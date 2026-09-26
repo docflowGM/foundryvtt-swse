@@ -1,8 +1,8 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "generatedFrom": "Phase 1A-1D talent structural audit",
   "branch": "audit/talent-phase-1-tree-census",
-  "authorityNote": "Primary sourcebooks are authoritative. Fandom-derived rows are indexing candidates until sourceStatus is PRIMARY_SOURCE_VERIFIED.",
+  "authorityNote": "Primary sourcebooks are authoritative. Tree origin membership and later expansion publications are tracked separately so supplemental additions are not misclassified as extras.",
   "counts": {
     "entries": 195,
     "referenceRows": 140,
@@ -23,7 +23,6 @@
         "Sith Apprentice"
       ],
       "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
-      "canonicalTalentNames": null,
       "repoTreeIds": [
         "17cec542331cb4e4"
       ],
@@ -38,7 +37,12 @@
         "Soldier"
       ],
       "status": "REPO_TREE_PRESENT",
-      "notes": null
+      "notes": null,
+      "originSourcebook": "Saga Edition Core Rulebook",
+      "originTalentNames": null,
+      "talentPublications": [],
+      "aggregateCanonicalTalentNames": null,
+      "aggregateMembershipStatus": "UNVERIFIED"
     },
     {
       "canonicalTreeKey": "Saga Edition Core Rulebook|Awareness",
@@ -54,7 +58,6 @@
         "Vanguard"
       ],
       "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
-      "canonicalTalentNames": null,
       "repoTreeIds": [
         "1c48d1cd9ab1f5c8"
       ],
@@ -71,7 +74,12 @@
         "Vanguard"
       ],
       "status": "REPO_TREE_PRESENT",
-      "notes": null
+      "notes": null,
+      "originSourcebook": "Saga Edition Core Rulebook",
+      "originTalentNames": null,
+      "talentPublications": [],
+      "aggregateCanonicalTalentNames": null,
+      "aggregateMembershipStatus": "UNVERIFIED"
     },
     {
       "canonicalTreeKey": "Saga Edition Core Rulebook|Bounty Hunter",
@@ -81,7 +89,6 @@
         "Bounty Hunter"
       ],
       "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
-      "canonicalTalentNames": null,
       "repoTreeIds": [
         "a47ed82a822e3962"
       ],
@@ -92,7 +99,12 @@
         "Bounty Hunter"
       ],
       "status": "REPO_TREE_PRESENT",
-      "notes": null
+      "notes": null,
+      "originSourcebook": "Saga Edition Core Rulebook",
+      "originTalentNames": null,
+      "talentPublications": [],
+      "aggregateCanonicalTalentNames": null,
+      "aggregateMembershipStatus": "UNVERIFIED"
     },
     {
       "canonicalTreeKey": "Saga Edition Core Rulebook|Brawler",
@@ -103,7 +115,6 @@
         "Melee Duelist"
       ],
       "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
-      "canonicalTalentNames": null,
       "repoTreeIds": [
         "67fdd8dce9abd6c1"
       ],
@@ -115,7 +126,12 @@
         "Soldier"
       ],
       "status": "REPO_TREE_PRESENT",
-      "notes": null
+      "notes": null,
+      "originSourcebook": "Saga Edition Core Rulebook",
+      "originTalentNames": null,
+      "talentPublications": [],
+      "aggregateCanonicalTalentNames": null,
+      "aggregateMembershipStatus": "UNVERIFIED"
     },
     {
       "canonicalTreeKey": "Saga Edition Core Rulebook|Camouflage",
@@ -127,7 +143,6 @@
         "Infiltrator"
       ],
       "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
-      "canonicalTalentNames": null,
       "repoTreeIds": [
         "3926d582d2077489"
       ],
@@ -140,7 +155,12 @@
         "Scout"
       ],
       "status": "REPO_TREE_PRESENT",
-      "notes": null
+      "notes": null,
+      "originSourcebook": "Saga Edition Core Rulebook",
+      "originTalentNames": null,
+      "talentPublications": [],
+      "aggregateCanonicalTalentNames": null,
+      "aggregateMembershipStatus": "UNVERIFIED"
     },
     {
       "canonicalTreeKey": "Saga Edition Core Rulebook|Commando",
@@ -152,7 +172,6 @@
         "Officer"
       ],
       "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
-      "canonicalTalentNames": null,
       "repoTreeIds": [
         "798ed0945cbdac1c"
       ],
@@ -165,7 +184,12 @@
         "Soldier"
       ],
       "status": "REPO_TREE_PRESENT",
-      "notes": null
+      "notes": null,
+      "originSourcebook": "Saga Edition Core Rulebook",
+      "originTalentNames": null,
+      "talentPublications": [],
+      "aggregateCanonicalTalentNames": null,
+      "aggregateMembershipStatus": "UNVERIFIED"
     },
     {
       "canonicalTreeKey": "Saga Edition Core Rulebook|Dark Side Devotee",
@@ -175,7 +199,6 @@
         "Force Adept"
       ],
       "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
-      "canonicalTalentNames": null,
       "repoTreeIds": [
         "96ef43a3054dcb58"
       ],
@@ -186,7 +209,12 @@
         "Force Adept"
       ],
       "status": "REPO_TREE_PRESENT",
-      "notes": null
+      "notes": null,
+      "originSourcebook": "Saga Edition Core Rulebook",
+      "originTalentNames": null,
+      "talentPublications": [],
+      "aggregateCanonicalTalentNames": null,
+      "aggregateMembershipStatus": "UNVERIFIED"
     },
     {
       "canonicalTreeKey": "Saga Edition Core Rulebook|Duelist",
@@ -199,7 +227,6 @@
         "Sith Apprentice"
       ],
       "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
-      "canonicalTalentNames": null,
       "repoTreeIds": [
         "b3c5d90b5036f39b"
       ],
@@ -213,7 +240,12 @@
         "Sith Apprentice"
       ],
       "status": "REPO_TREE_PRESENT",
-      "notes": null
+      "notes": null,
+      "originSourcebook": "Saga Edition Core Rulebook",
+      "originTalentNames": null,
+      "talentPublications": [],
+      "aggregateCanonicalTalentNames": null,
+      "aggregateMembershipStatus": "UNVERIFIED"
     },
     {
       "canonicalTreeKey": "Saga Edition Core Rulebook|Expert Pilot",
@@ -223,7 +255,6 @@
         "Ace Pilot"
       ],
       "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
-      "canonicalTalentNames": null,
       "repoTreeIds": [
         "b17c1515c06361d6"
       ],
@@ -234,7 +265,12 @@
         "Ace Pilot"
       ],
       "status": "REPO_TREE_PRESENT",
-      "notes": null
+      "notes": null,
+      "originSourcebook": "Saga Edition Core Rulebook",
+      "originTalentNames": null,
+      "talentPublications": [],
+      "aggregateCanonicalTalentNames": null,
+      "aggregateMembershipStatus": "UNVERIFIED"
     },
     {
       "canonicalTreeKey": "Saga Edition Core Rulebook|Force Adept",
@@ -245,7 +281,6 @@
         "Force Disciple"
       ],
       "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
-      "canonicalTalentNames": null,
       "repoTreeIds": [
         "e35ee41362604227"
       ],
@@ -257,7 +292,12 @@
         "Force Disciple"
       ],
       "status": "REPO_TREE_PRESENT",
-      "notes": null
+      "notes": null,
+      "originSourcebook": "Saga Edition Core Rulebook",
+      "originTalentNames": null,
+      "talentPublications": [],
+      "aggregateCanonicalTalentNames": null,
+      "aggregateMembershipStatus": "UNVERIFIED"
     },
     {
       "canonicalTreeKey": "Saga Edition Core Rulebook|Force Item",
@@ -267,7 +307,6 @@
         "Force Adept"
       ],
       "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
-      "canonicalTalentNames": null,
       "repoTreeIds": [
         "01e443d93e47f9c4"
       ],
@@ -278,7 +317,12 @@
         "Force Adept"
       ],
       "status": "REPO_TREE_PRESENT",
-      "notes": null
+      "notes": null,
+      "originSourcebook": "Saga Edition Core Rulebook",
+      "originTalentNames": null,
+      "talentPublications": [],
+      "aggregateCanonicalTalentNames": null,
+      "aggregateMembershipStatus": "UNVERIFIED"
     },
     {
       "canonicalTreeKey": "Saga Edition Core Rulebook|Fortune",
@@ -289,7 +333,6 @@
         "Gunslinger"
       ],
       "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
-      "canonicalTalentNames": null,
       "repoTreeIds": [
         "cee9b9398682b7d0"
       ],
@@ -301,7 +344,12 @@
         "Scoundrel"
       ],
       "status": "REPO_TREE_PRESENT",
-      "notes": null
+      "notes": null,
+      "originSourcebook": "Saga Edition Core Rulebook",
+      "originTalentNames": null,
+      "talentPublications": [],
+      "aggregateCanonicalTalentNames": null,
+      "aggregateMembershipStatus": "UNVERIFIED"
     },
     {
       "canonicalTreeKey": "Saga Edition Core Rulebook|Fringer",
@@ -312,7 +360,6 @@
         "Outlaw"
       ],
       "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
-      "canonicalTalentNames": null,
       "repoTreeIds": [
         "7c47d36dc1f77d9c"
       ],
@@ -324,7 +371,12 @@
         "Scout"
       ],
       "status": "REPO_TREE_PRESENT",
-      "notes": null
+      "notes": null,
+      "originSourcebook": "Saga Edition Core Rulebook",
+      "originTalentNames": null,
+      "talentPublications": [],
+      "aggregateCanonicalTalentNames": null,
+      "aggregateMembershipStatus": "UNVERIFIED"
     },
     {
       "canonicalTreeKey": "Saga Edition Core Rulebook|Gunner",
@@ -334,7 +386,6 @@
         "Ace Pilot"
       ],
       "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
-      "canonicalTalentNames": null,
       "repoTreeIds": [
         "43ead399d82b8142"
       ],
@@ -345,7 +396,12 @@
         "Ace Pilot"
       ],
       "status": "REPO_TREE_PRESENT",
-      "notes": null
+      "notes": null,
+      "originSourcebook": "Saga Edition Core Rulebook",
+      "originTalentNames": null,
+      "talentPublications": [],
+      "aggregateCanonicalTalentNames": null,
+      "aggregateMembershipStatus": "UNVERIFIED"
     },
     {
       "canonicalTreeKey": "Saga Edition Core Rulebook|Gunslinger",
@@ -355,7 +411,6 @@
         "Gunslinger"
       ],
       "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
-      "canonicalTalentNames": null,
       "repoTreeIds": [
         "cb6f775cd227a3e3"
       ],
@@ -366,7 +421,12 @@
         "Gunslinger"
       ],
       "status": "REPO_TREE_PRESENT",
-      "notes": null
+      "notes": null,
+      "originSourcebook": "Saga Edition Core Rulebook",
+      "originTalentNames": null,
+      "talentPublications": [],
+      "aggregateCanonicalTalentNames": null,
+      "aggregateMembershipStatus": "UNVERIFIED"
     },
     {
       "canonicalTreeKey": "Saga Edition Core Rulebook|Infamy",
@@ -377,7 +437,6 @@
         "Master Privateer"
       ],
       "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
-      "canonicalTalentNames": null,
       "repoTreeIds": [
         "c1be604242cb328f"
       ],
@@ -389,7 +448,12 @@
         "Master Privateer"
       ],
       "status": "REPO_TREE_PRESENT",
-      "notes": null
+      "notes": null,
+      "originSourcebook": "Saga Edition Core Rulebook",
+      "originTalentNames": null,
+      "talentPublications": [],
+      "aggregateCanonicalTalentNames": null,
+      "aggregateMembershipStatus": "UNVERIFIED"
     },
     {
       "canonicalTreeKey": "Saga Edition Core Rulebook|Influence",
@@ -400,7 +464,6 @@
         "Crime Lord"
       ],
       "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
-      "canonicalTalentNames": null,
       "repoTreeIds": [
         "8375b9b26b679901"
       ],
@@ -412,7 +475,12 @@
         "Noble"
       ],
       "status": "REPO_TREE_PRESENT",
-      "notes": null
+      "notes": null,
+      "originSourcebook": "Saga Edition Core Rulebook",
+      "originTalentNames": null,
+      "talentPublications": [],
+      "aggregateCanonicalTalentNames": null,
+      "aggregateMembershipStatus": "UNVERIFIED"
     },
     {
       "canonicalTreeKey": "Saga Edition Core Rulebook|Inspiration",
@@ -423,7 +491,6 @@
         "Droid Commander"
       ],
       "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
-      "canonicalTalentNames": null,
       "repoTreeIds": [
         "72d32ebcbb607314"
       ],
@@ -435,7 +502,12 @@
         "Noble"
       ],
       "status": "REPO_TREE_PRESENT",
-      "notes": null
+      "notes": null,
+      "originSourcebook": "Saga Edition Core Rulebook",
+      "originTalentNames": null,
+      "talentPublications": [],
+      "aggregateCanonicalTalentNames": null,
+      "aggregateMembershipStatus": "UNVERIFIED"
     },
     {
       "canonicalTreeKey": "Saga Edition Core Rulebook|Jedi Consular",
@@ -445,7 +517,6 @@
         "Jedi"
       ],
       "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
-      "canonicalTalentNames": null,
       "repoTreeIds": [
         "e99cfa9db8493573"
       ],
@@ -456,7 +527,12 @@
         "Jedi"
       ],
       "status": "REPO_TREE_PRESENT",
-      "notes": null
+      "notes": null,
+      "originSourcebook": "Saga Edition Core Rulebook",
+      "originTalentNames": null,
+      "talentPublications": [],
+      "aggregateCanonicalTalentNames": null,
+      "aggregateMembershipStatus": "UNVERIFIED"
     },
     {
       "canonicalTreeKey": "Saga Edition Core Rulebook|Jedi Guardian",
@@ -466,7 +542,6 @@
         "Jedi"
       ],
       "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
-      "canonicalTalentNames": null,
       "repoTreeIds": [
         "10c843cef8ce2798"
       ],
@@ -477,7 +552,12 @@
         "Jedi"
       ],
       "status": "REPO_TREE_PRESENT",
-      "notes": null
+      "notes": null,
+      "originSourcebook": "Saga Edition Core Rulebook",
+      "originTalentNames": null,
+      "talentPublications": [],
+      "aggregateCanonicalTalentNames": null,
+      "aggregateMembershipStatus": "UNVERIFIED"
     },
     {
       "canonicalTreeKey": "Saga Edition Core Rulebook|Jedi Sentinel",
@@ -487,7 +567,6 @@
         "Jedi"
       ],
       "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
-      "canonicalTalentNames": null,
       "repoTreeIds": [
         "36f18f3e974feb33"
       ],
@@ -498,7 +577,12 @@
         "Jedi"
       ],
       "status": "REPO_TREE_PRESENT",
-      "notes": null
+      "notes": null,
+      "originSourcebook": "Saga Edition Core Rulebook",
+      "originTalentNames": null,
+      "talentPublications": [],
+      "aggregateCanonicalTalentNames": null,
+      "aggregateMembershipStatus": "UNVERIFIED"
     },
     {
       "canonicalTreeKey": "Saga Edition Core Rulebook|Leadership",
@@ -511,7 +595,6 @@
         "Officer"
       ],
       "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
-      "canonicalTalentNames": null,
       "repoTreeIds": [
         "5964237d22681dc0"
       ],
@@ -525,7 +608,12 @@
         "Officer"
       ],
       "status": "REPO_TREE_PRESENT",
-      "notes": null
+      "notes": null,
+      "originSourcebook": "Saga Edition Core Rulebook",
+      "originTalentNames": null,
+      "talentPublications": [],
+      "aggregateCanonicalTalentNames": null,
+      "aggregateMembershipStatus": "UNVERIFIED"
     },
     {
       "canonicalTreeKey": "Saga Edition Core Rulebook|Lightsaber Combat",
@@ -538,7 +626,6 @@
         "Sith Apprentice"
       ],
       "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
-      "canonicalTalentNames": null,
       "repoTreeIds": [
         "2359c05ff13f3feb"
       ],
@@ -552,7 +639,12 @@
         "Sith Apprentice"
       ],
       "status": "REPO_TREE_PRESENT",
-      "notes": null
+      "notes": null,
+      "originSourcebook": "Saga Edition Core Rulebook",
+      "originTalentNames": null,
+      "talentPublications": [],
+      "aggregateCanonicalTalentNames": null,
+      "aggregateMembershipStatus": "UNVERIFIED"
     },
     {
       "canonicalTreeKey": "Saga Edition Core Rulebook|Lightsaber Forms",
@@ -562,7 +654,6 @@
         "Jedi Knight"
       ],
       "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
-      "canonicalTalentNames": null,
       "repoTreeIds": [
         "2bc2572e852832e4"
       ],
@@ -573,7 +664,12 @@
         "Jedi Knight"
       ],
       "status": "REPO_TREE_PRESENT",
-      "notes": null
+      "notes": null,
+      "originSourcebook": "Saga Edition Core Rulebook",
+      "originTalentNames": null,
+      "talentPublications": [],
+      "aggregateCanonicalTalentNames": null,
+      "aggregateMembershipStatus": "UNVERIFIED"
     },
     {
       "canonicalTreeKey": "Saga Edition Core Rulebook|Lineage",
@@ -584,7 +680,6 @@
         "Corporate Agent"
       ],
       "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
-      "canonicalTalentNames": null,
       "repoTreeIds": [
         "b5bb4154688c66ab"
       ],
@@ -596,7 +691,12 @@
         "Noble"
       ],
       "status": "REPO_TREE_PRESENT",
-      "notes": null
+      "notes": null,
+      "originSourcebook": "Saga Edition Core Rulebook",
+      "originTalentNames": null,
+      "talentPublications": [],
+      "aggregateCanonicalTalentNames": null,
+      "aggregateMembershipStatus": "UNVERIFIED"
     },
     {
       "canonicalTreeKey": "Saga Edition Core Rulebook|Mastermind",
@@ -606,7 +706,6 @@
         "Crime Lord"
       ],
       "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
-      "canonicalTalentNames": null,
       "repoTreeIds": [
         "560cc7994b357a0d"
       ],
@@ -617,7 +716,12 @@
         "Crime Lord"
       ],
       "status": "REPO_TREE_PRESENT",
-      "notes": null
+      "notes": null,
+      "originSourcebook": "Saga Edition Core Rulebook",
+      "originTalentNames": null,
+      "talentPublications": [],
+      "aggregateCanonicalTalentNames": null,
+      "aggregateMembershipStatus": "UNVERIFIED"
     },
     {
       "canonicalTreeKey": "Saga Edition Core Rulebook|Military Tactics",
@@ -627,7 +731,6 @@
         "Officer"
       ],
       "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
-      "canonicalTalentNames": null,
       "repoTreeIds": [
         "9253ace716c3e966"
       ],
@@ -638,7 +741,12 @@
         "Officer"
       ],
       "status": "REPO_TREE_PRESENT",
-      "notes": null
+      "notes": null,
+      "originSourcebook": "Saga Edition Core Rulebook",
+      "originTalentNames": null,
+      "talentPublications": [],
+      "aggregateCanonicalTalentNames": null,
+      "aggregateMembershipStatus": "UNVERIFIED"
     },
     {
       "canonicalTreeKey": "Saga Edition Core Rulebook|Misfortune",
@@ -651,7 +759,6 @@
         "Saboteur"
       ],
       "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
-      "canonicalTalentNames": null,
       "repoTreeIds": [
         "67b59e020c1660eb"
       ],
@@ -665,7 +772,12 @@
         "Scoundrel"
       ],
       "status": "REPO_TREE_PRESENT",
-      "notes": null
+      "notes": null,
+      "originSourcebook": "Saga Edition Core Rulebook",
+      "originTalentNames": null,
+      "talentPublications": [],
+      "aggregateCanonicalTalentNames": null,
+      "aggregateMembershipStatus": "UNVERIFIED"
     },
     {
       "canonicalTreeKey": "Saga Edition Core Rulebook|Sith",
@@ -676,7 +788,6 @@
         "Sith Lord"
       ],
       "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
-      "canonicalTalentNames": null,
       "repoTreeIds": [
         "d1037bc7a08ea80b"
       ],
@@ -688,7 +799,12 @@
         "Sith Lord"
       ],
       "status": "REPO_TREE_PRESENT",
-      "notes": null
+      "notes": null,
+      "originSourcebook": "Saga Edition Core Rulebook",
+      "originTalentNames": null,
+      "talentPublications": [],
+      "aggregateCanonicalTalentNames": null,
+      "aggregateMembershipStatus": "UNVERIFIED"
     },
     {
       "canonicalTreeKey": "Saga Edition Core Rulebook|Slicer",
@@ -700,7 +816,6 @@
         "Saboteur"
       ],
       "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
-      "canonicalTalentNames": null,
       "repoTreeIds": [
         "64874e65579e4cf4"
       ],
@@ -713,7 +828,12 @@
         "Scoundrel"
       ],
       "status": "REPO_TREE_PRESENT",
-      "notes": null
+      "notes": null,
+      "originSourcebook": "Saga Edition Core Rulebook",
+      "originTalentNames": null,
+      "talentPublications": [],
+      "aggregateCanonicalTalentNames": null,
+      "aggregateMembershipStatus": "UNVERIFIED"
     },
     {
       "canonicalTreeKey": "Saga Edition Core Rulebook|Spacer",
@@ -725,7 +845,6 @@
         "Master Privateer"
       ],
       "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
-      "canonicalTalentNames": null,
       "repoTreeIds": [
         "5ea8c79492d40713"
       ],
@@ -738,7 +857,12 @@
         "Scoundrel"
       ],
       "status": "REPO_TREE_PRESENT",
-      "notes": null
+      "notes": null,
+      "originSourcebook": "Saga Edition Core Rulebook",
+      "originTalentNames": null,
+      "talentPublications": [],
+      "aggregateCanonicalTalentNames": null,
+      "aggregateMembershipStatus": "UNVERIFIED"
     },
     {
       "canonicalTreeKey": "Saga Edition Core Rulebook|Survivor",
@@ -753,7 +877,6 @@
         "Vanguard"
       ],
       "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
-      "canonicalTalentNames": null,
       "repoTreeIds": [
         "9b06340233eb3cdd"
       ],
@@ -769,7 +892,12 @@
         "Vanguard"
       ],
       "status": "REPO_TREE_PRESENT",
-      "notes": null
+      "notes": null,
+      "originSourcebook": "Saga Edition Core Rulebook",
+      "originTalentNames": null,
+      "talentPublications": [],
+      "aggregateCanonicalTalentNames": null,
+      "aggregateMembershipStatus": "UNVERIFIED"
     },
     {
       "canonicalTreeKey": "Saga Edition Core Rulebook|Weapon Master",
@@ -779,7 +907,6 @@
         "Elite Trooper"
       ],
       "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
-      "canonicalTalentNames": null,
       "repoTreeIds": [
         "2f720d8b061f9bd0"
       ],
@@ -790,7 +917,12 @@
         "Elite Trooper"
       ],
       "status": "REPO_TREE_PRESENT",
-      "notes": null
+      "notes": null,
+      "originSourcebook": "Saga Edition Core Rulebook",
+      "originTalentNames": null,
+      "talentPublications": [],
+      "aggregateCanonicalTalentNames": null,
+      "aggregateMembershipStatus": "UNVERIFIED"
     },
     {
       "canonicalTreeKey": "Saga Edition Core Rulebook|Weapon Specialist",
@@ -801,7 +933,6 @@
         "Melee Duelist"
       ],
       "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
-      "canonicalTalentNames": null,
       "repoTreeIds": [
         "2e9265a596cc43f7"
       ],
@@ -813,7 +944,12 @@
         "Soldier"
       ],
       "status": "REPO_TREE_PRESENT",
-      "notes": null
+      "notes": null,
+      "originSourcebook": "Saga Edition Core Rulebook",
+      "originTalentNames": null,
+      "talentPublications": [],
+      "aggregateCanonicalTalentNames": null,
+      "aggregateMembershipStatus": "UNVERIFIED"
     },
     {
       "canonicalTreeKey": "Starships of the Galaxy|Naval Officer",
@@ -823,7 +959,6 @@
         "Officer"
       ],
       "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
-      "canonicalTalentNames": null,
       "repoTreeIds": [
         "057a978a7dc1d5a7"
       ],
@@ -834,7 +969,12 @@
         "Officer"
       ],
       "status": "REPO_TREE_PRESENT",
-      "notes": null
+      "notes": null,
+      "originSourcebook": "Starships of the Galaxy",
+      "originTalentNames": null,
+      "talentPublications": [],
+      "aggregateCanonicalTalentNames": null,
+      "aggregateMembershipStatus": "UNVERIFIED"
     },
     {
       "canonicalTreeKey": "Starships of the Galaxy|Outlaw Tech",
@@ -846,7 +986,6 @@
         "Military Engineer"
       ],
       "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
-      "canonicalTalentNames": null,
       "repoTreeIds": [
         "f1657b1d23a4c7dc"
       ],
@@ -859,7 +998,12 @@
         "Scoundrel"
       ],
       "status": "REPO_TREE_PRESENT",
-      "notes": null
+      "notes": null,
+      "originSourcebook": "Starships of the Galaxy",
+      "originTalentNames": null,
+      "talentPublications": [],
+      "aggregateCanonicalTalentNames": null,
+      "aggregateMembershipStatus": "UNVERIFIED"
     },
     {
       "canonicalTreeKey": "Starships of the Galaxy|Squadron Leader",
@@ -869,7 +1013,6 @@
         "Ace Pilot"
       ],
       "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
-      "canonicalTalentNames": null,
       "repoTreeIds": [
         "dc1b8c5ce2a70394"
       ],
@@ -880,7 +1023,12 @@
         "Ace Pilot"
       ],
       "status": "REPO_TREE_PRESENT",
-      "notes": null
+      "notes": null,
+      "originSourcebook": "Starships of the Galaxy",
+      "originTalentNames": null,
+      "talentPublications": [],
+      "aggregateCanonicalTalentNames": null,
+      "aggregateMembershipStatus": "UNVERIFIED"
     },
     {
       "canonicalTreeKey": "Threats of the Galaxy|Malkite Poisoner",
@@ -891,7 +1039,6 @@
         "Assassin"
       ],
       "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
-      "canonicalTalentNames": null,
       "repoTreeIds": [
         "c55b003333ff082d"
       ],
@@ -903,7 +1050,12 @@
         "Scoundrel"
       ],
       "status": "REPO_TREE_PRESENT",
-      "notes": null
+      "notes": null,
+      "originSourcebook": "Threats of the Galaxy",
+      "originTalentNames": null,
+      "talentPublications": [],
+      "aggregateCanonicalTalentNames": null,
+      "aggregateMembershipStatus": "UNVERIFIED"
     },
     {
       "canonicalTreeKey": "Threats of the Galaxy|Master of Teräs Käsi",
@@ -914,7 +1066,6 @@
         "Martial Arts Master"
       ],
       "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
-      "canonicalTalentNames": null,
       "repoTreeIds": [
         "ba726f623e42f849"
       ],
@@ -926,7 +1077,12 @@
         "Martial Arts Master"
       ],
       "status": "REPO_TREE_PRESENT",
-      "notes": null
+      "notes": null,
+      "originSourcebook": "Threats of the Galaxy",
+      "originTalentNames": null,
+      "talentPublications": [],
+      "aggregateCanonicalTalentNames": null,
+      "aggregateMembershipStatus": "UNVERIFIED"
     },
     {
       "canonicalTreeKey": "Knights of the Old Republic Campaign Guide|Corporate Power",
@@ -936,7 +1092,6 @@
         "Corporate Agent"
       ],
       "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
-      "canonicalTalentNames": null,
       "repoTreeIds": [
         "45c4007d09c01839"
       ],
@@ -947,7 +1102,12 @@
         "Corporate Agent"
       ],
       "status": "REPO_TREE_PRESENT",
-      "notes": null
+      "notes": null,
+      "originSourcebook": "Knights of the Old Republic Campaign Guide",
+      "originTalentNames": null,
+      "talentPublications": [],
+      "aggregateCanonicalTalentNames": null,
+      "aggregateMembershipStatus": "UNVERIFIED"
     },
     {
       "canonicalTreeKey": "Knights of the Old Republic Campaign Guide|Fencing",
@@ -957,7 +1117,6 @@
         "Noble"
       ],
       "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
-      "canonicalTalentNames": null,
       "repoTreeIds": [
         "9df067790c87e6bc"
       ],
@@ -968,7 +1127,12 @@
         "Noble"
       ],
       "status": "REPO_TREE_PRESENT",
-      "notes": null
+      "notes": null,
+      "originSourcebook": "Knights of the Old Republic Campaign Guide",
+      "originTalentNames": null,
+      "talentPublications": [],
+      "aggregateCanonicalTalentNames": null,
+      "aggregateMembershipStatus": "UNVERIFIED"
     },
     {
       "canonicalTreeKey": "Knights of the Old Republic Campaign Guide|Gladiatorial Combat",
@@ -978,7 +1142,6 @@
         "Gladiator"
       ],
       "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
-      "canonicalTalentNames": null,
       "repoTreeIds": [
         "12a2a02b0901605d"
       ],
@@ -989,7 +1152,12 @@
         "Gladiator"
       ],
       "status": "REPO_TREE_PRESENT",
-      "notes": null
+      "notes": null,
+      "originSourcebook": "Knights of the Old Republic Campaign Guide",
+      "originTalentNames": null,
+      "talentPublications": [],
+      "aggregateCanonicalTalentNames": null,
+      "aggregateMembershipStatus": "UNVERIFIED"
     },
     {
       "canonicalTreeKey": "Knights of the Old Republic Campaign Guide|Hyperspace Explorer",
@@ -999,7 +1167,6 @@
         "Scout"
       ],
       "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
-      "canonicalTalentNames": null,
       "repoTreeIds": [
         "089933380b40ce20"
       ],
@@ -1010,7 +1177,12 @@
         "Scout"
       ],
       "status": "REPO_TREE_PRESENT",
-      "notes": null
+      "notes": null,
+      "originSourcebook": "Knights of the Old Republic Campaign Guide",
+      "originTalentNames": null,
+      "talentPublications": [],
+      "aggregateCanonicalTalentNames": null,
+      "aggregateMembershipStatus": "UNVERIFIED"
     },
     {
       "canonicalTreeKey": "Knights of the Old Republic Campaign Guide|Jedi Battlemaster",
@@ -1020,7 +1192,6 @@
         "Jedi Knight"
       ],
       "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
-      "canonicalTalentNames": null,
       "repoTreeIds": [
         "dfc4142435b4356d"
       ],
@@ -1031,7 +1202,12 @@
         "Jedi Knight"
       ],
       "status": "REPO_TREE_PRESENT",
-      "notes": null
+      "notes": null,
+      "originSourcebook": "Knights of the Old Republic Campaign Guide",
+      "originTalentNames": null,
+      "talentPublications": [],
+      "aggregateCanonicalTalentNames": null,
+      "aggregateMembershipStatus": "UNVERIFIED"
     },
     {
       "canonicalTreeKey": "Knights of the Old Republic Campaign Guide|Jedi Shadow",
@@ -1041,7 +1217,6 @@
         "Jedi Knight"
       ],
       "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
-      "canonicalTalentNames": null,
       "repoTreeIds": [
         "eab0d8bbee7e0f4f"
       ],
@@ -1052,7 +1227,12 @@
         "Jedi Knight"
       ],
       "status": "REPO_TREE_PRESENT",
-      "notes": null
+      "notes": null,
+      "originSourcebook": "Knights of the Old Republic Campaign Guide",
+      "originTalentNames": null,
+      "talentPublications": [],
+      "aggregateCanonicalTalentNames": null,
+      "aggregateMembershipStatus": "UNVERIFIED"
     },
     {
       "canonicalTreeKey": "Knights of the Old Republic Campaign Guide|Jedi Watchman",
@@ -1062,7 +1242,6 @@
         "Jedi Knight"
       ],
       "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
-      "canonicalTalentNames": null,
       "repoTreeIds": [
         "77e3817ba5cfa0d5"
       ],
@@ -1073,7 +1252,12 @@
         "Jedi Knight"
       ],
       "status": "REPO_TREE_PRESENT",
-      "notes": null
+      "notes": null,
+      "originSourcebook": "Knights of the Old Republic Campaign Guide",
+      "originTalentNames": null,
+      "talentPublications": [],
+      "aggregateCanonicalTalentNames": null,
+      "aggregateMembershipStatus": "UNVERIFIED"
     },
     {
       "canonicalTreeKey": "Knights of the Old Republic Campaign Guide|Mandalorian Warrior",
@@ -1083,7 +1267,6 @@
         "Elite Trooper"
       ],
       "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
-      "canonicalTalentNames": null,
       "repoTreeIds": [
         "4b8857716e056f62"
       ],
@@ -1094,7 +1277,12 @@
         "Elite Trooper"
       ],
       "status": "REPO_TREE_PRESENT",
-      "notes": null
+      "notes": null,
+      "originSourcebook": "Knights of the Old Republic Campaign Guide",
+      "originTalentNames": null,
+      "talentPublications": [],
+      "aggregateCanonicalTalentNames": null,
+      "aggregateMembershipStatus": "UNVERIFIED"
     },
     {
       "canonicalTreeKey": "Knights of the Old Republic Campaign Guide|Melee Duelist",
@@ -1104,7 +1292,6 @@
         "Melee Duelist"
       ],
       "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
-      "canonicalTalentNames": null,
       "repoTreeIds": [
         "1381bb8c9a838279"
       ],
@@ -1115,7 +1302,12 @@
         "Melee Duelist"
       ],
       "status": "REPO_TREE_PRESENT",
-      "notes": null
+      "notes": null,
+      "originSourcebook": "Knights of the Old Republic Campaign Guide",
+      "originTalentNames": null,
+      "talentPublications": [],
+      "aggregateCanonicalTalentNames": null,
+      "aggregateMembershipStatus": "UNVERIFIED"
     },
     {
       "canonicalTreeKey": "Knights of the Old Republic Campaign Guide|Rocket Jumper",
@@ -1125,7 +1317,6 @@
         "Soldier"
       ],
       "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
-      "canonicalTalentNames": null,
       "repoTreeIds": [
         "1f50c63b6f08de10"
       ],
@@ -1136,7 +1327,12 @@
         "Soldier"
       ],
       "status": "REPO_TREE_PRESENT",
-      "notes": null
+      "notes": null,
+      "originSourcebook": "Knights of the Old Republic Campaign Guide",
+      "originTalentNames": null,
+      "talentPublications": [],
+      "aggregateCanonicalTalentNames": null,
+      "aggregateMembershipStatus": "UNVERIFIED"
     },
     {
       "canonicalTreeKey": "Knights of the Old Republic Campaign Guide|Run and Gun",
@@ -1146,7 +1342,6 @@
         "Scoundrel"
       ],
       "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
-      "canonicalTalentNames": null,
       "repoTreeIds": [
         "6367600ed3c0cfae"
       ],
@@ -1157,7 +1352,12 @@
         "Scoundrel"
       ],
       "status": "REPO_TREE_PRESENT",
-      "notes": null
+      "notes": null,
+      "originSourcebook": "Knights of the Old Republic Campaign Guide",
+      "originTalentNames": null,
+      "talentPublications": [],
+      "aggregateCanonicalTalentNames": null,
+      "aggregateMembershipStatus": "UNVERIFIED"
     },
     {
       "canonicalTreeKey": "Force Unleashed Campaign Guide|Advanced Medicine",
@@ -1168,7 +1368,6 @@
         "Shaper"
       ],
       "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
-      "canonicalTalentNames": null,
       "repoTreeIds": [
         "61725c845d26ade0"
       ],
@@ -1180,7 +1379,12 @@
         "Shaper"
       ],
       "status": "REPO_TREE_PRESENT",
-      "notes": null
+      "notes": null,
+      "originSourcebook": "Force Unleashed Campaign Guide",
+      "originTalentNames": null,
+      "talentPublications": [],
+      "aggregateCanonicalTalentNames": null,
+      "aggregateMembershipStatus": "UNVERIFIED"
     },
     {
       "canonicalTreeKey": "Force Unleashed Campaign Guide|Autonomy",
@@ -1190,7 +1394,6 @@
         "Independent Droid"
       ],
       "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
-      "canonicalTalentNames": null,
       "repoTreeIds": [
         "9fe73a3703fa45fca628fd43cae6bf7f"
       ],
@@ -1201,7 +1404,12 @@
         "Independent Droid"
       ],
       "status": "REPO_TREE_PRESENT",
-      "notes": null
+      "notes": null,
+      "originSourcebook": "Force Unleashed Campaign Guide",
+      "originTalentNames": null,
+      "talentPublications": [],
+      "aggregateCanonicalTalentNames": null,
+      "aggregateMembershipStatus": "UNVERIFIED"
     },
     {
       "canonicalTreeKey": "Force Unleashed Campaign Guide|Bothan SpyNet",
@@ -1211,7 +1419,6 @@
         "Infiltrator"
       ],
       "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
-      "canonicalTalentNames": null,
       "repoTreeIds": [
         "d20682671d035cef"
       ],
@@ -1222,7 +1429,12 @@
         "Infiltrator"
       ],
       "status": "REPO_TREE_PRESENT",
-      "notes": null
+      "notes": null,
+      "originSourcebook": "Force Unleashed Campaign Guide",
+      "originTalentNames": null,
+      "talentPublications": [],
+      "aggregateCanonicalTalentNames": null,
+      "aggregateMembershipStatus": "UNVERIFIED"
     },
     {
       "canonicalTreeKey": "Force Unleashed Campaign Guide|Critical Master",
@@ -1232,7 +1444,6 @@
         "Elite Trooper"
       ],
       "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
-      "canonicalTalentNames": null,
       "repoTreeIds": [
         "71e99c646b18d85c"
       ],
@@ -1243,7 +1454,12 @@
         "Elite Trooper"
       ],
       "status": "REPO_TREE_PRESENT",
-      "notes": null
+      "notes": null,
+      "originSourcebook": "Force Unleashed Campaign Guide",
+      "originTalentNames": null,
+      "talentPublications": [],
+      "aggregateCanonicalTalentNames": null,
+      "aggregateMembershipStatus": "UNVERIFIED"
     },
     {
       "canonicalTreeKey": "Force Unleashed Campaign Guide|Enforcement",
@@ -1253,7 +1469,6 @@
         "Enforcer"
       ],
       "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
-      "canonicalTalentNames": null,
       "repoTreeIds": [
         "2d164f62e17bed8c"
       ],
@@ -1264,7 +1479,12 @@
         "Enforcer"
       ],
       "status": "REPO_TREE_PRESENT",
-      "notes": null
+      "notes": null,
+      "originSourcebook": "Force Unleashed Campaign Guide",
+      "originTalentNames": null,
+      "talentPublications": [],
+      "aggregateCanonicalTalentNames": null,
+      "aggregateMembershipStatus": "UNVERIFIED"
     },
     {
       "canonicalTreeKey": "Force Unleashed Campaign Guide|Ideologue",
@@ -1274,7 +1494,6 @@
         "Noble"
       ],
       "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
-      "canonicalTalentNames": null,
       "repoTreeIds": [
         "d65a4816379802ee"
       ],
@@ -1285,7 +1504,12 @@
         "Noble"
       ],
       "status": "REPO_TREE_PRESENT",
-      "notes": null
+      "notes": null,
+      "originSourcebook": "Force Unleashed Campaign Guide",
+      "originTalentNames": null,
+      "talentPublications": [],
+      "aggregateCanonicalTalentNames": null,
+      "aggregateMembershipStatus": "UNVERIFIED"
     },
     {
       "canonicalTreeKey": "Force Unleashed Campaign Guide|Imperial Inquisitor",
@@ -1295,7 +1519,6 @@
         "Force Adept"
       ],
       "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
-      "canonicalTalentNames": null,
       "repoTreeIds": [
         "a6ee1a0c534cbc73"
       ],
@@ -1306,7 +1529,12 @@
         "Force Adept"
       ],
       "status": "REPO_TREE_PRESENT",
-      "notes": null
+      "notes": null,
+      "originSourcebook": "Force Unleashed Campaign Guide",
+      "originTalentNames": null,
+      "talentPublications": [],
+      "aggregateCanonicalTalentNames": null,
+      "aggregateMembershipStatus": "UNVERIFIED"
     },
     {
       "canonicalTreeKey": "Force Unleashed Campaign Guide|Infiltration",
@@ -1316,7 +1544,6 @@
         "Infiltrator"
       ],
       "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
-      "canonicalTalentNames": null,
       "repoTreeIds": [
         "7c7a8730e1b4381a"
       ],
@@ -1327,7 +1554,12 @@
         "Infiltrator"
       ],
       "status": "REPO_TREE_PRESENT",
-      "notes": null
+      "notes": null,
+      "originSourcebook": "Force Unleashed Campaign Guide",
+      "originTalentNames": null,
+      "talentPublications": [],
+      "aggregateCanonicalTalentNames": null,
+      "aggregateMembershipStatus": "UNVERIFIED"
     },
     {
       "canonicalTreeKey": "Force Unleashed Campaign Guide|Mercenary",
@@ -1337,7 +1569,6 @@
         "Soldier"
       ],
       "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
-      "canonicalTalentNames": null,
       "repoTreeIds": [
         "4007fa87192b5884"
       ],
@@ -1348,7 +1579,12 @@
         "Soldier"
       ],
       "status": "REPO_TREE_PRESENT",
-      "notes": null
+      "notes": null,
+      "originSourcebook": "Force Unleashed Campaign Guide",
+      "originTalentNames": null,
+      "talentPublications": [],
+      "aggregateCanonicalTalentNames": null,
+      "aggregateMembershipStatus": "UNVERIFIED"
     },
     {
       "canonicalTreeKey": "Force Unleashed Campaign Guide|Privateer",
@@ -1358,7 +1594,6 @@
         "Master Privateer"
       ],
       "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
-      "canonicalTalentNames": null,
       "repoTreeIds": [
         "df6678946610c554"
       ],
@@ -1369,7 +1604,12 @@
         "Master Privateer"
       ],
       "status": "REPO_TREE_PRESENT",
-      "notes": null
+      "notes": null,
+      "originSourcebook": "Force Unleashed Campaign Guide",
+      "originTalentNames": null,
+      "talentPublications": [],
+      "aggregateCanonicalTalentNames": null,
+      "aggregateMembershipStatus": "UNVERIFIED"
     },
     {
       "canonicalTreeKey": "Force Unleashed Campaign Guide|Sabotage",
@@ -1379,7 +1619,6 @@
         "Saboteur"
       ],
       "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
-      "canonicalTalentNames": null,
       "repoTreeIds": [
         "8897a36d59662ee9"
       ],
@@ -1390,7 +1629,12 @@
         "Saboteur"
       ],
       "status": "REPO_TREE_PRESENT",
-      "notes": null
+      "notes": null,
+      "originSourcebook": "Force Unleashed Campaign Guide",
+      "originTalentNames": null,
+      "talentPublications": [],
+      "aggregateCanonicalTalentNames": null,
+      "aggregateMembershipStatus": "UNVERIFIED"
     },
     {
       "canonicalTreeKey": "Force Unleashed Campaign Guide|Smuggling",
@@ -1400,7 +1644,6 @@
         "Scoundrel"
       ],
       "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
-      "canonicalTalentNames": null,
       "repoTreeIds": [
         "9f7ca12cc084737a"
       ],
@@ -1411,7 +1654,12 @@
         "Scoundrel"
       ],
       "status": "REPO_TREE_PRESENT",
-      "notes": null
+      "notes": null,
+      "originSourcebook": "Force Unleashed Campaign Guide",
+      "originTalentNames": null,
+      "talentPublications": [],
+      "aggregateCanonicalTalentNames": null,
+      "aggregateMembershipStatus": "UNVERIFIED"
     },
     {
       "canonicalTreeKey": "Force Unleashed Campaign Guide|Specialized Droid",
@@ -1421,7 +1669,6 @@
         "Independent Droid"
       ],
       "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
-      "canonicalTalentNames": null,
       "repoTreeIds": [
         "cec49bc60d1646b1"
       ],
@@ -1432,7 +1679,12 @@
         "Independent Droid"
       ],
       "status": "REPO_TREE_PRESENT",
-      "notes": null
+      "notes": null,
+      "originSourcebook": "Force Unleashed Campaign Guide",
+      "originTalentNames": null,
+      "talentPublications": [],
+      "aggregateCanonicalTalentNames": null,
+      "aggregateMembershipStatus": "UNVERIFIED"
     },
     {
       "canonicalTreeKey": "Force Unleashed Campaign Guide|Spy",
@@ -1443,7 +1695,6 @@
         "Infiltrator"
       ],
       "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
-      "canonicalTalentNames": null,
       "repoTreeIds": [
         "7c42882a1347ef18"
       ],
@@ -1455,7 +1706,12 @@
         "Scout"
       ],
       "status": "REPO_TREE_PRESENT",
-      "notes": null
+      "notes": null,
+      "originSourcebook": "Force Unleashed Campaign Guide",
+      "originTalentNames": null,
+      "talentPublications": [],
+      "aggregateCanonicalTalentNames": null,
+      "aggregateMembershipStatus": "UNVERIFIED"
     },
     {
       "canonicalTreeKey": "Force Unleashed Campaign Guide|Turret",
@@ -1465,7 +1721,6 @@
         "Saboteur"
       ],
       "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
-      "canonicalTalentNames": null,
       "repoTreeIds": [
         "92b30151b9b21109"
       ],
@@ -1476,7 +1731,12 @@
         "Saboteur"
       ],
       "status": "REPO_TREE_PRESENT",
-      "notes": null
+      "notes": null,
+      "originSourcebook": "Force Unleashed Campaign Guide",
+      "originTalentNames": null,
+      "talentPublications": [],
+      "aggregateCanonicalTalentNames": null,
+      "aggregateMembershipStatus": "UNVERIFIED"
     },
     {
       "canonicalTreeKey": "Scum and Villainy|Assassin",
@@ -1486,7 +1746,6 @@
         "Assassin"
       ],
       "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
-      "canonicalTalentNames": null,
       "repoTreeIds": [
         "186daeee7bd65a69"
       ],
@@ -1497,7 +1756,12 @@
         "Assassin"
       ],
       "status": "REPO_TREE_PRESENT",
-      "notes": null
+      "notes": null,
+      "originSourcebook": "Scum and Villainy",
+      "originTalentNames": null,
+      "talentPublications": [],
+      "aggregateCanonicalTalentNames": null,
+      "aggregateMembershipStatus": "UNVERIFIED"
     },
     {
       "canonicalTreeKey": "Scum and Villainy|Blockade Runner",
@@ -1507,7 +1771,6 @@
         "Ace Pilot"
       ],
       "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
-      "canonicalTalentNames": null,
       "repoTreeIds": [
         "296772ab8e69c9ef"
       ],
@@ -1518,7 +1781,12 @@
         "Ace Pilot"
       ],
       "status": "REPO_TREE_PRESENT",
-      "notes": null
+      "notes": null,
+      "originSourcebook": "Scum and Villainy",
+      "originTalentNames": null,
+      "talentPublications": [],
+      "aggregateCanonicalTalentNames": null,
+      "aggregateMembershipStatus": "UNVERIFIED"
     },
     {
       "canonicalTreeKey": "Scum and Villainy|Disgrace",
@@ -1529,7 +1797,6 @@
         "Charlatan"
       ],
       "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
-      "canonicalTalentNames": null,
       "repoTreeIds": [
         "e91cc675fbf9ba6e"
       ],
@@ -1541,7 +1808,12 @@
         "Noble"
       ],
       "status": "REPO_TREE_PRESENT",
-      "notes": null
+      "notes": null,
+      "originSourcebook": "Scum and Villainy",
+      "originTalentNames": null,
+      "talentPublications": [],
+      "aggregateCanonicalTalentNames": null,
+      "aggregateMembershipStatus": "UNVERIFIED"
     },
     {
       "canonicalTreeKey": "Scum and Villainy|Gand Findsman",
@@ -1551,7 +1823,6 @@
         "Bounty Hunter"
       ],
       "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
-      "canonicalTalentNames": null,
       "repoTreeIds": [
         "022b31d355c840a9"
       ],
@@ -1562,7 +1833,12 @@
         "Bounty Hunter"
       ],
       "status": "REPO_TREE_PRESENT",
-      "notes": null
+      "notes": null,
+      "originSourcebook": "Scum and Villainy",
+      "originTalentNames": null,
+      "talentPublications": [],
+      "aggregateCanonicalTalentNames": null,
+      "aggregateMembershipStatus": "UNVERIFIED"
     },
     {
       "canonicalTreeKey": "Scum and Villainy|GenoHaradan",
@@ -1572,12 +1848,6 @@
         "Assassin"
       ],
       "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
-      "canonicalTalentNames": [
-        "Deadly Repercussions",
-        "Manipulating Strike",
-        "Improved Manipulating Strike",
-        "Pulling the Strings"
-      ],
       "repoTreeIds": [
         "da7b731a3e434a7a",
         "db1b30c2163d0650"
@@ -1590,7 +1860,33 @@
         "Assassin"
       ],
       "status": "REPO_TREE_PRESENT",
-      "notes": "Canonical tree is split across repo trees Genoharadan and Genohardan."
+      "notes": "Canonical tree is split across repo trees Genoharadan and Genohardan.",
+      "originSourcebook": "Scum and Villainy",
+      "originTalentNames": [
+        "Deadly Repercussions",
+        "Manipulating Strike",
+        "Improved Manipulating Strike",
+        "Pulling the Strings"
+      ],
+      "talentPublications": [
+        {
+          "sourcebook": "Scum and Villainy",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Deadly Repercussions",
+            "Manipulating Strike",
+            "Improved Manipulating Strike",
+            "Pulling the Strings"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Deadly Repercussions",
+        "Manipulating Strike",
+        "Improved Manipulating Strike",
+        "Pulling the Strings"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED"
     },
     {
       "canonicalTreeKey": "Scum and Villainy|Outlaw",
@@ -1600,7 +1896,6 @@
         "Outlaw"
       ],
       "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
-      "canonicalTalentNames": null,
       "repoTreeIds": [
         "3caa80f6bef04200"
       ],
@@ -1611,7 +1906,12 @@
         "Outlaw"
       ],
       "status": "REPO_TREE_PRESENT",
-      "notes": null
+      "notes": null,
+      "originSourcebook": "Scum and Villainy",
+      "originTalentNames": null,
+      "talentPublications": [],
+      "aggregateCanonicalTalentNames": null,
+      "aggregateMembershipStatus": "UNVERIFIED"
     },
     {
       "canonicalTreeKey": "Scum and Villainy|Piracy",
@@ -1621,7 +1921,6 @@
         "Master Privateer"
       ],
       "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
-      "canonicalTalentNames": null,
       "repoTreeIds": [
         "61db5e2c0c44ef67"
       ],
@@ -1632,7 +1931,12 @@
         "Master Privateer"
       ],
       "status": "REPO_TREE_PRESENT",
-      "notes": null
+      "notes": null,
+      "originSourcebook": "Scum and Villainy",
+      "originTalentNames": null,
+      "talentPublications": [],
+      "aggregateCanonicalTalentNames": null,
+      "aggregateMembershipStatus": "UNVERIFIED"
     },
     {
       "canonicalTreeKey": "Scum and Villainy|Pistoleer",
@@ -1642,7 +1946,6 @@
         "Gunslinger"
       ],
       "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
-      "canonicalTalentNames": null,
       "repoTreeIds": [
         "ed77ab2e234089ed"
       ],
@@ -1653,7 +1956,12 @@
         "Gunslinger"
       ],
       "status": "REPO_TREE_PRESENT",
-      "notes": null
+      "notes": null,
+      "originSourcebook": "Scum and Villainy",
+      "originTalentNames": null,
+      "talentPublications": [],
+      "aggregateCanonicalTalentNames": null,
+      "aggregateMembershipStatus": "UNVERIFIED"
     },
     {
       "canonicalTreeKey": "Scum and Villainy|Trickery",
@@ -1663,7 +1971,6 @@
         "Charlatan"
       ],
       "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
-      "canonicalTalentNames": null,
       "repoTreeIds": [
         "ab9b75bc19f8e983"
       ],
@@ -1674,7 +1981,12 @@
         "Charlatan"
       ],
       "status": "REPO_TREE_PRESENT",
-      "notes": null
+      "notes": null,
+      "originSourcebook": "Scum and Villainy",
+      "originTalentNames": null,
+      "talentPublications": [],
+      "aggregateCanonicalTalentNames": null,
+      "aggregateMembershipStatus": "UNVERIFIED"
     },
     {
       "canonicalTreeKey": "Clone Wars Campaign Guide|Collaborator",
@@ -1684,7 +1996,6 @@
         "Noble"
       ],
       "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
-      "canonicalTalentNames": null,
       "repoTreeIds": [
         "4dc70f924e7794ac"
       ],
@@ -1695,7 +2006,12 @@
         "Noble"
       ],
       "status": "REPO_TREE_PRESENT",
-      "notes": null
+      "notes": null,
+      "originSourcebook": "Clone Wars Campaign Guide",
+      "originTalentNames": null,
+      "talentPublications": [],
+      "aggregateCanonicalTalentNames": null,
+      "aggregateMembershipStatus": "UNVERIFIED"
     },
     {
       "canonicalTreeKey": "Clone Wars Campaign Guide|Droid Commander",
@@ -1705,7 +2021,6 @@
         "Droid Commander"
       ],
       "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
-      "canonicalTalentNames": null,
       "repoTreeIds": [
         "9688ed3500084dca"
       ],
@@ -1716,7 +2031,12 @@
         "Droid Commander"
       ],
       "status": "REPO_TREE_PRESENT",
-      "notes": null
+      "notes": null,
+      "originSourcebook": "Clone Wars Campaign Guide",
+      "originTalentNames": null,
+      "talentPublications": [],
+      "aggregateCanonicalTalentNames": null,
+      "aggregateMembershipStatus": "UNVERIFIED"
     },
     {
       "canonicalTreeKey": "Clone Wars Campaign Guide|Jedi Archivist",
@@ -1726,7 +2046,6 @@
         "Jedi Knight"
       ],
       "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
-      "canonicalTalentNames": null,
       "repoTreeIds": [
         "152047d6ab7896ad"
       ],
@@ -1737,7 +2056,12 @@
         "Jedi Knight"
       ],
       "status": "REPO_TREE_PRESENT",
-      "notes": null
+      "notes": null,
+      "originSourcebook": "Clone Wars Campaign Guide",
+      "originTalentNames": null,
+      "talentPublications": [],
+      "aggregateCanonicalTalentNames": null,
+      "aggregateMembershipStatus": "UNVERIFIED"
     },
     {
       "canonicalTreeKey": "Clone Wars Campaign Guide|Jedi Healer",
@@ -1747,7 +2071,6 @@
         "Jedi Knight"
       ],
       "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
-      "canonicalTalentNames": null,
       "repoTreeIds": [
         "a2a7a376e4905da9"
       ],
@@ -1758,7 +2081,12 @@
         "Jedi Knight"
       ],
       "status": "REPO_TREE_PRESENT",
-      "notes": null
+      "notes": null,
+      "originSourcebook": "Clone Wars Campaign Guide",
+      "originTalentNames": null,
+      "talentPublications": [],
+      "aggregateCanonicalTalentNames": null,
+      "aggregateMembershipStatus": "UNVERIFIED"
     },
     {
       "canonicalTreeKey": "Clone Wars Campaign Guide|Loyal Protector",
@@ -1768,7 +2096,6 @@
         "Noble"
       ],
       "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
-      "canonicalTalentNames": null,
       "repoTreeIds": [
         "be2e649cbb7332fa"
       ],
@@ -1779,7 +2106,12 @@
         "Noble"
       ],
       "status": "REPO_TREE_PRESENT",
-      "notes": null
+      "notes": null,
+      "originSourcebook": "Clone Wars Campaign Guide",
+      "originTalentNames": null,
+      "talentPublications": [],
+      "aggregateCanonicalTalentNames": null,
+      "aggregateMembershipStatus": "UNVERIFIED"
     },
     {
       "canonicalTreeKey": "Clone Wars Campaign Guide|Melee Specialist",
@@ -1789,7 +2121,6 @@
         "Elite Trooper"
       ],
       "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
-      "canonicalTalentNames": null,
       "repoTreeIds": [
         "fad8118981c532f0"
       ],
@@ -1800,7 +2131,12 @@
         "Elite Trooper"
       ],
       "status": "REPO_TREE_PRESENT",
-      "notes": null
+      "notes": null,
+      "originSourcebook": "Clone Wars Campaign Guide",
+      "originTalentNames": null,
+      "talentPublications": [],
+      "aggregateCanonicalTalentNames": null,
+      "aggregateMembershipStatus": "UNVERIFIED"
     },
     {
       "canonicalTreeKey": "Clone Wars Campaign Guide|Military Engineer",
@@ -1810,7 +2146,6 @@
         "Military Engineer"
       ],
       "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
-      "canonicalTalentNames": null,
       "repoTreeIds": [
         "e32009b1b0aee8c9"
       ],
@@ -1821,7 +2156,12 @@
         "Military Engineer"
       ],
       "status": "REPO_TREE_PRESENT",
-      "notes": null
+      "notes": null,
+      "originSourcebook": "Clone Wars Campaign Guide",
+      "originTalentNames": null,
+      "talentPublications": [],
+      "aggregateCanonicalTalentNames": null,
+      "aggregateMembershipStatus": "UNVERIFIED"
     },
     {
       "canonicalTreeKey": "Clone Wars Campaign Guide|Opportunist",
@@ -1831,7 +2171,6 @@
         "Scoundrel"
       ],
       "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
-      "canonicalTalentNames": null,
       "repoTreeIds": [
         "bf3b07c1687a3ca2"
       ],
@@ -1842,7 +2181,12 @@
         "Scoundrel"
       ],
       "status": "REPO_TREE_PRESENT",
-      "notes": null
+      "notes": null,
+      "originSourcebook": "Clone Wars Campaign Guide",
+      "originTalentNames": null,
+      "talentPublications": [],
+      "aggregateCanonicalTalentNames": null,
+      "aggregateMembershipStatus": "UNVERIFIED"
     },
     {
       "canonicalTreeKey": "Clone Wars Campaign Guide|Reconnaissance",
@@ -1852,7 +2196,6 @@
         "Scout"
       ],
       "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
-      "canonicalTalentNames": null,
       "repoTreeIds": [
         "860fa1a66c837574"
       ],
@@ -1863,7 +2206,12 @@
         "Scout"
       ],
       "status": "REPO_TREE_PRESENT",
-      "notes": null
+      "notes": null,
+      "originSourcebook": "Clone Wars Campaign Guide",
+      "originTalentNames": null,
+      "talentPublications": [],
+      "aggregateCanonicalTalentNames": null,
+      "aggregateMembershipStatus": "UNVERIFIED"
     },
     {
       "canonicalTreeKey": "Clone Wars Campaign Guide|Republic Commando",
@@ -1873,7 +2221,6 @@
         "Elite Trooper"
       ],
       "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
-      "canonicalTalentNames": null,
       "repoTreeIds": [
         "cb3751283ea8fa3d"
       ],
@@ -1884,7 +2231,12 @@
         "Elite Trooper"
       ],
       "status": "REPO_TREE_PRESENT",
-      "notes": null
+      "notes": null,
+      "originSourcebook": "Clone Wars Campaign Guide",
+      "originTalentNames": null,
+      "talentPublications": [],
+      "aggregateCanonicalTalentNames": null,
+      "aggregateMembershipStatus": "UNVERIFIED"
     },
     {
       "canonicalTreeKey": "Clone Wars Campaign Guide|Squad Leader",
@@ -1894,7 +2246,6 @@
         "Soldier"
       ],
       "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
-      "canonicalTalentNames": null,
       "repoTreeIds": [
         "781feba15dc9e42f"
       ],
@@ -1905,7 +2256,12 @@
         "Soldier"
       ],
       "status": "REPO_TREE_PRESENT",
-      "notes": null
+      "notes": null,
+      "originSourcebook": "Clone Wars Campaign Guide",
+      "originTalentNames": null,
+      "talentPublications": [],
+      "aggregateCanonicalTalentNames": null,
+      "aggregateMembershipStatus": "UNVERIFIED"
     },
     {
       "canonicalTreeKey": "Clone Wars Campaign Guide|Surveillance",
@@ -1915,7 +2271,6 @@
         "Scout"
       ],
       "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
-      "canonicalTalentNames": null,
       "repoTreeIds": [
         "127a55c242e031f2"
       ],
@@ -1926,7 +2281,12 @@
         "Scout"
       ],
       "status": "REPO_TREE_PRESENT",
-      "notes": null
+      "notes": null,
+      "originSourcebook": "Clone Wars Campaign Guide",
+      "originTalentNames": null,
+      "talentPublications": [],
+      "aggregateCanonicalTalentNames": null,
+      "aggregateMembershipStatus": "UNVERIFIED"
     },
     {
       "canonicalTreeKey": "Clone Wars Campaign Guide|Trooper",
@@ -1936,7 +2296,6 @@
         "Soldier"
       ],
       "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
-      "canonicalTalentNames": null,
       "repoTreeIds": [
         "eff10782c1e56598"
       ],
@@ -1947,7 +2306,12 @@
         "Soldier"
       ],
       "status": "REPO_TREE_PRESENT",
-      "notes": null
+      "notes": null,
+      "originSourcebook": "Clone Wars Campaign Guide",
+      "originTalentNames": null,
+      "talentPublications": [],
+      "aggregateCanonicalTalentNames": null,
+      "aggregateMembershipStatus": "UNVERIFIED"
     },
     {
       "canonicalTreeKey": "Clone Wars Campaign Guide|Vanguard",
@@ -1957,7 +2321,6 @@
         "Vanguard"
       ],
       "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
-      "canonicalTalentNames": null,
       "repoTreeIds": [
         "ca304c9496f38747"
       ],
@@ -1968,7 +2331,12 @@
         "Vanguard"
       ],
       "status": "REPO_TREE_PRESENT",
-      "notes": null
+      "notes": null,
+      "originSourcebook": "Clone Wars Campaign Guide",
+      "originTalentNames": null,
+      "talentPublications": [],
+      "aggregateCanonicalTalentNames": null,
+      "aggregateMembershipStatus": "UNVERIFIED"
     },
     {
       "canonicalTreeKey": "Legacy Era Campaign Guide|Brute Squad",
@@ -1978,7 +2346,6 @@
         "Soldier"
       ],
       "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
-      "canonicalTalentNames": null,
       "repoTreeIds": [
         "7bcd1d892f2e9ae7"
       ],
@@ -1989,7 +2356,12 @@
         "Soldier"
       ],
       "status": "REPO_TREE_PRESENT",
-      "notes": null
+      "notes": null,
+      "originSourcebook": "Legacy Era Campaign Guide",
+      "originTalentNames": null,
+      "talentPublications": [],
+      "aggregateCanonicalTalentNames": null,
+      "aggregateMembershipStatus": "UNVERIFIED"
     },
     {
       "canonicalTreeKey": "Legacy Era Campaign Guide|Carbineer",
@@ -1999,7 +2371,6 @@
         "Gunslinger"
       ],
       "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
-      "canonicalTalentNames": null,
       "repoTreeIds": [
         "1933731cc59f8463"
       ],
@@ -2010,7 +2381,12 @@
         "Gunslinger"
       ],
       "status": "REPO_TREE_PRESENT",
-      "notes": null
+      "notes": null,
+      "originSourcebook": "Legacy Era Campaign Guide",
+      "originTalentNames": null,
+      "talentPublications": [],
+      "aggregateCanonicalTalentNames": null,
+      "aggregateMembershipStatus": "UNVERIFIED"
     },
     {
       "canonicalTreeKey": "Legacy Era Campaign Guide|Force Hunter",
@@ -2020,7 +2396,6 @@
         "Bounty Hunter"
       ],
       "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
-      "canonicalTalentNames": null,
       "repoTreeIds": [
         "29b16e48a3dbf165"
       ],
@@ -2031,7 +2406,12 @@
         "Bounty Hunter"
       ],
       "status": "REPO_TREE_PRESENT",
-      "notes": null
+      "notes": null,
+      "originSourcebook": "Legacy Era Campaign Guide",
+      "originTalentNames": null,
+      "talentPublications": [],
+      "aggregateCanonicalTalentNames": null,
+      "aggregateMembershipStatus": "UNVERIFIED"
     },
     {
       "canonicalTreeKey": "Legacy Era Campaign Guide|Fugitive Commander",
@@ -2041,7 +2421,6 @@
         "Officer"
       ],
       "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
-      "canonicalTalentNames": null,
       "repoTreeIds": [
         "61b74c82cb56876c"
       ],
@@ -2052,7 +2431,12 @@
         "Officer"
       ],
       "status": "REPO_TREE_PRESENT",
-      "notes": null
+      "notes": null,
+      "originSourcebook": "Legacy Era Campaign Guide",
+      "originTalentNames": null,
+      "talentPublications": [],
+      "aggregateCanonicalTalentNames": null,
+      "aggregateMembershipStatus": "UNVERIFIED"
     },
     {
       "canonicalTreeKey": "Legacy Era Campaign Guide|Implant",
@@ -2062,7 +2446,6 @@
         "Shaper"
       ],
       "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
-      "canonicalTalentNames": null,
       "repoTreeIds": [
         "d8a71a6c5b2b7581"
       ],
@@ -2073,7 +2456,12 @@
         "Shaper"
       ],
       "status": "REPO_TREE_PRESENT",
-      "notes": null
+      "notes": null,
+      "originSourcebook": "Legacy Era Campaign Guide",
+      "originTalentNames": null,
+      "talentPublications": [],
+      "aggregateCanonicalTalentNames": null,
+      "aggregateMembershipStatus": "UNVERIFIED"
     },
     {
       "canonicalTreeKey": "Legacy Era Campaign Guide|Jedi Refugee",
@@ -2083,7 +2471,6 @@
         "Jedi Knight"
       ],
       "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
-      "canonicalTalentNames": null,
       "repoTreeIds": [
         "e303ddd025779062"
       ],
@@ -2094,7 +2481,12 @@
         "Jedi Knight"
       ],
       "status": "REPO_TREE_PRESENT",
-      "notes": null
+      "notes": null,
+      "originSourcebook": "Legacy Era Campaign Guide",
+      "originTalentNames": null,
+      "talentPublications": [],
+      "aggregateCanonicalTalentNames": null,
+      "aggregateMembershipStatus": "UNVERIFIED"
     },
     {
       "canonicalTreeKey": "Legacy Era Campaign Guide|Knight's Armor",
@@ -2104,7 +2496,6 @@
         "Imperial Knight"
       ],
       "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
-      "canonicalTalentNames": null,
       "repoTreeIds": [
         "ea01d740c91888b3"
       ],
@@ -2115,7 +2506,12 @@
         "Imperial Knight"
       ],
       "status": "REPO_TREE_PRESENT",
-      "notes": null
+      "notes": null,
+      "originSourcebook": "Legacy Era Campaign Guide",
+      "originTalentNames": null,
+      "talentPublications": [],
+      "aggregateCanonicalTalentNames": null,
+      "aggregateMembershipStatus": "UNVERIFIED"
     },
     {
       "canonicalTreeKey": "Legacy Era Campaign Guide|Knight's Resolve",
@@ -2125,7 +2521,6 @@
         "Imperial Knight"
       ],
       "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
-      "canonicalTalentNames": null,
       "repoTreeIds": [
         "8048efd85ae61101"
       ],
@@ -2136,7 +2531,12 @@
         "Imperial Knight"
       ],
       "status": "REPO_TREE_PRESENT",
-      "notes": null
+      "notes": null,
+      "originSourcebook": "Legacy Era Campaign Guide",
+      "originTalentNames": null,
+      "talentPublications": [],
+      "aggregateCanonicalTalentNames": null,
+      "aggregateMembershipStatus": "UNVERIFIED"
     },
     {
       "canonicalTreeKey": "Legacy Era Campaign Guide|Protection",
@@ -2146,7 +2546,6 @@
         "Elite Trooper"
       ],
       "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
-      "canonicalTalentNames": null,
       "repoTreeIds": [
         "c92c2cbc79b8a515"
       ],
@@ -2157,7 +2556,12 @@
         "Elite Trooper"
       ],
       "status": "REPO_TREE_PRESENT",
-      "notes": null
+      "notes": null,
+      "originSourcebook": "Legacy Era Campaign Guide",
+      "originTalentNames": null,
+      "talentPublications": [],
+      "aggregateCanonicalTalentNames": null,
+      "aggregateMembershipStatus": "UNVERIFIED"
     },
     {
       "canonicalTreeKey": "Legacy Era Campaign Guide|Provocateur",
@@ -2168,14 +2572,6 @@
         "Charlatan"
       ],
       "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
-      "canonicalTalentNames": [
-        "Cast Suspicion",
-        "Distress to Discord",
-        "Friend or Foe",
-        "Seize the Moment",
-        "Stolen Advantage",
-        "True Betrayal"
-      ],
       "repoTreeIds": [
         "da34105c875650ae"
       ],
@@ -2186,7 +2582,39 @@
         "Noble"
       ],
       "status": "REPO_TREE_PRESENT",
-      "notes": null
+      "notes": null,
+      "originSourcebook": "Legacy Era Campaign Guide",
+      "originTalentNames": [
+        "Cast Suspicion",
+        "Distress to Discord",
+        "Friend or Foe",
+        "Seize the Moment",
+        "Stolen Advantage",
+        "True Betrayal"
+      ],
+      "talentPublications": [
+        {
+          "sourcebook": "Legacy Era Campaign Guide",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Cast Suspicion",
+            "Distress to Discord",
+            "Friend or Foe",
+            "Seize the Moment",
+            "Stolen Advantage",
+            "True Betrayal"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Cast Suspicion",
+        "Distress to Discord",
+        "Friend or Foe",
+        "Seize the Moment",
+        "Stolen Advantage",
+        "True Betrayal"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED"
     },
     {
       "canonicalTreeKey": "Legacy Era Campaign Guide|Shaper",
@@ -2196,7 +2624,6 @@
         "Shaper"
       ],
       "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
-      "canonicalTalentNames": null,
       "repoTreeIds": [
         "cdbee578d65154fc"
       ],
@@ -2207,7 +2634,12 @@
         "Shaper"
       ],
       "status": "REPO_TREE_PRESENT",
-      "notes": null
+      "notes": null,
+      "originSourcebook": "Legacy Era Campaign Guide",
+      "originTalentNames": null,
+      "talentPublications": [],
+      "aggregateCanonicalTalentNames": null,
+      "aggregateMembershipStatus": "UNVERIFIED"
     },
     {
       "canonicalTreeKey": "Legacy Era Campaign Guide|Sith Commander",
@@ -2217,7 +2649,6 @@
         "Sith Apprentice"
       ],
       "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
-      "canonicalTalentNames": null,
       "repoTreeIds": [
         "4d5ac20318ef56b6"
       ],
@@ -2228,7 +2659,12 @@
         "Sith Apprentice"
       ],
       "status": "REPO_TREE_PRESENT",
-      "notes": null
+      "notes": null,
+      "originSourcebook": "Legacy Era Campaign Guide",
+      "originTalentNames": null,
+      "talentPublications": [],
+      "aggregateCanonicalTalentNames": null,
+      "aggregateMembershipStatus": "UNVERIFIED"
     },
     {
       "canonicalTreeKey": "Legacy Era Campaign Guide|Versatility",
@@ -2238,7 +2674,6 @@
         "Scout"
       ],
       "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
-      "canonicalTalentNames": null,
       "repoTreeIds": [
         "ab2c265c4b2f54f6"
       ],
@@ -2249,7 +2684,12 @@
         "Scout"
       ],
       "status": "REPO_TREE_PRESENT",
-      "notes": null
+      "notes": null,
+      "originSourcebook": "Legacy Era Campaign Guide",
+      "originTalentNames": null,
+      "talentPublications": [],
+      "aggregateCanonicalTalentNames": null,
+      "aggregateMembershipStatus": "UNVERIFIED"
     },
     {
       "canonicalTreeKey": "Legacy Era Campaign Guide|Yuuzhan Vong Biotech",
@@ -2259,7 +2699,6 @@
         "Scoundrel"
       ],
       "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
-      "canonicalTalentNames": null,
       "repoTreeIds": [
         "33c3210fcac8c664"
       ],
@@ -2270,7 +2709,12 @@
         "Scoundrel"
       ],
       "status": "REPO_TREE_PRESENT",
-      "notes": null
+      "notes": null,
+      "originSourcebook": "Legacy Era Campaign Guide",
+      "originTalentNames": null,
+      "talentPublications": [],
+      "aggregateCanonicalTalentNames": null,
+      "aggregateMembershipStatus": "UNVERIFIED"
     },
     {
       "canonicalTreeKey": "Jedi Academy Training Manual|Beastwarden",
@@ -2280,7 +2724,6 @@
         "Force Adept"
       ],
       "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
-      "canonicalTalentNames": null,
       "repoTreeIds": [
         "ed899f9f41fc1391"
       ],
@@ -2291,7 +2734,12 @@
         "Force Adept"
       ],
       "status": "REPO_TREE_PRESENT",
-      "notes": null
+      "notes": null,
+      "originSourcebook": "Jedi Academy Training Manual",
+      "originTalentNames": null,
+      "talentPublications": [],
+      "aggregateCanonicalTalentNames": null,
+      "aggregateMembershipStatus": "UNVERIFIED"
     },
     {
       "canonicalTreeKey": "Jedi Academy Training Manual|Jedi Artisan",
@@ -2301,7 +2749,6 @@
         "Jedi Knight"
       ],
       "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
-      "canonicalTalentNames": null,
       "repoTreeIds": [
         "76ecaa09bb7619cb"
       ],
@@ -2312,7 +2759,12 @@
         "Jedi Knight"
       ],
       "status": "REPO_TREE_PRESENT",
-      "notes": null
+      "notes": null,
+      "originSourcebook": "Jedi Academy Training Manual",
+      "originTalentNames": null,
+      "talentPublications": [],
+      "aggregateCanonicalTalentNames": null,
+      "aggregateMembershipStatus": "UNVERIFIED"
     },
     {
       "canonicalTreeKey": "Jedi Academy Training Manual|Jedi Instructor",
@@ -2322,7 +2774,6 @@
         "Jedi Knight"
       ],
       "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
-      "canonicalTalentNames": null,
       "repoTreeIds": [
         "303d91124d4548c0"
       ],
@@ -2333,7 +2784,12 @@
         "Jedi Knight"
       ],
       "status": "REPO_TREE_PRESENT",
-      "notes": null
+      "notes": null,
+      "originSourcebook": "Jedi Academy Training Manual",
+      "originTalentNames": null,
+      "talentPublications": [],
+      "aggregateCanonicalTalentNames": null,
+      "aggregateMembershipStatus": "UNVERIFIED"
     },
     {
       "canonicalTreeKey": "Jedi Academy Training Manual|Jedi Investigator",
@@ -2343,7 +2799,6 @@
         "Jedi Knight"
       ],
       "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
-      "canonicalTalentNames": null,
       "repoTreeIds": [
         "44554c28675292b6"
       ],
@@ -2354,7 +2809,12 @@
         "Jedi Knight"
       ],
       "status": "REPO_TREE_PRESENT",
-      "notes": null
+      "notes": null,
+      "originSourcebook": "Jedi Academy Training Manual",
+      "originTalentNames": null,
+      "talentPublications": [],
+      "aggregateCanonicalTalentNames": null,
+      "aggregateMembershipStatus": "UNVERIFIED"
     },
     {
       "canonicalTreeKey": "Jedi Academy Training Manual|Jedi Weapon Master",
@@ -2364,7 +2824,6 @@
         "Jedi Knight"
       ],
       "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
-      "canonicalTalentNames": null,
       "repoTreeIds": [
         "7db97c2c7ebca579"
       ],
@@ -2375,7 +2834,12 @@
         "Jedi Knight"
       ],
       "status": "REPO_TREE_PRESENT",
-      "notes": null
+      "notes": null,
+      "originSourcebook": "Jedi Academy Training Manual",
+      "originTalentNames": null,
+      "talentPublications": [],
+      "aggregateCanonicalTalentNames": null,
+      "aggregateMembershipStatus": "UNVERIFIED"
     },
     {
       "canonicalTreeKey": "Jedi Academy Training Manual|Mystic",
@@ -2385,7 +2849,6 @@
         "Force Adept"
       ],
       "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
-      "canonicalTalentNames": null,
       "repoTreeIds": [
         "a3d0b7c9a6d041f2"
       ],
@@ -2396,7 +2859,12 @@
         "Force Adept"
       ],
       "status": "REPO_TREE_PRESENT",
-      "notes": null
+      "notes": null,
+      "originSourcebook": "Jedi Academy Training Manual",
+      "originTalentNames": null,
+      "talentPublications": [],
+      "aggregateCanonicalTalentNames": null,
+      "aggregateMembershipStatus": "UNVERIFIED"
     },
     {
       "canonicalTreeKey": "Jedi Academy Training Manual|Sith Alchemy",
@@ -2406,7 +2874,6 @@
         "Sith Apprentice"
       ],
       "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
-      "canonicalTalentNames": null,
       "repoTreeIds": [
         "a67faf2ae089ab5d"
       ],
@@ -2417,7 +2884,12 @@
         "Sith Apprentice"
       ],
       "status": "REPO_TREE_PRESENT",
-      "notes": null
+      "notes": null,
+      "originSourcebook": "Jedi Academy Training Manual",
+      "originTalentNames": null,
+      "talentPublications": [],
+      "aggregateCanonicalTalentNames": null,
+      "aggregateMembershipStatus": "UNVERIFIED"
     },
     {
       "canonicalTreeKey": "Jedi Academy Training Manual|Telepath",
@@ -2427,7 +2899,6 @@
         "Force Adept"
       ],
       "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
-      "canonicalTalentNames": null,
       "repoTreeIds": [
         "d25dc04b0e16f107"
       ],
@@ -2438,7 +2909,12 @@
         "Force Adept"
       ],
       "status": "REPO_TREE_PRESENT",
-      "notes": null
+      "notes": null,
+      "originSourcebook": "Jedi Academy Training Manual",
+      "originTalentNames": null,
+      "talentPublications": [],
+      "aggregateCanonicalTalentNames": null,
+      "aggregateMembershipStatus": "UNVERIFIED"
     },
     {
       "canonicalTreeKey": "Rebellion Era Campaign Guide|Ambusher",
@@ -2448,14 +2924,6 @@
         "Soldier"
       ],
       "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
-      "canonicalTalentNames": [
-        "Ambush Specialist",
-        "Destructive Ambusher",
-        "Keep It Going",
-        "Keep Them Reeling",
-        "Perceptive Ambusher",
-        "Spring the Trap"
-      ],
       "repoTreeIds": [
         "12027e0ad5e4d260"
       ],
@@ -2466,7 +2934,39 @@
         "Soldier"
       ],
       "status": "REPO_TREE_PRESENT",
-      "notes": null
+      "notes": null,
+      "originSourcebook": "Rebellion Era Campaign Guide",
+      "originTalentNames": [
+        "Ambush Specialist",
+        "Destructive Ambusher",
+        "Keep It Going",
+        "Keep Them Reeling",
+        "Perceptive Ambusher",
+        "Spring the Trap"
+      ],
+      "talentPublications": [
+        {
+          "sourcebook": "Rebellion Era Campaign Guide",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Ambush Specialist",
+            "Destructive Ambusher",
+            "Keep It Going",
+            "Keep Them Reeling",
+            "Perceptive Ambusher",
+            "Spring the Trap"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Ambush Specialist",
+        "Destructive Ambusher",
+        "Keep It Going",
+        "Keep Them Reeling",
+        "Perceptive Ambusher",
+        "Spring the Trap"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED"
     },
     {
       "canonicalTreeKey": "Rebellion Era Campaign Guide|Gambling Leader",
@@ -2476,13 +2976,6 @@
         "Noble"
       ],
       "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
-      "canonicalTalentNames": [
-        "Assault Gambit",
-        "Direct Fire",
-        "Face the Foe",
-        "Lead From the Front",
-        "Luck Favors the Bold"
-      ],
       "repoTreeIds": [
         "b7a1211d08826500"
       ],
@@ -2493,7 +2986,36 @@
         "Noble"
       ],
       "status": "REPO_TREE_PRESENT",
-      "notes": null
+      "notes": null,
+      "originSourcebook": "Rebellion Era Campaign Guide",
+      "originTalentNames": [
+        "Assault Gambit",
+        "Direct Fire",
+        "Face the Foe",
+        "Lead From the Front",
+        "Luck Favors the Bold"
+      ],
+      "talentPublications": [
+        {
+          "sourcebook": "Rebellion Era Campaign Guide",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Assault Gambit",
+            "Direct Fire",
+            "Face the Foe",
+            "Lead From the Front",
+            "Luck Favors the Bold"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Assault Gambit",
+        "Direct Fire",
+        "Face the Foe",
+        "Lead From the Front",
+        "Luck Favors the Bold"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED"
     },
     {
       "canonicalTreeKey": "Rebellion Era Campaign Guide|Improviser",
@@ -2503,13 +3025,6 @@
         "Improviser"
       ],
       "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
-      "canonicalTalentNames": [
-        "Bigger Bang",
-        "Capture Droid",
-        "Custom Model",
-        "Improved Jury-Rig",
-        "Improvised Device"
-      ],
       "repoTreeIds": [
         "7f37422819d7be6f"
       ],
@@ -2520,7 +3035,36 @@
         "Improviser"
       ],
       "status": "REPO_TREE_PRESENT",
-      "notes": null
+      "notes": null,
+      "originSourcebook": "Rebellion Era Campaign Guide",
+      "originTalentNames": [
+        "Bigger Bang",
+        "Capture Droid",
+        "Custom Model",
+        "Improved Jury-Rig",
+        "Improvised Device"
+      ],
+      "talentPublications": [
+        {
+          "sourcebook": "Rebellion Era Campaign Guide",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Bigger Bang",
+            "Capture Droid",
+            "Custom Model",
+            "Improved Jury-Rig",
+            "Improvised Device"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Bigger Bang",
+        "Capture Droid",
+        "Custom Model",
+        "Improved Jury-Rig",
+        "Improvised Device"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED"
     },
     {
       "canonicalTreeKey": "Rebellion Era Campaign Guide|Pathfinder",
@@ -2530,7 +3074,19 @@
         "Pathfinder"
       ],
       "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
-      "canonicalTalentNames": [
+      "repoTreeIds": [
+        "383ff8d392488cf8"
+      ],
+      "repoTreeNames": [
+        "Pathfinder"
+      ],
+      "repoClassAccess": [
+        "Pathfinder"
+      ],
+      "status": "REPO_TREE_PRESENT",
+      "notes": null,
+      "originSourcebook": "Rebellion Era Campaign Guide",
+      "originTalentNames": [
         "Bunker Blaster",
         "Defensive Measures",
         "Enhance Cover",
@@ -2542,17 +3098,37 @@
         "Safe Zone",
         "Zone of Recuperation"
       ],
-      "repoTreeIds": [
-        "383ff8d392488cf8"
+      "talentPublications": [
+        {
+          "sourcebook": "Rebellion Era Campaign Guide",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Bunker Blaster",
+            "Defensive Measures",
+            "Enhance Cover",
+            "Escort Fighter",
+            "Launch Point",
+            "Obscuring Defenses",
+            "Relocate",
+            "Safe Passage",
+            "Safe Zone",
+            "Zone of Recuperation"
+          ]
+        }
       ],
-      "repoTreeNames": [
-        "Pathfinder"
+      "aggregateCanonicalTalentNames": [
+        "Bunker Blaster",
+        "Defensive Measures",
+        "Enhance Cover",
+        "Escort Fighter",
+        "Launch Point",
+        "Obscuring Defenses",
+        "Relocate",
+        "Safe Passage",
+        "Safe Zone",
+        "Zone of Recuperation"
       ],
-      "repoClassAccess": [
-        "Pathfinder"
-      ],
-      "status": "REPO_TREE_PRESENT",
-      "notes": null
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED"
     },
     {
       "canonicalTreeKey": "Rebellion Era Campaign Guide|Procurement",
@@ -2562,13 +3138,6 @@
         "Improviser"
       ],
       "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
-      "canonicalTalentNames": [
-        "Black Market Buyer",
-        "Excellent Kit",
-        "Just What Is Needed",
-        "Only the Finest",
-        "Right Gear for the Job"
-      ],
       "repoTreeIds": [
         "a0d6323d6c1bf911"
       ],
@@ -2579,7 +3148,36 @@
         "Improviser"
       ],
       "status": "REPO_TREE_PRESENT",
-      "notes": null
+      "notes": null,
+      "originSourcebook": "Rebellion Era Campaign Guide",
+      "originTalentNames": [
+        "Black Market Buyer",
+        "Excellent Kit",
+        "Just What Is Needed",
+        "Only the Finest",
+        "Right Gear for the Job"
+      ],
+      "talentPublications": [
+        {
+          "sourcebook": "Rebellion Era Campaign Guide",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Black Market Buyer",
+            "Excellent Kit",
+            "Just What Is Needed",
+            "Only the Finest",
+            "Right Gear for the Job"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Black Market Buyer",
+        "Excellent Kit",
+        "Just What Is Needed",
+        "Only the Finest",
+        "Right Gear for the Job"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED"
     },
     {
       "canonicalTreeKey": "Rebellion Era Campaign Guide|Rebel Recruiter",
@@ -2589,13 +3187,6 @@
         "Officer"
       ],
       "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
-      "canonicalTalentNames": [
-        "Bolstered Numbers",
-        "Noble Sacrifice",
-        "Recruit Enemy",
-        "Stay in the Fight",
-        "Team Recruiting"
-      ],
       "repoTreeIds": [
         "a2c6962521c29361"
       ],
@@ -2606,7 +3197,36 @@
         "Officer"
       ],
       "status": "REPO_TREE_PRESENT",
-      "notes": null
+      "notes": null,
+      "originSourcebook": "Rebellion Era Campaign Guide",
+      "originTalentNames": [
+        "Bolstered Numbers",
+        "Noble Sacrifice",
+        "Recruit Enemy",
+        "Stay in the Fight",
+        "Team Recruiting"
+      ],
+      "talentPublications": [
+        {
+          "sourcebook": "Rebellion Era Campaign Guide",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Bolstered Numbers",
+            "Noble Sacrifice",
+            "Recruit Enemy",
+            "Stay in the Fight",
+            "Team Recruiting"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Bolstered Numbers",
+        "Noble Sacrifice",
+        "Recruit Enemy",
+        "Stay in the Fight",
+        "Team Recruiting"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED"
     },
     {
       "canonicalTreeKey": "Rebellion Era Campaign Guide|Recklessness",
@@ -2616,13 +3236,6 @@
         "Scoundrel"
       ],
       "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
-      "canonicalTalentNames": [
-        "Find Openings",
-        "Hit the Deck",
-        "Lure Closer",
-        "Risk for Reward",
-        "Trick Step"
-      ],
       "repoTreeIds": [
         "4af97ad058b1b30f"
       ],
@@ -2633,7 +3246,36 @@
         "Scoundrel"
       ],
       "status": "REPO_TREE_PRESENT",
-      "notes": null
+      "notes": null,
+      "originSourcebook": "Rebellion Era Campaign Guide",
+      "originTalentNames": [
+        "Find Openings",
+        "Hit the Deck",
+        "Lure Closer",
+        "Risk for Reward",
+        "Trick Step"
+      ],
+      "talentPublications": [
+        {
+          "sourcebook": "Rebellion Era Campaign Guide",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Find Openings",
+            "Hit the Deck",
+            "Lure Closer",
+            "Risk for Reward",
+            "Trick Step"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Find Openings",
+        "Hit the Deck",
+        "Lure Closer",
+        "Risk for Reward",
+        "Trick Step"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED"
     },
     {
       "canonicalTreeKey": "Rebellion Era Campaign Guide|Unpredictable",
@@ -2643,13 +3285,6 @@
         "Scout"
       ],
       "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
-      "canonicalTalentNames": [
-        "Aggressive Surge",
-        "Blast Back",
-        "Fade Away",
-        "Second Strike",
-        "Swerve"
-      ],
       "repoTreeIds": [
         "5a30489609182e8c"
       ],
@@ -2660,7 +3295,36 @@
         "Scout"
       ],
       "status": "REPO_TREE_PRESENT",
-      "notes": null
+      "notes": null,
+      "originSourcebook": "Rebellion Era Campaign Guide",
+      "originTalentNames": [
+        "Aggressive Surge",
+        "Blast Back",
+        "Fade Away",
+        "Second Strike",
+        "Swerve"
+      ],
+      "talentPublications": [
+        {
+          "sourcebook": "Rebellion Era Campaign Guide",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Aggressive Surge",
+            "Blast Back",
+            "Fade Away",
+            "Second Strike",
+            "Swerve"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Aggressive Surge",
+        "Blast Back",
+        "Fade Away",
+        "Second Strike",
+        "Swerve"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED"
     },
     {
       "canonicalTreeKey": "Rebellion Era Campaign Guide|Wingman",
@@ -2670,13 +3334,6 @@
         "Ace Pilot"
       ],
       "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
-      "canonicalTalentNames": [
-        "Concentrate All Fire",
-        "Escort Pilot",
-        "Lose Pursuit",
-        "Run Interference",
-        "Wingman Retribution"
-      ],
       "repoTreeIds": [
         "5f355ad4093d2bf8"
       ],
@@ -2687,7 +3344,36 @@
         "Ace Pilot"
       ],
       "status": "REPO_TREE_PRESENT",
-      "notes": null
+      "notes": null,
+      "originSourcebook": "Rebellion Era Campaign Guide",
+      "originTalentNames": [
+        "Concentrate All Fire",
+        "Escort Pilot",
+        "Lose Pursuit",
+        "Run Interference",
+        "Wingman Retribution"
+      ],
+      "talentPublications": [
+        {
+          "sourcebook": "Rebellion Era Campaign Guide",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Concentrate All Fire",
+            "Escort Pilot",
+            "Lose Pursuit",
+            "Run Interference",
+            "Wingman Retribution"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Concentrate All Fire",
+        "Escort Pilot",
+        "Lose Pursuit",
+        "Run Interference",
+        "Wingman Retribution"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED"
     },
     {
       "canonicalTreeKey": "Galaxy at War|Advance Patrol",
@@ -2697,12 +3383,6 @@
         "Scout"
       ],
       "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
-      "canonicalTalentNames": [
-        "Forward Patrol",
-        "Mobile Combatant",
-        "Trailblazer",
-        "Watchful Step"
-      ],
       "repoTreeIds": [
         "9d826906ad8945b0"
       ],
@@ -2711,7 +3391,33 @@
       ],
       "repoClassAccess": [],
       "status": "REPO_TREE_PRESENT",
-      "notes": null
+      "notes": null,
+      "originSourcebook": "Galaxy at War",
+      "originTalentNames": [
+        "Forward Patrol",
+        "Mobile Combatant",
+        "Trailblazer",
+        "Watchful Step"
+      ],
+      "talentPublications": [
+        {
+          "sourcebook": "Galaxy at War",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Forward Patrol",
+            "Mobile Combatant",
+            "Trailblazer",
+            "Watchful Step"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Forward Patrol",
+        "Mobile Combatant",
+        "Trailblazer",
+        "Watchful Step"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED"
     },
     {
       "canonicalTreeKey": "Galaxy at War|Anticipation",
@@ -2721,13 +3427,6 @@
         "Noble"
       ],
       "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
-      "canonicalTalentNames": [
-        "Anticipate Movement",
-        "Forewarn Allies",
-        "Get Down",
-        "Heavy Fire Zone",
-        "Summon Aid"
-      ],
       "repoTreeIds": [
         "3a785c985eae4d00"
       ],
@@ -2736,7 +3435,36 @@
       ],
       "repoClassAccess": [],
       "status": "REPO_TREE_PRESENT",
-      "notes": null
+      "notes": null,
+      "originSourcebook": "Galaxy at War",
+      "originTalentNames": [
+        "Anticipate Movement",
+        "Forewarn Allies",
+        "Get Down",
+        "Heavy Fire Zone",
+        "Summon Aid"
+      ],
+      "talentPublications": [
+        {
+          "sourcebook": "Galaxy at War",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Anticipate Movement",
+            "Forewarn Allies",
+            "Get Down",
+            "Heavy Fire Zone",
+            "Summon Aid"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Anticipate Movement",
+        "Forewarn Allies",
+        "Get Down",
+        "Heavy Fire Zone",
+        "Summon Aid"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED"
     },
     {
       "canonicalTreeKey": "Galaxy at War|Brigand",
@@ -2746,12 +3474,6 @@
         "Scoundrel"
       ],
       "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
-      "canonicalTalentNames": [
-        "Cheap Trick",
-        "Easy Prey",
-        "Quick Strike",
-        "Sly Combatant"
-      ],
       "repoTreeIds": [
         "7c6d007b549c4a4a"
       ],
@@ -2760,7 +3482,33 @@
       ],
       "repoClassAccess": [],
       "status": "REPO_TREE_PRESENT",
-      "notes": null
+      "notes": null,
+      "originSourcebook": "Galaxy at War",
+      "originTalentNames": [
+        "Cheap Trick",
+        "Easy Prey",
+        "Quick Strike",
+        "Sly Combatant"
+      ],
+      "talentPublications": [
+        {
+          "sourcebook": "Galaxy at War",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Cheap Trick",
+            "Easy Prey",
+            "Quick Strike",
+            "Sly Combatant"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Cheap Trick",
+        "Easy Prey",
+        "Quick Strike",
+        "Sly Combatant"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED"
     },
     {
       "canonicalTreeKey": "Galaxy at War|Martial Arts Forms",
@@ -2770,7 +3518,13 @@
         "Martial Arts Master"
       ],
       "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
-      "canonicalTalentNames": [
+      "repoTreeIds": [],
+      "repoTreeNames": [],
+      "repoClassAccess": [],
+      "status": "REPO_TREE_MISSING_OR_DISTINCT_IDENTITY",
+      "notes": null,
+      "originSourcebook": "Galaxy at War",
+      "originTalentNames": [
         "Echani Expertise",
         "Hijkata Expertise",
         "K'tara Expertise",
@@ -2779,11 +3533,31 @@
         "Tae-Jitsu Expertise",
         "Wrruushi Expertise"
       ],
-      "repoTreeIds": [],
-      "repoTreeNames": [],
-      "repoClassAccess": [],
-      "status": "REPO_TREE_MISSING_OR_DISTINCT_IDENTITY",
-      "notes": null
+      "talentPublications": [
+        {
+          "sourcebook": "Galaxy at War",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Echani Expertise",
+            "Hijkata Expertise",
+            "K'tara Expertise",
+            "K'thri Expertise",
+            "Stava Expertise",
+            "Tae-Jitsu Expertise",
+            "Wrruushi Expertise"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Echani Expertise",
+        "Hijkata Expertise",
+        "K'tara Expertise",
+        "K'thri Expertise",
+        "Stava Expertise",
+        "Tae-Jitsu Expertise",
+        "Wrruushi Expertise"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED"
     },
     {
       "canonicalTreeKey": "Galaxy at War|Sharpshooter",
@@ -2793,13 +3567,6 @@
         "Gunslinger"
       ],
       "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
-      "canonicalTalentNames": [
-        "Bullseye",
-        "Draw a Bead",
-        "Pinning Shot",
-        "Harrying Shot",
-        "Precision Shot"
-      ],
       "repoTreeIds": [
         "d203a51d6d0a4c65"
       ],
@@ -2808,7 +3575,36 @@
       ],
       "repoClassAccess": [],
       "status": "REPO_TREE_PRESENT",
-      "notes": null
+      "notes": null,
+      "originSourcebook": "Galaxy at War",
+      "originTalentNames": [
+        "Bullseye",
+        "Draw a Bead",
+        "Pinning Shot",
+        "Harrying Shot",
+        "Precision Shot"
+      ],
+      "talentPublications": [
+        {
+          "sourcebook": "Galaxy at War",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Bullseye",
+            "Draw a Bead",
+            "Pinning Shot",
+            "Harrying Shot",
+            "Precision Shot"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Bullseye",
+        "Draw a Bead",
+        "Pinning Shot",
+        "Harrying Shot",
+        "Precision Shot"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED"
     },
     {
       "canonicalTreeKey": "Galaxy at War|Shockboxer",
@@ -2818,13 +3614,6 @@
         "Soldier"
       ],
       "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
-      "canonicalTalentNames": [
-        "Defensive Jab",
-        "Nimble Dodge",
-        "Retaliation Jab",
-        "Stinging Jab",
-        "Stunning Shockboxer"
-      ],
       "repoTreeIds": [
         "abc3466390fe4050"
       ],
@@ -2833,7 +3622,36 @@
       ],
       "repoClassAccess": [],
       "status": "REPO_TREE_PRESENT",
-      "notes": null
+      "notes": null,
+      "originSourcebook": "Galaxy at War",
+      "originTalentNames": [
+        "Defensive Jab",
+        "Nimble Dodge",
+        "Retaliation Jab",
+        "Stinging Jab",
+        "Stunning Shockboxer"
+      ],
+      "talentPublications": [
+        {
+          "sourcebook": "Galaxy at War",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Defensive Jab",
+            "Nimble Dodge",
+            "Retaliation Jab",
+            "Stinging Jab",
+            "Stunning Shockboxer"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Defensive Jab",
+        "Nimble Dodge",
+        "Retaliation Jab",
+        "Stinging Jab",
+        "Stunning Shockboxer"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED"
     },
     {
       "canonicalTreeKey": "Galaxy at War|Squad Leader",
@@ -2843,18 +3661,40 @@
         "Elite Trooper"
       ],
       "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
-      "canonicalTalentNames": [
+      "repoTreeIds": [],
+      "repoTreeNames": [],
+      "repoClassAccess": [],
+      "status": "REPO_TREE_MISSING_OR_DISTINCT_IDENTITY",
+      "notes": "Distinct published Elite Trooper tree; do not reuse Clone Wars/Soldier Squad Leader ID.",
+      "originSourcebook": "Galaxy at War",
+      "originTalentNames": [
         "Fall Back",
         "Form Up",
         "Full Advance",
         "Hold Steady",
         "Search and Destroy"
       ],
-      "repoTreeIds": [],
-      "repoTreeNames": [],
-      "repoClassAccess": [],
-      "status": "REPO_TREE_MISSING_OR_DISTINCT_IDENTITY",
-      "notes": "Distinct published Elite Trooper tree; do not reuse Clone Wars/Soldier Squad Leader ID."
+      "talentPublications": [
+        {
+          "sourcebook": "Galaxy at War",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Fall Back",
+            "Form Up",
+            "Full Advance",
+            "Hold Steady",
+            "Search and Destroy"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Fall Back",
+        "Form Up",
+        "Full Advance",
+        "Hold Steady",
+        "Search and Destroy"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED"
     },
     {
       "canonicalTreeKey": "Galaxy at War|Unarmed Mastery",
@@ -2864,17 +3704,37 @@
         "Martial Arts Master"
       ],
       "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
-      "canonicalTalentNames": [
+      "repoTreeIds": [],
+      "repoTreeNames": [],
+      "repoClassAccess": [],
+      "status": "REPO_TREE_MISSING_OR_DISTINCT_IDENTITY",
+      "notes": null,
+      "originSourcebook": "Galaxy at War",
+      "originTalentNames": [
         "Flurry of Blows",
         "Hardened Strike",
         "Punishing Strike",
         "Tough as Durasteel"
       ],
-      "repoTreeIds": [],
-      "repoTreeNames": [],
-      "repoClassAccess": [],
-      "status": "REPO_TREE_MISSING_OR_DISTINCT_IDENTITY",
-      "notes": null
+      "talentPublications": [
+        {
+          "sourcebook": "Galaxy at War",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Flurry of Blows",
+            "Hardened Strike",
+            "Punishing Strike",
+            "Tough as Durasteel"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Flurry of Blows",
+        "Hardened Strike",
+        "Punishing Strike",
+        "Tough as Durasteel"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED"
     },
     {
       "canonicalTreeKey": "Galaxy at War|Veteran",
@@ -2884,13 +3744,6 @@
         "Soldier"
       ],
       "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
-      "canonicalTalentNames": [
-        "Battlefield Remedy",
-        "Grizzled Warrior",
-        "Reckless",
-        "Seen It All",
-        "Tested in Battle"
-      ],
       "repoTreeIds": [
         "96c390430d7a4975"
       ],
@@ -2899,7 +3752,36 @@
       ],
       "repoClassAccess": [],
       "status": "REPO_TREE_PRESENT",
-      "notes": null
+      "notes": null,
+      "originSourcebook": "Galaxy at War",
+      "originTalentNames": [
+        "Battlefield Remedy",
+        "Grizzled Warrior",
+        "Reckless",
+        "Seen It All",
+        "Tested in Battle"
+      ],
+      "talentPublications": [
+        {
+          "sourcebook": "Galaxy at War",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Battlefield Remedy",
+            "Grizzled Warrior",
+            "Reckless",
+            "Seen It All",
+            "Tested in Battle"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Battlefield Remedy",
+        "Grizzled Warrior",
+        "Reckless",
+        "Seen It All",
+        "Tested in Battle"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED"
     },
     {
       "canonicalTreeKey": "Scavenger's Guide to Droids|Elite Droid",
@@ -2909,7 +3791,6 @@
         "Independent Droid"
       ],
       "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
-      "canonicalTalentNames": null,
       "repoTreeIds": [
         "b968ecab63bc4cf4"
       ],
@@ -2920,7 +3801,12 @@
         "Independent Droid"
       ],
       "status": "REPO_TREE_PRESENT",
-      "notes": null
+      "notes": null,
+      "originSourcebook": "Scavenger's Guide to Droids",
+      "originTalentNames": null,
+      "talentPublications": [],
+      "aggregateCanonicalTalentNames": null,
+      "aggregateMembershipStatus": "UNVERIFIED"
     },
     {
       "canonicalTreeKey": "Scavenger's Guide to Droids|Override",
@@ -2930,12 +3816,6 @@
         "Droid Commander"
       ],
       "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
-      "canonicalTalentNames": [
-        "Directed Action",
-        "Directed Movement",
-        "Full Control",
-        "Remote Attack"
-      ],
       "repoTreeIds": [
         "01cb1ca2a10640b3"
       ],
@@ -2944,7 +3824,33 @@
       ],
       "repoClassAccess": [],
       "status": "REPO_TREE_PRESENT",
-      "notes": null
+      "notes": null,
+      "originSourcebook": "Scavenger's Guide to Droids",
+      "originTalentNames": [
+        "Directed Action",
+        "Directed Movement",
+        "Full Control",
+        "Remote Attack"
+      ],
+      "talentPublications": [
+        {
+          "sourcebook": "Scavenger's Guide to Droids",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Directed Action",
+            "Directed Movement",
+            "Full Control",
+            "Remote Attack"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Directed Action",
+        "Directed Movement",
+        "Full Control",
+        "Remote Attack"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED"
     },
     {
       "canonicalTreeKey": "Galaxy of Intrigue|Espionage",
@@ -2954,18 +3860,40 @@
         "Scout"
       ],
       "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
-      "canonicalTalentNames": [
+      "repoTreeIds": [],
+      "repoTreeNames": [],
+      "repoClassAccess": [],
+      "status": "REPO_TREE_MISSING_OR_DISTINCT_IDENTITY",
+      "notes": null,
+      "originSourcebook": "Galaxy of Intrigue",
+      "originTalentNames": [
         "Fade Out",
         "Keep Together",
         "Prudent Escape",
         "Reactive Stealth",
         "Sizing Up"
       ],
-      "repoTreeIds": [],
-      "repoTreeNames": [],
-      "repoClassAccess": [],
-      "status": "REPO_TREE_MISSING_OR_DISTINCT_IDENTITY",
-      "notes": null
+      "talentPublications": [
+        {
+          "sourcebook": "Galaxy of Intrigue",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Fade Out",
+            "Keep Together",
+            "Prudent Escape",
+            "Reactive Stealth",
+            "Sizing Up"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Fade Out",
+        "Keep Together",
+        "Prudent Escape",
+        "Reactive Stealth",
+        "Sizing Up"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED"
     },
     {
       "canonicalTreeKey": "Galaxy of Intrigue|Master of Intrigue",
@@ -2975,14 +3903,6 @@
         "Noble"
       ],
       "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
-      "canonicalTalentNames": [
-        "Advanced Planning",
-        "Blend In",
-        "Done It All",
-        "Get into Position",
-        "Master Manipulator",
-        "Retaliation"
-      ],
       "repoTreeIds": [
         "0ffc37dac946477d"
       ],
@@ -2991,7 +3911,39 @@
       ],
       "repoClassAccess": [],
       "status": "REPO_TREE_PRESENT",
-      "notes": null
+      "notes": null,
+      "originSourcebook": "Galaxy of Intrigue",
+      "originTalentNames": [
+        "Advanced Planning",
+        "Blend In",
+        "Done It All",
+        "Get into Position",
+        "Master Manipulator",
+        "Retaliation"
+      ],
+      "talentPublications": [
+        {
+          "sourcebook": "Galaxy of Intrigue",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Advanced Planning",
+            "Blend In",
+            "Done It All",
+            "Get into Position",
+            "Master Manipulator",
+            "Retaliation"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Advanced Planning",
+        "Blend In",
+        "Done It All",
+        "Get into Position",
+        "Master Manipulator",
+        "Retaliation"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED"
     },
     {
       "canonicalTreeKey": "Galaxy of Intrigue|Revolutionary",
@@ -3001,12 +3953,6 @@
         "Scoundrel"
       ],
       "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
-      "canonicalTalentNames": [
-        "Bomb Thrower",
-        "For the Cause",
-        "Make an Example",
-        "Revolutionary Rhetoric"
-      ],
       "repoTreeIds": [
         "e6a9c40b900847bd"
       ],
@@ -3015,7 +3961,33 @@
       ],
       "repoClassAccess": [],
       "status": "REPO_TREE_PRESENT",
-      "notes": null
+      "notes": null,
+      "originSourcebook": "Galaxy of Intrigue",
+      "originTalentNames": [
+        "Bomb Thrower",
+        "For the Cause",
+        "Make an Example",
+        "Revolutionary Rhetoric"
+      ],
+      "talentPublications": [
+        {
+          "sourcebook": "Galaxy of Intrigue",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Bomb Thrower",
+            "For the Cause",
+            "Make an Example",
+            "Revolutionary Rhetoric"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Bomb Thrower",
+        "For the Cause",
+        "Make an Example",
+        "Revolutionary Rhetoric"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED"
     },
     {
       "canonicalTreeKey": "Galaxy of Intrigue|Skill Challenge",
@@ -3025,17 +3997,37 @@
         "Noble"
       ],
       "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
-      "canonicalTalentNames": [
+      "repoTreeIds": [],
+      "repoTreeNames": [],
+      "repoClassAccess": [],
+      "status": "REPO_TREE_MISSING_OR_DISTINCT_IDENTITY",
+      "notes": null,
+      "originSourcebook": "Galaxy of Intrigue",
+      "originTalentNames": [
         "Guaranteed Boon",
         "Leading Skill",
         "Learn from Mistakes",
         "Try Your Luck"
       ],
-      "repoTreeIds": [],
-      "repoTreeNames": [],
-      "repoClassAccess": [],
-      "status": "REPO_TREE_MISSING_OR_DISTINCT_IDENTITY",
-      "notes": null
+      "talentPublications": [
+        {
+          "sourcebook": "Galaxy of Intrigue",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Guaranteed Boon",
+            "Leading Skill",
+            "Learn from Mistakes",
+            "Try Your Luck"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Guaranteed Boon",
+        "Leading Skill",
+        "Learn from Mistakes",
+        "Try Your Luck"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED"
     },
     {
       "canonicalTreeKey": "Galaxy of Intrigue|Superior Skills",
@@ -3045,7 +4037,6 @@
         "Noble"
       ],
       "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
-      "canonicalTalentNames": null,
       "repoTreeIds": [
         "04a6f32128cc4b98"
       ],
@@ -3056,7 +4047,12 @@
         "Noble"
       ],
       "status": "REPO_TREE_PRESENT",
-      "notes": null
+      "notes": null,
+      "originSourcebook": "Galaxy of Intrigue",
+      "originTalentNames": null,
+      "talentPublications": [],
+      "aggregateCanonicalTalentNames": null,
+      "aggregateMembershipStatus": "UNVERIFIED"
     },
     {
       "canonicalTreeKey": "Unknown Regions|Exile",
@@ -3066,15 +4062,6 @@
         "Noble"
       ],
       "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
-      "canonicalTalentNames": [
-        "Arrogant Bluster",
-        "Band Together",
-        "Strength in Numbers",
-        "Temporary Allies",
-        "Galactic Guidance",
-        "Rant",
-        "Self-Reliant"
-      ],
       "repoTreeIds": [
         "0b5857edbcf049a2"
       ],
@@ -3083,7 +4070,42 @@
       ],
       "repoClassAccess": [],
       "status": "REPO_TREE_PRESENT",
-      "notes": null
+      "notes": null,
+      "originSourcebook": "Unknown Regions",
+      "originTalentNames": [
+        "Arrogant Bluster",
+        "Band Together",
+        "Strength in Numbers",
+        "Temporary Allies",
+        "Galactic Guidance",
+        "Rant",
+        "Self-Reliant"
+      ],
+      "talentPublications": [
+        {
+          "sourcebook": "Unknown Regions",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Arrogant Bluster",
+            "Band Together",
+            "Strength in Numbers",
+            "Temporary Allies",
+            "Galactic Guidance",
+            "Rant",
+            "Self-Reliant"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Arrogant Bluster",
+        "Band Together",
+        "Strength in Numbers",
+        "Temporary Allies",
+        "Galactic Guidance",
+        "Rant",
+        "Self-Reliant"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED"
     },
     {
       "canonicalTreeKey": "Unknown Regions|Master Scout",
@@ -3093,13 +4115,6 @@
         "Scout"
       ],
       "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
-      "canonicalTalentNames": [
-        "Piercing Hit",
-        "Quicktrap",
-        "Speedclimber",
-        "Surprisingly Quick",
-        "Tripwire"
-      ],
       "repoTreeIds": [
         "dca33c0215264a02"
       ],
@@ -3108,7 +4123,36 @@
       ],
       "repoClassAccess": [],
       "status": "REPO_TREE_PRESENT",
-      "notes": null
+      "notes": null,
+      "originSourcebook": "Unknown Regions",
+      "originTalentNames": [
+        "Piercing Hit",
+        "Quicktrap",
+        "Speedclimber",
+        "Surprisingly Quick",
+        "Tripwire"
+      ],
+      "talentPublications": [
+        {
+          "sourcebook": "Unknown Regions",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Piercing Hit",
+            "Quicktrap",
+            "Speedclimber",
+            "Surprisingly Quick",
+            "Tripwire"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Piercing Hit",
+        "Quicktrap",
+        "Speedclimber",
+        "Surprisingly Quick",
+        "Tripwire"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED"
     },
     {
       "canonicalTreeKey": "Unknown Regions|Mobile Scout",
@@ -3118,12 +4162,6 @@
         "Scout"
       ],
       "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
-      "canonicalTalentNames": [
-        "Battle Mount",
-        "Expert Rider",
-        "Terrain Guidance",
-        "Mechanized Rider"
-      ],
       "repoTreeIds": [
         "c7a4e66f46044c7a"
       ],
@@ -3132,7 +4170,33 @@
       ],
       "repoClassAccess": [],
       "status": "REPO_TREE_PRESENT",
-      "notes": null
+      "notes": null,
+      "originSourcebook": "Unknown Regions",
+      "originTalentNames": [
+        "Battle Mount",
+        "Expert Rider",
+        "Terrain Guidance",
+        "Mechanized Rider"
+      ],
+      "talentPublications": [
+        {
+          "sourcebook": "Unknown Regions",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Battle Mount",
+            "Expert Rider",
+            "Terrain Guidance",
+            "Mechanized Rider"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Battle Mount",
+        "Expert Rider",
+        "Terrain Guidance",
+        "Mechanized Rider"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED"
     },
     {
       "canonicalTreeKey": "Unknown Regions|Outsider",
@@ -3142,12 +4206,6 @@
         "Scoundrel"
       ],
       "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
-      "canonicalTalentNames": [
-        "Oafish",
-        "Outsider's Eye",
-        "Outsider's Query",
-        "Wary"
-      ],
       "repoTreeIds": [
         "b15586b9c9554cf8"
       ],
@@ -3156,7 +4214,33 @@
       ],
       "repoClassAccess": [],
       "status": "REPO_TREE_PRESENT",
-      "notes": null
+      "notes": null,
+      "originSourcebook": "Unknown Regions",
+      "originTalentNames": [
+        "Oafish",
+        "Outsider's Eye",
+        "Outsider's Query",
+        "Wary"
+      ],
+      "talentPublications": [
+        {
+          "sourcebook": "Unknown Regions",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Oafish",
+            "Outsider's Eye",
+            "Outsider's Query",
+            "Wary"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Oafish",
+        "Outsider's Eye",
+        "Outsider's Query",
+        "Wary"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED"
     },
     {
       "canonicalTreeKey": "Unknown Regions|Warrior",
@@ -3166,15 +4250,6 @@
         "Soldier"
       ],
       "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
-      "canonicalTalentNames": [
-        "Champion",
-        "Disarming Hit",
-        "Masterful Strike",
-        "Quick Study",
-        "Simple Opportunity",
-        "Warrior's Awareness",
-        "Warrior's Determination"
-      ],
       "repoTreeIds": [
         "13776eed744d410c"
       ],
@@ -3183,7 +4258,42 @@
       ],
       "repoClassAccess": [],
       "status": "REPO_TREE_PRESENT",
-      "notes": null
+      "notes": null,
+      "originSourcebook": "Unknown Regions",
+      "originTalentNames": [
+        "Champion",
+        "Disarming Hit",
+        "Masterful Strike",
+        "Quick Study",
+        "Simple Opportunity",
+        "Warrior's Awareness",
+        "Warrior's Determination"
+      ],
+      "talentPublications": [
+        {
+          "sourcebook": "Unknown Regions",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Champion",
+            "Disarming Hit",
+            "Masterful Strike",
+            "Quick Study",
+            "Simple Opportunity",
+            "Warrior's Awareness",
+            "Warrior's Determination"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Champion",
+        "Disarming Hit",
+        "Masterful Strike",
+        "Quick Study",
+        "Simple Opportunity",
+        "Warrior's Awareness",
+        "Warrior's Determination"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED"
     },
     {
       "canonicalTreeKey": "repo-special|1stdegree Droid",
@@ -3191,7 +4301,6 @@
       "sourcebook": null,
       "classAccess": [],
       "sourceStatus": "REPO_SPECIAL_SOURCE_REVIEW",
-      "canonicalTalentNames": null,
       "repoTreeIds": [
         "a212850887fe41da"
       ],
@@ -3200,7 +4309,12 @@
       ],
       "repoClassAccess": [],
       "status": "REPO_ONLY_SPECIAL_OR_UNRESOLVED",
-      "notes": null
+      "notes": null,
+      "originSourcebook": null,
+      "originTalentNames": null,
+      "talentPublications": [],
+      "aggregateCanonicalTalentNames": null,
+      "aggregateMembershipStatus": "UNVERIFIED"
     },
     {
       "canonicalTreeKey": "repo-special|2nddegree Droid",
@@ -3208,7 +4322,6 @@
       "sourcebook": null,
       "classAccess": [],
       "sourceStatus": "REPO_SPECIAL_SOURCE_REVIEW",
-      "canonicalTalentNames": null,
       "repoTreeIds": [
         "ad499981ddb8450e"
       ],
@@ -3217,7 +4330,12 @@
       ],
       "repoClassAccess": [],
       "status": "REPO_ONLY_SPECIAL_OR_UNRESOLVED",
-      "notes": null
+      "notes": null,
+      "originSourcebook": null,
+      "originTalentNames": null,
+      "talentPublications": [],
+      "aggregateCanonicalTalentNames": null,
+      "aggregateMembershipStatus": "UNVERIFIED"
     },
     {
       "canonicalTreeKey": "repo-special|3rddegree Droid",
@@ -3225,7 +4343,6 @@
       "sourcebook": null,
       "classAccess": [],
       "sourceStatus": "REPO_SPECIAL_SOURCE_REVIEW",
-      "canonicalTalentNames": null,
       "repoTreeIds": [
         "af077700c1b8433f"
       ],
@@ -3234,7 +4351,12 @@
       ],
       "repoClassAccess": [],
       "status": "REPO_ONLY_SPECIAL_OR_UNRESOLVED",
-      "notes": null
+      "notes": null,
+      "originSourcebook": null,
+      "originTalentNames": null,
+      "talentPublications": [],
+      "aggregateCanonicalTalentNames": null,
+      "aggregateMembershipStatus": "UNVERIFIED"
     },
     {
       "canonicalTreeKey": "repo-special|4thdegree Droid",
@@ -3242,7 +4364,6 @@
       "sourcebook": null,
       "classAccess": [],
       "sourceStatus": "REPO_SPECIAL_SOURCE_REVIEW",
-      "canonicalTalentNames": null,
       "repoTreeIds": [
         "73814706c00849c6"
       ],
@@ -3251,7 +4372,12 @@
       ],
       "repoClassAccess": [],
       "status": "REPO_ONLY_SPECIAL_OR_UNRESOLVED",
-      "notes": null
+      "notes": null,
+      "originSourcebook": null,
+      "originTalentNames": null,
+      "talentPublications": [],
+      "aggregateCanonicalTalentNames": null,
+      "aggregateMembershipStatus": "UNVERIFIED"
     },
     {
       "canonicalTreeKey": "repo-special|5thdegree Droid",
@@ -3259,7 +4385,6 @@
       "sourcebook": null,
       "classAccess": [],
       "sourceStatus": "REPO_SPECIAL_SOURCE_REVIEW",
-      "canonicalTalentNames": null,
       "repoTreeIds": [
         "c4e48efaad1f49af"
       ],
@@ -3268,7 +4393,12 @@
       ],
       "repoClassAccess": [],
       "status": "REPO_ONLY_SPECIAL_OR_UNRESOLVED",
-      "notes": null
+      "notes": null,
+      "originSourcebook": null,
+      "originTalentNames": null,
+      "talentPublications": [],
+      "aggregateCanonicalTalentNames": null,
+      "aggregateMembershipStatus": "UNVERIFIED"
     },
     {
       "canonicalTreeKey": "repo-special|Agent Of Ossus",
@@ -3276,7 +4406,6 @@
       "sourcebook": null,
       "classAccess": [],
       "sourceStatus": "REPO_SPECIAL_SOURCE_REVIEW",
-      "canonicalTalentNames": null,
       "repoTreeIds": [
         "754907ded50d4f46"
       ],
@@ -3285,7 +4414,12 @@
       ],
       "repoClassAccess": [],
       "status": "REPO_ONLY_SPECIAL_OR_UNRESOLVED",
-      "notes": null
+      "notes": null,
+      "originSourcebook": null,
+      "originTalentNames": null,
+      "talentPublications": [],
+      "aggregateCanonicalTalentNames": null,
+      "aggregateMembershipStatus": "UNVERIFIED"
     },
     {
       "canonicalTreeKey": "repo-special|Aingtii Monk",
@@ -3293,7 +4427,6 @@
       "sourcebook": null,
       "classAccess": [],
       "sourceStatus": "REPO_SPECIAL_SOURCE_REVIEW",
-      "canonicalTalentNames": null,
       "repoTreeIds": [
         "f8e7edab5f234e27"
       ],
@@ -3302,7 +4435,12 @@
       ],
       "repoClassAccess": [],
       "status": "REPO_ONLY_SPECIAL_OR_UNRESOLVED",
-      "notes": null
+      "notes": null,
+      "originSourcebook": null,
+      "originTalentNames": null,
+      "talentPublications": [],
+      "aggregateCanonicalTalentNames": null,
+      "aggregateMembershipStatus": "UNVERIFIED"
     },
     {
       "canonicalTreeKey": "repo-special|Alter",
@@ -3310,7 +4448,6 @@
       "sourcebook": null,
       "classAccess": [],
       "sourceStatus": "REPO_SPECIAL_SOURCE_REVIEW",
-      "canonicalTalentNames": null,
       "repoTreeIds": [
         "6ac3416fb6aada56"
       ],
@@ -3319,7 +4456,12 @@
       ],
       "repoClassAccess": [],
       "status": "REPO_ONLY_SPECIAL_OR_UNRESOLVED",
-      "notes": null
+      "notes": null,
+      "originSourcebook": null,
+      "originTalentNames": null,
+      "talentPublications": [],
+      "aggregateCanonicalTalentNames": null,
+      "aggregateMembershipStatus": "UNVERIFIED"
     },
     {
       "canonicalTreeKey": "repo-special|Bando Gora Captain",
@@ -3327,7 +4469,6 @@
       "sourcebook": null,
       "classAccess": [],
       "sourceStatus": "REPO_SPECIAL_SOURCE_REVIEW",
-      "canonicalTalentNames": null,
       "repoTreeIds": [
         "b7fb2b10740923f6"
       ],
@@ -3336,7 +4477,12 @@
       ],
       "repoClassAccess": [],
       "status": "REPO_ONLY_SPECIAL_OR_UNRESOLVED",
-      "notes": null
+      "notes": null,
+      "originSourcebook": null,
+      "originTalentNames": null,
+      "talentPublications": [],
+      "aggregateCanonicalTalentNames": null,
+      "aggregateMembershipStatus": "UNVERIFIED"
     },
     {
       "canonicalTreeKey": "repo-special|Baran Do Sage",
@@ -3344,7 +4490,6 @@
       "sourcebook": null,
       "classAccess": [],
       "sourceStatus": "REPO_SPECIAL_SOURCE_REVIEW",
-      "canonicalTalentNames": null,
       "repoTreeIds": [
         "3e807e87cac844ba"
       ],
@@ -3353,7 +4498,12 @@
       ],
       "repoClassAccess": [],
       "status": "REPO_ONLY_SPECIAL_OR_UNRESOLVED",
-      "notes": null
+      "notes": null,
+      "originSourcebook": null,
+      "originTalentNames": null,
+      "talentPublications": [],
+      "aggregateCanonicalTalentNames": null,
+      "aggregateMembershipStatus": "UNVERIFIED"
     },
     {
       "canonicalTreeKey": "repo-special|Believer Disciple",
@@ -3361,7 +4511,6 @@
       "sourcebook": null,
       "classAccess": [],
       "sourceStatus": "REPO_SPECIAL_SOURCE_REVIEW",
-      "canonicalTalentNames": null,
       "repoTreeIds": [
         "92c32621101a11f9"
       ],
@@ -3370,7 +4519,12 @@
       ],
       "repoClassAccess": [],
       "status": "REPO_ONLY_SPECIAL_OR_UNRESOLVED",
-      "notes": null
+      "notes": null,
+      "originSourcebook": null,
+      "originTalentNames": null,
+      "talentPublications": [],
+      "aggregateCanonicalTalentNames": null,
+      "aggregateMembershipStatus": "UNVERIFIED"
     },
     {
       "canonicalTreeKey": "repo-special|Blackguard Wilder",
@@ -3378,7 +4532,6 @@
       "sourcebook": null,
       "classAccess": [],
       "sourceStatus": "REPO_SPECIAL_SOURCE_REVIEW",
-      "canonicalTalentNames": null,
       "repoTreeIds": [
         "d2535361d1b146cd"
       ],
@@ -3387,7 +4540,12 @@
       ],
       "repoClassAccess": [],
       "status": "REPO_ONLY_SPECIAL_OR_UNRESOLVED",
-      "notes": null
+      "notes": null,
+      "originSourcebook": null,
+      "originTalentNames": null,
+      "talentPublications": [],
+      "aggregateCanonicalTalentNames": null,
+      "aggregateMembershipStatus": "UNVERIFIED"
     },
     {
       "canonicalTreeKey": "repo-special|Blazing Chain",
@@ -3395,7 +4553,6 @@
       "sourcebook": null,
       "classAccess": [],
       "sourceStatus": "REPO_SPECIAL_SOURCE_REVIEW",
-      "canonicalTalentNames": null,
       "repoTreeIds": [
         "427213bd55e04e27"
       ],
@@ -3404,7 +4561,12 @@
       ],
       "repoClassAccess": [],
       "status": "REPO_ONLY_SPECIAL_OR_UNRESOLVED",
-      "notes": null
+      "notes": null,
+      "originSourcebook": null,
+      "originTalentNames": null,
+      "talentPublications": [],
+      "aggregateCanonicalTalentNames": null,
+      "aggregateMembershipStatus": "UNVERIFIED"
     },
     {
       "canonicalTreeKey": "repo-special|Bomarr Monk",
@@ -3412,7 +4574,6 @@
       "sourcebook": null,
       "classAccess": [],
       "sourceStatus": "REPO_SPECIAL_SOURCE_REVIEW",
-      "canonicalTalentNames": null,
       "repoTreeIds": [
         "8955568285ba4115"
       ],
@@ -3421,7 +4582,12 @@
       ],
       "repoClassAccess": [],
       "status": "REPO_ONLY_SPECIAL_OR_UNRESOLVED",
-      "notes": null
+      "notes": null,
+      "originSourcebook": null,
+      "originTalentNames": null,
+      "talentPublications": [],
+      "aggregateCanonicalTalentNames": null,
+      "aggregateMembershipStatus": "UNVERIFIED"
     },
     {
       "canonicalTreeKey": "repo-special|Chalactan Adept",
@@ -3429,7 +4595,6 @@
       "sourcebook": null,
       "classAccess": [],
       "sourceStatus": "REPO_SPECIAL_SOURCE_REVIEW",
-      "canonicalTalentNames": null,
       "repoTreeIds": [
         "f3881205595248d4"
       ],
@@ -3438,7 +4603,12 @@
       ],
       "repoClassAccess": [],
       "status": "REPO_ONLY_SPECIAL_OR_UNRESOLVED",
-      "notes": null
+      "notes": null,
+      "originSourcebook": null,
+      "originTalentNames": null,
+      "talentPublications": [],
+      "aggregateCanonicalTalentNames": null,
+      "aggregateMembershipStatus": "UNVERIFIED"
     },
     {
       "canonicalTreeKey": "repo-special|Cloner",
@@ -3446,7 +4616,6 @@
       "sourcebook": null,
       "classAccess": [],
       "sourceStatus": "REPO_SPECIAL_SOURCE_REVIEW",
-      "canonicalTalentNames": null,
       "repoTreeIds": [
         "8e44e56069274319"
       ],
@@ -3455,7 +4624,12 @@
       ],
       "repoClassAccess": [],
       "status": "REPO_ONLY_SPECIAL_OR_UNRESOLVED",
-      "notes": null
+      "notes": null,
+      "originSourcebook": null,
+      "originTalentNames": null,
+      "talentPublications": [],
+      "aggregateCanonicalTalentNames": null,
+      "aggregateMembershipStatus": "UNVERIFIED"
     },
     {
       "canonicalTreeKey": "repo-special|Control",
@@ -3463,7 +4637,6 @@
       "sourcebook": null,
       "classAccess": [],
       "sourceStatus": "REPO_SPECIAL_SOURCE_REVIEW",
-      "canonicalTalentNames": null,
       "repoTreeIds": [
         "d3661aa9906bdc79"
       ],
@@ -3472,7 +4645,12 @@
       ],
       "repoClassAccess": [],
       "status": "REPO_ONLY_SPECIAL_OR_UNRESOLVED",
-      "notes": null
+      "notes": null,
+      "originSourcebook": null,
+      "originTalentNames": null,
+      "talentPublications": [],
+      "aggregateCanonicalTalentNames": null,
+      "aggregateMembershipStatus": "UNVERIFIED"
     },
     {
       "canonicalTreeKey": "repo-special|Cowardice",
@@ -3480,7 +4658,6 @@
       "sourcebook": null,
       "classAccess": [],
       "sourceStatus": "REPO_SPECIAL_SOURCE_REVIEW",
-      "canonicalTalentNames": null,
       "repoTreeIds": [
         "acb91d3803eb4fcd"
       ],
@@ -3489,7 +4666,12 @@
       ],
       "repoClassAccess": [],
       "status": "REPO_ONLY_SPECIAL_OR_UNRESOLVED",
-      "notes": null
+      "notes": null,
+      "originSourcebook": null,
+      "originTalentNames": null,
+      "talentPublications": [],
+      "aggregateCanonicalTalentNames": null,
+      "aggregateMembershipStatus": "UNVERIFIED"
     },
     {
       "canonicalTreeKey": "repo-special|Dark Side",
@@ -3497,7 +4679,6 @@
       "sourcebook": null,
       "classAccess": [],
       "sourceStatus": "REPO_SPECIAL_SOURCE_REVIEW",
-      "canonicalTalentNames": null,
       "repoTreeIds": [
         "de95d37c72b1c4cd"
       ],
@@ -3506,7 +4687,12 @@
       ],
       "repoClassAccess": [],
       "status": "REPO_ONLY_SPECIAL_OR_UNRESOLVED",
-      "notes": null
+      "notes": null,
+      "originSourcebook": null,
+      "originTalentNames": null,
+      "talentPublications": [],
+      "aggregateCanonicalTalentNames": null,
+      "aggregateMembershipStatus": "UNVERIFIED"
     },
     {
       "canonicalTreeKey": "repo-special|Dathomiri Witch",
@@ -3514,7 +4700,6 @@
       "sourcebook": null,
       "classAccess": [],
       "sourceStatus": "REPO_SPECIAL_SOURCE_REVIEW",
-      "canonicalTalentNames": null,
       "repoTreeIds": [
         "ad16f3e5f4f7441b"
       ],
@@ -3523,7 +4708,12 @@
       ],
       "repoClassAccess": [],
       "status": "REPO_ONLY_SPECIAL_OR_UNRESOLVED",
-      "notes": null
+      "notes": null,
+      "originSourcebook": null,
+      "originTalentNames": null,
+      "talentPublications": [],
+      "aggregateCanonicalTalentNames": null,
+      "aggregateMembershipStatus": "UNVERIFIED"
     },
     {
       "canonicalTreeKey": "repo-special|Defensive Duelist",
@@ -3531,7 +4721,6 @@
       "sourcebook": null,
       "classAccess": [],
       "sourceStatus": "REPO_SPECIAL_SOURCE_REVIEW",
-      "canonicalTalentNames": null,
       "repoTreeIds": [
         "fc978e442f544dbe"
       ],
@@ -3540,7 +4729,12 @@
       ],
       "repoClassAccess": [],
       "status": "REPO_ONLY_SPECIAL_OR_UNRESOLVED",
-      "notes": null
+      "notes": null,
+      "originSourcebook": null,
+      "originTalentNames": null,
+      "talentPublications": [],
+      "aggregateCanonicalTalentNames": null,
+      "aggregateMembershipStatus": "UNVERIFIED"
     },
     {
       "canonicalTreeKey": "repo-special|Disciple Of Twilight",
@@ -3548,7 +4742,6 @@
       "sourcebook": null,
       "classAccess": [],
       "sourceStatus": "REPO_SPECIAL_SOURCE_REVIEW",
-      "canonicalTalentNames": null,
       "repoTreeIds": [
         "4da769d7c5f44232"
       ],
@@ -3557,7 +4750,12 @@
       ],
       "repoClassAccess": [],
       "status": "REPO_ONLY_SPECIAL_OR_UNRESOLVED",
-      "notes": null
+      "notes": null,
+      "originSourcebook": null,
+      "originTalentNames": null,
+      "talentPublications": [],
+      "aggregateCanonicalTalentNames": null,
+      "aggregateMembershipStatus": "UNVERIFIED"
     },
     {
       "canonicalTreeKey": "repo-special|Ember Of Vahl",
@@ -3565,7 +4763,6 @@
       "sourcebook": null,
       "classAccess": [],
       "sourceStatus": "REPO_SPECIAL_SOURCE_REVIEW",
-      "canonicalTalentNames": null,
       "repoTreeIds": [
         "c6eee4889411411b"
       ],
@@ -3574,7 +4771,12 @@
       ],
       "repoClassAccess": [],
       "status": "REPO_ONLY_SPECIAL_OR_UNRESOLVED",
-      "notes": null
+      "notes": null,
+      "originSourcebook": null,
+      "originTalentNames": null,
+      "talentPublications": [],
+      "aggregateCanonicalTalentNames": null,
+      "aggregateMembershipStatus": "UNVERIFIED"
     },
     {
       "canonicalTreeKey": "repo-special|Exceptional Followers",
@@ -3582,7 +4784,6 @@
       "sourcebook": null,
       "classAccess": [],
       "sourceStatus": "REPO_SPECIAL_SOURCE_REVIEW",
-      "canonicalTalentNames": null,
       "repoTreeIds": [
         "37f3554a2f30425a"
       ],
@@ -3591,7 +4792,12 @@
       ],
       "repoClassAccess": [],
       "status": "REPO_ONLY_SPECIAL_OR_UNRESOLVED",
-      "notes": null
+      "notes": null,
+      "originSourcebook": null,
+      "originTalentNames": null,
+      "talentPublications": [],
+      "aggregateCanonicalTalentNames": null,
+      "aggregateMembershipStatus": "UNVERIFIED"
     },
     {
       "canonicalTreeKey": "repo-special|Felucian Shaman",
@@ -3599,7 +4805,6 @@
       "sourcebook": null,
       "classAccess": [],
       "sourceStatus": "REPO_SPECIAL_SOURCE_REVIEW",
-      "canonicalTalentNames": null,
       "repoTreeIds": [
         "8a61bf426391431b"
       ],
@@ -3608,7 +4813,12 @@
       ],
       "repoClassAccess": [],
       "status": "REPO_ONLY_SPECIAL_OR_UNRESOLVED",
-      "notes": null
+      "notes": null,
+      "originSourcebook": null,
+      "originTalentNames": null,
+      "talentPublications": [],
+      "aggregateCanonicalTalentNames": null,
+      "aggregateMembershipStatus": "UNVERIFIED"
     },
     {
       "canonicalTreeKey": "repo-special|Force Warrior",
@@ -3616,7 +4826,6 @@
       "sourcebook": null,
       "classAccess": [],
       "sourceStatus": "REPO_SPECIAL_SOURCE_REVIEW",
-      "canonicalTalentNames": null,
       "repoTreeIds": [
         "11f99465ba4847e2"
       ],
@@ -3625,7 +4834,12 @@
       ],
       "repoClassAccess": [],
       "status": "REPO_ONLY_SPECIAL_OR_UNRESOLVED",
-      "notes": null
+      "notes": null,
+      "originSourcebook": null,
+      "originTalentNames": null,
+      "talentPublications": [],
+      "aggregateCanonicalTalentNames": null,
+      "aggregateMembershipStatus": "UNVERIFIED"
     },
     {
       "canonicalTreeKey": "repo-special|Galactic Senator",
@@ -3633,7 +4847,6 @@
       "sourcebook": null,
       "classAccess": [],
       "sourceStatus": "REPO_SPECIAL_SOURCE_REVIEW",
-      "canonicalTalentNames": null,
       "repoTreeIds": [
         "feb08c2834a447ab"
       ],
@@ -3642,7 +4855,12 @@
       ],
       "repoClassAccess": [],
       "status": "REPO_ONLY_SPECIAL_OR_UNRESOLVED",
-      "notes": null
+      "notes": null,
+      "originSourcebook": null,
+      "originTalentNames": null,
+      "talentPublications": [],
+      "aggregateCanonicalTalentNames": null,
+      "aggregateMembershipStatus": "UNVERIFIED"
     },
     {
       "canonicalTreeKey": "repo-special|Genohardan",
@@ -3650,7 +4868,6 @@
       "sourcebook": null,
       "classAccess": [],
       "sourceStatus": "REPO_SPECIAL_SOURCE_REVIEW",
-      "canonicalTalentNames": null,
       "repoTreeIds": [
         "db1b30c2163d0650"
       ],
@@ -3659,7 +4876,12 @@
       ],
       "repoClassAccess": [],
       "status": "REPO_ONLY_SPECIAL_OR_UNRESOLVED",
-      "notes": "Obsolete split fragment candidate of canonical GenoHaradan; retained here only as current-repo census evidence."
+      "notes": "Obsolete split fragment candidate of canonical GenoHaradan; retained here only as current-repo census evidence.",
+      "originSourcebook": null,
+      "originTalentNames": null,
+      "talentPublications": [],
+      "aggregateCanonicalTalentNames": null,
+      "aggregateMembershipStatus": "UNVERIFIED"
     },
     {
       "canonicalTreeKey": "repo-special|Guardian Spirit",
@@ -3667,7 +4889,6 @@
       "sourcebook": null,
       "classAccess": [],
       "sourceStatus": "REPO_SPECIAL_SOURCE_REVIEW",
-      "canonicalTalentNames": null,
       "repoTreeIds": [
         "6629c34384c4ca53"
       ],
@@ -3676,7 +4897,12 @@
       ],
       "repoClassAccess": [],
       "status": "REPO_ONLY_SPECIAL_OR_UNRESOLVED",
-      "notes": null
+      "notes": null,
+      "originSourcebook": null,
+      "originTalentNames": null,
+      "talentPublications": [],
+      "aggregateCanonicalTalentNames": null,
+      "aggregateMembershipStatus": "UNVERIFIED"
     },
     {
       "canonicalTreeKey": "repo-special|Iron Knight",
@@ -3684,7 +4910,6 @@
       "sourcebook": null,
       "classAccess": [],
       "sourceStatus": "REPO_SPECIAL_SOURCE_REVIEW",
-      "canonicalTalentNames": null,
       "repoTreeIds": [
         "a7dc5adf97fd6a67"
       ],
@@ -3693,7 +4918,12 @@
       ],
       "repoClassAccess": [],
       "status": "REPO_ONLY_SPECIAL_OR_UNRESOLVED",
-      "notes": null
+      "notes": null,
+      "originSourcebook": null,
+      "originTalentNames": null,
+      "talentPublications": [],
+      "aggregateCanonicalTalentNames": null,
+      "aggregateMembershipStatus": "UNVERIFIED"
     },
     {
       "canonicalTreeKey": "repo-special|Jal Shey",
@@ -3701,7 +4931,6 @@
       "sourcebook": null,
       "classAccess": [],
       "sourceStatus": "REPO_SPECIAL_SOURCE_REVIEW",
-      "canonicalTalentNames": null,
       "repoTreeIds": [
         "db1964d1e1d14b5a"
       ],
@@ -3710,7 +4939,12 @@
       ],
       "repoClassAccess": [],
       "status": "REPO_ONLY_SPECIAL_OR_UNRESOLVED",
-      "notes": null
+      "notes": null,
+      "originSourcebook": null,
+      "originTalentNames": null,
+      "talentPublications": [],
+      "aggregateCanonicalTalentNames": null,
+      "aggregateMembershipStatus": "UNVERIFIED"
     },
     {
       "canonicalTreeKey": "repo-special|Jedaii Ranger",
@@ -3718,7 +4952,6 @@
       "sourcebook": null,
       "classAccess": [],
       "sourceStatus": "REPO_SPECIAL_SOURCE_REVIEW",
-      "canonicalTalentNames": null,
       "repoTreeIds": [
         "dcac793cc9fe42a7"
       ],
@@ -3727,7 +4960,12 @@
       ],
       "repoClassAccess": [],
       "status": "REPO_ONLY_SPECIAL_OR_UNRESOLVED",
-      "notes": null
+      "notes": null,
+      "originSourcebook": null,
+      "originTalentNames": null,
+      "talentPublications": [],
+      "aggregateCanonicalTalentNames": null,
+      "aggregateMembershipStatus": "UNVERIFIED"
     },
     {
       "canonicalTreeKey": "repo-special|Jensaarai Defender",
@@ -3735,7 +4973,6 @@
       "sourcebook": null,
       "classAccess": [],
       "sourceStatus": "REPO_SPECIAL_SOURCE_REVIEW",
-      "canonicalTalentNames": null,
       "repoTreeIds": [
         "f5c62e2e81f648aa"
       ],
@@ -3744,7 +4981,12 @@
       ],
       "repoClassAccess": [],
       "status": "REPO_ONLY_SPECIAL_OR_UNRESOLVED",
-      "notes": null
+      "notes": null,
+      "originSourcebook": null,
+      "originTalentNames": null,
+      "talentPublications": [],
+      "aggregateCanonicalTalentNames": null,
+      "aggregateMembershipStatus": "UNVERIFIED"
     },
     {
       "canonicalTreeKey": "repo-special|Jumptrooper",
@@ -3752,7 +4994,6 @@
       "sourcebook": null,
       "classAccess": [],
       "sourceStatus": "REPO_SPECIAL_SOURCE_REVIEW",
-      "canonicalTalentNames": null,
       "repoTreeIds": [
         "25d99948c9cb41ad"
       ],
@@ -3761,7 +5002,12 @@
       ],
       "repoClassAccess": [],
       "status": "REPO_ONLY_SPECIAL_OR_UNRESOLVED",
-      "notes": null
+      "notes": null,
+      "originSourcebook": null,
+      "originTalentNames": null,
+      "talentPublications": [],
+      "aggregateCanonicalTalentNames": null,
+      "aggregateMembershipStatus": "UNVERIFIED"
     },
     {
       "canonicalTreeKey": "repo-special|Keetael",
@@ -3769,7 +5015,6 @@
       "sourcebook": null,
       "classAccess": [],
       "sourceStatus": "REPO_SPECIAL_SOURCE_REVIEW",
-      "canonicalTalentNames": null,
       "repoTreeIds": [
         "dad3c0da191748c1"
       ],
@@ -3778,7 +5023,12 @@
       ],
       "repoClassAccess": [],
       "status": "REPO_ONLY_SPECIAL_OR_UNRESOLVED",
-      "notes": null
+      "notes": null,
+      "originSourcebook": null,
+      "originTalentNames": null,
+      "talentPublications": [],
+      "aggregateCanonicalTalentNames": null,
+      "aggregateMembershipStatus": "UNVERIFIED"
     },
     {
       "canonicalTreeKey": "repo-special|Kilian Ranger",
@@ -3786,7 +5036,6 @@
       "sourcebook": null,
       "classAccess": [],
       "sourceStatus": "REPO_SPECIAL_SOURCE_REVIEW",
-      "canonicalTalentNames": null,
       "repoTreeIds": [
         "2a1838832f6146e2"
       ],
@@ -3795,7 +5044,12 @@
       ],
       "repoClassAccess": [],
       "status": "REPO_ONLY_SPECIAL_OR_UNRESOLVED",
-      "notes": null
+      "notes": null,
+      "originSourcebook": null,
+      "originTalentNames": null,
+      "talentPublications": [],
+      "aggregateCanonicalTalentNames": null,
+      "aggregateMembershipStatus": "UNVERIFIED"
     },
     {
       "canonicalTreeKey": "repo-special|Korunnai Adept",
@@ -3803,7 +5057,6 @@
       "sourcebook": null,
       "classAccess": [],
       "sourceStatus": "REPO_SPECIAL_SOURCE_REVIEW",
-      "canonicalTalentNames": null,
       "repoTreeIds": [
         "46d03bab0cf74a14"
       ],
@@ -3812,7 +5065,12 @@
       ],
       "repoClassAccess": [],
       "status": "REPO_ONLY_SPECIAL_OR_UNRESOLVED",
-      "notes": null
+      "notes": null,
+      "originSourcebook": null,
+      "originTalentNames": null,
+      "talentPublications": [],
+      "aggregateCanonicalTalentNames": null,
+      "aggregateMembershipStatus": "UNVERIFIED"
     },
     {
       "canonicalTreeKey": "repo-special|Krath",
@@ -3820,7 +5078,6 @@
       "sourcebook": null,
       "classAccess": [],
       "sourceStatus": "REPO_SPECIAL_SOURCE_REVIEW",
-      "canonicalTalentNames": null,
       "repoTreeIds": [
         "d29a7261c1be4b83"
       ],
@@ -3829,7 +5086,12 @@
       ],
       "repoClassAccess": [],
       "status": "REPO_ONLY_SPECIAL_OR_UNRESOLVED",
-      "notes": null
+      "notes": null,
+      "originSourcebook": null,
+      "originTalentNames": null,
+      "talentPublications": [],
+      "aggregateCanonicalTalentNames": null,
+      "aggregateMembershipStatus": "UNVERIFIED"
     },
     {
       "canonicalTreeKey": "repo-special|Light Side",
@@ -3837,7 +5099,6 @@
       "sourcebook": null,
       "classAccess": [],
       "sourceStatus": "REPO_SPECIAL_SOURCE_REVIEW",
-      "canonicalTalentNames": null,
       "repoTreeIds": [
         "001a438135e03588"
       ],
@@ -3846,7 +5107,12 @@
       ],
       "repoClassAccess": [],
       "status": "REPO_ONLY_SPECIAL_OR_UNRESOLVED",
-      "notes": null
+      "notes": null,
+      "originSourcebook": null,
+      "originTalentNames": null,
+      "talentPublications": [],
+      "aggregateCanonicalTalentNames": null,
+      "aggregateMembershipStatus": "UNVERIFIED"
     },
     {
       "canonicalTreeKey": "repo-special|Luka Sene",
@@ -3854,7 +5120,6 @@
       "sourcebook": null,
       "classAccess": [],
       "sourceStatus": "REPO_SPECIAL_SOURCE_REVIEW",
-      "canonicalTalentNames": null,
       "repoTreeIds": [
         "e6e3fc102bb54b20"
       ],
@@ -3863,7 +5128,12 @@
       ],
       "repoClassAccess": [],
       "status": "REPO_ONLY_SPECIAL_OR_UNRESOLVED",
-      "notes": null
+      "notes": null,
+      "originSourcebook": null,
+      "originTalentNames": null,
+      "talentPublications": [],
+      "aggregateCanonicalTalentNames": null,
+      "aggregateMembershipStatus": "UNVERIFIED"
     },
     {
       "canonicalTreeKey": "repo-special|Master Of The Amphistaff",
@@ -3871,7 +5141,6 @@
       "sourcebook": null,
       "classAccess": [],
       "sourceStatus": "REPO_SPECIAL_SOURCE_REVIEW",
-      "canonicalTalentNames": null,
       "repoTreeIds": [
         "d5b60c4f058c4085"
       ],
@@ -3880,7 +5149,12 @@
       ],
       "repoClassAccess": [],
       "status": "REPO_ONLY_SPECIAL_OR_UNRESOLVED",
-      "notes": null
+      "notes": null,
+      "originSourcebook": null,
+      "originTalentNames": null,
+      "talentPublications": [],
+      "aggregateCanonicalTalentNames": null,
+      "aggregateMembershipStatus": "UNVERIFIED"
     },
     {
       "canonicalTreeKey": "repo-special|Matukai Adept",
@@ -3888,7 +5162,6 @@
       "sourcebook": null,
       "classAccess": [],
       "sourceStatus": "REPO_SPECIAL_SOURCE_REVIEW",
-      "canonicalTalentNames": null,
       "repoTreeIds": [
         "ca65ba0c33cd4c7d"
       ],
@@ -3897,7 +5170,12 @@
       ],
       "repoClassAccess": [],
       "status": "REPO_ONLY_SPECIAL_OR_UNRESOLVED",
-      "notes": null
+      "notes": null,
+      "originSourcebook": null,
+      "originTalentNames": null,
+      "talentPublications": [],
+      "aggregateCanonicalTalentNames": null,
+      "aggregateMembershipStatus": "UNVERIFIED"
     },
     {
       "canonicalTreeKey": "repo-special|Mechanic",
@@ -3905,7 +5183,6 @@
       "sourcebook": null,
       "classAccess": [],
       "sourceStatus": "REPO_SPECIAL_SOURCE_REVIEW",
-      "canonicalTalentNames": null,
       "repoTreeIds": [
         "38d7c18ce4664c66"
       ],
@@ -3914,7 +5191,12 @@
       ],
       "repoClassAccess": [],
       "status": "REPO_ONLY_SPECIAL_OR_UNRESOLVED",
-      "notes": null
+      "notes": null,
+      "originSourcebook": null,
+      "originTalentNames": null,
+      "talentPublications": [],
+      "aggregateCanonicalTalentNames": null,
+      "aggregateMembershipStatus": "UNVERIFIED"
     },
     {
       "canonicalTreeKey": "repo-special|Midichlorian",
@@ -3922,7 +5204,6 @@
       "sourcebook": null,
       "classAccess": [],
       "sourceStatus": "REPO_SPECIAL_SOURCE_REVIEW",
-      "canonicalTalentNames": null,
       "repoTreeIds": [
         "e85cb1a787e24cac"
       ],
@@ -3931,7 +5212,12 @@
       ],
       "repoClassAccess": [],
       "status": "REPO_ONLY_SPECIAL_OR_UNRESOLVED",
-      "notes": null
+      "notes": null,
+      "originSourcebook": null,
+      "originTalentNames": null,
+      "talentPublications": [],
+      "aggregateCanonicalTalentNames": null,
+      "aggregateMembershipStatus": "UNVERIFIED"
     },
     {
       "canonicalTreeKey": "repo-special|Morgukai Warrior",
@@ -3939,7 +5225,6 @@
       "sourcebook": null,
       "classAccess": [],
       "sourceStatus": "REPO_SPECIAL_SOURCE_REVIEW",
-      "canonicalTalentNames": null,
       "repoTreeIds": [
         "0a61ab9ece844326"
       ],
@@ -3948,7 +5233,12 @@
       ],
       "repoClassAccess": [],
       "status": "REPO_ONLY_SPECIAL_OR_UNRESOLVED",
-      "notes": null
+      "notes": null,
+      "originSourcebook": null,
+      "originTalentNames": null,
+      "talentPublications": [],
+      "aggregateCanonicalTalentNames": null,
+      "aggregateMembershipStatus": "UNVERIFIED"
     },
     {
       "canonicalTreeKey": "repo-special|Order of Shasa",
@@ -3956,7 +5246,6 @@
       "sourcebook": null,
       "classAccess": [],
       "sourceStatus": "REPO_SPECIAL_SOURCE_REVIEW",
-      "canonicalTalentNames": null,
       "repoTreeIds": [
         "d2e4cd882822dcf2"
       ],
@@ -3965,7 +5254,12 @@
       ],
       "repoClassAccess": [],
       "status": "REPO_ONLY_SPECIAL_OR_UNRESOLVED",
-      "notes": null
+      "notes": null,
+      "originSourcebook": null,
+      "originTalentNames": null,
+      "talentPublications": [],
+      "aggregateCanonicalTalentNames": null,
+      "aggregateMembershipStatus": "UNVERIFIED"
     },
     {
       "canonicalTreeKey": "repo-special|Science",
@@ -3973,7 +5267,6 @@
       "sourcebook": null,
       "classAccess": [],
       "sourceStatus": "REPO_SPECIAL_SOURCE_REVIEW",
-      "canonicalTalentNames": null,
       "repoTreeIds": [
         "00cb74839a524276"
       ],
@@ -3982,7 +5275,12 @@
       ],
       "repoClassAccess": [],
       "status": "REPO_ONLY_SPECIAL_OR_UNRESOLVED",
-      "notes": null
+      "notes": null,
+      "originSourcebook": null,
+      "originTalentNames": null,
+      "talentPublications": [],
+      "aggregateCanonicalTalentNames": null,
+      "aggregateMembershipStatus": "UNVERIFIED"
     },
     {
       "canonicalTreeKey": "repo-special|Sense",
@@ -3990,7 +5288,6 @@
       "sourcebook": null,
       "classAccess": [],
       "sourceStatus": "REPO_SPECIAL_SOURCE_REVIEW",
-      "canonicalTalentNames": null,
       "repoTreeIds": [
         "d6b4331c0e31f7e3"
       ],
@@ -3999,7 +5296,12 @@
       ],
       "repoClassAccess": [],
       "status": "REPO_ONLY_SPECIAL_OR_UNRESOLVED",
-      "notes": null
+      "notes": null,
+      "originSourcebook": null,
+      "originTalentNames": null,
+      "talentPublications": [],
+      "aggregateCanonicalTalentNames": null,
+      "aggregateMembershipStatus": "UNVERIFIED"
     },
     {
       "canonicalTreeKey": "repo-special|Seyugi Dervish",
@@ -4007,7 +5309,6 @@
       "sourcebook": null,
       "classAccess": [],
       "sourceStatus": "REPO_SPECIAL_SOURCE_REVIEW",
-      "canonicalTalentNames": null,
       "repoTreeIds": [
         "a7ad797b01114925"
       ],
@@ -4016,7 +5317,12 @@
       ],
       "repoClassAccess": [],
       "status": "REPO_ONLY_SPECIAL_OR_UNRESOLVED",
-      "notes": null
+      "notes": null,
+      "originSourcebook": null,
+      "originTalentNames": null,
+      "talentPublications": [],
+      "aggregateCanonicalTalentNames": null,
+      "aggregateMembershipStatus": "UNVERIFIED"
     },
     {
       "canonicalTreeKey": "repo-special|Smashball Pro",
@@ -4024,7 +5330,6 @@
       "sourcebook": null,
       "classAccess": [],
       "sourceStatus": "REPO_SPECIAL_SOURCE_REVIEW",
-      "canonicalTalentNames": null,
       "repoTreeIds": [
         "bfc1356c66c74783"
       ],
@@ -4033,7 +5338,12 @@
       ],
       "repoClassAccess": [],
       "status": "REPO_ONLY_SPECIAL_OR_UNRESOLVED",
-      "notes": null
+      "notes": null,
+      "originSourcebook": null,
+      "originTalentNames": null,
+      "talentPublications": [],
+      "aggregateCanonicalTalentNames": null,
+      "aggregateMembershipStatus": "UNVERIFIED"
     },
     {
       "canonicalTreeKey": "repo-special|Sorcerer Of Tund",
@@ -4041,7 +5351,6 @@
       "sourcebook": null,
       "classAccess": [],
       "sourceStatus": "REPO_SPECIAL_SOURCE_REVIEW",
-      "canonicalTalentNames": null,
       "repoTreeIds": [
         "cfd358ef61fb47bd"
       ],
@@ -4050,7 +5359,12 @@
       ],
       "repoClassAccess": [],
       "status": "REPO_ONLY_SPECIAL_OR_UNRESOLVED",
-      "notes": null
+      "notes": null,
+      "originSourcebook": null,
+      "originTalentNames": null,
+      "talentPublications": [],
+      "aggregateCanonicalTalentNames": null,
+      "aggregateMembershipStatus": "UNVERIFIED"
     },
     {
       "canonicalTreeKey": "repo-special|Treatment",
@@ -4058,7 +5372,6 @@
       "sourcebook": null,
       "classAccess": [],
       "sourceStatus": "REPO_SPECIAL_SOURCE_REVIEW",
-      "canonicalTalentNames": null,
       "repoTreeIds": [
         "c1cf52502cf74435"
       ],
@@ -4067,7 +5380,12 @@
       ],
       "repoClassAccess": [],
       "status": "REPO_ONLY_SPECIAL_OR_UNRESOLVED",
-      "notes": null
+      "notes": null,
+      "originSourcebook": null,
+      "originTalentNames": null,
+      "talentPublications": [],
+      "aggregateCanonicalTalentNames": null,
+      "aggregateMembershipStatus": "UNVERIFIED"
     },
     {
       "canonicalTreeKey": "repo-special|Tyia Adept",
@@ -4075,7 +5393,6 @@
       "sourcebook": null,
       "classAccess": [],
       "sourceStatus": "REPO_SPECIAL_SOURCE_REVIEW",
-      "canonicalTalentNames": null,
       "repoTreeIds": [
         "9a5efe5d0e9b43a1"
       ],
@@ -4084,7 +5401,12 @@
       ],
       "repoClassAccess": [],
       "status": "REPO_ONLY_SPECIAL_OR_UNRESOLVED",
-      "notes": null
+      "notes": null,
+      "originSourcebook": null,
+      "originTalentNames": null,
+      "talentPublications": [],
+      "aggregateCanonicalTalentNames": null,
+      "aggregateMembershipStatus": "UNVERIFIED"
     },
     {
       "canonicalTreeKey": "repo-special|Warden Of The Sky",
@@ -4092,7 +5414,6 @@
       "sourcebook": null,
       "classAccess": [],
       "sourceStatus": "REPO_SPECIAL_SOURCE_REVIEW",
-      "canonicalTalentNames": null,
       "repoTreeIds": [
         "899038f739294c81"
       ],
@@ -4101,7 +5422,12 @@
       ],
       "repoClassAccess": [],
       "status": "REPO_ONLY_SPECIAL_OR_UNRESOLVED",
-      "notes": null
+      "notes": null,
+      "originSourcebook": null,
+      "originTalentNames": null,
+      "talentPublications": [],
+      "aggregateCanonicalTalentNames": null,
+      "aggregateMembershipStatus": "UNVERIFIED"
     },
     {
       "canonicalTreeKey": "repo-special|White Current Adept",
@@ -4109,7 +5435,6 @@
       "sourcebook": null,
       "classAccess": [],
       "sourceStatus": "REPO_SPECIAL_SOURCE_REVIEW",
-      "canonicalTalentNames": null,
       "repoTreeIds": [
         "4509306f66d744bf"
       ],
@@ -4118,7 +5443,17 @@
       ],
       "repoClassAccess": [],
       "status": "REPO_ONLY_SPECIAL_OR_UNRESOLVED",
-      "notes": null
+      "notes": null,
+      "originSourcebook": null,
+      "originTalentNames": null,
+      "talentPublications": [],
+      "aggregateCanonicalTalentNames": null,
+      "aggregateMembershipStatus": "UNVERIFIED"
     }
-  ]
+  ],
+  "schemaNotes": {
+    "originTalentNames": "Talents printed with the tree at its sourcebook origin when verified.",
+    "talentPublications": "Per-source additions to this tree. Later supplements append EXPANSION entries instead of becoming separate tree identities.",
+    "aggregateCanonicalTalentNames": "Union of verified talent publications when sufficiently audited; null/unfinalized until expansion coverage is complete."
+  }
 }
