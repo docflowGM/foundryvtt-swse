@@ -1,13 +1,13 @@
 {
-  "schemaVersion": 2,
+  "schemaVersion": 3,
   "generatedFrom": "Phase 1A-1D talent structural audit",
   "branch": "audit/talent-phase-1-tree-census",
-  "authorityNote": "Primary sourcebooks are authoritative. Tree origin membership and later expansion publications are tracked separately so supplemental additions are not misclassified as extras.",
+  "authorityNote": "Primary sourcebooks are authoritative. Tree origin membership, later talent additions, and class-access grants are tracked per publication so later expansions are not misattributed to a tree's origin book.",
   "counts": {
     "entries": 195,
     "referenceRows": 140,
-    "primarySourceVerified": 30,
-    "referencePendingPrimary": 110,
+    "primarySourceVerified": 64,
+    "referencePendingPrimary": 76,
     "repoSpecialSourceReview": 55
   },
   "entries": [
@@ -22,7 +22,7 @@
         "Jedi Knight",
         "Sith Apprentice"
       ],
-      "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
+      "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
       "repoTreeIds": [
         "17cec542331cb4e4"
       ],
@@ -39,10 +39,59 @@
       "status": "REPO_TREE_PRESENT",
       "notes": null,
       "originSourcebook": "Saga Edition Core Rulebook",
-      "originTalentNames": null,
-      "talentPublications": [],
-      "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED"
+      "originTalentNames": [
+        "Armor Mastery",
+        "Armored Defense",
+        "Improved Armored Defense",
+        "Juggernaut",
+        "Second Skin"
+      ],
+      "talentPublications": [
+        {
+          "sourcebook": "Saga Edition Core Rulebook",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Armor Mastery",
+            "Armored Defense",
+            "Improved Armored Defense",
+            "Juggernaut",
+            "Second Skin"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Armor Mastery",
+        "Armored Defense",
+        "Improved Armored Defense",
+        "Juggernaut",
+        "Second Skin"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
+      "referenceClassAccess": [
+        "Soldier",
+        "Gladiator",
+        "Imperial Knight",
+        "Jedi Knight",
+        "Sith Apprentice"
+      ],
+      "accessPublications": [
+        {
+          "sourcebook": "Saga Edition Core Rulebook",
+          "publicationType": "DIRECT_ACCESS_GRANT",
+          "classes": [
+            "Soldier",
+            "Jedi Knight",
+            "Sith Apprentice"
+          ]
+        }
+      ],
+      "aggregateClassAccess": [
+        "Soldier",
+        "Gladiator",
+        "Imperial Knight",
+        "Jedi Knight",
+        "Sith Apprentice"
+      ]
     },
     {
       "canonicalTreeKey": "Saga Edition Core Rulebook|Awareness",
@@ -57,7 +106,7 @@
         "Pathfinder",
         "Vanguard"
       ],
-      "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
+      "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
       "repoTreeIds": [
         "1c48d1cd9ab1f5c8"
       ],
@@ -76,10 +125,66 @@
       "status": "REPO_TREE_PRESENT",
       "notes": null,
       "originSourcebook": "Saga Edition Core Rulebook",
-      "originTalentNames": null,
-      "talentPublications": [],
-      "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED"
+      "originTalentNames": [
+        "Acute Senses",
+        "Expert Tracker",
+        "Improved Initiative",
+        "Keen Shot",
+        "Uncanny Dodge I",
+        "Uncanny Dodge II"
+      ],
+      "talentPublications": [
+        {
+          "sourcebook": "Saga Edition Core Rulebook",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Acute Senses",
+            "Expert Tracker",
+            "Improved Initiative",
+            "Keen Shot",
+            "Uncanny Dodge I",
+            "Uncanny Dodge II"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Acute Senses",
+        "Expert Tracker",
+        "Improved Initiative",
+        "Keen Shot",
+        "Uncanny Dodge I",
+        "Uncanny Dodge II"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
+      "referenceClassAccess": [
+        "Scout",
+        "Bounty Hunter",
+        "Gladiator",
+        "Gunslinger",
+        "Martial Arts Master",
+        "Pathfinder",
+        "Vanguard"
+      ],
+      "accessPublications": [
+        {
+          "sourcebook": "Saga Edition Core Rulebook",
+          "publicationType": "DIRECT_ACCESS_GRANT",
+          "classes": [
+            "Scout",
+            "Bounty Hunter",
+            "Gunslinger"
+          ]
+        }
+      ],
+      "aggregateClassAccess": [
+        "Scout",
+        "Bounty Hunter",
+        "Gladiator",
+        "Gunslinger",
+        "Martial Arts Master",
+        "Pathfinder",
+        "Vanguard"
+      ]
     },
     {
       "canonicalTreeKey": "Saga Edition Core Rulebook|Bounty Hunter",
@@ -88,7 +193,7 @@
       "classAccess": [
         "Bounty Hunter"
       ],
-      "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
+      "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
       "repoTreeIds": [
         "a47ed82a822e3962"
       ],
@@ -101,10 +206,52 @@
       "status": "REPO_TREE_PRESENT",
       "notes": null,
       "originSourcebook": "Saga Edition Core Rulebook",
-      "originTalentNames": null,
-      "talentPublications": [],
-      "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED"
+      "originTalentNames": [
+        "Hunter's Mark",
+        "Hunter's Target",
+        "Notorious",
+        "Nowhere to Hide",
+        "Relentless",
+        "Ruthless Negotiator"
+      ],
+      "talentPublications": [
+        {
+          "sourcebook": "Saga Edition Core Rulebook",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Hunter's Mark",
+            "Hunter's Target",
+            "Notorious",
+            "Nowhere to Hide",
+            "Relentless",
+            "Ruthless Negotiator"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Hunter's Mark",
+        "Hunter's Target",
+        "Notorious",
+        "Nowhere to Hide",
+        "Relentless",
+        "Ruthless Negotiator"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
+      "referenceClassAccess": [
+        "Bounty Hunter"
+      ],
+      "accessPublications": [
+        {
+          "sourcebook": "Saga Edition Core Rulebook",
+          "publicationType": "DIRECT_ACCESS_GRANT",
+          "classes": [
+            "Bounty Hunter"
+          ]
+        }
+      ],
+      "aggregateClassAccess": [
+        "Bounty Hunter"
+      ]
     },
     {
       "canonicalTreeKey": "Saga Edition Core Rulebook|Brawler",
@@ -114,7 +261,7 @@
         "Soldier",
         "Melee Duelist"
       ],
-      "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
+      "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
       "repoTreeIds": [
         "67fdd8dce9abd6c1"
       ],
@@ -128,10 +275,51 @@
       "status": "REPO_TREE_PRESENT",
       "notes": null,
       "originSourcebook": "Saga Edition Core Rulebook",
-      "originTalentNames": null,
-      "talentPublications": [],
-      "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED"
+      "originTalentNames": [
+        "Expert Grappler",
+        "Gun Club",
+        "Melee Smash",
+        "Stunning Strike",
+        "Unbalance Opponent"
+      ],
+      "talentPublications": [
+        {
+          "sourcebook": "Saga Edition Core Rulebook",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Expert Grappler",
+            "Gun Club",
+            "Melee Smash",
+            "Stunning Strike",
+            "Unbalance Opponent"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Expert Grappler",
+        "Gun Club",
+        "Melee Smash",
+        "Stunning Strike",
+        "Unbalance Opponent"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
+      "referenceClassAccess": [
+        "Soldier",
+        "Melee Duelist"
+      ],
+      "accessPublications": [
+        {
+          "sourcebook": "Saga Edition Core Rulebook",
+          "publicationType": "DIRECT_ACCESS_GRANT",
+          "classes": [
+            "Soldier"
+          ]
+        }
+      ],
+      "aggregateClassAccess": [
+        "Soldier",
+        "Melee Duelist"
+      ]
     },
     {
       "canonicalTreeKey": "Saga Edition Core Rulebook|Camouflage",
@@ -142,7 +330,7 @@
         "Elite Trooper",
         "Infiltrator"
       ],
-      "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
+      "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
       "repoTreeIds": [
         "3926d582d2077489"
       ],
@@ -157,10 +345,48 @@
       "status": "REPO_TREE_PRESENT",
       "notes": null,
       "originSourcebook": "Saga Edition Core Rulebook",
-      "originTalentNames": null,
-      "talentPublications": [],
-      "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED"
+      "originTalentNames": [
+        "Hidden Movement",
+        "Improved Stealth",
+        "Total Concealment"
+      ],
+      "talentPublications": [
+        {
+          "sourcebook": "Saga Edition Core Rulebook",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Hidden Movement",
+            "Improved Stealth",
+            "Total Concealment"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Hidden Movement",
+        "Improved Stealth",
+        "Total Concealment"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
+      "referenceClassAccess": [
+        "Scout",
+        "Elite Trooper",
+        "Infiltrator"
+      ],
+      "accessPublications": [
+        {
+          "sourcebook": "Saga Edition Core Rulebook",
+          "publicationType": "DIRECT_ACCESS_GRANT",
+          "classes": [
+            "Scout",
+            "Elite Trooper"
+          ]
+        }
+      ],
+      "aggregateClassAccess": [
+        "Scout",
+        "Elite Trooper",
+        "Infiltrator"
+      ]
     },
     {
       "canonicalTreeKey": "Saga Edition Core Rulebook|Commando",
@@ -171,7 +397,7 @@
         "Elite Trooper",
         "Officer"
       ],
-      "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
+      "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
       "repoTreeIds": [
         "798ed0945cbdac1c"
       ],
@@ -186,10 +412,61 @@
       "status": "REPO_TREE_PRESENT",
       "notes": null,
       "originSourcebook": "Saga Edition Core Rulebook",
-      "originTalentNames": null,
-      "talentPublications": [],
-      "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED"
+      "originTalentNames": [
+        "Battle Analysis",
+        "Cover Fire",
+        "Demolitionist",
+        "Draw Fire",
+        "Harm's Way",
+        "Indomitable",
+        "Tough as Nails"
+      ],
+      "talentPublications": [
+        {
+          "sourcebook": "Saga Edition Core Rulebook",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Battle Analysis",
+            "Cover Fire",
+            "Demolitionist",
+            "Draw Fire",
+            "Harm's Way",
+            "Indomitable",
+            "Tough as Nails"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Battle Analysis",
+        "Cover Fire",
+        "Demolitionist",
+        "Draw Fire",
+        "Harm's Way",
+        "Indomitable",
+        "Tough as Nails"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
+      "referenceClassAccess": [
+        "Soldier",
+        "Elite Trooper",
+        "Officer"
+      ],
+      "accessPublications": [
+        {
+          "sourcebook": "Saga Edition Core Rulebook",
+          "publicationType": "DIRECT_ACCESS_GRANT",
+          "classes": [
+            "Soldier",
+            "Elite Trooper",
+            "Officer"
+          ]
+        }
+      ],
+      "aggregateClassAccess": [
+        "Soldier",
+        "Elite Trooper",
+        "Officer"
+      ]
     },
     {
       "canonicalTreeKey": "Saga Edition Core Rulebook|Dark Side Devotee",
@@ -198,7 +475,7 @@
       "classAccess": [
         "Force Adept"
       ],
-      "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
+      "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
       "repoTreeIds": [
         "96ef43a3054dcb58"
       ],
@@ -211,10 +488,46 @@
       "status": "REPO_TREE_PRESENT",
       "notes": null,
       "originSourcebook": "Saga Edition Core Rulebook",
-      "originTalentNames": null,
-      "talentPublications": [],
-      "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED"
+      "originTalentNames": [
+        "Channel Aggression",
+        "Channel Anger",
+        "Crippling Strike",
+        "Embrace the Dark Side"
+      ],
+      "talentPublications": [
+        {
+          "sourcebook": "Saga Edition Core Rulebook",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Channel Aggression",
+            "Channel Anger",
+            "Crippling Strike",
+            "Embrace the Dark Side"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Channel Aggression",
+        "Channel Anger",
+        "Crippling Strike",
+        "Embrace the Dark Side"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
+      "referenceClassAccess": [
+        "Force Adept"
+      ],
+      "accessPublications": [
+        {
+          "sourcebook": "Saga Edition Core Rulebook",
+          "publicationType": "DIRECT_ACCESS_GRANT",
+          "classes": [
+            "Force Adept"
+          ]
+        }
+      ],
+      "aggregateClassAccess": [
+        "Force Adept"
+      ]
     },
     {
       "canonicalTreeKey": "Saga Edition Core Rulebook|Duelist",
@@ -226,7 +539,7 @@
         "Jedi Master",
         "Sith Apprentice"
       ],
-      "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
+      "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
       "repoTreeIds": [
         "b3c5d90b5036f39b"
       ],
@@ -242,10 +555,57 @@
       "status": "REPO_TREE_PRESENT",
       "notes": null,
       "originSourcebook": "Saga Edition Core Rulebook",
-      "originTalentNames": null,
-      "talentPublications": [],
-      "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED"
+      "originTalentNames": [
+        "Force Fortification",
+        "Greater Weapon Focus (Lightsabers)",
+        "Greater Weapon Specialization (Lightsabers)",
+        "Multiattack Proficiency (lightsabers)",
+        "Severing Strike"
+      ],
+      "talentPublications": [
+        {
+          "sourcebook": "Saga Edition Core Rulebook",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Force Fortification",
+            "Greater Weapon Focus (Lightsabers)",
+            "Greater Weapon Specialization (Lightsabers)",
+            "Multiattack Proficiency (lightsabers)",
+            "Severing Strike"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Force Fortification",
+        "Greater Weapon Focus (Lightsabers)",
+        "Greater Weapon Specialization (Lightsabers)",
+        "Multiattack Proficiency (lightsabers)",
+        "Severing Strike"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
+      "referenceClassAccess": [
+        "Imperial Knight",
+        "Jedi Knight",
+        "Jedi Master",
+        "Sith Apprentice"
+      ],
+      "accessPublications": [
+        {
+          "sourcebook": "Saga Edition Core Rulebook",
+          "publicationType": "DIRECT_ACCESS_GRANT",
+          "classes": [
+            "Jedi Knight",
+            "Jedi Master",
+            "Sith Apprentice"
+          ]
+        }
+      ],
+      "aggregateClassAccess": [
+        "Imperial Knight",
+        "Jedi Knight",
+        "Jedi Master",
+        "Sith Apprentice"
+      ]
     },
     {
       "canonicalTreeKey": "Saga Edition Core Rulebook|Expert Pilot",
@@ -254,7 +614,7 @@
       "classAccess": [
         "Ace Pilot"
       ],
-      "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
+      "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
       "repoTreeIds": [
         "b17c1515c06361d6"
       ],
@@ -267,10 +627,52 @@
       "status": "REPO_TREE_PRESENT",
       "notes": null,
       "originSourcebook": "Saga Edition Core Rulebook",
-      "originTalentNames": null,
-      "talentPublications": [],
-      "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED"
+      "originTalentNames": [
+        "Elusive Dogfighter",
+        "Full Throttle",
+        "Juke",
+        "Keep It Together",
+        "Relentless Pursuit",
+        "Vehicular Evasion"
+      ],
+      "talentPublications": [
+        {
+          "sourcebook": "Saga Edition Core Rulebook",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Elusive Dogfighter",
+            "Full Throttle",
+            "Juke",
+            "Keep It Together",
+            "Relentless Pursuit",
+            "Vehicular Evasion"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Elusive Dogfighter",
+        "Full Throttle",
+        "Juke",
+        "Keep It Together",
+        "Relentless Pursuit",
+        "Vehicular Evasion"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
+      "referenceClassAccess": [
+        "Ace Pilot"
+      ],
+      "accessPublications": [
+        {
+          "sourcebook": "Saga Edition Core Rulebook",
+          "publicationType": "DIRECT_ACCESS_GRANT",
+          "classes": [
+            "Ace Pilot"
+          ]
+        }
+      ],
+      "aggregateClassAccess": [
+        "Ace Pilot"
+      ]
     },
     {
       "canonicalTreeKey": "Saga Edition Core Rulebook|Force Adept",
@@ -280,7 +682,7 @@
         "Force Adept",
         "Force Disciple"
       ],
-      "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
+      "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
       "repoTreeIds": [
         "e35ee41362604227"
       ],
@@ -294,10 +696,46 @@
       "status": "REPO_TREE_PRESENT",
       "notes": null,
       "originSourcebook": "Saga Edition Core Rulebook",
-      "originTalentNames": null,
-      "talentPublications": [],
-      "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED"
+      "originTalentNames": [
+        "Force Power Adept",
+        "Force Treatment",
+        "Fortified Body"
+      ],
+      "talentPublications": [
+        {
+          "sourcebook": "Saga Edition Core Rulebook",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Force Power Adept",
+            "Force Treatment",
+            "Fortified Body"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Force Power Adept",
+        "Force Treatment",
+        "Fortified Body"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
+      "referenceClassAccess": [
+        "Force Adept",
+        "Force Disciple"
+      ],
+      "accessPublications": [
+        {
+          "sourcebook": "Saga Edition Core Rulebook",
+          "publicationType": "DIRECT_ACCESS_GRANT",
+          "classes": [
+            "Force Adept",
+            "Force Disciple"
+          ]
+        }
+      ],
+      "aggregateClassAccess": [
+        "Force Adept",
+        "Force Disciple"
+      ]
     },
     {
       "canonicalTreeKey": "Saga Edition Core Rulebook|Force Item",
@@ -306,7 +744,7 @@
       "classAccess": [
         "Force Adept"
       ],
-      "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
+      "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
       "repoTreeIds": [
         "01e443d93e47f9c4"
       ],
@@ -319,10 +757,46 @@
       "status": "REPO_TREE_PRESENT",
       "notes": null,
       "originSourcebook": "Saga Edition Core Rulebook",
-      "originTalentNames": null,
-      "talentPublications": [],
-      "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED"
+      "originTalentNames": [
+        "Attune Weapon",
+        "Empower Weapon",
+        "Force Talisman",
+        "Greater Force Talisman"
+      ],
+      "talentPublications": [
+        {
+          "sourcebook": "Saga Edition Core Rulebook",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Attune Weapon",
+            "Empower Weapon",
+            "Force Talisman",
+            "Greater Force Talisman"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Attune Weapon",
+        "Empower Weapon",
+        "Force Talisman",
+        "Greater Force Talisman"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
+      "referenceClassAccess": [
+        "Force Adept"
+      ],
+      "accessPublications": [
+        {
+          "sourcebook": "Saga Edition Core Rulebook",
+          "publicationType": "DIRECT_ACCESS_GRANT",
+          "classes": [
+            "Force Adept"
+          ]
+        }
+      ],
+      "aggregateClassAccess": [
+        "Force Adept"
+      ]
     },
     {
       "canonicalTreeKey": "Saga Edition Core Rulebook|Fortune",
@@ -332,7 +806,7 @@
         "Scoundrel",
         "Gunslinger"
       ],
-      "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
+      "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
       "repoTreeIds": [
         "cee9b9398682b7d0"
       ],
@@ -346,10 +820,52 @@
       "status": "REPO_TREE_PRESENT",
       "notes": null,
       "originSourcebook": "Saga Edition Core Rulebook",
-      "originTalentNames": null,
-      "talentPublications": [],
-      "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED"
+      "originTalentNames": [
+        "Fool's Luck",
+        "Fortune's Favor",
+        "Gambler",
+        "Knack",
+        "Lucky Shot"
+      ],
+      "talentPublications": [
+        {
+          "sourcebook": "Saga Edition Core Rulebook",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Fool's Luck",
+            "Fortune's Favor",
+            "Gambler",
+            "Knack",
+            "Lucky Shot"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Fool's Luck",
+        "Fortune's Favor",
+        "Gambler",
+        "Knack",
+        "Lucky Shot"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
+      "referenceClassAccess": [
+        "Scoundrel",
+        "Gunslinger"
+      ],
+      "accessPublications": [
+        {
+          "sourcebook": "Saga Edition Core Rulebook",
+          "publicationType": "DIRECT_ACCESS_GRANT",
+          "classes": [
+            "Scoundrel",
+            "Gunslinger"
+          ]
+        }
+      ],
+      "aggregateClassAccess": [
+        "Scoundrel",
+        "Gunslinger"
+      ]
     },
     {
       "canonicalTreeKey": "Saga Edition Core Rulebook|Fringer",
@@ -359,7 +875,7 @@
         "Scout",
         "Outlaw"
       ],
-      "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
+      "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
       "repoTreeIds": [
         "7c47d36dc1f77d9c"
       ],
@@ -373,10 +889,48 @@
       "status": "REPO_TREE_PRESENT",
       "notes": null,
       "originSourcebook": "Saga Edition Core Rulebook",
-      "originTalentNames": null,
-      "talentPublications": [],
-      "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED"
+      "originTalentNames": [
+        "Barter",
+        "Fringe Savant",
+        "Jury-Rigger",
+        "Long Stride"
+      ],
+      "talentPublications": [
+        {
+          "sourcebook": "Saga Edition Core Rulebook",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Barter",
+            "Fringe Savant",
+            "Jury-Rigger",
+            "Long Stride"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Barter",
+        "Fringe Savant",
+        "Jury-Rigger",
+        "Long Stride"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
+      "referenceClassAccess": [
+        "Scout",
+        "Outlaw"
+      ],
+      "accessPublications": [
+        {
+          "sourcebook": "Saga Edition Core Rulebook",
+          "publicationType": "DIRECT_ACCESS_GRANT",
+          "classes": [
+            "Scout"
+          ]
+        }
+      ],
+      "aggregateClassAccess": [
+        "Scout",
+        "Outlaw"
+      ]
     },
     {
       "canonicalTreeKey": "Saga Edition Core Rulebook|Gunner",
@@ -385,7 +939,7 @@
       "classAccess": [
         "Ace Pilot"
       ],
-      "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
+      "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
       "repoTreeIds": [
         "43ead399d82b8142"
       ],
@@ -398,10 +952,46 @@
       "status": "REPO_TREE_PRESENT",
       "notes": null,
       "originSourcebook": "Saga Edition Core Rulebook",
-      "originTalentNames": null,
-      "talentPublications": [],
-      "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED"
+      "originTalentNames": [
+        "Dogfight Gunner",
+        "Expert Gunner",
+        "Quick Trigger",
+        "System Hit"
+      ],
+      "talentPublications": [
+        {
+          "sourcebook": "Saga Edition Core Rulebook",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Dogfight Gunner",
+            "Expert Gunner",
+            "Quick Trigger",
+            "System Hit"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Dogfight Gunner",
+        "Expert Gunner",
+        "Quick Trigger",
+        "System Hit"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
+      "referenceClassAccess": [
+        "Ace Pilot"
+      ],
+      "accessPublications": [
+        {
+          "sourcebook": "Saga Edition Core Rulebook",
+          "publicationType": "DIRECT_ACCESS_GRANT",
+          "classes": [
+            "Ace Pilot"
+          ]
+        }
+      ],
+      "aggregateClassAccess": [
+        "Ace Pilot"
+      ]
     },
     {
       "canonicalTreeKey": "Saga Edition Core Rulebook|Gunslinger",
@@ -410,7 +1000,7 @@
       "classAccess": [
         "Gunslinger"
       ],
-      "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
+      "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
       "repoTreeIds": [
         "cb6f775cd227a3e3"
       ],
@@ -423,10 +1013,49 @@
       "status": "REPO_TREE_PRESENT",
       "notes": null,
       "originSourcebook": "Saga Edition Core Rulebook",
-      "originTalentNames": null,
-      "talentPublications": [],
-      "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED"
+      "originTalentNames": [
+        "Debilitating Shot",
+        "Deceptive Shot",
+        "Improved Quick Draw",
+        "Knockdown Shot",
+        "Multiattack Proficiency (pistols)"
+      ],
+      "talentPublications": [
+        {
+          "sourcebook": "Saga Edition Core Rulebook",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Debilitating Shot",
+            "Deceptive Shot",
+            "Improved Quick Draw",
+            "Knockdown Shot",
+            "Multiattack Proficiency (pistols)"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Debilitating Shot",
+        "Deceptive Shot",
+        "Improved Quick Draw",
+        "Knockdown Shot",
+        "Multiattack Proficiency (pistols)"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
+      "referenceClassAccess": [
+        "Gunslinger"
+      ],
+      "accessPublications": [
+        {
+          "sourcebook": "Saga Edition Core Rulebook",
+          "publicationType": "DIRECT_ACCESS_GRANT",
+          "classes": [
+            "Gunslinger"
+          ]
+        }
+      ],
+      "aggregateClassAccess": [
+        "Gunslinger"
+      ]
     },
     {
       "canonicalTreeKey": "Saga Edition Core Rulebook|Infamy",
@@ -436,7 +1065,7 @@
         "Crime Lord",
         "Master Privateer"
       ],
-      "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
+      "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
       "repoTreeIds": [
         "c1be604242cb328f"
       ],
@@ -450,10 +1079,51 @@
       "status": "REPO_TREE_PRESENT",
       "notes": null,
       "originSourcebook": "Saga Edition Core Rulebook",
-      "originTalentNames": null,
-      "talentPublications": [],
-      "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED"
+      "originTalentNames": [
+        "Inspire Fear I",
+        "Inspire Fear II",
+        "Inspire Fear III",
+        "Notorious",
+        "Shared Notoriety"
+      ],
+      "talentPublications": [
+        {
+          "sourcebook": "Saga Edition Core Rulebook",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Inspire Fear I",
+            "Inspire Fear II",
+            "Inspire Fear III",
+            "Notorious",
+            "Shared Notoriety"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Inspire Fear I",
+        "Inspire Fear II",
+        "Inspire Fear III",
+        "Notorious",
+        "Shared Notoriety"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
+      "referenceClassAccess": [
+        "Crime Lord",
+        "Master Privateer"
+      ],
+      "accessPublications": [
+        {
+          "sourcebook": "Saga Edition Core Rulebook",
+          "publicationType": "DIRECT_ACCESS_GRANT",
+          "classes": [
+            "Crime Lord"
+          ]
+        }
+      ],
+      "aggregateClassAccess": [
+        "Crime Lord",
+        "Master Privateer"
+      ]
     },
     {
       "canonicalTreeKey": "Saga Edition Core Rulebook|Influence",
@@ -463,7 +1133,7 @@
         "Noble",
         "Crime Lord"
       ],
-      "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
+      "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
       "repoTreeIds": [
         "8375b9b26b679901"
       ],
@@ -477,10 +1147,49 @@
       "status": "REPO_TREE_PRESENT",
       "notes": null,
       "originSourcebook": "Saga Edition Core Rulebook",
-      "originTalentNames": null,
-      "talentPublications": [],
-      "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED"
+      "originTalentNames": [
+        "Presence",
+        "Demand Surrender",
+        "Improved Weaken Resolve",
+        "Weaken Resolve"
+      ],
+      "talentPublications": [
+        {
+          "sourcebook": "Saga Edition Core Rulebook",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Presence",
+            "Demand Surrender",
+            "Improved Weaken Resolve",
+            "Weaken Resolve"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Presence",
+        "Demand Surrender",
+        "Improved Weaken Resolve",
+        "Weaken Resolve"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
+      "referenceClassAccess": [
+        "Noble",
+        "Crime Lord"
+      ],
+      "accessPublications": [
+        {
+          "sourcebook": "Saga Edition Core Rulebook",
+          "publicationType": "DIRECT_ACCESS_GRANT",
+          "classes": [
+            "Noble",
+            "Crime Lord"
+          ]
+        }
+      ],
+      "aggregateClassAccess": [
+        "Noble",
+        "Crime Lord"
+      ]
     },
     {
       "canonicalTreeKey": "Saga Edition Core Rulebook|Inspiration",
@@ -490,7 +1199,7 @@
         "Noble",
         "Droid Commander"
       ],
-      "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
+      "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
       "repoTreeIds": [
         "72d32ebcbb607314"
       ],
@@ -504,10 +1213,51 @@
       "status": "REPO_TREE_PRESENT",
       "notes": null,
       "originSourcebook": "Saga Edition Core Rulebook",
-      "originTalentNames": null,
-      "talentPublications": [],
-      "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED"
+      "originTalentNames": [
+        "Bolster Ally",
+        "Ignite Fervor",
+        "Inspire Confidence",
+        "Inspire Haste",
+        "Inspire Zeal"
+      ],
+      "talentPublications": [
+        {
+          "sourcebook": "Saga Edition Core Rulebook",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Bolster Ally",
+            "Ignite Fervor",
+            "Inspire Confidence",
+            "Inspire Haste",
+            "Inspire Zeal"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Bolster Ally",
+        "Ignite Fervor",
+        "Inspire Confidence",
+        "Inspire Haste",
+        "Inspire Zeal"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
+      "referenceClassAccess": [
+        "Noble",
+        "Droid Commander"
+      ],
+      "accessPublications": [
+        {
+          "sourcebook": "Saga Edition Core Rulebook",
+          "publicationType": "DIRECT_ACCESS_GRANT",
+          "classes": [
+            "Noble"
+          ]
+        }
+      ],
+      "aggregateClassAccess": [
+        "Noble",
+        "Droid Commander"
+      ]
     },
     {
       "canonicalTreeKey": "Saga Edition Core Rulebook|Jedi Consular",
@@ -516,7 +1266,7 @@
       "classAccess": [
         "Jedi"
       ],
-      "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
+      "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
       "repoTreeIds": [
         "e99cfa9db8493573"
       ],
@@ -529,10 +1279,46 @@
       "status": "REPO_TREE_PRESENT",
       "notes": null,
       "originSourcebook": "Saga Edition Core Rulebook",
-      "originTalentNames": null,
-      "talentPublications": [],
-      "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED"
+      "originTalentNames": [
+        "Adept Negotiator",
+        "Force Persuasion",
+        "Master Negotiator",
+        "Skilled Advisor"
+      ],
+      "talentPublications": [
+        {
+          "sourcebook": "Saga Edition Core Rulebook",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Adept Negotiator",
+            "Force Persuasion",
+            "Master Negotiator",
+            "Skilled Advisor"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Adept Negotiator",
+        "Force Persuasion",
+        "Master Negotiator",
+        "Skilled Advisor"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
+      "referenceClassAccess": [
+        "Jedi"
+      ],
+      "accessPublications": [
+        {
+          "sourcebook": "Saga Edition Core Rulebook",
+          "publicationType": "DIRECT_ACCESS_GRANT",
+          "classes": [
+            "Jedi"
+          ]
+        }
+      ],
+      "aggregateClassAccess": [
+        "Jedi"
+      ]
     },
     {
       "canonicalTreeKey": "Saga Edition Core Rulebook|Jedi Guardian",
@@ -541,7 +1327,7 @@
       "classAccess": [
         "Jedi"
       ],
-      "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
+      "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
       "repoTreeIds": [
         "10c843cef8ce2798"
       ],
@@ -554,10 +1340,49 @@
       "status": "REPO_TREE_PRESENT",
       "notes": null,
       "originSourcebook": "Saga Edition Core Rulebook",
-      "originTalentNames": null,
-      "talentPublications": [],
-      "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED"
+      "originTalentNames": [
+        "Acrobatic Recovery",
+        "Battle Meditation",
+        "Elusive Target",
+        "Force Intuition",
+        "Resilience"
+      ],
+      "talentPublications": [
+        {
+          "sourcebook": "Saga Edition Core Rulebook",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Acrobatic Recovery",
+            "Battle Meditation",
+            "Elusive Target",
+            "Force Intuition",
+            "Resilience"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Acrobatic Recovery",
+        "Battle Meditation",
+        "Elusive Target",
+        "Force Intuition",
+        "Resilience"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
+      "referenceClassAccess": [
+        "Jedi"
+      ],
+      "accessPublications": [
+        {
+          "sourcebook": "Saga Edition Core Rulebook",
+          "publicationType": "DIRECT_ACCESS_GRANT",
+          "classes": [
+            "Jedi"
+          ]
+        }
+      ],
+      "aggregateClassAccess": [
+        "Jedi"
+      ]
     },
     {
       "canonicalTreeKey": "Saga Edition Core Rulebook|Jedi Sentinel",
@@ -566,7 +1391,7 @@
       "classAccess": [
         "Jedi"
       ],
-      "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
+      "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
       "repoTreeIds": [
         "36f18f3e974feb33"
       ],
@@ -579,10 +1404,49 @@
       "status": "REPO_TREE_PRESENT",
       "notes": null,
       "originSourcebook": "Saga Edition Core Rulebook",
-      "originTalentNames": null,
-      "talentPublications": [],
-      "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED"
+      "originTalentNames": [
+        "Clear Mind",
+        "Dark Side Sense",
+        "Dark Side Scourge",
+        "Force Haze",
+        "Resist the Dark Side"
+      ],
+      "talentPublications": [
+        {
+          "sourcebook": "Saga Edition Core Rulebook",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Clear Mind",
+            "Dark Side Sense",
+            "Dark Side Scourge",
+            "Force Haze",
+            "Resist the Dark Side"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Clear Mind",
+        "Dark Side Sense",
+        "Dark Side Scourge",
+        "Force Haze",
+        "Resist the Dark Side"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
+      "referenceClassAccess": [
+        "Jedi"
+      ],
+      "accessPublications": [
+        {
+          "sourcebook": "Saga Edition Core Rulebook",
+          "publicationType": "DIRECT_ACCESS_GRANT",
+          "classes": [
+            "Jedi"
+          ]
+        }
+      ],
+      "aggregateClassAccess": [
+        "Jedi"
+      ]
     },
     {
       "canonicalTreeKey": "Saga Edition Core Rulebook|Leadership",
@@ -594,7 +1458,7 @@
         "Droid Commander",
         "Officer"
       ],
-      "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
+      "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
       "repoTreeIds": [
         "5964237d22681dc0"
       ],
@@ -610,10 +1474,59 @@
       "status": "REPO_TREE_PRESENT",
       "notes": null,
       "originSourcebook": "Saga Edition Core Rulebook",
-      "originTalentNames": null,
-      "talentPublications": [],
-      "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED"
+      "originTalentNames": [
+        "Born Leader",
+        "Coordinate",
+        "Distant Command",
+        "Fearless Leader",
+        "Rally",
+        "Trust"
+      ],
+      "talentPublications": [
+        {
+          "sourcebook": "Saga Edition Core Rulebook",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Born Leader",
+            "Coordinate",
+            "Distant Command",
+            "Fearless Leader",
+            "Rally",
+            "Trust"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Born Leader",
+        "Coordinate",
+        "Distant Command",
+        "Fearless Leader",
+        "Rally",
+        "Trust"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
+      "referenceClassAccess": [
+        "Noble",
+        "Corporate Agent",
+        "Droid Commander",
+        "Officer"
+      ],
+      "accessPublications": [
+        {
+          "sourcebook": "Saga Edition Core Rulebook",
+          "publicationType": "DIRECT_ACCESS_GRANT",
+          "classes": [
+            "Noble",
+            "Officer"
+          ]
+        }
+      ],
+      "aggregateClassAccess": [
+        "Noble",
+        "Corporate Agent",
+        "Droid Commander",
+        "Officer"
+      ]
     },
     {
       "canonicalTreeKey": "Saga Edition Core Rulebook|Lightsaber Combat",
@@ -625,7 +1538,7 @@
         "Jedi Knight",
         "Sith Apprentice"
       ],
-      "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
+      "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
       "repoTreeIds": [
         "2359c05ff13f3feb"
       ],
@@ -641,10 +1554,60 @@
       "status": "REPO_TREE_PRESENT",
       "notes": null,
       "originSourcebook": "Saga Edition Core Rulebook",
-      "originTalentNames": null,
-      "talentPublications": [],
-      "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED"
+      "originTalentNames": [
+        "Block",
+        "Deflect",
+        "Lightsaber Defense",
+        "Lightsaber Throw",
+        "Redirect Shot",
+        "Weapon Specialization (Lightsabers)"
+      ],
+      "talentPublications": [
+        {
+          "sourcebook": "Saga Edition Core Rulebook",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Block",
+            "Deflect",
+            "Lightsaber Defense",
+            "Lightsaber Throw",
+            "Redirect Shot",
+            "Weapon Specialization (Lightsabers)"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Block",
+        "Deflect",
+        "Lightsaber Defense",
+        "Lightsaber Throw",
+        "Redirect Shot",
+        "Weapon Specialization (Lightsabers)"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
+      "referenceClassAccess": [
+        "Jedi",
+        "Imperial Knight",
+        "Jedi Knight",
+        "Sith Apprentice"
+      ],
+      "accessPublications": [
+        {
+          "sourcebook": "Saga Edition Core Rulebook",
+          "publicationType": "DIRECT_ACCESS_GRANT",
+          "classes": [
+            "Jedi",
+            "Jedi Knight",
+            "Sith Apprentice"
+          ]
+        }
+      ],
+      "aggregateClassAccess": [
+        "Jedi",
+        "Imperial Knight",
+        "Jedi Knight",
+        "Sith Apprentice"
+      ]
     },
     {
       "canonicalTreeKey": "Saga Edition Core Rulebook|Lightsaber Forms",
@@ -653,7 +1616,7 @@
       "classAccess": [
         "Jedi Knight"
       ],
-      "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
+      "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
       "repoTreeIds": [
         "2bc2572e852832e4"
       ],
@@ -666,10 +1629,70 @@
       "status": "REPO_TREE_PRESENT",
       "notes": null,
       "originSourcebook": "Saga Edition Core Rulebook",
-      "originTalentNames": null,
-      "talentPublications": [],
-      "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED"
+      "originTalentNames": [
+        "Ataru",
+        "Djem So",
+        "Jar'Kai",
+        "Juyo",
+        "Makashi",
+        "Niman",
+        "Shien",
+        "Shii-Cho",
+        "Sokan",
+        "Soresu",
+        "Trakata",
+        "Vaapad"
+      ],
+      "talentPublications": [
+        {
+          "sourcebook": "Saga Edition Core Rulebook",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Ataru",
+            "Djem So",
+            "Jar'Kai",
+            "Juyo",
+            "Makashi",
+            "Niman",
+            "Shien",
+            "Shii-Cho",
+            "Sokan",
+            "Soresu",
+            "Trakata",
+            "Vaapad"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Ataru",
+        "Djem So",
+        "Jar'Kai",
+        "Juyo",
+        "Makashi",
+        "Niman",
+        "Shien",
+        "Shii-Cho",
+        "Sokan",
+        "Soresu",
+        "Trakata",
+        "Vaapad"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
+      "referenceClassAccess": [
+        "Jedi Knight"
+      ],
+      "accessPublications": [
+        {
+          "sourcebook": "Saga Edition Core Rulebook",
+          "publicationType": "DIRECT_ACCESS_GRANT",
+          "classes": [
+            "Jedi Knight"
+          ]
+        }
+      ],
+      "aggregateClassAccess": [
+        "Jedi Knight"
+      ]
     },
     {
       "canonicalTreeKey": "Saga Edition Core Rulebook|Lineage",
@@ -679,7 +1702,7 @@
         "Noble",
         "Corporate Agent"
       ],
-      "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
+      "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
       "repoTreeIds": [
         "b5bb4154688c66ab"
       ],
@@ -693,10 +1716,48 @@
       "status": "REPO_TREE_PRESENT",
       "notes": null,
       "originSourcebook": "Saga Edition Core Rulebook",
-      "originTalentNames": null,
-      "talentPublications": [],
-      "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED"
+      "originTalentNames": [
+        "Connections",
+        "Educated",
+        "Spontaneous Skill",
+        "Wealth"
+      ],
+      "talentPublications": [
+        {
+          "sourcebook": "Saga Edition Core Rulebook",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Connections",
+            "Educated",
+            "Spontaneous Skill",
+            "Wealth"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Connections",
+        "Educated",
+        "Spontaneous Skill",
+        "Wealth"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
+      "referenceClassAccess": [
+        "Noble",
+        "Corporate Agent"
+      ],
+      "accessPublications": [
+        {
+          "sourcebook": "Saga Edition Core Rulebook",
+          "publicationType": "DIRECT_ACCESS_GRANT",
+          "classes": [
+            "Noble"
+          ]
+        }
+      ],
+      "aggregateClassAccess": [
+        "Noble",
+        "Corporate Agent"
+      ]
     },
     {
       "canonicalTreeKey": "Saga Edition Core Rulebook|Mastermind",
@@ -705,7 +1766,7 @@
       "classAccess": [
         "Crime Lord"
       ],
-      "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
+      "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
       "repoTreeIds": [
         "560cc7994b357a0d"
       ],
@@ -718,10 +1779,43 @@
       "status": "REPO_TREE_PRESENT",
       "notes": null,
       "originSourcebook": "Saga Edition Core Rulebook",
-      "originTalentNames": null,
-      "talentPublications": [],
-      "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED"
+      "originTalentNames": [
+        "Attract Minion",
+        "Impel Ally I",
+        "Impel Ally II"
+      ],
+      "talentPublications": [
+        {
+          "sourcebook": "Saga Edition Core Rulebook",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Attract Minion",
+            "Impel Ally I",
+            "Impel Ally II"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Attract Minion",
+        "Impel Ally I",
+        "Impel Ally II"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
+      "referenceClassAccess": [
+        "Crime Lord"
+      ],
+      "accessPublications": [
+        {
+          "sourcebook": "Saga Edition Core Rulebook",
+          "publicationType": "DIRECT_ACCESS_GRANT",
+          "classes": [
+            "Crime Lord"
+          ]
+        }
+      ],
+      "aggregateClassAccess": [
+        "Crime Lord"
+      ]
     },
     {
       "canonicalTreeKey": "Saga Edition Core Rulebook|Military Tactics",
@@ -730,7 +1824,7 @@
       "classAccess": [
         "Officer"
       ],
-      "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
+      "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
       "repoTreeIds": [
         "9253ace716c3e966"
       ],
@@ -743,10 +1837,61 @@
       "status": "REPO_TREE_PRESENT",
       "notes": null,
       "originSourcebook": "Saga Edition Core Rulebook",
-      "originTalentNames": null,
-      "talentPublications": [],
-      "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED"
+      "originTalentNames": [
+        "Assault Tactics",
+        "Deployment Tactics",
+        "Field Tactics",
+        "One for the Team",
+        "Outmaneuver",
+        "Shift Defense I",
+        "Shift Defense II",
+        "Shift Defense III",
+        "Tactical Edge"
+      ],
+      "talentPublications": [
+        {
+          "sourcebook": "Saga Edition Core Rulebook",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Assault Tactics",
+            "Deployment Tactics",
+            "Field Tactics",
+            "One for the Team",
+            "Outmaneuver",
+            "Shift Defense I",
+            "Shift Defense II",
+            "Shift Defense III",
+            "Tactical Edge"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Assault Tactics",
+        "Deployment Tactics",
+        "Field Tactics",
+        "One for the Team",
+        "Outmaneuver",
+        "Shift Defense I",
+        "Shift Defense II",
+        "Shift Defense III",
+        "Tactical Edge"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
+      "referenceClassAccess": [
+        "Officer"
+      ],
+      "accessPublications": [
+        {
+          "sourcebook": "Saga Edition Core Rulebook",
+          "publicationType": "DIRECT_ACCESS_GRANT",
+          "classes": [
+            "Officer"
+          ]
+        }
+      ],
+      "aggregateClassAccess": [
+        "Officer"
+      ]
     },
     {
       "canonicalTreeKey": "Saga Edition Core Rulebook|Misfortune",
@@ -758,7 +1903,7 @@
         "Bounty Hunter",
         "Saboteur"
       ],
-      "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
+      "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
       "repoTreeIds": [
         "67b59e020c1660eb"
       ],
@@ -774,10 +1919,56 @@
       "status": "REPO_TREE_PRESENT",
       "notes": null,
       "originSourcebook": "Saga Edition Core Rulebook",
-      "originTalentNames": null,
-      "talentPublications": [],
-      "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED"
+      "originTalentNames": [
+        "Dastardly Strike",
+        "Disruptive",
+        "Skirmisher",
+        "Sneak Attack",
+        "Walk the Line"
+      ],
+      "talentPublications": [
+        {
+          "sourcebook": "Saga Edition Core Rulebook",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Dastardly Strike",
+            "Disruptive",
+            "Skirmisher",
+            "Sneak Attack",
+            "Walk the Line"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Dastardly Strike",
+        "Disruptive",
+        "Skirmisher",
+        "Sneak Attack",
+        "Walk the Line"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
+      "referenceClassAccess": [
+        "Scoundrel",
+        "Assassin",
+        "Bounty Hunter",
+        "Saboteur"
+      ],
+      "accessPublications": [
+        {
+          "sourcebook": "Saga Edition Core Rulebook",
+          "publicationType": "DIRECT_ACCESS_GRANT",
+          "classes": [
+            "Scoundrel",
+            "Bounty Hunter"
+          ]
+        }
+      ],
+      "aggregateClassAccess": [
+        "Scoundrel",
+        "Assassin",
+        "Bounty Hunter",
+        "Saboteur"
+      ]
     },
     {
       "canonicalTreeKey": "Saga Edition Core Rulebook|Sith",
@@ -787,7 +1978,7 @@
         "Sith Apprentice",
         "Sith Lord"
       ],
-      "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
+      "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
       "repoTreeIds": [
         "d1037bc7a08ea80b"
       ],
@@ -801,10 +1992,55 @@
       "status": "REPO_TREE_PRESENT",
       "notes": null,
       "originSourcebook": "Saga Edition Core Rulebook",
-      "originTalentNames": null,
-      "talentPublications": [],
-      "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED"
+      "originTalentNames": [
+        "Dark Healing",
+        "Dark Scourge",
+        "Dark Side Adept",
+        "Dark Side Master",
+        "Force Deception",
+        "Wicked Strike"
+      ],
+      "talentPublications": [
+        {
+          "sourcebook": "Saga Edition Core Rulebook",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Dark Healing",
+            "Dark Scourge",
+            "Dark Side Adept",
+            "Dark Side Master",
+            "Force Deception",
+            "Wicked Strike"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Dark Healing",
+        "Dark Scourge",
+        "Dark Side Adept",
+        "Dark Side Master",
+        "Force Deception",
+        "Wicked Strike"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
+      "referenceClassAccess": [
+        "Sith Apprentice",
+        "Sith Lord"
+      ],
+      "accessPublications": [
+        {
+          "sourcebook": "Saga Edition Core Rulebook",
+          "publicationType": "DIRECT_ACCESS_GRANT",
+          "classes": [
+            "Sith Apprentice",
+            "Sith Lord"
+          ]
+        }
+      ],
+      "aggregateClassAccess": [
+        "Sith Apprentice",
+        "Sith Lord"
+      ]
     },
     {
       "canonicalTreeKey": "Saga Edition Core Rulebook|Slicer",
@@ -815,7 +2051,7 @@
         "Outlaw",
         "Saboteur"
       ],
-      "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
+      "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
       "repoTreeIds": [
         "64874e65579e4cf4"
       ],
@@ -830,10 +2066,47 @@
       "status": "REPO_TREE_PRESENT",
       "notes": null,
       "originSourcebook": "Saga Edition Core Rulebook",
-      "originTalentNames": null,
-      "talentPublications": [],
-      "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED"
+      "originTalentNames": [
+        "Gimmick",
+        "Master Slicer",
+        "Trace"
+      ],
+      "talentPublications": [
+        {
+          "sourcebook": "Saga Edition Core Rulebook",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Gimmick",
+            "Master Slicer",
+            "Trace"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Gimmick",
+        "Master Slicer",
+        "Trace"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
+      "referenceClassAccess": [
+        "Scoundrel",
+        "Outlaw",
+        "Saboteur"
+      ],
+      "accessPublications": [
+        {
+          "sourcebook": "Saga Edition Core Rulebook",
+          "publicationType": "DIRECT_ACCESS_GRANT",
+          "classes": [
+            "Scoundrel"
+          ]
+        }
+      ],
+      "aggregateClassAccess": [
+        "Scoundrel",
+        "Outlaw",
+        "Saboteur"
+      ]
     },
     {
       "canonicalTreeKey": "Saga Edition Core Rulebook|Spacer",
@@ -844,7 +2117,7 @@
         "Ace Pilot",
         "Master Privateer"
       ],
-      "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
+      "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
       "repoTreeIds": [
         "5ea8c79492d40713"
       ],
@@ -859,10 +2132,51 @@
       "status": "REPO_TREE_PRESENT",
       "notes": null,
       "originSourcebook": "Saga Edition Core Rulebook",
-      "originTalentNames": null,
-      "talentPublications": [],
-      "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED"
+      "originTalentNames": [
+        "Hyperdriven",
+        "Spacehound",
+        "Starship Raider",
+        "Stellar Warrior"
+      ],
+      "talentPublications": [
+        {
+          "sourcebook": "Saga Edition Core Rulebook",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Hyperdriven",
+            "Spacehound",
+            "Starship Raider",
+            "Stellar Warrior"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Hyperdriven",
+        "Spacehound",
+        "Starship Raider",
+        "Stellar Warrior"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
+      "referenceClassAccess": [
+        "Scoundrel",
+        "Ace Pilot",
+        "Master Privateer"
+      ],
+      "accessPublications": [
+        {
+          "sourcebook": "Saga Edition Core Rulebook",
+          "publicationType": "DIRECT_ACCESS_GRANT",
+          "classes": [
+            "Scoundrel",
+            "Ace Pilot"
+          ]
+        }
+      ],
+      "aggregateClassAccess": [
+        "Scoundrel",
+        "Ace Pilot",
+        "Master Privateer"
+      ]
     },
     {
       "canonicalTreeKey": "Saga Edition Core Rulebook|Survivor",
@@ -876,7 +2190,7 @@
         "Pathfinder",
         "Vanguard"
       ],
-      "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
+      "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
       "repoTreeIds": [
         "9b06340233eb3cdd"
       ],
@@ -894,10 +2208,56 @@
       "status": "REPO_TREE_PRESENT",
       "notes": null,
       "originSourcebook": "Saga Edition Core Rulebook",
-      "originTalentNames": null,
-      "talentPublications": [],
-      "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED"
+      "originTalentNames": [
+        "Evasion",
+        "Extreme Effort",
+        "Sprint",
+        "Surefooted"
+      ],
+      "talentPublications": [
+        {
+          "sourcebook": "Saga Edition Core Rulebook",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Evasion",
+            "Extreme Effort",
+            "Sprint",
+            "Surefooted"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Evasion",
+        "Extreme Effort",
+        "Sprint",
+        "Surefooted"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
+      "referenceClassAccess": [
+        "Scout",
+        "Enforcer",
+        "Medic",
+        "Outlaw",
+        "Pathfinder",
+        "Vanguard"
+      ],
+      "accessPublications": [
+        {
+          "sourcebook": "Saga Edition Core Rulebook",
+          "publicationType": "DIRECT_ACCESS_GRANT",
+          "classes": [
+            "Scout"
+          ]
+        }
+      ],
+      "aggregateClassAccess": [
+        "Scout",
+        "Enforcer",
+        "Medic",
+        "Outlaw",
+        "Pathfinder",
+        "Vanguard"
+      ]
     },
     {
       "canonicalTreeKey": "Saga Edition Core Rulebook|Weapon Master",
@@ -906,7 +2266,7 @@
       "classAccess": [
         "Elite Trooper"
       ],
-      "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
+      "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
       "repoTreeIds": [
         "2f720d8b061f9bd0"
       ],
@@ -919,10 +2279,58 @@
       "status": "REPO_TREE_PRESENT",
       "notes": null,
       "originSourcebook": "Saga Edition Core Rulebook",
-      "originTalentNames": null,
-      "talentPublications": [],
-      "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED"
+      "originTalentNames": [
+        "Controlled Burst",
+        "Exotic Weapon Mastery",
+        "Greater Devastating Attack",
+        "Greater Penetrating Attack",
+        "Greater Weapon Focus",
+        "Greater Weapon Specialization",
+        "Multiattack Proficiency (heavy weapons)",
+        "Multiattack Proficiency (rifles)"
+      ],
+      "talentPublications": [
+        {
+          "sourcebook": "Saga Edition Core Rulebook",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Controlled Burst",
+            "Exotic Weapon Mastery",
+            "Greater Devastating Attack",
+            "Greater Penetrating Attack",
+            "Greater Weapon Focus",
+            "Greater Weapon Specialization",
+            "Multiattack Proficiency (heavy weapons)",
+            "Multiattack Proficiency (rifles)"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Controlled Burst",
+        "Exotic Weapon Mastery",
+        "Greater Devastating Attack",
+        "Greater Penetrating Attack",
+        "Greater Weapon Focus",
+        "Greater Weapon Specialization",
+        "Multiattack Proficiency (heavy weapons)",
+        "Multiattack Proficiency (rifles)"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
+      "referenceClassAccess": [
+        "Elite Trooper"
+      ],
+      "accessPublications": [
+        {
+          "sourcebook": "Saga Edition Core Rulebook",
+          "publicationType": "DIRECT_ACCESS_GRANT",
+          "classes": [
+            "Elite Trooper"
+          ]
+        }
+      ],
+      "aggregateClassAccess": [
+        "Elite Trooper"
+      ]
     },
     {
       "canonicalTreeKey": "Saga Edition Core Rulebook|Weapon Specialist",
@@ -932,7 +2340,7 @@
         "Soldier",
         "Melee Duelist"
       ],
-      "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
+      "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
       "repoTreeIds": [
         "2e9265a596cc43f7"
       ],
@@ -946,10 +2354,45 @@
       "status": "REPO_TREE_PRESENT",
       "notes": null,
       "originSourcebook": "Saga Edition Core Rulebook",
-      "originTalentNames": null,
-      "talentPublications": [],
-      "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED"
+      "originTalentNames": [
+        "Devastating Attack",
+        "Penetrating Attack",
+        "Weapon Specialization"
+      ],
+      "talentPublications": [
+        {
+          "sourcebook": "Saga Edition Core Rulebook",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Devastating Attack",
+            "Penetrating Attack",
+            "Weapon Specialization"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Devastating Attack",
+        "Penetrating Attack",
+        "Weapon Specialization"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
+      "referenceClassAccess": [
+        "Soldier",
+        "Melee Duelist"
+      ],
+      "accessPublications": [
+        {
+          "sourcebook": "Saga Edition Core Rulebook",
+          "publicationType": "DIRECT_ACCESS_GRANT",
+          "classes": [
+            "Soldier"
+          ]
+        }
+      ],
+      "aggregateClassAccess": [
+        "Soldier",
+        "Melee Duelist"
+      ]
     },
     {
       "canonicalTreeKey": "Starships of the Galaxy|Naval Officer",
@@ -974,7 +2417,14 @@
       "originTalentNames": null,
       "talentPublications": [],
       "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED"
+      "aggregateMembershipStatus": "UNVERIFIED",
+      "referenceClassAccess": [
+        "Officer"
+      ],
+      "accessPublications": [],
+      "aggregateClassAccess": [
+        "Officer"
+      ]
     },
     {
       "canonicalTreeKey": "Starships of the Galaxy|Outlaw Tech",
@@ -1003,7 +2453,18 @@
       "originTalentNames": null,
       "talentPublications": [],
       "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED"
+      "aggregateMembershipStatus": "UNVERIFIED",
+      "referenceClassAccess": [
+        "Scoundrel",
+        "Improviser",
+        "Military Engineer"
+      ],
+      "accessPublications": [],
+      "aggregateClassAccess": [
+        "Scoundrel",
+        "Improviser",
+        "Military Engineer"
+      ]
     },
     {
       "canonicalTreeKey": "Starships of the Galaxy|Squadron Leader",
@@ -1028,7 +2489,14 @@
       "originTalentNames": null,
       "talentPublications": [],
       "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED"
+      "aggregateMembershipStatus": "UNVERIFIED",
+      "referenceClassAccess": [
+        "Ace Pilot"
+      ],
+      "accessPublications": [],
+      "aggregateClassAccess": [
+        "Ace Pilot"
+      ]
     },
     {
       "canonicalTreeKey": "Threats of the Galaxy|Malkite Poisoner",
@@ -1055,7 +2523,16 @@
       "originTalentNames": null,
       "talentPublications": [],
       "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED"
+      "aggregateMembershipStatus": "UNVERIFIED",
+      "referenceClassAccess": [
+        "Scoundrel",
+        "Assassin"
+      ],
+      "accessPublications": [],
+      "aggregateClassAccess": [
+        "Scoundrel",
+        "Assassin"
+      ]
     },
     {
       "canonicalTreeKey": "Threats of the Galaxy|Master of Teräs Käsi",
@@ -1082,7 +2559,16 @@
       "originTalentNames": null,
       "talentPublications": [],
       "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED"
+      "aggregateMembershipStatus": "UNVERIFIED",
+      "referenceClassAccess": [
+        "Elite Trooper",
+        "Martial Arts Master"
+      ],
+      "accessPublications": [],
+      "aggregateClassAccess": [
+        "Elite Trooper",
+        "Martial Arts Master"
+      ]
     },
     {
       "canonicalTreeKey": "Knights of the Old Republic Campaign Guide|Corporate Power",
@@ -1107,7 +2593,14 @@
       "originTalentNames": null,
       "talentPublications": [],
       "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED"
+      "aggregateMembershipStatus": "UNVERIFIED",
+      "referenceClassAccess": [
+        "Corporate Agent"
+      ],
+      "accessPublications": [],
+      "aggregateClassAccess": [
+        "Corporate Agent"
+      ]
     },
     {
       "canonicalTreeKey": "Knights of the Old Republic Campaign Guide|Fencing",
@@ -1132,7 +2625,14 @@
       "originTalentNames": null,
       "talentPublications": [],
       "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED"
+      "aggregateMembershipStatus": "UNVERIFIED",
+      "referenceClassAccess": [
+        "Noble"
+      ],
+      "accessPublications": [],
+      "aggregateClassAccess": [
+        "Noble"
+      ]
     },
     {
       "canonicalTreeKey": "Knights of the Old Republic Campaign Guide|Gladiatorial Combat",
@@ -1157,7 +2657,14 @@
       "originTalentNames": null,
       "talentPublications": [],
       "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED"
+      "aggregateMembershipStatus": "UNVERIFIED",
+      "referenceClassAccess": [
+        "Gladiator"
+      ],
+      "accessPublications": [],
+      "aggregateClassAccess": [
+        "Gladiator"
+      ]
     },
     {
       "canonicalTreeKey": "Knights of the Old Republic Campaign Guide|Hyperspace Explorer",
@@ -1182,7 +2689,14 @@
       "originTalentNames": null,
       "talentPublications": [],
       "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED"
+      "aggregateMembershipStatus": "UNVERIFIED",
+      "referenceClassAccess": [
+        "Scout"
+      ],
+      "accessPublications": [],
+      "aggregateClassAccess": [
+        "Scout"
+      ]
     },
     {
       "canonicalTreeKey": "Knights of the Old Republic Campaign Guide|Jedi Battlemaster",
@@ -1207,7 +2721,14 @@
       "originTalentNames": null,
       "talentPublications": [],
       "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED"
+      "aggregateMembershipStatus": "UNVERIFIED",
+      "referenceClassAccess": [
+        "Jedi Knight"
+      ],
+      "accessPublications": [],
+      "aggregateClassAccess": [
+        "Jedi Knight"
+      ]
     },
     {
       "canonicalTreeKey": "Knights of the Old Republic Campaign Guide|Jedi Shadow",
@@ -1232,7 +2753,14 @@
       "originTalentNames": null,
       "talentPublications": [],
       "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED"
+      "aggregateMembershipStatus": "UNVERIFIED",
+      "referenceClassAccess": [
+        "Jedi Knight"
+      ],
+      "accessPublications": [],
+      "aggregateClassAccess": [
+        "Jedi Knight"
+      ]
     },
     {
       "canonicalTreeKey": "Knights of the Old Republic Campaign Guide|Jedi Watchman",
@@ -1257,7 +2785,14 @@
       "originTalentNames": null,
       "talentPublications": [],
       "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED"
+      "aggregateMembershipStatus": "UNVERIFIED",
+      "referenceClassAccess": [
+        "Jedi Knight"
+      ],
+      "accessPublications": [],
+      "aggregateClassAccess": [
+        "Jedi Knight"
+      ]
     },
     {
       "canonicalTreeKey": "Knights of the Old Republic Campaign Guide|Mandalorian Warrior",
@@ -1282,7 +2817,14 @@
       "originTalentNames": null,
       "talentPublications": [],
       "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED"
+      "aggregateMembershipStatus": "UNVERIFIED",
+      "referenceClassAccess": [
+        "Elite Trooper"
+      ],
+      "accessPublications": [],
+      "aggregateClassAccess": [
+        "Elite Trooper"
+      ]
     },
     {
       "canonicalTreeKey": "Knights of the Old Republic Campaign Guide|Melee Duelist",
@@ -1307,7 +2849,14 @@
       "originTalentNames": null,
       "talentPublications": [],
       "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED"
+      "aggregateMembershipStatus": "UNVERIFIED",
+      "referenceClassAccess": [
+        "Melee Duelist"
+      ],
+      "accessPublications": [],
+      "aggregateClassAccess": [
+        "Melee Duelist"
+      ]
     },
     {
       "canonicalTreeKey": "Knights of the Old Republic Campaign Guide|Rocket Jumper",
@@ -1332,7 +2881,14 @@
       "originTalentNames": null,
       "talentPublications": [],
       "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED"
+      "aggregateMembershipStatus": "UNVERIFIED",
+      "referenceClassAccess": [
+        "Soldier"
+      ],
+      "accessPublications": [],
+      "aggregateClassAccess": [
+        "Soldier"
+      ]
     },
     {
       "canonicalTreeKey": "Knights of the Old Republic Campaign Guide|Run and Gun",
@@ -1357,7 +2913,14 @@
       "originTalentNames": null,
       "talentPublications": [],
       "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED"
+      "aggregateMembershipStatus": "UNVERIFIED",
+      "referenceClassAccess": [
+        "Scoundrel"
+      ],
+      "accessPublications": [],
+      "aggregateClassAccess": [
+        "Scoundrel"
+      ]
     },
     {
       "canonicalTreeKey": "Force Unleashed Campaign Guide|Advanced Medicine",
@@ -1384,7 +2947,16 @@
       "originTalentNames": null,
       "talentPublications": [],
       "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED"
+      "aggregateMembershipStatus": "UNVERIFIED",
+      "referenceClassAccess": [
+        "Medic",
+        "Shaper"
+      ],
+      "accessPublications": [],
+      "aggregateClassAccess": [
+        "Medic",
+        "Shaper"
+      ]
     },
     {
       "canonicalTreeKey": "Force Unleashed Campaign Guide|Autonomy",
@@ -1409,7 +2981,14 @@
       "originTalentNames": null,
       "talentPublications": [],
       "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED"
+      "aggregateMembershipStatus": "UNVERIFIED",
+      "referenceClassAccess": [
+        "Independent Droid"
+      ],
+      "accessPublications": [],
+      "aggregateClassAccess": [
+        "Independent Droid"
+      ]
     },
     {
       "canonicalTreeKey": "Force Unleashed Campaign Guide|Bothan SpyNet",
@@ -1434,7 +3013,14 @@
       "originTalentNames": null,
       "talentPublications": [],
       "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED"
+      "aggregateMembershipStatus": "UNVERIFIED",
+      "referenceClassAccess": [
+        "Infiltrator"
+      ],
+      "accessPublications": [],
+      "aggregateClassAccess": [
+        "Infiltrator"
+      ]
     },
     {
       "canonicalTreeKey": "Force Unleashed Campaign Guide|Critical Master",
@@ -1459,7 +3045,14 @@
       "originTalentNames": null,
       "talentPublications": [],
       "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED"
+      "aggregateMembershipStatus": "UNVERIFIED",
+      "referenceClassAccess": [
+        "Elite Trooper"
+      ],
+      "accessPublications": [],
+      "aggregateClassAccess": [
+        "Elite Trooper"
+      ]
     },
     {
       "canonicalTreeKey": "Force Unleashed Campaign Guide|Enforcement",
@@ -1484,7 +3077,14 @@
       "originTalentNames": null,
       "talentPublications": [],
       "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED"
+      "aggregateMembershipStatus": "UNVERIFIED",
+      "referenceClassAccess": [
+        "Enforcer"
+      ],
+      "accessPublications": [],
+      "aggregateClassAccess": [
+        "Enforcer"
+      ]
     },
     {
       "canonicalTreeKey": "Force Unleashed Campaign Guide|Ideologue",
@@ -1509,7 +3109,14 @@
       "originTalentNames": null,
       "talentPublications": [],
       "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED"
+      "aggregateMembershipStatus": "UNVERIFIED",
+      "referenceClassAccess": [
+        "Noble"
+      ],
+      "accessPublications": [],
+      "aggregateClassAccess": [
+        "Noble"
+      ]
     },
     {
       "canonicalTreeKey": "Force Unleashed Campaign Guide|Imperial Inquisitor",
@@ -1534,7 +3141,14 @@
       "originTalentNames": null,
       "talentPublications": [],
       "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED"
+      "aggregateMembershipStatus": "UNVERIFIED",
+      "referenceClassAccess": [
+        "Force Adept"
+      ],
+      "accessPublications": [],
+      "aggregateClassAccess": [
+        "Force Adept"
+      ]
     },
     {
       "canonicalTreeKey": "Force Unleashed Campaign Guide|Infiltration",
@@ -1559,7 +3173,14 @@
       "originTalentNames": null,
       "talentPublications": [],
       "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED"
+      "aggregateMembershipStatus": "UNVERIFIED",
+      "referenceClassAccess": [
+        "Infiltrator"
+      ],
+      "accessPublications": [],
+      "aggregateClassAccess": [
+        "Infiltrator"
+      ]
     },
     {
       "canonicalTreeKey": "Force Unleashed Campaign Guide|Mercenary",
@@ -1584,7 +3205,14 @@
       "originTalentNames": null,
       "talentPublications": [],
       "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED"
+      "aggregateMembershipStatus": "UNVERIFIED",
+      "referenceClassAccess": [
+        "Soldier"
+      ],
+      "accessPublications": [],
+      "aggregateClassAccess": [
+        "Soldier"
+      ]
     },
     {
       "canonicalTreeKey": "Force Unleashed Campaign Guide|Privateer",
@@ -1609,7 +3237,14 @@
       "originTalentNames": null,
       "talentPublications": [],
       "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED"
+      "aggregateMembershipStatus": "UNVERIFIED",
+      "referenceClassAccess": [
+        "Master Privateer"
+      ],
+      "accessPublications": [],
+      "aggregateClassAccess": [
+        "Master Privateer"
+      ]
     },
     {
       "canonicalTreeKey": "Force Unleashed Campaign Guide|Sabotage",
@@ -1634,7 +3269,14 @@
       "originTalentNames": null,
       "talentPublications": [],
       "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED"
+      "aggregateMembershipStatus": "UNVERIFIED",
+      "referenceClassAccess": [
+        "Saboteur"
+      ],
+      "accessPublications": [],
+      "aggregateClassAccess": [
+        "Saboteur"
+      ]
     },
     {
       "canonicalTreeKey": "Force Unleashed Campaign Guide|Smuggling",
@@ -1659,7 +3301,14 @@
       "originTalentNames": null,
       "talentPublications": [],
       "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED"
+      "aggregateMembershipStatus": "UNVERIFIED",
+      "referenceClassAccess": [
+        "Scoundrel"
+      ],
+      "accessPublications": [],
+      "aggregateClassAccess": [
+        "Scoundrel"
+      ]
     },
     {
       "canonicalTreeKey": "Force Unleashed Campaign Guide|Specialized Droid",
@@ -1684,7 +3333,14 @@
       "originTalentNames": null,
       "talentPublications": [],
       "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED"
+      "aggregateMembershipStatus": "UNVERIFIED",
+      "referenceClassAccess": [
+        "Independent Droid"
+      ],
+      "accessPublications": [],
+      "aggregateClassAccess": [
+        "Independent Droid"
+      ]
     },
     {
       "canonicalTreeKey": "Force Unleashed Campaign Guide|Spy",
@@ -1711,7 +3367,16 @@
       "originTalentNames": null,
       "talentPublications": [],
       "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED"
+      "aggregateMembershipStatus": "UNVERIFIED",
+      "referenceClassAccess": [
+        "Scout",
+        "Infiltrator"
+      ],
+      "accessPublications": [],
+      "aggregateClassAccess": [
+        "Scout",
+        "Infiltrator"
+      ]
     },
     {
       "canonicalTreeKey": "Force Unleashed Campaign Guide|Turret",
@@ -1736,7 +3401,14 @@
       "originTalentNames": null,
       "talentPublications": [],
       "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED"
+      "aggregateMembershipStatus": "UNVERIFIED",
+      "referenceClassAccess": [
+        "Saboteur"
+      ],
+      "accessPublications": [],
+      "aggregateClassAccess": [
+        "Saboteur"
+      ]
     },
     {
       "canonicalTreeKey": "Scum and Villainy|Assassin",
@@ -1761,7 +3433,14 @@
       "originTalentNames": null,
       "talentPublications": [],
       "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED"
+      "aggregateMembershipStatus": "UNVERIFIED",
+      "referenceClassAccess": [
+        "Assassin"
+      ],
+      "accessPublications": [],
+      "aggregateClassAccess": [
+        "Assassin"
+      ]
     },
     {
       "canonicalTreeKey": "Scum and Villainy|Blockade Runner",
@@ -1786,7 +3465,14 @@
       "originTalentNames": null,
       "talentPublications": [],
       "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED"
+      "aggregateMembershipStatus": "UNVERIFIED",
+      "referenceClassAccess": [
+        "Ace Pilot"
+      ],
+      "accessPublications": [],
+      "aggregateClassAccess": [
+        "Ace Pilot"
+      ]
     },
     {
       "canonicalTreeKey": "Scum and Villainy|Disgrace",
@@ -1813,7 +3499,16 @@
       "originTalentNames": null,
       "talentPublications": [],
       "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED"
+      "aggregateMembershipStatus": "UNVERIFIED",
+      "referenceClassAccess": [
+        "Noble",
+        "Charlatan"
+      ],
+      "accessPublications": [],
+      "aggregateClassAccess": [
+        "Noble",
+        "Charlatan"
+      ]
     },
     {
       "canonicalTreeKey": "Scum and Villainy|Gand Findsman",
@@ -1838,7 +3533,14 @@
       "originTalentNames": null,
       "talentPublications": [],
       "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED"
+      "aggregateMembershipStatus": "UNVERIFIED",
+      "referenceClassAccess": [
+        "Bounty Hunter"
+      ],
+      "accessPublications": [],
+      "aggregateClassAccess": [
+        "Bounty Hunter"
+      ]
     },
     {
       "canonicalTreeKey": "Scum and Villainy|GenoHaradan",
@@ -1886,7 +3588,22 @@
         "Improved Manipulating Strike",
         "Pulling the Strings"
       ],
-      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED"
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
+      "referenceClassAccess": [
+        "Assassin"
+      ],
+      "accessPublications": [
+        {
+          "sourcebook": "Scum and Villainy",
+          "publicationType": "DIRECT_ACCESS_GRANT",
+          "classes": [
+            "Assassin"
+          ]
+        }
+      ],
+      "aggregateClassAccess": [
+        "Assassin"
+      ]
     },
     {
       "canonicalTreeKey": "Scum and Villainy|Outlaw",
@@ -1911,7 +3628,14 @@
       "originTalentNames": null,
       "talentPublications": [],
       "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED"
+      "aggregateMembershipStatus": "UNVERIFIED",
+      "referenceClassAccess": [
+        "Outlaw"
+      ],
+      "accessPublications": [],
+      "aggregateClassAccess": [
+        "Outlaw"
+      ]
     },
     {
       "canonicalTreeKey": "Scum and Villainy|Piracy",
@@ -1936,7 +3660,14 @@
       "originTalentNames": null,
       "talentPublications": [],
       "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED"
+      "aggregateMembershipStatus": "UNVERIFIED",
+      "referenceClassAccess": [
+        "Master Privateer"
+      ],
+      "accessPublications": [],
+      "aggregateClassAccess": [
+        "Master Privateer"
+      ]
     },
     {
       "canonicalTreeKey": "Scum and Villainy|Pistoleer",
@@ -1961,7 +3692,14 @@
       "originTalentNames": null,
       "talentPublications": [],
       "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED"
+      "aggregateMembershipStatus": "UNVERIFIED",
+      "referenceClassAccess": [
+        "Gunslinger"
+      ],
+      "accessPublications": [],
+      "aggregateClassAccess": [
+        "Gunslinger"
+      ]
     },
     {
       "canonicalTreeKey": "Scum and Villainy|Trickery",
@@ -1986,7 +3724,14 @@
       "originTalentNames": null,
       "talentPublications": [],
       "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED"
+      "aggregateMembershipStatus": "UNVERIFIED",
+      "referenceClassAccess": [
+        "Charlatan"
+      ],
+      "accessPublications": [],
+      "aggregateClassAccess": [
+        "Charlatan"
+      ]
     },
     {
       "canonicalTreeKey": "Clone Wars Campaign Guide|Collaborator",
@@ -2011,7 +3756,14 @@
       "originTalentNames": null,
       "talentPublications": [],
       "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED"
+      "aggregateMembershipStatus": "UNVERIFIED",
+      "referenceClassAccess": [
+        "Noble"
+      ],
+      "accessPublications": [],
+      "aggregateClassAccess": [
+        "Noble"
+      ]
     },
     {
       "canonicalTreeKey": "Clone Wars Campaign Guide|Droid Commander",
@@ -2036,7 +3788,14 @@
       "originTalentNames": null,
       "talentPublications": [],
       "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED"
+      "aggregateMembershipStatus": "UNVERIFIED",
+      "referenceClassAccess": [
+        "Droid Commander"
+      ],
+      "accessPublications": [],
+      "aggregateClassAccess": [
+        "Droid Commander"
+      ]
     },
     {
       "canonicalTreeKey": "Clone Wars Campaign Guide|Jedi Archivist",
@@ -2061,7 +3820,14 @@
       "originTalentNames": null,
       "talentPublications": [],
       "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED"
+      "aggregateMembershipStatus": "UNVERIFIED",
+      "referenceClassAccess": [
+        "Jedi Knight"
+      ],
+      "accessPublications": [],
+      "aggregateClassAccess": [
+        "Jedi Knight"
+      ]
     },
     {
       "canonicalTreeKey": "Clone Wars Campaign Guide|Jedi Healer",
@@ -2086,7 +3852,14 @@
       "originTalentNames": null,
       "talentPublications": [],
       "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED"
+      "aggregateMembershipStatus": "UNVERIFIED",
+      "referenceClassAccess": [
+        "Jedi Knight"
+      ],
+      "accessPublications": [],
+      "aggregateClassAccess": [
+        "Jedi Knight"
+      ]
     },
     {
       "canonicalTreeKey": "Clone Wars Campaign Guide|Loyal Protector",
@@ -2111,7 +3884,14 @@
       "originTalentNames": null,
       "talentPublications": [],
       "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED"
+      "aggregateMembershipStatus": "UNVERIFIED",
+      "referenceClassAccess": [
+        "Noble"
+      ],
+      "accessPublications": [],
+      "aggregateClassAccess": [
+        "Noble"
+      ]
     },
     {
       "canonicalTreeKey": "Clone Wars Campaign Guide|Melee Specialist",
@@ -2136,7 +3916,14 @@
       "originTalentNames": null,
       "talentPublications": [],
       "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED"
+      "aggregateMembershipStatus": "UNVERIFIED",
+      "referenceClassAccess": [
+        "Elite Trooper"
+      ],
+      "accessPublications": [],
+      "aggregateClassAccess": [
+        "Elite Trooper"
+      ]
     },
     {
       "canonicalTreeKey": "Clone Wars Campaign Guide|Military Engineer",
@@ -2161,7 +3948,14 @@
       "originTalentNames": null,
       "talentPublications": [],
       "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED"
+      "aggregateMembershipStatus": "UNVERIFIED",
+      "referenceClassAccess": [
+        "Military Engineer"
+      ],
+      "accessPublications": [],
+      "aggregateClassAccess": [
+        "Military Engineer"
+      ]
     },
     {
       "canonicalTreeKey": "Clone Wars Campaign Guide|Opportunist",
@@ -2186,7 +3980,14 @@
       "originTalentNames": null,
       "talentPublications": [],
       "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED"
+      "aggregateMembershipStatus": "UNVERIFIED",
+      "referenceClassAccess": [
+        "Scoundrel"
+      ],
+      "accessPublications": [],
+      "aggregateClassAccess": [
+        "Scoundrel"
+      ]
     },
     {
       "canonicalTreeKey": "Clone Wars Campaign Guide|Reconnaissance",
@@ -2211,7 +4012,14 @@
       "originTalentNames": null,
       "talentPublications": [],
       "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED"
+      "aggregateMembershipStatus": "UNVERIFIED",
+      "referenceClassAccess": [
+        "Scout"
+      ],
+      "accessPublications": [],
+      "aggregateClassAccess": [
+        "Scout"
+      ]
     },
     {
       "canonicalTreeKey": "Clone Wars Campaign Guide|Republic Commando",
@@ -2236,7 +4044,14 @@
       "originTalentNames": null,
       "talentPublications": [],
       "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED"
+      "aggregateMembershipStatus": "UNVERIFIED",
+      "referenceClassAccess": [
+        "Elite Trooper"
+      ],
+      "accessPublications": [],
+      "aggregateClassAccess": [
+        "Elite Trooper"
+      ]
     },
     {
       "canonicalTreeKey": "Clone Wars Campaign Guide|Squad Leader",
@@ -2261,7 +4076,14 @@
       "originTalentNames": null,
       "talentPublications": [],
       "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED"
+      "aggregateMembershipStatus": "UNVERIFIED",
+      "referenceClassAccess": [
+        "Soldier"
+      ],
+      "accessPublications": [],
+      "aggregateClassAccess": [
+        "Soldier"
+      ]
     },
     {
       "canonicalTreeKey": "Clone Wars Campaign Guide|Surveillance",
@@ -2286,7 +4108,14 @@
       "originTalentNames": null,
       "talentPublications": [],
       "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED"
+      "aggregateMembershipStatus": "UNVERIFIED",
+      "referenceClassAccess": [
+        "Scout"
+      ],
+      "accessPublications": [],
+      "aggregateClassAccess": [
+        "Scout"
+      ]
     },
     {
       "canonicalTreeKey": "Clone Wars Campaign Guide|Trooper",
@@ -2311,7 +4140,14 @@
       "originTalentNames": null,
       "talentPublications": [],
       "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED"
+      "aggregateMembershipStatus": "UNVERIFIED",
+      "referenceClassAccess": [
+        "Soldier"
+      ],
+      "accessPublications": [],
+      "aggregateClassAccess": [
+        "Soldier"
+      ]
     },
     {
       "canonicalTreeKey": "Clone Wars Campaign Guide|Vanguard",
@@ -2336,7 +4172,14 @@
       "originTalentNames": null,
       "talentPublications": [],
       "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED"
+      "aggregateMembershipStatus": "UNVERIFIED",
+      "referenceClassAccess": [
+        "Vanguard"
+      ],
+      "accessPublications": [],
+      "aggregateClassAccess": [
+        "Vanguard"
+      ]
     },
     {
       "canonicalTreeKey": "Legacy Era Campaign Guide|Brute Squad",
@@ -2361,7 +4204,14 @@
       "originTalentNames": null,
       "talentPublications": [],
       "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED"
+      "aggregateMembershipStatus": "UNVERIFIED",
+      "referenceClassAccess": [
+        "Soldier"
+      ],
+      "accessPublications": [],
+      "aggregateClassAccess": [
+        "Soldier"
+      ]
     },
     {
       "canonicalTreeKey": "Legacy Era Campaign Guide|Carbineer",
@@ -2386,7 +4236,14 @@
       "originTalentNames": null,
       "talentPublications": [],
       "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED"
+      "aggregateMembershipStatus": "UNVERIFIED",
+      "referenceClassAccess": [
+        "Gunslinger"
+      ],
+      "accessPublications": [],
+      "aggregateClassAccess": [
+        "Gunslinger"
+      ]
     },
     {
       "canonicalTreeKey": "Legacy Era Campaign Guide|Force Hunter",
@@ -2411,7 +4268,14 @@
       "originTalentNames": null,
       "talentPublications": [],
       "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED"
+      "aggregateMembershipStatus": "UNVERIFIED",
+      "referenceClassAccess": [
+        "Bounty Hunter"
+      ],
+      "accessPublications": [],
+      "aggregateClassAccess": [
+        "Bounty Hunter"
+      ]
     },
     {
       "canonicalTreeKey": "Legacy Era Campaign Guide|Fugitive Commander",
@@ -2436,7 +4300,14 @@
       "originTalentNames": null,
       "talentPublications": [],
       "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED"
+      "aggregateMembershipStatus": "UNVERIFIED",
+      "referenceClassAccess": [
+        "Officer"
+      ],
+      "accessPublications": [],
+      "aggregateClassAccess": [
+        "Officer"
+      ]
     },
     {
       "canonicalTreeKey": "Legacy Era Campaign Guide|Implant",
@@ -2461,7 +4332,14 @@
       "originTalentNames": null,
       "talentPublications": [],
       "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED"
+      "aggregateMembershipStatus": "UNVERIFIED",
+      "referenceClassAccess": [
+        "Shaper"
+      ],
+      "accessPublications": [],
+      "aggregateClassAccess": [
+        "Shaper"
+      ]
     },
     {
       "canonicalTreeKey": "Legacy Era Campaign Guide|Jedi Refugee",
@@ -2486,7 +4364,14 @@
       "originTalentNames": null,
       "talentPublications": [],
       "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED"
+      "aggregateMembershipStatus": "UNVERIFIED",
+      "referenceClassAccess": [
+        "Jedi Knight"
+      ],
+      "accessPublications": [],
+      "aggregateClassAccess": [
+        "Jedi Knight"
+      ]
     },
     {
       "canonicalTreeKey": "Legacy Era Campaign Guide|Knight's Armor",
@@ -2511,7 +4396,14 @@
       "originTalentNames": null,
       "talentPublications": [],
       "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED"
+      "aggregateMembershipStatus": "UNVERIFIED",
+      "referenceClassAccess": [
+        "Imperial Knight"
+      ],
+      "accessPublications": [],
+      "aggregateClassAccess": [
+        "Imperial Knight"
+      ]
     },
     {
       "canonicalTreeKey": "Legacy Era Campaign Guide|Knight's Resolve",
@@ -2536,7 +4428,14 @@
       "originTalentNames": null,
       "talentPublications": [],
       "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED"
+      "aggregateMembershipStatus": "UNVERIFIED",
+      "referenceClassAccess": [
+        "Imperial Knight"
+      ],
+      "accessPublications": [],
+      "aggregateClassAccess": [
+        "Imperial Knight"
+      ]
     },
     {
       "canonicalTreeKey": "Legacy Era Campaign Guide|Protection",
@@ -2561,7 +4460,14 @@
       "originTalentNames": null,
       "talentPublications": [],
       "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED"
+      "aggregateMembershipStatus": "UNVERIFIED",
+      "referenceClassAccess": [
+        "Elite Trooper"
+      ],
+      "accessPublications": [],
+      "aggregateClassAccess": [
+        "Elite Trooper"
+      ]
     },
     {
       "canonicalTreeKey": "Legacy Era Campaign Guide|Provocateur",
@@ -2614,7 +4520,25 @@
         "Stolen Advantage",
         "True Betrayal"
       ],
-      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED"
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
+      "referenceClassAccess": [
+        "Noble",
+        "Charlatan"
+      ],
+      "accessPublications": [
+        {
+          "sourcebook": "Legacy Era Campaign Guide",
+          "publicationType": "DIRECT_ACCESS_GRANT",
+          "classes": [
+            "Noble",
+            "Charlatan"
+          ]
+        }
+      ],
+      "aggregateClassAccess": [
+        "Noble",
+        "Charlatan"
+      ]
     },
     {
       "canonicalTreeKey": "Legacy Era Campaign Guide|Shaper",
@@ -2639,7 +4563,14 @@
       "originTalentNames": null,
       "talentPublications": [],
       "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED"
+      "aggregateMembershipStatus": "UNVERIFIED",
+      "referenceClassAccess": [
+        "Shaper"
+      ],
+      "accessPublications": [],
+      "aggregateClassAccess": [
+        "Shaper"
+      ]
     },
     {
       "canonicalTreeKey": "Legacy Era Campaign Guide|Sith Commander",
@@ -2664,7 +4595,14 @@
       "originTalentNames": null,
       "talentPublications": [],
       "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED"
+      "aggregateMembershipStatus": "UNVERIFIED",
+      "referenceClassAccess": [
+        "Sith Apprentice"
+      ],
+      "accessPublications": [],
+      "aggregateClassAccess": [
+        "Sith Apprentice"
+      ]
     },
     {
       "canonicalTreeKey": "Legacy Era Campaign Guide|Versatility",
@@ -2689,7 +4627,14 @@
       "originTalentNames": null,
       "talentPublications": [],
       "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED"
+      "aggregateMembershipStatus": "UNVERIFIED",
+      "referenceClassAccess": [
+        "Scout"
+      ],
+      "accessPublications": [],
+      "aggregateClassAccess": [
+        "Scout"
+      ]
     },
     {
       "canonicalTreeKey": "Legacy Era Campaign Guide|Yuuzhan Vong Biotech",
@@ -2714,7 +4659,14 @@
       "originTalentNames": null,
       "talentPublications": [],
       "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED"
+      "aggregateMembershipStatus": "UNVERIFIED",
+      "referenceClassAccess": [
+        "Scoundrel"
+      ],
+      "accessPublications": [],
+      "aggregateClassAccess": [
+        "Scoundrel"
+      ]
     },
     {
       "canonicalTreeKey": "Jedi Academy Training Manual|Beastwarden",
@@ -2739,7 +4691,14 @@
       "originTalentNames": null,
       "talentPublications": [],
       "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED"
+      "aggregateMembershipStatus": "UNVERIFIED",
+      "referenceClassAccess": [
+        "Force Adept"
+      ],
+      "accessPublications": [],
+      "aggregateClassAccess": [
+        "Force Adept"
+      ]
     },
     {
       "canonicalTreeKey": "Jedi Academy Training Manual|Jedi Artisan",
@@ -2764,7 +4723,14 @@
       "originTalentNames": null,
       "talentPublications": [],
       "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED"
+      "aggregateMembershipStatus": "UNVERIFIED",
+      "referenceClassAccess": [
+        "Jedi Knight"
+      ],
+      "accessPublications": [],
+      "aggregateClassAccess": [
+        "Jedi Knight"
+      ]
     },
     {
       "canonicalTreeKey": "Jedi Academy Training Manual|Jedi Instructor",
@@ -2789,7 +4755,14 @@
       "originTalentNames": null,
       "talentPublications": [],
       "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED"
+      "aggregateMembershipStatus": "UNVERIFIED",
+      "referenceClassAccess": [
+        "Jedi Knight"
+      ],
+      "accessPublications": [],
+      "aggregateClassAccess": [
+        "Jedi Knight"
+      ]
     },
     {
       "canonicalTreeKey": "Jedi Academy Training Manual|Jedi Investigator",
@@ -2814,7 +4787,14 @@
       "originTalentNames": null,
       "talentPublications": [],
       "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED"
+      "aggregateMembershipStatus": "UNVERIFIED",
+      "referenceClassAccess": [
+        "Jedi Knight"
+      ],
+      "accessPublications": [],
+      "aggregateClassAccess": [
+        "Jedi Knight"
+      ]
     },
     {
       "canonicalTreeKey": "Jedi Academy Training Manual|Jedi Weapon Master",
@@ -2839,7 +4819,14 @@
       "originTalentNames": null,
       "talentPublications": [],
       "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED"
+      "aggregateMembershipStatus": "UNVERIFIED",
+      "referenceClassAccess": [
+        "Jedi Knight"
+      ],
+      "accessPublications": [],
+      "aggregateClassAccess": [
+        "Jedi Knight"
+      ]
     },
     {
       "canonicalTreeKey": "Jedi Academy Training Manual|Mystic",
@@ -2864,7 +4851,14 @@
       "originTalentNames": null,
       "talentPublications": [],
       "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED"
+      "aggregateMembershipStatus": "UNVERIFIED",
+      "referenceClassAccess": [
+        "Force Adept"
+      ],
+      "accessPublications": [],
+      "aggregateClassAccess": [
+        "Force Adept"
+      ]
     },
     {
       "canonicalTreeKey": "Jedi Academy Training Manual|Sith Alchemy",
@@ -2889,7 +4883,14 @@
       "originTalentNames": null,
       "talentPublications": [],
       "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED"
+      "aggregateMembershipStatus": "UNVERIFIED",
+      "referenceClassAccess": [
+        "Sith Apprentice"
+      ],
+      "accessPublications": [],
+      "aggregateClassAccess": [
+        "Sith Apprentice"
+      ]
     },
     {
       "canonicalTreeKey": "Jedi Academy Training Manual|Telepath",
@@ -2914,7 +4915,14 @@
       "originTalentNames": null,
       "talentPublications": [],
       "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED"
+      "aggregateMembershipStatus": "UNVERIFIED",
+      "referenceClassAccess": [
+        "Force Adept"
+      ],
+      "accessPublications": [],
+      "aggregateClassAccess": [
+        "Force Adept"
+      ]
     },
     {
       "canonicalTreeKey": "Rebellion Era Campaign Guide|Ambusher",
@@ -2966,7 +4974,22 @@
         "Perceptive Ambusher",
         "Spring the Trap"
       ],
-      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED"
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
+      "referenceClassAccess": [
+        "Soldier"
+      ],
+      "accessPublications": [
+        {
+          "sourcebook": "Rebellion Era Campaign Guide",
+          "publicationType": "DIRECT_ACCESS_GRANT",
+          "classes": [
+            "Soldier"
+          ]
+        }
+      ],
+      "aggregateClassAccess": [
+        "Soldier"
+      ]
     },
     {
       "canonicalTreeKey": "Rebellion Era Campaign Guide|Gambling Leader",
@@ -3015,7 +5038,22 @@
         "Lead From the Front",
         "Luck Favors the Bold"
       ],
-      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED"
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
+      "referenceClassAccess": [
+        "Noble"
+      ],
+      "accessPublications": [
+        {
+          "sourcebook": "Rebellion Era Campaign Guide",
+          "publicationType": "DIRECT_ACCESS_GRANT",
+          "classes": [
+            "Noble"
+          ]
+        }
+      ],
+      "aggregateClassAccess": [
+        "Noble"
+      ]
     },
     {
       "canonicalTreeKey": "Rebellion Era Campaign Guide|Improviser",
@@ -3064,7 +5102,22 @@
         "Improved Jury-Rig",
         "Improvised Device"
       ],
-      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED"
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
+      "referenceClassAccess": [
+        "Improviser"
+      ],
+      "accessPublications": [
+        {
+          "sourcebook": "Rebellion Era Campaign Guide",
+          "publicationType": "DIRECT_ACCESS_GRANT",
+          "classes": [
+            "Improviser"
+          ]
+        }
+      ],
+      "aggregateClassAccess": [
+        "Improviser"
+      ]
     },
     {
       "canonicalTreeKey": "Rebellion Era Campaign Guide|Pathfinder",
@@ -3128,7 +5181,22 @@
         "Safe Zone",
         "Zone of Recuperation"
       ],
-      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED"
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
+      "referenceClassAccess": [
+        "Pathfinder"
+      ],
+      "accessPublications": [
+        {
+          "sourcebook": "Rebellion Era Campaign Guide",
+          "publicationType": "DIRECT_ACCESS_GRANT",
+          "classes": [
+            "Pathfinder"
+          ]
+        }
+      ],
+      "aggregateClassAccess": [
+        "Pathfinder"
+      ]
     },
     {
       "canonicalTreeKey": "Rebellion Era Campaign Guide|Procurement",
@@ -3177,7 +5245,22 @@
         "Only the Finest",
         "Right Gear for the Job"
       ],
-      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED"
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
+      "referenceClassAccess": [
+        "Improviser"
+      ],
+      "accessPublications": [
+        {
+          "sourcebook": "Rebellion Era Campaign Guide",
+          "publicationType": "DIRECT_ACCESS_GRANT",
+          "classes": [
+            "Improviser"
+          ]
+        }
+      ],
+      "aggregateClassAccess": [
+        "Improviser"
+      ]
     },
     {
       "canonicalTreeKey": "Rebellion Era Campaign Guide|Rebel Recruiter",
@@ -3226,7 +5309,22 @@
         "Stay in the Fight",
         "Team Recruiting"
       ],
-      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED"
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
+      "referenceClassAccess": [
+        "Officer"
+      ],
+      "accessPublications": [
+        {
+          "sourcebook": "Rebellion Era Campaign Guide",
+          "publicationType": "DIRECT_ACCESS_GRANT",
+          "classes": [
+            "Officer"
+          ]
+        }
+      ],
+      "aggregateClassAccess": [
+        "Officer"
+      ]
     },
     {
       "canonicalTreeKey": "Rebellion Era Campaign Guide|Recklessness",
@@ -3275,7 +5373,22 @@
         "Risk for Reward",
         "Trick Step"
       ],
-      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED"
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
+      "referenceClassAccess": [
+        "Scoundrel"
+      ],
+      "accessPublications": [
+        {
+          "sourcebook": "Rebellion Era Campaign Guide",
+          "publicationType": "DIRECT_ACCESS_GRANT",
+          "classes": [
+            "Scoundrel"
+          ]
+        }
+      ],
+      "aggregateClassAccess": [
+        "Scoundrel"
+      ]
     },
     {
       "canonicalTreeKey": "Rebellion Era Campaign Guide|Unpredictable",
@@ -3324,7 +5437,22 @@
         "Second Strike",
         "Swerve"
       ],
-      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED"
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
+      "referenceClassAccess": [
+        "Scout"
+      ],
+      "accessPublications": [
+        {
+          "sourcebook": "Rebellion Era Campaign Guide",
+          "publicationType": "DIRECT_ACCESS_GRANT",
+          "classes": [
+            "Scout"
+          ]
+        }
+      ],
+      "aggregateClassAccess": [
+        "Scout"
+      ]
     },
     {
       "canonicalTreeKey": "Rebellion Era Campaign Guide|Wingman",
@@ -3373,7 +5501,22 @@
         "Run Interference",
         "Wingman Retribution"
       ],
-      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED"
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
+      "referenceClassAccess": [
+        "Ace Pilot"
+      ],
+      "accessPublications": [
+        {
+          "sourcebook": "Rebellion Era Campaign Guide",
+          "publicationType": "DIRECT_ACCESS_GRANT",
+          "classes": [
+            "Ace Pilot"
+          ]
+        }
+      ],
+      "aggregateClassAccess": [
+        "Ace Pilot"
+      ]
     },
     {
       "canonicalTreeKey": "Galaxy at War|Advance Patrol",
@@ -3417,7 +5560,22 @@
         "Trailblazer",
         "Watchful Step"
       ],
-      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED"
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
+      "referenceClassAccess": [
+        "Scout"
+      ],
+      "accessPublications": [
+        {
+          "sourcebook": "Galaxy at War",
+          "publicationType": "DIRECT_ACCESS_GRANT",
+          "classes": [
+            "Scout"
+          ]
+        }
+      ],
+      "aggregateClassAccess": [
+        "Scout"
+      ]
     },
     {
       "canonicalTreeKey": "Galaxy at War|Anticipation",
@@ -3464,7 +5622,22 @@
         "Heavy Fire Zone",
         "Summon Aid"
       ],
-      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED"
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
+      "referenceClassAccess": [
+        "Noble"
+      ],
+      "accessPublications": [
+        {
+          "sourcebook": "Galaxy at War",
+          "publicationType": "DIRECT_ACCESS_GRANT",
+          "classes": [
+            "Noble"
+          ]
+        }
+      ],
+      "aggregateClassAccess": [
+        "Noble"
+      ]
     },
     {
       "canonicalTreeKey": "Galaxy at War|Brigand",
@@ -3508,7 +5681,22 @@
         "Quick Strike",
         "Sly Combatant"
       ],
-      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED"
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
+      "referenceClassAccess": [
+        "Scoundrel"
+      ],
+      "accessPublications": [
+        {
+          "sourcebook": "Galaxy at War",
+          "publicationType": "DIRECT_ACCESS_GRANT",
+          "classes": [
+            "Scoundrel"
+          ]
+        }
+      ],
+      "aggregateClassAccess": [
+        "Scoundrel"
+      ]
     },
     {
       "canonicalTreeKey": "Galaxy at War|Martial Arts Forms",
@@ -3557,7 +5745,22 @@
         "Tae-Jitsu Expertise",
         "Wrruushi Expertise"
       ],
-      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED"
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
+      "referenceClassAccess": [
+        "Martial Arts Master"
+      ],
+      "accessPublications": [
+        {
+          "sourcebook": "Galaxy at War",
+          "publicationType": "DIRECT_ACCESS_GRANT",
+          "classes": [
+            "Martial Arts Master"
+          ]
+        }
+      ],
+      "aggregateClassAccess": [
+        "Martial Arts Master"
+      ]
     },
     {
       "canonicalTreeKey": "Galaxy at War|Sharpshooter",
@@ -3604,7 +5807,22 @@
         "Harrying Shot",
         "Precision Shot"
       ],
-      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED"
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
+      "referenceClassAccess": [
+        "Gunslinger"
+      ],
+      "accessPublications": [
+        {
+          "sourcebook": "Galaxy at War",
+          "publicationType": "DIRECT_ACCESS_GRANT",
+          "classes": [
+            "Gunslinger"
+          ]
+        }
+      ],
+      "aggregateClassAccess": [
+        "Gunslinger"
+      ]
     },
     {
       "canonicalTreeKey": "Galaxy at War|Shockboxer",
@@ -3651,7 +5869,22 @@
         "Stinging Jab",
         "Stunning Shockboxer"
       ],
-      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED"
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
+      "referenceClassAccess": [
+        "Soldier"
+      ],
+      "accessPublications": [
+        {
+          "sourcebook": "Galaxy at War",
+          "publicationType": "DIRECT_ACCESS_GRANT",
+          "classes": [
+            "Soldier"
+          ]
+        }
+      ],
+      "aggregateClassAccess": [
+        "Soldier"
+      ]
     },
     {
       "canonicalTreeKey": "Galaxy at War|Squad Leader",
@@ -3694,7 +5927,22 @@
         "Hold Steady",
         "Search and Destroy"
       ],
-      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED"
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
+      "referenceClassAccess": [
+        "Elite Trooper"
+      ],
+      "accessPublications": [
+        {
+          "sourcebook": "Galaxy at War",
+          "publicationType": "DIRECT_ACCESS_GRANT",
+          "classes": [
+            "Elite Trooper"
+          ]
+        }
+      ],
+      "aggregateClassAccess": [
+        "Elite Trooper"
+      ]
     },
     {
       "canonicalTreeKey": "Galaxy at War|Unarmed Mastery",
@@ -3734,7 +5982,22 @@
         "Punishing Strike",
         "Tough as Durasteel"
       ],
-      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED"
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
+      "referenceClassAccess": [
+        "Martial Arts Master"
+      ],
+      "accessPublications": [
+        {
+          "sourcebook": "Galaxy at War",
+          "publicationType": "DIRECT_ACCESS_GRANT",
+          "classes": [
+            "Martial Arts Master"
+          ]
+        }
+      ],
+      "aggregateClassAccess": [
+        "Martial Arts Master"
+      ]
     },
     {
       "canonicalTreeKey": "Galaxy at War|Veteran",
@@ -3781,7 +6044,22 @@
         "Seen It All",
         "Tested in Battle"
       ],
-      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED"
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
+      "referenceClassAccess": [
+        "Soldier"
+      ],
+      "accessPublications": [
+        {
+          "sourcebook": "Galaxy at War",
+          "publicationType": "DIRECT_ACCESS_GRANT",
+          "classes": [
+            "Soldier"
+          ]
+        }
+      ],
+      "aggregateClassAccess": [
+        "Soldier"
+      ]
     },
     {
       "canonicalTreeKey": "Scavenger's Guide to Droids|Elite Droid",
@@ -3806,7 +6084,14 @@
       "originTalentNames": null,
       "talentPublications": [],
       "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED"
+      "aggregateMembershipStatus": "UNVERIFIED",
+      "referenceClassAccess": [
+        "Independent Droid"
+      ],
+      "accessPublications": [],
+      "aggregateClassAccess": [
+        "Independent Droid"
+      ]
     },
     {
       "canonicalTreeKey": "Scavenger's Guide to Droids|Override",
@@ -3850,7 +6135,22 @@
         "Full Control",
         "Remote Attack"
       ],
-      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED"
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
+      "referenceClassAccess": [
+        "Droid Commander"
+      ],
+      "accessPublications": [
+        {
+          "sourcebook": "Scavenger's Guide to Droids",
+          "publicationType": "DIRECT_ACCESS_GRANT",
+          "classes": [
+            "Droid Commander"
+          ]
+        }
+      ],
+      "aggregateClassAccess": [
+        "Droid Commander"
+      ]
     },
     {
       "canonicalTreeKey": "Galaxy of Intrigue|Espionage",
@@ -3893,7 +6193,22 @@
         "Reactive Stealth",
         "Sizing Up"
       ],
-      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED"
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
+      "referenceClassAccess": [
+        "Scout"
+      ],
+      "accessPublications": [
+        {
+          "sourcebook": "Galaxy of Intrigue",
+          "publicationType": "DIRECT_ACCESS_GRANT",
+          "classes": [
+            "Scout"
+          ]
+        }
+      ],
+      "aggregateClassAccess": [
+        "Scout"
+      ]
     },
     {
       "canonicalTreeKey": "Galaxy of Intrigue|Master of Intrigue",
@@ -3943,7 +6258,22 @@
         "Master Manipulator",
         "Retaliation"
       ],
-      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED"
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
+      "referenceClassAccess": [
+        "Noble"
+      ],
+      "accessPublications": [
+        {
+          "sourcebook": "Galaxy of Intrigue",
+          "publicationType": "DIRECT_ACCESS_GRANT",
+          "classes": [
+            "Noble"
+          ]
+        }
+      ],
+      "aggregateClassAccess": [
+        "Noble"
+      ]
     },
     {
       "canonicalTreeKey": "Galaxy of Intrigue|Revolutionary",
@@ -3987,7 +6317,22 @@
         "Make an Example",
         "Revolutionary Rhetoric"
       ],
-      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED"
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
+      "referenceClassAccess": [
+        "Scoundrel"
+      ],
+      "accessPublications": [
+        {
+          "sourcebook": "Galaxy of Intrigue",
+          "publicationType": "DIRECT_ACCESS_GRANT",
+          "classes": [
+            "Scoundrel"
+          ]
+        }
+      ],
+      "aggregateClassAccess": [
+        "Scoundrel"
+      ]
     },
     {
       "canonicalTreeKey": "Galaxy of Intrigue|Skill Challenge",
@@ -4027,7 +6372,22 @@
         "Learn from Mistakes",
         "Try Your Luck"
       ],
-      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED"
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
+      "referenceClassAccess": [
+        "Noble"
+      ],
+      "accessPublications": [
+        {
+          "sourcebook": "Galaxy of Intrigue",
+          "publicationType": "DIRECT_ACCESS_GRANT",
+          "classes": [
+            "Noble"
+          ]
+        }
+      ],
+      "aggregateClassAccess": [
+        "Noble"
+      ]
     },
     {
       "canonicalTreeKey": "Galaxy of Intrigue|Superior Skills",
@@ -4052,7 +6412,14 @@
       "originTalentNames": null,
       "talentPublications": [],
       "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED"
+      "aggregateMembershipStatus": "UNVERIFIED",
+      "referenceClassAccess": [
+        "Noble"
+      ],
+      "accessPublications": [],
+      "aggregateClassAccess": [
+        "Noble"
+      ]
     },
     {
       "canonicalTreeKey": "Unknown Regions|Exile",
@@ -4105,7 +6472,22 @@
         "Rant",
         "Self-Reliant"
       ],
-      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED"
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
+      "referenceClassAccess": [
+        "Noble"
+      ],
+      "accessPublications": [
+        {
+          "sourcebook": "Unknown Regions",
+          "publicationType": "DIRECT_ACCESS_GRANT",
+          "classes": [
+            "Noble"
+          ]
+        }
+      ],
+      "aggregateClassAccess": [
+        "Noble"
+      ]
     },
     {
       "canonicalTreeKey": "Unknown Regions|Master Scout",
@@ -4152,7 +6534,22 @@
         "Surprisingly Quick",
         "Tripwire"
       ],
-      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED"
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
+      "referenceClassAccess": [
+        "Scout"
+      ],
+      "accessPublications": [
+        {
+          "sourcebook": "Unknown Regions",
+          "publicationType": "DIRECT_ACCESS_GRANT",
+          "classes": [
+            "Scout"
+          ]
+        }
+      ],
+      "aggregateClassAccess": [
+        "Scout"
+      ]
     },
     {
       "canonicalTreeKey": "Unknown Regions|Mobile Scout",
@@ -4196,7 +6593,22 @@
         "Terrain Guidance",
         "Mechanized Rider"
       ],
-      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED"
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
+      "referenceClassAccess": [
+        "Scout"
+      ],
+      "accessPublications": [
+        {
+          "sourcebook": "Unknown Regions",
+          "publicationType": "DIRECT_ACCESS_GRANT",
+          "classes": [
+            "Scout"
+          ]
+        }
+      ],
+      "aggregateClassAccess": [
+        "Scout"
+      ]
     },
     {
       "canonicalTreeKey": "Unknown Regions|Outsider",
@@ -4240,7 +6652,22 @@
         "Outsider's Query",
         "Wary"
       ],
-      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED"
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
+      "referenceClassAccess": [
+        "Scoundrel"
+      ],
+      "accessPublications": [
+        {
+          "sourcebook": "Unknown Regions",
+          "publicationType": "DIRECT_ACCESS_GRANT",
+          "classes": [
+            "Scoundrel"
+          ]
+        }
+      ],
+      "aggregateClassAccess": [
+        "Scoundrel"
+      ]
     },
     {
       "canonicalTreeKey": "Unknown Regions|Warrior",
@@ -4293,7 +6720,22 @@
         "Warrior's Awareness",
         "Warrior's Determination"
       ],
-      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED"
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
+      "referenceClassAccess": [
+        "Soldier"
+      ],
+      "accessPublications": [
+        {
+          "sourcebook": "Unknown Regions",
+          "publicationType": "DIRECT_ACCESS_GRANT",
+          "classes": [
+            "Soldier"
+          ]
+        }
+      ],
+      "aggregateClassAccess": [
+        "Soldier"
+      ]
     },
     {
       "canonicalTreeKey": "repo-special|1stdegree Droid",
@@ -4314,7 +6756,10 @@
       "originTalentNames": null,
       "talentPublications": [],
       "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED"
+      "aggregateMembershipStatus": "UNVERIFIED",
+      "referenceClassAccess": [],
+      "accessPublications": [],
+      "aggregateClassAccess": []
     },
     {
       "canonicalTreeKey": "repo-special|2nddegree Droid",
@@ -4335,7 +6780,10 @@
       "originTalentNames": null,
       "talentPublications": [],
       "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED"
+      "aggregateMembershipStatus": "UNVERIFIED",
+      "referenceClassAccess": [],
+      "accessPublications": [],
+      "aggregateClassAccess": []
     },
     {
       "canonicalTreeKey": "repo-special|3rddegree Droid",
@@ -4356,7 +6804,10 @@
       "originTalentNames": null,
       "talentPublications": [],
       "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED"
+      "aggregateMembershipStatus": "UNVERIFIED",
+      "referenceClassAccess": [],
+      "accessPublications": [],
+      "aggregateClassAccess": []
     },
     {
       "canonicalTreeKey": "repo-special|4thdegree Droid",
@@ -4377,7 +6828,10 @@
       "originTalentNames": null,
       "talentPublications": [],
       "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED"
+      "aggregateMembershipStatus": "UNVERIFIED",
+      "referenceClassAccess": [],
+      "accessPublications": [],
+      "aggregateClassAccess": []
     },
     {
       "canonicalTreeKey": "repo-special|5thdegree Droid",
@@ -4398,7 +6852,10 @@
       "originTalentNames": null,
       "talentPublications": [],
       "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED"
+      "aggregateMembershipStatus": "UNVERIFIED",
+      "referenceClassAccess": [],
+      "accessPublications": [],
+      "aggregateClassAccess": []
     },
     {
       "canonicalTreeKey": "repo-special|Agent Of Ossus",
@@ -4419,7 +6876,10 @@
       "originTalentNames": null,
       "talentPublications": [],
       "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED"
+      "aggregateMembershipStatus": "UNVERIFIED",
+      "referenceClassAccess": [],
+      "accessPublications": [],
+      "aggregateClassAccess": []
     },
     {
       "canonicalTreeKey": "repo-special|Aingtii Monk",
@@ -4440,7 +6900,10 @@
       "originTalentNames": null,
       "talentPublications": [],
       "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED"
+      "aggregateMembershipStatus": "UNVERIFIED",
+      "referenceClassAccess": [],
+      "accessPublications": [],
+      "aggregateClassAccess": []
     },
     {
       "canonicalTreeKey": "repo-special|Alter",
@@ -4461,7 +6924,10 @@
       "originTalentNames": null,
       "talentPublications": [],
       "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED"
+      "aggregateMembershipStatus": "UNVERIFIED",
+      "referenceClassAccess": [],
+      "accessPublications": [],
+      "aggregateClassAccess": []
     },
     {
       "canonicalTreeKey": "repo-special|Bando Gora Captain",
@@ -4482,7 +6948,10 @@
       "originTalentNames": null,
       "talentPublications": [],
       "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED"
+      "aggregateMembershipStatus": "UNVERIFIED",
+      "referenceClassAccess": [],
+      "accessPublications": [],
+      "aggregateClassAccess": []
     },
     {
       "canonicalTreeKey": "repo-special|Baran Do Sage",
@@ -4503,7 +6972,10 @@
       "originTalentNames": null,
       "talentPublications": [],
       "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED"
+      "aggregateMembershipStatus": "UNVERIFIED",
+      "referenceClassAccess": [],
+      "accessPublications": [],
+      "aggregateClassAccess": []
     },
     {
       "canonicalTreeKey": "repo-special|Believer Disciple",
@@ -4524,7 +6996,10 @@
       "originTalentNames": null,
       "talentPublications": [],
       "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED"
+      "aggregateMembershipStatus": "UNVERIFIED",
+      "referenceClassAccess": [],
+      "accessPublications": [],
+      "aggregateClassAccess": []
     },
     {
       "canonicalTreeKey": "repo-special|Blackguard Wilder",
@@ -4545,7 +7020,10 @@
       "originTalentNames": null,
       "talentPublications": [],
       "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED"
+      "aggregateMembershipStatus": "UNVERIFIED",
+      "referenceClassAccess": [],
+      "accessPublications": [],
+      "aggregateClassAccess": []
     },
     {
       "canonicalTreeKey": "repo-special|Blazing Chain",
@@ -4566,7 +7044,10 @@
       "originTalentNames": null,
       "talentPublications": [],
       "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED"
+      "aggregateMembershipStatus": "UNVERIFIED",
+      "referenceClassAccess": [],
+      "accessPublications": [],
+      "aggregateClassAccess": []
     },
     {
       "canonicalTreeKey": "repo-special|Bomarr Monk",
@@ -4587,7 +7068,10 @@
       "originTalentNames": null,
       "talentPublications": [],
       "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED"
+      "aggregateMembershipStatus": "UNVERIFIED",
+      "referenceClassAccess": [],
+      "accessPublications": [],
+      "aggregateClassAccess": []
     },
     {
       "canonicalTreeKey": "repo-special|Chalactan Adept",
@@ -4608,7 +7092,10 @@
       "originTalentNames": null,
       "talentPublications": [],
       "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED"
+      "aggregateMembershipStatus": "UNVERIFIED",
+      "referenceClassAccess": [],
+      "accessPublications": [],
+      "aggregateClassAccess": []
     },
     {
       "canonicalTreeKey": "repo-special|Cloner",
@@ -4629,7 +7116,10 @@
       "originTalentNames": null,
       "talentPublications": [],
       "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED"
+      "aggregateMembershipStatus": "UNVERIFIED",
+      "referenceClassAccess": [],
+      "accessPublications": [],
+      "aggregateClassAccess": []
     },
     {
       "canonicalTreeKey": "repo-special|Control",
@@ -4650,7 +7140,10 @@
       "originTalentNames": null,
       "talentPublications": [],
       "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED"
+      "aggregateMembershipStatus": "UNVERIFIED",
+      "referenceClassAccess": [],
+      "accessPublications": [],
+      "aggregateClassAccess": []
     },
     {
       "canonicalTreeKey": "repo-special|Cowardice",
@@ -4671,7 +7164,10 @@
       "originTalentNames": null,
       "talentPublications": [],
       "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED"
+      "aggregateMembershipStatus": "UNVERIFIED",
+      "referenceClassAccess": [],
+      "accessPublications": [],
+      "aggregateClassAccess": []
     },
     {
       "canonicalTreeKey": "repo-special|Dark Side",
@@ -4692,7 +7188,10 @@
       "originTalentNames": null,
       "talentPublications": [],
       "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED"
+      "aggregateMembershipStatus": "UNVERIFIED",
+      "referenceClassAccess": [],
+      "accessPublications": [],
+      "aggregateClassAccess": []
     },
     {
       "canonicalTreeKey": "repo-special|Dathomiri Witch",
@@ -4713,7 +7212,10 @@
       "originTalentNames": null,
       "talentPublications": [],
       "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED"
+      "aggregateMembershipStatus": "UNVERIFIED",
+      "referenceClassAccess": [],
+      "accessPublications": [],
+      "aggregateClassAccess": []
     },
     {
       "canonicalTreeKey": "repo-special|Defensive Duelist",
@@ -4734,7 +7236,10 @@
       "originTalentNames": null,
       "talentPublications": [],
       "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED"
+      "aggregateMembershipStatus": "UNVERIFIED",
+      "referenceClassAccess": [],
+      "accessPublications": [],
+      "aggregateClassAccess": []
     },
     {
       "canonicalTreeKey": "repo-special|Disciple Of Twilight",
@@ -4755,7 +7260,10 @@
       "originTalentNames": null,
       "talentPublications": [],
       "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED"
+      "aggregateMembershipStatus": "UNVERIFIED",
+      "referenceClassAccess": [],
+      "accessPublications": [],
+      "aggregateClassAccess": []
     },
     {
       "canonicalTreeKey": "repo-special|Ember Of Vahl",
@@ -4776,7 +7284,10 @@
       "originTalentNames": null,
       "talentPublications": [],
       "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED"
+      "aggregateMembershipStatus": "UNVERIFIED",
+      "referenceClassAccess": [],
+      "accessPublications": [],
+      "aggregateClassAccess": []
     },
     {
       "canonicalTreeKey": "repo-special|Exceptional Followers",
@@ -4797,7 +7308,10 @@
       "originTalentNames": null,
       "talentPublications": [],
       "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED"
+      "aggregateMembershipStatus": "UNVERIFIED",
+      "referenceClassAccess": [],
+      "accessPublications": [],
+      "aggregateClassAccess": []
     },
     {
       "canonicalTreeKey": "repo-special|Felucian Shaman",
@@ -4818,7 +7332,10 @@
       "originTalentNames": null,
       "talentPublications": [],
       "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED"
+      "aggregateMembershipStatus": "UNVERIFIED",
+      "referenceClassAccess": [],
+      "accessPublications": [],
+      "aggregateClassAccess": []
     },
     {
       "canonicalTreeKey": "repo-special|Force Warrior",
@@ -4839,7 +7356,10 @@
       "originTalentNames": null,
       "talentPublications": [],
       "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED"
+      "aggregateMembershipStatus": "UNVERIFIED",
+      "referenceClassAccess": [],
+      "accessPublications": [],
+      "aggregateClassAccess": []
     },
     {
       "canonicalTreeKey": "repo-special|Galactic Senator",
@@ -4860,7 +7380,10 @@
       "originTalentNames": null,
       "talentPublications": [],
       "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED"
+      "aggregateMembershipStatus": "UNVERIFIED",
+      "referenceClassAccess": [],
+      "accessPublications": [],
+      "aggregateClassAccess": []
     },
     {
       "canonicalTreeKey": "repo-special|Genohardan",
@@ -4881,7 +7404,10 @@
       "originTalentNames": null,
       "talentPublications": [],
       "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED"
+      "aggregateMembershipStatus": "UNVERIFIED",
+      "referenceClassAccess": [],
+      "accessPublications": [],
+      "aggregateClassAccess": []
     },
     {
       "canonicalTreeKey": "repo-special|Guardian Spirit",
@@ -4902,7 +7428,10 @@
       "originTalentNames": null,
       "talentPublications": [],
       "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED"
+      "aggregateMembershipStatus": "UNVERIFIED",
+      "referenceClassAccess": [],
+      "accessPublications": [],
+      "aggregateClassAccess": []
     },
     {
       "canonicalTreeKey": "repo-special|Iron Knight",
@@ -4923,7 +7452,10 @@
       "originTalentNames": null,
       "talentPublications": [],
       "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED"
+      "aggregateMembershipStatus": "UNVERIFIED",
+      "referenceClassAccess": [],
+      "accessPublications": [],
+      "aggregateClassAccess": []
     },
     {
       "canonicalTreeKey": "repo-special|Jal Shey",
@@ -4944,7 +7476,10 @@
       "originTalentNames": null,
       "talentPublications": [],
       "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED"
+      "aggregateMembershipStatus": "UNVERIFIED",
+      "referenceClassAccess": [],
+      "accessPublications": [],
+      "aggregateClassAccess": []
     },
     {
       "canonicalTreeKey": "repo-special|Jedaii Ranger",
@@ -4965,7 +7500,10 @@
       "originTalentNames": null,
       "talentPublications": [],
       "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED"
+      "aggregateMembershipStatus": "UNVERIFIED",
+      "referenceClassAccess": [],
+      "accessPublications": [],
+      "aggregateClassAccess": []
     },
     {
       "canonicalTreeKey": "repo-special|Jensaarai Defender",
@@ -4986,7 +7524,10 @@
       "originTalentNames": null,
       "talentPublications": [],
       "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED"
+      "aggregateMembershipStatus": "UNVERIFIED",
+      "referenceClassAccess": [],
+      "accessPublications": [],
+      "aggregateClassAccess": []
     },
     {
       "canonicalTreeKey": "repo-special|Jumptrooper",
@@ -5007,7 +7548,10 @@
       "originTalentNames": null,
       "talentPublications": [],
       "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED"
+      "aggregateMembershipStatus": "UNVERIFIED",
+      "referenceClassAccess": [],
+      "accessPublications": [],
+      "aggregateClassAccess": []
     },
     {
       "canonicalTreeKey": "repo-special|Keetael",
@@ -5028,7 +7572,10 @@
       "originTalentNames": null,
       "talentPublications": [],
       "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED"
+      "aggregateMembershipStatus": "UNVERIFIED",
+      "referenceClassAccess": [],
+      "accessPublications": [],
+      "aggregateClassAccess": []
     },
     {
       "canonicalTreeKey": "repo-special|Kilian Ranger",
@@ -5049,7 +7596,10 @@
       "originTalentNames": null,
       "talentPublications": [],
       "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED"
+      "aggregateMembershipStatus": "UNVERIFIED",
+      "referenceClassAccess": [],
+      "accessPublications": [],
+      "aggregateClassAccess": []
     },
     {
       "canonicalTreeKey": "repo-special|Korunnai Adept",
@@ -5070,7 +7620,10 @@
       "originTalentNames": null,
       "talentPublications": [],
       "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED"
+      "aggregateMembershipStatus": "UNVERIFIED",
+      "referenceClassAccess": [],
+      "accessPublications": [],
+      "aggregateClassAccess": []
     },
     {
       "canonicalTreeKey": "repo-special|Krath",
@@ -5091,7 +7644,10 @@
       "originTalentNames": null,
       "talentPublications": [],
       "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED"
+      "aggregateMembershipStatus": "UNVERIFIED",
+      "referenceClassAccess": [],
+      "accessPublications": [],
+      "aggregateClassAccess": []
     },
     {
       "canonicalTreeKey": "repo-special|Light Side",
@@ -5112,7 +7668,10 @@
       "originTalentNames": null,
       "talentPublications": [],
       "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED"
+      "aggregateMembershipStatus": "UNVERIFIED",
+      "referenceClassAccess": [],
+      "accessPublications": [],
+      "aggregateClassAccess": []
     },
     {
       "canonicalTreeKey": "repo-special|Luka Sene",
@@ -5133,7 +7692,10 @@
       "originTalentNames": null,
       "talentPublications": [],
       "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED"
+      "aggregateMembershipStatus": "UNVERIFIED",
+      "referenceClassAccess": [],
+      "accessPublications": [],
+      "aggregateClassAccess": []
     },
     {
       "canonicalTreeKey": "repo-special|Master Of The Amphistaff",
@@ -5154,7 +7716,10 @@
       "originTalentNames": null,
       "talentPublications": [],
       "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED"
+      "aggregateMembershipStatus": "UNVERIFIED",
+      "referenceClassAccess": [],
+      "accessPublications": [],
+      "aggregateClassAccess": []
     },
     {
       "canonicalTreeKey": "repo-special|Matukai Adept",
@@ -5175,7 +7740,10 @@
       "originTalentNames": null,
       "talentPublications": [],
       "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED"
+      "aggregateMembershipStatus": "UNVERIFIED",
+      "referenceClassAccess": [],
+      "accessPublications": [],
+      "aggregateClassAccess": []
     },
     {
       "canonicalTreeKey": "repo-special|Mechanic",
@@ -5196,7 +7764,10 @@
       "originTalentNames": null,
       "talentPublications": [],
       "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED"
+      "aggregateMembershipStatus": "UNVERIFIED",
+      "referenceClassAccess": [],
+      "accessPublications": [],
+      "aggregateClassAccess": []
     },
     {
       "canonicalTreeKey": "repo-special|Midichlorian",
@@ -5217,7 +7788,10 @@
       "originTalentNames": null,
       "talentPublications": [],
       "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED"
+      "aggregateMembershipStatus": "UNVERIFIED",
+      "referenceClassAccess": [],
+      "accessPublications": [],
+      "aggregateClassAccess": []
     },
     {
       "canonicalTreeKey": "repo-special|Morgukai Warrior",
@@ -5238,7 +7812,10 @@
       "originTalentNames": null,
       "talentPublications": [],
       "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED"
+      "aggregateMembershipStatus": "UNVERIFIED",
+      "referenceClassAccess": [],
+      "accessPublications": [],
+      "aggregateClassAccess": []
     },
     {
       "canonicalTreeKey": "repo-special|Order of Shasa",
@@ -5259,7 +7836,10 @@
       "originTalentNames": null,
       "talentPublications": [],
       "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED"
+      "aggregateMembershipStatus": "UNVERIFIED",
+      "referenceClassAccess": [],
+      "accessPublications": [],
+      "aggregateClassAccess": []
     },
     {
       "canonicalTreeKey": "repo-special|Science",
@@ -5280,7 +7860,10 @@
       "originTalentNames": null,
       "talentPublications": [],
       "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED"
+      "aggregateMembershipStatus": "UNVERIFIED",
+      "referenceClassAccess": [],
+      "accessPublications": [],
+      "aggregateClassAccess": []
     },
     {
       "canonicalTreeKey": "repo-special|Sense",
@@ -5301,7 +7884,10 @@
       "originTalentNames": null,
       "talentPublications": [],
       "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED"
+      "aggregateMembershipStatus": "UNVERIFIED",
+      "referenceClassAccess": [],
+      "accessPublications": [],
+      "aggregateClassAccess": []
     },
     {
       "canonicalTreeKey": "repo-special|Seyugi Dervish",
@@ -5322,7 +7908,10 @@
       "originTalentNames": null,
       "talentPublications": [],
       "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED"
+      "aggregateMembershipStatus": "UNVERIFIED",
+      "referenceClassAccess": [],
+      "accessPublications": [],
+      "aggregateClassAccess": []
     },
     {
       "canonicalTreeKey": "repo-special|Smashball Pro",
@@ -5343,7 +7932,10 @@
       "originTalentNames": null,
       "talentPublications": [],
       "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED"
+      "aggregateMembershipStatus": "UNVERIFIED",
+      "referenceClassAccess": [],
+      "accessPublications": [],
+      "aggregateClassAccess": []
     },
     {
       "canonicalTreeKey": "repo-special|Sorcerer Of Tund",
@@ -5364,7 +7956,10 @@
       "originTalentNames": null,
       "talentPublications": [],
       "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED"
+      "aggregateMembershipStatus": "UNVERIFIED",
+      "referenceClassAccess": [],
+      "accessPublications": [],
+      "aggregateClassAccess": []
     },
     {
       "canonicalTreeKey": "repo-special|Treatment",
@@ -5385,7 +7980,10 @@
       "originTalentNames": null,
       "talentPublications": [],
       "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED"
+      "aggregateMembershipStatus": "UNVERIFIED",
+      "referenceClassAccess": [],
+      "accessPublications": [],
+      "aggregateClassAccess": []
     },
     {
       "canonicalTreeKey": "repo-special|Tyia Adept",
@@ -5406,7 +8004,10 @@
       "originTalentNames": null,
       "talentPublications": [],
       "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED"
+      "aggregateMembershipStatus": "UNVERIFIED",
+      "referenceClassAccess": [],
+      "accessPublications": [],
+      "aggregateClassAccess": []
     },
     {
       "canonicalTreeKey": "repo-special|Warden Of The Sky",
@@ -5427,7 +8028,10 @@
       "originTalentNames": null,
       "talentPublications": [],
       "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED"
+      "aggregateMembershipStatus": "UNVERIFIED",
+      "referenceClassAccess": [],
+      "accessPublications": [],
+      "aggregateClassAccess": []
     },
     {
       "canonicalTreeKey": "repo-special|White Current Adept",
@@ -5448,12 +8052,18 @@
       "originTalentNames": null,
       "talentPublications": [],
       "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED"
+      "aggregateMembershipStatus": "UNVERIFIED",
+      "referenceClassAccess": [],
+      "accessPublications": [],
+      "aggregateClassAccess": []
     }
   ],
   "schemaNotes": {
     "originTalentNames": "Talents printed with the tree at its sourcebook origin when verified.",
     "talentPublications": "Per-source additions to this tree. Later supplements append EXPANSION entries instead of becoming separate tree identities.",
-    "aggregateCanonicalTalentNames": "Union of verified talent publications when sufficiently audited; null/unfinalized until expansion coverage is complete."
+    "aggregateCanonicalTalentNames": "Union of verified talent publications when sufficiently audited; null/unfinalized until expansion coverage is complete.",
+    "referenceClassAccess": "Aggregate class-usage reference from the secondary index; never treated as source-local provenance by itself.",
+    "accessPublications": "Primary-source-verified class access grants, recorded by publication.",
+    "aggregateClassAccess": "Current aggregate reference/access target; later normalized from verified access publications as coverage becomes complete."
   }
 }
