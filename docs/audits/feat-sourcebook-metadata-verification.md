@@ -1715,3 +1715,253 @@ Before implementation begins, the final correction matrix must distinguish at le
 
 The Forceful family, old-edition feat rows, Intuitive Initiative feat duplicate, Saber Throw feat duplicate, and the unresolved db-only contaminants are exactly why this identity layer must be settled before Claude receives implementation packets.
 
+---
+
+# Phase 19 — Final unmatched identity cluster and whole-pack identity matrix
+
+## The last nine unmapped pack rows
+
+After Phase 18, the 390-record identity classification had only nine rows that were neither mapped to a published feat source set nor already classified as generated, invalid, or source-review identities.
+
+All nine currently claim **Galaxy at War**, but none appears in that book's published 42-feat set. All nine are also listed in the repository's historical `tools/feat_compendium_unmatched_db.csv` as having **no matching entry in `swse_feats.json`**, with the old database text left unchanged.
+
+The independent comprehensive Saga feat index likewise omits all nine as feats.
+
+### Low Profile / `058de949e909d9ae`
+
+Current pack rule:
+- Dex 13;
+- cover from enemies at long range;
+- reroll Stealth checks to avoid detection.
+
+This is not a Galaxy at War feat.
+
+The official Saga Edition Conversion Guide identifies **Low Profile as an old-edition feat** and gives the Saga replacement as **N/A**.
+
+Disposition: `INVALID_DUPLICATE`, `SOURCE_ERROR`, `UNSUPPORTED_METADATA`.
+
+### Headstrong / `54d6201340a6757f`
+
+Current pack rule:
+- +2 Will against fear;
+- once/encounter failed Will reroll.
+
+This is not a Galaxy at War feat.
+
+The official Saga Edition Conversion Guide identifies **Headstrong as an old-edition feat** and gives the Saga replacement as **N/A**.
+
+Disposition: `INVALID_DUPLICATE`, `SOURCE_ERROR`, `UNSUPPORTED_METADATA`.
+
+### Reactive Stealth / `3cd647b126f1d171`
+
+This name **does exist in published Saga**, but not as a feat.
+
+Galaxy of Intrigue publishes **Reactive Stealth as a Scout Espionage talent**. The actual talent triggers when a ranged attack misses while the character has concealment or cover; the character can move up to half Speed as a reaction and attempt to become hidden, provided concealment/cover remains at the destination.
+
+The pack feat is completely different:
+- once/encounter reroll a Stealth check and keep the better result.
+
+Therefore this is a non-feat identity collision, not a source typo.
+
+Disposition: `INVALID_DUPLICATE`, `SOURCE_ERROR`, `MECHANICS_ERROR`, `WRONG_OWNER`.
+
+Do not convert the feat row into the talent; retain the canonical mechanic under talent authority.
+
+### Reactive Awareness / `17f4a0850e94dc7d`
+
+Current pack rule:
+- trained Perception;
+- once/encounter Perception reroll, keep better.
+
+No published Saga feat with this name appears in the audited source sets or comprehensive feat index. The record is a historical unmatched db-only row.
+
+Disposition: `INVALID_DUPLICATE`, `SOURCE_ERROR`, `UNSUPPORTED_METADATA`.
+
+### Triple Crit Specialist / `2f2fa438a6fb54a0`
+
+Current pack rule:
+- prerequisite Triple Crit + Weapon Specialization;
+- selected weapon criticals deal triple damage and inflict -1 CT.
+
+No published Saga feat with this name appears in the source corpus or canonical feat index. It is a synthetic derivative layered on top of the real **Triple Crit** feat.
+
+Disposition: `INVALID_DUPLICATE`, `SOURCE_ERROR`, `UNSUPPORTED_METADATA`.
+
+Do not preserve this as a hidden extension to Triple Crit unless a source is later produced.
+
+### Resilient Reflexes / `e5ab9392378400ec`
+
+Current pack rule:
+- Dex 13;
+- +2 Reflex against effects targeting Dexterity;
+- failed-check reroll once/encounter.
+
+No published Saga feat with this name appears in the source corpus or canonical feat index. It mirrors the naming pattern of the real Galaxy at War feat **Resilient Strength** but is not itself published there.
+
+Disposition: `INVALID_DUPLICATE`, `SOURCE_ERROR`, `UNSUPPORTED_METADATA`.
+
+### Resilient Will / `f82323ee06f59735`
+
+Current pack rule:
+- Wis 13;
+- +2 Will against effects targeting Wisdom;
+- failed-check reroll once/encounter.
+
+As with Resilient Reflexes, this is not in Galaxy at War or the comprehensive Saga feat list. It appears to be a generated parallel to the real Resilient Strength naming pattern.
+
+Disposition: `INVALID_DUPLICATE`, `SOURCE_ERROR`, `UNSUPPORTED_METADATA`.
+
+### Conditioned / `e99d9284a73cf505`
+
+Current pack rule:
+- +2 Endurance;
+- once/encounter failed Endurance reroll.
+
+No published Saga feat with this name appears in the source corpus or canonical feat index. The record is a historical unmatched db-only row.
+
+Disposition: `INVALID_DUPLICATE`, `SOURCE_ERROR`, `UNSUPPORTED_METADATA`.
+
+### Surgical Precision / `eb33f5e4b5f6318c`
+
+Current pack rule:
+- trained Treat Injury;
+- +2 Treat Injury;
+- once/encounter failed Treat Injury reroll.
+
+No published Saga feat with this name appears in the source corpus or canonical feat index. The record is a historical unmatched db-only row.
+
+Disposition: `INVALID_DUPLICATE`, `SOURCE_ERROR`, `UNSUPPORTED_METADATA`.
+
+Do not confuse this synthetic skill-bonus feat with the legitimate Core **Surgical Expertise** feat.
+
+## Whole-pack identity classification — 390 current records
+
+With the nine rows above resolved, the current pack has **zero unclassified identities** at the audit's identity/provenance layer.
+
+| Identity class | Current pack records | Meaning |
+|---|---:|---|
+| Canonical published feat, single mapped source identity | **348** | A published feat identity represented by one pack row; source/mechanics may still need correction |
+| Canonical published feat with multi-source / same-name complexity | **3** | Echani Training, Tech Specialist, Staggering Attack |
+| Generated implementation choice | **6** | Weapon Proficiency choice-expansion records; valid implementation concept, not independent published feats |
+| Confirmed invalid/noncanonical feat identity | **28** | Old-edition contamination, talent/species-trait collisions, or synthetic legacy-db rows |
+| Identity still under `SOURCE_REVIEW` | **5** | Fast Talk, Improved Grapple, Keen Force Mind, Frightening Presence, Resilient Talent |
+| Unmapped | **0** | No remaining current row lacks an identity disposition |
+| **Total current pack records** | **390** | |
+
+### Multi-source / same-name rows
+
+**Echani Training**
+- base feat: Knights of the Old Republic Campaign Guide;
+- later extension: Galaxy at War;
+- one continuing feat identity with layered provenance.
+
+**Tech Specialist**
+- first official Web Enhancement publication;
+- later printed in Starships of the Galaxy;
+- one continuing feat identity with layered provenance.
+
+**Staggering Attack**
+- Galaxy at War and Scum and Villainy publish **different mechanics under the same name**;
+- current repository row is a hybrid;
+- this is not the same kind of multi-source identity as Echani Training or Tech Specialist;
+- correction requires a deliberate source-qualified variant policy and likely two clean mechanical records/variants rather than one merged rule.
+
+### Six generated Weapon Proficiency records
+
+These remain classified as implementation choices rather than invalid content:
+
+- Advanced Melee Weapon Proficiency
+- Heavy Weapon Proficiency
+- Weapon Proficiency (Heavy Weapons)
+- Weapon Proficiency (Pistols)
+- Weapon Proficiency (Rifles)
+- Weapon Proficiency (Simple Weapons)
+
+They derive from the canonical Core Weapon Proficiency feat and should not inflate source-entry counts.
+
+### Twenty-eight confirmed invalid/noncanonical rows
+
+The confirmed invalid bucket now consists of:
+
+**Old-edition feat contamination**
+- Frightful Presence
+- Great Fortitude
+- Headstrong
+- Lightning Reflexes
+- Low Profile
+- Stealthy
+- Trustworthy
+- Two-Weapon Fighting
+
+**Non-feat identity collisions**
+- Intuitive Initiative — Cerean species trait
+- Intimidating Presence — species-trait name collision
+- Reactive Stealth — Galaxy of Intrigue Scout talent
+- Saber Throw — Core Lightsaber Throw talent
+
+**Synthetic / unsupported legacy-db identities**
+- Forceful Grip
+- Forceful Saber Throw
+- Forceful Slam
+- Forceful Strike
+- Forceful Stun
+- Forceful Telekinesis
+- Forceful Throw
+- Forceful Vitality
+- Forceful Weapon
+- Forceful Will
+- Reactive Awareness
+- Triple Crit Specialist
+- Resilient Reflexes
+- Resilient Will
+- Conditioned
+- Surgical Precision
+
+These should be dependency-checked and retired/quarantined during implementation rather than mechanically completed.
+
+### Five identity-review rows
+
+These remain deliberately unresolved rather than being forced into the invalid bucket:
+
+- Fast Talk
+- Improved Grapple
+- Keen Force Mind
+- Frightening Presence
+- Resilient Talent
+
+For all five, current source claims are unsupported. Evidence strongly suggests noncanonical or converted content, but the audit retains `SOURCE_REVIEW` until the final archival sweep or user-provided source closes them.
+
+## Published-content asymmetry still matters
+
+A clean 390-row classification does **not** mean the source corpus and pack are in one-to-one parity.
+
+Known source-side exceptions include:
+
+- **Recall** — confirmed Force Unleashed `MISSING_CONTENT`; no pack record.
+- **Staggering Attack** — two distinct published mechanics under one name are currently collapsed into one hybrid pack record.
+- Generated Weapon Proficiency choice rows inflate pack-record count without adding published source identities.
+- Invalid/noncanonical rows further inflate pack-record count.
+- Echani Training and Tech Specialist have legitimate layered provenance without representing duplicate feat identities.
+
+Therefore the future correction pass must not use "pack count after cleanup" as its sole acceptance criterion. Identity parity must be checked by canonical source identities and explicit variant policy.
+
+## Next audit layer
+
+The identity/provenance layer is now sufficiently mature to begin the **correction matrix**.
+
+For each retained canonical record, the matrix should carry:
+
+1. pack ID;
+2. canonical identity;
+3. canonical source(s) and page(s);
+4. current source/page disposition;
+5. description disposition;
+6. prerequisite disposition;
+7. mechanics/`abilityMeta` disposition;
+8. taxonomy/`featType` disposition;
+9. correct subsystem owner;
+10. automation boundary;
+11. implementation packet priority.
+
+Generated-choice, invalid, missing-content, and variant-collision records must be represented separately so implementation work does not accidentally normalize bad identities into permanent architecture.
+
