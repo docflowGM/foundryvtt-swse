@@ -6,8 +6,8 @@
   "counts": {
     "entries": 195,
     "referenceRows": 140,
-    "primarySourceVerified": 64,
-    "referencePendingPrimary": 76,
+    "primarySourceVerified": 78,
+    "referencePendingPrimary": 62,
     "repoSpecialSourceReview": 55
   },
   "entries": [
@@ -3740,7 +3740,7 @@
       "classAccess": [
         "Noble"
       ],
-      "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
+      "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
       "repoTreeIds": [
         "4dc70f924e7794ac"
       ],
@@ -3753,14 +3753,46 @@
       "status": "REPO_TREE_PRESENT",
       "notes": null,
       "originSourcebook": "Clone Wars Campaign Guide",
-      "originTalentNames": null,
-      "talentPublications": [],
-      "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED",
+      "originTalentNames": [
+        "Double Agent",
+        "Enemy Tactics",
+        "Feed Information",
+        "Friendly Fire",
+        "Protection"
+      ],
+      "talentPublications": [
+        {
+          "sourcebook": "Clone Wars Campaign Guide",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Double Agent",
+            "Enemy Tactics",
+            "Feed Information",
+            "Friendly Fire",
+            "Protection"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Double Agent",
+        "Enemy Tactics",
+        "Feed Information",
+        "Friendly Fire",
+        "Protection"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
       "referenceClassAccess": [
         "Noble"
       ],
-      "accessPublications": [],
+      "accessPublications": [
+        {
+          "sourcebook": "Clone Wars Campaign Guide",
+          "publicationType": "DIRECT_ACCESS_GRANT",
+          "classes": [
+            "Noble"
+          ]
+        }
+      ],
       "aggregateClassAccess": [
         "Noble"
       ]
@@ -3772,7 +3804,7 @@
       "classAccess": [
         "Droid Commander"
       ],
-      "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
+      "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
       "repoTreeIds": [
         "9688ed3500084dca"
       ],
@@ -3785,14 +3817,55 @@
       "status": "REPO_TREE_PRESENT",
       "notes": null,
       "originSourcebook": "Clone Wars Campaign Guide",
-      "originTalentNames": null,
-      "talentPublications": [],
-      "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED",
+      "originTalentNames": [
+        "Automated Strike",
+        "Droid Defense",
+        "Droid Mettle",
+        "Expanded Sensors",
+        "Inspire Competence",
+        "Maintain Focus",
+        "Overclocked Troops",
+        "Reinforced Commands"
+      ],
+      "talentPublications": [
+        {
+          "sourcebook": "Clone Wars Campaign Guide",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Automated Strike",
+            "Droid Defense",
+            "Droid Mettle",
+            "Expanded Sensors",
+            "Inspire Competence",
+            "Maintain Focus",
+            "Overclocked Troops",
+            "Reinforced Commands"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Automated Strike",
+        "Droid Defense",
+        "Droid Mettle",
+        "Expanded Sensors",
+        "Inspire Competence",
+        "Maintain Focus",
+        "Overclocked Troops",
+        "Reinforced Commands"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
       "referenceClassAccess": [
         "Droid Commander"
       ],
-      "accessPublications": [],
+      "accessPublications": [
+        {
+          "sourcebook": "Clone Wars Campaign Guide",
+          "publicationType": "DIRECT_ACCESS_GRANT",
+          "classes": [
+            "Droid Commander"
+          ]
+        }
+      ],
       "aggregateClassAccess": [
         "Droid Commander"
       ]
@@ -3804,7 +3877,7 @@
       "classAccess": [
         "Jedi Knight"
       ],
-      "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
+      "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
       "repoTreeIds": [
         "152047d6ab7896ad"
       ],
@@ -3817,14 +3890,46 @@
       "status": "REPO_TREE_PRESENT",
       "notes": null,
       "originSourcebook": "Clone Wars Campaign Guide",
-      "originTalentNames": null,
-      "talentPublications": [],
-      "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED",
+      "originTalentNames": [
+        "Direct",
+        "Impart Knowledge",
+        "Insight of the Force",
+        "Master Advisor",
+        "Scholarly Knowledge"
+      ],
+      "talentPublications": [
+        {
+          "sourcebook": "Clone Wars Campaign Guide",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Direct",
+            "Impart Knowledge",
+            "Insight of the Force",
+            "Master Advisor",
+            "Scholarly Knowledge"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Direct",
+        "Impart Knowledge",
+        "Insight of the Force",
+        "Master Advisor",
+        "Scholarly Knowledge"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
       "referenceClassAccess": [
         "Jedi Knight"
       ],
-      "accessPublications": [],
+      "accessPublications": [
+        {
+          "sourcebook": "Clone Wars Campaign Guide",
+          "publicationType": "DIRECT_ACCESS_GRANT",
+          "classes": [
+            "Jedi Knight"
+          ]
+        }
+      ],
       "aggregateClassAccess": [
         "Jedi Knight"
       ]
@@ -3836,7 +3941,7 @@
       "classAccess": [
         "Jedi Knight"
       ],
-      "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
+      "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
       "repoTreeIds": [
         "a2a7a376e4905da9"
       ],
@@ -3849,14 +3954,43 @@
       "status": "REPO_TREE_PRESENT",
       "notes": null,
       "originSourcebook": "Clone Wars Campaign Guide",
-      "originTalentNames": null,
-      "talentPublications": [],
-      "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED",
+      "originTalentNames": [
+        "Force Treatment",
+        "Healing Boost",
+        "Improved Healing Boost",
+        "Soothe"
+      ],
+      "talentPublications": [
+        {
+          "sourcebook": "Clone Wars Campaign Guide",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Force Treatment",
+            "Healing Boost",
+            "Improved Healing Boost",
+            "Soothe"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Force Treatment",
+        "Healing Boost",
+        "Improved Healing Boost",
+        "Soothe"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
       "referenceClassAccess": [
         "Jedi Knight"
       ],
-      "accessPublications": [],
+      "accessPublications": [
+        {
+          "sourcebook": "Clone Wars Campaign Guide",
+          "publicationType": "DIRECT_ACCESS_GRANT",
+          "classes": [
+            "Jedi Knight"
+          ]
+        }
+      ],
       "aggregateClassAccess": [
         "Jedi Knight"
       ]
@@ -3868,7 +4002,7 @@
       "classAccess": [
         "Noble"
       ],
-      "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
+      "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
       "repoTreeIds": [
         "be2e649cbb7332fa"
       ],
@@ -3881,14 +4015,43 @@
       "status": "REPO_TREE_PRESENT",
       "notes": null,
       "originSourcebook": "Clone Wars Campaign Guide",
-      "originTalentNames": null,
-      "talentPublications": [],
-      "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED",
+      "originTalentNames": [
+        "Inspire Loyalty",
+        "Undying Loyalty",
+        "Punishing Protection",
+        "Protector Actions"
+      ],
+      "talentPublications": [
+        {
+          "sourcebook": "Clone Wars Campaign Guide",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Inspire Loyalty",
+            "Undying Loyalty",
+            "Punishing Protection",
+            "Protector Actions"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Inspire Loyalty",
+        "Undying Loyalty",
+        "Punishing Protection",
+        "Protector Actions"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
       "referenceClassAccess": [
         "Noble"
       ],
-      "accessPublications": [],
+      "accessPublications": [
+        {
+          "sourcebook": "Clone Wars Campaign Guide",
+          "publicationType": "DIRECT_ACCESS_GRANT",
+          "classes": [
+            "Noble"
+          ]
+        }
+      ],
       "aggregateClassAccess": [
         "Noble"
       ]
@@ -3900,7 +4063,7 @@
       "classAccess": [
         "Elite Trooper"
       ],
-      "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
+      "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
       "repoTreeIds": [
         "fad8118981c532f0"
       ],
@@ -3913,14 +4076,46 @@
       "status": "REPO_TREE_PRESENT",
       "notes": null,
       "originSourcebook": "Clone Wars Campaign Guide",
-      "originTalentNames": null,
-      "talentPublications": [],
-      "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED",
+      "originTalentNames": [
+        "Accurate Blow",
+        "Close-Quarters Fighter",
+        "Ignore Armor",
+        "Improved Stunning Strike",
+        "Whirling Death"
+      ],
+      "talentPublications": [
+        {
+          "sourcebook": "Clone Wars Campaign Guide",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Accurate Blow",
+            "Close-Quarters Fighter",
+            "Ignore Armor",
+            "Improved Stunning Strike",
+            "Whirling Death"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Accurate Blow",
+        "Close-Quarters Fighter",
+        "Ignore Armor",
+        "Improved Stunning Strike",
+        "Whirling Death"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
       "referenceClassAccess": [
         "Elite Trooper"
       ],
-      "accessPublications": [],
+      "accessPublications": [
+        {
+          "sourcebook": "Clone Wars Campaign Guide",
+          "publicationType": "DIRECT_ACCESS_GRANT",
+          "classes": [
+            "Elite Trooper"
+          ]
+        }
+      ],
       "aggregateClassAccess": [
         "Elite Trooper"
       ]
@@ -3932,7 +4127,7 @@
       "classAccess": [
         "Military Engineer"
       ],
-      "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
+      "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
       "repoTreeIds": [
         "e32009b1b0aee8c9"
       ],
@@ -3945,14 +4140,61 @@
       "status": "REPO_TREE_PRESENT",
       "notes": null,
       "originSourcebook": "Clone Wars Campaign Guide",
-      "originTalentNames": null,
-      "talentPublications": [],
-      "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED",
+      "originTalentNames": [
+        "Breach Cover",
+        "Breaching Explosive",
+        "Droid Expert",
+        "Prepared Explosive",
+        "Problem Solver",
+        "Quick Modifications",
+        "Repairs on the Fly",
+        "Sabotage Device",
+        "Tech Savant",
+        "Vehicular Boost"
+      ],
+      "talentPublications": [
+        {
+          "sourcebook": "Clone Wars Campaign Guide",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Breach Cover",
+            "Breaching Explosive",
+            "Droid Expert",
+            "Prepared Explosive",
+            "Problem Solver",
+            "Quick Modifications",
+            "Repairs on the Fly",
+            "Sabotage Device",
+            "Tech Savant",
+            "Vehicular Boost"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Breach Cover",
+        "Breaching Explosive",
+        "Droid Expert",
+        "Prepared Explosive",
+        "Problem Solver",
+        "Quick Modifications",
+        "Repairs on the Fly",
+        "Sabotage Device",
+        "Tech Savant",
+        "Vehicular Boost"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
       "referenceClassAccess": [
         "Military Engineer"
       ],
-      "accessPublications": [],
+      "accessPublications": [
+        {
+          "sourcebook": "Clone Wars Campaign Guide",
+          "publicationType": "DIRECT_ACCESS_GRANT",
+          "classes": [
+            "Military Engineer"
+          ]
+        }
+      ],
       "aggregateClassAccess": [
         "Military Engineer"
       ]
@@ -3964,7 +4206,7 @@
       "classAccess": [
         "Scoundrel"
       ],
-      "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
+      "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
       "repoTreeIds": [
         "bf3b07c1687a3ca2"
       ],
@@ -3977,14 +4219,46 @@
       "status": "REPO_TREE_PRESENT",
       "notes": null,
       "originSourcebook": "Clone Wars Campaign Guide",
-      "originTalentNames": null,
-      "talentPublications": [],
-      "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED",
+      "originTalentNames": [
+        "Advantageous Opening",
+        "Retribution",
+        "Slip By",
+        "Thrive on Chaos",
+        "Vindication"
+      ],
+      "talentPublications": [
+        {
+          "sourcebook": "Clone Wars Campaign Guide",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Advantageous Opening",
+            "Retribution",
+            "Slip By",
+            "Thrive on Chaos",
+            "Vindication"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Advantageous Opening",
+        "Retribution",
+        "Slip By",
+        "Thrive on Chaos",
+        "Vindication"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
       "referenceClassAccess": [
         "Scoundrel"
       ],
-      "accessPublications": [],
+      "accessPublications": [
+        {
+          "sourcebook": "Clone Wars Campaign Guide",
+          "publicationType": "DIRECT_ACCESS_GRANT",
+          "classes": [
+            "Scoundrel"
+          ]
+        }
+      ],
       "aggregateClassAccess": [
         "Scoundrel"
       ]
@@ -3996,7 +4270,7 @@
       "classAccess": [
         "Scout"
       ],
-      "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
+      "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
       "repoTreeIds": [
         "860fa1a66c837574"
       ],
@@ -4009,14 +4283,43 @@
       "status": "REPO_TREE_PRESENT",
       "notes": null,
       "originSourcebook": "Clone Wars Campaign Guide",
-      "originTalentNames": null,
-      "talentPublications": [],
-      "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED",
+      "originTalentNames": [
+        "Reconnaissance Team Leader",
+        "Close-Combat Assault",
+        "Get Into Position",
+        "Reconnaissance Actions"
+      ],
+      "talentPublications": [
+        {
+          "sourcebook": "Clone Wars Campaign Guide",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Reconnaissance Team Leader",
+            "Close-Combat Assault",
+            "Get Into Position",
+            "Reconnaissance Actions"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Reconnaissance Team Leader",
+        "Close-Combat Assault",
+        "Get Into Position",
+        "Reconnaissance Actions"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
       "referenceClassAccess": [
         "Scout"
       ],
-      "accessPublications": [],
+      "accessPublications": [
+        {
+          "sourcebook": "Clone Wars Campaign Guide",
+          "publicationType": "DIRECT_ACCESS_GRANT",
+          "classes": [
+            "Scout"
+          ]
+        }
+      ],
       "aggregateClassAccess": [
         "Scout"
       ]
@@ -4028,7 +4331,7 @@
       "classAccess": [
         "Elite Trooper"
       ],
-      "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
+      "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
       "repoTreeIds": [
         "cb3751283ea8fa3d"
       ],
@@ -4041,14 +4344,49 @@
       "status": "REPO_TREE_PRESENT",
       "notes": null,
       "originSourcebook": "Clone Wars Campaign Guide",
-      "originTalentNames": null,
-      "talentPublications": [],
-      "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED",
+      "originTalentNames": [
+        "Ambush",
+        "Higher Yield",
+        "Rapid Reload",
+        "Shoulder to Shoulder",
+        "Strength in Numbers",
+        "Weapon Shift"
+      ],
+      "talentPublications": [
+        {
+          "sourcebook": "Clone Wars Campaign Guide",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Ambush",
+            "Higher Yield",
+            "Rapid Reload",
+            "Shoulder to Shoulder",
+            "Strength in Numbers",
+            "Weapon Shift"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Ambush",
+        "Higher Yield",
+        "Rapid Reload",
+        "Shoulder to Shoulder",
+        "Strength in Numbers",
+        "Weapon Shift"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
       "referenceClassAccess": [
         "Elite Trooper"
       ],
-      "accessPublications": [],
+      "accessPublications": [
+        {
+          "sourcebook": "Clone Wars Campaign Guide",
+          "publicationType": "DIRECT_ACCESS_GRANT",
+          "classes": [
+            "Elite Trooper"
+          ]
+        }
+      ],
       "aggregateClassAccess": [
         "Elite Trooper"
       ]
@@ -4060,7 +4398,7 @@
       "classAccess": [
         "Soldier"
       ],
-      "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
+      "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
       "repoTreeIds": [
         "781feba15dc9e42f"
       ],
@@ -4073,14 +4411,43 @@
       "status": "REPO_TREE_PRESENT",
       "notes": null,
       "originSourcebook": "Clone Wars Campaign Guide",
-      "originTalentNames": null,
-      "talentPublications": [],
-      "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED",
+      "originTalentNames": [
+        "Commanding Officer",
+        "Coordinated Tactics",
+        "Fire at Will",
+        "Squad Actions"
+      ],
+      "talentPublications": [
+        {
+          "sourcebook": "Clone Wars Campaign Guide",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Commanding Officer",
+            "Coordinated Tactics",
+            "Fire at Will",
+            "Squad Actions"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Commanding Officer",
+        "Coordinated Tactics",
+        "Fire at Will",
+        "Squad Actions"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
       "referenceClassAccess": [
         "Soldier"
       ],
-      "accessPublications": [],
+      "accessPublications": [
+        {
+          "sourcebook": "Clone Wars Campaign Guide",
+          "publicationType": "DIRECT_ACCESS_GRANT",
+          "classes": [
+            "Soldier"
+          ]
+        }
+      ],
       "aggregateClassAccess": [
         "Soldier"
       ]
@@ -4092,7 +4459,7 @@
       "classAccess": [
         "Scout"
       ],
-      "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
+      "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
       "repoTreeIds": [
         "127a55c242e031f2"
       ],
@@ -4105,14 +4472,46 @@
       "status": "REPO_TREE_PRESENT",
       "notes": null,
       "originSourcebook": "Clone Wars Campaign Guide",
-      "originTalentNames": null,
-      "talentPublications": [],
-      "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED",
+      "originTalentNames": [
+        "Advanced Intel",
+        "Hidden Eyes",
+        "Hunt the Hunter",
+        "Seek and Destroy",
+        "Spotter"
+      ],
+      "talentPublications": [
+        {
+          "sourcebook": "Clone Wars Campaign Guide",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Advanced Intel",
+            "Hidden Eyes",
+            "Hunt the Hunter",
+            "Seek and Destroy",
+            "Spotter"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Advanced Intel",
+        "Hidden Eyes",
+        "Hunt the Hunter",
+        "Seek and Destroy",
+        "Spotter"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
       "referenceClassAccess": [
         "Scout"
       ],
-      "accessPublications": [],
+      "accessPublications": [
+        {
+          "sourcebook": "Clone Wars Campaign Guide",
+          "publicationType": "DIRECT_ACCESS_GRANT",
+          "classes": [
+            "Scout"
+          ]
+        }
+      ],
       "aggregateClassAccess": [
         "Scout"
       ]
@@ -4124,7 +4523,7 @@
       "classAccess": [
         "Soldier"
       ],
-      "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
+      "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
       "repoTreeIds": [
         "eff10782c1e56598"
       ],
@@ -4137,14 +4536,46 @@
       "status": "REPO_TREE_PRESENT",
       "notes": null,
       "originSourcebook": "Clone Wars Campaign Guide",
-      "originTalentNames": null,
-      "talentPublications": [],
-      "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED",
+      "originTalentNames": [
+        "Comrades in Arms",
+        "Focused Targeting",
+        "Phalanx",
+        "Stick Together",
+        "Watch Your Back"
+      ],
+      "talentPublications": [
+        {
+          "sourcebook": "Clone Wars Campaign Guide",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Comrades in Arms",
+            "Focused Targeting",
+            "Phalanx",
+            "Stick Together",
+            "Watch Your Back"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Comrades in Arms",
+        "Focused Targeting",
+        "Phalanx",
+        "Stick Together",
+        "Watch Your Back"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
       "referenceClassAccess": [
         "Soldier"
       ],
-      "accessPublications": [],
+      "accessPublications": [
+        {
+          "sourcebook": "Clone Wars Campaign Guide",
+          "publicationType": "DIRECT_ACCESS_GRANT",
+          "classes": [
+            "Soldier"
+          ]
+        }
+      ],
       "aggregateClassAccess": [
         "Soldier"
       ]
@@ -4156,7 +4587,7 @@
       "classAccess": [
         "Vanguard"
       ],
-      "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
+      "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
       "repoTreeIds": [
         "ca304c9496f38747"
       ],
@@ -4169,14 +4600,55 @@
       "status": "REPO_TREE_PRESENT",
       "notes": null,
       "originSourcebook": "Clone Wars Campaign Guide",
-      "originTalentNames": null,
-      "talentPublications": [],
-      "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED",
+      "originTalentNames": [
+        "Enhanced Vision",
+        "Impenetrable Cover",
+        "Invisible Attacker",
+        "Mark the Target",
+        "Maximize Cover",
+        "Shellshock",
+        "Soften the Target",
+        "Triangulate"
+      ],
+      "talentPublications": [
+        {
+          "sourcebook": "Clone Wars Campaign Guide",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Enhanced Vision",
+            "Impenetrable Cover",
+            "Invisible Attacker",
+            "Mark the Target",
+            "Maximize Cover",
+            "Shellshock",
+            "Soften the Target",
+            "Triangulate"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Enhanced Vision",
+        "Impenetrable Cover",
+        "Invisible Attacker",
+        "Mark the Target",
+        "Maximize Cover",
+        "Shellshock",
+        "Soften the Target",
+        "Triangulate"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
       "referenceClassAccess": [
         "Vanguard"
       ],
-      "accessPublications": [],
+      "accessPublications": [
+        {
+          "sourcebook": "Clone Wars Campaign Guide",
+          "publicationType": "DIRECT_ACCESS_GRANT",
+          "classes": [
+            "Vanguard"
+          ]
+        }
+      ],
       "aggregateClassAccess": [
         "Vanguard"
       ]
