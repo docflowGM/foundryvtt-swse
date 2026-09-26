@@ -1209,3 +1209,102 @@ Remaining source-authority gaps are now concentrated in:
 
 No feat mechanics, descriptions, taxonomy fields, or pack records were modified in these phases.
 
+---
+
+# Phase 16 — Web Enhancements
+
+## Evidence boundary and source identities
+
+The pack has exactly **two** records whose current `system.source` is `Web Enhancements`:
+
+- Dreadful Countenance
+- Rapid Assault
+
+These are not from the same publication.
+
+### Dreadful Countenance
+
+A preserved copy of the original Wizards of the Coast article **Behind the Threat: The Sith, Part 2 — The Becoming**, by Matthew Grau, retains the original Wizards URL `wizards.com/default.asp?x=starwars/article/BtT2,0`. The preserved four-page article visibly identifies Dreadful Countenance as a **New Feat** and supplies its prerequisite and benefit.
+
+That recovered Wizards article is treated as source-authoritative for this row.
+
+### Rapid Assault
+
+Rapid Assault is identified by the surviving Saga Edition FAQ compilation as an **official optional rule**, entry **E2**, and is consistently reproduced as a Web Enhancement feat. The original Wizards-hosted FAQ artifact itself was not recovered during this pass.
+
+Therefore Rapid Assault's identity and rule text are strongly supported, but its archival provenance remains `SOURCE_REVIEW` rather than being treated as equally strong as the recovered Dreadful Countenance article.
+
+The current generic `page: 1` value on both pack records is not meaningful provenance. Web rules need the actual article/FAQ identity rather than a fabricated book page.
+
+## Per-feat verification
+
+| Feat / pack ID | Source comparison | Runtime / owner findings | Status |
+|---|---|---|---|
+| Dreadful Countenance / `2e5ada2de01fff4d` | Description is faithful to the recovered Wizards article: Cha 13, Sith-tradition membership, and a reroll of a Persuasion or Use the Force check used to activate a fear effect, with the second result mandatory. `featType: general` is appropriate. Current provenance should identify **Behind the Threat: The Sith, Part 2 — The Becoming** rather than only `Web Enhancements, page 1`. | The live `SkillFeatResolver` consumes `abilityMeta.skillRerolls`, not the later `SKILL_REROLL` rules inserted by the addendum normalizer. The pack Persuasion reroll includes `applicationIncludes: ["fear", "intimidate"]`. Because the live resolver matches these values against the skill-use application's label, and the system has an ordinary `Intimidate` Persuasion application, the feat can surface a reroll for ordinary Intimidate merely because the label contains `intimidate`. The source requires the check to **activate a fear effect**; it does not grant a blanket Intimidate reroll. The separately normalized `rules` representation correctly requires fear context but is not the lane consumed by `SkillFeatResolver.getSkillRerollOptions()`. Primary Force taxonomy is also too narrow: the feat operates across Persuasion and Use the Force fear checks, so Skill / fear-effect reroll is the mechanical owner, with Sith/Force as secondary semantics. | `SOURCE_ERROR` (incomplete web provenance / fake page), `MECHANICS_ERROR` (live Persuasion reroll overmatch), `UNSUPPORTED_METADATA` (`intimidate` alias), `TAXONOMY_ERROR` |
+| Rapid Assault / `4be60753991eec43` | Current description matches the surviving FAQ/E2 rule: Double Attack or Dual Weapon Mastery I plus BAB +6; when wielding two weapons or a weapon qualifying for Double Attack, spend a Force Point to make **two attacks as a Standard Action**; normal multiattack penalties still apply; never more than two attacks; normally multiple attacks require Full Attack. | Pack metadata is internally inconsistent with that rule. `conditionSummary` and `actionRules[0]` describe a **full attack after movement** using `FULL_ATTACK_AFTER_MOVEMENT`, a rule the source does not grant. The pack manual combat card is closer but says to resolve a reduced Full Attack and "make one less attack than normal," which is not equivalent to the source's fixed two attacks. Separately, `unknown-regions-combat-action-adapter.js` injects Rapid Assault as an executable Standard action with a correct high-level summary and exact two-attack cap, but it lives under the wrong source-specific adapter and points `ruleData.helper` at `CombatOptionResolver.getOptionalRuleCombatActions`; repo-wide search finds no such helper. Thus the "implemented" action has no proven execution authority for spending the Force Point and sequencing exactly two attacks. A manual action card would be an acceptable current ceiling if it truthfully says exactly two attacks, preserves normal penalties, and explicitly handles Force Point spend. Force Point & Destiny is not the primary taxonomy; this is multiattack/action-economy combat that happens to spend a Force Point. | `SOURCE_REVIEW` (original FAQ artifact not recovered), `SOURCE_ERROR` (generic provenance / fake page), `MECHANICS_ERROR`, `UNSUPPORTED_METADATA`, `WRONG_OWNER`, `TAXONOMY_ERROR` |
+
+## Dreadful Countenance runtime correction specification
+
+Do not fix this during the audit pass, but the eventual implementation packet should preserve the following contract:
+
+1. The reroll must be gated by **fear-effect context**, not the word "Intimidate".
+2. Both qualifying skill families are valid:
+   - Persuasion check used to activate a fear effect.
+   - Use the Force check used to activate a fear effect.
+3. The reroll result is mandatory even if worse.
+4. Sith-tradition membership and Charisma 13 belong to progression eligibility, not runtime roll matching.
+5. The source-specific `SKILL_REROLL` rules already added by `skill-feat-expanded-addendum-normalization-hooks.js` express the intended fear-context shape more accurately than the currently consumed `skillRerolls` array. Do not create another skill engine; reconcile these lanes under the existing skill authority.
+
+The existing "implemented_correct" audit claim for this feat is therefore not source-certified and should not be relied upon during the correction pass.
+
+## Rapid Assault runtime correction specification
+
+The eventual correction should use the existing action/combat authorities rather than creating a feat-specific engine.
+
+Required contract:
+
+1. Eligibility:
+   - BAB +6.
+   - Double Attack **or** Dual Weapon Mastery I.
+   - Wielding two weapons, or a weapon with which Double Attack can be used.
+2. Cost:
+   - one Force Point.
+   - Standard Action.
+3. Resolution:
+   - exactly **two attacks**.
+   - retain the ordinary penalties for the chosen two-weapon or Double Attack method.
+   - no third or later attack, even if the actor's normal Full Attack could produce more.
+4. It is **not** "Full Attack after movement."
+5. Movement is flavor/permission context from taking only a Standard Action, not a separate trigger or prerequisite.
+6. If exact multiattack sequencing is not yet owned by Action Authority, represent this as a truthful manual/reference Standard-action card and Force Point prompt rather than a fake executable action.
+7. Move the action out of an Unknown-Regions-specific adapter. Web Enhancement rules should not be owned by a sourcebook-specific runtime module for an unrelated book.
+
+## Web Enhancement conclusion
+
+Both Web Enhancement identities are legitimate Saga material; neither should be deleted simply because it lacks a printed sourcebook.
+
+However, their current `source: Web Enhancements, page: 1` fields erase the actual publication identity, and both demonstrate why source certification must include runtime tracing:
+
+- Dreadful Countenance's **description is correct while the consumed reroll matcher is too broad**.
+- Rapid Assault's **description is correct while several metadata/runtime representations describe a different action shape or point to a nonexistent helper**.
+
+No pack or runtime files were changed in this phase.
+
+---
+
+# Whole-pack provenance checkpoint after Phase 16
+
+At the identity/provenance level, every current source bucket in the 390-record pack now has a documented disposition:
+
+- twelve uploaded sourcebooks have direct sourcebook phases;
+- Rebellion Era has a 60-feat secondary-source provenance set pending direct-book mechanics certification;
+- Legacy Era has a 19-feat secondary-source provenance set pending direct-book mechanics certification;
+- both Web Enhancement records now have exact publication identities or an explicit archival limitation;
+- the prior generic 48-record species bucket is resolved to Rebellion Era provenance;
+- `Intuitive Initiative` is directly identified as a Core Cerean species trait incorrectly duplicated as a feat;
+- `Keen Force Mind` remains the principal unresolved identity contamination;
+- `Recall` remains confirmed `MISSING_CONTENT`;
+- `Staggering Attack` remains the known same-name hybrid requiring an explicit variant policy.
+
+The next useful audit stage is therefore **record-level reconciliation of all 390 pack rows against the accumulated source-entry ledger**, not another source-count census. That pass should assign each record a final identity/provenance state and collect correction packets without yet editing the compendium.
+
