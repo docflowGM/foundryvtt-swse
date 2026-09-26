@@ -498,11 +498,30 @@ The highest-value next books for provenance resolution are:
 
 ## Source-set reconciliation
 
-Galaxy of Intrigue Chapter 1 publishes **26 feats**. All 26 names exist in the repository. Twenty-five already identify `Galaxy of Intrigue` as their source; **Forceful Recovery** is incorrectly attributed to `The Force Unleashed Campaign Guide`.
+Galaxy of Intrigue Chapter 1 publishes **26 feats**. All 26 canonical names exist in the repository, but the current source bucket is not clean.
+
+- **25** of the canonical 26 currently identify `Galaxy of Intrigue` as their source.
+- **Forceful Recovery** is the canonical 26th and is incorrectly attributed to `The Force Unleashed Campaign Guide`.
+- The pack currently has **29** rows tagged `Galaxy of Intrigue`, because four non-GOI rows also occupy that source bucket:
+  - **Desperate Gambit** — later source-verified in Phase 10 as a **Scum and Villainy** feat.
+  - **Intimidating Presence** — not a Galaxy of Intrigue feat; the pack record collides with the legitimate Saga species-trait identity and carries unrelated action-speed mechanics.
+  - **Frightening Presence** — not a Galaxy of Intrigue feat; no authoritative feat source has yet been established.
+  - **Resilient Talent** — not a Galaxy of Intrigue feat; no authoritative feat source has yet been established.
+
+This correction supersedes any reading of the old source-tag count as a clean 25-of-26 match. The four false-positive rows are treated separately below and in the later whole-pack identity reconciliation.
 
 Published feat set:
 
 Adaptable Talent, Bone Crusher, Brilliant Defense, Channel Rage, Cut the Red Tape, Demoralizing Strike, Disturbing Presence, Expert Briber, Flèche, Forceful Recovery, Grazing Shot, Hobbling Strike, Improved Opportunistic Trickery, Indomitable Personality, Master of Disguise, Meat Shield, Opportunistic Trickery, Recurring Success, Resolute Stance, Sadistic Strike, Silver Tongue, Skill Challenge: Catastrophic Avoidance, Skill Challenge: Last Resort, Skill Challenge: Recovery, Stand Tall, Wookiee Grip.
+
+### Current Galaxy-of-Intrigue-tagged rows that are not GOI feats
+
+| Record | Source-authoritative disposition | Status |
+|---|---|---|
+| Desperate Gambit / `8baf83743668f63a` | Not in the GOI feat table. Phase 10 directly verifies it as a **Scum and Villainy** feat. | `SOURCE_ERROR` |
+| Intimidating Presence / `83abd1c384b58c3c` | Not in the GOI feat table or indexed GOI feat entries. The name is already used by a legitimate Saga **species trait**; the pack row instead stores an unrelated Persuasion action-speed rule. This is a non-feat identity collision, not a feat awaiting a new GOI page. | `INVALID_DUPLICATE`, `SOURCE_ERROR`, `MECHANICS_ERROR`, `WRONG_OWNER` |
+| Frightening Presence / `d612e7a708edf75b` | Not in the GOI feat table or indexed GOI feat entries. The comprehensive Saga feat index also does not list it as a feat. No authoritative publication has yet been located for the surviving row. | `SOURCE_ERROR`, `UNSUPPORTED_METADATA`, `SOURCE_REVIEW`; candidate `INVALID_DUPLICATE` |
+| Resilient Talent / `fda012e3b2b1e55f` | Not in the GOI feat table or indexed GOI feat entries. The comprehensive Saga feat index also does not list it as a feat. Its temporary-talent rule must not be implemented merely because older repository manifests preserved it. | `SOURCE_ERROR`, `UNSUPPORTED_METADATA`, `SOURCE_REVIEW`; candidate `INVALID_DUPLICATE` |
 
 ## Per-feat verification
 
@@ -537,10 +556,11 @@ Adaptable Talent, Bone Crusher, Brilliant Defense, Channel Rage, Cut the Red Tap
 
 ## Galaxy of Intrigue conclusion
 
-This source reinforces two audit rules:
+This source reinforces three audit rules:
 
 1. A sourcebook’s theme is not automatically the feat’s mechanical taxonomy. Many feats printed in an intrigue book are still combat, defense, grapple, or progression rules.
 2. Description fidelity must include **mechanically decisive clauses**, not just a thematic summary. The Skill Challenge feats show where an overly compressed description stops being sufficient for rules use.
+3. A current source label is not evidence of membership in that sourcebook. Galaxy of Intrigue has **26 canonical feat entries but 29 currently tagged pack rows**; four false-positive rows occupy the bucket while Forceful Recovery is mislabeled elsewhere. Source reconciliation must compare canonical name sets, not counts.
 
 ---
 
