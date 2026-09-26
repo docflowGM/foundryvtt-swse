@@ -1965,3 +1965,271 @@ For each retained canonical record, the matrix should carry:
 
 Generated-choice, invalid, missing-content, and variant-collision records must be represented separately so implementation work does not accidentally normalize bad identities into permanent architecture.
 
+---
+
+# Phase 20 — Correction matrix, layer 1: source/provenance packet
+
+## Scope
+
+This is the first implementation-oriented matrix layer. It covers only **retained canonical feat records whose current source label is wrong**.
+
+It deliberately excludes:
+
+- the 28 confirmed invalid/noncanonical rows;
+- the 5 identity-review rows;
+- the 6 generated Weapon Proficiency choice records;
+- source-page corrections where the book label is already correct;
+- mechanics, taxonomy, description, and runtime-owner corrections.
+
+Against the 390-record pack baseline, **91 retained canonical rows currently carry the wrong source label**.
+
+The 91 divide into:
+
+- **40 direct-source-verified source-label corrections** that can be safely used in a later implementation packet;
+- **51 provenance-resolved but direct-book-blocked corrections** for Rebellion Era and Legacy Era, which should remain audit findings until those two sourcebooks are available for page/text verification.
+
+## Packet A — 40 direct-source-verified source-label corrections
+
+These changes are supported by the uploaded sourcebooks or recovered official Web material already reviewed in this ledger.
+
+### -> Saga Edition Core Rulebook — 8
+
+Current rows incorrectly sourced elsewhere:
+
+- Acrobatic Strike — Galaxy at War -> **Core**
+- Bantha Rush — Galaxy at War -> **Core**
+- Charging Fire — Galaxy at War -> **Core**
+- Crush — Force Unleashed -> **Core**
+- Deadeye — Galaxy at War -> **Core**
+- Mighty Swing — Galaxy at War -> **Core**
+- Sniper — Galaxy at War -> **Core**
+- Triple Crit — Galaxy at War -> **Core**
+
+These are the same eight Core provenance errors established in Phase 1.
+
+### -> Clone Wars Campaign Guide — 1
+
+- Unstoppable Force — Force Unleashed -> **Clone Wars**
+
+Do not preserve its current Force feat identity/taxonomy merely because the name contains "Force."
+
+### -> The Unknown Regions — 1
+
+- Mounted Combat — Core -> **The Unknown Regions**
+
+The source feat has both mount-speed and hit-negation functions; source correction must not be mistaken for mechanics completion.
+
+### -> The Force Unleashed Campaign Guide — 3
+
+- Natural Leader — Core -> **Force Unleashed**
+- Savage Attack — Galaxy at War -> **Force Unleashed**
+- Scavenger — Galaxy at War -> **Force Unleashed**
+
+Natural Leader is the p. 34 detailed feat omitted from Force Unleashed Table 2-1 and is the reason that book's corrected published feat count is 21.
+
+### -> Galaxy of Intrigue — 1
+
+- Forceful Recovery — Force Unleashed -> **Galaxy of Intrigue**
+
+### -> Scum and Villainy — 3
+
+- Burst of Speed — Galaxy at War -> **Scum and Villainy**
+- Desperate Gambit — Galaxy of Intrigue -> **Scum and Villainy**
+- Slippery Maneuver — Galaxy at War -> **Scum and Villainy**
+
+### -> Starships of the Galaxy — 1 primary printed-source correction
+
+- Tech Specialist — Core -> **Starships of the Galaxy**
+
+Tech Specialist also has an earlier official **Web Enhancement 1** publication. The correction model must preserve this layered provenance rather than pretending Starships is the only publication history.
+
+Recommended provenance policy:
+- primary printed source: Starships of the Galaxy p. 21;
+- supplemental/earlier publication: Web Enhancement 1, "The Tech Specialist."
+
+### -> Galaxy at War — 22
+
+**One cross-book combat feat**
+- Forceful Blast — Force Unleashed -> **Galaxy at War**
+
+**Eight Martial Arts family records**
+- Echani Training — generic Star Wars Saga Edition -> **KOTOR base feat + Galaxy at War extension**
+- Hijkata Training — generic -> **Galaxy at War**
+- K'tara Training — generic -> **Galaxy at War**
+- K'thri Training — generic -> **Galaxy at War**
+- Stava Training — generic -> **Galaxy at War**
+- Tae-Jitsu Training — generic -> **Galaxy at War**
+- Teräs Käsi Training — generic -> **Galaxy at War**
+- Wrruushi Training — generic -> **Galaxy at War**
+
+Echani Training must not be flattened into a one-book-only source. Its base feat is KOTOR p. 33; Galaxy at War adds a later extension.
+
+**Thirteen Team Feats**
+- Aquatic Specialists
+- Ascension Specialists
+- Covert Operatives
+- Medical Team
+- Mounted Regiment
+- Nimble Team
+- Slicer Team
+- Technical Experts
+- Tireless Squad
+- Unhindered Approach
+- Unified Squadron
+- Wary Sentries
+- Wilderness Specialists
+
+All thirteen currently use generic `Star Wars Saga Edition`; all should carry Galaxy at War provenance.
+
+### Direct-source Packet A acceptance criteria
+
+A future implementation commit for this packet should:
+
+1. update only canonical source/provenance fields for these 40 rows;
+2. keep `system.source` and any parallel `sourcebook` field consistent;
+3. preserve layered provenance for Echani Training and Tech Specialist rather than silently replacing history;
+4. **not** change feat mechanics, descriptions, taxonomy, or runtime code in the same commit;
+5. leave Staggering Attack untouched in this packet because its current Galaxy at War label is one valid source for a record that actually contains a two-source **variant collision**, not a simple source-label typo;
+6. run a report proving all 40 expected IDs changed and no other pack records changed.
+
+## Packet B — 51 provenance-resolved but direct-book-blocked source corrections
+
+These source assignments are strongly supported by independent Saga indexes and close the current name sets cleanly, but the actual Rebellion Era and Legacy Era PDFs are not available in the Project. They should remain an audit packet until those books can be rendered and page/text checked.
+
+### -> Rebellion Era Campaign Guide — 50
+
+**Two general feats**
+- Assured Attack — Galaxy at War -> **Rebellion Era**
+- Fast Surge — Jedi Academy -> **Rebellion Era**
+
+**Forty-eight species feats currently using generic `Star Wars Saga Edition` provenance**
+
+Bothan:
+- Bothan Will
+- Confident Success
+- Lasting Influence
+
+Cerean:
+- Binary Mind
+- Mind of Reason
+- Perfect Intuition
+
+Duros:
+- Flawless Pilot
+- Spacer's Surge
+- Veteran Spacer
+
+Ewok:
+- Ample Foraging
+- Forest Stalker
+- Keen Scent
+
+Gamorrean:
+- Increased Resistance
+- Primitive Warrior
+- Quick Comeback
+
+Gungan:
+- Gungan Weapon Master
+- Perfect Swimmer
+- Warrior Heritage
+
+Ithorian:
+- Devastating Bellow
+- Nature Specialist
+- Strong Bellow
+
+Kel Dor:
+- Justice Seeker
+- Read the Winds
+- Scion of Dorin
+
+Mon Calamari:
+- Fast Swimmer
+- Mon Calamari Shipwright
+- Sharp Senses
+
+Quarren:
+- Clawed Subspecies
+- Deep Sight
+- Shrewd Bargainer
+
+Rodian:
+- Fringe Benefits
+- Hunter's Instincts
+- Master Tracker
+
+Sullustan:
+- Darkness Dweller
+- Disarming Charm
+- Sure Climber
+
+Trandoshan:
+- Pitiless Warrior
+- Regenerative Healing
+- Thick Skin
+
+Twi'lek:
+- Imperceptible Liar
+- Jedi Heritage
+- Survivor of Ryloth
+
+Wookiee:
+- Bowcaster Marksman
+- Resurgent Vitality
+- Wroshyr Rage
+
+Zabrak:
+- Inborn Resilience
+- Instinctive Perception
+- Unwavering Focus
+
+### -> Legacy Era Campaign Guide — 1
+
+- Autofire Assault — Galaxy at War -> **Legacy Era**
+
+### Packet B gate
+
+Do **not** hand Packet B to implementation as a final source/page correction until the actual Rebellion Era and Legacy Era books are available.
+
+When those PDFs are supplied:
+
+1. render the feat sections;
+2. confirm the exact published name sets;
+3. verify printed page for every affected record;
+4. verify that no table/detail or errata conflict changes the current provenance conclusion;
+5. then promote Packet B from provenance-triage to source-authoritative correction.
+
+## Source-label matrix summary
+
+| Target canonical source | Wrong-label rows |
+|---|---:|
+| Rebellion Era Campaign Guide | 50 |
+| Galaxy at War | 22 |
+| Saga Edition Core Rulebook | 8 |
+| The Force Unleashed Campaign Guide | 3 |
+| Scum and Villainy | 3 |
+| Clone Wars Campaign Guide | 1 |
+| The Unknown Regions | 1 |
+| Galaxy of Intrigue | 1 |
+| Legacy Era Campaign Guide | 1 |
+| Starships of the Galaxy / Web publication history | 1 |
+| **Total** | **91** |
+
+## What this layer does not solve
+
+Correcting these source labels alone would still leave:
+
+- wrong page fields on many otherwise correctly sourced records;
+- missing Recall;
+- Staggering Attack's two published variants collapsed into one hybrid record;
+- description errors;
+- missing/incorrect prerequisites;
+- mechanics and `abilityMeta` defects;
+- taxonomy and `featType` errors;
+- wrong runtime owners;
+- stale implementation-status metadata;
+- invalid/noncanonical records that need retirement rather than source reassignment.
+
+The next correction-matrix layer should therefore be **page/provenance precision for the direct-source-verified books**, followed by description/prerequisite and mechanics packets.
+
