@@ -885,3 +885,108 @@ This book **does publish new feats in sidebars**, despite lacking a conventional
 | Mounted Defense / `acb7efcc70769b9f` | 127 | Description and explicitly manual redirection capture once/encounter and timing after attack result but before damage/effects. Preserve passenger-or-pilot use and beast/speeder restriction. Pilot-or-Ride training is not structured. Mounted defensive reaction is a better primary family than Pilot maneuvers alone. | Action & Reaction Runtime + UI-Assisted / GM Adjudication | `MECHANICS_PARTIAL` (eligibility/context certification), `TAXONOMY_ERROR`; manual handling appropriate |
 
 **Cumulative source-entry count:** 268 + 4 = **272**. No additional copy is created for a feat merely because NPCs also use it. This sidebar check also explains why the three unresolved JATM-tagged records should remain `SOURCE_REVIEW`, not be declared nonexistent solely because they are absent from that book's general feat section.
+
+---
+
+# Phase 13 — Whole-pack reconciliation checkpoint
+
+## Why this checkpoint exists
+
+The audit has now exhausted the sourcebooks currently represented by the completed book phases above and has reviewed **272 published source entries**. That number is deliberately not treated as a unique-pack-record count: some published entries overlap a single repository identity, some repository records are generated/choice variants rather than independent published feats, some current source fields are wrong, and at least one published feat (**Recall**) is missing from the pack entirely.
+
+The pack baseline remains **390 records** at blob `b072ca3980e7edd87c5c71ffdbca1d5d46be4643`.
+
+## Current `system.source` census
+
+This is a census of what the repository currently claims, **not** a certification of provenance.
+
+| Current source field | Pack records |
+|---|---:|
+| Saga Edition Core Rulebook | 74 |
+| Star Wars Saga Edition | 69 |
+| Galaxy at War | 42 |
+| The Force Unleashed Campaign Guide | 31 |
+| Galaxy of Intrigue | 29 |
+| Scum and Villainy | 23 |
+| Clone Wars Campaign Guide | 20 |
+| Knights of the Old Republic Campaign Guide | 20 |
+| Unknown Regions | 20 |
+| Legacy Era Campaign Guide | 18 |
+| Scavenger's Guide to Droids | 17 |
+| Rebellion Era Campaign Guide | 10 |
+| Jedi Academy Training Manual | 8 |
+| Threats of the Galaxy | 4 |
+| Starships of the Galaxy | 3 |
+| Web Enhancements | 2 |
+| **Total** | **390** |
+
+Of those 390 records, **291 currently claim one of the twelve book labels already covered by Phases 1–12**. This does **not** mean 291 records are source-correct. The earlier phases already prove cross-book misattribution in both directions.
+
+The remaining current-source labels divide into:
+
+- **69** generic `Star Wars Saga Edition` records.
+- **18** `Legacy Era Campaign Guide` records.
+- **10** `Rebellion Era Campaign Guide` records.
+- **2** `Web Enhancements` records.
+
+## Generic-source records already resolved by audited books
+
+The generic bucket is not wholly unaudited. Earlier sourcebook passes already prove that **21 of the 69 generic-source records are published identities covered by audited books**, so their generic provenance is not acceptable as the final source record:
+
+**Galaxy at War martial-arts/team material**
+- Aquatic Specialists
+- Ascension Specialists
+- Covert Operatives
+- Echani Training
+- Hijkata Training
+- K'tara Training
+- K'thri Training
+- Medical Team
+- Mounted Regiment
+- Nimble Team
+- Slicer Team
+- Stava Training
+- Tae-Jitsu Training
+- Technical Experts
+- Teräs Käsi Training
+- Tireless Squad
+- Unhindered Approach
+- Unified Squadron
+- Wary Sentries
+- Wilderness Specialists
+- Wrruushi Training
+
+**Echani Training requires multi-source provenance rather than a simplistic one-book rewrite:** Knights of the Old Republic Campaign Guide p. 33 publishes the base feat; Galaxy at War later adds material to the same feat identity. Preserve that distinction rather than manufacturing a duplicate record or flattening both publications into one unlabeled description.
+
+Therefore **48 generic-source records remain unresolved by the currently completed sourcebook phases**. They are not automatically invalid, missing, or homebrew; they require source location before correction.
+
+## Remaining source-authority gaps
+
+The pack still contains explicit claims to sources that have not yet received a source-authoritative phase in this ledger:
+
+| Source label | Current records | Audit state |
+|---|---:|---|
+| Legacy Era Campaign Guide | 18 | Needs authoritative sourcebook pass |
+| Rebellion Era Campaign Guide | 10 | Needs authoritative sourcebook pass |
+| Web Enhancements | 2 | Needs exact publication/location verification |
+| Generic Star Wars Saga Edition, after the 21 already resolved above | 48 | Needs provenance resolution; likely a mixture of later books, species/cultural feats, team material, and other sources |
+
+Do **not** infer that these counts equal the number of published feats in those sources. The entire audit has demonstrated that current source counts can accidentally balance while the name sets are wrong.
+
+## Reconciliation rules for the final 390-record pass
+
+1. Keep **published source-entry coverage** separate from **repository-record coverage**.
+2. A single pack record may legitimately need multiple provenance notes when a later book extends an earlier feat.
+3. Generated choice records (for example explicit Weapon Proficiency variants) must not be mistaken for independent published feat identities.
+4. Same-name published feats with different mechanics, such as **Staggering Attack**, require an explicit variant/identity policy; do not merge two rules into one hybrid record.
+5. Missing published content, such as **Recall**, remains `MISSING_CONTENT` even if the total pack count happens to match an expected source count elsewhere.
+6. A record is not source-certified merely because its current `system.source` names a book that has been audited. Certification comes from the name/text/rules comparison already recorded in the corresponding phase.
+7. No feat mechanics, descriptions, taxonomy fields, or pack records are changed during this checkpoint.
+
+## Next source work
+
+The next authoritative book passes should be **Legacy Era Campaign Guide** and **Rebellion Era Campaign Guide** when those sourcebooks are available in the project, followed by exact verification of the two `Web Enhancements` records and then the remaining 48 generic-source records.
+
+Until those sources are available, the audit can still perform repository-side reconciliation and consumer tracing, but it should not invent provenance from names, prerequisites, or current metadata.
+
+
