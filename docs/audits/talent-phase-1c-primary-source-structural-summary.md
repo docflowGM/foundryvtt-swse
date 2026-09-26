@@ -1,6 +1,6 @@
 # PHASE 1C SUMMARY - Primary-Source Structural Talent Adjudication
 
-**Status:** COMPLETE FOR AVAILABLE PRIMARY SOURCES / 1 BLOCKED ITEM  
+**Status:** COMPLETE  
 **Date:** 2026-09-26  
 **Branch:** `audit/talent-phase-1-tree-census`
 
@@ -11,6 +11,7 @@
 - `docs/audits/talent-phase-1c-scavengers-guide-to-droids-structural-adjudication.md`
 - `docs/audits/talent-phase-1c-unknown-regions-structural-adjudication.md`
 - `docs/audits/talent-phase-1c-scum-and-villainy-genoharadan-adjudication.md`
+- `docs/audits/talent-phase-1c-legacy-provocateur-structural-adjudication.md`
 
 ---
 
@@ -37,7 +38,7 @@ No production/data changes were made.
 | Scavenger's Guide to Droids | Override | COMPLETE |
 | The Unknown Regions | 5 trees | COMPLETE |
 | Scum and Villainy | GenoHaradan split | COMPLETE |
-| Legacy Era Campaign Guide | Provocateur | BLOCKED - PDF unavailable |
+| Legacy Era Campaign Guide | Provocateur | COMPLETE |
 
 ---
 
@@ -94,7 +95,7 @@ This is substantially worse than a simple class-access problem.
 - Scout -> Mobile Scout
 - Soldier -> Warrior
 
-**Total source-confirmed missing class/tree access edges: 19**
+**Total source-confirmed missing class/tree access edges: 20**
 
 Scum and Villainy's Assassin -> GenoHaradan relationship is present only through one malformed partial tree identity and therefore requires identity repair rather than a simple additional edge.
 
@@ -229,7 +230,7 @@ The aggregate should not be interpreted as a system-wide completion percentage; 
 
 ## Legacy Era Campaign Guide - Provocateur
 
-Secondary reference evidence says:
+Primary-source verification is now complete. Legacy Era Campaign Guide pp. 27-28 confirms:
 
 ```text
 Provocateur -> Noble, Charlatan
@@ -241,13 +242,9 @@ Current repository:
 - Charlatan does not claim Provocateur
 - `talent_tree_class_map.json` already says Noble + Charlatan
 
-However, the actual Legacy Era Campaign Guide PDF is not currently present in the uploaded project source set.
+**Status:** `ACCESS_ERROR_CONFIRMED`
 
-Therefore:
-
-**Status:** `SOURCE_REVIEW_BLOCKED_PRIMARY_PDF`
-
-Do not promote Charlatan -> Provocateur to source-certified correction until the primary book is supplied.
+The current Noble -> Provocateur edge is correct; Charlatan -> Provocateur is missing from the Charlatan class document. The repository Provocateur tree already contains all six canonical talents.
 
 ---
 
@@ -317,14 +314,14 @@ The purpose is to stop future cleanup from collapsing identity back to name-only
 - [x] Source-confirmed wrong tree claims enumerated.
 - [x] Same-name identity hazards documented.
 - [x] GenoHaradan split resolved conceptually.
-- [x] Legacy Era Provocateur explicitly blocked rather than guessed.
+- [x] Legacy Era Provocateur primary-source adjudicated.
 - [x] No production/data changes made.
 
 # Phase 1C verdict
 
 The structural audit has uncovered a materially larger problem than the repository's prior "reviewed" tree state suggested:
 
-- **19** missing source-confirmed class/tree access edges
+- **20** missing source-confirmed class/tree access edges
 - **5** missing source-confirmed tree identities
 - **74** source-confirmed missing/correct-tree talent identities in the targeted discrepancy set
 - **5** source-confirmed wrong tree claims
