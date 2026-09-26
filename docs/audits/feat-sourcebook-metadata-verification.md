@@ -1450,3 +1450,268 @@ After this phase:
 
 The next reconciliation pass should stop counting names and instead produce a **record-by-record final correction matrix** from this ledger: canonical identity/source, page/provenance, description disposition, mechanics disposition, taxonomy/owner disposition, and implementation boundary. That matrix can then be grouped into controlled implementation packets without changing the feat pack during the audit stage.
 
+---
+
+# Phase 18 — Identity cleanup: Force Unleashed correction, legacy Forceful family, and Core non-feat contaminants
+
+## Why this phase supersedes parts of earlier source reconciliation
+
+The earlier source passes were intentionally conservative about records that existed in the repository but were absent from a book's main feat table. That caution was correct, but the accumulated evidence is now strong enough to resolve several of those clusters.
+
+This phase combines:
+
+- direct visual reinspection of the uploaded **Force Unleashed Campaign Guide** feat pages;
+- direct visual reinspection of the Core Rulebook feat section and Weapon Proficiency entry;
+- the repository's own historical unmatched-record reports;
+- the official **Saga Edition Conversion Guide** for pre-Saga feat identities;
+- official Core errata / published talent references for Lightsaber Throw;
+- corpus-wide exact-name searches across the currently uploaded Saga sourcebooks;
+- comprehensive Saga feat indexes used only as a secondary cross-check where no uploaded source contains the name.
+
+No pack or runtime records are changed here.
+
+## Force Unleashed — corrected canonical source set is 21, not 20
+
+Phase 4 used Table 2-1 as the canonical set and therefore recorded **20** Force Unleashed feats. Direct reinspection shows that the table is incomplete.
+
+Printed p. 34 publishes an additional feat:
+
+### Natural Leader / `d41076e442832c3e`
+
+The book directly presents **Natural Leader** as a feat even though it is omitted from Table 2-1.
+
+Source:
+- prerequisite: Charisma 13;
+- benefit: the character becomes leader of an organization of their design;
+- organization scale is one-half heroic level plus Charisma bonus;
+- the character begins with +10 Organization Score for that organization;
+- the organization continues to grow as levels are gained.
+
+The pack currently attributes Natural Leader to **Saga Edition Core Rulebook p. 88**. It is not a Core Chapter 5 feat.
+
+Current description and `organizationRules` metadata materially preserve the Force Unleashed mechanic. The source identity is wrong, not the main rule concept.
+
+Disposition:
+- `SOURCE_ERROR`: Core -> **The Force Unleashed Campaign Guide, p. 34**.
+- Current broad Character / General Passive taxonomy should eventually be refined toward organization/progression/social authority, but no parallel organization engine should be created.
+- Main description/mechanics metadata: broadly `CORRECT` at the inspected rule-description level.
+
+### Corrected Force Unleashed source-entry count
+
+Force Unleashed therefore publishes **21 feat identities**, not 20:
+
+- the twenty in Table 2-1;
+- **Natural Leader**, printed in the detailed feat section but omitted from the table.
+
+This corrects the earlier direct-source cumulative count:
+
+- Phase 12 checkpoint: previously **272** published source entries reviewed;
+- corrected direct-source total: **273**.
+
+Any later aggregate that copied the 272 figure should treat this phase as superseding it.
+
+## The ten remaining `Forceful *` rows are noncanonical legacy-db identities
+
+After already resolving:
+
+- Crush -> Core Rulebook;
+- Forceful Blast -> Galaxy at War;
+- Forceful Recovery -> Galaxy of Intrigue;
+- Unstoppable Force -> Clone Wars;
+
+ten records remained tagged to Force Unleashed p. 34:
+
+- Forceful Grip / `465434fb7b44aee1`
+- Forceful Saber Throw / `37cb4455a70876ad`
+- Forceful Slam / `6673cd53493a9d6c`
+- Forceful Strike / `02ac414f546a539a`
+- Forceful Stun / `ff76bea42641ca5b`
+- Forceful Telekinesis / `8566edcae3a2f18c`
+- Forceful Throw / `10a017a020aa4a9c`
+- Forceful Vitality / `ffd5fecab0550bb6`
+- Forceful Weapon / `db564cc6f9879ec8`
+- Forceful Will / `17e317292814e13e`
+
+These are **not** Force Unleashed feats.
+
+The evidence is cumulative:
+
+1. None appears in the visually inspected Force Unleashed feat table or detailed feat pages.
+2. None occurs by exact name anywhere in the text-extracted uploaded Saga sourcebooks used by this audit.
+3. The repository's own `tools/feat_compendium_unmatched_db.csv` lists **all ten** as:
+   **"No matching entry in swse_feats.json; left existing description/rules text unchanged."**
+4. Earlier Force Unleashed parity/implementation documents treated them as real because they inherited the pack's existing source and description; those documents did not provide primary-source identity evidence.
+5. Comprehensive Saga feat indexes used as a cross-check do not identify these names as published Saga feats.
+
+The current mechanics are highly regular/generated in shape: several grant +2 to a named Force-power activation, two spend a Force Point for a -1 CT rider, and the others provide generalized Endurance or Will benefits. Regardless of whether those mechanics would be reasonable house rules, the identities are not source-supported Saga feats.
+
+**Disposition for all ten:** `INVALID_DUPLICATE` under this audit's "not an independent valid published feat / identity problem" definition, plus `SOURCE_ERROR` and `UNSUPPORTED_METADATA`.
+
+Implementation consequence for the later correction pass:
+
+- do **not** spend additional engineering effort completing these rows;
+- dependency-check their IDs and references first;
+- retire/remove or explicitly quarantine them as noncanonical content;
+- remove source-derived implementation claims that rely only on the old pack provenance;
+- do not migrate their behavior into Force powers unless a separately published rule actually supports it.
+
+This finding also explains why the old Force Unleashed source bucket could look much larger than the actual source set.
+
+## Core Rulebook — generated Weapon Proficiency choice rows are not independent feat identities
+
+The Core feat section publishes a single **Weapon Proficiency** feat. Its Special clause allows choosing a weapon group and selecting the feat multiple times for different groups.
+
+The repository additionally contains these records as if they were independent published feats:
+
+- Advanced Melee Weapon Proficiency / `cf28ec45cabaff59`
+- Heavy Weapon Proficiency / `41a9ce755ecffb5b`
+- Weapon Proficiency (Heavy Weapons)
+- Weapon Proficiency (Pistols)
+- Weapon Proficiency (Rifles)
+- Weapon Proficiency (Simple Weapons)
+
+These are implementation/choice expansions of the canonical feat, not separate Core source entries.
+
+Disposition: `INVALID_DUPLICATE` **as source identities**, with an important implementation caveat: they may remain useful generated/progression artifacts if the system requires explicit selected-choice records. If retained, their provenance should explicitly state **derived from Weapon Proficiency, Core p. 89**, and they must be excluded from published-feat source counts.
+
+Do not delete them merely because they are generated; decide their storage form during the later correction pass.
+
+## Saber Throw / `08dbd76457db101f` is a talent, not a feat
+
+The pack currently stores **Saber Throw** as a Core feat, source p. 94.
+
+The canonical rule is the **Lightsaber Throw talent** from the Core Lightsaber Combat talent tree, printed p. 41. Official Core errata expressly updates the wording of the "Lightsaber Throw Talent," confirming the rule's talent identity.
+
+The pack feat's mechanic is also materially different from that talent:
+- pack row: uses Use the Force instead of a ranged attack roll and automatically returns at end of turn;
+- actual talent: throw a lightsaber as a standard action as a thrown weapon; the wielder is proficient with it; normal range penalties apply; if the target is within 6 squares, the wielder can pull it back as a swift action with DC 20 Use the Force.
+
+The system already has Lightsaber Throw talent handling and related talent runtime.
+
+Disposition: `INVALID_DUPLICATE`, `SOURCE_ERROR`, `MECHANICS_ERROR`, `WRONG_OWNER`.
+
+Do not "repair" the feat into the talent. Retire the feat identity after dependency checks and preserve the canonical rule under talent authority.
+
+## Pre-Saga feat contamination in the Core-tagged bucket
+
+The official **Saga Edition Conversion Guide** explicitly identifies several names as feats from the previous d20 rules and tells players what Saga mechanic replaces them. Their presence as independent Saga feat rows is therefore not a missing-source problem; it is edition contamination.
+
+### Great Fortitude / `9a89576b3cc1347e`
+
+Pack: +2 Fortitude Defense.
+
+Conversion Guide:
+- old **Great Fortitude** -> Saga **Improved Defenses**.
+
+Saga also uses "Great Fortitude" as a species-trait name in some species entries, which is another reason not to treat the pack row as a canonical feat.
+
+Disposition: `INVALID_DUPLICATE`, `SOURCE_ERROR`, `WRONG_OWNER`. The current +2 feat effect is not a canonical Saga feat.
+
+### Lightning Reflexes / `b3a5c57344a516a2`
+
+Pack: +2 Reflex Defense.
+
+Conversion Guide:
+- old **Lightning Reflexes** -> Saga **Improved Defenses**.
+
+"Lightning Reflexes" also appears as a legitimate Saga species trait (for example, Gungans), not an independent feat.
+
+Disposition: `INVALID_DUPLICATE`, `SOURCE_ERROR`, `WRONG_OWNER`.
+
+### Frightful Presence / `b2296a4d5cef8a61`
+
+Pack: Charisma 15; area Persuasion intimidation action moving enemies -1 CT.
+
+Conversion Guide:
+- old **Frightful Presence** -> **N/A** in Saga.
+
+No matching Saga feat identity was found in the audited source corpus.
+
+Disposition: `INVALID_DUPLICATE`, `SOURCE_ERROR`, `UNSUPPORTED_METADATA`.
+
+### Stealthy / `0c53cb8b7c29d865`
+
+Pack: +2 Stealth and once/encounter failed-check reroll.
+
+Conversion Guide:
+- old **Stealthy** -> Saga **Skill Focus (Stealth)**.
+
+Disposition: `INVALID_DUPLICATE`, `SOURCE_ERROR`, `UNSUPPORTED_METADATA`.
+
+### Trustworthy / `6d8ce2807c579289`
+
+Pack: +2 Persuasion and once/encounter failed-check reroll.
+
+Conversion Guide:
+- old **Trustworthy** -> Saga **Skill Focus (Persuasion)** or **Skill Focus (Gather Information)**.
+
+Disposition: `INVALID_DUPLICATE`, `SOURCE_ERROR`, `UNSUPPORTED_METADATA`.
+
+### Two-Weapon Fighting / `88cdedff38b610c0`
+
+Pack: reduces two-weapon penalty by 2.
+
+Conversion Guide:
+- old **Two-Weapon Fighting** -> Saga **Dual Weapon Mastery II**.
+
+Saga's actual multiweapon feat chain is Dual Weapon Mastery I/II/III.
+
+Disposition: `INVALID_DUPLICATE`, `SOURCE_ERROR`, `UNSUPPORTED_METADATA`.
+
+These rows should not be maintained as parallel Saga mechanics during the eventual correction pass.
+
+## Fast Talk and Improved Grapple — unsupported db-only identities
+
+Two additional Core-tagged records do not appear in the Core feat table, do not occur by exact name in the uploaded source corpus, and are listed by the repository's own unmatched-record report as db-only with no matching `swse_feats.json` authority.
+
+### Fast Talk / `9768963c7a36237d`
+
+Current pack rule says a character trained in Persuasion can feint in combat as a swift action instead of a standard action.
+
+No official Saga feat by this name was located in the source corpus or comprehensive feat indexes. The repository does contain a **Fast Talker** talent elsewhere, but that is a distinct name and rule identity.
+
+The pack rule is additionally suspicious because the canonical combat Feint application uses **Deception**, not Persuasion.
+
+Disposition: `SOURCE_REVIEW`, `SOURCE_ERROR`, `UNSUPPORTED_METADATA`; **candidate `INVALID_DUPLICATE`**. Do not invest in its runtime implementation unless an authoritative source is produced.
+
+### Improved Grapple / `5824e2360feb505a`
+
+Current pack rule gives +5 on grapple checks and prevents the normal attack of opportunity when initiating a grapple.
+
+No official Saga feat by this name was found in the source corpus or comprehensive feat indexes. The repository's own combat audit already noted it "may be imported expanded content," and community search results show the same name/mechanical concept in homebrew grappling redesign discussions rather than a published Saga source.
+
+Disposition: `SOURCE_REVIEW`, `SOURCE_ERROR`, `UNSUPPORTED_METADATA`; **candidate `INVALID_DUPLICATE`**. The canonical Saga grapple feat chain remains Grab -> Pin/Trip -> Crush/Throw and related published expansions.
+
+## Core-source bucket after identity cleanup
+
+This phase substantially refines Phase 1's list of "Core-claimed but not independent Chapter 5 entries."
+
+Resolved out of the Core source set:
+
+- Mounted Combat -> Unknown Regions.
+- Natural Leader -> Force Unleashed p. 34.
+- Tech Specialist -> Starships of the Galaxy p. 21 plus its earlier official Web Enhancement publication; not Core.
+- Saber Throw -> canonical Core **talent**, not feat.
+- Great Fortitude -> obsolete pre-Saga feat / species-trait collision.
+- Lightning Reflexes -> obsolete pre-Saga feat / species-trait collision.
+- Frightful Presence -> obsolete pre-Saga feat, no Saga feat replacement.
+- Stealthy -> obsolete pre-Saga feat.
+- Trustworthy -> obsolete pre-Saga feat.
+- Two-Weapon Fighting -> obsolete pre-Saga feat.
+- Fast Talk -> unsupported legacy db-only candidate invalid.
+- Improved Grapple -> unsupported legacy db-only candidate invalid.
+- the six explicit Weapon Proficiency choice rows -> generated derivatives of the one canonical Weapon Proficiency feat.
+
+This leaves the **64 published Core Chapter 5 feat identities** as the source-authoritative Core feat set; generated proficiency choices may remain an implementation detail but must not inflate the source count.
+
+## Correction-matrix consequence
+
+Before implementation begins, the final correction matrix must distinguish at least four identity classes rather than treating every current pack row equally:
+
+1. **Canonical published feat** — retain and correct.
+2. **Canonical feat with multi-source extension** — retain one identity with explicit provenance structure where appropriate.
+3. **Generated implementation choice** — may remain in data, but is not an independent published feat.
+4. **Invalid/noncanonical feat row** — retire/quarantine after dependency check instead of spending engineering effort automating it.
+
+The Forceful family, old-edition feat rows, Intuitive Initiative feat duplicate, Saber Throw feat duplicate, and the unresolved db-only contaminants are exactly why this identity layer must be settled before Claude receives implementation packets.
+
