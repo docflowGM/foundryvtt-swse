@@ -6,9 +6,9 @@
   "counts": {
     "entries": 195,
     "referenceRows": 140,
-    "primarySourceVerified": 78,
+    "primarySourceVerified": 79,
     "referencePendingPrimary": 62,
-    "repoSpecialSourceReview": 55
+    "repoSpecialSourceReview": 54
   },
   "entries": [
     {
@@ -293,6 +293,14 @@
             "Stunning Strike",
             "Unbalance Opponent"
           ]
+        },
+        {
+          "sourcebook": "Clone Wars Campaign Guide",
+          "publicationType": "EXPANSION",
+          "talentNames": [
+            "Bayonet Master",
+            "Unrelenting Assault"
+          ]
         }
       ],
       "aggregateCanonicalTalentNames": [
@@ -300,7 +308,9 @@
         "Gun Club",
         "Melee Smash",
         "Stunning Strike",
-        "Unbalance Opponent"
+        "Unbalance Opponent",
+        "Bayonet Master",
+        "Unrelenting Assault"
       ],
       "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
       "referenceClassAccess": [
@@ -434,6 +444,13 @@
             "Indomitable",
             "Tough as Nails"
           ]
+        },
+        {
+          "sourcebook": "Clone Wars Campaign Guide",
+          "publicationType": "EXPANSION",
+          "talentNames": [
+            "Keep Them at Bay"
+          ]
         }
       ],
       "aggregateCanonicalTalentNames": [
@@ -443,7 +460,8 @@
         "Draw Fire",
         "Harm's Way",
         "Indomitable",
-        "Tough as Nails"
+        "Tough as Nails",
+        "Keep Them at Bay"
       ],
       "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
       "referenceClassAccess": [
@@ -647,6 +665,13 @@
             "Relentless Pursuit",
             "Vehicular Evasion"
           ]
+        },
+        {
+          "sourcebook": "Clone Wars Campaign Guide",
+          "publicationType": "EXPANSION",
+          "talentNames": [
+            "Renowned Pilot"
+          ]
         }
       ],
       "aggregateCanonicalTalentNames": [
@@ -655,7 +680,8 @@
         "Juke",
         "Keep It Together",
         "Relentless Pursuit",
-        "Vehicular Evasion"
+        "Vehicular Evasion",
+        "Renowned Pilot"
       ],
       "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
       "referenceClassAccess": [
@@ -773,13 +799,23 @@
             "Force Talisman",
             "Greater Force Talisman"
           ]
+        },
+        {
+          "sourcebook": "Clone Wars Campaign Guide",
+          "publicationType": "EXPANSION",
+          "talentNames": [
+            "Focused Force Talisman",
+            "Greater Focused Force Talisman"
+          ]
         }
       ],
       "aggregateCanonicalTalentNames": [
         "Attune Weapon",
         "Empower Weapon",
         "Force Talisman",
-        "Greater Force Talisman"
+        "Greater Force Talisman",
+        "Focused Force Talisman",
+        "Greater Focused Force Talisman"
       ],
       "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
       "referenceClassAccess": [
@@ -1031,6 +1067,13 @@
             "Knockdown Shot",
             "Multiattack Proficiency (pistols)"
           ]
+        },
+        {
+          "sourcebook": "Clone Wars Campaign Guide",
+          "publicationType": "EXPANSION",
+          "talentNames": [
+            "Blind Shot"
+          ]
         }
       ],
       "aggregateCanonicalTalentNames": [
@@ -1038,7 +1081,8 @@
         "Deceptive Shot",
         "Improved Quick Draw",
         "Knockdown Shot",
-        "Multiattack Proficiency (pistols)"
+        "Multiattack Proficiency (pistols)",
+        "Blind Shot"
       ],
       "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
       "referenceClassAccess": [
@@ -1295,13 +1339,23 @@
             "Master Negotiator",
             "Skilled Advisor"
           ]
+        },
+        {
+          "sourcebook": "Clone Wars Campaign Guide",
+          "publicationType": "EXPANSION",
+          "talentNames": [
+            "Consular's Vitality",
+            "Improved Consular's Vitality"
+          ]
         }
       ],
       "aggregateCanonicalTalentNames": [
         "Adept Negotiator",
         "Force Persuasion",
         "Master Negotiator",
-        "Skilled Advisor"
+        "Skilled Advisor",
+        "Consular's Vitality",
+        "Improved Consular's Vitality"
       ],
       "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
       "referenceClassAccess": [
@@ -1358,6 +1412,14 @@
             "Force Intuition",
             "Resilience"
           ]
+        },
+        {
+          "sourcebook": "Clone Wars Campaign Guide",
+          "publicationType": "EXPANSION",
+          "talentNames": [
+            "Exposing Strike",
+            "Guardian Strike"
+          ]
         }
       ],
       "aggregateCanonicalTalentNames": [
@@ -1365,7 +1427,9 @@
         "Battle Meditation",
         "Elusive Target",
         "Force Intuition",
-        "Resilience"
+        "Resilience",
+        "Exposing Strike",
+        "Guardian Strike"
       ],
       "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
       "referenceClassAccess": [
@@ -1422,6 +1486,14 @@
             "Force Haze",
             "Resist the Dark Side"
           ]
+        },
+        {
+          "sourcebook": "Clone Wars Campaign Guide",
+          "publicationType": "EXPANSION",
+          "talentNames": [
+            "Sentinel's Observation",
+            "Unseen Eyes"
+          ]
         }
       ],
       "aggregateCanonicalTalentNames": [
@@ -1429,7 +1501,9 @@
         "Dark Side Sense",
         "Dark Side Scourge",
         "Force Haze",
-        "Resist the Dark Side"
+        "Resist the Dark Side",
+        "Sentinel's Observation",
+        "Unseen Eyes"
       ],
       "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
       "referenceClassAccess": [
@@ -1863,6 +1937,15 @@
             "Shift Defense III",
             "Tactical Edge"
           ]
+        },
+        {
+          "sourcebook": "Clone Wars Campaign Guide",
+          "publicationType": "EXPANSION",
+          "talentNames": [
+            "Exploit Weakness",
+            "Grand Leader",
+            "Uncanny Defense"
+          ]
         }
       ],
       "aggregateCanonicalTalentNames": [
@@ -1874,7 +1957,10 @@
         "Shift Defense I",
         "Shift Defense II",
         "Shift Defense III",
-        "Tactical Edge"
+        "Tactical Edge",
+        "Exploit Weakness",
+        "Grand Leader",
+        "Uncanny Defense"
       ],
       "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
       "referenceClassAccess": [
@@ -1937,6 +2023,13 @@
             "Sneak Attack",
             "Walk the Line"
           ]
+        },
+        {
+          "sourcebook": "Clone Wars Campaign Guide",
+          "publicationType": "EXPANSION",
+          "talentNames": [
+            "Stymie"
+          ]
         }
       ],
       "aggregateCanonicalTalentNames": [
@@ -1944,7 +2037,8 @@
         "Disruptive",
         "Skirmisher",
         "Sneak Attack",
-        "Walk the Line"
+        "Walk the Line",
+        "Stymie"
       ],
       "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
       "referenceClassAccess": [
@@ -7394,9 +7488,19 @@
       "notes": null,
       "originSourcebook": null,
       "originTalentNames": null,
-      "talentPublications": [],
-      "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED",
+      "talentPublications": [
+        {
+          "sourcebook": "Clone Wars Campaign Guide",
+          "publicationType": "EXPANSION",
+          "talentNames": [
+            "Aversion"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Aversion"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
       "referenceClassAccess": [],
       "accessPublications": [],
       "aggregateClassAccess": []
@@ -7610,9 +7714,19 @@
       "notes": null,
       "originSourcebook": null,
       "originTalentNames": null,
-      "talentPublications": [],
-      "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED",
+      "talentPublications": [
+        {
+          "sourcebook": "Clone Wars Campaign Guide",
+          "publicationType": "EXPANSION",
+          "talentNames": [
+            "The Will To Resist"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "The Will To Resist"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
       "referenceClassAccess": [],
       "accessPublications": [],
       "aggregateClassAccess": []
@@ -7658,9 +7772,19 @@
       "notes": null,
       "originSourcebook": null,
       "originTalentNames": null,
-      "talentPublications": [],
-      "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED",
+      "talentPublications": [
+        {
+          "sourcebook": "Clone Wars Campaign Guide",
+          "publicationType": "EXPANSION",
+          "talentNames": [
+            "Consumed by Darkness"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Consumed by Darkness"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
       "referenceClassAccess": [],
       "accessPublications": [],
       "aggregateClassAccess": []
@@ -8122,11 +8246,11 @@
       "aggregateClassAccess": []
     },
     {
-      "canonicalTreeKey": "repo-special|Light Side",
+      "canonicalTreeKey": "Clone Wars Campaign Guide|Light Side",
       "displayName": "Light Side",
-      "sourcebook": null,
+      "sourcebook": "Clone Wars Campaign Guide",
       "classAccess": [],
-      "sourceStatus": "REPO_SPECIAL_SOURCE_REVIEW",
+      "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
       "repoTreeIds": [
         "001a438135e03588"
       ],
@@ -8136,14 +8260,42 @@
       "repoClassAccess": [],
       "status": "REPO_ONLY_SPECIAL_OR_UNRESOLVED",
       "notes": null,
-      "originSourcebook": null,
-      "originTalentNames": null,
-      "talentPublications": [],
-      "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED",
+      "originSourcebook": "Clone Wars Campaign Guide",
+      "originTalentNames": [
+        "At Peace",
+        "Attuned",
+        "Focused Attack",
+        "Surge of Light"
+      ],
+      "talentPublications": [
+        {
+          "sourcebook": "Clone Wars Campaign Guide",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "At Peace",
+            "Attuned",
+            "Focused Attack",
+            "Surge of Light"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "At Peace",
+        "Attuned",
+        "Focused Attack",
+        "Surge of Light"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
       "referenceClassAccess": [],
       "accessPublications": [],
-      "aggregateClassAccess": []
+      "aggregateClassAccess": [],
+      "accessModel": "FORCE_TALENT",
+      "specialAccessRules": [
+        {
+          "sourcebook": "Clone Wars Campaign Guide",
+          "summary": "Available when selecting Force talents; Dark Side Score must be 0 to select from the Light Side tree."
+        }
+      ]
     },
     {
       "canonicalTreeKey": "repo-special|Luka Sene",
@@ -8354,9 +8506,23 @@
       "notes": null,
       "originSourcebook": null,
       "originTalentNames": null,
-      "talentPublications": [],
-      "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED",
+      "talentPublications": [
+        {
+          "sourcebook": "Clone Wars Campaign Guide",
+          "publicationType": "EXPANSION",
+          "talentNames": [
+            "Heightened Awareness",
+            "Psychometry",
+            "Shift Sense"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Heightened Awareness",
+        "Psychometry",
+        "Shift Sense"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
       "referenceClassAccess": [],
       "accessPublications": [],
       "aggregateClassAccess": []
