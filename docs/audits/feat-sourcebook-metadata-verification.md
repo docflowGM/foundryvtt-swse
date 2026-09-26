@@ -989,4 +989,223 @@ The next authoritative book passes should be **Legacy Era Campaign Guide** and *
 
 Until those sources are available, the audit can still perform repository-side reconciliation and consumer tracing, but it should not invent provenance from names, prerequisites, or current metadata.
 
+---
+
+# Phase 14 — Rebellion Era provenance reconciliation
+
+## Evidence boundary
+
+The **Rebellion Era Campaign Guide PDF is not currently available in the Project files**, so this phase does **not** certify descriptions, prerequisites, page fields, or runtime mechanics against the printed book.
+
+This phase is limited to **provenance reconciliation** using multiple independent secondary indexes that explicitly identify their reference book as *Star Wars Saga Edition Rebellion Era Campaign Guide*:
+
+- Saga Edition RPG Omnibus — Rebellion Era Campaign Guide book index.
+- Star Wars Saga Edition Wiki — Rebellion Era Heroic Traits / Species Feats pages.
+- Individual species-feat pages that identify the Rebellion Era Campaign Guide as their reference book.
+
+These sources agree on a source set of **60 feats**:
+
+- **12 general feats**
+- **48 species feats** (three for each of the sixteen non-Human Core Rulebook species)
+
+This is strong enough to resolve current source-field drift, but **not** strong enough to replace the later direct sourcebook mechanics audit. Every RECG mechanics/description finding remains `SOURCE_REVIEW` until the book itself is rendered and checked.
+
+## Canonical name-set reconciliation
+
+### General feats — 12
+
+Assured Attack, Deft Charge, Fast Surge, Imperial Military Training, Moving Target, Prime Shot, Rapid Reaction, Rebel Military Training, Recovering Surge, Unstoppable Combatant, Vehicular Surge, Vitality Surge.
+
+The repository contains all twelve identities.
+
+- **10** already use `Rebellion Era Campaign Guide`.
+- **Assured Attack** is incorrectly tagged `Galaxy at War`.
+- **Fast Surge** is incorrectly tagged `Jedi Academy Training Manual`.
+
+Therefore the general-feat set has **2 confirmed book-level `SOURCE_ERROR` records** and no missing identity.
+
+### Species feats — 48
+
+All 48 are present in the repository but currently use the generic source `Star Wars Saga Edition`. The complete set groups cleanly as three feats per species:
+
+| Species | Published RECG species feats currently generic |
+|---|---|
+| Bothan | Bothan Will; Confident Success; Lasting Influence |
+| Cerean | Binary Mind; Mind of Reason; Perfect Intuition |
+| Duros | Flawless Pilot; Spacer's Surge; Veteran Spacer |
+| Ewok | Ample Foraging; Forest Stalker; Keen Scent |
+| Gamorrean | Increased Resistance; Primitive Warrior; Quick Comeback |
+| Gungan | Gungan Weapon Master; Perfect Swimmer; Warrior Heritage |
+| Ithorian | Devastating Bellow; Nature Specialist; Strong Bellow |
+| Kel Dor | Justice Seeker; Read the Winds; Scion of Dorin |
+| Mon Calamari | Fast Swimmer; Mon Calamari Shipwright; Sharp Senses |
+| Quarren | Clawed Subspecies; Deep Sight; Shrewd Bargainer |
+| Rodian | Fringe Benefits; Hunter's Instincts; Master Tracker |
+| Sullustan | Darkness Dweller; Disarming Charm; Sure Climber |
+| Trandoshan | Pitiless Warrior; Regenerative Healing; Thick Skin |
+| Twi'lek | Imperceptible Liar; Jedi Heritage; Survivor of Ryloth |
+| Wookiee | Bowcaster Marksman; Resurgent Vitality; Wroshyr Rage |
+| Zabrak | Inborn Resilience; Instinctive Perception; Unwavering Focus |
+
+All **48** therefore have a book-level `SOURCE_ERROR`: `Star Wars Saga Edition` is too generic and should eventually be replaced with Rebellion Era provenance once the direct book pass supplies the authoritative page data.
+
+This resolves the entire previously-unresolved 48-record generic bucket at the **provenance-triage level**.
+
+## Two high-value general-feat findings
+
+### Assured Attack / `adc9cac4d22b3090`
+
+Current source: `Galaxy at War`.
+
+Secondary RECG indexes consistently place the feat in Rebellion Era. A contemporary Saga rules commentary also identifies it on Rebellion Era p. 28.
+
+There is also a repository-internal mechanics contradiction that does not require trusting the secondary source as final authority:
+
+- current description/effect says reroll the lowest damage die and **keep the second result even if worse**;
+- current `abilityMeta.damageRerolls[0].outcome` is `keepBetter`.
+
+Those two repository layers cannot both be correct. Secondary RECG text agrees with **keep second**, making the runtime metadata the likely defect. Do not implement the correction until the printed source is checked, but preserve this as a high-priority `MECHANICS_ERROR` candidate.
+
+Status: `SOURCE_ERROR`; provisional `MECHANICS_ERROR` pending direct RECG verification; current Skills/Skill Reroll primary taxonomy is also suspect because the rule is a damage-roll combat feat.
+
+### Fast Surge / `05d8053002347946`
+
+Current source: `Jedi Academy Training Manual`; current `featType: force`.
+
+Independent RECG indexes identify Fast Surge as a Rebellion Era general feat. Its current description and Second Wind action-cost metadata agree with those secondary summaries: catch a Second Wind on your turn as a free action instead of a swift action.
+
+The Force feat identity is unsupported: there is no Force prerequisite or Force-specific effect.
+
+Status: `SOURCE_ERROR`, `TAXONOMY_ERROR`; mechanics await direct RECG certification.
+
+## JATM provenance correction addendum
+
+The uploaded **Jedi Academy Training Manual** was rendered directly.
+
+- Printed p. 23 contains **Follow Through, Force Regimen Mastery, Long Haft Strike, Relentless Attack**.
+- Printed p. 24 continues with **Unswerving Resolve** and then begins Force Powers.
+- No **Fast Surge**, **Keen Force Mind**, or **Intuitive Initiative** feat entry exists in that feat section.
+
+Multiple independent JATM book indexes likewise enumerate only those same five feat identities.
+
+### Intuitive Initiative / `ae5c34d352d6dff7`
+
+This record is not merely mis-sourced.
+
+The uploaded **Saga Edition Core Rulebook**, printed p. 25, identifies **Intuitive Initiative as a Cerean species trait**, not a feat: a Cerean can reroll Initiative but must accept the reroll even if worse.
+
+The repository currently turns that trait into a JATM Force feat with prerequisite `Trained in Use the Force`. Its description is internally contradictory ("take the better result" followed by "must keep the new result even if worse"), while its `skillRerolls.outcome: keepSecond` happens to match the actual Core species trait.
+
+Disposition: **`INVALID_DUPLICATE`, `SOURCE_ERROR`, `TAXONOMY_ERROR`**. The valid mechanic belongs to Cerean species-trait authority, not the feat compendium.
+
+### Keen Force Mind / `647d77a8f5ab9af3`
+
+No published JATM feat with this name appears in the rendered feat section, and the major Saga feat indexes do not list it as a JATM feat.
+
+The uploaded JATM does contain a closely related **Telepathic Intruder** talent in the Force Adept Telepath talent tree (printed p. 19). That actual talent is materially narrower than the repository's "Keen Force Mind" feat:
+
+- it triggers only **after successfully using a mind-affecting Force power against a target**;
+- until the end of the user's next turn it grants a **+2 Force bonus** on checks to activate mind-affecting Force powers **and talents**;
+- the bonus applies against **that same target**.
+
+The pack record instead grants a broad passive +2 to Use the Force checks for mind-affecting Force powers, with no trigger, same-target restriction, duration, or talent coverage.
+
+This is strong evidence of a record-identity contamination: the pack appears to have converted or generalized a JATM talent into a non-published feat under a new name.
+
+Disposition: current JATM feat provenance is unsupported; **probable `INVALID_DUPLICATE` / identity contamination**, with `MECHANICS_ERROR` relative to the identifiable Telepathic Intruder rule. Retain `SOURCE_REVIEW` until the final all-source reconciliation confirms there is no separate published "Keen Force Mind" elsewhere in the corpus.
+
+## Rebellion Era checkpoint
+
+At the provenance level, all **60** RECG feat identities are already present in the pack:
+
+- 10 correctly book-tagged general feats;
+- 2 misattributed general feats;
+- 48 generically sourced species feats.
+
+No RECG `MISSING_CONTENT` finding is justified from the name set.
+
+Direct description/prerequisite/mechanics/page verification remains blocked on the actual Rebellion Era Campaign Guide sourcebook.
+
+---
+
+# Phase 15 — Legacy Era provenance reconciliation
+
+## Evidence boundary
+
+The **Legacy Era Campaign Guide PDF is also not currently available in the Project files**. As with Phase 14, this is a provenance-only reconciliation using secondary book indexes; it is **not** a printed-source certification of mechanics, descriptions, prerequisites, or page numbers.
+
+The Saga Edition RPG Omnibus and Star Wars Saga Edition Wiki independently identify **19 Legacy Era feats**:
+
+1. Attack Combo (Fire and Strike)
+2. Attack Combo (Melee)
+3. Attack Combo (Ranged)
+4. Autofire Assault
+5. Autofire Sweep
+6. Biotech Specialist
+7. Biotech Surgery
+8. Brink of Death
+9. Fatal Hit
+10. Feat of Strength
+11. Galactic Alliance Military Training
+12. Grapple Resistance
+13. Knock Heads
+14. Multi-Grab
+15. Rancor Crush
+16. Return Fire
+17. Returning Bug
+18. Vehicle Systems Expertise
+19. Zero Range
+
+The repository contains all nineteen identities.
+
+Current source reconciliation:
+
+- **18** already use `Legacy Era Campaign Guide`.
+- **Autofire Assault / `c973e43c85382068`** is incorrectly tagged `Galaxy at War`.
+
+Thus the Legacy source set currently has **one confirmed book-level `SOURCE_ERROR`** and no missing identity at the name-set level.
+
+### Autofire Assault / `c973e43c85382068`
+
+Current description and metadata describe sustained autofire into the same area with a Weapon Focus weapon, reduced autofire penalty, and +1 weapon die. The current source field says Galaxy at War, but both independent Legacy indexes place the feat in Legacy Era.
+
+Status: `SOURCE_ERROR`; description/mechanics/taxonomy remain `SOURCE_REVIEW` until the Legacy Era sourcebook is available for direct verification.
+
+## Legacy Era checkpoint
+
+The provenance pass does **not** certify the existing 18 Legacy-tagged records merely because their names match the secondary source set. They still need the same sourcebook -> description -> metadata -> runtime owner -> taxonomy audit applied to every earlier book.
+
+No pack edits were made.
+
+---
+
+# Whole-pack provenance status after Phases 14–15
+
+The previous Phase 13 checkpoint left four provenance buckets:
+
+- 48 generic records unresolved;
+- 18 Legacy-tagged records awaiting a book pass;
+- 10 Rebellion-tagged records awaiting a book pass;
+- 2 Web Enhancement records awaiting exact publication verification.
+
+This pass materially improves that map:
+
+1. **All 48 previously unresolved generic records now have a consistent Rebellion Era provenance assignment at the secondary-index level.**
+2. Rebellion Era's full secondary source set is **60**, not the 10 rows currently tagged to the book:
+   - 10 correctly tagged,
+   - 2 misattributed general feats,
+   - 48 generically sourced species feats.
+3. Legacy Era's full secondary source set is **19**, with **Autofire Assault** the one currently misattributed record.
+4. JATM's stray **Fast Surge** is resolved to Rebellion Era.
+5. JATM's **Intuitive Initiative** is a directly source-verified invalid feat record derived from a Core species trait.
+6. JATM's **Keen Force Mind** is a probable invalid/contaminated feat identity closely matching the JATM Telepathic Intruder talent but with materially broadened mechanics.
+
+Remaining source-authority gaps are now concentrated in:
+
+- direct **Rebellion Era Campaign Guide** mechanics/page verification;
+- direct **Legacy Era Campaign Guide** mechanics/page verification;
+- the **two Web Enhancements** records;
+- final disposition of **Keen Force Mind** after exhaustive corpus reconciliation.
+
+No feat mechanics, descriptions, taxonomy fields, or pack records were modified in these phases.
 
