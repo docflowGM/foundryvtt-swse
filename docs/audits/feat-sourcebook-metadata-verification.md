@@ -1308,3 +1308,145 @@ At the identity/provenance level, every current source bucket in the 390-record 
 
 The next useful audit stage is therefore **record-level reconciliation of all 390 pack rows against the accumulated source-entry ledger**, not another source-count census. That pass should assign each record a final identity/provenance state and collect correction packets without yet editing the compendium.
 
+---
+
+# Phase 17 — Record-level completion: previously unmentioned pack identities
+
+## Scope and completion boundary
+
+After Phase 16, a literal name-to-ledger reconciliation found that **374 of the 390 current feat-pack names had already been explicitly mentioned somewhere in this audit**. Sixteen pack identities had not yet received an explicit row or disposition:
+
+- thirteen Core Rulebook feats;
+- three records currently tagged Galaxy of Intrigue.
+
+This phase closes that bookkeeping gap. It does **not** mean that all 390 records are now mechanically certified end to end. It means every current pack identity has now been explicitly named and assigned at least one audit disposition or review state.
+
+The thirteen Core entries below were verified directly against rendered pages of the uploaded **Saga Edition Core Rulebook**, printed pp. 84–88. The three Galaxy of Intrigue extras were checked against the full indexed uploaded book as well as the visually inspected feat section.
+
+## Core Rulebook — thirteen previously unmentioned records
+
+The source text is straightforward for this group. The major pack-wide problem is **page provenance drift**: eleven of these thirteen records name the correct book but carry the wrong printed page.
+
+| Feat / pack ID | Printed page | Source comparison and metadata finding | Mechanical owner | Status |
+|---|---:|---|---|---|
+| Exotic Weapon Proficiency / `1ea7da65feb15b18` | 84 | Description faithfully preserves BAB +1, one selected exotic weapon, removal of the nonproficiency penalty, and repeat selection for a different exotic weapon. Choice-backed proficiency metadata is the correct shape, but repeat-acquisition lifecycle still belongs to progression and was not re-certified here. Current page is 86. | Progression / Character Building + Weapon Proficiency | `SOURCE_ERROR` (page); effect metadata `CORRECT`; repeat-selection progression certification pending |
+| Extra Rage / `c01f64239af7705d` | 85 | Description faithfully preserves Rage species trait, +1 Rage use/day, and repeatability. `RageEngine.getRageUsesPerDay()` consumes `RAGE_USES_BONUS` from each owned feat copy, so the actual use-count effect is correctly runtime-backed. However, `abilityMeta.requiresSelectedChoice: true` has no source basis and is stale/unsupported for this feat. Current page is 86. | Species Rage Runtime + resource uses | `SOURCE_ERROR` (page), `UNSUPPORTED_METADATA`; runtime effect `CORRECT` |
+| Extra Second Wind / `4e57ee834c301ad8` | 85 | Description faithfully preserves +1 daily Second Wind use, the normal once/encounter cap, repeat acquisition, and the nonheroic first-copy clause. `MetaResourceFeatResolver.getSecondWindRules()` sums the explicit extra-use rule across owned feat items while leaving the encounter cap intact unless another rule overrides it. Current page is 86. | Second Wind / Recovery Runtime + Progression | `SOURCE_ERROR` (page); description/effect metadata `CORRECT` |
+| Force Boon / `53444cc061d81627` | 85 | Source prerequisite is Force Sensitivity; benefit is +3 Force Points at each level. Description and `MAX_BONUS: 3` resource metadata agree, and `MetaResourceFeatResolver.getForcePointMaxBonus()` consumes and sums that rule. Current page is **94**, not 85. | Force Point resource authority + Progression | `SOURCE_ERROR` (page); description/effect metadata `CORRECT` |
+| Great Cleave / `8a5cb28f625d6f02` | 85 | Description faithfully gives the Cleave prerequisite chain and removes Cleave's per-round use limit. `EXTRA_ATTACK_LIMIT_OVERRIDE: unlimitedPerRound` matches the source and the existing Cleave runtime is the proper owner. Current page is 86. | Combat Runtime / Cleave extra-attack authority | `SOURCE_ERROR` (page); mechanics `CORRECT` |
+| Improved Charge / `0166fcdddc548545` | 85 | Description and `ATTACK_OPTION` metadata faithfully remove the straight-line requirement and permit direction changes to avoid obstacles while preserving all other Charge rules. Spatial/path legality remains a valid player/GM boundary. Current page is 86. | Combat Runtime + UI-assisted movement / Charge | `SOURCE_ERROR` (page); mechanics `CORRECT` |
+| Improved Damage Threshold / `96666de28ba99b64` | 86 | Source grants +5 Damage Threshold and explicitly allows repeat selection with stacking. Description preserves both. `resourceRules.damageThreshold: FLAT_BONUS 5` is consumed by the canonical resource/derived path and naturally aggregates across owned copies. Current page is 87. | Derived Actor Math / Damage Threshold | `SOURCE_ERROR` (page); mechanics `CORRECT` |
+| Melee Defense / `3a847230d573a623` | 86 | Description and attack-option slider agree with source: Standard Action melee attack; penalty up to -5 and no greater than BAB; equal dodge bonus to Reflex; duration until start of next turn. Current page is 87. | CombatOptionResolver / attack-defense tradeoff | `SOURCE_ERROR` (page); mechanics `CORRECT` |
+| Powerful Charge / `e73873cdc77a6451` | 87 | Description and attack option agree: Medium+, BAB +1; charging melee attack gains additional +2 attack and half level damage on hit. Current page 87 is correct. | Combat Runtime / Charge | `CORRECT` at inspected source/metadata level |
+| Shake It Off / `3036290329d5b3e6` | 88 | Description and `SWIFT_ACTION_CONDITION_RECOVERY` metadata agree: spend two swift actions instead of three to move +1 CT. Current page is 87. The broad Recovery bucket is sensible, but the current Endurance & Environmental subbucket follows a prerequisite rather than the feat's actual condition-track effect. | Recovery Runtime / Condition Track action economy | `SOURCE_ERROR` (page), `TAXONOMY_ERROR`; mechanics `CORRECT` |
+| Strong in the Force / `71892687abbed346` | 88 | Description and Force Point `DIE_SIZE: 8` metadata agree: d8s instead of d6s when a Force Point adjusts an attack roll, skill check, or ability check. `MetaResourceFeatResolver.getForcePointDieSize()` consumes that rule. Current page is 87. | Force Point resource / roll authority | `SOURCE_ERROR` (page); mechanics `CORRECT` |
+| Surgical Expertise / `f9ae5b531ae01fd0` | 88 | Description and Treat Injury surgery time override agree: 10 minutes instead of one hour. The current skill-use rule correctly leaves the actual surgery procedure with Treat Injury authority. Current page is 87. | Skill Runtime / Treat Injury procedure | `SOURCE_ERROR` (page); mechanics `CORRECT` |
+| Toughness / `11db29efd899c438` | 88 | Source grants +1 HP per character level. Pack description is exact in substance. The old flat +5 modifier is disabled and the active `MAX_BONUS_PER_LEVEL: 1` resource rule is consumed by `MetaResourceFeatResolver.getHitPointMaxBonus()`. Current page 88 is correct. | Derived Actor Math / Hit Points | `CORRECT` |
+
+### Core page-field correction packet
+
+For the eventual metadata correction pass, the following page updates are source-verified:
+
+- Exotic Weapon Proficiency: 86 → **84**
+- Extra Rage: 86 → **85**
+- Extra Second Wind: 86 → **85**
+- Force Boon: 94 → **85**
+- Great Cleave: 86 → **85**
+- Improved Charge: 86 → **85**
+- Improved Damage Threshold: 87 → **86**
+- Melee Defense: 87 → **86**
+- Shake It Off: 87 → **88**
+- Strong in the Force: 87 → **88**
+- Surgical Expertise: 87 → **88**
+
+Powerful Charge 87 and Toughness 88 already have the correct printed pages.
+
+## Galaxy of Intrigue — three legacy db-only contaminants
+
+The current pack source census contains **29** rows tagged `Galaxy of Intrigue`, but the book's feat table contains **26 published feats**.
+
+The exact reconciliation is now:
+
+- **25** of the canonical 26 currently carry Galaxy of Intrigue provenance.
+- **Forceful Recovery** is the canonical 26th and is incorrectly tagged Force Unleashed.
+- **Desperate Gambit** is an extra Galaxy-of-Intrigue-tagged row that Phase 10 already resolved to **Scum and Villainy**.
+- the remaining three extra tagged rows are **Intimidating Presence, Frightening Presence, and Resilient Talent**.
+
+Direct evidence against those three source claims is unusually strong:
+
+1. They are absent from the visually inspected Galaxy of Intrigue feat table.
+2. Exact-name search over the **entire indexed uploaded Galaxy of Intrigue PDF** returns zero occurrences for all three.
+3. Repository ancestry in `tools/feat_compendium_unmatched_db.csv` / `feat_compendium_update_report.csv` labels them **db-only / no matching reference entry** and explicitly says their existing description/rules text was left unchanged.
+4. An older generated Galaxy-of-Intrigue parity manifest incorrectly promoted those legacy rows into the expected set; direct sourcebook inspection supersedes that manifest.
+
+### Intimidating Presence / `83abd1c384b58c3c`
+
+Current record:
+- source: Galaxy of Intrigue;
+- prerequisite: trained Persuasion;
+- effect: make Persuasion-to-Intimidate as a swift action instead of a standard action.
+
+No such feat appears in Galaxy of Intrigue.
+
+Worse, **Intimidating Presence is already a legitimate Saga species-trait identity**, including on Wookiees and several other species: it grants an optional reroll of a Persuasion check made to Intimidate and requires accepting the reroll even if worse. It is not a feat and it does not grant the action-speed rule stored in this pack row.
+
+The pack feat therefore collides with a valid non-feat rules identity while carrying unrelated mechanics and unsupported Galaxy of Intrigue provenance.
+
+Disposition: `INVALID_DUPLICATE`, `SOURCE_ERROR`, `MECHANICS_ERROR`, `WRONG_OWNER`. Do not “fix” this record by converting the existing action-speed effect into the species trait; the species trait already belongs to species authority. The feat record should be removed or otherwise retired during the later correction pass after reference checks confirm no external dependency requires its ID.
+
+### Frightening Presence / `d612e7a708edf75b`
+
+Current record:
+- source: Galaxy of Intrigue;
+- prerequisite: Cha 15, Frightful Presence;
+- effect: targets failing against Frightful Presence move -2 CT instead of -1.
+
+The full Galaxy of Intrigue source contains no feat by this name. Broad Saga feat indexes used during the remaining-source reconciliation also do not identify it among Core, the thirteen campaign/sourcebooks, or the two verified Web Enhancement feats. Repository history shows that one duplicate Frightening Presence row was already removed in an earlier suspect cleanup, but the surviving row's **source identity was never source-verified**.
+
+No authoritative source for this surviving feat identity has been located.
+
+Disposition: `SOURCE_ERROR`, `UNSUPPORTED_METADATA`, `SOURCE_REVIEW`; **candidate `INVALID_DUPLICATE`**. Keep the candidate wording until a final archival search rules out an obscure official web source, but do not treat this row as valid Galaxy of Intrigue content.
+
+### Resilient Talent / `fda012e3b2b1e55f`
+
+Current record:
+- source: Galaxy of Intrigue;
+- prerequisite: level 6;
+- effect: once/day gain for one minute any talent from a class in which you have levels, even without meeting that talent's prerequisites.
+
+The full Galaxy of Intrigue source contains no feat by this name, and the rule is absent from the book's 26-feat table. The record is another legacy db-only entry that earlier automation passes preserved without a matching source reference.
+
+Its mechanic also overlaps the broad design space of **Adaptable Talent** while materially contradicting that real feat's restrictions: Adaptable Talent requires a preselected talent whose prerequisites are met, performs a rest-based swap, and has prerequisite-chain restrictions. The two rules must not be merged.
+
+No authoritative source for Resilient Talent as a Saga feat has been located.
+
+Disposition: `SOURCE_ERROR`, `UNSUPPORTED_METADATA`, `SOURCE_REVIEW`; **candidate `INVALID_DUPLICATE`**. The existing temporary-talent-picker backlog must not be implemented until identity is proven.
+
+## Correction to the earlier Galaxy of Intrigue source census
+
+Phase 5 correctly identified the book's **26 canonical published feats**, but it did not explicitly reconcile the four extra rows then carrying a Galaxy of Intrigue source field.
+
+The corrected current-pack interpretation is:
+
+- 25 canonical GOI identities correctly book-tagged;
+- Forceful Recovery missing from that source bucket because it is misattributed to Force Unleashed;
+- Desperate Gambit extra/misattributed to GOI, resolved in Phase 10 as Scum and Villainy;
+- Intimidating Presence invalid identity collision;
+- Frightening Presence unsupported identity under review;
+- Resilient Talent unsupported identity under review.
+
+The raw count of 29 was therefore another example of why source-count equality or near-equality cannot certify a source set.
+
+## 390-record explicit-disposition milestone
+
+After this phase:
+
+- **all 390 current feat-pack records have now been explicitly named somewhere in this audit ledger**;
+- this is **not** the same as 390 source-certified or mechanically complete feats;
+- direct-source mechanics certification is still incomplete for the Rebellion Era and Legacy Era sets because their PDFs are not available in the Project;
+- identity/provenance exceptions remain open for Keen Force Mind, Frightening Presence, and Resilient Talent;
+- Recall remains confirmed `MISSING_CONTENT`;
+- Staggering Attack remains a same-name hybrid requiring a variant policy.
+
+The next reconciliation pass should stop counting names and instead produce a **record-by-record final correction matrix** from this ledger: canonical identity/source, page/provenance, description disposition, mechanics disposition, taxonomy/owner disposition, and implementation boundary. That matrix can then be grouped into controlled implementation packets without changing the feat pack during the audit stage.
+
