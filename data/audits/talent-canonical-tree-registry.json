@@ -6,8 +6,8 @@
   "counts": {
     "entries": 195,
     "referenceRows": 140,
-    "primarySourceVerified": 112,
-    "referencePendingPrimary": 36,
+    "primarySourceVerified": 125,
+    "referencePendingPrimary": 23,
     "repoSpecialSourceReview": 47
   },
   "entries": [
@@ -82,6 +82,13 @@
             "Soldier",
             "Jedi Knight",
             "Sith Apprentice"
+          ]
+        },
+        {
+          "sourcebook": "Legacy Era Campaign Guide",
+          "publicationType": "DIRECT_ACCESS_GRANT",
+          "classes": [
+            "Imperial Knight"
           ]
         }
       ],
@@ -321,6 +328,15 @@
             "Bayonet Master",
             "Unrelenting Assault"
           ]
+        },
+        {
+          "sourcebook": "Legacy Era Campaign Guide",
+          "publicationType": "EXPANSION",
+          "talentNames": [
+            "Grabber",
+            "Hammerblow",
+            "Strong Grab"
+          ]
         }
       ],
       "aggregateCanonicalTalentNames": [
@@ -330,7 +346,10 @@
         "Stunning Strike",
         "Unbalance Opponent",
         "Bayonet Master",
-        "Unrelenting Assault"
+        "Unrelenting Assault",
+        "Grabber",
+        "Hammerblow",
+        "Strong Grab"
       ],
       "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
       "referenceClassAccess": [
@@ -645,6 +664,13 @@
             "Jedi Knight",
             "Jedi Master",
             "Sith Apprentice"
+          ]
+        },
+        {
+          "sourcebook": "Legacy Era Campaign Guide",
+          "publicationType": "DIRECT_ACCESS_GRANT",
+          "classes": [
+            "Imperial Knight"
           ]
         }
       ],
@@ -1393,6 +1419,15 @@
             "Cleanse Mind",
             "Force of Will"
           ]
+        },
+        {
+          "sourcebook": "Legacy Era Campaign Guide",
+          "publicationType": "EXPANSION",
+          "talentNames": [
+            "Aggressive Negotiator",
+            "Consular's Wisdom",
+            "Entreat Aid"
+          ]
         }
       ],
       "aggregateCanonicalTalentNames": [
@@ -1403,7 +1438,10 @@
         "Consular's Vitality",
         "Improved Consular's Vitality",
         "Cleanse Mind",
-        "Force of Will"
+        "Force of Will",
+        "Aggressive Negotiator",
+        "Consular's Wisdom",
+        "Entreat Aid"
       ],
       "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
       "referenceClassAccess": [
@@ -1476,6 +1514,13 @@
             "Forceful Warrior",
             "Mobile Combatant"
           ]
+        },
+        {
+          "sourcebook": "Legacy Era Campaign Guide",
+          "publicationType": "EXPANSION",
+          "talentNames": [
+            "Defensive Acuity"
+          ]
         }
       ],
       "aggregateCanonicalTalentNames": [
@@ -1487,7 +1532,8 @@
         "Exposing Strike",
         "Guardian Strike",
         "Forceful Warrior",
-        "Mobile Combatant"
+        "Mobile Combatant",
+        "Defensive Acuity"
       ],
       "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
       "referenceClassAccess": [
@@ -1560,6 +1606,13 @@
             "Dampen Presence",
             "Steel Resolve"
           ]
+        },
+        {
+          "sourcebook": "Legacy Era Campaign Guide",
+          "publicationType": "EXPANSION",
+          "talentNames": [
+            "Dark Side Bane"
+          ]
         }
       ],
       "aggregateCanonicalTalentNames": [
@@ -1571,7 +1624,8 @@
         "Sentinel's Observation",
         "Unseen Eyes",
         "Dampen Presence",
-        "Steel Resolve"
+        "Steel Resolve",
+        "Dark Side Bane"
       ],
       "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
       "referenceClassAccess": [
@@ -1716,6 +1770,14 @@
             "Redirect Shot",
             "Weapon Specialization (Lightsabers)"
           ]
+        },
+        {
+          "sourcebook": "Legacy Era Campaign Guide",
+          "publicationType": "EXPANSION",
+          "talentNames": [
+            "Cortosis Gauntlet Block",
+            "Precision"
+          ]
         }
       ],
       "aggregateCanonicalTalentNames": [
@@ -1724,7 +1786,9 @@
         "Lightsaber Defense",
         "Lightsaber Throw",
         "Redirect Shot",
-        "Weapon Specialization (Lightsabers)"
+        "Weapon Specialization (Lightsabers)",
+        "Cortosis Gauntlet Block",
+        "Precision"
       ],
       "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
       "referenceClassAccess": [
@@ -1741,6 +1805,13 @@
             "Jedi",
             "Jedi Knight",
             "Sith Apprentice"
+          ]
+        },
+        {
+          "sourcebook": "Legacy Era Campaign Guide",
+          "publicationType": "DIRECT_ACCESS_GRANT",
+          "classes": [
+            "Imperial Knight"
           ]
         }
       ],
@@ -2108,6 +2179,14 @@
           "talentNames": [
             "Stymie"
           ]
+        },
+        {
+          "sourcebook": "Legacy Era Campaign Guide",
+          "publicationType": "EXPANSION",
+          "talentNames": [
+            "Seducer",
+            "Seize Object"
+          ]
         }
       ],
       "aggregateCanonicalTalentNames": [
@@ -2116,7 +2195,9 @@
         "Skirmisher",
         "Sneak Attack",
         "Walk the Line",
-        "Stymie"
+        "Stymie",
+        "Seducer",
+        "Seize Object"
       ],
       "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
       "referenceClassAccess": [
@@ -2552,12 +2633,20 @@
             "Penetrating Attack",
             "Weapon Specialization"
           ]
+        },
+        {
+          "sourcebook": "Legacy Era Campaign Guide",
+          "publicationType": "EXPANSION",
+          "talentNames": [
+            "Improved Suppression Fire"
+          ]
         }
       ],
       "aggregateCanonicalTalentNames": [
         "Devastating Attack",
         "Penetrating Attack",
-        "Weapon Specialization"
+        "Weapon Specialization",
+        "Improved Suppression Fire"
       ],
       "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
       "referenceClassAccess": [
@@ -3548,6 +3637,13 @@
           "publicationType": "DIRECT_ACCESS_GRANT",
           "classes": [
             "Medic"
+          ]
+        },
+        {
+          "sourcebook": "Legacy Era Campaign Guide",
+          "publicationType": "DIRECT_ACCESS_GRANT",
+          "classes": [
+            "Shaper"
           ]
         }
       ],
@@ -5749,7 +5845,7 @@
       "classAccess": [
         "Soldier"
       ],
-      "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
+      "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
       "repoTreeIds": [
         "7bcd1d892f2e9ae7"
       ],
@@ -5762,14 +5858,49 @@
       "status": "REPO_TREE_PRESENT",
       "notes": null,
       "originSourcebook": "Legacy Era Campaign Guide",
-      "originTalentNames": null,
-      "talentPublications": [],
-      "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED",
+      "originTalentNames": [
+        "Gang Leader",
+        "Melee Assault",
+        "Melee Brute",
+        "Melee Opportunist",
+        "Squad Brutality",
+        "Squad Superiority"
+      ],
+      "talentPublications": [
+        {
+          "sourcebook": "Legacy Era Campaign Guide",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Gang Leader",
+            "Melee Assault",
+            "Melee Brute",
+            "Melee Opportunist",
+            "Squad Brutality",
+            "Squad Superiority"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Gang Leader",
+        "Melee Assault",
+        "Melee Brute",
+        "Melee Opportunist",
+        "Squad Brutality",
+        "Squad Superiority"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
       "referenceClassAccess": [
         "Soldier"
       ],
-      "accessPublications": [],
+      "accessPublications": [
+        {
+          "sourcebook": "Legacy Era Campaign Guide",
+          "publicationType": "DIRECT_ACCESS_GRANT",
+          "classes": [
+            "Soldier"
+          ]
+        }
+      ],
       "aggregateClassAccess": [
         "Soldier"
       ]
@@ -5781,7 +5912,7 @@
       "classAccess": [
         "Gunslinger"
       ],
-      "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
+      "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
       "repoTreeIds": [
         "1933731cc59f8463"
       ],
@@ -5794,14 +5925,55 @@
       "status": "REPO_TREE_PRESENT",
       "notes": null,
       "originSourcebook": "Legacy Era Campaign Guide",
-      "originTalentNames": null,
-      "talentPublications": [],
-      "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED",
+      "originTalentNames": [
+        "Blowback",
+        "Close Contact",
+        "Multiattack Proficiency (rifles)",
+        "Old Faithful",
+        "Opportunity Fire",
+        "Rifle Master",
+        "Shoot from the Hip",
+        "Snap Shot"
+      ],
+      "talentPublications": [
+        {
+          "sourcebook": "Legacy Era Campaign Guide",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Blowback",
+            "Close Contact",
+            "Multiattack Proficiency (rifles)",
+            "Old Faithful",
+            "Opportunity Fire",
+            "Rifle Master",
+            "Shoot from the Hip",
+            "Snap Shot"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Blowback",
+        "Close Contact",
+        "Multiattack Proficiency (rifles)",
+        "Old Faithful",
+        "Opportunity Fire",
+        "Rifle Master",
+        "Shoot from the Hip",
+        "Snap Shot"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
       "referenceClassAccess": [
         "Gunslinger"
       ],
-      "accessPublications": [],
+      "accessPublications": [
+        {
+          "sourcebook": "Legacy Era Campaign Guide",
+          "publicationType": "DIRECT_ACCESS_GRANT",
+          "classes": [
+            "Gunslinger"
+          ]
+        }
+      ],
       "aggregateClassAccess": [
         "Gunslinger"
       ]
@@ -5813,7 +5985,7 @@
       "classAccess": [
         "Bounty Hunter"
       ],
-      "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
+      "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
       "repoTreeIds": [
         "29b16e48a3dbf165"
       ],
@@ -5826,14 +5998,49 @@
       "status": "REPO_TREE_PRESENT",
       "notes": null,
       "originSourcebook": "Legacy Era Campaign Guide",
-      "originTalentNames": null,
-      "talentPublications": [],
-      "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED",
+      "originTalentNames": [
+        "Force Blank",
+        "Lightsaber Evasion",
+        "Precision Fire",
+        "Steel Mind",
+        "Strong-Willed",
+        "Telekinetic Resistance"
+      ],
+      "talentPublications": [
+        {
+          "sourcebook": "Legacy Era Campaign Guide",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Force Blank",
+            "Lightsaber Evasion",
+            "Precision Fire",
+            "Steel Mind",
+            "Strong-Willed",
+            "Telekinetic Resistance"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Force Blank",
+        "Lightsaber Evasion",
+        "Precision Fire",
+        "Steel Mind",
+        "Strong-Willed",
+        "Telekinetic Resistance"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
       "referenceClassAccess": [
         "Bounty Hunter"
       ],
-      "accessPublications": [],
+      "accessPublications": [
+        {
+          "sourcebook": "Legacy Era Campaign Guide",
+          "publicationType": "DIRECT_ACCESS_GRANT",
+          "classes": [
+            "Bounty Hunter"
+          ]
+        }
+      ],
       "aggregateClassAccess": [
         "Bounty Hunter"
       ]
@@ -5845,7 +6052,7 @@
       "classAccess": [
         "Officer"
       ],
-      "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
+      "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
       "repoTreeIds": [
         "61b74c82cb56876c"
       ],
@@ -5858,14 +6065,49 @@
       "status": "REPO_TREE_PRESENT",
       "notes": null,
       "originSourcebook": "Legacy Era Campaign Guide",
-      "originTalentNames": null,
-      "talentPublications": [],
-      "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED",
+      "originTalentNames": [
+        "Disciplined Trickery",
+        "Group Perception",
+        "Hasty Withdrawal",
+        "Stalwart Subordinates",
+        "Stay in the Fight",
+        "Stealthy Withdrawal"
+      ],
+      "talentPublications": [
+        {
+          "sourcebook": "Legacy Era Campaign Guide",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Disciplined Trickery",
+            "Group Perception",
+            "Hasty Withdrawal",
+            "Stalwart Subordinates",
+            "Stay in the Fight",
+            "Stealthy Withdrawal"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Disciplined Trickery",
+        "Group Perception",
+        "Hasty Withdrawal",
+        "Stalwart Subordinates",
+        "Stay in the Fight",
+        "Stealthy Withdrawal"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
       "referenceClassAccess": [
         "Officer"
       ],
-      "accessPublications": [],
+      "accessPublications": [
+        {
+          "sourcebook": "Legacy Era Campaign Guide",
+          "publicationType": "DIRECT_ACCESS_GRANT",
+          "classes": [
+            "Officer"
+          ]
+        }
+      ],
       "aggregateClassAccess": [
         "Officer"
       ]
@@ -5877,7 +6119,7 @@
       "classAccess": [
         "Shaper"
       ],
-      "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
+      "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
       "repoTreeIds": [
         "d8a71a6c5b2b7581"
       ],
@@ -5888,16 +6130,48 @@
         "Shaper"
       ],
       "status": "REPO_TREE_PRESENT",
-      "notes": null,
+      "notes": "Primary source confirms 5 canonical origin talents. Repository also lists noncanonical 'Implant (general)', created from general Implant rules text rather than a printed talent identity.",
       "originSourcebook": "Legacy Era Campaign Guide",
-      "originTalentNames": null,
-      "talentPublications": [],
-      "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED",
+      "originTalentNames": [
+        "Adrenaline Implant",
+        "Precision Implant",
+        "Resilience Implant",
+        "Speed Implant",
+        "Strength Implant"
+      ],
+      "talentPublications": [
+        {
+          "sourcebook": "Legacy Era Campaign Guide",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Adrenaline Implant",
+            "Precision Implant",
+            "Resilience Implant",
+            "Speed Implant",
+            "Strength Implant"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Adrenaline Implant",
+        "Precision Implant",
+        "Resilience Implant",
+        "Speed Implant",
+        "Strength Implant"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
       "referenceClassAccess": [
         "Shaper"
       ],
-      "accessPublications": [],
+      "accessPublications": [
+        {
+          "sourcebook": "Legacy Era Campaign Guide",
+          "publicationType": "DIRECT_ACCESS_GRANT",
+          "classes": [
+            "Shaper"
+          ]
+        }
+      ],
       "aggregateClassAccess": [
         "Shaper"
       ]
@@ -5909,7 +6183,7 @@
       "classAccess": [
         "Jedi Knight"
       ],
-      "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
+      "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
       "repoTreeIds": [
         "e303ddd025779062"
       ],
@@ -5922,14 +6196,43 @@
       "status": "REPO_TREE_PRESENT",
       "notes": null,
       "originSourcebook": "Legacy Era Campaign Guide",
-      "originTalentNames": null,
-      "talentPublications": [],
-      "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED",
+      "originTalentNames": [
+        "Cover Your Tracks",
+        "Difficult to Sense",
+        "Force Veil",
+        "Jedi Network"
+      ],
+      "talentPublications": [
+        {
+          "sourcebook": "Legacy Era Campaign Guide",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Cover Your Tracks",
+            "Difficult to Sense",
+            "Force Veil",
+            "Jedi Network"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Cover Your Tracks",
+        "Difficult to Sense",
+        "Force Veil",
+        "Jedi Network"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
       "referenceClassAccess": [
         "Jedi Knight"
       ],
-      "accessPublications": [],
+      "accessPublications": [
+        {
+          "sourcebook": "Legacy Era Campaign Guide",
+          "publicationType": "DIRECT_ACCESS_GRANT",
+          "classes": [
+            "Jedi Knight"
+          ]
+        }
+      ],
       "aggregateClassAccess": [
         "Jedi Knight"
       ]
@@ -5941,7 +6244,7 @@
       "classAccess": [
         "Imperial Knight"
       ],
-      "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
+      "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
       "repoTreeIds": [
         "ea01d740c91888b3"
       ],
@@ -5954,14 +6257,46 @@
       "status": "REPO_TREE_PRESENT",
       "notes": null,
       "originSourcebook": "Legacy Era Campaign Guide",
-      "originTalentNames": null,
-      "talentPublications": [],
-      "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED",
+      "originTalentNames": [
+        "Armored Augmentation I",
+        "Armored Augmentation II",
+        "Armor Mastery",
+        "Cortosis Defense",
+        "Cortosis Retaliation"
+      ],
+      "talentPublications": [
+        {
+          "sourcebook": "Legacy Era Campaign Guide",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Armored Augmentation I",
+            "Armored Augmentation II",
+            "Armor Mastery",
+            "Cortosis Defense",
+            "Cortosis Retaliation"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Armored Augmentation I",
+        "Armored Augmentation II",
+        "Armor Mastery",
+        "Cortosis Defense",
+        "Cortosis Retaliation"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
       "referenceClassAccess": [
         "Imperial Knight"
       ],
-      "accessPublications": [],
+      "accessPublications": [
+        {
+          "sourcebook": "Legacy Era Campaign Guide",
+          "publicationType": "DIRECT_ACCESS_GRANT",
+          "classes": [
+            "Imperial Knight"
+          ]
+        }
+      ],
       "aggregateClassAccess": [
         "Imperial Knight"
       ]
@@ -5973,7 +6308,7 @@
       "classAccess": [
         "Imperial Knight"
       ],
-      "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
+      "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
       "repoTreeIds": [
         "8048efd85ae61101"
       ],
@@ -5986,14 +6321,46 @@
       "status": "REPO_TREE_PRESENT",
       "notes": null,
       "originSourcebook": "Legacy Era Campaign Guide",
-      "originTalentNames": null,
-      "talentPublications": [],
-      "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED",
+      "originTalentNames": [
+        "Knight's Morale",
+        "Oath of Duty",
+        "Praetoria Ishu",
+        "Praetoria Vonil",
+        "Strength of the Empire"
+      ],
+      "talentPublications": [
+        {
+          "sourcebook": "Legacy Era Campaign Guide",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Knight's Morale",
+            "Oath of Duty",
+            "Praetoria Ishu",
+            "Praetoria Vonil",
+            "Strength of the Empire"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Knight's Morale",
+        "Oath of Duty",
+        "Praetoria Ishu",
+        "Praetoria Vonil",
+        "Strength of the Empire"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
       "referenceClassAccess": [
         "Imperial Knight"
       ],
-      "accessPublications": [],
+      "accessPublications": [
+        {
+          "sourcebook": "Legacy Era Campaign Guide",
+          "publicationType": "DIRECT_ACCESS_GRANT",
+          "classes": [
+            "Imperial Knight"
+          ]
+        }
+      ],
       "aggregateClassAccess": [
         "Imperial Knight"
       ]
@@ -6005,7 +6372,7 @@
       "classAccess": [
         "Elite Trooper"
       ],
-      "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
+      "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
       "repoTreeIds": [
         "c92c2cbc79b8a515"
       ],
@@ -6016,16 +6383,57 @@
         "Elite Trooper"
       ],
       "status": "REPO_TREE_PRESENT",
-      "notes": null,
+      "notes": "Primary source confirms 8 canonical origin talents. Repository also lists Harm's Way, which is referenced by Protection rules text but is not a Protection talent; wrong extra membership confirmed.",
       "originSourcebook": "Legacy Era Campaign Guide",
-      "originTalentNames": null,
-      "talentPublications": [],
-      "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED",
+      "originTalentNames": [
+        "Armored Guard",
+        "Bodyguard's Sacrifice",
+        "Guard's Endurance",
+        "Lifesaver",
+        "Out of Harm's Way",
+        "Roll With It",
+        "Take the Hit",
+        "Ward"
+      ],
+      "talentPublications": [
+        {
+          "sourcebook": "Legacy Era Campaign Guide",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Armored Guard",
+            "Bodyguard's Sacrifice",
+            "Guard's Endurance",
+            "Lifesaver",
+            "Out of Harm's Way",
+            "Roll With It",
+            "Take the Hit",
+            "Ward"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Armored Guard",
+        "Bodyguard's Sacrifice",
+        "Guard's Endurance",
+        "Lifesaver",
+        "Out of Harm's Way",
+        "Roll With It",
+        "Take the Hit",
+        "Ward"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
       "referenceClassAccess": [
         "Elite Trooper"
       ],
-      "accessPublications": [],
+      "accessPublications": [
+        {
+          "sourcebook": "Legacy Era Campaign Guide",
+          "publicationType": "DIRECT_ACCESS_GRANT",
+          "classes": [
+            "Elite Trooper"
+          ]
+        }
+      ],
       "aggregateClassAccess": [
         "Elite Trooper"
       ]
@@ -6108,7 +6516,7 @@
       "classAccess": [
         "Shaper"
       ],
-      "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
+      "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
       "repoTreeIds": [
         "cdbee578d65154fc"
       ],
@@ -6121,14 +6529,46 @@
       "status": "REPO_TREE_PRESENT",
       "notes": null,
       "originSourcebook": "Legacy Era Campaign Guide",
-      "originTalentNames": null,
-      "talentPublications": [],
-      "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED",
+      "originTalentNames": [
+        "Biotech Mastery",
+        "Expedient Mending",
+        "Expert Shaper",
+        "Master Mender",
+        "Skilled Implanter"
+      ],
+      "talentPublications": [
+        {
+          "sourcebook": "Legacy Era Campaign Guide",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Biotech Mastery",
+            "Expedient Mending",
+            "Expert Shaper",
+            "Master Mender",
+            "Skilled Implanter"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Biotech Mastery",
+        "Expedient Mending",
+        "Expert Shaper",
+        "Master Mender",
+        "Skilled Implanter"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
       "referenceClassAccess": [
         "Shaper"
       ],
-      "accessPublications": [],
+      "accessPublications": [
+        {
+          "sourcebook": "Legacy Era Campaign Guide",
+          "publicationType": "DIRECT_ACCESS_GRANT",
+          "classes": [
+            "Shaper"
+          ]
+        }
+      ],
       "aggregateClassAccess": [
         "Shaper"
       ]
@@ -6140,7 +6580,7 @@
       "classAccess": [
         "Sith Apprentice"
       ],
-      "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
+      "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
       "repoTreeIds": [
         "4d5ac20318ef56b6"
       ],
@@ -6153,14 +6593,43 @@
       "status": "REPO_TREE_PRESENT",
       "notes": null,
       "originSourcebook": "Legacy Era Campaign Guide",
-      "originTalentNames": null,
-      "talentPublications": [],
-      "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED",
+      "originTalentNames": [
+        "Desperate Measures",
+        "Focus Terror",
+        "Incite Rage",
+        "Power of Hatred"
+      ],
+      "talentPublications": [
+        {
+          "sourcebook": "Legacy Era Campaign Guide",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Desperate Measures",
+            "Focus Terror",
+            "Incite Rage",
+            "Power of Hatred"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Desperate Measures",
+        "Focus Terror",
+        "Incite Rage",
+        "Power of Hatred"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
       "referenceClassAccess": [
         "Sith Apprentice"
       ],
-      "accessPublications": [],
+      "accessPublications": [
+        {
+          "sourcebook": "Legacy Era Campaign Guide",
+          "publicationType": "DIRECT_ACCESS_GRANT",
+          "classes": [
+            "Sith Apprentice"
+          ]
+        }
+      ],
       "aggregateClassAccess": [
         "Sith Apprentice"
       ]
@@ -6172,7 +6641,7 @@
       "classAccess": [
         "Scout"
       ],
-      "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
+      "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
       "repoTreeIds": [
         "ab2c265c4b2f54f6"
       ],
@@ -6185,14 +6654,46 @@
       "status": "REPO_TREE_PRESENT",
       "notes": null,
       "originSourcebook": "Legacy Era Campaign Guide",
-      "originTalentNames": null,
-      "talentPublications": [],
-      "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED",
+      "originTalentNames": [
+        "Adapt and Survive",
+        "Defensive Protection",
+        "Quick on Your Feet",
+        "Ready and Willing",
+        "Unbalancing Adaptation"
+      ],
+      "talentPublications": [
+        {
+          "sourcebook": "Legacy Era Campaign Guide",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Adapt and Survive",
+            "Defensive Protection",
+            "Quick on Your Feet",
+            "Ready and Willing",
+            "Unbalancing Adaptation"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Adapt and Survive",
+        "Defensive Protection",
+        "Quick on Your Feet",
+        "Ready and Willing",
+        "Unbalancing Adaptation"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
       "referenceClassAccess": [
         "Scout"
       ],
-      "accessPublications": [],
+      "accessPublications": [
+        {
+          "sourcebook": "Legacy Era Campaign Guide",
+          "publicationType": "DIRECT_ACCESS_GRANT",
+          "classes": [
+            "Scout"
+          ]
+        }
+      ],
       "aggregateClassAccess": [
         "Scout"
       ]
@@ -6204,7 +6705,7 @@
       "classAccess": [
         "Scoundrel"
       ],
-      "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
+      "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
       "repoTreeIds": [
         "33c3210fcac8c664"
       ],
@@ -6217,14 +6718,46 @@
       "status": "REPO_TREE_PRESENT",
       "notes": null,
       "originSourcebook": "Legacy Era Campaign Guide",
-      "originTalentNames": null,
-      "talentPublications": [],
-      "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED",
+      "originTalentNames": [
+        "Biotech Adept",
+        "Bugbite",
+        "Curved Throw",
+        "Surprising Weapons",
+        "Veiled Biotech"
+      ],
+      "talentPublications": [
+        {
+          "sourcebook": "Legacy Era Campaign Guide",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Biotech Adept",
+            "Bugbite",
+            "Curved Throw",
+            "Surprising Weapons",
+            "Veiled Biotech"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Biotech Adept",
+        "Bugbite",
+        "Curved Throw",
+        "Surprising Weapons",
+        "Veiled Biotech"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
       "referenceClassAccess": [
         "Scoundrel"
       ],
-      "accessPublications": [],
+      "accessPublications": [
+        {
+          "sourcebook": "Legacy Era Campaign Guide",
+          "publicationType": "DIRECT_ACCESS_GRANT",
+          "classes": [
+            "Scoundrel"
+          ]
+        }
+      ],
       "aggregateClassAccess": [
         "Scoundrel"
       ]
