@@ -1,0 +1,223 @@
+{
+  "schemaVersion": 1,
+  "phase": "2",
+  "sourcebook": "Threats of the Galaxy",
+  "generatedAt": "2026-09-27",
+  "branch": "audit/talent-phase-1-tree-census",
+  "scope": "Source-certified Threats of the Galaxy talents compared against the current repository talent-record mirror. No production records changed.",
+  "summary": {
+    "canonicalTalentPublications": 11,
+    "repositoryRecordsMapped": 11,
+    "missingCorrectTreeRecords": 0,
+    "phase1dStructuralCorrections": 0,
+    "distinctSameNameCollisionRisks": 0,
+    "dispositionCounts": {
+      "DESCRIPTION_INCOMPLETE": 3,
+      "MECHANICS_INCOMPLETE": 2,
+      "SOURCE_ALIGNED_SHORTHAND": 6,
+      "MECHANICS_ERROR": 3,
+      "DESCRIPTION_ERROR": 1,
+      "PREREQUISITE_ERROR": 2,
+      "NAME_NORMALIZATION_ONLY": 2
+    },
+    "sourceMetadataMissing": 11,
+    "summaryMissing": 11
+  },
+  "talents": [
+    {
+      "canonicalTreeKey": "Threats of the Galaxy|Malkite Poisoner",
+      "tree": "Malkite Poisoner",
+      "canonicalName": "Malkite Techniques",
+      "page": 13,
+      "repoId": "744c2eaaa48e15af",
+      "repoName": "Malkite Techniques",
+      "repoTreeName": "Malkite Poisoner",
+      "repoSource": null,
+      "repoPage": null,
+      "repoPrerequisites": "",
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "DESCRIPTION_INCOMPLETE",
+        "MECHANICS_INCOMPLETE"
+      ],
+      "notes": "Repository omits the once-per-encounter limit, standard-action toxin application, weapon restrictions, unconscious-at-track-end clause, and full cure/termination rules."
+    },
+    {
+      "canonicalTreeKey": "Threats of the Galaxy|Malkite Poisoner",
+      "tree": "Malkite Poisoner",
+      "canonicalName": "Modify Poison",
+      "page": 13,
+      "repoId": "661899f73e20f2ce",
+      "repoName": "Modify Poison",
+      "repoTreeName": "Malkite Poisoner",
+      "repoSource": null,
+      "repoPage": null,
+      "repoPrerequisites": "Malkite Techniques",
+      "canonicalPrerequisites": "Malkite Techniques",
+      "dispositions": [
+        "SOURCE_ALIGNED_SHORTHAND"
+      ],
+      "notes": "Core mechanic is aligned, but full source wording should replace summary-style text."
+    },
+    {
+      "canonicalTreeKey": "Threats of the Galaxy|Malkite Poisoner",
+      "tree": "Malkite Poisoner",
+      "canonicalName": "Numbing Poison",
+      "page": 13,
+      "repoId": "458647466717fcc2",
+      "repoName": "Numbing Poison",
+      "repoTreeName": "Malkite Poisoner",
+      "repoSource": null,
+      "repoPage": null,
+      "repoPrerequisites": "Malkite Techniques",
+      "canonicalPrerequisites": "Malkite Techniques",
+      "dispositions": [
+        "SOURCE_ALIGNED_SHORTHAND"
+      ],
+      "notes": "Mechanically aligned shorthand."
+    },
+    {
+      "canonicalTreeKey": "Threats of the Galaxy|Malkite Poisoner",
+      "tree": "Malkite Poisoner",
+      "canonicalName": "Undetectable Poison",
+      "page": 13,
+      "repoId": "c5726f0e65f643ab",
+      "repoName": "Undetectable Poison",
+      "repoTreeName": "Malkite Poisoner",
+      "repoSource": null,
+      "repoPage": null,
+      "repoPrerequisites": "Malkite Techniques",
+      "canonicalPrerequisites": "Malkite Techniques",
+      "dispositions": [
+        "MECHANICS_ERROR",
+        "DESCRIPTION_ERROR"
+      ],
+      "notes": "Source increases only the Treat Injury DC needed to cure the poison. Repository broadens this to detection and/or treatment."
+    },
+    {
+      "canonicalTreeKey": "Threats of the Galaxy|Malkite Poisoner",
+      "tree": "Malkite Poisoner",
+      "canonicalName": "Vicious Poison",
+      "page": 13,
+      "repoId": "b9c850fce4aa9c55",
+      "repoName": "Vicious Poison",
+      "repoTreeName": "Malkite Poisoner",
+      "repoSource": null,
+      "repoPage": null,
+      "repoPrerequisites": "Malkite Techniques",
+      "canonicalPrerequisites": "Malkite Techniques",
+      "dispositions": [
+        "SOURCE_ALIGNED_SHORTHAND"
+      ],
+      "notes": "Mechanically aligned shorthand."
+    },
+    {
+      "canonicalTreeKey": "Threats of the Galaxy|Master of Teräs Käsi",
+      "tree": "Master of Teräs Käsi",
+      "canonicalName": "Ignore Damage Reduction",
+      "page": 53,
+      "repoId": "566e0020c5866222",
+      "repoName": "Ignore Damage Reduction",
+      "repoTreeName": "Master of Teras Kasi",
+      "repoSource": null,
+      "repoPage": null,
+      "repoPrerequisites": "Teras Kasi Basics",
+      "canonicalPrerequisites": "Teräs Käsi Basics, Martial Arts I",
+      "dispositions": [
+        "PREREQUISITE_ERROR",
+        "SOURCE_ALIGNED_SHORTHAND"
+      ],
+      "notes": "Repository omits Martial Arts I from the printed prerequisites."
+    },
+    {
+      "canonicalTreeKey": "Threats of the Galaxy|Master of Teräs Käsi",
+      "tree": "Master of Teräs Käsi",
+      "canonicalName": "Teräs Käsi Basics",
+      "page": 53,
+      "repoId": "67bddb17ae2770f3",
+      "repoName": "Teras Kasi Basics",
+      "repoTreeName": "Master of Teras Kasi",
+      "repoSource": null,
+      "repoPage": null,
+      "repoPrerequisites": "Martial Arts I",
+      "canonicalPrerequisites": "Martial Arts I",
+      "dispositions": [
+        "SOURCE_ALIGNED_SHORTHAND",
+        "NAME_NORMALIZATION_ONLY"
+      ],
+      "notes": "Mechanic is aligned; repository omits the printed diacritics in the talent/tree display names."
+    },
+    {
+      "canonicalTreeKey": "Threats of the Galaxy|Master of Teräs Käsi",
+      "tree": "Master of Teräs Käsi",
+      "canonicalName": "Teräs Käsi Mastery",
+      "page": 53,
+      "repoId": "69da2f9701ef65b4",
+      "repoName": "Teras Kasi Mastery",
+      "repoTreeName": "Master of Teras Kasi",
+      "repoSource": null,
+      "repoPage": null,
+      "repoPrerequisites": "Martial Arts I-III, Teras Kasi Basics",
+      "canonicalPrerequisites": "Teräs Käsi Basics, Martial Arts I, Martial Arts II, Martial Arts III",
+      "dispositions": [
+        "MECHANICS_ERROR",
+        "NAME_NORMALIZATION_ONLY"
+      ],
+      "notes": "Source permits a qualifying unarmed-only full attack as a standard action. Repository benefit text adds confusing/restrictive wording not present in the source."
+    },
+    {
+      "canonicalTreeKey": "Threats of the Galaxy|Master of Teräs Käsi",
+      "tree": "Master of Teräs Käsi",
+      "canonicalName": "Unarmed Counterstrike",
+      "page": 53,
+      "repoId": "3282f9b1d3769f9c",
+      "repoName": "Unarmed Counterstrike",
+      "repoTreeName": "Master of Teras Kasi",
+      "repoSource": null,
+      "repoPage": null,
+      "repoPrerequisites": "Unarmed Parry",
+      "canonicalPrerequisites": "Teräs Käsi Basics, Unarmed Parry, Martial Arts I, Martial Arts II",
+      "dispositions": [
+        "PREREQUISITE_ERROR",
+        "SOURCE_ALIGNED_SHORTHAND"
+      ],
+      "notes": "Repository lists only Unarmed Parry; source also requires Teräs Käsi Basics, Martial Arts I, and Martial Arts II."
+    },
+    {
+      "canonicalTreeKey": "Threats of the Galaxy|Master of Teräs Käsi",
+      "tree": "Master of Teräs Käsi",
+      "canonicalName": "Unarmed Parry",
+      "page": 53,
+      "repoId": "379019c29b37d717",
+      "repoName": "Unarmed Parry",
+      "repoTreeName": "Master of Teras Kasi",
+      "repoSource": null,
+      "repoPage": null,
+      "repoPrerequisites": "Martial Arts I-II, Teras Kasi Basics",
+      "canonicalPrerequisites": "Teräs Käsi Basics, Martial Arts I, Martial Arts II",
+      "dispositions": [
+        "MECHANICS_ERROR",
+        "DESCRIPTION_INCOMPLETE"
+      ],
+      "notes": "Repository omits awareness/not-flat-footed requirements and misstates the cumulative -2 penalty, which applies to all attack rolls for each attack roll made since the beginning of the user's last turn."
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Dark Side",
+      "tree": "Dark Side",
+      "canonicalName": "Drain Knowledge",
+      "page": 30,
+      "repoId": "d46612d82307f0db",
+      "repoName": "Drain Knowledge",
+      "repoTreeName": "Dark Side",
+      "repoSource": null,
+      "repoPage": null,
+      "repoPrerequisites": "",
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "DESCRIPTION_INCOMPLETE",
+        "MECHANICS_INCOMPLETE"
+      ],
+      "notes": "Repository loses most of the published procedure: standard action, Force Point cost, Use the Force vs Will, one-day retry lockout, one-day duration, persistent-condition recovery, alternate Perception mind-sift mode, and full Dark Side consequence framing."
+    }
+  ]
+}
