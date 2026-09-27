@@ -1,0 +1,2458 @@
+{
+  "schemaVersion": 1,
+  "phase": "2",
+  "sourcebook": "Jedi Academy Training Manual",
+  "generatedAt": "2026-09-27",
+  "branch": "audit/talent-phase-1-tree-census",
+  "scope": "Source-certified Jedi Academy Training Manual talents compared against current repository talent-record mirror. No production records changed.",
+  "summary": {
+    "canonicalTalentPublications": 118,
+    "repositoryRecordsMapped": 62,
+    "missingCorrectTreeRecords": 56,
+    "originTreeIdentities": 19,
+    "originTalentIdentities": 96,
+    "expansionTreeTargets": 10,
+    "expansionTalentIdentities": 22,
+    "phase1dStructuralCorrections": 0,
+    "distinctSameNameIdentityHazards": 0,
+    "prerequisiteTextMismatches": 12,
+    "fullTextDifferentOrAbbreviated": 53,
+    "sourceMetadataMissing": 62,
+    "summaryMissing": 62,
+    "dispositionCounts": {
+      "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT": 53,
+      "SOURCE_METADATA_MISSING": 62,
+      "SUMMARY_MISSING": 62,
+      "PREREQUISITE_TEXT_MISMATCH": 12,
+      "CANONICAL_TEXT_PRESENT_BOTH": 9,
+      "MISSING_CONTENT": 56
+    }
+  },
+  "hierarchyFindings": [
+    "Sith Alchemy is one talent. Create Sith Amulet, Create Sith Armor, Create Sith Talisman, and Create Sith Weapon are procedures inside that talent.",
+    "Table 1-1 (Sith Alchemy) is supporting rules for Sith Alchemy Specialist; its trait rows are not talent identities.",
+    "The Optional Rule: Daily Force Points sidebar interrupting Guardian Spirit is not part of that talent.",
+    "The New Species: Shards sidebar interrupting the Iron Knight layout is not a talent-tree boundary.",
+    "No Phase 1D talent-membership correction was required."
+  ],
+  "missingRepositoryRecords": [
+    {
+      "tree": "Jedi Investigator",
+      "name": "Echoes in the Force",
+      "page": 20,
+      "canonicalTreeKey": "Jedi Academy Training Manual|Jedi Investigator",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Jedi Investigator",
+      "name": "Unclouded Judgment",
+      "page": 20,
+      "canonicalTreeKey": "Jedi Academy Training Manual|Jedi Investigator",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Jedi Weapon Master",
+      "name": "Improvised Weapon Master",
+      "page": 21,
+      "canonicalTreeKey": "Jedi Academy Training Manual|Jedi Weapon Master",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Mystic",
+      "name": "Regimen Aptitude",
+      "page": 18,
+      "canonicalTreeKey": "Jedi Academy Training Manual|Mystic",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Aingtii Monk",
+      "name": "Aura of Freedom",
+      "page": 73,
+      "canonicalTreeKey": "Jedi Academy Training Manual|Aing-Tii Monk",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Aingtii Monk",
+      "name": "Folded Space Mastery",
+      "page": 73,
+      "canonicalTreeKey": "Jedi Academy Training Manual|Aing-Tii Monk",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Aingtii Monk",
+      "name": "Liberate",
+      "page": 73,
+      "canonicalTreeKey": "Jedi Academy Training Manual|Aing-Tii Monk",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Aingtii Monk",
+      "name": "Many Shades of the Force",
+      "page": 73,
+      "canonicalTreeKey": "Jedi Academy Training Manual|Aing-Tii Monk",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Aingtii Monk",
+      "name": "Spatial Integrity",
+      "page": 73,
+      "canonicalTreeKey": "Jedi Academy Training Manual|Aing-Tii Monk",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Baran Do Sage",
+      "name": "Enhanced Danger Sense",
+      "page": 75,
+      "canonicalTreeKey": "Jedi Academy Training Manual|Baran Do Sage",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Baran Do Sage",
+      "name": "Expanded Horizon",
+      "page": 75,
+      "canonicalTreeKey": "Jedi Academy Training Manual|Baran Do Sage",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Baran Do Sage",
+      "name": "Knowledge and Defense",
+      "page": 75,
+      "canonicalTreeKey": "Jedi Academy Training Manual|Baran Do Sage",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Baran Do Sage",
+      "name": "Planetary Attunement",
+      "page": 75,
+      "canonicalTreeKey": "Jedi Academy Training Manual|Baran Do Sage",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Baran Do Sage",
+      "name": "Precognitive Meditation",
+      "page": 75,
+      "canonicalTreeKey": "Jedi Academy Training Manual|Baran Do Sage",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Iron Knight",
+      "name": "Droid Duelist",
+      "page": 79,
+      "canonicalTreeKey": "Jedi Academy Training Manual|Iron Knight",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Iron Knight",
+      "name": "Force Repair",
+      "page": 79,
+      "canonicalTreeKey": "Jedi Academy Training Manual|Iron Knight",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Iron Knight",
+      "name": "Heal Droid",
+      "page": 79,
+      "canonicalTreeKey": "Jedi Academy Training Manual|Iron Knight",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Iron Knight",
+      "name": "Mask Presence",
+      "page": 79,
+      "canonicalTreeKey": "Jedi Academy Training Manual|Iron Knight",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Iron Knight",
+      "name": "Silicon Mind",
+      "page": 79,
+      "canonicalTreeKey": "Jedi Academy Training Manual|Iron Knight",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Matukai Adept",
+      "name": "Body Control",
+      "page": 81,
+      "canonicalTreeKey": "Jedi Academy Training Manual|Matukai Adept",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Matukai Adept",
+      "name": "Physical Surge",
+      "page": 81,
+      "canonicalTreeKey": "Jedi Academy Training Manual|Matukai Adept",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Matukai Adept",
+      "name": "Soft to Solid",
+      "page": 81,
+      "canonicalTreeKey": "Jedi Academy Training Manual|Matukai Adept",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Matukai Adept",
+      "name": "Wan-Shen Defense",
+      "page": 81,
+      "canonicalTreeKey": "Jedi Academy Training Manual|Matukai Adept",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Matukai Adept",
+      "name": "Wan-Shen Kata",
+      "page": 81,
+      "canonicalTreeKey": "Jedi Academy Training Manual|Matukai Adept",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Matukai Adept",
+      "name": "Wan-Shen Mastery",
+      "page": 81,
+      "canonicalTreeKey": "Jedi Academy Training Manual|Matukai Adept",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Seyugi Dervish",
+      "name": "Seyugi Cyclone",
+      "page": 83,
+      "canonicalTreeKey": "Jedi Academy Training Manual|Seyugi Dervish",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Seyugi Dervish",
+      "name": "Mobile Whirlwind",
+      "page": 83,
+      "canonicalTreeKey": "Jedi Academy Training Manual|Seyugi Dervish",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Seyugi Dervish",
+      "name": "Repelling Whirlwind",
+      "page": 83,
+      "canonicalTreeKey": "Jedi Academy Training Manual|Seyugi Dervish",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Seyugi Dervish",
+      "name": "Sudden Storm",
+      "page": 83,
+      "canonicalTreeKey": "Jedi Academy Training Manual|Seyugi Dervish",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Seyugi Dervish",
+      "name": "Tempest Tossed",
+      "page": 83,
+      "canonicalTreeKey": "Jedi Academy Training Manual|Seyugi Dervish",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Tyia Adept",
+      "name": "Cycle of Harmony",
+      "page": 87,
+      "canonicalTreeKey": "Jedi Academy Training Manual|Tyia Adept",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Tyia Adept",
+      "name": "Force Stabilize",
+      "page": 87,
+      "canonicalTreeKey": "Jedi Academy Training Manual|Tyia Adept",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Tyia Adept",
+      "name": "Repel Discord",
+      "page": 87,
+      "canonicalTreeKey": "Jedi Academy Training Manual|Tyia Adept",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Tyia Adept",
+      "name": "Stifle Conflict",
+      "page": 87,
+      "canonicalTreeKey": "Jedi Academy Training Manual|Tyia Adept",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Tyia Adept",
+      "name": "Tyia Adept",
+      "page": 87,
+      "canonicalTreeKey": "Jedi Academy Training Manual|Tyia Adept",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Warden Of The Sky",
+      "name": "Brutal Unarmed Strike",
+      "page": 89,
+      "canonicalTreeKey": "Jedi Academy Training Manual|Warden of the Sky",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Warden Of The Sky",
+      "name": "Martial Resurgence",
+      "page": 89,
+      "canonicalTreeKey": "Jedi Academy Training Manual|Warden of the Sky",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Warden Of The Sky",
+      "name": "Rebound Leap",
+      "page": 89,
+      "canonicalTreeKey": "Jedi Academy Training Manual|Warden of the Sky",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Warden Of The Sky",
+      "name": "Simultaneous Strike",
+      "page": 89,
+      "canonicalTreeKey": "Jedi Academy Training Manual|Warden of the Sky",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Warden Of The Sky",
+      "name": "Telekinetic Strike",
+      "page": 89,
+      "canonicalTreeKey": "Jedi Academy Training Manual|Warden of the Sky",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Warden Of The Sky",
+      "name": "Telekinetic Throw",
+      "page": 89,
+      "canonicalTreeKey": "Jedi Academy Training Manual|Warden of the Sky",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "White Current Adept",
+      "name": "Force Immersion",
+      "page": 77,
+      "canonicalTreeKey": "Jedi Academy Training Manual|White Current Adept",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "White Current Adept",
+      "name": "Immerse Another",
+      "page": 77,
+      "canonicalTreeKey": "Jedi Academy Training Manual|White Current Adept",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "White Current Adept",
+      "name": "Ride the Current",
+      "page": 77,
+      "canonicalTreeKey": "Jedi Academy Training Manual|White Current Adept",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "White Current Adept",
+      "name": "Surrender to the Current",
+      "page": 77,
+      "canonicalTreeKey": "Jedi Academy Training Manual|White Current Adept",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "White Current Adept",
+      "name": "White Current Adept",
+      "page": 77,
+      "canonicalTreeKey": "Jedi Academy Training Manual|White Current Adept",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Shapers of Kro Var",
+      "name": "Combustion",
+      "page": 85,
+      "canonicalTreeKey": "Jedi Academy Training Manual|Shapers of Kro Var",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Shapers of Kro Var",
+      "name": "Earth Buckle",
+      "page": 85,
+      "canonicalTreeKey": "Jedi Academy Training Manual|Shapers of Kro Var",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Shapers of Kro Var",
+      "name": "Fluidity",
+      "page": 85,
+      "canonicalTreeKey": "Jedi Academy Training Manual|Shapers of Kro Var",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Shapers of Kro Var",
+      "name": "Thunderclap",
+      "page": 85,
+      "canonicalTreeKey": "Jedi Academy Training Manual|Shapers of Kro Var",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Shapers of Kro Var",
+      "name": "Wind Vortex",
+      "page": 85,
+      "canonicalTreeKey": "Jedi Academy Training Manual|Shapers of Kro Var",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Zeison Sha Warrior",
+      "name": "Discblade Arc",
+      "page": 91,
+      "canonicalTreeKey": "Jedi Academy Training Manual|Zeison Sha Warrior",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Zeison Sha Warrior",
+      "name": "Distant Discblade Throw",
+      "page": 91,
+      "canonicalTreeKey": "Jedi Academy Training Manual|Zeison Sha Warrior",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Zeison Sha Warrior",
+      "name": "Recall Discblade",
+      "page": 91,
+      "canonicalTreeKey": "Jedi Academy Training Manual|Zeison Sha Warrior",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Zeison Sha Warrior",
+      "name": "Telekinetic Vigilance",
+      "page": 91,
+      "canonicalTreeKey": "Jedi Academy Training Manual|Zeison Sha Warrior",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Zeison Sha Warrior",
+      "name": "Weapon Specialization (discblade)",
+      "page": 91,
+      "canonicalTreeKey": "Jedi Academy Training Manual|Zeison Sha Warrior",
+      "sameNameRepoCandidates": []
+    }
+  ],
+  "talents": [
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Dark Side Devotee",
+      "tree": "Dark Side Devotee",
+      "canonicalName": "Dark Side Talisman",
+      "page": 17,
+      "repoId": "e96812723ff4eb04",
+      "repoName": "Dark Side Talisman",
+      "repoTreeName": "Dark Side Devotee",
+      "repoPrerequisites": "",
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Dark Side Devotee",
+      "tree": "Dark Side Devotee",
+      "canonicalName": "Greater Dark Side Talisman",
+      "page": 17,
+      "repoId": "c8bf9ab9d1f8588a",
+      "repoName": "Greater Dark Side Talisman",
+      "repoTreeName": "Dark Side Devotee",
+      "repoPrerequisites": "Dark Side Talisman",
+      "canonicalPrerequisites": "Dark Side Talisman",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Duelist",
+      "tree": "Duelist",
+      "canonicalName": "Lightsaber Form Savant",
+      "page": 19,
+      "repoId": "fcc6357b5b33dbb7",
+      "repoName": "Lightsaber Form Savant",
+      "repoTreeName": "Duelist",
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Duelist",
+      "tree": "Duelist",
+      "canonicalName": "Shoto Master",
+      "page": 19,
+      "repoId": "26bece7080710c8d",
+      "repoName": "Shoto Master",
+      "repoTreeName": "Duelist",
+      "repoPrerequisites": "Shoto Focus",
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "PREREQUISITE_TEXT_MISMATCH",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Jedi Consular",
+      "tree": "Jedi Consular",
+      "canonicalName": "Adversary Lore",
+      "page": 14,
+      "repoId": "a8347dda0f619f2d",
+      "repoName": "Adversary Lore",
+      "repoTreeName": "Jedi Consular",
+      "repoPrerequisites": "",
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Jedi Consular",
+      "tree": "Jedi Consular",
+      "canonicalName": "Know Weakness",
+      "page": 14,
+      "repoId": "d0b25a52cdc093bf",
+      "repoName": "Know Weakness",
+      "repoTreeName": "Jedi Consular",
+      "repoPrerequisites": "Adversary Lore",
+      "canonicalPrerequisites": "Adversary Lore",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Jedi Guardian",
+      "tree": "Jedi Guardian",
+      "canonicalName": "Grenade Defense",
+      "page": 14,
+      "repoId": "27a67c4c00c1b9ae",
+      "repoName": "Grenade Defense",
+      "repoTreeName": "Jedi Guardian",
+      "repoPrerequisites": "",
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Jedi Guardian",
+      "tree": "Jedi Guardian",
+      "canonicalName": "Hold the Line",
+      "page": 14,
+      "repoId": "a843f45ec0f99db6",
+      "repoName": "Hold the Line",
+      "repoTreeName": "Jedi Guardian",
+      "repoPrerequisites": "",
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_TEXT_PRESENT_BOTH",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Jedi Sentinel",
+      "tree": "Jedi Sentinel",
+      "canonicalName": "Master of the Great Hunt",
+      "page": 14,
+      "repoId": "ee2cbf6681a5a7e1",
+      "repoName": "Master of the Great Hunt",
+      "repoTreeName": "Jedi Sentinel",
+      "repoPrerequisites": "",
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_TEXT_PRESENT_BOTH",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Lightsaber Combat",
+      "tree": "Lightsaber Combat",
+      "canonicalName": "Shoto Focus",
+      "page": 14,
+      "repoId": "e0f66d77a2b065a7",
+      "repoName": "Shoto Focus",
+      "repoTreeName": "Lightsaber Combat",
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Jedi Academy Training Manual|Beastwarden",
+      "tree": "Beastwarden",
+      "canonicalName": "Charm Beast",
+      "page": 18,
+      "repoId": "bab9a1ce285f98b9",
+      "repoName": "Charm Beast",
+      "repoTreeName": "Beastwarden",
+      "repoPrerequisites": "",
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Jedi Academy Training Manual|Beastwarden",
+      "tree": "Beastwarden",
+      "canonicalName": "Bonded Mount",
+      "page": 18,
+      "repoId": "9c88f3f82e6e2082",
+      "repoName": "Bonded Mount",
+      "repoTreeName": "Beastwarden",
+      "repoPrerequisites": "Charm Beast",
+      "canonicalPrerequisites": "Charm Beast",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Jedi Academy Training Manual|Beastwarden",
+      "tree": "Beastwarden",
+      "canonicalName": "Entreat Beast",
+      "page": 18,
+      "repoId": "b15fa2f45baf55ea",
+      "repoName": "Entreat Beast",
+      "repoTreeName": "Beastwarden",
+      "repoPrerequisites": "Charm Beast",
+      "canonicalPrerequisites": "Charm Beast",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Jedi Academy Training Manual|Beastwarden",
+      "tree": "Beastwarden",
+      "canonicalName": "Soothing Presence",
+      "page": 18,
+      "repoId": "0a65325a98b108a7",
+      "repoName": "Soothing Presence",
+      "repoTreeName": "Beastwarden",
+      "repoPrerequisites": "Charm Beast",
+      "canonicalPrerequisites": "Charm Beast",
+      "dispositions": [
+        "CANONICAL_TEXT_PRESENT_BOTH",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Jedi Academy Training Manual|Beastwarden",
+      "tree": "Beastwarden",
+      "canonicalName": "Wild Sense",
+      "page": 18,
+      "repoId": "b6e75c52f5d66ade",
+      "repoName": "Wild Sense",
+      "repoTreeName": "Beastwarden",
+      "repoPrerequisites": "Charm Beast",
+      "canonicalPrerequisites": "Charm Beast",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Jedi Academy Training Manual|Jedi Artisan",
+      "tree": "Jedi Artisan",
+      "canonicalName": "Call Weapon",
+      "page": 19,
+      "repoId": "bec7535325ee1eb1",
+      "repoName": "Call Weapon",
+      "repoTreeName": "Jedi Artisan",
+      "repoPrerequisites": "",
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Jedi Academy Training Manual|Jedi Artisan",
+      "tree": "Jedi Artisan",
+      "canonicalName": "Lightsaber Specialist",
+      "page": 19,
+      "repoId": "6fe17dc4f0f03c12",
+      "repoName": "Lightsaber Specialist",
+      "repoTreeName": "Jedi Artisan",
+      "repoPrerequisites": "Masterwork Lightsaber",
+      "canonicalPrerequisites": "Masterwork Lightsaber",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Jedi Academy Training Manual|Jedi Artisan",
+      "tree": "Jedi Artisan",
+      "canonicalName": "Masterwork Lightsaber",
+      "page": 19,
+      "repoId": "a64c01df9eba3147",
+      "repoName": "Masterwork Lightsaber",
+      "repoTreeName": "Jedi Artisan",
+      "repoPrerequisites": "",
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Jedi Academy Training Manual|Jedi Artisan",
+      "tree": "Jedi Artisan",
+      "canonicalName": "Perfect Attunement",
+      "page": 19,
+      "repoId": "c67e45ac79e6f0d7",
+      "repoName": "Perfect Attunement",
+      "repoTreeName": "Jedi Artisan",
+      "repoPrerequisites": "Masterwork Lightsaber",
+      "canonicalPrerequisites": "Masterwork Lightsaber",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Jedi Academy Training Manual|Jedi Artisan",
+      "tree": "Jedi Artisan",
+      "canonicalName": "Quick Modification",
+      "page": 19,
+      "repoId": "ac11f849b15c784c",
+      "repoName": "Quick Modification",
+      "repoTreeName": "Jedi Artisan",
+      "repoPrerequisites": "Masterwork Lightsaber",
+      "canonicalPrerequisites": "Masterwork Lightsaber,",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Jedi Academy Training Manual|Jedi Instructor",
+      "tree": "Jedi Instructor",
+      "canonicalName": "Apprentice Boon",
+      "page": 19,
+      "repoId": "53c5a847e3396d13",
+      "repoName": "Apprentice Boon",
+      "repoTreeName": "Jedi Instructor",
+      "repoPrerequisites": "",
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Jedi Academy Training Manual|Jedi Instructor",
+      "tree": "Jedi Instructor",
+      "canonicalName": "Share Force Secret",
+      "page": 19,
+      "repoId": "2dc6ad1667133f2d",
+      "repoName": "Share Force Secret",
+      "repoTreeName": "Jedi Instructor",
+      "repoPrerequisites": "At least 1 Force Secret",
+      "canonicalPrerequisites": "Must know at least 1 Force secret",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "PREREQUISITE_TEXT_MISMATCH",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Jedi Academy Training Manual|Jedi Instructor",
+      "tree": "Jedi Instructor",
+      "canonicalName": "Share Force Technique",
+      "page": 20,
+      "repoId": "7d02251f13fd5645",
+      "repoName": "Share Force Technique",
+      "repoTreeName": "Jedi Instructor",
+      "repoPrerequisites": "At least 1 Force Technique",
+      "canonicalPrerequisites": "Must know at least 1 Force Technique",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "PREREQUISITE_TEXT_MISMATCH",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Jedi Academy Training Manual|Jedi Instructor",
+      "tree": "Jedi Instructor",
+      "canonicalName": "Share Talent",
+      "page": 20,
+      "repoId": "2f00c50f3bf6bf5a",
+      "repoName": "Share Talent",
+      "repoTreeName": "Jedi Instructor",
+      "repoPrerequisites": "At least 1 Talent from Lightsaber Combat Talent Tree, Duelist Talent Tree, or Lightsaber Forms Talent Tree",
+      "canonicalPrerequisites": "At least one talent from the Lightsaber Combat, Duelist, or Lightsaber Forms talent tree",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "PREREQUISITE_TEXT_MISMATCH",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Jedi Academy Training Manual|Jedi Instructor",
+      "tree": "Jedi Instructor",
+      "canonicalName": "Transfer Power",
+      "page": 20,
+      "repoId": "488aaac69a9829bc",
+      "repoName": "Transfer Power",
+      "repoTreeName": "Jedi Instructor",
+      "repoPrerequisites": "Force Training",
+      "canonicalPrerequisites": "Force Training feat",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "PREREQUISITE_TEXT_MISMATCH",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Jedi Academy Training Manual|Jedi Investigator",
+      "tree": "Jedi Investigator",
+      "canonicalName": "Echoes in the Force",
+      "page": 20,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Jedi Academy Training Manual|Jedi Investigator",
+      "tree": "Jedi Investigator",
+      "canonicalName": "Jedi Quarry",
+      "page": 20,
+      "repoId": "dfb9e58c7bcb095c",
+      "repoName": "Jedi Quarry",
+      "repoTreeName": "Jedi Investigator",
+      "repoPrerequisites": "",
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Jedi Academy Training Manual|Jedi Investigator",
+      "tree": "Jedi Investigator",
+      "canonicalName": "Prepared for Danger",
+      "page": 20,
+      "repoId": "aa5b9fe99274274a",
+      "repoName": "Prepared for Danger",
+      "repoTreeName": "Jedi Investigator",
+      "repoPrerequisites": "Farseeing",
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "PREREQUISITE_TEXT_MISMATCH",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Jedi Academy Training Manual|Jedi Investigator",
+      "tree": "Jedi Investigator",
+      "canonicalName": "Sense Deception",
+      "page": 20,
+      "repoId": "467accea4a3c8cbd",
+      "repoName": "Sense Deception",
+      "repoTreeName": "Jedi Investigator",
+      "repoPrerequisites": "",
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Jedi Academy Training Manual|Jedi Investigator",
+      "tree": "Jedi Investigator",
+      "canonicalName": "Unclouded Judgment",
+      "page": 20,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "Sense Deception",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Jedi Academy Training Manual|Jedi Weapon Master",
+      "tree": "Jedi Weapon Master",
+      "canonicalName": "Combat Trance",
+      "page": 21,
+      "repoId": "675bfa10691b60f6",
+      "repoName": "Combat Trance",
+      "repoTreeName": "Jedi Weapon Master",
+      "repoPrerequisites": "Battle Strike",
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "PREREQUISITE_TEXT_MISMATCH",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Jedi Academy Training Manual|Jedi Weapon Master",
+      "tree": "Jedi Weapon Master",
+      "canonicalName": "Improvised Weapon Master",
+      "page": 21,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Jedi Academy Training Manual|Jedi Weapon Master",
+      "tree": "Jedi Weapon Master",
+      "canonicalName": "Shoto Pin",
+      "page": 21,
+      "repoId": "ab4b51be30dfa9bc",
+      "repoName": "Shoto Pin",
+      "repoTreeName": "Jedi Weapon Master",
+      "repoPrerequisites": "Block",
+      "canonicalPrerequisites": "Block",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Jedi Academy Training Manual|Jedi Weapon Master",
+      "tree": "Jedi Weapon Master",
+      "canonicalName": "Twin Weapon Mastery",
+      "page": 21,
+      "repoId": "cb4984135c665c4b",
+      "repoName": "Twin Weapon Mastery",
+      "repoTreeName": "Jedi Weapon Master",
+      "repoPrerequisites": "Twin Weapon Style",
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "PREREQUISITE_TEXT_MISMATCH",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Jedi Academy Training Manual|Jedi Weapon Master",
+      "tree": "Jedi Weapon Master",
+      "canonicalName": "Twin Weapon Style",
+      "page": 21,
+      "repoId": "5ea9a4c30dff1ac8",
+      "repoName": "Twin Weapon Style",
+      "repoTreeName": "Jedi Weapon Master",
+      "repoPrerequisites": "",
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Jedi Academy Training Manual|Mystic",
+      "tree": "Mystic",
+      "canonicalName": "Channel Vitality",
+      "page": 18,
+      "repoId": "cddfb9833c7d3344",
+      "repoName": "Channel Vitality",
+      "repoTreeName": "Mystic",
+      "repoPrerequisites": "",
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_TEXT_PRESENT_BOTH",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Jedi Academy Training Manual|Mystic",
+      "tree": "Mystic",
+      "canonicalName": "Closed Mind",
+      "page": 18,
+      "repoId": "084423db749d2bb3",
+      "repoName": "Closed Mind",
+      "repoTreeName": "Mystic",
+      "repoPrerequisites": "",
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_TEXT_PRESENT_BOTH",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Jedi Academy Training Manual|Mystic",
+      "tree": "Mystic",
+      "canonicalName": "Esoteric Technique",
+      "page": 18,
+      "repoId": "08e904def2f9ea5c",
+      "repoName": "Esoteric Technique",
+      "repoTreeName": "Mystic",
+      "repoPrerequisites": "",
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_TEXT_PRESENT_BOTH",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Jedi Academy Training Manual|Mystic",
+      "tree": "Mystic",
+      "canonicalName": "Mystic Mastery",
+      "page": 18,
+      "repoId": "4ec766d6818c373f",
+      "repoName": "Mystic Mastery",
+      "repoTreeName": "Mystic",
+      "repoPrerequisites": "",
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_TEXT_PRESENT_BOTH",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Jedi Academy Training Manual|Mystic",
+      "tree": "Mystic",
+      "canonicalName": "Regimen Aptitude",
+      "page": 18,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "Force Regimen Mastery (see page 23)",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Jedi Academy Training Manual|Sith Alchemy",
+      "tree": "Sith Alchemy",
+      "canonicalName": "Cause Mutation",
+      "page": 21,
+      "repoId": "c59de6f440c92832",
+      "repoName": "Cause Mutation",
+      "repoTreeName": "Sith Alchemy",
+      "repoPrerequisites": "Sith Alchemy",
+      "canonicalPrerequisites": "Sith Alchemy",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Jedi Academy Training Manual|Sith Alchemy",
+      "tree": "Sith Alchemy",
+      "canonicalName": "Rapid Alchemy",
+      "page": 21,
+      "repoId": "69420a9a5ff5d8b9",
+      "repoName": "Rapid Alchemy",
+      "repoTreeName": "Sith Alchemy",
+      "repoPrerequisites": "",
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Jedi Academy Training Manual|Sith Alchemy",
+      "tree": "Sith Alchemy",
+      "canonicalName": "Sith Alchemy",
+      "page": 21,
+      "repoId": "eb4f3e86-60bc-4765-89d0-323d4cc00845",
+      "repoName": "Sith Alchemy",
+      "repoTreeName": "Sith Alchemy",
+      "repoPrerequisites": "",
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": "Create Sith Amulet, Create Sith Armor, Create Sith Talisman, and Create Sith Weapon are procedures within this one talent, not standalone talents.",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Jedi Academy Training Manual|Sith Alchemy",
+      "tree": "Sith Alchemy",
+      "canonicalName": "Sith Alchemy Specialist",
+      "page": 22,
+      "repoId": "9bee4563b328def7",
+      "repoName": "Sith Alchemy Specialist",
+      "repoTreeName": "Sith Alchemy",
+      "repoPrerequisites": "Sith Alchemy",
+      "canonicalPrerequisites": "Sith Alchemy",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": "The talent references Table 1-1 (Sith Alchemy) for available traits; table entries are supporting rules, not separate talent identities.",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Jedi Academy Training Manual|Telepath",
+      "tree": "Telepath",
+      "canonicalName": "Mind Probe",
+      "page": 18,
+      "repoId": "ccaa66ed749e3317",
+      "repoName": "Mind Probe",
+      "repoTreeName": "Telepath",
+      "repoPrerequisites": "",
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Jedi Academy Training Manual|Telepath",
+      "tree": "Telepath",
+      "canonicalName": "Perfect Telepathy",
+      "page": 18,
+      "repoId": "2da74bc3f4d45d2d",
+      "repoName": "Perfect Telepathy",
+      "repoTreeName": "Telepath",
+      "repoPrerequisites": "",
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_TEXT_PRESENT_BOTH",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Jedi Academy Training Manual|Telepath",
+      "tree": "Telepath",
+      "canonicalName": "Psychic Citadel",
+      "page": 18,
+      "repoId": "546034f073eab1fd",
+      "repoName": "Psychic Citadel",
+      "repoTreeName": "Telepath",
+      "repoPrerequisites": "",
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_TEXT_PRESENT_BOTH",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Jedi Academy Training Manual|Telepath",
+      "tree": "Telepath",
+      "canonicalName": "Psychic Defenses",
+      "page": 18,
+      "repoId": "202a117b1b203951",
+      "repoName": "Psychic Defenses",
+      "repoTreeName": "Telepath",
+      "repoPrerequisites": "Psychic Citadel",
+      "canonicalPrerequisites": "Psychic Citadel",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Jedi Academy Training Manual|Telepath",
+      "tree": "Telepath",
+      "canonicalName": "Telepathic Intruder",
+      "page": 19,
+      "repoId": "443bfe7fa33dd627",
+      "repoName": "Telepathic Intruder",
+      "repoTreeName": "Telepath",
+      "repoPrerequisites": "",
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Jedi Academy Training Manual|Aing-Tii Monk",
+      "tree": "Aingtii Monk",
+      "canonicalName": "Aura of Freedom",
+      "page": 73,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Jedi Academy Training Manual|Aing-Tii Monk",
+      "tree": "Aingtii Monk",
+      "canonicalName": "Folded Space Mastery",
+      "page": 73,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "Fold space",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Jedi Academy Training Manual|Aing-Tii Monk",
+      "tree": "Aingtii Monk",
+      "canonicalName": "Liberate",
+      "page": 73,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "Aura of Freedom",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Jedi Academy Training Manual|Aing-Tii Monk",
+      "tree": "Aingtii Monk",
+      "canonicalName": "Many Shades of the Force",
+      "page": 73,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "Force Training",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Jedi Academy Training Manual|Aing-Tii Monk",
+      "tree": "Aingtii Monk",
+      "canonicalName": "Spatial Integrity",
+      "page": 73,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Alter",
+      "tree": "Alter",
+      "canonicalName": "Illusion",
+      "page": 14,
+      "repoId": "708a47d1be414990",
+      "repoName": "Illusion",
+      "repoTreeName": "Alter",
+      "repoPrerequisites": "Mind Trick",
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "PREREQUISITE_TEXT_MISMATCH",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Alter",
+      "tree": "Alter",
+      "canonicalName": "Illusion Bond",
+      "page": 15,
+      "repoId": "cd4803e05638b4ab",
+      "repoName": "Illusion Bond",
+      "repoTreeName": "Alter",
+      "repoPrerequisites": "Illusion",
+      "canonicalPrerequisites": "Illusion",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Alter",
+      "tree": "Alter",
+      "canonicalName": "Influence Savant",
+      "page": 15,
+      "repoId": "ced81064716debaa",
+      "repoName": "Influence Savant",
+      "repoTreeName": "Alter",
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Alter",
+      "tree": "Alter",
+      "canonicalName": "Link",
+      "page": 15,
+      "repoId": "df1bdd9ca78ad14d",
+      "repoName": "Link",
+      "repoTreeName": "Alter",
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Alter",
+      "tree": "Alter",
+      "canonicalName": "Masquerade",
+      "page": 15,
+      "repoId": "86fbb269a17a8c5e",
+      "repoName": "Masquerade",
+      "repoTreeName": "Alter",
+      "repoPrerequisites": "Illusion",
+      "canonicalPrerequisites": "Illusion",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Alter",
+      "tree": "Alter",
+      "canonicalName": "Suppress Force",
+      "page": 15,
+      "repoId": "ec3e6a05561ddc07",
+      "repoName": "Suppress Force",
+      "repoTreeName": "Alter",
+      "repoPrerequisites": "Influence Savant, Mind Trick",
+      "canonicalPrerequisites": "Influence Savant, mind trick",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Jedi Academy Training Manual|Baran Do Sage",
+      "tree": "Baran Do Sage",
+      "canonicalName": "Enhanced Danger Sense",
+      "page": 75,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Jedi Academy Training Manual|Baran Do Sage",
+      "tree": "Baran Do Sage",
+      "canonicalName": "Expanded Horizon",
+      "page": 75,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Jedi Academy Training Manual|Baran Do Sage",
+      "tree": "Baran Do Sage",
+      "canonicalName": "Knowledge and Defense",
+      "page": 75,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "Enhanced Danger Sense",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Jedi Academy Training Manual|Baran Do Sage",
+      "tree": "Baran Do Sage",
+      "canonicalName": "Planetary Attunement",
+      "page": 75,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Jedi Academy Training Manual|Baran Do Sage",
+      "tree": "Baran Do Sage",
+      "canonicalName": "Precognitive Meditation",
+      "page": 75,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Control",
+      "tree": "Control",
+      "canonicalName": "Channel Energy",
+      "page": 16,
+      "repoId": "fb6b798fe0c6091f",
+      "repoName": "Channel Energy",
+      "repoTreeName": "Control",
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "Negate energy",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "PREREQUISITE_TEXT_MISMATCH",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Control",
+      "tree": "Control",
+      "canonicalName": "Force Harmony",
+      "page": 16,
+      "repoId": "5b949c8cd8e78ee8",
+      "repoName": "Force Harmony",
+      "repoTreeName": "Control",
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Dark Side",
+      "tree": "Dark Side",
+      "canonicalName": "Dark Side Savant",
+      "page": 16,
+      "repoId": "b47beb909e6fce63",
+      "repoName": "Dark Side Savant",
+      "repoTreeName": "Dark Side",
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Dark Side",
+      "tree": "Dark Side",
+      "canonicalName": "Transfer Essence",
+      "page": 16,
+      "repoId": "c1be1f29c00436d5",
+      "repoName": "Transfer Essence",
+      "repoTreeName": "Dark Side",
+      "repoPrerequisites": "Dark Side Score equal to Wisdom Score",
+      "canonicalPrerequisites": "Dark Side Score equal to your Wisdom score",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "PREREQUISITE_TEXT_MISMATCH",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Jedi Academy Training Manual|Guardian Spirit",
+      "tree": "Guardian Spirit",
+      "canonicalName": "Guardian Spirit",
+      "page": 16,
+      "repoId": "0b18181b971fc505",
+      "repoName": "Guardian Spirit",
+      "repoTreeName": "Guardian Spirit",
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": "The Optional Rule: Daily Force Points sidebar interrupts the printed talent text and is excluded from the talent description.",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Jedi Academy Training Manual|Guardian Spirit",
+      "tree": "Guardian Spirit",
+      "canonicalName": "Crucial Advice",
+      "page": 17,
+      "repoId": "20ce23e9cc418512",
+      "repoName": "Crucial Advice",
+      "repoTreeName": "Guardian Spirit",
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Jedi Academy Training Manual|Guardian Spirit",
+      "tree": "Guardian Spirit",
+      "canonicalName": "Distracting Apparition",
+      "page": 17,
+      "repoId": "b85b92b788f7fa54",
+      "repoName": "Distracting Apparition",
+      "repoTreeName": "Guardian Spirit",
+      "repoPrerequisites": "Manifest Guardian Spirit",
+      "canonicalPrerequisites": "Manifest Guardian Spirit",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Jedi Academy Training Manual|Guardian Spirit",
+      "tree": "Guardian Spirit",
+      "canonicalName": "Manifest Guardian Spirit",
+      "page": 17,
+      "repoId": "3449cb22b384498b",
+      "repoName": "Manifest Guardian Spirit",
+      "repoTreeName": "Guardian Spirit",
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Jedi Academy Training Manual|Guardian Spirit",
+      "tree": "Guardian Spirit",
+      "canonicalName": "Vital Encouragement",
+      "page": 17,
+      "repoId": "1215e1c464a087b0",
+      "repoName": "Vital Encouragement",
+      "repoTreeName": "Guardian Spirit",
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Jedi Academy Training Manual|Iron Knight",
+      "tree": "Iron Knight",
+      "canonicalName": "Droid Duelist",
+      "page": 79,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Jedi Academy Training Manual|Iron Knight",
+      "tree": "Iron Knight",
+      "canonicalName": "Force Repair",
+      "page": 79,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Jedi Academy Training Manual|Iron Knight",
+      "tree": "Iron Knight",
+      "canonicalName": "Heal Droid",
+      "page": 79,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "Vital transfer",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Jedi Academy Training Manual|Iron Knight",
+      "tree": "Iron Knight",
+      "canonicalName": "Mask Presence",
+      "page": 79,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": "The New Species: Shards sidebar interrupts the Iron Knight tree layout and is excluded from the talent description.",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Jedi Academy Training Manual|Iron Knight",
+      "tree": "Iron Knight",
+      "canonicalName": "Silicon Mind",
+      "page": 79,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Jedi Academy Training Manual|Matukai Adept",
+      "tree": "Matukai Adept",
+      "canonicalName": "Body Control",
+      "page": 81,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Jedi Academy Training Manual|Matukai Adept",
+      "tree": "Matukai Adept",
+      "canonicalName": "Physical Surge",
+      "page": 81,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Jedi Academy Training Manual|Matukai Adept",
+      "tree": "Matukai Adept",
+      "canonicalName": "Soft to Solid",
+      "page": 81,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Jedi Academy Training Manual|Matukai Adept",
+      "tree": "Matukai Adept",
+      "canonicalName": "Wan-Shen Defense",
+      "page": 81,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "Proficient with the wan-shen (see page 54)",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Jedi Academy Training Manual|Matukai Adept",
+      "tree": "Matukai Adept",
+      "canonicalName": "Wan-Shen Kata",
+      "page": 81,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "Proficient with the wan-shen (see page 54)",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Jedi Academy Training Manual|Matukai Adept",
+      "tree": "Matukai Adept",
+      "canonicalName": "Wan-Shen Mastery",
+      "page": 81,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "Proficient with the wan-shen, Wan-Shen Kata, base attack bonus +5",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Sense",
+      "tree": "Sense",
+      "canonicalName": "Instinctive Navigation",
+      "page": 17,
+      "repoId": "2d392f2b63b738ed",
+      "repoName": "Instinctive Navigation",
+      "repoTreeName": "Sense",
+      "repoPrerequisites": "Force Pilot",
+      "canonicalPrerequisites": "Force Pilot",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Sense",
+      "tree": "Sense",
+      "canonicalName": "Motion of the Future",
+      "page": 17,
+      "repoId": "ff2201a270efa29e",
+      "repoName": "Motion of the Future",
+      "repoTreeName": "Sense",
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "Force Perception",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "PREREQUISITE_TEXT_MISMATCH",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Jedi Academy Training Manual|Seyugi Dervish",
+      "tree": "Seyugi Dervish",
+      "canonicalName": "Seyugi Cyclone",
+      "page": 83,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Jedi Academy Training Manual|Seyugi Dervish",
+      "tree": "Seyugi Dervish",
+      "canonicalName": "Mobile Whirlwind",
+      "page": 83,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "Seyugi Cyclone",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Jedi Academy Training Manual|Seyugi Dervish",
+      "tree": "Seyugi Dervish",
+      "canonicalName": "Repelling Whirlwind",
+      "page": 83,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "Seyugi Cyclone",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Jedi Academy Training Manual|Seyugi Dervish",
+      "tree": "Seyugi Dervish",
+      "canonicalName": "Sudden Storm",
+      "page": 83,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "Seyugi Cyclone",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Jedi Academy Training Manual|Seyugi Dervish",
+      "tree": "Seyugi Dervish",
+      "canonicalName": "Tempest Tossed",
+      "page": 83,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "Seyugi Cyclone",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Jedi Academy Training Manual|Tyia Adept",
+      "tree": "Tyia Adept",
+      "canonicalName": "Cycle of Harmony",
+      "page": 87,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "Tyia Adept",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Jedi Academy Training Manual|Tyia Adept",
+      "tree": "Tyia Adept",
+      "canonicalName": "Force Stabilize",
+      "page": 87,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "Tyia Adept",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Jedi Academy Training Manual|Tyia Adept",
+      "tree": "Tyia Adept",
+      "canonicalName": "Repel Discord",
+      "page": 87,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Jedi Academy Training Manual|Tyia Adept",
+      "tree": "Tyia Adept",
+      "canonicalName": "Stifle Conflict",
+      "page": 87,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Jedi Academy Training Manual|Tyia Adept",
+      "tree": "Tyia Adept",
+      "canonicalName": "Tyia Adept",
+      "page": 87,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Jedi Academy Training Manual|Warden of the Sky",
+      "tree": "Warden Of The Sky",
+      "canonicalName": "Brutal Unarmed Strike",
+      "page": 89,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "Telekinetic Strike",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Jedi Academy Training Manual|Warden of the Sky",
+      "tree": "Warden Of The Sky",
+      "canonicalName": "Martial Resurgence",
+      "page": 89,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Jedi Academy Training Manual|Warden of the Sky",
+      "tree": "Warden Of The Sky",
+      "canonicalName": "Rebound Leap",
+      "page": 89,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Jedi Academy Training Manual|Warden of the Sky",
+      "tree": "Warden Of The Sky",
+      "canonicalName": "Simultaneous Strike",
+      "page": 89,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "Base attack bonus +5",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Jedi Academy Training Manual|Warden of the Sky",
+      "tree": "Warden Of The Sky",
+      "canonicalName": "Telekinetic Strike",
+      "page": 89,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Jedi Academy Training Manual|Warden of the Sky",
+      "tree": "Warden Of The Sky",
+      "canonicalName": "Telekinetic Throw",
+      "page": 89,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "Throw feat",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Jedi Academy Training Manual|White Current Adept",
+      "tree": "White Current Adept",
+      "canonicalName": "Force Immersion",
+      "page": 77,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "White Current Adept, trained in Stealth",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Jedi Academy Training Manual|White Current Adept",
+      "tree": "White Current Adept",
+      "canonicalName": "Immerse Another",
+      "page": 77,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "White Current Adept, trained in Stealth",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Jedi Academy Training Manual|White Current Adept",
+      "tree": "White Current Adept",
+      "canonicalName": "Ride the Current",
+      "page": 77,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Jedi Academy Training Manual|White Current Adept",
+      "tree": "White Current Adept",
+      "canonicalName": "Surrender to the Current",
+      "page": 77,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Jedi Academy Training Manual|White Current Adept",
+      "tree": "White Current Adept",
+      "canonicalName": "White Current Adept",
+      "page": 77,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Jedi Academy Training Manual|Shapers of Kro Var",
+      "tree": "Shapers of Kro Var",
+      "canonicalName": "Combustion",
+      "page": 85,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "Force Training,",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Jedi Academy Training Manual|Shapers of Kro Var",
+      "tree": "Shapers of Kro Var",
+      "canonicalName": "Earth Buckle",
+      "page": 85,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Jedi Academy Training Manual|Shapers of Kro Var",
+      "tree": "Shapers of Kro Var",
+      "canonicalName": "Fluidity",
+      "page": 85,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Jedi Academy Training Manual|Shapers of Kro Var",
+      "tree": "Shapers of Kro Var",
+      "canonicalName": "Thunderclap",
+      "page": 85,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "Bantha Rush, Force Training",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Jedi Academy Training Manual|Shapers of Kro Var",
+      "tree": "Shapers of Kro Var",
+      "canonicalName": "Wind Vortex",
+      "page": 85,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Jedi Academy Training Manual|Zeison Sha Warrior",
+      "tree": "Zeison Sha Warrior",
+      "canonicalName": "Discblade Arc",
+      "page": 91,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "Proficiency with the discblade",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Jedi Academy Training Manual|Zeison Sha Warrior",
+      "tree": "Zeison Sha Warrior",
+      "canonicalName": "Distant Discblade Throw",
+      "page": 91,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "Proficiency with the discblade",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Jedi Academy Training Manual|Zeison Sha Warrior",
+      "tree": "Zeison Sha Warrior",
+      "canonicalName": "Recall Discblade",
+      "page": 91,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "Proficiency with the discblade",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Jedi Academy Training Manual|Zeison Sha Warrior",
+      "tree": "Zeison Sha Warrior",
+      "canonicalName": "Telekinetic Vigilance",
+      "page": 91,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "Intercept",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Jedi Academy Training Manual|Zeison Sha Warrior",
+      "tree": "Zeison Sha Warrior",
+      "canonicalName": "Weapon Specialization (discblade)",
+      "page": 91,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "Proficiency with the discblade, Weapon Focus (discblade)",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    }
+  ]
+}
