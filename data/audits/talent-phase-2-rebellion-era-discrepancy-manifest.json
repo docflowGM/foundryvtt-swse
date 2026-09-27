@@ -1,0 +1,1376 @@
+{
+  "schemaVersion": 1,
+  "phase": "2",
+  "sourcebook": "Rebellion Era Campaign Guide",
+  "generatedAt": "2026-09-26",
+  "branch": "audit/talent-phase-1-tree-census",
+  "scope": "Per-talent comparison of source-certified Rebellion Era content to the current repository. No production talent records changed.",
+  "summary": {
+    "canonicalTalentPublications": 64,
+    "repositoryRecordsMapped": 61,
+    "missingCorrectTreeRecords": 3,
+    "benefitStatus": {
+      "BENEFIT_EXACT": 37,
+      "BENEFIT_DIFFERENT": 10,
+      "BENEFIT_TRUNCATED_OR_SUMMARY": 14,
+      "MISSING_CORRECT_TREE_RECORD": 3
+    },
+    "descriptionStatus": {
+      "DESCRIPTION_EXACT": 49,
+      "DESCRIPTION_DIFFERENT": 11,
+      "MISSING_CORRECT_TREE_RECORD": 3,
+      "DESCRIPTION_HAS_EXTRA_TEXT": 1
+    },
+    "prerequisiteStatus": {
+      "PREREQUISITES_EXACT": 60,
+      "MISSING_CORRECT_TREE_RECORD": 3,
+      "PREREQUISITES_CANONICAL_MISMATCH": 1
+    },
+    "sourceMetadataStatus": {
+      "SOURCE_AND_PAGE_MISSING": 59,
+      "PAGE_MISSING": 2,
+      "MISSING_CORRECT_TREE_RECORD": 3
+    },
+    "summaryStatus": {
+      "SUMMARY_MISSING": 61,
+      "MISSING_CORRECT_TREE_RECORD": 3
+    },
+    "severeTextContaminationCandidates": 1
+  },
+  "phase1dStructuralCorrection": null,
+  "missingRepositoryRecords": [
+    {
+      "tree": "Rebel Recruiter",
+      "name": "Stay in the Fight",
+      "page": 41,
+      "canonicalTreeKey": "Rebellion Era Campaign Guide|Rebel Recruiter",
+      "sameNameRepoCandidates": [
+        {
+          "repoId": "c980750800b91061",
+          "tree": "Fugitive Commander",
+          "prerequisites": "Stalwart Subordinates"
+        }
+      ]
+    },
+    {
+      "tree": "Kilian Ranger",
+      "name": "Empower Siang Lance",
+      "page": 37,
+      "canonicalTreeKey": "Rebellion Era Campaign Guide|Kilian Ranger",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Kilian Ranger",
+      "name": "Shield Gauntlet Redirect",
+      "page": 37,
+      "canonicalTreeKey": "Rebellion Era Campaign Guide|Kilian Ranger",
+      "sameNameRepoCandidates": []
+    }
+  ],
+  "severeTextContaminationCandidates": [
+    {
+      "tree": "Recklessness",
+      "name": "Find Openings",
+      "repoId": "ad418fa7b1716364",
+      "repoChars": 581,
+      "canonicalChars": 123
+    }
+  ],
+  "talents": [
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Jedi Consular",
+      "tree": "Jedi Consular",
+      "canonicalName": "Guiding Strikes",
+      "page": 23,
+      "repoId": "e797ad357746be9f",
+      "repoName": "Guiding Strikes",
+      "benefitStatus": "BENEFIT_EXACT",
+      "descriptionStatus": "DESCRIPTION_EXACT",
+      "prerequisiteStatus": "PREREQUISITES_EXACT",
+      "sourceMetadataStatus": "SOURCE_AND_PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "CORRECT_OR_SOURCE_ALIGNED"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": [],
+      "repoBenefitChars": 337,
+      "canonicalBenefitChars": 337
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Jedi Consular",
+      "tree": "Jedi Consular",
+      "canonicalName": "Recall",
+      "page": 23,
+      "repoId": "0890f9e1c0858993",
+      "repoName": "Recall",
+      "benefitStatus": "BENEFIT_EXACT",
+      "descriptionStatus": "DESCRIPTION_EXACT",
+      "prerequisiteStatus": "PREREQUISITES_EXACT",
+      "sourceMetadataStatus": "SOURCE_AND_PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "CORRECT_OR_SOURCE_ALIGNED"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": [],
+      "repoBenefitChars": 127,
+      "canonicalBenefitChars": 127
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Jedi Guardian",
+      "tree": "Jedi Guardian",
+      "canonicalName": "Close Maneuvering",
+      "page": 23,
+      "repoId": "7355c8afe9509dad",
+      "repoName": "Close Maneuvering",
+      "benefitStatus": "BENEFIT_EXACT",
+      "descriptionStatus": "DESCRIPTION_EXACT",
+      "prerequisiteStatus": "PREREQUISITES_EXACT",
+      "sourceMetadataStatus": "PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "CORRECT_OR_SOURCE_ALIGNED"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": [],
+      "repoBenefitChars": 232,
+      "canonicalBenefitChars": 232
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Jedi Guardian",
+      "tree": "Jedi Guardian",
+      "canonicalName": "Immovable",
+      "page": 23,
+      "repoId": "14306c13238ccb83",
+      "repoName": "Immovable",
+      "benefitStatus": "BENEFIT_EXACT",
+      "descriptionStatus": "DESCRIPTION_EXACT",
+      "prerequisiteStatus": "PREREQUISITES_EXACT",
+      "sourceMetadataStatus": "PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "CORRECT_OR_SOURCE_ALIGNED"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": [],
+      "repoBenefitChars": 406,
+      "canonicalBenefitChars": 406
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Jedi Sentinel",
+      "tree": "Jedi Sentinel",
+      "canonicalName": "Gradual Resistance",
+      "page": 23,
+      "repoId": "291937f2d45a01bc",
+      "repoName": "Gradual Resistance",
+      "benefitStatus": "BENEFIT_EXACT",
+      "descriptionStatus": "DESCRIPTION_EXACT",
+      "prerequisiteStatus": "PREREQUISITES_EXACT",
+      "sourceMetadataStatus": "SOURCE_AND_PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "CORRECT_OR_SOURCE_ALIGNED"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": [],
+      "repoBenefitChars": 148,
+      "canonicalBenefitChars": 148
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Jedi Sentinel",
+      "tree": "Jedi Sentinel",
+      "canonicalName": "Reap Retribution",
+      "page": 23,
+      "repoId": "902c2cef66cf4df6",
+      "repoName": "Reap Retribution",
+      "benefitStatus": "BENEFIT_EXACT",
+      "descriptionStatus": "DESCRIPTION_EXACT",
+      "prerequisiteStatus": "PREREQUISITES_EXACT",
+      "sourceMetadataStatus": "SOURCE_AND_PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "CORRECT_OR_SOURCE_ALIGNED"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": [],
+      "repoBenefitChars": 177,
+      "canonicalBenefitChars": 177
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Leadership",
+      "tree": "Leadership",
+      "canonicalName": "Unwavering Ally",
+      "page": 25,
+      "repoId": "5ea6368fd61de9f1",
+      "repoName": "Unwavering Ally",
+      "benefitStatus": "BENEFIT_EXACT",
+      "descriptionStatus": "DESCRIPTION_EXACT",
+      "prerequisiteStatus": "PREREQUISITES_EXACT",
+      "sourceMetadataStatus": "SOURCE_AND_PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "CORRECT_OR_SOURCE_ALIGNED"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": [],
+      "repoBenefitChars": 297,
+      "canonicalBenefitChars": 297
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Lightsaber Combat",
+      "tree": "Lightsaber Combat",
+      "canonicalName": "Precise Redirect",
+      "page": 24,
+      "repoId": "515d69c71897e431",
+      "repoName": "Precise Redirect",
+      "benefitStatus": "BENEFIT_DIFFERENT",
+      "descriptionStatus": "DESCRIPTION_DIFFERENT",
+      "prerequisiteStatus": "PREREQUISITES_EXACT",
+      "sourceMetadataStatus": "SOURCE_AND_PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "DESCRIPTION_ERROR"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": [],
+      "repoBenefitChars": 116,
+      "canonicalBenefitChars": 116
+    },
+    {
+      "canonicalTreeKey": "Rebellion Era Campaign Guide|Ambusher",
+      "tree": "Ambusher",
+      "canonicalName": "Ambush Specialist",
+      "page": 28,
+      "repoId": "e835b21a01ae2ee7",
+      "repoName": "Ambush Specialist",
+      "benefitStatus": "BENEFIT_TRUNCATED_OR_SUMMARY",
+      "descriptionStatus": "DESCRIPTION_EXACT",
+      "prerequisiteStatus": "PREREQUISITES_EXACT",
+      "sourceMetadataStatus": "SOURCE_AND_PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "CORRECT_OR_SOURCE_ALIGNED"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": [],
+      "repoBenefitChars": 226,
+      "canonicalBenefitChars": 434
+    },
+    {
+      "canonicalTreeKey": "Rebellion Era Campaign Guide|Ambusher",
+      "tree": "Ambusher",
+      "canonicalName": "Destructive Ambusher",
+      "page": 28,
+      "repoId": "5d608b1083cfc31d",
+      "repoName": "Destructive Ambusher",
+      "benefitStatus": "BENEFIT_DIFFERENT",
+      "descriptionStatus": "DESCRIPTION_DIFFERENT",
+      "prerequisiteStatus": "PREREQUISITES_EXACT",
+      "sourceMetadataStatus": "SOURCE_AND_PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "DESCRIPTION_ERROR"
+      ],
+      "notes": "Repo benefit is a shortened summary and description is empty.",
+      "sameNameRepoCandidates": [],
+      "repoBenefitChars": 71,
+      "canonicalBenefitChars": 129
+    },
+    {
+      "canonicalTreeKey": "Rebellion Era Campaign Guide|Ambusher",
+      "tree": "Ambusher",
+      "canonicalName": "Keep It Going",
+      "page": 28,
+      "repoId": "34f21902e365a861",
+      "repoName": "Keep It Going",
+      "benefitStatus": "BENEFIT_EXACT",
+      "descriptionStatus": "DESCRIPTION_EXACT",
+      "prerequisiteStatus": "PREREQUISITES_EXACT",
+      "sourceMetadataStatus": "SOURCE_AND_PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "CORRECT_OR_SOURCE_ALIGNED"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": [],
+      "repoBenefitChars": 224,
+      "canonicalBenefitChars": 224
+    },
+    {
+      "canonicalTreeKey": "Rebellion Era Campaign Guide|Ambusher",
+      "tree": "Ambusher",
+      "canonicalName": "Keep Them Reeling",
+      "page": 28,
+      "repoId": "24bf81bc6d74fafd",
+      "repoName": "Keep Them Reeling",
+      "benefitStatus": "BENEFIT_DIFFERENT",
+      "descriptionStatus": "DESCRIPTION_DIFFERENT",
+      "prerequisiteStatus": "PREREQUISITES_EXACT",
+      "sourceMetadataStatus": "SOURCE_AND_PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "DESCRIPTION_ERROR",
+        "IDENTITY_ERROR"
+      ],
+      "notes": "Repo description contains a different mechanic; benefit is only a shortened summary of the printed talent.",
+      "sameNameRepoCandidates": [],
+      "repoBenefitChars": 126,
+      "canonicalBenefitChars": 278
+    },
+    {
+      "canonicalTreeKey": "Rebellion Era Campaign Guide|Ambusher",
+      "tree": "Ambusher",
+      "canonicalName": "Perceptive Ambusher",
+      "page": 28,
+      "repoId": "f4c2b1e5cdf5551a",
+      "repoName": "Perceptive Ambusher",
+      "benefitStatus": "BENEFIT_EXACT",
+      "descriptionStatus": "DESCRIPTION_EXACT",
+      "prerequisiteStatus": "PREREQUISITES_EXACT",
+      "sourceMetadataStatus": "SOURCE_AND_PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "CORRECT_OR_SOURCE_ALIGNED"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": [],
+      "repoBenefitChars": 111,
+      "canonicalBenefitChars": 111
+    },
+    {
+      "canonicalTreeKey": "Rebellion Era Campaign Guide|Ambusher",
+      "tree": "Ambusher",
+      "canonicalName": "Spring the Trap",
+      "page": 28,
+      "repoId": "c2b0b6dcba513cca",
+      "repoName": "Spring the Trap",
+      "benefitStatus": "BENEFIT_EXACT",
+      "descriptionStatus": "DESCRIPTION_EXACT",
+      "prerequisiteStatus": "PREREQUISITES_EXACT",
+      "sourceMetadataStatus": "SOURCE_AND_PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "CORRECT_OR_SOURCE_ALIGNED"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": [],
+      "repoBenefitChars": 200,
+      "canonicalBenefitChars": 200
+    },
+    {
+      "canonicalTreeKey": "Rebellion Era Campaign Guide|Gambling Leader",
+      "tree": "Gambling Leader",
+      "canonicalName": "Assault Gambit",
+      "page": 24,
+      "repoId": "ea9a4f110f5d2d8d",
+      "repoName": "Assault Gambit",
+      "benefitStatus": "BENEFIT_EXACT",
+      "descriptionStatus": "DESCRIPTION_EXACT",
+      "prerequisiteStatus": "PREREQUISITES_EXACT",
+      "sourceMetadataStatus": "SOURCE_AND_PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "CORRECT_OR_SOURCE_ALIGNED"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": [],
+      "repoBenefitChars": 325,
+      "canonicalBenefitChars": 325
+    },
+    {
+      "canonicalTreeKey": "Rebellion Era Campaign Guide|Gambling Leader",
+      "tree": "Gambling Leader",
+      "canonicalName": "Direct Fire",
+      "page": 24,
+      "repoId": "c64393b9304034ab",
+      "repoName": "Direct Fire",
+      "benefitStatus": "BENEFIT_DIFFERENT",
+      "descriptionStatus": "DESCRIPTION_DIFFERENT",
+      "prerequisiteStatus": "PREREQUISITES_EXACT",
+      "sourceMetadataStatus": "SOURCE_AND_PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "DESCRIPTION_ERROR"
+      ],
+      "notes": "Repo changes the printed frequency from once per turn to once per encounter.",
+      "sameNameRepoCandidates": [],
+      "repoBenefitChars": 227,
+      "canonicalBenefitChars": 223
+    },
+    {
+      "canonicalTreeKey": "Rebellion Era Campaign Guide|Gambling Leader",
+      "tree": "Gambling Leader",
+      "canonicalName": "Face the Foe",
+      "page": 24,
+      "repoId": "cbdedc32ac362634",
+      "repoName": "Face the Foe",
+      "benefitStatus": "BENEFIT_EXACT",
+      "descriptionStatus": "DESCRIPTION_EXACT",
+      "prerequisiteStatus": "PREREQUISITES_EXACT",
+      "sourceMetadataStatus": "SOURCE_AND_PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "CORRECT_OR_SOURCE_ALIGNED"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": [],
+      "repoBenefitChars": 103,
+      "canonicalBenefitChars": 103
+    },
+    {
+      "canonicalTreeKey": "Rebellion Era Campaign Guide|Gambling Leader",
+      "tree": "Gambling Leader",
+      "canonicalName": "Lead From the Front",
+      "page": 24,
+      "repoId": "a67a1a657fe5665c",
+      "repoName": "Lead From the Front",
+      "benefitStatus": "BENEFIT_EXACT",
+      "descriptionStatus": "DESCRIPTION_EXACT",
+      "prerequisiteStatus": "PREREQUISITES_EXACT",
+      "sourceMetadataStatus": "SOURCE_AND_PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "CORRECT_OR_SOURCE_ALIGNED"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": [],
+      "repoBenefitChars": 264,
+      "canonicalBenefitChars": 264
+    },
+    {
+      "canonicalTreeKey": "Rebellion Era Campaign Guide|Gambling Leader",
+      "tree": "Gambling Leader",
+      "canonicalName": "Luck Favors the Bold",
+      "page": 24,
+      "repoId": "c2447676a43a70a2",
+      "repoName": "Luck Favors the Bold",
+      "benefitStatus": "BENEFIT_EXACT",
+      "descriptionStatus": "DESCRIPTION_EXACT",
+      "prerequisiteStatus": "PREREQUISITES_EXACT",
+      "sourceMetadataStatus": "SOURCE_AND_PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "CORRECT_OR_SOURCE_ALIGNED"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": [],
+      "repoBenefitChars": 389,
+      "canonicalBenefitChars": 389
+    },
+    {
+      "canonicalTreeKey": "Rebellion Era Campaign Guide|Improviser",
+      "tree": "Improviser",
+      "canonicalName": "Bigger Bang",
+      "page": 43,
+      "repoId": "dc61d67946b1c1d6",
+      "repoName": "Bigger Bang",
+      "benefitStatus": "BENEFIT_DIFFERENT",
+      "descriptionStatus": "DESCRIPTION_DIFFERENT",
+      "prerequisiteStatus": "PREREQUISITES_EXACT",
+      "sourceMetadataStatus": "SOURCE_AND_PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "DESCRIPTION_ERROR"
+      ],
+      "notes": "Repo stores only a compressed summary rather than the printed rule.",
+      "sameNameRepoCandidates": [],
+      "repoBenefitChars": 38,
+      "canonicalBenefitChars": 121
+    },
+    {
+      "canonicalTreeKey": "Rebellion Era Campaign Guide|Improviser",
+      "tree": "Improviser",
+      "canonicalName": "Capture Droid",
+      "page": 43,
+      "repoId": "9ae263137f27e220",
+      "repoName": "Capture Droid",
+      "benefitStatus": "BENEFIT_TRUNCATED_OR_SUMMARY",
+      "descriptionStatus": "DESCRIPTION_EXACT",
+      "prerequisiteStatus": "PREREQUISITES_EXACT",
+      "sourceMetadataStatus": "SOURCE_AND_PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "CORRECT_OR_SOURCE_ALIGNED"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": [],
+      "repoBenefitChars": 174,
+      "canonicalBenefitChars": 561
+    },
+    {
+      "canonicalTreeKey": "Rebellion Era Campaign Guide|Improviser",
+      "tree": "Improviser",
+      "canonicalName": "Custom Model",
+      "page": 43,
+      "repoId": "b8472ec0498d2c20",
+      "repoName": "Custom Model",
+      "benefitStatus": "BENEFIT_EXACT",
+      "descriptionStatus": "DESCRIPTION_EXACT",
+      "prerequisiteStatus": "PREREQUISITES_EXACT",
+      "sourceMetadataStatus": "SOURCE_AND_PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "CORRECT_OR_SOURCE_ALIGNED"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": [],
+      "repoBenefitChars": 217,
+      "canonicalBenefitChars": 217
+    },
+    {
+      "canonicalTreeKey": "Rebellion Era Campaign Guide|Improviser",
+      "tree": "Improviser",
+      "canonicalName": "Improved Jury-Rig",
+      "page": 43,
+      "repoId": "6e3c1c77acfb0141",
+      "repoName": "Improved Jury-Rig",
+      "benefitStatus": "BENEFIT_EXACT",
+      "descriptionStatus": "DESCRIPTION_EXACT",
+      "prerequisiteStatus": "PREREQUISITES_EXACT",
+      "sourceMetadataStatus": "SOURCE_AND_PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "CORRECT_OR_SOURCE_ALIGNED"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": [],
+      "repoBenefitChars": 297,
+      "canonicalBenefitChars": 297
+    },
+    {
+      "canonicalTreeKey": "Rebellion Era Campaign Guide|Improviser",
+      "tree": "Improviser",
+      "canonicalName": "Improvised Device",
+      "page": 43,
+      "repoId": "84d4e92693185028",
+      "repoName": "Improvised Device",
+      "benefitStatus": "BENEFIT_TRUNCATED_OR_SUMMARY",
+      "descriptionStatus": "DESCRIPTION_EXACT",
+      "prerequisiteStatus": "PREREQUISITES_EXACT",
+      "sourceMetadataStatus": "SOURCE_AND_PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "CORRECT_OR_SOURCE_ALIGNED"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": [],
+      "repoBenefitChars": 337,
+      "canonicalBenefitChars": 504
+    },
+    {
+      "canonicalTreeKey": "Rebellion Era Campaign Guide|Pathfinder",
+      "tree": "Pathfinder",
+      "canonicalName": "Bunker Blaster",
+      "page": 45,
+      "repoId": "cc96a480b69ddc59",
+      "repoName": "Bunker Blaster",
+      "benefitStatus": "BENEFIT_DIFFERENT",
+      "descriptionStatus": "DESCRIPTION_DIFFERENT",
+      "prerequisiteStatus": "PREREQUISITES_EXACT",
+      "sourceMetadataStatus": "SOURCE_AND_PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "DESCRIPTION_ERROR"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": [],
+      "repoBenefitChars": 105,
+      "canonicalBenefitChars": 124
+    },
+    {
+      "canonicalTreeKey": "Rebellion Era Campaign Guide|Pathfinder",
+      "tree": "Pathfinder",
+      "canonicalName": "Defensive Measures",
+      "page": 45,
+      "repoId": "67186d921e94d636",
+      "repoName": "Defensive Measures",
+      "benefitStatus": "BENEFIT_EXACT",
+      "descriptionStatus": "DESCRIPTION_EXACT",
+      "prerequisiteStatus": "PREREQUISITES_EXACT",
+      "sourceMetadataStatus": "SOURCE_AND_PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "CORRECT_OR_SOURCE_ALIGNED"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": [],
+      "repoBenefitChars": 54,
+      "canonicalBenefitChars": 54
+    },
+    {
+      "canonicalTreeKey": "Rebellion Era Campaign Guide|Pathfinder",
+      "tree": "Pathfinder",
+      "canonicalName": "Enhance Cover",
+      "page": 45,
+      "repoId": "1d50b01d5151c3eb",
+      "repoName": "Enhance Cover",
+      "benefitStatus": "BENEFIT_EXACT",
+      "descriptionStatus": "DESCRIPTION_EXACT",
+      "prerequisiteStatus": "PREREQUISITES_EXACT",
+      "sourceMetadataStatus": "SOURCE_AND_PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "CORRECT_OR_SOURCE_ALIGNED"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": [],
+      "repoBenefitChars": 264,
+      "canonicalBenefitChars": 264
+    },
+    {
+      "canonicalTreeKey": "Rebellion Era Campaign Guide|Pathfinder",
+      "tree": "Pathfinder",
+      "canonicalName": "Escort Fighter",
+      "page": 45,
+      "repoId": "0991f4321b429bf5",
+      "repoName": "Escort Fighter",
+      "benefitStatus": "BENEFIT_EXACT",
+      "descriptionStatus": "DESCRIPTION_EXACT",
+      "prerequisiteStatus": "PREREQUISITES_EXACT",
+      "sourceMetadataStatus": "SOURCE_AND_PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "CORRECT_OR_SOURCE_ALIGNED"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": [],
+      "repoBenefitChars": 276,
+      "canonicalBenefitChars": 276
+    },
+    {
+      "canonicalTreeKey": "Rebellion Era Campaign Guide|Pathfinder",
+      "tree": "Pathfinder",
+      "canonicalName": "Launch Point",
+      "page": 45,
+      "repoId": "9aa564522f427214",
+      "repoName": "Launch Point",
+      "benefitStatus": "BENEFIT_EXACT",
+      "descriptionStatus": "DESCRIPTION_EXACT",
+      "prerequisiteStatus": "PREREQUISITES_EXACT",
+      "sourceMetadataStatus": "SOURCE_AND_PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "CORRECT_OR_SOURCE_ALIGNED"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": [],
+      "repoBenefitChars": 232,
+      "canonicalBenefitChars": 232
+    },
+    {
+      "canonicalTreeKey": "Rebellion Era Campaign Guide|Pathfinder",
+      "tree": "Pathfinder",
+      "canonicalName": "Obscuring Defenses",
+      "page": 45,
+      "repoId": "07174b444852424c",
+      "repoName": "Obscuring Defenses",
+      "benefitStatus": "BENEFIT_EXACT",
+      "descriptionStatus": "DESCRIPTION_EXACT",
+      "prerequisiteStatus": "PREREQUISITES_EXACT",
+      "sourceMetadataStatus": "SOURCE_AND_PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "CORRECT_OR_SOURCE_ALIGNED"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": [],
+      "repoBenefitChars": 69,
+      "canonicalBenefitChars": 69
+    },
+    {
+      "canonicalTreeKey": "Rebellion Era Campaign Guide|Pathfinder",
+      "tree": "Pathfinder",
+      "canonicalName": "Relocate",
+      "page": 45,
+      "repoId": "68e476fdeb434b01",
+      "repoName": "Relocate",
+      "benefitStatus": "BENEFIT_EXACT",
+      "descriptionStatus": "DESCRIPTION_EXACT",
+      "prerequisiteStatus": "PREREQUISITES_EXACT",
+      "sourceMetadataStatus": "SOURCE_AND_PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "CORRECT_OR_SOURCE_ALIGNED"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": [],
+      "repoBenefitChars": 291,
+      "canonicalBenefitChars": 291
+    },
+    {
+      "canonicalTreeKey": "Rebellion Era Campaign Guide|Pathfinder",
+      "tree": "Pathfinder",
+      "canonicalName": "Safe Passage",
+      "page": 45,
+      "repoId": "e857b1e13073b0a9",
+      "repoName": "Safe Passage",
+      "benefitStatus": "BENEFIT_EXACT",
+      "descriptionStatus": "DESCRIPTION_EXACT",
+      "prerequisiteStatus": "PREREQUISITES_EXACT",
+      "sourceMetadataStatus": "SOURCE_AND_PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "CORRECT_OR_SOURCE_ALIGNED"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": [],
+      "repoBenefitChars": 260,
+      "canonicalBenefitChars": 260
+    },
+    {
+      "canonicalTreeKey": "Rebellion Era Campaign Guide|Pathfinder",
+      "tree": "Pathfinder",
+      "canonicalName": "Safe Zone",
+      "page": 45,
+      "repoId": "5989079457c8a3cf",
+      "repoName": "Safe Zone",
+      "benefitStatus": "BENEFIT_TRUNCATED_OR_SUMMARY",
+      "descriptionStatus": "DESCRIPTION_EXACT",
+      "prerequisiteStatus": "PREREQUISITES_EXACT",
+      "sourceMetadataStatus": "SOURCE_AND_PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "CORRECT_OR_SOURCE_ALIGNED"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": [],
+      "repoBenefitChars": 534,
+      "canonicalBenefitChars": 824
+    },
+    {
+      "canonicalTreeKey": "Rebellion Era Campaign Guide|Pathfinder",
+      "tree": "Pathfinder",
+      "canonicalName": "Zone of Recuperation",
+      "page": 45,
+      "repoId": "a68be9fa4ffe98af",
+      "repoName": "Zone of Recuperation",
+      "benefitStatus": "BENEFIT_EXACT",
+      "descriptionStatus": "DESCRIPTION_EXACT",
+      "prerequisiteStatus": "PREREQUISITES_EXACT",
+      "sourceMetadataStatus": "SOURCE_AND_PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "CORRECT_OR_SOURCE_ALIGNED"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": [],
+      "repoBenefitChars": 131,
+      "canonicalBenefitChars": 131
+    },
+    {
+      "canonicalTreeKey": "Rebellion Era Campaign Guide|Procurement",
+      "tree": "Procurement",
+      "canonicalName": "Black Market Buyer",
+      "page": 43,
+      "repoId": "c006a4be6de26139",
+      "repoName": "Black Market Buyer",
+      "benefitStatus": "BENEFIT_EXACT",
+      "descriptionStatus": "DESCRIPTION_EXACT",
+      "prerequisiteStatus": "PREREQUISITES_EXACT",
+      "sourceMetadataStatus": "SOURCE_AND_PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "CORRECT_OR_SOURCE_ALIGNED"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": [],
+      "repoBenefitChars": 156,
+      "canonicalBenefitChars": 156
+    },
+    {
+      "canonicalTreeKey": "Rebellion Era Campaign Guide|Procurement",
+      "tree": "Procurement",
+      "canonicalName": "Excellent Kit",
+      "page": 43,
+      "repoId": "85318987b48d5caa",
+      "repoName": "Excellent Kit",
+      "benefitStatus": "BENEFIT_TRUNCATED_OR_SUMMARY",
+      "descriptionStatus": "DESCRIPTION_EXACT",
+      "prerequisiteStatus": "PREREQUISITES_EXACT",
+      "sourceMetadataStatus": "SOURCE_AND_PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "CORRECT_OR_SOURCE_ALIGNED"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": [],
+      "repoBenefitChars": 259,
+      "canonicalBenefitChars": 409
+    },
+    {
+      "canonicalTreeKey": "Rebellion Era Campaign Guide|Procurement",
+      "tree": "Procurement",
+      "canonicalName": "Just What Is Needed",
+      "page": 43,
+      "repoId": "5cd160036d6bba05",
+      "repoName": "Just What Is Needed",
+      "benefitStatus": "BENEFIT_TRUNCATED_OR_SUMMARY",
+      "descriptionStatus": "DESCRIPTION_EXACT",
+      "prerequisiteStatus": "PREREQUISITES_EXACT",
+      "sourceMetadataStatus": "SOURCE_AND_PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "CORRECT_OR_SOURCE_ALIGNED"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": [],
+      "repoBenefitChars": 268,
+      "canonicalBenefitChars": 551
+    },
+    {
+      "canonicalTreeKey": "Rebellion Era Campaign Guide|Procurement",
+      "tree": "Procurement",
+      "canonicalName": "Only the Finest",
+      "page": 43,
+      "repoId": "b5eba49d8305b689",
+      "repoName": "Only the Finest",
+      "benefitStatus": "BENEFIT_EXACT",
+      "descriptionStatus": "DESCRIPTION_EXACT",
+      "prerequisiteStatus": "PREREQUISITES_EXACT",
+      "sourceMetadataStatus": "SOURCE_AND_PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "CORRECT_OR_SOURCE_ALIGNED"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": [],
+      "repoBenefitChars": 176,
+      "canonicalBenefitChars": 176
+    },
+    {
+      "canonicalTreeKey": "Rebellion Era Campaign Guide|Procurement",
+      "tree": "Procurement",
+      "canonicalName": "Right Gear for the Job",
+      "page": 43,
+      "repoId": "f09f37cda0fc10e1",
+      "repoName": "Right Gear for the Job",
+      "benefitStatus": "BENEFIT_TRUNCATED_OR_SUMMARY",
+      "descriptionStatus": "DESCRIPTION_EXACT",
+      "prerequisiteStatus": "PREREQUISITES_EXACT",
+      "sourceMetadataStatus": "SOURCE_AND_PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "CORRECT_OR_SOURCE_ALIGNED"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": [],
+      "repoBenefitChars": 244,
+      "canonicalBenefitChars": 331
+    },
+    {
+      "canonicalTreeKey": "Rebellion Era Campaign Guide|Rebel Recruiter",
+      "tree": "Rebel Recruiter",
+      "canonicalName": "Bolstered Numbers",
+      "page": 40,
+      "repoId": "4348c2bca983e4a9",
+      "repoName": "Bolstered Numbers",
+      "benefitStatus": "BENEFIT_EXACT",
+      "descriptionStatus": "DESCRIPTION_EXACT",
+      "prerequisiteStatus": "PREREQUISITES_EXACT",
+      "sourceMetadataStatus": "SOURCE_AND_PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "CORRECT_OR_SOURCE_ALIGNED"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": [],
+      "repoBenefitChars": 167,
+      "canonicalBenefitChars": 167
+    },
+    {
+      "canonicalTreeKey": "Rebellion Era Campaign Guide|Rebel Recruiter",
+      "tree": "Rebel Recruiter",
+      "canonicalName": "Noble Sacrifice",
+      "page": 40,
+      "repoId": "1fc568c1bbdd94e0",
+      "repoName": "Noble Sacrifice",
+      "benefitStatus": "BENEFIT_TRUNCATED_OR_SUMMARY",
+      "descriptionStatus": "DESCRIPTION_EXACT",
+      "prerequisiteStatus": "PREREQUISITES_EXACT",
+      "sourceMetadataStatus": "SOURCE_AND_PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "CORRECT_OR_SOURCE_ALIGNED"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": [],
+      "repoBenefitChars": 279,
+      "canonicalBenefitChars": 570
+    },
+    {
+      "canonicalTreeKey": "Rebellion Era Campaign Guide|Rebel Recruiter",
+      "tree": "Rebel Recruiter",
+      "canonicalName": "Recruit Enemy",
+      "page": 41,
+      "repoId": "43ac0c4b1759507a",
+      "repoName": "Recruit Enemy",
+      "benefitStatus": "BENEFIT_TRUNCATED_OR_SUMMARY",
+      "descriptionStatus": "DESCRIPTION_EXACT",
+      "prerequisiteStatus": "PREREQUISITES_EXACT",
+      "sourceMetadataStatus": "SOURCE_AND_PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "CORRECT_OR_SOURCE_ALIGNED"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": [],
+      "repoBenefitChars": 473,
+      "canonicalBenefitChars": 1033
+    },
+    {
+      "canonicalTreeKey": "Rebellion Era Campaign Guide|Rebel Recruiter",
+      "tree": "Rebel Recruiter",
+      "canonicalName": "Stay in the Fight",
+      "page": 41,
+      "repoId": null,
+      "repoName": null,
+      "benefitStatus": "MISSING_CORRECT_TREE_RECORD",
+      "descriptionStatus": "MISSING_CORRECT_TREE_RECORD",
+      "prerequisiteStatus": "MISSING_CORRECT_TREE_RECORD",
+      "sourceMetadataStatus": "MISSING_CORRECT_TREE_RECORD",
+      "summaryStatus": "MISSING_CORRECT_TREE_RECORD",
+      "dispositions": [
+        "MISSING_CONTENT",
+        "DISTINCT_SAME_NAME_IDENTITY_MISSING"
+      ],
+      "notes": "Distinct same-name Rebellion identity is missing. Existing same-name repo record belongs to Legacy Era Fugitive Commander and must not be reused.",
+      "sameNameRepoCandidates": [
+        {
+          "repoId": "c980750800b91061",
+          "tree": "Fugitive Commander",
+          "prerequisites": "Stalwart Subordinates"
+        }
+      ],
+      "repoBenefitChars": 0,
+      "canonicalBenefitChars": 138
+    },
+    {
+      "canonicalTreeKey": "Rebellion Era Campaign Guide|Rebel Recruiter",
+      "tree": "Rebel Recruiter",
+      "canonicalName": "Team Recruiting",
+      "page": 41,
+      "repoId": "a3f4bc7671830701",
+      "repoName": "Team Recruiting",
+      "benefitStatus": "BENEFIT_EXACT",
+      "descriptionStatus": "DESCRIPTION_EXACT",
+      "prerequisiteStatus": "PREREQUISITES_EXACT",
+      "sourceMetadataStatus": "SOURCE_AND_PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "CORRECT_OR_SOURCE_ALIGNED"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": [],
+      "repoBenefitChars": 133,
+      "canonicalBenefitChars": 133
+    },
+    {
+      "canonicalTreeKey": "Rebellion Era Campaign Guide|Recklessness",
+      "tree": "Recklessness",
+      "canonicalName": "Find Openings",
+      "page": 25,
+      "repoId": "ad418fa7b1716364",
+      "repoName": "Find Openings",
+      "benefitStatus": "BENEFIT_DIFFERENT",
+      "descriptionStatus": "DESCRIPTION_DIFFERENT",
+      "prerequisiteStatus": "PREREQUISITES_EXACT",
+      "sourceMetadataStatus": "SOURCE_AND_PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "DESCRIPTION_ERROR",
+        "CONCATENATED_IDENTITY_TEXT"
+      ],
+      "notes": "Repo benefit concatenates Risk for Reward and Trick Step mechanics; description is empty.",
+      "sameNameRepoCandidates": [],
+      "repoBenefitChars": 581,
+      "canonicalBenefitChars": 123
+    },
+    {
+      "canonicalTreeKey": "Rebellion Era Campaign Guide|Recklessness",
+      "tree": "Recklessness",
+      "canonicalName": "Hit the Deck",
+      "page": 25,
+      "repoId": "a3d0ac66cac192ec",
+      "repoName": "Hit the Deck",
+      "benefitStatus": "BENEFIT_EXACT",
+      "descriptionStatus": "DESCRIPTION_EXACT",
+      "prerequisiteStatus": "PREREQUISITES_EXACT",
+      "sourceMetadataStatus": "SOURCE_AND_PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "CORRECT_OR_SOURCE_ALIGNED"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": [],
+      "repoBenefitChars": 178,
+      "canonicalBenefitChars": 178
+    },
+    {
+      "canonicalTreeKey": "Rebellion Era Campaign Guide|Recklessness",
+      "tree": "Recklessness",
+      "canonicalName": "Lure Closer",
+      "page": 25,
+      "repoId": "c2d2d55ee60f886f",
+      "repoName": "Lure Closer",
+      "benefitStatus": "BENEFIT_TRUNCATED_OR_SUMMARY",
+      "descriptionStatus": "DESCRIPTION_EXACT",
+      "prerequisiteStatus": "PREREQUISITES_EXACT",
+      "sourceMetadataStatus": "SOURCE_AND_PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "CORRECT_OR_SOURCE_ALIGNED"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": [],
+      "repoBenefitChars": 400,
+      "canonicalBenefitChars": 616
+    },
+    {
+      "canonicalTreeKey": "Rebellion Era Campaign Guide|Recklessness",
+      "tree": "Recklessness",
+      "canonicalName": "Risk for Reward",
+      "page": 25,
+      "repoId": "04b9cb3683c6e485",
+      "repoName": "Risk for Reward",
+      "benefitStatus": "BENEFIT_EXACT",
+      "descriptionStatus": "DESCRIPTION_EXACT",
+      "prerequisiteStatus": "PREREQUISITES_EXACT",
+      "sourceMetadataStatus": "SOURCE_AND_PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "CORRECT_OR_SOURCE_ALIGNED"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": [],
+      "repoBenefitChars": 157,
+      "canonicalBenefitChars": 157
+    },
+    {
+      "canonicalTreeKey": "Rebellion Era Campaign Guide|Recklessness",
+      "tree": "Recklessness",
+      "canonicalName": "Trick Step",
+      "page": 26,
+      "repoId": "4c689ac688e80c9e",
+      "repoName": "Trick Step",
+      "benefitStatus": "BENEFIT_TRUNCATED_OR_SUMMARY",
+      "descriptionStatus": "DESCRIPTION_EXACT",
+      "prerequisiteStatus": "PREREQUISITES_EXACT",
+      "sourceMetadataStatus": "SOURCE_AND_PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "CORRECT_OR_SOURCE_ALIGNED"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": [],
+      "repoBenefitChars": 115,
+      "canonicalBenefitChars": 424
+    },
+    {
+      "canonicalTreeKey": "Rebellion Era Campaign Guide|Unpredictable",
+      "tree": "Unpredictable",
+      "canonicalName": "Aggressive Surge",
+      "page": 26,
+      "repoId": "147f70a2b815f34e",
+      "repoName": "Aggressive Surge",
+      "benefitStatus": "BENEFIT_EXACT",
+      "descriptionStatus": "DESCRIPTION_EXACT",
+      "prerequisiteStatus": "PREREQUISITES_EXACT",
+      "sourceMetadataStatus": "SOURCE_AND_PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "CORRECT_OR_SOURCE_ALIGNED"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": [],
+      "repoBenefitChars": 198,
+      "canonicalBenefitChars": 198
+    },
+    {
+      "canonicalTreeKey": "Rebellion Era Campaign Guide|Unpredictable",
+      "tree": "Unpredictable",
+      "canonicalName": "Blast Back",
+      "page": 26,
+      "repoId": "2d486ece7350cedf",
+      "repoName": "Blast Back",
+      "benefitStatus": "BENEFIT_EXACT",
+      "descriptionStatus": "DESCRIPTION_EXACT",
+      "prerequisiteStatus": "PREREQUISITES_EXACT",
+      "sourceMetadataStatus": "SOURCE_AND_PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "CORRECT_OR_SOURCE_ALIGNED"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": [],
+      "repoBenefitChars": 270,
+      "canonicalBenefitChars": 270
+    },
+    {
+      "canonicalTreeKey": "Rebellion Era Campaign Guide|Unpredictable",
+      "tree": "Unpredictable",
+      "canonicalName": "Fade Away",
+      "page": 26,
+      "repoId": "cb4b14a242fbee71",
+      "repoName": "Fade Away",
+      "benefitStatus": "BENEFIT_EXACT",
+      "descriptionStatus": "DESCRIPTION_EXACT",
+      "prerequisiteStatus": "PREREQUISITES_EXACT",
+      "sourceMetadataStatus": "SOURCE_AND_PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "CORRECT_OR_SOURCE_ALIGNED"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": [],
+      "repoBenefitChars": 161,
+      "canonicalBenefitChars": 161
+    },
+    {
+      "canonicalTreeKey": "Rebellion Era Campaign Guide|Unpredictable",
+      "tree": "Unpredictable",
+      "canonicalName": "Second Strike",
+      "page": 26,
+      "repoId": "55b2475e42ce79f2",
+      "repoName": "Second Strike",
+      "benefitStatus": "BENEFIT_TRUNCATED_OR_SUMMARY",
+      "descriptionStatus": "DESCRIPTION_EXACT",
+      "prerequisiteStatus": "PREREQUISITES_EXACT",
+      "sourceMetadataStatus": "SOURCE_AND_PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "CORRECT_OR_SOURCE_ALIGNED"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": [],
+      "repoBenefitChars": 255,
+      "canonicalBenefitChars": 444
+    },
+    {
+      "canonicalTreeKey": "Rebellion Era Campaign Guide|Unpredictable",
+      "tree": "Unpredictable",
+      "canonicalName": "Swerve",
+      "page": 26,
+      "repoId": "99c685b0631a5601",
+      "repoName": "Swerve",
+      "benefitStatus": "BENEFIT_TRUNCATED_OR_SUMMARY",
+      "descriptionStatus": "DESCRIPTION_HAS_EXTRA_TEXT",
+      "prerequisiteStatus": "PREREQUISITES_EXACT",
+      "sourceMetadataStatus": "SOURCE_AND_PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "DESCRIPTION_ERROR"
+      ],
+      "notes": "Repo description appends the next Wingman talent, Concentrate All Fire.",
+      "sameNameRepoCandidates": [],
+      "repoBenefitChars": 229,
+      "canonicalBenefitChars": 417
+    },
+    {
+      "canonicalTreeKey": "Rebellion Era Campaign Guide|Wingman",
+      "tree": "Wingman",
+      "canonicalName": "Concentrate All Fire",
+      "page": 40,
+      "repoId": "6f6cd1c453dc1828",
+      "repoName": "Concentrate All Fire",
+      "benefitStatus": "BENEFIT_TRUNCATED_OR_SUMMARY",
+      "descriptionStatus": "DESCRIPTION_DIFFERENT",
+      "prerequisiteStatus": "PREREQUISITES_EXACT",
+      "sourceMetadataStatus": "SOURCE_AND_PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "DESCRIPTION_ERROR"
+      ],
+      "notes": "Repo stores a compressed summary rather than the printed rule.",
+      "sameNameRepoCandidates": [],
+      "repoBenefitChars": 126,
+      "canonicalBenefitChars": 264
+    },
+    {
+      "canonicalTreeKey": "Rebellion Era Campaign Guide|Wingman",
+      "tree": "Wingman",
+      "canonicalName": "Escort Pilot",
+      "page": 40,
+      "repoId": "7aa3eec9b7f748ef",
+      "repoName": "Escort Pilot",
+      "benefitStatus": "BENEFIT_EXACT",
+      "descriptionStatus": "DESCRIPTION_EXACT",
+      "prerequisiteStatus": "PREREQUISITES_EXACT",
+      "sourceMetadataStatus": "SOURCE_AND_PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "CORRECT_OR_SOURCE_ALIGNED"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": [],
+      "repoBenefitChars": 176,
+      "canonicalBenefitChars": 176
+    },
+    {
+      "canonicalTreeKey": "Rebellion Era Campaign Guide|Wingman",
+      "tree": "Wingman",
+      "canonicalName": "Lose Pursuit",
+      "page": 40,
+      "repoId": "b1bfca51996bb303",
+      "repoName": "Lose Pursuit",
+      "benefitStatus": "BENEFIT_EXACT",
+      "descriptionStatus": "DESCRIPTION_EXACT",
+      "prerequisiteStatus": "PREREQUISITES_EXACT",
+      "sourceMetadataStatus": "SOURCE_AND_PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "CORRECT_OR_SOURCE_ALIGNED"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": [],
+      "repoBenefitChars": 252,
+      "canonicalBenefitChars": 252
+    },
+    {
+      "canonicalTreeKey": "Rebellion Era Campaign Guide|Wingman",
+      "tree": "Wingman",
+      "canonicalName": "Run Interference",
+      "page": 40,
+      "repoId": "9fd409d9ceaf6733",
+      "repoName": "Run Interference",
+      "benefitStatus": "BENEFIT_EXACT",
+      "descriptionStatus": "DESCRIPTION_EXACT",
+      "prerequisiteStatus": "PREREQUISITES_EXACT",
+      "sourceMetadataStatus": "SOURCE_AND_PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "CORRECT_OR_SOURCE_ALIGNED"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": [],
+      "repoBenefitChars": 288,
+      "canonicalBenefitChars": 288
+    },
+    {
+      "canonicalTreeKey": "Rebellion Era Campaign Guide|Wingman",
+      "tree": "Wingman",
+      "canonicalName": "Wingman Retribution",
+      "page": 40,
+      "repoId": "3c4c26a54de7c1c1",
+      "repoName": "Wingman Retribution",
+      "benefitStatus": "BENEFIT_EXACT",
+      "descriptionStatus": "DESCRIPTION_EXACT",
+      "prerequisiteStatus": "PREREQUISITES_EXACT",
+      "sourceMetadataStatus": "SOURCE_AND_PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "CORRECT_OR_SOURCE_ALIGNED"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": [],
+      "repoBenefitChars": 208,
+      "canonicalBenefitChars": 208
+    },
+    {
+      "canonicalTreeKey": "Rebellion Era Campaign Guide|Kilian Ranger",
+      "tree": "Kilian Ranger",
+      "canonicalName": "Empower Siang Lance",
+      "page": 37,
+      "repoId": null,
+      "repoName": null,
+      "benefitStatus": "MISSING_CORRECT_TREE_RECORD",
+      "descriptionStatus": "MISSING_CORRECT_TREE_RECORD",
+      "prerequisiteStatus": "MISSING_CORRECT_TREE_RECORD",
+      "sourceMetadataStatus": "MISSING_CORRECT_TREE_RECORD",
+      "summaryStatus": "MISSING_CORRECT_TREE_RECORD",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": "Canonical Kilian talent is missing from the repository.",
+      "sameNameRepoCandidates": [],
+      "repoBenefitChars": 0,
+      "canonicalBenefitChars": 240
+    },
+    {
+      "canonicalTreeKey": "Rebellion Era Campaign Guide|Kilian Ranger",
+      "tree": "Kilian Ranger",
+      "canonicalName": "Shield Gauntlet Defense",
+      "page": 37,
+      "repoId": "852bca9332684a2b",
+      "repoName": "Shield Gauntlet Defense",
+      "benefitStatus": "BENEFIT_DIFFERENT",
+      "descriptionStatus": "DESCRIPTION_DIFFERENT",
+      "prerequisiteStatus": "PREREQUISITES_EXACT",
+      "sourceMetadataStatus": "SOURCE_AND_PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "DESCRIPTION_ERROR",
+        "IDENTITY_ERROR"
+      ],
+      "notes": "Repo record contains Shield Gauntlet Deflect mechanics rather than the printed Defense talent.",
+      "sameNameRepoCandidates": [],
+      "repoBenefitChars": 497,
+      "canonicalBenefitChars": 250
+    },
+    {
+      "canonicalTreeKey": "Rebellion Era Campaign Guide|Kilian Ranger",
+      "tree": "Kilian Ranger",
+      "canonicalName": "Shield Gauntlet Deflect",
+      "page": 37,
+      "repoId": "da5096b45d174f36",
+      "repoName": "Shield Gauntlet Deflect",
+      "benefitStatus": "BENEFIT_DIFFERENT",
+      "descriptionStatus": "DESCRIPTION_DIFFERENT",
+      "prerequisiteStatus": "PREREQUISITES_CANONICAL_MISMATCH",
+      "sourceMetadataStatus": "SOURCE_AND_PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "DESCRIPTION_ERROR",
+        "IDENTITY_ERROR",
+        "CONCATENATED_IDENTITY_TEXT",
+        "PREREQUISITE_ERROR"
+      ],
+      "notes": "Repo record concatenates Deflect/Redirect/Siang Lance material and omits its printed prerequisite.",
+      "sameNameRepoCandidates": [],
+      "repoBenefitChars": 1281,
+      "canonicalBenefitChars": 663
+    },
+    {
+      "canonicalTreeKey": "Rebellion Era Campaign Guide|Kilian Ranger",
+      "tree": "Kilian Ranger",
+      "canonicalName": "Shield Gauntlet Redirect",
+      "page": 37,
+      "repoId": null,
+      "repoName": null,
+      "benefitStatus": "MISSING_CORRECT_TREE_RECORD",
+      "descriptionStatus": "MISSING_CORRECT_TREE_RECORD",
+      "prerequisiteStatus": "MISSING_CORRECT_TREE_RECORD",
+      "sourceMetadataStatus": "MISSING_CORRECT_TREE_RECORD",
+      "summaryStatus": "MISSING_CORRECT_TREE_RECORD",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": "Canonical Kilian talent is missing from the repository.",
+      "sameNameRepoCandidates": [],
+      "repoBenefitChars": 0,
+      "canonicalBenefitChars": 676
+    },
+    {
+      "canonicalTreeKey": "Rebellion Era Campaign Guide|Kilian Ranger",
+      "tree": "Kilian Ranger",
+      "canonicalName": "Siang Lance Mastery",
+      "page": 37,
+      "repoId": "0bbfcac85b09416a",
+      "repoName": "Siang Lance Mastery",
+      "benefitStatus": "BENEFIT_DIFFERENT",
+      "descriptionStatus": "DESCRIPTION_DIFFERENT",
+      "prerequisiteStatus": "PREREQUISITES_EXACT",
+      "sourceMetadataStatus": "SOURCE_AND_PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "DESCRIPTION_ERROR",
+        "IDENTITY_ERROR",
+        "CONCATENATED_IDENTITY_TEXT"
+      ],
+      "notes": "Repo record contains Empower Siang Lance and Shield Gauntlet Defense material rather than Siang Lance Mastery.",
+      "sameNameRepoCandidates": [],
+      "repoBenefitChars": 512,
+      "canonicalBenefitChars": 401
+    }
+  ]
+}
