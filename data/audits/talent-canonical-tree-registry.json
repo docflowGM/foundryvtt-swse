@@ -3067,7 +3067,7 @@
         "Sith Lord"
       ],
       "status": "REPO_TREE_PRESENT",
-      "notes": null,
+      "notes": " Phase 2 Core verification restored source-confirmed Core Sith talent Improved Dark Healing (Core p.224), omitted from Phase 1D origin membership.",
       "originSourcebook": "Saga Edition Core Rulebook",
       "originTalentNames": [
         "Dark Healing",
@@ -3075,6 +3075,7 @@
         "Dark Side Adept",
         "Dark Side Master",
         "Force Deception",
+        "Improved Dark Healing",
         "Wicked Strike"
       ],
       "talentPublications": [
@@ -3087,6 +3088,7 @@
             "Dark Side Adept",
             "Dark Side Master",
             "Force Deception",
+            "Improved Dark Healing",
             "Wicked Strike"
           ]
         },
@@ -3107,6 +3109,7 @@
         "Dark Side Adept",
         "Dark Side Master",
         "Force Deception",
+        "Improved Dark Healing",
         "Wicked Strike",
         "Affliction",
         "Dark Healing Field",
@@ -13572,6 +13575,18 @@
       "primarySourceVerified": 177,
       "noncanonicalHomebrewConfirmed": 19,
       "obsoleteSplitFragmentsConfirmed": 1
-    }
+    },
+    "postCloseoutCorrections": [
+      {
+        "id": "core-sith-improved-dark-healing",
+        "date": "2026-09-26",
+        "sourcebook": "Saga Edition Core Rulebook",
+        "canonicalTree": "Sith",
+        "talent": "Improved Dark Healing",
+        "page": 224,
+        "disposition": "RESTORED_OMITTED_ORIGIN_MEMBERSHIP",
+        "note": "Talent already exists in repository Sith tree; Phase 1D registry omitted it."
+      }
+    ]
   }
 }
