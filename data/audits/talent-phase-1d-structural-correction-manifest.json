@@ -5,18 +5,18 @@
   "phase": "1D",
   "scope": "Structural canonical talent-tree repair queue. No production changes applied.",
   "authority": "Primary-source tree identity/membership/publication/access provenance from data/audits/talent-canonical-tree-registry.json.",
-  "postCloseoutCorrection": "Phase 2 Core certification restored Improved Dark Healing to the Core Sith origin membership. Phase 2 Galaxy at War certification removed Tough as Durasteel from Unarmed Mastery because the source identifies it as a Martial Arts Master class feature, not a selectable talent.",
+  "postCloseoutCorrection": "Phase 2 Core certification restored Improved Dark Healing to the Core Sith origin membership. Phase 2 Galaxy at War certification removed Tough as Durasteel from Unarmed Mastery because it is a Martial Arts Master class feature. Phase 2 Galaxy of Intrigue certification removed six named actions that had been misclassified as standalone talents under Dedicated Guardian and Pistol Duelist.",
   "summary": {
     "registryEntries": 197,
     "canonicalPublishedTrees": 177,
     "noncanonicalHomebrewTrees": 19,
     "obsoleteSplitFragments": 1,
-    "expansionPublicationClaims": 278,
+    "expansionPublicationClaims": 272,
     "laterClassAccessGrants": 23,
     "sourceDisprovedReferenceAccessClaims": 1,
-    "aggregateCanonicalMembershipClaims": 1190,
+    "aggregateCanonicalMembershipClaims": 1184,
     "treesWithMembershipDifferences": 104,
-    "canonicalMembershipGaps": 280,
+    "canonicalMembershipGaps": 274,
     "normalizationOnlyNameMatches": 9,
     "extraRepoMembershipClaims": 74,
     "treesWithClassAccessDifferences": 21,
@@ -234,7 +234,7 @@
       "repoTreeNames": [
         "Commando"
       ],
-      "canonicalMembershipCount": 16,
+      "canonicalMembershipCount": 13,
       "repoClaimCount": 8,
       "missingCanonicalMemberships": [
         "Draw Fire",
@@ -242,16 +242,13 @@
         "Defensive Position",
         "Out of Harm's Way",
         "Coordinated Effort",
-        "Dedicated Guardian",
-        "Blast Shield",
-        "Take the Pain",
-        "Team Effort"
+        "Dedicated Guardian"
       ],
       "normalizationOnlyNameMatches": [],
       "extraRepoMembershipClaims": [
         "Hard Target"
       ],
-      "repairNote": "Membership gaps identify absence from the correct canonical tree, not necessarily absence of a talent document elsewhere. Extra claims require identity/text adjudication before deletion."
+      "repairNote": "Phase 2 Galaxy of Intrigue source review corrected named sub-actions inside Dedicated Guardian; they are not standalone talent memberships. Remaining gaps retain the standard correct-tree meaning."
     },
     {
       "canonicalTreeKey": "Saga Edition Core Rulebook|Dark Side Devotee",
@@ -403,7 +400,7 @@
       "repoTreeNames": [
         "Gunslinger"
       ],
-      "canonicalMembershipCount": 18,
+      "canonicalMembershipCount": 15,
       "repoClaimCount": 10,
       "missingCanonicalMemberships": [
         "Keep Them Honest",
@@ -411,16 +408,13 @@
         "Retreating Fire",
         "Slowing Shot",
         "Swift Shot",
-        "Damaging Disarm",
-        "End Game",
-        "Snap Aiming",
-        "Stand Steady"
+        "Damaging Disarm"
       ],
       "normalizationOnlyNameMatches": [],
       "extraRepoMembershipClaims": [
         "Trigger Work"
       ],
-      "repairNote": "Membership gaps identify absence from the correct canonical tree, not necessarily absence of a talent document elsewhere. Extra claims require identity/text adjudication before deletion."
+      "repairNote": "Phase 2 Galaxy of Intrigue source review corrected named sub-actions inside Pistol Duelist; they are not standalone talent memberships. Remaining gaps retain the standard correct-tree meaning."
     },
     {
       "canonicalTreeKey": "Saga Edition Core Rulebook|Infamy",

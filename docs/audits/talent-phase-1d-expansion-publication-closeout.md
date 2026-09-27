@@ -512,7 +512,7 @@ Already source-certified and encoded in earlier Phase 1D sub-phases: **13** expa
 - Just a Droid
 - Swift Droid
 
-# Galaxy of Intrigue — 23 expansion memberships
+# Galaxy of Intrigue — 17 expansion memberships
 
 ## Brawler
 
@@ -525,10 +525,9 @@ Already source-certified and encoded in earlier Phase 1D sub-phases: **13** expa
 
 - Coordinated Effort
 - Dedicated Guardian
-- Blast Shield
-- Take the Pain
-- Team Effort
 - Dedicated Protector
+
+Phase 2 correction: **Blast Shield**, **Take the Pain**, and **Team Effort** are named actions inside Dedicated Guardian, not standalone talent memberships.
 
 ## Expert Pilot
 
@@ -551,9 +550,8 @@ Already source-certified and encoded in earlier Phase 1D sub-phases: **13** expa
 
 - Damaging Disarm
 - Pistol Duelist
-- End Game
-- Snap Aiming
-- Stand Steady
+
+Phase 2 correction: **End Game**, **Snap Aiming**, and **Stand Steady** are named actions inside Pistol Duelist, not standalone talent memberships.
 
 # Structural observations
 
@@ -562,7 +560,7 @@ The publication sweep confirms that later-book additions are a major part of SWS
 The highest-loss expansion lanes in the current repository remain:
 
 - **Unknown Regions:** 25 of 30 checked additions are absent from the correct tree.
-- **Galaxy of Intrigue:** 18 of 23 are absent from the correct tree.
+- **Galaxy of Intrigue:** 12 of 17 are absent from the correct tree.
 - **Scavenger's Guide to Droids:** 16 of 23 are absent from the correct tree.
 - **Galaxy at War:** 11 of 13 are absent from the correct tree.
 

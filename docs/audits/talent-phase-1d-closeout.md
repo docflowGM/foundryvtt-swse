@@ -375,3 +375,19 @@ The planned Talent Content / Presentation Contract belongs after structural iden
 The project now has a source-backed canonical talent-tree registry rather than a repository-shaped approximation.
 
 That registry is sufficient to begin the next content-certification/repair work without relying on unsafe talent-name matching or assuming that the current tree graph is authoritative.
+
+
+# Post-closeout Phase 2 correction - Galaxy of Intrigue nested-action correction
+
+Phase 2 page-layout review on 2026-09-27 corrected six Galaxy of Intrigue expansion claims that Phase 1D had treated as standalone talents:
+
+- Commando / Dedicated Guardian: Blast Shield, Take the Pain, Team Effort are named actions inside Dedicated Guardian.
+- Gunslinger / Pistol Duelist: End Game, Snap Aiming, Stand Steady are named actions inside Pistol Duelist.
+
+Corrected structural totals after the prior Core and Galaxy at War corrections:
+
+- later-book expansion membership claims: **272**
+- aggregate canonical tree-membership claims: **1,184**
+- canonical correct-tree membership gaps: **274**
+
+Machine authority is the corrected `data/audits/talent-canonical-tree-registry.json` and `data/audits/talent-phase-1d-structural-correction-manifest.json`.

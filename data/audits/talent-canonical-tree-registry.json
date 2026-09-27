@@ -693,9 +693,6 @@
           "talentNames": [
             "Coordinated Effort",
             "Dedicated Guardian",
-            "Blast Shield",
-            "Take the Pain",
-            "Team Effort",
             "Dedicated Protector"
           ]
         }
@@ -713,9 +710,6 @@
         "Out of Harm's Way",
         "Coordinated Effort",
         "Dedicated Guardian",
-        "Blast Shield",
-        "Take the Pain",
-        "Team Effort",
         "Dedicated Protector"
       ],
       "aggregateMembershipStatus": "PHASE_1D_PUBLICATION_LAYER_COMPLETE",
@@ -1553,10 +1547,7 @@
           "publicationType": "EXPANSION",
           "talentNames": [
             "Damaging Disarm",
-            "Pistol Duelist",
-            "End Game",
-            "Snap Aiming",
-            "Stand Steady"
+            "Pistol Duelist"
           ]
         }
       ],
@@ -1575,10 +1566,7 @@
         "Swift Shot",
         "Ranged Flank",
         "Damaging Disarm",
-        "Pistol Duelist",
-        "End Game",
-        "Snap Aiming",
-        "Stand Steady"
+        "Pistol Duelist"
       ],
       "aggregateMembershipStatus": "PHASE_1D_PUBLICATION_LAYER_COMPLETE",
       "referenceClassAccess": [
@@ -13558,7 +13546,7 @@
       "Scavenger's Guide to Droids",
       "Galaxy of Intrigue"
     ],
-    "expansionPublicationClaims": 278,
+    "expansionPublicationClaims": 272,
     "note": "Phase 1D certifies structural tree identity, origin membership, later publication membership, class/tradition access provenance, and noncanonical repo-special dispositions. It does not certify full talent text, prerequisites, or runtime mechanics.",
     "accessProvenanceStatus": "COMPLETE",
     "accessAuthority": "accessPublications",
@@ -13601,6 +13589,36 @@
         "page": 33,
         "disposition": "REMOVED_CLASS_FEATURE_FROM_TALENT_MEMBERSHIP",
         "note": "Galaxy at War pp. 32-33 grants talent selections at odd-numbered Martial Arts Master levels while Tough as Durasteel advances automatically at even levels (+2/+4/+6/+8/+10). It is a class feature, not a selectable Unarmed Mastery talent."
+      },
+      {
+        "id": "goi-dedicated-guardian-nested-actions",
+        "date": "2026-09-27",
+        "sourcebook": "Galaxy of Intrigue",
+        "canonicalTree": "Commando",
+        "talent": "Dedicated Guardian",
+        "page": 24,
+        "disposition": "REMOVED_NAMED_ACTIONS_FROM_TALENT_MEMBERSHIP",
+        "removedActionNames": [
+          "Blast Shield",
+          "Take the Pain",
+          "Team Effort"
+        ],
+        "note": "Blast Shield, Take the Pain, and Team Effort are named once-per-encounter actions inside the Dedicated Guardian talent, not separately selectable talents."
+      },
+      {
+        "id": "goi-pistol-duelist-nested-actions",
+        "date": "2026-09-27",
+        "sourcebook": "Galaxy of Intrigue",
+        "canonicalTree": "Gunslinger",
+        "talent": "Pistol Duelist",
+        "page": 25,
+        "disposition": "REMOVED_NAMED_ACTIONS_FROM_TALENT_MEMBERSHIP",
+        "removedActionNames": [
+          "End Game",
+          "Snap Aiming",
+          "Stand Steady"
+        ],
+        "note": "End Game, Snap Aiming, and Stand Steady are named once-per-encounter actions inside the Pistol Duelist talent, not separately selectable talents."
       }
     ]
   },
@@ -13636,6 +13654,34 @@
       "talent": "Tough as Durasteel",
       "disposition": "PHASE_1D_STRUCTURAL_OVERINCLUSION_CORRECTED",
       "page": 33
+    },
+    {
+      "id": "GOI_DEDICATED_GUARDIAN_NESTED_ACTIONS",
+      "phase": "2",
+      "sourcebook": "Galaxy of Intrigue",
+      "tree": "Commando",
+      "talent": "Dedicated Guardian",
+      "disposition": "PHASE_1D_STRUCTURAL_OVERINCLUSION_CORRECTED",
+      "page": 24,
+      "removedActionNames": [
+        "Blast Shield",
+        "Take the Pain",
+        "Team Effort"
+      ]
+    },
+    {
+      "id": "GOI_PISTOL_DUELIST_NESTED_ACTIONS",
+      "phase": "2",
+      "sourcebook": "Galaxy of Intrigue",
+      "tree": "Gunslinger",
+      "talent": "Pistol Duelist",
+      "disposition": "PHASE_1D_STRUCTURAL_OVERINCLUSION_CORRECTED",
+      "page": 25,
+      "removedActionNames": [
+        "End Game",
+        "Snap Aiming",
+        "Stand Steady"
+      ]
     }
   ]
 }
