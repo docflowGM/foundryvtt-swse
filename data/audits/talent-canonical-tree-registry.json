@@ -6,8 +6,8 @@
   "counts": {
     "entries": 195,
     "referenceRows": 140,
-    "primarySourceVerified": 125,
-    "referencePendingPrimary": 23,
+    "primarySourceVerified": 148,
+    "referencePendingPrimary": 0,
     "repoSpecialSourceReview": 47
   },
   "entries": [
@@ -2674,7 +2674,7 @@
       "classAccess": [
         "Officer"
       ],
-      "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
+      "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
       "repoTreeIds": [
         "057a978a7dc1d5a7"
       ],
@@ -2685,16 +2685,48 @@
         "Officer"
       ],
       "status": "REPO_TREE_PRESENT",
-      "notes": null,
+      "notes": "Primary source confirms 5 origin talents. Repository also claims Born Leader (a prerequisite/cross-reference, not a Naval Officer talent) and a second Combined Fire (Naval) record although the source prints one Combined Fire identity. Repo also drops the exclamation mark from It's a Trap!.",
       "originSourcebook": "Starships of the Galaxy",
-      "originTalentNames": null,
-      "talentPublications": [],
-      "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED",
+      "originTalentNames": [
+        "Combined Fire",
+        "Fleet Deployment",
+        "Fleet Tactics",
+        "It's a Trap!",
+        "Legendary Commander"
+      ],
+      "talentPublications": [
+        {
+          "sourcebook": "Starships of the Galaxy",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Combined Fire",
+            "Fleet Deployment",
+            "Fleet Tactics",
+            "It's a Trap!",
+            "Legendary Commander"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Combined Fire",
+        "Fleet Deployment",
+        "Fleet Tactics",
+        "It's a Trap!",
+        "Legendary Commander"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
       "referenceClassAccess": [
         "Officer"
       ],
-      "accessPublications": [],
+      "accessPublications": [
+        {
+          "sourcebook": "Starships of the Galaxy",
+          "publicationType": "DIRECT_ACCESS_GRANT",
+          "classes": [
+            "Officer"
+          ]
+        }
+      ],
       "aggregateClassAccess": [
         "Officer"
       ]
@@ -2708,7 +2740,7 @@
         "Improviser",
         "Military Engineer"
       ],
-      "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
+      "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
       "repoTreeIds": [
         "f1657b1d23a4c7dc"
       ],
@@ -2721,18 +2753,61 @@
         "Scoundrel"
       ],
       "status": "REPO_TREE_PRESENT",
-      "notes": null,
+      "notes": "Primary source confirms 4 origin talents. Quick Fix is absent from the Outlaw Tech tree; a same-name repository record exists under Mechanic and must be identity-adjudicated before repair.",
       "originSourcebook": "Starships of the Galaxy",
-      "originTalentNames": null,
-      "talentPublications": [],
-      "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED",
+      "originTalentNames": [
+        "Fast Repairs",
+        "Hot Wire",
+        "Quick Fix",
+        "Personalized Modifications"
+      ],
+      "talentPublications": [
+        {
+          "sourcebook": "Starships of the Galaxy",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Fast Repairs",
+            "Hot Wire",
+            "Quick Fix",
+            "Personalized Modifications"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Fast Repairs",
+        "Hot Wire",
+        "Quick Fix",
+        "Personalized Modifications"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
       "referenceClassAccess": [
         "Scoundrel",
         "Improviser",
         "Military Engineer"
       ],
-      "accessPublications": [],
+      "accessPublications": [
+        {
+          "sourcebook": "Starships of the Galaxy",
+          "publicationType": "DIRECT_ACCESS_GRANT",
+          "classes": [
+            "Scoundrel"
+          ]
+        },
+        {
+          "sourcebook": "Clone Wars Campaign Guide",
+          "publicationType": "DIRECT_ACCESS_GRANT",
+          "classes": [
+            "Military Engineer"
+          ]
+        },
+        {
+          "sourcebook": "Rebellion Era Campaign Guide",
+          "publicationType": "DIRECT_ACCESS_GRANT",
+          "classes": [
+            "Improviser"
+          ]
+        }
+      ],
       "aggregateClassAccess": [
         "Scoundrel",
         "Improviser",
@@ -2746,7 +2821,7 @@
       "classAccess": [
         "Ace Pilot"
       ],
-      "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
+      "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
       "repoTreeIds": [
         "dc1b8c5ce2a70394"
       ],
@@ -2759,14 +2834,43 @@
       "status": "REPO_TREE_PRESENT",
       "notes": null,
       "originSourcebook": "Starships of the Galaxy",
-      "originTalentNames": null,
-      "talentPublications": [],
-      "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED",
+      "originTalentNames": [
+        "Begin Attack Run",
+        "Regroup",
+        "Squadron Maneuvers",
+        "Squadron Tactics"
+      ],
+      "talentPublications": [
+        {
+          "sourcebook": "Starships of the Galaxy",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Begin Attack Run",
+            "Regroup",
+            "Squadron Maneuvers",
+            "Squadron Tactics"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Begin Attack Run",
+        "Regroup",
+        "Squadron Maneuvers",
+        "Squadron Tactics"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
       "referenceClassAccess": [
         "Ace Pilot"
       ],
-      "accessPublications": [],
+      "accessPublications": [
+        {
+          "sourcebook": "Starships of the Galaxy",
+          "publicationType": "DIRECT_ACCESS_GRANT",
+          "classes": [
+            "Ace Pilot"
+          ]
+        }
+      ],
       "aggregateClassAccess": [
         "Ace Pilot"
       ]
@@ -2779,7 +2883,7 @@
         "Scoundrel",
         "Assassin"
       ],
-      "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
+      "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
       "repoTreeIds": [
         "c55b003333ff082d"
       ],
@@ -2793,15 +2897,54 @@
       "status": "REPO_TREE_PRESENT",
       "notes": null,
       "originSourcebook": "Threats of the Galaxy",
-      "originTalentNames": null,
-      "talentPublications": [],
-      "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED",
+      "originTalentNames": [
+        "Malkite Techniques",
+        "Modify Poison",
+        "Numbing Poison",
+        "Undetectable Poison",
+        "Vicious Poison"
+      ],
+      "talentPublications": [
+        {
+          "sourcebook": "Threats of the Galaxy",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Malkite Techniques",
+            "Modify Poison",
+            "Numbing Poison",
+            "Undetectable Poison",
+            "Vicious Poison"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Malkite Techniques",
+        "Modify Poison",
+        "Numbing Poison",
+        "Undetectable Poison",
+        "Vicious Poison"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
       "referenceClassAccess": [
         "Scoundrel",
         "Assassin"
       ],
-      "accessPublications": [],
+      "accessPublications": [
+        {
+          "sourcebook": "Threats of the Galaxy",
+          "publicationType": "DIRECT_ACCESS_GRANT",
+          "classes": [
+            "Scoundrel"
+          ]
+        },
+        {
+          "sourcebook": "Scum and Villainy",
+          "publicationType": "DIRECT_ACCESS_GRANT",
+          "classes": [
+            "Assassin"
+          ]
+        }
+      ],
       "aggregateClassAccess": [
         "Scoundrel",
         "Assassin"
@@ -2815,7 +2958,7 @@
         "Elite Trooper",
         "Martial Arts Master"
       ],
-      "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
+      "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
       "repoTreeIds": [
         "ba726f623e42f849"
       ],
@@ -2827,17 +2970,56 @@
         "Martial Arts Master"
       ],
       "status": "REPO_TREE_PRESENT",
-      "notes": null,
+      "notes": "Primary source confirms 5 origin talents. Repository contains both Teräs Käsi Basics and Teras Kasi Basics; only one Basics identity is printed. Teras Kasi Mastery is a spelling/transliteration variant of printed Teräs Käsi Mastery.",
       "originSourcebook": "Threats of the Galaxy",
-      "originTalentNames": null,
-      "talentPublications": [],
-      "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED",
+      "originTalentNames": [
+        "Ignore Damage Reduction",
+        "Teräs Käsi Basics",
+        "Teräs Käsi Mastery",
+        "Unarmed Counterstrike",
+        "Unarmed Parry"
+      ],
+      "talentPublications": [
+        {
+          "sourcebook": "Threats of the Galaxy",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Ignore Damage Reduction",
+            "Teräs Käsi Basics",
+            "Teräs Käsi Mastery",
+            "Unarmed Counterstrike",
+            "Unarmed Parry"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Ignore Damage Reduction",
+        "Teräs Käsi Basics",
+        "Teräs Käsi Mastery",
+        "Unarmed Counterstrike",
+        "Unarmed Parry"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
       "referenceClassAccess": [
         "Elite Trooper",
         "Martial Arts Master"
       ],
-      "accessPublications": [],
+      "accessPublications": [
+        {
+          "sourcebook": "Threats of the Galaxy",
+          "publicationType": "DIRECT_ACCESS_GRANT",
+          "classes": [
+            "Elite Trooper"
+          ]
+        },
+        {
+          "sourcebook": "Galaxy at War",
+          "publicationType": "DIRECT_ACCESS_GRANT",
+          "classes": [
+            "Martial Arts Master"
+          ]
+        }
+      ],
       "aggregateClassAccess": [
         "Elite Trooper",
         "Martial Arts Master"
@@ -4602,7 +4784,7 @@
       "classAccess": [
         "Assassin"
       ],
-      "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
+      "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
       "repoTreeIds": [
         "186daeee7bd65a69"
       ],
@@ -4615,14 +4797,58 @@
       "status": "REPO_TREE_PRESENT",
       "notes": null,
       "originSourcebook": "Scum and Villainy",
-      "originTalentNames": null,
-      "talentPublications": [],
-      "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED",
+      "originTalentNames": [
+        "Advantageous Positioning",
+        "Get Some Distance",
+        "Murderous Arts I",
+        "Murderous Arts II",
+        "Ruthless",
+        "Shift",
+        "Sniping Assassin",
+        "Sniping Marksman",
+        "Sniping Master"
+      ],
+      "talentPublications": [
+        {
+          "sourcebook": "Scum and Villainy",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Advantageous Positioning",
+            "Get Some Distance",
+            "Murderous Arts I",
+            "Murderous Arts II",
+            "Ruthless",
+            "Shift",
+            "Sniping Assassin",
+            "Sniping Marksman",
+            "Sniping Master"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Advantageous Positioning",
+        "Get Some Distance",
+        "Murderous Arts I",
+        "Murderous Arts II",
+        "Ruthless",
+        "Shift",
+        "Sniping Assassin",
+        "Sniping Marksman",
+        "Sniping Master"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
       "referenceClassAccess": [
         "Assassin"
       ],
-      "accessPublications": [],
+      "accessPublications": [
+        {
+          "sourcebook": "Scum and Villainy",
+          "publicationType": "DIRECT_ACCESS_GRANT",
+          "classes": [
+            "Assassin"
+          ]
+        }
+      ],
       "aggregateClassAccess": [
         "Assassin"
       ]
@@ -4634,7 +4860,7 @@
       "classAccess": [
         "Ace Pilot"
       ],
-      "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
+      "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
       "repoTreeIds": [
         "296772ab8e69c9ef"
       ],
@@ -4647,14 +4873,46 @@
       "status": "REPO_TREE_PRESENT",
       "notes": null,
       "originSourcebook": "Scum and Villainy",
-      "originTalentNames": null,
-      "talentPublications": [],
-      "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED",
+      "originTalentNames": [
+        "Close Cover",
+        "Outrun",
+        "Punch Through",
+        "Small Target",
+        "Watch This"
+      ],
+      "talentPublications": [
+        {
+          "sourcebook": "Scum and Villainy",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Close Cover",
+            "Outrun",
+            "Punch Through",
+            "Small Target",
+            "Watch This"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Close Cover",
+        "Outrun",
+        "Punch Through",
+        "Small Target",
+        "Watch This"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
       "referenceClassAccess": [
         "Ace Pilot"
       ],
-      "accessPublications": [],
+      "accessPublications": [
+        {
+          "sourcebook": "Scum and Villainy",
+          "publicationType": "DIRECT_ACCESS_GRANT",
+          "classes": [
+            "Ace Pilot"
+          ]
+        }
+      ],
       "aggregateClassAccess": [
         "Ace Pilot"
       ]
@@ -4667,7 +4925,7 @@
         "Noble",
         "Charlatan"
       ],
-      "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
+      "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
       "repoTreeIds": [
         "e91cc675fbf9ba6e"
       ],
@@ -4681,15 +4939,54 @@
       "status": "REPO_TREE_PRESENT",
       "notes": null,
       "originSourcebook": "Scum and Villainy",
-      "originTalentNames": null,
-      "talentPublications": [],
-      "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED",
+      "originTalentNames": [
+        "Ambush",
+        "Castigate",
+        "Dirty Tactics",
+        "Draw Fire",
+        "Misplaced Loyalty",
+        "Two-Faced",
+        "Unreadable"
+      ],
+      "talentPublications": [
+        {
+          "sourcebook": "Scum and Villainy",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Ambush",
+            "Castigate",
+            "Dirty Tactics",
+            "Draw Fire",
+            "Misplaced Loyalty",
+            "Two-Faced",
+            "Unreadable"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Ambush",
+        "Castigate",
+        "Dirty Tactics",
+        "Draw Fire",
+        "Misplaced Loyalty",
+        "Two-Faced",
+        "Unreadable"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
       "referenceClassAccess": [
         "Noble",
         "Charlatan"
       ],
-      "accessPublications": [],
+      "accessPublications": [
+        {
+          "sourcebook": "Scum and Villainy",
+          "publicationType": "DIRECT_ACCESS_GRANT",
+          "classes": [
+            "Noble",
+            "Charlatan"
+          ]
+        }
+      ],
       "aggregateClassAccess": [
         "Noble",
         "Charlatan"
@@ -4702,7 +4999,7 @@
       "classAccess": [
         "Bounty Hunter"
       ],
-      "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
+      "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
       "repoTreeIds": [
         "022b31d355c840a9"
       ],
@@ -4715,14 +5012,46 @@
       "status": "REPO_TREE_PRESENT",
       "notes": null,
       "originSourcebook": "Scum and Villainy",
-      "originTalentNames": null,
-      "talentPublications": [],
-      "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED",
+      "originTalentNames": [
+        "Findsman Ceremonies",
+        "Findsman's Foresight",
+        "Omens",
+        "Target Visions",
+        "Temporal Awareness"
+      ],
+      "talentPublications": [
+        {
+          "sourcebook": "Scum and Villainy",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Findsman Ceremonies",
+            "Findsman's Foresight",
+            "Omens",
+            "Target Visions",
+            "Temporal Awareness"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Findsman Ceremonies",
+        "Findsman's Foresight",
+        "Omens",
+        "Target Visions",
+        "Temporal Awareness"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
       "referenceClassAccess": [
         "Bounty Hunter"
       ],
-      "accessPublications": [],
+      "accessPublications": [
+        {
+          "sourcebook": "Scum and Villainy",
+          "publicationType": "DIRECT_ACCESS_GRANT",
+          "classes": [
+            "Bounty Hunter"
+          ]
+        }
+      ],
       "aggregateClassAccess": [
         "Bounty Hunter"
       ]
@@ -4797,7 +5126,7 @@
       "classAccess": [
         "Outlaw"
       ],
-      "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
+      "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
       "repoTreeIds": [
         "3caa80f6bef04200"
       ],
@@ -4810,14 +5139,55 @@
       "status": "REPO_TREE_PRESENT",
       "notes": null,
       "originSourcebook": "Scum and Villainy",
-      "originTalentNames": null,
-      "talentPublications": [],
-      "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED",
+      "originTalentNames": [
+        "Confounding Attack",
+        "Double Up",
+        "Find an Opening",
+        "Opportunistic Defense",
+        "Preternatural Senses",
+        "Seize the Moment",
+        "Tangle Up",
+        "Uncanny Instincts"
+      ],
+      "talentPublications": [
+        {
+          "sourcebook": "Scum and Villainy",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Confounding Attack",
+            "Double Up",
+            "Find an Opening",
+            "Opportunistic Defense",
+            "Preternatural Senses",
+            "Seize the Moment",
+            "Tangle Up",
+            "Uncanny Instincts"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Confounding Attack",
+        "Double Up",
+        "Find an Opening",
+        "Opportunistic Defense",
+        "Preternatural Senses",
+        "Seize the Moment",
+        "Tangle Up",
+        "Uncanny Instincts"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
       "referenceClassAccess": [
         "Outlaw"
       ],
-      "accessPublications": [],
+      "accessPublications": [
+        {
+          "sourcebook": "Scum and Villainy",
+          "publicationType": "DIRECT_ACCESS_GRANT",
+          "classes": [
+            "Outlaw"
+          ]
+        }
+      ],
       "aggregateClassAccess": [
         "Outlaw"
       ]
@@ -4829,7 +5199,7 @@
       "classAccess": [
         "Master Privateer"
       ],
-      "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
+      "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
       "repoTreeIds": [
         "61db5e2c0c44ef67"
       ],
@@ -4840,16 +5210,54 @@
         "Master Privateer"
       ],
       "status": "REPO_TREE_PRESENT",
-      "notes": null,
+      "notes": "Primary source prints Keep Them Reeling. Repository uses Keep Them Reeling (Piracy) as an internal disambiguation variant.",
       "originSourcebook": "Scum and Villainy",
-      "originTalentNames": null,
-      "talentPublications": [],
-      "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED",
+      "originTalentNames": [
+        "Bloodthirsty",
+        "Fight to the Death",
+        "Keep Them Reeling",
+        "Raider's Frenzy",
+        "Raider's Surge",
+        "Savage Reputation",
+        "Take Them Alive"
+      ],
+      "talentPublications": [
+        {
+          "sourcebook": "Scum and Villainy",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Bloodthirsty",
+            "Fight to the Death",
+            "Keep Them Reeling",
+            "Raider's Frenzy",
+            "Raider's Surge",
+            "Savage Reputation",
+            "Take Them Alive"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Bloodthirsty",
+        "Fight to the Death",
+        "Keep Them Reeling",
+        "Raider's Frenzy",
+        "Raider's Surge",
+        "Savage Reputation",
+        "Take Them Alive"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
       "referenceClassAccess": [
         "Master Privateer"
       ],
-      "accessPublications": [],
+      "accessPublications": [
+        {
+          "sourcebook": "Scum and Villainy",
+          "publicationType": "DIRECT_ACCESS_GRANT",
+          "classes": [
+            "Master Privateer"
+          ]
+        }
+      ],
       "aggregateClassAccess": [
         "Master Privateer"
       ]
@@ -4861,7 +5269,7 @@
       "classAccess": [
         "Gunslinger"
       ],
-      "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
+      "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
       "repoTreeIds": [
         "ed77ab2e234089ed"
       ],
@@ -4872,16 +5280,48 @@
         "Gunslinger"
       ],
       "status": "REPO_TREE_PRESENT",
-      "notes": null,
+      "notes": "Primary source prints Flanking Fire. Repository record is named Flanking Foe; source-confirmed naming/identity error.",
       "originSourcebook": "Scum and Villainy",
-      "originTalentNames": null,
-      "talentPublications": [],
-      "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED",
+      "originTalentNames": [
+        "Dash and Blast",
+        "Flanking Fire",
+        "Guaranteed Shot",
+        "Hailfire",
+        "Twin Shot"
+      ],
+      "talentPublications": [
+        {
+          "sourcebook": "Scum and Villainy",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Dash and Blast",
+            "Flanking Fire",
+            "Guaranteed Shot",
+            "Hailfire",
+            "Twin Shot"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Dash and Blast",
+        "Flanking Fire",
+        "Guaranteed Shot",
+        "Hailfire",
+        "Twin Shot"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
       "referenceClassAccess": [
         "Gunslinger"
       ],
-      "accessPublications": [],
+      "accessPublications": [
+        {
+          "sourcebook": "Scum and Villainy",
+          "publicationType": "DIRECT_ACCESS_GRANT",
+          "classes": [
+            "Gunslinger"
+          ]
+        }
+      ],
       "aggregateClassAccess": [
         "Gunslinger"
       ]
@@ -4893,7 +5333,7 @@
       "classAccess": [
         "Charlatan"
       ],
-      "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
+      "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
       "repoTreeIds": [
         "ab9b75bc19f8e983"
       ],
@@ -4906,14 +5346,49 @@
       "status": "REPO_TREE_PRESENT",
       "notes": null,
       "originSourcebook": "Scum and Villainy",
-      "originTalentNames": null,
-      "talentPublications": [],
-      "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED",
+      "originTalentNames": [
+        "Cunning Distraction",
+        "Damaging Deception",
+        "Distracting Shout",
+        "Improved Soft Cover",
+        "Innocuous",
+        "Treacherous"
+      ],
+      "talentPublications": [
+        {
+          "sourcebook": "Scum and Villainy",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Cunning Distraction",
+            "Damaging Deception",
+            "Distracting Shout",
+            "Improved Soft Cover",
+            "Innocuous",
+            "Treacherous"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Cunning Distraction",
+        "Damaging Deception",
+        "Distracting Shout",
+        "Improved Soft Cover",
+        "Innocuous",
+        "Treacherous"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
       "referenceClassAccess": [
         "Charlatan"
       ],
-      "accessPublications": [],
+      "accessPublications": [
+        {
+          "sourcebook": "Scum and Villainy",
+          "publicationType": "DIRECT_ACCESS_GRANT",
+          "classes": [
+            "Charlatan"
+          ]
+        }
+      ],
       "aggregateClassAccess": [
         "Charlatan"
       ]
@@ -6769,7 +7244,7 @@
       "classAccess": [
         "Force Adept"
       ],
-      "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
+      "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
       "repoTreeIds": [
         "ed899f9f41fc1391"
       ],
@@ -6780,16 +7255,48 @@
         "Force Adept"
       ],
       "status": "REPO_TREE_PRESENT",
-      "notes": null,
+      "notes": "Primary source confirms 5 origin talents. Repository additionally claims Animal Companion, Nature Sense, and Calming Aura; those are not Beastwarden origin members on the verified source pages and require separate provenance/adjudication.",
       "originSourcebook": "Jedi Academy Training Manual",
-      "originTalentNames": null,
-      "talentPublications": [],
-      "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED",
+      "originTalentNames": [
+        "Charm Beast",
+        "Bonded Mount",
+        "Entreat Beast",
+        "Soothing Presence",
+        "Wild Sense"
+      ],
+      "talentPublications": [
+        {
+          "sourcebook": "Jedi Academy Training Manual",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Charm Beast",
+            "Bonded Mount",
+            "Entreat Beast",
+            "Soothing Presence",
+            "Wild Sense"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Charm Beast",
+        "Bonded Mount",
+        "Entreat Beast",
+        "Soothing Presence",
+        "Wild Sense"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
       "referenceClassAccess": [
         "Force Adept"
       ],
-      "accessPublications": [],
+      "accessPublications": [
+        {
+          "sourcebook": "Jedi Academy Training Manual",
+          "publicationType": "DIRECT_ACCESS_GRANT",
+          "classes": [
+            "Force Adept"
+          ]
+        }
+      ],
       "aggregateClassAccess": [
         "Force Adept"
       ]
@@ -6801,7 +7308,7 @@
       "classAccess": [
         "Jedi Knight"
       ],
-      "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
+      "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
       "repoTreeIds": [
         "76ecaa09bb7619cb"
       ],
@@ -6814,14 +7321,46 @@
       "status": "REPO_TREE_PRESENT",
       "notes": null,
       "originSourcebook": "Jedi Academy Training Manual",
-      "originTalentNames": null,
-      "talentPublications": [],
-      "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED",
+      "originTalentNames": [
+        "Call Weapon",
+        "Lightsaber Specialist",
+        "Masterwork Lightsaber",
+        "Perfect Attunement",
+        "Quick Modification"
+      ],
+      "talentPublications": [
+        {
+          "sourcebook": "Jedi Academy Training Manual",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Call Weapon",
+            "Lightsaber Specialist",
+            "Masterwork Lightsaber",
+            "Perfect Attunement",
+            "Quick Modification"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Call Weapon",
+        "Lightsaber Specialist",
+        "Masterwork Lightsaber",
+        "Perfect Attunement",
+        "Quick Modification"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
       "referenceClassAccess": [
         "Jedi Knight"
       ],
-      "accessPublications": [],
+      "accessPublications": [
+        {
+          "sourcebook": "Jedi Academy Training Manual",
+          "publicationType": "DIRECT_ACCESS_GRANT",
+          "classes": [
+            "Jedi Knight"
+          ]
+        }
+      ],
       "aggregateClassAccess": [
         "Jedi Knight"
       ]
@@ -6833,7 +7372,7 @@
       "classAccess": [
         "Jedi Knight"
       ],
-      "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
+      "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
       "repoTreeIds": [
         "303d91124d4548c0"
       ],
@@ -6846,14 +7385,46 @@
       "status": "REPO_TREE_PRESENT",
       "notes": null,
       "originSourcebook": "Jedi Academy Training Manual",
-      "originTalentNames": null,
-      "talentPublications": [],
-      "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED",
+      "originTalentNames": [
+        "Apprentice Boon",
+        "Share Force Secret",
+        "Share Force Technique",
+        "Share Talent",
+        "Transfer Power"
+      ],
+      "talentPublications": [
+        {
+          "sourcebook": "Jedi Academy Training Manual",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Apprentice Boon",
+            "Share Force Secret",
+            "Share Force Technique",
+            "Share Talent",
+            "Transfer Power"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Apprentice Boon",
+        "Share Force Secret",
+        "Share Force Technique",
+        "Share Talent",
+        "Transfer Power"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
       "referenceClassAccess": [
         "Jedi Knight"
       ],
-      "accessPublications": [],
+      "accessPublications": [
+        {
+          "sourcebook": "Jedi Academy Training Manual",
+          "publicationType": "DIRECT_ACCESS_GRANT",
+          "classes": [
+            "Jedi Knight"
+          ]
+        }
+      ],
       "aggregateClassAccess": [
         "Jedi Knight"
       ]
@@ -6865,7 +7436,7 @@
       "classAccess": [
         "Jedi Knight"
       ],
-      "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
+      "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
       "repoTreeIds": [
         "44554c28675292b6"
       ],
@@ -6876,16 +7447,48 @@
         "Jedi Knight"
       ],
       "status": "REPO_TREE_PRESENT",
-      "notes": null,
+      "notes": "Primary source prints Echoes in the Force and Unclouded Judgment. Repository uses Echoes of the Force and Unclouded Judgement.",
       "originSourcebook": "Jedi Academy Training Manual",
-      "originTalentNames": null,
-      "talentPublications": [],
-      "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED",
+      "originTalentNames": [
+        "Echoes in the Force",
+        "Jedi Quarry",
+        "Prepared for Danger",
+        "Sense Deception",
+        "Unclouded Judgment"
+      ],
+      "talentPublications": [
+        {
+          "sourcebook": "Jedi Academy Training Manual",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Echoes in the Force",
+            "Jedi Quarry",
+            "Prepared for Danger",
+            "Sense Deception",
+            "Unclouded Judgment"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Echoes in the Force",
+        "Jedi Quarry",
+        "Prepared for Danger",
+        "Sense Deception",
+        "Unclouded Judgment"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
       "referenceClassAccess": [
         "Jedi Knight"
       ],
-      "accessPublications": [],
+      "accessPublications": [
+        {
+          "sourcebook": "Jedi Academy Training Manual",
+          "publicationType": "DIRECT_ACCESS_GRANT",
+          "classes": [
+            "Jedi Knight"
+          ]
+        }
+      ],
       "aggregateClassAccess": [
         "Jedi Knight"
       ]
@@ -6897,7 +7500,7 @@
       "classAccess": [
         "Jedi Knight"
       ],
-      "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
+      "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
       "repoTreeIds": [
         "7db97c2c7ebca579"
       ],
@@ -6908,16 +7511,48 @@
         "Jedi Knight"
       ],
       "status": "REPO_TREE_PRESENT",
-      "notes": null,
+      "notes": "Primary source prints Improvised Weapon Master. Repository has typo Improvised Weapon Masteryy.",
       "originSourcebook": "Jedi Academy Training Manual",
-      "originTalentNames": null,
-      "talentPublications": [],
-      "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED",
+      "originTalentNames": [
+        "Combat Trance",
+        "Improvised Weapon Master",
+        "Shoto Pin",
+        "Twin Weapon Mastery",
+        "Twin Weapon Style"
+      ],
+      "talentPublications": [
+        {
+          "sourcebook": "Jedi Academy Training Manual",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Combat Trance",
+            "Improvised Weapon Master",
+            "Shoto Pin",
+            "Twin Weapon Mastery",
+            "Twin Weapon Style"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Combat Trance",
+        "Improvised Weapon Master",
+        "Shoto Pin",
+        "Twin Weapon Mastery",
+        "Twin Weapon Style"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
       "referenceClassAccess": [
         "Jedi Knight"
       ],
-      "accessPublications": [],
+      "accessPublications": [
+        {
+          "sourcebook": "Jedi Academy Training Manual",
+          "publicationType": "DIRECT_ACCESS_GRANT",
+          "classes": [
+            "Jedi Knight"
+          ]
+        }
+      ],
       "aggregateClassAccess": [
         "Jedi Knight"
       ]
@@ -6929,7 +7564,7 @@
       "classAccess": [
         "Force Adept"
       ],
-      "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
+      "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
       "repoTreeIds": [
         "a3d0b7c9a6d041f2"
       ],
@@ -6940,16 +7575,48 @@
         "Force Adept"
       ],
       "status": "REPO_TREE_PRESENT",
-      "notes": null,
+      "notes": "Primary source prints Regimen Aptitude. Repository uses Regimen Mastery; source-confirmed naming/identity mismatch with downstream progression references.",
       "originSourcebook": "Jedi Academy Training Manual",
-      "originTalentNames": null,
-      "talentPublications": [],
-      "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED",
+      "originTalentNames": [
+        "Channel Vitality",
+        "Closed Mind",
+        "Esoteric Technique",
+        "Mystic Mastery",
+        "Regimen Aptitude"
+      ],
+      "talentPublications": [
+        {
+          "sourcebook": "Jedi Academy Training Manual",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Channel Vitality",
+            "Closed Mind",
+            "Esoteric Technique",
+            "Mystic Mastery",
+            "Regimen Aptitude"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Channel Vitality",
+        "Closed Mind",
+        "Esoteric Technique",
+        "Mystic Mastery",
+        "Regimen Aptitude"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
       "referenceClassAccess": [
         "Force Adept"
       ],
-      "accessPublications": [],
+      "accessPublications": [
+        {
+          "sourcebook": "Jedi Academy Training Manual",
+          "publicationType": "DIRECT_ACCESS_GRANT",
+          "classes": [
+            "Force Adept"
+          ]
+        }
+      ],
       "aggregateClassAccess": [
         "Force Adept"
       ]
@@ -6961,7 +7628,7 @@
       "classAccess": [
         "Sith Apprentice"
       ],
-      "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
+      "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
       "repoTreeIds": [
         "a67faf2ae089ab5d"
       ],
@@ -6972,16 +7639,45 @@
         "Sith Apprentice"
       ],
       "status": "REPO_TREE_PRESENT",
-      "notes": null,
+      "notes": "Primary source confirms 4 origin talents. Repository also includes Sith Alchemy (craft), which is not a fifth printed Sith Alchemy-tree talent and needs identity/reference cleanup.",
       "originSourcebook": "Jedi Academy Training Manual",
-      "originTalentNames": null,
-      "talentPublications": [],
-      "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED",
+      "originTalentNames": [
+        "Cause Mutation",
+        "Rapid Alchemy",
+        "Sith Alchemy",
+        "Sith Alchemy Specialist"
+      ],
+      "talentPublications": [
+        {
+          "sourcebook": "Jedi Academy Training Manual",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Cause Mutation",
+            "Rapid Alchemy",
+            "Sith Alchemy",
+            "Sith Alchemy Specialist"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Cause Mutation",
+        "Rapid Alchemy",
+        "Sith Alchemy",
+        "Sith Alchemy Specialist"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
       "referenceClassAccess": [
         "Sith Apprentice"
       ],
-      "accessPublications": [],
+      "accessPublications": [
+        {
+          "sourcebook": "Jedi Academy Training Manual",
+          "publicationType": "DIRECT_ACCESS_GRANT",
+          "classes": [
+            "Sith Apprentice"
+          ]
+        }
+      ],
       "aggregateClassAccess": [
         "Sith Apprentice"
       ]
@@ -6993,7 +7689,7 @@
       "classAccess": [
         "Force Adept"
       ],
-      "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
+      "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
       "repoTreeIds": [
         "d25dc04b0e16f107"
       ],
@@ -7006,14 +7702,46 @@
       "status": "REPO_TREE_PRESENT",
       "notes": null,
       "originSourcebook": "Jedi Academy Training Manual",
-      "originTalentNames": null,
-      "talentPublications": [],
-      "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED",
+      "originTalentNames": [
+        "Mind Probe",
+        "Perfect Telepathy",
+        "Psychic Citadel",
+        "Psychic Defenses",
+        "Telepathic Intruder"
+      ],
+      "talentPublications": [
+        {
+          "sourcebook": "Jedi Academy Training Manual",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Mind Probe",
+            "Perfect Telepathy",
+            "Psychic Citadel",
+            "Psychic Defenses",
+            "Telepathic Intruder"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Mind Probe",
+        "Perfect Telepathy",
+        "Psychic Citadel",
+        "Psychic Defenses",
+        "Telepathic Intruder"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
       "referenceClassAccess": [
         "Force Adept"
       ],
-      "accessPublications": [],
+      "accessPublications": [
+        {
+          "sourcebook": "Jedi Academy Training Manual",
+          "publicationType": "DIRECT_ACCESS_GRANT",
+          "classes": [
+            "Force Adept"
+          ]
+        }
+      ],
       "aggregateClassAccess": [
         "Force Adept"
       ]
@@ -8162,7 +8890,7 @@
       "classAccess": [
         "Independent Droid"
       ],
-      "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
+      "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
       "repoTreeIds": [
         "b968ecab63bc4cf4"
       ],
@@ -8175,14 +8903,43 @@
       "status": "REPO_TREE_PRESENT",
       "notes": null,
       "originSourcebook": "Scavenger's Guide to Droids",
-      "originTalentNames": null,
-      "talentPublications": [],
-      "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED",
+      "originTalentNames": [
+        "Break Program",
+        "Heuristic Mastery",
+        "Scripted Routines",
+        "Ultra Resilient"
+      ],
+      "talentPublications": [
+        {
+          "sourcebook": "Scavenger's Guide to Droids",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Break Program",
+            "Heuristic Mastery",
+            "Scripted Routines",
+            "Ultra Resilient"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Break Program",
+        "Heuristic Mastery",
+        "Scripted Routines",
+        "Ultra Resilient"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
       "referenceClassAccess": [
         "Independent Droid"
       ],
-      "accessPublications": [],
+      "accessPublications": [
+        {
+          "sourcebook": "Scavenger's Guide to Droids",
+          "publicationType": "DIRECT_ACCESS_GRANT",
+          "classes": [
+            "Independent Droid"
+          ]
+        }
+      ],
       "aggregateClassAccess": [
         "Independent Droid"
       ]
@@ -8490,7 +9247,7 @@
       "classAccess": [
         "Noble"
       ],
-      "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
+      "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
       "repoTreeIds": [
         "04a6f32128cc4b98"
       ],
@@ -8503,14 +9260,52 @@
       "status": "REPO_TREE_PRESENT",
       "notes": null,
       "originSourcebook": "Galaxy of Intrigue",
-      "originTalentNames": null,
-      "talentPublications": [],
-      "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED",
+      "originTalentNames": [
+        "Assured Skill",
+        "Critical Skill Success",
+        "Exceptional Skill",
+        "Reliable Boon",
+        "Skill Boon",
+        "Skill Confidence",
+        "Skillful Recovery"
+      ],
+      "talentPublications": [
+        {
+          "sourcebook": "Galaxy of Intrigue",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Assured Skill",
+            "Critical Skill Success",
+            "Exceptional Skill",
+            "Reliable Boon",
+            "Skill Boon",
+            "Skill Confidence",
+            "Skillful Recovery"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Assured Skill",
+        "Critical Skill Success",
+        "Exceptional Skill",
+        "Reliable Boon",
+        "Skill Boon",
+        "Skill Confidence",
+        "Skillful Recovery"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
       "referenceClassAccess": [
         "Noble"
       ],
-      "accessPublications": [],
+      "accessPublications": [
+        {
+          "sourcebook": "Galaxy of Intrigue",
+          "publicationType": "DIRECT_ACCESS_GRANT",
+          "classes": [
+            "Noble"
+          ]
+        }
+      ],
       "aggregateClassAccess": [
         "Noble"
       ]
