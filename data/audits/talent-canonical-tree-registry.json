@@ -1013,12 +1013,24 @@
             "Force Treatment",
             "Fortified Body"
           ]
+        },
+        {
+          "sourcebook": "Unknown Regions",
+          "publicationType": "EXPANSION",
+          "talentNames": [
+            "Instrument of the Force",
+            "Long Call",
+            "Mystical Link"
+          ]
         }
       ],
       "aggregateCanonicalTalentNames": [
         "Force Power Adept",
         "Force Treatment",
-        "Fortified Body"
+        "Fortified Body",
+        "Instrument of the Force",
+        "Long Call",
+        "Mystical Link"
       ],
       "aggregateMembershipStatus": "PHASE_1D_PUBLICATION_LAYER_COMPLETE",
       "referenceClassAccess": [
