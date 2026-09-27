@@ -13588,5 +13588,28 @@
         "note": "Talent already exists in repository Sith tree; Phase 1D registry omitted it."
       }
     ]
-  }
+  },
+  "phase2": {
+    "status": "IN_PROGRESS",
+    "books": {
+      "Saga Edition Core Rulebook": {
+        "status": "SOURCE_CERTIFIED",
+        "canonicalTalentCount": 198,
+        "correction": "Improved Dark Healing restored to Core Sith origin membership after Phase 2 page-level verification.",
+        "certificationFile": "data/audits/talent-phase-2-core-certification.json",
+        "certifiedAt": "2026-09-26"
+      }
+    }
+  },
+  "phase2Corrections": [
+    {
+      "id": "CORE_SITH_IMPROVED_DARK_HEALING",
+      "phase": "2",
+      "sourcebook": "Saga Edition Core Rulebook",
+      "tree": "Sith",
+      "talent": "Improved Dark Healing",
+      "disposition": "PHASE_1D_STRUCTURAL_OMISSION_CORRECTED",
+      "page": 224
+    }
+  ]
 }
