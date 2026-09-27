@@ -145,6 +145,13 @@
             "Uncanny Dodge I",
             "Uncanny Dodge II"
           ]
+        },
+        {
+          "sourcebook": "Force Unleashed Campaign Guide",
+          "publicationType": "EXPANSION",
+          "talentNames": [
+            "Reset Initiative"
+          ]
         }
       ],
       "aggregateCanonicalTalentNames": [
@@ -153,7 +160,8 @@
         "Improved Initiative",
         "Keen Shot",
         "Uncanny Dodge I",
-        "Uncanny Dodge II"
+        "Uncanny Dodge II",
+        "Reset Initiative"
       ],
       "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
       "referenceClassAccess": [
@@ -226,6 +234,15 @@
             "Relentless",
             "Ruthless Negotiator"
           ]
+        },
+        {
+          "sourcebook": "Force Unleashed Campaign Guide",
+          "publicationType": "EXPANSION",
+          "talentNames": [
+            "Fearsome",
+            "Signature Item",
+            "Jedi Hunter"
+          ]
         }
       ],
       "aggregateCanonicalTalentNames": [
@@ -234,7 +251,10 @@
         "Notorious",
         "Nowhere to Hide",
         "Relentless",
-        "Ruthless Negotiator"
+        "Ruthless Negotiator",
+        "Fearsome",
+        "Signature Item",
+        "Jedi Hunter"
       ],
       "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
       "referenceClassAccess": [
@@ -591,6 +611,14 @@
             "Multiattack Proficiency (lightsabers)",
             "Severing Strike"
           ]
+        },
+        {
+          "sourcebook": "Force Unleashed Campaign Guide",
+          "publicationType": "EXPANSION",
+          "talentNames": [
+            "Improved Lightsaber Throw",
+            "Thrown Lightsaber Mastery"
+          ]
         }
       ],
       "aggregateCanonicalTalentNames": [
@@ -598,7 +626,9 @@
         "Greater Weapon Focus (Lightsabers)",
         "Greater Weapon Specialization (Lightsabers)",
         "Multiattack Proficiency (lightsabers)",
-        "Severing Strike"
+        "Severing Strike",
+        "Improved Lightsaber Throw",
+        "Thrown Lightsaber Mastery"
       ],
       "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
       "referenceClassAccess": [
@@ -1275,6 +1305,13 @@
             "Inspire Haste",
             "Inspire Zeal"
           ]
+        },
+        {
+          "sourcebook": "Force Unleashed Campaign Guide",
+          "publicationType": "EXPANSION",
+          "talentNames": [
+            "Willpower"
+          ]
         }
       ],
       "aggregateCanonicalTalentNames": [
@@ -1282,7 +1319,8 @@
         "Ignite Fervor",
         "Inspire Confidence",
         "Inspire Haste",
-        "Inspire Zeal"
+        "Inspire Zeal",
+        "Willpower"
       ],
       "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
       "referenceClassAccess": [
@@ -1347,6 +1385,14 @@
             "Consular's Vitality",
             "Improved Consular's Vitality"
           ]
+        },
+        {
+          "sourcebook": "Force Unleashed Campaign Guide",
+          "publicationType": "EXPANSION",
+          "talentNames": [
+            "Cleanse Mind",
+            "Force of Will"
+          ]
         }
       ],
       "aggregateCanonicalTalentNames": [
@@ -1355,7 +1401,9 @@
         "Master Negotiator",
         "Skilled Advisor",
         "Consular's Vitality",
-        "Improved Consular's Vitality"
+        "Improved Consular's Vitality",
+        "Cleanse Mind",
+        "Force of Will"
       ],
       "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
       "referenceClassAccess": [
@@ -1420,6 +1468,14 @@
             "Exposing Strike",
             "Guardian Strike"
           ]
+        },
+        {
+          "sourcebook": "Force Unleashed Campaign Guide",
+          "publicationType": "EXPANSION",
+          "talentNames": [
+            "Forceful Warrior",
+            "Mobile Combatant"
+          ]
         }
       ],
       "aggregateCanonicalTalentNames": [
@@ -1429,7 +1485,9 @@
         "Force Intuition",
         "Resilience",
         "Exposing Strike",
-        "Guardian Strike"
+        "Guardian Strike",
+        "Forceful Warrior",
+        "Mobile Combatant"
       ],
       "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
       "referenceClassAccess": [
@@ -1494,6 +1552,14 @@
             "Sentinel's Observation",
             "Unseen Eyes"
           ]
+        },
+        {
+          "sourcebook": "Force Unleashed Campaign Guide",
+          "publicationType": "EXPANSION",
+          "talentNames": [
+            "Dampen Presence",
+            "Steel Resolve"
+          ]
         }
       ],
       "aggregateCanonicalTalentNames": [
@@ -1503,7 +1569,9 @@
         "Force Haze",
         "Resist the Dark Side",
         "Sentinel's Observation",
-        "Unseen Eyes"
+        "Unseen Eyes",
+        "Dampen Presence",
+        "Steel Resolve"
       ],
       "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
       "referenceClassAccess": [
@@ -1806,13 +1874,23 @@
             "Spontaneous Skill",
             "Wealth"
           ]
+        },
+        {
+          "sourcebook": "Force Unleashed Campaign Guide",
+          "publicationType": "EXPANSION",
+          "talentNames": [
+            "Influential Friends",
+            "Powerful Friends"
+          ]
         }
       ],
       "aggregateCanonicalTalentNames": [
         "Connections",
         "Educated",
         "Spontaneous Skill",
-        "Wealth"
+        "Wealth",
+        "Influential Friends",
+        "Powerful Friends"
       ],
       "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
       "referenceClassAccess": [
@@ -2174,12 +2252,24 @@
             "Master Slicer",
             "Trace"
           ]
+        },
+        {
+          "sourcebook": "Force Unleashed Campaign Guide",
+          "publicationType": "EXPANSION",
+          "talentNames": [
+            "Electronic Forgery",
+            "Electronic Sabotage",
+            "Security Slicer"
+          ]
         }
       ],
       "aggregateCanonicalTalentNames": [
         "Gimmick",
         "Master Slicer",
-        "Trace"
+        "Trace",
+        "Electronic Forgery",
+        "Electronic Sabotage",
+        "Security Slicer"
       ],
       "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
       "referenceClassAccess": [
@@ -8027,10 +8117,20 @@
           "talentNames": [
             "Aversion"
           ]
+        },
+        {
+          "sourcebook": "Force Unleashed Campaign Guide",
+          "publicationType": "EXPANSION",
+          "talentNames": [
+            "Illusion",
+            "Telekinetic Prodigy"
+          ]
         }
       ],
       "aggregateCanonicalTalentNames": [
-        "Aversion"
+        "Aversion",
+        "Illusion",
+        "Telekinetic Prodigy"
       ],
       "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
       "referenceClassAccess": [],
@@ -8253,10 +8353,20 @@
           "talentNames": [
             "The Will To Resist"
           ]
+        },
+        {
+          "sourcebook": "Force Unleashed Campaign Guide",
+          "publicationType": "EXPANSION",
+          "talentNames": [
+            "Force Exertion",
+            "Indomitable Will"
+          ]
         }
       ],
       "aggregateCanonicalTalentNames": [
-        "The Will To Resist"
+        "The Will To Resist",
+        "Force Exertion",
+        "Indomitable Will"
       ],
       "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
       "referenceClassAccess": [],
@@ -8311,10 +8421,18 @@
           "talentNames": [
             "Consumed by Darkness"
           ]
+        },
+        {
+          "sourcebook": "Force Unleashed Campaign Guide",
+          "publicationType": "EXPANSION",
+          "talentNames": [
+            "Wrath of the Dark Side"
+          ]
         }
       ],
       "aggregateCanonicalTalentNames": [
-        "Consumed by Darkness"
+        "Consumed by Darkness",
+        "Wrath of the Dark Side"
       ],
       "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
       "referenceClassAccess": [],
@@ -9047,12 +9165,20 @@
             "Psychometry",
             "Shift Sense"
           ]
+        },
+        {
+          "sourcebook": "Force Unleashed Campaign Guide",
+          "publicationType": "EXPANSION",
+          "talentNames": [
+            "Feel the Force"
+          ]
         }
       ],
       "aggregateCanonicalTalentNames": [
         "Heightened Awareness",
         "Psychometry",
-        "Shift Sense"
+        "Shift Sense",
+        "Feel the Force"
       ],
       "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
       "referenceClassAccess": [],
