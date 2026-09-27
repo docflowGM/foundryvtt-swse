@@ -1,0 +1,3062 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-09-26",
+  "branch": "audit/talent-phase-1-tree-census",
+  "phase": "1D",
+  "scope": "Structural canonical talent-tree repair queue. No production changes applied.",
+  "summary": {
+    "registryEntries": 197,
+    "canonicalPublishedTrees": 177,
+    "noncanonicalHomebrewTrees": 19,
+    "obsoleteSplitFragments": 1,
+    "expansionPublicationClaims": 278,
+    "aggregateCanonicalMembershipClaims": 1190,
+    "treesWithMembershipDifferences": 104,
+    "canonicalMembershipGaps": 281,
+    "normalizationOnlyNameMatches": 9,
+    "extraRepoMembershipClaims": 75,
+    "treesWithClassAccessDifferences": 34,
+    "missingRepoClassAccessEdges": 20,
+    "extraRepoClassAccessEdges": 24
+  },
+  "missingCanonicalTreeDocuments": [
+    {
+      "canonicalTreeKey": "Galaxy at War|Martial Arts Forms",
+      "displayName": "Martial Arts Forms",
+      "sourcebook": "Galaxy at War",
+      "canonicalTalentNames": [
+        "Echani Expertise",
+        "Hijkata Expertise",
+        "K'tara Expertise",
+        "K'thri Expertise",
+        "Stava Expertise",
+        "Tae-Jitsu Expertise",
+        "Wrruushi Expertise"
+      ],
+      "expectedClassAccess": [
+        "Martial Arts Master"
+      ],
+      "accessModel": "CLASS"
+    },
+    {
+      "canonicalTreeKey": "Galaxy at War|Squad Leader",
+      "displayName": "Squad Leader",
+      "sourcebook": "Galaxy at War",
+      "canonicalTalentNames": [
+        "Fall Back",
+        "Form Up",
+        "Full Advance",
+        "Hold Steady",
+        "Search and Destroy"
+      ],
+      "expectedClassAccess": [
+        "Elite Trooper"
+      ],
+      "accessModel": "CLASS"
+    },
+    {
+      "canonicalTreeKey": "Galaxy at War|Unarmed Mastery",
+      "displayName": "Unarmed Mastery",
+      "sourcebook": "Galaxy at War",
+      "canonicalTalentNames": [
+        "Flurry of Blows",
+        "Hardened Strike",
+        "Punishing Strike",
+        "Tough as Durasteel"
+      ],
+      "expectedClassAccess": [
+        "Martial Arts Master"
+      ],
+      "accessModel": "CLASS"
+    },
+    {
+      "canonicalTreeKey": "Galaxy of Intrigue|Espionage",
+      "displayName": "Espionage",
+      "sourcebook": "Galaxy of Intrigue",
+      "canonicalTalentNames": [
+        "Fade Out",
+        "Keep Together",
+        "Prudent Escape",
+        "Reactive Stealth",
+        "Sizing Up"
+      ],
+      "expectedClassAccess": [
+        "Scout"
+      ],
+      "accessModel": "CLASS"
+    },
+    {
+      "canonicalTreeKey": "Galaxy of Intrigue|Skill Challenge",
+      "displayName": "Skill Challenge",
+      "sourcebook": "Galaxy of Intrigue",
+      "canonicalTalentNames": [
+        "Guaranteed Boon",
+        "Leading Skill",
+        "Learn from Mistakes",
+        "Try Your Luck"
+      ],
+      "expectedClassAccess": [
+        "Noble"
+      ],
+      "accessModel": "CLASS"
+    },
+    {
+      "canonicalTreeKey": "Jedi Academy Training Manual|Shapers of Kro Var",
+      "displayName": "Shapers of Kro Var",
+      "sourcebook": "Jedi Academy Training Manual",
+      "canonicalTalentNames": [
+        "Combustion",
+        "Earth Buckle",
+        "Fluidity",
+        "Thunderclap",
+        "Wind Vortex"
+      ],
+      "expectedClassAccess": [],
+      "accessModel": "FORCE_TRADITION"
+    },
+    {
+      "canonicalTreeKey": "Jedi Academy Training Manual|Zeison Sha Warrior",
+      "displayName": "Zeison Sha Warrior",
+      "sourcebook": "Jedi Academy Training Manual",
+      "canonicalTalentNames": [
+        "Discblade Arc",
+        "Distant Discblade Throw",
+        "Recall Discblade",
+        "Telekinetic Vigilance",
+        "Weapon Specialization (discblade)"
+      ],
+      "expectedClassAccess": [],
+      "accessModel": "FORCE_TRADITION"
+    }
+  ],
+  "membershipDifferences": [
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Awareness",
+      "canonicalDisplayName": "Awareness",
+      "originSourcebook": "Saga Edition Core Rulebook",
+      "repoTreeIds": [
+        "1c48d1cd9ab1f5c8"
+      ],
+      "repoTreeNames": [
+        "Awareness"
+      ],
+      "canonicalMembershipCount": 8,
+      "repoClaimCount": 7,
+      "missingCanonicalMemberships": [
+        "Acute Senses"
+      ],
+      "normalizationOnlyNameMatches": [],
+      "extraRepoMembershipClaims": [],
+      "repairNote": "Membership gaps identify absence from the correct canonical tree, not necessarily absence of a talent document elsewhere. Extra claims require identity/text adjudication before deletion."
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Bounty Hunter",
+      "canonicalDisplayName": "Bounty Hunter",
+      "originSourcebook": "Saga Edition Core Rulebook",
+      "repoTreeIds": [
+        "a47ed82a822e3962"
+      ],
+      "repoTreeNames": [
+        "Bounty Hunter"
+      ],
+      "canonicalMembershipCount": 18,
+      "repoClaimCount": 13,
+      "missingCanonicalMemberships": [
+        "Notorious",
+        "Familiar Enemies",
+        "Familiar Situation",
+        "Quick Cuffs",
+        "Revealing Secrets"
+      ],
+      "normalizationOnlyNameMatches": [],
+      "extraRepoMembershipClaims": [],
+      "repairNote": "Membership gaps identify absence from the correct canonical tree, not necessarily absence of a talent document elsewhere. Extra claims require identity/text adjudication before deletion."
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Brawler",
+      "canonicalDisplayName": "Brawler",
+      "originSourcebook": "Saga Edition Core Rulebook",
+      "repoTreeIds": [
+        "67fdd8dce9abd6c1"
+      ],
+      "repoTreeNames": [
+        "Brawler"
+      ],
+      "canonicalMembershipCount": 22,
+      "repoClaimCount": 16,
+      "missingCanonicalMemberships": [
+        "Gun Club",
+        "Melee Smash",
+        "Stunning Strike",
+        "Unbalance Opponent",
+        "Crowd Control",
+        "Disarm and Engage",
+        "Reverse Strength"
+      ],
+      "normalizationOnlyNameMatches": [],
+      "extraRepoMembershipClaims": [
+        "Unbalance Strike"
+      ],
+      "repairNote": "Membership gaps identify absence from the correct canonical tree, not necessarily absence of a talent document elsewhere. Extra claims require identity/text adjudication before deletion."
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Camouflage",
+      "canonicalDisplayName": "Camouflage",
+      "originSourcebook": "Saga Edition Core Rulebook",
+      "repoTreeIds": [
+        "3926d582d2077489"
+      ],
+      "repoTreeNames": [
+        "Camouflage"
+      ],
+      "canonicalMembershipCount": 10,
+      "repoClaimCount": 6,
+      "missingCanonicalMemberships": [
+        "Dig In",
+        "Ghost Assailant",
+        "Slip By",
+        "Extended Ambush"
+      ],
+      "normalizationOnlyNameMatches": [],
+      "extraRepoMembershipClaims": [],
+      "repairNote": "Membership gaps identify absence from the correct canonical tree, not necessarily absence of a talent document elsewhere. Extra claims require identity/text adjudication before deletion."
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Commando",
+      "canonicalDisplayName": "Commando",
+      "originSourcebook": "Saga Edition Core Rulebook",
+      "repoTreeIds": [
+        "798ed0945cbdac1c"
+      ],
+      "repoTreeNames": [
+        "Commando"
+      ],
+      "canonicalMembershipCount": 16,
+      "repoClaimCount": 8,
+      "missingCanonicalMemberships": [
+        "Draw Fire",
+        "Harm's Way",
+        "Defensive Position",
+        "Out of Harm's Way",
+        "Coordinated Effort",
+        "Dedicated Guardian",
+        "Blast Shield",
+        "Take the Pain",
+        "Team Effort"
+      ],
+      "normalizationOnlyNameMatches": [],
+      "extraRepoMembershipClaims": [
+        "Hard Target"
+      ],
+      "repairNote": "Membership gaps identify absence from the correct canonical tree, not necessarily absence of a talent document elsewhere. Extra claims require identity/text adjudication before deletion."
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Dark Side Devotee",
+      "canonicalDisplayName": "Dark Side Devotee",
+      "originSourcebook": "Saga Edition Core Rulebook",
+      "repoTreeIds": [
+        "96ef43a3054dcb58"
+      ],
+      "repoTreeNames": [
+        "Dark Side Devotee"
+      ],
+      "canonicalMembershipCount": 6,
+      "repoClaimCount": 7,
+      "missingCanonicalMemberships": [],
+      "normalizationOnlyNameMatches": [],
+      "extraRepoMembershipClaims": [
+        "Embrace Dark Side"
+      ],
+      "repairNote": "Membership gaps identify absence from the correct canonical tree, not necessarily absence of a talent document elsewhere. Extra claims require identity/text adjudication before deletion."
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Duelist",
+      "canonicalDisplayName": "Duelist",
+      "originSourcebook": "Saga Edition Core Rulebook",
+      "repoTreeIds": [
+        "b3c5d90b5036f39b"
+      ],
+      "repoTreeNames": [
+        "Duelist"
+      ],
+      "canonicalMembershipCount": 11,
+      "repoClaimCount": 10,
+      "missingCanonicalMemberships": [
+        "Multiattack Proficiency (lightsabers)"
+      ],
+      "normalizationOnlyNameMatches": [],
+      "extraRepoMembershipClaims": [],
+      "repairNote": "Membership gaps identify absence from the correct canonical tree, not necessarily absence of a talent document elsewhere. Extra claims require identity/text adjudication before deletion."
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Expert Pilot",
+      "canonicalDisplayName": "Expert Pilot",
+      "originSourcebook": "Saga Edition Core Rulebook",
+      "repoTreeIds": [
+        "b17c1515c06361d6"
+      ],
+      "repoTreeNames": [
+        "Expert Pilot"
+      ],
+      "canonicalMembershipCount": 16,
+      "repoClaimCount": 12,
+      "missingCanonicalMemberships": [
+        "Roll Out",
+        "Clip",
+        "Master Defender",
+        "Shunt Damage"
+      ],
+      "normalizationOnlyNameMatches": [],
+      "extraRepoMembershipClaims": [],
+      "repairNote": "Membership gaps identify absence from the correct canonical tree, not necessarily absence of a talent document elsewhere. Extra claims require identity/text adjudication before deletion."
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Force Adept",
+      "canonicalDisplayName": "Force Adept",
+      "originSourcebook": "Saga Edition Core Rulebook",
+      "repoTreeIds": [
+        "e35ee41362604227"
+      ],
+      "repoTreeNames": [
+        "Force Adept"
+      ],
+      "canonicalMembershipCount": 6,
+      "repoClaimCount": 8,
+      "missingCanonicalMemberships": [],
+      "normalizationOnlyNameMatches": [],
+      "extraRepoMembershipClaims": [
+        "Equilibrium",
+        "Indomitable class feature"
+      ],
+      "repairNote": "Membership gaps identify absence from the correct canonical tree, not necessarily absence of a talent document elsewhere. Extra claims require identity/text adjudication before deletion."
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Force Item",
+      "canonicalDisplayName": "Force Item",
+      "originSourcebook": "Saga Edition Core Rulebook",
+      "repoTreeIds": [
+        "01e443d93e47f9c4"
+      ],
+      "repoTreeNames": [
+        "Force Item"
+      ],
+      "canonicalMembershipCount": 8,
+      "repoClaimCount": 10,
+      "missingCanonicalMemberships": [],
+      "normalizationOnlyNameMatches": [],
+      "extraRepoMembershipClaims": [
+        "Empowered",
+        "Lasting Ichor Item"
+      ],
+      "repairNote": "Membership gaps identify absence from the correct canonical tree, not necessarily absence of a talent document elsewhere. Extra claims require identity/text adjudication before deletion."
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Fringer",
+      "canonicalDisplayName": "Fringer",
+      "originSourcebook": "Saga Edition Core Rulebook",
+      "repoTreeIds": [
+        "7c47d36dc1f77d9c"
+      ],
+      "repoTreeNames": [
+        "Fringer"
+      ],
+      "canonicalMembershipCount": 9,
+      "repoClaimCount": 7,
+      "missingCanonicalMemberships": [
+        "Jury-Rigger",
+        "Long Stride"
+      ],
+      "normalizationOnlyNameMatches": [],
+      "extraRepoMembershipClaims": [],
+      "repairNote": "Membership gaps identify absence from the correct canonical tree, not necessarily absence of a talent document elsewhere. Extra claims require identity/text adjudication before deletion."
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Gunner",
+      "canonicalDisplayName": "Gunner",
+      "originSourcebook": "Saga Edition Core Rulebook",
+      "repoTreeIds": [
+        "43ead399d82b8142"
+      ],
+      "repoTreeNames": [
+        "Gunner"
+      ],
+      "canonicalMembershipCount": 9,
+      "repoClaimCount": 7,
+      "missingCanonicalMemberships": [
+        "Fast Attack Specialist",
+        "Overcharged Shot"
+      ],
+      "normalizationOnlyNameMatches": [],
+      "extraRepoMembershipClaims": [],
+      "repairNote": "Membership gaps identify absence from the correct canonical tree, not necessarily absence of a talent document elsewhere. Extra claims require identity/text adjudication before deletion."
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Gunslinger",
+      "canonicalDisplayName": "Gunslinger",
+      "originSourcebook": "Saga Edition Core Rulebook",
+      "repoTreeIds": [
+        "cb6f775cd227a3e3"
+      ],
+      "repoTreeNames": [
+        "Gunslinger"
+      ],
+      "canonicalMembershipCount": 18,
+      "repoClaimCount": 10,
+      "missingCanonicalMemberships": [
+        "Keep Them Honest",
+        "Lingering Debilitation",
+        "Retreating Fire",
+        "Slowing Shot",
+        "Swift Shot",
+        "Damaging Disarm",
+        "End Game",
+        "Snap Aiming",
+        "Stand Steady"
+      ],
+      "normalizationOnlyNameMatches": [],
+      "extraRepoMembershipClaims": [
+        "Trigger Work"
+      ],
+      "repairNote": "Membership gaps identify absence from the correct canonical tree, not necessarily absence of a talent document elsewhere. Extra claims require identity/text adjudication before deletion."
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Infamy",
+      "canonicalDisplayName": "Infamy",
+      "originSourcebook": "Saga Edition Core Rulebook",
+      "repoTreeIds": [
+        "c1be604242cb328f"
+      ],
+      "repoTreeNames": [
+        "Infamy"
+      ],
+      "canonicalMembershipCount": 11,
+      "repoClaimCount": 11,
+      "missingCanonicalMemberships": [
+        "Master Manipulator",
+        "Small Favor"
+      ],
+      "normalizationOnlyNameMatches": [
+        {
+          "canonical": "Fear Me!",
+          "repo": "Fear Me"
+        }
+      ],
+      "extraRepoMembershipClaims": [
+        "Notorious (Infamy)",
+        "Inspire Fear"
+      ],
+      "repairNote": "Membership gaps identify absence from the correct canonical tree, not necessarily absence of a talent document elsewhere. Extra claims require identity/text adjudication before deletion."
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Influence",
+      "canonicalDisplayName": "Influence",
+      "originSourcebook": "Saga Edition Core Rulebook",
+      "repoTreeIds": [
+        "8375b9b26b679901"
+      ],
+      "repoTreeNames": [
+        "Influence"
+      ],
+      "canonicalMembershipCount": 6,
+      "repoClaimCount": 7,
+      "missingCanonicalMemberships": [
+        "Demand Surrender"
+      ],
+      "normalizationOnlyNameMatches": [],
+      "extraRepoMembershipClaims": [
+        "Allure",
+        "Seducer"
+      ],
+      "repairNote": "Membership gaps identify absence from the correct canonical tree, not necessarily absence of a talent document elsewhere. Extra claims require identity/text adjudication before deletion."
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Inspiration",
+      "canonicalDisplayName": "Inspiration",
+      "originSourcebook": "Saga Edition Core Rulebook",
+      "repoTreeIds": [
+        "72d32ebcbb607314"
+      ],
+      "repoTreeNames": [
+        "Inspiration"
+      ],
+      "canonicalMembershipCount": 6,
+      "repoClaimCount": 9,
+      "missingCanonicalMemberships": [],
+      "normalizationOnlyNameMatches": [],
+      "extraRepoMembershipClaims": [
+        "Beloved",
+        "Inspired",
+        "Bolster"
+      ],
+      "repairNote": "Membership gaps identify absence from the correct canonical tree, not necessarily absence of a talent document elsewhere. Extra claims require identity/text adjudication before deletion."
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Jedi Consular",
+      "canonicalDisplayName": "Jedi Consular",
+      "originSourcebook": "Saga Edition Core Rulebook",
+      "repoTreeIds": [
+        "e99cfa9db8493573"
+      ],
+      "repoTreeNames": [
+        "Jedi Consular"
+      ],
+      "canonicalMembershipCount": 20,
+      "repoClaimCount": 21,
+      "missingCanonicalMemberships": [
+        "Skilled Advisor"
+      ],
+      "normalizationOnlyNameMatches": [],
+      "extraRepoMembershipClaims": [
+        "Demand Surrender",
+        "Jedi Healer"
+      ],
+      "repairNote": "Membership gaps identify absence from the correct canonical tree, not necessarily absence of a talent document elsewhere. Extra claims require identity/text adjudication before deletion."
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Jedi Guardian",
+      "canonicalDisplayName": "Jedi Guardian",
+      "originSourcebook": "Saga Edition Core Rulebook",
+      "repoTreeIds": [
+        "10c843cef8ce2798"
+      ],
+      "repoTreeNames": [
+        "Jedi Guardian"
+      ],
+      "canonicalMembershipCount": 16,
+      "repoClaimCount": 17,
+      "missingCanonicalMemberships": [],
+      "normalizationOnlyNameMatches": [],
+      "extraRepoMembershipClaims": [
+        "Force Meld"
+      ],
+      "repairNote": "Membership gaps identify absence from the correct canonical tree, not necessarily absence of a talent document elsewhere. Extra claims require identity/text adjudication before deletion."
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Jedi Sentinel",
+      "canonicalDisplayName": "Jedi Sentinel",
+      "originSourcebook": "Saga Edition Core Rulebook",
+      "repoTreeIds": [
+        "36f18f3e974feb33"
+      ],
+      "repoTreeNames": [
+        "Jedi Sentinel"
+      ],
+      "canonicalMembershipCount": 19,
+      "repoClaimCount": 17,
+      "missingCanonicalMemberships": [
+        "Sentinel Strike",
+        "Sentinel's Gambit"
+      ],
+      "normalizationOnlyNameMatches": [],
+      "extraRepoMembershipClaims": [],
+      "repairNote": "Membership gaps identify absence from the correct canonical tree, not necessarily absence of a talent document elsewhere. Extra claims require identity/text adjudication before deletion."
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Leadership",
+      "canonicalDisplayName": "Leadership",
+      "originSourcebook": "Saga Edition Core Rulebook",
+      "repoTreeIds": [
+        "5964237d22681dc0"
+      ],
+      "repoTreeNames": [
+        "Leadership"
+      ],
+      "canonicalMembershipCount": 11,
+      "repoClaimCount": 7,
+      "missingCanonicalMemberships": [
+        "Born Leader",
+        "Commanding Presence",
+        "Tactical Savvy",
+        "Coordinated Leadership"
+      ],
+      "normalizationOnlyNameMatches": [],
+      "extraRepoMembershipClaims": [],
+      "repairNote": "Membership gaps identify absence from the correct canonical tree, not necessarily absence of a talent document elsewhere. Extra claims require identity/text adjudication before deletion."
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Mastermind",
+      "canonicalDisplayName": "Mastermind",
+      "originSourcebook": "Saga Edition Core Rulebook",
+      "repoTreeIds": [
+        "560cc7994b357a0d"
+      ],
+      "repoTreeNames": [
+        "Mastermind"
+      ],
+      "canonicalMembershipCount": 16,
+      "repoClaimCount": 13,
+      "missingCanonicalMemberships": [
+        "Master's Orders",
+        "Attract Superior Minion",
+        "Contingency Plan"
+      ],
+      "normalizationOnlyNameMatches": [],
+      "extraRepoMembershipClaims": [],
+      "repairNote": "Membership gaps identify absence from the correct canonical tree, not necessarily absence of a talent document elsewhere. Extra claims require identity/text adjudication before deletion."
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Military Tactics",
+      "canonicalDisplayName": "Military Tactics",
+      "originSourcebook": "Saga Edition Core Rulebook",
+      "repoTreeIds": [
+        "9253ace716c3e966"
+      ],
+      "repoTreeNames": [
+        "Military Tactics"
+      ],
+      "canonicalMembershipCount": 16,
+      "repoClaimCount": 13,
+      "missingCanonicalMemberships": [
+        "Irregular Tactics",
+        "Lead by Example",
+        "Turn the Tide"
+      ],
+      "normalizationOnlyNameMatches": [],
+      "extraRepoMembershipClaims": [],
+      "repairNote": "Membership gaps identify absence from the correct canonical tree, not necessarily absence of a talent document elsewhere. Extra claims require identity/text adjudication before deletion."
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Misfortune",
+      "canonicalDisplayName": "Misfortune",
+      "originSourcebook": "Saga Edition Core Rulebook",
+      "repoTreeIds": [
+        "67b59e020c1660eb"
+      ],
+      "repoTreeNames": [
+        "Misfortune"
+      ],
+      "canonicalMembershipCount": 17,
+      "repoClaimCount": 15,
+      "missingCanonicalMemberships": [
+        "Seducer",
+        "Backstabber",
+        "Improved Sneak Attack"
+      ],
+      "normalizationOnlyNameMatches": [],
+      "extraRepoMembershipClaims": [
+        "Dastardly Attack"
+      ],
+      "repairNote": "Membership gaps identify absence from the correct canonical tree, not necessarily absence of a talent document elsewhere. Extra claims require identity/text adjudication before deletion."
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Sith",
+      "canonicalDisplayName": "Sith",
+      "originSourcebook": "Saga Edition Core Rulebook",
+      "repoTreeIds": [
+        "d1037bc7a08ea80b"
+      ],
+      "repoTreeNames": [
+        "Sith"
+      ],
+      "canonicalMembershipCount": 10,
+      "repoClaimCount": 12,
+      "missingCanonicalMemberships": [
+        "Sith Alchemy"
+      ],
+      "normalizationOnlyNameMatches": [],
+      "extraRepoMembershipClaims": [
+        "Sith Alchemy (create)",
+        "Improved Dark Healing",
+        "Stolen Form"
+      ],
+      "repairNote": "Membership gaps identify absence from the correct canonical tree, not necessarily absence of a talent document elsewhere. Extra claims require identity/text adjudication before deletion."
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Spacer",
+      "canonicalDisplayName": "Spacer",
+      "originSourcebook": "Saga Edition Core Rulebook",
+      "repoTreeIds": [
+        "5ea8c79492d40713"
+      ],
+      "repoTreeNames": [
+        "Spacer"
+      ],
+      "canonicalMembershipCount": 7,
+      "repoClaimCount": 6,
+      "missingCanonicalMemberships": [
+        "Deep Space Raider"
+      ],
+      "normalizationOnlyNameMatches": [],
+      "extraRepoMembershipClaims": [],
+      "repairNote": "Membership gaps identify absence from the correct canonical tree, not necessarily absence of a talent document elsewhere. Extra claims require identity/text adjudication before deletion."
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Weapon Master",
+      "canonicalDisplayName": "Weapon Master",
+      "originSourcebook": "Saga Edition Core Rulebook",
+      "repoTreeIds": [
+        "2f720d8b061f9bd0"
+      ],
+      "repoTreeNames": [
+        "Weapon Master"
+      ],
+      "canonicalMembershipCount": 12,
+      "repoClaimCount": 10,
+      "missingCanonicalMemberships": [
+        "Multiattack Proficiency (heavy weapons)",
+        "Ferocious Assault",
+        "Extended Threat",
+        "Multiattack Proficiency (simple weapons)",
+        "Two-For-One Throw"
+      ],
+      "normalizationOnlyNameMatches": [],
+      "extraRepoMembershipClaims": [
+        "Multiattack Proficiency (heavy)",
+        "Devastating Attack",
+        "Penetrating Attack"
+      ],
+      "repairNote": "Membership gaps identify absence from the correct canonical tree, not necessarily absence of a talent document elsewhere. Extra claims require identity/text adjudication before deletion."
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Weapon Specialist",
+      "canonicalDisplayName": "Weapon Specialist",
+      "originSourcebook": "Saga Edition Core Rulebook",
+      "repoTreeIds": [
+        "2e9265a596cc43f7"
+      ],
+      "repoTreeNames": [
+        "Weapon Specialist"
+      ],
+      "canonicalMembershipCount": 9,
+      "repoClaimCount": 6,
+      "missingCanonicalMemberships": [
+        "Devastating Attack",
+        "Penetrating Attack",
+        "Autofire Assault"
+      ],
+      "normalizationOnlyNameMatches": [],
+      "extraRepoMembershipClaims": [],
+      "repairNote": "Membership gaps identify absence from the correct canonical tree, not necessarily absence of a talent document elsewhere. Extra claims require identity/text adjudication before deletion."
+    },
+    {
+      "canonicalTreeKey": "Starships of the Galaxy|Naval Officer",
+      "canonicalDisplayName": "Naval Officer",
+      "originSourcebook": "Starships of the Galaxy",
+      "repoTreeIds": [
+        "057a978a7dc1d5a7"
+      ],
+      "repoTreeNames": [
+        "Naval Officer"
+      ],
+      "canonicalMembershipCount": 5,
+      "repoClaimCount": 7,
+      "missingCanonicalMemberships": [],
+      "normalizationOnlyNameMatches": [
+        {
+          "canonical": "It's a Trap!",
+          "repo": "It's a Trap"
+        }
+      ],
+      "extraRepoMembershipClaims": [
+        "Combined Fire (Naval)",
+        "Born Leader"
+      ],
+      "repairNote": "Membership gaps identify absence from the correct canonical tree, not necessarily absence of a talent document elsewhere. Extra claims require identity/text adjudication before deletion."
+    },
+    {
+      "canonicalTreeKey": "Starships of the Galaxy|Outlaw Tech",
+      "canonicalDisplayName": "Outlaw Tech",
+      "originSourcebook": "Starships of the Galaxy",
+      "repoTreeIds": [
+        "f1657b1d23a4c7dc"
+      ],
+      "repoTreeNames": [
+        "Outlaw Tech"
+      ],
+      "canonicalMembershipCount": 4,
+      "repoClaimCount": 3,
+      "missingCanonicalMemberships": [
+        "Quick Fix"
+      ],
+      "normalizationOnlyNameMatches": [],
+      "extraRepoMembershipClaims": [],
+      "repairNote": "Membership gaps identify absence from the correct canonical tree, not necessarily absence of a talent document elsewhere. Extra claims require identity/text adjudication before deletion."
+    },
+    {
+      "canonicalTreeKey": "Threats of the Galaxy|Master of Teräs Käsi",
+      "canonicalDisplayName": "Master of Teräs Käsi",
+      "originSourcebook": "Threats of the Galaxy",
+      "repoTreeIds": [
+        "ba726f623e42f849"
+      ],
+      "repoTreeNames": [
+        "Master of Teräs Käsi"
+      ],
+      "canonicalMembershipCount": 5,
+      "repoClaimCount": 6,
+      "missingCanonicalMemberships": [],
+      "normalizationOnlyNameMatches": [
+        {
+          "canonical": "Teräs Käsi Mastery",
+          "repo": "Teras Kasi Mastery"
+        }
+      ],
+      "extraRepoMembershipClaims": [],
+      "repairNote": "Membership gaps identify absence from the correct canonical tree, not necessarily absence of a talent document elsewhere. Extra claims require identity/text adjudication before deletion."
+    },
+    {
+      "canonicalTreeKey": "Knights of the Old Republic Campaign Guide|Gladiatorial Combat",
+      "canonicalDisplayName": "Gladiatorial Combat",
+      "originSourcebook": "Knights of the Old Republic Campaign Guide",
+      "repoTreeIds": [
+        "12a2a02b0901605d"
+      ],
+      "repoTreeNames": [
+        "Gladiatorial Combat"
+      ],
+      "canonicalMembershipCount": 8,
+      "repoClaimCount": 8,
+      "missingCanonicalMemberships": [
+        "Multiattack Proficiency (exotic weapons)"
+      ],
+      "normalizationOnlyNameMatches": [],
+      "extraRepoMembershipClaims": [
+        "Multiattack Proficiency (exotic)"
+      ],
+      "repairNote": "Membership gaps identify absence from the correct canonical tree, not necessarily absence of a talent document elsewhere. Extra claims require identity/text adjudication before deletion."
+    },
+    {
+      "canonicalTreeKey": "Knights of the Old Republic Campaign Guide|Hyperspace Explorer",
+      "canonicalDisplayName": "Hyperspace Explorer",
+      "originSourcebook": "Knights of the Old Republic Campaign Guide",
+      "repoTreeIds": [
+        "089933380b40ce20"
+      ],
+      "repoTreeNames": [
+        "Hyperspace Explorer"
+      ],
+      "canonicalMembershipCount": 6,
+      "repoClaimCount": 5,
+      "missingCanonicalMemberships": [
+        "Silent Movement"
+      ],
+      "normalizationOnlyNameMatches": [],
+      "extraRepoMembershipClaims": [],
+      "repairNote": "Membership gaps identify absence from the correct canonical tree, not necessarily absence of a talent document elsewhere. Extra claims require identity/text adjudication before deletion."
+    },
+    {
+      "canonicalTreeKey": "Knights of the Old Republic Campaign Guide|Jedi Battlemaster",
+      "canonicalDisplayName": "Jedi Battlemaster",
+      "originSourcebook": "Knights of the Old Republic Campaign Guide",
+      "repoTreeIds": [
+        "dfc4142435b4356d"
+      ],
+      "repoTreeNames": [
+        "Jedi Battlemaster"
+      ],
+      "canonicalMembershipCount": 5,
+      "repoClaimCount": 6,
+      "missingCanonicalMemberships": [],
+      "normalizationOnlyNameMatches": [
+        {
+          "canonical": "Mobile Attack (lightsabers)",
+          "repo": "Mobile Attack (Lightsabers)"
+        }
+      ],
+      "extraRepoMembershipClaims": [
+        "Multiattack Proficiency (Lightsabers)"
+      ],
+      "repairNote": "Membership gaps identify absence from the correct canonical tree, not necessarily absence of a talent document elsewhere. Extra claims require identity/text adjudication before deletion."
+    },
+    {
+      "canonicalTreeKey": "Knights of the Old Republic Campaign Guide|Jedi Shadow",
+      "canonicalDisplayName": "Jedi Shadow",
+      "originSourcebook": "Knights of the Old Republic Campaign Guide",
+      "repoTreeIds": [
+        "eab0d8bbee7e0f4f"
+      ],
+      "repoTreeNames": [
+        "Jedi Shadow"
+      ],
+      "canonicalMembershipCount": 5,
+      "repoClaimCount": 7,
+      "missingCanonicalMemberships": [],
+      "normalizationOnlyNameMatches": [],
+      "extraRepoMembershipClaims": [
+        "Sentinel Strike",
+        "Sentinel's Gambit"
+      ],
+      "repairNote": "Membership gaps identify absence from the correct canonical tree, not necessarily absence of a talent document elsewhere. Extra claims require identity/text adjudication before deletion."
+    },
+    {
+      "canonicalTreeKey": "Knights of the Old Republic Campaign Guide|Jedi Watchman",
+      "canonicalDisplayName": "Jedi Watchman",
+      "originSourcebook": "Knights of the Old Republic Campaign Guide",
+      "repoTreeIds": [
+        "77e3817ba5cfa0d5"
+      ],
+      "repoTreeNames": [
+        "Jedi Watchman"
+      ],
+      "canonicalMembershipCount": 5,
+      "repoClaimCount": 5,
+      "missingCanonicalMemberships": [],
+      "normalizationOnlyNameMatches": [
+        {
+          "canonical": "Improved Quick Draw (lightsabers)",
+          "repo": "Improved Quick Draw (Lightsabers)"
+        }
+      ],
+      "extraRepoMembershipClaims": [],
+      "repairNote": "Membership gaps identify absence from the correct canonical tree, not necessarily absence of a talent document elsewhere. Extra claims require identity/text adjudication before deletion."
+    },
+    {
+      "canonicalTreeKey": "Knights of the Old Republic Campaign Guide|Melee Duelist",
+      "canonicalDisplayName": "Melee Duelist",
+      "originSourcebook": "Knights of the Old Republic Campaign Guide",
+      "repoTreeIds": [
+        "1381bb8c9a838279"
+      ],
+      "repoTreeNames": [
+        "Melee Duelist"
+      ],
+      "canonicalMembershipCount": 9,
+      "repoClaimCount": 9,
+      "missingCanonicalMemberships": [
+        "Multiattack Proficiency (advanced melee weapons)"
+      ],
+      "normalizationOnlyNameMatches": [],
+      "extraRepoMembershipClaims": [
+        "Multiattack Proficiency (advanced melee)"
+      ],
+      "repairNote": "Membership gaps identify absence from the correct canonical tree, not necessarily absence of a talent document elsewhere. Extra claims require identity/text adjudication before deletion."
+    },
+    {
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Bothan SpyNet",
+      "canonicalDisplayName": "Bothan SpyNet",
+      "originSourcebook": "Force Unleashed Campaign Guide",
+      "repoTreeIds": [
+        "d20682671d035cef"
+      ],
+      "repoTreeNames": [
+        "Bothan Spynet"
+      ],
+      "canonicalMembershipCount": 6,
+      "repoClaimCount": 7,
+      "missingCanonicalMemberships": [],
+      "normalizationOnlyNameMatches": [
+        {
+          "canonical": "Knowledge Is Life",
+          "repo": "Knowledge is Life"
+        },
+        {
+          "canonical": "Knowledge Is Power",
+          "repo": "Knowledge is Power"
+        },
+        {
+          "canonical": "Knowledge Is Strength",
+          "repo": "Knowledge is Strength"
+        }
+      ],
+      "extraRepoMembershipClaims": [
+        "Extended Critical Range"
+      ],
+      "repairNote": "Membership gaps identify absence from the correct canonical tree, not necessarily absence of a talent document elsewhere. Extra claims require identity/text adjudication before deletion."
+    },
+    {
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Critical Master",
+      "canonicalDisplayName": "Critical Master",
+      "originSourcebook": "Force Unleashed Campaign Guide",
+      "repoTreeIds": [
+        "71e99c646b18d85c"
+      ],
+      "repoTreeNames": [
+        "Critical Master"
+      ],
+      "canonicalMembershipCount": 8,
+      "repoClaimCount": 7,
+      "missingCanonicalMemberships": [
+        "Extended Critical Range (heavy weapons)",
+        "Extended Critical Range (simple weapons)"
+      ],
+      "normalizationOnlyNameMatches": [],
+      "extraRepoMembershipClaims": [
+        "Extended Critical Range (heavy)"
+      ],
+      "repairNote": "Membership gaps identify absence from the correct canonical tree, not necessarily absence of a talent document elsewhere. Extra claims require identity/text adjudication before deletion."
+    },
+    {
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Mercenary",
+      "canonicalDisplayName": "Mercenary",
+      "originSourcebook": "Force Unleashed Campaign Guide",
+      "repoTreeIds": [
+        "4007fa87192b5884"
+      ],
+      "repoTreeNames": [
+        "Mercenary"
+      ],
+      "canonicalMembershipCount": 5,
+      "repoClaimCount": 8,
+      "missingCanonicalMemberships": [],
+      "normalizationOnlyNameMatches": [],
+      "extraRepoMembershipClaims": [
+        "Mercenary's Grit",
+        "Mercenary's Determination",
+        "Mercenary's Teamwork"
+      ],
+      "repairNote": "Membership gaps identify absence from the correct canonical tree, not necessarily absence of a talent document elsewhere. Extra claims require identity/text adjudication before deletion."
+    },
+    {
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Privateer",
+      "canonicalDisplayName": "Privateer",
+      "originSourcebook": "Force Unleashed Campaign Guide",
+      "repoTreeIds": [
+        "df6678946610c554"
+      ],
+      "repoTreeNames": [
+        "Privateer"
+      ],
+      "canonicalMembershipCount": 9,
+      "repoClaimCount": 9,
+      "missingCanonicalMemberships": [
+        "Multiattack Proficiency (advanced melee weapons)"
+      ],
+      "normalizationOnlyNameMatches": [],
+      "extraRepoMembershipClaims": [
+        "Multiattack Proficiency (advanced melee)"
+      ],
+      "repairNote": "Membership gaps identify absence from the correct canonical tree, not necessarily absence of a talent document elsewhere. Extra claims require identity/text adjudication before deletion."
+    },
+    {
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Specialized Droid",
+      "canonicalDisplayName": "Specialized Droid",
+      "originSourcebook": "Force Unleashed Campaign Guide",
+      "repoTreeIds": [
+        "cec49bc60d1646b1"
+      ],
+      "repoTreeNames": [
+        "Specialized Droid"
+      ],
+      "canonicalMembershipCount": 7,
+      "repoClaimCount": 3,
+      "missingCanonicalMemberships": [
+        "Computer Language",
+        "Computer Master",
+        "Enhanced Manipulation",
+        "Hotwired Processor",
+        "Skill Conversion"
+      ],
+      "normalizationOnlyNameMatches": [],
+      "extraRepoMembershipClaims": [
+        "Hotwire"
+      ],
+      "repairNote": "Membership gaps identify absence from the correct canonical tree, not necessarily absence of a talent document elsewhere. Extra claims require identity/text adjudication before deletion."
+    },
+    {
+      "canonicalTreeKey": "Scum and Villainy|Piracy",
+      "canonicalDisplayName": "Piracy",
+      "originSourcebook": "Scum and Villainy",
+      "repoTreeIds": [
+        "61db5e2c0c44ef67"
+      ],
+      "repoTreeNames": [
+        "Piracy"
+      ],
+      "canonicalMembershipCount": 7,
+      "repoClaimCount": 7,
+      "missingCanonicalMemberships": [
+        "Keep Them Reeling"
+      ],
+      "normalizationOnlyNameMatches": [],
+      "extraRepoMembershipClaims": [
+        "Keep Them Reeling (Piracy)"
+      ],
+      "repairNote": "Membership gaps identify absence from the correct canonical tree, not necessarily absence of a talent document elsewhere. Extra claims require identity/text adjudication before deletion."
+    },
+    {
+      "canonicalTreeKey": "Scum and Villainy|Pistoleer",
+      "canonicalDisplayName": "Pistoleer",
+      "originSourcebook": "Scum and Villainy",
+      "repoTreeIds": [
+        "ed77ab2e234089ed"
+      ],
+      "repoTreeNames": [
+        "Pistoleer"
+      ],
+      "canonicalMembershipCount": 5,
+      "repoClaimCount": 5,
+      "missingCanonicalMemberships": [
+        "Flanking Fire"
+      ],
+      "normalizationOnlyNameMatches": [],
+      "extraRepoMembershipClaims": [
+        "Flanking Foe"
+      ],
+      "repairNote": "Membership gaps identify absence from the correct canonical tree, not necessarily absence of a talent document elsewhere. Extra claims require identity/text adjudication before deletion."
+    },
+    {
+      "canonicalTreeKey": "Clone Wars Campaign Guide|Droid Commander",
+      "canonicalDisplayName": "Droid Commander",
+      "originSourcebook": "Clone Wars Campaign Guide",
+      "repoTreeIds": [
+        "9688ed3500084dca"
+      ],
+      "repoTreeNames": [
+        "Droid Commander"
+      ],
+      "canonicalMembershipCount": 8,
+      "repoClaimCount": 2,
+      "missingCanonicalMemberships": [
+        "Automated Strike",
+        "Droid Mettle",
+        "Inspire Competence",
+        "Maintain Focus",
+        "Overclocked Troops",
+        "Reinforced Commands"
+      ],
+      "normalizationOnlyNameMatches": [],
+      "extraRepoMembershipClaims": [],
+      "repairNote": "Membership gaps identify absence from the correct canonical tree, not necessarily absence of a talent document elsewhere. Extra claims require identity/text adjudication before deletion."
+    },
+    {
+      "canonicalTreeKey": "Clone Wars Campaign Guide|Jedi Archivist",
+      "canonicalDisplayName": "Jedi Archivist",
+      "originSourcebook": "Clone Wars Campaign Guide",
+      "repoTreeIds": [
+        "152047d6ab7896ad"
+      ],
+      "repoTreeNames": [
+        "Jedi Archivist"
+      ],
+      "canonicalMembershipCount": 5,
+      "repoClaimCount": 6,
+      "missingCanonicalMemberships": [],
+      "normalizationOnlyNameMatches": [],
+      "extraRepoMembershipClaims": [
+        "Skilled Advisor"
+      ],
+      "repairNote": "Membership gaps identify absence from the correct canonical tree, not necessarily absence of a talent document elsewhere. Extra claims require identity/text adjudication before deletion."
+    },
+    {
+      "canonicalTreeKey": "Clone Wars Campaign Guide|Melee Specialist",
+      "canonicalDisplayName": "Melee Specialist",
+      "originSourcebook": "Clone Wars Campaign Guide",
+      "repoTreeIds": [
+        "fad8118981c532f0"
+      ],
+      "repoTreeNames": [
+        "Melee Specialist"
+      ],
+      "canonicalMembershipCount": 5,
+      "repoClaimCount": 7,
+      "missingCanonicalMemberships": [],
+      "normalizationOnlyNameMatches": [],
+      "extraRepoMembershipClaims": [
+        "Stunning Strike",
+        "Melee Smash"
+      ],
+      "repairNote": "Membership gaps identify absence from the correct canonical tree, not necessarily absence of a talent document elsewhere. Extra claims require identity/text adjudication before deletion."
+    },
+    {
+      "canonicalTreeKey": "Clone Wars Campaign Guide|Republic Commando",
+      "canonicalDisplayName": "Republic Commando",
+      "originSourcebook": "Clone Wars Campaign Guide",
+      "repoTreeIds": [
+        "cb3751283ea8fa3d"
+      ],
+      "repoTreeNames": [
+        "Republic Commando"
+      ],
+      "canonicalMembershipCount": 6,
+      "repoClaimCount": 7,
+      "missingCanonicalMemberships": [
+        "Ambush"
+      ],
+      "normalizationOnlyNameMatches": [],
+      "extraRepoMembershipClaims": [
+        "Gun Club",
+        "Ambush (Republic Commando)"
+      ],
+      "repairNote": "Membership gaps identify absence from the correct canonical tree, not necessarily absence of a talent document elsewhere. Extra claims require identity/text adjudication before deletion."
+    },
+    {
+      "canonicalTreeKey": "Legacy Era Campaign Guide|Implant",
+      "canonicalDisplayName": "Implant",
+      "originSourcebook": "Legacy Era Campaign Guide",
+      "repoTreeIds": [
+        "d8a71a6c5b2b7581"
+      ],
+      "repoTreeNames": [
+        "Implant"
+      ],
+      "canonicalMembershipCount": 5,
+      "repoClaimCount": 6,
+      "missingCanonicalMemberships": [],
+      "normalizationOnlyNameMatches": [],
+      "extraRepoMembershipClaims": [
+        "Implant (general)"
+      ],
+      "repairNote": "Membership gaps identify absence from the correct canonical tree, not necessarily absence of a talent document elsewhere. Extra claims require identity/text adjudication before deletion."
+    },
+    {
+      "canonicalTreeKey": "Legacy Era Campaign Guide|Protection",
+      "canonicalDisplayName": "Protection",
+      "originSourcebook": "Legacy Era Campaign Guide",
+      "repoTreeIds": [
+        "c92c2cbc79b8a515"
+      ],
+      "repoTreeNames": [
+        "Protection"
+      ],
+      "canonicalMembershipCount": 8,
+      "repoClaimCount": 9,
+      "missingCanonicalMemberships": [],
+      "normalizationOnlyNameMatches": [],
+      "extraRepoMembershipClaims": [
+        "Harm's Way"
+      ],
+      "repairNote": "Membership gaps identify absence from the correct canonical tree, not necessarily absence of a talent document elsewhere. Extra claims require identity/text adjudication before deletion."
+    },
+    {
+      "canonicalTreeKey": "Jedi Academy Training Manual|Beastwarden",
+      "canonicalDisplayName": "Beastwarden",
+      "originSourcebook": "Jedi Academy Training Manual",
+      "repoTreeIds": [
+        "ed899f9f41fc1391"
+      ],
+      "repoTreeNames": [
+        "Beastwarden"
+      ],
+      "canonicalMembershipCount": 5,
+      "repoClaimCount": 8,
+      "missingCanonicalMemberships": [],
+      "normalizationOnlyNameMatches": [],
+      "extraRepoMembershipClaims": [
+        "Animal Companion",
+        "Nature Sense",
+        "Calming Aura"
+      ],
+      "repairNote": "Membership gaps identify absence from the correct canonical tree, not necessarily absence of a talent document elsewhere. Extra claims require identity/text adjudication before deletion."
+    },
+    {
+      "canonicalTreeKey": "Jedi Academy Training Manual|Jedi Investigator",
+      "canonicalDisplayName": "Jedi Investigator",
+      "originSourcebook": "Jedi Academy Training Manual",
+      "repoTreeIds": [
+        "44554c28675292b6"
+      ],
+      "repoTreeNames": [
+        "Jedi Investigator"
+      ],
+      "canonicalMembershipCount": 5,
+      "repoClaimCount": 5,
+      "missingCanonicalMemberships": [
+        "Echoes in the Force",
+        "Unclouded Judgment"
+      ],
+      "normalizationOnlyNameMatches": [],
+      "extraRepoMembershipClaims": [
+        "Echoes of the Force",
+        "Unclouded Judgement"
+      ],
+      "repairNote": "Membership gaps identify absence from the correct canonical tree, not necessarily absence of a talent document elsewhere. Extra claims require identity/text adjudication before deletion."
+    },
+    {
+      "canonicalTreeKey": "Jedi Academy Training Manual|Jedi Weapon Master",
+      "canonicalDisplayName": "Jedi Weapon Master",
+      "originSourcebook": "Jedi Academy Training Manual",
+      "repoTreeIds": [
+        "7db97c2c7ebca579"
+      ],
+      "repoTreeNames": [
+        "Jedi Weapon Master"
+      ],
+      "canonicalMembershipCount": 5,
+      "repoClaimCount": 5,
+      "missingCanonicalMemberships": [
+        "Improvised Weapon Master"
+      ],
+      "normalizationOnlyNameMatches": [],
+      "extraRepoMembershipClaims": [
+        "Improvised Weapon Masteryy"
+      ],
+      "repairNote": "Membership gaps identify absence from the correct canonical tree, not necessarily absence of a talent document elsewhere. Extra claims require identity/text adjudication before deletion."
+    },
+    {
+      "canonicalTreeKey": "Jedi Academy Training Manual|Mystic",
+      "canonicalDisplayName": "Mystic",
+      "originSourcebook": "Jedi Academy Training Manual",
+      "repoTreeIds": [
+        "a3d0b7c9a6d041f2"
+      ],
+      "repoTreeNames": [
+        "Mystic"
+      ],
+      "canonicalMembershipCount": 5,
+      "repoClaimCount": 5,
+      "missingCanonicalMemberships": [
+        "Regimen Aptitude"
+      ],
+      "normalizationOnlyNameMatches": [],
+      "extraRepoMembershipClaims": [
+        "Regimen Mastery"
+      ],
+      "repairNote": "Membership gaps identify absence from the correct canonical tree, not necessarily absence of a talent document elsewhere. Extra claims require identity/text adjudication before deletion."
+    },
+    {
+      "canonicalTreeKey": "Jedi Academy Training Manual|Sith Alchemy",
+      "canonicalDisplayName": "Sith Alchemy",
+      "originSourcebook": "Jedi Academy Training Manual",
+      "repoTreeIds": [
+        "a67faf2ae089ab5d"
+      ],
+      "repoTreeNames": [
+        "Sith Alchemy"
+      ],
+      "canonicalMembershipCount": 4,
+      "repoClaimCount": 5,
+      "missingCanonicalMemberships": [],
+      "normalizationOnlyNameMatches": [],
+      "extraRepoMembershipClaims": [
+        "Sith Alchemy (craft)"
+      ],
+      "repairNote": "Membership gaps identify absence from the correct canonical tree, not necessarily absence of a talent document elsewhere. Extra claims require identity/text adjudication before deletion."
+    },
+    {
+      "canonicalTreeKey": "Rebellion Era Campaign Guide|Rebel Recruiter",
+      "canonicalDisplayName": "Rebel Recruiter",
+      "originSourcebook": "Rebellion Era Campaign Guide",
+      "repoTreeIds": [
+        "a2c6962521c29361"
+      ],
+      "repoTreeNames": [
+        "Rebel Recruiter"
+      ],
+      "canonicalMembershipCount": 5,
+      "repoClaimCount": 5,
+      "missingCanonicalMemberships": [
+        "Stay in the Fight"
+      ],
+      "normalizationOnlyNameMatches": [],
+      "extraRepoMembershipClaims": [
+        "Stay in the Fight (Recruit)"
+      ],
+      "repairNote": "Membership gaps identify absence from the correct canonical tree, not necessarily absence of a talent document elsewhere. Extra claims require identity/text adjudication before deletion."
+    },
+    {
+      "canonicalTreeKey": "Rebellion Era Campaign Guide|Wingman",
+      "canonicalDisplayName": "Wingman",
+      "originSourcebook": "Rebellion Era Campaign Guide",
+      "repoTreeIds": [
+        "5f355ad4093d2bf8"
+      ],
+      "repoTreeNames": [
+        "Wingman"
+      ],
+      "canonicalMembershipCount": 5,
+      "repoClaimCount": 6,
+      "missingCanonicalMemberships": [],
+      "normalizationOnlyNameMatches": [],
+      "extraRepoMembershipClaims": [
+        "Escort"
+      ],
+      "repairNote": "Membership gaps identify absence from the correct canonical tree, not necessarily absence of a talent document elsewhere. Extra claims require identity/text adjudication before deletion."
+    },
+    {
+      "canonicalTreeKey": "Galaxy at War|Advance Patrol",
+      "canonicalDisplayName": "Advance Patrol",
+      "originSourcebook": "Galaxy at War",
+      "repoTreeIds": [
+        "9d826906ad8945b0"
+      ],
+      "repoTreeNames": [
+        "Advance Patrol"
+      ],
+      "canonicalMembershipCount": 4,
+      "repoClaimCount": 2,
+      "missingCanonicalMemberships": [
+        "Mobile Combatant",
+        "Trailblazer"
+      ],
+      "normalizationOnlyNameMatches": [],
+      "extraRepoMembershipClaims": [],
+      "repairNote": "Membership gaps identify absence from the correct canonical tree, not necessarily absence of a talent document elsewhere. Extra claims require identity/text adjudication before deletion."
+    },
+    {
+      "canonicalTreeKey": "Galaxy at War|Anticipation",
+      "canonicalDisplayName": "Anticipation",
+      "originSourcebook": "Galaxy at War",
+      "repoTreeIds": [
+        "3a785c985eae4d00"
+      ],
+      "repoTreeNames": [
+        "Anticipation"
+      ],
+      "canonicalMembershipCount": 5,
+      "repoClaimCount": 2,
+      "missingCanonicalMemberships": [
+        "Anticipate Movement",
+        "Heavy Fire Zone",
+        "Summon Aid"
+      ],
+      "normalizationOnlyNameMatches": [],
+      "extraRepoMembershipClaims": [],
+      "repairNote": "Membership gaps identify absence from the correct canonical tree, not necessarily absence of a talent document elsewhere. Extra claims require identity/text adjudication before deletion."
+    },
+    {
+      "canonicalTreeKey": "Galaxy at War|Brigand",
+      "canonicalDisplayName": "Brigand",
+      "originSourcebook": "Galaxy at War",
+      "repoTreeIds": [
+        "7c6d007b549c4a4a"
+      ],
+      "repoTreeNames": [
+        "Brigand"
+      ],
+      "canonicalMembershipCount": 4,
+      "repoClaimCount": 1,
+      "missingCanonicalMemberships": [
+        "Easy Prey",
+        "Quick Strike",
+        "Sly Combatant"
+      ],
+      "normalizationOnlyNameMatches": [],
+      "extraRepoMembershipClaims": [],
+      "repairNote": "Membership gaps identify absence from the correct canonical tree, not necessarily absence of a talent document elsewhere. Extra claims require identity/text adjudication before deletion."
+    },
+    {
+      "canonicalTreeKey": "Galaxy at War|Martial Arts Forms",
+      "canonicalDisplayName": "Martial Arts Forms",
+      "originSourcebook": "Galaxy at War",
+      "repoTreeIds": [],
+      "repoTreeNames": [],
+      "canonicalMembershipCount": 7,
+      "repoClaimCount": 0,
+      "missingCanonicalMemberships": [
+        "Echani Expertise",
+        "Hijkata Expertise",
+        "K'tara Expertise",
+        "K'thri Expertise",
+        "Stava Expertise",
+        "Tae-Jitsu Expertise",
+        "Wrruushi Expertise"
+      ],
+      "normalizationOnlyNameMatches": [],
+      "extraRepoMembershipClaims": [],
+      "repairNote": "Membership gaps identify absence from the correct canonical tree, not necessarily absence of a talent document elsewhere. Extra claims require identity/text adjudication before deletion."
+    },
+    {
+      "canonicalTreeKey": "Galaxy at War|Sharpshooter",
+      "canonicalDisplayName": "Sharpshooter",
+      "originSourcebook": "Galaxy at War",
+      "repoTreeIds": [
+        "d203a51d6d0a4c65"
+      ],
+      "repoTreeNames": [
+        "Sharpshooter"
+      ],
+      "canonicalMembershipCount": 5,
+      "repoClaimCount": 3,
+      "missingCanonicalMemberships": [
+        "Bullseye",
+        "Harrying Shot"
+      ],
+      "normalizationOnlyNameMatches": [],
+      "extraRepoMembershipClaims": [],
+      "repairNote": "Membership gaps identify absence from the correct canonical tree, not necessarily absence of a talent document elsewhere. Extra claims require identity/text adjudication before deletion."
+    },
+    {
+      "canonicalTreeKey": "Galaxy at War|Shockboxer",
+      "canonicalDisplayName": "Shockboxer",
+      "originSourcebook": "Galaxy at War",
+      "repoTreeIds": [
+        "abc3466390fe4050"
+      ],
+      "repoTreeNames": [
+        "Shockboxer"
+      ],
+      "canonicalMembershipCount": 5,
+      "repoClaimCount": 2,
+      "missingCanonicalMemberships": [
+        "Defensive Jab",
+        "Nimble Dodge",
+        "Stunning Shockboxer"
+      ],
+      "normalizationOnlyNameMatches": [],
+      "extraRepoMembershipClaims": [],
+      "repairNote": "Membership gaps identify absence from the correct canonical tree, not necessarily absence of a talent document elsewhere. Extra claims require identity/text adjudication before deletion."
+    },
+    {
+      "canonicalTreeKey": "Galaxy at War|Squad Leader",
+      "canonicalDisplayName": "Squad Leader",
+      "originSourcebook": "Galaxy at War",
+      "repoTreeIds": [],
+      "repoTreeNames": [],
+      "canonicalMembershipCount": 5,
+      "repoClaimCount": 0,
+      "missingCanonicalMemberships": [
+        "Fall Back",
+        "Form Up",
+        "Full Advance",
+        "Hold Steady",
+        "Search and Destroy"
+      ],
+      "normalizationOnlyNameMatches": [],
+      "extraRepoMembershipClaims": [],
+      "repairNote": "Membership gaps identify absence from the correct canonical tree, not necessarily absence of a talent document elsewhere. Extra claims require identity/text adjudication before deletion."
+    },
+    {
+      "canonicalTreeKey": "Galaxy at War|Unarmed Mastery",
+      "canonicalDisplayName": "Unarmed Mastery",
+      "originSourcebook": "Galaxy at War",
+      "repoTreeIds": [],
+      "repoTreeNames": [],
+      "canonicalMembershipCount": 4,
+      "repoClaimCount": 0,
+      "missingCanonicalMemberships": [
+        "Flurry of Blows",
+        "Hardened Strike",
+        "Punishing Strike",
+        "Tough as Durasteel"
+      ],
+      "normalizationOnlyNameMatches": [],
+      "extraRepoMembershipClaims": [],
+      "repairNote": "Membership gaps identify absence from the correct canonical tree, not necessarily absence of a talent document elsewhere. Extra claims require identity/text adjudication before deletion."
+    },
+    {
+      "canonicalTreeKey": "Galaxy at War|Veteran",
+      "canonicalDisplayName": "Veteran",
+      "originSourcebook": "Galaxy at War",
+      "repoTreeIds": [
+        "96c390430d7a4975"
+      ],
+      "repoTreeNames": [
+        "Veteran"
+      ],
+      "canonicalMembershipCount": 5,
+      "repoClaimCount": 2,
+      "missingCanonicalMemberships": [
+        "Battlefield Remedy",
+        "Grizzled Warrior",
+        "Reckless"
+      ],
+      "normalizationOnlyNameMatches": [],
+      "extraRepoMembershipClaims": [],
+      "repairNote": "Membership gaps identify absence from the correct canonical tree, not necessarily absence of a talent document elsewhere. Extra claims require identity/text adjudication before deletion."
+    },
+    {
+      "canonicalTreeKey": "Scavenger's Guide to Droids|Override",
+      "canonicalDisplayName": "Override",
+      "originSourcebook": "Scavenger's Guide to Droids",
+      "repoTreeIds": [
+        "01cb1ca2a10640b3"
+      ],
+      "repoTreeNames": [
+        "Override"
+      ],
+      "canonicalMembershipCount": 4,
+      "repoClaimCount": 1,
+      "missingCanonicalMemberships": [
+        "Directed Movement",
+        "Full Control",
+        "Remote Attack"
+      ],
+      "normalizationOnlyNameMatches": [],
+      "extraRepoMembershipClaims": [],
+      "repairNote": "Membership gaps identify absence from the correct canonical tree, not necessarily absence of a talent document elsewhere. Extra claims require identity/text adjudication before deletion."
+    },
+    {
+      "canonicalTreeKey": "Galaxy of Intrigue|Espionage",
+      "canonicalDisplayName": "Espionage",
+      "originSourcebook": "Galaxy of Intrigue",
+      "repoTreeIds": [],
+      "repoTreeNames": [],
+      "canonicalMembershipCount": 5,
+      "repoClaimCount": 0,
+      "missingCanonicalMemberships": [
+        "Fade Out",
+        "Keep Together",
+        "Prudent Escape",
+        "Reactive Stealth",
+        "Sizing Up"
+      ],
+      "normalizationOnlyNameMatches": [],
+      "extraRepoMembershipClaims": [],
+      "repairNote": "Membership gaps identify absence from the correct canonical tree, not necessarily absence of a talent document elsewhere. Extra claims require identity/text adjudication before deletion."
+    },
+    {
+      "canonicalTreeKey": "Galaxy of Intrigue|Master of Intrigue",
+      "canonicalDisplayName": "Master of Intrigue",
+      "originSourcebook": "Galaxy of Intrigue",
+      "repoTreeIds": [
+        "0ffc37dac946477d"
+      ],
+      "repoTreeNames": [
+        "Master Of Intrigue"
+      ],
+      "canonicalMembershipCount": 6,
+      "repoClaimCount": 1,
+      "missingCanonicalMemberships": [
+        "Blend In",
+        "Done It All",
+        "Get into Position",
+        "Master Manipulator",
+        "Retaliation"
+      ],
+      "normalizationOnlyNameMatches": [],
+      "extraRepoMembershipClaims": [],
+      "repairNote": "Membership gaps identify absence from the correct canonical tree, not necessarily absence of a talent document elsewhere. Extra claims require identity/text adjudication before deletion."
+    },
+    {
+      "canonicalTreeKey": "Galaxy of Intrigue|Revolutionary",
+      "canonicalDisplayName": "Revolutionary",
+      "originSourcebook": "Galaxy of Intrigue",
+      "repoTreeIds": [
+        "e6a9c40b900847bd"
+      ],
+      "repoTreeNames": [
+        "Revolutionary"
+      ],
+      "canonicalMembershipCount": 4,
+      "repoClaimCount": 1,
+      "missingCanonicalMemberships": [
+        "Bomb Thrower",
+        "For the Cause",
+        "Revolutionary Rhetoric"
+      ],
+      "normalizationOnlyNameMatches": [],
+      "extraRepoMembershipClaims": [],
+      "repairNote": "Membership gaps identify absence from the correct canonical tree, not necessarily absence of a talent document elsewhere. Extra claims require identity/text adjudication before deletion."
+    },
+    {
+      "canonicalTreeKey": "Galaxy of Intrigue|Skill Challenge",
+      "canonicalDisplayName": "Skill Challenge",
+      "originSourcebook": "Galaxy of Intrigue",
+      "repoTreeIds": [],
+      "repoTreeNames": [],
+      "canonicalMembershipCount": 4,
+      "repoClaimCount": 0,
+      "missingCanonicalMemberships": [
+        "Guaranteed Boon",
+        "Leading Skill",
+        "Learn from Mistakes",
+        "Try Your Luck"
+      ],
+      "normalizationOnlyNameMatches": [],
+      "extraRepoMembershipClaims": [],
+      "repairNote": "Membership gaps identify absence from the correct canonical tree, not necessarily absence of a talent document elsewhere. Extra claims require identity/text adjudication before deletion."
+    },
+    {
+      "canonicalTreeKey": "Unknown Regions|Exile",
+      "canonicalDisplayName": "Exile",
+      "originSourcebook": "Unknown Regions",
+      "repoTreeIds": [
+        "0b5857edbcf049a2"
+      ],
+      "repoTreeNames": [
+        "Exile"
+      ],
+      "canonicalMembershipCount": 7,
+      "repoClaimCount": 1,
+      "missingCanonicalMemberships": [
+        "Arrogant Bluster",
+        "Band Together",
+        "Strength in Numbers",
+        "Temporary Allies",
+        "Rant",
+        "Self-Reliant"
+      ],
+      "normalizationOnlyNameMatches": [],
+      "extraRepoMembershipClaims": [],
+      "repairNote": "Membership gaps identify absence from the correct canonical tree, not necessarily absence of a talent document elsewhere. Extra claims require identity/text adjudication before deletion."
+    },
+    {
+      "canonicalTreeKey": "Unknown Regions|Master Scout",
+      "canonicalDisplayName": "Master Scout",
+      "originSourcebook": "Unknown Regions",
+      "repoTreeIds": [
+        "dca33c0215264a02"
+      ],
+      "repoTreeNames": [
+        "Master Scout"
+      ],
+      "canonicalMembershipCount": 5,
+      "repoClaimCount": 4,
+      "missingCanonicalMemberships": [
+        "Piercing Hit",
+        "Quicktrap",
+        "Speedclimber",
+        "Surprisingly Quick"
+      ],
+      "normalizationOnlyNameMatches": [],
+      "extraRepoMembershipClaims": [
+        "Long Stride",
+        "Jury-Rigger",
+        "Acute Senses"
+      ],
+      "repairNote": "Membership gaps identify absence from the correct canonical tree, not necessarily absence of a talent document elsewhere. Extra claims require identity/text adjudication before deletion."
+    },
+    {
+      "canonicalTreeKey": "Unknown Regions|Mobile Scout",
+      "canonicalDisplayName": "Mobile Scout",
+      "originSourcebook": "Unknown Regions",
+      "repoTreeIds": [
+        "c7a4e66f46044c7a"
+      ],
+      "repoTreeNames": [
+        "Mobile Scout"
+      ],
+      "canonicalMembershipCount": 4,
+      "repoClaimCount": 1,
+      "missingCanonicalMemberships": [
+        "Battle Mount",
+        "Terrain Guidance",
+        "Mechanized Rider"
+      ],
+      "normalizationOnlyNameMatches": [],
+      "extraRepoMembershipClaims": [],
+      "repairNote": "Membership gaps identify absence from the correct canonical tree, not necessarily absence of a talent document elsewhere. Extra claims require identity/text adjudication before deletion."
+    },
+    {
+      "canonicalTreeKey": "Unknown Regions|Outsider",
+      "canonicalDisplayName": "Outsider",
+      "originSourcebook": "Unknown Regions",
+      "repoTreeIds": [
+        "b15586b9c9554cf8"
+      ],
+      "repoTreeNames": [
+        "Outsider"
+      ],
+      "canonicalMembershipCount": 4,
+      "repoClaimCount": 1,
+      "missingCanonicalMemberships": [
+        "Oafish",
+        "Outsider's Query",
+        "Wary"
+      ],
+      "normalizationOnlyNameMatches": [],
+      "extraRepoMembershipClaims": [],
+      "repairNote": "Membership gaps identify absence from the correct canonical tree, not necessarily absence of a talent document elsewhere. Extra claims require identity/text adjudication before deletion."
+    },
+    {
+      "canonicalTreeKey": "Unknown Regions|Warrior",
+      "canonicalDisplayName": "Warrior",
+      "originSourcebook": "Unknown Regions",
+      "repoTreeIds": [
+        "13776eed744d410c"
+      ],
+      "repoTreeNames": [
+        "Warrior"
+      ],
+      "canonicalMembershipCount": 7,
+      "repoClaimCount": 3,
+      "missingCanonicalMemberships": [
+        "Champion",
+        "Disarming Hit",
+        "Masterful Strike",
+        "Quick Study",
+        "Simple Opportunity",
+        "Warrior's Determination"
+      ],
+      "normalizationOnlyNameMatches": [],
+      "extraRepoMembershipClaims": [
+        "Weapon Proficiency (Simple Weapons)",
+        "Ranged Disarm"
+      ],
+      "repairNote": "Membership gaps identify absence from the correct canonical tree, not necessarily absence of a talent document elsewhere. Extra claims require identity/text adjudication before deletion."
+    },
+    {
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|First-Degree Droid",
+      "canonicalDisplayName": "First-Degree Droid",
+      "originSourcebook": "Force Unleashed Campaign Guide",
+      "repoTreeIds": [
+        "a212850887fe41da"
+      ],
+      "repoTreeNames": [
+        "1stdegree Droid"
+      ],
+      "canonicalMembershipCount": 7,
+      "repoClaimCount": 1,
+      "missingCanonicalMemberships": [
+        "Dull the Pain",
+        "Interrogator",
+        "Known Vulnerability",
+        "Medical Analyzer",
+        "Science Analyzer",
+        "Triage Scan"
+      ],
+      "normalizationOnlyNameMatches": [],
+      "extraRepoMembershipClaims": [],
+      "repairNote": "Membership gaps identify absence from the correct canonical tree, not necessarily absence of a talent document elsewhere. Extra claims require identity/text adjudication before deletion."
+    },
+    {
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Second-Degree Droid",
+      "canonicalDisplayName": "Second-Degree Droid",
+      "originSourcebook": "Force Unleashed Campaign Guide",
+      "repoTreeIds": [
+        "ad499981ddb8450e"
+      ],
+      "repoTreeNames": [
+        "2nddegree Droid"
+      ],
+      "canonicalMembershipCount": 7,
+      "repoClaimCount": 1,
+      "missingCanonicalMemberships": [
+        "Adept Assistant",
+        "Mechanics Mastery",
+        "Vehicle Mechanic",
+        "On-Board System Link",
+        "Quick Astrogation",
+        "Scomp Link Slicer"
+      ],
+      "normalizationOnlyNameMatches": [],
+      "extraRepoMembershipClaims": [],
+      "repairNote": "Membership gaps identify absence from the correct canonical tree, not necessarily absence of a talent document elsewhere. Extra claims require identity/text adjudication before deletion."
+    },
+    {
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Third-Degree Droid",
+      "canonicalDisplayName": "Third-Degree Droid",
+      "originSourcebook": "Force Unleashed Campaign Guide",
+      "repoTreeIds": [
+        "af077700c1b8433f"
+      ],
+      "repoTreeNames": [
+        "3rddegree Droid"
+      ],
+      "canonicalMembershipCount": 7,
+      "repoClaimCount": 1,
+      "missingCanonicalMemberships": [
+        "Etiquette",
+        "Helpful",
+        "Protocol",
+        "Nuanced",
+        "Supervising Droid",
+        "Talkdroid"
+      ],
+      "normalizationOnlyNameMatches": [],
+      "extraRepoMembershipClaims": [],
+      "repairNote": "Membership gaps identify absence from the correct canonical tree, not necessarily absence of a talent document elsewhere. Extra claims require identity/text adjudication before deletion."
+    },
+    {
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Fourth-Degree Droid",
+      "canonicalDisplayName": "Fourth-Degree Droid",
+      "originSourcebook": "Force Unleashed Campaign Guide",
+      "repoTreeIds": [
+        "73814706c00849c6"
+      ],
+      "repoTreeNames": [
+        "4thdegree Droid"
+      ],
+      "canonicalMembershipCount": 7,
+      "repoClaimCount": 1,
+      "missingCanonicalMemberships": [
+        "Combat Repairs",
+        "Droid Smash",
+        "Targeting Package",
+        "Just a Scratch",
+        "Target Lock",
+        "Weapons Power Surge"
+      ],
+      "normalizationOnlyNameMatches": [],
+      "extraRepoMembershipClaims": [],
+      "repairNote": "Membership gaps identify absence from the correct canonical tree, not necessarily absence of a talent document elsewhere. Extra claims require identity/text adjudication before deletion."
+    },
+    {
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Fifth-Degree Droid",
+      "canonicalDisplayName": "Fifth-Degree Droid",
+      "originSourcebook": "Force Unleashed Campaign Guide",
+      "repoTreeIds": [
+        "c4e48efaad1f49af"
+      ],
+      "repoTreeNames": [
+        "5thdegree Droid"
+      ],
+      "canonicalMembershipCount": 7,
+      "repoClaimCount": 1,
+      "missingCanonicalMemberships": [
+        "Cargo Hauler",
+        "Environmentally Shielded",
+        "Power Supply",
+        "Durable",
+        "Load Launcher",
+        "Task Optimization"
+      ],
+      "normalizationOnlyNameMatches": [],
+      "extraRepoMembershipClaims": [],
+      "repairNote": "Membership gaps identify absence from the correct canonical tree, not necessarily absence of a talent document elsewhere. Extra claims require identity/text adjudication before deletion."
+    },
+    {
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Agent of Ossus",
+      "canonicalDisplayName": "Agent of Ossus",
+      "originSourcebook": "Force Unleashed Campaign Guide",
+      "repoTreeIds": [
+        "754907ded50d4f46"
+      ],
+      "repoTreeNames": [
+        "Agent Of Ossus"
+      ],
+      "canonicalMembershipCount": 4,
+      "repoClaimCount": 1,
+      "missingCanonicalMemberships": [
+        "Conceal Other",
+        "Insightful Aim",
+        "Vanish"
+      ],
+      "normalizationOnlyNameMatches": [],
+      "extraRepoMembershipClaims": [],
+      "repairNote": "Membership gaps identify absence from the correct canonical tree, not necessarily absence of a talent document elsewhere. Extra claims require identity/text adjudication before deletion."
+    },
+    {
+      "canonicalTreeKey": "Jedi Academy Training Manual|Aing-Tii Monk",
+      "canonicalDisplayName": "Aing-Tii Monk",
+      "originSourcebook": "Jedi Academy Training Manual",
+      "repoTreeIds": [
+        "f8e7edab5f234e27"
+      ],
+      "repoTreeNames": [
+        "Aingtii Monk"
+      ],
+      "canonicalMembershipCount": 5,
+      "repoClaimCount": 1,
+      "missingCanonicalMemberships": [
+        "Folded Space Mastery",
+        "Liberate",
+        "Many Shades of the Force",
+        "Spatial Integrity"
+      ],
+      "normalizationOnlyNameMatches": [],
+      "extraRepoMembershipClaims": [],
+      "repairNote": "Membership gaps identify absence from the correct canonical tree, not necessarily absence of a talent document elsewhere. Extra claims require identity/text adjudication before deletion."
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Alter",
+      "canonicalDisplayName": "Alter",
+      "originSourcebook": "Saga Edition Core Rulebook",
+      "repoTreeIds": [
+        "6ac3416fb6aada56"
+      ],
+      "repoTreeNames": [
+        "Alter"
+      ],
+      "canonicalMembershipCount": 14,
+      "repoClaimCount": 16,
+      "missingCanonicalMemberships": [],
+      "normalizationOnlyNameMatches": [],
+      "extraRepoMembershipClaims": [
+        "Force Bond",
+        "Move Massive Object"
+      ],
+      "repairNote": "Membership gaps identify absence from the correct canonical tree, not necessarily absence of a talent document elsewhere. Extra claims require identity/text adjudication before deletion."
+    },
+    {
+      "canonicalTreeKey": "Jedi Academy Training Manual|Baran Do Sage",
+      "canonicalDisplayName": "Baran Do Sage",
+      "originSourcebook": "Jedi Academy Training Manual",
+      "repoTreeIds": [
+        "3e807e87cac844ba"
+      ],
+      "repoTreeNames": [
+        "Baran Do Sage"
+      ],
+      "canonicalMembershipCount": 5,
+      "repoClaimCount": 1,
+      "missingCanonicalMemberships": [
+        "Expanded Horizon",
+        "Knowledge and Defense",
+        "Planetary Attunement",
+        "Precognitive Meditation"
+      ],
+      "normalizationOnlyNameMatches": [],
+      "extraRepoMembershipClaims": [],
+      "repairNote": "Membership gaps identify absence from the correct canonical tree, not necessarily absence of a talent document elsewhere. Extra claims require identity/text adjudication before deletion."
+    },
+    {
+      "canonicalTreeKey": "Unknown Regions|Blazing Chain",
+      "canonicalDisplayName": "Blazing Chain",
+      "originSourcebook": "Unknown Regions",
+      "repoTreeIds": [
+        "427213bd55e04e27"
+      ],
+      "repoTreeNames": [
+        "Blazing Chain"
+      ],
+      "canonicalMembershipCount": 4,
+      "repoClaimCount": 1,
+      "missingCanonicalMemberships": [
+        "Force Directed Shot",
+        "Negate and Redirect",
+        "Rising Anger"
+      ],
+      "normalizationOnlyNameMatches": [],
+      "extraRepoMembershipClaims": [],
+      "repairNote": "Membership gaps identify absence from the correct canonical tree, not necessarily absence of a talent document elsewhere. Extra claims require identity/text adjudication before deletion."
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Control",
+      "canonicalDisplayName": "Control",
+      "originSourcebook": "Saga Edition Core Rulebook",
+      "repoTreeIds": [
+        "d3661aa9906bdc79"
+      ],
+      "repoTreeNames": [
+        "Control"
+      ],
+      "canonicalMembershipCount": 11,
+      "repoClaimCount": 11,
+      "missingCanonicalMemberships": [
+        "Equilibrium"
+      ],
+      "normalizationOnlyNameMatches": [
+        {
+          "canonical": "The Will To Resist",
+          "repo": "The Will to Resist"
+        }
+      ],
+      "extraRepoMembershipClaims": [
+        "Telekinetic Stability"
+      ],
+      "repairNote": "Membership gaps identify absence from the correct canonical tree, not necessarily absence of a talent document elsewhere. Extra claims require identity/text adjudication before deletion."
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Dark Side",
+      "canonicalDisplayName": "Dark Side",
+      "originSourcebook": "Saga Edition Core Rulebook",
+      "repoTreeIds": [
+        "de95d37c72b1c4cd"
+      ],
+      "repoTreeNames": [
+        "Dark Side"
+      ],
+      "canonicalMembershipCount": 9,
+      "repoClaimCount": 11,
+      "missingCanonicalMemberships": [],
+      "normalizationOnlyNameMatches": [],
+      "extraRepoMembershipClaims": [
+        "Dark Preservation",
+        "Dark Side Maelstrom"
+      ],
+      "repairNote": "Membership gaps identify absence from the correct canonical tree, not necessarily absence of a talent document elsewhere. Extra claims require identity/text adjudication before deletion."
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Dathomiri Witch",
+      "canonicalDisplayName": "Dathomiri Witch",
+      "originSourcebook": "Saga Edition Core Rulebook",
+      "repoTreeIds": [
+        "ad16f3e5f4f7441b"
+      ],
+      "repoTreeNames": [
+        "Dathomiri Witch"
+      ],
+      "canonicalMembershipCount": 4,
+      "repoClaimCount": 3,
+      "missingCanonicalMemberships": [
+        "Charm Beast",
+        "Command Beast",
+        "Flight"
+      ],
+      "normalizationOnlyNameMatches": [],
+      "extraRepoMembershipClaims": [
+        "Dathomiri Hunter",
+        "Binding Sickle"
+      ],
+      "repairNote": "Membership gaps identify absence from the correct canonical tree, not necessarily absence of a talent document elsewhere. Extra claims require identity/text adjudication before deletion."
+    },
+    {
+      "canonicalTreeKey": "Legacy Era Campaign Guide|Disciple of Twilight",
+      "canonicalDisplayName": "Disciple of Twilight",
+      "originSourcebook": "Legacy Era Campaign Guide",
+      "repoTreeIds": [
+        "4da769d7c5f44232"
+      ],
+      "repoTreeNames": [
+        "Disciple Of Twilight"
+      ],
+      "canonicalMembershipCount": 5,
+      "repoClaimCount": 1,
+      "missingCanonicalMemberships": [
+        "Cloak of Shadow",
+        "Phantasm",
+        "Revelation",
+        "Shadow Armor",
+        "Shadow Vision"
+      ],
+      "normalizationOnlyNameMatches": [],
+      "extraRepoMembershipClaims": [
+        "Cloak of Shadows"
+      ],
+      "repairNote": "Membership gaps identify absence from the correct canonical tree, not necessarily absence of a talent document elsewhere. Extra claims require identity/text adjudication before deletion."
+    },
+    {
+      "canonicalTreeKey": "Legacy Era Campaign Guide|Ember of Vahl",
+      "canonicalDisplayName": "Ember of Vahl",
+      "originSourcebook": "Legacy Era Campaign Guide",
+      "repoTreeIds": [
+        "c6eee4889411411b"
+      ],
+      "repoTreeNames": [
+        "Ember Of Vahl"
+      ],
+      "canonicalMembershipCount": 5,
+      "repoClaimCount": 2,
+      "missingCanonicalMemberships": [
+        "Reading the Flame",
+        "Sword of Vahl",
+        "Vahl's Brand",
+        "Vahl's Flame"
+      ],
+      "normalizationOnlyNameMatches": [],
+      "extraRepoMembershipClaims": [
+        "Empowered Weapon"
+      ],
+      "repairNote": "Membership gaps identify absence from the correct canonical tree, not necessarily absence of a talent document elsewhere. Extra claims require identity/text adjudication before deletion."
+    },
+    {
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Felucian Shaman",
+      "canonicalDisplayName": "Felucian Shaman",
+      "originSourcebook": "Force Unleashed Campaign Guide",
+      "repoTreeIds": [
+        "8a61bf426391431b"
+      ],
+      "repoTreeNames": [
+        "Felucian Shaman"
+      ],
+      "canonicalMembershipCount": 4,
+      "repoClaimCount": 1,
+      "missingCanonicalMemberships": [
+        "Detonate",
+        "Hive Mind",
+        "Infuse Weapon",
+        "Sickening Blast"
+      ],
+      "normalizationOnlyNameMatches": [],
+      "extraRepoMembershipClaims": [
+        "Infused Weapon"
+      ],
+      "repairNote": "Membership gaps identify absence from the correct canonical tree, not necessarily absence of a talent document elsewhere. Extra claims require identity/text adjudication before deletion."
+    },
+    {
+      "canonicalTreeKey": "Knights of the Old Republic Campaign Guide|Jal Shey",
+      "canonicalDisplayName": "Jal Shey",
+      "originSourcebook": "Knights of the Old Republic Campaign Guide",
+      "repoTreeIds": [
+        "db1964d1e1d14b5a"
+      ],
+      "repoTreeNames": [
+        "Jal Shey"
+      ],
+      "canonicalMembershipCount": 4,
+      "repoClaimCount": 1,
+      "missingCanonicalMemberships": [
+        "Action Exchange",
+        "Imbue Item",
+        "Knowledge of the Force"
+      ],
+      "normalizationOnlyNameMatches": [],
+      "extraRepoMembershipClaims": [],
+      "repairNote": "Membership gaps identify absence from the correct canonical tree, not necessarily absence of a talent document elsewhere. Extra claims require identity/text adjudication before deletion."
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Jensaarai Defender",
+      "canonicalDisplayName": "Jensaarai Defender",
+      "originSourcebook": "Saga Edition Core Rulebook",
+      "repoTreeIds": [
+        "f5c62e2e81f648aa"
+      ],
+      "repoTreeNames": [
+        "Jensaarai Defender"
+      ],
+      "canonicalMembershipCount": 4,
+      "repoClaimCount": 1,
+      "missingCanonicalMemberships": [
+        "Attune Armor",
+        "Force Cloak Mastery",
+        "Linked Defense"
+      ],
+      "normalizationOnlyNameMatches": [],
+      "extraRepoMembershipClaims": [],
+      "repairNote": "Membership gaps identify absence from the correct canonical tree, not necessarily absence of a talent document elsewhere. Extra claims require identity/text adjudication before deletion."
+    },
+    {
+      "canonicalTreeKey": "Knights of the Old Republic Campaign Guide|Keetael",
+      "canonicalDisplayName": "Keetael",
+      "originSourcebook": "Knights of the Old Republic Campaign Guide",
+      "repoTreeIds": [
+        "dad3c0da191748c1"
+      ],
+      "repoTreeNames": [
+        "Keetael"
+      ],
+      "canonicalMembershipCount": 4,
+      "repoClaimCount": 1,
+      "missingCanonicalMemberships": [
+        "Conceal Force Use",
+        "Force Direction",
+        "Force Momentum",
+        "Past Visions"
+      ],
+      "normalizationOnlyNameMatches": [],
+      "extraRepoMembershipClaims": [
+        "Visions"
+      ],
+      "repairNote": "Membership gaps identify absence from the correct canonical tree, not necessarily absence of a talent document elsewhere. Extra claims require identity/text adjudication before deletion."
+    },
+    {
+      "canonicalTreeKey": "Rebellion Era Campaign Guide|Kilian Ranger",
+      "canonicalDisplayName": "Kilian Ranger",
+      "originSourcebook": "Rebellion Era Campaign Guide",
+      "repoTreeIds": [
+        "2a1838832f6146e2"
+      ],
+      "repoTreeNames": [
+        "Kilian Ranger"
+      ],
+      "canonicalMembershipCount": 5,
+      "repoClaimCount": 3,
+      "missingCanonicalMemberships": [
+        "Empower Siang Lance",
+        "Shield Gauntlet Redirect"
+      ],
+      "normalizationOnlyNameMatches": [],
+      "extraRepoMembershipClaims": [],
+      "repairNote": "Membership gaps identify absence from the correct canonical tree, not necessarily absence of a talent document elsewhere. Extra claims require identity/text adjudication before deletion."
+    },
+    {
+      "canonicalTreeKey": "Knights of the Old Republic Campaign Guide|Luka Sene",
+      "canonicalDisplayName": "Luka Sene",
+      "originSourcebook": "Knights of the Old Republic Campaign Guide",
+      "repoTreeIds": [
+        "e6e3fc102bb54b20"
+      ],
+      "repoTreeNames": [
+        "Luka Sene"
+      ],
+      "canonicalMembershipCount": 4,
+      "repoClaimCount": 1,
+      "missingCanonicalMemberships": [
+        "Improved Force Sight",
+        "Luka Sene Master",
+        "Quickseeing"
+      ],
+      "normalizationOnlyNameMatches": [],
+      "extraRepoMembershipClaims": [],
+      "repairNote": "Membership gaps identify absence from the correct canonical tree, not necessarily absence of a talent document elsewhere. Extra claims require identity/text adjudication before deletion."
+    },
+    {
+      "canonicalTreeKey": "Jedi Academy Training Manual|Matukai Adept",
+      "canonicalDisplayName": "Matukai Adept",
+      "originSourcebook": "Jedi Academy Training Manual",
+      "repoTreeIds": [
+        "ca65ba0c33cd4c7d"
+      ],
+      "repoTreeNames": [
+        "Matukai Adept"
+      ],
+      "canonicalMembershipCount": 6,
+      "repoClaimCount": 1,
+      "missingCanonicalMemberships": [
+        "Body Control",
+        "Physical Surge",
+        "Soft to Solid",
+        "Wan-Shen Defense",
+        "Wan-Shen Mastery"
+      ],
+      "normalizationOnlyNameMatches": [],
+      "extraRepoMembershipClaims": [],
+      "repairNote": "Membership gaps identify absence from the correct canonical tree, not necessarily absence of a talent document elsewhere. Extra claims require identity/text adjudication before deletion."
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Sense",
+      "canonicalDisplayName": "Sense",
+      "originSourcebook": "Saga Edition Core Rulebook",
+      "repoTreeIds": [
+        "d6b4331c0e31f7e3"
+      ],
+      "repoTreeNames": [
+        "Sense"
+      ],
+      "canonicalMembershipCount": 12,
+      "repoClaimCount": 12,
+      "missingCanonicalMemberships": [
+        "Visions"
+      ],
+      "normalizationOnlyNameMatches": [],
+      "extraRepoMembershipClaims": [
+        "Reference Book: Star Wars Saga Edition Starships of the Galaxy"
+      ],
+      "repairNote": "Membership gaps identify absence from the correct canonical tree, not necessarily absence of a talent document elsewhere. Extra claims require identity/text adjudication before deletion."
+    },
+    {
+      "canonicalTreeKey": "Jedi Academy Training Manual|Seyugi Dervish",
+      "canonicalDisplayName": "Seyugi Dervish",
+      "originSourcebook": "Jedi Academy Training Manual",
+      "repoTreeIds": [
+        "a7ad797b01114925"
+      ],
+      "repoTreeNames": [
+        "Seyugi Dervish"
+      ],
+      "canonicalMembershipCount": 5,
+      "repoClaimCount": 1,
+      "missingCanonicalMemberships": [
+        "Mobile Whirlwind",
+        "Repelling Whirlwind",
+        "Sudden Storm",
+        "Tempest Tossed"
+      ],
+      "normalizationOnlyNameMatches": [],
+      "extraRepoMembershipClaims": [],
+      "repairNote": "Membership gaps identify absence from the correct canonical tree, not necessarily absence of a talent document elsewhere. Extra claims require identity/text adjudication before deletion."
+    },
+    {
+      "canonicalTreeKey": "Jedi Academy Training Manual|Tyia Adept",
+      "canonicalDisplayName": "Tyia Adept",
+      "originSourcebook": "Jedi Academy Training Manual",
+      "repoTreeIds": [
+        "9a5efe5d0e9b43a1"
+      ],
+      "repoTreeNames": [
+        "Tyia Adept"
+      ],
+      "canonicalMembershipCount": 5,
+      "repoClaimCount": 1,
+      "missingCanonicalMemberships": [
+        "Cycle of Harmony",
+        "Force Stabilize",
+        "Repel Discord",
+        "Stifle Conflict"
+      ],
+      "normalizationOnlyNameMatches": [],
+      "extraRepoMembershipClaims": [],
+      "repairNote": "Membership gaps identify absence from the correct canonical tree, not necessarily absence of a talent document elsewhere. Extra claims require identity/text adjudication before deletion."
+    },
+    {
+      "canonicalTreeKey": "Jedi Academy Training Manual|Warden of the Sky",
+      "canonicalDisplayName": "Warden of the Sky",
+      "originSourcebook": "Jedi Academy Training Manual",
+      "repoTreeIds": [
+        "899038f739294c81"
+      ],
+      "repoTreeNames": [
+        "Warden Of The Sky"
+      ],
+      "canonicalMembershipCount": 6,
+      "repoClaimCount": 1,
+      "missingCanonicalMemberships": [
+        "Brutal Unarmed Strike",
+        "Martial Resurgence",
+        "Rebound Leap",
+        "Simultaneous Strike",
+        "Telekinetic Throw"
+      ],
+      "normalizationOnlyNameMatches": [],
+      "extraRepoMembershipClaims": [],
+      "repairNote": "Membership gaps identify absence from the correct canonical tree, not necessarily absence of a talent document elsewhere. Extra claims require identity/text adjudication before deletion."
+    },
+    {
+      "canonicalTreeKey": "Jedi Academy Training Manual|White Current Adept",
+      "canonicalDisplayName": "White Current Adept",
+      "originSourcebook": "Jedi Academy Training Manual",
+      "repoTreeIds": [
+        "4509306f66d744bf"
+      ],
+      "repoTreeNames": [
+        "White Current Adept"
+      ],
+      "canonicalMembershipCount": 5,
+      "repoClaimCount": 2,
+      "missingCanonicalMemberships": [
+        "Immerse Another",
+        "Ride the Current",
+        "Surrender to the Current"
+      ],
+      "normalizationOnlyNameMatches": [],
+      "extraRepoMembershipClaims": [],
+      "repairNote": "Membership gaps identify absence from the correct canonical tree, not necessarily absence of a talent document elsewhere. Extra claims require identity/text adjudication before deletion."
+    },
+    {
+      "canonicalTreeKey": "Jedi Academy Training Manual|Shapers of Kro Var",
+      "canonicalDisplayName": "Shapers of Kro Var",
+      "originSourcebook": "Jedi Academy Training Manual",
+      "repoTreeIds": [],
+      "repoTreeNames": [],
+      "canonicalMembershipCount": 5,
+      "repoClaimCount": 0,
+      "missingCanonicalMemberships": [
+        "Combustion",
+        "Earth Buckle",
+        "Fluidity",
+        "Thunderclap",
+        "Wind Vortex"
+      ],
+      "normalizationOnlyNameMatches": [],
+      "extraRepoMembershipClaims": [],
+      "repairNote": "Membership gaps identify absence from the correct canonical tree, not necessarily absence of a talent document elsewhere. Extra claims require identity/text adjudication before deletion."
+    },
+    {
+      "canonicalTreeKey": "Jedi Academy Training Manual|Zeison Sha Warrior",
+      "canonicalDisplayName": "Zeison Sha Warrior",
+      "originSourcebook": "Jedi Academy Training Manual",
+      "repoTreeIds": [],
+      "repoTreeNames": [],
+      "canonicalMembershipCount": 5,
+      "repoClaimCount": 0,
+      "missingCanonicalMemberships": [
+        "Discblade Arc",
+        "Distant Discblade Throw",
+        "Recall Discblade",
+        "Telekinetic Vigilance",
+        "Weapon Specialization (discblade)"
+      ],
+      "normalizationOnlyNameMatches": [],
+      "extraRepoMembershipClaims": [],
+      "repairNote": "Membership gaps identify absence from the correct canonical tree, not necessarily absence of a talent document elsewhere. Extra claims require identity/text adjudication before deletion."
+    }
+  ],
+  "classAccessDifferences": [
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Armor Specialist",
+      "canonicalDisplayName": "Armor Specialist",
+      "expectedClassAccess": [
+        "Imperial Knight",
+        "Jedi Knight",
+        "Sith Apprentice",
+        "Soldier"
+      ],
+      "repoClassAccess": [
+        "Gladiator",
+        "Imperial Knight",
+        "Jedi Knight",
+        "Sith Apprentice",
+        "Soldier"
+      ],
+      "missingRepoAccess": [],
+      "extraRepoAccess": [
+        "Gladiator"
+      ]
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Awareness",
+      "canonicalDisplayName": "Awareness",
+      "expectedClassAccess": [
+        "Bounty Hunter",
+        "Gunslinger",
+        "Scout"
+      ],
+      "repoClassAccess": [
+        "Bounty Hunter",
+        "Gladiator",
+        "Gunslinger",
+        "Martial Arts Master",
+        "Pathfinder",
+        "Scout",
+        "Vanguard"
+      ],
+      "missingRepoAccess": [],
+      "extraRepoAccess": [
+        "Gladiator",
+        "Martial Arts Master",
+        "Pathfinder",
+        "Vanguard"
+      ]
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Brawler",
+      "canonicalDisplayName": "Brawler",
+      "expectedClassAccess": [
+        "Soldier"
+      ],
+      "repoClassAccess": [
+        "Melee Duelist",
+        "Soldier"
+      ],
+      "missingRepoAccess": [],
+      "extraRepoAccess": [
+        "Melee Duelist"
+      ]
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Camouflage",
+      "canonicalDisplayName": "Camouflage",
+      "expectedClassAccess": [
+        "Elite Trooper",
+        "Scout"
+      ],
+      "repoClassAccess": [
+        "Elite Trooper",
+        "Infiltrator",
+        "Scout"
+      ],
+      "missingRepoAccess": [],
+      "extraRepoAccess": [
+        "Infiltrator"
+      ]
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Fringer",
+      "canonicalDisplayName": "Fringer",
+      "expectedClassAccess": [
+        "Scout"
+      ],
+      "repoClassAccess": [
+        "Outlaw",
+        "Scout"
+      ],
+      "missingRepoAccess": [],
+      "extraRepoAccess": [
+        "Outlaw"
+      ]
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Infamy",
+      "canonicalDisplayName": "Infamy",
+      "expectedClassAccess": [
+        "Crime Lord"
+      ],
+      "repoClassAccess": [
+        "Crime Lord",
+        "Master Privateer"
+      ],
+      "missingRepoAccess": [],
+      "extraRepoAccess": [
+        "Master Privateer"
+      ]
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Inspiration",
+      "canonicalDisplayName": "Inspiration",
+      "expectedClassAccess": [
+        "Noble"
+      ],
+      "repoClassAccess": [
+        "Droid Commander",
+        "Noble"
+      ],
+      "missingRepoAccess": [],
+      "extraRepoAccess": [
+        "Droid Commander"
+      ]
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Leadership",
+      "canonicalDisplayName": "Leadership",
+      "expectedClassAccess": [
+        "Noble",
+        "Officer"
+      ],
+      "repoClassAccess": [
+        "Corporate Agent",
+        "Droid Commander",
+        "Noble",
+        "Officer"
+      ],
+      "missingRepoAccess": [],
+      "extraRepoAccess": [
+        "Corporate Agent",
+        "Droid Commander"
+      ]
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Lineage",
+      "canonicalDisplayName": "Lineage",
+      "expectedClassAccess": [
+        "Noble"
+      ],
+      "repoClassAccess": [
+        "Corporate Agent",
+        "Noble"
+      ],
+      "missingRepoAccess": [],
+      "extraRepoAccess": [
+        "Corporate Agent"
+      ]
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Misfortune",
+      "canonicalDisplayName": "Misfortune",
+      "expectedClassAccess": [
+        "Bounty Hunter",
+        "Scoundrel"
+      ],
+      "repoClassAccess": [
+        "Assassin",
+        "Bounty Hunter",
+        "Saboteur",
+        "Scoundrel"
+      ],
+      "missingRepoAccess": [],
+      "extraRepoAccess": [
+        "Assassin",
+        "Saboteur"
+      ]
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Slicer",
+      "canonicalDisplayName": "Slicer",
+      "expectedClassAccess": [
+        "Scoundrel"
+      ],
+      "repoClassAccess": [
+        "Outlaw",
+        "Saboteur",
+        "Scoundrel"
+      ],
+      "missingRepoAccess": [],
+      "extraRepoAccess": [
+        "Outlaw",
+        "Saboteur"
+      ]
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Spacer",
+      "canonicalDisplayName": "Spacer",
+      "expectedClassAccess": [
+        "Ace Pilot",
+        "Scoundrel"
+      ],
+      "repoClassAccess": [
+        "Ace Pilot",
+        "Master Privateer",
+        "Scoundrel"
+      ],
+      "missingRepoAccess": [],
+      "extraRepoAccess": [
+        "Master Privateer"
+      ]
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Survivor",
+      "canonicalDisplayName": "Survivor",
+      "expectedClassAccess": [
+        "Scout"
+      ],
+      "repoClassAccess": [
+        "Enforcer",
+        "Medic",
+        "Outlaw",
+        "Pathfinder",
+        "Scout",
+        "Vanguard"
+      ],
+      "missingRepoAccess": [],
+      "extraRepoAccess": [
+        "Enforcer",
+        "Medic",
+        "Outlaw",
+        "Pathfinder",
+        "Vanguard"
+      ]
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Weapon Specialist",
+      "canonicalDisplayName": "Weapon Specialist",
+      "expectedClassAccess": [
+        "Soldier"
+      ],
+      "repoClassAccess": [
+        "Melee Duelist",
+        "Soldier"
+      ],
+      "missingRepoAccess": [],
+      "extraRepoAccess": [
+        "Melee Duelist"
+      ]
+    },
+    {
+      "canonicalTreeKey": "Legacy Era Campaign Guide|Provocateur",
+      "canonicalDisplayName": "Provocateur",
+      "expectedClassAccess": [
+        "Charlatan",
+        "Noble"
+      ],
+      "repoClassAccess": [
+        "Noble"
+      ],
+      "missingRepoAccess": [
+        "Charlatan"
+      ],
+      "extraRepoAccess": []
+    },
+    {
+      "canonicalTreeKey": "Galaxy at War|Advance Patrol",
+      "canonicalDisplayName": "Advance Patrol",
+      "expectedClassAccess": [
+        "Scout"
+      ],
+      "repoClassAccess": [],
+      "missingRepoAccess": [
+        "Scout"
+      ],
+      "extraRepoAccess": []
+    },
+    {
+      "canonicalTreeKey": "Galaxy at War|Anticipation",
+      "canonicalDisplayName": "Anticipation",
+      "expectedClassAccess": [
+        "Noble"
+      ],
+      "repoClassAccess": [],
+      "missingRepoAccess": [
+        "Noble"
+      ],
+      "extraRepoAccess": []
+    },
+    {
+      "canonicalTreeKey": "Galaxy at War|Brigand",
+      "canonicalDisplayName": "Brigand",
+      "expectedClassAccess": [
+        "Scoundrel"
+      ],
+      "repoClassAccess": [],
+      "missingRepoAccess": [
+        "Scoundrel"
+      ],
+      "extraRepoAccess": []
+    },
+    {
+      "canonicalTreeKey": "Galaxy at War|Martial Arts Forms",
+      "canonicalDisplayName": "Martial Arts Forms",
+      "expectedClassAccess": [
+        "Martial Arts Master"
+      ],
+      "repoClassAccess": [],
+      "missingRepoAccess": [
+        "Martial Arts Master"
+      ],
+      "extraRepoAccess": []
+    },
+    {
+      "canonicalTreeKey": "Galaxy at War|Sharpshooter",
+      "canonicalDisplayName": "Sharpshooter",
+      "expectedClassAccess": [
+        "Gunslinger"
+      ],
+      "repoClassAccess": [],
+      "missingRepoAccess": [
+        "Gunslinger"
+      ],
+      "extraRepoAccess": []
+    },
+    {
+      "canonicalTreeKey": "Galaxy at War|Shockboxer",
+      "canonicalDisplayName": "Shockboxer",
+      "expectedClassAccess": [
+        "Soldier"
+      ],
+      "repoClassAccess": [],
+      "missingRepoAccess": [
+        "Soldier"
+      ],
+      "extraRepoAccess": []
+    },
+    {
+      "canonicalTreeKey": "Galaxy at War|Squad Leader",
+      "canonicalDisplayName": "Squad Leader",
+      "expectedClassAccess": [
+        "Elite Trooper"
+      ],
+      "repoClassAccess": [],
+      "missingRepoAccess": [
+        "Elite Trooper"
+      ],
+      "extraRepoAccess": []
+    },
+    {
+      "canonicalTreeKey": "Galaxy at War|Unarmed Mastery",
+      "canonicalDisplayName": "Unarmed Mastery",
+      "expectedClassAccess": [
+        "Martial Arts Master"
+      ],
+      "repoClassAccess": [],
+      "missingRepoAccess": [
+        "Martial Arts Master"
+      ],
+      "extraRepoAccess": []
+    },
+    {
+      "canonicalTreeKey": "Galaxy at War|Veteran",
+      "canonicalDisplayName": "Veteran",
+      "expectedClassAccess": [
+        "Soldier"
+      ],
+      "repoClassAccess": [],
+      "missingRepoAccess": [
+        "Soldier"
+      ],
+      "extraRepoAccess": []
+    },
+    {
+      "canonicalTreeKey": "Scavenger's Guide to Droids|Override",
+      "canonicalDisplayName": "Override",
+      "expectedClassAccess": [
+        "Droid Commander"
+      ],
+      "repoClassAccess": [],
+      "missingRepoAccess": [
+        "Droid Commander"
+      ],
+      "extraRepoAccess": []
+    },
+    {
+      "canonicalTreeKey": "Galaxy of Intrigue|Espionage",
+      "canonicalDisplayName": "Espionage",
+      "expectedClassAccess": [
+        "Scout"
+      ],
+      "repoClassAccess": [],
+      "missingRepoAccess": [
+        "Scout"
+      ],
+      "extraRepoAccess": []
+    },
+    {
+      "canonicalTreeKey": "Galaxy of Intrigue|Master of Intrigue",
+      "canonicalDisplayName": "Master of Intrigue",
+      "expectedClassAccess": [
+        "Noble"
+      ],
+      "repoClassAccess": [],
+      "missingRepoAccess": [
+        "Noble"
+      ],
+      "extraRepoAccess": []
+    },
+    {
+      "canonicalTreeKey": "Galaxy of Intrigue|Revolutionary",
+      "canonicalDisplayName": "Revolutionary",
+      "expectedClassAccess": [
+        "Scoundrel"
+      ],
+      "repoClassAccess": [],
+      "missingRepoAccess": [
+        "Scoundrel"
+      ],
+      "extraRepoAccess": []
+    },
+    {
+      "canonicalTreeKey": "Galaxy of Intrigue|Skill Challenge",
+      "canonicalDisplayName": "Skill Challenge",
+      "expectedClassAccess": [
+        "Noble"
+      ],
+      "repoClassAccess": [],
+      "missingRepoAccess": [
+        "Noble"
+      ],
+      "extraRepoAccess": []
+    },
+    {
+      "canonicalTreeKey": "Unknown Regions|Exile",
+      "canonicalDisplayName": "Exile",
+      "expectedClassAccess": [
+        "Noble"
+      ],
+      "repoClassAccess": [],
+      "missingRepoAccess": [
+        "Noble"
+      ],
+      "extraRepoAccess": []
+    },
+    {
+      "canonicalTreeKey": "Unknown Regions|Master Scout",
+      "canonicalDisplayName": "Master Scout",
+      "expectedClassAccess": [
+        "Scout"
+      ],
+      "repoClassAccess": [],
+      "missingRepoAccess": [
+        "Scout"
+      ],
+      "extraRepoAccess": []
+    },
+    {
+      "canonicalTreeKey": "Unknown Regions|Mobile Scout",
+      "canonicalDisplayName": "Mobile Scout",
+      "expectedClassAccess": [
+        "Scout"
+      ],
+      "repoClassAccess": [],
+      "missingRepoAccess": [
+        "Scout"
+      ],
+      "extraRepoAccess": []
+    },
+    {
+      "canonicalTreeKey": "Unknown Regions|Outsider",
+      "canonicalDisplayName": "Outsider",
+      "expectedClassAccess": [
+        "Scoundrel"
+      ],
+      "repoClassAccess": [],
+      "missingRepoAccess": [
+        "Scoundrel"
+      ],
+      "extraRepoAccess": []
+    },
+    {
+      "canonicalTreeKey": "Unknown Regions|Warrior",
+      "canonicalDisplayName": "Warrior",
+      "expectedClassAccess": [
+        "Soldier"
+      ],
+      "repoClassAccess": [],
+      "missingRepoAccess": [
+        "Soldier"
+      ],
+      "extraRepoAccess": []
+    }
+  ],
+  "noncanonicalHomebrew": [
+    {
+      "repoDisplayName": "Blackguard Wilder",
+      "repoTreeIds": [
+        "d2535361d1b146cd"
+      ],
+      "disposition": "NONCANONICAL_HOMEBREW_CONFIRMED",
+      "notes": "Phase 1D special-tree pass: explicitly classified as community/homebrew rather than a published SWSE talent tree; retain only as repository census evidence until later content-policy/repair decisions."
+    },
+    {
+      "repoDisplayName": "Bomarr Monk",
+      "repoTreeIds": [
+        "8955568285ba4115"
+      ],
+      "disposition": "NONCANONICAL_HOMEBREW_CONFIRMED",
+      "notes": "Phase 1D special-tree pass: explicitly classified as community/homebrew rather than a published SWSE talent tree; retain only as repository census evidence until later content-policy/repair decisions."
+    },
+    {
+      "repoDisplayName": "Chalactan Adept",
+      "repoTreeIds": [
+        "f3881205595248d4"
+      ],
+      "disposition": "NONCANONICAL_HOMEBREW_CONFIRMED",
+      "notes": "Phase 1D special-tree pass: explicitly classified as community/homebrew rather than a published SWSE talent tree; retain only as repository census evidence until later content-policy/repair decisions."
+    },
+    {
+      "repoDisplayName": "Cloner",
+      "repoTreeIds": [
+        "8e44e56069274319"
+      ],
+      "disposition": "NONCANONICAL_HOMEBREW_CONFIRMED",
+      "notes": "Phase 1D special-tree pass: explicitly classified as community/homebrew rather than a published SWSE talent tree; retain only as repository census evidence until later content-policy/repair decisions."
+    },
+    {
+      "repoDisplayName": "Cowardice",
+      "repoTreeIds": [
+        "acb91d3803eb4fcd"
+      ],
+      "disposition": "NONCANONICAL_HOMEBREW_CONFIRMED",
+      "notes": "Phase 1D special-tree pass: explicitly classified as community/homebrew rather than a published SWSE talent tree; retain only as repository census evidence until later content-policy/repair decisions."
+    },
+    {
+      "repoDisplayName": "Defensive Duelist",
+      "repoTreeIds": [
+        "fc978e442f544dbe"
+      ],
+      "disposition": "NONCANONICAL_HOMEBREW_CONFIRMED",
+      "notes": "Phase 1D special-tree pass: explicitly classified as community/homebrew rather than a published SWSE talent tree; retain only as repository census evidence until later content-policy/repair decisions."
+    },
+    {
+      "repoDisplayName": "Exceptional Followers",
+      "repoTreeIds": [
+        "37f3554a2f30425a"
+      ],
+      "disposition": "NONCANONICAL_HOMEBREW_CONFIRMED",
+      "notes": "Phase 1D special-tree pass: explicitly classified as community/homebrew rather than a published SWSE talent tree; retain only as repository census evidence until later content-policy/repair decisions."
+    },
+    {
+      "repoDisplayName": "Force Warrior",
+      "repoTreeIds": [
+        "11f99465ba4847e2"
+      ],
+      "disposition": "NONCANONICAL_HOMEBREW_CONFIRMED",
+      "notes": "Phase 1D special-tree pass: explicitly classified as community/homebrew rather than a published SWSE talent tree; retain only as repository census evidence until later content-policy/repair decisions."
+    },
+    {
+      "repoDisplayName": "Galactic Senator",
+      "repoTreeIds": [
+        "feb08c2834a447ab"
+      ],
+      "disposition": "NONCANONICAL_HOMEBREW_CONFIRMED",
+      "notes": "Phase 1D special-tree pass: explicitly classified as community/homebrew rather than a published SWSE talent tree; retain only as repository census evidence until later content-policy/repair decisions."
+    },
+    {
+      "repoDisplayName": "Jedaii Ranger",
+      "repoTreeIds": [
+        "dcac793cc9fe42a7"
+      ],
+      "disposition": "NONCANONICAL_HOMEBREW_CONFIRMED",
+      "notes": "Phase 1D special-tree pass: explicitly classified as community/homebrew rather than a published SWSE talent tree; retain only as repository census evidence until later content-policy/repair decisions."
+    },
+    {
+      "repoDisplayName": "Jumptrooper",
+      "repoTreeIds": [
+        "25d99948c9cb41ad"
+      ],
+      "disposition": "NONCANONICAL_HOMEBREW_CONFIRMED",
+      "notes": "Phase 1D special-tree pass: explicitly classified as community/homebrew rather than a published SWSE talent tree; retain only as repository census evidence until later content-policy/repair decisions."
+    },
+    {
+      "repoDisplayName": "Master Of The Amphistaff",
+      "repoTreeIds": [
+        "d5b60c4f058c4085"
+      ],
+      "disposition": "NONCANONICAL_HOMEBREW_CONFIRMED",
+      "notes": "Phase 1D special-tree pass: explicitly classified as community/homebrew rather than a published SWSE talent tree; retain only as repository census evidence until later content-policy/repair decisions."
+    },
+    {
+      "repoDisplayName": "Mechanic",
+      "repoTreeIds": [
+        "38d7c18ce4664c66"
+      ],
+      "disposition": "NONCANONICAL_HOMEBREW_CONFIRMED",
+      "notes": "Phase 1D special-tree pass: explicitly classified as community/homebrew rather than a published SWSE talent tree; retain only as repository census evidence until later content-policy/repair decisions."
+    },
+    {
+      "repoDisplayName": "Midichlorian",
+      "repoTreeIds": [
+        "e85cb1a787e24cac"
+      ],
+      "disposition": "NONCANONICAL_HOMEBREW_CONFIRMED",
+      "notes": "Phase 1D special-tree pass: explicitly classified as community/homebrew rather than a published SWSE talent tree; retain only as repository census evidence until later content-policy/repair decisions."
+    },
+    {
+      "repoDisplayName": "Morgukai Warrior",
+      "repoTreeIds": [
+        "0a61ab9ece844326"
+      ],
+      "disposition": "NONCANONICAL_HOMEBREW_CONFIRMED",
+      "notes": "Phase 1D special-tree pass: explicitly classified as community/homebrew rather than a published SWSE talent tree; retain only as repository census evidence until later content-policy/repair decisions."
+    },
+    {
+      "repoDisplayName": "Science",
+      "repoTreeIds": [
+        "00cb74839a524276"
+      ],
+      "disposition": "NONCANONICAL_HOMEBREW_CONFIRMED",
+      "notes": "Phase 1D special-tree pass: explicitly classified as community/homebrew rather than a published SWSE talent tree; retain only as repository census evidence until later content-policy/repair decisions."
+    },
+    {
+      "repoDisplayName": "Smashball Pro",
+      "repoTreeIds": [
+        "bfc1356c66c74783"
+      ],
+      "disposition": "NONCANONICAL_HOMEBREW_CONFIRMED",
+      "notes": "Phase 1D special-tree pass: explicitly classified as community/homebrew rather than a published SWSE talent tree; retain only as repository census evidence until later content-policy/repair decisions."
+    },
+    {
+      "repoDisplayName": "Sorcerer Of Tund",
+      "repoTreeIds": [
+        "cfd358ef61fb47bd"
+      ],
+      "disposition": "NONCANONICAL_HOMEBREW_CONFIRMED",
+      "notes": "Phase 1D special-tree pass: explicitly classified as community/homebrew rather than a published SWSE talent tree; retain only as repository census evidence until later content-policy/repair decisions."
+    },
+    {
+      "repoDisplayName": "Treatment",
+      "repoTreeIds": [
+        "c1cf52502cf74435"
+      ],
+      "disposition": "NONCANONICAL_HOMEBREW_CONFIRMED",
+      "notes": "Phase 1D special-tree pass: explicitly classified as community/homebrew rather than a published SWSE talent tree; retain only as repository census evidence until later content-policy/repair decisions."
+    }
+  ],
+  "obsoleteSplitFragments": [
+    {
+      "repoDisplayName": "Genohardan",
+      "repoTreeIds": [
+        "db1b30c2163d0650"
+      ],
+      "canonicalReplacementKey": "Scum and Villainy|GenoHaradan",
+      "notes": "Obsolete split fragment of the source-confirmed canonical Scum and Villainy GenoHaradan tree. Retained only as current-repo census evidence until production repair."
+    }
+  ]
+}
