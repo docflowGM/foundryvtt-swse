@@ -6,9 +6,9 @@
   "counts": {
     "entries": 195,
     "referenceRows": 140,
-    "primarySourceVerified": 94,
+    "primarySourceVerified": 101,
     "referencePendingPrimary": 47,
-    "repoSpecialSourceReview": 54
+    "repoSpecialSourceReview": 47
   },
   "entries": [
     {
@@ -7926,11 +7926,11 @@
       ]
     },
     {
-      "canonicalTreeKey": "repo-special|1stdegree Droid",
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|First-Degree Droid",
       "displayName": "1stdegree Droid",
-      "sourcebook": null,
+      "sourcebook": "Force Unleashed Campaign Guide",
       "classAccess": [],
-      "sourceStatus": "REPO_SPECIAL_SOURCE_REVIEW",
+      "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
       "repoTreeIds": [
         "a212850887fe41da"
       ],
@@ -7940,21 +7940,47 @@
       "repoClassAccess": [],
       "status": "REPO_ONLY_SPECIAL_OR_UNRESOLVED",
       "notes": null,
-      "originSourcebook": null,
-      "originTalentNames": null,
-      "talentPublications": [],
-      "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED",
+      "originSourcebook": "Force Unleashed Campaign Guide",
+      "originTalentNames": [
+        "Dull the Pain",
+        "Interrogator",
+        "Medical Droid"
+      ],
+      "talentPublications": [
+        {
+          "sourcebook": "Force Unleashed Campaign Guide",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Dull the Pain",
+            "Interrogator",
+            "Medical Droid"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Dull the Pain",
+        "Interrogator",
+        "Medical Droid"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
       "referenceClassAccess": [],
       "accessPublications": [],
-      "aggregateClassAccess": []
+      "aggregateClassAccess": [],
+      "canonicalDisplayName": "First-Degree Droid",
+      "accessModel": "DROID_DEGREE",
+      "specialAccessRules": [
+        {
+          "sourcebook": "Force Unleashed Campaign Guide",
+          "summary": "Available only to first-degree droids when they would normally gain a talent."
+        }
+      ]
     },
     {
-      "canonicalTreeKey": "repo-special|2nddegree Droid",
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Second-Degree Droid",
       "displayName": "2nddegree Droid",
-      "sourcebook": null,
+      "sourcebook": "Force Unleashed Campaign Guide",
       "classAccess": [],
-      "sourceStatus": "REPO_SPECIAL_SOURCE_REVIEW",
+      "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
       "repoTreeIds": [
         "ad499981ddb8450e"
       ],
@@ -7964,21 +7990,47 @@
       "repoClassAccess": [],
       "status": "REPO_ONLY_SPECIAL_OR_UNRESOLVED",
       "notes": null,
-      "originSourcebook": null,
-      "originTalentNames": null,
-      "talentPublications": [],
-      "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED",
+      "originSourcebook": "Force Unleashed Campaign Guide",
+      "originTalentNames": [
+        "Adept Assistant",
+        "Mechanics Mastery",
+        "Vehicle Mechanic"
+      ],
+      "talentPublications": [
+        {
+          "sourcebook": "Force Unleashed Campaign Guide",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Adept Assistant",
+            "Mechanics Mastery",
+            "Vehicle Mechanic"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Adept Assistant",
+        "Mechanics Mastery",
+        "Vehicle Mechanic"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
       "referenceClassAccess": [],
       "accessPublications": [],
-      "aggregateClassAccess": []
+      "aggregateClassAccess": [],
+      "canonicalDisplayName": "Second-Degree Droid",
+      "accessModel": "DROID_DEGREE",
+      "specialAccessRules": [
+        {
+          "sourcebook": "Force Unleashed Campaign Guide",
+          "summary": "Available only to second-degree droids when they would normally gain a talent."
+        }
+      ]
     },
     {
-      "canonicalTreeKey": "repo-special|3rddegree Droid",
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Third-Degree Droid",
       "displayName": "3rddegree Droid",
-      "sourcebook": null,
+      "sourcebook": "Force Unleashed Campaign Guide",
       "classAccess": [],
-      "sourceStatus": "REPO_SPECIAL_SOURCE_REVIEW",
+      "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
       "repoTreeIds": [
         "af077700c1b8433f"
       ],
@@ -7988,21 +8040,47 @@
       "repoClassAccess": [],
       "status": "REPO_ONLY_SPECIAL_OR_UNRESOLVED",
       "notes": null,
-      "originSourcebook": null,
-      "originTalentNames": null,
-      "talentPublications": [],
-      "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED",
+      "originSourcebook": "Force Unleashed Campaign Guide",
+      "originTalentNames": [
+        "Etiquette",
+        "Helpful",
+        "Protocol"
+      ],
+      "talentPublications": [
+        {
+          "sourcebook": "Force Unleashed Campaign Guide",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Etiquette",
+            "Helpful",
+            "Protocol"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Etiquette",
+        "Helpful",
+        "Protocol"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
       "referenceClassAccess": [],
       "accessPublications": [],
-      "aggregateClassAccess": []
+      "aggregateClassAccess": [],
+      "canonicalDisplayName": "Third-Degree Droid",
+      "accessModel": "DROID_DEGREE",
+      "specialAccessRules": [
+        {
+          "sourcebook": "Force Unleashed Campaign Guide",
+          "summary": "Available only to third-degree droids when they would normally gain a talent."
+        }
+      ]
     },
     {
-      "canonicalTreeKey": "repo-special|4thdegree Droid",
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Fourth-Degree Droid",
       "displayName": "4thdegree Droid",
-      "sourcebook": null,
+      "sourcebook": "Force Unleashed Campaign Guide",
       "classAccess": [],
-      "sourceStatus": "REPO_SPECIAL_SOURCE_REVIEW",
+      "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
       "repoTreeIds": [
         "73814706c00849c6"
       ],
@@ -8012,21 +8090,47 @@
       "repoClassAccess": [],
       "status": "REPO_ONLY_SPECIAL_OR_UNRESOLVED",
       "notes": null,
-      "originSourcebook": null,
-      "originTalentNames": null,
-      "talentPublications": [],
-      "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED",
+      "originSourcebook": "Force Unleashed Campaign Guide",
+      "originTalentNames": [
+        "Combat Repairs",
+        "Droid Smash",
+        "Targeting Package"
+      ],
+      "talentPublications": [
+        {
+          "sourcebook": "Force Unleashed Campaign Guide",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Combat Repairs",
+            "Droid Smash",
+            "Targeting Package"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Combat Repairs",
+        "Droid Smash",
+        "Targeting Package"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
       "referenceClassAccess": [],
       "accessPublications": [],
-      "aggregateClassAccess": []
+      "aggregateClassAccess": [],
+      "canonicalDisplayName": "Fourth-Degree Droid",
+      "accessModel": "DROID_DEGREE",
+      "specialAccessRules": [
+        {
+          "sourcebook": "Force Unleashed Campaign Guide",
+          "summary": "Available only to fourth-degree droids when they would normally gain a talent."
+        }
+      ]
     },
     {
-      "canonicalTreeKey": "repo-special|5thdegree Droid",
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Fifth-Degree Droid",
       "displayName": "5thdegree Droid",
-      "sourcebook": null,
+      "sourcebook": "Force Unleashed Campaign Guide",
       "classAccess": [],
-      "sourceStatus": "REPO_SPECIAL_SOURCE_REVIEW",
+      "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
       "repoTreeIds": [
         "c4e48efaad1f49af"
       ],
@@ -8036,21 +8140,47 @@
       "repoClassAccess": [],
       "status": "REPO_ONLY_SPECIAL_OR_UNRESOLVED",
       "notes": null,
-      "originSourcebook": null,
-      "originTalentNames": null,
-      "talentPublications": [],
-      "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED",
+      "originSourcebook": "Force Unleashed Campaign Guide",
+      "originTalentNames": [
+        "Cargo Hauler",
+        "Environmentally Shielded",
+        "Power Supply"
+      ],
+      "talentPublications": [
+        {
+          "sourcebook": "Force Unleashed Campaign Guide",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Cargo Hauler",
+            "Environmentally Shielded",
+            "Power Supply"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Cargo Hauler",
+        "Environmentally Shielded",
+        "Power Supply"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
       "referenceClassAccess": [],
       "accessPublications": [],
-      "aggregateClassAccess": []
+      "aggregateClassAccess": [],
+      "canonicalDisplayName": "Fifth-Degree Droid",
+      "accessModel": "DROID_DEGREE",
+      "specialAccessRules": [
+        {
+          "sourcebook": "Force Unleashed Campaign Guide",
+          "summary": "Available only to fifth-degree droids when they would normally gain a talent."
+        }
+      ]
     },
     {
-      "canonicalTreeKey": "repo-special|Agent Of Ossus",
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Agent of Ossus",
       "displayName": "Agent Of Ossus",
-      "sourcebook": null,
+      "sourcebook": "Force Unleashed Campaign Guide",
       "classAccess": [],
-      "sourceStatus": "REPO_SPECIAL_SOURCE_REVIEW",
+      "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
       "repoTreeIds": [
         "754907ded50d4f46"
       ],
@@ -8060,14 +8190,47 @@
       "repoClassAccess": [],
       "status": "REPO_ONLY_SPECIAL_OR_UNRESOLVED",
       "notes": null,
-      "originSourcebook": null,
-      "originTalentNames": null,
-      "talentPublications": [],
-      "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED",
+      "originSourcebook": "Force Unleashed Campaign Guide",
+      "originTalentNames": [
+        "Buried Presence",
+        "Conceal Other",
+        "Insightful Aim",
+        "Vanish"
+      ],
+      "talentPublications": [
+        {
+          "sourcebook": "Force Unleashed Campaign Guide",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Buried Presence",
+            "Conceal Other",
+            "Insightful Aim",
+            "Vanish"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Buried Presence",
+        "Conceal Other",
+        "Insightful Aim",
+        "Vanish"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
       "referenceClassAccess": [],
       "accessPublications": [],
-      "aggregateClassAccess": []
+      "aggregateClassAccess": [],
+      "canonicalDisplayName": "Agent of Ossus",
+      "accessModel": "FORCE_TRADITION",
+      "specialAccessRules": [
+        {
+          "sourcebook": "Force Unleashed Campaign Guide",
+          "summary": "Force Sensitivity required to select talents from this Force talent tree."
+        },
+        {
+          "sourcebook": "Force Unleashed Campaign Guide",
+          "summary": "Tradition membership follows the Agents of Ossus membership conditions in the sourcebook."
+        }
+      ]
     },
     {
       "canonicalTreeKey": "repo-special|Aingtii Monk",
@@ -8560,11 +8723,11 @@
       "aggregateClassAccess": []
     },
     {
-      "canonicalTreeKey": "repo-special|Felucian Shaman",
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Felucian Shaman",
       "displayName": "Felucian Shaman",
-      "sourcebook": null,
+      "sourcebook": "Force Unleashed Campaign Guide",
       "classAccess": [],
-      "sourceStatus": "REPO_SPECIAL_SOURCE_REVIEW",
+      "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
       "repoTreeIds": [
         "8a61bf426391431b"
       ],
@@ -8574,14 +8737,47 @@
       "repoClassAccess": [],
       "status": "REPO_ONLY_SPECIAL_OR_UNRESOLVED",
       "notes": null,
-      "originSourcebook": null,
-      "originTalentNames": null,
-      "talentPublications": [],
-      "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED",
+      "originSourcebook": "Force Unleashed Campaign Guide",
+      "originTalentNames": [
+        "Detonate",
+        "Hive Mind",
+        "Infuse Weapon",
+        "Sickening Blast"
+      ],
+      "talentPublications": [
+        {
+          "sourcebook": "Force Unleashed Campaign Guide",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Detonate",
+            "Hive Mind",
+            "Infuse Weapon",
+            "Sickening Blast"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Detonate",
+        "Hive Mind",
+        "Infuse Weapon",
+        "Sickening Blast"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
       "referenceClassAccess": [],
       "accessPublications": [],
-      "aggregateClassAccess": []
+      "aggregateClassAccess": [],
+      "canonicalDisplayName": "Felucian Shaman",
+      "accessModel": "FORCE_TRADITION",
+      "specialAccessRules": [
+        {
+          "sourcebook": "Force Unleashed Campaign Guide",
+          "summary": "Tradition membership restricted to Felucians trained in Use the Force."
+        },
+        {
+          "sourcebook": "Force Unleashed Campaign Guide",
+          "summary": "Felucian shamans may also select Charm Beast and Command Beast from the Dathomiri Witch tree; these remain external-tree access, not Felucian Shaman membership."
+        }
+      ]
     },
     {
       "canonicalTreeKey": "repo-special|Force Warrior",
