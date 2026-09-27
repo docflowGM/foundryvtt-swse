@@ -1,0 +1,83 @@
+{
+  "schemaVersion": 1,
+  "phase": "2",
+  "sourcebook": "Legacy Era Campaign Guide",
+  "status": "IN_PROGRESS_CHECKPOINT",
+  "checkpointDate": "2026-09-27",
+  "branch": "audit/talent-phase-1-tree-census",
+  "authority": {
+    "pdf": "Star Wars Saga Edition - Legacy Era Campaign Guide.pdf",
+    "textIndex": "Legacy Era Campaign Guide_djvu.txt",
+    "rule": "TXT/DJVU is the wording/indexing layer; printed PDF pages are the final authority for hierarchy and page attribution."
+  },
+  "verifiedSoFar": {
+    "preliminaryCanonicalTalentPublications": 101,
+    "originTreeIdentities": 16,
+    "originTalentIdentities": 88,
+    "expansionTreeTargets": 7,
+    "expansionTalentIdentities": 13,
+    "hierarchyPassStatus": "No false nested-action talent identities found so far; current total remains 101.",
+    "repositoryRecordsMapped": 91,
+    "missingCorrectTreeRecords": 10,
+    "missingByTree": {
+      "Disciple Of Twilight": [
+        "Cloak of Shadow",
+        "Phantasm",
+        "Revelation",
+        "Shadow Armor",
+        "Shadow Vision"
+      ],
+      "Ember Of Vahl": [
+        "Initiate of Vahl",
+        "Reading the Flame",
+        "Sword of Vahl",
+        "Vahl's Brand",
+        "Vahl's Flame"
+      ]
+    },
+    "sameNameIdentityHazards": [
+      {
+        "canonicalTree": "Carbineer",
+        "canonicalTalent": "Multiattack Proficiency (rifles)",
+        "collidingTree": "Weapon Master",
+        "status": "CORRECT_TREE_RECORD_EXISTS_PROTECT_IDENTITY"
+      },
+      {
+        "canonicalTree": "Knight's Armor",
+        "canonicalTalent": "Armor Mastery",
+        "collidingTree": "Armor Specialist",
+        "status": "CORRECT_TREE_RECORD_EXISTS_PROTECT_IDENTITY"
+      },
+      {
+        "canonicalTree": "Provocateur",
+        "canonicalTalent": "Seize the Moment",
+        "collidingTree": "Outlaw",
+        "status": "CORRECT_TREE_RECORD_EXISTS_PROTECT_IDENTITY"
+      }
+    ],
+    "confirmedContentHazards": [
+      {
+        "tree": "Provocateur",
+        "talent": "Seize the Moment",
+        "disposition": "DESCRIPTION_CONTAMINATION_CONFIRMED",
+        "note": "The correct Provocateur record's benefit describes the Legacy mechanic, but its description contains the distinct Outlaw Seize the Moment mechanic."
+      }
+    ],
+    "specialSourceHandling": [
+      {
+        "tree": "Implant",
+        "note": "The Implant tree has a shared aftereffect paragraph applying to all five implant talents. It must be preserved with each talent during canonical normalization rather than emitted as a standalone generic Implant talent."
+      }
+    ]
+  },
+  "remainingBeforeBookCloseout": [
+    "Complete printed-page attribution for all 101 identities.",
+    "Finish canonical full-text and prerequisite normalization.",
+    "Classify mapped-record content discrepancies beyond already confirmed hazards.",
+    "Generate final content certification JSON.",
+    "Generate final discrepancy manifest JSON.",
+    "Publish final Legacy Era Phase 2 closeout document.",
+    "Commit and push final book checkpoint before starting the next sourcebook."
+  ],
+  "productionChanges": false
+}
