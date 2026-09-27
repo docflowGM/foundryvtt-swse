@@ -5,6 +5,7 @@
   "phase": "1D",
   "scope": "Structural canonical talent-tree repair queue. No production changes applied.",
   "authority": "Primary-source tree identity/membership/publication/access provenance from data/audits/talent-canonical-tree-registry.json.",
+  "postCloseoutCorrection": "Phase 2 Core certification restored Improved Dark Healing to the Core Sith origin membership.",
   "summary": {
     "registryEntries": 197,
     "canonicalPublishedTrees": 177,
@@ -2838,6 +2839,5 @@
       "sourcebook": "Force Unleashed Campaign Guide",
       "note": "Primary-source Master Privateer Talents section grants Infamy and Privateer, not Spacer. Repository/reference Spacer access is noncanonical."
     }
-  ],
-  "postCloseoutCorrection": "Core Phase 2 restored Improved Dark Healing to Core Sith origin membership (p.224). Structural totals recomputed."
+  ]
 }
