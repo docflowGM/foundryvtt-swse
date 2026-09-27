@@ -4,20 +4,23 @@
   "branch": "audit/talent-phase-1-tree-census",
   "phase": "1D",
   "scope": "Structural canonical talent-tree repair queue. No production changes applied.",
+  "authority": "Primary-source tree identity/membership/publication/access provenance from data/audits/talent-canonical-tree-registry.json.",
   "summary": {
     "registryEntries": 197,
     "canonicalPublishedTrees": 177,
     "noncanonicalHomebrewTrees": 19,
     "obsoleteSplitFragments": 1,
     "expansionPublicationClaims": 278,
+    "laterClassAccessGrants": 23,
+    "sourceDisprovedReferenceAccessClaims": 1,
     "aggregateCanonicalMembershipClaims": 1190,
     "treesWithMembershipDifferences": 104,
     "canonicalMembershipGaps": 281,
     "normalizationOnlyNameMatches": 9,
     "extraRepoMembershipClaims": 75,
-    "treesWithClassAccessDifferences": 34,
+    "treesWithClassAccessDifferences": 21,
     "missingRepoClassAccessEdges": 20,
-    "extraRepoClassAccessEdges": 24
+    "extraRepoClassAccessEdges": 1
   },
   "missingCanonicalTreeDocuments": [
     {
@@ -2404,199 +2407,6 @@
   ],
   "classAccessDifferences": [
     {
-      "canonicalTreeKey": "Saga Edition Core Rulebook|Armor Specialist",
-      "canonicalDisplayName": "Armor Specialist",
-      "expectedClassAccess": [
-        "Imperial Knight",
-        "Jedi Knight",
-        "Sith Apprentice",
-        "Soldier"
-      ],
-      "repoClassAccess": [
-        "Gladiator",
-        "Imperial Knight",
-        "Jedi Knight",
-        "Sith Apprentice",
-        "Soldier"
-      ],
-      "missingRepoAccess": [],
-      "extraRepoAccess": [
-        "Gladiator"
-      ]
-    },
-    {
-      "canonicalTreeKey": "Saga Edition Core Rulebook|Awareness",
-      "canonicalDisplayName": "Awareness",
-      "expectedClassAccess": [
-        "Bounty Hunter",
-        "Gunslinger",
-        "Scout"
-      ],
-      "repoClassAccess": [
-        "Bounty Hunter",
-        "Gladiator",
-        "Gunslinger",
-        "Martial Arts Master",
-        "Pathfinder",
-        "Scout",
-        "Vanguard"
-      ],
-      "missingRepoAccess": [],
-      "extraRepoAccess": [
-        "Gladiator",
-        "Martial Arts Master",
-        "Pathfinder",
-        "Vanguard"
-      ]
-    },
-    {
-      "canonicalTreeKey": "Saga Edition Core Rulebook|Brawler",
-      "canonicalDisplayName": "Brawler",
-      "expectedClassAccess": [
-        "Soldier"
-      ],
-      "repoClassAccess": [
-        "Melee Duelist",
-        "Soldier"
-      ],
-      "missingRepoAccess": [],
-      "extraRepoAccess": [
-        "Melee Duelist"
-      ]
-    },
-    {
-      "canonicalTreeKey": "Saga Edition Core Rulebook|Camouflage",
-      "canonicalDisplayName": "Camouflage",
-      "expectedClassAccess": [
-        "Elite Trooper",
-        "Scout"
-      ],
-      "repoClassAccess": [
-        "Elite Trooper",
-        "Infiltrator",
-        "Scout"
-      ],
-      "missingRepoAccess": [],
-      "extraRepoAccess": [
-        "Infiltrator"
-      ]
-    },
-    {
-      "canonicalTreeKey": "Saga Edition Core Rulebook|Fringer",
-      "canonicalDisplayName": "Fringer",
-      "expectedClassAccess": [
-        "Scout"
-      ],
-      "repoClassAccess": [
-        "Outlaw",
-        "Scout"
-      ],
-      "missingRepoAccess": [],
-      "extraRepoAccess": [
-        "Outlaw"
-      ]
-    },
-    {
-      "canonicalTreeKey": "Saga Edition Core Rulebook|Infamy",
-      "canonicalDisplayName": "Infamy",
-      "expectedClassAccess": [
-        "Crime Lord"
-      ],
-      "repoClassAccess": [
-        "Crime Lord",
-        "Master Privateer"
-      ],
-      "missingRepoAccess": [],
-      "extraRepoAccess": [
-        "Master Privateer"
-      ]
-    },
-    {
-      "canonicalTreeKey": "Saga Edition Core Rulebook|Inspiration",
-      "canonicalDisplayName": "Inspiration",
-      "expectedClassAccess": [
-        "Noble"
-      ],
-      "repoClassAccess": [
-        "Droid Commander",
-        "Noble"
-      ],
-      "missingRepoAccess": [],
-      "extraRepoAccess": [
-        "Droid Commander"
-      ]
-    },
-    {
-      "canonicalTreeKey": "Saga Edition Core Rulebook|Leadership",
-      "canonicalDisplayName": "Leadership",
-      "expectedClassAccess": [
-        "Noble",
-        "Officer"
-      ],
-      "repoClassAccess": [
-        "Corporate Agent",
-        "Droid Commander",
-        "Noble",
-        "Officer"
-      ],
-      "missingRepoAccess": [],
-      "extraRepoAccess": [
-        "Corporate Agent",
-        "Droid Commander"
-      ]
-    },
-    {
-      "canonicalTreeKey": "Saga Edition Core Rulebook|Lineage",
-      "canonicalDisplayName": "Lineage",
-      "expectedClassAccess": [
-        "Noble"
-      ],
-      "repoClassAccess": [
-        "Corporate Agent",
-        "Noble"
-      ],
-      "missingRepoAccess": [],
-      "extraRepoAccess": [
-        "Corporate Agent"
-      ]
-    },
-    {
-      "canonicalTreeKey": "Saga Edition Core Rulebook|Misfortune",
-      "canonicalDisplayName": "Misfortune",
-      "expectedClassAccess": [
-        "Bounty Hunter",
-        "Scoundrel"
-      ],
-      "repoClassAccess": [
-        "Assassin",
-        "Bounty Hunter",
-        "Saboteur",
-        "Scoundrel"
-      ],
-      "missingRepoAccess": [],
-      "extraRepoAccess": [
-        "Assassin",
-        "Saboteur"
-      ]
-    },
-    {
-      "canonicalTreeKey": "Saga Edition Core Rulebook|Slicer",
-      "canonicalDisplayName": "Slicer",
-      "expectedClassAccess": [
-        "Scoundrel"
-      ],
-      "repoClassAccess": [
-        "Outlaw",
-        "Saboteur",
-        "Scoundrel"
-      ],
-      "missingRepoAccess": [],
-      "extraRepoAccess": [
-        "Outlaw",
-        "Saboteur"
-      ]
-    },
-    {
       "canonicalTreeKey": "Saga Edition Core Rulebook|Spacer",
       "canonicalDisplayName": "Spacer",
       "expectedClassAccess": [
@@ -2611,44 +2421,6 @@
       "missingRepoAccess": [],
       "extraRepoAccess": [
         "Master Privateer"
-      ]
-    },
-    {
-      "canonicalTreeKey": "Saga Edition Core Rulebook|Survivor",
-      "canonicalDisplayName": "Survivor",
-      "expectedClassAccess": [
-        "Scout"
-      ],
-      "repoClassAccess": [
-        "Enforcer",
-        "Medic",
-        "Outlaw",
-        "Pathfinder",
-        "Scout",
-        "Vanguard"
-      ],
-      "missingRepoAccess": [],
-      "extraRepoAccess": [
-        "Enforcer",
-        "Medic",
-        "Outlaw",
-        "Pathfinder",
-        "Vanguard"
-      ]
-    },
-    {
-      "canonicalTreeKey": "Saga Edition Core Rulebook|Weapon Specialist",
-      "canonicalDisplayName": "Weapon Specialist",
-      "expectedClassAccess": [
-        "Soldier"
-      ],
-      "repoClassAccess": [
-        "Melee Duelist",
-        "Soldier"
-      ],
-      "missingRepoAccess": [],
-      "extraRepoAccess": [
-        "Melee Duelist"
       ]
     },
     {
@@ -3057,6 +2829,15 @@
       ],
       "canonicalReplacementKey": "Scum and Villainy|GenoHaradan",
       "notes": "Obsolete split fragment of the source-confirmed canonical Scum and Villainy GenoHaradan tree. Retained only as current-repo census evidence until production repair."
+    }
+  ],
+  "sourceDisprovedAccessClaims": [
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Spacer",
+      "className": "Master Privateer",
+      "disposition": "ACCESS_ERROR_SOURCE_DISPROVED",
+      "sourcebook": "Force Unleashed Campaign Guide",
+      "note": "Primary-source Master Privateer Talents section grants Infamy and Privateer, not Spacer. Repository/reference Spacer access is noncanonical."
     }
   ]
 }
