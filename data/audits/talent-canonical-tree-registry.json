@@ -100,14 +100,23 @@
           "classes": [
             "Imperial Knight"
           ]
+        },
+        {
+          "sourcebook": "Knights of the Old Republic Campaign Guide",
+          "publicationType": "DIRECT_ACCESS_GRANT",
+          "classes": [
+            "Gladiator"
+          ]
         }
       ],
       "aggregateClassAccess": [
         "Soldier",
         "Jedi Knight",
         "Sith Apprentice",
-        "Imperial Knight"
-      ]
+        "Imperial Knight",
+        "Gladiator"
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "Saga Edition Core Rulebook|Awareness",
@@ -206,13 +215,46 @@
             "Bounty Hunter",
             "Gunslinger"
           ]
+        },
+        {
+          "sourcebook": "Knights of the Old Republic Campaign Guide",
+          "publicationType": "DIRECT_ACCESS_GRANT",
+          "classes": [
+            "Gladiator"
+          ]
+        },
+        {
+          "sourcebook": "Galaxy at War",
+          "publicationType": "DIRECT_ACCESS_GRANT",
+          "classes": [
+            "Martial Arts Master"
+          ]
+        },
+        {
+          "sourcebook": "Rebellion Era Campaign Guide",
+          "publicationType": "DIRECT_ACCESS_GRANT",
+          "classes": [
+            "Pathfinder"
+          ]
+        },
+        {
+          "sourcebook": "Clone Wars Campaign Guide",
+          "publicationType": "DIRECT_ACCESS_GRANT",
+          "classes": [
+            "Vanguard"
+          ]
         }
       ],
       "aggregateClassAccess": [
         "Scout",
         "Bounty Hunter",
-        "Gunslinger"
-      ]
+        "Gunslinger",
+        "Gladiator",
+        "Martial Arts Master",
+        "Pathfinder",
+        "Vanguard"
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "Saga Edition Core Rulebook|Bounty Hunter",
@@ -327,7 +369,8 @@
       ],
       "aggregateClassAccess": [
         "Bounty Hunter"
-      ]
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "Saga Edition Core Rulebook|Brawler",
@@ -454,11 +497,20 @@
           "classes": [
             "Soldier"
           ]
+        },
+        {
+          "sourcebook": "Knights of the Old Republic Campaign Guide",
+          "publicationType": "DIRECT_ACCESS_GRANT",
+          "classes": [
+            "Melee Duelist"
+          ]
         }
       ],
       "aggregateClassAccess": [
-        "Soldier"
-      ]
+        "Soldier",
+        "Melee Duelist"
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "Saga Edition Core Rulebook|Camouflage",
@@ -551,12 +603,21 @@
             "Scout",
             "Elite Trooper"
           ]
+        },
+        {
+          "sourcebook": "Force Unleashed Campaign Guide",
+          "publicationType": "DIRECT_ACCESS_GRANT",
+          "classes": [
+            "Infiltrator"
+          ]
         }
       ],
       "aggregateClassAccess": [
         "Scout",
-        "Elite Trooper"
-      ]
+        "Elite Trooper",
+        "Infiltrator"
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "Saga Edition Core Rulebook|Commando",
@@ -678,7 +739,8 @@
         "Soldier",
         "Elite Trooper",
         "Officer"
-      ]
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "Saga Edition Core Rulebook|Dark Side Devotee",
@@ -749,7 +811,8 @@
       ],
       "aggregateClassAccess": [
         "Force Adept"
-      ]
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "Saga Edition Core Rulebook|Duelist",
@@ -864,7 +927,8 @@
         "Jedi Master",
         "Sith Apprentice",
         "Imperial Knight"
-      ]
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "Saga Edition Core Rulebook|Expert Pilot",
@@ -975,7 +1039,8 @@
       ],
       "aggregateClassAccess": [
         "Ace Pilot"
-      ]
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "Saga Edition Core Rulebook|Force Adept",
@@ -1050,7 +1115,8 @@
       "aggregateClassAccess": [
         "Force Adept",
         "Force Disciple"
-      ]
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "Saga Edition Core Rulebook|Force Item",
@@ -1131,7 +1197,8 @@
       ],
       "aggregateClassAccess": [
         "Force Adept"
-      ]
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "Saga Edition Core Rulebook|Fortune",
@@ -1228,7 +1295,8 @@
       "aggregateClassAccess": [
         "Scoundrel",
         "Gunslinger"
-      ]
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "Saga Edition Core Rulebook|Fringer",
@@ -1304,11 +1372,20 @@
           "classes": [
             "Scout"
           ]
+        },
+        {
+          "sourcebook": "Scum and Villainy",
+          "publicationType": "DIRECT_ACCESS_GRANT",
+          "classes": [
+            "Outlaw"
+          ]
         }
       ],
       "aggregateClassAccess": [
-        "Scout"
-      ]
+        "Scout",
+        "Outlaw"
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "Saga Edition Core Rulebook|Gunner",
@@ -1391,7 +1468,8 @@
       ],
       "aggregateClassAccess": [
         "Ace Pilot"
-      ]
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "Saga Edition Core Rulebook|Gunslinger",
@@ -1517,7 +1595,8 @@
       ],
       "aggregateClassAccess": [
         "Gunslinger"
-      ]
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "Saga Edition Core Rulebook|Infamy",
@@ -1604,11 +1683,20 @@
           "classes": [
             "Crime Lord"
           ]
+        },
+        {
+          "sourcebook": "Force Unleashed Campaign Guide",
+          "publicationType": "DIRECT_ACCESS_GRANT",
+          "classes": [
+            "Master Privateer"
+          ]
         }
       ],
       "aggregateClassAccess": [
-        "Crime Lord"
-      ]
+        "Crime Lord",
+        "Master Privateer"
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "Saga Edition Core Rulebook|Influence",
@@ -1684,7 +1772,8 @@
       "aggregateClassAccess": [
         "Noble",
         "Crime Lord"
-      ]
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "Saga Edition Core Rulebook|Inspiration",
@@ -1762,11 +1851,20 @@
           "classes": [
             "Noble"
           ]
+        },
+        {
+          "sourcebook": "Clone Wars Campaign Guide",
+          "publicationType": "DIRECT_ACCESS_GRANT",
+          "classes": [
+            "Droid Commander"
+          ]
         }
       ],
       "aggregateClassAccess": [
-        "Noble"
-      ]
+        "Noble",
+        "Droid Commander"
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "Saga Edition Core Rulebook|Jedi Consular",
@@ -1895,7 +1993,8 @@
       ],
       "aggregateClassAccess": [
         "Jedi"
-      ]
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "Saga Edition Core Rulebook|Jedi Guardian",
@@ -2023,7 +2122,8 @@
       ],
       "aggregateClassAccess": [
         "Jedi"
-      ]
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "Saga Edition Core Rulebook|Jedi Sentinel",
@@ -2169,7 +2269,8 @@
       ],
       "aggregateClassAccess": [
         "Jedi"
-      ]
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "Saga Edition Core Rulebook|Leadership",
@@ -2276,12 +2377,29 @@
             "Noble",
             "Officer"
           ]
+        },
+        {
+          "sourcebook": "Knights of the Old Republic Campaign Guide",
+          "publicationType": "DIRECT_ACCESS_GRANT",
+          "classes": [
+            "Corporate Agent"
+          ]
+        },
+        {
+          "sourcebook": "Clone Wars Campaign Guide",
+          "publicationType": "DIRECT_ACCESS_GRANT",
+          "classes": [
+            "Droid Commander"
+          ]
         }
       ],
       "aggregateClassAccess": [
         "Noble",
-        "Officer"
-      ]
+        "Officer",
+        "Corporate Agent",
+        "Droid Commander"
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "Saga Edition Core Rulebook|Lightsaber Combat",
@@ -2403,7 +2521,8 @@
         "Jedi Knight",
         "Sith Apprentice",
         "Imperial Knight"
-      ]
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "Saga Edition Core Rulebook|Lightsaber Forms",
@@ -2488,7 +2607,8 @@
       ],
       "aggregateClassAccess": [
         "Jedi Knight"
-      ]
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "Saga Edition Core Rulebook|Lineage",
@@ -2566,11 +2686,20 @@
           "classes": [
             "Noble"
           ]
+        },
+        {
+          "sourcebook": "Knights of the Old Republic Campaign Guide",
+          "publicationType": "DIRECT_ACCESS_GRANT",
+          "classes": [
+            "Corporate Agent"
+          ]
         }
       ],
       "aggregateClassAccess": [
-        "Noble"
-      ]
+        "Noble",
+        "Corporate Agent"
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "Saga Edition Core Rulebook|Mastermind",
@@ -2672,7 +2801,8 @@
       ],
       "aggregateClassAccess": [
         "Crime Lord"
-      ]
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "Saga Edition Core Rulebook|Military Tactics",
@@ -2774,7 +2904,8 @@
       ],
       "aggregateClassAccess": [
         "Officer"
-      ]
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "Saga Edition Core Rulebook|Misfortune",
@@ -2892,12 +3023,29 @@
             "Scoundrel",
             "Bounty Hunter"
           ]
+        },
+        {
+          "sourcebook": "Force Unleashed Campaign Guide",
+          "publicationType": "DIRECT_ACCESS_GRANT",
+          "classes": [
+            "Saboteur"
+          ]
+        },
+        {
+          "sourcebook": "Scum and Villainy",
+          "publicationType": "DIRECT_ACCESS_GRANT",
+          "classes": [
+            "Assassin"
+          ]
         }
       ],
       "aggregateClassAccess": [
         "Scoundrel",
-        "Bounty Hunter"
-      ]
+        "Bounty Hunter",
+        "Saboteur",
+        "Assassin"
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "Saga Edition Core Rulebook|Sith",
@@ -2983,7 +3131,8 @@
       "aggregateClassAccess": [
         "Sith Apprentice",
         "Sith Lord"
-      ]
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "Saga Edition Core Rulebook|Slicer",
@@ -3063,11 +3212,28 @@
           "classes": [
             "Scoundrel"
           ]
+        },
+        {
+          "sourcebook": "Force Unleashed Campaign Guide",
+          "publicationType": "DIRECT_ACCESS_GRANT",
+          "classes": [
+            "Saboteur"
+          ]
+        },
+        {
+          "sourcebook": "Scum and Villainy",
+          "publicationType": "DIRECT_ACCESS_GRANT",
+          "classes": [
+            "Outlaw"
+          ]
         }
       ],
       "aggregateClassAccess": [
-        "Scoundrel"
-      ]
+        "Scoundrel",
+        "Saboteur",
+        "Outlaw"
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "Saga Edition Core Rulebook|Spacer",
@@ -3154,7 +3320,16 @@
       "aggregateClassAccess": [
         "Scoundrel",
         "Ace Pilot"
-      ]
+      ],
+      "accessDiscrepancies": [
+        {
+          "className": "Master Privateer",
+          "disposition": "ACCESS_ERROR_SOURCE_DISPROVED",
+          "sourcebook": "Force Unleashed Campaign Guide",
+          "note": "Primary-source Master Privateer Talents section grants Infamy and Privateer, not Spacer. Repository/reference Spacer access is noncanonical."
+        }
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "Saga Edition Core Rulebook|Survivor",
@@ -3226,11 +3401,46 @@
           "classes": [
             "Scout"
           ]
+        },
+        {
+          "sourcebook": "Rebellion Era Campaign Guide",
+          "publicationType": "DIRECT_ACCESS_GRANT",
+          "classes": [
+            "Pathfinder"
+          ]
+        },
+        {
+          "sourcebook": "Clone Wars Campaign Guide",
+          "publicationType": "DIRECT_ACCESS_GRANT",
+          "classes": [
+            "Vanguard"
+          ]
+        },
+        {
+          "sourcebook": "Force Unleashed Campaign Guide",
+          "publicationType": "DIRECT_ACCESS_GRANT",
+          "classes": [
+            "Enforcer",
+            "Medic"
+          ]
+        },
+        {
+          "sourcebook": "Scum and Villainy",
+          "publicationType": "DIRECT_ACCESS_GRANT",
+          "classes": [
+            "Outlaw"
+          ]
         }
       ],
       "aggregateClassAccess": [
-        "Scout"
-      ]
+        "Scout",
+        "Pathfinder",
+        "Vanguard",
+        "Enforcer",
+        "Medic",
+        "Outlaw"
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "Saga Edition Core Rulebook|Weapon Master",
@@ -3323,7 +3533,8 @@
       ],
       "aggregateClassAccess": [
         "Elite Trooper"
-      ]
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "Saga Edition Core Rulebook|Weapon Specialist",
@@ -3416,11 +3627,20 @@
           "classes": [
             "Soldier"
           ]
+        },
+        {
+          "sourcebook": "Knights of the Old Republic Campaign Guide",
+          "publicationType": "DIRECT_ACCESS_GRANT",
+          "classes": [
+            "Melee Duelist"
+          ]
         }
       ],
       "aggregateClassAccess": [
-        "Soldier"
-      ]
+        "Soldier",
+        "Melee Duelist"
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "Starships of the Galaxy|Naval Officer",
@@ -3484,7 +3704,8 @@
       ],
       "aggregateClassAccess": [
         "Officer"
-      ]
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "Starships of the Galaxy|Outlaw Tech",
@@ -3567,7 +3788,8 @@
         "Scoundrel",
         "Military Engineer",
         "Improviser"
-      ]
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "Starships of the Galaxy|Squadron Leader",
@@ -3628,7 +3850,8 @@
       ],
       "aggregateClassAccess": [
         "Ace Pilot"
-      ]
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "Threats of the Galaxy|Malkite Poisoner",
@@ -3703,7 +3926,8 @@
       "aggregateClassAccess": [
         "Scoundrel",
         "Assassin"
-      ]
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "Threats of the Galaxy|Master of Teräs Käsi",
@@ -3778,7 +4002,8 @@
       "aggregateClassAccess": [
         "Elite Trooper",
         "Martial Arts Master"
-      ]
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "Knights of the Old Republic Campaign Guide|Corporate Power",
@@ -3848,7 +4073,8 @@
       ],
       "aggregateClassAccess": [
         "Corporate Agent"
-      ]
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "Knights of the Old Republic Campaign Guide|Fencing",
@@ -3912,7 +4138,8 @@
       ],
       "aggregateClassAccess": [
         "Noble"
-      ]
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "Knights of the Old Republic Campaign Guide|Gladiatorial Combat",
@@ -3985,7 +4212,8 @@
       ],
       "aggregateClassAccess": [
         "Gladiator"
-      ]
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "Knights of the Old Republic Campaign Guide|Hyperspace Explorer",
@@ -4057,7 +4285,8 @@
       ],
       "aggregateClassAccess": [
         "Scout"
-      ]
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "Knights of the Old Republic Campaign Guide|Jedi Battlemaster",
@@ -4121,7 +4350,8 @@
       ],
       "aggregateClassAccess": [
         "Jedi Knight"
-      ]
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "Knights of the Old Republic Campaign Guide|Jedi Shadow",
@@ -4185,7 +4415,8 @@
       ],
       "aggregateClassAccess": [
         "Jedi Knight"
-      ]
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "Knights of the Old Republic Campaign Guide|Jedi Watchman",
@@ -4249,7 +4480,8 @@
       ],
       "aggregateClassAccess": [
         "Jedi Knight"
-      ]
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "Knights of the Old Republic Campaign Guide|Mandalorian Warrior",
@@ -4310,7 +4542,8 @@
       ],
       "aggregateClassAccess": [
         "Elite Trooper"
-      ]
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "Knights of the Old Republic Campaign Guide|Melee Duelist",
@@ -4386,7 +4619,8 @@
       ],
       "aggregateClassAccess": [
         "Melee Duelist"
-      ]
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "Knights of the Old Republic Campaign Guide|Rocket Jumper",
@@ -4447,7 +4681,8 @@
       ],
       "aggregateClassAccess": [
         "Soldier"
-      ]
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "Knights of the Old Republic Campaign Guide|Run and Gun",
@@ -4511,7 +4746,8 @@
       ],
       "aggregateClassAccess": [
         "Scoundrel"
-      ]
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "Force Unleashed Campaign Guide|Advanced Medicine",
@@ -4595,7 +4831,8 @@
       "aggregateClassAccess": [
         "Medic",
         "Shaper"
-      ]
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "Force Unleashed Campaign Guide|Autonomy",
@@ -4669,7 +4906,8 @@
       ],
       "aggregateClassAccess": [
         "Independent Droid"
-      ]
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "Force Unleashed Campaign Guide|Bothan SpyNet",
@@ -4736,7 +4974,8 @@
       ],
       "aggregateClassAccess": [
         "Infiltrator"
-      ]
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "Force Unleashed Campaign Guide|Critical Master",
@@ -4814,7 +5053,8 @@
       ],
       "aggregateClassAccess": [
         "Elite Trooper"
-      ]
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "Force Unleashed Campaign Guide|Enforcement",
@@ -4884,7 +5124,8 @@
       ],
       "aggregateClassAccess": [
         "Enforcer"
-      ]
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "Force Unleashed Campaign Guide|Ideologue",
@@ -4948,7 +5189,8 @@
       ],
       "aggregateClassAccess": [
         "Noble"
-      ]
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "Force Unleashed Campaign Guide|Imperial Inquisitor",
@@ -5015,7 +5257,8 @@
           "sourcebook": "Force Unleashed Campaign Guide",
           "summary": "Requires membership in the Inquisitorius and Dark Side Score 1+."
         }
-      ]
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "Force Unleashed Campaign Guide|Infiltration",
@@ -5079,7 +5322,8 @@
       ],
       "aggregateClassAccess": [
         "Infiltrator"
-      ]
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "Force Unleashed Campaign Guide|Mercenary",
@@ -5143,7 +5387,8 @@
       ],
       "aggregateClassAccess": [
         "Soldier"
-      ]
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "Force Unleashed Campaign Guide|Privateer",
@@ -5219,7 +5464,8 @@
       ],
       "aggregateClassAccess": [
         "Master Privateer"
-      ]
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "Force Unleashed Campaign Guide|Sabotage",
@@ -5286,7 +5532,8 @@
       ],
       "aggregateClassAccess": [
         "Saboteur"
-      ]
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "Force Unleashed Campaign Guide|Smuggling",
@@ -5350,7 +5597,8 @@
       ],
       "aggregateClassAccess": [
         "Scoundrel"
-      ]
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "Force Unleashed Campaign Guide|Specialized Droid",
@@ -5425,7 +5673,8 @@
       ],
       "aggregateClassAccess": [
         "Independent Droid"
-      ]
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "Force Unleashed Campaign Guide|Spy",
@@ -5497,7 +5746,8 @@
       "aggregateClassAccess": [
         "Scout",
         "Infiltrator"
-      ]
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "Force Unleashed Campaign Guide|Turret",
@@ -5564,7 +5814,8 @@
       ],
       "aggregateClassAccess": [
         "Saboteur"
-      ]
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "Scum and Villainy|Assassin",
@@ -5640,7 +5891,8 @@
       ],
       "aggregateClassAccess": [
         "Assassin"
-      ]
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "Scum and Villainy|Blockade Runner",
@@ -5704,7 +5956,8 @@
       ],
       "aggregateClassAccess": [
         "Ace Pilot"
-      ]
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "Scum and Villainy|Disgrace",
@@ -5779,7 +6032,8 @@
       "aggregateClassAccess": [
         "Noble",
         "Charlatan"
-      ]
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "Scum and Villainy|Gand Findsman",
@@ -5843,7 +6097,8 @@
       ],
       "aggregateClassAccess": [
         "Bounty Hunter"
-      ]
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "Scum and Villainy|GenoHaradan",
@@ -5906,7 +6161,8 @@
       ],
       "aggregateClassAccess": [
         "Assassin"
-      ]
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "Scum and Villainy|Outlaw",
@@ -5979,7 +6235,8 @@
       ],
       "aggregateClassAccess": [
         "Outlaw"
-      ]
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "Scum and Villainy|Piracy",
@@ -6049,7 +6306,8 @@
       ],
       "aggregateClassAccess": [
         "Master Privateer"
-      ]
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "Scum and Villainy|Pistoleer",
@@ -6113,7 +6371,8 @@
       ],
       "aggregateClassAccess": [
         "Gunslinger"
-      ]
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "Scum and Villainy|Trickery",
@@ -6180,7 +6439,8 @@
       ],
       "aggregateClassAccess": [
         "Charlatan"
-      ]
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "Clone Wars Campaign Guide|Collaborator",
@@ -6244,7 +6504,8 @@
       ],
       "aggregateClassAccess": [
         "Noble"
-      ]
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "Clone Wars Campaign Guide|Droid Commander",
@@ -6317,7 +6578,8 @@
       ],
       "aggregateClassAccess": [
         "Droid Commander"
-      ]
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "Clone Wars Campaign Guide|Jedi Archivist",
@@ -6381,7 +6643,8 @@
       ],
       "aggregateClassAccess": [
         "Jedi Knight"
-      ]
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "Clone Wars Campaign Guide|Jedi Healer",
@@ -6442,7 +6705,8 @@
       ],
       "aggregateClassAccess": [
         "Jedi Knight"
-      ]
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "Clone Wars Campaign Guide|Loyal Protector",
@@ -6503,7 +6767,8 @@
       ],
       "aggregateClassAccess": [
         "Noble"
-      ]
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "Clone Wars Campaign Guide|Melee Specialist",
@@ -6567,7 +6832,8 @@
       ],
       "aggregateClassAccess": [
         "Elite Trooper"
-      ]
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "Clone Wars Campaign Guide|Military Engineer",
@@ -6646,7 +6912,8 @@
       ],
       "aggregateClassAccess": [
         "Military Engineer"
-      ]
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "Clone Wars Campaign Guide|Opportunist",
@@ -6710,7 +6977,8 @@
       ],
       "aggregateClassAccess": [
         "Scoundrel"
-      ]
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "Clone Wars Campaign Guide|Reconnaissance",
@@ -6771,7 +7039,8 @@
       ],
       "aggregateClassAccess": [
         "Scout"
-      ]
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "Clone Wars Campaign Guide|Republic Commando",
@@ -6838,7 +7107,8 @@
       ],
       "aggregateClassAccess": [
         "Elite Trooper"
-      ]
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "Clone Wars Campaign Guide|Squad Leader",
@@ -6899,7 +7169,8 @@
       ],
       "aggregateClassAccess": [
         "Soldier"
-      ]
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "Clone Wars Campaign Guide|Surveillance",
@@ -6963,7 +7234,8 @@
       ],
       "aggregateClassAccess": [
         "Scout"
-      ]
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "Clone Wars Campaign Guide|Trooper",
@@ -7027,7 +7299,8 @@
       ],
       "aggregateClassAccess": [
         "Soldier"
-      ]
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "Clone Wars Campaign Guide|Vanguard",
@@ -7100,7 +7373,8 @@
       ],
       "aggregateClassAccess": [
         "Vanguard"
-      ]
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "Legacy Era Campaign Guide|Brute Squad",
@@ -7167,7 +7441,8 @@
       ],
       "aggregateClassAccess": [
         "Soldier"
-      ]
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "Legacy Era Campaign Guide|Carbineer",
@@ -7240,7 +7515,8 @@
       ],
       "aggregateClassAccess": [
         "Gunslinger"
-      ]
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "Legacy Era Campaign Guide|Force Hunter",
@@ -7307,7 +7583,8 @@
       ],
       "aggregateClassAccess": [
         "Bounty Hunter"
-      ]
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "Legacy Era Campaign Guide|Fugitive Commander",
@@ -7374,7 +7651,8 @@
       ],
       "aggregateClassAccess": [
         "Officer"
-      ]
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "Legacy Era Campaign Guide|Implant",
@@ -7438,7 +7716,8 @@
       ],
       "aggregateClassAccess": [
         "Shaper"
-      ]
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "Legacy Era Campaign Guide|Jedi Refugee",
@@ -7499,7 +7778,8 @@
       ],
       "aggregateClassAccess": [
         "Jedi Knight"
-      ]
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "Legacy Era Campaign Guide|Knight's Armor",
@@ -7563,7 +7843,8 @@
       ],
       "aggregateClassAccess": [
         "Imperial Knight"
-      ]
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "Legacy Era Campaign Guide|Knight's Resolve",
@@ -7627,7 +7908,8 @@
       ],
       "aggregateClassAccess": [
         "Imperial Knight"
-      ]
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "Legacy Era Campaign Guide|Protection",
@@ -7700,7 +7982,8 @@
       ],
       "aggregateClassAccess": [
         "Elite Trooper"
-      ]
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "Legacy Era Campaign Guide|Provocateur",
@@ -7771,7 +8054,8 @@
       "aggregateClassAccess": [
         "Noble",
         "Charlatan"
-      ]
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "Legacy Era Campaign Guide|Shaper",
@@ -7835,7 +8119,8 @@
       ],
       "aggregateClassAccess": [
         "Shaper"
-      ]
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "Legacy Era Campaign Guide|Sith Commander",
@@ -7896,7 +8181,8 @@
       ],
       "aggregateClassAccess": [
         "Sith Apprentice"
-      ]
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "Legacy Era Campaign Guide|Versatility",
@@ -7960,7 +8246,8 @@
       ],
       "aggregateClassAccess": [
         "Scout"
-      ]
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "Legacy Era Campaign Guide|Yuuzhan Vong Biotech",
@@ -8024,7 +8311,8 @@
       ],
       "aggregateClassAccess": [
         "Scoundrel"
-      ]
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "Jedi Academy Training Manual|Beastwarden",
@@ -8088,7 +8376,8 @@
       ],
       "aggregateClassAccess": [
         "Force Adept"
-      ]
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "Jedi Academy Training Manual|Jedi Artisan",
@@ -8152,7 +8441,8 @@
       ],
       "aggregateClassAccess": [
         "Jedi Knight"
-      ]
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "Jedi Academy Training Manual|Jedi Instructor",
@@ -8216,7 +8506,8 @@
       ],
       "aggregateClassAccess": [
         "Jedi Knight"
-      ]
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "Jedi Academy Training Manual|Jedi Investigator",
@@ -8280,7 +8571,8 @@
       ],
       "aggregateClassAccess": [
         "Jedi Knight"
-      ]
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "Jedi Academy Training Manual|Jedi Weapon Master",
@@ -8344,7 +8636,8 @@
       ],
       "aggregateClassAccess": [
         "Jedi Knight"
-      ]
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "Jedi Academy Training Manual|Mystic",
@@ -8408,7 +8701,8 @@
       ],
       "aggregateClassAccess": [
         "Force Adept"
-      ]
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "Jedi Academy Training Manual|Sith Alchemy",
@@ -8469,7 +8763,8 @@
       ],
       "aggregateClassAccess": [
         "Sith Apprentice"
-      ]
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "Jedi Academy Training Manual|Telepath",
@@ -8533,7 +8828,8 @@
       ],
       "aggregateClassAccess": [
         "Force Adept"
-      ]
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "Rebellion Era Campaign Guide|Ambusher",
@@ -8600,7 +8896,8 @@
       ],
       "aggregateClassAccess": [
         "Soldier"
-      ]
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "Rebellion Era Campaign Guide|Gambling Leader",
@@ -8664,7 +8961,8 @@
       ],
       "aggregateClassAccess": [
         "Noble"
-      ]
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "Rebellion Era Campaign Guide|Improviser",
@@ -8728,7 +9026,8 @@
       ],
       "aggregateClassAccess": [
         "Improviser"
-      ]
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "Rebellion Era Campaign Guide|Pathfinder",
@@ -8807,7 +9106,8 @@
       ],
       "aggregateClassAccess": [
         "Pathfinder"
-      ]
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "Rebellion Era Campaign Guide|Procurement",
@@ -8871,7 +9171,8 @@
       ],
       "aggregateClassAccess": [
         "Improviser"
-      ]
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "Rebellion Era Campaign Guide|Rebel Recruiter",
@@ -8935,7 +9236,8 @@
       ],
       "aggregateClassAccess": [
         "Officer"
-      ]
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "Rebellion Era Campaign Guide|Recklessness",
@@ -8999,7 +9301,8 @@
       ],
       "aggregateClassAccess": [
         "Scoundrel"
-      ]
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "Rebellion Era Campaign Guide|Unpredictable",
@@ -9063,7 +9366,8 @@
       ],
       "aggregateClassAccess": [
         "Scout"
-      ]
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "Rebellion Era Campaign Guide|Wingman",
@@ -9127,7 +9431,8 @@
       ],
       "aggregateClassAccess": [
         "Ace Pilot"
-      ]
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "Galaxy at War|Advance Patrol",
@@ -9186,7 +9491,8 @@
       ],
       "aggregateClassAccess": [
         "Scout"
-      ]
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "Galaxy at War|Anticipation",
@@ -9248,7 +9554,8 @@
       ],
       "aggregateClassAccess": [
         "Noble"
-      ]
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "Galaxy at War|Brigand",
@@ -9307,7 +9614,8 @@
       ],
       "aggregateClassAccess": [
         "Scoundrel"
-      ]
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "Galaxy at War|Martial Arts Forms",
@@ -9371,7 +9679,8 @@
       ],
       "aggregateClassAccess": [
         "Martial Arts Master"
-      ]
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "Galaxy at War|Sharpshooter",
@@ -9433,7 +9742,8 @@
       ],
       "aggregateClassAccess": [
         "Gunslinger"
-      ]
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "Galaxy at War|Shockboxer",
@@ -9495,7 +9805,8 @@
       ],
       "aggregateClassAccess": [
         "Soldier"
-      ]
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "Galaxy at War|Squad Leader",
@@ -9553,7 +9864,8 @@
       ],
       "aggregateClassAccess": [
         "Elite Trooper"
-      ]
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "Galaxy at War|Unarmed Mastery",
@@ -9608,7 +9920,8 @@
       ],
       "aggregateClassAccess": [
         "Martial Arts Master"
-      ]
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "Galaxy at War|Veteran",
@@ -9670,7 +9983,8 @@
       ],
       "aggregateClassAccess": [
         "Soldier"
-      ]
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "Scavenger's Guide to Droids|Elite Droid",
@@ -9731,7 +10045,8 @@
       ],
       "aggregateClassAccess": [
         "Independent Droid"
-      ]
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "Scavenger's Guide to Droids|Override",
@@ -9790,7 +10105,8 @@
       ],
       "aggregateClassAccess": [
         "Droid Commander"
-      ]
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "Galaxy of Intrigue|Espionage",
@@ -9848,7 +10164,8 @@
       ],
       "aggregateClassAccess": [
         "Scout"
-      ]
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "Galaxy of Intrigue|Master of Intrigue",
@@ -9913,7 +10230,8 @@
       ],
       "aggregateClassAccess": [
         "Noble"
-      ]
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "Galaxy of Intrigue|Revolutionary",
@@ -9972,7 +10290,8 @@
       ],
       "aggregateClassAccess": [
         "Scoundrel"
-      ]
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "Galaxy of Intrigue|Skill Challenge",
@@ -10027,7 +10346,8 @@
       ],
       "aggregateClassAccess": [
         "Noble"
-      ]
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "Galaxy of Intrigue|Superior Skills",
@@ -10097,7 +10417,8 @@
       ],
       "aggregateClassAccess": [
         "Noble"
-      ]
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "Unknown Regions|Exile",
@@ -10165,7 +10486,8 @@
       ],
       "aggregateClassAccess": [
         "Noble"
-      ]
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "Unknown Regions|Master Scout",
@@ -10227,7 +10549,8 @@
       ],
       "aggregateClassAccess": [
         "Scout"
-      ]
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "Unknown Regions|Mobile Scout",
@@ -10286,7 +10609,8 @@
       ],
       "aggregateClassAccess": [
         "Scout"
-      ]
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "Unknown Regions|Outsider",
@@ -10345,7 +10669,8 @@
       ],
       "aggregateClassAccess": [
         "Scoundrel"
-      ]
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "Unknown Regions|Warrior",
@@ -10413,7 +10738,8 @@
       ],
       "aggregateClassAccess": [
         "Soldier"
-      ]
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "Force Unleashed Campaign Guide|First-Degree Droid",
@@ -10477,7 +10803,8 @@
           "sourcebook": "Force Unleashed Campaign Guide",
           "summary": "Available only to first-degree droids when they would normally gain a talent."
         }
-      ]
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "Force Unleashed Campaign Guide|Second-Degree Droid",
@@ -10541,7 +10868,8 @@
           "sourcebook": "Force Unleashed Campaign Guide",
           "summary": "Available only to second-degree droids when they would normally gain a talent."
         }
-      ]
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "Force Unleashed Campaign Guide|Third-Degree Droid",
@@ -10605,7 +10933,8 @@
           "sourcebook": "Force Unleashed Campaign Guide",
           "summary": "Available only to third-degree droids when they would normally gain a talent."
         }
-      ]
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "Force Unleashed Campaign Guide|Fourth-Degree Droid",
@@ -10669,7 +10998,8 @@
           "sourcebook": "Force Unleashed Campaign Guide",
           "summary": "Available only to fourth-degree droids when they would normally gain a talent."
         }
-      ]
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "Force Unleashed Campaign Guide|Fifth-Degree Droid",
@@ -10733,7 +11063,8 @@
           "sourcebook": "Force Unleashed Campaign Guide",
           "summary": "Available only to fifth-degree droids when they would normally gain a talent."
         }
-      ]
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "Force Unleashed Campaign Guide|Agent of Ossus",
@@ -10790,7 +11121,8 @@
           "sourcebook": "Force Unleashed Campaign Guide",
           "summary": "Tradition membership follows the Agents of Ossus membership conditions in the sourcebook."
         }
-      ]
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "Jedi Academy Training Manual|Aing-Tii Monk",
@@ -10847,7 +11179,8 @@
           "sourcebook": "Jedi Academy Training Manual",
           "summary": "Available as a Force talent only to eligible members of the Aing-Tii Monk tradition, subject to that sourcebook's membership rules."
         }
-      ]
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "Saga Edition Core Rulebook|Alter",
@@ -10946,7 +11279,8 @@
           "sourcebook": "Saga Edition Core Rulebook",
           "summary": "Available as a Force talent to characters who meet the normal Force-talent access requirements."
         }
-      ]
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "Clone Wars Campaign Guide|Bando Gora Captain",
@@ -11000,7 +11334,8 @@
           "sourcebook": "Clone Wars Campaign Guide",
           "summary": "Available as a Force talent only to eligible members of the Bando Gora Captain tradition, subject to that sourcebook's membership rules."
         }
-      ]
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "Jedi Academy Training Manual|Baran Do Sage",
@@ -11057,7 +11392,8 @@
           "sourcebook": "Jedi Academy Training Manual",
           "summary": "Available as a Force talent only to eligible members of the Baran Do Sage tradition, subject to that sourcebook's membership rules."
         }
-      ]
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "Clone Wars Campaign Guide|Believer Disciple",
@@ -11114,7 +11450,8 @@
           "sourcebook": "Clone Wars Campaign Guide",
           "summary": "Available as a Force talent only to eligible members of the Believer Disciple tradition, subject to that sourcebook's membership rules."
         }
-      ]
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "repo-special|Blackguard Wilder",
@@ -11193,7 +11530,8 @@
           "sourcebook": "Unknown Regions",
           "summary": "Available as a Force talent only to eligible members of the Blazing Chain tradition, subject to that sourcebook's membership rules."
         }
-      ]
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "repo-special|Bomarr Monk",
@@ -11360,7 +11698,8 @@
           "sourcebook": "Saga Edition Core Rulebook",
           "summary": "Available as a Force talent to characters who meet the normal Force-talent access requirements."
         }
-      ]
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "repo-special|Cowardice",
@@ -11473,7 +11812,8 @@
           "sourcebook": "Saga Edition Core Rulebook",
           "summary": "Available as a Force talent to characters who meet the normal Force-talent access requirements."
         }
-      ]
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "Saga Edition Core Rulebook|Dathomiri Witch",
@@ -11527,7 +11867,8 @@
           "sourcebook": "Saga Edition Core Rulebook",
           "summary": "Available as a Force talent only to eligible members of the Dathomiri Witch tradition, subject to that sourcebook's membership rules."
         }
-      ]
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "repo-special|Defensive Duelist",
@@ -11609,7 +11950,8 @@
           "sourcebook": "Legacy Era Campaign Guide",
           "summary": "Available as a Force talent only to eligible members of the Disciple of Twilight tradition, subject to that sourcebook's membership rules."
         }
-      ]
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "Legacy Era Campaign Guide|Ember of Vahl",
@@ -11666,7 +12008,8 @@
           "sourcebook": "Legacy Era Campaign Guide",
           "summary": "Available as a Force talent only to eligible members of the Ember of Vahl tradition, subject to that sourcebook's membership rules."
         }
-      ]
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "repo-special|Exceptional Followers",
@@ -11748,7 +12091,8 @@
           "sourcebook": "Force Unleashed Campaign Guide",
           "summary": "Felucian shamans may also select Charm Beast and Command Beast from the Dathomiri Witch tree; these remain external-tree access, not Felucian Shaman membership."
         }
-      ]
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "repo-special|Force Warrior",
@@ -11881,7 +12225,8 @@
           "sourcebook": "Jedi Academy Training Manual",
           "summary": "Available as a Force talent to characters who meet the normal Force-talent access requirements."
         }
-      ]
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "Jedi Academy Training Manual|Iron Knight",
@@ -11938,7 +12283,8 @@
           "sourcebook": "Jedi Academy Training Manual",
           "summary": "Available as a Force talent only to eligible members of the Iron Knight tradition, subject to that sourcebook's membership rules."
         }
-      ]
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "Knights of the Old Republic Campaign Guide|Jal Shey",
@@ -11992,7 +12338,8 @@
           "sourcebook": "Knights of the Old Republic Campaign Guide",
           "summary": "Available as a Force talent only to eligible members of the Jal Shey tradition, subject to that sourcebook's membership rules."
         }
-      ]
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "repo-special|Jedaii Ranger",
@@ -12071,7 +12418,8 @@
           "sourcebook": "Saga Edition Core Rulebook",
           "summary": "Available as a Force talent only to eligible members of the Jensaarai Defender tradition, subject to that sourcebook's membership rules."
         }
-      ]
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "repo-special|Jumptrooper",
@@ -12150,7 +12498,8 @@
           "sourcebook": "Knights of the Old Republic Campaign Guide",
           "summary": "Available as a Force talent only to eligible members of the Keetael tradition, subject to that sourcebook's membership rules."
         }
-      ]
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "Rebellion Era Campaign Guide|Kilian Ranger",
@@ -12207,7 +12556,8 @@
           "sourcebook": "Rebellion Era Campaign Guide",
           "summary": "Available as a Force talent only to eligible members of the Kilian Ranger tradition, subject to that sourcebook's membership rules."
         }
-      ]
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "Clone Wars Campaign Guide|Korunnai Adept",
@@ -12261,7 +12611,8 @@
           "sourcebook": "Clone Wars Campaign Guide",
           "summary": "Available as a Force talent only to eligible members of the Korunnai Adept tradition, subject to that sourcebook's membership rules."
         }
-      ]
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "Knights of the Old Republic Campaign Guide|Krath",
@@ -12315,7 +12666,8 @@
           "sourcebook": "Knights of the Old Republic Campaign Guide",
           "summary": "Available as a Force talent only to eligible members of the Krath tradition, subject to that sourcebook's membership rules."
         }
-      ]
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "Clone Wars Campaign Guide|Light Side",
@@ -12367,7 +12719,8 @@
           "sourcebook": "Clone Wars Campaign Guide",
           "summary": "Available when selecting Force talents; Dark Side Score must be 0 to select from the Light Side tree."
         }
-      ]
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "Knights of the Old Republic Campaign Guide|Luka Sene",
@@ -12421,7 +12774,8 @@
           "sourcebook": "Knights of the Old Republic Campaign Guide",
           "summary": "Available as a Force talent only to eligible members of the Luka Sene tradition, subject to that sourcebook's membership rules."
         }
-      ]
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "repo-special|Master Of The Amphistaff",
@@ -12506,7 +12860,8 @@
           "sourcebook": "Jedi Academy Training Manual",
           "summary": "Available as a Force talent only to eligible members of the Matukai Adept tradition, subject to that sourcebook's membership rules."
         }
-      ]
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "repo-special|Mechanic",
@@ -12635,7 +12990,8 @@
           "sourcebook": "Knights of the Old Republic Campaign Guide",
           "summary": "Available as a Force talent only to eligible members of the Order of Shasa tradition, subject to that sourcebook's membership rules."
         }
-      ]
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "repo-special|Science",
@@ -12755,7 +13111,8 @@
           "sourcebook": "Saga Edition Core Rulebook",
           "summary": "Available as a Force talent to characters who meet the normal Force-talent access requirements."
         }
-      ]
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "Jedi Academy Training Manual|Seyugi Dervish",
@@ -12812,7 +13169,8 @@
           "sourcebook": "Jedi Academy Training Manual",
           "summary": "Available as a Force talent only to eligible members of the Seyugi Dervish tradition, subject to that sourcebook's membership rules."
         }
-      ]
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "repo-special|Smashball Pro",
@@ -12944,7 +13302,8 @@
           "sourcebook": "Jedi Academy Training Manual",
           "summary": "Available as a Force talent only to eligible members of the Tyia Adept tradition, subject to that sourcebook's membership rules."
         }
-      ]
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "Jedi Academy Training Manual|Warden of the Sky",
@@ -13004,7 +13363,8 @@
           "sourcebook": "Jedi Academy Training Manual",
           "summary": "Available as a Force talent only to eligible members of the Warden of the Sky tradition, subject to that sourcebook's membership rules."
         }
-      ]
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "Jedi Academy Training Manual|White Current Adept",
@@ -13061,7 +13421,8 @@
           "sourcebook": "Jedi Academy Training Manual",
           "summary": "Available as a Force talent only to eligible members of the White Current Adept tradition, subject to that sourcebook's membership rules."
         }
-      ]
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "Jedi Academy Training Manual|Shapers of Kro Var",
@@ -13113,7 +13474,8 @@
           "sourcebook": "Jedi Academy Training Manual",
           "summary": "Available as a Force talent only to eligible members of the Shapers of Kro Var tradition, subject to the sourcebook's membership rules."
         }
-      ]
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     },
     {
       "canonicalTreeKey": "Jedi Academy Training Manual|Zeison Sha Warrior",
@@ -13165,7 +13527,8 @@
           "sourcebook": "Jedi Academy Training Manual",
           "summary": "Available as a Force talent only to eligible members of the Zeison Sha tradition, subject to the sourcebook's membership rules."
         }
-      ]
+      ],
+      "aggregateAccessStatus": "PHASE_1D_SOURCE_PROVENANCE_COMPLETE"
     }
   ],
   "schemaNotes": {
@@ -13196,6 +13559,10 @@
       "Galaxy of Intrigue"
     ],
     "expansionPublicationClaims": 278,
-    "note": "Phase 1D certifies structural tree identity, origin membership, later publication membership, class/tradition access provenance, and noncanonical repo-special dispositions. It does not certify full talent text, prerequisites, or runtime mechanics."
+    "note": "Phase 1D certifies structural tree identity, origin membership, later publication membership, class/tradition access provenance, and noncanonical repo-special dispositions. It does not certify full talent text, prerequisites, or runtime mechanics.",
+    "accessProvenanceStatus": "COMPLETE",
+    "accessAuthority": "accessPublications",
+    "laterClassAccessGrants": 23,
+    "sourceDisprovedReferenceAccessClaims": 1
   }
 }
