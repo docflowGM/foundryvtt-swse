@@ -1,0 +1,2053 @@
+{
+  "sourcebook": "Saga Edition Core Rulebook",
+  "trees": [
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Jedi Consular",
+      "tree": "Jedi Consular",
+      "talents": [
+        {
+          "name": "Adept Negotiator",
+          "page": 39,
+          "repoId": "7acc479dee2d3b10",
+          "benefit": "As a standard action, you can weaken the resolve of one enemy with your words. The target must have an Intelligence of 3 or higher, and it must be able to see, hear, and understand you. Make a Persuasion check; if the result equals or exceeds the target's Will Defense, it moves -1 step along the condition track (see Conditions, page 148). The target gets a +5 bonus to its Will Defense if it is higher level than you. If the target reaches the end of the track, it does not fall unconscious; instead, it cannot attack you or your allies for the remainder of the encounter unless you or one of your allies attacks it or one of its allies first. This is a mind-affecting effect.",
+          "prerequisites": "",
+          "special": "",
+          "summary": "As a standard action, use Persuasion against an intelligent enemy's Will Defense to move it 1 step down the condition track; reaching the end prevents it from attacking you or your allies."
+        },
+        {
+          "name": "Force Persuasion",
+          "page": 40,
+          "repoId": "d1fd547124c1901c",
+          "benefit": "You can use your Use the Force check modifier instead of your Persuasion check modifier when making Persuasion checks. You are considered trained in the Persuasion skill for purposes of using this talent. If you are entitled to a Persuasion check reroll, you may reroll your Use the Force check instead (subject to the same circumstances and limitations).",
+          "prerequisites": "Adept Negotiator",
+          "special": "",
+          "summary": "Use your Use the Force modifier for Persuasion checks, count as trained in Persuasion, and apply eligible Persuasion rerolls to the substituted check."
+        },
+        {
+          "name": "Master Negotiator",
+          "page": 40,
+          "repoId": "9dc39670f94a6ef2",
+          "benefit": "If you successfully use the Adept Negotiator talent, your target moves an additional -1 step along the condition track (-2 steps total). This is a mind-affecting effect.",
+          "prerequisites": "Adept Negotiator",
+          "special": "",
+          "summary": "A successful Adept Negotiator use moves the target 2 steps down the condition track instead of 1."
+        },
+        {
+          "name": "Skilled Advisor",
+          "page": 40,
+          "repoId": null,
+          "benefit": "You can spend a full-round action advising an ally, thereby granting her a +5 bonus on her next skill check. If you spend a Force Point, the bonus increases to +10. The target must be able (and willing) to hear and understand your advice. You cannot advise yourself. This is a mind-affecting effect.",
+          "prerequisites": "",
+          "special": "",
+          "summary": "Spend a full-round action to give a willing ally +5 on its next skill check, or +10 if you spend a Force Point; you cannot advise yourself."
+        }
+      ]
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Jedi Guardian",
+      "tree": "Jedi Guardian",
+      "talents": [
+        {
+          "name": "Acrobatic Recovery",
+          "page": 40,
+          "repoId": "5d4a63123e5a5eb4",
+          "benefit": "If an effect causes you to fall prone, you can make a DC 20 Acrobatics check to remain on your feet.",
+          "prerequisites": "",
+          "special": "",
+          "summary": "When an effect would knock you prone, make a DC 20 Acrobatics check to stay on your feet."
+        },
+        {
+          "name": "Battle Meditation",
+          "page": 40,
+          "repoId": "9461c7aa79dd07c6",
+          "benefit": "The Jedi technique known as Battle Meditation allows you and your allies to work together seamlessly and with a level of precision that can only come from the Force. As a full-round action, you can spend a Force Point to give you and all allies within 6 squares of you a +1 insight bonus on attack rolls that lasts until the end of the encounter. This bonus does not extend to allies outside the range of the effect, even if they move within 6 squares of you later on. Allies who benefit from the Battle Meditation must remain within 6 squares of you to retain the insight bonus, and they lose it if you are knocked unconscious or killed. This is a mind-affecting effect.",
+          "prerequisites": "",
+          "special": "",
+          "summary": "Spend a Force Point and a full-round action to grant yourself and nearby allies +1 insight to attacks for the encounter while they remain within 6 squares of you."
+        },
+        {
+          "name": "Elusive Target",
+          "page": 40,
+          "repoId": "a0ace6dcc1c67d48",
+          "benefit": "When fighting an opponent or multiple opponents in melee, other opponents attempting to target you with ranged attacks take a -5 penalty. This penalty is in addition to the normal -5 penalty for firing into melee (see Shooting or Throwing into a Melee, page 161), making the penalty to target you -10.",
+          "prerequisites": "",
+          "special": "",
+          "summary": "While you are engaged in melee, other opponents take an additional -5 penalty on ranged attacks against you, for -10 total when firing into melee."
+        },
+        {
+          "name": "Force Intuition",
+          "page": 40,
+          "repoId": "00deb8b4cce303b6",
+          "benefit": "You can use your Use the Force check modifier instead of your Initiative modifier when making Initiative checks. You are considered trained in the Initiative skill for purposes of using this talent. If you are entitled to an Initiative check reroll, you may reroll your Use the Force check instead (subject to the same circumstances and limitations).",
+          "prerequisites": "",
+          "special": "",
+          "summary": "Use your Use the Force modifier for Initiative checks, count as trained in Initiative, and apply eligible Initiative rerolls to the substituted check."
+        },
+        {
+          "name": "Resilience",
+          "page": 40,
+          "repoId": "0dde210ea6d197ef",
+          "benefit": "You can spend a Force Point as a swift action to move +2 steps along the condition track (see Conditions, page 148).",
+          "prerequisites": "",
+          "special": "",
+          "summary": "Spend a Force Point as a swift action to move 2 steps up the condition track."
+        }
+      ]
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Jedi Sentinel",
+      "tree": "Jedi Sentinel",
+      "talents": [
+        {
+          "name": "Clear Mind",
+          "page": 40,
+          "repoId": "8bd201bb22c8da3a",
+          "benefit": "You may reroll any opposed Use the Force check made to avoid being detected by other Force-users. You must take the result of the reroll, even if it is worse.",
+          "prerequisites": "",
+          "special": "",
+          "summary": "Reroll opposed Use the Force checks made to avoid detection by other Force-users, but you must keep the reroll."
+        },
+        {
+          "name": "Dark Side Sense",
+          "page": 40,
+          "repoId": "e885f64758f5e2bd",
+          "benefit": "Jedi following the path of the sentinel become exceptionally talented at rooting out evil. You may reroll any Use the Force check made to sense the presence and relative location of characters with a Dark Side Score of 1 or higher. You must take the result of the reroll, even if it is worse.",
+          "prerequisites": "",
+          "special": "",
+          "summary": "Reroll Use the Force checks made to sense the presence and relative location of characters with a Dark Side Score of 1+, keeping the reroll."
+        },
+        {
+          "name": "Dark Side Scourge",
+          "page": 40,
+          "repoId": "2e96f06be6b9def8",
+          "benefit": "Against creatures with a Dark Side Score of 1 or higher, you deal extra damage on melee attacks equal to your Charisma bonus (minimum +1).",
+          "prerequisites": "Dark Side Sense",
+          "special": "",
+          "summary": "Deal extra melee damage equal to your Charisma bonus, minimum +1, against creatures with a Dark Side Score of 1+."
+        },
+        {
+          "name": "Force Haze",
+          "page": 40,
+          "repoId": "f098749cb8767a5f",
+          "benefit": "You can spend a Force Point as a standard action to create a \"haze\" that hides you and your allies from the perceptions of others. You can hide a number of creatures in line of sight equal to your class level. Make a Use the Force check and compare the result to the Will Defense of any opponent that moves into line of sight of any creature hidden by your Force haze. If your check result beats the opponent's Will Defense, all hidden creatures are treated as if they had total concealment against that opponent. The Force haze lasts up to 1 minute but is dismissed instantly if anyone hidden by the Force haze makes an attack.",
+          "prerequisites": "Clear Mind",
+          "special": "",
+          "summary": "Spend a Force Point and a standard action to conceal up to your class level in creatures; opponents whose Will Defense you beat treat them as having total concealment for up to 1 minute."
+        },
+        {
+          "name": "Resist the Dark Side",
+          "page": 41,
+          "repoId": "3331d4b2b88e446f",
+          "benefit": "You gain a +5 Force bonus to all Defense scores against Force powers with the [dark side] descriptor and Force powers originating from any dark Force-user (that is, any Force-user whose Dark Side Score equals his Wisdom score).",
+          "prerequisites": "Dark Side Sense",
+          "special": "",
+          "summary": "Gain +5 Force to all Defenses against [dark side] Force powers and Force powers used by a dark Force-user."
+        }
+      ]
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Lightsaber Combat",
+      "tree": "Lightsaber Combat",
+      "talents": [
+        {
+          "name": "Block",
+          "page": 41,
+          "repoId": "9379daa94a228c04",
+          "benefit": "As a reaction, you may negate a melee attack by making a successful Use the Force check. The DC of the skill check is equal to the result of the attack roll you wish to negate, and you take a cumulative -5 penalty on your Use the Force check for every time you have used Block or Deflect since the beginning of your last turn. You must have a lightsaber drawn and ignited to use this talent, and you must be aware of the attack and not flat-footed.",
+          "prerequisites": "",
+          "special": "",
+          "summary": "As a reaction, oppose a melee attack roll with Use the Force to negate it; repeated Block or Deflect uses impose a cumulative -5 penalty until your next turn."
+        },
+        {
+          "name": "Deflect",
+          "page": 41,
+          "repoId": "72c644f7a09b1186",
+          "benefit": "As a reaction, you may negate a ranged attack by making a successful Use the Force check. The DC of the skill check is equal to the result of the attack roll you wish to negate, and you take a cumulative -5 penalty on your Use the Force check for every time you have used Block or Deflect since the beginning of your last turn. You must have a lightsaber drawn and ignited to use this talent, and you must be aware of the attack and not flat-footed. You can use this talent to deflect some of the barrage of shots fired from a ranged weapon set on autofire. If you succeed on the Use the Force check, you take half damage if the autofire attack hits and no damage if the autofire attack misses. This talent has no effect on other area attacks (such as grenades, missiles, and flamethrowers). This talent cannot be used to negate attacks made by Colossal (frigate) or larger-size vehicles unless the attack is made with a point-defense weapon.",
+          "prerequisites": "",
+          "special": "",
+          "summary": "As a reaction, oppose a ranged attack with Use the Force to negate it; it can also reduce autofire damage, with a cumulative -5 penalty for repeated Block/Deflect uses."
+        },
+        {
+          "name": "Lightsaber Defense",
+          "page": 41,
+          "repoId": "e8bf1222fd6289e4",
+          "benefit": "As a swift action, you can use your lightsaber to parry your opponents' attacks, gaining a +1 deflection bonus to your Reflex Defense until the start of your next turn. You must have a lightsaber drawn and ignited to use this talent, and you don't gain the deflection bonus if you are flat-footed or otherwise unaware of the incoming attack. You can take this talent multiple times; each time you take this talent, the deflection bonus increases by +1 (maximum +3).",
+          "prerequisites": "",
+          "special": "You can take this talent multiple times; each time you take this talent, the deflection bonus increases by +1 (maximum +3).",
+          "summary": "Spend a swift action with an ignited lightsaber to gain +1 deflection to Reflex Defense until your next turn; repeat selections can raise the bonus to +3."
+        },
+        {
+          "name": "Weapon Specialization (Lightsabers)",
+          "page": 41,
+          "repoId": "bcd9981b3c6a46dc",
+          "benefit": "You gain a +2 bonus on melee damage rolls with lightsabers.",
+          "prerequisites": "Weapon Focus (lightsabers) feat",
+          "special": "",
+          "summary": "Gain +2 on melee damage rolls with lightsabers."
+        },
+        {
+          "name": "Lightsaber Throw",
+          "page": 41,
+          "repoId": "e54ecc0ff06e61f3",
+          "benefit": "You can hurl a lightsaber as a standard action, treating it as a thrown weapon. You are considered proficient with the thrown lightsaber, and you apply the normal range penalties to the attack roll (see Table 8-5: Range Penalties). The thrown lightsaber deals normal weapon damage if it hits. If your target is no more than 6 squares away, you can pull your lightsaber back to your hand as a swift action by making a DC 20 Use the Force check.",
+          "prerequisites": "",
+          "special": "",
+          "summary": "Throw your lightsaber as a standard action for normal weapon damage; if the target is within 6 squares, retrieve it with a swift action and DC 20 Use the Force check."
+        },
+        {
+          "name": "Redirect Shot",
+          "page": 41,
+          "repoId": "941c1dfd00e697da",
+          "benefit": "This talent allows you to redirect a deflected blaster bolt along a specific trajectory so that it damages another creature or object in its path. Once per round when you successfully deflect a blaster bolt, you can make an immediate ranged attack against another target with which you have line of sight. Apply the normal range penalties to the attack roll (see Table 8-5: Range Penalties), not counting the distance the bolt traveled to reach you. If the attack succeeds, it deals normal weapon damage to the target. Only single blaster bolts can be redirected in this manner. Barrages from autofire weapons and other types of projectiles can't be redirected.",
+          "prerequisites": "Deflect, base attack bonus +5",
+          "special": "",
+          "summary": "Once per round after successfully Deflecting a single blaster bolt, make an immediate ranged attack with it against another target in line of sight."
+        }
+      ]
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Influence",
+      "tree": "Influence",
+      "talents": [
+        {
+          "name": "Presence",
+          "page": 43,
+          "repoId": "ec8f2ba706cc2c05",
+          "benefit": "You can make a Persuasion check to intimidate a creature as a standard action (instead of a full-round action).",
+          "prerequisites": "",
+          "special": "",
+          "summary": "Make Persuasion checks to intimidate as a standard action instead of a full-round action."
+        },
+        {
+          "name": "Demand Surrender",
+          "page": 43,
+          "repoId": null,
+          "benefit": "Once per encounter, you can make a Persuasion check as a standard action to demand surrender from an opponent who has been reduced to one-half or less of its hit points. If your check result equals or exceeds the target's Will Defense, it surrenders to you and your allies, drops any weapons it is holding, and takes no hostile actions. If the target is higher level than you, it gains a +5 bonus to its Will Defense. If you or any of your allies attack it, it no longer submits to your will and can act normally. You can only use this talent against a particular target once per encounter. This is a mind-affecting effect.",
+          "prerequisites": "Presence",
+          "special": "",
+          "summary": "Once per encounter, use Persuasion against a wounded opponent's Will Defense to force its surrender until you or an ally attacks it."
+        },
+        {
+          "name": "Improved Weaken Resolve",
+          "page": 43,
+          "repoId": "f3ac8054a0c60760",
+          "benefit": "As Weaken Resolve, except that the target doesn't stop fleeing from you if it is wounded.",
+          "prerequisites": "Presence, Weaken Resolve",
+          "special": "",
+          "summary": "Your Weaken Resolve target keeps fleeing even if it is wounded."
+        },
+        {
+          "name": "Weaken Resolve",
+          "page": 43,
+          "repoId": "28c306c37ccb9fcf",
+          "benefit": "Once per round, when you deal damage equal to or greater than the target's damage threshold, make a Persuasion check as a free action; if the result equals or exceeds the target's Will Defense, you fill the target with terror, causing it to flee from you at top speed for 1 minute. The target can't take standard actions, swift actions, or full-round actions while fleeing, and the target stops fleeing and can act normally if it is wounded. As a free action or reaction, the target can spend a Force Point (if it has not already spent one earlier in the round) to negate the effect. The effect is automatically negated if the target's level is equal to or higher than your character level. This is a mind-affecting fear effect.",
+          "prerequisites": "Presence",
+          "special": "",
+          "summary": "Once per round after beating a target's damage threshold, Persuasion vs. Will can force a lower-level target to flee for 1 minute; damage or a Force Point can end the effect."
+        }
+      ]
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Inspiration",
+      "tree": "Inspiration",
+      "treeRuleText": "All of the talents in this tree are mind-affecting effects. Moreover, you cannot use any of these talents on yourself.",
+      "talents": [
+        {
+          "name": "Bolster Ally",
+          "page": 43,
+          "repoId": "d6e7f7178e643717",
+          "benefit": "As a standard action, you can bolster an ally within line of sight, moving him +1 step along the condition track (see Conditions, page 148) and giving him a number of bonus hit points equal to his character level if he's at one-half his maximum hit points or less. Damage is subtracted from the bonus hit points first, and any bonus hit points remaining at the end of the encounter go away. You can't bolster the same ally more than once in a single encounter, and you can't bolster yourself.",
+          "prerequisites": "",
+          "special": "",
+          "summary": "As a standard action, move a bloodied ally 1 step up the condition track and grant bonus hit points equal to its level; each ally can benefit once per encounter."
+        },
+        {
+          "name": "Ignite Fervor",
+          "page": 43,
+          "repoId": "0703de963a247170",
+          "benefit": "Whenever you hit an opponent with a melee or ranged attack, you can (as a free action) choose to give one ally within your line of sight a bonus to damage on his next attack equal to his character level. Once his fervor has been ignited, the affected ally doesn't need to remain within line of sight of you; if his next attack misses, he loses the bonus to damage granted by this talent. You can't ignite fervor in yourself.",
+          "prerequisites": "Bolster Ally, Inspire Confidence",
+          "special": "",
+          "summary": "When you hit, give an ally in sight bonus damage on its next attack equal to its level; the bonus is lost if that attack misses."
+        },
+        {
+          "name": "Inspire Confidence",
+          "page": 44,
+          "repoId": "4d8882a28da30454",
+          "benefit": "As a standard action, you can inspire confidence in all allies in your line of sight, granting them a +1 morale bonus on attack rolls and a +1 morale bonus on skill checks for the rest of the encounter or until you're unconscious or dead. Once inspired, your allies don't need to remain within line of sight of you. You can't inspire confidence in yourself.",
+          "prerequisites": "",
+          "special": "",
+          "summary": "As a standard action, give allies in sight +1 morale to attacks and skill checks for the encounter, ending if you become unconscious or die."
+        },
+        {
+          "name": "Inspire Haste",
+          "page": 44,
+          "repoId": "c5f8d32dbc5afcc4",
+          "benefit": "As a swift action, you can encourage one of your allies within line of sight to make haste with a skill check. On that ally's next turn, that ally can make a skill check that requires a standard action as a move action instead.",
+          "prerequisites": "",
+          "special": "",
+          "summary": "As a swift action, let an ally in sight make one normally-standard-action skill check as a move action on its next turn."
+        },
+        {
+          "name": "Inspire Zeal",
+          "page": 44,
+          "repoId": "40508f87f3a8f33f",
+          "benefit": "Whenever an ally within line of sight of you makes an attack that moves an opponent down the condition track (such as by dealing damage that equals or exceeds the target's damage threshold), that ally moves the target an additional -1 step down the condition track.",
+          "prerequisites": "Bolster Ally, Inspire Confidence, Ignite Fervor",
+          "special": "",
+          "summary": "When an ally in sight moves a target down the condition track with an attack, it moves that target 1 additional step down."
+        }
+      ]
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Leadership",
+      "tree": "Leadership",
+      "treeRuleText": "All of the talents in this tree are mind-affecting effects. Moreover, you cannot use any of these talents on yourself.",
+      "talents": [
+        {
+          "name": "Born Leader",
+          "page": 44,
+          "repoId": null,
+          "benefit": "Once per encounter, as a swift action, you grant all allies within your line of sight a +1 insight bonus on attack rolls. This effect lasts for as long as they remain within line of sight of you. An ally loses this bonus immediately if line of sight is broken or if you are unconscious or dead.",
+          "prerequisites": "",
+          "special": "",
+          "summary": "Once per encounter as a swift action, allies in sight gain +1 insight to attacks while they keep line of sight to you and you remain conscious."
+        },
+        {
+          "name": "Coordinate",
+          "page": 44,
+          "repoId": "a52044feeab3fe05",
+          "benefit": "When you use this talent as a standard action, all allies within your line of sight grant an additional +1 bonus when they use the aid another action until the start of your next turn (see Aid Another, page 151). You may select this talent multiple times; each time you do, the bonus granted by the coordinate ability increases by +1 (to a maximum of +5).",
+          "prerequisites": "",
+          "special": "You may select this talent multiple times; each time you do, the bonus granted by the coordinate ability increases by +1 (to a maximum of +5).",
+          "summary": "As a standard action, increase the Aid Another bonus granted by allies in sight by +1 until your next turn; repeat selections can raise this to +5."
+        },
+        {
+          "name": "Distant Command",
+          "page": 44,
+          "repoId": "64fa257cd511314d",
+          "benefit": "Any ally who gains the benefit of your Born Leader talent does not lose the benefit if their line of sight to you is broken.",
+          "prerequisites": "Born Leader",
+          "special": "",
+          "summary": "Allies benefiting from Born Leader keep its bonus even if line of sight to you is later broken."
+        },
+        {
+          "name": "Fearless Leader",
+          "page": 44,
+          "repoId": "226e4f61e29df36f",
+          "benefit": "As a swift action, you can provide a courageous example for your allies. For the remainder of the encounter, your allies receive a +5 morale bonus to their Will Defense against any fear effect. Your allies lose this benefit if they lose line of sight to you, or if you are killed or knocked unconscious.",
+          "prerequisites": "Born Leader",
+          "special": "",
+          "summary": "As a swift action, allies gain +5 morale to Will Defense against fear for the encounter while they keep line of sight to you and you remain conscious."
+        },
+        {
+          "name": "Rally",
+          "page": 44,
+          "repoId": "962c8a24f9caaba0",
+          "benefit": "Once per encounter, you can rally your allies and bring them back from the edge of defeat. As a swift action, any allies within your line of sight who have less than half their total hit points remaining gain a +2 morale bonus to their Reflex Defense and Will Defense and a +2 bonus to all damage rolls for the remainder of the encounter.",
+          "prerequisites": "Born Leader, Distant Command",
+          "special": "",
+          "summary": "Once per encounter as a swift action, bloodied allies in sight gain +2 morale to Reflex and Will Defense and +2 damage for the encounter."
+        },
+        {
+          "name": "Trust",
+          "page": 44,
+          "repoId": "5e1065e8f4ab39b2",
+          "benefit": "You can give up your standard action to give one ally within your line of sight an extra standard action or move action on his next turn, to do with as he pleases. The ally does not lose the action if line of sight is later broken.",
+          "prerequisites": "Born Leader, Coordinate",
+          "special": "",
+          "summary": "Give up your standard action so an ally in sight gains an extra standard or move action on its next turn."
+        }
+      ]
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Lineage",
+      "tree": "Lineage",
+      "talents": [
+        {
+          "name": "Connections",
+          "page": 44,
+          "repoId": "e58a8ad63c1d8771",
+          "benefit": "You are able to obtain licensed, restricted, military, or illegal equipment without having to pay a licensing fee or endure a background check, provided the total cost of the desired equipment is equal to or less than your character level x 1,000 credits. In addition, when obtaining equipment or services through the black market, you reduce the black market cost multiplier by 1. See Restricted Items (page 118) for details.",
+          "prerequisites": "",
+          "special": "",
+          "summary": "Buy restricted gear worth up to your level x 1,000 credits without licensing fees or background checks, and reduce black-market cost multipliers by 1."
+        },
+        {
+          "name": "Educated",
+          "page": 44,
+          "repoId": "3e98c9f5a4f450ff",
+          "benefit": "Thanks to your well-rounded education, you may make any Knowledge check untrained.",
+          "prerequisites": "",
+          "special": "",
+          "summary": "You may make any Knowledge check untrained."
+        },
+        {
+          "name": "Spontaneous Skill",
+          "page": 44,
+          "repoId": "85fddc83428358ae",
+          "benefit": "Sometimes you surprise others with your skill. Once per day, you may make an untrained skill check as though you were trained in the skill. Exception: You cannot use this talent to make an untrained Use the Force check as though you were trained in the skill unless you have the Force Sensitivity feat (page 85). You can select this talent multiple times; each time you do, you can use it one additional time per day.",
+          "prerequisites": "Educated",
+          "special": "You can select this talent multiple times; each time you do, you can use it one additional time per day.",
+          "summary": "Once per day, make an untrained skill check as though trained; Use the Force requires Force Sensitivity. Repeat selections grant another daily use."
+        },
+        {
+          "name": "Wealth",
+          "page": 44,
+          "repoId": "37bf53b4b2c0e539",
+          "benefit": "Each time you gain a level (including the level at which you select this talent), you receive an amount of credits equal to 5,000 x your noble level. You can spend these credits as you see fit. The credits appear in a civilized, accessible location of your choice or in your private bank account.",
+          "prerequisites": "",
+          "special": "",
+          "summary": "Whenever you gain a level, receive credits equal to 5,000 x your noble level in an accessible location or account."
+        }
+      ]
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Fortune",
+      "tree": "Fortune",
+      "talents": [
+        {
+          "name": "Fool's Luck",
+          "page": 46,
+          "repoId": "5319a796f2c4ff64",
+          "benefit": "As a standard action, you can spend a Force Point to gain one of the following benefits for the rest of the encounter: a +1 luck bonus on attack rolls, a +5 luck bonus on skill checks, or a +1 luck bonus to all your defenses.",
+          "prerequisites": "",
+          "special": "",
+          "summary": "Spend a Force Point and a standard action to gain either +1 luck to attacks, +5 luck to skill checks, or +1 luck to all Defenses for the encounter."
+        },
+        {
+          "name": "Fortune's Favor",
+          "page": 46,
+          "repoId": "aacde500ec811cd4",
+          "benefit": "Whenever you score a critical hit with a melee or ranged attack, you gain a free standard action. You must take the extra standard action before the end of your turn, or else it is lost.",
+          "prerequisites": "",
+          "special": "",
+          "summary": "When you score a critical hit, gain a free standard action that must be used before your turn ends."
+        },
+        {
+          "name": "Gambler",
+          "page": 46,
+          "repoId": "8e4475b0f99633f3",
+          "benefit": "You gain a +2 competence bonus on Wisdom checks when you gamble (see the Gambling sidebar on the next page). You can select this talent multiple times; each time you take this talent, the competence bonus increases by +2.",
+          "prerequisites": "",
+          "special": "You can select this talent multiple times; each time you take this talent, the competence bonus increases by +2.",
+          "summary": "Gain +2 competence on Wisdom checks made to gamble; each additional selection increases the bonus by another +2."
+        },
+        {
+          "name": "Knack",
+          "page": 46,
+          "repoId": "ac6baadb9d65ff7f",
+          "benefit": "Once per day, you can reroll a skill check and take the better result. You can select this talent multiple times; each time you select this talent, you can use it one additional time per day.",
+          "prerequisites": "",
+          "special": "You can select this talent multiple times; each time you select this talent, you can use it one additional time per day.",
+          "summary": "Once per day, reroll a skill check and keep the better result; repeat selections grant another daily use."
+        },
+        {
+          "name": "Lucky Shot",
+          "page": 46,
+          "repoId": "5fbf1a3504865fba",
+          "benefit": "Once per day, you can reroll an attack roll and take the better result. You can select this talent multiple times; each time you select this talent, you can use it one additional time per day.",
+          "prerequisites": "Knack",
+          "special": "You can select this talent multiple times; each time you select this talent, you can use it one additional time per day.",
+          "summary": "Once per day, reroll an attack roll and keep the better result; repeat selections grant another daily use."
+        }
+      ]
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Misfortune",
+      "tree": "Misfortune",
+      "talents": [
+        {
+          "name": "Dastardly Strike",
+          "page": 46,
+          "repoId": "9e4345faaaa94dd8",
+          "benefit": "Whenever you make a successful attack against an opponent that is denied its Dexterity bonus to Reflex Defense, the target moves -1 step along the condition track (see Conditions, page 148).",
+          "prerequisites": "",
+          "special": "",
+          "summary": "When you hit a target denied its Dexterity bonus to Reflex Defense, move it 1 step down the condition track."
+        },
+        {
+          "name": "Disruptive",
+          "page": 46,
+          "repoId": "91b335f8565b90ef",
+          "benefit": "By spending two swift actions, you can use your knack for causing trouble and instigating chaos to disrupt your enemies. Until the start of your next turn, you suppress all morale and insight bonuses applied to enemies in your line of sight.",
+          "prerequisites": "",
+          "special": "",
+          "summary": "Spend two swift actions to suppress all morale and insight bonuses affecting enemies in your line of sight until your next turn."
+        },
+        {
+          "name": "Skirmisher",
+          "page": 46,
+          "repoId": "7b23e0812d6a8985",
+          "benefit": "If you move at least 2 squares before you attack and end your move in a different square from where you started, you gain a +1 bonus on attack rolls until the start of your next turn.",
+          "prerequisites": "",
+          "special": "",
+          "summary": "After moving at least 2 squares and ending in a different square, gain +1 on attack rolls until your next turn."
+        },
+        {
+          "name": "Sneak Attack",
+          "page": 46,
+          "repoId": "1505abc8babeeb84",
+          "benefit": "Any time your opponent is flat-footed or otherwise denied its Dexterity bonus to Reflex Defense, you deal an extra 1d6 points of damage with a successful melee or ranged attack. You must be within 6 squares of the target to make a sneak attack with a ranged weapon. You may select this talent multiple times. Each time you select it, your sneak attack damage increases by +1d6 (maximum +10d6).",
+          "prerequisites": "",
+          "special": "You may select this talent multiple times. Each time you select it, your sneak attack damage increases by +1d6 (maximum +10d6).",
+          "summary": "Deal +1d6 damage to flat-footed targets or those denied Dexterity to Reflex; ranged sneak attacks require 6 squares or less, and repeat selections add +1d6."
+        },
+        {
+          "name": "Walk the Line",
+          "page": 46,
+          "repoId": "3f8f5305eabc525e",
+          "benefit": "As a standard action, you can do or say something that catches your enemies off guard. All opponents within 6 squares of you and in your line of sight take a -2 penalty to their defenses until the start of your next turn. The penalty is negated if line of sight is broken.",
+          "prerequisites": "Disruptive",
+          "special": "",
+          "summary": "As a standard action, enemies within 6 squares and in sight take -2 to all Defenses until your next turn unless line of sight is broken."
+        }
+      ]
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Slicer",
+      "tree": "Slicer",
+      "talents": [
+        {
+          "name": "Gimmick",
+          "page": 47,
+          "repoId": "8d8937a416fc0d81",
+          "benefit": "You can issue a routine command to a computer (see page 187) as a swift action.",
+          "prerequisites": "",
+          "special": "",
+          "summary": "Issue a routine command to a computer as a swift action."
+        },
+        {
+          "name": "Master Slicer",
+          "page": 47,
+          "repoId": "bae4b0a8a3554cca",
+          "benefit": "You may choose to reroll any Use Computer check made to improve access on a computer, keeping the better of the two results.",
+          "prerequisites": "Gimmick",
+          "special": "",
+          "summary": "Reroll Use Computer checks made to improve access and keep the better result."
+        },
+        {
+          "name": "Trace",
+          "page": 47,
+          "repoId": "54065380bb20e8d8",
+          "benefit": "You can substitute your Use Computer skill for any Gather Information check as long as you have access to a computer network.",
+          "prerequisites": "",
+          "special": "",
+          "summary": "Use Use Computer instead of Gather Information whenever you have access to a computer network."
+        }
+      ]
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Spacer",
+      "tree": "Spacer",
+      "talents": [
+        {
+          "name": "Hyperdriven",
+          "page": 47,
+          "repoId": "29f73c36cabdeaf5",
+          "benefit": "Once per day while aboard a starship, you can add your scoundrel class level as a bonus on a single attack roll, skill check, or ability check. The decision to add this bonus can be made after the result of the roll or check is known.",
+          "prerequisites": "",
+          "special": "",
+          "summary": "Once per day aboard a starship, add your scoundrel level to one attack roll, skill check, or ability check after seeing the result."
+        },
+        {
+          "name": "Spacehound",
+          "page": 47,
+          "repoId": "fe0c3a64ca460542",
+          "benefit": "You take no penalty on attack rolls in low-gravity or zero-gravity environments, and you ignore the debilitating effects of space sickness (see Zero-Gravity Environments, page 257). In addition, you are considered proficient with any starship weapon.",
+          "prerequisites": "",
+          "special": "",
+          "summary": "Ignore low/zero-gravity attack penalties and space sickness, and count as proficient with all starship weapons."
+        },
+        {
+          "name": "Starship Raider",
+          "page": 47,
+          "repoId": "224906e573330bf2",
+          "benefit": "You gain a +1 bonus on attack rolls while aboard a starship. This bonus applies to attacks made with starship weapons as well as personal weapons used aboard a starship.",
+          "prerequisites": "Spacehound",
+          "special": "",
+          "summary": "Gain +1 on all attack rolls while aboard a starship, whether using starship or personal weapons."
+        },
+        {
+          "name": "Stellar Warrior",
+          "page": 47,
+          "repoId": "f92583cf04620d84",
+          "benefit": "Whenever you roll a natural 20 on an attack roll made aboard a starship, you gain one temporary Force Point. If the Force Point is not used before the end of the encounter, it is lost.",
+          "prerequisites": "Spacehound",
+          "special": "",
+          "summary": "When you roll a natural 20 on an attack aboard a starship, gain a temporary Force Point that expires at the end of the encounter."
+        }
+      ]
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Awareness",
+      "tree": "Awareness",
+      "talents": [
+        {
+          "name": "Acute Senses",
+          "page": 49,
+          "repoId": null,
+          "benefit": "You may choose to reroll any Perception check, but the result of the reroll must be accepted even if it is worse.",
+          "prerequisites": "",
+          "special": "",
+          "summary": "Reroll any Perception check, but you must keep the reroll even if it is worse."
+        },
+        {
+          "name": "Expert Tracker",
+          "page": 49,
+          "repoId": "16e18057bc92365c",
+          "benefit": "You take no penalty on Survival checks made to follow tracks while moving your normal speed. (Without this talent, you take a -5 penalty on Survival checks made to follow tracks while moving your normal speed.)",
+          "prerequisites": "Acute Senses",
+          "special": "",
+          "summary": "Follow tracks at your normal speed without the usual -5 penalty to Survival checks."
+        },
+        {
+          "name": "Improved Initiative",
+          "page": 49,
+          "repoId": "9840f0e8b8f53bb5",
+          "benefit": "You may choose to reroll any Initiative check, but the result of the reroll must be accepted even if it is worse.",
+          "prerequisites": "Acute Senses",
+          "special": "",
+          "summary": "Reroll any Initiative check, but you must keep the reroll even if it is worse."
+        },
+        {
+          "name": "Keen Shot",
+          "page": 49,
+          "repoId": "aca0598e9b0eb935",
+          "benefit": "You take no penalty on your attack roll when attacking a target with concealment (but not total concealment).",
+          "prerequisites": "Acute Senses",
+          "special": "",
+          "summary": "Ignore the attack-roll penalty for targeting creatures with concealment, but not total concealment."
+        },
+        {
+          "name": "Uncanny Dodge I",
+          "page": 49,
+          "repoId": "df9c364e91826cbf",
+          "benefit": "You retain your Dexterity bonus to your Reflex Defense regardless of being caught flat-footed or struck by a hidden attacker. You still lose your Dexterity bonus to your Reflex Defense if you are immobilized.",
+          "prerequisites": "Acute Senses, Improved Initiative",
+          "special": "",
+          "summary": "Keep your Dexterity bonus to Reflex Defense while flat-footed or attacked by a hidden foe; immobilization still removes it."
+        },
+        {
+          "name": "Uncanny Dodge II",
+          "page": 49,
+          "repoId": "c7f46a5c92d7dd5e",
+          "benefit": "You cannot be flanked. You can react to opponents on opposite sides of you as easily as you can react to a single attacker.",
+          "prerequisites": "Acute Senses, Improved Initiative, Uncanny Dodge I",
+          "special": "",
+          "summary": "You cannot be flanked."
+        }
+      ]
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Camouflage",
+      "tree": "Camouflage",
+      "talents": [
+        {
+          "name": "Hidden Movement",
+          "page": 49,
+          "repoId": "d0dad96e182d63d4",
+          "benefit": "You are very good at hiding when mobile. You take no penalty on your Stealth check when moving your normal speed.",
+          "prerequisites": "Improved Stealth",
+          "special": "",
+          "summary": "Move at your normal speed without taking a penalty on Stealth checks."
+        },
+        {
+          "name": "Improved Stealth",
+          "page": 49,
+          "repoId": "073115894cad8cf9",
+          "benefit": "You may choose to reroll any Stealth check, but the result of the reroll must be accepted even if it is worse.",
+          "prerequisites": "",
+          "special": "",
+          "summary": "Reroll any Stealth check, but you must keep the reroll even if it is worse."
+        },
+        {
+          "name": "Total Concealment",
+          "page": 49,
+          "repoId": "9d183b40a16b1376",
+          "benefit": "Any situation that would give you concealment (see page 156) grants you total concealment instead.",
+          "prerequisites": "Hidden Movement, Improved Stealth",
+          "special": "",
+          "summary": "Any effect that would grant you concealment grants total concealment instead."
+        }
+      ]
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Fringer",
+      "tree": "Fringer",
+      "talents": [
+        {
+          "name": "Barter",
+          "page": 50,
+          "repoId": "6408bc9e8f582f5d",
+          "benefit": "You may reroll any Persuasion check made to haggle (see the Persuasion skill, page 71). You must, however, accept the result of the reroll.",
+          "prerequisites": "",
+          "special": "",
+          "summary": "Reroll Persuasion checks made to haggle, but you must keep the reroll."
+        },
+        {
+          "name": "Fringe Savant",
+          "page": 50,
+          "repoId": "d4a9f83d180934b5",
+          "benefit": "Whenever you roll a natural 20 on a skill check during an encounter, you gain one temporary Force Point. If the Force Point is not used before the end of the encounter, it is lost.",
+          "prerequisites": "",
+          "special": "",
+          "summary": "When you roll a natural 20 on a skill check during an encounter, gain a temporary Force Point that expires when the encounter ends."
+        },
+        {
+          "name": "Jury-Rigger",
+          "page": 50,
+          "repoId": null,
+          "benefit": "You may reroll any Mechanics check made to accomplish a jury-rigged repair (see the Mechanics skill, page 68). You must, however, accept the result of the reroll.",
+          "prerequisites": "",
+          "special": "",
+          "summary": "Reroll Mechanics checks made for jury-rigged repairs, but you must keep the reroll."
+        },
+        {
+          "name": "Long Stride",
+          "page": 50,
+          "repoId": null,
+          "benefit": "Your speed increases by 2 squares if you are wearing light armor or no armor. If you have a natural fly, climb, or swim speed, it increases by 2 squares as well. You cannot use this talent if you are wearing medium or heavy armor.",
+          "prerequisites": "",
+          "special": "",
+          "summary": "Increase your movement speeds by 2 squares while wearing light armor or no armor; medium or heavy armor disables the benefit."
+        }
+      ]
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Survivor",
+      "tree": "Survivor",
+      "talents": [
+        {
+          "name": "Evasion",
+          "page": 50,
+          "repoId": "5400bc8cb1200624",
+          "benefit": "If you are hit by an area attack (see Area Attacks, page 155), you take half damage if the attack hits you. If the area attack misses you, you take no damage.",
+          "prerequisites": "",
+          "special": "",
+          "summary": "Take half damage from area attacks that hit you and no damage from area attacks that miss."
+        },
+        {
+          "name": "Extreme Effort",
+          "page": 50,
+          "repoId": "c7c5ac9608d29c5b",
+          "benefit": "You can spend two swift actions to gain a +5 bonus on a single Strength check or Strength-based skill check made during the same round.",
+          "prerequisites": "",
+          "special": "",
+          "summary": "Spend two swift actions to gain +5 on one Strength check or Strength-based skill check made that round."
+        },
+        {
+          "name": "Sprint",
+          "page": 50,
+          "repoId": "ca79321246ae6986",
+          "benefit": "When you use the run action, you can move up to five times your speed (instead of the normal four times your speed).",
+          "prerequisites": "",
+          "special": "",
+          "summary": "When you run, move up to 5 times your speed instead of 4 times."
+        },
+        {
+          "name": "Surefooted",
+          "page": 50,
+          "repoId": "f87bd82a892f69ea",
+          "benefit": "Your speed is not reduced by difficult terrain (see Difficult Terrain, page 159).",
+          "prerequisites": "",
+          "special": "",
+          "summary": "Difficult terrain does not reduce your speed."
+        }
+      ]
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Armor Specialist",
+      "tree": "Armor Specialist",
+      "talents": [
+        {
+          "name": "Armor Mastery",
+          "page": 51,
+          "repoId": "4fc3fe4c1e7f9ba0",
+          "benefit": "The maximum Dexterity bonus of your armor improves by +1. You must be proficient with the armor you are wearing to gain this benefit.",
+          "prerequisites": "Armored Defense",
+          "special": "",
+          "summary": "Increase your armor's maximum Dexterity bonus by +1 while wearing armor you are proficient with."
+        },
+        {
+          "name": "Armored Defense",
+          "page": 52,
+          "repoId": "4c236343b01ea763",
+          "benefit": "When calculating your Reflex Defense, you may add either your heroic level or your armor bonus, whichever is higher. You must be proficient with the armor you are wearing to gain this benefit.",
+          "prerequisites": "",
+          "special": "",
+          "summary": "For Reflex Defense, use either your heroic level or armor bonus, whichever is higher, while wearing armor you are proficient with."
+        },
+        {
+          "name": "Improved Armored Defense",
+          "page": 52,
+          "repoId": "394809ed8baff1b9",
+          "benefit": "When calculating your Reflex Defense, you may add your heroic level plus one-half your armor bonus (rounded down) or your armor bonus, whichever is higher. You must be proficient with the armor you are wearing to gain this benefit.",
+          "prerequisites": "Armored Defense",
+          "special": "",
+          "summary": "For Reflex Defense, use either your armor bonus or your heroic level plus half your armor bonus, whichever is higher."
+        },
+        {
+          "name": "Juggernaut",
+          "page": 52,
+          "repoId": "55f4a04087dacddc",
+          "benefit": "Your armor does not reduce your speed or the distance you can move while running. You must be proficient with the armor you are wearing to gain this benefit.",
+          "prerequisites": "Armored Defense",
+          "special": "",
+          "summary": "Armor you are proficient with no longer reduces your speed or running distance."
+        },
+        {
+          "name": "Second Skin",
+          "page": 52,
+          "repoId": "eafb1ee6cacedd20",
+          "benefit": "When wearing armor with which you are proficient, your armor bonus to your Reflex Defense and equipment bonus to your Fortitude Defense increase by +1.",
+          "prerequisites": "Armored Defense",
+          "special": "",
+          "summary": "While wearing armor you are proficient with, increase its Reflex armor bonus and Fortitude equipment bonus by +1."
+        }
+      ]
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Brawler",
+      "tree": "Brawler",
+      "talents": [
+        {
+          "name": "Expert Grappler",
+          "page": 52,
+          "repoId": "916a526d8c166005",
+          "benefit": "You gain a +2 competence bonus on grapple attacks (see page 153).",
+          "prerequisites": "",
+          "special": "",
+          "summary": "Gain +2 competence on grapple attacks."
+        },
+        {
+          "name": "Gun Club",
+          "page": 52,
+          "repoId": null,
+          "benefit": "You can use a ranged weapon as a melee weapon without taking a penalty on your attack roll. (Normally you take a -5 penalty on attack rolls made with an improvised weapon.) The weapon is otherwise treated as a club in all respects. If you are using a rifle with a mounted bayonet (see page 121) or vibrobayonet (see page 124), you may wield that weapon as a double weapon. The bayonet or vibrobayonet end is treated normally, and the other end is treated as a club.",
+          "prerequisites": "",
+          "special": "",
+          "summary": "Use ranged weapons in melee as clubs without the improvised-weapon attack penalty; a rifle with a bayonet can be wielded as a double weapon."
+        },
+        {
+          "name": "Melee Smash",
+          "page": 52,
+          "repoId": null,
+          "benefit": "You deal +1 point of damage with melee attacks.",
+          "prerequisites": "",
+          "special": "",
+          "summary": "Deal +1 damage with melee attacks."
+        },
+        {
+          "name": "Stunning Strike",
+          "page": 52,
+          "repoId": null,
+          "benefit": "When you damage an opponent with a melee attack, your opponent moves an additional -1 step along the condition track (see page 149) if your attack roll result equals or exceeds the target's damage threshold.",
+          "prerequisites": "Melee Smash",
+          "special": "",
+          "summary": "A melee hit whose attack roll equals or exceeds the target's damage threshold moves it 1 additional step down the condition track."
+        },
+        {
+          "name": "Unbalance Opponent",
+          "page": 52,
+          "repoId": null,
+          "benefit": "You are skilled at keeping your opponents off balance in melee combat. During your action, you designate an opponent no more than one size category larger or smaller than you. That opponent doesn't get to add his Strength bonus on attack rolls when targeting you. (If the opponent has a Strength penalty, he still suffers that penalty.) The opponent's Strength modifier applies to damage, as usual. You can select a new opponent on your next turn.",
+          "prerequisites": "Expert Grappler",
+          "special": "",
+          "summary": "Designate a similarly sized opponent each turn; it cannot add a positive Strength modifier to attacks against you, though Strength still modifies damage."
+        }
+      ]
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Commando",
+      "tree": "Commando",
+      "talents": [
+        {
+          "name": "Battle Analysis",
+          "page": 52,
+          "repoId": "7df2e8e4f18dc909",
+          "benefit": "As a swift action, you can make a DC 15 Knowledge (tactics) check. If the check succeeds, you know which allies and opponents in your line of sight are reduced to at least half of their maximum total hit points.",
+          "prerequisites": "",
+          "special": "",
+          "summary": "As a swift action, make DC 15 Knowledge (tactics) to identify visible allies and enemies at half hit points or less."
+        },
+        {
+          "name": "Cover Fire",
+          "page": 52,
+          "repoId": "049820827d7ef32b",
+          "benefit": "When you make a ranged attack with a pistol or rifle, all allies within 6 squares of you when the attack is made gain a +1 bonus to Reflex Defense until the start of your next turn. Allies within range do not need to be within your line of sight to gain the bonus.",
+          "prerequisites": "Battle Analysis",
+          "special": "",
+          "summary": "When you make a pistol or rifle attack, allies within 6 squares gain +1 Reflex Defense until your next turn."
+        },
+        {
+          "name": "Demolitionist",
+          "page": 52,
+          "repoId": "8aedbfb39b9f3b52",
+          "benefit": "When you use the Mechanics skill to place an explosive device, the explosion deals +2 dice of damage. You may take this talent multiple times; its effects stack.",
+          "prerequisites": "",
+          "special": "You may take this talent multiple times; its effects stack.",
+          "summary": "Explosives you place with Mechanics deal +2 damage dice; repeated selections stack."
+        },
+        {
+          "name": "Draw Fire",
+          "page": 52,
+          "repoId": null,
+          "benefit": "You can distract opponents and convince them that you are the most tempting (or most dangerous) target in an area. As a swift action, make a Persuasion check and compare the result to the Will Defense of opponents within line of sight. If the check result exceeds an opponent's Will Defense, that opponent cannot attack any character within 6 squares of you until the start of your next turn as long as you do not have cover against that opponent. (The affected opponent may still attack you, however.)",
+          "prerequisites": "",
+          "special": "",
+          "summary": "As a swift action, Persuasion vs. Will can prevent visible enemies from attacking anyone within 6 squares of you other than you until your next turn."
+        },
+        {
+          "name": "Harm's Way",
+          "page": 52,
+          "repoId": null,
+          "benefit": "Once per round, you may spend a swift action to shield a single adjacent ally from attacks, taking the damage and suffering the ill effects in your ally's stead. Until the start of your next turn, any attack made against the protected ally affects you instead. You may elect not to shield your protected ally against a given attack, provided the decision is made before the attack roll is made.",
+          "prerequisites": "Trained in the Initiative skill",
+          "special": "",
+          "summary": "Once per round, spend a swift action to protect an adjacent ally until your next turn, taking selected attacks and their effects in the ally's place."
+        },
+        {
+          "name": "Indomitable",
+          "page": 52,
+          "repoId": "b8aaf500d3069938",
+          "benefit": "Once per day as a swift action, you can move +5 steps along the condition track (see Conditions, page 148). This does not remove any persistent conditions that may be affecting you (see page 149). You can select this talent multiple times. Each time you select this talent, you can use it one additional time per day.",
+          "prerequisites": "",
+          "special": "You can select this talent multiple times. Each time you select this talent, you can use it one additional time per day.",
+          "summary": "Once per day as a swift action, move 5 steps up the condition track without removing persistent conditions; repeat selections grant another daily use."
+        },
+        {
+          "name": "Tough as Nails",
+          "page": 53,
+          "repoId": "916b0a6197bf85a6",
+          "benefit": "You can catch a second wind one extra time per day (see Second Wind, page 146). If you have this talent and the Extra Second Wind feat (see page 85), you can catch your second wind a total of three times per day.",
+          "prerequisites": "",
+          "special": "",
+          "summary": "Gain one additional second wind per day; with Extra Second Wind, you can use second wind three times per day total."
+        }
+      ]
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Weapon Specialist",
+      "tree": "Weapon Specialist",
+      "talents": [
+        {
+          "name": "Devastating Attack",
+          "page": 53,
+          "repoId": null,
+          "benefit": "Choose a single exotic weapon or weapon group with which you are proficient. Whenever you make a successful attack against a target using such a weapon, you treat your target's damage threshold as if it were 5 points lower when determining the result of your attack. You may select this talent multiple times. Each time you select this talent it applies to a different exotic weapon or weapon group.",
+          "prerequisites": "",
+          "special": "You may select this talent multiple times. Each time you select this talent it applies to a different exotic weapon or weapon group.",
+          "summary": "Choose a proficient weapon group or exotic weapon; attacks with it treat the target's damage threshold as 5 lower. Repeat selections apply to different weapons."
+        },
+        {
+          "name": "Penetrating Attack",
+          "page": 53,
+          "repoId": null,
+          "benefit": "Choose a single exotic weapon or weapon group with which you are proficient. Whenever you make a successful attack against a target using such a weapon, you treat your target's damage reduction as if it were 5 points lower when determining the result of your attack. You may select this talent multiple times. Each time you select this talent, it applies to a different exotic weapon or weapon group.",
+          "prerequisites": "Weapon Focus with chosen exotic weapon or weapon group",
+          "special": "You may select this talent multiple times. Each time you select this talent, it applies to a different exotic weapon or weapon group.",
+          "summary": "Choose a proficient weapon group or exotic weapon; attacks with it treat the target's damage reduction as 5 lower. Repeat selections apply to different weapons."
+        },
+        {
+          "name": "Weapon Specialization",
+          "page": 53,
+          "repoId": "869168cd679ee5d1",
+          "benefit": "Choose a single exotic weapon or weapon group with which you are proficient. You gain a +2 bonus on damage rolls with such weapons. You may select this talent multiple times. Each time you select this talent, it applies to a different exotic weapon or weapon group.",
+          "prerequisites": "Weapon Focus with chosen exotic weapon or weapon group",
+          "special": "You may select this talent multiple times. Each time you select this talent, it applies to a different exotic weapon or weapon group.",
+          "summary": "Choose a proficient weapon group or exotic weapon and gain +2 damage with it; repeat selections apply to different weapons."
+        }
+      ]
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Alter",
+      "tree": "Alter",
+      "talents": [
+        {
+          "name": "Disciplined Strike",
+          "page": 100,
+          "repoId": "0fc08fad3a87a830",
+          "benefit": "Whenever you use a Force power that has a cone effect (such as Force slam), you may exclude a certain number of targets from the effects of that power. The number of targets that you may exclude in this manner is equal to your Wisdom modifier (minimum of 1).",
+          "prerequisites": "",
+          "special": "",
+          "summary": "Exclude a number of targets equal to your Wisdom modifier (minimum 1) from your cone-shaped Force powers."
+        },
+        {
+          "name": "Telekinetic Power",
+          "page": 100,
+          "repoId": "11cae48e1213c407",
+          "benefit": "Whenever you roll a natural 20 on your Use the Force check to activate the Force disarm, Force grip, Force slam, Force thrust, or move object Force powers, you may choose to use that Force power again immediately as a free action. You may direct the second use of the Force power against any eligible target.",
+          "prerequisites": "",
+          "special": "",
+          "summary": "When you roll a natural 20 activating one of five telekinetic Force powers, use that power again immediately as a free action."
+        },
+        {
+          "name": "Telekinetic Savant",
+          "page": 100,
+          "repoId": "ddacb8e4517da6b5",
+          "benefit": "Once per encounter as a swift action, you may return one of these Force powers to your suite without spending a Force Point: Force disarm, Force grip, Force slam, Force thrust, or move object.",
+          "prerequisites": "",
+          "special": "You may select this talent multiple times. Each time you select it, you may use this talent one additional time per encounter.",
+          "summary": "Once per encounter as a swift action, recover one listed telekinetic Force power without spending a Force Point."
+        }
+      ]
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Control",
+      "tree": "Control",
+      "talents": [
+        {
+          "name": "Damage Reduction 10",
+          "page": 101,
+          "repoId": "35b42e14e3ef7d0d",
+          "benefit": "You can spend a Force Point as a standard action to gain damage reduction 10 for 1 minute (see Damage Reduction, page 158).",
+          "prerequisites": "",
+          "special": "",
+          "summary": "Spend a Force Point as a standard action to gain DR 10 for 1 minute."
+        },
+        {
+          "name": "Equilibrium",
+          "page": 101,
+          "repoId": null,
+          "benefit": "As a swift action, you can spend a Force Point to remove all debilitating conditions affecting you and return to a normal state (see Conditions, page 148).",
+          "prerequisites": "",
+          "special": "",
+          "summary": "Spend a Force Point as a swift action to remove all debilitating conditions affecting you."
+        },
+        {
+          "name": "Force Focus",
+          "page": 101,
+          "repoId": "af51d4e76675b183",
+          "benefit": "As a full-round action, you may make a DC 15 Use the Force check. If the check succeeds, you regain one spent Force power of your choice.",
+          "prerequisites": "",
+          "special": "",
+          "summary": "As a full-round action, make a DC 15 Use the Force check to recover one spent Force power."
+        },
+        {
+          "name": "Force Recovery",
+          "page": 101,
+          "repoId": "a691cc0212b6176c",
+          "benefit": "Whenever you use your second wind (see Second Wind, page 146), you regain a number of additional hit points equal to 1d6 per Force Point you possess (maximum 10d6).",
+          "prerequisites": "Equilibrium",
+          "special": "",
+          "summary": "When you use your second wind, regain +1d6 HP per Force Point you possess, up to 10d6."
+        }
+      ]
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Dark Side",
+      "tree": "Dark Side",
+      "treeRuleText": "You must have a Dark Side Score of 1 or higher to select talents from this tree; if your Dark Side Score is ever reduced to 0, you lose access to all talents in this talent tree until your Dark Side Score increases.",
+      "talents": [
+        {
+          "name": "Power of the Dark Side",
+          "page": 101,
+          "repoId": "627bd3abd30b973f",
+          "benefit": "You allow your hatred to fuel your attacks. Whenever you spend a Force Point to modify an attack roll, you may choose to roll an additional bonus die and take the best result. However, doing so increases your Dark Side Score by 1.",
+          "prerequisites": "",
+          "special": "For example, a 1st-level character with this talent could increase his Dark Side Score by 1 to roll 2d6 instead of 1d6, taking the best die result and applying it as a bonus on his attack roll.",
+          "summary": "When you spend a Force Point to boost an attack, roll one extra bonus die and keep the best, but gain 1 Dark Side Score."
+        },
+        {
+          "name": "Dark Presence",
+          "page": 101,
+          "repoId": "606e14c428f1d159",
+          "benefit": "As a standard action, you grant yourself and all allies within 6 squares of you a +1 Force bonus to all defenses until the end of the encounter. These bonuses are lost if you fall unconscious or die. Affected allies that move out of range lose the benefits for as long as they remain out of range.",
+          "prerequisites": "Charisma 13, Power of the Dark Side",
+          "special": "",
+          "summary": "As a standard action, grant yourself and nearby allies +1 Force bonus to all defenses for the encounter while they remain in range."
+        },
+        {
+          "name": "Revenge",
+          "page": 101,
+          "repoId": "c83f18465c3b9d91",
+          "benefit": "Whenever an ally of equal or higher level than you is killed or reduced to 0 hit points within your line of sight, you gain a +2 Force bonus on attack rolls and damage rolls until the end of the encounter.",
+          "prerequisites": "Dark Presence, Power of the Dark Side",
+          "special": "Since Force bonuses do not stack, you do not get a higher bonus if more than one ally falls in the same encounter.",
+          "summary": "When an equal- or higher-level ally you can see drops to 0 HP or dies, gain +2 Force bonus to attacks and damage for the encounter."
+        },
+        {
+          "name": "Swift Power",
+          "page": 101,
+          "repoId": "09609e71ba6cd4aa",
+          "benefit": "Once per day, you can use a Force power that normally takes a standard action or move action as a swift action.",
+          "prerequisites": "Power of the Dark Side",
+          "special": "",
+          "summary": "Once per day, use a Force power that normally takes a standard or move action as a swift action."
+        }
+      ]
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Sense",
+      "tree": "Sense",
+      "talents": [
+        {
+          "name": "Force Perception",
+          "page": 101,
+          "repoId": "a358402a9fc26c02",
+          "benefit": "You can make a Use the Force check instead of a Perception check to avoid surprise, notice enemies, sense deception, or sense influence (see the Perception skill, page 70). You are considered trained in the Perception skill for purposes of using this talent. If you are entitled to a Perception check reroll, you may reroll your Use the Force check instead (subject to the same circumstances and limitations).",
+          "prerequisites": "",
+          "special": "",
+          "summary": "Use Use the Force instead of Perception for several sensing tasks and count as trained in Perception for this talent."
+        },
+        {
+          "name": "Force Pilot",
+          "page": 101,
+          "repoId": "443373859f1ecca3",
+          "benefit": "You can use your Use the Force check modifier instead of your Pilot check modifier when making Pilot checks. You are considered trained in the Pilot skill for purposes of using this talent. If you are entitled to a Pilot check reroll, you may reroll your Use the Force check instead (subject to the same circumstances and limitations).",
+          "prerequisites": "",
+          "special": "",
+          "summary": "Use your Use the Force modifier for Pilot checks and count as trained in Pilot for this talent."
+        },
+        {
+          "name": "Foresight",
+          "page": 101,
+          "repoId": "d10cdcba4faae7bb",
+          "benefit": "You may spend a Force Point to reroll an Initiative check, keeping the better of the two rolls. Additionally, if you roll a natural 20 on the Initiative check reroll, you immediately regain the Force Point spent to activate this talent.",
+          "prerequisites": "Force Perception",
+          "special": "",
+          "summary": "Spend a Force Point to reroll Initiative and keep the better roll; a natural 20 on the reroll refunds the Force Point."
+        },
+        {
+          "name": "Gauge Force Potential",
+          "page": 101,
+          "repoId": "fdc4061afb97e87f",
+          "benefit": "By focusing on a specific creature in your line of sight, you can gauge how strong in the Force it is. This takes a standard action and requires a Use the Force check. If your check result meets or beats the target's Will Defense, you know whether or not it has the Force Sensitivity feat, you know how many Force powers it knows (but not which ones, specifically), and you know how many Force Points it has currently.",
+          "prerequisites": "Force Perception",
+          "special": "",
+          "summary": "As a standard action, beat a visible creature's Will Defense with Use the Force to learn its Force sensitivity, power count, and current Force Points."
+        },
+        {
+          "name": "Visions",
+          "page": 101,
+          "repoId": null,
+          "benefit": "Whenever you use the farseeing Force power, you can spend a Force Point as a swift action to see into the target's past or future instead of glimpsing the target in the present. You declare how far into the target's past or future you wish to look, up to a maximum of 1 year per your character level. Any information gained about a target's future is subject to change, depending on whether steps are taken to alter that future.",
+          "prerequisites": "Force Perception, farseeing",
+          "special": "",
+          "summary": "Spend a Force Point when using farseeing to view the target's past or possible future, up to 1 year per character level away."
+        }
+      ]
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Jensaarai Defender",
+      "tree": "Jensaarai Defender",
+      "talents": [
+        {
+          "name": "Attune Armor",
+          "page": 107,
+          "repoId": null,
+          "benefit": "As a full-round action, you may spend a Force Point to attune a suit of armor to the Force, permanently increasing its armor bonus by +2. In addition, the maximum Dexterity bonus of the attuned armor permanently improves by +1. Only you can benefit from wearing the attuned armor; the benefits do not apply if someone else dons the armor.",
+          "prerequisites": "",
+          "special": "",
+          "summary": "Spend a Force Point and a full-round action to permanently give a suit of armor +2 armor bonus and +1 maximum Dexterity bonus for you only."
+        },
+        {
+          "name": "Force Cloak",
+          "page": 107,
+          "repoId": "2c18952e0c014127",
+          "benefit": "As a swift action, you can surround yourself with an invisible bubble of Force power that shields you and anything you're carrying from electronic surveillance. The bubble also blocks all electronic sensors and communications. The Force cloak lasts for as long as you concentrate (a standard action) or until the start of your next turn.",
+          "prerequisites": "",
+          "special": "",
+          "summary": "As a swift action, cloak yourself and carried gear from electronic surveillance, sensors, and communications while you concentrate."
+        },
+        {
+          "name": "Force Cloak Mastery",
+          "page": 107,
+          "repoId": null,
+          "benefit": "As the Force Cloak talent, except that you can expand the bubble to envelop a number of creatures (including yourself) equal to your character level.",
+          "prerequisites": "Force Cloak",
+          "special": "",
+          "summary": "Your Force Cloak can cover a number of creatures, including yourself, equal to your character level."
+        },
+        {
+          "name": "Linked Defense",
+          "page": 107,
+          "repoId": null,
+          "benefit": "As a swift action, you can take a penalty of up to -5 on your attack roll and add the same number (up to +5) as a Force bonus to an ally's Reflex Defense, provided the ally is within your line of sight when you activate this talent. The bonus you confer cannot exceed your base attack bonus. The changes to your attack rolls and your ally's Reflex Defense last until the start of your next turn.",
+          "prerequisites": "",
+          "special": "",
+          "summary": "As a swift action, take up to -5 on attacks to grant the same Force bonus to a visible ally's Reflex Defense until your next turn."
+        }
+      ]
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Dathomiri Witch",
+      "tree": "Dathomiri Witch",
+      "talents": [
+        {
+          "name": "Adept Spellcaster",
+          "page": 107,
+          "repoId": "12b7eb5d32bd440e",
+          "benefit": "You may use any Force power that normally requires a swift action, move action, or standard action as a full-round action instead. If you choose to do so, you may reroll your Use the Force check to activate that power, but you must accept the result of the reroll, even if it is worse.",
+          "prerequisites": "",
+          "special": "",
+          "summary": "Use a swift-, move-, or standard-action Force power as a full-round action to reroll its Use the Force check, keeping the reroll."
+        },
+        {
+          "name": "Charm Beast",
+          "page": 107,
+          "repoId": null,
+          "benefit": "You may make a Use the Force check in place of a Persuasion check when attempting to change the attitude of an undomesticated creature with an Intelligence of 2 or less. Additionally, you do not take the normal -5 penalty on the check if the creature can't speak or understand your language.",
+          "prerequisites": "",
+          "special": "",
+          "summary": "Use Use the Force instead of Persuasion to change a low-Intelligence wild creature's attitude without the language penalty."
+        },
+        {
+          "name": "Command Beast",
+          "page": 107,
+          "repoId": null,
+          "benefit": "Whenever you manage to shift the attitude of a beast to indifferent or friendly, you may treat that creature as a domesticated animal—but for you only (it remains undomesticated in its response to other creatures). Additionally, you may use this beast as a mount, as per the Ride skill (see page 72), provided that it is at least one size category larger than you and has a comfortable place for you to sit. For more information on beasts, see page 273.",
+          "prerequisites": "Charm Beast",
+          "special": "",
+          "summary": "A beast you make indifferent or friendly counts as domesticated for you and can serve as a mount if it is large enough."
+        },
+        {
+          "name": "Flight",
+          "page": 107,
+          "repoId": null,
+          "benefit": "As a swift action, you can spend a Force Point to fly. You gain a fly speed equal to your land speed, and you can ascend at half speed or descend at double speed. The flight lasts until the start of your next turn; if you're still airborne at that time, you fall.",
+          "prerequisites": "Adept Spellcaster",
+          "special": "",
+          "summary": "Spend a Force Point as a swift action to fly at your land speed until your next turn; if still airborne then, you fall."
+        }
+      ]
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Expert Pilot",
+      "tree": "Expert Pilot",
+      "talents": [
+        {
+          "name": "Elusive Dogfighter",
+          "page": 207,
+          "repoId": "fead6e3522fd458a",
+          "benefit": "When engaged in a dogfight, any enemy pilot engaged in the same dogfight takes a -10 penalty on attack rolls when you succeed on the opposed Pilot check (see Attacking in a Dogfight, page 171).",
+          "prerequisites": "",
+          "special": "",
+          "summary": "When you win the opposed Pilot check in a dogfight, enemy pilots in that dogfight take -10 on attack rolls."
+        },
+        {
+          "name": "Full Throttle",
+          "page": 207,
+          "repoId": "34ff9dc64050028d",
+          "benefit": "You can take 10 on Pilot checks made to increase your vehicle's speed (see the Pilot skill description, page 71). In addition, when you use the all-out movement action while piloting a vehicle, your vehicle moves up to five times its normal speed (instead of the normal x4).",
+          "prerequisites": "",
+          "special": "",
+          "summary": "Take 10 when increasing vehicle speed, and all-out movement can move your vehicle up to five times its normal speed."
+        },
+        {
+          "name": "Juke",
+          "page": 207,
+          "repoId": "d001094556c97a92",
+          "benefit": "When you fight defensively as the pilot of a vehicle (see page 171), the dodge bonus to your vehicle's Reflex Defense increases to +5 even if you make an attack.",
+          "prerequisites": "Vehicular Evasion",
+          "special": "",
+          "summary": "When piloting and fighting defensively, your vehicle gets +5 dodge to Reflex Defense even if you attack."
+        },
+        {
+          "name": "Keep It Together",
+          "page": 207,
+          "repoId": "b7d5a1bc3d40b964",
+          "benefit": "Once per encounter, when a vehicle you're piloting takes damage that equals or exceeds its damage threshold, your vehicle avoids moving down the condition track (see Conditions, page 148).",
+          "prerequisites": "",
+          "special": "",
+          "summary": "Once per encounter, prevent your piloted vehicle from moving down the condition track when damage meets or exceeds its threshold."
+        },
+        {
+          "name": "Relentless Pursuit",
+          "page": 207,
+          "repoId": "b7caecab09bb3f77",
+          "benefit": "You may roll twice for any opposed Pilot check made to initiate a dogfight, keeping the better result (see Dogfight, page 171).",
+          "prerequisites": "",
+          "special": "",
+          "summary": "Roll twice and keep the better result on opposed Pilot checks to initiate a dogfight."
+        },
+        {
+          "name": "Vehicular Evasion",
+          "page": 207,
+          "repoId": "f0cf0ad742a5e014",
+          "benefit": "If the vehicle you are piloting is hit by an area attack (see Area Attacks, page 155), it takes half damage if the attack hits. If the area attack misses your vehicle, it takes no damage. You cannot use this talent when your vehicle is stationary or disabled.",
+          "prerequisites": "",
+          "special": "",
+          "summary": "While your vehicle is moving and functional, area attacks deal half damage on a hit and no damage on a miss."
+        }
+      ]
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Gunner",
+      "tree": "Gunner",
+      "talents": [
+        {
+          "name": "Dogfight Gunner",
+          "page": 207,
+          "repoId": "f52cadb1ae252d0c",
+          "benefit": "While your vehicle is engaged in a dogfight, you take no penalty on your attack rolls with vehicle weapons even if you are not the pilot.",
+          "prerequisites": "Expert Gunner",
+          "special": "",
+          "summary": "While your vehicle is in a dogfight, make vehicle-weapon attacks without the normal dogfight penalty even if you are not the pilot."
+        },
+        {
+          "name": "Expert Gunner",
+          "page": 207,
+          "repoId": "befaa195df06b274",
+          "benefit": "You gain a +1 bonus on attack rolls made using vehicle weapons.",
+          "prerequisites": "",
+          "special": "",
+          "summary": "Gain +1 on attack rolls with vehicle weapons."
+        },
+        {
+          "name": "Quick Trigger",
+          "page": 207,
+          "repoId": "12ffb24378b60c13",
+          "benefit": "Whenever an enemy vehicle moves out of your square or an adjacent square, you may make a single attack against that vehicle as an attack of opportunity.",
+          "prerequisites": "Expert Gunner",
+          "special": "",
+          "summary": "Make an attack of opportunity when an enemy vehicle leaves your square or an adjacent square."
+        },
+        {
+          "name": "System Hit",
+          "page": 207,
+          "repoId": "da9e6511f3ae8435",
+          "benefit": "Whenever you deal damage to a vehicle that equals or exceeds its damage threshold, you move that vehicle an additional -1 step on the condition track (see Conditions, page 148).",
+          "prerequisites": "Expert Gunner",
+          "special": "",
+          "summary": "Vehicle attacks that meet or exceed the target's damage threshold move it 1 additional step down the condition track."
+        }
+      ]
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Bounty Hunter",
+      "tree": "Bounty Hunter",
+      "talents": [
+        {
+          "name": "Hunter's Mark",
+          "page": 208,
+          "repoId": "74fb6b37af983a4c",
+          "benefit": "If you aim before making a ranged attack (see Aim, page 154), you move the target -1 step along the condition track if the attack hits (see Conditions, page 148).",
+          "prerequisites": "",
+          "special": "",
+          "summary": "If you aim before a ranged attack and hit, move the target 1 step down the condition track."
+        },
+        {
+          "name": "Hunter's Target",
+          "page": 208,
+          "repoId": "907906934ba3c563",
+          "benefit": "Once per encounter as a free action, you may designate an opponent. For the rest of the encounter, when you succeed on a melee or ranged attack against that opponent, you gain a bonus on damage rolls equal to your class level.",
+          "prerequisites": "Hunter's Mark",
+          "special": "",
+          "summary": "Once per encounter, designate one opponent; your successful attacks against it gain bonus damage equal to your bounty hunter class level."
+        },
+        {
+          "name": "Notorious",
+          "page": 208,
+          "repoId": null,
+          "benefit": "Your skill as a bounty hunter is known throughout the galaxy, even on fringe worlds. When you are not disguised, you can reroll any Persuasion checks made to intimidate others, keeping the better result (see the Persuasion skill, page 71).",
+          "prerequisites": "",
+          "special": "",
+          "summary": "When not disguised, reroll Persuasion checks made to intimidate and keep the better result."
+        },
+        {
+          "name": "Nowhere to Hide",
+          "page": 208,
+          "repoId": "b19ce52b1c965015",
+          "benefit": "You may choose to reroll any Gather Information checks made to locate a specific individual (see the Gather Information skill, page 67), but you must keep the result of the reroll, even if it is worse.",
+          "prerequisites": "",
+          "special": "",
+          "summary": "Reroll Gather Information checks to locate a specific individual, but keep the reroll."
+        },
+        {
+          "name": "Relentless",
+          "page": 208,
+          "repoId": "7bc10cb88a6a0c92",
+          "benefit": "This talent applies only to an opponent you've designated as your hunter's target (see Hunter's Target, above). Any attack or effect originating from the target that would normally move you along the condition track (see page 149) does not, in fact, move you along the condition track.",
+          "prerequisites": "Hunter's Mark, Hunter's Target",
+          "special": "",
+          "summary": "Your designated hunter's target cannot move you down the condition track with its attacks or effects."
+        },
+        {
+          "name": "Ruthless Negotiator",
+          "page": 208,
+          "repoId": "8298e12805291c78",
+          "benefit": "When haggling over the price of a bounty (see the Persuasion skill, page 71), you can reroll your Persuasion check and keep the better result.",
+          "prerequisites": "Notorious",
+          "special": "",
+          "summary": "When negotiating a bounty's price, reroll Persuasion and keep the better result."
+        }
+      ]
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Infamy",
+      "tree": "Infamy",
+      "talents": [
+        {
+          "name": "Inspire Fear I",
+          "page": 210,
+          "repoId": "cf4b1e5b126a2a7e",
+          "benefit": "Your infamy and reputation are such that any opponent whose level is equal to or less than your character level takes a -1 penalty on attack rolls and opposed skill checks made against you, as well as Use the Force checks made to activate Force powers that target you. This is a mind-affecting fear effect.",
+          "prerequisites": "",
+          "special": "",
+          "summary": "Equal- or lower-level opponents take -1 on attacks, opposed skill checks, and Use the Force checks targeting you."
+        },
+        {
+          "name": "Inspire Fear II",
+          "page": 210,
+          "repoId": "71bc6b43ab504b90",
+          "benefit": "As Inspire Fear I (see above), except that the penalty increases to -2.",
+          "prerequisites": "Inspire Fear I",
+          "special": "",
+          "summary": "Increase Inspire Fear's penalty to -2."
+        },
+        {
+          "name": "Inspire Fear III",
+          "page": 210,
+          "repoId": "bd11bfb793096483",
+          "benefit": "As Inspire Fear I (see above), except that the penalty increases to -5.",
+          "prerequisites": "Inspire Fear I, Inspire Fear II",
+          "special": "",
+          "summary": "Increase Inspire Fear's penalty to -5."
+        },
+        {
+          "name": "Notorious",
+          "page": 210,
+          "repoId": "a7d8c4da96eacad4",
+          "benefit": "Your reputation as a crime lord is known throughout the galaxy, even on fringe worlds. When you are not disguised, you may reroll any Persuasion checks made to intimidate others, keeping the better result (see the Persuasion skill, page 71).",
+          "prerequisites": "",
+          "special": "",
+          "summary": "When not disguised, reroll Persuasion checks made to intimidate and keep the better result."
+        },
+        {
+          "name": "Shared Notoriety",
+          "page": 210,
+          "repoId": "9491f34aad83dfb1",
+          "benefit": "When your minions invoke your name, others take note. If you have minions (see the Attract Minion talent, below), they may reroll any Persuasion checks made to intimidate others (see the Persuasion skill, page 71), but the result of the reroll must be accepted even if it is worse.",
+          "prerequisites": "Notorious",
+          "special": "",
+          "summary": "Your minions can reroll Persuasion checks to intimidate others, but must keep the reroll."
+        }
+      ]
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Mastermind",
+      "tree": "Mastermind",
+      "talents": [
+        {
+          "name": "Attract Minion",
+          "page": 210,
+          "repoId": "2b31cb2ea7ad64b9",
+          "benefit": "You attract a loyal minion. The minion is a nonheroic character (see page 277) with a class level equal to three-quarters of your character level, rounded down. You may select this talent multiple times; each time you select this talent, you gain another minion. Normally, you can have only one minion with you at a time. Any other minions you have are assumed to be looking after your various interests. If you lose a minion, you can send for another minion if you have one (although normal travel time still applies). Each minion that accompanies you on an adventure is entitled to an equal share of the total experience points earned for the adventure. For example, a minion that accompanies a party of five heroes on an adventure receives one-sixth of the XP that the group earns.",
+          "prerequisites": "",
+          "special": "You may select this talent multiple times; each time you select this talent, you gain another minion.",
+          "summary": "Gain a loyal nonheroic minion with class level equal to three-quarters of your character level; normally only one accompanies you at a time."
+        },
+        {
+          "name": "Impel Ally I",
+          "page": 210,
+          "repoId": "aa32a31a179fe5c1",
+          "benefit": "You can spend a swift action to grant one ally the ability to move its normal speed. The ally must move immediately on your turn, before you do anything else, or else the opportunity is wasted. You can use this talent up to three times on your turn (spending a swift action each time).",
+          "prerequisites": "",
+          "special": "",
+          "summary": "Spend a swift action to let one ally immediately move its speed; you can do this up to three times on your turn."
+        },
+        {
+          "name": "Impel Ally II",
+          "page": 210,
+          "repoId": "b11a87e70f957ed2",
+          "benefit": "You can spend two swift actions to grant one ally the ability to take a standard action or move action. The ally must act immediately on your turn, before you do anything else, or else the opportunity is wasted.",
+          "prerequisites": "Impel Ally I",
+          "special": "",
+          "summary": "Spend two swift actions to let one ally immediately take a standard or move action."
+        }
+      ]
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Weapon Master",
+      "tree": "Weapon Master",
+      "talents": [
+        {
+          "name": "Controlled Burst",
+          "page": 212,
+          "repoId": "3e35df4fce7082a3",
+          "benefit": "Your penalty when making an autofire attack or using the Burst Fire feat is reduced to -2. In addition, if you brace an autofire-only weapon, you have no penalty on your attack roll.",
+          "prerequisites": "",
+          "special": "",
+          "summary": "Reduce your autofire or Burst Fire attack penalty to -2; braced autofire-only weapons have no attack penalty."
+        },
+        {
+          "name": "Exotic Weapon Mastery",
+          "page": 212,
+          "repoId": "fb103ac0e4501e95",
+          "benefit": "You are considered proficient with any exotic weapon, even if you don't possess the appropriate Exotic Weapon Proficiency feat.",
+          "prerequisites": "",
+          "special": "",
+          "summary": "You are considered proficient with all exotic weapons."
+        },
+        {
+          "name": "Greater Devastating Attack",
+          "page": 212,
+          "repoId": "d3b19d5e369f579d",
+          "benefit": "Choose a single exotic weapon or weapon group with which you're proficient. Whenever you make a successful attack against a target using the chosen exotic weapon or a weapon from the chosen group, you treat your target's damage threshold as if it were 10 points lower when determining the result of your attack. This replaces the effects of the Devastating Attack talent (see page 53).",
+          "prerequisites": "Greater Weapon Focus, Devastating Attack, Weapon Focus with the chosen exotic weapon or weapon group",
+          "special": "",
+          "summary": "With a chosen weapon, treat the target's damage threshold as 10 lower, replacing Devastating Attack."
+        },
+        {
+          "name": "Greater Penetrating Attack",
+          "page": 212,
+          "repoId": "1718ec6cdf765a57",
+          "benefit": "Choose a single exotic weapon or weapon group with which you're proficient. Whenever you make a successful attack against a target using the chosen exotic weapon or a weapon from the chosen group, you treat your target's damage reduction as if it were 10 points lower when determining the result of your attack. This replaces the effects of the Penetrating Attack talent (see page 53).",
+          "prerequisites": "Greater Weapon Focus, Penetrating Attack, Weapon Focus with the chosen exotic weapon or weapon group",
+          "special": "",
+          "summary": "With a chosen weapon, treat the target's damage reduction as 10 lower, replacing Penetrating Attack."
+        },
+        {
+          "name": "Greater Weapon Focus",
+          "page": 212,
+          "repoId": "642c6c8643db7470",
+          "benefit": "Choose one exotic weapon or weapon group with which you're proficient. You gain a +1 bonus on attack rolls with the chosen exotic weapon or a weapon from the chosen group. This bonus stacks with the bonus granted by the Weapon Focus feat (page 89). You must be proficient with the weapon to gain this benefit.",
+          "prerequisites": "Weapon Focus with chosen exotic weapon or weapon group",
+          "special": "You may select this talent multiple times. Each time you select this talent, it applies to a different weapon group.",
+          "summary": "Choose a proficient exotic weapon or weapon group and gain +1 on attacks with it, stacking with Weapon Focus."
+        },
+        {
+          "name": "Greater Weapon Specialization",
+          "page": 212,
+          "repoId": "e9820b341bf94de1",
+          "benefit": "Choose one exotic weapon or one of the following weapon groups: advanced melee weapons, heavy weapons, pistols, rifles, simple weapons. You gain a +2 bonus on damage rolls with the chosen exotic weapon or a weapon from the chosen group. This bonus stacks with the bonus granted by the Weapon Specialization talent (page 53). You must be proficient with the weapon to gain this benefit.",
+          "prerequisites": "Greater Weapon Focus, Weapon Focus, and Weapon Specialization with the chosen exotic weapon or weapon group",
+          "special": "You may select this talent multiple times. Each time you select this talent, it applies to a different weapon group.",
+          "summary": "Choose an eligible weapon or weapon group and gain +2 damage with it, stacking with Weapon Specialization."
+        },
+        {
+          "name": "Multiattack Proficiency (heavy weapons)",
+          "page": 212,
+          "repoId": "1b3d5d3260391867",
+          "repoName": "Multiattack Proficiency (heavy)",
+          "benefit": "Whenever you make multiple attacks with any type of heavy weapon as a full attack action (see Full Attack, page 154), you reduce the penalty on your attack rolls by 2.",
+          "prerequisites": "",
+          "special": "You can take this talent multiple times; each time you take this talent, you reduce the penalty on your attack rolls by an additional 2.",
+          "summary": "Reduce the full-attack penalty with heavy weapons by 2; repeated selections reduce it by another 2 each."
+        },
+        {
+          "name": "Multiattack Proficiency (rifles)",
+          "page": 212,
+          "repoId": "5ec84c7e500601e4",
+          "benefit": "Whenever you make multiple attacks with any type of rifle as a full attack action (see Full Attack, page 154), you reduce the penalty on your attack rolls by 2.",
+          "prerequisites": "",
+          "special": "You can take this talent multiple times; each time you take this talent, you reduce the penalty on your attack rolls by an additional 2.",
+          "summary": "Reduce the full-attack penalty with rifles by 2; repeated selections reduce it by another 2 each."
+        }
+      ]
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Dark Side Devotee",
+      "tree": "Dark Side Devotee",
+      "talents": [
+        {
+          "name": "Channel Aggression",
+          "page": 213,
+          "repoId": "ef3ec55015c60bda",
+          "benefit": "If you succeed on an attack against a flanked opponent or any target that is denied its Dexterity bonus to Reflex Defense, you may spend a Force Point as a free action to deal additional damage to the target equal to 1d6 per class level (maximum 10d6).",
+          "prerequisites": "",
+          "special": "",
+          "summary": "After hitting a flanked or Dexterity-denied target, spend a Force Point as a free action for +1d6 damage per class level, max 10d6."
+        },
+        {
+          "name": "Channel Anger",
+          "page": 213,
+          "repoId": "37ee909a7de54768",
+          "benefit": "You let your anger swell into a rage. As a swift action, you may spend a Force Point to gain a +2 rage bonus on melee attack rolls and melee damage rolls for a number of rounds equal to 5 + your Constitution modifier. At the end of this duration, you move -1 step along the condition track (see Conditions, page 148). While raging, you cannot use skills that require patience and concentration, such as Mechanics, Stealth, or Use the Force.",
+          "prerequisites": "Channel Aggression",
+          "special": "",
+          "summary": "Spend a Force Point to rage for 5 + Con modifier rounds, gaining +2 melee attack and damage, then move 1 step down the condition track."
+        },
+        {
+          "name": "Crippling Strike",
+          "page": 213,
+          "repoId": "8b3cb561c294fa11",
+          "benefit": "Whenever you score a critical hit, you may spend a Force Point to also reduce the target's speed by half until he is fully healed (that is, restored to maximum hit points).",
+          "prerequisites": "Channel Aggression",
+          "special": "",
+          "summary": "On a critical hit, spend a Force Point to halve the target's speed until it is restored to full hit points."
+        },
+        {
+          "name": "Embrace the Dark Side",
+          "page": 213,
+          "repoId": "8e1ee6d1c756450f96d4d5eaa9657e47",
+          "benefit": "Whenever you use a Force power with the [dark side] descriptor, you may reroll your Use the Force check, but you must accept the result of the reroll even if it is worse. Upon choosing this talent, you can no longer use Force powers with the [light side] descriptor.",
+          "prerequisites": "Channel Aggression, Channel Anger",
+          "special": "",
+          "summary": "Reroll Use the Force checks for dark-side powers and keep the reroll, but permanently lose access to light-side Force powers."
+        }
+      ]
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Force Adept",
+      "tree": "Force Adept",
+      "talents": [
+        {
+          "name": "Force Power Adept",
+          "page": 214,
+          "repoId": "90d9a2e7dbc160d1",
+          "benefit": "You are skilled at using a particular Force power. Select one Force power you know. When using that Force power, you have the option of spending a Force Point to make two Use the Force checks, keeping the better result.",
+          "prerequisites": "",
+          "special": "This talent may be selected multiple times. Its effects do not stack. Each time you select this talent, you must choose a different Force power.",
+          "summary": "Choose a Force power; when using it, spend a Force Point to roll Use the Force twice and keep the better result."
+        },
+        {
+          "name": "Force Treatment",
+          "page": 214,
+          "repoId": "181da7f36b9fba9d",
+          "benefit": "You can make a Use the Force check in place of a Treat Injury check (see the Treat Injury skill, page 74). You are considered trained in the Treat Injury skill for purposes of using this talent. If you are entitled to a Treat Injury check reroll, you may reroll your Use the Force check instead (subject to the same circumstances and limitations). In addition, you can administer first aid, treat disease, treat poison, and treat radiation without the requisite medical kit or medpac.",
+          "prerequisites": "",
+          "special": "",
+          "summary": "Use Use the Force for Treat Injury, count as trained, and perform several treatments without a medical kit or medpac."
+        },
+        {
+          "name": "Fortified Body",
+          "page": 214,
+          "repoId": "6714ab8e28708f50",
+          "benefit": "The Force shields you against ailments, toxins, and radiation poisoning, making you immune to disease, poison, and radiation.",
+          "prerequisites": "Equilibrium",
+          "special": "",
+          "summary": "You are immune to disease, poison, and radiation."
+        }
+      ]
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Force Item",
+      "tree": "Force Item",
+      "talents": [
+        {
+          "name": "Attune Weapon",
+          "page": 214,
+          "repoId": "aa9b67c6737c2549",
+          "benefit": "You may spend a Force Point to attune a melee weapon. Attuning the weapon takes a full-round action. From that point forward, whenever you wield the attuned weapon, you gain a +1 Force bonus on attack rolls. The weapon is attuned to you alone; others who wield the weapon do not gain the Force bonus.",
+          "prerequisites": "",
+          "special": "",
+          "summary": "Spend a Force Point and a full-round action to attune a melee weapon, granting you +1 Force bonus on attacks with it."
+        },
+        {
+          "name": "Empower Weapon",
+          "page": 214,
+          "repoId": "5218d5971b78119b",
+          "benefit": "You may spend a Force Point to empower a melee weapon. Empowering the weapon takes a full-round action. From that point forward, the empowered weapon deals an additional die of damage, but only when wielded by you. (For example, an empowered lightsaber deals 3d8 points of damage instead of 2d8 points of damage.) Others who wield the weapon do not gain the bonus damage die.",
+          "prerequisites": "",
+          "special": "",
+          "summary": "Spend a Force Point and full-round action to empower a melee weapon so it deals one extra damage die when you wield it."
+        },
+        {
+          "name": "Force Talisman",
+          "page": 214,
+          "repoId": "66b23ee79bd33bf1",
+          "benefit": "You may spend one Force Point to imbue a weapon or some other portable object with the Force, creating a talisman that provides protection to you. Creating the talisman takes a full-round action. While you wear or carry the talisman on your person, you gain a +1 Force bonus to one of your defenses (Reflex, Fortitude, or Will). You may only have one Force talisman active at any given time, and if your Force talisman is destroyed, you may not create another Force talisman for 24 hours.",
+          "prerequisites": "",
+          "special": "",
+          "summary": "Spend a Force Point and full-round action to create a talisman granting +1 Force bonus to one chosen defense while you carry it."
+        },
+        {
+          "name": "Greater Force Talisman",
+          "page": 214,
+          "repoId": "0c636cdbb63cdba3",
+          "benefit": "As Force Talisman (above), except that the talisman's Force bonus extends to all three of your defenses (Reflex, Fortitude, and Will).",
+          "prerequisites": "Force Talisman",
+          "special": "",
+          "summary": "Your Force Talisman's +1 Force bonus applies to Reflex, Fortitude, and Will instead of only one defense."
+        }
+      ]
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Gunslinger",
+      "tree": "Gunslinger",
+      "talents": [
+        {
+          "name": "Debilitating Shot",
+          "page": 216,
+          "repoId": "52f51a77fd60f56f",
+          "benefit": "If you aim before making a ranged attack (see Aim, page 154) and the attack hits, you move the target -1 step along the condition track (see Conditions, page 148) in addition to dealing damage.",
+          "prerequisites": "",
+          "special": "",
+          "summary": "If you aim before a ranged attack and hit, move the target 1 step down the condition track in addition to dealing damage."
+        },
+        {
+          "name": "Deceptive Shot",
+          "page": 216,
+          "repoId": "b1afecfea833a2a5",
+          "benefit": "Select one target in line of sight within 6 squares. You can spend two swift actions on the same turn to make a Deception check; if the check result equals or exceeds the target's Will Defense, the target is denied its Dexterity bonus to Reflex Defense against your attacks until the beginning of your next turn.",
+          "prerequisites": "",
+          "special": "",
+          "summary": "Spend two swift actions to beat a nearby target's Will Defense with Deception, denying its Dexterity bonus to Reflex Defense against your attacks."
+        },
+        {
+          "name": "Improved Quick Draw",
+          "page": 216,
+          "repoId": "a1e013f8cfc15a86",
+          "benefit": "If you are carrying a pistol (either in your hand or in a holster), you may draw the pistol and make a single attack during a surprise round even if you are surprised. If you are not surprised, you may take any single action of your choice, as normal.",
+          "prerequisites": "",
+          "special": "",
+          "summary": "Even when surprised, draw a carried pistol and make one attack during the surprise round."
+        },
+        {
+          "name": "Knockdown Shot",
+          "page": 216,
+          "repoId": "92a32b96dacae82d",
+          "benefit": "If you aim before making a ranged attack (see Aim, page 154) and the attack hits, you knock the target prone in addition to dealing damage. You can't use this talent to knock down targets two or more size categories bigger than you.",
+          "prerequisites": "",
+          "special": "",
+          "summary": "If you aim before a ranged attack and hit, also knock the target prone unless it is at least two size categories larger than you."
+        },
+        {
+          "name": "Multiattack Proficiency (pistols)",
+          "page": 216,
+          "repoId": "b812c197daea93fd",
+          "benefit": "Whenever you make multiple attacks with any type of pistol as a full attack action (see Full Attack, page 154), you reduce the penalty on your attack rolls by 2.",
+          "prerequisites": "",
+          "special": "You can take this talent multiple times; each time you take this talent, you reduce the penalty on your attack rolls by an additional 2.",
+          "summary": "Reduce the full-attack penalty with pistols by 2; repeated selections reduce it by another 2 each."
+        }
+      ]
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Duelist",
+      "tree": "Duelist",
+      "talents": [
+        {
+          "name": "Force Fortification",
+          "page": 218,
+          "repoId": "be932caff635f8bc",
+          "benefit": "As a reaction, you can spend a Force Point to negate a critical hit scored against you and take normal damage instead. You can spend this Force Point even if you've already spent a Force Point earlier in the round.",
+          "prerequisites": "",
+          "special": "",
+          "summary": "As a reaction, spend a Force Point to turn a critical hit against you into a normal hit, even if you already spent a Force Point this round."
+        },
+        {
+          "name": "Greater Weapon Focus (Lightsabers)",
+          "page": 218,
+          "repoId": "3038f4c26de19e39",
+          "benefit": "You gain a +1 bonus on melee attack rolls with lightsabers. This bonus stacks with the bonus granted by the Weapon Focus (lightsabers) feat.",
+          "prerequisites": "Weapon Focus (lightsabers)",
+          "special": "",
+          "summary": "Gain +1 on melee attacks with lightsabers, stacking with Weapon Focus."
+        },
+        {
+          "name": "Greater Weapon Specialization (Lightsabers)",
+          "page": 218,
+          "repoId": "9cda854b5448414f",
+          "benefit": "You gain a +2 bonus on melee damage rolls with lightsabers. This bonus stacks with the bonus granted by the Weapon Specialization (lightsabers) talent.",
+          "prerequisites": "Greater Weapon Focus (lightsabers), Weapon Focus (lightsabers), Weapon Specialization (lightsabers)",
+          "special": "",
+          "summary": "Gain +2 melee damage with lightsabers, stacking with Weapon Specialization."
+        },
+        {
+          "name": "Multiattack Proficiency (lightsabers)",
+          "page": 218,
+          "repoId": null,
+          "benefit": "Whenever you make multiple attacks with any type of lightsaber as a full attack action (see Full Attack, page 154), you reduce the penalty on your attack rolls by 2.",
+          "prerequisites": "",
+          "special": "You can take this talent multiple times; each time you take this talent, you reduce the penalty on your attack rolls by an additional 2.",
+          "summary": "Reduce the full-attack penalty with lightsabers by 2; repeated selections reduce it by another 2 each."
+        },
+        {
+          "name": "Severing Strike",
+          "page": 218,
+          "repoId": "efd3308a8ccc22c6",
+          "benefit": "When you deal damage with a lightsaber that is equal to or greater than both the target's current hit points and the target's damage threshold (that is, when you would deal enough damage to kill your target), you may choose to use this talent. Instead of dealing full damage, you instead deal half damage to your target and move it -1 step on the condition track (see Conditions, page 148). In addition, you sever one of your target's arms at the wrist or elbow joint, or one of the target's legs at the knee or ankle joint (your choice). Severing part of an arm prevents the target from wielding weapons or using tools in that hand and imposes a -5 penalty on skill checks and ability checks keyed to Strength and Dexterity. Severing part of a leg knocks the target prone, reduces the target's speed by half, reduces its carrying capacity by half, and imposes a -5 penalty on skill checks and ability checks keyed to Strength and Dexterity. Because of the severity of such an injury, losing a part of a limb causes a persistent condition that can only be removed by having surgery successfully performed on you (see Treat Injury skill, page 74). A cybernetic replacement limb (see page 137) negates these reductions and penalties.",
+          "prerequisites": "",
+          "special": "",
+          "summary": "Instead of killing a target with a threshold-beating lightsaber hit, deal half damage, move it 1 step down the track, and sever an arm or leg with lasting penalties."
+        }
+      ]
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Lightsaber Forms",
+      "tree": "Lightsaber Forms",
+      "talents": [
+        {
+          "name": "Ataru",
+          "page": 218,
+          "repoId": "0b3f4075ed84aee0",
+          "benefit": "You may add your Dexterity bonus (instead of your Strength bonus) on damage rolls when wielding a lightsaber. When you wield a lightsaber two-handed, you may apply double your Dexterity bonus (instead of double your Strength bonus) to the damage.",
+          "prerequisites": "",
+          "special": "",
+          "summary": "Use Dexterity instead of Strength for lightsaber damage, doubling Dexterity when wielding the lightsaber two-handed."
+        },
+        {
+          "name": "Djem So",
+          "page": 218,
+          "repoId": "9dfce712a60a097f",
+          "benefit": "Once per round when an opponent hits you with a melee attack, you may spend a Force Point as a reaction to make an immediate attack against that opponent.",
+          "prerequisites": "",
+          "special": "",
+          "summary": "Once per round when hit by a melee attack, spend a Force Point as a reaction to attack that opponent immediately."
+        },
+        {
+          "name": "Jar'Kai",
+          "page": 218,
+          "repoId": "4552785ad56d90d4",
+          "benefit": "When you use the Lightsaber Defense talent, you gain twice the normal deflection bonus to your Reflex Defense when you are wielding two lightsabers.",
+          "prerequisites": "Lightsaber Defense, Niman",
+          "special": "",
+          "summary": "While wielding two lightsabers, double the Reflex Defense bonus from Lightsaber Defense."
+        },
+        {
+          "name": "Juyo",
+          "page": 218,
+          "repoId": "5fd19be0deca1115",
+          "benefit": "Once per encounter, you may spend a Force Point as a swift action to designate a single enemy in your line of sight. For the remainder of the encounter, you may reroll your first attack roll each round against that opponent, keeping the better result.",
+          "prerequisites": "Weapon Focus (lightsabers), Weapon Specialization (lightsabers), base attack bonus +10",
+          "special": "",
+          "summary": "Once per encounter, spend a Force Point to designate a visible enemy and reroll your first attack against it each round, keeping the better roll."
+        },
+        {
+          "name": "Makashi",
+          "page": 218,
+          "repoId": "8ddbb7f6d4a11725",
+          "benefit": "When wielding a single lightsaber in one hand, the deflection bonus you gain from the Lightsaber Defense talent (see page 41) increases by 2 (to a maximum of +5).",
+          "prerequisites": "Lightsaber Defense",
+          "special": "",
+          "summary": "With one one-handed lightsaber, increase your Lightsaber Defense deflection bonus by 2, up to +5."
+        },
+        {
+          "name": "Niman",
+          "page": 218,
+          "repoId": "7842befd5a8713c5",
+          "benefit": "When wielding a lightsaber, you gain a +1 bonus to your Reflex Defense and Will Defense.",
+          "prerequisites": "",
+          "special": "",
+          "summary": "While wielding a lightsaber, gain +1 Reflex Defense and +1 Will Defense."
+        },
+        {
+          "name": "Shien",
+          "page": 218,
+          "repoId": "e0223a2b572f2ef5",
+          "benefit": "Whenever you redirect a deflected blaster bolt (see the Redirect Shot talent, page 41), you gain a +5 bonus on your ranged attack roll.",
+          "prerequisites": "Deflect, Redirect Shot",
+          "special": "",
+          "summary": "Gain +5 on the ranged attack roll when using Redirect Shot."
+        },
+        {
+          "name": "Shii-Cho",
+          "page": 219,
+          "repoId": "c116f6249f4f47c9",
+          "benefit": "When using the Block or Deflect talents, you only take a -2 penalty on your Use the Force check for every previous block or deflect attempt since your last turn (see page 41).",
+          "prerequisites": "Block, Deflect",
+          "special": "",
+          "summary": "Reduce the cumulative Block/Deflect Use the Force penalty from -5 to -2 per previous attempt since your last turn."
+        },
+        {
+          "name": "Sokan",
+          "page": 219,
+          "repoId": "c95b1077ab31f9b0",
+          "benefit": "You may take 10 on Acrobatics checks to tumble even when distracted or threatened. Additionally, each threatened or occupied square that you tumble through only counts as 1 square of movement.",
+          "prerequisites": "Acrobatic Recovery",
+          "special": "",
+          "summary": "Take 10 when tumbling under pressure, and threatened or occupied squares cost only 1 square of movement while tumbling."
+        },
+        {
+          "name": "Soresu",
+          "page": 219,
+          "repoId": "af8c6f9b6c06b448",
+          "benefit": "You may reroll a failed Use the Force check when using the Block or Deflect talents.",
+          "prerequisites": "Block, Deflect",
+          "special": "",
+          "summary": "Reroll a failed Use the Force check made for Block or Deflect."
+        },
+        {
+          "name": "Trakata",
+          "page": 219,
+          "repoId": "629a0efa292511b7",
+          "benefit": "By harnessing the unique characteristics of a lightsaber, you can catch your opponent off guard by quickly shutting off and reigniting the blade. When wielding a lightsaber, you may spend two swift actions to make a Deception check to feint in combat (see page 66).",
+          "prerequisites": "Weapon Focus (lightsabers), Weapon Specialization (lightsabers), base attack bonus +12",
+          "special": "",
+          "summary": "While wielding a lightsaber, spend two swift actions to make a Deception check to feint in combat."
+        },
+        {
+          "name": "Vaapad",
+          "page": 219,
+          "repoId": "87c0a929a04eb870",
+          "benefit": "When attacking with a lightsaber, you score a critical hit on a natural roll of 19 or 20. However, a natural 19 is not considered an automatic hit; if you roll a natural 19 and still miss the target, you do not score a critical hit.",
+          "prerequisites": "Juyo, Weapon Focus (lightsabers), Weapon Specialization (lightsabers), base attack bonus +12",
+          "special": "",
+          "summary": "Lightsaber attacks score critical hits on natural 19-20, though a natural 19 still has to hit normally."
+        }
+      ]
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Military Tactics",
+      "tree": "Military Tactics",
+      "talents": [
+        {
+          "name": "Assault Tactics",
+          "page": 221,
+          "repoId": "d9fe8a0c76d845d4",
+          "benefit": "As a move action, you may designate a single creature or object as the target of an assault. If you succeed on a DC 15 Knowledge (tactics) check, you and all allies able to hear and understand you deal +1d6 points of damage to the target with each successful melee or ranged attack, until the start of your next turn. This is a mind-affecting effect.",
+          "prerequisites": "",
+          "special": "",
+          "summary": "As a move action, pass DC 15 Knowledge (tactics) to let you and hearing allies deal +1d6 damage to one target until your next turn."
+        },
+        {
+          "name": "Deployment Tactics",
+          "page": 221,
+          "repoId": "8a5f8b5c9b9fabaf",
+          "benefit": "You can use your tactical knowledge to direct allies in battle. As a move action, you can make a DC 15 Knowledge (tactics) check. If the check succeeds, you and any allies that can see, hear, and understand you gain a +1 competence bonus on attack rolls against flanked opponents or a +1 dodge bonus to Reflex Defense against attacks of opportunity (your choice). The bonus lasts until the start of your next turn. This is a mind-affecting effect. If you have the Born Leader talent (page 44) or the Battle Analysis talent (page 52), the bonus granted by this talent increases to +2.",
+          "prerequisites": "",
+          "special": "",
+          "summary": "Pass DC 15 Knowledge (tactics) to grant you and aware allies +1 against flanked foes or +1 Reflex vs opportunity attacks until your next turn; certain talents raise it to +2."
+        },
+        {
+          "name": "Field Tactics",
+          "page": 221,
+          "repoId": "5bdbf0148a6eb7b0",
+          "benefit": "You know how to use existing terrain to best advantage. By using a move action, you can make a DC 15 Knowledge (tactics) check. If the check succeeds, you and all allies within 10 squares of you can use whatever cover is available to gain a +10 cover bonus to Reflex Defense (instead of the normal +5 cover bonus). Allies must be able to hear and understand you to gain this benefit, and the bonus lasts until the start of your next turn. This talent provides no benefit to anyone who doesn't have cover. This is a mind-affecting effect.",
+          "prerequisites": "Deployment Tactics",
+          "special": "",
+          "summary": "Pass DC 15 Knowledge (tactics) to improve available cover to +10 Reflex for you and nearby hearing allies until your next turn."
+        },
+        {
+          "name": "One for the Team",
+          "page": 221,
+          "repoId": "f7ddece8fd2141f5",
+          "benefit": "As a reaction, you can choose to take one-half or all of the damage dealt to an adjacent ally by a single attack. Similarly, as a reaction, an adjacent ally can choose to take one-half or all of the damage dealt to you by a single attack (even if he doesn't have this talent).",
+          "prerequisites": "Deployment Tactics",
+          "special": "",
+          "summary": "As a reaction, you and an adjacent ally can shift half or all damage from a single attack between each other."
+        },
+        {
+          "name": "Outmaneuver",
+          "page": 221,
+          "repoId": "95697c5a4459d7e4",
+          "benefit": "An officer learns to counter the tactics of his enemies. As a standard action, you can make a DC 15 Knowledge (tactics) check. If the check succeeds, enemies in your line of sight lose all competence, insight, and morale bonuses on attack rolls, as well as any dodge bonuses to Reflex Defense, until the start of your next turn. If one or more enemy officers are within your line of sight, the highest-level officer among them can attempt to oppose your Knowledge (tactics) check as a reaction. If her skill check result is higher than yours, your attempt to outmaneuver your enemies fails.",
+          "prerequisites": "Deployment Tactics, Field Tactics",
+          "special": "",
+          "summary": "Pass DC 15 Knowledge (tactics) to strip visible enemies of specified attack and Reflex bonuses until your next turn; an enemy officer can oppose the check."
+        },
+        {
+          "name": "Shift Defense I",
+          "page": 222,
+          "repoId": "cb981391d4d16c59",
+          "benefit": "As a swift action, you can take a -2 penalty to one defense (Reflex, Fortitude, or Will) to gain a +1 competence bonus to another defense until the start of your next turn.",
+          "prerequisites": "",
+          "special": "",
+          "summary": "As a swift action, take -2 to one defense to gain +1 competence to another until your next turn."
+        },
+        {
+          "name": "Shift Defense II",
+          "page": 222,
+          "repoId": "c6739fcf6d2107d6",
+          "benefit": "As a swift action, you can take a -5 penalty to one defense (Reflex, Fortitude, or Will) to gain a +2 competence bonus to another defense until the start of your next turn.",
+          "prerequisites": "Shift Defense I",
+          "special": "",
+          "summary": "As a swift action, take -5 to one defense to gain +2 competence to another until your next turn."
+        },
+        {
+          "name": "Shift Defense III",
+          "page": 222,
+          "repoId": "6996c6ba09d63ab7",
+          "benefit": "As a swift action, you can gain a +5 competence bonus to one defense (Reflex, Fortitude, or Will) by taking a -5 penalty to your other two defenses.",
+          "prerequisites": "Shift Defense I, Shift Defense II",
+          "special": "",
+          "summary": "As a swift action, gain +5 competence to one defense by taking -5 to the other two."
+        },
+        {
+          "name": "Tactical Edge",
+          "page": 222,
+          "repoId": "b6287de11cbb4bef",
+          "benefit": "You can use the Assault Tactics, Deployment Tactics, or Field Tactics talent as a swift action instead of a move action, provided you have the talent in question.",
+          "prerequisites": "",
+          "special": "",
+          "summary": "Use Assault Tactics, Deployment Tactics, or Field Tactics as a swift action instead of a move action."
+        }
+      ]
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Sith",
+      "tree": "Sith",
+      "talents": [
+        {
+          "name": "Dark Healing",
+          "page": 223,
+          "repoId": "008b28849b74234d",
+          "benefit": "You can spend a Force Point to heal wounds by drawing life energy from another creature within 6 squares of you. Using this ability is a standard action, and you must succeed on a ranged attack roll. If the attack equals or exceeds the target's Fortitude Defense, you deal 1d6 points of damage per class level to the target and you heal an equal amount. If the attack fails, there is no effect.",
+          "prerequisites": "",
+          "special": "",
+          "summary": "Spend a Force Point and a standard action to make a ranged attack vs Fortitude; on success deal 1d6 damage per class level and heal the same amount."
+        },
+        {
+          "name": "Dark Scourge",
+          "page": 223,
+          "repoId": "08fc3247755c5ebe",
+          "benefit": "You have dedicated your life to wiping out the Jedi, and your hatred of them knows no bounds. Against Jedi characters, you gain a +1 dark side bonus on attack rolls.",
+          "prerequisites": "",
+          "special": "",
+          "summary": "Gain +1 dark side bonus on attack rolls against Jedi characters."
+        },
+        {
+          "name": "Dark Side Adept",
+          "page": 223,
+          "repoId": "cfdd73f3d939799d",
+          "benefit": "Force powers that are strongly tied to the dark side flow through you more easily. You can reroll any Use the Force check made when activating Force powers with the [dark side] descriptor, but you must keep the result of the reroll, even if it is worse.",
+          "prerequisites": "",
+          "special": "",
+          "summary": "Reroll Use the Force checks for dark-side Force powers, but keep the reroll."
+        },
+        {
+          "name": "Dark Side Master",
+          "page": 223,
+          "repoId": "d4fe49ef1701891e",
+          "benefit": "As Dark Side Adept (see above), except that you can spend a Force Point and keep the better of the two Use the Force checks.",
+          "prerequisites": "Dark Side Adept",
+          "special": "",
+          "summary": "When using Dark Side Adept, spend a Force Point to keep the better of the two Use the Force checks."
+        },
+        {
+          "name": "Force Deception",
+          "page": 223,
+          "repoId": "a40e25585a6f8c2b",
+          "benefit": "You can use your Use the Force check modifier instead of your Deception check modifier when making Deception checks, as you use the Force to cloak your vile treachery. You are considered trained in the Deception skill for purposes of using this talent. If you are entitled to a Deception check reroll, you may reroll your Use the Force check instead (subject to the same circumstances and limitations).",
+          "prerequisites": "",
+          "special": "",
+          "summary": "Use your Use the Force modifier for Deception checks, count as trained in Deception, and apply eligible Deception rerolls to the substituted check."
+        },
+        {
+          "name": "Improved Dark Healing",
+          "page": 224,
+          "repoId": "b03db168b3f23da0",
+          "benefit": "Your dark healing ability (see above) improves. The range of this ability increases to 12 squares, and even if the attack fails the target takes half damage while you heal an equal amount.",
+          "prerequisites": "Dark Healing",
+          "special": "",
+          "summary": "Dark Healing reaches 12 squares; on a failed attack the target still takes half damage and you heal the same amount."
+        },
+        {
+          "name": "Wicked Strike",
+          "page": 224,
+          "repoId": "d350b28e72652d29",
+          "benefit": "When you score a critical hit with a lightsaber, you may spend a Force Point to move the target -2 steps along the condition track (see Conditions, page 148).",
+          "prerequisites": "Weapon Focus (lightsabers), Weapon Specialization (lightsabers)",
+          "special": "",
+          "summary": "On a lightsaber critical hit, spend a Force Point to move the target 2 steps down the condition track."
+        }
+      ]
+    }
+  ],
+  "schemaVersion": 1,
+  "phase": "2",
+  "status": "COMPLETE",
+  "certifiedAt": "2026-09-26",
+  "treeCount": 40,
+  "talentCount": 198,
+  "sourceAuthority": {
+    "text": "Core Rulebook_djvu.txt",
+    "finalAuthority": "Star Wars Saga Edition.pdf",
+    "method": "TXT/DJVU used for bulk indexing/extraction; rendered PDF pages used for page attribution, tree boundaries, and OCR-sensitive wording."
+  },
+  "fieldContract": {
+    "benefit": "Canonical published mechanical rules text.",
+    "prerequisites": "Canonical printed prerequisite text, separated from benefit.",
+    "special": "Canonical Special/repeated-selection clauses where applicable.",
+    "summary": "Derived player-facing quick summary; presentation only and never mechanical authority.",
+    "page": "Printed Core Rulebook page."
+  },
+  "notes": [
+    "Identity matching is tree-scoped; display name alone is not used as a universal identity.",
+    "Core source scan added Improved Dark Healing to the Sith origin membership, correcting the Phase 1D registry."
+  ]
+}

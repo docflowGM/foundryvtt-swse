@@ -1,0 +1,1479 @@
+{
+  "schemaVersion": 1,
+  "phase": "2",
+  "sourcebook": "Unknown Regions",
+  "generatedAt": "2026-09-27",
+  "branch": "audit/talent-phase-1-tree-census",
+  "scope": "Source-certified Unknown Regions talents compared against the current repository talent-record mirror. No production records changed.",
+  "summary": {
+    "canonicalTalentPublications": 57,
+    "repositoryRecordsMapped": 1,
+    "missingCorrectTreeRecords": 56,
+    "phase1dStructuralCorrections": 2,
+    "removedMisclassifiedNamedActions": 4,
+    "distinctSameNameOrUnassignedCollisionRisks": 4,
+    "dispositionCounts": {
+      "CANONICAL_FULL_TEXT_MISSING_OR_ABBREVIATED": 1,
+      "MISSING_CONTENT": 56,
+      "DISTINCT_SAME_NAME_OR_UNASSIGNED_IDENTITY_MISSING": 4
+    }
+  },
+  "phase1dStructuralCorrections": [
+    {
+      "canonicalTreeKey": "Unknown Regions|Exile",
+      "parentTalent": "Band Together",
+      "removedActionNames": [
+        "Strength in Numbers",
+        "Temporary Allies"
+      ],
+      "page": 19,
+      "disposition": "PHASE_1D_STRUCTURAL_OVERINCLUSION_CORRECTED",
+      "reason": "Strength in Numbers and Temporary Allies are named once-per-encounter actions inside the Band Together talent, not standalone talents."
+    },
+    {
+      "canonicalTreeKey": "Unknown Regions|Warrior",
+      "parentTalent": "Champion",
+      "removedActionNames": [
+        "Disarming Hit",
+        "Masterful Strike"
+      ],
+      "page": 23,
+      "disposition": "PHASE_1D_STRUCTURAL_OVERINCLUSION_CORRECTED",
+      "reason": "Disarming Hit and Masterful Strike are named once-per-encounter actions inside the Champion talent, not standalone talents."
+    }
+  ],
+  "missingRepositoryRecords": [
+    {
+      "tree": "Exile",
+      "name": "Arrogant Bluster",
+      "page": 19,
+      "canonicalTreeKey": "Unknown Regions|Exile",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Exile",
+      "name": "Band Together",
+      "page": 19,
+      "canonicalTreeKey": "Unknown Regions|Exile",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Exile",
+      "name": "Galactic Guidance",
+      "page": 20,
+      "canonicalTreeKey": "Unknown Regions|Exile",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Exile",
+      "name": "Rant",
+      "page": 20,
+      "canonicalTreeKey": "Unknown Regions|Exile",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Exile",
+      "name": "Self-Reliant",
+      "page": 20,
+      "canonicalTreeKey": "Unknown Regions|Exile",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Leadership",
+      "name": "Coordinated Leadership",
+      "page": 20,
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Leadership",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Outsider",
+      "name": "Oafish",
+      "page": 20,
+      "canonicalTreeKey": "Unknown Regions|Outsider",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Outsider",
+      "name": "Outsider's Eye",
+      "page": 20,
+      "canonicalTreeKey": "Unknown Regions|Outsider",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Outsider",
+      "name": "Outsider's Query",
+      "page": 20,
+      "canonicalTreeKey": "Unknown Regions|Outsider",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Outsider",
+      "name": "Wary",
+      "page": 20,
+      "canonicalTreeKey": "Unknown Regions|Outsider",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Spacer",
+      "name": "Deep Space Raider",
+      "page": 21,
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Spacer",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Camouflage",
+      "name": "Extended Ambush",
+      "page": 21,
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Camouflage",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Hyperspace Explorer",
+      "name": "Silent Movement",
+      "page": 21,
+      "canonicalTreeKey": "Knights of the Old Republic Campaign Guide|Hyperspace Explorer",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Master Scout",
+      "name": "Piercing Hit",
+      "page": 21,
+      "canonicalTreeKey": "Unknown Regions|Master Scout",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Master Scout",
+      "name": "Quicktrap",
+      "page": 21,
+      "canonicalTreeKey": "Unknown Regions|Master Scout",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Master Scout",
+      "name": "Speedclimber",
+      "page": 21,
+      "canonicalTreeKey": "Unknown Regions|Master Scout",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Master Scout",
+      "name": "Surprisingly Quick",
+      "page": 21,
+      "canonicalTreeKey": "Unknown Regions|Master Scout",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Master Scout",
+      "name": "Tripwire",
+      "page": 21,
+      "canonicalTreeKey": "Unknown Regions|Master Scout",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Mobile Scout",
+      "name": "Battle Mount",
+      "page": 22,
+      "canonicalTreeKey": "Unknown Regions|Mobile Scout",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Mobile Scout",
+      "name": "Expert Rider",
+      "page": 22,
+      "canonicalTreeKey": "Unknown Regions|Mobile Scout",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Mobile Scout",
+      "name": "Terrain Guidance",
+      "page": 22,
+      "canonicalTreeKey": "Unknown Regions|Mobile Scout",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Mobile Scout",
+      "name": "Mechanized Rider",
+      "page": 22,
+      "canonicalTreeKey": "Unknown Regions|Mobile Scout",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Commando",
+      "name": "Out of Harm's Way",
+      "page": 23,
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Commando",
+      "sameNameRepoCandidates": [
+        {
+          "repoId": "6031244221b73865",
+          "tree": "Protection",
+          "source": null
+        }
+      ]
+    },
+    {
+      "tree": "Warrior",
+      "name": "Champion",
+      "page": 23,
+      "canonicalTreeKey": "Unknown Regions|Warrior",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Warrior",
+      "name": "Quick Study",
+      "page": 23,
+      "canonicalTreeKey": "Unknown Regions|Warrior",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Warrior",
+      "name": "Simple Opportunity",
+      "page": 23,
+      "canonicalTreeKey": "Unknown Regions|Warrior",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Warrior",
+      "name": "Warrior's Awareness",
+      "page": 23,
+      "canonicalTreeKey": "Unknown Regions|Warrior",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Warrior",
+      "name": "Warrior's Determination",
+      "page": 23,
+      "canonicalTreeKey": "Unknown Regions|Warrior",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Expert Pilot",
+      "name": "Roll Out",
+      "page": 29,
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Expert Pilot",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Gunner",
+      "name": "Fast Attack Specialist",
+      "page": 29,
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Gunner",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Gunner",
+      "name": "Overcharged Shot",
+      "page": 29,
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Gunner",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Bounty Hunter",
+      "name": "Familiar Enemies",
+      "page": 29,
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Bounty Hunter",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Bounty Hunter",
+      "name": "Familiar Situation",
+      "page": 29,
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Bounty Hunter",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Bounty Hunter",
+      "name": "Quick Cuffs",
+      "page": 29,
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Bounty Hunter",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Infamy",
+      "name": "Master Manipulator",
+      "page": 29,
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Infamy",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Infamy",
+      "name": "Small Favor",
+      "page": 29,
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Infamy",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Mastermind",
+      "name": "Master's Orders",
+      "page": 30,
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Mastermind",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Critical Master",
+      "name": "Extended Critical Range (simple weapons)",
+      "page": 30,
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Critical Master",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Weapon Master",
+      "name": "Extended Threat",
+      "page": 30,
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Weapon Master",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Weapon Master",
+      "name": "Multiattack Proficiency (simple weapons)",
+      "page": 30,
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Weapon Master",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Weapon Master",
+      "name": "Two-For-One Throw",
+      "page": 30,
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Weapon Master",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Force Adept",
+      "name": "Instrument of the Force",
+      "page": 30,
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Force Adept",
+      "sameNameRepoCandidates": [
+        {
+          "repoId": "f0ade00000000001",
+          "tree": null,
+          "source": null
+        }
+      ]
+    },
+    {
+      "tree": "Force Adept",
+      "name": "Long Call",
+      "page": 30,
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Force Adept",
+      "sameNameRepoCandidates": [
+        {
+          "repoId": "f0ade00000000002",
+          "tree": null,
+          "source": null
+        }
+      ]
+    },
+    {
+      "tree": "Force Adept",
+      "name": "Mystical Link",
+      "page": 30,
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Force Adept",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Gunslinger",
+      "name": "Lingering Debilitation",
+      "page": 31,
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Gunslinger",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Gunslinger",
+      "name": "Retreating Fire",
+      "page": 31,
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Gunslinger",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Gunslinger",
+      "name": "Slowing Shot",
+      "page": 31,
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Gunslinger",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Gunslinger",
+      "name": "Swift Shot",
+      "page": 31,
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Gunslinger",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Military Tactics",
+      "name": "Commander's Prerogative",
+      "page": 31,
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Military Tactics",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Military Tactics",
+      "name": "Irregular Tactics",
+      "page": 31,
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Military Tactics",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Military Tactics",
+      "name": "Lead by Example",
+      "page": 31,
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Military Tactics",
+      "sameNameRepoCandidates": [
+        {
+          "repoId": "2455d85114f52830",
+          "tree": "Ideologue",
+          "source": null
+        }
+      ]
+    },
+    {
+      "tree": "Military Tactics",
+      "name": "Turn the Tide",
+      "page": 31,
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Military Tactics",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Blazing Chain",
+      "name": "Force Directed Shot",
+      "page": 33,
+      "canonicalTreeKey": "Unknown Regions|Blazing Chain",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Blazing Chain",
+      "name": "Negate and Redirect",
+      "page": 33,
+      "canonicalTreeKey": "Unknown Regions|Blazing Chain",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Blazing Chain",
+      "name": "Rising Anger",
+      "page": 33,
+      "canonicalTreeKey": "Unknown Regions|Blazing Chain",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Blazing Chain",
+      "name": "Rising Panic",
+      "page": 33,
+      "canonicalTreeKey": "Unknown Regions|Blazing Chain",
+      "sameNameRepoCandidates": []
+    }
+  ],
+  "collisionRisks": [
+    {
+      "tree": "Commando",
+      "name": "Out of Harm's Way",
+      "page": 23,
+      "candidates": [
+        {
+          "repoId": "6031244221b73865",
+          "name": "Out of Harm's Way",
+          "tree": "Protection",
+          "treeId": "protection",
+          "source": null,
+          "prerequisites": "",
+          "benefit": "Allow one ally within 6 squares to move their speed to become adjacent to you without provoking attacks of opportunity.",
+          "description": "Allow one ally within 6 squares to move its speed to be adjacent to you without provoking attacks of opportunity."
+        }
+      ]
+    },
+    {
+      "tree": "Force Adept",
+      "name": "Instrument of the Force",
+      "page": 30,
+      "candidates": [
+        {
+          "repoId": "f0ade00000000001",
+          "name": "Instrument of the Force",
+          "tree": null,
+          "treeId": "e35ee41362604227",
+          "source": null,
+          "prerequisites": "",
+          "benefit": "You are particularly in tune with The Living Force. When you successfully use Search Your Feelings, you gain a Force Point that must be used before the end of the encounter.",
+          "description": "<p>You are particularly in tune with The Living Force. When you successfully use Search Your Feelings, you gain a Force Point that must be used before the end of the encounter.</p>\n<p>If you use this Force Point in a manner that would end in unfavorable results (per Search Your Feelings), you raise your Dark Side Score by 1. If you use the Force Point in an action that would normally raise your Dark Side Score, you raise your Dark Side Score by 2 instead.</p>"
+        }
+      ]
+    },
+    {
+      "tree": "Force Adept",
+      "name": "Long Call",
+      "page": 30,
+      "candidates": [
+        {
+          "repoId": "f0ade00000000002",
+          "name": "Long Call",
+          "tree": null,
+          "treeId": "e35ee41362604227",
+          "source": null,
+          "prerequisites": "Mystical Link",
+          "benefit": "When using the Telepathy ability of Use the Force, you reduce the DC of the Use the Force check by half, as do those Force-users for whom you are a willing telepathic recipient. When attempting to contact an unwilling target, you can reroll and take the better result.",
+          "description": "<p>When using the Telepathy ability of Use the Force, you reduce the DC of the Use the Force check by half, as do those Force-users for whom you are a willing telepathic recipient. When attempting to contact an unwilling target, you can reroll and take the better result.</p>\n<p>By spending a Force Point, you can simultaneously contact a number of targets equal to your Charisma modifier (minimum two) with a single Use the Force check.</p>"
+        }
+      ]
+    },
+    {
+      "tree": "Military Tactics",
+      "name": "Lead by Example",
+      "page": 31,
+      "candidates": [
+        {
+          "repoId": "2455d85114f52830",
+          "name": "Lead by Example",
+          "tree": "Ideologue",
+          "treeId": "ideologue",
+          "source": null,
+          "prerequisites": "",
+          "benefit": "Once per encounter, when you deal damage, all allies gain +1 attack and +1 die of damage on non-area attacks for the remainder of the encounter.",
+          "description": "When you deal damage, allies gain bonuses to attack and damage for the encounter."
+        }
+      ]
+    }
+  ],
+  "talents": [
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Jedi Sentinel",
+      "tree": "Jedi Sentinel",
+      "canonicalName": "Sense Primal Force",
+      "page": 19,
+      "repoId": "a1355dcae60772f5",
+      "repoName": "Sense Primal Force",
+      "repoTreeName": "Jedi Sentinel",
+      "repoPrerequisites": "",
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_ABBREVIATED"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Unknown Regions|Exile",
+      "tree": "Exile",
+      "canonicalName": "Arrogant Bluster",
+      "page": 19,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "Trained in the Persuasion skill",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Unknown Regions|Exile",
+      "tree": "Exile",
+      "canonicalName": "Band Together",
+      "page": 19,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "Galactic Guidance, Self-Reliant, trained in the Persuasion and Knowledge (galactic lore) skills",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Unknown Regions|Exile",
+      "tree": "Exile",
+      "canonicalName": "Galactic Guidance",
+      "page": 20,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "Trained in the Knowledge (galactic lore) skill",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Unknown Regions|Exile",
+      "tree": "Exile",
+      "canonicalName": "Rant",
+      "page": 20,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "Trained in the Persuasion skill",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Unknown Regions|Exile",
+      "tree": "Exile",
+      "canonicalName": "Self-Reliant",
+      "page": 20,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Leadership",
+      "tree": "Leadership",
+      "canonicalName": "Coordinated Leadership",
+      "page": 20,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "Born Leader, Coordinate",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Unknown Regions|Outsider",
+      "tree": "Outsider",
+      "canonicalName": "Oafish",
+      "page": 20,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Unknown Regions|Outsider",
+      "tree": "Outsider",
+      "canonicalName": "Outsider's Eye",
+      "page": 20,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "Trained in the Perception skill",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Unknown Regions|Outsider",
+      "tree": "Outsider",
+      "canonicalName": "Outsider's Query",
+      "page": 20,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "Trained in the Persuasion skill",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Unknown Regions|Outsider",
+      "tree": "Outsider",
+      "canonicalName": "Wary",
+      "page": 20,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "Outsider's Eye, trained in the Perception skill",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Spacer",
+      "tree": "Spacer",
+      "canonicalName": "Deep Space Raider",
+      "page": 21,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "Spacehound, Starship Raider",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Camouflage",
+      "tree": "Camouflage",
+      "canonicalName": "Extended Ambush",
+      "page": 21,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "Improved Stealth",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Knights of the Old Republic Campaign Guide|Hyperspace Explorer",
+      "tree": "Hyperspace Explorer",
+      "canonicalName": "Silent Movement",
+      "page": 21,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "Trained in the Stealth skill",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Unknown Regions|Master Scout",
+      "tree": "Master Scout",
+      "canonicalName": "Piercing Hit",
+      "page": 21,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "Acute Senses, Keen Shot",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Unknown Regions|Master Scout",
+      "tree": "Master Scout",
+      "canonicalName": "Quicktrap",
+      "page": 21,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "Jury-Rigger, Tripwire, trained in the Mechanics skill",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Unknown Regions|Master Scout",
+      "tree": "Master Scout",
+      "canonicalName": "Speedclimber",
+      "page": 21,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "Long Stride, Surefooted, trained in the Climb skill",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Unknown Regions|Master Scout",
+      "tree": "Master Scout",
+      "canonicalName": "Surprisingly Quick",
+      "page": 21,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "Skill Focus (Initiative), trained in the Initiative skill",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Unknown Regions|Master Scout",
+      "tree": "Master Scout",
+      "canonicalName": "Tripwire",
+      "page": 21,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "Jury-Rigger, trained in the Mechanics skill",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Unknown Regions|Mobile Scout",
+      "tree": "Mobile Scout",
+      "canonicalName": "Battle Mount",
+      "page": 22,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "Expert Rider, Terrain Guidance, trained in the Ride skill",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Unknown Regions|Mobile Scout",
+      "tree": "Mobile Scout",
+      "canonicalName": "Expert Rider",
+      "page": 22,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "Trained in the Ride skill",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Unknown Regions|Mobile Scout",
+      "tree": "Mobile Scout",
+      "canonicalName": "Terrain Guidance",
+      "page": 22,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "Trained in the Ride skill",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Unknown Regions|Mobile Scout",
+      "tree": "Mobile Scout",
+      "canonicalName": "Mechanized Rider",
+      "page": 22,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "Trained in the Pilot and Ride skills",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Commando",
+      "tree": "Commando",
+      "canonicalName": "Out of Harm's Way",
+      "page": 23,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "Harm's Way, trained in the Initiative skill",
+      "dispositions": [
+        "MISSING_CONTENT",
+        "DISTINCT_SAME_NAME_OR_UNASSIGNED_IDENTITY_MISSING"
+      ],
+      "notes": "A same-name repository record exists outside the correct canonical tree identity; do not repair by global display-name matching.",
+      "sameNameRepoCandidates": [
+        {
+          "repoId": "6031244221b73865",
+          "name": "Out of Harm's Way",
+          "tree": "Protection",
+          "source": null
+        }
+      ]
+    },
+    {
+      "canonicalTreeKey": "Unknown Regions|Warrior",
+      "tree": "Warrior",
+      "canonicalName": "Champion",
+      "page": 23,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "Warrior's Awareness, Warrior's Determination",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Unknown Regions|Warrior",
+      "tree": "Warrior",
+      "canonicalName": "Quick Study",
+      "page": 23,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "Warrior's Awareness",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Unknown Regions|Warrior",
+      "tree": "Warrior",
+      "canonicalName": "Simple Opportunity",
+      "page": 23,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "Weapon Proficiency (simple weapons)",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Unknown Regions|Warrior",
+      "tree": "Warrior",
+      "canonicalName": "Warrior's Awareness",
+      "page": 23,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Unknown Regions|Warrior",
+      "tree": "Warrior",
+      "canonicalName": "Warrior's Determination",
+      "page": 23,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Expert Pilot",
+      "tree": "Expert Pilot",
+      "canonicalName": "Roll Out",
+      "page": 29,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "Elusive Dogfighter",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Gunner",
+      "tree": "Gunner",
+      "canonicalName": "Fast Attack Specialist",
+      "page": 29,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "Expert Gunner, Quick Trigger",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Gunner",
+      "tree": "Gunner",
+      "canonicalName": "Overcharged Shot",
+      "page": 29,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "Expert Gunner",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Bounty Hunter",
+      "tree": "Bounty Hunter",
+      "canonicalName": "Familiar Enemies",
+      "page": 29,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "Familiar foe special quality",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Bounty Hunter",
+      "tree": "Bounty Hunter",
+      "canonicalName": "Familiar Situation",
+      "page": 29,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "Familiar foe special quality",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Bounty Hunter",
+      "tree": "Bounty Hunter",
+      "canonicalName": "Quick Cuffs",
+      "page": 29,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "Quick Draw feat",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Infamy",
+      "tree": "Infamy",
+      "canonicalName": "Master Manipulator",
+      "page": 29,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "Notorious, Skill Focus (Persuasion), trained in the Persuasion skill",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Infamy",
+      "tree": "Infamy",
+      "canonicalName": "Small Favor",
+      "page": 29,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "Notorious, trained in the Persuasion skill",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Mastermind",
+      "tree": "Mastermind",
+      "canonicalName": "Master's Orders",
+      "page": 30,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "Impel Ally I, Impel Ally II",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Critical Master",
+      "tree": "Critical Master",
+      "canonicalName": "Extended Critical Range (simple weapons)",
+      "page": 30,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "Weapon Proficiency (simple weapons), base attack bonus +10",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Weapon Master",
+      "tree": "Weapon Master",
+      "canonicalName": "Extended Threat",
+      "page": 30,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "Weapon Focus and Weapon Proficiency with weapon used",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Weapon Master",
+      "tree": "Weapon Master",
+      "canonicalName": "Multiattack Proficiency (simple weapons)",
+      "page": 30,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Weapon Master",
+      "tree": "Weapon Master",
+      "canonicalName": "Two-For-One Throw",
+      "page": 30,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "Weapon Focus (simple weapons), Weapon Proficiency (simple weapons)",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Force Adept",
+      "tree": "Force Adept",
+      "canonicalName": "Instrument of the Force",
+      "page": 30,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "MISSING_CONTENT",
+        "DISTINCT_SAME_NAME_OR_UNASSIGNED_IDENTITY_MISSING"
+      ],
+      "notes": "A same-name repository record exists outside the correct canonical tree identity; do not repair by global display-name matching.",
+      "sameNameRepoCandidates": [
+        {
+          "repoId": "f0ade00000000001",
+          "name": "Instrument of the Force",
+          "tree": null,
+          "source": null
+        }
+      ]
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Force Adept",
+      "tree": "Force Adept",
+      "canonicalName": "Long Call",
+      "page": 30,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "Mystical Link",
+      "dispositions": [
+        "MISSING_CONTENT",
+        "DISTINCT_SAME_NAME_OR_UNASSIGNED_IDENTITY_MISSING"
+      ],
+      "notes": "A same-name repository record exists outside the correct canonical tree identity; do not repair by global display-name matching.",
+      "sameNameRepoCandidates": [
+        {
+          "repoId": "f0ade00000000002",
+          "name": "Long Call",
+          "tree": null,
+          "source": null
+        }
+      ]
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Force Adept",
+      "tree": "Force Adept",
+      "canonicalName": "Mystical Link",
+      "page": 30,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Gunslinger",
+      "tree": "Gunslinger",
+      "canonicalName": "Lingering Debilitation",
+      "page": 31,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "Debilitating Shot",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Gunslinger",
+      "tree": "Gunslinger",
+      "canonicalName": "Retreating Fire",
+      "page": 31,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Gunslinger",
+      "tree": "Gunslinger",
+      "canonicalName": "Slowing Shot",
+      "page": 31,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "Debilitating Shot",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Gunslinger",
+      "tree": "Gunslinger",
+      "canonicalName": "Swift Shot",
+      "page": 31,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Military Tactics",
+      "tree": "Military Tactics",
+      "canonicalName": "Commander's Prerogative",
+      "page": 31,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "Trained in the Initiative skill",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Military Tactics",
+      "tree": "Military Tactics",
+      "canonicalName": "Irregular Tactics",
+      "page": 31,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "Share talent special quality",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Military Tactics",
+      "tree": "Military Tactics",
+      "canonicalName": "Lead by Example",
+      "page": 31,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "Share talent special quality",
+      "dispositions": [
+        "MISSING_CONTENT",
+        "DISTINCT_SAME_NAME_OR_UNASSIGNED_IDENTITY_MISSING"
+      ],
+      "notes": "A same-name repository record exists outside the correct canonical tree identity; do not repair by global display-name matching.",
+      "sameNameRepoCandidates": [
+        {
+          "repoId": "2455d85114f52830",
+          "name": "Lead by Example",
+          "tree": "Ideologue",
+          "source": null
+        }
+      ]
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Military Tactics",
+      "tree": "Military Tactics",
+      "canonicalName": "Turn the Tide",
+      "page": 31,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "Command Decision, Commander's Prerogative, trained in the Initiative skill",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Unknown Regions|Blazing Chain",
+      "tree": "Blazing Chain",
+      "canonicalName": "Force Directed Shot",
+      "page": 33,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "Force Sensitivity, trained in the Use the Force skill",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Unknown Regions|Blazing Chain",
+      "tree": "Blazing Chain",
+      "canonicalName": "Negate and Redirect",
+      "page": 33,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "Negate energy, Force Sensitivity, trained in Use the Force",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Unknown Regions|Blazing Chain",
+      "tree": "Blazing Chain",
+      "canonicalName": "Rising Anger",
+      "page": 33,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "Force Sensitivity, Dark Side Score of 1 or higher",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Unknown Regions|Blazing Chain",
+      "tree": "Blazing Chain",
+      "canonicalName": "Rising Panic",
+      "page": 33,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "Force Sensitivity, Dark Side Score of 1 or higher",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    }
+  ]
+}

@@ -1,0 +1,1290 @@
+{
+  "schemaVersion": 1,
+  "phase": "2",
+  "sourcebook": "Galaxy of Intrigue",
+  "generatedAt": "2026-09-27",
+  "branch": "audit/talent-phase-1-tree-census",
+  "scope": "Per-talent comparison of source-certified Galaxy of Intrigue content to the current repository talent-record mirror. No production talent records changed.",
+  "summary": {
+    "canonicalTalentPublications": 43,
+    "repositoryRecordsMapped": 0,
+    "missingCorrectTreeRecords": 43,
+    "benefitStatus": {
+      "MISSING_CORRECT_TREE_RECORD": 43
+    },
+    "descriptionStatus": {
+      "MISSING_CORRECT_TREE_RECORD": 43
+    },
+    "prerequisiteStatus": {
+      "MISSING_CORRECT_TREE_RECORD": 43
+    },
+    "sourceMetadataStatus": {
+      "MISSING_CORRECT_TREE_RECORD": 43
+    },
+    "summaryStatus": {
+      "MISSING_CORRECT_TREE_RECORD": 43
+    },
+    "distinctSameNameCollisionRisks": 2,
+    "phase1dStructuralCorrections": 2,
+    "removedMisclassifiedNamedActions": 6
+  },
+  "phase1dStructuralCorrections": [
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Commando",
+      "parentTalent": "Dedicated Guardian",
+      "removedActionNames": [
+        "Blast Shield",
+        "Take the Pain",
+        "Team Effort"
+      ],
+      "page": 24,
+      "disposition": "PHASE_1D_STRUCTURAL_OVERINCLUSION_CORRECTED",
+      "reason": "Blast Shield, Take the Pain, and Team Effort are named once-per-encounter actions inside the Dedicated Guardian talent, not separately selectable talents."
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Gunslinger",
+      "parentTalent": "Pistol Duelist",
+      "removedActionNames": [
+        "End Game",
+        "Snap Aiming",
+        "Stand Steady"
+      ],
+      "page": 25,
+      "disposition": "PHASE_1D_STRUCTURAL_OVERINCLUSION_CORRECTED",
+      "reason": "End Game, Snap Aiming, and Stand Steady are named once-per-encounter actions inside the Pistol Duelist talent, not separately selectable talents."
+    }
+  ],
+  "missingRepositoryRecords": [
+    {
+      "tree": "Master of Intrigue",
+      "name": "Advanced Planning",
+      "page": 20,
+      "canonicalTreeKey": "Galaxy of Intrigue|Master of Intrigue",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Master of Intrigue",
+      "name": "Blend In",
+      "page": 20,
+      "canonicalTreeKey": "Galaxy of Intrigue|Master of Intrigue",
+      "sameNameRepoCandidates": [
+        {
+          "repoId": "a18d67d9fd947f68",
+          "tree": "Spy",
+          "source": null,
+          "prerequisites": "Stealth"
+        }
+      ]
+    },
+    {
+      "tree": "Master of Intrigue",
+      "name": "Done It All",
+      "page": 20,
+      "canonicalTreeKey": "Galaxy of Intrigue|Master of Intrigue",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Master of Intrigue",
+      "name": "Get into Position",
+      "page": 20,
+      "canonicalTreeKey": "Galaxy of Intrigue|Master of Intrigue",
+      "sameNameRepoCandidates": [
+        {
+          "repoId": "510541d890629be0",
+          "tree": "Reconnaissance",
+          "source": null,
+          "prerequisites": "Base attack bonus +5, Reconnaissance Team Leader"
+        }
+      ]
+    },
+    {
+      "tree": "Master of Intrigue",
+      "name": "Master Manipulator",
+      "page": 20,
+      "canonicalTreeKey": "Galaxy of Intrigue|Master of Intrigue",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Master of Intrigue",
+      "name": "Retaliation",
+      "page": 20,
+      "canonicalTreeKey": "Galaxy of Intrigue|Master of Intrigue",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Skill Challenge",
+      "name": "Guaranteed Boon",
+      "page": 20,
+      "canonicalTreeKey": "Galaxy of Intrigue|Skill Challenge",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Skill Challenge",
+      "name": "Leading Skill",
+      "page": 20,
+      "canonicalTreeKey": "Galaxy of Intrigue|Skill Challenge",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Skill Challenge",
+      "name": "Learn from Mistakes",
+      "page": 20,
+      "canonicalTreeKey": "Galaxy of Intrigue|Skill Challenge",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Skill Challenge",
+      "name": "Try Your Luck",
+      "page": 20,
+      "canonicalTreeKey": "Galaxy of Intrigue|Skill Challenge",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Superior Skills",
+      "name": "Assured Skill",
+      "page": 21,
+      "canonicalTreeKey": "Galaxy of Intrigue|Superior Skills",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Superior Skills",
+      "name": "Critical Skill Success",
+      "page": 21,
+      "canonicalTreeKey": "Galaxy of Intrigue|Superior Skills",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Superior Skills",
+      "name": "Exceptional Skill",
+      "page": 21,
+      "canonicalTreeKey": "Galaxy of Intrigue|Superior Skills",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Superior Skills",
+      "name": "Reliable Boon",
+      "page": 21,
+      "canonicalTreeKey": "Galaxy of Intrigue|Superior Skills",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Superior Skills",
+      "name": "Skill Boon",
+      "page": 21,
+      "canonicalTreeKey": "Galaxy of Intrigue|Superior Skills",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Superior Skills",
+      "name": "Skill Confidence",
+      "page": 21,
+      "canonicalTreeKey": "Galaxy of Intrigue|Superior Skills",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Superior Skills",
+      "name": "Skillful Recovery",
+      "page": 21,
+      "canonicalTreeKey": "Galaxy of Intrigue|Superior Skills",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Revolutionary",
+      "name": "Bomb Thrower",
+      "page": 21,
+      "canonicalTreeKey": "Galaxy of Intrigue|Revolutionary",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Revolutionary",
+      "name": "For the Cause",
+      "page": 21,
+      "canonicalTreeKey": "Galaxy of Intrigue|Revolutionary",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Revolutionary",
+      "name": "Make an Example",
+      "page": 22,
+      "canonicalTreeKey": "Galaxy of Intrigue|Revolutionary",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Revolutionary",
+      "name": "Revolutionary Rhetoric",
+      "page": 22,
+      "canonicalTreeKey": "Galaxy of Intrigue|Revolutionary",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Espionage",
+      "name": "Fade Out",
+      "page": 22,
+      "canonicalTreeKey": "Galaxy of Intrigue|Espionage",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Espionage",
+      "name": "Keep Together",
+      "page": 22,
+      "canonicalTreeKey": "Galaxy of Intrigue|Espionage",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Espionage",
+      "name": "Prudent Escape",
+      "page": 22,
+      "canonicalTreeKey": "Galaxy of Intrigue|Espionage",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Espionage",
+      "name": "Reactive Stealth",
+      "page": 22,
+      "canonicalTreeKey": "Galaxy of Intrigue|Espionage",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Espionage",
+      "name": "Sizing Up",
+      "page": 23,
+      "canonicalTreeKey": "Galaxy of Intrigue|Espionage",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Brawler",
+      "name": "Crowd Control",
+      "page": 23,
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Brawler",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Brawler",
+      "name": "Disarm and Engage",
+      "page": 23,
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Brawler",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Brawler",
+      "name": "Entangler",
+      "page": 23,
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Brawler",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Brawler",
+      "name": "Reverse Strength",
+      "page": 23,
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Brawler",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Commando",
+      "name": "Coordinated Effort",
+      "page": 23,
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Commando",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Commando",
+      "name": "Dedicated Guardian",
+      "page": 24,
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Commando",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Commando",
+      "name": "Dedicated Protector",
+      "page": 24,
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Commando",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Expert Pilot",
+      "name": "Clip",
+      "page": 24,
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Expert Pilot",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Expert Pilot",
+      "name": "Master Defender",
+      "page": 24,
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Expert Pilot",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Expert Pilot",
+      "name": "Shunt Damage",
+      "page": 24,
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Expert Pilot",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Bounty Hunter",
+      "name": "Detective",
+      "page": 24,
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Bounty Hunter",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Bounty Hunter",
+      "name": "Electronic Trail",
+      "page": 24,
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Bounty Hunter",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Bounty Hunter",
+      "name": "Revealing Secrets",
+      "page": 25,
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Bounty Hunter",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Mastermind",
+      "name": "Attract Superior Minion",
+      "page": 25,
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Mastermind",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Mastermind",
+      "name": "Contingency Plan",
+      "page": 25,
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Mastermind",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Gunslinger",
+      "name": "Damaging Disarm",
+      "page": 25,
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Gunslinger",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Gunslinger",
+      "name": "Pistol Duelist",
+      "page": 25,
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Gunslinger",
+      "sameNameRepoCandidates": []
+    }
+  ],
+  "sameNameCollisionRisks": [
+    {
+      "tree": "Master of Intrigue",
+      "name": "Blend In",
+      "page": 20,
+      "candidates": [
+        {
+          "repoId": "a18d67d9fd947f68",
+          "name": "Blend In",
+          "tree": "Spy",
+          "treeId": "spy",
+          "source": null,
+          "prerequisites": "Stealth",
+          "benefit": "Use Stealth in place of Deception for a deceptive appearance; considered trained.",
+          "description": "Use Stealth instead of Deception for creating deceptive appearances."
+        }
+      ]
+    },
+    {
+      "tree": "Master of Intrigue",
+      "name": "Get into Position",
+      "page": 20,
+      "candidates": [
+        {
+          "repoId": "510541d890629be0",
+          "name": "Get Into Position",
+          "tree": "Reconnaissance",
+          "treeId": "reconnaissance",
+          "source": null,
+          "prerequisites": "Base attack bonus +5, Reconnaissance Team Leader",
+          "benefit": "One of your followers gains +2 speed.",
+          "description": "One follower gains increased speed."
+        }
+      ]
+    }
+  ],
+  "talents": [
+    {
+      "canonicalTreeKey": "Galaxy of Intrigue|Master of Intrigue",
+      "tree": "Master of Intrigue",
+      "canonicalName": "Advanced Planning",
+      "page": 20,
+      "repoId": null,
+      "repoName": null,
+      "benefitStatus": "MISSING_CORRECT_TREE_RECORD",
+      "descriptionStatus": "MISSING_CORRECT_TREE_RECORD",
+      "prerequisiteStatus": "MISSING_CORRECT_TREE_RECORD",
+      "sourceMetadataStatus": "MISSING_CORRECT_TREE_RECORD",
+      "summaryStatus": "MISSING_CORRECT_TREE_RECORD",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": [],
+      "repoBenefitChars": null,
+      "canonicalBenefitChars": 130
+    },
+    {
+      "canonicalTreeKey": "Galaxy of Intrigue|Master of Intrigue",
+      "tree": "Master of Intrigue",
+      "canonicalName": "Blend In",
+      "page": 20,
+      "repoId": null,
+      "repoName": null,
+      "benefitStatus": "MISSING_CORRECT_TREE_RECORD",
+      "descriptionStatus": "MISSING_CORRECT_TREE_RECORD",
+      "prerequisiteStatus": "MISSING_CORRECT_TREE_RECORD",
+      "sourceMetadataStatus": "MISSING_CORRECT_TREE_RECORD",
+      "summaryStatus": "MISSING_CORRECT_TREE_RECORD",
+      "dispositions": [
+        "MISSING_CONTENT",
+        "DISTINCT_SAME_NAME_IDENTITY_MISSING"
+      ],
+      "notes": "No correct-tree Galaxy of Intrigue record exists. Same-name repository candidate(s) belong to different tree identities and must not be moved or overwritten by display name alone.",
+      "sameNameRepoCandidates": [
+        {
+          "repoId": "a18d67d9fd947f68",
+          "name": "Blend In",
+          "tree": "Spy",
+          "source": null,
+          "prerequisites": "Stealth"
+        }
+      ],
+      "repoBenefitChars": null,
+      "canonicalBenefitChars": 227
+    },
+    {
+      "canonicalTreeKey": "Galaxy of Intrigue|Master of Intrigue",
+      "tree": "Master of Intrigue",
+      "canonicalName": "Done It All",
+      "page": 20,
+      "repoId": null,
+      "repoName": null,
+      "benefitStatus": "MISSING_CORRECT_TREE_RECORD",
+      "descriptionStatus": "MISSING_CORRECT_TREE_RECORD",
+      "prerequisiteStatus": "MISSING_CORRECT_TREE_RECORD",
+      "sourceMetadataStatus": "MISSING_CORRECT_TREE_RECORD",
+      "summaryStatus": "MISSING_CORRECT_TREE_RECORD",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": [],
+      "repoBenefitChars": null,
+      "canonicalBenefitChars": 293
+    },
+    {
+      "canonicalTreeKey": "Galaxy of Intrigue|Master of Intrigue",
+      "tree": "Master of Intrigue",
+      "canonicalName": "Get into Position",
+      "page": 20,
+      "repoId": null,
+      "repoName": null,
+      "benefitStatus": "MISSING_CORRECT_TREE_RECORD",
+      "descriptionStatus": "MISSING_CORRECT_TREE_RECORD",
+      "prerequisiteStatus": "MISSING_CORRECT_TREE_RECORD",
+      "sourceMetadataStatus": "MISSING_CORRECT_TREE_RECORD",
+      "summaryStatus": "MISSING_CORRECT_TREE_RECORD",
+      "dispositions": [
+        "MISSING_CONTENT",
+        "DISTINCT_SAME_NAME_IDENTITY_MISSING"
+      ],
+      "notes": "No correct-tree Galaxy of Intrigue record exists. Same-name repository candidate(s) belong to different tree identities and must not be moved or overwritten by display name alone.",
+      "sameNameRepoCandidates": [
+        {
+          "repoId": "510541d890629be0",
+          "name": "Get Into Position",
+          "tree": "Reconnaissance",
+          "source": null,
+          "prerequisites": "Base attack bonus +5, Reconnaissance Team Leader"
+        }
+      ],
+      "repoBenefitChars": null,
+      "canonicalBenefitChars": 184
+    },
+    {
+      "canonicalTreeKey": "Galaxy of Intrigue|Master of Intrigue",
+      "tree": "Master of Intrigue",
+      "canonicalName": "Master Manipulator",
+      "page": 20,
+      "repoId": null,
+      "repoName": null,
+      "benefitStatus": "MISSING_CORRECT_TREE_RECORD",
+      "descriptionStatus": "MISSING_CORRECT_TREE_RECORD",
+      "prerequisiteStatus": "MISSING_CORRECT_TREE_RECORD",
+      "sourceMetadataStatus": "MISSING_CORRECT_TREE_RECORD",
+      "summaryStatus": "MISSING_CORRECT_TREE_RECORD",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": [],
+      "repoBenefitChars": null,
+      "canonicalBenefitChars": 968
+    },
+    {
+      "canonicalTreeKey": "Galaxy of Intrigue|Master of Intrigue",
+      "tree": "Master of Intrigue",
+      "canonicalName": "Retaliation",
+      "page": 20,
+      "repoId": null,
+      "repoName": null,
+      "benefitStatus": "MISSING_CORRECT_TREE_RECORD",
+      "descriptionStatus": "MISSING_CORRECT_TREE_RECORD",
+      "prerequisiteStatus": "MISSING_CORRECT_TREE_RECORD",
+      "sourceMetadataStatus": "MISSING_CORRECT_TREE_RECORD",
+      "summaryStatus": "MISSING_CORRECT_TREE_RECORD",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": [],
+      "repoBenefitChars": null,
+      "canonicalBenefitChars": 304
+    },
+    {
+      "canonicalTreeKey": "Galaxy of Intrigue|Skill Challenge",
+      "tree": "Skill Challenge",
+      "canonicalName": "Guaranteed Boon",
+      "page": 20,
+      "repoId": null,
+      "repoName": null,
+      "benefitStatus": "MISSING_CORRECT_TREE_RECORD",
+      "descriptionStatus": "MISSING_CORRECT_TREE_RECORD",
+      "prerequisiteStatus": "MISSING_CORRECT_TREE_RECORD",
+      "sourceMetadataStatus": "MISSING_CORRECT_TREE_RECORD",
+      "summaryStatus": "MISSING_CORRECT_TREE_RECORD",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": [],
+      "repoBenefitChars": null,
+      "canonicalBenefitChars": 148
+    },
+    {
+      "canonicalTreeKey": "Galaxy of Intrigue|Skill Challenge",
+      "tree": "Skill Challenge",
+      "canonicalName": "Leading Skill",
+      "page": 20,
+      "repoId": null,
+      "repoName": null,
+      "benefitStatus": "MISSING_CORRECT_TREE_RECORD",
+      "descriptionStatus": "MISSING_CORRECT_TREE_RECORD",
+      "prerequisiteStatus": "MISSING_CORRECT_TREE_RECORD",
+      "sourceMetadataStatus": "MISSING_CORRECT_TREE_RECORD",
+      "summaryStatus": "MISSING_CORRECT_TREE_RECORD",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": [],
+      "repoBenefitChars": null,
+      "canonicalBenefitChars": 159
+    },
+    {
+      "canonicalTreeKey": "Galaxy of Intrigue|Skill Challenge",
+      "tree": "Skill Challenge",
+      "canonicalName": "Learn from Mistakes",
+      "page": 20,
+      "repoId": null,
+      "repoName": null,
+      "benefitStatus": "MISSING_CORRECT_TREE_RECORD",
+      "descriptionStatus": "MISSING_CORRECT_TREE_RECORD",
+      "prerequisiteStatus": "MISSING_CORRECT_TREE_RECORD",
+      "sourceMetadataStatus": "MISSING_CORRECT_TREE_RECORD",
+      "summaryStatus": "MISSING_CORRECT_TREE_RECORD",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": [],
+      "repoBenefitChars": null,
+      "canonicalBenefitChars": 240
+    },
+    {
+      "canonicalTreeKey": "Galaxy of Intrigue|Skill Challenge",
+      "tree": "Skill Challenge",
+      "canonicalName": "Try Your Luck",
+      "page": 20,
+      "repoId": null,
+      "repoName": null,
+      "benefitStatus": "MISSING_CORRECT_TREE_RECORD",
+      "descriptionStatus": "MISSING_CORRECT_TREE_RECORD",
+      "prerequisiteStatus": "MISSING_CORRECT_TREE_RECORD",
+      "sourceMetadataStatus": "MISSING_CORRECT_TREE_RECORD",
+      "summaryStatus": "MISSING_CORRECT_TREE_RECORD",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": [],
+      "repoBenefitChars": null,
+      "canonicalBenefitChars": 258
+    },
+    {
+      "canonicalTreeKey": "Galaxy of Intrigue|Superior Skills",
+      "tree": "Superior Skills",
+      "canonicalName": "Assured Skill",
+      "page": 21,
+      "repoId": null,
+      "repoName": null,
+      "benefitStatus": "MISSING_CORRECT_TREE_RECORD",
+      "descriptionStatus": "MISSING_CORRECT_TREE_RECORD",
+      "prerequisiteStatus": "MISSING_CORRECT_TREE_RECORD",
+      "sourceMetadataStatus": "MISSING_CORRECT_TREE_RECORD",
+      "summaryStatus": "MISSING_CORRECT_TREE_RECORD",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": [],
+      "repoBenefitChars": null,
+      "canonicalBenefitChars": 345
+    },
+    {
+      "canonicalTreeKey": "Galaxy of Intrigue|Superior Skills",
+      "tree": "Superior Skills",
+      "canonicalName": "Critical Skill Success",
+      "page": 21,
+      "repoId": null,
+      "repoName": null,
+      "benefitStatus": "MISSING_CORRECT_TREE_RECORD",
+      "descriptionStatus": "MISSING_CORRECT_TREE_RECORD",
+      "prerequisiteStatus": "MISSING_CORRECT_TREE_RECORD",
+      "sourceMetadataStatus": "MISSING_CORRECT_TREE_RECORD",
+      "summaryStatus": "MISSING_CORRECT_TREE_RECORD",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": [],
+      "repoBenefitChars": null,
+      "canonicalBenefitChars": 201
+    },
+    {
+      "canonicalTreeKey": "Galaxy of Intrigue|Superior Skills",
+      "tree": "Superior Skills",
+      "canonicalName": "Exceptional Skill",
+      "page": 21,
+      "repoId": null,
+      "repoName": null,
+      "benefitStatus": "MISSING_CORRECT_TREE_RECORD",
+      "descriptionStatus": "MISSING_CORRECT_TREE_RECORD",
+      "prerequisiteStatus": "MISSING_CORRECT_TREE_RECORD",
+      "sourceMetadataStatus": "MISSING_CORRECT_TREE_RECORD",
+      "summaryStatus": "MISSING_CORRECT_TREE_RECORD",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": [],
+      "repoBenefitChars": null,
+      "canonicalBenefitChars": 307
+    },
+    {
+      "canonicalTreeKey": "Galaxy of Intrigue|Superior Skills",
+      "tree": "Superior Skills",
+      "canonicalName": "Reliable Boon",
+      "page": 21,
+      "repoId": null,
+      "repoName": null,
+      "benefitStatus": "MISSING_CORRECT_TREE_RECORD",
+      "descriptionStatus": "MISSING_CORRECT_TREE_RECORD",
+      "prerequisiteStatus": "MISSING_CORRECT_TREE_RECORD",
+      "sourceMetadataStatus": "MISSING_CORRECT_TREE_RECORD",
+      "summaryStatus": "MISSING_CORRECT_TREE_RECORD",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": [],
+      "repoBenefitChars": null,
+      "canonicalBenefitChars": 184
+    },
+    {
+      "canonicalTreeKey": "Galaxy of Intrigue|Superior Skills",
+      "tree": "Superior Skills",
+      "canonicalName": "Skill Boon",
+      "page": 21,
+      "repoId": null,
+      "repoName": null,
+      "benefitStatus": "MISSING_CORRECT_TREE_RECORD",
+      "descriptionStatus": "MISSING_CORRECT_TREE_RECORD",
+      "prerequisiteStatus": "MISSING_CORRECT_TREE_RECORD",
+      "sourceMetadataStatus": "MISSING_CORRECT_TREE_RECORD",
+      "summaryStatus": "MISSING_CORRECT_TREE_RECORD",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": [],
+      "repoBenefitChars": null,
+      "canonicalBenefitChars": 360
+    },
+    {
+      "canonicalTreeKey": "Galaxy of Intrigue|Superior Skills",
+      "tree": "Superior Skills",
+      "canonicalName": "Skill Confidence",
+      "page": 21,
+      "repoId": null,
+      "repoName": null,
+      "benefitStatus": "MISSING_CORRECT_TREE_RECORD",
+      "descriptionStatus": "MISSING_CORRECT_TREE_RECORD",
+      "prerequisiteStatus": "MISSING_CORRECT_TREE_RECORD",
+      "sourceMetadataStatus": "MISSING_CORRECT_TREE_RECORD",
+      "summaryStatus": "MISSING_CORRECT_TREE_RECORD",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": [],
+      "repoBenefitChars": null,
+      "canonicalBenefitChars": 386
+    },
+    {
+      "canonicalTreeKey": "Galaxy of Intrigue|Superior Skills",
+      "tree": "Superior Skills",
+      "canonicalName": "Skillful Recovery",
+      "page": 21,
+      "repoId": null,
+      "repoName": null,
+      "benefitStatus": "MISSING_CORRECT_TREE_RECORD",
+      "descriptionStatus": "MISSING_CORRECT_TREE_RECORD",
+      "prerequisiteStatus": "MISSING_CORRECT_TREE_RECORD",
+      "sourceMetadataStatus": "MISSING_CORRECT_TREE_RECORD",
+      "summaryStatus": "MISSING_CORRECT_TREE_RECORD",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": [],
+      "repoBenefitChars": null,
+      "canonicalBenefitChars": 567
+    },
+    {
+      "canonicalTreeKey": "Galaxy of Intrigue|Revolutionary",
+      "tree": "Revolutionary",
+      "canonicalName": "Bomb Thrower",
+      "page": 21,
+      "repoId": null,
+      "repoName": null,
+      "benefitStatus": "MISSING_CORRECT_TREE_RECORD",
+      "descriptionStatus": "MISSING_CORRECT_TREE_RECORD",
+      "prerequisiteStatus": "MISSING_CORRECT_TREE_RECORD",
+      "sourceMetadataStatus": "MISSING_CORRECT_TREE_RECORD",
+      "summaryStatus": "MISSING_CORRECT_TREE_RECORD",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": [],
+      "repoBenefitChars": null,
+      "canonicalBenefitChars": 390
+    },
+    {
+      "canonicalTreeKey": "Galaxy of Intrigue|Revolutionary",
+      "tree": "Revolutionary",
+      "canonicalName": "For the Cause",
+      "page": 21,
+      "repoId": null,
+      "repoName": null,
+      "benefitStatus": "MISSING_CORRECT_TREE_RECORD",
+      "descriptionStatus": "MISSING_CORRECT_TREE_RECORD",
+      "prerequisiteStatus": "MISSING_CORRECT_TREE_RECORD",
+      "sourceMetadataStatus": "MISSING_CORRECT_TREE_RECORD",
+      "summaryStatus": "MISSING_CORRECT_TREE_RECORD",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": [],
+      "repoBenefitChars": null,
+      "canonicalBenefitChars": 233
+    },
+    {
+      "canonicalTreeKey": "Galaxy of Intrigue|Revolutionary",
+      "tree": "Revolutionary",
+      "canonicalName": "Make an Example",
+      "page": 22,
+      "repoId": null,
+      "repoName": null,
+      "benefitStatus": "MISSING_CORRECT_TREE_RECORD",
+      "descriptionStatus": "MISSING_CORRECT_TREE_RECORD",
+      "prerequisiteStatus": "MISSING_CORRECT_TREE_RECORD",
+      "sourceMetadataStatus": "MISSING_CORRECT_TREE_RECORD",
+      "summaryStatus": "MISSING_CORRECT_TREE_RECORD",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": [],
+      "repoBenefitChars": null,
+      "canonicalBenefitChars": 218
+    },
+    {
+      "canonicalTreeKey": "Galaxy of Intrigue|Revolutionary",
+      "tree": "Revolutionary",
+      "canonicalName": "Revolutionary Rhetoric",
+      "page": 22,
+      "repoId": null,
+      "repoName": null,
+      "benefitStatus": "MISSING_CORRECT_TREE_RECORD",
+      "descriptionStatus": "MISSING_CORRECT_TREE_RECORD",
+      "prerequisiteStatus": "MISSING_CORRECT_TREE_RECORD",
+      "sourceMetadataStatus": "MISSING_CORRECT_TREE_RECORD",
+      "summaryStatus": "MISSING_CORRECT_TREE_RECORD",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": [],
+      "repoBenefitChars": null,
+      "canonicalBenefitChars": 398
+    },
+    {
+      "canonicalTreeKey": "Galaxy of Intrigue|Espionage",
+      "tree": "Espionage",
+      "canonicalName": "Fade Out",
+      "page": 22,
+      "repoId": null,
+      "repoName": null,
+      "benefitStatus": "MISSING_CORRECT_TREE_RECORD",
+      "descriptionStatus": "MISSING_CORRECT_TREE_RECORD",
+      "prerequisiteStatus": "MISSING_CORRECT_TREE_RECORD",
+      "sourceMetadataStatus": "MISSING_CORRECT_TREE_RECORD",
+      "summaryStatus": "MISSING_CORRECT_TREE_RECORD",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": [],
+      "repoBenefitChars": null,
+      "canonicalBenefitChars": 335
+    },
+    {
+      "canonicalTreeKey": "Galaxy of Intrigue|Espionage",
+      "tree": "Espionage",
+      "canonicalName": "Keep Together",
+      "page": 22,
+      "repoId": null,
+      "repoName": null,
+      "benefitStatus": "MISSING_CORRECT_TREE_RECORD",
+      "descriptionStatus": "MISSING_CORRECT_TREE_RECORD",
+      "prerequisiteStatus": "MISSING_CORRECT_TREE_RECORD",
+      "sourceMetadataStatus": "MISSING_CORRECT_TREE_RECORD",
+      "summaryStatus": "MISSING_CORRECT_TREE_RECORD",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": [],
+      "repoBenefitChars": null,
+      "canonicalBenefitChars": 218
+    },
+    {
+      "canonicalTreeKey": "Galaxy of Intrigue|Espionage",
+      "tree": "Espionage",
+      "canonicalName": "Prudent Escape",
+      "page": 22,
+      "repoId": null,
+      "repoName": null,
+      "benefitStatus": "MISSING_CORRECT_TREE_RECORD",
+      "descriptionStatus": "MISSING_CORRECT_TREE_RECORD",
+      "prerequisiteStatus": "MISSING_CORRECT_TREE_RECORD",
+      "sourceMetadataStatus": "MISSING_CORRECT_TREE_RECORD",
+      "summaryStatus": "MISSING_CORRECT_TREE_RECORD",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": [],
+      "repoBenefitChars": null,
+      "canonicalBenefitChars": 304
+    },
+    {
+      "canonicalTreeKey": "Galaxy of Intrigue|Espionage",
+      "tree": "Espionage",
+      "canonicalName": "Reactive Stealth",
+      "page": 22,
+      "repoId": null,
+      "repoName": null,
+      "benefitStatus": "MISSING_CORRECT_TREE_RECORD",
+      "descriptionStatus": "MISSING_CORRECT_TREE_RECORD",
+      "prerequisiteStatus": "MISSING_CORRECT_TREE_RECORD",
+      "sourceMetadataStatus": "MISSING_CORRECT_TREE_RECORD",
+      "summaryStatus": "MISSING_CORRECT_TREE_RECORD",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": [],
+      "repoBenefitChars": null,
+      "canonicalBenefitChars": 272
+    },
+    {
+      "canonicalTreeKey": "Galaxy of Intrigue|Espionage",
+      "tree": "Espionage",
+      "canonicalName": "Sizing Up",
+      "page": 23,
+      "repoId": null,
+      "repoName": null,
+      "benefitStatus": "MISSING_CORRECT_TREE_RECORD",
+      "descriptionStatus": "MISSING_CORRECT_TREE_RECORD",
+      "prerequisiteStatus": "MISSING_CORRECT_TREE_RECORD",
+      "sourceMetadataStatus": "MISSING_CORRECT_TREE_RECORD",
+      "summaryStatus": "MISSING_CORRECT_TREE_RECORD",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": [],
+      "repoBenefitChars": null,
+      "canonicalBenefitChars": 290
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Brawler",
+      "tree": "Brawler",
+      "canonicalName": "Crowd Control",
+      "page": 23,
+      "repoId": null,
+      "repoName": null,
+      "benefitStatus": "MISSING_CORRECT_TREE_RECORD",
+      "descriptionStatus": "MISSING_CORRECT_TREE_RECORD",
+      "prerequisiteStatus": "MISSING_CORRECT_TREE_RECORD",
+      "sourceMetadataStatus": "MISSING_CORRECT_TREE_RECORD",
+      "summaryStatus": "MISSING_CORRECT_TREE_RECORD",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": [],
+      "repoBenefitChars": null,
+      "canonicalBenefitChars": 46
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Brawler",
+      "tree": "Brawler",
+      "canonicalName": "Disarm and Engage",
+      "page": 23,
+      "repoId": null,
+      "repoName": null,
+      "benefitStatus": "MISSING_CORRECT_TREE_RECORD",
+      "descriptionStatus": "MISSING_CORRECT_TREE_RECORD",
+      "prerequisiteStatus": "MISSING_CORRECT_TREE_RECORD",
+      "sourceMetadataStatus": "MISSING_CORRECT_TREE_RECORD",
+      "summaryStatus": "MISSING_CORRECT_TREE_RECORD",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": [],
+      "repoBenefitChars": null,
+      "canonicalBenefitChars": 213
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Brawler",
+      "tree": "Brawler",
+      "canonicalName": "Entangler",
+      "page": 23,
+      "repoId": null,
+      "repoName": null,
+      "benefitStatus": "MISSING_CORRECT_TREE_RECORD",
+      "descriptionStatus": "MISSING_CORRECT_TREE_RECORD",
+      "prerequisiteStatus": "MISSING_CORRECT_TREE_RECORD",
+      "sourceMetadataStatus": "MISSING_CORRECT_TREE_RECORD",
+      "summaryStatus": "MISSING_CORRECT_TREE_RECORD",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": [],
+      "repoBenefitChars": null,
+      "canonicalBenefitChars": 262
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Brawler",
+      "tree": "Brawler",
+      "canonicalName": "Reverse Strength",
+      "page": 23,
+      "repoId": null,
+      "repoName": null,
+      "benefitStatus": "MISSING_CORRECT_TREE_RECORD",
+      "descriptionStatus": "MISSING_CORRECT_TREE_RECORD",
+      "prerequisiteStatus": "MISSING_CORRECT_TREE_RECORD",
+      "sourceMetadataStatus": "MISSING_CORRECT_TREE_RECORD",
+      "summaryStatus": "MISSING_CORRECT_TREE_RECORD",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": [],
+      "repoBenefitChars": null,
+      "canonicalBenefitChars": 178
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Commando",
+      "tree": "Commando",
+      "canonicalName": "Coordinated Effort",
+      "page": 23,
+      "repoId": null,
+      "repoName": null,
+      "benefitStatus": "MISSING_CORRECT_TREE_RECORD",
+      "descriptionStatus": "MISSING_CORRECT_TREE_RECORD",
+      "prerequisiteStatus": "MISSING_CORRECT_TREE_RECORD",
+      "sourceMetadataStatus": "MISSING_CORRECT_TREE_RECORD",
+      "summaryStatus": "MISSING_CORRECT_TREE_RECORD",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": [],
+      "repoBenefitChars": null,
+      "canonicalBenefitChars": 206
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Commando",
+      "tree": "Commando",
+      "canonicalName": "Dedicated Guardian",
+      "page": 24,
+      "repoId": null,
+      "repoName": null,
+      "benefitStatus": "MISSING_CORRECT_TREE_RECORD",
+      "descriptionStatus": "MISSING_CORRECT_TREE_RECORD",
+      "prerequisiteStatus": "MISSING_CORRECT_TREE_RECORD",
+      "sourceMetadataStatus": "MISSING_CORRECT_TREE_RECORD",
+      "summaryStatus": "MISSING_CORRECT_TREE_RECORD",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": [],
+      "repoBenefitChars": null,
+      "canonicalBenefitChars": 838
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Commando",
+      "tree": "Commando",
+      "canonicalName": "Dedicated Protector",
+      "page": 24,
+      "repoId": null,
+      "repoName": null,
+      "benefitStatus": "MISSING_CORRECT_TREE_RECORD",
+      "descriptionStatus": "MISSING_CORRECT_TREE_RECORD",
+      "prerequisiteStatus": "MISSING_CORRECT_TREE_RECORD",
+      "sourceMetadataStatus": "MISSING_CORRECT_TREE_RECORD",
+      "summaryStatus": "MISSING_CORRECT_TREE_RECORD",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": [],
+      "repoBenefitChars": null,
+      "canonicalBenefitChars": 267
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Expert Pilot",
+      "tree": "Expert Pilot",
+      "canonicalName": "Clip",
+      "page": 24,
+      "repoId": null,
+      "repoName": null,
+      "benefitStatus": "MISSING_CORRECT_TREE_RECORD",
+      "descriptionStatus": "MISSING_CORRECT_TREE_RECORD",
+      "prerequisiteStatus": "MISSING_CORRECT_TREE_RECORD",
+      "sourceMetadataStatus": "MISSING_CORRECT_TREE_RECORD",
+      "summaryStatus": "MISSING_CORRECT_TREE_RECORD",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": [],
+      "repoBenefitChars": null,
+      "canonicalBenefitChars": 198
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Expert Pilot",
+      "tree": "Expert Pilot",
+      "canonicalName": "Master Defender",
+      "page": 24,
+      "repoId": null,
+      "repoName": null,
+      "benefitStatus": "MISSING_CORRECT_TREE_RECORD",
+      "descriptionStatus": "MISSING_CORRECT_TREE_RECORD",
+      "prerequisiteStatus": "MISSING_CORRECT_TREE_RECORD",
+      "sourceMetadataStatus": "MISSING_CORRECT_TREE_RECORD",
+      "summaryStatus": "MISSING_CORRECT_TREE_RECORD",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": [],
+      "repoBenefitChars": null,
+      "canonicalBenefitChars": 236
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Expert Pilot",
+      "tree": "Expert Pilot",
+      "canonicalName": "Shunt Damage",
+      "page": 24,
+      "repoId": null,
+      "repoName": null,
+      "benefitStatus": "MISSING_CORRECT_TREE_RECORD",
+      "descriptionStatus": "MISSING_CORRECT_TREE_RECORD",
+      "prerequisiteStatus": "MISSING_CORRECT_TREE_RECORD",
+      "sourceMetadataStatus": "MISSING_CORRECT_TREE_RECORD",
+      "summaryStatus": "MISSING_CORRECT_TREE_RECORD",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": [],
+      "repoBenefitChars": null,
+      "canonicalBenefitChars": 213
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Bounty Hunter",
+      "tree": "Bounty Hunter",
+      "canonicalName": "Detective",
+      "page": 24,
+      "repoId": null,
+      "repoName": null,
+      "benefitStatus": "MISSING_CORRECT_TREE_RECORD",
+      "descriptionStatus": "MISSING_CORRECT_TREE_RECORD",
+      "prerequisiteStatus": "MISSING_CORRECT_TREE_RECORD",
+      "sourceMetadataStatus": "MISSING_CORRECT_TREE_RECORD",
+      "summaryStatus": "MISSING_CORRECT_TREE_RECORD",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": [],
+      "repoBenefitChars": null,
+      "canonicalBenefitChars": 263
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Bounty Hunter",
+      "tree": "Bounty Hunter",
+      "canonicalName": "Electronic Trail",
+      "page": 24,
+      "repoId": null,
+      "repoName": null,
+      "benefitStatus": "MISSING_CORRECT_TREE_RECORD",
+      "descriptionStatus": "MISSING_CORRECT_TREE_RECORD",
+      "prerequisiteStatus": "MISSING_CORRECT_TREE_RECORD",
+      "sourceMetadataStatus": "MISSING_CORRECT_TREE_RECORD",
+      "summaryStatus": "MISSING_CORRECT_TREE_RECORD",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": [],
+      "repoBenefitChars": null,
+      "canonicalBenefitChars": 612
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Bounty Hunter",
+      "tree": "Bounty Hunter",
+      "canonicalName": "Revealing Secrets",
+      "page": 25,
+      "repoId": null,
+      "repoName": null,
+      "benefitStatus": "MISSING_CORRECT_TREE_RECORD",
+      "descriptionStatus": "MISSING_CORRECT_TREE_RECORD",
+      "prerequisiteStatus": "MISSING_CORRECT_TREE_RECORD",
+      "sourceMetadataStatus": "MISSING_CORRECT_TREE_RECORD",
+      "summaryStatus": "MISSING_CORRECT_TREE_RECORD",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": [],
+      "repoBenefitChars": null,
+      "canonicalBenefitChars": 233
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Mastermind",
+      "tree": "Mastermind",
+      "canonicalName": "Attract Superior Minion",
+      "page": 25,
+      "repoId": null,
+      "repoName": null,
+      "benefitStatus": "MISSING_CORRECT_TREE_RECORD",
+      "descriptionStatus": "MISSING_CORRECT_TREE_RECORD",
+      "prerequisiteStatus": "MISSING_CORRECT_TREE_RECORD",
+      "sourceMetadataStatus": "MISSING_CORRECT_TREE_RECORD",
+      "summaryStatus": "MISSING_CORRECT_TREE_RECORD",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": [],
+      "repoBenefitChars": null,
+      "canonicalBenefitChars": 203
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Mastermind",
+      "tree": "Mastermind",
+      "canonicalName": "Contingency Plan",
+      "page": 25,
+      "repoId": null,
+      "repoName": null,
+      "benefitStatus": "MISSING_CORRECT_TREE_RECORD",
+      "descriptionStatus": "MISSING_CORRECT_TREE_RECORD",
+      "prerequisiteStatus": "MISSING_CORRECT_TREE_RECORD",
+      "sourceMetadataStatus": "MISSING_CORRECT_TREE_RECORD",
+      "summaryStatus": "MISSING_CORRECT_TREE_RECORD",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": [],
+      "repoBenefitChars": null,
+      "canonicalBenefitChars": 156
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Gunslinger",
+      "tree": "Gunslinger",
+      "canonicalName": "Damaging Disarm",
+      "page": 25,
+      "repoId": null,
+      "repoName": null,
+      "benefitStatus": "MISSING_CORRECT_TREE_RECORD",
+      "descriptionStatus": "MISSING_CORRECT_TREE_RECORD",
+      "prerequisiteStatus": "MISSING_CORRECT_TREE_RECORD",
+      "sourceMetadataStatus": "MISSING_CORRECT_TREE_RECORD",
+      "summaryStatus": "MISSING_CORRECT_TREE_RECORD",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": [],
+      "repoBenefitChars": null,
+      "canonicalBenefitChars": 112
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Gunslinger",
+      "tree": "Gunslinger",
+      "canonicalName": "Pistol Duelist",
+      "page": 25,
+      "repoId": null,
+      "repoName": null,
+      "benefitStatus": "MISSING_CORRECT_TREE_RECORD",
+      "descriptionStatus": "MISSING_CORRECT_TREE_RECORD",
+      "prerequisiteStatus": "MISSING_CORRECT_TREE_RECORD",
+      "sourceMetadataStatus": "MISSING_CORRECT_TREE_RECORD",
+      "summaryStatus": "MISSING_CORRECT_TREE_RECORD",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": [],
+      "repoBenefitChars": null,
+      "canonicalBenefitChars": 536
+    }
+  ]
+}

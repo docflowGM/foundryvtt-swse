@@ -1,0 +1,2127 @@
+{
+  "schemaVersion": 1,
+  "phase": "2",
+  "sourcebook": "Legacy Era Campaign Guide",
+  "generatedAt": "2026-09-27",
+  "branch": "audit/talent-phase-1-tree-census",
+  "scope": "Source-certified Legacy Era Campaign Guide talents compared against the current repository talent-record mirror. No production records changed.",
+  "summary": {
+    "canonicalTalentPublications": 101,
+    "repositoryRecordsMapped": 91,
+    "missingCorrectTreeRecords": 10,
+    "originTreeIdentities": 16,
+    "originTalentIdentities": 88,
+    "expansionTreeTargets": 7,
+    "expansionTalentIdentities": 13,
+    "phase1dStructuralCorrections": 0,
+    "sameNameIdentityHazards": 3,
+    "prerequisiteSourceTextMismatches": 7,
+    "prerequisiteEquivalentNormalizations": 1,
+    "mappedCanonicalTextDifferentOrAbbreviated": 87,
+    "mappedCanonicalTextPresentBoth": 4,
+    "sourceMetadataMissing": 91,
+    "summaryMissing": 91,
+    "dispositionCounts": {
+      "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT": 87,
+      "SOURCE_METADATA_MISSING": 91,
+      "SUMMARY_MISSING": 91,
+      "CANONICAL_TEXT_PRESENT_BOTH": 4,
+      "PREREQUISITE_NORMALIZATION_EQUIVALENT": 1,
+      "DESCRIPTION_SAME_NAME_CONTAMINATION": 1,
+      "PREREQUISITE_TEXT_MISMATCH": 7,
+      "SHARED_AFTEREFFECT_OMITTED": 5,
+      "MISSING_CONTENT": 10
+    }
+  },
+  "missingRepositoryRecords": [
+    {
+      "tree": "Disciple Of Twilight",
+      "name": "Cloak of Shadow",
+      "page": 57,
+      "canonicalTreeKey": "Legacy Era Campaign Guide|Disciple of Twilight",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Disciple Of Twilight",
+      "name": "Phantasm",
+      "page": 57,
+      "canonicalTreeKey": "Legacy Era Campaign Guide|Disciple of Twilight",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Disciple Of Twilight",
+      "name": "Revelation",
+      "page": 58,
+      "canonicalTreeKey": "Legacy Era Campaign Guide|Disciple of Twilight",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Disciple Of Twilight",
+      "name": "Shadow Armor",
+      "page": 58,
+      "canonicalTreeKey": "Legacy Era Campaign Guide|Disciple of Twilight",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Disciple Of Twilight",
+      "name": "Shadow Vision",
+      "page": 58,
+      "canonicalTreeKey": "Legacy Era Campaign Guide|Disciple of Twilight",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Ember Of Vahl",
+      "name": "Initiate of Vahl",
+      "page": 59,
+      "canonicalTreeKey": "Legacy Era Campaign Guide|Ember of Vahl",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Ember Of Vahl",
+      "name": "Reading the Flame",
+      "page": 59,
+      "canonicalTreeKey": "Legacy Era Campaign Guide|Ember of Vahl",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Ember Of Vahl",
+      "name": "Sword of Vahl",
+      "page": 59,
+      "canonicalTreeKey": "Legacy Era Campaign Guide|Ember of Vahl",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Ember Of Vahl",
+      "name": "Vahl's Brand",
+      "page": 59,
+      "canonicalTreeKey": "Legacy Era Campaign Guide|Ember of Vahl",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Ember Of Vahl",
+      "name": "Vahl's Flame",
+      "page": 59,
+      "canonicalTreeKey": "Legacy Era Campaign Guide|Ember of Vahl",
+      "sameNameRepoCandidates": []
+    }
+  ],
+  "sameNameIdentityHazards": [
+    {
+      "tree": "Provocateur",
+      "name": "Seize the Moment",
+      "page": 27,
+      "repoId": "ec12ce36ff7048f2",
+      "candidates": [
+        {
+          "repoId": "e19c06b6dfc7a703",
+          "name": "Seize the Moment",
+          "tree": "Outlaw",
+          "source": null
+        }
+      ]
+    },
+    {
+      "tree": "Carbineer",
+      "name": "Multiattack Proficiency (rifles)",
+      "page": 41,
+      "repoId": "ecb678c47bb2cb43",
+      "candidates": [
+        {
+          "repoId": "5ec84c7e500601e4",
+          "name": "Multiattack Proficiency (rifles)",
+          "tree": "Weapon Master",
+          "source": null
+        }
+      ]
+    },
+    {
+      "tree": "Knight's Armor",
+      "name": "Armor Mastery",
+      "page": 45,
+      "repoId": "d9e707f23fffc2af",
+      "candidates": [
+        {
+          "repoId": "4fc3fe4c1e7f9ba0",
+          "name": "Armor Mastery",
+          "tree": "Armor Specialist",
+          "source": null
+        }
+      ]
+    }
+  ],
+  "prerequisiteFindings": [
+    {
+      "tree": "Lightsaber Combat",
+      "name": "Cortosis Gauntlet Block",
+      "page": 27,
+      "canonical": "Armor Proficiency (light, medium)",
+      "repo": "Armor Proficiency (Light), Armor Proficiency (Medium)",
+      "disposition": "PREREQUISITE_NORMALIZATION_EQUIVALENT"
+    },
+    {
+      "tree": "Provocateur",
+      "name": "True Betrayal",
+      "page": 28,
+      "canonical": "Cast Suspicion, Friend or Foe",
+      "repo": "Friend or Foe",
+      "disposition": "PREREQUISITE_TEXT_MISMATCH"
+    },
+    {
+      "tree": "Protection",
+      "name": "Roll With It",
+      "page": 41,
+      "canonical": "Bodyguard's Sacrifice, Take the Hit",
+      "repo": "Take the Hit",
+      "disposition": "PREREQUISITE_TEXT_MISMATCH"
+    },
+    {
+      "tree": "Knight's Armor",
+      "name": "Armored Augmentation I",
+      "page": 45,
+      "canonical": "Armor Proficiency with the type of armor worn",
+      "repo": "",
+      "disposition": "PREREQUISITE_TEXT_MISMATCH"
+    },
+    {
+      "tree": "Knight's Armor",
+      "name": "Armored Augmentation II",
+      "page": 45,
+      "canonical": "Armor Proficiency with the type of armor worn, Armored Augmentation I",
+      "repo": "Armored Augmentation I",
+      "disposition": "PREREQUISITE_TEXT_MISMATCH"
+    },
+    {
+      "tree": "Knight's Resolve",
+      "name": "Praetoria Ishu",
+      "page": 45,
+      "canonical": "Block, Deflect",
+      "repo": "",
+      "disposition": "PREREQUISITE_TEXT_MISMATCH"
+    },
+    {
+      "tree": "Knight's Resolve",
+      "name": "Strength of the Empire",
+      "page": 45,
+      "canonical": "Knight's Morale",
+      "repo": "",
+      "disposition": "PREREQUISITE_TEXT_MISMATCH"
+    },
+    {
+      "tree": "Shaper",
+      "name": "Skilled Implanter",
+      "page": 47,
+      "canonical": "Biotech Surgery feat",
+      "repo": "",
+      "disposition": "PREREQUISITE_TEXT_MISMATCH"
+    }
+  ],
+  "confirmedHighImpactContentDefects": [
+    {
+      "tree": "Provocateur",
+      "name": "Seize the Moment",
+      "page": 27,
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING",
+        "DESCRIPTION_SAME_NAME_CONTAMINATION"
+      ],
+      "notes": "The correct Provocateur item has a Legacy-aligned benefit, but its description is copied from the distinct Outlaw Seize the Moment identity."
+    },
+    {
+      "tree": "Implant",
+      "name": "Adrenaline Implant",
+      "page": 47,
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING",
+        "SHARED_AFTEREFFECT_OMITTED"
+      ],
+      "notes": "The repository text omits the Implant tree's shared end-of-encounter -3 persistent condition aftereffect and its recovery rule."
+    },
+    {
+      "tree": "Implant",
+      "name": "Precision Implant",
+      "page": 47,
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING",
+        "SHARED_AFTEREFFECT_OMITTED"
+      ],
+      "notes": "The repository text omits the Implant tree's shared end-of-encounter -3 persistent condition aftereffect and its recovery rule."
+    },
+    {
+      "tree": "Implant",
+      "name": "Resilience Implant",
+      "page": 47,
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING",
+        "SHARED_AFTEREFFECT_OMITTED"
+      ],
+      "notes": "The repository text omits the Implant tree's shared end-of-encounter -3 persistent condition aftereffect and its recovery rule."
+    },
+    {
+      "tree": "Implant",
+      "name": "Speed Implant",
+      "page": 47,
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING",
+        "SHARED_AFTEREFFECT_OMITTED"
+      ],
+      "notes": "The repository text omits the Implant tree's shared end-of-encounter -3 persistent condition aftereffect and its recovery rule."
+    },
+    {
+      "tree": "Implant",
+      "name": "Strength Implant",
+      "page": 47,
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING",
+        "SHARED_AFTEREFFECT_OMITTED"
+      ],
+      "notes": "The repository text omits the Implant tree's shared end-of-encounter -3 persistent condition aftereffect and its recovery rule."
+    }
+  ],
+  "talents": [
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Jedi Consular",
+      "tree": "Jedi Consular",
+      "canonicalName": "Aggressive Negotiator",
+      "page": 26,
+      "repoId": "f7bf586a35299965",
+      "repoName": "Aggressive Negotiator",
+      "repoTreeName": "Jedi Consular",
+      "repoPrerequisites": "Adept Negotiator",
+      "canonicalPrerequisites": "Adept Negotiator",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Jedi Consular",
+      "tree": "Jedi Consular",
+      "canonicalName": "Consular's Wisdom",
+      "page": 26,
+      "repoId": "321a3e9b59e7c7d7",
+      "repoName": "Consular's Wisdom",
+      "repoTreeName": "Jedi Consular",
+      "repoPrerequisites": "Adept Negotiator",
+      "canonicalPrerequisites": "Adept Negotiator",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Jedi Consular",
+      "tree": "Jedi Consular",
+      "canonicalName": "Entreat Aid",
+      "page": 26,
+      "repoId": "f561d569196bdda5",
+      "repoName": "Entreat Aid",
+      "repoTreeName": "Jedi Consular",
+      "repoPrerequisites": "",
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Jedi Guardian",
+      "tree": "Jedi Guardian",
+      "canonicalName": "Defensive Acuity",
+      "page": 27,
+      "repoId": "0bc102751285d17c",
+      "repoName": "Defensive Acuity",
+      "repoTreeName": "Jedi Guardian",
+      "repoPrerequisites": "",
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_TEXT_PRESENT_BOTH",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Jedi Sentinel",
+      "tree": "Jedi Sentinel",
+      "canonicalName": "Dark Side Bane",
+      "page": 27,
+      "repoId": "97a771d1f4627521",
+      "repoName": "Dark Side Bane",
+      "repoTreeName": "Jedi Sentinel",
+      "repoPrerequisites": "Dark Side Sense",
+      "canonicalPrerequisites": "Dark Side Sense",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Lightsaber Combat",
+      "tree": "Lightsaber Combat",
+      "canonicalName": "Cortosis Gauntlet Block",
+      "page": 27,
+      "repoId": "8989464c43d81045",
+      "repoName": "Cortosis Gauntlet Block",
+      "repoTreeName": "Lightsaber Combat",
+      "repoPrerequisites": "Armor Proficiency (Light), Armor Proficiency (Medium)",
+      "canonicalPrerequisites": "Armor Proficiency (light, medium)",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "PREREQUISITE_NORMALIZATION_EQUIVALENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Lightsaber Combat",
+      "tree": "Lightsaber Combat",
+      "canonicalName": "Precision",
+      "page": 27,
+      "repoId": "80e14ef4d1f52a4a",
+      "repoName": "Precision",
+      "repoTreeName": "Lightsaber Combat",
+      "repoPrerequisites": "",
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Legacy Era Campaign Guide|Provocateur",
+      "tree": "Provocateur",
+      "canonicalName": "Cast Suspicion",
+      "page": 27,
+      "repoId": "9408056ede41b43f",
+      "repoName": "Cast Suspicion",
+      "repoTreeName": "Provocateur",
+      "repoPrerequisites": "",
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Legacy Era Campaign Guide|Provocateur",
+      "tree": "Provocateur",
+      "canonicalName": "Distress to Discord",
+      "page": 27,
+      "repoId": "974c24246ed2b972",
+      "repoName": "Distress to Discord",
+      "repoTreeName": "Provocateur",
+      "repoPrerequisites": "",
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Legacy Era Campaign Guide|Provocateur",
+      "tree": "Provocateur",
+      "canonicalName": "Friend or Foe",
+      "page": 27,
+      "repoId": "014d291a6e16cc12",
+      "repoName": "Friend or Foe",
+      "repoTreeName": "Provocateur",
+      "repoPrerequisites": "Cast Suspicion",
+      "canonicalPrerequisites": "Cast Suspicion",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Legacy Era Campaign Guide|Provocateur",
+      "tree": "Provocateur",
+      "canonicalName": "Seize the Moment",
+      "page": 27,
+      "repoId": "ec12ce36ff7048f2",
+      "repoName": "Seize the Moment",
+      "repoTreeName": "Provocateur",
+      "repoPrerequisites": "Distress to Discord",
+      "canonicalPrerequisites": "Distress to Discord",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING",
+        "DESCRIPTION_SAME_NAME_CONTAMINATION"
+      ],
+      "notes": "The correct Provocateur item has a Legacy-aligned benefit, but its description is copied from the distinct Outlaw Seize the Moment identity.",
+      "sameNameRepoCandidates": [
+        {
+          "repoId": "e19c06b6dfc7a703",
+          "name": "Seize the Moment",
+          "tree": "Outlaw",
+          "source": null
+        }
+      ]
+    },
+    {
+      "canonicalTreeKey": "Legacy Era Campaign Guide|Provocateur",
+      "tree": "Provocateur",
+      "canonicalName": "Stolen Advantage",
+      "page": 28,
+      "repoId": "d137ae2e8be700b3",
+      "repoName": "Stolen Advantage",
+      "repoTreeName": "Provocateur",
+      "repoPrerequisites": "Cast Suspicion",
+      "canonicalPrerequisites": "Cast Suspicion",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Legacy Era Campaign Guide|Provocateur",
+      "tree": "Provocateur",
+      "canonicalName": "True Betrayal",
+      "page": 28,
+      "repoId": "ce1f5d3316b052f6",
+      "repoName": "True Betrayal",
+      "repoTreeName": "Provocateur",
+      "repoPrerequisites": "Friend or Foe",
+      "canonicalPrerequisites": "Cast Suspicion, Friend or Foe",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "PREREQUISITE_TEXT_MISMATCH",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Misfortune",
+      "tree": "Misfortune",
+      "canonicalName": "Seducer",
+      "page": 29,
+      "repoId": "d21d7d3d4d7be0d2",
+      "repoName": "Seducer",
+      "repoTreeName": "Misfortune",
+      "repoPrerequisites": "",
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Misfortune",
+      "tree": "Misfortune",
+      "canonicalName": "Seize Object",
+      "page": 29,
+      "repoId": "e97177f243cb2b0a",
+      "repoName": "Seize Object",
+      "repoTreeName": "Misfortune",
+      "repoPrerequisites": "",
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Legacy Era Campaign Guide|Yuuzhan Vong Biotech",
+      "tree": "Yuuzhan Vong Biotech",
+      "canonicalName": "Biotech Adept",
+      "page": 29,
+      "repoId": "a86559a808738c98",
+      "repoName": "Biotech Adept",
+      "repoTreeName": "Yuuzhan Vong Biotech",
+      "repoPrerequisites": "",
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Legacy Era Campaign Guide|Yuuzhan Vong Biotech",
+      "tree": "Yuuzhan Vong Biotech",
+      "canonicalName": "Bugbite",
+      "page": 29,
+      "repoId": "bed279ef3c81c42d",
+      "repoName": "Bugbite",
+      "repoTreeName": "Yuuzhan Vong Biotech",
+      "repoPrerequisites": "",
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Legacy Era Campaign Guide|Yuuzhan Vong Biotech",
+      "tree": "Yuuzhan Vong Biotech",
+      "canonicalName": "Curved Throw",
+      "page": 29,
+      "repoId": "76eb427551c6495c",
+      "repoName": "Curved Throw",
+      "repoTreeName": "Yuuzhan Vong Biotech",
+      "repoPrerequisites": "Bugbite",
+      "canonicalPrerequisites": "Bugbite",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Legacy Era Campaign Guide|Yuuzhan Vong Biotech",
+      "tree": "Yuuzhan Vong Biotech",
+      "canonicalName": "Surprising Weapons",
+      "page": 29,
+      "repoId": "6ef0900cd62869e7",
+      "repoName": "Surprising Weapons",
+      "repoTreeName": "Yuuzhan Vong Biotech",
+      "repoPrerequisites": "",
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Legacy Era Campaign Guide|Yuuzhan Vong Biotech",
+      "tree": "Yuuzhan Vong Biotech",
+      "canonicalName": "Veiled Biotech",
+      "page": 30,
+      "repoId": "b66c142c79341858",
+      "repoName": "Veiled Biotech",
+      "repoTreeName": "Yuuzhan Vong Biotech",
+      "repoPrerequisites": "Trained in Stealth",
+      "canonicalPrerequisites": "Trained in Stealth",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Legacy Era Campaign Guide|Versatility",
+      "tree": "Versatility",
+      "canonicalName": "Adapt and Survive",
+      "page": 30,
+      "repoId": "ef8a59509a45df46",
+      "repoName": "Adapt and Survive",
+      "repoTreeName": "Versatility",
+      "repoPrerequisites": "",
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Legacy Era Campaign Guide|Versatility",
+      "tree": "Versatility",
+      "canonicalName": "Defensive Protection",
+      "page": 30,
+      "repoId": "ded0046215380b0c",
+      "repoName": "Defensive Protection",
+      "repoTreeName": "Versatility",
+      "repoPrerequisites": "",
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Legacy Era Campaign Guide|Versatility",
+      "tree": "Versatility",
+      "canonicalName": "Quick on Your Feet",
+      "page": 30,
+      "repoId": "22d2c4b0d4d9b784",
+      "repoName": "Quick on Your Feet",
+      "repoTreeName": "Versatility",
+      "repoPrerequisites": "",
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Legacy Era Campaign Guide|Versatility",
+      "tree": "Versatility",
+      "canonicalName": "Ready and Willing",
+      "page": 30,
+      "repoId": "8a5c6b01f67caa85",
+      "repoName": "Ready and Willing",
+      "repoTreeName": "Versatility",
+      "repoPrerequisites": "",
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Legacy Era Campaign Guide|Versatility",
+      "tree": "Versatility",
+      "canonicalName": "Unbalancing Adaptation",
+      "page": 30,
+      "repoId": "02bf213d8104b017",
+      "repoName": "Unbalancing Adaptation",
+      "repoTreeName": "Versatility",
+      "repoPrerequisites": "Adapt and Survive",
+      "canonicalPrerequisites": "Adapt and Survive",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Legacy Era Campaign Guide|Brute Squad",
+      "tree": "Brute Squad",
+      "canonicalName": "Gang Leader",
+      "page": 30,
+      "repoId": "3a4ef3559a002c6f",
+      "repoName": "Gang Leader",
+      "repoTreeName": "Brute Squad",
+      "repoPrerequisites": "",
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Legacy Era Campaign Guide|Brute Squad",
+      "tree": "Brute Squad",
+      "canonicalName": "Melee Assault",
+      "page": 31,
+      "repoId": "e9aec3a7b011e17a",
+      "repoName": "Melee Assault",
+      "repoTreeName": "Brute Squad",
+      "repoPrerequisites": "",
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Legacy Era Campaign Guide|Brute Squad",
+      "tree": "Brute Squad",
+      "canonicalName": "Melee Brute",
+      "page": 31,
+      "repoId": "2cf48b8aa712d19d",
+      "repoName": "Melee Brute",
+      "repoTreeName": "Brute Squad",
+      "repoPrerequisites": "",
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Legacy Era Campaign Guide|Brute Squad",
+      "tree": "Brute Squad",
+      "canonicalName": "Melee Opportunist",
+      "page": 31,
+      "repoId": "91bb6515cf153d46",
+      "repoName": "Melee Opportunist",
+      "repoTreeName": "Brute Squad",
+      "repoPrerequisites": "",
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Legacy Era Campaign Guide|Brute Squad",
+      "tree": "Brute Squad",
+      "canonicalName": "Squad Brutality",
+      "page": 31,
+      "repoId": "5f92ad8d44c9055c",
+      "repoName": "Squad Brutality",
+      "repoTreeName": "Brute Squad",
+      "repoPrerequisites": "",
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Legacy Era Campaign Guide|Brute Squad",
+      "tree": "Brute Squad",
+      "canonicalName": "Squad Superiority",
+      "page": 31,
+      "repoId": "e38263c4acc245fe",
+      "repoName": "Squad Superiority",
+      "repoTreeName": "Brute Squad",
+      "repoPrerequisites": "",
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Brawler",
+      "tree": "Brawler",
+      "canonicalName": "Grabber",
+      "page": 31,
+      "repoId": "ae6c41da173f1385",
+      "repoName": "Grabber",
+      "repoTreeName": "Brawler",
+      "repoPrerequisites": "",
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Brawler",
+      "tree": "Brawler",
+      "canonicalName": "Hammerblow",
+      "page": 31,
+      "repoId": "4356ac9986934fbf",
+      "repoName": "Hammerblow",
+      "repoTreeName": "Brawler",
+      "repoPrerequisites": "",
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Brawler",
+      "tree": "Brawler",
+      "canonicalName": "Strong Grab",
+      "page": 31,
+      "repoId": "89d557f60251f4a5",
+      "repoName": "Strong Grab",
+      "repoTreeName": "Brawler",
+      "repoPrerequisites": "",
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Weapon Specialist",
+      "tree": "Weapon Specialist",
+      "canonicalName": "Improved Suppression Fire",
+      "page": 31,
+      "repoId": "bf6bcc2fc31411d2",
+      "repoName": "Improved Suppression Fire",
+      "repoTreeName": "Weapon Specialist",
+      "repoPrerequisites": "",
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Legacy Era Campaign Guide|Force Hunter",
+      "tree": "Force Hunter",
+      "canonicalName": "Force Blank",
+      "page": 40,
+      "repoId": "cdcdb85912d9eb67",
+      "repoName": "Force Blank",
+      "repoTreeName": "Force Hunter",
+      "repoPrerequisites": "",
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Legacy Era Campaign Guide|Force Hunter",
+      "tree": "Force Hunter",
+      "canonicalName": "Lightsaber Evasion",
+      "page": 40,
+      "repoId": "b3ce8b08a8cb95fa",
+      "repoName": "Lightsaber Evasion",
+      "repoTreeName": "Force Hunter",
+      "repoPrerequisites": "",
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Legacy Era Campaign Guide|Force Hunter",
+      "tree": "Force Hunter",
+      "canonicalName": "Precision Fire",
+      "page": 40,
+      "repoId": "bef731c3743c2c7f",
+      "repoName": "Precision Fire",
+      "repoTreeName": "Force Hunter",
+      "repoPrerequisites": "",
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Legacy Era Campaign Guide|Force Hunter",
+      "tree": "Force Hunter",
+      "canonicalName": "Steel Mind",
+      "page": 40,
+      "repoId": "19ba6767726bdc86",
+      "repoName": "Steel Mind",
+      "repoTreeName": "Force Hunter",
+      "repoPrerequisites": "",
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Legacy Era Campaign Guide|Force Hunter",
+      "tree": "Force Hunter",
+      "canonicalName": "Strong-Willed",
+      "page": 40,
+      "repoId": "5621a55aea1936b2",
+      "repoName": "Strong-Willed",
+      "repoTreeName": "Force Hunter",
+      "repoPrerequisites": "",
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Legacy Era Campaign Guide|Force Hunter",
+      "tree": "Force Hunter",
+      "canonicalName": "Telekinetic Resistance",
+      "page": 40,
+      "repoId": "203464310c5c2492",
+      "repoName": "Telekinetic Resistance",
+      "repoTreeName": "Force Hunter",
+      "repoPrerequisites": "",
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Legacy Era Campaign Guide|Protection",
+      "tree": "Protection",
+      "canonicalName": "Armored Guard",
+      "page": 40,
+      "repoId": "514b1225139b22b8",
+      "repoName": "Armored Guard",
+      "repoTreeName": "Protection",
+      "repoPrerequisites": "Ward",
+      "canonicalPrerequisites": "Ward",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Legacy Era Campaign Guide|Protection",
+      "tree": "Protection",
+      "canonicalName": "Bodyguard's Sacrifice",
+      "page": 40,
+      "repoId": "7505fbdd592c04fd",
+      "repoName": "Bodyguard's Sacrifice",
+      "repoTreeName": "Protection",
+      "repoPrerequisites": "",
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Legacy Era Campaign Guide|Protection",
+      "tree": "Protection",
+      "canonicalName": "Guard's Endurance",
+      "page": 41,
+      "repoId": "bffc3826d39f3946",
+      "repoName": "Guard's Endurance",
+      "repoTreeName": "Protection",
+      "repoPrerequisites": "Ward",
+      "canonicalPrerequisites": "Ward",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Legacy Era Campaign Guide|Protection",
+      "tree": "Protection",
+      "canonicalName": "Lifesaver",
+      "page": 41,
+      "repoId": "8eace9d86fc60711",
+      "repoName": "Lifesaver",
+      "repoTreeName": "Protection",
+      "repoPrerequisites": "Bodyguard's Sacrifice",
+      "canonicalPrerequisites": "Bodyguard's Sacrifice",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Legacy Era Campaign Guide|Protection",
+      "tree": "Protection",
+      "canonicalName": "Out of Harm's Way",
+      "page": 41,
+      "repoId": "6031244221b73865",
+      "repoName": "Out of Harm's Way",
+      "repoTreeName": "Protection",
+      "repoPrerequisites": "",
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Legacy Era Campaign Guide|Protection",
+      "tree": "Protection",
+      "canonicalName": "Roll With It",
+      "page": 41,
+      "repoId": "f4ca7e7a674372a5",
+      "repoName": "Roll With It",
+      "repoTreeName": "Protection",
+      "repoPrerequisites": "Take the Hit",
+      "canonicalPrerequisites": "Bodyguard's Sacrifice, Take the Hit",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "PREREQUISITE_TEXT_MISMATCH",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Legacy Era Campaign Guide|Protection",
+      "tree": "Protection",
+      "canonicalName": "Take the Hit",
+      "page": 41,
+      "repoId": "450aa69ead3975f2",
+      "repoName": "Take the Hit",
+      "repoTreeName": "Protection",
+      "repoPrerequisites": "Bodyguard's Sacrifice",
+      "canonicalPrerequisites": "Bodyguard's Sacrifice",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Legacy Era Campaign Guide|Protection",
+      "tree": "Protection",
+      "canonicalName": "Ward",
+      "page": 41,
+      "repoId": "d9241073d3b975e6",
+      "repoName": "Ward",
+      "repoTreeName": "Protection",
+      "repoPrerequisites": "",
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Legacy Era Campaign Guide|Carbineer",
+      "tree": "Carbineer",
+      "canonicalName": "Blowback",
+      "page": 41,
+      "repoId": "9b337a844329fa17",
+      "repoName": "Blowback",
+      "repoTreeName": "Carbineer",
+      "repoPrerequisites": "",
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Legacy Era Campaign Guide|Carbineer",
+      "tree": "Carbineer",
+      "canonicalName": "Close Contact",
+      "page": 41,
+      "repoId": "7d30702a5a2640a4",
+      "repoName": "Close Contact",
+      "repoTreeName": "Carbineer",
+      "repoPrerequisites": "",
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Legacy Era Campaign Guide|Carbineer",
+      "tree": "Carbineer",
+      "canonicalName": "Multiattack Proficiency (rifles)",
+      "page": 41,
+      "repoId": "ecb678c47bb2cb43",
+      "repoName": "Multiattack Proficiency (rifles)",
+      "repoTreeName": "Carbineer",
+      "repoPrerequisites": "",
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": [
+        {
+          "repoId": "5ec84c7e500601e4",
+          "name": "Multiattack Proficiency (rifles)",
+          "tree": "Weapon Master",
+          "source": null
+        }
+      ]
+    },
+    {
+      "canonicalTreeKey": "Legacy Era Campaign Guide|Carbineer",
+      "tree": "Carbineer",
+      "canonicalName": "Old Faithful",
+      "page": 41,
+      "repoId": "970d8d555645604d",
+      "repoName": "Old Faithful",
+      "repoTreeName": "Carbineer",
+      "repoPrerequisites": "",
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Legacy Era Campaign Guide|Carbineer",
+      "tree": "Carbineer",
+      "canonicalName": "Opportunity Fire",
+      "page": 41,
+      "repoId": "f5fcf2752e99961a",
+      "repoName": "Opportunity Fire",
+      "repoTreeName": "Carbineer",
+      "repoPrerequisites": "",
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Legacy Era Campaign Guide|Carbineer",
+      "tree": "Carbineer",
+      "canonicalName": "Rifle Master",
+      "page": 41,
+      "repoId": "d24b04541998b27b",
+      "repoName": "Rifle Master",
+      "repoTreeName": "Carbineer",
+      "repoPrerequisites": "",
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Legacy Era Campaign Guide|Carbineer",
+      "tree": "Carbineer",
+      "canonicalName": "Shoot from the Hip",
+      "page": 41,
+      "repoId": "554e245686231855",
+      "repoName": "Shoot from the Hip",
+      "repoTreeName": "Carbineer",
+      "repoPrerequisites": "",
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Legacy Era Campaign Guide|Carbineer",
+      "tree": "Carbineer",
+      "canonicalName": "Snap Shot",
+      "page": 41,
+      "repoId": "2c1268268212d135",
+      "repoName": "Snap Shot",
+      "repoTreeName": "Carbineer",
+      "repoPrerequisites": "",
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Legacy Era Campaign Guide|Jedi Refugee",
+      "tree": "Jedi Refugee",
+      "canonicalName": "Cover Your Tracks",
+      "page": 41,
+      "repoId": "43ee5741f4b2375c",
+      "repoName": "Cover Your Tracks",
+      "repoTreeName": "Jedi Refugee",
+      "repoPrerequisites": "",
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_TEXT_PRESENT_BOTH",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Legacy Era Campaign Guide|Jedi Refugee",
+      "tree": "Jedi Refugee",
+      "canonicalName": "Difficult to Sense",
+      "page": 41,
+      "repoId": "8c47c02ec74fa858",
+      "repoName": "Difficult to Sense",
+      "repoTreeName": "Jedi Refugee",
+      "repoPrerequisites": "",
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Legacy Era Campaign Guide|Jedi Refugee",
+      "tree": "Jedi Refugee",
+      "canonicalName": "Force Veil",
+      "page": 41,
+      "repoId": "4fa3e301abad7a48",
+      "repoName": "Force Veil",
+      "repoTreeName": "Jedi Refugee",
+      "repoPrerequisites": "Difficult to Sense",
+      "canonicalPrerequisites": "Difficult to Sense",
+      "dispositions": [
+        "CANONICAL_TEXT_PRESENT_BOTH",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Legacy Era Campaign Guide|Jedi Refugee",
+      "tree": "Jedi Refugee",
+      "canonicalName": "Jedi Network",
+      "page": 42,
+      "repoId": "251462d5e3aaa4ce",
+      "repoName": "Jedi Network",
+      "repoTreeName": "Jedi Refugee",
+      "repoPrerequisites": "",
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Legacy Era Campaign Guide|Fugitive Commander",
+      "tree": "Fugitive Commander",
+      "canonicalName": "Disciplined Trickery",
+      "page": 42,
+      "repoId": "f7a7ecda71555b5c",
+      "repoName": "Disciplined Trickery",
+      "repoTreeName": "Fugitive Commander",
+      "repoPrerequisites": "",
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Legacy Era Campaign Guide|Fugitive Commander",
+      "tree": "Fugitive Commander",
+      "canonicalName": "Group Perception",
+      "page": 42,
+      "repoId": "5775fa033444f4f0",
+      "repoName": "Group Perception",
+      "repoTreeName": "Fugitive Commander",
+      "repoPrerequisites": "",
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Legacy Era Campaign Guide|Fugitive Commander",
+      "tree": "Fugitive Commander",
+      "canonicalName": "Hasty Withdrawal",
+      "page": 42,
+      "repoId": "8f388280e0d1b244",
+      "repoName": "Hasty Withdrawal",
+      "repoTreeName": "Fugitive Commander",
+      "repoPrerequisites": "",
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Legacy Era Campaign Guide|Fugitive Commander",
+      "tree": "Fugitive Commander",
+      "canonicalName": "Stalwart Subordinates",
+      "page": 42,
+      "repoId": "d9ffff2586cd259b",
+      "repoName": "Stalwart Subordinates",
+      "repoTreeName": "Fugitive Commander",
+      "repoPrerequisites": "",
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Legacy Era Campaign Guide|Fugitive Commander",
+      "tree": "Fugitive Commander",
+      "canonicalName": "Stay in the Fight",
+      "page": 42,
+      "repoId": "c980750800b91061",
+      "repoName": "Stay in the Fight",
+      "repoTreeName": "Fugitive Commander",
+      "repoPrerequisites": "Stalwart Subordinates",
+      "canonicalPrerequisites": "Stalwart Subordinates",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Legacy Era Campaign Guide|Fugitive Commander",
+      "tree": "Fugitive Commander",
+      "canonicalName": "Stealthy Withdrawal",
+      "page": 42,
+      "repoId": "c483676cb3c07cb3",
+      "repoName": "Stealthy Withdrawal",
+      "repoTreeName": "Fugitive Commander",
+      "repoPrerequisites": "Hasty Withdrawal",
+      "canonicalPrerequisites": "Hasty Withdrawal",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Legacy Era Campaign Guide|Sith Commander",
+      "tree": "Sith Commander",
+      "canonicalName": "Desperate Measures",
+      "page": 43,
+      "repoId": "d11f6beaa5f93e66",
+      "repoName": "Desperate Measures",
+      "repoTreeName": "Sith Commander",
+      "repoPrerequisites": "Focus Terror",
+      "canonicalPrerequisites": "Focus Terror",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Legacy Era Campaign Guide|Sith Commander",
+      "tree": "Sith Commander",
+      "canonicalName": "Focus Terror",
+      "page": 43,
+      "repoId": "98c720992c5b428e",
+      "repoName": "Focus Terror",
+      "repoTreeName": "Sith Commander",
+      "repoPrerequisites": "",
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_TEXT_PRESENT_BOTH",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Legacy Era Campaign Guide|Sith Commander",
+      "tree": "Sith Commander",
+      "canonicalName": "Incite Rage",
+      "page": 43,
+      "repoId": "b8a9dd4c950a96f5",
+      "repoName": "Incite Rage",
+      "repoTreeName": "Sith Commander",
+      "repoPrerequisites": "",
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Legacy Era Campaign Guide|Sith Commander",
+      "tree": "Sith Commander",
+      "canonicalName": "Power of Hatred",
+      "page": 43,
+      "repoId": "51a8e7a193955f11",
+      "repoName": "Power of Hatred",
+      "repoTreeName": "Sith Commander",
+      "repoPrerequisites": "Incite Rage",
+      "canonicalPrerequisites": "Incite Rage",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Legacy Era Campaign Guide|Knight's Armor",
+      "tree": "Knight's Armor",
+      "canonicalName": "Armored Augmentation I",
+      "page": 45,
+      "repoId": "98355ed4f6473028",
+      "repoName": "Armored Augmentation I",
+      "repoTreeName": "Knight's Armor",
+      "repoPrerequisites": "",
+      "canonicalPrerequisites": "Armor Proficiency with the type of armor worn",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "PREREQUISITE_TEXT_MISMATCH",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Legacy Era Campaign Guide|Knight's Armor",
+      "tree": "Knight's Armor",
+      "canonicalName": "Armored Augmentation II",
+      "page": 45,
+      "repoId": "51588e91f335bb67",
+      "repoName": "Armored Augmentation II",
+      "repoTreeName": "Knight's Armor",
+      "repoPrerequisites": "Armored Augmentation I",
+      "canonicalPrerequisites": "Armor Proficiency with the type of armor worn, Armored Augmentation I",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "PREREQUISITE_TEXT_MISMATCH",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Legacy Era Campaign Guide|Knight's Armor",
+      "tree": "Knight's Armor",
+      "canonicalName": "Armor Mastery",
+      "page": 45,
+      "repoId": "d9e707f23fffc2af",
+      "repoName": "Armor Mastery",
+      "repoTreeName": "Knight's Armor",
+      "repoPrerequisites": "",
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": [
+        {
+          "repoId": "4fc3fe4c1e7f9ba0",
+          "name": "Armor Mastery",
+          "tree": "Armor Specialist",
+          "source": null
+        }
+      ]
+    },
+    {
+      "canonicalTreeKey": "Legacy Era Campaign Guide|Knight's Armor",
+      "tree": "Knight's Armor",
+      "canonicalName": "Cortosis Defense",
+      "page": 45,
+      "repoId": "dfe97e928928efc3",
+      "repoName": "Cortosis Defense",
+      "repoTreeName": "Knight's Armor",
+      "repoPrerequisites": "",
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Legacy Era Campaign Guide|Knight's Armor",
+      "tree": "Knight's Armor",
+      "canonicalName": "Cortosis Retaliation",
+      "page": 45,
+      "repoId": "22ce14b57f9b8c1a",
+      "repoName": "Cortosis Retaliation",
+      "repoTreeName": "Knight's Armor",
+      "repoPrerequisites": "Cortosis Defense",
+      "canonicalPrerequisites": "Cortosis Defense",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Legacy Era Campaign Guide|Knight's Resolve",
+      "tree": "Knight's Resolve",
+      "canonicalName": "Knight's Morale",
+      "page": 45,
+      "repoId": "e3b7d8c87441a1f0",
+      "repoName": "Knight's Morale",
+      "repoTreeName": "Knight's Resolve",
+      "repoPrerequisites": "",
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Legacy Era Campaign Guide|Knight's Resolve",
+      "tree": "Knight's Resolve",
+      "canonicalName": "Oath of Duty",
+      "page": 45,
+      "repoId": "001ae84d5862af55",
+      "repoName": "Oath of Duty",
+      "repoTreeName": "Knight's Resolve",
+      "repoPrerequisites": "",
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Legacy Era Campaign Guide|Knight's Resolve",
+      "tree": "Knight's Resolve",
+      "canonicalName": "Praetoria Ishu",
+      "page": 45,
+      "repoId": "16aa9efd54967320",
+      "repoName": "Praetoria Ishu",
+      "repoTreeName": "Knight's Resolve",
+      "repoPrerequisites": "",
+      "canonicalPrerequisites": "Block, Deflect",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "PREREQUISITE_TEXT_MISMATCH",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Legacy Era Campaign Guide|Knight's Resolve",
+      "tree": "Knight's Resolve",
+      "canonicalName": "Praetoria Vonil",
+      "page": 45,
+      "repoId": "4723e1eb351e07ae",
+      "repoName": "Praetoria Vonil",
+      "repoTreeName": "Knight's Resolve",
+      "repoPrerequisites": "Weapon Focus (lightsabers)",
+      "canonicalPrerequisites": "Weapon Focus (lightsabers)",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Legacy Era Campaign Guide|Knight's Resolve",
+      "tree": "Knight's Resolve",
+      "canonicalName": "Strength of the Empire",
+      "page": 45,
+      "repoId": "2b808a4a90614f92",
+      "repoName": "Strength of the Empire",
+      "repoTreeName": "Knight's Resolve",
+      "repoPrerequisites": "",
+      "canonicalPrerequisites": "Knight's Morale",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "PREREQUISITE_TEXT_MISMATCH",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Legacy Era Campaign Guide|Implant",
+      "tree": "Implant",
+      "canonicalName": "Adrenaline Implant",
+      "page": 47,
+      "repoId": "2fdf215a5da99e00",
+      "repoName": "Adrenaline Implant",
+      "repoTreeName": "Implant",
+      "repoPrerequisites": "",
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING",
+        "SHARED_AFTEREFFECT_OMITTED"
+      ],
+      "notes": "The repository text omits the Implant tree's shared end-of-encounter -3 persistent condition aftereffect and its recovery rule.",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Legacy Era Campaign Guide|Implant",
+      "tree": "Implant",
+      "canonicalName": "Precision Implant",
+      "page": 47,
+      "repoId": "58e37d40d3aa7d4b",
+      "repoName": "Precision Implant",
+      "repoTreeName": "Implant",
+      "repoPrerequisites": "",
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING",
+        "SHARED_AFTEREFFECT_OMITTED"
+      ],
+      "notes": "The repository text omits the Implant tree's shared end-of-encounter -3 persistent condition aftereffect and its recovery rule.",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Legacy Era Campaign Guide|Implant",
+      "tree": "Implant",
+      "canonicalName": "Resilience Implant",
+      "page": 47,
+      "repoId": "94b1951d4795f602",
+      "repoName": "Resilience Implant",
+      "repoTreeName": "Implant",
+      "repoPrerequisites": "",
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING",
+        "SHARED_AFTEREFFECT_OMITTED"
+      ],
+      "notes": "The repository text omits the Implant tree's shared end-of-encounter -3 persistent condition aftereffect and its recovery rule.",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Legacy Era Campaign Guide|Implant",
+      "tree": "Implant",
+      "canonicalName": "Speed Implant",
+      "page": 47,
+      "repoId": "d6d3b0a2ec01ca9a",
+      "repoName": "Speed Implant",
+      "repoTreeName": "Implant",
+      "repoPrerequisites": "",
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING",
+        "SHARED_AFTEREFFECT_OMITTED"
+      ],
+      "notes": "The repository text omits the Implant tree's shared end-of-encounter -3 persistent condition aftereffect and its recovery rule.",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Legacy Era Campaign Guide|Implant",
+      "tree": "Implant",
+      "canonicalName": "Strength Implant",
+      "page": 47,
+      "repoId": "cb0dcc59f7ced910",
+      "repoName": "Strength Implant",
+      "repoTreeName": "Implant",
+      "repoPrerequisites": "",
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING",
+        "SHARED_AFTEREFFECT_OMITTED"
+      ],
+      "notes": "The repository text omits the Implant tree's shared end-of-encounter -3 persistent condition aftereffect and its recovery rule.",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Legacy Era Campaign Guide|Shaper",
+      "tree": "Shaper",
+      "canonicalName": "Biotech Mastery",
+      "page": 47,
+      "repoId": "fc91564e800719be",
+      "repoName": "Biotech Mastery",
+      "repoTreeName": "Shaper",
+      "repoPrerequisites": "",
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Legacy Era Campaign Guide|Shaper",
+      "tree": "Shaper",
+      "canonicalName": "Expedient Mending",
+      "page": 47,
+      "repoId": "7f792f0e531e9abb",
+      "repoName": "Expedient Mending",
+      "repoTreeName": "Shaper",
+      "repoPrerequisites": "Expert Shaper",
+      "canonicalPrerequisites": "Expert Shaper",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Legacy Era Campaign Guide|Shaper",
+      "tree": "Shaper",
+      "canonicalName": "Expert Shaper",
+      "page": 47,
+      "repoId": "f9047f30ef6712af",
+      "repoName": "Expert Shaper",
+      "repoTreeName": "Shaper",
+      "repoPrerequisites": "",
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Legacy Era Campaign Guide|Shaper",
+      "tree": "Shaper",
+      "canonicalName": "Master Mender",
+      "page": 47,
+      "repoId": "bebc181408831371",
+      "repoName": "Master Mender",
+      "repoTreeName": "Shaper",
+      "repoPrerequisites": "Expert Shaper",
+      "canonicalPrerequisites": "Expert Shaper",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Legacy Era Campaign Guide|Shaper",
+      "tree": "Shaper",
+      "canonicalName": "Skilled Implanter",
+      "page": 47,
+      "repoId": "bf0c791fe21df919",
+      "repoName": "Skilled Implanter",
+      "repoTreeName": "Shaper",
+      "repoPrerequisites": "",
+      "canonicalPrerequisites": "Biotech Surgery feat",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "PREREQUISITE_TEXT_MISMATCH",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Legacy Era Campaign Guide|Disciple of Twilight",
+      "tree": "Disciple Of Twilight",
+      "canonicalName": "Cloak of Shadow",
+      "page": 57,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Legacy Era Campaign Guide|Disciple of Twilight",
+      "tree": "Disciple Of Twilight",
+      "canonicalName": "Phantasm",
+      "page": 57,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Legacy Era Campaign Guide|Disciple of Twilight",
+      "tree": "Disciple Of Twilight",
+      "canonicalName": "Revelation",
+      "page": 58,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Legacy Era Campaign Guide|Disciple of Twilight",
+      "tree": "Disciple Of Twilight",
+      "canonicalName": "Shadow Armor",
+      "page": 58,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "Cloak of Shadow",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Legacy Era Campaign Guide|Disciple of Twilight",
+      "tree": "Disciple Of Twilight",
+      "canonicalName": "Shadow Vision",
+      "page": 58,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Legacy Era Campaign Guide|Ember of Vahl",
+      "tree": "Ember Of Vahl",
+      "canonicalName": "Initiate of Vahl",
+      "page": 59,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Legacy Era Campaign Guide|Ember of Vahl",
+      "tree": "Ember Of Vahl",
+      "canonicalName": "Reading the Flame",
+      "page": 59,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "Initiate of Vahl",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Legacy Era Campaign Guide|Ember of Vahl",
+      "tree": "Ember Of Vahl",
+      "canonicalName": "Sword of Vahl",
+      "page": 59,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "Initiate of Vahl",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Legacy Era Campaign Guide|Ember of Vahl",
+      "tree": "Ember Of Vahl",
+      "canonicalName": "Vahl's Brand",
+      "page": 59,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "Empower Weapon",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Legacy Era Campaign Guide|Ember of Vahl",
+      "tree": "Ember Of Vahl",
+      "canonicalName": "Vahl's Flame",
+      "page": 59,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "Initiate of Vahl",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    }
+  ]
+}

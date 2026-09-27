@@ -1,0 +1,2270 @@
+{
+  "schemaVersion": 1,
+  "phase": "2",
+  "sourcebook": "Knights of the Old Republic Campaign Guide",
+  "generatedAt": "2026-09-27",
+  "branch": "audit/talent-phase-1-tree-census",
+  "scope": "Source-certified KOTOR talents compared against current repository talent-record mirror. No production records changed.",
+  "summary": {
+    "canonicalTalentPublications": 115,
+    "repositoryRecordsMapped": 92,
+    "missingCorrectTreeRecords": 23,
+    "originTreeIdentities": 16,
+    "originTalentIdentities": 82,
+    "expansionTreeTargets": 17,
+    "expansionTalentIdentities": 33,
+    "phase1dStructuralCorrections": 0,
+    "distinctSameNameIdentityHazards": 1,
+    "prerequisiteTextMismatches": 34,
+    "fullTextDifferentOrAbbreviated": 87,
+    "sourceMetadataMissing": 92,
+    "summaryMissing": 92,
+    "dispositionCounts": {
+      "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT": 87,
+      "SOURCE_METADATA_MISSING": 92,
+      "SUMMARY_MISSING": 92,
+      "PREREQUISITE_TEXT_MISMATCH": 34,
+      "CANONICAL_TEXT_PRESENT_BOTH": 5,
+      "MISSING_CONTENT": 23,
+      "DISTINCT_SAME_NAME_IDENTITY_HAZARD": 1
+    }
+  },
+  "missingRepositoryRecords": [
+    {
+      "tree": "Sith",
+      "name": "Sith Alchemy",
+      "page": 41,
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Sith",
+      "sameNameRepoCandidates": [
+        {
+          "repoId": "eb4f3e86-60bc-4765-89d0-323d4cc00845",
+          "name": "Sith Alchemy",
+          "tree": "Sith Alchemy",
+          "source": null
+        }
+      ]
+    },
+    {
+      "tree": "Gladiatorial Combat",
+      "name": "Multiattack Proficiency (exotic weapons)",
+      "page": 45,
+      "canonicalTreeKey": "Knights of the Old Republic Campaign Guide|Gladiatorial Combat",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Melee Duelist",
+      "name": "Multiattack Proficiency (advanced melee weapons)",
+      "page": 47,
+      "canonicalTreeKey": "Knights of the Old Republic Campaign Guide|Melee Duelist",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Jal Shey",
+      "name": "Action Exchange",
+      "page": 57,
+      "canonicalTreeKey": "Knights of the Old Republic Campaign Guide|Jal Shey",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Jal Shey",
+      "name": "Force Delay",
+      "page": 57,
+      "canonicalTreeKey": "Knights of the Old Republic Campaign Guide|Jal Shey",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Jal Shey",
+      "name": "Imbue Item",
+      "page": 58,
+      "canonicalTreeKey": "Knights of the Old Republic Campaign Guide|Jal Shey",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Jal Shey",
+      "name": "Knowledge of the Force",
+      "page": 58,
+      "canonicalTreeKey": "Knights of the Old Republic Campaign Guide|Jal Shey",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Keetael",
+      "name": "Conceal Force Use",
+      "page": 58,
+      "canonicalTreeKey": "Knights of the Old Republic Campaign Guide|Keetael",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Keetael",
+      "name": "Force Direction",
+      "page": 58,
+      "canonicalTreeKey": "Knights of the Old Republic Campaign Guide|Keetael",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Keetael",
+      "name": "Force Momentum",
+      "page": 58,
+      "canonicalTreeKey": "Knights of the Old Republic Campaign Guide|Keetael",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Keetael",
+      "name": "Past Visions",
+      "page": 58,
+      "canonicalTreeKey": "Knights of the Old Republic Campaign Guide|Keetael",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Krath",
+      "name": "Dark Side Manipulation",
+      "page": 59,
+      "canonicalTreeKey": "Knights of the Old Republic Campaign Guide|Krath",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Krath",
+      "name": "Krath Illusions",
+      "page": 60,
+      "canonicalTreeKey": "Knights of the Old Republic Campaign Guide|Krath",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Krath",
+      "name": "Krath Intuition",
+      "page": 60,
+      "canonicalTreeKey": "Knights of the Old Republic Campaign Guide|Krath",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Krath",
+      "name": "Krath Surge",
+      "page": 60,
+      "canonicalTreeKey": "Knights of the Old Republic Campaign Guide|Krath",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Luka Sene",
+      "name": "Field Detection",
+      "page": 60,
+      "canonicalTreeKey": "Knights of the Old Republic Campaign Guide|Luka Sene",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Luka Sene",
+      "name": "Improved Force Sight",
+      "page": 60,
+      "canonicalTreeKey": "Knights of the Old Republic Campaign Guide|Luka Sene",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Luka Sene",
+      "name": "Luka Sene Master",
+      "page": 60,
+      "canonicalTreeKey": "Knights of the Old Republic Campaign Guide|Luka Sene",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Luka Sene",
+      "name": "Quickseeing",
+      "page": 60,
+      "canonicalTreeKey": "Knights of the Old Republic Campaign Guide|Luka Sene",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Order of Shasa",
+      "name": "Deception Awareness",
+      "page": 61,
+      "canonicalTreeKey": "Knights of the Old Republic Campaign Guide|Order of Shasa",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Order of Shasa",
+      "name": "Greater Weapon Focus (Fira)",
+      "page": 61,
+      "canonicalTreeKey": "Knights of the Old Republic Campaign Guide|Order of Shasa",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Order of Shasa",
+      "name": "Progenitor's Call",
+      "page": 61,
+      "canonicalTreeKey": "Knights of the Old Republic Campaign Guide|Order of Shasa",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Order of Shasa",
+      "name": "Waveform",
+      "page": 61,
+      "canonicalTreeKey": "Knights of the Old Republic Campaign Guide|Order of Shasa",
+      "sameNameRepoCandidates": []
+    }
+  ],
+  "talents": [
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Jedi Consular",
+      "tree": "Jedi Consular",
+      "canonicalName": "Collective Visions",
+      "page": 24,
+      "repoId": "e5bef6ccacb51788",
+      "repoName": "Collective Visions",
+      "repoTreeName": "Jedi Consular",
+      "repoPrerequisites": "Farseeing",
+      "canonicalPrerequisites": "farseeing",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Jedi Consular",
+      "tree": "Jedi Consular",
+      "canonicalName": "Visionary Attack",
+      "page": 24,
+      "repoId": "299c45ac33bf1485",
+      "repoName": "Visionary Attack",
+      "repoTreeName": "Jedi Consular",
+      "repoPrerequisites": "Farseeing, WatchCircle Initiate",
+      "canonicalPrerequisites": "farseeing, WatchCircle Initiate",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Jedi Consular",
+      "tree": "Jedi Consular",
+      "canonicalName": "Visionary Defense",
+      "page": 25,
+      "repoId": "153f4b3c6510023d",
+      "repoName": "Visionary Defense",
+      "repoTreeName": "Jedi Consular",
+      "repoPrerequisites": "Farseeing, WatchCircle Initiate",
+      "canonicalPrerequisites": "farseeing, WatchCircle Initiate",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Jedi Consular",
+      "tree": "Jedi Consular",
+      "canonicalName": "Renew Vision",
+      "page": 25,
+      "repoId": "61302cbe9ccdea12",
+      "repoName": "Renew Vision",
+      "repoTreeName": "Jedi Consular",
+      "repoPrerequisites": "Farseeing",
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "PREREQUISITE_TEXT_MISMATCH",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Jedi Consular",
+      "tree": "Jedi Consular",
+      "canonicalName": "WatchCircle Initiate",
+      "page": 25,
+      "repoId": "ab9f1497d0b2d7c2",
+      "repoName": "WatchCircle Initiate",
+      "repoTreeName": "Jedi Consular",
+      "repoPrerequisites": "Farseeing",
+      "canonicalPrerequisites": "farseeing",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Jedi Guardian",
+      "tree": "Jedi Guardian",
+      "canonicalName": "Improved Battle Meditation",
+      "page": 25,
+      "repoId": "d6a04668587e2c03",
+      "repoName": "Improved Battle Meditation",
+      "repoTreeName": "Jedi Guardian",
+      "repoPrerequisites": "Battle Meditation",
+      "canonicalPrerequisites": "Battle Meditation",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Jedi Sentinel",
+      "tree": "Jedi Sentinel",
+      "canonicalName": "Dark Retaliation",
+      "page": 25,
+      "repoId": "2b4ffff03274a825",
+      "repoName": "Dark Retaliation",
+      "repoTreeName": "Jedi Sentinel",
+      "repoPrerequisites": "Sentinel Strike",
+      "canonicalPrerequisites": "Sentinel Strike",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Jedi Sentinel",
+      "tree": "Jedi Sentinel",
+      "canonicalName": "Sentinel Strike",
+      "page": 25,
+      "repoId": "cf2d518039afd828",
+      "repoName": "Sentinel Strike",
+      "repoTreeName": "Jedi Sentinel",
+      "repoPrerequisites": "",
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Jedi Sentinel",
+      "tree": "Jedi Sentinel",
+      "canonicalName": "Sentinel's Gambit",
+      "page": 25,
+      "repoId": "df40e8294bd43fe7",
+      "repoName": "Sentinel's Gambit",
+      "repoTreeName": "Jedi Sentinel",
+      "repoPrerequisites": "",
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Lightsaber Combat",
+      "tree": "Lightsaber Combat",
+      "canonicalName": "Riposte",
+      "page": 25,
+      "repoId": "b788095a71a47be7",
+      "repoName": "Riposte",
+      "repoTreeName": "Lightsaber Combat",
+      "repoPrerequisites": "Block, Base Attack Bonus +5",
+      "canonicalPrerequisites": "Block, base attack bonus +5",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Influence",
+      "tree": "Influence",
+      "canonicalName": "Fluster",
+      "page": 26,
+      "repoId": "e6d56fb82c669b9d",
+      "repoName": "Fluster",
+      "repoTreeName": "Influence",
+      "repoPrerequisites": "Presence, Persuasion",
+      "canonicalPrerequisites": "Presence, trained in Persuasion",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "PREREQUISITE_TEXT_MISMATCH",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Influence",
+      "tree": "Influence",
+      "canonicalName": "Intimidating Defense",
+      "page": 26,
+      "repoId": "de751f28fc269c85",
+      "repoName": "Intimidating Defense",
+      "repoTreeName": "Influence",
+      "repoPrerequisites": "Presence, Persuasion",
+      "canonicalPrerequisites": "Presence, trained in Persuasion",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "PREREQUISITE_TEXT_MISMATCH",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Leadership",
+      "tree": "Leadership",
+      "canonicalName": "Reactionary Attack",
+      "page": 26,
+      "repoId": "bc8667e10d541cb8",
+      "repoName": "Reactionary Attack",
+      "repoTreeName": "Leadership",
+      "repoPrerequisites": "Born Leader, Persuasion",
+      "canonicalPrerequisites": "Born Leader, trained in Persuasion",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "PREREQUISITE_TEXT_MISMATCH",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Knights of the Old Republic Campaign Guide|Fencing",
+      "tree": "Fencing",
+      "canonicalName": "Demoralizing Defense",
+      "page": 26,
+      "repoId": "4c7eb9c679ee43a8",
+      "repoName": "Demoralizing Defense",
+      "repoTreeName": "Fencing",
+      "repoPrerequisites": "Noble Fencing Style",
+      "canonicalPrerequisites": "Noble Fencing Style",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Knights of the Old Republic Campaign Guide|Fencing",
+      "tree": "Fencing",
+      "canonicalName": "Leading Feint",
+      "page": 26,
+      "repoId": "d68318a928d3d5c7",
+      "repoName": "Leading Feint",
+      "repoTreeName": "Fencing",
+      "repoPrerequisites": "Noble Fencing Style",
+      "canonicalPrerequisites": "Noble Fencing Style",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Knights of the Old Republic Campaign Guide|Fencing",
+      "tree": "Fencing",
+      "canonicalName": "Noble Fencing Style",
+      "page": 27,
+      "repoId": "00c3231e4a4173fa",
+      "repoName": "Noble Fencing Style",
+      "repoTreeName": "Fencing",
+      "repoPrerequisites": "Trained in Deception and Persuasion",
+      "canonicalPrerequisites": "Trained in Deception and Persuasion",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Knights of the Old Republic Campaign Guide|Fencing",
+      "tree": "Fencing",
+      "canonicalName": "Personal Affront",
+      "page": 27,
+      "repoId": "8b8c0f8c9d62f410",
+      "repoName": "Personal Affront",
+      "repoTreeName": "Fencing",
+      "repoPrerequisites": "Noble Fencing Style, base attack bonus +5",
+      "canonicalPrerequisites": "Noble Fencing Style, base attack bonus +5",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Knights of the Old Republic Campaign Guide|Fencing",
+      "tree": "Fencing",
+      "canonicalName": "Transposing Strike",
+      "page": 27,
+      "repoId": "39b5423e255e14b1",
+      "repoName": "Transposing Strike",
+      "repoTreeName": "Fencing",
+      "repoPrerequisites": "Noble Fencing Style, base attack bonus +5",
+      "canonicalPrerequisites": "Noble Fencing Style, base attack bonus +5,",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Fortune",
+      "tree": "Fortune",
+      "canonicalName": "Lucky Stop",
+      "page": 27,
+      "repoId": "a64632cafe74b864",
+      "repoName": "Lucky Stop",
+      "repoTreeName": "Fortune",
+      "repoPrerequisites": "Knack",
+      "canonicalPrerequisites": "Knack",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Knights of the Old Republic Campaign Guide|Run and Gun",
+      "tree": "Run and Gun",
+      "canonicalName": "Cheap Shot",
+      "page": 27,
+      "repoId": "32a76fe000898f90",
+      "repoName": "Cheap Shot",
+      "repoTreeName": "Run and Gun",
+      "repoPrerequisites": "Opportunistic Strike",
+      "canonicalPrerequisites": "Opportunistic Strike",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Knights of the Old Republic Campaign Guide|Run and Gun",
+      "tree": "Run and Gun",
+      "canonicalName": "No Escape",
+      "page": 27,
+      "repoId": "f0bfcfc354862328",
+      "repoName": "No Escape",
+      "repoTreeName": "Run and Gun",
+      "repoPrerequisites": "Opportunistic Strike",
+      "canonicalPrerequisites": "Opportunistic Strike",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Knights of the Old Republic Campaign Guide|Run and Gun",
+      "tree": "Run and Gun",
+      "canonicalName": "Opportunistic Strike",
+      "page": 27,
+      "repoId": "93770927eba5446d",
+      "repoName": "Opportunistic Strike",
+      "repoTreeName": "Run and Gun",
+      "repoPrerequisites": "",
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Knights of the Old Republic Campaign Guide|Run and Gun",
+      "tree": "Run and Gun",
+      "canonicalName": "Slippery Strike",
+      "page": 27,
+      "repoId": "a1a905019e7f17c0",
+      "repoName": "Slippery Strike",
+      "repoTreeName": "Run and Gun",
+      "repoPrerequisites": "Strike and Run",
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "PREREQUISITE_TEXT_MISMATCH",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Knights of the Old Republic Campaign Guide|Run and Gun",
+      "tree": "Run and Gun",
+      "canonicalName": "Strike and Run",
+      "page": 28,
+      "repoId": "119725589e32a35a",
+      "repoName": "Strike and Run",
+      "repoTreeName": "Run and Gun",
+      "repoPrerequisites": "",
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Awareness",
+      "tree": "Awareness",
+      "canonicalName": "Weak Point",
+      "page": 28,
+      "repoId": "18bbce2836989fc5",
+      "repoName": "Weak Point",
+      "repoTreeName": "Awareness",
+      "repoPrerequisites": "Keen Shot",
+      "canonicalPrerequisites": "Acute Senses, Keen Shot",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "PREREQUISITE_TEXT_MISMATCH",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Knights of the Old Republic Campaign Guide|Hyperspace Explorer",
+      "tree": "Hyperspace Explorer",
+      "canonicalName": "Deep-Space Gambit",
+      "page": 28,
+      "repoId": "ae7accbdad82989e",
+      "repoName": "Deep-Space Gambit",
+      "repoTreeName": "Hyperspace Explorer",
+      "repoPrerequisites": "",
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Knights of the Old Republic Campaign Guide|Hyperspace Explorer",
+      "tree": "Hyperspace Explorer",
+      "canonicalName": "Guidance",
+      "page": 28,
+      "repoId": "54e32a12afb28906",
+      "repoName": "Guidance",
+      "repoTreeName": "Hyperspace Explorer",
+      "repoPrerequisites": "Perception",
+      "canonicalPrerequisites": "Trained in Perception",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "PREREQUISITE_TEXT_MISMATCH",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Knights of the Old Republic Campaign Guide|Hyperspace Explorer",
+      "tree": "Hyperspace Explorer",
+      "canonicalName": "Hidden Attacker",
+      "page": 29,
+      "repoId": "6315a1a7aaf758d5",
+      "repoName": "Hidden Attacker",
+      "repoTreeName": "Hyperspace Explorer",
+      "repoPrerequisites": "Stealth",
+      "canonicalPrerequisites": "Trained in Stealth",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "PREREQUISITE_TEXT_MISMATCH",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Knights of the Old Republic Campaign Guide|Hyperspace Explorer",
+      "tree": "Hyperspace Explorer",
+      "canonicalName": "Hyperspace Savant",
+      "page": 29,
+      "repoId": "89914a75353f8810",
+      "repoName": "Hyperspace Savant",
+      "repoTreeName": "Hyperspace Explorer",
+      "repoPrerequisites": "Pilot",
+      "canonicalPrerequisites": "Trained in Pilot",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "PREREQUISITE_TEXT_MISMATCH",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Knights of the Old Republic Campaign Guide|Hyperspace Explorer",
+      "tree": "Hyperspace Explorer",
+      "canonicalName": "Vehicle Sneak",
+      "page": 29,
+      "repoId": "0c5026168620dbae",
+      "repoName": "Vehicle Sneak",
+      "repoTreeName": "Hyperspace Explorer",
+      "repoPrerequisites": "Pilot",
+      "canonicalPrerequisites": "Trained in Pilot",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "PREREQUISITE_TEXT_MISMATCH",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Armor Specialist",
+      "tree": "Armor Specialist",
+      "canonicalName": "Shield Expert",
+      "page": 29,
+      "repoId": "590178f76ad1b08a",
+      "repoName": "Shield Expert",
+      "repoTreeName": "Armor Specialist",
+      "repoPrerequisites": "Armor Proficiency (Light)",
+      "canonicalPrerequisites": "Armor Proficiency (tight)",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "PREREQUISITE_TEXT_MISMATCH",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Brawler",
+      "tree": "Brawler",
+      "canonicalName": "Devastating Melee Smash",
+      "page": 29,
+      "repoId": "d7e9b15e21ea1c4e",
+      "repoName": "Devastating Melee Smash",
+      "repoTreeName": "Brawler",
+      "repoPrerequisites": "Melee Smash",
+      "canonicalPrerequisites": "Melee Smash",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Weapon Specialist",
+      "tree": "Weapon Specialist",
+      "canonicalName": "Disarming Attack",
+      "page": 29,
+      "repoId": "456a0aa44da5105c",
+      "repoName": "Disarming Attack",
+      "repoTreeName": "Weapon Specialist",
+      "repoPrerequisites": "Improved Disarm, Intelligence 13, Weapon Specialization",
+      "canonicalPrerequisites": "Improved Disarm, Intelligence 13, Weapon Specialization with the chosen weapon",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "PREREQUISITE_TEXT_MISMATCH",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Knights of the Old Republic Campaign Guide|Rocket Jumper",
+      "tree": "Rocket Jumper",
+      "canonicalName": "Burning Assault",
+      "page": 30,
+      "repoId": "be617461ca46a5ad",
+      "repoName": "Burning Assault",
+      "repoTreeName": "Rocket Jumper",
+      "repoPrerequisites": "Jet Pack Training",
+      "canonicalPrerequisites": "Jet Pack Training",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Knights of the Old Republic Campaign Guide|Rocket Jumper",
+      "tree": "Rocket Jumper",
+      "canonicalName": "Improved Trajectory",
+      "page": 30,
+      "repoId": "f96f1d48cf6604c2",
+      "repoName": "Improved Trajectory",
+      "repoTreeName": "Rocket Jumper",
+      "repoPrerequisites": "Jet Pack Training",
+      "canonicalPrerequisites": "Jet Pack Training",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Knights of the Old Republic Campaign Guide|Rocket Jumper",
+      "tree": "Rocket Jumper",
+      "canonicalName": "Jet Pack Training",
+      "page": 30,
+      "repoId": "d3a642f2ceb21ed4",
+      "repoName": "Jet Pack Training",
+      "repoTreeName": "Rocket Jumper",
+      "repoPrerequisites": "",
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Knights of the Old Republic Campaign Guide|Rocket Jumper",
+      "tree": "Rocket Jumper",
+      "canonicalName": "Jet Pack Withdraw",
+      "page": 30,
+      "repoId": "4c23c64e3ab8dcc6",
+      "repoName": "Jet Pack Withdraw",
+      "repoTreeName": "Rocket Jumper",
+      "repoPrerequisites": "Jet Pack Training",
+      "canonicalPrerequisites": "Jet Pack Training",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Knights of the Old Republic Campaign Guide|Mandalorian Warrior",
+      "tree": "Mandalorian Warrior",
+      "canonicalName": "Armored Mandalorian",
+      "page": 38,
+      "repoId": "c3b22fdc6ca5af8e",
+      "repoName": "Armored Mandalorian",
+      "repoTreeName": "Mandalorian Warrior",
+      "repoPrerequisites": "Dexterity 13, Mandalorian Glory",
+      "canonicalPrerequisites": "Dexterity 13, Mandalorian Glory, proficient in armor worn",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "PREREQUISITE_TEXT_MISMATCH",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Knights of the Old Republic Campaign Guide|Mandalorian Warrior",
+      "tree": "Mandalorian Warrior",
+      "canonicalName": "Mandalorian Advance",
+      "page": 38,
+      "repoId": "e97df0daa156338c",
+      "repoName": "Mandalorian Advance",
+      "repoTreeName": "Mandalorian Warrior",
+      "repoPrerequisites": "",
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Knights of the Old Republic Campaign Guide|Mandalorian Warrior",
+      "tree": "Mandalorian Warrior",
+      "canonicalName": "Mandalorian Ferocity",
+      "page": 38,
+      "repoId": "9d1c806bdee12411",
+      "repoName": "Mandalorian Ferocity",
+      "repoTreeName": "Mandalorian Warrior",
+      "repoPrerequisites": "Dexterity 13, Weapon Proficiency (once)",
+      "canonicalPrerequisites": "Dexterity 13, proficient in selected exotic weapon or weapon group",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "PREREQUISITE_TEXT_MISMATCH",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Knights of the Old Republic Campaign Guide|Mandalorian Warrior",
+      "tree": "Mandalorian Warrior",
+      "canonicalName": "Mandalorian Glory",
+      "page": 38,
+      "repoId": "2ed2cffbd702c1c3",
+      "repoName": "Mandalorian Glory",
+      "repoTreeName": "Mandalorian Warrior",
+      "repoPrerequisites": "",
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Force Item",
+      "tree": "Force Item",
+      "canonicalName": "Primitive Block",
+      "page": 38,
+      "repoId": "d043a3c0494345ac",
+      "repoName": "Primitive Block",
+      "repoTreeName": "Force Item",
+      "repoPrerequisites": "Empower Weapon",
+      "canonicalPrerequisites": "Enpower Weapon",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "PREREQUISITE_TEXT_MISMATCH",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Force Item",
+      "tree": "Force Item",
+      "canonicalName": "Force Throw",
+      "page": 38,
+      "repoId": "86565bbe8b8fd1a2",
+      "repoName": "Force Throw",
+      "repoTreeName": "Force Item",
+      "repoPrerequisites": "Empower Weapon",
+      "canonicalPrerequisites": "Empower Weapon",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Gunslinger",
+      "tree": "Gunslinger",
+      "canonicalName": "Mobile Attack (pistols)",
+      "page": 39,
+      "repoId": "855d544f08e54afc",
+      "repoName": "Mobile Attack (pistols)",
+      "repoTreeName": "Gunslinger",
+      "repoPrerequisites": "",
+      "canonicalPrerequisites": "Multiattack Proficiency (pistols), Dual Weapon Mastery I, Weapon Focus (pistols)",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "PREREQUISITE_TEXT_MISMATCH",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Duelist",
+      "tree": "Duelist",
+      "canonicalName": "Improved Riposte",
+      "page": 39,
+      "repoId": "91c910b9c46a8649",
+      "repoName": "Improved Riposte",
+      "repoTreeName": "Duelist",
+      "repoPrerequisites": "Riposte, Block",
+      "canonicalPrerequisites": "Block, Riposte",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "PREREQUISITE_TEXT_MISMATCH",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Duelist",
+      "tree": "Duelist",
+      "canonicalName": "Improved Redirect",
+      "page": 39,
+      "repoId": "366ac9dea2e484d3",
+      "repoName": "Improved Redirect",
+      "repoTreeName": "Duelist",
+      "repoPrerequisites": "Redirect Shot, Deflect",
+      "canonicalPrerequisites": "Deflect, Redirect Shot",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "PREREQUISITE_TEXT_MISMATCH",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Knights of the Old Republic Campaign Guide|Jedi Battlemaster",
+      "tree": "Jedi Battlemaster",
+      "canonicalName": "Defensive Circle",
+      "page": 39,
+      "repoId": "d838141fe404a9fb",
+      "repoName": "Defensive Circle",
+      "repoTreeName": "Jedi Battlemaster",
+      "repoPrerequisites": "Battle Meditation, Block or Deflect, Jedi Battle Commander",
+      "canonicalPrerequisites": "Battle Meditation, Block or Deflect, Jedi Battle Commander",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Knights of the Old Republic Campaign Guide|Jedi Battlemaster",
+      "tree": "Jedi Battlemaster",
+      "canonicalName": "Force Revive",
+      "page": 39,
+      "repoId": "83dce0bf42928741",
+      "repoName": "Force Revive",
+      "repoTreeName": "Jedi Battlemaster",
+      "repoPrerequisites": "Battle Meditation, Jedi Battle Commander",
+      "canonicalPrerequisites": "Battle Meditation, Jedi Battle Commander",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Knights of the Old Republic Campaign Guide|Jedi Battlemaster",
+      "tree": "Jedi Battlemaster",
+      "canonicalName": "Jedi Battle Commander",
+      "page": 39,
+      "repoId": "57823500e878124a",
+      "repoName": "Jedi Battle Commander",
+      "repoTreeName": "Jedi Battlemaster",
+      "repoPrerequisites": "Battle Meditation",
+      "canonicalPrerequisites": "Battle Meditation",
+      "dispositions": [
+        "CANONICAL_TEXT_PRESENT_BOTH",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Knights of the Old Republic Campaign Guide|Jedi Battlemaster",
+      "tree": "Jedi Battlemaster",
+      "canonicalName": "Slashing Charge",
+      "page": 39,
+      "repoId": "d587fb91aedddd09",
+      "repoName": "Slashing Charge",
+      "repoTreeName": "Jedi Battlemaster",
+      "repoPrerequisites": "Block, Riposte, Weapon Focus (Lightsabers)",
+      "canonicalPrerequisites": "Block, Riposte, Weapon Focus (lightsabers), Weapon Proficiency (lightsabers)",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "PREREQUISITE_TEXT_MISMATCH",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Knights of the Old Republic Campaign Guide|Jedi Battlemaster",
+      "tree": "Jedi Battlemaster",
+      "canonicalName": "Mobile Attack (lightsabers)",
+      "page": 39,
+      "repoId": "eb701499ba157c6a",
+      "repoName": "Mobile Attack (Lightsabers)",
+      "repoTreeName": "Jedi Battlemaster",
+      "repoPrerequisites": "Multiattack Proficiency (Lightsabers), Dual Weapon Mastery I, Weapon Focus (Lightsabers)",
+      "canonicalPrerequisites": "Multiattack Proficiency (lightsabers), Dual Weapon Mastery |, Weapon Focus (lightsabers)",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "PREREQUISITE_TEXT_MISMATCH",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Knights of the Old Republic Campaign Guide|Jedi Shadow",
+      "tree": "Jedi Shadow",
+      "canonicalName": "Dark Deception",
+      "page": 39,
+      "repoId": "d1561acfdeac3d78",
+      "repoName": "Dark Deception",
+      "repoTreeName": "Jedi Shadow",
+      "repoPrerequisites": "",
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_TEXT_PRESENT_BOTH",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Knights of the Old Republic Campaign Guide|Jedi Shadow",
+      "tree": "Jedi Shadow",
+      "canonicalName": "Improved Sentinel Strike",
+      "page": 39,
+      "repoId": "f836070c4a153ba0",
+      "repoName": "Improved Sentinel Strike",
+      "repoTreeName": "Jedi Shadow",
+      "repoPrerequisites": "Sentinel Strike",
+      "canonicalPrerequisites": "Sentinel Strike",
+      "dispositions": [
+        "CANONICAL_TEXT_PRESENT_BOTH",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Knights of the Old Republic Campaign Guide|Jedi Shadow",
+      "tree": "Jedi Shadow",
+      "canonicalName": "Improved Sentinel's Gambit",
+      "page": 39,
+      "repoId": "c62073de45482781",
+      "repoName": "Improved Sentinel's Gambit",
+      "repoTreeName": "Jedi Shadow",
+      "repoPrerequisites": "Sentinel's Gambit",
+      "canonicalPrerequisites": "Sentinel’s Gambit",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Knights of the Old Republic Campaign Guide|Jedi Shadow",
+      "tree": "Jedi Shadow",
+      "canonicalName": "Rebuke the Dark",
+      "page": 39,
+      "repoId": "55379010171cf765",
+      "repoName": "Rebuke the Dark",
+      "repoTreeName": "Jedi Shadow",
+      "repoPrerequisites": "Rebuke",
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "PREREQUISITE_TEXT_MISMATCH",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Knights of the Old Republic Campaign Guide|Jedi Shadow",
+      "tree": "Jedi Shadow",
+      "canonicalName": "Taint of the Dark Side",
+      "page": 39,
+      "repoId": "3f5b1b3566f16ff5",
+      "repoName": "Taint of the Dark Side",
+      "repoTreeName": "Jedi Shadow",
+      "repoPrerequisites": "Dark Deception",
+      "canonicalPrerequisites": "Dark Deception",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Knights of the Old Republic Campaign Guide|Jedi Watchman",
+      "tree": "Jedi Watchman",
+      "canonicalName": "Force Warning",
+      "page": 40,
+      "repoId": "0178e98b17ab2bcc",
+      "repoName": "Force Warning",
+      "repoTreeName": "Jedi Watchman",
+      "repoPrerequisites": "",
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Knights of the Old Republic Campaign Guide|Jedi Watchman",
+      "tree": "Jedi Watchman",
+      "canonicalName": "Improved Quick Draw (lightsabers)",
+      "page": 40,
+      "repoId": "acb9d2dddeea7efd",
+      "repoName": "Improved Quick Draw (Lightsabers)",
+      "repoTreeName": "Jedi Watchman",
+      "repoPrerequisites": "Quick Draw, Weapon Focus (Lightsabers)",
+      "canonicalPrerequisites": "Quick Draw, Weapon Focus (lightsabers)",
+      "dispositions": [
+        "CANONICAL_TEXT_PRESENT_BOTH",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Knights of the Old Republic Campaign Guide|Jedi Watchman",
+      "tree": "Jedi Watchman",
+      "canonicalName": "Sheltering Stance",
+      "page": 40,
+      "repoId": "f541b5e57c5af27e",
+      "repoName": "Sheltering Stance",
+      "repoTreeName": "Jedi Watchman",
+      "repoPrerequisites": "Block or Deflect, Vigilance",
+      "canonicalPrerequisites": "Block or Deflect, Vigilance",
+      "dispositions": [
+        "CANONICAL_TEXT_PRESENT_BOTH",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Knights of the Old Republic Campaign Guide|Jedi Watchman",
+      "tree": "Jedi Watchman",
+      "canonicalName": "Vigilance",
+      "page": 40,
+      "repoId": "abe485644b195f0b",
+      "repoName": "Vigilance",
+      "repoTreeName": "Jedi Watchman",
+      "repoPrerequisites": "",
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Knights of the Old Republic Campaign Guide|Jedi Watchman",
+      "tree": "Jedi Watchman",
+      "canonicalName": "Watchman's Advance",
+      "page": 40,
+      "repoId": "e3927fc5314cc492",
+      "repoName": "Watchman's Advance",
+      "repoTreeName": "Jedi Watchman",
+      "repoPrerequisites": "Force Warning",
+      "canonicalPrerequisites": "Force Warning",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Sith",
+      "tree": "Sith",
+      "canonicalName": "Affliction",
+      "page": 40,
+      "repoId": "776a0fa8ae532ccc",
+      "repoName": "Affliction",
+      "repoTreeName": "Sith",
+      "repoPrerequisites": "",
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Sith",
+      "tree": "Sith",
+      "canonicalName": "Dark Healing Field",
+      "page": 40,
+      "repoId": "89a8c710bb68901c",
+      "repoName": "Dark Healing Field",
+      "repoTreeName": "Sith",
+      "repoPrerequisites": "Dark Healing, Improved Dark Healing",
+      "canonicalPrerequisites": "Dark Healing, Improved Dark Healing",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Sith",
+      "tree": "Sith",
+      "canonicalName": "Drain Force",
+      "page": 40,
+      "repoId": "2056998b5afa4e00",
+      "repoName": "Drain Force",
+      "repoTreeName": "Sith",
+      "repoPrerequisites": "Affliction",
+      "canonicalPrerequisites": "Affliction",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Sith",
+      "tree": "Sith",
+      "canonicalName": "Sith Alchemy",
+      "page": 41,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "Dark Side Adept, Dark Side Master",
+      "dispositions": [
+        "MISSING_CONTENT",
+        "DISTINCT_SAME_NAME_IDENTITY_HAZARD"
+      ],
+      "notes": "A same-name record exists under a separate Sith Alchemy tree; the KOTOR publication is an expansion talent of the Core Sith tree and must remain a distinct correct-tree identity.",
+      "sameNameRepoCandidates": [
+        {
+          "repoId": "eb4f3e86-60bc-4765-89d0-323d4cc00845",
+          "name": "Sith Alchemy",
+          "tree": "Sith Alchemy",
+          "source": null
+        }
+      ]
+    },
+    {
+      "canonicalTreeKey": "Knights of the Old Republic Campaign Guide|Corporate Power",
+      "tree": "Corporate Power",
+      "canonicalName": "Competitive Drive",
+      "page": 42,
+      "repoId": "53b0aa17a95ba670",
+      "repoName": "Competitive Drive",
+      "repoTreeName": "Corporate Power",
+      "repoPrerequisites": "",
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Knights of the Old Republic Campaign Guide|Corporate Power",
+      "tree": "Corporate Power",
+      "canonicalName": "Competitive Edge",
+      "page": 42,
+      "repoId": "4acfb3b5a7a402fd",
+      "repoName": "Competitive Edge",
+      "repoTreeName": "Corporate Power",
+      "repoPrerequisites": "",
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Knights of the Old Republic Campaign Guide|Corporate Power",
+      "tree": "Corporate Power",
+      "canonicalName": "Corporate Clout",
+      "page": 42,
+      "repoId": "50073b86c51c52cd",
+      "repoName": "Corporate Clout",
+      "repoTreeName": "Corporate Power",
+      "repoPrerequisites": "Impose Hesitation",
+      "canonicalPrerequisites": "Impose Hesitation, Wrong Decision",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "PREREQUISITE_TEXT_MISMATCH",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Knights of the Old Republic Campaign Guide|Corporate Power",
+      "tree": "Corporate Power",
+      "canonicalName": "Impose Confusion",
+      "page": 43,
+      "repoId": "d4da27798cbb18e6",
+      "repoName": "Impose Confusion",
+      "repoTreeName": "Corporate Power",
+      "repoPrerequisites": "Impose Hesitation",
+      "canonicalPrerequisites": "Impose Hesitation",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Knights of the Old Republic Campaign Guide|Corporate Power",
+      "tree": "Corporate Power",
+      "canonicalName": "Impose Hesitation",
+      "page": 43,
+      "repoId": "0fd8fc8cfae6f516",
+      "repoName": "Impose Hesitation",
+      "repoTreeName": "Corporate Power",
+      "repoPrerequisites": "",
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Knights of the Old Republic Campaign Guide|Corporate Power",
+      "tree": "Corporate Power",
+      "canonicalName": "Willful Resolve",
+      "page": 43,
+      "repoId": "f0c13c60b2e3f35b",
+      "repoName": "Willful Resolve",
+      "repoTreeName": "Corporate Power",
+      "repoPrerequisites": "",
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Knights of the Old Republic Campaign Guide|Corporate Power",
+      "tree": "Corporate Power",
+      "canonicalName": "Wrong Decision",
+      "page": 43,
+      "repoId": "463ae052e705eaf3",
+      "repoName": "Wrong Decision",
+      "repoTreeName": "Corporate Power",
+      "repoPrerequisites": "",
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Knights of the Old Republic Campaign Guide|Gladiatorial Combat",
+      "tree": "Gladiatorial Combat",
+      "canonicalName": "Brutal Attack",
+      "page": 44,
+      "repoId": "d9f47bfdde76475f",
+      "repoName": "Brutal Attack",
+      "repoTreeName": "Gladiatorial Combat",
+      "repoPrerequisites": "Weapon Focus",
+      "canonicalPrerequisites": "Weapon Focus with the chosen weapon",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "PREREQUISITE_TEXT_MISMATCH",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Knights of the Old Republic Campaign Guide|Gladiatorial Combat",
+      "tree": "Gladiatorial Combat",
+      "canonicalName": "Call Out",
+      "page": 44,
+      "repoId": "5c3036b82c047490",
+      "repoName": "Call Out",
+      "repoTreeName": "Gladiatorial Combat",
+      "repoPrerequisites": "Personal Vendetta",
+      "canonicalPrerequisites": "Personal Vendetta",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Knights of the Old Republic Campaign Guide|Gladiatorial Combat",
+      "tree": "Gladiatorial Combat",
+      "canonicalName": "Distracting Attack",
+      "page": 44,
+      "repoId": "cdf3e44536031f53",
+      "repoName": "Distracting Attack",
+      "repoTreeName": "Gladiatorial Combat",
+      "repoPrerequisites": "Brutal Attack",
+      "canonicalPrerequisites": "Brutal Attack with the weapon used",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "PREREQUISITE_TEXT_MISMATCH",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Knights of the Old Republic Campaign Guide|Gladiatorial Combat",
+      "tree": "Gladiatorial Combat",
+      "canonicalName": "Exotic Weapons Master",
+      "page": 44,
+      "repoId": "5a2dee101c2217b3",
+      "repoName": "Exotic Weapons Master",
+      "repoTreeName": "Gladiatorial Combat",
+      "repoPrerequisites": "",
+      "canonicalPrerequisites": "Proficiency in at least one exotic weapon",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "PREREQUISITE_TEXT_MISMATCH",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Knights of the Old Republic Campaign Guide|Gladiatorial Combat",
+      "tree": "Gladiatorial Combat",
+      "canonicalName": "Lockdown Strike",
+      "page": 45,
+      "repoId": "c7ecd80bdcdfaaba",
+      "repoName": "Lockdown Strike",
+      "repoTreeName": "Gladiatorial Combat",
+      "repoPrerequisites": "",
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Knights of the Old Republic Campaign Guide|Gladiatorial Combat",
+      "tree": "Gladiatorial Combat",
+      "canonicalName": "Multiattack Proficiency (exotic weapons)",
+      "page": 45,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "Exotic Weapons Master",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Knights of the Old Republic Campaign Guide|Gladiatorial Combat",
+      "tree": "Gladiatorial Combat",
+      "canonicalName": "Personal Vendetta",
+      "page": 45,
+      "repoId": "bc618e6b3da78b3e",
+      "repoName": "Personal Vendetta",
+      "repoTreeName": "Gladiatorial Combat",
+      "repoPrerequisites": "",
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Knights of the Old Republic Campaign Guide|Gladiatorial Combat",
+      "tree": "Gladiatorial Combat",
+      "canonicalName": "Unstoppable",
+      "page": 45,
+      "repoId": "9c0c0966b7c7c30e",
+      "repoName": "Unstoppable",
+      "repoTreeName": "Gladiatorial Combat",
+      "repoPrerequisites": "",
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Knights of the Old Republic Campaign Guide|Melee Duelist",
+      "tree": "Melee Duelist",
+      "canonicalName": "Advantageous Strike",
+      "page": 46,
+      "repoId": "c740ed344484a2b5",
+      "repoName": "Advantageous Strike",
+      "repoTreeName": "Melee Duelist",
+      "repoPrerequisites": "",
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Knights of the Old Republic Campaign Guide|Melee Duelist",
+      "tree": "Melee Duelist",
+      "canonicalName": "Dirty Tricks",
+      "page": 46,
+      "repoId": "46ef0773cd6ef86d",
+      "repoName": "Dirty Tricks",
+      "repoTreeName": "Melee Duelist",
+      "repoPrerequisites": "",
+      "canonicalPrerequisites": "Trained in Deception",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "PREREQUISITE_TEXT_MISMATCH",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Knights of the Old Republic Campaign Guide|Melee Duelist",
+      "tree": "Melee Duelist",
+      "canonicalName": "Dual Weapon Flourish I",
+      "page": 46,
+      "repoId": "5004013069710c3e",
+      "repoName": "Dual Weapon Flourish I",
+      "repoTreeName": "Melee Duelist",
+      "repoPrerequisites": "Dual Weapon Mastery I, Weapon Finesse",
+      "canonicalPrerequisites": "Dual Weapon Mastery I, Weapon Finesse",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Knights of the Old Republic Campaign Guide|Melee Duelist",
+      "tree": "Melee Duelist",
+      "canonicalName": "Dual Weapon Flourish II",
+      "page": 46,
+      "repoId": "02c69474cc7bbedd",
+      "repoName": "Dual Weapon Flourish II",
+      "repoTreeName": "Melee Duelist",
+      "repoPrerequisites": "Dual Weapon Mastery II, Dual Weapon Flourish I, Master of Elegance",
+      "canonicalPrerequisites": "Dual Weapon Mastery I, Weapon Finesse",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "PREREQUISITE_TEXT_MISMATCH",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Knights of the Old Republic Campaign Guide|Melee Duelist",
+      "tree": "Melee Duelist",
+      "canonicalName": "Master of Elegance",
+      "page": 46,
+      "repoId": "fc986d810732ff3a",
+      "repoName": "Master of Elegance",
+      "repoTreeName": "Melee Duelist",
+      "repoPrerequisites": "Dual or Single Weapon Flourish I",
+      "canonicalPrerequisites": "Dual Weapon Flourish I or Single Weapon Flourish I, Weapon Finesse",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "PREREQUISITE_TEXT_MISMATCH",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Knights of the Old Republic Campaign Guide|Melee Duelist",
+      "tree": "Melee Duelist",
+      "canonicalName": "Multiattack Proficiency (advanced melee weapons)",
+      "page": 47,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Knights of the Old Republic Campaign Guide|Melee Duelist",
+      "tree": "Melee Duelist",
+      "canonicalName": "Out of Nowhere",
+      "page": 47,
+      "repoId": "f7bc7dab38c43fb5",
+      "repoName": "Out of Nowhere",
+      "repoTreeName": "Melee Duelist",
+      "repoPrerequisites": "Deception, Weapon Finesse",
+      "canonicalPrerequisites": "Trained in Deception, Weapon Finesse",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "PREREQUISITE_TEXT_MISMATCH",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Knights of the Old Republic Campaign Guide|Melee Duelist",
+      "tree": "Melee Duelist",
+      "canonicalName": "Single Weapon Flourish I",
+      "page": 47,
+      "repoId": "499cfbb7489b1244",
+      "repoName": "Single Weapon Flourish I",
+      "repoTreeName": "Melee Duelist",
+      "repoPrerequisites": "Double Attack, Weapon Finesse",
+      "canonicalPrerequisites": "Double Attack (advanced melee weapons, exotic melee weapon, or lightsabers), Weapon Finesse",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "PREREQUISITE_TEXT_MISMATCH",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Knights of the Old Republic Campaign Guide|Melee Duelist",
+      "tree": "Melee Duelist",
+      "canonicalName": "Single Weapon Flourish II",
+      "page": 47,
+      "repoId": "bf23bf3704382723",
+      "repoName": "Single Weapon Flourish II",
+      "repoTreeName": "Melee Duelist",
+      "repoPrerequisites": "Master of Elegance, Single Weapon Flourish I",
+      "canonicalPrerequisites": "Double Attack (advanced melee weapons, exotic melee weapon, or lightsabers), Master of Elegance, Single Weapon Flourish I, Weapon Finesse",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "PREREQUISITE_TEXT_MISMATCH",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Alter",
+      "tree": "Alter",
+      "canonicalName": "Force Flow",
+      "page": 52,
+      "repoId": "b0898acb0a19a3cd",
+      "repoName": "Force Flow",
+      "repoTreeName": "Alter",
+      "repoPrerequisites": "",
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Alter",
+      "tree": "Alter",
+      "canonicalName": "Illusion",
+      "page": 52,
+      "repoId": "708a47d1be414990",
+      "repoName": "Illusion",
+      "repoTreeName": "Alter",
+      "repoPrerequisites": "Mind Trick",
+      "canonicalPrerequisites": "Mind trick",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Alter",
+      "tree": "Alter",
+      "canonicalName": "Telepathic Influence",
+      "page": 53,
+      "repoId": "3b30ffbfc3e3270f",
+      "repoName": "Telepathic Influence",
+      "repoTreeName": "Alter",
+      "repoPrerequisites": "Telepathic Link",
+      "canonicalPrerequisites": "Telepathic Link, trained in Use the Force",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "PREREQUISITE_TEXT_MISMATCH",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Alter",
+      "tree": "Alter",
+      "canonicalName": "Telepathic Link",
+      "page": 53,
+      "repoId": "25dd9d9b3b66c048",
+      "repoName": "Telepathic Link",
+      "repoTreeName": "Alter",
+      "repoPrerequisites": "",
+      "canonicalPrerequisites": "Trained in Use the Force",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "PREREQUISITE_TEXT_MISMATCH",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Control",
+      "tree": "Control",
+      "canonicalName": "Beast Trick",
+      "page": 53,
+      "repoId": "6c374ec52e710f11",
+      "repoName": "Beast Trick",
+      "repoTreeName": "Control",
+      "repoPrerequisites": "",
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Control",
+      "tree": "Control",
+      "canonicalName": "Force Suppression",
+      "page": 53,
+      "repoId": "7fa47c5d2c33ed40",
+      "repoName": "Force Suppression",
+      "repoTreeName": "Control",
+      "repoPrerequisites": "",
+      "canonicalPrerequisites": "rebuke Force power",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "PREREQUISITE_TEXT_MISMATCH",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Knights of the Old Republic Campaign Guide|Jal Shey",
+      "tree": "Jal Shey",
+      "canonicalName": "Action Exchange",
+      "page": 57,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "Force Delay",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Knights of the Old Republic Campaign Guide|Jal Shey",
+      "tree": "Jal Shey",
+      "canonicalName": "Force Delay",
+      "page": 57,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "Trained in Persuasion",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Knights of the Old Republic Campaign Guide|Jal Shey",
+      "tree": "Jal Shey",
+      "canonicalName": "Imbue Item",
+      "page": 58,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Knights of the Old Republic Campaign Guide|Jal Shey",
+      "tree": "Jal Shey",
+      "canonicalName": "Knowledge of the Force",
+      "page": 58,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Knights of the Old Republic Campaign Guide|Keetael",
+      "tree": "Keetael",
+      "canonicalName": "Conceal Force Use",
+      "page": 58,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Knights of the Old Republic Campaign Guide|Keetael",
+      "tree": "Keetael",
+      "canonicalName": "Force Direction",
+      "page": 58,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Knights of the Old Republic Campaign Guide|Keetael",
+      "tree": "Keetael",
+      "canonicalName": "Force Momentum",
+      "page": 58,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Knights of the Old Republic Campaign Guide|Keetael",
+      "tree": "Keetael",
+      "canonicalName": "Past Visions",
+      "page": 58,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "Visions",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Knights of the Old Republic Campaign Guide|Krath",
+      "tree": "Krath",
+      "canonicalName": "Dark Side Manipulation",
+      "page": 59,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Knights of the Old Republic Campaign Guide|Krath",
+      "tree": "Krath",
+      "canonicalName": "Krath Illusions",
+      "page": 60,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "||lusion",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Knights of the Old Republic Campaign Guide|Krath",
+      "tree": "Krath",
+      "canonicalName": "Krath Intuition",
+      "page": 60,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Knights of the Old Republic Campaign Guide|Krath",
+      "tree": "Krath",
+      "canonicalName": "Krath Surge",
+      "page": 60,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Knights of the Old Republic Campaign Guide|Luka Sene",
+      "tree": "Luka Sene",
+      "canonicalName": "Field Detection",
+      "page": 60,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "Trained in Use the Force",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Knights of the Old Republic Campaign Guide|Luka Sene",
+      "tree": "Luka Sene",
+      "canonicalName": "Improved Force Sight",
+      "page": 60,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "Force sight species trait, trained in Use the Force",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Knights of the Old Republic Campaign Guide|Luka Sene",
+      "tree": "Luka Sene",
+      "canonicalName": "Luka Sene Master",
+      "page": 60,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "Field Detection, farseeing",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Knights of the Old Republic Campaign Guide|Luka Sene",
+      "tree": "Luka Sene",
+      "canonicalName": "Quickseeing",
+      "page": 60,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "Trained in Use the Force, farseeing",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Knights of the Old Republic Campaign Guide|Order of Shasa",
+      "tree": "Order of Shasa",
+      "canonicalName": "Deception Awareness",
+      "page": 61,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Knights of the Old Republic Campaign Guide|Order of Shasa",
+      "tree": "Order of Shasa",
+      "canonicalName": "Greater Weapon Focus (Fira)",
+      "page": 61,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "Weapon Focus (fira)",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Knights of the Old Republic Campaign Guide|Order of Shasa",
+      "tree": "Order of Shasa",
+      "canonicalName": "Progenitor's Call",
+      "page": 61,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Knights of the Old Republic Campaign Guide|Order of Shasa",
+      "tree": "Order of Shasa",
+      "canonicalName": "Waveform",
+      "page": 61,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    }
+  ]
+}

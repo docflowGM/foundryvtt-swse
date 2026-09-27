@@ -1,0 +1,445 @@
+{
+  "schemaVersion": 1,
+  "phase": "2",
+  "sourcebook": "Starships of the Galaxy",
+  "generatedAt": "2026-09-27",
+  "branch": "audit/talent-phase-1-tree-census",
+  "scope": "Source-certified Starships of the Galaxy talents compared against the current repository talent-record mirror. No production records changed.",
+  "summary": {
+    "canonicalTalentPublications": 23,
+    "repositoryRecordsMapped": 22,
+    "missingCorrectTreeRecords": 1,
+    "statusCounts": {
+      "MAPPED_REQUIRES_CONTENT_REPAIR": 22,
+      "MISSING_CORRECT_TREE_RECORD": 1
+    },
+    "distinctSameNameCollisionRisks": 1,
+    "phase1dStructuralCorrections": 0,
+    "dispositionCounts": {
+      "DESCRIPTION_INCOMPLETE": 13,
+      "PREREQUISITE_ERROR": 7,
+      "SOURCE_ALIGNED_SHORTHAND": 6,
+      "MECHANICS_ERROR": 3,
+      "MISSING_CONTENT": 1,
+      "DISTINCT_SAME_NAME_IDENTITY_MISSING": 1
+    }
+  },
+  "missingRepositoryRecords": [
+    {
+      "tree": "Naval Officer",
+      "name": "Combined Fire",
+      "page": 18,
+      "canonicalTreeKey": "Starships of the Galaxy|Naval Officer",
+      "sameNameRepoCandidates": [
+        {
+          "repoId": "17518b7669101122",
+          "tree": "Mercenary",
+          "source": null
+        }
+      ]
+    }
+  ],
+  "sameNameCollisionRisks": [
+    {
+      "tree": "Naval Officer",
+      "name": "Combined Fire",
+      "page": 18,
+      "candidates": [
+        {
+          "repoId": "17518b7669101122",
+          "name": "Combined Fire",
+          "tree": "Mercenary",
+          "treeId": "naval-officer",
+          "source": null,
+          "prerequisites": "Coordinated Attack",
+          "benefit": "Deal +2 damage against targets damaged by an ally since the end of your last turn.",
+          "description": "Designate a vehicle or target; batteries deal extra damage when using Tactical Fire."
+        }
+      ]
+    }
+  ],
+  "talents": [
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Sense",
+      "tree": "Sense",
+      "canonicalName": "Force Reflexes",
+      "page": 16,
+      "repoId": "ece2612b7449f39a",
+      "repoName": "Force Reflexes",
+      "status": "MAPPED_REQUIRES_CONTENT_REPAIR",
+      "dispositions": [
+        "DESCRIPTION_INCOMPLETE",
+        "PREREQUISITE_ERROR"
+      ],
+      "notes": null,
+      "repoPrerequisites": "Starship Tactics, Force Pilot",
+      "canonicalPrerequisites": "Force Sensitivity, Starship Tactics, Force Pilot",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Lineage",
+      "tree": "Lineage",
+      "canonicalName": "Engineer",
+      "page": 16,
+      "repoId": "c727d7a40330d10d",
+      "repoName": "Engineer",
+      "status": "MAPPED_REQUIRES_CONTENT_REPAIR",
+      "dispositions": [
+        "SOURCE_ALIGNED_SHORTHAND"
+      ],
+      "notes": null,
+      "repoPrerequisites": "Educated, trained in Knowledge (technology)",
+      "canonicalPrerequisites": "Educated, trained in the Knowledge (technology) skill",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Starships of the Galaxy|Outlaw Tech",
+      "tree": "Outlaw Tech",
+      "canonicalName": "Fast Repairs",
+      "page": 16,
+      "repoId": "36f8497081dce05a",
+      "repoName": "Fast Repairs",
+      "status": "MAPPED_REQUIRES_CONTENT_REPAIR",
+      "dispositions": [
+        "MECHANICS_ERROR",
+        "PREREQUISITE_ERROR"
+      ],
+      "notes": "Repository says jury-rigging restores hit points; source grants temporary hit points that expire at encounter end.",
+      "repoPrerequisites": "",
+      "canonicalPrerequisites": "Trained in the Mechanics skill",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Starships of the Galaxy|Outlaw Tech",
+      "tree": "Outlaw Tech",
+      "canonicalName": "Hot Wire",
+      "page": 16,
+      "repoId": "d2b9069670413a43",
+      "repoName": "Hot Wire",
+      "status": "MAPPED_REQUIRES_CONTENT_REPAIR",
+      "dispositions": [
+        "DESCRIPTION_INCOMPLETE",
+        "PREREQUISITE_ERROR"
+      ],
+      "notes": null,
+      "repoPrerequisites": "",
+      "canonicalPrerequisites": "Trained in the Mechanics skill",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Starships of the Galaxy|Outlaw Tech",
+      "tree": "Outlaw Tech",
+      "canonicalName": "Quick Fix",
+      "page": 17,
+      "repoId": "3e6f7edaeec04a06",
+      "repoName": "Quick Fix",
+      "status": "MAPPED_REQUIRES_CONTENT_REPAIR",
+      "dispositions": [
+        "DESCRIPTION_INCOMPLETE",
+        "PREREQUISITE_ERROR"
+      ],
+      "notes": null,
+      "repoPrerequisites": "",
+      "canonicalPrerequisites": "Trained in the Mechanics skill",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Starships of the Galaxy|Outlaw Tech",
+      "tree": "Outlaw Tech",
+      "canonicalName": "Personalized Modifications",
+      "page": 17,
+      "repoId": "111b0a9d1f8d5111",
+      "repoName": "Personalized Modifications",
+      "status": "MAPPED_REQUIRES_CONTENT_REPAIR",
+      "dispositions": [
+        "DESCRIPTION_INCOMPLETE"
+      ],
+      "notes": null,
+      "repoPrerequisites": "",
+      "canonicalPrerequisites": "",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Expert Pilot",
+      "tree": "Expert Pilot",
+      "canonicalName": "Blind Spot",
+      "page": 17,
+      "repoId": "0be2881047fe9919",
+      "repoName": "Blind Spot",
+      "status": "MAPPED_REQUIRES_CONTENT_REPAIR",
+      "dispositions": [
+        "DESCRIPTION_INCOMPLETE"
+      ],
+      "notes": null,
+      "repoPrerequisites": "",
+      "canonicalPrerequisites": "",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Expert Pilot",
+      "tree": "Expert Pilot",
+      "canonicalName": "Close Scrape",
+      "page": 17,
+      "repoId": "66ed448a3a2e82bc",
+      "repoName": "Close Scrape",
+      "status": "MAPPED_REQUIRES_CONTENT_REPAIR",
+      "dispositions": [
+        "DESCRIPTION_INCOMPLETE"
+      ],
+      "notes": null,
+      "repoPrerequisites": "",
+      "canonicalPrerequisites": "",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Expert Pilot",
+      "tree": "Expert Pilot",
+      "canonicalName": "Improved Attack Run",
+      "page": 17,
+      "repoId": "538d7499a66a3672",
+      "repoName": "Improved Attack Run",
+      "status": "MAPPED_REQUIRES_CONTENT_REPAIR",
+      "dispositions": [
+        "SOURCE_ALIGNED_SHORTHAND"
+      ],
+      "notes": null,
+      "repoPrerequisites": "",
+      "canonicalPrerequisites": "",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Expert Pilot",
+      "tree": "Expert Pilot",
+      "canonicalName": "Vehicle Focus",
+      "page": 17,
+      "repoId": "4764dc69f0d11695",
+      "repoName": "Vehicle Focus",
+      "status": "MAPPED_REQUIRES_CONTENT_REPAIR",
+      "dispositions": [
+        "SOURCE_ALIGNED_SHORTHAND"
+      ],
+      "notes": null,
+      "repoPrerequisites": "Wisdom 13",
+      "canonicalPrerequisites": "Wisdom 13",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Expert Pilot",
+      "tree": "Expert Pilot",
+      "canonicalName": "Wingman",
+      "page": 17,
+      "repoId": "60b02b78caed8e16",
+      "repoName": "Wingman",
+      "status": "MAPPED_REQUIRES_CONTENT_REPAIR",
+      "dispositions": [
+        "DESCRIPTION_INCOMPLETE"
+      ],
+      "notes": null,
+      "repoPrerequisites": "Wisdom 13",
+      "canonicalPrerequisites": "Wisdom 13",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Gunner",
+      "tree": "Gunner",
+      "canonicalName": "Crippling Hit",
+      "page": 17,
+      "repoId": "4a78bd6bfe03eb8c",
+      "repoName": "Crippling Hit",
+      "status": "MAPPED_REQUIRES_CONTENT_REPAIR",
+      "dispositions": [
+        "DESCRIPTION_INCOMPLETE",
+        "PREREQUISITE_ERROR"
+      ],
+      "notes": null,
+      "repoPrerequisites": "System Hit",
+      "canonicalPrerequisites": "Expert Gunner, System Hit",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Gunner",
+      "tree": "Gunner",
+      "canonicalName": "Great Shot",
+      "page": 17,
+      "repoId": "221eb131fcb23585",
+      "repoName": "Great Shot",
+      "status": "MAPPED_REQUIRES_CONTENT_REPAIR",
+      "dispositions": [
+        "SOURCE_ALIGNED_SHORTHAND"
+      ],
+      "notes": null,
+      "repoPrerequisites": "",
+      "canonicalPrerequisites": "",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Gunner",
+      "tree": "Gunner",
+      "canonicalName": "Synchronized Fire",
+      "page": 17,
+      "repoId": "388f30468a80f221",
+      "repoName": "Synchronized Fire",
+      "status": "MAPPED_REQUIRES_CONTENT_REPAIR",
+      "dispositions": [
+        "DESCRIPTION_INCOMPLETE"
+      ],
+      "notes": null,
+      "repoPrerequisites": "Expert Gunner",
+      "canonicalPrerequisites": "Expert Gunner",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Starships of the Galaxy|Squadron Leader",
+      "tree": "Squadron Leader",
+      "canonicalName": "Begin Attack Run",
+      "page": 17,
+      "repoId": "7e0b34a95b5f465d",
+      "repoName": "Begin Attack Run",
+      "status": "MAPPED_REQUIRES_CONTENT_REPAIR",
+      "dispositions": [
+        "SOURCE_ALIGNED_SHORTHAND"
+      ],
+      "notes": null,
+      "repoPrerequisites": "Charisma 13",
+      "canonicalPrerequisites": "Charisma 13",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Starships of the Galaxy|Squadron Leader",
+      "tree": "Squadron Leader",
+      "canonicalName": "Regroup",
+      "page": 18,
+      "repoId": "10a43f0f9d4b31f5",
+      "repoName": "Regroup",
+      "status": "MAPPED_REQUIRES_CONTENT_REPAIR",
+      "dispositions": [
+        "SOURCE_ALIGNED_SHORTHAND"
+      ],
+      "notes": null,
+      "repoPrerequisites": "Charisma 13",
+      "canonicalPrerequisites": "Charisma 13",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Starships of the Galaxy|Squadron Leader",
+      "tree": "Squadron Leader",
+      "canonicalName": "Squadron Maneuvers",
+      "page": 18,
+      "repoId": "991dbfc3a436b5a1",
+      "repoName": "Squadron Maneuvers",
+      "status": "MAPPED_REQUIRES_CONTENT_REPAIR",
+      "dispositions": [
+        "MECHANICS_ERROR",
+        "PREREQUISITE_ERROR"
+      ],
+      "notes": "Repository says it grants a prerequisite of a chosen talent; source grants the benefits of one Expert Pilot or Gunner talent you already possess to the squadron.",
+      "repoPrerequisites": "Charisma 13, any other Ace talent",
+      "canonicalPrerequisites": "Charisma 13, any other ace pilot talent",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Starships of the Galaxy|Squadron Leader",
+      "tree": "Squadron Leader",
+      "canonicalName": "Squadron Tactics",
+      "page": 18,
+      "repoId": "ec12bc7f161a0893",
+      "repoName": "Squadron Tactics",
+      "status": "MAPPED_REQUIRES_CONTENT_REPAIR",
+      "dispositions": [
+        "DESCRIPTION_INCOMPLETE",
+        "PREREQUISITE_ERROR"
+      ],
+      "notes": null,
+      "repoPrerequisites": "Charisma 13, Starship Tactics, Squadron Maneuvers",
+      "canonicalPrerequisites": "Charisma 13, Wisdom 13, any other ace pilot talent, Squadron Maneuvers, Starship Tactics",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Starships of the Galaxy|Naval Officer",
+      "tree": "Naval Officer",
+      "canonicalName": "Combined Fire",
+      "page": 18,
+      "repoId": null,
+      "repoName": null,
+      "status": "MISSING_CORRECT_TREE_RECORD",
+      "dispositions": [
+        "MISSING_CONTENT",
+        "DISTINCT_SAME_NAME_IDENTITY_MISSING"
+      ],
+      "notes": "Same-name repository record belongs to a different canonical tree and must not be reused by display name alone.",
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "",
+      "sameNameRepoCandidates": [
+        {
+          "repoId": "17518b7669101122",
+          "tree": "Mercenary",
+          "source": null
+        }
+      ]
+    },
+    {
+      "canonicalTreeKey": "Starships of the Galaxy|Naval Officer",
+      "tree": "Naval Officer",
+      "canonicalName": "Fleet Deployment",
+      "page": 18,
+      "repoId": "d1c2e9bdbb58b715",
+      "repoName": "Fleet Deployment",
+      "status": "MAPPED_REQUIRES_CONTENT_REPAIR",
+      "dispositions": [
+        "DESCRIPTION_INCOMPLETE"
+      ],
+      "notes": null,
+      "repoPrerequisites": "Charisma 13",
+      "canonicalPrerequisites": "Charisma 13",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Starships of the Galaxy|Naval Officer",
+      "tree": "Naval Officer",
+      "canonicalName": "Fleet Tactics",
+      "page": 18,
+      "repoId": "d8d7218123a28f39",
+      "repoName": "Fleet Tactics",
+      "status": "MAPPED_REQUIRES_CONTENT_REPAIR",
+      "dispositions": [
+        "DESCRIPTION_INCOMPLETE"
+      ],
+      "notes": null,
+      "repoPrerequisites": "Charisma 13, Fleet Deployment",
+      "canonicalPrerequisites": "Charisma 13, Fleet Deployment",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Starships of the Galaxy|Naval Officer",
+      "tree": "Naval Officer",
+      "canonicalName": "It's a Trap!",
+      "page": 18,
+      "repoId": "8fe560a110d8f4ee",
+      "repoName": "It's a Trap",
+      "status": "MAPPED_REQUIRES_CONTENT_REPAIR",
+      "dispositions": [
+        "MECHANICS_ERROR"
+      ],
+      "notes": "Repository wording suggests forcing a vehicle to move; source grants that vehicle's pilot an immediate move action.",
+      "repoPrerequisites": "",
+      "canonicalPrerequisites": "",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Starships of the Galaxy|Naval Officer",
+      "tree": "Naval Officer",
+      "canonicalName": "Legendary Commander",
+      "page": 18,
+      "repoId": "d1683318140f3906",
+      "repoName": "Legendary Commander",
+      "status": "MAPPED_REQUIRES_CONTENT_REPAIR",
+      "dispositions": [
+        "DESCRIPTION_INCOMPLETE"
+      ],
+      "notes": null,
+      "repoPrerequisites": "Charisma 13, Intelligence 13, Born Leader",
+      "canonicalPrerequisites": "Charisma 13, Intelligence 13, Born Leader",
+      "sameNameRepoCandidates": []
+    }
+  ]
+}

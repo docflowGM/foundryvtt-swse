@@ -1,0 +1,2107 @@
+{
+  "schemaVersion": 1,
+  "phase": "2",
+  "sourcebook": "Scum and Villainy",
+  "generatedAt": "2026-09-27",
+  "branch": "audit/talent-phase-1-tree-census",
+  "scope": "Source-certified Scum and Villainy talents compared against the current repository talent-record mirror. No production records changed.",
+  "summary": {
+    "canonicalTalentPublications": 110,
+    "repositoryRecordsMapped": 104,
+    "missingCorrectTreeRecords": 6,
+    "phase1dStructuralCorrections": 2,
+    "distinctSameNameCollisionRisks": 5,
+    "dispositionCounts": {
+      "CANONICAL_TEXT_PRESENT": 1,
+      "CANONICAL_FULL_TEXT_MISSING_OR_ABBREVIATED": 103,
+      "PREREQUISITE_ERROR": 33,
+      "MECHANICS_ERROR": 3,
+      "DESCRIPTION_ERROR": 1,
+      "MISSING_CONTENT": 6,
+      "DISTINCT_SAME_NAME_IDENTITY_MISSING": 5
+    },
+    "sourceMetadataMissing": 104,
+    "summaryMissing": 104
+  },
+  "phase1dStructuralCorrections": [
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Inspiration",
+      "page": 14,
+      "disposition": "PHASE_1D_STRUCTURAL_IDENTITY_CORRECTED",
+      "replaced": "Bolster Ally",
+      "canonical": "Beloved",
+      "reason": "Bolster Ally is printed as a prerequisite of Beloved, not the Scum expansion talent."
+    },
+    {
+      "canonicalTreeKey": "Scum and Villainy|Disgrace",
+      "page": 14,
+      "disposition": "PHASE_1D_STRUCTURAL_OVERINCLUSION_CORRECTED",
+      "removed": "Draw Fire",
+      "reason": "Draw Fire is only a cross-tree reference inside Misplaced Loyalty; the Disgrace tree publishes six talents."
+    }
+  ],
+  "missingRepositoryRecords": [
+    {
+      "tree": "Pistoleer",
+      "name": "Flanking Fire",
+      "page": 28,
+      "canonicalTreeKey": "Scum and Villainy|Pistoleer",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "GenoHaradan",
+      "name": "Deadly Repercussions",
+      "page": 29,
+      "canonicalTreeKey": "Scum and Villainy|GenoHaradan",
+      "sameNameRepoCandidates": [
+        {
+          "repoId": "58c3d63d94288eb2",
+          "tree": "Genohardan",
+          "source": null
+        }
+      ]
+    },
+    {
+      "tree": "GenoHaradan",
+      "name": "Manipulating Strike",
+      "page": 30,
+      "canonicalTreeKey": "Scum and Villainy|GenoHaradan",
+      "sameNameRepoCandidates": [
+        {
+          "repoId": "9f01b5c07bbd5f76",
+          "tree": "Genohardan",
+          "source": null
+        }
+      ]
+    },
+    {
+      "tree": "GenoHaradan",
+      "name": "Improved Manipulating Strike",
+      "page": 30,
+      "canonicalTreeKey": "Scum and Villainy|GenoHaradan",
+      "sameNameRepoCandidates": [
+        {
+          "repoId": "8d14ab116a78dfd6",
+          "tree": "Genohardan",
+          "source": null
+        }
+      ]
+    },
+    {
+      "tree": "GenoHaradan",
+      "name": "Pulling the Strings",
+      "page": 30,
+      "canonicalTreeKey": "Scum and Villainy|GenoHaradan",
+      "sameNameRepoCandidates": [
+        {
+          "repoId": "d6faa4b87d5c35ce",
+          "tree": "Genohardan",
+          "source": null
+        }
+      ]
+    },
+    {
+      "tree": "Piracy",
+      "name": "Keep Them Reeling",
+      "page": 33,
+      "canonicalTreeKey": "Scum and Villainy|Piracy",
+      "sameNameRepoCandidates": [
+        {
+          "repoId": "24bf81bc6d74fafd",
+          "tree": "Ambusher",
+          "source": null
+        }
+      ]
+    }
+  ],
+  "sameNameCollisionRisks": [
+    {
+      "tree": "GenoHaradan",
+      "name": "Deadly Repercussions",
+      "page": 29,
+      "candidates": [
+        {
+          "repoId": "58c3d63d94288eb2",
+          "name": "Deadly Repercussions",
+          "tree": "Genohardan",
+          "treeId": "genohardan",
+          "source": null,
+          "prerequisites": "",
+          "benefit": "When you reduce an opponent to 0 hp, all opponents in line of sight of you and the target take -2 attack until your next turn.",
+          "description": "When you reduce an opponent to 0 hit points, all enemies in line of sight take –2 attack until your next turn."
+        }
+      ]
+    },
+    {
+      "tree": "GenoHaradan",
+      "name": "Manipulating Strike",
+      "page": 30,
+      "candidates": [
+        {
+          "repoId": "9f01b5c07bbd5f76",
+          "name": "Manipulating Strike",
+          "tree": "Genohardan",
+          "treeId": "genohardan",
+          "source": null,
+          "prerequisites": "",
+          "benefit": "Once per turn, when you damage a target with a non-area attack, make Persuasion vs Will Defense to control that target's swift action.",
+          "description": "Once per turn, after damaging a target, make a Persuasion check to determine their next swift action."
+        }
+      ]
+    },
+    {
+      "tree": "GenoHaradan",
+      "name": "Improved Manipulating Strike",
+      "page": 30,
+      "candidates": [
+        {
+          "repoId": "8d14ab116a78dfd6",
+          "name": "Improved Manipulating Strike",
+          "tree": "Genohardan",
+          "treeId": "genohardan",
+          "source": null,
+          "prerequisites": "Manipulating Strike",
+          "benefit": "Once per turn, when you damage a target with a non-area attack, make Persuasion vs Will Defense to control that target's move action.",
+          "description": "Once per turn, after damaging a target, make a Persuasion check to determine their next move action."
+        }
+      ]
+    },
+    {
+      "tree": "GenoHaradan",
+      "name": "Pulling the Strings",
+      "page": 30,
+      "candidates": [
+        {
+          "repoId": "d6faa4b87d5c35ce",
+          "name": "Pulling the Strings",
+          "tree": "Genohardan",
+          "treeId": "genohardan",
+          "source": null,
+          "prerequisites": "",
+          "benefit": "Make Persuasion vs Will Defense within 12 squares to move the target half its speed toward you and make an immediate attack.",
+          "description": "Use Persuasion vs Will Defense to move a target toward you and force an immediate attack."
+        }
+      ]
+    },
+    {
+      "tree": "Piracy",
+      "name": "Keep Them Reeling",
+      "page": 33,
+      "candidates": [
+        {
+          "repoId": "24bf81bc6d74fafd",
+          "name": "Keep Them Reeling",
+          "tree": "Ambusher",
+          "treeId": "piracy",
+          "source": null,
+          "prerequisites": "Ambush Specialist",
+          "benefit": "Once per turn, make an opposed Initiative check vs your prime target; if you win, the prime target is flat-footed against you.",
+          "description": "Make a melee attack; if it hits, deal no damage but force the target to move or withdraw next turn."
+        }
+      ]
+    }
+  ],
+  "confirmedHighImpactContentDefects": [
+    {
+      "tree": "Inspiration",
+      "name": "Beloved",
+      "page": 14,
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_ABBREVIATED",
+        "MECHANICS_ERROR"
+      ],
+      "notes": "Repository Guardian summary reverses the beneficiary: the source gives the character +2 Reflex while near the chosen ally; it does not give the ally +2 Reflex."
+    },
+    {
+      "tree": "Misfortune",
+      "name": "Cunning Strategist",
+      "page": 15,
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_ABBREVIATED",
+        "PREREQUISITE_ERROR",
+        "MECHANICS_ERROR"
+      ],
+      "notes": "Repository Vicious Attack summary changes the mechanic: the source imposes -5 on the character's two attack rolls, not a -5 attack penalty on the targets."
+    },
+    {
+      "tree": "Fringer",
+      "name": "Keep it Together",
+      "page": 17,
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_ABBREVIATED",
+        "DESCRIPTION_ERROR"
+      ],
+      "notes": "Repository benefit is broadly source-aligned, but its description incorrectly says the vehicle simply avoids moving down the condition track once per encounter."
+    },
+    {
+      "tree": "Assassin",
+      "name": "Murderous Arts II",
+      "page": 29,
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_ABBREVIATED",
+        "MECHANICS_ERROR"
+      ],
+      "notes": "Repository changes '+1 die of damage' to '+1d6 damage'."
+    }
+  ],
+  "talents": [
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Jedi Sentinel",
+      "tree": "Jedi Sentinel",
+      "canonicalName": "Persistent Haze",
+      "page": 13,
+      "repoId": "797de6f9dab4d578",
+      "repoName": "Persistent Haze",
+      "repoTreeName": "Jedi Sentinel",
+      "repoPrerequisites": "Clear Mind, Force Haze",
+      "canonicalPrerequisites": "Clear Mind, Force Haze",
+      "dispositions": [
+        "CANONICAL_TEXT_PRESENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Scum and Villainy|Disgrace",
+      "tree": "Disgrace",
+      "canonicalName": "Ambush",
+      "page": 13,
+      "repoId": "a3ac90e84127805d",
+      "repoName": "Ambush",
+      "repoTreeName": "Disgrace",
+      "repoPrerequisites": "Dirty Tactics",
+      "canonicalPrerequisites": "Dirty Tactics",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_ABBREVIATED"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Scum and Villainy|Disgrace",
+      "tree": "Disgrace",
+      "canonicalName": "Castigate",
+      "page": 14,
+      "repoId": "cad07bbaa57634c0",
+      "repoName": "Castigate",
+      "repoTreeName": "Disgrace",
+      "repoPrerequisites": "",
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_ABBREVIATED"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Scum and Villainy|Disgrace",
+      "tree": "Disgrace",
+      "canonicalName": "Dirty Tactics",
+      "page": 14,
+      "repoId": "1e7a0010a589b870",
+      "repoName": "Dirty Tactics",
+      "repoTreeName": "Disgrace",
+      "repoPrerequisites": "",
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_ABBREVIATED"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Scum and Villainy|Disgrace",
+      "tree": "Disgrace",
+      "canonicalName": "Misplaced Loyalty",
+      "page": 14,
+      "repoId": "4635850263c7bf94",
+      "repoName": "Misplaced Loyalty",
+      "repoTreeName": "Disgrace",
+      "repoPrerequisites": "Dirty Tactics",
+      "canonicalPrerequisites": "Dirty Tactics",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_ABBREVIATED"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Scum and Villainy|Disgrace",
+      "tree": "Disgrace",
+      "canonicalName": "Two-Faced",
+      "page": 14,
+      "repoId": "cef9b7ca6a26f4a6",
+      "repoName": "Two-Faced",
+      "repoTreeName": "Disgrace",
+      "repoPrerequisites": "Misplaced Loyalty",
+      "canonicalPrerequisites": "Dirty Tactics, Misplaced Loyalty",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_ABBREVIATED",
+        "PREREQUISITE_ERROR"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Scum and Villainy|Disgrace",
+      "tree": "Disgrace",
+      "canonicalName": "Unreadable",
+      "page": 14,
+      "repoId": "01bcee2365b82ce6",
+      "repoName": "Unreadable",
+      "repoTreeName": "Disgrace",
+      "repoPrerequisites": "",
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_ABBREVIATED"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Inspiration",
+      "tree": "Inspiration",
+      "canonicalName": "Beloved",
+      "page": 14,
+      "repoId": "444c032c563c18a1",
+      "repoName": "Beloved",
+      "repoTreeName": "Inspiration",
+      "repoPrerequisites": "Bolster Ally, Inspire Confidence",
+      "canonicalPrerequisites": "Bolster Ally, Inspire Confidence",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_ABBREVIATED",
+        "MECHANICS_ERROR"
+      ],
+      "notes": "Repository Guardian summary reverses the beneficiary: the source gives the character +2 Reflex while near the chosen ally; it does not give the ally +2 Reflex.",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Fortune",
+      "tree": "Fortune",
+      "canonicalName": "Avert Disaster",
+      "page": 14,
+      "repoId": "f453d09361b02e5a",
+      "repoName": "Avert Disaster",
+      "repoTreeName": "Fortune",
+      "repoPrerequisites": "Fool's Luck",
+      "canonicalPrerequisites": "Fool's Luck",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_ABBREVIATED"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Fortune",
+      "tree": "Fortune",
+      "canonicalName": "Better Lucky than Dead",
+      "page": 14,
+      "repoId": "bea59db82b097eea",
+      "repoName": "Better Lucky than Dead",
+      "repoTreeName": "Fortune",
+      "repoPrerequisites": "Fool's Luck",
+      "canonicalPrerequisites": "Fool's Luck",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_ABBREVIATED"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Fortune",
+      "tree": "Fortune",
+      "canonicalName": "Dumb Luck",
+      "page": 14,
+      "repoId": "7a024dac260bf9ec",
+      "repoName": "Dumb Luck",
+      "repoTreeName": "Fortune",
+      "repoPrerequisites": "Fool's Luck, Knack",
+      "canonicalPrerequisites": "Knack, Lucky Shot",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_ABBREVIATED",
+        "PREREQUISITE_ERROR"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Fortune",
+      "tree": "Fortune",
+      "canonicalName": "Labyrinthine Mind",
+      "page": 15,
+      "repoId": "e07f87b5dbcf035f",
+      "repoName": "Labyrinthine Mind",
+      "repoTreeName": "Fortune",
+      "repoPrerequisites": "",
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_ABBREVIATED"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Fortune",
+      "tree": "Fortune",
+      "canonicalName": "Ricochet Shot",
+      "page": 15,
+      "repoId": "5459cc5eedf15c8d",
+      "repoName": "Ricochet Shot",
+      "repoTreeName": "Fortune",
+      "repoPrerequisites": "Fool's Luck, Knack",
+      "canonicalPrerequisites": "Knack, Lucky Shot",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_ABBREVIATED",
+        "PREREQUISITE_ERROR"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Fortune",
+      "tree": "Fortune",
+      "canonicalName": "Uncanny Luck",
+      "page": 15,
+      "repoId": "e435b618793d8bc7",
+      "repoName": "Uncanny Luck",
+      "repoTreeName": "Fortune",
+      "repoPrerequisites": "Fool's Luck, Knack",
+      "canonicalPrerequisites": "Knack, Lucky Shot",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_ABBREVIATED",
+        "PREREQUISITE_ERROR"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Fortune",
+      "tree": "Fortune",
+      "canonicalName": "Unlikely Shot",
+      "page": 15,
+      "repoId": "beae25ca4ed40eea",
+      "repoName": "Unlikely Shot",
+      "repoTreeName": "Fortune",
+      "repoPrerequisites": "Fool's Luck, Knack",
+      "canonicalPrerequisites": "Knack, Lucky Shot",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_ABBREVIATED",
+        "PREREQUISITE_ERROR"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Misfortune",
+      "tree": "Misfortune",
+      "canonicalName": "Befuddle",
+      "page": 15,
+      "repoId": "1b26576c71db3b1b",
+      "repoName": "Befuddle",
+      "repoTreeName": "Misfortune",
+      "repoPrerequisites": "",
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_ABBREVIATED"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Misfortune",
+      "tree": "Misfortune",
+      "canonicalName": "Cunning Strategist",
+      "page": 15,
+      "repoId": "94adb5de4d3a7b20",
+      "repoName": "Cunning Strategist",
+      "repoTreeName": "Misfortune",
+      "repoPrerequisites": "Walk the Line",
+      "canonicalPrerequisites": "Disruptive, Walk the Line",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_ABBREVIATED",
+        "PREREQUISITE_ERROR",
+        "MECHANICS_ERROR"
+      ],
+      "notes": "Repository Vicious Attack summary changes the mechanic: the source imposes -5 on the character's two attack rolls, not a -5 attack penalty on the targets.",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Misfortune",
+      "tree": "Misfortune",
+      "canonicalName": "Hesitate",
+      "page": 15,
+      "repoId": "1c381292494e3139",
+      "repoName": "Hesitate",
+      "repoTreeName": "Misfortune",
+      "repoPrerequisites": "",
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_ABBREVIATED"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Misfortune",
+      "tree": "Misfortune",
+      "canonicalName": "Improved Skirmisher",
+      "page": 15,
+      "repoId": "dd69400f0069f846",
+      "repoName": "Improved Skirmisher",
+      "repoTreeName": "Misfortune",
+      "repoPrerequisites": "Skirmisher",
+      "canonicalPrerequisites": "Skirmisher",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_ABBREVIATED"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Misfortune",
+      "tree": "Misfortune",
+      "canonicalName": "Sow Confusion",
+      "page": 15,
+      "repoId": "6b09fe0c6fe98367",
+      "repoName": "Sow Confusion",
+      "repoTreeName": "Misfortune",
+      "repoPrerequisites": "Hesitate",
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_ABBREVIATED",
+        "PREREQUISITE_ERROR"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Misfortune",
+      "tree": "Misfortune",
+      "canonicalName": "Sudden Strike",
+      "page": 15,
+      "repoId": "08c80cfea1a3b886",
+      "repoName": "Sudden Strike",
+      "repoTreeName": "Misfortune",
+      "repoPrerequisites": "Skirmisher, Sneak Attack",
+      "canonicalPrerequisites": "Skirmisher, Sneak Attack",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_ABBREVIATED"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Misfortune",
+      "tree": "Misfortune",
+      "canonicalName": "Weakening Strike",
+      "page": 15,
+      "repoId": "9c1e0b0566cb45c2",
+      "repoName": "Weakening Strike",
+      "repoTreeName": "Misfortune",
+      "repoPrerequisites": "Dastardly Attack",
+      "canonicalPrerequisites": "Dastardly Strike",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_ABBREVIATED",
+        "PREREQUISITE_ERROR"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Slicer",
+      "tree": "Slicer",
+      "canonicalName": "Virus",
+      "page": 16,
+      "repoId": "aa964478cf5b30e8",
+      "repoName": "Virus",
+      "repoTreeName": "Slicer",
+      "repoPrerequisites": "Electronic Sabotage",
+      "canonicalPrerequisites": "Electronic Sabotage, trained in Use Computer",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_ABBREVIATED",
+        "PREREQUISITE_ERROR"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Spacer",
+      "tree": "Spacer",
+      "canonicalName": "Cramped Quarters Fighting",
+      "page": 16,
+      "repoId": "2b424f7cc4115acf",
+      "repoName": "Cramped Quarters Fighting",
+      "repoTreeName": "Spacer",
+      "repoPrerequisites": "Starship Raider",
+      "canonicalPrerequisites": "Spacehound, Starship Raider",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_ABBREVIATED",
+        "PREREQUISITE_ERROR"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Spacer",
+      "tree": "Spacer",
+      "canonicalName": "Make a Break for It",
+      "page": 16,
+      "repoId": "294bad1c8a7b4132",
+      "repoName": "Make a Break for It",
+      "repoTreeName": "Spacer",
+      "repoPrerequisites": "Stellar Warrior",
+      "canonicalPrerequisites": "Spacehound, Stellar Warrior",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_ABBREVIATED",
+        "PREREQUISITE_ERROR"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Camouflage",
+      "tree": "Camouflage",
+      "canonicalName": "Hide in Plain Sight",
+      "page": 16,
+      "repoId": "f25d28252bade7d1",
+      "repoName": "Hide in Plain Sight",
+      "repoTreeName": "Camouflage",
+      "repoPrerequisites": "Hidden Movement",
+      "canonicalPrerequisites": "Hidden Movement, Improved Stealth",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_ABBREVIATED",
+        "PREREQUISITE_ERROR"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Camouflage",
+      "tree": "Camouflage",
+      "canonicalName": "Hunker Down",
+      "page": 16,
+      "repoId": "11065e811d738b6e",
+      "repoName": "Hunker Down",
+      "repoTreeName": "Camouflage",
+      "repoPrerequisites": "",
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_ABBREVIATED"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Camouflage",
+      "tree": "Camouflage",
+      "canonicalName": "Shadow Striker",
+      "page": 16,
+      "repoId": "bca8ce9a488cf3d8",
+      "repoName": "Shadow Striker",
+      "repoTreeName": "Camouflage",
+      "repoPrerequisites": "Hidden Movement",
+      "canonicalPrerequisites": "Hidden Movement, Improved Stealth",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_ABBREVIATED",
+        "PREREQUISITE_ERROR"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Fringer",
+      "tree": "Fringer",
+      "canonicalName": "Flee",
+      "page": 17,
+      "repoId": "9ee88ce289527ed3",
+      "repoName": "Flee",
+      "repoTreeName": "Fringer",
+      "repoPrerequisites": "Long Stride",
+      "canonicalPrerequisites": "Long Stride",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_ABBREVIATED"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Fringer",
+      "tree": "Fringer",
+      "canonicalName": "Keep it Together",
+      "page": 17,
+      "repoId": "9211e3f6268b3413",
+      "repoName": "Keep it Together",
+      "repoTreeName": "Fringer",
+      "repoPrerequisites": "Jury-Rigger",
+      "canonicalPrerequisites": "Jury-Rigger",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_ABBREVIATED",
+        "DESCRIPTION_ERROR"
+      ],
+      "notes": "Repository benefit is broadly source-aligned, but its description incorrectly says the vehicle simply avoids moving down the condition track once per encounter.",
+      "sameNameRepoCandidates": [
+        {
+          "repoId": "b7d5a1bc3d40b964",
+          "name": "Keep It Together",
+          "tree": "Expert Pilot",
+          "source": null
+        }
+      ]
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Fringer",
+      "tree": "Fringer",
+      "canonicalName": "Sidestep",
+      "page": 17,
+      "repoId": "b4ae0f26326cdf71",
+      "repoName": "Sidestep",
+      "repoTreeName": "Fringer",
+      "repoPrerequisites": "Long Stride",
+      "canonicalPrerequisites": "Long Stride",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_ABBREVIATED"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Fringer",
+      "tree": "Fringer",
+      "canonicalName": "Surge",
+      "page": 17,
+      "repoId": "0a0681811f43b128",
+      "repoName": "Surge",
+      "repoTreeName": "Fringer",
+      "repoPrerequisites": "Long Stride",
+      "canonicalPrerequisites": "Long Stride",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_ABBREVIATED"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Fringer",
+      "tree": "Fringer",
+      "canonicalName": "Swift Strider",
+      "page": 17,
+      "repoId": "cae4f000dcfddd99",
+      "repoName": "Swift Strider",
+      "repoTreeName": "Fringer",
+      "repoPrerequisites": "Sidestep",
+      "canonicalPrerequisites": "Long Stride, Sidestep",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_ABBREVIATED",
+        "PREREQUISITE_ERROR"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Brawler",
+      "tree": "Brawler",
+      "canonicalName": "Cantina Brawler",
+      "page": 17,
+      "repoId": "430b73348460715e",
+      "repoName": "Cantina Brawler",
+      "repoTreeName": "Brawler",
+      "repoPrerequisites": "",
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_ABBREVIATED"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Brawler",
+      "tree": "Brawler",
+      "canonicalName": "Counterpunch",
+      "page": 18,
+      "repoId": "e1ac13b319b66c76",
+      "repoName": "Counterpunch",
+      "repoTreeName": "Brawler",
+      "repoPrerequisites": "",
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_ABBREVIATED"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Brawler",
+      "tree": "Brawler",
+      "canonicalName": "Experienced Brawler",
+      "page": 18,
+      "repoId": "bab0b5d081e304b6",
+      "repoName": "Experienced Brawler",
+      "repoTreeName": "Brawler",
+      "repoPrerequisites": "Stunning Strike",
+      "canonicalPrerequisites": "Melee Smash, Stunning Strike",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_ABBREVIATED",
+        "PREREQUISITE_ERROR"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Brawler",
+      "tree": "Brawler",
+      "canonicalName": "Make Do",
+      "page": 18,
+      "repoId": "95ae8969ac50b180",
+      "repoName": "Make Do",
+      "repoTreeName": "Brawler",
+      "repoPrerequisites": "",
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_ABBREVIATED"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Brawler",
+      "tree": "Brawler",
+      "canonicalName": "Man Down",
+      "page": 18,
+      "repoId": "da6a06aaf630376d",
+      "repoName": "Man Down",
+      "repoTreeName": "Brawler",
+      "repoPrerequisites": "",
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_ABBREVIATED"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Brawler",
+      "tree": "Brawler",
+      "canonicalName": "Pick a Fight",
+      "page": 18,
+      "repoId": "ffe31e578e9abeee",
+      "repoName": "Pick a Fight",
+      "repoTreeName": "Brawler",
+      "repoPrerequisites": "Cantina Brawler",
+      "canonicalPrerequisites": "Cantina Brawler",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_ABBREVIATED"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Brawler",
+      "tree": "Brawler",
+      "canonicalName": "Sucker Punch",
+      "page": 18,
+      "repoId": "6044037b6eb3ede9",
+      "repoName": "Sucker Punch",
+      "repoTreeName": "Brawler",
+      "repoPrerequisites": "",
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_ABBREVIATED"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Weapon Specialist",
+      "tree": "Weapon Specialist",
+      "canonicalName": "Crushing Assault",
+      "page": 18,
+      "repoId": "e1cb0fd81f7f6d44",
+      "repoName": "Crushing Assault",
+      "repoTreeName": "Weapon Specialist",
+      "repoPrerequisites": "Weapon Specialization",
+      "canonicalPrerequisites": "Weapon Specialization",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_ABBREVIATED"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Weapon Specialist",
+      "tree": "Weapon Specialist",
+      "canonicalName": "Impaling Assault",
+      "page": 18,
+      "repoId": "86a8e796b6c4deae",
+      "repoName": "Impaling Assault",
+      "repoTreeName": "Weapon Specialist",
+      "repoPrerequisites": "Weapon Specialization",
+      "canonicalPrerequisites": "Weapon Specialization",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_ABBREVIATED"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Weapon Specialist",
+      "tree": "Weapon Specialist",
+      "canonicalName": "Stinging Assault",
+      "page": 18,
+      "repoId": "cdb01f90827fad8c",
+      "repoName": "Stinging Assault",
+      "repoTreeName": "Weapon Specialist",
+      "repoPrerequisites": "Weapon Specialization",
+      "canonicalPrerequisites": "Weapon Specialization",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_ABBREVIATED"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Scum and Villainy|Blockade Runner",
+      "tree": "Blockade Runner",
+      "canonicalName": "Close Cover",
+      "page": 25,
+      "repoId": "9af262765ace3af1",
+      "repoName": "Close Cover",
+      "repoTreeName": "Blockade Runner",
+      "repoPrerequisites": "Watch This",
+      "canonicalPrerequisites": "Watch This",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_ABBREVIATED"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Scum and Villainy|Blockade Runner",
+      "tree": "Blockade Runner",
+      "canonicalName": "Outrun",
+      "page": 25,
+      "repoId": "57caba8565b88056",
+      "repoName": "Outrun",
+      "repoTreeName": "Blockade Runner",
+      "repoPrerequisites": "",
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_ABBREVIATED"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Scum and Villainy|Blockade Runner",
+      "tree": "Blockade Runner",
+      "canonicalName": "Punch Through",
+      "page": 25,
+      "repoId": "a0099db14b3fc3e7",
+      "repoName": "Punch Through",
+      "repoTreeName": "Blockade Runner",
+      "repoPrerequisites": "",
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_ABBREVIATED"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Scum and Villainy|Blockade Runner",
+      "tree": "Blockade Runner",
+      "canonicalName": "Small Target",
+      "page": 25,
+      "repoId": "70a06f3be4e9c216",
+      "repoName": "Small Target",
+      "repoTreeName": "Blockade Runner",
+      "repoPrerequisites": "",
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_ABBREVIATED"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Scum and Villainy|Blockade Runner",
+      "tree": "Blockade Runner",
+      "canonicalName": "Watch This",
+      "page": 26,
+      "repoId": "0b04910aaabc51ba",
+      "repoName": "Watch This",
+      "repoTreeName": "Blockade Runner",
+      "repoPrerequisites": "",
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_ABBREVIATED"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Bounty Hunter",
+      "tree": "Bounty Hunter",
+      "canonicalName": "Dread",
+      "page": 26,
+      "repoId": "782768cab6bd13de",
+      "repoName": "Dread",
+      "repoTreeName": "Bounty Hunter",
+      "repoPrerequisites": "Hunter's Target",
+      "canonicalPrerequisites": "Hunter's Mark, Hunter's Target",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_ABBREVIATED",
+        "PREREQUISITE_ERROR"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Bounty Hunter",
+      "tree": "Bounty Hunter",
+      "canonicalName": "Nowhere to Run",
+      "page": 26,
+      "repoId": "93a41831fe6bfc09",
+      "repoName": "Nowhere to Run",
+      "repoTreeName": "Bounty Hunter",
+      "repoPrerequisites": "Nowhere to Hide, Hunter's Target",
+      "canonicalPrerequisites": "Hunter's Mark, Hunter's Target, Nowhere to Hide",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_ABBREVIATED",
+        "PREREQUISITE_ERROR"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Bounty Hunter",
+      "tree": "Bounty Hunter",
+      "canonicalName": "Tag",
+      "page": 26,
+      "repoId": "28a61dadc073cd84",
+      "repoName": "Tag",
+      "repoTreeName": "Bounty Hunter",
+      "repoPrerequisites": "Hunter's Target",
+      "canonicalPrerequisites": "Hunter's Mark, Hunter's Target",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_ABBREVIATED",
+        "PREREQUISITE_ERROR"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Scum and Villainy|Gand Findsman",
+      "tree": "Gand Findsman",
+      "canonicalName": "Findsman Ceremonies",
+      "page": 26,
+      "repoId": "661c2c0665e911f6",
+      "repoName": "Findsman Ceremonies",
+      "repoTreeName": "Gand Findsman",
+      "repoPrerequisites": "",
+      "canonicalPrerequisites": "Force Sensitivity feat",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_ABBREVIATED",
+        "PREREQUISITE_ERROR"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Scum and Villainy|Gand Findsman",
+      "tree": "Gand Findsman",
+      "canonicalName": "Findsman's Foresight",
+      "page": 26,
+      "repoId": "e8fe6087eef386c7",
+      "repoName": "Findsman's Foresight",
+      "repoTreeName": "Gand Findsman",
+      "repoPrerequisites": "Findsman Ceremonies",
+      "canonicalPrerequisites": "Findsman Ceremonies",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_ABBREVIATED"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Scum and Villainy|Gand Findsman",
+      "tree": "Gand Findsman",
+      "canonicalName": "Omens",
+      "page": 26,
+      "repoId": "b08c8efbea22f604",
+      "repoName": "Omens",
+      "repoTreeName": "Gand Findsman",
+      "repoPrerequisites": "Findsman Ceremonies",
+      "canonicalPrerequisites": "Findsman Ceremonies",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_ABBREVIATED"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Scum and Villainy|Gand Findsman",
+      "tree": "Gand Findsman",
+      "canonicalName": "Target Visions",
+      "page": 26,
+      "repoId": "d61e3a2afe8ab339",
+      "repoName": "Target Visions",
+      "repoTreeName": "Gand Findsman",
+      "repoPrerequisites": "Findsman Ceremonies",
+      "canonicalPrerequisites": "Findsman Ceremonies",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_ABBREVIATED"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Scum and Villainy|Gand Findsman",
+      "tree": "Gand Findsman",
+      "canonicalName": "Temporal Awareness",
+      "page": 26,
+      "repoId": "028e4e50565971ee",
+      "repoName": "Temporal Awareness",
+      "repoTreeName": "Gand Findsman",
+      "repoPrerequisites": "Findsman Ceremonies",
+      "canonicalPrerequisites": "Findsman Ceremonies",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_ABBREVIATED"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Infamy",
+      "tree": "Infamy",
+      "canonicalName": "Fear Me!",
+      "page": 26,
+      "repoId": "a49074cc564848bb",
+      "repoName": "Fear Me",
+      "repoTreeName": "Infamy",
+      "repoPrerequisites": "Inspire Fear II",
+      "canonicalPrerequisites": "Attract Minion, Inspire Fear I, Inspire Fear II",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_ABBREVIATED",
+        "PREREQUISITE_ERROR"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Infamy",
+      "tree": "Infamy",
+      "canonicalName": "Frighten",
+      "page": 26,
+      "repoId": "50273d5ce8f84c31",
+      "repoName": "Frighten",
+      "repoTreeName": "Infamy",
+      "repoPrerequisites": "Inspire Fear I",
+      "canonicalPrerequisites": "Attract Minion, Inspire Fear I",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_ABBREVIATED",
+        "PREREQUISITE_ERROR"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Infamy",
+      "tree": "Infamy",
+      "canonicalName": "Terrify",
+      "page": 27,
+      "repoId": "8ed7b1889b1416d4",
+      "repoName": "Terrify",
+      "repoTreeName": "Infamy",
+      "repoPrerequisites": "Inspire Fear II, Frighten",
+      "canonicalPrerequisites": "Frighten, Inspire Fear I, Inspire Fear II",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_ABBREVIATED",
+        "PREREQUISITE_ERROR"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Infamy",
+      "tree": "Infamy",
+      "canonicalName": "Unsavory Reputation",
+      "page": 27,
+      "repoId": "b0ecc747a76deb72",
+      "repoName": "Unsavory Reputation",
+      "repoTreeName": "Infamy",
+      "repoPrerequisites": "Inspire Fear III, Notorious",
+      "canonicalPrerequisites": "Inspire Fear I, Inspire Fear II, Inspire Fear III, Notorious",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_ABBREVIATED",
+        "PREREQUISITE_ERROR"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Mastermind",
+      "tree": "Mastermind",
+      "canonicalName": "Bodyguard I",
+      "page": 27,
+      "repoId": "58789f9d0a49f215",
+      "repoName": "Bodyguard I",
+      "repoTreeName": "Mastermind",
+      "repoPrerequisites": "Attract Minion",
+      "canonicalPrerequisites": "Attract Minion",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_ABBREVIATED"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Mastermind",
+      "tree": "Mastermind",
+      "canonicalName": "Bodyguard II",
+      "page": 27,
+      "repoId": "7679eae1004af0cc",
+      "repoName": "Bodyguard II",
+      "repoTreeName": "Mastermind",
+      "repoPrerequisites": "Bodyguard I",
+      "canonicalPrerequisites": "Attract Minion, Bodyguard I",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_ABBREVIATED",
+        "PREREQUISITE_ERROR"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Mastermind",
+      "tree": "Mastermind",
+      "canonicalName": "Bodyguard III",
+      "page": 27,
+      "repoId": "9c2a4cbe82e922ec",
+      "repoName": "Bodyguard III",
+      "repoTreeName": "Mastermind",
+      "repoPrerequisites": "Bodyguard II",
+      "canonicalPrerequisites": "Attract Minion, Bodyguard I, Bodyguard II",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_ABBREVIATED",
+        "PREREQUISITE_ERROR"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Mastermind",
+      "tree": "Mastermind",
+      "canonicalName": "Impel Ally III",
+      "page": 27,
+      "repoId": "3f01107ed7779426",
+      "repoName": "Impel Ally III",
+      "repoTreeName": "Mastermind",
+      "repoPrerequisites": "Impel Ally II",
+      "canonicalPrerequisites": "Impel Ally I, Impel Ally II",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_ABBREVIATED",
+        "PREREQUISITE_ERROR"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Mastermind",
+      "tree": "Mastermind",
+      "canonicalName": "Inspire Wrath",
+      "page": 27,
+      "repoId": "dbe08a93276b6c25",
+      "repoName": "Inspire Wrath",
+      "repoTreeName": "Mastermind",
+      "repoPrerequisites": "Impel Ally II",
+      "canonicalPrerequisites": "Impel Ally I, Impel Ally II",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_ABBREVIATED",
+        "PREREQUISITE_ERROR"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Mastermind",
+      "tree": "Mastermind",
+      "canonicalName": "Shelter",
+      "page": 27,
+      "repoId": "e37a169786348439",
+      "repoName": "Shelter",
+      "repoTreeName": "Mastermind",
+      "repoPrerequisites": "Attract Minion",
+      "canonicalPrerequisites": "Attract Minion",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_ABBREVIATED"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Mastermind",
+      "tree": "Mastermind",
+      "canonicalName": "Tactical Superiority",
+      "page": 27,
+      "repoId": "f259cf27c1b62c47",
+      "repoName": "Tactical Superiority",
+      "repoTreeName": "Mastermind",
+      "repoPrerequisites": "",
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_ABBREVIATED"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Mastermind",
+      "tree": "Mastermind",
+      "canonicalName": "Tactical Withdrawal",
+      "page": 27,
+      "repoId": "b293a6a20b90bebe",
+      "repoName": "Tactical Withdrawal",
+      "repoTreeName": "Mastermind",
+      "repoPrerequisites": "",
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_ABBREVIATED"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Mastermind",
+      "tree": "Mastermind",
+      "canonicalName": "Urgency",
+      "page": 27,
+      "repoId": "a45e2213dd7eb4ca",
+      "repoName": "Urgency",
+      "repoTreeName": "Mastermind",
+      "repoPrerequisites": "Impel Ally II",
+      "canonicalPrerequisites": "Impel Ally I, Impel Ally II, Impel Ally III",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_ABBREVIATED",
+        "PREREQUISITE_ERROR"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Mastermind",
+      "tree": "Mastermind",
+      "canonicalName": "Wealth of Allies",
+      "page": 27,
+      "repoId": "397ba7dc962f6ebc",
+      "repoName": "Wealth of Allies",
+      "repoTreeName": "Mastermind",
+      "repoPrerequisites": "Attract Minion",
+      "canonicalPrerequisites": "Attract Minion",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_ABBREVIATED"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Gunslinger",
+      "tree": "Gunslinger",
+      "canonicalName": "Ranged Flank",
+      "page": 27,
+      "repoId": "a6e38142447c64a9",
+      "repoName": "Ranged Flank",
+      "repoTreeName": "Gunslinger",
+      "repoPrerequisites": "",
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_ABBREVIATED"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Scum and Villainy|Pistoleer",
+      "tree": "Pistoleer",
+      "canonicalName": "Dash and Blast",
+      "page": 27,
+      "repoId": "c41461c3bdd0165d",
+      "repoName": "Dash and Blast",
+      "repoTreeName": "Pistoleer",
+      "repoPrerequisites": "Dual Weapon Mastery I, Running Attack",
+      "canonicalPrerequisites": "Dual Weapon Mastery I, Running Attack",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_ABBREVIATED"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Scum and Villainy|Pistoleer",
+      "tree": "Pistoleer",
+      "canonicalName": "Flanking Fire",
+      "page": 28,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "Dual Weapon Mastery I",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Scum and Villainy|Pistoleer",
+      "tree": "Pistoleer",
+      "canonicalName": "Guaranteed Shot",
+      "page": 28,
+      "repoId": "52a4914cca90cc4d",
+      "repoName": "Guaranteed Shot",
+      "repoTreeName": "Pistoleer",
+      "repoPrerequisites": "Dual Weapon Mastery I",
+      "canonicalPrerequisites": "Dual Weapon Mastery I",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_ABBREVIATED"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Scum and Villainy|Pistoleer",
+      "tree": "Pistoleer",
+      "canonicalName": "Hailfire",
+      "page": 28,
+      "repoId": "223ba62ffbabb9c2",
+      "repoName": "Hailfire",
+      "repoTreeName": "Pistoleer",
+      "repoPrerequisites": "Dual Weapon Mastery I",
+      "canonicalPrerequisites": "Dual Weapon Mastery I",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_ABBREVIATED"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Scum and Villainy|Pistoleer",
+      "tree": "Pistoleer",
+      "canonicalName": "Twin Shot",
+      "page": 28,
+      "repoId": "c219dc05ccc7db81",
+      "repoName": "Twin Shot",
+      "repoTreeName": "Pistoleer",
+      "repoPrerequisites": "Dual Weapon Mastery I, Rapid Shot",
+      "canonicalPrerequisites": "Dual Weapon Mastery I, Rapid Shot",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_ABBREVIATED"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Scum and Villainy|Assassin",
+      "tree": "Assassin",
+      "canonicalName": "Advantageous Positioning",
+      "page": 29,
+      "repoId": "b2b2176b7d9360e0",
+      "repoName": "Advantageous Positioning",
+      "repoTreeName": "Assassin",
+      "repoPrerequisites": "Shift",
+      "canonicalPrerequisites": "Shift",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_ABBREVIATED"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Scum and Villainy|Assassin",
+      "tree": "Assassin",
+      "canonicalName": "Get Some Distance",
+      "page": 29,
+      "repoId": "2871d6138603fbcc",
+      "repoName": "Get Some Distance",
+      "repoTreeName": "Assassin",
+      "repoPrerequisites": "Advantageous Positioning",
+      "canonicalPrerequisites": "Advantageous Positioning, Shift",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_ABBREVIATED",
+        "PREREQUISITE_ERROR"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Scum and Villainy|Assassin",
+      "tree": "Assassin",
+      "canonicalName": "Murderous Arts I",
+      "page": 29,
+      "repoId": "0d58e041b9bf0be8",
+      "repoName": "Murderous Arts I",
+      "repoTreeName": "Assassin",
+      "repoPrerequisites": "",
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_ABBREVIATED"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Scum and Villainy|Assassin",
+      "tree": "Assassin",
+      "canonicalName": "Murderous Arts II",
+      "page": 29,
+      "repoId": "48734ec40189bb12",
+      "repoName": "Murderous Arts II",
+      "repoTreeName": "Assassin",
+      "repoPrerequisites": "Murderous Arts I",
+      "canonicalPrerequisites": "Murderous Arts I",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_ABBREVIATED",
+        "MECHANICS_ERROR"
+      ],
+      "notes": "Repository changes '+1 die of damage' to '+1d6 damage'.",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Scum and Villainy|Assassin",
+      "tree": "Assassin",
+      "canonicalName": "Ruthless",
+      "page": 29,
+      "repoId": "7aa4ca13a96d8770",
+      "repoName": "Ruthless",
+      "repoTreeName": "Assassin",
+      "repoPrerequisites": "",
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_ABBREVIATED"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": [
+        {
+          "repoId": "adfb725d20faade5",
+          "name": "Ruthless",
+          "tree": "Mercenary",
+          "source": null
+        }
+      ]
+    },
+    {
+      "canonicalTreeKey": "Scum and Villainy|Assassin",
+      "tree": "Assassin",
+      "canonicalName": "Shift",
+      "page": 29,
+      "repoId": "a7cb4c0dbcdd0fb8",
+      "repoName": "Shift",
+      "repoTreeName": "Assassin",
+      "repoPrerequisites": "",
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_ABBREVIATED"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Scum and Villainy|Assassin",
+      "tree": "Assassin",
+      "canonicalName": "Sniping Assassin",
+      "page": 29,
+      "repoId": "6ea04b7286133846",
+      "repoName": "Sniping Assassin",
+      "repoTreeName": "Assassin",
+      "repoPrerequisites": "",
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_ABBREVIATED"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Scum and Villainy|Assassin",
+      "tree": "Assassin",
+      "canonicalName": "Sniping Marksman",
+      "page": 29,
+      "repoId": "28b781d7186a03a9",
+      "repoName": "Sniping Marksman",
+      "repoTreeName": "Assassin",
+      "repoPrerequisites": "Sniping Assassin",
+      "canonicalPrerequisites": "Sniping Assassin",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_ABBREVIATED"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Scum and Villainy|Assassin",
+      "tree": "Assassin",
+      "canonicalName": "Sniping Master",
+      "page": 29,
+      "repoId": "216f5ea65b7c04fb",
+      "repoName": "Sniping Master",
+      "repoTreeName": "Assassin",
+      "repoPrerequisites": "Sniping Marksman",
+      "canonicalPrerequisites": "Sniping Assassin, Sniping Marksman",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_ABBREVIATED",
+        "PREREQUISITE_ERROR"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Scum and Villainy|GenoHaradan",
+      "tree": "GenoHaradan",
+      "canonicalName": "Deadly Repercussions",
+      "page": 29,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "MISSING_CONTENT",
+        "DISTINCT_SAME_NAME_IDENTITY_MISSING"
+      ],
+      "notes": "No correct-tree Scum and Villainy record exists. Same-name candidate(s) belong to another canonical or obsolete tree identity and must not be repaired by display name alone.",
+      "sameNameRepoCandidates": [
+        {
+          "repoId": "58c3d63d94288eb2",
+          "name": "Deadly Repercussions",
+          "tree": "Genohardan",
+          "source": null
+        }
+      ]
+    },
+    {
+      "canonicalTreeKey": "Scum and Villainy|GenoHaradan",
+      "tree": "GenoHaradan",
+      "canonicalName": "Manipulating Strike",
+      "page": 30,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "MISSING_CONTENT",
+        "DISTINCT_SAME_NAME_IDENTITY_MISSING"
+      ],
+      "notes": "No correct-tree Scum and Villainy record exists. Same-name candidate(s) belong to another canonical or obsolete tree identity and must not be repaired by display name alone.",
+      "sameNameRepoCandidates": [
+        {
+          "repoId": "9f01b5c07bbd5f76",
+          "name": "Manipulating Strike",
+          "tree": "Genohardan",
+          "source": null
+        }
+      ]
+    },
+    {
+      "canonicalTreeKey": "Scum and Villainy|GenoHaradan",
+      "tree": "GenoHaradan",
+      "canonicalName": "Improved Manipulating Strike",
+      "page": 30,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "Manipulating Strike",
+      "dispositions": [
+        "MISSING_CONTENT",
+        "DISTINCT_SAME_NAME_IDENTITY_MISSING"
+      ],
+      "notes": "No correct-tree Scum and Villainy record exists. Same-name candidate(s) belong to another canonical or obsolete tree identity and must not be repaired by display name alone.",
+      "sameNameRepoCandidates": [
+        {
+          "repoId": "8d14ab116a78dfd6",
+          "name": "Improved Manipulating Strike",
+          "tree": "Genohardan",
+          "source": null
+        }
+      ]
+    },
+    {
+      "canonicalTreeKey": "Scum and Villainy|GenoHaradan",
+      "tree": "GenoHaradan",
+      "canonicalName": "Pulling the Strings",
+      "page": 30,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "MISSING_CONTENT",
+        "DISTINCT_SAME_NAME_IDENTITY_MISSING"
+      ],
+      "notes": "No correct-tree Scum and Villainy record exists. Same-name candidate(s) belong to another canonical or obsolete tree identity and must not be repaired by display name alone.",
+      "sameNameRepoCandidates": [
+        {
+          "repoId": "d6faa4b87d5c35ce",
+          "name": "Pulling the Strings",
+          "tree": "Genohardan",
+          "source": null
+        }
+      ]
+    },
+    {
+      "canonicalTreeKey": "Scum and Villainy|Trickery",
+      "tree": "Trickery",
+      "canonicalName": "Cunning Distraction",
+      "page": 31,
+      "repoId": "3340f268613c0349",
+      "repoName": "Cunning Distraction",
+      "repoTreeName": "Trickery",
+      "repoPrerequisites": "",
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_ABBREVIATED"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Scum and Villainy|Trickery",
+      "tree": "Trickery",
+      "canonicalName": "Damaging Deception",
+      "page": 31,
+      "repoId": "533867af3de50833",
+      "repoName": "Damaging Deception",
+      "repoTreeName": "Trickery",
+      "repoPrerequisites": "Cunning Distraction",
+      "canonicalPrerequisites": "Cunning Distraction",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_ABBREVIATED"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Scum and Villainy|Trickery",
+      "tree": "Trickery",
+      "canonicalName": "Distracting Shout",
+      "page": 31,
+      "repoId": "6c62f35fddd45d66",
+      "repoName": "Distracting Shout",
+      "repoTreeName": "Trickery",
+      "repoPrerequisites": "Cunning Distraction",
+      "canonicalPrerequisites": "Cunning Distraction",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_ABBREVIATED"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Scum and Villainy|Trickery",
+      "tree": "Trickery",
+      "canonicalName": "Improved Soft Cover",
+      "page": 31,
+      "repoId": "1681031c6828d556",
+      "repoName": "Improved Soft Cover",
+      "repoTreeName": "Trickery",
+      "repoPrerequisites": "Innocuous",
+      "canonicalPrerequisites": "Innocuous",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_ABBREVIATED"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Scum and Villainy|Trickery",
+      "tree": "Trickery",
+      "canonicalName": "Innocuous",
+      "page": 31,
+      "repoId": "0fa7aace1d7606c6",
+      "repoName": "Innocuous",
+      "repoTreeName": "Trickery",
+      "repoPrerequisites": "",
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_ABBREVIATED"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Scum and Villainy|Trickery",
+      "tree": "Trickery",
+      "canonicalName": "Treacherous",
+      "page": 32,
+      "repoId": "e289618b92890003",
+      "repoName": "Treacherous",
+      "repoTreeName": "Trickery",
+      "repoPrerequisites": "Improved Soft Cover",
+      "canonicalPrerequisites": "Improved Soft Cover, Innocuous",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_ABBREVIATED",
+        "PREREQUISITE_ERROR"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Scum and Villainy|Piracy",
+      "tree": "Piracy",
+      "canonicalName": "Bloodthirsty",
+      "page": 33,
+      "repoId": "18e1fa8a911dda55",
+      "repoName": "Bloodthirsty",
+      "repoTreeName": "Piracy",
+      "repoPrerequisites": "",
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_ABBREVIATED"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Scum and Villainy|Piracy",
+      "tree": "Piracy",
+      "canonicalName": "Fight to the Death",
+      "page": 33,
+      "repoId": "ae97654ded718351",
+      "repoName": "Fight to the Death",
+      "repoTreeName": "Piracy",
+      "repoPrerequisites": "Bloodthirsty",
+      "canonicalPrerequisites": "Bloodthirsty",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_ABBREVIATED"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Scum and Villainy|Piracy",
+      "tree": "Piracy",
+      "canonicalName": "Keep Them Reeling",
+      "page": 33,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "MISSING_CONTENT",
+        "DISTINCT_SAME_NAME_IDENTITY_MISSING"
+      ],
+      "notes": "No correct-tree Scum and Villainy record exists. Same-name candidate(s) belong to another canonical or obsolete tree identity and must not be repaired by display name alone.",
+      "sameNameRepoCandidates": [
+        {
+          "repoId": "24bf81bc6d74fafd",
+          "name": "Keep Them Reeling",
+          "tree": "Ambusher",
+          "source": null
+        }
+      ]
+    },
+    {
+      "canonicalTreeKey": "Scum and Villainy|Piracy",
+      "tree": "Piracy",
+      "canonicalName": "Raider's Frenzy",
+      "page": 33,
+      "repoId": "37c45caffa191816",
+      "repoName": "Raider's Frenzy",
+      "repoTreeName": "Piracy",
+      "repoPrerequisites": "",
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_ABBREVIATED"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Scum and Villainy|Piracy",
+      "tree": "Piracy",
+      "canonicalName": "Raider's Surge",
+      "page": 33,
+      "repoId": "50285aaa58fed099",
+      "repoName": "Raider's Surge",
+      "repoTreeName": "Piracy",
+      "repoPrerequisites": "",
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_ABBREVIATED"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Scum and Villainy|Piracy",
+      "tree": "Piracy",
+      "canonicalName": "Savage Reputation",
+      "page": 33,
+      "repoId": "994e8232ccd3847c",
+      "repoName": "Savage Reputation",
+      "repoTreeName": "Piracy",
+      "repoPrerequisites": "Bloodthirsty",
+      "canonicalPrerequisites": "Bloodthirsty",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_ABBREVIATED"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Scum and Villainy|Piracy",
+      "tree": "Piracy",
+      "canonicalName": "Take Them Alive",
+      "page": 33,
+      "repoId": "cf59931d6a0c0719",
+      "repoName": "Take Them Alive",
+      "repoTreeName": "Piracy",
+      "repoPrerequisites": "",
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_ABBREVIATED"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Scum and Villainy|Outlaw",
+      "tree": "Outlaw",
+      "canonicalName": "Confounding Attack",
+      "page": 34,
+      "repoId": "fd35b51c26fa0d5c",
+      "repoName": "Confounding Attack",
+      "repoTreeName": "Outlaw",
+      "repoPrerequisites": "Tangle Up",
+      "canonicalPrerequisites": "Tangle Up, Uncanny Instincts",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_ABBREVIATED",
+        "PREREQUISITE_ERROR"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Scum and Villainy|Outlaw",
+      "tree": "Outlaw",
+      "canonicalName": "Double Up",
+      "page": 35,
+      "repoId": "3aeee38a6c7b7f12",
+      "repoName": "Double Up",
+      "repoTreeName": "Outlaw",
+      "repoPrerequisites": "Find an Opening",
+      "canonicalPrerequisites": "Find an Opening, Seize the Moment",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_ABBREVIATED",
+        "PREREQUISITE_ERROR"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Scum and Villainy|Outlaw",
+      "tree": "Outlaw",
+      "canonicalName": "Find an Opening",
+      "page": 35,
+      "repoId": "3991e671da41995a",
+      "repoName": "Find an Opening",
+      "repoTreeName": "Outlaw",
+      "repoPrerequisites": "Seize the Moment",
+      "canonicalPrerequisites": "Seize the Moment",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_ABBREVIATED"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Scum and Villainy|Outlaw",
+      "tree": "Outlaw",
+      "canonicalName": "Opportunistic Defense",
+      "page": 35,
+      "repoId": "ffdca1739d401042",
+      "repoName": "Opportunistic Defense",
+      "repoTreeName": "Outlaw",
+      "repoPrerequisites": "Uncanny Instincts",
+      "canonicalPrerequisites": "Uncanny Instincts",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_ABBREVIATED"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Scum and Villainy|Outlaw",
+      "tree": "Outlaw",
+      "canonicalName": "Preternatural Senses",
+      "page": 35,
+      "repoId": "4df672d524de7aa0",
+      "repoName": "Preternatural Senses",
+      "repoTreeName": "Outlaw",
+      "repoPrerequisites": "",
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_ABBREVIATED"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Scum and Villainy|Outlaw",
+      "tree": "Outlaw",
+      "canonicalName": "Seize the Moment",
+      "page": 35,
+      "repoId": "e19c06b6dfc7a703",
+      "repoName": "Seize the Moment",
+      "repoTreeName": "Outlaw",
+      "repoPrerequisites": "",
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_ABBREVIATED"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": [
+        {
+          "repoId": "ec12ce36ff7048f2",
+          "name": "Seize the Moment",
+          "tree": "Provocateur",
+          "source": null
+        }
+      ]
+    },
+    {
+      "canonicalTreeKey": "Scum and Villainy|Outlaw",
+      "tree": "Outlaw",
+      "canonicalName": "Tangle Up",
+      "page": 35,
+      "repoId": "e49c62d72e8b28d3",
+      "repoName": "Tangle Up",
+      "repoTreeName": "Outlaw",
+      "repoPrerequisites": "Uncanny Instincts",
+      "canonicalPrerequisites": "Uncanny Instincts",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_ABBREVIATED"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Scum and Villainy|Outlaw",
+      "tree": "Outlaw",
+      "canonicalName": "Uncanny Instincts",
+      "page": 35,
+      "repoId": "252285ae33a2a2d5",
+      "repoName": "Uncanny Instincts",
+      "repoTreeName": "Outlaw",
+      "repoPrerequisites": "",
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_ABBREVIATED"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    }
+  ]
+}
