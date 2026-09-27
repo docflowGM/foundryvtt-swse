@@ -6,8 +6,8 @@
   "counts": {
     "entries": 195,
     "referenceRows": 140,
-    "primarySourceVerified": 101,
-    "referencePendingPrimary": 47,
+    "primarySourceVerified": 112,
+    "referencePendingPrimary": 36,
     "repoSpecialSourceReview": 47
   },
   "entries": [
@@ -2761,7 +2761,7 @@
       "classAccess": [
         "Corporate Agent"
       ],
-      "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
+      "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
       "repoTreeIds": [
         "45c4007d09c01839"
       ],
@@ -2774,14 +2774,52 @@
       "status": "REPO_TREE_PRESENT",
       "notes": null,
       "originSourcebook": "Knights of the Old Republic Campaign Guide",
-      "originTalentNames": null,
-      "talentPublications": [],
-      "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED",
+      "originTalentNames": [
+        "Competitive Drive",
+        "Competitive Edge",
+        "Corporate Clout",
+        "Impose Confusion",
+        "Impose Hesitation",
+        "Willful Resolve",
+        "Wrong Decision"
+      ],
+      "talentPublications": [
+        {
+          "sourcebook": "Knights of the Old Republic Campaign Guide",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Competitive Drive",
+            "Competitive Edge",
+            "Corporate Clout",
+            "Impose Confusion",
+            "Impose Hesitation",
+            "Willful Resolve",
+            "Wrong Decision"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Competitive Drive",
+        "Competitive Edge",
+        "Corporate Clout",
+        "Impose Confusion",
+        "Impose Hesitation",
+        "Willful Resolve",
+        "Wrong Decision"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
       "referenceClassAccess": [
         "Corporate Agent"
       ],
-      "accessPublications": [],
+      "accessPublications": [
+        {
+          "sourcebook": "Knights of the Old Republic Campaign Guide",
+          "publicationType": "DIRECT_ACCESS_GRANT",
+          "classes": [
+            "Corporate Agent"
+          ]
+        }
+      ],
       "aggregateClassAccess": [
         "Corporate Agent"
       ]
@@ -2793,7 +2831,7 @@
       "classAccess": [
         "Noble"
       ],
-      "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
+      "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
       "repoTreeIds": [
         "9df067790c87e6bc"
       ],
@@ -2806,14 +2844,46 @@
       "status": "REPO_TREE_PRESENT",
       "notes": null,
       "originSourcebook": "Knights of the Old Republic Campaign Guide",
-      "originTalentNames": null,
-      "talentPublications": [],
-      "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED",
+      "originTalentNames": [
+        "Demoralizing Defense",
+        "Leading Feint",
+        "Noble Fencing Style",
+        "Personal Affront",
+        "Transposing Strike"
+      ],
+      "talentPublications": [
+        {
+          "sourcebook": "Knights of the Old Republic Campaign Guide",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Demoralizing Defense",
+            "Leading Feint",
+            "Noble Fencing Style",
+            "Personal Affront",
+            "Transposing Strike"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Demoralizing Defense",
+        "Leading Feint",
+        "Noble Fencing Style",
+        "Personal Affront",
+        "Transposing Strike"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
       "referenceClassAccess": [
         "Noble"
       ],
-      "accessPublications": [],
+      "accessPublications": [
+        {
+          "sourcebook": "Knights of the Old Republic Campaign Guide",
+          "publicationType": "DIRECT_ACCESS_GRANT",
+          "classes": [
+            "Noble"
+          ]
+        }
+      ],
       "aggregateClassAccess": [
         "Noble"
       ]
@@ -2825,7 +2895,7 @@
       "classAccess": [
         "Gladiator"
       ],
-      "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
+      "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
       "repoTreeIds": [
         "12a2a02b0901605d"
       ],
@@ -2838,14 +2908,55 @@
       "status": "REPO_TREE_PRESENT",
       "notes": null,
       "originSourcebook": "Knights of the Old Republic Campaign Guide",
-      "originTalentNames": null,
-      "talentPublications": [],
-      "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED",
+      "originTalentNames": [
+        "Brutal Attack",
+        "Call Out",
+        "Distracting Attack",
+        "Exotic Weapons Master",
+        "Lockdown Strike",
+        "Multiattack Proficiency (exotic weapons)",
+        "Personal Vendetta",
+        "Unstoppable"
+      ],
+      "talentPublications": [
+        {
+          "sourcebook": "Knights of the Old Republic Campaign Guide",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Brutal Attack",
+            "Call Out",
+            "Distracting Attack",
+            "Exotic Weapons Master",
+            "Lockdown Strike",
+            "Multiattack Proficiency (exotic weapons)",
+            "Personal Vendetta",
+            "Unstoppable"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Brutal Attack",
+        "Call Out",
+        "Distracting Attack",
+        "Exotic Weapons Master",
+        "Lockdown Strike",
+        "Multiattack Proficiency (exotic weapons)",
+        "Personal Vendetta",
+        "Unstoppable"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
       "referenceClassAccess": [
         "Gladiator"
       ],
-      "accessPublications": [],
+      "accessPublications": [
+        {
+          "sourcebook": "Knights of the Old Republic Campaign Guide",
+          "publicationType": "DIRECT_ACCESS_GRANT",
+          "classes": [
+            "Gladiator"
+          ]
+        }
+      ],
       "aggregateClassAccess": [
         "Gladiator"
       ]
@@ -2857,7 +2968,7 @@
       "classAccess": [
         "Scout"
       ],
-      "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
+      "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
       "repoTreeIds": [
         "089933380b40ce20"
       ],
@@ -2870,14 +2981,46 @@
       "status": "REPO_TREE_PRESENT",
       "notes": null,
       "originSourcebook": "Knights of the Old Republic Campaign Guide",
-      "originTalentNames": null,
-      "talentPublications": [],
-      "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED",
+      "originTalentNames": [
+        "Deep-Space Gambit",
+        "Guidance",
+        "Hidden Attacker",
+        "Hyperspace Savant",
+        "Vehicle Sneak"
+      ],
+      "talentPublications": [
+        {
+          "sourcebook": "Knights of the Old Republic Campaign Guide",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Deep-Space Gambit",
+            "Guidance",
+            "Hidden Attacker",
+            "Hyperspace Savant",
+            "Vehicle Sneak"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Deep-Space Gambit",
+        "Guidance",
+        "Hidden Attacker",
+        "Hyperspace Savant",
+        "Vehicle Sneak"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
       "referenceClassAccess": [
         "Scout"
       ],
-      "accessPublications": [],
+      "accessPublications": [
+        {
+          "sourcebook": "Knights of the Old Republic Campaign Guide",
+          "publicationType": "DIRECT_ACCESS_GRANT",
+          "classes": [
+            "Scout"
+          ]
+        }
+      ],
       "aggregateClassAccess": [
         "Scout"
       ]
@@ -2889,7 +3032,7 @@
       "classAccess": [
         "Jedi Knight"
       ],
-      "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
+      "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
       "repoTreeIds": [
         "dfc4142435b4356d"
       ],
@@ -2902,14 +3045,46 @@
       "status": "REPO_TREE_PRESENT",
       "notes": null,
       "originSourcebook": "Knights of the Old Republic Campaign Guide",
-      "originTalentNames": null,
-      "talentPublications": [],
-      "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED",
+      "originTalentNames": [
+        "Defensive Circle",
+        "Force Revive",
+        "Jedi Battle Commander",
+        "Slashing Charge",
+        "Mobile Attack (lightsabers)"
+      ],
+      "talentPublications": [
+        {
+          "sourcebook": "Knights of the Old Republic Campaign Guide",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Defensive Circle",
+            "Force Revive",
+            "Jedi Battle Commander",
+            "Slashing Charge",
+            "Mobile Attack (lightsabers)"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Defensive Circle",
+        "Force Revive",
+        "Jedi Battle Commander",
+        "Slashing Charge",
+        "Mobile Attack (lightsabers)"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
       "referenceClassAccess": [
         "Jedi Knight"
       ],
-      "accessPublications": [],
+      "accessPublications": [
+        {
+          "sourcebook": "Knights of the Old Republic Campaign Guide",
+          "publicationType": "DIRECT_ACCESS_GRANT",
+          "classes": [
+            "Jedi Knight"
+          ]
+        }
+      ],
       "aggregateClassAccess": [
         "Jedi Knight"
       ]
@@ -2921,7 +3096,7 @@
       "classAccess": [
         "Jedi Knight"
       ],
-      "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
+      "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
       "repoTreeIds": [
         "eab0d8bbee7e0f4f"
       ],
@@ -2934,14 +3109,46 @@
       "status": "REPO_TREE_PRESENT",
       "notes": null,
       "originSourcebook": "Knights of the Old Republic Campaign Guide",
-      "originTalentNames": null,
-      "talentPublications": [],
-      "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED",
+      "originTalentNames": [
+        "Dark Deception",
+        "Improved Sentinel Strike",
+        "Improved Sentinel's Gambit",
+        "Rebuke the Dark",
+        "Taint of the Dark Side"
+      ],
+      "talentPublications": [
+        {
+          "sourcebook": "Knights of the Old Republic Campaign Guide",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Dark Deception",
+            "Improved Sentinel Strike",
+            "Improved Sentinel's Gambit",
+            "Rebuke the Dark",
+            "Taint of the Dark Side"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Dark Deception",
+        "Improved Sentinel Strike",
+        "Improved Sentinel's Gambit",
+        "Rebuke the Dark",
+        "Taint of the Dark Side"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
       "referenceClassAccess": [
         "Jedi Knight"
       ],
-      "accessPublications": [],
+      "accessPublications": [
+        {
+          "sourcebook": "Knights of the Old Republic Campaign Guide",
+          "publicationType": "DIRECT_ACCESS_GRANT",
+          "classes": [
+            "Jedi Knight"
+          ]
+        }
+      ],
       "aggregateClassAccess": [
         "Jedi Knight"
       ]
@@ -2953,7 +3160,7 @@
       "classAccess": [
         "Jedi Knight"
       ],
-      "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
+      "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
       "repoTreeIds": [
         "77e3817ba5cfa0d5"
       ],
@@ -2966,14 +3173,46 @@
       "status": "REPO_TREE_PRESENT",
       "notes": null,
       "originSourcebook": "Knights of the Old Republic Campaign Guide",
-      "originTalentNames": null,
-      "talentPublications": [],
-      "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED",
+      "originTalentNames": [
+        "Force Warning",
+        "Improved Quick Draw (lightsabers)",
+        "Sheltering Stance",
+        "Vigilance",
+        "Watchman's Advance"
+      ],
+      "talentPublications": [
+        {
+          "sourcebook": "Knights of the Old Republic Campaign Guide",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Force Warning",
+            "Improved Quick Draw (lightsabers)",
+            "Sheltering Stance",
+            "Vigilance",
+            "Watchman's Advance"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Force Warning",
+        "Improved Quick Draw (lightsabers)",
+        "Sheltering Stance",
+        "Vigilance",
+        "Watchman's Advance"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
       "referenceClassAccess": [
         "Jedi Knight"
       ],
-      "accessPublications": [],
+      "accessPublications": [
+        {
+          "sourcebook": "Knights of the Old Republic Campaign Guide",
+          "publicationType": "DIRECT_ACCESS_GRANT",
+          "classes": [
+            "Jedi Knight"
+          ]
+        }
+      ],
       "aggregateClassAccess": [
         "Jedi Knight"
       ]
@@ -2985,7 +3224,7 @@
       "classAccess": [
         "Elite Trooper"
       ],
-      "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
+      "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
       "repoTreeIds": [
         "4b8857716e056f62"
       ],
@@ -2998,14 +3237,43 @@
       "status": "REPO_TREE_PRESENT",
       "notes": null,
       "originSourcebook": "Knights of the Old Republic Campaign Guide",
-      "originTalentNames": null,
-      "talentPublications": [],
-      "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED",
+      "originTalentNames": [
+        "Armored Mandalorian",
+        "Mandalorian Advance",
+        "Mandalorian Ferocity",
+        "Mandalorian Glory"
+      ],
+      "talentPublications": [
+        {
+          "sourcebook": "Knights of the Old Republic Campaign Guide",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Armored Mandalorian",
+            "Mandalorian Advance",
+            "Mandalorian Ferocity",
+            "Mandalorian Glory"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Armored Mandalorian",
+        "Mandalorian Advance",
+        "Mandalorian Ferocity",
+        "Mandalorian Glory"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
       "referenceClassAccess": [
         "Elite Trooper"
       ],
-      "accessPublications": [],
+      "accessPublications": [
+        {
+          "sourcebook": "Knights of the Old Republic Campaign Guide",
+          "publicationType": "DIRECT_ACCESS_GRANT",
+          "classes": [
+            "Elite Trooper"
+          ]
+        }
+      ],
       "aggregateClassAccess": [
         "Elite Trooper"
       ]
@@ -3017,7 +3285,7 @@
       "classAccess": [
         "Melee Duelist"
       ],
-      "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
+      "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
       "repoTreeIds": [
         "1381bb8c9a838279"
       ],
@@ -3030,14 +3298,58 @@
       "status": "REPO_TREE_PRESENT",
       "notes": null,
       "originSourcebook": "Knights of the Old Republic Campaign Guide",
-      "originTalentNames": null,
-      "talentPublications": [],
-      "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED",
+      "originTalentNames": [
+        "Advantageous Strike",
+        "Dirty Tricks",
+        "Dual Weapon Flourish I",
+        "Dual Weapon Flourish II",
+        "Master of Elegance",
+        "Multiattack Proficiency (advanced melee weapons)",
+        "Out of Nowhere",
+        "Single Weapon Flourish I",
+        "Single Weapon Flourish II"
+      ],
+      "talentPublications": [
+        {
+          "sourcebook": "Knights of the Old Republic Campaign Guide",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Advantageous Strike",
+            "Dirty Tricks",
+            "Dual Weapon Flourish I",
+            "Dual Weapon Flourish II",
+            "Master of Elegance",
+            "Multiattack Proficiency (advanced melee weapons)",
+            "Out of Nowhere",
+            "Single Weapon Flourish I",
+            "Single Weapon Flourish II"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Advantageous Strike",
+        "Dirty Tricks",
+        "Dual Weapon Flourish I",
+        "Dual Weapon Flourish II",
+        "Master of Elegance",
+        "Multiattack Proficiency (advanced melee weapons)",
+        "Out of Nowhere",
+        "Single Weapon Flourish I",
+        "Single Weapon Flourish II"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
       "referenceClassAccess": [
         "Melee Duelist"
       ],
-      "accessPublications": [],
+      "accessPublications": [
+        {
+          "sourcebook": "Knights of the Old Republic Campaign Guide",
+          "publicationType": "DIRECT_ACCESS_GRANT",
+          "classes": [
+            "Melee Duelist"
+          ]
+        }
+      ],
       "aggregateClassAccess": [
         "Melee Duelist"
       ]
@@ -3049,7 +3361,7 @@
       "classAccess": [
         "Soldier"
       ],
-      "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
+      "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
       "repoTreeIds": [
         "1f50c63b6f08de10"
       ],
@@ -3062,14 +3374,43 @@
       "status": "REPO_TREE_PRESENT",
       "notes": null,
       "originSourcebook": "Knights of the Old Republic Campaign Guide",
-      "originTalentNames": null,
-      "talentPublications": [],
-      "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED",
+      "originTalentNames": [
+        "Burning Assault",
+        "Improved Trajectory",
+        "Jet Pack Training",
+        "Jet Pack Withdraw"
+      ],
+      "talentPublications": [
+        {
+          "sourcebook": "Knights of the Old Republic Campaign Guide",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Burning Assault",
+            "Improved Trajectory",
+            "Jet Pack Training",
+            "Jet Pack Withdraw"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Burning Assault",
+        "Improved Trajectory",
+        "Jet Pack Training",
+        "Jet Pack Withdraw"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
       "referenceClassAccess": [
         "Soldier"
       ],
-      "accessPublications": [],
+      "accessPublications": [
+        {
+          "sourcebook": "Knights of the Old Republic Campaign Guide",
+          "publicationType": "DIRECT_ACCESS_GRANT",
+          "classes": [
+            "Soldier"
+          ]
+        }
+      ],
       "aggregateClassAccess": [
         "Soldier"
       ]
@@ -3081,7 +3422,7 @@
       "classAccess": [
         "Scoundrel"
       ],
-      "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
+      "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
       "repoTreeIds": [
         "6367600ed3c0cfae"
       ],
@@ -3094,14 +3435,46 @@
       "status": "REPO_TREE_PRESENT",
       "notes": null,
       "originSourcebook": "Knights of the Old Republic Campaign Guide",
-      "originTalentNames": null,
-      "talentPublications": [],
-      "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED",
+      "originTalentNames": [
+        "Cheap Shot",
+        "No Escape",
+        "Opportunistic Strike",
+        "Slippery Strike",
+        "Strike and Run"
+      ],
+      "talentPublications": [
+        {
+          "sourcebook": "Knights of the Old Republic Campaign Guide",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Cheap Shot",
+            "No Escape",
+            "Opportunistic Strike",
+            "Slippery Strike",
+            "Strike and Run"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Cheap Shot",
+        "No Escape",
+        "Opportunistic Strike",
+        "Slippery Strike",
+        "Strike and Run"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
       "referenceClassAccess": [
         "Scoundrel"
       ],
-      "accessPublications": [],
+      "accessPublications": [
+        {
+          "sourcebook": "Knights of the Old Republic Campaign Guide",
+          "publicationType": "DIRECT_ACCESS_GRANT",
+          "classes": [
+            "Scoundrel"
+          ]
+        }
+      ],
       "aggregateClassAccess": [
         "Scoundrel"
       ]
