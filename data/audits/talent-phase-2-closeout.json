@@ -184,5 +184,17 @@
       "system.prerequisites": "canonical printed prerequisite text",
       "source/page": "correct sourcebook and printed page"
     }
+  },
+  "reviewedAt": "2026-09-27",
+  "postCloseoutReview": {
+    "status": "CORRECTIONS_APPLIED",
+    "scope": "Final-three Phase 2 certification artifacts",
+    "findings": [
+      "Force Unleashed: corrected printed-page attribution for Force talents on p. 88; removed source-boundary/page-furniture leakage; replaced mechanically truncated summaries.",
+      "Jedi Academy: removed tradition-lore/page-furniture leakage from terminal talents; restored Guardian Spirit text continuing after the Daily Force Points sidebar; excluded Sith Alchemy Table 1-1 from parent talent text; corrected OCR punctuation and truncated summaries.",
+      "Scavenger's Guide: repaired prerequisite overrun for Break Program and Heuristic Mastery; normalized line-wrap OCR artifacts; replaced truncated summaries."
+    ],
+    "censusChanged": false,
+    "productionTalentRecordsChanged": false
   }
 }

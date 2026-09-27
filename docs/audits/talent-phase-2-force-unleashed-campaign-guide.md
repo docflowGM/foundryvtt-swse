@@ -23,7 +23,7 @@ The hierarchy pass found **no Phase 1D structural correction**. Prestige-class f
 
 - Heroic talents: printed pp. **24-29**
 - Prestige talents: printed pp. **42-57**
-- Force talents and traditions: printed pp. **87, 92-93**
+- Force talents and traditions: printed pp. **87-88, 92-93**
 - Droid talents: printed pp. **102-103**
 
 TXT/DJVU supplies searchable wording; rendered PDF pages are final authority for hierarchy, page boundaries, and sidebars.
@@ -65,6 +65,10 @@ No registry membership change was required.
 - **Mercenary -> Ruthless** has same-name repository content under Assassin.
 
 Also preserve the previously identified publication identity boundary for **Mobile Combatant**: Force Unleashed **Jedi Guardian -> Mobile Combatant** is not the later Galaxy at War **Advance Patrol -> Mobile Combatant** identity.
+
+## Post-closeout review correction
+
+A review pass removed source-boundary/page-furniture leakage from several captures, corrected Force talent page attribution across printed pp. 87-88, and replaced mechanically truncated quick summaries. Census totals did not change.
 
 ## Repository text fidelity
 

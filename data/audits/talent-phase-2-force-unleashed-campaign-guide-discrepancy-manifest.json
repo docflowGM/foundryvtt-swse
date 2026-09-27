@@ -3,8 +3,10 @@
   "phase": "2",
   "sourcebook": "Force Unleashed Campaign Guide",
   "generatedAt": "2026-09-27",
+  "reviewedAt": "2026-09-27",
   "branch": "audit/talent-phase-1-tree-census",
-  "scope": "Source-certified Force Unleashed talents compared against current repository talent-record mirror. No production records changed.",
+  "scope": "Source-certified Force Unleashed Campaign Guide talents compared against current repository talent-record mirror. No production records changed.",
+  "reviewCorrection": "Post-closeout review corrected source-boundary/OCR artifacts before production repair.",
   "summary": {
     "canonicalTalentPublications": 137,
     "repositoryRecordsMapped": 101,
@@ -942,7 +944,7 @@
       "repoName": "Spynet Agent",
       "repoTreeName": "Bothan Spynet",
       "repoPrerequisites": "Bothan Spynet",
-      "canonicalPrerequisites": "Bothan species, or two talents from the Infiltration tree. Unarmed Stun",
+      "canonicalPrerequisites": "Bothan species, or two talents from the Infiltration tree",
       "dispositions": [
         "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
         "PREREQUISITE_TEXT_MISMATCH",
@@ -979,7 +981,7 @@
       "repoName": null,
       "repoTreeName": null,
       "repoPrerequisites": null,
-      "canonicalPrerequisites": "Base attack bonus +10, Weapon Proficiency (heavy weap- ons) feat",
+      "canonicalPrerequisites": "Base attack bonus +10, Weapon Proficiency (heavy weapons) feat",
       "dispositions": [
         "MISSING_CONTENT"
       ],
@@ -1548,7 +1550,7 @@
         "SUMMARY_MISSING",
         "DISTINCT_SAME_NAME_IDENTITY_HAZARD"
       ],
-      "notes": null,
+      "notes": "Same-name Assassin talent exists; repair must remain tree-scoped.",
       "sameNameRepoCandidates": [
         {
           "repoId": "7aa4ca13a96d8770",
@@ -1603,7 +1605,7 @@
       "repoName": "Blaster and Blade I",
       "repoTreeName": "Privateer",
       "repoPrerequisites": "Dual Weapon I, Weapon Proficiency (advanced), Weapon Proficiency (pistols)",
-      "canonicalPrerequisites": "Dual Weapon Mastery | feat, Weapon Proficiency (advanced melee weapons, pistols) feats",
+      "canonicalPrerequisites": "Dual Weapon Mastery I feat, Weapon Proficiency (advanced melee weapons, pistols) feats",
       "dispositions": [
         "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
         "PREREQUISITE_TEXT_MISMATCH",
@@ -1622,7 +1624,7 @@
       "repoName": "Blaster and Blade II",
       "repoTreeName": "Privateer",
       "repoPrerequisites": "Blaster and Blade I",
-      "canonicalPrerequisites": "Blaster and Blade |, Dual Weapon Mastery | feat, Weapon Proficiency (advanced melee weapons, pistols) feats",
+      "canonicalPrerequisites": "Blaster and Blade I, Dual Weapon Mastery I feat, Weapon Proficiency (advanced melee weapons, pistols) feats",
       "dispositions": [
         "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
         "PREREQUISITE_TEXT_MISMATCH",
@@ -1641,7 +1643,7 @@
       "repoName": "Blaster and Blade III",
       "repoTreeName": "Privateer",
       "repoPrerequisites": "Blaster and Blade II",
-      "canonicalPrerequisites": "Blaster and Blade |, Blaster and Blade ||, Dual Weapon Mas- tery | feat, Weapon Proficiency (advanced melee weapons, pistols) feats",
+      "canonicalPrerequisites": "Blaster and Blade I, Blaster and Blade II, Dual Weapon Mastery I feat, Weapon Proficiency (advanced melee weapons, pistols) feats",
       "dispositions": [
         "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
         "PREREQUISITE_TEXT_MISMATCH",
@@ -2245,7 +2247,7 @@
       "repoName": null,
       "repoTreeName": null,
       "repoPrerequisites": null,
-      "canonicalPrerequisites": "",
+      "canonicalPrerequisites": "Medical Droid",
       "dispositions": [
         "MISSING_CONTENT"
       ],
@@ -2562,7 +2564,7 @@
       "canonicalTreeKey": "Saga Edition Core Rulebook|Alter",
       "tree": "Alter",
       "canonicalName": "Telekinetic Prodigy",
-      "page": 87,
+      "page": 88,
       "repoId": "7af4caf439358120",
       "repoName": "Telekinetic Prodigy",
       "repoTreeName": "Alter",
@@ -2580,7 +2582,7 @@
       "canonicalTreeKey": "Saga Edition Core Rulebook|Control",
       "tree": "Control",
       "canonicalName": "Force Exertion",
-      "page": 87,
+      "page": 88,
       "repoId": "7d0259a008e5d68f",
       "repoName": "Force Exertion",
       "repoTreeName": "Control",
@@ -2599,7 +2601,7 @@
       "canonicalTreeKey": "Saga Edition Core Rulebook|Control",
       "tree": "Control",
       "canonicalName": "Indomitable Will",
-      "page": 87,
+      "page": 88,
       "repoId": "a1f7a6ee66410c3e",
       "repoName": "Indomitable Will",
       "repoTreeName": "Control",
@@ -2617,7 +2619,7 @@
       "canonicalTreeKey": "Saga Edition Core Rulebook|Dark Side",
       "tree": "Dark Side",
       "canonicalName": "Wrath of the Dark Side",
-      "page": 87,
+      "page": 88,
       "repoId": "f5ebaf5d77257e0c",
       "repoName": "Wrath of the Dark Side",
       "repoTreeName": "Dark Side",
@@ -2699,7 +2701,7 @@
       "canonicalTreeKey": "Saga Edition Core Rulebook|Sense",
       "tree": "Sense",
       "canonicalName": "Feel the Force",
-      "page": 87,
+      "page": 88,
       "repoId": "301415f97665a33b",
       "repoName": "Feel the Force",
       "repoTreeName": "Sense",

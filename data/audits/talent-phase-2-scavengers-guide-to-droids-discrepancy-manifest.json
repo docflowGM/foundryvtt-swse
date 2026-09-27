@@ -3,8 +3,10 @@
   "phase": "2",
   "sourcebook": "Scavenger's Guide to Droids",
   "generatedAt": "2026-09-27",
+  "reviewedAt": "2026-09-27",
   "branch": "audit/talent-phase-1-tree-census",
   "scope": "Source-certified Scavenger's Guide to Droids talents compared against current repository talent-record mirror. No production records changed.",
+  "reviewCorrection": "Post-closeout review corrected source-boundary/OCR artifacts before production repair.",
   "summary": {
     "canonicalTalentPublications": 31,
     "repositoryRecordsMapped": 0,
@@ -305,7 +307,7 @@
       "repoName": null,
       "repoTreeName": null,
       "repoPrerequisites": null,
-      "canonicalPrerequisites": "Trained in Use Computer. Heuristic Mastery: You understand the subtleties and limitations of your heuristic processor. You can reroll any untrained skill check (except Use the Force), keeping the second result, even if it is worse. Once per encounter, you can spend a Force Point to reroll any skill check (trained or untrained), taking the better result. Prerequisite: Wisdom 15. Scripted Routines: Your extensive experience allows you to preset specific routines that give you an advantage in some situations. Once per encounter you can use each of the following actions: ¢ Attack Script: You can use a feat ora talent that modifies your attack roll as one action less (for example, a full-round action becomes a standard action, a standard action becomes a move action, a move action becomes a swift action, a swift action becomes a free action). ¢ Defense Script: You can apply your Independent Spirit bonus a second time during a single encounter. © Skill Script: While in combat, you can apply a bonus equal to one-half of your class level to any single skill that requires a standard action or less to use. You must be trained in the skill",
+      "canonicalPrerequisites": "Trained in Use Computer",
       "dispositions": [
         "MISSING_CONTENT"
       ],
@@ -321,7 +323,7 @@
       "repoName": null,
       "repoTreeName": null,
       "repoPrerequisites": null,
-      "canonicalPrerequisites": "Wisdom 15. Scripted Routines: Your extensive experience allows you to preset specific routines that give you an advantage in some situations. Once per encounter you can use each of the following actions: ¢ Attack Script: You can use a feat ora talent that modifies your attack roll as one action less (for example, a full-round action becomes a standard action, a standard action becomes a move action, a move action becomes a swift action, a swift action becomes a free action). ¢ Defense Script: You can apply your Independent Spirit bonus a second time during a single encounter. © Skill Script: While in combat, you can apply a bonus equal to one-half of your class level to any single skill that requires a standard action or less to use. You must be trained in the skill",
+      "canonicalPrerequisites": "Wisdom 15",
       "dispositions": [
         "MISSING_CONTENT"
       ],
@@ -465,7 +467,7 @@
       "repoName": null,
       "repoTreeName": null,
       "repoPrerequisites": null,
-      "canonicalPrerequisites": "Trained in Knowledge (life sciences) and Knowledge (physi- cal sciences)",
+      "canonicalPrerequisites": "Trained in Knowledge (life sciences) and Knowledge (physical sciences)",
       "dispositions": [
         "MISSING_CONTENT"
       ],

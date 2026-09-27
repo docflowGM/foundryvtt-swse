@@ -3,8 +3,10 @@
   "phase": "2",
   "sourcebook": "Jedi Academy Training Manual",
   "generatedAt": "2026-09-27",
+  "reviewedAt": "2026-09-27",
   "branch": "audit/talent-phase-1-tree-census",
   "scope": "Source-certified Jedi Academy Training Manual talents compared against current repository talent-record mirror. No production records changed.",
+  "reviewCorrection": "Post-closeout review corrected source-boundary/OCR artifacts before production repair.",
   "summary": {
     "canonicalTalentPublications": 118,
     "repositoryRecordsMapped": 62,
@@ -16,23 +18,23 @@
     "phase1dStructuralCorrections": 0,
     "distinctSameNameIdentityHazards": 0,
     "prerequisiteTextMismatches": 12,
-    "fullTextDifferentOrAbbreviated": 53,
+    "fullTextDifferentOrAbbreviated": 55,
     "sourceMetadataMissing": 62,
     "summaryMissing": 62,
     "dispositionCounts": {
-      "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT": 53,
+      "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT": 55,
       "SOURCE_METADATA_MISSING": 62,
       "SUMMARY_MISSING": 62,
       "PREREQUISITE_TEXT_MISMATCH": 12,
-      "CANONICAL_TEXT_PRESENT_BOTH": 9,
+      "CANONICAL_TEXT_PRESENT_BOTH": 7,
       "MISSING_CONTENT": 56
     }
   },
   "hierarchyFindings": [
-    "Sith Alchemy is one talent. Create Sith Amulet, Create Sith Armor, Create Sith Talisman, and Create Sith Weapon are procedures inside that talent.",
+    "Sith Alchemy is one talent. Create Sith Amulet, Create Sith Armor, Create Sith Talisman, and Create Sith Weapon are procedures inside that talent; Table 1-1 is excluded from the parent talent text.",
     "Table 1-1 (Sith Alchemy) is supporting rules for Sith Alchemy Specialist; its trait rows are not talent identities.",
-    "The Optional Rule: Daily Force Points sidebar interrupting Guardian Spirit is not part of that talent.",
-    "The New Species: Shards sidebar interrupting the Iron Knight layout is not a talent-tree boundary.",
+    "The Daily Force Points sidebar interrupts Guardian Spirit; the post-sidebar bonus Force Point paragraph resumes the talent and is included in canonical text.",
+    "The New Species: Shards sidebar follows Mask Presence and does not create a talent-tree boundary.",
     "No Phase 1D talent-membership correction was required."
   ],
   "missingRepositoryRecords": [
@@ -568,7 +570,7 @@
       "repoPrerequisites": "",
       "canonicalPrerequisites": "",
       "dispositions": [
-        "CANONICAL_TEXT_PRESENT_BOTH",
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
         "SOURCE_METADATA_MISSING",
         "SUMMARY_MISSING"
       ],
@@ -586,7 +588,7 @@
       "repoPrerequisites": "",
       "canonicalPrerequisites": "",
       "dispositions": [
-        "CANONICAL_TEXT_PRESENT_BOTH",
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
         "SOURCE_METADATA_MISSING",
         "SUMMARY_MISSING"
       ],
@@ -782,7 +784,7 @@
       "repoName": "Quick Modification",
       "repoTreeName": "Jedi Artisan",
       "repoPrerequisites": "Masterwork Lightsaber",
-      "canonicalPrerequisites": "Masterwork Lightsaber,",
+      "canonicalPrerequisites": "Masterwork Lightsaber",
       "dispositions": [
         "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
         "SOURCE_METADATA_MISSING",
@@ -1201,7 +1203,7 @@
         "SOURCE_METADATA_MISSING",
         "SUMMARY_MISSING"
       ],
-      "notes": "Create Sith Amulet, Create Sith Armor, Create Sith Talisman, and Create Sith Weapon are procedures within this one talent, not standalone talents.",
+      "notes": "Create Sith Amulet, Create Sith Armor, Create Sith Talisman, and Create Sith Weapon are procedures within this one talent, not standalone talents. Table 1-1 is excluded from the parent talent text.",
       "sameNameRepoCandidates": []
     },
     {
@@ -1219,7 +1221,7 @@
         "SOURCE_METADATA_MISSING",
         "SUMMARY_MISSING"
       ],
-      "notes": "The talent references Table 1-1 (Sith Alchemy) for available traits; table entries are supporting rules, not separate talent identities.",
+      "notes": "Table 1-1 supplies available traits; table rows are supporting rules, not standalone talent identities.",
       "sameNameRepoCandidates": []
     },
     {
@@ -1670,7 +1672,7 @@
         "SOURCE_METADATA_MISSING",
         "SUMMARY_MISSING"
       ],
-      "notes": "The Optional Rule: Daily Force Points sidebar interrupts the printed talent text and is excluded from the talent description.",
+      "notes": "The Daily Force Points sidebar interrupts this talent in layout; the post-sidebar bonus Force Point paragraph belongs to Guardian Spirit and is stitched back into canonical text.",
       "sameNameRepoCandidates": []
     },
     {
@@ -1806,7 +1808,7 @@
       "dispositions": [
         "MISSING_CONTENT"
       ],
-      "notes": "The New Species: Shards sidebar interrupts the Iron Knight tree layout and is excluded from the talent description.",
+      "notes": "The New Species: Shards sidebar follows Mask Presence and is excluded from the talent text.",
       "sameNameRepoCandidates": []
     },
     {
@@ -2303,7 +2305,7 @@
       "repoName": null,
       "repoTreeName": null,
       "repoPrerequisites": null,
-      "canonicalPrerequisites": "Force Training,",
+      "canonicalPrerequisites": "Force Training",
       "dispositions": [
         "MISSING_CONTENT"
       ],

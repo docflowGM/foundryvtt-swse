@@ -60,9 +60,13 @@ TXT/DJVU supplies searchable wording. Rendered PDF pages determine printed page,
 
 **Sith Alchemy Specialist** references Table 1-1 for its trait choices. Those table rows are supporting rules, not talent identities.
 
-The **Optional Rule: Daily Force Points** sidebar interrupts the printed **Guardian Spirit** text; it is not part of that talent. Likewise, the **New Species: Shards** sidebar does not split the Iron Knight talent tree.
+The **Optional Rule: Daily Force Points** sidebar interrupts the printed **Guardian Spirit** text. The sidebar itself is excluded, but the bonus Force Point paragraph following the sidebar resumes **Guardian Spirit** and is included in canonical text. Likewise, the **New Species: Shards** sidebar does not split the Iron Knight talent tree.
 
 No canonical tree-membership correction was required.
+
+## Post-closeout review correction
+
+A review pass removed page-furniture/tradition-lore leakage from terminal talents, restored the post-sidebar continuation of **Guardian Spirit**, excluded Table 1-1 from the parent **Sith Alchemy** text, corrected OCR punctuation, and replaced mechanically truncated quick summaries. Census totals did not change.
 
 ## Repository fidelity
 

@@ -49,6 +49,10 @@ All 31 Scavenger's Guide talent publications are absent as correct-tree records 
 
 None of those named actions is a standalone talent identity. The Phase 1D registry already reflects that structure, so no correction was necessary.
 
+## Post-closeout review correction
+
+A review pass fixed prerequisite overrun in **Break Program** and **Heuristic Mastery**, normalized obvious line-wrap OCR artifacts, and replaced the truncated **Burst Transfer** quick summary. Census totals did not change.
+
 ## Repository fidelity
 
 Because all 31 correct-tree records are absent, this book's production-repair work is creation rather than in-place text repair. The source-certified dataset supplies canonical text, prerequisites, page, and a derived quick summary for every identity.

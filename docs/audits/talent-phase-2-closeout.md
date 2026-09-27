@@ -185,6 +185,18 @@ Repair must remain tree/source scoped. Same-name talents must not be moved, over
 - [x] Phase 2 structural discoveries reconciled into Phase 1D authority.
 - [x] Production talent records left unchanged.
 
+# 9. Post-closeout review
+
+A review pass found and corrected certification-artifact defects in the final three books before production repair. These were transcription/boundary problems rather than changes to the canonical census. The **1,182 publication** total, **1,180 merged membership** total, and all Phase 1D structural counts remain unchanged.
+
+Corrections included:
+
+- Force Unleashed p. 88 source-page attribution and several page-boundary/OCR captures;
+- Jedi Academy terminal-talent lore leakage, Guardian Spirit's post-sidebar continuation, Sith Alchemy table separation, and truncated summaries;
+- Scavenger's Guide prerequisite overrun and line-wrap OCR cleanup.
+
+No production talent records were changed by the review.
+
 # Verdict
 
 **SWSE Talent Canonicalization Phase 2 is complete.**
