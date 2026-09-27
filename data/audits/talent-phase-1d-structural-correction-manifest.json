@@ -5,7 +5,7 @@
   "phase": "1D",
   "scope": "Structural canonical talent-tree repair queue. No production changes applied.",
   "authority": "Primary-source tree identity/membership/publication/access provenance from data/audits/talent-canonical-tree-registry.json.",
-  "postCloseoutCorrection": "Phase 2 Core certification restored Improved Dark Healing to the Core Sith origin membership. Phase 2 Galaxy at War certification removed Tough as Durasteel from Unarmed Mastery because it is a Martial Arts Master class feature. Phase 2 Galaxy of Intrigue certification removed six named actions that had been misclassified as standalone talents under Dedicated Guardian and Pistol Duelist.",
+  "postCloseoutCorrection": "Phase 2 Core certification restored Improved Dark Healing to the Core Sith origin membership. Phase 2 Galaxy at War certification removed Tough as Durasteel from Unarmed Mastery because it is a Martial Arts Master class feature. Phase 2 Galaxy of Intrigue certification removed six named actions that had been misclassified as standalone talents under Dedicated Guardian and Pistol Duelist. Phase 2 Scum and Villainy certification corrected Inspiration/Beloved and removed the Disgrace/Draw Fire cross-tree reference from canonical membership.",
   "summary": {
     "registryEntries": 197,
     "canonicalPublishedTrees": 177,
@@ -15,7 +15,7 @@
     "laterClassAccessGrants": 23,
     "sourceDisprovedReferenceAccessClaims": 1,
     "aggregateCanonicalMembershipClaims": 1184,
-    "treesWithMembershipDifferences": 104,
+    "treesWithMembershipDifferences": 105,
     "canonicalMembershipGaps": 274,
     "normalizationOnlyNameMatches": 9,
     "extraRepoMembershipClaims": 74,
@@ -476,16 +476,15 @@
       "repoTreeNames": [
         "Inspiration"
       ],
-      "canonicalMembershipCount": 6,
+      "canonicalMembershipCount": 7,
       "repoClaimCount": 9,
       "missingCanonicalMemberships": [],
       "normalizationOnlyNameMatches": [],
       "extraRepoMembershipClaims": [
-        "Beloved",
         "Inspired",
         "Bolster"
       ],
-      "repairNote": "Membership gaps identify absence from the correct canonical tree, not necessarily absence of a talent document elsewhere. Extra claims require identity/text adjudication before deletion."
+      "repairNote": "Phase 2 Scum and Villainy review corrected the expansion identity to Beloved. Remaining repository extras require separate adjudication."
     },
     {
       "canonicalTreeKey": "Saga Edition Core Rulebook|Jedi Consular",
@@ -2395,6 +2394,25 @@
       "normalizationOnlyNameMatches": [],
       "extraRepoMembershipClaims": [],
       "repairNote": "Membership gaps identify absence from the correct canonical tree, not necessarily absence of a talent document elsewhere. Extra claims require identity/text adjudication before deletion."
+    },
+    {
+      "canonicalTreeKey": "Scum and Villainy|Disgrace",
+      "canonicalDisplayName": "Disgrace",
+      "originSourcebook": "Scum and Villainy",
+      "repoTreeIds": [
+        "e91cc675fbf9ba6e"
+      ],
+      "repoTreeNames": [
+        "Disgrace"
+      ],
+      "canonicalMembershipCount": 6,
+      "repoClaimCount": 7,
+      "missingCanonicalMemberships": [],
+      "normalizationOnlyNameMatches": [],
+      "extraRepoMembershipClaims": [
+        "Draw Fire"
+      ],
+      "repairNote": "Phase 2 source review proved Draw Fire is only a cross-tree reference inside Misplaced Loyalty, not a Disgrace talent. The repository tree-membership string is contamination."
     }
   ],
   "classAccessDifferences": [

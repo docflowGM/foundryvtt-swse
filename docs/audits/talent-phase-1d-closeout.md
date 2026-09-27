@@ -391,3 +391,13 @@ Corrected structural totals after the prior Core and Galaxy at War corrections:
 - canonical correct-tree membership gaps: **274**
 
 Machine authority is the corrected `data/audits/talent-canonical-tree-registry.json` and `data/audits/talent-phase-1d-structural-correction-manifest.json`.
+
+
+# Post-closeout Phase 2 correction - Scum and Villainy identity corrections
+
+Phase 2 source/page review on 2026-09-27 corrected two Scum and Villainy structural claims:
+
+- Inspiration / **Beloved** replaces the false Scum expansion claim for Bolster Ally.
+- Disgrace / **Draw Fire** is removed. Draw Fire is only a reference inside Misplaced Loyalty to the Core Commando talent.
+
+These changes offset in aggregate membership count: Beloved adds one unique canonical membership while Draw Fire removes one false membership. Aggregate canonical memberships remain **1,184**. Expansion publication claims remain **272**. The corrected repository structural diff now contains **105** trees with membership differences; global gap count remains **274** and extra repo membership claims remain **74**.

@@ -1815,7 +1815,7 @@
           "sourcebook": "Scum and Villainy",
           "publicationType": "EXPANSION",
           "talentNames": [
-            "Bolster Ally"
+            "Beloved"
           ]
         }
       ],
@@ -1825,7 +1825,8 @@
         "Inspire Confidence",
         "Inspire Haste",
         "Inspire Zeal",
-        "Willpower"
+        "Willpower",
+        "Beloved"
       ],
       "aggregateMembershipStatus": "PHASE_1D_PUBLICATION_LAYER_COMPLETE",
       "referenceClassAccess": [
@@ -5976,7 +5977,6 @@
         "Ambush",
         "Castigate",
         "Dirty Tactics",
-        "Draw Fire",
         "Misplaced Loyalty",
         "Two-Faced",
         "Unreadable"
@@ -5989,7 +5989,6 @@
             "Ambush",
             "Castigate",
             "Dirty Tactics",
-            "Draw Fire",
             "Misplaced Loyalty",
             "Two-Faced",
             "Unreadable"
@@ -6000,7 +5999,6 @@
         "Ambush",
         "Castigate",
         "Dirty Tactics",
-        "Draw Fire",
         "Misplaced Loyalty",
         "Two-Faced",
         "Unreadable"
@@ -13619,6 +13617,26 @@
           "Stand Steady"
         ],
         "note": "End Game, Snap Aiming, and Stand Steady are named once-per-encounter actions inside the Pistol Duelist talent, not separately selectable talents."
+      },
+      {
+        "id": "scum-inspiration-beloved",
+        "date": "2026-09-27",
+        "sourcebook": "Scum and Villainy",
+        "canonicalTree": "Inspiration",
+        "talent": "Beloved",
+        "page": 14,
+        "disposition": "REPLACED_MISIDENTIFIED_EXPANSION_MEMBERSHIP",
+        "note": "Scum and Villainy p. 14 publishes Beloved as the new Inspiration talent. Bolster Ally is a prerequisite of Beloved, not the Scum expansion publication."
+      },
+      {
+        "id": "scum-disgrace-draw-fire-reference",
+        "date": "2026-09-27",
+        "sourcebook": "Scum and Villainy",
+        "canonicalTree": "Disgrace",
+        "talent": "Draw Fire",
+        "page": 14,
+        "disposition": "REMOVED_CROSS_TREE_REFERENCE_FROM_ORIGIN_MEMBERSHIP",
+        "note": "The Disgrace tree does not publish Draw Fire. Misplaced Loyalty merely references the Soldier/Commando Draw Fire talent in its restriction text."
       }
     ]
   },
@@ -13682,6 +13700,25 @@
         "Snap Aiming",
         "Stand Steady"
       ]
+    },
+    {
+      "id": "SCUM_INSPIRATION_BELOVED",
+      "phase": "2",
+      "sourcebook": "Scum and Villainy",
+      "tree": "Inspiration",
+      "talent": "Beloved",
+      "disposition": "PHASE_1D_STRUCTURAL_IDENTITY_CORRECTED",
+      "page": 14,
+      "replacedTalentName": "Bolster Ally"
+    },
+    {
+      "id": "SCUM_DISGRACE_DRAW_FIRE_REFERENCE",
+      "phase": "2",
+      "sourcebook": "Scum and Villainy",
+      "tree": "Disgrace",
+      "talent": "Draw Fire",
+      "disposition": "PHASE_1D_STRUCTURAL_OVERINCLUSION_CORRECTED",
+      "page": 14
     }
   ]
 }

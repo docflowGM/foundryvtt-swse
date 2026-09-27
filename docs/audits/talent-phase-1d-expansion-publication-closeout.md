@@ -615,3 +615,9 @@ After applying these publication edges, every primary-source verified tree shoul
 The Phase 1D publication layer is complete enough to generate authoritative aggregate canonical memberships from the sourcebook provenance graph.
 
 The remaining Phase 1D action after this document is mechanical registry recomputation plus the final correction/repair manifest.
+
+
+# Phase 2 Scum and Villainy correction
+
+- **Inspiration:** the Scum and Villainy expansion is **Beloved**, not Bolster Ally. Bolster Ally is a prerequisite printed beneath Beloved.
+- The correction is one-for-one, so the global later-publication claim count remains **272**.
