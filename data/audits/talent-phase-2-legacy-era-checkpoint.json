@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "phase": "2",
   "sourcebook": "Legacy Era Campaign Guide",
-  "status": "IN_PROGRESS_CHECKPOINT",
+  "status": "SUPERSEDED_BY_FINAL_CERTIFICATION",
   "checkpointDate": "2026-09-27",
   "branch": "audit/talent-phase-1-tree-census",
   "authority": {
@@ -79,5 +79,32 @@
     "Publish final Legacy Era Phase 2 closeout document.",
     "Commit and push final book checkpoint before starting the next sourcebook."
   ],
-  "productionChanges": false
+  "productionChanges": false,
+  "completedAt": "2026-09-27",
+  "finalCertificationFiles": [
+    "data/audits/talent-phase-2-legacy-era-campaign-guide-content.json",
+    "data/audits/talent-phase-2-legacy-era-campaign-guide-discrepancy-manifest.json",
+    "docs/audits/talent-phase-2-legacy-era-campaign-guide.md"
+  ],
+  "finalSummary": {
+    "canonicalTalentPublications": 101,
+    "originTreeIdentities": 16,
+    "originTalentIdentities": 88,
+    "expansionTreeTargets": 7,
+    "expansionTalentIdentities": 13,
+    "repositoryRecordsMapped": 91,
+    "missingRepositoryRecords": 10,
+    "phase1dStructuralCorrections": 0,
+    "dispositionCounts": {
+      "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT": 87,
+      "SOURCE_METADATA_MISSING": 91,
+      "SUMMARY_MISSING": 91,
+      "CANONICAL_TEXT_PRESENT_BOTH": 4,
+      "PREREQUISITE_NORMALIZATION_EQUIVALENT": 1,
+      "DESCRIPTION_SAME_NAME_CONTAMINATION": 1,
+      "PREREQUISITE_TEXT_MISMATCH": 7,
+      "SHARED_AFTEREFFECT_OMITTED": 5,
+      "MISSING_CONTENT": 10
+    }
+  }
 }

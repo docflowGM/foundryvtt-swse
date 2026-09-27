@@ -1,3 +1,13 @@
+# SUPERSEDED BY FINAL LEGACY ERA CERTIFICATION
+
+The in-progress checkpoint below has been completed. Final authority is:
+
+- `data/audits/talent-phase-2-legacy-era-campaign-guide-content.json`
+- `data/audits/talent-phase-2-legacy-era-campaign-guide-discrepancy-manifest.json`
+- `docs/audits/talent-phase-2-legacy-era-campaign-guide.md`
+
+---
+
 # PHASE 2 - Legacy Era Campaign Guide Checkpoint
 
 **Status:** IN PROGRESS  
