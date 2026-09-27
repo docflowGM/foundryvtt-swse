@@ -5,7 +5,7 @@
   "phase": "1D",
   "scope": "Structural canonical talent-tree repair queue. No production changes applied.",
   "authority": "Primary-source tree identity/membership/publication/access provenance from data/audits/talent-canonical-tree-registry.json.",
-  "postCloseoutCorrection": "Phase 2 Core certification restored Improved Dark Healing to the Core Sith origin membership. Phase 2 Galaxy at War certification removed Tough as Durasteel from Unarmed Mastery because it is a Martial Arts Master class feature. Phase 2 Galaxy of Intrigue certification removed six named actions that had been misclassified as standalone talents under Dedicated Guardian and Pistol Duelist. Phase 2 Scum and Villainy certification corrected Inspiration/Beloved and removed the Disgrace/Draw Fire cross-tree reference from canonical membership.",
+  "postCloseoutCorrection": "Phase 2 Core certification restored Improved Dark Healing to the Core Sith origin membership. Phase 2 Galaxy at War certification removed Tough as Durasteel from Unarmed Mastery because it is a Martial Arts Master class feature. Phase 2 Galaxy of Intrigue certification removed six named actions that had been misclassified as standalone talents under Dedicated Guardian and Pistol Duelist. Phase 2 Scum and Villainy certification corrected Inspiration/Beloved and removed the Disgrace/Draw Fire cross-tree reference from canonical membership. Phase 2 Unknown Regions certification removed four named sub-actions that had been misclassified as standalone talents under Band Together and Champion.",
   "summary": {
     "registryEntries": 197,
     "canonicalPublishedTrees": 177,
@@ -14,9 +14,9 @@
     "expansionPublicationClaims": 272,
     "laterClassAccessGrants": 23,
     "sourceDisprovedReferenceAccessClaims": 1,
-    "aggregateCanonicalMembershipClaims": 1184,
+    "aggregateCanonicalMembershipClaims": 1180,
     "treesWithMembershipDifferences": 105,
-    "canonicalMembershipGaps": 274,
+    "canonicalMembershipGaps": 270,
     "normalizationOnlyNameMatches": 9,
     "extraRepoMembershipClaims": 74,
     "treesWithClassAccessDifferences": 21,
@@ -1640,19 +1640,17 @@
       "repoTreeNames": [
         "Exile"
       ],
-      "canonicalMembershipCount": 7,
+      "canonicalMembershipCount": 5,
       "repoClaimCount": 1,
       "missingCanonicalMemberships": [
         "Arrogant Bluster",
         "Band Together",
-        "Strength in Numbers",
-        "Temporary Allies",
         "Rant",
         "Self-Reliant"
       ],
       "normalizationOnlyNameMatches": [],
       "extraRepoMembershipClaims": [],
-      "repairNote": "Membership gaps identify absence from the correct canonical tree, not necessarily absence of a talent document elsewhere. Extra claims require identity/text adjudication before deletion."
+      "repairNote": "Phase 2 Unknown Regions source review corrected named actions inside Band Together; they are not standalone talent memberships. Remaining differences retain the standard correct-tree meaning."
     },
     {
       "canonicalTreeKey": "Unknown Regions|Master Scout",
@@ -1732,12 +1730,10 @@
       "repoTreeNames": [
         "Warrior"
       ],
-      "canonicalMembershipCount": 7,
+      "canonicalMembershipCount": 5,
       "repoClaimCount": 3,
       "missingCanonicalMemberships": [
         "Champion",
-        "Disarming Hit",
-        "Masterful Strike",
         "Quick Study",
         "Simple Opportunity",
         "Warrior's Determination"
@@ -1747,7 +1743,7 @@
         "Weapon Proficiency (Simple Weapons)",
         "Ranged Disarm"
       ],
-      "repairNote": "Membership gaps identify absence from the correct canonical tree, not necessarily absence of a talent document elsewhere. Extra claims require identity/text adjudication before deletion."
+      "repairNote": "Phase 2 Unknown Regions source review corrected named actions inside Champion; they are not standalone talent memberships. Remaining differences retain the standard correct-tree meaning."
     },
     {
       "canonicalTreeKey": "Force Unleashed Campaign Guide|First-Degree Droid",

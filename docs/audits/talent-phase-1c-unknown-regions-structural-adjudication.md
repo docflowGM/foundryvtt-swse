@@ -1,3 +1,14 @@
+# PHASE 2 SUPERSEDING CORRECTION — 2026-09-27
+
+The Phase 2 page/hierarchy pass corrected two Phase 1C membership interpretations below:
+
+- **Exile:** canonical talents are Arrogant Bluster, Band Together, Galactic Guidance, Rant, Self-Reliant. **Strength in Numbers** and **Temporary Allies** are actions inside Band Together.
+- **Warrior:** canonical talents are Champion, Quick Study, Simple Opportunity, Warrior's Awareness, Warrior's Determination. **Disarming Hit** and **Masterful Strike** are actions inside Champion.
+
+Therefore the five class trees audited in this document contain **23**, not 27, standalone talent identities. The machine authority is the corrected `data/audits/talent-canonical-tree-registry.json`.
+
+---
+
 # PHASE 1C-UR FINDINGS - The Unknown Regions Structural Talent Adjudication
 
 **Status:** COMPLETE  

@@ -10427,8 +10427,6 @@
       "originTalentNames": [
         "Arrogant Bluster",
         "Band Together",
-        "Strength in Numbers",
-        "Temporary Allies",
         "Galactic Guidance",
         "Rant",
         "Self-Reliant"
@@ -10440,8 +10438,6 @@
           "talentNames": [
             "Arrogant Bluster",
             "Band Together",
-            "Strength in Numbers",
-            "Temporary Allies",
             "Galactic Guidance",
             "Rant",
             "Self-Reliant"
@@ -10451,8 +10447,6 @@
       "aggregateCanonicalTalentNames": [
         "Arrogant Bluster",
         "Band Together",
-        "Strength in Numbers",
-        "Temporary Allies",
         "Galactic Guidance",
         "Rant",
         "Self-Reliant"
@@ -10678,8 +10672,6 @@
       "originSourcebook": "Unknown Regions",
       "originTalentNames": [
         "Champion",
-        "Disarming Hit",
-        "Masterful Strike",
         "Quick Study",
         "Simple Opportunity",
         "Warrior's Awareness",
@@ -10691,8 +10683,6 @@
           "publicationType": "TREE_ORIGIN_MEMBERSHIP",
           "talentNames": [
             "Champion",
-            "Disarming Hit",
-            "Masterful Strike",
             "Quick Study",
             "Simple Opportunity",
             "Warrior's Awareness",
@@ -10702,8 +10692,6 @@
       ],
       "aggregateCanonicalTalentNames": [
         "Champion",
-        "Disarming Hit",
-        "Masterful Strike",
         "Quick Study",
         "Simple Opportunity",
         "Warrior's Awareness",
@@ -13637,6 +13625,34 @@
         "page": 14,
         "disposition": "REMOVED_CROSS_TREE_REFERENCE_FROM_ORIGIN_MEMBERSHIP",
         "note": "The Disgrace tree does not publish Draw Fire. Misplaced Loyalty merely references the Soldier/Commando Draw Fire talent in its restriction text."
+      },
+      {
+        "id": "unknown-band-together-nested-actions",
+        "date": "2026-09-27",
+        "sourcebook": "Unknown Regions",
+        "canonicalTree": "Exile",
+        "talent": "Band Together",
+        "page": 19,
+        "disposition": "REMOVED_NAMED_ACTIONS_FROM_TALENT_MEMBERSHIP",
+        "removedActionNames": [
+          "Strength in Numbers",
+          "Temporary Allies"
+        ],
+        "note": "Strength in Numbers and Temporary Allies are named once-per-encounter actions inside the Band Together talent, not standalone talents."
+      },
+      {
+        "id": "unknown-champion-nested-actions",
+        "date": "2026-09-27",
+        "sourcebook": "Unknown Regions",
+        "canonicalTree": "Warrior",
+        "talent": "Champion",
+        "page": 23,
+        "disposition": "REMOVED_NAMED_ACTIONS_FROM_TALENT_MEMBERSHIP",
+        "removedActionNames": [
+          "Disarming Hit",
+          "Masterful Strike"
+        ],
+        "note": "Disarming Hit and Masterful Strike are named once-per-encounter actions inside the Champion talent, not standalone talents."
       }
     ]
   },
@@ -13719,6 +13735,32 @@
       "talent": "Draw Fire",
       "disposition": "PHASE_1D_STRUCTURAL_OVERINCLUSION_CORRECTED",
       "page": 14
+    },
+    {
+      "id": "UNKNOWN_BAND_TOGETHER_NESTED_ACTIONS",
+      "phase": "2",
+      "sourcebook": "Unknown Regions",
+      "tree": "Exile",
+      "talent": "Band Together",
+      "disposition": "PHASE_1D_STRUCTURAL_OVERINCLUSION_CORRECTED",
+      "page": 19,
+      "removedActionNames": [
+        "Strength in Numbers",
+        "Temporary Allies"
+      ]
+    },
+    {
+      "id": "UNKNOWN_CHAMPION_NESTED_ACTIONS",
+      "phase": "2",
+      "sourcebook": "Unknown Regions",
+      "tree": "Warrior",
+      "talent": "Champion",
+      "disposition": "PHASE_1D_STRUCTURAL_OVERINCLUSION_CORRECTED",
+      "page": 23,
+      "removedActionNames": [
+        "Disarming Hit",
+        "Masterful Strike"
+      ]
     }
   ]
 }

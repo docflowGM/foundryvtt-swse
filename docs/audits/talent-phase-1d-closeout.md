@@ -401,3 +401,19 @@ Phase 2 source/page review on 2026-09-27 corrected two Scum and Villainy structu
 - Disgrace / **Draw Fire** is removed. Draw Fire is only a reference inside Misplaced Loyalty to the Core Commando talent.
 
 These changes offset in aggregate membership count: Beloved adds one unique canonical membership while Draw Fire removes one false membership. Aggregate canonical memberships remain **1,184**. Expansion publication claims remain **272**. The corrected repository structural diff now contains **105** trees with membership differences; global gap count remains **274** and extra repo membership claims remain **74**.
+
+
+# Post-closeout Phase 2 correction - Unknown Regions nested-action correction
+
+Phase 2 source hierarchy review on 2026-09-27 corrected four Unknown Regions origin claims:
+
+- Exile / **Band Together**: Strength in Numbers and Temporary Allies are named actions inside Band Together.
+- Warrior / **Champion**: Disarming Hit and Masterful Strike are named actions inside Champion.
+
+Corrected structural totals:
+
+- later-book expansion publication claims: **272** (unchanged)
+- aggregate canonical tree-membership claims: **1,180**
+- canonical correct-tree membership gaps: **270**
+
+No production pack records were changed.
