@@ -13540,7 +13540,7 @@
     "aggregateClassAccess": "Current aggregate reference/access target; later normalized from verified access publications as coverage becomes complete."
   },
   "phase1d": {
-    "status": "STRUCTURAL_REGISTRY_COMPLETE",
+    "status": "COMPLETE",
     "completedAt": "2026-09-26",
     "sourcebooksCovered": [
       "Saga Edition Core Rulebook",
@@ -13563,6 +13563,15 @@
     "accessProvenanceStatus": "COMPLETE",
     "accessAuthority": "accessPublications",
     "laterClassAccessGrants": 23,
-    "sourceDisprovedReferenceAccessClaims": 1
+    "sourceDisprovedReferenceAccessClaims": 1,
+    "closedAt": "2026-09-26",
+    "closeoutDocument": "docs/audits/talent-phase-1d-closeout.md",
+    "correctionManifest": "data/audits/talent-phase-1d-structural-correction-manifest.json",
+    "finalRegistryCounts": {
+      "entries": 197,
+      "primarySourceVerified": 177,
+      "noncanonicalHomebrewConfirmed": 19,
+      "obsoleteSplitFragmentsConfirmed": 1
+    }
   }
 }
