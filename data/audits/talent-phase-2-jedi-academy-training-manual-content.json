@@ -11,7 +11,8 @@
     "textIndex": "Jedi Academy Training Manual_djvu.txt",
     "rule": "TXT/DJVU is the wording/indexing layer. Rendered PDF printed pp. 14-22 and the Force-tradition talent pages 73, 75, 77, 79, 81, 83, 85, 87, 89, and 91 are final authority for page attribution, hierarchy, sidebars, and parent/action boundaries.",
     "quickSummary": "Derived player-facing text; not RAW.",
-    "reviewCorrection": "Post-closeout review removed OCR/page-furniture leakage, repaired source-boundary captures, corrected page attribution where required, and replaced mechanically truncated summaries."
+    "reviewCorrection": "Post-closeout review removed OCR/page-furniture leakage, repaired source-boundary captures, corrected page attribution where required, and replaced mechanically truncated summaries.",
+    "phase3AReviewCorrection": "Phase 3A multi-publication reconciliation visually verified JATM printed pp. 14-15 and removed two remaining OCR line-break/punctuation artifacts from Illusion. The JATM printing still has no printed prerequisite."
   },
   "contract": {
     "identity": "sourcebook + canonical tree + canonical talent name",
@@ -1656,7 +1657,7 @@
       "publicationType": "EXPANSION",
       "sourcebook": "Jedi Academy Training Manual",
       "page": 14,
-      "canonicalDescription": "As a standard action, you can spend a Force Point to create an illusion that seems perfectly real to anyone who views it. You designate the form and complexity of the illusion, as well as its size and location. Make a Use the Force check. When a creature views the illusion, compare the result of your Use the Force check to the creature's Will Defense. If your check result equals or exceeds its Will Defense, it believes the illusion to be real. Any physical interaction with the illusion (such as touching it, passing through it, or shooting it with a blaster) immediately reveals the true nature of the illusion to all who can see it, and the creature is no longer deceived The illusion lasts for a number of minutes equal to your heroic level. The illusion's size also affects your Use the Force check, applying a pen-alty for exceptionally large illusions. The penalties are -1 for Huge illusions, -2 for Gargantuan illusions, -5 for Colossal illusions, and -10 for Colossal (frigate) or larger illusions. This is a mind-affecting effect.",
+      "canonicalDescription": "As a standard action, you can spend a Force Point to create an illusion that seems perfectly real to anyone who views it. You designate the form and complexity of the illusion, as well as its size and location. Make a Use the Force check. When a creature views the illusion, compare the result of your Use the Force check to the creature's Will Defense. If your check result equals or exceeds its Will Defense, it believes the illusion to be real. Any physical interaction with the illusion (such as touching it, passing through it, or shooting it with a blaster) immediately reveals the true nature of the illusion to all who can see it, and the creature is no longer deceived. The illusion lasts for a number of minutes equal to your heroic level. The illusion's size also affects your Use the Force check, applying a penalty for exceptionally large illusions. The penalties are -1 for Huge illusions, -2 for Gargantuan illusions, -5 for Colossal illusions, and -10 for Colossal (frigate) or larger illusions. This is a mind-affecting effect.",
       "canonicalPrerequisites": "",
       "quickSummary": "As a standard action, you can spend a Force Point to create an illusion that seems perfectly real to anyone who views it.",
       "quickSummaryAuthority": "DERIVED_PLAYER_FACING_NOT_RAW",

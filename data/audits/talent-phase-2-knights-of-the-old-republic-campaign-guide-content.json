@@ -9,7 +9,8 @@
     "pdf": "SAGA EDITION - Knights of the Old Republic Campaign Guide.pdf",
     "textIndex": "Knights of the Old Republic Campaign Guide_djvu.txt",
     "rule": "TXT/DJVU is the wording/indexing layer. Rendered PDF printed pp. 24-30, 38-47, and 52-61 are final authority for page attribution, hierarchy, and parent/action boundaries.",
-    "quickSummary": "Derived player-facing text; not RAW."
+    "quickSummary": "Derived player-facing text; not RAW.",
+    "phase3AReviewCorrection": "Phase 3A multi-publication reconciliation visually verified KOTOR printed p. 52 and corrected an OCR tilde to the printed -10 penalty in Illusion."
   },
   "contract": {
     "identity": "sourcebook + canonical tree + canonical talent name",
@@ -2778,7 +2779,7 @@
       "publicationType": "EXPANSION",
       "sourcebook": "Knights of the Old Republic Campaign Guide",
       "page": 52,
-      "canonicalDescription": "As a standard action, you can spend a Force Point to create an illusion that seems perfectly real to anyone who views it. You designate the form and complexity of the illusion, as well as its size and location, and make a Use the Force check. When a creature views the illusion, compare the result of your Use the Force check to the creature's Will Defense; if your check result exceeds its Will Defense, it believes the illusion to be real. Any physical interaction with the illusion (such as touching it, passing through it, or shooting it with a blaster) immediately reveals the true nature of the illusion, and the creature is no longer deceived. The illusion lasts for a number of minutes equal to your heroic level.\n\nThe illusion’s size also affects your Use the Force check, applying a penalty for exceptionally large illusions. The penalties are -1 for Huge illusions, -2 for Gargantuan illusions, -5 for Colossal illusions, and ~10 for Colossal (frigate) or larger illusions.\n\nThis is a mind-affecting effect.",
+      "canonicalDescription": "As a standard action, you can spend a Force Point to create an illusion that seems perfectly real to anyone who views it. You designate the form and complexity of the illusion, as well as its size and location, and make a Use the Force check. When a creature views the illusion, compare the result of your Use the Force check to the creature's Will Defense; if your check result exceeds its Will Defense, it believes the illusion to be real. Any physical interaction with the illusion (such as touching it, passing through it, or shooting it with a blaster) immediately reveals the true nature of the illusion, and the creature is no longer deceived. The illusion lasts for a number of minutes equal to your heroic level.\n\nThe illusion’s size also affects your Use the Force check, applying a penalty for exceptionally large illusions. The penalties are -1 for Huge illusions, -2 for Gargantuan illusions, -5 for Colossal illusions, and -10 for Colossal (frigate) or larger illusions.\n\nThis is a mind-affecting effect.",
       "canonicalPrerequisites": "Mind trick",
       "quickSummary": "As a standard action, you can spend a Force Point to create an illusion that seems perfectly real to anyone who views it.",
       "quickSummaryAuthority": "DERIVED_PLAYER_FACING_NOT_RAW",
@@ -3483,5 +3484,6 @@
       ],
       "notes": null
     }
-  ]
+  ],
+  "reviewedAt": "2026-09-27"
 }

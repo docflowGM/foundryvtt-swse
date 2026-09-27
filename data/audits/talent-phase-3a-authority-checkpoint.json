@@ -1,0 +1,95 @@
+{
+  "schemaVersion": 1,
+  "phase": "3A",
+  "status": "IN_PROGRESS_CANONICAL_AUTHORITY_ESTABLISHED",
+  "startedAt": "2026-09-27",
+  "branch": "phase3/talent-production-canonicalization",
+  "productionAuthorityDiscovery": {
+    "runtimeCompendium": "foundryvtt-swse.talents",
+    "manifestPath": "packs/talents",
+    "versionedProductionSource": "packs/talents.db",
+    "compiledRuntimeArtifact": "packs/talents/ LevelDB directory (generated/uncommitted when present)",
+    "evidence": [
+      "system.json declares the talents Item pack at packs/talents.",
+      "tools/check-system-manifest.mjs explicitly states packs/<name>.db is the line-delimited source this repository versions and the compiled LevelDB directory is a build artifact.",
+      "scripts/data/talent-db.js builds runtime TalentDB from game.packs.get('foundryvtt-swse.talents').",
+      "scripts/data/talent-normalizer.js is read-only and treats the talent-tree inverse index as primary tree membership authority."
+    ]
+  },
+  "productionLayerCensus": {
+    "productionPack": {
+      "path": "packs/talents.db",
+      "gitBlobSha": "c8aae4d198d01b7620558a469332ffb3cfa7deba",
+      "records": 1024,
+      "choiceMetaRecords": 20,
+      "abilityMetaRecords": 1022,
+      "abilityMetaRuleRecords": 227
+    },
+    "fixesMirror": {
+      "path": "data/fixes/talents.fixed.json",
+      "gitBlobSha": "ad1adfe821a3e7787bd298d2220f16e2914bb0a4",
+      "records": 862,
+      "choiceMetaRecords": 0,
+      "abilityMetaRecords": 131,
+      "abilityMetaRuleRecords": 61
+    },
+    "generatedMirror": {
+      "path": "data/generated/talents.fixed.json",
+      "gitBlobSha": "9b436fc0a89e55184b87de8497e96a9d9a7cd8c5",
+      "records": 862,
+      "choiceMetaRecords": 0
+    },
+    "comparison": {
+      "productionAndFixesSharedIds": 859,
+      "productionOnlyIds": 165,
+      "fixesOnlyIds": 3,
+      "sharedProductionFixRecordsWithAnyJsonDifference": 852,
+      "fixesGeneratedSameIdSet": true,
+      "fixesGeneratedLogicalRecordDifferences": 59
+    },
+    "conclusion": "The 862-record staging mirrors cannot be used as Phase 3 production authority or as a rebuild source without losing current production documents and runtime metadata."
+  },
+  "canonicalMerge": {
+    "output": "data/canonical/talents.json",
+    "builder": "tools/build-canonical-talents.mjs",
+    "certifiedPublicationClaims": 1182,
+    "canonicalIdentities": 1180,
+    "multiPublicationIdentities": 1,
+    "productionPolicyReviewRequired": 1,
+    "identityRule": "canonicalTreeKey + talent name"
+  },
+  "explicitConflict": {
+    "canonicalIdentity": "Saga Edition Core Rulebook|Alter|Illusion",
+    "publications": [
+      {
+        "sourcebook": "Knights of the Old Republic Campaign Guide",
+        "page": 52,
+        "prerequisite": "Mind trick",
+        "comparison": "Use the Force result must exceed Will Defense."
+      },
+      {
+        "sourcebook": "Force Unleashed Campaign Guide",
+        "page": 87,
+        "prerequisite": "Mind trick",
+        "comparison": "Use the Force result must exceed Will Defense."
+      },
+      {
+        "sourcebook": "Jedi Academy Training Manual",
+        "page": 14,
+        "prerequisite": "",
+        "comparison": "Use the Force result equals or exceeds Will Defense; physical interaction reveals the illusion to all who can see it."
+      }
+    ],
+    "provisionalSelection": "Knights of the Old Republic Campaign Guide",
+    "productionMutationBlocked": true
+  },
+  "sourceCorrectionsDuring3A": [
+    "KOTOR Illusion: visual PDF verification corrected OCR '~10' to printed '-10' for Colossal (frigate) or larger illusions.",
+    "Jedi Academy Illusion: visual PDF verification removed a remaining sentence-boundary and line-break OCR artifact; the printing genuinely omits the earlier Mind trick prerequisite."
+  ],
+  "nextActions": [
+    "Certify the Illusion multi-publication precedence policy before Phase 3C.",
+    "Finish 3A validation of the generated 1,180-record canonical dataset.",
+    "Start Phase 3B by tree-scoped matching of data/canonical/talents.json against packs/talents.db while preserving pack-side runtime metadata."
+  ]
+}
