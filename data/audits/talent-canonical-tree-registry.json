@@ -4,11 +4,11 @@
   "branch": "audit/talent-phase-1-tree-census",
   "authorityNote": "Primary sourcebooks are authoritative. Tree origin membership, later talent additions, and class-access grants are tracked per publication so later expansions are not misattributed to a tree's origin book.",
   "counts": {
-    "entries": 195,
+    "entries": 197,
     "referenceRows": 140,
-    "primarySourceVerified": 148,
+    "primarySourceVerified": 177,
     "referencePendingPrimary": 0,
-    "repoSpecialSourceReview": 27,
+    "repoSpecialSourceReview": 0,
     "noncanonicalHomebrewConfirmed": 19,
     "obsoleteSplitFragmentsConfirmed": 1
   },
@@ -9936,11 +9936,11 @@
       ]
     },
     {
-      "canonicalTreeKey": "repo-special|Aingtii Monk",
+      "canonicalTreeKey": "Jedi Academy Training Manual|Aing-Tii Monk",
       "displayName": "Aingtii Monk",
-      "sourcebook": null,
+      "sourcebook": "Jedi Academy Training Manual",
       "classAccess": [],
-      "sourceStatus": "REPO_SPECIAL_SOURCE_REVIEW",
+      "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
       "repoTreeIds": [
         "f8e7edab5f234e27"
       ],
@@ -9948,23 +9948,56 @@
         "Aingtii Monk"
       ],
       "repoClassAccess": [],
-      "status": "REPO_ONLY_SPECIAL_OR_UNRESOLVED",
+      "status": "SOURCE_VERIFIED_SPECIAL_TREE",
       "notes": null,
-      "originSourcebook": null,
-      "originTalentNames": null,
-      "talentPublications": [],
-      "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED",
+      "originSourcebook": "Jedi Academy Training Manual",
+      "originTalentNames": [
+        "Aura of Freedom",
+        "Folded Space Mastery",
+        "Liberate",
+        "Many Shades of the Force",
+        "Spatial Integrity"
+      ],
+      "talentPublications": [
+        {
+          "sourcebook": "Jedi Academy Training Manual",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Aura of Freedom",
+            "Folded Space Mastery",
+            "Liberate",
+            "Many Shades of the Force",
+            "Spatial Integrity"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Aura of Freedom",
+        "Folded Space Mastery",
+        "Liberate",
+        "Many Shades of the Force",
+        "Spatial Integrity"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
       "referenceClassAccess": [],
       "accessPublications": [],
-      "aggregateClassAccess": []
+      "aggregateClassAccess": [],
+      "previousCanonicalTreeKey": "repo-special|Aingtii Monk",
+      "canonicalDisplayName": "Aing-Tii Monk",
+      "accessModel": "FORCE_TRADITION",
+      "specialAccessRules": [
+        {
+          "sourcebook": "Jedi Academy Training Manual",
+          "summary": "Available as a Force talent only to eligible members of the Aing-Tii Monk tradition, subject to that sourcebook's membership rules."
+        }
+      ]
     },
     {
-      "canonicalTreeKey": "repo-special|Alter",
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Alter",
       "displayName": "Alter",
-      "sourcebook": null,
+      "sourcebook": "Saga Edition Core Rulebook",
       "classAccess": [],
-      "sourceStatus": "REPO_SPECIAL_SOURCE_REVIEW",
+      "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
       "repoTreeIds": [
         "6ac3416fb6aada56"
       ],
@@ -9972,11 +10005,24 @@
         "Alter"
       ],
       "repoClassAccess": [],
-      "status": "REPO_ONLY_SPECIAL_OR_UNRESOLVED",
+      "status": "SOURCE_VERIFIED_SPECIAL_TREE",
       "notes": null,
-      "originSourcebook": null,
-      "originTalentNames": null,
+      "originSourcebook": "Saga Edition Core Rulebook",
+      "originTalentNames": [
+        "Disciplined Strike",
+        "Telekinetic Power",
+        "Telekinetic Savant"
+      ],
       "talentPublications": [
+        {
+          "sourcebook": "Saga Edition Core Rulebook",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Disciplined Strike",
+            "Telekinetic Power",
+            "Telekinetic Savant"
+          ]
+        },
         {
           "sourcebook": "Clone Wars Campaign Guide",
           "publicationType": "EXPANSION",
@@ -9994,6 +10040,9 @@
         }
       ],
       "aggregateCanonicalTalentNames": [
+        "Disciplined Strike",
+        "Telekinetic Power",
+        "Telekinetic Savant",
         "Aversion",
         "Illusion",
         "Telekinetic Prodigy"
@@ -10001,14 +10050,23 @@
       "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
       "referenceClassAccess": [],
       "accessPublications": [],
-      "aggregateClassAccess": []
+      "aggregateClassAccess": [],
+      "previousCanonicalTreeKey": "repo-special|Alter",
+      "canonicalDisplayName": "Alter",
+      "accessModel": "FORCE_TALENT",
+      "specialAccessRules": [
+        {
+          "sourcebook": "Saga Edition Core Rulebook",
+          "summary": "Available as a Force talent to characters who meet the normal Force-talent access requirements."
+        }
+      ]
     },
     {
-      "canonicalTreeKey": "repo-special|Bando Gora Captain",
+      "canonicalTreeKey": "Clone Wars Campaign Guide|Bando Gora Captain",
       "displayName": "Bando Gora Captain",
-      "sourcebook": null,
+      "sourcebook": "Clone Wars Campaign Guide",
       "classAccess": [],
-      "sourceStatus": "REPO_SPECIAL_SOURCE_REVIEW",
+      "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
       "repoTreeIds": [
         "b7fb2b10740923f6"
       ],
@@ -10016,23 +10074,53 @@
         "Bando Gora Captain"
       ],
       "repoClassAccess": [],
-      "status": "REPO_ONLY_SPECIAL_OR_UNRESOLVED",
+      "status": "SOURCE_VERIFIED_SPECIAL_TREE",
       "notes": null,
-      "originSourcebook": null,
-      "originTalentNames": null,
-      "talentPublications": [],
-      "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED",
+      "originSourcebook": "Clone Wars Campaign Guide",
+      "originTalentNames": [
+        "Bando Gora Surge",
+        "Force Fighter",
+        "Resist Enervation",
+        "Victorious Force Mastery"
+      ],
+      "talentPublications": [
+        {
+          "sourcebook": "Clone Wars Campaign Guide",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Bando Gora Surge",
+            "Force Fighter",
+            "Resist Enervation",
+            "Victorious Force Mastery"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Bando Gora Surge",
+        "Force Fighter",
+        "Resist Enervation",
+        "Victorious Force Mastery"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
       "referenceClassAccess": [],
       "accessPublications": [],
-      "aggregateClassAccess": []
+      "aggregateClassAccess": [],
+      "previousCanonicalTreeKey": "repo-special|Bando Gora Captain",
+      "canonicalDisplayName": "Bando Gora Captain",
+      "accessModel": "FORCE_TRADITION",
+      "specialAccessRules": [
+        {
+          "sourcebook": "Clone Wars Campaign Guide",
+          "summary": "Available as a Force talent only to eligible members of the Bando Gora Captain tradition, subject to that sourcebook's membership rules."
+        }
+      ]
     },
     {
-      "canonicalTreeKey": "repo-special|Baran Do Sage",
+      "canonicalTreeKey": "Jedi Academy Training Manual|Baran Do Sage",
       "displayName": "Baran Do Sage",
-      "sourcebook": null,
+      "sourcebook": "Jedi Academy Training Manual",
       "classAccess": [],
-      "sourceStatus": "REPO_SPECIAL_SOURCE_REVIEW",
+      "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
       "repoTreeIds": [
         "3e807e87cac844ba"
       ],
@@ -10040,23 +10128,56 @@
         "Baran Do Sage"
       ],
       "repoClassAccess": [],
-      "status": "REPO_ONLY_SPECIAL_OR_UNRESOLVED",
+      "status": "SOURCE_VERIFIED_SPECIAL_TREE",
       "notes": null,
-      "originSourcebook": null,
-      "originTalentNames": null,
-      "talentPublications": [],
-      "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED",
+      "originSourcebook": "Jedi Academy Training Manual",
+      "originTalentNames": [
+        "Enhanced Danger Sense",
+        "Expanded Horizon",
+        "Knowledge and Defense",
+        "Planetary Attunement",
+        "Precognitive Meditation"
+      ],
+      "talentPublications": [
+        {
+          "sourcebook": "Jedi Academy Training Manual",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Enhanced Danger Sense",
+            "Expanded Horizon",
+            "Knowledge and Defense",
+            "Planetary Attunement",
+            "Precognitive Meditation"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Enhanced Danger Sense",
+        "Expanded Horizon",
+        "Knowledge and Defense",
+        "Planetary Attunement",
+        "Precognitive Meditation"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
       "referenceClassAccess": [],
       "accessPublications": [],
-      "aggregateClassAccess": []
+      "aggregateClassAccess": [],
+      "previousCanonicalTreeKey": "repo-special|Baran Do Sage",
+      "canonicalDisplayName": "Baran Do Sage",
+      "accessModel": "FORCE_TRADITION",
+      "specialAccessRules": [
+        {
+          "sourcebook": "Jedi Academy Training Manual",
+          "summary": "Available as a Force talent only to eligible members of the Baran Do Sage tradition, subject to that sourcebook's membership rules."
+        }
+      ]
     },
     {
-      "canonicalTreeKey": "repo-special|Believer Disciple",
+      "canonicalTreeKey": "Clone Wars Campaign Guide|Believer Disciple",
       "displayName": "Believer Disciple",
-      "sourcebook": null,
+      "sourcebook": "Clone Wars Campaign Guide",
       "classAccess": [],
-      "sourceStatus": "REPO_SPECIAL_SOURCE_REVIEW",
+      "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
       "repoTreeIds": [
         "92c32621101a11f9"
       ],
@@ -10064,16 +10185,49 @@
         "Believer Disciple"
       ],
       "repoClassAccess": [],
-      "status": "REPO_ONLY_SPECIAL_OR_UNRESOLVED",
+      "status": "SOURCE_VERIFIED_SPECIAL_TREE",
       "notes": null,
-      "originSourcebook": null,
-      "originTalentNames": null,
-      "talentPublications": [],
-      "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED",
+      "originSourcebook": "Clone Wars Campaign Guide",
+      "originTalentNames": [
+        "Believer Intuition",
+        "Defense Boost",
+        "Hardiness",
+        "High Impact",
+        "Sith Reverence"
+      ],
+      "talentPublications": [
+        {
+          "sourcebook": "Clone Wars Campaign Guide",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Believer Intuition",
+            "Defense Boost",
+            "Hardiness",
+            "High Impact",
+            "Sith Reverence"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Believer Intuition",
+        "Defense Boost",
+        "Hardiness",
+        "High Impact",
+        "Sith Reverence"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
       "referenceClassAccess": [],
       "accessPublications": [],
-      "aggregateClassAccess": []
+      "aggregateClassAccess": [],
+      "previousCanonicalTreeKey": "repo-special|Believer Disciple",
+      "canonicalDisplayName": "Believer Disciple",
+      "accessModel": "FORCE_TRADITION",
+      "specialAccessRules": [
+        {
+          "sourcebook": "Clone Wars Campaign Guide",
+          "summary": "Available as a Force talent only to eligible members of the Believer Disciple tradition, subject to that sourcebook's membership rules."
+        }
+      ]
     },
     {
       "canonicalTreeKey": "repo-special|Blackguard Wilder",
@@ -10101,11 +10255,11 @@
       "sourceClassification": "NONCANONICAL_HOMEBREW"
     },
     {
-      "canonicalTreeKey": "repo-special|Blazing Chain",
+      "canonicalTreeKey": "Unknown Regions|Blazing Chain",
       "displayName": "Blazing Chain",
-      "sourcebook": null,
+      "sourcebook": "Unknown Regions",
       "classAccess": [],
-      "sourceStatus": "REPO_SPECIAL_SOURCE_REVIEW",
+      "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
       "repoTreeIds": [
         "427213bd55e04e27"
       ],
@@ -10113,16 +10267,46 @@
         "Blazing Chain"
       ],
       "repoClassAccess": [],
-      "status": "REPO_ONLY_SPECIAL_OR_UNRESOLVED",
+      "status": "SOURCE_VERIFIED_SPECIAL_TREE",
       "notes": null,
-      "originSourcebook": null,
-      "originTalentNames": null,
-      "talentPublications": [],
-      "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED",
+      "originSourcebook": "Unknown Regions",
+      "originTalentNames": [
+        "Force Directed Shot",
+        "Negate and Redirect",
+        "Rising Anger",
+        "Rising Panic"
+      ],
+      "talentPublications": [
+        {
+          "sourcebook": "Unknown Regions",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Force Directed Shot",
+            "Negate and Redirect",
+            "Rising Anger",
+            "Rising Panic"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Force Directed Shot",
+        "Negate and Redirect",
+        "Rising Anger",
+        "Rising Panic"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
       "referenceClassAccess": [],
       "accessPublications": [],
-      "aggregateClassAccess": []
+      "aggregateClassAccess": [],
+      "previousCanonicalTreeKey": "repo-special|Blazing Chain",
+      "canonicalDisplayName": "Blazing Chain",
+      "accessModel": "FORCE_TRADITION",
+      "specialAccessRules": [
+        {
+          "sourcebook": "Unknown Regions",
+          "summary": "Available as a Force talent only to eligible members of the Blazing Chain tradition, subject to that sourcebook's membership rules."
+        }
+      ]
     },
     {
       "canonicalTreeKey": "repo-special|Bomarr Monk",
@@ -10200,11 +10384,11 @@
       "sourceClassification": "NONCANONICAL_HOMEBREW"
     },
     {
-      "canonicalTreeKey": "repo-special|Control",
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Control",
       "displayName": "Control",
-      "sourcebook": null,
+      "sourcebook": "Saga Edition Core Rulebook",
       "classAccess": [],
-      "sourceStatus": "REPO_SPECIAL_SOURCE_REVIEW",
+      "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
       "repoTreeIds": [
         "d3661aa9906bdc79"
       ],
@@ -10212,11 +10396,26 @@
         "Control"
       ],
       "repoClassAccess": [],
-      "status": "REPO_ONLY_SPECIAL_OR_UNRESOLVED",
+      "status": "SOURCE_VERIFIED_SPECIAL_TREE",
       "notes": null,
-      "originSourcebook": null,
-      "originTalentNames": null,
+      "originSourcebook": "Saga Edition Core Rulebook",
+      "originTalentNames": [
+        "Damage Reduction 10",
+        "Equilibrium",
+        "Force Focus",
+        "Force Recovery"
+      ],
       "talentPublications": [
+        {
+          "sourcebook": "Saga Edition Core Rulebook",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Damage Reduction 10",
+            "Equilibrium",
+            "Force Focus",
+            "Force Recovery"
+          ]
+        },
         {
           "sourcebook": "Clone Wars Campaign Guide",
           "publicationType": "EXPANSION",
@@ -10234,6 +10433,10 @@
         }
       ],
       "aggregateCanonicalTalentNames": [
+        "Damage Reduction 10",
+        "Equilibrium",
+        "Force Focus",
+        "Force Recovery",
         "The Will To Resist",
         "Force Exertion",
         "Indomitable Will"
@@ -10241,7 +10444,16 @@
       "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
       "referenceClassAccess": [],
       "accessPublications": [],
-      "aggregateClassAccess": []
+      "aggregateClassAccess": [],
+      "previousCanonicalTreeKey": "repo-special|Control",
+      "canonicalDisplayName": "Control",
+      "accessModel": "FORCE_TALENT",
+      "specialAccessRules": [
+        {
+          "sourcebook": "Saga Edition Core Rulebook",
+          "summary": "Available as a Force talent to characters who meet the normal Force-talent access requirements."
+        }
+      ]
     },
     {
       "canonicalTreeKey": "repo-special|Cowardice",
@@ -10269,11 +10481,11 @@
       "sourceClassification": "NONCANONICAL_HOMEBREW"
     },
     {
-      "canonicalTreeKey": "repo-special|Dark Side",
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Dark Side",
       "displayName": "Dark Side",
-      "sourcebook": null,
+      "sourcebook": "Saga Edition Core Rulebook",
       "classAccess": [],
-      "sourceStatus": "REPO_SPECIAL_SOURCE_REVIEW",
+      "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
       "repoTreeIds": [
         "de95d37c72b1c4cd"
       ],
@@ -10281,11 +10493,26 @@
         "Dark Side"
       ],
       "repoClassAccess": [],
-      "status": "REPO_ONLY_SPECIAL_OR_UNRESOLVED",
+      "status": "SOURCE_VERIFIED_SPECIAL_TREE",
       "notes": null,
-      "originSourcebook": null,
-      "originTalentNames": null,
+      "originSourcebook": "Saga Edition Core Rulebook",
+      "originTalentNames": [
+        "Power of the Dark Side",
+        "Dark Presence",
+        "Revenge",
+        "Swift Power"
+      ],
       "talentPublications": [
+        {
+          "sourcebook": "Saga Edition Core Rulebook",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Power of the Dark Side",
+            "Dark Presence",
+            "Revenge",
+            "Swift Power"
+          ]
+        },
         {
           "sourcebook": "Clone Wars Campaign Guide",
           "publicationType": "EXPANSION",
@@ -10302,20 +10529,33 @@
         }
       ],
       "aggregateCanonicalTalentNames": [
+        "Power of the Dark Side",
+        "Dark Presence",
+        "Revenge",
+        "Swift Power",
         "Consumed by Darkness",
         "Wrath of the Dark Side"
       ],
       "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
       "referenceClassAccess": [],
       "accessPublications": [],
-      "aggregateClassAccess": []
+      "aggregateClassAccess": [],
+      "previousCanonicalTreeKey": "repo-special|Dark Side",
+      "canonicalDisplayName": "Dark Side",
+      "accessModel": "FORCE_TALENT",
+      "specialAccessRules": [
+        {
+          "sourcebook": "Saga Edition Core Rulebook",
+          "summary": "Available as a Force talent to characters who meet the normal Force-talent access requirements."
+        }
+      ]
     },
     {
-      "canonicalTreeKey": "repo-special|Dathomiri Witch",
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Dathomiri Witch",
       "displayName": "Dathomiri Witch",
-      "sourcebook": null,
+      "sourcebook": "Saga Edition Core Rulebook",
       "classAccess": [],
-      "sourceStatus": "REPO_SPECIAL_SOURCE_REVIEW",
+      "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
       "repoTreeIds": [
         "ad16f3e5f4f7441b"
       ],
@@ -10323,16 +10563,46 @@
         "Dathomiri Witch"
       ],
       "repoClassAccess": [],
-      "status": "REPO_ONLY_SPECIAL_OR_UNRESOLVED",
+      "status": "SOURCE_VERIFIED_SPECIAL_TREE",
       "notes": null,
-      "originSourcebook": null,
-      "originTalentNames": null,
-      "talentPublications": [],
-      "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED",
+      "originSourcebook": "Saga Edition Core Rulebook",
+      "originTalentNames": [
+        "Adept Spellcaster",
+        "Charm Beast",
+        "Command Beast",
+        "Flight"
+      ],
+      "talentPublications": [
+        {
+          "sourcebook": "Saga Edition Core Rulebook",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Adept Spellcaster",
+            "Charm Beast",
+            "Command Beast",
+            "Flight"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Adept Spellcaster",
+        "Charm Beast",
+        "Command Beast",
+        "Flight"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
       "referenceClassAccess": [],
       "accessPublications": [],
-      "aggregateClassAccess": []
+      "aggregateClassAccess": [],
+      "previousCanonicalTreeKey": "repo-special|Dathomiri Witch",
+      "canonicalDisplayName": "Dathomiri Witch",
+      "accessModel": "FORCE_TRADITION",
+      "specialAccessRules": [
+        {
+          "sourcebook": "Saga Edition Core Rulebook",
+          "summary": "Available as a Force talent only to eligible members of the Dathomiri Witch tradition, subject to that sourcebook's membership rules."
+        }
+      ]
     },
     {
       "canonicalTreeKey": "repo-special|Defensive Duelist",
@@ -10360,11 +10630,11 @@
       "sourceClassification": "NONCANONICAL_HOMEBREW"
     },
     {
-      "canonicalTreeKey": "repo-special|Disciple Of Twilight",
+      "canonicalTreeKey": "Legacy Era Campaign Guide|Disciple of Twilight",
       "displayName": "Disciple Of Twilight",
-      "sourcebook": null,
+      "sourcebook": "Legacy Era Campaign Guide",
       "classAccess": [],
-      "sourceStatus": "REPO_SPECIAL_SOURCE_REVIEW",
+      "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
       "repoTreeIds": [
         "4da769d7c5f44232"
       ],
@@ -10372,23 +10642,56 @@
         "Disciple Of Twilight"
       ],
       "repoClassAccess": [],
-      "status": "REPO_ONLY_SPECIAL_OR_UNRESOLVED",
+      "status": "SOURCE_VERIFIED_SPECIAL_TREE",
       "notes": null,
-      "originSourcebook": null,
-      "originTalentNames": null,
-      "talentPublications": [],
-      "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED",
+      "originSourcebook": "Legacy Era Campaign Guide",
+      "originTalentNames": [
+        "Cloak of Shadow",
+        "Phantasm",
+        "Revelation",
+        "Shadow Armor",
+        "Shadow Vision"
+      ],
+      "talentPublications": [
+        {
+          "sourcebook": "Legacy Era Campaign Guide",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Cloak of Shadow",
+            "Phantasm",
+            "Revelation",
+            "Shadow Armor",
+            "Shadow Vision"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Cloak of Shadow",
+        "Phantasm",
+        "Revelation",
+        "Shadow Armor",
+        "Shadow Vision"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
       "referenceClassAccess": [],
       "accessPublications": [],
-      "aggregateClassAccess": []
+      "aggregateClassAccess": [],
+      "previousCanonicalTreeKey": "repo-special|Disciple Of Twilight",
+      "canonicalDisplayName": "Disciple of Twilight",
+      "accessModel": "FORCE_TRADITION",
+      "specialAccessRules": [
+        {
+          "sourcebook": "Legacy Era Campaign Guide",
+          "summary": "Available as a Force talent only to eligible members of the Disciple of Twilight tradition, subject to that sourcebook's membership rules."
+        }
+      ]
     },
     {
-      "canonicalTreeKey": "repo-special|Ember Of Vahl",
+      "canonicalTreeKey": "Legacy Era Campaign Guide|Ember of Vahl",
       "displayName": "Ember Of Vahl",
-      "sourcebook": null,
+      "sourcebook": "Legacy Era Campaign Guide",
       "classAccess": [],
-      "sourceStatus": "REPO_SPECIAL_SOURCE_REVIEW",
+      "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
       "repoTreeIds": [
         "c6eee4889411411b"
       ],
@@ -10396,16 +10699,49 @@
         "Ember Of Vahl"
       ],
       "repoClassAccess": [],
-      "status": "REPO_ONLY_SPECIAL_OR_UNRESOLVED",
+      "status": "SOURCE_VERIFIED_SPECIAL_TREE",
       "notes": null,
-      "originSourcebook": null,
-      "originTalentNames": null,
-      "talentPublications": [],
-      "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED",
+      "originSourcebook": "Legacy Era Campaign Guide",
+      "originTalentNames": [
+        "Initiate of Vahl",
+        "Reading the Flame",
+        "Sword of Vahl",
+        "Vahl's Brand",
+        "Vahl's Flame"
+      ],
+      "talentPublications": [
+        {
+          "sourcebook": "Legacy Era Campaign Guide",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Initiate of Vahl",
+            "Reading the Flame",
+            "Sword of Vahl",
+            "Vahl's Brand",
+            "Vahl's Flame"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Initiate of Vahl",
+        "Reading the Flame",
+        "Sword of Vahl",
+        "Vahl's Brand",
+        "Vahl's Flame"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
       "referenceClassAccess": [],
       "accessPublications": [],
-      "aggregateClassAccess": []
+      "aggregateClassAccess": [],
+      "previousCanonicalTreeKey": "repo-special|Ember Of Vahl",
+      "canonicalDisplayName": "Ember of Vahl",
+      "accessModel": "FORCE_TRADITION",
+      "specialAccessRules": [
+        {
+          "sourcebook": "Legacy Era Campaign Guide",
+          "summary": "Available as a Force talent only to eligible members of the Ember of Vahl tradition, subject to that sourcebook's membership rules."
+        }
+      ]
     },
     {
       "canonicalTreeKey": "repo-special|Exceptional Followers",
@@ -10566,11 +10902,11 @@
       "canonicalReplacementKey": "Scum and Villainy|GenoHaradan"
     },
     {
-      "canonicalTreeKey": "repo-special|Guardian Spirit",
+      "canonicalTreeKey": "Jedi Academy Training Manual|Guardian Spirit",
       "displayName": "Guardian Spirit",
-      "sourcebook": null,
+      "sourcebook": "Jedi Academy Training Manual",
       "classAccess": [],
-      "sourceStatus": "REPO_SPECIAL_SOURCE_REVIEW",
+      "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
       "repoTreeIds": [
         "6629c34384c4ca53"
       ],
@@ -10578,23 +10914,56 @@
         "Guardian Spirit"
       ],
       "repoClassAccess": [],
-      "status": "REPO_ONLY_SPECIAL_OR_UNRESOLVED",
+      "status": "SOURCE_VERIFIED_SPECIAL_TREE",
       "notes": null,
-      "originSourcebook": null,
-      "originTalentNames": null,
-      "talentPublications": [],
-      "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED",
+      "originSourcebook": "Jedi Academy Training Manual",
+      "originTalentNames": [
+        "Guardian Spirit",
+        "Crucial Advice",
+        "Distracting Apparition",
+        "Manifest Guardian Spirit",
+        "Vital Encouragement"
+      ],
+      "talentPublications": [
+        {
+          "sourcebook": "Jedi Academy Training Manual",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Guardian Spirit",
+            "Crucial Advice",
+            "Distracting Apparition",
+            "Manifest Guardian Spirit",
+            "Vital Encouragement"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Guardian Spirit",
+        "Crucial Advice",
+        "Distracting Apparition",
+        "Manifest Guardian Spirit",
+        "Vital Encouragement"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
       "referenceClassAccess": [],
       "accessPublications": [],
-      "aggregateClassAccess": []
+      "aggregateClassAccess": [],
+      "previousCanonicalTreeKey": "repo-special|Guardian Spirit",
+      "canonicalDisplayName": "Guardian Spirit",
+      "accessModel": "FORCE_TALENT",
+      "specialAccessRules": [
+        {
+          "sourcebook": "Jedi Academy Training Manual",
+          "summary": "Available as a Force talent to characters who meet the normal Force-talent access requirements."
+        }
+      ]
     },
     {
-      "canonicalTreeKey": "repo-special|Iron Knight",
+      "canonicalTreeKey": "Jedi Academy Training Manual|Iron Knight",
       "displayName": "Iron Knight",
-      "sourcebook": null,
+      "sourcebook": "Jedi Academy Training Manual",
       "classAccess": [],
-      "sourceStatus": "REPO_SPECIAL_SOURCE_REVIEW",
+      "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
       "repoTreeIds": [
         "a7dc5adf97fd6a67"
       ],
@@ -10602,23 +10971,56 @@
         "Iron Knight"
       ],
       "repoClassAccess": [],
-      "status": "REPO_ONLY_SPECIAL_OR_UNRESOLVED",
+      "status": "SOURCE_VERIFIED_SPECIAL_TREE",
       "notes": null,
-      "originSourcebook": null,
-      "originTalentNames": null,
-      "talentPublications": [],
-      "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED",
+      "originSourcebook": "Jedi Academy Training Manual",
+      "originTalentNames": [
+        "Droid Duelist",
+        "Force Repair",
+        "Heal Droid",
+        "Mask Presence",
+        "Silicon Mind"
+      ],
+      "talentPublications": [
+        {
+          "sourcebook": "Jedi Academy Training Manual",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Droid Duelist",
+            "Force Repair",
+            "Heal Droid",
+            "Mask Presence",
+            "Silicon Mind"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Droid Duelist",
+        "Force Repair",
+        "Heal Droid",
+        "Mask Presence",
+        "Silicon Mind"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
       "referenceClassAccess": [],
       "accessPublications": [],
-      "aggregateClassAccess": []
+      "aggregateClassAccess": [],
+      "previousCanonicalTreeKey": "repo-special|Iron Knight",
+      "canonicalDisplayName": "Iron Knight",
+      "accessModel": "FORCE_TRADITION",
+      "specialAccessRules": [
+        {
+          "sourcebook": "Jedi Academy Training Manual",
+          "summary": "Available as a Force talent only to eligible members of the Iron Knight tradition, subject to that sourcebook's membership rules."
+        }
+      ]
     },
     {
-      "canonicalTreeKey": "repo-special|Jal Shey",
+      "canonicalTreeKey": "Knights of the Old Republic Campaign Guide|Jal Shey",
       "displayName": "Jal Shey",
-      "sourcebook": null,
+      "sourcebook": "Knights of the Old Republic Campaign Guide",
       "classAccess": [],
-      "sourceStatus": "REPO_SPECIAL_SOURCE_REVIEW",
+      "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
       "repoTreeIds": [
         "db1964d1e1d14b5a"
       ],
@@ -10626,16 +11028,46 @@
         "Jal Shey"
       ],
       "repoClassAccess": [],
-      "status": "REPO_ONLY_SPECIAL_OR_UNRESOLVED",
+      "status": "SOURCE_VERIFIED_SPECIAL_TREE",
       "notes": null,
-      "originSourcebook": null,
-      "originTalentNames": null,
-      "talentPublications": [],
-      "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED",
+      "originSourcebook": "Knights of the Old Republic Campaign Guide",
+      "originTalentNames": [
+        "Action Exchange",
+        "Force Delay",
+        "Imbue Item",
+        "Knowledge of the Force"
+      ],
+      "talentPublications": [
+        {
+          "sourcebook": "Knights of the Old Republic Campaign Guide",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Action Exchange",
+            "Force Delay",
+            "Imbue Item",
+            "Knowledge of the Force"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Action Exchange",
+        "Force Delay",
+        "Imbue Item",
+        "Knowledge of the Force"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
       "referenceClassAccess": [],
       "accessPublications": [],
-      "aggregateClassAccess": []
+      "aggregateClassAccess": [],
+      "previousCanonicalTreeKey": "repo-special|Jal Shey",
+      "canonicalDisplayName": "Jal Shey",
+      "accessModel": "FORCE_TRADITION",
+      "specialAccessRules": [
+        {
+          "sourcebook": "Knights of the Old Republic Campaign Guide",
+          "summary": "Available as a Force talent only to eligible members of the Jal Shey tradition, subject to that sourcebook's membership rules."
+        }
+      ]
     },
     {
       "canonicalTreeKey": "repo-special|Jedaii Ranger",
@@ -10663,11 +11095,11 @@
       "sourceClassification": "NONCANONICAL_HOMEBREW"
     },
     {
-      "canonicalTreeKey": "repo-special|Jensaarai Defender",
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Jensaarai Defender",
       "displayName": "Jensaarai Defender",
-      "sourcebook": null,
+      "sourcebook": "Saga Edition Core Rulebook",
       "classAccess": [],
-      "sourceStatus": "REPO_SPECIAL_SOURCE_REVIEW",
+      "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
       "repoTreeIds": [
         "f5c62e2e81f648aa"
       ],
@@ -10675,16 +11107,46 @@
         "Jensaarai Defender"
       ],
       "repoClassAccess": [],
-      "status": "REPO_ONLY_SPECIAL_OR_UNRESOLVED",
+      "status": "SOURCE_VERIFIED_SPECIAL_TREE",
       "notes": null,
-      "originSourcebook": null,
-      "originTalentNames": null,
-      "talentPublications": [],
-      "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED",
+      "originSourcebook": "Saga Edition Core Rulebook",
+      "originTalentNames": [
+        "Attune Armor",
+        "Force Cloak",
+        "Force Cloak Mastery",
+        "Linked Defense"
+      ],
+      "talentPublications": [
+        {
+          "sourcebook": "Saga Edition Core Rulebook",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Attune Armor",
+            "Force Cloak",
+            "Force Cloak Mastery",
+            "Linked Defense"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Attune Armor",
+        "Force Cloak",
+        "Force Cloak Mastery",
+        "Linked Defense"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
       "referenceClassAccess": [],
       "accessPublications": [],
-      "aggregateClassAccess": []
+      "aggregateClassAccess": [],
+      "previousCanonicalTreeKey": "repo-special|Jensaarai Defender",
+      "canonicalDisplayName": "Jensaarai Defender",
+      "accessModel": "FORCE_TRADITION",
+      "specialAccessRules": [
+        {
+          "sourcebook": "Saga Edition Core Rulebook",
+          "summary": "Available as a Force talent only to eligible members of the Jensaarai Defender tradition, subject to that sourcebook's membership rules."
+        }
+      ]
     },
     {
       "canonicalTreeKey": "repo-special|Jumptrooper",
@@ -10712,11 +11174,11 @@
       "sourceClassification": "NONCANONICAL_HOMEBREW"
     },
     {
-      "canonicalTreeKey": "repo-special|Keetael",
+      "canonicalTreeKey": "Knights of the Old Republic Campaign Guide|Keetael",
       "displayName": "Keetael",
-      "sourcebook": null,
+      "sourcebook": "Knights of the Old Republic Campaign Guide",
       "classAccess": [],
-      "sourceStatus": "REPO_SPECIAL_SOURCE_REVIEW",
+      "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
       "repoTreeIds": [
         "dad3c0da191748c1"
       ],
@@ -10724,23 +11186,53 @@
         "Keetael"
       ],
       "repoClassAccess": [],
-      "status": "REPO_ONLY_SPECIAL_OR_UNRESOLVED",
+      "status": "SOURCE_VERIFIED_SPECIAL_TREE",
       "notes": null,
-      "originSourcebook": null,
-      "originTalentNames": null,
-      "talentPublications": [],
-      "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED",
+      "originSourcebook": "Knights of the Old Republic Campaign Guide",
+      "originTalentNames": [
+        "Conceal Force Use",
+        "Force Direction",
+        "Force Momentum",
+        "Past Visions"
+      ],
+      "talentPublications": [
+        {
+          "sourcebook": "Knights of the Old Republic Campaign Guide",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Conceal Force Use",
+            "Force Direction",
+            "Force Momentum",
+            "Past Visions"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Conceal Force Use",
+        "Force Direction",
+        "Force Momentum",
+        "Past Visions"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
       "referenceClassAccess": [],
       "accessPublications": [],
-      "aggregateClassAccess": []
+      "aggregateClassAccess": [],
+      "previousCanonicalTreeKey": "repo-special|Keetael",
+      "canonicalDisplayName": "Keetael",
+      "accessModel": "FORCE_TRADITION",
+      "specialAccessRules": [
+        {
+          "sourcebook": "Knights of the Old Republic Campaign Guide",
+          "summary": "Available as a Force talent only to eligible members of the Keetael tradition, subject to that sourcebook's membership rules."
+        }
+      ]
     },
     {
-      "canonicalTreeKey": "repo-special|Kilian Ranger",
+      "canonicalTreeKey": "Rebellion Era Campaign Guide|Kilian Ranger",
       "displayName": "Kilian Ranger",
-      "sourcebook": null,
+      "sourcebook": "Rebellion Era Campaign Guide",
       "classAccess": [],
-      "sourceStatus": "REPO_SPECIAL_SOURCE_REVIEW",
+      "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
       "repoTreeIds": [
         "2a1838832f6146e2"
       ],
@@ -10748,23 +11240,56 @@
         "Kilian Ranger"
       ],
       "repoClassAccess": [],
-      "status": "REPO_ONLY_SPECIAL_OR_UNRESOLVED",
+      "status": "SOURCE_VERIFIED_SPECIAL_TREE",
       "notes": null,
-      "originSourcebook": null,
-      "originTalentNames": null,
-      "talentPublications": [],
-      "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED",
+      "originSourcebook": "Rebellion Era Campaign Guide",
+      "originTalentNames": [
+        "Empower Siang Lance",
+        "Shield Gauntlet Defense",
+        "Shield Gauntlet Deflect",
+        "Shield Gauntlet Redirect",
+        "Siang Lance Mastery"
+      ],
+      "talentPublications": [
+        {
+          "sourcebook": "Rebellion Era Campaign Guide",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Empower Siang Lance",
+            "Shield Gauntlet Defense",
+            "Shield Gauntlet Deflect",
+            "Shield Gauntlet Redirect",
+            "Siang Lance Mastery"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Empower Siang Lance",
+        "Shield Gauntlet Defense",
+        "Shield Gauntlet Deflect",
+        "Shield Gauntlet Redirect",
+        "Siang Lance Mastery"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
       "referenceClassAccess": [],
       "accessPublications": [],
-      "aggregateClassAccess": []
+      "aggregateClassAccess": [],
+      "previousCanonicalTreeKey": "repo-special|Kilian Ranger",
+      "canonicalDisplayName": "Kilian Ranger",
+      "accessModel": "FORCE_TRADITION",
+      "specialAccessRules": [
+        {
+          "sourcebook": "Rebellion Era Campaign Guide",
+          "summary": "Available as a Force talent only to eligible members of the Kilian Ranger tradition, subject to that sourcebook's membership rules."
+        }
+      ]
     },
     {
-      "canonicalTreeKey": "repo-special|Korunnai Adept",
+      "canonicalTreeKey": "Clone Wars Campaign Guide|Korunnai Adept",
       "displayName": "Korunnai Adept",
-      "sourcebook": null,
+      "sourcebook": "Clone Wars Campaign Guide",
       "classAccess": [],
-      "sourceStatus": "REPO_SPECIAL_SOURCE_REVIEW",
+      "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
       "repoTreeIds": [
         "46d03bab0cf74a14"
       ],
@@ -10772,23 +11297,53 @@
         "Korunnai Adept"
       ],
       "repoClassAccess": [],
-      "status": "REPO_ONLY_SPECIAL_OR_UNRESOLVED",
+      "status": "SOURCE_VERIFIED_SPECIAL_TREE",
       "notes": null,
-      "originSourcebook": null,
-      "originTalentNames": null,
-      "talentPublications": [],
-      "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED",
+      "originSourcebook": "Clone Wars Campaign Guide",
+      "originTalentNames": [
+        "Akk Dog Master",
+        "Akk Dog Trainer's Actions",
+        "Akk Dog Attack Training",
+        "Protective Reaction"
+      ],
+      "talentPublications": [
+        {
+          "sourcebook": "Clone Wars Campaign Guide",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Akk Dog Master",
+            "Akk Dog Trainer's Actions",
+            "Akk Dog Attack Training",
+            "Protective Reaction"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Akk Dog Master",
+        "Akk Dog Trainer's Actions",
+        "Akk Dog Attack Training",
+        "Protective Reaction"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
       "referenceClassAccess": [],
       "accessPublications": [],
-      "aggregateClassAccess": []
+      "aggregateClassAccess": [],
+      "previousCanonicalTreeKey": "repo-special|Korunnai Adept",
+      "canonicalDisplayName": "Korunnai Adept",
+      "accessModel": "FORCE_TRADITION",
+      "specialAccessRules": [
+        {
+          "sourcebook": "Clone Wars Campaign Guide",
+          "summary": "Available as a Force talent only to eligible members of the Korunnai Adept tradition, subject to that sourcebook's membership rules."
+        }
+      ]
     },
     {
-      "canonicalTreeKey": "repo-special|Krath",
+      "canonicalTreeKey": "Knights of the Old Republic Campaign Guide|Krath",
       "displayName": "Krath",
-      "sourcebook": null,
+      "sourcebook": "Knights of the Old Republic Campaign Guide",
       "classAccess": [],
-      "sourceStatus": "REPO_SPECIAL_SOURCE_REVIEW",
+      "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
       "repoTreeIds": [
         "d29a7261c1be4b83"
       ],
@@ -10796,16 +11351,46 @@
         "Krath"
       ],
       "repoClassAccess": [],
-      "status": "REPO_ONLY_SPECIAL_OR_UNRESOLVED",
+      "status": "SOURCE_VERIFIED_SPECIAL_TREE",
       "notes": null,
-      "originSourcebook": null,
-      "originTalentNames": null,
-      "talentPublications": [],
-      "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED",
+      "originSourcebook": "Knights of the Old Republic Campaign Guide",
+      "originTalentNames": [
+        "Dark Side Manipulation",
+        "Krath Illusions",
+        "Krath Intuition",
+        "Krath Surge"
+      ],
+      "talentPublications": [
+        {
+          "sourcebook": "Knights of the Old Republic Campaign Guide",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Dark Side Manipulation",
+            "Krath Illusions",
+            "Krath Intuition",
+            "Krath Surge"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Dark Side Manipulation",
+        "Krath Illusions",
+        "Krath Intuition",
+        "Krath Surge"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
       "referenceClassAccess": [],
       "accessPublications": [],
-      "aggregateClassAccess": []
+      "aggregateClassAccess": [],
+      "previousCanonicalTreeKey": "repo-special|Krath",
+      "canonicalDisplayName": "Krath",
+      "accessModel": "FORCE_TRADITION",
+      "specialAccessRules": [
+        {
+          "sourcebook": "Knights of the Old Republic Campaign Guide",
+          "summary": "Available as a Force talent only to eligible members of the Krath tradition, subject to that sourcebook's membership rules."
+        }
+      ]
     },
     {
       "canonicalTreeKey": "Clone Wars Campaign Guide|Light Side",
@@ -10860,11 +11445,11 @@
       ]
     },
     {
-      "canonicalTreeKey": "repo-special|Luka Sene",
+      "canonicalTreeKey": "Knights of the Old Republic Campaign Guide|Luka Sene",
       "displayName": "Luka Sene",
-      "sourcebook": null,
+      "sourcebook": "Knights of the Old Republic Campaign Guide",
       "classAccess": [],
-      "sourceStatus": "REPO_SPECIAL_SOURCE_REVIEW",
+      "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
       "repoTreeIds": [
         "e6e3fc102bb54b20"
       ],
@@ -10872,16 +11457,46 @@
         "Luka Sene"
       ],
       "repoClassAccess": [],
-      "status": "REPO_ONLY_SPECIAL_OR_UNRESOLVED",
+      "status": "SOURCE_VERIFIED_SPECIAL_TREE",
       "notes": null,
-      "originSourcebook": null,
-      "originTalentNames": null,
-      "talentPublications": [],
-      "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED",
+      "originSourcebook": "Knights of the Old Republic Campaign Guide",
+      "originTalentNames": [
+        "Field Detection",
+        "Improved Force Sight",
+        "Luka Sene Master",
+        "Quickseeing"
+      ],
+      "talentPublications": [
+        {
+          "sourcebook": "Knights of the Old Republic Campaign Guide",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Field Detection",
+            "Improved Force Sight",
+            "Luka Sene Master",
+            "Quickseeing"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Field Detection",
+        "Improved Force Sight",
+        "Luka Sene Master",
+        "Quickseeing"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
       "referenceClassAccess": [],
       "accessPublications": [],
-      "aggregateClassAccess": []
+      "aggregateClassAccess": [],
+      "previousCanonicalTreeKey": "repo-special|Luka Sene",
+      "canonicalDisplayName": "Luka Sene",
+      "accessModel": "FORCE_TRADITION",
+      "specialAccessRules": [
+        {
+          "sourcebook": "Knights of the Old Republic Campaign Guide",
+          "summary": "Available as a Force talent only to eligible members of the Luka Sene tradition, subject to that sourcebook's membership rules."
+        }
+      ]
     },
     {
       "canonicalTreeKey": "repo-special|Master Of The Amphistaff",
@@ -10909,11 +11524,11 @@
       "sourceClassification": "NONCANONICAL_HOMEBREW"
     },
     {
-      "canonicalTreeKey": "repo-special|Matukai Adept",
+      "canonicalTreeKey": "Jedi Academy Training Manual|Matukai Adept",
       "displayName": "Matukai Adept",
-      "sourcebook": null,
+      "sourcebook": "Jedi Academy Training Manual",
       "classAccess": [],
-      "sourceStatus": "REPO_SPECIAL_SOURCE_REVIEW",
+      "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
       "repoTreeIds": [
         "ca65ba0c33cd4c7d"
       ],
@@ -10921,16 +11536,52 @@
         "Matukai Adept"
       ],
       "repoClassAccess": [],
-      "status": "REPO_ONLY_SPECIAL_OR_UNRESOLVED",
+      "status": "SOURCE_VERIFIED_SPECIAL_TREE",
       "notes": null,
-      "originSourcebook": null,
-      "originTalentNames": null,
-      "talentPublications": [],
-      "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED",
+      "originSourcebook": "Jedi Academy Training Manual",
+      "originTalentNames": [
+        "Body Control",
+        "Physical Surge",
+        "Soft to Solid",
+        "Wan-Shen Defense",
+        "Wan-Shen Kata",
+        "Wan-Shen Mastery"
+      ],
+      "talentPublications": [
+        {
+          "sourcebook": "Jedi Academy Training Manual",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Body Control",
+            "Physical Surge",
+            "Soft to Solid",
+            "Wan-Shen Defense",
+            "Wan-Shen Kata",
+            "Wan-Shen Mastery"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Body Control",
+        "Physical Surge",
+        "Soft to Solid",
+        "Wan-Shen Defense",
+        "Wan-Shen Kata",
+        "Wan-Shen Mastery"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
       "referenceClassAccess": [],
       "accessPublications": [],
-      "aggregateClassAccess": []
+      "aggregateClassAccess": [],
+      "previousCanonicalTreeKey": "repo-special|Matukai Adept",
+      "canonicalDisplayName": "Matukai Adept",
+      "accessModel": "FORCE_TRADITION",
+      "specialAccessRules": [
+        {
+          "sourcebook": "Jedi Academy Training Manual",
+          "summary": "Available as a Force talent only to eligible members of the Matukai Adept tradition, subject to that sourcebook's membership rules."
+        }
+      ]
     },
     {
       "canonicalTreeKey": "repo-special|Mechanic",
@@ -11008,11 +11659,11 @@
       "sourceClassification": "NONCANONICAL_HOMEBREW"
     },
     {
-      "canonicalTreeKey": "repo-special|Order of Shasa",
+      "canonicalTreeKey": "Knights of the Old Republic Campaign Guide|Order of Shasa",
       "displayName": "Order of Shasa",
-      "sourcebook": null,
+      "sourcebook": "Knights of the Old Republic Campaign Guide",
       "classAccess": [],
-      "sourceStatus": "REPO_SPECIAL_SOURCE_REVIEW",
+      "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
       "repoTreeIds": [
         "d2e4cd882822dcf2"
       ],
@@ -11020,16 +11671,46 @@
         "Order of Shasa"
       ],
       "repoClassAccess": [],
-      "status": "REPO_ONLY_SPECIAL_OR_UNRESOLVED",
+      "status": "SOURCE_VERIFIED_SPECIAL_TREE",
       "notes": null,
-      "originSourcebook": null,
-      "originTalentNames": null,
-      "talentPublications": [],
-      "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED",
+      "originSourcebook": "Knights of the Old Republic Campaign Guide",
+      "originTalentNames": [
+        "Deception Awareness",
+        "Greater Weapon Focus (Fira)",
+        "Progenitor's Call",
+        "Waveform"
+      ],
+      "talentPublications": [
+        {
+          "sourcebook": "Knights of the Old Republic Campaign Guide",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Deception Awareness",
+            "Greater Weapon Focus (Fira)",
+            "Progenitor's Call",
+            "Waveform"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Deception Awareness",
+        "Greater Weapon Focus (Fira)",
+        "Progenitor's Call",
+        "Waveform"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
       "referenceClassAccess": [],
       "accessPublications": [],
-      "aggregateClassAccess": []
+      "aggregateClassAccess": [],
+      "previousCanonicalTreeKey": "repo-special|Order of Shasa",
+      "canonicalDisplayName": "Order of Shasa",
+      "accessModel": "FORCE_TRADITION",
+      "specialAccessRules": [
+        {
+          "sourcebook": "Knights of the Old Republic Campaign Guide",
+          "summary": "Available as a Force talent only to eligible members of the Order of Shasa tradition, subject to that sourcebook's membership rules."
+        }
+      ]
     },
     {
       "canonicalTreeKey": "repo-special|Science",
@@ -11057,11 +11738,11 @@
       "sourceClassification": "NONCANONICAL_HOMEBREW"
     },
     {
-      "canonicalTreeKey": "repo-special|Sense",
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Sense",
       "displayName": "Sense",
-      "sourcebook": null,
+      "sourcebook": "Saga Edition Core Rulebook",
       "classAccess": [],
-      "sourceStatus": "REPO_SPECIAL_SOURCE_REVIEW",
+      "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
       "repoTreeIds": [
         "d6b4331c0e31f7e3"
       ],
@@ -11069,11 +11750,28 @@
         "Sense"
       ],
       "repoClassAccess": [],
-      "status": "REPO_ONLY_SPECIAL_OR_UNRESOLVED",
+      "status": "SOURCE_VERIFIED_SPECIAL_TREE",
       "notes": null,
-      "originSourcebook": null,
-      "originTalentNames": null,
+      "originSourcebook": "Saga Edition Core Rulebook",
+      "originTalentNames": [
+        "Force Perception",
+        "Force Pilot",
+        "Foresight",
+        "Gauge Force Potential",
+        "Visions"
+      ],
       "talentPublications": [
+        {
+          "sourcebook": "Saga Edition Core Rulebook",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Force Perception",
+            "Force Pilot",
+            "Foresight",
+            "Gauge Force Potential",
+            "Visions"
+          ]
+        },
         {
           "sourcebook": "Clone Wars Campaign Guide",
           "publicationType": "EXPANSION",
@@ -11092,6 +11790,11 @@
         }
       ],
       "aggregateCanonicalTalentNames": [
+        "Force Perception",
+        "Force Pilot",
+        "Foresight",
+        "Gauge Force Potential",
+        "Visions",
         "Heightened Awareness",
         "Psychometry",
         "Shift Sense",
@@ -11100,14 +11803,23 @@
       "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
       "referenceClassAccess": [],
       "accessPublications": [],
-      "aggregateClassAccess": []
+      "aggregateClassAccess": [],
+      "previousCanonicalTreeKey": "repo-special|Sense",
+      "canonicalDisplayName": "Sense",
+      "accessModel": "FORCE_TALENT",
+      "specialAccessRules": [
+        {
+          "sourcebook": "Saga Edition Core Rulebook",
+          "summary": "Available as a Force talent to characters who meet the normal Force-talent access requirements."
+        }
+      ]
     },
     {
-      "canonicalTreeKey": "repo-special|Seyugi Dervish",
+      "canonicalTreeKey": "Jedi Academy Training Manual|Seyugi Dervish",
       "displayName": "Seyugi Dervish",
-      "sourcebook": null,
+      "sourcebook": "Jedi Academy Training Manual",
       "classAccess": [],
-      "sourceStatus": "REPO_SPECIAL_SOURCE_REVIEW",
+      "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
       "repoTreeIds": [
         "a7ad797b01114925"
       ],
@@ -11115,16 +11827,49 @@
         "Seyugi Dervish"
       ],
       "repoClassAccess": [],
-      "status": "REPO_ONLY_SPECIAL_OR_UNRESOLVED",
+      "status": "SOURCE_VERIFIED_SPECIAL_TREE",
       "notes": null,
-      "originSourcebook": null,
-      "originTalentNames": null,
-      "talentPublications": [],
-      "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED",
+      "originSourcebook": "Jedi Academy Training Manual",
+      "originTalentNames": [
+        "Seyugi Cyclone",
+        "Mobile Whirlwind",
+        "Repelling Whirlwind",
+        "Sudden Storm",
+        "Tempest Tossed"
+      ],
+      "talentPublications": [
+        {
+          "sourcebook": "Jedi Academy Training Manual",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Seyugi Cyclone",
+            "Mobile Whirlwind",
+            "Repelling Whirlwind",
+            "Sudden Storm",
+            "Tempest Tossed"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Seyugi Cyclone",
+        "Mobile Whirlwind",
+        "Repelling Whirlwind",
+        "Sudden Storm",
+        "Tempest Tossed"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
       "referenceClassAccess": [],
       "accessPublications": [],
-      "aggregateClassAccess": []
+      "aggregateClassAccess": [],
+      "previousCanonicalTreeKey": "repo-special|Seyugi Dervish",
+      "canonicalDisplayName": "Seyugi Dervish",
+      "accessModel": "FORCE_TRADITION",
+      "specialAccessRules": [
+        {
+          "sourcebook": "Jedi Academy Training Manual",
+          "summary": "Available as a Force talent only to eligible members of the Seyugi Dervish tradition, subject to that sourcebook's membership rules."
+        }
+      ]
     },
     {
       "canonicalTreeKey": "repo-special|Smashball Pro",
@@ -11202,11 +11947,11 @@
       "sourceClassification": "NONCANONICAL_HOMEBREW"
     },
     {
-      "canonicalTreeKey": "repo-special|Tyia Adept",
+      "canonicalTreeKey": "Jedi Academy Training Manual|Tyia Adept",
       "displayName": "Tyia Adept",
-      "sourcebook": null,
+      "sourcebook": "Jedi Academy Training Manual",
       "classAccess": [],
-      "sourceStatus": "REPO_SPECIAL_SOURCE_REVIEW",
+      "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
       "repoTreeIds": [
         "9a5efe5d0e9b43a1"
       ],
@@ -11214,23 +11959,56 @@
         "Tyia Adept"
       ],
       "repoClassAccess": [],
-      "status": "REPO_ONLY_SPECIAL_OR_UNRESOLVED",
+      "status": "SOURCE_VERIFIED_SPECIAL_TREE",
       "notes": null,
-      "originSourcebook": null,
-      "originTalentNames": null,
-      "talentPublications": [],
-      "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED",
+      "originSourcebook": "Jedi Academy Training Manual",
+      "originTalentNames": [
+        "Cycle of Harmony",
+        "Force Stabilize",
+        "Repel Discord",
+        "Stifle Conflict",
+        "Tyia Adept"
+      ],
+      "talentPublications": [
+        {
+          "sourcebook": "Jedi Academy Training Manual",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Cycle of Harmony",
+            "Force Stabilize",
+            "Repel Discord",
+            "Stifle Conflict",
+            "Tyia Adept"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Cycle of Harmony",
+        "Force Stabilize",
+        "Repel Discord",
+        "Stifle Conflict",
+        "Tyia Adept"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
       "referenceClassAccess": [],
       "accessPublications": [],
-      "aggregateClassAccess": []
+      "aggregateClassAccess": [],
+      "previousCanonicalTreeKey": "repo-special|Tyia Adept",
+      "canonicalDisplayName": "Tyia Adept",
+      "accessModel": "FORCE_TRADITION",
+      "specialAccessRules": [
+        {
+          "sourcebook": "Jedi Academy Training Manual",
+          "summary": "Available as a Force talent only to eligible members of the Tyia Adept tradition, subject to that sourcebook's membership rules."
+        }
+      ]
     },
     {
-      "canonicalTreeKey": "repo-special|Warden Of The Sky",
+      "canonicalTreeKey": "Jedi Academy Training Manual|Warden of the Sky",
       "displayName": "Warden Of The Sky",
-      "sourcebook": null,
+      "sourcebook": "Jedi Academy Training Manual",
       "classAccess": [],
-      "sourceStatus": "REPO_SPECIAL_SOURCE_REVIEW",
+      "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
       "repoTreeIds": [
         "899038f739294c81"
       ],
@@ -11238,23 +12016,59 @@
         "Warden Of The Sky"
       ],
       "repoClassAccess": [],
-      "status": "REPO_ONLY_SPECIAL_OR_UNRESOLVED",
+      "status": "SOURCE_VERIFIED_SPECIAL_TREE",
       "notes": null,
-      "originSourcebook": null,
-      "originTalentNames": null,
-      "talentPublications": [],
-      "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED",
+      "originSourcebook": "Jedi Academy Training Manual",
+      "originTalentNames": [
+        "Brutal Unarmed Strike",
+        "Martial Resurgence",
+        "Rebound Leap",
+        "Simultaneous Strike",
+        "Telekinetic Strike",
+        "Telekinetic Throw"
+      ],
+      "talentPublications": [
+        {
+          "sourcebook": "Jedi Academy Training Manual",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Brutal Unarmed Strike",
+            "Martial Resurgence",
+            "Rebound Leap",
+            "Simultaneous Strike",
+            "Telekinetic Strike",
+            "Telekinetic Throw"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Brutal Unarmed Strike",
+        "Martial Resurgence",
+        "Rebound Leap",
+        "Simultaneous Strike",
+        "Telekinetic Strike",
+        "Telekinetic Throw"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
       "referenceClassAccess": [],
       "accessPublications": [],
-      "aggregateClassAccess": []
+      "aggregateClassAccess": [],
+      "previousCanonicalTreeKey": "repo-special|Warden Of The Sky",
+      "canonicalDisplayName": "Warden of the Sky",
+      "accessModel": "FORCE_TRADITION",
+      "specialAccessRules": [
+        {
+          "sourcebook": "Jedi Academy Training Manual",
+          "summary": "Available as a Force talent only to eligible members of the Warden of the Sky tradition, subject to that sourcebook's membership rules."
+        }
+      ]
     },
     {
-      "canonicalTreeKey": "repo-special|White Current Adept",
+      "canonicalTreeKey": "Jedi Academy Training Manual|White Current Adept",
       "displayName": "White Current Adept",
-      "sourcebook": null,
+      "sourcebook": "Jedi Academy Training Manual",
       "classAccess": [],
-      "sourceStatus": "REPO_SPECIAL_SOURCE_REVIEW",
+      "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
       "repoTreeIds": [
         "4509306f66d744bf"
       ],
@@ -11262,16 +12076,153 @@
         "White Current Adept"
       ],
       "repoClassAccess": [],
-      "status": "REPO_ONLY_SPECIAL_OR_UNRESOLVED",
+      "status": "SOURCE_VERIFIED_SPECIAL_TREE",
       "notes": null,
-      "originSourcebook": null,
-      "originTalentNames": null,
-      "talentPublications": [],
-      "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED",
+      "originSourcebook": "Jedi Academy Training Manual",
+      "originTalentNames": [
+        "Force Immersion",
+        "Immerse Another",
+        "Ride the Current",
+        "Surrender to the Current",
+        "White Current Adept"
+      ],
+      "talentPublications": [
+        {
+          "sourcebook": "Jedi Academy Training Manual",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Force Immersion",
+            "Immerse Another",
+            "Ride the Current",
+            "Surrender to the Current",
+            "White Current Adept"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Force Immersion",
+        "Immerse Another",
+        "Ride the Current",
+        "Surrender to the Current",
+        "White Current Adept"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
       "referenceClassAccess": [],
       "accessPublications": [],
-      "aggregateClassAccess": []
+      "aggregateClassAccess": [],
+      "previousCanonicalTreeKey": "repo-special|White Current Adept",
+      "canonicalDisplayName": "White Current Adept",
+      "accessModel": "FORCE_TRADITION",
+      "specialAccessRules": [
+        {
+          "sourcebook": "Jedi Academy Training Manual",
+          "summary": "Available as a Force talent only to eligible members of the White Current Adept tradition, subject to that sourcebook's membership rules."
+        }
+      ]
+    },
+    {
+      "canonicalTreeKey": "Jedi Academy Training Manual|Shapers of Kro Var",
+      "canonicalDisplayName": "Shapers of Kro Var",
+      "displayName": "Shapers of Kro Var",
+      "sourcebook": "Jedi Academy Training Manual",
+      "classAccess": [],
+      "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
+      "repoTreeIds": [],
+      "repoTreeNames": [],
+      "repoClassAccess": [],
+      "status": "MISSING_CANONICAL_TREE",
+      "notes": "Primary source confirms this Force-tradition talent tree; no corresponding repository tree document exists.",
+      "originSourcebook": "Jedi Academy Training Manual",
+      "originTalentNames": [
+        "Combustion",
+        "Earth Buckle",
+        "Fluidity",
+        "Thunderclap",
+        "Wind Vortex"
+      ],
+      "talentPublications": [
+        {
+          "sourcebook": "Jedi Academy Training Manual",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Combustion",
+            "Earth Buckle",
+            "Fluidity",
+            "Thunderclap",
+            "Wind Vortex"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Combustion",
+        "Earth Buckle",
+        "Fluidity",
+        "Thunderclap",
+        "Wind Vortex"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
+      "referenceClassAccess": [],
+      "accessPublications": [],
+      "aggregateClassAccess": [],
+      "accessModel": "FORCE_TRADITION",
+      "specialAccessRules": [
+        {
+          "sourcebook": "Jedi Academy Training Manual",
+          "summary": "Available as a Force talent only to eligible members of the Shapers of Kro Var tradition, subject to the sourcebook's membership rules."
+        }
+      ]
+    },
+    {
+      "canonicalTreeKey": "Jedi Academy Training Manual|Zeison Sha Warrior",
+      "canonicalDisplayName": "Zeison Sha Warrior",
+      "displayName": "Zeison Sha Warrior",
+      "sourcebook": "Jedi Academy Training Manual",
+      "classAccess": [],
+      "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
+      "repoTreeIds": [],
+      "repoTreeNames": [],
+      "repoClassAccess": [],
+      "status": "MISSING_CANONICAL_TREE",
+      "notes": "Primary source confirms this Force-tradition talent tree; no corresponding repository tree document exists.",
+      "originSourcebook": "Jedi Academy Training Manual",
+      "originTalentNames": [
+        "Discblade Arc",
+        "Distant Discblade Throw",
+        "Recall Discblade",
+        "Telekinetic Vigilance",
+        "Weapon Specialization (discblade)"
+      ],
+      "talentPublications": [
+        {
+          "sourcebook": "Jedi Academy Training Manual",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Discblade Arc",
+            "Distant Discblade Throw",
+            "Recall Discblade",
+            "Telekinetic Vigilance",
+            "Weapon Specialization (discblade)"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Discblade Arc",
+        "Distant Discblade Throw",
+        "Recall Discblade",
+        "Telekinetic Vigilance",
+        "Weapon Specialization (discblade)"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
+      "referenceClassAccess": [],
+      "accessPublications": [],
+      "aggregateClassAccess": [],
+      "accessModel": "FORCE_TRADITION",
+      "specialAccessRules": [
+        {
+          "sourcebook": "Jedi Academy Training Manual",
+          "summary": "Available as a Force talent only to eligible members of the Zeison Sha tradition, subject to the sourcebook's membership rules."
+        }
+      ]
     }
   ],
   "schemaNotes": {
