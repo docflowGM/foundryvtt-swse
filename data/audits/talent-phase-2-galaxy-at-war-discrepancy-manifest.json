@@ -1,0 +1,1650 @@
+{
+  "schemaVersion": 1,
+  "phase": "2",
+  "sourcebook": "Galaxy at War",
+  "generatedAt": "2026-09-27",
+  "branch": "audit/talent-phase-1-tree-census",
+  "scope": "Per-talent comparison of source-certified Galaxy at War content to the current repository talent-record mirror. No production talent records changed.",
+  "summary": {
+    "canonicalTalentPublications": 56,
+    "repositoryRecordsMapped": 2,
+    "missingCorrectTreeRecords": 54,
+    "benefitStatus": {
+      "BENEFIT_DIFFERENT": 1,
+      "BENEFIT_EXACT": 1,
+      "MISSING_CORRECT_TREE_RECORD": 54
+    },
+    "descriptionStatus": {
+      "DESCRIPTION_DIFFERENT": 1,
+      "DESCRIPTION_EXACT": 1,
+      "MISSING_CORRECT_TREE_RECORD": 54
+    },
+    "prerequisiteStatus": {
+      "PREREQUISITES_CANONICAL_MISMATCH": 1,
+      "PREREQUISITES_EXACT": 1,
+      "MISSING_CORRECT_TREE_RECORD": 54
+    },
+    "sourceMetadataStatus": {
+      "PAGE_MISSING": 1,
+      "SOURCE_AND_PAGE_MISSING": 1,
+      "MISSING_CORRECT_TREE_RECORD": 54
+    },
+    "summaryStatus": {
+      "SUMMARY_MISSING": 2,
+      "MISSING_CORRECT_TREE_RECORD": 54
+    },
+    "distinctSameNameCollisionRisks": 3,
+    "phase1dStructuralCorrections": 1
+  },
+  "phase1dStructuralCorrection": {
+    "canonicalTreeKey": "Galaxy at War|Unarmed Mastery",
+    "removedTalentName": "Tough as Durasteel",
+    "disposition": "PHASE_1D_STRUCTURAL_OVERINCLUSION_CORRECTED",
+    "page": 33,
+    "reason": "Tough as Durasteel is a Martial Arts Master class feature that advances automatically at even levels; selectable talents occur at odd levels. Unarmed Mastery therefore contains three talents."
+  },
+  "missingRepositoryRecords": [
+    {
+      "tree": "Leadership",
+      "name": "Commanding Presence",
+      "page": 19,
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Leadership",
+      "sameNameRepoCandidates": [
+        {
+          "repoId": "438e13c99c7b53a6",
+          "tree": "Mercenary",
+          "source": null,
+          "prerequisites": ""
+        }
+      ]
+    },
+    {
+      "tree": "Leadership",
+      "name": "Tactical Savvy",
+      "page": 19,
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Leadership",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Misfortune",
+      "name": "Backstabber",
+      "page": 20,
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Misfortune",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Misfortune",
+      "name": "Improved Sneak Attack",
+      "page": 20,
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Misfortune",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Camouflage",
+      "name": "Dig In",
+      "page": 20,
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Camouflage",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Camouflage",
+      "name": "Ghost Assailant",
+      "page": 20,
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Camouflage",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Camouflage",
+      "name": "Slip By",
+      "page": 20,
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Camouflage",
+      "sameNameRepoCandidates": [
+        {
+          "repoId": "893c4fd12df55469",
+          "tree": "Opportunist",
+          "source": null,
+          "prerequisites": ""
+        }
+      ]
+    },
+    {
+      "tree": "Commando",
+      "name": "Defensive Position",
+      "page": 21,
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Commando",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Weapon Specialist",
+      "name": "Autofire Assault",
+      "page": 22,
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Weapon Specialist",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Weapon Master",
+      "name": "Ferocious Assault",
+      "page": 30,
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Weapon Master",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Gunslinger",
+      "name": "Keep Them Honest",
+      "page": 31,
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Gunslinger",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Anticipation",
+      "name": "Anticipate Movement",
+      "page": 18,
+      "canonicalTreeKey": "Galaxy at War|Anticipation",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Anticipation",
+      "name": "Forewarn Allies",
+      "page": 18,
+      "canonicalTreeKey": "Galaxy at War|Anticipation",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Anticipation",
+      "name": "Get Down",
+      "page": 18,
+      "canonicalTreeKey": "Galaxy at War|Anticipation",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Anticipation",
+      "name": "Heavy Fire Zone",
+      "page": 18,
+      "canonicalTreeKey": "Galaxy at War|Anticipation",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Anticipation",
+      "name": "Summon Aid",
+      "page": 19,
+      "canonicalTreeKey": "Galaxy at War|Anticipation",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Brigand",
+      "name": "Cheap Trick",
+      "page": 19,
+      "canonicalTreeKey": "Galaxy at War|Brigand",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Brigand",
+      "name": "Easy Prey",
+      "page": 19,
+      "canonicalTreeKey": "Galaxy at War|Brigand",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Brigand",
+      "name": "Quick Strike",
+      "page": 19,
+      "canonicalTreeKey": "Galaxy at War|Brigand",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Brigand",
+      "name": "Sly Combatant",
+      "page": 19,
+      "canonicalTreeKey": "Galaxy at War|Brigand",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Advance Patrol",
+      "name": "Forward Patrol",
+      "page": 20,
+      "canonicalTreeKey": "Galaxy at War|Advance Patrol",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Advance Patrol",
+      "name": "Mobile Combatant",
+      "page": 20,
+      "canonicalTreeKey": "Galaxy at War|Advance Patrol",
+      "sameNameRepoCandidates": [
+        {
+          "repoId": "198b68c0ca770ad7",
+          "tree": "Jedi Guardian",
+          "source": "Star Wars Saga Edition Force Unleashed Campaign Guide",
+          "prerequisites": ""
+        }
+      ]
+    },
+    {
+      "tree": "Advance Patrol",
+      "name": "Trailblazer",
+      "page": 20,
+      "canonicalTreeKey": "Galaxy at War|Advance Patrol",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Advance Patrol",
+      "name": "Watchful Step",
+      "page": 20,
+      "canonicalTreeKey": "Galaxy at War|Advance Patrol",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Shockboxer",
+      "name": "Defensive Jab",
+      "page": 21,
+      "canonicalTreeKey": "Galaxy at War|Shockboxer",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Shockboxer",
+      "name": "Nimble Dodge",
+      "page": 21,
+      "canonicalTreeKey": "Galaxy at War|Shockboxer",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Shockboxer",
+      "name": "Retaliation Jab",
+      "page": 21,
+      "canonicalTreeKey": "Galaxy at War|Shockboxer",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Shockboxer",
+      "name": "Stinging Jab",
+      "page": 21,
+      "canonicalTreeKey": "Galaxy at War|Shockboxer",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Shockboxer",
+      "name": "Stunning Shockboxer",
+      "page": 21,
+      "canonicalTreeKey": "Galaxy at War|Shockboxer",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Veteran",
+      "name": "Battlefield Remedy",
+      "page": 21,
+      "canonicalTreeKey": "Galaxy at War|Veteran",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Veteran",
+      "name": "Grizzled Warrior",
+      "page": 21,
+      "canonicalTreeKey": "Galaxy at War|Veteran",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Veteran",
+      "name": "Reckless",
+      "page": 22,
+      "canonicalTreeKey": "Galaxy at War|Veteran",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Veteran",
+      "name": "Seen It All",
+      "page": 22,
+      "canonicalTreeKey": "Galaxy at War|Veteran",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Veteran",
+      "name": "Tested in Battle",
+      "page": 22,
+      "canonicalTreeKey": "Galaxy at War|Veteran",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Sharpshooter",
+      "name": "Bullseye",
+      "page": 31,
+      "canonicalTreeKey": "Galaxy at War|Sharpshooter",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Sharpshooter",
+      "name": "Draw a Bead",
+      "page": 31,
+      "canonicalTreeKey": "Galaxy at War|Sharpshooter",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Sharpshooter",
+      "name": "Pinning Shot",
+      "page": 31,
+      "canonicalTreeKey": "Galaxy at War|Sharpshooter",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Sharpshooter",
+      "name": "Harrying Shot",
+      "page": 31,
+      "canonicalTreeKey": "Galaxy at War|Sharpshooter",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Sharpshooter",
+      "name": "Precision Shot",
+      "page": 31,
+      "canonicalTreeKey": "Galaxy at War|Sharpshooter",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Squad Leader",
+      "name": "Fall Back",
+      "page": 31,
+      "canonicalTreeKey": "Galaxy at War|Squad Leader",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Squad Leader",
+      "name": "Form Up",
+      "page": 31,
+      "canonicalTreeKey": "Galaxy at War|Squad Leader",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Squad Leader",
+      "name": "Full Advance",
+      "page": 31,
+      "canonicalTreeKey": "Galaxy at War|Squad Leader",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Squad Leader",
+      "name": "Hold Steady",
+      "page": 31,
+      "canonicalTreeKey": "Galaxy at War|Squad Leader",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Squad Leader",
+      "name": "Search and Destroy",
+      "page": 31,
+      "canonicalTreeKey": "Galaxy at War|Squad Leader",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Martial Arts Forms",
+      "name": "Echani Expertise",
+      "page": 32,
+      "canonicalTreeKey": "Galaxy at War|Martial Arts Forms",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Martial Arts Forms",
+      "name": "Hijkata Expertise",
+      "page": 32,
+      "canonicalTreeKey": "Galaxy at War|Martial Arts Forms",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Martial Arts Forms",
+      "name": "K'tara Expertise",
+      "page": 33,
+      "canonicalTreeKey": "Galaxy at War|Martial Arts Forms",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Martial Arts Forms",
+      "name": "K'thri Expertise",
+      "page": 33,
+      "canonicalTreeKey": "Galaxy at War|Martial Arts Forms",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Martial Arts Forms",
+      "name": "Stava Expertise",
+      "page": 33,
+      "canonicalTreeKey": "Galaxy at War|Martial Arts Forms",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Martial Arts Forms",
+      "name": "Tae-Jitsu Expertise",
+      "page": 33,
+      "canonicalTreeKey": "Galaxy at War|Martial Arts Forms",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Martial Arts Forms",
+      "name": "Wrruushi Expertise",
+      "page": 33,
+      "canonicalTreeKey": "Galaxy at War|Martial Arts Forms",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Unarmed Mastery",
+      "name": "Flurry of Blows",
+      "page": 33,
+      "canonicalTreeKey": "Galaxy at War|Unarmed Mastery",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Unarmed Mastery",
+      "name": "Hardened Strike",
+      "page": 33,
+      "canonicalTreeKey": "Galaxy at War|Unarmed Mastery",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Unarmed Mastery",
+      "name": "Punishing Strike",
+      "page": 33,
+      "canonicalTreeKey": "Galaxy at War|Unarmed Mastery",
+      "sameNameRepoCandidates": []
+    }
+  ],
+  "sameNameCollisionRisks": [
+    {
+      "tree": "Leadership",
+      "name": "Commanding Presence",
+      "page": 19,
+      "candidates": [
+        {
+          "repoId": "438e13c99c7b53a6",
+          "name": "Commanding Presence",
+          "tree": "Mercenary",
+          "treeId": "soldier",
+          "source": null,
+          "prerequisites": "",
+          "benefit": "Once per encounter, all enemies take -2 Will Defense; Persuasion becomes a class skill for you.",
+          "description": ""
+        }
+      ]
+    },
+    {
+      "tree": "Camouflage",
+      "name": "Slip By",
+      "page": 20,
+      "candidates": [
+        {
+          "repoId": "893c4fd12df55469",
+          "name": "Slip By",
+          "tree": "Opportunist",
+          "treeId": "opportunist",
+          "source": null,
+          "prerequisites": "",
+          "benefit": "When you damage an opponent, you may move through that opponent’s square; attacks of opportunity apply as normal.",
+          "description": "When you damage an opponent, you may move through their square."
+        }
+      ]
+    },
+    {
+      "tree": "Advance Patrol",
+      "name": "Mobile Combatant",
+      "page": 20,
+      "candidates": [
+        {
+          "repoId": "198b68c0ca770ad7",
+          "name": "Mobile Combatant",
+          "tree": "Jedi Guardian",
+          "treeId": "jedi-guardian",
+          "source": "Star Wars Saga Edition Force Unleashed Campaign Guide",
+          "prerequisites": "",
+          "benefit": "When you end your movement adjacent to an opponent, you can spend a Swift Action to activate this Talent. If the designated opponent Moves or Withdraws before the beginning of your next turn, you can choose to move with that opponent, up to a total distance equal to your current speed. Unless your opponent uses the Withdraw Action or makes an Acrobatics check to avoid Attacks of Opportunity, its movement provokes an Attack of Opportunity from you for the first square moved as normal, but no subsequent squares in the same movement. If your target moves farther than your speed, you must still end this movement closer to the target than you began.",
+          "description": "When you end your movement adjacent to an opponent, you can spend a Swift Action to activate this Talent. If the designated opponent Moves or Withdraws before the beginning of your next turn, you can choose to move with that opponent, up to a total distance equal to your current speed. Unless your opponent uses the Withdraw Action or makes an Acrobatics check to avoid Attacks of Opportunity, its movement provokes an Attack of Opportunity from you for the first square moved as normal, but no subsequent squares in the same movement. If your target moves farther than your speed, you must still end this movement closer to the target than you began."
+        }
+      ]
+    }
+  ],
+  "talents": [
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Jedi Guardian",
+      "tree": "Jedi Guardian",
+      "canonicalName": "Cover Escape",
+      "page": 18,
+      "repoId": "fcd7c1e0bd15df71",
+      "repoName": "Cover Escape",
+      "benefitStatus": "BENEFIT_DIFFERENT",
+      "descriptionStatus": "DESCRIPTION_DIFFERENT",
+      "prerequisiteStatus": "PREREQUISITES_CANONICAL_MISMATCH",
+      "sourceMetadataStatus": "PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "DESCRIPTION_ERROR",
+        "PREREQUISITE_ERROR"
+      ],
+      "notes": "Repo omits the source's 'melee' restriction on the negated attack and adds a prerequisite ('Block or Deflect') that does not appear in the Galaxy at War talent entry.",
+      "sameNameRepoCandidates": [],
+      "repoBenefitChars": 229,
+      "canonicalBenefitChars": 236
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Jedi Sentinel",
+      "tree": "Jedi Sentinel",
+      "canonicalName": "Prime Targets",
+      "page": 18,
+      "repoId": "ce151ce88fd55934",
+      "repoName": "Prime Targets",
+      "benefitStatus": "BENEFIT_EXACT",
+      "descriptionStatus": "DESCRIPTION_EXACT",
+      "prerequisiteStatus": "PREREQUISITES_EXACT",
+      "sourceMetadataStatus": "SOURCE_AND_PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "CORRECT_OR_SOURCE_ALIGNED"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": [],
+      "repoBenefitChars": 143,
+      "canonicalBenefitChars": 143
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Leadership",
+      "tree": "Leadership",
+      "canonicalName": "Commanding Presence",
+      "page": 19,
+      "repoId": null,
+      "repoName": null,
+      "benefitStatus": "MISSING_CORRECT_TREE_RECORD",
+      "descriptionStatus": "MISSING_CORRECT_TREE_RECORD",
+      "prerequisiteStatus": "MISSING_CORRECT_TREE_RECORD",
+      "sourceMetadataStatus": "MISSING_CORRECT_TREE_RECORD",
+      "summaryStatus": "MISSING_CORRECT_TREE_RECORD",
+      "dispositions": [
+        "MISSING_CONTENT",
+        "DISTINCT_SAME_NAME_IDENTITY_MISSING"
+      ],
+      "notes": "No correct-tree Galaxy at War record exists. Same-name repository candidate(s) belong to different tree/source identities and must not be moved or overwritten by name alone.",
+      "sameNameRepoCandidates": [
+        {
+          "repoId": "438e13c99c7b53a6",
+          "name": "Commanding Presence",
+          "tree": "Mercenary",
+          "source": null,
+          "prerequisites": ""
+        }
+      ],
+      "repoBenefitChars": null,
+      "canonicalBenefitChars": 1022
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Leadership",
+      "tree": "Leadership",
+      "canonicalName": "Tactical Savvy",
+      "page": 19,
+      "repoId": null,
+      "repoName": null,
+      "benefitStatus": "MISSING_CORRECT_TREE_RECORD",
+      "descriptionStatus": "MISSING_CORRECT_TREE_RECORD",
+      "prerequisiteStatus": "MISSING_CORRECT_TREE_RECORD",
+      "sourceMetadataStatus": "MISSING_CORRECT_TREE_RECORD",
+      "summaryStatus": "MISSING_CORRECT_TREE_RECORD",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": [],
+      "repoBenefitChars": null,
+      "canonicalBenefitChars": 161
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Misfortune",
+      "tree": "Misfortune",
+      "canonicalName": "Backstabber",
+      "page": 20,
+      "repoId": null,
+      "repoName": null,
+      "benefitStatus": "MISSING_CORRECT_TREE_RECORD",
+      "descriptionStatus": "MISSING_CORRECT_TREE_RECORD",
+      "prerequisiteStatus": "MISSING_CORRECT_TREE_RECORD",
+      "sourceMetadataStatus": "MISSING_CORRECT_TREE_RECORD",
+      "summaryStatus": "MISSING_CORRECT_TREE_RECORD",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": [],
+      "repoBenefitChars": null,
+      "canonicalBenefitChars": 198
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Misfortune",
+      "tree": "Misfortune",
+      "canonicalName": "Improved Sneak Attack",
+      "page": 20,
+      "repoId": null,
+      "repoName": null,
+      "benefitStatus": "MISSING_CORRECT_TREE_RECORD",
+      "descriptionStatus": "MISSING_CORRECT_TREE_RECORD",
+      "prerequisiteStatus": "MISSING_CORRECT_TREE_RECORD",
+      "sourceMetadataStatus": "MISSING_CORRECT_TREE_RECORD",
+      "summaryStatus": "MISSING_CORRECT_TREE_RECORD",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": [],
+      "repoBenefitChars": null,
+      "canonicalBenefitChars": 100
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Camouflage",
+      "tree": "Camouflage",
+      "canonicalName": "Dig In",
+      "page": 20,
+      "repoId": null,
+      "repoName": null,
+      "benefitStatus": "MISSING_CORRECT_TREE_RECORD",
+      "descriptionStatus": "MISSING_CORRECT_TREE_RECORD",
+      "prerequisiteStatus": "MISSING_CORRECT_TREE_RECORD",
+      "sourceMetadataStatus": "MISSING_CORRECT_TREE_RECORD",
+      "summaryStatus": "MISSING_CORRECT_TREE_RECORD",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": [],
+      "repoBenefitChars": null,
+      "canonicalBenefitChars": 143
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Camouflage",
+      "tree": "Camouflage",
+      "canonicalName": "Ghost Assailant",
+      "page": 20,
+      "repoId": null,
+      "repoName": null,
+      "benefitStatus": "MISSING_CORRECT_TREE_RECORD",
+      "descriptionStatus": "MISSING_CORRECT_TREE_RECORD",
+      "prerequisiteStatus": "MISSING_CORRECT_TREE_RECORD",
+      "sourceMetadataStatus": "MISSING_CORRECT_TREE_RECORD",
+      "summaryStatus": "MISSING_CORRECT_TREE_RECORD",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": [],
+      "repoBenefitChars": null,
+      "canonicalBenefitChars": 275
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Camouflage",
+      "tree": "Camouflage",
+      "canonicalName": "Slip By",
+      "page": 20,
+      "repoId": null,
+      "repoName": null,
+      "benefitStatus": "MISSING_CORRECT_TREE_RECORD",
+      "descriptionStatus": "MISSING_CORRECT_TREE_RECORD",
+      "prerequisiteStatus": "MISSING_CORRECT_TREE_RECORD",
+      "sourceMetadataStatus": "MISSING_CORRECT_TREE_RECORD",
+      "summaryStatus": "MISSING_CORRECT_TREE_RECORD",
+      "dispositions": [
+        "MISSING_CONTENT",
+        "DISTINCT_SAME_NAME_IDENTITY_MISSING"
+      ],
+      "notes": "No correct-tree Galaxy at War record exists. Same-name repository candidate(s) belong to different tree/source identities and must not be moved or overwritten by name alone.",
+      "sameNameRepoCandidates": [
+        {
+          "repoId": "893c4fd12df55469",
+          "name": "Slip By",
+          "tree": "Opportunist",
+          "source": null,
+          "prerequisites": ""
+        }
+      ],
+      "repoBenefitChars": null,
+      "canonicalBenefitChars": 209
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Commando",
+      "tree": "Commando",
+      "canonicalName": "Defensive Position",
+      "page": 21,
+      "repoId": null,
+      "repoName": null,
+      "benefitStatus": "MISSING_CORRECT_TREE_RECORD",
+      "descriptionStatus": "MISSING_CORRECT_TREE_RECORD",
+      "prerequisiteStatus": "MISSING_CORRECT_TREE_RECORD",
+      "sourceMetadataStatus": "MISSING_CORRECT_TREE_RECORD",
+      "summaryStatus": "MISSING_CORRECT_TREE_RECORD",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": [],
+      "repoBenefitChars": null,
+      "canonicalBenefitChars": 136
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Weapon Specialist",
+      "tree": "Weapon Specialist",
+      "canonicalName": "Autofire Assault",
+      "page": 22,
+      "repoId": null,
+      "repoName": null,
+      "benefitStatus": "MISSING_CORRECT_TREE_RECORD",
+      "descriptionStatus": "MISSING_CORRECT_TREE_RECORD",
+      "prerequisiteStatus": "MISSING_CORRECT_TREE_RECORD",
+      "sourceMetadataStatus": "MISSING_CORRECT_TREE_RECORD",
+      "summaryStatus": "MISSING_CORRECT_TREE_RECORD",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": [],
+      "repoBenefitChars": null,
+      "canonicalBenefitChars": 146
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Weapon Master",
+      "tree": "Weapon Master",
+      "canonicalName": "Ferocious Assault",
+      "page": 30,
+      "repoId": null,
+      "repoName": null,
+      "benefitStatus": "MISSING_CORRECT_TREE_RECORD",
+      "descriptionStatus": "MISSING_CORRECT_TREE_RECORD",
+      "prerequisiteStatus": "MISSING_CORRECT_TREE_RECORD",
+      "sourceMetadataStatus": "MISSING_CORRECT_TREE_RECORD",
+      "summaryStatus": "MISSING_CORRECT_TREE_RECORD",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": [],
+      "repoBenefitChars": null,
+      "canonicalBenefitChars": 163
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Gunslinger",
+      "tree": "Gunslinger",
+      "canonicalName": "Keep Them Honest",
+      "page": 31,
+      "repoId": null,
+      "repoName": null,
+      "benefitStatus": "MISSING_CORRECT_TREE_RECORD",
+      "descriptionStatus": "MISSING_CORRECT_TREE_RECORD",
+      "prerequisiteStatus": "MISSING_CORRECT_TREE_RECORD",
+      "sourceMetadataStatus": "MISSING_CORRECT_TREE_RECORD",
+      "summaryStatus": "MISSING_CORRECT_TREE_RECORD",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": [],
+      "repoBenefitChars": null,
+      "canonicalBenefitChars": 145
+    },
+    {
+      "canonicalTreeKey": "Galaxy at War|Anticipation",
+      "tree": "Anticipation",
+      "canonicalName": "Anticipate Movement",
+      "page": 18,
+      "repoId": null,
+      "repoName": null,
+      "benefitStatus": "MISSING_CORRECT_TREE_RECORD",
+      "descriptionStatus": "MISSING_CORRECT_TREE_RECORD",
+      "prerequisiteStatus": "MISSING_CORRECT_TREE_RECORD",
+      "sourceMetadataStatus": "MISSING_CORRECT_TREE_RECORD",
+      "summaryStatus": "MISSING_CORRECT_TREE_RECORD",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": [],
+      "repoBenefitChars": null,
+      "canonicalBenefitChars": 170
+    },
+    {
+      "canonicalTreeKey": "Galaxy at War|Anticipation",
+      "tree": "Anticipation",
+      "canonicalName": "Forewarn Allies",
+      "page": 18,
+      "repoId": null,
+      "repoName": null,
+      "benefitStatus": "MISSING_CORRECT_TREE_RECORD",
+      "descriptionStatus": "MISSING_CORRECT_TREE_RECORD",
+      "prerequisiteStatus": "MISSING_CORRECT_TREE_RECORD",
+      "sourceMetadataStatus": "MISSING_CORRECT_TREE_RECORD",
+      "summaryStatus": "MISSING_CORRECT_TREE_RECORD",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": [],
+      "repoBenefitChars": null,
+      "canonicalBenefitChars": 120
+    },
+    {
+      "canonicalTreeKey": "Galaxy at War|Anticipation",
+      "tree": "Anticipation",
+      "canonicalName": "Get Down",
+      "page": 18,
+      "repoId": null,
+      "repoName": null,
+      "benefitStatus": "MISSING_CORRECT_TREE_RECORD",
+      "descriptionStatus": "MISSING_CORRECT_TREE_RECORD",
+      "prerequisiteStatus": "MISSING_CORRECT_TREE_RECORD",
+      "sourceMetadataStatus": "MISSING_CORRECT_TREE_RECORD",
+      "summaryStatus": "MISSING_CORRECT_TREE_RECORD",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": [],
+      "repoBenefitChars": null,
+      "canonicalBenefitChars": 234
+    },
+    {
+      "canonicalTreeKey": "Galaxy at War|Anticipation",
+      "tree": "Anticipation",
+      "canonicalName": "Heavy Fire Zone",
+      "page": 18,
+      "repoId": null,
+      "repoName": null,
+      "benefitStatus": "MISSING_CORRECT_TREE_RECORD",
+      "descriptionStatus": "MISSING_CORRECT_TREE_RECORD",
+      "prerequisiteStatus": "MISSING_CORRECT_TREE_RECORD",
+      "sourceMetadataStatus": "MISSING_CORRECT_TREE_RECORD",
+      "summaryStatus": "MISSING_CORRECT_TREE_RECORD",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": [],
+      "repoBenefitChars": null,
+      "canonicalBenefitChars": 445
+    },
+    {
+      "canonicalTreeKey": "Galaxy at War|Anticipation",
+      "tree": "Anticipation",
+      "canonicalName": "Summon Aid",
+      "page": 19,
+      "repoId": null,
+      "repoName": null,
+      "benefitStatus": "MISSING_CORRECT_TREE_RECORD",
+      "descriptionStatus": "MISSING_CORRECT_TREE_RECORD",
+      "prerequisiteStatus": "MISSING_CORRECT_TREE_RECORD",
+      "sourceMetadataStatus": "MISSING_CORRECT_TREE_RECORD",
+      "summaryStatus": "MISSING_CORRECT_TREE_RECORD",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": [],
+      "repoBenefitChars": null,
+      "canonicalBenefitChars": 294
+    },
+    {
+      "canonicalTreeKey": "Galaxy at War|Brigand",
+      "tree": "Brigand",
+      "canonicalName": "Cheap Trick",
+      "page": 19,
+      "repoId": null,
+      "repoName": null,
+      "benefitStatus": "MISSING_CORRECT_TREE_RECORD",
+      "descriptionStatus": "MISSING_CORRECT_TREE_RECORD",
+      "prerequisiteStatus": "MISSING_CORRECT_TREE_RECORD",
+      "sourceMetadataStatus": "MISSING_CORRECT_TREE_RECORD",
+      "summaryStatus": "MISSING_CORRECT_TREE_RECORD",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": [],
+      "repoBenefitChars": null,
+      "canonicalBenefitChars": 141
+    },
+    {
+      "canonicalTreeKey": "Galaxy at War|Brigand",
+      "tree": "Brigand",
+      "canonicalName": "Easy Prey",
+      "page": 19,
+      "repoId": null,
+      "repoName": null,
+      "benefitStatus": "MISSING_CORRECT_TREE_RECORD",
+      "descriptionStatus": "MISSING_CORRECT_TREE_RECORD",
+      "prerequisiteStatus": "MISSING_CORRECT_TREE_RECORD",
+      "sourceMetadataStatus": "MISSING_CORRECT_TREE_RECORD",
+      "summaryStatus": "MISSING_CORRECT_TREE_RECORD",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": [],
+      "repoBenefitChars": null,
+      "canonicalBenefitChars": 248
+    },
+    {
+      "canonicalTreeKey": "Galaxy at War|Brigand",
+      "tree": "Brigand",
+      "canonicalName": "Quick Strike",
+      "page": 19,
+      "repoId": null,
+      "repoName": null,
+      "benefitStatus": "MISSING_CORRECT_TREE_RECORD",
+      "descriptionStatus": "MISSING_CORRECT_TREE_RECORD",
+      "prerequisiteStatus": "MISSING_CORRECT_TREE_RECORD",
+      "sourceMetadataStatus": "MISSING_CORRECT_TREE_RECORD",
+      "summaryStatus": "MISSING_CORRECT_TREE_RECORD",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": [],
+      "repoBenefitChars": null,
+      "canonicalBenefitChars": 223
+    },
+    {
+      "canonicalTreeKey": "Galaxy at War|Brigand",
+      "tree": "Brigand",
+      "canonicalName": "Sly Combatant",
+      "page": 19,
+      "repoId": null,
+      "repoName": null,
+      "benefitStatus": "MISSING_CORRECT_TREE_RECORD",
+      "descriptionStatus": "MISSING_CORRECT_TREE_RECORD",
+      "prerequisiteStatus": "MISSING_CORRECT_TREE_RECORD",
+      "sourceMetadataStatus": "MISSING_CORRECT_TREE_RECORD",
+      "summaryStatus": "MISSING_CORRECT_TREE_RECORD",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": [],
+      "repoBenefitChars": null,
+      "canonicalBenefitChars": 939
+    },
+    {
+      "canonicalTreeKey": "Galaxy at War|Advance Patrol",
+      "tree": "Advance Patrol",
+      "canonicalName": "Forward Patrol",
+      "page": 20,
+      "repoId": null,
+      "repoName": null,
+      "benefitStatus": "MISSING_CORRECT_TREE_RECORD",
+      "descriptionStatus": "MISSING_CORRECT_TREE_RECORD",
+      "prerequisiteStatus": "MISSING_CORRECT_TREE_RECORD",
+      "sourceMetadataStatus": "MISSING_CORRECT_TREE_RECORD",
+      "summaryStatus": "MISSING_CORRECT_TREE_RECORD",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": [],
+      "repoBenefitChars": null,
+      "canonicalBenefitChars": 214
+    },
+    {
+      "canonicalTreeKey": "Galaxy at War|Advance Patrol",
+      "tree": "Advance Patrol",
+      "canonicalName": "Mobile Combatant",
+      "page": 20,
+      "repoId": null,
+      "repoName": null,
+      "benefitStatus": "MISSING_CORRECT_TREE_RECORD",
+      "descriptionStatus": "MISSING_CORRECT_TREE_RECORD",
+      "prerequisiteStatus": "MISSING_CORRECT_TREE_RECORD",
+      "sourceMetadataStatus": "MISSING_CORRECT_TREE_RECORD",
+      "summaryStatus": "MISSING_CORRECT_TREE_RECORD",
+      "dispositions": [
+        "MISSING_CONTENT",
+        "DISTINCT_SAME_NAME_IDENTITY_MISSING"
+      ],
+      "notes": "No correct-tree Galaxy at War record exists. Same-name repository candidate(s) belong to different tree/source identities and must not be moved or overwritten by name alone.",
+      "sameNameRepoCandidates": [
+        {
+          "repoId": "198b68c0ca770ad7",
+          "name": "Mobile Combatant",
+          "tree": "Jedi Guardian",
+          "source": "Star Wars Saga Edition Force Unleashed Campaign Guide",
+          "prerequisites": ""
+        }
+      ],
+      "repoBenefitChars": null,
+      "canonicalBenefitChars": 847
+    },
+    {
+      "canonicalTreeKey": "Galaxy at War|Advance Patrol",
+      "tree": "Advance Patrol",
+      "canonicalName": "Trailblazer",
+      "page": 20,
+      "repoId": null,
+      "repoName": null,
+      "benefitStatus": "MISSING_CORRECT_TREE_RECORD",
+      "descriptionStatus": "MISSING_CORRECT_TREE_RECORD",
+      "prerequisiteStatus": "MISSING_CORRECT_TREE_RECORD",
+      "sourceMetadataStatus": "MISSING_CORRECT_TREE_RECORD",
+      "summaryStatus": "MISSING_CORRECT_TREE_RECORD",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": [],
+      "repoBenefitChars": null,
+      "canonicalBenefitChars": 206
+    },
+    {
+      "canonicalTreeKey": "Galaxy at War|Advance Patrol",
+      "tree": "Advance Patrol",
+      "canonicalName": "Watchful Step",
+      "page": 20,
+      "repoId": null,
+      "repoName": null,
+      "benefitStatus": "MISSING_CORRECT_TREE_RECORD",
+      "descriptionStatus": "MISSING_CORRECT_TREE_RECORD",
+      "prerequisiteStatus": "MISSING_CORRECT_TREE_RECORD",
+      "sourceMetadataStatus": "MISSING_CORRECT_TREE_RECORD",
+      "summaryStatus": "MISSING_CORRECT_TREE_RECORD",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": [],
+      "repoBenefitChars": null,
+      "canonicalBenefitChars": 305
+    },
+    {
+      "canonicalTreeKey": "Galaxy at War|Shockboxer",
+      "tree": "Shockboxer",
+      "canonicalName": "Defensive Jab",
+      "page": 21,
+      "repoId": null,
+      "repoName": null,
+      "benefitStatus": "MISSING_CORRECT_TREE_RECORD",
+      "descriptionStatus": "MISSING_CORRECT_TREE_RECORD",
+      "prerequisiteStatus": "MISSING_CORRECT_TREE_RECORD",
+      "sourceMetadataStatus": "MISSING_CORRECT_TREE_RECORD",
+      "summaryStatus": "MISSING_CORRECT_TREE_RECORD",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": [],
+      "repoBenefitChars": null,
+      "canonicalBenefitChars": 141
+    },
+    {
+      "canonicalTreeKey": "Galaxy at War|Shockboxer",
+      "tree": "Shockboxer",
+      "canonicalName": "Nimble Dodge",
+      "page": 21,
+      "repoId": null,
+      "repoName": null,
+      "benefitStatus": "MISSING_CORRECT_TREE_RECORD",
+      "descriptionStatus": "MISSING_CORRECT_TREE_RECORD",
+      "prerequisiteStatus": "MISSING_CORRECT_TREE_RECORD",
+      "sourceMetadataStatus": "MISSING_CORRECT_TREE_RECORD",
+      "summaryStatus": "MISSING_CORRECT_TREE_RECORD",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": [],
+      "repoBenefitChars": null,
+      "canonicalBenefitChars": 145
+    },
+    {
+      "canonicalTreeKey": "Galaxy at War|Shockboxer",
+      "tree": "Shockboxer",
+      "canonicalName": "Retaliation Jab",
+      "page": 21,
+      "repoId": null,
+      "repoName": null,
+      "benefitStatus": "MISSING_CORRECT_TREE_RECORD",
+      "descriptionStatus": "MISSING_CORRECT_TREE_RECORD",
+      "prerequisiteStatus": "MISSING_CORRECT_TREE_RECORD",
+      "sourceMetadataStatus": "MISSING_CORRECT_TREE_RECORD",
+      "summaryStatus": "MISSING_CORRECT_TREE_RECORD",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": [],
+      "repoBenefitChars": null,
+      "canonicalBenefitChars": 207
+    },
+    {
+      "canonicalTreeKey": "Galaxy at War|Shockboxer",
+      "tree": "Shockboxer",
+      "canonicalName": "Stinging Jab",
+      "page": 21,
+      "repoId": null,
+      "repoName": null,
+      "benefitStatus": "MISSING_CORRECT_TREE_RECORD",
+      "descriptionStatus": "MISSING_CORRECT_TREE_RECORD",
+      "prerequisiteStatus": "MISSING_CORRECT_TREE_RECORD",
+      "sourceMetadataStatus": "MISSING_CORRECT_TREE_RECORD",
+      "summaryStatus": "MISSING_CORRECT_TREE_RECORD",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": [],
+      "repoBenefitChars": null,
+      "canonicalBenefitChars": 216
+    },
+    {
+      "canonicalTreeKey": "Galaxy at War|Shockboxer",
+      "tree": "Shockboxer",
+      "canonicalName": "Stunning Shockboxer",
+      "page": 21,
+      "repoId": null,
+      "repoName": null,
+      "benefitStatus": "MISSING_CORRECT_TREE_RECORD",
+      "descriptionStatus": "MISSING_CORRECT_TREE_RECORD",
+      "prerequisiteStatus": "MISSING_CORRECT_TREE_RECORD",
+      "sourceMetadataStatus": "MISSING_CORRECT_TREE_RECORD",
+      "summaryStatus": "MISSING_CORRECT_TREE_RECORD",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": [],
+      "repoBenefitChars": null,
+      "canonicalBenefitChars": 191
+    },
+    {
+      "canonicalTreeKey": "Galaxy at War|Veteran",
+      "tree": "Veteran",
+      "canonicalName": "Battlefield Remedy",
+      "page": 21,
+      "repoId": null,
+      "repoName": null,
+      "benefitStatus": "MISSING_CORRECT_TREE_RECORD",
+      "descriptionStatus": "MISSING_CORRECT_TREE_RECORD",
+      "prerequisiteStatus": "MISSING_CORRECT_TREE_RECORD",
+      "sourceMetadataStatus": "MISSING_CORRECT_TREE_RECORD",
+      "summaryStatus": "MISSING_CORRECT_TREE_RECORD",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": [],
+      "repoBenefitChars": null,
+      "canonicalBenefitChars": 212
+    },
+    {
+      "canonicalTreeKey": "Galaxy at War|Veteran",
+      "tree": "Veteran",
+      "canonicalName": "Grizzled Warrior",
+      "page": 21,
+      "repoId": null,
+      "repoName": null,
+      "benefitStatus": "MISSING_CORRECT_TREE_RECORD",
+      "descriptionStatus": "MISSING_CORRECT_TREE_RECORD",
+      "prerequisiteStatus": "MISSING_CORRECT_TREE_RECORD",
+      "sourceMetadataStatus": "MISSING_CORRECT_TREE_RECORD",
+      "summaryStatus": "MISSING_CORRECT_TREE_RECORD",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": [],
+      "repoBenefitChars": null,
+      "canonicalBenefitChars": 719
+    },
+    {
+      "canonicalTreeKey": "Galaxy at War|Veteran",
+      "tree": "Veteran",
+      "canonicalName": "Reckless",
+      "page": 22,
+      "repoId": null,
+      "repoName": null,
+      "benefitStatus": "MISSING_CORRECT_TREE_RECORD",
+      "descriptionStatus": "MISSING_CORRECT_TREE_RECORD",
+      "prerequisiteStatus": "MISSING_CORRECT_TREE_RECORD",
+      "sourceMetadataStatus": "MISSING_CORRECT_TREE_RECORD",
+      "summaryStatus": "MISSING_CORRECT_TREE_RECORD",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": [],
+      "repoBenefitChars": null,
+      "canonicalBenefitChars": 192
+    },
+    {
+      "canonicalTreeKey": "Galaxy at War|Veteran",
+      "tree": "Veteran",
+      "canonicalName": "Seen It All",
+      "page": 22,
+      "repoId": null,
+      "repoName": null,
+      "benefitStatus": "MISSING_CORRECT_TREE_RECORD",
+      "descriptionStatus": "MISSING_CORRECT_TREE_RECORD",
+      "prerequisiteStatus": "MISSING_CORRECT_TREE_RECORD",
+      "sourceMetadataStatus": "MISSING_CORRECT_TREE_RECORD",
+      "summaryStatus": "MISSING_CORRECT_TREE_RECORD",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": [],
+      "repoBenefitChars": null,
+      "canonicalBenefitChars": 233
+    },
+    {
+      "canonicalTreeKey": "Galaxy at War|Veteran",
+      "tree": "Veteran",
+      "canonicalName": "Tested in Battle",
+      "page": 22,
+      "repoId": null,
+      "repoName": null,
+      "benefitStatus": "MISSING_CORRECT_TREE_RECORD",
+      "descriptionStatus": "MISSING_CORRECT_TREE_RECORD",
+      "prerequisiteStatus": "MISSING_CORRECT_TREE_RECORD",
+      "sourceMetadataStatus": "MISSING_CORRECT_TREE_RECORD",
+      "summaryStatus": "MISSING_CORRECT_TREE_RECORD",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": [],
+      "repoBenefitChars": null,
+      "canonicalBenefitChars": 107
+    },
+    {
+      "canonicalTreeKey": "Galaxy at War|Sharpshooter",
+      "tree": "Sharpshooter",
+      "canonicalName": "Bullseye",
+      "page": 31,
+      "repoId": null,
+      "repoName": null,
+      "benefitStatus": "MISSING_CORRECT_TREE_RECORD",
+      "descriptionStatus": "MISSING_CORRECT_TREE_RECORD",
+      "prerequisiteStatus": "MISSING_CORRECT_TREE_RECORD",
+      "sourceMetadataStatus": "MISSING_CORRECT_TREE_RECORD",
+      "summaryStatus": "MISSING_CORRECT_TREE_RECORD",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": [],
+      "repoBenefitChars": null,
+      "canonicalBenefitChars": 275
+    },
+    {
+      "canonicalTreeKey": "Galaxy at War|Sharpshooter",
+      "tree": "Sharpshooter",
+      "canonicalName": "Draw a Bead",
+      "page": 31,
+      "repoId": null,
+      "repoName": null,
+      "benefitStatus": "MISSING_CORRECT_TREE_RECORD",
+      "descriptionStatus": "MISSING_CORRECT_TREE_RECORD",
+      "prerequisiteStatus": "MISSING_CORRECT_TREE_RECORD",
+      "sourceMetadataStatus": "MISSING_CORRECT_TREE_RECORD",
+      "summaryStatus": "MISSING_CORRECT_TREE_RECORD",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": [],
+      "repoBenefitChars": null,
+      "canonicalBenefitChars": 410
+    },
+    {
+      "canonicalTreeKey": "Galaxy at War|Sharpshooter",
+      "tree": "Sharpshooter",
+      "canonicalName": "Pinning Shot",
+      "page": 31,
+      "repoId": null,
+      "repoName": null,
+      "benefitStatus": "MISSING_CORRECT_TREE_RECORD",
+      "descriptionStatus": "MISSING_CORRECT_TREE_RECORD",
+      "prerequisiteStatus": "MISSING_CORRECT_TREE_RECORD",
+      "sourceMetadataStatus": "MISSING_CORRECT_TREE_RECORD",
+      "summaryStatus": "MISSING_CORRECT_TREE_RECORD",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": [],
+      "repoBenefitChars": null,
+      "canonicalBenefitChars": 339
+    },
+    {
+      "canonicalTreeKey": "Galaxy at War|Sharpshooter",
+      "tree": "Sharpshooter",
+      "canonicalName": "Harrying Shot",
+      "page": 31,
+      "repoId": null,
+      "repoName": null,
+      "benefitStatus": "MISSING_CORRECT_TREE_RECORD",
+      "descriptionStatus": "MISSING_CORRECT_TREE_RECORD",
+      "prerequisiteStatus": "MISSING_CORRECT_TREE_RECORD",
+      "sourceMetadataStatus": "MISSING_CORRECT_TREE_RECORD",
+      "summaryStatus": "MISSING_CORRECT_TREE_RECORD",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": [],
+      "repoBenefitChars": null,
+      "canonicalBenefitChars": 231
+    },
+    {
+      "canonicalTreeKey": "Galaxy at War|Sharpshooter",
+      "tree": "Sharpshooter",
+      "canonicalName": "Precision Shot",
+      "page": 31,
+      "repoId": null,
+      "repoName": null,
+      "benefitStatus": "MISSING_CORRECT_TREE_RECORD",
+      "descriptionStatus": "MISSING_CORRECT_TREE_RECORD",
+      "prerequisiteStatus": "MISSING_CORRECT_TREE_RECORD",
+      "sourceMetadataStatus": "MISSING_CORRECT_TREE_RECORD",
+      "summaryStatus": "MISSING_CORRECT_TREE_RECORD",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": [],
+      "repoBenefitChars": null,
+      "canonicalBenefitChars": 127
+    },
+    {
+      "canonicalTreeKey": "Galaxy at War|Squad Leader",
+      "tree": "Squad Leader",
+      "canonicalName": "Fall Back",
+      "page": 31,
+      "repoId": null,
+      "repoName": null,
+      "benefitStatus": "MISSING_CORRECT_TREE_RECORD",
+      "descriptionStatus": "MISSING_CORRECT_TREE_RECORD",
+      "prerequisiteStatus": "MISSING_CORRECT_TREE_RECORD",
+      "sourceMetadataStatus": "MISSING_CORRECT_TREE_RECORD",
+      "summaryStatus": "MISSING_CORRECT_TREE_RECORD",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": "Galaxy at War's Elite Trooper Squad Leader tree is a distinct published identity from the Clone Wars Soldier Squad Leader tree. Shared squad-definition rules apply to every talent in this tree.",
+      "sameNameRepoCandidates": [],
+      "repoBenefitChars": null,
+      "canonicalBenefitChars": 148
+    },
+    {
+      "canonicalTreeKey": "Galaxy at War|Squad Leader",
+      "tree": "Squad Leader",
+      "canonicalName": "Form Up",
+      "page": 31,
+      "repoId": null,
+      "repoName": null,
+      "benefitStatus": "MISSING_CORRECT_TREE_RECORD",
+      "descriptionStatus": "MISSING_CORRECT_TREE_RECORD",
+      "prerequisiteStatus": "MISSING_CORRECT_TREE_RECORD",
+      "sourceMetadataStatus": "MISSING_CORRECT_TREE_RECORD",
+      "summaryStatus": "MISSING_CORRECT_TREE_RECORD",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": "Galaxy at War's Elite Trooper Squad Leader tree is a distinct published identity from the Clone Wars Soldier Squad Leader tree. Shared squad-definition rules apply to every talent in this tree.",
+      "sameNameRepoCandidates": [],
+      "repoBenefitChars": null,
+      "canonicalBenefitChars": 181
+    },
+    {
+      "canonicalTreeKey": "Galaxy at War|Squad Leader",
+      "tree": "Squad Leader",
+      "canonicalName": "Full Advance",
+      "page": 31,
+      "repoId": null,
+      "repoName": null,
+      "benefitStatus": "MISSING_CORRECT_TREE_RECORD",
+      "descriptionStatus": "MISSING_CORRECT_TREE_RECORD",
+      "prerequisiteStatus": "MISSING_CORRECT_TREE_RECORD",
+      "sourceMetadataStatus": "MISSING_CORRECT_TREE_RECORD",
+      "summaryStatus": "MISSING_CORRECT_TREE_RECORD",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": "Galaxy at War's Elite Trooper Squad Leader tree is a distinct published identity from the Clone Wars Soldier Squad Leader tree. Shared squad-definition rules apply to every talent in this tree.",
+      "sameNameRepoCandidates": [],
+      "repoBenefitChars": null,
+      "canonicalBenefitChars": 111
+    },
+    {
+      "canonicalTreeKey": "Galaxy at War|Squad Leader",
+      "tree": "Squad Leader",
+      "canonicalName": "Hold Steady",
+      "page": 31,
+      "repoId": null,
+      "repoName": null,
+      "benefitStatus": "MISSING_CORRECT_TREE_RECORD",
+      "descriptionStatus": "MISSING_CORRECT_TREE_RECORD",
+      "prerequisiteStatus": "MISSING_CORRECT_TREE_RECORD",
+      "sourceMetadataStatus": "MISSING_CORRECT_TREE_RECORD",
+      "summaryStatus": "MISSING_CORRECT_TREE_RECORD",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": "Galaxy at War's Elite Trooper Squad Leader tree is a distinct published identity from the Clone Wars Soldier Squad Leader tree. Shared squad-definition rules apply to every talent in this tree.",
+      "sameNameRepoCandidates": [],
+      "repoBenefitChars": null,
+      "canonicalBenefitChars": 108
+    },
+    {
+      "canonicalTreeKey": "Galaxy at War|Squad Leader",
+      "tree": "Squad Leader",
+      "canonicalName": "Search and Destroy",
+      "page": 31,
+      "repoId": null,
+      "repoName": null,
+      "benefitStatus": "MISSING_CORRECT_TREE_RECORD",
+      "descriptionStatus": "MISSING_CORRECT_TREE_RECORD",
+      "prerequisiteStatus": "MISSING_CORRECT_TREE_RECORD",
+      "sourceMetadataStatus": "MISSING_CORRECT_TREE_RECORD",
+      "summaryStatus": "MISSING_CORRECT_TREE_RECORD",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": "Galaxy at War's Elite Trooper Squad Leader tree is a distinct published identity from the Clone Wars Soldier Squad Leader tree. Shared squad-definition rules apply to every talent in this tree.",
+      "sameNameRepoCandidates": [],
+      "repoBenefitChars": null,
+      "canonicalBenefitChars": 116
+    },
+    {
+      "canonicalTreeKey": "Galaxy at War|Martial Arts Forms",
+      "tree": "Martial Arts Forms",
+      "canonicalName": "Echani Expertise",
+      "page": 32,
+      "repoId": null,
+      "repoName": null,
+      "benefitStatus": "MISSING_CORRECT_TREE_RECORD",
+      "descriptionStatus": "MISSING_CORRECT_TREE_RECORD",
+      "prerequisiteStatus": "MISSING_CORRECT_TREE_RECORD",
+      "sourceMetadataStatus": "MISSING_CORRECT_TREE_RECORD",
+      "summaryStatus": "MISSING_CORRECT_TREE_RECORD",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": [],
+      "repoBenefitChars": null,
+      "canonicalBenefitChars": 290
+    },
+    {
+      "canonicalTreeKey": "Galaxy at War|Martial Arts Forms",
+      "tree": "Martial Arts Forms",
+      "canonicalName": "Hijkata Expertise",
+      "page": 32,
+      "repoId": null,
+      "repoName": null,
+      "benefitStatus": "MISSING_CORRECT_TREE_RECORD",
+      "descriptionStatus": "MISSING_CORRECT_TREE_RECORD",
+      "prerequisiteStatus": "MISSING_CORRECT_TREE_RECORD",
+      "sourceMetadataStatus": "MISSING_CORRECT_TREE_RECORD",
+      "summaryStatus": "MISSING_CORRECT_TREE_RECORD",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": [],
+      "repoBenefitChars": null,
+      "canonicalBenefitChars": 140
+    },
+    {
+      "canonicalTreeKey": "Galaxy at War|Martial Arts Forms",
+      "tree": "Martial Arts Forms",
+      "canonicalName": "K'tara Expertise",
+      "page": 33,
+      "repoId": null,
+      "repoName": null,
+      "benefitStatus": "MISSING_CORRECT_TREE_RECORD",
+      "descriptionStatus": "MISSING_CORRECT_TREE_RECORD",
+      "prerequisiteStatus": "MISSING_CORRECT_TREE_RECORD",
+      "sourceMetadataStatus": "MISSING_CORRECT_TREE_RECORD",
+      "summaryStatus": "MISSING_CORRECT_TREE_RECORD",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": [],
+      "repoBenefitChars": null,
+      "canonicalBenefitChars": 243
+    },
+    {
+      "canonicalTreeKey": "Galaxy at War|Martial Arts Forms",
+      "tree": "Martial Arts Forms",
+      "canonicalName": "K'thri Expertise",
+      "page": 33,
+      "repoId": null,
+      "repoName": null,
+      "benefitStatus": "MISSING_CORRECT_TREE_RECORD",
+      "descriptionStatus": "MISSING_CORRECT_TREE_RECORD",
+      "prerequisiteStatus": "MISSING_CORRECT_TREE_RECORD",
+      "sourceMetadataStatus": "MISSING_CORRECT_TREE_RECORD",
+      "summaryStatus": "MISSING_CORRECT_TREE_RECORD",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": [],
+      "repoBenefitChars": null,
+      "canonicalBenefitChars": 240
+    },
+    {
+      "canonicalTreeKey": "Galaxy at War|Martial Arts Forms",
+      "tree": "Martial Arts Forms",
+      "canonicalName": "Stava Expertise",
+      "page": 33,
+      "repoId": null,
+      "repoName": null,
+      "benefitStatus": "MISSING_CORRECT_TREE_RECORD",
+      "descriptionStatus": "MISSING_CORRECT_TREE_RECORD",
+      "prerequisiteStatus": "MISSING_CORRECT_TREE_RECORD",
+      "sourceMetadataStatus": "MISSING_CORRECT_TREE_RECORD",
+      "summaryStatus": "MISSING_CORRECT_TREE_RECORD",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": [],
+      "repoBenefitChars": null,
+      "canonicalBenefitChars": 310
+    },
+    {
+      "canonicalTreeKey": "Galaxy at War|Martial Arts Forms",
+      "tree": "Martial Arts Forms",
+      "canonicalName": "Tae-Jitsu Expertise",
+      "page": 33,
+      "repoId": null,
+      "repoName": null,
+      "benefitStatus": "MISSING_CORRECT_TREE_RECORD",
+      "descriptionStatus": "MISSING_CORRECT_TREE_RECORD",
+      "prerequisiteStatus": "MISSING_CORRECT_TREE_RECORD",
+      "sourceMetadataStatus": "MISSING_CORRECT_TREE_RECORD",
+      "summaryStatus": "MISSING_CORRECT_TREE_RECORD",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": [],
+      "repoBenefitChars": null,
+      "canonicalBenefitChars": 295
+    },
+    {
+      "canonicalTreeKey": "Galaxy at War|Martial Arts Forms",
+      "tree": "Martial Arts Forms",
+      "canonicalName": "Wrruushi Expertise",
+      "page": 33,
+      "repoId": null,
+      "repoName": null,
+      "benefitStatus": "MISSING_CORRECT_TREE_RECORD",
+      "descriptionStatus": "MISSING_CORRECT_TREE_RECORD",
+      "prerequisiteStatus": "MISSING_CORRECT_TREE_RECORD",
+      "sourceMetadataStatus": "MISSING_CORRECT_TREE_RECORD",
+      "summaryStatus": "MISSING_CORRECT_TREE_RECORD",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": [],
+      "repoBenefitChars": null,
+      "canonicalBenefitChars": 319
+    },
+    {
+      "canonicalTreeKey": "Galaxy at War|Unarmed Mastery",
+      "tree": "Unarmed Mastery",
+      "canonicalName": "Flurry of Blows",
+      "page": 33,
+      "repoId": null,
+      "repoName": null,
+      "benefitStatus": "MISSING_CORRECT_TREE_RECORD",
+      "descriptionStatus": "MISSING_CORRECT_TREE_RECORD",
+      "prerequisiteStatus": "MISSING_CORRECT_TREE_RECORD",
+      "sourceMetadataStatus": "MISSING_CORRECT_TREE_RECORD",
+      "summaryStatus": "MISSING_CORRECT_TREE_RECORD",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": [],
+      "repoBenefitChars": null,
+      "canonicalBenefitChars": 250
+    },
+    {
+      "canonicalTreeKey": "Galaxy at War|Unarmed Mastery",
+      "tree": "Unarmed Mastery",
+      "canonicalName": "Hardened Strike",
+      "page": 33,
+      "repoId": null,
+      "repoName": null,
+      "benefitStatus": "MISSING_CORRECT_TREE_RECORD",
+      "descriptionStatus": "MISSING_CORRECT_TREE_RECORD",
+      "prerequisiteStatus": "MISSING_CORRECT_TREE_RECORD",
+      "sourceMetadataStatus": "MISSING_CORRECT_TREE_RECORD",
+      "summaryStatus": "MISSING_CORRECT_TREE_RECORD",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": [],
+      "repoBenefitChars": null,
+      "canonicalBenefitChars": 225
+    },
+    {
+      "canonicalTreeKey": "Galaxy at War|Unarmed Mastery",
+      "tree": "Unarmed Mastery",
+      "canonicalName": "Punishing Strike",
+      "page": 33,
+      "repoId": null,
+      "repoName": null,
+      "benefitStatus": "MISSING_CORRECT_TREE_RECORD",
+      "descriptionStatus": "MISSING_CORRECT_TREE_RECORD",
+      "prerequisiteStatus": "MISSING_CORRECT_TREE_RECORD",
+      "sourceMetadataStatus": "MISSING_CORRECT_TREE_RECORD",
+      "summaryStatus": "MISSING_CORRECT_TREE_RECORD",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": [],
+      "repoBenefitChars": null,
+      "canonicalBenefitChars": 270
+    }
+  ]
+}
