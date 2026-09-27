@@ -401,11 +401,11 @@ Registry entry before this pass: **absent**
 
 # 9. Origin-membership summary
 
-The 27 previously unresolved published repo-special trees contain **124 source-confirmed origin identities**.
+The 27 previously unresolved published repo-special trees contain **123 source-confirmed origin identities**.
 
 The two newly discovered missing Jedi Academy trees add **10 more**.
 
-Therefore this special-tree pass certifies **134 canonical origin talent identities** across 29 published tree identities.
+Therefore this special-tree pass certifies **133 canonical origin talent identities** across 29 published tree identities.
 
 Healthy examples:
 - Bando Gora Captain
