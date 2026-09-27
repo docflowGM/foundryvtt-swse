@@ -1,0 +1,748 @@
+{
+  "schemaVersion": 1,
+  "phase": "2",
+  "sourcebook": "Scavenger's Guide to Droids",
+  "generatedAt": "2026-09-27",
+  "branch": "audit/talent-phase-1-tree-census",
+  "scope": "Source-certified Scavenger's Guide to Droids talents compared against current repository talent-record mirror. No production records changed.",
+  "summary": {
+    "canonicalTalentPublications": 31,
+    "repositoryRecordsMapped": 0,
+    "missingCorrectTreeRecords": 31,
+    "originTreeIdentities": 2,
+    "originTalentIdentities": 8,
+    "expansionTreeTargets": 7,
+    "expansionTalentIdentities": 23,
+    "phase1dStructuralCorrections": 0,
+    "distinctSameNameIdentityHazards": 0,
+    "prerequisiteTextMismatches": 0,
+    "fullTextDifferentOrAbbreviated": 0,
+    "sourceMetadataMissing": 0,
+    "summaryMissing": 0,
+    "dispositionCounts": {
+      "MISSING_CONTENT": 31
+    }
+  },
+  "hierarchyFindings": [
+    "Just a Droid is one Autonomy talent. Just Another Droid and Just a Normal Droid are actions within it, not standalone talents.",
+    "Scripted Routines is one Elite Droid talent. Attack Script, Defense Script, and Skill Script are actions within it, not standalone talents.",
+    "No Phase 1D talent-membership correction was required."
+  ],
+  "missingRepositoryRecords": [
+    {
+      "tree": "Autonomy",
+      "name": "Just a Droid",
+      "page": 28,
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Autonomy",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Autonomy",
+      "name": "Swift Droid",
+      "page": 28,
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Autonomy",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Specialized Droid",
+      "name": "Power Boost",
+      "page": 28,
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Specialized Droid",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Elite Droid",
+      "name": "Break Program",
+      "page": 29,
+      "canonicalTreeKey": "Scavenger's Guide to Droids|Elite Droid",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Elite Droid",
+      "name": "Heuristic Mastery",
+      "page": 29,
+      "canonicalTreeKey": "Scavenger's Guide to Droids|Elite Droid",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Elite Droid",
+      "name": "Scripted Routines",
+      "page": 29,
+      "canonicalTreeKey": "Scavenger's Guide to Droids|Elite Droid",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Elite Droid",
+      "name": "Ultra Resilient",
+      "page": 29,
+      "canonicalTreeKey": "Scavenger's Guide to Droids|Elite Droid",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Override",
+      "name": "Directed Action",
+      "page": 28,
+      "canonicalTreeKey": "Scavenger's Guide to Droids|Override",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Override",
+      "name": "Directed Movement",
+      "page": 28,
+      "canonicalTreeKey": "Scavenger's Guide to Droids|Override",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Override",
+      "name": "Full Control",
+      "page": 28,
+      "canonicalTreeKey": "Scavenger's Guide to Droids|Override",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Override",
+      "name": "Remote Attack",
+      "page": 28,
+      "canonicalTreeKey": "Scavenger's Guide to Droids|Override",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "1stdegree Droid",
+      "name": "Known Vulnerability",
+      "page": 26,
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|First-Degree Droid",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "1stdegree Droid",
+      "name": "Medical Analyzer",
+      "page": 26,
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|First-Degree Droid",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "1stdegree Droid",
+      "name": "Science Analyzer",
+      "page": 26,
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|First-Degree Droid",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "1stdegree Droid",
+      "name": "Triage Scan",
+      "page": 26,
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|First-Degree Droid",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "2nddegree Droid",
+      "name": "Burst Transfer",
+      "page": 26,
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Second-Degree Droid",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "2nddegree Droid",
+      "name": "On-Board System Link",
+      "page": 26,
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Second-Degree Droid",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "2nddegree Droid",
+      "name": "Quick Astrogation",
+      "page": 26,
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Second-Degree Droid",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "2nddegree Droid",
+      "name": "Scomp Link Slicer",
+      "page": 27,
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Second-Degree Droid",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "3rddegree Droid",
+      "name": "Nuanced",
+      "page": 27,
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Third-Degree Droid",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "3rddegree Droid",
+      "name": "Observant",
+      "page": 27,
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Third-Degree Droid",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "3rddegree Droid",
+      "name": "Supervising Droid",
+      "page": 27,
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Third-Degree Droid",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "3rddegree Droid",
+      "name": "Talkdroid",
+      "page": 27,
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Third-Degree Droid",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "4thdegree Droid",
+      "name": "Just a Scratch",
+      "page": 27,
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Fourth-Degree Droid",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "4thdegree Droid",
+      "name": "Target Acquisition",
+      "page": 27,
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Fourth-Degree Droid",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "4thdegree Droid",
+      "name": "Target Lock",
+      "page": 27,
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Fourth-Degree Droid",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "4thdegree Droid",
+      "name": "Weapons Power Surge",
+      "page": 27,
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Fourth-Degree Droid",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "5thdegree Droid",
+      "name": "Durable",
+      "page": 27,
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Fifth-Degree Droid",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "5thdegree Droid",
+      "name": "Heavy-Duty Actuators",
+      "page": 27,
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Fifth-Degree Droid",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "5thdegree Droid",
+      "name": "Load Launcher",
+      "page": 27,
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Fifth-Degree Droid",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "5thdegree Droid",
+      "name": "Task Optimization",
+      "page": 28,
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Fifth-Degree Droid",
+      "sameNameRepoCandidates": []
+    }
+  ],
+  "talents": [
+    {
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Autonomy",
+      "tree": "Autonomy",
+      "canonicalName": "Just a Droid",
+      "page": 28,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": "Just Another Droid and Just a Normal Droid are named actions within this one Autonomy talent, not standalone talents.",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Autonomy",
+      "tree": "Autonomy",
+      "canonicalName": "Swift Droid",
+      "page": 28,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "Any two talents from the Autonomy talent tree",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Specialized Droid",
+      "tree": "Specialized Droid",
+      "canonicalName": "Power Boost",
+      "page": 28,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "Power Surge",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Scavenger's Guide to Droids|Elite Droid",
+      "tree": "Elite Droid",
+      "canonicalName": "Break Program",
+      "page": 29,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "Trained in Use Computer. Heuristic Mastery: You understand the subtleties and limitations of your heuristic processor. You can reroll any untrained skill check (except Use the Force), keeping the second result, even if it is worse. Once per encounter, you can spend a Force Point to reroll any skill check (trained or untrained), taking the better result. Prerequisite: Wisdom 15. Scripted Routines: Your extensive experience allows you to preset specific routines that give you an advantage in some situations. Once per encounter you can use each of the following actions: ¢ Attack Script: You can use a feat ora talent that modifies your attack roll as one action less (for example, a full-round action becomes a standard action, a standard action becomes a move action, a move action becomes a swift action, a swift action becomes a free action). ¢ Defense Script: You can apply your Independent Spirit bonus a second time during a single encounter. © Skill Script: While in combat, you can apply a bonus equal to one-half of your class level to any single skill that requires a standard action or less to use. You must be trained in the skill",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Scavenger's Guide to Droids|Elite Droid",
+      "tree": "Elite Droid",
+      "canonicalName": "Heuristic Mastery",
+      "page": 29,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "Wisdom 15. Scripted Routines: Your extensive experience allows you to preset specific routines that give you an advantage in some situations. Once per encounter you can use each of the following actions: ¢ Attack Script: You can use a feat ora talent that modifies your attack roll as one action less (for example, a full-round action becomes a standard action, a standard action becomes a move action, a move action becomes a swift action, a swift action becomes a free action). ¢ Defense Script: You can apply your Independent Spirit bonus a second time during a single encounter. © Skill Script: While in combat, you can apply a bonus equal to one-half of your class level to any single skill that requires a standard action or less to use. You must be trained in the skill",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Scavenger's Guide to Droids|Elite Droid",
+      "tree": "Elite Droid",
+      "canonicalName": "Scripted Routines",
+      "page": 29,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "Base attack bonus +5",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": "Attack Script, Defense Script, and Skill Script are named actions within this one Elite Droid talent, not standalone talents.",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Scavenger's Guide to Droids|Elite Droid",
+      "tree": "Elite Droid",
+      "canonicalName": "Ultra Resilient",
+      "page": 29,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Scavenger's Guide to Droids|Override",
+      "tree": "Override",
+      "canonicalName": "Directed Action",
+      "page": 28,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Scavenger's Guide to Droids|Override",
+      "tree": "Override",
+      "canonicalName": "Directed Movement",
+      "page": 28,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Scavenger's Guide to Droids|Override",
+      "tree": "Override",
+      "canonicalName": "Full Control",
+      "page": 28,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "Directed Action, Directed Movement, and Remote Attack",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Scavenger's Guide to Droids|Override",
+      "tree": "Override",
+      "canonicalName": "Remote Attack",
+      "page": 28,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|First-Degree Droid",
+      "tree": "1stdegree Droid",
+      "canonicalName": "Known Vulnerability",
+      "page": 26,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "Trained in Knowledge (life sciences)",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|First-Degree Droid",
+      "tree": "1stdegree Droid",
+      "canonicalName": "Medical Analyzer",
+      "page": 26,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "Trained in Knowledge (life sciences), medical droid",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|First-Degree Droid",
+      "tree": "1stdegree Droid",
+      "canonicalName": "Science Analyzer",
+      "page": 26,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "Trained in Knowledge (life sciences) and Knowledge (physi- cal sciences)",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|First-Degree Droid",
+      "tree": "1stdegree Droid",
+      "canonicalName": "Triage Scan",
+      "page": 26,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "Trained in Treat Injury, medical droid",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Second-Degree Droid",
+      "tree": "2nddegree Droid",
+      "canonicalName": "Burst Transfer",
+      "page": 26,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Second-Degree Droid",
+      "tree": "2nddegree Droid",
+      "canonicalName": "On-Board System Link",
+      "page": 26,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Second-Degree Droid",
+      "tree": "2nddegree Droid",
+      "canonicalName": "Quick Astrogation",
+      "page": 26,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "Trained in Use Computer",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Second-Degree Droid",
+      "tree": "2nddegree Droid",
+      "canonicalName": "Scomp Link Slicer",
+      "page": 27,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "Any two talents from the Slicer Talent Tree (see page 47 of the Saga Edition core rulebook). Burst Transfer can be one of these talents",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Third-Degree Droid",
+      "tree": "3rddegree Droid",
+      "canonicalName": "Nuanced",
+      "page": 27,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Third-Degree Droid",
+      "tree": "3rddegree Droid",
+      "canonicalName": "Observant",
+      "page": 27,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Third-Degree Droid",
+      "tree": "3rddegree Droid",
+      "canonicalName": "Supervising Droid",
+      "page": 27,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "Observant, any talent from the Influence, Inspiration, or Leadership Talent Trees (see pages 43-44 of the Saga Edition core rulebook)",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Third-Degree Droid",
+      "tree": "3rddegree Droid",
+      "canonicalName": "Talkdroid",
+      "page": 27,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "Trained in Persuasion",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Fourth-Degree Droid",
+      "tree": "4thdegree Droid",
+      "canonicalName": "Just a Scratch",
+      "page": 27,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "Equipped with medium or better armor, proficient with that armor",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Fourth-Degree Droid",
+      "tree": "4thdegree Droid",
+      "canonicalName": "Target Acquisition",
+      "page": 27,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Fourth-Degree Droid",
+      "tree": "4thdegree Droid",
+      "canonicalName": "Target Lock",
+      "page": 27,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "Target Acquisition",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Fourth-Degree Droid",
+      "tree": "4thdegree Droid",
+      "canonicalName": "Weapons Power Surge",
+      "page": 27,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Fifth-Degree Droid",
+      "tree": "5thdegree Droid",
+      "canonicalName": "Durable",
+      "page": 27,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Fifth-Degree Droid",
+      "tree": "5thdegree Droid",
+      "canonicalName": "Heavy-Duty Actuators",
+      "page": 27,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "Medium or larger size",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Fifth-Degree Droid",
+      "tree": "5thdegree Droid",
+      "canonicalName": "Load Launcher",
+      "page": 27,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Fifth-Degree Droid",
+      "tree": "5thdegree Droid",
+      "canonicalName": "Task Optimization",
+      "page": 28,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    }
+  ]
+}
