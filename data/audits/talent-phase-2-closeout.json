@@ -1,0 +1,188 @@
+{
+  "schemaVersion": 1,
+  "phase": "2",
+  "status": "COMPLETE",
+  "completedAt": "2026-09-27",
+  "branch": "audit/talent-phase-1-tree-census",
+  "purpose": "Source-certify canonical SWSE talent publication content without changing production talent records.",
+  "sourcePolicy": {
+    "searchableLayer": "DJVU/TXT conversions",
+    "finalAuthority": "Rendered primary-source PDF pages for hierarchy, printed page attribution, prerequisites, same-name identity, class-feature boundaries, sidebars, and OCR ambiguity."
+  },
+  "identityRule": "sourcebook publication + canonical talent tree + talent name",
+  "totals": {
+    "sourcebooks": 14,
+    "certifiedPublicationClaims": 1182,
+    "originPublicationClaims": 910,
+    "expansionPublicationClaims": 272,
+    "correctTreeRepositoryMappings": 849,
+    "missingCorrectTreePublicationClaims": 333,
+    "aggregateCanonicalTreeMembershipClaims": 1180
+  },
+  "distinction": {
+    "publicationClaims": 1182,
+    "aggregateCanonicalTreeMembershipClaims": 1180,
+    "explanation": "Phase 2 counts sourcebook talent publications. Phase 1D aggregate membership counts the merged canonical tree graph. They are related but intentionally not identical."
+  },
+  "currentStructuralAuthority": {
+    "registry": "data/audits/talent-canonical-tree-registry.json",
+    "structuralCorrectionManifest": "data/audits/talent-phase-1d-structural-correction-manifest.json",
+    "registryEntries": 197,
+    "canonicalPublishedTrees": 177,
+    "noncanonicalHomebrewTrees": 19,
+    "obsoleteSplitFragments": 1,
+    "canonicalMembershipGaps": 270,
+    "extraRepoMembershipClaims": 74,
+    "missingRepoClassAccessEdges": 20,
+    "extraRepoClassAccessEdges": 1
+  },
+  "phase2StructuralCorrections": [
+    "Core: restored Improved Dark Healing to the Core Sith origin membership.",
+    "Galaxy at War: removed Tough as Durasteel from Unarmed Mastery because it is a Martial Arts Master class feature.",
+    "Galaxy of Intrigue: removed six named actions misclassified as standalone talents under Dedicated Guardian and Pistol Duelist.",
+    "Scum and Villainy: corrected Inspiration/Beloved and removed the Disgrace/Draw Fire cross-tree reference from canonical membership.",
+    "Unknown Regions: removed four named sub-actions misclassified as standalone talents under Band Together and Champion."
+  ],
+  "books": [
+    {
+      "order": 1,
+      "sourcebook": "Saga Edition Core Rulebook",
+      "total": 198,
+      "origin": 198,
+      "expansion": 0,
+      "mapped": 190,
+      "missing": 8
+    },
+    {
+      "order": 2,
+      "sourcebook": "Clone Wars Campaign Guide",
+      "total": 118,
+      "origin": 95,
+      "expansion": 23,
+      "mapped": 112,
+      "missing": 6
+    },
+    {
+      "order": 3,
+      "sourcebook": "Rebellion Era Campaign Guide",
+      "total": 64,
+      "origin": 56,
+      "expansion": 8,
+      "mapped": 61,
+      "missing": 3
+    },
+    {
+      "order": 4,
+      "sourcebook": "Galaxy at War",
+      "total": 56,
+      "origin": 43,
+      "expansion": 13,
+      "mapped": 2,
+      "missing": 54
+    },
+    {
+      "order": 5,
+      "sourcebook": "Galaxy of Intrigue",
+      "total": 43,
+      "origin": 26,
+      "expansion": 17,
+      "mapped": 0,
+      "missing": 43
+    },
+    {
+      "order": 6,
+      "sourcebook": "Starships of the Galaxy",
+      "total": 23,
+      "origin": 13,
+      "expansion": 10,
+      "mapped": 22,
+      "missing": 1
+    },
+    {
+      "order": 7,
+      "sourcebook": "Threats of the Galaxy",
+      "total": 11,
+      "origin": 10,
+      "expansion": 1,
+      "mapped": 11,
+      "missing": 0
+    },
+    {
+      "order": 8,
+      "sourcebook": "Scum and Villainy",
+      "total": 110,
+      "origin": 55,
+      "expansion": 55,
+      "mapped": 104,
+      "missing": 6
+    },
+    {
+      "order": 9,
+      "sourcebook": "Unknown Regions",
+      "total": 57,
+      "origin": 27,
+      "expansion": 30,
+      "mapped": 1,
+      "missing": 56
+    },
+    {
+      "order": 10,
+      "sourcebook": "Legacy Era Campaign Guide",
+      "total": 101,
+      "origin": 88,
+      "expansion": 13,
+      "mapped": 91,
+      "missing": 10
+    },
+    {
+      "order": 11,
+      "sourcebook": "Knights of the Old Republic Campaign Guide",
+      "total": 115,
+      "origin": 82,
+      "expansion": 33,
+      "mapped": 92,
+      "missing": 23
+    },
+    {
+      "order": 12,
+      "sourcebook": "Force Unleashed Campaign Guide",
+      "total": 137,
+      "origin": 113,
+      "expansion": 24,
+      "mapped": 101,
+      "missing": 36
+    },
+    {
+      "order": 13,
+      "sourcebook": "Jedi Academy Training Manual",
+      "total": 118,
+      "origin": 96,
+      "expansion": 22,
+      "mapped": 62,
+      "missing": 56
+    },
+    {
+      "order": 14,
+      "sourcebook": "Scavenger's Guide to Droids",
+      "total": 31,
+      "origin": 8,
+      "expansion": 23,
+      "mapped": 0,
+      "missing": 31
+    }
+  ],
+  "productionStatus": {
+    "productionTalentRecordsChanged": false,
+    "note": "Phase 2 remained certification/audit only. Per-book content datasets and discrepancy manifests are repair authority for the later production pass."
+  },
+  "nextPhaseTarget": {
+    "goal": "Apply the certified Phase 2 authority to production talent records.",
+    "fields": {
+      "system.benefit": "canonical published rules text",
+      "system.description.value": "canonical/full player-readable rules text",
+      "system.summary": "short derived player-facing summary",
+      "system.prerequisites": "canonical printed prerequisite text",
+      "source/page": "correct sourcebook and printed page"
+    }
+  }
+}
