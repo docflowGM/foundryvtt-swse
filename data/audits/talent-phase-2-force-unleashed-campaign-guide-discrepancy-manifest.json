@@ -1,0 +1,2717 @@
+{
+  "schemaVersion": 1,
+  "phase": "2",
+  "sourcebook": "Force Unleashed Campaign Guide",
+  "generatedAt": "2026-09-27",
+  "branch": "audit/talent-phase-1-tree-census",
+  "scope": "Source-certified Force Unleashed talents compared against current repository talent-record mirror. No production records changed.",
+  "summary": {
+    "canonicalTalentPublications": 137,
+    "repositoryRecordsMapped": 101,
+    "missingCorrectTreeRecords": 36,
+    "originTreeIdentities": 22,
+    "originTalentIdentities": 113,
+    "expansionTreeTargets": 13,
+    "expansionTalentIdentities": 24,
+    "phase1dStructuralCorrections": 0,
+    "distinctSameNameIdentityHazards": 1,
+    "prerequisiteTextMismatches": 23,
+    "fullTextDifferentOrAbbreviated": 96,
+    "sourceMetadataMissing": 101,
+    "summaryMissing": 101,
+    "dispositionCounts": {
+      "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT": 96,
+      "PREREQUISITE_TEXT_MISMATCH": 23,
+      "SOURCE_METADATA_MISSING": 101,
+      "SUMMARY_MISSING": 101,
+      "CANONICAL_TEXT_PRESENT_BOTH": 5,
+      "MISSING_CONTENT": 36,
+      "DISTINCT_SAME_NAME_IDENTITY_HAZARD": 1
+    }
+  },
+  "hierarchyFindings": [
+    "Independent Spirit, Veteran Privateer, Medical Secrets, Unexpected Results, Destructive, Quick Sabotage, and Master Saboteur are prestige-class features, not selectable talent identities.",
+    "No Phase 1D talent-membership correction was required."
+  ],
+  "missingRepositoryRecords": [
+    {
+      "tree": "Autonomy",
+      "name": "Defensive Electronics",
+      "page": 47,
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Autonomy",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Autonomy",
+      "name": "Ion Resistance 10",
+      "page": 47,
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Autonomy",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Autonomy",
+      "name": "Soft Reset",
+      "page": 47,
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Autonomy",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Autonomy",
+      "name": "Modification Specialist",
+      "page": 47,
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Autonomy",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Autonomy",
+      "name": "Repair Self",
+      "page": 47,
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Autonomy",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Critical Master",
+      "name": "Extended Critical Range (heavy weapons)",
+      "page": 42,
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Critical Master",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Privateer",
+      "name": "Multiattack Proficiency (advanced melee weapons)",
+      "page": 52,
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Privateer",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Specialized Droid",
+      "name": "Computer Language",
+      "page": 47,
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Specialized Droid",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Specialized Droid",
+      "name": "Computer Master",
+      "page": 47,
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Specialized Droid",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Specialized Droid",
+      "name": "Enhanced Manipulation",
+      "page": 47,
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Specialized Droid",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Specialized Droid",
+      "name": "Hotwired Processor",
+      "page": 47,
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Specialized Droid",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Specialized Droid",
+      "name": "Power Surge",
+      "page": 48,
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Specialized Droid",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Specialized Droid",
+      "name": "Skill Conversion",
+      "page": 48,
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Specialized Droid",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "1stdegree Droid",
+      "name": "Dull the Pain",
+      "page": 102,
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|First-Degree Droid",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "1stdegree Droid",
+      "name": "Interrogator",
+      "page": 102,
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|First-Degree Droid",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "1stdegree Droid",
+      "name": "Medical Droid",
+      "page": 102,
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|First-Degree Droid",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "2nddegree Droid",
+      "name": "Adept Assistant",
+      "page": 102,
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Second-Degree Droid",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "2nddegree Droid",
+      "name": "Mechanics Mastery",
+      "page": 102,
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Second-Degree Droid",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "2nddegree Droid",
+      "name": "Vehicle Mechanic",
+      "page": 102,
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Second-Degree Droid",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "3rddegree Droid",
+      "name": "Etiquette",
+      "page": 103,
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Third-Degree Droid",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "3rddegree Droid",
+      "name": "Helpful",
+      "page": 103,
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Third-Degree Droid",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "3rddegree Droid",
+      "name": "Protocol",
+      "page": 103,
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Third-Degree Droid",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "4thdegree Droid",
+      "name": "Combat Repairs",
+      "page": 103,
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Fourth-Degree Droid",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "4thdegree Droid",
+      "name": "Droid Smash",
+      "page": 103,
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Fourth-Degree Droid",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "4thdegree Droid",
+      "name": "Targeting Package",
+      "page": 103,
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Fourth-Degree Droid",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "5thdegree Droid",
+      "name": "Cargo Hauler",
+      "page": 103,
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Fifth-Degree Droid",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "5thdegree Droid",
+      "name": "Environmentally Shielded",
+      "page": 103,
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Fifth-Degree Droid",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "5thdegree Droid",
+      "name": "Power Supply",
+      "page": 103,
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Fifth-Degree Droid",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Agent Of Ossus",
+      "name": "Buried Presence",
+      "page": 92,
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Agent of Ossus",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Agent Of Ossus",
+      "name": "Conceal Other",
+      "page": 92,
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Agent of Ossus",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Agent Of Ossus",
+      "name": "Insightful Aim",
+      "page": 92,
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Agent of Ossus",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Agent Of Ossus",
+      "name": "Vanish",
+      "page": 92,
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Agent of Ossus",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Felucian Shaman",
+      "name": "Detonate",
+      "page": 93,
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Felucian Shaman",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Felucian Shaman",
+      "name": "Hive Mind",
+      "page": 93,
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Felucian Shaman",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Felucian Shaman",
+      "name": "Infuse Weapon",
+      "page": 93,
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Felucian Shaman",
+      "sameNameRepoCandidates": []
+    },
+    {
+      "tree": "Felucian Shaman",
+      "name": "Sickening Blast",
+      "page": 93,
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Felucian Shaman",
+      "sameNameRepoCandidates": []
+    }
+  ],
+  "talents": [
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Awareness",
+      "tree": "Awareness",
+      "canonicalName": "Reset Initiative",
+      "page": 28,
+      "repoId": "97eeb67b9428f0eb",
+      "repoName": "Reset Initiative",
+      "repoTreeName": "Awareness",
+      "repoPrerequisites": "Improved Initiative, Initiative",
+      "canonicalPrerequisites": "Acute Senses, Improved Initiative, trained in the Initiative skill",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "PREREQUISITE_TEXT_MISMATCH",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Bounty Hunter",
+      "tree": "Bounty Hunter",
+      "canonicalName": "Fearsome",
+      "page": 42,
+      "repoId": "11e8f858af268e8c",
+      "repoName": "Fearsome",
+      "repoTreeName": "Bounty Hunter",
+      "repoPrerequisites": "Notorious",
+      "canonicalPrerequisites": "Notorious",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Bounty Hunter",
+      "tree": "Bounty Hunter",
+      "canonicalName": "Signature Item",
+      "page": 42,
+      "repoId": "a6fa8cb695f2882c",
+      "repoName": "Signature Item",
+      "repoTreeName": "Bounty Hunter",
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Bounty Hunter",
+      "tree": "Bounty Hunter",
+      "canonicalName": "Jedi Hunter",
+      "page": 42,
+      "repoId": "226aea42fcdd30b0",
+      "repoName": "Jedi Hunter",
+      "repoTreeName": "Bounty Hunter",
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Duelist",
+      "tree": "Duelist",
+      "canonicalName": "Improved Lightsaber Throw",
+      "page": 43,
+      "repoId": "705f100f5703e707",
+      "repoName": "Improved Lightsaber Throw",
+      "repoTreeName": "Duelist",
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "Lightsaber Throw",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "PREREQUISITE_TEXT_MISMATCH",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Duelist",
+      "tree": "Duelist",
+      "canonicalName": "Thrown Lightsaber Mastery",
+      "page": 43,
+      "repoId": "6ae9bf79e77bd8c3",
+      "repoName": "Thrown Lightsaber Mastery",
+      "repoTreeName": "Duelist",
+      "repoPrerequisites": "Improved Lightsaber Throw",
+      "canonicalPrerequisites": "Improved Lightsaber Throw, Lightsaber Throw",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "PREREQUISITE_TEXT_MISMATCH",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Inspiration",
+      "tree": "Inspiration",
+      "canonicalName": "Willpower",
+      "page": 25,
+      "repoId": "ae9cf46162b4bc42",
+      "repoName": "Willpower",
+      "repoTreeName": "Inspiration",
+      "repoPrerequisites": "Inspire Confidence",
+      "canonicalPrerequisites": "Inspire Confidence",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Jedi Consular",
+      "tree": "Jedi Consular",
+      "canonicalName": "Cleanse Mind",
+      "page": 24,
+      "repoId": "c93a9e38c432551b",
+      "repoName": "Cleanse Mind",
+      "repoTreeName": "Jedi Consular",
+      "repoPrerequisites": "",
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Jedi Consular",
+      "tree": "Jedi Consular",
+      "canonicalName": "Force of Will",
+      "page": 24,
+      "repoId": "b3538b62448c840e",
+      "repoName": "Force of Will",
+      "repoTreeName": "Jedi Consular",
+      "repoPrerequisites": "",
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Jedi Guardian",
+      "tree": "Jedi Guardian",
+      "canonicalName": "Forceful Warrior",
+      "page": 24,
+      "repoId": "f4b22e32d448b703",
+      "repoName": "Forceful Warrior",
+      "repoTreeName": "Jedi Guardian",
+      "repoPrerequisites": "",
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_TEXT_PRESENT_BOTH",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Jedi Guardian",
+      "tree": "Jedi Guardian",
+      "canonicalName": "Mobile Combatant",
+      "page": 24,
+      "repoId": "198b68c0ca770ad7",
+      "repoName": "Mobile Combatant",
+      "repoTreeName": "Jedi Guardian",
+      "repoPrerequisites": "",
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Jedi Sentinel",
+      "tree": "Jedi Sentinel",
+      "canonicalName": "Dampen Presence",
+      "page": 24,
+      "repoId": "236e5a8ef7bbcfa6",
+      "repoName": "Dampen Presence",
+      "repoTreeName": "Jedi Sentinel",
+      "repoPrerequisites": "",
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_TEXT_PRESENT_BOTH",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Jedi Sentinel",
+      "tree": "Jedi Sentinel",
+      "canonicalName": "Steel Resolve",
+      "page": 24,
+      "repoId": "3e18acc25d6c03db",
+      "repoName": "Steel Resolve",
+      "repoTreeName": "Jedi Sentinel",
+      "repoPrerequisites": "",
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Lineage",
+      "tree": "Lineage",
+      "canonicalName": "Influential Friends",
+      "page": 25,
+      "repoId": "471f4294820ce5ec",
+      "repoName": "Influential Friends",
+      "repoTreeName": "Lineage",
+      "repoPrerequisites": "Connections",
+      "canonicalPrerequisites": "Connections",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Lineage",
+      "tree": "Lineage",
+      "canonicalName": "Powerful Friends",
+      "page": 26,
+      "repoId": "62d47b8982b6591e",
+      "repoName": "Powerful Friends",
+      "repoTreeName": "Lineage",
+      "repoPrerequisites": "Influential Friends",
+      "canonicalPrerequisites": "Connections, Influential Friends",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "PREREQUISITE_TEXT_MISMATCH",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Slicer",
+      "tree": "Slicer",
+      "canonicalName": "Electronic Forgery",
+      "page": 27,
+      "repoId": "319c5ded54dbc4e6",
+      "repoName": "Electronic Forgery",
+      "repoTreeName": "Slicer",
+      "repoPrerequisites": "Use Computer",
+      "canonicalPrerequisites": "Trained in the Use Computer skill",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "PREREQUISITE_TEXT_MISMATCH",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Slicer",
+      "tree": "Slicer",
+      "canonicalName": "Electronic Sabotage",
+      "page": 27,
+      "repoId": "0290634450ab1637",
+      "repoName": "Electronic Sabotage",
+      "repoTreeName": "Slicer",
+      "repoPrerequisites": "Use Computer",
+      "canonicalPrerequisites": "Trained in the Use Computer skill",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "PREREQUISITE_TEXT_MISMATCH",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Slicer",
+      "tree": "Slicer",
+      "canonicalName": "Security Slicer",
+      "page": 27,
+      "repoId": "51ee1b777709cc4e",
+      "repoName": "Security Slicer",
+      "repoTreeName": "Slicer",
+      "repoPrerequisites": "Mechanics",
+      "canonicalPrerequisites": "Trained in the Mechanics skill",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "PREREQUISITE_TEXT_MISMATCH",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Advanced Medicine",
+      "tree": "Advanced Medicine",
+      "canonicalName": "Battlefield Medic",
+      "page": 54,
+      "repoId": "684e15133a9cc1e2",
+      "repoName": "Battlefield Medic",
+      "repoTreeName": "Advanced Medicine",
+      "repoPrerequisites": "Steady Under Pressure",
+      "canonicalPrerequisites": "Steady Under Pressure",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Advanced Medicine",
+      "tree": "Advanced Medicine",
+      "canonicalName": "Bring Them Back",
+      "page": 54,
+      "repoId": "aeb8d3e495605f71",
+      "repoName": "Bring Them Back",
+      "repoTreeName": "Advanced Medicine",
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Advanced Medicine",
+      "tree": "Advanced Medicine",
+      "canonicalName": "Emergency Team",
+      "page": 54,
+      "repoId": "d0c46d08ea867ae0",
+      "repoName": "Emergency Team",
+      "repoTreeName": "Advanced Medicine",
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Advanced Medicine",
+      "tree": "Advanced Medicine",
+      "canonicalName": "Extra First Aid",
+      "page": 54,
+      "repoId": "58a602ec4aa5b2dd",
+      "repoName": "Extra First Aid",
+      "repoTreeName": "Advanced Medicine",
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Advanced Medicine",
+      "tree": "Advanced Medicine",
+      "canonicalName": "Medical Miracle",
+      "page": 54,
+      "repoId": "ddece484fcea9c84",
+      "repoName": "Medical Miracle",
+      "repoTreeName": "Advanced Medicine",
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Advanced Medicine",
+      "tree": "Advanced Medicine",
+      "canonicalName": "Natural Healing",
+      "page": 54,
+      "repoId": "2c18d68d5e294dc8",
+      "repoName": "Natural Healing",
+      "repoTreeName": "Advanced Medicine",
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Advanced Medicine",
+      "tree": "Advanced Medicine",
+      "canonicalName": "Second Chance",
+      "page": 54,
+      "repoId": "c1d9d20e7789da33",
+      "repoName": "Second Chance",
+      "repoTreeName": "Advanced Medicine",
+      "repoPrerequisites": "Steady Under Pressure",
+      "canonicalPrerequisites": "Steady Under Pressure",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Advanced Medicine",
+      "tree": "Advanced Medicine",
+      "canonicalName": "Steady Under Pressure",
+      "page": 54,
+      "repoId": "ec18c61d653ce3e4",
+      "repoName": "Steady Under Pressure",
+      "repoTreeName": "Advanced Medicine",
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Autonomy",
+      "tree": "Autonomy",
+      "canonicalName": "Defensive Electronics",
+      "page": 47,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Autonomy",
+      "tree": "Autonomy",
+      "canonicalName": "Ion Resistance 10",
+      "page": 47,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Autonomy",
+      "tree": "Autonomy",
+      "canonicalName": "Soft Reset",
+      "page": 47,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Autonomy",
+      "tree": "Autonomy",
+      "canonicalName": "Modification Specialist",
+      "page": 47,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Autonomy",
+      "tree": "Autonomy",
+      "canonicalName": "Repair Self",
+      "page": 47,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Bothan SpyNet",
+      "tree": "Bothan SpyNet",
+      "canonicalName": "Bothan Resources",
+      "page": 50,
+      "repoId": "c11e9edfda40c53d",
+      "repoName": "Bothan Resources",
+      "repoTreeName": "Bothan Spynet",
+      "repoPrerequisites": "Spynet Agent",
+      "canonicalPrerequisites": "Spynet Agent",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Bothan SpyNet",
+      "tree": "Bothan SpyNet",
+      "canonicalName": "Knowledge Is Life",
+      "page": 50,
+      "repoId": "94aa0ef55bace440",
+      "repoName": "Knowledge is Life",
+      "repoTreeName": "Bothan Spynet",
+      "repoPrerequisites": "Spynet Agent",
+      "canonicalPrerequisites": "Spynet Agent",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Bothan SpyNet",
+      "tree": "Bothan SpyNet",
+      "canonicalName": "Knowledge Is Power",
+      "page": 50,
+      "repoId": "cdf46b8cdde49733",
+      "repoName": "Knowledge is Power",
+      "repoTreeName": "Bothan Spynet",
+      "repoPrerequisites": "Spynet Agent",
+      "canonicalPrerequisites": "Spynet Agent",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Bothan SpyNet",
+      "tree": "Bothan SpyNet",
+      "canonicalName": "Knowledge Is Strength",
+      "page": 50,
+      "repoId": "e2690af7f6700f95",
+      "repoName": "Knowledge is Strength",
+      "repoTreeName": "Bothan Spynet",
+      "repoPrerequisites": "Spynet Agent",
+      "canonicalPrerequisites": "Spynet Agent",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Bothan SpyNet",
+      "tree": "Bothan SpyNet",
+      "canonicalName": "Six Questions",
+      "page": 50,
+      "repoId": "46946e7208f1cf05",
+      "repoName": "Six Questions",
+      "repoTreeName": "Bothan Spynet",
+      "repoPrerequisites": "Spynet Agent",
+      "canonicalPrerequisites": "Spynet Agent",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Bothan SpyNet",
+      "tree": "Bothan SpyNet",
+      "canonicalName": "Spynet Agent",
+      "page": 50,
+      "repoId": "648d9634a3795988",
+      "repoName": "Spynet Agent",
+      "repoTreeName": "Bothan Spynet",
+      "repoPrerequisites": "Bothan Spynet",
+      "canonicalPrerequisites": "Bothan species, or two talents from the Infiltration tree. Unarmed Stun",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "PREREQUISITE_TEXT_MISMATCH",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Critical Master",
+      "tree": "Critical Master",
+      "canonicalName": "Deny Move",
+      "page": 42,
+      "repoId": "72ccf7bbe3048453",
+      "repoName": "Deny Move",
+      "repoTreeName": "Critical Master",
+      "repoPrerequisites": "Reduce Mobility",
+      "canonicalPrerequisites": "Reduce Mobility",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Critical Master",
+      "tree": "Critical Master",
+      "canonicalName": "Extended Critical Range (heavy weapons)",
+      "page": 42,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "Base attack bonus +10, Weapon Proficiency (heavy weap- ons) feat",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Critical Master",
+      "tree": "Critical Master",
+      "canonicalName": "Extended Critical Range (rifles)",
+      "page": 42,
+      "repoId": "141e1a07b365e0fd",
+      "repoName": "Extended Critical Range (rifles)",
+      "repoTreeName": "Critical Master",
+      "repoPrerequisites": "Base attack bonus +10, Weapon Proficiency (rifles)",
+      "canonicalPrerequisites": "Base attack bonus +10, Weapon Proficiency (rifles) feat",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "PREREQUISITE_TEXT_MISMATCH",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Critical Master",
+      "tree": "Critical Master",
+      "canonicalName": "Flurry Attack",
+      "page": 42,
+      "repoId": "9e2092257b53cd21",
+      "repoName": "Flurry Attack",
+      "repoTreeName": "Critical Master",
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "Weapon Proficiency feat for chosen weapon",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "PREREQUISITE_TEXT_MISMATCH",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Critical Master",
+      "tree": "Critical Master",
+      "canonicalName": "Knockback",
+      "page": 42,
+      "repoId": "9d235eba6b3e5daf",
+      "repoName": "Knockback",
+      "repoTreeName": "Critical Master",
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Critical Master",
+      "tree": "Critical Master",
+      "canonicalName": "Reduce Defense",
+      "page": 42,
+      "repoId": "874ffa6b66cf2c37",
+      "repoName": "Reduce Defense",
+      "repoTreeName": "Critical Master",
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Critical Master",
+      "tree": "Critical Master",
+      "canonicalName": "Reduce Mobility",
+      "page": 42,
+      "repoId": "c80edefd9c32ad02",
+      "repoName": "Reduce Mobility",
+      "repoTreeName": "Critical Master",
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Enforcement",
+      "tree": "Enforcement",
+      "canonicalName": "Cover Bracing",
+      "page": 45,
+      "repoId": "c59e7eba84e6d4eb",
+      "repoName": "Cover Bracing",
+      "repoTreeName": "Enforcement",
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Enforcement",
+      "tree": "Enforcement",
+      "canonicalName": "Intentional Crash",
+      "page": 45,
+      "repoId": "226b0a05cebd81ab",
+      "repoName": "Intentional Crash",
+      "repoTreeName": "Enforcement",
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "Trained in the Pilot skill",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "PREREQUISITE_TEXT_MISMATCH",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Enforcement",
+      "tree": "Enforcement",
+      "canonicalName": "Nonlethal Tactics",
+      "page": 45,
+      "repoId": "475fef43d75f3bff",
+      "repoName": "Nonlethal Tactics",
+      "repoTreeName": "Enforcement",
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Enforcement",
+      "tree": "Enforcement",
+      "canonicalName": "Pursuit",
+      "page": 45,
+      "repoId": "25f285b1cf4cff35",
+      "repoName": "Pursuit",
+      "repoTreeName": "Enforcement",
+      "repoPrerequisites": "Dexterity 13",
+      "canonicalPrerequisites": "Dexterity 13",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Enforcement",
+      "tree": "Enforcement",
+      "canonicalName": "Respected Officer",
+      "page": 45,
+      "repoId": "8488911915ea094d",
+      "repoName": "Respected Officer",
+      "repoTreeName": "Enforcement",
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Enforcement",
+      "tree": "Enforcement",
+      "canonicalName": "Slowing Stun",
+      "page": 45,
+      "repoId": "fa20a7209820d512",
+      "repoName": "Slowing Stun",
+      "repoTreeName": "Enforcement",
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Enforcement",
+      "tree": "Enforcement",
+      "canonicalName": "Takedown",
+      "page": 45,
+      "repoId": "fbac177b74fcea09",
+      "repoName": "Takedown",
+      "repoTreeName": "Enforcement",
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Ideologue",
+      "tree": "Ideologue",
+      "canonicalName": "Instruction",
+      "page": 25,
+      "repoId": "b37ac074a7e8de58",
+      "repoName": "Instruction",
+      "repoTreeName": "Ideologue",
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Ideologue",
+      "tree": "Ideologue",
+      "canonicalName": "Idealist",
+      "page": 25,
+      "repoId": "e8922370838f2965",
+      "repoName": "Idealist",
+      "repoTreeName": "Ideologue",
+      "repoPrerequisites": "Charisma 13",
+      "canonicalPrerequisites": "Charisma 13",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Ideologue",
+      "tree": "Ideologue",
+      "canonicalName": "Know Your Enemy",
+      "page": 25,
+      "repoId": "72cfc8816ea3ebf5",
+      "repoName": "Know Your Enemy",
+      "repoTreeName": "Ideologue",
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Ideologue",
+      "tree": "Ideologue",
+      "canonicalName": "Known Dissident",
+      "page": 25,
+      "repoId": "e15adb60be0dda02",
+      "repoName": "Known Dissident",
+      "repoTreeName": "Ideologue",
+      "repoPrerequisites": "Know Your Enemy",
+      "canonicalPrerequisites": "Know Your Enemy",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Ideologue",
+      "tree": "Ideologue",
+      "canonicalName": "Lead by Example",
+      "page": 25,
+      "repoId": "2455d85114f52830",
+      "repoName": "Lead by Example",
+      "repoTreeName": "Ideologue",
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Imperial Inquisitor",
+      "tree": "Imperial Inquisitor",
+      "canonicalName": "Cower Enemies",
+      "page": 42,
+      "repoId": "0e36a04342959256",
+      "repoName": "Cower Enemies",
+      "repoTreeName": "Imperial Inquisitor",
+      "repoPrerequisites": "Force Interrogation",
+      "canonicalPrerequisites": "Force Interrogation",
+      "dispositions": [
+        "CANONICAL_TEXT_PRESENT_BOTH",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Imperial Inquisitor",
+      "tree": "Imperial Inquisitor",
+      "canonicalName": "Force Interrogation",
+      "page": 43,
+      "repoId": "2acaa4620d396fe9",
+      "repoName": "Force Interrogation",
+      "repoTreeName": "Imperial Inquisitor",
+      "repoPrerequisites": "",
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_TEXT_PRESENT_BOTH",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Imperial Inquisitor",
+      "tree": "Imperial Inquisitor",
+      "canonicalName": "Inquisition",
+      "page": 43,
+      "repoId": "76ff0ba56aa3864b",
+      "repoName": "Inquisition",
+      "repoTreeName": "Imperial Inquisitor",
+      "repoPrerequisites": "",
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_TEXT_PRESENT_BOTH",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Imperial Inquisitor",
+      "tree": "Imperial Inquisitor",
+      "canonicalName": "Unsettling Presence",
+      "page": 43,
+      "repoId": "dd488c2dc43d14ab",
+      "repoName": "Unsettling Presence",
+      "repoTreeName": "Imperial Inquisitor",
+      "repoPrerequisites": "Force Interrogation",
+      "canonicalPrerequisites": "Force Interrogation",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Infiltration",
+      "tree": "Infiltration",
+      "canonicalName": "Always Ready",
+      "page": 49,
+      "repoId": "49f6a9ed0c91f847",
+      "repoName": "Always Ready",
+      "repoTreeName": "Infiltration",
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "Trained in the Initiative skill",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "PREREQUISITE_TEXT_MISMATCH",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Infiltration",
+      "tree": "Infiltration",
+      "canonicalName": "Concealed Weapon Expert",
+      "page": 49,
+      "repoId": "59b2b90ad0ae8eb8",
+      "repoName": "Concealed Weapon Expert",
+      "repoTreeName": "Infiltration",
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Infiltration",
+      "tree": "Infiltration",
+      "canonicalName": "Creeping Approach",
+      "page": 49,
+      "repoId": "2931a9052148e79a",
+      "repoName": "Creeping Approach",
+      "repoTreeName": "Infiltration",
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "Trained in the Stealth skill",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "PREREQUISITE_TEXT_MISMATCH",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Infiltration",
+      "tree": "Infiltration",
+      "canonicalName": "Set for Stun",
+      "page": 49,
+      "repoId": "878d89b7232413cf",
+      "repoName": "Set for Stun",
+      "repoTreeName": "Infiltration",
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Infiltration",
+      "tree": "Infiltration",
+      "canonicalName": "Silent Takedown",
+      "page": 49,
+      "repoId": "b1960cbc28776a53",
+      "repoName": "Silent Takedown",
+      "repoTreeName": "Infiltration",
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "Trained in the Stealth skill",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "PREREQUISITE_TEXT_MISMATCH",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Mercenary",
+      "tree": "Mercenary",
+      "canonicalName": "Commanding Presence",
+      "page": 28,
+      "repoId": "438e13c99c7b53a6",
+      "repoName": "Commanding Presence",
+      "repoTreeName": "Mercenary",
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Mercenary",
+      "tree": "Mercenary",
+      "canonicalName": "Dirty Fighting",
+      "page": 28,
+      "repoId": "c07b6c68e715b9ff",
+      "repoName": "Dirty Fighting",
+      "repoTreeName": "Mercenary",
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Mercenary",
+      "tree": "Mercenary",
+      "canonicalName": "Feared Warrior",
+      "page": 29,
+      "repoId": "cfd5d3f677b2bf1a",
+      "repoName": "Feared Warrior",
+      "repoTreeName": "Mercenary",
+      "repoPrerequisites": "Commanding Presence",
+      "canonicalPrerequisites": "Commanding Presence",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Mercenary",
+      "tree": "Mercenary",
+      "canonicalName": "Focused Warrior",
+      "page": 29,
+      "repoId": "42f9f503f5e26de7",
+      "repoName": "Focused Warrior",
+      "repoTreeName": "Mercenary",
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Mercenary",
+      "tree": "Mercenary",
+      "canonicalName": "Ruthless",
+      "page": 29,
+      "repoId": "adfb725d20faade5",
+      "repoName": "Ruthless",
+      "repoTreeName": "Mercenary",
+      "repoPrerequisites": "Dirty Fighting",
+      "canonicalPrerequisites": "Dirty Fighting",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING",
+        "DISTINCT_SAME_NAME_IDENTITY_HAZARD"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": [
+        {
+          "repoId": "7aa4ca13a96d8770",
+          "name": "Ruthless",
+          "tree": "Assassin",
+          "source": null
+        }
+      ]
+    },
+    {
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Privateer",
+      "tree": "Privateer",
+      "canonicalName": "Armored Spacer",
+      "page": 52,
+      "repoId": "0bf26c4fb8622e0b",
+      "repoName": "Armored Spacer",
+      "repoTreeName": "Privateer",
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Privateer",
+      "tree": "Privateer",
+      "canonicalName": "Attract Privateer",
+      "page": 52,
+      "repoId": "7a049ee1ecc3891b",
+      "repoName": "Attract Privateer",
+      "repoTreeName": "Privateer",
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Privateer",
+      "tree": "Privateer",
+      "canonicalName": "Blaster and Blade I",
+      "page": 52,
+      "repoId": "976c36831fecbd2b",
+      "repoName": "Blaster and Blade I",
+      "repoTreeName": "Privateer",
+      "repoPrerequisites": "Dual Weapon I, Weapon Proficiency (advanced), Weapon Proficiency (pistols)",
+      "canonicalPrerequisites": "Dual Weapon Mastery | feat, Weapon Proficiency (advanced melee weapons, pistols) feats",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "PREREQUISITE_TEXT_MISMATCH",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Privateer",
+      "tree": "Privateer",
+      "canonicalName": "Blaster and Blade II",
+      "page": 52,
+      "repoId": "5e895be4051e1408",
+      "repoName": "Blaster and Blade II",
+      "repoTreeName": "Privateer",
+      "repoPrerequisites": "Blaster and Blade I",
+      "canonicalPrerequisites": "Blaster and Blade |, Dual Weapon Mastery | feat, Weapon Proficiency (advanced melee weapons, pistols) feats",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "PREREQUISITE_TEXT_MISMATCH",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Privateer",
+      "tree": "Privateer",
+      "canonicalName": "Blaster and Blade III",
+      "page": 52,
+      "repoId": "584bf5a0f7381648",
+      "repoName": "Blaster and Blade III",
+      "repoTreeName": "Privateer",
+      "repoPrerequisites": "Blaster and Blade II",
+      "canonicalPrerequisites": "Blaster and Blade |, Blaster and Blade ||, Dual Weapon Mas- tery | feat, Weapon Proficiency (advanced melee weapons, pistols) feats",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "PREREQUISITE_TEXT_MISMATCH",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Privateer",
+      "tree": "Privateer",
+      "canonicalName": "Boarder",
+      "page": 52,
+      "repoId": "34669d959223b187",
+      "repoName": "Boarder",
+      "repoTreeName": "Privateer",
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Privateer",
+      "tree": "Privateer",
+      "canonicalName": "Ion Mastery",
+      "page": 52,
+      "repoId": "df9c25340dcb7c95",
+      "repoName": "Ion Mastery",
+      "repoTreeName": "Privateer",
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Privateer",
+      "tree": "Privateer",
+      "canonicalName": "Multiattack Proficiency (advanced melee weapons)",
+      "page": 52,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Privateer",
+      "tree": "Privateer",
+      "canonicalName": "Preserving Shot",
+      "page": 52,
+      "repoId": "a594f0b9ff786a6c",
+      "repoName": "Preserving Shot",
+      "repoTreeName": "Privateer",
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Sabotage",
+      "tree": "Sabotage",
+      "canonicalName": "Device Jammer",
+      "page": 56,
+      "repoId": "5db4343762664d95",
+      "repoName": "Device Jammer",
+      "repoTreeName": "Sabotage",
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Sabotage",
+      "tree": "Sabotage",
+      "canonicalName": "Droid Jammer",
+      "page": 56,
+      "repoId": "80a24150fd2f3163",
+      "repoName": "Droid Jammer",
+      "repoTreeName": "Sabotage",
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Sabotage",
+      "tree": "Sabotage",
+      "canonicalName": "Extreme Explosion",
+      "page": 57,
+      "repoId": "ddf81a7bb146ed87",
+      "repoName": "Extreme Explosion",
+      "repoTreeName": "Sabotage",
+      "repoPrerequisites": "Shaped Explosion",
+      "canonicalPrerequisites": "Skilled Demolitionist, Shaped Explosion",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "PREREQUISITE_TEXT_MISMATCH",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Sabotage",
+      "tree": "Sabotage",
+      "canonicalName": "Mine Mastery",
+      "page": 57,
+      "repoId": "9ceea9d860aab046",
+      "repoName": "Mine Mastery",
+      "repoTreeName": "Sabotage",
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Sabotage",
+      "tree": "Sabotage",
+      "canonicalName": "Shaped Explosion",
+      "page": 57,
+      "repoId": "7ab4fcbe5a8b7714",
+      "repoName": "Shaped Explosion",
+      "repoTreeName": "Sabotage",
+      "repoPrerequisites": "Skilled Demolitionist",
+      "canonicalPrerequisites": "Skilled Demolitionist",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Sabotage",
+      "tree": "Sabotage",
+      "canonicalName": "Skilled Demolitionist",
+      "page": 57,
+      "repoId": "c3a67c14c713a7a3",
+      "repoName": "Skilled Demolitionist",
+      "repoTreeName": "Sabotage",
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Smuggling",
+      "tree": "Smuggling",
+      "canonicalName": "Art of Concealment",
+      "page": 27,
+      "repoId": "64cfde2d0cf6c523",
+      "repoName": "Art of Concealment",
+      "repoTreeName": "Smuggling",
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Smuggling",
+      "tree": "Smuggling",
+      "canonicalName": "Fast Talker",
+      "page": 27,
+      "repoId": "eeed98748becb161",
+      "repoName": "Fast Talker",
+      "repoTreeName": "Smuggling",
+      "repoPrerequisites": "Art of Concealment",
+      "canonicalPrerequisites": "Art of Concealment",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Smuggling",
+      "tree": "Smuggling",
+      "canonicalName": "Hidden Weapons",
+      "page": 27,
+      "repoId": "234f9d660d14220c",
+      "repoName": "Hidden Weapons",
+      "repoTreeName": "Smuggling",
+      "repoPrerequisites": "Art of Concealment",
+      "canonicalPrerequisites": "Art of Concealment",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Smuggling",
+      "tree": "Smuggling",
+      "canonicalName": "Illicit Dealings",
+      "page": 27,
+      "repoId": "0681e1ea8e72f362",
+      "repoName": "Illicit Dealings",
+      "repoTreeName": "Smuggling",
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Smuggling",
+      "tree": "Smuggling",
+      "canonicalName": "Surprise Strike",
+      "page": 27,
+      "repoId": "b92e61669b29d090",
+      "repoName": "Surprise Strike",
+      "repoTreeName": "Smuggling",
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Specialized Droid",
+      "tree": "Specialized Droid",
+      "canonicalName": "Computer Language",
+      "page": 47,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "Must know the Binary language",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Specialized Droid",
+      "tree": "Specialized Droid",
+      "canonicalName": "Computer Master",
+      "page": 47,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Specialized Droid",
+      "tree": "Specialized Droid",
+      "canonicalName": "Enhanced Manipulation",
+      "page": 47,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "Dexterity 15",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Specialized Droid",
+      "tree": "Specialized Droid",
+      "canonicalName": "Hotwired Processor",
+      "page": 47,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Specialized Droid",
+      "tree": "Specialized Droid",
+      "canonicalName": "Power Surge",
+      "page": 48,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Specialized Droid",
+      "tree": "Specialized Droid",
+      "canonicalName": "Skill Conversion",
+      "page": 48,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Spy",
+      "tree": "Spy",
+      "canonicalName": "Blend In",
+      "page": 28,
+      "repoId": "a18d67d9fd947f68",
+      "repoName": "Blend In",
+      "repoTreeName": "Spy",
+      "repoPrerequisites": "Stealth",
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "PREREQUISITE_TEXT_MISMATCH",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Spy",
+      "tree": "Spy",
+      "canonicalName": "Incognito",
+      "page": 28,
+      "repoId": "55988579a1906e5e",
+      "repoName": "Incognito",
+      "repoTreeName": "Spy",
+      "repoPrerequisites": "Blend In",
+      "canonicalPrerequisites": "Blend In",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Spy",
+      "tree": "Spy",
+      "canonicalName": "Improved Surveillance",
+      "page": 28,
+      "repoId": "8070dbbea2886bbd",
+      "repoName": "Improved Surveillance",
+      "repoTreeName": "Spy",
+      "repoPrerequisites": "Surveillance",
+      "canonicalPrerequisites": "Surveillance, trained in the Perception skill",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "PREREQUISITE_TEXT_MISMATCH",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Spy",
+      "tree": "Spy",
+      "canonicalName": "Intimate Knowledge",
+      "page": 28,
+      "repoId": "a810b68876f7e44e",
+      "repoName": "Intimate Knowledge",
+      "repoTreeName": "Spy",
+      "repoPrerequisites": "Surveillance",
+      "canonicalPrerequisites": "Surveillance",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Spy",
+      "tree": "Spy",
+      "canonicalName": "Surveillance",
+      "page": 28,
+      "repoId": "f23b63464e0aeff7",
+      "repoName": "Surveillance",
+      "repoTreeName": "Spy",
+      "repoPrerequisites": "Perception",
+      "canonicalPrerequisites": "Trained in the Perception skill",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "PREREQUISITE_TEXT_MISMATCH",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Spy",
+      "tree": "Spy",
+      "canonicalName": "Traceless Tampering",
+      "page": 28,
+      "repoId": "9215a487a59862f3",
+      "repoName": "Traceless Tampering",
+      "repoTreeName": "Spy",
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Turret",
+      "tree": "Turret",
+      "canonicalName": "Blaster Turret I",
+      "page": 57,
+      "repoId": "7b56d0b92582ae88",
+      "repoName": "Blaster Turret I",
+      "repoTreeName": "Turret",
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Turret",
+      "tree": "Turret",
+      "canonicalName": "Blaster Turret II",
+      "page": 57,
+      "repoId": "1b1f818e56956bc5",
+      "repoName": "Blaster Turret II",
+      "repoTreeName": "Turret",
+      "repoPrerequisites": "Blaster Turret I",
+      "canonicalPrerequisites": "Blaster Turret I",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Turret",
+      "tree": "Turret",
+      "canonicalName": "Blaster Turret III",
+      "page": 57,
+      "repoId": "aa2a3697eeab3e35",
+      "repoName": "Blaster Turret III",
+      "repoTreeName": "Turret",
+      "repoPrerequisites": "Blaster Turret II",
+      "canonicalPrerequisites": "Blaster Turret I, Blaster Turret II",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "PREREQUISITE_TEXT_MISMATCH",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Turret",
+      "tree": "Turret",
+      "canonicalName": "Ion Turret",
+      "page": 57,
+      "repoId": "c2f332d1e74e3e1a",
+      "repoName": "Ion Turret",
+      "repoTreeName": "Turret",
+      "repoPrerequisites": "Blaster Turret I",
+      "canonicalPrerequisites": "Blaster Turret I",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Turret",
+      "tree": "Turret",
+      "canonicalName": "Stun Turret",
+      "page": 57,
+      "repoId": "8a551fd42b051d0e",
+      "repoName": "Stun Turret",
+      "repoTreeName": "Turret",
+      "repoPrerequisites": "Blaster Turret I",
+      "canonicalPrerequisites": "Blaster Turret I",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Turret",
+      "tree": "Turret",
+      "canonicalName": "Turret Self-Destruct",
+      "page": 57,
+      "repoId": "17ec736c3984fe43",
+      "repoName": "Turret Self-Destruct",
+      "repoTreeName": "Turret",
+      "repoPrerequisites": "Blaster Turret I",
+      "canonicalPrerequisites": "Blaster Turret I",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|First-Degree Droid",
+      "tree": "1stdegree Droid",
+      "canonicalName": "Dull the Pain",
+      "page": 102,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|First-Degree Droid",
+      "tree": "1stdegree Droid",
+      "canonicalName": "Interrogator",
+      "page": 102,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|First-Degree Droid",
+      "tree": "1stdegree Droid",
+      "canonicalName": "Medical Droid",
+      "page": 102,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Second-Degree Droid",
+      "tree": "2nddegree Droid",
+      "canonicalName": "Adept Assistant",
+      "page": 102,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Second-Degree Droid",
+      "tree": "2nddegree Droid",
+      "canonicalName": "Mechanics Mastery",
+      "page": 102,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Second-Degree Droid",
+      "tree": "2nddegree Droid",
+      "canonicalName": "Vehicle Mechanic",
+      "page": 102,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Third-Degree Droid",
+      "tree": "3rddegree Droid",
+      "canonicalName": "Etiquette",
+      "page": 103,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Third-Degree Droid",
+      "tree": "3rddegree Droid",
+      "canonicalName": "Helpful",
+      "page": 103,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Third-Degree Droid",
+      "tree": "3rddegree Droid",
+      "canonicalName": "Protocol",
+      "page": 103,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Fourth-Degree Droid",
+      "tree": "4thdegree Droid",
+      "canonicalName": "Combat Repairs",
+      "page": 103,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Fourth-Degree Droid",
+      "tree": "4thdegree Droid",
+      "canonicalName": "Droid Smash",
+      "page": 103,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Fourth-Degree Droid",
+      "tree": "4thdegree Droid",
+      "canonicalName": "Targeting Package",
+      "page": 103,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Fifth-Degree Droid",
+      "tree": "5thdegree Droid",
+      "canonicalName": "Cargo Hauler",
+      "page": 103,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Fifth-Degree Droid",
+      "tree": "5thdegree Droid",
+      "canonicalName": "Environmentally Shielded",
+      "page": 103,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Fifth-Degree Droid",
+      "tree": "5thdegree Droid",
+      "canonicalName": "Power Supply",
+      "page": 103,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Agent of Ossus",
+      "tree": "Agent Of Ossus",
+      "canonicalName": "Buried Presence",
+      "page": 92,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Agent of Ossus",
+      "tree": "Agent Of Ossus",
+      "canonicalName": "Conceal Other",
+      "page": 92,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "Buried Presence",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Agent of Ossus",
+      "tree": "Agent Of Ossus",
+      "canonicalName": "Insightful Aim",
+      "page": 92,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "Weapon Proficiency (pistols or rifles) feat",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Agent of Ossus",
+      "tree": "Agent Of Ossus",
+      "canonicalName": "Vanish",
+      "page": 92,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Alter",
+      "tree": "Alter",
+      "canonicalName": "Illusion",
+      "page": 87,
+      "repoId": "708a47d1be414990",
+      "repoName": "Illusion",
+      "repoTreeName": "Alter",
+      "repoPrerequisites": "Mind Trick",
+      "canonicalPrerequisites": "Mind trick",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Alter",
+      "tree": "Alter",
+      "canonicalName": "Telekinetic Prodigy",
+      "page": 87,
+      "repoId": "7af4caf439358120",
+      "repoName": "Telekinetic Prodigy",
+      "repoTreeName": "Alter",
+      "repoPrerequisites": "Telekinetic Savant",
+      "canonicalPrerequisites": "Telekinetic Savant",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Control",
+      "tree": "Control",
+      "canonicalName": "Force Exertion",
+      "page": 87,
+      "repoId": "7d0259a008e5d68f",
+      "repoName": "Force Exertion",
+      "repoTreeName": "Control",
+      "repoPrerequisites": "Force Training",
+      "canonicalPrerequisites": "Force Training feat",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "PREREQUISITE_TEXT_MISMATCH",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Control",
+      "tree": "Control",
+      "canonicalName": "Indomitable Will",
+      "page": 87,
+      "repoId": "a1f7a6ee66410c3e",
+      "repoName": "Indomitable Will",
+      "repoTreeName": "Control",
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Dark Side",
+      "tree": "Dark Side",
+      "canonicalName": "Wrath of the Dark Side",
+      "page": 87,
+      "repoId": "f5ebaf5d77257e0c",
+      "repoName": "Wrath of the Dark Side",
+      "repoTreeName": "Dark Side",
+      "repoPrerequisites": "Power of the Dark Side",
+      "canonicalPrerequisites": "Power of the Dark Side",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Felucian Shaman",
+      "tree": "Felucian Shaman",
+      "canonicalName": "Detonate",
+      "page": 93,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "Force blast",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Felucian Shaman",
+      "tree": "Felucian Shaman",
+      "canonicalName": "Hive Mind",
+      "page": 93,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Felucian Shaman",
+      "tree": "Felucian Shaman",
+      "canonicalName": "Infuse Weapon",
+      "page": 93,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Felucian Shaman",
+      "tree": "Felucian Shaman",
+      "canonicalName": "Sickening Blast",
+      "page": 93,
+      "repoId": null,
+      "repoName": null,
+      "repoTreeName": null,
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "Force blast",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Sense",
+      "tree": "Sense",
+      "canonicalName": "Feel the Force",
+      "page": 87,
+      "repoId": "301415f97665a33b",
+      "repoName": "Feel the Force",
+      "repoTreeName": "Sense",
+      "repoPrerequisites": null,
+      "canonicalPrerequisites": "",
+      "dispositions": [
+        "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+        "SOURCE_METADATA_MISSING",
+        "SUMMARY_MISSING"
+      ],
+      "notes": null,
+      "sameNameRepoCandidates": []
+    }
+  ]
+}
