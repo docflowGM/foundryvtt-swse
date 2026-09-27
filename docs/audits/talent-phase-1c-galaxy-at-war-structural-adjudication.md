@@ -10,6 +10,8 @@
 **Primary source:** `SW_Saga_Galaxy_at_War.pdf`  
 **Primary-source pages inspected:** printed pp. 18-22, 30-33
 
+> **Phase 2 correction (2026-09-27):** The original Phase 1C pass incorrectly counted `Tough as Durasteel` as an Unarmed Mastery talent. The Martial Arts Master class table grants talent selections only at odd-numbered levels and advances Tough as Durasteel automatically at levels 2/4/6/8/10. Printed pp. 32-33 therefore establish Tough as Durasteel as a class feature, not a selectable talent. Counts below are corrected accordingly.
+
 > **Scope:** This sub-phase adjudicates only the Galaxy at War structural discrepancy queue: class -> tree access, tree identity, and tree -> talent membership. It does not yet certify every talent's complete mechanics/abilityMeta implementation.
 
 ---
@@ -161,7 +163,8 @@ Canonical tree membership:
 1. Flurry of Blows
 2. Hardened Strike
 3. Punishing Strike
-4. Tough as Durasteel
+
+`Tough as Durasteel` is a separate Martial Arts Master class feature, not a member of this talent tree.
 
 Current repository:
 
@@ -410,8 +413,8 @@ For the nine Galaxy at War class talent-tree identities in the discrepancy queue
 | Sharpshooter | 5 | 3 | 2 |
 | Squad Leader - Elite Trooper | 5 | 0 | 5 |
 | Martial Arts Forms | 7 | 0 | 7 |
-| Unarmed Mastery | 4 | 0 | 4 |
-| **Total** | **44** | **12** | **32** |
+| Unarmed Mastery | 3 | 0 | 3 |
+| **Total** | **43** | **12** | **31** |
 
 This is a major content gap.
 
@@ -475,7 +478,7 @@ No production change is made in Phase 1C, but the following packet is now safe t
 
 ## Missing talent records
 
-32 source-confirmed missing talent identities across the nine audited trees.
+31 source-confirmed missing talent identities across the nine audited trees.
 
 These should be created from source text in a dedicated content packet, not reconstructed from Fandom summaries.
 
@@ -517,6 +520,6 @@ Those belong to the later tree/talent content certification pass.
 
 **Galaxy at War reveals substantial structural incompleteness rather than minor class-map drift.**
 
-The class access errors identified in Phase 1B are real, but they are only the surface issue. The directly audited GaW discrepancy trees contain **44 published talent identities, of which only 12 are currently represented in the correct repository tree identity**.
+The class access errors identified in Phase 1B are real, but they are only the surface issue. The directly audited GaW discrepancy trees contain **43 published talent identities, of which only 12 are currently represented in the correct repository tree identity**.
 
 The next structural sourcebook should be **Galaxy of Intrigue**, which can adjudicate Espionage, Skill Challenge, Master of Intrigue, and Revolutionary.

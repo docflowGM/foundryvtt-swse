@@ -5,7 +5,7 @@
   "phase": "1D",
   "scope": "Structural canonical talent-tree repair queue. No production changes applied.",
   "authority": "Primary-source tree identity/membership/publication/access provenance from data/audits/talent-canonical-tree-registry.json.",
-  "postCloseoutCorrection": "Phase 2 Core certification restored Improved Dark Healing to the Core Sith origin membership.",
+  "postCloseoutCorrection": "Phase 2 Core certification restored Improved Dark Healing to the Core Sith origin membership. Phase 2 Galaxy at War certification removed Tough as Durasteel from Unarmed Mastery because the source identifies it as a Martial Arts Master class feature, not a selectable talent.",
   "summary": {
     "registryEntries": 197,
     "canonicalPublishedTrees": 177,
@@ -14,9 +14,9 @@
     "expansionPublicationClaims": 278,
     "laterClassAccessGrants": 23,
     "sourceDisprovedReferenceAccessClaims": 1,
-    "aggregateCanonicalMembershipClaims": 1191,
+    "aggregateCanonicalMembershipClaims": 1190,
     "treesWithMembershipDifferences": 104,
-    "canonicalMembershipGaps": 281,
+    "canonicalMembershipGaps": 280,
     "normalizationOnlyNameMatches": 9,
     "extraRepoMembershipClaims": 74,
     "treesWithClassAccessDifferences": 21,
@@ -65,8 +65,7 @@
       "canonicalTalentNames": [
         "Flurry of Blows",
         "Hardened Strike",
-        "Punishing Strike",
-        "Tough as Durasteel"
+        "Punishing Strike"
       ],
       "expectedClassAccess": [
         "Martial Arts Master"
@@ -1504,17 +1503,16 @@
       "originSourcebook": "Galaxy at War",
       "repoTreeIds": [],
       "repoTreeNames": [],
-      "canonicalMembershipCount": 4,
+      "canonicalMembershipCount": 3,
       "repoClaimCount": 0,
       "missingCanonicalMemberships": [
         "Flurry of Blows",
         "Hardened Strike",
-        "Punishing Strike",
-        "Tough as Durasteel"
+        "Punishing Strike"
       ],
       "normalizationOnlyNameMatches": [],
       "extraRepoMembershipClaims": [],
-      "repairNote": "Membership gaps identify absence from the correct canonical tree, not necessarily absence of a talent document elsewhere. Extra claims require identity/text adjudication before deletion."
+      "repairNote": "Phase 2 source review corrected this tree to three selectable talents. Tough as Durasteel is a Martial Arts Master class feature gained at even levels, not an Unarmed Mastery talent."
     },
     {
       "canonicalTreeKey": "Galaxy at War|Veteran",

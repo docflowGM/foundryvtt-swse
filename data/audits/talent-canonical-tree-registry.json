@@ -9887,8 +9887,7 @@
       "originTalentNames": [
         "Flurry of Blows",
         "Hardened Strike",
-        "Punishing Strike",
-        "Tough as Durasteel"
+        "Punishing Strike"
       ],
       "talentPublications": [
         {
@@ -9897,16 +9896,14 @@
           "talentNames": [
             "Flurry of Blows",
             "Hardened Strike",
-            "Punishing Strike",
-            "Tough as Durasteel"
+            "Punishing Strike"
           ]
         }
       ],
       "aggregateCanonicalTalentNames": [
         "Flurry of Blows",
         "Hardened Strike",
-        "Punishing Strike",
-        "Tough as Durasteel"
+        "Punishing Strike"
       ],
       "aggregateMembershipStatus": "PHASE_1D_PUBLICATION_LAYER_COMPLETE",
       "referenceClassAccess": [
@@ -13594,6 +13591,16 @@
         "canonicalTreeKey": "Saga Edition Core Rulebook|Sith",
         "talentName": "Improved Dark Healing",
         "page": 224
+      },
+      {
+        "id": "gaw-unarmed-mastery-tough-as-durasteel",
+        "date": "2026-09-27",
+        "sourcebook": "Galaxy at War",
+        "canonicalTree": "Unarmed Mastery",
+        "talent": "Tough as Durasteel",
+        "page": 33,
+        "disposition": "REMOVED_CLASS_FEATURE_FROM_TALENT_MEMBERSHIP",
+        "note": "Galaxy at War pp. 32-33 grants talent selections at odd-numbered Martial Arts Master levels while Tough as Durasteel advances automatically at even levels (+2/+4/+6/+8/+10). It is a class feature, not a selectable Unarmed Mastery talent."
       }
     ]
   },
@@ -13620,6 +13627,15 @@
       "talent": "Improved Dark Healing",
       "disposition": "PHASE_1D_STRUCTURAL_OMISSION_CORRECTED",
       "page": 224
+    },
+    {
+      "id": "GAW_UNARMED_MASTERY_TOUGH_AS_DURASTEEL",
+      "phase": "2",
+      "sourcebook": "Galaxy at War",
+      "tree": "Unarmed Mastery",
+      "talent": "Tough as Durasteel",
+      "disposition": "PHASE_1D_STRUCTURAL_OVERINCLUSION_CORRECTED",
+      "page": 33
     }
   ]
 }
