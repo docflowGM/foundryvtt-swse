@@ -6,8 +6,8 @@
   "counts": {
     "entries": 195,
     "referenceRows": 140,
-    "primarySourceVerified": 79,
-    "referencePendingPrimary": 62,
+    "primarySourceVerified": 94,
+    "referencePendingPrimary": 47,
     "repoSpecialSourceReview": 54
   },
   "entries": [
@@ -3024,7 +3024,7 @@
         "Medic",
         "Shaper"
       ],
-      "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
+      "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
       "repoTreeIds": [
         "61725c845d26ade0"
       ],
@@ -3038,15 +3038,56 @@
       "status": "REPO_TREE_PRESENT",
       "notes": null,
       "originSourcebook": "Force Unleashed Campaign Guide",
-      "originTalentNames": null,
-      "talentPublications": [],
-      "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED",
+      "originTalentNames": [
+        "Battlefield Medic",
+        "Bring Them Back",
+        "Emergency Team",
+        "Extra First Aid",
+        "Medical Miracle",
+        "Natural Healing",
+        "Second Chance",
+        "Steady Under Pressure"
+      ],
+      "talentPublications": [
+        {
+          "sourcebook": "Force Unleashed Campaign Guide",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Battlefield Medic",
+            "Bring Them Back",
+            "Emergency Team",
+            "Extra First Aid",
+            "Medical Miracle",
+            "Natural Healing",
+            "Second Chance",
+            "Steady Under Pressure"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Battlefield Medic",
+        "Bring Them Back",
+        "Emergency Team",
+        "Extra First Aid",
+        "Medical Miracle",
+        "Natural Healing",
+        "Second Chance",
+        "Steady Under Pressure"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
       "referenceClassAccess": [
         "Medic",
         "Shaper"
       ],
-      "accessPublications": [],
+      "accessPublications": [
+        {
+          "sourcebook": "Force Unleashed Campaign Guide",
+          "publicationType": "DIRECT_ACCESS_GRANT",
+          "classes": [
+            "Medic"
+          ]
+        }
+      ],
       "aggregateClassAccess": [
         "Medic",
         "Shaper"
@@ -3059,7 +3100,7 @@
       "classAccess": [
         "Independent Droid"
       ],
-      "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
+      "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
       "repoTreeIds": [
         "9fe73a3703fa45fca628fd43cae6bf7f"
       ],
@@ -3072,14 +3113,46 @@
       "status": "REPO_TREE_PRESENT",
       "notes": null,
       "originSourcebook": "Force Unleashed Campaign Guide",
-      "originTalentNames": null,
-      "talentPublications": [],
-      "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED",
+      "originTalentNames": [
+        "Defensive Electronics",
+        "Ion Resistance 10",
+        "Soft Reset",
+        "Modification Specialist",
+        "Repair Self"
+      ],
+      "talentPublications": [
+        {
+          "sourcebook": "Force Unleashed Campaign Guide",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Defensive Electronics",
+            "Ion Resistance 10",
+            "Soft Reset",
+            "Modification Specialist",
+            "Repair Self"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Defensive Electronics",
+        "Ion Resistance 10",
+        "Soft Reset",
+        "Modification Specialist",
+        "Repair Self"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
       "referenceClassAccess": [
         "Independent Droid"
       ],
-      "accessPublications": [],
+      "accessPublications": [
+        {
+          "sourcebook": "Force Unleashed Campaign Guide",
+          "publicationType": "DIRECT_ACCESS_GRANT",
+          "classes": [
+            "Independent Droid"
+          ]
+        }
+      ],
       "aggregateClassAccess": [
         "Independent Droid"
       ]
@@ -3091,7 +3164,7 @@
       "classAccess": [
         "Infiltrator"
       ],
-      "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
+      "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
       "repoTreeIds": [
         "d20682671d035cef"
       ],
@@ -3104,14 +3177,49 @@
       "status": "REPO_TREE_PRESENT",
       "notes": null,
       "originSourcebook": "Force Unleashed Campaign Guide",
-      "originTalentNames": null,
-      "talentPublications": [],
-      "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED",
+      "originTalentNames": [
+        "Bothan Resources",
+        "Knowledge Is Life",
+        "Knowledge Is Power",
+        "Knowledge Is Strength",
+        "Six Questions",
+        "Spynet Agent"
+      ],
+      "talentPublications": [
+        {
+          "sourcebook": "Force Unleashed Campaign Guide",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Bothan Resources",
+            "Knowledge Is Life",
+            "Knowledge Is Power",
+            "Knowledge Is Strength",
+            "Six Questions",
+            "Spynet Agent"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Bothan Resources",
+        "Knowledge Is Life",
+        "Knowledge Is Power",
+        "Knowledge Is Strength",
+        "Six Questions",
+        "Spynet Agent"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
       "referenceClassAccess": [
         "Infiltrator"
       ],
-      "accessPublications": [],
+      "accessPublications": [
+        {
+          "sourcebook": "Force Unleashed Campaign Guide",
+          "publicationType": "DIRECT_ACCESS_GRANT",
+          "classes": [
+            "Infiltrator"
+          ]
+        }
+      ],
       "aggregateClassAccess": [
         "Infiltrator"
       ]
@@ -3123,7 +3231,7 @@
       "classAccess": [
         "Elite Trooper"
       ],
-      "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
+      "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
       "repoTreeIds": [
         "71e99c646b18d85c"
       ],
@@ -3136,14 +3244,52 @@
       "status": "REPO_TREE_PRESENT",
       "notes": null,
       "originSourcebook": "Force Unleashed Campaign Guide",
-      "originTalentNames": null,
-      "talentPublications": [],
-      "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED",
+      "originTalentNames": [
+        "Deny Move",
+        "Extended Critical Range (heavy weapons)",
+        "Extended Critical Range (rifles)",
+        "Flurry Attack",
+        "Knockback",
+        "Reduce Defense",
+        "Reduce Mobility"
+      ],
+      "talentPublications": [
+        {
+          "sourcebook": "Force Unleashed Campaign Guide",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Deny Move",
+            "Extended Critical Range (heavy weapons)",
+            "Extended Critical Range (rifles)",
+            "Flurry Attack",
+            "Knockback",
+            "Reduce Defense",
+            "Reduce Mobility"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Deny Move",
+        "Extended Critical Range (heavy weapons)",
+        "Extended Critical Range (rifles)",
+        "Flurry Attack",
+        "Knockback",
+        "Reduce Defense",
+        "Reduce Mobility"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
       "referenceClassAccess": [
         "Elite Trooper"
       ],
-      "accessPublications": [],
+      "accessPublications": [
+        {
+          "sourcebook": "Force Unleashed Campaign Guide",
+          "publicationType": "DIRECT_ACCESS_GRANT",
+          "classes": [
+            "Elite Trooper"
+          ]
+        }
+      ],
       "aggregateClassAccess": [
         "Elite Trooper"
       ]
@@ -3155,7 +3301,7 @@
       "classAccess": [
         "Enforcer"
       ],
-      "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
+      "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
       "repoTreeIds": [
         "2d164f62e17bed8c"
       ],
@@ -3168,14 +3314,52 @@
       "status": "REPO_TREE_PRESENT",
       "notes": null,
       "originSourcebook": "Force Unleashed Campaign Guide",
-      "originTalentNames": null,
-      "talentPublications": [],
-      "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED",
+      "originTalentNames": [
+        "Cover Bracing",
+        "Intentional Crash",
+        "Nonlethal Tactics",
+        "Pursuit",
+        "Respected Officer",
+        "Slowing Stun",
+        "Takedown"
+      ],
+      "talentPublications": [
+        {
+          "sourcebook": "Force Unleashed Campaign Guide",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Cover Bracing",
+            "Intentional Crash",
+            "Nonlethal Tactics",
+            "Pursuit",
+            "Respected Officer",
+            "Slowing Stun",
+            "Takedown"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Cover Bracing",
+        "Intentional Crash",
+        "Nonlethal Tactics",
+        "Pursuit",
+        "Respected Officer",
+        "Slowing Stun",
+        "Takedown"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
       "referenceClassAccess": [
         "Enforcer"
       ],
-      "accessPublications": [],
+      "accessPublications": [
+        {
+          "sourcebook": "Force Unleashed Campaign Guide",
+          "publicationType": "DIRECT_ACCESS_GRANT",
+          "classes": [
+            "Enforcer"
+          ]
+        }
+      ],
       "aggregateClassAccess": [
         "Enforcer"
       ]
@@ -3187,7 +3371,7 @@
       "classAccess": [
         "Noble"
       ],
-      "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
+      "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
       "repoTreeIds": [
         "d65a4816379802ee"
       ],
@@ -3200,14 +3384,46 @@
       "status": "REPO_TREE_PRESENT",
       "notes": null,
       "originSourcebook": "Force Unleashed Campaign Guide",
-      "originTalentNames": null,
-      "talentPublications": [],
-      "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED",
+      "originTalentNames": [
+        "Instruction",
+        "Idealist",
+        "Know Your Enemy",
+        "Known Dissident",
+        "Lead by Example"
+      ],
+      "talentPublications": [
+        {
+          "sourcebook": "Force Unleashed Campaign Guide",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Instruction",
+            "Idealist",
+            "Know Your Enemy",
+            "Known Dissident",
+            "Lead by Example"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Instruction",
+        "Idealist",
+        "Know Your Enemy",
+        "Known Dissident",
+        "Lead by Example"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
       "referenceClassAccess": [
         "Noble"
       ],
-      "accessPublications": [],
+      "accessPublications": [
+        {
+          "sourcebook": "Force Unleashed Campaign Guide",
+          "publicationType": "DIRECT_ACCESS_GRANT",
+          "classes": [
+            "Noble"
+          ]
+        }
+      ],
       "aggregateClassAccess": [
         "Noble"
       ]
@@ -3219,7 +3435,7 @@
       "classAccess": [
         "Force Adept"
       ],
-      "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
+      "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
       "repoTreeIds": [
         "a6ee1a0c534cbc73"
       ],
@@ -3232,16 +3448,51 @@
       "status": "REPO_TREE_PRESENT",
       "notes": null,
       "originSourcebook": "Force Unleashed Campaign Guide",
-      "originTalentNames": null,
-      "talentPublications": [],
-      "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED",
+      "originTalentNames": [
+        "Cower Enemies",
+        "Force Interrogation",
+        "Inquisition",
+        "Unsettling Presence"
+      ],
+      "talentPublications": [
+        {
+          "sourcebook": "Force Unleashed Campaign Guide",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Cower Enemies",
+            "Force Interrogation",
+            "Inquisition",
+            "Unsettling Presence"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Cower Enemies",
+        "Force Interrogation",
+        "Inquisition",
+        "Unsettling Presence"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
       "referenceClassAccess": [
         "Force Adept"
       ],
-      "accessPublications": [],
+      "accessPublications": [
+        {
+          "sourcebook": "Force Unleashed Campaign Guide",
+          "publicationType": "DIRECT_ACCESS_GRANT",
+          "classes": [
+            "Force Adept"
+          ]
+        }
+      ],
       "aggregateClassAccess": [
         "Force Adept"
+      ],
+      "specialAccessRules": [
+        {
+          "sourcebook": "Force Unleashed Campaign Guide",
+          "summary": "Requires membership in the Inquisitorius and Dark Side Score 1+."
+        }
       ]
     },
     {
@@ -3251,7 +3502,7 @@
       "classAccess": [
         "Infiltrator"
       ],
-      "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
+      "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
       "repoTreeIds": [
         "7c7a8730e1b4381a"
       ],
@@ -3264,14 +3515,46 @@
       "status": "REPO_TREE_PRESENT",
       "notes": null,
       "originSourcebook": "Force Unleashed Campaign Guide",
-      "originTalentNames": null,
-      "talentPublications": [],
-      "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED",
+      "originTalentNames": [
+        "Always Ready",
+        "Concealed Weapon Expert",
+        "Creeping Approach",
+        "Set for Stun",
+        "Silent Takedown"
+      ],
+      "talentPublications": [
+        {
+          "sourcebook": "Force Unleashed Campaign Guide",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Always Ready",
+            "Concealed Weapon Expert",
+            "Creeping Approach",
+            "Set for Stun",
+            "Silent Takedown"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Always Ready",
+        "Concealed Weapon Expert",
+        "Creeping Approach",
+        "Set for Stun",
+        "Silent Takedown"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
       "referenceClassAccess": [
         "Infiltrator"
       ],
-      "accessPublications": [],
+      "accessPublications": [
+        {
+          "sourcebook": "Force Unleashed Campaign Guide",
+          "publicationType": "DIRECT_ACCESS_GRANT",
+          "classes": [
+            "Infiltrator"
+          ]
+        }
+      ],
       "aggregateClassAccess": [
         "Infiltrator"
       ]
@@ -3283,7 +3566,7 @@
       "classAccess": [
         "Soldier"
       ],
-      "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
+      "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
       "repoTreeIds": [
         "4007fa87192b5884"
       ],
@@ -3296,14 +3579,46 @@
       "status": "REPO_TREE_PRESENT",
       "notes": null,
       "originSourcebook": "Force Unleashed Campaign Guide",
-      "originTalentNames": null,
-      "talentPublications": [],
-      "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED",
+      "originTalentNames": [
+        "Commanding Presence",
+        "Dirty Fighting",
+        "Feared Warrior",
+        "Focused Warrior",
+        "Ruthless"
+      ],
+      "talentPublications": [
+        {
+          "sourcebook": "Force Unleashed Campaign Guide",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Commanding Presence",
+            "Dirty Fighting",
+            "Feared Warrior",
+            "Focused Warrior",
+            "Ruthless"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Commanding Presence",
+        "Dirty Fighting",
+        "Feared Warrior",
+        "Focused Warrior",
+        "Ruthless"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
       "referenceClassAccess": [
         "Soldier"
       ],
-      "accessPublications": [],
+      "accessPublications": [
+        {
+          "sourcebook": "Force Unleashed Campaign Guide",
+          "publicationType": "DIRECT_ACCESS_GRANT",
+          "classes": [
+            "Soldier"
+          ]
+        }
+      ],
       "aggregateClassAccess": [
         "Soldier"
       ]
@@ -3315,7 +3630,7 @@
       "classAccess": [
         "Master Privateer"
       ],
-      "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
+      "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
       "repoTreeIds": [
         "df6678946610c554"
       ],
@@ -3328,14 +3643,58 @@
       "status": "REPO_TREE_PRESENT",
       "notes": null,
       "originSourcebook": "Force Unleashed Campaign Guide",
-      "originTalentNames": null,
-      "talentPublications": [],
-      "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED",
+      "originTalentNames": [
+        "Armored Spacer",
+        "Attract Privateer",
+        "Blaster and Blade I",
+        "Blaster and Blade II",
+        "Blaster and Blade III",
+        "Boarder",
+        "Ion Mastery",
+        "Multiattack Proficiency (advanced melee weapons)",
+        "Preserving Shot"
+      ],
+      "talentPublications": [
+        {
+          "sourcebook": "Force Unleashed Campaign Guide",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Armored Spacer",
+            "Attract Privateer",
+            "Blaster and Blade I",
+            "Blaster and Blade II",
+            "Blaster and Blade III",
+            "Boarder",
+            "Ion Mastery",
+            "Multiattack Proficiency (advanced melee weapons)",
+            "Preserving Shot"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Armored Spacer",
+        "Attract Privateer",
+        "Blaster and Blade I",
+        "Blaster and Blade II",
+        "Blaster and Blade III",
+        "Boarder",
+        "Ion Mastery",
+        "Multiattack Proficiency (advanced melee weapons)",
+        "Preserving Shot"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
       "referenceClassAccess": [
         "Master Privateer"
       ],
-      "accessPublications": [],
+      "accessPublications": [
+        {
+          "sourcebook": "Force Unleashed Campaign Guide",
+          "publicationType": "DIRECT_ACCESS_GRANT",
+          "classes": [
+            "Master Privateer"
+          ]
+        }
+      ],
       "aggregateClassAccess": [
         "Master Privateer"
       ]
@@ -3347,7 +3706,7 @@
       "classAccess": [
         "Saboteur"
       ],
-      "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
+      "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
       "repoTreeIds": [
         "8897a36d59662ee9"
       ],
@@ -3360,14 +3719,49 @@
       "status": "REPO_TREE_PRESENT",
       "notes": null,
       "originSourcebook": "Force Unleashed Campaign Guide",
-      "originTalentNames": null,
-      "talentPublications": [],
-      "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED",
+      "originTalentNames": [
+        "Device Jammer",
+        "Droid Jammer",
+        "Extreme Explosion",
+        "Mine Mastery",
+        "Shaped Explosion",
+        "Skilled Demolitionist"
+      ],
+      "talentPublications": [
+        {
+          "sourcebook": "Force Unleashed Campaign Guide",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Device Jammer",
+            "Droid Jammer",
+            "Extreme Explosion",
+            "Mine Mastery",
+            "Shaped Explosion",
+            "Skilled Demolitionist"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Device Jammer",
+        "Droid Jammer",
+        "Extreme Explosion",
+        "Mine Mastery",
+        "Shaped Explosion",
+        "Skilled Demolitionist"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
       "referenceClassAccess": [
         "Saboteur"
       ],
-      "accessPublications": [],
+      "accessPublications": [
+        {
+          "sourcebook": "Force Unleashed Campaign Guide",
+          "publicationType": "DIRECT_ACCESS_GRANT",
+          "classes": [
+            "Saboteur"
+          ]
+        }
+      ],
       "aggregateClassAccess": [
         "Saboteur"
       ]
@@ -3379,7 +3773,7 @@
       "classAccess": [
         "Scoundrel"
       ],
-      "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
+      "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
       "repoTreeIds": [
         "9f7ca12cc084737a"
       ],
@@ -3392,14 +3786,46 @@
       "status": "REPO_TREE_PRESENT",
       "notes": null,
       "originSourcebook": "Force Unleashed Campaign Guide",
-      "originTalentNames": null,
-      "talentPublications": [],
-      "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED",
+      "originTalentNames": [
+        "Art of Concealment",
+        "Fast Talker",
+        "Hidden Weapons",
+        "Illicit Dealings",
+        "Surprise Strike"
+      ],
+      "talentPublications": [
+        {
+          "sourcebook": "Force Unleashed Campaign Guide",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Art of Concealment",
+            "Fast Talker",
+            "Hidden Weapons",
+            "Illicit Dealings",
+            "Surprise Strike"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Art of Concealment",
+        "Fast Talker",
+        "Hidden Weapons",
+        "Illicit Dealings",
+        "Surprise Strike"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
       "referenceClassAccess": [
         "Scoundrel"
       ],
-      "accessPublications": [],
+      "accessPublications": [
+        {
+          "sourcebook": "Force Unleashed Campaign Guide",
+          "publicationType": "DIRECT_ACCESS_GRANT",
+          "classes": [
+            "Scoundrel"
+          ]
+        }
+      ],
       "aggregateClassAccess": [
         "Scoundrel"
       ]
@@ -3411,7 +3837,7 @@
       "classAccess": [
         "Independent Droid"
       ],
-      "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
+      "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
       "repoTreeIds": [
         "cec49bc60d1646b1"
       ],
@@ -3424,14 +3850,49 @@
       "status": "REPO_TREE_PRESENT",
       "notes": null,
       "originSourcebook": "Force Unleashed Campaign Guide",
-      "originTalentNames": null,
-      "talentPublications": [],
-      "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED",
+      "originTalentNames": [
+        "Computer Language",
+        "Computer Master",
+        "Enhanced Manipulation",
+        "Hotwired Processor",
+        "Power Surge",
+        "Skill Conversion"
+      ],
+      "talentPublications": [
+        {
+          "sourcebook": "Force Unleashed Campaign Guide",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Computer Language",
+            "Computer Master",
+            "Enhanced Manipulation",
+            "Hotwired Processor",
+            "Power Surge",
+            "Skill Conversion"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Computer Language",
+        "Computer Master",
+        "Enhanced Manipulation",
+        "Hotwired Processor",
+        "Power Surge",
+        "Skill Conversion"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
       "referenceClassAccess": [
         "Independent Droid"
       ],
-      "accessPublications": [],
+      "accessPublications": [
+        {
+          "sourcebook": "Force Unleashed Campaign Guide",
+          "publicationType": "DIRECT_ACCESS_GRANT",
+          "classes": [
+            "Independent Droid"
+          ]
+        }
+      ],
       "aggregateClassAccess": [
         "Independent Droid"
       ]
@@ -3444,7 +3905,7 @@
         "Scout",
         "Infiltrator"
       ],
-      "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
+      "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
       "repoTreeIds": [
         "7c42882a1347ef18"
       ],
@@ -3458,15 +3919,51 @@
       "status": "REPO_TREE_PRESENT",
       "notes": null,
       "originSourcebook": "Force Unleashed Campaign Guide",
-      "originTalentNames": null,
-      "talentPublications": [],
-      "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED",
+      "originTalentNames": [
+        "Blend In",
+        "Incognito",
+        "Improved Surveillance",
+        "Intimate Knowledge",
+        "Surveillance",
+        "Traceless Tampering"
+      ],
+      "talentPublications": [
+        {
+          "sourcebook": "Force Unleashed Campaign Guide",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Blend In",
+            "Incognito",
+            "Improved Surveillance",
+            "Intimate Knowledge",
+            "Surveillance",
+            "Traceless Tampering"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Blend In",
+        "Incognito",
+        "Improved Surveillance",
+        "Intimate Knowledge",
+        "Surveillance",
+        "Traceless Tampering"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
       "referenceClassAccess": [
         "Scout",
         "Infiltrator"
       ],
-      "accessPublications": [],
+      "accessPublications": [
+        {
+          "sourcebook": "Force Unleashed Campaign Guide",
+          "publicationType": "DIRECT_ACCESS_GRANT",
+          "classes": [
+            "Scout",
+            "Infiltrator"
+          ]
+        }
+      ],
       "aggregateClassAccess": [
         "Scout",
         "Infiltrator"
@@ -3479,7 +3976,7 @@
       "classAccess": [
         "Saboteur"
       ],
-      "sourceStatus": "REFERENCE_INDEX_PENDING_PRIMARY",
+      "sourceStatus": "PRIMARY_SOURCE_VERIFIED",
       "repoTreeIds": [
         "92b30151b9b21109"
       ],
@@ -3492,14 +3989,49 @@
       "status": "REPO_TREE_PRESENT",
       "notes": null,
       "originSourcebook": "Force Unleashed Campaign Guide",
-      "originTalentNames": null,
-      "talentPublications": [],
-      "aggregateCanonicalTalentNames": null,
-      "aggregateMembershipStatus": "UNVERIFIED",
+      "originTalentNames": [
+        "Blaster Turret I",
+        "Blaster Turret II",
+        "Blaster Turret III",
+        "Ion Turret",
+        "Stun Turret",
+        "Turret Self-Destruct"
+      ],
+      "talentPublications": [
+        {
+          "sourcebook": "Force Unleashed Campaign Guide",
+          "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+          "talentNames": [
+            "Blaster Turret I",
+            "Blaster Turret II",
+            "Blaster Turret III",
+            "Ion Turret",
+            "Stun Turret",
+            "Turret Self-Destruct"
+          ]
+        }
+      ],
+      "aggregateCanonicalTalentNames": [
+        "Blaster Turret I",
+        "Blaster Turret II",
+        "Blaster Turret III",
+        "Ion Turret",
+        "Stun Turret",
+        "Turret Self-Destruct"
+      ],
+      "aggregateMembershipStatus": "PARTIAL_UNTIL_ALL_EXPANSIONS_AUDITED",
       "referenceClassAccess": [
         "Saboteur"
       ],
-      "accessPublications": [],
+      "accessPublications": [
+        {
+          "sourcebook": "Force Unleashed Campaign Guide",
+          "publicationType": "DIRECT_ACCESS_GRANT",
+          "classes": [
+            "Saboteur"
+          ]
+        }
+      ],
       "aggregateClassAccess": [
         "Saboteur"
       ]
