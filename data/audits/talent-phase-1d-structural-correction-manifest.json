@@ -13,11 +13,11 @@
     "expansionPublicationClaims": 278,
     "laterClassAccessGrants": 23,
     "sourceDisprovedReferenceAccessClaims": 1,
-    "aggregateCanonicalMembershipClaims": 1190,
+    "aggregateCanonicalMembershipClaims": 1191,
     "treesWithMembershipDifferences": 104,
     "canonicalMembershipGaps": 281,
     "normalizationOnlyNameMatches": 9,
-    "extraRepoMembershipClaims": 75,
+    "extraRepoMembershipClaims": 74,
     "treesWithClassAccessDifferences": 21,
     "missingRepoClassAccessEdges": 20,
     "extraRepoClassAccessEdges": 1
@@ -651,7 +651,7 @@
       "repoTreeNames": [
         "Sith"
       ],
-      "canonicalMembershipCount": 10,
+      "canonicalMembershipCount": 11,
       "repoClaimCount": 12,
       "missingCanonicalMemberships": [
         "Sith Alchemy"
@@ -659,7 +659,6 @@
       "normalizationOnlyNameMatches": [],
       "extraRepoMembershipClaims": [
         "Sith Alchemy (create)",
-        "Improved Dark Healing",
         "Stolen Form"
       ],
       "repairNote": "Membership gaps identify absence from the correct canonical tree, not necessarily absence of a talent document elsewhere. Extra claims require identity/text adjudication before deletion."
@@ -2839,5 +2838,6 @@
       "sourcebook": "Force Unleashed Campaign Guide",
       "note": "Primary-source Master Privateer Talents section grants Infamy and Privateer, not Spacer. Repository/reference Spacer access is noncanonical."
     }
-  ]
+  ],
+  "postCloseoutCorrection": "Core Phase 2 restored Improved Dark Healing to Core Sith origin membership (p.224). Structural totals recomputed."
 }
