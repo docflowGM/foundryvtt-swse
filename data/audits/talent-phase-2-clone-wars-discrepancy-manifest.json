@@ -1,0 +1,2357 @@
+{
+  "schemaVersion": 1,
+  "phase": "2",
+  "sourcebook": "Clone Wars Campaign Guide",
+  "generatedAt": "2026-09-26",
+  "branch": "audit/talent-phase-1-tree-census",
+  "scope": "Per-talent comparison of source-certified Clone Wars content to the current repository. No production talent records changed.",
+  "summary": {
+    "canonicalTalentPublications": 118,
+    "repositoryRecordsMapped": 112,
+    "missingCorrectTreeRecords": 6,
+    "benefitStatus": {
+      "BENEFIT_DIFFERENT": 17,
+      "BENEFIT_EXACT": 79,
+      "BENEFIT_TRUNCATED_OR_SUMMARY": 13,
+      "MISSING_CORRECT_TREE_RECORD": 6,
+      "BENEFIT_HAS_EXTRA_TEXT": 3
+    },
+    "descriptionStatus": {
+      "DESCRIPTION_DIFFERENT": 13,
+      "DESCRIPTION_EXACT": 86,
+      "DESCRIPTION_TRUNCATED_OR_SUMMARY": 8,
+      "DESCRIPTION_HAS_EXTRA_TEXT": 5,
+      "MISSING_CORRECT_TREE_RECORD": 6
+    },
+    "prerequisiteStatus": {
+      "PREREQUISITES_EXACT": 110,
+      "MISSING_CORRECT_TREE_RECORD": 6,
+      "PREREQUISITES_CANONICAL_MISMATCH": 2
+    },
+    "sourceMetadataStatus": {
+      "SOURCE_AND_PAGE_MISSING": 101,
+      "PAGE_MISSING": 11,
+      "MISSING_CORRECT_TREE_RECORD": 6
+    },
+    "summaryStatus": {
+      "SUMMARY_MISSING": 112,
+      "MISSING_CORRECT_TREE_RECORD": 6
+    },
+    "severeTextContaminationCandidates": 3
+  },
+  "phase1dStructuralCorrection": null,
+  "missingRepositoryRecords": [
+    {
+      "tree": "Droid Commander",
+      "name": "Automated Strike",
+      "page": 43,
+      "canonicalTreeKey": "Clone Wars Campaign Guide|Droid Commander"
+    },
+    {
+      "tree": "Droid Commander",
+      "name": "Droid Mettle",
+      "page": 43,
+      "canonicalTreeKey": "Clone Wars Campaign Guide|Droid Commander"
+    },
+    {
+      "tree": "Droid Commander",
+      "name": "Inspire Competence",
+      "page": 44,
+      "canonicalTreeKey": "Clone Wars Campaign Guide|Droid Commander"
+    },
+    {
+      "tree": "Droid Commander",
+      "name": "Maintain Focus",
+      "page": 44,
+      "canonicalTreeKey": "Clone Wars Campaign Guide|Droid Commander"
+    },
+    {
+      "tree": "Droid Commander",
+      "name": "Overclocked Troops",
+      "page": 44,
+      "canonicalTreeKey": "Clone Wars Campaign Guide|Droid Commander"
+    },
+    {
+      "tree": "Droid Commander",
+      "name": "Reinforced Commands",
+      "page": 44,
+      "canonicalTreeKey": "Clone Wars Campaign Guide|Droid Commander"
+    }
+  ],
+  "severeTextContaminationCandidates": [
+    {
+      "tree": "Trooper",
+      "name": "Comrades in Arms",
+      "repoId": "d4dcafa34cda98c2",
+      "repoChars": 510,
+      "canonicalChars": 116
+    },
+    {
+      "tree": "Korunnai Adept",
+      "name": "Akk Dog Master",
+      "repoId": "b265aa9dd35c4c5b",
+      "repoChars": 2215,
+      "canonicalChars": 483
+    },
+    {
+      "tree": "Light Side",
+      "name": "Focused Attack",
+      "repoId": "2fc019fa8c4108a7",
+      "repoChars": 1553,
+      "canonicalChars": 142
+    }
+  ],
+  "talents": [
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Brawler",
+      "tree": "Brawler",
+      "canonicalName": "Bayonet Master",
+      "page": 26,
+      "repoId": "b6e600188cf5597f",
+      "repoName": "Bayonet Master",
+      "benefitStatus": "BENEFIT_DIFFERENT",
+      "descriptionStatus": "DESCRIPTION_DIFFERENT",
+      "prerequisiteStatus": "PREREQUISITES_EXACT",
+      "sourceMetadataStatus": "SOURCE_AND_PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "DESCRIPTION_ERROR"
+      ],
+      "notes": "Repo adds Vibrobayonet wording not printed in this Clone Wars talent.",
+      "repoBenefitChars": 320,
+      "canonicalBenefitChars": 290
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Brawler",
+      "tree": "Brawler",
+      "canonicalName": "Unrelenting Assault",
+      "page": 26,
+      "repoId": "0b2c53ed53f20751",
+      "repoName": "Unrelenting Assault",
+      "benefitStatus": "BENEFIT_EXACT",
+      "descriptionStatus": "DESCRIPTION_EXACT",
+      "prerequisiteStatus": "PREREQUISITES_EXACT",
+      "sourceMetadataStatus": "SOURCE_AND_PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "CORRECT_OR_SOURCE_ALIGNED"
+      ],
+      "notes": null,
+      "repoBenefitChars": 311,
+      "canonicalBenefitChars": 311
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Commando",
+      "tree": "Commando",
+      "canonicalName": "Keep Them at Bay",
+      "page": 26,
+      "repoId": "ff3b4c48d0a05a16",
+      "repoName": "Keep Them at Bay",
+      "benefitStatus": "BENEFIT_EXACT",
+      "descriptionStatus": "DESCRIPTION_EXACT",
+      "prerequisiteStatus": "PREREQUISITES_EXACT",
+      "sourceMetadataStatus": "SOURCE_AND_PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "CORRECT_OR_SOURCE_ALIGNED"
+      ],
+      "notes": null,
+      "repoBenefitChars": 228,
+      "canonicalBenefitChars": 228
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Expert Pilot",
+      "tree": "Expert Pilot",
+      "canonicalName": "Renowned Pilot",
+      "page": 39,
+      "repoId": "38e64db2b516759a",
+      "repoName": "Renowned Pilot",
+      "benefitStatus": "BENEFIT_TRUNCATED_OR_SUMMARY",
+      "descriptionStatus": "DESCRIPTION_EXACT",
+      "prerequisiteStatus": "PREREQUISITES_EXACT",
+      "sourceMetadataStatus": "SOURCE_AND_PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "CORRECT_OR_SOURCE_ALIGNED"
+      ],
+      "notes": null,
+      "repoBenefitChars": 206,
+      "canonicalBenefitChars": 319
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Force Item",
+      "tree": "Force Item",
+      "canonicalName": "Focused Force Talisman",
+      "page": 40,
+      "repoId": "12eea831f06c45f7",
+      "repoName": "Focused Force Talisman",
+      "benefitStatus": "BENEFIT_DIFFERENT",
+      "descriptionStatus": "DESCRIPTION_DIFFERENT",
+      "prerequisiteStatus": "PREREQUISITES_EXACT",
+      "sourceMetadataStatus": "SOURCE_AND_PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "DESCRIPTION_ERROR"
+      ],
+      "notes": "Repo changes recovery from the spent selected power to all expended uses.",
+      "repoBenefitChars": 327,
+      "canonicalBenefitChars": 269
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Force Item",
+      "tree": "Force Item",
+      "canonicalName": "Greater Focused Force Talisman",
+      "page": 40,
+      "repoId": "4ae840aaa4e0eba0",
+      "repoName": "Greater Focused Force Talisman",
+      "benefitStatus": "BENEFIT_EXACT",
+      "descriptionStatus": "DESCRIPTION_EXACT",
+      "prerequisiteStatus": "PREREQUISITES_EXACT",
+      "sourceMetadataStatus": "SOURCE_AND_PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "CORRECT_OR_SOURCE_ALIGNED"
+      ],
+      "notes": null,
+      "repoBenefitChars": 197,
+      "canonicalBenefitChars": 197
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Gunslinger",
+      "tree": "Gunslinger",
+      "canonicalName": "Blind Shot",
+      "page": 41,
+      "repoId": "bb484bdbc96c96ad",
+      "repoName": "Blind Shot",
+      "benefitStatus": "BENEFIT_EXACT",
+      "descriptionStatus": "DESCRIPTION_EXACT",
+      "prerequisiteStatus": "PREREQUISITES_EXACT",
+      "sourceMetadataStatus": "SOURCE_AND_PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "CORRECT_OR_SOURCE_ALIGNED"
+      ],
+      "notes": null,
+      "repoBenefitChars": 104,
+      "canonicalBenefitChars": 104
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Jedi Consular",
+      "tree": "Jedi Consular",
+      "canonicalName": "Consular's Vitality",
+      "page": 21,
+      "repoId": "c87b8389c8ca6ea9",
+      "repoName": "Consular's Vitality",
+      "benefitStatus": "BENEFIT_TRUNCATED_OR_SUMMARY",
+      "descriptionStatus": "DESCRIPTION_TRUNCATED_OR_SUMMARY",
+      "prerequisiteStatus": "PREREQUISITES_EXACT",
+      "sourceMetadataStatus": "SOURCE_AND_PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "DESCRIPTION_ERROR"
+      ],
+      "notes": null,
+      "repoBenefitChars": 138,
+      "canonicalBenefitChars": 604
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Jedi Consular",
+      "tree": "Jedi Consular",
+      "canonicalName": "Improved Consular's Vitality",
+      "page": 21,
+      "repoId": "3d3806bd03110ee8",
+      "repoName": "Improved Consular's Vitality",
+      "benefitStatus": "BENEFIT_EXACT",
+      "descriptionStatus": "DESCRIPTION_EXACT",
+      "prerequisiteStatus": "PREREQUISITES_EXACT",
+      "sourceMetadataStatus": "SOURCE_AND_PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "CORRECT_OR_SOURCE_ALIGNED"
+      ],
+      "notes": null,
+      "repoBenefitChars": 186,
+      "canonicalBenefitChars": 186
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Jedi Guardian",
+      "tree": "Jedi Guardian",
+      "canonicalName": "Exposing Strike",
+      "page": 21,
+      "repoId": "2afe84b999aa1c43",
+      "repoName": "Exposing Strike",
+      "benefitStatus": "BENEFIT_EXACT",
+      "descriptionStatus": "DESCRIPTION_EXACT",
+      "prerequisiteStatus": "PREREQUISITES_EXACT",
+      "sourceMetadataStatus": "PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "CORRECT_OR_SOURCE_ALIGNED"
+      ],
+      "notes": null,
+      "repoBenefitChars": 146,
+      "canonicalBenefitChars": 146
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Jedi Guardian",
+      "tree": "Jedi Guardian",
+      "canonicalName": "Guardian Strike",
+      "page": 21,
+      "repoId": "f15b54aeaaa5c578",
+      "repoName": "Guardian Strike",
+      "benefitStatus": "BENEFIT_EXACT",
+      "descriptionStatus": "DESCRIPTION_EXACT",
+      "prerequisiteStatus": "PREREQUISITES_EXACT",
+      "sourceMetadataStatus": "PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "CORRECT_OR_SOURCE_ALIGNED"
+      ],
+      "notes": null,
+      "repoBenefitChars": 177,
+      "canonicalBenefitChars": 177
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Jedi Sentinel",
+      "tree": "Jedi Sentinel",
+      "canonicalName": "Sentinel's Observation",
+      "page": 21,
+      "repoId": "da672f7b558a75ba",
+      "repoName": "Sentinel's Observation",
+      "benefitStatus": "BENEFIT_EXACT",
+      "descriptionStatus": "DESCRIPTION_EXACT",
+      "prerequisiteStatus": "PREREQUISITES_EXACT",
+      "sourceMetadataStatus": "SOURCE_AND_PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "CORRECT_OR_SOURCE_ALIGNED"
+      ],
+      "notes": null,
+      "repoBenefitChars": 111,
+      "canonicalBenefitChars": 111
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Jedi Sentinel",
+      "tree": "Jedi Sentinel",
+      "canonicalName": "Unseen Eyes",
+      "page": 21,
+      "repoId": "f6a7cb3c07ded492",
+      "repoName": "Unseen Eyes",
+      "benefitStatus": "BENEFIT_EXACT",
+      "descriptionStatus": "DESCRIPTION_EXACT",
+      "prerequisiteStatus": "PREREQUISITES_EXACT",
+      "sourceMetadataStatus": "SOURCE_AND_PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "CORRECT_OR_SOURCE_ALIGNED"
+      ],
+      "notes": null,
+      "repoBenefitChars": 264,
+      "canonicalBenefitChars": 264
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Military Tactics",
+      "tree": "Military Tactics",
+      "canonicalName": "Exploit Weakness",
+      "page": 42,
+      "repoId": "8ba50ebccb1f938e",
+      "repoName": "Exploit Weakness",
+      "benefitStatus": "BENEFIT_EXACT",
+      "descriptionStatus": "DESCRIPTION_EXACT",
+      "prerequisiteStatus": "PREREQUISITES_EXACT",
+      "sourceMetadataStatus": "SOURCE_AND_PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "CORRECT_OR_SOURCE_ALIGNED"
+      ],
+      "notes": null,
+      "repoBenefitChars": 237,
+      "canonicalBenefitChars": 237
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Military Tactics",
+      "tree": "Military Tactics",
+      "canonicalName": "Grand Leader",
+      "page": 42,
+      "repoId": "ce987679b604f25b",
+      "repoName": "Grand Leader",
+      "benefitStatus": "BENEFIT_EXACT",
+      "descriptionStatus": "DESCRIPTION_EXACT",
+      "prerequisiteStatus": "PREREQUISITES_EXACT",
+      "sourceMetadataStatus": "SOURCE_AND_PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "CORRECT_OR_SOURCE_ALIGNED"
+      ],
+      "notes": null,
+      "repoBenefitChars": 353,
+      "canonicalBenefitChars": 353
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Military Tactics",
+      "tree": "Military Tactics",
+      "canonicalName": "Uncanny Defense",
+      "page": 42,
+      "repoId": "3eddc00a79422747",
+      "repoName": "Uncanny Defense",
+      "benefitStatus": "BENEFIT_EXACT",
+      "descriptionStatus": "DESCRIPTION_EXACT",
+      "prerequisiteStatus": "PREREQUISITES_EXACT",
+      "sourceMetadataStatus": "SOURCE_AND_PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "CORRECT_OR_SOURCE_ALIGNED"
+      ],
+      "notes": null,
+      "repoBenefitChars": 231,
+      "canonicalBenefitChars": 231
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Misfortune",
+      "tree": "Misfortune",
+      "canonicalName": "Stymie",
+      "page": 24,
+      "repoId": "f16128ef7a76aa03",
+      "repoName": "Stymie",
+      "benefitStatus": "BENEFIT_TRUNCATED_OR_SUMMARY",
+      "descriptionStatus": "DESCRIPTION_DIFFERENT",
+      "prerequisiteStatus": "PREREQUISITES_EXACT",
+      "sourceMetadataStatus": "SOURCE_AND_PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "DESCRIPTION_ERROR"
+      ],
+      "notes": null,
+      "repoBenefitChars": 263,
+      "canonicalBenefitChars": 448
+    },
+    {
+      "canonicalTreeKey": "Clone Wars Campaign Guide|Collaborator",
+      "tree": "Collaborator",
+      "canonicalName": "Double Agent",
+      "page": 22,
+      "repoId": "35cd0efb3aae31c7",
+      "repoName": "Double Agent",
+      "benefitStatus": "BENEFIT_TRUNCATED_OR_SUMMARY",
+      "descriptionStatus": "DESCRIPTION_EXACT",
+      "prerequisiteStatus": "PREREQUISITES_EXACT",
+      "sourceMetadataStatus": "SOURCE_AND_PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "CORRECT_OR_SOURCE_ALIGNED"
+      ],
+      "notes": null,
+      "repoBenefitChars": 335,
+      "canonicalBenefitChars": 513
+    },
+    {
+      "canonicalTreeKey": "Clone Wars Campaign Guide|Collaborator",
+      "tree": "Collaborator",
+      "canonicalName": "Enemy Tactics",
+      "page": 23,
+      "repoId": "bb28cf47a45aff36",
+      "repoName": "Enemy Tactics",
+      "benefitStatus": "BENEFIT_EXACT",
+      "descriptionStatus": "DESCRIPTION_EXACT",
+      "prerequisiteStatus": "PREREQUISITES_EXACT",
+      "sourceMetadataStatus": "SOURCE_AND_PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "CORRECT_OR_SOURCE_ALIGNED"
+      ],
+      "notes": null,
+      "repoBenefitChars": 224,
+      "canonicalBenefitChars": 224
+    },
+    {
+      "canonicalTreeKey": "Clone Wars Campaign Guide|Collaborator",
+      "tree": "Collaborator",
+      "canonicalName": "Feed Information",
+      "page": 23,
+      "repoId": "f9a2bda9b63ad191",
+      "repoName": "Feed Information",
+      "benefitStatus": "BENEFIT_EXACT",
+      "descriptionStatus": "DESCRIPTION_EXACT",
+      "prerequisiteStatus": "PREREQUISITES_EXACT",
+      "sourceMetadataStatus": "SOURCE_AND_PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "CORRECT_OR_SOURCE_ALIGNED"
+      ],
+      "notes": null,
+      "repoBenefitChars": 251,
+      "canonicalBenefitChars": 251
+    },
+    {
+      "canonicalTreeKey": "Clone Wars Campaign Guide|Collaborator",
+      "tree": "Collaborator",
+      "canonicalName": "Friendly Fire",
+      "page": 23,
+      "repoId": "5cb9f0f6011a1bab",
+      "repoName": "Friendly Fire",
+      "benefitStatus": "BENEFIT_EXACT",
+      "descriptionStatus": "DESCRIPTION_EXACT",
+      "prerequisiteStatus": "PREREQUISITES_EXACT",
+      "sourceMetadataStatus": "SOURCE_AND_PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "CORRECT_OR_SOURCE_ALIGNED"
+      ],
+      "notes": null,
+      "repoBenefitChars": 320,
+      "canonicalBenefitChars": 320
+    },
+    {
+      "canonicalTreeKey": "Clone Wars Campaign Guide|Collaborator",
+      "tree": "Collaborator",
+      "canonicalName": "Protection",
+      "page": 23,
+      "repoId": "76352a9b615287f8",
+      "repoName": "Protection",
+      "benefitStatus": "BENEFIT_DIFFERENT",
+      "descriptionStatus": "DESCRIPTION_HAS_EXTRA_TEXT",
+      "prerequisiteStatus": "PREREQUISITES_EXACT",
+      "sourceMetadataStatus": "SOURCE_AND_PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "DESCRIPTION_ERROR"
+      ],
+      "notes": "Repo description appends restrictions not printed with the Clone Wars talent.",
+      "repoBenefitChars": 346,
+      "canonicalBenefitChars": 346
+    },
+    {
+      "canonicalTreeKey": "Clone Wars Campaign Guide|Droid Commander",
+      "tree": "Droid Commander",
+      "canonicalName": "Automated Strike",
+      "page": 43,
+      "repoId": null,
+      "repoName": null,
+      "benefitStatus": "MISSING_CORRECT_TREE_RECORD",
+      "descriptionStatus": "MISSING_CORRECT_TREE_RECORD",
+      "prerequisiteStatus": "MISSING_CORRECT_TREE_RECORD",
+      "sourceMetadataStatus": "MISSING_CORRECT_TREE_RECORD",
+      "summaryStatus": "MISSING_CORRECT_TREE_RECORD",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "repoBenefitChars": 0,
+      "canonicalBenefitChars": 258
+    },
+    {
+      "canonicalTreeKey": "Clone Wars Campaign Guide|Droid Commander",
+      "tree": "Droid Commander",
+      "canonicalName": "Droid Defense",
+      "page": 43,
+      "repoId": "e5ac014e044a4afa",
+      "repoName": "Droid Defense",
+      "benefitStatus": "BENEFIT_EXACT",
+      "descriptionStatus": "DESCRIPTION_EXACT",
+      "prerequisiteStatus": "PREREQUISITES_EXACT",
+      "sourceMetadataStatus": "SOURCE_AND_PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "CORRECT_OR_SOURCE_ALIGNED"
+      ],
+      "notes": null,
+      "repoBenefitChars": 249,
+      "canonicalBenefitChars": 249
+    },
+    {
+      "canonicalTreeKey": "Clone Wars Campaign Guide|Droid Commander",
+      "tree": "Droid Commander",
+      "canonicalName": "Droid Mettle",
+      "page": 43,
+      "repoId": null,
+      "repoName": null,
+      "benefitStatus": "MISSING_CORRECT_TREE_RECORD",
+      "descriptionStatus": "MISSING_CORRECT_TREE_RECORD",
+      "prerequisiteStatus": "MISSING_CORRECT_TREE_RECORD",
+      "sourceMetadataStatus": "MISSING_CORRECT_TREE_RECORD",
+      "summaryStatus": "MISSING_CORRECT_TREE_RECORD",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "repoBenefitChars": 0,
+      "canonicalBenefitChars": 168
+    },
+    {
+      "canonicalTreeKey": "Clone Wars Campaign Guide|Droid Commander",
+      "tree": "Droid Commander",
+      "canonicalName": "Expanded Sensors",
+      "page": 43,
+      "repoId": "db14070064e54a04",
+      "repoName": "Expanded Sensors",
+      "benefitStatus": "BENEFIT_EXACT",
+      "descriptionStatus": "DESCRIPTION_EXACT",
+      "prerequisiteStatus": "PREREQUISITES_EXACT",
+      "sourceMetadataStatus": "SOURCE_AND_PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "CORRECT_OR_SOURCE_ALIGNED"
+      ],
+      "notes": null,
+      "repoBenefitChars": 228,
+      "canonicalBenefitChars": 228
+    },
+    {
+      "canonicalTreeKey": "Clone Wars Campaign Guide|Droid Commander",
+      "tree": "Droid Commander",
+      "canonicalName": "Inspire Competence",
+      "page": 44,
+      "repoId": null,
+      "repoName": null,
+      "benefitStatus": "MISSING_CORRECT_TREE_RECORD",
+      "descriptionStatus": "MISSING_CORRECT_TREE_RECORD",
+      "prerequisiteStatus": "MISSING_CORRECT_TREE_RECORD",
+      "sourceMetadataStatus": "MISSING_CORRECT_TREE_RECORD",
+      "summaryStatus": "MISSING_CORRECT_TREE_RECORD",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "repoBenefitChars": 0,
+      "canonicalBenefitChars": 416
+    },
+    {
+      "canonicalTreeKey": "Clone Wars Campaign Guide|Droid Commander",
+      "tree": "Droid Commander",
+      "canonicalName": "Maintain Focus",
+      "page": 44,
+      "repoId": null,
+      "repoName": null,
+      "benefitStatus": "MISSING_CORRECT_TREE_RECORD",
+      "descriptionStatus": "MISSING_CORRECT_TREE_RECORD",
+      "prerequisiteStatus": "MISSING_CORRECT_TREE_RECORD",
+      "sourceMetadataStatus": "MISSING_CORRECT_TREE_RECORD",
+      "summaryStatus": "MISSING_CORRECT_TREE_RECORD",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "repoBenefitChars": 0,
+      "canonicalBenefitChars": 220
+    },
+    {
+      "canonicalTreeKey": "Clone Wars Campaign Guide|Droid Commander",
+      "tree": "Droid Commander",
+      "canonicalName": "Overclocked Troops",
+      "page": 44,
+      "repoId": null,
+      "repoName": null,
+      "benefitStatus": "MISSING_CORRECT_TREE_RECORD",
+      "descriptionStatus": "MISSING_CORRECT_TREE_RECORD",
+      "prerequisiteStatus": "MISSING_CORRECT_TREE_RECORD",
+      "sourceMetadataStatus": "MISSING_CORRECT_TREE_RECORD",
+      "summaryStatus": "MISSING_CORRECT_TREE_RECORD",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "repoBenefitChars": 0,
+      "canonicalBenefitChars": 174
+    },
+    {
+      "canonicalTreeKey": "Clone Wars Campaign Guide|Droid Commander",
+      "tree": "Droid Commander",
+      "canonicalName": "Reinforced Commands",
+      "page": 44,
+      "repoId": null,
+      "repoName": null,
+      "benefitStatus": "MISSING_CORRECT_TREE_RECORD",
+      "descriptionStatus": "MISSING_CORRECT_TREE_RECORD",
+      "prerequisiteStatus": "MISSING_CORRECT_TREE_RECORD",
+      "sourceMetadataStatus": "MISSING_CORRECT_TREE_RECORD",
+      "summaryStatus": "MISSING_CORRECT_TREE_RECORD",
+      "dispositions": [
+        "MISSING_CONTENT"
+      ],
+      "notes": null,
+      "repoBenefitChars": 0,
+      "canonicalBenefitChars": 114
+    },
+    {
+      "canonicalTreeKey": "Clone Wars Campaign Guide|Jedi Archivist",
+      "tree": "Jedi Archivist",
+      "canonicalName": "Direct",
+      "page": 41,
+      "repoId": "81154e9fc33e43b3",
+      "repoName": "Direct",
+      "benefitStatus": "BENEFIT_EXACT",
+      "descriptionStatus": "DESCRIPTION_EXACT",
+      "prerequisiteStatus": "PREREQUISITES_EXACT",
+      "sourceMetadataStatus": "SOURCE_AND_PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "CORRECT_OR_SOURCE_ALIGNED"
+      ],
+      "notes": null,
+      "repoBenefitChars": 210,
+      "canonicalBenefitChars": 210
+    },
+    {
+      "canonicalTreeKey": "Clone Wars Campaign Guide|Jedi Archivist",
+      "tree": "Jedi Archivist",
+      "canonicalName": "Impart Knowledge",
+      "page": 41,
+      "repoId": "5d682aa33468b683",
+      "repoName": "Impart Knowledge",
+      "benefitStatus": "BENEFIT_EXACT",
+      "descriptionStatus": "DESCRIPTION_EXACT",
+      "prerequisiteStatus": "PREREQUISITES_EXACT",
+      "sourceMetadataStatus": "SOURCE_AND_PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "CORRECT_OR_SOURCE_ALIGNED"
+      ],
+      "notes": null,
+      "repoBenefitChars": 133,
+      "canonicalBenefitChars": 133
+    },
+    {
+      "canonicalTreeKey": "Clone Wars Campaign Guide|Jedi Archivist",
+      "tree": "Jedi Archivist",
+      "canonicalName": "Insight of the Force",
+      "page": 41,
+      "repoId": "0adc25cfaa35147a",
+      "repoName": "Insight of the Force",
+      "benefitStatus": "BENEFIT_EXACT",
+      "descriptionStatus": "DESCRIPTION_EXACT",
+      "prerequisiteStatus": "PREREQUISITES_EXACT",
+      "sourceMetadataStatus": "SOURCE_AND_PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "CORRECT_OR_SOURCE_ALIGNED"
+      ],
+      "notes": null,
+      "repoBenefitChars": 352,
+      "canonicalBenefitChars": 352
+    },
+    {
+      "canonicalTreeKey": "Clone Wars Campaign Guide|Jedi Archivist",
+      "tree": "Jedi Archivist",
+      "canonicalName": "Master Advisor",
+      "page": 41,
+      "repoId": "e6c4f05db6ac6c06",
+      "repoName": "Master Advisor",
+      "benefitStatus": "BENEFIT_EXACT",
+      "descriptionStatus": "DESCRIPTION_EXACT",
+      "prerequisiteStatus": "PREREQUISITES_EXACT",
+      "sourceMetadataStatus": "SOURCE_AND_PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "CORRECT_OR_SOURCE_ALIGNED"
+      ],
+      "notes": null,
+      "repoBenefitChars": 197,
+      "canonicalBenefitChars": 197
+    },
+    {
+      "canonicalTreeKey": "Clone Wars Campaign Guide|Jedi Archivist",
+      "tree": "Jedi Archivist",
+      "canonicalName": "Scholarly Knowledge",
+      "page": 41,
+      "repoId": "63143040b7c229a7",
+      "repoName": "Scholarly Knowledge",
+      "benefitStatus": "BENEFIT_EXACT",
+      "descriptionStatus": "DESCRIPTION_EXACT",
+      "prerequisiteStatus": "PREREQUISITES_EXACT",
+      "sourceMetadataStatus": "SOURCE_AND_PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "CORRECT_OR_SOURCE_ALIGNED"
+      ],
+      "notes": null,
+      "repoBenefitChars": 153,
+      "canonicalBenefitChars": 153
+    },
+    {
+      "canonicalTreeKey": "Clone Wars Campaign Guide|Jedi Healer",
+      "tree": "Jedi Healer",
+      "canonicalName": "Force Treatment",
+      "page": 41,
+      "repoId": "a6ad65c1275faa33",
+      "repoName": "Force Treatment",
+      "benefitStatus": "BENEFIT_DIFFERENT",
+      "descriptionStatus": "DESCRIPTION_HAS_EXTRA_TEXT",
+      "prerequisiteStatus": "PREREQUISITES_EXACT",
+      "sourceMetadataStatus": "SOURCE_AND_PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "DESCRIPTION_ERROR"
+      ],
+      "notes": "Repo appends a medkit/medpac clause not printed with the Clone Wars Jedi Healer talent.",
+      "repoBenefitChars": 275,
+      "canonicalBenefitChars": 279
+    },
+    {
+      "canonicalTreeKey": "Clone Wars Campaign Guide|Jedi Healer",
+      "tree": "Jedi Healer",
+      "canonicalName": "Healing Boost",
+      "page": 41,
+      "repoId": "0e6a784501100693",
+      "repoName": "Healing Boost",
+      "benefitStatus": "BENEFIT_EXACT",
+      "descriptionStatus": "DESCRIPTION_EXACT",
+      "prerequisiteStatus": "PREREQUISITES_EXACT",
+      "sourceMetadataStatus": "SOURCE_AND_PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "CORRECT_OR_SOURCE_ALIGNED"
+      ],
+      "notes": null,
+      "repoBenefitChars": 116,
+      "canonicalBenefitChars": 116
+    },
+    {
+      "canonicalTreeKey": "Clone Wars Campaign Guide|Jedi Healer",
+      "tree": "Jedi Healer",
+      "canonicalName": "Improved Healing Boost",
+      "page": 41,
+      "repoId": "fb2bb5613e7edd49",
+      "repoName": "Improved Healing Boost",
+      "benefitStatus": "BENEFIT_EXACT",
+      "descriptionStatus": "DESCRIPTION_EXACT",
+      "prerequisiteStatus": "PREREQUISITES_EXACT",
+      "sourceMetadataStatus": "SOURCE_AND_PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "CORRECT_OR_SOURCE_ALIGNED"
+      ],
+      "notes": null,
+      "repoBenefitChars": 117,
+      "canonicalBenefitChars": 117
+    },
+    {
+      "canonicalTreeKey": "Clone Wars Campaign Guide|Jedi Healer",
+      "tree": "Jedi Healer",
+      "canonicalName": "Soothe",
+      "page": 41,
+      "repoId": "3713870862584269",
+      "repoName": "Soothe",
+      "benefitStatus": "BENEFIT_EXACT",
+      "descriptionStatus": "DESCRIPTION_EXACT",
+      "prerequisiteStatus": "PREREQUISITES_EXACT",
+      "sourceMetadataStatus": "SOURCE_AND_PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "CORRECT_OR_SOURCE_ALIGNED"
+      ],
+      "notes": null,
+      "repoBenefitChars": 181,
+      "canonicalBenefitChars": 181
+    },
+    {
+      "canonicalTreeKey": "Clone Wars Campaign Guide|Loyal Protector",
+      "tree": "Loyal Protector",
+      "canonicalName": "Inspire Loyalty",
+      "page": 23,
+      "repoId": "6ecfeff647f8764e",
+      "repoName": "Inspire Loyalty",
+      "benefitStatus": "BENEFIT_TRUNCATED_OR_SUMMARY",
+      "descriptionStatus": "DESCRIPTION_EXACT",
+      "prerequisiteStatus": "PREREQUISITES_EXACT",
+      "sourceMetadataStatus": "SOURCE_AND_PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "CORRECT_OR_SOURCE_ALIGNED"
+      ],
+      "notes": null,
+      "repoBenefitChars": 395,
+      "canonicalBenefitChars": 516
+    },
+    {
+      "canonicalTreeKey": "Clone Wars Campaign Guide|Loyal Protector",
+      "tree": "Loyal Protector",
+      "canonicalName": "Undying Loyalty",
+      "page": 23,
+      "repoId": "2a209f3e58d8528c",
+      "repoName": "Undying Loyalty",
+      "benefitStatus": "BENEFIT_EXACT",
+      "descriptionStatus": "DESCRIPTION_EXACT",
+      "prerequisiteStatus": "PREREQUISITES_EXACT",
+      "sourceMetadataStatus": "SOURCE_AND_PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "CORRECT_OR_SOURCE_ALIGNED"
+      ],
+      "notes": null,
+      "repoBenefitChars": 48,
+      "canonicalBenefitChars": 48
+    },
+    {
+      "canonicalTreeKey": "Clone Wars Campaign Guide|Loyal Protector",
+      "tree": "Loyal Protector",
+      "canonicalName": "Punishing Protection",
+      "page": 23,
+      "repoId": "b3590045fcd7c28c",
+      "repoName": "Punishing Protection",
+      "benefitStatus": "BENEFIT_EXACT",
+      "descriptionStatus": "DESCRIPTION_EXACT",
+      "prerequisiteStatus": "PREREQUISITES_EXACT",
+      "sourceMetadataStatus": "SOURCE_AND_PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "CORRECT_OR_SOURCE_ALIGNED"
+      ],
+      "notes": null,
+      "repoBenefitChars": 372,
+      "canonicalBenefitChars": 372
+    },
+    {
+      "canonicalTreeKey": "Clone Wars Campaign Guide|Loyal Protector",
+      "tree": "Loyal Protector",
+      "canonicalName": "Protector Actions",
+      "page": 23,
+      "repoId": "254b51a34600e2ef",
+      "repoName": "Protector Actions",
+      "benefitStatus": "BENEFIT_TRUNCATED_OR_SUMMARY",
+      "descriptionStatus": "DESCRIPTION_EXACT",
+      "prerequisiteStatus": "PREREQUISITES_EXACT",
+      "sourceMetadataStatus": "SOURCE_AND_PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "CORRECT_OR_SOURCE_ALIGNED"
+      ],
+      "notes": null,
+      "repoBenefitChars": 192,
+      "canonicalBenefitChars": 1112
+    },
+    {
+      "canonicalTreeKey": "Clone Wars Campaign Guide|Melee Specialist",
+      "tree": "Melee Specialist",
+      "canonicalName": "Accurate Blow",
+      "page": 39,
+      "repoId": "32df92c3114b5c94",
+      "repoName": "Accurate Blow",
+      "benefitStatus": "BENEFIT_EXACT",
+      "descriptionStatus": "DESCRIPTION_EXACT",
+      "prerequisiteStatus": "PREREQUISITES_EXACT",
+      "sourceMetadataStatus": "SOURCE_AND_PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "CORRECT_OR_SOURCE_ALIGNED"
+      ],
+      "notes": null,
+      "repoBenefitChars": 341,
+      "canonicalBenefitChars": 341
+    },
+    {
+      "canonicalTreeKey": "Clone Wars Campaign Guide|Melee Specialist",
+      "tree": "Melee Specialist",
+      "canonicalName": "Close-Quarters Fighter",
+      "page": 40,
+      "repoId": "8063a6b94b1de530",
+      "repoName": "Close-Quarters Fighter",
+      "benefitStatus": "BENEFIT_EXACT",
+      "descriptionStatus": "DESCRIPTION_EXACT",
+      "prerequisiteStatus": "PREREQUISITES_EXACT",
+      "sourceMetadataStatus": "SOURCE_AND_PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "CORRECT_OR_SOURCE_ALIGNED"
+      ],
+      "notes": null,
+      "repoBenefitChars": 163,
+      "canonicalBenefitChars": 163
+    },
+    {
+      "canonicalTreeKey": "Clone Wars Campaign Guide|Melee Specialist",
+      "tree": "Melee Specialist",
+      "canonicalName": "Ignore Armor",
+      "page": 40,
+      "repoId": "dbfcec98f38c8e2f",
+      "repoName": "Ignore Armor",
+      "benefitStatus": "BENEFIT_EXACT",
+      "descriptionStatus": "DESCRIPTION_EXACT",
+      "prerequisiteStatus": "PREREQUISITES_EXACT",
+      "sourceMetadataStatus": "SOURCE_AND_PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "CORRECT_OR_SOURCE_ALIGNED"
+      ],
+      "notes": null,
+      "repoBenefitChars": 127,
+      "canonicalBenefitChars": 127
+    },
+    {
+      "canonicalTreeKey": "Clone Wars Campaign Guide|Melee Specialist",
+      "tree": "Melee Specialist",
+      "canonicalName": "Improved Stunning Strike",
+      "page": 40,
+      "repoId": "680d3741dcaea6fe",
+      "repoName": "Improved Stunning Strike",
+      "benefitStatus": "BENEFIT_EXACT",
+      "descriptionStatus": "DESCRIPTION_EXACT",
+      "prerequisiteStatus": "PREREQUISITES_EXACT",
+      "sourceMetadataStatus": "SOURCE_AND_PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "CORRECT_OR_SOURCE_ALIGNED"
+      ],
+      "notes": null,
+      "repoBenefitChars": 198,
+      "canonicalBenefitChars": 198
+    },
+    {
+      "canonicalTreeKey": "Clone Wars Campaign Guide|Melee Specialist",
+      "tree": "Melee Specialist",
+      "canonicalName": "Whirling Death",
+      "page": 40,
+      "repoId": "98a88ebf26ac318a",
+      "repoName": "Whirling Death",
+      "benefitStatus": "BENEFIT_EXACT",
+      "descriptionStatus": "DESCRIPTION_EXACT",
+      "prerequisiteStatus": "PREREQUISITES_EXACT",
+      "sourceMetadataStatus": "SOURCE_AND_PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "CORRECT_OR_SOURCE_ALIGNED"
+      ],
+      "notes": null,
+      "repoBenefitChars": 240,
+      "canonicalBenefitChars": 240
+    },
+    {
+      "canonicalTreeKey": "Clone Wars Campaign Guide|Military Engineer",
+      "tree": "Military Engineer",
+      "canonicalName": "Breach Cover",
+      "page": 45,
+      "repoId": "da891615bb87a9e6",
+      "repoName": "Breach Cover",
+      "benefitStatus": "BENEFIT_EXACT",
+      "descriptionStatus": "DESCRIPTION_EXACT",
+      "prerequisiteStatus": "PREREQUISITES_EXACT",
+      "sourceMetadataStatus": "SOURCE_AND_PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "CORRECT_OR_SOURCE_ALIGNED"
+      ],
+      "notes": null,
+      "repoBenefitChars": 108,
+      "canonicalBenefitChars": 108
+    },
+    {
+      "canonicalTreeKey": "Clone Wars Campaign Guide|Military Engineer",
+      "tree": "Military Engineer",
+      "canonicalName": "Breaching Explosive",
+      "page": 45,
+      "repoId": "96d4cfaa29cab92b",
+      "repoName": "Breaching Explosive",
+      "benefitStatus": "BENEFIT_EXACT",
+      "descriptionStatus": "DESCRIPTION_EXACT",
+      "prerequisiteStatus": "PREREQUISITES_EXACT",
+      "sourceMetadataStatus": "SOURCE_AND_PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "CORRECT_OR_SOURCE_ALIGNED"
+      ],
+      "notes": null,
+      "repoBenefitChars": 103,
+      "canonicalBenefitChars": 103
+    },
+    {
+      "canonicalTreeKey": "Clone Wars Campaign Guide|Military Engineer",
+      "tree": "Military Engineer",
+      "canonicalName": "Droid Expert",
+      "page": 45,
+      "repoId": "befa9b2b15e54ff0",
+      "repoName": "Droid Expert",
+      "benefitStatus": "BENEFIT_EXACT",
+      "descriptionStatus": "DESCRIPTION_EXACT",
+      "prerequisiteStatus": "PREREQUISITES_EXACT",
+      "sourceMetadataStatus": "SOURCE_AND_PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "CORRECT_OR_SOURCE_ALIGNED"
+      ],
+      "notes": null,
+      "repoBenefitChars": 128,
+      "canonicalBenefitChars": 128
+    },
+    {
+      "canonicalTreeKey": "Clone Wars Campaign Guide|Military Engineer",
+      "tree": "Military Engineer",
+      "canonicalName": "Prepared Explosive",
+      "page": 45,
+      "repoId": "32029a2f0dbb7104",
+      "repoName": "Prepared Explosive",
+      "benefitStatus": "BENEFIT_EXACT",
+      "descriptionStatus": "DESCRIPTION_EXACT",
+      "prerequisiteStatus": "PREREQUISITES_EXACT",
+      "sourceMetadataStatus": "SOURCE_AND_PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "CORRECT_OR_SOURCE_ALIGNED"
+      ],
+      "notes": null,
+      "repoBenefitChars": 365,
+      "canonicalBenefitChars": 365
+    },
+    {
+      "canonicalTreeKey": "Clone Wars Campaign Guide|Military Engineer",
+      "tree": "Military Engineer",
+      "canonicalName": "Problem Solver",
+      "page": 45,
+      "repoId": "16f53472844251a7",
+      "repoName": "Problem Solver",
+      "benefitStatus": "BENEFIT_EXACT",
+      "descriptionStatus": "DESCRIPTION_EXACT",
+      "prerequisiteStatus": "PREREQUISITES_EXACT",
+      "sourceMetadataStatus": "SOURCE_AND_PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "CORRECT_OR_SOURCE_ALIGNED"
+      ],
+      "notes": null,
+      "repoBenefitChars": 347,
+      "canonicalBenefitChars": 347
+    },
+    {
+      "canonicalTreeKey": "Clone Wars Campaign Guide|Military Engineer",
+      "tree": "Military Engineer",
+      "canonicalName": "Quick Modifications",
+      "page": 45,
+      "repoId": "1e32cec439c5ecad",
+      "repoName": "Quick Modifications",
+      "benefitStatus": "BENEFIT_EXACT",
+      "descriptionStatus": "DESCRIPTION_EXACT",
+      "prerequisiteStatus": "PREREQUISITES_EXACT",
+      "sourceMetadataStatus": "SOURCE_AND_PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "CORRECT_OR_SOURCE_ALIGNED"
+      ],
+      "notes": null,
+      "repoBenefitChars": 164,
+      "canonicalBenefitChars": 164
+    },
+    {
+      "canonicalTreeKey": "Clone Wars Campaign Guide|Military Engineer",
+      "tree": "Military Engineer",
+      "canonicalName": "Repairs on the Fly",
+      "page": 45,
+      "repoId": "16dd1c81c5145dd8",
+      "repoName": "Repairs on the Fly",
+      "benefitStatus": "BENEFIT_EXACT",
+      "descriptionStatus": "DESCRIPTION_EXACT",
+      "prerequisiteStatus": "PREREQUISITES_EXACT",
+      "sourceMetadataStatus": "SOURCE_AND_PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "CORRECT_OR_SOURCE_ALIGNED"
+      ],
+      "notes": null,
+      "repoBenefitChars": 211,
+      "canonicalBenefitChars": 211
+    },
+    {
+      "canonicalTreeKey": "Clone Wars Campaign Guide|Military Engineer",
+      "tree": "Military Engineer",
+      "canonicalName": "Sabotage Device",
+      "page": 46,
+      "repoId": "fbe4b1551ef49a84",
+      "repoName": "Sabotage Device",
+      "benefitStatus": "BENEFIT_EXACT",
+      "descriptionStatus": "DESCRIPTION_EXACT",
+      "prerequisiteStatus": "PREREQUISITES_EXACT",
+      "sourceMetadataStatus": "SOURCE_AND_PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "CORRECT_OR_SOURCE_ALIGNED"
+      ],
+      "notes": null,
+      "repoBenefitChars": 284,
+      "canonicalBenefitChars": 284
+    },
+    {
+      "canonicalTreeKey": "Clone Wars Campaign Guide|Military Engineer",
+      "tree": "Military Engineer",
+      "canonicalName": "Tech Savant",
+      "page": 46,
+      "repoId": "e53cad01df3f27dd",
+      "repoName": "Tech Savant",
+      "benefitStatus": "BENEFIT_HAS_EXTRA_TEXT",
+      "descriptionStatus": "DESCRIPTION_HAS_EXTRA_TEXT",
+      "prerequisiteStatus": "PREREQUISITES_EXACT",
+      "sourceMetadataStatus": "SOURCE_AND_PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "DESCRIPTION_ERROR"
+      ],
+      "notes": "Repo appends a once-per-round beneficiary restriction not printed here.",
+      "repoBenefitChars": 251,
+      "canonicalBenefitChars": 175
+    },
+    {
+      "canonicalTreeKey": "Clone Wars Campaign Guide|Military Engineer",
+      "tree": "Military Engineer",
+      "canonicalName": "Vehicular Boost",
+      "page": 46,
+      "repoId": "856812052aa6c6d2",
+      "repoName": "Vehicular Boost",
+      "benefitStatus": "BENEFIT_EXACT",
+      "descriptionStatus": "DESCRIPTION_EXACT",
+      "prerequisiteStatus": "PREREQUISITES_EXACT",
+      "sourceMetadataStatus": "SOURCE_AND_PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "CORRECT_OR_SOURCE_ALIGNED"
+      ],
+      "notes": null,
+      "repoBenefitChars": 329,
+      "canonicalBenefitChars": 329
+    },
+    {
+      "canonicalTreeKey": "Clone Wars Campaign Guide|Opportunist",
+      "tree": "Opportunist",
+      "canonicalName": "Advantageous Opening",
+      "page": 24,
+      "repoId": "c2403caee49be74b",
+      "repoName": "Advantageous Opening",
+      "benefitStatus": "BENEFIT_EXACT",
+      "descriptionStatus": "DESCRIPTION_EXACT",
+      "prerequisiteStatus": "PREREQUISITES_EXACT",
+      "sourceMetadataStatus": "SOURCE_AND_PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "CORRECT_OR_SOURCE_ALIGNED"
+      ],
+      "notes": null,
+      "repoBenefitChars": 156,
+      "canonicalBenefitChars": 156
+    },
+    {
+      "canonicalTreeKey": "Clone Wars Campaign Guide|Opportunist",
+      "tree": "Opportunist",
+      "canonicalName": "Retribution",
+      "page": 24,
+      "repoId": "dd6b66af4a67b0a3",
+      "repoName": "Retribution",
+      "benefitStatus": "BENEFIT_EXACT",
+      "descriptionStatus": "DESCRIPTION_EXACT",
+      "prerequisiteStatus": "PREREQUISITES_EXACT",
+      "sourceMetadataStatus": "SOURCE_AND_PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "CORRECT_OR_SOURCE_ALIGNED"
+      ],
+      "notes": null,
+      "repoBenefitChars": 201,
+      "canonicalBenefitChars": 201
+    },
+    {
+      "canonicalTreeKey": "Clone Wars Campaign Guide|Opportunist",
+      "tree": "Opportunist",
+      "canonicalName": "Slip By",
+      "page": 24,
+      "repoId": "893c4fd12df55469",
+      "repoName": "Slip By",
+      "benefitStatus": "BENEFIT_DIFFERENT",
+      "descriptionStatus": "DESCRIPTION_DIFFERENT",
+      "prerequisiteStatus": "PREREQUISITES_EXACT",
+      "sourceMetadataStatus": "SOURCE_AND_PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "DESCRIPTION_ERROR"
+      ],
+      "notes": null,
+      "repoBenefitChars": 113,
+      "canonicalBenefitChars": 243
+    },
+    {
+      "canonicalTreeKey": "Clone Wars Campaign Guide|Opportunist",
+      "tree": "Opportunist",
+      "canonicalName": "Thrive on Chaos",
+      "page": 24,
+      "repoId": "4bdb0bda258c609e",
+      "repoName": "Thrive on Chaos",
+      "benefitStatus": "BENEFIT_EXACT",
+      "descriptionStatus": "DESCRIPTION_EXACT",
+      "prerequisiteStatus": "PREREQUISITES_EXACT",
+      "sourceMetadataStatus": "SOURCE_AND_PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "CORRECT_OR_SOURCE_ALIGNED"
+      ],
+      "notes": null,
+      "repoBenefitChars": 297,
+      "canonicalBenefitChars": 297
+    },
+    {
+      "canonicalTreeKey": "Clone Wars Campaign Guide|Opportunist",
+      "tree": "Opportunist",
+      "canonicalName": "Vindication",
+      "page": 24,
+      "repoId": "a3ab3f2ad47c8775",
+      "repoName": "Vindication",
+      "benefitStatus": "BENEFIT_EXACT",
+      "descriptionStatus": "DESCRIPTION_EXACT",
+      "prerequisiteStatus": "PREREQUISITES_EXACT",
+      "sourceMetadataStatus": "SOURCE_AND_PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "CORRECT_OR_SOURCE_ALIGNED"
+      ],
+      "notes": null,
+      "repoBenefitChars": 182,
+      "canonicalBenefitChars": 182
+    },
+    {
+      "canonicalTreeKey": "Clone Wars Campaign Guide|Reconnaissance",
+      "tree": "Reconnaissance",
+      "canonicalName": "Reconnaissance Team Leader",
+      "page": 25,
+      "repoId": "ff3c38adbb101622",
+      "repoName": "Reconnaissance Team Leader",
+      "benefitStatus": "BENEFIT_DIFFERENT",
+      "descriptionStatus": "DESCRIPTION_EXACT",
+      "prerequisiteStatus": "PREREQUISITES_EXACT",
+      "sourceMetadataStatus": "SOURCE_AND_PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "CORRECT_OR_SOURCE_ALIGNED"
+      ],
+      "notes": null,
+      "repoBenefitChars": 416,
+      "canonicalBenefitChars": 515
+    },
+    {
+      "canonicalTreeKey": "Clone Wars Campaign Guide|Reconnaissance",
+      "tree": "Reconnaissance",
+      "canonicalName": "Close-Combat Assault",
+      "page": 25,
+      "repoId": "84a9654b80238daf",
+      "repoName": "Close-Combat Assault",
+      "benefitStatus": "BENEFIT_EXACT",
+      "descriptionStatus": "DESCRIPTION_EXACT",
+      "prerequisiteStatus": "PREREQUISITES_EXACT",
+      "sourceMetadataStatus": "SOURCE_AND_PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "CORRECT_OR_SOURCE_ALIGNED"
+      ],
+      "notes": null,
+      "repoBenefitChars": 55,
+      "canonicalBenefitChars": 55
+    },
+    {
+      "canonicalTreeKey": "Clone Wars Campaign Guide|Reconnaissance",
+      "tree": "Reconnaissance",
+      "canonicalName": "Get Into Position",
+      "page": 25,
+      "repoId": "510541d890629be0",
+      "repoName": "Get Into Position",
+      "benefitStatus": "BENEFIT_EXACT",
+      "descriptionStatus": "DESCRIPTION_EXACT",
+      "prerequisiteStatus": "PREREQUISITES_EXACT",
+      "sourceMetadataStatus": "SOURCE_AND_PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "CORRECT_OR_SOURCE_ALIGNED"
+      ],
+      "notes": null,
+      "repoBenefitChars": 96,
+      "canonicalBenefitChars": 96
+    },
+    {
+      "canonicalTreeKey": "Clone Wars Campaign Guide|Reconnaissance",
+      "tree": "Reconnaissance",
+      "canonicalName": "Reconnaissance Actions",
+      "page": 25,
+      "repoId": "cf16d7c9bb7a70ad",
+      "repoName": "Reconnaissance Actions",
+      "benefitStatus": "BENEFIT_TRUNCATED_OR_SUMMARY",
+      "descriptionStatus": "DESCRIPTION_EXACT",
+      "prerequisiteStatus": "PREREQUISITES_EXACT",
+      "sourceMetadataStatus": "SOURCE_AND_PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "CORRECT_OR_SOURCE_ALIGNED"
+      ],
+      "notes": null,
+      "repoBenefitChars": 216,
+      "canonicalBenefitChars": 1264
+    },
+    {
+      "canonicalTreeKey": "Clone Wars Campaign Guide|Republic Commando",
+      "tree": "Republic Commando",
+      "canonicalName": "Ambush",
+      "page": 40,
+      "repoId": "c5996de1e3c69c04",
+      "repoName": "Ambush (Republic Commando)",
+      "benefitStatus": "BENEFIT_DIFFERENT",
+      "descriptionStatus": "DESCRIPTION_DIFFERENT",
+      "prerequisiteStatus": "PREREQUISITES_EXACT",
+      "sourceMetadataStatus": "SOURCE_AND_PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "NAME_VARIANT",
+        "DESCRIPTION_ERROR"
+      ],
+      "notes": null,
+      "repoBenefitChars": 69,
+      "canonicalBenefitChars": 115
+    },
+    {
+      "canonicalTreeKey": "Clone Wars Campaign Guide|Republic Commando",
+      "tree": "Republic Commando",
+      "canonicalName": "Higher Yield",
+      "page": 40,
+      "repoId": "fb003bc00401f0b7",
+      "repoName": "Higher Yield",
+      "benefitStatus": "BENEFIT_DIFFERENT",
+      "descriptionStatus": "DESCRIPTION_DIFFERENT",
+      "prerequisiteStatus": "PREREQUISITES_CANONICAL_MISMATCH",
+      "sourceMetadataStatus": "SOURCE_AND_PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "DESCRIPTION_ERROR",
+        "PREREQUISITE_ERROR"
+      ],
+      "notes": "Repo prerequisite says Mechanics; printed source says the Demolitions skill.",
+      "repoBenefitChars": 108,
+      "canonicalBenefitChars": 101
+    },
+    {
+      "canonicalTreeKey": "Clone Wars Campaign Guide|Republic Commando",
+      "tree": "Republic Commando",
+      "canonicalName": "Rapid Reload",
+      "page": 40,
+      "repoId": "f8922fbb1ac0b6d3",
+      "repoName": "Rapid Reload",
+      "benefitStatus": "BENEFIT_DIFFERENT",
+      "descriptionStatus": "DESCRIPTION_DIFFERENT",
+      "prerequisiteStatus": "PREREQUISITES_EXACT",
+      "sourceMetadataStatus": "SOURCE_AND_PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "DESCRIPTION_ERROR"
+      ],
+      "notes": "Repo adds Power Pack; the printed text specifies a stored energy cell.",
+      "repoBenefitChars": 100,
+      "canonicalBenefitChars": 86
+    },
+    {
+      "canonicalTreeKey": "Clone Wars Campaign Guide|Republic Commando",
+      "tree": "Republic Commando",
+      "canonicalName": "Shoulder to Shoulder",
+      "page": 40,
+      "repoId": "b2a9f60d6647fcc4",
+      "repoName": "Shoulder to Shoulder",
+      "benefitStatus": "BENEFIT_EXACT",
+      "descriptionStatus": "DESCRIPTION_EXACT",
+      "prerequisiteStatus": "PREREQUISITES_EXACT",
+      "sourceMetadataStatus": "SOURCE_AND_PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "CORRECT_OR_SOURCE_ALIGNED"
+      ],
+      "notes": null,
+      "repoBenefitChars": 293,
+      "canonicalBenefitChars": 293
+    },
+    {
+      "canonicalTreeKey": "Clone Wars Campaign Guide|Republic Commando",
+      "tree": "Republic Commando",
+      "canonicalName": "Strength in Numbers",
+      "page": 40,
+      "repoId": "22674c41b3d185be",
+      "repoName": "Strength in Numbers",
+      "benefitStatus": "BENEFIT_EXACT",
+      "descriptionStatus": "DESCRIPTION_EXACT",
+      "prerequisiteStatus": "PREREQUISITES_EXACT",
+      "sourceMetadataStatus": "SOURCE_AND_PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "CORRECT_OR_SOURCE_ALIGNED"
+      ],
+      "notes": null,
+      "repoBenefitChars": 81,
+      "canonicalBenefitChars": 81
+    },
+    {
+      "canonicalTreeKey": "Clone Wars Campaign Guide|Republic Commando",
+      "tree": "Republic Commando",
+      "canonicalName": "Weapon Shift",
+      "page": 40,
+      "repoId": "032242fb87215e06",
+      "repoName": "Weapon Shift",
+      "benefitStatus": "BENEFIT_EXACT",
+      "descriptionStatus": "DESCRIPTION_EXACT",
+      "prerequisiteStatus": "PREREQUISITES_EXACT",
+      "sourceMetadataStatus": "SOURCE_AND_PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "CORRECT_OR_SOURCE_ALIGNED"
+      ],
+      "notes": null,
+      "repoBenefitChars": 135,
+      "canonicalBenefitChars": 135
+    },
+    {
+      "canonicalTreeKey": "Clone Wars Campaign Guide|Squad Leader",
+      "tree": "Squad Leader",
+      "canonicalName": "Commanding Officer",
+      "page": 26,
+      "repoId": "bd34fd5bbc4a14fb",
+      "repoName": "Commanding Officer",
+      "benefitStatus": "BENEFIT_TRUNCATED_OR_SUMMARY",
+      "descriptionStatus": "DESCRIPTION_EXACT",
+      "prerequisiteStatus": "PREREQUISITES_EXACT",
+      "sourceMetadataStatus": "SOURCE_AND_PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "CORRECT_OR_SOURCE_ALIGNED"
+      ],
+      "notes": null,
+      "repoBenefitChars": 434,
+      "canonicalBenefitChars": 559
+    },
+    {
+      "canonicalTreeKey": "Clone Wars Campaign Guide|Squad Leader",
+      "tree": "Squad Leader",
+      "canonicalName": "Coordinated Tactics",
+      "page": 26,
+      "repoId": "4559e2e975f552fa",
+      "repoName": "Coordinated Tactics",
+      "benefitStatus": "BENEFIT_EXACT",
+      "descriptionStatus": "DESCRIPTION_EXACT",
+      "prerequisiteStatus": "PREREQUISITES_EXACT",
+      "sourceMetadataStatus": "SOURCE_AND_PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "CORRECT_OR_SOURCE_ALIGNED"
+      ],
+      "notes": null,
+      "repoBenefitChars": 193,
+      "canonicalBenefitChars": 193
+    },
+    {
+      "canonicalTreeKey": "Clone Wars Campaign Guide|Squad Leader",
+      "tree": "Squad Leader",
+      "canonicalName": "Fire at Will",
+      "page": 26,
+      "repoId": "fa113b33ac66c3b9",
+      "repoName": "Fire at Will",
+      "benefitStatus": "BENEFIT_EXACT",
+      "descriptionStatus": "DESCRIPTION_EXACT",
+      "prerequisiteStatus": "PREREQUISITES_EXACT",
+      "sourceMetadataStatus": "SOURCE_AND_PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "CORRECT_OR_SOURCE_ALIGNED"
+      ],
+      "notes": null,
+      "repoBenefitChars": 171,
+      "canonicalBenefitChars": 171
+    },
+    {
+      "canonicalTreeKey": "Clone Wars Campaign Guide|Squad Leader",
+      "tree": "Squad Leader",
+      "canonicalName": "Squad Actions",
+      "page": 26,
+      "repoId": "a4fca56a9a3853a6",
+      "repoName": "Squad Actions",
+      "benefitStatus": "BENEFIT_TRUNCATED_OR_SUMMARY",
+      "descriptionStatus": "DESCRIPTION_EXACT",
+      "prerequisiteStatus": "PREREQUISITES_EXACT",
+      "sourceMetadataStatus": "SOURCE_AND_PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "CORRECT_OR_SOURCE_ALIGNED"
+      ],
+      "notes": null,
+      "repoBenefitChars": 192,
+      "canonicalBenefitChars": 1160
+    },
+    {
+      "canonicalTreeKey": "Clone Wars Campaign Guide|Surveillance",
+      "tree": "Surveillance",
+      "canonicalName": "Advanced Intel",
+      "page": 25,
+      "repoId": "b48e17b423ae8300",
+      "repoName": "Advanced Intel",
+      "benefitStatus": "BENEFIT_EXACT",
+      "descriptionStatus": "DESCRIPTION_EXACT",
+      "prerequisiteStatus": "PREREQUISITES_EXACT",
+      "sourceMetadataStatus": "SOURCE_AND_PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "CORRECT_OR_SOURCE_ALIGNED"
+      ],
+      "notes": null,
+      "repoBenefitChars": 157,
+      "canonicalBenefitChars": 157
+    },
+    {
+      "canonicalTreeKey": "Clone Wars Campaign Guide|Surveillance",
+      "tree": "Surveillance",
+      "canonicalName": "Hidden Eyes",
+      "page": 25,
+      "repoId": "792ee3a45bf6f002",
+      "repoName": "Hidden Eyes",
+      "benefitStatus": "BENEFIT_EXACT",
+      "descriptionStatus": "DESCRIPTION_EXACT",
+      "prerequisiteStatus": "PREREQUISITES_EXACT",
+      "sourceMetadataStatus": "SOURCE_AND_PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "CORRECT_OR_SOURCE_ALIGNED"
+      ],
+      "notes": null,
+      "repoBenefitChars": 122,
+      "canonicalBenefitChars": 122
+    },
+    {
+      "canonicalTreeKey": "Clone Wars Campaign Guide|Surveillance",
+      "tree": "Surveillance",
+      "canonicalName": "Hunt the Hunter",
+      "page": 25,
+      "repoId": "cb018e0f620614fd",
+      "repoName": "Hunt the Hunter",
+      "benefitStatus": "BENEFIT_EXACT",
+      "descriptionStatus": "DESCRIPTION_EXACT",
+      "prerequisiteStatus": "PREREQUISITES_EXACT",
+      "sourceMetadataStatus": "SOURCE_AND_PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "CORRECT_OR_SOURCE_ALIGNED"
+      ],
+      "notes": null,
+      "repoBenefitChars": 173,
+      "canonicalBenefitChars": 173
+    },
+    {
+      "canonicalTreeKey": "Clone Wars Campaign Guide|Surveillance",
+      "tree": "Surveillance",
+      "canonicalName": "Seek and Destroy",
+      "page": 25,
+      "repoId": "adacf682b6ccf21c",
+      "repoName": "Seek and Destroy",
+      "benefitStatus": "BENEFIT_EXACT",
+      "descriptionStatus": "DESCRIPTION_EXACT",
+      "prerequisiteStatus": "PREREQUISITES_EXACT",
+      "sourceMetadataStatus": "SOURCE_AND_PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "CORRECT_OR_SOURCE_ALIGNED"
+      ],
+      "notes": null,
+      "repoBenefitChars": 210,
+      "canonicalBenefitChars": 210
+    },
+    {
+      "canonicalTreeKey": "Clone Wars Campaign Guide|Surveillance",
+      "tree": "Surveillance",
+      "canonicalName": "Spotter",
+      "page": 25,
+      "repoId": "a8973662a2f1cf0f",
+      "repoName": "Spotter",
+      "benefitStatus": "BENEFIT_EXACT",
+      "descriptionStatus": "DESCRIPTION_EXACT",
+      "prerequisiteStatus": "PREREQUISITES_EXACT",
+      "sourceMetadataStatus": "SOURCE_AND_PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "CORRECT_OR_SOURCE_ALIGNED"
+      ],
+      "notes": null,
+      "repoBenefitChars": 307,
+      "canonicalBenefitChars": 307
+    },
+    {
+      "canonicalTreeKey": "Clone Wars Campaign Guide|Trooper",
+      "tree": "Trooper",
+      "canonicalName": "Comrades in Arms",
+      "page": 26,
+      "repoId": "d4dcafa34cda98c2",
+      "repoName": "Comrades in Arms",
+      "benefitStatus": "BENEFIT_DIFFERENT",
+      "descriptionStatus": "DESCRIPTION_DIFFERENT",
+      "prerequisiteStatus": "PREREQUISITES_EXACT",
+      "sourceMetadataStatus": "SOURCE_AND_PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "DESCRIPTION_ERROR",
+        "CONCATENATED_IDENTITY_TEXT"
+      ],
+      "notes": "Repo record contains concatenated mechanics belonging to other Trooper talents.",
+      "repoBenefitChars": 510,
+      "canonicalBenefitChars": 116
+    },
+    {
+      "canonicalTreeKey": "Clone Wars Campaign Guide|Trooper",
+      "tree": "Trooper",
+      "canonicalName": "Focused Targeting",
+      "page": 26,
+      "repoId": "6c52d837af948ca0",
+      "repoName": "Focused Targeting",
+      "benefitStatus": "BENEFIT_EXACT",
+      "descriptionStatus": "DESCRIPTION_EXACT",
+      "prerequisiteStatus": "PREREQUISITES_EXACT",
+      "sourceMetadataStatus": "SOURCE_AND_PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "CORRECT_OR_SOURCE_ALIGNED"
+      ],
+      "notes": null,
+      "repoBenefitChars": 174,
+      "canonicalBenefitChars": 174
+    },
+    {
+      "canonicalTreeKey": "Clone Wars Campaign Guide|Trooper",
+      "tree": "Trooper",
+      "canonicalName": "Phalanx",
+      "page": 26,
+      "repoId": "e02a3171a6862f02",
+      "repoName": "Phalanx",
+      "benefitStatus": "BENEFIT_EXACT",
+      "descriptionStatus": "DESCRIPTION_DIFFERENT",
+      "prerequisiteStatus": "PREREQUISITES_EXACT",
+      "sourceMetadataStatus": "SOURCE_AND_PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "CORRECT_OR_SOURCE_ALIGNED"
+      ],
+      "notes": null,
+      "repoBenefitChars": 81,
+      "canonicalBenefitChars": 81
+    },
+    {
+      "canonicalTreeKey": "Clone Wars Campaign Guide|Trooper",
+      "tree": "Trooper",
+      "canonicalName": "Stick Together",
+      "page": 26,
+      "repoId": "729a17e25b873f4f",
+      "repoName": "Stick Together",
+      "benefitStatus": "BENEFIT_EXACT",
+      "descriptionStatus": "DESCRIPTION_EXACT",
+      "prerequisiteStatus": "PREREQUISITES_EXACT",
+      "sourceMetadataStatus": "SOURCE_AND_PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "CORRECT_OR_SOURCE_ALIGNED"
+      ],
+      "notes": null,
+      "repoBenefitChars": 213,
+      "canonicalBenefitChars": 213
+    },
+    {
+      "canonicalTreeKey": "Clone Wars Campaign Guide|Trooper",
+      "tree": "Trooper",
+      "canonicalName": "Watch Your Back",
+      "page": 26,
+      "repoId": "a0c97d4ca8a2d34d",
+      "repoName": "Watch Your Back",
+      "benefitStatus": "BENEFIT_EXACT",
+      "descriptionStatus": "DESCRIPTION_EXACT",
+      "prerequisiteStatus": "PREREQUISITES_EXACT",
+      "sourceMetadataStatus": "SOURCE_AND_PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "CORRECT_OR_SOURCE_ALIGNED"
+      ],
+      "notes": null,
+      "repoBenefitChars": 107,
+      "canonicalBenefitChars": 107
+    },
+    {
+      "canonicalTreeKey": "Clone Wars Campaign Guide|Vanguard",
+      "tree": "Vanguard",
+      "canonicalName": "Enhanced Vision",
+      "page": 47,
+      "repoId": "d6f62f5d8b003e14",
+      "repoName": "Enhanced Vision",
+      "benefitStatus": "BENEFIT_EXACT",
+      "descriptionStatus": "DESCRIPTION_EXACT",
+      "prerequisiteStatus": "PREREQUISITES_EXACT",
+      "sourceMetadataStatus": "SOURCE_AND_PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "CORRECT_OR_SOURCE_ALIGNED"
+      ],
+      "notes": null,
+      "repoBenefitChars": 121,
+      "canonicalBenefitChars": 121
+    },
+    {
+      "canonicalTreeKey": "Clone Wars Campaign Guide|Vanguard",
+      "tree": "Vanguard",
+      "canonicalName": "Impenetrable Cover",
+      "page": 47,
+      "repoId": "1584c86ad48d7b81",
+      "repoName": "Impenetrable Cover",
+      "benefitStatus": "BENEFIT_EXACT",
+      "descriptionStatus": "DESCRIPTION_EXACT",
+      "prerequisiteStatus": "PREREQUISITES_EXACT",
+      "sourceMetadataStatus": "SOURCE_AND_PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "CORRECT_OR_SOURCE_ALIGNED"
+      ],
+      "notes": null,
+      "repoBenefitChars": 226,
+      "canonicalBenefitChars": 226
+    },
+    {
+      "canonicalTreeKey": "Clone Wars Campaign Guide|Vanguard",
+      "tree": "Vanguard",
+      "canonicalName": "Invisible Attacker",
+      "page": 47,
+      "repoId": "fb495a33cd53da43",
+      "repoName": "Invisible Attacker",
+      "benefitStatus": "BENEFIT_EXACT",
+      "descriptionStatus": "DESCRIPTION_EXACT",
+      "prerequisiteStatus": "PREREQUISITES_EXACT",
+      "sourceMetadataStatus": "SOURCE_AND_PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "CORRECT_OR_SOURCE_ALIGNED"
+      ],
+      "notes": null,
+      "repoBenefitChars": 96,
+      "canonicalBenefitChars": 96
+    },
+    {
+      "canonicalTreeKey": "Clone Wars Campaign Guide|Vanguard",
+      "tree": "Vanguard",
+      "canonicalName": "Mark the Target",
+      "page": 47,
+      "repoId": "10a678b2b7e3ac0e",
+      "repoName": "Mark the Target",
+      "benefitStatus": "BENEFIT_EXACT",
+      "descriptionStatus": "DESCRIPTION_EXACT",
+      "prerequisiteStatus": "PREREQUISITES_EXACT",
+      "sourceMetadataStatus": "SOURCE_AND_PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "CORRECT_OR_SOURCE_ALIGNED"
+      ],
+      "notes": null,
+      "repoBenefitChars": 250,
+      "canonicalBenefitChars": 250
+    },
+    {
+      "canonicalTreeKey": "Clone Wars Campaign Guide|Vanguard",
+      "tree": "Vanguard",
+      "canonicalName": "Maximize Cover",
+      "page": 47,
+      "repoId": "f7b8af6b2e6b50c3",
+      "repoName": "Maximize Cover",
+      "benefitStatus": "BENEFIT_EXACT",
+      "descriptionStatus": "DESCRIPTION_EXACT",
+      "prerequisiteStatus": "PREREQUISITES_EXACT",
+      "sourceMetadataStatus": "SOURCE_AND_PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "CORRECT_OR_SOURCE_ALIGNED"
+      ],
+      "notes": null,
+      "repoBenefitChars": 175,
+      "canonicalBenefitChars": 175
+    },
+    {
+      "canonicalTreeKey": "Clone Wars Campaign Guide|Vanguard",
+      "tree": "Vanguard",
+      "canonicalName": "Shellshock",
+      "page": 47,
+      "repoId": "f75fa286772de3e7",
+      "repoName": "Shellshock",
+      "benefitStatus": "BENEFIT_EXACT",
+      "descriptionStatus": "DESCRIPTION_EXACT",
+      "prerequisiteStatus": "PREREQUISITES_EXACT",
+      "sourceMetadataStatus": "SOURCE_AND_PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "CORRECT_OR_SOURCE_ALIGNED"
+      ],
+      "notes": null,
+      "repoBenefitChars": 145,
+      "canonicalBenefitChars": 145
+    },
+    {
+      "canonicalTreeKey": "Clone Wars Campaign Guide|Vanguard",
+      "tree": "Vanguard",
+      "canonicalName": "Soften the Target",
+      "page": 47,
+      "repoId": "148e7a10a55d6ed3",
+      "repoName": "Soften the Target",
+      "benefitStatus": "BENEFIT_EXACT",
+      "descriptionStatus": "DESCRIPTION_EXACT",
+      "prerequisiteStatus": "PREREQUISITES_EXACT",
+      "sourceMetadataStatus": "SOURCE_AND_PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "CORRECT_OR_SOURCE_ALIGNED"
+      ],
+      "notes": null,
+      "repoBenefitChars": 245,
+      "canonicalBenefitChars": 245
+    },
+    {
+      "canonicalTreeKey": "Clone Wars Campaign Guide|Vanguard",
+      "tree": "Vanguard",
+      "canonicalName": "Triangulate",
+      "page": 47,
+      "repoId": "bd6cbb85cf7fc8a2",
+      "repoName": "Triangulate",
+      "benefitStatus": "BENEFIT_EXACT",
+      "descriptionStatus": "DESCRIPTION_EXACT",
+      "prerequisiteStatus": "PREREQUISITES_EXACT",
+      "sourceMetadataStatus": "SOURCE_AND_PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "CORRECT_OR_SOURCE_ALIGNED"
+      ],
+      "notes": null,
+      "repoBenefitChars": 321,
+      "canonicalBenefitChars": 321
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Alter",
+      "tree": "Alter",
+      "canonicalName": "Aversion",
+      "page": 53,
+      "repoId": "13cc978a8023eaa4",
+      "repoName": "Aversion",
+      "benefitStatus": "BENEFIT_TRUNCATED_OR_SUMMARY",
+      "descriptionStatus": "DESCRIPTION_TRUNCATED_OR_SUMMARY",
+      "prerequisiteStatus": "PREREQUISITES_EXACT",
+      "sourceMetadataStatus": "SOURCE_AND_PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "DESCRIPTION_ERROR"
+      ],
+      "notes": null,
+      "repoBenefitChars": 94,
+      "canonicalBenefitChars": 270
+    },
+    {
+      "canonicalTreeKey": "Clone Wars Campaign Guide|Bando Gora Captain",
+      "tree": "Bando Gora Captain",
+      "canonicalName": "Bando Gora Surge",
+      "page": 55,
+      "repoId": "6cb7efd0785d4114",
+      "repoName": "Bando Gora Surge",
+      "benefitStatus": "BENEFIT_EXACT",
+      "descriptionStatus": "DESCRIPTION_EXACT",
+      "prerequisiteStatus": "PREREQUISITES_EXACT",
+      "sourceMetadataStatus": "PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "CORRECT_OR_SOURCE_ALIGNED"
+      ],
+      "notes": null,
+      "repoBenefitChars": 287,
+      "canonicalBenefitChars": 287
+    },
+    {
+      "canonicalTreeKey": "Clone Wars Campaign Guide|Bando Gora Captain",
+      "tree": "Bando Gora Captain",
+      "canonicalName": "Force Fighter",
+      "page": 56,
+      "repoId": "3684019966515ceb",
+      "repoName": "Force Fighter",
+      "benefitStatus": "BENEFIT_EXACT",
+      "descriptionStatus": "DESCRIPTION_EXACT",
+      "prerequisiteStatus": "PREREQUISITES_EXACT",
+      "sourceMetadataStatus": "PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "CORRECT_OR_SOURCE_ALIGNED"
+      ],
+      "notes": null,
+      "repoBenefitChars": 142,
+      "canonicalBenefitChars": 142
+    },
+    {
+      "canonicalTreeKey": "Clone Wars Campaign Guide|Bando Gora Captain",
+      "tree": "Bando Gora Captain",
+      "canonicalName": "Resist Enervation",
+      "page": 56,
+      "repoId": "3fa908b70c8d97a6",
+      "repoName": "Resist Enervation",
+      "benefitStatus": "BENEFIT_EXACT",
+      "descriptionStatus": "DESCRIPTION_EXACT",
+      "prerequisiteStatus": "PREREQUISITES_EXACT",
+      "sourceMetadataStatus": "PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "CORRECT_OR_SOURCE_ALIGNED"
+      ],
+      "notes": null,
+      "repoBenefitChars": 137,
+      "canonicalBenefitChars": 137
+    },
+    {
+      "canonicalTreeKey": "Clone Wars Campaign Guide|Bando Gora Captain",
+      "tree": "Bando Gora Captain",
+      "canonicalName": "Victorious Force Mastery",
+      "page": 56,
+      "repoId": "0742d901c13ea130",
+      "repoName": "Victorious Force Mastery",
+      "benefitStatus": "BENEFIT_EXACT",
+      "descriptionStatus": "DESCRIPTION_EXACT",
+      "prerequisiteStatus": "PREREQUISITES_EXACT",
+      "sourceMetadataStatus": "PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "CORRECT_OR_SOURCE_ALIGNED"
+      ],
+      "notes": null,
+      "repoBenefitChars": 175,
+      "canonicalBenefitChars": 175
+    },
+    {
+      "canonicalTreeKey": "Clone Wars Campaign Guide|Believer Disciple",
+      "tree": "Believer Disciple",
+      "canonicalName": "Believer Intuition",
+      "page": 56,
+      "repoId": "3c7eff4b63880ee2",
+      "repoName": "Believer Intuition",
+      "benefitStatus": "BENEFIT_EXACT",
+      "descriptionStatus": "DESCRIPTION_EXACT",
+      "prerequisiteStatus": "PREREQUISITES_EXACT",
+      "sourceMetadataStatus": "PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "CORRECT_OR_SOURCE_ALIGNED"
+      ],
+      "notes": null,
+      "repoBenefitChars": 260,
+      "canonicalBenefitChars": 260
+    },
+    {
+      "canonicalTreeKey": "Clone Wars Campaign Guide|Believer Disciple",
+      "tree": "Believer Disciple",
+      "canonicalName": "Defense Boost",
+      "page": 56,
+      "repoId": "7d4f036dbaabdd02",
+      "repoName": "Defense Boost",
+      "benefitStatus": "BENEFIT_EXACT",
+      "descriptionStatus": "DESCRIPTION_EXACT",
+      "prerequisiteStatus": "PREREQUISITES_EXACT",
+      "sourceMetadataStatus": "PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "CORRECT_OR_SOURCE_ALIGNED"
+      ],
+      "notes": null,
+      "repoBenefitChars": 300,
+      "canonicalBenefitChars": 300
+    },
+    {
+      "canonicalTreeKey": "Clone Wars Campaign Guide|Believer Disciple",
+      "tree": "Believer Disciple",
+      "canonicalName": "Hardiness",
+      "page": 56,
+      "repoId": "038fcce2b039ece5",
+      "repoName": "Hardiness",
+      "benefitStatus": "BENEFIT_EXACT",
+      "descriptionStatus": "DESCRIPTION_EXACT",
+      "prerequisiteStatus": "PREREQUISITES_EXACT",
+      "sourceMetadataStatus": "PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "CORRECT_OR_SOURCE_ALIGNED"
+      ],
+      "notes": null,
+      "repoBenefitChars": 127,
+      "canonicalBenefitChars": 127
+    },
+    {
+      "canonicalTreeKey": "Clone Wars Campaign Guide|Believer Disciple",
+      "tree": "Believer Disciple",
+      "canonicalName": "High Impact",
+      "page": 56,
+      "repoId": "71bba39bd4ad95ae",
+      "repoName": "High Impact",
+      "benefitStatus": "BENEFIT_EXACT",
+      "descriptionStatus": "DESCRIPTION_EXACT",
+      "prerequisiteStatus": "PREREQUISITES_EXACT",
+      "sourceMetadataStatus": "PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "CORRECT_OR_SOURCE_ALIGNED"
+      ],
+      "notes": null,
+      "repoBenefitChars": 171,
+      "canonicalBenefitChars": 171
+    },
+    {
+      "canonicalTreeKey": "Clone Wars Campaign Guide|Believer Disciple",
+      "tree": "Believer Disciple",
+      "canonicalName": "Sith Reverence",
+      "page": 56,
+      "repoId": "81b2b88df9600ca7",
+      "repoName": "Sith Reverence",
+      "benefitStatus": "BENEFIT_EXACT",
+      "descriptionStatus": "DESCRIPTION_EXACT",
+      "prerequisiteStatus": "PREREQUISITES_EXACT",
+      "sourceMetadataStatus": "PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "CORRECT_OR_SOURCE_ALIGNED"
+      ],
+      "notes": null,
+      "repoBenefitChars": 169,
+      "canonicalBenefitChars": 169
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Control",
+      "tree": "Control",
+      "canonicalName": "The Will To Resist",
+      "page": 53,
+      "repoId": "9befb5e9bce19fa0",
+      "repoName": "The Will to Resist",
+      "benefitStatus": "BENEFIT_DIFFERENT",
+      "descriptionStatus": "DESCRIPTION_TRUNCATED_OR_SUMMARY",
+      "prerequisiteStatus": "PREREQUISITES_EXACT",
+      "sourceMetadataStatus": "SOURCE_AND_PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "NAME_VARIANT",
+        "DESCRIPTION_ERROR"
+      ],
+      "notes": null,
+      "repoBenefitChars": 159,
+      "canonicalBenefitChars": 332
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Dark Side",
+      "tree": "Dark Side",
+      "canonicalName": "Consumed by Darkness",
+      "page": 53,
+      "repoId": "b4d45c6951deb889",
+      "repoName": "Consumed by Darkness",
+      "benefitStatus": "BENEFIT_TRUNCATED_OR_SUMMARY",
+      "descriptionStatus": "DESCRIPTION_TRUNCATED_OR_SUMMARY",
+      "prerequisiteStatus": "PREREQUISITES_EXACT",
+      "sourceMetadataStatus": "SOURCE_AND_PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "DESCRIPTION_ERROR"
+      ],
+      "notes": null,
+      "repoBenefitChars": 42,
+      "canonicalBenefitChars": 208
+    },
+    {
+      "canonicalTreeKey": "Clone Wars Campaign Guide|Korunnai Adept",
+      "tree": "Korunnai Adept",
+      "canonicalName": "Akk Dog Master",
+      "page": 57,
+      "repoId": "b265aa9dd35c4c5b",
+      "repoName": "Akk Dog Master",
+      "benefitStatus": "BENEFIT_DIFFERENT",
+      "descriptionStatus": "DESCRIPTION_DIFFERENT",
+      "prerequisiteStatus": "PREREQUISITES_CANONICAL_MISMATCH",
+      "sourceMetadataStatus": "SOURCE_AND_PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "DESCRIPTION_ERROR",
+        "HOMEBREW_CONTAMINATION",
+        "IDENTITY_ERROR",
+        "PREREQUISITE_ERROR"
+      ],
+      "notes": "Repo contains other Korunnai mechanics, unrelated Vibroshield prerequisite material, and fan-source/homebrew content.",
+      "repoBenefitChars": 2215,
+      "canonicalBenefitChars": 483
+    },
+    {
+      "canonicalTreeKey": "Clone Wars Campaign Guide|Korunnai Adept",
+      "tree": "Korunnai Adept",
+      "canonicalName": "Akk Dog Trainer's Actions",
+      "page": 57,
+      "repoId": "ad7fd3e1a2b04c30",
+      "repoName": "Akk Dog Trainer's Actions",
+      "benefitStatus": "BENEFIT_DIFFERENT",
+      "descriptionStatus": "DESCRIPTION_DIFFERENT",
+      "prerequisiteStatus": "PREREQUISITES_EXACT",
+      "sourceMetadataStatus": "SOURCE_AND_PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "DESCRIPTION_ERROR"
+      ],
+      "notes": "Repo stores only a one-sentence summary; source defines three full follower actions.",
+      "repoBenefitChars": 140,
+      "canonicalBenefitChars": 1078
+    },
+    {
+      "canonicalTreeKey": "Clone Wars Campaign Guide|Korunnai Adept",
+      "tree": "Korunnai Adept",
+      "canonicalName": "Akk Dog Attack Training",
+      "page": 57,
+      "repoId": "ad7fd3e1a2b04c31",
+      "repoName": "Akk Dog Attack Training",
+      "benefitStatus": "BENEFIT_HAS_EXTRA_TEXT",
+      "descriptionStatus": "DESCRIPTION_HAS_EXTRA_TEXT",
+      "prerequisiteStatus": "PREREQUISITES_EXACT",
+      "sourceMetadataStatus": "SOURCE_AND_PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "DESCRIPTION_ERROR"
+      ],
+      "notes": "Repo appends an explanatory sentence not printed in the source.",
+      "repoBenefitChars": 87,
+      "canonicalBenefitChars": 53
+    },
+    {
+      "canonicalTreeKey": "Clone Wars Campaign Guide|Korunnai Adept",
+      "tree": "Korunnai Adept",
+      "canonicalName": "Protective Reaction",
+      "page": 57,
+      "repoId": "ad7fd3e1a2b04c32",
+      "repoName": "Protective Reaction",
+      "benefitStatus": "BENEFIT_EXACT",
+      "descriptionStatus": "DESCRIPTION_EXACT",
+      "prerequisiteStatus": "PREREQUISITES_EXACT",
+      "sourceMetadataStatus": "SOURCE_AND_PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "CORRECT_OR_SOURCE_ALIGNED"
+      ],
+      "notes": null,
+      "repoBenefitChars": 148,
+      "canonicalBenefitChars": 148
+    },
+    {
+      "canonicalTreeKey": "Clone Wars Campaign Guide|Light Side",
+      "tree": "Light Side",
+      "canonicalName": "At Peace",
+      "page": 53,
+      "repoId": "d054d594fe0ceba2",
+      "repoName": "At Peace",
+      "benefitStatus": "BENEFIT_DIFFERENT",
+      "descriptionStatus": "DESCRIPTION_TRUNCATED_OR_SUMMARY",
+      "prerequisiteStatus": "PREREQUISITES_EXACT",
+      "sourceMetadataStatus": "SOURCE_AND_PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "DESCRIPTION_ERROR"
+      ],
+      "notes": null,
+      "repoBenefitChars": 81,
+      "canonicalBenefitChars": 143
+    },
+    {
+      "canonicalTreeKey": "Clone Wars Campaign Guide|Light Side",
+      "tree": "Light Side",
+      "canonicalName": "Attuned",
+      "page": 53,
+      "repoId": "bd797d3f83d0f61f",
+      "repoName": "Attuned",
+      "benefitStatus": "BENEFIT_DIFFERENT",
+      "descriptionStatus": "DESCRIPTION_TRUNCATED_OR_SUMMARY",
+      "prerequisiteStatus": "PREREQUISITES_EXACT",
+      "sourceMetadataStatus": "SOURCE_AND_PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "DESCRIPTION_ERROR"
+      ],
+      "notes": null,
+      "repoBenefitChars": 137,
+      "canonicalBenefitChars": 201
+    },
+    {
+      "canonicalTreeKey": "Clone Wars Campaign Guide|Light Side",
+      "tree": "Light Side",
+      "canonicalName": "Focused Attack",
+      "page": 53,
+      "repoId": "2fc019fa8c4108a7",
+      "repoName": "Focused Attack",
+      "benefitStatus": "BENEFIT_HAS_EXTRA_TEXT",
+      "descriptionStatus": "DESCRIPTION_HAS_EXTRA_TEXT",
+      "prerequisiteStatus": "PREREQUISITES_EXACT",
+      "sourceMetadataStatus": "SOURCE_AND_PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "DESCRIPTION_ERROR",
+        "CONCATENATED_IDENTITY_TEXT",
+        "HOMEBREW_CONTAMINATION"
+      ],
+      "notes": "Repo concatenates Attuned, Focused Attack, Surge of Light, and explicit fan-source/homebrew material.",
+      "repoBenefitChars": 1553,
+      "canonicalBenefitChars": 142
+    },
+    {
+      "canonicalTreeKey": "Clone Wars Campaign Guide|Light Side",
+      "tree": "Light Side",
+      "canonicalName": "Surge of Light",
+      "page": 53,
+      "repoId": "8223d30bfce0c14d",
+      "repoName": "Surge of Light",
+      "benefitStatus": "BENEFIT_TRUNCATED_OR_SUMMARY",
+      "descriptionStatus": "DESCRIPTION_TRUNCATED_OR_SUMMARY",
+      "prerequisiteStatus": "PREREQUISITES_EXACT",
+      "sourceMetadataStatus": "SOURCE_AND_PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "DESCRIPTION_ERROR"
+      ],
+      "notes": null,
+      "repoBenefitChars": 79,
+      "canonicalBenefitChars": 275
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Sense",
+      "tree": "Sense",
+      "canonicalName": "Heightened Awareness",
+      "page": 53,
+      "repoId": "2db9534917366b8d",
+      "repoName": "Heightened Awareness",
+      "benefitStatus": "BENEFIT_DIFFERENT",
+      "descriptionStatus": "DESCRIPTION_DIFFERENT",
+      "prerequisiteStatus": "PREREQUISITES_EXACT",
+      "sourceMetadataStatus": "SOURCE_AND_PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "DESCRIPTION_ERROR"
+      ],
+      "notes": null,
+      "repoBenefitChars": 45,
+      "canonicalBenefitChars": 205
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Sense",
+      "tree": "Sense",
+      "canonicalName": "Psychometry",
+      "page": 53,
+      "repoId": "8ff0ec89e13b6d51",
+      "repoName": "Psychometry",
+      "benefitStatus": "BENEFIT_DIFFERENT",
+      "descriptionStatus": "DESCRIPTION_DIFFERENT",
+      "prerequisiteStatus": "PREREQUISITES_EXACT",
+      "sourceMetadataStatus": "SOURCE_AND_PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "DESCRIPTION_ERROR"
+      ],
+      "notes": null,
+      "repoBenefitChars": 68,
+      "canonicalBenefitChars": 416
+    },
+    {
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Sense",
+      "tree": "Sense",
+      "canonicalName": "Shift Sense",
+      "page": 53,
+      "repoId": "98d0ce77949d17cd",
+      "repoName": "Shift Sense",
+      "benefitStatus": "BENEFIT_TRUNCATED_OR_SUMMARY",
+      "descriptionStatus": "DESCRIPTION_TRUNCATED_OR_SUMMARY",
+      "prerequisiteStatus": "PREREQUISITES_EXACT",
+      "sourceMetadataStatus": "SOURCE_AND_PAGE_MISSING",
+      "summaryStatus": "SUMMARY_MISSING",
+      "dispositions": [
+        "DESCRIPTION_ERROR"
+      ],
+      "notes": null,
+      "repoBenefitChars": 85,
+      "canonicalBenefitChars": 121
+    }
+  ]
+}
