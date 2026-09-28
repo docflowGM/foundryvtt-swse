@@ -2,90 +2,76 @@
 
 ## Operating rule
 
-Claude's job in Phase 3C is to execute certified manifests, not to re-audit SWSE talent rules.
+Phase 3C executes certified Phase 3B manifests. It does not re-audit the books or reinterpret identity.
 
-For each completed book, use the corresponding `data/audits/talent-phase-3b-*-manifest.json` as the mutation plan and the canonical authority files as read-only evidence.
+A talent identity is `canonicalTreeKey + talent name`. Talent name alone is never sufficient.
 
-## Current completed execution packets
+## Completed execution packets
 
-1. **Saga Edition Core Rulebook**
-   - Manifest: `data/audits/talent-phase-3b-core-rulebook-manifest.json`
-   - Builder/checker: `tools/build-talent-phase-3b-core-manifest.mjs`
-   - Human checkpoint: `docs/audits/talent-phase-3b-core-rulebook.md`
-   - Identities: 198
+| Book | Owned identities | Manifest | Checker |
+|---|---:|---|---|
+| Saga Edition Core Rulebook | 198 | `data/audits/talent-phase-3b-core-rulebook-manifest.json` | `node tools/build-talent-phase-3b-core-manifest.mjs --check` |
+| Threats of the Galaxy | 11 | `data/audits/talent-phase-3b-threats-of-the-galaxy-manifest.json` | `node tools/build-talent-phase-3b-threats-manifest.mjs --check` |
 
-## Non-negotiable identity rule
-
-A talent identity is:
-
-`canonicalTreeKey + talent name`
-
-Talent name alone is never sufficient.
+The shared implementation is `tools/build-talent-phase-3b-manifest.mjs`.
 
 ## Production authorities
 
-- Canonical repair/build authority: `data/canonical/talents.json`
-- Effective shipped runtime inventory: `packs/talents.db`
-- Production talent-tree membership: `packs/talent_trees.db`
+- Canonical content and provenance: `data/canonical/talents.json`
+- Effective talent inventory: `packs/talents.db`
+- Talent-tree membership: `packs/talent_trees.db`
+- Canonical tree registry: `data/audits/talent-canonical-tree-registry.json`
 
-Do not treat `data/fixes/talents.fixed.json` or `data/generated/talents.fixed.json` as production authority.
+Do not treat historical fixed/generated JSON files as production authority.
 
-## Mutation behavior
+## Ownership rule
 
-For existing canonical identities:
+Only the Phase 3A primary-publication owner emits a production mutation. A talent reprinted or referenced by a later book is recorded as reference-only in that later book's manifest.
 
-- preserve the existing `_id`;
-- update only fields listed by the book manifest;
-- preserve runtime metadata not explicitly targeted.
+## Mutation contract
 
-For tree corrections:
+For existing identities:
 
-- update both the talent record and `packs/talent_trees.db` membership;
-- do not copy the talent and leave the old tree claim behind.
+- preserve `_id`;
+- write only fields named in `mutationFields`;
+- preserve runtime metadata and unrelated document fields;
+- preserve description storage shape:
+  - existing object → `system.description.value`;
+  - existing string → `system.description`;
+  - new record → `system.description.value`.
 
-For CREATE:
+For `CORRECT_TREE`, update both `system.treeId` and tree-pack membership. Remove the old membership and add the same ID to the target tree.
 
-- use the manifest's exact `createRecordId`;
-- use its `createTemplate`;
-- do not invent `abilityMeta`, tags, Active Effects, or automation.
+For `CREATE` and `IDENTITY_SPLIT`, use the exact `createRecordId` and `createTemplate`. Do not invent automation metadata.
 
-For IDENTITY_SPLIT:
+For `REMOVE_CONTAMINATION`, replace only the certified player-facing fields and preserve runtime metadata.
 
-- preserve the existing same-name record in its own tree;
-- create the new distinct identity exactly as specified.
+For `UPDATE_NAME`, synchronize the talent document and the name stored in its tree membership.
 
-For REMOVE_CONTAMINATION:
+## Review-only extras
 
-- replace only canonical player-facing fields with the manifest's target values;
-- preserve unrelated runtime metadata.
+`productionExtras` are not Phase 3C deletion instructions. Records classified `REVIEW_EXTRA_DUPLICATE_CANONICAL_ALIAS` remain untouched until Phase 3D confirms references and selects a safe survivor.
+
+Current review-only extras:
+
+- Core: `a7d8c4da96eacad4` — duplicate Infamy `Notorious` candidate
+- Threats: `222327492c484b4a` — duplicate Master of Teräs Käsi `Teräs Käsi Basics` candidate
 
 ## Required preflight
-
-Before applying Core:
 
 ```bash
 node tools/build-talent-canonical-authority.mjs --check
 node tools/build-talent-phase-3b-core-manifest.mjs --check
+node tools/build-talent-phase-3b-threats-manifest.mjs --check
 ```
 
-As more books are completed, run the corresponding book checker too.
+If any check fails, stop and regenerate/re-certify the affected manifest against the current authorities.
 
-If a checker fails, do not improvise around it. The manifest must be regenerated/re-certified against the new repository state.
+## Prohibited shortcuts
 
-## Required post-write verification
-
-At minimum:
-
-```bash
-node tools/audit-talent-tree-membership.mjs
-```
-
-Then run the book-specific Phase 3C verification once added.
-
-## Explicitly prohibited shortcuts
-
-- No global name-only matching.
-- No "missing in Phase 2 = CREATE" assumption.
-- No deletion of homebrew/noncanonical talents during canonical book repair.
-- No replacement of stable existing IDs unless a manifest explicitly says CREATE/IDENTITY_SPLIT.
-- No erasing `system.abilityMeta`, structured prerequisite metadata, tags, effects, or flags just to simplify the rewrite.
+- No name-only matching.
+- No CREATE inferred solely from a Phase 2 missing flag.
+- No same-name overwrite across trees.
+- No deletion of review-only extras in Phase 3C.
+- No flattening every description into one schema shape.
+- No erasing ability metadata, structured prerequisites, tags, effects, flags, images, ownership, folders, or sorting unless explicitly targeted.
