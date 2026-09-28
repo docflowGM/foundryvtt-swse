@@ -1084,19 +1084,14 @@ When you damage an opponent with a melee attack, your opponents move an addition
 
 - **Page:** 52
 - **Prerequisites:** Expert Grappler.
-- **Quick summary:** You are skilled at keeping your opponents off balance in melee combat. During your action, you designate an opponent no more than one size category larger or smaller than you.
+- **Quick summary:** Designate an opponent within one size category; it cannot add its Strength bonus to attack rolls against you until you select a new opponent.
 - **Phase 2 repository evidence:** No correct-tree repository record certified in Phase 2
 - **Phase 2 discrepancy flags:** MISSING_CONTENT
+- **Correction note:** Phase 3B PDF review removed an intervening page-design quotation that had contaminated the original OCR capture.
 
 **Canonical rules text**
 
-You are skilled at keeping your opponents off balance in melee combat. During your action, you designate an opponent no more than one size category larger or smaller than you. That opponent doesn't get to add his Strength bonus on attack rolls when targeting you.
-
-"YOUR FRIEND !IS QUITE A MERCENARY: IF HE REALLY CARES ABOUT
-
-| WONDER ANYTHING ..-
-
-(If the opponent has a Strength penalty, he still suffers that penalty.) The opponent's Strength modifier applies to damage, as usual. You can select new opponent on your next turn. 7
+You are skilled at keeping your opponents off balance in melee combat. During your action, you designate an opponent no more than one size category larger or smaller than you. That opponent doesn't get to add his Strength bonus on attack rolls when targeting you. (If the opponent has a Strength penalty, he still suffers that penalty.) The opponent's Strength modifier applies to damage, as usual. You can select a new opponent on your next turn.
 
 ### Commando
 
