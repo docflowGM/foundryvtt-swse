@@ -1,0 +1,1189 @@
+{
+  "schemaVersion": 2,
+  "phase": "3B",
+  "status": "CERTIFIED_BOOK_REPAIR_MANIFEST",
+  "sourcebook": "Threats of the Galaxy",
+  "bookOrder": 7,
+  "identityRule": "canonicalTreeKey + talent name; never talent name alone",
+  "ownershipRule": "Only the Phase 3A primary publication owner emits a production mutation. Repeated later publications are reference-only.",
+  "productionMutationAllowed": false,
+  "generatedAgainst": {
+    "canonical": {
+      "path": "data/canonical/talents.json",
+      "fingerprint": "fnv1a64:251001ba5bea19a1"
+    },
+    "registry": {
+      "path": "data/audits/talent-canonical-tree-registry.json",
+      "fingerprint": "fnv1a64:9121b94eb7b62f57"
+    },
+    "talents": {
+      "path": "packs/talents.db",
+      "fingerprint": "fnv1a64:1db9da2beb7923d3"
+    },
+    "trees": {
+      "path": "packs/talent_trees.db",
+      "fingerprint": "fnv1a64:5b5325da00db8387"
+    },
+    "phase2": {
+      "path": "data/audits/talent-phase-2-threats-of-the-galaxy-content.json",
+      "fingerprint": "fnv1a64:7629684f35b135a3"
+    },
+    "discrepancy": {
+      "path": "data/audits/talent-phase-2-threats-of-the-galaxy-discrepancy-manifest.json",
+      "fingerprint": "fnv1a64:4b2a5b9cdfc7dab5"
+    }
+  },
+  "counts": {
+    "certifiedPublicationClaims": 11,
+    "ownedCanonicalIdentities": 11,
+    "referenceOnlyPublicationClaims": 0,
+    "canonicalTrees": 3,
+    "dispositions": {
+      "UPDATE_CONTENT": 11
+    },
+    "fieldChanges": {
+      "system.benefit": 11,
+      "system.description.value": 9,
+      "system.summary": 11,
+      "system.source": 11,
+      "system.page": 11,
+      "name": 2,
+      "system.prerequisites": 1,
+      "system.description": 1
+    },
+    "productionExtras": 1
+  },
+  "dispositionPrecedence": [
+    "IDENTITY_SPLIT",
+    "CREATE",
+    "CORRECT_TREE",
+    "REMOVE_CONTAMINATION",
+    "UPDATE_CONTENT",
+    "UPDATE_METADATA",
+    "KEEP"
+  ],
+  "phase3cWriteContract": {
+    "productionTalentPack": "packs/talents.db",
+    "productionTreePack": "packs/talent_trees.db",
+    "preserveExistingIds": true,
+    "descriptionWriteRule": "Preserve each existing record's description shape: write system.description.value when description is an object and system.description when it is a string. New records use system.description.value.",
+    "canonicalFields": [
+      "name",
+      "system.benefit",
+      "system.description.value or system.description",
+      "system.summary",
+      "system.prerequisites",
+      "system.source",
+      "system.page"
+    ],
+    "prohibitedShortcuts": [
+      "Do not match or mutate by talent name alone.",
+      "Do not infer CREATE from a Phase 2 missing flag.",
+      "Do not overwrite a same-name identity in another tree.",
+      "Do not delete REVIEW_EXTRA records during Phase 3C.",
+      "Do not erase runtime metadata unless explicitly targeted."
+    ]
+  },
+  "referenceOnlyPublications": [],
+  "productionExtras": [
+    {
+      "productionRecordId": "222327492c484b4a",
+      "name": "Teräs Käsi Basics",
+      "treeClaims": [
+        {
+          "treeId": "ba726f623e42f849",
+          "treeName": "Master of Teräs Käsi"
+        }
+      ],
+      "classification": "REVIEW_EXTRA_DUPLICATE_CANONICAL_ALIAS",
+      "relatedCanonicalIdentity": "Threats of the Galaxy|Master of Teräs Käsi|Teräs Käsi Basics",
+      "instruction": "Do not delete during Phase 3C. Resolve under Phase 3D after canonical repair and reference audit."
+    }
+  ],
+  "records": [
+    {
+      "canonicalIdentity": "Threats of the Galaxy|Malkite Poisoner|Malkite Techniques",
+      "canonicalTreeKey": "Threats of the Galaxy|Malkite Poisoner",
+      "name": "Malkite Techniques",
+      "ownerSourcebook": "Threats of the Galaxy",
+      "targetTree": {
+        "treeId": "c55b003333ff082d",
+        "treeName": "Malkite Poisoner"
+      },
+      "disposition": "UPDATE_CONTENT",
+      "phase2Flags": [
+        "DESCRIPTION_INCOMPLETE",
+        "MECHANICS_INCOMPLETE"
+      ],
+      "identityResolution": {
+        "resolutionEvidence": "PHASE2_CONTENT_MAPPING",
+        "productionRecordId": "744c2eaaa48e15af",
+        "preserveProductionId": true,
+        "createRecordId": null,
+        "currentTreeClaims": [
+          {
+            "treeId": "c55b003333ff082d",
+            "treeName": "Malkite Poisoner"
+          }
+        ],
+        "sameNameProductionCandidates": [
+          {
+            "id": "744c2eaaa48e15af",
+            "name": "Malkite Techniques",
+            "treeClaims": [
+              {
+                "treeId": "c55b003333ff082d",
+                "treeName": "Malkite Poisoner"
+              }
+            ]
+          }
+        ],
+        "reviewExtraCandidateIds": []
+      },
+      "currentCanonicalFields": {
+        "name": "Malkite Techniques",
+        "system.benefit": "Once per encounter, you can apply a toxin to any non-Energy Slashing or Piercing weapon as a Standard Action. If an attack roll with that weapon also exceeds the target's Fortitude Defense, that target is Poisoned.",
+        "system.description.value": "Once per encounter, you can apply a toxin to any non-Energy Slashing or Piercing weapon as a Standard Action. If an attack roll with that weapon also exceeds the target's Fortitude Defense, that target is Poisoned.\n\nEach round on the creature's turn, the Poison makes an attack roll (1d20 + your Heroic Level) against the target's Fortitude Defense. If the attack succeeds, the target takes damage equal to 1d6 + one-half your Heroic Level and moves -1 step along the Condition Track.\n\nA target moved to the end of the Condition Track by the Poison is unconscious but continues to take damage as long as the Poison continues to attack. The Poison attacks each round until it misses, or until the victim is cured with a Treat Injury check (DC 10 + your Heroic Level).",
+        "system.summary": null,
+        "system.prerequisites": "",
+        "system.source": null,
+        "system.page": null
+      },
+      "targetFields": {
+        "name": "Malkite Techniques",
+        "system.benefit": "Once per encounter, you can apply a toxin to any nonenergy slashing or piercing weapon as a standard action. If an attack roll with that weapon also exceeds the target's Fortitude Defense, that target is poisoned. Each round on the creature's turn, the poison makes an attack roll (1d20 + your heroic level) against the target's Fortitude Defense. If the attack succeeds, the target takes damage equal to 1d6 + one-half your heroic level and moves -1 step along the condition track. A target moved to the end of the condition track by the poison is unconscious but continues to take damage as long as the poison continues to attack. The poison attacks each round until it misses or until the victim is cured with a Treat Injury check (DC 10 + your heroic level).",
+        "system.description.value": "Once per encounter, you can apply a toxin to any nonenergy slashing or piercing weapon as a standard action. If an attack roll with that weapon also exceeds the target's Fortitude Defense, that target is poisoned. Each round on the creature's turn, the poison makes an attack roll (1d20 + your heroic level) against the target's Fortitude Defense. If the attack succeeds, the target takes damage equal to 1d6 + one-half your heroic level and moves -1 step along the condition track. A target moved to the end of the condition track by the poison is unconscious but continues to take damage as long as the poison continues to attack. The poison attacks each round until it misses or until the victim is cured with a Treat Injury check (DC 10 + your heroic level).",
+        "system.summary": "Once per encounter, coat a nonenergy slashing or piercing weapon with a toxin that repeatedly attacks Fortitude, deals damage, and moves the victim down the condition track.",
+        "system.prerequisites": "",
+        "system.source": "Threats of the Galaxy",
+        "system.page": 13
+      },
+      "fieldChanges": {
+        "name": false,
+        "system.benefit": true,
+        "system.description.value": true,
+        "system.summary": true,
+        "system.prerequisites": false,
+        "system.source": true,
+        "system.page": true
+      },
+      "mutationFields": [
+        "system.benefit",
+        "system.description.value",
+        "system.summary",
+        "system.source",
+        "system.page"
+      ],
+      "treeMutation": {
+        "action": "KEEP",
+        "removeFromTreeIds": [],
+        "addToTreeId": "c55b003333ff082d",
+        "addTalentId": "744c2eaaa48e15af",
+        "addTalentName": "Malkite Techniques"
+      },
+      "preserveFields": [
+        "system.abilityMeta",
+        "system.prerequisitesStructured",
+        "system.tags",
+        "system.executionModel",
+        "system.subType",
+        "system.costNumeric",
+        "effects",
+        "flags",
+        "img",
+        "ownership",
+        "folder",
+        "sort"
+      ],
+      "createTemplate": null,
+      "claudeInstruction": "Preserve the existing production record ID and runtime metadata; replace only the listed canonical fields."
+    },
+    {
+      "canonicalIdentity": "Threats of the Galaxy|Malkite Poisoner|Modify Poison",
+      "canonicalTreeKey": "Threats of the Galaxy|Malkite Poisoner",
+      "name": "Modify Poison",
+      "ownerSourcebook": "Threats of the Galaxy",
+      "targetTree": {
+        "treeId": "c55b003333ff082d",
+        "treeName": "Malkite Poisoner"
+      },
+      "disposition": "UPDATE_CONTENT",
+      "phase2Flags": [
+        "SOURCE_ALIGNED_SHORTHAND"
+      ],
+      "identityResolution": {
+        "resolutionEvidence": "PHASE2_CONTENT_MAPPING",
+        "productionRecordId": "661899f73e20f2ce",
+        "preserveProductionId": true,
+        "createRecordId": null,
+        "currentTreeClaims": [
+          {
+            "treeId": "c55b003333ff082d",
+            "treeName": "Malkite Poisoner"
+          }
+        ],
+        "sameNameProductionCandidates": [
+          {
+            "id": "661899f73e20f2ce",
+            "name": "Modify Poison",
+            "treeClaims": [
+              {
+                "treeId": "c55b003333ff082d",
+                "treeName": "Malkite Poisoner"
+              }
+            ]
+          }
+        ],
+        "reviewExtraCandidateIds": []
+      },
+      "currentCanonicalFields": {
+        "name": "Modify Poison",
+        "system.benefit": "You can modify the deliver method of a Poison (Contact, Ingested, Inhaled) to another delivery method by succeeding in a Knowledge (Life Science) check (DC equal to the Poison's Treat Injury DC). The Poison's capabilities and specific effects are unchanged.",
+        "system.description.value": "You can modify the deliver method of a Poison (Contact, Ingested, Inhaled) to another delivery method by succeeding in a Knowledge (Life Science) check (DC equal to the Poison's Treat Injury DC). The Poison's capabilities and specific effects are unchanged.",
+        "system.summary": null,
+        "system.prerequisites": "Malkite Techniques",
+        "system.source": null,
+        "system.page": null
+      },
+      "targetFields": {
+        "name": "Modify Poison",
+        "system.benefit": "You can modify the delivery method of a poison (contact, ingested, inhaled, injury) to another delivery method by succeeding on a Knowledge (life sciences) check (DC equal to the poison's Treat Injury DC). The poison's capabilities and specific effects are unchanged.",
+        "system.description.value": "You can modify the delivery method of a poison (contact, ingested, inhaled, injury) to another delivery method by succeeding on a Knowledge (life sciences) check (DC equal to the poison's Treat Injury DC). The poison's capabilities and specific effects are unchanged.",
+        "system.summary": "Change a poison's delivery method with Knowledge (life sciences) against its Treat Injury DC.",
+        "system.prerequisites": "Malkite Techniques",
+        "system.source": "Threats of the Galaxy",
+        "system.page": 13
+      },
+      "fieldChanges": {
+        "name": false,
+        "system.benefit": true,
+        "system.description.value": true,
+        "system.summary": true,
+        "system.prerequisites": false,
+        "system.source": true,
+        "system.page": true
+      },
+      "mutationFields": [
+        "system.benefit",
+        "system.description.value",
+        "system.summary",
+        "system.source",
+        "system.page"
+      ],
+      "treeMutation": {
+        "action": "KEEP",
+        "removeFromTreeIds": [],
+        "addToTreeId": "c55b003333ff082d",
+        "addTalentId": "661899f73e20f2ce",
+        "addTalentName": "Modify Poison"
+      },
+      "preserveFields": [
+        "system.abilityMeta",
+        "system.prerequisitesStructured",
+        "system.tags",
+        "system.executionModel",
+        "system.subType",
+        "system.costNumeric",
+        "effects",
+        "flags",
+        "img",
+        "ownership",
+        "folder",
+        "sort"
+      ],
+      "createTemplate": null,
+      "claudeInstruction": "Preserve the existing production record ID and runtime metadata; replace only the listed canonical fields."
+    },
+    {
+      "canonicalIdentity": "Threats of the Galaxy|Malkite Poisoner|Numbing Poison",
+      "canonicalTreeKey": "Threats of the Galaxy|Malkite Poisoner",
+      "name": "Numbing Poison",
+      "ownerSourcebook": "Threats of the Galaxy",
+      "targetTree": {
+        "treeId": "c55b003333ff082d",
+        "treeName": "Malkite Poisoner"
+      },
+      "disposition": "UPDATE_CONTENT",
+      "phase2Flags": [
+        "SOURCE_ALIGNED_SHORTHAND"
+      ],
+      "identityResolution": {
+        "resolutionEvidence": "PHASE2_CONTENT_MAPPING",
+        "productionRecordId": "458647466717fcc2",
+        "preserveProductionId": true,
+        "createRecordId": null,
+        "currentTreeClaims": [
+          {
+            "treeId": "c55b003333ff082d",
+            "treeName": "Malkite Poisoner"
+          }
+        ],
+        "sameNameProductionCandidates": [
+          {
+            "id": "458647466717fcc2",
+            "name": "Numbing Poison",
+            "treeClaims": [
+              {
+                "treeId": "c55b003333ff082d",
+                "treeName": "Malkite Poisoner"
+              }
+            ]
+          }
+        ],
+        "reviewExtraCandidateIds": []
+      },
+      "currentCanonicalFields": {
+        "name": "Numbing Poison",
+        "system.benefit": "Any target you Poison is automatically denied its Dexterity bonus to its Reflex Defense, for a long as it remains Poisoned.",
+        "system.description.value": "Any target you Poison is automatically denied its Dexterity bonus to its Reflex Defense, for a long as it remains Poisoned.",
+        "system.summary": null,
+        "system.prerequisites": "Malkite Techniques",
+        "system.source": null,
+        "system.page": null
+      },
+      "targetFields": {
+        "name": "Numbing Poison",
+        "system.benefit": "Any target you poison is automatically denied its Dexterity bonus to its Reflex Defense for as long as it remains poisoned.",
+        "system.description.value": "Any target you poison is automatically denied its Dexterity bonus to its Reflex Defense for as long as it remains poisoned.",
+        "system.summary": "Poisoned targets lose their Dexterity bonus to Reflex Defense while the poison remains active.",
+        "system.prerequisites": "Malkite Techniques",
+        "system.source": "Threats of the Galaxy",
+        "system.page": 13
+      },
+      "fieldChanges": {
+        "name": false,
+        "system.benefit": true,
+        "system.description.value": true,
+        "system.summary": true,
+        "system.prerequisites": false,
+        "system.source": true,
+        "system.page": true
+      },
+      "mutationFields": [
+        "system.benefit",
+        "system.description.value",
+        "system.summary",
+        "system.source",
+        "system.page"
+      ],
+      "treeMutation": {
+        "action": "KEEP",
+        "removeFromTreeIds": [],
+        "addToTreeId": "c55b003333ff082d",
+        "addTalentId": "458647466717fcc2",
+        "addTalentName": "Numbing Poison"
+      },
+      "preserveFields": [
+        "system.abilityMeta",
+        "system.prerequisitesStructured",
+        "system.tags",
+        "system.executionModel",
+        "system.subType",
+        "system.costNumeric",
+        "effects",
+        "flags",
+        "img",
+        "ownership",
+        "folder",
+        "sort"
+      ],
+      "createTemplate": null,
+      "claudeInstruction": "Preserve the existing production record ID and runtime metadata; replace only the listed canonical fields."
+    },
+    {
+      "canonicalIdentity": "Threats of the Galaxy|Malkite Poisoner|Undetectable Poison",
+      "canonicalTreeKey": "Threats of the Galaxy|Malkite Poisoner",
+      "name": "Undetectable Poison",
+      "ownerSourcebook": "Threats of the Galaxy",
+      "targetTree": {
+        "treeId": "c55b003333ff082d",
+        "treeName": "Malkite Poisoner"
+      },
+      "disposition": "UPDATE_CONTENT",
+      "phase2Flags": [
+        "MECHANICS_ERROR",
+        "DESCRIPTION_ERROR"
+      ],
+      "identityResolution": {
+        "resolutionEvidence": "PHASE2_CONTENT_MAPPING",
+        "productionRecordId": "c5726f0e65f643ab",
+        "preserveProductionId": true,
+        "createRecordId": null,
+        "currentTreeClaims": [
+          {
+            "treeId": "c55b003333ff082d",
+            "treeName": "Malkite Poisoner"
+          }
+        ],
+        "sameNameProductionCandidates": [
+          {
+            "id": "c5726f0e65f643ab",
+            "name": "Undetectable Poison",
+            "treeClaims": [
+              {
+                "treeId": "c55b003333ff082d",
+                "treeName": "Malkite Poisoner"
+              }
+            ]
+          }
+        ],
+        "reviewExtraCandidateIds": []
+      },
+      "currentCanonicalFields": {
+        "name": "Undetectable Poison",
+        "system.benefit": "The Treat Injury DC needed to cure a Poison you have use against a target increases by 5.",
+        "system.description.value": "The Treat Injury DC needed to cure a Poison you have use against a target increases by 5.",
+        "system.summary": null,
+        "system.prerequisites": "Malkite Techniques",
+        "system.source": null,
+        "system.page": null
+      },
+      "targetFields": {
+        "name": "Undetectable Poison",
+        "system.benefit": "The Treat Injury DC needed to cure a poison you have used against a target increases by 5.",
+        "system.description.value": "The Treat Injury DC needed to cure a poison you have used against a target increases by 5.",
+        "system.summary": "Increase by 5 the Treat Injury DC required to cure a poison you used.",
+        "system.prerequisites": "Malkite Techniques",
+        "system.source": "Threats of the Galaxy",
+        "system.page": 13
+      },
+      "fieldChanges": {
+        "name": false,
+        "system.benefit": true,
+        "system.description.value": true,
+        "system.summary": true,
+        "system.prerequisites": false,
+        "system.source": true,
+        "system.page": true
+      },
+      "mutationFields": [
+        "system.benefit",
+        "system.description.value",
+        "system.summary",
+        "system.source",
+        "system.page"
+      ],
+      "treeMutation": {
+        "action": "KEEP",
+        "removeFromTreeIds": [],
+        "addToTreeId": "c55b003333ff082d",
+        "addTalentId": "c5726f0e65f643ab",
+        "addTalentName": "Undetectable Poison"
+      },
+      "preserveFields": [
+        "system.abilityMeta",
+        "system.prerequisitesStructured",
+        "system.tags",
+        "system.executionModel",
+        "system.subType",
+        "system.costNumeric",
+        "effects",
+        "flags",
+        "img",
+        "ownership",
+        "folder",
+        "sort"
+      ],
+      "createTemplate": null,
+      "claudeInstruction": "Preserve the existing production record ID and runtime metadata; replace only the listed canonical fields."
+    },
+    {
+      "canonicalIdentity": "Threats of the Galaxy|Malkite Poisoner|Vicious Poison",
+      "canonicalTreeKey": "Threats of the Galaxy|Malkite Poisoner",
+      "name": "Vicious Poison",
+      "ownerSourcebook": "Threats of the Galaxy",
+      "targetTree": {
+        "treeId": "c55b003333ff082d",
+        "treeName": "Malkite Poisoner"
+      },
+      "disposition": "UPDATE_CONTENT",
+      "phase2Flags": [
+        "SOURCE_ALIGNED_SHORTHAND"
+      ],
+      "identityResolution": {
+        "resolutionEvidence": "PHASE2_CONTENT_MAPPING",
+        "productionRecordId": "b9c850fce4aa9c55",
+        "preserveProductionId": true,
+        "createRecordId": null,
+        "currentTreeClaims": [
+          {
+            "treeId": "c55b003333ff082d",
+            "treeName": "Malkite Poisoner"
+          }
+        ],
+        "sameNameProductionCandidates": [
+          {
+            "id": "b9c850fce4aa9c55",
+            "name": "Vicious Poison",
+            "treeClaims": [
+              {
+                "treeId": "c55b003333ff082d",
+                "treeName": "Malkite Poisoner"
+              }
+            ]
+          }
+        ],
+        "reviewExtraCandidateIds": []
+      },
+      "currentCanonicalFields": {
+        "name": "Vicious Poison",
+        "system.benefit": "Any Poisons you have used against a target gain a +2 bonus to their attack rolls made against that target's Fortitude Defense.",
+        "system.description.value": "Any Poisons you have used against a target gain a +2 bonus to their attack rolls made against that target's Fortitude Defense.",
+        "system.summary": null,
+        "system.prerequisites": "Malkite Techniques",
+        "system.source": null,
+        "system.page": null
+      },
+      "targetFields": {
+        "name": "Vicious Poison",
+        "system.benefit": "Any poisons you have used against a target gain a +2 bonus to their attack rolls made against that target's Fortitude Defense.",
+        "system.description.value": "Any poisons you have used against a target gain a +2 bonus to their attack rolls made against that target's Fortitude Defense.",
+        "system.summary": "Your poisons gain +2 on attack rolls against the poisoned target's Fortitude Defense.",
+        "system.prerequisites": "Malkite Techniques",
+        "system.source": "Threats of the Galaxy",
+        "system.page": 13
+      },
+      "fieldChanges": {
+        "name": false,
+        "system.benefit": true,
+        "system.description.value": true,
+        "system.summary": true,
+        "system.prerequisites": false,
+        "system.source": true,
+        "system.page": true
+      },
+      "mutationFields": [
+        "system.benefit",
+        "system.description.value",
+        "system.summary",
+        "system.source",
+        "system.page"
+      ],
+      "treeMutation": {
+        "action": "KEEP",
+        "removeFromTreeIds": [],
+        "addToTreeId": "c55b003333ff082d",
+        "addTalentId": "b9c850fce4aa9c55",
+        "addTalentName": "Vicious Poison"
+      },
+      "preserveFields": [
+        "system.abilityMeta",
+        "system.prerequisitesStructured",
+        "system.tags",
+        "system.executionModel",
+        "system.subType",
+        "system.costNumeric",
+        "effects",
+        "flags",
+        "img",
+        "ownership",
+        "folder",
+        "sort"
+      ],
+      "createTemplate": null,
+      "claudeInstruction": "Preserve the existing production record ID and runtime metadata; replace only the listed canonical fields."
+    },
+    {
+      "canonicalIdentity": "Threats of the Galaxy|Master of Teräs Käsi|Ignore Damage Reduction",
+      "canonicalTreeKey": "Threats of the Galaxy|Master of Teräs Käsi",
+      "name": "Ignore Damage Reduction",
+      "ownerSourcebook": "Threats of the Galaxy",
+      "targetTree": {
+        "treeId": "ba726f623e42f849",
+        "treeName": "Master of Teräs Käsi"
+      },
+      "disposition": "UPDATE_CONTENT",
+      "phase2Flags": [
+        "PREREQUISITE_ERROR",
+        "SOURCE_ALIGNED_SHORTHAND"
+      ],
+      "identityResolution": {
+        "resolutionEvidence": "PHASE2_CONTENT_MAPPING",
+        "productionRecordId": "566e0020c5866222",
+        "preserveProductionId": true,
+        "createRecordId": null,
+        "currentTreeClaims": [
+          {
+            "treeId": "ba726f623e42f849",
+            "treeName": "Master of Teräs Käsi"
+          }
+        ],
+        "sameNameProductionCandidates": [
+          {
+            "id": "566e0020c5866222",
+            "name": "Ignore Damage Reduction",
+            "treeClaims": [
+              {
+                "treeId": "ba726f623e42f849",
+                "treeName": "Master of Teräs Käsi"
+              }
+            ]
+          }
+        ],
+        "reviewExtraCandidateIds": []
+      },
+      "currentCanonicalFields": {
+        "name": "Ignore Damage Reduction",
+        "system.benefit": "When you make an Unarmed attack against a target that has Damage Reduction, and you deal more damage than the target's DR, you ignore the target's DR completely.",
+        "system.description.value": "When you make an Unarmed attack against a target that has Damage Reduction, and you deal more damage than the target's DR, you ignore the target's DR completely.",
+        "system.summary": null,
+        "system.prerequisites": "Teräs Käsi Basics, Martial Arts I",
+        "system.source": null,
+        "system.page": null
+      },
+      "targetFields": {
+        "name": "Ignore Damage Reduction",
+        "system.benefit": "When you make an unarmed attack against a target that has damage reduction, and you deal more damage than the target's DR, you ignore the target's DR completely.",
+        "system.description.value": "When you make an unarmed attack against a target that has damage reduction, and you deal more damage than the target's DR, you ignore the target's DR completely.",
+        "system.summary": "If an unarmed attack's damage exceeds the target's DR, ignore that DR completely.",
+        "system.prerequisites": "Teräs Käsi Basics, Martial Arts I",
+        "system.source": "Threats of the Galaxy",
+        "system.page": 53
+      },
+      "fieldChanges": {
+        "name": false,
+        "system.benefit": true,
+        "system.description.value": true,
+        "system.summary": true,
+        "system.prerequisites": false,
+        "system.source": true,
+        "system.page": true
+      },
+      "mutationFields": [
+        "system.benefit",
+        "system.description.value",
+        "system.summary",
+        "system.source",
+        "system.page"
+      ],
+      "treeMutation": {
+        "action": "KEEP",
+        "removeFromTreeIds": [],
+        "addToTreeId": "ba726f623e42f849",
+        "addTalentId": "566e0020c5866222",
+        "addTalentName": "Ignore Damage Reduction"
+      },
+      "preserveFields": [
+        "system.abilityMeta",
+        "system.prerequisitesStructured",
+        "system.tags",
+        "system.executionModel",
+        "system.subType",
+        "system.costNumeric",
+        "effects",
+        "flags",
+        "img",
+        "ownership",
+        "folder",
+        "sort"
+      ],
+      "createTemplate": null,
+      "claudeInstruction": "Preserve the existing production record ID and runtime metadata; replace only the listed canonical fields."
+    },
+    {
+      "canonicalIdentity": "Threats of the Galaxy|Master of Teräs Käsi|Teräs Käsi Basics",
+      "canonicalTreeKey": "Threats of the Galaxy|Master of Teräs Käsi",
+      "name": "Teräs Käsi Basics",
+      "ownerSourcebook": "Threats of the Galaxy",
+      "targetTree": {
+        "treeId": "ba726f623e42f849",
+        "treeName": "Master of Teräs Käsi"
+      },
+      "disposition": "UPDATE_CONTENT",
+      "phase2Flags": [
+        "SOURCE_ALIGNED_SHORTHAND",
+        "NAME_NORMALIZATION_ONLY"
+      ],
+      "identityResolution": {
+        "resolutionEvidence": "EXPLICIT_ALIAS_OVERRIDE",
+        "productionRecordId": "67bddb17ae2770f3",
+        "preserveProductionId": true,
+        "createRecordId": null,
+        "currentTreeClaims": [
+          {
+            "treeId": "ba726f623e42f849",
+            "treeName": "Master of Teräs Käsi"
+          }
+        ],
+        "sameNameProductionCandidates": [
+          {
+            "id": "222327492c484b4a",
+            "name": "Teräs Käsi Basics",
+            "treeClaims": [
+              {
+                "treeId": "ba726f623e42f849",
+                "treeName": "Master of Teräs Käsi"
+              }
+            ]
+          },
+          {
+            "id": "67bddb17ae2770f3",
+            "name": "Teras Kasi Basics",
+            "treeClaims": [
+              {
+                "treeId": "ba726f623e42f849",
+                "treeName": "Master of Teräs Käsi"
+              }
+            ]
+          }
+        ],
+        "reviewExtraCandidateIds": [
+          "222327492c484b4a"
+        ]
+      },
+      "currentCanonicalFields": {
+        "name": "Teras Kasi Basics",
+        "system.benefit": "With Teras Kasi basics, unarmed attacks deal an additional damage die.",
+        "system.description.value": "You deal an additional die of damage with your unarmed attacks.",
+        "system.summary": null,
+        "system.prerequisites": "Martial Arts I",
+        "system.source": null,
+        "system.page": null
+      },
+      "targetFields": {
+        "name": "Teräs Käsi Basics",
+        "system.benefit": "You deal an additional die of damage with your unarmed attacks.",
+        "system.description.value": "You deal an additional die of damage with your unarmed attacks.",
+        "system.summary": "Unarmed attacks deal one additional damage die.",
+        "system.prerequisites": "Martial Arts I",
+        "system.source": "Threats of the Galaxy",
+        "system.page": 53
+      },
+      "fieldChanges": {
+        "name": true,
+        "system.benefit": true,
+        "system.description.value": false,
+        "system.summary": true,
+        "system.prerequisites": false,
+        "system.source": true,
+        "system.page": true
+      },
+      "mutationFields": [
+        "name",
+        "system.benefit",
+        "system.summary",
+        "system.source",
+        "system.page"
+      ],
+      "treeMutation": {
+        "action": "UPDATE_NAME",
+        "removeFromTreeIds": [],
+        "addToTreeId": "ba726f623e42f849",
+        "addTalentId": "67bddb17ae2770f3",
+        "replaceTalentName": {
+          "from": "Teras Kasi Basics",
+          "to": "Teräs Käsi Basics"
+        }
+      },
+      "preserveFields": [
+        "system.abilityMeta",
+        "system.prerequisitesStructured",
+        "system.tags",
+        "system.executionModel",
+        "system.subType",
+        "system.costNumeric",
+        "effects",
+        "flags",
+        "img",
+        "ownership",
+        "folder",
+        "sort"
+      ],
+      "createTemplate": null,
+      "claudeInstruction": "Preserve the existing production record ID and runtime metadata; replace only the listed canonical fields."
+    },
+    {
+      "canonicalIdentity": "Threats of the Galaxy|Master of Teräs Käsi|Teräs Käsi Mastery",
+      "canonicalTreeKey": "Threats of the Galaxy|Master of Teräs Käsi",
+      "name": "Teräs Käsi Mastery",
+      "ownerSourcebook": "Threats of the Galaxy",
+      "targetTree": {
+        "treeId": "ba726f623e42f849",
+        "treeName": "Master of Teräs Käsi"
+      },
+      "disposition": "UPDATE_CONTENT",
+      "phase2Flags": [
+        "MECHANICS_ERROR",
+        "NAME_NORMALIZATION_ONLY"
+      ],
+      "identityResolution": {
+        "resolutionEvidence": "PHASE2_CONTENT_MAPPING",
+        "productionRecordId": "69da2f9701ef65b4",
+        "preserveProductionId": true,
+        "createRecordId": null,
+        "currentTreeClaims": [
+          {
+            "treeId": "ba726f623e42f849",
+            "treeName": "Master of Teräs Käsi"
+          }
+        ],
+        "sameNameProductionCandidates": [
+          {
+            "id": "69da2f9701ef65b4",
+            "name": "Teras Kasi Mastery",
+            "treeClaims": [
+              {
+                "treeId": "ba726f623e42f849",
+                "treeName": "Master of Teräs Käsi"
+              }
+            ]
+          }
+        ],
+        "reviewExtraCandidateIds": []
+      },
+      "currentCanonicalFields": {
+        "name": "Teras Kasi Mastery",
+        "system.benefit": "Only full-round unarmed actions allowed; take full attack as a standard action.",
+        "system.description.value": "When making only unarmed attacks as a full-round action, you may take a full attack as a standard action.",
+        "system.summary": null,
+        "system.prerequisites": "Martial Arts I-III, Teras Kasi Basics",
+        "system.source": null,
+        "system.page": null
+      },
+      "targetFields": {
+        "name": "Teräs Käsi Mastery",
+        "system.benefit": "If you make only unarmed attacks during a full attack action, you can take the full attack action as a standard action instead of a full-round action.",
+        "system.description.value": "If you make only unarmed attacks during a full attack action, you can take the full attack action as a standard action instead of a full-round action.",
+        "system.summary": "A full attack made only with unarmed attacks can be taken as a standard action.",
+        "system.prerequisites": "Teräs Käsi Basics, Martial Arts I, Martial Arts II, Martial Arts III",
+        "system.source": "Threats of the Galaxy",
+        "system.page": 53
+      },
+      "fieldChanges": {
+        "name": true,
+        "system.benefit": true,
+        "system.description.value": true,
+        "system.summary": true,
+        "system.prerequisites": true,
+        "system.source": true,
+        "system.page": true
+      },
+      "mutationFields": [
+        "name",
+        "system.benefit",
+        "system.description.value",
+        "system.summary",
+        "system.prerequisites",
+        "system.source",
+        "system.page"
+      ],
+      "treeMutation": {
+        "action": "UPDATE_NAME",
+        "removeFromTreeIds": [],
+        "addToTreeId": "ba726f623e42f849",
+        "addTalentId": "69da2f9701ef65b4",
+        "replaceTalentName": {
+          "from": "Teras Kasi Mastery",
+          "to": "Teräs Käsi Mastery"
+        }
+      },
+      "preserveFields": [
+        "system.abilityMeta",
+        "system.prerequisitesStructured",
+        "system.tags",
+        "system.executionModel",
+        "system.subType",
+        "system.costNumeric",
+        "effects",
+        "flags",
+        "img",
+        "ownership",
+        "folder",
+        "sort"
+      ],
+      "createTemplate": null,
+      "claudeInstruction": "Preserve the existing production record ID and runtime metadata; replace only the listed canonical fields."
+    },
+    {
+      "canonicalIdentity": "Threats of the Galaxy|Master of Teräs Käsi|Unarmed Counterstrike",
+      "canonicalTreeKey": "Threats of the Galaxy|Master of Teräs Käsi",
+      "name": "Unarmed Counterstrike",
+      "ownerSourcebook": "Threats of the Galaxy",
+      "targetTree": {
+        "treeId": "ba726f623e42f849",
+        "treeName": "Master of Teräs Käsi"
+      },
+      "disposition": "UPDATE_CONTENT",
+      "phase2Flags": [
+        "PREREQUISITE_ERROR",
+        "SOURCE_ALIGNED_SHORTHAND"
+      ],
+      "identityResolution": {
+        "resolutionEvidence": "PHASE2_CONTENT_MAPPING",
+        "productionRecordId": "3282f9b1d3769f9c",
+        "preserveProductionId": true,
+        "createRecordId": null,
+        "currentTreeClaims": [
+          {
+            "treeId": "ba726f623e42f849",
+            "treeName": "Master of Teräs Käsi"
+          }
+        ],
+        "sameNameProductionCandidates": [
+          {
+            "id": "3282f9b1d3769f9c",
+            "name": "Unarmed Counterstrike",
+            "treeClaims": [
+              {
+                "treeId": "ba726f623e42f849",
+                "treeName": "Master of Teräs Käsi"
+              }
+            ]
+          }
+        ],
+        "reviewExtraCandidateIds": []
+      },
+      "currentCanonicalFields": {
+        "name": "Unarmed Counterstrike",
+        "system.benefit": "When you successfully Parry a melee attack with the Unarmed Parry Talent, you can immediately make an Unarmed attack as a Reaction against that target.",
+        "system.description.value": "When you successfully Parry a melee attack with the Unarmed Parry Talent, you can immediately make an Unarmed attack as a Reaction against that target.",
+        "system.summary": null,
+        "system.prerequisites": "Teräs Käsi Basics, Unarmed Parry, Martial Arts I, Martial Arts II",
+        "system.source": null,
+        "system.page": null
+      },
+      "targetFields": {
+        "name": "Unarmed Counterstrike",
+        "system.benefit": "When you successfully parry a melee attack with the Unarmed Parry talent, you can immediately make an unarmed attack as a reaction against that target.",
+        "system.description.value": "When you successfully parry a melee attack with the Unarmed Parry talent, you can immediately make an unarmed attack as a reaction against that target.",
+        "system.summary": "After successfully using Unarmed Parry, immediately make an unarmed reaction attack against that attacker.",
+        "system.prerequisites": "Teräs Käsi Basics, Unarmed Parry, Martial Arts I, Martial Arts II",
+        "system.source": "Threats of the Galaxy",
+        "system.page": 53
+      },
+      "fieldChanges": {
+        "name": false,
+        "system.benefit": true,
+        "system.description.value": true,
+        "system.summary": true,
+        "system.prerequisites": false,
+        "system.source": true,
+        "system.page": true
+      },
+      "mutationFields": [
+        "system.benefit",
+        "system.description.value",
+        "system.summary",
+        "system.source",
+        "system.page"
+      ],
+      "treeMutation": {
+        "action": "KEEP",
+        "removeFromTreeIds": [],
+        "addToTreeId": "ba726f623e42f849",
+        "addTalentId": "3282f9b1d3769f9c",
+        "addTalentName": "Unarmed Counterstrike"
+      },
+      "preserveFields": [
+        "system.abilityMeta",
+        "system.prerequisitesStructured",
+        "system.tags",
+        "system.executionModel",
+        "system.subType",
+        "system.costNumeric",
+        "effects",
+        "flags",
+        "img",
+        "ownership",
+        "folder",
+        "sort"
+      ],
+      "createTemplate": null,
+      "claudeInstruction": "Preserve the existing production record ID and runtime metadata; replace only the listed canonical fields."
+    },
+    {
+      "canonicalIdentity": "Threats of the Galaxy|Master of Teräs Käsi|Unarmed Parry",
+      "canonicalTreeKey": "Threats of the Galaxy|Master of Teräs Käsi",
+      "name": "Unarmed Parry",
+      "ownerSourcebook": "Threats of the Galaxy",
+      "targetTree": {
+        "treeId": "ba726f623e42f849",
+        "treeName": "Master of Teräs Käsi"
+      },
+      "disposition": "UPDATE_CONTENT",
+      "phase2Flags": [
+        "MECHANICS_ERROR",
+        "DESCRIPTION_INCOMPLETE"
+      ],
+      "identityResolution": {
+        "resolutionEvidence": "PHASE2_CONTENT_MAPPING",
+        "productionRecordId": "379019c29b37d717",
+        "preserveProductionId": true,
+        "createRecordId": null,
+        "currentTreeClaims": [
+          {
+            "treeId": "ba726f623e42f849",
+            "treeName": "Master of Teräs Käsi"
+          }
+        ],
+        "sameNameProductionCandidates": [
+          {
+            "id": "379019c29b37d717",
+            "name": "Unarmed Parry",
+            "treeClaims": [
+              {
+                "treeId": "ba726f623e42f849",
+                "treeName": "Master of Teräs Käsi"
+              }
+            ]
+          }
+        ],
+        "reviewExtraCandidateIds": []
+      },
+      "currentCanonicalFields": {
+        "name": "Unarmed Parry",
+        "system.benefit": "When you Fight Defensively, as a Reaction you can negate a melee attack by making a successful Unarmed attack roll. If your attack roll equals or exceeds the attack roll of the incoming melee attack, the attack is negated. You must be aware of the attack, and not be Flat-Footed, and you take a cumulative -2 penalty to all attack rolls for each attack roll made since the beginning of your last turn.",
+        "system.description.value": "When you Fight Defensively, as a Reaction you can negate a melee attack by making a successful Unarmed attack roll. If your attack roll equals or exceeds the attack roll of the incoming melee attack, the attack is negated. You must be aware of the attack, and not be Flat-Footed, and you take a cumulative -2 penalty to all attack rolls for each attack roll made since the beginning of your last turn.",
+        "system.summary": null,
+        "system.prerequisites": "Teräs Käsi Basics, Martial Arts I, Martial Arts II",
+        "system.source": null,
+        "system.page": null
+      },
+      "targetFields": {
+        "name": "Unarmed Parry",
+        "system.benefit": "When you fight defensively, as a reaction you can negate a melee attack by making a successful unarmed attack roll. If your attack roll equals or exceeds the attack roll of the incoming melee attack, the attack is negated. You must be aware of the attack and not flat-footed, and you take a cumulative -2 penalty to all attack rolls for each attack roll made since the beginning of your last turn.",
+        "system.description.value": "When you fight defensively, as a reaction you can negate a melee attack by making a successful unarmed attack roll. If your attack roll equals or exceeds the attack roll of the incoming melee attack, the attack is negated. You must be aware of the attack and not flat-footed, and you take a cumulative -2 penalty to all attack rolls for each attack roll made since the beginning of your last turn.",
+        "system.summary": "While fighting defensively, react with an unarmed attack roll to negate an incoming melee attack, with cumulative penalties for repeated rolls.",
+        "system.prerequisites": "Teräs Käsi Basics, Martial Arts I, Martial Arts II",
+        "system.source": "Threats of the Galaxy",
+        "system.page": 53
+      },
+      "fieldChanges": {
+        "name": false,
+        "system.benefit": true,
+        "system.description.value": true,
+        "system.summary": true,
+        "system.prerequisites": false,
+        "system.source": true,
+        "system.page": true
+      },
+      "mutationFields": [
+        "system.benefit",
+        "system.description.value",
+        "system.summary",
+        "system.source",
+        "system.page"
+      ],
+      "treeMutation": {
+        "action": "KEEP",
+        "removeFromTreeIds": [],
+        "addToTreeId": "ba726f623e42f849",
+        "addTalentId": "379019c29b37d717",
+        "addTalentName": "Unarmed Parry"
+      },
+      "preserveFields": [
+        "system.abilityMeta",
+        "system.prerequisitesStructured",
+        "system.tags",
+        "system.executionModel",
+        "system.subType",
+        "system.costNumeric",
+        "effects",
+        "flags",
+        "img",
+        "ownership",
+        "folder",
+        "sort"
+      ],
+      "createTemplate": null,
+      "claudeInstruction": "Preserve the existing production record ID and runtime metadata; replace only the listed canonical fields."
+    },
+    {
+      "canonicalIdentity": "Saga Edition Core Rulebook|Dark Side|Drain Knowledge",
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Dark Side",
+      "name": "Drain Knowledge",
+      "ownerSourcebook": "Threats of the Galaxy",
+      "targetTree": {
+        "treeId": "de95d37c72b1c4cd",
+        "treeName": "Dark Side"
+      },
+      "disposition": "UPDATE_CONTENT",
+      "phase2Flags": [
+        "DESCRIPTION_INCOMPLETE",
+        "MECHANICS_INCOMPLETE"
+      ],
+      "identityResolution": {
+        "resolutionEvidence": "PHASE2_CONTENT_MAPPING",
+        "productionRecordId": "d46612d82307f0db",
+        "preserveProductionId": true,
+        "createRecordId": null,
+        "currentTreeClaims": [
+          {
+            "treeId": "de95d37c72b1c4cd",
+            "treeName": "Dark Side"
+          }
+        ],
+        "sameNameProductionCandidates": [
+          {
+            "id": "d46612d82307f0db",
+            "name": "Drain Knowledge",
+            "treeClaims": [
+              {
+                "treeId": "de95d37c72b1c4cd",
+                "treeName": "Dark Side"
+              }
+            ]
+          }
+        ],
+        "reviewExtraCandidateIds": []
+      },
+      "currentCanonicalFields": {
+        "name": "Drain Knowledge",
+        "system.benefit": "By touch, make a check vs target's Will Defense to drain knowledge; gain trained status in a skill or a Skill Focus if you already have the skill; target moves down the condition track; you gain a Dark Side Point.",
+        "system.description": "Drain knowledge by touch, gaining a trained skill or Skill Focus; target moves down the condition track.",
+        "system.summary": null,
+        "system.prerequisites": null,
+        "system.source": null,
+        "system.page": null
+      },
+      "targetFields": {
+        "name": "Drain Knowledge",
+        "system.benefit": "As a standard action, you can spend a Force Point to drain the knowledge of an enemy you touch; you must succeed on a Use the Force check (DC equal to the target's Will Defense) to activate this talent, and if you fail to activate this talent, you may not try again on the same target for one day. If successful, you immediately become trained in one skill that the target is trained in; if you are already trained in that skill, you instead gain Skill Focus in that skill. This training or focus lasts for one day. Additionally, your target moves -1 persistent step along the condition track, and the persistent condition can be removed only by resting for 8 hours.\n\nAdditionally, you can choose to instead sift through the mind of the target, looking for a specific piece of knowledge or information. Doing so requires you to make a Perception check against the target's Will Defense; success indicates that you pull the relevant information from the target's mind. When you do so, you do not gain the training or focus normally granted by this talent, but otherwise the talent functions as normal.\n\nUsing this talent increases your Dark Side Score by 1.",
+        "system.description": "As a standard action, you can spend a Force Point to drain the knowledge of an enemy you touch; you must succeed on a Use the Force check (DC equal to the target's Will Defense) to activate this talent, and if you fail to activate this talent, you may not try again on the same target for one day. If successful, you immediately become trained in one skill that the target is trained in; if you are already trained in that skill, you instead gain Skill Focus in that skill. This training or focus lasts for one day. Additionally, your target moves -1 persistent step along the condition track, and the persistent condition can be removed only by resting for 8 hours.\n\nAdditionally, you can choose to instead sift through the mind of the target, looking for a specific piece of knowledge or information. Doing so requires you to make a Perception check against the target's Will Defense; success indicates that you pull the relevant information from the target's mind. When you do so, you do not gain the training or focus normally granted by this talent, but otherwise the talent functions as normal.\n\nUsing this talent increases your Dark Side Score by 1.",
+        "system.summary": "Spend a Force Point to drain a touched enemy's skill knowledge or specific information, inflicting a persistent condition and increasing your Dark Side Score.",
+        "system.prerequisites": "",
+        "system.source": "Threats of the Galaxy",
+        "system.page": 30
+      },
+      "fieldChanges": {
+        "name": false,
+        "system.benefit": true,
+        "system.description": true,
+        "system.summary": true,
+        "system.prerequisites": false,
+        "system.source": true,
+        "system.page": true
+      },
+      "mutationFields": [
+        "system.benefit",
+        "system.description",
+        "system.summary",
+        "system.source",
+        "system.page"
+      ],
+      "treeMutation": {
+        "action": "KEEP",
+        "removeFromTreeIds": [],
+        "addToTreeId": "de95d37c72b1c4cd",
+        "addTalentId": "d46612d82307f0db",
+        "addTalentName": "Drain Knowledge"
+      },
+      "preserveFields": [
+        "system.abilityMeta",
+        "system.prerequisitesStructured",
+        "system.tags",
+        "system.executionModel",
+        "system.subType",
+        "system.costNumeric",
+        "effects",
+        "flags",
+        "img",
+        "ownership",
+        "folder",
+        "sort"
+      ],
+      "createTemplate": null,
+      "claudeInstruction": "Preserve the existing production record ID and runtime metadata; replace only the listed canonical fields."
+    }
+  ]
+}
