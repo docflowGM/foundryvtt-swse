@@ -2571,6 +2571,155 @@ When you score a critical hit with a Lightsaber, you may spend a Force Point to 
 
 ---
 
+
+## Book 7 — Threats of the Galaxy
+
+**Phase 3B status:** COMPLETE — 11 owned canonical identities; 11 UPDATE_CONTENT; 0 CREATE; 0 CORRECT_TREE.
+
+### Dark Side
+
+#### Drain Knowledge
+
+- **Page:** 30
+- **Prerequisites:** None.
+- **Quick summary:** Spend a Force Point to drain a touched enemy's skill knowledge or specific information, inflicting a persistent condition and increasing your Dark Side Score.
+- **Production record:** `d46612d82307f0db`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+As a standard action, you can spend a Force Point to drain the knowledge of an enemy you touch; you must succeed on a Use the Force check (DC equal to the target's Will Defense) to activate this talent, and if you fail to activate this talent, you may not try again on the same target for one day. If successful, you immediately become trained in one skill that the target is trained in; if you are already trained in that skill, you instead gain Skill Focus in that skill. This training or focus lasts for one day. Additionally, your target moves -1 persistent step along the condition track, and the persistent condition can be removed only by resting for 8 hours.
+
+Additionally, you can choose to instead sift through the mind of the target, looking for a specific piece of knowledge or information. Doing so requires you to make a Perception check against the target's Will Defense; success indicates that you pull the relevant information from the target's mind. When you do so, you do not gain the training or focus normally granted by this talent, but otherwise the talent functions as normal.
+
+Using this talent increases your Dark Side Score by 1.
+
+### Malkite Poisoner
+
+#### Malkite Techniques
+
+- **Page:** 13
+- **Prerequisites:** None.
+- **Quick summary:** Once per encounter, coat a nonenergy slashing or piercing weapon with a toxin that repeatedly attacks Fortitude, deals damage, and moves the victim down the condition track.
+- **Production record:** `744c2eaaa48e15af`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Once per encounter, you can apply a toxin to any nonenergy slashing or piercing weapon as a standard action. If an attack roll with that weapon also exceeds the target's Fortitude Defense, that target is poisoned. Each round on the creature's turn, the poison makes an attack roll (1d20 + your heroic level) against the target's Fortitude Defense. If the attack succeeds, the target takes damage equal to 1d6 + one-half your heroic level and moves -1 step along the condition track. A target moved to the end of the condition track by the poison is unconscious but continues to take damage as long as the poison continues to attack. The poison attacks each round until it misses or until the victim is cured with a Treat Injury check (DC 10 + your heroic level).
+
+#### Modify Poison
+
+- **Page:** 13
+- **Prerequisites:** Malkite Techniques
+- **Quick summary:** Change a poison's delivery method with Knowledge (life sciences) against its Treat Injury DC.
+- **Production record:** `661899f73e20f2ce`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+You can modify the delivery method of a poison (contact, ingested, inhaled, injury) to another delivery method by succeeding on a Knowledge (life sciences) check (DC equal to the poison's Treat Injury DC). The poison's capabilities and specific effects are unchanged.
+
+#### Numbing Poison
+
+- **Page:** 13
+- **Prerequisites:** Malkite Techniques
+- **Quick summary:** Poisoned targets lose their Dexterity bonus to Reflex Defense while the poison remains active.
+- **Production record:** `458647466717fcc2`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Any target you poison is automatically denied its Dexterity bonus to its Reflex Defense for as long as it remains poisoned.
+
+#### Undetectable Poison
+
+- **Page:** 13
+- **Prerequisites:** Malkite Techniques
+- **Quick summary:** Increase by 5 the Treat Injury DC required to cure a poison you used.
+- **Production record:** `c5726f0e65f643ab`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+The Treat Injury DC needed to cure a poison you have used against a target increases by 5.
+
+#### Vicious Poison
+
+- **Page:** 13
+- **Prerequisites:** Malkite Techniques
+- **Quick summary:** Your poisons gain +2 on attack rolls against the poisoned target's Fortitude Defense.
+- **Production record:** `b9c850fce4aa9c55`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Any poisons you have used against a target gain a +2 bonus to their attack rolls made against that target's Fortitude Defense.
+
+### Master of Teräs Käsi
+
+#### Ignore Damage Reduction
+
+- **Page:** 53
+- **Prerequisites:** Teräs Käsi Basics, Martial Arts I
+- **Quick summary:** If an unarmed attack's damage exceeds the target's DR, ignore that DR completely.
+- **Production record:** `566e0020c5866222`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+When you make an unarmed attack against a target that has damage reduction, and you deal more damage than the target's DR, you ignore the target's DR completely.
+
+#### Teräs Käsi Basics
+
+- **Page:** 53
+- **Prerequisites:** Martial Arts I
+- **Quick summary:** Unarmed attacks deal one additional damage die.
+- **Production record:** `67bddb17ae2770f3`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+You deal an additional die of damage with your unarmed attacks.
+
+#### Teräs Käsi Mastery
+
+- **Page:** 53
+- **Prerequisites:** Teräs Käsi Basics, Martial Arts I, Martial Arts II, Martial Arts III
+- **Quick summary:** A full attack made only with unarmed attacks can be taken as a standard action.
+- **Production record:** `69da2f9701ef65b4`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+If you make only unarmed attacks during a full attack action, you can take the full attack action as a standard action instead of a full-round action.
+
+#### Unarmed Counterstrike
+
+- **Page:** 53
+- **Prerequisites:** Teräs Käsi Basics, Unarmed Parry, Martial Arts I, Martial Arts II
+- **Quick summary:** After successfully using Unarmed Parry, immediately make an unarmed reaction attack against that attacker.
+- **Production record:** `3282f9b1d3769f9c`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+When you successfully parry a melee attack with the Unarmed Parry talent, you can immediately make an unarmed attack as a reaction against that target.
+
+#### Unarmed Parry
+
+- **Page:** 53
+- **Prerequisites:** Teräs Käsi Basics, Martial Arts I, Martial Arts II
+- **Quick summary:** While fighting defensively, react with an unarmed attack roll to negate an incoming melee attack, with cumulative penalties for repeated rolls.
+- **Production record:** `379019c29b37d717`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+When you fight defensively, as a reaction you can negate a melee attack by making a successful unarmed attack roll. If your attack roll equals or exceeds the attack roll of the incoming melee attack, the attack is negated. You must be aware of the attack and not flat-footed, and you take a cumulative -2 penalty to all attack rolls for each attack roll made since the beginning of your last turn.
+
+---
+
 ## Append-only book index
 
 - [x] Saga Edition Core Rulebook — 198 certified talent claims
@@ -2579,7 +2728,7 @@ When you score a critical hit with a Lightsaber, you may spend a Force Point to 
 - [ ] Galaxy at War
 - [ ] Galaxy of Intrigue
 - [ ] Starships of the Galaxy
-- [ ] Threats of the Galaxy
+- [x] Threats of the Galaxy — 11 certified talent claims
 - [ ] Scum and Villainy
 - [ ] Unknown Regions
 - [ ] Legacy Era Campaign Guide
