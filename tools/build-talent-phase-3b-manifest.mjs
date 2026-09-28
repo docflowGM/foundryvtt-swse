@@ -65,7 +65,14 @@ const normalizeKey = value => String(value ?? '').normalize('NFD').replace(/\p{D
   .replace(/[^a-z0-9]+/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '');
 const normalizeText = value => String(value ?? '').replace(/\r/g, '').replace(/\s+/g, ' ').trim();
 const pairKey = (treeKey, name) => treeKey + '||' + name;
-const fingerprint = text => 'sha256:' + crypto.createHash('sha256').update(text).digest('hex');
+const fingerprint = text => {
+  let hash = 0xcbf29ce484222325n;
+  for (const char of text) {
+    hash ^= BigInt(char.codePointAt(0));
+    hash = BigInt.asUintN(64, hash * 0x100000001b3n);
+  }
+  return 'fnv1a64:' + hash.toString(16).padStart(16, '0');
+};
 const makeId = identity => crypto.createHash('sha256').update('swse-talent|' + identity).digest('hex').slice(0, 16);
 const parseNdjson = raw => raw.split(/\r?\n/).filter(Boolean).map(JSON.parse);
 
