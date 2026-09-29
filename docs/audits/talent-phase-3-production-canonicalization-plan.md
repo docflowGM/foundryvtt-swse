@@ -1,6 +1,6 @@
 # Talent Canonicalization Phase 3 - Production Repair Plan
 
-**Status:** READY TO BEGIN  
+**Status:** PHASE 3B COMPLETE — PHASE 3C READY  
 **Date:** 2026-09-27  
 **Predecessor:** Phase 2 source certification complete  
 **Canonical publication workload:** 1,182 / 1,182 certified  
@@ -59,14 +59,14 @@ This dataset should become the repair/build authority rather than making later t
 
 ## 3A acceptance gates
 
-- [ ] Actual production talent authority/build path identified.
-- [ ] 1,180 merged canonical identities represented exactly once.
-- [ ] No global-name-only merge logic.
-- [ ] Same-name identities remain separate by canonical tree.
-- [ ] All 1,182 publication claims reconcile into the merged graph.
-- [ ] Canonical text, prerequisites, source/page, and derived summaries survive the merge.
-- [ ] Publication provenance is preserved.
-- [ ] No production talent mutation yet.
+- [x] Actual production talent authority/build path identified.
+- [x] 1,180 merged canonical identities represented exactly once.
+- [x] No global-name-only merge logic.
+- [x] Same-name identities remain separate by canonical tree.
+- [x] All 1,182 publication claims reconcile into the merged graph.
+- [x] Canonical text, prerequisites, source/page, and derived summaries survive the merge.
+- [x] Publication provenance is preserved.
+- [x] No production talent mutation yet.
 
 ---
 
@@ -95,14 +95,25 @@ The current Phase 2 figure of 333 missing publication mappings must **not** be t
 
 ## 3B acceptance gates
 
-- [ ] Every canonical identity has one repair disposition.
-- [ ] Every production-only/extra record is classified.
-- [ ] Same-name hazards explicitly protected.
-- [ ] Create/update/tree-correction counts reconcile.
-- [ ] Manifest is reproducible from canonical authority + production source.
-- [ ] No production mutation occurs until this manifest is certified.
+- [x] Every canonical identity has one repair disposition.
+- [x] Every production-only/extra record is classified.
+- [x] Same-name hazards explicitly protected.
+- [x] Create/update/tree-correction counts reconcile.
+- [x] Manifest is reproducible from canonical authority + production source.
+- [x] No production mutation occurs until this manifest is certified.
 
 ---
+
+
+## Phase 3B closeout authority
+
+Global Phase 3B certification is recorded in:
+
+- `data/audits/talent-phase-3b-global-closeout.json`
+- `docs/audits/talent-phase-3b-global-closeout.md`
+- `tools/check-talent-phase-3b-global-closeout.mjs`
+
+The global reconciliation caught and corrected the Core/JATM same-name `Charm Beast` production collision before Phase 3C. Phase 3C may begin only when the global closeout checker passes.
 
 # Phase 3C - Apply production talent repair
 
