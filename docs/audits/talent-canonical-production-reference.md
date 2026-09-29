@@ -2574,6 +2574,838 @@ When you score a critical hit with a Lightsaber, you may spend a Force Point to 
 
 
 
+## Book 3 — Rebellion Era Campaign Guide
+
+**Phase 3B status:** COMPLETE — 64 owned canonical identities; 21 UPDATE_CONTENT; 37 UPDATE_METADATA; 3 REMOVE_CONTAMINATION; 2 CREATE; 1 IDENTITY_SPLIT.
+
+### Jedi Consular
+
+#### Guiding Strikes
+
+- **Page:** 23
+- **Prerequisites:** None.
+- **Quick summary:** When you deal damage to a target by making a Lightsaber attack on your turn, you can use a Swift Action before the end of your turn to activate this Talent.
+- **Production record:** `e797ad357746be9f`
+- **Phase 3B disposition:** `UPDATE_METADATA`
+
+**Canonical rules text**
+
+When you deal damage to a target by making a Lightsaber attack on your turn, you can use a Swift Action before the end of your turn to activate this Talent. If you do so, allies adjacent to the target at the time you make the attack gain a +2 circumstance bonus to melee attack rolls against the target until the start of your next turn.
+
+#### Recall
+
+- **Page:** 23
+- **Prerequisites:** None.
+- **Quick summary:** Whenever you spend a Force Point to return a Force Power to your Force Power Suite, you regain two Force Powers instead of one.
+- **Production record:** `0890f9e1c0858993`
+- **Phase 3B disposition:** `UPDATE_METADATA`
+
+**Canonical rules text**
+
+Whenever you spend a Force Point to return a Force Power to your Force Power Suite, you regain two Force Powers instead of one.
+
+### Jedi Guardian
+
+#### Close Maneuvering
+
+- **Page:** 23
+- **Prerequisites:** None.
+- **Quick summary:** Once per turn, you can use a Swift Action to designate a target.
+- **Production record:** `7355c8afe9509dad`
+- **Phase 3B disposition:** `UPDATE_METADATA`
+
+**Canonical rules text**
+
+Once per turn, you can use a Swift Action to designate a target. Until the start of your next turn, your movement does not provoke Attacks of Opportunity from that target, provided that you end your movement adjacent to that target.
+
+#### Immovable
+
+- **Page:** 23
+- **Prerequisites:** None.
+- **Quick summary:** You can activate this Talent as a Swift Action.
+- **Production record:** `14306c13238ccb83`
+- **Phase 3B disposition:** `UPDATE_METADATA`
+
+**Canonical rules text**
+
+You can activate this Talent as a Swift Action. Until the start of your next turn, anyone attempting to move you involuntarily, such as with a Bantha Rush or the Move Object Force Power, takes a -5 penalty to attack rolls or Skill Checks made to use that effect that would move you. An enemy can only take the penalty from this Talent once per attempt, regardless of how many targets have used this Talent.
+
+### Jedi Sentinel
+
+#### Gradual Resistance
+
+- **Page:** 23
+- **Prerequisites:** None.
+- **Quick summary:** If you take damage from the use of a Force Power, until the end of the encounter you gain a +2 Force bonus to all Defenses against that Force Power.
+- **Production record:** `291937f2d45a01bc`
+- **Phase 3B disposition:** `UPDATE_METADATA`
+
+**Canonical rules text**
+
+If you take damage from the use of a Force Power, until the end of the encounter you gain a +2 Force bonus to all Defenses against that Force Power.
+
+#### Reap Retribution
+
+- **Page:** 23
+- **Prerequisites:** None.
+- **Quick summary:** If you take damage from the use of a Force Power, until the end of the encounter you deal an extra 2 points of damage against the creature that used the Force Power against you.
+- **Production record:** `902c2cef66cf4df6`
+- **Phase 3B disposition:** `UPDATE_METADATA`
+
+**Canonical rules text**
+
+If you take damage from the use of a Force Power, until the end of the encounter you deal an extra 2 points of damage against the creature that used the Force Power against you.
+
+### Leadership
+
+#### Unwavering Ally
+
+- **Page:** 25
+- **Prerequisites:** None.
+- **Quick summary:** Once per turn, as a Swift Action, you can designate one ally within your line of sight who can hear and understand you.
+- **Production record:** `5ea6368fd61de9f1`
+- **Phase 3B disposition:** `UPDATE_METADATA`
+
+**Canonical rules text**
+
+Once per turn, as a Swift Action, you can designate one ally within your line of sight who can hear and understand you. Until the start of your next turn, that ally becomes immune to all effects that render the ally Flat-Footed or that deny the ally a Dexterity bonus to his or her Reflex Defense.
+
+### Lightsaber Combat
+
+#### Precise Redirect
+
+- **Page:** 24
+- **Prerequisites:** Redirect Shot
+- **Quick summary:** Whenever you successfully Redirect a blaster bolt and hit your target, the redirected attack deals +1 die of damage.
+- **Production record:** `515d69c71897e431`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Whenever you successfully redirect a blaster bolt and hit your target, the redirected attack deals +1 die of damage.
+
+### Ambusher
+
+#### Ambush Specialist
+
+- **Page:** 28
+- **Prerequisites:** None.
+- **Quick summary:** If you are not Surprised on the first round of combat in an encounter, you can treat the first round of combat as if it were the Surprise Round for the purposes of Talents and Feats that trigger only during the...
+- **Production record:** `e835b21a01ae2ee7`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+If you are not Surprised on the first round of combat in an encounter, you can treat the first round of combat as if it were the Surprise Round for the purposes of Talents and Feats that trigger only during the Surprise Round.
+
+Additionally, during the Surprise Round as a Free Action you can designate a target as your Prime Target. You gain a +2 morale bonus to attack rolls against your Prime Target until the end of the encounter.
+
+#### Destructive Ambusher
+
+- **Page:** 28
+- **Prerequisites:** Ambush Specialist
+- **Quick summary:** After choosing your prime target, attacks against it deal +1 damage die for the rest of the encounter.
+- **Production record:** `5d608b1083cfc31d`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+After you designate a prime target, you deal +1 die of damage on attacks against the prime target until the end of the encounter.
+
+#### Keep It Going
+
+- **Page:** 28
+- **Prerequisites:** Ambush Specialist
+- **Quick summary:** If you reduce your Prime Target to 0 Hit Points, as a Free Action you can designate another target within your line of sight as your new Prime Target.
+- **Production record:** `34f21902e365a861`
+- **Phase 3B disposition:** `UPDATE_METADATA`
+
+**Canonical rules text**
+
+If you reduce your Prime Target to 0 Hit Points, as a Free Action you can designate another target within your line of sight as your new Prime Target. This new target remains your Prime Target until the end of the encounter.
+
+#### Keep Them Reeling
+
+- **Page:** 28
+- **Prerequisites:** Ambush Specialist
+- **Quick summary:** Swift action: beat your prime target's Initiative to make it flat-footed against your attacks this turn.
+- **Production record:** `24bf81bc6d74fafd`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Once per turn as a swift action, you can make an Initiative check, opposed by the Initiative check of your prime target. If your check result equals or exceeds your prime target's check result, your target is flat-footed against all attacks you make before the end of your turn.
+
+#### Perceptive Ambusher
+
+- **Page:** 28
+- **Prerequisites:** Ambush Specialist
+- **Quick summary:** You gain a +5 circumstance bonus to Perception checks against your Prime Target until the end of the encounter.
+- **Production record:** `f4c2b1e5cdf5551a`
+- **Phase 3B disposition:** `UPDATE_METADATA`
+
+**Canonical rules text**
+
+You gain a +5 circumstance bonus to Perception checks against your Prime Target until the end of the encounter.
+
+#### Spring the Trap
+
+- **Page:** 28
+- **Prerequisites:** None.
+- **Quick summary:** If you and all your allies roll higher Initiative checks to start combat than do all your opponents, you automatically gain a Surprise Round, even if the opponents are aware of you when combat begins.
+- **Production record:** `c2b0b6dcba513cca`
+- **Phase 3B disposition:** `UPDATE_METADATA`
+
+**Canonical rules text**
+
+If you and all your allies roll higher Initiative checks to start combat than do all your opponents, you automatically gain a Surprise Round, even if the opponents are aware of you when combat begins.
+
+### Gambling Leader
+
+#### Assault Gambit
+
+- **Page:** 24
+- **Prerequisites:** None.
+- **Quick summary:** Once per turn, as a Standard Action, you can designate one ally and one enemy that have line of effect to each other.
+- **Production record:** `ea9a4f110f5d2d8d`
+- **Phase 3B disposition:** `UPDATE_METADATA`
+
+**Canonical rules text**
+
+Once per turn, as a Standard Action, you can designate one ally and one enemy that have line of effect to each other. The ally and the enemy make opposed Initiative checks, and the winner can make a single immediate melee or ranged attack against the loser. No character can benefit from this Talent more than once per round.
+
+#### Direct Fire
+
+- **Page:** 24
+- **Prerequisites:** Assault Gambit
+- **Quick summary:** Once per turn, designate an ally to ignore one uncovered target's cover bonus to Reflex Defense until your next turn.
+- **Production record:** `c64393b9304034ab`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Once per turn, as a swift action, you can designate one ally and one target that does not have cover from you. Until the start of your next turn, the ally you designate ignores that target's cover bonuses to Reflex Defense.
+
+#### Face the Foe
+
+- **Page:** 24
+- **Prerequisites:** None.
+- **Quick summary:** If you do not have Cover from a target, you gain a +1 morale bonus to attack rolls against that target.
+- **Production record:** `cbdedc32ac362634`
+- **Phase 3B disposition:** `UPDATE_METADATA`
+
+**Canonical rules text**
+
+If you do not have Cover from a target, you gain a +1 morale bonus to attack rolls against that target.
+
+#### Lead From the Front
+
+- **Page:** 24
+- **Prerequisites:** Face the Foe
+- **Quick summary:** If you do not have Cover from a target that you damaged with a ranged attack, all your allies gain a +2 morale bonus to attack rolls against that target and a +5 circumstance bonus to opposed Initiative checks...
+- **Production record:** `a67a1a657fe5665c`
+- **Phase 3B disposition:** `UPDATE_METADATA`
+
+**Canonical rules text**
+
+If you do not have Cover from a target that you damaged with a ranged attack, all your allies gain a +2 morale bonus to attack rolls against that target and a +5 circumstance bonus to opposed Initiative checks against that target until the start of your next turn.
+
+#### Luck Favors the Bold
+
+- **Page:** 24
+- **Prerequisites:** Face the Foe
+- **Quick summary:** If at least one enemy within your line of sight is aware of you and you do not have Cover against that enemy, at the start of your turn if you are conscious you gain a number of Bonus Hit Points equal to 5 + one-half...
+- **Production record:** `c2447676a43a70a2`
+- **Phase 3B disposition:** `UPDATE_METADATA`
+
+**Canonical rules text**
+
+If at least one enemy within your line of sight is aware of you and you do not have Cover against that enemy, at the start of your turn if you are conscious you gain a number of Bonus Hit Points equal to 5 + one-half your Heroic Level. Damage is subtracted from Bonus Hit Points first, and any Bonus Hit Points remaining at the end of the encounter are lost. Bonus Hit Points do not stack.
+
+### Improviser
+
+#### Bigger Bang
+
+- **Page:** 43
+- **Prerequisites:** Improvised Device
+- **Quick summary:** Grenades made with Improvised Device deal +1 damage die.
+- **Production record:** `dc61d67946b1c1d6`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Whenever you create a grenade with the Improvised Device talent, the grenade deals an additional die of damage when used.
+
+#### Capture Droid
+
+- **Page:** 43
+- **Prerequisites:** None.
+- **Quick summary:** Once per encounter, you can use this Talent on an adjacent enemy Droid that has been reduced to 0 Hit Points or moved to the bottom of the Condition Track, but not destroyed.
+- **Production record:** `9ae263137f27e220`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Once per encounter, you can use this Talent on an adjacent enemy Droid that has been reduced to 0 Hit Points or moved to the bottom of the Condition Track, but not destroyed.
+
+As a Standard Action, make a Mechanics check against the Droid's Will Defense. If your result equals or exceeds the Droid's Will Defense, the Droid moves +2 steps on the Condition Track, regains 1d8 Hit Points, becomes your ally, and it's Attitude toward you immediately shifts to Friendly.
+
+The Droid fights on your side until the end of the encounter, at which point it is destroyed.
+
+#### Custom Model
+
+- **Page:** 43
+- **Prerequisites:** Improvised Device, Tech Specialist
+- **Quick summary:** Whenever you create a device with the Improvised Device Talent, you can apply one modification granted by the Tech Specialist Feat to the device. This customization does not affect the value of the item being created.
+- **Production record:** `b8472ec0498d2c20`
+- **Phase 3B disposition:** `UPDATE_METADATA`
+
+**Canonical rules text**
+
+Whenever you create a device with the Improvised Device Talent, you can apply one modification granted by the Tech Specialist Feat to the device. This customization does not affect the value of the item being created.
+
+#### Improved Jury-Rig
+
+- **Page:** 43
+- **Prerequisites:** None.
+- **Quick summary:** You can use the Jury-Rig application of the Mechanics Skill as a Standard Action instead of as a Full-Round Action.
+- **Production record:** `6e3c1c77acfb0141`
+- **Phase 3B disposition:** `UPDATE_METADATA`
+
+**Canonical rules text**
+
+You can use the Jury-Rig application of the Mechanics Skill as a Standard Action instead of as a Full-Round Action. Additionally, you are not required to make a Skill Check to successfully Jury-Rig a device or Vehicle, and the device or Vehicle moves +3 steps on the Condition Track instead of +2.
+
+#### Improvised Device
+
+- **Page:** 43
+- **Prerequisites:** None.
+- **Quick summary:** You can create a temporary piece of almost any type of Equipment from the spare parts you have around.
+- **Production record:** `84d4e92693185028`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+You can create a temporary piece of almost any type of Equipment from the spare parts you have around. To do so, you must make a DC 25 Mechanics check and spend one hour building the device. The object can have a maximum value of 200 credits x your Class Level, it cannot have an availability of Rare or Illegal, and it cannot be unique.
+
+The device you create must be something that you would be reasonably familiar with, and after 24 hours the object is destroyed. You can use this Talent once per day.
+
+### Pathfinder
+
+#### Bunker Blaster
+
+- **Page:** 45
+- **Prerequisites:** None.
+- **Quick summary:** If adjacent cover can protect you from a target, you can Aim at that target as a move action.
+- **Production record:** `cc96a480b69ddc59`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+If you are adjacent to an object that can provide you with cover from a target, you can aim at that target as a move action.
+
+#### Defensive Measures
+
+- **Page:** 45
+- **Prerequisites:** Safe Zone
+- **Quick summary:** All enemies treat your Safe Zone as difficult terrain.
+- **Production record:** `67186d921e94d636`
+- **Phase 3B disposition:** `UPDATE_METADATA`
+
+**Canonical rules text**
+
+All enemies treat your Safe Zone as difficult terrain.
+
+#### Enhance Cover
+
+- **Page:** 45
+- **Prerequisites:** None.
+- **Quick summary:** As a Swift Action, you can designate a single ally within your line of sight who has Cover from one or more enemies.
+- **Production record:** `1d50b01d5151c3eb`
+- **Phase 3B disposition:** `UPDATE_METADATA`
+
+**Canonical rules text**
+
+As a Swift Action, you can designate a single ally within your line of sight who has Cover from one or more enemies. That ally is considered instead to have Improved Cover against those enemies until the start of your next turn as long as the ally still has Cover.
+
+#### Escort Fighter
+
+- **Page:** 45
+- **Prerequisites:** None.
+- **Quick summary:** You can spend a Swift Action to designate one adjacent ally.
+- **Production record:** `0991f4321b429bf5`
+- **Phase 3B disposition:** `UPDATE_METADATA`
+
+**Canonical rules text**
+
+You can spend a Swift Action to designate one adjacent ally. Until the start of your next turn, if you move, that ally can also move the same number of squares, provided that the ally ends its movement adjacent to you. You cannot move a distance greater than the ally's speed.
+
+#### Launch Point
+
+- **Page:** 45
+- **Prerequisites:** Safe Zone
+- **Quick summary:** Any ally who starts his or her turn within your Safe Zone and then exits the Safe Zone gains a +2 bonus to attack rolls before the end of that ally's turn, provided that the ally is not within your Safe Zone when the...
+- **Production record:** `9aa564522f427214`
+- **Phase 3B disposition:** `UPDATE_METADATA`
+
+**Canonical rules text**
+
+Any ally who starts his or her turn within your Safe Zone and then exits the Safe Zone gains a +2 bonus to attack rolls before the end of that ally's turn, provided that the ally is not within your Safe Zone when the attack is made.
+
+#### Obscuring Defenses
+
+- **Page:** 45
+- **Prerequisites:** Safe Zone
+- **Quick summary:** Enemies firing into your Safe Zone take a -2 penalty to attack rolls.
+- **Production record:** `07174b444852424c`
+- **Phase 3B disposition:** `UPDATE_METADATA`
+
+**Canonical rules text**
+
+Enemies firing into your Safe Zone take a -2 penalty to attack rolls.
+
+#### Relocate
+
+- **Page:** 45
+- **Prerequisites:** Safe Zone
+- **Quick summary:** You can dismiss your Safe Zone as a Swift Action, ending its current effects.
+- **Production record:** `68e476fdeb434b01`
+- **Phase 3B disposition:** `UPDATE_METADATA`
+
+**Canonical rules text**
+
+You can dismiss your Safe Zone as a Swift Action, ending its current effects. Any allies in the space your Safe Zone was occupying gain a +2 bonus to their Speed until the start of your next turn. When you use this Talent, you cannot create a new Safe Zone until the start of your next turn.
+
+#### Safe Passage
+
+- **Page:** 45
+- **Prerequisites:** Escort Fighter
+- **Quick summary:** Once per turn, you can spend a Move Action to allow one ally within line of sight to move up to its speed as a Reaction.
+- **Production record:** `e857b1e13073b0a9`
+- **Phase 3B disposition:** `UPDATE_METADATA`
+
+**Canonical rules text**
+
+Once per turn, you can spend a Move Action to allow one ally within line of sight to move up to its speed as a Reaction. If a target makes an Attack of Opportunity against the ally during its movement, you can make an Attack of Opportunity against that target.
+
+#### Safe Zone
+
+- **Page:** 45
+- **Prerequisites:** None.
+- **Quick summary:** As a Standard Action, you can identify a Safe Zone, within which your allies gain certain advantages.
+- **Production record:** `5989079457c8a3cf`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+As a Standard Action, you can identify a Safe Zone, within which your allies gain certain advantages. You designate a 4-by-4 square area of the combat area as a Safe Zone; at least 1 square of the Safe Zone must be the square you currently occupy. Each ally who starts his or her turn within the Safe Zone gains a +2 circumstance bonus to his or her Fortitude Defense and Will Defense until the start of the ally's next turn. The Safe Zone lasts until the end of the encounter, and you can have only one Safe Zone in effect at a time.
+
+You can create a new Safe Zone as a Standard Action, dismissing the old Safe Zone and replacing it with the new one, but no square of the old Safe Zone can overlap with any square of the new Safe Zone. You cannot create a Safe Zone in a space that overlaps another Pathfinder's Safe Zone.
+
+#### Zone of Recuperation
+
+- **Page:** 45
+- **Prerequisites:** Safe Zone
+- **Quick summary:** Any ally who catches a Second Wind while within your Safe Zone regains a number of additional Hit Points equal to your Class Level.
+- **Production record:** `a68be9fa4ffe98af`
+- **Phase 3B disposition:** `UPDATE_METADATA`
+
+**Canonical rules text**
+
+Any ally who catches a Second Wind while within your Safe Zone regains a number of additional Hit Points equal to your Class Level.
+
+### Procurement
+
+#### Black Market Buyer
+
+- **Page:** 43
+- **Prerequisites:** None.
+- **Quick summary:** When seeking an item from the Black Market, you do not need to make a Gather Information check to locate a Black Market merchant; you automatically succeed.
+- **Production record:** `c006a4be6de26139`
+- **Phase 3B disposition:** `UPDATE_METADATA`
+
+**Canonical rules text**
+
+When seeking an item from the Black Market, you do not need to make a Gather Information check to locate a Black Market merchant; you automatically succeed.
+
+#### Excellent Kit
+
+- **Page:** 43
+- **Prerequisites:** None.
+- **Quick summary:** You always make sure that your allies have the best gear available.
+- **Production record:** `85318987b48d5caa`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+You always make sure that your allies have the best gear available. Whenever you purchase Weapons, Armor, or other Equipment (either legally or through the Black Market), all gear you purchase has 50% more Hit Points than normal and has 5 more DR than normal.
+
+In addition, whenever one of your allies makes a Mechanics check on an object that you purchased, that ally gains a +2 Equipment bonus to the check.
+
+#### Just What Is Needed
+
+- **Page:** 43
+- **Prerequisites:** None.
+- **Quick summary:** You have a knack for finding the best quality replacement parts for broken Equipment.
+- **Production record:** `5cd160036d6bba05`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+You have a knack for finding the best quality replacement parts for broken Equipment. Whenever you use the Repair application of the Mechanics skill, you restore an extra 1d8 Hit Points with a successful Mechanics check, in addition to what you would normally restore.
+
+If you use the Aid Another Action to assist an ally with Repairs, that ally also Repairs an extra 1d8 Hit Points with a successful Mechanics check. Any ally can only benefit from this Talent once per Mechanics check, regardless of how many allies with this Talent aid on the check.
+
+#### Only the Finest
+
+- **Page:** 43
+- **Prerequisites:** Black Market Buyer
+- **Quick summary:** Whenever you purchase goods through the Black Market, you can obtain items that have been modified with the Tech Specialist feat without increasing the base value of the items.
+- **Production record:** `b5eba49d8305b689`
+- **Phase 3B disposition:** `UPDATE_METADATA`
+
+**Canonical rules text**
+
+Whenever you purchase goods through the Black Market, you can obtain items that have been modified with the Tech Specialist feat without increasing the base value of the items.
+
+#### Right Gear for the Job
+
+- **Page:** 43
+- **Prerequisites:** None.
+- **Quick summary:** Once per day when an ally makes an Untrained skill check, as a Reaction you can grant that ally a +5 Equipment bonus to the check, and the ally is considered Trained in that Skill for the purpose of using...
+- **Production record:** `f09f37cda0fc10e1`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Once per day when an ally makes an Untrained skill check, as a Reaction you can grant that ally a +5 Equipment bonus to the check, and the ally is considered Trained in that Skill for the purpose of using Trained-only applications of the Skill.
+
+You cannot use this Talent to allow an ally to make an Untrained Use the Force check.
+
+### Rebel Recruiter
+
+#### Bolstered Numbers
+
+- **Page:** 40
+- **Prerequisites:** Recruit Enemy
+- **Quick summary:** Whenever you successfully use Recruit Enemy on a target, you and all allies within line of sight gain a +2 morale bonus to attack rolls until the end of the encounter.
+- **Production record:** `4348c2bca983e4a9`
+- **Phase 3B disposition:** `UPDATE_METADATA`
+
+**Canonical rules text**
+
+Whenever you successfully use Recruit Enemy on a target, you and all allies within line of sight gain a +2 morale bonus to attack rolls until the end of the encounter.
+
+#### Noble Sacrifice
+
+- **Page:** 40
+- **Prerequisites:** Recruit Enemy
+- **Quick summary:** Whenever you successfully use Recruit Enemy on a target, if that target is reduced to 0 Hit Points or moved to the bottom of the Condition Track, as a Reaction you can grant yourself and all allies within line of...
+- **Production record:** `1fc568c1bbdd94e0`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Whenever you successfully use Recruit Enemy on a target, if that target is reduced to 0 Hit Points or moved to the bottom of the Condition Track, as a Reaction you can grant yourself and all allies within line of sight a number of Bonus Hit Points equal to 10 + your Class Level.
+
+Damage is subtracted from Bonus Hit Points first, and any Bonus Hit Points remaining at the end of the encounter are lost. Bonus Hit Points do not stack. No Bonus Hit Points may be granted if you or an ally reduce the target to 0 Hit Points or move it to the bottom of the Condition Track.
+
+#### Recruit Enemy
+
+- **Page:** 41
+- **Prerequisites:** None.
+- **Quick summary:** Once per encounter when you deal damage to a living creature that is equal to or greater than the target's current Hit Points and the target's Damage Threshold (that is, when you deal enough damage to kill the...
+- **Production record:** `43ac0c4b1759507a`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Once per encounter when you deal damage to a living creature that is equal to or greater than the target's current Hit Points and the target's Damage Threshold (that is, when you deal enough damage to kill the target), you can use this Talent. Make a Persuasion check against the target's Will Defense; if your result equals or exceeds the target's Will Defense, instead of dealing full damage, you deal half damage to the target and move it -1 step on the Condition Track.
+
+In addition, the target becomes your ally, and its Attitude toward you immediately shifts to Friendly. The target fights on your side until the end of the encounter, at which point it departs (or, if the GM wishes, the target might become your ally permanently and join your party). Anyone Hostile to you becomes Hostile to the target.
+
+This is a Mind-Affecting effect. If the target is a higher level than you, it gains a +5 bonus to its Will Defense. Enemies that cannot be bribed, blackmailed, or seduced (such as Stormtroopers) are immune to this effect.
+
+#### Stay in the Fight
+
+- **Page:** 41
+- **Prerequisites:** Recruit Enemy
+- **Quick summary:** A target you successfully Recruit Enemy can immediately catch a second wind as a reaction if able.
+- **Production target:** CREATE `6cf364c5b9556770`
+- **Phase 3B disposition:** `IDENTITY_SPLIT`
+
+**Canonical rules text**
+
+If you successfully use Recruit Enemy on a target and that target can catch a second wind, the target can do so immediately as a reaction.
+
+#### Team Recruiting
+
+- **Page:** 41
+- **Prerequisites:** Recruit Enemy
+- **Quick summary:** You can use your Recruit Enemy Talent whenever you or an ally would deal enough damage to kill a target, instead of only when you do.
+- **Production record:** `a3f4bc7671830701`
+- **Phase 3B disposition:** `UPDATE_METADATA`
+
+**Canonical rules text**
+
+You can use your Recruit Enemy Talent whenever you or an ally would deal enough damage to kill a target, instead of only when you do.
+
+### Recklessness
+
+#### Find Openings
+
+- **Page:** 25
+- **Prerequisites:** None.
+- **Quick summary:** When an attack misses you, gain +2 morale on your next attack before the end of your next turn.
+- **Production record:** `ad418fa7b1716364`
+- **Phase 3B disposition:** `REMOVE_CONTAMINATION`
+
+**Canonical rules text**
+
+Whenever you are missed by an attack, you gain a +2 morale bonus to your next attack roll before the end of your next turn.
+
+#### Hit the Deck
+
+- **Page:** 25
+- **Prerequisites:** None.
+- **Quick summary:** Whenever you make an Area Attack, each ally in the area takes no damage if your attack roll fails to overcome his or her Reflex Defense, and takes half damage if the attack hits.
+- **Production record:** `a3d0ac66cac192ec`
+- **Phase 3B disposition:** `UPDATE_METADATA`
+
+**Canonical rules text**
+
+Whenever you make an Area Attack, each ally in the area takes no damage if your attack roll fails to overcome his or her Reflex Defense, and takes half damage if the attack hits.
+
+#### Lure Closer
+
+- **Page:** 25
+- **Prerequisites:** Trick Step
+- **Quick summary:** Once per turn, as a Move Action, you can make a Deception check against the Will Defense of one enemy within 12 squares and within your line of sight.
+- **Production record:** `c2d2d55ee60f886f`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Once per turn, as a Move Action, you can make a Deception check against the Will Defense of one enemy within 12 squares and within your line of sight. If you check results equals or exceeds the target's Will Defense, the target must move a number of squares equal to half its speed, and each square of movement must bring the target closer to you (though the target does avoid Hazards and obstacles).
+
+If the target cannot avoid a Hazard (such as a pit), it stops moving in the nearest safe square. This movement is considered involuntary and does not provoke Attacks of Opportunity. This is a Mind-Affecting effect.
+
+#### Risk for Reward
+
+- **Page:** 25
+- **Prerequisites:** Find Openings
+- **Quick summary:** Once per turn, when an enemy damages you with an Attack of Opportunity, you can make a single melee or ranged attack against a target in range as a Reaction.
+- **Production record:** `04b9cb3683c6e485`
+- **Phase 3B disposition:** `UPDATE_METADATA`
+
+**Canonical rules text**
+
+Once per turn, when an enemy damages you with an Attack of Opportunity, you can make a single melee or ranged attack against a target in range as a Reaction.
+
+#### Trick Step
+
+- **Page:** 26
+- **Prerequisites:** None.
+- **Quick summary:** As a Swift Action, make an Initiative check, opposed by the Initiative check of an enemy within your line of sight.
+- **Production record:** `4c689ac688e80c9e`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+As a Swift Action, make an Initiative check, opposed by the Initiative check of an enemy within your line of sight.
+
+If your check result equals or exceeds the target's check, the target is considered Flat-Footed against the next attack you make before the end of your turn. If the target's check result is higher, you are considered Flat-Footed against the next attack made by the target before the start of your next turn.
+
+### Unpredictable
+
+#### Aggressive Surge
+
+- **Page:** 26
+- **Prerequisites:** None.
+- **Quick summary:** Once per encounter when you catch a Second Wind, you can make a Charge attack as a Free Action, provided that you can make a charge attack against a legal target at the time you catch a Second Wind.
+- **Production record:** `147f70a2b815f34e`
+- **Phase 3B disposition:** `UPDATE_METADATA`
+
+**Canonical rules text**
+
+Once per encounter when you catch a Second Wind, you can make a Charge attack as a Free Action, provided that you can make a charge attack against a legal target at the time you catch a Second Wind.
+
+#### Blast Back
+
+- **Page:** 26
+- **Prerequisites:** None.
+- **Quick summary:** Once per round when you are damaged by an enemy's Area Attack, as a Reaction you can make an immediate melee or ranged attack against the source of the Area Attack, provided that you have line of sight to the...
+- **Production record:** `2d486ece7350cedf`
+- **Phase 3B disposition:** `UPDATE_METADATA`
+
+**Canonical rules text**
+
+Once per round when you are damaged by an enemy's Area Attack, as a Reaction you can make an immediate melee or ranged attack against the source of the Area Attack, provided that you have line of sight to the attacker and the target is within your melee or ranged reach.
+
+#### Fade Away
+
+- **Page:** 26
+- **Prerequisites:** None.
+- **Quick summary:** Once per turn when you are damaged by an enemy's attack, as a Reaction you can move up to half your speed. This movement does not provoke Attacks of Opportunity.
+- **Production record:** `cb4b14a242fbee71`
+- **Phase 3B disposition:** `UPDATE_METADATA`
+
+**Canonical rules text**
+
+Once per turn when you are damaged by an enemy's attack, as a Reaction you can move up to half your speed. This movement does not provoke Attacks of Opportunity.
+
+#### Second Strike
+
+- **Page:** 26
+- **Prerequisites:** Blast Back
+- **Quick summary:** Once per encounter when you miss a target with a single melee or ranged attack, as a Free Action you can move up to half your speed and make a second attack of the same type against a different target.
+- **Production record:** `55b2475e42ce79f2`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Once per encounter when you miss a target with a single melee or ranged attack, as a Free Action you can move up to half your speed and make a second attack of the same type against a different target. This movement doesn't provoke Attacks of Opportunity.
+
+If you have the Combat Reflexes feat, you may use this Talent a number of times per encounter equal to your Dexterity bonus (minimum 1). You may still only use this Talent once per round.
+
+#### Swerve
+
+- **Page:** 26
+- **Prerequisites:** Fade Away
+- **Quick summary:** Once per encounter, negate an opportunity attack against you and move up to half speed without provoking; Combat Reflexes can grant extra uses.
+- **Production record:** `99c685b0631a5601`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Once per encounter when an enemy makes an attack of opportunity against you, as a reaction you can automatically negate the attack and immediately move up to half your speed. This movement does not provoke attacks of opportunity. If you have the Combat Reflexes feat, you can use this talent a number of times per encounter equal to your Dexterity bonus (minimum 1). You may still only use this talent once per round.
+
+### Wingman
+
+#### Concentrate All Fire
+
+- **Page:** 40
+- **Prerequisites:** None.
+- **Quick summary:** When your Aid Another helps an ally's vehicle-weapon attack hit, that attack deals +1 damage die; only one such bonus applies.
+- **Production record:** `6f6cd1c453dc1828`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+When you use the aid another action to aid an ally's attack roll with a vehicle weapon, if the attack hits, it deals +1 die of damage. Any ally can only benefit from this talent once per attack roll regardless of how many allies with this talent aid on the attack.
+
+#### Escort Pilot
+
+- **Page:** 40
+- **Prerequisites:** None.
+- **Quick summary:** When a Vehicle that you are Piloting is adjacent to a Vehicle of Colossal size or smaller that is Piloted by an ally, both Vehicles gain a +10 bonus to their Damage Thresholds.
+- **Production record:** `7aa3eec9b7f748ef`
+- **Phase 3B disposition:** `UPDATE_METADATA`
+
+**Canonical rules text**
+
+When a Vehicle that you are Piloting is adjacent to a Vehicle of Colossal size or smaller that is Piloted by an ally, both Vehicles gain a +10 bonus to their Damage Thresholds.
+
+#### Lose Pursuit
+
+- **Page:** 40
+- **Prerequisites:** None.
+- **Quick summary:** When a Vehicle that you are Piloting is adjacent to a Vehicle of Colossal size or smaller that is Piloted by an ally, both you and your ally gain a +5 circumstance bonus to Pilot checks to avoid being pulled into a...
+- **Production record:** `b1bfca51996bb303`
+- **Phase 3B disposition:** `UPDATE_METADATA`
+
+**Canonical rules text**
+
+When a Vehicle that you are Piloting is adjacent to a Vehicle of Colossal size or smaller that is Piloted by an ally, both you and your ally gain a +5 circumstance bonus to Pilot checks to avoid being pulled into a Dogfight as an Attack of Opportunity.
+
+#### Run Interference
+
+- **Page:** 40
+- **Prerequisites:** Escort Pilot Talent
+- **Quick summary:** As a Reaction, you can use your Vehicular Combat Feat to negate an attack against an adjacent Vehicle of Colossal size or smaller that is Piloted by an ally.
+- **Production record:** `9fd409d9ceaf6733`
+- **Phase 3B disposition:** `UPDATE_METADATA`
+
+**Canonical rules text**
+
+As a Reaction, you can use your Vehicular Combat Feat to negate an attack against an adjacent Vehicle of Colossal size or smaller that is Piloted by an ally. If you can use Vehicular Combat more than once per round, each use to negate an attack counts toward your limit of uses per round.
+
+#### Wingman Retribution
+
+- **Page:** 40
+- **Prerequisites:** Escort Pilot Talent
+- **Quick summary:** When a Vehicle of Colossal size or smaller that is Piloted by an ally is damaged by an attack, once per round as a Reaction you can make a Vehicle Weapon attack with a -5 penalty against your ally's attacker.
+- **Production record:** `3c4c26a54de7c1c1`
+- **Phase 3B disposition:** `UPDATE_METADATA`
+
+**Canonical rules text**
+
+When a Vehicle of Colossal size or smaller that is Piloted by an ally is damaged by an attack, once per round as a Reaction you can make a Vehicle Weapon attack with a -5 penalty against your ally's attacker.
+
+### Kilian Ranger
+
+#### Empower Siang Lance
+
+- **Page:** 37
+- **Prerequisites:** Siang Lance Mastery, base attack bonus +7
+- **Quick summary:** Spend a Force Point and a full-round action to empower your siang lance; it deals +1 damage die when you wield it.
+- **Production target:** CREATE `2bae1dc009d4f2d2`
+- **Phase 3B disposition:** `CREATE`
+
+**Canonical rules text**
+
+You can spend a Force Point to empower a siang lance, which takes a full-round action. After the siang lance is empowered, it deals an additional die of damage when you wield it. Others who wield the weapon do not gain the bonus damage die.
+
+#### Shield Gauntlet Defense
+
+- **Page:** 37
+- **Prerequisites:** None.
+- **Quick summary:** Once per turn, react for +2 deflection Reflex against one ranged attack while using an active shield gauntlet.
+- **Production record:** `852bca9332684a2b`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Once per turn as a reaction, you can gain a +2 deflection bonus to your Reflex Defense against any one ranged attack. To use this talent, you must be wearing an active shield gauntlet, you must be aware of the attack, and you must not be flat-footed.
+
+#### Shield Gauntlet Deflect
+
+- **Page:** 37
+- **Prerequisites:** Shield Gauntlet Defense
+- **Quick summary:** React once per round with Use the Force to negate a ranged attack; can protect an adjacent ally with a Force Point and partially deflect autofire.
+- **Production record:** `da5096b45d174f36`
+- **Phase 3B disposition:** `REMOVE_CONTAMINATION`
+
+**Canonical rules text**
+
+Once per round as a reaction, you can negate a ranged attack by making a successful Use the Force check. The DC of the skill check is equal to the result of the attack roll you wish to negate. To use this talent, you must be wearing an active shield gauntlet, you must be aware of the attack, and you must not be flat-footed. You can spend a Force Point to use this talent to negate a ranged attack against an adjacent character. You can use Shield Gauntlet Deflect to deflect some of the barrage of shots fired from a ranged weapon set on autofire. If your Use the Force check succeeds, you take half damage if the attack hits and no damage if the attack misses.
+
+#### Shield Gauntlet Redirect
+
+- **Page:** 37
+- **Prerequisites:** Shield Gauntlet Defense, Shield Gauntlet Deflect, base attack bonus +5
+- **Quick summary:** After deflecting a blaster bolt, make an immediate ranged attack against another target within 6 squares.
+- **Production target:** CREATE `2fe6d21e112e43cd`
+- **Phase 3B disposition:** `CREATE`
+
+**Canonical rules text**
+
+This talent allows you to redirect a deflected blaster bolt along a specific trajectory so that it damages another creature or object in its path. When you successfully deflect a blaster bolt, you can make an immediate ranged attack against another target within 6 squares of you to which you have line of sight. If the attack succeeds, it deals normal weapon damage to the target. Only single blaster bolts can be redirected in this manner. You cannot use this talent to redirect barrages from autofire weapons and other types of projectiles. To use this talent, you must be wearing an active shield gauntlet, you must be aware of the attack, and you must not be flat-footed.
+
+#### Siang Lance Mastery
+
+- **Page:** 37
+- **Prerequisites:** None.
+- **Quick summary:** Treat a siang lance as a rifle and gain +1 attack with it; counts as Weapon Focus (siang lance) for prerequisites.
+- **Production record:** `0bbfcac85b09416a`
+- **Phase 3B disposition:** `REMOVE_CONTAMINATION`
+
+**Canonical rules text**
+
+You treat a siang lance as a rifle instead of as an exotic weapon. Additionally, you gain a +1 bonus to attack rolls with a siang lance. This talent counts as the Weapon Focus (siang lance) feat for the purpose of satisfying prerequisites. If you also have the Weapon Focus (rifles) feat, the attack bonus provided by this talent does not stack with the attack bonus provided by Weapon Focus (rifles).
+
+---
+
 ## Book 4 — Galaxy at War
 
 **Phase 3B status:** COMPLETE — 56 owned canonical identities; 13 UPDATE_CONTENT; 1 UPDATE_METADATA; 39 CREATE; 3 IDENTITY_SPLIT.
@@ -5467,7 +6299,7 @@ You channel your power surge into a boost for your locomotion system. When you i
 
 - [x] Saga Edition Core Rulebook — 198 certified talent claims
 - [ ] Clone Wars Campaign Guide
-- [ ] Rebellion Era Campaign Guide
+- [x] Rebellion Era Campaign Guide — 64 certified talent claims
 - [x] Galaxy at War — 56 certified talent claims
 - [x] Galaxy of Intrigue — 43 certified talent claims
 - [x] Starships of the Galaxy — 23 certified talent claims
