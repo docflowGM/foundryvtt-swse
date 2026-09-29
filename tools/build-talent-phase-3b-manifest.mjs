@@ -7,6 +7,7 @@
  *   node tools/build-talent-phase-3b-manifest.mjs --book clone-wars [--check]
  *   node tools/build-talent-phase-3b-manifest.mjs --book kotor [--check]
  *   node tools/build-talent-phase-3b-manifest.mjs --book force-unleashed [--check]
+ *   node tools/build-talent-phase-3b-manifest.mjs --book jatm [--check]
  *   node tools/build-talent-phase-3b-manifest.mjs --book threats [--check]
  *   node tools/build-talent-phase-3b-manifest.mjs --book starships [--check]
  *   node tools/build-talent-phase-3b-manifest.mjs --book scavengers [--check]
@@ -102,6 +103,26 @@ const BOOKS = {
         UPDATE_CONTENT: 107,
         UPDATE_METADATA: 2,
         CREATE: 28
+      }
+    }
+  },
+  jatm: {
+    sourcebook: 'Jedi Academy Training Manual',
+    bookOrder: 13,
+    classes: 'packs/classes.db',
+    allowTreeCreates: true,
+    phase2: 'data/audits/talent-phase-2-jedi-academy-training-manual-content.json',
+    discrepancy: 'data/audits/talent-phase-2-jedi-academy-training-manual-discrepancy-manifest.json',
+    output: 'data/audits/talent-phase-3b-jedi-academy-training-manual-manifest.json',
+    aliases: {},
+    expected: {
+      records: 117,
+      extras: 0,
+      treeCreates: 2,
+      classAccessMutations: 0,
+      dispositions: {
+        UPDATE_CONTENT: 74,
+        CREATE: 43
       }
     }
   },
@@ -725,6 +746,6 @@ if (isDirectRun) {
   const bookArg = process.argv.find(arg => arg.startsWith('--book='));
   const index = process.argv.indexOf('--book');
   const bookKey = bookArg ? bookArg.slice('--book='.length) : index >= 0 ? process.argv[index + 1] : null;
-  invariant(bookKey, 'usage: --book core|clone-wars|kotor|force-unleashed|threats|starships|scavengers|intrigue|war|unknown|rebellion|legacy|scum [--check]');
+  invariant(bookKey, 'usage: --book core|clone-wars|kotor|force-unleashed|jatm|threats|starships|scavengers|intrigue|war|unknown|rebellion|legacy|scum [--check]');
   buildBookManifest(bookKey, {check: process.argv.includes('--check')});
 }
