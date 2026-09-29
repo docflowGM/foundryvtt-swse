@@ -10469,6 +10469,1540 @@ When you use the farseeing Force power, you can choose to target an object you h
 
 You can spend a Force Point to gain low-light vision for 1 minute or until the end of the encounter, whichever is longer.
 
+## Book 11 — Knights of the Old Republic Campaign Guide
+
+**Phase 3B status:** COMPLETE — 114 owned canonical identities; 99 UPDATE_CONTENT; 2 CORRECT_TREE; 12 CREATE; 1 IDENTITY_SPLIT; 1 reference-only publication claim.
+
+### Jedi Consular
+
+#### Collective Visions
+
+- **Page:** 24
+- **Prerequisites:** farseeing
+- **Quick summary:** Developed by Krynda Draay, this talent is used by Jedi Covenant WatchCircles to sharpen their visions through the Force.
+- **Production record:** `e5bef6ccacb51788`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Developed by Krynda Draay, this talent is used by Jedi Covenant WatchCircles to sharpen their visions through the Force. When you use farseeing or a Force power or talent that has farseeing as a prerequisite, other Force-users with farseeing in their Force-power suite can aid another (page 151 of the Saga Edition core rulebook) on your Use the Force check as a reaction if they are within 6 squares of you.
+
+#### Visionary Attack
+
+- **Page:** 24
+- **Prerequisites:** farseeing, WatchCircle Initiate
+- **Quick summary:** As a reaction, you can make a Use the Force check after you or an ally within 12 squares misses with a melee or ranged attack, removing one use of the farseeing Force power from your active suite (as
+- **Production record:** `299c45ac33bf1485`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+As a reaction, you can make a Use the Force check after you or an ally within 12 squares misses with a melee or ranged attack, removing one use of the farseeing Force power from your active suite (as
+
+SlveL sever)
+
+though you had activated the power). If your check result equals or exceeds the Will Defense of the target of that missed attack, the attacker can reroll the missed attack roll. This counts as using the farseeing Force power against that target, but this talent replaces the normal rules and effect of that power. Any attack can only be affected by this talent once (thus, multiple characters cannot use this talent on the same attack to allow multiple rerolls). You take a cumulative -5 penalty on Use the Force checks until the beginning of your next turn when you use this talent.
+
+#### Visionary Defense
+
+- **Page:** 25
+- **Prerequisites:** farseeing, WatchCircle Initiate
+- **Quick summary:** As a reaction, you can make a Use the Force check after you or an ally within 12 squares is the target of a melee or ranged attack (but before the results of the attack roll are known), removing one use of the farseeing Force power from your active suite (as though you had just activated the power).
+- **Production record:** `153f4b3c6510023d`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+As a reaction, you can make a Use the Force check after you or an ally within 12 squares is the target of a melee or ranged attack (but before the results of the attack roll are known), removing one use of the farseeing Force power from your active suite (as though you had just activated the power). If your check result exceeds the Will Defense of the attacker, you grant the target of the attack a +5 Force bonus to Reflex Defense against that attack. This counts as using the farseeing Force power against the attacker, but this talent replaces the normal rules and effect of that power. Any attack can only be affected by this talent once (thus, multiple characters cannot use this talent on the same attack to allow multiple rerolls). You take a cumulative -5 penalty on Use the Force checks until the beginning of your next turn when you use this talent.
+
+#### Renew Vision
+
+- **Page:** 25
+- **Prerequisites:** None.
+- **Quick summary:** Once per encounter, you can regain all expended uses of the farseeing power as a swift action.
+- **Production record:** `61302cbe9ccdea12`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Once per encounter, you can regain all expended uses of the farseeing power as a swift action.
+
+#### WatchCircle Initiate
+
+- **Page:** 25
+- **Prerequisites:** farseeing
+- **Quick summary:** As a reaction, you can make a Use the Force check (DC 15) and remove one use of the farseeing Force power from your active suite (as though you had activated the power).
+- **Production record:** `ab9f1497d0b2d7c2`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+As a reaction, you can make a Use the Force check (DC 15) and remove one use of the farseeing Force power from your active suite (as though you had activated the power). You subtract 1 from your Force Point total (this cannot be subtracted from temporary Force Points, and does not count as spending a Force Point) and add 1 to the Force Point total of an ally within line of sight. This counts as using the farseeing Force power against that target, but this talent replaces the normal rules and effect of that power.
+
+### Jedi Guardian
+
+#### Improved Battle Meditation
+
+- **Page:** 25
+- **Prerequisites:** Battle Meditation
+- **Quick summary:** You may activate your Battle Meditation talent as a swift action instead of as a full-round action.
+- **Production record:** `d6a04668587e2c03`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+You may activate your Battle Meditation talent as a swift action instead of as a full-round action. The range of the Battle Meditation extends out to 12 squares. Enemies within the radius of your Battle Meditation suffer a -1 penalty to all attack rolls.
+
+### Jedi Sentinel
+
+#### Dark Retaliation
+
+- **Page:** 25
+- **Prerequisites:** Sentinel Strike
+- **Quick summary:** Once per encounter, you can spend a Force Point to activate a Force power as a reaction to being targeted by a power with the [dark side] descriptor.
+- **Production record:** `2b4ffff03274a825`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Once per encounter, you can spend a Force Point to activate a Force power as a reaction to being targeted by a power with the [dark side] descriptor.
+
+#### Sentinel Strike
+
+- **Page:** 25
+- **Prerequisites:** None.
+- **Quick summary:** Any time you attack a flat-footed opponent (or one who is denied its Dexterity bonus to Reflex Defense against you) with a damage-dealing Force power or attack with a lightsaber, you deal an extra 106 damage with that attack.
+- **Production record:** `cf2d518039afd828`
+- **Phase 3B disposition:** `CORRECT_TREE`
+
+**Canonical rules text**
+
+Any time you attack a flat-footed opponent (or one who is denied its Dexterity bonus to Reflex Defense against you) with a damage-dealing Force power or attack with a lightsaber, you deal an extra 106 damage with that attack. This talent does not affect Force powers with the [dark side] descriptor.
+
+You can select this talent multiple times. Each time you select it, your Sentinel Strike damage increases by 1d6 (maximum +5d6).
+
+#### Sentinel's Gambit
+
+- **Page:** 25
+- **Prerequisites:** None.
+- **Quick summary:** Once per encounter, as a swift action, you can designate an adjacent enemy with a Dark Side Score of 1 or higher as the target of this talent.
+- **Production record:** `df40e8294bd43fe7`
+- **Phase 3B disposition:** `CORRECT_TREE`
+
+**Canonical rules text**
+
+Once per encounter, as a swift action, you can designate an adjacent enemy with a Dark Side Score of 1 or higher as the target of this talent. The designated enemy loses its Dexterity bonus to Reflex Defense against your attacks until the end of your next turn.
+
+### Lightsaber Combat
+
+#### Riposte
+
+- **Page:** 25
+- **Prerequisites:** Block, base attack bonus +5
+- **Quick summary:** As a reaction once per encounter, make a lightsaber attack against a being whose attack you negate using the Block lightsaber combat talent (page 41 of the Saga Edition core rulebook).
+- **Production record:** `b788095a71a47be7`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+As a reaction once per encounter, make a lightsaber attack against a being whose attack you negate using the Block lightsaber combat talent (page 41 of the Saga Edition core rulebook). Only non-area melee attacks can be riposted in this manner; you cannot use this talent when negating the damage from melee area attacks (such as those made with the Whirlwind Attack feat).
+
+### Influence
+
+#### Fluster
+
+- **Page:** 26
+- **Prerequisites:** Presence, trained in Persuasion
+- **Quick summary:** You get under an enemy's skin.
+- **Production record:** `e6d56fb82c669b9d`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+You get under an enemy's skin. Once per encounter, make a Persuasion check to intimidate one creature within line of sight as a standard action. On a success, instead of the normal effect of an intimidate application of the Persuasion skill, the affected creature can take only a single swift action on its next turn. If the target is higher level than you, it gains a +5 bonus to its Will Defense against the skill check.
+
+This is a mind-affecting effect.
+
+#### Intimidating Defense
+
+- **Page:** 26
+- **Prerequisites:** Presence, trained in Persuasion
+- **Quick summary:** Once per encounter, as a reaction, you can make a Persuasion check to intimidate one creature that has made a melee or ranged attack against you if that creature is within line of sight.
+- **Production record:** `de751f28fc269c85`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Once per encounter, as a reaction, you can make a Persuasion check to intimidate one creature that has made a melee or ranged attack against you if that creature is within line of sight. If you succeed, you impose a —5 penalty to that attack roll. If the target is higher level than you, it gains a +5 bonus to its Will Defense against the Intimidating Defense.
+
+This is a mind-affecting effect.
+
+### Leadership
+
+#### Reactionary Attack
+
+- **Page:** 26
+- **Prerequisites:** Born Leader, trained in Persuasion
+- **Quick summary:** Once per encounter, as a reaction to an attack made against you or an ally, you can direct an ally within 6 squares to make an immediate attack as a reaction against the attacking enemy.
+- **Production record:** `bc8667e10d541cb8`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Once per encounter, as a reaction to an attack made against you or an ally, you can direct an ally within 6 squares to make an immediate attack as a reaction against the attacking enemy. The ally you choose must be capable of making an attack against the target.
+
+### Fencing
+
+#### Demoralizing Defense
+
+- **Page:** 26
+- **Prerequisites:** Noble Fencing Style
+- **Quick summary:** As a reaction, you can designate an enemy you
+- **Production record:** `4c7eb9c679ee43a8`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+As a reaction, you can designate an enemy you
+
+have just hit with a melee attack. The enemy takes only half damage from the attack, but takes a -5 penalty on attacks made against you until the end of your next turn.
+
+This is a mind-affecting effect.
+
+#### Leading Feint
+
+- **Page:** 26
+- **Prerequisites:** Noble Fencing Style
+- **Quick summary:** Whenever you successfully damage an opponent with a melee attack, you can make a Deception check to feint against that target as a swift action.
+- **Production record:** `d68318a928d3d5c7`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Whenever you successfully damage an opponent with a melee attack, you can make a Deception check to feint against that target as a swift action. If successful, you designate an ally within 12 squares; your target is treated as flat-footed against the first attack that ally makes against your target before the beginning of your next turn.
+
+SUYSEL Hieovseh
+
+Ges
+
+#### Noble Fencing Style
+
+- **Page:** 27
+- **Prerequisites:** Trained in Deception and Persuasion
+- **Quick summary:** This style of swordplay uses wit and force of personality to increase accuracy, taunting and distracting an opponent with feints, misdirection, and deception.
+- **Production record:** `00c3231e4a4173fa`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+This style of swordplay uses wit and force of personality to increase accuracy, taunting and distracting an opponent with feints, misdirection, and deception. When using a light melee weapon or a lightsaber that you are proficient with, you can use your Charisma modifier instead of your Strength modifier on attack rolls.
+
+#### Personal Affront
+
+- **Page:** 27
+- **Prerequisites:** Noble Fencing Style, base attack bonus +5
+- **Quick summary:** Once per encounter, as a reaction, you can make a single melee attack against an adjacent enemy who just damaged you.
+- **Production record:** `8b8c0f8c9d62f410`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Once per encounter, as a reaction, you can make a single melee attack against an adjacent enemy who just damaged you.
+
+#### Transposing Strike
+
+- **Page:** 27
+- **Prerequisites:** Noble Fencing Style, base attack bonus +5,
+- **Quick summary:** When you hit a character with a melee attack, you can choose to have the attack deal only half damage and switch places with that foe.
+- **Production record:** `39b5423e255e14b1`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+When you hit a character with a melee attack, you can choose to have the attack deal only half damage and switch places with that foe. Your foe must be no more than one size category larger than you, and you must end up occupying a space that was previously occupied by your target (and vice versa) to use this talent. This movement does not provoke attacks of opportunity.
+
+### Fortune
+
+#### Lucky Stop
+
+- **Page:** 27
+- **Prerequisites:** Knack
+- **Quick summary:** A successful hit against you is mitigated by an item you just happen to be wearing or carrying, or glances off your armor or clothing in just the right way.
+- **Production record:** `a64632cafe74b864`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+A successful hit against you is mitigated by an item you just happen to be wearing or carrying, or glances off your armor or clothing in just the right way. Once per encounter, as a reaction, you can negate the damage from a single attack that would normally reduce you to 0 hit points.
+
+### Run and Gun
+
+#### Cheap Shot
+
+- **Page:** 27
+- **Prerequisites:** Opportunistic Strike
+- **Quick summary:** Once per encounter, you can make an attack of opportunity against an opponent that takes the withdraw action to withdraw from a space threatened by one of your allies within point-blank range.
+- **Production record:** `32a76fe000898f90`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Once per encounter, you can make an attack of opportunity against an opponent that takes the withdraw action to withdraw from a space threatened by one of your allies within point-blank range.
+
+#### No Escape
+
+- **Page:** 27
+- **Prerequisites:** Opportunistic Strike
+- **Quick summary:** Whenever an opponent uses the withdraw action to leave your threatened space, that opponent is considered flat-footed against you until the end of your next turn.
+- **Production record:** `f0bfcfc354862328`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Whenever an opponent uses the withdraw action to leave your threatened space, that opponent is considered flat-footed against you until the end of your next turn.
+
+#### Opportunistic Strike
+
+- **Page:** 27
+- **Prerequisites:** None.
+- **Quick summary:** Once per encounter, you can make an attack of opportunity against an opponent within point-blank range (even using a ranged weapon) if that opponent provokes an attack of opportunity from one of your allies.
+- **Production record:** `93770927eba5446d`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Once per encounter, you can make an attack of opportunity against an opponent within point-blank range (even using a ranged weapon) if that opponent provokes an attack of opportunity from one of your allies.
+
+#### Slippery Strike
+
+- **Page:** 27
+- **Prerequisites:** None.
+- **Quick summary:** Once per encounter, you can designate an opponent you have just damaged as a reaction; that
+- **Production record:** `a1a905019e7f17c0`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Once per encounter, you can designate an opponent you have just damaged as a reaction; that
+
+#### Strike and Run
+
+- **Page:** 28
+- **Prerequisites:** None.
+- **Quick summary:** Once per encounter, as a reaction after successfully damaging an opponent with a melee or ranged attack, you can move your speed.
+- **Production record:** `119725589e32a35a`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Once per encounter, as a reaction after successfully damaging an opponent with a melee or ranged attack, you can move your speed.
+
+### Awareness
+
+#### Weak Point
+
+- **Page:** 28
+- **Prerequisites:** Acute Senses, Keen Shot
+- **Quick summary:** Once per encounter, you can use a swift action to ignore the Damage Reduction of a single target within your line of sight for the rest of your turn.
+- **Production record:** `18bbce2836989fc5`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Once per encounter, you can use a swift action to ignore the Damage Reduction of a single target within your line of sight for the rest of your turn.
+
+### Hyperspace Explorer
+
+#### Deep-Space Gambit
+
+- **Page:** 28
+- **Prerequisites:** None.
+- **Quick summary:** Once per encounter, when you or a vehicle you occupy are the target of an attack roll, you can force your opponent to reroll the attack.
+- **Production record:** `ae7accbdad82989e`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Once per encounter, when you or a vehicle you occupy are the target of an attack roll, you can force your opponent to reroll the attack. The opponent must take the worse result.
+
+#### Guidance
+
+- **Page:** 28
+- **Prerequisites:** Trained in Perception
+- **Quick summary:** You know how to guide others through treacherous terrain.
+- **Production record:** `54e32a12afb28906`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+You know how to guide others through treacherous terrain. You may use a swift action to point out to an ally the path of least resistance to an ally within line of sight who can see, hear, and understand you. The ally ignores the effect of difficult terrain on its next turn. You may not use this talent on yourself.
+
+#### Hidden Attacker
+
+- **Page:** 29
+- **Prerequisites:** Trained in Stealth
+- **Quick summary:** Your shots seem to come from nowhere.
+- **Production record:** `6315a1a7aaf758d5`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Your shots seem to come from nowhere. Whenever you use the snipe application of the Stealth skill, you do so as a swift action instead of a move action.
+
+#### Hyperspace Savant
+
+- **Page:** 29
+- **Prerequisites:** Trained in Pilot
+- **Quick summary:** You can substitute your Pilot skill for any Use Computer check made to astrogate or operate sensors while you are the pilot of a vehicle.
+- **Production record:** `89914a75353f8810`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+You can substitute your Pilot skill for any Use Computer check made to astrogate or operate sensors while you are the pilot of a vehicle.
+
+#### Vehicle Sneak
+
+- **Page:** 29
+- **Prerequisites:** Trained in Pilot
+- **Quick summary:** You know how to fly and operate your vehicle in order to hide its approach visually, decrease the noise it produces, and minimize its sensor signature.
+- **Production record:** `0c5026168620dbae`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+You know how to fly and operate your vehicle in order to hide its approach visually, decrease the noise it produces, and minimize its sensor signature. Treat your ship as two size categories smaller when attempting Stealth checks.
+
+### Armor Specialist
+
+#### Shield Expert
+
+- **Page:** 29
+- **Prerequisites:** Armor Proficiency (tight)
+- **Quick summary:** You are an expert in using personal shields for maximum effectiveness.
+- **Production record:** `590178f76ad1b08a`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+You are an expert in using personal shields for maximum effectiveness. Once per encounter, you can spend a swift action to regain 10 points of SR (up to the shield’s maximum) on an active personal shield.
+
+### Brawler
+
+#### Devastating Melee Smash
+
+- **Page:** 29
+- **Prerequisites:** Melee Smash
+- **Quick summary:** Once per encounter, you can attempt a devastating melee smash.
+- **Production record:** `d7e9b15e21ea1c4e`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Once per encounter, you can attempt a devastating melee smash. You must declare this special melee attack before making the attack roll. If the attack roll succeeds add half your level to the damage instead of the normal +1 for Melee Smash. The damage from this talent does not stack with any damage bonus provided by the Powerful Charge feat.
+
+### Weapon Specialist
+
+#### Disarming Attack
+
+- **Page:** 29
+- **Prerequisites:** Improved Disarm, Intelligence 13, Weapon Specialization with the chosen weapon
+- **Quick summary:** Choose a single exotic weapon or weapon group with which you are proficient.
+- **Production record:** `456a0aa44da5105c`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Choose a single exotic weapon or weapon group with which you are proficient. You ignore a target's armor bonus to Reflex Defense when disarming with such a weapon. Additionally, as a free action, once per encounter, you can grant yourself a +10 bonus on your attack roll when attempting to disarm an opponent while using such a weapon.
+
+SHV, aexusF
+
+HW HS LavHD
+
+C SESE | Shiv sana ll YalavHo a)
+
+### Rocket Jumper
+
+#### Burning Assault
+
+- **Page:** 30
+- **Prerequisites:** Jet Pack Training
+- **Quick summary:** As a standard action you can expend one of your jet pack’s charges to make an attack with the jet pack, treating it as a flame thrower {see page 128 of the Saga Fdition core rulebook).
+- **Production record:** `be617461ca46a5ad`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+As a standard action you can expend one of your jet pack’s charges to make an attack with the jet pack, treating it as a flame thrower {see page 128 of the Saga Fdition core rulebook). You cannot use this talent when you are flying. You are considered proficient in the flame thrower for the purpose of making this attack.
+
+#### Improved Trajectory
+
+- **Page:** 30
+- **Prerequisites:** Jet Pack Training
+- **Quick summary:** You always use the proper trajectories to maximize efficiency of your rocket-pack burn rates.
+- **Production record:** `f96f1d48cf6604c2`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+You always use the proper trajectories to maximize efficiency of your rocket-pack burn rates. You increase your fly speed by 2 squares when using a jet pack.
+
+#### Jet Pack Training
+
+- **Page:** 30
+- **Prerequisites:** None.
+- **Quick summary:** You can activate a jet pack as a free action on your turn.
+- **Production record:** `d3a642f2ceb21ed4`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+You can activate a jet pack as a free action on your turn. You need not make Pilot checks to land safely with a jet pack.
+
+#### Jet Pack Withdraw
+
+- **Page:** 30
+- **Prerequisites:** Jet Pack Training
+- **Quick summary:** Once per encounter, as a reaction when an opponent moves adjacent to you, you can expend one charge of your jet pack to fly and move your speed or withdraw.
+- **Production record:** `4c23c64e3ab8dcc6`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Once per encounter, as a reaction when an opponent moves adjacent to you, you can expend one charge of your jet pack to fly and move your speed or withdraw.
+
+### Mandalorian Warrior
+
+#### Armored Mandalorian
+
+- **Page:** 38
+- **Prerequisites:** Dexterity 13, Mandalorian Glory, proficient in armor worn
+- **Quick summary:** Mandalorians wear armor constantly and learn to adjust to take an impact on the strongest section of their armor.
+- **Production record:** `c3b22fdc6ca5af8e`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Mandalorians wear armor constantly and learn to adjust to take an impact on the strongest section of their armor. You add your armor’s Fortitude Defense bonus as an equipment bonus to your elite trooper damage reduction (with a maximum bonus equal to your base elite trooper DR). Additionally, if a lightsaber does not ignore the DR of the armor you are wearing (such as cortosis weave/phrik alloy armor),
+
+a lightsaber does not ignore your damage reduction.
+
+#### Mandalorian Advance
+
+- **Page:** 38
+- **Prerequisites:** None.
+- **Quick summary:** Veteran Mandalorians know how to move on the battlefield.
+- **Production record:** `e97df0daa156338c`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Veteran Mandalorians know how to move on the battlefield. Once per encounter, on your turn, you can move up to your speed as a free action before any other action.
+
+#### Mandalorian Ferocity
+
+- **Page:** 38
+- **Prerequisites:** Dexterity 13, proficient in selected exotic weapon or weapon group
+- **Quick summary:** Mandalorians can be ferocious fighters.
+- **Production record:** `9d1c806bdee12411`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Mandalorians can be ferocious fighters. Select one weapon group or exotic weapon you are proficient with. Once per encounter, when making more than one attack in a round, you can add one damage die to each successful hit with the selected weapon group or exotic weapon. You can take this talent more than once, selecting a different weapon group each time.
+
+#### Mandalorian Glory
+
+- **Page:** 38
+- **Prerequisites:** None.
+- **Quick summary:** Above everything else, Mandalorians fight for glory in battle.
+- **Production record:** `2ed2cffbd702c1c3`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Above everything else, Mandalorians fight for glory in battle. Once per encounter, when you reduce an opponent's hit points to 0, you gain a +5 attack bonus with your next attack during the same encounter.
+
+### Force Item
+
+#### Primitive Block
+
+- **Page:** 38
+- **Prerequisites:** Enpower Weapon
+- **Quick summary:** As a reaction, you may negate a melee attack by making a successful Use the Force check.
+- **Production record:** `d043a3c0494345ac`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+As a reaction, you may negate a melee attack by making a successful Use the Force check. The DC of the skill check is equal to the result of the attack roll you wish to negate, and you take a cumulative -5 penalty on your Use the Force checks to use this talent for every time you have used Primitive Block since the beginning of your last turn. You must have a weapon you have empowered drawn to use this talent, and you must be aware of the attack and not flat-footed. You may spend a Force Point to use this talent to negate an attack against an adjacent character.
+
+You may use the Primitive Block talent to negate melee area attacks, such as those made by the Whirlwind Attack feat. If you succeed on the Use the Force check, you take half damage if the attack hits and no damage if the attack misses.
+
+#### Force Throw
+
+- **Page:** 38
+- **Prerequisites:** Empower Weapon
+- **Quick summary:** You can hurl a simple or advanced melee weapon your size or smaller as a standard action, treating it as a thrown weapon.
+- **Production record:** `86565bbe8b8fd1a2`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+You can hurl a simple or advanced melee weapon your size or smaller as a standard action, treating it as a thrown weapon. You are considered proficient with the thrown weapon. The thrown weapon deals normal weapon damage if it hits. If the weapon deals piercing or slashing damage, it becomes embedded in your target, remaining there and causing an additional die of damage each round at the end of the target's turn, and also when it is removed (removing the embedded weapon is a swift action and an adjacent ally can remove the embedded weapon for you). Your target must be within 6 squares of you. The weapon does not automatically return to you, but you can retrieve it with move object (dealing an additional die of damage in the process, if the weapon is embedded in the target, as above).
+
+### Gunslinger
+
+#### Mobile Attack (pistols)
+
+- **Page:** 39
+- **Prerequisites:** Multiattack Proficiency (pistols), Dual Weapon Mastery I, Weapon Focus (pistols)
+- **Quick summary:** Immediately after making a full attack where you attack with two pistols, you may move up to your speed as a free action.
+- **Production record:** `855d544f08e54afc`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Immediately after making a full attack where you attack with two pistols, you may move up to your speed as a free action.
+
+WJED!t KNIGHT TALENTS The following talents are for use with the Jedi Knight prestige class.
+
+### Duelist
+
+#### Improved Riposte
+
+- **Page:** 39
+- **Prerequisites:** Block, Riposte
+- **Quick summary:** Once per turn, when you successfully make a riposte attack using the Riposte talent, you do not count the Block use that triggered the riposte (thus, you take no cumulative penalty to Use the Force checks from that Block attempt).
+- **Production record:** `91c910b9c46a8649`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Once per turn, when you successfully make a riposte attack using the Riposte talent, you do not count the Block use that triggered the riposte (thus, you take no cumulative penalty to Use the Force checks from that Block attempt). Subsequent Block attempts before the beginning of your next turn impose penalties as normal.
+
+#### Improved Redirect
+
+- **Page:** 39
+- **Prerequisites:** Deflect, Redirect Shot
+- **Quick summary:** Once per turn, when you successfully redirect an attack with the Redirect Shot talent, do not count the Deflect use that triggered the redirected attack (thus, you take no cumulative penalty to Use the Force checks from that Deflect attempt).
+- **Production record:** `366ac9dea2e484d3`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Once per turn, when you successfully redirect an attack with the Redirect Shot talent, do not count the Deflect use that triggered the redirected attack (thus, you take no cumulative penalty to Use the Force checks from that Deflect attempt). Subsequent Deflect attempts before the beginning of your next turn impose penalties as normal.
+
+### Jedi Battlemaster
+
+#### Defensive Circle
+
+- **Page:** 39
+- **Prerequisites:** Battle Meditation, Block or Deflect, Jedi Battle Commander
+- **Quick summary:** As a swift action, you and any allies affected by your Battle Meditation gain a +2 insight bonus to Reflex Defense, lasting as long as they are affected by Battle Meditation.
+- **Production record:** `d838141fe404a9fb`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+As a swift action, you and any allies affected by your Battle Meditation gain a +2 insight bonus to Reflex Defense, lasting as long as they are affected by Battle Meditation. Additionally, you gain a +1 bonus to your Use the Force checks to Block and Deflect (as per the talents) for each adjacent ally wielding a lightsaber.
+
+#### Force Revive
+
+- **Page:** 39
+- **Prerequisites:** Battle Meditation, Jedi Battle Commander
+- **Quick summary:** When an ally affected by your Battle Mediation is reduced to O hit points, you can spend a Force Point as a reaction, allowing that ally to take its Second Wind as a reaction immediately (though the target still falls unconscious before the Second Wind is triggered).
+- **Production record:** `83dce0bf42928741`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+When an ally affected by your Battle Mediation is reduced to O hit points, you can spend a Force Point as a reaction, allowing that ally to take its Second Wind as a reaction immediately (though the target still falls unconscious before the Second Wind is triggered).
+
+#### Jedi Battle Commander
+
+- **Page:** 39
+- **Prerequisites:** Battle Meditation
+- **Quick summary:** You are trained to direct Jedi in pitched battles.
+- **Production record:** `57823500e878124a`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+You are trained to direct Jedi in pitched battles. Your battle meditation grants a +2 insight bonus on attack rolls instead of the normal +1.
+
+#### Slashing Charge
+
+- **Page:** 39
+- **Prerequisites:** Block, Riposte, Weapon Focus (lightsabers), Weapon Proficiency (lightsabers)
+- **Quick summary:** Once per encounter, while making a charge, you take no cumulative penalty to Use the Force checks for each Block attempt you make during the charge.
+- **Production record:** `d587fb91aedddd09`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Once per encounter, while making a charge, you take no cumulative penalty to Use the Force checks for each Block attempt you make during the charge. When performing slashing charge, you can apply the attack bonus granted by the charge to all Riposte attacks as well. You can declare the use of this ability after you begin the charge but before you make your first Riposte attack.
+
+#### Mobile Attack (lightsabers)
+
+- **Page:** 39
+- **Prerequisites:** Multiattack Proficiency (lightsabers), Dual Weapon Mastery |, Weapon Focus (lightsabers)
+- **Quick summary:** Immediately after making a full attack where you attack with two lightsabers (or both ends of a double-bladed lightsaber), you may move up to your speed as a free action.
+- **Production record:** `eb701499ba157c6a`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Immediately after making a full attack where you attack with two lightsabers (or both ends of a double-bladed lightsaber), you may move up to your speed as a free action.
+
+### Jedi Shadow
+
+#### Dark Deception
+
+- **Page:** 39
+- **Prerequisites:** None.
+- **Quick summary:** You can cloak your intentions with a veil of anger and hate.
+- **Production record:** `d1561acfdeac3d78`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+You can cloak your intentions with a veil of anger and hate. When another character attempts to sense you through the Force in any way, you can choose to act as though your Dark Side Score equals your Wisdom score.
+
+Additionally, Deception is now a class skill for you.
+
+#### Improved Sentinel Strike
+
+- **Page:** 39
+- **Prerequisites:** Sentinel Strike
+- **Quick summary:** Increase the damage dice of your Sentinel Strike to d8 instead of d6.
+- **Production record:** `f836070c4a153ba0`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Increase the damage dice of your Sentinel Strike to d8 instead of d6.
+
+#### Improved Sentinel's Gambit
+
+- **Page:** 39
+- **Prerequisites:** Sentinel’s Gambit
+- **Quick summary:** You can use Sentinel’s Gambit an additional number of times an encounter equal to half your class level (minimum 1).
+- **Production record:** `c62073de45482781`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+You can use Sentinel’s Gambit an additional number of times an encounter equal to half your class level (minimum 1).
+
+#### Rebuke the Dark
+
+- **Page:** 39
+- **Prerequisites:** None.
+- **Quick summary:** When using the rebuke Force power against a Force power with the [dark side] descriptor, roll two dice for the rebuke attempt and take the better result.
+- **Production record:** `55379010171cf765`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+When using the rebuke Force power against a Force power with the [dark side] descriptor, roll two dice for the rebuke attempt and take the better result.
+
+#### Taint of the Dark Side
+
+- **Page:** 39
+- **Prerequisites:** Dark Deception
+- **Quick summary:** Add one Force power with the [dark side] descriptor to your Force suite.
+- **Production record:** `3f5b1b3566f16ff5`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Add one Force power with the [dark side] descriptor to your Force suite. Once per encounter you can use that Force power with the [dark side] descriptor without increasing your Dark Side Score.
+
+i YatavHg.
+
+i E 1 1
+
+T ay) | W d 8 “W Q Pr > @ (i) Ww) 0)
+
+a)
+
+HW eSLavHoS
+
+SessSsevi1) FoILSEe)
+
+### Jedi Watchman
+
+#### Force Warning
+
+- **Page:** 40
+- **Prerequisites:** None.
+- **Quick summary:** Allies within 12 squares can choose to reroll their Initiative checks at the start of combat but must take the second result, even if it is worse.
+- **Production record:** `0178e98b17ab2bcc`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Allies within 12 squares can choose to reroll their Initiative checks at the start of combat but must take the second result, even if it is worse. Furthermore, if any allies within 12 squares are surprised at the start of an encounter, but you are not, you can designate a number of those allies equal to your Wisdom modifier (minimum 1); those allies are no longer considered surprised and can act normally on the surprise round.
+
+MaSTER 4TRIG, JEDI WATCHMAN
+
+#### Improved Quick Draw (lightsabers)
+
+- **Page:** 40
+- **Prerequisites:** Quick Draw, Weapon Focus (lightsabers)
+- **Quick summary:** If you are carrying a lightsaber (either in your hand or at your belt), you can draw the lightsaber, ignite it, and make a single attack during the surprise round even if you are surprised.
+- **Production record:** `acb9d2dddeea7efd`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+If you are carrying a lightsaber (either in your hand or at your belt), you can draw the lightsaber, ignite it, and make a single attack during the surprise round even if you are surprised. If you are not surprised, you can take any single action of your choice, as normal.
+
+Additionally, once per turn you may draw and ignite a lightsaber as a free action on your turn.
+
+#### Sheltering Stance
+
+- **Page:** 40
+- **Prerequisites:** Block or Deflect, Vigilance
+- **Quick summary:** Whenever you are adjacent to an ally, you may use the Block or Deflect talents on attacks that target that ally without the need to spend a Force Point.
+- **Production record:** `f541b5e57c5af27e`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Whenever you are adjacent to an ally, you may use the Block or Deflect talents on attacks that target that ally without the need to spend a Force Point.
+
+#### Vigilance
+
+- **Page:** 40
+- **Prerequisites:** None.
+- **Quick summary:** As a swift action you may designate one adjacent ally as the target of this talent.
+- **Production record:** `abe485644b195f0b`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+As a swift action you may designate one adjacent ally as the target of this talent. That target gains a +1 deflection bonus to Reflex Defense as long as you remain adjacent to them. You may change the target of this talent as a swift action.
+
+#### Watchman's Advance
+
+- **Page:** 40
+- **Prerequisites:** Force Warning
+- **Quick summary:** When acting in the surprise round, you and your allies can take an extra move action.
+- **Production record:** `e3927fc5314cc492`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+When acting in the surprise round, you and your allies can take an extra move action. Any character can gain only one extra move action during the surprise round regardless of the number of Jedi with this talent in your group.
+
+### Sith
+
+#### Affliction
+
+- **Page:** 40
+- **Prerequisites:** None.
+- **Quick summary:** Your Force power carries the taint of the dark side more so than even other dark side users.
+- **Production record:** `776a0fa8ae532ccc`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Your Force power carries the taint of the dark side more so than even other dark side users. When you damage a single opponent with one of your Force powers, that target also takes 2d6 points of Force damage at the beginning of its next turn, before taking any actions.
+
+#### Dark Healing Field
+
+- **Page:** 40
+- **Prerequisites:** Dark Healing, Improved Dark Healing
+- **Quick summary:** You can spend a Force Point to heal wounds by drawing life energy from up to three targeted creatures within 12 squares of you.
+- **Production record:** `89a8c710bb68901c`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+You can spend a Force Point to heal wounds by drawing life energy from up to three targeted creatures within 12 squares of you. Once per encounter, make a Use the Force check. If the attack equals or exceeds a target's Fortitude Defense, the target takes 1d6 damage per class level. You heal half the total damage dealt (cumulative from all targets). If the attack fails, the targets take half damage and you heal that amount.
+
+#### Drain Force
+
+- **Page:** 40
+- **Prerequisites:** Affliction
+- **Quick summary:** Once per encounter, as a reaction when you damage a Forcesensitive opponent, the dark taint of your power allows you to sap some of the opponent's strength and covert it to personal power, regaining one spent Force power.
+- **Production record:** `2056998b5afa4e00`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Once per encounter, as a reaction when you damage a Forcesensitive opponent, the dark taint of your power allows you to sap some of the opponent's strength and covert it to personal power, regaining one spent Force power. Additionally, the target loses one Force Point.
+
+#### Sith Alchemy
+
+- **Page:** 41
+- **Prerequisites:** Dark Side Adept, Dark Side Master
+- **Quick summary:** Your knowledge of Sith sorcery allows you to imbue talismans and other objects with the power of the dark side.
+- **Production target:** `eeecb3737aabf789`
+- **Phase 3B disposition:** `IDENTITY_SPLIT`
+
+**Canonical rules text**
+
+Your knowledge of Sith sorcery allows you to imbue talismans and other objects with the power of the dark side.
+
+Create Sith Talisman:You can spend one Force Point to imbue a portable object with the dark side, creating a Sith talisman that provides offensive strength to a Force power or lightsaber attack. Creating the talisman takes a full-round action. While you wear or carry the talisman on your person, add 1d6 to your damage with Force powers. You gain a Dark Side point when you first put on or carry a Sith talisman. You can have only one Sith talisman active at any given time, and if it is destroyed, you cannot create another one for 24 hours.
+
+Create Sith Weapon: You can alchemically treat a properly prepared weapon to become a Sith weapon. You may spend a Force Point to imbue the weapon with the properties of the Sith alchemical weapon template (this process takes one hour to complete). See Chapter 5: Equipment and Droids for information on Sith alchemical weapons.
+
+New PRESTIGE
+
+### Corporate Power
+
+#### Competitive Drive
+
+- **Page:** 42
+- **Prerequisites:** None.
+- **Quick summary:** You are driven to compete and succeed.
+- **Production record:** `53b0aa17a95ba670`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+You are driven to compete and succeed. Once per encounter, you can reroll any Wisdom-, Intelligence-, or Charisma-based skill check (except Use the Force) and take the better result.
+
+#### Competitive Edge
+
+- **Page:** 42
+- **Prerequisites:** None.
+- **Quick summary:** When you and your allies are not surprised, you and a number of allies equal to your Charisma modifier (minimum 1) that you designate on your first turn gain the benefit of the Quick Draw feat for the remainder of the encounter.
+- **Production record:** `4acfb3b5a7a402fd`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+When you and your allies are not surprised, you and a number of allies equal to your Charisma modifier (minimum 1) that you designate on your first turn gain the benefit of the Quick Draw feat for the remainder of the encounter.
+
+#### Corporate Clout
+
+- **Page:** 42
+- **Prerequisites:** Impose Hesitation, Wrong Decision
+- **Quick summary:** You are adept at making deals that make enemies question which side they should be on.
+- **Production record:** `50073b86c51c52cd`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+You are adept at making deals that make enemies question which side they should be on. Once per encounter, as a standard action, you can make a Persuasion check against the Will Defense of an enemy within line of sight. If your check equals or exceeds the target's Will Defense, the target cannot attack you for the remainder of the encounter. If your check exceeds the Will Defense by 5 or more, the target will not attack you or your allies for the remainder of the encounter, and retreats from the encounter. If your check exceeds the Will Defense by 10 or more, the target's attitude toward you is now Friendly, and the target becomes your ally for the remainder of the encounter, remaining under the control of the Gamemaster. If you or one of your allies attacks the target, the target once again becomes hostile.
+
+lf the target is higher level than you, it gains a +5 bonus to its Will Defense.
+
+This is a mind-affecting fear effect.
+
+#### Impose Confusion
+
+- **Page:** 43
+- **Prerequisites:** Impose Hesitation
+- **Quick summary:** Increase the area of Impose Hesitation toa 12-square cone.
+- **Production record:** `d4da27798cbb18e6`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Increase the area of Impose Hesitation toa 12-square cone. Also, once per encounter, after making the Persuasion check for Impose Hesitation, you can instead choose to have the targets lose a standard action on their next turn.
+
+#### Impose Hesitation
+
+- **Page:** 43
+- **Prerequisites:** None.
+- **Quick summary:** As a standard action, make a Persuasion check targeting all opponents in a 6-square cone.
+- **Production record:** `0fd8fc8cfae6f516`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+As a standard action, make a Persuasion check targeting all opponents in a 6-square cone. If you equal or exceed the target's Will Defense, the target loses a swift action on its next turn and cannot take full-round actions. This is a mind-affecting effect. Targets need to see, hear, and understand you to be affected by this attack.
+
+#### Willful Resolve
+
+- **Page:** 43
+- **Prerequisites:** None.
+- **Quick summary:** Once per encounter, you can negate the effect of a single attack roll or skill check made against you that targets your Will Defense.
+- **Production record:** `f0c13c60b2e3f35b`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Once per encounter, you can negate the effect of a single attack roll or skill check made against you that targets your Will Defense.
+
+#### Wrong Decision
+
+- **Page:** 43
+- **Prerequisites:** None.
+- **Quick summary:** Each time you are attacked, the opponent that attacked you takes a -2 morale penalty to its Will Defense until the end of your next turn.
+- **Production record:** `463ae052e705eaf3`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Each time you are attacked, the opponent that attacked you takes a -2 morale penalty to its Will Defense until the end of your next turn. This penalty is not cumulative, so if a target makes multiple attacks against you it only incurs the penalty once per turn.
+
+Executive Leadership
+
+As aswift action, as many times an encounter equal to half your corporate agent level, you can grant an ally within line of sight a temporary boost to theirspeed, attacks, or defenses. Until the end of their turn they can gain one of the following benefits (your choice): increase base speed by 2 squares, a +2 morale bonus to attack rolls, or a +2 morale bonus to all defenses.
+
+### Gladiatorial Combat
+
+#### Brutal Attack
+
+- **Page:** 44
+- **Prerequisites:** Weapon Focus with the chosen weapon
+- **Quick summary:** Choose a single exotic weapon or weapon group you are proficient with.
+- **Production record:** `d9f47bfdde76475f`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Choose a single exotic weapon or weapon group you are proficient with. Attacks with such weapons that deal damage that exceeds an opponent's damage threshold deal +1 die of damage on that attack.
+
+You can select this talent multiple times. Each time you select this talent, it applies to a different exotic weapon or weapon group.
+
+#### Call Out
+
+- **Page:** 44
+- **Prerequisites:** Personal Vendetta
+- **Quick summary:** When you use the Personal Vendetta talent, you may designate one target of that talent to take a -5 penalty to attacks against targets other than you instead of the normal -2.
+- **Production record:** `5c3036b82c047490`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+When you use the Personal Vendetta talent, you may designate one target of that talent to take a -5 penalty to attacks against targets other than you instead of the normal -2.
+
+#### Distracting Attack
+
+- **Page:** 44
+- **Prerequisites:** Brutal Attack with the weapon used
+- **Quick summary:** When you deal damage to a target with a melee or ranged attack, compare the attack roll to the target's Will Defense.
+- **Production record:** `cdf3e44536031f53`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+When you deal damage to a target with a melee or ranged attack, compare the attack roll to the target's Will Defense. If the attack roll also meets or exceeds the target's Will Defense, the target takes a -2 penalty to Reflex Defense until the end of your next turn.
+
+#### Exotic Weapons Master
+
+- **Page:** 44
+- **Prerequisites:** Proficiency in at least one exotic weapon
+- **Quick summary:** You treat all exotic weapons as a single weapon group (exotic weapons).
+- **Production record:** `5a2dee101c2217b3`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+You treat all exotic weapons as a single weapon group (exotic weapons). If you already have feats that grant proficiency with or augment the use of one exotic weapon, those feats grant proficiency with or augment all exotic weapons. For example, if you already had Exotic Weapon Proficiency (shyarn) and Weapon Focus (shyarn) you now how Weapon Proficiency (exotic weapons) and Weapon Focus (exotic weapons), and the effects of both feats apply to all exotic weapons.
+
+#### Lockdown Strike
+
+- **Page:** 45
+- **Prerequisites:** None.
+- **Quick summary:** When you hit a moving opponent that is one size category larger than you or smaller with an attack of opportunity, you immediately end its current movement.
+- **Production record:** `c7ecd80bdcdfaaba`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+When you hit a moving opponent that is one size category larger than you or smaller with an attack of opportunity, you immediately end its current movement.
+
+#### Multiattack Proficiency (exotic weapons)
+
+- **Page:** 45
+- **Prerequisites:** Exotic Weapons Master
+- **Quick summary:** Whenever you make multiple attacks with exotic weapons as a full attack action, you reduce the penalty on your attack rolls by 2.
+- **Production target:** `66c8f9d94547b5e6`
+- **Phase 3B disposition:** `CREATE`
+
+**Canonical rules text**
+
+Whenever you make multiple attacks with exotic weapons as a full attack action, you reduce the penalty on your attack rolls by 2.
+
+You can take this talent multiple times; each time you take this talent, you reduce the penalty on your attack rolls by an additional 2.
+
+#### Personal Vendetta
+
+- **Page:** 45
+- **Prerequisites:** None.
+- **Quick summary:** As a swift action, you can taunt all enemies within 12 squares and line of sight; on their next turn, these enemies take a -2 penalty on attack rolls made against any target other than you.
+- **Production record:** `bc618e6b3da78b3e`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+As a swift action, you can taunt all enemies within 12 squares and line of sight; on their next turn, these enemies take a -2 penalty on attack rolls made against any target other than you.
+
+This is a mind-affecting effect.
+
+#### Unstoppable
+
+- **Page:** 45
+- **Prerequisites:** None.
+- **Quick summary:** You can sometimes shrug off the effect of debilitating attacks, Once per encounter, if you are hit by an attack that would normally knock you down the condition track, you can reduce the number of steps you move down the condition track by 1 step (to a minimum of 0}.
+- **Production record:** `9c0c0966b7c7c30e`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+You can sometimes shrug off the effect of debilitating attacks, Once per encounter, if you are hit by an attack that would normally knock you down the condition track, you can reduce the number of steps you move down the condition track by 1 step (to a minimum of 0}.
+
+### Melee Duelist
+
+#### Advantageous Strike
+
+- **Page:** 46
+- **Prerequisites:** None.
+- **Quick summary:** You take advantage of your opponent's haste.
+- **Production record:** `c740ed344484a2b5`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+You take advantage of your opponent's haste. You gain a +5 bonus on attacks of opportunity with melee weapons you are proficient with.
+
+#### Dirty Tricks
+
+- **Page:** 46
+- **Prerequisites:** Trained in Deception
+- **Quick summary:** You are not above using a few dirty tricks to win.
+- **Production record:** `46ef0773cd6ef86d`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+You are not above using a few dirty tricks to win. You can use the feint application of the Deception skill as two swift actions against an opponent you threaten.
+
+#### Dual Weapon Flourish I
+
+- **Page:** 46
+- **Prerequisites:** Dual Weapon Mastery I, Weapon Finesse
+- **Quick summary:** When wielding only two light melee weapons or two lightsabers, whenever you make a single attack as a standard action with one weapon you can make a single attack with the other weapon as a free action against the same target.
+- **Production record:** `5004013069710c3e`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+When wielding only two light melee weapons or two lightsabers, whenever you make a single attack as a standard action with one weapon you can make a single attack with the other weapon as a free action against the same target. You apply the normal penalties for fighting with two weapons with this attack.
+
+#### Dual Weapon Flourish II
+
+- **Page:** 46
+- **Prerequisites:** Dual Weapon Mastery I, Weapon Finesse
+- **Quick summary:** When wielding only two light melee weapons or two lightsabers, whenever you make a single attack as a standard action with one weapon you can make a single attack with the other weapon as a free action against the same target.
+- **Production record:** `02c69474cc7bbedd`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+When wielding only two light melee weapons or two lightsabers, whenever you make a single attack as a standard action with one weapon you can make a single attack with the other weapon as a free action against the same target. You apply the normal penalties for fighting with two weapons with this attack.
+
+#### Master of Elegance
+
+- **Page:** 46
+- **Prerequisites:** Dual Weapon Flourish I or Single Weapon Flourish I, Weapon Finesse
+- **Quick summary:** You may add your Dexterity bonus [instead of your Strength bonus) on damage rolls when wielding a light melee weapon.
+- **Production record:** `fc986d810732ff3a`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+You may add your Dexterity bonus [instead of your Strength bonus) on damage rolls when wielding a light melee weapon. When you wield a light melee weapon two-handed, you may apply double your Dexterity bonus (instead of double your Strength bonus) to the damage.
+
+#### Multiattack Proficiency (advanced melee weapons)
+
+- **Page:** 47
+- **Prerequisites:** None.
+- **Quick summary:** Whenever you make multiple attacks with advanced melee weapons as a full attack action, you reduce the penalty on your attack rolls by 2.
+- **Production target:** `35375c6c9505e6f5`
+- **Phase 3B disposition:** `CREATE`
+
+**Canonical rules text**
+
+Whenever you make multiple attacks with advanced melee weapons as a full attack action, you reduce the penalty on your attack rolls by 2.
+
+You can take this talent multiple times; each time you take this talent, you reduce the penalty on your attack rolls by an additional 2.
+
+#### Out of Nowhere
+
+- **Page:** 47
+- **Prerequisites:** Trained in Deception, Weapon Finesse
+- **Quick summary:** Once per encounter, as a free action on your turn, you can make an attack with a light melee weapon or lightsaber after a successful feint.
+- **Production record:** `f7bc7dab38c43fb5`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Once per encounter, as a free action on your turn, you can make an attack with a light melee weapon or lightsaber after a successful feint.
+
+#### Single Weapon Flourish I
+
+- **Page:** 47
+- **Prerequisites:** Double Attack (advanced melee weapons, exotic melee weapon, or lightsabers), Weapon Finesse
+- **Quick summary:** When you wield only a single light melee weapon or a Single lightsaber and make a full attack, you can move up to your speed as a free action at any time during your turn.
+- **Production record:** `499cfbb7489b1244`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+When you wield only a single light melee weapon or a Single lightsaber and make a full attack, you can move up to your speed as a free action at any time during your turn.
+
+#### Single Weapon Flourish II
+
+- **Page:** 47
+- **Prerequisites:** Double Attack (advanced melee weapons, exotic melee weapon, or lightsabers), Master of Elegance, Single Weapon Flourish I, Weapon Finesse
+- **Quick summary:** When you wield only a single light melee weapon or a single lightsaber, you can make a full attack as a standard action instead of a full-round action.
+- **Production record:** `bf23bf3704382723`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+When you wield only a single light melee weapon or a single lightsaber, you can make a full attack as a standard action instead of a full-round action.
+
+### Alter
+
+#### Force Flow
+
+- **Page:** 52
+- **Prerequisites:** None.
+- **Quick summary:** For reasons unknown to you, the Living Force flows through you in an irregular fashion.
+- **Production record:** `b0898acb0a19a3cd`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+For reasons unknown to you, the Living Force flows through you in an irregular fashion. Whenever you roll a natural 1 on an attack roll or Use the Force check, you gain one temporary Force Point. If you do not spend this Force Point before the end of the encounter, it is lost.
+
+#### Telepathic Influence
+
+- **Page:** 53
+- **Prerequisites:** Telepathic Link, trained in Use the Force
+- **Quick summary:** You naturally and unconsciously influence those who are regularly around you.
+- **Production record:** `3b30ffbfc3e3270f`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+You naturally and unconsciously influence those who are regularly around you. Whenever you roll a natural 20 on an attack roll or Use the Force check, instead of regaining all your spent Force powers you may instead choose to grant one ally within 12 squares a temporary Force Point. If your ally does not use this temporary Force Point before the end of the encounter, it is lost.
+
+#### Telepathic Link
+
+- **Page:** 53
+- **Prerequisites:** Trained in Use the Force
+- **Quick summary:** You form an enhanced telepathic link with a willing ally with the Force Sensitivity feat as a swift action.
+- **Production record:** `25dd9d9b3b66c048`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+You form an enhanced telepathic link with a willing ally with the Force Sensitivity feat as a swift action. The link is maintained until you choose to remove it (no action required). As long as you remain within one kilometer or your target, you and the target can communicate telepathically as though you were speaking. Once per encounter, you may use a Force power from your target’s Force suite (if the target consents), or you may allow the target to use one of your Force powers. You may only have one telepathic link active at a time.
+
+### Control
+
+#### Beast Trick
+
+- **Page:** 53
+- **Prerequisites:** None.
+- **Quick summary:** You can use the mind trick Force power on creatures of Intelligence 2 and lower.
+- **Production record:** `6c374ec52e710f11`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+You can use the mind trick Force power on creatures of Intelligence 2 and lower. However, a beast with an Intelligence of 2 or less still cannot perform any complex action or understand complex commands it wouldn't otherwise be able to understand; an affected beast might understand “Attack those Sith troopers!” but it would not comprehend, “Break into the command center and disable the communications array."
+
+#### Force Suppression
+
+- **Page:** 53
+- **Prerequisites:** rebuke Force power
+- **Quick summary:** If you use the rebuke Force power to attempt to negate or redirect a Force power used against you but fail to overcome your opponent's Use the Force check result, you instead lessen the effect of the Force power by one step.
+- **Production record:** `7fa47c5d2c33ed40`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+If you use the rebuke Force power to attempt to negate or redirect a Force power used against you but fail to overcome your opponent's Use the Force check result, you instead lessen the effect of the Force power by one step. For example, if an opponent attempted to use the slow Force power on you and rolled a 21, if you fail to rebuke the power you only suffer the DC 15 effect instead of the DC 20 effect. This talent only affects Force powers that have variable effects based on your opponent's Use the Force checks, and powers with static DCs without variable effects (such as Force lightning) are unaffected.
+
+### Jal Shey
+
+#### Action Exchange
+
+- **Page:** 57
+- **Prerequisites:** Force Delay
+- **Quick summary:** Whenever you successfully use Force Delay, you grant one ally within six squares and line of sight the ability to trade a move action for another standard action on his next turn.
+- **Production target:** `837af2972223104f`
+- **Phase 3B disposition:** `CREATE`
+
+**Canonical rules text**
+
+Whenever you successfully use Force Delay, you grant one ally within six squares and line of sight the ability to trade a move action for another standard action on his next turn.
+
+#### Force Delay
+
+- **Page:** 57
+- **Prerequisites:** Trained in Persuasion
+- **Quick summary:** Jal Shey verbally startle opponents with a little help from the Force.
+- **Production record:** `bb6511073dfb4774`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Jal Shey verbally startle opponents with a little help from the Force. Once per encounter, make a Persuasion check against the Will
+
+AP SSLdvHo
+
+aeVved aHL
+
+Al usiavHo 7)
+
+2Suyecd SH
+
+Defense of a target of Intelligence 3 or higher that can understand you as a reaction. If successful, the target loses its move action on its next round. If you spend a Force Point, the target loses its standard action instead.
+
+#### Imbue Item
+
+- **Page:** 58
+- **Prerequisites:** None.
+- **Quick summary:** You can spend a Force Point to imbue a specially crafted weapon, item, armor, or article of clothing with the power of the Force.
+- **Production target:** `5e972b61a1f9ecce`
+- **Phase 3B disposition:** `CREATE`
+
+**Canonical rules text**
+
+You can spend a Force Point to imbue a specially crafted weapon, item, armor, or article of clothing with the power of the Force. Imbuing the item requires a full round action. As a full-round action, the wearer of such an item can open himself to the Force, transferring one of their Force Points into the item. You can then use a swift action to spend a stored Force Point at any later time, even in the same round that you spend a Force Point of your own. You can attune only one item per 24 hours, the item functions only for you and a given item can only store one Force Point at a time. You cannot wear more than one attuned item at a time, and you can spend only up to a maximum of two Force Points in a round (one of your own plus one from an item).
+
+#### Knowledge of the Force
+
+- **Page:** 58
+- **Prerequisites:** None.
+- **Quick summary:** You can use your scholarly knowledge of the Force to help others reach their full potential.
+- **Production target:** `04eca2813630e8d4`
+- **Phase 3B disposition:** `CREATE`
+
+**Canonical rules text**
+
+You can use your scholarly knowledge of the Force to help others reach their full potential. You can spend a Force Point as a reaction to aid another ally within 6 squares on a Use the Force check, following the normal rules for the aid another action as usual.
+
+### Keetael
+
+#### Conceal Force Use
+
+- **Page:** 58
+- **Prerequisites:** None.
+- **Quick summary:** You have learned to use the Force without telltale gestures, reducing the disturbance created in the process.
+- **Production target:** `deb5ce7af3c824ff`
+- **Phase 3B disposition:** `CREATE`
+
+**Canonical rules text**
+
+You have learned to use the Force without telltale gestures, reducing the disturbance created in the process. Whenever you make a Use the Force check, as a swift action you can make a Deception check to convey deceptive appearances in order to conceal the effects of your Force use. Normal modifiers for the deception’s complexity still apply.
+
+#### Force Direction
+
+- **Page:** 58
+- **Prerequisites:** None.
+- **Quick summary:** You use the Force to guide your ranged attacks to their target.
+- **Production target:** `d65ad7fb7a374762`
+- **Phase 3B disposition:** `CREATE`
+
+**Canonical rules text**
+
+You use the Force to guide your ranged attacks to their target. Whenever you spend a Force point to add to a ranged attack roll, you can always add +3 (or +4, if you roll d8s for Force Points) instead of rolling the die.
+
+#### Force Momentum
+
+- **Page:** 58
+- **Prerequisites:** None.
+- **Quick summary:** You use the Force to add to the impact of your melee weapon, increasing your damage.
+- **Production target:** `4cb2cf521a4d2175`
+- **Phase 3B disposition:** `CREATE`
+
+**Canonical rules text**
+
+You use the Force to add to the impact of your melee weapon, increasing your damage. Whenever you spend a Force point to add to a melee attack roll, if the attack hits you can also add the Force point’s result to the damage roll.
+
+#### Past Visions
+
+- **Page:** 58
+- **Prerequisites:** Visions
+- **Quick summary:** The long-lived Draethos are particularly adept at searching and understanding the past.
+- **Production target:** `462df9a631ee50f4`
+- **Phase 3B disposition:** `CREATE`
+
+**Canonical rules text**
+
+The long-lived Draethos are particularly adept at searching and understanding the past. When using farseeing to look into the past, reduce your DC numbers by half. Also, you are able to see everything within 6 squares of your target clearly without spending a Force Point.
+
+### Krath
+
+#### Dark Side Manipulation
+
+- **Page:** 59
+- **Prerequisites:** None.
+- **Quick summary:** Your Sith sorcery experimentation has provided you with a method of manipulating the dark side.
+- **Production record:** `eaaecdfd7a538975`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Your Sith sorcery experimentation has provided you with a method of manipulating the dark side. Once per encounter, when using a Force Point in an act that would give you a dark side point, you may treat the Force Point as though you had rolled the maximum on the die.
+
+Al H3iLeavHO
+
+BgoHed FHL
+
+an 18)
+
+Al esiavHa
+
+f a WwW q v G) 2) ® W)
+
+#### Krath Illusions
+
+- **Page:** 60
+- **Prerequisites:** ||lusion
+- **Quick summary:** As a swift action, you can reduce the penalty for large illusions by one half (rounded down, minimum -1).
+- **Production record:** `90820963f87dd268`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+As a swift action, you can reduce the penalty for large illusions by one half (rounded down, minimum -1).
+
+#### Krath Intuition
+
+- **Page:** 60
+- **Prerequisites:** None.
+- **Quick summary:** You have a natural ability to use dark-side artifacts, such as Sith talismans and alchemical weapons.
+- **Production record:** `ed0304eebd82042b`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+You have a natural ability to use dark-side artifacts, such as Sith talismans and alchemical weapons. Once per encounter, you may spend a Force Point to treat the damage from a Sith alchemical weapon as though you had rolled the maximum damage on the dice.
+
+#### Krath Surge
+
+- **Page:** 60
+- **Prerequisites:** None.
+- **Quick summary:** Once per encounter, using rudimentary Sith sorcery, you channel dark side energy in a manner that boosts one use of a Force power.
+- **Production record:** `ca30265867f3dcb1`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Once per encounter, using rudimentary Sith sorcery, you channel dark side energy in a manner that boosts one use of a Force power. As a swift action, you can add 1 die of damage (if the power deals damage) or extend the range of the power by 6 squares (if it has a range beyond yourself or a single target). Using this talent automatically adds the {dark side] descriptor to the power used.
+
+### Luka Sene
+
+#### Field Detection
+
+- **Page:** 60
+- **Prerequisites:** Trained in Use the Force
+- **Quick summary:** As a swift action, make a DC 15 Use the Force check.
+- **Production record:** `700ec3d782794d11`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+As a swift action, make a DC 15 Use the Force check. If tne check succeeds, you can detect the presence, general strength, and origin (or direction of origin if the source is out of range) of electromagnetic and energy fields within 12 squares of you. You can also determine the type of field, allowing you to detect communications devices, sensors, and other electronic equipment. When dealing damage to a person or droid using a personal shield, or to a vehicle with shields active, a successful check allows you to detect minute fluctuations in the shield, reducing their SR by -5 against your attacks until the end of your turn.
+
+#### Improved Force Sight
+
+- **Page:** 60
+- **Prerequisites:** Force sight species trait, trained in Use the Force
+- **Quick summary:** Your natural Force sight is more precise than that of your fellow Miraluka.
+- **Production target:** `38f57c9f9cd0b727`
+- **Phase 3B disposition:** `CREATE`
+
+**Canonical rules text**
+
+Your natural Force sight is more precise than that of your fellow Miraluka. You can use the Search application of the Perception skill as a swift action. Additionally, you always succeed when using the Sense Surroundings application of the Use the Force skill (no roll required).
+
+#### Luka Sene Master
+
+- **Page:** 60
+- **Prerequisites:** Field Detection, farseeing
+- **Quick summary:** You are a master of Luka Sene techniques and an expert in using sense-related talents and powers.
+- **Production target:** `b0427980c49cd650`
+- **Phase 3B disposition:** `CREATE`
+
+**Canonical rules text**
+
+You are a master of Luka Sene techniques and an expert in using sense-related talents and powers. Once per encounter, you gain a temporary Force Point that you must spend when activating a talent from the Sense or Luka Sene talent trees, using the farseeing Force power, or on a Use the Force check made to use the Search Your Feelings or Sense Force applications of the skill. The Force Point is lost if not used before the end of the encounter.
+
+#### Quickseeing
+
+- **Page:** 60
+- **Prerequisites:** Trained in Use the Force, farseeing
+- **Quick summary:** As a free action on your turn, you can make a Use the Force check against a living creature within 12 squares, removing one use of the farseeing Force power from your active suite (as though you had activated the power).
+- **Production target:** `537afb4984d1ca61`
+- **Phase 3B disposition:** `CREATE`
+
+**Canonical rules text**
+
+As a free action on your turn, you can make a Use the Force check against a living creature within 12 squares, removing one use of the farseeing Force power from your active suite (as though you had activated the power). If your check result equals or exceeds the Will Defense of the target you gain a +2 insight bonus on attack rolls against that target until the end of your turn. This counts as using the farseeing Force power against that target, but this talent replaces the normal rules and effect of that power.
+
+### Order of Shasa
+
+#### Deception Awareness
+
+- **Page:** 61
+- **Prerequisites:** None.
+- **Quick summary:** Realizing how the devastating the consequences would have been if the Sith had successfully deceived her and her companions during the Jedi Civil War, Shasa has developed a technique for using the Force to detect deceptions.
+- **Production record:** `4cc3f26d58c3302b`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Realizing how the devastating the consequences would have been if the Sith had successfully deceived her and her companions during the Jedi Civil War, Shasa has developed a technique for using the Force to detect deceptions. You gain +5 to your Will Defense against uses of the Deception skill. Additionally, you can make a Use the Force check instead of a Perception check to sense deception and sense influence. You are considered trained in Perception for the purpose of using this talent. If you are entitled toa Perception check reroll, you may reroll your Use the Force check instead (subject to the same circumstances and limitations).
+
+#### Greater Weapon Focus (Fira)
+
+- **Page:** 61
+- **Prerequisites:** Weapon Focus (fira)
+- **Quick summary:** You have mastered the chosen weapon of the Order of Shasa.
+- **Production record:** `f9c5c2077e398e60`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+You have mastered the chosen weapon of the Order of Shasa. You gain a +1 bonus on melee attack rolls with a fira. This bonus stacks with the bonus granted by the Weapon Focus feat.
+
+#### Progenitor's Call
+
+- **Page:** 61
+- **Prerequisites:** None.
+- **Quick summary:** You have learned to sense the call of your ancestors and wield it through the Force.
+- **Production record:** `4ebb3a798e36afe6`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+You have learned to sense the call of your ancestors and wield it through the Force. Once per encounter, you can telepathically disrupt an enemy by making a Use the Force check against the target's Will Defense. If you succeed, the target is confused by the call, moving -1 persistent step down the condition track and losing its standard action on its next turn. A creature can only be affected by this power once per encounter, and the persistent condition can be removed with a DC 15 Treat Injury check or by resting for 8 hours. This is a mind-affecting effect.
+
+#### Waveform
+
+- **Page:** 61
+- **Prerequisites:** None.
+- **Quick summary:** Taking cues from Manaan's oceans, you know how to emulate wave action using the Force.
+- **Production record:** `29ae5a7db772d779`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Taking cues from Manaan's oceans, you know how to emulate wave action using the Force. As a swift action, when you use a telekinetic Force power (that is, a power affected by the Telekinetic Power or Telekinetic Savant talents), you manipulate the particles of the environment around you to add to the force of impact, allowing you to add your Charisma modifier to any damage dealt (minimum +1).
+
+“i CHAPTER V
+
+### Reference-only publication
+
+- Alter — Illusion — KOTOR page 52. Canonical owner: Force Unleashed Campaign Guide. No KOTOR production mutation.
+
 ---
 
 ## Append-only book index
@@ -10483,7 +12017,7 @@ You can spend a Force Point to gain low-light vision for 1 minute or until the e
 - [x] Scum and Villainy — 110 certified talent claims
 - [x] Unknown Regions — 57 certified talent claims
 - [x] Legacy Era Campaign Guide — 101 certified talent claims
-- [ ] Knights of the Old Republic Campaign Guide
+- [x] Knights of the Old Republic Campaign Guide — 115 certified talent claims
 - [ ] Force Unleashed Campaign Guide
 - [ ] Jedi Academy Training Manual
 - [x] Scavenger's Guide to Droids — 31 certified talent claims
