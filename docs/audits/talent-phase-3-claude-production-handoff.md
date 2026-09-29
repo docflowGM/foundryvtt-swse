@@ -20,6 +20,7 @@ A talent identity is `canonicalTreeKey + talent name`. Talent name alone is neve
 | Scum and Villainy | 110 | `data/audits/talent-phase-3b-scum-and-villainy-manifest.json` | `node tools/build-talent-phase-3b-scum-and-villainy-manifest.mjs --check` |
 | Unknown Regions | 57 | `data/audits/talent-phase-3b-unknown-regions-manifest.json` | `node tools/build-talent-phase-3b-unknown-regions-manifest.mjs --check` |
 | Legacy Era Campaign Guide | 101 | `data/audits/talent-phase-3b-legacy-era-campaign-guide-manifest.json` | `node tools/build-talent-phase-3b-legacy-era-manifest.mjs --check` |
+| Knights of the Old Republic Campaign Guide | 114 | `data/audits/talent-phase-3b-knights-of-the-old-republic-campaign-guide-manifest.json` | `node tools/build-talent-phase-3b-kotor-manifest.mjs --check` |
 | Scavenger's Guide to Droids | 31 | `data/audits/talent-phase-3b-scavengers-guide-to-droids-manifest.json` | `node tools/build-talent-phase-3b-scavengers-manifest.mjs --check` |
 
 The shared implementation is `tools/build-talent-phase-3b-manifest.mjs`.
