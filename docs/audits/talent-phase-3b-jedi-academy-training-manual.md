@@ -51,10 +51,23 @@ Therefore only 43 talents are certified `CREATE`.
 
 Two canonical JATM Force-tradition talent trees are absent from `packs/talent_trees.db` and are certified for creation before their talents:
 
-- Shapers of Kro Var — `ab3311a860d8d359` — 5 talents
-- Zeison Sha Warrior — `aec386e85f66e93e` — 5 talents
+- Shapers of Kro Var — `4b2b7b67261c99fa` — 5 talents
+- Zeison Sha Warrior — `ec0c0bc224d2e4d5` — 5 talents
 
 Both tree-registry entries use the `FORCE_TRADITION` access model and have no class-access grants. Their `classAccessMutations` count is therefore zero; Phase 3C must create the tree records without inventing base-class access.
+
+## Pre-Phase 3C reproducibility correction
+
+The Phase 3C-1 dry-run preflight reran this manifest through the shared deterministic builder and found that the initially committed packet was internally inconsistent: talents within each missing Force-tradition tree had been assigned different generated target-tree IDs even though only one tree document per canonical tree was scheduled for creation.
+
+The corrected manifest now uses exactly one tree identity per canonical tree:
+
+- every Shapers of Kro Var member targets `4b2b7b67261c99fa`;
+- every Zeison Sha Warrior member targets `ec0c0bc224d2e4d5`.
+
+The same deterministic regeneration replaced the ten generated member-talent IDs for these two trees. The corrected IDs are authoritative in `data/audits/talent-phase-3b-jedi-academy-training-manual-manifest.json`.
+
+This correction changes no publication counts, canonical identity counts, dispositions, or class-access mutations, and it performed no production mutation.
 
 ## Production verification
 
