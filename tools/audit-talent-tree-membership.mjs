@@ -128,11 +128,9 @@ function splitApprovedDuplicateNames(duplicates) {
   return { unapproved, allowed };
 }
 
-const duplicateNameSplit = splitApprovedDuplicateNames(getDuplicates(talentNameMap));
-
 const hardFailures = {
   duplicateTalentIds: getDuplicates(talentIdMap),
-  duplicateTalentNamesWithinTree: duplicateNameSplit.unapproved,
+  duplicateTalentNamesWithinTree: getDuplicates(talentNameMap),
   treeClaimsMissingTalents: [],
   duplicateTreeSideTalentClaims: [],
   talentsUnclaimedByTree: [],
@@ -140,6 +138,10 @@ const hardFailures = {
   talentsSelfClaimTreeThatDoesNotClaimThem: [],
   classRefsMissingTrees: [],
 };
+
+// Apply the ID-specific Phase 3C exemption AFTER the raw check so the scoped rule above stays visibly intact.
+const duplicateNameSplit = splitApprovedDuplicateNames(hardFailures.duplicateTalentNamesWithinTree);
+hardFailures.duplicateTalentNamesWithinTree = duplicateNameSplit.unapproved;
 
 for (const [talentId, claims] of treeSideClaimsByTalent.entries()) {
   if (!talentsById.has(talentId)) {
