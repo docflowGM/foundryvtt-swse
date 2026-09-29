@@ -4,6 +4,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { registerFoundryPathLoader } from './helpers/foundry-shim/register.mjs';
 import { installFoundryShimGlobals } from './helpers/foundry-shim/globals.mjs';
+import { hydrationState, assertCertified } from './helpers/phase3b-certified.mjs';
 
 // Superior Skills talent-tree hydration regression guard.
 //
@@ -172,11 +173,17 @@ const talentsByName = new Map(talentDocs.map(doc => [doc.name.toLowerCase(), doc
     assert.ok(!JSON.stringify(doc).includes('Unknown Regions'), `${name} still claims the wrong source book`);
   }
 
-  assert.equal(
-    talentsById.get('07cd591fb8dccb39').system.prerequisites,
-    'Critical Skill Success',
-    'Skill Confidence lost its Critical Skill Success prerequisite'
-  );
+  // Skill Confidence prints "Prerequisite: Critical Skill Success, trained in the chosen skill." (Galaxy of Intrigue,
+  // individual TXT). The hydrated record only carried "Critical Skill Success"; Phase 3C writes the printed prerequisite.
+  // Both states must still name the Critical Skill Success prerequisite; a certified record must equal the Phase 3B target.
+  const skillConfidence = talentsById.get('07cd591fb8dccb39');
+  if (hydrationState(skillConfidence, 'Galaxy of Intrigue|Superior Skills|Skill Confidence') === 'certified') {
+    assertCertified(assert, skillConfidence, 'Galaxy of Intrigue|Superior Skills|Skill Confidence');
+    assert.equal(skillConfidence.system.prerequisites, 'Critical Skill Success, trained in the chosen skill');
+  } else {
+    assert.equal(skillConfidence.system.prerequisites, 'Critical Skill Success', 'Skill Confidence lost its Critical Skill Success prerequisite');
+  }
+  assert.match(skillConfidence.system.prerequisites, /^Critical Skill Success/);
 }
 
 /* ------------------------------------------------------------------ *
