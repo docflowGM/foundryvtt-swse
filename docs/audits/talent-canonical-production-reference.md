@@ -2573,6 +2573,579 @@ When you score a critical hit with a Lightsaber, you may spend a Force Point to 
 
 
 
+
+## Book 5 — Galaxy of Intrigue
+
+**Phase 3B status:** COMPLETE — 43 identities; 12 UPDATE_CONTENT; 2 UPDATE_METADATA; 27 CREATE; 2 IDENTITY_SPLIT; 2 tree creates.
+
+### Bounty Hunter
+
+#### Detective
+
+- **Page:** 24
+- **Prerequisites:** None.
+- **Quick summary:** Locating an individual with Gather Information is DC -10 and takes half the time and bribery cost.
+- **Production target:** `27dd504c877a4de5`
+- **Phase 3B disposition:** `UPDATE_METADATA`
+
+**Canonical rules text**
+
+You are skilled in locating individuals and using research and surveillance to learn some of their most intimate secrets. When you make a Gather Information check to locate an individual, the DC is reduced by 10, and the time and bribery cost are reduced by half.
+
+#### Electronic Trail
+
+- **Page:** 24
+- **Prerequisites:** Nowhere to Hide, trained in the Use Computer skill
+- **Quick summary:** After locating a target, receive a daily catalog of its normal electronic trail while you have computer/network access.
+- **Production target:** `d26506bfba104470`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Once you have located a target using Gather Information, you can track its electronic presence. Once per day, you receive a catalog of the target's electronic trail, which includes the amount and location of credits spent, the routes of any public transportation taken, and the sites viewed on the HoloNet while the target was logged in using its primary identity. To receive this information, you must have access to a computer or datapad plus access to a network or the HoloNet. The electronic trail does not reveal bank balances or other secret information, which requires a separate Gather Information check.
+
+#### Revealing Secrets
+
+- **Page:** 25
+- **Prerequisites:** Detective
+- **Quick summary:** Gather Information checks for secret information are DC -10 and cost one-fifth the normal bribery amount.
+- **Production target:** CREATE `71908efcdb7e6711`
+- **Phase 3B disposition:** `CREATE`
+
+**Canonical rules text**
+
+Your investigations reveal information that your target thought was secret. When you make a Gather Information check to learn secret information, the DC is reduced by 10 and the bribery cost is reduced to one-fifth the original cost.
+
+### Brawler
+
+#### Crowd Control
+
+- **Page:** 23
+- **Prerequisites:** Entangler
+- **Quick summary:** You can maintain grabs on two adjacent creatures at once.
+- **Production target:** CREATE `8a412e9a700b06d5`
+- **Phase 3B disposition:** `CREATE`
+
+**Canonical rules text**
+
+You can grab two adjacent creatures at a time.
+
+#### Disarm and Engage
+
+- **Page:** 23
+- **Prerequisites:** None.
+- **Quick summary:** After a successful disarm, immediately attack with the disarmed weapon at -5, plus nonproficiency if applicable.
+- **Production target:** CREATE `f61d70448c4cd14e`
+- **Phase 3B disposition:** `CREATE`
+
+**Canonical rules text**
+
+When you successfully disarm an opponent, you can make an immediate free attack with the disarmed weapon at a -5 penalty. If you are not proficient with the weapon, you take the penalty for nonproficiency as well.
+
+#### Entangler
+
+- **Page:** 23
+- **Prerequisites:** None.
+- **Quick summary:** Reduce your grab attack penalty to -2 and increase the grabbed target's attack penalty to -5.
+- **Production target:** `6a52361527b64513`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+When grabbing a target, you take a -2 penalty to your attack roll (instead of the normal -5 penalty). Until the target breaks the grab, it takes a -5 penalty to attack rolls, including those made with natural and light weapons (instead of the normal -2 penalty).
+
+#### Reverse Strength
+
+- **Page:** 23
+- **Prerequisites:** None.
+- **Quick summary:** A successful grapple deals damage equal to the opponent's Strength modifier, minimum 1.
+- **Production target:** CREATE `002c2d4fd8383a3e`
+- **Phase 3B disposition:** `CREATE`
+
+**Canonical rules text**
+
+You know how to use an opponent's strength against it. Whenever you successfully grapple an opponent, you deal damage equal to the opponent's Strength modifier (minimum 1 point).
+
+### Commando
+
+#### Coordinated Effort
+
+- **Page:** 23
+- **Prerequisites:** Dedicated Protector
+- **Quick summary:** When aiding your Dedicated Protector target's attack, also grant +2 damage on that attack.
+- **Production target:** CREATE `527289442596a891`
+- **Phase 3B disposition:** `CREATE`
+
+**Canonical rules text**
+
+When you use the aid another action to grant a bonus on attack rolls, if you are aiding the target of your Dedicated Protector talent that ally also gains a +2 bonus to damage rolls on the attack you aided.
+
+#### Dedicated Guardian
+
+- **Page:** 24
+- **Prerequisites:** Dedicated Protector, Harm's Way
+- **Quick summary:** Once each per encounter, protect your Dedicated Protector target with Blast Shield, Take the Pain, or Team Effort.
+- **Production target:** CREATE `562148487d7aa43c`
+- **Phase 3B disposition:** `CREATE`
+
+**Canonical rules text**
+
+You can use each of the following actions once per encounter:
+
+Blast Shield: Spend a swift action. Until the end of your next turn, the ally who is under the effects of your Dedicated Protector talent is treated as having the Evasion talent for the purposes of determining damage from an area attack. If the ally already has Evasion, the damage from a successful area attack is reduced by 1 die.
+
+Take the Pain: Whenever your Dedicated Protector target would move down the condition track, you can, as a reaction, choose to move the same number of steps down the condition track instead (preventing the ally from moving down the track).
+
+Team Effort: Spend a swift action. Until the end of your next turn, while you are adjacent to your Dedicated Protector target, any enemy that is adjacent to you and to that ally is considered flanked.
+
+#### Dedicated Protector
+
+- **Page:** 24
+- **Prerequisites:** Harm's Way
+- **Quick summary:** Once per encounter, designate a nearby ally to gain +1 morale Reflex while adjacent to you for the encounter.
+- **Production target:** `f3a1542edd5f4259`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Once per encounter, you can designate one ally within 6 squares of you. Until the end of the encounter, that ally gains a +1 morale bonus to Reflex Defense as long as it remains adjacent to you. Any individual can only be the target of this talent once per encounter.
+
+### Espionage
+
+#### Fade Out
+
+- **Page:** 22
+- **Prerequisites:** Trained in Stealth
+- **Quick summary:** Use Stealth instead of Deception to create a diversion to hide; trained Deception grants +5 to that check.
+- **Production target:** CREATE `77293789b3e9e38a`
+- **Phase 3B disposition:** `CREATE`
+
+**Canonical rules text**
+
+You know how to make yourself scarce when dealing with suspicious or hostile beings. You can use your Stealth skill, not Deception, to create a diversion to hide (see page 73 of the Saga Edition core rulebook). If you are trained in the Deception skill, you gain a +5 bonus to your skill check for the purposes of creating a diversion.
+
+#### Keep Together
+
+- **Page:** 22
+- **Prerequisites:** None.
+- **Quick summary:** After any melee or ranged attack hits or misses you, react by moving your speed without provoking if you end adjacent to an ally.
+- **Production target:** CREATE `de31c189f3416df7`
+- **Phase 3B disposition:** `CREATE`
+
+**Canonical rules text**
+
+Whenever you are hit or missed by a melee or a ranged attack, you can move up to your speed as a reaction, provided that you end your movement adjacent to an ally. This movement does not provoke attacks of opportunity.
+
+#### Prudent Escape
+
+- **Page:** 22
+- **Prerequisites:** None.
+- **Quick summary:** When you drop or incapacitate a target, you and two nearby visible allies may immediately move your speeds without provoking.
+- **Production target:** CREATE `70929db4d14b8ae8`
+- **Phase 3B disposition:** `CREATE`
+
+**Canonical rules text**
+
+Whenever you reduce a target to 0 hit points or otherwise render a creature unconscious, you can choose two allies within 6 squares of you and within your line of sight. You and the allies you chose can immediately move up to your speeds as a reaction. This movement does not provoke opportunity attacks.
+
+#### Reactive Stealth
+
+- **Page:** 22
+- **Prerequisites:** Trained in Stealth
+- **Quick summary:** When a ranged attack misses you while you have cover or concealment, react by moving half speed and attempting to hide.
+- **Production target:** CREATE `810160a476804e61`
+- **Phase 3B disposition:** `CREATE`
+
+**Canonical rules text**
+
+When you are missed by a ranged attack and have concealment or cover from the attacker, you can move up to half your speed as a reaction and make a Stealth check to become hidden from your attacker, provided you still have concealment or cover at the end of your movement.
+
+#### Sizing Up
+
+- **Page:** 23
+- **Prerequisites:** None.
+- **Quick summary:** Once per encounter, beat a nearby visible target's Will with Perception to gain +2 insight on attacks and skill checks against it for the encounter.
+- **Production target:** CREATE `95579a44ff466f19`
+- **Phase 3B disposition:** `CREATE`
+
+**Canonical rules text**
+
+Once per encounter, you can make a Perception check against the Will Defense of a single target that is within 6 squares of you and within your line of sight. If you succeed, you gain a +2 insight bonus to all skill checks and attack rolls against the target until the end of the encounter.
+
+### Expert Pilot
+
+#### Clip
+
+- **Page:** 24
+- **Prerequisites:** None.
+- **Quick summary:** When ramming, treat your ship as two size categories smaller for damage you take, while the target still takes damage from your actual size.
+- **Production target:** CREATE `52bedcae0b3729de`
+- **Phase 3B disposition:** `CREATE`
+
+**Canonical rules text**
+
+When you use the ram action, you reduce the size of your ship by two categories for the purposes of taking collision damage. The rammed ship takes damage appropriate to the actual size of your ship.
+
+#### Master Defender
+
+- **Page:** 24
+- **Prerequisites:** None.
+- **Quick summary:** Fight defensively to give your vehicle +5 Reflex for -2 attacks or +10 Reflex for -5 attacks for you and your gunners.
+- **Production target:** CREATE `5ba7da84697a94dd`
+- **Phase 3B disposition:** `CREATE`
+
+**Canonical rules text**
+
+When you fight defensively, either your vehicle gains a +5 dodge bonus to Reflex Defense if you and your gunners take a -2 penalty to attack rolls, or it gains a +10 dodge bonus if you and your gunners take a -5 penalty to attack rolls.
+
+#### Shunt Damage
+
+- **Page:** 24
+- **Prerequisites:** None.
+- **Quick summary:** Once per encounter when your ship takes damage, beat an adjacent ally ship's Reflex with Pilot to redirect the damage to it.
+- **Production target:** CREATE `a12b5e12c3358182`
+- **Phase 3B disposition:** `CREATE`
+
+**Canonical rules text**
+
+Once per encounter, if your ship takes damage, make a Pilot check and compare the result to the Reflex Defense of one adjacent allied ship. If your check result is higher, the allied ship takes the damage instead.
+
+### Gunslinger
+
+#### Damaging Disarm
+
+- **Page:** 25
+- **Prerequisites:** Ranged Disarm
+- **Quick summary:** A successful ranged disarm also deals half the attack's damage to the target.
+- **Production target:** CREATE `dceb4b975170edda`
+- **Phase 3B disposition:** `CREATE`
+
+**Canonical rules text**
+
+If you successfully disarm an opponent using a ranged attack, the target also takes half damage from the attack.
+
+#### Pistol Duelist
+
+- **Page:** 25
+- **Prerequisites:** None.
+- **Quick summary:** Once each per encounter as a standard action, use End Game, Snap Aiming, or Stand Steady with a pistol.
+- **Production target:** `d4a94695e27f60a1`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+You are a master of the elegant, if archaic, custom of dueling with pistols. You can use each of the following actions once per encounter as a standard action:
+
+End Game: You make a single ranged attack with a pistol against an opponent within range. The opponent's damage threshold is halved (round down) for the purposes of this attack.
+
+Snap Aiming: You make a single ranged attack with the benefits of aiming.
+
+Stand Steady: You gain a +4 bonus to your Reflex Defense until the end of your next turn and make a single ranged attack.
+
+### Master Of Intrigue
+
+#### Advanced Planning
+
+- **Page:** 20
+- **Prerequisites:** None.
+- **Quick summary:** When combat initiative is rolled, swap Initiative results with one willing visible ally.
+- **Production target:** `5bf2f1759ee54834`
+- **Phase 3B disposition:** `UPDATE_METADATA`
+
+**Canonical rules text**
+
+When you roll Initiative for combat, choose one willing ally within your line of sight. You and that ally swap Initiative results.
+
+#### Blend In
+
+- **Page:** 20
+- **Prerequisites:** None.
+- **Quick summary:** As a swift action while adjacent to at least two creatures, gain total concealment against nonadjacent attackers.
+- **Production target:** CREATE `4a6da8249db460f6`
+- **Phase 3B disposition:** `IDENTITY_SPLIT`
+
+**Canonical rules text**
+
+You know how to blend into a variety of cultures and groups with ease. As a swift action, you gain total concealment when adjacent to at least two other creatures. This benefit does not apply to attacks from adjacent creatures.
+
+#### Done It All
+
+- **Page:** 20
+- **Prerequisites:** None.
+- **Quick summary:** Choose two qualifying nonprestige-class talents; spend a Force Point once per turn to gain one until the end of your next turn.
+- **Production target:** CREATE `d376f165f1a47281`
+- **Phase 3B disposition:** `CREATE`
+
+**Canonical rules text**
+
+When you select this talent, choose two talents (from any nonprestige class) that you do not possess but for which you meet the prerequisites. Once per turn on your turn, you can spend a Force Point as a free action to gain the benefits of one of those talents until the end of your next turn.
+
+#### Get into Position
+
+- **Page:** 20
+- **Prerequisites:** None.
+- **Quick summary:** Once per encounter at the start of your first turn, let two visible allies within 12 squares immediately move their speed.
+- **Production target:** CREATE `bb7ee79cbdd2c018`
+- **Phase 3B disposition:** `IDENTITY_SPLIT`
+
+**Canonical rules text**
+
+Once per encounter, at the start of your first turn, choose two allies within 12 squares and in your line of sight. Each ally can immediately move up to his or her speed as a reaction.
+
+#### Master Manipulator
+
+- **Page:** 20
+- **Prerequisites:** Advanced Planning, Get into Position
+- **Quick summary:** Once each per encounter, use Demand Recovery, Exceptional Control, or Word of Warning as a swift action.
+- **Production target:** CREATE `c5a043b596f544d0`
+- **Phase 3B disposition:** `CREATE`
+
+**Canonical rules text**
+
+You are a master of making things happen the way you want them to. You can use each of the following actions once per encounter as a swift action on your turn:
+
+Demand Recovery: Select one ally within 5 squares and in your line of sight. That ally moves +5 steps on the condition track and gains a +2 morale bonus to attack rolls and skill checks until the end of your next turn.
+
+Exceptional Control: Roll a d20 and note the result. Once before the end of the encounter, as a reaction you can replace the result of any enemy's or ally's d20 roll with the result you rolled for this ability. The enemy or ally must be within your line of sight.
+
+Word of Warning: Select one ally within 5 squares and in your line of sight. Once before the end of the encounter, as a reaction to that ally having any defense score targeted by a skill check or an attack, you can replace that ally's defense score with your same defense score until the attack or skill check is resolved.
+
+#### Retaliation
+
+- **Page:** 20
+- **Prerequisites:** Advanced Planning
+- **Quick summary:** After threshold damage moves you down the condition track, your next damaging hit before the end of your next turn also moves the target -1 step.
+- **Production target:** CREATE `8ed2a9fd50053e3b`
+- **Phase 3B disposition:** `CREATE`
+
+**Canonical rules text**
+
+Whenever you move down the condition track as a result of taking damage that equals or exceeds your damage threshold, the next time you hit and damage a creature or a droid with a melee or a ranged attack before the end of your next turn, you automatically move the target -1 step on the condition track.
+
+### Mastermind
+
+#### Attract Superior Minion
+
+- **Page:** 25
+- **Prerequisites:** Attract Minion, Impel Ally I, Impel Ally II
+- **Quick summary:** Your Attract Minion follower becomes a nonheroic character with class level equal to your character level.
+- **Production target:** CREATE `9ef268e31963cf70`
+- **Phase 3B disposition:** `CREATE`
+
+**Canonical rules text**
+
+You attract a particularly skilled and powerful minion. The minion is a nonheroic character with a class level equal to your character level. This talent otherwise functions as the Attract Minion talent.
+
+#### Contingency Plan
+
+- **Page:** 25
+- **Prerequisites:** None.
+- **Quick summary:** Once per encounter after failing an attack, skill check, or opposed-check talent, move your speed as a reaction.
+- **Production target:** CREATE `7a8b247639d32740`
+- **Phase 3B disposition:** `CREATE`
+
+**Canonical rules text**
+
+Once per encounter, if you fail an attack roll, a skill check, or the use of a talent that requires an opposed check, you can move your speed as a reaction.
+
+### Revolutionary
+
+#### Bomb Thrower
+
+- **Page:** 21
+- **Prerequisites:** Trained in the Mechanics skill
+- **Quick summary:** Gain +5 to Mechanics for explosives and craft an improvised frag grenade as a full-round action with suitable supplies.
+- **Production target:** CREATE `959f16cb707d8360`
+- **Phase 3B disposition:** `CREATE`
+
+**Canonical rules text**
+
+You are skilled in making and handling impromptu explosives. You gain a +5 bonus to Mechanics checks for the purposes of handling explosives. In addition, you can spend a full-round action to craft the equivalent of a frag grenade from spare parts you have on hand. You must have access to the appropriate supplies, such as an old blaster, a toolkit, or materials found inside a hangar bay.
+
+#### For the Cause
+
+- **Page:** 21
+- **Prerequisites:** Make an Example
+- **Quick summary:** When you or a nearby ally takes threshold-exceeding damage, nearby allies gain +2 attack and damage until the end of your next turn.
+- **Production target:** CREATE `df8f36d21dc4d23c`
+- **Phase 3B disposition:** `CREATE`
+
+**Canonical rules text**
+
+Whenever you or an ally within 6 squares of you takes damage that exceeds that character's damage threshold, you and all allies within 6 squares of you gain a +2 bonus to attack rolls and damage rolls until the end of your next turn.
+
+#### Make an Example
+
+- **Page:** 22
+- **Prerequisites:** None.
+- **Quick summary:** Exceed a target's damage threshold to give it -5 on attacks against you until the end of your next turn.
+- **Production target:** `603e7e5d628a435d`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Whenever you hit with an attack and deal enough damage to exceed a target's damage threshold, that target takes a -5 penalty to attack rolls against you until the end of your next turn. This is a mind-affecting effect.
+
+#### Revolutionary Rhetoric
+
+- **Page:** 22
+- **Prerequisites:** None.
+- **Quick summary:** As a standard action, beat a nearby visible enemy's Will with Persuasion to restrict it to move and swift actions until your next turn unless you attack it.
+- **Production target:** CREATE `46ebeef2d6de4837`
+- **Phase 3B disposition:** `CREATE`
+
+**Canonical rules text**
+
+As a standard action, you can do or say something that causes an enemy to doubt its motives. Choose one enemy within 12 squares and in your line of sight, and make a Persuasion check against the target's Will Defense. If you succeed, the target can take only move actions and swift actions until the end of your next turn. This effect ends if you attack the target. This is a mind-affecting effect.
+
+### Skill Challenge
+
+#### Guaranteed Boon
+
+- **Page:** 20
+- **Prerequisites:** None.
+- **Quick summary:** If a Force Point-boosted skill challenge check still fails, regain that Force Point.
+- **Production target:** CREATE `669aae58e8d0d90f`
+- **Phase 3B disposition:** `CREATE`
+
+**Canonical rules text**
+
+Whenever you spend a Force Point to add to a skill roll in a skill challenge and accrue a failure for that skill check, you regain that Force Point.
+
+#### Leading Skill
+
+- **Page:** 20
+- **Prerequisites:** None.
+- **Quick summary:** After a skill challenge success, gain +2 insight on your next check using a different skill in that challenge.
+- **Production target:** CREATE `efd54ffa36d5a2b4`
+- **Phase 3B disposition:** `CREATE`
+
+**Canonical rules text**
+
+Whenever you earn a success in a skill challenge, you gain a +2 insight bonus to your next skill check made with a different skill in the same skill challenge.
+
+#### Learn from Mistakes
+
+- **Page:** 20
+- **Prerequisites:** None.
+- **Quick summary:** After your skill challenge failure, the next ally gains +2 insight if using a different action and skill.
+- **Production target:** CREATE `6dcf10db37160d23`
+- **Phase 3B disposition:** `CREATE`
+
+**Canonical rules text**
+
+Whenever you accrue a failure in a skill challenge, you grant the next ally to take an action in the skill challenge a +2 insight bonus to a skill check, provided that ally takes a different action (and uses a different skill) than you did.
+
+#### Try Your Luck
+
+- **Page:** 20
+- **Prerequisites:** None.
+- **Quick summary:** After your skill challenge failure, choose an ally; their next use of that same skill rolls twice and keeps the better result.
+- **Production target:** CREATE `bf27fc2e540e2ed5`
+- **Phase 3B disposition:** `CREATE`
+
+**Canonical rules text**
+
+Whenever you accrue a failure in a skill challenge, choose one ally. The next time that ally uses the same skill that you used to accrue a failure before the end of the skill challenge, that ally rolls two dice on the skill check and keeps the better result.
+
+### Superior Skills
+
+#### Assured Skill
+
+- **Page:** 21
+- **Prerequisites:** None.
+- **Quick summary:** For one chosen skill, forgo competence bonuses to roll twice and keep either result; may be selected for different skills.
+- **Production target:** `b89d573dba9ddb20`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+When you select this talent, choose one skill. Whenever you roll a skill check with that skill, you can choose to lose any competence bonuses to that skill check and instead roll 2 dice, keeping either result.
+
+You can select this talent multiple times. Each time you do so, you must choose a different skill to gain the benefits of this talent.
+
+#### Critical Skill Success
+
+- **Page:** 21
+- **Prerequisites:** None.
+- **Quick summary:** After a natural 20 on a skill check, gain a one-use +5 competence bonus to another skill before the end of your next turn.
+- **Production target:** `5242623648114830`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Whenever you roll a natural 20 on a skill check, choose one other skill. Once before the end of your next turn, you can choose to gain a +5 competence bonus to a check with that skill as a free action.
+
+#### Exceptional Skill
+
+- **Page:** 21
+- **Prerequisites:** Trained in the chosen skill
+- **Quick summary:** For a trained chosen skill, natural results 2-7 count as 8; may be selected for different skills.
+- **Production target:** `36fbab1a05c08fdd`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+When you select this talent, choose one skill. Whenever you roll a skill check with that skill, a result of 2-7 on the die is always treated as though you had rolled an 8.
+
+You can select this talent multiple times. Each time you do so, you must choose a different skill to gain the benefits of this talent.
+
+#### Reliable Boon
+
+- **Page:** 21
+- **Prerequisites:** None.
+- **Quick summary:** When adding a Force Point to a skill check, reroll Force Point dice showing 1 until they show 2 or higher.
+- **Production target:** `f85bb79fe20de1ef`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Whenever you spend a Force Point to add to a skill check, you always reroll a result of 1 on any of your Force Point dice, and continue to reroll until you get a result of 2 or higher.
+
+#### Skill Boon
+
+- **Page:** 21
+- **Prerequisites:** Trained in the chosen skill
+- **Quick summary:** For a trained chosen skill, increase the Force Point die used on that skill by one step, maximum d12.
+- **Production target:** `1cbf8a40f7972aa4`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+When you select this talent, choose one skill. Whenever you spend a Force Point to add to that skill, increase the die type of your Force Point by one step (i.e. from d6 to d8, d8 to d10, or d10 to d12), to a maximum of d12.
+
+You can select this talent multiple times. Each time you do so, you must choose a different skill to gain the benefits of this talent.
+
+#### Skill Confidence
+
+- **Page:** 21
+- **Prerequisites:** Critical Skill Success, trained in the chosen skill
+- **Quick summary:** With a chosen trained skill, natural 19-20 triggers Critical Skill Success and grants bonus hit points equal to your Charisma modifier.
+- **Production target:** `07cd591fb8dccb39`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+When you select this talent, choose one skill. Whenever you roll a natural 19 or a natural 20 on a skill check with that skill, you gain the benefits of the Critical Skill Success talent and also gain bonus hit points equal to your Charisma modifier.
+
+You can select this talent multiple times. Each time you do so, you must choose a different skill to gain the benefits of this talent.
+
+#### Skillful Recovery
+
+- **Page:** 21
+- **Prerequisites:** Trained in the chosen skill
+- **Quick summary:** Failing a chosen trained skill check grants a temporary Force Point usable only on that skill during the encounter.
+- **Production target:** `323cc243fef47675`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+When you select this talent, choose one skill. Whenever you fail a skill check with that skill, you gain one temporary Force Point. That Force Point can only be spent to add to a skill check with the skill you chose for this talent. If the Force Point is not spent by the end of the encounter, it is lost. For the purposes of this talent, failing a skill check means failing to get the minimum possible result from the skill check.
+
+You can select this talent multiple times. Each time you do so, you must choose a different skill to gain the benefits of this talent.
+
+---
+
 ## Book 6 — Starships of the Galaxy
 
 **Phase 3B status:** COMPLETE — 23 owned canonical identities; 22 UPDATE_CONTENT; 1 CORRECT_TREE; 0 CREATE.
@@ -3422,7 +3995,7 @@ You channel your power surge into a boost for your locomotion system. When you i
 - [ ] Clone Wars Campaign Guide
 - [ ] Rebellion Era Campaign Guide
 - [ ] Galaxy at War
-- [ ] Galaxy of Intrigue
+- [x] Galaxy of Intrigue — 43 certified talent claims
 - [x] Starships of the Galaxy — 23 certified talent claims
 - [x] Threats of the Galaxy — 11 certified talent claims
 - [ ] Scum and Villainy
