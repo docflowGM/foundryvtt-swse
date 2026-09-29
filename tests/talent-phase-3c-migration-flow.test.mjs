@@ -42,11 +42,11 @@ try {
   });
   step('--verify refuses on the pre-state (nothing to verify)', () => { const r = run('--verify'); assert.notEqual(r.code, 0); assert.match(r.out, /still the certified pre-state/); });
   const textDefects = scanManifestText(loadCommittedManifests()).gating.length;
-  step('--apply refuses to write certified text that carries OCR artifacts (unless explicitly overridden)', () => {
+  step('--apply refuses to write certified text that carries OCR artifacts (checked only while such text exists)', () => {
+    if (!textDefects) return; // certified text is clean: the gate has nothing to refuse (apply itself is exercised below)
     const snap = fs.readFileSync(path.join(copy, 'packs/talents.db'), 'utf8');
     const r = run('--apply');
-    if (textDefects) { assert.notEqual(r.code, 0); assert.match(r.out, /refusing to apply.*OCR artifacts/); assert.equal(fs.readFileSync(path.join(copy, 'packs/talents.db'), 'utf8'), snap); }
-    else { assert.equal(r.code, 0, r.out); }
+    assert.notEqual(r.code, 0); assert.match(r.out, /refusing to apply.*OCR artifacts/); assert.equal(fs.readFileSync(path.join(copy, 'packs/talents.db'), 'utf8'), snap);
   });
   step('--apply refuses while a source-text correction still requires the rendered PDF, even with clean text', () => {
     const file = path.join(copy, 'data/audits/talent-phase-3b-source-text-corrections.json');
@@ -57,9 +57,9 @@ try {
       assert.equal(fs.readFileSync(path.join(copy, 'packs/talents.db'), 'utf8'), snap);
     } finally { fs.rmSync(file, { force: true }); }
   });
-  step('--apply succeeds on the pre-state (override only needed while Phase 3B text defects remain)', () => {
-    if (!textDefects) return;
-    const r = run('--apply', '--allow-ocr-artifacts'); assert.equal(r.code, 0, r.out); assert.match(r.out, /APPLIED/);
+  step('--apply succeeds on the pre-state (with NO override once the certified text is clean)', () => {
+    const r = textDefects ? run('--apply', '--allow-ocr-artifacts') : run('--apply');
+    assert.equal(r.code, 0, r.out); assert.match(r.out, /APPLIED/);
   });
   step('post-state copy: --status reports POST_STATE', () => { assert.match(run('--status').out, /POST_STATE/); });
   step('--verify --exact passes', () => { const r = run('--verify', '--exact'); assert.equal(r.code, 0, r.out); assert.match(r.out, /verify PASS/); });
