@@ -6,6 +6,7 @@
  *   node tools/build-talent-phase-3b-manifest.mjs --book core [--check]
  *   node tools/build-talent-phase-3b-manifest.mjs --book threats [--check]
  *   node tools/build-talent-phase-3b-manifest.mjs --book starships [--check]
+ *   node tools/build-talent-phase-3b-manifest.mjs --book scavengers [--check]
  */
 import fs from 'node:fs';
 import path from 'node:path';
@@ -39,6 +40,22 @@ const BOOKS = {
         CORRECT_TREE: 17,
         CREATE: 6,
         IDENTITY_SPLIT: 1
+      }
+    }
+  },
+  scavengers: {
+    sourcebook: "Scavenger's Guide to Droids",
+    bookOrder: 14,
+    phase2: 'data/audits/talent-phase-2-scavengers-guide-to-droids-content.json',
+    discrepancy: 'data/audits/talent-phase-2-scavengers-guide-to-droids-discrepancy-manifest.json',
+    output: 'data/audits/talent-phase-3b-scavengers-guide-to-droids-manifest.json',
+    aliases: {},
+    expected: {
+      records: 31,
+      extras: 0,
+      dispositions: {
+        UPDATE_CONTENT: 12,
+        CREATE: 19
       }
     }
   },
@@ -396,6 +413,6 @@ if (isDirectRun) {
   const bookArg = process.argv.find(arg => arg.startsWith('--book='));
   const index = process.argv.indexOf('--book');
   const bookKey = bookArg ? bookArg.slice('--book='.length) : index >= 0 ? process.argv[index + 1] : null;
-  invariant(bookKey, 'usage: --book core|threats|starships [--check]');
+  invariant(bookKey, 'usage: --book core|threats|starships|scavengers [--check]');
   buildBookManifest(bookKey, {check: process.argv.includes('--check')});
 }
