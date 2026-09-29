@@ -11,6 +11,7 @@
  *   node tools/build-talent-phase-3b-manifest.mjs --book war [--check]
  *   node tools/build-talent-phase-3b-manifest.mjs --book unknown [--check]
  *   node tools/build-talent-phase-3b-manifest.mjs --book rebellion [--check]
+ *   node tools/build-talent-phase-3b-manifest.mjs --book legacy [--check]
  */
 import fs from 'node:fs';
 import path from 'node:path';
@@ -44,6 +45,26 @@ const BOOKS = {
         CORRECT_TREE: 17,
         CREATE: 6,
         IDENTITY_SPLIT: 1
+      }
+    }
+  },
+  legacy: {
+    sourcebook: 'Legacy Era Campaign Guide',
+    bookOrder: 10,
+    phase2: 'data/audits/talent-phase-2-legacy-era-campaign-guide-content.json',
+    discrepancy: 'data/audits/talent-phase-2-legacy-era-campaign-guide-discrepancy-manifest.json',
+    output: 'data/audits/talent-phase-3b-legacy-era-campaign-guide-manifest.json',
+    aliases: {},
+    additionalContaminationFlags: ['DESCRIPTION_SAME_NAME_CONTAMINATION'],
+    expected: {
+      records: 101,
+      extras: 0,
+      dispositions: {
+        UPDATE_CONTENT: 89,
+        UPDATE_METADATA: 1,
+        REMOVE_CONTAMINATION: 1,
+        CORRECT_TREE: 1,
+        CREATE: 9
       }
     }
   },
@@ -245,7 +266,8 @@ export function buildBookManifest(bookKey, { check = false } = {}) {
     'HOMEBREW_CONTAMINATION',
     'CONCATENATED_IDENTITY_TEXT',
     'CORE_TEXT_WITH_LATER_EXTENSION',
-    'NONCANONICAL_ACTIVE_FORM_RESTRICTION'
+    'NONCANONICAL_ACTIVE_FORM_RESTRICTION',
+    ...(cfg.additionalContaminationFlags ?? [])
   ]);
   const productionIds = new Set(talents.map(t => t._id));
   const generatedIds = new Set();
@@ -579,6 +601,6 @@ if (isDirectRun) {
   const bookArg = process.argv.find(arg => arg.startsWith('--book='));
   const index = process.argv.indexOf('--book');
   const bookKey = bookArg ? bookArg.slice('--book='.length) : index >= 0 ? process.argv[index + 1] : null;
-  invariant(bookKey, 'usage: --book core|threats|starships|scavengers|intrigue|war|unknown|rebellion [--check]');
+  invariant(bookKey, 'usage: --book core|threats|starships|scavengers|intrigue|war|unknown|rebellion|legacy [--check]');
   buildBookManifest(bookKey, {check: process.argv.includes('--check')});
 }
