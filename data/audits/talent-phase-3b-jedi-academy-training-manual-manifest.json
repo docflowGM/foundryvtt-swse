@@ -94,11 +94,11 @@
   "treeCreates": [
     {
       "canonicalTreeKey": "Jedi Academy Training Manual|Shapers of Kro Var",
-      "createTreeId": "ab3311a860d8d359",
+      "createTreeId": "4b2b7b67261c99fa",
       "displayName": "Shapers of Kro Var",
       "classAccess": [],
       "createTemplate": {
-        "_id": "ab3311a860d8d359",
+        "_id": "4b2b7b67261c99fa",
         "name": "Shapers of Kro Var",
         "type": "talenttree",
         "img": "icons/svg/item-bag.svg",
@@ -107,11 +107,11 @@
           "description": "",
           "costNumeric": null,
           "talentIds": [
-            "78a296a68645450b",
-            "2f9bd5b93d0eb82a",
-            "d257d180378c8f9d",
-            "07680913de8adc53",
-            "addff1294f534ac7"
+            "953e539478ea6c3e",
+            "8436e1f101dc438c",
+            "5567797336fc8571",
+            "7f63f6f3fec96bf3",
+            "897c61c8054bdd9e"
           ],
           "talentNames": [
             "Combustion",
@@ -132,11 +132,11 @@
     },
     {
       "canonicalTreeKey": "Jedi Academy Training Manual|Zeison Sha Warrior",
-      "createTreeId": "aec386e85f66e93e",
+      "createTreeId": "ec0c0bc224d2e4d5",
       "displayName": "Zeison Sha Warrior",
       "classAccess": [],
       "createTemplate": {
-        "_id": "aec386e85f66e93e",
+        "_id": "ec0c0bc224d2e4d5",
         "name": "Zeison Sha Warrior",
         "type": "talenttree",
         "img": "icons/svg/item-bag.svg",
@@ -145,11 +145,11 @@
           "description": "",
           "costNumeric": null,
           "talentIds": [
-            "69380dec0c195e82",
-            "b2c9221dafb87277",
-            "72ac4192d35d3ae8",
-            "b7b402e8065f4fa8",
-            "e7307fe67d4abd64"
+            "3d7da7d62139a6e9",
+            "8f172c307cdec956",
+            "abbf02a67dbe0c89",
+            "8ddbbeb09758295d",
+            "5854b821895ffdd9"
           ],
           "talentNames": [
             "Discblade Arc",
@@ -3050,7 +3050,7 @@
         "resolutionEvidence": "UNRESOLVED",
         "productionRecordId": null,
         "preserveProductionId": false,
-        "createRecordId": "7f5aac5b3a2d0f5d",
+        "createRecordId": "4a0ed533e99848a8",
         "currentTreeClaims": [],
         "sameNameProductionCandidates": [],
         "reviewExtraCandidateIds": []
@@ -3088,7 +3088,7 @@
         "action": "ADD",
         "removeFromTreeIds": [],
         "addToTreeId": "44554c28675292b6",
-        "addTalentId": "7f5aac5b3a2d0f5d",
+        "addTalentId": "4a0ed533e99848a8",
         "addTalentName": "Unclouded Judgment"
       },
       "preserveFields": [
@@ -3106,7 +3106,7 @@
         "sort"
       ],
       "createTemplate": {
-        "_id": "7f5aac5b3a2d0f5d",
+        "_id": "4a0ed533e99848a8",
         "name": "Unclouded Judgment",
         "type": "talent",
         "img": "icons/svg/item-bag.svg",
@@ -3250,7 +3250,7 @@
         "resolutionEvidence": "UNRESOLVED",
         "productionRecordId": null,
         "preserveProductionId": false,
-        "createRecordId": "a7bb794bf2c385d8",
+        "createRecordId": "17cdb585c58c2f19",
         "currentTreeClaims": [],
         "sameNameProductionCandidates": [],
         "reviewExtraCandidateIds": []
@@ -3287,7 +3287,7 @@
         "action": "ADD",
         "removeFromTreeIds": [],
         "addToTreeId": "7db97c2c7ebca579",
-        "addTalentId": "a7bb794bf2c385d8",
+        "addTalentId": "17cdb585c58c2f19",
         "addTalentName": "Improvised Weapon Master"
       },
       "preserveFields": [
@@ -3305,7 +3305,7 @@
         "sort"
       ],
       "createTemplate": {
-        "_id": "a7bb794bf2c385d8",
+        "_id": "17cdb585c58c2f19",
         "name": "Improvised Weapon Master",
         "type": "talent",
         "img": "icons/svg/item-bag.svg",
@@ -4037,7 +4037,7 @@
         "resolutionEvidence": "UNRESOLVED",
         "productionRecordId": null,
         "preserveProductionId": false,
-        "createRecordId": "36e44f2c3831eb02",
+        "createRecordId": "605e0a2ac655e184",
         "currentTreeClaims": [],
         "sameNameProductionCandidates": [],
         "reviewExtraCandidateIds": []
@@ -4075,7 +4075,7 @@
         "action": "ADD",
         "removeFromTreeIds": [],
         "addToTreeId": "a3d0b7c9a6d041f2",
-        "addTalentId": "36e44f2c3831eb02",
+        "addTalentId": "605e0a2ac655e184",
         "addTalentName": "Regimen Aptitude"
       },
       "preserveFields": [
@@ -4093,7 +4093,7 @@
         "sort"
       ],
       "createTemplate": {
-        "_id": "36e44f2c3831eb02",
+        "_id": "605e0a2ac655e184",
         "name": "Regimen Aptitude",
         "type": "talent",
         "img": "icons/svg/item-bag.svg",
@@ -5116,7 +5116,7 @@
         "resolutionEvidence": "UNRESOLVED",
         "productionRecordId": null,
         "preserveProductionId": false,
-        "createRecordId": "0bb459ef9331df9d",
+        "createRecordId": "93bb4f8c058655f9",
         "currentTreeClaims": [],
         "sameNameProductionCandidates": [],
         "reviewExtraCandidateIds": []
@@ -5154,7 +5154,7 @@
         "action": "ADD",
         "removeFromTreeIds": [],
         "addToTreeId": "f8e7edab5f234e27",
-        "addTalentId": "0bb459ef9331df9d",
+        "addTalentId": "93bb4f8c058655f9",
         "addTalentName": "Folded Space Mastery"
       },
       "preserveFields": [
@@ -5172,7 +5172,7 @@
         "sort"
       ],
       "createTemplate": {
-        "_id": "0bb459ef9331df9d",
+        "_id": "93bb4f8c058655f9",
         "name": "Folded Space Mastery",
         "type": "talent",
         "img": "icons/svg/item-bag.svg",
@@ -5216,7 +5216,7 @@
         "resolutionEvidence": "UNRESOLVED",
         "productionRecordId": null,
         "preserveProductionId": false,
-        "createRecordId": "44f9c0fb687671eb",
+        "createRecordId": "5a858011286f5809",
         "currentTreeClaims": [],
         "sameNameProductionCandidates": [],
         "reviewExtraCandidateIds": []
@@ -5254,7 +5254,7 @@
         "action": "ADD",
         "removeFromTreeIds": [],
         "addToTreeId": "f8e7edab5f234e27",
-        "addTalentId": "44f9c0fb687671eb",
+        "addTalentId": "5a858011286f5809",
         "addTalentName": "Liberate"
       },
       "preserveFields": [
@@ -5272,7 +5272,7 @@
         "sort"
       ],
       "createTemplate": {
-        "_id": "44f9c0fb687671eb",
+        "_id": "5a858011286f5809",
         "name": "Liberate",
         "type": "talent",
         "img": "icons/svg/item-bag.svg",
@@ -5316,7 +5316,7 @@
         "resolutionEvidence": "UNRESOLVED",
         "productionRecordId": null,
         "preserveProductionId": false,
-        "createRecordId": "a0147b10aa17816f",
+        "createRecordId": "d444b28e15a5a9c3",
         "currentTreeClaims": [],
         "sameNameProductionCandidates": [],
         "reviewExtraCandidateIds": []
@@ -5354,7 +5354,7 @@
         "action": "ADD",
         "removeFromTreeIds": [],
         "addToTreeId": "f8e7edab5f234e27",
-        "addTalentId": "a0147b10aa17816f",
+        "addTalentId": "d444b28e15a5a9c3",
         "addTalentName": "Many Shades of the Force"
       },
       "preserveFields": [
@@ -5372,7 +5372,7 @@
         "sort"
       ],
       "createTemplate": {
-        "_id": "a0147b10aa17816f",
+        "_id": "d444b28e15a5a9c3",
         "name": "Many Shades of the Force",
         "type": "talent",
         "img": "icons/svg/item-bag.svg",
@@ -5416,7 +5416,7 @@
         "resolutionEvidence": "UNRESOLVED",
         "productionRecordId": null,
         "preserveProductionId": false,
-        "createRecordId": "ed756bf97aad8264",
+        "createRecordId": "e40620e2dca73682",
         "currentTreeClaims": [],
         "sameNameProductionCandidates": [],
         "reviewExtraCandidateIds": []
@@ -5453,7 +5453,7 @@
         "action": "ADD",
         "removeFromTreeIds": [],
         "addToTreeId": "f8e7edab5f234e27",
-        "addTalentId": "ed756bf97aad8264",
+        "addTalentId": "e40620e2dca73682",
         "addTalentName": "Spatial Integrity"
       },
       "preserveFields": [
@@ -5471,7 +5471,7 @@
         "sort"
       ],
       "createTemplate": {
-        "_id": "ed756bf97aad8264",
+        "_id": "e40620e2dca73682",
         "name": "Spatial Integrity",
         "type": "talent",
         "img": "icons/svg/item-bag.svg",
@@ -6102,7 +6102,7 @@
         "resolutionEvidence": "UNRESOLVED",
         "productionRecordId": null,
         "preserveProductionId": false,
-        "createRecordId": "ba7803cebc9caa0e",
+        "createRecordId": "4a6a7eccce089a4e",
         "currentTreeClaims": [],
         "sameNameProductionCandidates": [],
         "reviewExtraCandidateIds": []
@@ -6139,7 +6139,7 @@
         "action": "ADD",
         "removeFromTreeIds": [],
         "addToTreeId": "3e807e87cac844ba",
-        "addTalentId": "ba7803cebc9caa0e",
+        "addTalentId": "4a6a7eccce089a4e",
         "addTalentName": "Expanded Horizon"
       },
       "preserveFields": [
@@ -6157,7 +6157,7 @@
         "sort"
       ],
       "createTemplate": {
-        "_id": "ba7803cebc9caa0e",
+        "_id": "4a6a7eccce089a4e",
         "name": "Expanded Horizon",
         "type": "talent",
         "img": "icons/svg/item-bag.svg",
@@ -6201,7 +6201,7 @@
         "resolutionEvidence": "UNRESOLVED",
         "productionRecordId": null,
         "preserveProductionId": false,
-        "createRecordId": "9dbb669ad8788c96",
+        "createRecordId": "06ab0e40780ea63d",
         "currentTreeClaims": [],
         "sameNameProductionCandidates": [],
         "reviewExtraCandidateIds": []
@@ -6239,7 +6239,7 @@
         "action": "ADD",
         "removeFromTreeIds": [],
         "addToTreeId": "3e807e87cac844ba",
-        "addTalentId": "9dbb669ad8788c96",
+        "addTalentId": "06ab0e40780ea63d",
         "addTalentName": "Knowledge and Defense"
       },
       "preserveFields": [
@@ -6257,7 +6257,7 @@
         "sort"
       ],
       "createTemplate": {
-        "_id": "9dbb669ad8788c96",
+        "_id": "06ab0e40780ea63d",
         "name": "Knowledge and Defense",
         "type": "talent",
         "img": "icons/svg/item-bag.svg",
@@ -6301,7 +6301,7 @@
         "resolutionEvidence": "UNRESOLVED",
         "productionRecordId": null,
         "preserveProductionId": false,
-        "createRecordId": "ee1ff1a4fc035bee",
+        "createRecordId": "1204459eaaff9efa",
         "currentTreeClaims": [],
         "sameNameProductionCandidates": [],
         "reviewExtraCandidateIds": []
@@ -6338,7 +6338,7 @@
         "action": "ADD",
         "removeFromTreeIds": [],
         "addToTreeId": "3e807e87cac844ba",
-        "addTalentId": "ee1ff1a4fc035bee",
+        "addTalentId": "1204459eaaff9efa",
         "addTalentName": "Planetary Attunement"
       },
       "preserveFields": [
@@ -6356,7 +6356,7 @@
         "sort"
       ],
       "createTemplate": {
-        "_id": "ee1ff1a4fc035bee",
+        "_id": "1204459eaaff9efa",
         "name": "Planetary Attunement",
         "type": "talent",
         "img": "icons/svg/item-bag.svg",
@@ -6400,7 +6400,7 @@
         "resolutionEvidence": "UNRESOLVED",
         "productionRecordId": null,
         "preserveProductionId": false,
-        "createRecordId": "413c9544030ba424",
+        "createRecordId": "f8ac7fecc8d3c8ff",
         "currentTreeClaims": [],
         "sameNameProductionCandidates": [],
         "reviewExtraCandidateIds": []
@@ -6437,7 +6437,7 @@
         "action": "ADD",
         "removeFromTreeIds": [],
         "addToTreeId": "3e807e87cac844ba",
-        "addTalentId": "413c9544030ba424",
+        "addTalentId": "f8ac7fecc8d3c8ff",
         "addTalentName": "Precognitive Meditation"
       },
       "preserveFields": [
@@ -6455,7 +6455,7 @@
         "sort"
       ],
       "createTemplate": {
-        "_id": "413c9544030ba424",
+        "_id": "f8ac7fecc8d3c8ff",
         "name": "Precognitive Meditation",
         "type": "talent",
         "img": "icons/svg/item-bag.svg",
@@ -7862,7 +7862,7 @@
         "resolutionEvidence": "UNRESOLVED",
         "productionRecordId": null,
         "preserveProductionId": false,
-        "createRecordId": "3148da1245711efd",
+        "createRecordId": "65f3bc5663794697",
         "currentTreeClaims": [],
         "sameNameProductionCandidates": [],
         "reviewExtraCandidateIds": []
@@ -7899,7 +7899,7 @@
         "action": "ADD",
         "removeFromTreeIds": [],
         "addToTreeId": "ca65ba0c33cd4c7d",
-        "addTalentId": "3148da1245711efd",
+        "addTalentId": "65f3bc5663794697",
         "addTalentName": "Body Control"
       },
       "preserveFields": [
@@ -7917,7 +7917,7 @@
         "sort"
       ],
       "createTemplate": {
-        "_id": "3148da1245711efd",
+        "_id": "65f3bc5663794697",
         "name": "Body Control",
         "type": "talent",
         "img": "icons/svg/item-bag.svg",
@@ -7961,7 +7961,7 @@
         "resolutionEvidence": "UNRESOLVED",
         "productionRecordId": null,
         "preserveProductionId": false,
-        "createRecordId": "e70fc01f9d76d984",
+        "createRecordId": "26e3d987f7b984cf",
         "currentTreeClaims": [],
         "sameNameProductionCandidates": [],
         "reviewExtraCandidateIds": []
@@ -7998,7 +7998,7 @@
         "action": "ADD",
         "removeFromTreeIds": [],
         "addToTreeId": "ca65ba0c33cd4c7d",
-        "addTalentId": "e70fc01f9d76d984",
+        "addTalentId": "26e3d987f7b984cf",
         "addTalentName": "Physical Surge"
       },
       "preserveFields": [
@@ -8016,7 +8016,7 @@
         "sort"
       ],
       "createTemplate": {
-        "_id": "e70fc01f9d76d984",
+        "_id": "26e3d987f7b984cf",
         "name": "Physical Surge",
         "type": "talent",
         "img": "icons/svg/item-bag.svg",
@@ -8060,7 +8060,7 @@
         "resolutionEvidence": "UNRESOLVED",
         "productionRecordId": null,
         "preserveProductionId": false,
-        "createRecordId": "918e049da1550f2f",
+        "createRecordId": "004732cba6bfa4a7",
         "currentTreeClaims": [],
         "sameNameProductionCandidates": [],
         "reviewExtraCandidateIds": []
@@ -8097,7 +8097,7 @@
         "action": "ADD",
         "removeFromTreeIds": [],
         "addToTreeId": "ca65ba0c33cd4c7d",
-        "addTalentId": "918e049da1550f2f",
+        "addTalentId": "004732cba6bfa4a7",
         "addTalentName": "Soft to Solid"
       },
       "preserveFields": [
@@ -8115,7 +8115,7 @@
         "sort"
       ],
       "createTemplate": {
-        "_id": "918e049da1550f2f",
+        "_id": "004732cba6bfa4a7",
         "name": "Soft to Solid",
         "type": "talent",
         "img": "icons/svg/item-bag.svg",
@@ -8159,7 +8159,7 @@
         "resolutionEvidence": "UNRESOLVED",
         "productionRecordId": null,
         "preserveProductionId": false,
-        "createRecordId": "abf877ec135d4f05",
+        "createRecordId": "960a9095402d23ee",
         "currentTreeClaims": [],
         "sameNameProductionCandidates": [],
         "reviewExtraCandidateIds": []
@@ -8197,7 +8197,7 @@
         "action": "ADD",
         "removeFromTreeIds": [],
         "addToTreeId": "ca65ba0c33cd4c7d",
-        "addTalentId": "abf877ec135d4f05",
+        "addTalentId": "960a9095402d23ee",
         "addTalentName": "Wan-Shen Defense"
       },
       "preserveFields": [
@@ -8215,7 +8215,7 @@
         "sort"
       ],
       "createTemplate": {
-        "_id": "abf877ec135d4f05",
+        "_id": "960a9095402d23ee",
         "name": "Wan-Shen Defense",
         "type": "talent",
         "img": "icons/svg/item-bag.svg",
@@ -8356,7 +8356,7 @@
         "resolutionEvidence": "UNRESOLVED",
         "productionRecordId": null,
         "preserveProductionId": false,
-        "createRecordId": "de9a5e8ac3998301",
+        "createRecordId": "e17a8eea5c111f48",
         "currentTreeClaims": [],
         "sameNameProductionCandidates": [],
         "reviewExtraCandidateIds": []
@@ -8394,7 +8394,7 @@
         "action": "ADD",
         "removeFromTreeIds": [],
         "addToTreeId": "ca65ba0c33cd4c7d",
-        "addTalentId": "de9a5e8ac3998301",
+        "addTalentId": "e17a8eea5c111f48",
         "addTalentName": "Wan-Shen Mastery"
       },
       "preserveFields": [
@@ -8412,7 +8412,7 @@
         "sort"
       ],
       "createTemplate": {
-        "_id": "de9a5e8ac3998301",
+        "_id": "e17a8eea5c111f48",
         "name": "Wan-Shen Mastery",
         "type": "talent",
         "img": "icons/svg/item-bag.svg",
@@ -8750,7 +8750,7 @@
         "resolutionEvidence": "UNRESOLVED",
         "productionRecordId": null,
         "preserveProductionId": false,
-        "createRecordId": "4a94affdfe899dcc",
+        "createRecordId": "160cab566fd1ea2c",
         "currentTreeClaims": [],
         "sameNameProductionCandidates": [],
         "reviewExtraCandidateIds": []
@@ -8788,7 +8788,7 @@
         "action": "ADD",
         "removeFromTreeIds": [],
         "addToTreeId": "a7ad797b01114925",
-        "addTalentId": "4a94affdfe899dcc",
+        "addTalentId": "160cab566fd1ea2c",
         "addTalentName": "Mobile Whirlwind"
       },
       "preserveFields": [
@@ -8806,7 +8806,7 @@
         "sort"
       ],
       "createTemplate": {
-        "_id": "4a94affdfe899dcc",
+        "_id": "160cab566fd1ea2c",
         "name": "Mobile Whirlwind",
         "type": "talent",
         "img": "icons/svg/item-bag.svg",
@@ -8850,7 +8850,7 @@
         "resolutionEvidence": "UNRESOLVED",
         "productionRecordId": null,
         "preserveProductionId": false,
-        "createRecordId": "69420a430d38abc6",
+        "createRecordId": "f5bdd03d2767793e",
         "currentTreeClaims": [],
         "sameNameProductionCandidates": [],
         "reviewExtraCandidateIds": []
@@ -8888,7 +8888,7 @@
         "action": "ADD",
         "removeFromTreeIds": [],
         "addToTreeId": "a7ad797b01114925",
-        "addTalentId": "69420a430d38abc6",
+        "addTalentId": "f5bdd03d2767793e",
         "addTalentName": "Repelling Whirlwind"
       },
       "preserveFields": [
@@ -8906,7 +8906,7 @@
         "sort"
       ],
       "createTemplate": {
-        "_id": "69420a430d38abc6",
+        "_id": "f5bdd03d2767793e",
         "name": "Repelling Whirlwind",
         "type": "talent",
         "img": "icons/svg/item-bag.svg",
@@ -8950,7 +8950,7 @@
         "resolutionEvidence": "UNRESOLVED",
         "productionRecordId": null,
         "preserveProductionId": false,
-        "createRecordId": "e22615e71b4d2b5e",
+        "createRecordId": "c101826c205debf2",
         "currentTreeClaims": [],
         "sameNameProductionCandidates": [],
         "reviewExtraCandidateIds": []
@@ -8988,7 +8988,7 @@
         "action": "ADD",
         "removeFromTreeIds": [],
         "addToTreeId": "a7ad797b01114925",
-        "addTalentId": "e22615e71b4d2b5e",
+        "addTalentId": "c101826c205debf2",
         "addTalentName": "Sudden Storm"
       },
       "preserveFields": [
@@ -9006,7 +9006,7 @@
         "sort"
       ],
       "createTemplate": {
-        "_id": "e22615e71b4d2b5e",
+        "_id": "c101826c205debf2",
         "name": "Sudden Storm",
         "type": "talent",
         "img": "icons/svg/item-bag.svg",
@@ -9050,7 +9050,7 @@
         "resolutionEvidence": "UNRESOLVED",
         "productionRecordId": null,
         "preserveProductionId": false,
-        "createRecordId": "2c33256a6f6be51c",
+        "createRecordId": "f7b620efd191ac6b",
         "currentTreeClaims": [],
         "sameNameProductionCandidates": [],
         "reviewExtraCandidateIds": []
@@ -9088,7 +9088,7 @@
         "action": "ADD",
         "removeFromTreeIds": [],
         "addToTreeId": "a7ad797b01114925",
-        "addTalentId": "2c33256a6f6be51c",
+        "addTalentId": "f7b620efd191ac6b",
         "addTalentName": "Tempest Tossed"
       },
       "preserveFields": [
@@ -9106,7 +9106,7 @@
         "sort"
       ],
       "createTemplate": {
-        "_id": "2c33256a6f6be51c",
+        "_id": "f7b620efd191ac6b",
         "name": "Tempest Tossed",
         "type": "talent",
         "img": "icons/svg/item-bag.svg",
@@ -9150,7 +9150,7 @@
         "resolutionEvidence": "UNRESOLVED",
         "productionRecordId": null,
         "preserveProductionId": false,
-        "createRecordId": "fafcbb9f270a8832",
+        "createRecordId": "7b921008eb97b266",
         "currentTreeClaims": [],
         "sameNameProductionCandidates": [],
         "reviewExtraCandidateIds": []
@@ -9188,7 +9188,7 @@
         "action": "ADD",
         "removeFromTreeIds": [],
         "addToTreeId": "9a5efe5d0e9b43a1",
-        "addTalentId": "fafcbb9f270a8832",
+        "addTalentId": "7b921008eb97b266",
         "addTalentName": "Cycle of Harmony"
       },
       "preserveFields": [
@@ -9206,7 +9206,7 @@
         "sort"
       ],
       "createTemplate": {
-        "_id": "fafcbb9f270a8832",
+        "_id": "7b921008eb97b266",
         "name": "Cycle of Harmony",
         "type": "talent",
         "img": "icons/svg/item-bag.svg",
@@ -9250,7 +9250,7 @@
         "resolutionEvidence": "UNRESOLVED",
         "productionRecordId": null,
         "preserveProductionId": false,
-        "createRecordId": "bdb50f9c95d57965",
+        "createRecordId": "eea7ea6dc3bd0313",
         "currentTreeClaims": [],
         "sameNameProductionCandidates": [],
         "reviewExtraCandidateIds": []
@@ -9288,7 +9288,7 @@
         "action": "ADD",
         "removeFromTreeIds": [],
         "addToTreeId": "9a5efe5d0e9b43a1",
-        "addTalentId": "bdb50f9c95d57965",
+        "addTalentId": "eea7ea6dc3bd0313",
         "addTalentName": "Force Stabilize"
       },
       "preserveFields": [
@@ -9306,7 +9306,7 @@
         "sort"
       ],
       "createTemplate": {
-        "_id": "bdb50f9c95d57965",
+        "_id": "eea7ea6dc3bd0313",
         "name": "Force Stabilize",
         "type": "talent",
         "img": "icons/svg/item-bag.svg",
@@ -9350,7 +9350,7 @@
         "resolutionEvidence": "UNRESOLVED",
         "productionRecordId": null,
         "preserveProductionId": false,
-        "createRecordId": "b0e098c0c1117b5a",
+        "createRecordId": "30b5540645eb4287",
         "currentTreeClaims": [],
         "sameNameProductionCandidates": [],
         "reviewExtraCandidateIds": []
@@ -9387,7 +9387,7 @@
         "action": "ADD",
         "removeFromTreeIds": [],
         "addToTreeId": "9a5efe5d0e9b43a1",
-        "addTalentId": "b0e098c0c1117b5a",
+        "addTalentId": "30b5540645eb4287",
         "addTalentName": "Repel Discord"
       },
       "preserveFields": [
@@ -9405,7 +9405,7 @@
         "sort"
       ],
       "createTemplate": {
-        "_id": "b0e098c0c1117b5a",
+        "_id": "30b5540645eb4287",
         "name": "Repel Discord",
         "type": "talent",
         "img": "icons/svg/item-bag.svg",
@@ -9449,7 +9449,7 @@
         "resolutionEvidence": "UNRESOLVED",
         "productionRecordId": null,
         "preserveProductionId": false,
-        "createRecordId": "91337685961e598b",
+        "createRecordId": "9db016b2e528beb4",
         "currentTreeClaims": [],
         "sameNameProductionCandidates": [],
         "reviewExtraCandidateIds": []
@@ -9486,7 +9486,7 @@
         "action": "ADD",
         "removeFromTreeIds": [],
         "addToTreeId": "9a5efe5d0e9b43a1",
-        "addTalentId": "91337685961e598b",
+        "addTalentId": "9db016b2e528beb4",
         "addTalentName": "Stifle Conflict"
       },
       "preserveFields": [
@@ -9504,7 +9504,7 @@
         "sort"
       ],
       "createTemplate": {
-        "_id": "91337685961e598b",
+        "_id": "9db016b2e528beb4",
         "name": "Stifle Conflict",
         "type": "talent",
         "img": "icons/svg/item-bag.svg",
@@ -9644,7 +9644,7 @@
         "resolutionEvidence": "UNRESOLVED",
         "productionRecordId": null,
         "preserveProductionId": false,
-        "createRecordId": "90630f61edcdb6db",
+        "createRecordId": "dbc150d8f2de73c1",
         "currentTreeClaims": [],
         "sameNameProductionCandidates": [],
         "reviewExtraCandidateIds": []
@@ -9682,7 +9682,7 @@
         "action": "ADD",
         "removeFromTreeIds": [],
         "addToTreeId": "899038f739294c81",
-        "addTalentId": "90630f61edcdb6db",
+        "addTalentId": "dbc150d8f2de73c1",
         "addTalentName": "Brutal Unarmed Strike"
       },
       "preserveFields": [
@@ -9700,7 +9700,7 @@
         "sort"
       ],
       "createTemplate": {
-        "_id": "90630f61edcdb6db",
+        "_id": "dbc150d8f2de73c1",
         "name": "Brutal Unarmed Strike",
         "type": "talent",
         "img": "icons/svg/item-bag.svg",
@@ -9744,7 +9744,7 @@
         "resolutionEvidence": "UNRESOLVED",
         "productionRecordId": null,
         "preserveProductionId": false,
-        "createRecordId": "5ea93db75c485810",
+        "createRecordId": "0fb750f0f0e6f767",
         "currentTreeClaims": [],
         "sameNameProductionCandidates": [],
         "reviewExtraCandidateIds": []
@@ -9781,7 +9781,7 @@
         "action": "ADD",
         "removeFromTreeIds": [],
         "addToTreeId": "899038f739294c81",
-        "addTalentId": "5ea93db75c485810",
+        "addTalentId": "0fb750f0f0e6f767",
         "addTalentName": "Martial Resurgence"
       },
       "preserveFields": [
@@ -9799,7 +9799,7 @@
         "sort"
       ],
       "createTemplate": {
-        "_id": "5ea93db75c485810",
+        "_id": "0fb750f0f0e6f767",
         "name": "Martial Resurgence",
         "type": "talent",
         "img": "icons/svg/item-bag.svg",
@@ -9843,7 +9843,7 @@
         "resolutionEvidence": "UNRESOLVED",
         "productionRecordId": null,
         "preserveProductionId": false,
-        "createRecordId": "6231c28737053444",
+        "createRecordId": "1b41d42e6adb0d46",
         "currentTreeClaims": [],
         "sameNameProductionCandidates": [],
         "reviewExtraCandidateIds": []
@@ -9880,7 +9880,7 @@
         "action": "ADD",
         "removeFromTreeIds": [],
         "addToTreeId": "899038f739294c81",
-        "addTalentId": "6231c28737053444",
+        "addTalentId": "1b41d42e6adb0d46",
         "addTalentName": "Rebound Leap"
       },
       "preserveFields": [
@@ -9898,7 +9898,7 @@
         "sort"
       ],
       "createTemplate": {
-        "_id": "6231c28737053444",
+        "_id": "1b41d42e6adb0d46",
         "name": "Rebound Leap",
         "type": "talent",
         "img": "icons/svg/item-bag.svg",
@@ -9942,7 +9942,7 @@
         "resolutionEvidence": "UNRESOLVED",
         "productionRecordId": null,
         "preserveProductionId": false,
-        "createRecordId": "788ee1bd17672ec9",
+        "createRecordId": "040e50766b518ea6",
         "currentTreeClaims": [],
         "sameNameProductionCandidates": [],
         "reviewExtraCandidateIds": []
@@ -9980,7 +9980,7 @@
         "action": "ADD",
         "removeFromTreeIds": [],
         "addToTreeId": "899038f739294c81",
-        "addTalentId": "788ee1bd17672ec9",
+        "addTalentId": "040e50766b518ea6",
         "addTalentName": "Simultaneous Strike"
       },
       "preserveFields": [
@@ -9998,7 +9998,7 @@
         "sort"
       ],
       "createTemplate": {
-        "_id": "788ee1bd17672ec9",
+        "_id": "040e50766b518ea6",
         "name": "Simultaneous Strike",
         "type": "talent",
         "img": "icons/svg/item-bag.svg",
@@ -10139,7 +10139,7 @@
         "resolutionEvidence": "UNRESOLVED",
         "productionRecordId": null,
         "preserveProductionId": false,
-        "createRecordId": "a9cbbb79f3b87970",
+        "createRecordId": "1bce5b5ca81d0873",
         "currentTreeClaims": [],
         "sameNameProductionCandidates": [],
         "reviewExtraCandidateIds": []
@@ -10177,7 +10177,7 @@
         "action": "ADD",
         "removeFromTreeIds": [],
         "addToTreeId": "899038f739294c81",
-        "addTalentId": "a9cbbb79f3b87970",
+        "addTalentId": "1bce5b5ca81d0873",
         "addTalentName": "Telekinetic Throw"
       },
       "preserveFields": [
@@ -10195,7 +10195,7 @@
         "sort"
       ],
       "createTemplate": {
-        "_id": "a9cbbb79f3b87970",
+        "_id": "1bce5b5ca81d0873",
         "name": "Telekinetic Throw",
         "type": "talent",
         "img": "icons/svg/item-bag.svg",
@@ -10336,7 +10336,7 @@
         "resolutionEvidence": "UNRESOLVED",
         "productionRecordId": null,
         "preserveProductionId": false,
-        "createRecordId": "357cd59f1b0cb306",
+        "createRecordId": "6add44bebe61f2f3",
         "currentTreeClaims": [],
         "sameNameProductionCandidates": [],
         "reviewExtraCandidateIds": []
@@ -10374,7 +10374,7 @@
         "action": "ADD",
         "removeFromTreeIds": [],
         "addToTreeId": "4509306f66d744bf",
-        "addTalentId": "357cd59f1b0cb306",
+        "addTalentId": "6add44bebe61f2f3",
         "addTalentName": "Immerse Another"
       },
       "preserveFields": [
@@ -10392,7 +10392,7 @@
         "sort"
       ],
       "createTemplate": {
-        "_id": "357cd59f1b0cb306",
+        "_id": "6add44bebe61f2f3",
         "name": "Immerse Another",
         "type": "talent",
         "img": "icons/svg/item-bag.svg",
@@ -10436,7 +10436,7 @@
         "resolutionEvidence": "UNRESOLVED",
         "productionRecordId": null,
         "preserveProductionId": false,
-        "createRecordId": "0273dfee9b1eb522",
+        "createRecordId": "df6c20e602190daa",
         "currentTreeClaims": [],
         "sameNameProductionCandidates": [],
         "reviewExtraCandidateIds": []
@@ -10473,7 +10473,7 @@
         "action": "ADD",
         "removeFromTreeIds": [],
         "addToTreeId": "4509306f66d744bf",
-        "addTalentId": "0273dfee9b1eb522",
+        "addTalentId": "df6c20e602190daa",
         "addTalentName": "Ride the Current"
       },
       "preserveFields": [
@@ -10491,7 +10491,7 @@
         "sort"
       ],
       "createTemplate": {
-        "_id": "0273dfee9b1eb522",
+        "_id": "df6c20e602190daa",
         "name": "Ride the Current",
         "type": "talent",
         "img": "icons/svg/item-bag.svg",
@@ -10535,7 +10535,7 @@
         "resolutionEvidence": "UNRESOLVED",
         "productionRecordId": null,
         "preserveProductionId": false,
-        "createRecordId": "cb2d2947f45b3df5",
+        "createRecordId": "d1ced133cee0a6fa",
         "currentTreeClaims": [],
         "sameNameProductionCandidates": [],
         "reviewExtraCandidateIds": []
@@ -10572,7 +10572,7 @@
         "action": "ADD",
         "removeFromTreeIds": [],
         "addToTreeId": "4509306f66d744bf",
-        "addTalentId": "cb2d2947f45b3df5",
+        "addTalentId": "d1ced133cee0a6fa",
         "addTalentName": "Surrender to the Current"
       },
       "preserveFields": [
@@ -10590,7 +10590,7 @@
         "sort"
       ],
       "createTemplate": {
-        "_id": "cb2d2947f45b3df5",
+        "_id": "d1ced133cee0a6fa",
         "name": "Surrender to the Current",
         "type": "talent",
         "img": "icons/svg/item-bag.svg",
@@ -10719,7 +10719,7 @@
       "name": "Combustion",
       "ownerSourcebook": "Jedi Academy Training Manual",
       "targetTree": {
-        "treeId": "ab3311a860d8d359",
+        "treeId": "4b2b7b67261c99fa",
         "treeName": "Shapers of Kro Var"
       },
       "disposition": "CREATE",
@@ -10730,7 +10730,7 @@
         "resolutionEvidence": "UNRESOLVED",
         "productionRecordId": null,
         "preserveProductionId": false,
-        "createRecordId": "78a296a68645450b",
+        "createRecordId": "953e539478ea6c3e",
         "currentTreeClaims": [],
         "sameNameProductionCandidates": [],
         "reviewExtraCandidateIds": []
@@ -10767,8 +10767,8 @@
       "treeMutation": {
         "action": "ADD",
         "removeFromTreeIds": [],
-        "addToTreeId": "ab3311a860d8d359",
-        "addTalentId": "78a296a68645450b",
+        "addToTreeId": "4b2b7b67261c99fa",
+        "addTalentId": "953e539478ea6c3e",
         "addTalentName": "Combustion"
       },
       "preserveFields": [
@@ -10786,12 +10786,12 @@
         "sort"
       ],
       "createTemplate": {
-        "_id": "78a296a68645450b",
+        "_id": "953e539478ea6c3e",
         "name": "Combustion",
         "type": "talent",
         "img": "icons/svg/item-bag.svg",
         "system": {
-          "treeId": "ab3311a860d8d359",
+          "treeId": "4b2b7b67261c99fa",
           "benefit": "You can spend a Force Point as a swift action to add 146 points of fire damage to any Force power that causes damage to a single target. A target that takes fire damage also catches on fire (see page 256 of the Saga Edition core rulebook).",
           "description": {
             "value": "You can spend a Force Point as a swift action to add 146 points of fire damage to any Force power that causes damage to a single target. A target that takes fire damage also catches on fire (see page 256 of the Saga Edition core rulebook)."
@@ -10819,7 +10819,7 @@
       "name": "Earth Buckle",
       "ownerSourcebook": "Jedi Academy Training Manual",
       "targetTree": {
-        "treeId": "16ceb3667e8af344",
+        "treeId": "4b2b7b67261c99fa",
         "treeName": "Shapers of Kro Var"
       },
       "disposition": "CREATE",
@@ -10830,7 +10830,7 @@
         "resolutionEvidence": "UNRESOLVED",
         "productionRecordId": null,
         "preserveProductionId": false,
-        "createRecordId": "2f9bd5b93d0eb82a",
+        "createRecordId": "8436e1f101dc438c",
         "currentTreeClaims": [],
         "sameNameProductionCandidates": [],
         "reviewExtraCandidateIds": []
@@ -10866,8 +10866,8 @@
       "treeMutation": {
         "action": "ADD",
         "removeFromTreeIds": [],
-        "addToTreeId": "16ceb3667e8af344",
-        "addTalentId": "2f9bd5b93d0eb82a",
+        "addToTreeId": "4b2b7b67261c99fa",
+        "addTalentId": "8436e1f101dc438c",
         "addTalentName": "Earth Buckle"
       },
       "preserveFields": [
@@ -10885,12 +10885,12 @@
         "sort"
       ],
       "createTemplate": {
-        "_id": "2f9bd5b93d0eb82a",
+        "_id": "8436e1f101dc438c",
         "name": "Earth Buckle",
         "type": "talent",
         "img": "icons/svg/item-bag.svg",
         "system": {
-          "treeId": "16ceb3667e8af344",
+          "treeId": "4b2b7b67261c99fa",
           "benefit": "You can spend a Force Point as a swift action to create a 3x3 square area of difficult terrain centered on you. You ignore any penalties for moving on difficult terrain that you create using this talent. A SHAPER OF KRO VAR DEFENDS HIMSELF AGAINST THE FORCES OF THE SEPARATISTS.",
           "description": {
             "value": "You can spend a Force Point as a swift action to create a 3x3 square area of difficult terrain centered on you. You ignore any penalties for moving on difficult terrain that you create using this talent. A SHAPER OF KRO VAR DEFENDS HIMSELF AGAINST THE FORCES OF THE SEPARATISTS."
@@ -10918,7 +10918,7 @@
       "name": "Fluidity",
       "ownerSourcebook": "Jedi Academy Training Manual",
       "targetTree": {
-        "treeId": "c68485b751d127e0",
+        "treeId": "4b2b7b67261c99fa",
         "treeName": "Shapers of Kro Var"
       },
       "disposition": "CREATE",
@@ -10929,7 +10929,7 @@
         "resolutionEvidence": "UNRESOLVED",
         "productionRecordId": null,
         "preserveProductionId": false,
-        "createRecordId": "d257d180378c8f9d",
+        "createRecordId": "5567797336fc8571",
         "currentTreeClaims": [],
         "sameNameProductionCandidates": [],
         "reviewExtraCandidateIds": []
@@ -10965,8 +10965,8 @@
       "treeMutation": {
         "action": "ADD",
         "removeFromTreeIds": [],
-        "addToTreeId": "c68485b751d127e0",
-        "addTalentId": "d257d180378c8f9d",
+        "addToTreeId": "4b2b7b67261c99fa",
+        "addTalentId": "5567797336fc8571",
         "addTalentName": "Fluidity"
       },
       "preserveFields": [
@@ -10984,12 +10984,12 @@
         "sort"
       ],
       "createTemplate": {
-        "_id": "d257d180378c8f9d",
+        "_id": "5567797336fc8571",
         "name": "Fluidity",
         "type": "talent",
         "img": "icons/svg/item-bag.svg",
         "system": {
-          "treeId": "c68485b751d127e0",
+          "treeId": "4b2b7b67261c99fa",
           "benefit": "You use your Use the Force check modifier instead of your Acro-batics check modifier when making Acrobatics checks. If you are entitled to an Acrobatics check reroll, you may reroll your Use the Force check instead (subject to the same circumstances and limitations). Additionally, when you attempt a grapple or attempting to break free of a grapple, you can spend a Force Point to be treated as if you were one size category larger.",
           "description": {
             "value": "You use your Use the Force check modifier instead of your Acro-batics check modifier when making Acrobatics checks. If you are entitled to an Acrobatics check reroll, you may reroll your Use the Force check instead (subject to the same circumstances and limitations). Additionally, when you attempt a grapple or attempting to break free of a grapple, you can spend a Force Point to be treated as if you were one size category larger."
@@ -11017,7 +11017,7 @@
       "name": "Thunderclap",
       "ownerSourcebook": "Jedi Academy Training Manual",
       "targetTree": {
-        "treeId": "f0664ef5c94b3e0b",
+        "treeId": "4b2b7b67261c99fa",
         "treeName": "Shapers of Kro Var"
       },
       "disposition": "CREATE",
@@ -11028,7 +11028,7 @@
         "resolutionEvidence": "UNRESOLVED",
         "productionRecordId": null,
         "preserveProductionId": false,
-        "createRecordId": "07680913de8adc53",
+        "createRecordId": "7f63f6f3fec96bf3",
         "currentTreeClaims": [],
         "sameNameProductionCandidates": [],
         "reviewExtraCandidateIds": []
@@ -11065,8 +11065,8 @@
       "treeMutation": {
         "action": "ADD",
         "removeFromTreeIds": [],
-        "addToTreeId": "f0664ef5c94b3e0b",
-        "addTalentId": "07680913de8adc53",
+        "addToTreeId": "4b2b7b67261c99fa",
+        "addTalentId": "7f63f6f3fec96bf3",
         "addTalentName": "Thunderclap"
       },
       "preserveFields": [
@@ -11084,12 +11084,12 @@
         "sort"
       ],
       "createTemplate": {
-        "_id": "07680913de8adc53",
+        "_id": "7f63f6f3fec96bf3",
         "name": "Thunderclap",
         "type": "talent",
         "img": "icons/svg/item-bag.svg",
         "system": {
-          "treeId": "f0664ef5c94b3e0b",
+          "treeId": "4b2b7b67261c99fa",
           "benefit": "When you use a Force power that deals damage, you can use the Bantha Rush feat against that target as though you had made a melee attack.",
           "description": {
             "value": "When you use a Force power that deals damage, you can use the Bantha Rush feat against that target as though you had made a melee attack."
@@ -11117,7 +11117,7 @@
       "name": "Wind Vortex",
       "ownerSourcebook": "Jedi Academy Training Manual",
       "targetTree": {
-        "treeId": "ff5e6f23f78832c6",
+        "treeId": "4b2b7b67261c99fa",
         "treeName": "Shapers of Kro Var"
       },
       "disposition": "CREATE",
@@ -11128,7 +11128,7 @@
         "resolutionEvidence": "UNRESOLVED",
         "productionRecordId": null,
         "preserveProductionId": false,
-        "createRecordId": "addff1294f534ac7",
+        "createRecordId": "897c61c8054bdd9e",
         "currentTreeClaims": [],
         "sameNameProductionCandidates": [],
         "reviewExtraCandidateIds": []
@@ -11164,8 +11164,8 @@
       "treeMutation": {
         "action": "ADD",
         "removeFromTreeIds": [],
-        "addToTreeId": "ff5e6f23f78832c6",
-        "addTalentId": "addff1294f534ac7",
+        "addToTreeId": "4b2b7b67261c99fa",
+        "addTalentId": "897c61c8054bdd9e",
         "addTalentName": "Wind Vortex"
       },
       "preserveFields": [
@@ -11183,12 +11183,12 @@
         "sort"
       ],
       "createTemplate": {
-        "_id": "addff1294f534ac7",
+        "_id": "897c61c8054bdd9e",
         "name": "Wind Vortex",
         "type": "talent",
         "img": "icons/svg/item-bag.svg",
         "system": {
-          "treeId": "ff5e6f23f78832c6",
+          "treeId": "4b2b7b67261c99fa",
           "benefit": "You can spend a Force Point as a swift action to surround yourself with whirling winds. You gain concealment from all other targets and gain a +2 circumstance bonus to Reflex Defense against thrown weapons. This effect lasts until the end of the encounter.",
           "description": {
             "value": "You can spend a Force Point as a swift action to surround yourself with whirling winds. You gain concealment from all other targets and gain a +2 circumstance bonus to Reflex Defense against thrown weapons. This effect lasts until the end of the encounter."
@@ -11216,7 +11216,7 @@
       "name": "Discblade Arc",
       "ownerSourcebook": "Jedi Academy Training Manual",
       "targetTree": {
-        "treeId": "aec386e85f66e93e",
+        "treeId": "ec0c0bc224d2e4d5",
         "treeName": "Zeison Sha Warrior"
       },
       "disposition": "CREATE",
@@ -11227,7 +11227,7 @@
         "resolutionEvidence": "UNRESOLVED",
         "productionRecordId": null,
         "preserveProductionId": false,
-        "createRecordId": "69380dec0c195e82",
+        "createRecordId": "3d7da7d62139a6e9",
         "currentTreeClaims": [],
         "sameNameProductionCandidates": [],
         "reviewExtraCandidateIds": []
@@ -11264,8 +11264,8 @@
       "treeMutation": {
         "action": "ADD",
         "removeFromTreeIds": [],
-        "addToTreeId": "aec386e85f66e93e",
-        "addTalentId": "69380dec0c195e82",
+        "addToTreeId": "ec0c0bc224d2e4d5",
+        "addTalentId": "3d7da7d62139a6e9",
         "addTalentName": "Discblade Arc"
       },
       "preserveFields": [
@@ -11283,12 +11283,12 @@
         "sort"
       ],
       "createTemplate": {
-        "_id": "69380dec0c195e82",
+        "_id": "3d7da7d62139a6e9",
         "name": "Discblade Arc",
         "type": "talent",
         "img": "icons/svg/item-bag.svg",
         "system": {
-          "treeId": "aec386e85f66e93e",
+          "treeId": "ec0c0bc224d2e4d5",
           "benefit": "As a full-round action, you can make an area attack with your discblade, striking three targets, all of which must be within point blank range for your discblade. This attack uses the area attack rules; you make one attack roll and apply the result to every target you designate.",
           "description": {
             "value": "As a full-round action, you can make an area attack with your discblade, striking three targets, all of which must be within point blank range for your discblade. This attack uses the area attack rules; you make one attack roll and apply the result to every target you designate."
@@ -11316,7 +11316,7 @@
       "name": "Distant Discblade Throw",
       "ownerSourcebook": "Jedi Academy Training Manual",
       "targetTree": {
-        "treeId": "b66a1c0b3e2968fb",
+        "treeId": "ec0c0bc224d2e4d5",
         "treeName": "Zeison Sha Warrior"
       },
       "disposition": "CREATE",
@@ -11327,7 +11327,7 @@
         "resolutionEvidence": "UNRESOLVED",
         "productionRecordId": null,
         "preserveProductionId": false,
-        "createRecordId": "b2c9221dafb87277",
+        "createRecordId": "8f172c307cdec956",
         "currentTreeClaims": [],
         "sameNameProductionCandidates": [],
         "reviewExtraCandidateIds": []
@@ -11364,8 +11364,8 @@
       "treeMutation": {
         "action": "ADD",
         "removeFromTreeIds": [],
-        "addToTreeId": "b66a1c0b3e2968fb",
-        "addTalentId": "b2c9221dafb87277",
+        "addToTreeId": "ec0c0bc224d2e4d5",
+        "addTalentId": "8f172c307cdec956",
         "addTalentName": "Distant Discblade Throw"
       },
       "preserveFields": [
@@ -11383,12 +11383,12 @@
         "sort"
       ],
       "createTemplate": {
-        "_id": "b2c9221dafb87277",
+        "_id": "8f172c307cdec956",
         "name": "Distant Discblade Throw",
         "type": "talent",
         "img": "icons/svg/item-bag.svg",
         "system": {
-          "treeId": "b66a1c0b3e2968fb",
+          "treeId": "ec0c0bc224d2e4d5",
           "benefit": "When you use a discblade, you treat it as a pistol (instead of a thrown weapon) for the purpose of determining range.",
           "description": {
             "value": "When you use a discblade, you treat it as a pistol (instead of a thrown weapon) for the purpose of determining range."
@@ -11416,7 +11416,7 @@
       "name": "Recall Discblade",
       "ownerSourcebook": "Jedi Academy Training Manual",
       "targetTree": {
-        "treeId": "527dca8008737acb",
+        "treeId": "ec0c0bc224d2e4d5",
         "treeName": "Zeison Sha Warrior"
       },
       "disposition": "CREATE",
@@ -11427,7 +11427,7 @@
         "resolutionEvidence": "UNRESOLVED",
         "productionRecordId": null,
         "preserveProductionId": false,
-        "createRecordId": "72ac4192d35d3ae8",
+        "createRecordId": "abbf02a67dbe0c89",
         "currentTreeClaims": [],
         "sameNameProductionCandidates": [],
         "reviewExtraCandidateIds": []
@@ -11464,8 +11464,8 @@
       "treeMutation": {
         "action": "ADD",
         "removeFromTreeIds": [],
-        "addToTreeId": "527dca8008737acb",
-        "addTalentId": "72ac4192d35d3ae8",
+        "addToTreeId": "ec0c0bc224d2e4d5",
+        "addTalentId": "abbf02a67dbe0c89",
         "addTalentName": "Recall Discblade"
       },
       "preserveFields": [
@@ -11483,12 +11483,12 @@
         "sort"
       ],
       "createTemplate": {
-        "_id": "72ac4192d35d3ae8",
+        "_id": "abbf02a67dbe0c89",
         "name": "Recall Discblade",
         "type": "talent",
         "img": "icons/svg/item-bag.svg",
         "system": {
-          "treeId": "527dca8008737acb",
+          "treeId": "ec0c0bc224d2e4d5",
           "benefit": "When you make a ranged attack with a discblade (or use the Discblade Arc talent above), after the attack is resolved you can make a DC 15 Use the Force check to call the weapon back to your hand as a free action.",
           "description": {
             "value": "When you make a ranged attack with a discblade (or use the Discblade Arc talent above), after the attack is resolved you can make a DC 15 Use the Force check to call the weapon back to your hand as a free action."
@@ -11516,7 +11516,7 @@
       "name": "Telekinetic Vigilance",
       "ownerSourcebook": "Jedi Academy Training Manual",
       "targetTree": {
-        "treeId": "ad6f9190a94e3d5f",
+        "treeId": "ec0c0bc224d2e4d5",
         "treeName": "Zeison Sha Warrior"
       },
       "disposition": "CREATE",
@@ -11527,7 +11527,7 @@
         "resolutionEvidence": "UNRESOLVED",
         "productionRecordId": null,
         "preserveProductionId": false,
-        "createRecordId": "b7b402e8065f4fa8",
+        "createRecordId": "8ddbbeb09758295d",
         "currentTreeClaims": [],
         "sameNameProductionCandidates": [],
         "reviewExtraCandidateIds": []
@@ -11564,8 +11564,8 @@
       "treeMutation": {
         "action": "ADD",
         "removeFromTreeIds": [],
-        "addToTreeId": "ad6f9190a94e3d5f",
-        "addTalentId": "b7b402e8065f4fa8",
+        "addToTreeId": "ec0c0bc224d2e4d5",
+        "addTalentId": "8ddbbeb09758295d",
         "addTalentName": "Telekinetic Vigilance"
       },
       "preserveFields": [
@@ -11583,12 +11583,12 @@
         "sort"
       ],
       "createTemplate": {
-        "_id": "b7b402e8065f4fa8",
+        "_id": "8ddbbeb09758295d",
         "name": "Telekinetic Vigilance",
         "type": "talent",
         "img": "icons/svg/item-bag.svg",
         "system": {
-          "treeId": "ad6f9190a94e3d5f",
+          "treeId": "ec0c0bc224d2e4d5",
           "benefit": "You can return the intercept Force power to your Force suite as a swift action without spending a Force Point.",
           "description": {
             "value": "You can return the intercept Force power to your Force suite as a swift action without spending a Force Point."
@@ -11616,7 +11616,7 @@
       "name": "Weapon Specialization (discblade)",
       "ownerSourcebook": "Jedi Academy Training Manual",
       "targetTree": {
-        "treeId": "e298b37c297ac0a1",
+        "treeId": "ec0c0bc224d2e4d5",
         "treeName": "Zeison Sha Warrior"
       },
       "disposition": "CREATE",
@@ -11627,7 +11627,7 @@
         "resolutionEvidence": "UNRESOLVED",
         "productionRecordId": null,
         "preserveProductionId": false,
-        "createRecordId": "e7307fe67d4abd64",
+        "createRecordId": "5854b821895ffdd9",
         "currentTreeClaims": [],
         "sameNameProductionCandidates": [],
         "reviewExtraCandidateIds": []
@@ -11664,8 +11664,8 @@
       "treeMutation": {
         "action": "ADD",
         "removeFromTreeIds": [],
-        "addToTreeId": "e298b37c297ac0a1",
-        "addTalentId": "e7307fe67d4abd64",
+        "addToTreeId": "ec0c0bc224d2e4d5",
+        "addTalentId": "5854b821895ffdd9",
         "addTalentName": "Weapon Specialization (discblade)"
       },
       "preserveFields": [
@@ -11683,12 +11683,12 @@
         "sort"
       ],
       "createTemplate": {
-        "_id": "e7307fe67d4abd64",
+        "_id": "5854b821895ffdd9",
         "name": "Weapon Specialization (discblade)",
         "type": "talent",
         "img": "icons/svg/item-bag.svg",
         "system": {
-          "treeId": "e298b37c297ac0a1",
+          "treeId": "ec0c0bc224d2e4d5",
           "benefit": "You gain a +2 bonus on melee damage rolls with your discblade.",
           "description": {
             "value": "You gain a +2 bonus on melee damage rolls with your discblade."
