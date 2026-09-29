@@ -3019,6 +3019,403 @@ When you fight defensively, as a reaction you can negate a melee attack by makin
 
 ---
 
+
+## Book 14 — Scavenger's Guide to Droids
+
+**Phase 3B status:** COMPLETE — 31 owned canonical identities; 12 UPDATE_CONTENT; 19 CREATE.
+
+### 1stdegree Droid
+
+#### Known Vulnerability
+
+- **Page:** 26
+- **Prerequisites:** Trained in Knowledge (life sciences)
+- **Quick summary:** You know the vulnerable spots to hit on most species.
+- **Production target:** CREATE `852c4b043904102f`
+- **Phase 3B disposition:** `CREATE`
+
+**Canonical rules text**
+
+You know the vulnerable spots to hit on most species. As a free action, you make a DC 15 Knowledge (life sciences) check (DC 25 for rare species, DC 35 for unknown species, both as determined by the Gamemaster). If the check is successful, until the end of the encounter, whenever you make a successful melee or unarmed attack that deals damage against a target of that species, your target takes a -2 penalties to attack rolls until the end of your next turn.
+
+#### Medical Analyzer
+
+- **Page:** 26
+- **Prerequisites:** Trained in Knowledge (life sciences), medical droid
+- **Quick summary:** You use your medical knowledge and advanced droid processor to improve your treatment of medical conditions.
+- **Production target:** CREATE `7fb6b7d078bdb493`
+- **Phase 3B disposition:** `CREATE`
+
+**Canonical rules text**
+
+You use your medical knowledge and advanced droid processor to improve your treatment of medical conditions. When making a Treat Injury check to Treat Disease, Treat Poison, or Treat Radiation, you can also add your Intelligence modifier to your roll.
+
+#### Science Analyzer
+
+- **Page:** 26
+- **Prerequisites:** Trained in Knowledge (life sciences) and Knowledge (physical sciences)
+- **Quick summary:** You use your extensive databanks to better analyze scientific data.
+- **Production target:** CREATE `739397eded522cd8`
+- **Phase 3B disposition:** `CREATE`
+
+**Canonical rules text**
+
+You use your extensive databanks to better analyze scientific data. You can add double your Intelligence modifier to your Knowledge (life sciences) or Knowledge (physical sciences) skill check.
+
+#### Triage Scan
+
+- **Page:** 26
+- **Prerequisites:** Trained in Treat Injury, medical droid
+- **Quick summary:** As a standard action, you can make a DC 20 Treat Injury check.
+- **Production target:** CREATE `c9433c6bcb4133d5`
+- **Phase 3B disposition:** `CREATE`
+
+**Canonical rules text**
+
+As a standard action, you can make a DC 20 Treat Injury check. If the check succeeds, you know if the organic characters within 6 squares and within your line of sight are below one half of their hit points and at what step they are along the condition track.
+
+### 2nddegree Droid
+
+#### Burst Transfer
+
+- **Page:** 26
+- **Prerequisites:** None.
+- **Quick summary:** Double Binary data transfer with another droid that has Burst Transfer and halve Access Information time when using Use Computer.
+- **Production target:** `df91dea8db444459`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+You can double the amount of data transferred with the Binary language in a single round (see page 191 of the Saga Edition core rulebook) when communicating with other droids with Burst Transfer, and you cut Access Information time in half when making Use Computer checks to find general or specific information (see page 76 of the Saga Edition core rulebook).
+
+#### On-Board System Link
+
+- **Page:** 26
+- **Prerequisites:** None.
+- **Quick summary:** While aboard a starship or vehicle and plugged into the ship's systems by scomp link, droid socket, or basic data port, you can reroute power or recharge shields as two swift actions instead of three.
+- **Production target:** CREATE `31461ebe45c5f4c9`
+- **Phase 3B disposition:** `CREATE`
+
+**Canonical rules text**
+
+While aboard a starship or vehicle and plugged into the ship's systems by scomp link, droid socket, or basic data port, you can reroute power or recharge shields as two swift actions instead of three.
+
+#### Quick Astrogation
+
+- **Page:** 26
+- **Prerequisites:** Trained in Use Computer
+- **Quick summary:** Your speedy electronic astrogation-calculation routines allow you to cut calculation time in half.
+- **Production target:** CREATE `cdbaa45c44141d9c`
+- **Phase 3B disposition:** `CREATE`
+
+**Canonical rules text**
+
+Your speedy electronic astrogation-calculation routines allow you to cut calculation time in half. Additionally, when attempting a Use Computer check to Astrogate, you can make the calculation as a standard action instead of a full-round action.
+
+#### Scomp Link Slicer
+
+- **Page:** 27
+- **Prerequisites:** Any two talents from the Slicer Talent Tree (see page 47 of the Saga Edition core rulebook). Burst Transfer can be one of these talents
+- **Quick summary:** While physically linked to a computer, use Eradicate, Lockout, and Untraceable once each per encounter to slice systems more safely.
+- **Production target:** CREATE `3b38783594bcebce`
+- **Phase 3B disposition:** `CREATE`
+
+**Canonical rules text**
+
+Your inherent speed and advanced skill reduce the danger of slicing computer systems. You must be physically linked to the system you are slicing. You can use each of the following actions once per encounter: e Eradicate: You can use Disable or Erase Program on a computer that is friendly or helpful toward you. With this talent, disabling or erasing a program takes 5 minutes and requires a DC 15 Use Computer check (see page 76 of the Saga Edition core rulebook). ¢ Lockout: If you succeed on an opposed Use Computer check when you Issue a Routine Command to counteract another programmer's actions, you automatically lock the other programmer out of the system. He or she must succeed in an opposed Use Computer check against you to regain access to the system (see page 76 of the Saga Edition core rulebook). You resist the attempt as a reaction. © Untraceable: As a reaction, you automatically keep a hostile computer from tracing your location if you fail a Use Computer check (see page 76 of the Saga Edition core rulebook) by 10 or less.
+
+### 3rddegree Droid
+
+#### Nuanced
+
+- **Page:** 27
+- **Prerequisites:** None.
+- **Quick summary:** You are skilled in the nuances of diplomatic speech and gestures.
+- **Production target:** CREATE `8f4fed2c36ab4c2a`
+- **Phase 3B disposition:** `CREATE`
+
+**Canonical rules text**
+
+You are skilled in the nuances of diplomatic speech and gestures. Once per encounter, you can add your Wisdom bonus to a Persuasion check in addition to your Charisma bonus.
+
+#### Observant
+
+- **Page:** 27
+- **Prerequisites:** None.
+- **Quick summary:** You enhance your persuasiveness by applying data obtained through observation.
+- **Production target:** `175c46931a9e474a`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+You enhance your persuasiveness by applying data obtained through observation. Whenever you would fail a Persuasion check, you can roll a Perception check as a free action, with a DC equal to the DC of the Persuasion check. If you succeed, add +5 to the original Persuasion check result.
+
+#### Supervising Droid
+
+- **Page:** 27
+- **Prerequisites:** Observant, any talent from the Influence, Inspiration, or Leadership Talent Trees (see pages 43-44 of the Saga Edition core rulebook)
+- **Quick summary:** Once per encounter each, use Combat Support, Director, and Instant Action to assist allied droids in attacks, skills, or action economy.
+- **Production target:** CREATE `0025737e7198390e`
+- **Phase 3B disposition:** `CREATE`
+
+**Canonical rules text**
+
+You are programmed to oversee other droids. You can use each of the following actions once per encounter: © Combat Support: As a standard action, you automatically aid another on an allied droid's attack roll, provided you are capable of using the aid another action to assist that ally. If you also have Weapon Focus with this weapon, you increase the bonus provided by the aid another action from +2 to +3. e Director: As a standard action, you automatically aid another droid with a skill you are trained in. If you also have Skill Focus in the skill, you increase the aid another bonus from +2 to +5. e Instant Action: As a swift action, you grant one ally a swift action that it can use immediately as a free action.
+
+#### Talkdroid
+
+- **Page:** 27
+- **Prerequisites:** Trained in Persuasion
+- **Quick summary:** You know how to subtly massage translations.
+- **Production target:** CREATE `4e52d41e355b5923`
+- **Phase 3B disposition:** `CREATE`
+
+**Canonical rules text**
+
+You know how to subtly massage translations. When one of your allies is attempting to use the Persuasion skill to change the attitude of a creature that does not understand your ally, you add +2 to the ally’s Persuasion check results if you perform the translation.
+
+### 4thdegree Droid
+
+#### Just a Scratch
+
+- **Page:** 27
+- **Prerequisites:** Equipped with medium or better armor, proficient with that armor
+- **Quick summary:** Once per encounter, as a reaction, you can reduce the damage from a single attack that targets your Reflex Defense by an amount equal to your Fortitude Defense.
+- **Production target:** CREATE `81acbac191981ace`
+- **Phase 3B disposition:** `CREATE`
+
+**Canonical rules text**
+
+Once per encounter, as a reaction, you can reduce the damage from a single attack that targets your Reflex Defense by an amount equal to your Fortitude Defense.
+
+#### Target Acquisition
+
+- **Page:** 27
+- **Prerequisites:** None.
+- **Quick summary:** Once per encounter, as a swift action, designate an enemy target within line of sight as an acquired target.
+- **Production target:** `6ef413a824474491`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Once per encounter, as a swift action, designate an enemy target within line of sight as an acquired target. You gain a +1 circumstance bonus to attack rolls and damage rolls for all attacks against that target until the end of the encounter, as long as the target remains within your line of sight.
+
+#### Target Lock
+
+- **Page:** 27
+- **Prerequisites:** Target Acquisition
+- **Quick summary:** You lock onto the target designated by the Target Acquisition talent.
+- **Production target:** CREATE `3d2805cd83bb0cc4`
+- **Phase 3B disposition:** `CREATE`
+
+**Canonical rules text**
+
+You lock onto the target designated by the Target Acquisition talent. If the target leaves your line of sight, you automatically reacquire the target lock as a reaction if the target comes back within your line of sight. You also gain a +5 bonus to your Perception skill when opposing the target's Stealth checks.
+
+#### Weapons Power Surge
+
+- **Page:** 27
+- **Prerequisites:** None.
+- **Quick summary:** Once per encounter, as a free action, you can increase the damage dealt by one of your weapons by 1 or 2 damage dice in exchange for moving -1 step on the condition track for each die increased.
+- **Production target:** CREATE `09e7eeda16a7814f`
+- **Phase 3B disposition:** `CREATE`
+
+**Canonical rules text**
+
+Once per encounter, as a free action, you can increase the damage dealt by one of your weapons by 1 or 2 damage dice in exchange for moving -1 step on the condition track for each die increased. The weapon must be permanently mounted to your chassis, and it must use your internal power supply. Handheld weapons, such as blaster rifles, do not qualify for this talent.
+
+### 5thdegree Droid
+
+#### Durable
+
+- **Page:** 27
+- **Prerequisites:** None.
+- **Quick summary:** You are particularly durable and continue to function when a lesser droid would become disabled.
+- **Production target:** CREATE `c5410351fc7c7aa7`
+- **Phase 3B disposition:** `CREATE`
+
+**Canonical rules text**
+
+You are particularly durable and continue to function when a lesser droid would become disabled. The first time during an encounter that you would be moved to the bottom of the condition track by any effect, you instead stop at the -10 step. Additionally, if a single attack causes you to move multiple steps down the condition track, you can spend a Force Point as a reaction to only move -1 step down the condition track.
+
+#### Heavy-Duty Actuators
+
+- **Page:** 27
+- **Prerequisites:** Medium or larger size
+- **Quick summary:** Your heavy-duty actuators allow you to release your power and speed in a quick burst.
+- **Production target:** `f733e1a56fba443b`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Your heavy-duty actuators allow you to release your power and speed in a quick burst. You can double your Strength bonus to your melee and unarmed damage rolls.
+
+#### Load Launcher
+
+- **Page:** 27
+- **Prerequisites:** None.
+- **Quick summary:** You are considered proficient with improvised thrown weapons (see page 150 of the Saga Edition core rulebook) when making a ranged attack by throwing an object.
+- **Production target:** CREATE `b1090fa2d2ebc982`
+- **Phase 3B disposition:** `CREATE`
+
+**Canonical rules text**
+
+You are considered proficient with improvised thrown weapons (see page 150 of the Saga Edition core rulebook) when making a ranged attack by throwing an object. Objects up to one size category larger than you can be thrown up to a number of squares equal to 2 x your Strength bonus (minimum 1 square). Additionally, you add your Strength bonus to any damage dealt.
+
+#### Task Optimization
+
+- **Page:** 28
+- **Prerequisites:** None.
+- **Quick summary:** Select a skill you are trained in.
+- **Production target:** CREATE `8f26ca25481d612f`
+- **Phase 3B disposition:** `CREATE`
+
+**Canonical rules text**
+
+Select a skill you are trained in. Once per encounter, you can perform any application of that skill as one action quicker than normal but as at least a swift action (for example, a full-round action becomes a standard action, a standard action becomes a move action, a move action becomes a swift action). Tasks requiring more than one round cannot be optimized with this talent.
+
+### Autonomy
+
+#### Just a Droid
+
+- **Page:** 28
+- **Prerequisites:** None.
+- **Quick summary:** You are adept at passing yourself off as an ordinary droid.
+- **Production target:** `27604b55a6fd41ffbc04f05cec16463d`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+You are adept at passing yourself off as an ordinary droid. You can use each of the following actions once per encounter. Just Another Droid: You are skilled at using Stealth to sneak past unwary enemies when moving in plain sight. You can use the Sneak application of the Stealth skill when in plain sight of an enemy, if the enemy has no reason to doubt that you are just another droid. You are considered trained in Stealth for this action. Just a Normal Droid: You can reroll Deception checks for deceptive appearance to make observers believe that you are carrying out a standard function when attempting to do something atypical for your droid model or function. You may keep either result.
+
+#### Swift Droid
+
+- **Page:** 28
+- **Prerequisites:** Any two talents from the Autonomy talent tree
+- **Quick summary:** You move quickly when caught.
+- **Production target:** `594eb9e7f9084742a7d1cbc209d2f340`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+You move quickly when caught. You can make a swift action as a reaction after failing a Deception check or a Stealth check.
+
+### Elite Droid
+
+#### Break Program
+
+- **Page:** 29
+- **Prerequisites:** Trained in Use Computer
+- **Quick summary:** You can use your ability to circumvent behavioral inhibitors to temporarily break the programming of a droid that you have a data link with.
+- **Production target:** `cb3bbc1e7d8829e9`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+You can use your ability to circumvent behavioral inhibitors to temporarily break the programming of a droid that you have a data link with. Make a Use Computer check opposed by the droid's Will Defense. Breaking the droid's programming overrides its behavioral inhibitors for a number of rounds equal to your Intelligence bonus.
+
+#### Heuristic Mastery
+
+- **Page:** 29
+- **Prerequisites:** Wisdom 15
+- **Quick summary:** You understand the subtleties and limitations of your heuristic processor.
+- **Production target:** `2b6a4a203b72dc79`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+You understand the subtleties and limitations of your heuristic processor. You can reroll any untrained skill check (except Use the Force), keeping the second result, even if it is worse. Once per encounter, you can spend a Force Point to reroll any skill check (trained or untrained), taking the better result.
+
+#### Scripted Routines
+
+- **Page:** 29
+- **Prerequisites:** Base attack bonus +5
+- **Quick summary:** Your extensive experience allows you to preset specific routines that give you an advantage in some situations.
+- **Production target:** `8d0657e7ade688bd`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Your extensive experience allows you to preset specific routines that give you an advantage in some situations. Once per encounter you can use each of the following actions: Attack Script: You can use a feat or a talent that modifies your attack roll as one action less (for example, a full-round action becomes a standard action, a standard action becomes a move action, a move action becomes a swift action, a swift action becomes a free action). Defense Script: You can apply your Independent Spirit bonus a second time during a single encounter. Skill Script: While in combat, you can apply a bonus equal to one-half of your class level to any single skill that requires a standard action or less to use. You must be trained in the skill.
+
+#### Ultra Resilient
+
+- **Page:** 29
+- **Prerequisites:** None.
+- **Quick summary:** You have advanced subroutines that make you more resistant to the effect of damage.
+- **Production target:** `6fdbdd17eba93006`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+You have advanced subroutines that make you more resistant to the effect of damage. Once per encounter, as a reaction, you can increase your damage threshold with a bonus equal to your Independent Droid level.
+
+### Override
+
+#### Directed Action
+
+- **Page:** 28
+- **Prerequisites:** None.
+- **Quick summary:** As a standard action, you allow one droid that can hear and understand you to make a Deception, Mechanics, Persuasion, Pilot, Ride, Treat Injury, or Use Computer check immediately as a free action.
+- **Production target:** `3a34ce2ef55c41b1`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+As a standard action, you allow one droid that can hear and understand you to make a Deception, Mechanics, Persuasion, Pilot, Ride, Treat Injury, or Use Computer check immediately as a free action. The droid can replace its relevant ability score modifier for that check with your Intelligence modifier.
+
+#### Directed Movement
+
+- **Page:** 28
+- **Prerequisites:** None.
+- **Quick summary:** As a move action, you allow one droid that can hear and understand you to move up to its speed.
+- **Production target:** CREATE `510d4b2aadbbc2de`
+- **Phase 3B disposition:** `CREATE`
+
+**Canonical rules text**
+
+As a move action, you allow one droid that can hear and understand you to move up to its speed. The droid can make Acrobatics, Climb, Jump, Stealth, or Swim checks during this movement, and can replace its own relevant ability score modifier for that check with your Intelligence modifier.
+
+#### Full Control
+
+- **Page:** 28
+- **Prerequisites:** Directed Action, Directed Movement, and Remote Attack
+- **Quick summary:** As a full-round action, you allow one droid that can hear and understand you to take the full attack action.
+- **Production target:** CREATE `67c0e483d52bee0d`
+- **Phase 3B disposition:** `CREATE`
+
+**Canonical rules text**
+
+As a full-round action, you allow one droid that can hear and understand you to take the full attack action. The droid can replace its relevant ability score modifier to any attack rolls it makes with your Intelligence modifier.
+
+#### Remote Attack
+
+- **Page:** 28
+- **Prerequisites:** None.
+- **Quick summary:** As a standard action, you allow one droid that can hear and understand you to make a melee or ranged attack.
+- **Production target:** CREATE `86da8cfcddb94adb`
+- **Phase 3B disposition:** `CREATE`
+
+**Canonical rules text**
+
+As a standard action, you allow one droid that can hear and understand you to make a melee or ranged attack. The droid can replace its relevant ability score modifier to its attack roll with your Intelligence modifier.
+
+### Specialized Droid
+
+#### Power Boost
+
+- **Page:** 28
+- **Prerequisites:** Power Surge
+- **Quick summary:** You channel your power surge into a boost for your locomotion system.
+- **Production target:** `eb503c1c3fb945a6`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+You channel your power surge into a boost for your locomotion system. When you initiate a power surge, you can use one of the following bonuses with your installed locomotion system: Jump +4 squares (walking or wheeled locomotion), or increase hovering height by 4 squares (hovering locomotion). You can use this talent for a number of rounds equal to one-haIf your level (rounded down). At the end of a power boost, you move -1 persistent step on the condition track. The penalties imposed by this condition persist until you receive repairs (using the Repair Droid application of the Mechanics skill). You can use both Power Surge and Power Boost at the same time, but you must move -2 persistent steps on the condition track.
+
+---
+
 ## Append-only book index
 
 - [x] Saga Edition Core Rulebook — 198 certified talent claims
@@ -3034,7 +3431,7 @@ When you fight defensively, as a reaction you can negate a melee attack by makin
 - [ ] Knights of the Old Republic Campaign Guide
 - [ ] Force Unleashed Campaign Guide
 - [ ] Jedi Academy Training Manual
-- [ ] Scavenger's Guide to Droids
+- [x] Scavenger's Guide to Droids — 31 certified talent claims
 
 ## Phase 3 production-status convention
 
