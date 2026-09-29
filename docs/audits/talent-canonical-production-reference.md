@@ -8957,12 +8957,1524 @@ As a standard action, you allow one droid that can hear and understand you to ma
 
 You channel your power surge into a boost for your locomotion system. When you initiate a power surge, you can use one of the following bonuses with your installed locomotion system: Jump +4 squares (walking or wheeled locomotion), or increase hovering height by 4 squares (hovering locomotion). You can use this talent for a number of rounds equal to one-haIf your level (rounded down). At the end of a power boost, you move -1 persistent step on the condition track. The penalties imposed by this condition persist until you receive repairs (using the Repair Droid application of the Mechanics skill). You can use both Power Surge and Power Boost at the same time, but you must move -2 persistent steps on the condition track.
 
+## Book 2 — Clone Wars Campaign Guide
+
+**Phase 3B status:** COMPLETE — 118 owned canonical identities; 40 UPDATE_CONTENT; 69 UPDATE_METADATA; 3 REMOVE_CONTAMINATION; 6 CREATE.
+
+### Brawler
+
+#### Bayonet Master
+
+- **Page:** 26
+- **Prerequisites:** Gun Club
+- **Quick summary:** When you take a full attack action, you can treat a ranged weapon with a bayonet as a double melee weapon.
+- **Production record:** `b6e600188cf5597f`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+When you take a full attack action, you can treat a ranged weapon with a bayonet as a double melee weapon. You can attack with the bayonet and club a target with your ranged weapon (as with the Gun Club talent), ignoring the normal penalties for attacking with both ends of a double weapon.
+
+#### Unrelenting Assault
+
+- **Page:** 26
+- **Prerequisites:** Melee Smash
+- **Quick summary:** You launch yourself at your foe, attacking with weapons, limbs, or anything else available.
+- **Production record:** `0b2c53ed53f20751`
+- **Phase 3B disposition:** `UPDATE_METADATA`
+
+**Canonical rules text**
+
+You launch yourself at your foe, attacking with weapons, limbs, or anything else available. Whenever you miss with a melee attack or the attack is negated, you still deal your Strength bonus in damage to the target (minimum 1), or 2 x your Strength bonus if you attack with a weapon you are wielding two-handed.
+
+### Commando
+
+#### Keep Them at Bay
+
+- **Page:** 26
+- **Prerequisites:** None.
+- **Quick summary:** When you use the Aid Another Action to Suppress an Enemy, that enemy takes a -5 penalty on its next attack instead of the normal -2 penalty.
+- **Production record:** `ff3b4c48d0a05a16`
+- **Phase 3B disposition:** `UPDATE_METADATA`
+
+**Canonical rules text**
+
+When you use the Aid Another Action to Suppress an Enemy, that enemy takes a -5 penalty on its next attack instead of the normal -2 penalty. Only 1 character may gain the benefits of this Talent against a given target at a time.
+
+### Expert Pilot
+
+#### Renowned Pilot
+
+- **Page:** 39
+- **Prerequisites:** None.
+- **Quick summary:** Your reputation as a skilled pilot precedes you and bolsters the resolve of your allies. All allies within 6 squares of a Vehicle you Pilot can reroll one Pilot check, keeping the better of the two results.
+- **Production record:** `38e64db2b516759a`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Your reputation as a skilled pilot precedes you and bolsters the resolve of your allies. All allies within 6 squares of a Vehicle you Pilot can reroll one Pilot check, keeping the better of the two results.
+
+Once an ally has used this ability, that same ally cannot gain this Talent's benefit during the same encounter.
+
+### Force Item
+
+#### Focused Force Talisman
+
+- **Page:** 40
+- **Prerequisites:** Force Talisman
+- **Quick summary:** Bind one Force power to a talisman; after activating it, spend a Force Point to immediately return that spent power to your suite.
+- **Production record:** `12eea831f06c45f7`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+When you create a Force talisman, you can select a single Force power from your Force suite. Whenever you are wearing this talisman and activate the selected Force power, you can spend a Force Point to immediately regain that spent power, adding it to your Force suite.
+
+#### Greater Focused Force Talisman
+
+- **Page:** 40
+- **Prerequisites:** Force Talisman, Focused Force Talisman
+- **Quick summary:** As the Focused Force Talisman Talent, except that a Force Point spent to immediately recover the selected Force Power does not count against the "one per turn" restriction on spending Force Points.
+- **Production record:** `4ae840aaa4e0eba0`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+As the Focused Force Talisman Talent, except that a Force Point spent to immediately recover the selected Force Power does not count against the "one per turn" restriction on spending Force Points.
+
+### Gunslinger
+
+#### Blind Shot
+
+- **Page:** 41
+- **Prerequisites:** None.
+- **Quick summary:** You ignore the penalties on your ranged attack rolls when a target has Concealment or Total Concealment.
+- **Production record:** `bb484bdbc96c96ad`
+- **Phase 3B disposition:** `UPDATE_METADATA`
+
+**Canonical rules text**
+
+You ignore the penalties on your ranged attack rolls when a target has Concealment or Total Concealment.
+
+### Jedi Consular
+
+#### Consular's Vitality
+
+- **Page:** 21
+- **Prerequisites:** None.
+- **Quick summary:** Once per round as a Swift Action, grant an ally Bonus Hit Points equal to 5 + your Charisma modifier; take -5 on UTF until your next turn.
+- **Production record:** `c87b8389c8ca6ea9`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Jedi during the Clone Wars learn to call upon the Force not only for their own strength but also to aid the clone troopers and other allies under their command. Once per round as a swift action, you grant one ally within 12 squares of you (and in your line of sight) bonus hit points equal to 5 + your Charisma modifier. These bonus hit points last until the beginning of your next turn (at which point any remaining bonus hit points are lost), and any damage dealt to that ally comes out of bonus hit points first. You take a -5 penalty on all Use the Force checks until the beginning of your next turn.
+
+#### Improved Consular's Vitality
+
+- **Page:** 21
+- **Prerequisites:** Consular's Vitality
+- **Quick summary:** Whenever you damage a target with a successful Lightsaber attack, you may use the Consular's Vitality Talent as a Free Action instead of a Swift Action until the start of your next turn.
+- **Production record:** `3d3806bd03110ee8`
+- **Phase 3B disposition:** `UPDATE_METADATA`
+
+**Canonical rules text**
+
+Whenever you damage a target with a successful Lightsaber attack, you may use the Consular's Vitality Talent as a Free Action instead of a Swift Action until the start of your next turn.
+
+### Jedi Guardian
+
+#### Exposing Strike
+
+- **Page:** 21
+- **Prerequisites:** None.
+- **Quick summary:** When you use a Lightsaber to deal damage to a target, you can spend a Force Point to make that target Flat-Footed until the end of your next turn.
+- **Production record:** `2afe84b999aa1c43`
+- **Phase 3B disposition:** `UPDATE_METADATA`
+
+**Canonical rules text**
+
+When you use a Lightsaber to deal damage to a target, you can spend a Force Point to make that target Flat-Footed until the end of your next turn.
+
+#### Guardian Strike
+
+- **Page:** 21
+- **Prerequisites:** None.
+- **Quick summary:** Whenever you use a Lightsaber to deal damage to a target, that target takes a -2 penalty on attack rolls against any target other than you until the beginning of your next turn.
+- **Production record:** `f15b54aeaaa5c578`
+- **Phase 3B disposition:** `UPDATE_METADATA`
+
+**Canonical rules text**
+
+Whenever you use a Lightsaber to deal damage to a target, that target takes a -2 penalty on attack rolls against any target other than you until the beginning of your next turn.
+
+### Jedi Sentinel
+
+#### Sentinel's Observation
+
+- **Page:** 21
+- **Prerequisites:** None.
+- **Quick summary:** If you have Concealment against a target, you gain a +2 circumstance bonus on attack rolls against that target.
+- **Production record:** `da672f7b558a75ba`
+- **Phase 3B disposition:** `UPDATE_METADATA`
+
+**Canonical rules text**
+
+If you have Concealment against a target, you gain a +2 circumstance bonus on attack rolls against that target.
+
+#### Unseen Eyes
+
+- **Page:** 21
+- **Prerequisites:** Clear Mind, Force Haze
+- **Quick summary:** Whenever you use the Force Haze Talent, allies hidden by the Force Haze can reroll any Perception check, keeping the better of the two results.
+- **Production record:** `f6a7cb3c07ded492`
+- **Phase 3B disposition:** `UPDATE_METADATA`
+
+**Canonical rules text**
+
+Whenever you use the Force Haze Talent, allies hidden by the Force Haze can reroll any Perception check, keeping the better of the two results. Additionally, allies hidden by the Force Haze gain a +2 bonus on all damage rolls against foes that are unaware of them.
+
+### Military Tactics
+
+#### Exploit Weakness
+
+- **Page:** 42
+- **Prerequisites:** Assault Tactics
+- **Quick summary:** When you use the Assault Tactics Talent on an enemy, the target takes a cumulative -1 penalty to its Reflex Defense each time it is damaged by one of your allies (maximum -5 penalty).
+- **Production record:** `8ba50ebccb1f938e`
+- **Phase 3B disposition:** `UPDATE_METADATA`
+
+**Canonical rules text**
+
+When you use the Assault Tactics Talent on an enemy, the target takes a cumulative -1 penalty to its Reflex Defense each time it is damaged by one of your allies (maximum -5 penalty). This penalty applies until the end of your next turn.
+
+#### Grand Leader
+
+- **Page:** 42
+- **Prerequisites:** None.
+- **Quick summary:** As a Swift Action, once per encounter, you can grant bonus Hit Points equal to 5 + one-half your Character Level to allies within 20 squares of you and in your line of sight.
+- **Production record:** `ce987679b604f25b`
+- **Phase 3B disposition:** `UPDATE_METADATA`
+
+**Canonical rules text**
+
+As a Swift Action, once per encounter, you can grant bonus Hit Points equal to 5 + one-half your Character Level to allies within 20 squares of you and in your line of sight. Damage is subtracted from the bonus Hit Points first, and any bonus Hit Points remaining at the end of the encounter go away. Bonus Hit Points from multiple sources do not stack.
+
+#### Uncanny Defense
+
+- **Page:** 42
+- **Prerequisites:** None.
+- **Quick summary:** Once per day, you can add one-half your Officer Class Level to all your Defenses for one round.
+- **Production record:** `3eddc00a79422747`
+- **Phase 3B disposition:** `UPDATE_METADATA`
+
+**Canonical rules text**
+
+Once per day, you can add one-half your Officer Class Level to all your Defenses for one round. You must declare that you are using this Talent at the beginning of your turn. The benefits last until the beginning of your next turn.
+
+### Misfortune
+
+#### Stymie
+
+- **Page:** 24
+- **Prerequisites:** None.
+- **Quick summary:** Swift action once per round: impose -5 on one chosen skill for a visible target within 12 squares; mind-affecting.
+- **Production record:** `f16128ef7a76aa03`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Once per round, as a swift action, you can designate a target within 12 squares of you and in your line of sight as the target of this talent. Until the beginning of your turn, you can cause that target to take a -5 penalty on all checks made with a single skill. You must have line of sight to your target to make use of this talent, and declare which skill is to be penalized at the time this talent is activated. This is a mind-affecting effect.
+
+### Collaborator
+
+#### Double Agent
+
+- **Page:** 22
+- **Prerequisites:** None.
+- **Quick summary:** When you roll Initiative at the beginning of combat, also roll a Deception check, comparing the result to the Will Defense of all enemies in line of sight.
+- **Production record:** `35cd0efb3aae31c7`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+When you roll Initiative at the beginning of combat, also roll a Deception check, comparing the result to the Will Defense of all enemies in line of sight. If your Deception check is successful, that target cannot attack you and does not believe you to be an enemy (though they do not consider you an ally) while this effect is active.
+
+If you attack or otherwise obviously harm or hinder a target under the effect of this Talent, or one of that target's allies, this effect ends. This is a Mind-Affecting effect.
+
+#### Enemy Tactics
+
+- **Page:** 23
+- **Prerequisites:** None.
+- **Quick summary:** Whenever an enemy within 12 squares of you and in your line of sight receives an insight or morale bonus from any source, you can also gain that bonus, subject to all the same limitations as the bonus provided to...
+- **Production record:** `bb28cf47a45aff36`
+- **Phase 3B disposition:** `UPDATE_METADATA`
+
+**Canonical rules text**
+
+Whenever an enemy within 12 squares of you and in your line of sight receives an insight or morale bonus from any source, you can also gain that bonus, subject to all the same limitations as the bonus provided to that enemy.
+
+#### Feed Information
+
+- **Page:** 23
+- **Prerequisites:** None.
+- **Quick summary:** As a Swift Action, you can grant one enemy a +1 bonus on its next attack roll made before the beginning of your next turn.
+- **Production record:** `f9a2bda9b63ad191`
+- **Phase 3B disposition:** `UPDATE_METADATA`
+
+**Canonical rules text**
+
+As a Swift Action, you can grant one enemy a +1 bonus on its next attack roll made before the beginning of your next turn. Additionally, until the beginning of your next turn, you can designate one ally who receives a +2 bonus on its next attack roll.
+
+#### Friendly Fire
+
+- **Page:** 23
+- **Prerequisites:** Enemy Tactics
+- **Quick summary:** If you are engaged in melee combat with an adjacent enemy and are the target of a ranged attack that misses you, compare the attack roll to the Reflex Defense of one adjacent enemy; if the attack equals or exceeds...
+- **Production record:** `5cb9f0f6011a1bab`
+- **Phase 3B disposition:** `UPDATE_METADATA`
+
+**Canonical rules text**
+
+If you are engaged in melee combat with an adjacent enemy and are the target of a ranged attack that misses you, compare the attack roll to the Reflex Defense of one adjacent enemy; if the attack equals or exceeds the target's Reflex Defense, that enemy becomes the new target of the attack, which is resolved as normal.
+
+#### Protection
+
+- **Page:** 23
+- **Prerequisites:** Double Agent
+- **Quick summary:** As a standard action, you can designate one ally and make a Persuasion check, comparing the result against the Will Defense of all enemies in your line of sight who can hear and understand you.
+- **Production record:** `76352a9b615287f8`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+As a standard action, you can designate one ally and make a Persuasion check, comparing the result against the Will Defense of all enemies in your line of sight who can hear and understand you. If your check result equals or exceeds a target's Will Defense, that target cannot attack the ally you designated until the beginning of your next turn.
+
+### Droid Commander
+
+#### Automated Strike
+
+- **Page:** 43
+- **Prerequisites:** Double Attack with the chosen weapon
+- **Quick summary:** Swift action and DC 15 Knowledge (tactics): droid allies gain Double Attack with one of your proficient weapon groups until your next turn ends.
+- **Production target:** `6b2b31d1b90739d1`
+- **Phase 3B disposition:** `CREATE`
+
+**Canonical rules text**
+
+As a swift action, you can make a DC 15 Knowledge (tactics) check. If successful, all droid allies able to hear and understand you gain the benefits of the Double Attack feat for one weapon group with which you are proficient until the end of your next turn.
+
+#### Droid Defense
+
+- **Page:** 43
+- **Prerequisites:** None.
+- **Quick summary:** As a Standard Action, you can transmit tactical information to all Droid allies that can hear and understand you, granting them a bonus equal to your Intelligence modifier to one of their Defenses (your choice) until...
+- **Production record:** `e5ac014e044a4afa`
+- **Phase 3B disposition:** `UPDATE_METADATA`
+
+**Canonical rules text**
+
+As a Standard Action, you can transmit tactical information to all Droid allies that can hear and understand you, granting them a bonus equal to your Intelligence modifier to one of their Defenses (your choice) until the beginning of your next turn.
+
+#### Droid Mettle
+
+- **Page:** 43
+- **Prerequisites:** Droid Defense
+- **Quick summary:** Once per turn as a swift action, give one visible droid ally bonus HP equal to 10 + your class level.
+- **Production target:** `e55e9497ecf6303d`
+- **Phase 3B disposition:** `CREATE`
+
+**Canonical rules text**
+
+As a swift action once per turn, you can designate a single droid ally within your line of sight. That droid ally gains bonus hit points equal to 10 + your class level.
+
+#### Expanded Sensors
+
+- **Page:** 43
+- **Prerequisites:** None.
+- **Quick summary:** If you or any of your Droid allies has line of sight to, and is aware of, a target, all Droid allies that can hear and understand you are also considered to have line of sight (but not necessarily line of effect) to...
+- **Production record:** `db14070064e54a04`
+- **Phase 3B disposition:** `UPDATE_METADATA`
+
+**Canonical rules text**
+
+If you or any of your Droid allies has line of sight to, and is aware of, a target, all Droid allies that can hear and understand you are also considered to have line of sight (but not necessarily line of effect) to that target.
+
+#### Inspire Competence
+
+- **Page:** 44
+- **Prerequisites:** Expanded Sensors
+- **Quick summary:** Swift action: give one visible droid ally half your class level as a competence bonus on its next attack before your next turn.
+- **Production target:** `853d7f87a4610f85`
+- **Phase 3B disposition:** `CREATE`
+
+**Canonical rules text**
+
+As a swift action once per turn, you can grant one droid ally within your line of sight a competence bonus on its next attack roll made before the start of your next turn equal to half your class level. Additionally, any droid designated as the target of your Networked Mind class feature is considered to have a heuristic processor whenever it is beneficial, even if it does not actually have a heuristic processor.
+
+#### Maintain Focus
+
+- **Page:** 44
+- **Prerequisites:** None.
+- **Quick summary:** Swift action: visible droid allies can Recover with two swift actions until your next turn begins.
+- **Production target:** `1e984785c24ab9c0`
+- **Phase 3B disposition:** `CREATE`
+
+**Canonical rules text**
+
+As a swift action once per turn, you can grant all droid allies within your line of sight the ability to take the Recover action as two swift actions (instead of as three swift actions) until the start of your next turn.
+
+#### Overclocked Troops
+
+- **Page:** 44
+- **Prerequisites:** Droid Defense
+- **Quick summary:** Once per turn as a swift action, let each networked droid ally immediately move up to its speed.
+- **Production target:** `f09bb97395175598`
+- **Phase 3B disposition:** `CREATE`
+
+**Canonical rules text**
+
+You push the limits of the droids under your command. You can spend a swift action once per turn to allow each of your networked allies to immediately move up to their speed.
+
+#### Reinforced Commands
+
+- **Page:** 44
+- **Prerequisites:** Droid Defense
+- **Quick summary:** Increase any morale or insight bonus you grant a droid ally by 1.
+- **Production target:** `6bfdeeec8ccd21bb`
+- **Phase 3B disposition:** `CREATE`
+
+**Canonical rules text**
+
+When you use an ability that grants a droid ally a morale or insight bonus, increase the value of that bonus by 1.
+
+### Jedi Archivist
+
+#### Direct
+
+- **Page:** 41
+- **Prerequisites:** None.
+- **Quick summary:** As a Standard Action, you can return one spent Force Power to the Force Power Suite of any ally within 6 squares of you and in your line of sight. The Force Power must have been spent by the ally you designate.
+- **Production record:** `81154e9fc33e43b3`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+As a Standard Action, you can return one spent Force Power to the Force Power Suite of any ally within 6 squares of you and in your line of sight. The Force Power must have been spent by the ally you designate.
+
+#### Impart Knowledge
+
+- **Page:** 41
+- **Prerequisites:** Skilled Advisor
+- **Quick summary:** You can Aid Another on the Knowledge checks of an ally within 6 squares of you as a Reaction for Knowledge skills you are Trained in.
+- **Production record:** `5d682aa33468b683`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+You can Aid Another on the Knowledge checks of an ally within 6 squares of you as a Reaction for Knowledge skills you are Trained in.
+
+#### Insight of the Force
+
+- **Page:** 41
+- **Prerequisites:** None.
+- **Quick summary:** You can make a Use the Force check in place of a Knowledge check for any Knowledge skill you are not Trained in.
+- **Production record:** `0adc25cfaa35147a`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+You can make a Use the Force check in place of a Knowledge check for any Knowledge skill you are not Trained in. You are considered Trained in that Knowledge skill for the purposes of using this Talent. If you are entitled to a Knowledge check reroll, you can reroll your Use the Force check instead (subject to the same circumstances and limitations).
+
+#### Master Advisor
+
+- **Page:** 41
+- **Prerequisites:** Skilled Advisor
+- **Quick summary:** When you use the Skilled Advisor Talent, the ally you aid gains one temporary Force Point at the end of their next turn. If the Force Point is not spent before the end of the encounter, it is lost.
+- **Production record:** `e6c4f05db6ac6c06`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+When you use the Skilled Advisor Talent, the ally you aid gains one temporary Force Point at the end of their next turn. If the Force Point is not spent before the end of the encounter, it is lost.
+
+#### Scholarly Knowledge
+
+- **Page:** 41
+- **Prerequisites:** None.
+- **Quick summary:** As a Swift Action, you can reroll a Knowledge check and keep the better of the two results. This can be used with any Knowledge skill you are Trained in.
+- **Production record:** `63143040b7c229a7`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+As a Swift Action, you can reroll a Knowledge check and keep the better of the two results. This can be used with any Knowledge skill you are Trained in.
+
+### Jedi Healer
+
+#### Force Treatment
+
+- **Page:** 41
+- **Prerequisites:** None.
+- **Quick summary:** Use Use the Force instead of Treat Injury, count as trained, and use applicable Treat Injury rerolls on the Force check.
+- **Production record:** `a6ad65c1275faa33`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+You can make a Use the Force check in the place of a Treat Injury check. You are considered trained in the Treat Injury skill. If you are entitled to a Treat Injury check reroll, you can reroll your Use the Force check instead (subject to the same circumstances and limitations).
+
+#### Healing Boost
+
+- **Page:** 41
+- **Prerequisites:** Vital Transfer
+- **Quick summary:** When healing somebody through Vital Transfer, the amount of damage healed increases by 1 point per your Class Level.
+- **Production record:** `0e6a784501100693`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+When healing somebody through Vital Transfer, the amount of damage healed increases by 1 point per your Class Level.
+
+#### Improved Healing Boost
+
+- **Page:** 41
+- **Prerequisites:** Healing Boost, Vital Transfer
+- **Quick summary:** When healing somebody through Vital Transfer, the amount of damage healed increases by 2 points per your Class Level.
+- **Production record:** `fb2bb5613e7edd49`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+When healing somebody through Vital Transfer, the amount of damage healed increases by 2 points per your Class Level.
+
+#### Soothe
+
+- **Page:** 41
+- **Prerequisites:** Vital Transfer
+- **Quick summary:** When using Vital Transfer to heal somebody, you can move the target +1 step on the Condition Track instead of healing damage. When doing so, you move -1 step on the Condition Track.
+- **Production record:** `3713870862584269`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+When using Vital Transfer to heal somebody, you can move the target +1 step on the Condition Track instead of healing damage. When doing so, you move -1 step on the Condition Track.
+
+### Loyal Protector
+
+#### Inspire Loyalty
+
+- **Page:** 23
+- **Prerequisites:** None.
+- **Quick summary:** You gain a single Follower.
+- **Production record:** `6ecfeff647f8764e`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+You gain a single Follower. Choose either the aggressive, defensive, or utility Follower Template for your follower, generating the follower's statistics based on the rules found in the Followers section. This Follower gains one Armor Proficiency Feat of your choice and becomes Trained in the Perception skill. The Follower must meet the prerequisites for the Armor Proficiency Feat you select.
+
+You can select this Talent multiple times. Each time you do, you gain one additional Follower (maximum of 3 Followers).
+
+#### Undying Loyalty
+
+- **Page:** 23
+- **Prerequisites:** Inspire Loyalty
+- **Quick summary:** Each of your Followers gains the Toughness Feat.
+- **Production record:** `2a209f3e58d8528c`
+- **Phase 3B disposition:** `UPDATE_METADATA`
+
+**Canonical rules text**
+
+Each of your Followers gains the Toughness Feat.
+
+#### Punishing Protection
+
+- **Page:** 23
+- **Prerequisites:** Inspire Loyalty, Base Attack Bonus +5
+- **Quick summary:** As a Reaction to you being damaged by an attack or a Force Power, one of your followers can make an immediate melee or ranged attack against the target that attacked you.
+- **Production record:** `b3590045fcd7c28c`
+- **Phase 3B disposition:** `UPDATE_METADATA`
+
+**Canonical rules text**
+
+As a Reaction to you being damaged by an attack or a Force Power, one of your followers can make an immediate melee or ranged attack against the target that attacked you. Until the beginning of your next turn, any time you are damaged by an attack or Force Power, another one of your followers can attack that attacking target. This ability can be used once per encounter.
+
+#### Protector Actions
+
+- **Page:** 23
+- **Prerequisites:** Inspire Loyalty
+- **Quick summary:** Use coordinated protector actions to redirect attacks, move followers toward attackers, or penalize an enemy's attacks.
+- **Production record:** `254b51a34600e2ef`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+You and your Followers have learned to work together to great effect, ensuring that you remain safe while allowing them to do their duty. You can use any of the following actions on your turn:
+
+Bodyguard: As a Standard Action, you can make a melee or ranged attack against a target within Range. Until the end of your next turn, if that target damages you with an attack or Force Power, as a Reaction you can choose to redirect the attack or Force Power to an adjacent follower; the attack or Force Power is resolved against that ally as normal.
+Diversion Attack: As a Standard Action, you can make a melee or ranged attack against a target within Range. If that target attacks you or one of your allies before the beginning of your next turn, you can move one of your Followers up to its speed directly toward that target.
+The Best Defense: As a Standard Action, you can make a melee or ranged attack against a target within Range. For each of your followers armed with a ranged weapon and having line of sight to the target, that target takes a -1 penalty on attack rolls until the beginning of your next turn.
+
+### Melee Specialist
+
+#### Accurate Blow
+
+- **Page:** 39
+- **Prerequisites:** None.
+- **Quick summary:** Choose one Exotic Weapon (Melee) or one of the following Weapon Groups in which you are proficient: Advanced Melee Weapons, Lightsabers, or Simple Weapons (Melee).
+- **Production record:** `32df92c3114b5c94`
+- **Phase 3B disposition:** `UPDATE_METADATA`
+
+**Canonical rules text**
+
+Choose one Exotic Weapon (Melee) or one of the following Weapon Groups in which you are proficient: Advanced Melee Weapons, Lightsabers, or Simple Weapons (Melee). When you make a Melee Attack with a Weapon from the chosen group and the attack roll exceeds the target's Reflex Defense by 5 or more, you deal +1 die of damage with the attack.
+
+#### Close-Quarters Fighter
+
+- **Page:** 40
+- **Prerequisites:** None.
+- **Quick summary:** Whenever you occupy the same square as your target or are adjacent to your target, you gain a +1 circumstance bonus to your melee attack rolls against that target.
+- **Production record:** `8063a6b94b1de530`
+- **Phase 3B disposition:** `UPDATE_METADATA`
+
+**Canonical rules text**
+
+Whenever you occupy the same square as your target or are adjacent to your target, you gain a +1 circumstance bonus to your melee attack rolls against that target.
+
+#### Ignore Armor
+
+- **Page:** 40
+- **Prerequisites:** None.
+- **Quick summary:** Once per encounter, when you make a melee attack, you can ignore any Armor or Equipment bonuses granted by your target's Armor.
+- **Production record:** `dbfcec98f38c8e2f`
+- **Phase 3B disposition:** `UPDATE_METADATA`
+
+**Canonical rules text**
+
+Once per encounter, when you make a melee attack, you can ignore any Armor or Equipment bonuses granted by your target's Armor.
+
+#### Improved Stunning Strike
+
+- **Page:** 40
+- **Prerequisites:** Stunning Strike
+- **Quick summary:** When you damage an opponent with a melee attack that moves the target down the Condition Track, the target cannot take any Action requiring a Standard Action or a Full-Round Action on its next turn.
+- **Production record:** `680d3741dcaea6fe`
+- **Phase 3B disposition:** `UPDATE_METADATA`
+
+**Canonical rules text**
+
+When you damage an opponent with a melee attack that moves the target down the Condition Track, the target cannot take any Action requiring a Standard Action or a Full-Round Action on its next turn.
+
+#### Whirling Death
+
+- **Page:** 40
+- **Prerequisites:** Melee Smash, Unrelenting Assault
+- **Quick summary:** You twirl your Weapon around you in a blur, creating a circle of death around you.
+- **Production record:** `98a88ebf26ac318a`
+- **Phase 3B disposition:** `UPDATE_METADATA`
+
+**Canonical rules text**
+
+You twirl your Weapon around you in a blur, creating a circle of death around you. Any enemy target that begins its turn adjacent to you takes damage equal to your Strength bonus. You must be wielding a Melee Weapon to be using this Talent.
+
+### Military Engineer
+
+#### Breach Cover
+
+- **Page:** 45
+- **Prerequisites:** None.
+- **Quick summary:** When you fire or throw a Weapon with a Burst or Splash radius at a target with Cover, you ignore that Cover.
+- **Production record:** `da891615bb87a9e6`
+- **Phase 3B disposition:** `UPDATE_METADATA`
+
+**Canonical rules text**
+
+When you fire or throw a Weapon with a Burst or Splash radius at a target with Cover, you ignore that Cover.
+
+#### Breaching Explosive
+
+- **Page:** 45
+- **Prerequisites:** None.
+- **Quick summary:** You ignore the Damage Threshold of doors and walls when using Mines and fixed (non-Grenade) Explosives.
+- **Production record:** `96d4cfaa29cab92b`
+- **Phase 3B disposition:** `UPDATE_METADATA`
+
+**Canonical rules text**
+
+You ignore the Damage Threshold of doors and walls when using Mines and fixed (non-Grenade) Explosives.
+
+#### Droid Expert
+
+- **Page:** 45
+- **Prerequisites:** Repairs on the Fly
+- **Quick summary:** When you Repair a Droid, you Repair 1 additional Hit Point for each point by which your Mechanics check beats the base DC of 20.
+- **Production record:** `befa9b2b15e54ff0`
+- **Phase 3B disposition:** `UPDATE_METADATA`
+
+**Canonical rules text**
+
+When you Repair a Droid, you Repair 1 additional Hit Point for each point by which your Mechanics check beats the base DC of 20.
+
+#### Prepared Explosive
+
+- **Page:** 45
+- **Prerequisites:** None.
+- **Quick summary:** When you use a Mine or other fixed (non-Grenade) Explosive, you can choose to have the Burst radius of the Explosive become Difficult Terrain after the Explosive has detonated.
+- **Production record:** `32029a2f0dbb7104`
+- **Phase 3B disposition:** `UPDATE_METADATA`
+
+**Canonical rules text**
+
+When you use a Mine or other fixed (non-Grenade) Explosive, you can choose to have the Burst radius of the Explosive become Difficult Terrain after the Explosive has detonated. Alternatively, if you plant a Mine or fixed Explosive in an area of Difficult Terrain, you can have the Explosive deal no damage and instead turn the Difficult Terrain into normal terrain.
+
+#### Problem Solver
+
+- **Page:** 45
+- **Prerequisites:** None.
+- **Quick summary:** As a Swift Action once per turn, you can designate a single Vehicle within your line of sight whose Pilot can hear and understand you.
+- **Production record:** `16f53472844251a7`
+- **Phase 3B disposition:** `UPDATE_METADATA`
+
+**Canonical rules text**
+
+As a Swift Action once per turn, you can designate a single Vehicle within your line of sight whose Pilot can hear and understand you. That Pilot's Vehicle ignores Difficult Terrain until the start of your next turn, and the Pilot gains a +5 insight bonus on all Pilot checks made to avoid Hazards and Collisions until the start of your next turn.
+
+#### Quick Modifications
+
+- **Page:** 45
+- **Prerequisites:** Repairs on the Fly, Tech Specialist
+- **Quick summary:** When you create a Field-Created Weapon, you can choose one Weapon Modification from the Tech Specialist feat to apply to the created Weapon at the time of creation.
+- **Production record:** `1e32cec439c5ecad`
+- **Phase 3B disposition:** `UPDATE_METADATA`
+
+**Canonical rules text**
+
+When you create a Field-Created Weapon, you can choose one Weapon Modification from the Tech Specialist feat to apply to the created Weapon at the time of creation.
+
+#### Repairs on the Fly
+
+- **Page:** 45
+- **Prerequisites:** None.
+- **Quick summary:** You can use the Repair application of the Mechanics skill to Repair Droid or Repair Object as a Standard Action. You can gain the benefits of this Talent only once per day per Droid, object, or Vehicle Repaired.
+- **Production record:** `16dd1c81c5145dd8`
+- **Phase 3B disposition:** `UPDATE_METADATA`
+
+**Canonical rules text**
+
+You can use the Repair application of the Mechanics skill to Repair Droid or Repair Object as a Standard Action. You can gain the benefits of this Talent only once per day per Droid, object, or Vehicle Repaired.
+
+#### Sabotage Device
+
+- **Page:** 46
+- **Prerequisites:** None.
+- **Quick summary:** As a Swift Action, you can sabotage any object or weapon that is powered by an Energy Cell or Power Pack so that it becomes a Grenade.
+- **Production record:** `fbe4b1551ef49a84`
+- **Phase 3B disposition:** `UPDATE_METADATA`
+
+**Canonical rules text**
+
+As a Swift Action, you can sabotage any object or weapon that is powered by an Energy Cell or Power Pack so that it becomes a Grenade. The object or Weapon is then considered to be a Frag Grenade in all ways, but it can be turned back into its original form with another Swift Action.
+
+#### Tech Savant
+
+- **Page:** 46
+- **Prerequisites:** Trained in Knowledge (Technology)
+- **Quick summary:** As a standard action, you can increase the speed of one adjacent droid or vehicle you occupy by 1 square (applied to any method of locomotion) until the end of your next turn.
+- **Production record:** `e53cad01df3f27dd`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+As a standard action, you can increase the speed of one adjacent droid or vehicle you occupy by 1 square (applied to any method of locomotion) until the end of your next turn.
+
+#### Vehicular Boost
+
+- **Page:** 46
+- **Prerequisites:** None.
+- **Quick summary:** As a Standard Action, you can make a DC 15 Mechanics check to grant one Vehicle you occupy a number of Bonus Hit Points equal to 5 x your Class Level.
+- **Production record:** `856812052aa6c6d2`
+- **Phase 3B disposition:** `UPDATE_METADATA`
+
+**Canonical rules text**
+
+As a Standard Action, you can make a DC 15 Mechanics check to grant one Vehicle you occupy a number of Bonus Hit Points equal to 5 x your Class Level. Damage is subtracted from the Bonus Hit Points first, and any Bonus Hit Points remaining at the end of the encounter go away. Bonus Hit Points from multiple sources do not stack.
+
+### Opportunist
+
+#### Advantageous Opening
+
+- **Page:** 24
+- **Prerequisites:** None.
+- **Quick summary:** When an enemy or ally in your line of sight rolls a Natural 1 on an attack roll, you can make a melee or ranged attack against a single target within Range.
+- **Production record:** `c2403caee49be74b`
+- **Phase 3B disposition:** `UPDATE_METADATA`
+
+**Canonical rules text**
+
+When an enemy or ally in your line of sight rolls a Natural 1 on an attack roll, you can make a melee or ranged attack against a single target within Range.
+
+#### Retribution
+
+- **Page:** 24
+- **Prerequisites:** None.
+- **Quick summary:** When a target moves one of your allies in your line of sight down the Condition Track by any means, you gain a +2 insight bonus to your attack rolls against that target until the end of your next turn.
+- **Production record:** `dd6b66af4a67b0a3`
+- **Phase 3B disposition:** `UPDATE_METADATA`
+
+**Canonical rules text**
+
+When a target moves one of your allies in your line of sight down the Condition Track by any means, you gain a +2 insight bonus to your attack rolls against that target until the end of your next turn.
+
+#### Slip By
+
+- **Page:** 24
+- **Prerequisites:** None.
+- **Quick summary:** When you damage an opponent, you may move through that opponent’s square; attacks of opportunity apply as normal.
+- **Production record:** `893c4fd12df55469`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+When you damage a target, until the beginning of your next turn, you can move through that target's space. Moving through the target's space might still provoke attacks of opportunity as normal, and you must end your movement in a legal space.
+
+#### Thrive on Chaos
+
+- **Page:** 24
+- **Prerequisites:** Advantageous Opening
+- **Quick summary:** When an enemy or ally within 20 squares of you is reduced to 0 Hit Points, you gain Bonus Hit Points equal to 5 + one-half your Character Level.
+- **Production record:** `4bdb0bda258c609e`
+- **Phase 3B disposition:** `UPDATE_METADATA`
+
+**Canonical rules text**
+
+When an enemy or ally within 20 squares of you is reduced to 0 Hit Points, you gain Bonus Hit Points equal to 5 + one-half your Character Level. Damage is subtracted from Bonus Hit Points first, and any Bonus Hit Points remaining at the end of the encounter go away. Bonus Hit Points do not stack.
+
+#### Vindication
+
+- **Page:** 24
+- **Prerequisites:** Retribution
+- **Quick summary:** When an enemy you have damaged is reduced to 0 Hit Points or moved to the bottom of the Condition Track, your next attack made before the end of the encounter deals +1 die of damage.
+- **Production record:** `a3ab3f2ad47c8775`
+- **Phase 3B disposition:** `UPDATE_METADATA`
+
+**Canonical rules text**
+
+When an enemy you have damaged is reduced to 0 Hit Points or moved to the bottom of the Condition Track, your next attack made before the end of the encounter deals +1 die of damage.
+
+### Reconnaissance
+
+#### Reconnaissance Team Leader
+
+- **Page:** 25
+- **Prerequisites:** None.
+- **Quick summary:** You gain a single Follower.
+- **Production record:** `ff3c38adbb101622`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+You gain a single Follower. Choose either the Aggressive, Defensive, or Utility Follower Template for your Follower, generating the follower's statistics using the Followers rules. This Follower gains the Skill Training (Perception) and Skill Training (Stealth) Feats. Additionally, whenever you use the Stealth skill, all your Followers can also make Stealth checks as a part of the same Action if they are able to.
+
+You can select this Talent up to three times. Each time you do, you gain one additional Follower.
+
+#### Close-Combat Assault
+
+- **Page:** 25
+- **Prerequisites:** Reconnaissance Team Leader
+- **Quick summary:** Each of your Followers gains the Point-Blank Shot Feat.
+- **Production record:** `84a9654b80238daf`
+- **Phase 3B disposition:** `UPDATE_METADATA`
+
+**Canonical rules text**
+
+Each of your Followers gains the Point-Blank Shot Feat.
+
+#### Get Into Position
+
+- **Page:** 25
+- **Prerequisites:** Base attack bonus +5, Reconnaissance Team Leader
+- **Quick summary:** As a Move Action, you can cause one of your Followers to move up to his or her speed +2 squares.
+- **Production record:** `510541d890629be0`
+- **Phase 3B disposition:** `UPDATE_METADATA`
+
+**Canonical rules text**
+
+As a Move Action, you can cause one of your Followers to move up to his or her speed +2 squares.
+
+#### Reconnaissance Actions
+
+- **Page:** 25
+- **Prerequisites:** Reconnaissance Team Leader
+- **Quick summary:** Use reconnaissance-team actions to grant attack, Stealth, or Perception bonuses based on armed followers with line of sight.
+- **Production record:** `cf16d7c9bb7a70ad`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+You and your reconnaissance team have learned to work together as a cohesive unit and have an established set of tactics, which you have practiced to perfection. You can use any of the following actions on your turn:
+
+Forward Scouting: As a Standard Action, you can make a melee or ranged attack against a target in Range. For each of your Followers armed with a ranged weapon who has line of sight to your target, you can grant one ally a +2 insight bonus on attack rolls against the target until the end of your next turn. Thus, if you have multiple armed Followers with line of sight to the target, you can grant the +2 bonus to multiple allies.
+Group Sniping: As a Standard Action, you can make a melee or ranged attack against a target in Range. For each of your Followers armed with a ranged weapon who has line of sight to your target, you and each of your followers gains a +1 circumstance bonus to Stealth checks until the end of your next turn.
+Sweep the Area: As a Standard Action, you can make a melee or ranged attack against a target in Range. For each of your Followers armed with a ranged weapon who has line of sight to your target, you and each of your Followers gains a +1 circumstance bonus on Perception checks until the end of your next turn.
+
+### Republic Commando
+
+#### Ambush
+
+- **Page:** 40
+- **Prerequisites:** None.
+- **Quick summary:** If you hit an opponent that has not yet acted, add +2 dice of damage.
+- **Production record:** `c5996de1e3c69c04`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+When you successfully hit an opponent that has not yet acted in combat, you deal +2 dice of damage with the attack.
+
+#### Higher Yield
+
+- **Page:** 40
+- **Prerequisites:** Trained in the Demolitions skill
+- **Quick summary:** Once per encounter, add +1 damage die with one grenade or other explosive.
+- **Production record:** `fb003bc00401f0b7`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Once per encounter, you can choose to deal +1 die of damage with a single grenade or other explosive.
+
+#### Rapid Reload
+
+- **Page:** 40
+- **Prerequisites:** None.
+- **Quick summary:** You can retrieve a stored Energy Cell or Power Pack and reload your Weapon as a single Swift Action.
+- **Production record:** `f8922fbb1ac0b6d3`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+You can retrieve a stored energy cell and reload your weapon as a single swift action.
+
+#### Shoulder to Shoulder
+
+- **Page:** 40
+- **Prerequisites:** None.
+- **Quick summary:** Whenever you begin your turn adjacent to an ally, you gain a number of bonus Hit Points equal to your Heroic Level.
+- **Production record:** `b2a9f60d6647fcc4`
+- **Phase 3B disposition:** `UPDATE_METADATA`
+
+**Canonical rules text**
+
+Whenever you begin your turn adjacent to an ally, you gain a number of bonus Hit Points equal to your Heroic Level. Damage is subtracted from the bonus Hit Points first, and any bonus Hit Points remaining at the end of the encounter go away. Bonus Hit Points from various sources do not stack.
+
+#### Strength in Numbers
+
+- **Page:** 40
+- **Prerequisites:** None.
+- **Quick summary:** If you are within 10 squares of an ally, you can add +2 to your Damage Reduction.
+- **Production record:** `22674c41b3d185be`
+- **Phase 3B disposition:** `UPDATE_METADATA`
+
+**Canonical rules text**
+
+If you are within 10 squares of an ally, you can add +2 to your Damage Reduction.
+
+#### Weapon Shift
+
+- **Page:** 40
+- **Prerequisites:** Gun Club
+- **Quick summary:** If you use a Ranged Weapon as a Melee Weapon (as with the Gun Club Talent), you gain a +2 bonus to melee attack rolls with that Weapon.
+- **Production record:** `032242fb87215e06`
+- **Phase 3B disposition:** `UPDATE_METADATA`
+
+**Canonical rules text**
+
+If you use a Ranged Weapon as a Melee Weapon (as with the Gun Club Talent), you gain a +2 bonus to melee attack rolls with that Weapon.
+
+### Squad Leader
+
+#### Commanding Officer
+
+- **Page:** 26
+- **Prerequisites:** None.
+- **Quick summary:** You gain a single Follower.
+- **Production record:** `bd34fd5bbc4a14fb`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+You gain a single Follower. Choose either the Aggressive, Defensive, or Utility Follower Template for your Follower, generating the follower's statistics using the rules found in the Followers page. This Follower gains one Armor Proficiency Feat of your choice and Weapon Proficiency (Rifles), in addition to those provided by the Follower Templates. The Follower must meet the prerequisites for the Armor Proficiency Feat you select.
+
+You can select this Talent multiple times. Each time you do, you gain one additional Follower (maximum of three Followers).
+
+#### Coordinated Tactics
+
+- **Page:** 26
+- **Prerequisites:** Commanding Officer
+- **Quick summary:** Each of your Followers gains the Coordinated Attack Feat, provided he or she meets the prerequisite. If your Follower later meets the prerequisite for the Feat, they gain the Feat at that time.
+- **Production record:** `4559e2e975f552fa`
+- **Phase 3B disposition:** `UPDATE_METADATA`
+
+**Canonical rules text**
+
+Each of your Followers gains the Coordinated Attack Feat, provided he or she meets the prerequisite. If your Follower later meets the prerequisite for the Feat, they gain the Feat at that time.
+
+#### Fire at Will
+
+- **Page:** 26
+- **Prerequisites:** Commanding Officer, Base Attack Bonus +5
+- **Quick summary:** As a Full-Round Action, you and one of your Followers can make a ranged attack against one target (each) in line of sight. You each take a -5 penalty to your attack rolls.
+- **Production record:** `fa113b33ac66c3b9`
+- **Phase 3B disposition:** `UPDATE_METADATA`
+
+**Canonical rules text**
+
+As a Full-Round Action, you and one of your Followers can make a ranged attack against one target (each) in line of sight. You each take a -5 penalty to your attack rolls.
+
+#### Squad Actions
+
+- **Page:** 26
+- **Prerequisites:** Commanding Officer
+- **Quick summary:** Use coordinated squad actions to widen autofire, add follower-based damage, or gain follower-based attack bonuses.
+- **Production record:** `a4fca56a9a3853a6`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+You and your squad have learned to work together as a team, and have an established set of tactics that you have practiced to perfection. You can use any of the following Actions on your turn.
+
+Autofire Barrage: As a Standard Action, you can make an Autofire attack against legal target spaces. For each of your Followers who is armed with a ranged Weapon set on Autofire and has a line of sight to the area targeted by your Autofire, you can designate one additional square as targeted by your Autofire (that square must be adjacent to your original target area).
+Open Fire: As a Standard Action, make a ranged attack against a single target. For each of your Followers who is armed with a ranged Weapon and has a line of sight to the target, add +2 to your damage roll on a successful hit.
+Painted Target: As a Standard Action, make a ranged attack against a single target. You gain a competence bonus on your attack roll equal to the number of your Followers who are armed with a ranged Weapon and have line of sight to the target. Thus, if you have three armed Followers with line of sight to the target, you gain a +3 competence bonus on your attack roll.
+
+### Surveillance
+
+#### Advanced Intel
+
+- **Page:** 25
+- **Prerequisites:** Spotter
+- **Quick summary:** If you are not Surprised at the beginning of combat, you can use the Spotter talent as a Free Action on your first turn, including during the Surprise Round.
+- **Production record:** `b48e17b423ae8300`
+- **Phase 3B disposition:** `UPDATE_METADATA`
+
+**Canonical rules text**
+
+If you are not Surprised at the beginning of combat, you can use the Spotter talent as a Free Action on your first turn, including during the Surprise Round.
+
+#### Hidden Eyes
+
+- **Page:** 25
+- **Prerequisites:** None.
+- **Quick summary:** If you have Concealment from a target, you gain a +5 circumstance bonus on all Perception checks made against that target.
+- **Production record:** `792ee3a45bf6f002`
+- **Phase 3B disposition:** `UPDATE_METADATA`
+
+**Canonical rules text**
+
+If you have Concealment from a target, you gain a +5 circumstance bonus on all Perception checks made against that target.
+
+#### Hunt the Hunter
+
+- **Page:** 25
+- **Prerequisites:** None.
+- **Quick summary:** When you use a Standard Action to actively look for hidden enemies, you can make a single melee or ranged attack against any one enemy you notice with your Perception check.
+- **Production record:** `cb018e0f620614fd`
+- **Phase 3B disposition:** `UPDATE_METADATA`
+
+**Canonical rules text**
+
+When you use a Standard Action to actively look for hidden enemies, you can make a single melee or ranged attack against any one enemy you notice with your Perception check.
+
+#### Seek and Destroy
+
+- **Page:** 25
+- **Prerequisites:** Hidden Eyes
+- **Quick summary:** If you make a Charge attack against a target that is unaware of you, that target cannot make a Perception check to notice you until after the attack is resolved, even if you move away from Cover or Concealment.
+- **Production record:** `adacf682b6ccf21c`
+- **Phase 3B disposition:** `UPDATE_METADATA`
+
+**Canonical rules text**
+
+If you make a Charge attack against a target that is unaware of you, that target cannot make a Perception check to notice you until after the attack is resolved, even if you move away from Cover or Concealment.
+
+#### Spotter
+
+- **Page:** 25
+- **Prerequisites:** None.
+- **Quick summary:** As a Move Action, you can make a Perception check with a DC equal to 10 + the CL of a single target enemy in your line of sight.
+- **Production record:** `a8973662a2f1cf0f`
+- **Phase 3B disposition:** `UPDATE_METADATA`
+
+**Canonical rules text**
+
+As a Move Action, you can make a Perception check with a DC equal to 10 + the CL of a single target enemy in your line of sight. If you succeed on the check, you and all your allies that can hear and understand you gain a +1 insight bonus on attack rolls against that target until the end of your next turn.
+
+### Trooper
+
+#### Comrades in Arms
+
+- **Page:** 26
+- **Prerequisites:** None.
+- **Quick summary:** Gain +1 circumstance on melee and ranged attacks while you are within 3 squares of an ally.
+- **Production record:** `d4dcafa34cda98c2`
+- **Phase 3B disposition:** `REMOVE_CONTAMINATION`
+
+**Canonical rules text**
+
+Whenever you are within 3 squares of an ally, you gain a +1 circumstance bonus on all melee and ranged attack rolls.
+
+#### Focused Targeting
+
+- **Page:** 26
+- **Prerequisites:** Comrades in Arms
+- **Quick summary:** When you damage a target with a melee or ranged attack, all allies within 3 squares gain a +2 bonus on damage rolls against that target until the beginning of your next turn.
+- **Production record:** `6c52d837af948ca0`
+- **Phase 3B disposition:** `UPDATE_METADATA`
+
+**Canonical rules text**
+
+When you damage a target with a melee or ranged attack, all allies within 3 squares gain a +2 bonus on damage rolls against that target until the beginning of your next turn.
+
+#### Phalanx
+
+- **Page:** 26
+- **Prerequisites:** Watch Your Back
+- **Quick summary:** If you provide soft cover to an ally within 3 squares, it becomes improved cover.
+- **Production record:** `e02a3171a6862f02`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+If you provide soft cover to an ally within 3 squares, it becomes improved cover.
+
+#### Stick Together
+
+- **Page:** 26
+- **Prerequisites:** Comrades in Arms
+- **Quick summary:** You can spend a Move Action to activate this Talent. Until the beginning of your next turn, if an ally Moves you can immediately move up to your speed, provided you end your movement within 3 squares of that ally.
+- **Production record:** `729a17e25b873f4f`
+- **Phase 3B disposition:** `UPDATE_METADATA`
+
+**Canonical rules text**
+
+You can spend a Move Action to activate this Talent. Until the beginning of your next turn, if an ally Moves you can immediately move up to your speed, provided you end your movement within 3 squares of that ally.
+
+#### Watch Your Back
+
+- **Page:** 26
+- **Prerequisites:** None.
+- **Quick summary:** If you are adjacent to at least one ally, enemies gain no benefit from Flanking you or any adjacent allies.
+- **Production record:** `a0c97d4ca8a2d34d`
+- **Phase 3B disposition:** `UPDATE_METADATA`
+
+**Canonical rules text**
+
+If you are adjacent to at least one ally, enemies gain no benefit from Flanking you or any adjacent allies.
+
+### Vanguard
+
+#### Enhanced Vision
+
+- **Page:** 47
+- **Prerequisites:** None.
+- **Quick summary:** When actively looking for hidden enemies, you can make a Perception check as a Swift Action instead of a Standard Action.
+- **Production record:** `d6f62f5d8b003e14`
+- **Phase 3B disposition:** `UPDATE_METADATA`
+
+**Canonical rules text**
+
+When actively looking for hidden enemies, you can make a Perception check as a Swift Action instead of a Standard Action.
+
+#### Impenetrable Cover
+
+- **Page:** 47
+- **Prerequisites:** Maximize Cover
+- **Quick summary:** Whenever you have Cover against a target, you gain Damage Reduction equal to your Class Level against that target until the start of your next turn, provided you still have Cover from the target at the time the...
+- **Production record:** `1584c86ad48d7b81`
+- **Phase 3B disposition:** `UPDATE_METADATA`
+
+**Canonical rules text**
+
+Whenever you have Cover against a target, you gain Damage Reduction equal to your Class Level against that target until the start of your next turn, provided you still have Cover from the target at the time the attack is made.
+
+#### Invisible Attacker
+
+- **Page:** 47
+- **Prerequisites:** Maximize Cover
+- **Quick summary:** If your target is unaware of you, your ranged attacks deal +1 die of damage against that target.
+- **Production record:** `fb495a33cd53da43`
+- **Phase 3B disposition:** `UPDATE_METADATA`
+
+**Canonical rules text**
+
+If your target is unaware of you, your ranged attacks deal +1 die of damage against that target.
+
+#### Mark the Target
+
+- **Page:** 47
+- **Prerequisites:** None.
+- **Quick summary:** Whenever you damage a target with a non-Area Attack ranged attack, you may designate one ally within your line of sight as a Swift Action.
+- **Production record:** `10a678b2b7e3ac0e`
+- **Phase 3B disposition:** `UPDATE_METADATA`
+
+**Canonical rules text**
+
+Whenever you damage a target with a non-Area Attack ranged attack, you may designate one ally within your line of sight as a Swift Action. Your target is considered Flat-Footed against that ally's first attack made before the start of your next turn.
+
+#### Maximize Cover
+
+- **Page:** 47
+- **Prerequisites:** None.
+- **Quick summary:** When an opponent uses the Aim Action to negate your Cover, you can make a Stealth check opposed by the attacker's Initiative check. If successful, you retain your Cover bonus.
+- **Production record:** `f7b8af6b2e6b50c3`
+- **Phase 3B disposition:** `UPDATE_METADATA`
+
+**Canonical rules text**
+
+When an opponent uses the Aim Action to negate your Cover, you can make a Stealth check opposed by the attacker's Initiative check. If successful, you retain your Cover bonus.
+
+#### Shellshock
+
+- **Page:** 47
+- **Prerequisites:** Soften the Target
+- **Quick summary:** Whenever you damage a target that is unaware of you with an Area Attack, that target is considered Flat-Footed until the start of your next turn.
+- **Production record:** `f75fa286772de3e7`
+- **Phase 3B disposition:** `UPDATE_METADATA`
+
+**Canonical rules text**
+
+Whenever you damage a target that is unaware of you with an Area Attack, that target is considered Flat-Footed until the start of your next turn.
+
+#### Soften the Target
+
+- **Page:** 47
+- **Prerequisites:** None.
+- **Quick summary:** Whenever you damage a target with a ranged attack, you may designate one ally within your line of sight as a Swift Action.
+- **Production record:** `148e7a10a55d6ed3`
+- **Phase 3B disposition:** `UPDATE_METADATA`
+
+**Canonical rules text**
+
+Whenever you damage a target with a ranged attack, you may designate one ally within your line of sight as a Swift Action. The ally you designate ignores the target's Damage Reduction and Shield Rating (if any) until the start of your next turn.
+
+#### Triangulate
+
+- **Page:** 47
+- **Prerequisites:** Enhanced Vision
+- **Quick summary:** If you and at least one other ally have line of sight to and are aware of a target, you and all allies that can hear and understand you can reroll one ranged attack roll against that target, accepting the second...
+- **Production record:** `bd6cbb85cf7fc8a2`
+- **Phase 3B disposition:** `UPDATE_METADATA`
+
+**Canonical rules text**
+
+If you and at least one other ally have line of sight to and are aware of a target, you and all allies that can hear and understand you can reroll one ranged attack roll against that target, accepting the second result even if it is worse. You and your allies can only gain the benefits of this Talent once per encounter.
+
+### Alter
+
+#### Aversion
+
+- **Page:** 53
+- **Prerequisites:** None.
+- **Quick summary:** Swift action + Force Point: enemies treat squares within 2 squares of you as difficult terrain for the encounter; mind-affecting.
+- **Production record:** `13cc978a8023eaa4`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+As a swift action, you can spend a Force Point to radiate an invisible aura that makes other beings want to avoid you. Until the end of the encounter, all squares within 2 squares of you are considered difficult terrain for your enemies. This is a mind-affecting effect.
+
+### Bando Gora Captain
+
+#### Bando Gora Surge
+
+- **Page:** 55
+- **Prerequisites:** None.
+- **Quick summary:** Whenever you move up the Condition Track by any means, you gain Bonus Hit Points equal to 5 + your Heroic Level.
+- **Production record:** `6cb7efd0785d4114`
+- **Phase 3B disposition:** `UPDATE_METADATA`
+
+**Canonical rules text**
+
+Whenever you move up the Condition Track by any means, you gain Bonus Hit Points equal to 5 + your Heroic Level. Bonus Hit Points are consumed before regular Hit Points, and unused Bonus Hit Points go away at the end of the encounter. Bonus Hit Points from multiple sources do not stack.
+
+#### Force Fighter
+
+- **Page:** 56
+- **Prerequisites:** None.
+- **Quick summary:** Whenever you spend a Force Point to add to an attack roll, you heal a number of Hit Points equal to the Force Point result if the attack hits.
+- **Production record:** `3684019966515ceb`
+- **Phase 3B disposition:** `UPDATE_METADATA`
+
+**Canonical rules text**
+
+Whenever you spend a Force Point to add to an attack roll, you heal a number of Hit Points equal to the Force Point result if the attack hits.
+
+#### Resist Enervation
+
+- **Page:** 56
+- **Prerequisites:** None.
+- **Quick summary:** Whenever an effect would move you down the Condition Track, you can spend a Force Point to negate that movement down the Condition Track.
+- **Production record:** `3fa908b70c8d97a6`
+- **Phase 3B disposition:** `UPDATE_METADATA`
+
+**Canonical rules text**
+
+Whenever an effect would move you down the Condition Track, you can spend a Force Point to negate that movement down the Condition Track.
+
+#### Victorious Force Mastery
+
+- **Page:** 56
+- **Prerequisites:** Force Training
+- **Quick summary:** Whenever an enemy you have damaged in this encounter is reduced to 0 Hit Points, you may automatically return one spent Force Power to your Force Power Suite as a Free Action.
+- **Production record:** `0742d901c13ea130`
+- **Phase 3B disposition:** `UPDATE_METADATA`
+
+**Canonical rules text**
+
+Whenever an enemy you have damaged in this encounter is reduced to 0 Hit Points, you may automatically return one spent Force Power to your Force Power Suite as a Free Action.
+
+### Believer Disciple
+
+#### Believer Intuition
+
+- **Page:** 56
+- **Prerequisites:** None.
+- **Quick summary:** As a Reaction, when an opponent successfully attacks you, make a Use the Force check and compare the result to your opponent's attack roll.
+- **Production record:** `3c7eff4b63880ee2`
+- **Phase 3B disposition:** `UPDATE_METADATA`
+
+**Canonical rules text**
+
+As a Reaction, when an opponent successfully attacks you, make a Use the Force check and compare the result to your opponent's attack roll. If the check equals or exceeds the result of the attack roll, you can add your Charisma modifier to your Reflex Defense.
+
+#### Defense Boost
+
+- **Page:** 56
+- **Prerequisites:** None.
+- **Quick summary:** As a Swift Action, you can make a DC 15 Use the Force check.
+- **Production record:** `7d4f036dbaabdd02`
+- **Phase 3B disposition:** `UPDATE_METADATA`
+
+**Canonical rules text**
+
+As a Swift Action, you can make a DC 15 Use the Force check. If the check succeeds, you gain a +1 Force bonus to your Fortitude Defense until the end of the encounter. Before you make your Use the Force check, you can increase the target number to DC 20 to gain a +1 Force bonus to all your Defenses.
+
+#### Hardiness
+
+- **Page:** 56
+- **Prerequisites:** None.
+- **Quick summary:** You can spend a Force Point to reduce the number of Swift Actions it takes you to move +1 step along to Condition Track by one.
+- **Production record:** `038fcce2b039ece5`
+- **Phase 3B disposition:** `UPDATE_METADATA`
+
+**Canonical rules text**
+
+You can spend a Force Point to reduce the number of Swift Actions it takes you to move +1 step along to Condition Track by one.
+
+#### High Impact
+
+- **Page:** 56
+- **Prerequisites:** None.
+- **Quick summary:** As a Swift Action, make a DC 15 Use the Force check. If your check succeeds, double your Strength bonus to the next melee damage roll you make before the end of your turn.
+- **Production record:** `71bba39bd4ad95ae`
+- **Phase 3B disposition:** `UPDATE_METADATA`
+
+**Canonical rules text**
+
+As a Swift Action, make a DC 15 Use the Force check. If your check succeeds, double your Strength bonus to the next melee damage roll you make before the end of your turn.
+
+#### Sith Reverence
+
+- **Page:** 56
+- **Prerequisites:** None.
+- **Quick summary:** You gain a +1 morale bonus on your attack rolls while you are within 20 squares and in line of sight of an ally with a Dark Side Score equal to or greater than your own.
+- **Production record:** `81b2b88df9600ca7`
+- **Phase 3B disposition:** `UPDATE_METADATA`
+
+**Canonical rules text**
+
+You gain a +1 morale bonus on your attack rolls while you are within 20 squares and in line of sight of an ally with a Dark Side Score equal to or greater than your own.
+
+### Control
+
+#### The Will To Resist
+
+- **Page:** 53
+- **Prerequisites:** None.
+- **Quick summary:** Once per turn, react to a Will-targeting effect with Use the Force as your Will Defense, then take -5 Use the Force until your next turn ends.
+- **Production record:** `9befb5e9bce19fa0`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Once per turn, as a reaction to being targeted by a Force power or other ability that targets your Will Defense, you can make a Use the Force check and replace your Will Defense with the result of the Use the Force check. After you make this check, until the end of your next turn, you take a -5 penalty on all Use the Force checks.
+
+### Dark Side
+
+#### Consumed by Darkness
+
+- **Page:** 53
+- **Prerequisites:** None.
+- **Quick summary:** Swift action: take -5 Will Defense to gain +2 Force on attacks until the beginning of your next turn.
+- **Production record:** `b4d45c6951deb889`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Sometimes your anger consumes you. As a swift action, you can take a -5 penalty to your Will Defense to gain a +2 Force bonus on attack rolls. The penalty and bonus last until the beginning of your next turn.
+
+### Korunnai Adept
+
+#### Akk Dog Master
+
+- **Page:** 57
+- **Prerequisites:** None.
+- **Quick summary:** Gain an akk dog follower with species traits and Power Attack; your self-targeting Force powers may target it instead.
+- **Production record:** `b265aa9dd35c4c5b`
+- **Phase 3B disposition:** `REMOVE_CONTAMINATION`
+
+**Canonical rules text**
+
+You gain an akk dog follower. Choose either the aggressive, defensive, or utility follower template, and generate the akk dog follower's statistics using the rules on page 32. This follower gains the akk dog species traits and the Power Attack feat. Additionally, any Force power you activate that targets you can target your akk dog follower instead, at your discretion. An akk dog counts toward the total number of followers you have, just like followers gained from other talents.
+
+#### Akk Dog Trainer's Actions
+
+- **Page:** 57
+- **Prerequisites:** Akk Dog Master
+- **Quick summary:** Unlock three coordinated akk-dog actions: Attack in Concert, Fall Upon Prey, and Paired Maul.
+- **Production record:** `ad7fd3e1a2b04c30`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+You and your akk dog have bonded through the Force and can fight in concert. You can use any of the following actions on your turn.
+
+Attack in Concert: As a standard action, you can make a melee or ranged attack against a target in range. If your akk dog follower is adjacent to the target and your attack hits, the target also takes piercing damage equal to 1d6 + the akk dog's Strength modifier. This additional damage is considered part of your attack for the purposes of resolving damage, DR, SR, and overcoming damage threshold.
+
+Fall Upon Prey: As a standard action, you can make a melee or ranged attack against a target in range, and your akk dog can take the charge action against a target within its range. However, both you and your akk dog take a -5 penalty on your attack rolls (this replaces the bonus to attack rolls granted by the charge action).
+
+Paired Maul: As a standard action, you can make a melee or ranged attack against a target in range. If the attack hits, your akk dog follower gains a +2 competence bonus on its next attack roll against that target.
+
+#### Akk Dog Attack Training
+
+- **Page:** 57
+- **Prerequisites:** Akk Dog Master
+- **Quick summary:** Your akk dog follower gains Powerful Charge.
+- **Production record:** `ad7fd3e1a2b04c31`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Your akk dog follower gains the Powerful Charge feat.
+
+#### Protective Reaction
+
+- **Page:** 57
+- **Prerequisites:** Akk Dog Master
+- **Quick summary:** When an enemy adjacent to your Akk Dog Follower targets you with an attack, that enemy provokes an Attack of Opportunity from your Akk Dog Follower.
+- **Production record:** `ad7fd3e1a2b04c32`
+- **Phase 3B disposition:** `UPDATE_METADATA`
+
+**Canonical rules text**
+
+When an enemy adjacent to your Akk Dog Follower targets you with an attack, that enemy provokes an Attack of Opportunity from your Akk Dog Follower.
+
+### Light Side
+
+#### At Peace
+
+- **Page:** 53
+- **Prerequisites:** None.
+- **Quick summary:** Spend a Force Point for +2 Force to all defenses until the encounter ends or you attack.
+- **Production record:** `d054d594fe0ceba2`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+You can spend a Force Point to gain a +2 Force bonus to all defenses until the end of the encounter or until you attack, whichever comes first.
+
+#### Attuned
+
+- **Page:** 53
+- **Prerequisites:** Focused Attack
+- **Quick summary:** On a natural 20 against a target with Dark Side Score 1+, immediately activate a [light side] Force power as a free action.
+- **Production record:** `bd797d3f83d0f61f`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+When you roll a natural 20 on an attack roll against a target with a Dark Side Score of 1 or higher, you can activate a single Force power with the [light side] descriptor immediately as a free action.
+
+#### Focused Attack
+
+- **Page:** 53
+- **Prerequisites:** None.
+- **Quick summary:** Spend a Force Point to reroll an attack against a target with Dark Side Score 1+ and keep the better roll.
+- **Production record:** `2fc019fa8c4108a7`
+- **Phase 3B disposition:** `REMOVE_CONTAMINATION`
+
+**Canonical rules text**
+
+You can spend a Force Point to reroll an attack against a creature with a Dark Side Score of 1 or higher, keeping the better of the two rolls.
+
+#### Surge of Light
+
+- **Page:** 53
+- **Prerequisites:** None.
+- **Quick summary:** Once per encounter as a swift action, recover a [light side] Force power without a Force Point; each additional selection adds another use.
+- **Production record:** `8223d30bfce0c14d`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Once per encounter, as a swift action, you can return any Force power with the [light side] descriptor to your suite without spending a Force Point. You can select this talent multiple times. Each time you select it, you can use this talent one additional time per encounter.
+
+### Sense
+
+#### Heightened Awareness
+
+- **Page:** 53
+- **Prerequisites:** None.
+- **Quick summary:** Spend a Force Point to add Charisma to Perception; selecting this talent again adds Charisma an additional time.
+- **Production record:** `2db9534917366b8d`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+You can spend a Force Point to add your Charisma bonus to your Perception check. You can select this talent multiple times. Each time you select this talent, you add your Charisma bonus an additional time.
+
+#### Psychometry
+
+- **Page:** 53
+- **Prerequisites:** Farseeing, Force Perception
+- **Quick summary:** Use farseeing on a held object to perceive up to 5 years of its past per character level through its prior holder's impressions.
+- **Production record:** `8ff0ec89e13b6d51`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+When you use the farseeing Force power, you can choose to target an object you hold instead of a character or creature. You can look into the targeted object's past, up to a maximum of 5 years per your character level. Any information gained about the object's past is based on the thoughts and emotions of the person holding or carrying the object at the time you perceive, which can skew the results of the vision.
+
+#### Shift Sense
+
+- **Page:** 53
+- **Prerequisites:** None.
+- **Quick summary:** Spend a Force Point for low-light vision for 1 minute or the rest of the encounter, whichever is longer.
+- **Production record:** `98d0ce77949d17cd`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+You can spend a Force Point to gain low-light vision for 1 minute or until the end of the encounter, whichever is longer.
+
 ---
 
 ## Append-only book index
 
 - [x] Saga Edition Core Rulebook — 198 certified talent claims
-- [ ] Clone Wars Campaign Guide
+- [x] Clone Wars Campaign Guide — 118 certified talent claims
 - [x] Rebellion Era Campaign Guide — 64 certified talent claims
 - [x] Galaxy at War — 56 certified talent claims
 - [x] Galaxy of Intrigue — 43 certified talent claims
