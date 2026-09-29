@@ -6,6 +6,7 @@ import { spawnSync } from 'node:child_process';
 import {
   ROOT, loadInputs, applyReference, checkInvariants, runAudit, protectedIds, BLOCKER_SAME_NAME_IN_TREE
 } from '../tools/audit-talent-phase-3c-independent.mjs';
+import { buildRuntimeRegistries } from '../tools/build-talent-runtime-registries.mjs';
 
 // Independent Phase 3C review: read-only. Never writes production packs.
 // docs/audits/talent-phase-3c-claude-independent-review.md explains each case.
@@ -18,12 +19,9 @@ const failing = (results, fragment) => results.filter(r => !r.ok && r.id.include
 
 /* 1. Baseline: every invariant holds and a second application is a no-op. */
 const audit = runAudit();
-test('every independent invariant passes except the ONE documented open blocker (B2)', () => {
-  // B2: the certified rename of Infamy|Notorious and Master of Teräs Käsi|Teräs Käsi Basics creates a same-name pair
-  // with the protected review extras a7d8c4da96eacad4 / 222327492c484b4a inside one tree. That is a hard failure in
-  // tools/audit-talent-tree-membership.mjs. When B2 is resolved this assertion must be tightened to an empty list.
+test('every independent invariant passes, including the two certified Phase 3D review-alias exemptions', () => {
   const bad = audit.results.filter(r => !r.ok).map(r => r.id);
-  assert.deepEqual(bad, [BLOCKER_SAME_NAME_IN_TREE]);
+  assert.deepEqual(bad, []);
   assert.ok(audit.results.length >= 18);
 });
 test('protected set is exactly 92 (90 deferred + 2 review extras)', () => {
@@ -138,6 +136,36 @@ test('primary applicator projected state == independent reference state (byte-id
     for (const k of ['talents', 'trees', 'classes']) assert.equal(JSON.stringify(app[k]), JSON.stringify(audit.first[k]), k + ' differ');
   } finally { fs.rmSync(dir, { recursive: true, force: true }); }
 });
+test('projected production rebuilds runtime registries with Phase 3C structural parity', () => {
+  const legacyRegistry = JSON.parse(fs.readFileSync(path.join(ROOT, 'data/generated/talent-trees.registry.json'), 'utf8'));
+  const built = buildRuntimeRegistries({
+    talents: audit.first.talents,
+    trees: audit.first.trees,
+    classes: audit.first.classes,
+    legacyRegistry
+  });
+  assert.equal(built.talentTreeRegistry.length, 196);
+  assert.equal(built.classBindings.length, 37);
+
+  const byDisplay = new Map(built.talentTreeRegistry.map(x => [x.displayName, x]));
+  for (const name of ['Martial Arts Forms', 'Unarmed Mastery', 'Skill Challenge', 'Espionage', 'Shapers of Kro Var', 'Zeison Sha Warrior', 'Squad Leader']) {
+    assert.ok(byDisplay.has(name), 'missing new runtime tree ' + name);
+  }
+  assert.ok(!byDisplay.has('GenoHardan'), 'obsolete split GenoHardan registry entry survived');
+  assert.ok(byDisplay.has('GenoHaradan'), 'canonical GenoHaradan registry entry missing');
+  assert.ok(byDisplay.get('Dathomiri Witch').talents.includes('Charm Beast'));
+  assert.ok(byDisplay.get('Beastwarden').talents.includes('Charm Beast'));
+
+  const bindingByClass = new Map(built.classBindings.map(x => [x.class, x.treeIds]));
+  const classMutations = audit.inputs.manifests.flatMap(m => m.manifest.classAccessMutations ?? []);
+  assert.equal(classMutations.length, 5);
+  for (const mutation of classMutations) {
+    const expectedKey = mutation.add['system.talentTreeIds'];
+    assert.ok(bindingByClass.get(mutation.className)?.includes(expectedKey),
+      mutation.className + ' runtime binding missing ' + expectedKey);
+  }
+});
+
 test('primary applicator refuses --write in Phase 3C-1 and leaves packs untouched', () => {
   const before = ['talents.db', 'talent_trees.db', 'classes.db'].map(f => fs.readFileSync(path.join(ROOT, 'packs', f), 'utf8'));
   const run = spawnSync(process.execPath, [path.join(ROOT, 'tools/apply-talent-phase-3c.mjs'), '--write'], { cwd: ROOT, encoding: 'utf8' });

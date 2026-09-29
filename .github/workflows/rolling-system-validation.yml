@@ -94,16 +94,16 @@ jobs:
           if ! node tools/check-talent-phase-3b-global-closeout.mjs; then
             echo "::group::Phase 3C manifest regeneration diagnostic"
             for book in clone-wars core force-unleashed war intrigue jatm kotor legacy rebellion scavengers scum starships threats unknown; do
-              node tools/build-talent-phase-3b-manifest.mjs --book "$book" || true
+              node tools/build-talent-phase-3b-manifest.mjs --book "$book" --check || true
             done
             git diff -- data/audits/talent-phase-3b-*-manifest.json || true
             echo "::endgroup::"
             exit 1
           fi
-          if ! node tools/apply-talent-phase-3c.mjs; then
+          if ! node tools/apply-talent-phase-3c.mjs --check; then
             echo "::group::Phase 3C manifest regeneration diagnostic"
             for book in clone-wars core force-unleashed war intrigue jatm kotor legacy rebellion scavengers scum starships threats unknown; do
-              node tools/build-talent-phase-3b-manifest.mjs --book "$book" || true
+              node tools/build-talent-phase-3b-manifest.mjs --book "$book" --check || true
             done
             git diff -- data/audits/talent-phase-3b-*-manifest.json || true
             echo "::endgroup::"
