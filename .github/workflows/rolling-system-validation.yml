@@ -101,6 +101,14 @@ jobs:
             exit 1
           fi
 
+      - name: Upload Phase 3B regeneration diagnostic
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: phase3b-regenerated-jatm
+          path: data/audits/talent-phase-3b-jedi-academy-training-manual-manifest.json
+          if-no-files-found: error
+
       - name: Rolling-system test suite
         run: node tools/run-rolling-tests.mjs
 
