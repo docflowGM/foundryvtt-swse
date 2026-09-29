@@ -11,6 +11,7 @@ A talent identity is `canonicalTreeKey + talent name`. Talent name alone is neve
 | Book | Owned identities | Manifest | Checker |
 |---|---:|---|---|
 | Saga Edition Core Rulebook | 198 | `data/audits/talent-phase-3b-core-rulebook-manifest.json` | `node tools/build-talent-phase-3b-core-manifest.mjs --check` |
+| Rebellion Era Campaign Guide | 64 | `data/audits/talent-phase-3b-rebellion-era-campaign-guide-manifest.json` | `node tools/build-talent-phase-3b-rebellion-era-manifest.mjs --check` |
 | Galaxy at War | 56 | `data/audits/talent-phase-3b-galaxy-at-war-manifest.json` | `node tools/build-talent-phase-3b-galaxy-at-war-manifest.mjs --check` |
 | Galaxy of Intrigue | 43 | `data/audits/talent-phase-3b-galaxy-of-intrigue-manifest.json` | `node tools/build-talent-phase-3b-galaxy-of-intrigue-manifest.mjs --check` |
 | Unknown Regions | 57 | `data/audits/talent-phase-3b-unknown-regions-manifest.json` | `node tools/build-talent-phase-3b-unknown-regions-manifest.mjs --check` |
