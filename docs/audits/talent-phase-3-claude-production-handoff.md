@@ -27,6 +27,32 @@ A talent identity is `canonicalTreeKey + talent name`. Talent name alone is neve
 
 The shared implementation is `tools/build-talent-phase-3b-manifest.mjs`.
 
+## Global Phase 3B closeout
+
+Phase 3B is globally certified.
+
+- Machine closeout: `data/audits/talent-phase-3b-global-closeout.json`
+- Human closeout: `docs/audits/talent-phase-3b-global-closeout.md`
+- Global checker: `node tools/check-talent-phase-3b-global-closeout.mjs`
+
+Certified global accounting:
+
+- 1,182 publication claims
+- 1,180 canonical identities
+- 932 existing canonical production records
+- 248 generated talent records
+- 2 reference-only publication claims
+- 2 review-only production extras
+- 90 production-only records deferred intact to Phase 3D
+- 7 tree creates
+- 1 tree consolidation
+- 5 class-access mutations
+
+The global pass caught and corrected one cross-book identity collision: production Charm Beast `bab9a1ce285f98b9` belongs to JATM Beastwarden and must not be moved into Core Dathomiri Witch. Core Dathomiri Witch Charm Beast is now an `IDENTITY_SPLIT` with create ID `c919d7682bd9df40`.
+
+Phase 3C must not begin unless the global checker passes.
+
+
 ## Production authorities
 
 - Canonical content and provenance: `data/canonical/talents.json`
@@ -68,6 +94,8 @@ Current review-only extras:
 
 - Core: `a7d8c4da96eacad4` — duplicate Infamy `Notorious` candidate
 - Threats: `222327492c484b4a` — duplicate Master of Teräs Käsi `Teräs Käsi Basics` candidate
+
+In addition, 90 production-only records are classified `DEFER_PHASE_3D_PRODUCTION_ONLY` in the global closeout. Phase 3C must leave all 90 untouched.
 
 ## Required preflight
 
