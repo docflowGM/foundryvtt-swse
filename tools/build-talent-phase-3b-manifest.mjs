@@ -40,6 +40,9 @@ const BOOKS = {
     aliases: {
       'Saga Edition Core Rulebook|Weapon Master|Multiattack Proficiency (heavy weapons)': '1b3d5d3260391867'
     },
+    forceIdentitySplits: [
+      'Saga Edition Core Rulebook|Dathomiri Witch|Charm Beast'
+    ],
     expected: {
       records: 198,
       extras: 1,
@@ -47,9 +50,9 @@ const BOOKS = {
         UPDATE_CONTENT: 112,
         UPDATE_METADATA: 31,
         REMOVE_CONTAMINATION: 31,
-        CORRECT_TREE: 17,
+        CORRECT_TREE: 16,
         CREATE: 6,
-        IDENTITY_SPLIT: 1
+        IDENTITY_SPLIT: 2
       }
     }
   },
@@ -490,7 +493,10 @@ export function buildBookManifest(bookKey, { check = false } = {}) {
     const canonicalCandidateTreeIds = new Set(survivorOverride ? repoTreeIds : [targetTreeId]);
     const sameNameInTarget = sameName.filter(t => (claimsByTalentId.get(t._id) ?? []).some(tree => canonicalCandidateTreeIds.has(tree._id)));
     const exactNameInTarget = sameNameInTarget.filter(t => t.name === canonical.name);
-    const resolved = direct || (exactNameInTarget.length === 1 ? exactNameInTarget[0] : sameNameInTarget.length === 1 ? sameNameInTarget[0] : null);
+    const forceIdentitySplit = (cfg.forceIdentitySplits ?? []).includes(canonical.canonicalIdentity);
+    const resolved = forceIdentitySplit
+      ? null
+      : direct || (exactNameInTarget.length === 1 ? exactNameInTarget[0] : sameNameInTarget.length === 1 ? sameNameInTarget[0] : null);
 
     const currentTrees = resolved ? (claimsByTalentId.get(resolved._id) ?? []) : [];
     const isCorrectTree = !!resolved && currentTrees.some(tree => tree._id === targetTreeId);
@@ -571,7 +577,8 @@ export function buildBookManifest(bookKey, { check = false } = {}) {
       disposition,
       phase2Flags: claim.dispositions ?? [],
       identityResolution: {
-        resolutionEvidence: overrideId ? 'EXPLICIT_ALIAS_OVERRIDE'
+        resolutionEvidence: forceIdentitySplit ? 'FORCED_IDENTITY_SPLIT_SAME_NAME_CROSS_TREE'
+          : overrideId ? 'EXPLICIT_ALIAS_OVERRIDE'
           : claim.repoRecordId ? 'PHASE2_CONTENT_MAPPING'
           : discrepancyId ? 'PHASE2_DISCREPANCY_MAPPING'
           : resolved && survivorOverride ? 'TREE_CONSOLIDATION_NAME_MATCH'
