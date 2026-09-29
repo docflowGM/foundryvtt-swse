@@ -359,7 +359,7 @@ await TalentRegistry.initialize();
   // The choice prompt itself is driven off the document's choiceMeta.
   assert.equal(item.system.choiceMeta?.required, true);
   assert.equal(item.system.choiceMeta?.choiceKind, 'trained_skill');
-  assert.ok(String(item.system.benefit || '').includes('Trained Skill'), 'Exceptional Skill lost its canonical benefit text');
+  assert.match(String(item.system.benefit || ''), /trained skill|choose one skill/i, 'Exceptional Skill lost its canonical benefit text'); // legacy wording says "Trained Skill"; the printed text says "choose one skill"
 }
 
 // Every Superior Skills talent that names a chosen skill exposes choice metadata.
