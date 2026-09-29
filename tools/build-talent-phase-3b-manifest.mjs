@@ -57,8 +57,8 @@ const BOOKS = {
       records: 198,
       extras: 1,
       dispositions: {
-        UPDATE_CONTENT: 112,
-        UPDATE_METADATA: 31,
+        UPDATE_CONTENT: 111,
+        UPDATE_METADATA: 32,
         REMOVE_CONTAMINATION: 31,
         CORRECT_TREE: 16,
         CREATE: 6,

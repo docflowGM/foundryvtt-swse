@@ -103,13 +103,15 @@ export function applyToReferenceDoc(manifest, opts = {}) {
     const bookStart = lines.findIndex(l => /^## Book \d+ — /.test(l) && l.endsWith(entry.sourcebook));
     invariant(bookStart >= 0, `${entry.id}: book section not found in the production reference`);
     let bookEnd = lines.findIndex((l, i) => i > bookStart && /^## Book \d+ — /.test(l)); if (bookEnd < 0) bookEnd = lines.length;
-    // Expansion sections do not repeat the tree-key line, so locate the tree by its "### <tree>" heading.
-    const treeName = treeKey.split('|')[1];
-    const treeAt = lines.findIndex((l, i) => i > bookStart && i < bookEnd && l === `### ${treeName}`);
-    invariant(treeAt >= 0, `${entry.id}: tree "${treeName}" not found in the production reference book section`);
-    let treeEnd = lines.findIndex((l, i) => i > treeAt && i < bookEnd && l.startsWith('### ')); if (treeEnd < 0) treeEnd = bookEnd;
-    const headAt = lines.findIndex((l, i) => i > treeAt && i < treeEnd && l === `#### ${name}`);
-    invariant(headAt >= 0, `${entry.id}: heading "${name}" not found in the production reference`);
+    // Locate "#### <talent>" inside the book section; when the name repeats, disambiguate by the nearest "### <tree>" heading.
+    const treeName = treeKey.split('|')[1].toLowerCase();
+    const candidates = [];
+    for (let i = bookStart + 1; i < bookEnd; i++) if (lines[i] === `#### ${name}`) candidates.push(i);
+    const treeOf = i => { for (let j = i; j > bookStart; j--) if (lines[j].startsWith('### ')) return lines[j].slice(4).toLowerCase(); return ''; };
+    const matching = candidates.length === 1 ? candidates : candidates.filter(i => treeOf(i) === treeName);
+    invariant(matching.length === 1, `${entry.id}: expected one "#### ${name}" heading for tree "${treeName}" in the production reference, found ${matching.length}`);
+    const headAt = matching[0];
+    let treeEnd = bookEnd;
     let headEnd = lines.findIndex((l, i) => i > headAt && i < treeEnd && (l.startsWith('#### ') || l.startsWith('### '))); if (headEnd < 0) headEnd = treeEnd;
     let block = lines.slice(headAt, headEnd).join('\n');
     const before = block;

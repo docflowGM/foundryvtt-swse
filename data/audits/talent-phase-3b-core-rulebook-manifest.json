@@ -10,7 +10,7 @@
   "generatedAgainst": {
     "canonical": {
       "path": "data/canonical/talents.json",
-      "fingerprint": "fnv1a64:e5d2b3062bf593b6"
+      "fingerprint": "fnv1a64:56163af3312933dd"
     },
     "registry": {
       "path": "data/audits/talent-canonical-tree-registry.json",
@@ -26,7 +26,7 @@
     },
     "phase2": {
       "path": "data/audits/talent-phase-2-core-rulebook-content.json",
-      "fingerprint": "fnv1a64:20795f2e3ff285b0"
+      "fingerprint": "fnv1a64:8cff410679b8e7a9"
     },
     "discrepancy": {
       "path": "data/audits/talent-phase-2-core-discrepancy-manifest.json",
@@ -39,21 +39,21 @@
     "referenceOnlyPublicationClaims": 0,
     "canonicalTrees": 40,
     "dispositions": {
-      "UPDATE_CONTENT": 112,
+      "UPDATE_CONTENT": 111,
       "CORRECT_TREE": 16,
-      "UPDATE_METADATA": 31,
+      "UPDATE_METADATA": 32,
       "REMOVE_CONTAMINATION": 31,
       "CREATE": 6,
       "IDENTITY_SPLIT": 2
     },
     "fieldChanges": {
-      "system.benefit": 130,
+      "system.benefit": 129,
       "system.description": 39,
       "system.summary": 198,
       "system.source": 198,
       "system.page": 198,
-      "system.prerequisites": 77,
-      "system.description.value": 73,
+      "system.prerequisites": 75,
+      "system.description.value": 80,
       "name": 3
     },
     "productionExtras": 1
@@ -1877,8 +1877,8 @@
       },
       "targetFields": {
         "name": "Redirect Shot",
-        "system.benefit": "This talent allows you to redirect a deflected blaster bolt along a specific trajectory so that it damages another creature or object in its path, Once per round when you successfully deflect a blaster bolt, you can make an immediate ranged attack against another target with which you have line of sight. Apply the normal range penalties to the attack roll (see Table 8-5: Range Penalties}, not counting the distance the bolt traveled to reach you. If the attack succeeds, it deals norma! weapon damage to the target.\n\nOnly single blaster bolts can be redirected in this manner. Barrages from autofire weapons and other types of projectiles can't be redirected.",
-        "system.description.value": "This talent allows you to redirect a deflected blaster bolt along a specific trajectory so that it damages another creature or object in its path, Once per round when you successfully deflect a blaster bolt, you can make an immediate ranged attack against another target with which you have line of sight. Apply the normal range penalties to the attack roll (see Table 8-5: Range Penalties}, not counting the distance the bolt traveled to reach you. If the attack succeeds, it deals norma! weapon damage to the target.\n\nOnly single blaster bolts can be redirected in this manner. Barrages from autofire weapons and other types of projectiles can't be redirected.",
+        "system.benefit": "This talent allows you to redirect a deflected blaster bolt along a specific trajectory so that it damages another creature or object in its path, Once per round when you successfully deflect a blaster bolt, you can make an immediate ranged attack against another target with which you have line of sight. Apply the normal range penalties to the attack roll (see Table 8-5: Range Penalties), not counting the distance the bolt traveled to reach you. If the attack succeeds, it deals normal weapon damage to the target.\n\nOnly single blaster bolts can be redirected in this manner. Barrages from autofire weapons and other types of projectiles can't be redirected.",
+        "system.description.value": "This talent allows you to redirect a deflected blaster bolt along a specific trajectory so that it damages another creature or object in its path, Once per round when you successfully deflect a blaster bolt, you can make an immediate ranged attack against another target with which you have line of sight. Apply the normal range penalties to the attack roll (see Table 8-5: Range Penalties), not counting the distance the bolt traveled to reach you. If the attack succeeds, it deals normal weapon damage to the target.\n\nOnly single blaster bolts can be redirected in this manner. Barrages from autofire weapons and other types of projectiles can't be redirected.",
         "system.summary": "This talent allows you to redirect a deflected blaster bolt along a specific trajectory so that it damages another creature or object in its path, Once per round when you successfully deflect a blaster bolt, you can make an...",
         "system.prerequisites": "Deflect, base attack bonus +5.",
         "system.source": "Saga Edition Core Rulebook",
@@ -3508,9 +3508,9 @@
       },
       "targetFields": {
         "name": "Connections",
-        "system.benefit": "You are able to obtain licensed, restricted, military, or illegal equipment without having to pay a licensing fee or endure a background check, provided the total cost of the desired equipment is equal to or less\" than your character level x 1,000 credits. In addition, when obtaining equip~ ment or services through the black market, you reduce the black market cost multiplier by 1. See Restricted Items (page 118) for details.",
-        "system.description.value": "You are able to obtain licensed, restricted, military, or illegal equipment without having to pay a licensing fee or endure a background check, provided the total cost of the desired equipment is equal to or less\" than your character level x 1,000 credits. In addition, when obtaining equip~ ment or services through the black market, you reduce the black market cost multiplier by 1. See Restricted Items (page 118) for details.",
-        "system.summary": "You are able to obtain licensed, restricted, military, or illegal equipment without having to pay a licensing fee or endure a background check, provided the total cost of the desired equipment is equal to or less\" than your...",
+        "system.benefit": "You are able to obtain licensed, restricted, military, or illegal equipment without having to pay a licensing fee or endure a background check, provided the total cost of the desired equipment is equal to or less than your character level x 1,000 credits. In addition, when obtaining equipment or services through the black market, you reduce the black market cost multiplier by 1. See Restricted Items (page 118) for details.",
+        "system.description.value": "You are able to obtain licensed, restricted, military, or illegal equipment without having to pay a licensing fee or endure a background check, provided the total cost of the desired equipment is equal to or less than your character level x 1,000 credits. In addition, when obtaining equipment or services through the black market, you reduce the black market cost multiplier by 1. See Restricted Items (page 118) for details.",
+        "system.summary": "You are able to obtain licensed, restricted, military, or illegal equipment without having to pay a licensing fee or endure a background check, provided the total cost of the desired equipment is equal to or less than your...",
         "system.prerequisites": "",
         "system.source": "Saga Edition Core Rulebook",
         "system.page": 44
@@ -13598,7 +13598,7 @@
         "system.benefit": "You can spend a Swift Action to grant one ally the ability to move its normal speed. The ally must move immediately on your turn, before you do anything else, or else the opportunity is wasted.",
         "system.description.value": "You can spend a Swift Action to grant one ally the ability to move its normal speed. The ally must move immediately on your turn, before you do anything else, or else the opportunity is wasted.",
         "system.summary": "You can spend a Swift Action to grant one ally the ability to move its normal speed. The ally must move immediately on your turn, before you do anything else, or else the opportunity is wasted.",
-        "system.prerequisites": "|mpel Ally |",
+        "system.prerequisites": "",
         "system.source": "Saga Edition Core Rulebook",
         "system.page": 210
       },
@@ -13607,7 +13607,7 @@
         "system.benefit": true,
         "system.description.value": true,
         "system.summary": true,
-        "system.prerequisites": true,
+        "system.prerequisites": false,
         "system.source": true,
         "system.page": true
       },
@@ -13615,7 +13615,6 @@
         "system.benefit",
         "system.description.value",
         "system.summary",
-        "system.prerequisites",
         "system.source",
         "system.page"
       ],
@@ -13652,7 +13651,7 @@
         "treeId": "560cc7994b357a0d",
         "treeName": "Mastermind"
       },
-      "disposition": "UPDATE_CONTENT",
+      "disposition": "UPDATE_METADATA",
       "phase2Flags": [
         "CORRECT_OR_SOURCE_ALIGNED"
       ],
@@ -13695,7 +13694,7 @@
         "system.benefit": "You can spend two Swift Actions to grant one ally the ability to take a Standard Action or Move Action. The ally must move immediately on your turn, before you do anything else, or else the opportunity is wasted.",
         "system.description.value": "You can spend two Swift Actions to grant one ally the ability to take a Standard Action or Move Action. The ally must move immediately on your turn, before you do anything else, or else the opportunity is wasted.",
         "system.summary": "You can spend two Swift Actions to grant one ally the ability to take a Standard Action or Move Action. The ally must move immediately on your turn, before you do anything else, or else the opportunity is wasted.",
-        "system.prerequisites": "|mpel Ally |",
+        "system.prerequisites": "Impel Ally I",
         "system.source": "Saga Edition Core Rulebook",
         "system.page": 210
       },
@@ -13704,13 +13703,12 @@
         "system.benefit": false,
         "system.description.value": false,
         "system.summary": true,
-        "system.prerequisites": true,
+        "system.prerequisites": false,
         "system.source": true,
         "system.page": true
       },
       "mutationFields": [
         "system.summary",
-        "system.prerequisites",
         "system.source",
         "system.page"
       ],
@@ -13736,7 +13734,7 @@
         "sort"
       ],
       "createTemplate": null,
-      "claudeInstruction": "Preserve the existing production record ID and runtime metadata; replace only the listed canonical fields."
+      "claudeInstruction": "Preserve the existing production record ID and canonical content; update only the listed metadata or display-name fields."
     },
     {
       "canonicalIdentity": "Saga Edition Core Rulebook|Weapon Master|Controlled Burst",
@@ -14943,9 +14941,9 @@
       },
       "targetFields": {
         "name": "Force Power Adept",
-        "system.benefit": "<p>You are skilled at using a particular Force Power. Select one Force Power you know. When using that Force Power, you have the option of spending a Force Point to make two Use the Force checks, keeping the better result.</p>\n<p>This Talent may be selected multiple times. Its effects do not stack. Each time you select this Talent, you must choose a different Force Power.</p>",
-        "system.description.value": "<p>You are skilled at using a particular Force Power. Select one Force Power you know. When using that Force Power, you have the option of spending a Force Point to make two Use the Force checks, keeping the better result.</p>\n<p>This Talent may be selected multiple times. Its effects do not stack. Each time you select this Talent, you must choose a different Force Power.</p>",
-        "system.summary": "<p>You are skilled at using a particular Force Power. Select one Force Power you know.",
+        "system.benefit": "You are skilled at using a particular Force Power. Select one Force Power you know. When using that Force Power, you have the option of spending a Force Point to make two Use the Force checks, keeping the better result.\n\nThis Talent may be selected multiple times. Its effects do not stack. Each time you select this Talent, you must choose a different Force Power.",
+        "system.description.value": "You are skilled at using a particular Force Power. Select one Force Power you know. When using that Force Power, you have the option of spending a Force Point to make two Use the Force checks, keeping the better result.\n\nThis Talent may be selected multiple times. Its effects do not stack. Each time you select this Talent, you must choose a different Force Power.",
+        "system.summary": "You are skilled at using a particular Force Power. Select one Force Power you know.",
         "system.prerequisites": "",
         "system.source": "Saga Edition Core Rulebook",
         "system.page": 214
@@ -14953,7 +14951,7 @@
       "fieldChanges": {
         "name": false,
         "system.benefit": true,
-        "system.description.value": false,
+        "system.description.value": true,
         "system.summary": true,
         "system.prerequisites": false,
         "system.source": true,
@@ -14961,6 +14959,7 @@
       },
       "mutationFields": [
         "system.benefit",
+        "system.description.value",
         "system.summary",
         "system.source",
         "system.page"
@@ -15048,9 +15047,9 @@
       },
       "targetFields": {
         "name": "Force Treatment",
-        "system.benefit": "<p>You can make a Use the Force check in place of a Treat Injury check. You are considered Trained in the Treat Injury Skill. If you are entitled to a Treat Injury check reroll, you may reroll your Use the Force check instead (subject to the same circumstances and limitations).</p>\n<p>In addition, you can administer First Aid, Treat Disease, Treat Poison, and Treat Radiation without the requisite Medical Kit or Medpac.</p>",
-        "system.description.value": "<p>You can make a Use the Force check in place of a Treat Injury check. You are considered Trained in the Treat Injury Skill. If you are entitled to a Treat Injury check reroll, you may reroll your Use the Force check instead (subject to the same circumstances and limitations).</p>\n<p>In addition, you can administer First Aid, Treat Disease, Treat Poison, and Treat Radiation without the requisite Medical Kit or Medpac.</p>",
-        "system.summary": "<p>You can make a Use the Force check in place of a Treat Injury check. You are considered Trained in the Treat Injury Skill.",
+        "system.benefit": "You can make a Use the Force check in place of a Treat Injury check. You are considered Trained in the Treat Injury Skill. If you are entitled to a Treat Injury check reroll, you may reroll your Use the Force check instead (subject to the same circumstances and limitations).\n\nIn addition, you can administer First Aid, Treat Disease, Treat Poison, and Treat Radiation without the requisite Medical Kit or Medpac.",
+        "system.description.value": "You can make a Use the Force check in place of a Treat Injury check. You are considered Trained in the Treat Injury Skill. If you are entitled to a Treat Injury check reroll, you may reroll your Use the Force check instead (subject to the same circumstances and limitations).\n\nIn addition, you can administer First Aid, Treat Disease, Treat Poison, and Treat Radiation without the requisite Medical Kit or Medpac.",
+        "system.summary": "You can make a Use the Force check in place of a Treat Injury check. You are considered Trained in the Treat Injury Skill.",
         "system.prerequisites": "",
         "system.source": "Saga Edition Core Rulebook",
         "system.page": 214
@@ -15058,7 +15057,7 @@
       "fieldChanges": {
         "name": false,
         "system.benefit": true,
-        "system.description.value": false,
+        "system.description.value": true,
         "system.summary": true,
         "system.prerequisites": false,
         "system.source": true,
@@ -15066,6 +15065,7 @@
       },
       "mutationFields": [
         "system.benefit",
+        "system.description.value",
         "system.summary",
         "system.source",
         "system.page"
@@ -15143,24 +15143,24 @@
       },
       "targetFields": {
         "name": "Fortified Body",
-        "system.benefit": "<p>The Force shields you against ailments, toxins, and radiation poisoning, making you immune to Disease, Poison, and Radiation.</p>",
-        "system.description.value": "<p>The Force shields you against ailments, toxins, and radiation poisoning, making you immune to Disease, Poison, and Radiation.</p>",
-        "system.summary": "<p>The Force shields you against ailments, toxins, and radiation poisoning, making you immune to Disease, Poison, and Radiation.</p>",
+        "system.benefit": "The Force shields you against ailments, toxins, and radiation poisoning, making you immune to Disease, Poison, and Radiation.",
+        "system.description.value": "The Force shields you against ailments, toxins, and radiation poisoning, making you immune to Disease, Poison, and Radiation.",
+        "system.summary": "The Force shields you against ailments, toxins, and radiation poisoning, making you immune to Disease, Poison, and Radiation.",
         "system.prerequisites": "Equilibrium (see page 101).",
         "system.source": "Saga Edition Core Rulebook",
         "system.page": 214
       },
       "fieldChanges": {
         "name": false,
-        "system.benefit": true,
-        "system.description.value": false,
+        "system.benefit": false,
+        "system.description.value": true,
         "system.summary": true,
         "system.prerequisites": true,
         "system.source": true,
         "system.page": true
       },
       "mutationFields": [
-        "system.benefit",
+        "system.description.value",
         "system.summary",
         "system.prerequisites",
         "system.source",
@@ -15239,9 +15239,9 @@
       },
       "targetFields": {
         "name": "Attune Weapon",
-        "system.benefit": "<p>You may spend a Force Point to attune a melee weapon. Attuning the weapon takes a Full-Round Action. From that point forward, whenever you wield the attuned weapon, you gain a +1 Force bonus on attack rolls.</p>\n<p>The weapon is attuned to you alone; others who wield the weapon do not gain the Force bonus.</p>",
-        "system.description.value": "<p>You may spend a Force Point to attune a melee weapon. Attuning the weapon takes a Full-Round Action. From that point forward, whenever you wield the attuned weapon, you gain a +1 Force bonus on attack rolls.</p>\n<p>The weapon is attuned to you alone; others who wield the weapon do not gain the Force bonus.</p>",
-        "system.summary": "<p>You may spend a Force Point to attune a melee weapon. Attuning the weapon takes a Full-Round Action.",
+        "system.benefit": "You may spend a Force Point to attune a melee weapon. Attuning the weapon takes a Full-Round Action. From that point forward, whenever you wield the attuned weapon, you gain a +1 Force bonus on attack rolls.\n\nThe weapon is attuned to you alone; others who wield the weapon do not gain the Force bonus.",
+        "system.description.value": "You may spend a Force Point to attune a melee weapon. Attuning the weapon takes a Full-Round Action. From that point forward, whenever you wield the attuned weapon, you gain a +1 Force bonus on attack rolls.\n\nThe weapon is attuned to you alone; others who wield the weapon do not gain the Force bonus.",
+        "system.summary": "You may spend a Force Point to attune a melee weapon. Attuning the weapon takes a Full-Round Action.",
         "system.prerequisites": "",
         "system.source": "Saga Edition Core Rulebook",
         "system.page": 214
@@ -15249,7 +15249,7 @@
       "fieldChanges": {
         "name": false,
         "system.benefit": true,
-        "system.description.value": false,
+        "system.description.value": true,
         "system.summary": true,
         "system.prerequisites": false,
         "system.source": true,
@@ -15257,6 +15257,7 @@
       },
       "mutationFields": [
         "system.benefit",
+        "system.description.value",
         "system.summary",
         "system.source",
         "system.page"
@@ -15334,9 +15335,9 @@
       },
       "targetFields": {
         "name": "Empower Weapon",
-        "system.benefit": "<p>You may spend a Force Point to empower a melee weapon. Empowering the weapon takes a Full-Round Action. From that point forward, the Empowered Weapon deals an additional die of damage, but only when wielded by you.</p>\n<p>For example, an empowered Lightsaber deals 3d8 points of damage, instead of 2d8 points of damage. Others who wield the weapon do not gain the bonus damage die.</p>",
-        "system.description.value": "<p>You may spend a Force Point to empower a melee weapon. Empowering the weapon takes a Full-Round Action. From that point forward, the Empowered Weapon deals an additional die of damage, but only when wielded by you.</p>\n<p>For example, an empowered Lightsaber deals 3d8 points of damage, instead of 2d8 points of damage. Others who wield the weapon do not gain the bonus damage die.</p>",
-        "system.summary": "<p>You may spend a Force Point to empower a melee weapon. Empowering the weapon takes a Full-Round Action.",
+        "system.benefit": "You may spend a Force Point to empower a melee weapon. Empowering the weapon takes a Full-Round Action. From that point forward, the Empowered Weapon deals an additional die of damage, but only when wielded by you.\n\nFor example, an empowered Lightsaber deals 3d8 points of damage, instead of 2d8 points of damage. Others who wield the weapon do not gain the bonus damage die.",
+        "system.description.value": "You may spend a Force Point to empower a melee weapon. Empowering the weapon takes a Full-Round Action. From that point forward, the Empowered Weapon deals an additional die of damage, but only when wielded by you.\n\nFor example, an empowered Lightsaber deals 3d8 points of damage, instead of 2d8 points of damage. Others who wield the weapon do not gain the bonus damage die.",
+        "system.summary": "You may spend a Force Point to empower a melee weapon. Empowering the weapon takes a Full-Round Action.",
         "system.prerequisites": "",
         "system.source": "Saga Edition Core Rulebook",
         "system.page": 214
@@ -15344,7 +15345,7 @@
       "fieldChanges": {
         "name": false,
         "system.benefit": true,
-        "system.description.value": false,
+        "system.description.value": true,
         "system.summary": true,
         "system.prerequisites": false,
         "system.source": true,
@@ -15352,6 +15353,7 @@
       },
       "mutationFields": [
         "system.benefit",
+        "system.description.value",
         "system.summary",
         "system.source",
         "system.page"
@@ -15429,9 +15431,9 @@
       },
       "targetFields": {
         "name": "Force Talisman",
-        "system.benefit": "<p>You may spend a Force Point to imbue a weapon or some other portable object with The Force, creating a Talisman that provides protection to you. Creating the Talisman takes a Full-Round Action.</p>\n<p>While you wear or carry the Talisman on your person, you gain a +1 Force bonus to one of your Defenses (Reflex Defense, Fortitude Defense, or Will Defense).</p>\n<p>You may only have one Force Talisman active at a given time, and if your Force Talisman is destroyed, you may not create another Force Talisman for 24 hours.</p>",
-        "system.description.value": "<p>You may spend a Force Point to imbue a weapon or some other portable object with The Force, creating a Talisman that provides protection to you. Creating the Talisman takes a Full-Round Action.</p>\n<p>While you wear or carry the Talisman on your person, you gain a +1 Force bonus to one of your Defenses (Reflex Defense, Fortitude Defense, or Will Defense).</p>\n<p>You may only have one Force Talisman active at a given time, and if your Force Talisman is destroyed, you may not create another Force Talisman for 24 hours.</p>",
-        "system.summary": "<p>You may spend a Force Point to imbue a weapon or some other portable object with The Force, creating a Talisman that provides protection to you.",
+        "system.benefit": "You may spend a Force Point to imbue a weapon or some other portable object with The Force, creating a Talisman that provides protection to you. Creating the Talisman takes a Full-Round Action.\n\nWhile you wear or carry the Talisman on your person, you gain a +1 Force bonus to one of your Defenses (Reflex Defense, Fortitude Defense, or Will Defense).\n\nYou may only have one Force Talisman active at a given time, and if your Force Talisman is destroyed, you may not create another Force Talisman for 24 hours.",
+        "system.description.value": "You may spend a Force Point to imbue a weapon or some other portable object with The Force, creating a Talisman that provides protection to you. Creating the Talisman takes a Full-Round Action.\n\nWhile you wear or carry the Talisman on your person, you gain a +1 Force bonus to one of your Defenses (Reflex Defense, Fortitude Defense, or Will Defense).\n\nYou may only have one Force Talisman active at a given time, and if your Force Talisman is destroyed, you may not create another Force Talisman for 24 hours.",
+        "system.summary": "You may spend a Force Point to imbue a weapon or some other portable object with The Force, creating a Talisman that provides protection to you.",
         "system.prerequisites": "",
         "system.source": "Saga Edition Core Rulebook",
         "system.page": 214
@@ -15439,7 +15441,7 @@
       "fieldChanges": {
         "name": false,
         "system.benefit": true,
-        "system.description.value": false,
+        "system.description.value": true,
         "system.summary": true,
         "system.prerequisites": false,
         "system.source": true,
@@ -15447,6 +15449,7 @@
       },
       "mutationFields": [
         "system.benefit",
+        "system.description.value",
         "system.summary",
         "system.source",
         "system.page"
@@ -15524,9 +15527,9 @@
       },
       "targetFields": {
         "name": "Greater Force Talisman",
-        "system.benefit": "<p>You may spend a Force Point to imbue a weapon or some other portable object with The Force, creating a Talisman that provides protection to you. Creating the Talisman takes a Full-Round Action.</p>\n<p>While you wear or carry the Talisman on your person, you gain a +1 Force bonus to all of your Defenses (Reflex Defense, Fortitude Defense, and Will Defense).</p>\n<p>You may only have one Greater Force Talisman active at a given time, and if your Greater Force Talisman is destroyed, you may not create another Greater Force Talisman (or regular Force Talisman) for 24 hours.</p>",
-        "system.description.value": "<p>You may spend a Force Point to imbue a weapon or some other portable object with The Force, creating a Talisman that provides protection to you. Creating the Talisman takes a Full-Round Action.</p>\n<p>While you wear or carry the Talisman on your person, you gain a +1 Force bonus to all of your Defenses (Reflex Defense, Fortitude Defense, and Will Defense).</p>\n<p>You may only have one Greater Force Talisman active at a given time, and if your Greater Force Talisman is destroyed, you may not create another Greater Force Talisman (or regular Force Talisman) for 24 hours.</p>",
-        "system.summary": "<p>You may spend a Force Point to imbue a weapon or some other portable object with The Force, creating a Talisman that provides protection to you.",
+        "system.benefit": "You may spend a Force Point to imbue a weapon or some other portable object with The Force, creating a Talisman that provides protection to you. Creating the Talisman takes a Full-Round Action.\n\nWhile you wear or carry the Talisman on your person, you gain a +1 Force bonus to all of your Defenses (Reflex Defense, Fortitude Defense, and Will Defense).\n\nYou may only have one Greater Force Talisman active at a given time, and if your Greater Force Talisman is destroyed, you may not create another Greater Force Talisman (or regular Force Talisman) for 24 hours.",
+        "system.description.value": "You may spend a Force Point to imbue a weapon or some other portable object with The Force, creating a Talisman that provides protection to you. Creating the Talisman takes a Full-Round Action.\n\nWhile you wear or carry the Talisman on your person, you gain a +1 Force bonus to all of your Defenses (Reflex Defense, Fortitude Defense, and Will Defense).\n\nYou may only have one Greater Force Talisman active at a given time, and if your Greater Force Talisman is destroyed, you may not create another Greater Force Talisman (or regular Force Talisman) for 24 hours.",
+        "system.summary": "You may spend a Force Point to imbue a weapon or some other portable object with The Force, creating a Talisman that provides protection to you.",
         "system.prerequisites": "Force Talisman",
         "system.source": "Saga Edition Core Rulebook",
         "system.page": 214
@@ -15534,7 +15537,7 @@
       "fieldChanges": {
         "name": false,
         "system.benefit": true,
-        "system.description.value": false,
+        "system.description.value": true,
         "system.summary": true,
         "system.prerequisites": false,
         "system.source": true,
@@ -15542,6 +15545,7 @@
       },
       "mutationFields": [
         "system.benefit",
+        "system.description.value",
         "system.summary",
         "system.source",
         "system.page"
