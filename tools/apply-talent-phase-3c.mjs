@@ -125,7 +125,8 @@ for (const {manifest} of manifests) {
         invariant(Object.prototype.hasOwnProperty.call(record.targetFields ?? {}, field),
           'targetFields missing mutation field ' + field + ' for ' + record.canonicalIdentity);
         if (record.currentCanonicalFields && Object.prototype.hasOwnProperty.call(record.currentCanonicalFields, field)) {
-          invariant(same(getPath(talent, field), record.currentCanonicalFields[field]),
+          const actualCurrent = getPath(talent, field) ?? null;
+          invariant(same(actualCurrent, record.currentCanonicalFields[field]),
             'production drift at ' + field + ' for ' + record.canonicalIdentity);
         }
         setPath(talent, field, record.targetFields[field]);
