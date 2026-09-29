@@ -40,11 +40,11 @@
     "canonicalTrees": 40,
     "dispositions": {
       "UPDATE_CONTENT": 112,
-      "CORRECT_TREE": 17,
+      "CORRECT_TREE": 16,
       "UPDATE_METADATA": 31,
       "REMOVE_CONTAMINATION": 31,
       "CREATE": 6,
-      "IDENTITY_SPLIT": 1
+      "IDENTITY_SPLIT": 2
     },
     "fieldChanges": {
       "system.benefit": 130,
@@ -11112,21 +11112,16 @@
         "treeId": "ad16f3e5f4f7441b",
         "treeName": "Dathomiri Witch"
       },
-      "disposition": "CORRECT_TREE",
+      "disposition": "IDENTITY_SPLIT",
       "phase2Flags": [
         "TREE_ERROR"
       ],
       "identityResolution": {
-        "resolutionEvidence": "PHASE2_CONTENT_MAPPING",
-        "productionRecordId": "bab9a1ce285f98b9",
-        "preserveProductionId": true,
-        "createRecordId": null,
-        "currentTreeClaims": [
-          {
-            "treeId": "ed899f9f41fc1391",
-            "treeName": "Beastwarden"
-          }
-        ],
+        "resolutionEvidence": "FORCED_IDENTITY_SPLIT_SAME_NAME_CROSS_TREE",
+        "productionRecordId": null,
+        "preserveProductionId": false,
+        "createRecordId": "c919d7682bd9df40",
+        "currentTreeClaims": [],
         "sameNameProductionCandidates": [
           {
             "id": "bab9a1ce285f98b9",
@@ -11141,15 +11136,7 @@
         ],
         "reviewExtraCandidateIds": []
       },
-      "currentCanonicalFields": {
-        "name": "Charm Beast",
-        "system.benefit": "You can make a Use the Force check in place of a Persuasion check when attempting to change the Attitude of an undomesticated creature with an Intelligence score of 2 or less. Additionally, you do not take the normal -5 penalty on the check if the creature can't speak or understand your language.\n\nThis Talent is identical to the Dathomiri Witch Talent of the same name, and both are considered to be the same Talent for the purposes of satisfying prerequisites.",
-        "system.description.value": "You can make a Use the Force check in place of a Persuasion check when attempting to change the Attitude of an undomesticated creature with an Intelligence score of 2 or less. Additionally, you do not take the normal -5 penalty on the check if the creature can't speak or understand your language.\n\nThis Talent is identical to the Dathomiri Witch Talent of the same name, and both are considered to be the same Talent for the purposes of satisfying prerequisites.",
-        "system.summary": null,
-        "system.prerequisites": "",
-        "system.source": null,
-        "system.page": null
-      },
+      "currentCanonicalFields": null,
       "targetFields": {
         "name": "Charm Beast",
         "system.benefit": "You can make a Use the Force check in place of a Persuasion check when attempting to change the Attitude of an undomesticated creature with an Intelligence score of 2 or less. Additionally, you do not take the normal -5 penalty on the check if the creature can't speak or understand your language.",
@@ -11174,15 +11161,14 @@
         "system.summary",
         "system.source",
         "system.page",
+        "_record_create",
         "system.treeId"
       ],
       "treeMutation": {
-        "action": "MOVE",
-        "removeFromTreeIds": [
-          "ed899f9f41fc1391"
-        ],
+        "action": "ADD",
+        "removeFromTreeIds": [],
         "addToTreeId": "ad16f3e5f4f7441b",
-        "addTalentId": "bab9a1ce285f98b9",
+        "addTalentId": "c919d7682bd9df40",
         "addTalentName": "Charm Beast"
       },
       "preserveFields": [
@@ -11199,8 +11185,33 @@
         "folder",
         "sort"
       ],
-      "createTemplate": null,
-      "claudeInstruction": "Preserve the existing production record ID, update the listed canonical fields, move tree membership to the target tree, and set system.treeId."
+      "createTemplate": {
+        "_id": "c919d7682bd9df40",
+        "name": "Charm Beast",
+        "type": "talent",
+        "img": "icons/svg/item-bag.svg",
+        "system": {
+          "treeId": "ad16f3e5f4f7441b",
+          "benefit": "You can make a Use the Force check in place of a Persuasion check when attempting to change the Attitude of an undomesticated creature with an Intelligence score of 2 or less. Additionally, you do not take the normal -5 penalty on the check if the creature can't speak or understand your language.",
+          "description": {
+            "value": "You can make a Use the Force check in place of a Persuasion check when attempting to change the Attitude of an undomesticated creature with an Intelligence score of 2 or less. Additionally, you do not take the normal -5 penalty on the check if the creature can't speak or understand your language."
+          },
+          "summary": "You can make a Use the Force check in place of a Persuasion check when attempting to change the Attitude of an undomesticated creature with an Intelligence score of 2 or less.",
+          "prerequisites": "",
+          "source": "Saga Edition Core Rulebook",
+          "page": 107,
+          "costNumeric": null,
+          "tags": []
+        },
+        "effects": [],
+        "folder": null,
+        "sort": 0,
+        "ownership": {
+          "default": 0
+        },
+        "flags": {}
+      },
+      "claudeInstruction": "Create the distinct canonical identity with createRecordId. Do not overwrite or repurpose a same-name record in another tree."
     },
     {
       "canonicalIdentity": "Saga Edition Core Rulebook|Dathomiri Witch|Command Beast",
