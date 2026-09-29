@@ -83,6 +83,8 @@ node tools/build-talent-phase-3b-threats-manifest.mjs --check
 node tools/build-talent-phase-3b-scum-and-villainy-manifest.mjs --check
 node tools/build-talent-phase-3b-unknown-regions-manifest.mjs --check
 node tools/build-talent-phase-3b-legacy-era-manifest.mjs --check
+node tools/build-talent-phase-3b-kotor-manifest.mjs --check
+node tools/build-talent-phase-3b-force-unleashed-manifest.mjs --check
 node tools/build-talent-phase-3b-jedi-academy-manifest.mjs --check
 node tools/build-talent-phase-3b-scavengers-manifest.mjs --check
 ```
