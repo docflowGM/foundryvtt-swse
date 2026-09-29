@@ -12,6 +12,7 @@
  *   node tools/build-talent-phase-3b-manifest.mjs --book unknown [--check]
  *   node tools/build-talent-phase-3b-manifest.mjs --book rebellion [--check]
  *   node tools/build-talent-phase-3b-manifest.mjs --book legacy [--check]
+ *   node tools/build-talent-phase-3b-manifest.mjs --book scum [--check]
  */
 import fs from 'node:fs';
 import path from 'node:path';
@@ -44,6 +45,29 @@ const BOOKS = {
         REMOVE_CONTAMINATION: 31,
         CORRECT_TREE: 17,
         CREATE: 6,
+        IDENTITY_SPLIT: 1
+      }
+    }
+  },
+  scum: {
+    sourcebook: 'Scum and Villainy',
+    bookOrder: 8,
+    phase2: 'data/audits/talent-phase-2-scum-and-villainy-content.json',
+    discrepancy: 'data/audits/talent-phase-2-scum-and-villainy-discrepancy-manifest.json',
+    output: 'data/audits/talent-phase-3b-scum-and-villainy-manifest.json',
+    aliases: {},
+    treeSurvivors: {
+      'Scum and Villainy|GenoHaradan': 'da7b731a3e434a7a'
+    },
+    expected: {
+      records: 110,
+      extras: 0,
+      treeConsolidations: 1,
+      dispositions: {
+        UPDATE_CONTENT: 104,
+        UPDATE_METADATA: 1,
+        CORRECT_TREE: 3,
+        CREATE: 1,
         IDENTITY_SPLIT: 1
       }
     }
@@ -274,6 +298,7 @@ export function buildBookManifest(bookKey, { check = false } = {}) {
   const extras = new Map();
   const referenceOnlyPublications = [];
   const treeCreates = new Map();
+  const treeConsolidations = new Map();
   const classAccessMutations = new Map();
   const records = [];
 
@@ -296,10 +321,40 @@ export function buildBookManifest(bookKey, { check = false } = {}) {
     const repoTreeIds = treeAuthority.repoTreeIds ?? [];
     let targetTreeId;
     let targetTree;
-    if (repoTreeIds.length === 1) {
+    const survivorOverride = cfg.treeSurvivors?.[claim.canonicalTreeKey] ?? null;
+    if (repoTreeIds.length === 1 && !survivorOverride) {
       targetTreeId = repoTreeIds[0];
       targetTree = treeById.get(targetTreeId);
       invariant(targetTree, 'target production tree missing: ' + targetTreeId);
+    } else if (survivorOverride) {
+      invariant(repoTreeIds.includes(survivorOverride), 'tree survivor is not a registered production tree: ' + claim.canonicalTreeKey);
+      targetTreeId = survivorOverride;
+      const survivorTree = treeById.get(targetTreeId);
+      invariant(survivorTree, 'target production tree missing: ' + targetTreeId);
+      targetTree = {...survivorTree, name: treeAuthority.displayName};
+      if (!treeConsolidations.has(claim.canonicalTreeKey)) {
+        const obsoleteTrees = repoTreeIds.filter(id => id !== targetTreeId).map(id => {
+          const tree = treeById.get(id);
+          invariant(tree, 'obsolete split tree missing: ' + id);
+          return {treeId: id, treeName: tree.name};
+        });
+        treeConsolidations.set(claim.canonicalTreeKey, {
+          canonicalTreeKey: claim.canonicalTreeKey,
+          survivorTreeId: targetTreeId,
+          survivorCurrentName: survivorTree.name,
+          canonicalDisplayName: treeAuthority.displayName,
+          obsoleteTrees,
+          classAccess: treeAuthority.aggregateClassAccess ?? treeAuthority.classAccess ?? [],
+          survivorTreePatch: {
+            name: treeAuthority.displayName,
+            'system.talent_tree': treeAuthority.displayName,
+            'system.talentIds': [],
+            'system.talentNames': []
+          },
+          deleteObsoleteTreeIds: obsoleteTrees.map(tree => tree.treeId),
+          instruction: 'Move every canonical member to the survivor tree, rename the survivor to the canonical display name, update references if needed, then delete only the listed obsolete split fragments.'
+        });
+      }
     } else {
       invariant(cfg.allowTreeCreates && repoTreeIds.length === 0, 'expected one production tree id for ' + claim.canonicalTreeKey);
       targetTreeId = makeTreeId(claim.canonicalTreeKey);
@@ -355,7 +410,8 @@ export function buildBookManifest(bookKey, { check = false } = {}) {
     const evidenceId = claim.repoRecordId ?? discrepancyId;
     const direct = (overrideId && talentById.get(overrideId)) || (evidenceId && talentById.get(evidenceId)) || null;
     const sameName = talentsByName.get(normalizeKey(canonical.name)) ?? [];
-    const sameNameInTarget = sameName.filter(t => (claimsByTalentId.get(t._id) ?? []).some(tree => tree._id === targetTreeId));
+    const canonicalCandidateTreeIds = new Set(survivorOverride ? repoTreeIds : [targetTreeId]);
+    const sameNameInTarget = sameName.filter(t => (claimsByTalentId.get(t._id) ?? []).some(tree => canonicalCandidateTreeIds.has(tree._id)));
     const exactNameInTarget = sameNameInTarget.filter(t => t.name === canonical.name);
     const resolved = direct || (exactNameInTarget.length === 1 ? exactNameInTarget[0] : sameNameInTarget.length === 1 ? sameNameInTarget[0] : null);
 
@@ -398,7 +454,7 @@ export function buildBookManifest(bookKey, { check = false } = {}) {
 
     let disposition;
     if (!resolved) disposition = sameName.length > 0 ? 'IDENTITY_SPLIT' : 'CREATE';
-    else if (!isCorrectTree) disposition = evidenceId || overrideId ? 'CORRECT_TREE' : 'IDENTITY_SPLIT';
+    else if (!isCorrectTree) disposition = evidenceId || overrideId || (survivorOverride && currentTrees.some(tree => repoTreeIds.includes(tree._id))) ? 'CORRECT_TREE' : 'IDENTITY_SPLIT';
     else if ((claim.dispositions ?? []).some(flag => contaminationFlags.has(flag))) disposition = 'REMOVE_CONTAMINATION';
     else if (fieldChanges['system.benefit'] || fieldChanges[descriptionPath] || fieldChanges['system.prerequisites']) disposition = 'UPDATE_CONTENT';
     else if (fieldChanges.name || fieldChanges['system.summary'] || fieldChanges['system.source'] || fieldChanges['system.page']) disposition = 'UPDATE_METADATA';
@@ -441,6 +497,7 @@ export function buildBookManifest(bookKey, { check = false } = {}) {
         resolutionEvidence: overrideId ? 'EXPLICIT_ALIAS_OVERRIDE'
           : claim.repoRecordId ? 'PHASE2_CONTENT_MAPPING'
           : discrepancyId ? 'PHASE2_DISCREPANCY_MAPPING'
+          : resolved && survivorOverride ? 'TREE_CONSOLIDATION_NAME_MATCH'
           : resolved ? 'TARGET_TREE_NAME_MATCH' : 'UNRESOLVED',
         productionRecordId: productionId,
         preserveProductionId: !!productionId,
@@ -512,6 +569,14 @@ export function buildBookManifest(bookKey, { check = false } = {}) {
     treeCreate.createTemplate.system.talentNames = members.map(record => record.name);
   }
 
+  for (const consolidation of treeConsolidations.values()) {
+    const members = records.filter(record => record.canonicalTreeKey === consolidation.canonicalTreeKey);
+    consolidation.survivorTreePatch['system.talentIds'] = members.map(record =>
+      record.identityResolution.productionRecordId ?? record.identityResolution.createRecordId
+    );
+    consolidation.survivorTreePatch['system.talentNames'] = members.map(record => record.name);
+  }
+
   const dispositionCounts = {};
   const fieldChangeCounts = {};
   for (const record of records) {
@@ -524,6 +589,7 @@ export function buildBookManifest(bookKey, { check = false } = {}) {
   invariant(records.length === cfg.expected.records, 'unexpected owned record count for ' + bookKey);
   invariant(extras.size === cfg.expected.extras, 'unexpected production-extra count for ' + bookKey);
   invariant(treeCreates.size === (cfg.expected.treeCreates ?? 0), 'unexpected tree-create count for ' + bookKey);
+  invariant(treeConsolidations.size === (cfg.expected.treeConsolidations ?? 0), 'unexpected tree-consolidation count for ' + bookKey);
   invariant(classAccessMutations.size === (cfg.expected.classAccessMutations ?? 0), 'unexpected class-access mutation count for ' + bookKey);
   for (const [key, value] of Object.entries(cfg.expected.dispositions)) {
     invariant((dispositionCounts[key] ?? 0) === value, 'unexpected ' + key + ' count for ' + bookKey);
@@ -555,7 +621,8 @@ export function buildBookManifest(bookKey, { check = false } = {}) {
       ...(cfg.allowTreeCreates ? {
         productionTreeCreates: treeCreates.size,
         classAccessMutations: classAccessMutations.size
-      } : {})
+      } : {}),
+      ...(cfg.treeSurvivors ? {productionTreeConsolidations: treeConsolidations.size} : {})
     },
     dispositionPrecedence: ['IDENTITY_SPLIT','CREATE','CORRECT_TREE','REMOVE_CONTAMINATION','UPDATE_CONTENT','UPDATE_METADATA','KEEP'],
     phase3cWriteContract: {
@@ -577,6 +644,7 @@ export function buildBookManifest(bookKey, { check = false } = {}) {
       treeCreates: [...treeCreates.values()],
       classAccessMutations: [...classAccessMutations.values()]
     } : {}),
+    ...(cfg.treeSurvivors ? {treeConsolidations: [...treeConsolidations.values()]} : {}),
     referenceOnlyPublications,
     productionExtras: [...extras.values()],
     records
@@ -601,6 +669,6 @@ if (isDirectRun) {
   const bookArg = process.argv.find(arg => arg.startsWith('--book='));
   const index = process.argv.indexOf('--book');
   const bookKey = bookArg ? bookArg.slice('--book='.length) : index >= 0 ? process.argv[index + 1] : null;
-  invariant(bookKey, 'usage: --book core|threats|starships|scavengers|intrigue|war|unknown|rebellion|legacy [--check]');
+  invariant(bookKey, 'usage: --book core|threats|starships|scavengers|intrigue|war|unknown|rebellion|legacy|scum [--check]');
   buildBookManifest(bookKey, {check: process.argv.includes('--check')});
 }
