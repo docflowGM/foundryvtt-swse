@@ -262,7 +262,7 @@ If your target is no more than 6 squares away, you can pull your lightsaber back
 
 **Canonical rules text**
 
-This talent allows you to redirect a deflected blaster bolt along a specific trajectory so that it damages another creature or object in its path, Once per round when you successfully deflect a blaster bolt, you can make an immediate ranged attack against another target with which you have line of sight. Apply the normal range penalties to the attack roll (see Table 8-5: Range Penalties}, not counting the distance the bolt traveled to reach you. If the attack succeeds, it deals norma! weapon damage to the target.
+This talent allows you to redirect a deflected blaster bolt along a specific trajectory so that it damages another creature or object in its path, Once per round when you successfully deflect a blaster bolt, you can make an immediate ranged attack against another target with which you have line of sight. Apply the normal range penalties to the attack roll (see Table 8-5: Range Penalties), not counting the distance the bolt traveled to reach you. If the attack succeeds, it deals normal weapon damage to the target.
 
 Only single blaster bolts can be redirected in this manner. Barrages from autofire weapons and other types of projectiles can't be redirected.
 
@@ -480,13 +480,13 @@ You can give up your Standard Action to give one ally within your line of sight 
 
 - **Page:** 44
 - **Prerequisites:** —
-- **Quick summary:** You are able to obtain licensed, restricted, military, or illegal equipment without having to pay a licensing fee or endure a background check, provided the total cost of the desired equipment is equal to or less" than your...
+- **Quick summary:** You are able to obtain licensed, restricted, military, or illegal equipment without having to pay a licensing fee or endure a background check, provided the total cost of the desired equipment is equal to or less than your...
 - **Phase 2 repository evidence:** Mapped repository record: `e58a8ad63c1d8771` (Connections)
 - **Phase 2 discrepancy flags:** CORRECT_OR_SOURCE_ALIGNED
 
 **Canonical rules text**
 
-You are able to obtain licensed, restricted, military, or illegal equipment without having to pay a licensing fee or endure a background check, provided the total cost of the desired equipment is equal to or less" than your character level x 1,000 credits. In addition, when obtaining equip~ ment or services through the black market, you reduce the black market cost multiplier by 1. See Restricted Items (page 118) for details.
+You are able to obtain licensed, restricted, military, or illegal equipment without having to pay a licensing fee or endure a background check, provided the total cost of the desired equipment is equal to or less than your character level x 1,000 credits. In addition, when obtaining equipment or services through the black market, you reduce the black market cost multiplier by 1. See Restricted Items (page 118) for details.
 
 #### Educated
 
@@ -1229,13 +1229,13 @@ Choose a single Exotic Weapon or weapon group with which you are proficient. You
 
 - **Page:** 100
 - **Prerequisites:** —
-- **Quick summary:** Whenever you use a Force power that hs effect (such as Force siam), you may exclude a certain number OF from the effects of that power.
+- **Quick summary:** Whenever you use a Force power that has an area effect (such as Force slam), you may exclude a certain number of targets from the effects of that power.
 - **Phase 2 repository evidence:** Mapped repository record: `0fc08fad3a87a830` (Disciplined Strike)
 - **Phase 2 discrepancy flags:** CORRECT_OR_SOURCE_ALIGNED
 
 **Canonical rules text**
 
-Whenever you use a Force power that hs effect (such as Force siam), you may exclude a certain number OF from the effects of that power. The number of targets that you in this manner is equal to your Wisdom modifier [minimum of 1). _
+Whenever you use a Force power that has an area effect (such as Force slam), you may exclude a certain number of targets from the effects of that power. The number of targets that you may exclude in this manner is equal to your Wisdom modifier (minimum of 1).
 
 #### Telekinetic Power
 
@@ -1821,7 +1821,7 @@ You attract a loyal Minion. The Minion is a Nonheroic character with a Class Lev
 #### Impel Ally I
 
 - **Page:** 210
-- **Prerequisites:** |mpel Ally |
+- **Prerequisites:** —
 - **Quick summary:** You can spend a Swift Action to grant one ally the ability to move its normal speed. The ally must move immediately on your turn, before you do anything else, or else the opportunity is wasted.
 - **Phase 2 repository evidence:** Mapped repository record: `aa32a31a179fe5c1` (Impel Ally I)
 - **Phase 2 discrepancy flags:** CORRECT_OR_SOURCE_ALIGNED
@@ -1833,7 +1833,7 @@ You can spend a Swift Action to grant one ally the ability to move its normal sp
 #### Impel Ally II
 
 - **Page:** 210
-- **Prerequisites:** |mpel Ally |
+- **Prerequisites:** Impel Ally I
 - **Quick summary:** You can spend two Swift Actions to grant one ally the ability to take a Standard Action or Move Action. The ally must move immediately on your turn, before you do anything else, or else the opportunity is wasted.
 - **Phase 2 repository evidence:** Mapped repository record: `b11a87e70f957ed2` (Impel Ally II)
 - **Phase 2 discrepancy flags:** CORRECT_OR_SOURCE_ALIGNED
@@ -1862,13 +1862,13 @@ Your penalty when making an autofire attack or using the Burst Fire feat is redu
 
 - **Page:** 212
 - **Prerequisites:** —
-- **Quick summary:** You are considered profi- stacks with the bonus granted by the Weapon Specialization talent fp; cient with any exotic weapon, even if you don't possess the 53).
+- **Quick summary:** You are considered proficient with any exotic weapon, even if you don't possess the appropriate Exotic Weapon Proficiency feat.
 - **Phase 2 repository evidence:** Mapped repository record: `fb103ac0e4501e95` (Exotic Weapon Mastery)
 - **Phase 2 discrepancy flags:** CORRECT_OR_SOURCE_ALIGNED
 
 **Canonical rules text**
 
-You are considered profi- stacks with the bonus granted by the Weapon Specialization talent fp; cient with any exotic weapon, even if you don't possess the 53). You must be proficient with the weapon to gain this benefit appropriate Exotic Weapon Proficiency feat. You may select this talent multiple times. Each time you select this tat
+You are considered proficient with any exotic weapon, even if you don't possess the appropriate Exotic Weapon Proficiency feat.
 
 #### Greater Devastating Attack
 
@@ -2002,39 +2002,41 @@ Whenever you use a Force Power with the [Dark Side] descriptor, you may reroll y
 
 - **Page:** 214
 - **Prerequisites:** —
-- **Quick summary:** <p>You are skilled at using a particular Force Power. Select one Force Power you know.
+- **Quick summary:** You are skilled at using a particular Force Power. Select one Force Power you know.
 - **Phase 2 repository evidence:** Mapped repository record: `90d9a2e7dbc160d1` (Force Power Adept)
 - **Phase 2 discrepancy flags:** CORRECT_OR_SOURCE_ALIGNED
 
 **Canonical rules text**
 
-<p>You are skilled at using a particular Force Power. Select one Force Power you know. When using that Force Power, you have the option of spending a Force Point to make two Use the Force checks, keeping the better result.</p>
-<p>This Talent may be selected multiple times. Its effects do not stack. Each time you select this Talent, you must choose a different Force Power.</p>
+You are skilled at using a particular Force Power. Select one Force Power you know. When using that Force Power, you have the option of spending a Force Point to make two Use the Force checks, keeping the better result.
+
+This Talent may be selected multiple times. Its effects do not stack. Each time you select this Talent, you must choose a different Force Power.
 
 #### Force Treatment
 
 - **Page:** 214
 - **Prerequisites:** —
-- **Quick summary:** <p>You can make a Use the Force check in place of a Treat Injury check. You are considered Trained in the Treat Injury Skill.
+- **Quick summary:** You can make a Use the Force check in place of a Treat Injury check. You are considered Trained in the Treat Injury Skill.
 - **Phase 2 repository evidence:** Mapped repository record: `181da7f36b9fba9d` (Force Treatment)
 - **Phase 2 discrepancy flags:** CORRECT_OR_SOURCE_ALIGNED
 
 **Canonical rules text**
 
-<p>You can make a Use the Force check in place of a Treat Injury check. You are considered Trained in the Treat Injury Skill. If you are entitled to a Treat Injury check reroll, you may reroll your Use the Force check instead (subject to the same circumstances and limitations).</p>
-<p>In addition, you can administer First Aid, Treat Disease, Treat Poison, and Treat Radiation without the requisite Medical Kit or Medpac.</p>
+You can make a Use the Force check in place of a Treat Injury check. You are considered Trained in the Treat Injury Skill. If you are entitled to a Treat Injury check reroll, you may reroll your Use the Force check instead (subject to the same circumstances and limitations).
+
+In addition, you can administer First Aid, Treat Disease, Treat Poison, and Treat Radiation without the requisite Medical Kit or Medpac.
 
 #### Fortified Body
 
 - **Page:** 214
 - **Prerequisites:** Equilibrium (see page 101).
-- **Quick summary:** <p>The Force shields you against ailments, toxins, and radiation poisoning, making you immune to Disease, Poison, and Radiation.</p>
+- **Quick summary:** The Force shields you against ailments, toxins, and radiation poisoning, making you immune to Disease, Poison, and Radiation.
 - **Phase 2 repository evidence:** Mapped repository record: `6714ab8e28708f50` (Fortified Body)
 - **Phase 2 discrepancy flags:** CORRECT_OR_SOURCE_ALIGNED
 
 **Canonical rules text**
 
-<p>The Force shields you against ailments, toxins, and radiation poisoning, making you immune to Disease, Poison, and Radiation.</p>
+The Force shields you against ailments, toxins, and radiation poisoning, making you immune to Disease, Poison, and Radiation.
 
 ### Force Item
 
@@ -2044,55 +2046,61 @@ Whenever you use a Force Power with the [Dark Side] descriptor, you may reroll y
 
 - **Page:** 214
 - **Prerequisites:** —
-- **Quick summary:** <p>You may spend a Force Point to attune a melee weapon. Attuning the weapon takes a Full-Round Action.
+- **Quick summary:** You may spend a Force Point to attune a melee weapon. Attuning the weapon takes a Full-Round Action.
 - **Phase 2 repository evidence:** Mapped repository record: `aa9b67c6737c2549` (Attune Weapon)
 - **Phase 2 discrepancy flags:** CORRECT_OR_SOURCE_ALIGNED
 
 **Canonical rules text**
 
-<p>You may spend a Force Point to attune a melee weapon. Attuning the weapon takes a Full-Round Action. From that point forward, whenever you wield the attuned weapon, you gain a +1 Force bonus on attack rolls.</p>
-<p>The weapon is attuned to you alone; others who wield the weapon do not gain the Force bonus.</p>
+You may spend a Force Point to attune a melee weapon. Attuning the weapon takes a Full-Round Action. From that point forward, whenever you wield the attuned weapon, you gain a +1 Force bonus on attack rolls.
+
+The weapon is attuned to you alone; others who wield the weapon do not gain the Force bonus.
 
 #### Empower Weapon
 
 - **Page:** 214
 - **Prerequisites:** —
-- **Quick summary:** <p>You may spend a Force Point to empower a melee weapon. Empowering the weapon takes a Full-Round Action.
+- **Quick summary:** You may spend a Force Point to empower a melee weapon. Empowering the weapon takes a Full-Round Action.
 - **Phase 2 repository evidence:** Mapped repository record: `5218d5971b78119b` (Empower Weapon)
 - **Phase 2 discrepancy flags:** CORRECT_OR_SOURCE_ALIGNED
 
 **Canonical rules text**
 
-<p>You may spend a Force Point to empower a melee weapon. Empowering the weapon takes a Full-Round Action. From that point forward, the Empowered Weapon deals an additional die of damage, but only when wielded by you.</p>
-<p>For example, an empowered Lightsaber deals 3d8 points of damage, instead of 2d8 points of damage. Others who wield the weapon do not gain the bonus damage die.</p>
+You may spend a Force Point to empower a melee weapon. Empowering the weapon takes a Full-Round Action. From that point forward, the Empowered Weapon deals an additional die of damage, but only when wielded by you.
+
+For example, an empowered Lightsaber deals 3d8 points of damage, instead of 2d8 points of damage. Others who wield the weapon do not gain the bonus damage die.
 
 #### Force Talisman
 
 - **Page:** 214
 - **Prerequisites:** —
-- **Quick summary:** <p>You may spend a Force Point to imbue a weapon or some other portable object with The Force, creating a Talisman that provides protection to you.
+- **Quick summary:** You may spend a Force Point to imbue a weapon or some other portable object with The Force, creating a Talisman that provides protection to you.
 - **Phase 2 repository evidence:** Mapped repository record: `66b23ee79bd33bf1` (Force Talisman)
 - **Phase 2 discrepancy flags:** CORRECT_OR_SOURCE_ALIGNED
 
 **Canonical rules text**
 
-<p>You may spend a Force Point to imbue a weapon or some other portable object with The Force, creating a Talisman that provides protection to you. Creating the Talisman takes a Full-Round Action.</p>
-<p>While you wear or carry the Talisman on your person, you gain a +1 Force bonus to one of your Defenses (Reflex Defense, Fortitude Defense, or Will Defense).</p>
-<p>You may only have one Force Talisman active at a given time, and if your Force Talisman is destroyed, you may not create another Force Talisman for 24 hours.</p>
+You may spend a Force Point to imbue a weapon or some other portable object with The Force, creating a Talisman that provides protection to you. Creating the Talisman takes a Full-Round Action.
+
+While you wear or carry the Talisman on your person, you gain a +1 Force bonus to one of your Defenses (Reflex Defense, Fortitude Defense, or Will Defense).
+
+You may only have one Force Talisman active at a given time, and if your Force Talisman is destroyed, you may not create another Force Talisman for 24 hours.
 
 #### Greater Force Talisman
 
 - **Page:** 214
 - **Prerequisites:** Force Talisman
-- **Quick summary:** <p>You may spend a Force Point to imbue a weapon or some other portable object with The Force, creating a Talisman that provides protection to you.
+- **Quick summary:** You may spend a Force Point to imbue a weapon or some other portable object with The Force, creating a Talisman that provides protection to you.
 - **Phase 2 repository evidence:** Mapped repository record: `0c636cdbb63cdba3` (Greater Force Talisman)
 - **Phase 2 discrepancy flags:** CORRECT_OR_SOURCE_ALIGNED
 
 **Canonical rules text**
 
-<p>You may spend a Force Point to imbue a weapon or some other portable object with The Force, creating a Talisman that provides protection to you. Creating the Talisman takes a Full-Round Action.</p>
-<p>While you wear or carry the Talisman on your person, you gain a +1 Force bonus to all of your Defenses (Reflex Defense, Fortitude Defense, and Will Defense).</p>
-<p>You may only have one Greater Force Talisman active at a given time, and if your Greater Force Talisman is destroyed, you may not create another Greater Force Talisman (or regular Force Talisman) for 24 hours.</p>
+You may spend a Force Point to imbue a weapon or some other portable object with The Force, creating a Talisman that provides protection to you. Creating the Talisman takes a Full-Round Action.
+
+While you wear or carry the Talisman on your person, you gain a +1 Force bonus to all of your Defenses (Reflex Defense, Fortitude Defense, and Will Defense).
+
+You may only have one Greater Force Talisman active at a given time, and if your Greater Force Talisman is destroyed, you may not create another Greater Force Talisman (or regular Force Talisman) for 24 hours.
 
 ### Gunslinger
 
@@ -10492,17 +10500,13 @@ Developed by Krynda Draay, this talent is used by Jedi Covenant WatchCircles to 
 
 - **Page:** 24
 - **Prerequisites:** farseeing, WatchCircle Initiate
-- **Quick summary:** As a reaction, you can make a Use the Force check after you or an ally within 12 squares misses with a melee or ranged attack, removing one use of the farseeing Force power from your active suite (as
+- **Quick summary:** As a reaction, you can make a Use the Force check after you or an ally within 12 squares misses with a melee or ranged attack, removing one use of the farseeing Force power from your active suite (as though you had activated the power).
 - **Production record:** `299c45ac33bf1485`
 - **Phase 3B disposition:** `UPDATE_CONTENT`
 
 **Canonical rules text**
 
-As a reaction, you can make a Use the Force check after you or an ally within 12 squares misses with a melee or ranged attack, removing one use of the farseeing Force power from your active suite (as
-
-SlveL sever)
-
-though you had activated the power). If your check result equals or exceeds the Will Defense of the target of that missed attack, the attacker can reroll the missed attack roll. This counts as using the farseeing Force power against that target, but this talent replaces the normal rules and effect of that power. Any attack can only be affected by this talent once (thus, multiple characters cannot use this talent on the same attack to allow multiple rerolls). You take a cumulative -5 penalty on Use the Force checks until the beginning of your next turn when you use this talent.
+As a reaction, you can make a Use the Force check after you or an ally within 12 squares misses with a melee or ranged attack, removing one use of the farseeing Force power from your active suite (as though you had activated the power). If your check result equals or exceeds the Will Defense of the target of that missed attack, the attacker can reroll the missed attack roll. This counts as using the farseeing Force power against that target, but this talent replaces the normal rules and effect of that power. Any attack can only be affected by this talent once (thus, multiple characters cannot use this talent on the same attack to allow multiple rerolls). You take a cumulative -5 penalty on Use the Force checks until the beginning of your next turn when you use this talent.
 
 #### Visionary Defense
 
@@ -10682,10 +10686,6 @@ This is a mind-affecting effect.
 
 Whenever you successfully damage an opponent with a melee attack, you can make a Deception check to feint against that target as a swift action. If successful, you designate an ally within 12 squares; your target is treated as flat-footed against the first attack that ally makes against your target before the beginning of your next turn.
 
-SUYSEL Hieovseh
-
-Ges
-
 #### Noble Fencing Style
 
 - **Page:** 27
@@ -10777,14 +10777,14 @@ Once per encounter, you can make an attack of opportunity against an opponent wi
 #### Slippery Strike
 
 - **Page:** 27
-- **Prerequisites:** None.
-- **Quick summary:** Once per encounter, you can designate an opponent you have just damaged as a reaction; that
+- **Prerequisites:** Strike and Run
+- **Quick summary:** Once per encounter, you can designate an opponent you have just damaged as a reaction; that opponent cannot make attacks of opportunity against you until the end of your next turn.
 - **Production record:** `a1a905019e7f17c0`
 - **Phase 3B disposition:** `UPDATE_CONTENT`
 
 **Canonical rules text**
 
-Once per encounter, you can designate an opponent you have just damaged as a reaction; that
+Once per encounter, you can designate an opponent you have just damaged as a reaction; that opponent cannot make attacks of opportunity against you until the end of your next turn. You may use this in conjunction with the Strike and Run talent, allowing you to benefit from both talents as a single reaction.
 
 #### Strike and Run
 
@@ -10916,25 +10916,19 @@ Once per encounter, you can attempt a devastating melee smash. You must declare 
 
 Choose a single exotic weapon or weapon group with which you are proficient. You ignore a target's armor bonus to Reflex Defense when disarming with such a weapon. Additionally, as a free action, once per encounter, you can grant yourself a +10 bonus on your attack roll when attempting to disarm an opponent while using such a weapon.
 
-SHV, aexusF
-
-HW HS LavHD
-
-C SESE | Shiv sana ll YalavHo a)
-
 ### Rocket Jumper
 
 #### Burning Assault
 
 - **Page:** 30
 - **Prerequisites:** Jet Pack Training
-- **Quick summary:** As a standard action you can expend one of your jet pack’s charges to make an attack with the jet pack, treating it as a flame thrower {see page 128 of the Saga Fdition core rulebook).
+- **Quick summary:** As a standard action you can expend one of your jet pack’s charges to make an attack with the jet pack, treating it as a flame thrower (see page 128 of the Saga Edition core rulebook).
 - **Production record:** `be617461ca46a5ad`
 - **Phase 3B disposition:** `UPDATE_CONTENT`
 
 **Canonical rules text**
 
-As a standard action you can expend one of your jet pack’s charges to make an attack with the jet pack, treating it as a flame thrower {see page 128 of the Saga Fdition core rulebook). You cannot use this talent when you are flying. You are considered proficient in the flame thrower for the purpose of making this attack.
+As a standard action you can expend one of your jet pack’s charges to make an attack with the jet pack, treating it as a flame thrower (see page 128 of the Saga Edition core rulebook). You cannot use this talent when you are flying. You are considered proficient in the flame thrower for the purpose of making this attack.
 
 #### Improved Trajectory
 
@@ -11066,8 +11060,6 @@ You can hurl a simple or advanced melee weapon your size or smaller as a standar
 
 Immediately after making a full attack where you attack with two pistols, you may move up to your speed as a free action.
 
-WJED!t KNIGHT TALENTS The following talents are for use with the Jedi Knight prestige class.
-
 ### Duelist
 
 #### Improved Riposte
@@ -11147,7 +11139,7 @@ Once per encounter, while making a charge, you take no cumulative penalty to Use
 #### Mobile Attack (lightsabers)
 
 - **Page:** 39
-- **Prerequisites:** Multiattack Proficiency (lightsabers), Dual Weapon Mastery |, Weapon Focus (lightsabers)
+- **Prerequisites:** Multiattack Proficiency (lightsabers), Dual Weapon Mastery I, Weapon Focus (lightsabers)
 - **Quick summary:** Immediately after making a full attack where you attack with two lightsabers (or both ends of a double-bladed lightsaber), you may move up to your speed as a free action.
 - **Production record:** `eb701499ba157c6a`
 - **Phase 3B disposition:** `UPDATE_CONTENT`
@@ -11220,18 +11212,6 @@ When using the rebuke Force power against a Force power with the [dark side] des
 
 Add one Force power with the [dark side] descriptor to your Force suite. Once per encounter you can use that Force power with the [dark side] descriptor without increasing your Dark Side Score.
 
-i YatavHg.
-
-i E 1 1
-
-T ay) | W d 8 “W Q Pr > @ (i) Ww) 0)
-
-a)
-
-HW eSLavHoS
-
-SessSsevi1) FoILSEe)
-
 ### Jedi Watchman
 
 #### Force Warning
@@ -11245,8 +11225,6 @@ SessSsevi1) FoILSEe)
 **Canonical rules text**
 
 Allies within 12 squares can choose to reroll their Initiative checks at the start of combat but must take the second result, even if it is worse. Furthermore, if any allies within 12 squares are surprised at the start of an encounter, but you are not, you can designate a number of those allies equal to your Wisdom modifier (minimum 1); those allies are no longer considered surprised and can act normally on the surprise round.
-
-MaSTER 4TRIG, JEDI WATCHMAN
 
 #### Improved Quick Draw (lightsabers)
 
@@ -11351,8 +11329,6 @@ Your knowledge of Sith sorcery allows you to imbue talismans and other objects w
 Create Sith Talisman:You can spend one Force Point to imbue a portable object with the dark side, creating a Sith talisman that provides offensive strength to a Force power or lightsaber attack. Creating the talisman takes a full-round action. While you wear or carry the talisman on your person, add 1d6 to your damage with Force powers. You gain a Dark Side point when you first put on or carry a Sith talisman. You can have only one Sith talisman active at any given time, and if it is destroyed, you cannot create another one for 24 hours.
 
 Create Sith Weapon: You can alchemically treat a properly prepared weapon to become a Sith weapon. You may spend a Force Point to imbue the weapon with the properties of the Sith alchemical weapon template (this process takes one hour to complete). See Chapter 5: Equipment and Droids for information on Sith alchemical weapons.
-
-New PRESTIGE
 
 ### Corporate Power
 
@@ -11544,13 +11520,13 @@ This is a mind-affecting effect.
 
 - **Page:** 45
 - **Prerequisites:** None.
-- **Quick summary:** You can sometimes shrug off the effect of debilitating attacks, Once per encounter, if you are hit by an attack that would normally knock you down the condition track, you can reduce the number of steps you move down the condition track by 1 step (to a minimum of 0}.
+- **Quick summary:** You can sometimes shrug off the effect of debilitating attacks, Once per encounter, if you are hit by an attack that would normally knock you down the condition track, you can reduce the number of steps you move down the condition track by 1 step (to a minimum of 0).
 - **Production record:** `9c0c0966b7c7c30e`
 - **Phase 3B disposition:** `UPDATE_CONTENT`
 
 **Canonical rules text**
 
-You can sometimes shrug off the effect of debilitating attacks, Once per encounter, if you are hit by an attack that would normally knock you down the condition track, you can reduce the number of steps you move down the condition track by 1 step (to a minimum of 0}.
+You can sometimes shrug off the effect of debilitating attacks, Once per encounter, if you are hit by an attack that would normally knock you down the condition track, you can reduce the number of steps you move down the condition track by 1 step (to a minimum of 0).
 
 ### Melee Duelist
 
@@ -11606,13 +11582,13 @@ When wielding only two light melee weapons or two lightsabers, whenever you make
 
 - **Page:** 46
 - **Prerequisites:** Dual Weapon Flourish I or Single Weapon Flourish I, Weapon Finesse
-- **Quick summary:** You may add your Dexterity bonus [instead of your Strength bonus) on damage rolls when wielding a light melee weapon.
+- **Quick summary:** You may add your Dexterity bonus (instead of your Strength bonus) on damage rolls when wielding a light melee weapon.
 - **Production record:** `fc986d810732ff3a`
 - **Phase 3B disposition:** `UPDATE_CONTENT`
 
 **Canonical rules text**
 
-You may add your Dexterity bonus [instead of your Strength bonus) on damage rolls when wielding a light melee weapon. When you wield a light melee weapon two-handed, you may apply double your Dexterity bonus (instead of double your Strength bonus) to the damage.
+You may add your Dexterity bonus (instead of your Strength bonus) on damage rolls when wielding a light melee weapon. When you wield a light melee weapon two-handed, you may apply double your Dexterity bonus (instead of double your Strength bonus) to the damage.
 
 #### Multiattack Proficiency (advanced melee weapons)
 
@@ -11752,17 +11728,7 @@ Whenever you successfully use Force Delay, you grant one ally within six squares
 
 **Canonical rules text**
 
-Jal Shey verbally startle opponents with a little help from the Force. Once per encounter, make a Persuasion check against the Will
-
-AP SSLdvHo
-
-aeVved aHL
-
-Al usiavHo 7)
-
-2Suyecd SH
-
-Defense of a target of Intelligence 3 or higher that can understand you as a reaction. If successful, the target loses its move action on its next round. If you spend a Force Point, the target loses its standard action instead.
+Jal Shey verbally startle opponents with a little help from the Force. Once per encounter, make a Persuasion check against the Will Defense of a target of Intelligence 3 or higher that can understand you as a reaction. If successful, the target loses its move action on its next round. If you spend a Force Point, the target loses its standard action instead.
 
 #### Imbue Item
 
@@ -11852,20 +11818,10 @@ The long-lived Draethos are particularly adept at searching and understanding th
 
 Your Sith sorcery experimentation has provided you with a method of manipulating the dark side. Once per encounter, when using a Force Point in an act that would give you a dark side point, you may treat the Force Point as though you had rolled the maximum on the die.
 
-Al H3iLeavHO
-
-BgoHed FHL
-
-an 18)
-
-Al esiavHa
-
-f a WwW q v G) 2) ® W)
-
 #### Krath Illusions
 
 - **Page:** 60
-- **Prerequisites:** ||lusion
+- **Prerequisites:** Illusion
 - **Quick summary:** As a swift action, you can reduce the penalty for large illusions by one half (rounded down, minimum -1).
 - **Production record:** `90820963f87dd268`
 - **Phase 3B disposition:** `UPDATE_CONTENT`
@@ -11896,7 +11852,7 @@ You have a natural ability to use dark-side artifacts, such as Sith talismans an
 
 **Canonical rules text**
 
-Once per encounter, using rudimentary Sith sorcery, you channel dark side energy in a manner that boosts one use of a Force power. As a swift action, you can add 1 die of damage (if the power deals damage) or extend the range of the power by 6 squares (if it has a range beyond yourself or a single target). Using this talent automatically adds the {dark side] descriptor to the power used.
+Once per encounter, using rudimentary Sith sorcery, you channel dark side energy in a manner that boosts one use of a Force power. As a swift action, you can add 1 die of damage (if the power deals damage) or extend the range of the power by 6 squares (if it has a range beyond yourself or a single target). Using this talent automatically adds the [dark side] descriptor to the power used.
 
 ### Luka Sene
 
@@ -11998,8 +11954,6 @@ You have learned to sense the call of your ancestors and wield it through the Fo
 
 Taking cues from Manaan's oceans, you know how to emulate wave action using the Force. As a swift action, when you use a telekinetic Force power (that is, a power affected by the Telekinetic Power or Telekinetic Savant talents), you manipulate the particles of the environment around you to add to the force of impact, allowing you to add your Charisma modifier to any damage dealt (minimum +1).
 
-“i CHAPTER V
-
 ### Reference-only publication
 
 - Alter — Illusion — KOTOR page 52. Canonical owner: Force Unleashed Campaign Guide. No KOTOR production mutation.
@@ -12058,7 +12012,7 @@ You are famous for using certain items, and you have become skilled at wielding 
 
 **Canonical rules text**
 
-You are skilled at fighting Jedi and other Force-users. You gain a +1 insight bonus to Fortitude and Will Defense and deal +1 die of damage against characters who have the Force Sensitivity feat. EvITeE TROOPER TALENTS The following talents are intended for use with the elite trooper prestige class.
+You are skilled at fighting Jedi and other Force-users. You gain a +1 insight bonus to Fortitude and Will Defense and deal +1 die of damage against characters who have the Force Sensitivity feat.
 
 ### Duelist
 
@@ -12444,13 +12398,13 @@ As a swift action, you can designate a single target within your line of sight a
 
 - **Page:** 50
 - **Prerequisites:** Spynet Agent
-- **Quick summary:** As a swift action, you can designate a single target within your line of sight and make a Knowledge (galactic lore} check against a DC equal to 15 + the target's CL.
+- **Quick summary:** As a swift action, you can designate a single target within your line of sight and make a Knowledge (galactic lore) check against a DC equal to 15 + the target's CL.
 - **Production record:** `e2690af7f6700f95`
 - **Phase 3B disposition:** `UPDATE_CONTENT`
 
 **Canonical rules text**
 
-As a swift action, you can designate a single target within your line of sight and make a Knowledge (galactic lore} check against a DC equal to 15 + the target's CL. If the check is successful, for the remainder of the encounter you gain a +2 morale bonus on attack rolls against that target.
+As a swift action, you can designate a single target within your line of sight and make a Knowledge (galactic lore) check against a DC equal to 15 + the target's CL. If the check is successful, for the remainder of the encounter you gain a +2 morale bonus on attack rolls against that target.
 
 #### Six Questions
 
@@ -13472,13 +13426,13 @@ You always succeed on attempts to aid another on Deception, Knowledge, and Persu
 
 - **Page:** 103
 - **Prerequisites:** None.
-- **Quick summary:** Once per day, as a full-round action, you can use the Mechanics skill to repair yourself (using the repair droid application of the skill}, as opposed to the normal 1 hour.
+- **Quick summary:** Once per day, as a full-round action, you can use the Mechanics skill to repair yourself (using the repair droid application of the skill), as opposed to the normal 1 hour.
 - **Production target:** `428896be183fadb1`
 - **Phase 3B disposition:** `CREATE`
 
 **Canonical rules text**
 
-Once per day, as a full-round action, you can use the Mechanics skill to repair yourself (using the repair droid application of the skill}, as opposed to the normal 1 hour.
+Once per day, as a full-round action, you can use the Mechanics skill to repair yourself (using the repair droid application of the skill), as opposed to the normal 1 hour.
 
 #### Droid Smash
 
@@ -13755,7 +13709,7 @@ You can spend a Force Point to imbue a weapon or some other portable object with
 
 **Canonical rules text**
 
-As Dark Side Talisman (above), except that the talisman’s Force bonus extends to all three of your defenses (Reflex, Fortitude, and Will). 1 esidvnS eaVued HL dO VSME 0 a > a 4 5 bi
+As Dark Side Talisman (above), except that the talisman’s Force bonus extends to all three of your defenses (Reflex, Fortitude, and Will).
 
 ### Duelist
 
@@ -13781,7 +13735,7 @@ Once per encounter as a swift action, you can return any one spent Force power w
 
 **Canonical rules text**
 
-When you wield both a one-handed lightsaber and a shoto (or guard shoto), you can consider the one-handed lightsaber to be a light weapon. Additionally, if you have the Lightsaber Defense talent, you can activate the talent as a free action on your turn (instead of a swift action) whenever you wield both a one-handed lightsaber and a shoto (or guard shoto) A MeO! ARTISAN TEACHES THE Basice OF LIGHTSABER CONSTRUCTION.
+When you wield both a one-handed lightsaber and a shoto (or guard shoto), you can consider the one-handed lightsaber to be a light weapon. Additionally, if you have the Lightsaber Defense talent, you can activate the talent as a free action on your turn (instead of a swift action) whenever you wield both a one-handed lightsaber and a shoto (or guard shoto)
 
 ### Jedi Consular
 
@@ -13807,7 +13761,7 @@ As a standard action, you can peer into the Force and search for weaknesses in t
 
 **Canonical rules text**
 
-Whenever you use Adversary Lore on a target suc-cessfully, that target also takes an additional 1d6 points of damage from any successful attack made against it by you or an ally who can hear and understand you until the end of your next turn. NEw JEDI GUARDIAN TALENTS The following talents belong to the Jedi Guardian talent tree (see page 40 of the Saga Edition core rulebook).
+Whenever you use Adversary Lore on a target suc-cessfully, that target also takes an additional 1d6 points of damage from any successful attack made against it by you or an ally who can hear and understand you until the end of your next turn.
 
 ### Jedi Guardian
 
@@ -13833,7 +13787,7 @@ You can use the Move Light Object application of the Use the Force skill to cast
 
 **Canonical rules text**
 
-When you make a successful attack of opportunity against a target leaving your threatened area, you stop the target's movement, ending its action. New JEDI SENTINEL TALENT The following talent belongs to the Jedi Sentinel talent tree (see page 40 of the Saga Edition core rulebook).
+When you make a successful attack of opportunity against a target leaving your threatened area, you stop the target's movement, ending its action.
 
 ### Jedi Sentinel
 
@@ -13847,7 +13801,7 @@ When you make a successful attack of opportunity against a target leaving your t
 
 **Canonical rules text**
 
-You gain a +1 Force bonus on attack rolls and deal +1 die of damage on lightsaber attacks made against a beast with a Dark Side Score of 1+. New LIGHTSABER COMBAT TALENT The following talent belongs to the Lightsaber Combat talent tree (see page 41 of the Saga Edition core rulebook).
+You gain a +1 Force bonus on attack rolls and deal +1 die of damage on lightsaber attacks made against a beast with a Dark Side Score of 1+.
 
 ### Lightsaber Combat
 
@@ -13961,7 +13915,7 @@ Whenever you are armed with a lightsaber that you built, you gain a +2 morale bo
 
 **Canonical rules text**
 
-Whenever you build a lightsaber, you do so with such expertise that it makes the weapon even more refined and elegant. When you build a lightsaber, you can choose to add one extra accessory to the lightsaber at the time of creation, and when you hit a target with a lightsaber that you built, you can always choose to reroll one damage die from your damage roll, but you must keep the second result, even if it is worse. |n addition, you can mentor another character while he constructs his own lightsaber. When you do so, you reduce the Use the Force check DC for constructing the lightsaber by -5.
+Whenever you build a lightsaber, you do so with such expertise that it makes the weapon even more refined and elegant. When you build a lightsaber, you can choose to add one extra accessory to the lightsaber at the time of creation, and when you hit a target with a lightsaber that you built, you can always choose to reroll one damage die from your damage roll, but you must keep the second result, even if it is worse. In addition, you can mentor another character while he constructs his own lightsaber. When you do so, you reduce the Use the Force check DC for constructing the lightsaber by -5.
 
 #### Perfect Attunement
 
@@ -14011,7 +13965,7 @@ Whenever an ally within 12 squares with a lower Use the Force skill bonus than y
 
 **Canonical rules text**
 
-When you take this talent, choose one Force secret that you know. Once per turn as a swift action, you can grant the use of this Force secret to one ally within 12 squares of you who is trained in the Use the Force skill. The target gains the benefit of this secret until the end of your next turn. \o I > 1 4 o 2 g98Ocd SHA AO aor) wsiawnS
+When you take this talent, choose one Force secret that you know. Once per turn as a swift action, you can grant the use of this Force secret to one ally within 12 squares of you who is trained in the Use the Force skill. The target gains the benefit of this secret until the end of your next turn.
 
 #### Share Force Technique
 
@@ -14147,7 +14101,7 @@ You take no penalty on attack rolls with improvised weapons.
 
 **Canonical rules text**
 
-Whenever you are wielding a shoto and success-fully use the Block talent to negate a melee attack, the attacker can make no further melee attacks until the start of its next turn or until you are no longer adjacent to it. A RODIAN Jeo! WEAPONMASTER. SITH APPRENTICE TALENTS The following talents are for use with the Sith apprentice prestige class (see page 222 of the Saga Edition core rulebook).
+Whenever you are wielding a shoto and success-fully use the Block talent to negate a melee attack, the attacker can make no further melee attacks until the start of its next turn or until you are no longer adjacent to it.
 
 #### Twin Weapon Mastery
 
@@ -14353,7 +14307,7 @@ Whenever another creature targets you with a Force power with the [mind-affectin
 
 **Canonical rules text**
 
-Whenever you use a Force power with the [mind-affecting] descriptor successfully against a target, until the end of your next turn you gain a +2 Force bonus on skill checks made to activate mind-affecting Force powers and talents against that same target. JEDI KNIGHT TALENTS The following talents are for use with the Jedi Knight prestige class (see page 217 of the Saga Edition core rulebook). New Duelist Talents The following talents belong to the Duelist talent tree (see page 218 of the Saga Edition core rulebook).
+Whenever you use a Force power with the [mind-affecting] descriptor successfully against a target, until the end of your next turn you gain a +2 Force bonus on skill checks made to activate mind-affecting Force powers and talents against that same target.
 
 ### Aingtii Monk
 
@@ -14477,7 +14431,7 @@ You can use the Illusion talent to create a disguise for yourself. You use the r
 
 **Canonical rules text**
 
-You can convince others that they have been cut off from the Force, even if that is not the case, preventing them from making Use the Force checks. Whenever a target with an Intelligence of 3 or higher within 12 squares of you and in your line of sight attempts to make a Use the Force check for any reason, you can spend one use of the mind trick Force power as a reaction. You make a Use the Force check, and if your Use the Force check equals or exceeds the target's Use the Force check result, that target's skill check is negated, and the action it was attempting fails. v Q 8 @ a) 8 é 5) a) Q W gavVed SHA dO YVAME ) wSievHoS A KEL DOR SITH LORD CHANNELS THE ENEROY FROM BLASTER BOLTS, TURNING THEM INTO FORCE LIGHTNING. New Control Talents The following talents belong to the Control talent tree (see page 101 of the Saga Edition core rulebook)
+You can convince others that they have been cut off from the Force, even if that is not the case, preventing them from making Use the Force checks. Whenever a target with an Intelligence of 3 or higher within 12 squares of you and in your line of sight attempts to make a Use the Force check for any reason, you can spend one use of the mind trick Force power as a reaction. You make a Use the Force check, and if your Use the Force check equals or exceeds the target's Use the Force check result, that target's skill check is negated, and the action it was attempting fails.
 
 ### Baran Do Sage
 
@@ -14591,7 +14545,7 @@ Once per encounter as a swift action, you can return one Force power with the [d
 
 **Canonical rules text**
 
-When you die, you become a dark side spirit (see page 118) until the end of the encounter. You continue to occupy a space in this form, but other creatures can occupy the same space or move through your space without impediment. As a standard action, you can attempt to possess an adjacent target. You must succeed on a Use the Force check against an adjacent target's Will Defense. If your check result equals or exceeds the target's Will Defense, you deal 8d6 points of stun damage to the target; if you reduce the target to 0 hit points or move it to the bottom of the condition track with this attack, you possess the target as though it were a willing host (see the dark spirit template for details). Alternately, as a standard action, you can transfer your essence into a single adjacent object, such as a holocron or a lightsaber. If you do so, you lie dormant within the object until another creature attempts to use that object, at which time you can emerge and attempt to possess the creature, as described above, \f you do not possess a creature or object within 10 rounds of manifesting as a dark spirit, your spirit dissipates and ceases to exist.
+When you die, you become a dark side spirit (see page 118) until the end of the encounter. You continue to occupy a space in this form, but other creatures can occupy the same space or move through your space without impediment. As a standard action, you can attempt to possess an adjacent target. You must succeed on a Use the Force check against an adjacent target's Will Defense. If your check result equals or exceeds the target's Will Defense, you deal 8d6 points of stun damage to the target; if you reduce the target to 0 hit points or move it to the bottom of the condition track with this attack, you possess the target as though it were a willing host (see the dark spirit template for details). Alternately, as a standard action, you can transfer your essence into a single adjacent object, such as a holocron or a lightsaber. If you do so, you lie dormant within the object until another creature attempts to use that object, at which time you can emerge and attempt to possess the creature, as described above. If you do not possess a creature or object within 10 rounds of manifesting as a dark spirit, your spirit dissipates and ceases to exist.
 
 ### Guardian Spirit
 
@@ -14815,7 +14769,7 @@ You can substitute your Use the Force skill for any Use Computer check made to a
 
 **Canonical rules text**
 
-As a swift action, you can peer into the future in search of signs of danger, removing one use of the farseeing Force power from your active suite (as though you had just activated the power). Any time before the end of your next turn when you are the target of an attack or Force power, you can force your attacker to reroll the attack roll (or Use the Force check) against you, keeping the second result. This counts as using the farseeing Force power against the attacker, but this talent replaces the normal rules and effect of that power. PRESTIGE CLASS TALENTS This section introduces several new talents for the prestige classes presented in the Saga Edition core rulebook. FORCE ADEPT TALENTS The following talents are for use with the Force adept prestige class (see page 212 of the Saga Edition core rulebook). New Dark Side Devotee Talents The following talents belong to the Dark Side Devotee talent tree (see page 213 of the Saga Edition core rulebook).
+As a swift action, you can peer into the future in search of signs of danger, removing one use of the farseeing Force power from your active suite (as though you had just activated the power). Any time before the end of your next turn when you are the target of an attack or Force power, you can force your attacker to reroll the attack roll (or Use the Force check) against you, keeping the second result. This counts as using the farseeing Force power against the attacker, but this talent replaces the normal rules and effect of that power.
 
 ### Seyugi Dervish
 
@@ -14903,7 +14857,7 @@ When an ally within 12 squares of you and in your line of sight takes damage or 
 
 **Canonical rules text**
 
-You can designate an ally within 12 squares of you and in your line of sight once per turn as a swift action; that ally immediately takes its second wind if it has not yet done so in this encounter. A HUMAN JEDI CONSULTS A REVWIEN TIA ADEPT.
+You can designate an ally within 12 squares of you and in your line of sight once per turn as a swift action; that ally immediately takes its second wind if it has not yet done so in this encounter.
 
 #### Repel Discord
 
@@ -15101,7 +15055,7 @@ You can spend a Force Point as a swift action to add 146 points of fire damage t
 
 **Canonical rules text**
 
-You can spend a Force Point as a swift action to create a 3x3 square area of difficult terrain centered on you. You ignore any penalties for moving on difficult terrain that you create using this talent. A SHAPER OF KRO VAR DEFENDS HIMSELF AGAINST THE FORCES OF THE SEPARATISTS.
+You can spend a Force Point as a swift action to create a 3x3 square area of difficult terrain centered on you. You ignore any penalties for moving on difficult terrain that you create using this talent.
 
 #### Fluidity
 

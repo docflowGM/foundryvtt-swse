@@ -4,6 +4,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { registerFoundryPathLoader } from './helpers/foundry-shim/register.mjs';
 import { installFoundryShimGlobals } from './helpers/foundry-shim/globals.mjs';
+import { hydrationState, assertCertified } from './helpers/phase3b-certified.mjs';
 
 // Krath talent-tree hydration regression guard.
 //
@@ -100,8 +101,14 @@ const krathTree = treeDocs.find(doc => doc._id === TREE_ID);
     assert.equal(doc.system.treeId, TREE_ID, `${expected.name} does not claim the Krath tree by id`);
     assert.equal(doc.system.talent_tree, TREE_NAME, `${expected.name} does not claim the Krath tree by name`);
     assert.equal(doc.system.source, SOURCE, `${expected.name} has the wrong source book`);
-    assert.equal(doc.system.page, expected.page, `${expected.name} has the wrong printed page`);
-    assert.equal(doc.system.prerequisites, expected.prerequisites);
+    const state = hydrationState(doc, `${SOURCE}|Krath|${expected.name}`);
+    if (state === 'certified') {
+      // Phase 3C applied: the record must equal the Phase 3B certified target (page, prerequisites, printed text).
+      assertCertified(assert, doc, `${SOURCE}|Krath|${expected.name}`);
+    } else {
+      assert.equal(doc.system.page, expected.page, `${expected.name} has the wrong printed page`);
+      assert.equal(doc.system.prerequisites, expected.prerequisites);
+    }
     assert.ok(String(doc.system.benefit || '').length > 40, `${expected.name} has no benefit text`);
     assert.equal(doc.system.description?.value, doc.system.benefit);
     assert.ok(doc.system.tags.includes(`tree_${TREE_ID}`));
@@ -135,7 +142,7 @@ const krathTree = treeDocs.find(doc => doc._id === TREE_ID);
   const surge = talentsById.get('ca30265867f3dcb1');
   assert.equal(surge.system.activationChoiceMeta.resolution, 'on_use');
   assert.deepEqual(surge.system.activationChoiceMeta.options.map(o => o.id), ['damage', 'range']);
-  assert.match(surge.system.benefit, /\[Dark Side\] descriptor/);
+  assert.match(surge.system.benefit, /\[dark side\] descriptor/i);
 }
 
 /* ------------------------------------------------------------------ *
@@ -145,7 +152,9 @@ const krathTree = treeDocs.find(doc => doc._id === TREE_ID);
  * silently drop: the frequency limit, the trigger, the cost, the
  * rounding rule, the floor, the scope of the effect.
  * ------------------------------------------------------------------ */
-{
+// Wording-level clause assertions describe the pre-Phase-3C hand-hydrated wording. Once Phase 3C has applied the printed
+// (Phase 3B certified) text, every record is asserted field-for-field against that target in section 3 instead.
+if (hydrationState(talentsById.get('eaaecdfd7a538975'), `${SOURCE}|Krath|Dark Side Manipulation`) === 'legacy') {
   const darkSide = talentsById.get('eaaecdfd7a538975');
   assert.match(darkSide.system.benefit, /^Once per encounter/, 'the frequency limit was dropped');
   assert.match(darkSide.system.benefit, /spend a Force Point/, 'the Force Point cost was dropped');

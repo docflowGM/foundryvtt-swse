@@ -4,6 +4,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { registerFoundryPathLoader } from './helpers/foundry-shim/register.mjs';
 import { installFoundryShimGlobals } from './helpers/foundry-shim/globals.mjs';
+import { hydrationState, assertCertified } from './helpers/phase3b-certified.mjs';
 
 // Elite Droid talent-tree hydration regression guard.
 //
@@ -22,7 +23,8 @@ const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const TREE_ID = 'b968ecab63bc4cf4';
 const TREE_NAME = 'Elite Droid';
 const SOURCE = "Scavenger's Guide to Droids";
-const PAGE = 28;
+const PAGE = 28;            // legacy hydration (pre-Phase-3C production)
+const CERTIFIED_PAGE = 29;  // Phase 3B certified printed page
 
 const ELITE_DROID = Object.freeze({
   cb3bbc1e7d8829e9: { name: 'Break Program', prerequisites: 'Trained in Use Computer' },
@@ -69,8 +71,16 @@ const tree = treeDocs.find(doc => doc._id === TREE_ID);
     assert.equal(doc.system.talent_tree, TREE_NAME, `${expected.name} does not claim the tree by name`);
     /* 4. Source and page. */
     assert.equal(doc.system.source, SOURCE, `${expected.name} has the wrong source book`);
-    assert.equal(doc.system.page, PAGE, `${expected.name} has the wrong printed page`);
-    assert.equal(doc.system.prerequisites, expected.prerequisites);
+    if (hydrationState(doc, `${SOURCE}|Elite Droid|${expected.name}`) === 'certified') {
+      // Phase 3C applied. The Elite Droid talents are printed on p. 29 (rendered-PDF verification recorded in
+      // docs/audits/talent-phase-3b-scavengers-guide-to-droids.md); the earlier hydration pinned p. 28, which is the
+      // page of the Autonomy / Specialized Droid talents.
+      assertCertified(assert, doc, `${SOURCE}|Elite Droid|${expected.name}`);
+      assert.equal(doc.system.page, CERTIFIED_PAGE, `${expected.name} has the wrong printed page`);
+    } else {
+      assert.equal(doc.system.page, PAGE, `${expected.name} has the wrong printed page`);
+      assert.equal(doc.system.prerequisites, expected.prerequisites);
+    }
     assert.ok(String(doc.system.benefit || '').length > 40, `${expected.name} has no benefit text`);
     assert.equal(doc.system.description?.value, doc.system.benefit);
     assert.ok(doc.system.tags.includes(`tree_${TREE_ID}`));
@@ -107,19 +117,24 @@ const tree = treeDocs.find(doc => doc._id === TREE_ID);
 }
 
 /* Source-fidelity: the mechanical clauses, not just the names. */
+// The wording-level clause assertions describe the hand-hydrated pre-Phase-3C wording; a certified record is asserted
+// field-for-field against the Phase 3B target above instead. Metadata assertions apply in both states.
+const IDENTITY = { breakProgram: 'Break Program', heuristic: 'Heuristic Mastery', scripted: 'Scripted Routines', ultra: 'Ultra Resilient' };
+const IDS = { breakProgram: 'cb3bbc1e7d8829e9', heuristic: '2b6a4a203b72dc79', scripted: '8d0657e7ade688bd', ultra: '6fdbdd17eba93006' };
+const legacyWording = key => hydrationState(talentsById.get(IDS[key]), `${SOURCE}|Elite Droid|${IDENTITY[key]}`) === 'legacy';
 {
   const breakProgram = talentsById.get('cb3bbc1e7d8829e9');
-  assert.match(breakProgram.system.benefit, /behavioral inhibitors/);
-  assert.match(breakProgram.system.benefit, /data link/);
-  assert.match(breakProgram.system.benefit, /Use Computer check opposed by the target Droid's Will Defense/);
-  assert.match(breakProgram.system.benefit, /rounds equal to your Intelligence bonus/);
+  if (legacyWording('breakProgram')) assert.match(breakProgram.system.benefit, /behavioral inhibitors/);
+  if (legacyWording('breakProgram')) assert.match(breakProgram.system.benefit, /data link/);
+  if (legacyWording('breakProgram')) assert.match(breakProgram.system.benefit, /Use Computer check opposed by the target Droid's Will Defense/);
+  if (legacyWording('breakProgram')) assert.match(breakProgram.system.benefit, /rounds equal to your Intelligence bonus/);
   assert.equal(breakProgram.system.abilityMeta.combatActions[0].relatedSkills[0], 'useComputer');
 
   const heuristic = talentsById.get('2b6a4a203b72dc79');
-  assert.match(heuristic.system.benefit, /reroll any untrained Skill Check, except a Use the Force check/);
-  assert.match(heuristic.system.benefit, /keep the result of the reroll even if it is worse/);
-  assert.match(heuristic.system.benefit, /once per encounter you can spend a Force Point/);
-  assert.match(heuristic.system.benefit, /take the better result/);
+  if (legacyWording('heuristic')) assert.match(heuristic.system.benefit, /reroll any untrained Skill Check, except a Use the Force check/);
+  if (legacyWording('heuristic')) assert.match(heuristic.system.benefit, /keep the result of the reroll even if it is worse/);
+  if (legacyWording('heuristic')) assert.match(heuristic.system.benefit, /once per encounter you can spend a Force Point/);
+  if (legacyWording('heuristic')) assert.match(heuristic.system.benefit, /take the better result/);
   const rerolls = heuristic.system.abilityMeta.rerolls;
   assert.equal(rerolls.length, 2);
   const untrained = rerolls.find(r => r.trigger === 'untrainedSkillCheck');
@@ -148,13 +163,13 @@ const tree = treeDocs.find(doc => doc._id === TREE_ID);
   assert.equal(routines[2].bonusFormula, 'floor(independentDroidLevel / 2)');
   assert.deepEqual(routines[2].requires, ['inCombat', 'trainedSkill', 'standardActionOrLess']);
   for (const name of ['Attack Script', 'Defense Script', 'Skill Script']) {
-    assert.ok(scripted.system.benefit.includes(name), `${name} is missing from the printed benefit text`);
+    if (legacyWording('scripted')) assert.ok(scripted.system.benefit.includes(name), `${name} is missing from the printed benefit text`);
   }
 
   /* 9. Ultra Resilient is a once-per-encounter Reaction scaled by class level. */
   const ultra = talentsById.get('6fdbdd17eba93006');
-  assert.match(ultra.system.benefit, /Once per encounter, as a Reaction/);
-  assert.match(ultra.system.benefit, /Damage Threshold by a bonus equal to your Independent Droid level/);
+  if (legacyWording('ultra')) assert.match(ultra.system.benefit, /Once per encounter, as a Reaction/);
+  if (legacyWording('ultra')) assert.match(ultra.system.benefit, /Damage Threshold by a bonus equal to your Independent Droid level/);
   assert.equal(ultra.system.abilityMeta.usesPerEncounter, 1);
   assert.equal(ultra.system.abilityMeta.combatActions[0].actionType, 'reaction');
   assert.deepEqual(ultra.system.abilityMeta.temporaryBonus, {

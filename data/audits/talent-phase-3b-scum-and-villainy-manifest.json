@@ -10,7 +10,7 @@
   "generatedAgainst": {
     "canonical": {
       "path": "data/canonical/talents.json",
-      "fingerprint": "fnv1a64:251001ba5bea19a1"
+      "fingerprint": "fnv1a64:8ec7fe66c2980baa"
     },
     "registry": {
       "path": "data/audits/talent-canonical-tree-registry.json",

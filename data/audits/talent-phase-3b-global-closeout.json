@@ -6,7 +6,7 @@
   "branch": "audit/talent-phase-3a-canonical-authority",
   "authority": {
     "canonicalTalents": "data/canonical/talents.json",
-    "canonicalTalentBlobSha": "1360dfe9266fcb8743e5aeb9fb6229cefed6328d",
+    "canonicalTalentBlobSha": "d0add2069f174cedc9f4a01500477f4dc62b6fb4",
     "productionTalents": "packs/talents.db",
     "productionTalentBlobSha": "c8aae4d198d01b7620558a469332ffb3cfa7deba",
     "productionTrees": "packs/talent_trees.db",
@@ -20,8 +20,8 @@
     "canonicalIdentities": 1180,
     "referenceOnlyPublicationClaims": 2,
     "dispositions": {
-      "UPDATE_CONTENT": 727,
-      "UPDATE_METADATA": 144,
+      "UPDATE_CONTENT": 725,
+      "UPDATE_METADATA": 146,
       "CREATE": 236,
       "REMOVE_CONTAMINATION": 38,
       "CORRECT_TREE": 23,
@@ -95,7 +95,7 @@
       "bookKey": "clone-wars",
       "sourcebook": "Clone Wars Campaign Guide",
       "manifest": "data/audits/talent-phase-3b-clone-wars-campaign-guide-manifest.json",
-      "manifestBlobSha": "5751719f7923e9cd42e6a7d114e7c22c237f9a57",
+      "manifestBlobSha": "84b0d18ecdb9d6b60280603493125f3a22376cf9",
       "publicationClaims": 118,
       "ownedCanonicalIdentities": 118,
       "referenceOnlyClaims": 0,
@@ -114,14 +114,14 @@
       "bookKey": "core",
       "sourcebook": "Saga Edition Core Rulebook",
       "manifest": "data/audits/talent-phase-3b-core-rulebook-manifest.json",
-      "manifestBlobSha": "faecbf101114fba6db75a0e989874815ab0a64c7",
+      "manifestBlobSha": "e2885b1c5b7ea2c7c02190fe3911853b26289157",
       "publicationClaims": 198,
       "ownedCanonicalIdentities": 198,
       "referenceOnlyClaims": 0,
       "dispositions": {
-        "UPDATE_CONTENT": 112,
+        "UPDATE_CONTENT": 111,
         "CORRECT_TREE": 16,
-        "UPDATE_METADATA": 31,
+        "UPDATE_METADATA": 32,
         "REMOVE_CONTAMINATION": 31,
         "CREATE": 6,
         "IDENTITY_SPLIT": 2
@@ -135,7 +135,7 @@
       "bookKey": "force-unleashed",
       "sourcebook": "Force Unleashed Campaign Guide",
       "manifest": "data/audits/talent-phase-3b-force-unleashed-campaign-guide-manifest.json",
-      "manifestBlobSha": "6744784453a747589954037241e1904f132f9432",
+      "manifestBlobSha": "7a9bc28e68ca92abea99dbd1d089305e26b86c69",
       "publicationClaims": 137,
       "ownedCanonicalIdentities": 137,
       "referenceOnlyClaims": 0,
@@ -153,7 +153,7 @@
       "bookKey": "war",
       "sourcebook": "Galaxy at War",
       "manifest": "data/audits/talent-phase-3b-galaxy-at-war-manifest.json",
-      "manifestBlobSha": "74f0bfb95e38f3ef766641ca581b0a1de0fd8bc7",
+      "manifestBlobSha": "591393bd136ff5bb4c2936935b33d17a532d2117",
       "publicationClaims": 56,
       "ownedCanonicalIdentities": 56,
       "referenceOnlyClaims": 0,
@@ -172,7 +172,7 @@
       "bookKey": "intrigue",
       "sourcebook": "Galaxy of Intrigue",
       "manifest": "data/audits/talent-phase-3b-galaxy-of-intrigue-manifest.json",
-      "manifestBlobSha": "d1a33a88dd00a4e24e1030a9463cf0ae6f6a8d73",
+      "manifestBlobSha": "c386af3561ffe3ae135bc92da64103d41e2e793e",
       "publicationClaims": 43,
       "ownedCanonicalIdentities": 43,
       "referenceOnlyClaims": 0,
@@ -191,7 +191,7 @@
       "bookKey": "jatm",
       "sourcebook": "Jedi Academy Training Manual",
       "manifest": "data/audits/talent-phase-3b-jedi-academy-training-manual-manifest.json",
-      "manifestBlobSha": "c0662d689020f372c6691760ee4a4f35c36a6568",
+      "manifestBlobSha": "20ad99b7a3e8b272b575f629acb503976abc7452",
       "publicationClaims": 118,
       "ownedCanonicalIdentities": 117,
       "referenceOnlyClaims": 1,
@@ -208,15 +208,16 @@
       "bookKey": "kotor",
       "sourcebook": "Knights of the Old Republic Campaign Guide",
       "manifest": "data/audits/talent-phase-3b-knights-of-the-old-republic-campaign-guide-manifest.json",
-      "manifestBlobSha": "dc027b71a8a10e3ccf6ee666ff8f951901b1c612",
+      "manifestBlobSha": "a1f99697ddf7dded4bfede0c718b2d6497f499e4",
       "publicationClaims": 115,
       "ownedCanonicalIdentities": 114,
       "referenceOnlyClaims": 1,
       "dispositions": {
-        "UPDATE_CONTENT": 99,
+        "UPDATE_CONTENT": 98,
         "CORRECT_TREE": 2,
         "IDENTITY_SPLIT": 1,
-        "CREATE": 12
+        "CREATE": 12,
+        "UPDATE_METADATA": 1
       },
       "productionExtras": 0,
       "treeCreates": 0,
@@ -227,7 +228,7 @@
       "bookKey": "legacy",
       "sourcebook": "Legacy Era Campaign Guide",
       "manifest": "data/audits/talent-phase-3b-legacy-era-campaign-guide-manifest.json",
-      "manifestBlobSha": "65ec62571b8716a2a18d540953df0e2c89e5e113",
+      "manifestBlobSha": "b822f01732cc52651a0abf3689ede2d7a5c0a0d9",
       "publicationClaims": 101,
       "ownedCanonicalIdentities": 101,
       "referenceOnlyClaims": 0,
@@ -247,7 +248,7 @@
       "bookKey": "rebellion",
       "sourcebook": "Rebellion Era Campaign Guide",
       "manifest": "data/audits/talent-phase-3b-rebellion-era-campaign-guide-manifest.json",
-      "manifestBlobSha": "b8bf2c2d8038d62f571cfb67578ac7197a13495b",
+      "manifestBlobSha": "21229b834cf16dbfcdd86ac865a1ae86bc333704",
       "publicationClaims": 64,
       "ownedCanonicalIdentities": 64,
       "referenceOnlyClaims": 0,
@@ -267,7 +268,7 @@
       "bookKey": "scavengers",
       "sourcebook": "Scavenger's Guide to Droids",
       "manifest": "data/audits/talent-phase-3b-scavengers-guide-to-droids-manifest.json",
-      "manifestBlobSha": "699aabedec6ebb9ff14e70951199ffae7b42350a",
+      "manifestBlobSha": "13c59d946cef3e89a9e1807e68b9fd7c51bd3ba6",
       "publicationClaims": 31,
       "ownedCanonicalIdentities": 31,
       "referenceOnlyClaims": 0,
@@ -284,7 +285,7 @@
       "bookKey": "scum",
       "sourcebook": "Scum and Villainy",
       "manifest": "data/audits/talent-phase-3b-scum-and-villainy-manifest.json",
-      "manifestBlobSha": "7100fa614229fa49fb34fc91db4d006b22bb8ae0",
+      "manifestBlobSha": "b3ce8d306c478ef32c9a7ed712101dd5b507f59e",
       "publicationClaims": 110,
       "ownedCanonicalIdentities": 110,
       "referenceOnlyClaims": 0,
@@ -304,7 +305,7 @@
       "bookKey": "starships",
       "sourcebook": "Starships of the Galaxy",
       "manifest": "data/audits/talent-phase-3b-starships-of-the-galaxy-manifest.json",
-      "manifestBlobSha": "9ce71dd1c0b3efc21153e5a5b06fd3a584a7481f",
+      "manifestBlobSha": "3f2ff18e8c984aa3b675f98276012dcbf94abf50",
       "publicationClaims": 23,
       "ownedCanonicalIdentities": 23,
       "referenceOnlyClaims": 0,
@@ -321,7 +322,7 @@
       "bookKey": "threats",
       "sourcebook": "Threats of the Galaxy",
       "manifest": "data/audits/talent-phase-3b-threats-of-the-galaxy-manifest.json",
-      "manifestBlobSha": "b4d1c30b160783975310bf151781d5b31e4c65c2",
+      "manifestBlobSha": "d752f544f40dedd2346227ebb5dbd6b1598fc53b",
       "publicationClaims": 11,
       "ownedCanonicalIdentities": 11,
       "referenceOnlyClaims": 0,
@@ -337,7 +338,7 @@
       "bookKey": "unknown",
       "sourcebook": "Unknown Regions",
       "manifest": "data/audits/talent-phase-3b-unknown-regions-manifest.json",
-      "manifestBlobSha": "891843427d297117e9a2ce3f7e62f29b6fe3bd60",
+      "manifestBlobSha": "658bbbb19d41cfa51f8690e0f8b724684c68e88d",
       "publicationClaims": 57,
       "ownedCanonicalIdentities": 57,
       "referenceOnlyClaims": 0,
@@ -2845,5 +2846,231 @@
       "Apply only certified manifest mutations.",
       "Leave reviewExtras and productionOnlyDeferred untouched during Phase 3C."
     ]
+  },
+  "phase3bSourceTextCorrections": {
+    "manifest": "data/audits/talent-phase-3b-source-text-corrections.json",
+    "issue": "OCR damage (signatures, appended captions/headings, mismatched delimiters) had been certified into the Phase 2 canonical talent text.",
+    "resolution": "Corrected in the Phase 2 content authority; data/canonical/talents.json and the Phase 3B manifests were regenerated by their builders.",
+    "countsChanged": false,
+    "dispositionsChanged": false,
+    "productionMutationPerformed": false,
+    "previousCanonicalTalentBlobSha": "1360dfe9266fcb8743e5aeb9fb6229cefed6328d",
+    "previousManifestBlobShas": {
+      "clone-wars": "5751719f7923e9cd42e6a7d114e7c22c237f9a57",
+      "core": "faecbf101114fba6db75a0e989874815ab0a64c7",
+      "force-unleashed": "6744784453a747589954037241e1904f132f9432",
+      "war": "74f0bfb95e38f3ef766641ca581b0a1de0fd8bc7",
+      "intrigue": "d1a33a88dd00a4e24e1030a9463cf0ae6f6a8d73",
+      "jatm": "c0662d689020f372c6691760ee4a4f35c36a6568",
+      "kotor": "dc027b71a8a10e3ccf6ee666ff8f951901b1c612",
+      "legacy": "65ec62571b8716a2a18d540953df0e2c89e5e113",
+      "rebellion": "b8bf2c2d8038d62f571cfb67578ac7197a13495b",
+      "scavengers": "699aabedec6ebb9ff14e70951199ffae7b42350a",
+      "scum": "7100fa614229fa49fb34fc91db4d006b22bb8ae0",
+      "starships": "9ce71dd1c0b3efc21153e5a5b06fd3a584a7481f",
+      "threats": "b4d1c30b160783975310bf151781d5b31e4c65c2",
+      "unknown": "891843427d297117e9a2ce3f7e62f29b6fe3bd60"
+    },
+    "correctedCanonicalTalentBlobSha": "d0add2069f174cedc9f4a01500477f4dc62b6fb4",
+    "correctedManifestBlobShas": {
+      "clone-wars": "84b0d18ecdb9d6b60280603493125f3a22376cf9",
+      "core": "e2885b1c5b7ea2c7c02190fe3911853b26289157",
+      "force-unleashed": "7a9bc28e68ca92abea99dbd1d089305e26b86c69",
+      "war": "591393bd136ff5bb4c2936935b33d17a532d2117",
+      "intrigue": "c386af3561ffe3ae135bc92da64103d41e2e793e",
+      "jatm": "20ad99b7a3e8b272b575f629acb503976abc7452",
+      "kotor": "a1f99697ddf7dded4bfede0c718b2d6497f499e4",
+      "legacy": "b822f01732cc52651a0abf3689ede2d7a5c0a0d9",
+      "rebellion": "21229b834cf16dbfcdd86ac865a1ae86bc333704",
+      "scavengers": "13c59d946cef3e89a9e1807e68b9fd7c51bd3ba6",
+      "scum": "b3ce8d306c478ef32c9a7ed712101dd5b507f59e",
+      "starships": "3f2ff18e8c984aa3b675f98276012dcbf94abf50",
+      "threats": "d752f544f40dedd2346227ebb5dbd6b1598fc53b",
+      "unknown": "658bbbb19d41cfa51f8690e0f8b724684c68e88d"
+    },
+    "entries": 47,
+    "entriesApplied": 47,
+    "entriesStillRequiringPdf": [],
+    "previousDispositions": {
+      "global": {
+        "UPDATE_CONTENT": 727,
+        "UPDATE_METADATA": 144,
+        "CREATE": 236,
+        "REMOVE_CONTAMINATION": 38,
+        "CORRECT_TREE": 23,
+        "IDENTITY_SPLIT": 12
+      },
+      "perBook": {
+        "clone-wars": {
+          "UPDATE_CONTENT": 40,
+          "UPDATE_METADATA": 69,
+          "CREATE": 6,
+          "REMOVE_CONTAMINATION": 3
+        },
+        "core": {
+          "UPDATE_CONTENT": 112,
+          "CORRECT_TREE": 16,
+          "UPDATE_METADATA": 31,
+          "REMOVE_CONTAMINATION": 31,
+          "CREATE": 6,
+          "IDENTITY_SPLIT": 2
+        },
+        "force-unleashed": {
+          "UPDATE_CONTENT": 107,
+          "UPDATE_METADATA": 2,
+          "CREATE": 28
+        },
+        "war": {
+          "UPDATE_CONTENT": 13,
+          "UPDATE_METADATA": 1,
+          "IDENTITY_SPLIT": 3,
+          "CREATE": 39
+        },
+        "intrigue": {
+          "UPDATE_METADATA": 2,
+          "IDENTITY_SPLIT": 2,
+          "CREATE": 27,
+          "UPDATE_CONTENT": 12
+        },
+        "jatm": {
+          "UPDATE_CONTENT": 74,
+          "CREATE": 43
+        },
+        "kotor": {
+          "UPDATE_CONTENT": 99,
+          "CORRECT_TREE": 2,
+          "IDENTITY_SPLIT": 1,
+          "CREATE": 12
+        },
+        "legacy": {
+          "UPDATE_CONTENT": 89,
+          "REMOVE_CONTAMINATION": 1,
+          "CORRECT_TREE": 1,
+          "UPDATE_METADATA": 1,
+          "CREATE": 9
+        },
+        "rebellion": {
+          "UPDATE_METADATA": 37,
+          "UPDATE_CONTENT": 21,
+          "IDENTITY_SPLIT": 1,
+          "REMOVE_CONTAMINATION": 3,
+          "CREATE": 2
+        },
+        "scavengers": {
+          "UPDATE_CONTENT": 12,
+          "CREATE": 19
+        },
+        "scum": {
+          "UPDATE_CONTENT": 104,
+          "CREATE": 1,
+          "CORRECT_TREE": 3,
+          "IDENTITY_SPLIT": 1,
+          "UPDATE_METADATA": 1
+        },
+        "starships": {
+          "UPDATE_CONTENT": 22,
+          "CORRECT_TREE": 1
+        },
+        "threats": {
+          "UPDATE_CONTENT": 11
+        },
+        "unknown": {
+          "UPDATE_CONTENT": 11,
+          "CREATE": 44,
+          "IDENTITY_SPLIT": 2
+        }
+      }
+    },
+    "correctedDispositions": {
+      "global": {
+        "UPDATE_CONTENT": 725,
+        "UPDATE_METADATA": 146,
+        "CREATE": 236,
+        "REMOVE_CONTAMINATION": 38,
+        "CORRECT_TREE": 23,
+        "IDENTITY_SPLIT": 12
+      },
+      "perBook": {
+        "clone-wars": {
+          "UPDATE_CONTENT": 40,
+          "UPDATE_METADATA": 69,
+          "CREATE": 6,
+          "REMOVE_CONTAMINATION": 3
+        },
+        "core": {
+          "UPDATE_CONTENT": 111,
+          "CORRECT_TREE": 16,
+          "UPDATE_METADATA": 32,
+          "REMOVE_CONTAMINATION": 31,
+          "CREATE": 6,
+          "IDENTITY_SPLIT": 2
+        },
+        "force-unleashed": {
+          "UPDATE_CONTENT": 107,
+          "UPDATE_METADATA": 2,
+          "CREATE": 28
+        },
+        "war": {
+          "UPDATE_CONTENT": 13,
+          "UPDATE_METADATA": 1,
+          "IDENTITY_SPLIT": 3,
+          "CREATE": 39
+        },
+        "intrigue": {
+          "UPDATE_METADATA": 2,
+          "IDENTITY_SPLIT": 2,
+          "CREATE": 27,
+          "UPDATE_CONTENT": 12
+        },
+        "jatm": {
+          "UPDATE_CONTENT": 74,
+          "CREATE": 43
+        },
+        "kotor": {
+          "UPDATE_CONTENT": 98,
+          "CORRECT_TREE": 2,
+          "IDENTITY_SPLIT": 1,
+          "CREATE": 12,
+          "UPDATE_METADATA": 1
+        },
+        "legacy": {
+          "UPDATE_CONTENT": 89,
+          "REMOVE_CONTAMINATION": 1,
+          "CORRECT_TREE": 1,
+          "UPDATE_METADATA": 1,
+          "CREATE": 9
+        },
+        "rebellion": {
+          "UPDATE_METADATA": 37,
+          "UPDATE_CONTENT": 21,
+          "IDENTITY_SPLIT": 1,
+          "REMOVE_CONTAMINATION": 3,
+          "CREATE": 2
+        },
+        "scavengers": {
+          "UPDATE_CONTENT": 12,
+          "CREATE": 19
+        },
+        "scum": {
+          "UPDATE_CONTENT": 104,
+          "CREATE": 1,
+          "CORRECT_TREE": 3,
+          "IDENTITY_SPLIT": 1,
+          "UPDATE_METADATA": 1
+        },
+        "starships": {
+          "UPDATE_CONTENT": 22,
+          "CORRECT_TREE": 1
+        },
+        "threats": {
+          "UPDATE_CONTENT": 11
+        },
+        "unknown": {
+          "UPDATE_CONTENT": 11,
+          "CREATE": 44,
+          "IDENTITY_SPLIT": 2
+        }
+      }
+    }
   }
 }
