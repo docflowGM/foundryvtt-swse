@@ -5899,6 +5899,1298 @@ Once per round as a reaction to an enemy damaging one of your allies or moving o
 
 ---
 
+## Book 10 — Legacy Era Campaign Guide
+
+**Phase 3B status:** COMPLETE — 101 owned canonical identities; 89 UPDATE_CONTENT; 1 UPDATE_METADATA; 1 REMOVE_CONTAMINATION; 1 CORRECT_TREE; 9 CREATE.
+
+### Jedi Consular
+
+#### Aggressive Negotiator
+
+- **Page:** 26
+- **Prerequisites:** Adept Negotiator
+- **Quick summary:** Whenever you damage an opponent with a lightsaber attack, you can take 10 on any Persuasion checks you make before the end of your next turn, even if you would not normally be able to.
+- **Production record:** `f7bf586a35299965`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Whenever you damage an opponent with a lightsaber attack, you can take 10 on any Persuasion checks you make before the end of your next turn, even if you would not normally be able to.
+
+#### Consular's Wisdom
+
+- **Page:** 26
+- **Prerequisites:** Adept Negotiator
+- **Quick summary:** Once per encounter as a swift action, you can choose one ally within your line of sight that can hear and understand you.
+- **Production record:** `321a3e9b59e7c7d7`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Once per encounter as a swift action, you can choose one ally within your line of sight that can hear and understand you. Until the end of the encounter, that ally adds your Wisdom bonus to its Will Defense against mind-affecting effects.
+
+#### Entreat Aid
+
+- **Page:** 26
+- **Prerequisites:** None.
+- **Quick summary:** Once per turn as a swift action, you can spend a Force Point to let one adjacent ally use the aid another action (as a reaction) to assist you with a skill check.
+- **Production record:** `f561d569196bdda5`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Once per turn as a swift action, you can spend a Force Point to let one adjacent ally use the aid another action (as a reaction) to assist you with a skill check. You must make the skill check before the end of your turn, or the benefit of the aid another action is lost. An ally that has already used the aid another action to assist you since the end of your last turn may not be targeted by this talent.
+
+### Jedi Guardian
+
+#### Defensive Acuity
+
+- **Page:** 27
+- **Prerequisites:** None.
+- **Quick summary:** When you take the fight defensively action, you deal +1 die of damage with lightsaber attacks and gain a +2 circumstance bonus on Use the Force checks made to negate an attack with the Block or Deflect talents.
+- **Production record:** `0bc102751285d17c`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+When you take the fight defensively action, you deal +1 die of damage with lightsaber attacks and gain a +2 circumstance bonus on Use the Force checks made to negate an attack with the Block or Deflect talents. These benefits last until the end of your next turn.
+
+### Jedi Sentinel
+
+#### Dark Side Bane
+
+- **Page:** 27
+- **Prerequisites:** Dark Side Sense
+- **Quick summary:** When you use a damage-dealing Force power against a creature with a Dark Side Score of 1 or higher, you deal extra damage on a hit equal to your Charisma bonus (minimum +1).
+- **Production record:** `97a771d1f4627521`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+When you use a damage-dealing Force power against a creature with a Dark Side Score of 1 or higher, you deal extra damage on a hit equal to your Charisma bonus (minimum +1).
+
+### Lightsaber Combat
+
+#### Cortosis Gauntlet Block
+
+- **Page:** 27
+- **Prerequisites:** Armor Proficiency (light, medium)
+- **Quick summary:** You have received additional training in the use of cortosis gauntlets (see page 183).
+- **Production record:** `8989464c43d81045`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+You have received additional training in the use of cortosis gauntlets (see page 183). You can use the Block talent, even when not armed with a lightsaber, provided you are wearing a cortosis gauntlet. If you successfully block an attack with a lightsaber while wearing a cortosis gauntlet, the attacking lightsaber is deactivated.
+
+#### Precision
+
+- **Page:** 27
+- **Prerequisites:** None.
+- **Quick summary:** As a standard action, you can make a melee attack with a lightsaber against an adjacent opponent.
+- **Production record:** `80e14ef4d1f52a4a`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+As a standard action, you can make a melee attack with a lightsaber against an adjacent opponent. If the attack hits, it deals normal damage and also reduces the target's speed to 2 squares until the end of your next turn.
+
+### Provocateur
+
+#### Cast Suspicion
+
+- **Page:** 27
+- **Prerequisites:** None.
+- **Quick summary:** As a swift action, you can select one enemy within your line of sight.
+- **Production record:** `9408056ede41b43f`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+As a swift action, you can select one enemy within your line of sight. That enemy loses all morale and insight bonuses on attack rolls and cannot be aided (using the aid another action) by its allies until the end of your next turn.
+
+#### Distress to Discord
+
+- **Page:** 27
+- **Prerequisites:** None.
+- **Quick summary:** You encourage your allies to sow discord among your enemies by fighting with renewed vigor.
+- **Production record:** `974c24246ed2b972`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+You encourage your allies to sow discord among your enemies by fighting with renewed vigor. Whenever an ally within your line of sight takes its second wind, all enemies within 2 squares of that ally lose their Dexterity bonuses to Reflex Defense until the end of your next turn.
+
+#### Friend or Foe
+
+- **Page:** 27
+- **Prerequisites:** Cast Suspicion
+- **Quick summary:** Whenever an ally within your line of sight is missed by a ranged attack, you can (as a reaction, once per turn) designate one enemy adjacent to that ally.
+- **Production record:** `014d291a6e16cc12`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Whenever an ally within your line of sight is missed by a ranged attack, you can (as a reaction, once per turn) designate one enemy adjacent to that ally. Compare the attack roll of the missed attack to the Reflex Defense of that enemy; if the attack would hit, the attack targets that enemy and is resolved as normal.
+
+#### Seize the Moment
+
+- **Page:** 27
+- **Prerequisites:** Distress to Discord
+- **Quick summary:** Once per turn as a reaction, when an enemy is reduced to 0 hit points or is moved down the condition track by any means, you allow one ally within your line of sight to take its second wind immediately (as a free action).
+- **Production record:** `ec12ce36ff7048f2`
+- **Phase 3B disposition:** `REMOVE_CONTAMINATION`
+
+**Canonical rules text**
+
+Once per turn as a reaction, when an enemy is reduced to 0 hit points or is moved down the condition track by any means, you allow one ally within your line of sight to take its second wind immediately (as a free action). Furthermore, when your ally takes its second wind, it regains a number of additional hit points equal to your class level.
+
+#### Stolen Advantage
+
+- **Page:** 28
+- **Prerequisites:** Cast Suspicion
+- **Quick summary:** Whenever an enemy within your line of sight uses the aid another action to grant one of its allies a bonus, you can (as a reaction) designate one ally within your line of sight.
+- **Production record:** `d137ae2e8be700b3`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Whenever an enemy within your line of sight uses the aid another action to grant one of its allies a bonus, you can (as a reaction) designate one ally within your line of sight. The enemy automatically fails to aid its ally, and the ally you designate gains a +2 bonus on its next attack roll made before the end of your next turn.
+
+#### True Betrayal
+
+- **Page:** 28
+- **Prerequisites:** Cast Suspicion, Friend or Foe
+- **Quick summary:** As a standard action, make a Persuasion check against the Will Defense of one enemy within your line of sight that can hear and understand you.
+- **Production record:** `ce1f5d3316b052f6`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+As a standard action, make a Persuasion check against the Will Defense of one enemy within your line of sight that can hear and understand you. If your check result equals or exceeds the target's Will Defense, that target immediately makes an attack (as a free action) against another target of your choice. This can be a melee attack against an adjacent target or a ranged attack against a target within the attacker's point-blank range.
+
+The target gets a +5 bonus to its Will Defense if it is higher level than you. This is a mind-affecting effect.
+
+### Misfortune
+
+#### Seducer
+
+- **Page:** 29
+- **Prerequisites:** None.
+- **Quick summary:** You excel at seduction through deception.
+- **Production record:** `d21d7d3d4d7be0d2`
+- **Phase 3B disposition:** `CORRECT_TREE`
+
+**Canonical rules text**
+
+You excel at seduction through deception. If you fail a Persuasion check to change a target's attitude (see page 71 of the Saga Edition core rulebook), you can immediately reroll the check using your Deception skill in lieu of your Persuasion skill. You must accept the result of the reroll, even if it's lower.
+
+#### Seize Object
+
+- **Page:** 29
+- **Prerequisites:** None.
+- **Quick summary:** Once per encounter as a move action, you can attempt to seize a held, carried, or worn object from an adjacent target by making a Disarm attack, with a +10 bonus on your attack roll.
+- **Production record:** `e97177f243cb2b0a`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Once per encounter as a move action, you can attempt to seize a held, carried, or worn object from an adjacent target by making a Disarm attack, with a +10 bonus on your attack roll. If the attack succeeds, you are now holding the object. You must have a free hand with which to grab the object, and you cannot use this talent in place of the disarm action. You cannot conceal the use of this talent from the target.
+
+### Yuuzhan Vong Biotech
+
+#### Biotech Adept
+
+- **Page:** 29
+- **Prerequisites:** None.
+- **Quick summary:** You can reroll any Knowledge (life sciences) or Treat Injury check made to use or repair biotech devices and weapons, but you must keep the second result, even if it is worse.
+- **Production record:** `a86559a808738c98`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+You can reroll any Knowledge (life sciences) or Treat Injury check made to use or repair biotech devices and weapons, but you must keep the second result, even if it is worse.
+
+#### Bugbite
+
+- **Page:** 29
+- **Prerequisites:** None.
+- **Quick summary:** You deal +1 die of damage on attacks made with razor bugs and thud bugs.
+- **Production record:** `bed279ef3c81c42d`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+You deal +1 die of damage on attacks made with razor bugs and thud bugs.
+
+#### Curved Throw
+
+- **Page:** 29
+- **Prerequisites:** Bugbite
+- **Quick summary:** You can spend a swift action to ignore cover (but not total cover) with your next attack with a thud bug or a razor bug made before the end of your turn.
+- **Production record:** `76eb427551c6495c`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+You can spend a swift action to ignore cover (but not total cover) with your next attack with a thud bug or a razor bug made before the end of your turn.
+
+#### Surprising Weapons
+
+- **Page:** 29
+- **Prerequisites:** None.
+- **Quick summary:** Whenever you successfully hit an enemy with an amphistaff, thud bug, or razor bug, and your attack roll also exceeds the target's Will Defense, that target is considered flat-footed against you until the end of your next turn.
+- **Production record:** `6ef0900cd62869e7`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Whenever you successfully hit an enemy with an amphistaff, thud bug, or razor bug, and your attack roll also exceeds the target's Will Defense, that target is considered flat-footed against you until the end of your next turn.
+
+#### Veiled Biotech
+
+- **Page:** 30
+- **Prerequisites:** Trained in Stealth
+- **Quick summary:** You gain a +10 competence bonus on Deception and Stealth checks made to conceal any biotechnology or any biotech implants you possess.
+- **Production record:** `b66c142c79341858`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+You gain a +10 competence bonus on Deception and Stealth checks made to conceal any biotechnology or any biotech implants you possess. Additionally, you may draw a concealed biotech item or weapon as a swift action instead of a standard action; if you then make an attack with that biotech weapon before the end of your turn, your opponent loses its Dexterity bonus to Reflex Defense against the first attack you make with that weapon.
+
+### Versatility
+
+#### Adapt and Survive
+
+- **Page:** 30
+- **Prerequisites:** None.
+- **Quick summary:** When an enemy within 24 squares of you and in your line of sight receives a morale or insight bonus of any kind, you also gain the benefits of that bonus until the end of your next turn.
+- **Production record:** `ef8a59509a45df46`
+- **Phase 3B disposition:** `UPDATE_METADATA`
+
+**Canonical rules text**
+
+When an enemy within 24 squares of you and in your line of sight receives a morale or insight bonus of any kind, you also gain the benefits of that bonus until the end of your next turn.
+
+#### Defensive Protection
+
+- **Page:** 30
+- **Prerequisites:** None.
+- **Quick summary:** You can spend a Force Point as a reaction and add the results of the Force Point roll to any one of your defenses, or to one of the defenses of an adjacent ally.
+- **Production record:** `ded0046215380b0c`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+You can spend a Force Point as a reaction and add the results of the Force Point roll to any one of your defenses, or to one of the defenses of an adjacent ally. This bonus lasts until the beginning of your next turn.
+
+#### Quick on Your Feet
+
+- **Page:** 30
+- **Prerequisites:** None.
+- **Quick summary:** Once per encounter, you may move up to your speed as a reaction.
+- **Production record:** `22d2c4b0d4d9b784`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Once per encounter, you may move up to your speed as a reaction.
+
+#### Ready and Willing
+
+- **Page:** 30
+- **Prerequisites:** None.
+- **Quick summary:** When you ready an action, you can choose at any time before the start of your next turn to take your readied action at the end of the current turn, after the acting creature, droid, or vehicle completes its action.
+- **Production record:** `8a5c6b01f67caa85`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+When you ready an action, you can choose at any time before the start of your next turn to take your readied action at the end of the current turn, after the acting creature, droid, or vehicle completes its action.
+
+#### Unbalancing Adaptation
+
+- **Page:** 30
+- **Prerequisites:** Adapt and Survive
+- **Quick summary:** When you use the Adapt and Survive talent, you also deny the bonus that triggered the talent to one enemy within your line of sight.
+- **Production record:** `02bf213d8104b017`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+When you use the Adapt and Survive talent, you also deny the bonus that triggered the talent to one enemy within your line of sight.
+
+### Brute Squad
+
+#### Gang Leader
+
+- **Page:** 30
+- **Prerequisites:** None.
+- **Quick summary:** Once per encounter, when you make a Persuasion check to intimidate, you gain a +1 bonus on the check for every ally within 6 squares of you and in the target's line of sight (maximum +5 bonus).
+- **Production record:** `3a4ef3559a002c6f`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Once per encounter, when you make a Persuasion check to intimidate, you gain a +1 bonus on the check for every ally within 6 squares of you and in the target's line of sight (maximum +5 bonus).
+
+#### Melee Assault
+
+- **Page:** 31
+- **Prerequisites:** None.
+- **Quick summary:** When you make a melee attack against a target that has one or more of your allies adjacent to it, compare the result to the target's Fortitude Defense as well as its Reflex Defense.
+- **Production record:** `e9aec3a7b011e17a`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+When you make a melee attack against a target that has one or more of your allies adjacent to it, compare the result to the target's Fortitude Defense as well as its Reflex Defense. If the attack hits both defenses, the attack deals +1 die of damage and the target is knocked prone.
+
+#### Melee Brute
+
+- **Page:** 31
+- **Prerequisites:** None.
+- **Quick summary:** When you make a melee attack against a target that has one or more of your allies adjacent to it, compare the result to the target's Fortitude Defense as well as its Reflex Defense.
+- **Production record:** `2cf48b8aa712d19d`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+When you make a melee attack against a target that has one or more of your allies adjacent to it, compare the result to the target's Fortitude Defense as well as its Reflex Defense. If the attack hits both defenses, the target's speed is reduced by 2 squares and it takes a -2 penalty to its Reflex Defense until the end of your next turn.
+
+#### Melee Opportunist
+
+- **Page:** 31
+- **Prerequisites:** None.
+- **Quick summary:** Once per encounter, when an ally makes a successful melee attack against a target adjacent to you, you can make a melee attack against that target as a reaction, with a +2 bonus on the attack roll.
+- **Production record:** `91bb6515cf153d46`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Once per encounter, when an ally makes a successful melee attack against a target adjacent to you, you can make a melee attack against that target as a reaction, with a +2 bonus on the attack roll.
+
+#### Squad Brutality
+
+- **Page:** 31
+- **Prerequisites:** None.
+- **Quick summary:** When you succeed on a melee attack against a target that has one or more of your allies adjacent to it, you may reroll your damage roll, taking the better result.
+- **Production record:** `5f92ad8d44c9055c`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+When you succeed on a melee attack against a target that has one or more of your allies adjacent to it, you may reroll your damage roll, taking the better result. ,
+
+#### Squad Superiority
+
+- **Page:** 31
+- **Prerequisites:** None.
+- **Quick summary:** Whenever you and at least two allies are adjacent to the same target, that target is considered flat-footed against you.
+- **Production record:** `e38263c4acc245fe`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Whenever you and at least two allies are adjacent to the same target, that target is considered flat-footed against you.
+
+### Brawler
+
+#### Grabber
+
+- **Page:** 31
+- **Prerequisites:** None.
+- **Quick summary:** You do not take a -5 penalty when using the grab action (see page 152 of the Saga Edition core rulebook).
+- **Production record:** `ae6c41da173f1385`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+You do not take a -5 penalty when using the grab action (see page 152 of the Saga Edition core rulebook).
+
+#### Hammerblow
+
+- **Page:** 31
+- **Prerequisites:** None.
+- **Quick summary:** If you are unarmed and holding no items, you double your Strength bonus on unarmed attack rolls.
+- **Production record:** `4356ac9986934fbf`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+If you are unarmed and holding no items, you double your Strength bonus on unarmed attack rolls.
+
+#### Strong Grab
+
+- **Page:** 31
+- **Prerequisites:** None.
+- **Quick summary:** When you successfully grab an opponent, they must use a full-round action instead of a standard action to break the grab.
+- **Production record:** `89d557f60251f4a5`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+When you successfully grab an opponent, they must use a full-round action instead of a standard action to break the grab.
+
+### Weapon Specialist
+
+#### Improved Suppression Fire
+
+- **Page:** 31
+- **Prerequisites:** None.
+- **Quick summary:** When you successfully suppress an enemy using the aid another action (see page 151 of the Saga Edition core rulebook), that enemy takes a -5 penalty on its attack rolls until the start of your next turn.
+- **Production record:** `bf6bcc2fc31411d2`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+When you successfully suppress an enemy using the aid another action (see page 151 of the Saga Edition core rulebook), that enemy takes a -5 penalty on its attack rolls until the start of your next turn. When targeting an area with an autofire weapon, each enemy in the attack area takes a -2 penalty on its attack rolls until the start of your next turn, regardless of whether your attack hits.
+
+### Force Hunter
+
+#### Force Blank
+
+- **Page:** 40
+- **Prerequisites:** None.
+- **Quick summary:** You are especially hard to detect using the Force.
+- **Production record:** `cdcdb85912d9eb67`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+You are especially hard to detect using the Force. Attempts to detect you using the Sense Surroundings aspect of the Use the Force skill suffer a -10 penalty.
+
+#### Lightsaber Evasion
+
+- **Page:** 40
+- **Prerequisites:** None.
+- **Quick summary:** Whenever an enemy misses you with a melee attack with a lightsaber, you may move up to 2 squares in any direction.
+- **Production record:** `b3ce8b08a8cb95fa`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Whenever an enemy misses you with a melee attack with a lightsaber, you may move up to 2 squares in any direction. This movement does not provoke attacks of opportunity.
+
+#### Precision Fire
+
+- **Page:** 40
+- **Prerequisites:** None.
+- **Quick summary:** The Jedi are skilled at blocking and deflecting ranged attacks with their lightsabers, and you are able to compensate for this to some degree by taking careful shots.
+- **Production record:** `bef731c3743c2c7f`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+The Jedi are skilled at blocking and deflecting ranged attacks with their lightsabers, and you are able to compensate for this to some degree by taking careful shots. Whenever you aim before making a ranged attack, you increase the difficulty of Deflect attempts to negate your attack by +5.
+
+#### Steel Mind
+
+- **Page:** 40
+- **Prerequisites:** None.
+- **Quick summary:** If you resist the effects of a mind-affecting Force power, the user of that power cannot attempt to use the same power against you for the rest of the encounter.
+- **Production record:** `19ba6767726bdc86`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+If you resist the effects of a mind-affecting Force power, the user of that power cannot attempt to use the same power against you for the rest of the encounter.
+
+#### Strong-Willed
+
+- **Page:** 40
+- **Prerequisites:** None.
+- **Quick summary:** You are trained to resist Jedi mind tricks.
+- **Production record:** `5621a55aea1936b2`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+You are trained to resist Jedi mind tricks. You add your class level to Will Defense against Use the Force checks.
+
+#### Telekinetic Resistance
+
+- **Page:** 40
+- **Prerequisites:** None.
+- **Quick summary:** Whenever you are targeted by a Force power that moves you, you reduce the distance you are moved by half.
+- **Production record:** `203464310c5c2492`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Whenever you are targeted by a Force power that moves you, you reduce the distance you are moved by half.
+
+### Protection
+
+#### Armored Guard
+
+- **Page:** 40
+- **Prerequisites:** Ward
+- **Quick summary:** When you use the Ward talent (see below), your ally's cover bonus to Reflex Defense is increased by one-half the armor bonus of any natural armor you possess as well as any armor you are wearing.
+- **Production record:** `514b1225139b22b8`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+When you use the Ward talent (see below), your ally's cover bonus to Reflex Defense is increased by one-half the armor bonus of any natural armor you possess as well as any armor you are wearing.
+
+#### Bodyguard's Sacrifice
+
+- **Page:** 40
+- **Prerequisites:** None.
+- **Quick summary:** As a reaction, you can interfere with any successful attack against an adjacent ally.
+- **Production record:** `7505fbdd592c04fd`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+As a reaction, you can interfere with any successful attack against an adjacent ally. You can choose to take any or all of that attack's damage, and the remainder is dealt to the target as normal. Once you use this talent, you may not use it again until the end of your next turn.
+
+#### Guard's Endurance
+
+- **Page:** 41
+- **Prerequisites:** Ward
+- **Quick summary:** Whenever you begin your turn adjacent to the target of your Ward talent (see below), you gain bonus hit points equal to your character level until the start of your next turn.
+- **Production record:** `bffc3826d39f3946`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Whenever you begin your turn adjacent to the target of your Ward talent (see below), you gain bonus hit points equal to your character level until the start of your next turn. Damage is subtracted from the bonus hit points first, and any bonus hit points remaining at the end of the encounter go away. Bonus hit points from different sources do not stack.
+
+#### Lifesaver
+
+- **Page:** 41
+- **Prerequisites:** Bodyguard's Sacrifice
+- **Quick summary:** Once per encounter as a reaction, when an ally takes damage that equals or exceeds its damage threshold or reduces it to 0 hit points, you can move up to your speed provided you end your movement adjacent to that ally.
+- **Production record:** `8eace9d86fc60711`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Once per encounter as a reaction, when an ally takes damage that equals or exceeds its damage threshold or reduces it to 0 hit points, you can move up to your speed provided you end your movement adjacent to that ally. This movement provokes attacks of opportunity as normal, you take all of the damage that triggered this talent's use, and your ally takes no damage.
+
+#### Out of Harm's Way
+
+- **Page:** 41
+- **Prerequisites:** None.
+- **Quick summary:** As a move action, you allow one ally within 6 squares of you to move up to its speed, provided the ally ends its movement adjacent to you.
+- **Production record:** `6031244221b73865`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+As a move action, you allow one ally within 6 squares of you to move up to its speed, provided the ally ends its movement adjacent to you. This movement does not provoke attacks of opportunity.
+
+#### Roll With It
+
+- **Page:** 41
+- **Prerequisites:** Bodyguard's Sacrifice, Take the Hit
+- **Quick summary:** Whenever you take damage on behalf of an ally through the use of a talent (including Harm's Way), you gain damage reduction equal to your class level until the end of your next turn.
+- **Production record:** `f4ca7e7a674372a5`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Whenever you take damage on behalf of an ally through the use of a talent (including Harm's Way), you gain damage reduction equal to your class level until the end of your next turn.
+
+#### Take the Hit
+
+- **Page:** 41
+- **Prerequisites:** Bodyguard's Sacrifice
+- **Quick summary:** Whenever you take damage on behalf of an ally through the use of a talent (including Harm's Way), your damage threshold is increased by 5.
+- **Production record:** `450aa69ead3975f2`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Whenever you take damage on behalf of an ally through the use of a talent (including Harm's Way), your damage threshold is increased by 5.
+
+#### Ward
+
+- **Page:** 41
+- **Prerequisites:** None.
+- **Quick summary:** As a swift action, designate one adjacent ally.
+- **Production record:** `d9241073d3b975e6`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+As a swift action, designate one adjacent ally. Until the end of your next turn, as long as that ally remains adjacent to you, you are considered to be providing that ally with soft cover against all attacks. You cannot be designated as the target of this talent (such as, when it is used by an ally) if you have used this talent since the start of your last turn, and you cannot use this talent if you are currently designated as another ally's ward.
+
+### Carbineer
+
+#### Blowback
+
+- **Page:** 41
+- **Prerequisites:** None.
+- **Quick summary:** When you make an attack with a rifle that deals damage in excess of your target's damage threshold, you can choose to push the target 1 square away from you.
+- **Production record:** `9b337a844329fa17`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+When you make an attack with a rifle that deals damage in excess of your target's damage threshold, you can choose to push the target 1 square away from you.
+
+#### Close Contact
+
+- **Page:** 41
+- **Prerequisites:** None.
+- **Quick summary:** The point-blank range of any rifle or carbine you use is increased by 5 squares.
+- **Production record:** `7d30702a5a2640a4`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+The point-blank range of any rifle or carbine you use is increased by 5 squares. Short range for the weapon begins 5 squares later, but still ends at the same distance.
+
+You can take this talent up to two times; each time you take this talent, you increase the point-blank range of any rifle or carbine you use by an additional 5 squares, up to a maximum of 10 squares.
+
+#### Multiattack Proficiency (rifles)
+
+- **Page:** 41
+- **Prerequisites:** None.
+- **Quick summary:** Whenever you make multiple attacks with any type of rifle as a full attack action (see page 154 of the Saga Edition core rulebook), you reduce the penalty of your attack rolls by 2.
+- **Production record:** `ecb678c47bb2cb43`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Whenever you make multiple attacks with any type of rifle as a full attack action (see page 154 of the Saga Edition core rulebook), you reduce the penalty of your attack rolls by 2.
+
+You can take this talent multiple times; each time you take this talent, you reduce the penalty on your attack rolls by an additional 2.
+
+#### Old Faithful
+
+- **Page:** 41
+- **Prerequisites:** None.
+- **Quick summary:** The trusty sidearm class feature (see page 217 of the Saga Edition core rulebook) of the gunslinger prestige class also applies to any rifle or carbine that you use.
+- **Production record:** `970d8d555645604d`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+The trusty sidearm class feature (see page 217 of the Saga Edition core rulebook) of the gunslinger prestige class also applies to any rifle or carbine that you use.
+
+#### Opportunity Fire
+
+- **Page:** 41
+- **Prerequisites:** None.
+- **Quick summary:** You gain a +2 bonus on attacks of opportunity made with rifles.
+- **Production record:** `f5fcf2752e99961a`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+You gain a +2 bonus on attacks of opportunity made with rifles.
+
+#### Rifle Master
+
+- **Page:** 41
+- **Prerequisites:** None.
+- **Quick summary:** You treat all rifles as though they were accurate weapons, taking no penalty when firing at targets at short range.
+- **Production record:** `d24b04541998b27b`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+You treat all rifles as though they were accurate weapons, taking no penalty when firing at targets at short range.
+
+#### Shoot from the Hip
+
+- **Page:** 41
+- **Prerequisites:** None.
+- **Quick summary:** You can always use a rifle to make attacks of opportunity.
+- **Production record:** `554e245686231855`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+You can always use a rifle to make attacks of opportunity.
+
+#### Snap Shot
+
+- **Page:** 41
+- **Prerequisites:** None.
+- **Quick summary:** You do not provoke attacks of opportunity while using the aim action with a rifle or carbine with its stock extended.
+- **Production record:** `2c1268268212d135`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+You do not provoke attacks of opportunity while using the aim action with a rifle or carbine with its stock extended.
+
+### Jedi Refugee
+
+#### Cover Your Tracks
+
+- **Page:** 41
+- **Prerequisites:** None.
+- **Quick summary:** You are adept at living beneath society's radar.
+- **Production record:** `43ee5741f4b2375c`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+You are adept at living beneath society's radar. Anyone who attempts to locate you using the Gather Information skill suffers a -5 penalty on their Gather Information checks.
+
+#### Difficult to Sense
+
+- **Page:** 41
+- **Prerequisites:** None.
+- **Quick summary:** You are skilled at concealing your presence from other Force-users.
+- **Production record:** `8c47c02ec74fa858`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+You are skilled at concealing your presence from other Force-users. You may reroll any opposed Use the Force check made to conceal your presence from someone who attempts to sense other Forceusers, keeping the better result.
+
+#### Force Veil
+
+- **Page:** 41
+- **Prerequisites:** Difficult to Sense
+- **Quick summary:** Your ability to conceal yourself from other Force-users allows you to reduce the radius within which you can be detected to 10 kilometers (instead of 100 kilometers).
+- **Production record:** `4fa3e301abad7a48`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Your ability to conceal yourself from other Force-users allows you to reduce the radius within which you can be detected to 10 kilometers (instead of 100 kilometers).
+
+#### Jedi Network
+
+- **Page:** 42
+- **Prerequisites:** None.
+- **Quick summary:** You have access to a network of Jedi sympathizers.
+- **Production record:** `251462d5e3aaa4ce`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+You have access to a network of Jedi sympathizers. While in a civilized area, you can call upon this network of allies once per game session for one of the following purposes:
+
+Acquire Equipment or Funds: You can use your contacts to obtain material that might otherwise be licensed, restricted, military, or illegal, provided the total value of the equipment does not exceed your level in this class x 500 credits. Alternately, you can obtain a number of credits from your contacts equal to this amount to spend as you see fit.
+
+Obtain Information: Your contacts provide you with information, automatically succeeding on a Gather Information check (and covering the credit cost of the check) provided that the DC does not exceed 20.
+
+Receive Medical Attention: Your contacts provide you and up to three of your allies with medical attention as dispensed by a skilled physician or healer. The length of the treatment cannot exceed 24 hours, but is otherwise free of charge and completely private.
+
+Secure Safe house: One of your contacts provides a safe redoubt for you and up to three of your allies, for a number of days equal to your Jedi Knight class level. While in hiding, you have no contact with anyone other than the individual who is hiding you. Once the allotted time is up, you must leave the safe house or risk discovery. For each day you remain in hiding past this deadline, the Gamemaster should roll 1d20. On a result of 15 or higher, your safe house is discovered, and your contact's complicity in keeping you hidden is exposed.
+
+### Fugitive Commander
+
+#### Disciplined Trickery
+
+- **Page:** 42
+- **Prerequisites:** None.
+- **Quick summary:** Once per turn as a reaction, you allow one ally within 12 squares of you and in your line of sight to reroll one Deception or Stealth check, but the ally must keep the second result, even if it is worse.
+- **Production record:** `f7a7ecda71555b5c`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Once per turn as a reaction, you allow one ally within 12 squares of you and in your line of sight to reroll one Deception or Stealth check, but the ally must keep the second result, even if it is worse.
+
+#### Group Perception
+
+- **Page:** 42
+- **Prerequisites:** None.
+- **Quick summary:** Whenever you roll a Perception check, all allies within 6 squares of you can do so as well, taking the highest reroll result rolled by you or any ally.
+- **Production record:** `5775fa033444f4f0`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Whenever you roll a Perception check, all allies within 6 squares of you can do so as well, taking the highest reroll result rolled by you or any ally.
+
+#### Hasty Withdrawal
+
+- **Page:** 42
+- **Prerequisites:** None.
+- **Quick summary:** As a swift action once per turn, you target a number of allies equal to your Charisma bonus (minimum 1).
+- **Production record:** `8f388280e0d1b244`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+As a swift action once per turn, you target a number of allies equal to your Charisma bonus (minimum 1). Each targeted ally must be within 12 squares of you and in your line of sight. Each ally you target can take the withdraw action immediately as a free action. The normal rules for withdrawing otherwise apply (see page 153 of the Saga Edition core rulebook).
+
+#### Stalwart Subordinates
+
+- **Page:** 42
+- **Prerequisites:** None.
+- **Quick summary:** When any ally within 12 squares of you and in your line of sight is targeted by a skill check against its Will Defense, the source of that skill check (whether a hazard, a creature, a droid, or whatever) must roll the skill check twice...
+- **Production record:** `d9ffff2586cd259b`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+When any ally within 12 squares of you and in your line of sight is targeted by a skill check against its Will Defense, the source of that skill check (whether a hazard, a creature, a droid, or whatever) must roll the skill check twice and take the lowest result.
+
+#### Stay in the Fight
+
+- **Page:** 42
+- **Prerequisites:** Stalwart Subordinates
+- **Quick summary:** As a swift action, you remove one mind-affecting or fear effect currently affecting an ally within 12 squares of you and in your line of sight.
+- **Production record:** `c980750800b91061`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+As a swift action, you remove one mind-affecting or fear effect currently affecting an ally within 12 squares of you and in your line of sight. When you do so, you also grant the target a number of bonus hit points equal to 10 + your class level.
+
+#### Stealthy Withdrawal
+
+- **Page:** 42
+- **Prerequisites:** Hasty Withdrawal
+- **Quick summary:** When an ally withdraws as a result of your Hasty Withdrawal talent and ends its withdraw action with cover or concealment from any enemy target, that ally can make an immediate Stealth check to sneak as a free action.
+- **Production record:** `c483676cb3c07cb3`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+When an ally withdraws as a result of your Hasty Withdrawal talent and ends its withdraw action with cover or concealment from any enemy target, that ally can make an immediate Stealth check to sneak as a free action.
+
+### Sith Commander
+
+#### Desperate Measures
+
+- **Page:** 43
+- **Prerequisites:** Focus Terror
+- **Quick summary:** Desperation stems from fear.
+- **Production record:** `d11f6beaa5f93e66`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Desperation stems from fear. Once per encounter as a swift action, you instill desperation in all allies within 12 squares of you and in your line of sight, allowing each of them to make an immediate attack at a -5 penalty.
+
+#### Focus Terror
+
+- **Page:** 43
+- **Prerequisites:** None.
+- **Quick summary:** Once per encounter as a swift action, you can harness the fear felt by your allies and transform it into a powerful motivational tool.
+- **Production record:** `98c720992c5b428e`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Once per encounter as a swift action, you can harness the fear felt by your allies and transform it into a powerful motivational tool. All allies within 12 squares of you and in your line of sight move +2 steps along the condition track, but suffer a -2 penalty on attack rolls and skill checks for a number of rounds equal to your character level.
+
+#### Incite Rage
+
+- **Page:** 43
+- **Prerequisites:** None.
+- **Quick summary:** Once per encounter as a swift action, you can channel your anger and hatred into your allies.
+- **Production record:** `b8a9dd4c950a96f5`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Once per encounter as a swift action, you can channel your anger and hatred into your allies. All allies within 12 squares of you and in your line of sight gain a +1 rage bonus on attack rolls but take a -2 penalty to their Reflex Defense. This effect lasts until the encounter ends, or you are knocked unconscious or killed.
+
+#### Power of Hatred
+
+- **Page:** 43
+- **Prerequisites:** Incite Rage
+- **Quick summary:** Once per encounter as a swift action, you can inflame the passions of your allies.
+- **Production record:** `51a8e7a193955f11`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Once per encounter as a swift action, you can inflame the passions of your allies. Each ally within your line of sight who has fewer than half its normal hit points gains bonus hit points equal to your character level. Damage is subtracted from the bonus hit points first, and any bonus hit points remaining at the end of the encounter go away. Bonus hit points from different sources do not stack.
+
+### Knight's Armor
+
+#### Armored Augmentation I
+
+- **Page:** 45
+- **Prerequisites:** Armor Proficiency with the type of armor worn
+- **Quick summary:** Once per encounter, you may spend a Force Point as a swift action to augment your own ability to withstand damage by imbuing the armor you are wearing with the Force.
+- **Production record:** `98355ed4f6473028`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Once per encounter, you may spend a Force Point as a swift action to augment your own ability to withstand damage by imbuing the armor you are wearing with the Force. This allows you to add your armor bonus to Reflex Defense to your damage threshold until the end of the encounter.
+
+#### Armored Augmentation II
+
+- **Page:** 45
+- **Prerequisites:** Armor Proficiency with the type of armor worn, Armored Augmentation I
+- **Quick summary:** Whenever you use the Armored Augmentation I talent, you also gain DR equal to 2 x your armor's equipment bonus to Fortitude Defense.
+- **Production record:** `51588e91f335bb67`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Whenever you use the Armored Augmentation I talent, you also gain DR equal to 2 x your armor's equipment bonus to Fortitude Defense.
+
+#### Armor Mastery
+
+- **Page:** 45
+- **Prerequisites:** None.
+- **Quick summary:** When calculating your Reflex Defense, you may add your heroic level plus one-half your armor bonus (rounded down) or your armor bonus, whichever is higher.
+- **Production record:** `d9e707f23fffc2af`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+When calculating your Reflex Defense, you may add your heroic level plus one-half your armor bonus (rounded down) or your armor bonus, whichever is higher. You must be proficient with the armor you are wearing to gain this benefit.
+
+This talent counts as both the Armored Defense and Improved Armored Defense talents for the purposes of prerequisites.
+
+#### Cortosis Defense
+
+- **Page:** 45
+- **Prerequisites:** None.
+- **Quick summary:** You are adept at using a cortosis gauntlet to parry lightsaber attacks.
+- **Production record:** `dfe97e928928efc3`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+You are adept at using a cortosis gauntlet to parry lightsaber attacks. You gain a +2 bonus when making an opposed unarmed melee attack roll against a lightsaber attack.
+
+#### Cortosis Retaliation
+
+- **Page:** 45
+- **Prerequisites:** Cortosis Defense
+- **Quick summary:** Whenever you successfully use a cortosis gauntlet to parry an attack made with a lightsaber, you may make an immediate attack of opportunity against the attacker.
+- **Production record:** `22ce14b57f9b8c1a`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Whenever you successfully use a cortosis gauntlet to parry an attack made with a lightsaber, you may make an immediate attack of opportunity against the attacker.
+
+### Knight's Resolve
+
+#### Knight's Morale
+
+- **Page:** 45
+- **Prerequisites:** None.
+- **Quick summary:** When an ally within 12 squares of you and within your line of sight hits with a lightsaber attack, you gain a +1 morale bonus to all defenses until the end of your next turn.
+- **Production record:** `e3b7d8c87441a1f0`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+When an ally within 12 squares of you and within your line of sight hits with a lightsaber attack, you gain a +1 morale bonus to all defenses until the end of your next turn.
+
+#### Oath of Duty
+
+- **Page:** 45
+- **Prerequisites:** None.
+- **Quick summary:** When an ally within 12 squares of you and within your line of sight hits with a lightsaber attack, you gain bonus hit points equal to 3 x your class level until the end of your next turn.
+- **Production record:** `001ae84d5862af55`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+When an ally within 12 squares of you and within your line of sight hits with a lightsaber attack, you gain bonus hit points equal to 3 x your class level until the end of your next turn. Damage is subtracted from the bonus hit points first, and any bonus hit points remaining at the end of the encounter go away. Bonus hit points from different sources do not stack.
+
+#### Praetoria Ishu
+
+- **Page:** 45
+- **Prerequisites:** Block, Deflect
+- **Quick summary:** You can use the Block talent to negate a melee attack made against an adjacent ally.
+- **Production record:** `16aa9efd54967320`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+You can use the Block talent to negate a melee attack made against an adjacent ally. In addition, you can use the Deflect talent to negate a ranged attack made against an adjacent ally.
+
+#### Praetoria Vonil
+
+- **Page:** 45
+- **Prerequisites:** Weapon Focus (lightsabers)
+- **Quick summary:** You have mastered the offensive lightsaber style favored by the Imperial Knights.
+- **Production record:** `4723e1eb351e07ae`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+You have mastered the offensive lightsaber style favored by the Imperial Knights. When wielding a single lightsaber with two hands, you deal +1 die of damage if you move at least 1 square on your turn before making the attack.
+
+#### Strength of the Empire
+
+- **Page:** 45
+- **Prerequisites:** Knight's Morale
+- **Quick summary:** When an ally within 12 squares of you and in your line of sight hits with a lightsaber attack, you deal +1 die of damage with the next lightsaber attack you make before the end of your next turn.
+- **Production record:** `2b808a4a90614f92`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+When an ally within 12 squares of you and in your line of sight hits with a lightsaber attack, you deal +1 die of damage with the next lightsaber attack you make before the end of your next turn.
+
+### Implant
+
+#### Adrenaline Implant
+
+- **Page:** 47
+- **Prerequisites:** None.
+- **Quick summary:** Once per encounter as a standard action, you can give one adjacent living creature an adrenaline implant.
+- **Production record:** `2fdf215a5da99e00`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Once per encounter as a standard action, you can give one adjacent living creature an adrenaline implant. The target must be willing to receive this implant, which grants the target 10 bonus hit points at the start of each of its turns. These bonus hit points do not accumulate. Damage is subtracted from the bonus hit points first, and any bonus hit points remaining at the end of the encounter go away. Bonus hit points from different sources do not stack.
+
+The following talents all grant effects that last until the end of the encounter. At the end of the encounter, any target that benefits from one or more of these talents immediately moves -3 steps down the condition track, and the condition becomes persistent. The persistent condition can only be removed after 8 hours of rest, or by performing successful surgery (as per the application of the Treat Injury skill) on the target.
+
+#### Precision Implant
+
+- **Page:** 47
+- **Prerequisites:** None.
+- **Quick summary:** Once per encounter as a standard action, you can give one adjacent living creature a precision implant.
+- **Production record:** `58e37d40d3aa7d4b`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Once per encounter as a standard action, you can give one adjacent living creature a precision implant. The target must be willing to receive this implant, which grants the target a +1 equipment bonus on attack rolls until the end of the encounter.
+
+The following talents all grant effects that last until the end of the encounter. At the end of the encounter, any target that benefits from one or more of these talents immediately moves -3 steps down the condition track, and the condition becomes persistent. The persistent condition can only be removed after 8 hours of rest, or by performing successful surgery (as per the application of the Treat Injury skill) on the target.
+
+#### Resilience Implant
+
+- **Page:** 47
+- **Prerequisites:** None.
+- **Quick summary:** Once per encounter as a standard action, you can give one adjacent living creature a resilience implant.
+- **Production record:** `94b1951d4795f602`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Once per encounter as a standard action, you can give one adjacent living creature a resilience implant. The target must be willing to receive this implant, which grants the target a +5 equipment bonus to its damage threshold until the end of the encounter.
+
+The following talents all grant effects that last until the end of the encounter. At the end of the encounter, any target that benefits from one or more of these talents immediately moves -3 steps down the condition track, and the condition becomes persistent. The persistent condition can only be removed after 8 hours of rest, or by performing successful surgery (as per the application of the Treat Injury skill) on the target.
+
+#### Speed Implant
+
+- **Page:** 47
+- **Prerequisites:** None.
+- **Quick summary:** Once per encounter as a standard action, you can give one adjacent living creature a speed implant.
+- **Production record:** `d6d3b0a2ec01ca9a`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Once per encounter as a standard action, you can give one adjacent living creature a speed implant. The target must be willing to receive this implant, which increases the target's base speed by 2 until the end of the encounter.
+
+The following talents all grant effects that last until the end of the encounter. At the end of the encounter, any target that benefits from one or more of these talents immediately moves -3 steps down the condition track, and the condition becomes persistent. The persistent condition can only be removed after 8 hours of rest, or by performing successful surgery (as per the application of the Treat Injury skill) on the target.
+
+#### Strength Implant
+
+- **Page:** 47
+- **Prerequisites:** None.
+- **Quick summary:** Once per encounter as a standard action, you can give one adjacent living creature a strength implant.
+- **Production record:** `cb0dcc59f7ced910`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Once per encounter as a standard action, you can give one adjacent living creature a strength implant. The target must be willing to receive this implant, which allows the target to deal +1 die of damage whenever it hits with a melee attack until the end of the encounter.
+
+The following talents all grant effects that last until the end of the encounter. At the end of the encounter, any target that benefits from one or more of these talents immediately moves -3 steps down the condition track, and the condition becomes persistent. The persistent condition can only be removed after 8 hours of rest, or by performing successful surgery (as per the application of the Treat Injury skill) on the target.
+
+### Shaper
+
+#### Biotech Mastery
+
+- **Page:** 47
+- **Prerequisites:** None.
+- **Quick summary:** When using the Biotech Specialist feat to modify biotechnology, you are able to make the appropriate modification in half of the normal time for half the normal cost.
+- **Production record:** `fc91564e800719be`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+When using the Biotech Specialist feat to modify biotechnology, you are able to make the appropriate modification in half of the normal time for half the normal cost. In addition, you can take 10 on the Mechanics check (even when distracted or threatened), but you cannot take 20.
+
+#### Expedient Mending
+
+- **Page:** 47
+- **Prerequisites:** Expert Shaper
+- **Quick summary:** You can temporarily mend a damaged or disabled biotech device using the Treat Injury skill (see page 32) as a standard action instead of a full-round action.
+- **Production record:** `7f792f0e531e9abb`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+You can temporarily mend a damaged or disabled biotech device using the Treat Injury skill (see page 32) as a standard action instead of a full-round action.
+
+#### Expert Shaper
+
+- **Page:** 47
+- **Prerequisites:** None.
+- **Quick summary:** You may reroll any Treat Injury check made to repair or modify a biotech object, but the result of the reroll must be accepted even if it is worse.
+- **Production record:** `f9047f30ef6712af`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+You may reroll any Treat Injury check made to repair or modify a biotech object, but the result of the reroll must be accepted even if it is worse.
+
+#### Master Mender
+
+- **Page:** 47
+- **Prerequisites:** Expert Shaper
+- **Quick summary:** Whenever you temporarily mend a biotech device using the Treat Injury skill (see page 32), the mended device moves +4 steps on the condition track.
+- **Production record:** `bebc181408831371`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Whenever you temporarily mend a biotech device using the Treat Injury skill (see page 32), the mended device moves +4 steps on the condition track. In addition, the mended device only moves -3 steps down the condition track at the end of the scene or encounter, and is only disabled if this reduction brings it to -5 steps on the track.
+
+#### Skilled Implanter
+
+- **Page:** 47
+- **Prerequisites:** Biotech Surgery feat
+- **Quick summary:** Whenever you use the Biotech Surgery feat to install an implant, the implant's attack bonus against the recipient's Fortitude Defense is halved (see page 67 for more information on implants).
+- **Production record:** `bf0c791fe21df919`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Whenever you use the Biotech Surgery feat to install an implant, the implant's attack bonus against the recipient's Fortitude Defense is halved (see page 67 for more information on implants).
+
+### Disciple Of Twilight
+
+#### Cloak of Shadow
+
+- **Page:** 57
+- **Prerequisites:** None.
+- **Quick summary:** You can spend a Force Point as a swift action to bend light around you, veiling yourself in shadows.
+- **Production target:** CREATE `b3fe6f7659b40a55`
+- **Phase 3B disposition:** `CREATE`
+
+**Canonical rules text**
+
+You can spend a Force Point as a swift action to bend light around you, veiling yourself in shadows. Until the end of the encounter, whenever you move and end your movement at least 3 squares away from your starting position, you gain concealment from all targets until the beginning of your next turn.
+
+#### Phantasm
+
+- **Page:** 57
+- **Prerequisites:** None.
+- **Quick summary:** Whenever you successfully use a Force power with the [mind-affecting] descriptor against a target, any time before the end of the encounter you can spend a Force Point as a swift action to create illusory phantoms around that target.
+- **Production target:** CREATE `943f8753f56f3a63`
+- **Phase 3B disposition:** `CREATE`
+
+**Canonical rules text**
+
+Whenever you successfully use a Force power with the [mind-affecting] descriptor against a target, any time before the end of the encounter you can spend a Force Point as a swift action to create illusory phantoms around that target. When you do this, you and all of your allies within the target's line of sight have concealment from the target until the end of your next turn.
+
+#### Revelation
+
+- **Page:** 58
+- **Prerequisites:** None.
+- **Quick summary:** As a standard action, you can make a Use the Force check against the Will Defense of an enemy that has concealment from you or any of your allies.
+- **Production target:** CREATE `35af8366f831bd8b`
+- **Phase 3B disposition:** `CREATE`
+
+**Canonical rules text**
+
+As a standard action, you can make a Use the Force check against the Will Defense of an enemy that has concealment from you or any of your allies. If successful, the enemy is silhouetted by a faint shimmering light that belies his location. Your target loses any concealment bonuses to Reflex Defense until the end of your next turn.
+
+#### Shadow Armor
+
+- **Page:** 58
+- **Prerequisites:** Cloak of Shadow
+- **Quick summary:** You use the Force to bend light around yourself, wrapping you in shadows and making it difficult for enemies to tell where you end and the shadows begin.
+- **Production target:** CREATE `4916dbbae0f18ee1`
+- **Phase 3B disposition:** `CREATE`
+
+**Canonical rules text**
+
+You use the Force to bend light around yourself, wrapping you in shadows and making it difficult for enemies to tell where you end and the shadows begin. As a swift action, you grant yourself a +1 Force bonus to your Reflex Defense until the start of your next turn.
+
+You may select this talent multiple times. Each time you select it, the Force bonus it provides increases by +1 (maximum +4).
+
+#### Shadow Vision
+
+- **Page:** 58
+- **Prerequisites:** None.
+- **Quick summary:** As a swift action, you gain low-light vision, allowing you to ignore concealment (but not total concealment) from darkness.
+- **Production target:** CREATE `66b3278292626e27`
+- **Phase 3B disposition:** `CREATE`
+
+**Canonical rules text**
+
+As a swift action, you gain low-light vision, allowing you to ignore concealment (but not total concealment) from darkness. This benefit lasts for 5 minutes or until the end of the encounter, whichever comes first.
+
+### Ember Of Vahl
+
+#### Initiate of Vahl
+
+- **Page:** 59
+- **Prerequisites:** None.
+- **Quick summary:** Having been formally initiated into Vahl's priesthood, you are resistant to the effects of fire and extreme heat.
+- **Production record:** `510a0f02ffa843e3`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Having been formally initiated into Vahl's priesthood, you are resistant to the effects of fire and extreme heat. You take half damage from attacks that deal fire damage, or no damage on a miss (if the fire damage is part of an area attack).
+
+#### Reading the Flame
+
+- **Page:** 59
+- **Prerequisites:** Initiate of Vahl
+- **Quick summary:** You can enter a trance by staring into a flame of any size, gaining insight into the workings of the galaxy by meditating on the flame's movement.
+- **Production target:** CREATE `12f61917f809a3fb`
+- **Phase 3B disposition:** `CREATE`
+
+**Canonical rules text**
+
+You can enter a trance by staring into a flame of any size, gaining insight into the workings of the galaxy by meditating on the flame's movement. Whenever you use the farseeing power or the Search Your Feelings application of the Use the Force skill, you can reroll your Use the Force check, keeping the better result.
+
+#### Sword of Vahl
+
+- **Page:** 59
+- **Prerequisites:** Initiate of Vahl
+- **Quick summary:** Your devotion to Vahla allows you to eschew advanced weapons in favor of simple implements of war.
+- **Production target:** CREATE `b1a9d6277428e6c0`
+- **Phase 3B disposition:** `CREATE`
+
+**Canonical rules text**
+
+Your devotion to Vahla allows you to eschew advanced weapons in favor of simple implements of war. You gain a +1 Force bonus on attack rolls made with simple weapons.
+
+#### Vahl's Brand
+
+- **Page:** 59
+- **Prerequisites:** Empower Weapon
+- **Quick summary:** Any additional damage you deal with an empowered weapon (see the Empower Weapon talent, page 214 of the Saga Edition core rulebook) is considered to be fire damage.
+- **Production target:** CREATE `a5f8ec365ef2b699`
+- **Phase 3B disposition:** `CREATE`
+
+**Canonical rules text**
+
+Any additional damage you deal with an empowered weapon (see the Empower Weapon talent, page 214 of the Saga Edition core rulebook) is considered to be fire damage.
+
+#### Vahl's Flame
+
+- **Page:** 59
+- **Prerequisites:** Initiate of Vahl
+- **Quick summary:** As a swift action, you can use the Force to call forth the sparks of your goddess, wreathing your weapon in flames.
+- **Production target:** CREATE `8ba6abad84c6d9ef`
+- **Phase 3B disposition:** `CREATE`
+
+**Canonical rules text**
+
+As a swift action, you can use the Force to call forth the sparks of your goddess, wreathing your weapon in flames. Until the beginning of your next turn, any successful attack you make with a melee weapon deals an additional 1d6 points of fire damage.
+
+---
+
 ## Book 14 — Scavenger's Guide to Droids
 
 **Phase 3B status:** COMPLETE — 31 owned canonical identities; 12 UPDATE_CONTENT; 19 CREATE.
@@ -6306,7 +7598,7 @@ You channel your power surge into a boost for your locomotion system. When you i
 - [x] Threats of the Galaxy — 11 certified talent claims
 - [ ] Scum and Villainy
 - [x] Unknown Regions — 57 certified talent claims
-- [ ] Legacy Era Campaign Guide
+- [x] Legacy Era Campaign Guide — 101 certified talent claims
 - [ ] Knights of the Old Republic Campaign Guide
 - [ ] Force Unleashed Campaign Guide
 - [ ] Jedi Academy Training Manual
