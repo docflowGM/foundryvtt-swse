@@ -11,6 +11,7 @@ A talent identity is `canonicalTreeKey + talent name`. Talent name alone is neve
 | Book | Owned identities | Manifest | Checker |
 |---|---:|---|---|
 | Saga Edition Core Rulebook | 198 | `data/audits/talent-phase-3b-core-rulebook-manifest.json` | `node tools/build-talent-phase-3b-core-manifest.mjs --check` |
+| Starships of the Galaxy | 23 | `data/audits/talent-phase-3b-starships-of-the-galaxy-manifest.json` | `node tools/build-talent-phase-3b-starships-manifest.mjs --check` |
 | Threats of the Galaxy | 11 | `data/audits/talent-phase-3b-threats-of-the-galaxy-manifest.json` | `node tools/build-talent-phase-3b-threats-manifest.mjs --check` |
 
 The shared implementation is `tools/build-talent-phase-3b-manifest.mjs`.
@@ -62,6 +63,7 @@ Current review-only extras:
 ```bash
 node tools/build-talent-canonical-authority.mjs --check
 node tools/build-talent-phase-3b-core-manifest.mjs --check
+node tools/build-talent-phase-3b-starships-manifest.mjs --check
 node tools/build-talent-phase-3b-threats-manifest.mjs --check
 ```
 
