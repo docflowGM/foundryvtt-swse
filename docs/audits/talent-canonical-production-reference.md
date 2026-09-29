@@ -1504,6 +1504,7 @@ You may use any Force power that normally requires a swift action, move action, 
 - **Quick summary:** You can make a Use the Force check in place of a Persuasion check when attempting to change the Attitude of an undomesticated creature with an Intelligence score of 2 or less.
 - **Phase 2 repository evidence:** Mapped repository record: `bab9a1ce285f98b9` (Charm Beast)
 - **Phase 2 discrepancy flags:** TREE_ERROR
+- **Phase 3B correction:** The mapped record is the distinct JATM Beastwarden identity and must remain there. Core Dathomiri Witch `Charm Beast` is `IDENTITY_SPLIT` with create ID `c919d7682bd9df40`.
 
 **Canonical rules text**
 
