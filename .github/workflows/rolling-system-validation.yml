@@ -98,6 +98,9 @@ jobs:
       - name: Guard — talent/tree membership
         run: node tools/audit-talent-tree-membership.mjs
 
+      - name: Guard — Phase 3C talent dry-run applicator
+        run: node tools/apply-talent-phase-3c.mjs
+
       - name: Guard — system manifest and declared packs
         run: node tools/check-system-manifest.mjs
 
