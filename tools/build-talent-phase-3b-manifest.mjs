@@ -8,6 +8,7 @@
  *   node tools/build-talent-phase-3b-manifest.mjs --book starships [--check]
  *   node tools/build-talent-phase-3b-manifest.mjs --book scavengers [--check]
  *   node tools/build-talent-phase-3b-manifest.mjs --book intrigue [--check]
+ *   node tools/build-talent-phase-3b-manifest.mjs --book war [--check]
  */
 import fs from 'node:fs';
 import path from 'node:path';
@@ -41,6 +42,28 @@ const BOOKS = {
         CORRECT_TREE: 17,
         CREATE: 6,
         IDENTITY_SPLIT: 1
+      }
+    }
+  },
+  war: {
+    sourcebook: 'Galaxy at War',
+    bookOrder: 4,
+    classes: 'packs/classes.db',
+    allowTreeCreates: true,
+    phase2: 'data/audits/talent-phase-2-galaxy-at-war-content.json',
+    discrepancy: 'data/audits/talent-phase-2-galaxy-at-war-discrepancy-manifest.json',
+    output: 'data/audits/talent-phase-3b-galaxy-at-war-manifest.json',
+    aliases: {},
+    expected: {
+      records: 56,
+      extras: 0,
+      treeCreates: 3,
+      classAccessMutations: 3,
+      dispositions: {
+        UPDATE_CONTENT: 13,
+        UPDATE_METADATA: 1,
+        CREATE: 39,
+        IDENTITY_SPLIT: 3
       }
     }
   },
@@ -518,6 +541,6 @@ if (isDirectRun) {
   const bookArg = process.argv.find(arg => arg.startsWith('--book='));
   const index = process.argv.indexOf('--book');
   const bookKey = bookArg ? bookArg.slice('--book='.length) : index >= 0 ? process.argv[index + 1] : null;
-  invariant(bookKey, 'usage: --book core|threats|starships|scavengers|intrigue [--check]');
+  invariant(bookKey, 'usage: --book core|threats|starships|scavengers|intrigue|war [--check]');
   buildBookManifest(bookKey, {check: process.argv.includes('--check')});
 }
