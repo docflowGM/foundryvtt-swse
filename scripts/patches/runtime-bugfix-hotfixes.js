@@ -317,7 +317,10 @@ function filterArmorSpecialistRegistry(data) {
   return data.map(entry => {
     if (!isArmorSpecialistTree(entry) || !Array.isArray(entry.talents)) return entry;
     const talents = entry.talents.filter(ref => !isBlockedArmorMasteryRef(ref));
-    return { ...entry, talentCount: talents.length, talents };
+    const filtered = { ...entry, talentCount: talents.length, talents };
+    // Generated entries also list member IDs; keep them in step with the filtered names.
+    if (Array.isArray(entry.talentIds)) filtered.talentIds = entry.talentIds.filter(ref => !isBlockedArmorMasteryRef(ref));
+    return filtered;
   });
 }
 

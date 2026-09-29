@@ -37,6 +37,7 @@ function createTalentTreeBuildAudit() {
         duplicateSourceIds: [],
         duplicateStableKeys: [],
         emptyTrees: [],
+        sameNameTrees: [],
     };
 }
 
@@ -64,6 +65,7 @@ function emitTalentTreeBuildAudit(audit) {
         duplicateSourceIds: audit.duplicateSourceIds.length,
         duplicateStableKeys: audit.duplicateStableKeys.length,
         emptyTrees: audit.emptyTrees.length,
+        sameNameTreesDisambiguated: audit.sameNameTrees.length,
     };
 
     if (hasFailures) {
@@ -153,6 +155,22 @@ export const TalentTreeDB = {
                     // Validate
                     validateTalentTree(normalizedTree);
 
+                    // Distinct trees can share a display name (Squad Leader exists in the Clone Wars Campaign Guide and
+                    // in Galaxy at War). Their name-derived id/key would collide and the later tree would overwrite the
+                    // earlier one, so the later tree gets an unambiguous, sourceId-suffixed id and key instead.
+                    const baseStableKey = entry.system?.key ?? toStableKey(entry.name);
+                    let stableKey = baseStableKey;
+                    const holder = this.trees.get(normalizedTree.id);
+                    if (holder && normalizedTree.sourceId && holder.sourceId && holder.sourceId !== normalizedTree.sourceId) {
+                        audit.sameNameTrees.push({
+                            keptId: holder.id,
+                            keptSourceId: holder.sourceId,
+                            disambiguated: describeTreeForAudit(normalizedTree),
+                        });
+                        normalizedTree.id = `${normalizedTree.id}_${normalizedTree.sourceId}`;
+                        stableKey = baseStableKey ? `${baseStableKey}-${normalizedTree.sourceId}` : baseStableKey;
+                    }
+
                     if (!normalizedTree.sourceId) {
                         audit.missingSourceIds.push(describeTreeForAudit(normalizedTree));
                         warnings++;
@@ -185,7 +203,7 @@ export const TalentTreeDB = {
                     if (normalizedTree.sourceId) {this.sourceIndex.set(normalizedTree.sourceId, normalizedTree);}
 
                     // Store by stable key (generate if not in compendium)
-                    const key = entry.system?.key ?? toStableKey(entry.name);
+                    const key = stableKey;
                     if (key) {
                         if (this._byKey.has(key)) {
                             audit.duplicateStableKeys.push({
@@ -251,7 +269,7 @@ export const TalentTreeDB = {
 
                 for (const entry of data) {
                     const displayName = entry.displayName || entry.name || entry.id;
-                    const keys = [entry.id, displayName, toStableKey(displayName), normalizeTalentTreeId(displayName)]
+                    const keys = [entry.sourceId, entry.id, displayName, toStableKey(displayName), normalizeTalentTreeId(displayName)]
                         .map(key => String(key || '').trim())
                         .filter(Boolean);
                     for (const key of keys) {
@@ -281,7 +299,8 @@ export const TalentTreeDB = {
     _applyMembershipRegistryHints(tree, registry) {
         if (!tree || !registry?.size) {return tree;}
 
-        const keys = [tree.id, tree.name, toStableKey(tree.name), normalizeTalentTreeId(tree.name), tree.sourceId]
+        // sourceId first: distinct trees may share a display name (Squad Leader), so the pack _id is the only unambiguous key.
+        const keys = [tree.sourceId, tree.id, tree.name, toStableKey(tree.name), normalizeTalentTreeId(tree.name)]
             .map(key => String(key || '').trim())
             .filter(Boolean);
         const entry = keys.map(key => registry.get(key)).find(Boolean);

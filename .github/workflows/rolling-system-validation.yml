@@ -89,26 +89,10 @@ jobs:
       - name: Syntax check (scripts/, tools/, tests/)
         run: node tools/run-rolling-syntax-check.mjs
 
-      - name: Guard — Phase 3C talent dry-run applicator
-        run: |
-          if ! node tools/check-talent-phase-3b-global-closeout.mjs; then
-            echo "::group::Phase 3C manifest regeneration diagnostic"
-            for book in clone-wars core force-unleashed war intrigue jatm kotor legacy rebellion scavengers scum starships threats unknown; do
-              node tools/build-talent-phase-3b-manifest.mjs --book "$book" || true
-            done
-            git diff -- data/audits/talent-phase-3b-*-manifest.json || true
-            echo "::endgroup::"
-            exit 1
-          fi
-          if ! node tools/apply-talent-phase-3c.mjs; then
-            echo "::group::Phase 3C manifest regeneration diagnostic"
-            for book in clone-wars core force-unleashed war intrigue jatm kotor legacy rebellion scavengers scum starships threats unknown; do
-              node tools/build-talent-phase-3b-manifest.mjs --book "$book" || true
-            done
-            git diff -- data/audits/talent-phase-3b-*-manifest.json || true
-            echo "::endgroup::"
-            exit 1
-          fi
+      # State-aware and read-only: never runs --apply. Pre-state: Phase 3B closeout + dry-run report freshness +
+      # independent audit + membership audit. Post-state: --verify --exact + registry freshness + membership audit.
+      - name: Guard — Phase 3C talent migration (state-aware, read-only)
+        run: node tools/check-talent-phase-3c-ci.mjs
 
       - name: Rolling-system test suite
         run: node tools/run-rolling-tests.mjs

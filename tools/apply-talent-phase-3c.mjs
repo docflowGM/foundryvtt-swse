@@ -27,6 +27,10 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
+import {
+  REGISTRY_PATHS, generateFromPackTexts, serializeRegistry, loadPreviousRegistry, registrySlug
+} from './build-talent-tree-registry.mjs';
+import { scanManifestText, summarize as summarizeTextQuality } from './audit-talent-phase-3c-text-quality.mjs';
 
 export const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 export const CLOSEOUT_PATH = 'data/audits/talent-phase-3b-global-closeout.json';
@@ -553,25 +557,104 @@ export function verifyPostState({ manifests, closeout, report, talents, trees, c
   return results;
 }
 
-export function exactPostStateResults(texts, report) {
-  const sha = packBlobShas(texts);
-  return ['talents', 'trees', 'classes'].map(k => ({
-    id: `exact certified blob: ${PACKS[k]}`, ok: report.postState?.[k] === sha[k],
+/**
+ * Runtime registry (data/generated + data/fixes talent-trees.registry.json) checks. The registry is DERIVED from the
+ * packs, so the primary proof is "a fresh generation from the on-disk packs equals both on-disk files"; the semantic
+ * checks below then pin the properties the migration is responsible for.
+ */
+export function verifyRegistry({ registryTexts, expectedText, manifests, closeout, talents, trees, classes }) {
+  const results = [];
+  const check = (id, fn) => {
+    try { results.push({ id, ok: true, detail: fn() ?? '' }); }
+    catch (e) { results.push({ id, ok: false, detail: String(e.message).replace(ERR, '').split('\n')[0] }); }
+  };
+  const recs = manifests.flatMap(m => m.manifest.records);
+  const T = new Map(talents.map(t => [t._id, t]));
+  let registry = [];
+  try { registry = JSON.parse(registryTexts[0]); } catch { /* reported below */ }
+  const bySource = new Map(registry.filter(e => e.sourceId).map(e => [e.sourceId, e]));
+
+  check('registry: generated and fixes files are byte-identical and equal a fresh generation from the packs', () => {
+    invariant(registryTexts.length === REGISTRY_PATHS.length && registryTexts.every(t => t === expectedText), 'registry files are stale or diverge from a fresh generation (run node tools/build-talent-tree-registry.mjs)');
+  });
+  check('registry: one entry per production tree, member IDs and names equal the pack, unique entry IDs', () => {
+    invariant(Array.isArray(registry), 'registry is not an array');
+    invariant(new Set(registry.map(e => e.id)).size === registry.length, 'duplicate registry entry IDs');
+    for (const tree of trees) {
+      const e = bySource.get(tree._id); invariant(e, `registry lacks tree ${tree.name} (${tree._id})`);
+      invariant(same(e.talentIds, tree.system.talentIds), `registry membership differs from pack for ${tree.name}`);
+      invariant(same(e.talents, tree.system.talentIds.map(id => T.get(id).name)), `registry names differ from pack for ${tree.name}`);
+      invariant(e.talentCount === e.talents.length && e.displayName === tree.name, `registry count/name wrong for ${tree.name}`);
+    }
+    invariant(bySource.size === trees.length, 'registry holds entries for trees that no longer exist');
+  });
+  check('registry: 7 certified new trees represented; obsolete GenoHaradan fragment absent; consolidated tree complete', () => {
+    for (const tc of manifests.flatMap(m => m.manifest.treeCreates ?? [])) {
+      const e = bySource.get(tc.createTreeId); invariant(e, 'new tree missing from registry: ' + tc.canonicalTreeKey);
+      invariant(same([...e.talentIds].sort(), [...tc.createTemplate.system.talentIds].sort()), 'new tree members wrong in registry: ' + tc.canonicalTreeKey);
+    }
+    for (const c of manifests.flatMap(m => m.manifest.treeConsolidations ?? [])) {
+      for (const o of c.deleteObsoleteTreeIds) invariant(!bySource.has(o), 'obsolete tree still in registry ' + o);
+      for (const o of c.obsoleteTrees ?? []) invariant(!registry.some(e => e.id === registrySlug(o.treeName)), 'obsolete tree alias still in registry: ' + o.treeName);
+      const e = bySource.get(c.survivorTreeId); invariant(e && e.displayName === c.canonicalDisplayName, 'consolidated tree missing/misnamed in registry');
+      invariant(same([...e.talentIds].sort(), [...c.survivorTreePatch['system.talentIds']].sort()), 'consolidated tree members wrong in registry');
+      invariant(registry.filter(x => registrySlug(x.displayName) === registrySlug(c.canonicalDisplayName)).length === 1, 'GenoHaradan is represented more than once');
+    }
+  });
+  check('registry: Charm Beast identities are separate, ID-addressed entries (Core Dathomiri Witch vs JATM Beastwarden)', () => {
+    const core = bySource.get(recs.find(r => r.canonicalIdentity === 'Saga Edition Core Rulebook|Dathomiri Witch|Charm Beast').targetTree.treeId);
+    const jatm = bySource.get(recs.find(r => r.canonicalIdentity === 'Jedi Academy Training Manual|Beastwarden|Charm Beast').targetTree.treeId);
+    invariant(core?.talentIds.includes('c919d7682bd9df40') && !core.talentIds.includes('bab9a1ce285f98b9'), 'Core entry must hold only the Core Charm Beast ID');
+    invariant(jatm?.talentIds.includes('bab9a1ce285f98b9') && !jatm.talentIds.includes('c919d7682bd9df40'), 'JATM entry must hold only the JATM Charm Beast ID');
+    invariant(core.id !== jatm.id && core.sourceId !== jatm.sourceId, 'Charm Beast trees share a registry entry');
+  });
+  check('registry: same-name trees (Squad Leader x2) get distinct entries keyed by sourceId', () => {
+    const groups = new Map();
+    for (const t of trees) groups.set(registrySlug(t.name), [...(groups.get(registrySlug(t.name)) ?? []), t._id]);
+    for (const ids of groups.values()) if (ids.length > 1) {
+      invariant(new Set(ids.map(id => bySource.get(id).id)).size === ids.length, 'same-name trees share a registry id');
+    }
+  });
+  check('registry: class access matches the class pack, including the 5 certified access mutations', () => {
+    for (const tree of trees) {
+      const expected = classes.filter(c => (c.system.talent_trees ?? []).includes(tree._id) || (c.system.talentTreeSourceIds ?? []).includes(tree._id)).map(c => c.name);
+      invariant(same([...(bySource.get(tree._id).classAccess ?? [])].sort(), [...new Set(expected)].sort()), `classAccess differs for ${tree.name}`);
+    }
+    for (const m of manifests.flatMap(x => x.manifest.classAccessMutations ?? [])) {
+      invariant(bySource.get(m.treeId).classAccess.includes(m.className), `${m.className} missing from ${m.treeName} classAccess`);
+    }
+  });
+  check('registry: legacy alias entries (no sourceId) are the only entries not backed by a pack tree', () => {
+    for (const e of registry.filter(x => !x.sourceId)) invariant(!trees.some(t => registrySlug(t.name) === e.id), 'legacy alias shadows a real tree: ' + e.id);
+  });
+  return results;
+}
+
+export function exactPostStateResults(texts, report, registryTexts = []) {
+  const sha = { ...packBlobShas(texts), registry: gitBlobSha(registryTexts[0] ?? ''), registryFixes: gitBlobSha(registryTexts[1] ?? '') };
+  const rel = { ...PACKS, registry: REGISTRY_PATHS[0], registryFixes: REGISTRY_PATHS[1] };
+  return Object.keys(rel).map(k => ({
+    id: `exact certified blob: ${rel[k]}`, ok: report.postState?.[k] === sha[k],
     detail: sha[k] === report.postState?.[k] ? sha[k] : `on-disk ${sha[k]} != certified ${report.postState?.[k]}`
   }));
 }
 
+export const readRegistryTexts = root => REGISTRY_PATHS.map(rel => (fs.existsSync(path.join(root, rel)) ? readText(rel, root) : ''));
+
 /* ------------------------------------------------------------------------------------------------
  * Report
  * ---------------------------------------------------------------------------------------------- */
-export function buildReport({ manifests, closeout, texts, before, projection }) {
+export function buildReport({ manifests, closeout, texts, before, projection, root = ROOT }) {
   const out = serializeProjection(projection, texts);
-  const preSha = packBlobShas(texts);
-  const postSha = packBlobShas(out);
+  const preRegistry = readRegistryTexts(root);
+  const preSha = { ...packBlobShas(texts), registry: gitBlobSha(preRegistry[0]), registryFixes: gitBlobSha(preRegistry[1]) };
+  const registryText = serializeRegistry(generateFromPackTexts({ texts: out, previousRegistry: loadPreviousRegistry(root), manifests }));
+  const postSha = { ...packBlobShas(out), registry: gitBlobSha(registryText), registryFixes: gitBlobSha(registryText) };
+  const textQuality = summarizeTextQuality(scanManifestText(manifests));
   return {
     schemaVersion: 2,
     phase: '3C-1',
-    status: 'DRY_RUN_CERTIFIED',
+    status: textQuality.gatingFields === 0 ? 'DRY_RUN_CERTIFIED' : 'DRY_RUN_BLOCKED_PHASE3B_TEXT_DEFECTS',
     productionMutationPerformed: false,
     inputAuthority: {
       phase3bCloseout: CLOSEOUT_PATH,
@@ -596,7 +679,9 @@ export function buildReport({ manifests, closeout, texts, before, projection }) 
       charmBeastIdentitySplitVerified: true
     },
     fingerprints: computeCertifiedFingerprints({ manifests, closeout, before }),
+    textQuality,
     acceptance: {
+      certifiedTextFreeOfOcrArtifacts: textQuality.gatingFields === 0,
       all14BookManifestsRebuiltInCheckMode: true,
       productionDriftChecksPassed: true,
       noGeneratedTalentIdCollisions: true,
@@ -639,6 +724,7 @@ function printResults(results) {
 export async function main(argv = process.argv.slice(2), root = ROOT) {
   const has = flag => argv.includes(flag);
   const modes = ['--apply', '--verify', '--report', '--check', '--status'].filter(has);
+  invariant(!has('--allow-ocr-artifacts') || has('--apply'), '--allow-ocr-artifacts is only meaningful with --apply');
   invariant(modes.length <= 1, 'choose at most one of --apply --verify --report --check --status');
   if (has('--write')) throw new Error(ERR + '--write is not a mode; use --apply');
 
@@ -651,8 +737,12 @@ export async function main(argv = process.argv.slice(2), root = ROOT) {
     const manifests = loadCommittedManifests(root);
     const report = readJson(REPORT_PATH, root);
     const texts = loadPackTexts(root);
-    let results = verifyPostState({ manifests, closeout, report, talents: parseNdjson(texts.talents), trees: parseNdjson(texts.trees), classes: parseNdjson(texts.classes) });
-    if (has('--exact')) results = results.concat(exactPostStateResults(texts, report));
+    const packs = { talents: parseNdjson(texts.talents), trees: parseNdjson(texts.trees), classes: parseNdjson(texts.classes) };
+    let results = verifyPostState({ manifests, closeout, report, ...packs });
+    const registryTexts = readRegistryTexts(root);
+    const expectedText = serializeRegistry(generateFromPackTexts({ texts, previousRegistry: registryTexts[0] ? JSON.parse(registryTexts[0]) : [], manifests }));
+    results = results.concat(verifyRegistry({ registryTexts, expectedText, manifests, closeout, ...packs }));
+    if (has('--exact')) results = results.concat(exactPostStateResults(texts, report, registryTexts));
     const bad = printResults(results);
     console.log(bad ? `\n[talent-phase-3c] verify FAILED (${bad})` : `\n[talent-phase-3c] verify PASS (${results.length} checks; no files written)`);
     return bad ? 1 : 0;
@@ -662,7 +752,7 @@ export async function main(argv = process.argv.slice(2), root = ROOT) {
   requirePreState(root);
   const inputs = await loadPreStateInputs(root);
   const projection = projectPhase3C({ manifests: inputs.manifests, closeout: inputs.closeout, ...inputs.before });
-  const report = buildReport({ manifests: inputs.manifests, closeout: inputs.closeout, texts: inputs.texts, before: inputs.before, projection });
+  const report = buildReport({ manifests: inputs.manifests, closeout: inputs.closeout, texts: inputs.texts, before: inputs.before, projection, root });
   const serialized = JSON.stringify(report, null, 2) + '\n';
 
   if (has('--check')) {
@@ -677,6 +767,14 @@ export async function main(argv = process.argv.slice(2), root = ROOT) {
     return 0;
   }
   if (has('--apply')) {
+    // 0. never write certified text that carries OCR artifacts (see tools/audit-talent-phase-3c-text-quality.mjs)
+    const quality = scanManifestText(inputs.manifests);
+    if (quality.gating.length && !has('--allow-ocr-artifacts')) {
+      const q = summarizeTextQuality(quality);
+      throw new Error(ERR + `refusing to apply: ${q.gatingFields} certified target text fields in ${q.gatingRecords} records carry OCR artifacts ` +
+        `${JSON.stringify(q.bySignature)}; Phase 3B text must be corrected first (node tools/audit-talent-phase-3c-text-quality.mjs). ` +
+        '--allow-ocr-artifacts exists for scratch validation only');
+    }
     // 1. the committed report must be the report of THIS pre-state
     invariant(fs.existsSync(path.join(root, REPORT_PATH)) && readText(REPORT_PATH, root) === serialized,
       'committed dry-run report is missing or stale; refusing to write production packs');
@@ -689,11 +787,20 @@ export async function main(argv = process.argv.slice(2), root = ROOT) {
       manifests: loadCommittedManifests(root), closeout: inputs.closeout, report,
       talents: parseNdjson(out.talents), trees: parseNdjson(out.trees), classes: parseNdjson(out.classes)
     });
-    const failed = pre.filter(r => !r.ok);
+    const registryText = serializeRegistry(generateFromPackTexts({ texts: out, previousRegistry: loadPreviousRegistry(root), manifests: inputs.manifests }));
+    const preRegistry = verifyRegistry({
+      registryTexts: REGISTRY_PATHS.map(() => registryText), expectedText: registryText,
+      manifests: loadCommittedManifests(root), closeout: inputs.closeout,
+      talents: parseNdjson(out.talents), trees: parseNdjson(out.trees), classes: parseNdjson(out.classes)
+    });
+    const failed = pre.concat(preRegistry).filter(r => !r.ok);
     invariant(failed.length === 0, 'projected state failed verification: ' + failed.map(f => `${f.id}: ${f.detail}`).join(' | '));
-    // 4. write only the certified outputs
+    invariant(gitBlobSha(registryText) === report.postState.registry, 'projected registry differs from the committed report');
+    // 4. write only the certified outputs: three packs + the derived runtime registry (both copies)
     for (const [key, rel] of Object.entries(PACKS)) fs.writeFileSync(path.join(root, rel), out[key], 'utf8');
+    for (const rel of REGISTRY_PATHS) fs.writeFileSync(path.join(root, rel), registryText, 'utf8');
     console.log('[talent-phase-3c] APPLIED: packs/talents.db, packs/talent_trees.db, packs/classes.db written');
+    console.log('[talent-phase-3c] APPLIED: ' + REGISTRY_PATHS.join(', ') + ' regenerated');
     console.log('[talent-phase-3c] next: node tools/apply-talent-phase-3c.mjs --verify --exact');
     return 0;
   }
