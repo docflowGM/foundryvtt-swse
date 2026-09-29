@@ -9,6 +9,7 @@
  *   node tools/build-talent-phase-3b-manifest.mjs --book scavengers [--check]
  *   node tools/build-talent-phase-3b-manifest.mjs --book intrigue [--check]
  *   node tools/build-talent-phase-3b-manifest.mjs --book war [--check]
+ *   node tools/build-talent-phase-3b-manifest.mjs --book unknown [--check]
  */
 import fs from 'node:fs';
 import path from 'node:path';
@@ -42,6 +43,23 @@ const BOOKS = {
         CORRECT_TREE: 17,
         CREATE: 6,
         IDENTITY_SPLIT: 1
+      }
+    }
+  },
+  unknown: {
+    sourcebook: 'Unknown Regions',
+    bookOrder: 9,
+    phase2: 'data/audits/talent-phase-2-unknown-regions-content.json',
+    discrepancy: 'data/audits/talent-phase-2-unknown-regions-discrepancy-manifest.json',
+    output: 'data/audits/talent-phase-3b-unknown-regions-manifest.json',
+    aliases: {},
+    expected: {
+      records: 57,
+      extras: 0,
+      dispositions: {
+        UPDATE_CONTENT: 11,
+        CREATE: 44,
+        IDENTITY_SPLIT: 2
       }
     }
   },
@@ -541,6 +559,6 @@ if (isDirectRun) {
   const bookArg = process.argv.find(arg => arg.startsWith('--book='));
   const index = process.argv.indexOf('--book');
   const bookKey = bookArg ? bookArg.slice('--book='.length) : index >= 0 ? process.argv[index + 1] : null;
-  invariant(bookKey, 'usage: --book core|threats|starships|scavengers|intrigue|war [--check]');
+  invariant(bookKey, 'usage: --book core|threats|starships|scavengers|intrigue|war|unknown [--check]');
   buildBookManifest(bookKey, {check: process.argv.includes('--check')});
 }
