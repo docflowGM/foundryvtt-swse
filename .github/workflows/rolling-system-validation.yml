@@ -99,7 +99,14 @@ jobs:
         run: node tools/audit-talent-tree-membership.mjs
 
       - name: Guard — Phase 3C talent dry-run applicator
-        run: node tools/apply-talent-phase-3c.mjs
+        run: |
+          if ! node tools/apply-talent-phase-3c.mjs; then
+            echo "::group::Phase 3C manifest regeneration diagnostic"
+            node tools/build-talent-phase-3b-manifest.mjs --book core || true
+            git diff -- data/audits/talent-phase-3b-core-rulebook-manifest.json || true
+            echo "::endgroup::"
+            exit 1
+          fi
 
       - name: Guard — system manifest and declared packs
         run: node tools/check-system-manifest.mjs
