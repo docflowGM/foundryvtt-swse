@@ -383,17 +383,30 @@ export function checkInvariants(inputs, after, { reference = null } = {}) {
     for (const [id, t] of RB) if (!touched.has(id)) assert.equal(JSON.stringify(R.get(id)), JSON.stringify(t), 'untouched tree changed ' + id);
   });
   check(BLOCKER_SAME_NAME_IN_TREE, () => {
-    // Mirrors tools/audit-talent-tree-membership.mjs `duplicateTalentNamesWithinTree` (a hard failure in CI).
+    // Mirrors tools/audit-talent-tree-membership.mjs. Phase 3B deliberately
+    // preserves two exact review-only duplicate aliases until Phase 3D.
+    const normalize = value => String(value ?? '').normalize('NFKD').replace(/[^\w]+/g, '').toLowerCase();
+    const exemptions = new Map((inputs.closeout.reviewExtras ?? [])
+      .filter(extra => extra.classification === 'REVIEW_EXTRA_DUPLICATE_CANONICAL_ALIAS')
+      .map(extra => {
+        const claim = extra.treeClaims?.[0];
+        return [String(claim?.treeId ?? '') + '::' + normalize(extra.name), extra.productionRecordId];
+      }));
     const bad = [];
     for (const t of after.trees) {
       const seen = new Map();
       for (const i of t.system.talentIds) {
-        const k = (T.get(i)?.name ?? '').normalize('NFKD').replace(/[^\w]+/g, '').toLowerCase();
+        const k = normalize(T.get(i)?.name);
         seen.set(k, [...(seen.get(k) ?? []), i]);
       }
-      for (const [k, v] of seen) if (v.length > 1) bad.push(t.name + ': ' + T.get(v[0]).name + ' -> ' + v.join(','));
+      for (const [k, v] of seen) {
+        if (v.length <= 1) continue;
+        const protectedExtraId = exemptions.get(t._id + '::' + k);
+        if (v.length === 2 && protectedExtraId && v.includes(protectedExtraId)) continue;
+        bad.push(t.name + ': ' + T.get(v[0]).name + ' -> ' + v.join(','));
+      }
     }
-    assert.equal(bad.length, 0, bad.length + ' same-name pairs within a tree: ' + bad.join(' | '));
+    assert.equal(bad.length, 0, bad.length + ' unapproved same-name pairs within a tree: ' + bad.join(' | '));
   });
   if (reference !== undefined && reference !== null) {
     check('idempotence: second application yields deep-equal state (order-sensitive)', () => {
