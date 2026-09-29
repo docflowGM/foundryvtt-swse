@@ -1,0 +1,2459 @@
+{
+  "schemaVersion": 1,
+  "phase": "3B-source-text-corrections",
+  "date": "2026-09-29",
+  "purpose": "Corrections to OCR damage that was certified into the Phase 2 canonical talent text. Corrections are made in the Phase 2 content authority (data/audits/talent-phase-2-*-content.json) and flow through tools/build-talent-canonical-authority.mjs and tools/build-talent-phase-3b-manifest.mjs; no Phase 3B manifest is edited by hand.",
+  "method": {
+    "txtIsIndexingLayer": true,
+    "pdfAvailableToThisAudit": false,
+    "rule": "A correction is TXT_CONFIRMED only when the individual sourcebook TXT itself supplies the evidence (a paired delimiter, a clean sibling occurrence, or the TXT rules text visibly ending before appended page furniture). Where the TXT is damaged the entry is TXT_AMBIGUOUS_PDF_REQUIRED. No bulk punctuation or spelling clean-up was performed; every edit is an exact substring replacement recorded below.",
+    "statusVocabulary": {
+      "TXT_CONFIRMED": "evidence is in the individual sourcebook TXT",
+      "PDF_CONFIRMED": "confirmed against the rendered PDF",
+      "TXT_AMBIGUOUS_PDF_REQUIRED": "TXT damaged or ambiguous; PDF check required before certification",
+      "UNRESOLVED": "cannot be decided",
+      "PRIOR_PDF_AUDIT_RECORDED": "a rendered-PDF verification is recorded in repository audit documents but was not repeated by this audit"
+    },
+    "detection": "signature scan (html tags, backslash, pipe, tilde, curly braces, gibberish tokens) over every certified target text field plus a full scan of all 1180 canonical records for the same signatures, all-caps caption/heading words and unbalanced brackets",
+    "limits": "signature-based; OCR damage without a detectable signature (a silently wrong letter, a dropped word) cannot be found by scanning and needs a PDF proofread"
+  },
+  "entries": [
+    {
+      "id": "TC-001",
+      "canonicalIdentity": "Saga Edition Core Rulebook|Lightsaber Combat|Redirect Shot",
+      "sourcebook": "Saga Edition Core Rulebook",
+      "printedPage": 41,
+      "phase2File": "data/audits/talent-phase-2-core-rulebook-content.json",
+      "phase2ClaimIdentity": "Saga Edition Core Rulebook|Lightsaber Combat|Redirect Shot",
+      "group": "A-flagged-ocr-signature",
+      "suspectedCorruption": [
+        "curly-brace delimiter (closing \")\" read as \"}\")",
+        "in-word \"!\" for \"l\" (norma!)"
+      ],
+      "edits": [
+        {
+          "kind": "delimiter",
+          "find": "Range Penalties}",
+          "replace": "Range Penalties)",
+          "evidence": "opening \"(see Table 8-5\" has no \"}\" partner; the pair is parentheses"
+        },
+        {
+          "kind": "ocr-letter",
+          "find": "norma! weapon damage",
+          "replace": "normal weapon damage",
+          "evidence": "\"norma!\" is an OCR read of \"normal\"; the same phrase reads \"normal range penalties\" two sentences earlier"
+        }
+      ],
+      "fields": [
+        {
+          "phase2Field": "canonicalDescription",
+          "targetFields": [
+            "system.benefit",
+            "system.description|system.description.value"
+          ],
+          "currentValue": "This talent allows you to redirect a deflected blaster bolt along a specific trajectory so that it damages another creature or object in its path, Once per round when you successfully deflect a blaster bolt, you can make an immediate ranged attack against another target with which you have line of sight. Apply the normal range penalties to the attack roll (see Table 8-5: Range Penalties}, not counting the distance the bolt traveled to reach you. If the attack succeeds, it deals norma! weapon damage to the target.\n\nOnly single blaster bolts can be redirected in this manner. Barrages from autofire weapons and other types of projectiles can't be redirected.",
+          "correctedValue": "This talent allows you to redirect a deflected blaster bolt along a specific trajectory so that it damages another creature or object in its path, Once per round when you successfully deflect a blaster bolt, you can make an immediate ranged attack against another target with which you have line of sight. Apply the normal range penalties to the attack roll (see Table 8-5: Range Penalties), not counting the distance the bolt traveled to reach you. If the attack succeeds, it deals normal weapon damage to the target.\n\nOnly single blaster bolts can be redirected in this manner. Barrages from autofire weapons and other types of projectiles can't be redirected.",
+          "editsApplied": [
+            0,
+            1
+          ]
+        }
+      ],
+      "verification": {
+        "txtFile": "reference/sourcebooks/Core Rulebook_djvu.txt",
+        "txtLine": 3737,
+        "pdf": "NOT_AVAILABLE_IN_REPOSITORY_OR_SESSION",
+        "status": "TXT_CONFIRMED",
+        "pdfConfirmationRequired": false,
+        "notes": null,
+        "unresolvedReason": null
+      },
+      "deliberatelyUncorrected": [
+        "\", Once per round\" (comma where the print has a full stop): OCR punctuation normalisation, not material"
+      ],
+      "applied": true,
+      "blocksApply": false,
+      "proposalNotApplied": null,
+      "docEdits": null
+    },
+    {
+      "id": "TC-002",
+      "canonicalIdentity": "Saga Edition Core Rulebook|Lineage|Connections",
+      "sourcebook": "Saga Edition Core Rulebook",
+      "printedPage": 44,
+      "phase2File": "data/audits/talent-phase-2-core-rulebook-content.json",
+      "phase2ClaimIdentity": "Saga Edition Core Rulebook|Lineage|Connections",
+      "group": "A-flagged-ocr-signature",
+      "suspectedCorruption": [
+        "tilde hyphenation artifact (equip~ ment)",
+        "stray closing quotation mark (less\" than)"
+      ],
+      "edits": [
+        {
+          "kind": "hyphenation",
+          "find": "equip~ ment",
+          "replace": "equipment",
+          "evidence": "TXT breaks the word across a line as \"equip~ / ment\"; joined form is the only reading"
+        },
+        {
+          "kind": "stray-quote",
+          "find": "less\" than",
+          "replace": "less than",
+          "evidence": "a lone closing quotation mark with no opening quote in the field (OCR of a footnote/line-end mark)"
+        }
+      ],
+      "fields": [
+        {
+          "phase2Field": "canonicalDescription",
+          "targetFields": [
+            "system.benefit",
+            "system.description|system.description.value"
+          ],
+          "currentValue": "You are able to obtain licensed, restricted, military, or illegal equipment without having to pay a licensing fee or endure a background check, provided the total cost of the desired equipment is equal to or less\" than your character level x 1,000 credits. In addition, when obtaining equip~ ment or services through the black market, you reduce the black market cost multiplier by 1. See Restricted Items (page 118) for details.",
+          "correctedValue": "You are able to obtain licensed, restricted, military, or illegal equipment without having to pay a licensing fee or endure a background check, provided the total cost of the desired equipment is equal to or less than your character level x 1,000 credits. In addition, when obtaining equipment or services through the black market, you reduce the black market cost multiplier by 1. See Restricted Items (page 118) for details.",
+          "editsApplied": [
+            0,
+            1
+          ]
+        },
+        {
+          "phase2Field": "quickSummary",
+          "targetFields": [
+            "system.summary"
+          ],
+          "currentValue": "You are able to obtain licensed, restricted, military, or illegal equipment without having to pay a licensing fee or endure a background check, provided the total cost of the desired equipment is equal to or less\" than your...",
+          "correctedValue": "You are able to obtain licensed, restricted, military, or illegal equipment without having to pay a licensing fee or endure a background check, provided the total cost of the desired equipment is equal to or less than your...",
+          "editsApplied": [
+            1
+          ]
+        }
+      ],
+      "verification": {
+        "txtFile": "reference/sourcebooks/Core Rulebook_djvu.txt",
+        "txtLine": 4096,
+        "pdf": "NOT_AVAILABLE_IN_REPOSITORY_OR_SESSION",
+        "status": "TXT_CONFIRMED",
+        "pdfConfirmationRequired": false,
+        "notes": null,
+        "unresolvedReason": null
+      },
+      "deliberatelyUncorrected": [],
+      "applied": true,
+      "blocksApply": false,
+      "proposalNotApplied": null,
+      "docEdits": null
+    },
+    {
+      "id": "TC-003",
+      "canonicalIdentity": "Saga Edition Core Rulebook|Mastermind|Impel Ally I",
+      "sourcebook": "Saga Edition Core Rulebook",
+      "printedPage": 210,
+      "phase2File": "data/audits/talent-phase-2-core-rulebook-content.json",
+      "phase2ClaimIdentity": "Saga Edition Core Rulebook|Mastermind|Impel Ally I",
+      "group": "A-flagged-ocr-signature",
+      "suspectedCorruption": [
+        "prerequisite copied from Impel Ally II (pipe-for-I OCR value \"|mpel Ally |\")"
+      ],
+      "edits": [
+        {
+          "kind": "misattributed-prerequisite",
+          "find": "|mpel Ally |",
+          "replace": "",
+          "evidence": "TXT prints no \"Prerequisite:\" line after Impel Ally I (it runs straight into \"Impel Ally II:\"); the \"|mpel Ally |\" line belongs to Impel Ally II. Production value is also empty."
+        }
+      ],
+      "fields": [
+        {
+          "phase2Field": "canonicalPrerequisites",
+          "targetFields": [
+            "system.prerequisites"
+          ],
+          "currentValue": "|mpel Ally |",
+          "correctedValue": "",
+          "editsApplied": [
+            0
+          ],
+          "removedTrailingText": "|mpel Ally |"
+        }
+      ],
+      "verification": {
+        "txtFile": "reference/sourcebooks/Core Rulebook_djvu.txt",
+        "txtLine": 19884,
+        "pdf": "NOT_AVAILABLE_IN_REPOSITORY_OR_SESSION",
+        "status": "TXT_CONFIRMED",
+        "pdfConfirmationRequired": false,
+        "notes": "Advisory PDF spot-check: OCR could in principle drop a printed prerequisite line.",
+        "unresolvedReason": null
+      },
+      "deliberatelyUncorrected": [],
+      "applied": true,
+      "blocksApply": false,
+      "proposalNotApplied": null,
+      "docEdits": [
+        {
+          "find": "|mpel Ally |",
+          "replace": "—"
+        }
+      ]
+    },
+    {
+      "id": "TC-004",
+      "canonicalIdentity": "Saga Edition Core Rulebook|Mastermind|Impel Ally II",
+      "sourcebook": "Saga Edition Core Rulebook",
+      "printedPage": 210,
+      "phase2File": "data/audits/talent-phase-2-core-rulebook-content.json",
+      "phase2ClaimIdentity": "Saga Edition Core Rulebook|Mastermind|Impel Ally II",
+      "group": "A-flagged-ocr-signature",
+      "suspectedCorruption": [
+        "pipe-for-capital-I OCR (|mpel Ally |)"
+      ],
+      "edits": [
+        {
+          "kind": "pipe-as-I",
+          "find": "|mpel Ally |",
+          "replace": "Impel Ally I",
+          "evidence": "TXT prints \"Prerequisite: |mpel Ally |\"; each \"|\" is the OCR read of a capital I in the talent name \"Impel Ally I\"; production value is \"Impel Ally I\""
+        }
+      ],
+      "fields": [
+        {
+          "phase2Field": "canonicalPrerequisites",
+          "targetFields": [
+            "system.prerequisites"
+          ],
+          "currentValue": "|mpel Ally |",
+          "correctedValue": "Impel Ally I",
+          "editsApplied": [
+            0
+          ]
+        }
+      ],
+      "verification": {
+        "txtFile": "reference/sourcebooks/Core Rulebook_djvu.txt",
+        "txtLine": 19892,
+        "pdf": "NOT_AVAILABLE_IN_REPOSITORY_OR_SESSION",
+        "status": "TXT_CONFIRMED",
+        "pdfConfirmationRequired": false,
+        "notes": null,
+        "unresolvedReason": null
+      },
+      "deliberatelyUncorrected": [],
+      "applied": true,
+      "blocksApply": false,
+      "proposalNotApplied": null,
+      "docEdits": null
+    },
+    {
+      "id": "TC-005",
+      "canonicalIdentity": "Saga Edition Core Rulebook|Force Adept|Force Power Adept",
+      "sourcebook": "Saga Edition Core Rulebook",
+      "printedPage": 214,
+      "phase2File": "data/audits/talent-phase-2-core-rulebook-content.json",
+      "phase2ClaimIdentity": "Saga Edition Core Rulebook|Force Adept|Force Power Adept",
+      "group": "A-flagged-ocr-signature",
+      "suspectedCorruption": [
+        "HTML paragraph markup (<p>, </p>) inside plain-text pack fields"
+      ],
+      "edits": [
+        {
+          "kind": "markup-strip",
+          "method": "remove <p> / </p> wrappers; </p>\\n<p> becomes a blank line",
+          "evidence": "the packs store plain text; only the tag wrappers are removed, no wording is changed"
+        }
+      ],
+      "fields": [
+        {
+          "phase2Field": "canonicalDescription",
+          "targetFields": [
+            "system.benefit",
+            "system.description|system.description.value"
+          ],
+          "currentValue": "<p>You are skilled at using a particular Force Power. Select one Force Power you know. When using that Force Power, you have the option of spending a Force Point to make two Use the Force checks, keeping the better result.</p>\n<p>This Talent may be selected multiple times. Its effects do not stack. Each time you select this Talent, you must choose a different Force Power.</p>",
+          "correctedValue": "You are skilled at using a particular Force Power. Select one Force Power you know. When using that Force Power, you have the option of spending a Force Point to make two Use the Force checks, keeping the better result.\n\nThis Talent may be selected multiple times. Its effects do not stack. Each time you select this Talent, you must choose a different Force Power.",
+          "editsApplied": [
+            0
+          ]
+        },
+        {
+          "phase2Field": "quickSummary",
+          "targetFields": [
+            "system.summary"
+          ],
+          "currentValue": "<p>You are skilled at using a particular Force Power. Select one Force Power you know.",
+          "correctedValue": "You are skilled at using a particular Force Power. Select one Force Power you know.",
+          "editsApplied": [
+            0
+          ]
+        }
+      ],
+      "verification": {
+        "txtFile": "reference/sourcebooks/Core Rulebook_djvu.txt",
+        "txtLine": 20264,
+        "pdf": "NOT_AVAILABLE_IN_REPOSITORY_OR_SESSION",
+        "status": "TXT_CONFIRMED",
+        "pdfConfirmationRequired": false,
+        "notes": "Markup-only correction. This record's wording is repository-derived (capitalisation/expansion differs from the TXT); wording is not part of this correction.",
+        "unresolvedReason": null
+      },
+      "deliberatelyUncorrected": [],
+      "applied": true,
+      "blocksApply": false,
+      "proposalNotApplied": null,
+      "docEdits": null
+    },
+    {
+      "id": "TC-006",
+      "canonicalIdentity": "Saga Edition Core Rulebook|Force Adept|Force Treatment",
+      "sourcebook": "Saga Edition Core Rulebook",
+      "printedPage": 214,
+      "phase2File": "data/audits/talent-phase-2-core-rulebook-content.json",
+      "phase2ClaimIdentity": "Saga Edition Core Rulebook|Force Adept|Force Treatment",
+      "group": "A-flagged-ocr-signature",
+      "suspectedCorruption": [
+        "HTML paragraph markup (<p>, </p>) inside plain-text pack fields"
+      ],
+      "edits": [
+        {
+          "kind": "markup-strip",
+          "method": "remove <p> / </p> wrappers; </p>\\n<p> becomes a blank line",
+          "evidence": "the packs store plain text; only the tag wrappers are removed, no wording is changed"
+        }
+      ],
+      "fields": [
+        {
+          "phase2Field": "canonicalDescription",
+          "targetFields": [
+            "system.benefit",
+            "system.description|system.description.value"
+          ],
+          "currentValue": "<p>You can make a Use the Force check in place of a Treat Injury check. You are considered Trained in the Treat Injury Skill. If you are entitled to a Treat Injury check reroll, you may reroll your Use the Force check instead (subject to the same circumstances and limitations).</p>\n<p>In addition, you can administer First Aid, Treat Disease, Treat Poison, and Treat Radiation without the requisite Medical Kit or Medpac.</p>",
+          "correctedValue": "You can make a Use the Force check in place of a Treat Injury check. You are considered Trained in the Treat Injury Skill. If you are entitled to a Treat Injury check reroll, you may reroll your Use the Force check instead (subject to the same circumstances and limitations).\n\nIn addition, you can administer First Aid, Treat Disease, Treat Poison, and Treat Radiation without the requisite Medical Kit or Medpac.",
+          "editsApplied": [
+            0
+          ]
+        },
+        {
+          "phase2Field": "quickSummary",
+          "targetFields": [
+            "system.summary"
+          ],
+          "currentValue": "<p>You can make a Use the Force check in place of a Treat Injury check. You are considered Trained in the Treat Injury Skill.",
+          "correctedValue": "You can make a Use the Force check in place of a Treat Injury check. You are considered Trained in the Treat Injury Skill.",
+          "editsApplied": [
+            0
+          ]
+        }
+      ],
+      "verification": {
+        "txtFile": "reference/sourcebooks/Core Rulebook_djvu.txt",
+        "txtLine": 20274,
+        "pdf": "NOT_AVAILABLE_IN_REPOSITORY_OR_SESSION",
+        "status": "TXT_CONFIRMED",
+        "pdfConfirmationRequired": false,
+        "notes": "Markup-only correction. This record's wording is repository-derived (capitalisation/expansion differs from the TXT); wording is not part of this correction.",
+        "unresolvedReason": null
+      },
+      "deliberatelyUncorrected": [],
+      "applied": true,
+      "blocksApply": false,
+      "proposalNotApplied": null,
+      "docEdits": null
+    },
+    {
+      "id": "TC-007",
+      "canonicalIdentity": "Saga Edition Core Rulebook|Force Adept|Fortified Body",
+      "sourcebook": "Saga Edition Core Rulebook",
+      "printedPage": 214,
+      "phase2File": "data/audits/talent-phase-2-core-rulebook-content.json",
+      "phase2ClaimIdentity": "Saga Edition Core Rulebook|Force Adept|Fortified Body",
+      "group": "A-flagged-ocr-signature",
+      "suspectedCorruption": [
+        "HTML paragraph markup (<p>, </p>) inside plain-text pack fields"
+      ],
+      "edits": [
+        {
+          "kind": "markup-strip",
+          "method": "remove <p> / </p> wrappers; </p>\\n<p> becomes a blank line",
+          "evidence": "the packs store plain text; only the tag wrappers are removed, no wording is changed"
+        }
+      ],
+      "fields": [
+        {
+          "phase2Field": "canonicalDescription",
+          "targetFields": [
+            "system.benefit",
+            "system.description|system.description.value"
+          ],
+          "currentValue": "<p>The Force shields you against ailments, toxins, and radiation poisoning, making you immune to Disease, Poison, and Radiation.</p>",
+          "correctedValue": "The Force shields you against ailments, toxins, and radiation poisoning, making you immune to Disease, Poison, and Radiation.",
+          "editsApplied": [
+            0
+          ]
+        },
+        {
+          "phase2Field": "quickSummary",
+          "targetFields": [
+            "system.summary"
+          ],
+          "currentValue": "<p>The Force shields you against ailments, toxins, and radiation poisoning, making you immune to Disease, Poison, and Radiation.</p>",
+          "correctedValue": "The Force shields you against ailments, toxins, and radiation poisoning, making you immune to Disease, Poison, and Radiation.",
+          "editsApplied": [
+            0
+          ]
+        }
+      ],
+      "verification": {
+        "txtFile": "reference/sourcebooks/Core Rulebook_djvu.txt",
+        "txtLine": 20286,
+        "pdf": "NOT_AVAILABLE_IN_REPOSITORY_OR_SESSION",
+        "status": "TXT_CONFIRMED",
+        "pdfConfirmationRequired": false,
+        "notes": "Markup-only correction. This record's wording is repository-derived (capitalisation/expansion differs from the TXT); wording is not part of this correction.",
+        "unresolvedReason": null
+      },
+      "deliberatelyUncorrected": [],
+      "applied": true,
+      "blocksApply": false,
+      "proposalNotApplied": null,
+      "docEdits": null
+    },
+    {
+      "id": "TC-008",
+      "canonicalIdentity": "Saga Edition Core Rulebook|Force Item|Attune Weapon",
+      "sourcebook": "Saga Edition Core Rulebook",
+      "printedPage": 214,
+      "phase2File": "data/audits/talent-phase-2-core-rulebook-content.json",
+      "phase2ClaimIdentity": "Saga Edition Core Rulebook|Force Item|Attune Weapon",
+      "group": "A-flagged-ocr-signature",
+      "suspectedCorruption": [
+        "HTML paragraph markup (<p>, </p>) inside plain-text pack fields"
+      ],
+      "edits": [
+        {
+          "kind": "markup-strip",
+          "method": "remove <p> / </p> wrappers; </p>\\n<p> becomes a blank line",
+          "evidence": "the packs store plain text; only the tag wrappers are removed, no wording is changed"
+        }
+      ],
+      "fields": [
+        {
+          "phase2Field": "canonicalDescription",
+          "targetFields": [
+            "system.benefit",
+            "system.description|system.description.value"
+          ],
+          "currentValue": "<p>You may spend a Force Point to attune a melee weapon. Attuning the weapon takes a Full-Round Action. From that point forward, whenever you wield the attuned weapon, you gain a +1 Force bonus on attack rolls.</p>\n<p>The weapon is attuned to you alone; others who wield the weapon do not gain the Force bonus.</p>",
+          "correctedValue": "You may spend a Force Point to attune a melee weapon. Attuning the weapon takes a Full-Round Action. From that point forward, whenever you wield the attuned weapon, you gain a +1 Force bonus on attack rolls.\n\nThe weapon is attuned to you alone; others who wield the weapon do not gain the Force bonus.",
+          "editsApplied": [
+            0
+          ]
+        },
+        {
+          "phase2Field": "quickSummary",
+          "targetFields": [
+            "system.summary"
+          ],
+          "currentValue": "<p>You may spend a Force Point to attune a melee weapon. Attuning the weapon takes a Full-Round Action.",
+          "correctedValue": "You may spend a Force Point to attune a melee weapon. Attuning the weapon takes a Full-Round Action.",
+          "editsApplied": [
+            0
+          ]
+        }
+      ],
+      "verification": {
+        "txtFile": "reference/sourcebooks/Core Rulebook_djvu.txt",
+        "txtLine": 20350,
+        "pdf": "NOT_AVAILABLE_IN_REPOSITORY_OR_SESSION",
+        "status": "TXT_CONFIRMED",
+        "pdfConfirmationRequired": false,
+        "notes": "Markup-only correction. This record's wording is repository-derived (capitalisation/expansion differs from the TXT); wording is not part of this correction.",
+        "unresolvedReason": null
+      },
+      "deliberatelyUncorrected": [],
+      "applied": true,
+      "blocksApply": false,
+      "proposalNotApplied": null,
+      "docEdits": null
+    },
+    {
+      "id": "TC-009",
+      "canonicalIdentity": "Saga Edition Core Rulebook|Force Item|Empower Weapon",
+      "sourcebook": "Saga Edition Core Rulebook",
+      "printedPage": 214,
+      "phase2File": "data/audits/talent-phase-2-core-rulebook-content.json",
+      "phase2ClaimIdentity": "Saga Edition Core Rulebook|Force Item|Empower Weapon",
+      "group": "A-flagged-ocr-signature",
+      "suspectedCorruption": [
+        "HTML paragraph markup (<p>, </p>) inside plain-text pack fields"
+      ],
+      "edits": [
+        {
+          "kind": "markup-strip",
+          "method": "remove <p> / </p> wrappers; </p>\\n<p> becomes a blank line",
+          "evidence": "the packs store plain text; only the tag wrappers are removed, no wording is changed"
+        }
+      ],
+      "fields": [
+        {
+          "phase2Field": "canonicalDescription",
+          "targetFields": [
+            "system.benefit",
+            "system.description|system.description.value"
+          ],
+          "currentValue": "<p>You may spend a Force Point to empower a melee weapon. Empowering the weapon takes a Full-Round Action. From that point forward, the Empowered Weapon deals an additional die of damage, but only when wielded by you.</p>\n<p>For example, an empowered Lightsaber deals 3d8 points of damage, instead of 2d8 points of damage. Others who wield the weapon do not gain the bonus damage die.</p>",
+          "correctedValue": "You may spend a Force Point to empower a melee weapon. Empowering the weapon takes a Full-Round Action. From that point forward, the Empowered Weapon deals an additional die of damage, but only when wielded by you.\n\nFor example, an empowered Lightsaber deals 3d8 points of damage, instead of 2d8 points of damage. Others who wield the weapon do not gain the bonus damage die.",
+          "editsApplied": [
+            0
+          ]
+        },
+        {
+          "phase2Field": "quickSummary",
+          "targetFields": [
+            "system.summary"
+          ],
+          "currentValue": "<p>You may spend a Force Point to empower a melee weapon. Empowering the weapon takes a Full-Round Action.",
+          "correctedValue": "You may spend a Force Point to empower a melee weapon. Empowering the weapon takes a Full-Round Action.",
+          "editsApplied": [
+            0
+          ]
+        }
+      ],
+      "verification": {
+        "txtFile": "reference/sourcebooks/Core Rulebook_djvu.txt",
+        "txtLine": 20357,
+        "pdf": "NOT_AVAILABLE_IN_REPOSITORY_OR_SESSION",
+        "status": "TXT_CONFIRMED",
+        "pdfConfirmationRequired": false,
+        "notes": "Markup-only correction. This record's wording is repository-derived (capitalisation/expansion differs from the TXT); wording is not part of this correction.",
+        "unresolvedReason": null
+      },
+      "deliberatelyUncorrected": [],
+      "applied": true,
+      "blocksApply": false,
+      "proposalNotApplied": null,
+      "docEdits": null
+    },
+    {
+      "id": "TC-010",
+      "canonicalIdentity": "Saga Edition Core Rulebook|Force Item|Force Talisman",
+      "sourcebook": "Saga Edition Core Rulebook",
+      "printedPage": 214,
+      "phase2File": "data/audits/talent-phase-2-core-rulebook-content.json",
+      "phase2ClaimIdentity": "Saga Edition Core Rulebook|Force Item|Force Talisman",
+      "group": "A-flagged-ocr-signature",
+      "suspectedCorruption": [
+        "HTML paragraph markup (<p>, </p>) inside plain-text pack fields"
+      ],
+      "edits": [
+        {
+          "kind": "markup-strip",
+          "method": "remove <p> / </p> wrappers; </p>\\n<p> becomes a blank line",
+          "evidence": "the packs store plain text; only the tag wrappers are removed, no wording is changed"
+        }
+      ],
+      "fields": [
+        {
+          "phase2Field": "canonicalDescription",
+          "targetFields": [
+            "system.benefit",
+            "system.description|system.description.value"
+          ],
+          "currentValue": "<p>You may spend a Force Point to imbue a weapon or some other portable object with The Force, creating a Talisman that provides protection to you. Creating the Talisman takes a Full-Round Action.</p>\n<p>While you wear or carry the Talisman on your person, you gain a +1 Force bonus to one of your Defenses (Reflex Defense, Fortitude Defense, or Will Defense).</p>\n<p>You may only have one Force Talisman active at a given time, and if your Force Talisman is destroyed, you may not create another Force Talisman for 24 hours.</p>",
+          "correctedValue": "You may spend a Force Point to imbue a weapon or some other portable object with The Force, creating a Talisman that provides protection to you. Creating the Talisman takes a Full-Round Action.\n\nWhile you wear or carry the Talisman on your person, you gain a +1 Force bonus to one of your Defenses (Reflex Defense, Fortitude Defense, or Will Defense).\n\nYou may only have one Force Talisman active at a given time, and if your Force Talisman is destroyed, you may not create another Force Talisman for 24 hours.",
+          "editsApplied": [
+            0
+          ]
+        },
+        {
+          "phase2Field": "quickSummary",
+          "targetFields": [
+            "system.summary"
+          ],
+          "currentValue": "<p>You may spend a Force Point to imbue a weapon or some other portable object with The Force, creating a Talisman that provides protection to you.",
+          "correctedValue": "You may spend a Force Point to imbue a weapon or some other portable object with The Force, creating a Talisman that provides protection to you.",
+          "editsApplied": [
+            0
+          ]
+        }
+      ],
+      "verification": {
+        "txtFile": "reference/sourcebooks/Core Rulebook_djvu.txt",
+        "txtLine": 20293,
+        "pdf": "NOT_AVAILABLE_IN_REPOSITORY_OR_SESSION",
+        "status": "TXT_CONFIRMED",
+        "pdfConfirmationRequired": false,
+        "notes": "Markup-only correction. This record's wording is repository-derived (capitalisation/expansion differs from the TXT); wording is not part of this correction.",
+        "unresolvedReason": null
+      },
+      "deliberatelyUncorrected": [],
+      "applied": true,
+      "blocksApply": false,
+      "proposalNotApplied": null,
+      "docEdits": null
+    },
+    {
+      "id": "TC-011",
+      "canonicalIdentity": "Saga Edition Core Rulebook|Force Item|Greater Force Talisman",
+      "sourcebook": "Saga Edition Core Rulebook",
+      "printedPage": 214,
+      "phase2File": "data/audits/talent-phase-2-core-rulebook-content.json",
+      "phase2ClaimIdentity": "Saga Edition Core Rulebook|Force Item|Greater Force Talisman",
+      "group": "A-flagged-ocr-signature",
+      "suspectedCorruption": [
+        "HTML paragraph markup (<p>, </p>) inside plain-text pack fields"
+      ],
+      "edits": [
+        {
+          "kind": "markup-strip",
+          "method": "remove <p> / </p> wrappers; </p>\\n<p> becomes a blank line",
+          "evidence": "the packs store plain text; only the tag wrappers are removed, no wording is changed"
+        }
+      ],
+      "fields": [
+        {
+          "phase2Field": "canonicalDescription",
+          "targetFields": [
+            "system.benefit",
+            "system.description|system.description.value"
+          ],
+          "currentValue": "<p>You may spend a Force Point to imbue a weapon or some other portable object with The Force, creating a Talisman that provides protection to you. Creating the Talisman takes a Full-Round Action.</p>\n<p>While you wear or carry the Talisman on your person, you gain a +1 Force bonus to all of your Defenses (Reflex Defense, Fortitude Defense, and Will Defense).</p>\n<p>You may only have one Greater Force Talisman active at a given time, and if your Greater Force Talisman is destroyed, you may not create another Greater Force Talisman (or regular Force Talisman) for 24 hours.</p>",
+          "correctedValue": "You may spend a Force Point to imbue a weapon or some other portable object with The Force, creating a Talisman that provides protection to you. Creating the Talisman takes a Full-Round Action.\n\nWhile you wear or carry the Talisman on your person, you gain a +1 Force bonus to all of your Defenses (Reflex Defense, Fortitude Defense, and Will Defense).\n\nYou may only have one Greater Force Talisman active at a given time, and if your Greater Force Talisman is destroyed, you may not create another Greater Force Talisman (or regular Force Talisman) for 24 hours.",
+          "editsApplied": [
+            0
+          ]
+        },
+        {
+          "phase2Field": "quickSummary",
+          "targetFields": [
+            "system.summary"
+          ],
+          "currentValue": "<p>You may spend a Force Point to imbue a weapon or some other portable object with The Force, creating a Talisman that provides protection to you.",
+          "correctedValue": "You may spend a Force Point to imbue a weapon or some other portable object with The Force, creating a Talisman that provides protection to you.",
+          "editsApplied": [
+            0
+          ]
+        }
+      ],
+      "verification": {
+        "txtFile": "reference/sourcebooks/Core Rulebook_djvu.txt",
+        "txtLine": 20305,
+        "pdf": "NOT_AVAILABLE_IN_REPOSITORY_OR_SESSION",
+        "status": "TXT_CONFIRMED",
+        "pdfConfirmationRequired": false,
+        "notes": "Markup-only correction. This record's wording is repository-derived (capitalisation/expansion differs from the TXT); wording is not part of this correction.",
+        "unresolvedReason": null
+      },
+      "deliberatelyUncorrected": [],
+      "applied": true,
+      "blocksApply": false,
+      "proposalNotApplied": null,
+      "docEdits": null
+    },
+    {
+      "id": "TC-012",
+      "canonicalIdentity": "Saga Edition Core Rulebook|Dark Side Devotee|Greater Dark Side Talisman",
+      "sourcebook": "Jedi Academy Training Manual",
+      "printedPage": 17,
+      "phase2File": "data/audits/talent-phase-2-jedi-academy-training-manual-content.json",
+      "phase2ClaimIdentity": "Jedi Academy Training Manual|Dark Side Devotee|Greater Dark Side Talisman",
+      "group": "A-flagged-ocr-signature",
+      "suspectedCorruption": [
+        "illustration/page-furniture noise appended (1 esidvnS eaVued HL dO VSME 0 a > a 4 5 bi)"
+      ],
+      "edits": [
+        {
+          "kind": "noise-removal",
+          "method": "remove the appended/inserted text (see fields[].removedTrailingText or fields[].currentValue)",
+          "evidence": "the rules sentence ends at \"(Reflex, Fortitude, and Will).\" and the TXT continues with the separate \"Prerequisite:\" line; everything after is page noise"
+        }
+      ],
+      "fields": [
+        {
+          "phase2Field": "canonicalDescription",
+          "targetFields": [
+            "system.benefit",
+            "system.description|system.description.value"
+          ],
+          "currentValue": "As Dark Side Talisman (above), except that the talisman’s Force bonus extends to all three of your defenses (Reflex, Fortitude, and Will). 1 esidvnS eaVued HL dO VSME 0 a > a 4 5 bi",
+          "correctedValue": "As Dark Side Talisman (above), except that the talisman’s Force bonus extends to all three of your defenses (Reflex, Fortitude, and Will).",
+          "editsApplied": [
+            0
+          ],
+          "removedTrailingText": " 1 esidvnS eaVued HL dO VSME 0 a > a 4 5 bi"
+        }
+      ],
+      "verification": {
+        "txtFile": "reference/sourcebooks/Jedi Academy Training Manual_djvu.txt",
+        "txtLine": 1423,
+        "pdf": "NOT_AVAILABLE_IN_REPOSITORY_OR_SESSION",
+        "status": "TXT_CONFIRMED",
+        "pdfConfirmationRequired": false,
+        "notes": null,
+        "unresolvedReason": null
+      },
+      "deliberatelyUncorrected": [],
+      "applied": true,
+      "blocksApply": false,
+      "proposalNotApplied": null,
+      "docEdits": null
+    },
+    {
+      "id": "TC-013",
+      "canonicalIdentity": "Saga Edition Core Rulebook|Alter|Suppress Force",
+      "sourcebook": "Jedi Academy Training Manual",
+      "printedPage": 15,
+      "phase2File": "data/audits/talent-phase-2-jedi-academy-training-manual-content.json",
+      "phase2ClaimIdentity": "Jedi Academy Training Manual|Alter|Suppress Force",
+      "group": "A-flagged-ocr-signature",
+      "suspectedCorruption": [
+        "illustration noise, an image caption and the next section heading appended after the rules text"
+      ],
+      "edits": [
+        {
+          "kind": "noise-removal",
+          "method": "remove the appended/inserted text (see fields[].removedTrailingText or fields[].currentValue)",
+          "evidence": "the TXT rules text ends \"...and the action it was attempting fails.\"; the appended noise, the caption \"A KEL DOR SITH LORD CHANNELS...\" and the heading \"New Control Talents\" are not part of the talent"
+        }
+      ],
+      "fields": [
+        {
+          "phase2Field": "canonicalDescription",
+          "targetFields": [
+            "system.benefit",
+            "system.description|system.description.value"
+          ],
+          "currentValue": "You can convince others that they have been cut off from the Force, even if that is not the case, preventing them from making Use the Force checks. Whenever a target with an Intelligence of 3 or higher within 12 squares of you and in your line of sight attempts to make a Use the Force check for any reason, you can spend one use of the mind trick Force power as a reaction. You make a Use the Force check, and if your Use the Force check equals or exceeds the target's Use the Force check result, that target's skill check is negated, and the action it was attempting fails. v Q 8 @ a) 8 é 5) a) Q W gavVed SHA dO YVAME ) wSievHoS A KEL DOR SITH LORD CHANNELS THE ENEROY FROM BLASTER BOLTS, TURNING THEM INTO FORCE LIGHTNING. New Control Talents The following talents belong to the Control talent tree (see page 101 of the Saga Edition core rulebook)",
+          "correctedValue": "You can convince others that they have been cut off from the Force, even if that is not the case, preventing them from making Use the Force checks. Whenever a target with an Intelligence of 3 or higher within 12 squares of you and in your line of sight attempts to make a Use the Force check for any reason, you can spend one use of the mind trick Force power as a reaction. You make a Use the Force check, and if your Use the Force check equals or exceeds the target's Use the Force check result, that target's skill check is negated, and the action it was attempting fails.",
+          "editsApplied": [
+            0
+          ],
+          "removedTrailingText": " v Q 8 @ a) 8 é 5) a) Q W gavVed SHA dO YVAME ) wSievHoS A KEL DOR SITH LORD CHANNELS THE ENEROY FROM BLASTER BOLTS, TURNING THEM INTO FORCE LIGHTNING. New Control Talents The following talents belong to the Control talent tree (see page 101 of the Saga Edition core rulebook)"
+        }
+      ],
+      "verification": {
+        "txtFile": "reference/sourcebooks/Jedi Academy Training Manual_djvu.txt",
+        "txtLine": 1216,
+        "pdf": "NOT_AVAILABLE_IN_REPOSITORY_OR_SESSION",
+        "status": "TXT_CONFIRMED",
+        "pdfConfirmationRequired": false,
+        "notes": null,
+        "unresolvedReason": null
+      },
+      "deliberatelyUncorrected": [],
+      "applied": true,
+      "blocksApply": false,
+      "proposalNotApplied": null,
+      "docEdits": null
+    },
+    {
+      "id": "TC-014",
+      "canonicalIdentity": "Saga Edition Core Rulebook|Dark Side|Transfer Essence",
+      "sourcebook": "Jedi Academy Training Manual",
+      "printedPage": 16,
+      "phase2File": "data/audits/talent-phase-2-jedi-academy-training-manual-content.json",
+      "phase2ClaimIdentity": "Jedi Academy Training Manual|Dark Side|Transfer Essence",
+      "group": "A-flagged-ocr-signature",
+      "suspectedCorruption": [
+        "backslash-for-\"If\" OCR (\\f)"
+      ],
+      "edits": [
+        {
+          "kind": "backslash-as-I",
+          "find": "as described above, \\f you",
+          "replace": "as described above. If you",
+          "evidence": "\"\\f you do not possess a creature or object\" starts a sentence: \"\\f\" is the OCR read of \"If\" and the preceding comma is the OCR read of the full stop"
+        }
+      ],
+      "fields": [
+        {
+          "phase2Field": "canonicalDescription",
+          "targetFields": [
+            "system.benefit",
+            "system.description|system.description.value"
+          ],
+          "currentValue": "When you die, you become a dark side spirit (see page 118) until the end of the encounter. You continue to occupy a space in this form, but other creatures can occupy the same space or move through your space without impediment. As a standard action, you can attempt to possess an adjacent target. You must succeed on a Use the Force check against an adjacent target's Will Defense. If your check result equals or exceeds the target's Will Defense, you deal 8d6 points of stun damage to the target; if you reduce the target to 0 hit points or move it to the bottom of the condition track with this attack, you possess the target as though it were a willing host (see the dark spirit template for details). Alternately, as a standard action, you can transfer your essence into a single adjacent object, such as a holocron or a lightsaber. If you do so, you lie dormant within the object until another creature attempts to use that object, at which time you can emerge and attempt to possess the creature, as described above, \\f you do not possess a creature or object within 10 rounds of manifesting as a dark spirit, your spirit dissipates and ceases to exist.",
+          "correctedValue": "When you die, you become a dark side spirit (see page 118) until the end of the encounter. You continue to occupy a space in this form, but other creatures can occupy the same space or move through your space without impediment. As a standard action, you can attempt to possess an adjacent target. You must succeed on a Use the Force check against an adjacent target's Will Defense. If your check result equals or exceeds the target's Will Defense, you deal 8d6 points of stun damage to the target; if you reduce the target to 0 hit points or move it to the bottom of the condition track with this attack, you possess the target as though it were a willing host (see the dark spirit template for details). Alternately, as a standard action, you can transfer your essence into a single adjacent object, such as a holocron or a lightsaber. If you do so, you lie dormant within the object until another creature attempts to use that object, at which time you can emerge and attempt to possess the creature, as described above. If you do not possess a creature or object within 10 rounds of manifesting as a dark spirit, your spirit dissipates and ceases to exist.",
+          "editsApplied": [
+            0
+          ]
+        }
+      ],
+      "verification": {
+        "txtFile": "reference/sourcebooks/Jedi Academy Training Manual_djvu.txt",
+        "txtLine": 1277,
+        "pdf": "NOT_AVAILABLE_IN_REPOSITORY_OR_SESSION",
+        "status": "TXT_CONFIRMED",
+        "pdfConfirmationRequired": false,
+        "notes": null,
+        "unresolvedReason": null
+      },
+      "deliberatelyUncorrected": [],
+      "applied": true,
+      "blocksApply": false,
+      "proposalNotApplied": null,
+      "docEdits": null
+    },
+    {
+      "id": "TC-015",
+      "canonicalIdentity": "Saga Edition Core Rulebook|Weapon Specialist|Disarming Attack",
+      "sourcebook": "Knights of the Old Republic Campaign Guide",
+      "printedPage": 29,
+      "phase2File": "data/audits/talent-phase-2-knights-of-the-old-republic-campaign-guide-content.json",
+      "phase2ClaimIdentity": "Knights of the Old Republic Campaign Guide|Weapon Specialist|Disarming Attack",
+      "group": "A-flagged-ocr-signature",
+      "suspectedCorruption": [
+        "illustration noise appended (SHV, aexusF / HW HS LavHD / C SESE | Shiv sana ll YalavHo a))"
+      ],
+      "edits": [
+        {
+          "kind": "noise-removal",
+          "method": "remove the appended/inserted text (see fields[].removedTrailingText or fields[].currentValue)",
+          "evidence": "the rules sentence ends \"...while using such a weapon.\"; the TXT continues with the \"Prerequisites:\" line"
+        }
+      ],
+      "fields": [
+        {
+          "phase2Field": "canonicalDescription",
+          "targetFields": [
+            "system.benefit",
+            "system.description|system.description.value"
+          ],
+          "currentValue": "Choose a single exotic weapon or weapon group with which you are proficient. You ignore a target's armor bonus to Reflex Defense when disarming with such a weapon. Additionally, as a free action, once per encounter, you can grant yourself a +10 bonus on your attack roll when attempting to disarm an opponent while using such a weapon.\n\nSHV, aexusF\n\nHW HS LavHD\n\nC SESE | Shiv sana ll YalavHo a)",
+          "correctedValue": "Choose a single exotic weapon or weapon group with which you are proficient. You ignore a target's armor bonus to Reflex Defense when disarming with such a weapon. Additionally, as a free action, once per encounter, you can grant yourself a +10 bonus on your attack roll when attempting to disarm an opponent while using such a weapon.",
+          "editsApplied": [
+            0
+          ],
+          "removedTrailingText": "\n\nSHV, aexusF\n\nHW HS LavHD\n\nC SESE | Shiv sana ll YalavHo a)"
+        }
+      ],
+      "verification": {
+        "txtFile": "reference/sourcebooks/Knights of the Old Republic Campaign Guide_djvu.txt",
+        "txtLine": 2704,
+        "pdf": "NOT_AVAILABLE_IN_REPOSITORY_OR_SESSION",
+        "status": "TXT_CONFIRMED",
+        "pdfConfirmationRequired": false,
+        "notes": null,
+        "unresolvedReason": null
+      },
+      "deliberatelyUncorrected": [],
+      "applied": true,
+      "blocksApply": false,
+      "proposalNotApplied": null,
+      "docEdits": null
+    },
+    {
+      "id": "TC-016",
+      "canonicalIdentity": "Force Unleashed Campaign Guide|Bothan SpyNet|Knowledge Is Strength",
+      "sourcebook": "Force Unleashed Campaign Guide",
+      "printedPage": 50,
+      "phase2File": "data/audits/talent-phase-2-force-unleashed-campaign-guide-content.json",
+      "phase2ClaimIdentity": "Force Unleashed Campaign Guide|Bothan SpyNet|Knowledge Is Strength",
+      "group": "A-flagged-ocr-signature",
+      "suspectedCorruption": [
+        "curly-brace delimiter (\"}\" for \")\")"
+      ],
+      "edits": [
+        {
+          "kind": "delimiter",
+          "find": "(galactic lore}",
+          "replace": "(galactic lore)",
+          "evidence": "opening \"(\" partner; parentheses"
+        }
+      ],
+      "fields": [
+        {
+          "phase2Field": "canonicalDescription",
+          "targetFields": [
+            "system.benefit",
+            "system.description|system.description.value"
+          ],
+          "currentValue": "As a swift action, you can designate a single target within your line of sight and make a Knowledge (galactic lore} check against a DC equal to 15 + the target's CL. If the check is successful, for the remainder of the encounter you gain a +2 morale bonus on attack rolls against that target.",
+          "correctedValue": "As a swift action, you can designate a single target within your line of sight and make a Knowledge (galactic lore) check against a DC equal to 15 + the target's CL. If the check is successful, for the remainder of the encounter you gain a +2 morale bonus on attack rolls against that target.",
+          "editsApplied": [
+            0
+          ]
+        },
+        {
+          "phase2Field": "quickSummary",
+          "targetFields": [
+            "system.summary"
+          ],
+          "currentValue": "As a swift action, you can designate a single target within your line of sight and make a Knowledge (galactic lore} check against a DC equal to 15 + the target's CL.",
+          "correctedValue": "As a swift action, you can designate a single target within your line of sight and make a Knowledge (galactic lore) check against a DC equal to 15 + the target's CL.",
+          "editsApplied": [
+            0
+          ]
+        }
+      ],
+      "verification": {
+        "txtFile": "reference/sourcebooks/Force Unleashed Campaign Guide_djvu.txt",
+        "txtLine": 4712,
+        "pdf": "NOT_AVAILABLE_IN_REPOSITORY_OR_SESSION",
+        "status": "TXT_CONFIRMED",
+        "pdfConfirmationRequired": false,
+        "notes": null,
+        "unresolvedReason": null
+      },
+      "deliberatelyUncorrected": [],
+      "applied": true,
+      "blocksApply": false,
+      "proposalNotApplied": null,
+      "docEdits": null
+    },
+    {
+      "id": "TC-017",
+      "canonicalIdentity": "Force Unleashed Campaign Guide|Fourth-Degree Droid|Combat Repairs",
+      "sourcebook": "Force Unleashed Campaign Guide",
+      "printedPage": 103,
+      "phase2File": "data/audits/talent-phase-2-force-unleashed-campaign-guide-content.json",
+      "phase2ClaimIdentity": "Force Unleashed Campaign Guide|4thdegree Droid|Combat Repairs",
+      "group": "A-flagged-ocr-signature",
+      "suspectedCorruption": [
+        "curly-brace delimiter (\"}\" for \")\")",
+        "in-word \"!\" for \"l\" (norma!)"
+      ],
+      "edits": [
+        {
+          "kind": "delimiter",
+          "find": "of the skill}",
+          "replace": "of the skill)",
+          "evidence": "opening \"(using the repair droid application\" partner; parentheses"
+        },
+        {
+          "kind": "ocr-letter",
+          "find": "norma! 1 hour",
+          "replace": "normal 1 hour",
+          "evidence": "\"norma!\" is an OCR read of \"normal\""
+        }
+      ],
+      "fields": [
+        {
+          "phase2Field": "canonicalDescription",
+          "targetFields": [
+            "system.benefit",
+            "system.description|system.description.value"
+          ],
+          "currentValue": "Once per day, as a full-round action, you can use the Mechanics skill to repair yourself (using the repair droid application of the skill}, as opposed to the normal 1 hour.",
+          "correctedValue": "Once per day, as a full-round action, you can use the Mechanics skill to repair yourself (using the repair droid application of the skill), as opposed to the normal 1 hour.",
+          "editsApplied": [
+            0
+          ]
+        },
+        {
+          "phase2Field": "quickSummary",
+          "targetFields": [
+            "system.summary"
+          ],
+          "currentValue": "Once per day, as a full-round action, you can use the Mechanics skill to repair yourself (using the repair droid application of the skill}, as opposed to the normal 1 hour.",
+          "correctedValue": "Once per day, as a full-round action, you can use the Mechanics skill to repair yourself (using the repair droid application of the skill), as opposed to the normal 1 hour.",
+          "editsApplied": [
+            0
+          ]
+        }
+      ],
+      "verification": {
+        "txtFile": "reference/sourcebooks/Force Unleashed Campaign Guide_djvu.txt",
+        "txtLine": 9759,
+        "pdf": "NOT_AVAILABLE_IN_REPOSITORY_OR_SESSION",
+        "status": "TXT_CONFIRMED",
+        "pdfConfirmationRequired": false,
+        "notes": null,
+        "unresolvedReason": null
+      },
+      "deliberatelyUncorrected": [],
+      "applied": true,
+      "blocksApply": false,
+      "proposalNotApplied": null,
+      "docEdits": null
+    },
+    {
+      "id": "TC-018",
+      "canonicalIdentity": "Jedi Academy Training Manual|Jedi Artisan|Masterwork Lightsaber",
+      "sourcebook": "Jedi Academy Training Manual",
+      "printedPage": 19,
+      "phase2File": "data/audits/talent-phase-2-jedi-academy-training-manual-content.json",
+      "phase2ClaimIdentity": "Jedi Academy Training Manual|Jedi Artisan|Masterwork Lightsaber",
+      "group": "A-flagged-ocr-signature",
+      "suspectedCorruption": [
+        "pipe-for-capital-I OCR (|n addition)"
+      ],
+      "edits": [
+        {
+          "kind": "pipe-as-I",
+          "find": "|n addition",
+          "replace": "In addition",
+          "evidence": "sentence-initial \"|n addition\" is \"In addition\""
+        }
+      ],
+      "fields": [
+        {
+          "phase2Field": "canonicalDescription",
+          "targetFields": [
+            "system.benefit",
+            "system.description|system.description.value"
+          ],
+          "currentValue": "Whenever you build a lightsaber, you do so with such expertise that it makes the weapon even more refined and elegant. When you build a lightsaber, you can choose to add one extra accessory to the lightsaber at the time of creation, and when you hit a target with a lightsaber that you built, you can always choose to reroll one damage die from your damage roll, but you must keep the second result, even if it is worse. |n addition, you can mentor another character while he constructs his own lightsaber. When you do so, you reduce the Use the Force check DC for constructing the lightsaber by -5.",
+          "correctedValue": "Whenever you build a lightsaber, you do so with such expertise that it makes the weapon even more refined and elegant. When you build a lightsaber, you can choose to add one extra accessory to the lightsaber at the time of creation, and when you hit a target with a lightsaber that you built, you can always choose to reroll one damage die from your damage roll, but you must keep the second result, even if it is worse. In addition, you can mentor another character while he constructs his own lightsaber. When you do so, you reduce the Use the Force check DC for constructing the lightsaber by -5.",
+          "editsApplied": [
+            0
+          ]
+        }
+      ],
+      "verification": {
+        "txtFile": "reference/sourcebooks/Jedi Academy Training Manual_djvu.txt",
+        "txtLine": 1608,
+        "pdf": "NOT_AVAILABLE_IN_REPOSITORY_OR_SESSION",
+        "status": "TXT_CONFIRMED",
+        "pdfConfirmationRequired": false,
+        "notes": null,
+        "unresolvedReason": null
+      },
+      "deliberatelyUncorrected": [],
+      "applied": true,
+      "blocksApply": false,
+      "proposalNotApplied": null,
+      "docEdits": null
+    },
+    {
+      "id": "TC-019",
+      "canonicalIdentity": "Jedi Academy Training Manual|Jedi Instructor|Share Force Secret",
+      "sourcebook": "Jedi Academy Training Manual",
+      "printedPage": 19,
+      "phase2File": "data/audits/talent-phase-2-jedi-academy-training-manual-content.json",
+      "phase2ClaimIdentity": "Jedi Academy Training Manual|Jedi Instructor|Share Force Secret",
+      "group": "A-flagged-ocr-signature",
+      "suspectedCorruption": [
+        "illustration noise appended (\\o I > 1 4 o 2 g98Ocd SHA AO aor) wsiawnS)"
+      ],
+      "edits": [
+        {
+          "kind": "noise-removal",
+          "method": "remove the appended/inserted text (see fields[].removedTrailingText or fields[].currentValue)",
+          "evidence": "rules text ends \"...until the end of your next turn.\"; the TXT continues with the \"Prerequisite:\" line"
+        }
+      ],
+      "fields": [
+        {
+          "phase2Field": "canonicalDescription",
+          "targetFields": [
+            "system.benefit",
+            "system.description|system.description.value"
+          ],
+          "currentValue": "When you take this talent, choose one Force secret that you know. Once per turn as a swift action, you can grant the use of this Force secret to one ally within 12 squares of you who is trained in the Use the Force skill. The target gains the benefit of this secret until the end of your next turn. \\o I > 1 4 o 2 g98Ocd SHA AO aor) wsiawnS",
+          "correctedValue": "When you take this talent, choose one Force secret that you know. Once per turn as a swift action, you can grant the use of this Force secret to one ally within 12 squares of you who is trained in the Use the Force skill. The target gains the benefit of this secret until the end of your next turn.",
+          "editsApplied": [
+            0
+          ],
+          "removedTrailingText": " \\o I > 1 4 o 2 g98Ocd SHA AO aor) wsiawnS"
+        }
+      ],
+      "verification": {
+        "txtFile": "reference/sourcebooks/Jedi Academy Training Manual_djvu.txt",
+        "txtLine": 1644,
+        "pdf": "NOT_AVAILABLE_IN_REPOSITORY_OR_SESSION",
+        "status": "TXT_CONFIRMED",
+        "pdfConfirmationRequired": false,
+        "notes": null,
+        "unresolvedReason": null
+      },
+      "deliberatelyUncorrected": [],
+      "applied": true,
+      "blocksApply": false,
+      "proposalNotApplied": null,
+      "docEdits": null
+    },
+    {
+      "id": "TC-020",
+      "canonicalIdentity": "Knights of the Old Republic Campaign Guide|Rocket Jumper|Burning Assault",
+      "sourcebook": "Knights of the Old Republic Campaign Guide",
+      "printedPage": 30,
+      "phase2File": "data/audits/talent-phase-2-knights-of-the-old-republic-campaign-guide-content.json",
+      "phase2ClaimIdentity": "Knights of the Old Republic Campaign Guide|Rocket Jumper|Burning Assault",
+      "group": "A-flagged-ocr-signature",
+      "suspectedCorruption": [
+        "curly-brace delimiter (\"{\" for \"(\")",
+        "letter substitution (Fdition)"
+      ],
+      "edits": [
+        {
+          "kind": "delimiter",
+          "find": "{see page 128 of the Saga Fdition core rulebook)",
+          "replace": "(see page 128 of the Saga Edition core rulebook)",
+          "evidence": "closing \")\" is the partner of \"{\"; \"Fdition\" is \"Edition\" (the book title, cf. \"Saga Edition core rulebook\" throughout the TXT)"
+        }
+      ],
+      "fields": [
+        {
+          "phase2Field": "canonicalDescription",
+          "targetFields": [
+            "system.benefit",
+            "system.description|system.description.value"
+          ],
+          "currentValue": "As a standard action you can expend one of your jet pack’s charges to make an attack with the jet pack, treating it as a flame thrower {see page 128 of the Saga Fdition core rulebook). You cannot use this talent when you are flying. You are considered proficient in the flame thrower for the purpose of making this attack.",
+          "correctedValue": "As a standard action you can expend one of your jet pack’s charges to make an attack with the jet pack, treating it as a flame thrower (see page 128 of the Saga Edition core rulebook). You cannot use this talent when you are flying. You are considered proficient in the flame thrower for the purpose of making this attack.",
+          "editsApplied": [
+            0
+          ]
+        },
+        {
+          "phase2Field": "quickSummary",
+          "targetFields": [
+            "system.summary"
+          ],
+          "currentValue": "As a standard action you can expend one of your jet pack’s charges to make an attack with the jet pack, treating it as a flame thrower {see page 128 of the Saga Fdition core rulebook).",
+          "correctedValue": "As a standard action you can expend one of your jet pack’s charges to make an attack with the jet pack, treating it as a flame thrower (see page 128 of the Saga Edition core rulebook).",
+          "editsApplied": [
+            0
+          ]
+        }
+      ],
+      "verification": {
+        "txtFile": "reference/sourcebooks/Knights of the Old Republic Campaign Guide_djvu.txt",
+        "txtLine": 2728,
+        "pdf": "NOT_AVAILABLE_IN_REPOSITORY_OR_SESSION",
+        "status": "TXT_CONFIRMED",
+        "pdfConfirmationRequired": false,
+        "notes": null,
+        "unresolvedReason": null
+      },
+      "deliberatelyUncorrected": [],
+      "applied": true,
+      "blocksApply": false,
+      "proposalNotApplied": null,
+      "docEdits": null
+    },
+    {
+      "id": "TC-021",
+      "canonicalIdentity": "Knights of the Old Republic Campaign Guide|Jedi Battlemaster|Mobile Attack (lightsabers)",
+      "sourcebook": "Knights of the Old Republic Campaign Guide",
+      "printedPage": 39,
+      "phase2File": "data/audits/talent-phase-2-knights-of-the-old-republic-campaign-guide-content.json",
+      "phase2ClaimIdentity": "Knights of the Old Republic Campaign Guide|Jedi Battlemaster|Mobile Attack (lightsabers)",
+      "group": "A-flagged-ocr-signature",
+      "suspectedCorruption": [
+        "pipe-for-capital-I OCR (Dual Weapon Mastery |)"
+      ],
+      "edits": [
+        {
+          "kind": "pipe-as-I",
+          "find": "Dual Weapon Mastery |,",
+          "replace": "Dual Weapon Mastery I,",
+          "evidence": "the feat is named \"Dual Weapon Mastery I\"; production value is \"Dual Weapon Mastery I\""
+        }
+      ],
+      "fields": [
+        {
+          "phase2Field": "canonicalPrerequisites",
+          "targetFields": [
+            "system.prerequisites"
+          ],
+          "currentValue": "Multiattack Proficiency (lightsabers), Dual Weapon Mastery |, Weapon Focus (lightsabers)",
+          "correctedValue": "Multiattack Proficiency (lightsabers), Dual Weapon Mastery I, Weapon Focus (lightsabers)",
+          "editsApplied": [
+            0
+          ]
+        }
+      ],
+      "verification": {
+        "txtFile": "reference/sourcebooks/Knights of the Old Republic Campaign Guide_djvu.txt",
+        "txtLine": null,
+        "pdf": "NOT_AVAILABLE_IN_REPOSITORY_OR_SESSION",
+        "status": "TXT_CONFIRMED",
+        "pdfConfirmationRequired": false,
+        "notes": null,
+        "unresolvedReason": null
+      },
+      "deliberatelyUncorrected": [],
+      "applied": true,
+      "blocksApply": false,
+      "proposalNotApplied": null,
+      "docEdits": null
+    },
+    {
+      "id": "TC-022",
+      "canonicalIdentity": "Knights of the Old Republic Campaign Guide|Jedi Shadow|Taint of the Dark Side",
+      "sourcebook": "Knights of the Old Republic Campaign Guide",
+      "printedPage": 39,
+      "phase2File": "data/audits/talent-phase-2-knights-of-the-old-republic-campaign-guide-content.json",
+      "phase2ClaimIdentity": "Knights of the Old Republic Campaign Guide|Jedi Shadow|Taint of the Dark Side",
+      "group": "A-flagged-ocr-signature",
+      "suspectedCorruption": [
+        "illustration noise appended after the rules text"
+      ],
+      "edits": [
+        {
+          "kind": "noise-removal",
+          "method": "remove the appended/inserted text (see fields[].removedTrailingText or fields[].currentValue)",
+          "evidence": "rules text ends \"...without increasing your Dark Side Score.\"; the TXT continues with the \"Prerequisite: Dark Deception.\" line then noise"
+        }
+      ],
+      "fields": [
+        {
+          "phase2Field": "canonicalDescription",
+          "targetFields": [
+            "system.benefit",
+            "system.description|system.description.value"
+          ],
+          "currentValue": "Add one Force power with the [dark side] descriptor to your Force suite. Once per encounter you can use that Force power with the [dark side] descriptor without increasing your Dark Side Score.\n\ni YatavHg.\n\ni E 1 1\n\nT ay) | W d 8 “W Q Pr > @ (i) Ww) 0)\n\na)\n\nHW eSLavHoS\n\nSessSsevi1) FoILSEe)",
+          "correctedValue": "Add one Force power with the [dark side] descriptor to your Force suite. Once per encounter you can use that Force power with the [dark side] descriptor without increasing your Dark Side Score.",
+          "editsApplied": [
+            0
+          ],
+          "removedTrailingText": "\n\ni YatavHg.\n\ni E 1 1\n\nT ay) | W d 8 “W Q Pr > @ (i) Ww) 0)\n\na)\n\nHW eSLavHoS\n\nSessSsevi1) FoILSEe)"
+        }
+      ],
+      "verification": {
+        "txtFile": "reference/sourcebooks/Knights of the Old Republic Campaign Guide_djvu.txt",
+        "txtLine": 3679,
+        "pdf": "NOT_AVAILABLE_IN_REPOSITORY_OR_SESSION",
+        "status": "TXT_CONFIRMED",
+        "pdfConfirmationRequired": false,
+        "notes": null,
+        "unresolvedReason": null
+      },
+      "deliberatelyUncorrected": [],
+      "applied": true,
+      "blocksApply": false,
+      "proposalNotApplied": null,
+      "docEdits": null
+    },
+    {
+      "id": "TC-023",
+      "canonicalIdentity": "Knights of the Old Republic Campaign Guide|Gladiatorial Combat|Unstoppable",
+      "sourcebook": "Knights of the Old Republic Campaign Guide",
+      "printedPage": 45,
+      "phase2File": "data/audits/talent-phase-2-knights-of-the-old-republic-campaign-guide-content.json",
+      "phase2ClaimIdentity": "Knights of the Old Republic Campaign Guide|Gladiatorial Combat|Unstoppable",
+      "group": "A-flagged-ocr-signature",
+      "suspectedCorruption": [
+        "curly-brace delimiter (\"}\" for \")\")"
+      ],
+      "edits": [
+        {
+          "kind": "delimiter",
+          "find": "(to a minimum of 0}",
+          "replace": "(to a minimum of 0)",
+          "evidence": "opening \"(\" partner; parentheses"
+        }
+      ],
+      "fields": [
+        {
+          "phase2Field": "canonicalDescription",
+          "targetFields": [
+            "system.benefit",
+            "system.description|system.description.value"
+          ],
+          "currentValue": "You can sometimes shrug off the effect of debilitating attacks, Once per encounter, if you are hit by an attack that would normally knock you down the condition track, you can reduce the number of steps you move down the condition track by 1 step (to a minimum of 0}.",
+          "correctedValue": "You can sometimes shrug off the effect of debilitating attacks, Once per encounter, if you are hit by an attack that would normally knock you down the condition track, you can reduce the number of steps you move down the condition track by 1 step (to a minimum of 0).",
+          "editsApplied": [
+            0
+          ]
+        },
+        {
+          "phase2Field": "quickSummary",
+          "targetFields": [
+            "system.summary"
+          ],
+          "currentValue": "You can sometimes shrug off the effect of debilitating attacks, Once per encounter, if you are hit by an attack that would normally knock you down the condition track, you can reduce the number of steps you move down the condition track by 1 step (to a minimum of 0}.",
+          "correctedValue": "You can sometimes shrug off the effect of debilitating attacks, Once per encounter, if you are hit by an attack that would normally knock you down the condition track, you can reduce the number of steps you move down the condition track by 1 step (to a minimum of 0).",
+          "editsApplied": [
+            0
+          ]
+        }
+      ],
+      "verification": {
+        "txtFile": "reference/sourcebooks/Knights of the Old Republic Campaign Guide_djvu.txt",
+        "txtLine": 4213,
+        "pdf": "NOT_AVAILABLE_IN_REPOSITORY_OR_SESSION",
+        "status": "TXT_CONFIRMED",
+        "pdfConfirmationRequired": false,
+        "notes": null,
+        "unresolvedReason": null
+      },
+      "deliberatelyUncorrected": [],
+      "applied": true,
+      "blocksApply": false,
+      "proposalNotApplied": null,
+      "docEdits": null
+    },
+    {
+      "id": "TC-024",
+      "canonicalIdentity": "Knights of the Old Republic Campaign Guide|Jal Shey|Force Delay",
+      "sourcebook": "Knights of the Old Republic Campaign Guide",
+      "printedPage": 57,
+      "phase2File": "data/audits/talent-phase-2-knights-of-the-old-republic-campaign-guide-content.json",
+      "phase2ClaimIdentity": "Knights of the Old Republic Campaign Guide|Jal Shey|Force Delay",
+      "group": "A-flagged-ocr-signature",
+      "suspectedCorruption": [
+        "illustration noise inserted inside the sentence (AP SSLdvHo / aeVved aHL / Al usiavHo 7) / 2Suyecd SH)"
+      ],
+      "edits": [
+        {
+          "kind": "noise-removal",
+          "find": "against the Will\n\nAP SSLdvHo\n\naeVved aHL\n\nAl usiavHo 7)\n\n2Suyecd SH\n\nDefense of a target",
+          "replace": "against the Will Defense of a target",
+          "evidence": "the TXT shows \"...against the Will\" then the noise block then \"Defense of a target of Intelligence 3 or higher...\"; removing the block restores the sentence"
+        }
+      ],
+      "fields": [
+        {
+          "phase2Field": "canonicalDescription",
+          "targetFields": [
+            "system.benefit",
+            "system.description|system.description.value"
+          ],
+          "currentValue": "Jal Shey verbally startle opponents with a little help from the Force. Once per encounter, make a Persuasion check against the Will\n\nAP SSLdvHo\n\naeVved aHL\n\nAl usiavHo 7)\n\n2Suyecd SH\n\nDefense of a target of Intelligence 3 or higher that can understand you as a reaction. If successful, the target loses its move action on its next round. If you spend a Force Point, the target loses its standard action instead.",
+          "correctedValue": "Jal Shey verbally startle opponents with a little help from the Force. Once per encounter, make a Persuasion check against the Will Defense of a target of Intelligence 3 or higher that can understand you as a reaction. If successful, the target loses its move action on its next round. If you spend a Force Point, the target loses its standard action instead.",
+          "editsApplied": [
+            0
+          ]
+        }
+      ],
+      "verification": {
+        "txtFile": "reference/sourcebooks/Knights of the Old Republic Campaign Guide_djvu.txt",
+        "txtLine": 5362,
+        "pdf": "NOT_AVAILABLE_IN_REPOSITORY_OR_SESSION",
+        "status": "TXT_CONFIRMED",
+        "pdfConfirmationRequired": false,
+        "notes": null,
+        "unresolvedReason": null
+      },
+      "deliberatelyUncorrected": [],
+      "applied": true,
+      "blocksApply": false,
+      "proposalNotApplied": null,
+      "docEdits": null
+    },
+    {
+      "id": "TC-025",
+      "canonicalIdentity": "Knights of the Old Republic Campaign Guide|Krath|Dark Side Manipulation",
+      "sourcebook": "Knights of the Old Republic Campaign Guide",
+      "printedPage": 59,
+      "phase2File": "data/audits/talent-phase-2-knights-of-the-old-republic-campaign-guide-content.json",
+      "phase2ClaimIdentity": "Knights of the Old Republic Campaign Guide|Krath|Dark Side Manipulation",
+      "group": "A-flagged-ocr-signature",
+      "suspectedCorruption": [
+        "illustration noise appended (Al H3iLeavHO / BgoHed FHL / ...)"
+      ],
+      "edits": [
+        {
+          "kind": "noise-removal",
+          "method": "remove the appended/inserted text (see fields[].removedTrailingText or fields[].currentValue)",
+          "evidence": "rules text ends \"...rolled the maximum on the die.\"; everything after is noise"
+        }
+      ],
+      "fields": [
+        {
+          "phase2Field": "canonicalDescription",
+          "targetFields": [
+            "system.benefit",
+            "system.description|system.description.value"
+          ],
+          "currentValue": "Your Sith sorcery experimentation has provided you with a method of manipulating the dark side. Once per encounter, when using a Force Point in an act that would give you a dark side point, you may treat the Force Point as though you had rolled the maximum on the die.\n\nAl H3iLeavHO\n\nBgoHed FHL\n\nan 18)\n\nAl esiavHa\n\nf a WwW q v G) 2) ® W)",
+          "correctedValue": "Your Sith sorcery experimentation has provided you with a method of manipulating the dark side. Once per encounter, when using a Force Point in an act that would give you a dark side point, you may treat the Force Point as though you had rolled the maximum on the die.",
+          "editsApplied": [
+            0
+          ],
+          "removedTrailingText": "\n\nAl H3iLeavHO\n\nBgoHed FHL\n\nan 18)\n\nAl esiavHa\n\nf a WwW q v G) 2) ® W)"
+        }
+      ],
+      "verification": {
+        "txtFile": "reference/sourcebooks/Knights of the Old Republic Campaign Guide_djvu.txt",
+        "txtLine": 5561,
+        "pdf": "NOT_AVAILABLE_IN_REPOSITORY_OR_SESSION",
+        "status": "TXT_CONFIRMED",
+        "pdfConfirmationRequired": false,
+        "notes": null,
+        "unresolvedReason": null
+      },
+      "deliberatelyUncorrected": [],
+      "applied": true,
+      "blocksApply": false,
+      "proposalNotApplied": null,
+      "docEdits": null
+    },
+    {
+      "id": "TC-026",
+      "canonicalIdentity": "Knights of the Old Republic Campaign Guide|Krath|Krath Illusions",
+      "sourcebook": "Knights of the Old Republic Campaign Guide",
+      "printedPage": 60,
+      "phase2File": "data/audits/talent-phase-2-knights-of-the-old-republic-campaign-guide-content.json",
+      "phase2ClaimIdentity": "Knights of the Old Republic Campaign Guide|Krath|Krath Illusions",
+      "group": "A-flagged-ocr-signature",
+      "suspectedCorruption": [
+        "pipe-for-\"Il\" OCR (||lusion)"
+      ],
+      "edits": [
+        {
+          "kind": "pipe-as-Il",
+          "find": "||lusion",
+          "replace": "Illusion",
+          "evidence": "the TXT itself is damaged (\"Prerequisite: ||lusion.\"). Corroboration: \"||\" is the OCR read of \"Il\"; canonical identity \"Saga Edition Core Rulebook|Alter|Illusion\" exists and is the only talent that fits; production and the source-verified hydration test carry \"Illusion\"; the project owner reports the combined OCR corpus reads \"Illusion\" (that corpus is not in this repository and could not be inspected)"
+        }
+      ],
+      "fields": [
+        {
+          "phase2Field": "canonicalPrerequisites",
+          "targetFields": [
+            "system.prerequisites"
+          ],
+          "currentValue": "||lusion",
+          "correctedValue": "Illusion",
+          "editsApplied": [
+            0
+          ]
+        }
+      ],
+      "verification": {
+        "txtFile": "reference/sourcebooks/Knights of the Old Republic Campaign Guide_djvu.txt",
+        "txtLine": 5589,
+        "pdf": "NOT_AVAILABLE_IN_REPOSITORY_OR_SESSION",
+        "status": "TXT_AMBIGUOUS_PDF_REQUIRED",
+        "pdfConfirmationRequired": true,
+        "notes": "Applied on the strength of the corroboration above, but the printed word must still be confirmed against the rendered PDF (printed p. 60). Not PDF_CONFIRMED.",
+        "unresolvedReason": null
+      },
+      "deliberatelyUncorrected": [],
+      "applied": true,
+      "blocksApply": true,
+      "proposalNotApplied": null,
+      "docEdits": null
+    },
+    {
+      "id": "TC-027",
+      "canonicalIdentity": "Knights of the Old Republic Campaign Guide|Krath|Krath Surge",
+      "sourcebook": "Knights of the Old Republic Campaign Guide",
+      "printedPage": 60,
+      "phase2File": "data/audits/talent-phase-2-knights-of-the-old-republic-campaign-guide-content.json",
+      "phase2ClaimIdentity": "Knights of the Old Republic Campaign Guide|Krath|Krath Surge",
+      "group": "A-flagged-ocr-signature",
+      "suspectedCorruption": [
+        "curly-brace delimiter (\"{\" for \"[\")"
+      ],
+      "edits": [
+        {
+          "kind": "delimiter",
+          "find": "{dark side] descriptor",
+          "replace": "[dark side] descriptor",
+          "evidence": "the closing \"]\" is the partner; \"[dark side]\" is the descriptor notation used throughout the book"
+        }
+      ],
+      "fields": [
+        {
+          "phase2Field": "canonicalDescription",
+          "targetFields": [
+            "system.benefit",
+            "system.description|system.description.value"
+          ],
+          "currentValue": "Once per encounter, using rudimentary Sith sorcery, you channel dark side energy in a manner that boosts one use of a Force power. As a swift action, you can add 1 die of damage (if the power deals damage) or extend the range of the power by 6 squares (if it has a range beyond yourself or a single target). Using this talent automatically adds the {dark side] descriptor to the power used.",
+          "correctedValue": "Once per encounter, using rudimentary Sith sorcery, you channel dark side energy in a manner that boosts one use of a Force power. As a swift action, you can add 1 die of damage (if the power deals damage) or extend the range of the power by 6 squares (if it has a range beyond yourself or a single target). Using this talent automatically adds the [dark side] descriptor to the power used.",
+          "editsApplied": [
+            0
+          ]
+        }
+      ],
+      "verification": {
+        "txtFile": "reference/sourcebooks/Knights of the Old Republic Campaign Guide_djvu.txt",
+        "txtLine": 5599,
+        "pdf": "NOT_AVAILABLE_IN_REPOSITORY_OR_SESSION",
+        "status": "TXT_CONFIRMED",
+        "pdfConfirmationRequired": false,
+        "notes": null,
+        "unresolvedReason": null
+      },
+      "deliberatelyUncorrected": [],
+      "applied": true,
+      "blocksApply": false,
+      "proposalNotApplied": null,
+      "docEdits": null
+    },
+    {
+      "id": "TC-028",
+      "canonicalIdentity": "Saga Edition Core Rulebook|Bounty Hunter|Jedi Hunter",
+      "sourcebook": "Force Unleashed Campaign Guide",
+      "printedPage": 42,
+      "phase2File": "data/audits/talent-phase-2-force-unleashed-campaign-guide-content.json",
+      "phase2ClaimIdentity": "Force Unleashed Campaign Guide|Bounty Hunter|Jedi Hunter",
+      "group": "B-page-furniture-in-rules-text",
+      "suspectedCorruption": [
+        "section heading and introduction of the next talent group appended (EvITeE TROOPER TALENTS ...)"
+      ],
+      "edits": [
+        {
+          "kind": "furniture-removal",
+          "method": "remove the appended/inserted text (see fields[].removedTrailingText or fields[].currentValue)",
+          "evidence": "the appended text is an illustration caption / section heading / next-section introduction from the surrounding page, not part of the talent; the talent's rules text ends at the preceding sentence in the TXT"
+        }
+      ],
+      "fields": [
+        {
+          "phase2Field": "canonicalDescription",
+          "targetFields": [
+            "system.benefit",
+            "system.description|system.description.value"
+          ],
+          "currentValue": "You are skilled at fighting Jedi and other Force-users. You gain a +1 insight bonus to Fortitude and Will Defense and deal +1 die of damage against characters who have the Force Sensitivity feat. EvITeE TROOPER TALENTS The following talents are intended for use with the elite trooper prestige class.",
+          "correctedValue": "You are skilled at fighting Jedi and other Force-users. You gain a +1 insight bonus to Fortitude and Will Defense and deal +1 die of damage against characters who have the Force Sensitivity feat.",
+          "editsApplied": [
+            0
+          ],
+          "removedTrailingText": " EvITeE TROOPER TALENTS The following talents are intended for use with the elite trooper prestige class."
+        }
+      ],
+      "verification": {
+        "txtFile": "reference/sourcebooks/Force Unleashed Campaign Guide_djvu.txt",
+        "txtLine": 3932,
+        "pdf": "NOT_AVAILABLE_IN_REPOSITORY_OR_SESSION",
+        "status": "TXT_CONFIRMED",
+        "pdfConfirmationRequired": false,
+        "notes": null,
+        "unresolvedReason": null
+      },
+      "deliberatelyUncorrected": [],
+      "applied": true,
+      "blocksApply": false,
+      "proposalNotApplied": null,
+      "docEdits": null
+    },
+    {
+      "id": "TC-029",
+      "canonicalIdentity": "Saga Edition Core Rulebook|Duelist|Shoto Master",
+      "sourcebook": "Jedi Academy Training Manual",
+      "printedPage": 19,
+      "phase2File": "data/audits/talent-phase-2-jedi-academy-training-manual-content.json",
+      "phase2ClaimIdentity": "Jedi Academy Training Manual|Duelist|Shoto Master",
+      "group": "B-page-furniture-in-rules-text",
+      "suspectedCorruption": [
+        "illustration caption appended (A MeO! ARTISAN TEACHES THE Basice OF LIGHTSABER CONSTRUCTION.)"
+      ],
+      "edits": [
+        {
+          "kind": "furniture-removal",
+          "method": "remove the appended/inserted text (see fields[].removedTrailingText or fields[].currentValue)",
+          "evidence": "the appended text is an illustration caption / section heading / next-section introduction from the surrounding page, not part of the talent; the talent's rules text ends at the preceding sentence in the TXT"
+        }
+      ],
+      "fields": [
+        {
+          "phase2Field": "canonicalDescription",
+          "targetFields": [
+            "system.benefit",
+            "system.description|system.description.value"
+          ],
+          "currentValue": "When you wield both a one-handed lightsaber and a shoto (or guard shoto), you can consider the one-handed lightsaber to be a light weapon. Additionally, if you have the Lightsaber Defense talent, you can activate the talent as a free action on your turn (instead of a swift action) whenever you wield both a one-handed lightsaber and a shoto (or guard shoto) A MeO! ARTISAN TEACHES THE Basice OF LIGHTSABER CONSTRUCTION.",
+          "correctedValue": "When you wield both a one-handed lightsaber and a shoto (or guard shoto), you can consider the one-handed lightsaber to be a light weapon. Additionally, if you have the Lightsaber Defense talent, you can activate the talent as a free action on your turn (instead of a swift action) whenever you wield both a one-handed lightsaber and a shoto (or guard shoto)",
+          "editsApplied": [
+            0
+          ],
+          "removedTrailingText": " A MeO! ARTISAN TEACHES THE Basice OF LIGHTSABER CONSTRUCTION."
+        }
+      ],
+      "verification": {
+        "txtFile": "reference/sourcebooks/Jedi Academy Training Manual_djvu.txt",
+        "txtLine": 1582,
+        "pdf": "NOT_AVAILABLE_IN_REPOSITORY_OR_SESSION",
+        "status": "TXT_CONFIRMED",
+        "pdfConfirmationRequired": false,
+        "notes": null,
+        "unresolvedReason": null
+      },
+      "deliberatelyUncorrected": [],
+      "applied": true,
+      "blocksApply": false,
+      "proposalNotApplied": null,
+      "docEdits": null
+    },
+    {
+      "id": "TC-030",
+      "canonicalIdentity": "Saga Edition Core Rulebook|Gunslinger|Mobile Attack (pistols)",
+      "sourcebook": "Knights of the Old Republic Campaign Guide",
+      "printedPage": 39,
+      "phase2File": "data/audits/talent-phase-2-knights-of-the-old-republic-campaign-guide-content.json",
+      "phase2ClaimIdentity": "Knights of the Old Republic Campaign Guide|Gunslinger|Mobile Attack (pistols)",
+      "group": "B-page-furniture-in-rules-text",
+      "suspectedCorruption": [
+        "section heading and introduction appended (WJED!t KNIGHT TALENTS ...)"
+      ],
+      "edits": [
+        {
+          "kind": "furniture-removal",
+          "method": "remove the appended/inserted text (see fields[].removedTrailingText or fields[].currentValue)",
+          "evidence": "the appended text is an illustration caption / section heading / next-section introduction from the surrounding page, not part of the talent; the talent's rules text ends at the preceding sentence in the TXT"
+        }
+      ],
+      "fields": [
+        {
+          "phase2Field": "canonicalDescription",
+          "targetFields": [
+            "system.benefit",
+            "system.description|system.description.value"
+          ],
+          "currentValue": "Immediately after making a full attack where you attack with two pistols, you may move up to your speed as a free action.\n\nWJED!t KNIGHT TALENTS The following talents are for use with the Jedi Knight prestige class.",
+          "correctedValue": "Immediately after making a full attack where you attack with two pistols, you may move up to your speed as a free action.",
+          "editsApplied": [
+            0
+          ],
+          "removedTrailingText": "\n\nWJED!t KNIGHT TALENTS The following talents are for use with the Jedi Knight prestige class."
+        }
+      ],
+      "verification": {
+        "txtFile": "reference/sourcebooks/Knights of the Old Republic Campaign Guide_djvu.txt",
+        "txtLine": 3572,
+        "pdf": "NOT_AVAILABLE_IN_REPOSITORY_OR_SESSION",
+        "status": "TXT_CONFIRMED",
+        "pdfConfirmationRequired": false,
+        "notes": null,
+        "unresolvedReason": null
+      },
+      "deliberatelyUncorrected": [],
+      "applied": true,
+      "blocksApply": false,
+      "proposalNotApplied": null,
+      "docEdits": null
+    },
+    {
+      "id": "TC-031",
+      "canonicalIdentity": "Saga Edition Core Rulebook|Jedi Consular|Know Weakness",
+      "sourcebook": "Jedi Academy Training Manual",
+      "printedPage": 14,
+      "phase2File": "data/audits/talent-phase-2-jedi-academy-training-manual-content.json",
+      "phase2ClaimIdentity": "Jedi Academy Training Manual|Jedi Consular|Know Weakness",
+      "group": "B-page-furniture-in-rules-text",
+      "suspectedCorruption": [
+        "section heading and introduction appended (NEw JEDI GUARDIAN TALENTS ...)"
+      ],
+      "edits": [
+        {
+          "kind": "furniture-removal",
+          "method": "remove the appended/inserted text (see fields[].removedTrailingText or fields[].currentValue)",
+          "evidence": "the appended text is an illustration caption / section heading / next-section introduction from the surrounding page, not part of the talent; the talent's rules text ends at the preceding sentence in the TXT"
+        }
+      ],
+      "fields": [
+        {
+          "phase2Field": "canonicalDescription",
+          "targetFields": [
+            "system.benefit",
+            "system.description|system.description.value"
+          ],
+          "currentValue": "Whenever you use Adversary Lore on a target suc-cessfully, that target also takes an additional 1d6 points of damage from any successful attack made against it by you or an ally who can hear and understand you until the end of your next turn. NEw JEDI GUARDIAN TALENTS The following talents belong to the Jedi Guardian talent tree (see page 40 of the Saga Edition core rulebook).",
+          "correctedValue": "Whenever you use Adversary Lore on a target suc-cessfully, that target also takes an additional 1d6 points of damage from any successful attack made against it by you or an ally who can hear and understand you until the end of your next turn.",
+          "editsApplied": [
+            0
+          ],
+          "removedTrailingText": " NEw JEDI GUARDIAN TALENTS The following talents belong to the Jedi Guardian talent tree (see page 40 of the Saga Edition core rulebook)."
+        }
+      ],
+      "verification": {
+        "txtFile": "reference/sourcebooks/Jedi Academy Training Manual_djvu.txt",
+        "txtLine": 1067,
+        "pdf": "NOT_AVAILABLE_IN_REPOSITORY_OR_SESSION",
+        "status": "TXT_CONFIRMED",
+        "pdfConfirmationRequired": false,
+        "notes": null,
+        "unresolvedReason": null
+      },
+      "deliberatelyUncorrected": [],
+      "applied": true,
+      "blocksApply": false,
+      "proposalNotApplied": null,
+      "docEdits": null
+    },
+    {
+      "id": "TC-032",
+      "canonicalIdentity": "Saga Edition Core Rulebook|Jedi Guardian|Hold the Line",
+      "sourcebook": "Jedi Academy Training Manual",
+      "printedPage": 14,
+      "phase2File": "data/audits/talent-phase-2-jedi-academy-training-manual-content.json",
+      "phase2ClaimIdentity": "Jedi Academy Training Manual|Jedi Guardian|Hold the Line",
+      "group": "B-page-furniture-in-rules-text",
+      "suspectedCorruption": [
+        "section heading and introduction appended (New JEDI SENTINEL TALENT ...)"
+      ],
+      "edits": [
+        {
+          "kind": "furniture-removal",
+          "method": "remove the appended/inserted text (see fields[].removedTrailingText or fields[].currentValue)",
+          "evidence": "the appended text is an illustration caption / section heading / next-section introduction from the surrounding page, not part of the talent; the talent's rules text ends at the preceding sentence in the TXT"
+        }
+      ],
+      "fields": [
+        {
+          "phase2Field": "canonicalDescription",
+          "targetFields": [
+            "system.benefit",
+            "system.description|system.description.value"
+          ],
+          "currentValue": "When you make a successful attack of opportunity against a target leaving your threatened area, you stop the target's movement, ending its action. New JEDI SENTINEL TALENT The following talent belongs to the Jedi Sentinel talent tree (see page 40 of the Saga Edition core rulebook).",
+          "correctedValue": "When you make a successful attack of opportunity against a target leaving your threatened area, you stop the target's movement, ending its action.",
+          "editsApplied": [
+            0
+          ],
+          "removedTrailingText": " New JEDI SENTINEL TALENT The following talent belongs to the Jedi Sentinel talent tree (see page 40 of the Saga Edition core rulebook)."
+        }
+      ],
+      "verification": {
+        "txtFile": "reference/sourcebooks/Jedi Academy Training Manual_djvu.txt",
+        "txtLine": 1088,
+        "pdf": "NOT_AVAILABLE_IN_REPOSITORY_OR_SESSION",
+        "status": "TXT_CONFIRMED",
+        "pdfConfirmationRequired": false,
+        "notes": null,
+        "unresolvedReason": null
+      },
+      "deliberatelyUncorrected": [],
+      "applied": true,
+      "blocksApply": false,
+      "proposalNotApplied": null,
+      "docEdits": null
+    },
+    {
+      "id": "TC-033",
+      "canonicalIdentity": "Saga Edition Core Rulebook|Jedi Sentinel|Master of the Great Hunt",
+      "sourcebook": "Jedi Academy Training Manual",
+      "printedPage": 14,
+      "phase2File": "data/audits/talent-phase-2-jedi-academy-training-manual-content.json",
+      "phase2ClaimIdentity": "Jedi Academy Training Manual|Jedi Sentinel|Master of the Great Hunt",
+      "group": "B-page-furniture-in-rules-text",
+      "suspectedCorruption": [
+        "section heading and introduction appended (New LIGHTSABER COMBAT TALENT ...)"
+      ],
+      "edits": [
+        {
+          "kind": "furniture-removal",
+          "method": "remove the appended/inserted text (see fields[].removedTrailingText or fields[].currentValue)",
+          "evidence": "the appended text is an illustration caption / section heading / next-section introduction from the surrounding page, not part of the talent; the talent's rules text ends at the preceding sentence in the TXT"
+        }
+      ],
+      "fields": [
+        {
+          "phase2Field": "canonicalDescription",
+          "targetFields": [
+            "system.benefit",
+            "system.description|system.description.value"
+          ],
+          "currentValue": "You gain a +1 Force bonus on attack rolls and deal +1 die of damage on lightsaber attacks made against a beast with a Dark Side Score of 1+. New LIGHTSABER COMBAT TALENT The following talent belongs to the Lightsaber Combat talent tree (see page 41 of the Saga Edition core rulebook).",
+          "correctedValue": "You gain a +1 Force bonus on attack rolls and deal +1 die of damage on lightsaber attacks made against a beast with a Dark Side Score of 1+.",
+          "editsApplied": [
+            0
+          ],
+          "removedTrailingText": " New LIGHTSABER COMBAT TALENT The following talent belongs to the Lightsaber Combat talent tree (see page 41 of the Saga Edition core rulebook)."
+        }
+      ],
+      "verification": {
+        "txtFile": "reference/sourcebooks/Jedi Academy Training Manual_djvu.txt",
+        "txtLine": 1097,
+        "pdf": "NOT_AVAILABLE_IN_REPOSITORY_OR_SESSION",
+        "status": "TXT_CONFIRMED",
+        "pdfConfirmationRequired": false,
+        "notes": null,
+        "unresolvedReason": null
+      },
+      "deliberatelyUncorrected": [],
+      "applied": true,
+      "blocksApply": false,
+      "proposalNotApplied": null,
+      "docEdits": null
+    },
+    {
+      "id": "TC-034",
+      "canonicalIdentity": "Saga Edition Core Rulebook|Sith|Sith Alchemy",
+      "sourcebook": "Knights of the Old Republic Campaign Guide",
+      "printedPage": 41,
+      "phase2File": "data/audits/talent-phase-2-knights-of-the-old-republic-campaign-guide-content.json",
+      "phase2ClaimIdentity": "Knights of the Old Republic Campaign Guide|Sith|Sith Alchemy",
+      "group": "B-page-furniture-in-rules-text",
+      "suspectedCorruption": [
+        "heading fragment appended (New PRESTIGE)"
+      ],
+      "edits": [
+        {
+          "kind": "furniture-removal",
+          "method": "remove the appended/inserted text (see fields[].removedTrailingText or fields[].currentValue)",
+          "evidence": "the appended text is an illustration caption / section heading / next-section introduction from the surrounding page, not part of the talent; the talent's rules text ends at the preceding sentence in the TXT"
+        }
+      ],
+      "fields": [
+        {
+          "phase2Field": "canonicalDescription",
+          "targetFields": [
+            "system.benefit",
+            "system.description|system.description.value"
+          ],
+          "currentValue": "Your knowledge of Sith sorcery allows you to imbue talismans and other objects with the power of the dark side.\n\nCreate Sith Talisman:You can spend one Force Point to imbue a portable object with the dark side, creating a Sith talisman that provides offensive strength to a Force power or lightsaber attack. Creating the talisman takes a full-round action. While you wear or carry the talisman on your person, add 1d6 to your damage with Force powers. You gain a Dark Side point when you first put on or carry a Sith talisman. You can have only one Sith talisman active at any given time, and if it is destroyed, you cannot create another one for 24 hours.\n\nCreate Sith Weapon: You can alchemically treat a properly prepared weapon to become a Sith weapon. You may spend a Force Point to imbue the weapon with the properties of the Sith alchemical weapon template (this process takes one hour to complete). See Chapter 5: Equipment and Droids for information on Sith alchemical weapons.\n\nNew PRESTIGE",
+          "correctedValue": "Your knowledge of Sith sorcery allows you to imbue talismans and other objects with the power of the dark side.\n\nCreate Sith Talisman:You can spend one Force Point to imbue a portable object with the dark side, creating a Sith talisman that provides offensive strength to a Force power or lightsaber attack. Creating the talisman takes a full-round action. While you wear or carry the talisman on your person, add 1d6 to your damage with Force powers. You gain a Dark Side point when you first put on or carry a Sith talisman. You can have only one Sith talisman active at any given time, and if it is destroyed, you cannot create another one for 24 hours.\n\nCreate Sith Weapon: You can alchemically treat a properly prepared weapon to become a Sith weapon. You may spend a Force Point to imbue the weapon with the properties of the Sith alchemical weapon template (this process takes one hour to complete). See Chapter 5: Equipment and Droids for information on Sith alchemical weapons.",
+          "editsApplied": [
+            0
+          ],
+          "removedTrailingText": "\n\nNew PRESTIGE"
+        }
+      ],
+      "verification": {
+        "txtFile": "reference/sourcebooks/Knights of the Old Republic Campaign Guide_djvu.txt",
+        "txtLine": 3803,
+        "pdf": "NOT_AVAILABLE_IN_REPOSITORY_OR_SESSION",
+        "status": "TXT_CONFIRMED",
+        "pdfConfirmationRequired": false,
+        "notes": null,
+        "unresolvedReason": null
+      },
+      "deliberatelyUncorrected": [],
+      "applied": true,
+      "blocksApply": false,
+      "proposalNotApplied": null,
+      "docEdits": null
+    },
+    {
+      "id": "TC-035",
+      "canonicalIdentity": "Knights of the Old Republic Campaign Guide|Fencing|Leading Feint",
+      "sourcebook": "Knights of the Old Republic Campaign Guide",
+      "printedPage": 26,
+      "phase2File": "data/audits/talent-phase-2-knights-of-the-old-republic-campaign-guide-content.json",
+      "phase2ClaimIdentity": "Knights of the Old Republic Campaign Guide|Fencing|Leading Feint",
+      "group": "B-page-furniture-in-rules-text",
+      "suspectedCorruption": [
+        "illustration noise appended (SUYSEL Hieovseh / Ges)"
+      ],
+      "edits": [
+        {
+          "kind": "furniture-removal",
+          "method": "remove the appended/inserted text (see fields[].removedTrailingText or fields[].currentValue)",
+          "evidence": "the appended text is an illustration caption / section heading / next-section introduction from the surrounding page, not part of the talent; the talent's rules text ends at the preceding sentence in the TXT"
+        }
+      ],
+      "fields": [
+        {
+          "phase2Field": "canonicalDescription",
+          "targetFields": [
+            "system.benefit",
+            "system.description|system.description.value"
+          ],
+          "currentValue": "Whenever you successfully damage an opponent with a melee attack, you can make a Deception check to feint against that target as a swift action. If successful, you designate an ally within 12 squares; your target is treated as flat-footed against the first attack that ally makes against your target before the beginning of your next turn.\n\nSUYSEL Hieovseh\n\nGes",
+          "correctedValue": "Whenever you successfully damage an opponent with a melee attack, you can make a Deception check to feint against that target as a swift action. If successful, you designate an ally within 12 squares; your target is treated as flat-footed against the first attack that ally makes against your target before the beginning of your next turn.",
+          "editsApplied": [
+            0
+          ],
+          "removedTrailingText": "\n\nSUYSEL Hieovseh\n\nGes"
+        }
+      ],
+      "verification": {
+        "txtFile": "reference/sourcebooks/Knights of the Old Republic Campaign Guide_djvu.txt",
+        "txtLine": 2379,
+        "pdf": "NOT_AVAILABLE_IN_REPOSITORY_OR_SESSION",
+        "status": "TXT_CONFIRMED",
+        "pdfConfirmationRequired": false,
+        "notes": null,
+        "unresolvedReason": null
+      },
+      "deliberatelyUncorrected": [],
+      "applied": true,
+      "blocksApply": false,
+      "proposalNotApplied": null,
+      "docEdits": null
+    },
+    {
+      "id": "TC-036",
+      "canonicalIdentity": "Knights of the Old Republic Campaign Guide|Jedi Watchman|Force Warning",
+      "sourcebook": "Knights of the Old Republic Campaign Guide",
+      "printedPage": 40,
+      "phase2File": "data/audits/talent-phase-2-knights-of-the-old-republic-campaign-guide-content.json",
+      "phase2ClaimIdentity": "Knights of the Old Republic Campaign Guide|Jedi Watchman|Force Warning",
+      "group": "B-page-furniture-in-rules-text",
+      "suspectedCorruption": [
+        "illustration caption appended (MaSTER 4TRIG, JEDI WATCHMAN)"
+      ],
+      "edits": [
+        {
+          "kind": "furniture-removal",
+          "method": "remove the appended/inserted text (see fields[].removedTrailingText or fields[].currentValue)",
+          "evidence": "the appended text is an illustration caption / section heading / next-section introduction from the surrounding page, not part of the talent; the talent's rules text ends at the preceding sentence in the TXT"
+        }
+      ],
+      "fields": [
+        {
+          "phase2Field": "canonicalDescription",
+          "targetFields": [
+            "system.benefit",
+            "system.description|system.description.value"
+          ],
+          "currentValue": "Allies within 12 squares can choose to reroll their Initiative checks at the start of combat but must take the second result, even if it is worse. Furthermore, if any allies within 12 squares are surprised at the start of an encounter, but you are not, you can designate a number of those allies equal to your Wisdom modifier (minimum 1); those allies are no longer considered surprised and can act normally on the surprise round.\n\nMaSTER 4TRIG, JEDI WATCHMAN",
+          "correctedValue": "Allies within 12 squares can choose to reroll their Initiative checks at the start of combat but must take the second result, even if it is worse. Furthermore, if any allies within 12 squares are surprised at the start of an encounter, but you are not, you can designate a number of those allies equal to your Wisdom modifier (minimum 1); those allies are no longer considered surprised and can act normally on the surprise round.",
+          "editsApplied": [
+            0
+          ],
+          "removedTrailingText": "\n\nMaSTER 4TRIG, JEDI WATCHMAN"
+        }
+      ],
+      "verification": {
+        "txtFile": "reference/sourcebooks/Knights of the Old Republic Campaign Guide_djvu.txt",
+        "txtLine": 3729,
+        "pdf": "NOT_AVAILABLE_IN_REPOSITORY_OR_SESSION",
+        "status": "TXT_CONFIRMED",
+        "pdfConfirmationRequired": false,
+        "notes": null,
+        "unresolvedReason": null
+      },
+      "deliberatelyUncorrected": [],
+      "applied": true,
+      "blocksApply": false,
+      "proposalNotApplied": null,
+      "docEdits": null
+    },
+    {
+      "id": "TC-037",
+      "canonicalIdentity": "Jedi Academy Training Manual|Jedi Weapon Master|Shoto Pin",
+      "sourcebook": "Jedi Academy Training Manual",
+      "printedPage": 21,
+      "phase2File": "data/audits/talent-phase-2-jedi-academy-training-manual-content.json",
+      "phase2ClaimIdentity": "Jedi Academy Training Manual|Jedi Weapon Master|Shoto Pin",
+      "group": "B-page-furniture-in-rules-text",
+      "suspectedCorruption": [
+        "illustration caption, section heading and introduction appended (A RODIAN Jeo! WEAPONMASTER. SITH APPRENTICE TALENTS ...)"
+      ],
+      "edits": [
+        {
+          "kind": "furniture-removal",
+          "method": "remove the appended/inserted text (see fields[].removedTrailingText or fields[].currentValue)",
+          "evidence": "the appended text is an illustration caption / section heading / next-section introduction from the surrounding page, not part of the talent; the talent's rules text ends at the preceding sentence in the TXT"
+        }
+      ],
+      "fields": [
+        {
+          "phase2Field": "canonicalDescription",
+          "targetFields": [
+            "system.benefit",
+            "system.description|system.description.value"
+          ],
+          "currentValue": "Whenever you are wielding a shoto and success-fully use the Block talent to negate a melee attack, the attacker can make no further melee attacks until the start of its next turn or until you are no longer adjacent to it. A RODIAN Jeo! WEAPONMASTER. SITH APPRENTICE TALENTS The following talents are for use with the Sith apprentice prestige class (see page 222 of the Saga Edition core rulebook).",
+          "correctedValue": "Whenever you are wielding a shoto and success-fully use the Block talent to negate a melee attack, the attacker can make no further melee attacks until the start of its next turn or until you are no longer adjacent to it.",
+          "editsApplied": [
+            0
+          ],
+          "removedTrailingText": " A RODIAN Jeo! WEAPONMASTER. SITH APPRENTICE TALENTS The following talents are for use with the Sith apprentice prestige class (see page 222 of the Saga Edition core rulebook)."
+        }
+      ],
+      "verification": {
+        "txtFile": "reference/sourcebooks/Jedi Academy Training Manual_djvu.txt",
+        "txtLine": 1808,
+        "pdf": "NOT_AVAILABLE_IN_REPOSITORY_OR_SESSION",
+        "status": "TXT_CONFIRMED",
+        "pdfConfirmationRequired": false,
+        "notes": null,
+        "unresolvedReason": null
+      },
+      "deliberatelyUncorrected": [],
+      "applied": true,
+      "blocksApply": false,
+      "proposalNotApplied": null,
+      "docEdits": null
+    },
+    {
+      "id": "TC-038",
+      "canonicalIdentity": "Jedi Academy Training Manual|Telepath|Telepathic Intruder",
+      "sourcebook": "Jedi Academy Training Manual",
+      "printedPage": 19,
+      "phase2File": "data/audits/talent-phase-2-jedi-academy-training-manual-content.json",
+      "phase2ClaimIdentity": "Jedi Academy Training Manual|Telepath|Telepathic Intruder",
+      "group": "B-page-furniture-in-rules-text",
+      "suspectedCorruption": [
+        "two section headings and introductions appended (JEDI KNIGHT TALENTS ... New Duelist Talents ...)"
+      ],
+      "edits": [
+        {
+          "kind": "furniture-removal",
+          "method": "remove the appended/inserted text (see fields[].removedTrailingText or fields[].currentValue)",
+          "evidence": "the appended text is an illustration caption / section heading / next-section introduction from the surrounding page, not part of the talent; the talent's rules text ends at the preceding sentence in the TXT"
+        }
+      ],
+      "fields": [
+        {
+          "phase2Field": "canonicalDescription",
+          "targetFields": [
+            "system.benefit",
+            "system.description|system.description.value"
+          ],
+          "currentValue": "Whenever you use a Force power with the [mind-affecting] descriptor successfully against a target, until the end of your next turn you gain a +2 Force bonus on skill checks made to activate mind-affecting Force powers and talents against that same target. JEDI KNIGHT TALENTS The following talents are for use with the Jedi Knight prestige class (see page 217 of the Saga Edition core rulebook). New Duelist Talents The following talents belong to the Duelist talent tree (see page 218 of the Saga Edition core rulebook).",
+          "correctedValue": "Whenever you use a Force power with the [mind-affecting] descriptor successfully against a target, until the end of your next turn you gain a +2 Force bonus on skill checks made to activate mind-affecting Force powers and talents against that same target.",
+          "editsApplied": [
+            0
+          ],
+          "removedTrailingText": " JEDI KNIGHT TALENTS The following talents are for use with the Jedi Knight prestige class (see page 217 of the Saga Edition core rulebook). New Duelist Talents The following talents belong to the Duelist talent tree (see page 218 of the Saga Edition core rulebook)."
+        }
+      ],
+      "verification": {
+        "txtFile": "reference/sourcebooks/Jedi Academy Training Manual_djvu.txt",
+        "txtLine": 1561,
+        "pdf": "NOT_AVAILABLE_IN_REPOSITORY_OR_SESSION",
+        "status": "TXT_CONFIRMED",
+        "pdfConfirmationRequired": false,
+        "notes": null,
+        "unresolvedReason": null
+      },
+      "deliberatelyUncorrected": [],
+      "applied": true,
+      "blocksApply": false,
+      "proposalNotApplied": null,
+      "docEdits": null
+    },
+    {
+      "id": "TC-039",
+      "canonicalIdentity": "Knights of the Old Republic Campaign Guide|Order of Shasa|Waveform",
+      "sourcebook": "Knights of the Old Republic Campaign Guide",
+      "printedPage": 61,
+      "phase2File": "data/audits/talent-phase-2-knights-of-the-old-republic-campaign-guide-content.json",
+      "phase2ClaimIdentity": "Knights of the Old Republic Campaign Guide|Order of Shasa|Waveform",
+      "group": "B-page-furniture-in-rules-text",
+      "suspectedCorruption": [
+        "chapter footer appended (“i CHAPTER V)"
+      ],
+      "edits": [
+        {
+          "kind": "furniture-removal",
+          "method": "remove the appended/inserted text (see fields[].removedTrailingText or fields[].currentValue)",
+          "evidence": "the appended text is an illustration caption / section heading / next-section introduction from the surrounding page, not part of the talent; the talent's rules text ends at the preceding sentence in the TXT"
+        }
+      ],
+      "fields": [
+        {
+          "phase2Field": "canonicalDescription",
+          "targetFields": [
+            "system.benefit",
+            "system.description|system.description.value"
+          ],
+          "currentValue": "Taking cues from Manaan's oceans, you know how to emulate wave action using the Force. As a swift action, when you use a telekinetic Force power (that is, a power affected by the Telekinetic Power or Telekinetic Savant talents), you manipulate the particles of the environment around you to add to the force of impact, allowing you to add your Charisma modifier to any damage dealt (minimum +1).\n\n“i CHAPTER V",
+          "correctedValue": "Taking cues from Manaan's oceans, you know how to emulate wave action using the Force. As a swift action, when you use a telekinetic Force power (that is, a power affected by the Telekinetic Power or Telekinetic Savant talents), you manipulate the particles of the environment around you to add to the force of impact, allowing you to add your Charisma modifier to any damage dealt (minimum +1).",
+          "editsApplied": [
+            0
+          ],
+          "removedTrailingText": "\n\n“i CHAPTER V"
+        }
+      ],
+      "verification": {
+        "txtFile": "reference/sourcebooks/Knights of the Old Republic Campaign Guide_djvu.txt",
+        "txtLine": 5776,
+        "pdf": "NOT_AVAILABLE_IN_REPOSITORY_OR_SESSION",
+        "status": "TXT_CONFIRMED",
+        "pdfConfirmationRequired": false,
+        "notes": null,
+        "unresolvedReason": null
+      },
+      "deliberatelyUncorrected": [],
+      "applied": true,
+      "blocksApply": false,
+      "proposalNotApplied": null,
+      "docEdits": null
+    },
+    {
+      "id": "TC-040",
+      "canonicalIdentity": "Saga Edition Core Rulebook|Sense|Motion of the Future",
+      "sourcebook": "Jedi Academy Training Manual",
+      "printedPage": 17,
+      "phase2File": "data/audits/talent-phase-2-jedi-academy-training-manual-content.json",
+      "phase2ClaimIdentity": "Jedi Academy Training Manual|Sense|Motion of the Future",
+      "group": "B-page-furniture-in-rules-text",
+      "suspectedCorruption": [
+        "section headings and introductions appended (PRESTIGE CLASS TALENTS ... FORCE ADEPT TALENTS ... New Dark Side Devotee Talents ...)"
+      ],
+      "edits": [
+        {
+          "kind": "furniture-removal",
+          "method": "remove the appended/inserted text (see fields[].removedTrailingText or fields[].currentValue)",
+          "evidence": "the appended text is an illustration caption / section heading / next-section introduction from the surrounding page, not part of the talent; the talent's rules text ends at the preceding sentence in the TXT"
+        }
+      ],
+      "fields": [
+        {
+          "phase2Field": "canonicalDescription",
+          "targetFields": [
+            "system.benefit",
+            "system.description|system.description.value"
+          ],
+          "currentValue": "As a swift action, you can peer into the future in search of signs of danger, removing one use of the farseeing Force power from your active suite (as though you had just activated the power). Any time before the end of your next turn when you are the target of an attack or Force power, you can force your attacker to reroll the attack roll (or Use the Force check) against you, keeping the second result. This counts as using the farseeing Force power against the attacker, but this talent replaces the normal rules and effect of that power. PRESTIGE CLASS TALENTS This section introduces several new talents for the prestige classes presented in the Saga Edition core rulebook. FORCE ADEPT TALENTS The following talents are for use with the Force adept prestige class (see page 212 of the Saga Edition core rulebook). New Dark Side Devotee Talents The following talents belong to the Dark Side Devotee talent tree (see page 213 of the Saga Edition core rulebook).",
+          "correctedValue": "As a swift action, you can peer into the future in search of signs of danger, removing one use of the farseeing Force power from your active suite (as though you had just activated the power). Any time before the end of your next turn when you are the target of an attack or Force power, you can force your attacker to reroll the attack roll (or Use the Force check) against you, keeping the second result. This counts as using the farseeing Force power against the attacker, but this talent replaces the normal rules and effect of that power.",
+          "editsApplied": [
+            0
+          ],
+          "removedTrailingText": " PRESTIGE CLASS TALENTS This section introduces several new talents for the prestige classes presented in the Saga Edition core rulebook. FORCE ADEPT TALENTS The following talents are for use with the Force adept prestige class (see page 212 of the Saga Edition core rulebook). New Dark Side Devotee Talents The following talents belong to the Dark Side Devotee talent tree (see page 213 of the Saga Edition core rulebook)."
+        }
+      ],
+      "verification": {
+        "txtFile": "reference/sourcebooks/Jedi Academy Training Manual_djvu.txt",
+        "txtLine": 1384,
+        "pdf": "NOT_AVAILABLE_IN_REPOSITORY_OR_SESSION",
+        "status": "TXT_CONFIRMED",
+        "pdfConfirmationRequired": false,
+        "notes": null,
+        "unresolvedReason": null
+      },
+      "deliberatelyUncorrected": [],
+      "applied": true,
+      "blocksApply": false,
+      "proposalNotApplied": null,
+      "docEdits": null
+    },
+    {
+      "id": "TC-041",
+      "canonicalIdentity": "Jedi Academy Training Manual|Tyia Adept|Force Stabilize",
+      "sourcebook": "Jedi Academy Training Manual",
+      "printedPage": 87,
+      "phase2File": "data/audits/talent-phase-2-jedi-academy-training-manual-content.json",
+      "phase2ClaimIdentity": "Jedi Academy Training Manual|Tyia Adept|Force Stabilize",
+      "group": "B-page-furniture-in-rules-text",
+      "suspectedCorruption": [
+        "illustration caption appended (A HUMAN JEDI CONSULTS A REVWIEN TIA ADEPT.)"
+      ],
+      "edits": [
+        {
+          "kind": "furniture-removal",
+          "method": "remove the appended/inserted text (see fields[].removedTrailingText or fields[].currentValue)",
+          "evidence": "the appended text is an illustration caption / section heading / next-section introduction from the surrounding page, not part of the talent; the talent's rules text ends at the preceding sentence in the TXT"
+        }
+      ],
+      "fields": [
+        {
+          "phase2Field": "canonicalDescription",
+          "targetFields": [
+            "system.benefit",
+            "system.description|system.description.value"
+          ],
+          "currentValue": "You can designate an ally within 12 squares of you and in your line of sight once per turn as a swift action; that ally immediately takes its second wind if it has not yet done so in this encounter. A HUMAN JEDI CONSULTS A REVWIEN TIA ADEPT.",
+          "correctedValue": "You can designate an ally within 12 squares of you and in your line of sight once per turn as a swift action; that ally immediately takes its second wind if it has not yet done so in this encounter.",
+          "editsApplied": [
+            0
+          ],
+          "removedTrailingText": " A HUMAN JEDI CONSULTS A REVWIEN TIA ADEPT."
+        }
+      ],
+      "verification": {
+        "txtFile": "reference/sourcebooks/Jedi Academy Training Manual_djvu.txt",
+        "txtLine": 8023,
+        "pdf": "NOT_AVAILABLE_IN_REPOSITORY_OR_SESSION",
+        "status": "TXT_CONFIRMED",
+        "pdfConfirmationRequired": false,
+        "notes": null,
+        "unresolvedReason": null
+      },
+      "deliberatelyUncorrected": [],
+      "applied": true,
+      "blocksApply": false,
+      "proposalNotApplied": null,
+      "docEdits": null
+    },
+    {
+      "id": "TC-042",
+      "canonicalIdentity": "Jedi Academy Training Manual|Shapers of Kro Var|Earth Buckle",
+      "sourcebook": "Jedi Academy Training Manual",
+      "printedPage": 85,
+      "phase2File": "data/audits/talent-phase-2-jedi-academy-training-manual-content.json",
+      "phase2ClaimIdentity": "Jedi Academy Training Manual|Shapers of Kro Var|Earth Buckle",
+      "group": "B-page-furniture-in-rules-text",
+      "suspectedCorruption": [
+        "illustration caption appended (A SHAPER OF KRO VAR DEFENDS HIMSELF AGAINST THE FORCES OF THE SEPARATISTS.)"
+      ],
+      "edits": [
+        {
+          "kind": "furniture-removal",
+          "method": "remove the appended/inserted text (see fields[].removedTrailingText or fields[].currentValue)",
+          "evidence": "the appended text is an illustration caption / section heading / next-section introduction from the surrounding page, not part of the talent; the talent's rules text ends at the preceding sentence in the TXT"
+        }
+      ],
+      "fields": [
+        {
+          "phase2Field": "canonicalDescription",
+          "targetFields": [
+            "system.benefit",
+            "system.description|system.description.value"
+          ],
+          "currentValue": "You can spend a Force Point as a swift action to create a 3x3 square area of difficult terrain centered on you. You ignore any penalties for moving on difficult terrain that you create using this talent. A SHAPER OF KRO VAR DEFENDS HIMSELF AGAINST THE FORCES OF THE SEPARATISTS.",
+          "correctedValue": "You can spend a Force Point as a swift action to create a 3x3 square area of difficult terrain centered on you. You ignore any penalties for moving on difficult terrain that you create using this talent.",
+          "editsApplied": [
+            0
+          ],
+          "removedTrailingText": " A SHAPER OF KRO VAR DEFENDS HIMSELF AGAINST THE FORCES OF THE SEPARATISTS."
+        }
+      ],
+      "verification": {
+        "txtFile": "reference/sourcebooks/Jedi Academy Training Manual_djvu.txt",
+        "txtLine": 7837,
+        "pdf": "NOT_AVAILABLE_IN_REPOSITORY_OR_SESSION",
+        "status": "TXT_CONFIRMED",
+        "pdfConfirmationRequired": false,
+        "notes": null,
+        "unresolvedReason": null
+      },
+      "deliberatelyUncorrected": [],
+      "applied": true,
+      "blocksApply": false,
+      "proposalNotApplied": null,
+      "docEdits": null
+    },
+    {
+      "id": "TC-043",
+      "canonicalIdentity": "Saga Edition Core Rulebook|Jedi Consular|Visionary Attack",
+      "sourcebook": "Knights of the Old Republic Campaign Guide",
+      "printedPage": 24,
+      "phase2File": "data/audits/talent-phase-2-knights-of-the-old-republic-campaign-guide-content.json",
+      "phase2ClaimIdentity": "Knights of the Old Republic Campaign Guide|Jedi Consular|Visionary Attack",
+      "group": "B-page-furniture-in-rules-text",
+      "suspectedCorruption": [
+        "illustration noise inserted inside the parenthetical (SlveL sever))",
+        "summary cut at the noise"
+      ],
+      "edits": [
+        {
+          "kind": "noise-removal",
+          "find": "(as\n\nSlveL sever)\n\nthough",
+          "replace": "(as though",
+          "evidence": "the TXT reads \"(as\" ... noise ... \"though you had activated the power)\"; removing the noise restores the parenthetical"
+        },
+        {
+          "kind": "summary-restore",
+          "method": "complete the truncated derived summary",
+          "evidence": "the derived summary was cut at the noise; it is completed with the wording of the benefit"
+        }
+      ],
+      "fields": [
+        {
+          "phase2Field": "canonicalDescription",
+          "targetFields": [
+            "system.benefit",
+            "system.description|system.description.value"
+          ],
+          "currentValue": "As a reaction, you can make a Use the Force check after you or an ally within 12 squares misses with a melee or ranged attack, removing one use of the farseeing Force power from your active suite (as\n\nSlveL sever)\n\nthough you had activated the power). If your check result equals or exceeds the Will Defense of the target of that missed attack, the attacker can reroll the missed attack roll. This counts as using the farseeing Force power against that target, but this talent replaces the normal rules and effect of that power. Any attack can only be affected by this talent once (thus, multiple characters cannot use this talent on the same attack to allow multiple rerolls). You take a cumulative -5 penalty on Use the Force checks until the beginning of your next turn when you use this talent.",
+          "correctedValue": "As a reaction, you can make a Use the Force check after you or an ally within 12 squares misses with a melee or ranged attack, removing one use of the farseeing Force power from your active suite (as though you had activated the power). If your check result equals or exceeds the Will Defense of the target of that missed attack, the attacker can reroll the missed attack roll. This counts as using the farseeing Force power against that target, but this talent replaces the normal rules and effect of that power. Any attack can only be affected by this talent once (thus, multiple characters cannot use this talent on the same attack to allow multiple rerolls). You take a cumulative -5 penalty on Use the Force checks until the beginning of your next turn when you use this talent.",
+          "editsApplied": [
+            0
+          ]
+        },
+        {
+          "phase2Field": "quickSummary",
+          "targetFields": [
+            "system.summary"
+          ],
+          "currentValue": "As a reaction, you can make a Use the Force check after you or an ally within 12 squares misses with a melee or ranged attack, removing one use of the farseeing Force power from your active suite (as",
+          "correctedValue": "As a reaction, you can make a Use the Force check after you or an ally within 12 squares misses with a melee or ranged attack, removing one use of the farseeing Force power from your active suite (as though you had activated the power).",
+          "editsApplied": [
+            1
+          ]
+        }
+      ],
+      "verification": {
+        "txtFile": "reference/sourcebooks/Knights of the Old Republic Campaign Guide_djvu.txt",
+        "txtLine": 2170,
+        "pdf": "NOT_AVAILABLE_IN_REPOSITORY_OR_SESSION",
+        "status": "TXT_CONFIRMED",
+        "pdfConfirmationRequired": false,
+        "notes": null,
+        "unresolvedReason": null
+      },
+      "deliberatelyUncorrected": [],
+      "applied": true,
+      "blocksApply": false,
+      "proposalNotApplied": null,
+      "docEdits": null
+    },
+    {
+      "id": "TC-044",
+      "canonicalIdentity": "Knights of the Old Republic Campaign Guide|Melee Duelist|Master of Elegance",
+      "sourcebook": "Knights of the Old Republic Campaign Guide",
+      "printedPage": 46,
+      "phase2File": "data/audits/talent-phase-2-knights-of-the-old-republic-campaign-guide-content.json",
+      "phase2ClaimIdentity": "Knights of the Old Republic Campaign Guide|Melee Duelist|Master of Elegance",
+      "group": "B-page-furniture-in-rules-text",
+      "suspectedCorruption": [
+        "bracket delimiter (\"[\" for \"(\")"
+      ],
+      "edits": [
+        {
+          "kind": "delimiter",
+          "find": "[instead of your Strength bonus)",
+          "replace": "(instead of your Strength bonus)",
+          "evidence": "the closing \")\" is the partner; the second sentence of the same talent reads \"(instead of double your Strength bonus)\""
+        }
+      ],
+      "fields": [
+        {
+          "phase2Field": "canonicalDescription",
+          "targetFields": [
+            "system.benefit",
+            "system.description|system.description.value"
+          ],
+          "currentValue": "You may add your Dexterity bonus [instead of your Strength bonus) on damage rolls when wielding a light melee weapon. When you wield a light melee weapon two-handed, you may apply double your Dexterity bonus (instead of double your Strength bonus) to the damage.",
+          "correctedValue": "You may add your Dexterity bonus (instead of your Strength bonus) on damage rolls when wielding a light melee weapon. When you wield a light melee weapon two-handed, you may apply double your Dexterity bonus (instead of double your Strength bonus) to the damage.",
+          "editsApplied": [
+            0
+          ]
+        },
+        {
+          "phase2Field": "quickSummary",
+          "targetFields": [
+            "system.summary"
+          ],
+          "currentValue": "You may add your Dexterity bonus [instead of your Strength bonus) on damage rolls when wielding a light melee weapon.",
+          "correctedValue": "You may add your Dexterity bonus (instead of your Strength bonus) on damage rolls when wielding a light melee weapon.",
+          "editsApplied": [
+            0
+          ]
+        }
+      ],
+      "verification": {
+        "txtFile": "reference/sourcebooks/Knights of the Old Republic Campaign Guide_djvu.txt",
+        "txtLine": 4453,
+        "pdf": "NOT_AVAILABLE_IN_REPOSITORY_OR_SESSION",
+        "status": "TXT_CONFIRMED",
+        "pdfConfirmationRequired": false,
+        "notes": null,
+        "unresolvedReason": null
+      },
+      "deliberatelyUncorrected": [],
+      "applied": true,
+      "blocksApply": false,
+      "proposalNotApplied": null,
+      "docEdits": null
+    },
+    {
+      "id": "TC-045",
+      "canonicalIdentity": "Saga Edition Core Rulebook|Alter|Disciplined Strike",
+      "sourcebook": "Saga Edition Core Rulebook",
+      "printedPage": 100,
+      "phase2File": "data/audits/talent-phase-2-core-rulebook-content.json",
+      "phase2ClaimIdentity": "Saga Edition Core Rulebook|Alter|Disciplined Strike",
+      "group": "C-source-text-damaged-pdf-required",
+      "suspectedCorruption": [
+        "dropped/garbled words in the TXT itself (\"that hs effect\", \"Force siam\", \"certain number OF\", \"that you in this manner\")",
+        "text cut after \"Wisdom modifier [minimum of 1).\""
+      ],
+      "edits": [],
+      "fields": [],
+      "verification": {
+        "txtFile": "reference/sourcebooks/Core Rulebook_djvu.txt",
+        "txtLine": 9803,
+        "pdf": "NOT_AVAILABLE_IN_REPOSITORY_OR_SESSION",
+        "status": "TXT_AMBIGUOUS_PDF_REQUIRED",
+        "pdfConfirmationRequired": true,
+        "notes": null,
+        "unresolvedReason": "the individual Core TXT is itself damaged (dropped words); the wording cannot be reconstructed without guessing"
+      },
+      "deliberatelyUncorrected": [],
+      "applied": false,
+      "blocksApply": true,
+      "proposalNotApplied": "Whenever you use a Force power that has an area effect (such as Force slam), you may exclude a certain number of targets from the effects of that power. The number of targets that you exclude in this manner is equal to your Wisdom modifier (minimum of 1). -- UNVERIFIED reconstruction, must be confirmed against the PDF before use",
+      "docEdits": null
+    },
+    {
+      "id": "TC-046",
+      "canonicalIdentity": "Saga Edition Core Rulebook|Weapon Master|Exotic Weapon Mastery",
+      "sourcebook": "Saga Edition Core Rulebook",
+      "printedPage": 212,
+      "phase2File": "data/audits/talent-phase-2-core-rulebook-content.json",
+      "phase2ClaimIdentity": "Saga Edition Core Rulebook|Weapon Master|Exotic Weapon Mastery",
+      "group": "C-source-text-damaged-pdf-required",
+      "suspectedCorruption": [
+        "two-column crossover in the TXT (text of Exotic Weapon Mastery interleaved with Greater Devastating Attack)",
+        "benefit cut mid-sentence (\"Each time you select this tat\")"
+      ],
+      "edits": [],
+      "fields": [],
+      "verification": {
+        "txtFile": "reference/sourcebooks/Core Rulebook_djvu.txt",
+        "txtLine": 20072,
+        "pdf": "NOT_AVAILABLE_IN_REPOSITORY_OR_SESSION",
+        "status": "TXT_AMBIGUOUS_PDF_REQUIRED",
+        "pdfConfirmationRequired": true,
+        "notes": null,
+        "unresolvedReason": "column crossover and truncation in the TXT; the two interleaved columns cannot be separated reliably without the page image"
+      },
+      "deliberatelyUncorrected": [],
+      "applied": false,
+      "blocksApply": true,
+      "proposalNotApplied": null,
+      "docEdits": null
+    },
+    {
+      "id": "TC-047",
+      "canonicalIdentity": "Knights of the Old Republic Campaign Guide|Run and Gun|Slippery Strike",
+      "sourcebook": "Knights of the Old Republic Campaign Guide",
+      "printedPage": 27,
+      "phase2File": "data/audits/talent-phase-2-knights-of-the-old-republic-campaign-guide-content.json",
+      "phase2ClaimIdentity": "Knights of the Old Republic Campaign Guide|Run and Gun|Slippery Strike",
+      "group": "C-source-text-damaged-pdf-required",
+      "suspectedCorruption": [
+        "benefit ends mid-sentence (\"...as a reaction; that\")",
+        "the TXT cuts the sidebar text at an illustration"
+      ],
+      "edits": [],
+      "fields": [],
+      "verification": {
+        "txtFile": "reference/sourcebooks/Knights of the Old Republic Campaign Guide_djvu.txt",
+        "txtLine": 2502,
+        "pdf": "NOT_AVAILABLE_IN_REPOSITORY_OR_SESSION",
+        "status": "TXT_AMBIGUOUS_PDF_REQUIRED",
+        "pdfConfirmationRequired": true,
+        "notes": null,
+        "unresolvedReason": "the TXT text for this talent is cut off by an illustration; the rest of the rules text is not present in the TXT"
+      },
+      "deliberatelyUncorrected": [],
+      "applied": false,
+      "blocksApply": true,
+      "proposalNotApplied": null,
+      "docEdits": null
+    }
+  ],
+  "summary": {
+    "flaggedByPhase3CScan": {
+      "fields": 54,
+      "records": 27,
+      "correctedFields": 54,
+      "falsePositiveFields": 0
+    },
+    "additionalFindings": {
+      "recordsBeyondPhase3CScan": 20
+    },
+    "entries": 47,
+    "recordsCorrected": 44,
+    "phase2FieldsChanged": 58,
+    "byStatus": {
+      "TXT_CONFIRMED": 43,
+      "TXT_AMBIGUOUS_PDF_REQUIRED": 4
+    },
+    "blocksApply": [
+      "Knights of the Old Republic Campaign Guide|Krath|Krath Illusions",
+      "Saga Edition Core Rulebook|Alter|Disciplined Strike",
+      "Saga Edition Core Rulebook|Weapon Master|Exotic Weapon Mastery",
+      "Knights of the Old Republic Campaign Guide|Run and Gun|Slippery Strike"
+    ]
+  },
+  "nonSourceFindings": [
+    {
+      "id": "NS-001",
+      "kind": "PAGE_AUTHORITY",
+      "canonicalIdentity": "Scavenger's Guide to Droids|Elite Droid (Break Program, Heuristic Mastery, Scripted Routines, Ultra Resilient)",
+      "sourcebook": "Scavenger's Guide to Droids",
+      "question": "system.page 29 (Phase 3B/Phase 2) versus 28 (hydration test / current production)",
+      "verdict": "Phase 3B authority (printed page 29) is correct; the hydration test expectation (28) is stale",
+      "status": "PRIOR_PDF_AUDIT_RECORDED",
+      "blocksApply": false,
+      "evidence": [
+        "data/audits/talent-phase-2-scavengers-guide-to-droids-content.json authority.rule: \"Rendered PDF printed pp. 26-29 are final authority for page attribution\" and reviewCorrection \"corrected page attribution where required\"; all four records carry canonicalTextCapture DJVU_NORMALIZED_PDF_PAGE_AND_HIERARCHY_VERIFIED",
+        "docs/audits/talent-phase-3b-scavengers-guide-to-droids.md \"Source verification\": printed page 28 = remaining Fifth-Degree, Override, Specialized Droid and Autonomy talents; printed page 29 = Elite Droid talents; \"visually checked in the supplied PDF\"",
+        "the individual TXT orders the \"New Autonomy Talent\" block immediately before \"New Elite Droid Talent Tree\", consistent with 28 -> 29",
+        "the hydration test pinned 28 from commit 96a20b7, which cites p. 28 without a PDF check; docs/audits/talent-phase-1c-scavengers-guide-to-droids-structural-adjudication.md inspected printed p. 28 for the Autonomy/Specialized material, not for Elite Droid"
+      ],
+      "limitation": "The sourcebook PDFs are not in the repository or this session, so the rendered page could not be re-checked here; the verdict relies on the two recorded audits above.",
+      "action": "no canonical change; the hydration test expectation is aligned to the certified value (see tests)"
+    },
+    {
+      "id": "NS-002",
+      "kind": "STALE_TEST_EXPECTATION",
+      "canonicalIdentity": "Galaxy of Intrigue|Superior Skills|Skill Confidence",
+      "sourcebook": "Galaxy of Intrigue",
+      "question": "prerequisites \"Critical Skill Success\" (test) versus \"Critical Skill Success, trained in the chosen skill\" (Phase 3B)",
+      "verdict": "the canonical value is source-supported; the test is stale",
+      "status": "TXT_CONFIRMED",
+      "blocksApply": false,
+      "evidence": [
+        "reference/sourcebooks/Galaxy of Intrigue_djvu.txt: \"Prerequisite: Critical Skill Success, trained in the chosen skill.\""
+      ]
+    }
+  ]
+}
