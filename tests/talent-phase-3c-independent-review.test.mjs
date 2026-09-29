@@ -18,12 +18,9 @@ const failing = (results, fragment) => results.filter(r => !r.ok && r.id.include
 
 /* 1. Baseline: every invariant holds and a second application is a no-op. */
 const audit = runAudit();
-test('every independent invariant passes except the ONE documented open blocker (B2)', () => {
-  // B2: the certified rename of Infamy|Notorious and Master of Teräs Käsi|Teräs Käsi Basics creates a same-name pair
-  // with the protected review extras a7d8c4da96eacad4 / 222327492c484b4a inside one tree. That is a hard failure in
-  // tools/audit-talent-tree-membership.mjs. When B2 is resolved this assertion must be tightened to an empty list.
+test('every independent invariant passes, including the two certified Phase 3D review-alias exemptions', () => {
   const bad = audit.results.filter(r => !r.ok).map(r => r.id);
-  assert.deepEqual(bad, [BLOCKER_SAME_NAME_IN_TREE]);
+  assert.deepEqual(bad, []);
   assert.ok(audit.results.length >= 18);
 });
 test('protected set is exactly 92 (90 deferred + 2 review extras)', () => {
