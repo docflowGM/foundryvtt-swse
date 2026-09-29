@@ -60,7 +60,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
 
 concurrency:
   group: rolling-validation-${{ github.workflow }}-${{ github.ref }}
@@ -101,13 +101,22 @@ jobs:
             exit 1
           fi
 
-      - name: Upload Phase 3B regeneration diagnostic
-        if: failure()
-        uses: actions/upload-artifact@v4
-        with:
-          name: phase3b-regenerated-jatm
-          path: data/audits/talent-phase-3b-jedi-academy-training-manual-manifest.json
-          if-no-files-found: error
+      - name: Commit JATM Phase 3B correction
+        if: failure() && github.event_name == 'pull_request' && github.event.pull_request.head.ref == 'audit/talent-phase-3c-production-application'
+        run: |
+          set -e
+          git fetch origin audit/talent-phase-3c-production-application
+          git checkout -B audit/talent-phase-3c-production-application origin/audit/talent-phase-3c-production-application
+          node tools/build-talent-phase-3b-manifest.mjs --book jatm
+          if git diff --quiet -- data/audits/talent-phase-3b-jedi-academy-training-manual-manifest.json; then
+            echo "JATM manifest already current; no correction commit needed."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/audits/talent-phase-3b-jedi-academy-training-manual-manifest.json
+          git commit -m "audit: correct JATM Phase 3B tree identities"
+          git push origin HEAD:audit/talent-phase-3c-production-application
 
       - name: Rolling-system test suite
         run: node tools/run-rolling-tests.mjs
