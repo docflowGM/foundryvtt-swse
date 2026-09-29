@@ -13723,6 +13723,1492 @@ As a standard action, you can spend a Force Point to ignore all concealment for 
 
 ---
 
+
+---
+
+## Book 13 — Jedi Academy Training Manual
+
+**Phase 3B status:** COMPLETE — 117 owned canonical identities; 74 UPDATE_CONTENT; 43 CREATE; 1 reference-only publication; 2 talent-tree creates.
+
+### Dark Side Devotee
+
+#### Dark Side Talisman
+
+- **Page:** 17
+- **Prerequisites:** None.
+- **Quick summary:** You can spend a Force Point to imbue a weapon or some other portable object with the dark side of the Force, creating a talisman that grants you protection from the light side.
+- **Production record:** `e96812723ff4eb04`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+You can spend a Force Point to imbue a weapon or some other portable object with the dark side of the Force, creating a talisman that grants you protection from the light side. Creating the dark side talisman takes a full-round action. While you wear or carry the talisman, you gain a +2 Force bonus to one of your defenses (Reflex, Fortitude, or Will) against Force powers with the [light side] descriptor. You can have only one dark side talisman active at a given time (though you can have both a dark side talisman and a Force talisman active at the same time), and if your dark side talisman is destroyed, you cannot create another one for 24 hours.
+
+#### Greater Dark Side Talisman
+
+- **Page:** 17
+- **Prerequisites:** Dark Side Talisman
+- **Quick summary:** As Dark Side Talisman (above), except that the talisman’s Force bonus extends to all three of your defenses (Reflex, Fortitude, and Will).
+- **Production record:** `c8bf9ab9d1f8588a`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+As Dark Side Talisman (above), except that the talisman’s Force bonus extends to all three of your defenses (Reflex, Fortitude, and Will). 1 esidvnS eaVued HL dO VSME 0 a > a 4 5 bi
+
+### Duelist
+
+#### Lightsaber Form Savant
+
+- **Page:** 19
+- **Prerequisites:** None.
+- **Quick summary:** Once per encounter as a swift action, you can return any one spent Force power with the [lightsaber form] descriptor to your Force suite without spending a Force Point.
+- **Production record:** `fcc6357b5b33dbb7`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Once per encounter as a swift action, you can return any one spent Force power with the [lightsaber form] descriptor to your Force suite without spending a Force Point. You can select this talent multiple times, Each time you select it, you can use it one additional time per encounter.
+
+#### Shoto Master
+
+- **Page:** 19
+- **Prerequisites:** None.
+- **Quick summary:** When you wield both a one-handed lightsaber and a shoto (or guard shoto), you can consider the one-handed lightsaber to be a light weapon.
+- **Production record:** `26bece7080710c8d`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+When you wield both a one-handed lightsaber and a shoto (or guard shoto), you can consider the one-handed lightsaber to be a light weapon. Additionally, if you have the Lightsaber Defense talent, you can activate the talent as a free action on your turn (instead of a swift action) whenever you wield both a one-handed lightsaber and a shoto (or guard shoto) A MeO! ARTISAN TEACHES THE Basice OF LIGHTSABER CONSTRUCTION.
+
+### Jedi Consular
+
+#### Adversary Lore
+
+- **Page:** 14
+- **Prerequisites:** None.
+- **Quick summary:** As a standard action, you can peer into the Force and search for weaknesses in the defenses of your enemies.
+- **Production record:** `a8347dda0f619f2d`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+As a standard action, you can peer into the Force and search for weaknesses in the defenses of your enemies. Make a Use the Force check against the Will Defense of a target creature within 12 squares of you and in your line of sight. If the skill check equals or exceeds the target's Will Defense, that target takes a -2 penalty to Reflex Defense against you and all allies who can hear and understand you until the end of your next turn.
+
+#### Know Weakness
+
+- **Page:** 14
+- **Prerequisites:** Adversary Lore
+- **Quick summary:** Whenever you use Adversary Lore on a target suc-cessfully, that target also takes an additional 1d6 points of damage from any successful attack made against it by you or an ally who can hear and understand you until the end of your next turn.
+- **Production record:** `d0b25a52cdc093bf`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Whenever you use Adversary Lore on a target suc-cessfully, that target also takes an additional 1d6 points of damage from any successful attack made against it by you or an ally who can hear and understand you until the end of your next turn. NEw JEDI GUARDIAN TALENTS The following talents belong to the Jedi Guardian talent tree (see page 40 of the Saga Edition core rulebook).
+
+### Jedi Guardian
+
+#### Grenade Defense
+
+- **Page:** 14
+- **Prerequisites:** None.
+- **Quick summary:** You can use the Move Light Object application of the Use the Force skill to cast aside grenades that are thrown at you.
+- **Production record:** `27a67c4c00c1b9ae`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+You can use the Move Light Object application of the Use the Force skill to cast aside grenades that are thrown at you. As a reaction when you are attacked by a grenade of any kind, you can make a Use the Force check with a DC equal to the attack roll of the incoming grenade attack. If your check equals or beats the DC, you hurl the grenade toa location where it explodes harmlessly, negating the attack. Whether or not you are successful, you take a -5 penalty on Use the Force checks until the start of your next turn.
+
+#### Hold the Line
+
+- **Page:** 14
+- **Prerequisites:** None.
+- **Quick summary:** When you make a successful attack of opportunity against a target leaving your threatened area, you stop the target's movement, ending its action.
+- **Production record:** `a843f45ec0f99db6`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+When you make a successful attack of opportunity against a target leaving your threatened area, you stop the target's movement, ending its action. New JEDI SENTINEL TALENT The following talent belongs to the Jedi Sentinel talent tree (see page 40 of the Saga Edition core rulebook).
+
+### Jedi Sentinel
+
+#### Master of the Great Hunt
+
+- **Page:** 14
+- **Prerequisites:** None.
+- **Quick summary:** You gain a +1 Force bonus on attack rolls and deal +1 die of damage on lightsaber attacks made against a beast with a Dark Side Score of 1+.
+- **Production record:** `ee2cbf6681a5a7e1`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+You gain a +1 Force bonus on attack rolls and deal +1 die of damage on lightsaber attacks made against a beast with a Dark Side Score of 1+. New LIGHTSABER COMBAT TALENT The following talent belongs to the Lightsaber Combat talent tree (see page 41 of the Saga Edition core rulebook).
+
+### Lightsaber Combat
+
+#### Shoto Focus
+
+- **Page:** 14
+- **Prerequisites:** None.
+- **Quick summary:** Whenever you wield both a one-handed lightsaber and a shoto (or guard shoto), you gain a +2 competence bonus on attack rolls made with the shoto.
+- **Production record:** `e0f66d77a2b065a7`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Whenever you wield both a one-handed lightsaber and a shoto (or guard shoto), you gain a +2 competence bonus on attack rolls made with the shoto.
+
+### Beastwarden
+
+#### Charm Beast
+
+- **Page:** 18
+- **Prerequisites:** None.
+- **Quick summary:** You can make a Use the Force check in place of a Persuasion check when attempting to change the attitude of an undomesticated creature with an Intelligence of 2 or less.
+- **Production record:** `bab9a1ce285f98b9`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+You can make a Use the Force check in place of a Persuasion check when attempting to change the attitude of an undomesticated creature with an Intelligence of 2 or less. Additionally, you do not take the normal -5 penalty on the check if the creature can’t speak or understand your language. (This talent is identical to the Dathomiri Witch talent of the same name, and both are considered to be the same talent for the purposes of satisfying prerequisites).
+
+#### Bonded Mount
+
+- **Page:** 18
+- **Prerequisites:** Charm Beast
+- **Quick summary:** Whenever you encounter a domesticated beast with a friendly or helpful attitude toward you, you can spend a Force Point as a full-round action to bond the beast to you as a mount.
+- **Production record:** `9c88f3f82e6e2082`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Whenever you encounter a domesticated beast with a friendly or helpful attitude toward you, you can spend a Force Point as a full-round action to bond the beast to you as a mount. A bonded mount shares an empathic link with you, allowing you to sense its emotions as a free action. When you ride a bonded mount, your mount uses your Reflex Defense and Will Defense instead of its own, Additionally, if your mount has any special senses (such as scent, darkvision, or low-light vision) that you do not possess, you gain the benefits of its special senses as long as you are riding that mount.
+
+#### Entreat Beast
+
+- **Page:** 18
+- **Prerequisites:** Charm Beast
+- **Quick summary:** You can use the Force to convince a small beast to carry objects, deliver messages, or perform other minor tasks for you.
+- **Production record:** `b15fa2f45baf55ea`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+You can use the Force to convince a small beast to carry objects, deliver messages, or perform other minor tasks for you. If you are near a beast that is at least indifferent to you (whether this be a pet you bring with you or a beast encountered in the wild), you can make a Use the Force check against the beast's Will Defense as a swift action. If your skill check equals or exceeds the beast's Will Defense, the beast performs one task for you from the following list: deliver one object from your person to another target within 30 squares of you; retrieve one unattended object within 30 squares of it and in its line of sight and bring it to you; or press a button, pull a lever, or otherwise perform some minor activation of an unattended item within 30 squares,
+
+#### Soothing Presence
+
+- **Page:** 18
+- **Prerequisites:** Charm Beast
+- **Quick summary:** Whenever you encounter a beast with an unfriendly attitude toward you, you automatically shift its attitude to indifferent (no skill check required).
+- **Production record:** `0a65325a98b108a7`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Whenever you encounter a beast with an unfriendly attitude toward you, you automatically shift its attitude to indifferent (no skill check required).
+
+#### Wild Sense
+
+- **Page:** 18
+- **Prerequisites:** Charm Beast
+- **Quick summary:** As a swift action once per turn, you can make a Use the Force check to touch the mind of a beast with an indifferent or better attitude toward you, provided it is within 12 squares of you and in your line of sight.
+- **Production record:** `b6e75c52f5d66ade`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+As a swift action once per turn, you can make a Use the Force check to touch the mind of a beast with an indifferent or better attitude toward you, provided it is within 12 squares of you and in your line of sight. When you do so, the beast makes an immediate active Perception check, and you are considered to perceive everything that the beast does, including noticing targets, as though you had made the check. Additionally, until the end of your turn, you are considered to have line of sight to anything the beast has line of sight to.
+
+### Jedi Artisan
+
+#### Call Weapon
+
+- **Page:** 19
+- **Prerequisites:** None.
+- **Quick summary:** You can use the Move Light Object application of the Use the Force skill to call a lightsaber you built into your hand and ignite it as a free action.
+- **Production record:** `bec7535325ee1eb1`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+You can use the Move Light Object application of the Use the Force skill to call a lightsaber you built into your hand and ignite it as a free action. The weapon must be in your line of sight to call it to your hand,
+
+#### Lightsaber Specialist
+
+- **Page:** 19
+- **Prerequisites:** Masterwork Lightsaber
+- **Quick summary:** Whenever you are armed with a lightsaber that you built, you gain a +2 morale bonus on Use the Force checks made to use the Block and Deflect talents.
+- **Production record:** `6fe17dc4f0f03c12`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Whenever you are armed with a lightsaber that you built, you gain a +2 morale bonus on Use the Force checks made to use the Block and Deflect talents.
+
+#### Masterwork Lightsaber
+
+- **Page:** 19
+- **Prerequisites:** None.
+- **Quick summary:** Whenever you build a lightsaber, you do so with such expertise that it makes the weapon even more refined and elegant.
+- **Production record:** `a64c01df9eba3147`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Whenever you build a lightsaber, you do so with such expertise that it makes the weapon even more refined and elegant. When you build a lightsaber, you can choose to add one extra accessory to the lightsaber at the time of creation, and when you hit a target with a lightsaber that you built, you can always choose to reroll one damage die from your damage roll, but you must keep the second result, even if it is worse. |n addition, you can mentor another character while he constructs his own lightsaber. When you do so, you reduce the Use the Force check DC for constructing the lightsaber by -5.
+
+#### Perfect Attunement
+
+- **Page:** 19
+- **Prerequisites:** Masterwork Lightsaber
+- **Quick summary:** Whenever you spend a Force Point to add to an lightsaber attack roll made with a lightsaber that you built, you can add that same amount to the damage if the attack hits.
+- **Production record:** `c67e45ac79e6f0d7`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Whenever you spend a Force Point to add to an lightsaber attack roll made with a lightsaber that you built, you can add that same amount to the damage if the attack hits.
+
+#### Quick Modification
+
+- **Page:** 19
+- **Prerequisites:** Masterwork Lightsaber
+- **Quick summary:** You can spend 1 minute modifying a lightsaber you have built, removing one accessory and putting a different one in its place.
+- **Production record:** `ac11f849b15c784c`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+You can spend 1 minute modifying a lightsaber you have built, removing one accessory and putting a different one in its place. Gamemasters may rule that some modifications cannot be added or removed in this way due to rarity of materials or the difficulty of the modification (such as adding or removing the electrum detail)
+
+### Jedi Instructor
+
+#### Apprentice Boon
+
+- **Page:** 19
+- **Prerequisites:** None.
+- **Quick summary:** Whenever an ally within 12 squares with a lower Use the Force skill bonus than you makes a Use the Force check, you can spend a Force Point as a reaction to add to that Use the Force check.
+- **Production record:** `53c5a847e3396d13`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Whenever an ally within 12 squares with a lower Use the Force skill bonus than you makes a Use the Force check, you can spend a Force Point as a reaction to add to that Use the Force check. Use your level to determine how many dice to roll for the Force Point.
+
+#### Share Force Secret
+
+- **Page:** 19
+- **Prerequisites:** Must know at least 1 Force secret
+- **Quick summary:** When you take this talent, choose one Force secret that you know.
+- **Production record:** `2dc6ad1667133f2d`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+When you take this talent, choose one Force secret that you know. Once per turn as a swift action, you can grant the use of this Force secret to one ally within 12 squares of you who is trained in the Use the Force skill. The target gains the benefit of this secret until the end of your next turn. \o I > 1 4 o 2 g98Ocd SHA AO aor) wsiawnS
+
+#### Share Force Technique
+
+- **Page:** 20
+- **Prerequisites:** Must know at least 1 Force Technique
+- **Quick summary:** When you take this talent, choose one Force technique that you know.
+- **Production record:** `7d02251f13fd5645`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+When you take this talent, choose one Force technique that you know. Once per turn asa swift action, you can grant the use of this Force technique to one ally within 12 squares of you who is trained in the Use the Force skill. The target gains the benefit of this technique until the end of your next turn. You cannot choose the Force Point Recovery technique for this talent.
+
+#### Share Talent
+
+- **Page:** 20
+- **Prerequisites:** At least one talent from the Lightsaber Combat, Duelist, or Lightsaber Forms talent tree
+- **Quick summary:** Choose a talent that you already possess.
+- **Production record:** `2f00c50f3bf6bf5a`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Choose a talent that you already possess. The talent must be from the Lightsa-ber Combat talent tree, the Duel-ist talent tree, or the Lightsaber Forms talent tree. Once per day as a standard action, you can spend a Force Point to impart the benefits of the chosen talent to one or more allies, effectively granting them the talent (even if they don't meet the prerequisites), An ally must be within 12 squares of you and must be able to see and hear you to gain the talent; once gained, its benefits last until the end of the encounter. You can share the talent with a number of allies equal to one-haIf your class level, rounded down. Only allies who are trained in the Use the Force skill can gain the benefits of the shared talent. A Twi'Ler Jeo! INsTRUCTOR. You can take this talent multiple times. Each time you do so, you must select a different talent to share with this ability. You can share each talent with your allies only once per day.
+
+#### Transfer Power
+
+- **Page:** 20
+- **Prerequisites:** Force Training feat
+- **Quick summary:** As a standard action, you can spend any one use of a Force power currently in your Force suite, adding a use of that power to the Force suite of any ally trained in the Use the Force skill.
+- **Production record:** `488aaac69a9829bc`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+As a standard action, you can spend any one use of a Force power currently in your Force suite, adding a use of that power to the Force suite of any ally trained in the Use the Force skill. The ally must be within 12 squares of you and in your line of sight. When your ally uses that power, it disappears from his or her Force suite. If the ally does not use the Force power before the end of the encounter, it is permanently removed from his or her Force suite.
+
+### Jedi Investigator
+
+#### Echoes in the Force
+
+- **Page:** 20
+- **Prerequisites:** None.
+- **Quick summary:** You can use the farseeing power on a location instead of on an individual creature, peering into the location's past to view events that occurred there.
+- **Production target:** CREATE `e26abfa7fe650912`
+- **Phase 3B disposition:** `CREATE`
+
+**Canonical rules text**
+
+You can use the farseeing power on a location instead of on an individual creature, peering into the location's past to view events that occurred there. Unlike the normal use of the farseeing power, you are actually looking into the location's past (at a time you designate), and you must be standing in the location being viewed. The target DC for your Use the Force check is 20, +1 for each day into the past that you attempt to scry. When you look into the past, you need only specify a time in a number of days, as you can sense tremors in the Force that focus your visions on meaningful events that day.
+
+#### Jedi Quarry
+
+- **Page:** 20
+- **Prerequisites:** None.
+- **Quick summary:** As a swift action, you designate a single target creature as the focus of your attentions.
+- **Production record:** `dfb9e58c7bcb095c`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+As a swift action, you designate a single target creature as the focus of your attentions. You gain a +2 bonus to your speed any time you spend a move action to move, provided that you end your movement adjacent to the target. You retain this bonus (and may not use this talent again) until your target surrenders, is reduced to 0 hit points, or moves to the bottom of the condition track, or until the encounter ends.
+
+#### Prepared for Danger
+
+- **Page:** 20
+- **Prerequisites:** None.
+- **Quick summary:** Whenever you have at least one unspent farseeing power in your Force suite, you can spend that farseeing power to regain any one other Force power as a swift action.
+- **Production record:** `aa5b9fe99274274a`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Whenever you have at least one unspent farseeing power in your Force suite, you can spend that farseeing power to regain any one other Force power as a swift action.
+
+#### Sense Deception
+
+- **Page:** 20
+- **Prerequisites:** None.
+- **Quick summary:** Whenever someone makes a Deception or Persuasion skill check against your Will Defense, you can make a Use the Force check, replacing your Will Defense with the result of your Use the Force check if it is higher.
+- **Production record:** `467accea4a3c8cbd`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Whenever someone makes a Deception or Persuasion skill check against your Will Defense, you can make a Use the Force check, replacing your Will Defense with the result of your Use the Force check if it is higher.
+
+#### Unclouded Judgment
+
+- **Page:** 20
+- **Prerequisites:** Sense Deception
+- **Quick summary:** Whenever you are the target of a mind-affecting Force power or talent, you can spend a Force Point as a reaction to negate the effects of that Force power or talent (no skill check required).
+- **Production target:** CREATE `7f5aac5b3a2d0f5d`
+- **Phase 3B disposition:** `CREATE`
+
+**Canonical rules text**
+
+Whenever you are the target of a mind-affecting Force power or talent, you can spend a Force Point as a reaction to negate the effects of that Force power or talent (no skill check required).
+
+### Jedi Weapon Master
+
+#### Combat Trance
+
+- **Page:** 21
+- **Prerequisites:** None.
+- **Quick summary:** Whenever you use the battle strike power, you gain the power's bonus on attack rolls on your first melee attack made each round until the end of the encounter.
+- **Production record:** `675bfa10691b60f6`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Whenever you use the battle strike power, you gain the power's bonus on attack rolls on your first melee attack made each round until the end of the encounter. If you do not attack in a round, this effect ends.
+
+#### Improvised Weapon Master
+
+- **Page:** 21
+- **Prerequisites:** None.
+- **Quick summary:** You take no penalty on attack rolls with improvised weapons.
+- **Production target:** CREATE `a7bb794bf2c385d8`
+- **Phase 3B disposition:** `CREATE`
+
+**Canonical rules text**
+
+You take no penalty on attack rolls with improvised weapons.
+
+#### Shoto Pin
+
+- **Page:** 21
+- **Prerequisites:** Block
+- **Quick summary:** Whenever you are wielding a shoto and success-fully use the Block talent to negate a melee attack, the attacker can make no further melee attacks until the start of its next turn or until you are no longer adjacent to it.
+- **Production record:** `ab4b51be30dfa9bc`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Whenever you are wielding a shoto and success-fully use the Block talent to negate a melee attack, the attacker can make no further melee attacks until the start of its next turn or until you are no longer adjacent to it. A RODIAN Jeo! WEAPONMASTER. SITH APPRENTICE TALENTS The following talents are for use with the Sith apprentice prestige class (see page 222 of the Saga Edition core rulebook).
+
+#### Twin Weapon Mastery
+
+- **Page:** 21
+- **Prerequisites:** None.
+- **Quick summary:** Whenever you use the Twin Weapon Style talent, you can move 2 squares between each attack.
+- **Production record:** `cb4984135c665c4b`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Whenever you use the Twin Weapon Style talent, you can move 2 squares between each attack. This movement does not provoke attacks of opportunity.
+
+#### Twin Weapon Style
+
+- **Page:** 21
+- **Prerequisites:** None.
+- **Quick summary:** As a standard action, whenever you are wielding two weapons (or a double weapon), you can make one attack with each weapon (or each end of a double-weapon).
+- **Production record:** `5ea9a4c30dff1ac8`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+As a standard action, whenever you are wielding two weapons (or a double weapon), you can make one attack with each weapon (or each end of a double-weapon). Each attack must be against a different target
+
+### Mystic
+
+#### Channel Vitality
+
+- **Page:** 18
+- **Prerequisites:** None.
+- **Quick summary:** You can fuel your mastery of the Force with your own vitality.
+- **Production record:** `cddfb9833c7d3344`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+You can fuel your mastery of the Force with your own vitality. As a swift action, you can move -1 step down the condition track to gain a temporary Force Point. This temporary Force Point lasts until the end of your turn, at which point it is lost if it has not been used.
+
+#### Closed Mind
+
+- **Page:** 18
+- **Prerequisites:** None.
+- **Quick summary:** Whenever a creature uses a mind-affecting effect on you that targets your Will Defense, it must roll the attack roll or skill check twice, taking the lower result.
+- **Production record:** `084423db749d2bb3`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Whenever a creature uses a mind-affecting effect on you that targets your Will Defense, it must roll the attack roll or skill check twice, taking the lower result.
+
+#### Esoteric Technique
+
+- **Page:** 18
+- **Prerequisites:** None.
+- **Quick summary:** When you spend a Force Point to activate a Force technique or Force secret, you gain bonus hit points equal to 10 + your class level until the end of the encounter.
+- **Production record:** `08e904def2f9ea5c`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+When you spend a Force Point to activate a Force technique or Force secret, you gain bonus hit points equal to 10 + your class level until the end of the encounter.
+
+#### Mystic Mastery
+
+- **Page:** 18
+- **Prerequisites:** None.
+- **Quick summary:** Whenever you gain a level, you also gain a number of additional Force Points equal to the number of Force talents you possess (maximum +6).
+- **Production record:** `4ec766d6818c373f`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Whenever you gain a level, you also gain a number of additional Force Points equal to the number of Force talents you possess (maximum +6).
+
+#### Regimen Aptitude
+
+- **Page:** 18
+- **Prerequisites:** Force Regimen Mastery (see page 23)
+- **Quick summary:** You gain a +5 Force bonus on skill checks made to perform a Force regimen (see page 10).
+- **Production target:** CREATE `36e44f2c3831eb02`
+- **Phase 3B disposition:** `CREATE`
+
+**Canonical rules text**
+
+You gain a +5 Force bonus on skill checks made to perform a Force regimen (see page 10).
+
+### Sith Alchemy
+
+#### Cause Mutation
+
+- **Page:** 21
+- **Prerequisites:** Sith Alchemy
+- **Quick summary:** You can use your mastery of Sith alchemy to create mutated abominations.
+- **Production record:** `c59de6f440c92832`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+You can use your mastery of Sith alchemy to create mutated abominations. You must have access to a willing (or unconscious) creature to which you will apply the Sith Abomination template (see the side-bar) or the Chrysalis Beast template (see page 133). You also need a medical lab outfitted for the process, which requires a number of days equal to the creature's modified CL. You must spend a Force Point at the completion of the process to complete the transformation. A creature you have mutated is considered to be a domesticated creature, but for you only (unless it was already a domesticated creature before its mutation).
+
+#### Rapid Alchemy
+
+- **Page:** 21
+- **Prerequisites:** None.
+- **Quick summary:** Asa standard action, you can perform minor alchemical alterations to a melee weapon you wield.
+- **Production record:** `69420a9a5ff5d8b9`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Asa standard action, you can perform minor alchemical alterations to a melee weapon you wield. For the remainder of the encounter, you gain a +2 equipment bonus on attack rolls with that weapon, Addition-ally, once before the end of the encounter, you can sacrifice this bonus as a free action to gain a +5 equipment bonus on a single damage roll you make with that weapon.
+
+#### Sith Alchemy
+
+- **Page:** 21
+- **Prerequisites:** None.
+- **Quick summary:** Use Sith alchemy to create Sith amulets, dark armor, Sith talismans, and Sith weapons; each transformation increases your Dark Side Score by 1.
+- **Production record:** `eb4f3e8660bc476589d0323d4cc00845`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Your knowledge of Sith alchemy allows you to imbue certain objects with the power of the dark side. You can perform any of the following alchemical transformations, though each time you do so, increase your Dark Side Score by 1.
+
+Create Sith Amulet: You can create a Sith amulet. The creation of a Sith amulet requires 25,000 credits' worth of gems and other raw materials, and the creation process takes 1 week (this work can be spread out over several sessions and need not be consecutive). At the end of the process, you must spend a Force Point to complete the Sith amulet, after which point it functions exactly as a Sith amulet (see page 68).
+
+Create Sith Armor: You can transform a suit of normal battle armor into the dark armor worn by Sith Lords. You must have a suit of battle armor to transform into the dark armor (light battle armor becomes light dark armor, medium battle armor becomes medium dark armor, and heavy battle armor becomes heavy dark armor). The transformation process takes 1 day for light dark armor, 2 days for medium dark armor, and 3 days for heavy dark armor. You must spend a Force Point at the end of the creation process to complete the armor's transformation.
+
+Create Sith Talisman: You can spend 1 Force Point to imbue a portable object with the dark side, creating a Sith talisman that provides offensive strength to a Force power. Creating the talisman takes a full-round action. While you wear or carry the talisman on your person, you add 1d6 to your damage with Force powers. You increase your Dark Side Score by 1 when you first wear or carry a Sith talisman. You can have only one Sith talisman active at any given time, and if it is destroyed, you cannot create another one for 24 hours.
+
+Create Sith Weapon: You can alchemically treat a simple melee weapon or an advanced melee weapon, turning it into a Sith weapon. You must spend a Force Point and spend 1 hour imbuing the weapon with the properties of a Sith alchemical weapon. A lightsaber does not ignore the Sith weapon's DR, and characters who are proficient in the weapon's use can treat it as a lightsaber for the purposes of the Block, Deflect, and Redirect Shot talents (and any talents that have those Jedi talents as a prerequisite). Additionally, as a swift action, the wielder of a Sith weapon can spend a Force Point to gain a bonus equal to his Dark Side Score to the damage of his next attack made with the weapon before the end of the encounter. This increases the wielder's Dark Side Score by 1.
+
+#### Sith Alchemy Specialist
+
+- **Page:** 22
+- **Prerequisites:** Sith Alchemy
+- **Quick summary:** Spend a Force Point and 1 hour to give a Sith-alchemy object one trait from Table 1-1, increasing your Dark Side Score by 1.
+- **Production record:** `9bee4563b328def7`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+You can modify an object with Sith alchemy so that it gains a specific trait. Specific traits are listed on Table 1-1. You can only perform one modification at a time. Unless otherwise noted, you cannot grant more than one benefit to a single object, and you cannot apply the same benefit more than once. You must spend a Force Point and devote 1 hour of uninterrupted work to apply a trait to the relevant object, and when you do so, you increase your Dark Side Score by 1.
+
+### Telepath
+
+#### Mind Probe
+
+- **Page:** 18
+- **Prerequisites:** None.
+- **Quick summary:** When you touch a living creature with an Intelligence of 3 or higher, you can use the Force to probe its mind for secrets.
+- **Production record:** `ccaa66ed749e3317`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+When you touch a living creature with an Intelligence of 3 or higher, you can use the Force to probe its mind for secrets. You must be adjacent to the target, and using the mind probe is a full-round action. If the target is unwilling, you must succeed on a Use the Force check, equal ing or exceeding the target's Will Defense. This ability otherwise functions exactly as the Gather Information skill's Learn News and Rumors, Learn Secret Information, and Locate Individual applications. Your Use the Force check must still exceed the base Gather Information skill DCs in order to retrieve the information you seek, but you need not pay anything in bribes, and you retrieve the information as a part of the full-round action. Failing the skill check by 5 or more does not cause someone to notice that you are seeking the information.
+
+#### Perfect Telepathy
+
+- **Page:** 18
+- **Prerequisites:** None.
+- **Quick summary:** You can communicate in full sentences and complete thoughts when you use the Telepathy aspect of the Use the Force skill, instead of just in basic phrases.
+- **Production record:** `2da74bc3f4d45d2d`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+You can communicate in full sentences and complete thoughts when you use the Telepathy aspect of the Use the Force skill, instead of just in basic phrases. However, the target of your telepathy can still only communicate in basic emotions or single thoughts.
+
+#### Psychic Citadel
+
+- **Page:** 18
+- **Prerequisites:** None.
+- **Quick summary:** You gain a Force bonus to your Will Defense equal to your class level.
+- **Production record:** `546034f073eab1fd`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+You gain a Force bonus to your Will Defense equal to your class level.
+
+#### Psychic Defenses
+
+- **Page:** 18
+- **Prerequisites:** Psychic Citadel
+- **Quick summary:** Whenever another creature targets you with a Force power with the [mind-affecting] descriptor, it automatically takes Force damage equal to 146 x your Wisdom modifier (minimum x1).
+- **Production record:** `202a117b1b203951`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Whenever another creature targets you with a Force power with the [mind-affecting] descriptor, it automatically takes Force damage equal to 146 x your Wisdom modifier (minimum x1).
+
+#### Telepathic Intruder
+
+- **Page:** 19
+- **Prerequisites:** None.
+- **Quick summary:** After successfully using a mind-affecting Force power, gain +2 on checks to use mind-affecting Force powers and talents against that target until the end of your next turn.
+- **Production record:** `443bfe7fa33dd627`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Whenever you use a Force power with the [mind-affecting] descriptor successfully against a target, until the end of your next turn you gain a +2 Force bonus on skill checks made to activate mind-affecting Force powers and talents against that same target. JEDI KNIGHT TALENTS The following talents are for use with the Jedi Knight prestige class (see page 217 of the Saga Edition core rulebook). New Duelist Talents The following talents belong to the Duelist talent tree (see page 218 of the Saga Edition core rulebook).
+
+### Aingtii Monk
+
+#### Aura of Freedom
+
+- **Page:** 73
+- **Prerequisites:** None.
+- **Quick summary:** All allies within 6 squares of you gain a +5 Force bonus on skill checks or grapple checks made to escape grapples or other immobilizing hazards.
+- **Production record:** `437443efb52249aa`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+All allies within 6 squares of you gain a +5 Force bonus on skill checks or grapple checks made to escape grapples or other immobilizing hazards. Additionally, whenever an ally within 6 squares of you is moved against its will (such as by the move object Force power or the Bantha Rush feat), you can spend a Force Point as a reaction to negate the forced movement entirely.
+
+#### Folded Space Mastery
+
+- **Page:** 73
+- **Prerequisites:** Fold space
+- **Quick summary:** While you are the pilot of a vehicle, you can use the fold space Force power (see page 25) to move the vehicle across long distances.
+- **Production target:** CREATE `0bb459ef9331df9d`
+- **Phase 3B disposition:** `CREATE`
+
+**Canonical rules text**
+
+While you are the pilot of a vehicle, you can use the fold space Force power (see page 25) to move the vehicle across long distances. If your Use the Force check to activate the power is sufficient to move an object of the same size as your vehicle (or larger), you can use the power to move your vehicle and all of its occupants safely to the desired destination. You use your Use the Force check result instead of a Use Com-puter check, as though calculating a hyperspace jump. This otherwise uses the normal rules for hyperspace travel, though travel is instantaneous and requires no hyperdrive.
+
+#### Liberate
+
+- **Page:** 73
+- **Prerequisites:** Aura of Freedom
+- **Quick summary:** Spend a Force Point as a swift action to free a nearby ally from a grab, grapple, or immobilizing effect and let the ally move up to half speed as a reaction.
+- **Production target:** CREATE `44f9c0fb687671eb`
+- **Phase 3B disposition:** `CREATE`
+
+**Canonical rules text**
+
+You can spend a Force Point as a swift action to designate one ally within 12 squares of you and in line of sight that is currently grabbed, grappled, or immobilized; that target automatically escapes from the grab or grapple (or the immobilizing effect is removed), and the target can move up to half its speed immediately as a reaction. This movement does not provoke attacks of opportunity.
+
+#### Many Shades of the Force
+
+- **Page:** 73
+- **Prerequisites:** Force Training
+- **Quick summary:** Choose one Force power with the [dark side] or [light side] descriptor in your Force suite.
+- **Production target:** CREATE `a0147b10aa17816f`
+- **Phase 3B disposition:** `CREATE`
+
+**Canonical rules text**
+
+Choose one Force power with the [dark side] or [light side] descriptor in your Force suite. That power is no longer considered to have that descriptor for you.
+
+#### Spatial Integrity
+
+- **Page:** 73
+- **Prerequisites:** None.
+- **Quick summary:** While you are aboard a vehicle, you can spend a Force Point as a reaction to the vehicle taking damage; you make a Use the Force check and reduce the damage the vehicle takes by the check result.
+- **Production target:** CREATE `ed756bf97aad8264`
+- **Phase 3B disposition:** `CREATE`
+
+**Canonical rules text**
+
+While you are aboard a vehicle, you can spend a Force Point as a reaction to the vehicle taking damage; you make a Use the Force check and reduce the damage the vehicle takes by the check result. This reduction occurs after both DR and SR are applied to the damage.
+
+### Alter
+
+#### Illusion Bond
+
+- **Page:** 15
+- **Prerequisites:** Illusion
+- **Quick summary:** Whenever you create an illusion of a humanoid using the Illusion talent, you are able to see and hear as though you were standing in the space occupied by your illusion.
+- **Production record:** `cd4803e05638b4ab`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Whenever you create an illusion of a humanoid using the Illusion talent, you are able to see and hear as though you were standing in the space occupied by your illusion.
+
+#### Influence Savant
+
+- **Page:** 15
+- **Prerequisites:** None.
+- **Quick summary:** Once per encounter as a swift action, you can return ‘one Force power with the [mind-affecting] descriptor to your Force suite without spending a Force Point.
+- **Production record:** `ced81064716debaa`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Once per encounter as a swift action, you can return ‘one Force power with the [mind-affecting] descriptor to your Force suite without spending a Force Point. You can select this talent multiple times. Each time you select it, you can use it one additional time per encounter.
+
+#### Link
+
+- **Page:** 15
+- **Prerequisites:** None.
+- **Quick summary:** You can lend your strength in the Force to another character, creating a bond between you through which the Force flows.
+- **Production record:** `df1bdd9ca78ad14d`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+You can lend your strength in the Force to another character, creating a bond between you through which the Force flows. As a standard action, you can designate one willing ally within 12 squares of you and in your line of sight, This ally must be trained in the Use the Force skill. As long as you remain within 12 squares of each other, you can aid each other on Use the Force checks as a reaction. However, the character using the aid another reaction takes a -5 penalty on all Use the Force checks until the end of his next turn. This link lasts until the end of the encounter, or until you or your ally ends the link (a free action). You can have only one active link at a time.
+
+#### Masquerade
+
+- **Page:** 15
+- **Prerequisites:** Illusion
+- **Quick summary:** You can use the Illusion talent to create a disguise for yourself.
+- **Production record:** `86fbb269a17a8c5e`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+You can use the Illusion talent to create a disguise for yourself. You use the result of your Use the Force check made to create the illusion for the purposes of creating a deceptive appearance, as per the application of the Deception skill. All other rules and restrictions for using the Illusion talent still apply.
+
+#### Suppress Force
+
+- **Page:** 15
+- **Prerequisites:** Influence Savant, mind trick
+- **Quick summary:** You can convince others that they have been cut off from the Force, even if that is not the case, preventing them from making Use the Force checks.
+- **Production record:** `ec3e6a05561ddc07`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+You can convince others that they have been cut off from the Force, even if that is not the case, preventing them from making Use the Force checks. Whenever a target with an Intelligence of 3 or higher within 12 squares of you and in your line of sight attempts to make a Use the Force check for any reason, you can spend one use of the mind trick Force power as a reaction. You make a Use the Force check, and if your Use the Force check equals or exceeds the target's Use the Force check result, that target's skill check is negated, and the action it was attempting fails. v Q 8 @ a) 8 é 5) a) Q W gavVed SHA dO YVAME ) wSievHoS A KEL DOR SITH LORD CHANNELS THE ENEROY FROM BLASTER BOLTS, TURNING THEM INTO FORCE LIGHTNING. New Control Talents The following talents belong to the Control talent tree (see page 101 of the Saga Edition core rulebook)
+
+### Baran Do Sage
+
+#### Enhanced Danger Sense
+
+- **Page:** 75
+- **Prerequisites:** None.
+- **Quick summary:** You gain a +10 bonus on Perception checks made to avoid being surprised.
+- **Production record:** `f29c25c955f24e57`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+You gain a +10 bonus on Perception checks made to avoid being surprised. Additionally, you can spend a Force Point to act in the surprise round, even if you are surprised.
+
+#### Expanded Horizon
+
+- **Page:** 75
+- **Prerequisites:** None.
+- **Quick summary:** Whenever you use the Search Your Feelings applica-tion of the Use the Force skill, you can sense the consequences of your actions out to 1 hour into the future (instead of the normal 10 minutes).
+- **Production target:** CREATE `ba7803cebc9caa0e`
+- **Phase 3B disposition:** `CREATE`
+
+**Canonical rules text**
+
+Whenever you use the Search Your Feelings applica-tion of the Use the Force skill, you can sense the consequences of your actions out to 1 hour into the future (instead of the normal 10 minutes). You can spend a Force Point when you do so to expand this window out to 8 hours, or a Destiny Point to expand this window out to 24 hours.
+
+#### Knowledge and Defense
+
+- **Page:** 75
+- **Prerequisites:** Enhanced Danger Sense
+- **Quick summary:** You add your Wisdom bonus to your Reflex Defense whenever your Dexterity bonus would normally be denied to you.
+- **Production target:** CREATE `9dbb669ad8788c96`
+- **Phase 3B disposition:** `CREATE`
+
+**Canonical rules text**
+
+You add your Wisdom bonus to your Reflex Defense whenever your Dexterity bonus would normally be denied to you.
+
+#### Planetary Attunement
+
+- **Page:** 75
+- **Prerequisites:** None.
+- **Quick summary:** Whenever you arrive on a new planet, you can spend 10 minutes and a Force Point to acclimate yourself to the planet's unique ebb and flow of Force energy.
+- **Production target:** CREATE `ee1ff1a4fc035bee`
+- **Phase 3B disposition:** `CREATE`
+
+**Canonical rules text**
+
+Whenever you arrive on a new planet, you can spend 10 minutes and a Force Point to acclimate yourself to the planet's unique ebb and flow of Force energy. While on the planet, you gain a +2 Force bonus to all defenses against naturally occurring hazards on the world, your speed increases by 1 square, and you can sense what the weather will be like in the immediate area up to 24 hours in advance as a full-round action.
+
+#### Precognitive Meditation
+
+- **Page:** 75
+- **Prerequisites:** None.
+- **Quick summary:** Once per day, you can spend 10 minutes meditating to seek visions of the future.
+- **Production target:** CREATE `413c9544030ba424`
+- **Phase 3B disposition:** `CREATE`
+
+**Canonical rules text**
+
+Once per day, you can spend 10 minutes meditating to seek visions of the future. At that time, you can spend a Force Point as a part of this meditation. Once during the rest of the day, whenever you or a vehicle you pilot are the target of an attack, you can choose to negate that attack provided the attack roll is not a natural 20. At the end of the day, if you did not use this ability, you regain the Force Point spent on the meditation.
+
+### Control
+
+#### Channel Energy
+
+- **Page:** 16
+- **Prerequisites:** Negate energy
+- **Quick summary:** After negate energy prevents energy-weapon damage, spend a Force Point as a reaction to immediately activate a Force power from your suite.
+- **Production record:** `fb6b798fe0c6091f`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Whenever you use the negate energy Force power to successfully negate the damage from an energy weapon attack, you can spend a Force Point as a reaction to immediately activate any Force power currently in your Force suite.
+
+#### Force Harmony
+
+- **Page:** 16
+- **Prerequisites:** None.
+- **Quick summary:** Once per encounter, you can activate one Force talent that requires a Force Point to use without spending a Force Point New Dark Side Talents The following talents belong to the Dark Side talent tree (see page 101 of the Saga Edition core rulebook).
+- **Production record:** `5b949c8cd8e78ee8`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Once per encounter, you can activate one Force talent that requires a Force Point to use without spending a Force Point New Dark Side Talents The following talents belong to the Dark Side talent tree (see page 101 of the Saga Edition core rulebook).
+
+### Dark Side
+
+#### Dark Side Savant
+
+- **Page:** 16
+- **Prerequisites:** None.
+- **Quick summary:** Once per encounter as a swift action, you can return one Force power with the [dark side] descriptor to your Force suite without spending a Force Point.
+- **Production record:** `b47beb909e6fce63`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Once per encounter as a swift action, you can return one Force power with the [dark side] descriptor to your Force suite without spending a Force Point. You can select this talent multiple times. Each time you select it, you can use it one additional time per encounter.
+
+#### Transfer Essence
+
+- **Page:** 16
+- **Prerequisites:** Dark Side Score equal to your Wisdom score
+- **Quick summary:** When you die, you become a dark side spirit (see page 118) until the end of the encounter.
+- **Production record:** `c1be1f29c00436d5`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+When you die, you become a dark side spirit (see page 118) until the end of the encounter. You continue to occupy a space in this form, but other creatures can occupy the same space or move through your space without impediment. As a standard action, you can attempt to possess an adjacent target. You must succeed on a Use the Force check against an adjacent target's Will Defense. If your check result equals or exceeds the target's Will Defense, you deal 8d6 points of stun damage to the target; if you reduce the target to 0 hit points or move it to the bottom of the condition track with this attack, you possess the target as though it were a willing host (see the dark spirit template for details). Alternately, as a standard action, you can transfer your essence into a single adjacent object, such as a holocron or a lightsaber. If you do so, you lie dormant within the object until another creature attempts to use that object, at which time you can emerge and attempt to possess the creature, as described above, \f you do not possess a creature or object within 10 rounds of manifesting as a dark spirit, your spirit dissipates and ceases to exist.
+
+### Guardian Spirit
+
+#### Guardian Spirit
+
+- **Page:** 16
+- **Prerequisites:** None.
+- **Quick summary:** You have a guardian spirit watching over you from the realm of the Force, providing you with insight and advice.
+- **Production record:** `0b18181b971fc505`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+You have a guardian spirit watching over you from the realm of the Force, providing you with insight and advice. Your guardian spirit might be an old mentor or an ancient member of your Force tradition who has chosen to guide you to your destiny. When you use the Search Your Feelings application of the Use the Force skill, you can instead choose to consult your guardian spirit. When you do so, you learn more than just whether the results of your actions will be favorable or unfavorable; you also learn the nature of any immediate consequences, including potential encounters, and whether or not certain actions will bring you closer to achieving your destiny. Additionally, you gain one bonus Force Point each day (available after you rest for at least 6 hours). This bonus Force Point can only be used to improve a Force power or activate a Force technique or a Force secret. If you do not spend your bonus Force Point in a given day, it is lost at the start of the next day.
+
+#### Crucial Advice
+
+- **Page:** 17
+- **Prerequisites:** None.
+- **Quick summary:** Once per encounter, when you fail a skill check, you can reroll the skill check with a +2 circumstance bonus.
+- **Production record:** `20ce23e9cc418512`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Once per encounter, when you fail a skill check, you can reroll the skill check with a +2 circumstance bonus. (In the case of skill checks with multiple possible results, such as when activating a Force power with multiple effects, failing a skill check is defined achieving less than the minimum DC for that check.)
+
+#### Distracting Apparition
+
+- **Page:** 17
+- **Prerequisites:** Manifest Guardian Spirit
+- **Quick summary:** When you have a manifested guardian spirit, the spirit also discourages your enemies and distracts them from their goals.
+- **Production record:** `b85b92b788f7fa54`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+When you have a manifested guardian spirit, the spirit also discourages your enemies and distracts them from their goals. Any enemy within 3 squares of your guardian spirit takes a -2 penalty to Will Defense and a -2 penalty on attack rolls against you.
+
+#### Manifest Guardian Spirit
+
+- **Page:** 17
+- **Prerequisites:** None.
+- **Quick summary:** You can spend a Force Point as a swift action to have your guardian spirit manifest for the duration of the encounter.
+- **Production record:** `3449cb22b384498b`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+You can spend a Force Point as a swift action to have your guardian spirit manifest for the duration of the encounter. Your guardian spirit appears in any square within 6 squares of you. A guardian spirit occupies a space, but creatures can move through the guardian spirit without obstruction. As long as the guardian spirit remains within 12 squares of you, you gain a +1 morale bonus on attack rolls, a +2 morale bonus on Use the Force checks, and a +2 morale bonus to Will Defense. You can move the guardian spirit up to 6 squares as a swift action once per turn.
+
+#### Vital Encouragement
+
+- **Page:** 17
+- **Prerequisites:** None.
+- **Quick summary:** Once per encounter, your guardian spirit offers you vital encouragement, urging you to press on despite adversity.
+- **Production record:** `1215e1c464a087b0`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Once per encounter, your guardian spirit offers you vital encouragement, urging you to press on despite adversity. As a free action, you gain bonus hit points equal to 10 + one-haIf your heroic level. Damage is subtracted from bonus hit points first, and any bonus hit points remaining at the end of the encounter are lost. New Sense Talents The following talents belong to the Sense talent tree (see page 101 of the Saga Edition core rulebook)
+
+### Iron Knight
+
+#### Droid Duelist
+
+- **Page:** 79
+- **Prerequisites:** None.
+- **Quick summary:** Whenever you are wielding a lightsaber, you can spend a Force Point as a swift action to cause an opponent to be flat-footed against your next attack made with a lightsaber before the end of your turn.
+- **Production record:** `b4ccb329f72bd67f`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Whenever you are wielding a lightsaber, you can spend a Force Point as a swift action to cause an opponent to be flat-footed against your next attack made with a lightsaber before the end of your turn.
+
+#### Force Repair
+
+- **Page:** 79
+- **Prerequisites:** None.
+- **Quick summary:** You can use the Force Trance application of the Use the Force skill to recover hit points through natural healing.
+- **Production record:** `5731c9fdc0b11421`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+You can use the Force Trance application of the Use the Force skill to recover hit points through natural healing. You can also receive hit points from the vital transfer Force power. Whenever you receive bonus hit points from any source, you gain additional bonus hit points equal to your Charisma modifier (minimum +1).
+
+#### Heal Droid
+
+- **Page:** 79
+- **Prerequisites:** Vital transfer
+- **Quick summary:** You can use the vital transfer Force power to heal droids (including Shard-inhabited droids), which are normally immune to this power.
+- **Production record:** `138586f784e21d7e`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+You can use the vital transfer Force power to heal droids (including Shard-inhabited droids), which are normally immune to this power.
+
+#### Mask Presence
+
+- **Page:** 79
+- **Prerequisites:** None.
+- **Quick summary:** As a swift action, you become immune to the Sense Force application of the Use the Force skill, and appear to be nothing more than a regular droid in the Force.
+- **Production record:** `6f7fa0ea2ad38e50`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+As a swift action, you become immune to the Sense Force application of the Use the Force skill, and appear to be nothing more than a regular droid in the Force. If you make a Use the Force check or use any Force power or Force talent, this effect immediately ends.
+
+#### Silicon Mind
+
+- **Page:** 79
+- **Prerequisites:** None.
+- **Quick summary:** Other Force-users have a difficult time knowing how to influence you.
+- **Production record:** `d2ffe0250af82d28`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Other Force-users have a difficult time knowing how to influence you. You can spend a Force Point as a reaction to gain a bonus to your Will Defense equal to your Charisma modifier (minimum +1) against all Use the Force checks until the end of your next turn.
+
+### Matukai Adept
+
+#### Body Control
+
+- **Page:** 81
+- **Prerequisites:** None.
+- **Quick summary:** You can add your Charisma modifier instead of your Con-stitution modifier to your Fortitude Defense.
+- **Production target:** CREATE `3148da1245711efd`
+- **Phase 3B disposition:** `CREATE`
+
+**Canonical rules text**
+
+You can add your Charisma modifier instead of your Con-stitution modifier to your Fortitude Defense. Additionally, you can spend a Force Point as a swift action to become immune to poison, radiation, and disease until the end of the encounter.
+
+#### Physical Surge
+
+- **Page:** 81
+- **Prerequisites:** None.
+- **Quick summary:** Whenever you roll an Initiative check at the start of combat, you can spend a swift action immediately, regardless of whether or not you are surprised.
+- **Production target:** CREATE `e70fc01f9d76d984`
+- **Phase 3B disposition:** `CREATE`
+
+**Canonical rules text**
+
+Whenever you roll an Initiative check at the start of combat, you can spend a swift action immediately, regardless of whether or not you are surprised.
+
+#### Soft to Solid
+
+- **Page:** 81
+- **Prerequisites:** None.
+- **Quick summary:** As a reaction when you are damaged by an attack, you can spend a Force Point to increase the rigidity of your skin, gaining DR 10 until the end of your next turn.
+- **Production target:** CREATE `918e049da1550f2f`
+- **Phase 3B disposition:** `CREATE`
+
+**Canonical rules text**
+
+As a reaction when you are damaged by an attack, you can spend a Force Point to increase the rigidity of your skin, gaining DR 10 until the end of your next turn.
+
+#### Wan-Shen Defense
+
+- **Page:** 81
+- **Prerequisites:** Proficient with the wan-shen (see page 54)
+- **Quick summary:** As a swift action, you can use your wan-shen to parry your opponents’ attacks, gaining a +1 deflection bonus to your Reflex Defense against melee attacks until the start of your next turn.
+- **Production target:** CREATE `abf877ec135d4f05`
+- **Phase 3B disposition:** `CREATE`
+
+**Canonical rules text**
+
+As a swift action, you can use your wan-shen to parry your opponents’ attacks, gaining a +1 deflection bonus to your Reflex Defense against melee attacks until the start of your next turn. You must have your wan-shen in hand to use this talent, and you do not gain the deflection bonus if you are flat-footed or otherwise unaware of the incoming attack. You can take this talent multiple times; each time you take this talent, the deflection bonus increases by +1 (to a maximum of +3)
+
+#### Wan-Shen Kata
+
+- **Page:** 81
+- **Prerequisites:** Proficient with the wan-shen (see page 54)
+- **Quick summary:** You treat the wan-shen as a Medium weapon instead of a Large weapon.
+- **Production record:** `ae3fd778e4a34798`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+You treat the wan-shen as a Medium weapon instead of a Large weapon. You can use the Pin and Trip feats with a wan-shen, substituting your attack bonus with the wan-shen for your grapple check You must have your wan-shen in hand to use this talent. In addition, when you use the wan-shen as a double weapon, you reduce all attack penalties for attacking with both ends of the weapon by 1
+
+#### Wan-Shen Mastery
+
+- **Page:** 81
+- **Prerequisites:** Proficient with the wan-shen, Wan-Shen Kata, base attack bonus +5
+- **Quick summary:** As a standard action, you make two attacks with your wan-shen, each one against a different target within your reach.
+- **Production target:** CREATE `de9a5e8ac3998301`
+- **Phase 3B disposition:** `CREATE`
+
+**Canonical rules text**
+
+As a standard action, you make two attacks with your wan-shen, each one against a different target within your reach. You must have your wan-shen in hand to use this talent.
+
+### Sense
+
+#### Instinctive Navigation
+
+- **Page:** 17
+- **Prerequisites:** Force Pilot
+- **Quick summary:** You can substitute your Use the Force skill for any Use Computer check made to astrogate or operate sensors while you are the pilot of a vehicle.
+- **Production record:** `2d392f2b63b738ed`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+You can substitute your Use the Force skill for any Use Computer check made to astrogate or operate sensors while you are the pilot of a vehicle.
+
+#### Motion of the Future
+
+- **Page:** 17
+- **Prerequisites:** Force Perception
+- **Quick summary:** As a swift action, you can peer into the future in search of signs of danger, removing one use of the farseeing Force power from your active suite (as though you had just activated the power).
+- **Production record:** `ff2201a270efa29e`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+As a swift action, you can peer into the future in search of signs of danger, removing one use of the farseeing Force power from your active suite (as though you had just activated the power). Any time before the end of your next turn when you are the target of an attack or Force power, you can force your attacker to reroll the attack roll (or Use the Force check) against you, keeping the second result. This counts as using the farseeing Force power against the attacker, but this talent replaces the normal rules and effect of that power. PRESTIGE CLASS TALENTS This section introduces several new talents for the prestige classes presented in the Saga Edition core rulebook. FORCE ADEPT TALENTS The following talents are for use with the Force adept prestige class (see page 212 of the Saga Edition core rulebook). New Dark Side Devotee Talents The following talents belong to the Dark Side Devotee talent tree (see page 213 of the Saga Edition core rulebook).
+
+### Seyugi Dervish
+
+#### Seyugi Cyclone
+
+- **Page:** 83
+- **Prerequisites:** None.
+- **Quick summary:** If you are wielding no weapons (other than combat gloves or stun gauntlets), you can use the Whirlwind Attack feat as a standard action by spending a Force Point even if you do not posess the Whirlwind Attack feat.
+- **Production record:** `cc90a9fc255f4dc4`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+If you are wielding no weapons (other than combat gloves or stun gauntlets), you can use the Whirlwind Attack feat as a standard action by spending a Force Point even if you do not posess the Whirlwind Attack feat. Additionally, this talent satisfies the prerequisites for the Whirlwind Attack feat.
+
+#### Mobile Whirlwind
+
+- **Page:** 83
+- **Prerequisites:** Seyugi Cyclone
+- **Quick summary:** Whenever you use the Whirlwind Attack feat, you can move up to your speed after the attack is resolved.
+- **Production target:** CREATE `4a94affdfe899dcc`
+- **Phase 3B disposition:** `CREATE`
+
+**Canonical rules text**
+
+Whenever you use the Whirlwind Attack feat, you can move up to your speed after the attack is resolved.
+
+#### Repelling Whirlwind
+
+- **Page:** 83
+- **Prerequisites:** Seyugi Cyclone
+- **Quick summary:** You gain a +2 circumstance bonus to Reflex Defense against any target hit by your Whirlwind Attack until the start of your next turn.
+- **Production target:** CREATE `69420a430d38abc6`
+- **Phase 3B disposition:** `CREATE`
+
+**Canonical rules text**
+
+You gain a +2 circumstance bonus to Reflex Defense against any target hit by your Whirlwind Attack until the start of your next turn.
+
+#### Sudden Storm
+
+- **Page:** 83
+- **Prerequisites:** Seyugi Cyclone
+- **Quick summary:** Spend a Force Point to replace the normal melee attack at the end of a charge with a Whirlwind Attack while unarmed.
+- **Production target:** CREATE `e22615e71b4d2b5e`
+- **Phase 3B disposition:** `CREATE`
+
+**Canonical rules text**
+
+Instead of a normal melee attack at the end of the charge, you can spend a Force Point to make a Whirlwind Attack (as per the feat) at the end of a charge, provided you are not wielding any weapons (except combat gloves or stun gauntlets).
+
+#### Tempest Tossed
+
+- **Page:** 83
+- **Prerequisites:** Seyugi Cyclone
+- **Quick summary:** When you damage a target with a Whirlwind Attack, you can choose to move that target 1 square in any direction as a free action.
+- **Production target:** CREATE `2c33256a6f6be51c`
+- **Phase 3B disposition:** `CREATE`
+
+**Canonical rules text**
+
+When you damage a target with a Whirlwind Attack, you can choose to move that target 1 square in any direction as a free action. You can't move a target that's being grabbed or grappled, and you can't move the opponent into a solid object or another creature's fighting space. This forced movement does not provoke attacks of opportunity.
+
+### Tyia Adept
+
+#### Cycle of Harmony
+
+- **Page:** 87
+- **Prerequisites:** Tyia Adept
+- **Quick summary:** When one nearby ally is harmed or moved down the condition track, give another nearby ally bonus hit points as a reaction.
+- **Production target:** CREATE `fafcbb9f270a8832`
+- **Phase 3B disposition:** `CREATE`
+
+**Canonical rules text**
+
+When an ally within 12 squares of you and in your line of sight takes damage or moves down the condition track by any means, you can designate a different ally within 12 squares of you and in your line of sight as a reaction. The ally you designate gains bonus hit points equal to 5 + your Charisma modifier (minimum +1). Damage is subtracted from bonus hit points first, and any bonus hit points remaining at the end of the encounter are lost.
+
+#### Force Stabilize
+
+- **Page:** 87
+- **Prerequisites:** Tyia Adept
+- **Quick summary:** You can designate an ally within 12 squares of you and in your line of sight once per turn as a swift action; that ally immediately takes its second wind if it has not yet done so in this encounter.
+- **Production target:** CREATE `bdb50f9c95d57965`
+- **Phase 3B disposition:** `CREATE`
+
+**Canonical rules text**
+
+You can designate an ally within 12 squares of you and in your line of sight once per turn as a swift action; that ally immediately takes its second wind if it has not yet done so in this encounter. A HUMAN JEDI CONSULTS A REVWIEN TIA ADEPT.
+
+#### Repel Discord
+
+- **Page:** 87
+- **Prerequisites:** None.
+- **Quick summary:** When targeted by a dark-side Force power, spend a Force Point to penalize the users activation check by its Dark Side Score.
+- **Production target:** CREATE `b0e098c0c1117b5a`
+- **Phase 3B disposition:** `CREATE`
+
+**Canonical rules text**
+
+Whenever you are targeted by a Force power with the [dark side] descriptor, you can spend a Force Point as a reaction to give the creature using that Force Power against you a penalty on its Use the Force check to activate the power equal to its Dark Side Score.
+
+#### Stifle Conflict
+
+- **Page:** 87
+- **Prerequisites:** None.
+- **Quick summary:** You can choose to have any Force power you activate deal stun damage instead of normal damage.
+- **Production target:** CREATE `91337685961e598b`
+- **Phase 3B disposition:** `CREATE`
+
+**Canonical rules text**
+
+You can choose to have any Force power you activate deal stun damage instead of normal damage.
+
+#### Tyia Adept
+
+- **Page:** 87
+- **Prerequisites:** None.
+- **Quick summary:** As a swift action, you can spend a Force Point to designate one nondroid ally within 12 squares of you and in your line of sight.
+- **Production record:** `8f64ec5c81784b2d`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+As a swift action, you can spend a Force Point to designate one nondroid ally within 12 squares of you and in your line of sight. Until the end of your next turn, whenever you or the targeted ally takes damage from any source, you take half of the damage and your ally takes half of the damage. This halving of damage takes place before the damage is compared to your respective damage thresholds.
+
+### Warden Of The Sky
+
+#### Brutal Unarmed Strike
+
+- **Page:** 89
+- **Prerequisites:** Telekinetic Strike
+- **Quick summary:** Whenever you roll the damage for an unarmed attack, you reroll any dice that come up with a result of 1.
+- **Production target:** CREATE `90630f61edcdb6db`
+- **Phase 3B disposition:** `CREATE`
+
+**Canonical rules text**
+
+Whenever you roll the damage for an unarmed attack, you reroll any dice that come up with a result of 1.
+
+#### Martial Resurgence
+
+- **Page:** 89
+- **Prerequisites:** None.
+- **Quick summary:** You recover all spent Force powers, adding them to your Force suite again, whenever you roll a natural 20 on an unarmed attack.
+- **Production target:** CREATE `5ea93db75c485810`
+- **Phase 3B disposition:** `CREATE`
+
+**Canonical rules text**
+
+You recover all spent Force powers, adding them to your Force suite again, whenever you roll a natural 20 on an unarmed attack.
+
+#### Rebound Leap
+
+- **Page:** 89
+- **Prerequisites:** None.
+- **Quick summary:** Whenever you reduce an opponent to 0 hit points with an unarmed attack, you can make a Jump check as a free action, moving a distance as determined by the results of your Jump check.
+- **Production target:** CREATE `6231c28737053444`
+- **Phase 3B disposition:** `CREATE`
+
+**Canonical rules text**
+
+Whenever you reduce an opponent to 0 hit points with an unarmed attack, you can make a Jump check as a free action, moving a distance as determined by the results of your Jump check. You can use the surge power as normal to enhance this Jump check, increasing the distance you move.
+
+#### Simultaneous Strike
+
+- **Page:** 89
+- **Prerequisites:** Base attack bonus +5
+- **Quick summary:** As a standard action, you can make two unarmed attacks, each against different targets.
+- **Production target:** CREATE `788ee1bd17672ec9`
+- **Phase 3B disposition:** `CREATE`
+
+**Canonical rules text**
+
+As a standard action, you can make two unarmed attacks, each against different targets.
+
+#### Telekinetic Strike
+
+- **Page:** 89
+- **Prerequisites:** None.
+- **Quick summary:** Whenever you make a successful unarmed attack, you can add the result of a Force Point roll to the damage instead of the attack roll (see “Using Force Points" on page 93 of the Saga Edition core rulebook).
+- **Production record:** `196b54d69bd54983`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Whenever you make a successful unarmed attack, you can add the result of a Force Point roll to the damage instead of the attack roll (see “Using Force Points" on page 93 of the Saga Edition core rulebook).
+
+#### Telekinetic Throw
+
+- **Page:** 89
+- **Prerequisites:** Throw feat
+- **Quick summary:** Whenever you successfully use the Throw feat, your opponent falls prone in any space you desire up to 3 squares beyond your reach.
+- **Production target:** CREATE `a9cbbb79f3b87970`
+- **Phase 3B disposition:** `CREATE`
+
+**Canonical rules text**
+
+Whenever you successfully use the Throw feat, your opponent falls prone in any space you desire up to 3 squares beyond your reach.
+
+### White Current Adept
+
+#### Force Immersion
+
+- **Page:** 77
+- **Prerequisites:** White Current Adept, trained in Stealth
+- **Quick summary:** You can use the sneak application of the Stealth skill to hide from electronic surveillance and sensors.
+- **Production record:** `d2aabaa6848b4a09`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+You can use the sneak application of the Stealth skill to hide from electronic surveillance and sensors. Any opponent attempting to detect you with sensors or electronic surveillance must beat your Stealth check with a Use Computer check. You need only roll a single Stealth check to avoid both electronic notice and notice by conventional means, using the same result as the DC for both Perception checks and Use Computer checks made to detect you.
+
+#### Immerse Another
+
+- **Page:** 77
+- **Prerequisites:** White Current Adept, trained in Stealth
+- **Quick summary:** Use your Stealth or Use the Force result for an adjacent ally when hiding or avoiding Sense Force; spend a Force Point to affect all adjacent allies.
+- **Production target:** CREATE `357cd59f1b0cb306`
+- **Phase 3B disposition:** `CREATE`
+
+**Canonical rules text**
+
+Whenever you make a Stealth check to sneak, you can use your check result in the place of one adjacent ally’s Stealth check to sneak (additionally, if you have the Force Immersion talent, that talent applies to the designated ally as well). Similarly, you can use your Use the Force check result in the place of an adjacent ally’s Use the Force check result to avoid detection by the Sense Force application of the skill. You can spend a Force Point to have this ability apply to all adjacent allies instead of just one.
+
+#### Ride the Current
+
+- **Page:** 77
+- **Prerequisites:** None.
+- **Quick summary:** As a reaction to being damaged by an attack or Force power, you can spend a Force Point to gain total concealment from all targets until the end of your next turn.
+- **Production target:** CREATE `0273dfee9b1eb522`
+- **Phase 3B disposition:** `CREATE`
+
+**Canonical rules text**
+
+As a reaction to being damaged by an attack or Force power, you can spend a Force Point to gain total concealment from all targets until the end of your next turn. Additionally, if you have not yet taken your second wind, you can do so immediately as a part of this reaction.
+
+#### Surrender to the Current
+
+- **Page:** 77
+- **Prerequisites:** None.
+- **Quick summary:** As a swift action, you can choose to sur-render to the White Current and allow it to flow around you and fuel your Force powers.
+- **Production target:** CREATE `cb2d2947f45b3df5`
+- **Phase 3B disposition:** `CREATE`
+
+**Canonical rules text**
+
+As a swift action, you can choose to sur-render to the White Current and allow it to flow around you and fuel your Force powers. Until the end of the encounter, you cannot use Force powers that do not have "You" as the sole target. However, once per turn as a swift action, you can recover one spent Force power that has “You" as the sole target without spending a Force Point, adding that power back to your Force suite.
+
+#### White Current Adept
+
+- **Page:** 77
+- **Prerequisites:** None.
+- **Quick summary:** You can make a Use the Force check in place of a Stealth check.
+- **Production record:** `50598d8920bd46e9`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+You can make a Use the Force check in place of a Stealth check. You are considered trained in the Stealth skill. If you are entitled to a Stealth check reroll, you can reroll your Use the Force check instead (subject to the same circumstances and limitations).
+
+### Shapers of Kro Var
+
+#### Combustion
+
+- **Page:** 85
+- **Prerequisites:** Force Training
+- **Quick summary:** You can spend a Force Point as a swift action to add 146 points of fire damage to any Force power that causes damage to a single target.
+- **Production target:** CREATE `78a296a68645450b`
+- **Phase 3B disposition:** `CREATE`
+
+**Canonical rules text**
+
+You can spend a Force Point as a swift action to add 146 points of fire damage to any Force power that causes damage to a single target. A target that takes fire damage also catches on fire (see page 256 of the Saga Edition core rulebook).
+
+#### Earth Buckle
+
+- **Page:** 85
+- **Prerequisites:** None.
+- **Quick summary:** You can spend a Force Point as a swift action to create a 3x3 square area of difficult terrain centered on you.
+- **Production target:** CREATE `2f9bd5b93d0eb82a`
+- **Phase 3B disposition:** `CREATE`
+
+**Canonical rules text**
+
+You can spend a Force Point as a swift action to create a 3x3 square area of difficult terrain centered on you. You ignore any penalties for moving on difficult terrain that you create using this talent. A SHAPER OF KRO VAR DEFENDS HIMSELF AGAINST THE FORCES OF THE SEPARATISTS.
+
+#### Fluidity
+
+- **Page:** 85
+- **Prerequisites:** None.
+- **Quick summary:** You use your Use the Force check modifier instead of your Acro-batics check modifier when making Acrobatics checks.
+- **Production target:** CREATE `d257d180378c8f9d`
+- **Phase 3B disposition:** `CREATE`
+
+**Canonical rules text**
+
+You use your Use the Force check modifier instead of your Acro-batics check modifier when making Acrobatics checks. If you are entitled to an Acrobatics check reroll, you may reroll your Use the Force check instead (subject to the same circumstances and limitations). Additionally, when you attempt a grapple or attempting to break free of a grapple, you can spend a Force Point to be treated as if you were one size category larger.
+
+#### Thunderclap
+
+- **Page:** 85
+- **Prerequisites:** Bantha Rush, Force Training
+- **Quick summary:** When you use a Force power that deals damage, you can use the Bantha Rush feat against that target as though you had made a melee attack.
+- **Production target:** CREATE `07680913de8adc53`
+- **Phase 3B disposition:** `CREATE`
+
+**Canonical rules text**
+
+When you use a Force power that deals damage, you can use the Bantha Rush feat against that target as though you had made a melee attack.
+
+#### Wind Vortex
+
+- **Page:** 85
+- **Prerequisites:** None.
+- **Quick summary:** You can spend a Force Point as a swift action to surround yourself with whirling winds.
+- **Production target:** CREATE `addff1294f534ac7`
+- **Phase 3B disposition:** `CREATE`
+
+**Canonical rules text**
+
+You can spend a Force Point as a swift action to surround yourself with whirling winds. You gain concealment from all other targets and gain a +2 circumstance bonus to Reflex Defense against thrown weapons. This effect lasts until the end of the encounter.
+
+### Zeison Sha Warrior
+
+#### Discblade Arc
+
+- **Page:** 91
+- **Prerequisites:** Proficiency with the discblade
+- **Quick summary:** As a full-round action, you can make an area attack with your discblade, striking three targets, all of which must be within point blank range for your discblade.
+- **Production target:** CREATE `69380dec0c195e82`
+- **Phase 3B disposition:** `CREATE`
+
+**Canonical rules text**
+
+As a full-round action, you can make an area attack with your discblade, striking three targets, all of which must be within point blank range for your discblade. This attack uses the area attack rules; you make one attack roll and apply the result to every target you designate.
+
+#### Distant Discblade Throw
+
+- **Page:** 91
+- **Prerequisites:** Proficiency with the discblade
+- **Quick summary:** When you use a discblade, you treat it as a pistol (instead of a thrown weapon) for the purpose of determining range.
+- **Production target:** CREATE `b2c9221dafb87277`
+- **Phase 3B disposition:** `CREATE`
+
+**Canonical rules text**
+
+When you use a discblade, you treat it as a pistol (instead of a thrown weapon) for the purpose of determining range.
+
+#### Recall Discblade
+
+- **Page:** 91
+- **Prerequisites:** Proficiency with the discblade
+- **Quick summary:** When you make a ranged attack with a discblade (or use the Discblade Arc talent above), after the attack is resolved you can make a DC 15 Use the Force check to call the weapon back to your hand as a free action.
+- **Production target:** CREATE `72ac4192d35d3ae8`
+- **Phase 3B disposition:** `CREATE`
+
+**Canonical rules text**
+
+When you make a ranged attack with a discblade (or use the Discblade Arc talent above), after the attack is resolved you can make a DC 15 Use the Force check to call the weapon back to your hand as a free action.
+
+#### Telekinetic Vigilance
+
+- **Page:** 91
+- **Prerequisites:** Intercept
+- **Quick summary:** You can return the intercept Force power to your Force suite as a swift action without spending a Force Point.
+- **Production target:** CREATE `b7b402e8065f4fa8`
+- **Phase 3B disposition:** `CREATE`
+
+**Canonical rules text**
+
+You can return the intercept Force power to your Force suite as a swift action without spending a Force Point.
+
+#### Weapon Specialization (discblade)
+
+- **Page:** 91
+- **Prerequisites:** Proficiency with the discblade, Weapon Focus (discblade)
+- **Quick summary:** You gain a +2 bonus on melee damage rolls with your discblade.
+- **Production target:** CREATE `e7307fe67d4abd64`
+- **Phase 3B disposition:** `CREATE`
+
+**Canonical rules text**
+
+You gain a +2 bonus on melee damage rolls with your discblade.
+
+### Reference-only publication
+
+- Alter — Illusion — Jedi Academy page 87. Canonical owner: Force Unleashed Campaign Guide. No Jedi Academy production mutation.
+
+### Missing Force-tradition trees
+
+- Shapers of Kro Var — create tree `ab3311a860d8d359` before its 5 talents; no base-class access mutation is authorized.
+- Zeison Sha Warrior — create tree `aec386e85f66e93e` before its 5 talents; no base-class access mutation is authorized.
+
 ## Append-only book index
 
 - [x] Saga Edition Core Rulebook — 198 certified talent claims
@@ -13737,7 +15223,7 @@ As a standard action, you can spend a Force Point to ignore all concealment for 
 - [x] Legacy Era Campaign Guide — 101 certified talent claims
 - [x] Knights of the Old Republic Campaign Guide — 115 certified talent claims
 - [x] Force Unleashed Campaign Guide — 137 certified talent claims
-- [ ] Jedi Academy Training Manual
+- [x] Jedi Academy Training Manual — 118 certified talent claims
 - [x] Scavenger's Guide to Droids — 31 certified talent claims
 
 ## Phase 3 production-status convention
