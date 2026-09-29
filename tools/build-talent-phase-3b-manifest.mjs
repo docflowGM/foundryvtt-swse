@@ -59,7 +59,8 @@ const BOOKS = {
       treeCreates: 2,
       classAccessMutations: 2,
       dispositions: {
-        UPDATE_CONTENT: 14,
+        UPDATE_CONTENT: 12,
+        UPDATE_METADATA: 2,
         CREATE: 27,
         IDENTITY_SPLIT: 2
       }
