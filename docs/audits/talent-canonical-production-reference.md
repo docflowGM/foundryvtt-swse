@@ -2572,6 +2572,305 @@ When you score a critical hit with a Lightsaber, you may spend a Force Point to 
 ---
 
 
+
+## Book 6 — Starships of the Galaxy
+
+**Phase 3B status:** COMPLETE — 23 owned canonical identities; 22 UPDATE_CONTENT; 1 CORRECT_TREE; 0 CREATE.
+
+### Expert Pilot
+
+#### Blind Spot
+
+- **Page:** 17
+- **Prerequisites:** None.
+- **Quick summary:** Enter and maintain the blind spot of an adjacent vehicle at least two sizes larger to gain +2 attacks against it while it takes -2 attacks against you.
+- **Production record:** `0be2881047fe9919`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+You can fly a vehicle you pilot so close to a target at least two sizes larger than your vehicle that it is difficult for the target to avoid or attack you. You must be adjacent to the target (at starship scale) to use this talent. As a swift action, make an opposed Pilot check against the target. If you succeed, you move into the same space as your target. You move with your target if it moves (assuming your vehicle has sufficient speed to keep up), and you must make another opposed Pilot check each round as a swift action to stay in its blind spot.
+
+As long as you stay in the target's blind spot, any attack you make against the target gains a +2 bonus, and the target takes a -2 penalty on attacks made against you.
+
+#### Close Scrape
+
+- **Page:** 17
+- **Prerequisites:** None.
+- **Quick summary:** React to a critical hit while piloting Colossal-or-smaller craft; a Pilot check against the attack total converts it to a normal hit.
+- **Production record:** `66ed448a3a2e82bc`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Whenever you are piloting a vehicle of Colossal size or smaller, you may make a Pilot check as a reaction to turn a critical hit into a normal hit. The DC for the Pilot check is equal to the attack roll total of the critical hit. If you are successful, the damage from the attack is not doubled (though it is still considered an automatic hit).
+
+#### Improved Attack Run
+
+- **Page:** 17
+- **Prerequisites:** None.
+- **Quick summary:** Attack runs no longer require straight-line movement.
+- **Production record:** `538d7499a66a3672`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+You do not have to move in a straight line when using the attack run action.
+
+#### Vehicle Focus
+
+- **Page:** 17
+- **Prerequisites:** Wisdom 13
+- **Quick summary:** Choose a vehicle type; while piloting or gunning it, gain +2 vehicle-weapon attacks and may take 10 on Pilot checks.
+- **Production record:** `4764dc69f0d11695`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Choose a single type of vehicle from the following list: airspeeder, capital ship, space transport, speeder, starfighter, or walker. When you are the pilot or gunner of that type of vehicle, you gain +2 to all attack rolls with a vehicle weapon, and may take 10 on any Pilot checks made while piloting that type of vehicle, even when you are otherwise unable to.
+
+#### Wingman
+
+- **Page:** 17
+- **Prerequisites:** Wisdom 13
+- **Quick summary:** Swift DC 15 Pilot check grants a nearby allied starfighter or airspeeder +5 on opposed dogfight Pilot checks until your next turn.
+- **Production record:** `60b02b78caed8e16`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+As a swift action, you can make a DC 15 Pilot check to assist any allied starfighter or airspeeder within 2 squares at starship scale. If you succeed, the pilot of that vehicle gains a +5 bonus on all opposed Pilot checks relating to the dogfight action until the start of your next turn.
+
+### Gunner
+
+#### Crippling Hit
+
+- **Page:** 17
+- **Prerequisites:** Expert Gunner, System Hit
+- **Quick summary:** When your attack moves a vehicle down the condition track, disable its hyperdrive, one weapon/battery, or communications until it fully recovers.
+- **Production record:** `4a78bd6bfe03eb8c`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Whenever you make an attack that causes a vehicle to move -1 or more steps down the condition track, you may also cause it to lose one of the following systems: hyperdrive, one weapon or weapon battery, or communications. The system remains inoperative until the target regains all steps on the condition track.
+
+#### Great Shot
+
+- **Page:** 17
+- **Prerequisites:** None.
+- **Quick summary:** Treat vehicle-weapon targets as one range category closer for range bonuses and penalties.
+- **Production record:** `221eb131fcb23585`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+When firing a vehicle weapon, you treat the distance to the target as though it were one range category less than it actually is. For example, when targeting an enemy at short range, you treat it as though it were at point blank range for the purpose of determining bonuses or penalties.
+
+#### Synchronized Fire
+
+- **Page:** 17
+- **Prerequisites:** Expert Gunner
+- **Quick summary:** Once per encounter, coordinate one weapon with an ally so two successful hits combine before SR/DR and damage-threshold comparison.
+- **Production record:** `388f30468a80f221`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Once per encounter, you may ready to fire a single weapon at the same target as an ally, and you coordinate with a single weapon of your ally. If both attacks hit, you add the damage of the two weapons together before applying the target's SR or DR, and treat it as a single attack for purposes of exceeding the target's damage threshold.
+
+### Lineage
+
+#### Engineer
+
+- **Page:** 16
+- **Prerequisites:** Educated, trained in the Knowledge (technology) skill
+- **Quick summary:** Become trained in Mechanics and reduce vehicle-system installation time by 25%.
+- **Production record:** `c727d7a40330d10d`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+You are trained in the Mechanics skill. Additionally, when installing new systems into a vehicle, the efficiency of your designs reduces the time it takes to install the system by 25%.
+
+### Naval Officer
+
+#### Combined Fire
+
+- **Page:** 18
+- **Prerequisites:** None.
+- **Quick summary:** Swiftly designate a visible target; batteries gain damage dice every 2 points over Reflex, and tactical fire may designate one weapon/battery to attack.
+- **Production record:** `17518b7669101122`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+As a swift action, you may designate a single creature, vehicle, or object within your line of sight as the target of combined fire. Any weapon batteries attacking that target deal an extra die of damage for every 2 points their attack roll exceeds the target's Reflex Defense (instead of every 3 points). In addition, when using the tactical fire option for a capital ship (see ship descriptions in Chapter 4), you may designate a weapon or weapon battery to make a single attack.
+
+#### Fleet Deployment
+
+- **Page:** 18
+- **Prerequisites:** Charisma 13
+- **Quick summary:** Full-round action lets visible vehicles up to your class level immediately move their speed.
+- **Production record:** `d1c2e9bdbb58b715`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+As a full-round action, you can designate a number of vehicles equal to your class level and within your line of sight. Those vehicles may immediately move a number of squares equal to their speed.
+
+#### Fleet Tactics
+
+- **Page:** 18
+- **Prerequisites:** Charisma 13, Fleet Deployment
+- **Quick summary:** Standard action and DC 15 Knowledge (tactics) check grants visible allied gunners +1 damage die against one vehicle until your next turn.
+- **Production record:** `d8d7218123a28f39`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+As a standard action, you may designate a single vehicle as the target of a large-scale assault. If you succeed on a DC 15 Knowledge (tactics) check, all allied gunners within line of sight deal 1 additional die of damage to the target with each successful ranged attack until the start of your next turn. This is a mind-affecting effect.
+
+#### It's a Trap!
+
+- **Page:** 18
+- **Prerequisites:** None.
+- **Quick summary:** Once per encounter as a reaction, grant the pilot of one visible vehicle an immediate move action.
+- **Production record:** `8fe560a110d8f4ee`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+You are skilled at sensing the plans of enemy naval officers and counteracting them. Once per encounter as a reaction, you can grant the pilot of any single vehicle within line of sight (including a vehicle you are commanding) an immediate move action.
+
+#### Legendary Commander
+
+- **Page:** 18
+- **Prerequisites:** Charisma 13, Intelligence 13, Born Leader
+- **Quick summary:** As capital-ship commander, improve Reflex calculation, gunner damage scaling, and generic crew quality.
+- **Production record:** `d1683318140f3906`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+When you are the commander of a capital ship, calculate its Reflex Defense using your heroic level plus one-half the ship's armor bonus (round down), the pilot's heroic level, or the ship's armor bonus, whichever is more. In addition, all gunners on your ship add one-half your heroic level or one-half their heroic level, whichever is more, to damage rolls with vehicle weapons. Finally, you treat any generic crew as being one quality level higher (maximum of ace).
+
+### Outlaw Tech
+
+#### Fast Repairs
+
+- **Page:** 16
+- **Prerequisites:** Trained in the Mechanics skill
+- **Quick summary:** Jury-rigging grants temporary hit points equal to your Mechanics check result for the encounter.
+- **Production record:** `36f8497081dce05a`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Whenever you jury-rig an object or vehicle, the vehicle gains a number of temporary hit points equal to the result of your Mechanics check. Damage is subtracted from these temporary hit points first, and temporary hit points go away at the conclusion of the encounter.
+
+#### Hot Wire
+
+- **Page:** 16
+- **Prerequisites:** Trained in the Mechanics skill
+- **Quick summary:** Use Mechanics instead of Use Computer to improve computer access, including qualifying rerolls.
+- **Production record:** `d2b9069670413a43`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+You can use your Mechanics check modifier instead of your Use Computer check modifier when making Use Computer checks to improve access to a computer system. You are considered trained in the Use Computer skill for purposes of using this talent. If you are entitled to a Use Computer check reroll, you may reroll your Mechanics check instead (subject to the same circumstances and limitations).
+
+#### Personalized Modifications
+
+- **Page:** 17
+- **Prerequisites:** None.
+- **Quick summary:** As a standard action, tune a powered weapon you wield for +1 attack and +2 damage for the encounter.
+- **Production record:** `111b0a9d1f8d5111`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+As a standard action, you may tweak the settings, grips, and moving parts of a powered weapon you wield, tailoring it to your needs. For the remainder of the encounter, you gain a +1 equipment bonus on attack rolls and a +2 equipment bonus on damage rolls with that weapon. You can use this talent only on powered weapons (those that require a power cell to operate), including weapons connected to a larger power source (such as vehicle and starship weapons).
+
+#### Quick Fix
+
+- **Page:** 17
+- **Prerequisites:** Trained in the Mechanics skill
+- **Quick summary:** Once per encounter, jury-rig an object or vehicle even if it is not disabled.
+- **Production record:** `3e6f7edaeec04a06`
+- **Phase 3B disposition:** `CORRECT_TREE`
+
+**Canonical rules text**
+
+Once per encounter, you may jury-rig an object or vehicle that is not disabled. All normal benefits and penalties for jury-rigging still apply.
+
+### Sense
+
+#### Force Reflexes
+
+- **Page:** 16
+- **Prerequisites:** Force Sensitivity, Starship Tactics, Force Pilot
+- **Quick summary:** Spend a Force Point when activating a starship maneuver to reroll the Pilot check and keep the better result.
+- **Production record:** `ece2612b7449f39a`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+When activating a starship maneuver, you may spend a Force Point to reroll your Pilot check, keeping the better result. See Chapter 2 for more information on starship maneuvers.
+
+### Squadron Leader
+
+#### Begin Attack Run
+
+- **Page:** 17
+- **Prerequisites:** Charisma 13
+- **Quick summary:** Swiftly designate one target; squadron attack runs against it gain +5 instead of +2.
+- **Production record:** `7e0b34a95b5f465d`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+As a swift action, you designate a single target. When using the attack run action against that target, vehicles in your squadron gain a +5 bonus on their attack rolls (instead of the normal +2). You may have only one target designated at a time.
+
+#### Regroup
+
+- **Page:** 18
+- **Prerequisites:** Charisma 13
+- **Quick summary:** Once per encounter, standard action moves every squadron vehicle +1 step on the condition track.
+- **Production record:** `10a43f0f9d4b31f5`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Once per encounter as a standard action, you can move all vehicles in your squadron +1 step on their condition tracks.
+
+#### Squadron Maneuvers
+
+- **Page:** 18
+- **Prerequisites:** Charisma 13, any other ace pilot talent
+- **Quick summary:** Choose one Expert Pilot or Gunner talent you possess; once per encounter, grant its benefits to your whole squadron for the encounter.
+- **Production record:** `991dbfc3a436b5a1`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Choose one talent that you already possess. The talent you select must be from the Expert Pilot or Gunner talent trees. Once per encounter as a standard action, you can impart the benefits of the chosen talent to all members of your squadron. Once gained, its benefits last until the end of the encounter.
+
+#### Squadron Tactics
+
+- **Page:** 18
+- **Prerequisites:** Charisma 13, Wisdom 13, any other ace pilot talent, Squadron Maneuvers, Starship Tactics
+- **Quick summary:** Once per encounter when you use a starship maneuver, each squadron ship may independently use that maneuver once on its next turn.
+- **Production record:** `ec12bc7f161a0893`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Once per encounter, when you use a starship maneuver, you grant all ships in your squadron the ability to use the same maneuver once on their next turn. The pilot of each ship that chooses to use the maneuver must make any Pilot checks or attack rolls the maneuver requires—your success or failure with the maneuver has no bearing on the success of other units of your squadron.
+
+---
+
 ## Book 7 — Threats of the Galaxy
 
 **Phase 3B status:** COMPLETE — 11 owned canonical identities; 11 UPDATE_CONTENT; 0 CREATE; 0 CORRECT_TREE.
@@ -2727,7 +3026,7 @@ When you fight defensively, as a reaction you can negate a melee attack by makin
 - [ ] Rebellion Era Campaign Guide
 - [ ] Galaxy at War
 - [ ] Galaxy of Intrigue
-- [ ] Starships of the Galaxy
+- [x] Starships of the Galaxy — 23 certified talent claims
 - [x] Threats of the Galaxy — 11 certified talent claims
 - [ ] Scum and Villainy
 - [ ] Unknown Regions
