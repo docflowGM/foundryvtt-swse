@@ -7,6 +7,7 @@
  *   node tools/build-talent-phase-3b-manifest.mjs --book threats [--check]
  *   node tools/build-talent-phase-3b-manifest.mjs --book starships [--check]
  *   node tools/build-talent-phase-3b-manifest.mjs --book scavengers [--check]
+ *   node tools/build-talent-phase-3b-manifest.mjs --book intrigue [--check]
  */
 import fs from 'node:fs';
 import path from 'node:path';
@@ -40,6 +41,27 @@ const BOOKS = {
         CORRECT_TREE: 17,
         CREATE: 6,
         IDENTITY_SPLIT: 1
+      }
+    }
+  },
+  intrigue: {
+    sourcebook: 'Galaxy of Intrigue',
+    bookOrder: 5,
+    classes: 'packs/classes.db',
+    allowTreeCreates: true,
+    phase2: 'data/audits/talent-phase-2-galaxy-of-intrigue-content.json',
+    discrepancy: 'data/audits/talent-phase-2-galaxy-of-intrigue-discrepancy-manifest.json',
+    output: 'data/audits/talent-phase-3b-galaxy-of-intrigue-manifest.json',
+    aliases: {},
+    expected: {
+      records: 43,
+      extras: 0,
+      treeCreates: 2,
+      classAccessMutations: 2,
+      dispositions: {
+        UPDATE_CONTENT: 14,
+        CREATE: 27,
+        IDENTITY_SPLIT: 2
       }
     }
   },
@@ -108,13 +130,20 @@ const fingerprint = text => {
   return 'fnv1a64:' + hash.toString(16).padStart(16, '0');
 };
 const makeId = identity => crypto.createHash('sha256').update('swse-talent|' + identity).digest('hex').slice(0, 16);
+const makeTreeId = treeKey => crypto.createHash('sha256').update('swse-talent-tree|' + treeKey).digest('hex').slice(0, 16);
+const treeSlug = name => normalizeKey(name).replace(/-/g, '_');
 const parseNdjson = raw => raw.split(/\r?\n/).filter(Boolean).map(JSON.parse);
 
 export function buildBookManifest(bookKey, { check = false } = {}) {
   const cfg = BOOKS[bookKey];
   invariant(cfg, 'unknown --book value: ' + bookKey);
 
-  const paths = {...COMMON, phase2: cfg.phase2, discrepancy: cfg.discrepancy};
+  const paths = {
+    ...COMMON,
+    ...(cfg.classes ? {classes: cfg.classes} : {}),
+    phase2: cfg.phase2,
+    discrepancy: cfg.discrepancy
+  };
   const raw = Object.fromEntries(Object.entries(paths).map(([key, rel]) => [key, readText(rel)]));
   const canonicalAuthority = JSON.parse(raw.canonical);
   const phase2 = JSON.parse(raw.phase2);
@@ -122,11 +151,13 @@ export function buildBookManifest(bookKey, { check = false } = {}) {
   const registry = JSON.parse(raw.registry);
   const talents = parseNdjson(raw.talents);
   const trees = parseNdjson(raw.trees);
+  const classes = raw.classes ? parseNdjson(raw.classes) : [];
 
   const canonicalByPair = new Map(canonicalAuthority.records.map(r => [pairKey(r.canonicalTreeKey, r.name), r]));
   const registryByKey = new Map(registry.entries.map(e => [e.canonicalTreeKey, e]));
   const talentById = new Map(talents.map(t => [t._id, t]));
   const treeById = new Map(trees.map(t => [t._id, t]));
+  const classByName = new Map(classes.map(c => [c.name, c]));
   const claimsByTalentId = new Map();
   const talentsByName = new Map();
 
@@ -158,6 +189,8 @@ export function buildBookManifest(bookKey, { check = false } = {}) {
   const generatedIds = new Set();
   const extras = new Map();
   const referenceOnlyPublications = [];
+  const treeCreates = new Map();
+  const classAccessMutations = new Map();
   const records = [];
 
   for (const claim of phase2.records) {
@@ -176,10 +209,62 @@ export function buildBookManifest(bookKey, { check = false } = {}) {
 
     const treeAuthority = registryByKey.get(claim.canonicalTreeKey);
     invariant(treeAuthority, 'missing canonical tree registry entry: ' + claim.canonicalTreeKey);
-    invariant((treeAuthority.repoTreeIds ?? []).length === 1, 'expected one production tree id for ' + claim.canonicalTreeKey);
-    const targetTreeId = treeAuthority.repoTreeIds[0];
-    const targetTree = treeById.get(targetTreeId);
-    invariant(targetTree, 'target production tree missing: ' + targetTreeId);
+    const repoTreeIds = treeAuthority.repoTreeIds ?? [];
+    let targetTreeId;
+    let targetTree;
+    if (repoTreeIds.length === 1) {
+      targetTreeId = repoTreeIds[0];
+      targetTree = treeById.get(targetTreeId);
+      invariant(targetTree, 'target production tree missing: ' + targetTreeId);
+    } else {
+      invariant(cfg.allowTreeCreates && repoTreeIds.length === 0, 'expected one production tree id for ' + claim.canonicalTreeKey);
+      targetTreeId = makeTreeId(claim.canonicalTreeKey);
+      invariant(!treeById.has(targetTreeId), 'deterministic tree id collides with production: ' + claim.canonicalTreeKey);
+      targetTree = {
+        _id: targetTreeId,
+        name: treeAuthority.displayName,
+        type: 'talenttree',
+        img: 'icons/svg/item-bag.svg',
+        system: {
+          talent_tree: treeAuthority.displayName,
+          description: '',
+          costNumeric: null,
+          talentIds: [],
+          talentNames: []
+        },
+        effects: [],
+        folder: null,
+        sort: 0,
+        ownership: {default: 0},
+        flags: {}
+      };
+      if (!treeCreates.has(claim.canonicalTreeKey)) {
+        treeCreates.set(claim.canonicalTreeKey, {
+          canonicalTreeKey: claim.canonicalTreeKey,
+          createTreeId: targetTreeId,
+          displayName: treeAuthority.displayName,
+          classAccess: treeAuthority.aggregateClassAccess ?? treeAuthority.classAccess ?? [],
+          createTemplate: targetTree
+        });
+        for (const className of treeAuthority.aggregateClassAccess ?? treeAuthority.classAccess ?? []) {
+          const classRecord = classByName.get(className);
+          invariant(classRecord, 'missing production class record for tree access: ' + className);
+          classAccessMutations.set(className + '|' + claim.canonicalTreeKey, {
+            classRecordId: classRecord._id,
+            className,
+            canonicalTreeKey: claim.canonicalTreeKey,
+            treeId: targetTreeId,
+            treeName: treeAuthority.displayName,
+            add: {
+              'system.talent_trees': targetTreeId,
+              'system.talentTreeIds': treeSlug(treeAuthority.displayName),
+              'system.talentTreeSourceIds': targetTreeId,
+              'system.talentTreeUuids': 'Compendium.foundryvtt-swse.talent_trees.' + targetTreeId
+            }
+          });
+        }
+      }
+    }
 
     const overrideId = cfg.aliases[canonical.canonicalIdentity] ?? null;
     const discrepancyId = discrepancyIds.get(pairKey(claim.canonicalTreeKey, claim.canonicalName)) ?? null;
@@ -335,6 +420,14 @@ export function buildBookManifest(bookKey, { check = false } = {}) {
     });
   }
 
+  for (const treeCreate of treeCreates.values()) {
+    const members = records.filter(record => record.canonicalTreeKey === treeCreate.canonicalTreeKey);
+    treeCreate.createTemplate.system.talentIds = members.map(record =>
+      record.identityResolution.productionRecordId ?? record.identityResolution.createRecordId
+    );
+    treeCreate.createTemplate.system.talentNames = members.map(record => record.name);
+  }
+
   const dispositionCounts = {};
   const fieldChangeCounts = {};
   for (const record of records) {
@@ -346,6 +439,8 @@ export function buildBookManifest(bookKey, { check = false } = {}) {
 
   invariant(records.length === cfg.expected.records, 'unexpected owned record count for ' + bookKey);
   invariant(extras.size === cfg.expected.extras, 'unexpected production-extra count for ' + bookKey);
+  invariant(treeCreates.size === (cfg.expected.treeCreates ?? 0), 'unexpected tree-create count for ' + bookKey);
+  invariant(classAccessMutations.size === (cfg.expected.classAccessMutations ?? 0), 'unexpected class-access mutation count for ' + bookKey);
   for (const [key, value] of Object.entries(cfg.expected.dispositions)) {
     invariant((dispositionCounts[key] ?? 0) === value, 'unexpected ' + key + ' count for ' + bookKey);
   }
@@ -372,12 +467,17 @@ export function buildBookManifest(bookKey, { check = false } = {}) {
       canonicalTrees: new Set(records.map(r => r.canonicalTreeKey)).size,
       dispositions: dispositionCounts,
       fieldChanges: fieldChangeCounts,
-      productionExtras: extras.size
+      productionExtras: extras.size,
+      ...(cfg.allowTreeCreates ? {
+        productionTreeCreates: treeCreates.size,
+        classAccessMutations: classAccessMutations.size
+      } : {})
     },
     dispositionPrecedence: ['IDENTITY_SPLIT','CREATE','CORRECT_TREE','REMOVE_CONTAMINATION','UPDATE_CONTENT','UPDATE_METADATA','KEEP'],
     phase3cWriteContract: {
       productionTalentPack: 'packs/talents.db',
       productionTreePack: 'packs/talent_trees.db',
+      ...(cfg.allowTreeCreates ? {productionClassPack: 'packs/classes.db'} : {}),
       preserveExistingIds: true,
       descriptionWriteRule: "Preserve each existing record's description shape: write system.description.value when description is an object and system.description when it is a string. New records use system.description.value.",
       canonicalFields: ['name','system.benefit','system.description.value or system.description','system.summary','system.prerequisites','system.source','system.page'],
@@ -389,6 +489,10 @@ export function buildBookManifest(bookKey, { check = false } = {}) {
         'Do not erase runtime metadata unless explicitly targeted.'
       ]
     },
+    ...(cfg.allowTreeCreates ? {
+      treeCreates: [...treeCreates.values()],
+      classAccessMutations: [...classAccessMutations.values()]
+    } : {}),
     referenceOnlyPublications,
     productionExtras: [...extras.values()],
     records
@@ -413,6 +517,6 @@ if (isDirectRun) {
   const bookArg = process.argv.find(arg => arg.startsWith('--book='));
   const index = process.argv.indexOf('--book');
   const bookKey = bookArg ? bookArg.slice('--book='.length) : index >= 0 ? process.argv[index + 1] : null;
-  invariant(bookKey, 'usage: --book core|threats|starships|scavengers [--check]');
+  invariant(bookKey, 'usage: --book core|threats|starships|scavengers|intrigue [--check]');
   buildBookManifest(bookKey, {check: process.argv.includes('--check')});
 }
