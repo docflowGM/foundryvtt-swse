@@ -55,13 +55,16 @@ function makePack(packKey, docs) {
 globalThis.game.system = { id: 'foundryvtt-swse' };
 globalThis.game.packs = new Map([
   ['foundryvtt-swse.talents', makePack('foundryvtt-swse.talents', projected.talents)],
-  ['foundryvtt-swse.talent_trees', makePack('foundryvtt-swse.talent_trees', projected.trees)]
+  ['foundryvtt-swse.talent_trees', makePack('foundryvtt-swse.talent_trees', projected.trees)],
+  ['foundryvtt-swse.classes', makePack('foundryvtt-swse.classes', projected.classes)]
 ]);
 
 const { TalentRegistry } = await import('/systems/foundryvtt-swse/scripts/registries/talent-registry.js');
 await TalentRegistry.initialize();
 const { TalentTreeDB } = await import('/systems/foundryvtt-swse/scripts/data/talent-tree-db.js');
 await TalentTreeDB.build();
+const { ClassesDB } = await import('/systems/foundryvtt-swse/scripts/data/classes-db.js');
+await ClassesDB.build(TalentTreeDB);
 const { getTalentMembership, clearCache } = await import('/systems/foundryvtt-swse/scripts/engine/progression/talents/talent-tree-membership-authority.js');
 clearCache();
 
@@ -100,6 +103,28 @@ await test('TalentTreeDB keeps BOTH Squad Leader trees (no overwrite, no load-au
     const own = treeDoc(t.sourceId);
     assert.deepEqual([...t.talentNames].sort(), own.system.talentIds.map(id => projected.talents.find(x => x._id === id).name).sort());
   }
+});
+await test('class access resolves the intended Squad Leader tree ID (Soldier -> Clone Wars, Elite Trooper -> Galaxy at War)', () => {
+  const cwRuntime = runtimeTree('781feba15dc9e42f'), gawRuntime = runtimeTree('3b30dd12884bb2e4');
+  const soldier = [...ClassesDB.classes.values()].find(c => c.name === 'Soldier');
+  const elite = [...ClassesDB.classes.values()].find(c => c.name === 'Elite Trooper');
+  assert.ok(soldier.talentTreeSourceIds.includes('781feba15dc9e42f') && !soldier.talentTreeSourceIds.includes('3b30dd12884bb2e4'));
+  assert.ok(elite.talentTreeSourceIds.includes('3b30dd12884bb2e4') && !elite.talentTreeSourceIds.includes('781feba15dc9e42f'));
+  // ClassesDB derives talentTreeIds from talentTreeSourceIds (bySourceId), not from the slug stored in the pack.
+  assert.ok(soldier.talentTreeIds.includes(cwRuntime.id) && !soldier.talentTreeIds.includes(gawRuntime.id));
+  assert.ok(elite.talentTreeIds.includes(gawRuntime.id) && !elite.talentTreeIds.includes(cwRuntime.id));
+  assert.notEqual(cwRuntime.id, gawRuntime.id);
+  // and the registry agrees
+  const byId = new Map(registry.filter(e => e.sourceId).map(e => [e.sourceId, e]));
+  assert.ok(byId.get('781feba15dc9e42f').classAccess.includes('Soldier') && !byId.get('781feba15dc9e42f').classAccess.includes('Elite Trooper'));
+  assert.ok(byId.get('3b30dd12884bb2e4').classAccess.includes('Elite Trooper') && !byId.get('3b30dd12884bb2e4').classAccess.includes('Soldier'));
+});
+await test('both Squad Leader identities stay addressable by tree id, sourceId and registry entry after a rebuild', async () => {
+  await TalentTreeDB.build();
+  assert.equal(TalentTreeDB.bySourceId('781feba15dc9e42f').sourceId, '781feba15dc9e42f');
+  assert.equal(TalentTreeDB.bySourceId('3b30dd12884bb2e4').sourceId, '3b30dd12884bb2e4');
+  assert.equal(TalentTreeDB.trees.size, projected.trees.length);
+  assert.equal(new Set(registry.filter(e => e.sourceId).map(e => e.id)).size, projected.trees.length, 'registry entry ids must be unique');
 });
 await test('consolidated GenoHaradan tree exposes all four members through the runtime; the obsolete tree is gone', async () => {
   const members = await membershipOf('da7b731a3e434a7a');
