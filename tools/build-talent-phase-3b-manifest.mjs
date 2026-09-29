@@ -43,6 +43,16 @@ const BOOKS = {
     forceIdentitySplits: [
       'Saga Edition Core Rulebook|Dathomiri Witch|Charm Beast'
     ],
+    certifiedCreateIds: {
+      'Saga Edition Core Rulebook|Brawler|Unbalance Opponent': 'e293cb03d35c2bff',
+      'Saga Edition Core Rulebook|Jensaarai Defender|Attune Armor': 'b315da0532ce8b75',
+      'Saga Edition Core Rulebook|Jensaarai Defender|Force Cloak Mastery': 'f3b8b39d4906007d',
+      'Saga Edition Core Rulebook|Jensaarai Defender|Linked Defense': 'dd7a357a59b8ebc0',
+      'Saga Edition Core Rulebook|Dathomiri Witch|Charm Beast': 'c919d7682bd9df40',
+      'Saga Edition Core Rulebook|Dathomiri Witch|Command Beast': '6f158211516da82a',
+      'Saga Edition Core Rulebook|Dathomiri Witch|Flight': 'c518a366d0eb0a8a',
+      'Saga Edition Core Rulebook|Bounty Hunter|Notorious': 'c67cbd59abd1cc53'
+    },
     expected: {
       records: 198,
       extras: 1,
@@ -544,7 +554,8 @@ export function buildBookManifest(bookKey, { check = false } = {}) {
     else disposition = 'KEEP';
 
     const productionId = resolved?._id ?? null;
-    const createId = productionId ? null : makeId(canonical.canonicalIdentity);
+    const createId = productionId ? null
+      : (cfg.certifiedCreateIds?.[canonical.canonicalIdentity] ?? makeId(canonical.canonicalIdentity));
     if (createId) {
       invariant(!productionIds.has(createId), 'deterministic create id collides with production: ' + canonical.canonicalIdentity);
       invariant(!generatedIds.has(createId), 'deterministic create id collision in manifest: ' + canonical.canonicalIdentity);

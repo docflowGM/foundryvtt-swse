@@ -48,6 +48,7 @@ const setPath = (obj, dotted, value) => {
 };
 const pushUnique = (arr, value) => { if (!arr.includes(value)) arr.push(value); };
 const removeValue = (arr, value) => { let i; while ((i = arr.indexOf(value)) >= 0) arr.splice(i,1); };
+const STRUCTURAL_MUTATION_FIELDS = new Set(['_record_create', 'system.treeId']);
 
 if (process.argv.includes('--write')) {
   throw new Error('[talent-phase-3c-dry-run] --write is intentionally unavailable in Phase 3C-1');
@@ -111,13 +112,16 @@ for (const {manifest} of manifests) {
     const existingId = record.identityResolution?.productionRecordId ?? null;
     const createId = record.identityResolution?.createRecordId ?? null;
     let talent;
+    let originalName = null;
 
     if (existingId) {
       talent = talentById.get(existingId);
       invariant(talent, 'existing production record missing: ' + existingId + ' for ' + record.canonicalIdentity);
       invariant(!protectedIds.has(existingId), 'certified mutation targets protected record: ' + existingId);
+      originalName = talent.name;
 
       for (const field of record.mutationFields ?? []) {
+        if (STRUCTURAL_MUTATION_FIELDS.has(field)) continue;
         invariant(Object.prototype.hasOwnProperty.call(record.targetFields ?? {}, field),
           'targetFields missing mutation field ' + field + ' for ' + record.canonicalIdentity);
         if (record.currentCanonicalFields && Object.prototype.hasOwnProperty.call(record.currentCanonicalFields, field)) {
@@ -125,6 +129,9 @@ for (const {manifest} of manifests) {
             'production drift at ' + field + ' for ' + record.canonicalIdentity);
         }
         setPath(talent, field, record.targetFields[field]);
+      }
+      if ((record.mutationFields ?? []).includes('system.treeId')) {
+        setPath(talent, 'system.treeId', record.targetTree.treeId);
       }
       operationCounts.existingTalentUpdates++;
     } else {
@@ -145,14 +152,20 @@ for (const {manifest} of manifests) {
         const oldTree = treeById.get(oldTreeId);
         invariant(oldTree, 'tree mutation source missing: ' + oldTreeId);
         removeValue(oldTree.system.talentIds ??= [], talent._id);
-        removeValue(oldTree.system.talentNames ??= [], record.name);
+        removeValue(oldTree.system.talentNames ??= [], originalName);
+        removeValue(oldTree.system.talentNames, record.name);
         operationCounts.treeMembershipMoves++;
       }
       if (tm.addToTreeId) {
         const targetTree = treeById.get(tm.addToTreeId);
         invariant(targetTree, 'tree mutation target missing: ' + tm.addToTreeId);
         pushUnique(targetTree.system.talentIds ??= [], tm.addTalentId ?? talent._id);
-        pushUnique(targetTree.system.talentNames ??= [], tm.addTalentName ?? talent.name);
+        if (tm.replaceTalentName) {
+          removeValue(targetTree.system.talentNames ??= [], tm.replaceTalentName.from);
+          pushUnique(targetTree.system.talentNames, tm.replaceTalentName.to);
+        } else {
+          pushUnique(targetTree.system.talentNames ??= [], tm.addTalentName ?? talent.name);
+        }
       }
     }
   }
@@ -206,6 +219,10 @@ for (const {manifest} of manifests) {
     invariant(tree, 'final canonical target tree missing: ' + record.canonicalIdentity);
     invariant((tree.system?.talentIds ?? []).includes(id), 'final target tree lacks talent ID: ' + record.canonicalIdentity);
     invariant((tree.system?.talentNames ?? []).includes(record.name), 'final target tree lacks talent name: ' + record.canonicalIdentity);
+    if ((record.mutationFields ?? []).includes('system.treeId')) {
+      invariant(talent.system?.treeId === record.targetTree.treeId,
+        'final talent treeId mismatch: ' + record.canonicalIdentity);
+    }
   }
 }
 
