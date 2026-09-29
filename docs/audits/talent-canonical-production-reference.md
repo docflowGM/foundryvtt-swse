@@ -12003,6 +12003,1724 @@ Taking cues from Manaan's oceans, you know how to emulate wave action using the 
 
 - Alter — Illusion — KOTOR page 52. Canonical owner: Force Unleashed Campaign Guide. No KOTOR production mutation.
 
+## Book 12 — Force Unleashed Campaign Guide
+
+**Phase 3B status:** COMPLETE — 137 owned canonical identities; 107 UPDATE_CONTENT; 2 UPDATE_METADATA; 28 CREATE.
+
+### Awareness
+
+#### Reset Initiative
+
+- **Page:** 28
+- **Prerequisites:** Acute Senses, Improved Initiative, trained in the Initiative skill
+- **Quick summary:** Scouts are highly aware of their surroundings and able to take advantage of the slightest opportunities.
+- **Production record:** `97eeb67b9428f0eb`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Scouts are highly aware of their surroundings and able to take advantage of the slightest opportunities. Once per encounter, at any time after the first full round (that is, the first full round after the surprise round, if one occurs), the scout can set his Initiative to his current Initiative +5.
+
+### Bounty Hunter
+
+#### Fearsome
+
+- **Page:** 42
+- **Prerequisites:** Notorious
+- **Quick summary:** Your reputation precedes you, striking fear in your target.
+- **Production record:** `11e8f858af268e8c`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Your reputation precedes you, striking fear in your target. Any opponent within 6 squares whose level is equal to or less than your heroic level takes a -1 penalty on attack rolls made against you.
+
+#### Signature Item
+
+- **Page:** 42
+- **Prerequisites:** None.
+- **Quick summary:** You are famous for using certain items, and you have become skilled at wielding them.
+- **Production record:** `a6fa8cb695f2882c`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+You are famous for using certain items, and you have become skilled at wielding them. You select a single weapon, suit of armor, vehicle, starship, or other item. While wielding that weapon, wearing that armor, piloting that vehicle, or otherwise using that item, you gain a +2 morale bonus on opposed skill checks. You can select this talent multiple times. Each time you do so, you choose a new object to be your signature item. The effects of multiple signature items are cumulative with one another, increasing this morale bonus by 1 each time.
+
+#### Jedi Hunter
+
+- **Page:** 42
+- **Prerequisites:** None.
+- **Quick summary:** You are skilled at fighting Jedi and other Force-users.
+- **Production record:** `226aea42fcdd30b0`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+You are skilled at fighting Jedi and other Force-users. You gain a +1 insight bonus to Fortitude and Will Defense and deal +1 die of damage against characters who have the Force Sensitivity feat. EvITeE TROOPER TALENTS The following talents are intended for use with the elite trooper prestige class.
+
+### Duelist
+
+#### Improved Lightsaber Throw
+
+- **Page:** 43
+- **Prerequisites:** Lightsaber Throw
+- **Quick summary:** You can spend a Force Point as a standard action to throw your lightsaber at a group of opponents.
+- **Production record:** `705f100f5703e707`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+You can spend a Force Point as a standard action to throw your lightsaber at a group of opponents. You make a single ranged attack roll (treating the lightsaber as a thrown weapon) and compare the result to the Reflex Defense of all targets in a 6-square line originating in your square. If your attack roll result exceeds a target’s Reflex Defense, you deal normal lightsaber damage to that target (dealing half damage if you fail to exceed the target’s Reflex Defense). This attack is considered an area attack. You can pull your lightsaber back to your hand as a swift action by making a DC 20 Use the Force check.
+
+#### Thrown Lightsaber Mastery
+
+- **Page:** 43
+- **Prerequisites:** Improved Lightsaber Throw, Lightsaber Throw
+- **Quick summary:** Any target successfully struck by a lightsaber you throw moves at half speed (round down) until the beginning of your next turn.
+- **Production record:** `6ae9bf79e77bd8c3`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Any target successfully struck by a lightsaber you throw moves at half speed (round down) until the beginning of your next turn.
+
+### Inspiration
+
+#### Willpower
+
+- **Page:** 25
+- **Prerequisites:** Inspire Confidence
+- **Quick summary:** You can share your strength of will with your allies.
+- **Production record:** `ae9cf46162b4bc42`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+You can share your strength of will with your allies. Once per encounter as a swift action, you can grant all allies within line of sight a +2 morale bonus to their Will Defense. This bonus lasts for the remainder of the encounter, and once it is granted your allies need not remain within line of sight with you to retain this bonus. You may not use this talent on yourself.
+
+### Jedi Consular
+
+#### Cleanse Mind
+
+- **Page:** 24
+- **Prerequisites:** None.
+- **Quick summary:** As a swift action once per turn, remove one ongoing mind-affecting effect from an allied target within line of sight.
+- **Production record:** `c93a9e38c432551b`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Once per turn as a swift action, you can remove one ongoing mind-affecting effect (such as the effects of Demand Surrender or Weaken Resolve talents, or the effect of being moved to the end of the condition track by the Adept Negotiator talent, or the ongoing effects of the mind trick Force power) from a single allied target within line of sight.
+
+#### Force of Will
+
+- **Page:** 24
+- **Prerequisites:** None.
+- **Quick summary:** You gain a +2 insight bonus to Will Defense.
+- **Production record:** `b3538b62448c840e`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+You gain a +2 insight bonus to Will Defense. Also, as a swift action, you can spend a Force Point to give all allies within 6 squares of you a +2 insight bonus to Will Defense that lasts for the remainder of the encounter. This bonus does not extend to allies outside the range of the effect, even if they move within 6 squares of you later on. Allies who benefit from this talent must remain within 6 squares of you to retain the insight bonus, and they lose it if you are knocked unconscious or killed. This is a mind-affecting effect.
+
+### Jedi Guardian
+
+#### Forceful Warrior
+
+- **Page:** 24
+- **Prerequisites:** None.
+- **Quick summary:** When you score a critical hit with a lightsaber, you gain 1 temporary Force Point.
+- **Production record:** `f4b22e32d448b703`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+When you score a critical hit with a lightsaber, you gain 1 temporary Force Point. If the Force Point is not used before the end of the encounter, it is lost.
+
+#### Mobile Combatant
+
+- **Page:** 24
+- **Prerequisites:** None.
+- **Quick summary:** When you end your movement adjacent to an opponent, you can spend a swift action to activate this talent.
+- **Production record:** `198b68c0ca770ad7`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+When you end your movement adjacent to an opponent, you can spend a swift action to activate this talent. If the designated opponent moves or withdraws before the beginning of your next turn, you can choose to move with that opponent, up to a total distance equal to your current speed. Unless your opponent uses the withdraw action or makes an Acrobatics check to avoid attacks of opportunity, its movement provokes an attack of opportunity from you for the first square moved as normal (but not subsequent squares in the same movement). If your target moves farther than your speed, you must still end this movement closer to the target than you began.
+
+### Jedi Sentinel
+
+#### Dampen Presence
+
+- **Page:** 24
+- **Prerequisites:** None.
+- **Quick summary:** When you interact with another sentient creature, you can use a swift action to reduce the impression you leave on it.
+- **Production record:** `236e5a8ef7bbcfa6`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+When you interact with another sentient creature, you can use a swift action to reduce the impression you leave on it. When you have finished interacting with the creature, you make a Use the Force check, and if the check result exceeds the target's Will Defense, it does not remember interacting with you once you are gone. A target that is higher in level than you gains a +5 bonus to its Will Defense to resist this ability. This is a mind-affecting effect.
+
+#### Steel Resolve
+
+- **Page:** 24
+- **Prerequisites:** None.
+- **Quick summary:** When you use a standard action to make a melee attack, you can take a penalty of -1 to -5 on your attack roll and add twice that value (+2 to +10) as an insight bonus to your Will Defense.
+- **Production record:** `3e18acc25d6c03db`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+When you use a standard action to make a melee attack, you can take a penalty of -1 to -5 on your attack roll and add twice that value (+2 to +10) as an insight bonus to your Will Defense. This bonus may not exceed your base attack bonus. The changes to attack rolls and Will Defense last until the start of your next turn.
+
+### Lineage
+
+#### Influential Friends
+
+- **Page:** 25
+- **Prerequisites:** Connections
+- **Quick summary:** You have influential contacts within a certain organization, planet, or region who can provide concrete information to you on certain subjects.
+- **Production record:** `471f4294820ce5ec`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+You have influential contacts within a certain organization, planet, or region who can provide concrete information to you on certain subjects. Once per day, you can have one of those contacts make a skill check on your behalf. The contact always takes 20 on the skill check (even if the skill would normally not allow taking 20) and has a skill modifier equal to 5 + one-haIf your heroic level. Contacting your influential allies and receiving the benefit of the skill check takes a number of minutes equal to 10 x the skill check result.
+
+#### Powerful Friends
+
+- **Page:** 26
+- **Prerequisites:** Connections, Influential Friends
+- **Quick summary:** You have a powerful contact who has an extended sphere of influence.
+- **Production record:** `62d47b8982b6591e`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+You have a powerful contact who has an extended sphere of influence. The contact could be an Imperial Senator, a high-level military officer, a regional governor, an infamous crime lord, or another person of similar significance. Once per encounter, you can invoke the name or office of your powerful friend and take 20 on one Persuasion check, with no increase in the time needed to make the check.
+
+### Slicer
+
+#### Electronic Forgery
+
+- **Page:** 27
+- **Prerequisites:** Trained in the Use Computer skill
+- **Quick summary:** You can use your Use Computer modifier in place of your Deception modifier to create a deceptive appearance with forged electronic documents.
+- **Production record:** `319c5ded54dbc4e6`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+You can use your Use Computer modifier in place of your Deception modifier to create a deceptive appearance with forged electronic documents.
+
+#### Electronic Sabotage
+
+- **Page:** 27
+- **Prerequisites:** Trained in the Use Computer skill
+- **Quick summary:** You excel at causing havoc with computers and electronics.
+- **Production record:** `0290634450ab1637`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+You excel at causing havoc with computers and electronics. As a standard action, you can lock down a computer terminal by making a Use Computer check, making it potentially difficult for anyone else to access. That computer is considered unfriendly to anyone other than you who attempts to use it, and the result of your Use Computer check replaces the computer's Will Defense on an attempt to change its attitude. This effect ends if anyone else succeeds in adjusting the computer's attitude to indifferent. You cannot take 20 on this Use Computer check.
+
+#### Security Slicer
+
+- **Page:** 27
+- **Prerequisites:** Trained in the Mechanics skill
+- **Quick summary:** You are an expert in electronic security.
+- **Production record:** `51ee1b777709cc4e`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+You are an expert in electronic security. When you make a Mechanics check to disable a security system, you can do so without the help of a security kit. Additionally, something goes wrong only when you fail the Mechanics check by 10 or more.
+
+### Advanced Medicine
+
+#### Battlefield Medic
+
+- **Page:** 54
+- **Prerequisites:** Steady Under Pressure
+- **Quick summary:** You can use the first aid application of the Treat Injury skill on a creature as a standard action instead of a full-round action.
+- **Production record:** `684e15133a9cc1e2`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+You can use the first aid application of the Treat Injury skill on a creature as a standard action instead of a full-round action.
+
+#### Bring Them Back
+
+- **Page:** 54
+- **Prerequisites:** None.
+- **Quick summary:** You can use the revivify application of the Treat Injury skill on a target that has died anytime within a number of rounds equal to one-haIf your heroic level.
+- **Production record:** `aeb8d3e495605f71`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+You can use the revivify application of the Treat Injury skill on a target that has died anytime within a number of rounds equal to one-haIf your heroic level.
+
+#### Emergency Team
+
+- **Page:** 54
+- **Prerequisites:** None.
+- **Quick summary:** You are skilled at working on and managing an emergency medical team.
+- **Production record:** `d0c46d08ea867ae0`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+You are skilled at working on and managing an emergency medical team. Allies automatically succeed on aid another attempts when assisting you with Treat Injury checks.
+
+#### Extra First Aid
+
+- **Page:** 54
+- **Prerequisites:** None.
+- **Quick summary:** You can use the first aid application of the Treat Injury skill one additional time per day on a target that has already received first aid for the day.
+- **Production record:** `58a602ec4aa5b2dd`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+You can use the first aid application of the Treat Injury skill one additional time per day on a target that has already received first aid for the day.
+
+#### Medical Miracle
+
+- **Page:** 54
+- **Prerequisites:** None.
+- **Quick summary:** As a standard action, you can make a DC 20 Treat Injury check on an adjacent target.
+- **Production record:** `ddece484fcea9c84`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+As a standard action, you can make a DC 20 Treat Injury check on an adjacent target. If the check is successful, that target immediately uses its second wind, even if it is above half hit points. If the target has already expended all of its second winds for the day, this talent has no effect.
+
+#### Natural Healing
+
+- **Page:** 54
+- **Prerequisites:** None.
+- **Quick summary:** Make first aid, treat disease, and treat poison checks without a medical kit when suitable natural substitutes are available.
+- **Production record:** `2c18d68d5e294dc8`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Your extensive knowledge of natural healing allows you to make first aid, treat disease, and treat poison (Treat Injury) checks without a medical kit, if you have access to appropriate natural substitutes (as determined by the Gamemaster).
+
+#### Second Chance
+
+- **Page:** 54
+- **Prerequisites:** Steady Under Pressure
+- **Quick summary:** If you fail your Treat Injury check, your patient does not take any additional damage, nor does it die, even if the failed check would normally require it.
+- **Production record:** `c1d9d20e7789da33`
+- **Phase 3B disposition:** `UPDATE_METADATA`
+
+**Canonical rules text**
+
+If you fail your Treat Injury check, your patient does not take any additional damage, nor does it die, even if the failed check would normally require it.
+
+#### Steady Under Pressure
+
+- **Page:** 54
+- **Prerequisites:** None.
+- **Quick summary:** You can choose to reroll any Treat Injury check, using the better result.
+- **Production record:** `ec18c61d653ce3e4`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+You can choose to reroll any Treat Injury check, using the better result.
+
+### Autonomy
+
+#### Defensive Electronics
+
+- **Page:** 47
+- **Prerequisites:** None.
+- **Quick summary:** You defend your independence from all.
+- **Production record:** `7a2cab18b77945538426f19d662f14f9`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+You defend your independence from all. When someone tries to reprogram you, add your class level to your Will Defense.
+
+#### Ion Resistance 10
+
+- **Page:** 47
+- **Prerequisites:** None.
+- **Quick summary:** You gain DR 10 against ion damage.
+- **Production record:** `c113b29cde344fafb6aa376a843639d3`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+You gain DR 10 against ion damage.
+
+#### Soft Reset
+
+- **Page:** 47
+- **Prerequisites:** None.
+- **Quick summary:** You are adept at rerouting your internal electronics.
+- **Production record:** `2739921a657a49a496885c456bcace65`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+You are adept at rerouting your internal electronics. If you are moved to the bottom of the condition track by any means other than taking damage exceeding your damage threshold, you automatically move +1 step along the condition track after being disabled for 2 rounds.
+
+#### Modification Specialist
+
+- **Page:** 47
+- **Prerequisites:** None.
+- **Quick summary:** You have become skilled at reprogramming and modifying your own systems.
+- **Production record:** `cc6f40522eca4cdd90dc5a04edad0a07`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+You have become skilled at reprogramming and modifying your own systems. You do not incur the normal -5 penalty on Mechanics and Use Computer checks to reprogram yourself or perform self-modifications (see page 197 of the Saga Edition core rulebook).
+
+#### Repair Self
+
+- **Page:** 47
+- **Prerequisites:** None.
+- **Quick summary:** When you repair yourself (using the repair droid application of the Mechanics skill), you repair 1 additional hit point for each point by which your check exceeds the DC.
+- **Production record:** `177198e388ad4e3ca6fe85d3b6b399f5`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+When you repair yourself (using the repair droid application of the Mechanics skill), you repair 1 additional hit point for each point by which your check exceeds the DC.
+
+### Bothan Spynet
+
+#### Bothan Resources
+
+- **Page:** 50
+- **Prerequisites:** Spynet Agent
+- **Quick summary:** Your status within the Spynet gives you access to additional resources, and you know the best sources for restricted or rare items.
+- **Production record:** `c11e9edfda40c53d`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Your status within the Spynet gives you access to additional resources, and you know the best sources for restricted or rare items. With a successful DC 20 Gather Information check, you can purchase standard weapons, equipment, and transport services at 50% of the going rate, or exotic and restricted weapons, equipment, and transport services at 75% of the going rate.
+
+#### Knowledge Is Life
+
+- **Page:** 50
+- **Prerequisites:** Spynet Agent
+- **Quick summary:** As a swift action, you can designate a single target within line of sight and make a Knowledge (galactic lore) check against a DC equal to 15 + the target's CL.
+- **Production record:** `94aa0ef55bace440`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+As a swift action, you can designate a single target within line of sight and make a Knowledge (galactic lore) check against a DC equal to 15 + the target's CL. If the check is successful, for the remainder of the encounter you gain a +2 morale bonus to the defense score of your choice against that target.
+
+#### Knowledge Is Power
+
+- **Page:** 50
+- **Prerequisites:** Spynet Agent
+- **Quick summary:** As a swift action, you can designate a single target within your line of sight and make a Knowledge (galactic lore) check against a DC equal to 15 + the target's CL.
+- **Production record:** `cdf46b8cdde49733`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+As a swift action, you can designate a single target within your line of sight and make a Knowledge (galactic lore) check against a DC equal to 15 + the target's CL. If the check is successful, for the remainder of the encounter you score a critical hit against that target on a natural rol! of 19 or 20. If you have another ability that increases your weapon's critical range against that target (such as the elite trooper's extended critical range talent, or the Jedi Knight's Vaapad talent), you increase this range by 1 (for example, from 19-20 to 18-20). However, anything other than a natural 20 is not considered an automatic hit; if you roll anything other than a natural 20 and still miss the target, you do not score a critical hit.
+
+#### Knowledge Is Strength
+
+- **Page:** 50
+- **Prerequisites:** Spynet Agent
+- **Quick summary:** As a swift action, you can designate a single target within your line of sight and make a Knowledge (galactic lore} check against a DC equal to 15 + the target's CL.
+- **Production record:** `e2690af7f6700f95`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+As a swift action, you can designate a single target within your line of sight and make a Knowledge (galactic lore} check against a DC equal to 15 + the target's CL. If the check is successful, for the remainder of the encounter you gain a +2 morale bonus on attack rolls against that target.
+
+#### Six Questions
+
+- **Page:** 50
+- **Prerequisites:** Spynet Agent
+- **Quick summary:** You have mastered the basic Bothan philosophy of Six Questions to glean more information from contacts through fewer questions.
+- **Production record:** `46946e7208f1cf05`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+You have mastered the basic Bothan philosophy of Six Questions to glean more information from contacts through fewer questions. As a swift action, you can make a Knowledge (galactic lore) check against a DC equal to 15 + the target's CL. If the check is successful, you learn a target character's level, classes, and ability scores, and the target's available Force Points and Destiny Points.
+
+#### Spynet Agent
+
+- **Page:** 50
+- **Prerequisites:** Bothan species, or two talents from the Infiltration tree
+- **Quick summary:** You can use your Gather Information check modifier instead of your Knowledge (galactic lore) check modifier when making Knowledge (galactic lore) checks.
+- **Production record:** `648d9634a3795988`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+You can use your Gather Information check modifier instead of your Knowledge (galactic lore) check modifier when making Knowledge (galactic lore) checks. You are considered trained in the Knowledge (galactic lore) skill for the purpose of using this talent. If you are entitled to a Knowledge (galactic lore) reroll, you can reroll your Gather Information check instead (subject to the same circumstances and limitations).
+
+### Critical Master
+
+#### Deny Move
+
+- **Page:** 42
+- **Prerequisites:** Reduce Mobility
+- **Quick summary:** When you score a critical hit with a melee or ranged attack, your target cannot move on its next turn.
+- **Production record:** `72ccf7bbe3048453`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+When you score a critical hit with a melee or ranged attack, your target cannot move on its next turn.
+
+#### Extended Critical Range (heavy weapons)
+
+- **Page:** 42
+- **Prerequisites:** Base attack bonus +10, Weapon Proficiency (heavy weapons) feat
+- **Quick summary:** When you are using a heavy weapon, you extend the weapon's critical range by 1 (for example, 19-20 instead of 20).
+- **Production target:** `04985a42930dff2a`
+- **Phase 3B disposition:** `CREATE`
+
+**Canonical rules text**
+
+When you are using a heavy weapon, you extend the weapon's critical range by 1 (for example, 19-20 instead of 20). However, anything other than a natural 20 is not considered an automatic hit; if you roll anything other than a natural 20 and still miss the target, you do not score a critical hit.
+
+#### Extended Critical Range (rifles)
+
+- **Page:** 42
+- **Prerequisites:** Base attack bonus +10, Weapon Proficiency (rifles) feat
+- **Quick summary:** When you are using a rifle, you extend the weapon's critical range by 1 (for example, 19-20 instead of 20).
+- **Production record:** `141e1a07b365e0fd`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+When you are using a rifle, you extend the weapon's critical range by 1 (for example, 19-20 instead of 20). However, anything other than a natural 20 is not considered an automatic hit; if you roll anything other than a natural 20 and still miss the target, you do not score a critical hit.
+
+#### Flurry Attack
+
+- **Page:** 42
+- **Prerequisites:** Weapon Proficiency feat for chosen weapon
+- **Quick summary:** Choose a single weapon group or exotic weapon you are proficient with.
+- **Production record:** `9e2092257b53cd21`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Choose a single weapon group or exotic weapon you are proficient with. When you score a critical hit with a weapon from that group, you can make one immediate extra attack (in addition to the other effects of a critical hit) against a single target within range. You may only use this talent once per turn. You can select this talent multiple times. Its effects do not stack. Each time you take the talent, it applies to a new weapon group or exotic weapon.
+
+#### Knockback
+
+- **Page:** 42
+- **Prerequisites:** None.
+- **Quick summary:** When you score a critical hit against a target no more than two size categories larger than you are, you can choose to move that opponent 1 square in any direction as a free action.
+- **Production record:** `9d235eba6b3e5daf`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+When you score a critical hit against a target no more than two size categories larger than you are, you can choose to move that opponent 1 square in any direction as a free action. You cannot use this talent on an opponent that is being grabbed or grappled, and you cannot move your target into a solid object or another creature's fighting space.
+
+#### Reduce Defense
+
+- **Page:** 42
+- **Prerequisites:** None.
+- **Quick summary:** When you score a critical hit with a melee or ranged attack, your target takes a -2 penalty to Reflex Defense until it is fully healed (at maximum hit points).
+- **Production record:** `874ffa6b66cf2c37`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+When you score a critical hit with a melee or ranged attack, your target takes a -2 penalty to Reflex Defense until it is fully healed (at maximum hit points).
+
+#### Reduce Mobility
+
+- **Page:** 42
+- **Prerequisites:** None.
+- **Quick summary:** When you score a critical hit with a melee or ranged attack, you reduce the target's speed by half until it is fully healed (at maximum hit points).
+- **Production record:** `c80edefd9c32ad02`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+When you score a critical hit with a melee or ranged attack, you reduce the target's speed by half until it is fully healed (at maximum hit points).
+
+### Enforcement
+
+#### Cover Bracing
+
+- **Page:** 45
+- **Prerequisites:** None.
+- **Quick summary:** You can brace a weapon set on autofire as a single swift action (instead of two) if you are adjacent to an object (including walls, barriers, and vehicles) that provides you with cover from all of the target squares.
+- **Production record:** `c59e7eba84e6d4eb`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+You can brace a weapon set on autofire as a single swift action (instead of two) if you are adjacent to an object (including walls, barriers, and vehicles) that provides you with cover from all of the target squares.
+
+#### Intentional Crash
+
+- **Page:** 45
+- **Prerequisites:** Trained in the Pilot skill
+- **Quick summary:** You know how to intentionally crash an opponent's moving vehicle.
+- **Production record:** `226b0a05cebd81ab`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+You know how to intentionally crash an opponent's moving vehicle. When you successfully deal damage to a vehicle by ramming it, your vehicle takes half damage from the ram. Additionally, if the target vehicle is the same size as your vehicle or smaller, that vehicle cannot move in the following round.
+
+#### Nonlethal Tactics
+
+- **Page:** 45
+- **Prerequisites:** None.
+- **Quick summary:** When you are using a ranged weapon set to stun, stun grenades, nets, or stun batons, you gain a +1 bonus on your attack roll and deal +1 die of stun damage.
+- **Production record:** `475fef43d75f3bff`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+When you are using a ranged weapon set to stun, stun grenades, nets, or stun batons, you gain a +1 bonus on your attack roll and deal +1 die of stun damage.
+
+#### Pursuit
+
+- **Page:** 45
+- **Prerequisites:** Dexterity 13
+- **Quick summary:** When running, you are not restricted to a straight line (see “Endurance,” page 66 of the Saga Edition core rulebook) and you can reroll Endurance checks, using the better result, while running.
+- **Production record:** `25f285b1cf4cff35`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+When running, you are not restricted to a straight line (see “Endurance,” page 66 of the Saga Edition core rulebook) and you can reroll Endurance checks, using the better result, while running.
+
+#### Respected Officer
+
+- **Page:** 45
+- **Prerequisites:** None.
+- **Quick summary:** You have a reputation that causes allies and enemies to treat you with respect.
+- **Production record:** `8488911915ea094d`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+You have a reputation that causes allies and enemies to treat you with respect. You automatically improve the attitude of an indifferent character to friendly with no check required (see “Persuasion,” page 71 of the Saga Edition core rulebook).
+
+#### Slowing Stun
+
+- **Page:** 45
+- **Prerequisites:** None.
+- **Quick summary:** When you move a target at least -1 step along the condition track with an attack, its speed is halved until all conditions are removed.
+- **Production record:** `fa20a7209820d512`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+When you move a target at least -1 step along the condition track with an attack, its speed is halved until all conditions are removed.
+
+#### Takedown
+
+- **Page:** 45
+- **Prerequisites:** None.
+- **Quick summary:** When you successfully make a melee attack and deal damage at the end of a charge, you knock your target prone as well, provided your opponent is no more than one size category larger than you.
+- **Production record:** `fbac177b74fcea09`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+When you successfully make a melee attack and deal damage at the end of a charge, you knock your target prone as well, provided your opponent is no more than one size category larger than you.
+
+### Ideologue
+
+#### Instruction
+
+- **Page:** 25
+- **Prerequisites:** None.
+- **Quick summary:** Once per encounter, as a standard action, you can boost the competence of one of your allies within 6 squares.
+- **Production record:** `b37ac074a7e8de58`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Once per encounter, as a standard action, you can boost the competence of one of your allies within 6 squares. That individual gains the ability to make a single skill check using your skill modifier (except Use the Force); this skill check must be made before the end of the encounter, or the benefit is lost. You can select this talent multiple times. Each time you do so, you gain one additional use of this talent per encounter.
+
+#### Idealist
+
+- **Page:** 25
+- **Prerequisites:** Charisma 13
+- **Quick summary:** Your confidence empowers you, giving you the ability to withstand the harmful influence of others.
+- **Production record:** `e8922370838f2965`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Your confidence empowers you, giving you the ability to withstand the harmful influence of others. You can add your Charisma bonus in place of your Wisdom bonus to your Will Defense.
+
+#### Know Your Enemy
+
+- **Page:** 25
+- **Prerequisites:** None.
+- **Quick summary:** You are well versed in the strengths and weaknesses of enemies of your cause.
+- **Production record:** `72cfc8816ea3ebf5`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+You are well versed in the strengths and weaknesses of enemies of your cause. As a swift action, you can select a single enemy within line of sight and make a Knowledge (galactic lore) check against a DC equal to 15 + the target's CL. If the check is successful, you immediately learn any two (your choice) of the following pieces of information: target's base attack bonus or attack bonus with a particular weapon, any one defense Score, any one skill modifier, or the presence of any one talent or feat (you choose the talent or feat, and the Gamemaster reveals whether or not it is present).
+
+#### Known Dissident
+
+- **Page:** 25
+- **Prerequisites:** Know Your Enemy
+- **Quick summary:** You are a well-known opponent of a large and influential government or organization (such as the Empire or the Corporate Sector Authority).
+- **Production record:** `e15adb60be0dda02`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+You are a well-known opponent of a large and influential government or organization (such as the Empire or the Corporate Sector Authority). Officials of any level are loath to take action against you, lest they inadvertently promote your cause. As a standard action, you can make a Persuasion check against the Will Defense of a single opponent within line of sight that can hear and understand you. If your Persuasion check succeeds, that opponent may not attack you or any vehicle you occupy until the start of your next turn. If the target is of higher level than you, it gains a +5 bonus to its Will Defense, and the target must be able to hear and understand you. If the target is attacked, the effect of this talent ends. This is a mind-affecting effect.
+
+#### Lead by Example
+
+- **Page:** 25
+- **Prerequisites:** None.
+- **Quick summary:** Your bravery and skill inspires others to follow your lead.
+- **Production record:** `2455d85114f52830`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Your bravery and skill inspires others to follow your lead. Once per encounter, when you successfully deal damage to an enemy, you can choose to grant all allies a +1 circumstance bonus on attack rolls and +1 die of damage on non-area attacks against that target for the remainder of the encounter.
+
+### Imperial Inquisitor
+
+#### Cower Enemies
+
+- **Page:** 42
+- **Prerequisites:** Force Interrogation
+- **Quick summary:** When you use the Persuasion skill to intimidate, you can intimidate all targets in a 6-square cone (originating from your square) instead of intimidating a single target.
+- **Production record:** `0e36a04342959256`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+When you use the Persuasion skill to intimidate, you can intimidate all targets in a 6-square cone (originating from your square) instead of intimidating a single target. All other limitations to the intimidation use of the Persuasion skill still apply.
+
+#### Force Interrogation
+
+- **Page:** 43
+- **Prerequisites:** None.
+- **Quick summary:** When you deal damage to one or more creatures by using a Force power, you can immediately make a Persuasion check as a free action to intimidate a single target you damaged.
+- **Production record:** `2acaa4620d396fe9`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+When you deal damage to one or more creatures by using a Force power, you can immediately make a Persuasion check as a free action to intimidate a single target you damaged.
+
+#### Inquisition
+
+- **Page:** 43
+- **Prerequisites:** None.
+- **Quick summary:** You are particularly adept at dealing with Force-sensitive foes.
+- **Production record:** `76ff0ba56aa3864b`
+- **Phase 3B disposition:** `UPDATE_METADATA`
+
+**Canonical rules text**
+
+You are particularly adept at dealing with Force-sensitive foes. You gain a +1 bonus on attack rolls and deal +1 die of damage against targets that have the Force Sensitivity feat.
+
+#### Unsettling Presence
+
+- **Page:** 43
+- **Prerequisites:** Force Interrogation
+- **Quick summary:** You can spend a Force Point as a standard action to create an aura of unsettling discomfort around you.
+- **Production record:** `dd488c2dc43d14ab`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+You can spend a Force Point as a standard action to create an aura of unsettling discomfort around you. You make a Use the Force check when you activate this talent and compare the check result to the Will Defense of any creature that comes within 6 squares of you. If your Use the Force check result exceeds the creature's Will Defense, that target takes a -2 penalty on attack rolls and skill checks while within 6 squares of you. This aura lasts for the remainder of the encounter.
+
+### Infiltration
+
+#### Always Ready
+
+- **Page:** 49
+- **Prerequisites:** Trained in the Initiative skill
+- **Quick summary:** You are accustomed to operating in response to enemy actions.
+- **Production record:** `49f6a9ed0c91f847`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+You are accustomed to operating in response to enemy actions. When your readied action is triggered, it does not change your initiative count (see page 162 of the Saga Edition core rulebook).
+
+#### Concealed Weapon Expert
+
+- **Page:** 49
+- **Prerequisites:** None.
+- **Quick summary:** You are deadly with an unarmed strike, hold-out blaster, dagger, or vibrodagger or other small, concealable weapon (as determined by the Gamemaster).
+- **Production record:** `59b2b90ad0ae8eb8`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+You are deadly with an unarmed strike, hold-out blaster, dagger, or vibrodagger or other small, concealable weapon (as determined by the Gamemaster). Once per round you can use a swift action to reroll an attack using one of these weapons, but you must take the second result, even if it is worse.
+
+#### Creeping Approach
+
+- **Page:** 49
+- **Prerequisites:** Trained in the Stealth skill
+- **Quick summary:** As a swift action, you can designate a single opponent within 12 squares that is unaware of you as the target of this talent.
+- **Production record:** `2931a9052148e79a`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+As a swift action, you can designate a single opponent within 12 squares that is unaware of you as the target of this talent. Until the beginning of your next turn, that target may not make Perception checks to notice you, even if you enter the target's line of sight. If you or any of your allies attack the target, the effect of this talent ends.
+
+#### Set for Stun
+
+- **Page:** 49
+- **Prerequisites:** None.
+- **Quick summary:** You are particularly adept with stun weapons.
+- **Production record:** `878d89b7232413cf`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+You are particularly adept with stun weapons. If you are using a ranged weapon that deals stun damage (including a lethal weapon set to stun), you can spend two consecutive swift actions in the same round to activate this talent. If the stun damage on your next attack exceeds the target's damage threshold, you move the target -3 steps along the condition track instead of the normal -2. You lose the benefit of this talent if you lose line of sight to your target or if you take any other action before making your attack.
+
+#### Silent Takedown
+
+- **Page:** 49
+- **Prerequisites:** Trained in the Stealth skill
+- **Quick summary:** You are skilled at quietly knocking out or eliminating guards and others when they are caught unaware.
+- **Production record:** `b1960cbc28776a53`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+You are skilled at quietly knocking out or eliminating guards and others when they are caught unaware. If you damage an opponent that is unaware of you, that opponent cannot speak or make other noises until the end of your next turn. This is a stunning effect.
+
+### Mercenary
+
+#### Commanding Presence
+
+- **Page:** 28
+- **Prerequisites:** None.
+- **Quick summary:** Once per encounter, you can activate this talent as a swift action.
+- **Production record:** `438e13c99c7b53a6`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Once per encounter, you can activate this talent as a swift action. Until the end of the encounter, all your enemies within 6 squares of you take a -2 penalty to their Will Defense. This is a mind-affecting fear effect. Additionally, Persuasion is now considered a class skill for you.
+
+#### Dirty Fighting
+
+- **Page:** 28
+- **Prerequisites:** None.
+- **Quick summary:** Once per encounter, if you successfully damage an opponent with a melee or ranged attack, you reduce the target's damage threshold by 2 for the remainder of the encounter.
+- **Production record:** `c07b6c68e715b9ff`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Once per encounter, if you successfully damage an opponent with a melee or ranged attack, you reduce the target's damage threshold by 2 for the remainder of the encounter.
+
+#### Feared Warrior
+
+- **Page:** 29
+- **Prerequisites:** Commanding Presence
+- **Quick summary:** Your abilities on the battlefield are well known and feared.
+- **Production record:** `cfd5d3f677b2bf1a`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Your abilities on the battlefield are well known and feared. When you reduce an enemy to 0 hit points with an attack, you can make a Persuasion check as a free action against all targets within 6 squares. Jf your Persuasion check exceeds a target's Will Defense, that target takes a -2 penalty on attack rolls for the remainder of the encounter. This talent affects any given target only once per encounter. This is a mind-affecting fear effect.
+
+#### Focused Warrior
+
+- **Page:** 29
+- **Prerequisites:** None.
+- **Quick summary:** Your training makes you confident and disciplined in combat.
+- **Production record:** `42f9f503f5e26de7`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Your training makes you confident and disciplined in combat. When you successfully deal damage to an opponent in combat, you gain a +5 morale bonus to Will Defense until the start of your next turn. You lose this bonus to Will Defense if you are surprised or flat-footed for any reason.
+
+#### Ruthless
+
+- **Page:** 29
+- **Prerequisites:** Dirty Fighting
+- **Quick summary:** When you deal damage to a target with a melee or ranged attack roll that exceeds the target's damage threshold, you gain a +2 bonus on damage rolls against that target for the remainder of the encounter.
+- **Production record:** `adfb725d20faade5`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+When you deal damage to a target with a melee or ranged attack roll that exceeds the target's damage threshold, you gain a +2 bonus on damage rolls against that target for the remainder of the encounter.
+
+### Privateer
+
+#### Armored Spacer
+
+- **Page:** 52
+- **Prerequisites:** None.
+- **Quick summary:** You can use armored spacesuits as if you had the Armor Proficiency (heavy) feat.
+- **Production record:** `0bf26c4fb8622e0b`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+You can use armored spacesuits as if you had the Armor Proficiency (heavy) feat.
+
+#### Attract Privateer
+
+- **Page:** 52
+- **Prerequisites:** None.
+- **Quick summary:** You attract a loyal privateer lieutenant.
+- **Production record:** `7a049ee1ecc3891b`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+You attract a loyal privateer lieutenant. The privateer is a nonheroic character who has a class level equal to three-quarters of your character level, rounded down. You can select this talent multiple times. Each time you do so, you gain another privateer. Each privateer who accompanies you on an adventure is entitled to an equal share of the total experience points earned for the adventure. For example, a privateer who accompanies a party of five heroes on an adventure receives one-sixth of the XP that the group earns.
+
+#### Blaster and Blade I
+
+- **Page:** 52
+- **Prerequisites:** Dual Weapon Mastery I feat, Weapon Proficiency (advanced melee weapons, pistols) feats
+- **Quick summary:** After a standard-action attack with an advanced melee weapon, make a pistol attack as a free action while wielding both weapons.
+- **Production record:** `976c36831fecbd2b`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+When you make a single attack with an advanced melee weapon as a standard action, you can immediately make an attack with a pistol as a free action, provided you have both the advanced melee weapon and the pistol in your hands when the melee attack is made. You apply the normal penalties for fighting with two weapons to both of these attacks.
+
+#### Blaster and Blade II
+
+- **Page:** 52
+- **Prerequisites:** Blaster and Blade I, Dual Weapon Mastery I feat, Weapon Proficiency (advanced melee weapons, pistols) feats
+- **Quick summary:** When you are wielding both an advanced melee weapon and a pistol, you treat the advanced melee weapon as though you were wielding it two-handed (including doubling your Strength bonus on damage rolls).
+- **Production record:** `5e895be4051e1408`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+When you are wielding both an advanced melee weapon and a pistol, you treat the advanced melee weapon as though you were wielding it two-handed (including doubling your Strength bonus on damage rolls).
+
+#### Blaster and Blade III
+
+- **Page:** 52
+- **Prerequisites:** Blaster and Blade I, Blaster and Blade II, Dual Weapon Mastery I feat, Weapon Proficiency (advanced melee weapons, pistols) feats
+- **Quick summary:** When you are wielding both an advanced melee weapon and a pistol, you can make a full attack as a standard action instead of a full-round action, provided you attack with both weapons.
+- **Production record:** `584bf5a0f7381648`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+When you are wielding both an advanced melee weapon and a pistol, you can make a full attack as a standard action instead of a full-round action, provided you attack with both weapons.
+
+#### Boarder
+
+- **Page:** 52
+- **Prerequisites:** None.
+- **Quick summary:** You are skilled at boarding hostile vessels.
+- **Production record:** `34669d959223b187`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+You are skilled at boarding hostile vessels. You ignore cover (but not improved cover) with your character-scale ranged attacks while aboard a Starship or space station.
+
+#### Ion Mastery
+
+- **Page:** 52
+- **Prerequisites:** None.
+- **Quick summary:** You know the typical weaknesses of vehicles and droids, and you know how to preserve such targets for capture rather than destroying them.
+- **Production record:** `df9c25340dcb7c95`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+You know the typical weaknesses of vehicles and droids, and you know how to preserve such targets for capture rather than destroying them. When attacking with ion weapons, you gain a +1 bonus on attack rolls and deal +1 die of ion damage.
+
+#### Multiattack Proficiency (advanced melee weapons)
+
+- **Page:** 52
+- **Prerequisites:** None.
+- **Quick summary:** When you make multiple attacks with any type of advanced melee weapon as a full attack action, you lessen the penalty on your attack rolls by 2.
+- **Production target:** `d7ba5fb8b677a2f4`
+- **Phase 3B disposition:** `CREATE`
+
+**Canonical rules text**
+
+When you make multiple attacks with any type of advanced melee weapon as a full attack action, you lessen the penalty on your attack rolls by 2. You can take this talent multiple times. Each time you do so, you lessen the penalty on your attack rolls by an additional 2.
+
+#### Preserving Shot
+
+- **Page:** 52
+- **Prerequisites:** None.
+- **Quick summary:** When a vehicle-weapon hit would destroy a vehicle, instead deal half damage, move it -1 condition step, and disable its sublight engines and hyperdrive.
+- **Production record:** `a594f0b9ff786a6c`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+When you deal damage with a vehicle weapon that is equal to or greater than both the target vehicle's current hit points and the target vehicle's damage threshold (that is, when you would deal enough damage to destroy the target vehicle), you can choose to use this talent. Instead of dealing full damage, you instead deal half damage to your target and move it -1 step along on the condition track. In addition, you disable the ship's sublight engines and hyperdrive. The ship cannot move or make a jump to lightspeed until it has received repairs (through use of the repair object application of the Mechanics skill).
+
+### Sabotage
+
+#### Device Jammer
+
+- **Page:** 56
+- **Prerequisites:** None.
+- **Quick summary:** You can construct a short-range jammer that affects a specific type of electronic device such as a personal shield generator, comlink, computer, or datapad.
+- **Production record:** `5db4343762664d95`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+You can construct a short-range jammer that affects a specific type of electronic device such as a personal shield generator, comlink, computer, or datapad. As a full-round action, you select a particular piece of equipment (any object except a droid, vehicle, or weapon) and make a DC 20 Mechanics check. If the check is successful, all devices of the chosen type cease to function while within 12 squares of your position for the remainder of the encounter. You may only have one jammer (device or droid) active at a time.
+
+#### Droid Jammer
+
+- **Page:** 56
+- **Prerequisites:** None.
+- **Quick summary:** You can construct a short-range jammer that affects droids.
+- **Production record:** `80a24150fd2f3163`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+You can construct a short-range jammer that affects droids. As a full-round action, you make a Mechanics check to build the jammer. When a droid comes within 6 squares of you, compare the result of your Mechanics check to the droid’s Will Defense. If your check result equals or exceeds the droid’s Will Defense, the droid can take only swift actions as long as it remains within the radius of the jammer. Droids that are immune to the effect of a restraining bolt are immune to the effect of this talent. The jammer functions for the remainder of the encounter. You may only have one jammer (device or droid) active at a time.
+
+#### Extreme Explosion
+
+- **Page:** 57
+- **Prerequisites:** Skilled Demolitionist, Shaped Explosion
+- **Quick summary:** You know how to set large charges and use dozens of charges for extremely large explosions.
+- **Production record:** `ddf81a7bb146ed87`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+You know how to set large charges and use dozens of charges for extremely large explosions. You increase the blast radius of any mines or explosives by 1 square.
+
+#### Mine Mastery
+
+- **Page:** 57
+- **Prerequisites:** None.
+- **Quick summary:** You can place a mine as a standard action instead of a full-round action.
+- **Production record:** `9ceea9d860aab046`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+You can place a mine as a standard action instead of a full-round action.
+
+#### Shaped Explosion
+
+- **Page:** 57
+- **Prerequisites:** Skilled Demolitionist
+- **Quick summary:** You know how to set charges to direct a blast in a specific direction or manner.
+- **Production record:** `7ab4fcbe5a8b7714`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+You know how to set charges to direct a blast in a specific direction or manner. You can shape an explosion caused by explosives or mines that you set into a line or a cone instead of a radius. The length of the line is equal to 2 x the radius of the explosive blast, the length of the cone is equal to 3 x the radius of the blast, and either the line or the cone originates from the square where the explosives are placed.
+
+#### Skilled Demolitionist
+
+- **Page:** 57
+- **Prerequisites:** None.
+- **Quick summary:** You can set a detonator as a swift action, and your explosives never go off as the detonator is being placed, even if you fail the check by 10 or more.
+- **Production record:** `c3a67c14c713a7a3`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+You can set a detonator as a swift action, and your explosives never go off as the detonator is being placed, even if you fail the check by 10 or more. You must still roll to determine if the charge otherwise goes off as planned (see “Mechanics,” page 69 of the Saga Edition core rulebook).
+
+### Smuggling
+
+#### Art of Concealment
+
+- **Page:** 27
+- **Prerequisites:** None.
+- **Quick summary:** Some smugglers are adept at hiding contraband and weapons, even on their person.
+- **Production record:** `64cfde2d0cf6c523`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Some smugglers are adept at hiding contraband and weapons, even on their person. When making a Stealth check to conceal an item, you can take 10 even under pressure. Additionally, you can conceal an item as a swift action.
+
+#### Fast Talker
+
+- **Page:** 27
+- **Prerequisites:** Art of Concealment
+- **Quick summary:** Smugglers must be quick to explain discrepancies in their cover stories.
+- **Production record:** `eeed98748becb161`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Smugglers must be quick to explain discrepancies in their cover stories. Once per day, you can take 20 on a Deception check as a standard action when attempting to deceive.
+
+#### Hidden Weapons
+
+- **Page:** 27
+- **Prerequisites:** Art of Concealment
+- **Quick summary:** If you draw a concealed weapon and attack a target that failed to notice the item in the same round, that target is considered flat-footed against you.
+- **Production record:** `234f9d660d14220c`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+If you draw a concealed weapon and attack a target that failed to notice the item in the same round, that target is considered flat-footed against you. You can draw a concealed item or a stowed item as a move action, Additionally, if you have the Quick Draw feat, you can reduce this to a swift action.
+
+#### Illicit Dealings
+
+- **Page:** 27
+- **Prerequisites:** None.
+- **Quick summary:** Smugglers have a knack for locating and negotiating illicit deals.
+- **Production record:** `0681e1ea8e72f362`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Smugglers have a knack for locating and negotiating illicit deals. When using Persuasion to haggle for restricted, military, or illegal goods you may roll twice, keeping the better result.
+
+#### Surprise Strike
+
+- **Page:** 27
+- **Prerequisites:** None.
+- **Quick summary:** Sometimes a smuggler has to fight his way out of a bad situation.
+- **Production record:** `b92e61669b29d090`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Sometimes a smuggler has to fight his way out of a bad situation. If you fail any Deception check to convey deceptive information, you can initiate combat and make a single unarmed attack as a free action in the surprise round (or with a melee or ranged weapon, if you have the Quick Draw feat); all other combatants are considered surprised even if they are aware of you.
+
+### Specialized Droid
+
+#### Computer Language
+
+- **Page:** 47
+- **Prerequisites:** Must know the Binary language
+- **Quick summary:** You can use your Persuasion modifier instead of your Use Computer modifier when making Use Computer checks.
+- **Production target:** `662eb601a2686349`
+- **Phase 3B disposition:** `CREATE`
+
+**Canonical rules text**
+
+You can use your Persuasion modifier instead of your Use Computer modifier when making Use Computer checks. You are considered trained in the Use Computer skill for the purpose of using this talent. If you are entitled to a Use Computer check reroll, you can reroll your Persuasion check instead (subject to the same circumstances and limitations).
+
+#### Computer Master
+
+- **Page:** 47
+- **Prerequisites:** None.
+- **Quick summary:** You can reroll any opposed Use Computer check, using the better result.
+- **Production target:** `8d7cbcbbf1dc58bb`
+- **Phase 3B disposition:** `CREATE`
+
+**Canonical rules text**
+
+You can reroll any opposed Use Computer check, using the better result.
+
+#### Enhanced Manipulation
+
+- **Page:** 47
+- **Prerequisites:** Dexterity 15
+- **Quick summary:** You have improved appendage manipulation routines.
+- **Production target:** `37cdbac0dee1b93a`
+- **Phase 3B disposition:** `CREATE`
+
+**Canonical rules text**
+
+You have improved appendage manipulation routines. You can take 10 when making any Dexterity-based skill check, even if you are threatened or would not normally be able to take 10.
+
+#### Hotwired Processor
+
+- **Page:** 47
+- **Prerequisites:** None.
+- **Quick summary:** You gain temporary processing power, enhancing your mental attributes.
+- **Production target:** `e9a5fe40ce95a053`
+- **Phase 3B disposition:** `CREATE`
+
+**Canonical rules text**
+
+You gain temporary processing power, enhancing your mental attributes. When you hotwire your processor (a swift action), you gain a +5 circumstance bonus on Intelligence- and Wisdom-based skill checks and a +1 circumstance bonus on ranged attack rolls. A hotwiring lasts for a number of rounds equal to one-haIf your level (rounded down). When the hotwiring ends, you move -1 persistent step along the condition track. The penalties imposed by this condition persist until you receive repairs (using the repair droid application of the Mechanics skill).
+
+#### Power Surge
+
+- **Page:** 48
+- **Prerequisites:** None.
+- **Quick summary:** You temporarily surge your power systems to enhance your physical abilities.
+- **Production record:** `77d09ca0a54f4c36`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+You temporarily surge your power systems to enhance your physical abilities. When you initiate a power surge (a swift action), you gain a +1 circumstance bonus on melee attack rolls, +1 die of damage on melee damage rolls, and an increase of 2 squares to your speed. A power surge lasts for a number of rounds equal to one-haIf your level (rounded down). At the end of a power surge, you move -1 persistent step along the condition track. The penalties imposed by this condition persist until you receive repairs (using the repair droid application of the Mechanics skill).
+
+#### Skill Conversion
+
+- **Page:** 48
+- **Prerequisites:** None.
+- **Quick summary:** When you reprogram yourself, you can sacrifice a single trained skill for a bonus Skill Focus feat.
+- **Production target:** `3d17761d072eeb53`
+- **Phase 3B disposition:** `CREATE`
+
+**Canonical rules text**
+
+When you reprogram yourself, you can sacrifice a single trained skill for a bonus Skill Focus feat. You must meet the prerequisites for the feat (you must be trained in the skill you choose to gain Skill Focus for), and you can do this only once per reprogramming.
+
+### Spy
+
+#### Blend In
+
+- **Page:** 28
+- **Prerequisites:** None.
+- **Quick summary:** You know the tricks of body language and movement that allow you to disguise your appearance without elaborate materials or efforts.
+- **Production record:** `a18d67d9fd947f68`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+You know the tricks of body language and movement that allow you to disguise your appearance without elaborate materials or efforts. You can use your Stealth modifier in place of your Deception modifier for the purpose of creating a deceptive appearance. You are considered trained in the Deception skill for the purpose of using this talent. If you are entitled to a Deception check reroll, you can reroll your Stealth check instead (subject to the same circumstances and conditions).
+
+#### Incognito
+
+- **Page:** 28
+- **Prerequisites:** Blend In
+- **Quick summary:** Spies are adept at concealing their identities, even if not using a physical disguise.
+- **Production record:** `55988579a1906e5e`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Spies are adept at concealing their identities, even if not using a physical disguise. You can reroll your Deception check for the purpose of creating a deceptive appearance, using the better result.
+
+#### Improved Surveillance
+
+- **Page:** 28
+- **Prerequisites:** Surveillance, trained in the Perception skill
+- **Quick summary:** When you successfully use the Surveillance talent, you grant yourself and your allies a +1 insight bonus to all defenses against that target.
+- **Production record:** `8070dbbea2886bbd`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+When you successfully use the Surveillance talent, you grant yourself and your allies a +1 insight bonus to all defenses against that target.
+
+#### Intimate Knowledge
+
+- **Page:** 28
+- **Prerequisites:** Surveillance
+- **Quick summary:** Experienced spies and scouts remember many details from previous assignments, providing insights on later missions.
+- **Production record:** `a810b68876f7e44e`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Experienced spies and scouts remember many details from previous assignments, providing insights on later missions. Once per encounter as a standard action, you can take 20 on a check involving a Knowledge skill you are trained in, or take 10 on a check involving a Knowledge skill you are untrained in, even if circumstances would not normally allow you to take 10 or 20.
+
+#### Surveillance
+
+- **Page:** 28
+- **Prerequisites:** Trained in the Perception skill
+- **Quick summary:** As a full-round action, you can make a Perception check against a single target within line of sight.
+- **Production record:** `f23b63464e0aeff7`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+As a full-round action, you can make a Perception check against a single target within line of sight. The DCs equal to 15 or the target's Stealth check result (if the target is actively trying to remain hidden), whichever is greater. If the check is successful, you grant yourself and all allies within line of sight a +2 insight bonus on attack rolls against that target until the end of your next turn. Your allies must be able to hear and understand you to benefit from this bonus, and they do not lose the benefit of this talent if they move out of line of sight after it is used.
+
+#### Traceless Tampering
+
+- **Page:** 28
+- **Prerequisites:** None.
+- **Quick summary:** Spies specialize in leaving no evidence of their presence when they tamper with advanced electronics or basic mechanical systems.
+- **Production record:** `9215a487a59862f3`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Spies specialize in leaving no evidence of their presence when they tamper with advanced electronics or basic mechanical systems. When using Mechanics to disable a device, you automatically leave no trace when tampering (with no DC increase), and you must fail by 10 or more (instead of 5 or more) before something goes wrong.
+
+### Turret
+
+#### Blaster Turret I
+
+- **Page:** 57
+- **Prerequisites:** None.
+- **Quick summary:** Once per encounter, as standard action you can create a blaster turret (Size Tiny, Initiative +4, Perception +4, Reflex Defense 10, 10 hp, Threshold 8) that can be mounted to any flat surface.
+- **Production record:** `7b56d0b92582ae88`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Once per encounter, as standard action you can create a blaster turret (Size Tiny, Initiative +4, Perception +4, Reflex Defense 10, 10 hp, Threshold 8) that can be mounted to any flat surface. The turret fires as a standard blaster pistol once per round, using your base attack bonus plus your Intelligence bonus and dealing 3d6 points of damage. The turret fires at any target you designate (a free action, once per round on your turn), though you must remain adjacent to the turret to control it. The turret is expended at the end of the encounter.
+
+#### Blaster Turret II
+
+- **Page:** 57
+- **Prerequisites:** Blaster Turret I
+- **Quick summary:** Your turret’s capabilities increase in the following ways: Initiative +8, Perception +8, Reflex Defense 12, 15 hp, Threshold 10, and the turret deals 3d8 points of damage.
+- **Production record:** `1b1f818e56956bc5`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Your turret’s capabilities increase in the following ways: Initiative +8, Perception +8, Reflex Defense 12, 15 hp, Threshold 10, and the turret deals 3d8 points of damage. The turret can be directed by remote control at a range of 12 squares.
+
+#### Blaster Turret III
+
+- **Page:** 57
+- **Prerequisites:** Blaster Turret I, Blaster Turret II
+- **Quick summary:** Your turret gains the ability to fire twice per round, with a -5 penalty on each attack roll, and gains DR 5.
+- **Production record:** `aa2a3697eeab3e35`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Your turret gains the ability to fire twice per round, with a -5 penalty on each attack roll, and gains DR 5.
+
+#### Ion Turret
+
+- **Page:** 57
+- **Prerequisites:** Blaster Turret I
+- **Quick summary:** You can construct a turret that is highly effective against droids.
+- **Production record:** `c2f332d1e74e3e1a`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+You can construct a turret that is highly effective against droids. The turret deals ion damage instead of normal damage.
+
+#### Stun Turret
+
+- **Page:** 57
+- **Prerequisites:** Blaster Turret I
+- **Quick summary:** You can construct a nonlethal turret.
+- **Production record:** `8a551fd42b051d0e`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+You can construct a nonlethal turret. The turret deals stun damage instead of normal damage.
+
+#### Turret Self-Destruct
+
+- **Page:** 57
+- **Prerequisites:** Blaster Turret I
+- **Quick summary:** Your turret self-destructs automatically when it reaches 0 hit points.
+- **Production record:** `17ec736c3984fe43`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Your turret self-destructs automatically when it reaches 0 hit points. It explodes in a 2-square radius, dealing its normal damage.!f you are adjacent to the turret, you can disable this feature as a reaction.
+
+### 1stdegree Droid
+
+#### Dull the Pain
+
+- **Page:** 102
+- **Prerequisites:** Medical Droid
+- **Quick summary:** As a full-round action, you can make a DC 15 Treat Injury check on an adjacent living creature to move it +1 step along the condition track.
+- **Production target:** `d32459fe16029f2a`
+- **Phase 3B disposition:** `CREATE`
+
+**Canonical rules text**
+
+As a full-round action, you can make a DC 15 Treat Injury check on an adjacent living creature to move it +1 step along the condition track.
+
+#### Interrogator
+
+- **Page:** 102
+- **Prerequisites:** None.
+- **Quick summary:** You can create an aura of unliving, emotionless menace that no biological creature can match, and combine it with the cruel application of medical knowledge.
+- **Production target:** `aab9d63888f12dba`
+- **Phase 3B disposition:** `CREATE`
+
+**Canonical rules text**
+
+You can create an aura of unliving, emotionless menace that no biological creature can match, and combine it with the cruel application of medical knowledge. You can use your Treat Injury modifier on a Persuasion check to change attitude or intimidate. You must be adjacent to your target to use this ability, in addition to the normal requirements for these uses of the Persuasion skill.
+
+#### Medical Droid
+
+- **Page:** 102
+- **Prerequisites:** None.
+- **Quick summary:** When you use a medpac to perform first aid with the Treat Injury skill, the creature gains 2 hit points for every point by which your check exceeds the DC (rather than the normal 1 hit point).
+- **Production record:** `97faaefe3487494c`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+When you use a medpac to perform first aid with the Treat Injury skill, the creature gains 2 hit points for every point by which your check exceeds the DC (rather than the normal 1 hit point).
+
+### 2nddegree Droid
+
+#### Adept Assistant
+
+- **Page:** 102
+- **Prerequisites:** None.
+- **Quick summary:** When you successfully aid another character on a Mechanics, Pilot, or Use Computer check, you add +5 to the check result (rather than the normal +2).
+- **Production target:** `7cbae1f695df81c5`
+- **Phase 3B disposition:** `CREATE`
+
+**Canonical rules text**
+
+When you successfully aid another character on a Mechanics, Pilot, or Use Computer check, you add +5 to the check result (rather than the normal +2).
+
+#### Mechanics Mastery
+
+- **Page:** 102
+- **Prerequisites:** None.
+- **Quick summary:** You can always take 10 on a Mechanics check, even if distractions or hazardous circumstances would normally prevent you from doing so.
+- **Production target:** `88d01facdd76940e`
+- **Phase 3B disposition:** `CREATE`
+
+**Canonical rules text**
+
+You can always take 10 on a Mechanics check, even if distractions or hazardous circumstances would normally prevent you from doing so.
+
+#### Vehicle Mechanic
+
+- **Page:** 102
+- **Prerequisites:** None.
+- **Quick summary:** Once per day you can spend three swift actions in successive rounds to make a DC 20 Mechanics check to restore 1d8 hit points to a vehicle and move it +1 step along the condition track.
+- **Production target:** `5ea7a0fd9015b29c`
+- **Phase 3B disposition:** `CREATE`
+
+**Canonical rules text**
+
+Once per day you can spend three swift actions in successive rounds to make a DC 20 Mechanics check to restore 1d8 hit points to a vehicle and move it +1 step along the condition track. You also restore 1 hit point to the vehicle for every paint by which you exceed the Mechanics check DC.
+
+### 3rddegree Droid
+
+#### Etiquette
+
+- **Page:** 103
+- **Prerequisites:** None.
+- **Quick summary:** When you succeed on a Persuasion check to change attitude, you adjust the target's attitude by one additional step.
+- **Production target:** `9a0c74195f3d4ac3`
+- **Phase 3B disposition:** `CREATE`
+
+**Canonical rules text**
+
+When you succeed on a Persuasion check to change attitude, you adjust the target's attitude by one additional step.
+
+#### Helpful
+
+- **Page:** 103
+- **Prerequisites:** None.
+- **Quick summary:** Once per turn you can use the aid another action to assist any adjacent ally on a skill check as a swift action instead of a standard action.
+- **Production target:** `342fd105ca6369c7`
+- **Phase 3B disposition:** `CREATE`
+
+**Canonical rules text**
+
+Once per turn you can use the aid another action to assist any adjacent ally on a skill check as a swift action instead of a standard action.
+
+#### Protocol
+
+- **Page:** 103
+- **Prerequisites:** None.
+- **Quick summary:** You always succeed on attempts to aid another on Deception, Knowledge, and Persuasion checks (no check required).
+- **Production target:** `058898a456a9a8fb`
+- **Phase 3B disposition:** `CREATE`
+
+**Canonical rules text**
+
+You always succeed on attempts to aid another on Deception, Knowledge, and Persuasion checks (no check required).
+
+### 4thdegree Droid
+
+#### Combat Repairs
+
+- **Page:** 103
+- **Prerequisites:** None.
+- **Quick summary:** Once per day, as a full-round action, you can use the Mechanics skill to repair yourself (using the repair droid application of the skill}, as opposed to the normal 1 hour.
+- **Production target:** `428896be183fadb1`
+- **Phase 3B disposition:** `CREATE`
+
+**Canonical rules text**
+
+Once per day, as a full-round action, you can use the Mechanics skill to repair yourself (using the repair droid application of the skill}, as opposed to the normal 1 hour.
+
+#### Droid Smash
+
+- **Page:** 103
+- **Prerequisites:** None.
+- **Quick summary:** You can use your mechanical strength when wielding a melee weapon.
+- **Production target:** `236bf4d940eb6b12`
+- **Phase 3B disposition:** `CREATE`
+
+**Canonical rules text**
+
+You can use your mechanical strength when wielding a melee weapon. You add 2 x your Strength bonus to melee damage rolls when wielding a weapon in one hand.
+
+#### Targeting Package
+
+- **Page:** 103
+- **Prerequisites:** None.
+- **Quick summary:** You can take two consecutive swift actions in the same round to activate special targeting software.
+- **Production target:** `ac8c46e1f6365c4a`
+- **Phase 3B disposition:** `CREATE`
+
+**Canonical rules text**
+
+You can take two consecutive swift actions in the same round to activate special targeting software. When you do so, you gain a +2 bonus on attack rolls and damage rolls on your next attack if your target is at point blank range (or within reach, for melee attacks) and within line of sight. You lose the benefit of this talent if you lose line of sight to your target or if you take any other action before making your attack. The effect of this talent stacks with that of the Point Blank Shot feat.
+
+### 5thdegree Droid
+
+#### Cargo Hauler
+
+- **Page:** 103
+- **Prerequisites:** None.
+- **Quick summary:** You gain a +5 bonus on Strength-based skill checks.
+- **Production target:** `ce141cbd257003bc`
+- **Phase 3B disposition:** `CREATE`
+
+**Canonical rules text**
+
+You gain a +5 bonus on Strength-based skill checks. Additionally, you double your carrying capacity.
+
+#### Environmentally Shielded
+
+- **Page:** 103
+- **Prerequisites:** None.
+- **Quick summary:** You gain a +5 equipment bonus to your Fortitude Defense against environmental hazards, including extreme atmospheric conditions and corrosion.
+- **Production target:** `aadcae548952b7eb`
+- **Phase 3B disposition:** `CREATE`
+
+**Canonical rules text**
+
+You gain a +5 equipment bonus to your Fortitude Defense against environmental hazards, including extreme atmospheric conditions and corrosion.
+
+#### Power Supply
+
+- **Page:** 103
+- **Prerequisites:** None.
+- **Quick summary:** You have learned to reroute power through your system to act as a power generator, providing power to an E-Web blaster (or similar weapon requiring a power generator).
+- **Production target:** `56a3b3c9b57f11fa`
+- **Phase 3B disposition:** `CREATE`
+
+**Canonical rules text**
+
+You have learned to reroute power through your system to act as a power generator, providing power to an E-Web blaster (or similar weapon requiring a power generator). Additionally, whenever you would normally spend three swift actions to recharge shields or reroute power on a vehicle or starship, you need spend only two swift actions instead.
+
+### Agent Of Ossus
+
+#### Buried Presence
+
+- **Page:** 92
+- **Prerequisites:** None.
+- **Quick summary:** You can spend a Force Point as a standard action to become immune to detection by the Force for 1 hour.
+- **Production record:** `c913aa5322934cfd`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+You can spend a Force Point as a standard action to become immune to detection by the Force for 1 hour. During this time, you always avoid detection by characters who are using the sense force application of the Use the Force skill, and you cannot be the target of the farseeing power. You may use this as a reaction to another character attempting to locate you with Sense Force (but before the character locates you), and if you make a Use the Force check this power’s effect immediately ends.
+
+#### Conceal Other
+
+- **Page:** 92
+- **Prerequisites:** Buried Presence
+- **Quick summary:** When you use either the Buried Presence talent or the Vanish talent, you affect one other willing adjacent target, granting it the effect of that talent as well.
+- **Production target:** `ea3bdb2a7d6b44db`
+- **Phase 3B disposition:** `CREATE`
+
+**Canonical rules text**
+
+When you use either the Buried Presence talent or the Vanish talent, you affect one other willing adjacent target, granting it the effect of that talent as well. You can select this talent multiple times. Each time you do so, it increases the number of adjacent willing targets you affect by one.
+
+#### Insightful Aim
+
+- **Page:** 92
+- **Prerequisites:** Weapon Proficiency (pistols or rifles) feat
+- **Quick summary:** You can spend a Force Point as a swift action to substitute your Use the Force modifier for your ranged attack bonus when making attacks with a ranged weapon until the beginning of your next turn.
+- **Production target:** `c60790c84a0be9cf`
+- **Phase 3B disposition:** `CREATE`
+
+**Canonical rules text**
+
+You can spend a Force Point as a swift action to substitute your Use the Force modifier for your ranged attack bonus when making attacks with a ranged weapon until the beginning of your next turn.
+
+#### Vanish
+
+- **Page:** 92
+- **Prerequisites:** None.
+- **Quick summary:** You can make a Use the Force check as a swift action to vanish from the sight of a single target within line of sight.
+- **Production target:** `4816e7970b4241c2`
+- **Phase 3B disposition:** `CREATE`
+
+**Canonical rules text**
+
+You can make a Use the Force check as a swift action to vanish from the sight of a single target within line of sight. If the result of your Use the Force check exceeds the target's Will Defense, you gain total concealment from that target until the beginning of your next turn, or until you make an attack roll or skill check against the target.
+
+### Alter
+
+#### Illusion
+
+- **Page:** 87
+- **Prerequisites:** Mind trick
+- **Quick summary:** As a standard action, you can spend a Force Point to create an illusion that seems perfectly real to anyone who views it.
+- **Production record:** `708a47d1be414990`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+As a standard action, you can spend a Force Point to create an illusion that seems perfectly real to anyone who views it. You designate the form and complexity of the illusion, as well as its size and location, and make a Use the Force check. When a creature views the illusion, compare the result of your Use the Force check to the creature's Will Defense; if your check result exceeds its Will Defense, it believes the illusion to be real. Any physical interaction with the illusion (such as touching it, passing through it, or shooting it with a blaster) immediately reveals the true nature of the illusion, and the creature is no longer deceived. The illusion lasts for a number of minutes equal to your heroic level. The illusion's size also affects your Use the Force check, applying a penalty for exceptionally large illusions. The penalties are -1 for Huge illusions, -2 for Gargantuan illusions, -5 for Colossal illusions, and -10 for Colossal (Frigate) or larger illusions. This is a mind-affecting effect.
+
+#### Telekinetic Prodigy
+
+- **Page:** 88
+- **Prerequisites:** Telekinetic Savant
+- **Quick summary:** When you take the Force Training feat and select move object as one of your Force powers, you can also select one extra power to add to your Force suite for free.
+- **Production record:** `7af4caf439358120`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+When you take the Force Training feat and select move object as one of your Force powers, you can also select one extra power to add to your Force suite for free. This power must be one of the powers affected by the Telekinetic Savant talent. You can gain only one extra power each time you take the Force Training feat, regardless of how many times you choose the move object power.
+
+### Control
+
+#### Force Exertion
+
+- **Page:** 88
+- **Prerequisites:** Force Training feat
+- **Quick summary:** When you select this talent, choose one Force power that you have in your Force power suite.
+- **Production record:** `7d0259a008e5d68f`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+When you select this talent, choose one Force power that you have in your Force power suite. As a reaction, you can remove any one Force power from your active suite to add an extra use of the Force power designated by this talent. Doing so moves you -1 persistent step along the condition track. This persistent condition is removed by resting for 1 minute. You can select this talent multiple times. Each time you do so, you choose a different Force power to be gained by using this talent.
+
+#### Indomitable Will
+
+- **Page:** 88
+- **Prerequisites:** None.
+- **Quick summary:** You can spend a Force Point as a standard action to become immune to all mind-affecting effects for 1 minute.
+- **Production record:** `a1f7a6ee66410c3e`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+You can spend a Force Point as a standard action to become immune to all mind-affecting effects for 1 minute.
+
+### Dark Side
+
+#### Wrath of the Dark Side
+
+- **Page:** 88
+- **Prerequisites:** Power of the Dark Side
+- **Quick summary:** On a natural 20 with a directly damaging Force power, forgo normal Force-power recovery to deal half that damage again at the start of the targets next turn.
+- **Production record:** `f5ebaf5d77257e0c`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+When you roll a natural 20 on a Use the Force check to activate a Force power that directly deals damage to a target, you can choose not to regain all of your spent Force powers as normal and instead the targets damaged by the power take half that damage again at the start of their next turn. Only powers that directly damage the target are subject to this talent, including corruption, Force blast, Force grip, Force lightning, Force slam, Force storm, Force thrust (only when spending a Force Point), and repulse (only when spending a Force Point).
+
+### Felucian Shaman
+
+#### Detonate
+
+- **Page:** 93
+- **Prerequisites:** Force blast
+- **Quick summary:** When you use the Force blast power, you can spend a Force Point to compare the result of your Use the Force check to the Reflex Defense of all other characters, creatures, and droids within 2 squares of your target.
+- **Production target:** `bf1a79b50e129dc7`
+- **Phase 3B disposition:** `CREATE`
+
+**Canonical rules text**
+
+When you use the Force blast power, you can spend a Force Point to compare the result of your Use the Force check to the Reflex Defense of all other characters, creatures, and droids within 2 squares of your target. If you exceed the Reflex Defense of those secondary targets, they also take damage from the Force blast, and if you fail to exceed their Reflex Defense, they take half damage instead. This is considered to be an area attack against the secondary targets (but not against the original target).
+
+#### Hive Mind
+
+- **Page:** 93
+- **Prerequisites:** None.
+- **Quick summary:** You can use the telepathy application of the Use the Force skill as a swift action, and you automatically succeed (no roll required) if your target is a willing recipient on the same planet.
+- **Production target:** `ba740330cf490549`
+- **Phase 3B disposition:** `CREATE`
+
+**Canonical rules text**
+
+You can use the telepathy application of the Use the Force skill as a swift action, and you automatically succeed (no roll required) if your target is a willing recipient on the same planet.
+
+#### Infuse Weapon
+
+- **Page:** 93
+- **Prerequisites:** None.
+- **Quick summary:** You can spend a Force Point to infuse an unpowered melee weapon (one that does not require an energy cell) with the strength of the Force, making it resistant to the attacks of other weapons.
+- **Production target:** `0df15b0ea7721c50`
+- **Phase 3B disposition:** `CREATE`
+
+**Canonical rules text**
+
+You can spend a Force Point to infuse an unpowered melee weapon (one that does not require an energy cell) with the strength of the Force, making it resistant to the attacks of other weapons. Infusing the weapon takes a full-round action. From that point forward, when you wield the weapon, its damage reduction is doubled, and lightsabers do not ignore the weapon's damage reduction. When you spend a Force Point to modify the attack roll of an infused weapon, you also add 2 x the Force Point's result to the damage roll if the attack is a success.
+
+#### Sickening Blast
+
+- **Page:** 93
+- **Prerequisites:** Force blast
+- **Quick summary:** When you use the Force blast power, if your Use the Force check exceeds the target's Fortitude Defense, you can choose to move the target -1 step along the condition track.
+- **Production target:** `6f32f14243bd4856`
+- **Phase 3B disposition:** `CREATE`
+
+**Canonical rules text**
+
+When you use the Force blast power, if your Use the Force check exceeds the target's Fortitude Defense, you can choose to move the target -1 step along the condition track. Doing so increases your Dark Side Score by 1.
+
+### Sense
+
+#### Feel the Force
+
+- **Page:** 88
+- **Prerequisites:** None.
+- **Quick summary:** As a standard action, you can spend a Force Point to ignore all concealment for 1 minute.
+- **Production record:** `301415f97665a33b`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+As a standard action, you can spend a Force Point to ignore all concealment for 1 minute.
+
 ---
 
 ## Append-only book index
@@ -12018,7 +13736,7 @@ Taking cues from Manaan's oceans, you know how to emulate wave action using the 
 - [x] Unknown Regions — 57 certified talent claims
 - [x] Legacy Era Campaign Guide — 101 certified talent claims
 - [x] Knights of the Old Republic Campaign Guide — 115 certified talent claims
-- [ ] Force Unleashed Campaign Guide
+- [x] Force Unleashed Campaign Guide — 137 certified talent claims
 - [ ] Jedi Academy Training Manual
 - [x] Scavenger's Guide to Droids — 31 certified talent claims
 
