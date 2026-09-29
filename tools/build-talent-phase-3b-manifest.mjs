@@ -5,6 +5,7 @@
  * Usage:
  *   node tools/build-talent-phase-3b-manifest.mjs --book core [--check]
  *   node tools/build-talent-phase-3b-manifest.mjs --book clone-wars [--check]
+ *   node tools/build-talent-phase-3b-manifest.mjs --book kotor [--check]
  *   node tools/build-talent-phase-3b-manifest.mjs --book threats [--check]
  *   node tools/build-talent-phase-3b-manifest.mjs --book starships [--check]
  *   node tools/build-talent-phase-3b-manifest.mjs --book scavengers [--check]
@@ -65,6 +66,24 @@ const BOOKS = {
         UPDATE_METADATA: 69,
         REMOVE_CONTAMINATION: 3,
         CREATE: 6
+      }
+    }
+  },
+  kotor: {
+    sourcebook: 'Knights of the Old Republic Campaign Guide',
+    bookOrder: 11,
+    phase2: 'data/audits/talent-phase-2-knights-of-the-old-republic-campaign-guide-content.json',
+    discrepancy: 'data/audits/talent-phase-2-knights-of-the-old-republic-campaign-guide-discrepancy-manifest.json',
+    output: 'data/audits/talent-phase-3b-knights-of-the-old-republic-campaign-guide-manifest.json',
+    aliases: {},
+    expected: {
+      records: 114,
+      extras: 0,
+      dispositions: {
+        UPDATE_CONTENT: 99,
+        CORRECT_TREE: 2,
+        CREATE: 12,
+        IDENTITY_SPLIT: 1
       }
     }
   },
@@ -688,6 +707,6 @@ if (isDirectRun) {
   const bookArg = process.argv.find(arg => arg.startsWith('--book='));
   const index = process.argv.indexOf('--book');
   const bookKey = bookArg ? bookArg.slice('--book='.length) : index >= 0 ? process.argv[index + 1] : null;
-  invariant(bookKey, 'usage: --book core|clone-wars|threats|starships|scavengers|intrigue|war|unknown|rebellion|legacy|scum [--check]');
+  invariant(bookKey, 'usage: --book core|clone-wars|kotor|threats|starships|scavengers|intrigue|war|unknown|rebellion|legacy|scum [--check]');
   buildBookManifest(bookKey, {check: process.argv.includes('--check')});
 }
