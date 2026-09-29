@@ -1,14 +1,21 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
-import os from 'node:os';
 import path from 'node:path';
 import { spawnSync } from 'node:child_process';
+import { projectPhase3C, loadCommittedManifests, detectPackState } from '../tools/apply-talent-phase-3c.mjs';
 import {
   ROOT, loadInputs, applyReference, checkInvariants, runAudit, protectedIds, BLOCKER_SAME_NAME_IN_TREE
 } from '../tools/audit-talent-phase-3c-independent.mjs';
 
 // Independent Phase 3C review: read-only. Never writes production packs.
 // docs/audits/talent-phase-3c-claude-independent-review.md explains each case.
+
+// The independent model needs the certified PRE-state packs. After the migration is applied, apply --verify is the
+// authority for the post-state, so this file becomes a documented no-op instead of a false failure.
+if (detectPackState().state !== 'PRE_STATE') {
+  console.log('  skip talent-phase-3c independent review: production packs are not the certified pre-state (use apply-talent-phase-3c.mjs --verify)');
+  process.exit(0);
+}
 
 let passed = 0;
 const test = (name, fn) => { fn(); passed++; console.log('  ok  ' + name); };
@@ -119,24 +126,11 @@ test('checker detects GenoHaradan obsolete tree left behind', () => corrupt(a =>
 
 /* 4. Cross-implementation equivalence: the primary applicator's projected state must equal the reference model's. */
 test('primary applicator projected state == independent reference state (byte-identical, order included)', () => {
-  const src = fs.readFileSync(path.join(ROOT, 'tools/apply-talent-phase-3c.mjs'), 'utf8');
-  const importLine = "from './build-talent-phase-3b-manifest.mjs'";
-  const rootLine = "path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')";
-  assert.ok(src.includes(importLine) && src.includes(rootLine), 'applicator layout changed; update this harness');
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'swse-3c-'));
-  try {
-    const dump = path.join(dir, 'state.json');
-    const patched = src
-      .replace(importLine, "from " + JSON.stringify(path.join(ROOT, 'tools/build-talent-phase-3b-manifest.mjs')))
-      .replace(rootLine, JSON.stringify(ROOT))
-      + `\nfs.writeFileSync(${JSON.stringify(dump)}, JSON.stringify({talents, trees, classes}));\n`;
-    const file = path.join(dir, 'applicator-probe.mjs');
-    fs.writeFileSync(file, patched);
-    const run = spawnSync(process.execPath, [file], { cwd: ROOT, encoding: 'utf8' });
-    assert.equal(run.status, 0, run.stderr.slice(0, 500));
-    const app = JSON.parse(fs.readFileSync(dump, 'utf8'));
-    for (const k of ['talents', 'trees', 'classes']) assert.equal(JSON.stringify(app[k]), JSON.stringify(audit.first[k]), k + ' differ');
-  } finally { fs.rmSync(dir, { recursive: true, force: true }); }
+  const projection = projectPhase3C({
+    manifests: loadCommittedManifests(), closeout: audit.inputs.closeout,
+    talents: audit.inputs.talents, trees: audit.inputs.trees, classes: audit.inputs.classes
+  });
+  for (const k of ['talents', 'trees', 'classes']) assert.equal(JSON.stringify(projection[k]), JSON.stringify(audit.first[k]), k + ' differ');
 });
 test('primary applicator refuses --write in Phase 3C-1 and leaves packs untouched', () => {
   const before = ['talents.db', 'talent_trees.db', 'classes.db'].map(f => fs.readFileSync(path.join(ROOT, 'packs', f), 'utf8'));

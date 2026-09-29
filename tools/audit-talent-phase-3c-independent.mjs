@@ -413,6 +413,11 @@ export function runAudit() {
 
 const isMain = process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url);
 if (isMain) {
+  const { detectPackState } = await import('./apply-talent-phase-3c.mjs');
+  if (detectPackState().state !== 'PRE_STATE') {
+    console.log('SKIP: production packs are not the certified pre-state; use node tools/apply-talent-phase-3c.mjs --verify');
+    process.exit(0);
+  }
   const { results } = runAudit();
   if (process.argv.includes('--json')) console.log(JSON.stringify(results, null, 2));
   else for (const r of results) console.log((r.ok ? 'PASS' : 'FAIL') + '  ' + r.id + (r.detail ? '  [' + r.detail + ']' : ''));
