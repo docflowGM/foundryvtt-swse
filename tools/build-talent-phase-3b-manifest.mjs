@@ -95,7 +95,8 @@ const BOOKS = {
       records: 114,
       extras: 0,
       dispositions: {
-        UPDATE_CONTENT: 99,
+        UPDATE_CONTENT: 98,
+        UPDATE_METADATA: 1,
         CORRECT_TREE: 2,
         CREATE: 12,
         IDENTITY_SPLIT: 1

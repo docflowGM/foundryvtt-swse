@@ -10492,17 +10492,13 @@ Developed by Krynda Draay, this talent is used by Jedi Covenant WatchCircles to 
 
 - **Page:** 24
 - **Prerequisites:** farseeing, WatchCircle Initiate
-- **Quick summary:** As a reaction, you can make a Use the Force check after you or an ally within 12 squares misses with a melee or ranged attack, removing one use of the farseeing Force power from your active suite (as
+- **Quick summary:** As a reaction, you can make a Use the Force check after you or an ally within 12 squares misses with a melee or ranged attack, removing one use of the farseeing Force power from your active suite (as though you had activated the power).
 - **Production record:** `299c45ac33bf1485`
 - **Phase 3B disposition:** `UPDATE_CONTENT`
 
 **Canonical rules text**
 
-As a reaction, you can make a Use the Force check after you or an ally within 12 squares misses with a melee or ranged attack, removing one use of the farseeing Force power from your active suite (as
-
-SlveL sever)
-
-though you had activated the power). If your check result equals or exceeds the Will Defense of the target of that missed attack, the attacker can reroll the missed attack roll. This counts as using the farseeing Force power against that target, but this talent replaces the normal rules and effect of that power. Any attack can only be affected by this talent once (thus, multiple characters cannot use this talent on the same attack to allow multiple rerolls). You take a cumulative -5 penalty on Use the Force checks until the beginning of your next turn when you use this talent.
+As a reaction, you can make a Use the Force check after you or an ally within 12 squares misses with a melee or ranged attack, removing one use of the farseeing Force power from your active suite (as though you had activated the power). though you had activated the power). If your check result equals or exceeds the Will Defense of the target of that missed attack, the attacker can reroll the missed attack roll. This counts as using the farseeing Force power against that target, but this talent replaces the normal rules and effect of that power. Any attack can only be affected by this talent once (thus, multiple characters cannot use this talent on the same attack to allow multiple rerolls). You take a cumulative -5 penalty on Use the Force checks until the beginning of your next turn when you use this talent.
 
 #### Visionary Defense
 
@@ -10681,10 +10677,6 @@ This is a mind-affecting effect.
 **Canonical rules text**
 
 Whenever you successfully damage an opponent with a melee attack, you can make a Deception check to feint against that target as a swift action. If successful, you designate an ally within 12 squares; your target is treated as flat-footed against the first attack that ally makes against your target before the beginning of your next turn.
-
-SUYSEL Hieovseh
-
-Ges
 
 #### Noble Fencing Style
 
@@ -10916,25 +10908,19 @@ Once per encounter, you can attempt a devastating melee smash. You must declare 
 
 Choose a single exotic weapon or weapon group with which you are proficient. You ignore a target's armor bonus to Reflex Defense when disarming with such a weapon. Additionally, as a free action, once per encounter, you can grant yourself a +10 bonus on your attack roll when attempting to disarm an opponent while using such a weapon.
 
-SHV, aexusF
-
-HW HS LavHD
-
-C SESE | Shiv sana ll YalavHo a)
-
 ### Rocket Jumper
 
 #### Burning Assault
 
 - **Page:** 30
 - **Prerequisites:** Jet Pack Training
-- **Quick summary:** As a standard action you can expend one of your jet pack’s charges to make an attack with the jet pack, treating it as a flame thrower {see page 128 of the Saga Fdition core rulebook).
+- **Quick summary:** As a standard action you can expend one of your jet pack’s charges to make an attack with the jet pack, treating it as a flame thrower (see page 128 of the Saga Edition core rulebook).
 - **Production record:** `be617461ca46a5ad`
 - **Phase 3B disposition:** `UPDATE_CONTENT`
 
 **Canonical rules text**
 
-As a standard action you can expend one of your jet pack’s charges to make an attack with the jet pack, treating it as a flame thrower {see page 128 of the Saga Fdition core rulebook). You cannot use this talent when you are flying. You are considered proficient in the flame thrower for the purpose of making this attack.
+As a standard action you can expend one of your jet pack’s charges to make an attack with the jet pack, treating it as a flame thrower (see page 128 of the Saga Edition core rulebook). You cannot use this talent when you are flying. You are considered proficient in the flame thrower for the purpose of making this attack.
 
 #### Improved Trajectory
 
@@ -11066,8 +11052,6 @@ You can hurl a simple or advanced melee weapon your size or smaller as a standar
 
 Immediately after making a full attack where you attack with two pistols, you may move up to your speed as a free action.
 
-WJED!t KNIGHT TALENTS The following talents are for use with the Jedi Knight prestige class.
-
 ### Duelist
 
 #### Improved Riposte
@@ -11147,7 +11131,7 @@ Once per encounter, while making a charge, you take no cumulative penalty to Use
 #### Mobile Attack (lightsabers)
 
 - **Page:** 39
-- **Prerequisites:** Multiattack Proficiency (lightsabers), Dual Weapon Mastery |, Weapon Focus (lightsabers)
+- **Prerequisites:** Multiattack Proficiency (lightsabers), Dual Weapon Mastery I, Weapon Focus (lightsabers)
 - **Quick summary:** Immediately after making a full attack where you attack with two lightsabers (or both ends of a double-bladed lightsaber), you may move up to your speed as a free action.
 - **Production record:** `eb701499ba157c6a`
 - **Phase 3B disposition:** `UPDATE_CONTENT`
@@ -11220,18 +11204,6 @@ When using the rebuke Force power against a Force power with the [dark side] des
 
 Add one Force power with the [dark side] descriptor to your Force suite. Once per encounter you can use that Force power with the [dark side] descriptor without increasing your Dark Side Score.
 
-i YatavHg.
-
-i E 1 1
-
-T ay) | W d 8 “W Q Pr > @ (i) Ww) 0)
-
-a)
-
-HW eSLavHoS
-
-SessSsevi1) FoILSEe)
-
 ### Jedi Watchman
 
 #### Force Warning
@@ -11245,8 +11217,6 @@ SessSsevi1) FoILSEe)
 **Canonical rules text**
 
 Allies within 12 squares can choose to reroll their Initiative checks at the start of combat but must take the second result, even if it is worse. Furthermore, if any allies within 12 squares are surprised at the start of an encounter, but you are not, you can designate a number of those allies equal to your Wisdom modifier (minimum 1); those allies are no longer considered surprised and can act normally on the surprise round.
-
-MaSTER 4TRIG, JEDI WATCHMAN
 
 #### Improved Quick Draw (lightsabers)
 
@@ -11351,8 +11321,6 @@ Your knowledge of Sith sorcery allows you to imbue talismans and other objects w
 Create Sith Talisman:You can spend one Force Point to imbue a portable object with the dark side, creating a Sith talisman that provides offensive strength to a Force power or lightsaber attack. Creating the talisman takes a full-round action. While you wear or carry the talisman on your person, add 1d6 to your damage with Force powers. You gain a Dark Side point when you first put on or carry a Sith talisman. You can have only one Sith talisman active at any given time, and if it is destroyed, you cannot create another one for 24 hours.
 
 Create Sith Weapon: You can alchemically treat a properly prepared weapon to become a Sith weapon. You may spend a Force Point to imbue the weapon with the properties of the Sith alchemical weapon template (this process takes one hour to complete). See Chapter 5: Equipment and Droids for information on Sith alchemical weapons.
-
-New PRESTIGE
 
 ### Corporate Power
 
@@ -11544,13 +11512,13 @@ This is a mind-affecting effect.
 
 - **Page:** 45
 - **Prerequisites:** None.
-- **Quick summary:** You can sometimes shrug off the effect of debilitating attacks, Once per encounter, if you are hit by an attack that would normally knock you down the condition track, you can reduce the number of steps you move down the condition track by 1 step (to a minimum of 0}.
+- **Quick summary:** You can sometimes shrug off the effect of debilitating attacks, Once per encounter, if you are hit by an attack that would normally knock you down the condition track, you can reduce the number of steps you move down the condition track by 1 step (to a minimum of 0).
 - **Production record:** `9c0c0966b7c7c30e`
 - **Phase 3B disposition:** `UPDATE_CONTENT`
 
 **Canonical rules text**
 
-You can sometimes shrug off the effect of debilitating attacks, Once per encounter, if you are hit by an attack that would normally knock you down the condition track, you can reduce the number of steps you move down the condition track by 1 step (to a minimum of 0}.
+You can sometimes shrug off the effect of debilitating attacks, Once per encounter, if you are hit by an attack that would normally knock you down the condition track, you can reduce the number of steps you move down the condition track by 1 step (to a minimum of 0).
 
 ### Melee Duelist
 
@@ -11606,13 +11574,13 @@ When wielding only two light melee weapons or two lightsabers, whenever you make
 
 - **Page:** 46
 - **Prerequisites:** Dual Weapon Flourish I or Single Weapon Flourish I, Weapon Finesse
-- **Quick summary:** You may add your Dexterity bonus [instead of your Strength bonus) on damage rolls when wielding a light melee weapon.
+- **Quick summary:** You may add your Dexterity bonus (instead of your Strength bonus) on damage rolls when wielding a light melee weapon.
 - **Production record:** `fc986d810732ff3a`
 - **Phase 3B disposition:** `UPDATE_CONTENT`
 
 **Canonical rules text**
 
-You may add your Dexterity bonus [instead of your Strength bonus) on damage rolls when wielding a light melee weapon. When you wield a light melee weapon two-handed, you may apply double your Dexterity bonus (instead of double your Strength bonus) to the damage.
+You may add your Dexterity bonus (instead of your Strength bonus) on damage rolls when wielding a light melee weapon. When you wield a light melee weapon two-handed, you may apply double your Dexterity bonus (instead of double your Strength bonus) to the damage.
 
 #### Multiattack Proficiency (advanced melee weapons)
 
@@ -11752,17 +11720,7 @@ Whenever you successfully use Force Delay, you grant one ally within six squares
 
 **Canonical rules text**
 
-Jal Shey verbally startle opponents with a little help from the Force. Once per encounter, make a Persuasion check against the Will
-
-AP SSLdvHo
-
-aeVved aHL
-
-Al usiavHo 7)
-
-2Suyecd SH
-
-Defense of a target of Intelligence 3 or higher that can understand you as a reaction. If successful, the target loses its move action on its next round. If you spend a Force Point, the target loses its standard action instead.
+Jal Shey verbally startle opponents with a little help from the Force. Once per encounter, make a Persuasion check against the Will Defense of a target of Intelligence 3 or higher that can understand you as a reaction. If successful, the target loses its move action on its next round. If you spend a Force Point, the target loses its standard action instead.
 
 #### Imbue Item
 
@@ -11852,20 +11810,10 @@ The long-lived Draethos are particularly adept at searching and understanding th
 
 Your Sith sorcery experimentation has provided you with a method of manipulating the dark side. Once per encounter, when using a Force Point in an act that would give you a dark side point, you may treat the Force Point as though you had rolled the maximum on the die.
 
-Al H3iLeavHO
-
-BgoHed FHL
-
-an 18)
-
-Al esiavHa
-
-f a WwW q v G) 2) ® W)
-
 #### Krath Illusions
 
 - **Page:** 60
-- **Prerequisites:** ||lusion
+- **Prerequisites:** Illusion
 - **Quick summary:** As a swift action, you can reduce the penalty for large illusions by one half (rounded down, minimum -1).
 - **Production record:** `90820963f87dd268`
 - **Phase 3B disposition:** `UPDATE_CONTENT`
@@ -11896,7 +11844,7 @@ You have a natural ability to use dark-side artifacts, such as Sith talismans an
 
 **Canonical rules text**
 
-Once per encounter, using rudimentary Sith sorcery, you channel dark side energy in a manner that boosts one use of a Force power. As a swift action, you can add 1 die of damage (if the power deals damage) or extend the range of the power by 6 squares (if it has a range beyond yourself or a single target). Using this talent automatically adds the {dark side] descriptor to the power used.
+Once per encounter, using rudimentary Sith sorcery, you channel dark side energy in a manner that boosts one use of a Force power. As a swift action, you can add 1 die of damage (if the power deals damage) or extend the range of the power by 6 squares (if it has a range beyond yourself or a single target). Using this talent automatically adds the [dark side] descriptor to the power used.
 
 ### Luka Sene
 
@@ -11997,8 +11945,6 @@ You have learned to sense the call of your ancestors and wield it through the Fo
 **Canonical rules text**
 
 Taking cues from Manaan's oceans, you know how to emulate wave action using the Force. As a swift action, when you use a telekinetic Force power (that is, a power affected by the Telekinetic Power or Telekinetic Savant talents), you manipulate the particles of the environment around you to add to the force of impact, allowing you to add your Charisma modifier to any damage dealt (minimum +1).
-
-“i CHAPTER V
 
 ### Reference-only publication
 

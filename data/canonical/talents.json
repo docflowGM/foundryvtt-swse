@@ -2245,7 +2245,7 @@
               "MISSING_CONTENT"
             ],
             "sameNameRepoCandidates": [],
-            "notes": null
+            "notes": "Phase 3B review removed a page-design quotation that had interrupted the OCR capture and restored the complete printed talent text."
           }
         ]
       }
@@ -9062,8 +9062,8 @@
       "classAccess": [
         "Gunslinger"
       ],
-      "benefit": "Immediately after making a full attack where you attack with two pistols, you may move up to your speed as a free action.\n\nWJED!t KNIGHT TALENTS The following talents are for use with the Jedi Knight prestige class.",
-      "description": "Immediately after making a full attack where you attack with two pistols, you may move up to your speed as a free action.\n\nWJED!t KNIGHT TALENTS The following talents are for use with the Jedi Knight prestige class.",
+      "benefit": "Immediately after making a full attack where you attack with two pistols, you may move up to your speed as a free action.",
+      "description": "Immediately after making a full attack where you attack with two pistols, you may move up to your speed as a free action.",
       "summary": "Immediately after making a full attack where you attack with two pistols, you may move up to your speed as a free action.",
       "prerequisites": "Multiattack Proficiency (pistols), Dual Weapon Mastery I, Weapon Focus (pistols)",
       "source": "Knights of the Old Republic Campaign Guide",
@@ -9074,7 +9074,7 @@
           "page": 39,
           "publicationType": "EXPANSION",
           "claimIdentity": "Knights of the Old Republic Campaign Guide|Gunslinger|Mobile Attack (pistols)",
-          "description": "Immediately after making a full attack where you attack with two pistols, you may move up to your speed as a free action.\n\nWJED!t KNIGHT TALENTS The following talents are for use with the Jedi Knight prestige class.",
+          "description": "Immediately after making a full attack where you attack with two pistols, you may move up to your speed as a free action.",
           "prerequisites": "Multiattack Proficiency (pistols), Dual Weapon Mastery I, Weapon Focus (pistols)",
           "summary": "Immediately after making a full attack where you attack with two pistols, you may move up to your speed as a free action.",
           "textCapture": "DJVU_NORMALIZED_PDF_PAGE_AND_HIERARCHY_VERIFIED",
@@ -11502,9 +11502,9 @@
       "classAccess": [
         "Jedi"
       ],
-      "benefit": "As a reaction, you can make a Use the Force check after you or an ally within 12 squares misses with a melee or ranged attack, removing one use of the farseeing Force power from your active suite (as\n\nSlveL sever)\n\nthough you had activated the power). If your check result equals or exceeds the Will Defense of the target of that missed attack, the attacker can reroll the missed attack roll. This counts as using the farseeing Force power against that target, but this talent replaces the normal rules and effect of that power. Any attack can only be affected by this talent once (thus, multiple characters cannot use this talent on the same attack to allow multiple rerolls). You take a cumulative -5 penalty on Use the Force checks until the beginning of your next turn when you use this talent.",
-      "description": "As a reaction, you can make a Use the Force check after you or an ally within 12 squares misses with a melee or ranged attack, removing one use of the farseeing Force power from your active suite (as\n\nSlveL sever)\n\nthough you had activated the power). If your check result equals or exceeds the Will Defense of the target of that missed attack, the attacker can reroll the missed attack roll. This counts as using the farseeing Force power against that target, but this talent replaces the normal rules and effect of that power. Any attack can only be affected by this talent once (thus, multiple characters cannot use this talent on the same attack to allow multiple rerolls). You take a cumulative -5 penalty on Use the Force checks until the beginning of your next turn when you use this talent.",
-      "summary": "As a reaction, you can make a Use the Force check after you or an ally within 12 squares misses with a melee or ranged attack, removing one use of the farseeing Force power from your active suite (as",
+      "benefit": "As a reaction, you can make a Use the Force check after you or an ally within 12 squares misses with a melee or ranged attack, removing one use of the farseeing Force power from your active suite (as though you had activated the power). If your check result equals or exceeds the Will Defense of the target of that missed attack, the attacker can reroll the missed attack roll. This counts as using the farseeing Force power against that target, but this talent replaces the normal rules and effect of that power. Any attack can only be affected by this talent once (thus, multiple characters cannot use this talent on the same attack to allow multiple rerolls). You take a cumulative -5 penalty on Use the Force checks until the beginning of your next turn when you use this talent.",
+      "description": "As a reaction, you can make a Use the Force check after you or an ally within 12 squares misses with a melee or ranged attack, removing one use of the farseeing Force power from your active suite (as though you had activated the power). If your check result equals or exceeds the Will Defense of the target of that missed attack, the attacker can reroll the missed attack roll. This counts as using the farseeing Force power against that target, but this talent replaces the normal rules and effect of that power. Any attack can only be affected by this talent once (thus, multiple characters cannot use this talent on the same attack to allow multiple rerolls). You take a cumulative -5 penalty on Use the Force checks until the beginning of your next turn when you use this talent.",
+      "summary": "As a reaction, you can make a Use the Force check after you or an ally within 12 squares misses with a melee or ranged attack, removing one use of the farseeing Force power from your active suite (as though you had activated the power).",
       "prerequisites": "farseeing, WatchCircle Initiate",
       "source": "Knights of the Old Republic Campaign Guide",
       "page": 24,
@@ -11514,9 +11514,9 @@
           "page": 24,
           "publicationType": "EXPANSION",
           "claimIdentity": "Knights of the Old Republic Campaign Guide|Jedi Consular|Visionary Attack",
-          "description": "As a reaction, you can make a Use the Force check after you or an ally within 12 squares misses with a melee or ranged attack, removing one use of the farseeing Force power from your active suite (as\n\nSlveL sever)\n\nthough you had activated the power). If your check result equals or exceeds the Will Defense of the target of that missed attack, the attacker can reroll the missed attack roll. This counts as using the farseeing Force power against that target, but this talent replaces the normal rules and effect of that power. Any attack can only be affected by this talent once (thus, multiple characters cannot use this talent on the same attack to allow multiple rerolls). You take a cumulative -5 penalty on Use the Force checks until the beginning of your next turn when you use this talent.",
+          "description": "As a reaction, you can make a Use the Force check after you or an ally within 12 squares misses with a melee or ranged attack, removing one use of the farseeing Force power from your active suite (as though you had activated the power). If your check result equals or exceeds the Will Defense of the target of that missed attack, the attacker can reroll the missed attack roll. This counts as using the farseeing Force power against that target, but this talent replaces the normal rules and effect of that power. Any attack can only be affected by this talent once (thus, multiple characters cannot use this talent on the same attack to allow multiple rerolls). You take a cumulative -5 penalty on Use the Force checks until the beginning of your next turn when you use this talent.",
           "prerequisites": "farseeing, WatchCircle Initiate",
-          "summary": "As a reaction, you can make a Use the Force check after you or an ally within 12 squares misses with a melee or ranged attack, removing one use of the farseeing Force power from your active suite (as",
+          "summary": "As a reaction, you can make a Use the Force check after you or an ally within 12 squares misses with a melee or ranged attack, removing one use of the farseeing Force power from your active suite (as though you had activated the power).",
           "textCapture": "DJVU_NORMALIZED_PDF_PAGE_AND_HIERARCHY_VERIFIED",
           "sourceAuthorityFile": "data/audits/talent-phase-2-knights-of-the-old-republic-campaign-guide-content.json"
         }
@@ -19330,8 +19330,8 @@
         "Sith Apprentice",
         "Sith Lord"
       ],
-      "benefit": "Your knowledge of Sith sorcery allows you to imbue talismans and other objects with the power of the dark side.\n\nCreate Sith Talisman:You can spend one Force Point to imbue a portable object with the dark side, creating a Sith talisman that provides offensive strength to a Force power or lightsaber attack. Creating the talisman takes a full-round action. While you wear or carry the talisman on your person, add 1d6 to your damage with Force powers. You gain a Dark Side point when you first put on or carry a Sith talisman. You can have only one Sith talisman active at any given time, and if it is destroyed, you cannot create another one for 24 hours.\n\nCreate Sith Weapon: You can alchemically treat a properly prepared weapon to become a Sith weapon. You may spend a Force Point to imbue the weapon with the properties of the Sith alchemical weapon template (this process takes one hour to complete). See Chapter 5: Equipment and Droids for information on Sith alchemical weapons.\n\nNew PRESTIGE",
-      "description": "Your knowledge of Sith sorcery allows you to imbue talismans and other objects with the power of the dark side.\n\nCreate Sith Talisman:You can spend one Force Point to imbue a portable object with the dark side, creating a Sith talisman that provides offensive strength to a Force power or lightsaber attack. Creating the talisman takes a full-round action. While you wear or carry the talisman on your person, add 1d6 to your damage with Force powers. You gain a Dark Side point when you first put on or carry a Sith talisman. You can have only one Sith talisman active at any given time, and if it is destroyed, you cannot create another one for 24 hours.\n\nCreate Sith Weapon: You can alchemically treat a properly prepared weapon to become a Sith weapon. You may spend a Force Point to imbue the weapon with the properties of the Sith alchemical weapon template (this process takes one hour to complete). See Chapter 5: Equipment and Droids for information on Sith alchemical weapons.\n\nNew PRESTIGE",
+      "benefit": "Your knowledge of Sith sorcery allows you to imbue talismans and other objects with the power of the dark side.\n\nCreate Sith Talisman:You can spend one Force Point to imbue a portable object with the dark side, creating a Sith talisman that provides offensive strength to a Force power or lightsaber attack. Creating the talisman takes a full-round action. While you wear or carry the talisman on your person, add 1d6 to your damage with Force powers. You gain a Dark Side point when you first put on or carry a Sith talisman. You can have only one Sith talisman active at any given time, and if it is destroyed, you cannot create another one for 24 hours.\n\nCreate Sith Weapon: You can alchemically treat a properly prepared weapon to become a Sith weapon. You may spend a Force Point to imbue the weapon with the properties of the Sith alchemical weapon template (this process takes one hour to complete). See Chapter 5: Equipment and Droids for information on Sith alchemical weapons.",
+      "description": "Your knowledge of Sith sorcery allows you to imbue talismans and other objects with the power of the dark side.\n\nCreate Sith Talisman:You can spend one Force Point to imbue a portable object with the dark side, creating a Sith talisman that provides offensive strength to a Force power or lightsaber attack. Creating the talisman takes a full-round action. While you wear or carry the talisman on your person, add 1d6 to your damage with Force powers. You gain a Dark Side point when you first put on or carry a Sith talisman. You can have only one Sith talisman active at any given time, and if it is destroyed, you cannot create another one for 24 hours.\n\nCreate Sith Weapon: You can alchemically treat a properly prepared weapon to become a Sith weapon. You may spend a Force Point to imbue the weapon with the properties of the Sith alchemical weapon template (this process takes one hour to complete). See Chapter 5: Equipment and Droids for information on Sith alchemical weapons.",
       "summary": "Your knowledge of Sith sorcery allows you to imbue talismans and other objects with the power of the dark side.",
       "prerequisites": "Dark Side Adept, Dark Side Master",
       "source": "Knights of the Old Republic Campaign Guide",
@@ -19342,7 +19342,7 @@
           "page": 41,
           "publicationType": "EXPANSION",
           "claimIdentity": "Knights of the Old Republic Campaign Guide|Sith|Sith Alchemy",
-          "description": "Your knowledge of Sith sorcery allows you to imbue talismans and other objects with the power of the dark side.\n\nCreate Sith Talisman:You can spend one Force Point to imbue a portable object with the dark side, creating a Sith talisman that provides offensive strength to a Force power or lightsaber attack. Creating the talisman takes a full-round action. While you wear or carry the talisman on your person, add 1d6 to your damage with Force powers. You gain a Dark Side point when you first put on or carry a Sith talisman. You can have only one Sith talisman active at any given time, and if it is destroyed, you cannot create another one for 24 hours.\n\nCreate Sith Weapon: You can alchemically treat a properly prepared weapon to become a Sith weapon. You may spend a Force Point to imbue the weapon with the properties of the Sith alchemical weapon template (this process takes one hour to complete). See Chapter 5: Equipment and Droids for information on Sith alchemical weapons.\n\nNew PRESTIGE",
+          "description": "Your knowledge of Sith sorcery allows you to imbue talismans and other objects with the power of the dark side.\n\nCreate Sith Talisman:You can spend one Force Point to imbue a portable object with the dark side, creating a Sith talisman that provides offensive strength to a Force power or lightsaber attack. Creating the talisman takes a full-round action. While you wear or carry the talisman on your person, add 1d6 to your damage with Force powers. You gain a Dark Side point when you first put on or carry a Sith talisman. You can have only one Sith talisman active at any given time, and if it is destroyed, you cannot create another one for 24 hours.\n\nCreate Sith Weapon: You can alchemically treat a properly prepared weapon to become a Sith weapon. You may spend a Force Point to imbue the weapon with the properties of the Sith alchemical weapon template (this process takes one hour to complete). See Chapter 5: Equipment and Droids for information on Sith alchemical weapons.",
           "prerequisites": "Dark Side Adept, Dark Side Master",
           "summary": "Your knowledge of Sith sorcery allows you to imbue talismans and other objects with the power of the dark side.",
           "textCapture": "DJVU_NORMALIZED_PDF_PAGE_AND_HIERARCHY_VERIFIED",
@@ -21257,8 +21257,8 @@
         "Soldier",
         "Melee Duelist"
       ],
-      "benefit": "Choose a single exotic weapon or weapon group with which you are proficient. You ignore a target's armor bonus to Reflex Defense when disarming with such a weapon. Additionally, as a free action, once per encounter, you can grant yourself a +10 bonus on your attack roll when attempting to disarm an opponent while using such a weapon.\n\nSHV, aexusF\n\nHW HS LavHD\n\nC SESE | Shiv sana ll YalavHo a)",
-      "description": "Choose a single exotic weapon or weapon group with which you are proficient. You ignore a target's armor bonus to Reflex Defense when disarming with such a weapon. Additionally, as a free action, once per encounter, you can grant yourself a +10 bonus on your attack roll when attempting to disarm an opponent while using such a weapon.\n\nSHV, aexusF\n\nHW HS LavHD\n\nC SESE | Shiv sana ll YalavHo a)",
+      "benefit": "Choose a single exotic weapon or weapon group with which you are proficient. You ignore a target's armor bonus to Reflex Defense when disarming with such a weapon. Additionally, as a free action, once per encounter, you can grant yourself a +10 bonus on your attack roll when attempting to disarm an opponent while using such a weapon.",
+      "description": "Choose a single exotic weapon or weapon group with which you are proficient. You ignore a target's armor bonus to Reflex Defense when disarming with such a weapon. Additionally, as a free action, once per encounter, you can grant yourself a +10 bonus on your attack roll when attempting to disarm an opponent while using such a weapon.",
       "summary": "Choose a single exotic weapon or weapon group with which you are proficient.",
       "prerequisites": "Improved Disarm, Intelligence 13, Weapon Specialization with the chosen weapon",
       "source": "Knights of the Old Republic Campaign Guide",
@@ -21269,7 +21269,7 @@
           "page": 29,
           "publicationType": "EXPANSION",
           "claimIdentity": "Knights of the Old Republic Campaign Guide|Weapon Specialist|Disarming Attack",
-          "description": "Choose a single exotic weapon or weapon group with which you are proficient. You ignore a target's armor bonus to Reflex Defense when disarming with such a weapon. Additionally, as a free action, once per encounter, you can grant yourself a +10 bonus on your attack roll when attempting to disarm an opponent while using such a weapon.\n\nSHV, aexusF\n\nHW HS LavHD\n\nC SESE | Shiv sana ll YalavHo a)",
+          "description": "Choose a single exotic weapon or weapon group with which you are proficient. You ignore a target's armor bonus to Reflex Defense when disarming with such a weapon. Additionally, as a free action, once per encounter, you can grant yourself a +10 bonus on your attack roll when attempting to disarm an opponent while using such a weapon.",
           "prerequisites": "Improved Disarm, Intelligence 13, Weapon Specialization with the chosen weapon",
           "summary": "Choose a single exotic weapon or weapon group with which you are proficient.",
           "textCapture": "DJVU_NORMALIZED_PDF_PAGE_AND_HIERARCHY_VERIFIED",
@@ -23231,8 +23231,8 @@
       "classAccess": [
         "Noble"
       ],
-      "benefit": "Whenever you successfully damage an opponent with a melee attack, you can make a Deception check to feint against that target as a swift action. If successful, you designate an ally within 12 squares; your target is treated as flat-footed against the first attack that ally makes against your target before the beginning of your next turn.\n\nSUYSEL Hieovseh\n\nGes",
-      "description": "Whenever you successfully damage an opponent with a melee attack, you can make a Deception check to feint against that target as a swift action. If successful, you designate an ally within 12 squares; your target is treated as flat-footed against the first attack that ally makes against your target before the beginning of your next turn.\n\nSUYSEL Hieovseh\n\nGes",
+      "benefit": "Whenever you successfully damage an opponent with a melee attack, you can make a Deception check to feint against that target as a swift action. If successful, you designate an ally within 12 squares; your target is treated as flat-footed against the first attack that ally makes against your target before the beginning of your next turn.",
+      "description": "Whenever you successfully damage an opponent with a melee attack, you can make a Deception check to feint against that target as a swift action. If successful, you designate an ally within 12 squares; your target is treated as flat-footed against the first attack that ally makes against your target before the beginning of your next turn.",
       "summary": "Whenever you successfully damage an opponent with a melee attack, you can make a Deception check to feint against that target as a swift action.",
       "prerequisites": "Noble Fencing Style",
       "source": "Knights of the Old Republic Campaign Guide",
@@ -23243,7 +23243,7 @@
           "page": 26,
           "publicationType": "ORIGIN",
           "claimIdentity": "Knights of the Old Republic Campaign Guide|Fencing|Leading Feint",
-          "description": "Whenever you successfully damage an opponent with a melee attack, you can make a Deception check to feint against that target as a swift action. If successful, you designate an ally within 12 squares; your target is treated as flat-footed against the first attack that ally makes against your target before the beginning of your next turn.\n\nSUYSEL Hieovseh\n\nGes",
+          "description": "Whenever you successfully damage an opponent with a melee attack, you can make a Deception check to feint against that target as a swift action. If successful, you designate an ally within 12 squares; your target is treated as flat-footed against the first attack that ally makes against your target before the beginning of your next turn.",
           "prerequisites": "Noble Fencing Style",
           "summary": "Whenever you successfully damage an opponent with a melee attack, you can make a Deception check to feint against that target as a swift action.",
           "textCapture": "DJVU_NORMALIZED_PDF_PAGE_AND_HIERARCHY_VERIFIED",
@@ -23837,9 +23837,9 @@
       "classAccess": [
         "Gladiator"
       ],
-      "benefit": "You can sometimes shrug off the effect of debilitating attacks, Once per encounter, if you are hit by an attack that would normally knock you down the condition track, you can reduce the number of steps you move down the condition track by 1 step (to a minimum of 0}.",
-      "description": "You can sometimes shrug off the effect of debilitating attacks, Once per encounter, if you are hit by an attack that would normally knock you down the condition track, you can reduce the number of steps you move down the condition track by 1 step (to a minimum of 0}.",
-      "summary": "You can sometimes shrug off the effect of debilitating attacks, Once per encounter, if you are hit by an attack that would normally knock you down the condition track, you can reduce the number of steps you move down the condition track by 1 step (to a minimum of 0}.",
+      "benefit": "You can sometimes shrug off the effect of debilitating attacks, Once per encounter, if you are hit by an attack that would normally knock you down the condition track, you can reduce the number of steps you move down the condition track by 1 step (to a minimum of 0).",
+      "description": "You can sometimes shrug off the effect of debilitating attacks, Once per encounter, if you are hit by an attack that would normally knock you down the condition track, you can reduce the number of steps you move down the condition track by 1 step (to a minimum of 0).",
+      "summary": "You can sometimes shrug off the effect of debilitating attacks, Once per encounter, if you are hit by an attack that would normally knock you down the condition track, you can reduce the number of steps you move down the condition track by 1 step (to a minimum of 0).",
       "prerequisites": "",
       "source": "Knights of the Old Republic Campaign Guide",
       "page": 45,
@@ -23849,9 +23849,9 @@
           "page": 45,
           "publicationType": "ORIGIN",
           "claimIdentity": "Knights of the Old Republic Campaign Guide|Gladiatorial Combat|Unstoppable",
-          "description": "You can sometimes shrug off the effect of debilitating attacks, Once per encounter, if you are hit by an attack that would normally knock you down the condition track, you can reduce the number of steps you move down the condition track by 1 step (to a minimum of 0}.",
+          "description": "You can sometimes shrug off the effect of debilitating attacks, Once per encounter, if you are hit by an attack that would normally knock you down the condition track, you can reduce the number of steps you move down the condition track by 1 step (to a minimum of 0).",
           "prerequisites": "",
-          "summary": "You can sometimes shrug off the effect of debilitating attacks, Once per encounter, if you are hit by an attack that would normally knock you down the condition track, you can reduce the number of steps you move down the condition track by 1 step (to a minimum of 0}.",
+          "summary": "You can sometimes shrug off the effect of debilitating attacks, Once per encounter, if you are hit by an attack that would normally knock you down the condition track, you can reduce the number of steps you move down the condition track by 1 step (to a minimum of 0).",
           "textCapture": "DJVU_NORMALIZED_PDF_PAGE_AND_HIERARCHY_VERIFIED",
           "sourceAuthorityFile": "data/audits/talent-phase-2-knights-of-the-old-republic-campaign-guide-content.json"
         }
@@ -24448,7 +24448,7 @@
       "benefit": "Immediately after making a full attack where you attack with two lightsabers (or both ends of a double-bladed lightsaber), you may move up to your speed as a free action.",
       "description": "Immediately after making a full attack where you attack with two lightsabers (or both ends of a double-bladed lightsaber), you may move up to your speed as a free action.",
       "summary": "Immediately after making a full attack where you attack with two lightsabers (or both ends of a double-bladed lightsaber), you may move up to your speed as a free action.",
-      "prerequisites": "Multiattack Proficiency (lightsabers), Dual Weapon Mastery |, Weapon Focus (lightsabers)",
+      "prerequisites": "Multiattack Proficiency (lightsabers), Dual Weapon Mastery I, Weapon Focus (lightsabers)",
       "source": "Knights of the Old Republic Campaign Guide",
       "page": 39,
       "publications": [
@@ -24458,7 +24458,7 @@
           "publicationType": "ORIGIN",
           "claimIdentity": "Knights of the Old Republic Campaign Guide|Jedi Battlemaster|Mobile Attack (lightsabers)",
           "description": "Immediately after making a full attack where you attack with two lightsabers (or both ends of a double-bladed lightsaber), you may move up to your speed as a free action.",
-          "prerequisites": "Multiattack Proficiency (lightsabers), Dual Weapon Mastery |, Weapon Focus (lightsabers)",
+          "prerequisites": "Multiattack Proficiency (lightsabers), Dual Weapon Mastery I, Weapon Focus (lightsabers)",
           "summary": "Immediately after making a full attack where you attack with two lightsabers (or both ends of a double-bladed lightsaber), you may move up to your speed as a free action.",
           "textCapture": "DJVU_NORMALIZED_PDF_PAGE_AND_HIERARCHY_VERIFIED",
           "sourceAuthorityFile": "data/audits/talent-phase-2-knights-of-the-old-republic-campaign-guide-content.json"
@@ -24722,8 +24722,8 @@
       "classAccess": [
         "Jedi Knight"
       ],
-      "benefit": "Add one Force power with the [dark side] descriptor to your Force suite. Once per encounter you can use that Force power with the [dark side] descriptor without increasing your Dark Side Score.\n\ni YatavHg.\n\ni E 1 1\n\nT ay) | W d 8 “W Q Pr > @ (i) Ww) 0)\n\na)\n\nHW eSLavHoS\n\nSessSsevi1) FoILSEe)",
-      "description": "Add one Force power with the [dark side] descriptor to your Force suite. Once per encounter you can use that Force power with the [dark side] descriptor without increasing your Dark Side Score.\n\ni YatavHg.\n\ni E 1 1\n\nT ay) | W d 8 “W Q Pr > @ (i) Ww) 0)\n\na)\n\nHW eSLavHoS\n\nSessSsevi1) FoILSEe)",
+      "benefit": "Add one Force power with the [dark side] descriptor to your Force suite. Once per encounter you can use that Force power with the [dark side] descriptor without increasing your Dark Side Score.",
+      "description": "Add one Force power with the [dark side] descriptor to your Force suite. Once per encounter you can use that Force power with the [dark side] descriptor without increasing your Dark Side Score.",
       "summary": "Add one Force power with the [dark side] descriptor to your Force suite.",
       "prerequisites": "Dark Deception",
       "source": "Knights of the Old Republic Campaign Guide",
@@ -24734,7 +24734,7 @@
           "page": 39,
           "publicationType": "ORIGIN",
           "claimIdentity": "Knights of the Old Republic Campaign Guide|Jedi Shadow|Taint of the Dark Side",
-          "description": "Add one Force power with the [dark side] descriptor to your Force suite. Once per encounter you can use that Force power with the [dark side] descriptor without increasing your Dark Side Score.\n\ni YatavHg.\n\ni E 1 1\n\nT ay) | W d 8 “W Q Pr > @ (i) Ww) 0)\n\na)\n\nHW eSLavHoS\n\nSessSsevi1) FoILSEe)",
+          "description": "Add one Force power with the [dark side] descriptor to your Force suite. Once per encounter you can use that Force power with the [dark side] descriptor without increasing your Dark Side Score.",
           "prerequisites": "Dark Deception",
           "summary": "Add one Force power with the [dark side] descriptor to your Force suite.",
           "textCapture": "DJVU_NORMALIZED_PDF_PAGE_AND_HIERARCHY_VERIFIED",
@@ -24777,8 +24777,8 @@
       "classAccess": [
         "Jedi Knight"
       ],
-      "benefit": "Allies within 12 squares can choose to reroll their Initiative checks at the start of combat but must take the second result, even if it is worse. Furthermore, if any allies within 12 squares are surprised at the start of an encounter, but you are not, you can designate a number of those allies equal to your Wisdom modifier (minimum 1); those allies are no longer considered surprised and can act normally on the surprise round.\n\nMaSTER 4TRIG, JEDI WATCHMAN",
-      "description": "Allies within 12 squares can choose to reroll their Initiative checks at the start of combat but must take the second result, even if it is worse. Furthermore, if any allies within 12 squares are surprised at the start of an encounter, but you are not, you can designate a number of those allies equal to your Wisdom modifier (minimum 1); those allies are no longer considered surprised and can act normally on the surprise round.\n\nMaSTER 4TRIG, JEDI WATCHMAN",
+      "benefit": "Allies within 12 squares can choose to reroll their Initiative checks at the start of combat but must take the second result, even if it is worse. Furthermore, if any allies within 12 squares are surprised at the start of an encounter, but you are not, you can designate a number of those allies equal to your Wisdom modifier (minimum 1); those allies are no longer considered surprised and can act normally on the surprise round.",
+      "description": "Allies within 12 squares can choose to reroll their Initiative checks at the start of combat but must take the second result, even if it is worse. Furthermore, if any allies within 12 squares are surprised at the start of an encounter, but you are not, you can designate a number of those allies equal to your Wisdom modifier (minimum 1); those allies are no longer considered surprised and can act normally on the surprise round.",
       "summary": "Allies within 12 squares can choose to reroll their Initiative checks at the start of combat but must take the second result, even if it is worse.",
       "prerequisites": "",
       "source": "Knights of the Old Republic Campaign Guide",
@@ -24789,7 +24789,7 @@
           "page": 40,
           "publicationType": "ORIGIN",
           "claimIdentity": "Knights of the Old Republic Campaign Guide|Jedi Watchman|Force Warning",
-          "description": "Allies within 12 squares can choose to reroll their Initiative checks at the start of combat but must take the second result, even if it is worse. Furthermore, if any allies within 12 squares are surprised at the start of an encounter, but you are not, you can designate a number of those allies equal to your Wisdom modifier (minimum 1); those allies are no longer considered surprised and can act normally on the surprise round.\n\nMaSTER 4TRIG, JEDI WATCHMAN",
+          "description": "Allies within 12 squares can choose to reroll their Initiative checks at the start of combat but must take the second result, even if it is worse. Furthermore, if any allies within 12 squares are surprised at the start of an encounter, but you are not, you can designate a number of those allies equal to your Wisdom modifier (minimum 1); those allies are no longer considered surprised and can act normally on the surprise round.",
           "prerequisites": "",
           "summary": "Allies within 12 squares can choose to reroll their Initiative checks at the start of combat but must take the second result, even if it is worse.",
           "textCapture": "DJVU_NORMALIZED_PDF_PAGE_AND_HIERARCHY_VERIFIED",
@@ -25496,9 +25496,9 @@
       "classAccess": [
         "Melee Duelist"
       ],
-      "benefit": "You may add your Dexterity bonus [instead of your Strength bonus) on damage rolls when wielding a light melee weapon. When you wield a light melee weapon two-handed, you may apply double your Dexterity bonus (instead of double your Strength bonus) to the damage.",
-      "description": "You may add your Dexterity bonus [instead of your Strength bonus) on damage rolls when wielding a light melee weapon. When you wield a light melee weapon two-handed, you may apply double your Dexterity bonus (instead of double your Strength bonus) to the damage.",
-      "summary": "You may add your Dexterity bonus [instead of your Strength bonus) on damage rolls when wielding a light melee weapon.",
+      "benefit": "You may add your Dexterity bonus (instead of your Strength bonus) on damage rolls when wielding a light melee weapon. When you wield a light melee weapon two-handed, you may apply double your Dexterity bonus (instead of double your Strength bonus) to the damage.",
+      "description": "You may add your Dexterity bonus (instead of your Strength bonus) on damage rolls when wielding a light melee weapon. When you wield a light melee weapon two-handed, you may apply double your Dexterity bonus (instead of double your Strength bonus) to the damage.",
+      "summary": "You may add your Dexterity bonus (instead of your Strength bonus) on damage rolls when wielding a light melee weapon.",
       "prerequisites": "Dual Weapon Flourish I or Single Weapon Flourish I, Weapon Finesse",
       "source": "Knights of the Old Republic Campaign Guide",
       "page": 46,
@@ -25508,9 +25508,9 @@
           "page": 46,
           "publicationType": "ORIGIN",
           "claimIdentity": "Knights of the Old Republic Campaign Guide|Melee Duelist|Master of Elegance",
-          "description": "You may add your Dexterity bonus [instead of your Strength bonus) on damage rolls when wielding a light melee weapon. When you wield a light melee weapon two-handed, you may apply double your Dexterity bonus (instead of double your Strength bonus) to the damage.",
+          "description": "You may add your Dexterity bonus (instead of your Strength bonus) on damage rolls when wielding a light melee weapon. When you wield a light melee weapon two-handed, you may apply double your Dexterity bonus (instead of double your Strength bonus) to the damage.",
           "prerequisites": "Dual Weapon Flourish I or Single Weapon Flourish I, Weapon Finesse",
-          "summary": "You may add your Dexterity bonus [instead of your Strength bonus) on damage rolls when wielding a light melee weapon.",
+          "summary": "You may add your Dexterity bonus (instead of your Strength bonus) on damage rolls when wielding a light melee weapon.",
           "textCapture": "DJVU_NORMALIZED_PDF_PAGE_AND_HIERARCHY_VERIFIED",
           "sourceAuthorityFile": "data/audits/talent-phase-2-knights-of-the-old-republic-campaign-guide-content.json"
         }
@@ -25773,9 +25773,9 @@
       "classAccess": [
         "Soldier"
       ],
-      "benefit": "As a standard action you can expend one of your jet pack’s charges to make an attack with the jet pack, treating it as a flame thrower {see page 128 of the Saga Fdition core rulebook). You cannot use this talent when you are flying. You are considered proficient in the flame thrower for the purpose of making this attack.",
-      "description": "As a standard action you can expend one of your jet pack’s charges to make an attack with the jet pack, treating it as a flame thrower {see page 128 of the Saga Fdition core rulebook). You cannot use this talent when you are flying. You are considered proficient in the flame thrower for the purpose of making this attack.",
-      "summary": "As a standard action you can expend one of your jet pack’s charges to make an attack with the jet pack, treating it as a flame thrower {see page 128 of the Saga Fdition core rulebook).",
+      "benefit": "As a standard action you can expend one of your jet pack’s charges to make an attack with the jet pack, treating it as a flame thrower (see page 128 of the Saga Edition core rulebook). You cannot use this talent when you are flying. You are considered proficient in the flame thrower for the purpose of making this attack.",
+      "description": "As a standard action you can expend one of your jet pack’s charges to make an attack with the jet pack, treating it as a flame thrower (see page 128 of the Saga Edition core rulebook). You cannot use this talent when you are flying. You are considered proficient in the flame thrower for the purpose of making this attack.",
+      "summary": "As a standard action you can expend one of your jet pack’s charges to make an attack with the jet pack, treating it as a flame thrower (see page 128 of the Saga Edition core rulebook).",
       "prerequisites": "Jet Pack Training",
       "source": "Knights of the Old Republic Campaign Guide",
       "page": 30,
@@ -25785,9 +25785,9 @@
           "page": 30,
           "publicationType": "ORIGIN",
           "claimIdentity": "Knights of the Old Republic Campaign Guide|Rocket Jumper|Burning Assault",
-          "description": "As a standard action you can expend one of your jet pack’s charges to make an attack with the jet pack, treating it as a flame thrower {see page 128 of the Saga Fdition core rulebook). You cannot use this talent when you are flying. You are considered proficient in the flame thrower for the purpose of making this attack.",
+          "description": "As a standard action you can expend one of your jet pack’s charges to make an attack with the jet pack, treating it as a flame thrower (see page 128 of the Saga Edition core rulebook). You cannot use this talent when you are flying. You are considered proficient in the flame thrower for the purpose of making this attack.",
           "prerequisites": "Jet Pack Training",
-          "summary": "As a standard action you can expend one of your jet pack’s charges to make an attack with the jet pack, treating it as a flame thrower {see page 128 of the Saga Fdition core rulebook).",
+          "summary": "As a standard action you can expend one of your jet pack’s charges to make an attack with the jet pack, treating it as a flame thrower (see page 128 of the Saga Edition core rulebook).",
           "textCapture": "DJVU_NORMALIZED_PDF_PAGE_AND_HIERARCHY_VERIFIED",
           "sourceAuthorityFile": "data/audits/talent-phase-2-knights-of-the-old-republic-campaign-guide-content.json"
         }
@@ -59614,8 +59614,8 @@
       "tree": "Jal Shey",
       "treeOriginSourcebook": "Knights of the Old Republic Campaign Guide",
       "classAccess": [],
-      "benefit": "Jal Shey verbally startle opponents with a little help from the Force. Once per encounter, make a Persuasion check against the Will\n\nAP SSLdvHo\n\naeVved aHL\n\nAl usiavHo 7)\n\n2Suyecd SH\n\nDefense of a target of Intelligence 3 or higher that can understand you as a reaction. If successful, the target loses its move action on its next round. If you spend a Force Point, the target loses its standard action instead.",
-      "description": "Jal Shey verbally startle opponents with a little help from the Force. Once per encounter, make a Persuasion check against the Will\n\nAP SSLdvHo\n\naeVved aHL\n\nAl usiavHo 7)\n\n2Suyecd SH\n\nDefense of a target of Intelligence 3 or higher that can understand you as a reaction. If successful, the target loses its move action on its next round. If you spend a Force Point, the target loses its standard action instead.",
+      "benefit": "Jal Shey verbally startle opponents with a little help from the Force. Once per encounter, make a Persuasion check against the Will Defense of a target of Intelligence 3 or higher that can understand you as a reaction. If successful, the target loses its move action on its next round. If you spend a Force Point, the target loses its standard action instead.",
+      "description": "Jal Shey verbally startle opponents with a little help from the Force. Once per encounter, make a Persuasion check against the Will Defense of a target of Intelligence 3 or higher that can understand you as a reaction. If successful, the target loses its move action on its next round. If you spend a Force Point, the target loses its standard action instead.",
       "summary": "Jal Shey verbally startle opponents with a little help from the Force.",
       "prerequisites": "Trained in Persuasion",
       "source": "Knights of the Old Republic Campaign Guide",
@@ -59626,7 +59626,7 @@
           "page": 57,
           "publicationType": "ORIGIN",
           "claimIdentity": "Knights of the Old Republic Campaign Guide|Jal Shey|Force Delay",
-          "description": "Jal Shey verbally startle opponents with a little help from the Force. Once per encounter, make a Persuasion check against the Will\n\nAP SSLdvHo\n\naeVved aHL\n\nAl usiavHo 7)\n\n2Suyecd SH\n\nDefense of a target of Intelligence 3 or higher that can understand you as a reaction. If successful, the target loses its move action on its next round. If you spend a Force Point, the target loses its standard action instead.",
+          "description": "Jal Shey verbally startle opponents with a little help from the Force. Once per encounter, make a Persuasion check against the Will Defense of a target of Intelligence 3 or higher that can understand you as a reaction. If successful, the target loses its move action on its next round. If you spend a Force Point, the target loses its standard action instead.",
           "prerequisites": "Trained in Persuasion",
           "summary": "Jal Shey verbally startle opponents with a little help from the Force.",
           "textCapture": "DJVU_NORMALIZED_PDF_PAGE_AND_HIERARCHY_VERIFIED",
@@ -60643,8 +60643,8 @@
       "tree": "Krath",
       "treeOriginSourcebook": "Knights of the Old Republic Campaign Guide",
       "classAccess": [],
-      "benefit": "Your Sith sorcery experimentation has provided you with a method of manipulating the dark side. Once per encounter, when using a Force Point in an act that would give you a dark side point, you may treat the Force Point as though you had rolled the maximum on the die.\n\nAl H3iLeavHO\n\nBgoHed FHL\n\nan 18)\n\nAl esiavHa\n\nf a WwW q v G) 2) ® W)",
-      "description": "Your Sith sorcery experimentation has provided you with a method of manipulating the dark side. Once per encounter, when using a Force Point in an act that would give you a dark side point, you may treat the Force Point as though you had rolled the maximum on the die.\n\nAl H3iLeavHO\n\nBgoHed FHL\n\nan 18)\n\nAl esiavHa\n\nf a WwW q v G) 2) ® W)",
+      "benefit": "Your Sith sorcery experimentation has provided you with a method of manipulating the dark side. Once per encounter, when using a Force Point in an act that would give you a dark side point, you may treat the Force Point as though you had rolled the maximum on the die.",
+      "description": "Your Sith sorcery experimentation has provided you with a method of manipulating the dark side. Once per encounter, when using a Force Point in an act that would give you a dark side point, you may treat the Force Point as though you had rolled the maximum on the die.",
       "summary": "Your Sith sorcery experimentation has provided you with a method of manipulating the dark side.",
       "prerequisites": "",
       "source": "Knights of the Old Republic Campaign Guide",
@@ -60655,7 +60655,7 @@
           "page": 59,
           "publicationType": "ORIGIN",
           "claimIdentity": "Knights of the Old Republic Campaign Guide|Krath|Dark Side Manipulation",
-          "description": "Your Sith sorcery experimentation has provided you with a method of manipulating the dark side. Once per encounter, when using a Force Point in an act that would give you a dark side point, you may treat the Force Point as though you had rolled the maximum on the die.\n\nAl H3iLeavHO\n\nBgoHed FHL\n\nan 18)\n\nAl esiavHa\n\nf a WwW q v G) 2) ® W)",
+          "description": "Your Sith sorcery experimentation has provided you with a method of manipulating the dark side. Once per encounter, when using a Force Point in an act that would give you a dark side point, you may treat the Force Point as though you had rolled the maximum on the die.",
           "prerequisites": "",
           "summary": "Your Sith sorcery experimentation has provided you with a method of manipulating the dark side.",
           "textCapture": "DJVU_NORMALIZED_PDF_PAGE_AND_HIERARCHY_VERIFIED",
@@ -60697,7 +60697,7 @@
       "benefit": "As a swift action, you can reduce the penalty for large illusions by one half (rounded down, minimum -1).",
       "description": "As a swift action, you can reduce the penalty for large illusions by one half (rounded down, minimum -1).",
       "summary": "As a swift action, you can reduce the penalty for large illusions by one half (rounded down, minimum -1).",
-      "prerequisites": "||lusion",
+      "prerequisites": "Illusion",
       "source": "Knights of the Old Republic Campaign Guide",
       "page": 60,
       "publications": [
@@ -60707,7 +60707,7 @@
           "publicationType": "ORIGIN",
           "claimIdentity": "Knights of the Old Republic Campaign Guide|Krath|Krath Illusions",
           "description": "As a swift action, you can reduce the penalty for large illusions by one half (rounded down, minimum -1).",
-          "prerequisites": "||lusion",
+          "prerequisites": "Illusion",
           "summary": "As a swift action, you can reduce the penalty for large illusions by one half (rounded down, minimum -1).",
           "textCapture": "DJVU_NORMALIZED_PDF_PAGE_AND_HIERARCHY_VERIFIED",
           "sourceAuthorityFile": "data/audits/talent-phase-2-knights-of-the-old-republic-campaign-guide-content.json"
@@ -60796,8 +60796,8 @@
       "tree": "Krath",
       "treeOriginSourcebook": "Knights of the Old Republic Campaign Guide",
       "classAccess": [],
-      "benefit": "Once per encounter, using rudimentary Sith sorcery, you channel dark side energy in a manner that boosts one use of a Force power. As a swift action, you can add 1 die of damage (if the power deals damage) or extend the range of the power by 6 squares (if it has a range beyond yourself or a single target). Using this talent automatically adds the {dark side] descriptor to the power used.",
-      "description": "Once per encounter, using rudimentary Sith sorcery, you channel dark side energy in a manner that boosts one use of a Force power. As a swift action, you can add 1 die of damage (if the power deals damage) or extend the range of the power by 6 squares (if it has a range beyond yourself or a single target). Using this talent automatically adds the {dark side] descriptor to the power used.",
+      "benefit": "Once per encounter, using rudimentary Sith sorcery, you channel dark side energy in a manner that boosts one use of a Force power. As a swift action, you can add 1 die of damage (if the power deals damage) or extend the range of the power by 6 squares (if it has a range beyond yourself or a single target). Using this talent automatically adds the [dark side] descriptor to the power used.",
+      "description": "Once per encounter, using rudimentary Sith sorcery, you channel dark side energy in a manner that boosts one use of a Force power. As a swift action, you can add 1 die of damage (if the power deals damage) or extend the range of the power by 6 squares (if it has a range beyond yourself or a single target). Using this talent automatically adds the [dark side] descriptor to the power used.",
       "summary": "Once per encounter, using rudimentary Sith sorcery, you channel dark side energy in a manner that boosts one use of a Force power.",
       "prerequisites": "",
       "source": "Knights of the Old Republic Campaign Guide",
@@ -60808,7 +60808,7 @@
           "page": 60,
           "publicationType": "ORIGIN",
           "claimIdentity": "Knights of the Old Republic Campaign Guide|Krath|Krath Surge",
-          "description": "Once per encounter, using rudimentary Sith sorcery, you channel dark side energy in a manner that boosts one use of a Force power. As a swift action, you can add 1 die of damage (if the power deals damage) or extend the range of the power by 6 squares (if it has a range beyond yourself or a single target). Using this talent automatically adds the {dark side] descriptor to the power used.",
+          "description": "Once per encounter, using rudimentary Sith sorcery, you channel dark side energy in a manner that boosts one use of a Force power. As a swift action, you can add 1 die of damage (if the power deals damage) or extend the range of the power by 6 squares (if it has a range beyond yourself or a single target). Using this talent automatically adds the [dark side] descriptor to the power used.",
           "prerequisites": "",
           "summary": "Once per encounter, using rudimentary Sith sorcery, you channel dark side energy in a manner that boosts one use of a Force power.",
           "textCapture": "DJVU_NORMALIZED_PDF_PAGE_AND_HIERARCHY_VERIFIED",
@@ -61716,8 +61716,8 @@
       "tree": "Order of Shasa",
       "treeOriginSourcebook": "Knights of the Old Republic Campaign Guide",
       "classAccess": [],
-      "benefit": "Taking cues from Manaan's oceans, you know how to emulate wave action using the Force. As a swift action, when you use a telekinetic Force power (that is, a power affected by the Telekinetic Power or Telekinetic Savant talents), you manipulate the particles of the environment around you to add to the force of impact, allowing you to add your Charisma modifier to any damage dealt (minimum +1).\n\n“i CHAPTER V",
-      "description": "Taking cues from Manaan's oceans, you know how to emulate wave action using the Force. As a swift action, when you use a telekinetic Force power (that is, a power affected by the Telekinetic Power or Telekinetic Savant talents), you manipulate the particles of the environment around you to add to the force of impact, allowing you to add your Charisma modifier to any damage dealt (minimum +1).\n\n“i CHAPTER V",
+      "benefit": "Taking cues from Manaan's oceans, you know how to emulate wave action using the Force. As a swift action, when you use a telekinetic Force power (that is, a power affected by the Telekinetic Power or Telekinetic Savant talents), you manipulate the particles of the environment around you to add to the force of impact, allowing you to add your Charisma modifier to any damage dealt (minimum +1).",
+      "description": "Taking cues from Manaan's oceans, you know how to emulate wave action using the Force. As a swift action, when you use a telekinetic Force power (that is, a power affected by the Telekinetic Power or Telekinetic Savant talents), you manipulate the particles of the environment around you to add to the force of impact, allowing you to add your Charisma modifier to any damage dealt (minimum +1).",
       "summary": "Taking cues from Manaan's oceans, you know how to emulate wave action using the Force.",
       "prerequisites": "",
       "source": "Knights of the Old Republic Campaign Guide",
@@ -61728,7 +61728,7 @@
           "page": 61,
           "publicationType": "ORIGIN",
           "claimIdentity": "Knights of the Old Republic Campaign Guide|Order of Shasa|Waveform",
-          "description": "Taking cues from Manaan's oceans, you know how to emulate wave action using the Force. As a swift action, when you use a telekinetic Force power (that is, a power affected by the Telekinetic Power or Telekinetic Savant talents), you manipulate the particles of the environment around you to add to the force of impact, allowing you to add your Charisma modifier to any damage dealt (minimum +1).\n\n“i CHAPTER V",
+          "description": "Taking cues from Manaan's oceans, you know how to emulate wave action using the Force. As a swift action, when you use a telekinetic Force power (that is, a power affected by the Telekinetic Power or Telekinetic Savant talents), you manipulate the particles of the environment around you to add to the force of impact, allowing you to add your Charisma modifier to any damage dealt (minimum +1).",
           "prerequisites": "",
           "summary": "Taking cues from Manaan's oceans, you know how to emulate wave action using the Force.",
           "textCapture": "DJVU_NORMALIZED_PDF_PAGE_AND_HIERARCHY_VERIFIED",
