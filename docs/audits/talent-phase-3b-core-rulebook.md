@@ -13,9 +13,9 @@
 | `UPDATE_CONTENT` | 112 |
 | `UPDATE_METADATA` | 31 |
 | `REMOVE_CONTAMINATION` | 31 |
-| `CORRECT_TREE` | 17 |
+| `CORRECT_TREE` | 16 |
 | `CREATE` | 6 |
-| `IDENTITY_SPLIT` | 1 |
+| `IDENTITY_SPLIT` | 2 |
 | **Total** | **198** |
 
 The machine-readable authority is `data/audits/talent-phase-3b-core-rulebook-manifest.json`. It is generated and checked through the shared builder `tools/build-talent-phase-3b-manifest.mjs` and the Core wrapper `tools/build-talent-phase-3b-core-manifest.mjs`.
@@ -34,6 +34,8 @@ The six true CREATE identities are:
 - `Flight` — `c518a366d0eb0a8a`
 
 Bounty Hunter `Notorious` remains an `IDENTITY_SPLIT` with create ID `c67cbd59abd1cc53`; it must not overwrite the Infamy identity.
+
+Dathomiri Witch `Charm Beast` is also an `IDENTITY_SPLIT`. The global Phase 3B closeout proved that production record `bab9a1ce285f98b9` belongs to the distinct JATM Beastwarden `Charm Beast` identity. Core therefore creates `c919d7682bd9df40` instead of moving the Beastwarden record.
 
 Production record `a7d8c4da96eacad4` is an additional Infamy `Notorious` candidate classified `REVIEW_EXTRA_DUPLICATE_CANONICAL_ALIAS`. Phase 3C must not delete it. Duplicate resolution is deferred until Phase 3D.
 
