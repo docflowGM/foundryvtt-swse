@@ -1,0 +1,2323 @@
+{
+  "schemaVersion": 2,
+  "phase": "3B",
+  "status": "CERTIFIED_BOOK_REPAIR_MANIFEST",
+  "sourcebook": "Starships of the Galaxy",
+  "bookOrder": 6,
+  "identityRule": "canonicalTreeKey + talent name; never talent name alone",
+  "ownershipRule": "Only the Phase 3A primary publication owner emits a production mutation. Repeated later publications are reference-only.",
+  "productionMutationAllowed": false,
+  "generatedAgainst": {
+    "canonical": {
+      "path": "data/canonical/talents.json",
+      "fingerprint": "fnv1a64:251001ba5bea19a1"
+    },
+    "registry": {
+      "path": "data/audits/talent-canonical-tree-registry.json",
+      "fingerprint": "fnv1a64:9121b94eb7b62f57"
+    },
+    "talents": {
+      "path": "packs/talents.db",
+      "fingerprint": "fnv1a64:1db9da2beb7923d3"
+    },
+    "trees": {
+      "path": "packs/talent_trees.db",
+      "fingerprint": "fnv1a64:5b5325da00db8387"
+    },
+    "phase2": {
+      "path": "data/audits/talent-phase-2-starships-of-the-galaxy-content.json",
+      "fingerprint": "fnv1a64:b150f5c2e1d522c2"
+    },
+    "discrepancy": {
+      "path": "data/audits/talent-phase-2-starships-of-the-galaxy-discrepancy-manifest.json",
+      "fingerprint": "fnv1a64:a79f6797fdab5d7b"
+    }
+  },
+  "counts": {
+    "certifiedPublicationClaims": 23,
+    "ownedCanonicalIdentities": 23,
+    "referenceOnlyPublicationClaims": 0,
+    "canonicalTrees": 7,
+    "dispositions": {
+      "UPDATE_CONTENT": 22,
+      "CORRECT_TREE": 1
+    },
+    "fieldChanges": {
+      "system.benefit": 23,
+      "system.description": 3,
+      "system.summary": 23,
+      "system.prerequisites": 8,
+      "system.source": 23,
+      "system.page": 23,
+      "system.description.value": 20,
+      "name": 1
+    },
+    "productionExtras": 0
+  },
+  "dispositionPrecedence": [
+    "IDENTITY_SPLIT",
+    "CREATE",
+    "CORRECT_TREE",
+    "REMOVE_CONTAMINATION",
+    "UPDATE_CONTENT",
+    "UPDATE_METADATA",
+    "KEEP"
+  ],
+  "phase3cWriteContract": {
+    "productionTalentPack": "packs/talents.db",
+    "productionTreePack": "packs/talent_trees.db",
+    "preserveExistingIds": true,
+    "descriptionWriteRule": "Preserve each existing record's description shape: write system.description.value when description is an object and system.description when it is a string. New records use system.description.value.",
+    "canonicalFields": [
+      "name",
+      "system.benefit",
+      "system.description.value or system.description",
+      "system.summary",
+      "system.prerequisites",
+      "system.source",
+      "system.page"
+    ],
+    "prohibitedShortcuts": [
+      "Do not match or mutate by talent name alone.",
+      "Do not infer CREATE from a Phase 2 missing flag.",
+      "Do not overwrite a same-name identity in another tree.",
+      "Do not delete REVIEW_EXTRA records during Phase 3C.",
+      "Do not erase runtime metadata unless explicitly targeted."
+    ]
+  },
+  "referenceOnlyPublications": [],
+  "productionExtras": [],
+  "records": [
+    {
+      "canonicalIdentity": "Saga Edition Core Rulebook|Sense|Force Reflexes",
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Sense",
+      "name": "Force Reflexes",
+      "ownerSourcebook": "Starships of the Galaxy",
+      "targetTree": {
+        "treeId": "d6b4331c0e31f7e3",
+        "treeName": "Sense"
+      },
+      "disposition": "UPDATE_CONTENT",
+      "phase2Flags": [
+        "DESCRIPTION_INCOMPLETE",
+        "PREREQUISITE_ERROR"
+      ],
+      "identityResolution": {
+        "resolutionEvidence": "PHASE2_CONTENT_MAPPING",
+        "productionRecordId": "ece2612b7449f39a",
+        "preserveProductionId": true,
+        "createRecordId": null,
+        "currentTreeClaims": [
+          {
+            "treeId": "d6b4331c0e31f7e3",
+            "treeName": "Sense"
+          }
+        ],
+        "sameNameProductionCandidates": [
+          {
+            "id": "ece2612b7449f39a",
+            "name": "Force Reflexes",
+            "treeClaims": [
+              {
+                "treeId": "d6b4331c0e31f7e3",
+                "treeName": "Sense"
+              }
+            ]
+          }
+        ],
+        "reviewExtraCandidateIds": []
+      },
+      "currentCanonicalFields": {
+        "name": "Force Reflexes",
+        "system.benefit": "When activating a starship maneuver, reroll the Pilot check.",
+        "system.description": "When activating a starship maneuver, reroll the Pilot check.",
+        "system.summary": null,
+        "system.prerequisites": "Starship Tactics, Force Pilot",
+        "system.source": null,
+        "system.page": null
+      },
+      "targetFields": {
+        "name": "Force Reflexes",
+        "system.benefit": "When activating a starship maneuver, you may spend a Force Point to reroll your Pilot check, keeping the better result. See Chapter 2 for more information on starship maneuvers.",
+        "system.description": "When activating a starship maneuver, you may spend a Force Point to reroll your Pilot check, keeping the better result. See Chapter 2 for more information on starship maneuvers.",
+        "system.summary": "Spend a Force Point when activating a starship maneuver to reroll the Pilot check and keep the better result.",
+        "system.prerequisites": "Force Sensitivity, Starship Tactics, Force Pilot",
+        "system.source": "Starships of the Galaxy",
+        "system.page": 16
+      },
+      "fieldChanges": {
+        "name": false,
+        "system.benefit": true,
+        "system.description": true,
+        "system.summary": true,
+        "system.prerequisites": true,
+        "system.source": true,
+        "system.page": true
+      },
+      "mutationFields": [
+        "system.benefit",
+        "system.description",
+        "system.summary",
+        "system.prerequisites",
+        "system.source",
+        "system.page"
+      ],
+      "treeMutation": {
+        "action": "KEEP",
+        "removeFromTreeIds": [],
+        "addToTreeId": "d6b4331c0e31f7e3",
+        "addTalentId": "ece2612b7449f39a",
+        "addTalentName": "Force Reflexes"
+      },
+      "preserveFields": [
+        "system.abilityMeta",
+        "system.prerequisitesStructured",
+        "system.tags",
+        "system.executionModel",
+        "system.subType",
+        "system.costNumeric",
+        "effects",
+        "flags",
+        "img",
+        "ownership",
+        "folder",
+        "sort"
+      ],
+      "createTemplate": null,
+      "claudeInstruction": "Preserve the existing production record ID and runtime metadata; replace only the listed canonical fields."
+    },
+    {
+      "canonicalIdentity": "Saga Edition Core Rulebook|Lineage|Engineer",
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Lineage",
+      "name": "Engineer",
+      "ownerSourcebook": "Starships of the Galaxy",
+      "targetTree": {
+        "treeId": "b5bb4154688c66ab",
+        "treeName": "Lineage"
+      },
+      "disposition": "UPDATE_CONTENT",
+      "phase2Flags": [
+        "SOURCE_ALIGNED_SHORTHAND"
+      ],
+      "identityResolution": {
+        "resolutionEvidence": "PHASE2_CONTENT_MAPPING",
+        "productionRecordId": "c727d7a40330d10d",
+        "preserveProductionId": true,
+        "createRecordId": null,
+        "currentTreeClaims": [
+          {
+            "treeId": "b5bb4154688c66ab",
+            "treeName": "Lineage"
+          }
+        ],
+        "sameNameProductionCandidates": [
+          {
+            "id": "c727d7a40330d10d",
+            "name": "Engineer",
+            "treeClaims": [
+              {
+                "treeId": "b5bb4154688c66ab",
+                "treeName": "Lineage"
+              }
+            ]
+          }
+        ],
+        "reviewExtraCandidateIds": []
+      },
+      "currentCanonicalFields": {
+        "name": "Engineer",
+        "system.benefit": "You are Trained in the Mechanics skill. Additionally, when installing new systems into a Vehicle, the efficiency of your designs reduces the time it takes to install the system by 25%.",
+        "system.description.value": "You are Trained in the Mechanics skill. Additionally, when installing new systems into a Vehicle, the efficiency of your designs reduces the time it takes to install the system by 25%.",
+        "system.summary": null,
+        "system.prerequisites": "Educated, Trained in Knowledge (Technology)",
+        "system.source": null,
+        "system.page": null
+      },
+      "targetFields": {
+        "name": "Engineer",
+        "system.benefit": "You are trained in the Mechanics skill. Additionally, when installing new systems into a vehicle, the efficiency of your designs reduces the time it takes to install the system by 25%.",
+        "system.description.value": "You are trained in the Mechanics skill. Additionally, when installing new systems into a vehicle, the efficiency of your designs reduces the time it takes to install the system by 25%.",
+        "system.summary": "Become trained in Mechanics and reduce vehicle-system installation time by 25%.",
+        "system.prerequisites": "Educated, trained in the Knowledge (technology) skill",
+        "system.source": "Starships of the Galaxy",
+        "system.page": 16
+      },
+      "fieldChanges": {
+        "name": false,
+        "system.benefit": true,
+        "system.description.value": true,
+        "system.summary": true,
+        "system.prerequisites": true,
+        "system.source": true,
+        "system.page": true
+      },
+      "mutationFields": [
+        "system.benefit",
+        "system.description.value",
+        "system.summary",
+        "system.prerequisites",
+        "system.source",
+        "system.page"
+      ],
+      "treeMutation": {
+        "action": "KEEP",
+        "removeFromTreeIds": [],
+        "addToTreeId": "b5bb4154688c66ab",
+        "addTalentId": "c727d7a40330d10d",
+        "addTalentName": "Engineer"
+      },
+      "preserveFields": [
+        "system.abilityMeta",
+        "system.prerequisitesStructured",
+        "system.tags",
+        "system.executionModel",
+        "system.subType",
+        "system.costNumeric",
+        "effects",
+        "flags",
+        "img",
+        "ownership",
+        "folder",
+        "sort"
+      ],
+      "createTemplate": null,
+      "claudeInstruction": "Preserve the existing production record ID and runtime metadata; replace only the listed canonical fields."
+    },
+    {
+      "canonicalIdentity": "Starships of the Galaxy|Outlaw Tech|Fast Repairs",
+      "canonicalTreeKey": "Starships of the Galaxy|Outlaw Tech",
+      "name": "Fast Repairs",
+      "ownerSourcebook": "Starships of the Galaxy",
+      "targetTree": {
+        "treeId": "f1657b1d23a4c7dc",
+        "treeName": "Outlaw Tech"
+      },
+      "disposition": "UPDATE_CONTENT",
+      "phase2Flags": [
+        "MECHANICS_ERROR",
+        "PREREQUISITE_ERROR"
+      ],
+      "identityResolution": {
+        "resolutionEvidence": "PHASE2_CONTENT_MAPPING",
+        "productionRecordId": "36f8497081dce05a",
+        "preserveProductionId": true,
+        "createRecordId": null,
+        "currentTreeClaims": [
+          {
+            "treeId": "f1657b1d23a4c7dc",
+            "treeName": "Outlaw Tech"
+          }
+        ],
+        "sameNameProductionCandidates": [
+          {
+            "id": "36f8497081dce05a",
+            "name": "Fast Repairs",
+            "treeClaims": [
+              {
+                "treeId": "f1657b1d23a4c7dc",
+                "treeName": "Outlaw Tech"
+              }
+            ]
+          }
+        ],
+        "reviewExtraCandidateIds": []
+      },
+      "currentCanonicalFields": {
+        "name": "Fast Repairs",
+        "system.benefit": "Whenever you Jury-Rig an object or Vehicle, the Vehicle gains a number of temporary Hit Points equal to the result of your Mechanics check. Damage is subtracted from these temporary Hit Points first, and temporary Hit Points go away at the conclusion of the encounter.",
+        "system.description.value": "Whenever you Jury-Rig an object or Vehicle, the Vehicle gains a number of temporary Hit Points equal to the result of your Mechanics check. Damage is subtracted from these temporary Hit Points first, and temporary Hit Points go away at the conclusion of the encounter.",
+        "system.summary": null,
+        "system.prerequisites": "Trained in Mechanics",
+        "system.source": null,
+        "system.page": null
+      },
+      "targetFields": {
+        "name": "Fast Repairs",
+        "system.benefit": "Whenever you jury-rig an object or vehicle, the vehicle gains a number of temporary hit points equal to the result of your Mechanics check. Damage is subtracted from these temporary hit points first, and temporary hit points go away at the conclusion of the encounter.",
+        "system.description.value": "Whenever you jury-rig an object or vehicle, the vehicle gains a number of temporary hit points equal to the result of your Mechanics check. Damage is subtracted from these temporary hit points first, and temporary hit points go away at the conclusion of the encounter.",
+        "system.summary": "Jury-rigging grants temporary hit points equal to your Mechanics check result for the encounter.",
+        "system.prerequisites": "Trained in the Mechanics skill",
+        "system.source": "Starships of the Galaxy",
+        "system.page": 16
+      },
+      "fieldChanges": {
+        "name": false,
+        "system.benefit": true,
+        "system.description.value": true,
+        "system.summary": true,
+        "system.prerequisites": true,
+        "system.source": true,
+        "system.page": true
+      },
+      "mutationFields": [
+        "system.benefit",
+        "system.description.value",
+        "system.summary",
+        "system.prerequisites",
+        "system.source",
+        "system.page"
+      ],
+      "treeMutation": {
+        "action": "KEEP",
+        "removeFromTreeIds": [],
+        "addToTreeId": "f1657b1d23a4c7dc",
+        "addTalentId": "36f8497081dce05a",
+        "addTalentName": "Fast Repairs"
+      },
+      "preserveFields": [
+        "system.abilityMeta",
+        "system.prerequisitesStructured",
+        "system.tags",
+        "system.executionModel",
+        "system.subType",
+        "system.costNumeric",
+        "effects",
+        "flags",
+        "img",
+        "ownership",
+        "folder",
+        "sort"
+      ],
+      "createTemplate": null,
+      "claudeInstruction": "Preserve the existing production record ID and runtime metadata; replace only the listed canonical fields."
+    },
+    {
+      "canonicalIdentity": "Starships of the Galaxy|Outlaw Tech|Hot Wire",
+      "canonicalTreeKey": "Starships of the Galaxy|Outlaw Tech",
+      "name": "Hot Wire",
+      "ownerSourcebook": "Starships of the Galaxy",
+      "targetTree": {
+        "treeId": "f1657b1d23a4c7dc",
+        "treeName": "Outlaw Tech"
+      },
+      "disposition": "UPDATE_CONTENT",
+      "phase2Flags": [
+        "DESCRIPTION_INCOMPLETE",
+        "PREREQUISITE_ERROR"
+      ],
+      "identityResolution": {
+        "resolutionEvidence": "PHASE2_CONTENT_MAPPING",
+        "productionRecordId": "d2b9069670413a43",
+        "preserveProductionId": true,
+        "createRecordId": null,
+        "currentTreeClaims": [
+          {
+            "treeId": "f1657b1d23a4c7dc",
+            "treeName": "Outlaw Tech"
+          }
+        ],
+        "sameNameProductionCandidates": [
+          {
+            "id": "d2b9069670413a43",
+            "name": "Hot Wire",
+            "treeClaims": [
+              {
+                "treeId": "f1657b1d23a4c7dc",
+                "treeName": "Outlaw Tech"
+              }
+            ]
+          }
+        ],
+        "reviewExtraCandidateIds": []
+      },
+      "currentCanonicalFields": {
+        "name": "Hot Wire",
+        "system.benefit": "Use Mechanics instead of Use Computer to improve computer access; you are considered trained.",
+        "system.description": "Use Mechanics instead of Use Computer to improve access to systems.",
+        "system.summary": null,
+        "system.prerequisites": null,
+        "system.source": null,
+        "system.page": null
+      },
+      "targetFields": {
+        "name": "Hot Wire",
+        "system.benefit": "You can use your Mechanics check modifier instead of your Use Computer check modifier when making Use Computer checks to improve access to a computer system. You are considered trained in the Use Computer skill for purposes of using this talent. If you are entitled to a Use Computer check reroll, you may reroll your Mechanics check instead (subject to the same circumstances and limitations).",
+        "system.description": "You can use your Mechanics check modifier instead of your Use Computer check modifier when making Use Computer checks to improve access to a computer system. You are considered trained in the Use Computer skill for purposes of using this talent. If you are entitled to a Use Computer check reroll, you may reroll your Mechanics check instead (subject to the same circumstances and limitations).",
+        "system.summary": "Use Mechanics instead of Use Computer to improve computer access, including qualifying rerolls.",
+        "system.prerequisites": "Trained in the Mechanics skill",
+        "system.source": "Starships of the Galaxy",
+        "system.page": 16
+      },
+      "fieldChanges": {
+        "name": false,
+        "system.benefit": true,
+        "system.description": true,
+        "system.summary": true,
+        "system.prerequisites": true,
+        "system.source": true,
+        "system.page": true
+      },
+      "mutationFields": [
+        "system.benefit",
+        "system.description",
+        "system.summary",
+        "system.prerequisites",
+        "system.source",
+        "system.page"
+      ],
+      "treeMutation": {
+        "action": "KEEP",
+        "removeFromTreeIds": [],
+        "addToTreeId": "f1657b1d23a4c7dc",
+        "addTalentId": "d2b9069670413a43",
+        "addTalentName": "Hot Wire"
+      },
+      "preserveFields": [
+        "system.abilityMeta",
+        "system.prerequisitesStructured",
+        "system.tags",
+        "system.executionModel",
+        "system.subType",
+        "system.costNumeric",
+        "effects",
+        "flags",
+        "img",
+        "ownership",
+        "folder",
+        "sort"
+      ],
+      "createTemplate": null,
+      "claudeInstruction": "Preserve the existing production record ID and runtime metadata; replace only the listed canonical fields."
+    },
+    {
+      "canonicalIdentity": "Starships of the Galaxy|Outlaw Tech|Quick Fix",
+      "canonicalTreeKey": "Starships of the Galaxy|Outlaw Tech",
+      "name": "Quick Fix",
+      "ownerSourcebook": "Starships of the Galaxy",
+      "targetTree": {
+        "treeId": "f1657b1d23a4c7dc",
+        "treeName": "Outlaw Tech"
+      },
+      "disposition": "CORRECT_TREE",
+      "phase2Flags": [
+        "DESCRIPTION_INCOMPLETE",
+        "PREREQUISITE_ERROR"
+      ],
+      "identityResolution": {
+        "resolutionEvidence": "PHASE2_CONTENT_MAPPING",
+        "productionRecordId": "3e6f7edaeec04a06",
+        "preserveProductionId": true,
+        "createRecordId": null,
+        "currentTreeClaims": [
+          {
+            "treeId": "38d7c18ce4664c66",
+            "treeName": "Mechanic"
+          }
+        ],
+        "sameNameProductionCandidates": [
+          {
+            "id": "3e6f7edaeec04a06",
+            "name": "Quick Fix",
+            "treeClaims": [
+              {
+                "treeId": "38d7c18ce4664c66",
+                "treeName": "Mechanic"
+              }
+            ]
+          }
+        ],
+        "reviewExtraCandidateIds": []
+      },
+      "currentCanonicalFields": {
+        "name": "Quick Fix",
+        "system.benefit": "Once per encounter, you may Jury-Rig an object or Vehicle that is not Disabled. All normal benefits and penalties for Jury-Rigging still apply.",
+        "system.description.value": "Once per encounter, you may Jury-Rig an object or Vehicle that is not Disabled. All normal benefits and penalties for Jury-Rigging still apply.",
+        "system.summary": null,
+        "system.prerequisites": "Trained in Mechanics",
+        "system.source": null,
+        "system.page": null
+      },
+      "targetFields": {
+        "name": "Quick Fix",
+        "system.benefit": "Once per encounter, you may jury-rig an object or vehicle that is not disabled. All normal benefits and penalties for jury-rigging still apply.",
+        "system.description.value": "Once per encounter, you may jury-rig an object or vehicle that is not disabled. All normal benefits and penalties for jury-rigging still apply.",
+        "system.summary": "Once per encounter, jury-rig an object or vehicle even if it is not disabled.",
+        "system.prerequisites": "Trained in the Mechanics skill",
+        "system.source": "Starships of the Galaxy",
+        "system.page": 17
+      },
+      "fieldChanges": {
+        "name": false,
+        "system.benefit": true,
+        "system.description.value": true,
+        "system.summary": true,
+        "system.prerequisites": true,
+        "system.source": true,
+        "system.page": true
+      },
+      "mutationFields": [
+        "system.benefit",
+        "system.description.value",
+        "system.summary",
+        "system.prerequisites",
+        "system.source",
+        "system.page",
+        "system.treeId"
+      ],
+      "treeMutation": {
+        "action": "MOVE",
+        "removeFromTreeIds": [
+          "38d7c18ce4664c66"
+        ],
+        "addToTreeId": "f1657b1d23a4c7dc",
+        "addTalentId": "3e6f7edaeec04a06",
+        "addTalentName": "Quick Fix"
+      },
+      "preserveFields": [
+        "system.abilityMeta",
+        "system.prerequisitesStructured",
+        "system.tags",
+        "system.executionModel",
+        "system.subType",
+        "system.costNumeric",
+        "effects",
+        "flags",
+        "img",
+        "ownership",
+        "folder",
+        "sort"
+      ],
+      "createTemplate": null,
+      "claudeInstruction": "Preserve the existing production record ID, update the listed canonical fields, move tree membership to the target tree, and set system.treeId."
+    },
+    {
+      "canonicalIdentity": "Starships of the Galaxy|Outlaw Tech|Personalized Modifications",
+      "canonicalTreeKey": "Starships of the Galaxy|Outlaw Tech",
+      "name": "Personalized Modifications",
+      "ownerSourcebook": "Starships of the Galaxy",
+      "targetTree": {
+        "treeId": "f1657b1d23a4c7dc",
+        "treeName": "Outlaw Tech"
+      },
+      "disposition": "UPDATE_CONTENT",
+      "phase2Flags": [
+        "DESCRIPTION_INCOMPLETE"
+      ],
+      "identityResolution": {
+        "resolutionEvidence": "PHASE2_CONTENT_MAPPING",
+        "productionRecordId": "111b0a9d1f8d5111",
+        "preserveProductionId": true,
+        "createRecordId": null,
+        "currentTreeClaims": [
+          {
+            "treeId": "f1657b1d23a4c7dc",
+            "treeName": "Outlaw Tech"
+          }
+        ],
+        "sameNameProductionCandidates": [
+          {
+            "id": "111b0a9d1f8d5111",
+            "name": "Personalized Modifications",
+            "treeClaims": [
+              {
+                "treeId": "f1657b1d23a4c7dc",
+                "treeName": "Outlaw Tech"
+              }
+            ]
+          }
+        ],
+        "reviewExtraCandidateIds": []
+      },
+      "currentCanonicalFields": {
+        "name": "Personalized Modifications",
+        "system.benefit": "As a Standard Action, you may tweak the settings, grips, and moving parts of a powered weapon you wield, tailoring it to your needs. For the remainder of a the encounter, you gain a +1 Equipment bonus on attack rolls, and a +2 Equipment bonus on damage rolls with that weapon.",
+        "system.description.value": "As a Standard Action, you may tweak the settings, grips, and moving parts of a powered weapon you wield, tailoring it to your needs. For the remainder of a the encounter, you gain a +1 Equipment bonus on attack rolls, and a +2 Equipment bonus on damage rolls with that weapon.\n\nYou can use this Talent only on powered weapons (those that require an Energy Cell or Power Pack to operate), including weapons connected to a larger power source (such as Weapon Systems).",
+        "system.summary": null,
+        "system.prerequisites": "",
+        "system.source": null,
+        "system.page": null
+      },
+      "targetFields": {
+        "name": "Personalized Modifications",
+        "system.benefit": "As a standard action, you may tweak the settings, grips, and moving parts of a powered weapon you wield, tailoring it to your needs. For the remainder of the encounter, you gain a +1 equipment bonus on attack rolls and a +2 equipment bonus on damage rolls with that weapon. You can use this talent only on powered weapons (those that require a power cell to operate), including weapons connected to a larger power source (such as vehicle and starship weapons).",
+        "system.description.value": "As a standard action, you may tweak the settings, grips, and moving parts of a powered weapon you wield, tailoring it to your needs. For the remainder of the encounter, you gain a +1 equipment bonus on attack rolls and a +2 equipment bonus on damage rolls with that weapon. You can use this talent only on powered weapons (those that require a power cell to operate), including weapons connected to a larger power source (such as vehicle and starship weapons).",
+        "system.summary": "As a standard action, tune a powered weapon you wield for +1 attack and +2 damage for the encounter.",
+        "system.prerequisites": "",
+        "system.source": "Starships of the Galaxy",
+        "system.page": 17
+      },
+      "fieldChanges": {
+        "name": false,
+        "system.benefit": true,
+        "system.description.value": true,
+        "system.summary": true,
+        "system.prerequisites": false,
+        "system.source": true,
+        "system.page": true
+      },
+      "mutationFields": [
+        "system.benefit",
+        "system.description.value",
+        "system.summary",
+        "system.source",
+        "system.page"
+      ],
+      "treeMutation": {
+        "action": "KEEP",
+        "removeFromTreeIds": [],
+        "addToTreeId": "f1657b1d23a4c7dc",
+        "addTalentId": "111b0a9d1f8d5111",
+        "addTalentName": "Personalized Modifications"
+      },
+      "preserveFields": [
+        "system.abilityMeta",
+        "system.prerequisitesStructured",
+        "system.tags",
+        "system.executionModel",
+        "system.subType",
+        "system.costNumeric",
+        "effects",
+        "flags",
+        "img",
+        "ownership",
+        "folder",
+        "sort"
+      ],
+      "createTemplate": null,
+      "claudeInstruction": "Preserve the existing production record ID and runtime metadata; replace only the listed canonical fields."
+    },
+    {
+      "canonicalIdentity": "Saga Edition Core Rulebook|Expert Pilot|Blind Spot",
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Expert Pilot",
+      "name": "Blind Spot",
+      "ownerSourcebook": "Starships of the Galaxy",
+      "targetTree": {
+        "treeId": "b17c1515c06361d6",
+        "treeName": "Expert Pilot"
+      },
+      "disposition": "UPDATE_CONTENT",
+      "phase2Flags": [
+        "DESCRIPTION_INCOMPLETE"
+      ],
+      "identityResolution": {
+        "resolutionEvidence": "PHASE2_CONTENT_MAPPING",
+        "productionRecordId": "0be2881047fe9919",
+        "preserveProductionId": true,
+        "createRecordId": null,
+        "currentTreeClaims": [
+          {
+            "treeId": "b17c1515c06361d6",
+            "treeName": "Expert Pilot"
+          }
+        ],
+        "sameNameProductionCandidates": [
+          {
+            "id": "0be2881047fe9919",
+            "name": "Blind Spot",
+            "treeClaims": [
+              {
+                "treeId": "b17c1515c06361d6",
+                "treeName": "Expert Pilot"
+              }
+            ]
+          }
+        ],
+        "reviewExtraCandidateIds": []
+      },
+      "currentCanonicalFields": {
+        "name": "Blind Spot",
+        "system.benefit": "You can fly a Vehicle you Pilot so close to a target at least two sizes larger than your Vehicle that it is difficult for the target to avoid or attack you. You must be adjacent to the target (at Starship Scale) to use this Talent.",
+        "system.description.value": "You can fly a Vehicle you Pilot so close to a target at least two sizes larger than your Vehicle that it is difficult for the target to avoid or attack you. You must be adjacent to the target (at Starship Scale) to use this Talent.\n\nAs a Swift Action, make an opposed Pilot check against the target. If you succeed, you move into the same space as your target. You move with your target if it moves (assuming your Vehicle has sufficient Speed to keep up), and you must make another opposed Pilot check each round as a Swift Action to stay in its Blind Spot.\n\nAs long as you stay in the target's Blind Spot, any attack you make against the target gains a +2 bonus, and the target takes a -2 penalty on attacks made against you.",
+        "system.summary": null,
+        "system.prerequisites": "",
+        "system.source": null,
+        "system.page": null
+      },
+      "targetFields": {
+        "name": "Blind Spot",
+        "system.benefit": "You can fly a vehicle you pilot so close to a target at least two sizes larger than your vehicle that it is difficult for the target to avoid or attack you. You must be adjacent to the target (at starship scale) to use this talent. As a swift action, make an opposed Pilot check against the target. If you succeed, you move into the same space as your target. You move with your target if it moves (assuming your vehicle has sufficient speed to keep up), and you must make another opposed Pilot check each round as a swift action to stay in its blind spot.\n\nAs long as you stay in the target's blind spot, any attack you make against the target gains a +2 bonus, and the target takes a -2 penalty on attacks made against you.",
+        "system.description.value": "You can fly a vehicle you pilot so close to a target at least two sizes larger than your vehicle that it is difficult for the target to avoid or attack you. You must be adjacent to the target (at starship scale) to use this talent. As a swift action, make an opposed Pilot check against the target. If you succeed, you move into the same space as your target. You move with your target if it moves (assuming your vehicle has sufficient speed to keep up), and you must make another opposed Pilot check each round as a swift action to stay in its blind spot.\n\nAs long as you stay in the target's blind spot, any attack you make against the target gains a +2 bonus, and the target takes a -2 penalty on attacks made against you.",
+        "system.summary": "Enter and maintain the blind spot of an adjacent vehicle at least two sizes larger to gain +2 attacks against it while it takes -2 attacks against you.",
+        "system.prerequisites": "",
+        "system.source": "Starships of the Galaxy",
+        "system.page": 17
+      },
+      "fieldChanges": {
+        "name": false,
+        "system.benefit": true,
+        "system.description.value": true,
+        "system.summary": true,
+        "system.prerequisites": false,
+        "system.source": true,
+        "system.page": true
+      },
+      "mutationFields": [
+        "system.benefit",
+        "system.description.value",
+        "system.summary",
+        "system.source",
+        "system.page"
+      ],
+      "treeMutation": {
+        "action": "KEEP",
+        "removeFromTreeIds": [],
+        "addToTreeId": "b17c1515c06361d6",
+        "addTalentId": "0be2881047fe9919",
+        "addTalentName": "Blind Spot"
+      },
+      "preserveFields": [
+        "system.abilityMeta",
+        "system.prerequisitesStructured",
+        "system.tags",
+        "system.executionModel",
+        "system.subType",
+        "system.costNumeric",
+        "effects",
+        "flags",
+        "img",
+        "ownership",
+        "folder",
+        "sort"
+      ],
+      "createTemplate": null,
+      "claudeInstruction": "Preserve the existing production record ID and runtime metadata; replace only the listed canonical fields."
+    },
+    {
+      "canonicalIdentity": "Saga Edition Core Rulebook|Expert Pilot|Close Scrape",
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Expert Pilot",
+      "name": "Close Scrape",
+      "ownerSourcebook": "Starships of the Galaxy",
+      "targetTree": {
+        "treeId": "b17c1515c06361d6",
+        "treeName": "Expert Pilot"
+      },
+      "disposition": "UPDATE_CONTENT",
+      "phase2Flags": [
+        "DESCRIPTION_INCOMPLETE"
+      ],
+      "identityResolution": {
+        "resolutionEvidence": "PHASE2_CONTENT_MAPPING",
+        "productionRecordId": "66ed448a3a2e82bc",
+        "preserveProductionId": true,
+        "createRecordId": null,
+        "currentTreeClaims": [
+          {
+            "treeId": "b17c1515c06361d6",
+            "treeName": "Expert Pilot"
+          }
+        ],
+        "sameNameProductionCandidates": [
+          {
+            "id": "66ed448a3a2e82bc",
+            "name": "Close Scrape",
+            "treeClaims": [
+              {
+                "treeId": "b17c1515c06361d6",
+                "treeName": "Expert Pilot"
+              }
+            ]
+          }
+        ],
+        "reviewExtraCandidateIds": []
+      },
+      "currentCanonicalFields": {
+        "name": "Close Scrape",
+        "system.benefit": "Whenever you are Piloting a Vehicle of Colossal size or smaller, you may make a Pilot check as a Reaction to turn a Critical Hit into a normal hit. The DC for the Pilot check is equal to the attack roll total of the Critical Hit.",
+        "system.description.value": "Whenever you are Piloting a Vehicle of Colossal size or smaller, you may make a Pilot check as a Reaction to turn a Critical Hit into a normal hit. The DC for the Pilot check is equal to the attack roll total of the Critical Hit.\n\nIf you are successful, the damage from the attack is not doubled (though it is still considered an automatic hit).",
+        "system.summary": null,
+        "system.prerequisites": "",
+        "system.source": null,
+        "system.page": null
+      },
+      "targetFields": {
+        "name": "Close Scrape",
+        "system.benefit": "Whenever you are piloting a vehicle of Colossal size or smaller, you may make a Pilot check as a reaction to turn a critical hit into a normal hit. The DC for the Pilot check is equal to the attack roll total of the critical hit. If you are successful, the damage from the attack is not doubled (though it is still considered an automatic hit).",
+        "system.description.value": "Whenever you are piloting a vehicle of Colossal size or smaller, you may make a Pilot check as a reaction to turn a critical hit into a normal hit. The DC for the Pilot check is equal to the attack roll total of the critical hit. If you are successful, the damage from the attack is not doubled (though it is still considered an automatic hit).",
+        "system.summary": "React to a critical hit while piloting Colossal-or-smaller craft; a Pilot check against the attack total converts it to a normal hit.",
+        "system.prerequisites": "",
+        "system.source": "Starships of the Galaxy",
+        "system.page": 17
+      },
+      "fieldChanges": {
+        "name": false,
+        "system.benefit": true,
+        "system.description.value": true,
+        "system.summary": true,
+        "system.prerequisites": false,
+        "system.source": true,
+        "system.page": true
+      },
+      "mutationFields": [
+        "system.benefit",
+        "system.description.value",
+        "system.summary",
+        "system.source",
+        "system.page"
+      ],
+      "treeMutation": {
+        "action": "KEEP",
+        "removeFromTreeIds": [],
+        "addToTreeId": "b17c1515c06361d6",
+        "addTalentId": "66ed448a3a2e82bc",
+        "addTalentName": "Close Scrape"
+      },
+      "preserveFields": [
+        "system.abilityMeta",
+        "system.prerequisitesStructured",
+        "system.tags",
+        "system.executionModel",
+        "system.subType",
+        "system.costNumeric",
+        "effects",
+        "flags",
+        "img",
+        "ownership",
+        "folder",
+        "sort"
+      ],
+      "createTemplate": null,
+      "claudeInstruction": "Preserve the existing production record ID and runtime metadata; replace only the listed canonical fields."
+    },
+    {
+      "canonicalIdentity": "Saga Edition Core Rulebook|Expert Pilot|Improved Attack Run",
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Expert Pilot",
+      "name": "Improved Attack Run",
+      "ownerSourcebook": "Starships of the Galaxy",
+      "targetTree": {
+        "treeId": "b17c1515c06361d6",
+        "treeName": "Expert Pilot"
+      },
+      "disposition": "UPDATE_CONTENT",
+      "phase2Flags": [
+        "SOURCE_ALIGNED_SHORTHAND"
+      ],
+      "identityResolution": {
+        "resolutionEvidence": "PHASE2_CONTENT_MAPPING",
+        "productionRecordId": "538d7499a66a3672",
+        "preserveProductionId": true,
+        "createRecordId": null,
+        "currentTreeClaims": [
+          {
+            "treeId": "b17c1515c06361d6",
+            "treeName": "Expert Pilot"
+          }
+        ],
+        "sameNameProductionCandidates": [
+          {
+            "id": "538d7499a66a3672",
+            "name": "Improved Attack Run",
+            "treeClaims": [
+              {
+                "treeId": "b17c1515c06361d6",
+                "treeName": "Expert Pilot"
+              }
+            ]
+          }
+        ],
+        "reviewExtraCandidateIds": []
+      },
+      "currentCanonicalFields": {
+        "name": "Improved Attack Run",
+        "system.benefit": "You do not have to move in a straight line when using the Attack Run Action.",
+        "system.description.value": "You do not have to move in a straight line when using the Attack Run Action.",
+        "system.summary": null,
+        "system.prerequisites": "",
+        "system.source": null,
+        "system.page": null
+      },
+      "targetFields": {
+        "name": "Improved Attack Run",
+        "system.benefit": "You do not have to move in a straight line when using the attack run action.",
+        "system.description.value": "You do not have to move in a straight line when using the attack run action.",
+        "system.summary": "Attack runs no longer require straight-line movement.",
+        "system.prerequisites": "",
+        "system.source": "Starships of the Galaxy",
+        "system.page": 17
+      },
+      "fieldChanges": {
+        "name": false,
+        "system.benefit": true,
+        "system.description.value": true,
+        "system.summary": true,
+        "system.prerequisites": false,
+        "system.source": true,
+        "system.page": true
+      },
+      "mutationFields": [
+        "system.benefit",
+        "system.description.value",
+        "system.summary",
+        "system.source",
+        "system.page"
+      ],
+      "treeMutation": {
+        "action": "KEEP",
+        "removeFromTreeIds": [],
+        "addToTreeId": "b17c1515c06361d6",
+        "addTalentId": "538d7499a66a3672",
+        "addTalentName": "Improved Attack Run"
+      },
+      "preserveFields": [
+        "system.abilityMeta",
+        "system.prerequisitesStructured",
+        "system.tags",
+        "system.executionModel",
+        "system.subType",
+        "system.costNumeric",
+        "effects",
+        "flags",
+        "img",
+        "ownership",
+        "folder",
+        "sort"
+      ],
+      "createTemplate": null,
+      "claudeInstruction": "Preserve the existing production record ID and runtime metadata; replace only the listed canonical fields."
+    },
+    {
+      "canonicalIdentity": "Saga Edition Core Rulebook|Expert Pilot|Vehicle Focus",
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Expert Pilot",
+      "name": "Vehicle Focus",
+      "ownerSourcebook": "Starships of the Galaxy",
+      "targetTree": {
+        "treeId": "b17c1515c06361d6",
+        "treeName": "Expert Pilot"
+      },
+      "disposition": "UPDATE_CONTENT",
+      "phase2Flags": [
+        "SOURCE_ALIGNED_SHORTHAND"
+      ],
+      "identityResolution": {
+        "resolutionEvidence": "PHASE2_CONTENT_MAPPING",
+        "productionRecordId": "4764dc69f0d11695",
+        "preserveProductionId": true,
+        "createRecordId": null,
+        "currentTreeClaims": [
+          {
+            "treeId": "b17c1515c06361d6",
+            "treeName": "Expert Pilot"
+          }
+        ],
+        "sameNameProductionCandidates": [
+          {
+            "id": "4764dc69f0d11695",
+            "name": "Vehicle Focus",
+            "treeClaims": [
+              {
+                "treeId": "b17c1515c06361d6",
+                "treeName": "Expert Pilot"
+              }
+            ]
+          }
+        ],
+        "reviewExtraCandidateIds": []
+      },
+      "currentCanonicalFields": {
+        "name": "Vehicle Focus",
+        "system.benefit": "Choose a single type of Vehicle from the following list:",
+        "system.description.value": "Choose a single type of Vehicle from the following list:",
+        "system.summary": null,
+        "system.prerequisites": "Wisdom 13",
+        "system.source": null,
+        "system.page": null
+      },
+      "targetFields": {
+        "name": "Vehicle Focus",
+        "system.benefit": "Choose a single type of vehicle from the following list: airspeeder, capital ship, space transport, speeder, starfighter, or walker. When you are the pilot or gunner of that type of vehicle, you gain +2 to all attack rolls with a vehicle weapon, and may take 10 on any Pilot checks made while piloting that type of vehicle, even when you are otherwise unable to.",
+        "system.description.value": "Choose a single type of vehicle from the following list: airspeeder, capital ship, space transport, speeder, starfighter, or walker. When you are the pilot or gunner of that type of vehicle, you gain +2 to all attack rolls with a vehicle weapon, and may take 10 on any Pilot checks made while piloting that type of vehicle, even when you are otherwise unable to.",
+        "system.summary": "Choose a vehicle type; while piloting or gunning it, gain +2 vehicle-weapon attacks and may take 10 on Pilot checks.",
+        "system.prerequisites": "Wisdom 13",
+        "system.source": "Starships of the Galaxy",
+        "system.page": 17
+      },
+      "fieldChanges": {
+        "name": false,
+        "system.benefit": true,
+        "system.description.value": true,
+        "system.summary": true,
+        "system.prerequisites": false,
+        "system.source": true,
+        "system.page": true
+      },
+      "mutationFields": [
+        "system.benefit",
+        "system.description.value",
+        "system.summary",
+        "system.source",
+        "system.page"
+      ],
+      "treeMutation": {
+        "action": "KEEP",
+        "removeFromTreeIds": [],
+        "addToTreeId": "b17c1515c06361d6",
+        "addTalentId": "4764dc69f0d11695",
+        "addTalentName": "Vehicle Focus"
+      },
+      "preserveFields": [
+        "system.abilityMeta",
+        "system.prerequisitesStructured",
+        "system.tags",
+        "system.executionModel",
+        "system.subType",
+        "system.costNumeric",
+        "effects",
+        "flags",
+        "img",
+        "ownership",
+        "folder",
+        "sort"
+      ],
+      "createTemplate": null,
+      "claudeInstruction": "Preserve the existing production record ID and runtime metadata; replace only the listed canonical fields."
+    },
+    {
+      "canonicalIdentity": "Saga Edition Core Rulebook|Expert Pilot|Wingman",
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Expert Pilot",
+      "name": "Wingman",
+      "ownerSourcebook": "Starships of the Galaxy",
+      "targetTree": {
+        "treeId": "b17c1515c06361d6",
+        "treeName": "Expert Pilot"
+      },
+      "disposition": "UPDATE_CONTENT",
+      "phase2Flags": [
+        "DESCRIPTION_INCOMPLETE"
+      ],
+      "identityResolution": {
+        "resolutionEvidence": "PHASE2_CONTENT_MAPPING",
+        "productionRecordId": "60b02b78caed8e16",
+        "preserveProductionId": true,
+        "createRecordId": null,
+        "currentTreeClaims": [
+          {
+            "treeId": "b17c1515c06361d6",
+            "treeName": "Expert Pilot"
+          }
+        ],
+        "sameNameProductionCandidates": [
+          {
+            "id": "60b02b78caed8e16",
+            "name": "Wingman",
+            "treeClaims": [
+              {
+                "treeId": "b17c1515c06361d6",
+                "treeName": "Expert Pilot"
+              }
+            ]
+          }
+        ],
+        "reviewExtraCandidateIds": []
+      },
+      "currentCanonicalFields": {
+        "name": "Wingman",
+        "system.benefit": "As a Swift Action, you can make a DC 15 Pilot check to assist any allied Starfighter or Airspeeder within 2 squares at Starship Scale. If you succeed, the Pilot of that Vehicle gains a +5 bonus on all opposed Pilot checks relating to the Dogfight Action until the start of your next turn.",
+        "system.description.value": "As a Swift Action, you can make a DC 15 Pilot check to assist any allied Starfighter or Airspeeder within 2 squares at Starship Scale. If you succeed, the Pilot of that Vehicle gains a +5 bonus on all opposed Pilot checks relating to the Dogfight Action until the start of your next turn.",
+        "system.summary": null,
+        "system.prerequisites": "Wisdom 13",
+        "system.source": null,
+        "system.page": null
+      },
+      "targetFields": {
+        "name": "Wingman",
+        "system.benefit": "As a swift action, you can make a DC 15 Pilot check to assist any allied starfighter or airspeeder within 2 squares at starship scale. If you succeed, the pilot of that vehicle gains a +5 bonus on all opposed Pilot checks relating to the dogfight action until the start of your next turn.",
+        "system.description.value": "As a swift action, you can make a DC 15 Pilot check to assist any allied starfighter or airspeeder within 2 squares at starship scale. If you succeed, the pilot of that vehicle gains a +5 bonus on all opposed Pilot checks relating to the dogfight action until the start of your next turn.",
+        "system.summary": "Swift DC 15 Pilot check grants a nearby allied starfighter or airspeeder +5 on opposed dogfight Pilot checks until your next turn.",
+        "system.prerequisites": "Wisdom 13",
+        "system.source": "Starships of the Galaxy",
+        "system.page": 17
+      },
+      "fieldChanges": {
+        "name": false,
+        "system.benefit": true,
+        "system.description.value": true,
+        "system.summary": true,
+        "system.prerequisites": false,
+        "system.source": true,
+        "system.page": true
+      },
+      "mutationFields": [
+        "system.benefit",
+        "system.description.value",
+        "system.summary",
+        "system.source",
+        "system.page"
+      ],
+      "treeMutation": {
+        "action": "KEEP",
+        "removeFromTreeIds": [],
+        "addToTreeId": "b17c1515c06361d6",
+        "addTalentId": "60b02b78caed8e16",
+        "addTalentName": "Wingman"
+      },
+      "preserveFields": [
+        "system.abilityMeta",
+        "system.prerequisitesStructured",
+        "system.tags",
+        "system.executionModel",
+        "system.subType",
+        "system.costNumeric",
+        "effects",
+        "flags",
+        "img",
+        "ownership",
+        "folder",
+        "sort"
+      ],
+      "createTemplate": null,
+      "claudeInstruction": "Preserve the existing production record ID and runtime metadata; replace only the listed canonical fields."
+    },
+    {
+      "canonicalIdentity": "Saga Edition Core Rulebook|Gunner|Crippling Hit",
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Gunner",
+      "name": "Crippling Hit",
+      "ownerSourcebook": "Starships of the Galaxy",
+      "targetTree": {
+        "treeId": "43ead399d82b8142",
+        "treeName": "Gunner"
+      },
+      "disposition": "UPDATE_CONTENT",
+      "phase2Flags": [
+        "DESCRIPTION_INCOMPLETE",
+        "PREREQUISITE_ERROR"
+      ],
+      "identityResolution": {
+        "resolutionEvidence": "PHASE2_CONTENT_MAPPING",
+        "productionRecordId": "4a78bd6bfe03eb8c",
+        "preserveProductionId": true,
+        "createRecordId": null,
+        "currentTreeClaims": [
+          {
+            "treeId": "43ead399d82b8142",
+            "treeName": "Gunner"
+          }
+        ],
+        "sameNameProductionCandidates": [
+          {
+            "id": "4a78bd6bfe03eb8c",
+            "name": "Crippling Hit",
+            "treeClaims": [
+              {
+                "treeId": "43ead399d82b8142",
+                "treeName": "Gunner"
+              }
+            ]
+          }
+        ],
+        "reviewExtraCandidateIds": []
+      },
+      "currentCanonicalFields": {
+        "name": "Crippling Hit",
+        "system.benefit": "Whenever you make an attack that causes a Vehicle to move -1 or more steps down the Condition Track, you may also cause it to lose one of the following systems: Hyperdrive, one Weapon System or Weapon Battery, or communications.",
+        "system.description.value": "Whenever you make an attack that causes a Vehicle to move -1 or more steps down the Condition Track, you may also cause it to lose one of the following systems: Hyperdrive, one Weapon System or Weapon Battery, or communications.\n\nThe system remains inoperable until the target regains all steps on the Condition Track.",
+        "system.summary": null,
+        "system.prerequisites": "Expert Gunner, System Hit",
+        "system.source": null,
+        "system.page": null
+      },
+      "targetFields": {
+        "name": "Crippling Hit",
+        "system.benefit": "Whenever you make an attack that causes a vehicle to move -1 or more steps down the condition track, you may also cause it to lose one of the following systems: hyperdrive, one weapon or weapon battery, or communications. The system remains inoperative until the target regains all steps on the condition track.",
+        "system.description.value": "Whenever you make an attack that causes a vehicle to move -1 or more steps down the condition track, you may also cause it to lose one of the following systems: hyperdrive, one weapon or weapon battery, or communications. The system remains inoperative until the target regains all steps on the condition track.",
+        "system.summary": "When your attack moves a vehicle down the condition track, disable its hyperdrive, one weapon/battery, or communications until it fully recovers.",
+        "system.prerequisites": "Expert Gunner, System Hit",
+        "system.source": "Starships of the Galaxy",
+        "system.page": 17
+      },
+      "fieldChanges": {
+        "name": false,
+        "system.benefit": true,
+        "system.description.value": true,
+        "system.summary": true,
+        "system.prerequisites": false,
+        "system.source": true,
+        "system.page": true
+      },
+      "mutationFields": [
+        "system.benefit",
+        "system.description.value",
+        "system.summary",
+        "system.source",
+        "system.page"
+      ],
+      "treeMutation": {
+        "action": "KEEP",
+        "removeFromTreeIds": [],
+        "addToTreeId": "43ead399d82b8142",
+        "addTalentId": "4a78bd6bfe03eb8c",
+        "addTalentName": "Crippling Hit"
+      },
+      "preserveFields": [
+        "system.abilityMeta",
+        "system.prerequisitesStructured",
+        "system.tags",
+        "system.executionModel",
+        "system.subType",
+        "system.costNumeric",
+        "effects",
+        "flags",
+        "img",
+        "ownership",
+        "folder",
+        "sort"
+      ],
+      "createTemplate": null,
+      "claudeInstruction": "Preserve the existing production record ID and runtime metadata; replace only the listed canonical fields."
+    },
+    {
+      "canonicalIdentity": "Saga Edition Core Rulebook|Gunner|Great Shot",
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Gunner",
+      "name": "Great Shot",
+      "ownerSourcebook": "Starships of the Galaxy",
+      "targetTree": {
+        "treeId": "43ead399d82b8142",
+        "treeName": "Gunner"
+      },
+      "disposition": "UPDATE_CONTENT",
+      "phase2Flags": [
+        "SOURCE_ALIGNED_SHORTHAND"
+      ],
+      "identityResolution": {
+        "resolutionEvidence": "PHASE2_CONTENT_MAPPING",
+        "productionRecordId": "221eb131fcb23585",
+        "preserveProductionId": true,
+        "createRecordId": null,
+        "currentTreeClaims": [
+          {
+            "treeId": "43ead399d82b8142",
+            "treeName": "Gunner"
+          }
+        ],
+        "sameNameProductionCandidates": [
+          {
+            "id": "221eb131fcb23585",
+            "name": "Great Shot",
+            "treeClaims": [
+              {
+                "treeId": "43ead399d82b8142",
+                "treeName": "Gunner"
+              }
+            ]
+          }
+        ],
+        "reviewExtraCandidateIds": []
+      },
+      "currentCanonicalFields": {
+        "name": "Great Shot",
+        "system.benefit": "When firing a Vehicle Weapon, you treat the distance to the target as though it were one Range category less than it actually is. For example, when targeting an opponent at Short Range, you treat it as though it were at least Point-Blank Range for the purpose of determining bonuses or penalties.",
+        "system.description.value": "When firing a Vehicle Weapon, you treat the distance to the target as though it were one Range category less than it actually is. For example, when targeting an opponent at Short Range, you treat it as though it were at least Point-Blank Range for the purpose of determining bonuses or penalties.",
+        "system.summary": null,
+        "system.prerequisites": "",
+        "system.source": null,
+        "system.page": null
+      },
+      "targetFields": {
+        "name": "Great Shot",
+        "system.benefit": "When firing a vehicle weapon, you treat the distance to the target as though it were one range category less than it actually is. For example, when targeting an enemy at short range, you treat it as though it were at point blank range for the purpose of determining bonuses or penalties.",
+        "system.description.value": "When firing a vehicle weapon, you treat the distance to the target as though it were one range category less than it actually is. For example, when targeting an enemy at short range, you treat it as though it were at point blank range for the purpose of determining bonuses or penalties.",
+        "system.summary": "Treat vehicle-weapon targets as one range category closer for range bonuses and penalties.",
+        "system.prerequisites": "",
+        "system.source": "Starships of the Galaxy",
+        "system.page": 17
+      },
+      "fieldChanges": {
+        "name": false,
+        "system.benefit": true,
+        "system.description.value": true,
+        "system.summary": true,
+        "system.prerequisites": false,
+        "system.source": true,
+        "system.page": true
+      },
+      "mutationFields": [
+        "system.benefit",
+        "system.description.value",
+        "system.summary",
+        "system.source",
+        "system.page"
+      ],
+      "treeMutation": {
+        "action": "KEEP",
+        "removeFromTreeIds": [],
+        "addToTreeId": "43ead399d82b8142",
+        "addTalentId": "221eb131fcb23585",
+        "addTalentName": "Great Shot"
+      },
+      "preserveFields": [
+        "system.abilityMeta",
+        "system.prerequisitesStructured",
+        "system.tags",
+        "system.executionModel",
+        "system.subType",
+        "system.costNumeric",
+        "effects",
+        "flags",
+        "img",
+        "ownership",
+        "folder",
+        "sort"
+      ],
+      "createTemplate": null,
+      "claudeInstruction": "Preserve the existing production record ID and runtime metadata; replace only the listed canonical fields."
+    },
+    {
+      "canonicalIdentity": "Saga Edition Core Rulebook|Gunner|Synchronized Fire",
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Gunner",
+      "name": "Synchronized Fire",
+      "ownerSourcebook": "Starships of the Galaxy",
+      "targetTree": {
+        "treeId": "43ead399d82b8142",
+        "treeName": "Gunner"
+      },
+      "disposition": "UPDATE_CONTENT",
+      "phase2Flags": [
+        "DESCRIPTION_INCOMPLETE"
+      ],
+      "identityResolution": {
+        "resolutionEvidence": "PHASE2_CONTENT_MAPPING",
+        "productionRecordId": "388f30468a80f221",
+        "preserveProductionId": true,
+        "createRecordId": null,
+        "currentTreeClaims": [
+          {
+            "treeId": "43ead399d82b8142",
+            "treeName": "Gunner"
+          }
+        ],
+        "sameNameProductionCandidates": [
+          {
+            "id": "388f30468a80f221",
+            "name": "Synchronized Fire",
+            "treeClaims": [
+              {
+                "treeId": "43ead399d82b8142",
+                "treeName": "Gunner"
+              }
+            ]
+          }
+        ],
+        "reviewExtraCandidateIds": []
+      },
+      "currentCanonicalFields": {
+        "name": "Synchronized Fire",
+        "system.benefit": "Once per encounter, you may ready to fire a single weapon at the same target as an ally, and you coordinate with a single weapon of your ally.",
+        "system.description.value": "Once per encounter, you may ready to fire a single weapon at the same target as an ally, and you coordinate with a single weapon of your ally.\n\nIf both attacks hit, you add the damage of the two weapons together before applying the target's Shield Rating or Damage Reduction, and treat it as a single attack for purposes of exceeding the target's Damage Threshold.",
+        "system.summary": null,
+        "system.prerequisites": "Expert Gunner",
+        "system.source": null,
+        "system.page": null
+      },
+      "targetFields": {
+        "name": "Synchronized Fire",
+        "system.benefit": "Once per encounter, you may ready to fire a single weapon at the same target as an ally, and you coordinate with a single weapon of your ally. If both attacks hit, you add the damage of the two weapons together before applying the target's SR or DR, and treat it as a single attack for purposes of exceeding the target's damage threshold.",
+        "system.description.value": "Once per encounter, you may ready to fire a single weapon at the same target as an ally, and you coordinate with a single weapon of your ally. If both attacks hit, you add the damage of the two weapons together before applying the target's SR or DR, and treat it as a single attack for purposes of exceeding the target's damage threshold.",
+        "system.summary": "Once per encounter, coordinate one weapon with an ally so two successful hits combine before SR/DR and damage-threshold comparison.",
+        "system.prerequisites": "Expert Gunner",
+        "system.source": "Starships of the Galaxy",
+        "system.page": 17
+      },
+      "fieldChanges": {
+        "name": false,
+        "system.benefit": true,
+        "system.description.value": true,
+        "system.summary": true,
+        "system.prerequisites": false,
+        "system.source": true,
+        "system.page": true
+      },
+      "mutationFields": [
+        "system.benefit",
+        "system.description.value",
+        "system.summary",
+        "system.source",
+        "system.page"
+      ],
+      "treeMutation": {
+        "action": "KEEP",
+        "removeFromTreeIds": [],
+        "addToTreeId": "43ead399d82b8142",
+        "addTalentId": "388f30468a80f221",
+        "addTalentName": "Synchronized Fire"
+      },
+      "preserveFields": [
+        "system.abilityMeta",
+        "system.prerequisitesStructured",
+        "system.tags",
+        "system.executionModel",
+        "system.subType",
+        "system.costNumeric",
+        "effects",
+        "flags",
+        "img",
+        "ownership",
+        "folder",
+        "sort"
+      ],
+      "createTemplate": null,
+      "claudeInstruction": "Preserve the existing production record ID and runtime metadata; replace only the listed canonical fields."
+    },
+    {
+      "canonicalIdentity": "Starships of the Galaxy|Squadron Leader|Begin Attack Run",
+      "canonicalTreeKey": "Starships of the Galaxy|Squadron Leader",
+      "name": "Begin Attack Run",
+      "ownerSourcebook": "Starships of the Galaxy",
+      "targetTree": {
+        "treeId": "dc1b8c5ce2a70394",
+        "treeName": "Squadron Leader"
+      },
+      "disposition": "UPDATE_CONTENT",
+      "phase2Flags": [
+        "SOURCE_ALIGNED_SHORTHAND"
+      ],
+      "identityResolution": {
+        "resolutionEvidence": "PHASE2_CONTENT_MAPPING",
+        "productionRecordId": "7e0b34a95b5f465d",
+        "preserveProductionId": true,
+        "createRecordId": null,
+        "currentTreeClaims": [
+          {
+            "treeId": "dc1b8c5ce2a70394",
+            "treeName": "Squadron Leader"
+          }
+        ],
+        "sameNameProductionCandidates": [
+          {
+            "id": "7e0b34a95b5f465d",
+            "name": "Begin Attack Run",
+            "treeClaims": [
+              {
+                "treeId": "dc1b8c5ce2a70394",
+                "treeName": "Squadron Leader"
+              }
+            ]
+          }
+        ],
+        "reviewExtraCandidateIds": []
+      },
+      "currentCanonicalFields": {
+        "name": "Begin Attack Run",
+        "system.benefit": "As a Swift Action, you designate a single target. When using the Attack Run Action against that target, Vehicles in your squadron gain a +5 bonus on their attack rolls (instead of the normal +2). You may have only one target designated at a time.",
+        "system.description.value": "As a Swift Action, you designate a single target. When using the Attack Run Action against that target, Vehicles in your squadron gain a +5 bonus on their attack rolls (instead of the normal +2). You may have only one target designated at a time.",
+        "system.summary": null,
+        "system.prerequisites": "Charisma 13",
+        "system.source": null,
+        "system.page": null
+      },
+      "targetFields": {
+        "name": "Begin Attack Run",
+        "system.benefit": "As a swift action, you designate a single target. When using the attack run action against that target, vehicles in your squadron gain a +5 bonus on their attack rolls (instead of the normal +2). You may have only one target designated at a time.",
+        "system.description.value": "As a swift action, you designate a single target. When using the attack run action against that target, vehicles in your squadron gain a +5 bonus on their attack rolls (instead of the normal +2). You may have only one target designated at a time.",
+        "system.summary": "Swiftly designate one target; squadron attack runs against it gain +5 instead of +2.",
+        "system.prerequisites": "Charisma 13",
+        "system.source": "Starships of the Galaxy",
+        "system.page": 17
+      },
+      "fieldChanges": {
+        "name": false,
+        "system.benefit": true,
+        "system.description.value": true,
+        "system.summary": true,
+        "system.prerequisites": false,
+        "system.source": true,
+        "system.page": true
+      },
+      "mutationFields": [
+        "system.benefit",
+        "system.description.value",
+        "system.summary",
+        "system.source",
+        "system.page"
+      ],
+      "treeMutation": {
+        "action": "KEEP",
+        "removeFromTreeIds": [],
+        "addToTreeId": "dc1b8c5ce2a70394",
+        "addTalentId": "7e0b34a95b5f465d",
+        "addTalentName": "Begin Attack Run"
+      },
+      "preserveFields": [
+        "system.abilityMeta",
+        "system.prerequisitesStructured",
+        "system.tags",
+        "system.executionModel",
+        "system.subType",
+        "system.costNumeric",
+        "effects",
+        "flags",
+        "img",
+        "ownership",
+        "folder",
+        "sort"
+      ],
+      "createTemplate": null,
+      "claudeInstruction": "Preserve the existing production record ID and runtime metadata; replace only the listed canonical fields."
+    },
+    {
+      "canonicalIdentity": "Starships of the Galaxy|Squadron Leader|Regroup",
+      "canonicalTreeKey": "Starships of the Galaxy|Squadron Leader",
+      "name": "Regroup",
+      "ownerSourcebook": "Starships of the Galaxy",
+      "targetTree": {
+        "treeId": "dc1b8c5ce2a70394",
+        "treeName": "Squadron Leader"
+      },
+      "disposition": "UPDATE_CONTENT",
+      "phase2Flags": [
+        "SOURCE_ALIGNED_SHORTHAND"
+      ],
+      "identityResolution": {
+        "resolutionEvidence": "PHASE2_CONTENT_MAPPING",
+        "productionRecordId": "10a43f0f9d4b31f5",
+        "preserveProductionId": true,
+        "createRecordId": null,
+        "currentTreeClaims": [
+          {
+            "treeId": "dc1b8c5ce2a70394",
+            "treeName": "Squadron Leader"
+          }
+        ],
+        "sameNameProductionCandidates": [
+          {
+            "id": "10a43f0f9d4b31f5",
+            "name": "Regroup",
+            "treeClaims": [
+              {
+                "treeId": "dc1b8c5ce2a70394",
+                "treeName": "Squadron Leader"
+              }
+            ]
+          }
+        ],
+        "reviewExtraCandidateIds": []
+      },
+      "currentCanonicalFields": {
+        "name": "Regroup",
+        "system.benefit": "Once per encounter as a Standard Action, you can move all Vehicles in your squadron +1 step on their Condition Tracks.",
+        "system.description.value": "Once per encounter as a Standard Action, you can move all Vehicles in your squadron +1 step on their Condition Tracks.",
+        "system.summary": null,
+        "system.prerequisites": "Charisma 13",
+        "system.source": null,
+        "system.page": null
+      },
+      "targetFields": {
+        "name": "Regroup",
+        "system.benefit": "Once per encounter as a standard action, you can move all vehicles in your squadron +1 step on their condition tracks.",
+        "system.description.value": "Once per encounter as a standard action, you can move all vehicles in your squadron +1 step on their condition tracks.",
+        "system.summary": "Once per encounter, standard action moves every squadron vehicle +1 step on the condition track.",
+        "system.prerequisites": "Charisma 13",
+        "system.source": "Starships of the Galaxy",
+        "system.page": 18
+      },
+      "fieldChanges": {
+        "name": false,
+        "system.benefit": true,
+        "system.description.value": true,
+        "system.summary": true,
+        "system.prerequisites": false,
+        "system.source": true,
+        "system.page": true
+      },
+      "mutationFields": [
+        "system.benefit",
+        "system.description.value",
+        "system.summary",
+        "system.source",
+        "system.page"
+      ],
+      "treeMutation": {
+        "action": "KEEP",
+        "removeFromTreeIds": [],
+        "addToTreeId": "dc1b8c5ce2a70394",
+        "addTalentId": "10a43f0f9d4b31f5",
+        "addTalentName": "Regroup"
+      },
+      "preserveFields": [
+        "system.abilityMeta",
+        "system.prerequisitesStructured",
+        "system.tags",
+        "system.executionModel",
+        "system.subType",
+        "system.costNumeric",
+        "effects",
+        "flags",
+        "img",
+        "ownership",
+        "folder",
+        "sort"
+      ],
+      "createTemplate": null,
+      "claudeInstruction": "Preserve the existing production record ID and runtime metadata; replace only the listed canonical fields."
+    },
+    {
+      "canonicalIdentity": "Starships of the Galaxy|Squadron Leader|Squadron Maneuvers",
+      "canonicalTreeKey": "Starships of the Galaxy|Squadron Leader",
+      "name": "Squadron Maneuvers",
+      "ownerSourcebook": "Starships of the Galaxy",
+      "targetTree": {
+        "treeId": "dc1b8c5ce2a70394",
+        "treeName": "Squadron Leader"
+      },
+      "disposition": "UPDATE_CONTENT",
+      "phase2Flags": [
+        "MECHANICS_ERROR",
+        "PREREQUISITE_ERROR"
+      ],
+      "identityResolution": {
+        "resolutionEvidence": "PHASE2_CONTENT_MAPPING",
+        "productionRecordId": "991dbfc3a436b5a1",
+        "preserveProductionId": true,
+        "createRecordId": null,
+        "currentTreeClaims": [
+          {
+            "treeId": "dc1b8c5ce2a70394",
+            "treeName": "Squadron Leader"
+          }
+        ],
+        "sameNameProductionCandidates": [
+          {
+            "id": "991dbfc3a436b5a1",
+            "name": "Squadron Maneuvers",
+            "treeClaims": [
+              {
+                "treeId": "dc1b8c5ce2a70394",
+                "treeName": "Squadron Leader"
+              }
+            ]
+          }
+        ],
+        "reviewExtraCandidateIds": []
+      },
+      "currentCanonicalFields": {
+        "name": "Squadron Maneuvers",
+        "system.benefit": "Choose one Talent that you already possess. The Talent you select must be from either the Expert Pilot Talent Tree or the Gunner Talent Tree. Once per encounter as a Standard Action, you can impart the benefits of the chosen Talent to all members of your squadron. Once gained, its benefits last until the end of the encounter.",
+        "system.description.value": "Choose one Talent that you already possess. The Talent you select must be from either the Expert Pilot Talent Tree or the Gunner Talent Tree. Once per encounter as a Standard Action, you can impart the benefits of the chosen Talent to all members of your squadron. Once gained, its benefits last until the end of the encounter.",
+        "system.summary": null,
+        "system.prerequisites": "Charisma 13, Any Talent from either the Expert Pilot Talent Tree or the Gunner Talent Tree",
+        "system.source": null,
+        "system.page": null
+      },
+      "targetFields": {
+        "name": "Squadron Maneuvers",
+        "system.benefit": "Choose one talent that you already possess. The talent you select must be from the Expert Pilot or Gunner talent trees. Once per encounter as a standard action, you can impart the benefits of the chosen talent to all members of your squadron. Once gained, its benefits last until the end of the encounter.",
+        "system.description.value": "Choose one talent that you already possess. The talent you select must be from the Expert Pilot or Gunner talent trees. Once per encounter as a standard action, you can impart the benefits of the chosen talent to all members of your squadron. Once gained, its benefits last until the end of the encounter.",
+        "system.summary": "Choose one Expert Pilot or Gunner talent you possess; once per encounter, grant its benefits to your whole squadron for the encounter.",
+        "system.prerequisites": "Charisma 13, any other ace pilot talent",
+        "system.source": "Starships of the Galaxy",
+        "system.page": 18
+      },
+      "fieldChanges": {
+        "name": false,
+        "system.benefit": true,
+        "system.description.value": true,
+        "system.summary": true,
+        "system.prerequisites": true,
+        "system.source": true,
+        "system.page": true
+      },
+      "mutationFields": [
+        "system.benefit",
+        "system.description.value",
+        "system.summary",
+        "system.prerequisites",
+        "system.source",
+        "system.page"
+      ],
+      "treeMutation": {
+        "action": "KEEP",
+        "removeFromTreeIds": [],
+        "addToTreeId": "dc1b8c5ce2a70394",
+        "addTalentId": "991dbfc3a436b5a1",
+        "addTalentName": "Squadron Maneuvers"
+      },
+      "preserveFields": [
+        "system.abilityMeta",
+        "system.prerequisitesStructured",
+        "system.tags",
+        "system.executionModel",
+        "system.subType",
+        "system.costNumeric",
+        "effects",
+        "flags",
+        "img",
+        "ownership",
+        "folder",
+        "sort"
+      ],
+      "createTemplate": null,
+      "claudeInstruction": "Preserve the existing production record ID and runtime metadata; replace only the listed canonical fields."
+    },
+    {
+      "canonicalIdentity": "Starships of the Galaxy|Squadron Leader|Squadron Tactics",
+      "canonicalTreeKey": "Starships of the Galaxy|Squadron Leader",
+      "name": "Squadron Tactics",
+      "ownerSourcebook": "Starships of the Galaxy",
+      "targetTree": {
+        "treeId": "dc1b8c5ce2a70394",
+        "treeName": "Squadron Leader"
+      },
+      "disposition": "UPDATE_CONTENT",
+      "phase2Flags": [
+        "DESCRIPTION_INCOMPLETE",
+        "PREREQUISITE_ERROR"
+      ],
+      "identityResolution": {
+        "resolutionEvidence": "PHASE2_CONTENT_MAPPING",
+        "productionRecordId": "ec12bc7f161a0893",
+        "preserveProductionId": true,
+        "createRecordId": null,
+        "currentTreeClaims": [
+          {
+            "treeId": "dc1b8c5ce2a70394",
+            "treeName": "Squadron Leader"
+          }
+        ],
+        "sameNameProductionCandidates": [
+          {
+            "id": "ec12bc7f161a0893",
+            "name": "Squadron Tactics",
+            "treeClaims": [
+              {
+                "treeId": "dc1b8c5ce2a70394",
+                "treeName": "Squadron Leader"
+              }
+            ]
+          }
+        ],
+        "reviewExtraCandidateIds": []
+      },
+      "currentCanonicalFields": {
+        "name": "Squadron Tactics",
+        "system.benefit": "Once per encounter, when you use a non-attack pattern Starship Maneuver, you grant all ships in your squadron the ability to use the same Starship Maneuver once on their next turn. The Pilot of each ship that chooses to use the Starship Maneuver must make any Pilot checks or attack rolls the Starship Maneuver requires- your success or failure with the Starship Maneuver has no bearing on the success of other units in your squadron.",
+        "system.description.value": "Once per encounter, when you use a non-attack pattern Starship Maneuver, you grant all ships in your squadron the ability to use the same Starship Maneuver once on their next turn. The Pilot of each ship that chooses to use the Starship Maneuver must make any Pilot checks or attack rolls the Starship Maneuver requires- your success or failure with the Starship Maneuver has no bearing on the success of other units in your squadron.",
+        "system.summary": null,
+        "system.prerequisites": "Charisma 13, Wisdom 13, Starship Tactics, Squadron Maneuvers",
+        "system.source": null,
+        "system.page": null
+      },
+      "targetFields": {
+        "name": "Squadron Tactics",
+        "system.benefit": "Once per encounter, when you use a starship maneuver, you grant all ships in your squadron the ability to use the same maneuver once on their next turn. The pilot of each ship that chooses to use the maneuver must make any Pilot checks or attack rolls the maneuver requires—your success or failure with the maneuver has no bearing on the success of other units of your squadron.",
+        "system.description.value": "Once per encounter, when you use a starship maneuver, you grant all ships in your squadron the ability to use the same maneuver once on their next turn. The pilot of each ship that chooses to use the maneuver must make any Pilot checks or attack rolls the maneuver requires—your success or failure with the maneuver has no bearing on the success of other units of your squadron.",
+        "system.summary": "Once per encounter when you use a starship maneuver, each squadron ship may independently use that maneuver once on its next turn.",
+        "system.prerequisites": "Charisma 13, Wisdom 13, any other ace pilot talent, Squadron Maneuvers, Starship Tactics",
+        "system.source": "Starships of the Galaxy",
+        "system.page": 18
+      },
+      "fieldChanges": {
+        "name": false,
+        "system.benefit": true,
+        "system.description.value": true,
+        "system.summary": true,
+        "system.prerequisites": true,
+        "system.source": true,
+        "system.page": true
+      },
+      "mutationFields": [
+        "system.benefit",
+        "system.description.value",
+        "system.summary",
+        "system.prerequisites",
+        "system.source",
+        "system.page"
+      ],
+      "treeMutation": {
+        "action": "KEEP",
+        "removeFromTreeIds": [],
+        "addToTreeId": "dc1b8c5ce2a70394",
+        "addTalentId": "ec12bc7f161a0893",
+        "addTalentName": "Squadron Tactics"
+      },
+      "preserveFields": [
+        "system.abilityMeta",
+        "system.prerequisitesStructured",
+        "system.tags",
+        "system.executionModel",
+        "system.subType",
+        "system.costNumeric",
+        "effects",
+        "flags",
+        "img",
+        "ownership",
+        "folder",
+        "sort"
+      ],
+      "createTemplate": null,
+      "claudeInstruction": "Preserve the existing production record ID and runtime metadata; replace only the listed canonical fields."
+    },
+    {
+      "canonicalIdentity": "Starships of the Galaxy|Naval Officer|Combined Fire",
+      "canonicalTreeKey": "Starships of the Galaxy|Naval Officer",
+      "name": "Combined Fire",
+      "ownerSourcebook": "Starships of the Galaxy",
+      "targetTree": {
+        "treeId": "057a978a7dc1d5a7",
+        "treeName": "Naval Officer"
+      },
+      "disposition": "UPDATE_CONTENT",
+      "phase2Flags": [
+        "MISSING_CONTENT",
+        "DISTINCT_SAME_NAME_IDENTITY_MISSING"
+      ],
+      "identityResolution": {
+        "resolutionEvidence": "TARGET_TREE_NAME_MATCH",
+        "productionRecordId": "17518b7669101122",
+        "preserveProductionId": true,
+        "createRecordId": null,
+        "currentTreeClaims": [
+          {
+            "treeId": "057a978a7dc1d5a7",
+            "treeName": "Naval Officer"
+          }
+        ],
+        "sameNameProductionCandidates": [
+          {
+            "id": "17518b7669101122",
+            "name": "Combined Fire",
+            "treeClaims": [
+              {
+                "treeId": "057a978a7dc1d5a7",
+                "treeName": "Naval Officer"
+              }
+            ]
+          }
+        ],
+        "reviewExtraCandidateIds": []
+      },
+      "currentCanonicalFields": {
+        "name": "Combined Fire",
+        "system.benefit": "As a Swift Action, you may designate a single creature, Vehicle or object within your line of sight as the target of . Any Weapon Batteries attacking the target deal an extra die of damage for every 2 points by which their attack roll exceeds the target's Reflex Defense (instead of every 3 points). In addition, when using the Tactical Fire option for a Capital Ship, you may designated a weapon or Weapon Battery to make a single attack. As a Full-Round Action, you can designate a number of Vehicles equal to your Officer Class Level and within your line of sight. Those Vehicles may immediately move a number of squares equal to their speed.",
+        "system.description": "As a Swift Action, you may designate a single creature, Vehicle or object within your line of sight as the target of . Any Weapon Batteries attacking the target deal an extra die of damage for every 2 points by which their attack roll exceeds the target's Reflex Defense (instead of every 3 points). In addition, when using the Tactical Fire option for a Capital Ship, you may designated a weapon or Weapon Battery to make a single attack. As a Full-Round Action, you can designate a number of Vehicles equal to your Officer Class Level and within your line of sight. Those Vehicles may immediately move a number of squares equal to their speed.",
+        "system.summary": null,
+        "system.prerequisites": "Charisma 13",
+        "system.source": null,
+        "system.page": null
+      },
+      "targetFields": {
+        "name": "Combined Fire",
+        "system.benefit": "As a swift action, you may designate a single creature, vehicle, or object within your line of sight as the target of combined fire. Any weapon batteries attacking that target deal an extra die of damage for every 2 points their attack roll exceeds the target's Reflex Defense (instead of every 3 points). In addition, when using the tactical fire option for a capital ship (see ship descriptions in Chapter 4), you may designate a weapon or weapon battery to make a single attack.",
+        "system.description": "As a swift action, you may designate a single creature, vehicle, or object within your line of sight as the target of combined fire. Any weapon batteries attacking that target deal an extra die of damage for every 2 points their attack roll exceeds the target's Reflex Defense (instead of every 3 points). In addition, when using the tactical fire option for a capital ship (see ship descriptions in Chapter 4), you may designate a weapon or weapon battery to make a single attack.",
+        "system.summary": "Swiftly designate a visible target; batteries gain damage dice every 2 points over Reflex, and tactical fire may designate one weapon/battery to attack.",
+        "system.prerequisites": "",
+        "system.source": "Starships of the Galaxy",
+        "system.page": 18
+      },
+      "fieldChanges": {
+        "name": false,
+        "system.benefit": true,
+        "system.description": true,
+        "system.summary": true,
+        "system.prerequisites": true,
+        "system.source": true,
+        "system.page": true
+      },
+      "mutationFields": [
+        "system.benefit",
+        "system.description",
+        "system.summary",
+        "system.prerequisites",
+        "system.source",
+        "system.page"
+      ],
+      "treeMutation": {
+        "action": "KEEP",
+        "removeFromTreeIds": [],
+        "addToTreeId": "057a978a7dc1d5a7",
+        "addTalentId": "17518b7669101122",
+        "addTalentName": "Combined Fire"
+      },
+      "preserveFields": [
+        "system.abilityMeta",
+        "system.prerequisitesStructured",
+        "system.tags",
+        "system.executionModel",
+        "system.subType",
+        "system.costNumeric",
+        "effects",
+        "flags",
+        "img",
+        "ownership",
+        "folder",
+        "sort"
+      ],
+      "createTemplate": null,
+      "claudeInstruction": "Preserve the existing production record ID and runtime metadata; replace only the listed canonical fields."
+    },
+    {
+      "canonicalIdentity": "Starships of the Galaxy|Naval Officer|Fleet Deployment",
+      "canonicalTreeKey": "Starships of the Galaxy|Naval Officer",
+      "name": "Fleet Deployment",
+      "ownerSourcebook": "Starships of the Galaxy",
+      "targetTree": {
+        "treeId": "057a978a7dc1d5a7",
+        "treeName": "Naval Officer"
+      },
+      "disposition": "UPDATE_CONTENT",
+      "phase2Flags": [
+        "DESCRIPTION_INCOMPLETE"
+      ],
+      "identityResolution": {
+        "resolutionEvidence": "PHASE2_CONTENT_MAPPING",
+        "productionRecordId": "d1c2e9bdbb58b715",
+        "preserveProductionId": true,
+        "createRecordId": null,
+        "currentTreeClaims": [
+          {
+            "treeId": "057a978a7dc1d5a7",
+            "treeName": "Naval Officer"
+          }
+        ],
+        "sameNameProductionCandidates": [
+          {
+            "id": "d1c2e9bdbb58b715",
+            "name": "Fleet Deployment",
+            "treeClaims": [
+              {
+                "treeId": "057a978a7dc1d5a7",
+                "treeName": "Naval Officer"
+              }
+            ]
+          }
+        ],
+        "reviewExtraCandidateIds": []
+      },
+      "currentCanonicalFields": {
+        "name": "Fleet Deployment",
+        "system.benefit": "As a Full-Round Action, you can designate a number of Vehicles equal to your Officer Class Level and within your line of sight. Those Vehicles may immediately move a number of squares equal to their speed.",
+        "system.description.value": "As a Full-Round Action, you can designate a number of Vehicles equal to your Officer Class Level and within your line of sight. Those Vehicles may immediately move a number of squares equal to their speed.",
+        "system.summary": null,
+        "system.prerequisites": "Charisma 13",
+        "system.source": null,
+        "system.page": null
+      },
+      "targetFields": {
+        "name": "Fleet Deployment",
+        "system.benefit": "As a full-round action, you can designate a number of vehicles equal to your class level and within your line of sight. Those vehicles may immediately move a number of squares equal to their speed.",
+        "system.description.value": "As a full-round action, you can designate a number of vehicles equal to your class level and within your line of sight. Those vehicles may immediately move a number of squares equal to their speed.",
+        "system.summary": "Full-round action lets visible vehicles up to your class level immediately move their speed.",
+        "system.prerequisites": "Charisma 13",
+        "system.source": "Starships of the Galaxy",
+        "system.page": 18
+      },
+      "fieldChanges": {
+        "name": false,
+        "system.benefit": true,
+        "system.description.value": true,
+        "system.summary": true,
+        "system.prerequisites": false,
+        "system.source": true,
+        "system.page": true
+      },
+      "mutationFields": [
+        "system.benefit",
+        "system.description.value",
+        "system.summary",
+        "system.source",
+        "system.page"
+      ],
+      "treeMutation": {
+        "action": "KEEP",
+        "removeFromTreeIds": [],
+        "addToTreeId": "057a978a7dc1d5a7",
+        "addTalentId": "d1c2e9bdbb58b715",
+        "addTalentName": "Fleet Deployment"
+      },
+      "preserveFields": [
+        "system.abilityMeta",
+        "system.prerequisitesStructured",
+        "system.tags",
+        "system.executionModel",
+        "system.subType",
+        "system.costNumeric",
+        "effects",
+        "flags",
+        "img",
+        "ownership",
+        "folder",
+        "sort"
+      ],
+      "createTemplate": null,
+      "claudeInstruction": "Preserve the existing production record ID and runtime metadata; replace only the listed canonical fields."
+    },
+    {
+      "canonicalIdentity": "Starships of the Galaxy|Naval Officer|Fleet Tactics",
+      "canonicalTreeKey": "Starships of the Galaxy|Naval Officer",
+      "name": "Fleet Tactics",
+      "ownerSourcebook": "Starships of the Galaxy",
+      "targetTree": {
+        "treeId": "057a978a7dc1d5a7",
+        "treeName": "Naval Officer"
+      },
+      "disposition": "UPDATE_CONTENT",
+      "phase2Flags": [
+        "DESCRIPTION_INCOMPLETE"
+      ],
+      "identityResolution": {
+        "resolutionEvidence": "PHASE2_CONTENT_MAPPING",
+        "productionRecordId": "d8d7218123a28f39",
+        "preserveProductionId": true,
+        "createRecordId": null,
+        "currentTreeClaims": [
+          {
+            "treeId": "057a978a7dc1d5a7",
+            "treeName": "Naval Officer"
+          }
+        ],
+        "sameNameProductionCandidates": [
+          {
+            "id": "d8d7218123a28f39",
+            "name": "Fleet Tactics",
+            "treeClaims": [
+              {
+                "treeId": "057a978a7dc1d5a7",
+                "treeName": "Naval Officer"
+              }
+            ]
+          }
+        ],
+        "reviewExtraCandidateIds": []
+      },
+      "currentCanonicalFields": {
+        "name": "Fleet Tactics",
+        "system.benefit": "As a Standard Action, you may designate a single Vehicle as the target of a large-scale assault. If you succeed on a DC 15 Knowledge (Tactics) check, all allied Gunners within line of sight deal 1 additional die of damage to the target with each successful ranged attack until the start of your next turn.",
+        "system.description.value": "As a Standard Action, you may designate a single Vehicle as the target of a large-scale assault. If you succeed on a DC 15 Knowledge (Tactics) check, all allied Gunners within line of sight deal 1 additional die of damage to the target with each successful ranged attack until the start of your next turn.\n\nThis is a Mind-Affecting effect.",
+        "system.summary": null,
+        "system.prerequisites": "Charisma 13, Fleet Deployment",
+        "system.source": null,
+        "system.page": null
+      },
+      "targetFields": {
+        "name": "Fleet Tactics",
+        "system.benefit": "As a standard action, you may designate a single vehicle as the target of a large-scale assault. If you succeed on a DC 15 Knowledge (tactics) check, all allied gunners within line of sight deal 1 additional die of damage to the target with each successful ranged attack until the start of your next turn. This is a mind-affecting effect.",
+        "system.description.value": "As a standard action, you may designate a single vehicle as the target of a large-scale assault. If you succeed on a DC 15 Knowledge (tactics) check, all allied gunners within line of sight deal 1 additional die of damage to the target with each successful ranged attack until the start of your next turn. This is a mind-affecting effect.",
+        "system.summary": "Standard action and DC 15 Knowledge (tactics) check grants visible allied gunners +1 damage die against one vehicle until your next turn.",
+        "system.prerequisites": "Charisma 13, Fleet Deployment",
+        "system.source": "Starships of the Galaxy",
+        "system.page": 18
+      },
+      "fieldChanges": {
+        "name": false,
+        "system.benefit": true,
+        "system.description.value": true,
+        "system.summary": true,
+        "system.prerequisites": false,
+        "system.source": true,
+        "system.page": true
+      },
+      "mutationFields": [
+        "system.benefit",
+        "system.description.value",
+        "system.summary",
+        "system.source",
+        "system.page"
+      ],
+      "treeMutation": {
+        "action": "KEEP",
+        "removeFromTreeIds": [],
+        "addToTreeId": "057a978a7dc1d5a7",
+        "addTalentId": "d8d7218123a28f39",
+        "addTalentName": "Fleet Tactics"
+      },
+      "preserveFields": [
+        "system.abilityMeta",
+        "system.prerequisitesStructured",
+        "system.tags",
+        "system.executionModel",
+        "system.subType",
+        "system.costNumeric",
+        "effects",
+        "flags",
+        "img",
+        "ownership",
+        "folder",
+        "sort"
+      ],
+      "createTemplate": null,
+      "claudeInstruction": "Preserve the existing production record ID and runtime metadata; replace only the listed canonical fields."
+    },
+    {
+      "canonicalIdentity": "Starships of the Galaxy|Naval Officer|It's a Trap!",
+      "canonicalTreeKey": "Starships of the Galaxy|Naval Officer",
+      "name": "It's a Trap!",
+      "ownerSourcebook": "Starships of the Galaxy",
+      "targetTree": {
+        "treeId": "057a978a7dc1d5a7",
+        "treeName": "Naval Officer"
+      },
+      "disposition": "UPDATE_CONTENT",
+      "phase2Flags": [
+        "MECHANICS_ERROR"
+      ],
+      "identityResolution": {
+        "resolutionEvidence": "PHASE2_CONTENT_MAPPING",
+        "productionRecordId": "8fe560a110d8f4ee",
+        "preserveProductionId": true,
+        "createRecordId": null,
+        "currentTreeClaims": [
+          {
+            "treeId": "057a978a7dc1d5a7",
+            "treeName": "Naval Officer"
+          }
+        ],
+        "sameNameProductionCandidates": [
+          {
+            "id": "8fe560a110d8f4ee",
+            "name": "It's a Trap",
+            "treeClaims": [
+              {
+                "treeId": "057a978a7dc1d5a7",
+                "treeName": "Naval Officer"
+              }
+            ]
+          }
+        ],
+        "reviewExtraCandidateIds": []
+      },
+      "currentCanonicalFields": {
+        "name": "It's a Trap",
+        "system.benefit": "You are skilled at sensing the plans of enemy naval Officers, and counteracting them. Once per encounter as a Reaction, you can grant the Pilot of any single Vehicle within line of sight (including a Vehicle you are commanding) an immediate Move Action.",
+        "system.description.value": "You are skilled at sensing the plans of enemy naval Officers, and counteracting them. Once per encounter as a Reaction, you can grant the Pilot of any single Vehicle within line of sight (including a Vehicle you are commanding) an immediate Move Action.",
+        "system.summary": null,
+        "system.prerequisites": "",
+        "system.source": null,
+        "system.page": null
+      },
+      "targetFields": {
+        "name": "It's a Trap!",
+        "system.benefit": "You are skilled at sensing the plans of enemy naval officers and counteracting them. Once per encounter as a reaction, you can grant the pilot of any single vehicle within line of sight (including a vehicle you are commanding) an immediate move action.",
+        "system.description.value": "You are skilled at sensing the plans of enemy naval officers and counteracting them. Once per encounter as a reaction, you can grant the pilot of any single vehicle within line of sight (including a vehicle you are commanding) an immediate move action.",
+        "system.summary": "Once per encounter as a reaction, grant the pilot of one visible vehicle an immediate move action.",
+        "system.prerequisites": "",
+        "system.source": "Starships of the Galaxy",
+        "system.page": 18
+      },
+      "fieldChanges": {
+        "name": true,
+        "system.benefit": true,
+        "system.description.value": true,
+        "system.summary": true,
+        "system.prerequisites": false,
+        "system.source": true,
+        "system.page": true
+      },
+      "mutationFields": [
+        "name",
+        "system.benefit",
+        "system.description.value",
+        "system.summary",
+        "system.source",
+        "system.page"
+      ],
+      "treeMutation": {
+        "action": "UPDATE_NAME",
+        "removeFromTreeIds": [],
+        "addToTreeId": "057a978a7dc1d5a7",
+        "addTalentId": "8fe560a110d8f4ee",
+        "replaceTalentName": {
+          "from": "It's a Trap",
+          "to": "It's a Trap!"
+        }
+      },
+      "preserveFields": [
+        "system.abilityMeta",
+        "system.prerequisitesStructured",
+        "system.tags",
+        "system.executionModel",
+        "system.subType",
+        "system.costNumeric",
+        "effects",
+        "flags",
+        "img",
+        "ownership",
+        "folder",
+        "sort"
+      ],
+      "createTemplate": null,
+      "claudeInstruction": "Preserve the existing production record ID and runtime metadata; replace only the listed canonical fields."
+    },
+    {
+      "canonicalIdentity": "Starships of the Galaxy|Naval Officer|Legendary Commander",
+      "canonicalTreeKey": "Starships of the Galaxy|Naval Officer",
+      "name": "Legendary Commander",
+      "ownerSourcebook": "Starships of the Galaxy",
+      "targetTree": {
+        "treeId": "057a978a7dc1d5a7",
+        "treeName": "Naval Officer"
+      },
+      "disposition": "UPDATE_CONTENT",
+      "phase2Flags": [
+        "DESCRIPTION_INCOMPLETE"
+      ],
+      "identityResolution": {
+        "resolutionEvidence": "PHASE2_CONTENT_MAPPING",
+        "productionRecordId": "d1683318140f3906",
+        "preserveProductionId": true,
+        "createRecordId": null,
+        "currentTreeClaims": [
+          {
+            "treeId": "057a978a7dc1d5a7",
+            "treeName": "Naval Officer"
+          }
+        ],
+        "sameNameProductionCandidates": [
+          {
+            "id": "d1683318140f3906",
+            "name": "Legendary Commander",
+            "treeClaims": [
+              {
+                "treeId": "057a978a7dc1d5a7",
+                "treeName": "Naval Officer"
+              }
+            ]
+          }
+        ],
+        "reviewExtraCandidateIds": []
+      },
+      "currentCanonicalFields": {
+        "name": "Legendary Commander",
+        "system.benefit": "When you are the Commander of a Capital Ship, calculate its Reflex Defense using your Heroic Level plus one-half the ship's armor bonus (rounded down), the Pilot's Heroic Level, or the ship's Armor bonus, whichever is highest.",
+        "system.description.value": "When you are the Commander of a Capital Ship, calculate its Reflex Defense using your Heroic Level plus one-half the ship's armor bonus (rounded down), the Pilot's Heroic Level, or the ship's Armor bonus, whichever is highest.\n\nIn addition, all Gunners on your ship add one-half your Heroic Level, or one-half their Heroic Level, whichever is more, to damage rolls with Vehicle Weapons. Finally, you treat any generic crew as being one quality level higher (maximum of Ace, see Crew Quality).",
+        "system.summary": null,
+        "system.prerequisites": "Charisma 13, Intelligence 13, Born Leader",
+        "system.source": null,
+        "system.page": null
+      },
+      "targetFields": {
+        "name": "Legendary Commander",
+        "system.benefit": "When you are the commander of a capital ship, calculate its Reflex Defense using your heroic level plus one-half the ship's armor bonus (round down), the pilot's heroic level, or the ship's armor bonus, whichever is more. In addition, all gunners on your ship add one-half your heroic level or one-half their heroic level, whichever is more, to damage rolls with vehicle weapons. Finally, you treat any generic crew as being one quality level higher (maximum of ace).",
+        "system.description.value": "When you are the commander of a capital ship, calculate its Reflex Defense using your heroic level plus one-half the ship's armor bonus (round down), the pilot's heroic level, or the ship's armor bonus, whichever is more. In addition, all gunners on your ship add one-half your heroic level or one-half their heroic level, whichever is more, to damage rolls with vehicle weapons. Finally, you treat any generic crew as being one quality level higher (maximum of ace).",
+        "system.summary": "As capital-ship commander, improve Reflex calculation, gunner damage scaling, and generic crew quality.",
+        "system.prerequisites": "Charisma 13, Intelligence 13, Born Leader",
+        "system.source": "Starships of the Galaxy",
+        "system.page": 18
+      },
+      "fieldChanges": {
+        "name": false,
+        "system.benefit": true,
+        "system.description.value": true,
+        "system.summary": true,
+        "system.prerequisites": false,
+        "system.source": true,
+        "system.page": true
+      },
+      "mutationFields": [
+        "system.benefit",
+        "system.description.value",
+        "system.summary",
+        "system.source",
+        "system.page"
+      ],
+      "treeMutation": {
+        "action": "KEEP",
+        "removeFromTreeIds": [],
+        "addToTreeId": "057a978a7dc1d5a7",
+        "addTalentId": "d1683318140f3906",
+        "addTalentName": "Legendary Commander"
+      },
+      "preserveFields": [
+        "system.abilityMeta",
+        "system.prerequisitesStructured",
+        "system.tags",
+        "system.executionModel",
+        "system.subType",
+        "system.costNumeric",
+        "effects",
+        "flags",
+        "img",
+        "ownership",
+        "folder",
+        "sort"
+      ],
+      "createTemplate": null,
+      "claudeInstruction": "Preserve the existing production record ID and runtime metadata; replace only the listed canonical fields."
+    }
+  ]
+}

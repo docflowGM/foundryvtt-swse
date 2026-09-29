@@ -1,0 +1,4446 @@
+{
+  "schemaVersion": 2,
+  "phase": "3B",
+  "status": "CERTIFIED_BOOK_REPAIR_MANIFEST",
+  "sourcebook": "Galaxy of Intrigue",
+  "bookOrder": 5,
+  "identityRule": "canonicalTreeKey + talent name; never talent name alone",
+  "ownershipRule": "Only the Phase 3A primary publication owner emits a production mutation. Repeated later publications are reference-only.",
+  "productionMutationAllowed": false,
+  "generatedAgainst": {
+    "canonical": {
+      "path": "data/canonical/talents.json",
+      "fingerprint": "fnv1a64:251001ba5bea19a1"
+    },
+    "registry": {
+      "path": "data/audits/talent-canonical-tree-registry.json",
+      "fingerprint": "fnv1a64:9121b94eb7b62f57"
+    },
+    "talents": {
+      "path": "packs/talents.db",
+      "fingerprint": "fnv1a64:1db9da2beb7923d3"
+    },
+    "trees": {
+      "path": "packs/talent_trees.db",
+      "fingerprint": "fnv1a64:5b5325da00db8387"
+    },
+    "classes": {
+      "path": "packs/classes.db",
+      "fingerprint": "fnv1a64:511de8d194fdaf13"
+    },
+    "phase2": {
+      "path": "data/audits/talent-phase-2-galaxy-of-intrigue-content.json",
+      "fingerprint": "fnv1a64:8e3c64030274cf91"
+    },
+    "discrepancy": {
+      "path": "data/audits/talent-phase-2-galaxy-of-intrigue-discrepancy-manifest.json",
+      "fingerprint": "fnv1a64:e0319687827c1324"
+    }
+  },
+  "counts": {
+    "certifiedPublicationClaims": 43,
+    "ownedCanonicalIdentities": 43,
+    "referenceOnlyPublicationClaims": 0,
+    "canonicalTrees": 11,
+    "dispositions": {
+      "UPDATE_METADATA": 2,
+      "IDENTITY_SPLIT": 2,
+      "CREATE": 27,
+      "UPDATE_CONTENT": 12
+    },
+    "fieldChanges": {
+      "system.summary": 43,
+      "system.source": 36,
+      "system.page": 36,
+      "system.benefit": 41,
+      "system.description.value": 40,
+      "system.prerequisites": 17,
+      "system.description": 1
+    },
+    "productionExtras": 0,
+    "productionTreeCreates": 2,
+    "classAccessMutations": 2
+  },
+  "dispositionPrecedence": [
+    "IDENTITY_SPLIT",
+    "CREATE",
+    "CORRECT_TREE",
+    "REMOVE_CONTAMINATION",
+    "UPDATE_CONTENT",
+    "UPDATE_METADATA",
+    "KEEP"
+  ],
+  "phase3cWriteContract": {
+    "productionTalentPack": "packs/talents.db",
+    "productionTreePack": "packs/talent_trees.db",
+    "productionClassPack": "packs/classes.db",
+    "preserveExistingIds": true,
+    "descriptionWriteRule": "Preserve each existing record's description shape: write system.description.value when description is an object and system.description when it is a string. New records use system.description.value.",
+    "canonicalFields": [
+      "name",
+      "system.benefit",
+      "system.description.value or system.description",
+      "system.summary",
+      "system.prerequisites",
+      "system.source",
+      "system.page"
+    ],
+    "prohibitedShortcuts": [
+      "Do not match or mutate by talent name alone.",
+      "Do not infer CREATE from a Phase 2 missing flag.",
+      "Do not overwrite a same-name identity in another tree.",
+      "Do not delete REVIEW_EXTRA records during Phase 3C.",
+      "Do not erase runtime metadata unless explicitly targeted."
+    ]
+  },
+  "treeCreates": [
+    {
+      "canonicalTreeKey": "Galaxy of Intrigue|Skill Challenge",
+      "createTreeId": "7ab8bd7bce901f85",
+      "displayName": "Skill Challenge",
+      "classAccess": [
+        "Noble"
+      ],
+      "createTemplate": {
+        "_id": "7ab8bd7bce901f85",
+        "name": "Skill Challenge",
+        "type": "talenttree",
+        "img": "icons/svg/item-bag.svg",
+        "system": {
+          "talent_tree": "Skill Challenge",
+          "description": "",
+          "costNumeric": null,
+          "talentIds": [
+            "669aae58e8d0d90f",
+            "efd54ffa36d5a2b4",
+            "6dcf10db37160d23",
+            "bf27fc2e540e2ed5"
+          ],
+          "talentNames": [
+            "Guaranteed Boon",
+            "Leading Skill",
+            "Learn from Mistakes",
+            "Try Your Luck"
+          ]
+        },
+        "effects": [],
+        "folder": null,
+        "sort": 0,
+        "ownership": {
+          "default": 0
+        },
+        "flags": {}
+      }
+    },
+    {
+      "canonicalTreeKey": "Galaxy of Intrigue|Espionage",
+      "createTreeId": "0c4ddea3c78ffc3d",
+      "displayName": "Espionage",
+      "classAccess": [
+        "Scout"
+      ],
+      "createTemplate": {
+        "_id": "0c4ddea3c78ffc3d",
+        "name": "Espionage",
+        "type": "talenttree",
+        "img": "icons/svg/item-bag.svg",
+        "system": {
+          "talent_tree": "Espionage",
+          "description": "",
+          "costNumeric": null,
+          "talentIds": [
+            "77293789b3e9e38a",
+            "de31c189f3416df7",
+            "70929db4d14b8ae8",
+            "810160a476804e61",
+            "95579a44ff466f19"
+          ],
+          "talentNames": [
+            "Fade Out",
+            "Keep Together",
+            "Prudent Escape",
+            "Reactive Stealth",
+            "Sizing Up"
+          ]
+        },
+        "effects": [],
+        "folder": null,
+        "sort": 0,
+        "ownership": {
+          "default": 0
+        },
+        "flags": {}
+      }
+    }
+  ],
+  "classAccessMutations": [
+    {
+      "classRecordId": "8c58016e587dd2c7",
+      "className": "Noble",
+      "canonicalTreeKey": "Galaxy of Intrigue|Skill Challenge",
+      "treeId": "7ab8bd7bce901f85",
+      "treeName": "Skill Challenge",
+      "add": {
+        "system.talent_trees": "7ab8bd7bce901f85",
+        "system.talentTreeIds": "skill_challenge",
+        "system.talentTreeSourceIds": "7ab8bd7bce901f85",
+        "system.talentTreeUuids": "Compendium.foundryvtt-swse.talent_trees.7ab8bd7bce901f85"
+      }
+    },
+    {
+      "classRecordId": "b5bed5d1b5f42958",
+      "className": "Scout",
+      "canonicalTreeKey": "Galaxy of Intrigue|Espionage",
+      "treeId": "0c4ddea3c78ffc3d",
+      "treeName": "Espionage",
+      "add": {
+        "system.talent_trees": "0c4ddea3c78ffc3d",
+        "system.talentTreeIds": "espionage",
+        "system.talentTreeSourceIds": "0c4ddea3c78ffc3d",
+        "system.talentTreeUuids": "Compendium.foundryvtt-swse.talent_trees.0c4ddea3c78ffc3d"
+      }
+    }
+  ],
+  "referenceOnlyPublications": [],
+  "productionExtras": [],
+  "records": [
+    {
+      "canonicalIdentity": "Galaxy of Intrigue|Master of Intrigue|Advanced Planning",
+      "canonicalTreeKey": "Galaxy of Intrigue|Master of Intrigue",
+      "name": "Advanced Planning",
+      "ownerSourcebook": "Galaxy of Intrigue",
+      "targetTree": {
+        "treeId": "0ffc37dac946477d",
+        "treeName": "Master Of Intrigue"
+      },
+      "disposition": "UPDATE_METADATA",
+      "phase2Flags": [
+        "MISSING_CONTENT"
+      ],
+      "identityResolution": {
+        "resolutionEvidence": "TARGET_TREE_NAME_MATCH",
+        "productionRecordId": "5bf2f1759ee54834",
+        "preserveProductionId": true,
+        "createRecordId": null,
+        "currentTreeClaims": [
+          {
+            "treeId": "0ffc37dac946477d",
+            "treeName": "Master Of Intrigue"
+          }
+        ],
+        "sameNameProductionCandidates": [
+          {
+            "id": "5bf2f1759ee54834",
+            "name": "Advanced Planning",
+            "treeClaims": [
+              {
+                "treeId": "0ffc37dac946477d",
+                "treeName": "Master Of Intrigue"
+              }
+            ]
+          }
+        ],
+        "reviewExtraCandidateIds": []
+      },
+      "currentCanonicalFields": {
+        "name": "Advanced Planning",
+        "system.benefit": "When you roll Initiative for combat, choose one willing ally within your line of sight. You and that ally swap Initiative results.",
+        "system.description.value": "When you roll Initiative for combat, choose one willing ally within your line of sight. You and that ally swap Initiative results.",
+        "system.summary": null,
+        "system.prerequisites": "",
+        "system.source": null,
+        "system.page": null
+      },
+      "targetFields": {
+        "name": "Advanced Planning",
+        "system.benefit": "When you roll Initiative for combat, choose one willing ally within your line of sight. You and that ally swap Initiative results.",
+        "system.description.value": "When you roll Initiative for combat, choose one willing ally within your line of sight. You and that ally swap Initiative results.",
+        "system.summary": "When combat initiative is rolled, swap Initiative results with one willing visible ally.",
+        "system.prerequisites": "",
+        "system.source": "Galaxy of Intrigue",
+        "system.page": 20
+      },
+      "fieldChanges": {
+        "name": false,
+        "system.benefit": false,
+        "system.description.value": false,
+        "system.summary": true,
+        "system.prerequisites": false,
+        "system.source": true,
+        "system.page": true
+      },
+      "mutationFields": [
+        "system.summary",
+        "system.source",
+        "system.page"
+      ],
+      "treeMutation": {
+        "action": "KEEP",
+        "removeFromTreeIds": [],
+        "addToTreeId": "0ffc37dac946477d",
+        "addTalentId": "5bf2f1759ee54834",
+        "addTalentName": "Advanced Planning"
+      },
+      "preserveFields": [
+        "system.abilityMeta",
+        "system.prerequisitesStructured",
+        "system.tags",
+        "system.executionModel",
+        "system.subType",
+        "system.costNumeric",
+        "effects",
+        "flags",
+        "img",
+        "ownership",
+        "folder",
+        "sort"
+      ],
+      "createTemplate": null,
+      "claudeInstruction": "Preserve the existing production record ID and canonical content; update only the listed metadata or display-name fields."
+    },
+    {
+      "canonicalIdentity": "Galaxy of Intrigue|Master of Intrigue|Blend In",
+      "canonicalTreeKey": "Galaxy of Intrigue|Master of Intrigue",
+      "name": "Blend In",
+      "ownerSourcebook": "Galaxy of Intrigue",
+      "targetTree": {
+        "treeId": "0ffc37dac946477d",
+        "treeName": "Master Of Intrigue"
+      },
+      "disposition": "IDENTITY_SPLIT",
+      "phase2Flags": [
+        "MISSING_CONTENT",
+        "DISTINCT_SAME_NAME_IDENTITY_MISSING"
+      ],
+      "identityResolution": {
+        "resolutionEvidence": "UNRESOLVED",
+        "productionRecordId": null,
+        "preserveProductionId": false,
+        "createRecordId": "4a6da8249db460f6",
+        "currentTreeClaims": [],
+        "sameNameProductionCandidates": [
+          {
+            "id": "a18d67d9fd947f68",
+            "name": "Blend In",
+            "treeClaims": [
+              {
+                "treeId": "7c42882a1347ef18",
+                "treeName": "Spy"
+              }
+            ]
+          }
+        ],
+        "reviewExtraCandidateIds": []
+      },
+      "currentCanonicalFields": null,
+      "targetFields": {
+        "name": "Blend In",
+        "system.benefit": "You know how to blend into a variety of cultures and groups with ease. As a swift action, you gain total concealment when adjacent to at least two other creatures. This benefit does not apply to attacks from adjacent creatures.",
+        "system.description.value": "You know how to blend into a variety of cultures and groups with ease. As a swift action, you gain total concealment when adjacent to at least two other creatures. This benefit does not apply to attacks from adjacent creatures.",
+        "system.summary": "As a swift action while adjacent to at least two creatures, gain total concealment against nonadjacent attackers.",
+        "system.prerequisites": "",
+        "system.source": "Galaxy of Intrigue",
+        "system.page": 20
+      },
+      "fieldChanges": {
+        "name": false,
+        "system.benefit": true,
+        "system.description.value": true,
+        "system.summary": true,
+        "system.prerequisites": false,
+        "system.source": true,
+        "system.page": true
+      },
+      "mutationFields": [
+        "system.benefit",
+        "system.description.value",
+        "system.summary",
+        "system.source",
+        "system.page",
+        "_record_create",
+        "system.treeId"
+      ],
+      "treeMutation": {
+        "action": "ADD",
+        "removeFromTreeIds": [],
+        "addToTreeId": "0ffc37dac946477d",
+        "addTalentId": "4a6da8249db460f6",
+        "addTalentName": "Blend In"
+      },
+      "preserveFields": [
+        "system.abilityMeta",
+        "system.prerequisitesStructured",
+        "system.tags",
+        "system.executionModel",
+        "system.subType",
+        "system.costNumeric",
+        "effects",
+        "flags",
+        "img",
+        "ownership",
+        "folder",
+        "sort"
+      ],
+      "createTemplate": {
+        "_id": "4a6da8249db460f6",
+        "name": "Blend In",
+        "type": "talent",
+        "img": "icons/svg/item-bag.svg",
+        "system": {
+          "treeId": "0ffc37dac946477d",
+          "benefit": "You know how to blend into a variety of cultures and groups with ease. As a swift action, you gain total concealment when adjacent to at least two other creatures. This benefit does not apply to attacks from adjacent creatures.",
+          "description": {
+            "value": "You know how to blend into a variety of cultures and groups with ease. As a swift action, you gain total concealment when adjacent to at least two other creatures. This benefit does not apply to attacks from adjacent creatures."
+          },
+          "summary": "As a swift action while adjacent to at least two creatures, gain total concealment against nonadjacent attackers.",
+          "prerequisites": "",
+          "source": "Galaxy of Intrigue",
+          "page": 20,
+          "costNumeric": null,
+          "tags": []
+        },
+        "effects": [],
+        "folder": null,
+        "sort": 0,
+        "ownership": {
+          "default": 0
+        },
+        "flags": {}
+      },
+      "claudeInstruction": "Create the distinct canonical identity with createRecordId. Do not overwrite or repurpose a same-name record in another tree."
+    },
+    {
+      "canonicalIdentity": "Galaxy of Intrigue|Master of Intrigue|Done It All",
+      "canonicalTreeKey": "Galaxy of Intrigue|Master of Intrigue",
+      "name": "Done It All",
+      "ownerSourcebook": "Galaxy of Intrigue",
+      "targetTree": {
+        "treeId": "0ffc37dac946477d",
+        "treeName": "Master Of Intrigue"
+      },
+      "disposition": "CREATE",
+      "phase2Flags": [
+        "MISSING_CONTENT"
+      ],
+      "identityResolution": {
+        "resolutionEvidence": "UNRESOLVED",
+        "productionRecordId": null,
+        "preserveProductionId": false,
+        "createRecordId": "d376f165f1a47281",
+        "currentTreeClaims": [],
+        "sameNameProductionCandidates": [],
+        "reviewExtraCandidateIds": []
+      },
+      "currentCanonicalFields": null,
+      "targetFields": {
+        "name": "Done It All",
+        "system.benefit": "When you select this talent, choose two talents (from any nonprestige class) that you do not possess but for which you meet the prerequisites. Once per turn on your turn, you can spend a Force Point as a free action to gain the benefits of one of those talents until the end of your next turn.",
+        "system.description.value": "When you select this talent, choose two talents (from any nonprestige class) that you do not possess but for which you meet the prerequisites. Once per turn on your turn, you can spend a Force Point as a free action to gain the benefits of one of those talents until the end of your next turn.",
+        "system.summary": "Choose two qualifying nonprestige-class talents; spend a Force Point once per turn to gain one until the end of your next turn.",
+        "system.prerequisites": "",
+        "system.source": "Galaxy of Intrigue",
+        "system.page": 20
+      },
+      "fieldChanges": {
+        "name": false,
+        "system.benefit": true,
+        "system.description.value": true,
+        "system.summary": true,
+        "system.prerequisites": false,
+        "system.source": true,
+        "system.page": true
+      },
+      "mutationFields": [
+        "system.benefit",
+        "system.description.value",
+        "system.summary",
+        "system.source",
+        "system.page",
+        "_record_create",
+        "system.treeId"
+      ],
+      "treeMutation": {
+        "action": "ADD",
+        "removeFromTreeIds": [],
+        "addToTreeId": "0ffc37dac946477d",
+        "addTalentId": "d376f165f1a47281",
+        "addTalentName": "Done It All"
+      },
+      "preserveFields": [
+        "system.abilityMeta",
+        "system.prerequisitesStructured",
+        "system.tags",
+        "system.executionModel",
+        "system.subType",
+        "system.costNumeric",
+        "effects",
+        "flags",
+        "img",
+        "ownership",
+        "folder",
+        "sort"
+      ],
+      "createTemplate": {
+        "_id": "d376f165f1a47281",
+        "name": "Done It All",
+        "type": "talent",
+        "img": "icons/svg/item-bag.svg",
+        "system": {
+          "treeId": "0ffc37dac946477d",
+          "benefit": "When you select this talent, choose two talents (from any nonprestige class) that you do not possess but for which you meet the prerequisites. Once per turn on your turn, you can spend a Force Point as a free action to gain the benefits of one of those talents until the end of your next turn.",
+          "description": {
+            "value": "When you select this talent, choose two talents (from any nonprestige class) that you do not possess but for which you meet the prerequisites. Once per turn on your turn, you can spend a Force Point as a free action to gain the benefits of one of those talents until the end of your next turn."
+          },
+          "summary": "Choose two qualifying nonprestige-class talents; spend a Force Point once per turn to gain one until the end of your next turn.",
+          "prerequisites": "",
+          "source": "Galaxy of Intrigue",
+          "page": 20,
+          "costNumeric": null,
+          "tags": []
+        },
+        "effects": [],
+        "folder": null,
+        "sort": 0,
+        "ownership": {
+          "default": 0
+        },
+        "flags": {}
+      },
+      "claudeInstruction": "Create the exact canonical identity with createRecordId; do not infer automation metadata. Add the new ID/name to the target talent tree."
+    },
+    {
+      "canonicalIdentity": "Galaxy of Intrigue|Master of Intrigue|Get into Position",
+      "canonicalTreeKey": "Galaxy of Intrigue|Master of Intrigue",
+      "name": "Get into Position",
+      "ownerSourcebook": "Galaxy of Intrigue",
+      "targetTree": {
+        "treeId": "0ffc37dac946477d",
+        "treeName": "Master Of Intrigue"
+      },
+      "disposition": "IDENTITY_SPLIT",
+      "phase2Flags": [
+        "MISSING_CONTENT",
+        "DISTINCT_SAME_NAME_IDENTITY_MISSING"
+      ],
+      "identityResolution": {
+        "resolutionEvidence": "UNRESOLVED",
+        "productionRecordId": null,
+        "preserveProductionId": false,
+        "createRecordId": "bb7ee79cbdd2c018",
+        "currentTreeClaims": [],
+        "sameNameProductionCandidates": [
+          {
+            "id": "510541d890629be0",
+            "name": "Get Into Position",
+            "treeClaims": [
+              {
+                "treeId": "860fa1a66c837574",
+                "treeName": "Reconnaissance"
+              }
+            ]
+          }
+        ],
+        "reviewExtraCandidateIds": []
+      },
+      "currentCanonicalFields": null,
+      "targetFields": {
+        "name": "Get into Position",
+        "system.benefit": "Once per encounter, at the start of your first turn, choose two allies within 12 squares and in your line of sight. Each ally can immediately move up to his or her speed as a reaction.",
+        "system.description.value": "Once per encounter, at the start of your first turn, choose two allies within 12 squares and in your line of sight. Each ally can immediately move up to his or her speed as a reaction.",
+        "system.summary": "Once per encounter at the start of your first turn, let two visible allies within 12 squares immediately move their speed.",
+        "system.prerequisites": "",
+        "system.source": "Galaxy of Intrigue",
+        "system.page": 20
+      },
+      "fieldChanges": {
+        "name": false,
+        "system.benefit": true,
+        "system.description.value": true,
+        "system.summary": true,
+        "system.prerequisites": false,
+        "system.source": true,
+        "system.page": true
+      },
+      "mutationFields": [
+        "system.benefit",
+        "system.description.value",
+        "system.summary",
+        "system.source",
+        "system.page",
+        "_record_create",
+        "system.treeId"
+      ],
+      "treeMutation": {
+        "action": "ADD",
+        "removeFromTreeIds": [],
+        "addToTreeId": "0ffc37dac946477d",
+        "addTalentId": "bb7ee79cbdd2c018",
+        "addTalentName": "Get into Position"
+      },
+      "preserveFields": [
+        "system.abilityMeta",
+        "system.prerequisitesStructured",
+        "system.tags",
+        "system.executionModel",
+        "system.subType",
+        "system.costNumeric",
+        "effects",
+        "flags",
+        "img",
+        "ownership",
+        "folder",
+        "sort"
+      ],
+      "createTemplate": {
+        "_id": "bb7ee79cbdd2c018",
+        "name": "Get into Position",
+        "type": "talent",
+        "img": "icons/svg/item-bag.svg",
+        "system": {
+          "treeId": "0ffc37dac946477d",
+          "benefit": "Once per encounter, at the start of your first turn, choose two allies within 12 squares and in your line of sight. Each ally can immediately move up to his or her speed as a reaction.",
+          "description": {
+            "value": "Once per encounter, at the start of your first turn, choose two allies within 12 squares and in your line of sight. Each ally can immediately move up to his or her speed as a reaction."
+          },
+          "summary": "Once per encounter at the start of your first turn, let two visible allies within 12 squares immediately move their speed.",
+          "prerequisites": "",
+          "source": "Galaxy of Intrigue",
+          "page": 20,
+          "costNumeric": null,
+          "tags": []
+        },
+        "effects": [],
+        "folder": null,
+        "sort": 0,
+        "ownership": {
+          "default": 0
+        },
+        "flags": {}
+      },
+      "claudeInstruction": "Create the distinct canonical identity with createRecordId. Do not overwrite or repurpose a same-name record in another tree."
+    },
+    {
+      "canonicalIdentity": "Galaxy of Intrigue|Master of Intrigue|Master Manipulator",
+      "canonicalTreeKey": "Galaxy of Intrigue|Master of Intrigue",
+      "name": "Master Manipulator",
+      "ownerSourcebook": "Galaxy of Intrigue",
+      "targetTree": {
+        "treeId": "0ffc37dac946477d",
+        "treeName": "Master Of Intrigue"
+      },
+      "disposition": "CREATE",
+      "phase2Flags": [
+        "MISSING_CONTENT"
+      ],
+      "identityResolution": {
+        "resolutionEvidence": "UNRESOLVED",
+        "productionRecordId": null,
+        "preserveProductionId": false,
+        "createRecordId": "c5a043b596f544d0",
+        "currentTreeClaims": [],
+        "sameNameProductionCandidates": [],
+        "reviewExtraCandidateIds": []
+      },
+      "currentCanonicalFields": null,
+      "targetFields": {
+        "name": "Master Manipulator",
+        "system.benefit": "You are a master of making things happen the way you want them to. You can use each of the following actions once per encounter as a swift action on your turn:\n\nDemand Recovery: Select one ally within 5 squares and in your line of sight. That ally moves +5 steps on the condition track and gains a +2 morale bonus to attack rolls and skill checks until the end of your next turn.\n\nExceptional Control: Roll a d20 and note the result. Once before the end of the encounter, as a reaction you can replace the result of any enemy's or ally's d20 roll with the result you rolled for this ability. The enemy or ally must be within your line of sight.\n\nWord of Warning: Select one ally within 5 squares and in your line of sight. Once before the end of the encounter, as a reaction to that ally having any defense score targeted by a skill check or an attack, you can replace that ally's defense score with your same defense score until the attack or skill check is resolved.",
+        "system.description.value": "You are a master of making things happen the way you want them to. You can use each of the following actions once per encounter as a swift action on your turn:\n\nDemand Recovery: Select one ally within 5 squares and in your line of sight. That ally moves +5 steps on the condition track and gains a +2 morale bonus to attack rolls and skill checks until the end of your next turn.\n\nExceptional Control: Roll a d20 and note the result. Once before the end of the encounter, as a reaction you can replace the result of any enemy's or ally's d20 roll with the result you rolled for this ability. The enemy or ally must be within your line of sight.\n\nWord of Warning: Select one ally within 5 squares and in your line of sight. Once before the end of the encounter, as a reaction to that ally having any defense score targeted by a skill check or an attack, you can replace that ally's defense score with your same defense score until the attack or skill check is resolved.",
+        "system.summary": "Once each per encounter, use Demand Recovery, Exceptional Control, or Word of Warning as a swift action.",
+        "system.prerequisites": "Advanced Planning, Get into Position",
+        "system.source": "Galaxy of Intrigue",
+        "system.page": 20
+      },
+      "fieldChanges": {
+        "name": false,
+        "system.benefit": true,
+        "system.description.value": true,
+        "system.summary": true,
+        "system.prerequisites": true,
+        "system.source": true,
+        "system.page": true
+      },
+      "mutationFields": [
+        "system.benefit",
+        "system.description.value",
+        "system.summary",
+        "system.prerequisites",
+        "system.source",
+        "system.page",
+        "_record_create",
+        "system.treeId"
+      ],
+      "treeMutation": {
+        "action": "ADD",
+        "removeFromTreeIds": [],
+        "addToTreeId": "0ffc37dac946477d",
+        "addTalentId": "c5a043b596f544d0",
+        "addTalentName": "Master Manipulator"
+      },
+      "preserveFields": [
+        "system.abilityMeta",
+        "system.prerequisitesStructured",
+        "system.tags",
+        "system.executionModel",
+        "system.subType",
+        "system.costNumeric",
+        "effects",
+        "flags",
+        "img",
+        "ownership",
+        "folder",
+        "sort"
+      ],
+      "createTemplate": {
+        "_id": "c5a043b596f544d0",
+        "name": "Master Manipulator",
+        "type": "talent",
+        "img": "icons/svg/item-bag.svg",
+        "system": {
+          "treeId": "0ffc37dac946477d",
+          "benefit": "You are a master of making things happen the way you want them to. You can use each of the following actions once per encounter as a swift action on your turn:\n\nDemand Recovery: Select one ally within 5 squares and in your line of sight. That ally moves +5 steps on the condition track and gains a +2 morale bonus to attack rolls and skill checks until the end of your next turn.\n\nExceptional Control: Roll a d20 and note the result. Once before the end of the encounter, as a reaction you can replace the result of any enemy's or ally's d20 roll with the result you rolled for this ability. The enemy or ally must be within your line of sight.\n\nWord of Warning: Select one ally within 5 squares and in your line of sight. Once before the end of the encounter, as a reaction to that ally having any defense score targeted by a skill check or an attack, you can replace that ally's defense score with your same defense score until the attack or skill check is resolved.",
+          "description": {
+            "value": "You are a master of making things happen the way you want them to. You can use each of the following actions once per encounter as a swift action on your turn:\n\nDemand Recovery: Select one ally within 5 squares and in your line of sight. That ally moves +5 steps on the condition track and gains a +2 morale bonus to attack rolls and skill checks until the end of your next turn.\n\nExceptional Control: Roll a d20 and note the result. Once before the end of the encounter, as a reaction you can replace the result of any enemy's or ally's d20 roll with the result you rolled for this ability. The enemy or ally must be within your line of sight.\n\nWord of Warning: Select one ally within 5 squares and in your line of sight. Once before the end of the encounter, as a reaction to that ally having any defense score targeted by a skill check or an attack, you can replace that ally's defense score with your same defense score until the attack or skill check is resolved."
+          },
+          "summary": "Once each per encounter, use Demand Recovery, Exceptional Control, or Word of Warning as a swift action.",
+          "prerequisites": "Advanced Planning, Get into Position",
+          "source": "Galaxy of Intrigue",
+          "page": 20,
+          "costNumeric": null,
+          "tags": []
+        },
+        "effects": [],
+        "folder": null,
+        "sort": 0,
+        "ownership": {
+          "default": 0
+        },
+        "flags": {}
+      },
+      "claudeInstruction": "Create the exact canonical identity with createRecordId; do not infer automation metadata. Add the new ID/name to the target talent tree."
+    },
+    {
+      "canonicalIdentity": "Galaxy of Intrigue|Master of Intrigue|Retaliation",
+      "canonicalTreeKey": "Galaxy of Intrigue|Master of Intrigue",
+      "name": "Retaliation",
+      "ownerSourcebook": "Galaxy of Intrigue",
+      "targetTree": {
+        "treeId": "0ffc37dac946477d",
+        "treeName": "Master Of Intrigue"
+      },
+      "disposition": "CREATE",
+      "phase2Flags": [
+        "MISSING_CONTENT"
+      ],
+      "identityResolution": {
+        "resolutionEvidence": "UNRESOLVED",
+        "productionRecordId": null,
+        "preserveProductionId": false,
+        "createRecordId": "8ed2a9fd50053e3b",
+        "currentTreeClaims": [],
+        "sameNameProductionCandidates": [],
+        "reviewExtraCandidateIds": []
+      },
+      "currentCanonicalFields": null,
+      "targetFields": {
+        "name": "Retaliation",
+        "system.benefit": "Whenever you move down the condition track as a result of taking damage that equals or exceeds your damage threshold, the next time you hit and damage a creature or a droid with a melee or a ranged attack before the end of your next turn, you automatically move the target -1 step on the condition track.",
+        "system.description.value": "Whenever you move down the condition track as a result of taking damage that equals or exceeds your damage threshold, the next time you hit and damage a creature or a droid with a melee or a ranged attack before the end of your next turn, you automatically move the target -1 step on the condition track.",
+        "system.summary": "After threshold damage moves you down the condition track, your next damaging hit before the end of your next turn also moves the target -1 step.",
+        "system.prerequisites": "Advanced Planning",
+        "system.source": "Galaxy of Intrigue",
+        "system.page": 20
+      },
+      "fieldChanges": {
+        "name": false,
+        "system.benefit": true,
+        "system.description.value": true,
+        "system.summary": true,
+        "system.prerequisites": true,
+        "system.source": true,
+        "system.page": true
+      },
+      "mutationFields": [
+        "system.benefit",
+        "system.description.value",
+        "system.summary",
+        "system.prerequisites",
+        "system.source",
+        "system.page",
+        "_record_create",
+        "system.treeId"
+      ],
+      "treeMutation": {
+        "action": "ADD",
+        "removeFromTreeIds": [],
+        "addToTreeId": "0ffc37dac946477d",
+        "addTalentId": "8ed2a9fd50053e3b",
+        "addTalentName": "Retaliation"
+      },
+      "preserveFields": [
+        "system.abilityMeta",
+        "system.prerequisitesStructured",
+        "system.tags",
+        "system.executionModel",
+        "system.subType",
+        "system.costNumeric",
+        "effects",
+        "flags",
+        "img",
+        "ownership",
+        "folder",
+        "sort"
+      ],
+      "createTemplate": {
+        "_id": "8ed2a9fd50053e3b",
+        "name": "Retaliation",
+        "type": "talent",
+        "img": "icons/svg/item-bag.svg",
+        "system": {
+          "treeId": "0ffc37dac946477d",
+          "benefit": "Whenever you move down the condition track as a result of taking damage that equals or exceeds your damage threshold, the next time you hit and damage a creature or a droid with a melee or a ranged attack before the end of your next turn, you automatically move the target -1 step on the condition track.",
+          "description": {
+            "value": "Whenever you move down the condition track as a result of taking damage that equals or exceeds your damage threshold, the next time you hit and damage a creature or a droid with a melee or a ranged attack before the end of your next turn, you automatically move the target -1 step on the condition track."
+          },
+          "summary": "After threshold damage moves you down the condition track, your next damaging hit before the end of your next turn also moves the target -1 step.",
+          "prerequisites": "Advanced Planning",
+          "source": "Galaxy of Intrigue",
+          "page": 20,
+          "costNumeric": null,
+          "tags": []
+        },
+        "effects": [],
+        "folder": null,
+        "sort": 0,
+        "ownership": {
+          "default": 0
+        },
+        "flags": {}
+      },
+      "claudeInstruction": "Create the exact canonical identity with createRecordId; do not infer automation metadata. Add the new ID/name to the target talent tree."
+    },
+    {
+      "canonicalIdentity": "Galaxy of Intrigue|Skill Challenge|Guaranteed Boon",
+      "canonicalTreeKey": "Galaxy of Intrigue|Skill Challenge",
+      "name": "Guaranteed Boon",
+      "ownerSourcebook": "Galaxy of Intrigue",
+      "targetTree": {
+        "treeId": "7ab8bd7bce901f85",
+        "treeName": "Skill Challenge"
+      },
+      "disposition": "CREATE",
+      "phase2Flags": [
+        "MISSING_CONTENT"
+      ],
+      "identityResolution": {
+        "resolutionEvidence": "UNRESOLVED",
+        "productionRecordId": null,
+        "preserveProductionId": false,
+        "createRecordId": "669aae58e8d0d90f",
+        "currentTreeClaims": [],
+        "sameNameProductionCandidates": [],
+        "reviewExtraCandidateIds": []
+      },
+      "currentCanonicalFields": null,
+      "targetFields": {
+        "name": "Guaranteed Boon",
+        "system.benefit": "Whenever you spend a Force Point to add to a skill roll in a skill challenge and accrue a failure for that skill check, you regain that Force Point.",
+        "system.description.value": "Whenever you spend a Force Point to add to a skill roll in a skill challenge and accrue a failure for that skill check, you regain that Force Point.",
+        "system.summary": "If a Force Point-boosted skill challenge check still fails, regain that Force Point.",
+        "system.prerequisites": "",
+        "system.source": "Galaxy of Intrigue",
+        "system.page": 20
+      },
+      "fieldChanges": {
+        "name": false,
+        "system.benefit": true,
+        "system.description.value": true,
+        "system.summary": true,
+        "system.prerequisites": false,
+        "system.source": true,
+        "system.page": true
+      },
+      "mutationFields": [
+        "system.benefit",
+        "system.description.value",
+        "system.summary",
+        "system.source",
+        "system.page",
+        "_record_create",
+        "system.treeId"
+      ],
+      "treeMutation": {
+        "action": "ADD",
+        "removeFromTreeIds": [],
+        "addToTreeId": "7ab8bd7bce901f85",
+        "addTalentId": "669aae58e8d0d90f",
+        "addTalentName": "Guaranteed Boon"
+      },
+      "preserveFields": [
+        "system.abilityMeta",
+        "system.prerequisitesStructured",
+        "system.tags",
+        "system.executionModel",
+        "system.subType",
+        "system.costNumeric",
+        "effects",
+        "flags",
+        "img",
+        "ownership",
+        "folder",
+        "sort"
+      ],
+      "createTemplate": {
+        "_id": "669aae58e8d0d90f",
+        "name": "Guaranteed Boon",
+        "type": "talent",
+        "img": "icons/svg/item-bag.svg",
+        "system": {
+          "treeId": "7ab8bd7bce901f85",
+          "benefit": "Whenever you spend a Force Point to add to a skill roll in a skill challenge and accrue a failure for that skill check, you regain that Force Point.",
+          "description": {
+            "value": "Whenever you spend a Force Point to add to a skill roll in a skill challenge and accrue a failure for that skill check, you regain that Force Point."
+          },
+          "summary": "If a Force Point-boosted skill challenge check still fails, regain that Force Point.",
+          "prerequisites": "",
+          "source": "Galaxy of Intrigue",
+          "page": 20,
+          "costNumeric": null,
+          "tags": []
+        },
+        "effects": [],
+        "folder": null,
+        "sort": 0,
+        "ownership": {
+          "default": 0
+        },
+        "flags": {}
+      },
+      "claudeInstruction": "Create the exact canonical identity with createRecordId; do not infer automation metadata. Add the new ID/name to the target talent tree."
+    },
+    {
+      "canonicalIdentity": "Galaxy of Intrigue|Skill Challenge|Leading Skill",
+      "canonicalTreeKey": "Galaxy of Intrigue|Skill Challenge",
+      "name": "Leading Skill",
+      "ownerSourcebook": "Galaxy of Intrigue",
+      "targetTree": {
+        "treeId": "7ab8bd7bce901f85",
+        "treeName": "Skill Challenge"
+      },
+      "disposition": "CREATE",
+      "phase2Flags": [
+        "MISSING_CONTENT"
+      ],
+      "identityResolution": {
+        "resolutionEvidence": "UNRESOLVED",
+        "productionRecordId": null,
+        "preserveProductionId": false,
+        "createRecordId": "efd54ffa36d5a2b4",
+        "currentTreeClaims": [],
+        "sameNameProductionCandidates": [],
+        "reviewExtraCandidateIds": []
+      },
+      "currentCanonicalFields": null,
+      "targetFields": {
+        "name": "Leading Skill",
+        "system.benefit": "Whenever you earn a success in a skill challenge, you gain a +2 insight bonus to your next skill check made with a different skill in the same skill challenge.",
+        "system.description.value": "Whenever you earn a success in a skill challenge, you gain a +2 insight bonus to your next skill check made with a different skill in the same skill challenge.",
+        "system.summary": "After a skill challenge success, gain +2 insight on your next check using a different skill in that challenge.",
+        "system.prerequisites": "",
+        "system.source": "Galaxy of Intrigue",
+        "system.page": 20
+      },
+      "fieldChanges": {
+        "name": false,
+        "system.benefit": true,
+        "system.description.value": true,
+        "system.summary": true,
+        "system.prerequisites": false,
+        "system.source": true,
+        "system.page": true
+      },
+      "mutationFields": [
+        "system.benefit",
+        "system.description.value",
+        "system.summary",
+        "system.source",
+        "system.page",
+        "_record_create",
+        "system.treeId"
+      ],
+      "treeMutation": {
+        "action": "ADD",
+        "removeFromTreeIds": [],
+        "addToTreeId": "7ab8bd7bce901f85",
+        "addTalentId": "efd54ffa36d5a2b4",
+        "addTalentName": "Leading Skill"
+      },
+      "preserveFields": [
+        "system.abilityMeta",
+        "system.prerequisitesStructured",
+        "system.tags",
+        "system.executionModel",
+        "system.subType",
+        "system.costNumeric",
+        "effects",
+        "flags",
+        "img",
+        "ownership",
+        "folder",
+        "sort"
+      ],
+      "createTemplate": {
+        "_id": "efd54ffa36d5a2b4",
+        "name": "Leading Skill",
+        "type": "talent",
+        "img": "icons/svg/item-bag.svg",
+        "system": {
+          "treeId": "7ab8bd7bce901f85",
+          "benefit": "Whenever you earn a success in a skill challenge, you gain a +2 insight bonus to your next skill check made with a different skill in the same skill challenge.",
+          "description": {
+            "value": "Whenever you earn a success in a skill challenge, you gain a +2 insight bonus to your next skill check made with a different skill in the same skill challenge."
+          },
+          "summary": "After a skill challenge success, gain +2 insight on your next check using a different skill in that challenge.",
+          "prerequisites": "",
+          "source": "Galaxy of Intrigue",
+          "page": 20,
+          "costNumeric": null,
+          "tags": []
+        },
+        "effects": [],
+        "folder": null,
+        "sort": 0,
+        "ownership": {
+          "default": 0
+        },
+        "flags": {}
+      },
+      "claudeInstruction": "Create the exact canonical identity with createRecordId; do not infer automation metadata. Add the new ID/name to the target talent tree."
+    },
+    {
+      "canonicalIdentity": "Galaxy of Intrigue|Skill Challenge|Learn from Mistakes",
+      "canonicalTreeKey": "Galaxy of Intrigue|Skill Challenge",
+      "name": "Learn from Mistakes",
+      "ownerSourcebook": "Galaxy of Intrigue",
+      "targetTree": {
+        "treeId": "7ab8bd7bce901f85",
+        "treeName": "Skill Challenge"
+      },
+      "disposition": "CREATE",
+      "phase2Flags": [
+        "MISSING_CONTENT"
+      ],
+      "identityResolution": {
+        "resolutionEvidence": "UNRESOLVED",
+        "productionRecordId": null,
+        "preserveProductionId": false,
+        "createRecordId": "6dcf10db37160d23",
+        "currentTreeClaims": [],
+        "sameNameProductionCandidates": [],
+        "reviewExtraCandidateIds": []
+      },
+      "currentCanonicalFields": null,
+      "targetFields": {
+        "name": "Learn from Mistakes",
+        "system.benefit": "Whenever you accrue a failure in a skill challenge, you grant the next ally to take an action in the skill challenge a +2 insight bonus to a skill check, provided that ally takes a different action (and uses a different skill) than you did.",
+        "system.description.value": "Whenever you accrue a failure in a skill challenge, you grant the next ally to take an action in the skill challenge a +2 insight bonus to a skill check, provided that ally takes a different action (and uses a different skill) than you did.",
+        "system.summary": "After your skill challenge failure, the next ally gains +2 insight if using a different action and skill.",
+        "system.prerequisites": "",
+        "system.source": "Galaxy of Intrigue",
+        "system.page": 20
+      },
+      "fieldChanges": {
+        "name": false,
+        "system.benefit": true,
+        "system.description.value": true,
+        "system.summary": true,
+        "system.prerequisites": false,
+        "system.source": true,
+        "system.page": true
+      },
+      "mutationFields": [
+        "system.benefit",
+        "system.description.value",
+        "system.summary",
+        "system.source",
+        "system.page",
+        "_record_create",
+        "system.treeId"
+      ],
+      "treeMutation": {
+        "action": "ADD",
+        "removeFromTreeIds": [],
+        "addToTreeId": "7ab8bd7bce901f85",
+        "addTalentId": "6dcf10db37160d23",
+        "addTalentName": "Learn from Mistakes"
+      },
+      "preserveFields": [
+        "system.abilityMeta",
+        "system.prerequisitesStructured",
+        "system.tags",
+        "system.executionModel",
+        "system.subType",
+        "system.costNumeric",
+        "effects",
+        "flags",
+        "img",
+        "ownership",
+        "folder",
+        "sort"
+      ],
+      "createTemplate": {
+        "_id": "6dcf10db37160d23",
+        "name": "Learn from Mistakes",
+        "type": "talent",
+        "img": "icons/svg/item-bag.svg",
+        "system": {
+          "treeId": "7ab8bd7bce901f85",
+          "benefit": "Whenever you accrue a failure in a skill challenge, you grant the next ally to take an action in the skill challenge a +2 insight bonus to a skill check, provided that ally takes a different action (and uses a different skill) than you did.",
+          "description": {
+            "value": "Whenever you accrue a failure in a skill challenge, you grant the next ally to take an action in the skill challenge a +2 insight bonus to a skill check, provided that ally takes a different action (and uses a different skill) than you did."
+          },
+          "summary": "After your skill challenge failure, the next ally gains +2 insight if using a different action and skill.",
+          "prerequisites": "",
+          "source": "Galaxy of Intrigue",
+          "page": 20,
+          "costNumeric": null,
+          "tags": []
+        },
+        "effects": [],
+        "folder": null,
+        "sort": 0,
+        "ownership": {
+          "default": 0
+        },
+        "flags": {}
+      },
+      "claudeInstruction": "Create the exact canonical identity with createRecordId; do not infer automation metadata. Add the new ID/name to the target talent tree."
+    },
+    {
+      "canonicalIdentity": "Galaxy of Intrigue|Skill Challenge|Try Your Luck",
+      "canonicalTreeKey": "Galaxy of Intrigue|Skill Challenge",
+      "name": "Try Your Luck",
+      "ownerSourcebook": "Galaxy of Intrigue",
+      "targetTree": {
+        "treeId": "7ab8bd7bce901f85",
+        "treeName": "Skill Challenge"
+      },
+      "disposition": "CREATE",
+      "phase2Flags": [
+        "MISSING_CONTENT"
+      ],
+      "identityResolution": {
+        "resolutionEvidence": "UNRESOLVED",
+        "productionRecordId": null,
+        "preserveProductionId": false,
+        "createRecordId": "bf27fc2e540e2ed5",
+        "currentTreeClaims": [],
+        "sameNameProductionCandidates": [],
+        "reviewExtraCandidateIds": []
+      },
+      "currentCanonicalFields": null,
+      "targetFields": {
+        "name": "Try Your Luck",
+        "system.benefit": "Whenever you accrue a failure in a skill challenge, choose one ally. The next time that ally uses the same skill that you used to accrue a failure before the end of the skill challenge, that ally rolls two dice on the skill check and keeps the better result.",
+        "system.description.value": "Whenever you accrue a failure in a skill challenge, choose one ally. The next time that ally uses the same skill that you used to accrue a failure before the end of the skill challenge, that ally rolls two dice on the skill check and keeps the better result.",
+        "system.summary": "After your skill challenge failure, choose an ally; their next use of that same skill rolls twice and keeps the better result.",
+        "system.prerequisites": "",
+        "system.source": "Galaxy of Intrigue",
+        "system.page": 20
+      },
+      "fieldChanges": {
+        "name": false,
+        "system.benefit": true,
+        "system.description.value": true,
+        "system.summary": true,
+        "system.prerequisites": false,
+        "system.source": true,
+        "system.page": true
+      },
+      "mutationFields": [
+        "system.benefit",
+        "system.description.value",
+        "system.summary",
+        "system.source",
+        "system.page",
+        "_record_create",
+        "system.treeId"
+      ],
+      "treeMutation": {
+        "action": "ADD",
+        "removeFromTreeIds": [],
+        "addToTreeId": "7ab8bd7bce901f85",
+        "addTalentId": "bf27fc2e540e2ed5",
+        "addTalentName": "Try Your Luck"
+      },
+      "preserveFields": [
+        "system.abilityMeta",
+        "system.prerequisitesStructured",
+        "system.tags",
+        "system.executionModel",
+        "system.subType",
+        "system.costNumeric",
+        "effects",
+        "flags",
+        "img",
+        "ownership",
+        "folder",
+        "sort"
+      ],
+      "createTemplate": {
+        "_id": "bf27fc2e540e2ed5",
+        "name": "Try Your Luck",
+        "type": "talent",
+        "img": "icons/svg/item-bag.svg",
+        "system": {
+          "treeId": "7ab8bd7bce901f85",
+          "benefit": "Whenever you accrue a failure in a skill challenge, choose one ally. The next time that ally uses the same skill that you used to accrue a failure before the end of the skill challenge, that ally rolls two dice on the skill check and keeps the better result.",
+          "description": {
+            "value": "Whenever you accrue a failure in a skill challenge, choose one ally. The next time that ally uses the same skill that you used to accrue a failure before the end of the skill challenge, that ally rolls two dice on the skill check and keeps the better result."
+          },
+          "summary": "After your skill challenge failure, choose an ally; their next use of that same skill rolls twice and keeps the better result.",
+          "prerequisites": "",
+          "source": "Galaxy of Intrigue",
+          "page": 20,
+          "costNumeric": null,
+          "tags": []
+        },
+        "effects": [],
+        "folder": null,
+        "sort": 0,
+        "ownership": {
+          "default": 0
+        },
+        "flags": {}
+      },
+      "claudeInstruction": "Create the exact canonical identity with createRecordId; do not infer automation metadata. Add the new ID/name to the target talent tree."
+    },
+    {
+      "canonicalIdentity": "Galaxy of Intrigue|Superior Skills|Assured Skill",
+      "canonicalTreeKey": "Galaxy of Intrigue|Superior Skills",
+      "name": "Assured Skill",
+      "ownerSourcebook": "Galaxy of Intrigue",
+      "targetTree": {
+        "treeId": "04a6f32128cc4b98",
+        "treeName": "Superior Skills"
+      },
+      "disposition": "UPDATE_CONTENT",
+      "phase2Flags": [
+        "MISSING_CONTENT"
+      ],
+      "identityResolution": {
+        "resolutionEvidence": "TARGET_TREE_NAME_MATCH",
+        "productionRecordId": "b89d573dba9ddb20",
+        "preserveProductionId": true,
+        "createRecordId": null,
+        "currentTreeClaims": [
+          {
+            "treeId": "04a6f32128cc4b98",
+            "treeName": "Superior Skills"
+          }
+        ],
+        "sameNameProductionCandidates": [
+          {
+            "id": "b89d573dba9ddb20",
+            "name": "Assured Skill",
+            "treeClaims": [
+              {
+                "treeId": "04a6f32128cc4b98",
+                "treeName": "Superior Skills"
+              }
+            ]
+          }
+        ],
+        "reviewExtraCandidateIds": []
+      },
+      "currentCanonicalFields": {
+        "name": "Assured Skill",
+        "system.benefit": "When you select this Talent, choose one Skill. Whenever you roll a Skill Check with that Skill, you can choose to lose any competence bonuses to that Skill Check and instead roll twice, keeping either result. You can select this Talent multiple times. Each time you do so, you must choose a different Skill to gain the benefits of this Talent.",
+        "system.description.value": "When you select this Talent, choose one Skill. Whenever you roll a Skill Check with that Skill, you can choose to lose any competence bonuses to that Skill Check and instead roll twice, keeping either result. You can select this Talent multiple times. Each time you do so, you must choose a different Skill to gain the benefits of this Talent.",
+        "system.summary": null,
+        "system.prerequisites": "",
+        "system.source": "Galaxy of Intrigue",
+        "system.page": 21
+      },
+      "targetFields": {
+        "name": "Assured Skill",
+        "system.benefit": "When you select this talent, choose one skill. Whenever you roll a skill check with that skill, you can choose to lose any competence bonuses to that skill check and instead roll 2 dice, keeping either result.\n\nYou can select this talent multiple times. Each time you do so, you must choose a different skill to gain the benefits of this talent.",
+        "system.description.value": "When you select this talent, choose one skill. Whenever you roll a skill check with that skill, you can choose to lose any competence bonuses to that skill check and instead roll 2 dice, keeping either result.\n\nYou can select this talent multiple times. Each time you do so, you must choose a different skill to gain the benefits of this talent.",
+        "system.summary": "For one chosen skill, forgo competence bonuses to roll twice and keep either result; may be selected for different skills.",
+        "system.prerequisites": "",
+        "system.source": "Galaxy of Intrigue",
+        "system.page": 21
+      },
+      "fieldChanges": {
+        "name": false,
+        "system.benefit": true,
+        "system.description.value": true,
+        "system.summary": true,
+        "system.prerequisites": false,
+        "system.source": false,
+        "system.page": false
+      },
+      "mutationFields": [
+        "system.benefit",
+        "system.description.value",
+        "system.summary"
+      ],
+      "treeMutation": {
+        "action": "KEEP",
+        "removeFromTreeIds": [],
+        "addToTreeId": "04a6f32128cc4b98",
+        "addTalentId": "b89d573dba9ddb20",
+        "addTalentName": "Assured Skill"
+      },
+      "preserveFields": [
+        "system.abilityMeta",
+        "system.prerequisitesStructured",
+        "system.tags",
+        "system.executionModel",
+        "system.subType",
+        "system.costNumeric",
+        "effects",
+        "flags",
+        "img",
+        "ownership",
+        "folder",
+        "sort"
+      ],
+      "createTemplate": null,
+      "claudeInstruction": "Preserve the existing production record ID and runtime metadata; replace only the listed canonical fields."
+    },
+    {
+      "canonicalIdentity": "Galaxy of Intrigue|Superior Skills|Critical Skill Success",
+      "canonicalTreeKey": "Galaxy of Intrigue|Superior Skills",
+      "name": "Critical Skill Success",
+      "ownerSourcebook": "Galaxy of Intrigue",
+      "targetTree": {
+        "treeId": "04a6f32128cc4b98",
+        "treeName": "Superior Skills"
+      },
+      "disposition": "UPDATE_CONTENT",
+      "phase2Flags": [
+        "MISSING_CONTENT"
+      ],
+      "identityResolution": {
+        "resolutionEvidence": "TARGET_TREE_NAME_MATCH",
+        "productionRecordId": "5242623648114830",
+        "preserveProductionId": true,
+        "createRecordId": null,
+        "currentTreeClaims": [
+          {
+            "treeId": "04a6f32128cc4b98",
+            "treeName": "Superior Skills"
+          }
+        ],
+        "sameNameProductionCandidates": [
+          {
+            "id": "5242623648114830",
+            "name": "Critical Skill Success",
+            "treeClaims": [
+              {
+                "treeId": "04a6f32128cc4b98",
+                "treeName": "Superior Skills"
+              }
+            ]
+          }
+        ],
+        "reviewExtraCandidateIds": []
+      },
+      "currentCanonicalFields": {
+        "name": "Critical Skill Success",
+        "system.benefit": "Whenever you roll a Natural 20 on a Skill Check, choose one other Skill. Once before the end of your next turn, you can choose to gain a +5 competence bonus to a check with that Skill as a Free Action.",
+        "system.description.value": "Whenever you roll a Natural 20 on a Skill Check, choose one other Skill. Once before the end of your next turn, you can choose to gain a +5 competence bonus to a check with that Skill as a Free Action.",
+        "system.summary": null,
+        "system.prerequisites": "",
+        "system.source": "Galaxy of Intrigue",
+        "system.page": 21
+      },
+      "targetFields": {
+        "name": "Critical Skill Success",
+        "system.benefit": "Whenever you roll a natural 20 on a skill check, choose one other skill. Once before the end of your next turn, you can choose to gain a +5 competence bonus to a check with that skill as a free action.",
+        "system.description.value": "Whenever you roll a natural 20 on a skill check, choose one other skill. Once before the end of your next turn, you can choose to gain a +5 competence bonus to a check with that skill as a free action.",
+        "system.summary": "After a natural 20 on a skill check, gain a one-use +5 competence bonus to another skill before the end of your next turn.",
+        "system.prerequisites": "",
+        "system.source": "Galaxy of Intrigue",
+        "system.page": 21
+      },
+      "fieldChanges": {
+        "name": false,
+        "system.benefit": true,
+        "system.description.value": true,
+        "system.summary": true,
+        "system.prerequisites": false,
+        "system.source": false,
+        "system.page": false
+      },
+      "mutationFields": [
+        "system.benefit",
+        "system.description.value",
+        "system.summary"
+      ],
+      "treeMutation": {
+        "action": "KEEP",
+        "removeFromTreeIds": [],
+        "addToTreeId": "04a6f32128cc4b98",
+        "addTalentId": "5242623648114830",
+        "addTalentName": "Critical Skill Success"
+      },
+      "preserveFields": [
+        "system.abilityMeta",
+        "system.prerequisitesStructured",
+        "system.tags",
+        "system.executionModel",
+        "system.subType",
+        "system.costNumeric",
+        "effects",
+        "flags",
+        "img",
+        "ownership",
+        "folder",
+        "sort"
+      ],
+      "createTemplate": null,
+      "claudeInstruction": "Preserve the existing production record ID and runtime metadata; replace only the listed canonical fields."
+    },
+    {
+      "canonicalIdentity": "Galaxy of Intrigue|Superior Skills|Exceptional Skill",
+      "canonicalTreeKey": "Galaxy of Intrigue|Superior Skills",
+      "name": "Exceptional Skill",
+      "ownerSourcebook": "Galaxy of Intrigue",
+      "targetTree": {
+        "treeId": "04a6f32128cc4b98",
+        "treeName": "Superior Skills"
+      },
+      "disposition": "UPDATE_CONTENT",
+      "phase2Flags": [
+        "MISSING_CONTENT"
+      ],
+      "identityResolution": {
+        "resolutionEvidence": "TARGET_TREE_NAME_MATCH",
+        "productionRecordId": "36fbab1a05c08fdd",
+        "preserveProductionId": true,
+        "createRecordId": null,
+        "currentTreeClaims": [
+          {
+            "treeId": "04a6f32128cc4b98",
+            "treeName": "Superior Skills"
+          }
+        ],
+        "sameNameProductionCandidates": [
+          {
+            "id": "36fbab1a05c08fdd",
+            "name": "Exceptional Skill",
+            "treeClaims": [
+              {
+                "treeId": "04a6f32128cc4b98",
+                "treeName": "Superior Skills"
+              }
+            ]
+          }
+        ],
+        "reviewExtraCandidateIds": []
+      },
+      "currentCanonicalFields": {
+        "name": "Exceptional Skill",
+        "system.benefit": "When you select this Talent, choose one Trained Skill. Whenever you roll a Skill Check with that Skill, a result of 2-7 on the die is always treated as though you had rolled an 8. You can select this Talent multiple times. Each time you do so, you must choose a different Skill to gain the benefits of this Talent.",
+        "system.description.value": "When you select this Talent, choose one Trained Skill. Whenever you roll a Skill Check with that Skill, a result of 2-7 on the die is always treated as though you had rolled an 8. You can select this Talent multiple times. Each time you do so, you must choose a different Skill to gain the benefits of this Talent.",
+        "system.summary": null,
+        "system.prerequisites": "",
+        "system.source": "Galaxy of Intrigue",
+        "system.page": 21
+      },
+      "targetFields": {
+        "name": "Exceptional Skill",
+        "system.benefit": "When you select this talent, choose one skill. Whenever you roll a skill check with that skill, a result of 2-7 on the die is always treated as though you had rolled an 8.\n\nYou can select this talent multiple times. Each time you do so, you must choose a different skill to gain the benefits of this talent.",
+        "system.description.value": "When you select this talent, choose one skill. Whenever you roll a skill check with that skill, a result of 2-7 on the die is always treated as though you had rolled an 8.\n\nYou can select this talent multiple times. Each time you do so, you must choose a different skill to gain the benefits of this talent.",
+        "system.summary": "For a trained chosen skill, natural results 2-7 count as 8; may be selected for different skills.",
+        "system.prerequisites": "Trained in the chosen skill",
+        "system.source": "Galaxy of Intrigue",
+        "system.page": 21
+      },
+      "fieldChanges": {
+        "name": false,
+        "system.benefit": true,
+        "system.description.value": true,
+        "system.summary": true,
+        "system.prerequisites": true,
+        "system.source": false,
+        "system.page": false
+      },
+      "mutationFields": [
+        "system.benefit",
+        "system.description.value",
+        "system.summary",
+        "system.prerequisites"
+      ],
+      "treeMutation": {
+        "action": "KEEP",
+        "removeFromTreeIds": [],
+        "addToTreeId": "04a6f32128cc4b98",
+        "addTalentId": "36fbab1a05c08fdd",
+        "addTalentName": "Exceptional Skill"
+      },
+      "preserveFields": [
+        "system.abilityMeta",
+        "system.prerequisitesStructured",
+        "system.tags",
+        "system.executionModel",
+        "system.subType",
+        "system.costNumeric",
+        "effects",
+        "flags",
+        "img",
+        "ownership",
+        "folder",
+        "sort"
+      ],
+      "createTemplate": null,
+      "claudeInstruction": "Preserve the existing production record ID and runtime metadata; replace only the listed canonical fields."
+    },
+    {
+      "canonicalIdentity": "Galaxy of Intrigue|Superior Skills|Reliable Boon",
+      "canonicalTreeKey": "Galaxy of Intrigue|Superior Skills",
+      "name": "Reliable Boon",
+      "ownerSourcebook": "Galaxy of Intrigue",
+      "targetTree": {
+        "treeId": "04a6f32128cc4b98",
+        "treeName": "Superior Skills"
+      },
+      "disposition": "UPDATE_CONTENT",
+      "phase2Flags": [
+        "MISSING_CONTENT"
+      ],
+      "identityResolution": {
+        "resolutionEvidence": "TARGET_TREE_NAME_MATCH",
+        "productionRecordId": "f85bb79fe20de1ef",
+        "preserveProductionId": true,
+        "createRecordId": null,
+        "currentTreeClaims": [
+          {
+            "treeId": "04a6f32128cc4b98",
+            "treeName": "Superior Skills"
+          }
+        ],
+        "sameNameProductionCandidates": [
+          {
+            "id": "f85bb79fe20de1ef",
+            "name": "Reliable Boon",
+            "treeClaims": [
+              {
+                "treeId": "04a6f32128cc4b98",
+                "treeName": "Superior Skills"
+              }
+            ]
+          }
+        ],
+        "reviewExtraCandidateIds": []
+      },
+      "currentCanonicalFields": {
+        "name": "Reliable Boon",
+        "system.benefit": "Whenever you spend a Force Point to add to a Skill Check, you always reroll a result of 1 on any of your Force Point dice, and continue to reroll until you get a result of 2 or higher.",
+        "system.description.value": "Whenever you spend a Force Point to add to a Skill Check, you always reroll a result of 1 on any of your Force Point dice, and continue to reroll until you get a result of 2 or higher.",
+        "system.summary": null,
+        "system.prerequisites": "",
+        "system.source": "Galaxy of Intrigue",
+        "system.page": 21
+      },
+      "targetFields": {
+        "name": "Reliable Boon",
+        "system.benefit": "Whenever you spend a Force Point to add to a skill check, you always reroll a result of 1 on any of your Force Point dice, and continue to reroll until you get a result of 2 or higher.",
+        "system.description.value": "Whenever you spend a Force Point to add to a skill check, you always reroll a result of 1 on any of your Force Point dice, and continue to reroll until you get a result of 2 or higher.",
+        "system.summary": "When adding a Force Point to a skill check, reroll Force Point dice showing 1 until they show 2 or higher.",
+        "system.prerequisites": "",
+        "system.source": "Galaxy of Intrigue",
+        "system.page": 21
+      },
+      "fieldChanges": {
+        "name": false,
+        "system.benefit": true,
+        "system.description.value": true,
+        "system.summary": true,
+        "system.prerequisites": false,
+        "system.source": false,
+        "system.page": false
+      },
+      "mutationFields": [
+        "system.benefit",
+        "system.description.value",
+        "system.summary"
+      ],
+      "treeMutation": {
+        "action": "KEEP",
+        "removeFromTreeIds": [],
+        "addToTreeId": "04a6f32128cc4b98",
+        "addTalentId": "f85bb79fe20de1ef",
+        "addTalentName": "Reliable Boon"
+      },
+      "preserveFields": [
+        "system.abilityMeta",
+        "system.prerequisitesStructured",
+        "system.tags",
+        "system.executionModel",
+        "system.subType",
+        "system.costNumeric",
+        "effects",
+        "flags",
+        "img",
+        "ownership",
+        "folder",
+        "sort"
+      ],
+      "createTemplate": null,
+      "claudeInstruction": "Preserve the existing production record ID and runtime metadata; replace only the listed canonical fields."
+    },
+    {
+      "canonicalIdentity": "Galaxy of Intrigue|Superior Skills|Skill Boon",
+      "canonicalTreeKey": "Galaxy of Intrigue|Superior Skills",
+      "name": "Skill Boon",
+      "ownerSourcebook": "Galaxy of Intrigue",
+      "targetTree": {
+        "treeId": "04a6f32128cc4b98",
+        "treeName": "Superior Skills"
+      },
+      "disposition": "UPDATE_CONTENT",
+      "phase2Flags": [
+        "MISSING_CONTENT"
+      ],
+      "identityResolution": {
+        "resolutionEvidence": "TARGET_TREE_NAME_MATCH",
+        "productionRecordId": "1cbf8a40f7972aa4",
+        "preserveProductionId": true,
+        "createRecordId": null,
+        "currentTreeClaims": [
+          {
+            "treeId": "04a6f32128cc4b98",
+            "treeName": "Superior Skills"
+          }
+        ],
+        "sameNameProductionCandidates": [
+          {
+            "id": "1cbf8a40f7972aa4",
+            "name": "Skill Boon",
+            "treeClaims": [
+              {
+                "treeId": "04a6f32128cc4b98",
+                "treeName": "Superior Skills"
+              }
+            ]
+          }
+        ],
+        "reviewExtraCandidateIds": []
+      },
+      "currentCanonicalFields": {
+        "name": "Skill Boon",
+        "system.benefit": "When you select this Talent, choose one Trained Skill. Whenever you spend a Force Point to add to that Skill, increase the die type of your Force Point by one step (i.e. from d6 to d8, d8 to d10, d10 to d12), to a maximum of d12. You can select this Talent multiple times. Each time you do so, you must choose a different Skill to gain the benefits of this Talent.",
+        "system.description.value": "When you select this Talent, choose one Trained Skill. Whenever you spend a Force Point to add to that Skill, increase the die type of your Force Point by one step (i.e. from d6 to d8, d8 to d10, d10 to d12), to a maximum of d12. You can select this Talent multiple times. Each time you do so, you must choose a different Skill to gain the benefits of this Talent.",
+        "system.summary": null,
+        "system.prerequisites": "",
+        "system.source": "Galaxy of Intrigue",
+        "system.page": 21
+      },
+      "targetFields": {
+        "name": "Skill Boon",
+        "system.benefit": "When you select this talent, choose one skill. Whenever you spend a Force Point to add to that skill, increase the die type of your Force Point by one step (i.e. from d6 to d8, d8 to d10, or d10 to d12), to a maximum of d12.\n\nYou can select this talent multiple times. Each time you do so, you must choose a different skill to gain the benefits of this talent.",
+        "system.description.value": "When you select this talent, choose one skill. Whenever you spend a Force Point to add to that skill, increase the die type of your Force Point by one step (i.e. from d6 to d8, d8 to d10, or d10 to d12), to a maximum of d12.\n\nYou can select this talent multiple times. Each time you do so, you must choose a different skill to gain the benefits of this talent.",
+        "system.summary": "For a trained chosen skill, increase the Force Point die used on that skill by one step, maximum d12.",
+        "system.prerequisites": "Trained in the chosen skill",
+        "system.source": "Galaxy of Intrigue",
+        "system.page": 21
+      },
+      "fieldChanges": {
+        "name": false,
+        "system.benefit": true,
+        "system.description.value": true,
+        "system.summary": true,
+        "system.prerequisites": true,
+        "system.source": false,
+        "system.page": false
+      },
+      "mutationFields": [
+        "system.benefit",
+        "system.description.value",
+        "system.summary",
+        "system.prerequisites"
+      ],
+      "treeMutation": {
+        "action": "KEEP",
+        "removeFromTreeIds": [],
+        "addToTreeId": "04a6f32128cc4b98",
+        "addTalentId": "1cbf8a40f7972aa4",
+        "addTalentName": "Skill Boon"
+      },
+      "preserveFields": [
+        "system.abilityMeta",
+        "system.prerequisitesStructured",
+        "system.tags",
+        "system.executionModel",
+        "system.subType",
+        "system.costNumeric",
+        "effects",
+        "flags",
+        "img",
+        "ownership",
+        "folder",
+        "sort"
+      ],
+      "createTemplate": null,
+      "claudeInstruction": "Preserve the existing production record ID and runtime metadata; replace only the listed canonical fields."
+    },
+    {
+      "canonicalIdentity": "Galaxy of Intrigue|Superior Skills|Skill Confidence",
+      "canonicalTreeKey": "Galaxy of Intrigue|Superior Skills",
+      "name": "Skill Confidence",
+      "ownerSourcebook": "Galaxy of Intrigue",
+      "targetTree": {
+        "treeId": "04a6f32128cc4b98",
+        "treeName": "Superior Skills"
+      },
+      "disposition": "UPDATE_CONTENT",
+      "phase2Flags": [
+        "MISSING_CONTENT"
+      ],
+      "identityResolution": {
+        "resolutionEvidence": "TARGET_TREE_NAME_MATCH",
+        "productionRecordId": "07cd591fb8dccb39",
+        "preserveProductionId": true,
+        "createRecordId": null,
+        "currentTreeClaims": [
+          {
+            "treeId": "04a6f32128cc4b98",
+            "treeName": "Superior Skills"
+          }
+        ],
+        "sameNameProductionCandidates": [
+          {
+            "id": "07cd591fb8dccb39",
+            "name": "Skill Confidence",
+            "treeClaims": [
+              {
+                "treeId": "04a6f32128cc4b98",
+                "treeName": "Superior Skills"
+              }
+            ]
+          }
+        ],
+        "reviewExtraCandidateIds": []
+      },
+      "currentCanonicalFields": {
+        "name": "Skill Confidence",
+        "system.benefit": "When you select this Talent, choose one Trained Skill. Whenever you roll a Natural 19 or a Natural 20 on a Skill Check with that Skill, you gain the benefits of the Critical Skill Success Talent and also gain Bonus Hit Points equal to your Charisma modifier. You can select this Talent multiple times. Each time you do so, you must choose a different Skill to gain the benefits of this Talent.",
+        "system.description.value": "When you select this Talent, choose one Trained Skill. Whenever you roll a Natural 19 or a Natural 20 on a Skill Check with that Skill, you gain the benefits of the Critical Skill Success Talent and also gain Bonus Hit Points equal to your Charisma modifier. You can select this Talent multiple times. Each time you do so, you must choose a different Skill to gain the benefits of this Talent.",
+        "system.summary": null,
+        "system.prerequisites": "Critical Skill Success",
+        "system.source": "Galaxy of Intrigue",
+        "system.page": 21
+      },
+      "targetFields": {
+        "name": "Skill Confidence",
+        "system.benefit": "When you select this talent, choose one skill. Whenever you roll a natural 19 or a natural 20 on a skill check with that skill, you gain the benefits of the Critical Skill Success talent and also gain bonus hit points equal to your Charisma modifier.\n\nYou can select this talent multiple times. Each time you do so, you must choose a different skill to gain the benefits of this talent.",
+        "system.description.value": "When you select this talent, choose one skill. Whenever you roll a natural 19 or a natural 20 on a skill check with that skill, you gain the benefits of the Critical Skill Success talent and also gain bonus hit points equal to your Charisma modifier.\n\nYou can select this talent multiple times. Each time you do so, you must choose a different skill to gain the benefits of this talent.",
+        "system.summary": "With a chosen trained skill, natural 19-20 triggers Critical Skill Success and grants bonus hit points equal to your Charisma modifier.",
+        "system.prerequisites": "Critical Skill Success, trained in the chosen skill",
+        "system.source": "Galaxy of Intrigue",
+        "system.page": 21
+      },
+      "fieldChanges": {
+        "name": false,
+        "system.benefit": true,
+        "system.description.value": true,
+        "system.summary": true,
+        "system.prerequisites": true,
+        "system.source": false,
+        "system.page": false
+      },
+      "mutationFields": [
+        "system.benefit",
+        "system.description.value",
+        "system.summary",
+        "system.prerequisites"
+      ],
+      "treeMutation": {
+        "action": "KEEP",
+        "removeFromTreeIds": [],
+        "addToTreeId": "04a6f32128cc4b98",
+        "addTalentId": "07cd591fb8dccb39",
+        "addTalentName": "Skill Confidence"
+      },
+      "preserveFields": [
+        "system.abilityMeta",
+        "system.prerequisitesStructured",
+        "system.tags",
+        "system.executionModel",
+        "system.subType",
+        "system.costNumeric",
+        "effects",
+        "flags",
+        "img",
+        "ownership",
+        "folder",
+        "sort"
+      ],
+      "createTemplate": null,
+      "claudeInstruction": "Preserve the existing production record ID and runtime metadata; replace only the listed canonical fields."
+    },
+    {
+      "canonicalIdentity": "Galaxy of Intrigue|Superior Skills|Skillful Recovery",
+      "canonicalTreeKey": "Galaxy of Intrigue|Superior Skills",
+      "name": "Skillful Recovery",
+      "ownerSourcebook": "Galaxy of Intrigue",
+      "targetTree": {
+        "treeId": "04a6f32128cc4b98",
+        "treeName": "Superior Skills"
+      },
+      "disposition": "UPDATE_CONTENT",
+      "phase2Flags": [
+        "MISSING_CONTENT"
+      ],
+      "identityResolution": {
+        "resolutionEvidence": "TARGET_TREE_NAME_MATCH",
+        "productionRecordId": "323cc243fef47675",
+        "preserveProductionId": true,
+        "createRecordId": null,
+        "currentTreeClaims": [
+          {
+            "treeId": "04a6f32128cc4b98",
+            "treeName": "Superior Skills"
+          }
+        ],
+        "sameNameProductionCandidates": [
+          {
+            "id": "323cc243fef47675",
+            "name": "Skillful Recovery",
+            "treeClaims": [
+              {
+                "treeId": "04a6f32128cc4b98",
+                "treeName": "Superior Skills"
+              }
+            ]
+          }
+        ],
+        "reviewExtraCandidateIds": []
+      },
+      "currentCanonicalFields": {
+        "name": "Skillful Recovery",
+        "system.benefit": "When you select this Talent, choose one Trained Skill. Whenever you fail a Skill Check with that Skill, you gain one temporary Force Point. That Force Point can only be spent to add to a Skill Check with the Skill you chose for this Talent. If the Force Point is not spent by the end of the encounter, it is lost.",
+        "system.description.value": "When you select this Talent, choose one Trained Skill. Whenever you fail a Skill Check with that Skill, you gain one temporary Force Point. That Force Point can only be spent to add to a Skill Check with the Skill you chose for this Talent. If the Force Point is not spent by the end of the encounter, it is lost.\n\nFor the purposes of this Talent, failing a Skill Check means failing to get the minimum possible result from the Skill Check. You can select this Talent multiple times. Each time you do so, you must choose a different Skill to gain the benefits of this Talent.",
+        "system.summary": null,
+        "system.prerequisites": "",
+        "system.source": "Galaxy of Intrigue",
+        "system.page": 21
+      },
+      "targetFields": {
+        "name": "Skillful Recovery",
+        "system.benefit": "When you select this talent, choose one skill. Whenever you fail a skill check with that skill, you gain one temporary Force Point. That Force Point can only be spent to add to a skill check with the skill you chose for this talent. If the Force Point is not spent by the end of the encounter, it is lost. For the purposes of this talent, failing a skill check means failing to get the minimum possible result from the skill check.\n\nYou can select this talent multiple times. Each time you do so, you must choose a different skill to gain the benefits of this talent.",
+        "system.description.value": "When you select this talent, choose one skill. Whenever you fail a skill check with that skill, you gain one temporary Force Point. That Force Point can only be spent to add to a skill check with the skill you chose for this talent. If the Force Point is not spent by the end of the encounter, it is lost. For the purposes of this talent, failing a skill check means failing to get the minimum possible result from the skill check.\n\nYou can select this talent multiple times. Each time you do so, you must choose a different skill to gain the benefits of this talent.",
+        "system.summary": "Failing a chosen trained skill check grants a temporary Force Point usable only on that skill during the encounter.",
+        "system.prerequisites": "Trained in the chosen skill",
+        "system.source": "Galaxy of Intrigue",
+        "system.page": 21
+      },
+      "fieldChanges": {
+        "name": false,
+        "system.benefit": true,
+        "system.description.value": true,
+        "system.summary": true,
+        "system.prerequisites": true,
+        "system.source": false,
+        "system.page": false
+      },
+      "mutationFields": [
+        "system.benefit",
+        "system.description.value",
+        "system.summary",
+        "system.prerequisites"
+      ],
+      "treeMutation": {
+        "action": "KEEP",
+        "removeFromTreeIds": [],
+        "addToTreeId": "04a6f32128cc4b98",
+        "addTalentId": "323cc243fef47675",
+        "addTalentName": "Skillful Recovery"
+      },
+      "preserveFields": [
+        "system.abilityMeta",
+        "system.prerequisitesStructured",
+        "system.tags",
+        "system.executionModel",
+        "system.subType",
+        "system.costNumeric",
+        "effects",
+        "flags",
+        "img",
+        "ownership",
+        "folder",
+        "sort"
+      ],
+      "createTemplate": null,
+      "claudeInstruction": "Preserve the existing production record ID and runtime metadata; replace only the listed canonical fields."
+    },
+    {
+      "canonicalIdentity": "Galaxy of Intrigue|Revolutionary|Bomb Thrower",
+      "canonicalTreeKey": "Galaxy of Intrigue|Revolutionary",
+      "name": "Bomb Thrower",
+      "ownerSourcebook": "Galaxy of Intrigue",
+      "targetTree": {
+        "treeId": "e6a9c40b900847bd",
+        "treeName": "Revolutionary"
+      },
+      "disposition": "CREATE",
+      "phase2Flags": [
+        "MISSING_CONTENT"
+      ],
+      "identityResolution": {
+        "resolutionEvidence": "UNRESOLVED",
+        "productionRecordId": null,
+        "preserveProductionId": false,
+        "createRecordId": "959f16cb707d8360",
+        "currentTreeClaims": [],
+        "sameNameProductionCandidates": [],
+        "reviewExtraCandidateIds": []
+      },
+      "currentCanonicalFields": null,
+      "targetFields": {
+        "name": "Bomb Thrower",
+        "system.benefit": "You are skilled in making and handling impromptu explosives. You gain a +5 bonus to Mechanics checks for the purposes of handling explosives. In addition, you can spend a full-round action to craft the equivalent of a frag grenade from spare parts you have on hand. You must have access to the appropriate supplies, such as an old blaster, a toolkit, or materials found inside a hangar bay.",
+        "system.description.value": "You are skilled in making and handling impromptu explosives. You gain a +5 bonus to Mechanics checks for the purposes of handling explosives. In addition, you can spend a full-round action to craft the equivalent of a frag grenade from spare parts you have on hand. You must have access to the appropriate supplies, such as an old blaster, a toolkit, or materials found inside a hangar bay.",
+        "system.summary": "Gain +5 to Mechanics for explosives and craft an improvised frag grenade as a full-round action with suitable supplies.",
+        "system.prerequisites": "Trained in the Mechanics skill",
+        "system.source": "Galaxy of Intrigue",
+        "system.page": 21
+      },
+      "fieldChanges": {
+        "name": false,
+        "system.benefit": true,
+        "system.description.value": true,
+        "system.summary": true,
+        "system.prerequisites": true,
+        "system.source": true,
+        "system.page": true
+      },
+      "mutationFields": [
+        "system.benefit",
+        "system.description.value",
+        "system.summary",
+        "system.prerequisites",
+        "system.source",
+        "system.page",
+        "_record_create",
+        "system.treeId"
+      ],
+      "treeMutation": {
+        "action": "ADD",
+        "removeFromTreeIds": [],
+        "addToTreeId": "e6a9c40b900847bd",
+        "addTalentId": "959f16cb707d8360",
+        "addTalentName": "Bomb Thrower"
+      },
+      "preserveFields": [
+        "system.abilityMeta",
+        "system.prerequisitesStructured",
+        "system.tags",
+        "system.executionModel",
+        "system.subType",
+        "system.costNumeric",
+        "effects",
+        "flags",
+        "img",
+        "ownership",
+        "folder",
+        "sort"
+      ],
+      "createTemplate": {
+        "_id": "959f16cb707d8360",
+        "name": "Bomb Thrower",
+        "type": "talent",
+        "img": "icons/svg/item-bag.svg",
+        "system": {
+          "treeId": "e6a9c40b900847bd",
+          "benefit": "You are skilled in making and handling impromptu explosives. You gain a +5 bonus to Mechanics checks for the purposes of handling explosives. In addition, you can spend a full-round action to craft the equivalent of a frag grenade from spare parts you have on hand. You must have access to the appropriate supplies, such as an old blaster, a toolkit, or materials found inside a hangar bay.",
+          "description": {
+            "value": "You are skilled in making and handling impromptu explosives. You gain a +5 bonus to Mechanics checks for the purposes of handling explosives. In addition, you can spend a full-round action to craft the equivalent of a frag grenade from spare parts you have on hand. You must have access to the appropriate supplies, such as an old blaster, a toolkit, or materials found inside a hangar bay."
+          },
+          "summary": "Gain +5 to Mechanics for explosives and craft an improvised frag grenade as a full-round action with suitable supplies.",
+          "prerequisites": "Trained in the Mechanics skill",
+          "source": "Galaxy of Intrigue",
+          "page": 21,
+          "costNumeric": null,
+          "tags": []
+        },
+        "effects": [],
+        "folder": null,
+        "sort": 0,
+        "ownership": {
+          "default": 0
+        },
+        "flags": {}
+      },
+      "claudeInstruction": "Create the exact canonical identity with createRecordId; do not infer automation metadata. Add the new ID/name to the target talent tree."
+    },
+    {
+      "canonicalIdentity": "Galaxy of Intrigue|Revolutionary|For the Cause",
+      "canonicalTreeKey": "Galaxy of Intrigue|Revolutionary",
+      "name": "For the Cause",
+      "ownerSourcebook": "Galaxy of Intrigue",
+      "targetTree": {
+        "treeId": "e6a9c40b900847bd",
+        "treeName": "Revolutionary"
+      },
+      "disposition": "CREATE",
+      "phase2Flags": [
+        "MISSING_CONTENT"
+      ],
+      "identityResolution": {
+        "resolutionEvidence": "UNRESOLVED",
+        "productionRecordId": null,
+        "preserveProductionId": false,
+        "createRecordId": "df8f36d21dc4d23c",
+        "currentTreeClaims": [],
+        "sameNameProductionCandidates": [],
+        "reviewExtraCandidateIds": []
+      },
+      "currentCanonicalFields": null,
+      "targetFields": {
+        "name": "For the Cause",
+        "system.benefit": "Whenever you or an ally within 6 squares of you takes damage that exceeds that character's damage threshold, you and all allies within 6 squares of you gain a +2 bonus to attack rolls and damage rolls until the end of your next turn.",
+        "system.description.value": "Whenever you or an ally within 6 squares of you takes damage that exceeds that character's damage threshold, you and all allies within 6 squares of you gain a +2 bonus to attack rolls and damage rolls until the end of your next turn.",
+        "system.summary": "When you or a nearby ally takes threshold-exceeding damage, nearby allies gain +2 attack and damage until the end of your next turn.",
+        "system.prerequisites": "Make an Example",
+        "system.source": "Galaxy of Intrigue",
+        "system.page": 21
+      },
+      "fieldChanges": {
+        "name": false,
+        "system.benefit": true,
+        "system.description.value": true,
+        "system.summary": true,
+        "system.prerequisites": true,
+        "system.source": true,
+        "system.page": true
+      },
+      "mutationFields": [
+        "system.benefit",
+        "system.description.value",
+        "system.summary",
+        "system.prerequisites",
+        "system.source",
+        "system.page",
+        "_record_create",
+        "system.treeId"
+      ],
+      "treeMutation": {
+        "action": "ADD",
+        "removeFromTreeIds": [],
+        "addToTreeId": "e6a9c40b900847bd",
+        "addTalentId": "df8f36d21dc4d23c",
+        "addTalentName": "For the Cause"
+      },
+      "preserveFields": [
+        "system.abilityMeta",
+        "system.prerequisitesStructured",
+        "system.tags",
+        "system.executionModel",
+        "system.subType",
+        "system.costNumeric",
+        "effects",
+        "flags",
+        "img",
+        "ownership",
+        "folder",
+        "sort"
+      ],
+      "createTemplate": {
+        "_id": "df8f36d21dc4d23c",
+        "name": "For the Cause",
+        "type": "talent",
+        "img": "icons/svg/item-bag.svg",
+        "system": {
+          "treeId": "e6a9c40b900847bd",
+          "benefit": "Whenever you or an ally within 6 squares of you takes damage that exceeds that character's damage threshold, you and all allies within 6 squares of you gain a +2 bonus to attack rolls and damage rolls until the end of your next turn.",
+          "description": {
+            "value": "Whenever you or an ally within 6 squares of you takes damage that exceeds that character's damage threshold, you and all allies within 6 squares of you gain a +2 bonus to attack rolls and damage rolls until the end of your next turn."
+          },
+          "summary": "When you or a nearby ally takes threshold-exceeding damage, nearby allies gain +2 attack and damage until the end of your next turn.",
+          "prerequisites": "Make an Example",
+          "source": "Galaxy of Intrigue",
+          "page": 21,
+          "costNumeric": null,
+          "tags": []
+        },
+        "effects": [],
+        "folder": null,
+        "sort": 0,
+        "ownership": {
+          "default": 0
+        },
+        "flags": {}
+      },
+      "claudeInstruction": "Create the exact canonical identity with createRecordId; do not infer automation metadata. Add the new ID/name to the target talent tree."
+    },
+    {
+      "canonicalIdentity": "Galaxy of Intrigue|Revolutionary|Make an Example",
+      "canonicalTreeKey": "Galaxy of Intrigue|Revolutionary",
+      "name": "Make an Example",
+      "ownerSourcebook": "Galaxy of Intrigue",
+      "targetTree": {
+        "treeId": "e6a9c40b900847bd",
+        "treeName": "Revolutionary"
+      },
+      "disposition": "UPDATE_CONTENT",
+      "phase2Flags": [
+        "MISSING_CONTENT"
+      ],
+      "identityResolution": {
+        "resolutionEvidence": "TARGET_TREE_NAME_MATCH",
+        "productionRecordId": "603e7e5d628a435d",
+        "preserveProductionId": true,
+        "createRecordId": null,
+        "currentTreeClaims": [
+          {
+            "treeId": "e6a9c40b900847bd",
+            "treeName": "Revolutionary"
+          }
+        ],
+        "sameNameProductionCandidates": [
+          {
+            "id": "603e7e5d628a435d",
+            "name": "Make an Example",
+            "treeClaims": [
+              {
+                "treeId": "e6a9c40b900847bd",
+                "treeName": "Revolutionary"
+              }
+            ]
+          }
+        ],
+        "reviewExtraCandidateIds": []
+      },
+      "currentCanonicalFields": {
+        "name": "Make an Example",
+        "system.benefit": "Whenever you or an ally within 6 squares of you takes damage that exceeds that character’s Damage Threshold, you and all allies within 6 squares of you gain a +2 bonus to attack rolls and damage rolls until the end of your next turn. Whenever you hit with an attack and deal enough damage to exceed a target’s Damage Threshold, that target takes a -5 penalty to attack rolls against you until the end of your next turn. This is a Mind-Affecting effect. As a Standard Action, you can do or say something that causes an enemy to doubt its motives. Choose one enemy within 12 squares and in your line of sight, and make a Persuasion check against the target’s Will Defense. If you succeed, the target can take only Move Actions and Swift Actions until the end of your next turn. This effect ends if you attack the target. This is a Mind-Affecting effect.",
+        "system.description": "Whenever you or an ally within 6 squares of you takes damage that exceeds that character’s Damage Threshold, you and all allies within 6 squares of you gain a +2 bonus to attack rolls and damage rolls until the end of your next turn. Whenever you hit with an attack and deal enough damage to exceed a target’s Damage Threshold, that target takes a -5 penalty to attack rolls against you until the end of your next turn. This is a Mind-Affecting effect. As a Standard Action, you can do or say something that causes an enemy to doubt its motives. Choose one enemy within 12 squares and in your line of sight, and make a Persuasion check against the target’s Will Defense. If you succeed, the target can take only Move Actions and Swift Actions until the end of your next turn. This effect ends if you attack the target. This is a Mind-Affecting effect.",
+        "system.summary": null,
+        "system.prerequisites": "",
+        "system.source": null,
+        "system.page": null
+      },
+      "targetFields": {
+        "name": "Make an Example",
+        "system.benefit": "Whenever you hit with an attack and deal enough damage to exceed a target's damage threshold, that target takes a -5 penalty to attack rolls against you until the end of your next turn. This is a mind-affecting effect.",
+        "system.description": "Whenever you hit with an attack and deal enough damage to exceed a target's damage threshold, that target takes a -5 penalty to attack rolls against you until the end of your next turn. This is a mind-affecting effect.",
+        "system.summary": "Exceed a target's damage threshold to give it -5 on attacks against you until the end of your next turn.",
+        "system.prerequisites": "",
+        "system.source": "Galaxy of Intrigue",
+        "system.page": 22
+      },
+      "fieldChanges": {
+        "name": false,
+        "system.benefit": true,
+        "system.description": true,
+        "system.summary": true,
+        "system.prerequisites": false,
+        "system.source": true,
+        "system.page": true
+      },
+      "mutationFields": [
+        "system.benefit",
+        "system.description",
+        "system.summary",
+        "system.source",
+        "system.page"
+      ],
+      "treeMutation": {
+        "action": "KEEP",
+        "removeFromTreeIds": [],
+        "addToTreeId": "e6a9c40b900847bd",
+        "addTalentId": "603e7e5d628a435d",
+        "addTalentName": "Make an Example"
+      },
+      "preserveFields": [
+        "system.abilityMeta",
+        "system.prerequisitesStructured",
+        "system.tags",
+        "system.executionModel",
+        "system.subType",
+        "system.costNumeric",
+        "effects",
+        "flags",
+        "img",
+        "ownership",
+        "folder",
+        "sort"
+      ],
+      "createTemplate": null,
+      "claudeInstruction": "Preserve the existing production record ID and runtime metadata; replace only the listed canonical fields."
+    },
+    {
+      "canonicalIdentity": "Galaxy of Intrigue|Revolutionary|Revolutionary Rhetoric",
+      "canonicalTreeKey": "Galaxy of Intrigue|Revolutionary",
+      "name": "Revolutionary Rhetoric",
+      "ownerSourcebook": "Galaxy of Intrigue",
+      "targetTree": {
+        "treeId": "e6a9c40b900847bd",
+        "treeName": "Revolutionary"
+      },
+      "disposition": "CREATE",
+      "phase2Flags": [
+        "MISSING_CONTENT"
+      ],
+      "identityResolution": {
+        "resolutionEvidence": "UNRESOLVED",
+        "productionRecordId": null,
+        "preserveProductionId": false,
+        "createRecordId": "46ebeef2d6de4837",
+        "currentTreeClaims": [],
+        "sameNameProductionCandidates": [],
+        "reviewExtraCandidateIds": []
+      },
+      "currentCanonicalFields": null,
+      "targetFields": {
+        "name": "Revolutionary Rhetoric",
+        "system.benefit": "As a standard action, you can do or say something that causes an enemy to doubt its motives. Choose one enemy within 12 squares and in your line of sight, and make a Persuasion check against the target's Will Defense. If you succeed, the target can take only move actions and swift actions until the end of your next turn. This effect ends if you attack the target. This is a mind-affecting effect.",
+        "system.description.value": "As a standard action, you can do or say something that causes an enemy to doubt its motives. Choose one enemy within 12 squares and in your line of sight, and make a Persuasion check against the target's Will Defense. If you succeed, the target can take only move actions and swift actions until the end of your next turn. This effect ends if you attack the target. This is a mind-affecting effect.",
+        "system.summary": "As a standard action, beat a nearby visible enemy's Will with Persuasion to restrict it to move and swift actions until your next turn unless you attack it.",
+        "system.prerequisites": "",
+        "system.source": "Galaxy of Intrigue",
+        "system.page": 22
+      },
+      "fieldChanges": {
+        "name": false,
+        "system.benefit": true,
+        "system.description.value": true,
+        "system.summary": true,
+        "system.prerequisites": false,
+        "system.source": true,
+        "system.page": true
+      },
+      "mutationFields": [
+        "system.benefit",
+        "system.description.value",
+        "system.summary",
+        "system.source",
+        "system.page",
+        "_record_create",
+        "system.treeId"
+      ],
+      "treeMutation": {
+        "action": "ADD",
+        "removeFromTreeIds": [],
+        "addToTreeId": "e6a9c40b900847bd",
+        "addTalentId": "46ebeef2d6de4837",
+        "addTalentName": "Revolutionary Rhetoric"
+      },
+      "preserveFields": [
+        "system.abilityMeta",
+        "system.prerequisitesStructured",
+        "system.tags",
+        "system.executionModel",
+        "system.subType",
+        "system.costNumeric",
+        "effects",
+        "flags",
+        "img",
+        "ownership",
+        "folder",
+        "sort"
+      ],
+      "createTemplate": {
+        "_id": "46ebeef2d6de4837",
+        "name": "Revolutionary Rhetoric",
+        "type": "talent",
+        "img": "icons/svg/item-bag.svg",
+        "system": {
+          "treeId": "e6a9c40b900847bd",
+          "benefit": "As a standard action, you can do or say something that causes an enemy to doubt its motives. Choose one enemy within 12 squares and in your line of sight, and make a Persuasion check against the target's Will Defense. If you succeed, the target can take only move actions and swift actions until the end of your next turn. This effect ends if you attack the target. This is a mind-affecting effect.",
+          "description": {
+            "value": "As a standard action, you can do or say something that causes an enemy to doubt its motives. Choose one enemy within 12 squares and in your line of sight, and make a Persuasion check against the target's Will Defense. If you succeed, the target can take only move actions and swift actions until the end of your next turn. This effect ends if you attack the target. This is a mind-affecting effect."
+          },
+          "summary": "As a standard action, beat a nearby visible enemy's Will with Persuasion to restrict it to move and swift actions until your next turn unless you attack it.",
+          "prerequisites": "",
+          "source": "Galaxy of Intrigue",
+          "page": 22,
+          "costNumeric": null,
+          "tags": []
+        },
+        "effects": [],
+        "folder": null,
+        "sort": 0,
+        "ownership": {
+          "default": 0
+        },
+        "flags": {}
+      },
+      "claudeInstruction": "Create the exact canonical identity with createRecordId; do not infer automation metadata. Add the new ID/name to the target talent tree."
+    },
+    {
+      "canonicalIdentity": "Galaxy of Intrigue|Espionage|Fade Out",
+      "canonicalTreeKey": "Galaxy of Intrigue|Espionage",
+      "name": "Fade Out",
+      "ownerSourcebook": "Galaxy of Intrigue",
+      "targetTree": {
+        "treeId": "0c4ddea3c78ffc3d",
+        "treeName": "Espionage"
+      },
+      "disposition": "CREATE",
+      "phase2Flags": [
+        "MISSING_CONTENT"
+      ],
+      "identityResolution": {
+        "resolutionEvidence": "UNRESOLVED",
+        "productionRecordId": null,
+        "preserveProductionId": false,
+        "createRecordId": "77293789b3e9e38a",
+        "currentTreeClaims": [],
+        "sameNameProductionCandidates": [],
+        "reviewExtraCandidateIds": []
+      },
+      "currentCanonicalFields": null,
+      "targetFields": {
+        "name": "Fade Out",
+        "system.benefit": "You know how to make yourself scarce when dealing with suspicious or hostile beings. You can use your Stealth skill, not Deception, to create a diversion to hide (see page 73 of the Saga Edition core rulebook). If you are trained in the Deception skill, you gain a +5 bonus to your skill check for the purposes of creating a diversion.",
+        "system.description.value": "You know how to make yourself scarce when dealing with suspicious or hostile beings. You can use your Stealth skill, not Deception, to create a diversion to hide (see page 73 of the Saga Edition core rulebook). If you are trained in the Deception skill, you gain a +5 bonus to your skill check for the purposes of creating a diversion.",
+        "system.summary": "Use Stealth instead of Deception to create a diversion to hide; trained Deception grants +5 to that check.",
+        "system.prerequisites": "Trained in Stealth",
+        "system.source": "Galaxy of Intrigue",
+        "system.page": 22
+      },
+      "fieldChanges": {
+        "name": false,
+        "system.benefit": true,
+        "system.description.value": true,
+        "system.summary": true,
+        "system.prerequisites": true,
+        "system.source": true,
+        "system.page": true
+      },
+      "mutationFields": [
+        "system.benefit",
+        "system.description.value",
+        "system.summary",
+        "system.prerequisites",
+        "system.source",
+        "system.page",
+        "_record_create",
+        "system.treeId"
+      ],
+      "treeMutation": {
+        "action": "ADD",
+        "removeFromTreeIds": [],
+        "addToTreeId": "0c4ddea3c78ffc3d",
+        "addTalentId": "77293789b3e9e38a",
+        "addTalentName": "Fade Out"
+      },
+      "preserveFields": [
+        "system.abilityMeta",
+        "system.prerequisitesStructured",
+        "system.tags",
+        "system.executionModel",
+        "system.subType",
+        "system.costNumeric",
+        "effects",
+        "flags",
+        "img",
+        "ownership",
+        "folder",
+        "sort"
+      ],
+      "createTemplate": {
+        "_id": "77293789b3e9e38a",
+        "name": "Fade Out",
+        "type": "talent",
+        "img": "icons/svg/item-bag.svg",
+        "system": {
+          "treeId": "0c4ddea3c78ffc3d",
+          "benefit": "You know how to make yourself scarce when dealing with suspicious or hostile beings. You can use your Stealth skill, not Deception, to create a diversion to hide (see page 73 of the Saga Edition core rulebook). If you are trained in the Deception skill, you gain a +5 bonus to your skill check for the purposes of creating a diversion.",
+          "description": {
+            "value": "You know how to make yourself scarce when dealing with suspicious or hostile beings. You can use your Stealth skill, not Deception, to create a diversion to hide (see page 73 of the Saga Edition core rulebook). If you are trained in the Deception skill, you gain a +5 bonus to your skill check for the purposes of creating a diversion."
+          },
+          "summary": "Use Stealth instead of Deception to create a diversion to hide; trained Deception grants +5 to that check.",
+          "prerequisites": "Trained in Stealth",
+          "source": "Galaxy of Intrigue",
+          "page": 22,
+          "costNumeric": null,
+          "tags": []
+        },
+        "effects": [],
+        "folder": null,
+        "sort": 0,
+        "ownership": {
+          "default": 0
+        },
+        "flags": {}
+      },
+      "claudeInstruction": "Create the exact canonical identity with createRecordId; do not infer automation metadata. Add the new ID/name to the target talent tree."
+    },
+    {
+      "canonicalIdentity": "Galaxy of Intrigue|Espionage|Keep Together",
+      "canonicalTreeKey": "Galaxy of Intrigue|Espionage",
+      "name": "Keep Together",
+      "ownerSourcebook": "Galaxy of Intrigue",
+      "targetTree": {
+        "treeId": "0c4ddea3c78ffc3d",
+        "treeName": "Espionage"
+      },
+      "disposition": "CREATE",
+      "phase2Flags": [
+        "MISSING_CONTENT"
+      ],
+      "identityResolution": {
+        "resolutionEvidence": "UNRESOLVED",
+        "productionRecordId": null,
+        "preserveProductionId": false,
+        "createRecordId": "de31c189f3416df7",
+        "currentTreeClaims": [],
+        "sameNameProductionCandidates": [],
+        "reviewExtraCandidateIds": []
+      },
+      "currentCanonicalFields": null,
+      "targetFields": {
+        "name": "Keep Together",
+        "system.benefit": "Whenever you are hit or missed by a melee or a ranged attack, you can move up to your speed as a reaction, provided that you end your movement adjacent to an ally. This movement does not provoke attacks of opportunity.",
+        "system.description.value": "Whenever you are hit or missed by a melee or a ranged attack, you can move up to your speed as a reaction, provided that you end your movement adjacent to an ally. This movement does not provoke attacks of opportunity.",
+        "system.summary": "After any melee or ranged attack hits or misses you, react by moving your speed without provoking if you end adjacent to an ally.",
+        "system.prerequisites": "",
+        "system.source": "Galaxy of Intrigue",
+        "system.page": 22
+      },
+      "fieldChanges": {
+        "name": false,
+        "system.benefit": true,
+        "system.description.value": true,
+        "system.summary": true,
+        "system.prerequisites": false,
+        "system.source": true,
+        "system.page": true
+      },
+      "mutationFields": [
+        "system.benefit",
+        "system.description.value",
+        "system.summary",
+        "system.source",
+        "system.page",
+        "_record_create",
+        "system.treeId"
+      ],
+      "treeMutation": {
+        "action": "ADD",
+        "removeFromTreeIds": [],
+        "addToTreeId": "0c4ddea3c78ffc3d",
+        "addTalentId": "de31c189f3416df7",
+        "addTalentName": "Keep Together"
+      },
+      "preserveFields": [
+        "system.abilityMeta",
+        "system.prerequisitesStructured",
+        "system.tags",
+        "system.executionModel",
+        "system.subType",
+        "system.costNumeric",
+        "effects",
+        "flags",
+        "img",
+        "ownership",
+        "folder",
+        "sort"
+      ],
+      "createTemplate": {
+        "_id": "de31c189f3416df7",
+        "name": "Keep Together",
+        "type": "talent",
+        "img": "icons/svg/item-bag.svg",
+        "system": {
+          "treeId": "0c4ddea3c78ffc3d",
+          "benefit": "Whenever you are hit or missed by a melee or a ranged attack, you can move up to your speed as a reaction, provided that you end your movement adjacent to an ally. This movement does not provoke attacks of opportunity.",
+          "description": {
+            "value": "Whenever you are hit or missed by a melee or a ranged attack, you can move up to your speed as a reaction, provided that you end your movement adjacent to an ally. This movement does not provoke attacks of opportunity."
+          },
+          "summary": "After any melee or ranged attack hits or misses you, react by moving your speed without provoking if you end adjacent to an ally.",
+          "prerequisites": "",
+          "source": "Galaxy of Intrigue",
+          "page": 22,
+          "costNumeric": null,
+          "tags": []
+        },
+        "effects": [],
+        "folder": null,
+        "sort": 0,
+        "ownership": {
+          "default": 0
+        },
+        "flags": {}
+      },
+      "claudeInstruction": "Create the exact canonical identity with createRecordId; do not infer automation metadata. Add the new ID/name to the target talent tree."
+    },
+    {
+      "canonicalIdentity": "Galaxy of Intrigue|Espionage|Prudent Escape",
+      "canonicalTreeKey": "Galaxy of Intrigue|Espionage",
+      "name": "Prudent Escape",
+      "ownerSourcebook": "Galaxy of Intrigue",
+      "targetTree": {
+        "treeId": "0c4ddea3c78ffc3d",
+        "treeName": "Espionage"
+      },
+      "disposition": "CREATE",
+      "phase2Flags": [
+        "MISSING_CONTENT"
+      ],
+      "identityResolution": {
+        "resolutionEvidence": "UNRESOLVED",
+        "productionRecordId": null,
+        "preserveProductionId": false,
+        "createRecordId": "70929db4d14b8ae8",
+        "currentTreeClaims": [],
+        "sameNameProductionCandidates": [],
+        "reviewExtraCandidateIds": []
+      },
+      "currentCanonicalFields": null,
+      "targetFields": {
+        "name": "Prudent Escape",
+        "system.benefit": "Whenever you reduce a target to 0 hit points or otherwise render a creature unconscious, you can choose two allies within 6 squares of you and within your line of sight. You and the allies you chose can immediately move up to your speeds as a reaction. This movement does not provoke opportunity attacks.",
+        "system.description.value": "Whenever you reduce a target to 0 hit points or otherwise render a creature unconscious, you can choose two allies within 6 squares of you and within your line of sight. You and the allies you chose can immediately move up to your speeds as a reaction. This movement does not provoke opportunity attacks.",
+        "system.summary": "When you drop or incapacitate a target, you and two nearby visible allies may immediately move your speeds without provoking.",
+        "system.prerequisites": "",
+        "system.source": "Galaxy of Intrigue",
+        "system.page": 22
+      },
+      "fieldChanges": {
+        "name": false,
+        "system.benefit": true,
+        "system.description.value": true,
+        "system.summary": true,
+        "system.prerequisites": false,
+        "system.source": true,
+        "system.page": true
+      },
+      "mutationFields": [
+        "system.benefit",
+        "system.description.value",
+        "system.summary",
+        "system.source",
+        "system.page",
+        "_record_create",
+        "system.treeId"
+      ],
+      "treeMutation": {
+        "action": "ADD",
+        "removeFromTreeIds": [],
+        "addToTreeId": "0c4ddea3c78ffc3d",
+        "addTalentId": "70929db4d14b8ae8",
+        "addTalentName": "Prudent Escape"
+      },
+      "preserveFields": [
+        "system.abilityMeta",
+        "system.prerequisitesStructured",
+        "system.tags",
+        "system.executionModel",
+        "system.subType",
+        "system.costNumeric",
+        "effects",
+        "flags",
+        "img",
+        "ownership",
+        "folder",
+        "sort"
+      ],
+      "createTemplate": {
+        "_id": "70929db4d14b8ae8",
+        "name": "Prudent Escape",
+        "type": "talent",
+        "img": "icons/svg/item-bag.svg",
+        "system": {
+          "treeId": "0c4ddea3c78ffc3d",
+          "benefit": "Whenever you reduce a target to 0 hit points or otherwise render a creature unconscious, you can choose two allies within 6 squares of you and within your line of sight. You and the allies you chose can immediately move up to your speeds as a reaction. This movement does not provoke opportunity attacks.",
+          "description": {
+            "value": "Whenever you reduce a target to 0 hit points or otherwise render a creature unconscious, you can choose two allies within 6 squares of you and within your line of sight. You and the allies you chose can immediately move up to your speeds as a reaction. This movement does not provoke opportunity attacks."
+          },
+          "summary": "When you drop or incapacitate a target, you and two nearby visible allies may immediately move your speeds without provoking.",
+          "prerequisites": "",
+          "source": "Galaxy of Intrigue",
+          "page": 22,
+          "costNumeric": null,
+          "tags": []
+        },
+        "effects": [],
+        "folder": null,
+        "sort": 0,
+        "ownership": {
+          "default": 0
+        },
+        "flags": {}
+      },
+      "claudeInstruction": "Create the exact canonical identity with createRecordId; do not infer automation metadata. Add the new ID/name to the target talent tree."
+    },
+    {
+      "canonicalIdentity": "Galaxy of Intrigue|Espionage|Reactive Stealth",
+      "canonicalTreeKey": "Galaxy of Intrigue|Espionage",
+      "name": "Reactive Stealth",
+      "ownerSourcebook": "Galaxy of Intrigue",
+      "targetTree": {
+        "treeId": "0c4ddea3c78ffc3d",
+        "treeName": "Espionage"
+      },
+      "disposition": "CREATE",
+      "phase2Flags": [
+        "MISSING_CONTENT"
+      ],
+      "identityResolution": {
+        "resolutionEvidence": "UNRESOLVED",
+        "productionRecordId": null,
+        "preserveProductionId": false,
+        "createRecordId": "810160a476804e61",
+        "currentTreeClaims": [],
+        "sameNameProductionCandidates": [],
+        "reviewExtraCandidateIds": []
+      },
+      "currentCanonicalFields": null,
+      "targetFields": {
+        "name": "Reactive Stealth",
+        "system.benefit": "When you are missed by a ranged attack and have concealment or cover from the attacker, you can move up to half your speed as a reaction and make a Stealth check to become hidden from your attacker, provided you still have concealment or cover at the end of your movement.",
+        "system.description.value": "When you are missed by a ranged attack and have concealment or cover from the attacker, you can move up to half your speed as a reaction and make a Stealth check to become hidden from your attacker, provided you still have concealment or cover at the end of your movement.",
+        "system.summary": "When a ranged attack misses you while you have cover or concealment, react by moving half speed and attempting to hide.",
+        "system.prerequisites": "Trained in Stealth",
+        "system.source": "Galaxy of Intrigue",
+        "system.page": 22
+      },
+      "fieldChanges": {
+        "name": false,
+        "system.benefit": true,
+        "system.description.value": true,
+        "system.summary": true,
+        "system.prerequisites": true,
+        "system.source": true,
+        "system.page": true
+      },
+      "mutationFields": [
+        "system.benefit",
+        "system.description.value",
+        "system.summary",
+        "system.prerequisites",
+        "system.source",
+        "system.page",
+        "_record_create",
+        "system.treeId"
+      ],
+      "treeMutation": {
+        "action": "ADD",
+        "removeFromTreeIds": [],
+        "addToTreeId": "0c4ddea3c78ffc3d",
+        "addTalentId": "810160a476804e61",
+        "addTalentName": "Reactive Stealth"
+      },
+      "preserveFields": [
+        "system.abilityMeta",
+        "system.prerequisitesStructured",
+        "system.tags",
+        "system.executionModel",
+        "system.subType",
+        "system.costNumeric",
+        "effects",
+        "flags",
+        "img",
+        "ownership",
+        "folder",
+        "sort"
+      ],
+      "createTemplate": {
+        "_id": "810160a476804e61",
+        "name": "Reactive Stealth",
+        "type": "talent",
+        "img": "icons/svg/item-bag.svg",
+        "system": {
+          "treeId": "0c4ddea3c78ffc3d",
+          "benefit": "When you are missed by a ranged attack and have concealment or cover from the attacker, you can move up to half your speed as a reaction and make a Stealth check to become hidden from your attacker, provided you still have concealment or cover at the end of your movement.",
+          "description": {
+            "value": "When you are missed by a ranged attack and have concealment or cover from the attacker, you can move up to half your speed as a reaction and make a Stealth check to become hidden from your attacker, provided you still have concealment or cover at the end of your movement."
+          },
+          "summary": "When a ranged attack misses you while you have cover or concealment, react by moving half speed and attempting to hide.",
+          "prerequisites": "Trained in Stealth",
+          "source": "Galaxy of Intrigue",
+          "page": 22,
+          "costNumeric": null,
+          "tags": []
+        },
+        "effects": [],
+        "folder": null,
+        "sort": 0,
+        "ownership": {
+          "default": 0
+        },
+        "flags": {}
+      },
+      "claudeInstruction": "Create the exact canonical identity with createRecordId; do not infer automation metadata. Add the new ID/name to the target talent tree."
+    },
+    {
+      "canonicalIdentity": "Galaxy of Intrigue|Espionage|Sizing Up",
+      "canonicalTreeKey": "Galaxy of Intrigue|Espionage",
+      "name": "Sizing Up",
+      "ownerSourcebook": "Galaxy of Intrigue",
+      "targetTree": {
+        "treeId": "0c4ddea3c78ffc3d",
+        "treeName": "Espionage"
+      },
+      "disposition": "CREATE",
+      "phase2Flags": [
+        "MISSING_CONTENT"
+      ],
+      "identityResolution": {
+        "resolutionEvidence": "UNRESOLVED",
+        "productionRecordId": null,
+        "preserveProductionId": false,
+        "createRecordId": "95579a44ff466f19",
+        "currentTreeClaims": [],
+        "sameNameProductionCandidates": [],
+        "reviewExtraCandidateIds": []
+      },
+      "currentCanonicalFields": null,
+      "targetFields": {
+        "name": "Sizing Up",
+        "system.benefit": "Once per encounter, you can make a Perception check against the Will Defense of a single target that is within 6 squares of you and within your line of sight. If you succeed, you gain a +2 insight bonus to all skill checks and attack rolls against the target until the end of the encounter.",
+        "system.description.value": "Once per encounter, you can make a Perception check against the Will Defense of a single target that is within 6 squares of you and within your line of sight. If you succeed, you gain a +2 insight bonus to all skill checks and attack rolls against the target until the end of the encounter.",
+        "system.summary": "Once per encounter, beat a nearby visible target's Will with Perception to gain +2 insight on attacks and skill checks against it for the encounter.",
+        "system.prerequisites": "",
+        "system.source": "Galaxy of Intrigue",
+        "system.page": 23
+      },
+      "fieldChanges": {
+        "name": false,
+        "system.benefit": true,
+        "system.description.value": true,
+        "system.summary": true,
+        "system.prerequisites": false,
+        "system.source": true,
+        "system.page": true
+      },
+      "mutationFields": [
+        "system.benefit",
+        "system.description.value",
+        "system.summary",
+        "system.source",
+        "system.page",
+        "_record_create",
+        "system.treeId"
+      ],
+      "treeMutation": {
+        "action": "ADD",
+        "removeFromTreeIds": [],
+        "addToTreeId": "0c4ddea3c78ffc3d",
+        "addTalentId": "95579a44ff466f19",
+        "addTalentName": "Sizing Up"
+      },
+      "preserveFields": [
+        "system.abilityMeta",
+        "system.prerequisitesStructured",
+        "system.tags",
+        "system.executionModel",
+        "system.subType",
+        "system.costNumeric",
+        "effects",
+        "flags",
+        "img",
+        "ownership",
+        "folder",
+        "sort"
+      ],
+      "createTemplate": {
+        "_id": "95579a44ff466f19",
+        "name": "Sizing Up",
+        "type": "talent",
+        "img": "icons/svg/item-bag.svg",
+        "system": {
+          "treeId": "0c4ddea3c78ffc3d",
+          "benefit": "Once per encounter, you can make a Perception check against the Will Defense of a single target that is within 6 squares of you and within your line of sight. If you succeed, you gain a +2 insight bonus to all skill checks and attack rolls against the target until the end of the encounter.",
+          "description": {
+            "value": "Once per encounter, you can make a Perception check against the Will Defense of a single target that is within 6 squares of you and within your line of sight. If you succeed, you gain a +2 insight bonus to all skill checks and attack rolls against the target until the end of the encounter."
+          },
+          "summary": "Once per encounter, beat a nearby visible target's Will with Perception to gain +2 insight on attacks and skill checks against it for the encounter.",
+          "prerequisites": "",
+          "source": "Galaxy of Intrigue",
+          "page": 23,
+          "costNumeric": null,
+          "tags": []
+        },
+        "effects": [],
+        "folder": null,
+        "sort": 0,
+        "ownership": {
+          "default": 0
+        },
+        "flags": {}
+      },
+      "claudeInstruction": "Create the exact canonical identity with createRecordId; do not infer automation metadata. Add the new ID/name to the target talent tree."
+    },
+    {
+      "canonicalIdentity": "Saga Edition Core Rulebook|Brawler|Crowd Control",
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Brawler",
+      "name": "Crowd Control",
+      "ownerSourcebook": "Galaxy of Intrigue",
+      "targetTree": {
+        "treeId": "67fdd8dce9abd6c1",
+        "treeName": "Brawler"
+      },
+      "disposition": "CREATE",
+      "phase2Flags": [
+        "MISSING_CONTENT"
+      ],
+      "identityResolution": {
+        "resolutionEvidence": "UNRESOLVED",
+        "productionRecordId": null,
+        "preserveProductionId": false,
+        "createRecordId": "8a412e9a700b06d5",
+        "currentTreeClaims": [],
+        "sameNameProductionCandidates": [],
+        "reviewExtraCandidateIds": []
+      },
+      "currentCanonicalFields": null,
+      "targetFields": {
+        "name": "Crowd Control",
+        "system.benefit": "You can grab two adjacent creatures at a time.",
+        "system.description.value": "You can grab two adjacent creatures at a time.",
+        "system.summary": "You can maintain grabs on two adjacent creatures at once.",
+        "system.prerequisites": "Entangler",
+        "system.source": "Galaxy of Intrigue",
+        "system.page": 23
+      },
+      "fieldChanges": {
+        "name": false,
+        "system.benefit": true,
+        "system.description.value": true,
+        "system.summary": true,
+        "system.prerequisites": true,
+        "system.source": true,
+        "system.page": true
+      },
+      "mutationFields": [
+        "system.benefit",
+        "system.description.value",
+        "system.summary",
+        "system.prerequisites",
+        "system.source",
+        "system.page",
+        "_record_create",
+        "system.treeId"
+      ],
+      "treeMutation": {
+        "action": "ADD",
+        "removeFromTreeIds": [],
+        "addToTreeId": "67fdd8dce9abd6c1",
+        "addTalentId": "8a412e9a700b06d5",
+        "addTalentName": "Crowd Control"
+      },
+      "preserveFields": [
+        "system.abilityMeta",
+        "system.prerequisitesStructured",
+        "system.tags",
+        "system.executionModel",
+        "system.subType",
+        "system.costNumeric",
+        "effects",
+        "flags",
+        "img",
+        "ownership",
+        "folder",
+        "sort"
+      ],
+      "createTemplate": {
+        "_id": "8a412e9a700b06d5",
+        "name": "Crowd Control",
+        "type": "talent",
+        "img": "icons/svg/item-bag.svg",
+        "system": {
+          "treeId": "67fdd8dce9abd6c1",
+          "benefit": "You can grab two adjacent creatures at a time.",
+          "description": {
+            "value": "You can grab two adjacent creatures at a time."
+          },
+          "summary": "You can maintain grabs on two adjacent creatures at once.",
+          "prerequisites": "Entangler",
+          "source": "Galaxy of Intrigue",
+          "page": 23,
+          "costNumeric": null,
+          "tags": []
+        },
+        "effects": [],
+        "folder": null,
+        "sort": 0,
+        "ownership": {
+          "default": 0
+        },
+        "flags": {}
+      },
+      "claudeInstruction": "Create the exact canonical identity with createRecordId; do not infer automation metadata. Add the new ID/name to the target talent tree."
+    },
+    {
+      "canonicalIdentity": "Saga Edition Core Rulebook|Brawler|Disarm and Engage",
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Brawler",
+      "name": "Disarm and Engage",
+      "ownerSourcebook": "Galaxy of Intrigue",
+      "targetTree": {
+        "treeId": "67fdd8dce9abd6c1",
+        "treeName": "Brawler"
+      },
+      "disposition": "CREATE",
+      "phase2Flags": [
+        "MISSING_CONTENT"
+      ],
+      "identityResolution": {
+        "resolutionEvidence": "UNRESOLVED",
+        "productionRecordId": null,
+        "preserveProductionId": false,
+        "createRecordId": "f61d70448c4cd14e",
+        "currentTreeClaims": [],
+        "sameNameProductionCandidates": [],
+        "reviewExtraCandidateIds": []
+      },
+      "currentCanonicalFields": null,
+      "targetFields": {
+        "name": "Disarm and Engage",
+        "system.benefit": "When you successfully disarm an opponent, you can make an immediate free attack with the disarmed weapon at a -5 penalty. If you are not proficient with the weapon, you take the penalty for nonproficiency as well.",
+        "system.description.value": "When you successfully disarm an opponent, you can make an immediate free attack with the disarmed weapon at a -5 penalty. If you are not proficient with the weapon, you take the penalty for nonproficiency as well.",
+        "system.summary": "After a successful disarm, immediately attack with the disarmed weapon at -5, plus nonproficiency if applicable.",
+        "system.prerequisites": "",
+        "system.source": "Galaxy of Intrigue",
+        "system.page": 23
+      },
+      "fieldChanges": {
+        "name": false,
+        "system.benefit": true,
+        "system.description.value": true,
+        "system.summary": true,
+        "system.prerequisites": false,
+        "system.source": true,
+        "system.page": true
+      },
+      "mutationFields": [
+        "system.benefit",
+        "system.description.value",
+        "system.summary",
+        "system.source",
+        "system.page",
+        "_record_create",
+        "system.treeId"
+      ],
+      "treeMutation": {
+        "action": "ADD",
+        "removeFromTreeIds": [],
+        "addToTreeId": "67fdd8dce9abd6c1",
+        "addTalentId": "f61d70448c4cd14e",
+        "addTalentName": "Disarm and Engage"
+      },
+      "preserveFields": [
+        "system.abilityMeta",
+        "system.prerequisitesStructured",
+        "system.tags",
+        "system.executionModel",
+        "system.subType",
+        "system.costNumeric",
+        "effects",
+        "flags",
+        "img",
+        "ownership",
+        "folder",
+        "sort"
+      ],
+      "createTemplate": {
+        "_id": "f61d70448c4cd14e",
+        "name": "Disarm and Engage",
+        "type": "talent",
+        "img": "icons/svg/item-bag.svg",
+        "system": {
+          "treeId": "67fdd8dce9abd6c1",
+          "benefit": "When you successfully disarm an opponent, you can make an immediate free attack with the disarmed weapon at a -5 penalty. If you are not proficient with the weapon, you take the penalty for nonproficiency as well.",
+          "description": {
+            "value": "When you successfully disarm an opponent, you can make an immediate free attack with the disarmed weapon at a -5 penalty. If you are not proficient with the weapon, you take the penalty for nonproficiency as well."
+          },
+          "summary": "After a successful disarm, immediately attack with the disarmed weapon at -5, plus nonproficiency if applicable.",
+          "prerequisites": "",
+          "source": "Galaxy of Intrigue",
+          "page": 23,
+          "costNumeric": null,
+          "tags": []
+        },
+        "effects": [],
+        "folder": null,
+        "sort": 0,
+        "ownership": {
+          "default": 0
+        },
+        "flags": {}
+      },
+      "claudeInstruction": "Create the exact canonical identity with createRecordId; do not infer automation metadata. Add the new ID/name to the target talent tree."
+    },
+    {
+      "canonicalIdentity": "Saga Edition Core Rulebook|Brawler|Entangler",
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Brawler",
+      "name": "Entangler",
+      "ownerSourcebook": "Galaxy of Intrigue",
+      "targetTree": {
+        "treeId": "67fdd8dce9abd6c1",
+        "treeName": "Brawler"
+      },
+      "disposition": "UPDATE_CONTENT",
+      "phase2Flags": [
+        "MISSING_CONTENT"
+      ],
+      "identityResolution": {
+        "resolutionEvidence": "TARGET_TREE_NAME_MATCH",
+        "productionRecordId": "6a52361527b64513",
+        "preserveProductionId": true,
+        "createRecordId": null,
+        "currentTreeClaims": [
+          {
+            "treeId": "67fdd8dce9abd6c1",
+            "treeName": "Brawler"
+          }
+        ],
+        "sameNameProductionCandidates": [
+          {
+            "id": "6a52361527b64513",
+            "name": "Entangler",
+            "treeClaims": [
+              {
+                "treeId": "67fdd8dce9abd6c1",
+                "treeName": "Brawler"
+              }
+            ]
+          }
+        ],
+        "reviewExtraCandidateIds": []
+      },
+      "currentCanonicalFields": {
+        "name": "Entangler",
+        "system.benefit": "When Grabbing a target, you take a -2 penalty to your attack roll (instead of the normal -5 penalty). Until the target breaks the Grab, it takes a -5 penalty to attack rolls, including those made with Natural and Light Weapons (instead of the normal -2 penalty).",
+        "system.description.value": "When Grabbing a target, you take a -2 penalty to your attack roll (instead of the normal -5 penalty). Until the target breaks the Grab, it takes a -5 penalty to attack rolls, including those made with Natural and Light Weapons (instead of the normal -2 penalty).",
+        "system.summary": null,
+        "system.prerequisites": "",
+        "system.source": null,
+        "system.page": null
+      },
+      "targetFields": {
+        "name": "Entangler",
+        "system.benefit": "When grabbing a target, you take a -2 penalty to your attack roll (instead of the normal -5 penalty). Until the target breaks the grab, it takes a -5 penalty to attack rolls, including those made with natural and light weapons (instead of the normal -2 penalty).",
+        "system.description.value": "When grabbing a target, you take a -2 penalty to your attack roll (instead of the normal -5 penalty). Until the target breaks the grab, it takes a -5 penalty to attack rolls, including those made with natural and light weapons (instead of the normal -2 penalty).",
+        "system.summary": "Reduce your grab attack penalty to -2 and increase the grabbed target's attack penalty to -5.",
+        "system.prerequisites": "",
+        "system.source": "Galaxy of Intrigue",
+        "system.page": 23
+      },
+      "fieldChanges": {
+        "name": false,
+        "system.benefit": true,
+        "system.description.value": true,
+        "system.summary": true,
+        "system.prerequisites": false,
+        "system.source": true,
+        "system.page": true
+      },
+      "mutationFields": [
+        "system.benefit",
+        "system.description.value",
+        "system.summary",
+        "system.source",
+        "system.page"
+      ],
+      "treeMutation": {
+        "action": "KEEP",
+        "removeFromTreeIds": [],
+        "addToTreeId": "67fdd8dce9abd6c1",
+        "addTalentId": "6a52361527b64513",
+        "addTalentName": "Entangler"
+      },
+      "preserveFields": [
+        "system.abilityMeta",
+        "system.prerequisitesStructured",
+        "system.tags",
+        "system.executionModel",
+        "system.subType",
+        "system.costNumeric",
+        "effects",
+        "flags",
+        "img",
+        "ownership",
+        "folder",
+        "sort"
+      ],
+      "createTemplate": null,
+      "claudeInstruction": "Preserve the existing production record ID and runtime metadata; replace only the listed canonical fields."
+    },
+    {
+      "canonicalIdentity": "Saga Edition Core Rulebook|Brawler|Reverse Strength",
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Brawler",
+      "name": "Reverse Strength",
+      "ownerSourcebook": "Galaxy of Intrigue",
+      "targetTree": {
+        "treeId": "67fdd8dce9abd6c1",
+        "treeName": "Brawler"
+      },
+      "disposition": "CREATE",
+      "phase2Flags": [
+        "MISSING_CONTENT"
+      ],
+      "identityResolution": {
+        "resolutionEvidence": "UNRESOLVED",
+        "productionRecordId": null,
+        "preserveProductionId": false,
+        "createRecordId": "002c2d4fd8383a3e",
+        "currentTreeClaims": [],
+        "sameNameProductionCandidates": [],
+        "reviewExtraCandidateIds": []
+      },
+      "currentCanonicalFields": null,
+      "targetFields": {
+        "name": "Reverse Strength",
+        "system.benefit": "You know how to use an opponent's strength against it. Whenever you successfully grapple an opponent, you deal damage equal to the opponent's Strength modifier (minimum 1 point).",
+        "system.description.value": "You know how to use an opponent's strength against it. Whenever you successfully grapple an opponent, you deal damage equal to the opponent's Strength modifier (minimum 1 point).",
+        "system.summary": "A successful grapple deals damage equal to the opponent's Strength modifier, minimum 1.",
+        "system.prerequisites": "",
+        "system.source": "Galaxy of Intrigue",
+        "system.page": 23
+      },
+      "fieldChanges": {
+        "name": false,
+        "system.benefit": true,
+        "system.description.value": true,
+        "system.summary": true,
+        "system.prerequisites": false,
+        "system.source": true,
+        "system.page": true
+      },
+      "mutationFields": [
+        "system.benefit",
+        "system.description.value",
+        "system.summary",
+        "system.source",
+        "system.page",
+        "_record_create",
+        "system.treeId"
+      ],
+      "treeMutation": {
+        "action": "ADD",
+        "removeFromTreeIds": [],
+        "addToTreeId": "67fdd8dce9abd6c1",
+        "addTalentId": "002c2d4fd8383a3e",
+        "addTalentName": "Reverse Strength"
+      },
+      "preserveFields": [
+        "system.abilityMeta",
+        "system.prerequisitesStructured",
+        "system.tags",
+        "system.executionModel",
+        "system.subType",
+        "system.costNumeric",
+        "effects",
+        "flags",
+        "img",
+        "ownership",
+        "folder",
+        "sort"
+      ],
+      "createTemplate": {
+        "_id": "002c2d4fd8383a3e",
+        "name": "Reverse Strength",
+        "type": "talent",
+        "img": "icons/svg/item-bag.svg",
+        "system": {
+          "treeId": "67fdd8dce9abd6c1",
+          "benefit": "You know how to use an opponent's strength against it. Whenever you successfully grapple an opponent, you deal damage equal to the opponent's Strength modifier (minimum 1 point).",
+          "description": {
+            "value": "You know how to use an opponent's strength against it. Whenever you successfully grapple an opponent, you deal damage equal to the opponent's Strength modifier (minimum 1 point)."
+          },
+          "summary": "A successful grapple deals damage equal to the opponent's Strength modifier, minimum 1.",
+          "prerequisites": "",
+          "source": "Galaxy of Intrigue",
+          "page": 23,
+          "costNumeric": null,
+          "tags": []
+        },
+        "effects": [],
+        "folder": null,
+        "sort": 0,
+        "ownership": {
+          "default": 0
+        },
+        "flags": {}
+      },
+      "claudeInstruction": "Create the exact canonical identity with createRecordId; do not infer automation metadata. Add the new ID/name to the target talent tree."
+    },
+    {
+      "canonicalIdentity": "Saga Edition Core Rulebook|Commando|Coordinated Effort",
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Commando",
+      "name": "Coordinated Effort",
+      "ownerSourcebook": "Galaxy of Intrigue",
+      "targetTree": {
+        "treeId": "798ed0945cbdac1c",
+        "treeName": "Commando"
+      },
+      "disposition": "CREATE",
+      "phase2Flags": [
+        "MISSING_CONTENT"
+      ],
+      "identityResolution": {
+        "resolutionEvidence": "UNRESOLVED",
+        "productionRecordId": null,
+        "preserveProductionId": false,
+        "createRecordId": "527289442596a891",
+        "currentTreeClaims": [],
+        "sameNameProductionCandidates": [],
+        "reviewExtraCandidateIds": []
+      },
+      "currentCanonicalFields": null,
+      "targetFields": {
+        "name": "Coordinated Effort",
+        "system.benefit": "When you use the aid another action to grant a bonus on attack rolls, if you are aiding the target of your Dedicated Protector talent that ally also gains a +2 bonus to damage rolls on the attack you aided.",
+        "system.description.value": "When you use the aid another action to grant a bonus on attack rolls, if you are aiding the target of your Dedicated Protector talent that ally also gains a +2 bonus to damage rolls on the attack you aided.",
+        "system.summary": "When aiding your Dedicated Protector target's attack, also grant +2 damage on that attack.",
+        "system.prerequisites": "Dedicated Protector",
+        "system.source": "Galaxy of Intrigue",
+        "system.page": 23
+      },
+      "fieldChanges": {
+        "name": false,
+        "system.benefit": true,
+        "system.description.value": true,
+        "system.summary": true,
+        "system.prerequisites": true,
+        "system.source": true,
+        "system.page": true
+      },
+      "mutationFields": [
+        "system.benefit",
+        "system.description.value",
+        "system.summary",
+        "system.prerequisites",
+        "system.source",
+        "system.page",
+        "_record_create",
+        "system.treeId"
+      ],
+      "treeMutation": {
+        "action": "ADD",
+        "removeFromTreeIds": [],
+        "addToTreeId": "798ed0945cbdac1c",
+        "addTalentId": "527289442596a891",
+        "addTalentName": "Coordinated Effort"
+      },
+      "preserveFields": [
+        "system.abilityMeta",
+        "system.prerequisitesStructured",
+        "system.tags",
+        "system.executionModel",
+        "system.subType",
+        "system.costNumeric",
+        "effects",
+        "flags",
+        "img",
+        "ownership",
+        "folder",
+        "sort"
+      ],
+      "createTemplate": {
+        "_id": "527289442596a891",
+        "name": "Coordinated Effort",
+        "type": "talent",
+        "img": "icons/svg/item-bag.svg",
+        "system": {
+          "treeId": "798ed0945cbdac1c",
+          "benefit": "When you use the aid another action to grant a bonus on attack rolls, if you are aiding the target of your Dedicated Protector talent that ally also gains a +2 bonus to damage rolls on the attack you aided.",
+          "description": {
+            "value": "When you use the aid another action to grant a bonus on attack rolls, if you are aiding the target of your Dedicated Protector talent that ally also gains a +2 bonus to damage rolls on the attack you aided."
+          },
+          "summary": "When aiding your Dedicated Protector target's attack, also grant +2 damage on that attack.",
+          "prerequisites": "Dedicated Protector",
+          "source": "Galaxy of Intrigue",
+          "page": 23,
+          "costNumeric": null,
+          "tags": []
+        },
+        "effects": [],
+        "folder": null,
+        "sort": 0,
+        "ownership": {
+          "default": 0
+        },
+        "flags": {}
+      },
+      "claudeInstruction": "Create the exact canonical identity with createRecordId; do not infer automation metadata. Add the new ID/name to the target talent tree."
+    },
+    {
+      "canonicalIdentity": "Saga Edition Core Rulebook|Commando|Dedicated Guardian",
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Commando",
+      "name": "Dedicated Guardian",
+      "ownerSourcebook": "Galaxy of Intrigue",
+      "targetTree": {
+        "treeId": "798ed0945cbdac1c",
+        "treeName": "Commando"
+      },
+      "disposition": "CREATE",
+      "phase2Flags": [
+        "MISSING_CONTENT"
+      ],
+      "identityResolution": {
+        "resolutionEvidence": "UNRESOLVED",
+        "productionRecordId": null,
+        "preserveProductionId": false,
+        "createRecordId": "562148487d7aa43c",
+        "currentTreeClaims": [],
+        "sameNameProductionCandidates": [],
+        "reviewExtraCandidateIds": []
+      },
+      "currentCanonicalFields": null,
+      "targetFields": {
+        "name": "Dedicated Guardian",
+        "system.benefit": "You can use each of the following actions once per encounter:\n\nBlast Shield: Spend a swift action. Until the end of your next turn, the ally who is under the effects of your Dedicated Protector talent is treated as having the Evasion talent for the purposes of determining damage from an area attack. If the ally already has Evasion, the damage from a successful area attack is reduced by 1 die.\n\nTake the Pain: Whenever your Dedicated Protector target would move down the condition track, you can, as a reaction, choose to move the same number of steps down the condition track instead (preventing the ally from moving down the track).\n\nTeam Effort: Spend a swift action. Until the end of your next turn, while you are adjacent to your Dedicated Protector target, any enemy that is adjacent to you and to that ally is considered flanked.",
+        "system.description.value": "You can use each of the following actions once per encounter:\n\nBlast Shield: Spend a swift action. Until the end of your next turn, the ally who is under the effects of your Dedicated Protector talent is treated as having the Evasion talent for the purposes of determining damage from an area attack. If the ally already has Evasion, the damage from a successful area attack is reduced by 1 die.\n\nTake the Pain: Whenever your Dedicated Protector target would move down the condition track, you can, as a reaction, choose to move the same number of steps down the condition track instead (preventing the ally from moving down the track).\n\nTeam Effort: Spend a swift action. Until the end of your next turn, while you are adjacent to your Dedicated Protector target, any enemy that is adjacent to you and to that ally is considered flanked.",
+        "system.summary": "Once each per encounter, protect your Dedicated Protector target with Blast Shield, Take the Pain, or Team Effort.",
+        "system.prerequisites": "Dedicated Protector, Harm's Way",
+        "system.source": "Galaxy of Intrigue",
+        "system.page": 24
+      },
+      "fieldChanges": {
+        "name": false,
+        "system.benefit": true,
+        "system.description.value": true,
+        "system.summary": true,
+        "system.prerequisites": true,
+        "system.source": true,
+        "system.page": true
+      },
+      "mutationFields": [
+        "system.benefit",
+        "system.description.value",
+        "system.summary",
+        "system.prerequisites",
+        "system.source",
+        "system.page",
+        "_record_create",
+        "system.treeId"
+      ],
+      "treeMutation": {
+        "action": "ADD",
+        "removeFromTreeIds": [],
+        "addToTreeId": "798ed0945cbdac1c",
+        "addTalentId": "562148487d7aa43c",
+        "addTalentName": "Dedicated Guardian"
+      },
+      "preserveFields": [
+        "system.abilityMeta",
+        "system.prerequisitesStructured",
+        "system.tags",
+        "system.executionModel",
+        "system.subType",
+        "system.costNumeric",
+        "effects",
+        "flags",
+        "img",
+        "ownership",
+        "folder",
+        "sort"
+      ],
+      "createTemplate": {
+        "_id": "562148487d7aa43c",
+        "name": "Dedicated Guardian",
+        "type": "talent",
+        "img": "icons/svg/item-bag.svg",
+        "system": {
+          "treeId": "798ed0945cbdac1c",
+          "benefit": "You can use each of the following actions once per encounter:\n\nBlast Shield: Spend a swift action. Until the end of your next turn, the ally who is under the effects of your Dedicated Protector talent is treated as having the Evasion talent for the purposes of determining damage from an area attack. If the ally already has Evasion, the damage from a successful area attack is reduced by 1 die.\n\nTake the Pain: Whenever your Dedicated Protector target would move down the condition track, you can, as a reaction, choose to move the same number of steps down the condition track instead (preventing the ally from moving down the track).\n\nTeam Effort: Spend a swift action. Until the end of your next turn, while you are adjacent to your Dedicated Protector target, any enemy that is adjacent to you and to that ally is considered flanked.",
+          "description": {
+            "value": "You can use each of the following actions once per encounter:\n\nBlast Shield: Spend a swift action. Until the end of your next turn, the ally who is under the effects of your Dedicated Protector talent is treated as having the Evasion talent for the purposes of determining damage from an area attack. If the ally already has Evasion, the damage from a successful area attack is reduced by 1 die.\n\nTake the Pain: Whenever your Dedicated Protector target would move down the condition track, you can, as a reaction, choose to move the same number of steps down the condition track instead (preventing the ally from moving down the track).\n\nTeam Effort: Spend a swift action. Until the end of your next turn, while you are adjacent to your Dedicated Protector target, any enemy that is adjacent to you and to that ally is considered flanked."
+          },
+          "summary": "Once each per encounter, protect your Dedicated Protector target with Blast Shield, Take the Pain, or Team Effort.",
+          "prerequisites": "Dedicated Protector, Harm's Way",
+          "source": "Galaxy of Intrigue",
+          "page": 24,
+          "costNumeric": null,
+          "tags": []
+        },
+        "effects": [],
+        "folder": null,
+        "sort": 0,
+        "ownership": {
+          "default": 0
+        },
+        "flags": {}
+      },
+      "claudeInstruction": "Create the exact canonical identity with createRecordId; do not infer automation metadata. Add the new ID/name to the target talent tree."
+    },
+    {
+      "canonicalIdentity": "Saga Edition Core Rulebook|Commando|Dedicated Protector",
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Commando",
+      "name": "Dedicated Protector",
+      "ownerSourcebook": "Galaxy of Intrigue",
+      "targetTree": {
+        "treeId": "798ed0945cbdac1c",
+        "treeName": "Commando"
+      },
+      "disposition": "UPDATE_CONTENT",
+      "phase2Flags": [
+        "MISSING_CONTENT"
+      ],
+      "identityResolution": {
+        "resolutionEvidence": "TARGET_TREE_NAME_MATCH",
+        "productionRecordId": "f3a1542edd5f4259",
+        "preserveProductionId": true,
+        "createRecordId": null,
+        "currentTreeClaims": [
+          {
+            "treeId": "798ed0945cbdac1c",
+            "treeName": "Commando"
+          }
+        ],
+        "sameNameProductionCandidates": [
+          {
+            "id": "f3a1542edd5f4259",
+            "name": "Dedicated Protector",
+            "treeClaims": [
+              {
+                "treeId": "798ed0945cbdac1c",
+                "treeName": "Commando"
+              }
+            ]
+          }
+        ],
+        "reviewExtraCandidateIds": []
+      },
+      "currentCanonicalFields": {
+        "name": "Dedicated Protector",
+        "system.benefit": "Once per encounter, you can designate one ally within 6 squares of you. Until the end of the encounter, that ally gains a +1 morale bonus to their Reflex Defense as long as it remains adjacent to you. Any individual can only be the target of this Talent once per encounter.",
+        "system.description.value": "Once per encounter, you can designate one ally within 6 squares of you. Until the end of the encounter, that ally gains a +1 morale bonus to their Reflex Defense as long as it remains adjacent to you. Any individual can only be the target of this Talent once per encounter.",
+        "system.summary": null,
+        "system.prerequisites": "Harm's Way",
+        "system.source": null,
+        "system.page": null
+      },
+      "targetFields": {
+        "name": "Dedicated Protector",
+        "system.benefit": "Once per encounter, you can designate one ally within 6 squares of you. Until the end of the encounter, that ally gains a +1 morale bonus to Reflex Defense as long as it remains adjacent to you. Any individual can only be the target of this talent once per encounter.",
+        "system.description.value": "Once per encounter, you can designate one ally within 6 squares of you. Until the end of the encounter, that ally gains a +1 morale bonus to Reflex Defense as long as it remains adjacent to you. Any individual can only be the target of this talent once per encounter.",
+        "system.summary": "Once per encounter, designate a nearby ally to gain +1 morale Reflex while adjacent to you for the encounter.",
+        "system.prerequisites": "Harm's Way",
+        "system.source": "Galaxy of Intrigue",
+        "system.page": 24
+      },
+      "fieldChanges": {
+        "name": false,
+        "system.benefit": true,
+        "system.description.value": true,
+        "system.summary": true,
+        "system.prerequisites": false,
+        "system.source": true,
+        "system.page": true
+      },
+      "mutationFields": [
+        "system.benefit",
+        "system.description.value",
+        "system.summary",
+        "system.source",
+        "system.page"
+      ],
+      "treeMutation": {
+        "action": "KEEP",
+        "removeFromTreeIds": [],
+        "addToTreeId": "798ed0945cbdac1c",
+        "addTalentId": "f3a1542edd5f4259",
+        "addTalentName": "Dedicated Protector"
+      },
+      "preserveFields": [
+        "system.abilityMeta",
+        "system.prerequisitesStructured",
+        "system.tags",
+        "system.executionModel",
+        "system.subType",
+        "system.costNumeric",
+        "effects",
+        "flags",
+        "img",
+        "ownership",
+        "folder",
+        "sort"
+      ],
+      "createTemplate": null,
+      "claudeInstruction": "Preserve the existing production record ID and runtime metadata; replace only the listed canonical fields."
+    },
+    {
+      "canonicalIdentity": "Saga Edition Core Rulebook|Expert Pilot|Clip",
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Expert Pilot",
+      "name": "Clip",
+      "ownerSourcebook": "Galaxy of Intrigue",
+      "targetTree": {
+        "treeId": "b17c1515c06361d6",
+        "treeName": "Expert Pilot"
+      },
+      "disposition": "CREATE",
+      "phase2Flags": [
+        "MISSING_CONTENT"
+      ],
+      "identityResolution": {
+        "resolutionEvidence": "UNRESOLVED",
+        "productionRecordId": null,
+        "preserveProductionId": false,
+        "createRecordId": "52bedcae0b3729de",
+        "currentTreeClaims": [],
+        "sameNameProductionCandidates": [],
+        "reviewExtraCandidateIds": []
+      },
+      "currentCanonicalFields": null,
+      "targetFields": {
+        "name": "Clip",
+        "system.benefit": "When you use the ram action, you reduce the size of your ship by two categories for the purposes of taking collision damage. The rammed ship takes damage appropriate to the actual size of your ship.",
+        "system.description.value": "When you use the ram action, you reduce the size of your ship by two categories for the purposes of taking collision damage. The rammed ship takes damage appropriate to the actual size of your ship.",
+        "system.summary": "When ramming, treat your ship as two size categories smaller for damage you take, while the target still takes damage from your actual size.",
+        "system.prerequisites": "",
+        "system.source": "Galaxy of Intrigue",
+        "system.page": 24
+      },
+      "fieldChanges": {
+        "name": false,
+        "system.benefit": true,
+        "system.description.value": true,
+        "system.summary": true,
+        "system.prerequisites": false,
+        "system.source": true,
+        "system.page": true
+      },
+      "mutationFields": [
+        "system.benefit",
+        "system.description.value",
+        "system.summary",
+        "system.source",
+        "system.page",
+        "_record_create",
+        "system.treeId"
+      ],
+      "treeMutation": {
+        "action": "ADD",
+        "removeFromTreeIds": [],
+        "addToTreeId": "b17c1515c06361d6",
+        "addTalentId": "52bedcae0b3729de",
+        "addTalentName": "Clip"
+      },
+      "preserveFields": [
+        "system.abilityMeta",
+        "system.prerequisitesStructured",
+        "system.tags",
+        "system.executionModel",
+        "system.subType",
+        "system.costNumeric",
+        "effects",
+        "flags",
+        "img",
+        "ownership",
+        "folder",
+        "sort"
+      ],
+      "createTemplate": {
+        "_id": "52bedcae0b3729de",
+        "name": "Clip",
+        "type": "talent",
+        "img": "icons/svg/item-bag.svg",
+        "system": {
+          "treeId": "b17c1515c06361d6",
+          "benefit": "When you use the ram action, you reduce the size of your ship by two categories for the purposes of taking collision damage. The rammed ship takes damage appropriate to the actual size of your ship.",
+          "description": {
+            "value": "When you use the ram action, you reduce the size of your ship by two categories for the purposes of taking collision damage. The rammed ship takes damage appropriate to the actual size of your ship."
+          },
+          "summary": "When ramming, treat your ship as two size categories smaller for damage you take, while the target still takes damage from your actual size.",
+          "prerequisites": "",
+          "source": "Galaxy of Intrigue",
+          "page": 24,
+          "costNumeric": null,
+          "tags": []
+        },
+        "effects": [],
+        "folder": null,
+        "sort": 0,
+        "ownership": {
+          "default": 0
+        },
+        "flags": {}
+      },
+      "claudeInstruction": "Create the exact canonical identity with createRecordId; do not infer automation metadata. Add the new ID/name to the target talent tree."
+    },
+    {
+      "canonicalIdentity": "Saga Edition Core Rulebook|Expert Pilot|Master Defender",
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Expert Pilot",
+      "name": "Master Defender",
+      "ownerSourcebook": "Galaxy of Intrigue",
+      "targetTree": {
+        "treeId": "b17c1515c06361d6",
+        "treeName": "Expert Pilot"
+      },
+      "disposition": "CREATE",
+      "phase2Flags": [
+        "MISSING_CONTENT"
+      ],
+      "identityResolution": {
+        "resolutionEvidence": "UNRESOLVED",
+        "productionRecordId": null,
+        "preserveProductionId": false,
+        "createRecordId": "5ba7da84697a94dd",
+        "currentTreeClaims": [],
+        "sameNameProductionCandidates": [],
+        "reviewExtraCandidateIds": []
+      },
+      "currentCanonicalFields": null,
+      "targetFields": {
+        "name": "Master Defender",
+        "system.benefit": "When you fight defensively, either your vehicle gains a +5 dodge bonus to Reflex Defense if you and your gunners take a -2 penalty to attack rolls, or it gains a +10 dodge bonus if you and your gunners take a -5 penalty to attack rolls.",
+        "system.description.value": "When you fight defensively, either your vehicle gains a +5 dodge bonus to Reflex Defense if you and your gunners take a -2 penalty to attack rolls, or it gains a +10 dodge bonus if you and your gunners take a -5 penalty to attack rolls.",
+        "system.summary": "Fight defensively to give your vehicle +5 Reflex for -2 attacks or +10 Reflex for -5 attacks for you and your gunners.",
+        "system.prerequisites": "",
+        "system.source": "Galaxy of Intrigue",
+        "system.page": 24
+      },
+      "fieldChanges": {
+        "name": false,
+        "system.benefit": true,
+        "system.description.value": true,
+        "system.summary": true,
+        "system.prerequisites": false,
+        "system.source": true,
+        "system.page": true
+      },
+      "mutationFields": [
+        "system.benefit",
+        "system.description.value",
+        "system.summary",
+        "system.source",
+        "system.page",
+        "_record_create",
+        "system.treeId"
+      ],
+      "treeMutation": {
+        "action": "ADD",
+        "removeFromTreeIds": [],
+        "addToTreeId": "b17c1515c06361d6",
+        "addTalentId": "5ba7da84697a94dd",
+        "addTalentName": "Master Defender"
+      },
+      "preserveFields": [
+        "system.abilityMeta",
+        "system.prerequisitesStructured",
+        "system.tags",
+        "system.executionModel",
+        "system.subType",
+        "system.costNumeric",
+        "effects",
+        "flags",
+        "img",
+        "ownership",
+        "folder",
+        "sort"
+      ],
+      "createTemplate": {
+        "_id": "5ba7da84697a94dd",
+        "name": "Master Defender",
+        "type": "talent",
+        "img": "icons/svg/item-bag.svg",
+        "system": {
+          "treeId": "b17c1515c06361d6",
+          "benefit": "When you fight defensively, either your vehicle gains a +5 dodge bonus to Reflex Defense if you and your gunners take a -2 penalty to attack rolls, or it gains a +10 dodge bonus if you and your gunners take a -5 penalty to attack rolls.",
+          "description": {
+            "value": "When you fight defensively, either your vehicle gains a +5 dodge bonus to Reflex Defense if you and your gunners take a -2 penalty to attack rolls, or it gains a +10 dodge bonus if you and your gunners take a -5 penalty to attack rolls."
+          },
+          "summary": "Fight defensively to give your vehicle +5 Reflex for -2 attacks or +10 Reflex for -5 attacks for you and your gunners.",
+          "prerequisites": "",
+          "source": "Galaxy of Intrigue",
+          "page": 24,
+          "costNumeric": null,
+          "tags": []
+        },
+        "effects": [],
+        "folder": null,
+        "sort": 0,
+        "ownership": {
+          "default": 0
+        },
+        "flags": {}
+      },
+      "claudeInstruction": "Create the exact canonical identity with createRecordId; do not infer automation metadata. Add the new ID/name to the target talent tree."
+    },
+    {
+      "canonicalIdentity": "Saga Edition Core Rulebook|Expert Pilot|Shunt Damage",
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Expert Pilot",
+      "name": "Shunt Damage",
+      "ownerSourcebook": "Galaxy of Intrigue",
+      "targetTree": {
+        "treeId": "b17c1515c06361d6",
+        "treeName": "Expert Pilot"
+      },
+      "disposition": "CREATE",
+      "phase2Flags": [
+        "MISSING_CONTENT"
+      ],
+      "identityResolution": {
+        "resolutionEvidence": "UNRESOLVED",
+        "productionRecordId": null,
+        "preserveProductionId": false,
+        "createRecordId": "a12b5e12c3358182",
+        "currentTreeClaims": [],
+        "sameNameProductionCandidates": [],
+        "reviewExtraCandidateIds": []
+      },
+      "currentCanonicalFields": null,
+      "targetFields": {
+        "name": "Shunt Damage",
+        "system.benefit": "Once per encounter, if your ship takes damage, make a Pilot check and compare the result to the Reflex Defense of one adjacent allied ship. If your check result is higher, the allied ship takes the damage instead.",
+        "system.description.value": "Once per encounter, if your ship takes damage, make a Pilot check and compare the result to the Reflex Defense of one adjacent allied ship. If your check result is higher, the allied ship takes the damage instead.",
+        "system.summary": "Once per encounter when your ship takes damage, beat an adjacent ally ship's Reflex with Pilot to redirect the damage to it.",
+        "system.prerequisites": "",
+        "system.source": "Galaxy of Intrigue",
+        "system.page": 24
+      },
+      "fieldChanges": {
+        "name": false,
+        "system.benefit": true,
+        "system.description.value": true,
+        "system.summary": true,
+        "system.prerequisites": false,
+        "system.source": true,
+        "system.page": true
+      },
+      "mutationFields": [
+        "system.benefit",
+        "system.description.value",
+        "system.summary",
+        "system.source",
+        "system.page",
+        "_record_create",
+        "system.treeId"
+      ],
+      "treeMutation": {
+        "action": "ADD",
+        "removeFromTreeIds": [],
+        "addToTreeId": "b17c1515c06361d6",
+        "addTalentId": "a12b5e12c3358182",
+        "addTalentName": "Shunt Damage"
+      },
+      "preserveFields": [
+        "system.abilityMeta",
+        "system.prerequisitesStructured",
+        "system.tags",
+        "system.executionModel",
+        "system.subType",
+        "system.costNumeric",
+        "effects",
+        "flags",
+        "img",
+        "ownership",
+        "folder",
+        "sort"
+      ],
+      "createTemplate": {
+        "_id": "a12b5e12c3358182",
+        "name": "Shunt Damage",
+        "type": "talent",
+        "img": "icons/svg/item-bag.svg",
+        "system": {
+          "treeId": "b17c1515c06361d6",
+          "benefit": "Once per encounter, if your ship takes damage, make a Pilot check and compare the result to the Reflex Defense of one adjacent allied ship. If your check result is higher, the allied ship takes the damage instead.",
+          "description": {
+            "value": "Once per encounter, if your ship takes damage, make a Pilot check and compare the result to the Reflex Defense of one adjacent allied ship. If your check result is higher, the allied ship takes the damage instead."
+          },
+          "summary": "Once per encounter when your ship takes damage, beat an adjacent ally ship's Reflex with Pilot to redirect the damage to it.",
+          "prerequisites": "",
+          "source": "Galaxy of Intrigue",
+          "page": 24,
+          "costNumeric": null,
+          "tags": []
+        },
+        "effects": [],
+        "folder": null,
+        "sort": 0,
+        "ownership": {
+          "default": 0
+        },
+        "flags": {}
+      },
+      "claudeInstruction": "Create the exact canonical identity with createRecordId; do not infer automation metadata. Add the new ID/name to the target talent tree."
+    },
+    {
+      "canonicalIdentity": "Saga Edition Core Rulebook|Bounty Hunter|Detective",
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Bounty Hunter",
+      "name": "Detective",
+      "ownerSourcebook": "Galaxy of Intrigue",
+      "targetTree": {
+        "treeId": "a47ed82a822e3962",
+        "treeName": "Bounty Hunter"
+      },
+      "disposition": "UPDATE_METADATA",
+      "phase2Flags": [
+        "MISSING_CONTENT"
+      ],
+      "identityResolution": {
+        "resolutionEvidence": "TARGET_TREE_NAME_MATCH",
+        "productionRecordId": "27dd504c877a4de5",
+        "preserveProductionId": true,
+        "createRecordId": null,
+        "currentTreeClaims": [
+          {
+            "treeId": "a47ed82a822e3962",
+            "treeName": "Bounty Hunter"
+          }
+        ],
+        "sameNameProductionCandidates": [
+          {
+            "id": "27dd504c877a4de5",
+            "name": "Detective",
+            "treeClaims": [
+              {
+                "treeId": "a47ed82a822e3962",
+                "treeName": "Bounty Hunter"
+              }
+            ]
+          }
+        ],
+        "reviewExtraCandidateIds": []
+      },
+      "currentCanonicalFields": {
+        "name": "Detective",
+        "system.benefit": "You are skilled in locating individuals and using research and surveillance to learn some of their most intimate secrets. When you make a Gather Information check to locate an individual, the DC is reduced by 10, and the time and bribery cost are reduced by half.",
+        "system.description.value": "You are skilled in locating individuals and using research and surveillance to learn some of their most intimate secrets. When you make a Gather Information check to locate an individual, the DC is reduced by 10, and the time and bribery cost are reduced by half.",
+        "system.summary": null,
+        "system.prerequisites": "",
+        "system.source": null,
+        "system.page": null
+      },
+      "targetFields": {
+        "name": "Detective",
+        "system.benefit": "You are skilled in locating individuals and using research and surveillance to learn some of their most intimate secrets. When you make a Gather Information check to locate an individual, the DC is reduced by 10, and the time and bribery cost are reduced by half.",
+        "system.description.value": "You are skilled in locating individuals and using research and surveillance to learn some of their most intimate secrets. When you make a Gather Information check to locate an individual, the DC is reduced by 10, and the time and bribery cost are reduced by half.",
+        "system.summary": "Locating an individual with Gather Information is DC -10 and takes half the time and bribery cost.",
+        "system.prerequisites": "",
+        "system.source": "Galaxy of Intrigue",
+        "system.page": 24
+      },
+      "fieldChanges": {
+        "name": false,
+        "system.benefit": false,
+        "system.description.value": false,
+        "system.summary": true,
+        "system.prerequisites": false,
+        "system.source": true,
+        "system.page": true
+      },
+      "mutationFields": [
+        "system.summary",
+        "system.source",
+        "system.page"
+      ],
+      "treeMutation": {
+        "action": "KEEP",
+        "removeFromTreeIds": [],
+        "addToTreeId": "a47ed82a822e3962",
+        "addTalentId": "27dd504c877a4de5",
+        "addTalentName": "Detective"
+      },
+      "preserveFields": [
+        "system.abilityMeta",
+        "system.prerequisitesStructured",
+        "system.tags",
+        "system.executionModel",
+        "system.subType",
+        "system.costNumeric",
+        "effects",
+        "flags",
+        "img",
+        "ownership",
+        "folder",
+        "sort"
+      ],
+      "createTemplate": null,
+      "claudeInstruction": "Preserve the existing production record ID and canonical content; update only the listed metadata or display-name fields."
+    },
+    {
+      "canonicalIdentity": "Saga Edition Core Rulebook|Bounty Hunter|Electronic Trail",
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Bounty Hunter",
+      "name": "Electronic Trail",
+      "ownerSourcebook": "Galaxy of Intrigue",
+      "targetTree": {
+        "treeId": "a47ed82a822e3962",
+        "treeName": "Bounty Hunter"
+      },
+      "disposition": "UPDATE_CONTENT",
+      "phase2Flags": [
+        "MISSING_CONTENT"
+      ],
+      "identityResolution": {
+        "resolutionEvidence": "TARGET_TREE_NAME_MATCH",
+        "productionRecordId": "d26506bfba104470",
+        "preserveProductionId": true,
+        "createRecordId": null,
+        "currentTreeClaims": [
+          {
+            "treeId": "a47ed82a822e3962",
+            "treeName": "Bounty Hunter"
+          }
+        ],
+        "sameNameProductionCandidates": [
+          {
+            "id": "d26506bfba104470",
+            "name": "Electronic Trail",
+            "treeClaims": [
+              {
+                "treeId": "a47ed82a822e3962",
+                "treeName": "Bounty Hunter"
+              }
+            ]
+          }
+        ],
+        "reviewExtraCandidateIds": []
+      },
+      "currentCanonicalFields": {
+        "name": "Electronic Trail",
+        "system.benefit": "Once you have located a target using Gather Information, you can track its electronic presence. Once per day, you receive a catalog of the target's Electronic Trail, which includes the amount and location of credits spent, the routes of any public transportation taken, and the sites viewed on the HoloNet while the target was logged in using its primary identity.",
+        "system.description.value": "Once you have located a target using Gather Information, you can track its electronic presence. Once per day, you receive a catalog of the target's Electronic Trail, which includes the amount and location of credits spent, the routes of any public transportation taken, and the sites viewed on the HoloNet while the target was logged in using its primary identity.\n\nTo receive this information, you must have access to a computer or Datapad plus access to a network or The HoloNet. This Electronic Trail does not reveal bank balances or other secret information, which requires a separate Gather Information check.",
+        "system.summary": null,
+        "system.prerequisites": "Nowhere to Hide, Trained in Use Computer",
+        "system.source": null,
+        "system.page": null
+      },
+      "targetFields": {
+        "name": "Electronic Trail",
+        "system.benefit": "Once you have located a target using Gather Information, you can track its electronic presence. Once per day, you receive a catalog of the target's electronic trail, which includes the amount and location of credits spent, the routes of any public transportation taken, and the sites viewed on the HoloNet while the target was logged in using its primary identity. To receive this information, you must have access to a computer or datapad plus access to a network or the HoloNet. The electronic trail does not reveal bank balances or other secret information, which requires a separate Gather Information check.",
+        "system.description.value": "Once you have located a target using Gather Information, you can track its electronic presence. Once per day, you receive a catalog of the target's electronic trail, which includes the amount and location of credits spent, the routes of any public transportation taken, and the sites viewed on the HoloNet while the target was logged in using its primary identity. To receive this information, you must have access to a computer or datapad plus access to a network or the HoloNet. The electronic trail does not reveal bank balances or other secret information, which requires a separate Gather Information check.",
+        "system.summary": "After locating a target, receive a daily catalog of its normal electronic trail while you have computer/network access.",
+        "system.prerequisites": "Nowhere to Hide, trained in the Use Computer skill",
+        "system.source": "Galaxy of Intrigue",
+        "system.page": 24
+      },
+      "fieldChanges": {
+        "name": false,
+        "system.benefit": true,
+        "system.description.value": true,
+        "system.summary": true,
+        "system.prerequisites": true,
+        "system.source": true,
+        "system.page": true
+      },
+      "mutationFields": [
+        "system.benefit",
+        "system.description.value",
+        "system.summary",
+        "system.prerequisites",
+        "system.source",
+        "system.page"
+      ],
+      "treeMutation": {
+        "action": "KEEP",
+        "removeFromTreeIds": [],
+        "addToTreeId": "a47ed82a822e3962",
+        "addTalentId": "d26506bfba104470",
+        "addTalentName": "Electronic Trail"
+      },
+      "preserveFields": [
+        "system.abilityMeta",
+        "system.prerequisitesStructured",
+        "system.tags",
+        "system.executionModel",
+        "system.subType",
+        "system.costNumeric",
+        "effects",
+        "flags",
+        "img",
+        "ownership",
+        "folder",
+        "sort"
+      ],
+      "createTemplate": null,
+      "claudeInstruction": "Preserve the existing production record ID and runtime metadata; replace only the listed canonical fields."
+    },
+    {
+      "canonicalIdentity": "Saga Edition Core Rulebook|Bounty Hunter|Revealing Secrets",
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Bounty Hunter",
+      "name": "Revealing Secrets",
+      "ownerSourcebook": "Galaxy of Intrigue",
+      "targetTree": {
+        "treeId": "a47ed82a822e3962",
+        "treeName": "Bounty Hunter"
+      },
+      "disposition": "CREATE",
+      "phase2Flags": [
+        "MISSING_CONTENT"
+      ],
+      "identityResolution": {
+        "resolutionEvidence": "UNRESOLVED",
+        "productionRecordId": null,
+        "preserveProductionId": false,
+        "createRecordId": "71908efcdb7e6711",
+        "currentTreeClaims": [],
+        "sameNameProductionCandidates": [],
+        "reviewExtraCandidateIds": []
+      },
+      "currentCanonicalFields": null,
+      "targetFields": {
+        "name": "Revealing Secrets",
+        "system.benefit": "Your investigations reveal information that your target thought was secret. When you make a Gather Information check to learn secret information, the DC is reduced by 10 and the bribery cost is reduced to one-fifth the original cost.",
+        "system.description.value": "Your investigations reveal information that your target thought was secret. When you make a Gather Information check to learn secret information, the DC is reduced by 10 and the bribery cost is reduced to one-fifth the original cost.",
+        "system.summary": "Gather Information checks for secret information are DC -10 and cost one-fifth the normal bribery amount.",
+        "system.prerequisites": "Detective",
+        "system.source": "Galaxy of Intrigue",
+        "system.page": 25
+      },
+      "fieldChanges": {
+        "name": false,
+        "system.benefit": true,
+        "system.description.value": true,
+        "system.summary": true,
+        "system.prerequisites": true,
+        "system.source": true,
+        "system.page": true
+      },
+      "mutationFields": [
+        "system.benefit",
+        "system.description.value",
+        "system.summary",
+        "system.prerequisites",
+        "system.source",
+        "system.page",
+        "_record_create",
+        "system.treeId"
+      ],
+      "treeMutation": {
+        "action": "ADD",
+        "removeFromTreeIds": [],
+        "addToTreeId": "a47ed82a822e3962",
+        "addTalentId": "71908efcdb7e6711",
+        "addTalentName": "Revealing Secrets"
+      },
+      "preserveFields": [
+        "system.abilityMeta",
+        "system.prerequisitesStructured",
+        "system.tags",
+        "system.executionModel",
+        "system.subType",
+        "system.costNumeric",
+        "effects",
+        "flags",
+        "img",
+        "ownership",
+        "folder",
+        "sort"
+      ],
+      "createTemplate": {
+        "_id": "71908efcdb7e6711",
+        "name": "Revealing Secrets",
+        "type": "talent",
+        "img": "icons/svg/item-bag.svg",
+        "system": {
+          "treeId": "a47ed82a822e3962",
+          "benefit": "Your investigations reveal information that your target thought was secret. When you make a Gather Information check to learn secret information, the DC is reduced by 10 and the bribery cost is reduced to one-fifth the original cost.",
+          "description": {
+            "value": "Your investigations reveal information that your target thought was secret. When you make a Gather Information check to learn secret information, the DC is reduced by 10 and the bribery cost is reduced to one-fifth the original cost."
+          },
+          "summary": "Gather Information checks for secret information are DC -10 and cost one-fifth the normal bribery amount.",
+          "prerequisites": "Detective",
+          "source": "Galaxy of Intrigue",
+          "page": 25,
+          "costNumeric": null,
+          "tags": []
+        },
+        "effects": [],
+        "folder": null,
+        "sort": 0,
+        "ownership": {
+          "default": 0
+        },
+        "flags": {}
+      },
+      "claudeInstruction": "Create the exact canonical identity with createRecordId; do not infer automation metadata. Add the new ID/name to the target talent tree."
+    },
+    {
+      "canonicalIdentity": "Saga Edition Core Rulebook|Mastermind|Attract Superior Minion",
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Mastermind",
+      "name": "Attract Superior Minion",
+      "ownerSourcebook": "Galaxy of Intrigue",
+      "targetTree": {
+        "treeId": "560cc7994b357a0d",
+        "treeName": "Mastermind"
+      },
+      "disposition": "CREATE",
+      "phase2Flags": [
+        "MISSING_CONTENT"
+      ],
+      "identityResolution": {
+        "resolutionEvidence": "UNRESOLVED",
+        "productionRecordId": null,
+        "preserveProductionId": false,
+        "createRecordId": "9ef268e31963cf70",
+        "currentTreeClaims": [],
+        "sameNameProductionCandidates": [],
+        "reviewExtraCandidateIds": []
+      },
+      "currentCanonicalFields": null,
+      "targetFields": {
+        "name": "Attract Superior Minion",
+        "system.benefit": "You attract a particularly skilled and powerful minion. The minion is a nonheroic character with a class level equal to your character level. This talent otherwise functions as the Attract Minion talent.",
+        "system.description.value": "You attract a particularly skilled and powerful minion. The minion is a nonheroic character with a class level equal to your character level. This talent otherwise functions as the Attract Minion talent.",
+        "system.summary": "Your Attract Minion follower becomes a nonheroic character with class level equal to your character level.",
+        "system.prerequisites": "Attract Minion, Impel Ally I, Impel Ally II",
+        "system.source": "Galaxy of Intrigue",
+        "system.page": 25
+      },
+      "fieldChanges": {
+        "name": false,
+        "system.benefit": true,
+        "system.description.value": true,
+        "system.summary": true,
+        "system.prerequisites": true,
+        "system.source": true,
+        "system.page": true
+      },
+      "mutationFields": [
+        "system.benefit",
+        "system.description.value",
+        "system.summary",
+        "system.prerequisites",
+        "system.source",
+        "system.page",
+        "_record_create",
+        "system.treeId"
+      ],
+      "treeMutation": {
+        "action": "ADD",
+        "removeFromTreeIds": [],
+        "addToTreeId": "560cc7994b357a0d",
+        "addTalentId": "9ef268e31963cf70",
+        "addTalentName": "Attract Superior Minion"
+      },
+      "preserveFields": [
+        "system.abilityMeta",
+        "system.prerequisitesStructured",
+        "system.tags",
+        "system.executionModel",
+        "system.subType",
+        "system.costNumeric",
+        "effects",
+        "flags",
+        "img",
+        "ownership",
+        "folder",
+        "sort"
+      ],
+      "createTemplate": {
+        "_id": "9ef268e31963cf70",
+        "name": "Attract Superior Minion",
+        "type": "talent",
+        "img": "icons/svg/item-bag.svg",
+        "system": {
+          "treeId": "560cc7994b357a0d",
+          "benefit": "You attract a particularly skilled and powerful minion. The minion is a nonheroic character with a class level equal to your character level. This talent otherwise functions as the Attract Minion talent.",
+          "description": {
+            "value": "You attract a particularly skilled and powerful minion. The minion is a nonheroic character with a class level equal to your character level. This talent otherwise functions as the Attract Minion talent."
+          },
+          "summary": "Your Attract Minion follower becomes a nonheroic character with class level equal to your character level.",
+          "prerequisites": "Attract Minion, Impel Ally I, Impel Ally II",
+          "source": "Galaxy of Intrigue",
+          "page": 25,
+          "costNumeric": null,
+          "tags": []
+        },
+        "effects": [],
+        "folder": null,
+        "sort": 0,
+        "ownership": {
+          "default": 0
+        },
+        "flags": {}
+      },
+      "claudeInstruction": "Create the exact canonical identity with createRecordId; do not infer automation metadata. Add the new ID/name to the target talent tree."
+    },
+    {
+      "canonicalIdentity": "Saga Edition Core Rulebook|Mastermind|Contingency Plan",
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Mastermind",
+      "name": "Contingency Plan",
+      "ownerSourcebook": "Galaxy of Intrigue",
+      "targetTree": {
+        "treeId": "560cc7994b357a0d",
+        "treeName": "Mastermind"
+      },
+      "disposition": "CREATE",
+      "phase2Flags": [
+        "MISSING_CONTENT"
+      ],
+      "identityResolution": {
+        "resolutionEvidence": "UNRESOLVED",
+        "productionRecordId": null,
+        "preserveProductionId": false,
+        "createRecordId": "7a8b247639d32740",
+        "currentTreeClaims": [],
+        "sameNameProductionCandidates": [],
+        "reviewExtraCandidateIds": []
+      },
+      "currentCanonicalFields": null,
+      "targetFields": {
+        "name": "Contingency Plan",
+        "system.benefit": "Once per encounter, if you fail an attack roll, a skill check, or the use of a talent that requires an opposed check, you can move your speed as a reaction.",
+        "system.description.value": "Once per encounter, if you fail an attack roll, a skill check, or the use of a talent that requires an opposed check, you can move your speed as a reaction.",
+        "system.summary": "Once per encounter after failing an attack, skill check, or opposed-check talent, move your speed as a reaction.",
+        "system.prerequisites": "",
+        "system.source": "Galaxy of Intrigue",
+        "system.page": 25
+      },
+      "fieldChanges": {
+        "name": false,
+        "system.benefit": true,
+        "system.description.value": true,
+        "system.summary": true,
+        "system.prerequisites": false,
+        "system.source": true,
+        "system.page": true
+      },
+      "mutationFields": [
+        "system.benefit",
+        "system.description.value",
+        "system.summary",
+        "system.source",
+        "system.page",
+        "_record_create",
+        "system.treeId"
+      ],
+      "treeMutation": {
+        "action": "ADD",
+        "removeFromTreeIds": [],
+        "addToTreeId": "560cc7994b357a0d",
+        "addTalentId": "7a8b247639d32740",
+        "addTalentName": "Contingency Plan"
+      },
+      "preserveFields": [
+        "system.abilityMeta",
+        "system.prerequisitesStructured",
+        "system.tags",
+        "system.executionModel",
+        "system.subType",
+        "system.costNumeric",
+        "effects",
+        "flags",
+        "img",
+        "ownership",
+        "folder",
+        "sort"
+      ],
+      "createTemplate": {
+        "_id": "7a8b247639d32740",
+        "name": "Contingency Plan",
+        "type": "talent",
+        "img": "icons/svg/item-bag.svg",
+        "system": {
+          "treeId": "560cc7994b357a0d",
+          "benefit": "Once per encounter, if you fail an attack roll, a skill check, or the use of a talent that requires an opposed check, you can move your speed as a reaction.",
+          "description": {
+            "value": "Once per encounter, if you fail an attack roll, a skill check, or the use of a talent that requires an opposed check, you can move your speed as a reaction."
+          },
+          "summary": "Once per encounter after failing an attack, skill check, or opposed-check talent, move your speed as a reaction.",
+          "prerequisites": "",
+          "source": "Galaxy of Intrigue",
+          "page": 25,
+          "costNumeric": null,
+          "tags": []
+        },
+        "effects": [],
+        "folder": null,
+        "sort": 0,
+        "ownership": {
+          "default": 0
+        },
+        "flags": {}
+      },
+      "claudeInstruction": "Create the exact canonical identity with createRecordId; do not infer automation metadata. Add the new ID/name to the target talent tree."
+    },
+    {
+      "canonicalIdentity": "Saga Edition Core Rulebook|Gunslinger|Damaging Disarm",
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Gunslinger",
+      "name": "Damaging Disarm",
+      "ownerSourcebook": "Galaxy of Intrigue",
+      "targetTree": {
+        "treeId": "cb6f775cd227a3e3",
+        "treeName": "Gunslinger"
+      },
+      "disposition": "CREATE",
+      "phase2Flags": [
+        "MISSING_CONTENT"
+      ],
+      "identityResolution": {
+        "resolutionEvidence": "UNRESOLVED",
+        "productionRecordId": null,
+        "preserveProductionId": false,
+        "createRecordId": "dceb4b975170edda",
+        "currentTreeClaims": [],
+        "sameNameProductionCandidates": [],
+        "reviewExtraCandidateIds": []
+      },
+      "currentCanonicalFields": null,
+      "targetFields": {
+        "name": "Damaging Disarm",
+        "system.benefit": "If you successfully disarm an opponent using a ranged attack, the target also takes half damage from the attack.",
+        "system.description.value": "If you successfully disarm an opponent using a ranged attack, the target also takes half damage from the attack.",
+        "system.summary": "A successful ranged disarm also deals half the attack's damage to the target.",
+        "system.prerequisites": "Ranged Disarm",
+        "system.source": "Galaxy of Intrigue",
+        "system.page": 25
+      },
+      "fieldChanges": {
+        "name": false,
+        "system.benefit": true,
+        "system.description.value": true,
+        "system.summary": true,
+        "system.prerequisites": true,
+        "system.source": true,
+        "system.page": true
+      },
+      "mutationFields": [
+        "system.benefit",
+        "system.description.value",
+        "system.summary",
+        "system.prerequisites",
+        "system.source",
+        "system.page",
+        "_record_create",
+        "system.treeId"
+      ],
+      "treeMutation": {
+        "action": "ADD",
+        "removeFromTreeIds": [],
+        "addToTreeId": "cb6f775cd227a3e3",
+        "addTalentId": "dceb4b975170edda",
+        "addTalentName": "Damaging Disarm"
+      },
+      "preserveFields": [
+        "system.abilityMeta",
+        "system.prerequisitesStructured",
+        "system.tags",
+        "system.executionModel",
+        "system.subType",
+        "system.costNumeric",
+        "effects",
+        "flags",
+        "img",
+        "ownership",
+        "folder",
+        "sort"
+      ],
+      "createTemplate": {
+        "_id": "dceb4b975170edda",
+        "name": "Damaging Disarm",
+        "type": "talent",
+        "img": "icons/svg/item-bag.svg",
+        "system": {
+          "treeId": "cb6f775cd227a3e3",
+          "benefit": "If you successfully disarm an opponent using a ranged attack, the target also takes half damage from the attack.",
+          "description": {
+            "value": "If you successfully disarm an opponent using a ranged attack, the target also takes half damage from the attack."
+          },
+          "summary": "A successful ranged disarm also deals half the attack's damage to the target.",
+          "prerequisites": "Ranged Disarm",
+          "source": "Galaxy of Intrigue",
+          "page": 25,
+          "costNumeric": null,
+          "tags": []
+        },
+        "effects": [],
+        "folder": null,
+        "sort": 0,
+        "ownership": {
+          "default": 0
+        },
+        "flags": {}
+      },
+      "claudeInstruction": "Create the exact canonical identity with createRecordId; do not infer automation metadata. Add the new ID/name to the target talent tree."
+    },
+    {
+      "canonicalIdentity": "Saga Edition Core Rulebook|Gunslinger|Pistol Duelist",
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Gunslinger",
+      "name": "Pistol Duelist",
+      "ownerSourcebook": "Galaxy of Intrigue",
+      "targetTree": {
+        "treeId": "cb6f775cd227a3e3",
+        "treeName": "Gunslinger"
+      },
+      "disposition": "UPDATE_CONTENT",
+      "phase2Flags": [
+        "MISSING_CONTENT"
+      ],
+      "identityResolution": {
+        "resolutionEvidence": "TARGET_TREE_NAME_MATCH",
+        "productionRecordId": "d4a94695e27f60a1",
+        "preserveProductionId": true,
+        "createRecordId": null,
+        "currentTreeClaims": [
+          {
+            "treeId": "cb6f775cd227a3e3",
+            "treeName": "Gunslinger"
+          }
+        ],
+        "sameNameProductionCandidates": [
+          {
+            "id": "d4a94695e27f60a1",
+            "name": "Pistol Duelist",
+            "treeClaims": [
+              {
+                "treeId": "cb6f775cd227a3e3",
+                "treeName": "Gunslinger"
+              }
+            ]
+          }
+        ],
+        "reviewExtraCandidateIds": []
+      },
+      "currentCanonicalFields": {
+        "name": "Pistol Duelist",
+        "system.benefit": "You are a master of the elegant, if archaic, custom of dueling with Pistols. You can use each of the following actions once per encounter as a Standard Action: End Game, Snap Aiming, and Stand Ready.",
+        "system.description.value": "<p>You are a master of the elegant, if archaic, custom of dueling with Pistols. You can use each of the following actions once per encounter as a Standard Action:</p><ul><li><strong>End Game:</strong> You make a single ranged attack with a Pistol against an opponent within range. The opponent's Damage Threshold is halved, rounded down, for the purpose of this attack.</li><li><strong>Snap Aiming:</strong> You make a single ranged attack with the benefits of Aiming.</li><li><strong>Stand Ready:</strong> You gain a +4 bonus to your Reflex Defense until the end of your next turn and make a single ranged attack.</li></ul>",
+        "system.summary": null,
+        "system.prerequisites": "",
+        "system.source": null,
+        "system.page": null
+      },
+      "targetFields": {
+        "name": "Pistol Duelist",
+        "system.benefit": "You are a master of the elegant, if archaic, custom of dueling with pistols. You can use each of the following actions once per encounter as a standard action:\n\nEnd Game: You make a single ranged attack with a pistol against an opponent within range. The opponent's damage threshold is halved (round down) for the purposes of this attack.\n\nSnap Aiming: You make a single ranged attack with the benefits of aiming.\n\nStand Steady: You gain a +4 bonus to your Reflex Defense until the end of your next turn and make a single ranged attack.",
+        "system.description.value": "You are a master of the elegant, if archaic, custom of dueling with pistols. You can use each of the following actions once per encounter as a standard action:\n\nEnd Game: You make a single ranged attack with a pistol against an opponent within range. The opponent's damage threshold is halved (round down) for the purposes of this attack.\n\nSnap Aiming: You make a single ranged attack with the benefits of aiming.\n\nStand Steady: You gain a +4 bonus to your Reflex Defense until the end of your next turn and make a single ranged attack.",
+        "system.summary": "Once each per encounter as a standard action, use End Game, Snap Aiming, or Stand Steady with a pistol.",
+        "system.prerequisites": "",
+        "system.source": "Galaxy of Intrigue",
+        "system.page": 25
+      },
+      "fieldChanges": {
+        "name": false,
+        "system.benefit": true,
+        "system.description.value": true,
+        "system.summary": true,
+        "system.prerequisites": false,
+        "system.source": true,
+        "system.page": true
+      },
+      "mutationFields": [
+        "system.benefit",
+        "system.description.value",
+        "system.summary",
+        "system.source",
+        "system.page"
+      ],
+      "treeMutation": {
+        "action": "KEEP",
+        "removeFromTreeIds": [],
+        "addToTreeId": "cb6f775cd227a3e3",
+        "addTalentId": "d4a94695e27f60a1",
+        "addTalentName": "Pistol Duelist"
+      },
+      "preserveFields": [
+        "system.abilityMeta",
+        "system.prerequisitesStructured",
+        "system.tags",
+        "system.executionModel",
+        "system.subType",
+        "system.costNumeric",
+        "effects",
+        "flags",
+        "img",
+        "ownership",
+        "folder",
+        "sort"
+      ],
+      "createTemplate": null,
+      "claudeInstruction": "Preserve the existing production record ID and runtime metadata; replace only the listed canonical fields."
+    }
+  ]
+}

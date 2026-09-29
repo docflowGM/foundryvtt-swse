@@ -1,0 +1,3131 @@
+{
+  "schemaVersion": 2,
+  "phase": "3B",
+  "status": "CERTIFIED_BOOK_REPAIR_MANIFEST",
+  "sourcebook": "Scavenger's Guide to Droids",
+  "bookOrder": 14,
+  "identityRule": "canonicalTreeKey + talent name; never talent name alone",
+  "ownershipRule": "Only the Phase 3A primary publication owner emits a production mutation. Repeated later publications are reference-only.",
+  "productionMutationAllowed": false,
+  "generatedAgainst": {
+    "canonical": {
+      "path": "data/canonical/talents.json",
+      "fingerprint": "fnv1a64:251001ba5bea19a1"
+    },
+    "registry": {
+      "path": "data/audits/talent-canonical-tree-registry.json",
+      "fingerprint": "fnv1a64:9121b94eb7b62f57"
+    },
+    "talents": {
+      "path": "packs/talents.db",
+      "fingerprint": "fnv1a64:1db9da2beb7923d3"
+    },
+    "trees": {
+      "path": "packs/talent_trees.db",
+      "fingerprint": "fnv1a64:5b5325da00db8387"
+    },
+    "phase2": {
+      "path": "data/audits/talent-phase-2-scavengers-guide-to-droids-content.json",
+      "fingerprint": "fnv1a64:5551fc382631c1ce"
+    },
+    "discrepancy": {
+      "path": "data/audits/talent-phase-2-scavengers-guide-to-droids-discrepancy-manifest.json",
+      "fingerprint": "fnv1a64:0269a15b0e907951"
+    }
+  },
+  "counts": {
+    "certifiedPublicationClaims": 31,
+    "ownedCanonicalIdentities": 31,
+    "referenceOnlyPublicationClaims": 0,
+    "canonicalTrees": 9,
+    "dispositions": {
+      "UPDATE_CONTENT": 12,
+      "CREATE": 19
+    },
+    "fieldChanges": {
+      "system.benefit": 31,
+      "system.description.value": 31,
+      "system.summary": 31,
+      "system.source": 27,
+      "system.page": 31,
+      "system.prerequisites": 12
+    },
+    "productionExtras": 0
+  },
+  "dispositionPrecedence": [
+    "IDENTITY_SPLIT",
+    "CREATE",
+    "CORRECT_TREE",
+    "REMOVE_CONTAMINATION",
+    "UPDATE_CONTENT",
+    "UPDATE_METADATA",
+    "KEEP"
+  ],
+  "phase3cWriteContract": {
+    "productionTalentPack": "packs/talents.db",
+    "productionTreePack": "packs/talent_trees.db",
+    "preserveExistingIds": true,
+    "descriptionWriteRule": "Preserve each existing record's description shape: write system.description.value when description is an object and system.description when it is a string. New records use system.description.value.",
+    "canonicalFields": [
+      "name",
+      "system.benefit",
+      "system.description.value or system.description",
+      "system.summary",
+      "system.prerequisites",
+      "system.source",
+      "system.page"
+    ],
+    "prohibitedShortcuts": [
+      "Do not match or mutate by talent name alone.",
+      "Do not infer CREATE from a Phase 2 missing flag.",
+      "Do not overwrite a same-name identity in another tree.",
+      "Do not delete REVIEW_EXTRA records during Phase 3C.",
+      "Do not erase runtime metadata unless explicitly targeted."
+    ]
+  },
+  "referenceOnlyPublications": [],
+  "productionExtras": [],
+  "records": [
+    {
+      "canonicalIdentity": "Force Unleashed Campaign Guide|Autonomy|Just a Droid",
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Autonomy",
+      "name": "Just a Droid",
+      "ownerSourcebook": "Scavenger's Guide to Droids",
+      "targetTree": {
+        "treeId": "9fe73a3703fa45fca628fd43cae6bf7f",
+        "treeName": "Autonomy"
+      },
+      "disposition": "UPDATE_CONTENT",
+      "phase2Flags": [
+        "MISSING_CONTENT"
+      ],
+      "identityResolution": {
+        "resolutionEvidence": "TARGET_TREE_NAME_MATCH",
+        "productionRecordId": "27604b55a6fd41ffbc04f05cec16463d",
+        "preserveProductionId": true,
+        "createRecordId": null,
+        "currentTreeClaims": [
+          {
+            "treeId": "9fe73a3703fa45fca628fd43cae6bf7f",
+            "treeName": "Autonomy"
+          }
+        ],
+        "sameNameProductionCandidates": [
+          {
+            "id": "27604b55a6fd41ffbc04f05cec16463d",
+            "name": "Just a Droid",
+            "treeClaims": [
+              {
+                "treeId": "9fe73a3703fa45fca628fd43cae6bf7f",
+                "treeName": "Autonomy"
+              }
+            ]
+          }
+        ],
+        "reviewExtraCandidateIds": []
+      },
+      "currentCanonicalFields": {
+        "name": "Just a Droid",
+        "system.benefit": "You are adept at passing yourself off as an ordinary Droid. You can use each of the following Actions once per encounter.",
+        "system.description.value": "You are adept at passing yourself off as an ordinary Droid. You can use each of the following Actions once per encounter.\n\nJust Another Droid: You are skilled at using Stealth to sneak past unwary enemies when moving in plain sight. You can use the Sneak application of the Stealth Skill when in plain sight of an enemy, if the enemy has no reason to doubt that you are just another Droid. You are considered Trained in Stealth for this Action.\nJust a Normal Droid: You can reroll Deception checks for Deceptive Appearance to make observers believe that you are carrying out a standard function when attempting to do something atypical for your Droid Model or function. You may keep either result.",
+        "system.summary": null,
+        "system.prerequisites": "",
+        "system.source": null,
+        "system.page": null
+      },
+      "targetFields": {
+        "name": "Just a Droid",
+        "system.benefit": "You are adept at passing yourself off as an ordinary droid. You can use each of the following actions once per encounter. Just Another Droid: You are skilled at using Stealth to sneak past unwary enemies when moving in plain sight. You can use the Sneak application of the Stealth skill when in plain sight of an enemy, if the enemy has no reason to doubt that you are just another droid. You are considered trained in Stealth for this action. Just a Normal Droid: You can reroll Deception checks for deceptive appearance to make observers believe that you are carrying out a standard function when attempting to do something atypical for your droid model or function. You may keep either result.",
+        "system.description.value": "You are adept at passing yourself off as an ordinary droid. You can use each of the following actions once per encounter. Just Another Droid: You are skilled at using Stealth to sneak past unwary enemies when moving in plain sight. You can use the Sneak application of the Stealth skill when in plain sight of an enemy, if the enemy has no reason to doubt that you are just another droid. You are considered trained in Stealth for this action. Just a Normal Droid: You can reroll Deception checks for deceptive appearance to make observers believe that you are carrying out a standard function when attempting to do something atypical for your droid model or function. You may keep either result.",
+        "system.summary": "You are adept at passing yourself off as an ordinary droid.",
+        "system.prerequisites": "",
+        "system.source": "Scavenger's Guide to Droids",
+        "system.page": 28
+      },
+      "fieldChanges": {
+        "name": false,
+        "system.benefit": true,
+        "system.description.value": true,
+        "system.summary": true,
+        "system.prerequisites": false,
+        "system.source": true,
+        "system.page": true
+      },
+      "mutationFields": [
+        "system.benefit",
+        "system.description.value",
+        "system.summary",
+        "system.source",
+        "system.page"
+      ],
+      "treeMutation": {
+        "action": "KEEP",
+        "removeFromTreeIds": [],
+        "addToTreeId": "9fe73a3703fa45fca628fd43cae6bf7f",
+        "addTalentId": "27604b55a6fd41ffbc04f05cec16463d",
+        "addTalentName": "Just a Droid"
+      },
+      "preserveFields": [
+        "system.abilityMeta",
+        "system.prerequisitesStructured",
+        "system.tags",
+        "system.executionModel",
+        "system.subType",
+        "system.costNumeric",
+        "effects",
+        "flags",
+        "img",
+        "ownership",
+        "folder",
+        "sort"
+      ],
+      "createTemplate": null,
+      "claudeInstruction": "Preserve the existing production record ID and runtime metadata; replace only the listed canonical fields."
+    },
+    {
+      "canonicalIdentity": "Force Unleashed Campaign Guide|Autonomy|Swift Droid",
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Autonomy",
+      "name": "Swift Droid",
+      "ownerSourcebook": "Scavenger's Guide to Droids",
+      "targetTree": {
+        "treeId": "9fe73a3703fa45fca628fd43cae6bf7f",
+        "treeName": "Autonomy"
+      },
+      "disposition": "UPDATE_CONTENT",
+      "phase2Flags": [
+        "MISSING_CONTENT"
+      ],
+      "identityResolution": {
+        "resolutionEvidence": "TARGET_TREE_NAME_MATCH",
+        "productionRecordId": "594eb9e7f9084742a7d1cbc209d2f340",
+        "preserveProductionId": true,
+        "createRecordId": null,
+        "currentTreeClaims": [
+          {
+            "treeId": "9fe73a3703fa45fca628fd43cae6bf7f",
+            "treeName": "Autonomy"
+          }
+        ],
+        "sameNameProductionCandidates": [
+          {
+            "id": "594eb9e7f9084742a7d1cbc209d2f340",
+            "name": "Swift Droid",
+            "treeClaims": [
+              {
+                "treeId": "9fe73a3703fa45fca628fd43cae6bf7f",
+                "treeName": "Autonomy"
+              }
+            ]
+          }
+        ],
+        "reviewExtraCandidateIds": []
+      },
+      "currentCanonicalFields": {
+        "name": "Swift Droid",
+        "system.benefit": "You move quickly when caught. You can make a Swift Action as a Reaction after failing a Deception check or a Stealth check.",
+        "system.description.value": "You move quickly when caught. You can make a Swift Action as a Reaction after failing a Deception check or a Stealth check.",
+        "system.summary": null,
+        "system.prerequisites": "Any two Talents from the Autonomy Talent Tree",
+        "system.source": null,
+        "system.page": null
+      },
+      "targetFields": {
+        "name": "Swift Droid",
+        "system.benefit": "You move quickly when caught. You can make a swift action as a reaction after failing a Deception check or a Stealth check.",
+        "system.description.value": "You move quickly when caught. You can make a swift action as a reaction after failing a Deception check or a Stealth check.",
+        "system.summary": "You move quickly when caught.",
+        "system.prerequisites": "Any two talents from the Autonomy talent tree",
+        "system.source": "Scavenger's Guide to Droids",
+        "system.page": 28
+      },
+      "fieldChanges": {
+        "name": false,
+        "system.benefit": true,
+        "system.description.value": true,
+        "system.summary": true,
+        "system.prerequisites": true,
+        "system.source": true,
+        "system.page": true
+      },
+      "mutationFields": [
+        "system.benefit",
+        "system.description.value",
+        "system.summary",
+        "system.prerequisites",
+        "system.source",
+        "system.page"
+      ],
+      "treeMutation": {
+        "action": "KEEP",
+        "removeFromTreeIds": [],
+        "addToTreeId": "9fe73a3703fa45fca628fd43cae6bf7f",
+        "addTalentId": "594eb9e7f9084742a7d1cbc209d2f340",
+        "addTalentName": "Swift Droid"
+      },
+      "preserveFields": [
+        "system.abilityMeta",
+        "system.prerequisitesStructured",
+        "system.tags",
+        "system.executionModel",
+        "system.subType",
+        "system.costNumeric",
+        "effects",
+        "flags",
+        "img",
+        "ownership",
+        "folder",
+        "sort"
+      ],
+      "createTemplate": null,
+      "claudeInstruction": "Preserve the existing production record ID and runtime metadata; replace only the listed canonical fields."
+    },
+    {
+      "canonicalIdentity": "Force Unleashed Campaign Guide|Specialized Droid|Power Boost",
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Specialized Droid",
+      "name": "Power Boost",
+      "ownerSourcebook": "Scavenger's Guide to Droids",
+      "targetTree": {
+        "treeId": "cec49bc60d1646b1",
+        "treeName": "Specialized Droid"
+      },
+      "disposition": "UPDATE_CONTENT",
+      "phase2Flags": [
+        "MISSING_CONTENT"
+      ],
+      "identityResolution": {
+        "resolutionEvidence": "TARGET_TREE_NAME_MATCH",
+        "productionRecordId": "eb503c1c3fb945a6",
+        "preserveProductionId": true,
+        "createRecordId": null,
+        "currentTreeClaims": [
+          {
+            "treeId": "cec49bc60d1646b1",
+            "treeName": "Specialized Droid"
+          }
+        ],
+        "sameNameProductionCandidates": [
+          {
+            "id": "eb503c1c3fb945a6",
+            "name": "Power Boost",
+            "treeClaims": [
+              {
+                "treeId": "cec49bc60d1646b1",
+                "treeName": "Specialized Droid"
+              }
+            ]
+          }
+        ],
+        "reviewExtraCandidateIds": []
+      },
+      "currentCanonicalFields": {
+        "name": "Power Boost",
+        "system.benefit": "You channel your Power Surge into a boost for your Locomotion System. When you initiate a Power Surge, you can use one of the following bonuses with your installed Locomotion System:",
+        "system.description.value": "You channel your Power Surge into a boost for your Locomotion System. When you initiate a Power Surge, you can use one of the following bonuses with your installed Locomotion System:",
+        "system.summary": null,
+        "system.prerequisites": "Power Surge",
+        "system.source": null,
+        "system.page": null
+      },
+      "targetFields": {
+        "name": "Power Boost",
+        "system.benefit": "You channel your power surge into a boost for your locomotion system. When you initiate a power surge, you can use one of the following bonuses with your installed locomotion system: Jump +4 squares (walking or wheeled locomotion), or increase hovering height by 4 squares (hovering locomotion). You can use this talent for a number of rounds equal to one-haIf your level (rounded down). At the end of a power boost, you move -1 persistent step on the condition track. The penalties imposed by this condition persist until you receive repairs (using the Repair Droid application of the Mechanics skill). You can use both Power Surge and Power Boost at the same time, but you must move -2 persistent steps on the condition track.",
+        "system.description.value": "You channel your power surge into a boost for your locomotion system. When you initiate a power surge, you can use one of the following bonuses with your installed locomotion system: Jump +4 squares (walking or wheeled locomotion), or increase hovering height by 4 squares (hovering locomotion). You can use this talent for a number of rounds equal to one-haIf your level (rounded down). At the end of a power boost, you move -1 persistent step on the condition track. The penalties imposed by this condition persist until you receive repairs (using the Repair Droid application of the Mechanics skill). You can use both Power Surge and Power Boost at the same time, but you must move -2 persistent steps on the condition track.",
+        "system.summary": "You channel your power surge into a boost for your locomotion system.",
+        "system.prerequisites": "Power Surge",
+        "system.source": "Scavenger's Guide to Droids",
+        "system.page": 28
+      },
+      "fieldChanges": {
+        "name": false,
+        "system.benefit": true,
+        "system.description.value": true,
+        "system.summary": true,
+        "system.prerequisites": false,
+        "system.source": true,
+        "system.page": true
+      },
+      "mutationFields": [
+        "system.benefit",
+        "system.description.value",
+        "system.summary",
+        "system.source",
+        "system.page"
+      ],
+      "treeMutation": {
+        "action": "KEEP",
+        "removeFromTreeIds": [],
+        "addToTreeId": "cec49bc60d1646b1",
+        "addTalentId": "eb503c1c3fb945a6",
+        "addTalentName": "Power Boost"
+      },
+      "preserveFields": [
+        "system.abilityMeta",
+        "system.prerequisitesStructured",
+        "system.tags",
+        "system.executionModel",
+        "system.subType",
+        "system.costNumeric",
+        "effects",
+        "flags",
+        "img",
+        "ownership",
+        "folder",
+        "sort"
+      ],
+      "createTemplate": null,
+      "claudeInstruction": "Preserve the existing production record ID and runtime metadata; replace only the listed canonical fields."
+    },
+    {
+      "canonicalIdentity": "Scavenger's Guide to Droids|Elite Droid|Break Program",
+      "canonicalTreeKey": "Scavenger's Guide to Droids|Elite Droid",
+      "name": "Break Program",
+      "ownerSourcebook": "Scavenger's Guide to Droids",
+      "targetTree": {
+        "treeId": "b968ecab63bc4cf4",
+        "treeName": "Elite Droid"
+      },
+      "disposition": "UPDATE_CONTENT",
+      "phase2Flags": [
+        "MISSING_CONTENT"
+      ],
+      "identityResolution": {
+        "resolutionEvidence": "TARGET_TREE_NAME_MATCH",
+        "productionRecordId": "cb3bbc1e7d8829e9",
+        "preserveProductionId": true,
+        "createRecordId": null,
+        "currentTreeClaims": [
+          {
+            "treeId": "b968ecab63bc4cf4",
+            "treeName": "Elite Droid"
+          }
+        ],
+        "sameNameProductionCandidates": [
+          {
+            "id": "cb3bbc1e7d8829e9",
+            "name": "Break Program",
+            "treeClaims": [
+              {
+                "treeId": "b968ecab63bc4cf4",
+                "treeName": "Elite Droid"
+              }
+            ]
+          }
+        ],
+        "reviewExtraCandidateIds": []
+      },
+      "currentCanonicalFields": {
+        "name": "Break Program",
+        "system.benefit": "You can circumvent the behavioral inhibitors of another Droid, temporarily breaking its programming. The target Droid must have a data link with you. Make a Use Computer check opposed by the target Droid's Will Defense. If your check succeeds, you override the target's behavioral inhibitors for a number of rounds equal to your Intelligence bonus.",
+        "system.description.value": "You can circumvent the behavioral inhibitors of another Droid, temporarily breaking its programming. The target Droid must have a data link with you. Make a Use Computer check opposed by the target Droid's Will Defense. If your check succeeds, you override the target's behavioral inhibitors for a number of rounds equal to your Intelligence bonus.",
+        "system.summary": null,
+        "system.prerequisites": "Trained in Use Computer",
+        "system.source": "Scavenger's Guide to Droids",
+        "system.page": 28
+      },
+      "targetFields": {
+        "name": "Break Program",
+        "system.benefit": "You can use your ability to circumvent behavioral inhibitors to temporarily break the programming of a droid that you have a data link with. Make a Use Computer check opposed by the droid's Will Defense. Breaking the droid's programming overrides its behavioral inhibitors for a number of rounds equal to your Intelligence bonus.",
+        "system.description.value": "You can use your ability to circumvent behavioral inhibitors to temporarily break the programming of a droid that you have a data link with. Make a Use Computer check opposed by the droid's Will Defense. Breaking the droid's programming overrides its behavioral inhibitors for a number of rounds equal to your Intelligence bonus.",
+        "system.summary": "You can use your ability to circumvent behavioral inhibitors to temporarily break the programming of a droid that you have a data link with.",
+        "system.prerequisites": "Trained in Use Computer",
+        "system.source": "Scavenger's Guide to Droids",
+        "system.page": 29
+      },
+      "fieldChanges": {
+        "name": false,
+        "system.benefit": true,
+        "system.description.value": true,
+        "system.summary": true,
+        "system.prerequisites": false,
+        "system.source": false,
+        "system.page": true
+      },
+      "mutationFields": [
+        "system.benefit",
+        "system.description.value",
+        "system.summary",
+        "system.page"
+      ],
+      "treeMutation": {
+        "action": "KEEP",
+        "removeFromTreeIds": [],
+        "addToTreeId": "b968ecab63bc4cf4",
+        "addTalentId": "cb3bbc1e7d8829e9",
+        "addTalentName": "Break Program"
+      },
+      "preserveFields": [
+        "system.abilityMeta",
+        "system.prerequisitesStructured",
+        "system.tags",
+        "system.executionModel",
+        "system.subType",
+        "system.costNumeric",
+        "effects",
+        "flags",
+        "img",
+        "ownership",
+        "folder",
+        "sort"
+      ],
+      "createTemplate": null,
+      "claudeInstruction": "Preserve the existing production record ID and runtime metadata; replace only the listed canonical fields."
+    },
+    {
+      "canonicalIdentity": "Scavenger's Guide to Droids|Elite Droid|Heuristic Mastery",
+      "canonicalTreeKey": "Scavenger's Guide to Droids|Elite Droid",
+      "name": "Heuristic Mastery",
+      "ownerSourcebook": "Scavenger's Guide to Droids",
+      "targetTree": {
+        "treeId": "b968ecab63bc4cf4",
+        "treeName": "Elite Droid"
+      },
+      "disposition": "UPDATE_CONTENT",
+      "phase2Flags": [
+        "MISSING_CONTENT"
+      ],
+      "identityResolution": {
+        "resolutionEvidence": "TARGET_TREE_NAME_MATCH",
+        "productionRecordId": "2b6a4a203b72dc79",
+        "preserveProductionId": true,
+        "createRecordId": null,
+        "currentTreeClaims": [
+          {
+            "treeId": "b968ecab63bc4cf4",
+            "treeName": "Elite Droid"
+          }
+        ],
+        "sameNameProductionCandidates": [
+          {
+            "id": "2b6a4a203b72dc79",
+            "name": "Heuristic Mastery",
+            "treeClaims": [
+              {
+                "treeId": "b968ecab63bc4cf4",
+                "treeName": "Elite Droid"
+              }
+            ]
+          }
+        ],
+        "reviewExtraCandidateIds": []
+      },
+      "currentCanonicalFields": {
+        "name": "Heuristic Mastery",
+        "system.benefit": "You can reroll any untrained Skill Check, except a Use the Force check, but you must keep the result of the reroll even if it is worse. Additionally, once per encounter you can spend a Force Point to reroll any Skill Check, trained or untrained, and take the better result.",
+        "system.description.value": "You can reroll any untrained Skill Check, except a Use the Force check, but you must keep the result of the reroll even if it is worse. Additionally, once per encounter you can spend a Force Point to reroll any Skill Check, trained or untrained, and take the better result.",
+        "system.summary": null,
+        "system.prerequisites": "Wisdom 15",
+        "system.source": "Scavenger's Guide to Droids",
+        "system.page": 28
+      },
+      "targetFields": {
+        "name": "Heuristic Mastery",
+        "system.benefit": "You understand the subtleties and limitations of your heuristic processor. You can reroll any untrained skill check (except Use the Force), keeping the second result, even if it is worse. Once per encounter, you can spend a Force Point to reroll any skill check (trained or untrained), taking the better result.",
+        "system.description.value": "You understand the subtleties and limitations of your heuristic processor. You can reroll any untrained skill check (except Use the Force), keeping the second result, even if it is worse. Once per encounter, you can spend a Force Point to reroll any skill check (trained or untrained), taking the better result.",
+        "system.summary": "You understand the subtleties and limitations of your heuristic processor.",
+        "system.prerequisites": "Wisdom 15",
+        "system.source": "Scavenger's Guide to Droids",
+        "system.page": 29
+      },
+      "fieldChanges": {
+        "name": false,
+        "system.benefit": true,
+        "system.description.value": true,
+        "system.summary": true,
+        "system.prerequisites": false,
+        "system.source": false,
+        "system.page": true
+      },
+      "mutationFields": [
+        "system.benefit",
+        "system.description.value",
+        "system.summary",
+        "system.page"
+      ],
+      "treeMutation": {
+        "action": "KEEP",
+        "removeFromTreeIds": [],
+        "addToTreeId": "b968ecab63bc4cf4",
+        "addTalentId": "2b6a4a203b72dc79",
+        "addTalentName": "Heuristic Mastery"
+      },
+      "preserveFields": [
+        "system.abilityMeta",
+        "system.prerequisitesStructured",
+        "system.tags",
+        "system.executionModel",
+        "system.subType",
+        "system.costNumeric",
+        "effects",
+        "flags",
+        "img",
+        "ownership",
+        "folder",
+        "sort"
+      ],
+      "createTemplate": null,
+      "claudeInstruction": "Preserve the existing production record ID and runtime metadata; replace only the listed canonical fields."
+    },
+    {
+      "canonicalIdentity": "Scavenger's Guide to Droids|Elite Droid|Scripted Routines",
+      "canonicalTreeKey": "Scavenger's Guide to Droids|Elite Droid",
+      "name": "Scripted Routines",
+      "ownerSourcebook": "Scavenger's Guide to Droids",
+      "targetTree": {
+        "treeId": "b968ecab63bc4cf4",
+        "treeName": "Elite Droid"
+      },
+      "disposition": "UPDATE_CONTENT",
+      "phase2Flags": [
+        "MISSING_CONTENT"
+      ],
+      "identityResolution": {
+        "resolutionEvidence": "TARGET_TREE_NAME_MATCH",
+        "productionRecordId": "8d0657e7ade688bd",
+        "preserveProductionId": true,
+        "createRecordId": null,
+        "currentTreeClaims": [
+          {
+            "treeId": "b968ecab63bc4cf4",
+            "treeName": "Elite Droid"
+          }
+        ],
+        "sameNameProductionCandidates": [
+          {
+            "id": "8d0657e7ade688bd",
+            "name": "Scripted Routines",
+            "treeClaims": [
+              {
+                "treeId": "b968ecab63bc4cf4",
+                "treeName": "Elite Droid"
+              }
+            ]
+          }
+        ],
+        "reviewExtraCandidateIds": []
+      },
+      "currentCanonicalFields": {
+        "name": "Scripted Routines",
+        "system.benefit": "Once per encounter, you can use each of the following three Scripted Routines.\n\nAttack Script: You can use a Feat or Talent that modifies an attack roll as one action less than it normally requires. A Full-Round Action becomes a Standard Action, a Standard Action becomes a Move Action, a Move Action becomes a Swift Action, and a Swift Action becomes a Free Action.\n\nDefense Script: You can apply your Independent Spirit bonus a second time during the encounter.\n\nSkill Script: While in combat, you can apply a bonus equal to one-half your Independent Droid class level to one use of a Skill in which you are trained that requires a Standard Action or less.",
+        "system.description.value": "Once per encounter, you can use each of the following three Scripted Routines.\n\nAttack Script: You can use a Feat or Talent that modifies an attack roll as one action less than it normally requires. A Full-Round Action becomes a Standard Action, a Standard Action becomes a Move Action, a Move Action becomes a Swift Action, and a Swift Action becomes a Free Action.\n\nDefense Script: You can apply your Independent Spirit bonus a second time during the encounter.\n\nSkill Script: While in combat, you can apply a bonus equal to one-half your Independent Droid class level to one use of a Skill in which you are trained that requires a Standard Action or less.",
+        "system.summary": null,
+        "system.prerequisites": "Base attack bonus +5",
+        "system.source": "Scavenger's Guide to Droids",
+        "system.page": 28
+      },
+      "targetFields": {
+        "name": "Scripted Routines",
+        "system.benefit": "Your extensive experience allows you to preset specific routines that give you an advantage in some situations. Once per encounter you can use each of the following actions: Attack Script: You can use a feat or a talent that modifies your attack roll as one action less (for example, a full-round action becomes a standard action, a standard action becomes a move action, a move action becomes a swift action, a swift action becomes a free action). Defense Script: You can apply your Independent Spirit bonus a second time during a single encounter. Skill Script: While in combat, you can apply a bonus equal to one-half of your class level to any single skill that requires a standard action or less to use. You must be trained in the skill.",
+        "system.description.value": "Your extensive experience allows you to preset specific routines that give you an advantage in some situations. Once per encounter you can use each of the following actions: Attack Script: You can use a feat or a talent that modifies your attack roll as one action less (for example, a full-round action becomes a standard action, a standard action becomes a move action, a move action becomes a swift action, a swift action becomes a free action). Defense Script: You can apply your Independent Spirit bonus a second time during a single encounter. Skill Script: While in combat, you can apply a bonus equal to one-half of your class level to any single skill that requires a standard action or less to use. You must be trained in the skill.",
+        "system.summary": "Your extensive experience allows you to preset specific routines that give you an advantage in some situations.",
+        "system.prerequisites": "Base attack bonus +5",
+        "system.source": "Scavenger's Guide to Droids",
+        "system.page": 29
+      },
+      "fieldChanges": {
+        "name": false,
+        "system.benefit": true,
+        "system.description.value": true,
+        "system.summary": true,
+        "system.prerequisites": false,
+        "system.source": false,
+        "system.page": true
+      },
+      "mutationFields": [
+        "system.benefit",
+        "system.description.value",
+        "system.summary",
+        "system.page"
+      ],
+      "treeMutation": {
+        "action": "KEEP",
+        "removeFromTreeIds": [],
+        "addToTreeId": "b968ecab63bc4cf4",
+        "addTalentId": "8d0657e7ade688bd",
+        "addTalentName": "Scripted Routines"
+      },
+      "preserveFields": [
+        "system.abilityMeta",
+        "system.prerequisitesStructured",
+        "system.tags",
+        "system.executionModel",
+        "system.subType",
+        "system.costNumeric",
+        "effects",
+        "flags",
+        "img",
+        "ownership",
+        "folder",
+        "sort"
+      ],
+      "createTemplate": null,
+      "claudeInstruction": "Preserve the existing production record ID and runtime metadata; replace only the listed canonical fields."
+    },
+    {
+      "canonicalIdentity": "Scavenger's Guide to Droids|Elite Droid|Ultra Resilient",
+      "canonicalTreeKey": "Scavenger's Guide to Droids|Elite Droid",
+      "name": "Ultra Resilient",
+      "ownerSourcebook": "Scavenger's Guide to Droids",
+      "targetTree": {
+        "treeId": "b968ecab63bc4cf4",
+        "treeName": "Elite Droid"
+      },
+      "disposition": "UPDATE_CONTENT",
+      "phase2Flags": [
+        "MISSING_CONTENT"
+      ],
+      "identityResolution": {
+        "resolutionEvidence": "TARGET_TREE_NAME_MATCH",
+        "productionRecordId": "6fdbdd17eba93006",
+        "preserveProductionId": true,
+        "createRecordId": null,
+        "currentTreeClaims": [
+          {
+            "treeId": "b968ecab63bc4cf4",
+            "treeName": "Elite Droid"
+          }
+        ],
+        "sameNameProductionCandidates": [
+          {
+            "id": "6fdbdd17eba93006",
+            "name": "Ultra Resilient",
+            "treeClaims": [
+              {
+                "treeId": "b968ecab63bc4cf4",
+                "treeName": "Elite Droid"
+              }
+            ]
+          }
+        ],
+        "reviewExtraCandidateIds": []
+      },
+      "currentCanonicalFields": {
+        "name": "Ultra Resilient",
+        "system.benefit": "Once per encounter, as a Reaction, you can increase your Damage Threshold by a bonus equal to your Independent Droid level.",
+        "system.description.value": "Once per encounter, as a Reaction, you can increase your Damage Threshold by a bonus equal to your Independent Droid level.",
+        "system.summary": null,
+        "system.prerequisites": "",
+        "system.source": "Scavenger's Guide to Droids",
+        "system.page": 28
+      },
+      "targetFields": {
+        "name": "Ultra Resilient",
+        "system.benefit": "You have advanced subroutines that make you more resistant to the effect of damage. Once per encounter, as a reaction, you can increase your damage threshold with a bonus equal to your Independent Droid level.",
+        "system.description.value": "You have advanced subroutines that make you more resistant to the effect of damage. Once per encounter, as a reaction, you can increase your damage threshold with a bonus equal to your Independent Droid level.",
+        "system.summary": "You have advanced subroutines that make you more resistant to the effect of damage.",
+        "system.prerequisites": "",
+        "system.source": "Scavenger's Guide to Droids",
+        "system.page": 29
+      },
+      "fieldChanges": {
+        "name": false,
+        "system.benefit": true,
+        "system.description.value": true,
+        "system.summary": true,
+        "system.prerequisites": false,
+        "system.source": false,
+        "system.page": true
+      },
+      "mutationFields": [
+        "system.benefit",
+        "system.description.value",
+        "system.summary",
+        "system.page"
+      ],
+      "treeMutation": {
+        "action": "KEEP",
+        "removeFromTreeIds": [],
+        "addToTreeId": "b968ecab63bc4cf4",
+        "addTalentId": "6fdbdd17eba93006",
+        "addTalentName": "Ultra Resilient"
+      },
+      "preserveFields": [
+        "system.abilityMeta",
+        "system.prerequisitesStructured",
+        "system.tags",
+        "system.executionModel",
+        "system.subType",
+        "system.costNumeric",
+        "effects",
+        "flags",
+        "img",
+        "ownership",
+        "folder",
+        "sort"
+      ],
+      "createTemplate": null,
+      "claudeInstruction": "Preserve the existing production record ID and runtime metadata; replace only the listed canonical fields."
+    },
+    {
+      "canonicalIdentity": "Scavenger's Guide to Droids|Override|Directed Action",
+      "canonicalTreeKey": "Scavenger's Guide to Droids|Override",
+      "name": "Directed Action",
+      "ownerSourcebook": "Scavenger's Guide to Droids",
+      "targetTree": {
+        "treeId": "01cb1ca2a10640b3",
+        "treeName": "Override"
+      },
+      "disposition": "UPDATE_CONTENT",
+      "phase2Flags": [
+        "MISSING_CONTENT"
+      ],
+      "identityResolution": {
+        "resolutionEvidence": "TARGET_TREE_NAME_MATCH",
+        "productionRecordId": "3a34ce2ef55c41b1",
+        "preserveProductionId": true,
+        "createRecordId": null,
+        "currentTreeClaims": [
+          {
+            "treeId": "01cb1ca2a10640b3",
+            "treeName": "Override"
+          }
+        ],
+        "sameNameProductionCandidates": [
+          {
+            "id": "3a34ce2ef55c41b1",
+            "name": "Directed Action",
+            "treeClaims": [
+              {
+                "treeId": "01cb1ca2a10640b3",
+                "treeName": "Override"
+              }
+            ]
+          }
+        ],
+        "reviewExtraCandidateIds": []
+      },
+      "currentCanonicalFields": {
+        "name": "Directed Action",
+        "system.benefit": "As a Standard Action, you allow one Droid that can hear and understand you to make a Deception, Mechanics, Persuasion, Pilot, Ride, Treat Injury, or Use Computer check immediately as a Free Action. The Droid can replace its relevant Ability Score modifier for that check with your Intelligence modifier.",
+        "system.description.value": "As a Standard Action, you allow one Droid that can hear and understand you to make a Deception, Mechanics, Persuasion, Pilot, Ride, Treat Injury, or Use Computer check immediately as a Free Action. The Droid can replace its relevant Ability Score modifier for that check with your Intelligence modifier.",
+        "system.summary": null,
+        "system.prerequisites": "",
+        "system.source": null,
+        "system.page": null
+      },
+      "targetFields": {
+        "name": "Directed Action",
+        "system.benefit": "As a standard action, you allow one droid that can hear and understand you to make a Deception, Mechanics, Persuasion, Pilot, Ride, Treat Injury, or Use Computer check immediately as a free action. The droid can replace its relevant ability score modifier for that check with your Intelligence modifier.",
+        "system.description.value": "As a standard action, you allow one droid that can hear and understand you to make a Deception, Mechanics, Persuasion, Pilot, Ride, Treat Injury, or Use Computer check immediately as a free action. The droid can replace its relevant ability score modifier for that check with your Intelligence modifier.",
+        "system.summary": "As a standard action, you allow one droid that can hear and understand you to make a Deception, Mechanics, Persuasion, Pilot, Ride, Treat Injury, or Use Computer check immediately as a free action.",
+        "system.prerequisites": "",
+        "system.source": "Scavenger's Guide to Droids",
+        "system.page": 28
+      },
+      "fieldChanges": {
+        "name": false,
+        "system.benefit": true,
+        "system.description.value": true,
+        "system.summary": true,
+        "system.prerequisites": false,
+        "system.source": true,
+        "system.page": true
+      },
+      "mutationFields": [
+        "system.benefit",
+        "system.description.value",
+        "system.summary",
+        "system.source",
+        "system.page"
+      ],
+      "treeMutation": {
+        "action": "KEEP",
+        "removeFromTreeIds": [],
+        "addToTreeId": "01cb1ca2a10640b3",
+        "addTalentId": "3a34ce2ef55c41b1",
+        "addTalentName": "Directed Action"
+      },
+      "preserveFields": [
+        "system.abilityMeta",
+        "system.prerequisitesStructured",
+        "system.tags",
+        "system.executionModel",
+        "system.subType",
+        "system.costNumeric",
+        "effects",
+        "flags",
+        "img",
+        "ownership",
+        "folder",
+        "sort"
+      ],
+      "createTemplate": null,
+      "claudeInstruction": "Preserve the existing production record ID and runtime metadata; replace only the listed canonical fields."
+    },
+    {
+      "canonicalIdentity": "Scavenger's Guide to Droids|Override|Directed Movement",
+      "canonicalTreeKey": "Scavenger's Guide to Droids|Override",
+      "name": "Directed Movement",
+      "ownerSourcebook": "Scavenger's Guide to Droids",
+      "targetTree": {
+        "treeId": "01cb1ca2a10640b3",
+        "treeName": "Override"
+      },
+      "disposition": "CREATE",
+      "phase2Flags": [
+        "MISSING_CONTENT"
+      ],
+      "identityResolution": {
+        "resolutionEvidence": "UNRESOLVED",
+        "productionRecordId": null,
+        "preserveProductionId": false,
+        "createRecordId": "510d4b2aadbbc2de",
+        "currentTreeClaims": [],
+        "sameNameProductionCandidates": [],
+        "reviewExtraCandidateIds": []
+      },
+      "currentCanonicalFields": null,
+      "targetFields": {
+        "name": "Directed Movement",
+        "system.benefit": "As a move action, you allow one droid that can hear and understand you to move up to its speed. The droid can make Acrobatics, Climb, Jump, Stealth, or Swim checks during this movement, and can replace its own relevant ability score modifier for that check with your Intelligence modifier.",
+        "system.description.value": "As a move action, you allow one droid that can hear and understand you to move up to its speed. The droid can make Acrobatics, Climb, Jump, Stealth, or Swim checks during this movement, and can replace its own relevant ability score modifier for that check with your Intelligence modifier.",
+        "system.summary": "As a move action, you allow one droid that can hear and understand you to move up to its speed.",
+        "system.prerequisites": "",
+        "system.source": "Scavenger's Guide to Droids",
+        "system.page": 28
+      },
+      "fieldChanges": {
+        "name": false,
+        "system.benefit": true,
+        "system.description.value": true,
+        "system.summary": true,
+        "system.prerequisites": false,
+        "system.source": true,
+        "system.page": true
+      },
+      "mutationFields": [
+        "system.benefit",
+        "system.description.value",
+        "system.summary",
+        "system.source",
+        "system.page",
+        "_record_create",
+        "system.treeId"
+      ],
+      "treeMutation": {
+        "action": "ADD",
+        "removeFromTreeIds": [],
+        "addToTreeId": "01cb1ca2a10640b3",
+        "addTalentId": "510d4b2aadbbc2de",
+        "addTalentName": "Directed Movement"
+      },
+      "preserveFields": [
+        "system.abilityMeta",
+        "system.prerequisitesStructured",
+        "system.tags",
+        "system.executionModel",
+        "system.subType",
+        "system.costNumeric",
+        "effects",
+        "flags",
+        "img",
+        "ownership",
+        "folder",
+        "sort"
+      ],
+      "createTemplate": {
+        "_id": "510d4b2aadbbc2de",
+        "name": "Directed Movement",
+        "type": "talent",
+        "img": "icons/svg/item-bag.svg",
+        "system": {
+          "treeId": "01cb1ca2a10640b3",
+          "benefit": "As a move action, you allow one droid that can hear and understand you to move up to its speed. The droid can make Acrobatics, Climb, Jump, Stealth, or Swim checks during this movement, and can replace its own relevant ability score modifier for that check with your Intelligence modifier.",
+          "description": {
+            "value": "As a move action, you allow one droid that can hear and understand you to move up to its speed. The droid can make Acrobatics, Climb, Jump, Stealth, or Swim checks during this movement, and can replace its own relevant ability score modifier for that check with your Intelligence modifier."
+          },
+          "summary": "As a move action, you allow one droid that can hear and understand you to move up to its speed.",
+          "prerequisites": "",
+          "source": "Scavenger's Guide to Droids",
+          "page": 28,
+          "costNumeric": null,
+          "tags": []
+        },
+        "effects": [],
+        "folder": null,
+        "sort": 0,
+        "ownership": {
+          "default": 0
+        },
+        "flags": {}
+      },
+      "claudeInstruction": "Create the exact canonical identity with createRecordId; do not infer automation metadata. Add the new ID/name to the target talent tree."
+    },
+    {
+      "canonicalIdentity": "Scavenger's Guide to Droids|Override|Full Control",
+      "canonicalTreeKey": "Scavenger's Guide to Droids|Override",
+      "name": "Full Control",
+      "ownerSourcebook": "Scavenger's Guide to Droids",
+      "targetTree": {
+        "treeId": "01cb1ca2a10640b3",
+        "treeName": "Override"
+      },
+      "disposition": "CREATE",
+      "phase2Flags": [
+        "MISSING_CONTENT"
+      ],
+      "identityResolution": {
+        "resolutionEvidence": "UNRESOLVED",
+        "productionRecordId": null,
+        "preserveProductionId": false,
+        "createRecordId": "67c0e483d52bee0d",
+        "currentTreeClaims": [],
+        "sameNameProductionCandidates": [],
+        "reviewExtraCandidateIds": []
+      },
+      "currentCanonicalFields": null,
+      "targetFields": {
+        "name": "Full Control",
+        "system.benefit": "As a full-round action, you allow one droid that can hear and understand you to take the full attack action. The droid can replace its relevant ability score modifier to any attack rolls it makes with your Intelligence modifier.",
+        "system.description.value": "As a full-round action, you allow one droid that can hear and understand you to take the full attack action. The droid can replace its relevant ability score modifier to any attack rolls it makes with your Intelligence modifier.",
+        "system.summary": "As a full-round action, you allow one droid that can hear and understand you to take the full attack action.",
+        "system.prerequisites": "Directed Action, Directed Movement, and Remote Attack",
+        "system.source": "Scavenger's Guide to Droids",
+        "system.page": 28
+      },
+      "fieldChanges": {
+        "name": false,
+        "system.benefit": true,
+        "system.description.value": true,
+        "system.summary": true,
+        "system.prerequisites": true,
+        "system.source": true,
+        "system.page": true
+      },
+      "mutationFields": [
+        "system.benefit",
+        "system.description.value",
+        "system.summary",
+        "system.prerequisites",
+        "system.source",
+        "system.page",
+        "_record_create",
+        "system.treeId"
+      ],
+      "treeMutation": {
+        "action": "ADD",
+        "removeFromTreeIds": [],
+        "addToTreeId": "01cb1ca2a10640b3",
+        "addTalentId": "67c0e483d52bee0d",
+        "addTalentName": "Full Control"
+      },
+      "preserveFields": [
+        "system.abilityMeta",
+        "system.prerequisitesStructured",
+        "system.tags",
+        "system.executionModel",
+        "system.subType",
+        "system.costNumeric",
+        "effects",
+        "flags",
+        "img",
+        "ownership",
+        "folder",
+        "sort"
+      ],
+      "createTemplate": {
+        "_id": "67c0e483d52bee0d",
+        "name": "Full Control",
+        "type": "talent",
+        "img": "icons/svg/item-bag.svg",
+        "system": {
+          "treeId": "01cb1ca2a10640b3",
+          "benefit": "As a full-round action, you allow one droid that can hear and understand you to take the full attack action. The droid can replace its relevant ability score modifier to any attack rolls it makes with your Intelligence modifier.",
+          "description": {
+            "value": "As a full-round action, you allow one droid that can hear and understand you to take the full attack action. The droid can replace its relevant ability score modifier to any attack rolls it makes with your Intelligence modifier."
+          },
+          "summary": "As a full-round action, you allow one droid that can hear and understand you to take the full attack action.",
+          "prerequisites": "Directed Action, Directed Movement, and Remote Attack",
+          "source": "Scavenger's Guide to Droids",
+          "page": 28,
+          "costNumeric": null,
+          "tags": []
+        },
+        "effects": [],
+        "folder": null,
+        "sort": 0,
+        "ownership": {
+          "default": 0
+        },
+        "flags": {}
+      },
+      "claudeInstruction": "Create the exact canonical identity with createRecordId; do not infer automation metadata. Add the new ID/name to the target talent tree."
+    },
+    {
+      "canonicalIdentity": "Scavenger's Guide to Droids|Override|Remote Attack",
+      "canonicalTreeKey": "Scavenger's Guide to Droids|Override",
+      "name": "Remote Attack",
+      "ownerSourcebook": "Scavenger's Guide to Droids",
+      "targetTree": {
+        "treeId": "01cb1ca2a10640b3",
+        "treeName": "Override"
+      },
+      "disposition": "CREATE",
+      "phase2Flags": [
+        "MISSING_CONTENT"
+      ],
+      "identityResolution": {
+        "resolutionEvidence": "UNRESOLVED",
+        "productionRecordId": null,
+        "preserveProductionId": false,
+        "createRecordId": "86da8cfcddb94adb",
+        "currentTreeClaims": [],
+        "sameNameProductionCandidates": [],
+        "reviewExtraCandidateIds": []
+      },
+      "currentCanonicalFields": null,
+      "targetFields": {
+        "name": "Remote Attack",
+        "system.benefit": "As a standard action, you allow one droid that can hear and understand you to make a melee or ranged attack. The droid can replace its relevant ability score modifier to its attack roll with your Intelligence modifier.",
+        "system.description.value": "As a standard action, you allow one droid that can hear and understand you to make a melee or ranged attack. The droid can replace its relevant ability score modifier to its attack roll with your Intelligence modifier.",
+        "system.summary": "As a standard action, you allow one droid that can hear and understand you to make a melee or ranged attack.",
+        "system.prerequisites": "",
+        "system.source": "Scavenger's Guide to Droids",
+        "system.page": 28
+      },
+      "fieldChanges": {
+        "name": false,
+        "system.benefit": true,
+        "system.description.value": true,
+        "system.summary": true,
+        "system.prerequisites": false,
+        "system.source": true,
+        "system.page": true
+      },
+      "mutationFields": [
+        "system.benefit",
+        "system.description.value",
+        "system.summary",
+        "system.source",
+        "system.page",
+        "_record_create",
+        "system.treeId"
+      ],
+      "treeMutation": {
+        "action": "ADD",
+        "removeFromTreeIds": [],
+        "addToTreeId": "01cb1ca2a10640b3",
+        "addTalentId": "86da8cfcddb94adb",
+        "addTalentName": "Remote Attack"
+      },
+      "preserveFields": [
+        "system.abilityMeta",
+        "system.prerequisitesStructured",
+        "system.tags",
+        "system.executionModel",
+        "system.subType",
+        "system.costNumeric",
+        "effects",
+        "flags",
+        "img",
+        "ownership",
+        "folder",
+        "sort"
+      ],
+      "createTemplate": {
+        "_id": "86da8cfcddb94adb",
+        "name": "Remote Attack",
+        "type": "talent",
+        "img": "icons/svg/item-bag.svg",
+        "system": {
+          "treeId": "01cb1ca2a10640b3",
+          "benefit": "As a standard action, you allow one droid that can hear and understand you to make a melee or ranged attack. The droid can replace its relevant ability score modifier to its attack roll with your Intelligence modifier.",
+          "description": {
+            "value": "As a standard action, you allow one droid that can hear and understand you to make a melee or ranged attack. The droid can replace its relevant ability score modifier to its attack roll with your Intelligence modifier."
+          },
+          "summary": "As a standard action, you allow one droid that can hear and understand you to make a melee or ranged attack.",
+          "prerequisites": "",
+          "source": "Scavenger's Guide to Droids",
+          "page": 28,
+          "costNumeric": null,
+          "tags": []
+        },
+        "effects": [],
+        "folder": null,
+        "sort": 0,
+        "ownership": {
+          "default": 0
+        },
+        "flags": {}
+      },
+      "claudeInstruction": "Create the exact canonical identity with createRecordId; do not infer automation metadata. Add the new ID/name to the target talent tree."
+    },
+    {
+      "canonicalIdentity": "Force Unleashed Campaign Guide|First-Degree Droid|Known Vulnerability",
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|First-Degree Droid",
+      "name": "Known Vulnerability",
+      "ownerSourcebook": "Scavenger's Guide to Droids",
+      "targetTree": {
+        "treeId": "a212850887fe41da",
+        "treeName": "1stdegree Droid"
+      },
+      "disposition": "CREATE",
+      "phase2Flags": [
+        "MISSING_CONTENT"
+      ],
+      "identityResolution": {
+        "resolutionEvidence": "UNRESOLVED",
+        "productionRecordId": null,
+        "preserveProductionId": false,
+        "createRecordId": "852c4b043904102f",
+        "currentTreeClaims": [],
+        "sameNameProductionCandidates": [],
+        "reviewExtraCandidateIds": []
+      },
+      "currentCanonicalFields": null,
+      "targetFields": {
+        "name": "Known Vulnerability",
+        "system.benefit": "You know the vulnerable spots to hit on most species. As a free action, you make a DC 15 Knowledge (life sciences) check (DC 25 for rare species, DC 35 for unknown species, both as determined by the Gamemaster). If the check is successful, until the end of the encounter, whenever you make a successful melee or unarmed attack that deals damage against a target of that species, your target takes a -2 penalties to attack rolls until the end of your next turn.",
+        "system.description.value": "You know the vulnerable spots to hit on most species. As a free action, you make a DC 15 Knowledge (life sciences) check (DC 25 for rare species, DC 35 for unknown species, both as determined by the Gamemaster). If the check is successful, until the end of the encounter, whenever you make a successful melee or unarmed attack that deals damage against a target of that species, your target takes a -2 penalties to attack rolls until the end of your next turn.",
+        "system.summary": "You know the vulnerable spots to hit on most species.",
+        "system.prerequisites": "Trained in Knowledge (life sciences)",
+        "system.source": "Scavenger's Guide to Droids",
+        "system.page": 26
+      },
+      "fieldChanges": {
+        "name": false,
+        "system.benefit": true,
+        "system.description.value": true,
+        "system.summary": true,
+        "system.prerequisites": true,
+        "system.source": true,
+        "system.page": true
+      },
+      "mutationFields": [
+        "system.benefit",
+        "system.description.value",
+        "system.summary",
+        "system.prerequisites",
+        "system.source",
+        "system.page",
+        "_record_create",
+        "system.treeId"
+      ],
+      "treeMutation": {
+        "action": "ADD",
+        "removeFromTreeIds": [],
+        "addToTreeId": "a212850887fe41da",
+        "addTalentId": "852c4b043904102f",
+        "addTalentName": "Known Vulnerability"
+      },
+      "preserveFields": [
+        "system.abilityMeta",
+        "system.prerequisitesStructured",
+        "system.tags",
+        "system.executionModel",
+        "system.subType",
+        "system.costNumeric",
+        "effects",
+        "flags",
+        "img",
+        "ownership",
+        "folder",
+        "sort"
+      ],
+      "createTemplate": {
+        "_id": "852c4b043904102f",
+        "name": "Known Vulnerability",
+        "type": "talent",
+        "img": "icons/svg/item-bag.svg",
+        "system": {
+          "treeId": "a212850887fe41da",
+          "benefit": "You know the vulnerable spots to hit on most species. As a free action, you make a DC 15 Knowledge (life sciences) check (DC 25 for rare species, DC 35 for unknown species, both as determined by the Gamemaster). If the check is successful, until the end of the encounter, whenever you make a successful melee or unarmed attack that deals damage against a target of that species, your target takes a -2 penalties to attack rolls until the end of your next turn.",
+          "description": {
+            "value": "You know the vulnerable spots to hit on most species. As a free action, you make a DC 15 Knowledge (life sciences) check (DC 25 for rare species, DC 35 for unknown species, both as determined by the Gamemaster). If the check is successful, until the end of the encounter, whenever you make a successful melee or unarmed attack that deals damage against a target of that species, your target takes a -2 penalties to attack rolls until the end of your next turn."
+          },
+          "summary": "You know the vulnerable spots to hit on most species.",
+          "prerequisites": "Trained in Knowledge (life sciences)",
+          "source": "Scavenger's Guide to Droids",
+          "page": 26,
+          "costNumeric": null,
+          "tags": []
+        },
+        "effects": [],
+        "folder": null,
+        "sort": 0,
+        "ownership": {
+          "default": 0
+        },
+        "flags": {}
+      },
+      "claudeInstruction": "Create the exact canonical identity with createRecordId; do not infer automation metadata. Add the new ID/name to the target talent tree."
+    },
+    {
+      "canonicalIdentity": "Force Unleashed Campaign Guide|First-Degree Droid|Medical Analyzer",
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|First-Degree Droid",
+      "name": "Medical Analyzer",
+      "ownerSourcebook": "Scavenger's Guide to Droids",
+      "targetTree": {
+        "treeId": "a212850887fe41da",
+        "treeName": "1stdegree Droid"
+      },
+      "disposition": "CREATE",
+      "phase2Flags": [
+        "MISSING_CONTENT"
+      ],
+      "identityResolution": {
+        "resolutionEvidence": "UNRESOLVED",
+        "productionRecordId": null,
+        "preserveProductionId": false,
+        "createRecordId": "7fb6b7d078bdb493",
+        "currentTreeClaims": [],
+        "sameNameProductionCandidates": [],
+        "reviewExtraCandidateIds": []
+      },
+      "currentCanonicalFields": null,
+      "targetFields": {
+        "name": "Medical Analyzer",
+        "system.benefit": "You use your medical knowledge and advanced droid processor to improve your treatment of medical conditions. When making a Treat Injury check to Treat Disease, Treat Poison, or Treat Radiation, you can also add your Intelligence modifier to your roll.",
+        "system.description.value": "You use your medical knowledge and advanced droid processor to improve your treatment of medical conditions. When making a Treat Injury check to Treat Disease, Treat Poison, or Treat Radiation, you can also add your Intelligence modifier to your roll.",
+        "system.summary": "You use your medical knowledge and advanced droid processor to improve your treatment of medical conditions.",
+        "system.prerequisites": "Trained in Knowledge (life sciences), medical droid",
+        "system.source": "Scavenger's Guide to Droids",
+        "system.page": 26
+      },
+      "fieldChanges": {
+        "name": false,
+        "system.benefit": true,
+        "system.description.value": true,
+        "system.summary": true,
+        "system.prerequisites": true,
+        "system.source": true,
+        "system.page": true
+      },
+      "mutationFields": [
+        "system.benefit",
+        "system.description.value",
+        "system.summary",
+        "system.prerequisites",
+        "system.source",
+        "system.page",
+        "_record_create",
+        "system.treeId"
+      ],
+      "treeMutation": {
+        "action": "ADD",
+        "removeFromTreeIds": [],
+        "addToTreeId": "a212850887fe41da",
+        "addTalentId": "7fb6b7d078bdb493",
+        "addTalentName": "Medical Analyzer"
+      },
+      "preserveFields": [
+        "system.abilityMeta",
+        "system.prerequisitesStructured",
+        "system.tags",
+        "system.executionModel",
+        "system.subType",
+        "system.costNumeric",
+        "effects",
+        "flags",
+        "img",
+        "ownership",
+        "folder",
+        "sort"
+      ],
+      "createTemplate": {
+        "_id": "7fb6b7d078bdb493",
+        "name": "Medical Analyzer",
+        "type": "talent",
+        "img": "icons/svg/item-bag.svg",
+        "system": {
+          "treeId": "a212850887fe41da",
+          "benefit": "You use your medical knowledge and advanced droid processor to improve your treatment of medical conditions. When making a Treat Injury check to Treat Disease, Treat Poison, or Treat Radiation, you can also add your Intelligence modifier to your roll.",
+          "description": {
+            "value": "You use your medical knowledge and advanced droid processor to improve your treatment of medical conditions. When making a Treat Injury check to Treat Disease, Treat Poison, or Treat Radiation, you can also add your Intelligence modifier to your roll."
+          },
+          "summary": "You use your medical knowledge and advanced droid processor to improve your treatment of medical conditions.",
+          "prerequisites": "Trained in Knowledge (life sciences), medical droid",
+          "source": "Scavenger's Guide to Droids",
+          "page": 26,
+          "costNumeric": null,
+          "tags": []
+        },
+        "effects": [],
+        "folder": null,
+        "sort": 0,
+        "ownership": {
+          "default": 0
+        },
+        "flags": {}
+      },
+      "claudeInstruction": "Create the exact canonical identity with createRecordId; do not infer automation metadata. Add the new ID/name to the target talent tree."
+    },
+    {
+      "canonicalIdentity": "Force Unleashed Campaign Guide|First-Degree Droid|Science Analyzer",
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|First-Degree Droid",
+      "name": "Science Analyzer",
+      "ownerSourcebook": "Scavenger's Guide to Droids",
+      "targetTree": {
+        "treeId": "a212850887fe41da",
+        "treeName": "1stdegree Droid"
+      },
+      "disposition": "CREATE",
+      "phase2Flags": [
+        "MISSING_CONTENT"
+      ],
+      "identityResolution": {
+        "resolutionEvidence": "UNRESOLVED",
+        "productionRecordId": null,
+        "preserveProductionId": false,
+        "createRecordId": "739397eded522cd8",
+        "currentTreeClaims": [],
+        "sameNameProductionCandidates": [],
+        "reviewExtraCandidateIds": []
+      },
+      "currentCanonicalFields": null,
+      "targetFields": {
+        "name": "Science Analyzer",
+        "system.benefit": "You use your extensive databanks to better analyze scientific data. You can add double your Intelligence modifier to your Knowledge (life sciences) or Knowledge (physical sciences) skill check.",
+        "system.description.value": "You use your extensive databanks to better analyze scientific data. You can add double your Intelligence modifier to your Knowledge (life sciences) or Knowledge (physical sciences) skill check.",
+        "system.summary": "You use your extensive databanks to better analyze scientific data.",
+        "system.prerequisites": "Trained in Knowledge (life sciences) and Knowledge (physical sciences)",
+        "system.source": "Scavenger's Guide to Droids",
+        "system.page": 26
+      },
+      "fieldChanges": {
+        "name": false,
+        "system.benefit": true,
+        "system.description.value": true,
+        "system.summary": true,
+        "system.prerequisites": true,
+        "system.source": true,
+        "system.page": true
+      },
+      "mutationFields": [
+        "system.benefit",
+        "system.description.value",
+        "system.summary",
+        "system.prerequisites",
+        "system.source",
+        "system.page",
+        "_record_create",
+        "system.treeId"
+      ],
+      "treeMutation": {
+        "action": "ADD",
+        "removeFromTreeIds": [],
+        "addToTreeId": "a212850887fe41da",
+        "addTalentId": "739397eded522cd8",
+        "addTalentName": "Science Analyzer"
+      },
+      "preserveFields": [
+        "system.abilityMeta",
+        "system.prerequisitesStructured",
+        "system.tags",
+        "system.executionModel",
+        "system.subType",
+        "system.costNumeric",
+        "effects",
+        "flags",
+        "img",
+        "ownership",
+        "folder",
+        "sort"
+      ],
+      "createTemplate": {
+        "_id": "739397eded522cd8",
+        "name": "Science Analyzer",
+        "type": "talent",
+        "img": "icons/svg/item-bag.svg",
+        "system": {
+          "treeId": "a212850887fe41da",
+          "benefit": "You use your extensive databanks to better analyze scientific data. You can add double your Intelligence modifier to your Knowledge (life sciences) or Knowledge (physical sciences) skill check.",
+          "description": {
+            "value": "You use your extensive databanks to better analyze scientific data. You can add double your Intelligence modifier to your Knowledge (life sciences) or Knowledge (physical sciences) skill check."
+          },
+          "summary": "You use your extensive databanks to better analyze scientific data.",
+          "prerequisites": "Trained in Knowledge (life sciences) and Knowledge (physical sciences)",
+          "source": "Scavenger's Guide to Droids",
+          "page": 26,
+          "costNumeric": null,
+          "tags": []
+        },
+        "effects": [],
+        "folder": null,
+        "sort": 0,
+        "ownership": {
+          "default": 0
+        },
+        "flags": {}
+      },
+      "claudeInstruction": "Create the exact canonical identity with createRecordId; do not infer automation metadata. Add the new ID/name to the target talent tree."
+    },
+    {
+      "canonicalIdentity": "Force Unleashed Campaign Guide|First-Degree Droid|Triage Scan",
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|First-Degree Droid",
+      "name": "Triage Scan",
+      "ownerSourcebook": "Scavenger's Guide to Droids",
+      "targetTree": {
+        "treeId": "a212850887fe41da",
+        "treeName": "1stdegree Droid"
+      },
+      "disposition": "CREATE",
+      "phase2Flags": [
+        "MISSING_CONTENT"
+      ],
+      "identityResolution": {
+        "resolutionEvidence": "UNRESOLVED",
+        "productionRecordId": null,
+        "preserveProductionId": false,
+        "createRecordId": "c9433c6bcb4133d5",
+        "currentTreeClaims": [],
+        "sameNameProductionCandidates": [],
+        "reviewExtraCandidateIds": []
+      },
+      "currentCanonicalFields": null,
+      "targetFields": {
+        "name": "Triage Scan",
+        "system.benefit": "As a standard action, you can make a DC 20 Treat Injury check. If the check succeeds, you know if the organic characters within 6 squares and within your line of sight are below one half of their hit points and at what step they are along the condition track.",
+        "system.description.value": "As a standard action, you can make a DC 20 Treat Injury check. If the check succeeds, you know if the organic characters within 6 squares and within your line of sight are below one half of their hit points and at what step they are along the condition track.",
+        "system.summary": "As a standard action, you can make a DC 20 Treat Injury check.",
+        "system.prerequisites": "Trained in Treat Injury, medical droid",
+        "system.source": "Scavenger's Guide to Droids",
+        "system.page": 26
+      },
+      "fieldChanges": {
+        "name": false,
+        "system.benefit": true,
+        "system.description.value": true,
+        "system.summary": true,
+        "system.prerequisites": true,
+        "system.source": true,
+        "system.page": true
+      },
+      "mutationFields": [
+        "system.benefit",
+        "system.description.value",
+        "system.summary",
+        "system.prerequisites",
+        "system.source",
+        "system.page",
+        "_record_create",
+        "system.treeId"
+      ],
+      "treeMutation": {
+        "action": "ADD",
+        "removeFromTreeIds": [],
+        "addToTreeId": "a212850887fe41da",
+        "addTalentId": "c9433c6bcb4133d5",
+        "addTalentName": "Triage Scan"
+      },
+      "preserveFields": [
+        "system.abilityMeta",
+        "system.prerequisitesStructured",
+        "system.tags",
+        "system.executionModel",
+        "system.subType",
+        "system.costNumeric",
+        "effects",
+        "flags",
+        "img",
+        "ownership",
+        "folder",
+        "sort"
+      ],
+      "createTemplate": {
+        "_id": "c9433c6bcb4133d5",
+        "name": "Triage Scan",
+        "type": "talent",
+        "img": "icons/svg/item-bag.svg",
+        "system": {
+          "treeId": "a212850887fe41da",
+          "benefit": "As a standard action, you can make a DC 20 Treat Injury check. If the check succeeds, you know if the organic characters within 6 squares and within your line of sight are below one half of their hit points and at what step they are along the condition track.",
+          "description": {
+            "value": "As a standard action, you can make a DC 20 Treat Injury check. If the check succeeds, you know if the organic characters within 6 squares and within your line of sight are below one half of their hit points and at what step they are along the condition track."
+          },
+          "summary": "As a standard action, you can make a DC 20 Treat Injury check.",
+          "prerequisites": "Trained in Treat Injury, medical droid",
+          "source": "Scavenger's Guide to Droids",
+          "page": 26,
+          "costNumeric": null,
+          "tags": []
+        },
+        "effects": [],
+        "folder": null,
+        "sort": 0,
+        "ownership": {
+          "default": 0
+        },
+        "flags": {}
+      },
+      "claudeInstruction": "Create the exact canonical identity with createRecordId; do not infer automation metadata. Add the new ID/name to the target talent tree."
+    },
+    {
+      "canonicalIdentity": "Force Unleashed Campaign Guide|Second-Degree Droid|Burst Transfer",
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Second-Degree Droid",
+      "name": "Burst Transfer",
+      "ownerSourcebook": "Scavenger's Guide to Droids",
+      "targetTree": {
+        "treeId": "ad499981ddb8450e",
+        "treeName": "2nddegree Droid"
+      },
+      "disposition": "UPDATE_CONTENT",
+      "phase2Flags": [
+        "MISSING_CONTENT"
+      ],
+      "identityResolution": {
+        "resolutionEvidence": "TARGET_TREE_NAME_MATCH",
+        "productionRecordId": "df91dea8db444459",
+        "preserveProductionId": true,
+        "createRecordId": null,
+        "currentTreeClaims": [
+          {
+            "treeId": "ad499981ddb8450e",
+            "treeName": "2nddegree Droid"
+          }
+        ],
+        "sameNameProductionCandidates": [
+          {
+            "id": "df91dea8db444459",
+            "name": "Burst Transfer",
+            "treeClaims": [
+              {
+                "treeId": "ad499981ddb8450e",
+                "treeName": "2nddegree Droid"
+              }
+            ]
+          }
+        ],
+        "reviewExtraCandidateIds": []
+      },
+      "currentCanonicalFields": {
+        "name": "Burst Transfer",
+        "system.benefit": "You can double the amount of data transferred with the Binary language in a single round when communicating with other droids with Burst Transfer, and you can Access Information in half the time when making Use Computer checks to find general or specific information.",
+        "system.description.value": "You can double the amount of data transferred with the Binary language in a single round when communicating with other droids with Burst Transfer, and you can Access Information in half the time when making Use Computer checks to find general or specific information.",
+        "system.summary": null,
+        "system.prerequisites": "",
+        "system.source": null,
+        "system.page": null
+      },
+      "targetFields": {
+        "name": "Burst Transfer",
+        "system.benefit": "You can double the amount of data transferred with the Binary language in a single round (see page 191 of the Saga Edition core rulebook) when communicating with other droids with Burst Transfer, and you cut Access Information time in half when making Use Computer checks to find general or specific information (see page 76 of the Saga Edition core rulebook).",
+        "system.description.value": "You can double the amount of data transferred with the Binary language in a single round (see page 191 of the Saga Edition core rulebook) when communicating with other droids with Burst Transfer, and you cut Access Information time in half when making Use Computer checks to find general or specific information (see page 76 of the Saga Edition core rulebook).",
+        "system.summary": "Double Binary data transfer with another droid that has Burst Transfer and halve Access Information time when using Use Computer.",
+        "system.prerequisites": "",
+        "system.source": "Scavenger's Guide to Droids",
+        "system.page": 26
+      },
+      "fieldChanges": {
+        "name": false,
+        "system.benefit": true,
+        "system.description.value": true,
+        "system.summary": true,
+        "system.prerequisites": false,
+        "system.source": true,
+        "system.page": true
+      },
+      "mutationFields": [
+        "system.benefit",
+        "system.description.value",
+        "system.summary",
+        "system.source",
+        "system.page"
+      ],
+      "treeMutation": {
+        "action": "KEEP",
+        "removeFromTreeIds": [],
+        "addToTreeId": "ad499981ddb8450e",
+        "addTalentId": "df91dea8db444459",
+        "addTalentName": "Burst Transfer"
+      },
+      "preserveFields": [
+        "system.abilityMeta",
+        "system.prerequisitesStructured",
+        "system.tags",
+        "system.executionModel",
+        "system.subType",
+        "system.costNumeric",
+        "effects",
+        "flags",
+        "img",
+        "ownership",
+        "folder",
+        "sort"
+      ],
+      "createTemplate": null,
+      "claudeInstruction": "Preserve the existing production record ID and runtime metadata; replace only the listed canonical fields."
+    },
+    {
+      "canonicalIdentity": "Force Unleashed Campaign Guide|Second-Degree Droid|On-Board System Link",
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Second-Degree Droid",
+      "name": "On-Board System Link",
+      "ownerSourcebook": "Scavenger's Guide to Droids",
+      "targetTree": {
+        "treeId": "ad499981ddb8450e",
+        "treeName": "2nddegree Droid"
+      },
+      "disposition": "CREATE",
+      "phase2Flags": [
+        "MISSING_CONTENT"
+      ],
+      "identityResolution": {
+        "resolutionEvidence": "UNRESOLVED",
+        "productionRecordId": null,
+        "preserveProductionId": false,
+        "createRecordId": "31461ebe45c5f4c9",
+        "currentTreeClaims": [],
+        "sameNameProductionCandidates": [],
+        "reviewExtraCandidateIds": []
+      },
+      "currentCanonicalFields": null,
+      "targetFields": {
+        "name": "On-Board System Link",
+        "system.benefit": "While aboard a starship or vehicle and plugged into the ship's systems by scomp link, droid socket, or basic data port, you can reroute power or recharge shields as two swift actions instead of three.",
+        "system.description.value": "While aboard a starship or vehicle and plugged into the ship's systems by scomp link, droid socket, or basic data port, you can reroute power or recharge shields as two swift actions instead of three.",
+        "system.summary": "While aboard a starship or vehicle and plugged into the ship's systems by scomp link, droid socket, or basic data port, you can reroute power or recharge shields as two swift actions instead of three.",
+        "system.prerequisites": "",
+        "system.source": "Scavenger's Guide to Droids",
+        "system.page": 26
+      },
+      "fieldChanges": {
+        "name": false,
+        "system.benefit": true,
+        "system.description.value": true,
+        "system.summary": true,
+        "system.prerequisites": false,
+        "system.source": true,
+        "system.page": true
+      },
+      "mutationFields": [
+        "system.benefit",
+        "system.description.value",
+        "system.summary",
+        "system.source",
+        "system.page",
+        "_record_create",
+        "system.treeId"
+      ],
+      "treeMutation": {
+        "action": "ADD",
+        "removeFromTreeIds": [],
+        "addToTreeId": "ad499981ddb8450e",
+        "addTalentId": "31461ebe45c5f4c9",
+        "addTalentName": "On-Board System Link"
+      },
+      "preserveFields": [
+        "system.abilityMeta",
+        "system.prerequisitesStructured",
+        "system.tags",
+        "system.executionModel",
+        "system.subType",
+        "system.costNumeric",
+        "effects",
+        "flags",
+        "img",
+        "ownership",
+        "folder",
+        "sort"
+      ],
+      "createTemplate": {
+        "_id": "31461ebe45c5f4c9",
+        "name": "On-Board System Link",
+        "type": "talent",
+        "img": "icons/svg/item-bag.svg",
+        "system": {
+          "treeId": "ad499981ddb8450e",
+          "benefit": "While aboard a starship or vehicle and plugged into the ship's systems by scomp link, droid socket, or basic data port, you can reroute power or recharge shields as two swift actions instead of three.",
+          "description": {
+            "value": "While aboard a starship or vehicle and plugged into the ship's systems by scomp link, droid socket, or basic data port, you can reroute power or recharge shields as two swift actions instead of three."
+          },
+          "summary": "While aboard a starship or vehicle and plugged into the ship's systems by scomp link, droid socket, or basic data port, you can reroute power or recharge shields as two swift actions instead of three.",
+          "prerequisites": "",
+          "source": "Scavenger's Guide to Droids",
+          "page": 26,
+          "costNumeric": null,
+          "tags": []
+        },
+        "effects": [],
+        "folder": null,
+        "sort": 0,
+        "ownership": {
+          "default": 0
+        },
+        "flags": {}
+      },
+      "claudeInstruction": "Create the exact canonical identity with createRecordId; do not infer automation metadata. Add the new ID/name to the target talent tree."
+    },
+    {
+      "canonicalIdentity": "Force Unleashed Campaign Guide|Second-Degree Droid|Quick Astrogation",
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Second-Degree Droid",
+      "name": "Quick Astrogation",
+      "ownerSourcebook": "Scavenger's Guide to Droids",
+      "targetTree": {
+        "treeId": "ad499981ddb8450e",
+        "treeName": "2nddegree Droid"
+      },
+      "disposition": "CREATE",
+      "phase2Flags": [
+        "MISSING_CONTENT"
+      ],
+      "identityResolution": {
+        "resolutionEvidence": "UNRESOLVED",
+        "productionRecordId": null,
+        "preserveProductionId": false,
+        "createRecordId": "cdbaa45c44141d9c",
+        "currentTreeClaims": [],
+        "sameNameProductionCandidates": [],
+        "reviewExtraCandidateIds": []
+      },
+      "currentCanonicalFields": null,
+      "targetFields": {
+        "name": "Quick Astrogation",
+        "system.benefit": "Your speedy electronic astrogation-calculation routines allow you to cut calculation time in half. Additionally, when attempting a Use Computer check to Astrogate, you can make the calculation as a standard action instead of a full-round action.",
+        "system.description.value": "Your speedy electronic astrogation-calculation routines allow you to cut calculation time in half. Additionally, when attempting a Use Computer check to Astrogate, you can make the calculation as a standard action instead of a full-round action.",
+        "system.summary": "Your speedy electronic astrogation-calculation routines allow you to cut calculation time in half.",
+        "system.prerequisites": "Trained in Use Computer",
+        "system.source": "Scavenger's Guide to Droids",
+        "system.page": 26
+      },
+      "fieldChanges": {
+        "name": false,
+        "system.benefit": true,
+        "system.description.value": true,
+        "system.summary": true,
+        "system.prerequisites": true,
+        "system.source": true,
+        "system.page": true
+      },
+      "mutationFields": [
+        "system.benefit",
+        "system.description.value",
+        "system.summary",
+        "system.prerequisites",
+        "system.source",
+        "system.page",
+        "_record_create",
+        "system.treeId"
+      ],
+      "treeMutation": {
+        "action": "ADD",
+        "removeFromTreeIds": [],
+        "addToTreeId": "ad499981ddb8450e",
+        "addTalentId": "cdbaa45c44141d9c",
+        "addTalentName": "Quick Astrogation"
+      },
+      "preserveFields": [
+        "system.abilityMeta",
+        "system.prerequisitesStructured",
+        "system.tags",
+        "system.executionModel",
+        "system.subType",
+        "system.costNumeric",
+        "effects",
+        "flags",
+        "img",
+        "ownership",
+        "folder",
+        "sort"
+      ],
+      "createTemplate": {
+        "_id": "cdbaa45c44141d9c",
+        "name": "Quick Astrogation",
+        "type": "talent",
+        "img": "icons/svg/item-bag.svg",
+        "system": {
+          "treeId": "ad499981ddb8450e",
+          "benefit": "Your speedy electronic astrogation-calculation routines allow you to cut calculation time in half. Additionally, when attempting a Use Computer check to Astrogate, you can make the calculation as a standard action instead of a full-round action.",
+          "description": {
+            "value": "Your speedy electronic astrogation-calculation routines allow you to cut calculation time in half. Additionally, when attempting a Use Computer check to Astrogate, you can make the calculation as a standard action instead of a full-round action."
+          },
+          "summary": "Your speedy electronic astrogation-calculation routines allow you to cut calculation time in half.",
+          "prerequisites": "Trained in Use Computer",
+          "source": "Scavenger's Guide to Droids",
+          "page": 26,
+          "costNumeric": null,
+          "tags": []
+        },
+        "effects": [],
+        "folder": null,
+        "sort": 0,
+        "ownership": {
+          "default": 0
+        },
+        "flags": {}
+      },
+      "claudeInstruction": "Create the exact canonical identity with createRecordId; do not infer automation metadata. Add the new ID/name to the target talent tree."
+    },
+    {
+      "canonicalIdentity": "Force Unleashed Campaign Guide|Second-Degree Droid|Scomp Link Slicer",
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Second-Degree Droid",
+      "name": "Scomp Link Slicer",
+      "ownerSourcebook": "Scavenger's Guide to Droids",
+      "targetTree": {
+        "treeId": "ad499981ddb8450e",
+        "treeName": "2nddegree Droid"
+      },
+      "disposition": "CREATE",
+      "phase2Flags": [
+        "MISSING_CONTENT"
+      ],
+      "identityResolution": {
+        "resolutionEvidence": "UNRESOLVED",
+        "productionRecordId": null,
+        "preserveProductionId": false,
+        "createRecordId": "3b38783594bcebce",
+        "currentTreeClaims": [],
+        "sameNameProductionCandidates": [],
+        "reviewExtraCandidateIds": []
+      },
+      "currentCanonicalFields": null,
+      "targetFields": {
+        "name": "Scomp Link Slicer",
+        "system.benefit": "Your inherent speed and advanced skill reduce the danger of slicing computer systems. You must be physically linked to the system you are slicing. You can use each of the following actions once per encounter: e Eradicate: You can use Disable or Erase Program on a computer that is friendly or helpful toward you. With this talent, disabling or erasing a program takes 5 minutes and requires a DC 15 Use Computer check (see page 76 of the Saga Edition core rulebook). ¢ Lockout: If you succeed on an opposed Use Computer check when you Issue a Routine Command to counteract another programmer's actions, you automatically lock the other programmer out of the system. He or she must succeed in an opposed Use Computer check against you to regain access to the system (see page 76 of the Saga Edition core rulebook). You resist the attempt as a reaction. © Untraceable: As a reaction, you automatically keep a hostile computer from tracing your location if you fail a Use Computer check (see page 76 of the Saga Edition core rulebook) by 10 or less.",
+        "system.description.value": "Your inherent speed and advanced skill reduce the danger of slicing computer systems. You must be physically linked to the system you are slicing. You can use each of the following actions once per encounter: e Eradicate: You can use Disable or Erase Program on a computer that is friendly or helpful toward you. With this talent, disabling or erasing a program takes 5 minutes and requires a DC 15 Use Computer check (see page 76 of the Saga Edition core rulebook). ¢ Lockout: If you succeed on an opposed Use Computer check when you Issue a Routine Command to counteract another programmer's actions, you automatically lock the other programmer out of the system. He or she must succeed in an opposed Use Computer check against you to regain access to the system (see page 76 of the Saga Edition core rulebook). You resist the attempt as a reaction. © Untraceable: As a reaction, you automatically keep a hostile computer from tracing your location if you fail a Use Computer check (see page 76 of the Saga Edition core rulebook) by 10 or less.",
+        "system.summary": "While physically linked to a computer, use Eradicate, Lockout, and Untraceable once each per encounter to slice systems more safely.",
+        "system.prerequisites": "Any two talents from the Slicer Talent Tree (see page 47 of the Saga Edition core rulebook). Burst Transfer can be one of these talents",
+        "system.source": "Scavenger's Guide to Droids",
+        "system.page": 27
+      },
+      "fieldChanges": {
+        "name": false,
+        "system.benefit": true,
+        "system.description.value": true,
+        "system.summary": true,
+        "system.prerequisites": true,
+        "system.source": true,
+        "system.page": true
+      },
+      "mutationFields": [
+        "system.benefit",
+        "system.description.value",
+        "system.summary",
+        "system.prerequisites",
+        "system.source",
+        "system.page",
+        "_record_create",
+        "system.treeId"
+      ],
+      "treeMutation": {
+        "action": "ADD",
+        "removeFromTreeIds": [],
+        "addToTreeId": "ad499981ddb8450e",
+        "addTalentId": "3b38783594bcebce",
+        "addTalentName": "Scomp Link Slicer"
+      },
+      "preserveFields": [
+        "system.abilityMeta",
+        "system.prerequisitesStructured",
+        "system.tags",
+        "system.executionModel",
+        "system.subType",
+        "system.costNumeric",
+        "effects",
+        "flags",
+        "img",
+        "ownership",
+        "folder",
+        "sort"
+      ],
+      "createTemplate": {
+        "_id": "3b38783594bcebce",
+        "name": "Scomp Link Slicer",
+        "type": "talent",
+        "img": "icons/svg/item-bag.svg",
+        "system": {
+          "treeId": "ad499981ddb8450e",
+          "benefit": "Your inherent speed and advanced skill reduce the danger of slicing computer systems. You must be physically linked to the system you are slicing. You can use each of the following actions once per encounter: e Eradicate: You can use Disable or Erase Program on a computer that is friendly or helpful toward you. With this talent, disabling or erasing a program takes 5 minutes and requires a DC 15 Use Computer check (see page 76 of the Saga Edition core rulebook). ¢ Lockout: If you succeed on an opposed Use Computer check when you Issue a Routine Command to counteract another programmer's actions, you automatically lock the other programmer out of the system. He or she must succeed in an opposed Use Computer check against you to regain access to the system (see page 76 of the Saga Edition core rulebook). You resist the attempt as a reaction. © Untraceable: As a reaction, you automatically keep a hostile computer from tracing your location if you fail a Use Computer check (see page 76 of the Saga Edition core rulebook) by 10 or less.",
+          "description": {
+            "value": "Your inherent speed and advanced skill reduce the danger of slicing computer systems. You must be physically linked to the system you are slicing. You can use each of the following actions once per encounter: e Eradicate: You can use Disable or Erase Program on a computer that is friendly or helpful toward you. With this talent, disabling or erasing a program takes 5 minutes and requires a DC 15 Use Computer check (see page 76 of the Saga Edition core rulebook). ¢ Lockout: If you succeed on an opposed Use Computer check when you Issue a Routine Command to counteract another programmer's actions, you automatically lock the other programmer out of the system. He or she must succeed in an opposed Use Computer check against you to regain access to the system (see page 76 of the Saga Edition core rulebook). You resist the attempt as a reaction. © Untraceable: As a reaction, you automatically keep a hostile computer from tracing your location if you fail a Use Computer check (see page 76 of the Saga Edition core rulebook) by 10 or less."
+          },
+          "summary": "While physically linked to a computer, use Eradicate, Lockout, and Untraceable once each per encounter to slice systems more safely.",
+          "prerequisites": "Any two talents from the Slicer Talent Tree (see page 47 of the Saga Edition core rulebook). Burst Transfer can be one of these talents",
+          "source": "Scavenger's Guide to Droids",
+          "page": 27,
+          "costNumeric": null,
+          "tags": []
+        },
+        "effects": [],
+        "folder": null,
+        "sort": 0,
+        "ownership": {
+          "default": 0
+        },
+        "flags": {}
+      },
+      "claudeInstruction": "Create the exact canonical identity with createRecordId; do not infer automation metadata. Add the new ID/name to the target talent tree."
+    },
+    {
+      "canonicalIdentity": "Force Unleashed Campaign Guide|Third-Degree Droid|Nuanced",
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Third-Degree Droid",
+      "name": "Nuanced",
+      "ownerSourcebook": "Scavenger's Guide to Droids",
+      "targetTree": {
+        "treeId": "af077700c1b8433f",
+        "treeName": "3rddegree Droid"
+      },
+      "disposition": "CREATE",
+      "phase2Flags": [
+        "MISSING_CONTENT"
+      ],
+      "identityResolution": {
+        "resolutionEvidence": "UNRESOLVED",
+        "productionRecordId": null,
+        "preserveProductionId": false,
+        "createRecordId": "8f4fed2c36ab4c2a",
+        "currentTreeClaims": [],
+        "sameNameProductionCandidates": [],
+        "reviewExtraCandidateIds": []
+      },
+      "currentCanonicalFields": null,
+      "targetFields": {
+        "name": "Nuanced",
+        "system.benefit": "You are skilled in the nuances of diplomatic speech and gestures. Once per encounter, you can add your Wisdom bonus to a Persuasion check in addition to your Charisma bonus.",
+        "system.description.value": "You are skilled in the nuances of diplomatic speech and gestures. Once per encounter, you can add your Wisdom bonus to a Persuasion check in addition to your Charisma bonus.",
+        "system.summary": "You are skilled in the nuances of diplomatic speech and gestures.",
+        "system.prerequisites": "",
+        "system.source": "Scavenger's Guide to Droids",
+        "system.page": 27
+      },
+      "fieldChanges": {
+        "name": false,
+        "system.benefit": true,
+        "system.description.value": true,
+        "system.summary": true,
+        "system.prerequisites": false,
+        "system.source": true,
+        "system.page": true
+      },
+      "mutationFields": [
+        "system.benefit",
+        "system.description.value",
+        "system.summary",
+        "system.source",
+        "system.page",
+        "_record_create",
+        "system.treeId"
+      ],
+      "treeMutation": {
+        "action": "ADD",
+        "removeFromTreeIds": [],
+        "addToTreeId": "af077700c1b8433f",
+        "addTalentId": "8f4fed2c36ab4c2a",
+        "addTalentName": "Nuanced"
+      },
+      "preserveFields": [
+        "system.abilityMeta",
+        "system.prerequisitesStructured",
+        "system.tags",
+        "system.executionModel",
+        "system.subType",
+        "system.costNumeric",
+        "effects",
+        "flags",
+        "img",
+        "ownership",
+        "folder",
+        "sort"
+      ],
+      "createTemplate": {
+        "_id": "8f4fed2c36ab4c2a",
+        "name": "Nuanced",
+        "type": "talent",
+        "img": "icons/svg/item-bag.svg",
+        "system": {
+          "treeId": "af077700c1b8433f",
+          "benefit": "You are skilled in the nuances of diplomatic speech and gestures. Once per encounter, you can add your Wisdom bonus to a Persuasion check in addition to your Charisma bonus.",
+          "description": {
+            "value": "You are skilled in the nuances of diplomatic speech and gestures. Once per encounter, you can add your Wisdom bonus to a Persuasion check in addition to your Charisma bonus."
+          },
+          "summary": "You are skilled in the nuances of diplomatic speech and gestures.",
+          "prerequisites": "",
+          "source": "Scavenger's Guide to Droids",
+          "page": 27,
+          "costNumeric": null,
+          "tags": []
+        },
+        "effects": [],
+        "folder": null,
+        "sort": 0,
+        "ownership": {
+          "default": 0
+        },
+        "flags": {}
+      },
+      "claudeInstruction": "Create the exact canonical identity with createRecordId; do not infer automation metadata. Add the new ID/name to the target talent tree."
+    },
+    {
+      "canonicalIdentity": "Force Unleashed Campaign Guide|Third-Degree Droid|Observant",
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Third-Degree Droid",
+      "name": "Observant",
+      "ownerSourcebook": "Scavenger's Guide to Droids",
+      "targetTree": {
+        "treeId": "af077700c1b8433f",
+        "treeName": "3rddegree Droid"
+      },
+      "disposition": "UPDATE_CONTENT",
+      "phase2Flags": [
+        "MISSING_CONTENT"
+      ],
+      "identityResolution": {
+        "resolutionEvidence": "TARGET_TREE_NAME_MATCH",
+        "productionRecordId": "175c46931a9e474a",
+        "preserveProductionId": true,
+        "createRecordId": null,
+        "currentTreeClaims": [
+          {
+            "treeId": "af077700c1b8433f",
+            "treeName": "3rddegree Droid"
+          }
+        ],
+        "sameNameProductionCandidates": [
+          {
+            "id": "175c46931a9e474a",
+            "name": "Observant",
+            "treeClaims": [
+              {
+                "treeId": "af077700c1b8433f",
+                "treeName": "3rddegree Droid"
+              }
+            ]
+          }
+        ],
+        "reviewExtraCandidateIds": []
+      },
+      "currentCanonicalFields": {
+        "name": "Observant",
+        "system.benefit": "You enhance your persuasiveness by applying data obtained through observation. Whenever you would fail a Persuasion check, you can roll a Perception check as a Free Action, with a DC equal to the DC of the Persuasion check. If you succeed, add +5 to the original Persuasion check result.",
+        "system.description.value": "You enhance your persuasiveness by applying data obtained through observation. Whenever you would fail a Persuasion check, you can roll a Perception check as a Free Action, with a DC equal to the DC of the Persuasion check. If you succeed, add +5 to the original Persuasion check result.",
+        "system.summary": null,
+        "system.prerequisites": "",
+        "system.source": null,
+        "system.page": null
+      },
+      "targetFields": {
+        "name": "Observant",
+        "system.benefit": "You enhance your persuasiveness by applying data obtained through observation. Whenever you would fail a Persuasion check, you can roll a Perception check as a free action, with a DC equal to the DC of the Persuasion check. If you succeed, add +5 to the original Persuasion check result.",
+        "system.description.value": "You enhance your persuasiveness by applying data obtained through observation. Whenever you would fail a Persuasion check, you can roll a Perception check as a free action, with a DC equal to the DC of the Persuasion check. If you succeed, add +5 to the original Persuasion check result.",
+        "system.summary": "You enhance your persuasiveness by applying data obtained through observation.",
+        "system.prerequisites": "",
+        "system.source": "Scavenger's Guide to Droids",
+        "system.page": 27
+      },
+      "fieldChanges": {
+        "name": false,
+        "system.benefit": true,
+        "system.description.value": true,
+        "system.summary": true,
+        "system.prerequisites": false,
+        "system.source": true,
+        "system.page": true
+      },
+      "mutationFields": [
+        "system.benefit",
+        "system.description.value",
+        "system.summary",
+        "system.source",
+        "system.page"
+      ],
+      "treeMutation": {
+        "action": "KEEP",
+        "removeFromTreeIds": [],
+        "addToTreeId": "af077700c1b8433f",
+        "addTalentId": "175c46931a9e474a",
+        "addTalentName": "Observant"
+      },
+      "preserveFields": [
+        "system.abilityMeta",
+        "system.prerequisitesStructured",
+        "system.tags",
+        "system.executionModel",
+        "system.subType",
+        "system.costNumeric",
+        "effects",
+        "flags",
+        "img",
+        "ownership",
+        "folder",
+        "sort"
+      ],
+      "createTemplate": null,
+      "claudeInstruction": "Preserve the existing production record ID and runtime metadata; replace only the listed canonical fields."
+    },
+    {
+      "canonicalIdentity": "Force Unleashed Campaign Guide|Third-Degree Droid|Supervising Droid",
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Third-Degree Droid",
+      "name": "Supervising Droid",
+      "ownerSourcebook": "Scavenger's Guide to Droids",
+      "targetTree": {
+        "treeId": "af077700c1b8433f",
+        "treeName": "3rddegree Droid"
+      },
+      "disposition": "CREATE",
+      "phase2Flags": [
+        "MISSING_CONTENT"
+      ],
+      "identityResolution": {
+        "resolutionEvidence": "UNRESOLVED",
+        "productionRecordId": null,
+        "preserveProductionId": false,
+        "createRecordId": "0025737e7198390e",
+        "currentTreeClaims": [],
+        "sameNameProductionCandidates": [],
+        "reviewExtraCandidateIds": []
+      },
+      "currentCanonicalFields": null,
+      "targetFields": {
+        "name": "Supervising Droid",
+        "system.benefit": "You are programmed to oversee other droids. You can use each of the following actions once per encounter: © Combat Support: As a standard action, you automatically aid another on an allied droid's attack roll, provided you are capable of using the aid another action to assist that ally. If you also have Weapon Focus with this weapon, you increase the bonus provided by the aid another action from +2 to +3. e Director: As a standard action, you automatically aid another droid with a skill you are trained in. If you also have Skill Focus in the skill, you increase the aid another bonus from +2 to +5. e Instant Action: As a swift action, you grant one ally a swift action that it can use immediately as a free action.",
+        "system.description.value": "You are programmed to oversee other droids. You can use each of the following actions once per encounter: © Combat Support: As a standard action, you automatically aid another on an allied droid's attack roll, provided you are capable of using the aid another action to assist that ally. If you also have Weapon Focus with this weapon, you increase the bonus provided by the aid another action from +2 to +3. e Director: As a standard action, you automatically aid another droid with a skill you are trained in. If you also have Skill Focus in the skill, you increase the aid another bonus from +2 to +5. e Instant Action: As a swift action, you grant one ally a swift action that it can use immediately as a free action.",
+        "system.summary": "Once per encounter each, use Combat Support, Director, and Instant Action to assist allied droids in attacks, skills, or action economy.",
+        "system.prerequisites": "Observant, any talent from the Influence, Inspiration, or Leadership Talent Trees (see pages 43-44 of the Saga Edition core rulebook)",
+        "system.source": "Scavenger's Guide to Droids",
+        "system.page": 27
+      },
+      "fieldChanges": {
+        "name": false,
+        "system.benefit": true,
+        "system.description.value": true,
+        "system.summary": true,
+        "system.prerequisites": true,
+        "system.source": true,
+        "system.page": true
+      },
+      "mutationFields": [
+        "system.benefit",
+        "system.description.value",
+        "system.summary",
+        "system.prerequisites",
+        "system.source",
+        "system.page",
+        "_record_create",
+        "system.treeId"
+      ],
+      "treeMutation": {
+        "action": "ADD",
+        "removeFromTreeIds": [],
+        "addToTreeId": "af077700c1b8433f",
+        "addTalentId": "0025737e7198390e",
+        "addTalentName": "Supervising Droid"
+      },
+      "preserveFields": [
+        "system.abilityMeta",
+        "system.prerequisitesStructured",
+        "system.tags",
+        "system.executionModel",
+        "system.subType",
+        "system.costNumeric",
+        "effects",
+        "flags",
+        "img",
+        "ownership",
+        "folder",
+        "sort"
+      ],
+      "createTemplate": {
+        "_id": "0025737e7198390e",
+        "name": "Supervising Droid",
+        "type": "talent",
+        "img": "icons/svg/item-bag.svg",
+        "system": {
+          "treeId": "af077700c1b8433f",
+          "benefit": "You are programmed to oversee other droids. You can use each of the following actions once per encounter: © Combat Support: As a standard action, you automatically aid another on an allied droid's attack roll, provided you are capable of using the aid another action to assist that ally. If you also have Weapon Focus with this weapon, you increase the bonus provided by the aid another action from +2 to +3. e Director: As a standard action, you automatically aid another droid with a skill you are trained in. If you also have Skill Focus in the skill, you increase the aid another bonus from +2 to +5. e Instant Action: As a swift action, you grant one ally a swift action that it can use immediately as a free action.",
+          "description": {
+            "value": "You are programmed to oversee other droids. You can use each of the following actions once per encounter: © Combat Support: As a standard action, you automatically aid another on an allied droid's attack roll, provided you are capable of using the aid another action to assist that ally. If you also have Weapon Focus with this weapon, you increase the bonus provided by the aid another action from +2 to +3. e Director: As a standard action, you automatically aid another droid with a skill you are trained in. If you also have Skill Focus in the skill, you increase the aid another bonus from +2 to +5. e Instant Action: As a swift action, you grant one ally a swift action that it can use immediately as a free action."
+          },
+          "summary": "Once per encounter each, use Combat Support, Director, and Instant Action to assist allied droids in attacks, skills, or action economy.",
+          "prerequisites": "Observant, any talent from the Influence, Inspiration, or Leadership Talent Trees (see pages 43-44 of the Saga Edition core rulebook)",
+          "source": "Scavenger's Guide to Droids",
+          "page": 27,
+          "costNumeric": null,
+          "tags": []
+        },
+        "effects": [],
+        "folder": null,
+        "sort": 0,
+        "ownership": {
+          "default": 0
+        },
+        "flags": {}
+      },
+      "claudeInstruction": "Create the exact canonical identity with createRecordId; do not infer automation metadata. Add the new ID/name to the target talent tree."
+    },
+    {
+      "canonicalIdentity": "Force Unleashed Campaign Guide|Third-Degree Droid|Talkdroid",
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Third-Degree Droid",
+      "name": "Talkdroid",
+      "ownerSourcebook": "Scavenger's Guide to Droids",
+      "targetTree": {
+        "treeId": "af077700c1b8433f",
+        "treeName": "3rddegree Droid"
+      },
+      "disposition": "CREATE",
+      "phase2Flags": [
+        "MISSING_CONTENT"
+      ],
+      "identityResolution": {
+        "resolutionEvidence": "UNRESOLVED",
+        "productionRecordId": null,
+        "preserveProductionId": false,
+        "createRecordId": "4e52d41e355b5923",
+        "currentTreeClaims": [],
+        "sameNameProductionCandidates": [],
+        "reviewExtraCandidateIds": []
+      },
+      "currentCanonicalFields": null,
+      "targetFields": {
+        "name": "Talkdroid",
+        "system.benefit": "You know how to subtly massage translations. When one of your allies is attempting to use the Persuasion skill to change the attitude of a creature that does not understand your ally, you add +2 to the ally’s Persuasion check results if you perform the translation.",
+        "system.description.value": "You know how to subtly massage translations. When one of your allies is attempting to use the Persuasion skill to change the attitude of a creature that does not understand your ally, you add +2 to the ally’s Persuasion check results if you perform the translation.",
+        "system.summary": "You know how to subtly massage translations.",
+        "system.prerequisites": "Trained in Persuasion",
+        "system.source": "Scavenger's Guide to Droids",
+        "system.page": 27
+      },
+      "fieldChanges": {
+        "name": false,
+        "system.benefit": true,
+        "system.description.value": true,
+        "system.summary": true,
+        "system.prerequisites": true,
+        "system.source": true,
+        "system.page": true
+      },
+      "mutationFields": [
+        "system.benefit",
+        "system.description.value",
+        "system.summary",
+        "system.prerequisites",
+        "system.source",
+        "system.page",
+        "_record_create",
+        "system.treeId"
+      ],
+      "treeMutation": {
+        "action": "ADD",
+        "removeFromTreeIds": [],
+        "addToTreeId": "af077700c1b8433f",
+        "addTalentId": "4e52d41e355b5923",
+        "addTalentName": "Talkdroid"
+      },
+      "preserveFields": [
+        "system.abilityMeta",
+        "system.prerequisitesStructured",
+        "system.tags",
+        "system.executionModel",
+        "system.subType",
+        "system.costNumeric",
+        "effects",
+        "flags",
+        "img",
+        "ownership",
+        "folder",
+        "sort"
+      ],
+      "createTemplate": {
+        "_id": "4e52d41e355b5923",
+        "name": "Talkdroid",
+        "type": "talent",
+        "img": "icons/svg/item-bag.svg",
+        "system": {
+          "treeId": "af077700c1b8433f",
+          "benefit": "You know how to subtly massage translations. When one of your allies is attempting to use the Persuasion skill to change the attitude of a creature that does not understand your ally, you add +2 to the ally’s Persuasion check results if you perform the translation.",
+          "description": {
+            "value": "You know how to subtly massage translations. When one of your allies is attempting to use the Persuasion skill to change the attitude of a creature that does not understand your ally, you add +2 to the ally’s Persuasion check results if you perform the translation."
+          },
+          "summary": "You know how to subtly massage translations.",
+          "prerequisites": "Trained in Persuasion",
+          "source": "Scavenger's Guide to Droids",
+          "page": 27,
+          "costNumeric": null,
+          "tags": []
+        },
+        "effects": [],
+        "folder": null,
+        "sort": 0,
+        "ownership": {
+          "default": 0
+        },
+        "flags": {}
+      },
+      "claudeInstruction": "Create the exact canonical identity with createRecordId; do not infer automation metadata. Add the new ID/name to the target talent tree."
+    },
+    {
+      "canonicalIdentity": "Force Unleashed Campaign Guide|Fourth-Degree Droid|Just a Scratch",
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Fourth-Degree Droid",
+      "name": "Just a Scratch",
+      "ownerSourcebook": "Scavenger's Guide to Droids",
+      "targetTree": {
+        "treeId": "73814706c00849c6",
+        "treeName": "4thdegree Droid"
+      },
+      "disposition": "CREATE",
+      "phase2Flags": [
+        "MISSING_CONTENT"
+      ],
+      "identityResolution": {
+        "resolutionEvidence": "UNRESOLVED",
+        "productionRecordId": null,
+        "preserveProductionId": false,
+        "createRecordId": "81acbac191981ace",
+        "currentTreeClaims": [],
+        "sameNameProductionCandidates": [],
+        "reviewExtraCandidateIds": []
+      },
+      "currentCanonicalFields": null,
+      "targetFields": {
+        "name": "Just a Scratch",
+        "system.benefit": "Once per encounter, as a reaction, you can reduce the damage from a single attack that targets your Reflex Defense by an amount equal to your Fortitude Defense.",
+        "system.description.value": "Once per encounter, as a reaction, you can reduce the damage from a single attack that targets your Reflex Defense by an amount equal to your Fortitude Defense.",
+        "system.summary": "Once per encounter, as a reaction, you can reduce the damage from a single attack that targets your Reflex Defense by an amount equal to your Fortitude Defense.",
+        "system.prerequisites": "Equipped with medium or better armor, proficient with that armor",
+        "system.source": "Scavenger's Guide to Droids",
+        "system.page": 27
+      },
+      "fieldChanges": {
+        "name": false,
+        "system.benefit": true,
+        "system.description.value": true,
+        "system.summary": true,
+        "system.prerequisites": true,
+        "system.source": true,
+        "system.page": true
+      },
+      "mutationFields": [
+        "system.benefit",
+        "system.description.value",
+        "system.summary",
+        "system.prerequisites",
+        "system.source",
+        "system.page",
+        "_record_create",
+        "system.treeId"
+      ],
+      "treeMutation": {
+        "action": "ADD",
+        "removeFromTreeIds": [],
+        "addToTreeId": "73814706c00849c6",
+        "addTalentId": "81acbac191981ace",
+        "addTalentName": "Just a Scratch"
+      },
+      "preserveFields": [
+        "system.abilityMeta",
+        "system.prerequisitesStructured",
+        "system.tags",
+        "system.executionModel",
+        "system.subType",
+        "system.costNumeric",
+        "effects",
+        "flags",
+        "img",
+        "ownership",
+        "folder",
+        "sort"
+      ],
+      "createTemplate": {
+        "_id": "81acbac191981ace",
+        "name": "Just a Scratch",
+        "type": "talent",
+        "img": "icons/svg/item-bag.svg",
+        "system": {
+          "treeId": "73814706c00849c6",
+          "benefit": "Once per encounter, as a reaction, you can reduce the damage from a single attack that targets your Reflex Defense by an amount equal to your Fortitude Defense.",
+          "description": {
+            "value": "Once per encounter, as a reaction, you can reduce the damage from a single attack that targets your Reflex Defense by an amount equal to your Fortitude Defense."
+          },
+          "summary": "Once per encounter, as a reaction, you can reduce the damage from a single attack that targets your Reflex Defense by an amount equal to your Fortitude Defense.",
+          "prerequisites": "Equipped with medium or better armor, proficient with that armor",
+          "source": "Scavenger's Guide to Droids",
+          "page": 27,
+          "costNumeric": null,
+          "tags": []
+        },
+        "effects": [],
+        "folder": null,
+        "sort": 0,
+        "ownership": {
+          "default": 0
+        },
+        "flags": {}
+      },
+      "claudeInstruction": "Create the exact canonical identity with createRecordId; do not infer automation metadata. Add the new ID/name to the target talent tree."
+    },
+    {
+      "canonicalIdentity": "Force Unleashed Campaign Guide|Fourth-Degree Droid|Target Acquisition",
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Fourth-Degree Droid",
+      "name": "Target Acquisition",
+      "ownerSourcebook": "Scavenger's Guide to Droids",
+      "targetTree": {
+        "treeId": "73814706c00849c6",
+        "treeName": "4thdegree Droid"
+      },
+      "disposition": "UPDATE_CONTENT",
+      "phase2Flags": [
+        "MISSING_CONTENT"
+      ],
+      "identityResolution": {
+        "resolutionEvidence": "TARGET_TREE_NAME_MATCH",
+        "productionRecordId": "6ef413a824474491",
+        "preserveProductionId": true,
+        "createRecordId": null,
+        "currentTreeClaims": [
+          {
+            "treeId": "73814706c00849c6",
+            "treeName": "4thdegree Droid"
+          }
+        ],
+        "sameNameProductionCandidates": [
+          {
+            "id": "6ef413a824474491",
+            "name": "Target Acquisition",
+            "treeClaims": [
+              {
+                "treeId": "73814706c00849c6",
+                "treeName": "4thdegree Droid"
+              }
+            ]
+          }
+        ],
+        "reviewExtraCandidateIds": []
+      },
+      "currentCanonicalFields": {
+        "name": "Target Acquisition",
+        "system.benefit": "Once per encounter, as a Swift Action, designate an enemy target within line of sight as an acquired target. You gain a +1 circumstance bonus to attack rolls and damage rolls for all attacks against that target until the end of the encounter, as long as the target remains within your line of sight.",
+        "system.description.value": "Once per encounter, as a Swift Action, designate an enemy target within line of sight as an acquired target. You gain a +1 circumstance bonus to attack rolls and damage rolls for all attacks against that target until the end of the encounter, as long as the target remains within your line of sight.",
+        "system.summary": null,
+        "system.prerequisites": "",
+        "system.source": null,
+        "system.page": null
+      },
+      "targetFields": {
+        "name": "Target Acquisition",
+        "system.benefit": "Once per encounter, as a swift action, designate an enemy target within line of sight as an acquired target. You gain a +1 circumstance bonus to attack rolls and damage rolls for all attacks against that target until the end of the encounter, as long as the target remains within your line of sight.",
+        "system.description.value": "Once per encounter, as a swift action, designate an enemy target within line of sight as an acquired target. You gain a +1 circumstance bonus to attack rolls and damage rolls for all attacks against that target until the end of the encounter, as long as the target remains within your line of sight.",
+        "system.summary": "Once per encounter, as a swift action, designate an enemy target within line of sight as an acquired target.",
+        "system.prerequisites": "",
+        "system.source": "Scavenger's Guide to Droids",
+        "system.page": 27
+      },
+      "fieldChanges": {
+        "name": false,
+        "system.benefit": true,
+        "system.description.value": true,
+        "system.summary": true,
+        "system.prerequisites": false,
+        "system.source": true,
+        "system.page": true
+      },
+      "mutationFields": [
+        "system.benefit",
+        "system.description.value",
+        "system.summary",
+        "system.source",
+        "system.page"
+      ],
+      "treeMutation": {
+        "action": "KEEP",
+        "removeFromTreeIds": [],
+        "addToTreeId": "73814706c00849c6",
+        "addTalentId": "6ef413a824474491",
+        "addTalentName": "Target Acquisition"
+      },
+      "preserveFields": [
+        "system.abilityMeta",
+        "system.prerequisitesStructured",
+        "system.tags",
+        "system.executionModel",
+        "system.subType",
+        "system.costNumeric",
+        "effects",
+        "flags",
+        "img",
+        "ownership",
+        "folder",
+        "sort"
+      ],
+      "createTemplate": null,
+      "claudeInstruction": "Preserve the existing production record ID and runtime metadata; replace only the listed canonical fields."
+    },
+    {
+      "canonicalIdentity": "Force Unleashed Campaign Guide|Fourth-Degree Droid|Target Lock",
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Fourth-Degree Droid",
+      "name": "Target Lock",
+      "ownerSourcebook": "Scavenger's Guide to Droids",
+      "targetTree": {
+        "treeId": "73814706c00849c6",
+        "treeName": "4thdegree Droid"
+      },
+      "disposition": "CREATE",
+      "phase2Flags": [
+        "MISSING_CONTENT"
+      ],
+      "identityResolution": {
+        "resolutionEvidence": "UNRESOLVED",
+        "productionRecordId": null,
+        "preserveProductionId": false,
+        "createRecordId": "3d2805cd83bb0cc4",
+        "currentTreeClaims": [],
+        "sameNameProductionCandidates": [],
+        "reviewExtraCandidateIds": []
+      },
+      "currentCanonicalFields": null,
+      "targetFields": {
+        "name": "Target Lock",
+        "system.benefit": "You lock onto the target designated by the Target Acquisition talent. If the target leaves your line of sight, you automatically reacquire the target lock as a reaction if the target comes back within your line of sight. You also gain a +5 bonus to your Perception skill when opposing the target's Stealth checks.",
+        "system.description.value": "You lock onto the target designated by the Target Acquisition talent. If the target leaves your line of sight, you automatically reacquire the target lock as a reaction if the target comes back within your line of sight. You also gain a +5 bonus to your Perception skill when opposing the target's Stealth checks.",
+        "system.summary": "You lock onto the target designated by the Target Acquisition talent.",
+        "system.prerequisites": "Target Acquisition",
+        "system.source": "Scavenger's Guide to Droids",
+        "system.page": 27
+      },
+      "fieldChanges": {
+        "name": false,
+        "system.benefit": true,
+        "system.description.value": true,
+        "system.summary": true,
+        "system.prerequisites": true,
+        "system.source": true,
+        "system.page": true
+      },
+      "mutationFields": [
+        "system.benefit",
+        "system.description.value",
+        "system.summary",
+        "system.prerequisites",
+        "system.source",
+        "system.page",
+        "_record_create",
+        "system.treeId"
+      ],
+      "treeMutation": {
+        "action": "ADD",
+        "removeFromTreeIds": [],
+        "addToTreeId": "73814706c00849c6",
+        "addTalentId": "3d2805cd83bb0cc4",
+        "addTalentName": "Target Lock"
+      },
+      "preserveFields": [
+        "system.abilityMeta",
+        "system.prerequisitesStructured",
+        "system.tags",
+        "system.executionModel",
+        "system.subType",
+        "system.costNumeric",
+        "effects",
+        "flags",
+        "img",
+        "ownership",
+        "folder",
+        "sort"
+      ],
+      "createTemplate": {
+        "_id": "3d2805cd83bb0cc4",
+        "name": "Target Lock",
+        "type": "talent",
+        "img": "icons/svg/item-bag.svg",
+        "system": {
+          "treeId": "73814706c00849c6",
+          "benefit": "You lock onto the target designated by the Target Acquisition talent. If the target leaves your line of sight, you automatically reacquire the target lock as a reaction if the target comes back within your line of sight. You also gain a +5 bonus to your Perception skill when opposing the target's Stealth checks.",
+          "description": {
+            "value": "You lock onto the target designated by the Target Acquisition talent. If the target leaves your line of sight, you automatically reacquire the target lock as a reaction if the target comes back within your line of sight. You also gain a +5 bonus to your Perception skill when opposing the target's Stealth checks."
+          },
+          "summary": "You lock onto the target designated by the Target Acquisition talent.",
+          "prerequisites": "Target Acquisition",
+          "source": "Scavenger's Guide to Droids",
+          "page": 27,
+          "costNumeric": null,
+          "tags": []
+        },
+        "effects": [],
+        "folder": null,
+        "sort": 0,
+        "ownership": {
+          "default": 0
+        },
+        "flags": {}
+      },
+      "claudeInstruction": "Create the exact canonical identity with createRecordId; do not infer automation metadata. Add the new ID/name to the target talent tree."
+    },
+    {
+      "canonicalIdentity": "Force Unleashed Campaign Guide|Fourth-Degree Droid|Weapons Power Surge",
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Fourth-Degree Droid",
+      "name": "Weapons Power Surge",
+      "ownerSourcebook": "Scavenger's Guide to Droids",
+      "targetTree": {
+        "treeId": "73814706c00849c6",
+        "treeName": "4thdegree Droid"
+      },
+      "disposition": "CREATE",
+      "phase2Flags": [
+        "MISSING_CONTENT"
+      ],
+      "identityResolution": {
+        "resolutionEvidence": "UNRESOLVED",
+        "productionRecordId": null,
+        "preserveProductionId": false,
+        "createRecordId": "09e7eeda16a7814f",
+        "currentTreeClaims": [],
+        "sameNameProductionCandidates": [],
+        "reviewExtraCandidateIds": []
+      },
+      "currentCanonicalFields": null,
+      "targetFields": {
+        "name": "Weapons Power Surge",
+        "system.benefit": "Once per encounter, as a free action, you can increase the damage dealt by one of your weapons by 1 or 2 damage dice in exchange for moving -1 step on the condition track for each die increased. The weapon must be permanently mounted to your chassis, and it must use your internal power supply. Handheld weapons, such as blaster rifles, do not qualify for this talent.",
+        "system.description.value": "Once per encounter, as a free action, you can increase the damage dealt by one of your weapons by 1 or 2 damage dice in exchange for moving -1 step on the condition track for each die increased. The weapon must be permanently mounted to your chassis, and it must use your internal power supply. Handheld weapons, such as blaster rifles, do not qualify for this talent.",
+        "system.summary": "Once per encounter, as a free action, you can increase the damage dealt by one of your weapons by 1 or 2 damage dice in exchange for moving -1 step on the condition track for each die increased.",
+        "system.prerequisites": "",
+        "system.source": "Scavenger's Guide to Droids",
+        "system.page": 27
+      },
+      "fieldChanges": {
+        "name": false,
+        "system.benefit": true,
+        "system.description.value": true,
+        "system.summary": true,
+        "system.prerequisites": false,
+        "system.source": true,
+        "system.page": true
+      },
+      "mutationFields": [
+        "system.benefit",
+        "system.description.value",
+        "system.summary",
+        "system.source",
+        "system.page",
+        "_record_create",
+        "system.treeId"
+      ],
+      "treeMutation": {
+        "action": "ADD",
+        "removeFromTreeIds": [],
+        "addToTreeId": "73814706c00849c6",
+        "addTalentId": "09e7eeda16a7814f",
+        "addTalentName": "Weapons Power Surge"
+      },
+      "preserveFields": [
+        "system.abilityMeta",
+        "system.prerequisitesStructured",
+        "system.tags",
+        "system.executionModel",
+        "system.subType",
+        "system.costNumeric",
+        "effects",
+        "flags",
+        "img",
+        "ownership",
+        "folder",
+        "sort"
+      ],
+      "createTemplate": {
+        "_id": "09e7eeda16a7814f",
+        "name": "Weapons Power Surge",
+        "type": "talent",
+        "img": "icons/svg/item-bag.svg",
+        "system": {
+          "treeId": "73814706c00849c6",
+          "benefit": "Once per encounter, as a free action, you can increase the damage dealt by one of your weapons by 1 or 2 damage dice in exchange for moving -1 step on the condition track for each die increased. The weapon must be permanently mounted to your chassis, and it must use your internal power supply. Handheld weapons, such as blaster rifles, do not qualify for this talent.",
+          "description": {
+            "value": "Once per encounter, as a free action, you can increase the damage dealt by one of your weapons by 1 or 2 damage dice in exchange for moving -1 step on the condition track for each die increased. The weapon must be permanently mounted to your chassis, and it must use your internal power supply. Handheld weapons, such as blaster rifles, do not qualify for this talent."
+          },
+          "summary": "Once per encounter, as a free action, you can increase the damage dealt by one of your weapons by 1 or 2 damage dice in exchange for moving -1 step on the condition track for each die increased.",
+          "prerequisites": "",
+          "source": "Scavenger's Guide to Droids",
+          "page": 27,
+          "costNumeric": null,
+          "tags": []
+        },
+        "effects": [],
+        "folder": null,
+        "sort": 0,
+        "ownership": {
+          "default": 0
+        },
+        "flags": {}
+      },
+      "claudeInstruction": "Create the exact canonical identity with createRecordId; do not infer automation metadata. Add the new ID/name to the target talent tree."
+    },
+    {
+      "canonicalIdentity": "Force Unleashed Campaign Guide|Fifth-Degree Droid|Durable",
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Fifth-Degree Droid",
+      "name": "Durable",
+      "ownerSourcebook": "Scavenger's Guide to Droids",
+      "targetTree": {
+        "treeId": "c4e48efaad1f49af",
+        "treeName": "5thdegree Droid"
+      },
+      "disposition": "CREATE",
+      "phase2Flags": [
+        "MISSING_CONTENT"
+      ],
+      "identityResolution": {
+        "resolutionEvidence": "UNRESOLVED",
+        "productionRecordId": null,
+        "preserveProductionId": false,
+        "createRecordId": "c5410351fc7c7aa7",
+        "currentTreeClaims": [],
+        "sameNameProductionCandidates": [],
+        "reviewExtraCandidateIds": []
+      },
+      "currentCanonicalFields": null,
+      "targetFields": {
+        "name": "Durable",
+        "system.benefit": "You are particularly durable and continue to function when a lesser droid would become disabled. The first time during an encounter that you would be moved to the bottom of the condition track by any effect, you instead stop at the -10 step. Additionally, if a single attack causes you to move multiple steps down the condition track, you can spend a Force Point as a reaction to only move -1 step down the condition track.",
+        "system.description.value": "You are particularly durable and continue to function when a lesser droid would become disabled. The first time during an encounter that you would be moved to the bottom of the condition track by any effect, you instead stop at the -10 step. Additionally, if a single attack causes you to move multiple steps down the condition track, you can spend a Force Point as a reaction to only move -1 step down the condition track.",
+        "system.summary": "You are particularly durable and continue to function when a lesser droid would become disabled.",
+        "system.prerequisites": "",
+        "system.source": "Scavenger's Guide to Droids",
+        "system.page": 27
+      },
+      "fieldChanges": {
+        "name": false,
+        "system.benefit": true,
+        "system.description.value": true,
+        "system.summary": true,
+        "system.prerequisites": false,
+        "system.source": true,
+        "system.page": true
+      },
+      "mutationFields": [
+        "system.benefit",
+        "system.description.value",
+        "system.summary",
+        "system.source",
+        "system.page",
+        "_record_create",
+        "system.treeId"
+      ],
+      "treeMutation": {
+        "action": "ADD",
+        "removeFromTreeIds": [],
+        "addToTreeId": "c4e48efaad1f49af",
+        "addTalentId": "c5410351fc7c7aa7",
+        "addTalentName": "Durable"
+      },
+      "preserveFields": [
+        "system.abilityMeta",
+        "system.prerequisitesStructured",
+        "system.tags",
+        "system.executionModel",
+        "system.subType",
+        "system.costNumeric",
+        "effects",
+        "flags",
+        "img",
+        "ownership",
+        "folder",
+        "sort"
+      ],
+      "createTemplate": {
+        "_id": "c5410351fc7c7aa7",
+        "name": "Durable",
+        "type": "talent",
+        "img": "icons/svg/item-bag.svg",
+        "system": {
+          "treeId": "c4e48efaad1f49af",
+          "benefit": "You are particularly durable and continue to function when a lesser droid would become disabled. The first time during an encounter that you would be moved to the bottom of the condition track by any effect, you instead stop at the -10 step. Additionally, if a single attack causes you to move multiple steps down the condition track, you can spend a Force Point as a reaction to only move -1 step down the condition track.",
+          "description": {
+            "value": "You are particularly durable and continue to function when a lesser droid would become disabled. The first time during an encounter that you would be moved to the bottom of the condition track by any effect, you instead stop at the -10 step. Additionally, if a single attack causes you to move multiple steps down the condition track, you can spend a Force Point as a reaction to only move -1 step down the condition track."
+          },
+          "summary": "You are particularly durable and continue to function when a lesser droid would become disabled.",
+          "prerequisites": "",
+          "source": "Scavenger's Guide to Droids",
+          "page": 27,
+          "costNumeric": null,
+          "tags": []
+        },
+        "effects": [],
+        "folder": null,
+        "sort": 0,
+        "ownership": {
+          "default": 0
+        },
+        "flags": {}
+      },
+      "claudeInstruction": "Create the exact canonical identity with createRecordId; do not infer automation metadata. Add the new ID/name to the target talent tree."
+    },
+    {
+      "canonicalIdentity": "Force Unleashed Campaign Guide|Fifth-Degree Droid|Heavy-Duty Actuators",
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Fifth-Degree Droid",
+      "name": "Heavy-Duty Actuators",
+      "ownerSourcebook": "Scavenger's Guide to Droids",
+      "targetTree": {
+        "treeId": "c4e48efaad1f49af",
+        "treeName": "5thdegree Droid"
+      },
+      "disposition": "UPDATE_CONTENT",
+      "phase2Flags": [
+        "MISSING_CONTENT"
+      ],
+      "identityResolution": {
+        "resolutionEvidence": "TARGET_TREE_NAME_MATCH",
+        "productionRecordId": "f733e1a56fba443b",
+        "preserveProductionId": true,
+        "createRecordId": null,
+        "currentTreeClaims": [
+          {
+            "treeId": "c4e48efaad1f49af",
+            "treeName": "5thdegree Droid"
+          }
+        ],
+        "sameNameProductionCandidates": [
+          {
+            "id": "f733e1a56fba443b",
+            "name": "Heavy-Duty Actuators",
+            "treeClaims": [
+              {
+                "treeId": "c4e48efaad1f49af",
+                "treeName": "5thdegree Droid"
+              }
+            ]
+          }
+        ],
+        "reviewExtraCandidateIds": []
+      },
+      "currentCanonicalFields": {
+        "name": "Heavy-Duty Actuators",
+        "system.benefit": "Your Heavy-Duty Actuators allow you to release your power and speed in a quick burst. You can double your Strength bonus to your melee and unarmed damage rolls.",
+        "system.description.value": "Your Heavy-Duty Actuators allow you to release your power and speed in a quick burst. You can double your Strength bonus to your melee and unarmed damage rolls.",
+        "system.summary": null,
+        "system.prerequisites": "Medium or larger size",
+        "system.source": null,
+        "system.page": null
+      },
+      "targetFields": {
+        "name": "Heavy-Duty Actuators",
+        "system.benefit": "Your heavy-duty actuators allow you to release your power and speed in a quick burst. You can double your Strength bonus to your melee and unarmed damage rolls.",
+        "system.description.value": "Your heavy-duty actuators allow you to release your power and speed in a quick burst. You can double your Strength bonus to your melee and unarmed damage rolls.",
+        "system.summary": "Your heavy-duty actuators allow you to release your power and speed in a quick burst.",
+        "system.prerequisites": "Medium or larger size",
+        "system.source": "Scavenger's Guide to Droids",
+        "system.page": 27
+      },
+      "fieldChanges": {
+        "name": false,
+        "system.benefit": true,
+        "system.description.value": true,
+        "system.summary": true,
+        "system.prerequisites": false,
+        "system.source": true,
+        "system.page": true
+      },
+      "mutationFields": [
+        "system.benefit",
+        "system.description.value",
+        "system.summary",
+        "system.source",
+        "system.page"
+      ],
+      "treeMutation": {
+        "action": "KEEP",
+        "removeFromTreeIds": [],
+        "addToTreeId": "c4e48efaad1f49af",
+        "addTalentId": "f733e1a56fba443b",
+        "addTalentName": "Heavy-Duty Actuators"
+      },
+      "preserveFields": [
+        "system.abilityMeta",
+        "system.prerequisitesStructured",
+        "system.tags",
+        "system.executionModel",
+        "system.subType",
+        "system.costNumeric",
+        "effects",
+        "flags",
+        "img",
+        "ownership",
+        "folder",
+        "sort"
+      ],
+      "createTemplate": null,
+      "claudeInstruction": "Preserve the existing production record ID and runtime metadata; replace only the listed canonical fields."
+    },
+    {
+      "canonicalIdentity": "Force Unleashed Campaign Guide|Fifth-Degree Droid|Load Launcher",
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Fifth-Degree Droid",
+      "name": "Load Launcher",
+      "ownerSourcebook": "Scavenger's Guide to Droids",
+      "targetTree": {
+        "treeId": "c4e48efaad1f49af",
+        "treeName": "5thdegree Droid"
+      },
+      "disposition": "CREATE",
+      "phase2Flags": [
+        "MISSING_CONTENT"
+      ],
+      "identityResolution": {
+        "resolutionEvidence": "UNRESOLVED",
+        "productionRecordId": null,
+        "preserveProductionId": false,
+        "createRecordId": "b1090fa2d2ebc982",
+        "currentTreeClaims": [],
+        "sameNameProductionCandidates": [],
+        "reviewExtraCandidateIds": []
+      },
+      "currentCanonicalFields": null,
+      "targetFields": {
+        "name": "Load Launcher",
+        "system.benefit": "You are considered proficient with improvised thrown weapons (see page 150 of the Saga Edition core rulebook) when making a ranged attack by throwing an object. Objects up to one size category larger than you can be thrown up to a number of squares equal to 2 x your Strength bonus (minimum 1 square). Additionally, you add your Strength bonus to any damage dealt.",
+        "system.description.value": "You are considered proficient with improvised thrown weapons (see page 150 of the Saga Edition core rulebook) when making a ranged attack by throwing an object. Objects up to one size category larger than you can be thrown up to a number of squares equal to 2 x your Strength bonus (minimum 1 square). Additionally, you add your Strength bonus to any damage dealt.",
+        "system.summary": "You are considered proficient with improvised thrown weapons (see page 150 of the Saga Edition core rulebook) when making a ranged attack by throwing an object.",
+        "system.prerequisites": "",
+        "system.source": "Scavenger's Guide to Droids",
+        "system.page": 27
+      },
+      "fieldChanges": {
+        "name": false,
+        "system.benefit": true,
+        "system.description.value": true,
+        "system.summary": true,
+        "system.prerequisites": false,
+        "system.source": true,
+        "system.page": true
+      },
+      "mutationFields": [
+        "system.benefit",
+        "system.description.value",
+        "system.summary",
+        "system.source",
+        "system.page",
+        "_record_create",
+        "system.treeId"
+      ],
+      "treeMutation": {
+        "action": "ADD",
+        "removeFromTreeIds": [],
+        "addToTreeId": "c4e48efaad1f49af",
+        "addTalentId": "b1090fa2d2ebc982",
+        "addTalentName": "Load Launcher"
+      },
+      "preserveFields": [
+        "system.abilityMeta",
+        "system.prerequisitesStructured",
+        "system.tags",
+        "system.executionModel",
+        "system.subType",
+        "system.costNumeric",
+        "effects",
+        "flags",
+        "img",
+        "ownership",
+        "folder",
+        "sort"
+      ],
+      "createTemplate": {
+        "_id": "b1090fa2d2ebc982",
+        "name": "Load Launcher",
+        "type": "talent",
+        "img": "icons/svg/item-bag.svg",
+        "system": {
+          "treeId": "c4e48efaad1f49af",
+          "benefit": "You are considered proficient with improvised thrown weapons (see page 150 of the Saga Edition core rulebook) when making a ranged attack by throwing an object. Objects up to one size category larger than you can be thrown up to a number of squares equal to 2 x your Strength bonus (minimum 1 square). Additionally, you add your Strength bonus to any damage dealt.",
+          "description": {
+            "value": "You are considered proficient with improvised thrown weapons (see page 150 of the Saga Edition core rulebook) when making a ranged attack by throwing an object. Objects up to one size category larger than you can be thrown up to a number of squares equal to 2 x your Strength bonus (minimum 1 square). Additionally, you add your Strength bonus to any damage dealt."
+          },
+          "summary": "You are considered proficient with improvised thrown weapons (see page 150 of the Saga Edition core rulebook) when making a ranged attack by throwing an object.",
+          "prerequisites": "",
+          "source": "Scavenger's Guide to Droids",
+          "page": 27,
+          "costNumeric": null,
+          "tags": []
+        },
+        "effects": [],
+        "folder": null,
+        "sort": 0,
+        "ownership": {
+          "default": 0
+        },
+        "flags": {}
+      },
+      "claudeInstruction": "Create the exact canonical identity with createRecordId; do not infer automation metadata. Add the new ID/name to the target talent tree."
+    },
+    {
+      "canonicalIdentity": "Force Unleashed Campaign Guide|Fifth-Degree Droid|Task Optimization",
+      "canonicalTreeKey": "Force Unleashed Campaign Guide|Fifth-Degree Droid",
+      "name": "Task Optimization",
+      "ownerSourcebook": "Scavenger's Guide to Droids",
+      "targetTree": {
+        "treeId": "c4e48efaad1f49af",
+        "treeName": "5thdegree Droid"
+      },
+      "disposition": "CREATE",
+      "phase2Flags": [
+        "MISSING_CONTENT"
+      ],
+      "identityResolution": {
+        "resolutionEvidence": "UNRESOLVED",
+        "productionRecordId": null,
+        "preserveProductionId": false,
+        "createRecordId": "8f26ca25481d612f",
+        "currentTreeClaims": [],
+        "sameNameProductionCandidates": [],
+        "reviewExtraCandidateIds": []
+      },
+      "currentCanonicalFields": null,
+      "targetFields": {
+        "name": "Task Optimization",
+        "system.benefit": "Select a skill you are trained in. Once per encounter, you can perform any application of that skill as one action quicker than normal but as at least a swift action (for example, a full-round action becomes a standard action, a standard action becomes a move action, a move action becomes a swift action). Tasks requiring more than one round cannot be optimized with this talent.",
+        "system.description.value": "Select a skill you are trained in. Once per encounter, you can perform any application of that skill as one action quicker than normal but as at least a swift action (for example, a full-round action becomes a standard action, a standard action becomes a move action, a move action becomes a swift action). Tasks requiring more than one round cannot be optimized with this talent.",
+        "system.summary": "Select a skill you are trained in.",
+        "system.prerequisites": "",
+        "system.source": "Scavenger's Guide to Droids",
+        "system.page": 28
+      },
+      "fieldChanges": {
+        "name": false,
+        "system.benefit": true,
+        "system.description.value": true,
+        "system.summary": true,
+        "system.prerequisites": false,
+        "system.source": true,
+        "system.page": true
+      },
+      "mutationFields": [
+        "system.benefit",
+        "system.description.value",
+        "system.summary",
+        "system.source",
+        "system.page",
+        "_record_create",
+        "system.treeId"
+      ],
+      "treeMutation": {
+        "action": "ADD",
+        "removeFromTreeIds": [],
+        "addToTreeId": "c4e48efaad1f49af",
+        "addTalentId": "8f26ca25481d612f",
+        "addTalentName": "Task Optimization"
+      },
+      "preserveFields": [
+        "system.abilityMeta",
+        "system.prerequisitesStructured",
+        "system.tags",
+        "system.executionModel",
+        "system.subType",
+        "system.costNumeric",
+        "effects",
+        "flags",
+        "img",
+        "ownership",
+        "folder",
+        "sort"
+      ],
+      "createTemplate": {
+        "_id": "8f26ca25481d612f",
+        "name": "Task Optimization",
+        "type": "talent",
+        "img": "icons/svg/item-bag.svg",
+        "system": {
+          "treeId": "c4e48efaad1f49af",
+          "benefit": "Select a skill you are trained in. Once per encounter, you can perform any application of that skill as one action quicker than normal but as at least a swift action (for example, a full-round action becomes a standard action, a standard action becomes a move action, a move action becomes a swift action). Tasks requiring more than one round cannot be optimized with this talent.",
+          "description": {
+            "value": "Select a skill you are trained in. Once per encounter, you can perform any application of that skill as one action quicker than normal but as at least a swift action (for example, a full-round action becomes a standard action, a standard action becomes a move action, a move action becomes a swift action). Tasks requiring more than one round cannot be optimized with this talent."
+          },
+          "summary": "Select a skill you are trained in.",
+          "prerequisites": "",
+          "source": "Scavenger's Guide to Droids",
+          "page": 28,
+          "costNumeric": null,
+          "tags": []
+        },
+        "effects": [],
+        "folder": null,
+        "sort": 0,
+        "ownership": {
+          "default": 0
+        },
+        "flags": {}
+      },
+      "claudeInstruction": "Create the exact canonical identity with createRecordId; do not infer automation metadata. Add the new ID/name to the target talent tree."
+    }
+  ]
+}
