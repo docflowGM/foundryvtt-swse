@@ -5,6 +5,7 @@
  * Usage:
  *   node tools/build-talent-phase-3b-manifest.mjs --book core [--check]
  *   node tools/build-talent-phase-3b-manifest.mjs --book threats [--check]
+ *   node tools/build-talent-phase-3b-manifest.mjs --book starships [--check]
  */
 import fs from 'node:fs';
 import path from 'node:path';
@@ -38,6 +39,22 @@ const BOOKS = {
         CORRECT_TREE: 17,
         CREATE: 6,
         IDENTITY_SPLIT: 1
+      }
+    }
+  },
+  starships: {
+    sourcebook: 'Starships of the Galaxy',
+    bookOrder: 6,
+    phase2: 'data/audits/talent-phase-2-starships-of-the-galaxy-content.json',
+    discrepancy: 'data/audits/talent-phase-2-starships-of-the-galaxy-discrepancy-manifest.json',
+    output: 'data/audits/talent-phase-3b-starships-of-the-galaxy-manifest.json',
+    aliases: {},
+    expected: {
+      records: 23,
+      extras: 0,
+      dispositions: {
+        UPDATE_CONTENT: 22,
+        CORRECT_TREE: 1
       }
     }
   },
@@ -379,6 +396,6 @@ if (isDirectRun) {
   const bookArg = process.argv.find(arg => arg.startsWith('--book='));
   const index = process.argv.indexOf('--book');
   const bookKey = bookArg ? bookArg.slice('--book='.length) : index >= 0 ? process.argv[index + 1] : null;
-  invariant(bookKey, 'usage: --book core|threats [--check]');
+  invariant(bookKey, 'usage: --book core|threats|starships [--check]');
   buildBookManifest(bookKey, {check: process.argv.includes('--check')});
 }
