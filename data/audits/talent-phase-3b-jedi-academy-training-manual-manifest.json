@@ -10,7 +10,7 @@
   "generatedAgainst": {
     "canonical": {
       "path": "data/canonical/talents.json",
-      "fingerprint": "fnv1a64:251001ba5bea19a1"
+      "fingerprint": "fnv1a64:8ec7fe66c2980baa"
     },
     "registry": {
       "path": "data/audits/talent-canonical-tree-registry.json",
@@ -30,7 +30,7 @@
     },
     "phase2": {
       "path": "data/audits/talent-phase-2-jedi-academy-training-manual-content.json",
-      "fingerprint": "fnv1a64:1bbe4019acf63fce"
+      "fingerprint": "fnv1a64:8fbef50687cf23d3"
     },
     "discrepancy": {
       "path": "data/audits/talent-phase-2-jedi-academy-training-manual-discrepancy-manifest.json",
@@ -328,8 +328,8 @@
       },
       "targetFields": {
         "name": "Greater Dark Side Talisman",
-        "system.benefit": "As Dark Side Talisman (above), except that the talisman’s Force bonus extends to all three of your defenses (Reflex, Fortitude, and Will). 1 esidvnS eaVued HL dO VSME 0 a > a 4 5 bi",
-        "system.description.value": "As Dark Side Talisman (above), except that the talisman’s Force bonus extends to all three of your defenses (Reflex, Fortitude, and Will). 1 esidvnS eaVued HL dO VSME 0 a > a 4 5 bi",
+        "system.benefit": "As Dark Side Talisman (above), except that the talisman’s Force bonus extends to all three of your defenses (Reflex, Fortitude, and Will).",
+        "system.description.value": "As Dark Side Talisman (above), except that the talisman’s Force bonus extends to all three of your defenses (Reflex, Fortitude, and Will).",
         "system.summary": "As Dark Side Talisman (above), except that the talisman’s Force bonus extends to all three of your defenses (Reflex, Fortitude, and Will).",
         "system.prerequisites": "Dark Side Talisman",
         "system.source": "Jedi Academy Training Manual",
@@ -525,8 +525,8 @@
       },
       "targetFields": {
         "name": "Shoto Master",
-        "system.benefit": "When you wield both a one-handed lightsaber and a shoto (or guard shoto), you can consider the one-handed lightsaber to be a light weapon. Additionally, if you have the Lightsaber Defense talent, you can activate the talent as a free action on your turn (instead of a swift action) whenever you wield both a one-handed lightsaber and a shoto (or guard shoto) A MeO! ARTISAN TEACHES THE Basice OF LIGHTSABER CONSTRUCTION.",
-        "system.description": "When you wield both a one-handed lightsaber and a shoto (or guard shoto), you can consider the one-handed lightsaber to be a light weapon. Additionally, if you have the Lightsaber Defense talent, you can activate the talent as a free action on your turn (instead of a swift action) whenever you wield both a one-handed lightsaber and a shoto (or guard shoto) A MeO! ARTISAN TEACHES THE Basice OF LIGHTSABER CONSTRUCTION.",
+        "system.benefit": "When you wield both a one-handed lightsaber and a shoto (or guard shoto), you can consider the one-handed lightsaber to be a light weapon. Additionally, if you have the Lightsaber Defense talent, you can activate the talent as a free action on your turn (instead of a swift action) whenever you wield both a one-handed lightsaber and a shoto (or guard shoto)",
+        "system.description": "When you wield both a one-handed lightsaber and a shoto (or guard shoto), you can consider the one-handed lightsaber to be a light weapon. Additionally, if you have the Lightsaber Defense talent, you can activate the talent as a free action on your turn (instead of a swift action) whenever you wield both a one-handed lightsaber and a shoto (or guard shoto)",
         "system.summary": "When you wield both a one-handed lightsaber and a shoto (or guard shoto), you can consider the one-handed lightsaber to be a light weapon.",
         "system.prerequisites": "",
         "system.source": "Jedi Academy Training Manual",
@@ -721,8 +721,8 @@
       },
       "targetFields": {
         "name": "Know Weakness",
-        "system.benefit": "Whenever you use Adversary Lore on a target suc-cessfully, that target also takes an additional 1d6 points of damage from any successful attack made against it by you or an ally who can hear and understand you until the end of your next turn. NEw JEDI GUARDIAN TALENTS The following talents belong to the Jedi Guardian talent tree (see page 40 of the Saga Edition core rulebook).",
-        "system.description.value": "Whenever you use Adversary Lore on a target suc-cessfully, that target also takes an additional 1d6 points of damage from any successful attack made against it by you or an ally who can hear and understand you until the end of your next turn. NEw JEDI GUARDIAN TALENTS The following talents belong to the Jedi Guardian talent tree (see page 40 of the Saga Edition core rulebook).",
+        "system.benefit": "Whenever you use Adversary Lore on a target suc-cessfully, that target also takes an additional 1d6 points of damage from any successful attack made against it by you or an ally who can hear and understand you until the end of your next turn.",
+        "system.description.value": "Whenever you use Adversary Lore on a target suc-cessfully, that target also takes an additional 1d6 points of damage from any successful attack made against it by you or an ally who can hear and understand you until the end of your next turn.",
         "system.summary": "Whenever you use Adversary Lore on a target suc-cessfully, that target also takes an additional 1d6 points of damage from any successful attack made against it by you or an ally who can hear and understand you until the end of your next turn.",
         "system.prerequisites": "Adversary Lore",
         "system.source": "Jedi Academy Training Manual",
@@ -917,8 +917,8 @@
       },
       "targetFields": {
         "name": "Hold the Line",
-        "system.benefit": "When you make a successful attack of opportunity against a target leaving your threatened area, you stop the target's movement, ending its action. New JEDI SENTINEL TALENT The following talent belongs to the Jedi Sentinel talent tree (see page 40 of the Saga Edition core rulebook).",
-        "system.description.value": "When you make a successful attack of opportunity against a target leaving your threatened area, you stop the target's movement, ending its action. New JEDI SENTINEL TALENT The following talent belongs to the Jedi Sentinel talent tree (see page 40 of the Saga Edition core rulebook).",
+        "system.benefit": "When you make a successful attack of opportunity against a target leaving your threatened area, you stop the target's movement, ending its action.",
+        "system.description.value": "When you make a successful attack of opportunity against a target leaving your threatened area, you stop the target's movement, ending its action.",
         "system.summary": "When you make a successful attack of opportunity against a target leaving your threatened area, you stop the target's movement, ending its action.",
         "system.prerequisites": "",
         "system.source": "Jedi Academy Training Manual",
@@ -1015,8 +1015,8 @@
       },
       "targetFields": {
         "name": "Master of the Great Hunt",
-        "system.benefit": "You gain a +1 Force bonus on attack rolls and deal +1 die of damage on lightsaber attacks made against a beast with a Dark Side Score of 1+. New LIGHTSABER COMBAT TALENT The following talent belongs to the Lightsaber Combat talent tree (see page 41 of the Saga Edition core rulebook).",
-        "system.description": "You gain a +1 Force bonus on attack rolls and deal +1 die of damage on lightsaber attacks made against a beast with a Dark Side Score of 1+. New LIGHTSABER COMBAT TALENT The following talent belongs to the Lightsaber Combat talent tree (see page 41 of the Saga Edition core rulebook).",
+        "system.benefit": "You gain a +1 Force bonus on attack rolls and deal +1 die of damage on lightsaber attacks made against a beast with a Dark Side Score of 1+.",
+        "system.description": "You gain a +1 Force bonus on attack rolls and deal +1 die of damage on lightsaber attacks made against a beast with a Dark Side Score of 1+.",
         "system.summary": "You gain a +1 Force bonus on attack rolls and deal +1 die of damage on lightsaber attacks made against a beast with a Dark Side Score of 1+.",
         "system.prerequisites": "",
         "system.source": "Jedi Academy Training Manual",
@@ -1897,8 +1897,8 @@
       },
       "targetFields": {
         "name": "Masterwork Lightsaber",
-        "system.benefit": "Whenever you build a lightsaber, you do so with such expertise that it makes the weapon even more refined and elegant. When you build a lightsaber, you can choose to add one extra accessory to the lightsaber at the time of creation, and when you hit a target with a lightsaber that you built, you can always choose to reroll one damage die from your damage roll, but you must keep the second result, even if it is worse. |n addition, you can mentor another character while he constructs his own lightsaber. When you do so, you reduce the Use the Force check DC for constructing the lightsaber by -5.",
-        "system.description.value": "Whenever you build a lightsaber, you do so with such expertise that it makes the weapon even more refined and elegant. When you build a lightsaber, you can choose to add one extra accessory to the lightsaber at the time of creation, and when you hit a target with a lightsaber that you built, you can always choose to reroll one damage die from your damage roll, but you must keep the second result, even if it is worse. |n addition, you can mentor another character while he constructs his own lightsaber. When you do so, you reduce the Use the Force check DC for constructing the lightsaber by -5.",
+        "system.benefit": "Whenever you build a lightsaber, you do so with such expertise that it makes the weapon even more refined and elegant. When you build a lightsaber, you can choose to add one extra accessory to the lightsaber at the time of creation, and when you hit a target with a lightsaber that you built, you can always choose to reroll one damage die from your damage roll, but you must keep the second result, even if it is worse. In addition, you can mentor another character while he constructs his own lightsaber. When you do so, you reduce the Use the Force check DC for constructing the lightsaber by -5.",
+        "system.description.value": "Whenever you build a lightsaber, you do so with such expertise that it makes the weapon even more refined and elegant. When you build a lightsaber, you can choose to add one extra accessory to the lightsaber at the time of creation, and when you hit a target with a lightsaber that you built, you can always choose to reroll one damage die from your damage roll, but you must keep the second result, even if it is worse. In addition, you can mentor another character while he constructs his own lightsaber. When you do so, you reduce the Use the Force check DC for constructing the lightsaber by -5.",
         "system.summary": "Whenever you build a lightsaber, you do so with such expertise that it makes the weapon even more refined and elegant.",
         "system.prerequisites": "",
         "system.source": "Jedi Academy Training Manual",
@@ -2290,8 +2290,8 @@
       },
       "targetFields": {
         "name": "Share Force Secret",
-        "system.benefit": "When you take this talent, choose one Force secret that you know. Once per turn as a swift action, you can grant the use of this Force secret to one ally within 12 squares of you who is trained in the Use the Force skill. The target gains the benefit of this secret until the end of your next turn. \\o I > 1 4 o 2 g98Ocd SHA AO aor) wsiawnS",
-        "system.description.value": "When you take this talent, choose one Force secret that you know. Once per turn as a swift action, you can grant the use of this Force secret to one ally within 12 squares of you who is trained in the Use the Force skill. The target gains the benefit of this secret until the end of your next turn. \\o I > 1 4 o 2 g98Ocd SHA AO aor) wsiawnS",
+        "system.benefit": "When you take this talent, choose one Force secret that you know. Once per turn as a swift action, you can grant the use of this Force secret to one ally within 12 squares of you who is trained in the Use the Force skill. The target gains the benefit of this secret until the end of your next turn.",
+        "system.description.value": "When you take this talent, choose one Force secret that you know. Once per turn as a swift action, you can grant the use of this Force secret to one ally within 12 squares of you who is trained in the Use the Force skill. The target gains the benefit of this secret until the end of your next turn.",
         "system.summary": "When you take this talent, choose one Force secret that you know.",
         "system.prerequisites": "Must know at least 1 Force secret",
         "system.source": "Jedi Academy Training Manual",
@@ -3383,8 +3383,8 @@
       },
       "targetFields": {
         "name": "Shoto Pin",
-        "system.benefit": "Whenever you are wielding a shoto and success-fully use the Block talent to negate a melee attack, the attacker can make no further melee attacks until the start of its next turn or until you are no longer adjacent to it. A RODIAN Jeo! WEAPONMASTER. SITH APPRENTICE TALENTS The following talents are for use with the Sith apprentice prestige class (see page 222 of the Saga Edition core rulebook).",
-        "system.description.value": "Whenever you are wielding a shoto and success-fully use the Block talent to negate a melee attack, the attacker can make no further melee attacks until the start of its next turn or until you are no longer adjacent to it. A RODIAN Jeo! WEAPONMASTER. SITH APPRENTICE TALENTS The following talents are for use with the Sith apprentice prestige class (see page 222 of the Saga Edition core rulebook).",
+        "system.benefit": "Whenever you are wielding a shoto and success-fully use the Block talent to negate a melee attack, the attacker can make no further melee attacks until the start of its next turn or until you are no longer adjacent to it.",
+        "system.description.value": "Whenever you are wielding a shoto and success-fully use the Block talent to negate a melee attack, the attacker can make no further melee attacks until the start of its next turn or until you are no longer adjacent to it.",
         "system.summary": "Whenever you are wielding a shoto and success-fully use the Block talent to negate a melee attack, the attacker can make no further melee attacks until the start of its next turn or until you are no longer adjacent to it.",
         "system.prerequisites": "Block",
         "system.source": "Jedi Academy Training Manual",
@@ -4955,8 +4955,8 @@
       },
       "targetFields": {
         "name": "Telepathic Intruder",
-        "system.benefit": "Whenever you use a Force power with the [mind-affecting] descriptor successfully against a target, until the end of your next turn you gain a +2 Force bonus on skill checks made to activate mind-affecting Force powers and talents against that same target. JEDI KNIGHT TALENTS The following talents are for use with the Jedi Knight prestige class (see page 217 of the Saga Edition core rulebook). New Duelist Talents The following talents belong to the Duelist talent tree (see page 218 of the Saga Edition core rulebook).",
-        "system.description.value": "Whenever you use a Force power with the [mind-affecting] descriptor successfully against a target, until the end of your next turn you gain a +2 Force bonus on skill checks made to activate mind-affecting Force powers and talents against that same target. JEDI KNIGHT TALENTS The following talents are for use with the Jedi Knight prestige class (see page 217 of the Saga Edition core rulebook). New Duelist Talents The following talents belong to the Duelist talent tree (see page 218 of the Saga Edition core rulebook).",
+        "system.benefit": "Whenever you use a Force power with the [mind-affecting] descriptor successfully against a target, until the end of your next turn you gain a +2 Force bonus on skill checks made to activate mind-affecting Force powers and talents against that same target.",
+        "system.description.value": "Whenever you use a Force power with the [mind-affecting] descriptor successfully against a target, until the end of your next turn you gain a +2 Force bonus on skill checks made to activate mind-affecting Force powers and talents against that same target.",
         "system.summary": "After successfully using a mind-affecting Force power, gain +2 on checks to use mind-affecting Force powers and talents against that target until the end of your next turn.",
         "system.prerequisites": "",
         "system.source": "Jedi Academy Training Manual",
@@ -5941,8 +5941,8 @@
       },
       "targetFields": {
         "name": "Suppress Force",
-        "system.benefit": "You can convince others that they have been cut off from the Force, even if that is not the case, preventing them from making Use the Force checks. Whenever a target with an Intelligence of 3 or higher within 12 squares of you and in your line of sight attempts to make a Use the Force check for any reason, you can spend one use of the mind trick Force power as a reaction. You make a Use the Force check, and if your Use the Force check equals or exceeds the target's Use the Force check result, that target's skill check is negated, and the action it was attempting fails. v Q 8 @ a) 8 é 5) a) Q W gavVed SHA dO YVAME ) wSievHoS A KEL DOR SITH LORD CHANNELS THE ENEROY FROM BLASTER BOLTS, TURNING THEM INTO FORCE LIGHTNING. New Control Talents The following talents belong to the Control talent tree (see page 101 of the Saga Edition core rulebook)",
-        "system.description": "You can convince others that they have been cut off from the Force, even if that is not the case, preventing them from making Use the Force checks. Whenever a target with an Intelligence of 3 or higher within 12 squares of you and in your line of sight attempts to make a Use the Force check for any reason, you can spend one use of the mind trick Force power as a reaction. You make a Use the Force check, and if your Use the Force check equals or exceeds the target's Use the Force check result, that target's skill check is negated, and the action it was attempting fails. v Q 8 @ a) 8 é 5) a) Q W gavVed SHA dO YVAME ) wSievHoS A KEL DOR SITH LORD CHANNELS THE ENEROY FROM BLASTER BOLTS, TURNING THEM INTO FORCE LIGHTNING. New Control Talents The following talents belong to the Control talent tree (see page 101 of the Saga Edition core rulebook)",
+        "system.benefit": "You can convince others that they have been cut off from the Force, even if that is not the case, preventing them from making Use the Force checks. Whenever a target with an Intelligence of 3 or higher within 12 squares of you and in your line of sight attempts to make a Use the Force check for any reason, you can spend one use of the mind trick Force power as a reaction. You make a Use the Force check, and if your Use the Force check equals or exceeds the target's Use the Force check result, that target's skill check is negated, and the action it was attempting fails.",
+        "system.description": "You can convince others that they have been cut off from the Force, even if that is not the case, preventing them from making Use the Force checks. Whenever a target with an Intelligence of 3 or higher within 12 squares of you and in your line of sight attempts to make a Use the Force check for any reason, you can spend one use of the mind trick Force power as a reaction. You make a Use the Force check, and if your Use the Force check equals or exceeds the target's Use the Force check result, that target's skill check is negated, and the action it was attempting fails.",
         "system.summary": "You can convince others that they have been cut off from the Force, even if that is not the case, preventing them from making Use the Force checks.",
         "system.prerequisites": "Influence Savant, mind trick",
         "system.source": "Jedi Academy Training Manual",
@@ -6831,8 +6831,8 @@
       },
       "targetFields": {
         "name": "Transfer Essence",
-        "system.benefit": "When you die, you become a dark side spirit (see page 118) until the end of the encounter. You continue to occupy a space in this form, but other creatures can occupy the same space or move through your space without impediment. As a standard action, you can attempt to possess an adjacent target. You must succeed on a Use the Force check against an adjacent target's Will Defense. If your check result equals or exceeds the target's Will Defense, you deal 8d6 points of stun damage to the target; if you reduce the target to 0 hit points or move it to the bottom of the condition track with this attack, you possess the target as though it were a willing host (see the dark spirit template for details). Alternately, as a standard action, you can transfer your essence into a single adjacent object, such as a holocron or a lightsaber. If you do so, you lie dormant within the object until another creature attempts to use that object, at which time you can emerge and attempt to possess the creature, as described above, \\f you do not possess a creature or object within 10 rounds of manifesting as a dark spirit, your spirit dissipates and ceases to exist.",
-        "system.description": "When you die, you become a dark side spirit (see page 118) until the end of the encounter. You continue to occupy a space in this form, but other creatures can occupy the same space or move through your space without impediment. As a standard action, you can attempt to possess an adjacent target. You must succeed on a Use the Force check against an adjacent target's Will Defense. If your check result equals or exceeds the target's Will Defense, you deal 8d6 points of stun damage to the target; if you reduce the target to 0 hit points or move it to the bottom of the condition track with this attack, you possess the target as though it were a willing host (see the dark spirit template for details). Alternately, as a standard action, you can transfer your essence into a single adjacent object, such as a holocron or a lightsaber. If you do so, you lie dormant within the object until another creature attempts to use that object, at which time you can emerge and attempt to possess the creature, as described above, \\f you do not possess a creature or object within 10 rounds of manifesting as a dark spirit, your spirit dissipates and ceases to exist.",
+        "system.benefit": "When you die, you become a dark side spirit (see page 118) until the end of the encounter. You continue to occupy a space in this form, but other creatures can occupy the same space or move through your space without impediment. As a standard action, you can attempt to possess an adjacent target. You must succeed on a Use the Force check against an adjacent target's Will Defense. If your check result equals or exceeds the target's Will Defense, you deal 8d6 points of stun damage to the target; if you reduce the target to 0 hit points or move it to the bottom of the condition track with this attack, you possess the target as though it were a willing host (see the dark spirit template for details). Alternately, as a standard action, you can transfer your essence into a single adjacent object, such as a holocron or a lightsaber. If you do so, you lie dormant within the object until another creature attempts to use that object, at which time you can emerge and attempt to possess the creature, as described above. If you do not possess a creature or object within 10 rounds of manifesting as a dark spirit, your spirit dissipates and ceases to exist.",
+        "system.description": "When you die, you become a dark side spirit (see page 118) until the end of the encounter. You continue to occupy a space in this form, but other creatures can occupy the same space or move through your space without impediment. As a standard action, you can attempt to possess an adjacent target. You must succeed on a Use the Force check against an adjacent target's Will Defense. If your check result equals or exceeds the target's Will Defense, you deal 8d6 points of stun damage to the target; if you reduce the target to 0 hit points or move it to the bottom of the condition track with this attack, you possess the target as though it were a willing host (see the dark spirit template for details). Alternately, as a standard action, you can transfer your essence into a single adjacent object, such as a holocron or a lightsaber. If you do so, you lie dormant within the object until another creature attempts to use that object, at which time you can emerge and attempt to possess the creature, as described above. If you do not possess a creature or object within 10 rounds of manifesting as a dark spirit, your spirit dissipates and ceases to exist.",
         "system.summary": "When you die, you become a dark side spirit (see page 118) until the end of the encounter.",
         "system.prerequisites": "Dark Side Score equal to your Wisdom score",
         "system.source": "Jedi Academy Training Manual",
@@ -8589,8 +8589,8 @@
       },
       "targetFields": {
         "name": "Motion of the Future",
-        "system.benefit": "As a swift action, you can peer into the future in search of signs of danger, removing one use of the farseeing Force power from your active suite (as though you had just activated the power). Any time before the end of your next turn when you are the target of an attack or Force power, you can force your attacker to reroll the attack roll (or Use the Force check) against you, keeping the second result. This counts as using the farseeing Force power against the attacker, but this talent replaces the normal rules and effect of that power. PRESTIGE CLASS TALENTS This section introduces several new talents for the prestige classes presented in the Saga Edition core rulebook. FORCE ADEPT TALENTS The following talents are for use with the Force adept prestige class (see page 212 of the Saga Edition core rulebook). New Dark Side Devotee Talents The following talents belong to the Dark Side Devotee talent tree (see page 213 of the Saga Edition core rulebook).",
-        "system.description": "As a swift action, you can peer into the future in search of signs of danger, removing one use of the farseeing Force power from your active suite (as though you had just activated the power). Any time before the end of your next turn when you are the target of an attack or Force power, you can force your attacker to reroll the attack roll (or Use the Force check) against you, keeping the second result. This counts as using the farseeing Force power against the attacker, but this talent replaces the normal rules and effect of that power. PRESTIGE CLASS TALENTS This section introduces several new talents for the prestige classes presented in the Saga Edition core rulebook. FORCE ADEPT TALENTS The following talents are for use with the Force adept prestige class (see page 212 of the Saga Edition core rulebook). New Dark Side Devotee Talents The following talents belong to the Dark Side Devotee talent tree (see page 213 of the Saga Edition core rulebook).",
+        "system.benefit": "As a swift action, you can peer into the future in search of signs of danger, removing one use of the farseeing Force power from your active suite (as though you had just activated the power). Any time before the end of your next turn when you are the target of an attack or Force power, you can force your attacker to reroll the attack roll (or Use the Force check) against you, keeping the second result. This counts as using the farseeing Force power against the attacker, but this talent replaces the normal rules and effect of that power.",
+        "system.description": "As a swift action, you can peer into the future in search of signs of danger, removing one use of the farseeing Force power from your active suite (as though you had just activated the power). Any time before the end of your next turn when you are the target of an attack or Force power, you can force your attacker to reroll the attack roll (or Use the Force check) against you, keeping the second result. This counts as using the farseeing Force power against the attacker, but this talent replaces the normal rules and effect of that power.",
         "system.summary": "As a swift action, you can peer into the future in search of signs of danger, removing one use of the farseeing Force power from your active suite (as though you had just activated the power).",
         "system.prerequisites": "Force Perception",
         "system.source": "Jedi Academy Training Manual",
@@ -9258,8 +9258,8 @@
       "currentCanonicalFields": null,
       "targetFields": {
         "name": "Force Stabilize",
-        "system.benefit": "You can designate an ally within 12 squares of you and in your line of sight once per turn as a swift action; that ally immediately takes its second wind if it has not yet done so in this encounter. A HUMAN JEDI CONSULTS A REVWIEN TIA ADEPT.",
-        "system.description.value": "You can designate an ally within 12 squares of you and in your line of sight once per turn as a swift action; that ally immediately takes its second wind if it has not yet done so in this encounter. A HUMAN JEDI CONSULTS A REVWIEN TIA ADEPT.",
+        "system.benefit": "You can designate an ally within 12 squares of you and in your line of sight once per turn as a swift action; that ally immediately takes its second wind if it has not yet done so in this encounter.",
+        "system.description.value": "You can designate an ally within 12 squares of you and in your line of sight once per turn as a swift action; that ally immediately takes its second wind if it has not yet done so in this encounter.",
         "system.summary": "You can designate an ally within 12 squares of you and in your line of sight once per turn as a swift action; that ally immediately takes its second wind if it has not yet done so in this encounter.",
         "system.prerequisites": "Tyia Adept",
         "system.source": "Jedi Academy Training Manual",
@@ -9312,9 +9312,9 @@
         "img": "icons/svg/item-bag.svg",
         "system": {
           "treeId": "9a5efe5d0e9b43a1",
-          "benefit": "You can designate an ally within 12 squares of you and in your line of sight once per turn as a swift action; that ally immediately takes its second wind if it has not yet done so in this encounter. A HUMAN JEDI CONSULTS A REVWIEN TIA ADEPT.",
+          "benefit": "You can designate an ally within 12 squares of you and in your line of sight once per turn as a swift action; that ally immediately takes its second wind if it has not yet done so in this encounter.",
           "description": {
-            "value": "You can designate an ally within 12 squares of you and in your line of sight once per turn as a swift action; that ally immediately takes its second wind if it has not yet done so in this encounter. A HUMAN JEDI CONSULTS A REVWIEN TIA ADEPT."
+            "value": "You can designate an ally within 12 squares of you and in your line of sight once per turn as a swift action; that ally immediately takes its second wind if it has not yet done so in this encounter."
           },
           "summary": "You can designate an ally within 12 squares of you and in your line of sight once per turn as a swift action; that ally immediately takes its second wind if it has not yet done so in this encounter.",
           "prerequisites": "Tyia Adept",
@@ -10838,8 +10838,8 @@
       "currentCanonicalFields": null,
       "targetFields": {
         "name": "Earth Buckle",
-        "system.benefit": "You can spend a Force Point as a swift action to create a 3x3 square area of difficult terrain centered on you. You ignore any penalties for moving on difficult terrain that you create using this talent. A SHAPER OF KRO VAR DEFENDS HIMSELF AGAINST THE FORCES OF THE SEPARATISTS.",
-        "system.description.value": "You can spend a Force Point as a swift action to create a 3x3 square area of difficult terrain centered on you. You ignore any penalties for moving on difficult terrain that you create using this talent. A SHAPER OF KRO VAR DEFENDS HIMSELF AGAINST THE FORCES OF THE SEPARATISTS.",
+        "system.benefit": "You can spend a Force Point as a swift action to create a 3x3 square area of difficult terrain centered on you. You ignore any penalties for moving on difficult terrain that you create using this talent.",
+        "system.description.value": "You can spend a Force Point as a swift action to create a 3x3 square area of difficult terrain centered on you. You ignore any penalties for moving on difficult terrain that you create using this talent.",
         "system.summary": "You can spend a Force Point as a swift action to create a 3x3 square area of difficult terrain centered on you.",
         "system.prerequisites": "",
         "system.source": "Jedi Academy Training Manual",
@@ -10891,9 +10891,9 @@
         "img": "icons/svg/item-bag.svg",
         "system": {
           "treeId": "4b2b7b67261c99fa",
-          "benefit": "You can spend a Force Point as a swift action to create a 3x3 square area of difficult terrain centered on you. You ignore any penalties for moving on difficult terrain that you create using this talent. A SHAPER OF KRO VAR DEFENDS HIMSELF AGAINST THE FORCES OF THE SEPARATISTS.",
+          "benefit": "You can spend a Force Point as a swift action to create a 3x3 square area of difficult terrain centered on you. You ignore any penalties for moving on difficult terrain that you create using this talent.",
           "description": {
-            "value": "You can spend a Force Point as a swift action to create a 3x3 square area of difficult terrain centered on you. You ignore any penalties for moving on difficult terrain that you create using this talent. A SHAPER OF KRO VAR DEFENDS HIMSELF AGAINST THE FORCES OF THE SEPARATISTS."
+            "value": "You can spend a Force Point as a swift action to create a 3x3 square area of difficult terrain centered on you. You ignore any penalties for moving on difficult terrain that you create using this talent."
           },
           "summary": "You can spend a Force Point as a swift action to create a 3x3 square area of difficult terrain centered on you.",
           "prerequisites": "",

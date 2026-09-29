@@ -10,7 +10,7 @@
   "generatedAgainst": {
     "canonical": {
       "path": "data/canonical/talents.json",
-      "fingerprint": "fnv1a64:251001ba5bea19a1"
+      "fingerprint": "fnv1a64:8ec7fe66c2980baa"
     },
     "registry": {
       "path": "data/audits/talent-canonical-tree-registry.json",
@@ -26,7 +26,7 @@
     },
     "phase2": {
       "path": "data/audits/talent-phase-2-force-unleashed-campaign-guide-content.json",
-      "fingerprint": "fnv1a64:f281eeab4ab321be"
+      "fingerprint": "fnv1a64:ffcf039fca0f0c62"
     },
     "discrepancy": {
       "path": "data/audits/talent-phase-2-force-unleashed-campaign-guide-discrepancy-manifest.json",
@@ -436,8 +436,8 @@
       },
       "targetFields": {
         "name": "Jedi Hunter",
-        "system.benefit": "You are skilled at fighting Jedi and other Force-users. You gain a +1 insight bonus to Fortitude and Will Defense and deal +1 die of damage against characters who have the Force Sensitivity feat. EvITeE TROOPER TALENTS The following talents are intended for use with the elite trooper prestige class.",
-        "system.description.value": "You are skilled at fighting Jedi and other Force-users. You gain a +1 insight bonus to Fortitude and Will Defense and deal +1 die of damage against characters who have the Force Sensitivity feat. EvITeE TROOPER TALENTS The following talents are intended for use with the elite trooper prestige class.",
+        "system.benefit": "You are skilled at fighting Jedi and other Force-users. You gain a +1 insight bonus to Fortitude and Will Defense and deal +1 die of damage against characters who have the Force Sensitivity feat.",
+        "system.description.value": "You are skilled at fighting Jedi and other Force-users. You gain a +1 insight bonus to Fortitude and Will Defense and deal +1 die of damage against characters who have the Force Sensitivity feat.",
         "system.summary": "You are skilled at fighting Jedi and other Force-users.",
         "system.prerequisites": "",
         "system.source": "Force Unleashed Campaign Guide",
@@ -3480,9 +3480,9 @@
       },
       "targetFields": {
         "name": "Knowledge Is Strength",
-        "system.benefit": "As a swift action, you can designate a single target within your line of sight and make a Knowledge (galactic lore} check against a DC equal to 15 + the target's CL. If the check is successful, for the remainder of the encounter you gain a +2 morale bonus on attack rolls against that target.",
-        "system.description.value": "As a swift action, you can designate a single target within your line of sight and make a Knowledge (galactic lore} check against a DC equal to 15 + the target's CL. If the check is successful, for the remainder of the encounter you gain a +2 morale bonus on attack rolls against that target.",
-        "system.summary": "As a swift action, you can designate a single target within your line of sight and make a Knowledge (galactic lore} check against a DC equal to 15 + the target's CL.",
+        "system.benefit": "As a swift action, you can designate a single target within your line of sight and make a Knowledge (galactic lore) check against a DC equal to 15 + the target's CL. If the check is successful, for the remainder of the encounter you gain a +2 morale bonus on attack rolls against that target.",
+        "system.description.value": "As a swift action, you can designate a single target within your line of sight and make a Knowledge (galactic lore) check against a DC equal to 15 + the target's CL. If the check is successful, for the remainder of the encounter you gain a +2 morale bonus on attack rolls against that target.",
+        "system.summary": "As a swift action, you can designate a single target within your line of sight and make a Knowledge (galactic lore) check against a DC equal to 15 + the target's CL.",
         "system.prerequisites": "Spynet Agent",
         "system.source": "Force Unleashed Campaign Guide",
         "system.page": 50
@@ -11645,9 +11645,9 @@
       "currentCanonicalFields": null,
       "targetFields": {
         "name": "Combat Repairs",
-        "system.benefit": "Once per day, as a full-round action, you can use the Mechanics skill to repair yourself (using the repair droid application of the skill}, as opposed to the normal 1 hour.",
-        "system.description.value": "Once per day, as a full-round action, you can use the Mechanics skill to repair yourself (using the repair droid application of the skill}, as opposed to the normal 1 hour.",
-        "system.summary": "Once per day, as a full-round action, you can use the Mechanics skill to repair yourself (using the repair droid application of the skill}, as opposed to the normal 1 hour.",
+        "system.benefit": "Once per day, as a full-round action, you can use the Mechanics skill to repair yourself (using the repair droid application of the skill), as opposed to the normal 1 hour.",
+        "system.description.value": "Once per day, as a full-round action, you can use the Mechanics skill to repair yourself (using the repair droid application of the skill), as opposed to the normal 1 hour.",
+        "system.summary": "Once per day, as a full-round action, you can use the Mechanics skill to repair yourself (using the repair droid application of the skill), as opposed to the normal 1 hour.",
         "system.prerequisites": "",
         "system.source": "Force Unleashed Campaign Guide",
         "system.page": 103
@@ -11698,11 +11698,11 @@
         "img": "icons/svg/item-bag.svg",
         "system": {
           "treeId": "73814706c00849c6",
-          "benefit": "Once per day, as a full-round action, you can use the Mechanics skill to repair yourself (using the repair droid application of the skill}, as opposed to the normal 1 hour.",
+          "benefit": "Once per day, as a full-round action, you can use the Mechanics skill to repair yourself (using the repair droid application of the skill), as opposed to the normal 1 hour.",
           "description": {
-            "value": "Once per day, as a full-round action, you can use the Mechanics skill to repair yourself (using the repair droid application of the skill}, as opposed to the normal 1 hour."
+            "value": "Once per day, as a full-round action, you can use the Mechanics skill to repair yourself (using the repair droid application of the skill), as opposed to the normal 1 hour."
           },
-          "summary": "Once per day, as a full-round action, you can use the Mechanics skill to repair yourself (using the repair droid application of the skill}, as opposed to the normal 1 hour.",
+          "summary": "Once per day, as a full-round action, you can use the Mechanics skill to repair yourself (using the repair droid application of the skill), as opposed to the normal 1 hour.",
           "prerequisites": "",
           "source": "Force Unleashed Campaign Guide",
           "page": 103,

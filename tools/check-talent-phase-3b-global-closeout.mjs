@@ -175,8 +175,8 @@ invariant(totals.claims === 1182, 'publication claims must total 1182');
 invariant(totals.owned === 1180, 'owned identities must total 1180');
 invariant(totals.refs === 2, 'reference-only publication claims must total 2');
 assertSame(totals.dispositions, {
-  UPDATE_CONTENT: 727,
-  UPDATE_METADATA: 144,
+  UPDATE_CONTENT: 725,
+  UPDATE_METADATA: 146,
   CREATE: 236,
   REMOVE_CONTAMINATION: 38,
   CORRECT_TREE: 23,
