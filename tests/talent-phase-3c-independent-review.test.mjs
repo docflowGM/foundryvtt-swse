@@ -4,7 +4,7 @@ import path from 'node:path';
 import { spawnSync } from 'node:child_process';
 import { projectPhase3C, loadCommittedManifests, detectPackState } from '../tools/apply-talent-phase-3c.mjs';
 import {
-  ROOT, loadInputs, applyReference, checkInvariants, runAudit, protectedIds, BLOCKER_SAME_NAME_IN_TREE
+  ROOT, loadInputs, applyReference, checkInvariants, runAudit, protectedIds, SAME_NAME_IN_TREE_CHECK
 } from '../tools/audit-talent-phase-3c-independent.mjs';
 
 // Independent Phase 3C review: read-only. Never writes production packs.
@@ -25,13 +25,16 @@ const failing = (results, fragment) => results.filter(r => !r.ok && r.id.include
 
 /* 1. Baseline: every invariant holds and a second application is a no-op. */
 const audit = runAudit();
-test('every independent invariant passes except the ONE documented open blocker (B2)', () => {
-  // B2: the certified rename of Infamy|Notorious and Master of Teräs Käsi|Teräs Käsi Basics creates a same-name pair
-  // with the protected review extras a7d8c4da96eacad4 / 222327492c484b4a inside one tree. That is a hard failure in
-  // tools/audit-talent-tree-membership.mjs. When B2 is resolved this assertion must be tightened to an empty list.
-  const bad = audit.results.filter(r => !r.ok).map(r => r.id);
-  assert.deepEqual(bad, [BLOCKER_SAME_NAME_IN_TREE]);
-  assert.ok(audit.results.length >= 18);
+test('all 18 independent invariants pass (incl. second-run zero diff)', () => {
+  assert.deepEqual(audit.results.filter(r => !r.ok), []);
+  assert.equal(audit.results.length, 18);
+});
+test('a third same-name pair (not a certified review extra) is rejected by the independent model', () => {
+  const after = structuredClone(audit.first);
+  const tree = after.trees.find(t => t._id === '67fdd8dce9abd6c1');
+  const twin = structuredClone(after.talents.find(t => t._id === tree.system.talentIds[0])); twin._id = 'eeeeeeeeeeeeeeee';
+  after.talents.push(twin); tree.system.talentIds.push(twin._id);
+  assert.ok(failing(checkInvariants(audit.inputs, after, { reference: audit.second }), 'same-name').length >= 1);
 });
 test('protected set is exactly 92 (90 deferred + 2 review extras)', () => {
   assert.equal(protectedIds(audit.inputs.closeout).size, 92);

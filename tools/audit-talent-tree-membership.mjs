@@ -97,9 +97,42 @@ for (const talent of talents) {
   });
 }
 
+// Phase 3C: two certified review-only production extras are deliberately deferred to Phase 3D
+// (data/audits/talent-phase-3b-global-closeout.json -> reviewExtras). The certified canonical renames make each of
+// them a same-name twin of its canonical alias inside the same tree. That single condition is tolerated, and only
+// for those exact IDs, only inside the tree the closeout records for them, and only as a pair. The list of IDs is
+// read from the closeout (not hand-copied here). Every other duplicate name remains a hard failure.
+function loadProtectedReviewExtras() {
+  const closeoutPath = path.join(ROOT, 'data', 'audits', 'talent-phase-3b-global-closeout.json');
+  if (!fs.existsSync(closeoutPath)) return new Map();
+  const closeout = JSON.parse(fs.readFileSync(closeoutPath, 'utf8'));
+  return new Map((closeout.reviewExtras ?? []).map((extra) => [
+    extra.productionRecordId,
+    { name: extra.name, treeIds: new Set((extra.treeClaims ?? []).map((claim) => claim.treeId)), classification: extra.classification },
+  ]));
+}
+const protectedReviewExtras = loadProtectedReviewExtras();
+
+function splitApprovedDuplicateNames(duplicates) {
+  const unapproved = [];
+  const allowed = [];
+  for (const group of duplicates) {
+    const treeId = String(group.key).split('::')[0];
+    const ids = group.values.map((value) => value.id);
+    const extras = ids.filter((id) => protectedReviewExtras.has(id));
+    const approved = ids.length === 2
+      && extras.length === 1
+      && [...protectedReviewExtras.get(extras[0]).treeIds].some((claimed) => normalizeKey(claimed) === treeId);
+    (approved ? allowed : unapproved).push(approved ? { ...group, protectedReviewExtraId: extras[0] } : group);
+  }
+  return { unapproved, allowed };
+}
+
+const duplicateNameSplit = splitApprovedDuplicateNames(getDuplicates(talentNameMap));
+
 const hardFailures = {
   duplicateTalentIds: getDuplicates(talentIdMap),
-  duplicateTalentNamesWithinTree: getDuplicates(talentNameMap),
+  duplicateTalentNamesWithinTree: duplicateNameSplit.unapproved,
   treeClaimsMissingTalents: [],
   duplicateTreeSideTalentClaims: [],
   talentsUnclaimedByTree: [],
@@ -180,6 +213,7 @@ const report = {
     classClaimedTrees: classClaimedTreeIds.size,
   },
   hardFailures,
+  allowedProtectedReviewExtraDuplicateNames: duplicateNameSplit.allowed,
   inventory: { treesNotClaimedByClass },
 };
 
@@ -190,6 +224,10 @@ for (const [name, entries] of Object.entries(hardFailures)) {
   console.log(`${name}: ${entries.length}`);
   for (const entry of entries.slice(0, 25)) console.log(`  - ${JSON.stringify(entry)}`);
   if (entries.length > 25) console.log(`  ... ${entries.length - 25} more`);
+}
+console.log(`allowedProtectedReviewExtraDuplicateNames: ${duplicateNameSplit.allowed.length}`);
+for (const entry of duplicateNameSplit.allowed) {
+  console.log(`  - allowed (Phase 3D-deferred review extra ${entry.protectedReviewExtraId}): ${JSON.stringify(entry)}`);
 }
 console.log(`treesNotClaimedByClass: ${treesNotClaimedByClass.length}`);
 
