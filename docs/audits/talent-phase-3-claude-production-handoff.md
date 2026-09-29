@@ -11,6 +11,7 @@ A talent identity is `canonicalTreeKey + talent name`. Talent name alone is neve
 | Book | Owned identities | Manifest | Checker |
 |---|---:|---|---|
 | Saga Edition Core Rulebook | 198 | `data/audits/talent-phase-3b-core-rulebook-manifest.json` | `node tools/build-talent-phase-3b-core-manifest.mjs --check` |
+| Galaxy of Intrigue | 43 | `data/audits/talent-phase-3b-galaxy-of-intrigue-manifest.json` | `node tools/build-talent-phase-3b-galaxy-of-intrigue-manifest.mjs --check` |
 | Starships of the Galaxy | 23 | `data/audits/talent-phase-3b-starships-of-the-galaxy-manifest.json` | `node tools/build-talent-phase-3b-starships-manifest.mjs --check` |
 | Scavenger's Guide to Droids | 31 | `data/audits/talent-phase-3b-scavengers-guide-to-droids-manifest.json` | `node tools/build-talent-phase-3b-scavengers-manifest.mjs --check` |
 | Threats of the Galaxy | 11 | `data/audits/talent-phase-3b-threats-of-the-galaxy-manifest.json` | `node tools/build-talent-phase-3b-threats-manifest.mjs --check` |
@@ -64,6 +65,7 @@ Current review-only extras:
 ```bash
 node tools/build-talent-canonical-authority.mjs --check
 node tools/build-talent-phase-3b-core-manifest.mjs --check
+node tools/build-talent-phase-3b-galaxy-of-intrigue-manifest.mjs --check
 node tools/build-talent-phase-3b-starships-manifest.mjs --check
 node tools/build-talent-phase-3b-scavengers-manifest.mjs --check
 node tools/build-talent-phase-3b-threats-manifest.mjs --check
@@ -79,3 +81,7 @@ If any check fails, stop and regenerate/re-certify the affected manifest against
 - No deletion of review-only extras in Phase 3C.
 - No flattening every description into one schema shape.
 - No erasing ability metadata, structured prerequisites, tags, effects, flags, images, ownership, folders, or sorting unless explicitly targeted.
+
+## Missing-tree execution rule
+
+When a book manifest contains `treeCreates`, create those talent-tree documents before their talents. Then apply every listed `classAccessMutation` to `packs/classes.db`. Never create talents with an unresolved or nonexistent parent tree.
