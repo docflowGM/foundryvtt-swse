@@ -12,6 +12,7 @@ A talent identity is `canonicalTreeKey + talent name`. Talent name alone is neve
 |---|---:|---|---|
 | Saga Edition Core Rulebook | 198 | `data/audits/talent-phase-3b-core-rulebook-manifest.json` | `node tools/build-talent-phase-3b-core-manifest.mjs --check` |
 | Starships of the Galaxy | 23 | `data/audits/talent-phase-3b-starships-of-the-galaxy-manifest.json` | `node tools/build-talent-phase-3b-starships-manifest.mjs --check` |
+| Scavenger's Guide to Droids | 31 | `data/audits/talent-phase-3b-scavengers-guide-to-droids-manifest.json` | `node tools/build-talent-phase-3b-scavengers-manifest.mjs --check` |
 | Threats of the Galaxy | 11 | `data/audits/talent-phase-3b-threats-of-the-galaxy-manifest.json` | `node tools/build-talent-phase-3b-threats-manifest.mjs --check` |
 
 The shared implementation is `tools/build-talent-phase-3b-manifest.mjs`.
@@ -64,6 +65,7 @@ Current review-only extras:
 node tools/build-talent-canonical-authority.mjs --check
 node tools/build-talent-phase-3b-core-manifest.mjs --check
 node tools/build-talent-phase-3b-starships-manifest.mjs --check
+node tools/build-talent-phase-3b-scavengers-manifest.mjs --check
 node tools/build-talent-phase-3b-threats-manifest.mjs --check
 ```
 
