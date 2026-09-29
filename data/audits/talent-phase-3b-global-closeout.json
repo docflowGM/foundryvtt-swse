@@ -52,6 +52,44 @@
     "preservedProductionRecordId": "bab9a1ce285f98b9",
     "newCoreCreateRecordId": "c919d7682bd9df40"
   },
+  "phase3bPreflightCorrections": [
+    {
+      "date": "2026-09-29",
+      "discoveredBy": "Phase 3C-1 deterministic preflight",
+      "sourcebook": "Jedi Academy Training Manual",
+      "issue": "The initially certified JATM manifest assigned different generated target tree IDs to talents within each of two missing Force-tradition trees, so most created talents would have referenced tree documents that Phase 3C would never create.",
+      "resolution": "Regenerate the JATM manifest from the shared deterministic builder so every Shapers of Kro Var member targets one created tree and every Zeison Sha Warrior member targets one created tree. Accept the regenerated deterministic talent IDs for the ten members of those two generated trees.",
+      "countsChanged": false,
+      "dispositionsChanged": false,
+      "productionMutationPerformed": false,
+      "previousManifestBlobSha": "fc76c9769e2054f1fbfc4a63fd300fa8c710c6c0",
+      "correctedManifestBlobSha": "c0662d689020f372c6691760ee4a4f35c36a6568",
+      "correctedTreeCreates": [
+        {
+          "canonicalTreeKey": "Jedi Academy Training Manual|Shapers of Kro Var",
+          "createTreeId": "4b2b7b67261c99fa",
+          "memberTalentIds": [
+            "953e539478ea6c3e",
+            "8436e1f101dc438c",
+            "5567797336fc8571",
+            "7f63f6f3fec96bf3",
+            "897c61c8054bdd9e"
+          ]
+        },
+        {
+          "canonicalTreeKey": "Jedi Academy Training Manual|Zeison Sha Warrior",
+          "createTreeId": "ec0c0bc224d2e4d5",
+          "memberTalentIds": [
+            "3d7da7d62139a6e9",
+            "8f172c307cdec956",
+            "abbf02a67dbe0c89",
+            "8ddbbeb09758295d",
+            "5854b821895ffdd9"
+          ]
+        }
+      ]
+    }
+  ],
   "perBook": [
     {
       "bookKey": "clone-wars",
@@ -153,7 +191,7 @@
       "bookKey": "jatm",
       "sourcebook": "Jedi Academy Training Manual",
       "manifest": "data/audits/talent-phase-3b-jedi-academy-training-manual-manifest.json",
-      "manifestBlobSha": "fc76c9769e2054f1fbfc4a63fd300fa8c710c6c0",
+      "manifestBlobSha": "c0662d689020f372c6691760ee4a4f35c36a6568",
       "publicationClaims": 118,
       "ownedCanonicalIdentities": 117,
       "referenceOnlyClaims": 1,
@@ -475,15 +513,15 @@
     {
       "sourcebook": "Jedi Academy Training Manual",
       "canonicalTreeKey": "Jedi Academy Training Manual|Shapers of Kro Var",
-      "createTreeId": "ab3311a860d8d359",
+      "createTreeId": "4b2b7b67261c99fa",
       "displayName": "Shapers of Kro Var",
       "classAccess": [],
       "memberTalentIds": [
-        "78a296a68645450b",
-        "2f9bd5b93d0eb82a",
-        "d257d180378c8f9d",
-        "07680913de8adc53",
-        "addff1294f534ac7"
+        "953e539478ea6c3e",
+        "8436e1f101dc438c",
+        "5567797336fc8571",
+        "7f63f6f3fec96bf3",
+        "897c61c8054bdd9e"
       ],
       "memberTalentNames": [
         "Combustion",
@@ -496,15 +534,15 @@
     {
       "sourcebook": "Jedi Academy Training Manual",
       "canonicalTreeKey": "Jedi Academy Training Manual|Zeison Sha Warrior",
-      "createTreeId": "aec386e85f66e93e",
+      "createTreeId": "ec0c0bc224d2e4d5",
       "displayName": "Zeison Sha Warrior",
       "classAccess": [],
       "memberTalentIds": [
-        "69380dec0c195e82",
-        "b2c9221dafb87277",
-        "72ac4192d35d3ae8",
-        "b7b402e8065f4fa8",
-        "e7307fe67d4abd64"
+        "3d7da7d62139a6e9",
+        "8f172c307cdec956",
+        "abbf02a67dbe0c89",
+        "8ddbbeb09758295d",
+        "5854b821895ffdd9"
       ],
       "memberTalentNames": [
         "Discblade Arc",

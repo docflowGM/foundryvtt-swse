@@ -70,6 +70,20 @@ Final authority:
 
 This is now enforced by the global closeout checker.
 
+## Phase 3C preflight correction — JATM generated trees
+
+The Phase 3C-1 reproducibility gate found a second pre-production certification defect in the Jedi Academy Training Manual manifest. The initial JATM packet assigned different generated target-tree IDs to talents that all belonged to the same two missing Force-tradition trees. That plan was internally inconsistent: Phase 3C would create only two tree documents, while several generated talents would point to other, nonexistent tree IDs.
+
+The JATM manifest was therefore regenerated from the shared deterministic builder before any production mutation. Corrected authority:
+
+- Shapers of Kro Var — `4b2b7b67261c99fa` — all five generated members target this tree.
+- Zeison Sha Warrior — `ec0c0bc224d2e4d5` — all five generated members target this tree.
+- The ten affected generated talent IDs were replaced by the regenerated deterministic IDs recorded in the corrected JATM manifest and global closeout JSON.
+- Publication counts, canonical identity counts, disposition totals, and class-access counts are unchanged.
+- No production talent, tree, or class record was modified by this correction.
+
+The corrected JATM manifest blob is `c0662d689020f372c6691760ee4a4f35c36a6568`. This correction is recorded under `phase3bPreflightCorrections` in the machine-readable global closeout.
+
 ## Production inverse classification
 
 The current production talent pack contains 1,024 documents.
@@ -208,8 +222,8 @@ Seven canonical trees must be created before their talents:
 
 ### Jedi Academy Training Manual
 
-- Shapers of Kro Var — `ab3311a860d8d359`
-- Zeison Sha Warrior — `aec386e85f66e93e`
+- Shapers of Kro Var — `4b2b7b67261c99fa`
+- Zeison Sha Warrior — `ec0c0bc224d2e4d5`
 
 The five class-access mutations are limited to the Galaxy at War and Galaxy of Intrigue trees. The two Jedi Academy trees are Force-tradition gated and receive no invented class access.
 
