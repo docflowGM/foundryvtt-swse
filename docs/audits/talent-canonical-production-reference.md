@@ -5165,6 +5165,1378 @@ When you fight defensively, as a reaction you can negate a melee attack by makin
 ---
 
 
+## Book 8 — Scum and Villainy
+
+**Phase 3B status:** COMPLETE — 110 owned canonical identities; 104 UPDATE_CONTENT; 1 UPDATE_METADATA; 3 CORRECT_TREE; 1 CREATE; 1 IDENTITY_SPLIT; 1 tree consolidation.
+
+### Jedi Sentinel
+
+#### Persistent Haze
+
+- **Page:** 13
+- **Prerequisites:** Clear Mind, Force Haze
+- **Quick summary:** Whenever anyone concealed by your use of the Force Haze talent attacks, you maintain total concealment without having to make another Use the Force check.
+- **Production record:** `797de6f9dab4d578`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Whenever anyone concealed by your use of the Force Haze talent attacks, you maintain total concealment without having to make another Use the Force check. Only those who do not attack remain concealed; the attacker no longer has total concealment, even when using this talent.
+
+### Disgrace
+
+#### Ambush
+
+- **Page:** 13
+- **Prerequisites:** Dirty Tactics
+- **Quick summary:** During a surprise round, before combat begins, if you are not surprised you can give up your standard action to allow all nonsurprised allies within your line of sight to take an extra move action during the surprise round.
+- **Production record:** `a3ac90e84127805d`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+During a surprise round, before combat begins, if you are not surprised you can give up your standard action to allow all nonsurprised allies within your line of sight to take an extra move action during the surprise round. Allies can spend this move action to instead reroll their Initiative check and take the better result as a free action before combat begins.
+
+#### Castigate
+
+- **Page:** 14
+- **Prerequisites:** None.
+- **Quick summary:** You deliver a scathing rebuke against a target to erode its will and fill it with doubt.
+- **Production record:** `cad07bbaa57634c0`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+You deliver a scathing rebuke against a target to erode its will and fill it with doubt. Make a Persuasion check as a standard action against the target's Will Defense. If successful, impose a -2 penalty to all the target's Defenses until the end of your next turn. You can use this ability only against targets that can clearly hear you and understand your language.
+
+#### Dirty Tactics
+
+- **Page:** 14
+- **Prerequisites:** None.
+- **Quick summary:** Once per encounter, as a standard action, you can grant a tactical advantage to all allies within your line of sight.
+- **Production record:** `1e7a0010a589b870`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Once per encounter, as a standard action, you can grant a tactical advantage to all allies within your line of sight. When any ally flanks an opponent, that ally gains a +4 flanking bonus on melee attack rolls instead of the normal +2 bonus. Allies lose this benefit immediately if line of sight is broken, if you are unconscious or dead, or at the end of the encounter.
+
+#### Misplaced Loyalty
+
+- **Page:** 14
+- **Prerequisites:** Dirty Tactics
+- **Quick summary:** As a swift action once per turn, you can make a Persuasion check against the Will Defense of all opponents within your line of sight.
+- **Production record:** `4635850263c7bf94`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+As a swift action once per turn, you can make a Persuasion check against the Will Defense of all opponents within your line of sight. If successful, a target cannot attack you if one of your allies is within 6 squares of you. You may not use this talent in the same round as the soldier's Draw Fire talent. This effect lasts until the beginning of your next turn.
+
+#### Two-Faced
+
+- **Page:** 14
+- **Prerequisites:** Dirty Tactics, Misplaced Loyalty
+- **Quick summary:** Once each per encounter, attack to set up a retaliatory strike, become nonthreatening, or gain +2 attack and damage against a target that ignored you.
+- **Production record:** `cef9b7ca6a26f4a6`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+You can use each of the following actions once per encounter as a standard action. False Security: Make a single melee or ranged attack against a target within range; any time before the beginning of your next turn, you can make a single attack against that target as a reaction if that target attacks you. Nonthreatening: Make a single melee or ranged attack against a target within range; until the beginning of your next turn, that opponent cannot make any attacks against you except attacks of opportunity; this is a mind-affecting effect. Tricky Target: Make a single melee or ranged attack against a target within range that has not attacked you since the end of your last turn; you gain a +2 bonus on your attack roll and damage roll for this attack.
+
+#### Unreadable
+
+- **Page:** 14
+- **Prerequisites:** None.
+- **Quick summary:** You gain a +5 bonus to your Will Defense against skill checks made to read your emotions and influence your attitude.
+- **Production record:** `01bcee2365b82ce6`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+You gain a +5 bonus to your Will Defense against skill checks made to read your emotions and influence your attitude. In addition, whenever you successfully feint a target in combat, that target is flat-footed against all your attacks until the end of your next turn.
+
+### Inspiration
+
+#### Beloved
+
+- **Page:** 14
+- **Prerequisites:** Bolster Ally, Inspire Confidence
+- **Quick summary:** Once each per encounter, use Guardian for +2 Reflex, Reprisal to enable an ally's reaction attack, or To Me! to let visible allies reposition when you take damage.
+- **Production record:** `444c032c563c18a1`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Your allies hold you in such esteem that when you are threatened or injured, you can impel them to action. You can use each of the following actions once per encounter. Guardian: Choose one ally as a swift action. As long as you remain within 6 squares of the ally, you gain a +2 bonus to your Reflex Defense until the start of your next turn. Reprisal: Make a single melee or ranged attack against any target within range as a standard action. If your attack roll succeeds and that target attacks you before the end of your next turn, one ally within 6 squares can make an attack against that target as a reaction. To Me!: Spend a swift action. Whenever you take any damage before the beginning of your next turn, each ally within line of sight can move 2 squares as a reaction; this movement does not provoke attacks of opportunity.
+
+### Fortune
+
+#### Avert Disaster
+
+- **Page:** 14
+- **Prerequisites:** Fool's Luck
+- **Quick summary:** Once per encounter, you can turn a critical hit against you into a normal hit.
+- **Production record:** `f453d09361b02e5a`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Once per encounter, you can turn a critical hit against you into a normal hit.
+
+#### Better Lucky than Dead
+
+- **Page:** 14
+- **Prerequisites:** Fool's Luck
+- **Quick summary:** Once per encounter, as a reaction, you gain a +5 luck bonus to any one defense until the start of your next turn.
+- **Production record:** `bea59db82b097eea`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Once per encounter, as a reaction, you gain a +5 luck bonus to any one defense until the start of your next turn.
+
+#### Dumb Luck
+
+- **Page:** 14
+- **Prerequisites:** Knack, Lucky Shot
+- **Quick summary:** Once each per encounter, use Dumb Luck to gain Reflex against a damaged target, escape after being damaged, or gain +2 on your next attack after a miss.
+- **Production record:** `7a024dac260bf9ec`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+You can use each of the following actions once per encounter as a standard action. Elude Enemy: Make a single melee or ranged attack against any target within range; if you damage the target, you gain a +2 bonus to your Reflex Defense against that target until the beginning of your next turn. Escape: Make a single melee or ranged attack against any target within range; if the target successfully damages you before the start of your next turn, you can immediately move 2 squares as a reaction without provoking attacks of opportunity. Make your Own Luck: Make a single melee or ranged attack against any target within range; if you miss this target, you gain a +2 bonus on your next attack roll.
+
+#### Labyrinthine Mind
+
+- **Page:** 15
+- **Prerequisites:** None.
+- **Quick summary:** Once per encounter, as a reaction, you become immune to all mind-affecting effects until the end of your next turn.
+- **Production record:** `e07f87b5dbcf035f`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Once per encounter, as a reaction, you become immune to all mind-affecting effects until the end of your next turn. You can choose to ignore this for beneficial effects. Any mind-affecting effects currently affecting you are also removed, though you may choose to retain any beneficial effects.
+
+#### Ricochet Shot
+
+- **Page:** 15
+- **Prerequisites:** Knack, Lucky Shot
+- **Quick summary:** When making a ranged attack against a target with cover, you can choose to reduce the benefit of that target's cover by one step, from improved cover to cover or cover to no cover.
+- **Production record:** `5459cc5eedf15c8d`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+When making a ranged attack against a target with cover, you can choose to reduce the benefit of that target's cover by one step, from improved cover to cover or cover to no cover. You deal only half damage with this attack.
+
+#### Uncanny Luck
+
+- **Page:** 15
+- **Prerequisites:** Knack, Lucky Shot
+- **Quick summary:** Once per encounter, you can consider any single d20 roll of 16 or higher to be a natural 20.
+- **Production record:** `e435b618793d8bc7`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Once per encounter, you can consider any single d20 roll of 16 or higher to be a natural 20.
+
+#### Unlikely Shot
+
+- **Page:** 15
+- **Prerequisites:** Knack, Lucky Shot
+- **Quick summary:** Once per encounter, you can reroll the damage of one attack and take the better result.
+- **Production record:** `beae25ca4ed40eea`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Once per encounter, you can reroll the damage of one attack and take the better result.
+
+### Misfortune
+
+#### Befuddle
+
+- **Page:** 15
+- **Prerequisites:** None.
+- **Quick summary:** If you succeed on a Deception check against a target's Will Defense as a swift action, until the start of your next turn you can move through the threatened area of that target as a part of your move action without provoking an attack of opportunity.
+- **Production record:** `1b26576c71db3b1b`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+If you succeed on a Deception check against a target's Will Defense as a swift action, until the start of your next turn you can move through the threatened area of that target as a part of your move action without provoking an attack of opportunity. Each threatened square that you move through counts as 2 squares of movement.
+
+#### Cunning Strategist
+
+- **Page:** 15
+- **Prerequisites:** Disruptive, Walk the Line
+- **Quick summary:** Once each per encounter, attack to impose -5 Reflex, reduce speed by 2, or attack two nearby targets at -5 while rolling damage once.
+- **Production record:** `94adb5de4d3a7b20`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+You can use each of the following actions once per encounter as a standard action. Create Opening: Make a single melee or ranged attack against any target within range; if you damage the target, it takes a -5 penalty to its Reflex Defense until the start of your next turn. Crippling Attack: Make a single melee or ranged attack against an opponent within range; until the start of your next turn, the target takes a -2 penalty to its speed. Vicious Attack: Make a melee or ranged attack with one weapon against two opponents that are within 2 squares of each other; make a separate attack roll at a -5 penalty against each target, but roll damage only once.
+
+#### Hesitate
+
+- **Page:** 15
+- **Prerequisites:** None.
+- **Quick summary:** You can fill your opponent with doubt by making a Persuasion check as a standard action against a single target that can hear and understand you within 12 squares.
+- **Production record:** `1c381292494e3139`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+You can fill your opponent with doubt by making a Persuasion check as a standard action against a single target that can hear and understand you within 12 squares. If your check result equals or exceeds the target's Will Defense, the target takes a -2 penalty to its base speed, and if the target takes a standard action it must also spend its swift action. This penalty lasts until the end of the target's next turn.
+
+#### Improved Skirmisher
+
+- **Page:** 15
+- **Prerequisites:** Skirmisher
+- **Quick summary:** When you move at least 2 squares before your attack and end your move in a different square from where you started, you gain a +1 bonus to all your defenses until the start of your next turn.
+- **Production record:** `dd69400f0069f846`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+When you move at least 2 squares before your attack and end your move in a different square from where you started, you gain a +1 bonus to all your defenses until the start of your next turn.
+
+#### Sow Confusion
+
+- **Page:** 15
+- **Prerequisites:** None.
+- **Quick summary:** Once per encounter, as a standard action, you can make a Deception check and compare the result to the Will Defense of all enemies in your line of sight.
+- **Production record:** `6b09fe0c6fe98367`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Once per encounter, as a standard action, you can make a Deception check and compare the result to the Will Defense of all enemies in your line of sight. If the check result equals or exceeds an enemy's Will Defense, that enemy must spend a swift action in addition to a standard action to make an attack until the start of your next turn.
+
+#### Sudden Strike
+
+- **Page:** 15
+- **Prerequisites:** Skirmisher, Sneak Attack
+- **Quick summary:** Whenever you would gain the benefit of the Skirmisher talent and you successfully hit your opponent, you deal sneak attack damage in addition to the normal damage dealt by the attack.
+- **Production record:** `08c80cfea1a3b886`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Whenever you would gain the benefit of the Skirmisher talent and you successfully hit your opponent, you deal sneak attack damage in addition to the normal damage dealt by the attack.
+
+#### Weakening Strike
+
+- **Page:** 15
+- **Prerequisites:** Dastardly Strike
+- **Quick summary:** Whenever you deal damage to an opponent denied its Dexterity bonus to Reflex Defense, you can choose not to move the target down the condition track and instead impose a -5 penalty on all your opponent's attacks and melee damage until the end of your next turn.
+- **Production record:** `9c1e0b0566cb45c2`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Whenever you deal damage to an opponent denied its Dexterity bonus to Reflex Defense, you can choose not to move the target down the condition track and instead impose a -5 penalty on all your opponent's attacks and melee damage until the end of your next turn.
+
+### Slicer
+
+#### Virus
+
+- **Page:** 16
+- **Prerequisites:** Electronic Sabotage, trained in Use Computer
+- **Quick summary:** You can substitute a Use Computer check for a Mechanics check when disabling a computerized device.
+- **Production record:** `aa964478cf5b30e8`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+You can substitute a Use Computer check for a Mechanics check when disabling a computerized device. The effort takes 1 minute and the DC is equal to the computer's Will Defense. In addition, whenever anyone accesses the affected computer using a droid or another computer, that computer or droid's attitude immediately becomes unfriendly.
+
+### Spacer
+
+#### Cramped Quarters Fighting
+
+- **Page:** 16
+- **Prerequisites:** Spacehound, Starship Raider
+- **Quick summary:** When adjacent to an obstacle or barrier, you gain a +2 cover bonus to your Reflex Defense.
+- **Production record:** `2b424f7cc4115acf`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+When adjacent to an obstacle or barrier, you gain a +2 cover bonus to your Reflex Defense.
+
+#### Make a Break for It
+
+- **Page:** 16
+- **Prerequisites:** Spacehound, Stellar Warrior
+- **Quick summary:** Once per encounter, while on or in a vehicle, you can move up to one-half your speed or move the vehicle up to one-half its speed if you are the pilot, as a swift action.
+- **Production record:** `294bad1c8a7b4132`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Once per encounter, while on or in a vehicle, you can move up to one-half your speed or move the vehicle up to one-half its speed if you are the pilot, as a swift action. This movement does not provoke attacks of opportunity.
+
+### Camouflage
+
+#### Hide in Plain Sight
+
+- **Page:** 16
+- **Prerequisites:** Hidden Movement, Improved Stealth
+- **Quick summary:** Once per encounter, when you are within 2 squares of cover or concealment, you can move to that cover or concealment and make a Stealth check to hide as a single move action.
+- **Production record:** `f25d28252bade7d1`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Once per encounter, when you are within 2 squares of cover or concealment, you can move to that cover or concealment and make a Stealth check to hide as a single move action.
+
+#### Hunker Down
+
+- **Page:** 16
+- **Prerequisites:** None.
+- **Quick summary:** Whenever you benefit from cover, you can spend a swift action to hunker down and maximize the benefit of the cover.
+- **Production record:** `11065e811d738b6e`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Whenever you benefit from cover, you can spend a swift action to hunker down and maximize the benefit of the cover. You increase the benefit of cover to improved cover and improved cover to total cover.
+
+#### Shadow Striker
+
+- **Page:** 16
+- **Prerequisites:** Hidden Movement, Improved Stealth
+- **Quick summary:** Once each per encounter, attack from stealth to gain total concealment, restrict a target to one swift action, or gain +2/+5 on the attack.
+- **Production record:** `bca8ce9a488cf3d8`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+You can use each of the following actions once per encounter as a standard action. Blinding Strike: Make a single melee or ranged attack against an opponent within range; if you damage the target, you gain total concealment against that target until the beginning of your next turn. Confusing Strike: Make a single melee or ranged attack against an opponent within range; if the opponent is denied its Dexterity bonus to Reflex Defense or you have concealment from this opponent, a successful attack also causes the opponent to be able to take only a swift action on its next turn. Unexpected Attack: Make a melee or ranged attack within range against an opponent from whom you have concealment; you gain a +2 bonus on this attack roll if you have concealment or a +5 bonus if you have total concealment.
+
+### Fringer
+
+#### Flee
+
+- **Page:** 17
+- **Prerequisites:** Long Stride
+- **Quick summary:** As a standard action, you can designate a single opponent and move up to your speed away from that opponent.
+- **Production record:** `9ee88ce289527ed3`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+As a standard action, you can designate a single opponent and move up to your speed away from that opponent. This movement does not provoke attacks of opportunity from that opponent, though it might provoke as normal from all other opponents. In addition, your speed increases by 2 until the end of your next turn.
+
+#### Keep it Together
+
+- **Page:** 17
+- **Prerequisites:** Jury-Rigger
+- **Quick summary:** Whenever you successfully jury-rig a device or vehicle, the vehicle does not move -5 steps along the condition track at the end of the encounter, though it does move -2 persistent steps down the condition track.
+- **Production record:** `9211e3f6268b3413`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Whenever you successfully jury-rig a device or vehicle, the vehicle does not move -5 steps along the condition track at the end of the encounter, though it does move -2 persistent steps down the condition track.
+
+#### Sidestep
+
+- **Page:** 17
+- **Prerequisites:** Long Stride
+- **Quick summary:** You can use a swift action to reduce the cost of each move into a diagonal space to 1 until the end of your turn if you are wearing light armor or no armor.
+- **Production record:** `b4ae0f26326cdf71`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+You can use a swift action to reduce the cost of each move into a diagonal space to 1 until the end of your turn if you are wearing light armor or no armor. You cannot use this talent if you are wearing medium or heavy armor.
+
+#### Surge
+
+- **Page:** 17
+- **Prerequisites:** Long Stride
+- **Quick summary:** Once per encounter, you can use a swift action to move up to your speed.
+- **Production record:** `0a0681811f43b128`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Once per encounter, you can use a swift action to move up to your speed.
+
+#### Swift Strider
+
+- **Page:** 17
+- **Prerequisites:** Long Stride, Sidestep
+- **Quick summary:** Once each per encounter, move for a lasting Reflex bonus, charge without the Reflex penalty, or build Reflex bonuses from attacks of opportunity during movement.
+- **Production record:** `cae4f000dcfddd99`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+You can use each of the following actions once per encounter as a standard action. Blurring Burst: As a move action move up to your speed and gain a +2 bonus to your Reflex Defense until the end of the encounter. Sudden Assault: Make a charge attack against an enemy within range as a standard action; you take no penalty to your Reflex Defense for this attack. Weaving Stride: Move up to your speed as a move action; you gain a cumulative +2 dodge bonus to Reflex Defense for each attack of opportunity made against you during this movement, lasting until the beginning of your next turn.
+
+### Brawler
+
+#### Cantina Brawler
+
+- **Page:** 17
+- **Prerequisites:** None.
+- **Quick summary:** While flanked, you gain a +2 bonus to your attack rolls and damage rolls.
+- **Production record:** `430b73348460715e`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+While flanked, you gain a +2 bonus to your attack rolls and damage rolls.
+
+#### Counterpunch
+
+- **Page:** 18
+- **Prerequisites:** None.
+- **Quick summary:** When you fight defensively, any adjacent creature that attacks you provokes an attack of opportunity from you.
+- **Production record:** `e1ac13b319b66c76`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+When you fight defensively, any adjacent creature that attacks you provokes an attack of opportunity from you.
+
+#### Experienced Brawler
+
+- **Page:** 18
+- **Prerequisites:** Melee Smash, Stunning Strike
+- **Quick summary:** Once each per encounter after a melee attack, gain +5 Reflex, gain +5 Fortitude/Will, or move 2 squares safely as a reaction.
+- **Production record:** `bab0b5d081e304b6`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+You can use each of the following actions as a standard action once per encounter. Avoid Attack: Make a single melee attack against an opponent within your reach. Until the beginning of your next turn, you gain a +5 dodge bonus to Reflex Defense against a single attack as a reaction. Fortified Mind: Make a single melee attack against an opponent within your reach. Until the beginning of your next turn, you gain a +5 bonus to Fortitude or Will Defense against a single attack as a reaction. Focused Stance: Make a single melee attack against an opponent within your reach. At any time before the beginning of your next turn, as a reaction, you can move up to 2 squares; this movement does not provoke attacks of opportunity.
+
+#### Make Do
+
+- **Page:** 18
+- **Prerequisites:** None.
+- **Quick summary:** When fighting with an improvised weapon, you take no penalty on your attack rolls.
+- **Production record:** `95ae8969ac50b180`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+When fighting with an improvised weapon, you take no penalty on your attack rolls.
+
+#### Man Down
+
+- **Page:** 18
+- **Prerequisites:** None.
+- **Quick summary:** Whenever an ally within 6 squares is reduced to 0 hit points, you can immediately move up to your speed toward that ally as a reaction.
+- **Production record:** `da6a06aaf630376d`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Whenever an ally within 6 squares is reduced to 0 hit points, you can immediately move up to your speed toward that ally as a reaction. This movement does not provoke attacks of opportunity.
+
+#### Pick a Fight
+
+- **Page:** 18
+- **Prerequisites:** Cantina Brawler
+- **Quick summary:** During the surprise round, you and all allies within 6 squares of you gain a +1 morale bonus on attack rolls.
+- **Production record:** `ffe31e578e9abeee`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+During the surprise round, you and all allies within 6 squares of you gain a +1 morale bonus on attack rolls. Additionally, until the end of the encounter, you retain this bonus to attack rolls against any target you or your allies damage during the surprise round.
+
+#### Sucker Punch
+
+- **Page:** 18
+- **Prerequisites:** None.
+- **Quick summary:** When your melee attack damages an opponent that is denied its Dexterity bonus to Reflex Defense, that opponent cannot make attacks of opportunity until the end of its next turn.
+- **Production record:** `6044037b6eb3ede9`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+When your melee attack damages an opponent that is denied its Dexterity bonus to Reflex Defense, that opponent cannot make attacks of opportunity until the end of its next turn.
+
+### Weapon Specialist
+
+#### Crushing Assault
+
+- **Page:** 18
+- **Prerequisites:** Weapon Specialization
+- **Quick summary:** Whenever you successfully damage an opponent using a bludgeoning weapon that you have the Weapon Specialization talent for, your next attack against that opponent made before the end of the encounter gains a +2 bonus to the attack roll and to the damage roll.
+- **Production record:** `e1cb0fd81f7f6d44`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Whenever you successfully damage an opponent using a bludgeoning weapon that you have the Weapon Specialization talent for, your next attack against that opponent made before the end of the encounter gains a +2 bonus to the attack roll and to the damage roll. The effects of multiple Crushing Assaults do not stack.
+
+#### Impaling Assault
+
+- **Page:** 18
+- **Prerequisites:** Weapon Specialization
+- **Quick summary:** Whenever you successfully damage an opponent using a piercing weapon that you have the Weapon Specialization talent for, your opponent reduces its speed by 2 squares until the end of your next turn.
+- **Production record:** `86a8e796b6c4deae`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Whenever you successfully damage an opponent using a piercing weapon that you have the Weapon Specialization talent for, your opponent reduces its speed by 2 squares until the end of your next turn. The effects of multiple Impaling Assaults do not stack.
+
+#### Stinging Assault
+
+- **Page:** 18
+- **Prerequisites:** Weapon Specialization
+- **Quick summary:** Whenever you successfully injure an opponent using a slashing weapon that you have the Weapon Specialization talent for, your opponent takes a -2 penalty on melee attacks against you until the start of your next turn.
+- **Production record:** `cdb01f90827fad8c`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Whenever you successfully injure an opponent using a slashing weapon that you have the Weapon Specialization talent for, your opponent takes a -2 penalty on melee attacks against you until the start of your next turn. The effects of multiple Stinging Assaults do not stack.
+
+### Blockade Runner
+
+#### Close Cover
+
+- **Page:** 25
+- **Prerequisites:** Watch This
+- **Quick summary:** If you occupy the same space as a vehicle that is larger than the vehicle you are piloting, your vehicle gains a +5 cover bonus from the larger vehicle.
+- **Production record:** `9af262765ace3af1`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+If you occupy the same space as a vehicle that is larger than the vehicle you are piloting, your vehicle gains a +5 cover bonus from the larger vehicle.
+
+#### Outrun
+
+- **Page:** 25
+- **Prerequisites:** None.
+- **Quick summary:** Whenever you use the all-out movement action as the pilot of a vehicle, your vehicle gains a +2 dodge bonus to Reflex Defense.
+- **Production record:** `57caba8565b88056`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Whenever you use the all-out movement action as the pilot of a vehicle, your vehicle gains a +2 dodge bonus to Reflex Defense.
+
+#### Punch Through
+
+- **Page:** 25
+- **Prerequisites:** None.
+- **Quick summary:** If you are the pilot of a vehicle, smaller vehicles that attempt to engage you in a dogfight take a -10 penalty on their Pilot check instead of the normal -5.
+- **Production record:** `a0099db14b3fc3e7`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+If you are the pilot of a vehicle, smaller vehicles that attempt to engage you in a dogfight take a -10 penalty on their Pilot check instead of the normal -5.
+
+#### Small Target
+
+- **Page:** 25
+- **Prerequisites:** None.
+- **Quick summary:** When you are the pilot of a Colossal or smaller vehicle, capital ship weapons that take a -20 penalty on attack rolls against your vehicle, such as turbolasers, do not automatically score a critical hit on your vehicle on a natural 20.
+- **Production record:** `70a06f3be4e9c216`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+When you are the pilot of a Colossal or smaller vehicle, capital ship weapons that take a -20 penalty on attack rolls against your vehicle, such as turbolasers, do not automatically score a critical hit on your vehicle on a natural 20. The attack is only a critical hit if the total attack roll (20 + the weapon's attack bonus) would normally hit your vehicle. Otherwise, the attack deals normal damage.
+
+#### Watch This
+
+- **Page:** 26
+- **Prerequisites:** None.
+- **Quick summary:** You can move into or through a space occupied by a vehicle of Colossal (frigate) size or larger without causing a collision.
+- **Production record:** `0b04910aaabc51ba`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+You can move into or through a space occupied by a vehicle of Colossal (frigate) size or larger without causing a collision. Additionally, if you pilot a Colossal or smaller vehicle, you can occupy the same space as a vehicle of Colossal (frigate) size or larger.
+
+### Bounty Hunter
+
+#### Dread
+
+- **Page:** 26
+- **Prerequisites:** Hunter's Mark, Hunter's Target
+- **Quick summary:** As a standard action, you can instill bone-chilling fear in an opponent whom you selected for Hunter's Target.
+- **Production record:** `782768cab6bd13de`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+As a standard action, you can instill bone-chilling fear in an opponent whom you selected for Hunter's Target. Make a Persuasion check against your opponent's Will Defense. If you equal or exceed your opponent's Will Defense, that opponent takes a -5 penalty to Will Defense. This is a mind-affecting effect. The penalty remains as long as you have line of sight to your opponent and immediately ends if the line of sight is broken.
+
+#### Nowhere to Run
+
+- **Page:** 26
+- **Prerequisites:** Hunter's Mark, Hunter's Target, Nowhere to Hide
+- **Quick summary:** Once per turn, whenever an opponent whom you selected for Hunter's Target attempts to withdraw, you can make an attack of opportunity against the opponent.
+- **Production record:** `93a41831fe6bfc09`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Once per turn, whenever an opponent whom you selected for Hunter's Target attempts to withdraw, you can make an attack of opportunity against the opponent.
+
+#### Tag
+
+- **Page:** 26
+- **Prerequisites:** Hunter's Mark, Hunter's Target
+- **Quick summary:** Whenever you damage an opponent whom you selected for Hunter's Target, all allies gain a +2 bonus on their next attack roll against that opponent until the start of your next turn.
+- **Production record:** `28a61dadc073cd84`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Whenever you damage an opponent whom you selected for Hunter's Target, all allies gain a +2 bonus on their next attack roll against that opponent until the start of your next turn.
+
+### Gand Findsman
+
+#### Findsman Ceremonies
+
+- **Page:** 26
+- **Prerequisites:** Force Sensitivity feat
+- **Quick summary:** Once per day, you can spend 10 minutes performing rituals that enhance your connection with the Force, receiving visions and portents as a result.
+- **Production record:** `661c2c0665e911f6`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Once per day, you can spend 10 minutes performing rituals that enhance your connection with the Force, receiving visions and portents as a result. At that time, you can spend any number of Force Points in the performance of the ritual, up to the total number you have remaining. For the remainder of the day, whenever you make a Perception or Stealth check, make a Use the Force check to use the farseeing Force power, or make an attack roll, you can choose to reroll but must keep the second result, even if it is worse. You may do this a number of times per day equal to the number of Force Points you spent during the casting of the ritual. At the end of the day, you regain Force Points equal to the number of rerolls you have remaining.
+
+#### Findsman's Foresight
+
+- **Page:** 26
+- **Prerequisites:** Findsman Ceremonies
+- **Quick summary:** The visions you receive sometimes provide clues about dangerous situations.
+- **Production record:** `e8fe6087eef386c7`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+The visions you receive sometimes provide clues about dangerous situations. Whenever you make a Perception check to avoid surprise, you may roll two dice and keep the better result.
+
+#### Omens
+
+- **Page:** 26
+- **Prerequisites:** Findsman Ceremonies
+- **Quick summary:** You see omens in both success and failure.
+- **Production record:** `b08c8efbea22f604`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+You see omens in both success and failure. Whenever an ally within 10 squares and line of sight rolls a natural 1 or a natural 20 on an attack roll, you gain a +2 insight bonus to either your next attack roll made before the end of your next turn, or a +2 insight bonus to Reflex Defense until the end of your next turn, your choice.
+
+#### Target Visions
+
+- **Page:** 26
+- **Prerequisites:** Findsman Ceremonies
+- **Quick summary:** You have visions that tell you what your enemies are likely to do even before they do it.
+- **Production record:** `d61e3a2afe8ab339`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+You have visions that tell you what your enemies are likely to do even before they do it. Once per encounter, when an enemy creature moves within 6 squares of you, you may make a melee or ranged attack against that target as a reaction to their movement.
+
+#### Temporal Awareness
+
+- **Page:** 26
+- **Prerequisites:** Findsman Ceremonies
+- **Quick summary:** Once per encounter, as a reaction to any enemy's attack, you can move up to your speed.
+- **Production record:** `028e4e50565971ee`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Once per encounter, as a reaction to any enemy's attack, you can move up to your speed.
+
+### Infamy
+
+#### Fear Me!
+
+- **Page:** 26
+- **Prerequisites:** Attract Minion, Inspire Fear I, Inspire Fear II
+- **Quick summary:** Once per encounter, as a reaction to one of your minions being moved down the condition track, you can reduce the number of steps the minion moves down the condition track by 1.
+- **Production record:** `a49074cc564848bb`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Once per encounter, as a reaction to one of your minions being moved down the condition track, you can reduce the number of steps the minion moves down the condition track by 1. Additionally, the target regains hit points equal to your heroic level. If the target is reduced to 0 hit points or moved to the bottom of the condition track, you cannot use this talent on that target.
+
+#### Frighten
+
+- **Page:** 26
+- **Prerequisites:** Attract Minion, Inspire Fear I
+- **Quick summary:** Once per encounter, you can designate a minion as a free action to spread fear among your enemies.
+- **Production record:** `50273d5ce8f84c31`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Once per encounter, you can designate a minion as a free action to spread fear among your enemies. At any point before the end of the encounter, you can activate this ability to force all enemies adjacent to your minion to move 1 square away from the minion. This movement does not provoke attacks of opportunity. This is a mind-affecting effect.
+
+#### Terrify
+
+- **Page:** 27
+- **Prerequisites:** Frighten, Inspire Fear I, Inspire Fear II
+- **Quick summary:** As a standard action, you can make a Persuasion check against a target that is within your line of sight and that is also affected by your Inspire Fear talent.
+- **Production record:** `8ed7b1889b1416d4`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+As a standard action, you can make a Persuasion check against a target that is within your line of sight and that is also affected by your Inspire Fear talent. If you equal or exceed the target's Will Defense, then on its next turn the target must spend at least one move action to move away from you. If the target is somehow prevented from doing so, then the penalty from Inspire Fear doubles until the start of your next turn. This is a mind-affecting fear effect.
+
+#### Unsavory Reputation
+
+- **Page:** 27
+- **Prerequisites:** Inspire Fear I, Inspire Fear II, Inspire Fear III, Notorious
+- **Quick summary:** Any opponent that is reduced to half hit points or fewer while within 6 squares of you takes a -2 penalty on all attack rolls and skill checks for the duration of the encounter.
+- **Production record:** `b0ecc747a76deb72`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Any opponent that is reduced to half hit points or fewer while within 6 squares of you takes a -2 penalty on all attack rolls and skill checks for the duration of the encounter. This is a mind-affecting fear effect.
+
+### Mastermind
+
+#### Bodyguard I
+
+- **Page:** 27
+- **Prerequisites:** Attract Minion
+- **Quick summary:** Whenever you are adjacent to a minion gained with the Attract Minion talent, once per turn as a reaction to being attacked you can redirect the attack against that minion.
+- **Production record:** `58789f9d0a49f215`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Whenever you are adjacent to a minion gained with the Attract Minion talent, once per turn as a reaction to being attacked you can redirect the attack against that minion. Compare the attack roll to the minion's defenses and resolve the attack as normal.
+
+#### Bodyguard II
+
+- **Page:** 27
+- **Prerequisites:** Attract Minion, Bodyguard I
+- **Quick summary:** When you redirect an attack to a minion using the Bodyguard I talent, that minion's relevant defense score gains a bonus equal to half your class level.
+- **Production record:** `7679eae1004af0cc`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+When you redirect an attack to a minion using the Bodyguard I talent, that minion's relevant defense score gains a bonus equal to half your class level.
+
+#### Bodyguard III
+
+- **Page:** 27
+- **Prerequisites:** Attract Minion, Bodyguard I, Bodyguard II
+- **Quick summary:** When you redirect an attack to a minion using the Bodyguard I talent, that minion can make an immediate melee or ranged attack against your attacker if the attacker is within range.
+- **Production record:** `9c2a4cbe82e922ec`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+When you redirect an attack to a minion using the Bodyguard I talent, that minion can make an immediate melee or ranged attack against your attacker if the attacker is within range. Additionally, the bonus provided by the Bodyguard II talent increases to your full class level.
+
+#### Impel Ally III
+
+- **Page:** 27
+- **Prerequisites:** Impel Ally I, Impel Ally II
+- **Quick summary:** Once per encounter, you can spend three swift actions on consecutive turns to grant one ally the ability to take a standard action and a move action.
+- **Production record:** `3f01107ed7779426`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Once per encounter, you can spend three swift actions on consecutive turns to grant one ally the ability to take a standard action and a move action. The ally must act immediately on your turn when the final swift action is spent, before you do anything else, or the opportunity is wasted.
+
+#### Inspire Wrath
+
+- **Page:** 27
+- **Prerequisites:** Impel Ally I, Impel Ally II
+- **Quick summary:** As a standard action, you can designate a target to be the object of your allies' wrath.
+- **Production record:** `dbe08a93276b6c25`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+As a standard action, you can designate a target to be the object of your allies' wrath. While your allies have line of sight to the target or until the target is unconscious or dead, your allies gain a +2 morale bonus on attack rolls against the target and a +2 morale bonus on skill checks against that target. You can designate a new target on any round by using another standard action. You can only use this talent against one opponent at a time.
+
+#### Shelter
+
+- **Page:** 27
+- **Prerequisites:** Attract Minion
+- **Quick summary:** Whenever you are adjacent to a minion, you gain a +2 cover bonus to your Reflex Defense.
+- **Production record:** `e37a169786348439`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Whenever you are adjacent to a minion, you gain a +2 cover bonus to your Reflex Defense.
+
+#### Tactical Superiority
+
+- **Page:** 27
+- **Prerequisites:** None.
+- **Quick summary:** Spend two swift actions to select two allies.
+- **Production record:** `f259cf27c1b62c47`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Spend two swift actions to select two allies. Each ally can move 2 squares as a reaction. This movement does not provoke attacks of opportunity.
+
+#### Tactical Withdrawal
+
+- **Page:** 27
+- **Prerequisites:** None.
+- **Quick summary:** Spend two swift actions to grant all allies that are in your line of sight and within 6 squares of you the ability to use the withdraw action as a swift action until the start of your next turn.
+- **Production record:** `b293a6a20b90bebe`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Spend two swift actions to grant all allies that are in your line of sight and within 6 squares of you the ability to use the withdraw action as a swift action until the start of your next turn.
+
+#### Urgency
+
+- **Page:** 27
+- **Prerequisites:** Impel Ally I, Impel Ally II, Impel Ally III
+- **Quick summary:** Once per encounter, you can spend three swift actions on consecutive turns to increase the speed of all allies within line of sight of you by 2.
+- **Production record:** `a45e2213dd7eb4ca`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Once per encounter, you can spend three swift actions on consecutive turns to increase the speed of all allies within line of sight of you by 2. The increased speed lasts until the start of your next turn after the third swift action is spent.
+
+#### Wealth of Allies
+
+- **Page:** 27
+- **Prerequisites:** Attract Minion
+- **Quick summary:** Whenever one of your minions is killed, he or she is replaced by another minion of the same level.
+- **Production record:** `397ba7dc962f6ebc`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Whenever one of your minions is killed, he or she is replaced by another minion of the same level. This replacement occurs 24 hours later.
+
+### Gunslinger
+
+#### Ranged Flank
+
+- **Page:** 27
+- **Prerequisites:** None.
+- **Quick summary:** If you are within 6 squares of a target and are armed with a pistol or a rifle, you can act as though you occupied the nearest square adjacent to the target for the purposes of determining whether or not you or any allies are flanking that target.
+- **Production record:** `a6e38142447c64a9`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+If you are within 6 squares of a target and are armed with a pistol or a rifle, you can act as though you occupied the nearest square adjacent to the target for the purposes of determining whether or not you or any allies are flanking that target. You may only be considered to be flanking a single target at range at a time. You must spend a swift action on your turn to designate the target you flank at range.
+
+### Pistoleer
+
+#### Dash and Blast
+
+- **Page:** 27
+- **Prerequisites:** Dual Weapon Mastery I, Running Attack
+- **Quick summary:** Once per encounter as a full-round action, when you are wielding two pistols, you may move up to twice your speed and make a ranged attack with each pistol.
+- **Production record:** `c41461c3bdd0165d`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Once per encounter as a full-round action, when you are wielding two pistols, you may move up to twice your speed and make a ranged attack with each pistol. The normal penalties for attacking with two weapons apply to these attacks.
+
+#### Flanking Fire
+
+- **Page:** 28
+- **Prerequisites:** Dual Weapon Mastery I
+- **Quick summary:** Whenever you are flanked by two or more opponents and are wielding two pistols, you can make a full attack action as a standard action instead of a full-round action.
+- **Production target:** CREATE `1f6b9d509a07f881`
+- **Phase 3B disposition:** `CREATE`
+
+**Canonical rules text**
+
+Whenever you are flanked by two or more opponents and are wielding two pistols, you can make a full attack action as a standard action instead of a full-round action. This is provided that you target only opponents that flank you and attack at least two targets.
+
+#### Guaranteed Shot
+
+- **Page:** 28
+- **Prerequisites:** Dual Weapon Mastery I
+- **Quick summary:** If you are wielding two pistols and make a single ranged attack with one of those pistols as a standard action, even if you miss you deal damage equal to half your heroic level to the target.
+- **Production record:** `52a4914cca90cc4d`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+If you are wielding two pistols and make a single ranged attack with one of those pistols as a standard action, even if you miss you deal damage equal to half your heroic level to the target. This consumes a single shot from the weapon not making the attack, and the weapon you attack with uses as many shots as required by the attack.
+
+#### Hailfire
+
+- **Page:** 28
+- **Prerequisites:** Dual Weapon Mastery I
+- **Quick summary:** When you are wielding two pistols, as a standard action you can make an autofire attack with one of the pistols as though the weapon were set to autofire, even if the pistol would not normally be capable of autofire.
+- **Production record:** `223ba62ffbabb9c2`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+When you are wielding two pistols, as a standard action you can make an autofire attack with one of the pistols as though the weapon were set to autofire, even if the pistol would not normally be capable of autofire. The normal penalties for autofire still apply to this attack roll, and you may split the number of shots consumed between the two pistols.
+
+#### Twin Shot
+
+- **Page:** 28
+- **Prerequisites:** Dual Weapon Mastery I, Rapid Shot
+- **Quick summary:** When you are wielding two pistols, you gain a +2 bonus to damage rolls when using the Rapid Shot feat.
+- **Production record:** `c219dc05ccc7db81`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+When you are wielding two pistols, you gain a +2 bonus to damage rolls when using the Rapid Shot feat.
+
+### Assassin
+
+#### Advantageous Positioning
+
+- **Page:** 29
+- **Prerequisites:** Shift
+- **Quick summary:** Any opponent that you are flanking is considered flat-footed and is denied its Dexterity bonus to Reflex Defense against you.
+- **Production record:** `b2b2176b7d9360e0`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Any opponent that you are flanking is considered flat-footed and is denied its Dexterity bonus to Reflex Defense against you.
+
+#### Get Some Distance
+
+- **Page:** 29
+- **Prerequisites:** Advantageous Positioning, Shift
+- **Quick summary:** Once per encounter as a standard action you can make a melee attack against a target and then move your speed away from that target.
+- **Production record:** `2871d6138603fbcc`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Once per encounter as a standard action you can make a melee attack against a target and then move your speed away from that target. This movement does not provoke an attack of opportunity.
+
+#### Murderous Arts I
+
+- **Page:** 29
+- **Prerequisites:** None.
+- **Quick summary:** When your successful attack causes an opponent to move -1 step along the condition track, that opponent immediately takes an additional 1d6 damage.
+- **Production record:** `0d58e041b9bf0be8`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+When your successful attack causes an opponent to move -1 step along the condition track, that opponent immediately takes an additional 1d6 damage.
+
+#### Murderous Arts II
+
+- **Page:** 29
+- **Prerequisites:** Murderous Arts I
+- **Quick summary:** Whenever you successfully hit an opponent that you have marked, your melee and ranged attacks deal an additional die of damage.
+- **Production record:** `48734ec40189bb12`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Whenever you successfully hit an opponent that you have marked, your melee and ranged attacks deal an additional die of damage.
+
+#### Ruthless
+
+- **Page:** 29
+- **Prerequisites:** None.
+- **Quick summary:** Once per encounter, when you drop a foe to 0 hit points or push an opponent to the bottom of the condition track, you can immediately take a bonus standard action.
+- **Production record:** `7aa4ca13a96d8770`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Once per encounter, when you drop a foe to 0 hit points or push an opponent to the bottom of the condition track, you can immediately take a bonus standard action.
+
+#### Shift
+
+- **Page:** 29
+- **Prerequisites:** None.
+- **Quick summary:** As a move action, you can move 1 square without provoking an attack of opportunity.
+- **Production record:** `a7cb4c0dbcdd0fb8`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+As a move action, you can move 1 square without provoking an attack of opportunity.
+
+#### Sniping Assassin
+
+- **Page:** 29
+- **Prerequisites:** None.
+- **Quick summary:** When you make a ranged attack against a target that is not at point blank range, you add half your class level to your damage roll.
+- **Production record:** `6ea04b7286133846`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+When you make a ranged attack against a target that is not at point blank range, you add half your class level to your damage roll.
+
+#### Sniping Marksman
+
+- **Page:** 29
+- **Prerequisites:** Sniping Assassin
+- **Quick summary:** Once per encounter, when you make a ranged attack against a target that is not at point blank range, you can ignore your target's armor bonus to Reflex Defense.
+- **Production record:** `28b781d7186a03a9`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Once per encounter, when you make a ranged attack against a target that is not at point blank range, you can ignore your target's armor bonus to Reflex Defense.
+
+#### Sniping Master
+
+- **Page:** 29
+- **Prerequisites:** Sniping Assassin, Sniping Marksman
+- **Quick summary:** By taking only a single swift action, you can aim at a target that is not within point blank range.
+- **Production record:** `216f5ea65b7c04fb`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+By taking only a single swift action, you can aim at a target that is not within point blank range.
+
+### GenoHaradan
+
+#### Deadly Repercussions
+
+- **Page:** 29
+- **Prerequisites:** None.
+- **Quick summary:** When you reduce a target to 0 hit points or move the target to the bottom of the condition track, all your opponents within line of sight of both you and your target take a -2 penalty on attack rolls until the beginning of your next turn.
+- **Production record:** `58c3d63d94288eb2`
+- **Phase 3B disposition:** `CORRECT_TREE`
+
+**Canonical rules text**
+
+When you reduce a target to 0 hit points or move the target to the bottom of the condition track, all your opponents within line of sight of both you and your target take a -2 penalty on attack rolls until the beginning of your next turn.
+
+#### Manipulating Strike
+
+- **Page:** 30
+- **Prerequisites:** None.
+- **Quick summary:** Once per turn when you successfully damage a target with a non-area attack, make an immediate Persuasion check against the target's Will Defense.
+- **Production record:** `9f01b5c07bbd5f76`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Once per turn when you successfully damage a target with a non-area attack, make an immediate Persuasion check against the target's Will Defense. If successful, you can determine what the target does with its swift action on its next turn. This is a mind-affecting effect.
+
+#### Improved Manipulating Strike
+
+- **Page:** 30
+- **Prerequisites:** Manipulating Strike
+- **Quick summary:** Whenever you successfully use the Manipulating Strike talent, you determine what the target does with its move action on its next turn.
+- **Production record:** `8d14ab116a78dfd6`
+- **Phase 3B disposition:** `CORRECT_TREE`
+
+**Canonical rules text**
+
+Whenever you successfully use the Manipulating Strike talent, you determine what the target does with its move action on its next turn. You cannot move an opponent into a hazard such as lava or off a cliff.
+
+#### Pulling the Strings
+
+- **Page:** 30
+- **Prerequisites:** None.
+- **Quick summary:** As a standard action, you can make a Persuasion check against the Will Defense of a target within 12 squares.
+- **Production record:** `d6faa4b87d5c35ce`
+- **Phase 3B disposition:** `CORRECT_TREE`
+
+**Canonical rules text**
+
+As a standard action, you can make a Persuasion check against the Will Defense of a target within 12 squares. If you succeed, you move the target up to half its speed toward what you determine is the safest route, and you can make an immediate ranged or melee attack against the target if it is within your range. You cannot move an opponent into a hazard such as lava or off a cliff.
+
+### Trickery
+
+#### Cunning Distraction
+
+- **Page:** 31
+- **Prerequisites:** None.
+- **Quick summary:** When you successfully feint an opponent in combat, you can immediately move up to one-half your speed as a reaction.
+- **Production record:** `3340f268613c0349`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+When you successfully feint an opponent in combat, you can immediately move up to one-half your speed as a reaction.
+
+#### Damaging Deception
+
+- **Page:** 31
+- **Prerequisites:** Cunning Distraction
+- **Quick summary:** As a standard action, you can make a Deception check against the Will Defense of any target within your line of sight that can see, hear, and understand you.
+- **Production record:** `533867af3de50833`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+As a standard action, you can make a Deception check against the Will Defense of any target within your line of sight that can see, hear, and understand you. If successful, the next attack made by one of your allies against that target deals 2 additional dice of damage.
+
+#### Distracting Shout
+
+- **Page:** 31
+- **Prerequisites:** Cunning Distraction
+- **Quick summary:** Once per encounter, as a reaction to one of your allies being attacked, you can make a Deception check, replacing the defense score of that ally with the result of your Deception check for resolution of the attack.
+- **Production record:** `6c62f35fddd45d66`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Once per encounter, as a reaction to one of your allies being attacked, you can make a Deception check, replacing the defense score of that ally with the result of your Deception check for resolution of the attack. If any defense score is higher than the Deception check result, your ally can use that defense score instead. If the attack still hits, this does not count as the one use per encounter of this talent.
+
+#### Improved Soft Cover
+
+- **Page:** 31
+- **Prerequisites:** Innocuous
+- **Quick summary:** While you occupy a square adjacent to another creature, you can use a swift action to gain a +2 cover bonus to your Reflex Defense until the start of your next turn or until you are no longer adjacent to another creature, whichever comes first.
+- **Production record:** `1681031c6828d556`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+While you occupy a square adjacent to another creature, you can use a swift action to gain a +2 cover bonus to your Reflex Defense until the start of your next turn or until you are no longer adjacent to another creature, whichever comes first.
+
+#### Innocuous
+
+- **Page:** 31
+- **Prerequisites:** None.
+- **Quick summary:** As a swift action, you can make a Deception check against a single enemy within 6 squares of you and in line of sight.
+- **Production record:** `0fa7aace1d7606c6`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+As a swift action, you can make a Deception check against a single enemy within 6 squares of you and in line of sight. If the check equals or exceeds the target's Will Defense, the target takes a -5 penalty on all attacks made against you until the start of your next turn.
+
+#### Treacherous
+
+- **Page:** 32
+- **Prerequisites:** Improved Soft Cover, Innocuous
+- **Quick summary:** Whenever you are attacked in combat and adjacent to a creature other than your attacker, you can move 1 square as a reaction.
+- **Production record:** `e289618b92890003`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Whenever you are attacked in combat and adjacent to a creature other than your attacker, you can move 1 square as a reaction. The attack intended for you instead targets the adjacent creature, though if you move away from a creature that threatens you, it can make an attack of opportunity before the original attack is resolved.
+
+### Piracy
+
+#### Bloodthirsty
+
+- **Page:** 33
+- **Prerequisites:** None.
+- **Quick summary:** You can perform a coup de grace as a move action.
+- **Production record:** `18e1fa8a911dda55`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+You can perform a coup de grace as a move action. Whenever you successfully perform a coup de grace action and kill the target, all allies within your line of sight gain a +2 morale bonus on attack rolls for the duration of the encounter.
+
+#### Fight to the Death
+
+- **Page:** 33
+- **Prerequisites:** Bloodthirsty
+- **Quick summary:** Once per encounter, as a swift action, you can fill your companions with renewed vigor.
+- **Production record:** `ae97654ded718351`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Once per encounter, as a swift action, you can fill your companions with renewed vigor. All allies within 6 squares of you heal damage equal to your heroic level.
+
+#### Keep Them Reeling
+
+- **Page:** 33
+- **Prerequisites:** None.
+- **Quick summary:** As a standard action, you can make a single melee attack against a target within reach.
+- **Production target:** CREATE `9fe189e1376feec5`
+- **Phase 3B disposition:** `IDENTITY_SPLIT`
+
+**Canonical rules text**
+
+As a standard action, you can make a single melee attack against a target within reach. If the attack hits, you deal no damage, but your target must move or withdraw away from you on its next turn.
+
+#### Raider's Frenzy
+
+- **Page:** 33
+- **Prerequisites:** None.
+- **Quick summary:** Once per round, when one of your allies within 6 squares successfully damages a target, you grant all your allies within your line of sight a bonus to damage rolls against that target equal to one-half your class level until the end of your next turn.
+- **Production record:** `37c45caffa191816`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Once per round, when one of your allies within 6 squares successfully damages a target, you grant all your allies within your line of sight a bonus to damage rolls against that target equal to one-half your class level until the end of your next turn.
+
+#### Raider's Surge
+
+- **Page:** 33
+- **Prerequisites:** None.
+- **Quick summary:** Once per encounter, as a standard action, you can make a Deception or Persuasion check, your choice, against each enemy within your line of sight.
+- **Production record:** `50285aaa58fed099`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Once per encounter, as a standard action, you can make a Deception or Persuasion check, your choice, against each enemy within your line of sight. If the check result equals or exceeds the enemy's Will Defense, that enemy must withdraw on its next action or take a -1 penalty on its attack rolls until the end of the encounter. This is a mind-affecting effect.
+
+#### Savage Reputation
+
+- **Page:** 33
+- **Prerequisites:** Bloodthirsty
+- **Quick summary:** All opponents within 6 squares of you take a -1 penalty on all attacks.
+- **Production record:** `994e8232ccd3847c`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+All opponents within 6 squares of you take a -1 penalty on all attacks. This is a mind-affecting fear effect.
+
+#### Take Them Alive
+
+- **Page:** 33
+- **Prerequisites:** None.
+- **Quick summary:** Whenever you or any of your allies within 6 squares of you reduces a target to 0 hit points, you can choose to treat that opponent as though they had been reduced to 0 by stun damage and thus remain stable.
+- **Production record:** `cf59931d6a0c0719`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Whenever you or any of your allies within 6 squares of you reduces a target to 0 hit points, you can choose to treat that opponent as though they had been reduced to 0 by stun damage and thus remain stable.
+
+### Outlaw
+
+#### Confounding Attack
+
+- **Page:** 34
+- **Prerequisites:** Tangle Up, Uncanny Instincts
+- **Quick summary:** Once per encounter, whenever you would use Uncanny Instincts, you can forgo the movement to make an immediate melee or ranged attack against the opponent that hit you.
+- **Production record:** `fd35b51c26fa0d5c`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Once per encounter, whenever you would use Uncanny Instincts, you can forgo the movement to make an immediate melee or ranged attack against the opponent that hit you. If your attack is a melee attack that hits and deals damage, you and your opponent immediately switch places if both you and your opponent can end in a legal space.
+
+#### Double Up
+
+- **Page:** 35
+- **Prerequisites:** Find an Opening, Seize the Moment
+- **Quick summary:** Once per encounter, whenever you would use Seize the Moment, you can forgo the extra swift action to make an immediate melee or ranged attack against the damaged opponent.
+- **Production record:** `3aeee38a6c7b7f12`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Once per encounter, whenever you would use Seize the Moment, you can forgo the extra swift action to make an immediate melee or ranged attack against the damaged opponent. If your attack is a ranged attack that hits and deals damage, you treat the damage dealt by you and your ally as though it was one attack for the purposes of overcoming DR, SR, and determining whether the damage exceeded the target's damage threshold.
+
+#### Find an Opening
+
+- **Page:** 35
+- **Prerequisites:** Seize the Moment
+- **Quick summary:** Whenever you would use Seize the Moment, you can forgo the swift action to be able to aim as a single swift action on your next turn.
+- **Production record:** `3991e671da41995a`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Whenever you would use Seize the Moment, you can forgo the swift action to be able to aim as a single swift action on your next turn.
+
+#### Opportunistic Defense
+
+- **Page:** 35
+- **Prerequisites:** Uncanny Instincts
+- **Quick summary:** Once per encounter, whenever you would use Uncanny Instincts, you can forgo this extra movement and instead increase your Reflex Defense by 5 until the end of your next turn.
+- **Production record:** `ffdca1739d401042`
+- **Phase 3B disposition:** `UPDATE_METADATA`
+
+**Canonical rules text**
+
+Once per encounter, whenever you would use Uncanny Instincts, you can forgo this extra movement and instead increase your Reflex Defense by 5 until the end of your next turn.
+
+#### Preternatural Senses
+
+- **Page:** 35
+- **Prerequisites:** None.
+- **Quick summary:** Once per encounter, as a reaction, you can add one-half your class level to the defense score of your choice.
+- **Production record:** `4df672d524de7aa0`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Once per encounter, as a reaction, you can add one-half your class level to the defense score of your choice.
+
+#### Seize the Moment
+
+- **Page:** 35
+- **Prerequisites:** None.
+- **Quick summary:** Once per round, whenever an ally successfully damages an opponent, you can take a swift action as a reaction.
+- **Production record:** `e19c06b6dfc7a703`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Once per round, whenever an ally successfully damages an opponent, you can take a swift action as a reaction.
+
+#### Tangle Up
+
+- **Page:** 35
+- **Prerequisites:** Uncanny Instincts
+- **Quick summary:** As a standard action, you can make a non-area melee or ranged attack against an opponent within range.
+- **Production record:** `e49c62d72e8b28d3`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+As a standard action, you can make a non-area melee or ranged attack against an opponent within range. If the attack hits, you deal half your normal damage, minimum 1 point, but your opponent loses its next move action.
+
+#### Uncanny Instincts
+
+- **Page:** 35
+- **Prerequisites:** None.
+- **Quick summary:** Once per encounter, whenever an opponent successfully deals damage to you, you can move 1 square as a reaction.
+- **Production record:** `252285ae33a2a2d5`
+- **Phase 3B disposition:** `UPDATE_CONTENT`
+
+**Canonical rules text**
+
+Once per encounter, whenever an opponent successfully deals damage to you, you can move 1 square as a reaction. This movement does not provoke attacks of opportunity.
+
+---
+
 ## Book 9 — Unknown Regions
 
 **Phase 3B status:** COMPLETE — 57 owned canonical identities; 11 UPDATE_CONTENT; 44 CREATE; 2 IDENTITY_SPLIT.
@@ -7596,7 +8968,7 @@ You channel your power surge into a boost for your locomotion system. When you i
 - [x] Galaxy of Intrigue — 43 certified talent claims
 - [x] Starships of the Galaxy — 23 certified talent claims
 - [x] Threats of the Galaxy — 11 certified talent claims
-- [ ] Scum and Villainy
+- [x] Scum and Villainy — 110 certified talent claims
 - [x] Unknown Regions — 57 certified talent claims
 - [x] Legacy Era Campaign Guide — 101 certified talent claims
 - [ ] Knights of the Old Republic Campaign Guide
