@@ -13,6 +13,7 @@ A talent identity is `canonicalTreeKey + talent name`. Talent name alone is neve
 | Saga Edition Core Rulebook | 198 | `data/audits/talent-phase-3b-core-rulebook-manifest.json` | `node tools/build-talent-phase-3b-core-manifest.mjs --check` |
 | Galaxy at War | 56 | `data/audits/talent-phase-3b-galaxy-at-war-manifest.json` | `node tools/build-talent-phase-3b-galaxy-at-war-manifest.mjs --check` |
 | Galaxy of Intrigue | 43 | `data/audits/talent-phase-3b-galaxy-of-intrigue-manifest.json` | `node tools/build-talent-phase-3b-galaxy-of-intrigue-manifest.mjs --check` |
+| Unknown Regions | 57 | `data/audits/talent-phase-3b-unknown-regions-manifest.json` | `node tools/build-talent-phase-3b-unknown-regions-manifest.mjs --check` |
 | Starships of the Galaxy | 23 | `data/audits/talent-phase-3b-starships-of-the-galaxy-manifest.json` | `node tools/build-talent-phase-3b-starships-manifest.mjs --check` |
 | Scavenger's Guide to Droids | 31 | `data/audits/talent-phase-3b-scavengers-guide-to-droids-manifest.json` | `node tools/build-talent-phase-3b-scavengers-manifest.mjs --check` |
 | Threats of the Galaxy | 11 | `data/audits/talent-phase-3b-threats-of-the-galaxy-manifest.json` | `node tools/build-talent-phase-3b-threats-manifest.mjs --check` |
