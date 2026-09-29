@@ -1141,6 +1141,7 @@
     }
   },
   "textQuality": {
+    "pendingSourceTextCorrections": 0,
     "gatingFields": 54,
     "gatingRecords": 27,
     "informationalFields": 12,
@@ -1155,6 +1156,7 @@
   },
   "acceptance": {
     "certifiedTextFreeOfOcrArtifacts": false,
+    "noSourceTextCorrectionAwaitingPdf": true,
     "all14BookManifestsRebuiltInCheckMode": true,
     "productionDriftChecksPassed": true,
     "noGeneratedTalentIdCollisions": true,

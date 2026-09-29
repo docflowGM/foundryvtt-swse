@@ -30,7 +30,7 @@ import { fileURLToPath } from 'node:url';
 import {
   REGISTRY_PATHS, generateFromPackTexts, serializeRegistry, loadPreviousRegistry, registrySlug
 } from './build-talent-tree-registry.mjs';
-import { scanManifestText, summarize as summarizeTextQuality } from './audit-talent-phase-3c-text-quality.mjs';
+import { scanManifestText, pendingSourceTextCorrections, summarize as summarizeTextQuality } from './audit-talent-phase-3c-text-quality.mjs';
 
 export const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 export const CLOSEOUT_PATH = 'data/audits/talent-phase-3b-global-closeout.json';
@@ -650,11 +650,11 @@ export function buildReport({ manifests, closeout, texts, before, projection, ro
   const preSha = { ...packBlobShas(texts), registry: gitBlobSha(preRegistry[0]), registryFixes: gitBlobSha(preRegistry[1]) };
   const registryText = serializeRegistry(generateFromPackTexts({ texts: out, previousRegistry: loadPreviousRegistry(root), manifests }));
   const postSha = { ...packBlobShas(out), registry: gitBlobSha(registryText), registryFixes: gitBlobSha(registryText) };
-  const textQuality = summarizeTextQuality(scanManifestText(manifests));
+  const textQuality = summarizeTextQuality(scanManifestText(manifests), pendingSourceTextCorrections(root));
   return {
     schemaVersion: 2,
     phase: '3C-1',
-    status: textQuality.gatingFields === 0 ? 'DRY_RUN_CERTIFIED' : 'DRY_RUN_BLOCKED_PHASE3B_TEXT_DEFECTS',
+    status: textQuality.gatingFields === 0 && textQuality.pendingSourceTextCorrections === 0 ? 'DRY_RUN_CERTIFIED' : 'DRY_RUN_BLOCKED_PHASE3B_TEXT_DEFECTS',
     productionMutationPerformed: false,
     inputAuthority: {
       phase3bCloseout: CLOSEOUT_PATH,
@@ -682,6 +682,7 @@ export function buildReport({ manifests, closeout, texts, before, projection, ro
     textQuality,
     acceptance: {
       certifiedTextFreeOfOcrArtifacts: textQuality.gatingFields === 0,
+      noSourceTextCorrectionAwaitingPdf: textQuality.pendingSourceTextCorrections === 0,
       all14BookManifestsRebuiltInCheckMode: true,
       productionDriftChecksPassed: true,
       noGeneratedTalentIdCollisions: true,
@@ -769,11 +770,14 @@ export async function main(argv = process.argv.slice(2), root = ROOT) {
   if (has('--apply')) {
     // 0. never write certified text that carries OCR artifacts (see tools/audit-talent-phase-3c-text-quality.mjs)
     const quality = scanManifestText(inputs.manifests);
-    if (quality.gating.length && !has('--allow-ocr-artifacts')) {
-      const q = summarizeTextQuality(quality);
-      throw new Error(ERR + `refusing to apply: ${q.gatingFields} certified target text fields in ${q.gatingRecords} records carry OCR artifacts ` +
-        `${JSON.stringify(q.bySignature)}; Phase 3B text must be corrected first (node tools/audit-talent-phase-3c-text-quality.mjs). ` +
-        '--allow-ocr-artifacts exists for scratch validation only');
+    const pending = pendingSourceTextCorrections(root);
+    if ((quality.gating.length || pending.length) && !has('--allow-ocr-artifacts')) {
+      const q = summarizeTextQuality(quality, pending);
+      const reasons = [];
+      if (q.gatingFields) reasons.push(`${q.gatingFields} certified target text fields in ${q.gatingRecords} records carry OCR artifacts ${JSON.stringify(q.bySignature)}`);
+      if (pending.length) reasons.push(`${pending.length} source-text corrections still require the rendered PDF (${pending.map(p => p.canonicalIdentity).join('; ')})`);
+      throw new Error(ERR + 'refusing to apply: ' + reasons.join('; and ') + '; Phase 3B text must be corrected and PDF-confirmed first ' +
+        '(node tools/audit-talent-phase-3c-text-quality.mjs). --allow-ocr-artifacts exists for scratch validation only');
     }
     // 1. the committed report must be the report of THIS pre-state
     invariant(fs.existsSync(path.join(root, REPORT_PATH)) && readText(REPORT_PATH, root) === serialized,

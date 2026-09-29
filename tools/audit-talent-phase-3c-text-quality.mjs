@@ -25,6 +25,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
+const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const TEXT_FIELDS = ['system.benefit', 'system.summary', 'system.description', 'system.description.value', 'system.prerequisites'];
 const SIGNATURES = [
   ['html-tag', v => /<\/?(?:p|br|div|span|b|i|em|strong)\b[^>]*>/i.test(v)],
@@ -71,7 +72,23 @@ export function scanManifestText(manifests) {
   return { gating, informational };
 }
 
-export const summarize = ({ gating, informational }) => ({
+export const CORRECTIONS_PATH = 'data/audits/talent-phase-3b-source-text-corrections.json';
+
+/**
+ * Entries of the Phase 3B source-text corrections manifest that still need the rendered PDF (status
+ * TXT_AMBIGUOUS_PDF_REQUIRED / UNRESOLVED). Their canonical text is either not yet corrected or corrected without PDF
+ * confirmation, so Phase 3C must not write them. Absent manifest => nothing pending.
+ */
+export function pendingSourceTextCorrections(root = ROOT) {
+  const file = path.join(root, CORRECTIONS_PATH);
+  if (!fs.existsSync(file)) return [];
+  return JSON.parse(fs.readFileSync(file, 'utf8')).entries
+    .filter(e => e.blocksApply)
+    .map(e => ({ id: e.id, canonicalIdentity: e.canonicalIdentity, status: e.verification.status, applied: e.applied, printedPage: e.printedPage, reason: e.verification.unresolvedReason ?? e.verification.notes ?? null }));
+}
+
+export const summarize = ({ gating, informational }, pending = []) => ({
+  pendingSourceTextCorrections: pending.length,
   gatingFields: gating.length,
   gatingRecords: new Set(gating.map(f => f.canonicalIdentity)).size,
   informationalFields: informational.length,
@@ -80,12 +97,15 @@ export const summarize = ({ gating, informational }) => ({
 
 const isMain = process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url);
 if (isMain) {
-  const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-  const { loadCommittedManifests } = await import('./apply-talent-phase-3c.mjs');
-  const result = scanManifestText(loadCommittedManifests(ROOT));
-  if (process.argv.includes('--json')) console.log(JSON.stringify({ summary: summarize(result), ...result }, null, 2));
+  // Read the manifests directly: importing apply-talent-phase-3c.mjs here would be a circular import (it imports this module).
+  const dir = path.join(ROOT, 'data/audits');
+  const manifests = fs.readdirSync(dir).filter(f => /^talent-phase-3b-.*-manifest\.json$/.test(f)).sort()
+    .map(f => ({ manifest: JSON.parse(fs.readFileSync(path.join(dir, f), 'utf8')) }));
+  const result = scanManifestText(manifests);
+  const pending = pendingSourceTextCorrections(ROOT);
+  if (process.argv.includes('--json')) console.log(JSON.stringify({ summary: summarize(result, pending), pending, ...result }, null, 2));
   else {
-    const s = summarize(result);
+    const s = summarize(result, pending);
     console.log(`certified target text with OCR-artifact signatures: ${s.gatingFields} fields in ${s.gatingRecords} records ${JSON.stringify(s.bySignature)}`);
     const seen = new Set();
     for (const f of result.gating) {
@@ -93,6 +113,8 @@ if (isMain) {
       console.log(`  ${f.canonicalIdentity} [${f.disposition}] ${f.field}: ${f.signatures.join(',')} :: ${JSON.stringify(f.target.slice(0, 90))}`);
     }
     console.log(`informational (unbalanced brackets/parentheses): ${s.informationalFields} fields`);
+    console.log(`source-text corrections still requiring the rendered PDF: ${pending.length}`);
+    for (const p of pending) console.log(`  ${p.id} ${p.canonicalIdentity} (p. ${p.printedPage}) ${p.status}${p.applied ? ' [applied, unconfirmed]' : ' [not applied]'}`);
   }
-  if (process.argv.includes('--strict') && result.gating.length) process.exit(1);
+  if (process.argv.includes('--strict') && (result.gating.length || pending.length)) process.exit(1);
 }

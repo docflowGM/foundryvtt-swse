@@ -48,6 +48,15 @@ try {
     if (textDefects) { assert.notEqual(r.code, 0); assert.match(r.out, /refusing to apply.*OCR artifacts/); assert.equal(fs.readFileSync(path.join(copy, 'packs/talents.db'), 'utf8'), snap); }
     else { assert.equal(r.code, 0, r.out); }
   });
+  step('--apply refuses while a source-text correction still requires the rendered PDF, even with clean text', () => {
+    const file = path.join(copy, 'data/audits/talent-phase-3b-source-text-corrections.json');
+    fs.writeFileSync(file, JSON.stringify({ entries: [{ id: 'TC-X', canonicalIdentity: 'B|T|Pending', printedPage: 1, blocksApply: true, applied: false, verification: { status: 'TXT_AMBIGUOUS_PDF_REQUIRED' } }] }));
+    try {
+      const snap = fs.readFileSync(path.join(copy, 'packs/talents.db'), 'utf8');
+      const r = run('--apply'); assert.notEqual(r.code, 0); assert.match(r.out, /still require the rendered PDF \(B\|T\|Pending\)/);
+      assert.equal(fs.readFileSync(path.join(copy, 'packs/talents.db'), 'utf8'), snap);
+    } finally { fs.rmSync(file, { force: true }); }
+  });
   step('--apply succeeds on the pre-state (override only needed while Phase 3B text defects remain)', () => {
     if (!textDefects) return;
     const r = run('--apply', '--allow-ocr-artifacts'); assert.equal(r.code, 0, r.out); assert.match(r.out, /APPLIED/);
