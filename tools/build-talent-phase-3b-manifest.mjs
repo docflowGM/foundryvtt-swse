@@ -4,6 +4,7 @@
  *
  * Usage:
  *   node tools/build-talent-phase-3b-manifest.mjs --book core [--check]
+ *   node tools/build-talent-phase-3b-manifest.mjs --book clone-wars [--check]
  *   node tools/build-talent-phase-3b-manifest.mjs --book threats [--check]
  *   node tools/build-talent-phase-3b-manifest.mjs --book starships [--check]
  *   node tools/build-talent-phase-3b-manifest.mjs --book scavengers [--check]
@@ -46,6 +47,24 @@ const BOOKS = {
         CORRECT_TREE: 17,
         CREATE: 6,
         IDENTITY_SPLIT: 1
+      }
+    }
+  },
+  'clone-wars': {
+    sourcebook: 'Clone Wars Campaign Guide',
+    bookOrder: 2,
+    phase2: 'data/audits/talent-phase-2-clone-wars-campaign-guide-content.json',
+    discrepancy: 'data/audits/talent-phase-2-clone-wars-discrepancy-manifest.json',
+    output: 'data/audits/talent-phase-3b-clone-wars-campaign-guide-manifest.json',
+    aliases: {},
+    expected: {
+      records: 118,
+      extras: 0,
+      dispositions: {
+        UPDATE_CONTENT: 40,
+        UPDATE_METADATA: 69,
+        REMOVE_CONTAMINATION: 3,
+        CREATE: 6
       }
     }
   },
@@ -669,6 +688,6 @@ if (isDirectRun) {
   const bookArg = process.argv.find(arg => arg.startsWith('--book='));
   const index = process.argv.indexOf('--book');
   const bookKey = bookArg ? bookArg.slice('--book='.length) : index >= 0 ? process.argv[index + 1] : null;
-  invariant(bookKey, 'usage: --book core|threats|starships|scavengers|intrigue|war|unknown|rebellion|legacy|scum [--check]');
+  invariant(bookKey, 'usage: --book core|clone-wars|threats|starships|scavengers|intrigue|war|unknown|rebellion|legacy|scum [--check]');
   buildBookManifest(bookKey, {check: process.argv.includes('--check')});
 }
