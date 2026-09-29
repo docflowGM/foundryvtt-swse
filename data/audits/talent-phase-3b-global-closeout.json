@@ -1,0 +1,2811 @@
+{
+  "schemaVersion": 1,
+  "phase": "3B",
+  "status": "GLOBAL_CLOSEOUT_CERTIFIED",
+  "date": "2026-09-29",
+  "branch": "audit/talent-phase-3a-canonical-authority",
+  "authority": {
+    "canonicalTalents": "data/canonical/talents.json",
+    "canonicalTalentBlobSha": "1360dfe9266fcb8743e5aeb9fb6229cefed6328d",
+    "productionTalents": "packs/talents.db",
+    "productionTalentBlobSha": "c8aae4d198d01b7620558a469332ffb3cfa7deba",
+    "productionTrees": "packs/talent_trees.db",
+    "productionTreeBlobSha": "81c0fd5603e8021ec502a1f1b6bae4b69181a717",
+    "treeRegistry": "data/audits/talent-canonical-tree-registry.json",
+    "treeRegistryBlobSha": "52f9cbdc9ff9abaa77313a307d3897228afd1544"
+  },
+  "counts": {
+    "sourcebooks": 14,
+    "publicationClaims": 1182,
+    "canonicalIdentities": 1180,
+    "referenceOnlyPublicationClaims": 2,
+    "dispositions": {
+      "UPDATE_CONTENT": 727,
+      "UPDATE_METADATA": 144,
+      "CREATE": 236,
+      "REMOVE_CONTAMINATION": 38,
+      "CORRECT_TREE": 23,
+      "IDENTITY_SPLIT": 12
+    },
+    "existingCanonicalProductionRecords": 932,
+    "generatedTalentRecords": 248,
+    "projectedProductionTalentRecordsAfterPhase3C": 1272,
+    "productionTalentRecordsBeforePhase3C": 1024,
+    "productionReviewExtras": 2,
+    "productionOnlyDeferredToPhase3D": 90,
+    "productionTreeCreates": 7,
+    "productionTreeConsolidations": 1,
+    "classAccessMutations": 5
+  },
+  "identityIntegrity": {
+    "canonicalSetMatchesManifests": true,
+    "ownershipMatchesCanonicalAuthority": true,
+    "duplicateExistingProductionAssignments": [],
+    "duplicateGeneratedTalentIds": [],
+    "generatedTalentVsProductionCollisions": [],
+    "duplicateGeneratedTreeIds": [],
+    "generatedTreeVsProductionCollisions": []
+  },
+  "crossBookCorrection": {
+    "issue": "Production record bab9a1ce285f98b9 was previously assigned to both Core Dathomiri Witch Charm Beast and JATM Beastwarden Charm Beast.",
+    "resolution": "Preserve bab9a1ce285f98b9 for JATM Beastwarden Charm Beast and create a distinct Core Dathomiri Witch Charm Beast record.",
+    "preservedProductionRecordId": "bab9a1ce285f98b9",
+    "newCoreCreateRecordId": "c919d7682bd9df40"
+  },
+  "perBook": [
+    {
+      "bookKey": "clone-wars",
+      "sourcebook": "Clone Wars Campaign Guide",
+      "manifest": "data/audits/talent-phase-3b-clone-wars-campaign-guide-manifest.json",
+      "manifestBlobSha": "5751719f7923e9cd42e6a7d114e7c22c237f9a57",
+      "publicationClaims": 118,
+      "ownedCanonicalIdentities": 118,
+      "referenceOnlyClaims": 0,
+      "dispositions": {
+        "UPDATE_CONTENT": 40,
+        "UPDATE_METADATA": 69,
+        "CREATE": 6,
+        "REMOVE_CONTAMINATION": 3
+      },
+      "productionExtras": 0,
+      "treeCreates": 0,
+      "treeConsolidations": 0,
+      "classAccessMutations": 0
+    },
+    {
+      "bookKey": "core",
+      "sourcebook": "Saga Edition Core Rulebook",
+      "manifest": "data/audits/talent-phase-3b-core-rulebook-manifest.json",
+      "manifestBlobSha": "faecbf101114fba6db75a0e989874815ab0a64c7",
+      "publicationClaims": 198,
+      "ownedCanonicalIdentities": 198,
+      "referenceOnlyClaims": 0,
+      "dispositions": {
+        "UPDATE_CONTENT": 112,
+        "CORRECT_TREE": 16,
+        "UPDATE_METADATA": 31,
+        "REMOVE_CONTAMINATION": 31,
+        "CREATE": 6,
+        "IDENTITY_SPLIT": 2
+      },
+      "productionExtras": 1,
+      "treeCreates": 0,
+      "treeConsolidations": 0,
+      "classAccessMutations": 0
+    },
+    {
+      "bookKey": "force-unleashed",
+      "sourcebook": "Force Unleashed Campaign Guide",
+      "manifest": "data/audits/talent-phase-3b-force-unleashed-campaign-guide-manifest.json",
+      "manifestBlobSha": "6744784453a747589954037241e1904f132f9432",
+      "publicationClaims": 137,
+      "ownedCanonicalIdentities": 137,
+      "referenceOnlyClaims": 0,
+      "dispositions": {
+        "UPDATE_CONTENT": 107,
+        "UPDATE_METADATA": 2,
+        "CREATE": 28
+      },
+      "productionExtras": 0,
+      "treeCreates": 0,
+      "treeConsolidations": 0,
+      "classAccessMutations": 0
+    },
+    {
+      "bookKey": "war",
+      "sourcebook": "Galaxy at War",
+      "manifest": "data/audits/talent-phase-3b-galaxy-at-war-manifest.json",
+      "manifestBlobSha": "74f0bfb95e38f3ef766641ca581b0a1de0fd8bc7",
+      "publicationClaims": 56,
+      "ownedCanonicalIdentities": 56,
+      "referenceOnlyClaims": 0,
+      "dispositions": {
+        "UPDATE_CONTENT": 13,
+        "UPDATE_METADATA": 1,
+        "IDENTITY_SPLIT": 3,
+        "CREATE": 39
+      },
+      "productionExtras": 0,
+      "treeCreates": 3,
+      "treeConsolidations": 0,
+      "classAccessMutations": 3
+    },
+    {
+      "bookKey": "intrigue",
+      "sourcebook": "Galaxy of Intrigue",
+      "manifest": "data/audits/talent-phase-3b-galaxy-of-intrigue-manifest.json",
+      "manifestBlobSha": "d1a33a88dd00a4e24e1030a9463cf0ae6f6a8d73",
+      "publicationClaims": 43,
+      "ownedCanonicalIdentities": 43,
+      "referenceOnlyClaims": 0,
+      "dispositions": {
+        "UPDATE_METADATA": 2,
+        "IDENTITY_SPLIT": 2,
+        "CREATE": 27,
+        "UPDATE_CONTENT": 12
+      },
+      "productionExtras": 0,
+      "treeCreates": 2,
+      "treeConsolidations": 0,
+      "classAccessMutations": 2
+    },
+    {
+      "bookKey": "jatm",
+      "sourcebook": "Jedi Academy Training Manual",
+      "manifest": "data/audits/talent-phase-3b-jedi-academy-training-manual-manifest.json",
+      "manifestBlobSha": "fc76c9769e2054f1fbfc4a63fd300fa8c710c6c0",
+      "publicationClaims": 118,
+      "ownedCanonicalIdentities": 117,
+      "referenceOnlyClaims": 1,
+      "dispositions": {
+        "UPDATE_CONTENT": 74,
+        "CREATE": 43
+      },
+      "productionExtras": 0,
+      "treeCreates": 2,
+      "treeConsolidations": 0,
+      "classAccessMutations": 0
+    },
+    {
+      "bookKey": "kotor",
+      "sourcebook": "Knights of the Old Republic Campaign Guide",
+      "manifest": "data/audits/talent-phase-3b-knights-of-the-old-republic-campaign-guide-manifest.json",
+      "manifestBlobSha": "dc027b71a8a10e3ccf6ee666ff8f951901b1c612",
+      "publicationClaims": 115,
+      "ownedCanonicalIdentities": 114,
+      "referenceOnlyClaims": 1,
+      "dispositions": {
+        "UPDATE_CONTENT": 99,
+        "CORRECT_TREE": 2,
+        "IDENTITY_SPLIT": 1,
+        "CREATE": 12
+      },
+      "productionExtras": 0,
+      "treeCreates": 0,
+      "treeConsolidations": 0,
+      "classAccessMutations": 0
+    },
+    {
+      "bookKey": "legacy",
+      "sourcebook": "Legacy Era Campaign Guide",
+      "manifest": "data/audits/talent-phase-3b-legacy-era-campaign-guide-manifest.json",
+      "manifestBlobSha": "65ec62571b8716a2a18d540953df0e2c89e5e113",
+      "publicationClaims": 101,
+      "ownedCanonicalIdentities": 101,
+      "referenceOnlyClaims": 0,
+      "dispositions": {
+        "UPDATE_CONTENT": 89,
+        "REMOVE_CONTAMINATION": 1,
+        "CORRECT_TREE": 1,
+        "UPDATE_METADATA": 1,
+        "CREATE": 9
+      },
+      "productionExtras": 0,
+      "treeCreates": 0,
+      "treeConsolidations": 0,
+      "classAccessMutations": 0
+    },
+    {
+      "bookKey": "rebellion",
+      "sourcebook": "Rebellion Era Campaign Guide",
+      "manifest": "data/audits/talent-phase-3b-rebellion-era-campaign-guide-manifest.json",
+      "manifestBlobSha": "b8bf2c2d8038d62f571cfb67578ac7197a13495b",
+      "publicationClaims": 64,
+      "ownedCanonicalIdentities": 64,
+      "referenceOnlyClaims": 0,
+      "dispositions": {
+        "UPDATE_METADATA": 37,
+        "UPDATE_CONTENT": 21,
+        "IDENTITY_SPLIT": 1,
+        "REMOVE_CONTAMINATION": 3,
+        "CREATE": 2
+      },
+      "productionExtras": 0,
+      "treeCreates": 0,
+      "treeConsolidations": 0,
+      "classAccessMutations": 0
+    },
+    {
+      "bookKey": "scavengers",
+      "sourcebook": "Scavenger's Guide to Droids",
+      "manifest": "data/audits/talent-phase-3b-scavengers-guide-to-droids-manifest.json",
+      "manifestBlobSha": "699aabedec6ebb9ff14e70951199ffae7b42350a",
+      "publicationClaims": 31,
+      "ownedCanonicalIdentities": 31,
+      "referenceOnlyClaims": 0,
+      "dispositions": {
+        "UPDATE_CONTENT": 12,
+        "CREATE": 19
+      },
+      "productionExtras": 0,
+      "treeCreates": 0,
+      "treeConsolidations": 0,
+      "classAccessMutations": 0
+    },
+    {
+      "bookKey": "scum",
+      "sourcebook": "Scum and Villainy",
+      "manifest": "data/audits/talent-phase-3b-scum-and-villainy-manifest.json",
+      "manifestBlobSha": "7100fa614229fa49fb34fc91db4d006b22bb8ae0",
+      "publicationClaims": 110,
+      "ownedCanonicalIdentities": 110,
+      "referenceOnlyClaims": 0,
+      "dispositions": {
+        "UPDATE_CONTENT": 104,
+        "CREATE": 1,
+        "CORRECT_TREE": 3,
+        "IDENTITY_SPLIT": 1,
+        "UPDATE_METADATA": 1
+      },
+      "productionExtras": 0,
+      "treeCreates": 0,
+      "treeConsolidations": 1,
+      "classAccessMutations": 0
+    },
+    {
+      "bookKey": "starships",
+      "sourcebook": "Starships of the Galaxy",
+      "manifest": "data/audits/talent-phase-3b-starships-of-the-galaxy-manifest.json",
+      "manifestBlobSha": "9ce71dd1c0b3efc21153e5a5b06fd3a584a7481f",
+      "publicationClaims": 23,
+      "ownedCanonicalIdentities": 23,
+      "referenceOnlyClaims": 0,
+      "dispositions": {
+        "UPDATE_CONTENT": 22,
+        "CORRECT_TREE": 1
+      },
+      "productionExtras": 0,
+      "treeCreates": 0,
+      "treeConsolidations": 0,
+      "classAccessMutations": 0
+    },
+    {
+      "bookKey": "threats",
+      "sourcebook": "Threats of the Galaxy",
+      "manifest": "data/audits/talent-phase-3b-threats-of-the-galaxy-manifest.json",
+      "manifestBlobSha": "b4d1c30b160783975310bf151781d5b31e4c65c2",
+      "publicationClaims": 11,
+      "ownedCanonicalIdentities": 11,
+      "referenceOnlyClaims": 0,
+      "dispositions": {
+        "UPDATE_CONTENT": 11
+      },
+      "productionExtras": 1,
+      "treeCreates": 0,
+      "treeConsolidations": 0,
+      "classAccessMutations": 0
+    },
+    {
+      "bookKey": "unknown",
+      "sourcebook": "Unknown Regions",
+      "manifest": "data/audits/talent-phase-3b-unknown-regions-manifest.json",
+      "manifestBlobSha": "891843427d297117e9a2ce3f7e62f29b6fe3bd60",
+      "publicationClaims": 57,
+      "ownedCanonicalIdentities": 57,
+      "referenceOnlyClaims": 0,
+      "dispositions": {
+        "UPDATE_CONTENT": 11,
+        "CREATE": 44,
+        "IDENTITY_SPLIT": 2
+      },
+      "productionExtras": 0,
+      "treeCreates": 0,
+      "treeConsolidations": 0,
+      "classAccessMutations": 0
+    }
+  ],
+  "referenceOnlyPublications": [
+    {
+      "sourcebook": "Jedi Academy Training Manual",
+      "publicationClaim": "Jedi Academy Training Manual|Alter|Illusion",
+      "canonicalIdentity": "Saga Edition Core Rulebook|Alter|Illusion",
+      "ownerSourcebook": "Force Unleashed Campaign Guide"
+    },
+    {
+      "sourcebook": "Knights of the Old Republic Campaign Guide",
+      "publicationClaim": "Knights of the Old Republic Campaign Guide|Alter|Illusion",
+      "canonicalIdentity": "Saga Edition Core Rulebook|Alter|Illusion",
+      "ownerSourcebook": "Force Unleashed Campaign Guide"
+    }
+  ],
+  "reviewExtras": [
+    {
+      "sourcebook": "Saga Edition Core Rulebook",
+      "productionRecordId": "a7d8c4da96eacad4",
+      "name": "Notorious",
+      "treeClaims": [
+        {
+          "treeId": "c1be604242cb328f",
+          "treeName": "Infamy"
+        }
+      ],
+      "classification": "REVIEW_EXTRA_DUPLICATE_CANONICAL_ALIAS",
+      "relatedCanonicalIdentity": "Saga Edition Core Rulebook|Infamy|Notorious",
+      "instruction": "Do not delete during Phase 3C. Resolve under Phase 3D after canonical repair and reference audit."
+    },
+    {
+      "sourcebook": "Threats of the Galaxy",
+      "productionRecordId": "222327492c484b4a",
+      "name": "Teräs Käsi Basics",
+      "treeClaims": [
+        {
+          "treeId": "ba726f623e42f849",
+          "treeName": "Master of Teräs Käsi"
+        }
+      ],
+      "classification": "REVIEW_EXTRA_DUPLICATE_CANONICAL_ALIAS",
+      "relatedCanonicalIdentity": "Threats of the Galaxy|Master of Teräs Käsi|Teräs Käsi Basics",
+      "instruction": "Do not delete during Phase 3C. Resolve under Phase 3D after canonical repair and reference audit."
+    }
+  ],
+  "treeCreates": [
+    {
+      "sourcebook": "Galaxy at War",
+      "canonicalTreeKey": "Galaxy at War|Squad Leader",
+      "createTreeId": "3b30dd12884bb2e4",
+      "displayName": "Squad Leader",
+      "classAccess": [
+        "Elite Trooper"
+      ],
+      "memberTalentIds": [
+        "16b020752725d7a9",
+        "29e32c30fda1a234",
+        "4f60988cc2260277",
+        "438abc85b1f7d25d",
+        "1907d80212a12c68"
+      ],
+      "memberTalentNames": [
+        "Fall Back",
+        "Form Up",
+        "Full Advance",
+        "Hold Steady",
+        "Search and Destroy"
+      ]
+    },
+    {
+      "sourcebook": "Galaxy at War",
+      "canonicalTreeKey": "Galaxy at War|Martial Arts Forms",
+      "createTreeId": "8633ecbf7151fbb6",
+      "displayName": "Martial Arts Forms",
+      "classAccess": [
+        "Martial Arts Master"
+      ],
+      "memberTalentIds": [
+        "88ca4add87c2a86a",
+        "6b55ee89c322b99d",
+        "cafcd19016e17d00",
+        "9f02751f14ad2de8",
+        "41d3f44653a1fe34",
+        "6e638242c0af18df",
+        "75c0b084b706be38"
+      ],
+      "memberTalentNames": [
+        "Echani Expertise",
+        "Hijkata Expertise",
+        "K'tara Expertise",
+        "K'thri Expertise",
+        "Stava Expertise",
+        "Tae-Jitsu Expertise",
+        "Wrruushi Expertise"
+      ]
+    },
+    {
+      "sourcebook": "Galaxy at War",
+      "canonicalTreeKey": "Galaxy at War|Unarmed Mastery",
+      "createTreeId": "10738666e7ddcd1f",
+      "displayName": "Unarmed Mastery",
+      "classAccess": [
+        "Martial Arts Master"
+      ],
+      "memberTalentIds": [
+        "11b45afc4136594c",
+        "a497a8c8c14acb9d",
+        "8637ce4c8b274df4"
+      ],
+      "memberTalentNames": [
+        "Flurry of Blows",
+        "Hardened Strike",
+        "Punishing Strike"
+      ]
+    },
+    {
+      "sourcebook": "Galaxy of Intrigue",
+      "canonicalTreeKey": "Galaxy of Intrigue|Skill Challenge",
+      "createTreeId": "7ab8bd7bce901f85",
+      "displayName": "Skill Challenge",
+      "classAccess": [
+        "Noble"
+      ],
+      "memberTalentIds": [
+        "669aae58e8d0d90f",
+        "efd54ffa36d5a2b4",
+        "6dcf10db37160d23",
+        "bf27fc2e540e2ed5"
+      ],
+      "memberTalentNames": [
+        "Guaranteed Boon",
+        "Leading Skill",
+        "Learn from Mistakes",
+        "Try Your Luck"
+      ]
+    },
+    {
+      "sourcebook": "Galaxy of Intrigue",
+      "canonicalTreeKey": "Galaxy of Intrigue|Espionage",
+      "createTreeId": "0c4ddea3c78ffc3d",
+      "displayName": "Espionage",
+      "classAccess": [
+        "Scout"
+      ],
+      "memberTalentIds": [
+        "77293789b3e9e38a",
+        "de31c189f3416df7",
+        "70929db4d14b8ae8",
+        "810160a476804e61",
+        "95579a44ff466f19"
+      ],
+      "memberTalentNames": [
+        "Fade Out",
+        "Keep Together",
+        "Prudent Escape",
+        "Reactive Stealth",
+        "Sizing Up"
+      ]
+    },
+    {
+      "sourcebook": "Jedi Academy Training Manual",
+      "canonicalTreeKey": "Jedi Academy Training Manual|Shapers of Kro Var",
+      "createTreeId": "ab3311a860d8d359",
+      "displayName": "Shapers of Kro Var",
+      "classAccess": [],
+      "memberTalentIds": [
+        "78a296a68645450b",
+        "2f9bd5b93d0eb82a",
+        "d257d180378c8f9d",
+        "07680913de8adc53",
+        "addff1294f534ac7"
+      ],
+      "memberTalentNames": [
+        "Combustion",
+        "Earth Buckle",
+        "Fluidity",
+        "Thunderclap",
+        "Wind Vortex"
+      ]
+    },
+    {
+      "sourcebook": "Jedi Academy Training Manual",
+      "canonicalTreeKey": "Jedi Academy Training Manual|Zeison Sha Warrior",
+      "createTreeId": "aec386e85f66e93e",
+      "displayName": "Zeison Sha Warrior",
+      "classAccess": [],
+      "memberTalentIds": [
+        "69380dec0c195e82",
+        "b2c9221dafb87277",
+        "72ac4192d35d3ae8",
+        "b7b402e8065f4fa8",
+        "e7307fe67d4abd64"
+      ],
+      "memberTalentNames": [
+        "Discblade Arc",
+        "Distant Discblade Throw",
+        "Recall Discblade",
+        "Telekinetic Vigilance",
+        "Weapon Specialization (discblade)"
+      ]
+    }
+  ],
+  "treeConsolidations": [
+    {
+      "sourcebook": "Scum and Villainy",
+      "canonicalTreeKey": "Scum and Villainy|GenoHaradan",
+      "survivorTreeId": "da7b731a3e434a7a",
+      "survivorCurrentName": "Genoharadan",
+      "canonicalDisplayName": "GenoHaradan",
+      "deleteObsoleteTreeIds": [
+        "db1b30c2163d0650"
+      ]
+    }
+  ],
+  "classAccessMutations": [
+    {
+      "sourcebook": "Galaxy at War",
+      "classRecordId": "c4dbedcf989cb6b2",
+      "className": "Elite Trooper",
+      "canonicalTreeKey": "Galaxy at War|Squad Leader",
+      "treeId": "3b30dd12884bb2e4",
+      "treeName": "Squad Leader"
+    },
+    {
+      "sourcebook": "Galaxy at War",
+      "classRecordId": "480a290aa128f683",
+      "className": "Martial Arts Master",
+      "canonicalTreeKey": "Galaxy at War|Martial Arts Forms",
+      "treeId": "8633ecbf7151fbb6",
+      "treeName": "Martial Arts Forms"
+    },
+    {
+      "sourcebook": "Galaxy at War",
+      "classRecordId": "480a290aa128f683",
+      "className": "Martial Arts Master",
+      "canonicalTreeKey": "Galaxy at War|Unarmed Mastery",
+      "treeId": "10738666e7ddcd1f",
+      "treeName": "Unarmed Mastery"
+    },
+    {
+      "sourcebook": "Galaxy of Intrigue",
+      "classRecordId": "8c58016e587dd2c7",
+      "className": "Noble",
+      "canonicalTreeKey": "Galaxy of Intrigue|Skill Challenge",
+      "treeId": "7ab8bd7bce901f85",
+      "treeName": "Skill Challenge"
+    },
+    {
+      "sourcebook": "Galaxy of Intrigue",
+      "classRecordId": "b5bed5d1b5f42958",
+      "className": "Scout",
+      "canonicalTreeKey": "Galaxy of Intrigue|Espionage",
+      "treeId": "0c4ddea3c78ffc3d",
+      "treeName": "Espionage"
+    }
+  ],
+  "specialOperations": {
+    "CORRECT_TREE": [
+      {
+        "sourcebook": "Saga Edition Core Rulebook",
+        "canonicalIdentity": "Saga Edition Core Rulebook|Jedi Consular|Skilled Advisor",
+        "productionRecordId": "35cbdbe9c91ba1d0",
+        "createRecordId": null,
+        "targetTree": {
+          "treeId": "e99cfa9db8493573",
+          "treeName": "Jedi Consular"
+        },
+        "sourceTreeClaims": [
+          {
+            "treeId": "152047d6ab7896ad",
+            "treeName": "Jedi Archivist"
+          }
+        ],
+        "phase2Flags": [
+          "TREE_ERROR"
+        ]
+      },
+      {
+        "sourcebook": "Saga Edition Core Rulebook",
+        "canonicalIdentity": "Saga Edition Core Rulebook|Influence|Demand Surrender",
+        "productionRecordId": "871638a983029bc4",
+        "createRecordId": null,
+        "targetTree": {
+          "treeId": "8375b9b26b679901",
+          "treeName": "Influence"
+        },
+        "sourceTreeClaims": [
+          {
+            "treeId": "e99cfa9db8493573",
+            "treeName": "Jedi Consular"
+          }
+        ],
+        "phase2Flags": [
+          "TREE_ERROR",
+          "CORE_TEXT_WITH_LATER_EXTENSION"
+        ]
+      },
+      {
+        "sourcebook": "Saga Edition Core Rulebook",
+        "canonicalIdentity": "Saga Edition Core Rulebook|Leadership|Born Leader",
+        "productionRecordId": "6a66ba6e0834dd6f",
+        "createRecordId": null,
+        "targetTree": {
+          "treeId": "5964237d22681dc0",
+          "treeName": "Leadership"
+        },
+        "sourceTreeClaims": [
+          {
+            "treeId": "057a978a7dc1d5a7",
+            "treeName": "Naval Officer"
+          }
+        ],
+        "phase2Flags": [
+          "TREE_ERROR"
+        ]
+      },
+      {
+        "sourcebook": "Saga Edition Core Rulebook",
+        "canonicalIdentity": "Saga Edition Core Rulebook|Awareness|Acute Senses",
+        "productionRecordId": "f0166d26d9f6252a",
+        "createRecordId": null,
+        "targetTree": {
+          "treeId": "1c48d1cd9ab1f5c8",
+          "treeName": "Awareness"
+        },
+        "sourceTreeClaims": [
+          {
+            "treeId": "dca33c0215264a02",
+            "treeName": "Master Scout"
+          }
+        ],
+        "phase2Flags": [
+          "TREE_ERROR",
+          "CORE_TEXT_WITH_LATER_EXTENSION"
+        ]
+      },
+      {
+        "sourcebook": "Saga Edition Core Rulebook",
+        "canonicalIdentity": "Saga Edition Core Rulebook|Fringer|Jury-Rigger",
+        "productionRecordId": "e15a3408b9474354",
+        "createRecordId": null,
+        "targetTree": {
+          "treeId": "7c47d36dc1f77d9c",
+          "treeName": "Fringer"
+        },
+        "sourceTreeClaims": [
+          {
+            "treeId": "dca33c0215264a02",
+            "treeName": "Master Scout"
+          }
+        ],
+        "phase2Flags": [
+          "TREE_ERROR"
+        ]
+      },
+      {
+        "sourcebook": "Saga Edition Core Rulebook",
+        "canonicalIdentity": "Saga Edition Core Rulebook|Fringer|Long Stride",
+        "productionRecordId": "618472c99f355949",
+        "createRecordId": null,
+        "targetTree": {
+          "treeId": "7c47d36dc1f77d9c",
+          "treeName": "Fringer"
+        },
+        "sourceTreeClaims": [
+          {
+            "treeId": "dca33c0215264a02",
+            "treeName": "Master Scout"
+          }
+        ],
+        "phase2Flags": [
+          "TREE_ERROR"
+        ]
+      },
+      {
+        "sourcebook": "Saga Edition Core Rulebook",
+        "canonicalIdentity": "Saga Edition Core Rulebook|Brawler|Gun Club",
+        "productionRecordId": "bff3997bbdecc98a",
+        "createRecordId": null,
+        "targetTree": {
+          "treeId": "67fdd8dce9abd6c1",
+          "treeName": "Brawler"
+        },
+        "sourceTreeClaims": [
+          {
+            "treeId": "cb3751283ea8fa3d",
+            "treeName": "Republic Commando"
+          }
+        ],
+        "phase2Flags": [
+          "TREE_ERROR"
+        ]
+      },
+      {
+        "sourcebook": "Saga Edition Core Rulebook",
+        "canonicalIdentity": "Saga Edition Core Rulebook|Brawler|Melee Smash",
+        "productionRecordId": "e0ee525f4109cfde",
+        "createRecordId": null,
+        "targetTree": {
+          "treeId": "67fdd8dce9abd6c1",
+          "treeName": "Brawler"
+        },
+        "sourceTreeClaims": [
+          {
+            "treeId": "fad8118981c532f0",
+            "treeName": "Melee Specialist"
+          }
+        ],
+        "phase2Flags": [
+          "TREE_ERROR"
+        ]
+      },
+      {
+        "sourcebook": "Saga Edition Core Rulebook",
+        "canonicalIdentity": "Saga Edition Core Rulebook|Brawler|Stunning Strike",
+        "productionRecordId": "9292819462b46074",
+        "createRecordId": null,
+        "targetTree": {
+          "treeId": "67fdd8dce9abd6c1",
+          "treeName": "Brawler"
+        },
+        "sourceTreeClaims": [
+          {
+            "treeId": "fad8118981c532f0",
+            "treeName": "Melee Specialist"
+          }
+        ],
+        "phase2Flags": [
+          "TREE_ERROR"
+        ]
+      },
+      {
+        "sourcebook": "Saga Edition Core Rulebook",
+        "canonicalIdentity": "Saga Edition Core Rulebook|Commando|Draw Fire",
+        "productionRecordId": "f29d5c0628459c94",
+        "createRecordId": null,
+        "targetTree": {
+          "treeId": "798ed0945cbdac1c",
+          "treeName": "Commando"
+        },
+        "sourceTreeClaims": [
+          {
+            "treeId": "e91cc675fbf9ba6e",
+            "treeName": "Disgrace"
+          }
+        ],
+        "phase2Flags": [
+          "TREE_ERROR"
+        ]
+      },
+      {
+        "sourcebook": "Saga Edition Core Rulebook",
+        "canonicalIdentity": "Saga Edition Core Rulebook|Commando|Harm's Way",
+        "productionRecordId": "fde8157b6d097e12",
+        "createRecordId": null,
+        "targetTree": {
+          "treeId": "798ed0945cbdac1c",
+          "treeName": "Commando"
+        },
+        "sourceTreeClaims": [
+          {
+            "treeId": "c92c2cbc79b8a515",
+            "treeName": "Protection"
+          }
+        ],
+        "phase2Flags": [
+          "TREE_ERROR"
+        ]
+      },
+      {
+        "sourcebook": "Saga Edition Core Rulebook",
+        "canonicalIdentity": "Saga Edition Core Rulebook|Weapon Specialist|Devastating Attack",
+        "productionRecordId": "383915a7d11e1225",
+        "createRecordId": null,
+        "targetTree": {
+          "treeId": "2e9265a596cc43f7",
+          "treeName": "Weapon Specialist"
+        },
+        "sourceTreeClaims": [
+          {
+            "treeId": "2f720d8b061f9bd0",
+            "treeName": "Weapon Master"
+          }
+        ],
+        "phase2Flags": [
+          "TREE_ERROR"
+        ]
+      },
+      {
+        "sourcebook": "Saga Edition Core Rulebook",
+        "canonicalIdentity": "Saga Edition Core Rulebook|Weapon Specialist|Penetrating Attack",
+        "productionRecordId": "7d547902b8d9109e",
+        "createRecordId": null,
+        "targetTree": {
+          "treeId": "2e9265a596cc43f7",
+          "treeName": "Weapon Specialist"
+        },
+        "sourceTreeClaims": [
+          {
+            "treeId": "2f720d8b061f9bd0",
+            "treeName": "Weapon Master"
+          }
+        ],
+        "phase2Flags": [
+          "TREE_ERROR"
+        ]
+      },
+      {
+        "sourcebook": "Saga Edition Core Rulebook",
+        "canonicalIdentity": "Saga Edition Core Rulebook|Control|Equilibrium",
+        "productionRecordId": "328a880e60f2320f",
+        "createRecordId": null,
+        "targetTree": {
+          "treeId": "d3661aa9906bdc79",
+          "treeName": "Control"
+        },
+        "sourceTreeClaims": [
+          {
+            "treeId": "e35ee41362604227",
+            "treeName": "Force Adept"
+          }
+        ],
+        "phase2Flags": [
+          "TREE_ERROR",
+          "DESCRIPTION_ERROR",
+          "CONCATENATED_IDENTITY_TEXT"
+        ]
+      },
+      {
+        "sourcebook": "Saga Edition Core Rulebook",
+        "canonicalIdentity": "Saga Edition Core Rulebook|Sense|Visions",
+        "productionRecordId": "da12fc505efc5eea",
+        "createRecordId": null,
+        "targetTree": {
+          "treeId": "d6b4331c0e31f7e3",
+          "treeName": "Sense"
+        },
+        "sourceTreeClaims": [
+          {
+            "treeId": "dad3c0da191748c1",
+            "treeName": "Keetael"
+          }
+        ],
+        "phase2Flags": [
+          "TREE_ERROR",
+          "DESCRIPTION_ERROR"
+        ]
+      },
+      {
+        "sourcebook": "Saga Edition Core Rulebook",
+        "canonicalIdentity": "Saga Edition Core Rulebook|Duelist|Multiattack Proficiency (lightsabers)",
+        "productionRecordId": "317400e9ea2b66c7",
+        "createRecordId": null,
+        "targetTree": {
+          "treeId": "b3c5d90b5036f39b",
+          "treeName": "Duelist"
+        },
+        "sourceTreeClaims": [
+          {
+            "treeId": "dfc4142435b4356d",
+            "treeName": "Jedi Battlemaster"
+          }
+        ],
+        "phase2Flags": [
+          "TREE_ERROR"
+        ]
+      },
+      {
+        "sourcebook": "Knights of the Old Republic Campaign Guide",
+        "canonicalIdentity": "Saga Edition Core Rulebook|Jedi Sentinel|Sentinel Strike",
+        "productionRecordId": "cf2d518039afd828",
+        "createRecordId": null,
+        "targetTree": {
+          "treeId": "36f18f3e974feb33",
+          "treeName": "Jedi Sentinel"
+        },
+        "sourceTreeClaims": [
+          {
+            "treeId": "eab0d8bbee7e0f4f",
+            "treeName": "Jedi Shadow"
+          }
+        ],
+        "phase2Flags": [
+          "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+          "SOURCE_METADATA_MISSING",
+          "SUMMARY_MISSING"
+        ]
+      },
+      {
+        "sourcebook": "Knights of the Old Republic Campaign Guide",
+        "canonicalIdentity": "Saga Edition Core Rulebook|Jedi Sentinel|Sentinel's Gambit",
+        "productionRecordId": "df40e8294bd43fe7",
+        "createRecordId": null,
+        "targetTree": {
+          "treeId": "36f18f3e974feb33",
+          "treeName": "Jedi Sentinel"
+        },
+        "sourceTreeClaims": [
+          {
+            "treeId": "eab0d8bbee7e0f4f",
+            "treeName": "Jedi Shadow"
+          }
+        ],
+        "phase2Flags": [
+          "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+          "SOURCE_METADATA_MISSING",
+          "SUMMARY_MISSING"
+        ]
+      },
+      {
+        "sourcebook": "Legacy Era Campaign Guide",
+        "canonicalIdentity": "Saga Edition Core Rulebook|Misfortune|Seducer",
+        "productionRecordId": "d21d7d3d4d7be0d2",
+        "createRecordId": null,
+        "targetTree": {
+          "treeId": "67b59e020c1660eb",
+          "treeName": "Misfortune"
+        },
+        "sourceTreeClaims": [
+          {
+            "treeId": "8375b9b26b679901",
+            "treeName": "Influence"
+          }
+        ],
+        "phase2Flags": [
+          "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+          "SOURCE_METADATA_MISSING",
+          "SUMMARY_MISSING"
+        ]
+      },
+      {
+        "sourcebook": "Scum and Villainy",
+        "canonicalIdentity": "Scum and Villainy|GenoHaradan|Deadly Repercussions",
+        "productionRecordId": "58c3d63d94288eb2",
+        "createRecordId": null,
+        "targetTree": {
+          "treeId": "da7b731a3e434a7a",
+          "treeName": "GenoHaradan"
+        },
+        "sourceTreeClaims": [
+          {
+            "treeId": "db1b30c2163d0650",
+            "treeName": "Genohardan"
+          }
+        ],
+        "phase2Flags": [
+          "MISSING_CONTENT",
+          "DISTINCT_SAME_NAME_IDENTITY_MISSING"
+        ]
+      },
+      {
+        "sourcebook": "Scum and Villainy",
+        "canonicalIdentity": "Scum and Villainy|GenoHaradan|Improved Manipulating Strike",
+        "productionRecordId": "8d14ab116a78dfd6",
+        "createRecordId": null,
+        "targetTree": {
+          "treeId": "da7b731a3e434a7a",
+          "treeName": "GenoHaradan"
+        },
+        "sourceTreeClaims": [
+          {
+            "treeId": "db1b30c2163d0650",
+            "treeName": "Genohardan"
+          }
+        ],
+        "phase2Flags": [
+          "MISSING_CONTENT",
+          "DISTINCT_SAME_NAME_IDENTITY_MISSING"
+        ]
+      },
+      {
+        "sourcebook": "Scum and Villainy",
+        "canonicalIdentity": "Scum and Villainy|GenoHaradan|Pulling the Strings",
+        "productionRecordId": "d6faa4b87d5c35ce",
+        "createRecordId": null,
+        "targetTree": {
+          "treeId": "da7b731a3e434a7a",
+          "treeName": "GenoHaradan"
+        },
+        "sourceTreeClaims": [
+          {
+            "treeId": "db1b30c2163d0650",
+            "treeName": "Genohardan"
+          }
+        ],
+        "phase2Flags": [
+          "MISSING_CONTENT",
+          "DISTINCT_SAME_NAME_IDENTITY_MISSING"
+        ]
+      },
+      {
+        "sourcebook": "Starships of the Galaxy",
+        "canonicalIdentity": "Starships of the Galaxy|Outlaw Tech|Quick Fix",
+        "productionRecordId": "3e6f7edaeec04a06",
+        "createRecordId": null,
+        "targetTree": {
+          "treeId": "f1657b1d23a4c7dc",
+          "treeName": "Outlaw Tech"
+        },
+        "sourceTreeClaims": [
+          {
+            "treeId": "38d7c18ce4664c66",
+            "treeName": "Mechanic"
+          }
+        ],
+        "phase2Flags": [
+          "DESCRIPTION_INCOMPLETE",
+          "PREREQUISITE_ERROR"
+        ]
+      }
+    ],
+    "IDENTITY_SPLIT": [
+      {
+        "sourcebook": "Saga Edition Core Rulebook",
+        "canonicalIdentity": "Saga Edition Core Rulebook|Dathomiri Witch|Charm Beast",
+        "productionRecordId": null,
+        "createRecordId": "c919d7682bd9df40",
+        "targetTree": {
+          "treeId": "ad16f3e5f4f7441b",
+          "treeName": "Dathomiri Witch"
+        },
+        "sourceTreeClaims": [],
+        "phase2Flags": [
+          "TREE_ERROR"
+        ]
+      },
+      {
+        "sourcebook": "Saga Edition Core Rulebook",
+        "canonicalIdentity": "Saga Edition Core Rulebook|Bounty Hunter|Notorious",
+        "productionRecordId": null,
+        "createRecordId": "c67cbd59abd1cc53",
+        "targetTree": {
+          "treeId": "a47ed82a822e3962",
+          "treeName": "Bounty Hunter"
+        },
+        "sourceTreeClaims": [],
+        "phase2Flags": [
+          "MISSING_DISTINCT_IDENTITY",
+          "IDENTITY_ERROR"
+        ]
+      },
+      {
+        "sourcebook": "Galaxy at War",
+        "canonicalIdentity": "Saga Edition Core Rulebook|Leadership|Commanding Presence",
+        "productionRecordId": null,
+        "createRecordId": "d442508aa9d9bdf6",
+        "targetTree": {
+          "treeId": "5964237d22681dc0",
+          "treeName": "Leadership"
+        },
+        "sourceTreeClaims": [],
+        "phase2Flags": [
+          "MISSING_CONTENT",
+          "DISTINCT_SAME_NAME_IDENTITY_MISSING"
+        ]
+      },
+      {
+        "sourcebook": "Galaxy at War",
+        "canonicalIdentity": "Saga Edition Core Rulebook|Camouflage|Slip By",
+        "productionRecordId": null,
+        "createRecordId": "b1f19c1c86bdcae9",
+        "targetTree": {
+          "treeId": "3926d582d2077489",
+          "treeName": "Camouflage"
+        },
+        "sourceTreeClaims": [],
+        "phase2Flags": [
+          "MISSING_CONTENT",
+          "DISTINCT_SAME_NAME_IDENTITY_MISSING"
+        ]
+      },
+      {
+        "sourcebook": "Galaxy at War",
+        "canonicalIdentity": "Galaxy at War|Advance Patrol|Mobile Combatant",
+        "productionRecordId": null,
+        "createRecordId": "ee184e210f8c8935",
+        "targetTree": {
+          "treeId": "9d826906ad8945b0",
+          "treeName": "Advance Patrol"
+        },
+        "sourceTreeClaims": [],
+        "phase2Flags": [
+          "MISSING_CONTENT",
+          "DISTINCT_SAME_NAME_IDENTITY_MISSING"
+        ]
+      },
+      {
+        "sourcebook": "Galaxy of Intrigue",
+        "canonicalIdentity": "Galaxy of Intrigue|Master of Intrigue|Blend In",
+        "productionRecordId": null,
+        "createRecordId": "4a6da8249db460f6",
+        "targetTree": {
+          "treeId": "0ffc37dac946477d",
+          "treeName": "Master Of Intrigue"
+        },
+        "sourceTreeClaims": [],
+        "phase2Flags": [
+          "MISSING_CONTENT",
+          "DISTINCT_SAME_NAME_IDENTITY_MISSING"
+        ]
+      },
+      {
+        "sourcebook": "Galaxy of Intrigue",
+        "canonicalIdentity": "Galaxy of Intrigue|Master of Intrigue|Get into Position",
+        "productionRecordId": null,
+        "createRecordId": "bb7ee79cbdd2c018",
+        "targetTree": {
+          "treeId": "0ffc37dac946477d",
+          "treeName": "Master Of Intrigue"
+        },
+        "sourceTreeClaims": [],
+        "phase2Flags": [
+          "MISSING_CONTENT",
+          "DISTINCT_SAME_NAME_IDENTITY_MISSING"
+        ]
+      },
+      {
+        "sourcebook": "Knights of the Old Republic Campaign Guide",
+        "canonicalIdentity": "Saga Edition Core Rulebook|Sith|Sith Alchemy",
+        "productionRecordId": null,
+        "createRecordId": "eeecb3737aabf789",
+        "targetTree": {
+          "treeId": "d1037bc7a08ea80b",
+          "treeName": "Sith"
+        },
+        "sourceTreeClaims": [],
+        "phase2Flags": [
+          "MISSING_CONTENT",
+          "DISTINCT_SAME_NAME_IDENTITY_HAZARD"
+        ]
+      },
+      {
+        "sourcebook": "Rebellion Era Campaign Guide",
+        "canonicalIdentity": "Rebellion Era Campaign Guide|Rebel Recruiter|Stay in the Fight",
+        "productionRecordId": null,
+        "createRecordId": "6cf364c5b9556770",
+        "targetTree": {
+          "treeId": "a2c6962521c29361",
+          "treeName": "Rebel Recruiter"
+        },
+        "sourceTreeClaims": [],
+        "phase2Flags": [
+          "MISSING_CONTENT",
+          "DISTINCT_SAME_NAME_IDENTITY_MISSING"
+        ]
+      },
+      {
+        "sourcebook": "Scum and Villainy",
+        "canonicalIdentity": "Scum and Villainy|Piracy|Keep Them Reeling",
+        "productionRecordId": null,
+        "createRecordId": "9fe189e1376feec5",
+        "targetTree": {
+          "treeId": "61db5e2c0c44ef67",
+          "treeName": "Piracy"
+        },
+        "sourceTreeClaims": [],
+        "phase2Flags": [
+          "MISSING_CONTENT",
+          "DISTINCT_SAME_NAME_IDENTITY_MISSING"
+        ]
+      },
+      {
+        "sourcebook": "Unknown Regions",
+        "canonicalIdentity": "Saga Edition Core Rulebook|Commando|Out of Harm's Way",
+        "productionRecordId": null,
+        "createRecordId": "1946e16d1e6c831c",
+        "targetTree": {
+          "treeId": "798ed0945cbdac1c",
+          "treeName": "Commando"
+        },
+        "sourceTreeClaims": [],
+        "phase2Flags": [
+          "MISSING_CONTENT",
+          "DISTINCT_SAME_NAME_OR_UNASSIGNED_IDENTITY_MISSING"
+        ]
+      },
+      {
+        "sourcebook": "Unknown Regions",
+        "canonicalIdentity": "Saga Edition Core Rulebook|Military Tactics|Lead by Example",
+        "productionRecordId": null,
+        "createRecordId": "7369f8ce78ce4821",
+        "targetTree": {
+          "treeId": "9253ace716c3e966",
+          "treeName": "Military Tactics"
+        },
+        "sourceTreeClaims": [],
+        "phase2Flags": [
+          "MISSING_CONTENT",
+          "DISTINCT_SAME_NAME_OR_UNASSIGNED_IDENTITY_MISSING"
+        ]
+      }
+    ],
+    "REMOVE_CONTAMINATION": [
+      {
+        "sourcebook": "Clone Wars Campaign Guide",
+        "canonicalIdentity": "Clone Wars Campaign Guide|Trooper|Comrades in Arms",
+        "productionRecordId": "d4dcafa34cda98c2",
+        "createRecordId": null,
+        "targetTree": {
+          "treeId": "eff10782c1e56598",
+          "treeName": "Trooper"
+        },
+        "sourceTreeClaims": [
+          {
+            "treeId": "eff10782c1e56598",
+            "treeName": "Trooper"
+          }
+        ],
+        "phase2Flags": [
+          "DESCRIPTION_ERROR",
+          "CONCATENATED_IDENTITY_TEXT"
+        ]
+      },
+      {
+        "sourcebook": "Clone Wars Campaign Guide",
+        "canonicalIdentity": "Clone Wars Campaign Guide|Korunnai Adept|Akk Dog Master",
+        "productionRecordId": "b265aa9dd35c4c5b",
+        "createRecordId": null,
+        "targetTree": {
+          "treeId": "46d03bab0cf74a14",
+          "treeName": "Korunnai Adept"
+        },
+        "sourceTreeClaims": [
+          {
+            "treeId": "46d03bab0cf74a14",
+            "treeName": "Korunnai Adept"
+          }
+        ],
+        "phase2Flags": [
+          "DESCRIPTION_ERROR",
+          "HOMEBREW_CONTAMINATION",
+          "IDENTITY_ERROR",
+          "PREREQUISITE_ERROR"
+        ]
+      },
+      {
+        "sourcebook": "Clone Wars Campaign Guide",
+        "canonicalIdentity": "Clone Wars Campaign Guide|Light Side|Focused Attack",
+        "productionRecordId": "2fc019fa8c4108a7",
+        "createRecordId": null,
+        "targetTree": {
+          "treeId": "001a438135e03588",
+          "treeName": "Light Side"
+        },
+        "sourceTreeClaims": [
+          {
+            "treeId": "001a438135e03588",
+            "treeName": "Light Side"
+          }
+        ],
+        "phase2Flags": [
+          "DESCRIPTION_ERROR",
+          "CONCATENATED_IDENTITY_TEXT",
+          "HOMEBREW_CONTAMINATION"
+        ]
+      },
+      {
+        "sourcebook": "Saga Edition Core Rulebook",
+        "canonicalIdentity": "Saga Edition Core Rulebook|Influence|Weaken Resolve",
+        "productionRecordId": "28c306c37ccb9fcf",
+        "createRecordId": null,
+        "targetTree": {
+          "treeId": "8375b9b26b679901",
+          "treeName": "Influence"
+        },
+        "sourceTreeClaims": [
+          {
+            "treeId": "8375b9b26b679901",
+            "treeName": "Influence"
+          }
+        ],
+        "phase2Flags": [
+          "CORRECT_OR_SOURCE_ALIGNED",
+          "CORE_TEXT_WITH_LATER_EXTENSION"
+        ]
+      },
+      {
+        "sourcebook": "Saga Edition Core Rulebook",
+        "canonicalIdentity": "Saga Edition Core Rulebook|Leadership|Rally",
+        "productionRecordId": "962c8a24f9caaba0",
+        "createRecordId": null,
+        "targetTree": {
+          "treeId": "5964237d22681dc0",
+          "treeName": "Leadership"
+        },
+        "sourceTreeClaims": [
+          {
+            "treeId": "5964237d22681dc0",
+            "treeName": "Leadership"
+          }
+        ],
+        "phase2Flags": [
+          "CORE_TEXT_WITH_LATER_EXTENSION"
+        ]
+      },
+      {
+        "sourcebook": "Saga Edition Core Rulebook",
+        "canonicalIdentity": "Saga Edition Core Rulebook|Lineage|Educated",
+        "productionRecordId": "3e98c9f5a4f450ff",
+        "createRecordId": null,
+        "targetTree": {
+          "treeId": "b5bb4154688c66ab",
+          "treeName": "Lineage"
+        },
+        "sourceTreeClaims": [
+          {
+            "treeId": "b5bb4154688c66ab",
+            "treeName": "Lineage"
+          }
+        ],
+        "phase2Flags": [
+          "DESCRIPTION_ERROR",
+          "HOMEBREW_CONTAMINATION",
+          "CONCATENATED_IDENTITY_TEXT"
+        ]
+      },
+      {
+        "sourcebook": "Saga Edition Core Rulebook",
+        "canonicalIdentity": "Saga Edition Core Rulebook|Misfortune|Dastardly Strike",
+        "productionRecordId": "9e4345faaaa94dd8",
+        "createRecordId": null,
+        "targetTree": {
+          "treeId": "67b59e020c1660eb",
+          "treeName": "Misfortune"
+        },
+        "sourceTreeClaims": [
+          {
+            "treeId": "67b59e020c1660eb",
+            "treeName": "Misfortune"
+          }
+        ],
+        "phase2Flags": [
+          "CORE_TEXT_WITH_LATER_EXTENSION"
+        ]
+      },
+      {
+        "sourcebook": "Saga Edition Core Rulebook",
+        "canonicalIdentity": "Saga Edition Core Rulebook|Spacer|Stellar Warrior",
+        "productionRecordId": "f92583cf04620d84",
+        "createRecordId": null,
+        "targetTree": {
+          "treeId": "5ea8c79492d40713",
+          "treeName": "Spacer"
+        },
+        "sourceTreeClaims": [
+          {
+            "treeId": "5ea8c79492d40713",
+            "treeName": "Spacer"
+          }
+        ],
+        "phase2Flags": [
+          "CORRECT_OR_SOURCE_ALIGNED",
+          "CORE_TEXT_WITH_LATER_EXTENSION"
+        ]
+      },
+      {
+        "sourcebook": "Saga Edition Core Rulebook",
+        "canonicalIdentity": "Saga Edition Core Rulebook|Awareness|Uncanny Dodge I",
+        "productionRecordId": "df9c364e91826cbf",
+        "createRecordId": null,
+        "targetTree": {
+          "treeId": "1c48d1cd9ab1f5c8",
+          "treeName": "Awareness"
+        },
+        "sourceTreeClaims": [
+          {
+            "treeId": "1c48d1cd9ab1f5c8",
+            "treeName": "Awareness"
+          }
+        ],
+        "phase2Flags": [
+          "CORE_TEXT_WITH_LATER_EXTENSION"
+        ]
+      },
+      {
+        "sourcebook": "Saga Edition Core Rulebook",
+        "canonicalIdentity": "Saga Edition Core Rulebook|Awareness|Uncanny Dodge II",
+        "productionRecordId": "c7f46a5c92d7dd5e",
+        "createRecordId": null,
+        "targetTree": {
+          "treeId": "1c48d1cd9ab1f5c8",
+          "treeName": "Awareness"
+        },
+        "sourceTreeClaims": [
+          {
+            "treeId": "1c48d1cd9ab1f5c8",
+            "treeName": "Awareness"
+          }
+        ],
+        "phase2Flags": [
+          "CORE_TEXT_WITH_LATER_EXTENSION"
+        ]
+      },
+      {
+        "sourcebook": "Saga Edition Core Rulebook",
+        "canonicalIdentity": "Saga Edition Core Rulebook|Camouflage|Hidden Movement",
+        "productionRecordId": "d0dad96e182d63d4",
+        "createRecordId": null,
+        "targetTree": {
+          "treeId": "3926d582d2077489",
+          "treeName": "Camouflage"
+        },
+        "sourceTreeClaims": [
+          {
+            "treeId": "3926d582d2077489",
+            "treeName": "Camouflage"
+          }
+        ],
+        "phase2Flags": [
+          "CORE_TEXT_WITH_LATER_EXTENSION"
+        ]
+      },
+      {
+        "sourcebook": "Saga Edition Core Rulebook",
+        "canonicalIdentity": "Saga Edition Core Rulebook|Camouflage|Improved Stealth",
+        "productionRecordId": "073115894cad8cf9",
+        "createRecordId": null,
+        "targetTree": {
+          "treeId": "3926d582d2077489",
+          "treeName": "Camouflage"
+        },
+        "sourceTreeClaims": [
+          {
+            "treeId": "3926d582d2077489",
+            "treeName": "Camouflage"
+          }
+        ],
+        "phase2Flags": [
+          "CORE_TEXT_WITH_LATER_EXTENSION"
+        ]
+      },
+      {
+        "sourcebook": "Saga Edition Core Rulebook",
+        "canonicalIdentity": "Saga Edition Core Rulebook|Commando|Indomitable",
+        "productionRecordId": "b8aaf500d3069938",
+        "createRecordId": null,
+        "targetTree": {
+          "treeId": "798ed0945cbdac1c",
+          "treeName": "Commando"
+        },
+        "sourceTreeClaims": [
+          {
+            "treeId": "798ed0945cbdac1c",
+            "treeName": "Commando"
+          }
+        ],
+        "phase2Flags": [
+          "CORRECT_OR_SOURCE_ALIGNED",
+          "CORE_TEXT_WITH_LATER_EXTENSION"
+        ]
+      },
+      {
+        "sourcebook": "Saga Edition Core Rulebook",
+        "canonicalIdentity": "Saga Edition Core Rulebook|Alter|Telekinetic Power",
+        "productionRecordId": "11cae48e1213c407",
+        "createRecordId": null,
+        "targetTree": {
+          "treeId": "6ac3416fb6aada56",
+          "treeName": "Alter"
+        },
+        "sourceTreeClaims": [
+          {
+            "treeId": "6ac3416fb6aada56",
+            "treeName": "Alter"
+          }
+        ],
+        "phase2Flags": [
+          "DESCRIPTION_ERROR",
+          "CONCATENATED_IDENTITY_TEXT"
+        ]
+      },
+      {
+        "sourcebook": "Saga Edition Core Rulebook",
+        "canonicalIdentity": "Saga Edition Core Rulebook|Alter|Telekinetic Savant",
+        "productionRecordId": "ddacb8e4517da6b5",
+        "createRecordId": null,
+        "targetTree": {
+          "treeId": "6ac3416fb6aada56",
+          "treeName": "Alter"
+        },
+        "sourceTreeClaims": [
+          {
+            "treeId": "6ac3416fb6aada56",
+            "treeName": "Alter"
+          }
+        ],
+        "phase2Flags": [
+          "DESCRIPTION_ERROR",
+          "CONCATENATED_IDENTITY_TEXT"
+        ]
+      },
+      {
+        "sourcebook": "Saga Edition Core Rulebook",
+        "canonicalIdentity": "Saga Edition Core Rulebook|Dark Side|Power of the Dark Side",
+        "productionRecordId": "627bd3abd30b973f",
+        "createRecordId": null,
+        "targetTree": {
+          "treeId": "de95d37c72b1c4cd",
+          "treeName": "Dark Side"
+        },
+        "sourceTreeClaims": [
+          {
+            "treeId": "de95d37c72b1c4cd",
+            "treeName": "Dark Side"
+          }
+        ],
+        "phase2Flags": [
+          "DESCRIPTION_ERROR",
+          "HOMEBREW_CONTAMINATION",
+          "CONCATENATED_IDENTITY_TEXT"
+        ]
+      },
+      {
+        "sourcebook": "Saga Edition Core Rulebook",
+        "canonicalIdentity": "Saga Edition Core Rulebook|Sense|Force Perception",
+        "productionRecordId": "a358402a9fc26c02",
+        "createRecordId": null,
+        "targetTree": {
+          "treeId": "d6b4331c0e31f7e3",
+          "treeName": "Sense"
+        },
+        "sourceTreeClaims": [
+          {
+            "treeId": "d6b4331c0e31f7e3",
+            "treeName": "Sense"
+          }
+        ],
+        "phase2Flags": [
+          "DESCRIPTION_ERROR",
+          "HOMEBREW_CONTAMINATION",
+          "CONCATENATED_IDENTITY_TEXT"
+        ]
+      },
+      {
+        "sourcebook": "Saga Edition Core Rulebook",
+        "canonicalIdentity": "Saga Edition Core Rulebook|Sense|Force Pilot",
+        "productionRecordId": "443373859f1ecca3",
+        "createRecordId": null,
+        "targetTree": {
+          "treeId": "d6b4331c0e31f7e3",
+          "treeName": "Sense"
+        },
+        "sourceTreeClaims": [
+          {
+            "treeId": "d6b4331c0e31f7e3",
+            "treeName": "Sense"
+          }
+        ],
+        "phase2Flags": [
+          "DESCRIPTION_ERROR",
+          "HOMEBREW_CONTAMINATION",
+          "CONCATENATED_IDENTITY_TEXT",
+          "PREREQUISITE_ERROR"
+        ]
+      },
+      {
+        "sourcebook": "Saga Edition Core Rulebook",
+        "canonicalIdentity": "Saga Edition Core Rulebook|Dathomiri Witch|Adept Spellcaster",
+        "productionRecordId": "12b7eb5d32bd440e",
+        "createRecordId": null,
+        "targetTree": {
+          "treeId": "ad16f3e5f4f7441b",
+          "treeName": "Dathomiri Witch"
+        },
+        "sourceTreeClaims": [
+          {
+            "treeId": "ad16f3e5f4f7441b",
+            "treeName": "Dathomiri Witch"
+          }
+        ],
+        "phase2Flags": [
+          "DESCRIPTION_ERROR",
+          "HOMEBREW_CONTAMINATION",
+          "CONCATENATED_IDENTITY_TEXT",
+          "PREREQUISITE_ERROR"
+        ]
+      },
+      {
+        "sourcebook": "Saga Edition Core Rulebook",
+        "canonicalIdentity": "Saga Edition Core Rulebook|Bounty Hunter|Hunter's Mark",
+        "productionRecordId": "74fb6b37af983a4c",
+        "createRecordId": null,
+        "targetTree": {
+          "treeId": "a47ed82a822e3962",
+          "treeName": "Bounty Hunter"
+        },
+        "sourceTreeClaims": [
+          {
+            "treeId": "a47ed82a822e3962",
+            "treeName": "Bounty Hunter"
+          }
+        ],
+        "phase2Flags": [
+          "CORE_TEXT_WITH_LATER_EXTENSION"
+        ]
+      },
+      {
+        "sourcebook": "Saga Edition Core Rulebook",
+        "canonicalIdentity": "Saga Edition Core Rulebook|Weapon Master|Greater Devastating Attack",
+        "productionRecordId": "d3b19d5e369f579d",
+        "createRecordId": null,
+        "targetTree": {
+          "treeId": "2f720d8b061f9bd0",
+          "treeName": "Weapon Master"
+        },
+        "sourceTreeClaims": [
+          {
+            "treeId": "2f720d8b061f9bd0",
+            "treeName": "Weapon Master"
+          }
+        ],
+        "phase2Flags": [
+          "CORE_TEXT_WITH_LATER_EXTENSION",
+          "PREREQUISITE_ERROR"
+        ]
+      },
+      {
+        "sourcebook": "Saga Edition Core Rulebook",
+        "canonicalIdentity": "Saga Edition Core Rulebook|Lightsaber Forms|Ataru",
+        "productionRecordId": "0b3f4075ed84aee0",
+        "createRecordId": null,
+        "targetTree": {
+          "treeId": "2bc2572e852832e4",
+          "treeName": "Lightsaber Forms"
+        },
+        "sourceTreeClaims": [
+          {
+            "treeId": "2bc2572e852832e4",
+            "treeName": "Lightsaber Forms"
+          }
+        ],
+        "phase2Flags": [
+          "DESCRIPTION_ERROR",
+          "NONCANONICAL_ACTIVE_FORM_RESTRICTION"
+        ]
+      },
+      {
+        "sourcebook": "Saga Edition Core Rulebook",
+        "canonicalIdentity": "Saga Edition Core Rulebook|Lightsaber Forms|Djem So",
+        "productionRecordId": "9dfce712a60a097f",
+        "createRecordId": null,
+        "targetTree": {
+          "treeId": "2bc2572e852832e4",
+          "treeName": "Lightsaber Forms"
+        },
+        "sourceTreeClaims": [
+          {
+            "treeId": "2bc2572e852832e4",
+            "treeName": "Lightsaber Forms"
+          }
+        ],
+        "phase2Flags": [
+          "DESCRIPTION_ERROR",
+          "NONCANONICAL_ACTIVE_FORM_RESTRICTION"
+        ]
+      },
+      {
+        "sourcebook": "Saga Edition Core Rulebook",
+        "canonicalIdentity": "Saga Edition Core Rulebook|Lightsaber Forms|Jar'Kai",
+        "productionRecordId": "4552785ad56d90d4",
+        "createRecordId": null,
+        "targetTree": {
+          "treeId": "2bc2572e852832e4",
+          "treeName": "Lightsaber Forms"
+        },
+        "sourceTreeClaims": [
+          {
+            "treeId": "2bc2572e852832e4",
+            "treeName": "Lightsaber Forms"
+          }
+        ],
+        "phase2Flags": [
+          "DESCRIPTION_ERROR",
+          "NONCANONICAL_ACTIVE_FORM_RESTRICTION"
+        ]
+      },
+      {
+        "sourcebook": "Saga Edition Core Rulebook",
+        "canonicalIdentity": "Saga Edition Core Rulebook|Lightsaber Forms|Juyo",
+        "productionRecordId": "5fd19be0deca1115",
+        "createRecordId": null,
+        "targetTree": {
+          "treeId": "2bc2572e852832e4",
+          "treeName": "Lightsaber Forms"
+        },
+        "sourceTreeClaims": [
+          {
+            "treeId": "2bc2572e852832e4",
+            "treeName": "Lightsaber Forms"
+          }
+        ],
+        "phase2Flags": [
+          "DESCRIPTION_ERROR",
+          "NONCANONICAL_ACTIVE_FORM_RESTRICTION"
+        ]
+      },
+      {
+        "sourcebook": "Saga Edition Core Rulebook",
+        "canonicalIdentity": "Saga Edition Core Rulebook|Lightsaber Forms|Makashi",
+        "productionRecordId": "8ddbb7f6d4a11725",
+        "createRecordId": null,
+        "targetTree": {
+          "treeId": "2bc2572e852832e4",
+          "treeName": "Lightsaber Forms"
+        },
+        "sourceTreeClaims": [
+          {
+            "treeId": "2bc2572e852832e4",
+            "treeName": "Lightsaber Forms"
+          }
+        ],
+        "phase2Flags": [
+          "DESCRIPTION_ERROR",
+          "NONCANONICAL_ACTIVE_FORM_RESTRICTION"
+        ]
+      },
+      {
+        "sourcebook": "Saga Edition Core Rulebook",
+        "canonicalIdentity": "Saga Edition Core Rulebook|Lightsaber Forms|Niman",
+        "productionRecordId": "7842befd5a8713c5",
+        "createRecordId": null,
+        "targetTree": {
+          "treeId": "2bc2572e852832e4",
+          "treeName": "Lightsaber Forms"
+        },
+        "sourceTreeClaims": [
+          {
+            "treeId": "2bc2572e852832e4",
+            "treeName": "Lightsaber Forms"
+          }
+        ],
+        "phase2Flags": [
+          "DESCRIPTION_ERROR",
+          "NONCANONICAL_ACTIVE_FORM_RESTRICTION"
+        ]
+      },
+      {
+        "sourcebook": "Saga Edition Core Rulebook",
+        "canonicalIdentity": "Saga Edition Core Rulebook|Lightsaber Forms|Shien",
+        "productionRecordId": "e0223a2b572f2ef5",
+        "createRecordId": null,
+        "targetTree": {
+          "treeId": "2bc2572e852832e4",
+          "treeName": "Lightsaber Forms"
+        },
+        "sourceTreeClaims": [
+          {
+            "treeId": "2bc2572e852832e4",
+            "treeName": "Lightsaber Forms"
+          }
+        ],
+        "phase2Flags": [
+          "DESCRIPTION_ERROR",
+          "NONCANONICAL_ACTIVE_FORM_RESTRICTION"
+        ]
+      },
+      {
+        "sourcebook": "Saga Edition Core Rulebook",
+        "canonicalIdentity": "Saga Edition Core Rulebook|Lightsaber Forms|Shii-Cho",
+        "productionRecordId": "c116f6249f4f47c9",
+        "createRecordId": null,
+        "targetTree": {
+          "treeId": "2bc2572e852832e4",
+          "treeName": "Lightsaber Forms"
+        },
+        "sourceTreeClaims": [
+          {
+            "treeId": "2bc2572e852832e4",
+            "treeName": "Lightsaber Forms"
+          }
+        ],
+        "phase2Flags": [
+          "DESCRIPTION_ERROR",
+          "NONCANONICAL_ACTIVE_FORM_RESTRICTION"
+        ]
+      },
+      {
+        "sourcebook": "Saga Edition Core Rulebook",
+        "canonicalIdentity": "Saga Edition Core Rulebook|Lightsaber Forms|Sokan",
+        "productionRecordId": "c95b1077ab31f9b0",
+        "createRecordId": null,
+        "targetTree": {
+          "treeId": "2bc2572e852832e4",
+          "treeName": "Lightsaber Forms"
+        },
+        "sourceTreeClaims": [
+          {
+            "treeId": "2bc2572e852832e4",
+            "treeName": "Lightsaber Forms"
+          }
+        ],
+        "phase2Flags": [
+          "DESCRIPTION_ERROR",
+          "NONCANONICAL_ACTIVE_FORM_RESTRICTION"
+        ]
+      },
+      {
+        "sourcebook": "Saga Edition Core Rulebook",
+        "canonicalIdentity": "Saga Edition Core Rulebook|Lightsaber Forms|Soresu",
+        "productionRecordId": "af8c6f9b6c06b448",
+        "createRecordId": null,
+        "targetTree": {
+          "treeId": "2bc2572e852832e4",
+          "treeName": "Lightsaber Forms"
+        },
+        "sourceTreeClaims": [
+          {
+            "treeId": "2bc2572e852832e4",
+            "treeName": "Lightsaber Forms"
+          }
+        ],
+        "phase2Flags": [
+          "DESCRIPTION_ERROR",
+          "NONCANONICAL_ACTIVE_FORM_RESTRICTION"
+        ]
+      },
+      {
+        "sourcebook": "Saga Edition Core Rulebook",
+        "canonicalIdentity": "Saga Edition Core Rulebook|Lightsaber Forms|Trakata",
+        "productionRecordId": "629a0efa292511b7",
+        "createRecordId": null,
+        "targetTree": {
+          "treeId": "2bc2572e852832e4",
+          "treeName": "Lightsaber Forms"
+        },
+        "sourceTreeClaims": [
+          {
+            "treeId": "2bc2572e852832e4",
+            "treeName": "Lightsaber Forms"
+          }
+        ],
+        "phase2Flags": [
+          "DESCRIPTION_ERROR",
+          "NONCANONICAL_ACTIVE_FORM_RESTRICTION"
+        ]
+      },
+      {
+        "sourcebook": "Saga Edition Core Rulebook",
+        "canonicalIdentity": "Saga Edition Core Rulebook|Lightsaber Forms|Vaapad",
+        "productionRecordId": "87c0a929a04eb870",
+        "createRecordId": null,
+        "targetTree": {
+          "treeId": "2bc2572e852832e4",
+          "treeName": "Lightsaber Forms"
+        },
+        "sourceTreeClaims": [
+          {
+            "treeId": "2bc2572e852832e4",
+            "treeName": "Lightsaber Forms"
+          }
+        ],
+        "phase2Flags": [
+          "DESCRIPTION_ERROR",
+          "NONCANONICAL_ACTIVE_FORM_RESTRICTION"
+        ]
+      },
+      {
+        "sourcebook": "Saga Edition Core Rulebook",
+        "canonicalIdentity": "Saga Edition Core Rulebook|Sith|Dark Side Master",
+        "productionRecordId": "d4fe49ef1701891e",
+        "createRecordId": null,
+        "targetTree": {
+          "treeId": "d1037bc7a08ea80b",
+          "treeName": "Sith"
+        },
+        "sourceTreeClaims": [
+          {
+            "treeId": "d1037bc7a08ea80b",
+            "treeName": "Sith"
+          }
+        ],
+        "phase2Flags": [
+          "CORE_TEXT_WITH_LATER_EXTENSION"
+        ]
+      },
+      {
+        "sourcebook": "Legacy Era Campaign Guide",
+        "canonicalIdentity": "Legacy Era Campaign Guide|Provocateur|Seize the Moment",
+        "productionRecordId": "ec12ce36ff7048f2",
+        "createRecordId": null,
+        "targetTree": {
+          "treeId": "da34105c875650ae",
+          "treeName": "Provocateur"
+        },
+        "sourceTreeClaims": [
+          {
+            "treeId": "da34105c875650ae",
+            "treeName": "Provocateur"
+          }
+        ],
+        "phase2Flags": [
+          "CANONICAL_FULL_TEXT_MISSING_OR_DIFFERENT",
+          "SOURCE_METADATA_MISSING",
+          "SUMMARY_MISSING",
+          "DESCRIPTION_SAME_NAME_CONTAMINATION"
+        ]
+      },
+      {
+        "sourcebook": "Rebellion Era Campaign Guide",
+        "canonicalIdentity": "Rebellion Era Campaign Guide|Recklessness|Find Openings",
+        "productionRecordId": "ad418fa7b1716364",
+        "createRecordId": null,
+        "targetTree": {
+          "treeId": "4af97ad058b1b30f",
+          "treeName": "Recklessness"
+        },
+        "sourceTreeClaims": [
+          {
+            "treeId": "4af97ad058b1b30f",
+            "treeName": "Recklessness"
+          }
+        ],
+        "phase2Flags": [
+          "DESCRIPTION_ERROR",
+          "CONCATENATED_IDENTITY_TEXT"
+        ]
+      },
+      {
+        "sourcebook": "Rebellion Era Campaign Guide",
+        "canonicalIdentity": "Rebellion Era Campaign Guide|Kilian Ranger|Shield Gauntlet Deflect",
+        "productionRecordId": "da5096b45d174f36",
+        "createRecordId": null,
+        "targetTree": {
+          "treeId": "2a1838832f6146e2",
+          "treeName": "Kilian Ranger"
+        },
+        "sourceTreeClaims": [
+          {
+            "treeId": "2a1838832f6146e2",
+            "treeName": "Kilian Ranger"
+          }
+        ],
+        "phase2Flags": [
+          "DESCRIPTION_ERROR",
+          "IDENTITY_ERROR",
+          "CONCATENATED_IDENTITY_TEXT",
+          "PREREQUISITE_ERROR"
+        ]
+      },
+      {
+        "sourcebook": "Rebellion Era Campaign Guide",
+        "canonicalIdentity": "Rebellion Era Campaign Guide|Kilian Ranger|Siang Lance Mastery",
+        "productionRecordId": "0bbfcac85b09416a",
+        "createRecordId": null,
+        "targetTree": {
+          "treeId": "2a1838832f6146e2",
+          "treeName": "Kilian Ranger"
+        },
+        "sourceTreeClaims": [
+          {
+            "treeId": "2a1838832f6146e2",
+            "treeName": "Kilian Ranger"
+          }
+        ],
+        "phase2Flags": [
+          "DESCRIPTION_ERROR",
+          "IDENTITY_ERROR",
+          "CONCATENATED_IDENTITY_TEXT"
+        ]
+      }
+    ]
+  },
+  "productionOnlyDeferredSummary": {
+    "count": 90,
+    "byRegistryStatus": {
+      "REPO_TREE_PRESENT": 39,
+      "REPO_ONLY_NONCANONICAL_HOMEBREW": 38,
+      "SOURCE_VERIFIED_SPECIAL_TREE": 10,
+      "UNREGISTERED_OR_NONCANONICAL_TREE": 2,
+      "REPO_ONLY_SPECIAL_OR_UNRESOLVED": 1
+    },
+    "policy": "Do not mutate or delete these records during Phase 3C. Resolve them under Phase 3D noncanonical/legacy policy."
+  },
+  "productionOnlyDeferred": [
+    {
+      "productionRecordId": "0c9b0788ad42450c",
+      "name": "Extended Critical Range",
+      "treeId": "d20682671d035cef",
+      "treeName": "Bothan Spynet",
+      "registryKey": "Force Unleashed Campaign Guide|Bothan SpyNet",
+      "registryStatus": "REPO_TREE_PRESENT",
+      "classification": "DEFER_PHASE_3D_PRODUCTION_ONLY"
+    },
+    {
+      "productionRecordId": "0cdd50aaa65e4360",
+      "name": "Voices",
+      "treeId": "e85cb1a787e24cac",
+      "treeName": "Midichlorian",
+      "registryKey": "repo-special|Midichlorian",
+      "registryStatus": "REPO_ONLY_NONCANONICAL_HOMEBREW",
+      "classification": "DEFER_PHASE_3D_PRODUCTION_ONLY"
+    },
+    {
+      "productionRecordId": "0de7338c2b984b96",
+      "name": "Droid Receptacle",
+      "treeId": "8955568285ba4115",
+      "treeName": "Bomarr Monk",
+      "registryKey": "repo-special|Bomarr Monk",
+      "registryStatus": "REPO_ONLY_NONCANONICAL_HOMEBREW",
+      "classification": "DEFER_PHASE_3D_PRODUCTION_ONLY"
+    },
+    {
+      "productionRecordId": "0e6854d8aacc48dc",
+      "name": "Stay in the Fight (Recruit)",
+      "treeId": "a2c6962521c29361",
+      "treeName": "Rebel Recruiter",
+      "registryKey": "Rebellion Era Campaign Guide|Rebel Recruiter",
+      "registryStatus": "REPO_TREE_PRESENT",
+      "classification": "DEFER_PHASE_3D_PRODUCTION_ONLY"
+    },
+    {
+      "productionRecordId": "125b5aa00f5a4d0a",
+      "name": "Morgukai Resolve",
+      "treeId": "0a61ab9ece844326",
+      "treeName": "Morgukai Warrior",
+      "registryKey": "repo-special|Morgukai Warrior",
+      "registryStatus": "REPO_ONLY_NONCANONICAL_HOMEBREW",
+      "classification": "DEFER_PHASE_3D_PRODUCTION_ONLY"
+    },
+    {
+      "productionRecordId": "12e6b524fc6959b6",
+      "name": "Unbalance Strike",
+      "treeId": "67fdd8dce9abd6c1",
+      "treeName": "Brawler",
+      "registryKey": "Saga Edition Core Rulebook|Brawler",
+      "registryStatus": "REPO_TREE_PRESENT",
+      "classification": "DEFER_PHASE_3D_PRODUCTION_ONLY"
+    },
+    {
+      "productionRecordId": "14cc3ddc051f4ece",
+      "name": "Animal Companion",
+      "treeId": "ed899f9f41fc1391",
+      "treeName": "Beastwarden",
+      "registryKey": "Jedi Academy Training Manual|Beastwarden",
+      "registryStatus": "REPO_TREE_PRESENT",
+      "classification": "DEFER_PHASE_3D_PRODUCTION_ONLY"
+    },
+    {
+      "productionRecordId": "192279eaa0b61d36",
+      "name": "Dark Preservation",
+      "treeId": "de95d37c72b1c4cd",
+      "treeName": "Dark Side",
+      "registryKey": "Saga Edition Core Rulebook|Dark Side",
+      "registryStatus": "SOURCE_VERIFIED_SPECIAL_TREE",
+      "classification": "DEFER_PHASE_3D_PRODUCTION_ONLY"
+    },
+    {
+      "productionRecordId": "1bda3fdaa84240d3",
+      "name": "Mobility",
+      "treeId": "25d99948c9cb41ad",
+      "treeName": "Jumptrooper",
+      "registryKey": "repo-special|Jumptrooper",
+      "registryStatus": "REPO_ONLY_NONCANONICAL_HOMEBREW",
+      "classification": "DEFER_PHASE_3D_PRODUCTION_ONLY"
+    },
+    {
+      "productionRecordId": "208e1e15e989323f",
+      "name": "Telekinetic Stability",
+      "treeId": "d3661aa9906bdc79",
+      "treeName": "Control",
+      "registryKey": "Saga Edition Core Rulebook|Control",
+      "registryStatus": "SOURCE_VERIFIED_SPECIAL_TREE",
+      "classification": "DEFER_PHASE_3D_PRODUCTION_ONLY"
+    },
+    {
+      "productionRecordId": "213d97c2cbbd4f81",
+      "name": "Not in the Face",
+      "treeId": "acb91d3803eb4fcd",
+      "treeName": "Cowardice",
+      "registryKey": "repo-special|Cowardice",
+      "registryStatus": "REPO_ONLY_NONCANONICAL_HOMEBREW",
+      "classification": "DEFER_PHASE_3D_PRODUCTION_ONLY"
+    },
+    {
+      "productionRecordId": "23852d30490fc1e4",
+      "name": "Combined Fire (Naval)",
+      "treeId": "057a978a7dc1d5a7",
+      "treeName": "Naval Officer",
+      "registryKey": "Starships of the Galaxy|Naval Officer",
+      "registryStatus": "REPO_TREE_PRESENT",
+      "classification": "DEFER_PHASE_3D_PRODUCTION_ONLY"
+    },
+    {
+      "productionRecordId": "247b9ba1f8d34683",
+      "name": "Retrovirus",
+      "treeId": "8e44e56069274319",
+      "treeName": "Cloner",
+      "registryKey": "repo-special|Cloner",
+      "registryStatus": "REPO_ONLY_NONCANONICAL_HOMEBREW",
+      "classification": "DEFER_PHASE_3D_PRODUCTION_ONLY"
+    },
+    {
+      "productionRecordId": "271024ca2ac6c04b",
+      "name": "Multiattack Proficiency (exotic)",
+      "treeId": "12a2a02b0901605d",
+      "treeName": "Gladiatorial Combat",
+      "registryKey": "Knights of the Old Republic Campaign Guide|Gladiatorial Combat",
+      "registryStatus": "REPO_TREE_PRESENT",
+      "classification": "DEFER_PHASE_3D_PRODUCTION_ONLY"
+    },
+    {
+      "productionRecordId": "2c27842384e55cb2",
+      "name": "Mercenary's Grit",
+      "treeId": "4007fa87192b5884",
+      "treeName": "Mercenary",
+      "registryKey": "Force Unleashed Campaign Guide|Mercenary",
+      "registryStatus": "REPO_TREE_PRESENT",
+      "classification": "DEFER_PHASE_3D_PRODUCTION_ONLY"
+    },
+    {
+      "productionRecordId": "2f6bdc483d8f4aa8",
+      "name": "Serene Courage",
+      "treeId": "8955568285ba4115",
+      "treeName": "Bomarr Monk",
+      "registryKey": "repo-special|Bomarr Monk",
+      "registryStatus": "REPO_ONLY_NONCANONICAL_HOMEBREW",
+      "classification": "DEFER_PHASE_3D_PRODUCTION_ONLY"
+    },
+    {
+      "productionRecordId": "35350a8b3d2a4810",
+      "name": "Empowered",
+      "treeId": "01e443d93e47f9c4",
+      "treeName": "Force Item",
+      "registryKey": "Saga Edition Core Rulebook|Force Item",
+      "registryStatus": "REPO_TREE_PRESENT",
+      "classification": "DEFER_PHASE_3D_PRODUCTION_ONLY"
+    },
+    {
+      "productionRecordId": "395daa7cd6f14b8f",
+      "name": "Rough Landings",
+      "treeId": "25d99948c9cb41ad",
+      "treeName": "Jumptrooper",
+      "registryKey": "repo-special|Jumptrooper",
+      "registryStatus": "REPO_ONLY_NONCANONICAL_HOMEBREW",
+      "classification": "DEFER_PHASE_3D_PRODUCTION_ONLY"
+    },
+    {
+      "productionRecordId": "3cc9552cfab59676",
+      "name": "Embrace Dark Side",
+      "treeId": "dark-side-devotee",
+      "treeName": "Dark Side Devotee",
+      "registryKey": null,
+      "registryStatus": null,
+      "classification": "DEFER_PHASE_3D_PRODUCTION_ONLY"
+    },
+    {
+      "productionRecordId": "3df46d093b31411d",
+      "name": "Indomitable class feature",
+      "treeId": "e35ee41362604227",
+      "treeName": "Force Adept",
+      "registryKey": "Saga Edition Core Rulebook|Force Adept",
+      "registryStatus": "REPO_TREE_PRESENT",
+      "classification": "DEFER_PHASE_3D_PRODUCTION_ONLY"
+    },
+    {
+      "productionRecordId": "3faa4d16e28d43e4",
+      "name": "Weapon Proficiency (Simple Weapons)",
+      "treeId": "13776eed744d410c",
+      "treeName": "Warrior",
+      "registryKey": "Unknown Regions|Warrior",
+      "registryStatus": "REPO_TREE_PRESENT",
+      "classification": "DEFER_PHASE_3D_PRODUCTION_ONLY"
+    },
+    {
+      "productionRecordId": "433c2e9c0e71aceb",
+      "name": "Flanking Foe",
+      "treeId": "ed77ab2e234089ed",
+      "treeName": "Pistoleer",
+      "registryKey": "Scum and Villainy|Pistoleer",
+      "registryStatus": "REPO_TREE_PRESENT",
+      "classification": "DEFER_PHASE_3D_PRODUCTION_ONLY"
+    },
+    {
+      "productionRecordId": "4632b4bf79044752",
+      "name": "Nature Sense",
+      "treeId": "ed899f9f41fc1391",
+      "treeName": "Beastwarden",
+      "registryKey": "Jedi Academy Training Manual|Beastwarden",
+      "registryStatus": "REPO_TREE_PRESENT",
+      "classification": "DEFER_PHASE_3D_PRODUCTION_ONLY"
+    },
+    {
+      "productionRecordId": "4d6c2d2398c33ba7",
+      "name": "Sith Alchemy (craft)",
+      "treeId": "a67faf2ae089ab5d",
+      "treeName": "Sith Alchemy",
+      "registryKey": "Jedi Academy Training Manual|Sith Alchemy",
+      "registryStatus": "REPO_TREE_PRESENT",
+      "classification": "DEFER_PHASE_3D_PRODUCTION_ONLY"
+    },
+    {
+      "productionRecordId": "4d7d5a38d0394e4c",
+      "name": "Force Bond",
+      "treeId": "6ac3416fb6aada56",
+      "treeName": "Alter",
+      "registryKey": "Saga Edition Core Rulebook|Alter",
+      "registryStatus": "SOURCE_VERIFIED_SPECIAL_TREE",
+      "classification": "DEFER_PHASE_3D_PRODUCTION_ONLY"
+    },
+    {
+      "productionRecordId": "4dfad6e363c11acf",
+      "name": "Improvised Weapon Masteryy",
+      "treeId": "7db97c2c7ebca579",
+      "treeName": "Jedi Weapon Master",
+      "registryKey": "Jedi Academy Training Manual|Jedi Weapon Master",
+      "registryStatus": "REPO_TREE_PRESENT",
+      "classification": "DEFER_PHASE_3D_PRODUCTION_ONLY"
+    },
+    {
+      "productionRecordId": "5644990a390a4178",
+      "name": "Hotwire",
+      "treeId": "cec49bc60d1646b1",
+      "treeName": "Specialized Droid",
+      "registryKey": "Force Unleashed Campaign Guide|Specialized Droid",
+      "registryStatus": "REPO_TREE_PRESENT",
+      "classification": "DEFER_PHASE_3D_PRODUCTION_ONLY"
+    },
+    {
+      "productionRecordId": "57c770c7924e4241",
+      "name": "Cloak of Shadows",
+      "treeId": "4da769d7c5f44232",
+      "treeName": "Disciple Of Twilight",
+      "registryKey": "Legacy Era Campaign Guide|Disciple of Twilight",
+      "registryStatus": "SOURCE_VERIFIED_SPECIAL_TREE",
+      "classification": "DEFER_PHASE_3D_PRODUCTION_ONLY"
+    },
+    {
+      "productionRecordId": "585227ba15d24a37",
+      "name": "Inspire Fear",
+      "treeId": "c1be604242cb328f",
+      "treeName": "Infamy",
+      "registryKey": "Saga Edition Core Rulebook|Infamy",
+      "registryStatus": "REPO_TREE_PRESENT",
+      "classification": "DEFER_PHASE_3D_PRODUCTION_ONLY"
+    },
+    {
+      "productionRecordId": "588c176b47724734",
+      "name": "Feign Harmlessness",
+      "treeId": "acb91d3803eb4fcd",
+      "treeName": "Cowardice",
+      "registryKey": "repo-special|Cowardice",
+      "registryStatus": "REPO_ONLY_NONCANONICAL_HOMEBREW",
+      "classification": "DEFER_PHASE_3D_PRODUCTION_ONLY"
+    },
+    {
+      "productionRecordId": "5e4a7f98b1e74326",
+      "name": "Adept Spellcaster",
+      "treeId": "cfd358ef61fb47bd",
+      "treeName": "Sorcerer Of Tund",
+      "registryKey": "repo-special|Sorcerer Of Tund",
+      "registryStatus": "REPO_ONLY_NONCANONICAL_HOMEBREW",
+      "classification": "DEFER_PHASE_3D_PRODUCTION_ONLY"
+    },
+    {
+      "productionRecordId": "6021056231839e7c",
+      "name": "Multiattack Proficiency (advanced melee)",
+      "treeId": "df6678946610c554",
+      "treeName": "Privateer",
+      "registryKey": "Force Unleashed Campaign Guide|Privateer",
+      "registryStatus": "REPO_TREE_PRESENT",
+      "classification": "DEFER_PHASE_3D_PRODUCTION_ONLY"
+    },
+    {
+      "productionRecordId": "61c9413bde23411a",
+      "name": "Extended Sputters",
+      "treeId": "25d99948c9cb41ad",
+      "treeName": "Jumptrooper",
+      "registryKey": "repo-special|Jumptrooper",
+      "registryStatus": "REPO_ONLY_NONCANONICAL_HOMEBREW",
+      "classification": "DEFER_PHASE_3D_PRODUCTION_ONLY"
+    },
+    {
+      "productionRecordId": "62d461ae3b0fcfa9",
+      "name": "Move Massive Object",
+      "treeId": "6ac3416fb6aada56",
+      "treeName": "Alter",
+      "registryKey": "Saga Edition Core Rulebook|Alter",
+      "registryStatus": "SOURCE_VERIFIED_SPECIAL_TREE",
+      "classification": "DEFER_PHASE_3D_PRODUCTION_ONLY"
+    },
+    {
+      "productionRecordId": "62e70280d08f43ec",
+      "name": "Allure",
+      "treeId": "8375b9b26b679901",
+      "treeName": "Influence",
+      "registryKey": "Saga Edition Core Rulebook|Influence",
+      "registryStatus": "REPO_TREE_PRESENT",
+      "classification": "DEFER_PHASE_3D_PRODUCTION_ONLY"
+    },
+    {
+      "productionRecordId": "67a08d46f24c4fdd",
+      "name": "Crash Landings",
+      "treeId": "25d99948c9cb41ad",
+      "treeName": "Jumptrooper",
+      "registryKey": "repo-special|Jumptrooper",
+      "registryStatus": "REPO_ONLY_NONCANONICAL_HOMEBREW",
+      "classification": "DEFER_PHASE_3D_PRODUCTION_ONLY"
+    },
+    {
+      "productionRecordId": "6f3641f0ff39fc90",
+      "name": "Escort",
+      "treeId": "5f355ad4093d2bf8",
+      "treeName": "Wingman",
+      "registryKey": "Rebellion Era Campaign Guide|Wingman",
+      "registryStatus": "REPO_TREE_PRESENT",
+      "classification": "DEFER_PHASE_3D_PRODUCTION_ONLY"
+    },
+    {
+      "productionRecordId": "707dd4f0b5c744a6",
+      "name": "Special:",
+      "treeId": "25d99948c9cb41ad",
+      "treeName": "Jumptrooper",
+      "registryKey": "repo-special|Jumptrooper",
+      "registryStatus": "REPO_ONLY_NONCANONICAL_HOMEBREW",
+      "classification": "DEFER_PHASE_3D_PRODUCTION_ONLY"
+    },
+    {
+      "productionRecordId": "714c38c0498a4eaf",
+      "name": "Empowered Weapon",
+      "treeId": "c6eee4889411411b",
+      "treeName": "Ember Of Vahl",
+      "registryKey": "Legacy Era Campaign Guide|Ember of Vahl",
+      "registryStatus": "SOURCE_VERIFIED_SPECIAL_TREE",
+      "classification": "DEFER_PHASE_3D_PRODUCTION_ONLY"
+    },
+    {
+      "productionRecordId": "747458ee63cd4a2a",
+      "name": "Defensive Roll",
+      "treeId": "11f99465ba4847e2",
+      "treeName": "Force Warrior",
+      "registryKey": "repo-special|Force Warrior",
+      "registryStatus": "REPO_ONLY_NONCANONICAL_HOMEBREW",
+      "classification": "DEFER_PHASE_3D_PRODUCTION_ONLY"
+    },
+    {
+      "productionRecordId": "77ab82670aa14f33",
+      "name": "Smashball Pass",
+      "treeId": "bfc1356c66c74783",
+      "treeName": "Smashball Pro",
+      "registryKey": "repo-special|Smashball Pro",
+      "registryStatus": "REPO_ONLY_NONCANONICAL_HOMEBREW",
+      "classification": "DEFER_PHASE_3D_PRODUCTION_ONLY"
+    },
+    {
+      "productionRecordId": "78955cbbe9504d7f",
+      "name": "Patient Builder",
+      "treeId": "38d7c18ce4664c66",
+      "treeName": "Mechanic",
+      "registryKey": "repo-special|Mechanic",
+      "registryStatus": "REPO_ONLY_NONCANONICAL_HOMEBREW",
+      "classification": "DEFER_PHASE_3D_PRODUCTION_ONLY"
+    },
+    {
+      "productionRecordId": "7a58134276d64561",
+      "name": "Calming Aura",
+      "treeId": "ed899f9f41fc1391",
+      "treeName": "Beastwarden",
+      "registryKey": "Jedi Academy Training Manual|Beastwarden",
+      "registryStatus": "REPO_TREE_PRESENT",
+      "classification": "DEFER_PHASE_3D_PRODUCTION_ONLY"
+    },
+    {
+      "productionRecordId": "7f4edcb8aa830972",
+      "name": "Hard Target",
+      "treeId": "798ed0945cbdac1c",
+      "treeName": "Commando",
+      "registryKey": "Saga Edition Core Rulebook|Commando",
+      "registryStatus": "REPO_TREE_PRESENT",
+      "classification": "DEFER_PHASE_3D_PRODUCTION_ONLY"
+    },
+    {
+      "productionRecordId": "816ac9cc1e6c413b",
+      "name": "Force Meld",
+      "treeId": "jedi-guardian",
+      "treeName": "Jedi Guardian",
+      "registryKey": null,
+      "registryStatus": null,
+      "classification": "DEFER_PHASE_3D_PRODUCTION_ONLY"
+    },
+    {
+      "productionRecordId": "81cd2a2473e248a0",
+      "name": "In Balance",
+      "treeId": "dcac793cc9fe42a7",
+      "treeName": "Jedaii Ranger",
+      "registryKey": "repo-special|Jedaii Ranger",
+      "registryStatus": "REPO_ONLY_NONCANONICAL_HOMEBREW",
+      "classification": "DEFER_PHASE_3D_PRODUCTION_ONLY"
+    },
+    {
+      "productionRecordId": "85e348f24a144e1c",
+      "name": "Inspired",
+      "treeId": "72d32ebcbb607314",
+      "treeName": "Inspiration",
+      "registryKey": "Saga Edition Core Rulebook|Inspiration",
+      "registryStatus": "REPO_TREE_PRESENT",
+      "classification": "DEFER_PHASE_3D_PRODUCTION_ONLY"
+    },
+    {
+      "productionRecordId": "85e9699cee664641",
+      "name": "Identify Creature",
+      "treeId": "00cb74839a524276",
+      "treeName": "Science",
+      "registryKey": "repo-special|Science",
+      "registryStatus": "REPO_ONLY_NONCANONICAL_HOMEBREW",
+      "classification": "DEFER_PHASE_3D_PRODUCTION_ONLY"
+    },
+    {
+      "productionRecordId": "86c10d63bba2d9c8",
+      "name": "Trigger Work",
+      "treeId": "cb6f775cd227a3e3",
+      "treeName": "Gunslinger",
+      "registryKey": "Saga Edition Core Rulebook|Gunslinger",
+      "registryStatus": "REPO_TREE_PRESENT",
+      "classification": "DEFER_PHASE_3D_PRODUCTION_ONLY"
+    },
+    {
+      "productionRecordId": "893158dcfe246ad7",
+      "name": "Implant (general)",
+      "treeId": "d8a71a6c5b2b7581",
+      "treeName": "Implant",
+      "registryKey": "Legacy Era Campaign Guide|Implant",
+      "registryStatus": "REPO_TREE_PRESENT",
+      "classification": "DEFER_PHASE_3D_PRODUCTION_ONLY"
+    },
+    {
+      "productionRecordId": "8a6fc1f368226b7b",
+      "name": "Sith Alchemy (create)",
+      "treeId": "d1037bc7a08ea80b",
+      "treeName": "Sith",
+      "registryKey": "Saga Edition Core Rulebook|Sith",
+      "registryStatus": "REPO_TREE_PRESENT",
+      "classification": "DEFER_PHASE_3D_PRODUCTION_ONLY"
+    },
+    {
+      "productionRecordId": "8d70989dc42f4829",
+      "name": "Suktub Defender",
+      "treeId": "bfc1356c66c74783",
+      "treeName": "Smashball Pro",
+      "registryKey": "repo-special|Smashball Pro",
+      "registryStatus": "REPO_ONLY_NONCANONICAL_HOMEBREW",
+      "classification": "DEFER_PHASE_3D_PRODUCTION_ONLY"
+    },
+    {
+      "productionRecordId": "9319584186ce4228",
+      "name": "Dathomiri Hunter",
+      "treeId": "ad16f3e5f4f7441b",
+      "treeName": "Dathomiri Witch",
+      "registryKey": "Saga Edition Core Rulebook|Dathomiri Witch",
+      "registryStatus": "SOURCE_VERIFIED_SPECIAL_TREE",
+      "classification": "DEFER_PHASE_3D_PRODUCTION_ONLY"
+    },
+    {
+      "productionRecordId": "933240d6581843b9",
+      "name": "Lasting Ichor Item",
+      "treeId": "01e443d93e47f9c4",
+      "treeName": "Force Item",
+      "registryKey": "Saga Edition Core Rulebook|Force Item",
+      "registryStatus": "REPO_TREE_PRESENT",
+      "classification": "DEFER_PHASE_3D_PRODUCTION_ONLY"
+    },
+    {
+      "productionRecordId": "96a833f805df1be1",
+      "name": "Regimen Mastery",
+      "treeId": "a3d0b7c9a6d041f2",
+      "treeName": "Mystic",
+      "registryKey": "Jedi Academy Training Manual|Mystic",
+      "registryStatus": "REPO_TREE_PRESENT",
+      "classification": "DEFER_PHASE_3D_PRODUCTION_ONLY"
+    },
+    {
+      "productionRecordId": "9780298d28d64954",
+      "name": "Centerbreaker Charge",
+      "treeId": "bfc1356c66c74783",
+      "treeName": "Smashball Pro",
+      "registryKey": "repo-special|Smashball Pro",
+      "registryStatus": "REPO_ONLY_NONCANONICAL_HOMEBREW",
+      "classification": "DEFER_PHASE_3D_PRODUCTION_ONLY"
+    },
+    {
+      "productionRecordId": "a0c4b4b252ee4c96",
+      "name": "Cortosis Staff Block",
+      "treeId": "0a61ab9ece844326",
+      "treeName": "Morgukai Warrior",
+      "registryKey": "repo-special|Morgukai Warrior",
+      "registryStatus": "REPO_ONLY_NONCANONICAL_HOMEBREW",
+      "classification": "DEFER_PHASE_3D_PRODUCTION_ONLY"
+    },
+    {
+      "productionRecordId": "a1ef8440f49847f1",
+      "name": "Linebreaker Charge",
+      "treeId": "bfc1356c66c74783",
+      "treeName": "Smashball Pro",
+      "registryKey": "repo-special|Smashball Pro",
+      "registryStatus": "REPO_ONLY_NONCANONICAL_HOMEBREW",
+      "classification": "DEFER_PHASE_3D_PRODUCTION_ONLY"
+    },
+    {
+      "productionRecordId": "a36f9a2eb2424f86",
+      "name": "Amphistaff Block",
+      "treeId": "d5b60c4f058c4085",
+      "treeName": "Master Of The Amphistaff",
+      "registryKey": "repo-special|Master Of The Amphistaff",
+      "registryStatus": "REPO_ONLY_NONCANONICAL_HOMEBREW",
+      "classification": "DEFER_PHASE_3D_PRODUCTION_ONLY"
+    },
+    {
+      "productionRecordId": "a4629f24bd571414",
+      "name": "Mercenary's Determination",
+      "treeId": "4007fa87192b5884",
+      "treeName": "Mercenary",
+      "registryKey": "Force Unleashed Campaign Guide|Mercenary",
+      "registryStatus": "REPO_TREE_PRESENT",
+      "classification": "DEFER_PHASE_3D_PRODUCTION_ONLY"
+    },
+    {
+      "productionRecordId": "a76198e5da0f6368",
+      "name": "Echoes of the Force",
+      "treeId": "44554c28675292b6",
+      "treeName": "Jedi Investigator",
+      "registryKey": "Jedi Academy Training Manual|Jedi Investigator",
+      "registryStatus": "REPO_TREE_PRESENT",
+      "classification": "DEFER_PHASE_3D_PRODUCTION_ONLY"
+    },
+    {
+      "productionRecordId": "a9a84d42b75f4fb1",
+      "name": "Lesser Mark of Illumination",
+      "treeId": "f3881205595248d4",
+      "treeName": "Chalactan Adept",
+      "registryKey": "repo-special|Chalactan Adept",
+      "registryStatus": "REPO_ONLY_NONCANONICAL_HOMEBREW",
+      "classification": "DEFER_PHASE_3D_PRODUCTION_ONLY"
+    },
+    {
+      "productionRecordId": "ab6efafd94ad044e",
+      "name": "Extended Critical Range (heavy)",
+      "treeId": "71e99c646b18d85c",
+      "treeName": "Critical Master",
+      "registryKey": "Force Unleashed Campaign Guide|Critical Master",
+      "registryStatus": "REPO_TREE_PRESENT",
+      "classification": "DEFER_PHASE_3D_PRODUCTION_ONLY"
+    },
+    {
+      "productionRecordId": "b1669310f65d42b7",
+      "name": "Engineering Savant",
+      "treeId": "38d7c18ce4664c66",
+      "treeName": "Mechanic",
+      "registryKey": "repo-special|Mechanic",
+      "registryStatus": "REPO_ONLY_NONCANONICAL_HOMEBREW",
+      "classification": "DEFER_PHASE_3D_PRODUCTION_ONLY"
+    },
+    {
+      "productionRecordId": "b28f312432d79e77",
+      "name": "Keep Them Reeling (Piracy)",
+      "treeId": "61db5e2c0c44ef67",
+      "treeName": "Piracy",
+      "registryKey": "Scum and Villainy|Piracy",
+      "registryStatus": "REPO_TREE_PRESENT",
+      "classification": "DEFER_PHASE_3D_PRODUCTION_ONLY"
+    },
+    {
+      "productionRecordId": "b431ca7ea00947b9",
+      "name": "Delusion",
+      "treeId": "cfd358ef61fb47bd",
+      "treeName": "Sorcerer Of Tund",
+      "registryKey": "repo-special|Sorcerer Of Tund",
+      "registryStatus": "REPO_ONLY_NONCANONICAL_HOMEBREW",
+      "classification": "DEFER_PHASE_3D_PRODUCTION_ONLY"
+    },
+    {
+      "productionRecordId": "b9fce171cad543d7",
+      "name": "Clone Scientist",
+      "treeId": "8e44e56069274319",
+      "treeName": "Cloner",
+      "registryKey": "repo-special|Cloner",
+      "registryStatus": "REPO_ONLY_NONCANONICAL_HOMEBREW",
+      "classification": "DEFER_PHASE_3D_PRODUCTION_ONLY"
+    },
+    {
+      "productionRecordId": "c086c6265e224637",
+      "name": "Shedding of the Body",
+      "treeId": "8955568285ba4115",
+      "treeName": "Bomarr Monk",
+      "registryKey": "repo-special|Bomarr Monk",
+      "registryStatus": "REPO_ONLY_NONCANONICAL_HOMEBREW",
+      "classification": "DEFER_PHASE_3D_PRODUCTION_ONLY"
+    },
+    {
+      "productionRecordId": "c6a65be235c34a6f",
+      "name": "Bolster",
+      "treeId": "72d32ebcbb607314",
+      "treeName": "Inspiration",
+      "registryKey": "Saga Edition Core Rulebook|Inspiration",
+      "registryStatus": "REPO_TREE_PRESENT",
+      "classification": "DEFER_PHASE_3D_PRODUCTION_ONLY"
+    },
+    {
+      "productionRecordId": "cb261592f68849a5",
+      "name": "Infused Weapon",
+      "treeId": "8a61bf426391431b",
+      "treeName": "Felucian Shaman",
+      "registryKey": "Force Unleashed Campaign Guide|Felucian Shaman",
+      "registryStatus": "REPO_ONLY_SPECIAL_OR_UNRESOLVED",
+      "classification": "DEFER_PHASE_3D_PRODUCTION_ONLY"
+    },
+    {
+      "productionRecordId": "cc1cf3a694244618",
+      "name": "Diplomatic Poise",
+      "treeId": "feb08c2834a447ab",
+      "treeName": "Galactic Senator",
+      "registryKey": "repo-special|Galactic Senator",
+      "registryStatus": "REPO_ONLY_NONCANONICAL_HOMEBREW",
+      "classification": "DEFER_PHASE_3D_PRODUCTION_ONLY"
+    },
+    {
+      "productionRecordId": "cc78c981176d4fed",
+      "name": "Avoid Collisions",
+      "treeId": "25d99948c9cb41ad",
+      "treeName": "Jumptrooper",
+      "registryKey": "repo-special|Jumptrooper",
+      "registryStatus": "REPO_ONLY_NONCANONICAL_HOMEBREW",
+      "classification": "DEFER_PHASE_3D_PRODUCTION_ONLY"
+    },
+    {
+      "productionRecordId": "cc938ba0542c97e4",
+      "name": "Unclouded Judgement",
+      "treeId": "44554c28675292b6",
+      "treeName": "Jedi Investigator",
+      "registryKey": "Jedi Academy Training Manual|Jedi Investigator",
+      "registryStatus": "REPO_TREE_PRESENT",
+      "classification": "DEFER_PHASE_3D_PRODUCTION_ONLY"
+    },
+    {
+      "productionRecordId": "d1418afeaa3f40ec",
+      "name": "Reflexive Tilting",
+      "treeId": "25d99948c9cb41ad",
+      "treeName": "Jumptrooper",
+      "registryKey": "repo-special|Jumptrooper",
+      "registryStatus": "REPO_ONLY_NONCANONICAL_HOMEBREW",
+      "classification": "DEFER_PHASE_3D_PRODUCTION_ONLY"
+    },
+    {
+      "productionRecordId": "d49ca4c47e704a96",
+      "name": "Defensive Stance",
+      "treeId": "fc978e442f544dbe",
+      "treeName": "Defensive Duelist",
+      "registryKey": "repo-special|Defensive Duelist",
+      "registryStatus": "REPO_ONLY_NONCANONICAL_HOMEBREW",
+      "classification": "DEFER_PHASE_3D_PRODUCTION_ONLY"
+    },
+    {
+      "productionRecordId": "d7870d0940a3ce0b",
+      "name": "Ranged Disarm",
+      "treeId": "13776eed744d410c",
+      "treeName": "Warrior",
+      "registryKey": "Unknown Regions|Warrior",
+      "registryStatus": "REPO_TREE_PRESENT",
+      "classification": "DEFER_PHASE_3D_PRODUCTION_ONLY"
+    },
+    {
+      "productionRecordId": "d9cb414fe4734507",
+      "name": "Mass Cloning",
+      "treeId": "8e44e56069274319",
+      "treeName": "Cloner",
+      "registryKey": "repo-special|Cloner",
+      "registryStatus": "REPO_ONLY_NONCANONICAL_HOMEBREW",
+      "classification": "DEFER_PHASE_3D_PRODUCTION_ONLY"
+    },
+    {
+      "productionRecordId": "e09d40421ade49e8",
+      "name": "Binding Sickle",
+      "treeId": "ad16f3e5f4f7441b",
+      "treeName": "Dathomiri Witch",
+      "registryKey": "Saga Edition Core Rulebook|Dathomiri Witch",
+      "registryStatus": "SOURCE_VERIFIED_SPECIAL_TREE",
+      "classification": "DEFER_PHASE_3D_PRODUCTION_ONLY"
+    },
+    {
+      "productionRecordId": "e6055a514a784387",
+      "name": "Akk Dog Master",
+      "treeId": "37f3554a2f30425a",
+      "treeName": "Exceptional Followers",
+      "registryKey": "repo-special|Exceptional Followers",
+      "registryStatus": "REPO_ONLY_NONCANONICAL_HOMEBREW",
+      "classification": "DEFER_PHASE_3D_PRODUCTION_ONLY"
+    },
+    {
+      "productionRecordId": "e9541e13afbb4a41",
+      "name": "Steady Strike",
+      "treeId": "fc978e442f544dbe",
+      "treeName": "Defensive Duelist",
+      "registryKey": "repo-special|Defensive Duelist",
+      "registryStatus": "REPO_ONLY_NONCANONICAL_HOMEBREW",
+      "classification": "DEFER_PHASE_3D_PRODUCTION_ONLY"
+    },
+    {
+      "productionRecordId": "ea6ee6fad799491e",
+      "name": "Jedi Healer",
+      "treeId": "e99cfa9db8493573",
+      "treeName": "Jedi Consular",
+      "registryKey": "Saga Edition Core Rulebook|Jedi Consular",
+      "registryStatus": "REPO_TREE_PRESENT",
+      "classification": "DEFER_PHASE_3D_PRODUCTION_ONLY"
+    },
+    {
+      "productionRecordId": "ebc1d6e79fa543c9",
+      "name": "Steady Hands",
+      "treeId": "c1cf52502cf74435",
+      "treeName": "Treatment",
+      "registryKey": "repo-special|Treatment",
+      "registryStatus": "REPO_ONLY_NONCANONICAL_HOMEBREW",
+      "classification": "DEFER_PHASE_3D_PRODUCTION_ONLY"
+    },
+    {
+      "productionRecordId": "f0851e0e5a1ac771",
+      "name": "Multiattack Proficiency (advanced melee)",
+      "treeId": "1381bb8c9a838279",
+      "treeName": "Melee Duelist",
+      "registryKey": "Knights of the Old Republic Campaign Guide|Melee Duelist",
+      "registryStatus": "REPO_TREE_PRESENT",
+      "classification": "DEFER_PHASE_3D_PRODUCTION_ONLY"
+    },
+    {
+      "productionRecordId": "f123e0682ef74583",
+      "name": "Reference Book: Star Wars Saga Edition Starships of the Galaxy",
+      "treeId": "d6b4331c0e31f7e3",
+      "treeName": "Sense",
+      "registryKey": "Saga Edition Core Rulebook|Sense",
+      "registryStatus": "SOURCE_VERIFIED_SPECIAL_TREE",
+      "classification": "DEFER_PHASE_3D_PRODUCTION_ONLY"
+    },
+    {
+      "productionRecordId": "f2df5596a9db40c1",
+      "name": "Blackguard Initiate",
+      "treeId": "d2535361d1b146cd",
+      "treeName": "Blackguard Wilder",
+      "registryKey": "repo-special|Blackguard Wilder",
+      "registryStatus": "REPO_ONLY_NONCANONICAL_HOMEBREW",
+      "classification": "DEFER_PHASE_3D_PRODUCTION_ONLY"
+    },
+    {
+      "productionRecordId": "f5a4088480c005ae",
+      "name": "Dastardly Attack",
+      "treeId": "67b59e020c1660eb",
+      "treeName": "Misfortune",
+      "registryKey": "Saga Edition Core Rulebook|Misfortune",
+      "registryStatus": "REPO_TREE_PRESENT",
+      "classification": "DEFER_PHASE_3D_PRODUCTION_ONLY"
+    },
+    {
+      "productionRecordId": "f785208aa6774cd7",
+      "name": "Dark Side Maelstrom",
+      "treeId": "de95d37c72b1c4cd",
+      "treeName": "Dark Side",
+      "registryKey": "Saga Edition Core Rulebook|Dark Side",
+      "registryStatus": "SOURCE_VERIFIED_SPECIAL_TREE",
+      "classification": "DEFER_PHASE_3D_PRODUCTION_ONLY"
+    },
+    {
+      "productionRecordId": "f9352f317ad2f695",
+      "name": "Stolen Form",
+      "treeId": "d1037bc7a08ea80b",
+      "treeName": "Sith",
+      "registryKey": "Saga Edition Core Rulebook|Sith",
+      "registryStatus": "REPO_TREE_PRESENT",
+      "classification": "DEFER_PHASE_3D_PRODUCTION_ONLY"
+    },
+    {
+      "productionRecordId": "fbaab00b6eab02a3",
+      "name": "Mercenary's Teamwork",
+      "treeId": "4007fa87192b5884",
+      "treeName": "Mercenary",
+      "registryKey": "Force Unleashed Campaign Guide|Mercenary",
+      "registryStatus": "REPO_TREE_PRESENT",
+      "classification": "DEFER_PHASE_3D_PRODUCTION_ONLY"
+    },
+    {
+      "productionRecordId": "fd87928650da45fd",
+      "name": "Poisoncraft",
+      "treeId": "00cb74839a524276",
+      "treeName": "Science",
+      "registryKey": "repo-special|Science",
+      "registryStatus": "REPO_ONLY_NONCANONICAL_HOMEBREW",
+      "classification": "DEFER_PHASE_3D_PRODUCTION_ONLY"
+    }
+  ],
+  "phase3cGate": {
+    "ready": true,
+    "requirements": [
+      "Run the canonical authority checker.",
+      "Run every book Phase 3B checker.",
+      "Run the global Phase 3B closeout checker.",
+      "Apply only certified manifest mutations.",
+      "Leave reviewExtras and productionOnlyDeferred untouched during Phase 3C."
+    ]
+  }
+}
