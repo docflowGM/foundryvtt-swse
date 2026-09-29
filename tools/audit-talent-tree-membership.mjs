@@ -11,6 +11,22 @@ const PACKS = {
   classes: path.join(ROOT, 'packs', 'classes.db'),
 };
 
+const PHASE3B_CLOSEOUT = path.join(ROOT, 'data', 'audits', 'talent-phase-3b-global-closeout.json');
+
+function loadReviewExtraDuplicateExemptions() {
+  if (!fs.existsSync(PHASE3B_CLOSEOUT)) return new Map();
+  const closeout = JSON.parse(fs.readFileSync(PHASE3B_CLOSEOUT, 'utf8'));
+  const exemptions = new Map();
+  for (const extra of closeout.reviewExtras ?? []) {
+    if (extra.classification !== 'REVIEW_EXTRA_DUPLICATE_CANONICAL_ALIAS') continue;
+    const claim = extra.treeClaims?.[0];
+    if (!claim?.treeId || !extra.name || !extra.productionRecordId) continue;
+    const key = `${normalizeKey(claim.treeId)}::${normalizeKey(extra.name)}`;
+    exemptions.set(key, extra.productionRecordId);
+  }
+  return exemptions;
+}
+
 function readJsonLines(filePath) {
   return fs.readFileSync(filePath, 'utf8')
     .split(/\r?\n/)
@@ -97,9 +113,18 @@ for (const talent of talents) {
   });
 }
 
+const reviewExtraDuplicateExemptions = loadReviewExtraDuplicateExemptions();
+const duplicateTalentNamesWithinTree = getDuplicates(talentNameMap).filter(({ key, values }) => {
+  const protectedExtraId = reviewExtraDuplicateExemptions.get(key);
+  if (!protectedExtraId) return true;
+  // Phase 3B deliberately preserves exactly one review-only duplicate alias in
+  // each certified tree until Phase 3D. Exempt only that exact two-record pair.
+  return !(values.length === 2 && values.some(value => value.id === protectedExtraId));
+});
+
 const hardFailures = {
   duplicateTalentIds: getDuplicates(talentIdMap),
-  duplicateTalentNamesWithinTree: getDuplicates(talentNameMap),
+  duplicateTalentNamesWithinTree,
   treeClaimsMissingTalents: [],
   duplicateTreeSideTalentClaims: [],
   talentsUnclaimedByTree: [],
