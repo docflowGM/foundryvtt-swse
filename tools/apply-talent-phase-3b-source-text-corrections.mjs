@@ -61,6 +61,10 @@ export function validateManifest(manifest) {
       for (const [name, re] of RESIDUE) invariant(!re.test(f.correctedValue), `${e.id}: corrected ${f.phase2Field} still contains ${name} residue`);
     }
     if (e.blocksApply) invariant(e.verification.pdfConfirmationRequired === true, `${e.id}: a blocking entry must require PDF confirmation`);
+    if (e.verification.status === 'PDF_CONFIRMED') {
+      invariant(e.verification.pdf?.status === 'RENDERED_PAGE_VISUALLY_VERIFIED' && Number.isInteger(e.verification.pdf.printedPage) && e.verification.pdf.verifiedBy, `${e.id}: PDF_CONFIRMED needs a recorded rendered-page verification (printed page, verifier)`);
+      invariant(e.verification.pdfConfirmationRequired === false && e.blocksApply === false, `${e.id}: a PDF-confirmed entry must not require or block on the PDF`);
+    }
   }
   for (const f of manifest.nonSourceFindings ?? []) invariant(STATUSES.has(f.status), `${f.id}: unknown status`);
   return { entries: manifest.entries.length, blocking: manifest.entries.filter(e => e.blocksApply).length };
@@ -116,12 +120,24 @@ export function applyToReferenceDoc(manifest, opts = {}) {
     let block = lines.slice(headAt, headEnd).join('\n');
     const before = block;
     for (const f of entry.fields) {
-      if (f.phase2Field === 'canonicalPrerequisites' && f.correctedValue === '') {
+      if (f.phase2Field === 'canonicalPrerequisites' && f.currentValue === '') {
+        block = block.replace(/^- \*\*Prerequisites:\*\* (?:—|None\.)$/m, `- **Prerequisites:** ${f.correctedValue}`);
+      } else if (f.phase2Field === 'canonicalPrerequisites' && f.correctedValue === '') {
         block = block.replace(`- **Prerequisites:** ${f.currentValue}`, '- **Prerequisites:** —');
       } else if (block.includes(f.currentValue)) block = block.split(f.currentValue).join(f.correctedValue);
       // The reference wraps noise removals across paragraphs the same way, so fall back to the removed tail.
       else if (f.removedTrailingText && block.includes(f.removedTrailingText.trim())) block = block.split(f.removedTrailingText.trim()).join('');
     }
+    // The rules-text paragraph is authoritative: rewrite it whole from the corrected value (substring edits above can leave
+    // fragments when the reference held a differently-cut copy of the damaged text).
+    const desc = entry.fields.find(f => f.phase2Field === 'canonicalDescription');
+    if (desc) {
+      const marker = '**Canonical rules text**\n\n';
+      const at = block.indexOf(marker);
+      if (at >= 0) block = block.slice(0, at + marker.length) + desc.correctedValue + '\n';
+    }
+    const summary = entry.fields.find(f => f.phase2Field === 'quickSummary');
+    if (summary) block = block.replace(/^- \*\*Quick summary:\*\* .*$/m, () => `- **Quick summary:** ${summary.correctedValue}`);
     if (block !== before) { lines.splice(headAt, headEnd - headAt, ...block.split('\n')); touched++; }
   }
   text = lines.join('\n');
@@ -143,6 +159,15 @@ export function checkApplied(manifest, { strict = false, onlyBook, exceptBook } 
       if (canon && canon.provenance.primaryPublication.sourcebook === entry.sourcebook) {
         for (const key of PHASE2_TO_CANONICAL[f.phase2Field]) if (canon[key] !== f.correctedValue) problems.push(`${entry.id}: data/canonical/talents.json ${key} is stale (regenerate with tools/build-talent-canonical-authority.mjs)`);
       }
+    }
+  }
+  // The human-readable production reference carries the same text: none of the damaged values may remain in it.
+  const doc = readText(REFERENCE_DOC);
+  for (const entry of manifest.entries.filter(e => e.applied && selected(e, { onlyBook, exceptBook }))) {
+    for (const f of entry.fields) {
+      const damaged = f.removedTrailingText?.trim() || f.currentValue;
+      if (damaged.length >= 12 && !f.correctedValue.includes(damaged) && doc.includes(damaged)) problems.push(`${entry.id}: production reference still contains the damaged ${f.phase2Field} text`);
+      if (f.phase2Field === 'canonicalDescription' && !doc.includes(f.correctedValue.split('\n')[0])) problems.push(`${entry.id}: production reference lacks the corrected ${f.phase2Field} text`);
     }
   }
   // Recorded closeout SHAs are maintained values: they must describe the files on disk.

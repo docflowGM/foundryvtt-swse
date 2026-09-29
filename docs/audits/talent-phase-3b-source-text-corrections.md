@@ -25,11 +25,11 @@ data/audits/talent-phase-2-*-content.json   (edited: exact, asserted replacement
 | Fields flagged by the Phase 3C signature scan | **54 fields in 27 records** |
 | … corrected | **54** |
 | … proven false positives | **0** |
-| Further records found by a full scan of all 1,180 canonical texts | **20** (17 corrected, 3 not repairable from the TXT) |
-| Manifest entries | **47** (44 corrected, 3 documented but not applied) |
-| Phase 2 fields changed | 58 |
+| Further records found by a full scan of all 1,180 canonical texts | **20** (all corrected; 3 of them from the rendered PDF) |
+| Manifest entries | **47** (all applied) |
+| Phase 2 fields changed | 65 |
 
-Status: 43 `TXT_CONFIRMED`, 4 `TXT_AMBIGUOUS_PDF_REQUIRED` (one applied, three not applied), 0 `UNRESOLVED`.
+Status: 43 `TXT_CONFIRMED`, **4 `PDF_CONFIRMED`**, 0 `TXT_AMBIGUOUS_PDF_REQUIRED`, 0 `UNRESOLVED`; nothing blocks Phase 3C.
 
 ### Defect classes found
 
@@ -40,7 +40,7 @@ Status: 43 `TXT_CONFIRMED`, 4 `TXT_AMBIGUOUS_PDF_REQUIRED` (one applied, three n
 | `{ }` for `( )` / `[ ]`, `[` for `(` | Redirect Shot, Knowledge Is Strength, Combat Repairs, Burning Assault, Unstoppable, Krath Surge, Master of Elegance | delimiter restored from its paired partner in the same passage |
 | `\|` / `\\f` / `~` OCR substitutions | Impel Ally I/II, Masterwork Lightsaber, Transfer Essence, Connections, Mobile Attack (lightsabers), Krath Illusions | restored (`I`, `If`, joined word, `Illusion`) |
 | HTML `<p>` wrappers | 7 Force Adept / Force Item talents | markup only removed |
-| Damaged in the TXT itself | **Disciplined Strike, Exotic Weapon Mastery, Slippery Strike** (and Krath Illusions' prerequisite) | the three are **not corrected** and need the PDF; Krath Illusions is applied but PDF-pending |
+| Damaged in the TXT itself | Disciplined Strike, Exotic Weapon Mastery, Slippery Strike, Krath Illusions' prerequisite | resolved from the rendered PDFs (see below) |
 
 Small in-word OCR letters inside a corrected field (`norma!`, `Fdition`, a stray `"`) were fixed only in fields that
 were already being corrected. Comma-for-full-stop OCR and other punctuation normalisation was **deliberately not
@@ -48,14 +48,24 @@ touched** (recorded per entry in `deliberatelyUncorrected`). Nothing was reworde
 
 ## Verification evidence and its limits
 
-* The sourcebook **PDFs and the combined "All Books" corpus are not in the repository or in this session**, so nothing
-  here is `PDF_CONFIRMED`. Every correction rests on the individual TXT files only: a paired delimiter, a clean sibling
-  occurrence (e.g. `Dual Weapon Mastery I,` two talents above the damaged `Dual Weapon Mastery |,`), or the TXT rules
-  text visibly ending before appended furniture. Each entry cites the TXT file and line.
-* **Krath Illusions** (`||lusion` → `Illusion`, printed p. 60) is applied but stays `TXT_AMBIGUOUS_PDF_REQUIRED`: the
-  individual TXT is itself damaged. Corroboration: `||` is the OCR read of `Il`; `Saga Edition Core Rulebook|Alter|Illusion`
-  is the only talent that fits; production and the source-verified hydration test carry `Illusion`; the project owner
-  reports the combined OCR corpus reads `Illusion` (not inspectable here). It still needs a rendered-PDF check.
+* The sourcebook PDFs are not in the repository, so this audit could not open them. Forty-three corrections rest on the
+  individual TXT files: a paired delimiter, a clean sibling occurrence (e.g. `Dual Weapon Mastery I,` two talents above the
+  damaged `Dual Weapon Mastery |,`), or the TXT rules text visibly ending before appended furniture. Each entry cites the TXT
+  file and line.
+* The four entries that could not be settled from the TXT were **visually checked against the rendered PDFs by the project owner
+  on 2026-09-29**; their findings are recorded in the manifest (`verification.pdf`) and are now `PDF_CONFIRMED`:
+
+| Entry | Source | PDF finding | Canonical value |
+|---|---|---|---|
+| TC-026 Krath Illusions | KOTOR printed p. 60 | prerequisite is `Illusion`; `\|\|lusion` is OCR corruption | `Illusion` |
+| TC-045 Disciplined Strike | Core printed p. 100 | the **printed** text says "has a **cone** effect"; the official Core erratum for p. 100 changes it to "has an **area** effect" | erratum-applied "area effect" text; no prerequisite |
+| TC-046 Exotic Weapon Mastery | Core printed p. 212 | one sentence; the OCR interleaved the neighbouring column | "You are considered proficient with any exotic weapon, even if you don't possess the appropriate Exotic Weapon Proficiency feat." |
+| TC-047 Slippery Strike | KOTOR printed p. 27 (continues p. 28) | full two-page text; prerequisite `Strike and Run` | full benefit, prerequisite `Strike and Run`, source page stays 27 |
+
+  For Disciplined Strike the print-versus-erratum distinction is kept in the entry (`errata`, `verification.notes`): the printed
+  PDF is not claimed to say "area effect". The erratum text itself was reported by the project owner from the repository's
+  combined source corpus, which is not part of this checkout, so this audit did not inspect it (`erratumInspectedByThisAudit: false`).
+  Derived `quickSummary` values for these three records are the first sentence of the corrected benefit.
 * **Detection is signature-based.** OCR damage without a detectable signature (a silently wrong letter, a dropped word)
   cannot be found by scanning; only a PDF proofread can. The three Core/KOTOR records above were found by side effects
   (unbalanced brackets, a benefit that stops mid-sentence).
@@ -100,9 +110,10 @@ the tests meaningful both before and after Phase 3C is applied.
 
 ## Remaining gates before Phase 3C may write production
 
-1. Rendered-PDF check of **Krath Illusions** (printed p. 60).
-2. PDF transcription of **Disciplined Strike** (Core), **Exotic Weapon Mastery** (Core), **Slippery Strike** (KOTOR): their
-   canonical text is still the damaged TXT text and is *not* fixed by this branch.
-3. Optional: independent PDF re-check of the Elite Droid page (already recorded as verified in two repository audits).
-4. `node tools/apply-talent-phase-3b-source-text-corrections.mjs --check --strict` must pass (it fails while any entry is
-   PDF-pending).
+None of the source-text entries blocks any more (`node tools/apply-talent-phase-3b-source-text-corrections.mjs --check --strict` passes).
+The remaining external gate is the live Foundry v13 Squad Leader check
+(`docs/audits/talent-phase-3c-squad-leader-live-verification.md`). Optional: an independent re-render of the Elite Droid page
+(already recorded as verified in two repository audits).
+
+Known cosmetic residue: the Phase 2 `canonicalTextCapture` label of Disciplined Strike / Exotic Weapon Mastery still reads
+`TXT_SOURCE_EXPORT_NORMALIZED`; the text itself is now PDF-transcribed.

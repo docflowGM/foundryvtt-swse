@@ -10,7 +10,7 @@
   "generatedAgainst": {
     "canonical": {
       "path": "data/canonical/talents.json",
-      "fingerprint": "fnv1a64:56163af3312933dd"
+      "fingerprint": "fnv1a64:8ec7fe66c2980baa"
     },
     "registry": {
       "path": "data/audits/talent-canonical-tree-registry.json",
@@ -26,7 +26,7 @@
     },
     "phase2": {
       "path": "data/audits/talent-phase-2-core-rulebook-content.json",
-      "fingerprint": "fnv1a64:8cff410679b8e7a9"
+      "fingerprint": "fnv1a64:8853cbf9cb2530be"
     },
     "discrepancy": {
       "path": "data/audits/talent-phase-2-core-discrepancy-manifest.json",
@@ -9084,9 +9084,9 @@
       },
       "targetFields": {
         "name": "Disciplined Strike",
-        "system.benefit": "Whenever you use a Force power that hs effect (such as Force siam), you may exclude a certain number OF from the effects of that power. The number of targets that you in this manner is equal to your Wisdom modifier [minimum of 1). _",
-        "system.description": "Whenever you use a Force power that hs effect (such as Force siam), you may exclude a certain number OF from the effects of that power. The number of targets that you in this manner is equal to your Wisdom modifier [minimum of 1). _",
-        "system.summary": "Whenever you use a Force power that hs effect (such as Force siam), you may exclude a certain number OF from the effects of that power.",
+        "system.benefit": "Whenever you use a Force power that has an area effect (such as Force slam), you may exclude a certain number of targets from the effects of that power. The number of targets that you may exclude in this manner is equal to your Wisdom modifier (minimum of 1).",
+        "system.description": "Whenever you use a Force power that has an area effect (such as Force slam), you may exclude a certain number of targets from the effects of that power. The number of targets that you may exclude in this manner is equal to your Wisdom modifier (minimum of 1).",
+        "system.summary": "Whenever you use a Force power that has an area effect (such as Force slam), you may exclude a certain number of targets from the effects of that power.",
         "system.prerequisites": "",
         "system.source": "Saga Edition Core Rulebook",
         "system.page": 100
@@ -13881,9 +13881,9 @@
       },
       "targetFields": {
         "name": "Exotic Weapon Mastery",
-        "system.benefit": "You are considered profi- stacks with the bonus granted by the Weapon Specialization talent fp; cient with any exotic weapon, even if you don't possess the 53). You must be proficient with the weapon to gain this benefit appropriate Exotic Weapon Proficiency feat. You may select this talent multiple times. Each time you select this tat",
-        "system.description.value": "You are considered profi- stacks with the bonus granted by the Weapon Specialization talent fp; cient with any exotic weapon, even if you don't possess the 53). You must be proficient with the weapon to gain this benefit appropriate Exotic Weapon Proficiency feat. You may select this talent multiple times. Each time you select this tat",
-        "system.summary": "You are considered profi- stacks with the bonus granted by the Weapon Specialization talent fp; cient with any exotic weapon, even if you don't possess the 53).",
+        "system.benefit": "You are considered proficient with any exotic weapon, even if you don't possess the appropriate Exotic Weapon Proficiency feat.",
+        "system.description.value": "You are considered proficient with any exotic weapon, even if you don't possess the appropriate Exotic Weapon Proficiency feat.",
+        "system.summary": "You are considered proficient with any exotic weapon, even if you don't possess the appropriate Exotic Weapon Proficiency feat.",
         "system.prerequisites": "",
         "system.source": "Saga Edition Core Rulebook",
         "system.page": 212

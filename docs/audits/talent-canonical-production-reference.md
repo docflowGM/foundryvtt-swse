@@ -1229,13 +1229,13 @@ Choose a single Exotic Weapon or weapon group with which you are proficient. You
 
 - **Page:** 100
 - **Prerequisites:** —
-- **Quick summary:** Whenever you use a Force power that hs effect (such as Force siam), you may exclude a certain number OF from the effects of that power.
+- **Quick summary:** Whenever you use a Force power that has an area effect (such as Force slam), you may exclude a certain number of targets from the effects of that power.
 - **Phase 2 repository evidence:** Mapped repository record: `0fc08fad3a87a830` (Disciplined Strike)
 - **Phase 2 discrepancy flags:** CORRECT_OR_SOURCE_ALIGNED
 
 **Canonical rules text**
 
-Whenever you use a Force power that hs effect (such as Force siam), you may exclude a certain number OF from the effects of that power. The number of targets that you in this manner is equal to your Wisdom modifier [minimum of 1). _
+Whenever you use a Force power that has an area effect (such as Force slam), you may exclude a certain number of targets from the effects of that power. The number of targets that you may exclude in this manner is equal to your Wisdom modifier (minimum of 1).
 
 #### Telekinetic Power
 
@@ -1862,13 +1862,13 @@ Your penalty when making an autofire attack or using the Burst Fire feat is redu
 
 - **Page:** 212
 - **Prerequisites:** —
-- **Quick summary:** You are considered profi- stacks with the bonus granted by the Weapon Specialization talent fp; cient with any exotic weapon, even if you don't possess the 53).
+- **Quick summary:** You are considered proficient with any exotic weapon, even if you don't possess the appropriate Exotic Weapon Proficiency feat.
 - **Phase 2 repository evidence:** Mapped repository record: `fb103ac0e4501e95` (Exotic Weapon Mastery)
 - **Phase 2 discrepancy flags:** CORRECT_OR_SOURCE_ALIGNED
 
 **Canonical rules text**
 
-You are considered profi- stacks with the bonus granted by the Weapon Specialization talent fp; cient with any exotic weapon, even if you don't possess the 53). You must be proficient with the weapon to gain this benefit appropriate Exotic Weapon Proficiency feat. You may select this talent multiple times. Each time you select this tat
+You are considered proficient with any exotic weapon, even if you don't possess the appropriate Exotic Weapon Proficiency feat.
 
 #### Greater Devastating Attack
 
@@ -10500,13 +10500,13 @@ Developed by Krynda Draay, this talent is used by Jedi Covenant WatchCircles to 
 
 - **Page:** 24
 - **Prerequisites:** farseeing, WatchCircle Initiate
-- **Quick summary:** As a reaction, you can make a Use the Force check after you or an ally within 12 squares misses with a melee or ranged attack, removing one use of the farseeing Force power from your active suite (as though you had activated the power). though you had activated the power).
+- **Quick summary:** As a reaction, you can make a Use the Force check after you or an ally within 12 squares misses with a melee or ranged attack, removing one use of the farseeing Force power from your active suite (as though you had activated the power).
 - **Production record:** `299c45ac33bf1485`
 - **Phase 3B disposition:** `UPDATE_CONTENT`
 
 **Canonical rules text**
 
-As a reaction, you can make a Use the Force check after you or an ally within 12 squares misses with a melee or ranged attack, removing one use of the farseeing Force power from your active suite (as though you had activated the power). though you had activated the power). though you had activated the power). If your check result equals or exceeds the Will Defense of the target of that missed attack, the attacker can reroll the missed attack roll. This counts as using the farseeing Force power against that target, but this talent replaces the normal rules and effect of that power. Any attack can only be affected by this talent once (thus, multiple characters cannot use this talent on the same attack to allow multiple rerolls). You take a cumulative -5 penalty on Use the Force checks until the beginning of your next turn when you use this talent.
+As a reaction, you can make a Use the Force check after you or an ally within 12 squares misses with a melee or ranged attack, removing one use of the farseeing Force power from your active suite (as though you had activated the power). If your check result equals or exceeds the Will Defense of the target of that missed attack, the attacker can reroll the missed attack roll. This counts as using the farseeing Force power against that target, but this talent replaces the normal rules and effect of that power. Any attack can only be affected by this talent once (thus, multiple characters cannot use this talent on the same attack to allow multiple rerolls). You take a cumulative -5 penalty on Use the Force checks until the beginning of your next turn when you use this talent.
 
 #### Visionary Defense
 
@@ -10777,14 +10777,14 @@ Once per encounter, you can make an attack of opportunity against an opponent wi
 #### Slippery Strike
 
 - **Page:** 27
-- **Prerequisites:** None.
-- **Quick summary:** Once per encounter, you can designate an opponent you have just damaged as a reaction; that
+- **Prerequisites:** Strike and Run
+- **Quick summary:** Once per encounter, you can designate an opponent you have just damaged as a reaction; that opponent cannot make attacks of opportunity against you until the end of your next turn.
 - **Production record:** `a1a905019e7f17c0`
 - **Phase 3B disposition:** `UPDATE_CONTENT`
 
 **Canonical rules text**
 
-Once per encounter, you can designate an opponent you have just damaged as a reaction; that
+Once per encounter, you can designate an opponent you have just damaged as a reaction; that opponent cannot make attacks of opportunity against you until the end of your next turn. You may use this in conjunction with the Strike and Run talent, allowing you to benefit from both talents as a single reaction.
 
 #### Strike and Run
 

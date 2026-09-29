@@ -20453,9 +20453,9 @@
       "classAccess": [
         "Elite Trooper"
       ],
-      "benefit": "You are considered profi- stacks with the bonus granted by the Weapon Specialization talent fp; cient with any exotic weapon, even if you don't possess the 53). You must be proficient with the weapon to gain this benefit appropriate Exotic Weapon Proficiency feat. You may select this talent multiple times. Each time you select this tat",
-      "description": "You are considered profi- stacks with the bonus granted by the Weapon Specialization talent fp; cient with any exotic weapon, even if you don't possess the 53). You must be proficient with the weapon to gain this benefit appropriate Exotic Weapon Proficiency feat. You may select this talent multiple times. Each time you select this tat",
-      "summary": "You are considered profi- stacks with the bonus granted by the Weapon Specialization talent fp; cient with any exotic weapon, even if you don't possess the 53).",
+      "benefit": "You are considered proficient with any exotic weapon, even if you don't possess the appropriate Exotic Weapon Proficiency feat.",
+      "description": "You are considered proficient with any exotic weapon, even if you don't possess the appropriate Exotic Weapon Proficiency feat.",
+      "summary": "You are considered proficient with any exotic weapon, even if you don't possess the appropriate Exotic Weapon Proficiency feat.",
       "prerequisites": "",
       "source": "Saga Edition Core Rulebook",
       "page": 212,
@@ -20465,9 +20465,9 @@
           "page": 212,
           "publicationType": "TREE_ORIGIN_MEMBERSHIP",
           "claimIdentity": "Saga Edition Core Rulebook|Weapon Master|Exotic Weapon Mastery",
-          "description": "You are considered profi- stacks with the bonus granted by the Weapon Specialization talent fp; cient with any exotic weapon, even if you don't possess the 53). You must be proficient with the weapon to gain this benefit appropriate Exotic Weapon Proficiency feat. You may select this talent multiple times. Each time you select this tat",
+          "description": "You are considered proficient with any exotic weapon, even if you don't possess the appropriate Exotic Weapon Proficiency feat.",
           "prerequisites": "",
-          "summary": "You are considered profi- stacks with the bonus granted by the Weapon Specialization talent fp; cient with any exotic weapon, even if you don't possess the 53).",
+          "summary": "You are considered proficient with any exotic weapon, even if you don't possess the appropriate Exotic Weapon Proficiency feat.",
           "textCapture": "TXT_SOURCE_EXPORT_NORMALIZED",
           "sourceAuthorityFile": "data/audits/talent-phase-2-core-rulebook-content.json"
         }
@@ -26158,10 +26158,10 @@
       "classAccess": [
         "Scoundrel"
       ],
-      "benefit": "Once per encounter, you can designate an opponent you have just damaged as a reaction; that",
-      "description": "Once per encounter, you can designate an opponent you have just damaged as a reaction; that",
-      "summary": "Once per encounter, you can designate an opponent you have just damaged as a reaction; that",
-      "prerequisites": "",
+      "benefit": "Once per encounter, you can designate an opponent you have just damaged as a reaction; that opponent cannot make attacks of opportunity against you until the end of your next turn. You may use this in conjunction with the Strike and Run talent, allowing you to benefit from both talents as a single reaction.",
+      "description": "Once per encounter, you can designate an opponent you have just damaged as a reaction; that opponent cannot make attacks of opportunity against you until the end of your next turn. You may use this in conjunction with the Strike and Run talent, allowing you to benefit from both talents as a single reaction.",
+      "summary": "Once per encounter, you can designate an opponent you have just damaged as a reaction; that opponent cannot make attacks of opportunity against you until the end of your next turn.",
+      "prerequisites": "Strike and Run",
       "source": "Knights of the Old Republic Campaign Guide",
       "page": 27,
       "publications": [
@@ -26170,9 +26170,9 @@
           "page": 27,
           "publicationType": "ORIGIN",
           "claimIdentity": "Knights of the Old Republic Campaign Guide|Run and Gun|Slippery Strike",
-          "description": "Once per encounter, you can designate an opponent you have just damaged as a reaction; that",
-          "prerequisites": "",
-          "summary": "Once per encounter, you can designate an opponent you have just damaged as a reaction; that",
+          "description": "Once per encounter, you can designate an opponent you have just damaged as a reaction; that opponent cannot make attacks of opportunity against you until the end of your next turn. You may use this in conjunction with the Strike and Run talent, allowing you to benefit from both talents as a single reaction.",
+          "prerequisites": "Strike and Run",
+          "summary": "Once per encounter, you can designate an opponent you have just damaged as a reaction; that opponent cannot make attacks of opportunity against you until the end of your next turn.",
           "textCapture": "DJVU_NORMALIZED_PDF_PAGE_AND_HIERARCHY_VERIFIED",
           "sourceAuthorityFile": "data/audits/talent-phase-2-knights-of-the-old-republic-campaign-guide-content.json"
         }
@@ -55366,9 +55366,9 @@
       "tree": "Alter",
       "treeOriginSourcebook": "Saga Edition Core Rulebook",
       "classAccess": [],
-      "benefit": "Whenever you use a Force power that hs effect (such as Force siam), you may exclude a certain number OF from the effects of that power. The number of targets that you in this manner is equal to your Wisdom modifier [minimum of 1). _",
-      "description": "Whenever you use a Force power that hs effect (such as Force siam), you may exclude a certain number OF from the effects of that power. The number of targets that you in this manner is equal to your Wisdom modifier [minimum of 1). _",
-      "summary": "Whenever you use a Force power that hs effect (such as Force siam), you may exclude a certain number OF from the effects of that power.",
+      "benefit": "Whenever you use a Force power that has an area effect (such as Force slam), you may exclude a certain number of targets from the effects of that power. The number of targets that you may exclude in this manner is equal to your Wisdom modifier (minimum of 1).",
+      "description": "Whenever you use a Force power that has an area effect (such as Force slam), you may exclude a certain number of targets from the effects of that power. The number of targets that you may exclude in this manner is equal to your Wisdom modifier (minimum of 1).",
+      "summary": "Whenever you use a Force power that has an area effect (such as Force slam), you may exclude a certain number of targets from the effects of that power.",
       "prerequisites": "",
       "source": "Saga Edition Core Rulebook",
       "page": 100,
@@ -55378,9 +55378,9 @@
           "page": 100,
           "publicationType": "TREE_ORIGIN_MEMBERSHIP",
           "claimIdentity": "Saga Edition Core Rulebook|Alter|Disciplined Strike",
-          "description": "Whenever you use a Force power that hs effect (such as Force siam), you may exclude a certain number OF from the effects of that power. The number of targets that you in this manner is equal to your Wisdom modifier [minimum of 1). _",
+          "description": "Whenever you use a Force power that has an area effect (such as Force slam), you may exclude a certain number of targets from the effects of that power. The number of targets that you may exclude in this manner is equal to your Wisdom modifier (minimum of 1).",
           "prerequisites": "",
-          "summary": "Whenever you use a Force power that hs effect (such as Force siam), you may exclude a certain number OF from the effects of that power.",
+          "summary": "Whenever you use a Force power that has an area effect (such as Force slam), you may exclude a certain number of targets from the effects of that power.",
           "textCapture": "TXT_SOURCE_EXPORT_NORMALIZED",
           "sourceAuthorityFile": "data/audits/talent-phase-2-core-rulebook-content.json"
         }

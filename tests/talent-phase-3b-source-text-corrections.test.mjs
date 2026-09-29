@@ -24,7 +24,9 @@ const test = (name, fn) => { fn(); n++; console.log('  ok  ' + name); };
 test('manifest is valid; statuses and blocksApply are consistent', () => {
   const v = validateManifest(manifest);
   assert.equal(v.entries, 47);
-  assert.deepEqual(Object.fromEntries(Object.entries(manifest.summary.byStatus)), { TXT_CONFIRMED: 43, TXT_AMBIGUOUS_PDF_REQUIRED: 4 });
+  assert.deepEqual(Object.fromEntries(Object.entries(manifest.summary.byStatus)), { TXT_CONFIRMED: 43, PDF_CONFIRMED: 4 });
+  assert.equal(manifest.entries.filter(e => e.verification.status === 'TXT_AMBIGUOUS_PDF_REQUIRED').length, 0, 'no entry may still be PDF-pending');
+  assert.equal(manifest.entries.filter(e => e.blocksApply).length, 0, 'no source-text entry may block Phase 3C');
   assert.equal(manifest.entries.filter(e => e.verification.status === 'UNRESOLVED').length, 0, 'no entry may be UNRESOLVED');
 });
 test('every applied correction is present in Phase 2, the canonical authority and the Phase 3B manifests', () => {
@@ -47,7 +49,7 @@ test('the 54 fields flagged by the Phase 3C scan are all resolved; none was a fa
 test('no OCR-residue signature survives in any canonical benefit/summary/prerequisite', () => {
   const residue = [['html', /<\/?(?:p|br|div|span)\b/i], ['backslash', /\\/], ['pipe', /\|/], ['tilde', /~/], ['brace', /[{}]/]];
   const caps = v => (v.match(/\b[A-Z][A-Z0-9']{3,}\b/g) ?? []).filter(w => !['DC', 'HP', 'BAB', 'SWSE', 'NPC', 'CL', 'XP', 'DR', 'GM'].includes(w));
-  const unresolved = new Set(manifest.entries.filter(e => e.blocksApply).map(e => e.canonicalIdentity));
+  const unresolved = new Set(manifest.entries.filter(e => e.blocksApply).map(e => e.canonicalIdentity)); // none once every PDF check is recorded
   for (const r of canonical.records) {
     if (unresolved.has(r.canonicalIdentity)) continue; // documented PDF-pending records
     for (const key of ['benefit', 'description', 'summary', 'prerequisites']) {
@@ -56,14 +58,38 @@ test('no OCR-residue signature survives in any canonical benefit/summary/prerequ
     }
   }
 });
-test('Krath Illusions: prerequisite is "Illusion" and its status stays PDF-pending until a PDF check is recorded', () => {
-  const rec = byId.get('Knights of the Old Republic Campaign Guide|Krath|Krath Illusions');
-  assert.equal(rec.targetFields['system.prerequisites'], 'Illusion');
-  assert.equal(canonById.get('Knights of the Old Republic Campaign Guide|Krath|Krath Illusions').prerequisites, 'Illusion');
-  const entry = manifest.entries.find(e => e.canonicalIdentity === rec.canonicalIdentity);
-  assert.equal(entry.printedPage, 60);
-  assert.ok(['TXT_AMBIGUOUS_PDF_REQUIRED', 'PDF_CONFIRMED'].includes(entry.verification.status));
-  assert.equal(entry.blocksApply, entry.verification.status !== 'PDF_CONFIRMED');
+test('Krath Illusions: prerequisite is "Illusion", confirmed against rendered printed page 60', () => {
+  const id = 'Knights of the Old Republic Campaign Guide|Krath|Krath Illusions';
+  assert.equal(byId.get(id).targetFields['system.prerequisites'], 'Illusion');
+  assert.equal(canonById.get(id).prerequisites, 'Illusion');
+  assert.equal(canonById.get(id).benefit, 'As a swift action, you can reduce the penalty for large illusions by one half (rounded down, minimum -1).');
+  const entry = manifest.entries.find(e => e.canonicalIdentity === id);
+  assert.equal(entry.printedPage, 60); assert.equal(entry.verification.status, 'PDF_CONFIRMED');
+  assert.equal(entry.verification.pdf.printedPage, 60); assert.equal(entry.blocksApply, false); assert.equal(entry.verification.pdfConfirmationRequired, false);
+});
+test('Disciplined Strike: errata-applied "area effect" text, printed PDF "cone effect" recorded as evidence', () => {
+  const id = 'Saga Edition Core Rulebook|Alter|Disciplined Strike';
+  const expected = 'Whenever you use a Force power that has an area effect (such as Force slam), you may exclude a certain number of targets from the effects of that power. The number of targets that you may exclude in this manner is equal to your Wisdom modifier (minimum of 1).';
+  assert.equal(canonById.get(id).benefit, expected); assert.equal(byId.get(id).targetFields['system.benefit'], expected);
+  assert.equal(canonById.get(id).prerequisites, ''); assert.equal(canonById.get(id).page, 100);
+  const entry = manifest.entries.find(e => e.canonicalIdentity === id);
+  assert.equal(entry.verification.status, 'PDF_CONFIRMED');
+  assert.equal(entry.errata.printedPdfReads, 'has a cone effect'); assert.equal(entry.errata.canonicalValue, 'has an area effect');
+  assert.match(entry.verification.notes, /printed page says "cone effect"/);
+});
+test('Exotic Weapon Mastery: one sentence, no column-crossover text, no prerequisite', () => {
+  const id = 'Saga Edition Core Rulebook|Weapon Master|Exotic Weapon Mastery';
+  const expected = "You are considered proficient with any exotic weapon, even if you don't possess the appropriate Exotic Weapon Proficiency feat.";
+  assert.equal(canonById.get(id).benefit, expected); assert.equal(byId.get(id).targetFields['system.benefit'], expected);
+  assert.equal(canonById.get(id).prerequisites, ''); assert.equal(canonById.get(id).page, 212);
+  assert.doesNotMatch(canonById.get(id).benefit, /multiple times|Weapon Specialization|profi-/);
+});
+test('Slippery Strike: full two-page text, prerequisite Strike and Run, source page stays 27', () => {
+  const id = 'Knights of the Old Republic Campaign Guide|Run and Gun|Slippery Strike';
+  const expected = 'Once per encounter, you can designate an opponent you have just damaged as a reaction; that opponent cannot make attacks of opportunity against you until the end of your next turn. You may use this in conjunction with the Strike and Run talent, allowing you to benefit from both talents as a single reaction.';
+  assert.equal(canonById.get(id).benefit, expected); assert.equal(byId.get(id).targetFields['system.benefit'], expected);
+  assert.equal(canonById.get(id).prerequisites, 'Strike and Run'); assert.equal(canonById.get(id).page, 27);
+  assert.equal(manifest.entries.find(e => e.canonicalIdentity === id).continuesOnPrintedPage, 28);
 });
 test('Elite Droid: certified printed page is 29 everywhere in the authority chain', () => {
   for (const name of ['Break Program', 'Heuristic Mastery', 'Scripted Routines', 'Ultra Resilient']) {
@@ -91,17 +117,17 @@ test('corrections that made canonical text equal production only moved records b
   for (const k of Object.keys(prev)) if (!['UPDATE_CONTENT', 'UPDATE_METADATA'].includes(k)) assert.equal(now[k], prev[k], k);
   assert.equal((now.UPDATE_CONTENT ?? 0) + (now.UPDATE_METADATA ?? 0), prev.UPDATE_CONTENT + prev.UPDATE_METADATA);
 });
-test('PDF-pending records are named in the closeout and blocked from application', () => {
-  const pending = manifest.entries.filter(e => e.blocksApply).map(e => e.canonicalIdentity).sort();
-  assert.deepEqual([...closeout.phase3bSourceTextCorrections.entriesStillRequiringPdf].sort(), pending);
-  assert.equal(pending.length, 4);
+test('no PDF-pending source-text entry remains, and the closeout says so', () => {
+  assert.deepEqual(closeout.phase3bSourceTextCorrections.entriesStillRequiringPdf, []);
+  assert.equal(checkApplied(manifest, { strict: true }).problems.length, 0, 'strict check must pass');
 });
 test('validateManifest rejects tampering (unknown status, no-op correction, residue in a corrected value)', () => {
   const clone = () => structuredClone(manifest);
   let m = clone(); m.entries[0].verification.status = 'PROBABLY_FINE'; assert.throws(() => validateManifest(m), /unknown verification status/);
   m = clone(); const e = m.entries.find(x => x.fields.length); e.fields[0].correctedValue = e.fields[0].currentValue; assert.throws(() => validateManifest(m), /not actually corrected/);
   m = clone(); const f = m.entries.find(x => x.fields.length); f.fields[0].correctedValue += ' \\o'; assert.throws(() => validateManifest(m), /residue/);
-  m = clone(); const p = m.entries.find(x => x.blocksApply); p.blocksApply = false; assert.throws(() => validateManifest(m), /blocksApply disagrees/);
+  m = clone(); const p = m.entries.find(x => x.verification.status === 'TXT_CONFIRMED'); p.blocksApply = true; assert.throws(() => validateManifest(m), /blocksApply disagrees/);
+  m = clone(); const q = m.entries.find(x => x.verification.status === 'PDF_CONFIRMED'); delete q.verification.pdf; assert.throws(() => validateManifest(m), /rendered-page verification/);
 });
 
 console.log(`\n${n} source-text correction checks passed`);

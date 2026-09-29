@@ -10,7 +10,7 @@
   "generatedAgainst": {
     "canonical": {
       "path": "data/canonical/talents.json",
-      "fingerprint": "fnv1a64:56163af3312933dd"
+      "fingerprint": "fnv1a64:8ec7fe66c2980baa"
     },
     "registry": {
       "path": "data/audits/talent-canonical-tree-registry.json",
@@ -26,7 +26,7 @@
     },
     "phase2": {
       "path": "data/audits/talent-phase-2-knights-of-the-old-republic-campaign-guide-content.json",
-      "fingerprint": "fnv1a64:78fc4ffec39af22d"
+      "fingerprint": "fnv1a64:33b115ba38b3590e"
     },
     "discrepancy": {
       "path": "data/audits/talent-phase-2-knights-of-the-old-republic-campaign-guide-discrepancy-manifest.json",
@@ -49,7 +49,7 @@
       "system.benefit": 113,
       "system.description": 13,
       "system.summary": 114,
-      "system.prerequisites": 42,
+      "system.prerequisites": 41,
       "system.source": 106,
       "system.page": 110,
       "system.description.value": 100,
@@ -2326,10 +2326,10 @@
       },
       "targetFields": {
         "name": "Slippery Strike",
-        "system.benefit": "Once per encounter, you can designate an opponent you have just damaged as a reaction; that",
-        "system.description.value": "Once per encounter, you can designate an opponent you have just damaged as a reaction; that",
-        "system.summary": "Once per encounter, you can designate an opponent you have just damaged as a reaction; that",
-        "system.prerequisites": "",
+        "system.benefit": "Once per encounter, you can designate an opponent you have just damaged as a reaction; that opponent cannot make attacks of opportunity against you until the end of your next turn. You may use this in conjunction with the Strike and Run talent, allowing you to benefit from both talents as a single reaction.",
+        "system.description.value": "Once per encounter, you can designate an opponent you have just damaged as a reaction; that opponent cannot make attacks of opportunity against you until the end of your next turn. You may use this in conjunction with the Strike and Run talent, allowing you to benefit from both talents as a single reaction.",
+        "system.summary": "Once per encounter, you can designate an opponent you have just damaged as a reaction; that opponent cannot make attacks of opportunity against you until the end of your next turn.",
+        "system.prerequisites": "Strike and Run",
         "system.source": "Knights of the Old Republic Campaign Guide",
         "system.page": 27
       },
@@ -2338,7 +2338,7 @@
         "system.benefit": true,
         "system.description.value": true,
         "system.summary": true,
-        "system.prerequisites": true,
+        "system.prerequisites": false,
         "system.source": true,
         "system.page": true
       },
@@ -2346,7 +2346,6 @@
         "system.benefit",
         "system.description.value",
         "system.summary",
-        "system.prerequisites",
         "system.source",
         "system.page"
       ],

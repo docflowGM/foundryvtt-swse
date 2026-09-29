@@ -9,13 +9,14 @@
     "rule": "A correction is TXT_CONFIRMED only when the individual sourcebook TXT itself supplies the evidence (a paired delimiter, a clean sibling occurrence, or the TXT rules text visibly ending before appended page furniture). Where the TXT is damaged the entry is TXT_AMBIGUOUS_PDF_REQUIRED. No bulk punctuation or spelling clean-up was performed; every edit is an exact substring replacement recorded below.",
     "statusVocabulary": {
       "TXT_CONFIRMED": "evidence is in the individual sourcebook TXT",
-      "PDF_CONFIRMED": "confirmed against the rendered PDF",
+      "PDF_CONFIRMED": "confirmed against the rendered PDF page (by the project owner; see verification.pdf)",
       "TXT_AMBIGUOUS_PDF_REQUIRED": "TXT damaged or ambiguous; PDF check required before certification",
       "UNRESOLVED": "cannot be decided",
       "PRIOR_PDF_AUDIT_RECORDED": "a rendered-PDF verification is recorded in repository audit documents but was not repeated by this audit"
     },
     "detection": "signature scan (html tags, backslash, pipe, tilde, curly braces, gibberish tokens) over every certified target text field plus a full scan of all 1180 canonical records for the same signatures, all-caps caption/heading words and unbalanced brackets",
-    "limits": "signature-based; OCR damage without a detectable signature (a silently wrong letter, a dropped word) cannot be found by scanning and needs a PDF proofread"
+    "limits": "signature-based; OCR damage without a detectable signature (a silently wrong letter, a dropped word) cannot be found by scanning and needs a PDF proofread",
+    "pdfVerification": "The four entries that were TXT_AMBIGUOUS_PDF_REQUIRED were resolved by the project owner from the rendered sourcebook PDFs (2026-09-29). Those PDFs are not in this repository; the findings are recorded here from the owner's written results."
   },
   "entries": [
     {
@@ -1388,7 +1389,7 @@
           "kind": "pipe-as-Il",
           "find": "||lusion",
           "replace": "Illusion",
-          "evidence": "the TXT itself is damaged (\"Prerequisite: ||lusion.\"). Corroboration: \"||\" is the OCR read of \"Il\"; canonical identity \"Saga Edition Core Rulebook|Alter|Illusion\" exists and is the only talent that fits; production and the source-verified hydration test carry \"Illusion\"; the project owner reports the combined OCR corpus reads \"Illusion\" (that corpus is not in this repository and could not be inspected)"
+          "evidence": "the TXT itself is damaged (\"Prerequisite: ||lusion.\"). Corroboration: \"||\" is the OCR read of \"Il\"; canonical identity \"Saga Edition Core Rulebook|Alter|Illusion\" exists and is the only talent that fits; production and the source-verified hydration test carry \"Illusion\"; the project owner reports the combined OCR corpus reads \"Illusion\" (that corpus is not in this repository and could not be inspected) — CONFIRMED by the rendered printed page 60."
         }
       ],
       "fields": [
@@ -1407,15 +1408,21 @@
       "verification": {
         "txtFile": "reference/sourcebooks/Knights of the Old Republic Campaign Guide_djvu.txt",
         "txtLine": 5589,
-        "pdf": "NOT_AVAILABLE_IN_REPOSITORY_OR_SESSION",
-        "status": "TXT_AMBIGUOUS_PDF_REQUIRED",
-        "pdfConfirmationRequired": true,
-        "notes": "Applied on the strength of the corroboration above, but the printed word must still be confirmed against the rendered PDF (printed p. 60). Not PDF_CONFIRMED.",
+        "pdf": {
+          "status": "RENDERED_PAGE_VISUALLY_VERIFIED",
+          "printedPage": 60,
+          "date": "2026-09-29",
+          "verifiedBy": "project owner, visual check of the rendered sourcebook PDF (ChatGPT project); recorded from the owner's written findings — the PDF itself is not in this repository",
+          "finding": "Benefit: \"As a swift action, you can reduce the penalty for large illusions by one half (rounded down, minimum -1).\" Prerequisite: \"Illusion\". The TXT \"||lusion\" is OCR corruption."
+        },
+        "status": "PDF_CONFIRMED",
+        "pdfConfirmationRequired": false,
+        "notes": "Rendered printed page 60 visually verified. The applied prerequisite \"Illusion\" is correct.",
         "unresolvedReason": null
       },
       "deliberatelyUncorrected": [],
       "applied": true,
-      "blocksApply": true,
+      "blocksApply": false,
       "proposalNotApplied": null,
       "docEdits": null
     },
@@ -2318,27 +2325,71 @@
       "printedPage": 100,
       "phase2File": "data/audits/talent-phase-2-core-rulebook-content.json",
       "phase2ClaimIdentity": "Saga Edition Core Rulebook|Alter|Disciplined Strike",
-      "group": "C-source-text-damaged-pdf-required",
+      "group": "C-source-text-damaged-pdf-transcribed",
       "suspectedCorruption": [
         "dropped/garbled words in the TXT itself (\"that hs effect\", \"Force siam\", \"certain number OF\", \"that you in this manner\")",
         "text cut after \"Wisdom modifier [minimum of 1).\""
       ],
-      "edits": [],
-      "fields": [],
+      "edits": [
+        {
+          "kind": "pdf-transcription",
+          "method": "replace the damaged TXT text with the transcription of the rendered PDF (see fields[].currentValue / correctedValue)",
+          "evidence": "the rendered PDF gives the sentence structure and wording; the phrase \"has a cone effect\" is replaced by the official erratum \"has an area effect\" (see errata)"
+        }
+      ],
+      "fields": [
+        {
+          "phase2Field": "canonicalDescription",
+          "targetFields": [
+            "system.benefit",
+            "system.description|system.description.value"
+          ],
+          "currentValue": "Whenever you use a Force power that hs effect (such as Force siam), you may exclude a certain number OF from the effects of that power. The number of targets that you in this manner is equal to your Wisdom modifier [minimum of 1). _",
+          "correctedValue": "Whenever you use a Force power that has an area effect (such as Force slam), you may exclude a certain number of targets from the effects of that power. The number of targets that you may exclude in this manner is equal to your Wisdom modifier (minimum of 1).",
+          "editsApplied": [
+            0
+          ]
+        },
+        {
+          "phase2Field": "quickSummary",
+          "targetFields": [
+            "system.summary"
+          ],
+          "currentValue": "Whenever you use a Force power that hs effect (such as Force siam), you may exclude a certain number OF from the effects of that power.",
+          "correctedValue": "Whenever you use a Force power that has an area effect (such as Force slam), you may exclude a certain number of targets from the effects of that power.",
+          "editsApplied": [
+            0
+          ]
+        }
+      ],
       "verification": {
         "txtFile": "reference/sourcebooks/Core Rulebook_djvu.txt",
         "txtLine": 9803,
-        "pdf": "NOT_AVAILABLE_IN_REPOSITORY_OR_SESSION",
-        "status": "TXT_AMBIGUOUS_PDF_REQUIRED",
-        "pdfConfirmationRequired": true,
-        "notes": null,
-        "unresolvedReason": "the individual Core TXT is itself damaged (dropped words); the wording cannot be reconstructed without guessing"
+        "pdf": {
+          "status": "RENDERED_PAGE_VISUALLY_VERIFIED",
+          "printedPage": 100,
+          "date": "2026-09-29",
+          "verifiedBy": "project owner, visual check of the rendered sourcebook PDF (ChatGPT project); recorded from the owner's written findings — the PDF itself is not in this repository",
+          "finding": "Printed Core PDF p. 100 reads \"has a cone effect\" (not \"area effect\"). Prerequisites: none."
+        },
+        "status": "PDF_CONFIRMED",
+        "pdfConfirmationRequired": false,
+        "notes": "Printed text versus erratum: the printed page says \"cone effect\"; the official Core erratum for page 100 says to change \"has a cone effect\" to \"has an area effect\". The canonical value is the erratum-applied \"area effect\". The repository combined-corpus copy of the erratum was reported by the project owner and was not independently inspected by this audit.",
+        "unresolvedReason": null
       },
       "deliberatelyUncorrected": [],
-      "applied": false,
-      "blocksApply": true,
-      "proposalNotApplied": "Whenever you use a Force power that has an area effect (such as Force slam), you may exclude a certain number of targets from the effects of that power. The number of targets that you exclude in this manner is equal to your Wisdom modifier (minimum of 1). -- UNVERIFIED reconstruction, must be confirmed against the PDF before use",
-      "docEdits": null
+      "applied": true,
+      "blocksApply": false,
+      "proposalNotApplied": null,
+      "docEdits": null,
+      "errata": {
+        "source": "official Saga Edition Core Rulebook errata, page 100",
+        "instruction": "Change the phrase \"has a cone effect\" to \"has an area effect\" instead.",
+        "printedPdfReads": "has a cone effect",
+        "canonicalValue": "has an area effect",
+        "canonicalValueBasis": "printed text with the official erratum applied",
+        "erratumInspectedByThisAudit": false
+      }
     },
     {
       "id": "TC-046",
@@ -2347,25 +2398,61 @@
       "printedPage": 212,
       "phase2File": "data/audits/talent-phase-2-core-rulebook-content.json",
       "phase2ClaimIdentity": "Saga Edition Core Rulebook|Weapon Master|Exotic Weapon Mastery",
-      "group": "C-source-text-damaged-pdf-required",
+      "group": "C-source-text-damaged-pdf-transcribed",
       "suspectedCorruption": [
         "two-column crossover in the TXT (text of Exotic Weapon Mastery interleaved with Greater Devastating Attack)",
         "benefit cut mid-sentence (\"Each time you select this tat\")"
       ],
-      "edits": [],
-      "fields": [],
+      "edits": [
+        {
+          "kind": "pdf-transcription",
+          "method": "replace the damaged TXT text with the transcription of the rendered PDF (see fields[].currentValue / correctedValue)",
+          "evidence": "the rendered page separates this talent from the adjacent column; the \"stacks with the bonus granted by the Weapon Specialization talent\", \"You must be proficient with the weapon to gain this benefit\" and \"You may select this talent multiple times\" fragments in the OCR belong to neighbouring talents/columns and are not part of Exotic Weapon Mastery"
+        }
+      ],
+      "fields": [
+        {
+          "phase2Field": "canonicalDescription",
+          "targetFields": [
+            "system.benefit",
+            "system.description|system.description.value"
+          ],
+          "currentValue": "You are considered profi- stacks with the bonus granted by the Weapon Specialization talent fp; cient with any exotic weapon, even if you don't possess the 53). You must be proficient with the weapon to gain this benefit appropriate Exotic Weapon Proficiency feat. You may select this talent multiple times. Each time you select this tat",
+          "correctedValue": "You are considered proficient with any exotic weapon, even if you don't possess the appropriate Exotic Weapon Proficiency feat.",
+          "editsApplied": [
+            0
+          ]
+        },
+        {
+          "phase2Field": "quickSummary",
+          "targetFields": [
+            "system.summary"
+          ],
+          "currentValue": "You are considered profi- stacks with the bonus granted by the Weapon Specialization talent fp; cient with any exotic weapon, even if you don't possess the 53).",
+          "correctedValue": "You are considered proficient with any exotic weapon, even if you don't possess the appropriate Exotic Weapon Proficiency feat.",
+          "editsApplied": [
+            0
+          ]
+        }
+      ],
       "verification": {
         "txtFile": "reference/sourcebooks/Core Rulebook_djvu.txt",
         "txtLine": 20072,
-        "pdf": "NOT_AVAILABLE_IN_REPOSITORY_OR_SESSION",
-        "status": "TXT_AMBIGUOUS_PDF_REQUIRED",
-        "pdfConfirmationRequired": true,
-        "notes": null,
-        "unresolvedReason": "column crossover and truncation in the TXT; the two interleaved columns cannot be separated reliably without the page image"
+        "pdf": {
+          "status": "RENDERED_PAGE_VISUALLY_VERIFIED",
+          "printedPage": 212,
+          "date": "2026-09-29",
+          "verifiedBy": "project owner, visual check of the rendered sourcebook PDF (ChatGPT project); recorded from the owner's written findings — the PDF itself is not in this repository",
+          "finding": "Rendered printed p. 212: the talent has one sentence only (\"You are considered proficient with any exotic weapon, even if you don't possess the appropriate Exotic Weapon Proficiency feat.\"). No prerequisites. The OCR interleaved the neighbouring column."
+        },
+        "status": "PDF_CONFIRMED",
+        "pdfConfirmationRequired": false,
+        "notes": "Two-column crossover in the TXT identified and removed; no additional sentence belongs to this talent.",
+        "unresolvedReason": null
       },
       "deliberatelyUncorrected": [],
-      "applied": false,
-      "blocksApply": true,
+      "applied": true,
+      "blocksApply": false,
       "proposalNotApplied": null,
       "docEdits": null
     },
@@ -2376,27 +2463,75 @@
       "printedPage": 27,
       "phase2File": "data/audits/talent-phase-2-knights-of-the-old-republic-campaign-guide-content.json",
       "phase2ClaimIdentity": "Knights of the Old Republic Campaign Guide|Run and Gun|Slippery Strike",
-      "group": "C-source-text-damaged-pdf-required",
+      "group": "C-source-text-damaged-pdf-transcribed",
       "suspectedCorruption": [
         "benefit ends mid-sentence (\"...as a reaction; that\")",
         "the TXT cuts the sidebar text at an illustration"
       ],
-      "edits": [],
-      "fields": [],
+      "edits": [
+        {
+          "kind": "pdf-transcription",
+          "method": "replace the damaged TXT text with the transcription of the rendered PDF (see fields[].currentValue / correctedValue)",
+          "evidence": "the talent begins at the bottom of printed p. 27 and continues at the top of printed p. 28; the page break and the Mira illustration are not rules text"
+        }
+      ],
+      "fields": [
+        {
+          "phase2Field": "canonicalDescription",
+          "targetFields": [
+            "system.benefit",
+            "system.description|system.description.value"
+          ],
+          "currentValue": "Once per encounter, you can designate an opponent you have just damaged as a reaction; that",
+          "correctedValue": "Once per encounter, you can designate an opponent you have just damaged as a reaction; that opponent cannot make attacks of opportunity against you until the end of your next turn. You may use this in conjunction with the Strike and Run talent, allowing you to benefit from both talents as a single reaction.",
+          "editsApplied": [
+            0
+          ]
+        },
+        {
+          "phase2Field": "quickSummary",
+          "targetFields": [
+            "system.summary"
+          ],
+          "currentValue": "Once per encounter, you can designate an opponent you have just damaged as a reaction; that",
+          "correctedValue": "Once per encounter, you can designate an opponent you have just damaged as a reaction; that opponent cannot make attacks of opportunity against you until the end of your next turn.",
+          "editsApplied": [
+            0
+          ]
+        },
+        {
+          "phase2Field": "canonicalPrerequisites",
+          "targetFields": [
+            "system.prerequisites"
+          ],
+          "currentValue": "",
+          "correctedValue": "Strike and Run",
+          "editsApplied": [
+            0
+          ]
+        }
+      ],
       "verification": {
         "txtFile": "reference/sourcebooks/Knights of the Old Republic Campaign Guide_djvu.txt",
         "txtLine": 2502,
-        "pdf": "NOT_AVAILABLE_IN_REPOSITORY_OR_SESSION",
-        "status": "TXT_AMBIGUOUS_PDF_REQUIRED",
-        "pdfConfirmationRequired": true,
-        "notes": null,
-        "unresolvedReason": "the TXT text for this talent is cut off by an illustration; the rest of the rules text is not present in the TXT"
+        "pdf": {
+          "status": "RENDERED_PAGE_VISUALLY_VERIFIED",
+          "printedPage": 27,
+          "date": "2026-09-29",
+          "verifiedBy": "project owner, visual check of the rendered sourcebook PDF (ChatGPT project); recorded from the owner's written findings — the PDF itself is not in this repository",
+          "finding": "Rendered printed pp. 27-28: the entry begins at the bottom of p. 27 and continues at the top of p. 28; prerequisite \"Strike and Run\". The canonical source page stays 27 (where the entry begins)."
+        },
+        "status": "PDF_CONFIRMED",
+        "pdfConfirmationRequired": false,
+        "notes": "Full two-page text recovered; the page break and illustration excluded.",
+        "unresolvedReason": null
       },
       "deliberatelyUncorrected": [],
-      "applied": false,
-      "blocksApply": true,
+      "applied": true,
+      "blocksApply": false,
       "proposalNotApplied": null,
-      "docEdits": null
+      "docEdits": null,
+      "continuesOnPrintedPage": 28
     }
   ],
   "summary": {
@@ -2410,13 +2545,14 @@
       "recordsBeyondPhase3CScan": 20
     },
     "entries": 47,
-    "recordsCorrected": 44,
-    "phase2FieldsChanged": 58,
+    "recordsCorrected": 47,
+    "phase2FieldsChanged": 65,
     "byStatus": {
       "TXT_CONFIRMED": 43,
-      "TXT_AMBIGUOUS_PDF_REQUIRED": 4
+      "PDF_CONFIRMED": 4
     },
-    "blocksApply": [
+    "blocksApply": [],
+    "pdfVerifiedEntries": [
       "Knights of the Old Republic Campaign Guide|Krath|Krath Illusions",
       "Saga Edition Core Rulebook|Alter|Disciplined Strike",
       "Saga Edition Core Rulebook|Weapon Master|Exotic Weapon Mastery",
