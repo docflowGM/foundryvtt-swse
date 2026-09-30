@@ -17,11 +17,11 @@ Denominator: 1182 certified claims + 7 3E addendum claims = 1189 claims → 1187
 | UNRESOLVED_SAME_NAME_AMBIGUITY | 0 | yes |
 | CLAIM_COUNT_MISMATCH | 0 | yes |
 | HOMEBREW_IN_DENOMINATOR | 0 | yes |
-| WRONG_SOURCE_PAGE | 7 | no (metadata: source/page repair unit or Phase 3F) |
+| WRONG_SOURCE_PAGE | 0 | no (metadata: source/page repair unit or Phase 3F) |
 | STALE_TREE_ID_SLUG | 71 | no (metadata: source/page repair unit or Phase 3F) |
 | TREE_DISPLAY_NAME_DRIFT | 72 | no (metadata: source/page repair unit or Phase 3F) |
 
-Source/page agreement: 1180 of 1187 identities carry a production source/page that matches a certified publication.
+Source/page agreement: 1187 of 1187 identities carry a production source/page that matches a certified publication.
 
 No blocking findings.
 
@@ -170,11 +170,4 @@ No blocking findings.
 - Jedi Academy Training Manual|Warden of the Sky|Simultaneous Strike: tree 899038f739294c81 is named "Warden Of The Sky", canonical "Warden of the Sky"
 - Jedi Academy Training Manual|Warden of the Sky|Telekinetic Strike: tree 899038f739294c81 is named "Warden Of The Sky", canonical "Warden of the Sky"
 - Jedi Academy Training Manual|Warden of the Sky|Telekinetic Throw: tree 899038f739294c81 is named "Warden Of The Sky", canonical "Warden of the Sky"
-- Saga Edition Core Rulebook|Gunslinger|Trigger Work: production null p.null; authority Saga Edition Core Rulebook p.217
-- Saga Edition Core Rulebook|Gunslinger|Ranged Disarm: production null p.null; authority Saga Edition Core Rulebook p.217
-- Saga Edition Core Rulebook|Alter|Move Massive Object: production null p.null; authority Legacy Era Campaign Guide p.55
-- Saga Edition Core Rulebook|Control|Telekinetic Stability: production null p.null; authority Legacy Era Campaign Guide p.55
-- Saga Edition Core Rulebook|Dark Side|Dark Preservation: production null p.null; authority Legacy Era Campaign Guide p.55
-- Saga Edition Core Rulebook|Commando|Hard Target: production null p.null; authority Threats of the Galaxy p.95
-- Saga Edition Core Rulebook|Sith|Stolen Form: production null p.null; authority Threats of the Galaxy p.81
 

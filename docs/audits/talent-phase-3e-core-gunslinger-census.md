@@ -1,7 +1,7 @@
 # Phase 3E-2a — Core Gunslinger source census (pp. 216–217)
 
 Read-only, source-first. Generator: `node tools/census-talent-core-gunslinger.mjs` · data: `data/audits/talent-phase-3e-core-gunslinger-census.json`.
-Status: **CERTIFIED_7_PUBLISHED_7_PRODUCTION**. Nothing was repaired; no production data was touched.
+Status: **CERTIFIED_7_PUBLISHED_7_PRODUCTION**. Read-only census: this tool touches no production data.
 
 ## Source evidence (Core Rulebook TXT)
 
@@ -18,8 +18,8 @@ Status: **CERTIFIED_7_PUBLISHED_7_PRODUCTION**. Nothing was repaired; no product
 | Improved Quick Draw | 20569 | yes | yes (p.216) | `a1e013f8cfc15a86` (Saga Edition Core Rulebook / 216) | EXACT_MATCH |
 | Knockdown Shot | 20573 | yes | yes (p.216) | `92a32b96dacae82d` (Saga Edition Core Rulebook / 216) | EXACT_MATCH |
 | Multiattack Proficiency (pistols) | 20578 | yes | yes (p.216) | `b812c197daea93fd` (Saga Edition Core Rulebook / 216) | EXACT_MATCH |
-| Ranged Disarm | 20640 | **no** | **no** | `d7870d0940a3ce0b` (**—** / **—**) | AUTHORITY_GAP_PRODUCTION_PRESENT |
-| Trigger Work | 20645 | **no** | **no** | `86c10d63bba2d9c8` (**—** / **—**) | AUTHORITY_GAP_PRODUCTION_PRESENT |
+| Ranged Disarm | 20640 | **no** | **no** | `d7870d0940a3ce0b` (Saga Edition Core Rulebook / 217) | AUTHORITY_GAP_PRODUCTION_PRESENT |
+| Trigger Work | 20645 | **no** | **no** | `86c10d63bba2d9c8` (Saga Edition Core Rulebook / 217) | AUTHORITY_GAP_PRODUCTION_PRESENT |
 
 Layer counts — source TXT **7**, Phase 1D origin roster **5**, canonical corpus origin identities **5** (aggregate with expansions 15), production tree members **17**.
 
@@ -29,7 +29,7 @@ Layer counts — source TXT **7**, Phase 1D origin roster **5**, canonical corpu
 - **Authority gaps, production already correct (2):** Ranged Disarm; Trigger Work — published on p.217, absent from Phase 1D/2/3A, present in production since Phase 3D.
 - **Identity / tree mismatches:** none.
 - **Unexplained production extras in the tree:** none (the ten other members are certified expansion publications).
-- **Production metadata defect (small, separate):** Ranged Disarm; Trigger Work carry no `source`/`page` in production.
+- **Production metadata:** source and page are present on every member (repaired by Phase 3E-4).
 
 ## PDF verification (owner-reported, rendered Core Rulebook)
 
@@ -41,4 +41,4 @@ Layer counts — source TXT **7**, Phase 1D origin roster **5**, canonical corpu
 
 ## Certification: **7 published → 7 production → 0 missing → 0 unexplained extras → 0 tree mismatches**
 
-Both p.217 talents are `PDF_VERIFIED`. The production records still lack `source`/`page` (Core Rulebook, p.217) — a source-provable production defect to be repaired through the controlled manifest path, not by hand.
+Both p.217 talents are `PDF_VERIFIED`. Their production `source`/`page` (Core Rulebook, p.217) is present (Phase 3E-4 repair).

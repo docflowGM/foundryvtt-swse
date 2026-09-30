@@ -99,14 +99,14 @@ const census = {
 census.interpretation = {
   phase1dRosterIsIncomplete: census.findings.authorityGaps.length > 0,
   productionIsCorrectForBoth: rows.filter(r => r.status === 'AUTHORITY_GAP_PRODUCTION_PRESENT').every(r => r.production),
-  note: 'Phase 1D/2/3A never captured the two p.217 talents; production already holds both (Phase 3D) but without source/page. Authority gap, not a missing-record defect; the production source/page omission is a separate, small production defect to be fixed through the manifest contract, not by hand.'
+  note: 'Phase 1D/2/3A never captured the two p.217 talents; production already holds both (Phase 3D). Authority gap, not a missing-record defect. Their production source/page omission was a separate defect, repaired through the Phase 3E-4 manifest contract (this census snapshots the current production state).'
 };
 const json = JSON.stringify(census, null, 2) + '\n';
 
 const md = [
   '# Phase 3E-2a — Core Gunslinger source census (pp. 216–217)', '',
   'Read-only, source-first. Generator: `node tools/census-talent-core-gunslinger.mjs` · data: `data/audits/talent-phase-3e-core-gunslinger-census.json`.',
-  `Status: **${census.status}**. Nothing was repaired; no production data was touched.`, '',
+  `Status: **${census.status}**. Read-only census: this tool touches no production data.`, '',
   '## Source evidence (Core Rulebook TXT)', '',
   `- Tree heading \`${src.treeHeading.text}\` at TXT line ${heading}. The tree is **alphabetical**: Debilitating Shot, Deceptive Shot, Improved Quick Draw, Knockdown Shot, Multiattack Proficiency (pistols), **Ranged Disarm, Trigger Work** — seven talents.`,
   `- Five entries sit before the class game-statistics table (TXT ${src.entries[0].line}–${src.entries[4].line}); the remaining two sit after the table, across the page/column break (TXT ${src.entries[5].line}, ${src.entries[6].line}): \`${src.continuation.text}\``,
@@ -120,7 +120,7 @@ const md = [
   `- **Authority gaps, production already correct (${census.findings.authorityGaps.length}):** ${census.findings.authorityGaps.join('; ')} — published on p.217, absent from Phase 1D/2/3A, present in production since Phase 3D.`,
   `- **Identity / tree mismatches:** ${census.findings.mismatches.length ? census.findings.mismatches.join('; ') : 'none'}.`,
   `- **Unexplained production extras in the tree:** ${extras.length ? extras.map(e => e.name).join('; ') : 'none'} (the ten other members are certified expansion publications).`,
-  `- **Production metadata defect (small, separate):** ${census.findings.productionMetadataDefects.join('; ')} carry no \`source\`/\`page\` in production.`, '',
+  census.findings.productionMetadataDefects.length ? `- **Production metadata defect (small, separate):** ${census.findings.productionMetadataDefects.join('; ')} carry no \`source\`/\`page\` in production.` : '- **Production metadata:** source and page are present on every member (repaired by Phase 3E-4).', '',
   '## PDF verification (owner-reported, rendered Core Rulebook)', '',
   `- Page mapping: ${census.pdfVerification.pageMapping}.`,
   `- Roster: ${census.pdfVerification.treeRoster}.`,
@@ -128,7 +128,7 @@ const md = [
   '- **Trigger Work** (p.217, PDF_VERIFIED, prerequisite **none**): "' + census.pdfVerification.exactWording['Trigger Work'] + '" (Rapid Shot is printed, not inferred).',
   `- Neighbour boundary: ${census.pdfVerification.neighbourBoundary}.`, '',
   `## Certification: **${certification.published} published → ${certification.production} production → ${certification.missing} missing → ${certification.unexplainedExtras} unexplained extras → ${certification.treeMismatches} tree mismatches**`, '',
-  'Both p.217 talents are `PDF_VERIFIED`. The production records still lack `source`/`page` (Core Rulebook, p.217) — a source-provable production defect to be repaired through the controlled manifest path, not by hand.', ''
+  'Both p.217 talents are `PDF_VERIFIED`.' + (census.findings.productionMetadataDefects.length ? ' The production records still lack `source`/`page` (Core Rulebook, p.217) — a source-provable production defect to be repaired through the controlled manifest path, not by hand.' : ' Their production `source`/`page` (Core Rulebook, p.217) is present (Phase 3E-4 repair).'), ''
 ].join('\n');
 
 if (process.argv.includes('--check')) {

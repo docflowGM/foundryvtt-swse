@@ -216,13 +216,13 @@
       "canonicalPage": null,
       "production": {
         "id": "d7870d0940a3ce0b",
-        "source": null,
-        "page": null,
+        "source": "Saga Edition Core Rulebook",
+        "page": 217,
         "prerequisites": "",
-        "benefit": "You can Disarm an opponent using a ranged attack. If your ranged Disarm attack fails, your opponent doesn't get to make a free attack against you."
+        "benefit": "You can disarm an opponent using a ranged attack. If your ranged disarm attack fails, your opponent doesn't get to make a free attack against you (see Disarm, page 152)."
       },
       "status": "AUTHORITY_GAP_PRODUCTION_PRESENT",
-      "productionMetadataDefect": "source/page missing on the production record"
+      "productionMetadataDefect": null
     },
     {
       "name": "Trigger Work",
@@ -233,13 +233,13 @@
       "canonicalPage": null,
       "production": {
         "id": "86c10d63bba2d9c8",
-        "source": null,
-        "page": null,
+        "source": "Saga Edition Core Rulebook",
+        "page": 217,
         "prerequisites": "",
         "benefit": "You take no penalty on your attack roll when using the Rapid Shot feat."
       },
       "status": "AUTHORITY_GAP_PRODUCTION_PRESENT",
-      "productionMetadataDefect": "source/page missing on the production record"
+      "productionMetadataDefect": null
     }
   ],
   "unexplainedProductionExtras": [],
@@ -256,10 +256,7 @@
       "Trigger Work"
     ],
     "mismatches": [],
-    "productionMetadataDefects": [
-      "Ranged Disarm",
-      "Trigger Work"
-    ]
+    "productionMetadataDefects": []
   },
   "pdfVerification": {
     "status": "PDF_VERIFIED_BY_OWNER",
@@ -288,6 +285,6 @@
   "interpretation": {
     "phase1dRosterIsIncomplete": true,
     "productionIsCorrectForBoth": true,
-    "note": "Phase 1D/2/3A never captured the two p.217 talents; production already holds both (Phase 3D) but without source/page. Authority gap, not a missing-record defect; the production source/page omission is a separate, small production defect to be fixed through the manifest contract, not by hand."
+    "note": "Phase 1D/2/3A never captured the two p.217 talents; production already holds both (Phase 3D). Authority gap, not a missing-record defect. Their production source/page omission was a separate defect, repaired through the Phase 3E-4 manifest contract (this census snapshots the current production state)."
   }
 }

@@ -13,8 +13,8 @@
     "crossTreeSameNameGroups": 19
   },
   "sourcePageAgreement": {
-    "exactSourcePage": 1180,
-    "wrongSourcePage": 7
+    "exactSourcePage": 1187,
+    "wrongSourcePage": 0
   },
   "findingCounts": {
     "CLAIM_WITHOUT_RECORD": 0,
@@ -26,7 +26,7 @@
     "UNRESOLVED_SAME_NAME_AMBIGUITY": 0,
     "CLAIM_COUNT_MISMATCH": 0,
     "HOMEBREW_IN_DENOMINATOR": 0,
-    "WRONG_SOURCE_PAGE": 7,
+    "WRONG_SOURCE_PAGE": 0,
     "STALE_TREE_ID_SLUG": 71,
     "TREE_DISPLAY_NAME_DRIFT": 72
   },
@@ -746,41 +746,6 @@
       "code": "TREE_DISPLAY_NAME_DRIFT",
       "identity": "Jedi Academy Training Manual|Warden of the Sky|Telekinetic Throw",
       "detail": "tree 899038f739294c81 is named \"Warden Of The Sky\", canonical \"Warden of the Sky\""
-    },
-    {
-      "code": "WRONG_SOURCE_PAGE",
-      "identity": "Saga Edition Core Rulebook|Gunslinger|Trigger Work",
-      "detail": "production null p.null; authority Saga Edition Core Rulebook p.217"
-    },
-    {
-      "code": "WRONG_SOURCE_PAGE",
-      "identity": "Saga Edition Core Rulebook|Gunslinger|Ranged Disarm",
-      "detail": "production null p.null; authority Saga Edition Core Rulebook p.217"
-    },
-    {
-      "code": "WRONG_SOURCE_PAGE",
-      "identity": "Saga Edition Core Rulebook|Alter|Move Massive Object",
-      "detail": "production null p.null; authority Legacy Era Campaign Guide p.55"
-    },
-    {
-      "code": "WRONG_SOURCE_PAGE",
-      "identity": "Saga Edition Core Rulebook|Control|Telekinetic Stability",
-      "detail": "production null p.null; authority Legacy Era Campaign Guide p.55"
-    },
-    {
-      "code": "WRONG_SOURCE_PAGE",
-      "identity": "Saga Edition Core Rulebook|Dark Side|Dark Preservation",
-      "detail": "production null p.null; authority Legacy Era Campaign Guide p.55"
-    },
-    {
-      "code": "WRONG_SOURCE_PAGE",
-      "identity": "Saga Edition Core Rulebook|Commando|Hard Target",
-      "detail": "production null p.null; authority Threats of the Galaxy p.95"
-    },
-    {
-      "code": "WRONG_SOURCE_PAGE",
-      "identity": "Saga Edition Core Rulebook|Sith|Stolen Form",
-      "detail": "production null p.null; authority Threats of the Galaxy p.81"
     }
   ]
 }
