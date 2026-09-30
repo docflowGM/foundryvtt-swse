@@ -13,9 +13,9 @@
   ],
   "inputPopulation": 92,
   "progress": {
-    "adjudicated": 8,
-    "blockedOnOwnerPolicy": 4,
-    "pending": 80,
+    "adjudicated": 9,
+    "blockedOnOwnerPolicy": 5,
+    "pending": 78,
     "note": "REVIEW_REQUIRED with adjudicationStatus PENDING_3D2 means \"not yet examined\". BLOCKED_ON_OWNER_POLICY is a concrete, named reason (reviewRequiredReason)."
   },
   "records": [
@@ -1108,22 +1108,84 @@
       "treeId": "dark-side-devotee",
       "treeName": "Dark Side Devotee",
       "group": "DEFERRED_PRODUCTION_ONLY",
-      "finalDisposition": "REVIEW_REQUIRED",
-      "survivorId": null,
-      "adjudicationStatus": "PENDING_3D2",
+      "finalDisposition": "MERGE_DUPLICATE",
+      "survivorId": "8e1ee6d1c756450f96d4d5eaa9657e47",
+      "adjudicationStatus": "ADJUDICATED",
       "evidence": {
-        "status": "NOT_YET_ADJUDICATED",
-        "census": "see data/audits/talent-phase-3d-production-extras-census.json",
-        "provisional": {
-          "value": "REVIEW_REQUIRED",
-          "basis": "registry status UNREGISTERED_OR_NONCANONICAL_TREE",
-          "confidence": "LOW"
-        }
+        "status": "ADJUDICATED_TXT_CONFIRMED",
+        "conclusion": "The \"missing tree\" flag is a false alarm and the record is a name-variant duplicate. Embrace Dark Side (3cc9552cfab59676) is the same Dark Side Devotee talent as canonical \"Embrace the Dark Side\" (8e1ee6d1c756450f96d4d5eaa9657e47, Core p.213).",
+        "findings": [
+          "Core Rulebook TXT 20232: \"Embrace the Dark Side: Whenever you use a Force power with the [dark side] descriptor, you may reroll…\", \"Prerequisites: Channel Aggression, Channel Anger.\" — the record's benefit and prerequisite match the printed talent exactly; only the NAME is shortened (no \"the\").",
+          "The tree exists: the record is a member of Dark Side Devotee 96ef43a3054dcb58 (talentIds). Only its legacy system.treeId slug \"dark-side-devotee\" is stale, exactly like ~80 other records including canonical ones (see \"stale slug treeIds\" finding).",
+          "Both records sit in the same tree; the canonical roster has exactly one Embrace the Dark Side."
+        ],
+        "sourceRefs": [
+          "reference/sourcebooks/Core Rulebook_djvu.txt:20232",
+          "data/canonical/talents.json (Saga Edition Core Rulebook|Dark Side Devotee|Embrace the Dark Side)"
+        ],
+        "pdfRequired": false,
+        "pdfNote": "Identity is settled by TXT (name, tree, benefit, prerequisites)."
       },
-      "referencesToRepoint": null,
+      "referencesToRepoint": {
+        "structural": [
+          {
+            "file": "packs/talent_trees.db",
+            "treeId": "96ef43a3054dcb58",
+            "remove": [
+              "system.talentIds[3cc9552cfab59676]",
+              "system.talentNames \"Embrace Dark Side\""
+            ]
+          },
+          {
+            "file": "data/generated/talent-trees.registry.json + data/fixes/talent-trees.registry.json",
+            "action": "regenerate with tools/build-talent-tree-registry.mjs"
+          }
+        ],
+        "actorPackEmbeddedItems": [],
+        "toolReferences": [
+          {
+            "file": "tools/fix-compendium-issues.js:29",
+            "action": "legacy one-shot map keyed by the duplicate ID; drop the entry"
+          },
+          {
+            "file": "tools/verify-compendium-fixes.js:22",
+            "action": "legacy verifier expects the duplicate to exist in tree de95d37c72b1c4cd; drop the entry"
+          }
+        ],
+        "otherReferences": [
+          {
+            "file": "data/fixes/talents.fixed.json",
+            "classification": "GENERATED_DERIVED_DATA"
+          },
+          {
+            "file": "data/generated/talents.fixed.json",
+            "classification": "GENERATED_DERIVED_DATA"
+          },
+          {
+            "file": "docs/talent-force-prestige-cleanup-phase-t9.json",
+            "classification": "DOC_OR_CLEANUP_PLAN"
+          },
+          {
+            "file": "tools/fix-compendium-issues.js",
+            "classification": "TOOL"
+          },
+          {
+            "file": "tools/verify-compendium-fixes.js",
+            "classification": "TOOL"
+          }
+        ],
+        "note": "No actor embedded item and no talent prerequisitesStructured references the duplicate's swse.id (swse.talent.embrace_dark_side appears only on the duplicate itself)."
+      },
       "metadataTransfer": [],
-      "expectedFinal": null,
-      "phase3cCanonicalRecordTouched": false
+      "expectedFinal": {
+        "recordExists": false,
+        "survivorRecordExists": true,
+        "treeMembership": "removed from Dark Side Devotee 96ef43a3054dcb58 (tree keeps 6 members)",
+        "classAccess": "unchanged",
+        "canonicalRecordsTouched": []
+      },
+      "phase3cCanonicalRecordTouched": false,
+      "metadataReview": "Duplicate carries prerequisitesStructured = {talent channel_anger} (_source canonical-csv) that the survivor lacks. NOT migrated: it is incomplete (omits the printed Channel Aggression prerequisite), so it is not valid metadata. Everything else on the survivor (combat action card, summary, source/page, implementationStatus \"implemented\") is richer than the duplicate's. Observation only: the survivor has no prerequisitesStructured; that is a separate pre-existing gap and not fixed here (touching it would be PHASE_3C_CANONICAL_RECORD_TOUCHED)."
     },
     {
       "productionId": "3df46d093b31411d",
@@ -1811,20 +1873,22 @@
       "group": "DEFERRED_PRODUCTION_ONLY",
       "finalDisposition": "REVIEW_REQUIRED",
       "survivorId": null,
-      "adjudicationStatus": "PENDING_3D2",
+      "adjudicationStatus": "BLOCKED_ON_OWNER_POLICY",
       "evidence": {
-        "status": "NOT_YET_ADJUDICATED",
-        "census": "see data/audits/talent-phase-3d-production-extras-census.json",
-        "provisional": {
-          "value": "REVIEW_REQUIRED",
-          "basis": "registry status UNREGISTERED_OR_NONCANONICAL_TREE",
-          "confidence": "LOW"
-        }
+        "status": "ADJUDICATED_NOT_OFFICIAL_SWSE_BLOCKED_ON_POLICY",
+        "conclusion": "The \"missing tree\" flag is a false alarm (Force Meld is a member of Jedi Guardian 10c843cef8ce2798; only its legacy system.treeId slug \"jedi-guardian\" is stale). The record itself is self-labelled homebrew.",
+        "findings": [
+          "Benefit ends \"Homebrew Reference Book: Legacy of the Force Sourcebook\"; \"Force Meld\" appears in no committed sourcebook TXT.",
+          "Not an evidence gap but a policy gap (same class as the other homebrew records).",
+          "PINNED BY A TEST: tests/talent-membership-and-pack-completion.test.mjs asserts this record exists (lines 131, 149) — any removal must update that test deliberately."
+        ],
+        "pdfRequired": false
       },
       "referencesToRepoint": null,
       "metadataTransfer": [],
       "expectedFinal": null,
-      "phase3cCanonicalRecordTouched": false
+      "phase3cCanonicalRecordTouched": false,
+      "reviewRequiredReason": "HOMEBREW_POLICY_OWNER_DECISION"
     },
     {
       "productionId": "81cd2a2473e248a0",

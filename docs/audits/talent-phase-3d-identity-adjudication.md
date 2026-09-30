@@ -11,12 +11,12 @@ Tests: `tests/talent-phase-3d-review-extras.test.mjs` · Census: `talent-phase-3
 |---|---|---|
 | Review extras (Notorious, Teräs Käsi Basics) | 2 | **Adjudicated** (this checkpoint) |
 | SOURCE_VERIFIED_SPECIAL_TREE | 10 | **Adjudicated** (3 KEEP, 3 REMOVE_CONTAMINATION, 4 blocked on homebrew policy) |
-| Missing trees (Embrace Dark Side, Force Meld) | 2 | pending |
+| Missing trees (Embrace Dark Side, Force Meld) | 2 | **Adjudicated** (1 MERGE_DUPLICATE, 1 blocked on homebrew policy) |
 | Same-name / sourcebook-hit candidates | — | pending |
 | Actor-referenced | — | pending |
 | No credible publication evidence | — | pending |
 
-The other 80 sit in the manifest as `REVIEW_REQUIRED` with `adjudicationStatus: PENDING_3D2` — a placeholder, not a decision.
+The other 78 sit in the manifest as `REVIEW_REQUIRED` with `adjudicationStatus: PENDING_3D2` — a placeholder, not a decision.
 
 ## 1. `a7d8c4da96eacad4` — Notorious (Infamy) → `REMOVE_CONTAMINATION`
 
@@ -111,6 +111,18 @@ in the manifest, with the printed text); the printed page numbers need a PDF loo
 **The four homebrew records are a policy question, not an evidence question.** `KEEP_NONBOOK_SUPPORTED` requires official material (none found) and `REMOVE_CONTAMINATION`
 would delete content the project owner may have added on purpose. They stay `REVIEW_REQUIRED` with a named reason and are *not* counted as unresolved evidence gaps. The 38 `REPO_ONLY_NONCANONICAL_HOMEBREW`
 records will raise the same question, so one owner ruling (keep out of the authoritative pack / move to a separate homebrew pack / delete) resolves the whole class.
+
+## 4. Bucket: the 2 "missing tree" records
+
+**Finding: the "missing tree" flag is a false alarm.** Both records *are* members of real trees (Dark Side Devotee `96ef43a3054dcb58`, Jedi Guardian `10c843cef8ce2798`) through the tree's `talentIds`.
+Only their legacy `system.treeId` slug (`dark-side-devotee`, `jedi-guardian`) is not a pack ID. The same stale slug appears on **~80 talent records, including canonical ones**
+(e.g. every Jedi Guardian and lightsaber-forms member). Membership is carried by `talent_trees.talentIds`, so nothing is broken, but `system.treeId` is not a reliable key on those records.
+*Observation for a later cleanup (out of Phase 3D scope, not touched here).*
+
+| ID | Record | Disposition | Basis |
+|---|---|---|---|
+| `3cc9552cfab59676` | Embrace Dark Side | **MERGE_DUPLICATE** → `8e1ee6d1c756450f96d4d5eaa9657e47` | Core TXT 20232: same benefit and prerequisites as canonical *Embrace the Dark Side* (Core p.213); name shortened. Same tree. Duplicate has an incomplete `prerequisitesStructured` (omits Channel Aggression) — not migrated; nothing valid is lost. Retire its entries in `tools/fix-compendium-issues.js:29` and `tools/verify-compendium-fixes.js:22`. No actor references. |
+| `816ac9cc1e6c413b` | Force Meld | REVIEW_REQUIRED — `HOMEBREW_POLICY_OWNER_DECISION` | Ends "Homebrew Reference Book: Legacy of the Force Sourcebook"; in no TXT. `tests/talent-membership-and-pack-completion.test.mjs` pins its existence (lines 131, 149). |
 
 ## Validation
 
