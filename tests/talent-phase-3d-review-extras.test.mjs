@@ -84,6 +84,16 @@ test('Stolen Form is kept as an official additional publication (not quarantined
   const r = rec('f9352f317ad2f695'); assert.equal(r.finalDisposition, 'KEEP_CANONICAL_ADDITIONAL_PUBLICATION');
   assert.equal(r.evidence.status, 'PDF_CONFIRMED_BY_OWNER'); assert.equal(r.referencesToRepoint.actorPackEmbeddedItems.length, 2);
 });
+test('the canonical prerequisite allow-list is enforced (flag, path, scope, target, text)', () => {
+  const mut = fn => { const m = clone(manifest); fn(m.canonicalPrerequisiteRepoints); return run(m); };
+  assert.ok(mut(c => { c.flag = 'x'; }).some(e => /PHASE_3C_CANONICAL_RECORD_TOUCHED/.test(e)));
+  assert.ok(mut(c => { c.repoints[0].path = 'system.benefit'; }).some(e => /not an allow-listed/.test(e)));
+  assert.ok(mut(c => { c.repoints[0].recordId = 'a7d8c4da96eacad4'; }).some(e => /outside the inherited 92/.test(e)));
+  assert.ok(mut(c => { c.repoints[0].to = 'a7d8c4da96eacad4'; }).some(e => /must exist and stay canonical/.test(e)));
+  assert.ok(mut(c => { c.repoints[4].preservePrerequisiteText = 'Dastardly Attack'; }).some(e => /prerequisite text/.test(e)));
+  assert.ok(mut(c => { c.repoints[0].phase3cCanonicalRecordTouched = false; }).some(e => /marked phase3cCanonicalRecordTouched/.test(e)));
+  assert.deepEqual(manifest.canonicalPrerequisiteRepoints.repoints.map(r => r.recordName), ['Fearsome', 'Ruthless Negotiator', 'Shared Notoriety', 'Unsavory Reputation', 'Weakening Strike']);
+});
 test('a merge survivor may not itself be scheduled for deletion', () => {
   const m = clone(manifest); const a = m.records.find(r => r.finalDisposition === 'MERGE_DUPLICATE'); const b = m.records.filter(r => r.finalDisposition === 'REMOVE_CONTAMINATION')[0];
   a.survivorId = b.productionId; assert.ok(run(m).some(e => /scheduled for deletion/.test(e)));

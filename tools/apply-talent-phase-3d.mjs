@@ -116,6 +116,55 @@ export function refreshSnapshot(item, survivor, survivorTree, targetPack = 'tale
 }
 const snapshotMatches = (item, survivor, survivorTree, classNameOf) => same(refreshSnapshot(clone(item), survivor, survivorTree, 'talents', classNameOf), item);
 
+
+/**
+ * Allow-listed canonical structured-prerequisite repoints (PHASE_3C_CANONICAL_RECORD_TOUCHED). Exactly one leaf per listed
+ * entry: system.prerequisitesStructured.conditions[i].id, and only when it currently holds the expected `from` value.
+ * Applied to the canonical record and to its derived mirror entry (same leaf), nothing else.
+ */
+export function applyCanonicalPrerequisiteRepoints(manifest, talents, derived = {}) {
+  const touched = [];
+  for (const r of manifest.canonicalPrerequisiteRepoints?.repoints ?? []) {
+    const m = /^system\.prerequisitesStructured\.conditions\[(\d+)\]\.id$/.exec(r.path);
+    invariant(m, `canonical prerequisite repoint path is not allow-listed: ${r.path}`);
+    const leaf = doc => { const c = doc?.system?.prerequisitesStructured?.conditions?.[Number(m[1])]; return c && typeof c === 'object' ? c : null; };
+    const rec = talents.find(t => t._id === r.recordId);
+    invariant(rec, `canonical prerequisite repoint: ${r.recordName} (${r.recordId}) is missing`);
+    invariant(leaf(rec)?.id === r.from, `canonical prerequisite repoint: ${r.recordName} ${r.path} holds ${JSON.stringify(leaf(rec)?.id)}, expected ${r.from}`);
+    invariant(rec.system.prerequisites === r.preservePrerequisiteText, `canonical prerequisite repoint: ${r.recordName} prerequisite text must stay ${JSON.stringify(r.preservePrerequisiteText)}`);
+    leaf(rec).id = r.to;
+    let mirrors = 0;
+    for (const arr of Object.values(derived)) { const d = arr.find(e => e._id === r.recordId); if (d && leaf(d)?.id === r.from) { leaf(d).id = r.to; mirrors++; } }
+    touched.push({ recordId: r.recordId, name: rec.name, path: r.path, from: r.from, to: r.to, toIdentity: r.toIdentity, mirrorEntriesUpdated: mirrors, flag: 'PHASE_3C_CANONICAL_RECORD_TOUCHED' });
+  }
+  return touched;
+}
+
+/** Runtime identities (production ids and flags.swse.id values no surviving canonical record carries) of every record leaving the canonical pack. */
+export function retiredIdentities(manifest, talentsBefore, canonicalAfter) {
+  const beforeById = new Map(talentsBefore.map(t => [t._id, t]));
+  const carriedAfter = new Set(canonicalAfter.map(t => t.flags?.swse?.id).filter(Boolean));
+  const dead = new Set();
+  for (const r of manifest.records.filter(x => REMOVING.has(x.finalDisposition))) {
+    dead.add(r.productionId);
+    const sid = beforeById.get(r.productionId)?.flags?.swse?.id;
+    if (sid && !carriedAfter.has(sid)) dead.add(sid);
+  }
+  return [...dead].sort();
+}
+/** Structured-prerequisite identities (ids / uuids) held by canonical talents that equal a retired identity. */
+export function danglingFromRetired(retired, canonicalAfter) {
+  const dead = new Set(retired);
+  const leaves = (o, out = []) => { if (typeof o === 'string') out.push(o); else if (o && typeof o === 'object') for (const v of Object.values(o)) leaves(v, out); return out; };
+  const hits = [];
+  for (const t of canonicalAfter) for (const v of leaves(t.system?.prerequisitesStructured ?? {})) {
+    const bare = v.replace(/^Compendium\.foundryvtt-swse\.talents\./, '');
+    if (dead.has(v) || dead.has(bare)) hits.push(`${t.name} (${t._id}): ${v}`);
+  }
+  return hits;
+}
+const danglingStructuredPrerequisites = (manifest, talentsBefore, canonicalAfter) => danglingFromRetired(retiredIdentities(manifest, talentsBefore, canonicalAfter), canonicalAfter);
+
 /* ------------------------------------------------------------------------------------------------
  * Projection. Pure: never touches disk.
  * ---------------------------------------------------------------------------------------------- */
@@ -208,6 +257,10 @@ export function projectPhase3D(input) {
     t.system.treeId = toTreeId;
   }
 
+  /* 3b. Allow-listed canonical structured-prerequisite repoints (owner-authorized PHASE_3C_CANONICAL_RECORD_TOUCHED). */
+  const canonicalTouched = applyCanonicalPrerequisiteRepoints(manifest, talents, derived);
+  operationCounts.canonicalPrerequisiteRepoints = canonicalTouched.length;
+
   /* 4. Trees: classify every tree that loses a member (by ID), then detach. */
   const treeFate = new Map();
   for (const tree of trees) {
@@ -270,7 +323,7 @@ export function projectPhase3D(input) {
     talents: canonicalTalents, trees: canonicalTrees, classes, actors, derived, registry,
     homebrew: { talents: homebrewTalents, trees: homebrewTrees },
     repointed, classAccessRemoved, derivedDrops, operationCounts,
-    runtimeFiles, runtimeRepoints,
+    runtimeFiles, runtimeRepoints, canonicalTouched,
     movedTreeIds: [...movedTreeIds], mixedTrees: [...treeFate.values()].filter(f => f.staying.length).map(f => ({ treeId: f.tree._id, tree: f.tree.name, membersLeaving: f.moved.length + f.removed.length, membersRemaining: f.staying.length }))
   };
 }
@@ -339,7 +392,15 @@ export function verifyProjection(input, p) {
   check('homebrew talent count = MOVE_HOMEBREW_PACK count', p.homebrew.talents.length === by('MOVE_HOMEBREW_PACK').length, String(p.homebrew.talents.length));
   check('total preserved talent records = before - merges - removals', p.talents.length + p.homebrew.talents.length === input.talents.length - by('MERGE_DUPLICATE').length - by('REMOVE_CONTAMINATION').length);
   check('tree count reconciles (canonical + homebrew = before)', p.trees.length + p.homebrew.trees.length === input.trees.length, `${p.trees.length}+${p.homebrew.trees.length}`);
-  check('every talent outside the 92 is byte-identical', input.talents.filter(t => !protectedIds.has(t._id)).every(t => same(after.get(t._id), t)));
+  const touchedIds = new Set((manifest.canonicalPrerequisiteRepoints?.repoints ?? []).map(r => r.recordId));
+  check('every talent outside the 92 and the allow-listed prerequisite repoints is byte-identical', input.talents.filter(t => !protectedIds.has(t._id) && !touchedIds.has(t._id)).every(t => same(after.get(t._id), t)));
+  check('each allow-listed canonical record changed ONLY its listed prerequisitesStructured id leaf (text, tags, abilityMeta, everything else identical)', (manifest.canonicalPrerequisiteRepoints?.repoints ?? []).every(r => {
+    const a = clone(after.get(r.recordId)), b = clone(before.get(r.recordId));
+    for (const x of manifest.canonicalPrerequisiteRepoints.repoints.filter(q => q.recordId === r.recordId)) { const i = Number(/\[(\d+)\]/.exec(x.path)[1]); a.system.prerequisitesStructured.conditions[i].id = b.system.prerequisitesStructured.conditions[i].id; }
+    return same(a, b) && after.get(r.recordId).system.prerequisites === r.preservePrerequisiteText;
+  }));
+  check('the four Notorious prerequisites keep their tree-specific identities (Bounty Hunter vs Infamy) and Weakening Strike names Dastardly Strike', (() => { const id = (n, i) => after.get(n).system.prerequisitesStructured.conditions[i].id; return id('11e8f858af268e8c', 0) === 'c67cbd59abd1cc53' && id('8298e12805291c78', 0) === 'c67cbd59abd1cc53' && id('9491f34aad83dfb1', 0) === '09744041cdcc9e22' && id('b0ecc747a76deb72', 1) === '09744041cdcc9e22' && id('9c1e0b0566cb45c2', 0) === '9e4345faaaa94dd8' && after.get('9c1e0b0566cb45c2').system.prerequisites === 'Dastardly Strike'; })());
+  check('no canonical structured prerequisite identity points at a removed/merged/moved Phase 3D record', danglingStructuredPrerequisites(manifest, input.talents, p.talents).length === 0, danglingStructuredPrerequisites(manifest, input.talents, p.talents).slice(0, 4).join('; '));
   check('KEEP records are present and unchanged', by('KEEP_CANONICAL_ADDITIONAL_PUBLICATION').every(r => same(after.get(r.productionId), before.get(r.productionId))));
   check('CORRECT_IDENTITY changes only system.treeId', by('CORRECT_IDENTITY').every(r => { const a = clone(after.get(r.productionId)), b = clone(before.get(r.productionId)); a.system.treeId = b.system.treeId; return same(a, b); }));
   check('merged / removed / moved records are gone from the canonical pack', leaving.every(r => !after.has(r.productionId)));
@@ -449,6 +510,8 @@ export function buildReport(input, p, verification, root = ROOT) {
     actorRepoints: { total: p.repointed.length, snapshotRefreshed: p.repointed.filter(r => r.snapshotRefreshed).length, byDisposition: tally(p.repointed, r => r.disposition), byTargetPack: tally(p.repointed, r => r.toPack), snapshotFields: SNAPSHOT_FIELDS, items: p.repointed },
     trees: { movedToHomebrew: p.homebrew.trees.map(t => ({ treeId: t._id, name: t.name, members: t.system.talentIds.length })), keepCanonicalLoseMembers: p.mixedTrees },
     classAccess: { changes: p.classAccessRemoved, note: p.classAccessRemoved.length ? undefined : 'no canonical class references any tree that moves to the homebrew pack' },
+    retiredIdentities: retiredIdentities(input.manifest, input.talents, p.talents),
+    canonicalRecordsTouched: { flag: 'PHASE_3C_CANONICAL_RECORD_TOUCHED', count: p.canonicalTouched.length, records: p.canonicalTouched, authorization: 'owner-authorized; only the listed prerequisitesStructured id leaves', note: 'The CORRECT_IDENTITY record (Ranged Disarm) is one of the inherited 92 and is not counted here.' },
     runtimeData: { repointed: p.runtimeRepoints, note: 'found by the repository-wide residual-reference gate; the first dry run scanned packs only' },
     derivedData: { entriesDropped: p.derivedDrops, note: 'data/*/talents.fixed.json are partial derived mirrors with no runtime or tool consumer found' },
     homebrewPack: {
@@ -456,11 +519,8 @@ export function buildReport(input, p, verification, root = ROOT) {
       systemJsonEntries: [HOMEBREW_PACK_BLOCKS.after_talents, HOMEBREW_PACK_BLOCKS.after_talent_trees],
       note: 'Not loaded by any canonical talent engine; must never be presented as official SWSE content.'
     },
-    knownOpenFinding: {
-      danglingRuntimeIds: 'Five canonical records keep prerequisitesStructured ids that equal the flags.swse.id of a removed duplicate: swse.talent.notorious (Fearsome, Ruthless Negotiator, Shared Notoriety, Unsavory Reputation) and swse.talent.dastardly_attack (Weakening Strike). They are Phase 3C canonical records, so this application does not touch them (PHASE_3C_CANONICAL_RECORD_TOUCHED requires manifest authorization). The pre-existing mismatch is unchanged for canonical selections (the surviving records never carried those ids); only legacy actor items lose an id match.'
-    },
     followUps: [
-      'Decide whether to authorize repointing the five dangling structured prerequisites (PHASE_3C_CANONICAL_RECORD_TOUCHED).',
+      'Structured talent prerequisites are only evaluated when a talent has no prerequisite text; all five repointed records have text, so the leaves are identity data. The survivors c67cbd59abd1cc53 (Bounty Hunter Notorious) and 9e4345faaaa94dd8 (Dastardly Strike) carry no flags.swse.id, so the production _id is stored; giving them runtime ids (or a uuid leaf) would make id-path resolution effective and is a separate canonical-record decision.',
       'Add the six KEEP records and the Ranged Disarm correction to the canonical corpus through the Phase 2 → canonical → manifest chain (CANONICAL_CORPUS_ADDITION).'
     ],
     verification: { passed: verification.filter(v => v.ok).length, failed: verification.filter(v => !v.ok).length, results: verification }
@@ -566,6 +626,8 @@ export function verifyPostState(st, { exact = false, root = ROOT, scan = true } 
   const leavingIds = new Set(leaving.map(r => r.productionId));
   check('no embedded actor item points at a record that left the canonical pack', Object.values(st.actors).flat().every(a => (a.items ?? []).every(i => { const s = parseSourceId(i.flags?.core?.sourceId); return !(s && s.pack === 'talents' && leavingIds.has(s.id)); })));
   check('no contaminated Notorious / merged Teräs Käsi snapshot text survives', Object.values(st.actors).flat().every(a => (a.items ?? []).every(i => !(i.name === 'Notorious' && /Reference Book|Master Manipulator|small favor from someone/i.test(JSON.stringify(i.system))) && !(i.name === 'Teräs Käsi Basics' && /Prerequisites: ,/.test(JSON.stringify(i.system))))));
+  check('no canonical structured prerequisite identity points at a removed/merged/moved Phase 3D record (zero dangling)', (report.retiredIdentities ?? []).length > 0 && danglingFromRetired(report.retiredIdentities, st.talents).length === 0);
+  check('allow-listed canonical prerequisite repoints are in place with prerequisite text preserved', (manifest.canonicalPrerequisiteRepoints?.repoints ?? []).every(r => { const i = Number(/\[(\d+)\]/.exec(r.path)[1]); const t = canon.get(r.recordId); return t?.system?.prerequisitesStructured?.conditions?.[i]?.id === r.to && t.system.prerequisites === r.preservePrerequisiteText; }));
   check('derived talents.fixed.json mirrors carry no leaving id', DERIVED_FILES.every(rel => !leaving.some(r => (st.texts[rel === DERIVED_FILES[0] ? 'derivedGenerated' : 'derivedFixes'] ?? '').includes(`"${r.productionId}"`))));
 
   const packNames = new Map(st.systemJson.packs.map(p => [p.name, p]));
@@ -602,6 +664,7 @@ const printResults = results => { for (const v of results) console.log(`${v.ok ?
 
 export function applyProduction(root = ROOT) {
   const c3 = detectPhase3cState(root);
+  invariant(c3.state !== 'POST_3D_STATE', 'REFUSED: already applied — the packs are the Phase 3D certified post-state (use --verify --exact)');
   invariant(c3.state === 'POST_STATE', `REFUSED: the Phase 3C certified post-state is required (found ${c3.state}); partial or unexpected pack fingerprints are not migrated`);
   const input = loadInputs(root);
   invariant(detect3DState(input.manifest, input.talents) === 'PRE_3D', 'REFUSED: Phase 3D is already applied (or partly applied)');

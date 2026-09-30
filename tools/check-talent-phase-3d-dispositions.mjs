@@ -56,6 +56,22 @@ export function checkDispositions({ manifest, census, talents, actors }) {
     if (!ids.has(rp.to) || deletedIds.has(rp.to)) errors.push(`runtime repoint ${rp.file}: target ${rp.to} must exist and stay canonical`);
     if (!(rp.expectedOccurrences > 0)) errors.push(`runtime repoint ${rp.file}: expectedOccurrences missing`);
   }
+  const cp = manifest.canonicalPrerequisiteRepoints;
+  if (cp) {
+    if (cp.flag !== 'PHASE_3C_CANONICAL_RECORD_TOUCHED') errors.push('canonicalPrerequisiteRepoints must carry the PHASE_3C_CANONICAL_RECORD_TOUCHED flag');
+    const byId = new Map(talents.map(t => [t._id, t]));
+    const seen = new Set();
+    for (const r of cp.repoints) {
+      const t = byId.get(r.recordId), key = r.recordId + '|' + r.path;
+      if (seen.has(key)) errors.push(`canonical prerequisite repoint listed twice: ${key}`); seen.add(key);
+      if (!t) { errors.push(`canonical prerequisite repoint: record ${r.recordId} does not exist`); continue; }
+      if (deletedIds.has(r.recordId) || expected.has(r.recordId)) errors.push(`canonical prerequisite repoint: ${r.recordName} must be a canonical record outside the inherited 92`);
+      if (!/^system\.prerequisitesStructured\.conditions\[\d+\]\.id$/.test(r.path)) errors.push(`canonical prerequisite repoint ${key}: path is not an allow-listed prerequisitesStructured condition id leaf`);
+      if (!ids.has(r.to) || deletedIds.has(r.to)) errors.push(`canonical prerequisite repoint ${key}: target ${r.to} must exist and stay canonical`);
+      if (r.phase3cCanonicalRecordTouched !== true) errors.push(`canonical prerequisite repoint ${key}: must be marked phase3cCanonicalRecordTouched`);
+      if (manifest.records.length && t.system.prerequisites !== r.preservePrerequisiteText && ids.has(r.recordId)) errors.push(`canonical prerequisite repoint ${key}: prerequisite text is ${JSON.stringify(t.system.prerequisites)}, expected ${JSON.stringify(r.preservePrerequisiteText)}`);
+    }
+  }
   return errors;
 }
 

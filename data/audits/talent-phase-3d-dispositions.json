@@ -6730,5 +6730,63 @@
       "rationale": "Two class archetypes list the contaminated bare-name \"Inspire Fear\" record (Terrify text + scraper residue). The canonical talent of that name is the entry of the Inspire Fear series, Inspire Fear I (Core, Infamy, p.210); both archetypes are fear/intimidation leaders. Found by the repository-wide residual-reference gate; the original dry run scanned packs only.",
       "reviewNote": "Replacement target is a judgment call (Inspire Fear I vs Terrify); flagged for owner review at the commit gate."
     }
-  ]
+  ],
+  "canonicalPrerequisiteRepoints": {
+    "status": "OWNER_AUTHORIZED",
+    "flag": "PHASE_3C_CANONICAL_RECORD_TOUCHED",
+    "scope": "Only the listed prerequisitesStructured condition id leaves may change on these five Phase 3C canonical records. Canonical text, descriptions, summaries, ordinary prerequisite text, tags, abilityMeta and every other field must stay byte-identical.",
+    "rationale": "Each leaf holds the flags.swse.id of a duplicate that Phase 3D removes (swse.talent.notorious = the contaminated Notorious record; swse.talent.dastardly_attack = the merged Dastardly Attack duplicate). The two printed Notorious talents are distinct canonical identities, so the target follows the dependent talent's own tree.",
+    "repoints": [
+      {
+        "recordId": "11e8f858af268e8c",
+        "recordName": "Fearsome",
+        "path": "system.prerequisitesStructured.conditions[0].id",
+        "from": "swse.talent.notorious",
+        "to": "c67cbd59abd1cc53",
+        "toIdentity": "Saga Edition Core Rulebook|Bounty Hunter|Notorious",
+        "preservePrerequisiteText": "Notorious",
+        "phase3cCanonicalRecordTouched": true
+      },
+      {
+        "recordId": "8298e12805291c78",
+        "recordName": "Ruthless Negotiator",
+        "path": "system.prerequisitesStructured.conditions[0].id",
+        "from": "swse.talent.notorious",
+        "to": "c67cbd59abd1cc53",
+        "toIdentity": "Saga Edition Core Rulebook|Bounty Hunter|Notorious",
+        "preservePrerequisiteText": "Notorious.",
+        "phase3cCanonicalRecordTouched": true
+      },
+      {
+        "recordId": "9491f34aad83dfb1",
+        "recordName": "Shared Notoriety",
+        "path": "system.prerequisitesStructured.conditions[0].id",
+        "from": "swse.talent.notorious",
+        "to": "09744041cdcc9e22",
+        "toIdentity": "Saga Edition Core Rulebook|Infamy|Notorious",
+        "preservePrerequisiteText": "Notorious",
+        "phase3cCanonicalRecordTouched": true
+      },
+      {
+        "recordId": "b0ecc747a76deb72",
+        "recordName": "Unsavory Reputation",
+        "path": "system.prerequisitesStructured.conditions[1].id",
+        "from": "swse.talent.notorious",
+        "to": "09744041cdcc9e22",
+        "toIdentity": "Saga Edition Core Rulebook|Infamy|Notorious",
+        "preservePrerequisiteText": "Inspire Fear I, Inspire Fear II, Inspire Fear III, Notorious",
+        "phase3cCanonicalRecordTouched": true
+      },
+      {
+        "recordId": "9c1e0b0566cb45c2",
+        "recordName": "Weakening Strike",
+        "path": "system.prerequisitesStructured.conditions[0].id",
+        "from": "swse.talent.dastardly_attack",
+        "to": "9e4345faaaa94dd8",
+        "toIdentity": "Saga Edition Core Rulebook|Misfortune|Dastardly Strike",
+        "preservePrerequisiteText": "Dastardly Strike",
+        "phase3cCanonicalRecordTouched": true
+      }
+    ]
+  }
 }

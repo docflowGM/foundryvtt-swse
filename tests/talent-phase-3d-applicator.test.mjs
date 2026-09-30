@@ -5,7 +5,7 @@ import path from 'node:path';
 import crypto from 'node:crypto';
 import { spawnSync } from 'node:child_process';
 import { detectPackState } from '../tools/apply-talent-phase-3c.mjs';
-import { loadInputs, projectPhase3D, verifyProjection, detect3DState, freshReport, applyProduction, loadPostState, verifyPostState, REPORT_PATH, HOMEBREW } from '../tools/apply-talent-phase-3d.mjs';
+import { danglingFromRetired, retiredIdentities, loadInputs, projectPhase3D, verifyProjection, detect3DState, freshReport, applyProduction, loadPostState, verifyPostState, REPORT_PATH, HOMEBREW } from '../tools/apply-talent-phase-3d.mjs';
 
 // Phase 3D-3: dry-run only. These tests never write a pack; they prove the simulation and its refusals.
 if (detectPackState().state !== 'POST_STATE') { console.log('  skip talent-phase-3d applicator: packs are not the certified Phase 3C post-state'); process.exit(0); }
@@ -85,6 +85,30 @@ test('legacy registry aliases are rewritten by exact leaving name (merge -> surv
   assert.deepEqual(alias('ace-pilot').talents, ['Escort Pilot']);
   const names = new Set(p.talents.map(t => t.name));
   for (const e of p.registry.filter(x => !x.sourceId)) for (const n of e.talents ?? []) if (input.talents.some(t => t.name === n && !names.has(n))) assert.fail(`${e.id} still names ${n}`);
+});
+test('five dangling structured prerequisites are repointed by identity (PHASE_3C_CANONICAL_RECORD_TOUCHED), text untouched', () => {
+  assert.equal(p.canonicalTouched.length, 5); assert.ok(p.canonicalTouched.every(t => t.flag === 'PHASE_3C_CANONICAL_RECORD_TOUCHED'));
+  const want = [['11e8f858af268e8c', 0, 'c67cbd59abd1cc53', 'Notorious'], ['8298e12805291c78', 0, 'c67cbd59abd1cc53', 'Notorious.'], ['9491f34aad83dfb1', 0, '09744041cdcc9e22', 'Notorious'], ['b0ecc747a76deb72', 1, '09744041cdcc9e22', 'Inspire Fear I, Inspire Fear II, Inspire Fear III, Notorious'], ['9c1e0b0566cb45c2', 0, '9e4345faaaa94dd8', 'Dastardly Strike']];
+  for (const [id, i, to, text] of want) {
+    const t = p.talents.find(x => x._id === id); assert.equal(t.system.prerequisitesStructured.conditions[i].id, to, t.name); assert.equal(t.system.prerequisites, text);
+    const b = clone(input.talents.find(x => x._id === id)); b.system.prerequisitesStructured.conditions[i].id = to; assert.deepEqual(t, b, `${t.name}: only the id leaf may differ`);
+  }
+  // the two printed Notorious talents stay distinct: Bounty Hunter dependents vs Infamy dependents
+  assert.notEqual(p.talents.find(x => x._id === '11e8f858af268e8c').system.prerequisitesStructured.conditions[0].id, p.talents.find(x => x._id === '9491f34aad83dfb1').system.prerequisitesStructured.conditions[0].id);
+  // derived mirror entries (older schema, no structured prerequisites) carry no stale leaf
+  for (const arr of Object.values(p.derived)) for (const e of arr.filter(x => want.some(w => w[0] === x._id))) assert.ok(!JSON.stringify(e.system.prerequisitesStructured ?? null).includes('swse.talent.notorious') && !JSON.stringify(e.system.prerequisitesStructured ?? null).includes('dastardly_attack'));
+});
+test('structured-prerequisite gate: zero dangling after the plan, and it catches a stale identity', () => {
+  const retired = retiredIdentities(input.manifest, input.talents, p.talents);
+  assert.ok(retired.includes('swse.talent.notorious') && retired.includes('swse.talent.dastardly_attack') && retired.includes('a7d8c4da96eacad4'));
+  assert.deepEqual(danglingFromRetired(retired, p.talents), []);
+  assert.ok(danglingFromRetired(retired, input.talents).length >= 5, 'the pre-migration pack has the five dangling references');
+  const bad = clone(p.talents); bad[0].system.prerequisitesStructured = { type: 'all', conditions: [{ type: 'talent', uuid: 'Compendium.foundryvtt-swse.talents.a7d8c4da96eacad4' }] };
+  assert.equal(danglingFromRetired(retired, bad).length, 1);
+});
+test('an allow-listed prerequisite repoint whose current value drifted refuses to apply', () => {
+  const i = { ...input, manifest: clone(input.manifest) }; i.manifest.canonicalPrerequisiteRepoints.repoints[0].from = 'swse.talent.something_else';
+  throwsWith(() => projectPhase3D(i), /holds .* expected/);
 });
 test('registry is regenerated without the homebrew trees and keeps every canonical tree', () => {
   assert.ok(p.registry.every(e => !p.movedTreeIds.includes(e.sourceId)));
