@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "phase": "3D-2",
-  "status": "IN_PROGRESS",
+  "status": "ADJUDICATION_COMPLETE",
   "productionMutationPerformed": false,
   "allowedDispositions": [
     "KEEP_CANONICAL_ADDITIONAL_PUBLICATION",
@@ -9,15 +9,15 @@
     "MERGE_DUPLICATE",
     "REMOVE_CONTAMINATION",
     "CORRECT_IDENTITY",
+    "MOVE_HOMEBREW_PACK",
     "REVIEW_REQUIRED"
   ],
   "inputPopulation": 92,
   "progress": {
-    "adjudicated": 41,
-    "blockedOnOwnerPolicy": 50,
-    "blockedOnPdfLookup": 1,
+    "adjudicated": 92,
+    "reviewRequired": 0,
     "pending": 0,
-    "note": "REVIEW_REQUIRED always carries a concrete reviewRequiredReason (owner policy or PDF lookup); nothing is left as \"not yet examined\"."
+    "note": "All 92 adjudicated. REVIEW_REQUIRED = 0."
   },
   "records": [
     {
@@ -691,11 +691,11 @@
       "treeId": "e85cb1a787e24cac",
       "treeName": "Midichlorian",
       "group": "DEFERRED_PRODUCTION_ONLY",
-      "finalDisposition": "REVIEW_REQUIRED",
+      "finalDisposition": "MOVE_HOMEBREW_PACK",
       "survivorId": null,
-      "adjudicationStatus": "BLOCKED_ON_OWNER_POLICY",
+      "adjudicationStatus": "ADJUDICATED",
       "evidence": {
-        "status": "NO_OFFICIAL_SUPPORT_FOUND_BLOCKED_ON_POLICY",
+        "status": "ADJUDICATED_NONCANONICAL_OWNER_RULING",
         "conclusion": "No verbatim text and no talent of this name in any of the 14 committed sourcebook TXT files, and no canonical identity matches it.",
         "findings": [
           "textSupport gives the best 5-gram containment against every TXT and against the canonical corpus.",
@@ -713,11 +713,46 @@
         "registryStatus": "REPO_ONLY_NONCANONICAL_HOMEBREW",
         "pdfRequired": false
       },
-      "referencesToRepoint": null,
+      "referencesToRepoint": {
+        "structural": [
+          {
+            "file": "packs/talent_trees.db",
+            "treeId": "e85cb1a787e24cac",
+            "action": "move whole tree document (same _id) to the homebrew tree pack"
+          },
+          {
+            "file": "data/generated/talent-trees.registry.json + data/fixes/talent-trees.registry.json",
+            "action": "regenerate with tools/build-talent-tree-registry.mjs"
+          }
+        ],
+        "actorPackEmbeddedItems": [],
+        "note": "Embedded actor items (if any) must have flags.core.sourceId rewritten from the talents pack to the homebrew pack before the source document leaves the canonical pack."
+      },
       "metadataTransfer": [],
-      "expectedFinal": null,
+      "expectedFinal": {
+        "recordExists": false,
+        "homebrewPackRecordExists": true,
+        "homebrewPack": "talents-homebrew",
+        "idPreserved": true,
+        "treeMembership": "tree Midichlorian e85cb1a787e24cac moves to the homebrew tree pack",
+        "classAccess": "no canonical class references the moved tree (verified by the dry run)",
+        "canonicalRecordsTouched": []
+      },
       "phase3cCanonicalRecordTouched": false,
-      "reviewRequiredReason": "UNSOURCED_OWNER_POLICY"
+      "ownerRuling": {
+        "decision": "OWNER_RULING_DECISION_1",
+        "summary": "Move all 50 homebrew/unsourced records (ids preserved, automation metadata preserved) into a separate explicitly noncanonical homebrew compendium; preserve exclusively-homebrew trees with them; remove those trees from canonical class access/registries; audit embedded actor references first; never present them as official SWSE content."
+      },
+      "previousReviewRequiredReason": "UNSOURCED_OWNER_POLICY",
+      "metadataReview": "Whole record (including abilityMeta, tags, flags, prerequisitesStructured, effects) moves unchanged; nothing is dropped.",
+      "homebrewMove": {
+        "targetPack": "talents-homebrew",
+        "idPreserved": true,
+        "treeHandling": "TREE_MOVES_WITH_RECORDS",
+        "treeId": "e85cb1a787e24cac",
+        "treeName": "Midichlorian",
+        "canonicalMembersRemainingInTree": 0
+      }
     },
     {
       "productionId": "0de7338c2b984b96",
@@ -725,11 +760,11 @@
       "treeId": "8955568285ba4115",
       "treeName": "Bomarr Monk",
       "group": "DEFERRED_PRODUCTION_ONLY",
-      "finalDisposition": "REVIEW_REQUIRED",
+      "finalDisposition": "MOVE_HOMEBREW_PACK",
       "survivorId": null,
-      "adjudicationStatus": "BLOCKED_ON_OWNER_POLICY",
+      "adjudicationStatus": "ADJUDICATED",
       "evidence": {
-        "status": "NO_OFFICIAL_SUPPORT_FOUND_BLOCKED_ON_POLICY",
+        "status": "ADJUDICATED_NONCANONICAL_OWNER_RULING",
         "conclusion": "No verbatim text and no talent of this name in any of the 14 committed sourcebook TXT files, and no canonical identity matches it.",
         "findings": [
           "textSupport gives the best 5-gram containment against every TXT and against the canonical corpus.",
@@ -747,11 +782,46 @@
         "registryStatus": "REPO_ONLY_NONCANONICAL_HOMEBREW",
         "pdfRequired": false
       },
-      "referencesToRepoint": null,
+      "referencesToRepoint": {
+        "structural": [
+          {
+            "file": "packs/talent_trees.db",
+            "treeId": "8955568285ba4115",
+            "action": "move whole tree document (same _id) to the homebrew tree pack"
+          },
+          {
+            "file": "data/generated/talent-trees.registry.json + data/fixes/talent-trees.registry.json",
+            "action": "regenerate with tools/build-talent-tree-registry.mjs"
+          }
+        ],
+        "actorPackEmbeddedItems": [],
+        "note": "Embedded actor items (if any) must have flags.core.sourceId rewritten from the talents pack to the homebrew pack before the source document leaves the canonical pack."
+      },
       "metadataTransfer": [],
-      "expectedFinal": null,
+      "expectedFinal": {
+        "recordExists": false,
+        "homebrewPackRecordExists": true,
+        "homebrewPack": "talents-homebrew",
+        "idPreserved": true,
+        "treeMembership": "tree Bomarr Monk 8955568285ba4115 moves to the homebrew tree pack",
+        "classAccess": "no canonical class references the moved tree (verified by the dry run)",
+        "canonicalRecordsTouched": []
+      },
       "phase3cCanonicalRecordTouched": false,
-      "reviewRequiredReason": "UNSOURCED_OWNER_POLICY"
+      "ownerRuling": {
+        "decision": "OWNER_RULING_DECISION_1",
+        "summary": "Move all 50 homebrew/unsourced records (ids preserved, automation metadata preserved) into a separate explicitly noncanonical homebrew compendium; preserve exclusively-homebrew trees with them; remove those trees from canonical class access/registries; audit embedded actor references first; never present them as official SWSE content."
+      },
+      "previousReviewRequiredReason": "UNSOURCED_OWNER_POLICY",
+      "metadataReview": "Whole record (including abilityMeta, tags, flags, prerequisitesStructured, effects) moves unchanged; nothing is dropped.",
+      "homebrewMove": {
+        "targetPack": "talents-homebrew",
+        "idPreserved": true,
+        "treeHandling": "TREE_MOVES_WITH_RECORDS",
+        "treeId": "8955568285ba4115",
+        "treeName": "Bomarr Monk",
+        "canonicalMembersRemainingInTree": 0
+      }
     },
     {
       "productionId": "0e6854d8aacc48dc",
@@ -830,11 +900,11 @@
       "treeId": "0a61ab9ece844326",
       "treeName": "Morgukai Warrior",
       "group": "DEFERRED_PRODUCTION_ONLY",
-      "finalDisposition": "REVIEW_REQUIRED",
+      "finalDisposition": "MOVE_HOMEBREW_PACK",
       "survivorId": null,
-      "adjudicationStatus": "BLOCKED_ON_OWNER_POLICY",
+      "adjudicationStatus": "ADJUDICATED",
       "evidence": {
-        "status": "NO_OFFICIAL_SUPPORT_FOUND_BLOCKED_ON_POLICY",
+        "status": "ADJUDICATED_NONCANONICAL_OWNER_RULING",
         "conclusion": "No verbatim text and no talent of this name in any of the 14 committed sourcebook TXT files, and no canonical identity matches it.",
         "findings": [
           "textSupport gives the best 5-gram containment against every TXT and against the canonical corpus.",
@@ -852,11 +922,46 @@
         "registryStatus": "REPO_ONLY_NONCANONICAL_HOMEBREW",
         "pdfRequired": false
       },
-      "referencesToRepoint": null,
+      "referencesToRepoint": {
+        "structural": [
+          {
+            "file": "packs/talent_trees.db",
+            "treeId": "0a61ab9ece844326",
+            "action": "move whole tree document (same _id) to the homebrew tree pack"
+          },
+          {
+            "file": "data/generated/talent-trees.registry.json + data/fixes/talent-trees.registry.json",
+            "action": "regenerate with tools/build-talent-tree-registry.mjs"
+          }
+        ],
+        "actorPackEmbeddedItems": [],
+        "note": "Embedded actor items (if any) must have flags.core.sourceId rewritten from the talents pack to the homebrew pack before the source document leaves the canonical pack."
+      },
       "metadataTransfer": [],
-      "expectedFinal": null,
+      "expectedFinal": {
+        "recordExists": false,
+        "homebrewPackRecordExists": true,
+        "homebrewPack": "talents-homebrew",
+        "idPreserved": true,
+        "treeMembership": "tree Morgukai Warrior 0a61ab9ece844326 moves to the homebrew tree pack",
+        "classAccess": "no canonical class references the moved tree (verified by the dry run)",
+        "canonicalRecordsTouched": []
+      },
       "phase3cCanonicalRecordTouched": false,
-      "reviewRequiredReason": "UNSOURCED_OWNER_POLICY"
+      "ownerRuling": {
+        "decision": "OWNER_RULING_DECISION_1",
+        "summary": "Move all 50 homebrew/unsourced records (ids preserved, automation metadata preserved) into a separate explicitly noncanonical homebrew compendium; preserve exclusively-homebrew trees with them; remove those trees from canonical class access/registries; audit embedded actor references first; never present them as official SWSE content."
+      },
+      "previousReviewRequiredReason": "UNSOURCED_OWNER_POLICY",
+      "metadataReview": "Whole record (including abilityMeta, tags, flags, prerequisitesStructured, effects) moves unchanged; nothing is dropped.",
+      "homebrewMove": {
+        "targetPack": "talents-homebrew",
+        "idPreserved": true,
+        "treeHandling": "TREE_MOVES_WITH_RECORDS",
+        "treeId": "0a61ab9ece844326",
+        "treeName": "Morgukai Warrior",
+        "canonicalMembersRemainingInTree": 0
+      }
     },
     {
       "productionId": "12e6b524fc6959b6",
@@ -935,11 +1040,11 @@
       "treeId": "ed899f9f41fc1391",
       "treeName": "Beastwarden",
       "group": "DEFERRED_PRODUCTION_ONLY",
-      "finalDisposition": "REVIEW_REQUIRED",
+      "finalDisposition": "MOVE_HOMEBREW_PACK",
       "survivorId": null,
-      "adjudicationStatus": "BLOCKED_ON_OWNER_POLICY",
+      "adjudicationStatus": "ADJUDICATED",
       "evidence": {
-        "status": "NO_OFFICIAL_SUPPORT_FOUND_BLOCKED_ON_POLICY",
+        "status": "ADJUDICATED_NONCANONICAL_OWNER_RULING",
         "conclusion": "No verbatim text and no talent of this name in any of the 14 committed sourcebook TXT files, and no canonical identity matches it.",
         "findings": [
           "textSupport gives the best 5-gram containment against every TXT and against the canonical corpus.",
@@ -957,11 +1062,46 @@
         "registryStatus": "REPO_TREE_PRESENT",
         "pdfRequired": false
       },
-      "referencesToRepoint": null,
+      "referencesToRepoint": {
+        "structural": [
+          {
+            "file": "packs/talent_trees.db",
+            "treeId": "ed899f9f41fc1391",
+            "action": "remove system.talentIds[14cc3ddc051f4ece] and its talentNames entry from the canonical tree"
+          },
+          {
+            "file": "data/generated/talent-trees.registry.json + data/fixes/talent-trees.registry.json",
+            "action": "regenerate with tools/build-talent-tree-registry.mjs"
+          }
+        ],
+        "actorPackEmbeddedItems": [],
+        "note": "Embedded actor items (if any) must have flags.core.sourceId rewritten from the talents pack to the homebrew pack before the source document leaves the canonical pack."
+      },
       "metadataTransfer": [],
-      "expectedFinal": null,
+      "expectedFinal": {
+        "recordExists": false,
+        "homebrewPackRecordExists": true,
+        "homebrewPack": "talents-homebrew",
+        "idPreserved": true,
+        "treeMembership": "removed from canonical tree Beastwarden ed899f9f41fc1391",
+        "classAccess": "no canonical class references the moved tree (verified by the dry run)",
+        "canonicalRecordsTouched": []
+      },
       "phase3cCanonicalRecordTouched": false,
-      "reviewRequiredReason": "UNSOURCED_OWNER_POLICY"
+      "ownerRuling": {
+        "decision": "OWNER_RULING_DECISION_1",
+        "summary": "Move all 50 homebrew/unsourced records (ids preserved, automation metadata preserved) into a separate explicitly noncanonical homebrew compendium; preserve exclusively-homebrew trees with them; remove those trees from canonical class access/registries; audit embedded actor references first; never present them as official SWSE content."
+      },
+      "previousReviewRequiredReason": "UNSOURCED_OWNER_POLICY",
+      "metadataReview": "Whole record (including abilityMeta, tags, flags, prerequisitesStructured, effects) moves unchanged; nothing is dropped.",
+      "homebrewMove": {
+        "targetPack": "talents-homebrew",
+        "idPreserved": true,
+        "treeHandling": "TREE_STAYS_CANONICAL_MEMBER_LEAVES",
+        "treeId": "ed899f9f41fc1391",
+        "treeName": "Beastwarden",
+        "canonicalMembersRemainingInTree": 5
+      }
     },
     {
       "productionId": "192279eaa0b61d36",
@@ -1030,11 +1170,11 @@
       "treeId": "25d99948c9cb41ad",
       "treeName": "Jumptrooper",
       "group": "DEFERRED_PRODUCTION_ONLY",
-      "finalDisposition": "REVIEW_REQUIRED",
+      "finalDisposition": "MOVE_HOMEBREW_PACK",
       "survivorId": null,
-      "adjudicationStatus": "BLOCKED_ON_OWNER_POLICY",
+      "adjudicationStatus": "ADJUDICATED",
       "evidence": {
-        "status": "NO_OFFICIAL_SUPPORT_FOUND_BLOCKED_ON_POLICY",
+        "status": "ADJUDICATED_NONCANONICAL_OWNER_RULING",
         "conclusion": "No verbatim text and no talent of this name in any of the 14 committed sourcebook TXT files, and no canonical identity matches it.",
         "findings": [
           "textSupport gives the best 5-gram containment against every TXT and against the canonical corpus.",
@@ -1052,11 +1192,46 @@
         "registryStatus": "REPO_ONLY_NONCANONICAL_HOMEBREW",
         "pdfRequired": false
       },
-      "referencesToRepoint": null,
+      "referencesToRepoint": {
+        "structural": [
+          {
+            "file": "packs/talent_trees.db",
+            "treeId": "25d99948c9cb41ad",
+            "action": "move whole tree document (same _id) to the homebrew tree pack"
+          },
+          {
+            "file": "data/generated/talent-trees.registry.json + data/fixes/talent-trees.registry.json",
+            "action": "regenerate with tools/build-talent-tree-registry.mjs"
+          }
+        ],
+        "actorPackEmbeddedItems": [],
+        "note": "Embedded actor items (if any) must have flags.core.sourceId rewritten from the talents pack to the homebrew pack before the source document leaves the canonical pack."
+      },
       "metadataTransfer": [],
-      "expectedFinal": null,
+      "expectedFinal": {
+        "recordExists": false,
+        "homebrewPackRecordExists": true,
+        "homebrewPack": "talents-homebrew",
+        "idPreserved": true,
+        "treeMembership": "tree Jumptrooper 25d99948c9cb41ad moves to the homebrew tree pack",
+        "classAccess": "no canonical class references the moved tree (verified by the dry run)",
+        "canonicalRecordsTouched": []
+      },
       "phase3cCanonicalRecordTouched": false,
-      "reviewRequiredReason": "UNSOURCED_OWNER_POLICY"
+      "ownerRuling": {
+        "decision": "OWNER_RULING_DECISION_1",
+        "summary": "Move all 50 homebrew/unsourced records (ids preserved, automation metadata preserved) into a separate explicitly noncanonical homebrew compendium; preserve exclusively-homebrew trees with them; remove those trees from canonical class access/registries; audit embedded actor references first; never present them as official SWSE content."
+      },
+      "previousReviewRequiredReason": "UNSOURCED_OWNER_POLICY",
+      "metadataReview": "Whole record (including abilityMeta, tags, flags, prerequisitesStructured, effects) moves unchanged; nothing is dropped.",
+      "homebrewMove": {
+        "targetPack": "talents-homebrew",
+        "idPreserved": true,
+        "treeHandling": "TREE_MOVES_WITH_RECORDS",
+        "treeId": "25d99948c9cb41ad",
+        "treeName": "Jumptrooper",
+        "canonicalMembersRemainingInTree": 0
+      }
     },
     {
       "productionId": "208e1e15e989323f",
@@ -1109,11 +1284,11 @@
       "treeId": "acb91d3803eb4fcd",
       "treeName": "Cowardice",
       "group": "DEFERRED_PRODUCTION_ONLY",
-      "finalDisposition": "REVIEW_REQUIRED",
+      "finalDisposition": "MOVE_HOMEBREW_PACK",
       "survivorId": null,
-      "adjudicationStatus": "BLOCKED_ON_OWNER_POLICY",
+      "adjudicationStatus": "ADJUDICATED",
       "evidence": {
-        "status": "NO_OFFICIAL_SUPPORT_FOUND_BLOCKED_ON_POLICY",
+        "status": "ADJUDICATED_NONCANONICAL_OWNER_RULING",
         "conclusion": "No verbatim text and no talent of this name in any of the 14 committed sourcebook TXT files, and no canonical identity matches it.",
         "findings": [
           "textSupport gives the best 5-gram containment against every TXT and against the canonical corpus.",
@@ -1131,11 +1306,46 @@
         "registryStatus": "REPO_ONLY_NONCANONICAL_HOMEBREW",
         "pdfRequired": false
       },
-      "referencesToRepoint": null,
+      "referencesToRepoint": {
+        "structural": [
+          {
+            "file": "packs/talent_trees.db",
+            "treeId": "acb91d3803eb4fcd",
+            "action": "move whole tree document (same _id) to the homebrew tree pack"
+          },
+          {
+            "file": "data/generated/talent-trees.registry.json + data/fixes/talent-trees.registry.json",
+            "action": "regenerate with tools/build-talent-tree-registry.mjs"
+          }
+        ],
+        "actorPackEmbeddedItems": [],
+        "note": "Embedded actor items (if any) must have flags.core.sourceId rewritten from the talents pack to the homebrew pack before the source document leaves the canonical pack."
+      },
       "metadataTransfer": [],
-      "expectedFinal": null,
+      "expectedFinal": {
+        "recordExists": false,
+        "homebrewPackRecordExists": true,
+        "homebrewPack": "talents-homebrew",
+        "idPreserved": true,
+        "treeMembership": "tree Cowardice acb91d3803eb4fcd moves to the homebrew tree pack",
+        "classAccess": "no canonical class references the moved tree (verified by the dry run)",
+        "canonicalRecordsTouched": []
+      },
       "phase3cCanonicalRecordTouched": false,
-      "reviewRequiredReason": "UNSOURCED_OWNER_POLICY"
+      "ownerRuling": {
+        "decision": "OWNER_RULING_DECISION_1",
+        "summary": "Move all 50 homebrew/unsourced records (ids preserved, automation metadata preserved) into a separate explicitly noncanonical homebrew compendium; preserve exclusively-homebrew trees with them; remove those trees from canonical class access/registries; audit embedded actor references first; never present them as official SWSE content."
+      },
+      "previousReviewRequiredReason": "UNSOURCED_OWNER_POLICY",
+      "metadataReview": "Whole record (including abilityMeta, tags, flags, prerequisitesStructured, effects) moves unchanged; nothing is dropped.",
+      "homebrewMove": {
+        "targetPack": "talents-homebrew",
+        "idPreserved": true,
+        "treeHandling": "TREE_MOVES_WITH_RECORDS",
+        "treeId": "acb91d3803eb4fcd",
+        "treeName": "Cowardice",
+        "canonicalMembersRemainingInTree": 0
+      }
     },
     {
       "productionId": "23852d30490fc1e4",
@@ -1210,11 +1420,11 @@
       "treeId": "8e44e56069274319",
       "treeName": "Cloner",
       "group": "DEFERRED_PRODUCTION_ONLY",
-      "finalDisposition": "REVIEW_REQUIRED",
+      "finalDisposition": "MOVE_HOMEBREW_PACK",
       "survivorId": null,
-      "adjudicationStatus": "BLOCKED_ON_OWNER_POLICY",
+      "adjudicationStatus": "ADJUDICATED",
       "evidence": {
-        "status": "NO_OFFICIAL_SUPPORT_FOUND_BLOCKED_ON_POLICY",
+        "status": "ADJUDICATED_NONCANONICAL_OWNER_RULING",
         "conclusion": "No verbatim text and no talent of this name in any of the 14 committed sourcebook TXT files, and no canonical identity matches it.",
         "findings": [
           "textSupport gives the best 5-gram containment against every TXT and against the canonical corpus.",
@@ -1232,11 +1442,46 @@
         "registryStatus": "REPO_ONLY_NONCANONICAL_HOMEBREW",
         "pdfRequired": false
       },
-      "referencesToRepoint": null,
+      "referencesToRepoint": {
+        "structural": [
+          {
+            "file": "packs/talent_trees.db",
+            "treeId": "8e44e56069274319",
+            "action": "move whole tree document (same _id) to the homebrew tree pack"
+          },
+          {
+            "file": "data/generated/talent-trees.registry.json + data/fixes/talent-trees.registry.json",
+            "action": "regenerate with tools/build-talent-tree-registry.mjs"
+          }
+        ],
+        "actorPackEmbeddedItems": [],
+        "note": "Embedded actor items (if any) must have flags.core.sourceId rewritten from the talents pack to the homebrew pack before the source document leaves the canonical pack."
+      },
       "metadataTransfer": [],
-      "expectedFinal": null,
+      "expectedFinal": {
+        "recordExists": false,
+        "homebrewPackRecordExists": true,
+        "homebrewPack": "talents-homebrew",
+        "idPreserved": true,
+        "treeMembership": "tree Cloner 8e44e56069274319 moves to the homebrew tree pack",
+        "classAccess": "no canonical class references the moved tree (verified by the dry run)",
+        "canonicalRecordsTouched": []
+      },
       "phase3cCanonicalRecordTouched": false,
-      "reviewRequiredReason": "UNSOURCED_OWNER_POLICY"
+      "ownerRuling": {
+        "decision": "OWNER_RULING_DECISION_1",
+        "summary": "Move all 50 homebrew/unsourced records (ids preserved, automation metadata preserved) into a separate explicitly noncanonical homebrew compendium; preserve exclusively-homebrew trees with them; remove those trees from canonical class access/registries; audit embedded actor references first; never present them as official SWSE content."
+      },
+      "previousReviewRequiredReason": "UNSOURCED_OWNER_POLICY",
+      "metadataReview": "Whole record (including abilityMeta, tags, flags, prerequisitesStructured, effects) moves unchanged; nothing is dropped.",
+      "homebrewMove": {
+        "targetPack": "talents-homebrew",
+        "idPreserved": true,
+        "treeHandling": "TREE_MOVES_WITH_RECORDS",
+        "treeId": "8e44e56069274319",
+        "treeName": "Cloner",
+        "canonicalMembersRemainingInTree": 0
+      }
     },
     {
       "productionId": "271024ca2ac6c04b",
@@ -1315,11 +1560,11 @@
       "treeId": "4007fa87192b5884",
       "treeName": "Mercenary",
       "group": "DEFERRED_PRODUCTION_ONLY",
-      "finalDisposition": "REVIEW_REQUIRED",
+      "finalDisposition": "MOVE_HOMEBREW_PACK",
       "survivorId": null,
-      "adjudicationStatus": "BLOCKED_ON_OWNER_POLICY",
+      "adjudicationStatus": "ADJUDICATED",
       "evidence": {
-        "status": "NO_OFFICIAL_SUPPORT_FOUND_BLOCKED_ON_POLICY",
+        "status": "ADJUDICATED_NONCANONICAL_OWNER_RULING",
         "conclusion": "No verbatim text and no talent of this name in any of the 14 committed sourcebook TXT files, and no canonical identity matches it.",
         "findings": [
           "textSupport gives the best 5-gram containment against every TXT and against the canonical corpus.",
@@ -1337,11 +1582,46 @@
         "registryStatus": "REPO_TREE_PRESENT",
         "pdfRequired": false
       },
-      "referencesToRepoint": null,
+      "referencesToRepoint": {
+        "structural": [
+          {
+            "file": "packs/talent_trees.db",
+            "treeId": "4007fa87192b5884",
+            "action": "remove system.talentIds[2c27842384e55cb2] and its talentNames entry from the canonical tree"
+          },
+          {
+            "file": "data/generated/talent-trees.registry.json + data/fixes/talent-trees.registry.json",
+            "action": "regenerate with tools/build-talent-tree-registry.mjs"
+          }
+        ],
+        "actorPackEmbeddedItems": [],
+        "note": "Embedded actor items (if any) must have flags.core.sourceId rewritten from the talents pack to the homebrew pack before the source document leaves the canonical pack."
+      },
       "metadataTransfer": [],
-      "expectedFinal": null,
+      "expectedFinal": {
+        "recordExists": false,
+        "homebrewPackRecordExists": true,
+        "homebrewPack": "talents-homebrew",
+        "idPreserved": true,
+        "treeMembership": "removed from canonical tree Mercenary 4007fa87192b5884",
+        "classAccess": "no canonical class references the moved tree (verified by the dry run)",
+        "canonicalRecordsTouched": []
+      },
       "phase3cCanonicalRecordTouched": false,
-      "reviewRequiredReason": "UNSOURCED_OWNER_POLICY"
+      "ownerRuling": {
+        "decision": "OWNER_RULING_DECISION_1",
+        "summary": "Move all 50 homebrew/unsourced records (ids preserved, automation metadata preserved) into a separate explicitly noncanonical homebrew compendium; preserve exclusively-homebrew trees with them; remove those trees from canonical class access/registries; audit embedded actor references first; never present them as official SWSE content."
+      },
+      "previousReviewRequiredReason": "UNSOURCED_OWNER_POLICY",
+      "metadataReview": "Whole record (including abilityMeta, tags, flags, prerequisitesStructured, effects) moves unchanged; nothing is dropped.",
+      "homebrewMove": {
+        "targetPack": "talents-homebrew",
+        "idPreserved": true,
+        "treeHandling": "TREE_STAYS_CANONICAL_MEMBER_LEAVES",
+        "treeId": "4007fa87192b5884",
+        "treeName": "Mercenary",
+        "canonicalMembersRemainingInTree": 5
+      }
     },
     {
       "productionId": "2f6bdc483d8f4aa8",
@@ -1349,11 +1629,11 @@
       "treeId": "8955568285ba4115",
       "treeName": "Bomarr Monk",
       "group": "DEFERRED_PRODUCTION_ONLY",
-      "finalDisposition": "REVIEW_REQUIRED",
+      "finalDisposition": "MOVE_HOMEBREW_PACK",
       "survivorId": null,
-      "adjudicationStatus": "BLOCKED_ON_OWNER_POLICY",
+      "adjudicationStatus": "ADJUDICATED",
       "evidence": {
-        "status": "NO_OFFICIAL_SUPPORT_FOUND_BLOCKED_ON_POLICY",
+        "status": "ADJUDICATED_NONCANONICAL_OWNER_RULING",
         "conclusion": "No verbatim text and no talent of this name in any of the 14 committed sourcebook TXT files, and no canonical identity matches it.",
         "findings": [
           "textSupport gives the best 5-gram containment against every TXT and against the canonical corpus.",
@@ -1371,11 +1651,46 @@
         "registryStatus": "REPO_ONLY_NONCANONICAL_HOMEBREW",
         "pdfRequired": false
       },
-      "referencesToRepoint": null,
+      "referencesToRepoint": {
+        "structural": [
+          {
+            "file": "packs/talent_trees.db",
+            "treeId": "8955568285ba4115",
+            "action": "move whole tree document (same _id) to the homebrew tree pack"
+          },
+          {
+            "file": "data/generated/talent-trees.registry.json + data/fixes/talent-trees.registry.json",
+            "action": "regenerate with tools/build-talent-tree-registry.mjs"
+          }
+        ],
+        "actorPackEmbeddedItems": [],
+        "note": "Embedded actor items (if any) must have flags.core.sourceId rewritten from the talents pack to the homebrew pack before the source document leaves the canonical pack."
+      },
       "metadataTransfer": [],
-      "expectedFinal": null,
+      "expectedFinal": {
+        "recordExists": false,
+        "homebrewPackRecordExists": true,
+        "homebrewPack": "talents-homebrew",
+        "idPreserved": true,
+        "treeMembership": "tree Bomarr Monk 8955568285ba4115 moves to the homebrew tree pack",
+        "classAccess": "no canonical class references the moved tree (verified by the dry run)",
+        "canonicalRecordsTouched": []
+      },
       "phase3cCanonicalRecordTouched": false,
-      "reviewRequiredReason": "UNSOURCED_OWNER_POLICY"
+      "ownerRuling": {
+        "decision": "OWNER_RULING_DECISION_1",
+        "summary": "Move all 50 homebrew/unsourced records (ids preserved, automation metadata preserved) into a separate explicitly noncanonical homebrew compendium; preserve exclusively-homebrew trees with them; remove those trees from canonical class access/registries; audit embedded actor references first; never present them as official SWSE content."
+      },
+      "previousReviewRequiredReason": "UNSOURCED_OWNER_POLICY",
+      "metadataReview": "Whole record (including abilityMeta, tags, flags, prerequisitesStructured, effects) moves unchanged; nothing is dropped.",
+      "homebrewMove": {
+        "targetPack": "talents-homebrew",
+        "idPreserved": true,
+        "treeHandling": "TREE_MOVES_WITH_RECORDS",
+        "treeId": "8955568285ba4115",
+        "treeName": "Bomarr Monk",
+        "canonicalMembersRemainingInTree": 0
+      }
     },
     {
       "productionId": "35350a8b3d2a4810",
@@ -1443,11 +1758,11 @@
       "treeId": "25d99948c9cb41ad",
       "treeName": "Jumptrooper",
       "group": "DEFERRED_PRODUCTION_ONLY",
-      "finalDisposition": "REVIEW_REQUIRED",
+      "finalDisposition": "MOVE_HOMEBREW_PACK",
       "survivorId": null,
-      "adjudicationStatus": "BLOCKED_ON_OWNER_POLICY",
+      "adjudicationStatus": "ADJUDICATED",
       "evidence": {
-        "status": "NO_OFFICIAL_SUPPORT_FOUND_BLOCKED_ON_POLICY",
+        "status": "ADJUDICATED_NONCANONICAL_OWNER_RULING",
         "conclusion": "No verbatim text and no talent of this name in any of the 14 committed sourcebook TXT files, and no canonical identity matches it.",
         "findings": [
           "textSupport gives the best 5-gram containment against every TXT and against the canonical corpus.",
@@ -1465,11 +1780,46 @@
         "registryStatus": "REPO_ONLY_NONCANONICAL_HOMEBREW",
         "pdfRequired": false
       },
-      "referencesToRepoint": null,
+      "referencesToRepoint": {
+        "structural": [
+          {
+            "file": "packs/talent_trees.db",
+            "treeId": "25d99948c9cb41ad",
+            "action": "move whole tree document (same _id) to the homebrew tree pack"
+          },
+          {
+            "file": "data/generated/talent-trees.registry.json + data/fixes/talent-trees.registry.json",
+            "action": "regenerate with tools/build-talent-tree-registry.mjs"
+          }
+        ],
+        "actorPackEmbeddedItems": [],
+        "note": "Embedded actor items (if any) must have flags.core.sourceId rewritten from the talents pack to the homebrew pack before the source document leaves the canonical pack."
+      },
       "metadataTransfer": [],
-      "expectedFinal": null,
+      "expectedFinal": {
+        "recordExists": false,
+        "homebrewPackRecordExists": true,
+        "homebrewPack": "talents-homebrew",
+        "idPreserved": true,
+        "treeMembership": "tree Jumptrooper 25d99948c9cb41ad moves to the homebrew tree pack",
+        "classAccess": "no canonical class references the moved tree (verified by the dry run)",
+        "canonicalRecordsTouched": []
+      },
       "phase3cCanonicalRecordTouched": false,
-      "reviewRequiredReason": "UNSOURCED_OWNER_POLICY"
+      "ownerRuling": {
+        "decision": "OWNER_RULING_DECISION_1",
+        "summary": "Move all 50 homebrew/unsourced records (ids preserved, automation metadata preserved) into a separate explicitly noncanonical homebrew compendium; preserve exclusively-homebrew trees with them; remove those trees from canonical class access/registries; audit embedded actor references first; never present them as official SWSE content."
+      },
+      "previousReviewRequiredReason": "UNSOURCED_OWNER_POLICY",
+      "metadataReview": "Whole record (including abilityMeta, tags, flags, prerequisitesStructured, effects) moves unchanged; nothing is dropped.",
+      "homebrewMove": {
+        "targetPack": "talents-homebrew",
+        "idPreserved": true,
+        "treeHandling": "TREE_MOVES_WITH_RECORDS",
+        "treeId": "25d99948c9cb41ad",
+        "treeName": "Jumptrooper",
+        "canonicalMembersRemainingInTree": 0
+      }
     },
     {
       "productionId": "3cc9552cfab59676",
@@ -1562,11 +1912,11 @@
       "treeId": "e35ee41362604227",
       "treeName": "Force Adept",
       "group": "DEFERRED_PRODUCTION_ONLY",
-      "finalDisposition": "REVIEW_REQUIRED",
+      "finalDisposition": "MOVE_HOMEBREW_PACK",
       "survivorId": null,
-      "adjudicationStatus": "BLOCKED_ON_OWNER_POLICY",
+      "adjudicationStatus": "ADJUDICATED",
       "evidence": {
-        "status": "NO_OFFICIAL_SUPPORT_FOUND_BLOCKED_ON_POLICY",
+        "status": "ADJUDICATED_NONCANONICAL_OWNER_RULING",
         "conclusion": "No verbatim text and no talent of this name in any of the 14 committed sourcebook TXT files, and no canonical identity matches it.",
         "findings": [
           "textSupport gives the best 5-gram containment against every TXT and against the canonical corpus.",
@@ -1584,11 +1934,46 @@
         "registryStatus": "REPO_TREE_PRESENT",
         "pdfRequired": false
       },
-      "referencesToRepoint": null,
+      "referencesToRepoint": {
+        "structural": [
+          {
+            "file": "packs/talent_trees.db",
+            "treeId": "e35ee41362604227",
+            "action": "remove system.talentIds[3df46d093b31411d] and its talentNames entry from the canonical tree"
+          },
+          {
+            "file": "data/generated/talent-trees.registry.json + data/fixes/talent-trees.registry.json",
+            "action": "regenerate with tools/build-talent-tree-registry.mjs"
+          }
+        ],
+        "actorPackEmbeddedItems": [],
+        "note": "Embedded actor items (if any) must have flags.core.sourceId rewritten from the talents pack to the homebrew pack before the source document leaves the canonical pack."
+      },
       "metadataTransfer": [],
-      "expectedFinal": null,
+      "expectedFinal": {
+        "recordExists": false,
+        "homebrewPackRecordExists": true,
+        "homebrewPack": "talents-homebrew",
+        "idPreserved": true,
+        "treeMembership": "removed from canonical tree Force Adept e35ee41362604227",
+        "classAccess": "no canonical class references the moved tree (verified by the dry run)",
+        "canonicalRecordsTouched": []
+      },
       "phase3cCanonicalRecordTouched": false,
-      "reviewRequiredReason": "UNSOURCED_OWNER_POLICY"
+      "ownerRuling": {
+        "decision": "OWNER_RULING_DECISION_1",
+        "summary": "Move all 50 homebrew/unsourced records (ids preserved, automation metadata preserved) into a separate explicitly noncanonical homebrew compendium; preserve exclusively-homebrew trees with them; remove those trees from canonical class access/registries; audit embedded actor references first; never present them as official SWSE content."
+      },
+      "previousReviewRequiredReason": "UNSOURCED_OWNER_POLICY",
+      "metadataReview": "Whole record (including abilityMeta, tags, flags, prerequisitesStructured, effects) moves unchanged; nothing is dropped.",
+      "homebrewMove": {
+        "targetPack": "talents-homebrew",
+        "idPreserved": true,
+        "treeHandling": "TREE_STAYS_CANONICAL_MEMBER_LEAVES",
+        "treeId": "e35ee41362604227",
+        "treeName": "Force Adept",
+        "canonicalMembersRemainingInTree": 6
+      }
     },
     {
       "productionId": "3faa4d16e28d43e4",
@@ -1724,11 +2109,11 @@
       "treeId": "ed899f9f41fc1391",
       "treeName": "Beastwarden",
       "group": "DEFERRED_PRODUCTION_ONLY",
-      "finalDisposition": "REVIEW_REQUIRED",
+      "finalDisposition": "MOVE_HOMEBREW_PACK",
       "survivorId": null,
-      "adjudicationStatus": "BLOCKED_ON_OWNER_POLICY",
+      "adjudicationStatus": "ADJUDICATED",
       "evidence": {
-        "status": "ADJUDICATED_NOT_OFFICIAL_SWSE_BLOCKED_ON_POLICY",
+        "status": "ADJUDICATED_NONCANONICAL_OWNER_RULING",
         "conclusion": "Self-labelled \"Homebrew Reference Book\" text; not printed in any committed sourcebook.",
         "findings": [
           "textSupport gives the best 5-gram containment against every TXT and against the canonical corpus.",
@@ -1746,11 +2131,46 @@
         "registryStatus": "REPO_TREE_PRESENT",
         "pdfRequired": false
       },
-      "referencesToRepoint": null,
+      "referencesToRepoint": {
+        "structural": [
+          {
+            "file": "packs/talent_trees.db",
+            "treeId": "ed899f9f41fc1391",
+            "action": "remove system.talentIds[4632b4bf79044752] and its talentNames entry from the canonical tree"
+          },
+          {
+            "file": "data/generated/talent-trees.registry.json + data/fixes/talent-trees.registry.json",
+            "action": "regenerate with tools/build-talent-tree-registry.mjs"
+          }
+        ],
+        "actorPackEmbeddedItems": [],
+        "note": "Embedded actor items (if any) must have flags.core.sourceId rewritten from the talents pack to the homebrew pack before the source document leaves the canonical pack."
+      },
       "metadataTransfer": [],
-      "expectedFinal": null,
+      "expectedFinal": {
+        "recordExists": false,
+        "homebrewPackRecordExists": true,
+        "homebrewPack": "talents-homebrew",
+        "idPreserved": true,
+        "treeMembership": "removed from canonical tree Beastwarden ed899f9f41fc1391",
+        "classAccess": "no canonical class references the moved tree (verified by the dry run)",
+        "canonicalRecordsTouched": []
+      },
       "phase3cCanonicalRecordTouched": false,
-      "reviewRequiredReason": "HOMEBREW_POLICY_OWNER_DECISION"
+      "ownerRuling": {
+        "decision": "OWNER_RULING_DECISION_1",
+        "summary": "Move all 50 homebrew/unsourced records (ids preserved, automation metadata preserved) into a separate explicitly noncanonical homebrew compendium; preserve exclusively-homebrew trees with them; remove those trees from canonical class access/registries; audit embedded actor references first; never present them as official SWSE content."
+      },
+      "previousReviewRequiredReason": "HOMEBREW_POLICY_OWNER_DECISION",
+      "metadataReview": "Whole record (including abilityMeta, tags, flags, prerequisitesStructured, effects) moves unchanged; nothing is dropped.",
+      "homebrewMove": {
+        "targetPack": "talents-homebrew",
+        "idPreserved": true,
+        "treeHandling": "TREE_STAYS_CANONICAL_MEMBER_LEAVES",
+        "treeId": "ed899f9f41fc1391",
+        "treeName": "Beastwarden",
+        "canonicalMembersRemainingInTree": 5
+      }
     },
     {
       "productionId": "4d6c2d2398c33ba7",
@@ -1829,11 +2249,11 @@
       "treeId": "6ac3416fb6aada56",
       "treeName": "Alter",
       "group": "DEFERRED_PRODUCTION_ONLY",
-      "finalDisposition": "REVIEW_REQUIRED",
+      "finalDisposition": "MOVE_HOMEBREW_PACK",
       "survivorId": null,
-      "adjudicationStatus": "BLOCKED_ON_OWNER_POLICY",
+      "adjudicationStatus": "ADJUDICATED",
       "evidence": {
-        "status": "ADJUDICATED_NOT_OFFICIAL_SWSE_BLOCKED_ON_POLICY",
+        "status": "ADJUDICATED_NONCANONICAL_OWNER_RULING",
         "conclusion": "Self-labelled homebrew (Homebrew Reference Book: Legacy of the Force Sourcebook); not found in any committed sourcebook TXT.",
         "findings": [
           "benefit ends \"Homebrew Reference Book: Legacy of the Force Sourcebook\"; no Saga Edition sourcebook of that name exists in the corpus and \"Force Bond\" is not a talent in any TXT (the only hit is KOTOR prose about Bastila and Revan).",
@@ -1841,11 +2261,46 @@
         ],
         "pdfRequired": false
       },
-      "referencesToRepoint": null,
+      "referencesToRepoint": {
+        "structural": [
+          {
+            "file": "packs/talent_trees.db",
+            "treeId": "6ac3416fb6aada56",
+            "action": "remove system.talentIds[4d7d5a38d0394e4c] and its talentNames entry from the canonical tree"
+          },
+          {
+            "file": "data/generated/talent-trees.registry.json + data/fixes/talent-trees.registry.json",
+            "action": "regenerate with tools/build-talent-tree-registry.mjs"
+          }
+        ],
+        "actorPackEmbeddedItems": [],
+        "note": "Embedded actor items (if any) must have flags.core.sourceId rewritten from the talents pack to the homebrew pack before the source document leaves the canonical pack."
+      },
       "metadataTransfer": [],
-      "expectedFinal": null,
+      "expectedFinal": {
+        "recordExists": false,
+        "homebrewPackRecordExists": true,
+        "homebrewPack": "talents-homebrew",
+        "idPreserved": true,
+        "treeMembership": "removed from canonical tree Alter 6ac3416fb6aada56",
+        "classAccess": "no canonical class references the moved tree (verified by the dry run)",
+        "canonicalRecordsTouched": []
+      },
       "phase3cCanonicalRecordTouched": false,
-      "reviewRequiredReason": "HOMEBREW_POLICY_OWNER_DECISION"
+      "ownerRuling": {
+        "decision": "OWNER_RULING_DECISION_1",
+        "summary": "Move all 50 homebrew/unsourced records (ids preserved, automation metadata preserved) into a separate explicitly noncanonical homebrew compendium; preserve exclusively-homebrew trees with them; remove those trees from canonical class access/registries; audit embedded actor references first; never present them as official SWSE content."
+      },
+      "previousReviewRequiredReason": "HOMEBREW_POLICY_OWNER_DECISION",
+      "metadataReview": "Whole record (including abilityMeta, tags, flags, prerequisitesStructured, effects) moves unchanged; nothing is dropped.",
+      "homebrewMove": {
+        "targetPack": "talents-homebrew",
+        "idPreserved": true,
+        "treeHandling": "TREE_STAYS_CANONICAL_MEMBER_LEAVES",
+        "treeId": "6ac3416fb6aada56",
+        "treeName": "Alter",
+        "canonicalMembersRemainingInTree": 15
+      }
     },
     {
       "productionId": "4dfad6e363c11acf",
@@ -2103,11 +2558,11 @@
       "treeId": "acb91d3803eb4fcd",
       "treeName": "Cowardice",
       "group": "DEFERRED_PRODUCTION_ONLY",
-      "finalDisposition": "REVIEW_REQUIRED",
+      "finalDisposition": "MOVE_HOMEBREW_PACK",
       "survivorId": null,
-      "adjudicationStatus": "BLOCKED_ON_OWNER_POLICY",
+      "adjudicationStatus": "ADJUDICATED",
       "evidence": {
-        "status": "NO_OFFICIAL_SUPPORT_FOUND_BLOCKED_ON_POLICY",
+        "status": "ADJUDICATED_NONCANONICAL_OWNER_RULING",
         "conclusion": "No verbatim text and no talent of this name in any of the 14 committed sourcebook TXT files, and no canonical identity matches it.",
         "findings": [
           "textSupport gives the best 5-gram containment against every TXT and against the canonical corpus.",
@@ -2125,11 +2580,46 @@
         "registryStatus": "REPO_ONLY_NONCANONICAL_HOMEBREW",
         "pdfRequired": false
       },
-      "referencesToRepoint": null,
+      "referencesToRepoint": {
+        "structural": [
+          {
+            "file": "packs/talent_trees.db",
+            "treeId": "acb91d3803eb4fcd",
+            "action": "move whole tree document (same _id) to the homebrew tree pack"
+          },
+          {
+            "file": "data/generated/talent-trees.registry.json + data/fixes/talent-trees.registry.json",
+            "action": "regenerate with tools/build-talent-tree-registry.mjs"
+          }
+        ],
+        "actorPackEmbeddedItems": [],
+        "note": "Embedded actor items (if any) must have flags.core.sourceId rewritten from the talents pack to the homebrew pack before the source document leaves the canonical pack."
+      },
       "metadataTransfer": [],
-      "expectedFinal": null,
+      "expectedFinal": {
+        "recordExists": false,
+        "homebrewPackRecordExists": true,
+        "homebrewPack": "talents-homebrew",
+        "idPreserved": true,
+        "treeMembership": "tree Cowardice acb91d3803eb4fcd moves to the homebrew tree pack",
+        "classAccess": "no canonical class references the moved tree (verified by the dry run)",
+        "canonicalRecordsTouched": []
+      },
       "phase3cCanonicalRecordTouched": false,
-      "reviewRequiredReason": "UNSOURCED_OWNER_POLICY"
+      "ownerRuling": {
+        "decision": "OWNER_RULING_DECISION_1",
+        "summary": "Move all 50 homebrew/unsourced records (ids preserved, automation metadata preserved) into a separate explicitly noncanonical homebrew compendium; preserve exclusively-homebrew trees with them; remove those trees from canonical class access/registries; audit embedded actor references first; never present them as official SWSE content."
+      },
+      "previousReviewRequiredReason": "UNSOURCED_OWNER_POLICY",
+      "metadataReview": "Whole record (including abilityMeta, tags, flags, prerequisitesStructured, effects) moves unchanged; nothing is dropped.",
+      "homebrewMove": {
+        "targetPack": "talents-homebrew",
+        "idPreserved": true,
+        "treeHandling": "TREE_MOVES_WITH_RECORDS",
+        "treeId": "acb91d3803eb4fcd",
+        "treeName": "Cowardice",
+        "canonicalMembersRemainingInTree": 0
+      }
     },
     {
       "productionId": "5e4a7f98b1e74326",
@@ -2137,11 +2627,11 @@
       "treeId": "cfd358ef61fb47bd",
       "treeName": "Sorcerer Of Tund",
       "group": "DEFERRED_PRODUCTION_ONLY",
-      "finalDisposition": "REVIEW_REQUIRED",
+      "finalDisposition": "MOVE_HOMEBREW_PACK",
       "survivorId": null,
-      "adjudicationStatus": "BLOCKED_ON_OWNER_POLICY",
+      "adjudicationStatus": "ADJUDICATED",
       "evidence": {
-        "status": "NO_OFFICIAL_SUPPORT_FOUND_BLOCKED_ON_POLICY",
+        "status": "ADJUDICATED_NONCANONICAL_OWNER_RULING",
         "conclusion": "No verbatim text and no talent of this name in any of the 14 committed sourcebook TXT files, and no canonical identity matches it.",
         "findings": [
           "textSupport gives the best 5-gram containment against every TXT and against the canonical corpus.",
@@ -2159,11 +2649,46 @@
         "registryStatus": "REPO_ONLY_NONCANONICAL_HOMEBREW",
         "pdfRequired": false
       },
-      "referencesToRepoint": null,
+      "referencesToRepoint": {
+        "structural": [
+          {
+            "file": "packs/talent_trees.db",
+            "treeId": "cfd358ef61fb47bd",
+            "action": "move whole tree document (same _id) to the homebrew tree pack"
+          },
+          {
+            "file": "data/generated/talent-trees.registry.json + data/fixes/talent-trees.registry.json",
+            "action": "regenerate with tools/build-talent-tree-registry.mjs"
+          }
+        ],
+        "actorPackEmbeddedItems": [],
+        "note": "Embedded actor items (if any) must have flags.core.sourceId rewritten from the talents pack to the homebrew pack before the source document leaves the canonical pack."
+      },
       "metadataTransfer": [],
-      "expectedFinal": null,
+      "expectedFinal": {
+        "recordExists": false,
+        "homebrewPackRecordExists": true,
+        "homebrewPack": "talents-homebrew",
+        "idPreserved": true,
+        "treeMembership": "tree Sorcerer Of Tund cfd358ef61fb47bd moves to the homebrew tree pack",
+        "classAccess": "no canonical class references the moved tree (verified by the dry run)",
+        "canonicalRecordsTouched": []
+      },
       "phase3cCanonicalRecordTouched": false,
-      "reviewRequiredReason": "UNSOURCED_OWNER_POLICY"
+      "ownerRuling": {
+        "decision": "OWNER_RULING_DECISION_1",
+        "summary": "Move all 50 homebrew/unsourced records (ids preserved, automation metadata preserved) into a separate explicitly noncanonical homebrew compendium; preserve exclusively-homebrew trees with them; remove those trees from canonical class access/registries; audit embedded actor references first; never present them as official SWSE content."
+      },
+      "previousReviewRequiredReason": "UNSOURCED_OWNER_POLICY",
+      "metadataReview": "Whole record (including abilityMeta, tags, flags, prerequisitesStructured, effects) moves unchanged; nothing is dropped.",
+      "homebrewMove": {
+        "targetPack": "talents-homebrew",
+        "idPreserved": true,
+        "treeHandling": "TREE_MOVES_WITH_RECORDS",
+        "treeId": "cfd358ef61fb47bd",
+        "treeName": "Sorcerer Of Tund",
+        "canonicalMembersRemainingInTree": 0
+      }
     },
     {
       "productionId": "6021056231839e7c",
@@ -2250,11 +2775,11 @@
       "treeId": "25d99948c9cb41ad",
       "treeName": "Jumptrooper",
       "group": "DEFERRED_PRODUCTION_ONLY",
-      "finalDisposition": "REVIEW_REQUIRED",
+      "finalDisposition": "MOVE_HOMEBREW_PACK",
       "survivorId": null,
-      "adjudicationStatus": "BLOCKED_ON_OWNER_POLICY",
+      "adjudicationStatus": "ADJUDICATED",
       "evidence": {
-        "status": "NO_OFFICIAL_SUPPORT_FOUND_BLOCKED_ON_POLICY",
+        "status": "ADJUDICATED_NONCANONICAL_OWNER_RULING",
         "conclusion": "No verbatim text and no talent of this name in any of the 14 committed sourcebook TXT files, and no canonical identity matches it.",
         "findings": [
           "textSupport gives the best 5-gram containment against every TXT and against the canonical corpus.",
@@ -2272,11 +2797,46 @@
         "registryStatus": "REPO_ONLY_NONCANONICAL_HOMEBREW",
         "pdfRequired": false
       },
-      "referencesToRepoint": null,
+      "referencesToRepoint": {
+        "structural": [
+          {
+            "file": "packs/talent_trees.db",
+            "treeId": "25d99948c9cb41ad",
+            "action": "move whole tree document (same _id) to the homebrew tree pack"
+          },
+          {
+            "file": "data/generated/talent-trees.registry.json + data/fixes/talent-trees.registry.json",
+            "action": "regenerate with tools/build-talent-tree-registry.mjs"
+          }
+        ],
+        "actorPackEmbeddedItems": [],
+        "note": "Embedded actor items (if any) must have flags.core.sourceId rewritten from the talents pack to the homebrew pack before the source document leaves the canonical pack."
+      },
       "metadataTransfer": [],
-      "expectedFinal": null,
+      "expectedFinal": {
+        "recordExists": false,
+        "homebrewPackRecordExists": true,
+        "homebrewPack": "talents-homebrew",
+        "idPreserved": true,
+        "treeMembership": "tree Jumptrooper 25d99948c9cb41ad moves to the homebrew tree pack",
+        "classAccess": "no canonical class references the moved tree (verified by the dry run)",
+        "canonicalRecordsTouched": []
+      },
       "phase3cCanonicalRecordTouched": false,
-      "reviewRequiredReason": "UNSOURCED_OWNER_POLICY"
+      "ownerRuling": {
+        "decision": "OWNER_RULING_DECISION_1",
+        "summary": "Move all 50 homebrew/unsourced records (ids preserved, automation metadata preserved) into a separate explicitly noncanonical homebrew compendium; preserve exclusively-homebrew trees with them; remove those trees from canonical class access/registries; audit embedded actor references first; never present them as official SWSE content."
+      },
+      "previousReviewRequiredReason": "UNSOURCED_OWNER_POLICY",
+      "metadataReview": "Whole record (including abilityMeta, tags, flags, prerequisitesStructured, effects) moves unchanged; nothing is dropped.",
+      "homebrewMove": {
+        "targetPack": "talents-homebrew",
+        "idPreserved": true,
+        "treeHandling": "TREE_MOVES_WITH_RECORDS",
+        "treeId": "25d99948c9cb41ad",
+        "treeName": "Jumptrooper",
+        "canonicalMembersRemainingInTree": 0
+      }
     },
     {
       "productionId": "62d461ae3b0fcfa9",
@@ -2329,11 +2889,11 @@
       "treeId": "8375b9b26b679901",
       "treeName": "Influence",
       "group": "DEFERRED_PRODUCTION_ONLY",
-      "finalDisposition": "REVIEW_REQUIRED",
+      "finalDisposition": "MOVE_HOMEBREW_PACK",
       "survivorId": null,
-      "adjudicationStatus": "BLOCKED_ON_OWNER_POLICY",
+      "adjudicationStatus": "ADJUDICATED",
       "evidence": {
-        "status": "ADJUDICATED_NOT_OFFICIAL_SWSE_BLOCKED_ON_POLICY",
+        "status": "ADJUDICATED_NONCANONICAL_OWNER_RULING",
         "conclusion": "Self-labelled \"Homebrew Reference Book\" text; not printed in any committed sourcebook.",
         "findings": [
           "textSupport gives the best 5-gram containment against every TXT and against the canonical corpus.",
@@ -2351,11 +2911,46 @@
         "registryStatus": "REPO_TREE_PRESENT",
         "pdfRequired": false
       },
-      "referencesToRepoint": null,
+      "referencesToRepoint": {
+        "structural": [
+          {
+            "file": "packs/talent_trees.db",
+            "treeId": "8375b9b26b679901",
+            "action": "remove system.talentIds[62e70280d08f43ec] and its talentNames entry from the canonical tree"
+          },
+          {
+            "file": "data/generated/talent-trees.registry.json + data/fixes/talent-trees.registry.json",
+            "action": "regenerate with tools/build-talent-tree-registry.mjs"
+          }
+        ],
+        "actorPackEmbeddedItems": [],
+        "note": "Embedded actor items (if any) must have flags.core.sourceId rewritten from the talents pack to the homebrew pack before the source document leaves the canonical pack."
+      },
       "metadataTransfer": [],
-      "expectedFinal": null,
+      "expectedFinal": {
+        "recordExists": false,
+        "homebrewPackRecordExists": true,
+        "homebrewPack": "talents-homebrew",
+        "idPreserved": true,
+        "treeMembership": "removed from canonical tree Influence 8375b9b26b679901",
+        "classAccess": "no canonical class references the moved tree (verified by the dry run)",
+        "canonicalRecordsTouched": []
+      },
       "phase3cCanonicalRecordTouched": false,
-      "reviewRequiredReason": "HOMEBREW_POLICY_OWNER_DECISION"
+      "ownerRuling": {
+        "decision": "OWNER_RULING_DECISION_1",
+        "summary": "Move all 50 homebrew/unsourced records (ids preserved, automation metadata preserved) into a separate explicitly noncanonical homebrew compendium; preserve exclusively-homebrew trees with them; remove those trees from canonical class access/registries; audit embedded actor references first; never present them as official SWSE content."
+      },
+      "previousReviewRequiredReason": "HOMEBREW_POLICY_OWNER_DECISION",
+      "metadataReview": "Whole record (including abilityMeta, tags, flags, prerequisitesStructured, effects) moves unchanged; nothing is dropped.",
+      "homebrewMove": {
+        "targetPack": "talents-homebrew",
+        "idPreserved": true,
+        "treeHandling": "TREE_STAYS_CANONICAL_MEMBER_LEAVES",
+        "treeId": "8375b9b26b679901",
+        "treeName": "Influence",
+        "canonicalMembersRemainingInTree": 6
+      }
     },
     {
       "productionId": "67a08d46f24c4fdd",
@@ -2363,11 +2958,11 @@
       "treeId": "25d99948c9cb41ad",
       "treeName": "Jumptrooper",
       "group": "DEFERRED_PRODUCTION_ONLY",
-      "finalDisposition": "REVIEW_REQUIRED",
+      "finalDisposition": "MOVE_HOMEBREW_PACK",
       "survivorId": null,
-      "adjudicationStatus": "BLOCKED_ON_OWNER_POLICY",
+      "adjudicationStatus": "ADJUDICATED",
       "evidence": {
-        "status": "NO_OFFICIAL_SUPPORT_FOUND_BLOCKED_ON_POLICY",
+        "status": "ADJUDICATED_NONCANONICAL_OWNER_RULING",
         "conclusion": "No verbatim text and no talent of this name in any of the 14 committed sourcebook TXT files, and no canonical identity matches it.",
         "findings": [
           "textSupport gives the best 5-gram containment against every TXT and against the canonical corpus.",
@@ -2385,11 +2980,46 @@
         "registryStatus": "REPO_ONLY_NONCANONICAL_HOMEBREW",
         "pdfRequired": false
       },
-      "referencesToRepoint": null,
+      "referencesToRepoint": {
+        "structural": [
+          {
+            "file": "packs/talent_trees.db",
+            "treeId": "25d99948c9cb41ad",
+            "action": "move whole tree document (same _id) to the homebrew tree pack"
+          },
+          {
+            "file": "data/generated/talent-trees.registry.json + data/fixes/talent-trees.registry.json",
+            "action": "regenerate with tools/build-talent-tree-registry.mjs"
+          }
+        ],
+        "actorPackEmbeddedItems": [],
+        "note": "Embedded actor items (if any) must have flags.core.sourceId rewritten from the talents pack to the homebrew pack before the source document leaves the canonical pack."
+      },
       "metadataTransfer": [],
-      "expectedFinal": null,
+      "expectedFinal": {
+        "recordExists": false,
+        "homebrewPackRecordExists": true,
+        "homebrewPack": "talents-homebrew",
+        "idPreserved": true,
+        "treeMembership": "tree Jumptrooper 25d99948c9cb41ad moves to the homebrew tree pack",
+        "classAccess": "no canonical class references the moved tree (verified by the dry run)",
+        "canonicalRecordsTouched": []
+      },
       "phase3cCanonicalRecordTouched": false,
-      "reviewRequiredReason": "UNSOURCED_OWNER_POLICY"
+      "ownerRuling": {
+        "decision": "OWNER_RULING_DECISION_1",
+        "summary": "Move all 50 homebrew/unsourced records (ids preserved, automation metadata preserved) into a separate explicitly noncanonical homebrew compendium; preserve exclusively-homebrew trees with them; remove those trees from canonical class access/registries; audit embedded actor references first; never present them as official SWSE content."
+      },
+      "previousReviewRequiredReason": "UNSOURCED_OWNER_POLICY",
+      "metadataReview": "Whole record (including abilityMeta, tags, flags, prerequisitesStructured, effects) moves unchanged; nothing is dropped.",
+      "homebrewMove": {
+        "targetPack": "talents-homebrew",
+        "idPreserved": true,
+        "treeHandling": "TREE_MOVES_WITH_RECORDS",
+        "treeId": "25d99948c9cb41ad",
+        "treeName": "Jumptrooper",
+        "canonicalMembersRemainingInTree": 0
+      }
     },
     {
       "productionId": "6f3641f0ff39fc90",
@@ -2588,11 +3218,11 @@
       "treeId": "11f99465ba4847e2",
       "treeName": "Force Warrior",
       "group": "DEFERRED_PRODUCTION_ONLY",
-      "finalDisposition": "REVIEW_REQUIRED",
+      "finalDisposition": "MOVE_HOMEBREW_PACK",
       "survivorId": null,
-      "adjudicationStatus": "BLOCKED_ON_OWNER_POLICY",
+      "adjudicationStatus": "ADJUDICATED",
       "evidence": {
-        "status": "NO_OFFICIAL_SUPPORT_FOUND_BLOCKED_ON_POLICY",
+        "status": "ADJUDICATED_NONCANONICAL_OWNER_RULING",
         "conclusion": "No verbatim text and no talent of this name in any of the 14 committed sourcebook TXT files, and no canonical identity matches it.",
         "findings": [
           "textSupport gives the best 5-gram containment against every TXT and against the canonical corpus.",
@@ -2610,11 +3240,46 @@
         "registryStatus": "REPO_ONLY_NONCANONICAL_HOMEBREW",
         "pdfRequired": false
       },
-      "referencesToRepoint": null,
+      "referencesToRepoint": {
+        "structural": [
+          {
+            "file": "packs/talent_trees.db",
+            "treeId": "11f99465ba4847e2",
+            "action": "move whole tree document (same _id) to the homebrew tree pack"
+          },
+          {
+            "file": "data/generated/talent-trees.registry.json + data/fixes/talent-trees.registry.json",
+            "action": "regenerate with tools/build-talent-tree-registry.mjs"
+          }
+        ],
+        "actorPackEmbeddedItems": [],
+        "note": "Embedded actor items (if any) must have flags.core.sourceId rewritten from the talents pack to the homebrew pack before the source document leaves the canonical pack."
+      },
       "metadataTransfer": [],
-      "expectedFinal": null,
+      "expectedFinal": {
+        "recordExists": false,
+        "homebrewPackRecordExists": true,
+        "homebrewPack": "talents-homebrew",
+        "idPreserved": true,
+        "treeMembership": "tree Force Warrior 11f99465ba4847e2 moves to the homebrew tree pack",
+        "classAccess": "no canonical class references the moved tree (verified by the dry run)",
+        "canonicalRecordsTouched": []
+      },
       "phase3cCanonicalRecordTouched": false,
-      "reviewRequiredReason": "UNSOURCED_OWNER_POLICY"
+      "ownerRuling": {
+        "decision": "OWNER_RULING_DECISION_1",
+        "summary": "Move all 50 homebrew/unsourced records (ids preserved, automation metadata preserved) into a separate explicitly noncanonical homebrew compendium; preserve exclusively-homebrew trees with them; remove those trees from canonical class access/registries; audit embedded actor references first; never present them as official SWSE content."
+      },
+      "previousReviewRequiredReason": "UNSOURCED_OWNER_POLICY",
+      "metadataReview": "Whole record (including abilityMeta, tags, flags, prerequisitesStructured, effects) moves unchanged; nothing is dropped.",
+      "homebrewMove": {
+        "targetPack": "talents-homebrew",
+        "idPreserved": true,
+        "treeHandling": "TREE_MOVES_WITH_RECORDS",
+        "treeId": "11f99465ba4847e2",
+        "treeName": "Force Warrior",
+        "canonicalMembersRemainingInTree": 0
+      }
     },
     {
       "productionId": "77ab82670aa14f33",
@@ -2622,11 +3287,11 @@
       "treeId": "bfc1356c66c74783",
       "treeName": "Smashball Pro",
       "group": "DEFERRED_PRODUCTION_ONLY",
-      "finalDisposition": "REVIEW_REQUIRED",
+      "finalDisposition": "MOVE_HOMEBREW_PACK",
       "survivorId": null,
-      "adjudicationStatus": "BLOCKED_ON_OWNER_POLICY",
+      "adjudicationStatus": "ADJUDICATED",
       "evidence": {
-        "status": "NO_OFFICIAL_SUPPORT_FOUND_BLOCKED_ON_POLICY",
+        "status": "ADJUDICATED_NONCANONICAL_OWNER_RULING",
         "conclusion": "No verbatim text and no talent of this name in any of the 14 committed sourcebook TXT files, and no canonical identity matches it.",
         "findings": [
           "textSupport gives the best 5-gram containment against every TXT and against the canonical corpus.",
@@ -2644,11 +3309,46 @@
         "registryStatus": "REPO_ONLY_NONCANONICAL_HOMEBREW",
         "pdfRequired": false
       },
-      "referencesToRepoint": null,
+      "referencesToRepoint": {
+        "structural": [
+          {
+            "file": "packs/talent_trees.db",
+            "treeId": "bfc1356c66c74783",
+            "action": "move whole tree document (same _id) to the homebrew tree pack"
+          },
+          {
+            "file": "data/generated/talent-trees.registry.json + data/fixes/talent-trees.registry.json",
+            "action": "regenerate with tools/build-talent-tree-registry.mjs"
+          }
+        ],
+        "actorPackEmbeddedItems": [],
+        "note": "Embedded actor items (if any) must have flags.core.sourceId rewritten from the talents pack to the homebrew pack before the source document leaves the canonical pack."
+      },
       "metadataTransfer": [],
-      "expectedFinal": null,
+      "expectedFinal": {
+        "recordExists": false,
+        "homebrewPackRecordExists": true,
+        "homebrewPack": "talents-homebrew",
+        "idPreserved": true,
+        "treeMembership": "tree Smashball Pro bfc1356c66c74783 moves to the homebrew tree pack",
+        "classAccess": "no canonical class references the moved tree (verified by the dry run)",
+        "canonicalRecordsTouched": []
+      },
       "phase3cCanonicalRecordTouched": false,
-      "reviewRequiredReason": "UNSOURCED_OWNER_POLICY"
+      "ownerRuling": {
+        "decision": "OWNER_RULING_DECISION_1",
+        "summary": "Move all 50 homebrew/unsourced records (ids preserved, automation metadata preserved) into a separate explicitly noncanonical homebrew compendium; preserve exclusively-homebrew trees with them; remove those trees from canonical class access/registries; audit embedded actor references first; never present them as official SWSE content."
+      },
+      "previousReviewRequiredReason": "UNSOURCED_OWNER_POLICY",
+      "metadataReview": "Whole record (including abilityMeta, tags, flags, prerequisitesStructured, effects) moves unchanged; nothing is dropped.",
+      "homebrewMove": {
+        "targetPack": "talents-homebrew",
+        "idPreserved": true,
+        "treeHandling": "TREE_MOVES_WITH_RECORDS",
+        "treeId": "bfc1356c66c74783",
+        "treeName": "Smashball Pro",
+        "canonicalMembersRemainingInTree": 0
+      }
     },
     {
       "productionId": "78955cbbe9504d7f",
@@ -2656,11 +3356,11 @@
       "treeId": "38d7c18ce4664c66",
       "treeName": "Mechanic",
       "group": "DEFERRED_PRODUCTION_ONLY",
-      "finalDisposition": "REVIEW_REQUIRED",
+      "finalDisposition": "MOVE_HOMEBREW_PACK",
       "survivorId": null,
-      "adjudicationStatus": "BLOCKED_ON_OWNER_POLICY",
+      "adjudicationStatus": "ADJUDICATED",
       "evidence": {
-        "status": "NO_OFFICIAL_SUPPORT_FOUND_BLOCKED_ON_POLICY",
+        "status": "ADJUDICATED_NONCANONICAL_OWNER_RULING",
         "conclusion": "No verbatim text and no talent of this name in any of the 14 committed sourcebook TXT files, and no canonical identity matches it.",
         "findings": [
           "textSupport gives the best 5-gram containment against every TXT and against the canonical corpus.",
@@ -2678,11 +3378,46 @@
         "registryStatus": "REPO_ONLY_NONCANONICAL_HOMEBREW",
         "pdfRequired": false
       },
-      "referencesToRepoint": null,
+      "referencesToRepoint": {
+        "structural": [
+          {
+            "file": "packs/talent_trees.db",
+            "treeId": "38d7c18ce4664c66",
+            "action": "move whole tree document (same _id) to the homebrew tree pack"
+          },
+          {
+            "file": "data/generated/talent-trees.registry.json + data/fixes/talent-trees.registry.json",
+            "action": "regenerate with tools/build-talent-tree-registry.mjs"
+          }
+        ],
+        "actorPackEmbeddedItems": [],
+        "note": "Embedded actor items (if any) must have flags.core.sourceId rewritten from the talents pack to the homebrew pack before the source document leaves the canonical pack."
+      },
       "metadataTransfer": [],
-      "expectedFinal": null,
+      "expectedFinal": {
+        "recordExists": false,
+        "homebrewPackRecordExists": true,
+        "homebrewPack": "talents-homebrew",
+        "idPreserved": true,
+        "treeMembership": "tree Mechanic 38d7c18ce4664c66 moves to the homebrew tree pack",
+        "classAccess": "no canonical class references the moved tree (verified by the dry run)",
+        "canonicalRecordsTouched": []
+      },
       "phase3cCanonicalRecordTouched": false,
-      "reviewRequiredReason": "UNSOURCED_OWNER_POLICY"
+      "ownerRuling": {
+        "decision": "OWNER_RULING_DECISION_1",
+        "summary": "Move all 50 homebrew/unsourced records (ids preserved, automation metadata preserved) into a separate explicitly noncanonical homebrew compendium; preserve exclusively-homebrew trees with them; remove those trees from canonical class access/registries; audit embedded actor references first; never present them as official SWSE content."
+      },
+      "previousReviewRequiredReason": "UNSOURCED_OWNER_POLICY",
+      "metadataReview": "Whole record (including abilityMeta, tags, flags, prerequisitesStructured, effects) moves unchanged; nothing is dropped.",
+      "homebrewMove": {
+        "targetPack": "talents-homebrew",
+        "idPreserved": true,
+        "treeHandling": "TREE_MOVES_WITH_RECORDS",
+        "treeId": "38d7c18ce4664c66",
+        "treeName": "Mechanic",
+        "canonicalMembersRemainingInTree": 0
+      }
     },
     {
       "productionId": "7a58134276d64561",
@@ -2690,11 +3425,11 @@
       "treeId": "ed899f9f41fc1391",
       "treeName": "Beastwarden",
       "group": "DEFERRED_PRODUCTION_ONLY",
-      "finalDisposition": "REVIEW_REQUIRED",
+      "finalDisposition": "MOVE_HOMEBREW_PACK",
       "survivorId": null,
-      "adjudicationStatus": "BLOCKED_ON_OWNER_POLICY",
+      "adjudicationStatus": "ADJUDICATED",
       "evidence": {
-        "status": "NO_OFFICIAL_SUPPORT_FOUND_BLOCKED_ON_POLICY",
+        "status": "ADJUDICATED_NONCANONICAL_OWNER_RULING",
         "conclusion": "No verbatim text and no talent of this name in any of the 14 committed sourcebook TXT files, and no canonical identity matches it.",
         "findings": [
           "textSupport gives the best 5-gram containment against every TXT and against the canonical corpus.",
@@ -2712,11 +3447,46 @@
         "registryStatus": "REPO_TREE_PRESENT",
         "pdfRequired": false
       },
-      "referencesToRepoint": null,
+      "referencesToRepoint": {
+        "structural": [
+          {
+            "file": "packs/talent_trees.db",
+            "treeId": "ed899f9f41fc1391",
+            "action": "remove system.talentIds[7a58134276d64561] and its talentNames entry from the canonical tree"
+          },
+          {
+            "file": "data/generated/talent-trees.registry.json + data/fixes/talent-trees.registry.json",
+            "action": "regenerate with tools/build-talent-tree-registry.mjs"
+          }
+        ],
+        "actorPackEmbeddedItems": [],
+        "note": "Embedded actor items (if any) must have flags.core.sourceId rewritten from the talents pack to the homebrew pack before the source document leaves the canonical pack."
+      },
       "metadataTransfer": [],
-      "expectedFinal": null,
+      "expectedFinal": {
+        "recordExists": false,
+        "homebrewPackRecordExists": true,
+        "homebrewPack": "talents-homebrew",
+        "idPreserved": true,
+        "treeMembership": "removed from canonical tree Beastwarden ed899f9f41fc1391",
+        "classAccess": "no canonical class references the moved tree (verified by the dry run)",
+        "canonicalRecordsTouched": []
+      },
       "phase3cCanonicalRecordTouched": false,
-      "reviewRequiredReason": "UNSOURCED_OWNER_POLICY"
+      "ownerRuling": {
+        "decision": "OWNER_RULING_DECISION_1",
+        "summary": "Move all 50 homebrew/unsourced records (ids preserved, automation metadata preserved) into a separate explicitly noncanonical homebrew compendium; preserve exclusively-homebrew trees with them; remove those trees from canonical class access/registries; audit embedded actor references first; never present them as official SWSE content."
+      },
+      "previousReviewRequiredReason": "UNSOURCED_OWNER_POLICY",
+      "metadataReview": "Whole record (including abilityMeta, tags, flags, prerequisitesStructured, effects) moves unchanged; nothing is dropped.",
+      "homebrewMove": {
+        "targetPack": "talents-homebrew",
+        "idPreserved": true,
+        "treeHandling": "TREE_STAYS_CANONICAL_MEMBER_LEAVES",
+        "treeId": "ed899f9f41fc1391",
+        "treeName": "Beastwarden",
+        "canonicalMembersRemainingInTree": 5
+      }
     },
     {
       "productionId": "7f4edcb8aa830972",
@@ -2788,11 +3558,11 @@
       "treeId": "jedi-guardian",
       "treeName": "Jedi Guardian",
       "group": "DEFERRED_PRODUCTION_ONLY",
-      "finalDisposition": "REVIEW_REQUIRED",
+      "finalDisposition": "MOVE_HOMEBREW_PACK",
       "survivorId": null,
-      "adjudicationStatus": "BLOCKED_ON_OWNER_POLICY",
+      "adjudicationStatus": "ADJUDICATED",
       "evidence": {
-        "status": "ADJUDICATED_NOT_OFFICIAL_SWSE_BLOCKED_ON_POLICY",
+        "status": "ADJUDICATED_NONCANONICAL_OWNER_RULING",
         "conclusion": "The \"missing tree\" flag is a false alarm (Force Meld is a member of Jedi Guardian 10c843cef8ce2798; only its legacy system.treeId slug \"jedi-guardian\" is stale). The record itself is self-labelled homebrew.",
         "findings": [
           "Benefit ends \"Homebrew Reference Book: Legacy of the Force Sourcebook\"; \"Force Meld\" appears in no committed sourcebook TXT.",
@@ -2801,11 +3571,46 @@
         ],
         "pdfRequired": false
       },
-      "referencesToRepoint": null,
+      "referencesToRepoint": {
+        "structural": [
+          {
+            "file": "packs/talent_trees.db",
+            "treeId": "10c843cef8ce2798",
+            "action": "remove system.talentIds[816ac9cc1e6c413b] and its talentNames entry from the canonical tree"
+          },
+          {
+            "file": "data/generated/talent-trees.registry.json + data/fixes/talent-trees.registry.json",
+            "action": "regenerate with tools/build-talent-tree-registry.mjs"
+          }
+        ],
+        "actorPackEmbeddedItems": [],
+        "note": "Embedded actor items (if any) must have flags.core.sourceId rewritten from the talents pack to the homebrew pack before the source document leaves the canonical pack."
+      },
       "metadataTransfer": [],
-      "expectedFinal": null,
+      "expectedFinal": {
+        "recordExists": false,
+        "homebrewPackRecordExists": true,
+        "homebrewPack": "talents-homebrew",
+        "idPreserved": true,
+        "treeMembership": "removed from canonical tree Jedi Guardian 10c843cef8ce2798",
+        "classAccess": "no canonical class references the moved tree (verified by the dry run)",
+        "canonicalRecordsTouched": []
+      },
       "phase3cCanonicalRecordTouched": false,
-      "reviewRequiredReason": "HOMEBREW_POLICY_OWNER_DECISION"
+      "ownerRuling": {
+        "decision": "OWNER_RULING_DECISION_1",
+        "summary": "Move all 50 homebrew/unsourced records (ids preserved, automation metadata preserved) into a separate explicitly noncanonical homebrew compendium; preserve exclusively-homebrew trees with them; remove those trees from canonical class access/registries; audit embedded actor references first; never present them as official SWSE content."
+      },
+      "previousReviewRequiredReason": "HOMEBREW_POLICY_OWNER_DECISION",
+      "metadataReview": "Whole record (including abilityMeta, tags, flags, prerequisitesStructured, effects) moves unchanged; nothing is dropped.",
+      "homebrewMove": {
+        "targetPack": "talents-homebrew",
+        "idPreserved": true,
+        "treeHandling": "TREE_STAYS_CANONICAL_MEMBER_LEAVES",
+        "treeId": "10c843cef8ce2798",
+        "treeName": "Jedi Guardian",
+        "canonicalMembersRemainingInTree": 16
+      }
     },
     {
       "productionId": "81cd2a2473e248a0",
@@ -2813,11 +3618,11 @@
       "treeId": "dcac793cc9fe42a7",
       "treeName": "Jedaii Ranger",
       "group": "DEFERRED_PRODUCTION_ONLY",
-      "finalDisposition": "REVIEW_REQUIRED",
+      "finalDisposition": "MOVE_HOMEBREW_PACK",
       "survivorId": null,
-      "adjudicationStatus": "BLOCKED_ON_OWNER_POLICY",
+      "adjudicationStatus": "ADJUDICATED",
       "evidence": {
-        "status": "NO_OFFICIAL_SUPPORT_FOUND_BLOCKED_ON_POLICY",
+        "status": "ADJUDICATED_NONCANONICAL_OWNER_RULING",
         "conclusion": "No verbatim text and no talent of this name in any of the 14 committed sourcebook TXT files, and no canonical identity matches it.",
         "findings": [
           "textSupport gives the best 5-gram containment against every TXT and against the canonical corpus.",
@@ -2835,11 +3640,46 @@
         "registryStatus": "REPO_ONLY_NONCANONICAL_HOMEBREW",
         "pdfRequired": false
       },
-      "referencesToRepoint": null,
+      "referencesToRepoint": {
+        "structural": [
+          {
+            "file": "packs/talent_trees.db",
+            "treeId": "dcac793cc9fe42a7",
+            "action": "move whole tree document (same _id) to the homebrew tree pack"
+          },
+          {
+            "file": "data/generated/talent-trees.registry.json + data/fixes/talent-trees.registry.json",
+            "action": "regenerate with tools/build-talent-tree-registry.mjs"
+          }
+        ],
+        "actorPackEmbeddedItems": [],
+        "note": "Embedded actor items (if any) must have flags.core.sourceId rewritten from the talents pack to the homebrew pack before the source document leaves the canonical pack."
+      },
       "metadataTransfer": [],
-      "expectedFinal": null,
+      "expectedFinal": {
+        "recordExists": false,
+        "homebrewPackRecordExists": true,
+        "homebrewPack": "talents-homebrew",
+        "idPreserved": true,
+        "treeMembership": "tree Jedaii Ranger dcac793cc9fe42a7 moves to the homebrew tree pack",
+        "classAccess": "no canonical class references the moved tree (verified by the dry run)",
+        "canonicalRecordsTouched": []
+      },
       "phase3cCanonicalRecordTouched": false,
-      "reviewRequiredReason": "UNSOURCED_OWNER_POLICY"
+      "ownerRuling": {
+        "decision": "OWNER_RULING_DECISION_1",
+        "summary": "Move all 50 homebrew/unsourced records (ids preserved, automation metadata preserved) into a separate explicitly noncanonical homebrew compendium; preserve exclusively-homebrew trees with them; remove those trees from canonical class access/registries; audit embedded actor references first; never present them as official SWSE content."
+      },
+      "previousReviewRequiredReason": "UNSOURCED_OWNER_POLICY",
+      "metadataReview": "Whole record (including abilityMeta, tags, flags, prerequisitesStructured, effects) moves unchanged; nothing is dropped.",
+      "homebrewMove": {
+        "targetPack": "talents-homebrew",
+        "idPreserved": true,
+        "treeHandling": "TREE_MOVES_WITH_RECORDS",
+        "treeId": "dcac793cc9fe42a7",
+        "treeName": "Jedaii Ranger",
+        "canonicalMembersRemainingInTree": 0
+      }
     },
     {
       "productionId": "85e348f24a144e1c",
@@ -2907,11 +3747,11 @@
       "treeId": "00cb74839a524276",
       "treeName": "Science",
       "group": "DEFERRED_PRODUCTION_ONLY",
-      "finalDisposition": "REVIEW_REQUIRED",
+      "finalDisposition": "MOVE_HOMEBREW_PACK",
       "survivorId": null,
-      "adjudicationStatus": "BLOCKED_ON_OWNER_POLICY",
+      "adjudicationStatus": "ADJUDICATED",
       "evidence": {
-        "status": "NO_OFFICIAL_SUPPORT_FOUND_BLOCKED_ON_POLICY",
+        "status": "ADJUDICATED_NONCANONICAL_OWNER_RULING",
         "conclusion": "No verbatim text and no talent of this name in any of the 14 committed sourcebook TXT files, and no canonical identity matches it.",
         "findings": [
           "textSupport gives the best 5-gram containment against every TXT and against the canonical corpus.",
@@ -2929,11 +3769,46 @@
         "registryStatus": "REPO_ONLY_NONCANONICAL_HOMEBREW",
         "pdfRequired": false
       },
-      "referencesToRepoint": null,
+      "referencesToRepoint": {
+        "structural": [
+          {
+            "file": "packs/talent_trees.db",
+            "treeId": "00cb74839a524276",
+            "action": "move whole tree document (same _id) to the homebrew tree pack"
+          },
+          {
+            "file": "data/generated/talent-trees.registry.json + data/fixes/talent-trees.registry.json",
+            "action": "regenerate with tools/build-talent-tree-registry.mjs"
+          }
+        ],
+        "actorPackEmbeddedItems": [],
+        "note": "Embedded actor items (if any) must have flags.core.sourceId rewritten from the talents pack to the homebrew pack before the source document leaves the canonical pack."
+      },
       "metadataTransfer": [],
-      "expectedFinal": null,
+      "expectedFinal": {
+        "recordExists": false,
+        "homebrewPackRecordExists": true,
+        "homebrewPack": "talents-homebrew",
+        "idPreserved": true,
+        "treeMembership": "tree Science 00cb74839a524276 moves to the homebrew tree pack",
+        "classAccess": "no canonical class references the moved tree (verified by the dry run)",
+        "canonicalRecordsTouched": []
+      },
       "phase3cCanonicalRecordTouched": false,
-      "reviewRequiredReason": "UNSOURCED_OWNER_POLICY"
+      "ownerRuling": {
+        "decision": "OWNER_RULING_DECISION_1",
+        "summary": "Move all 50 homebrew/unsourced records (ids preserved, automation metadata preserved) into a separate explicitly noncanonical homebrew compendium; preserve exclusively-homebrew trees with them; remove those trees from canonical class access/registries; audit embedded actor references first; never present them as official SWSE content."
+      },
+      "previousReviewRequiredReason": "UNSOURCED_OWNER_POLICY",
+      "metadataReview": "Whole record (including abilityMeta, tags, flags, prerequisitesStructured, effects) moves unchanged; nothing is dropped.",
+      "homebrewMove": {
+        "targetPack": "talents-homebrew",
+        "idPreserved": true,
+        "treeHandling": "TREE_MOVES_WITH_RECORDS",
+        "treeId": "00cb74839a524276",
+        "treeName": "Science",
+        "canonicalMembersRemainingInTree": 0
+      }
     },
     {
       "productionId": "86c10d63bba2d9c8",
@@ -3322,11 +4197,11 @@
       "treeId": "ad16f3e5f4f7441b",
       "treeName": "Dathomiri Witch",
       "group": "DEFERRED_PRODUCTION_ONLY",
-      "finalDisposition": "REVIEW_REQUIRED",
+      "finalDisposition": "MOVE_HOMEBREW_PACK",
       "survivorId": null,
-      "adjudicationStatus": "BLOCKED_ON_OWNER_POLICY",
+      "adjudicationStatus": "ADJUDICATED",
       "evidence": {
-        "status": "ADJUDICATED_NOT_OFFICIAL_SWSE_BLOCKED_ON_POLICY",
+        "status": "ADJUDICATED_NONCANONICAL_OWNER_RULING",
         "conclusion": "Self-labelled homebrew (Homebrew Reference Book: Dathomir Field Guide (Dathomiri Witch)); not found in any committed sourcebook TXT.",
         "findings": [
           "record text references Energy Bow / Sense Surroundings homebrew; no TXT hit for the name.",
@@ -3334,11 +4209,46 @@
         ],
         "pdfRequired": false
       },
-      "referencesToRepoint": null,
+      "referencesToRepoint": {
+        "structural": [
+          {
+            "file": "packs/talent_trees.db",
+            "treeId": "ad16f3e5f4f7441b",
+            "action": "remove system.talentIds[9319584186ce4228] and its talentNames entry from the canonical tree"
+          },
+          {
+            "file": "data/generated/talent-trees.registry.json + data/fixes/talent-trees.registry.json",
+            "action": "regenerate with tools/build-talent-tree-registry.mjs"
+          }
+        ],
+        "actorPackEmbeddedItems": [],
+        "note": "Embedded actor items (if any) must have flags.core.sourceId rewritten from the talents pack to the homebrew pack before the source document leaves the canonical pack."
+      },
       "metadataTransfer": [],
-      "expectedFinal": null,
+      "expectedFinal": {
+        "recordExists": false,
+        "homebrewPackRecordExists": true,
+        "homebrewPack": "talents-homebrew",
+        "idPreserved": true,
+        "treeMembership": "removed from canonical tree Dathomiri Witch ad16f3e5f4f7441b",
+        "classAccess": "no canonical class references the moved tree (verified by the dry run)",
+        "canonicalRecordsTouched": []
+      },
       "phase3cCanonicalRecordTouched": false,
-      "reviewRequiredReason": "HOMEBREW_POLICY_OWNER_DECISION"
+      "ownerRuling": {
+        "decision": "OWNER_RULING_DECISION_1",
+        "summary": "Move all 50 homebrew/unsourced records (ids preserved, automation metadata preserved) into a separate explicitly noncanonical homebrew compendium; preserve exclusively-homebrew trees with them; remove those trees from canonical class access/registries; audit embedded actor references first; never present them as official SWSE content."
+      },
+      "previousReviewRequiredReason": "HOMEBREW_POLICY_OWNER_DECISION",
+      "metadataReview": "Whole record (including abilityMeta, tags, flags, prerequisitesStructured, effects) moves unchanged; nothing is dropped.",
+      "homebrewMove": {
+        "targetPack": "talents-homebrew",
+        "idPreserved": true,
+        "treeHandling": "TREE_STAYS_CANONICAL_MEMBER_LEAVES",
+        "treeId": "ad16f3e5f4f7441b",
+        "treeName": "Dathomiri Witch",
+        "canonicalMembersRemainingInTree": 4
+      }
     },
     {
       "productionId": "933240d6581843b9",
@@ -3346,11 +4256,11 @@
       "treeId": "01e443d93e47f9c4",
       "treeName": "Force Item",
       "group": "DEFERRED_PRODUCTION_ONLY",
-      "finalDisposition": "REVIEW_REQUIRED",
+      "finalDisposition": "MOVE_HOMEBREW_PACK",
       "survivorId": null,
-      "adjudicationStatus": "BLOCKED_ON_OWNER_POLICY",
+      "adjudicationStatus": "ADJUDICATED",
       "evidence": {
-        "status": "NO_OFFICIAL_SUPPORT_FOUND_BLOCKED_ON_POLICY",
+        "status": "ADJUDICATED_NONCANONICAL_OWNER_RULING",
         "conclusion": "No verbatim text and no talent of this name in any of the 14 committed sourcebook TXT files, and no canonical identity matches it.",
         "findings": [
           "textSupport gives the best 5-gram containment against every TXT and against the canonical corpus.",
@@ -3368,11 +4278,46 @@
         "registryStatus": "REPO_TREE_PRESENT",
         "pdfRequired": false
       },
-      "referencesToRepoint": null,
+      "referencesToRepoint": {
+        "structural": [
+          {
+            "file": "packs/talent_trees.db",
+            "treeId": "01e443d93e47f9c4",
+            "action": "remove system.talentIds[933240d6581843b9] and its talentNames entry from the canonical tree"
+          },
+          {
+            "file": "data/generated/talent-trees.registry.json + data/fixes/talent-trees.registry.json",
+            "action": "regenerate with tools/build-talent-tree-registry.mjs"
+          }
+        ],
+        "actorPackEmbeddedItems": [],
+        "note": "Embedded actor items (if any) must have flags.core.sourceId rewritten from the talents pack to the homebrew pack before the source document leaves the canonical pack."
+      },
       "metadataTransfer": [],
-      "expectedFinal": null,
+      "expectedFinal": {
+        "recordExists": false,
+        "homebrewPackRecordExists": true,
+        "homebrewPack": "talents-homebrew",
+        "idPreserved": true,
+        "treeMembership": "removed from canonical tree Force Item 01e443d93e47f9c4",
+        "classAccess": "no canonical class references the moved tree (verified by the dry run)",
+        "canonicalRecordsTouched": []
+      },
       "phase3cCanonicalRecordTouched": false,
-      "reviewRequiredReason": "UNSOURCED_OWNER_POLICY"
+      "ownerRuling": {
+        "decision": "OWNER_RULING_DECISION_1",
+        "summary": "Move all 50 homebrew/unsourced records (ids preserved, automation metadata preserved) into a separate explicitly noncanonical homebrew compendium; preserve exclusively-homebrew trees with them; remove those trees from canonical class access/registries; audit embedded actor references first; never present them as official SWSE content."
+      },
+      "previousReviewRequiredReason": "UNSOURCED_OWNER_POLICY",
+      "metadataReview": "Whole record (including abilityMeta, tags, flags, prerequisitesStructured, effects) moves unchanged; nothing is dropped.",
+      "homebrewMove": {
+        "targetPack": "talents-homebrew",
+        "idPreserved": true,
+        "treeHandling": "TREE_STAYS_CANONICAL_MEMBER_LEAVES",
+        "treeId": "01e443d93e47f9c4",
+        "treeName": "Force Item",
+        "canonicalMembersRemainingInTree": 8
+      }
     },
     {
       "productionId": "96a833f805df1be1",
@@ -3444,11 +4389,11 @@
       "treeId": "bfc1356c66c74783",
       "treeName": "Smashball Pro",
       "group": "DEFERRED_PRODUCTION_ONLY",
-      "finalDisposition": "REVIEW_REQUIRED",
+      "finalDisposition": "MOVE_HOMEBREW_PACK",
       "survivorId": null,
-      "adjudicationStatus": "BLOCKED_ON_OWNER_POLICY",
+      "adjudicationStatus": "ADJUDICATED",
       "evidence": {
-        "status": "NO_OFFICIAL_SUPPORT_FOUND_BLOCKED_ON_POLICY",
+        "status": "ADJUDICATED_NONCANONICAL_OWNER_RULING",
         "conclusion": "No verbatim text and no talent of this name in any of the 14 committed sourcebook TXT files, and no canonical identity matches it.",
         "findings": [
           "textSupport gives the best 5-gram containment against every TXT and against the canonical corpus.",
@@ -3466,11 +4411,46 @@
         "registryStatus": "REPO_ONLY_NONCANONICAL_HOMEBREW",
         "pdfRequired": false
       },
-      "referencesToRepoint": null,
+      "referencesToRepoint": {
+        "structural": [
+          {
+            "file": "packs/talent_trees.db",
+            "treeId": "bfc1356c66c74783",
+            "action": "move whole tree document (same _id) to the homebrew tree pack"
+          },
+          {
+            "file": "data/generated/talent-trees.registry.json + data/fixes/talent-trees.registry.json",
+            "action": "regenerate with tools/build-talent-tree-registry.mjs"
+          }
+        ],
+        "actorPackEmbeddedItems": [],
+        "note": "Embedded actor items (if any) must have flags.core.sourceId rewritten from the talents pack to the homebrew pack before the source document leaves the canonical pack."
+      },
       "metadataTransfer": [],
-      "expectedFinal": null,
+      "expectedFinal": {
+        "recordExists": false,
+        "homebrewPackRecordExists": true,
+        "homebrewPack": "talents-homebrew",
+        "idPreserved": true,
+        "treeMembership": "tree Smashball Pro bfc1356c66c74783 moves to the homebrew tree pack",
+        "classAccess": "no canonical class references the moved tree (verified by the dry run)",
+        "canonicalRecordsTouched": []
+      },
       "phase3cCanonicalRecordTouched": false,
-      "reviewRequiredReason": "UNSOURCED_OWNER_POLICY"
+      "ownerRuling": {
+        "decision": "OWNER_RULING_DECISION_1",
+        "summary": "Move all 50 homebrew/unsourced records (ids preserved, automation metadata preserved) into a separate explicitly noncanonical homebrew compendium; preserve exclusively-homebrew trees with them; remove those trees from canonical class access/registries; audit embedded actor references first; never present them as official SWSE content."
+      },
+      "previousReviewRequiredReason": "UNSOURCED_OWNER_POLICY",
+      "metadataReview": "Whole record (including abilityMeta, tags, flags, prerequisitesStructured, effects) moves unchanged; nothing is dropped.",
+      "homebrewMove": {
+        "targetPack": "talents-homebrew",
+        "idPreserved": true,
+        "treeHandling": "TREE_MOVES_WITH_RECORDS",
+        "treeId": "bfc1356c66c74783",
+        "treeName": "Smashball Pro",
+        "canonicalMembersRemainingInTree": 0
+      }
     },
     {
       "productionId": "a0c4b4b252ee4c96",
@@ -3478,11 +4458,11 @@
       "treeId": "0a61ab9ece844326",
       "treeName": "Morgukai Warrior",
       "group": "DEFERRED_PRODUCTION_ONLY",
-      "finalDisposition": "REVIEW_REQUIRED",
+      "finalDisposition": "MOVE_HOMEBREW_PACK",
       "survivorId": null,
-      "adjudicationStatus": "BLOCKED_ON_OWNER_POLICY",
+      "adjudicationStatus": "ADJUDICATED",
       "evidence": {
-        "status": "NO_OFFICIAL_SUPPORT_FOUND_BLOCKED_ON_POLICY",
+        "status": "ADJUDICATED_NONCANONICAL_OWNER_RULING",
         "conclusion": "No verbatim text and no talent of this name in any of the 14 committed sourcebook TXT files, and no canonical identity matches it.",
         "findings": [
           "textSupport gives the best 5-gram containment against every TXT and against the canonical corpus.",
@@ -3500,11 +4480,46 @@
         "registryStatus": "REPO_ONLY_NONCANONICAL_HOMEBREW",
         "pdfRequired": false
       },
-      "referencesToRepoint": null,
+      "referencesToRepoint": {
+        "structural": [
+          {
+            "file": "packs/talent_trees.db",
+            "treeId": "0a61ab9ece844326",
+            "action": "move whole tree document (same _id) to the homebrew tree pack"
+          },
+          {
+            "file": "data/generated/talent-trees.registry.json + data/fixes/talent-trees.registry.json",
+            "action": "regenerate with tools/build-talent-tree-registry.mjs"
+          }
+        ],
+        "actorPackEmbeddedItems": [],
+        "note": "Embedded actor items (if any) must have flags.core.sourceId rewritten from the talents pack to the homebrew pack before the source document leaves the canonical pack."
+      },
       "metadataTransfer": [],
-      "expectedFinal": null,
+      "expectedFinal": {
+        "recordExists": false,
+        "homebrewPackRecordExists": true,
+        "homebrewPack": "talents-homebrew",
+        "idPreserved": true,
+        "treeMembership": "tree Morgukai Warrior 0a61ab9ece844326 moves to the homebrew tree pack",
+        "classAccess": "no canonical class references the moved tree (verified by the dry run)",
+        "canonicalRecordsTouched": []
+      },
       "phase3cCanonicalRecordTouched": false,
-      "reviewRequiredReason": "UNSOURCED_OWNER_POLICY"
+      "ownerRuling": {
+        "decision": "OWNER_RULING_DECISION_1",
+        "summary": "Move all 50 homebrew/unsourced records (ids preserved, automation metadata preserved) into a separate explicitly noncanonical homebrew compendium; preserve exclusively-homebrew trees with them; remove those trees from canonical class access/registries; audit embedded actor references first; never present them as official SWSE content."
+      },
+      "previousReviewRequiredReason": "UNSOURCED_OWNER_POLICY",
+      "metadataReview": "Whole record (including abilityMeta, tags, flags, prerequisitesStructured, effects) moves unchanged; nothing is dropped.",
+      "homebrewMove": {
+        "targetPack": "talents-homebrew",
+        "idPreserved": true,
+        "treeHandling": "TREE_MOVES_WITH_RECORDS",
+        "treeId": "0a61ab9ece844326",
+        "treeName": "Morgukai Warrior",
+        "canonicalMembersRemainingInTree": 0
+      }
     },
     {
       "productionId": "a1ef8440f49847f1",
@@ -3512,11 +4527,11 @@
       "treeId": "bfc1356c66c74783",
       "treeName": "Smashball Pro",
       "group": "DEFERRED_PRODUCTION_ONLY",
-      "finalDisposition": "REVIEW_REQUIRED",
+      "finalDisposition": "MOVE_HOMEBREW_PACK",
       "survivorId": null,
-      "adjudicationStatus": "BLOCKED_ON_OWNER_POLICY",
+      "adjudicationStatus": "ADJUDICATED",
       "evidence": {
-        "status": "NO_OFFICIAL_SUPPORT_FOUND_BLOCKED_ON_POLICY",
+        "status": "ADJUDICATED_NONCANONICAL_OWNER_RULING",
         "conclusion": "No verbatim text and no talent of this name in any of the 14 committed sourcebook TXT files, and no canonical identity matches it.",
         "findings": [
           "textSupport gives the best 5-gram containment against every TXT and against the canonical corpus.",
@@ -3534,11 +4549,46 @@
         "registryStatus": "REPO_ONLY_NONCANONICAL_HOMEBREW",
         "pdfRequired": false
       },
-      "referencesToRepoint": null,
+      "referencesToRepoint": {
+        "structural": [
+          {
+            "file": "packs/talent_trees.db",
+            "treeId": "bfc1356c66c74783",
+            "action": "move whole tree document (same _id) to the homebrew tree pack"
+          },
+          {
+            "file": "data/generated/talent-trees.registry.json + data/fixes/talent-trees.registry.json",
+            "action": "regenerate with tools/build-talent-tree-registry.mjs"
+          }
+        ],
+        "actorPackEmbeddedItems": [],
+        "note": "Embedded actor items (if any) must have flags.core.sourceId rewritten from the talents pack to the homebrew pack before the source document leaves the canonical pack."
+      },
       "metadataTransfer": [],
-      "expectedFinal": null,
+      "expectedFinal": {
+        "recordExists": false,
+        "homebrewPackRecordExists": true,
+        "homebrewPack": "talents-homebrew",
+        "idPreserved": true,
+        "treeMembership": "tree Smashball Pro bfc1356c66c74783 moves to the homebrew tree pack",
+        "classAccess": "no canonical class references the moved tree (verified by the dry run)",
+        "canonicalRecordsTouched": []
+      },
       "phase3cCanonicalRecordTouched": false,
-      "reviewRequiredReason": "UNSOURCED_OWNER_POLICY"
+      "ownerRuling": {
+        "decision": "OWNER_RULING_DECISION_1",
+        "summary": "Move all 50 homebrew/unsourced records (ids preserved, automation metadata preserved) into a separate explicitly noncanonical homebrew compendium; preserve exclusively-homebrew trees with them; remove those trees from canonical class access/registries; audit embedded actor references first; never present them as official SWSE content."
+      },
+      "previousReviewRequiredReason": "UNSOURCED_OWNER_POLICY",
+      "metadataReview": "Whole record (including abilityMeta, tags, flags, prerequisitesStructured, effects) moves unchanged; nothing is dropped.",
+      "homebrewMove": {
+        "targetPack": "talents-homebrew",
+        "idPreserved": true,
+        "treeHandling": "TREE_MOVES_WITH_RECORDS",
+        "treeId": "bfc1356c66c74783",
+        "treeName": "Smashball Pro",
+        "canonicalMembersRemainingInTree": 0
+      }
     },
     {
       "productionId": "a36f9a2eb2424f86",
@@ -3546,11 +4596,11 @@
       "treeId": "d5b60c4f058c4085",
       "treeName": "Master Of The Amphistaff",
       "group": "DEFERRED_PRODUCTION_ONLY",
-      "finalDisposition": "REVIEW_REQUIRED",
+      "finalDisposition": "MOVE_HOMEBREW_PACK",
       "survivorId": null,
-      "adjudicationStatus": "BLOCKED_ON_OWNER_POLICY",
+      "adjudicationStatus": "ADJUDICATED",
       "evidence": {
-        "status": "NO_OFFICIAL_SUPPORT_FOUND_BLOCKED_ON_POLICY",
+        "status": "ADJUDICATED_NONCANONICAL_OWNER_RULING",
         "conclusion": "No verbatim text and no talent of this name in any of the 14 committed sourcebook TXT files, and no canonical identity matches it.",
         "findings": [
           "textSupport gives the best 5-gram containment against every TXT and against the canonical corpus.",
@@ -3568,11 +4618,46 @@
         "registryStatus": "REPO_ONLY_NONCANONICAL_HOMEBREW",
         "pdfRequired": false
       },
-      "referencesToRepoint": null,
+      "referencesToRepoint": {
+        "structural": [
+          {
+            "file": "packs/talent_trees.db",
+            "treeId": "d5b60c4f058c4085",
+            "action": "move whole tree document (same _id) to the homebrew tree pack"
+          },
+          {
+            "file": "data/generated/talent-trees.registry.json + data/fixes/talent-trees.registry.json",
+            "action": "regenerate with tools/build-talent-tree-registry.mjs"
+          }
+        ],
+        "actorPackEmbeddedItems": [],
+        "note": "Embedded actor items (if any) must have flags.core.sourceId rewritten from the talents pack to the homebrew pack before the source document leaves the canonical pack."
+      },
       "metadataTransfer": [],
-      "expectedFinal": null,
+      "expectedFinal": {
+        "recordExists": false,
+        "homebrewPackRecordExists": true,
+        "homebrewPack": "talents-homebrew",
+        "idPreserved": true,
+        "treeMembership": "tree Master Of The Amphistaff d5b60c4f058c4085 moves to the homebrew tree pack",
+        "classAccess": "no canonical class references the moved tree (verified by the dry run)",
+        "canonicalRecordsTouched": []
+      },
       "phase3cCanonicalRecordTouched": false,
-      "reviewRequiredReason": "UNSOURCED_OWNER_POLICY"
+      "ownerRuling": {
+        "decision": "OWNER_RULING_DECISION_1",
+        "summary": "Move all 50 homebrew/unsourced records (ids preserved, automation metadata preserved) into a separate explicitly noncanonical homebrew compendium; preserve exclusively-homebrew trees with them; remove those trees from canonical class access/registries; audit embedded actor references first; never present them as official SWSE content."
+      },
+      "previousReviewRequiredReason": "UNSOURCED_OWNER_POLICY",
+      "metadataReview": "Whole record (including abilityMeta, tags, flags, prerequisitesStructured, effects) moves unchanged; nothing is dropped.",
+      "homebrewMove": {
+        "targetPack": "talents-homebrew",
+        "idPreserved": true,
+        "treeHandling": "TREE_MOVES_WITH_RECORDS",
+        "treeId": "d5b60c4f058c4085",
+        "treeName": "Master Of The Amphistaff",
+        "canonicalMembersRemainingInTree": 0
+      }
     },
     {
       "productionId": "a4629f24bd571414",
@@ -3580,11 +4665,11 @@
       "treeId": "4007fa87192b5884",
       "treeName": "Mercenary",
       "group": "DEFERRED_PRODUCTION_ONLY",
-      "finalDisposition": "REVIEW_REQUIRED",
+      "finalDisposition": "MOVE_HOMEBREW_PACK",
       "survivorId": null,
-      "adjudicationStatus": "BLOCKED_ON_OWNER_POLICY",
+      "adjudicationStatus": "ADJUDICATED",
       "evidence": {
-        "status": "NO_OFFICIAL_SUPPORT_FOUND_BLOCKED_ON_POLICY",
+        "status": "ADJUDICATED_NONCANONICAL_OWNER_RULING",
         "conclusion": "No verbatim text and no talent of this name in any of the 14 committed sourcebook TXT files, and no canonical identity matches it.",
         "findings": [
           "textSupport gives the best 5-gram containment against every TXT and against the canonical corpus.",
@@ -3602,11 +4687,46 @@
         "registryStatus": "REPO_TREE_PRESENT",
         "pdfRequired": false
       },
-      "referencesToRepoint": null,
+      "referencesToRepoint": {
+        "structural": [
+          {
+            "file": "packs/talent_trees.db",
+            "treeId": "4007fa87192b5884",
+            "action": "remove system.talentIds[a4629f24bd571414] and its talentNames entry from the canonical tree"
+          },
+          {
+            "file": "data/generated/talent-trees.registry.json + data/fixes/talent-trees.registry.json",
+            "action": "regenerate with tools/build-talent-tree-registry.mjs"
+          }
+        ],
+        "actorPackEmbeddedItems": [],
+        "note": "Embedded actor items (if any) must have flags.core.sourceId rewritten from the talents pack to the homebrew pack before the source document leaves the canonical pack."
+      },
       "metadataTransfer": [],
-      "expectedFinal": null,
+      "expectedFinal": {
+        "recordExists": false,
+        "homebrewPackRecordExists": true,
+        "homebrewPack": "talents-homebrew",
+        "idPreserved": true,
+        "treeMembership": "removed from canonical tree Mercenary 4007fa87192b5884",
+        "classAccess": "no canonical class references the moved tree (verified by the dry run)",
+        "canonicalRecordsTouched": []
+      },
       "phase3cCanonicalRecordTouched": false,
-      "reviewRequiredReason": "UNSOURCED_OWNER_POLICY"
+      "ownerRuling": {
+        "decision": "OWNER_RULING_DECISION_1",
+        "summary": "Move all 50 homebrew/unsourced records (ids preserved, automation metadata preserved) into a separate explicitly noncanonical homebrew compendium; preserve exclusively-homebrew trees with them; remove those trees from canonical class access/registries; audit embedded actor references first; never present them as official SWSE content."
+      },
+      "previousReviewRequiredReason": "UNSOURCED_OWNER_POLICY",
+      "metadataReview": "Whole record (including abilityMeta, tags, flags, prerequisitesStructured, effects) moves unchanged; nothing is dropped.",
+      "homebrewMove": {
+        "targetPack": "talents-homebrew",
+        "idPreserved": true,
+        "treeHandling": "TREE_STAYS_CANONICAL_MEMBER_LEAVES",
+        "treeId": "4007fa87192b5884",
+        "treeName": "Mercenary",
+        "canonicalMembersRemainingInTree": 5
+      }
     },
     {
       "productionId": "a76198e5da0f6368",
@@ -3681,11 +4801,11 @@
       "treeId": "f3881205595248d4",
       "treeName": "Chalactan Adept",
       "group": "DEFERRED_PRODUCTION_ONLY",
-      "finalDisposition": "REVIEW_REQUIRED",
+      "finalDisposition": "MOVE_HOMEBREW_PACK",
       "survivorId": null,
-      "adjudicationStatus": "BLOCKED_ON_OWNER_POLICY",
+      "adjudicationStatus": "ADJUDICATED",
       "evidence": {
-        "status": "NO_OFFICIAL_SUPPORT_FOUND_BLOCKED_ON_POLICY",
+        "status": "ADJUDICATED_NONCANONICAL_OWNER_RULING",
         "conclusion": "No verbatim text and no talent of this name in any of the 14 committed sourcebook TXT files, and no canonical identity matches it.",
         "findings": [
           "textSupport gives the best 5-gram containment against every TXT and against the canonical corpus.",
@@ -3703,11 +4823,46 @@
         "registryStatus": "REPO_ONLY_NONCANONICAL_HOMEBREW",
         "pdfRequired": false
       },
-      "referencesToRepoint": null,
+      "referencesToRepoint": {
+        "structural": [
+          {
+            "file": "packs/talent_trees.db",
+            "treeId": "f3881205595248d4",
+            "action": "move whole tree document (same _id) to the homebrew tree pack"
+          },
+          {
+            "file": "data/generated/talent-trees.registry.json + data/fixes/talent-trees.registry.json",
+            "action": "regenerate with tools/build-talent-tree-registry.mjs"
+          }
+        ],
+        "actorPackEmbeddedItems": [],
+        "note": "Embedded actor items (if any) must have flags.core.sourceId rewritten from the talents pack to the homebrew pack before the source document leaves the canonical pack."
+      },
       "metadataTransfer": [],
-      "expectedFinal": null,
+      "expectedFinal": {
+        "recordExists": false,
+        "homebrewPackRecordExists": true,
+        "homebrewPack": "talents-homebrew",
+        "idPreserved": true,
+        "treeMembership": "tree Chalactan Adept f3881205595248d4 moves to the homebrew tree pack",
+        "classAccess": "no canonical class references the moved tree (verified by the dry run)",
+        "canonicalRecordsTouched": []
+      },
       "phase3cCanonicalRecordTouched": false,
-      "reviewRequiredReason": "UNSOURCED_OWNER_POLICY"
+      "ownerRuling": {
+        "decision": "OWNER_RULING_DECISION_1",
+        "summary": "Move all 50 homebrew/unsourced records (ids preserved, automation metadata preserved) into a separate explicitly noncanonical homebrew compendium; preserve exclusively-homebrew trees with them; remove those trees from canonical class access/registries; audit embedded actor references first; never present them as official SWSE content."
+      },
+      "previousReviewRequiredReason": "UNSOURCED_OWNER_POLICY",
+      "metadataReview": "Whole record (including abilityMeta, tags, flags, prerequisitesStructured, effects) moves unchanged; nothing is dropped.",
+      "homebrewMove": {
+        "targetPack": "talents-homebrew",
+        "idPreserved": true,
+        "treeHandling": "TREE_MOVES_WITH_RECORDS",
+        "treeId": "f3881205595248d4",
+        "treeName": "Chalactan Adept",
+        "canonicalMembersRemainingInTree": 0
+      }
     },
     {
       "productionId": "ab6efafd94ad044e",
@@ -3786,11 +4941,11 @@
       "treeId": "38d7c18ce4664c66",
       "treeName": "Mechanic",
       "group": "DEFERRED_PRODUCTION_ONLY",
-      "finalDisposition": "REVIEW_REQUIRED",
+      "finalDisposition": "MOVE_HOMEBREW_PACK",
       "survivorId": null,
-      "adjudicationStatus": "BLOCKED_ON_OWNER_POLICY",
+      "adjudicationStatus": "ADJUDICATED",
       "evidence": {
-        "status": "NO_OFFICIAL_SUPPORT_FOUND_BLOCKED_ON_POLICY",
+        "status": "ADJUDICATED_NONCANONICAL_OWNER_RULING",
         "conclusion": "No verbatim text and no talent of this name in any of the 14 committed sourcebook TXT files, and no canonical identity matches it.",
         "findings": [
           "textSupport gives the best 5-gram containment against every TXT and against the canonical corpus.",
@@ -3808,11 +4963,46 @@
         "registryStatus": "REPO_ONLY_NONCANONICAL_HOMEBREW",
         "pdfRequired": false
       },
-      "referencesToRepoint": null,
+      "referencesToRepoint": {
+        "structural": [
+          {
+            "file": "packs/talent_trees.db",
+            "treeId": "38d7c18ce4664c66",
+            "action": "move whole tree document (same _id) to the homebrew tree pack"
+          },
+          {
+            "file": "data/generated/talent-trees.registry.json + data/fixes/talent-trees.registry.json",
+            "action": "regenerate with tools/build-talent-tree-registry.mjs"
+          }
+        ],
+        "actorPackEmbeddedItems": [],
+        "note": "Embedded actor items (if any) must have flags.core.sourceId rewritten from the talents pack to the homebrew pack before the source document leaves the canonical pack."
+      },
       "metadataTransfer": [],
-      "expectedFinal": null,
+      "expectedFinal": {
+        "recordExists": false,
+        "homebrewPackRecordExists": true,
+        "homebrewPack": "talents-homebrew",
+        "idPreserved": true,
+        "treeMembership": "tree Mechanic 38d7c18ce4664c66 moves to the homebrew tree pack",
+        "classAccess": "no canonical class references the moved tree (verified by the dry run)",
+        "canonicalRecordsTouched": []
+      },
       "phase3cCanonicalRecordTouched": false,
-      "reviewRequiredReason": "UNSOURCED_OWNER_POLICY"
+      "ownerRuling": {
+        "decision": "OWNER_RULING_DECISION_1",
+        "summary": "Move all 50 homebrew/unsourced records (ids preserved, automation metadata preserved) into a separate explicitly noncanonical homebrew compendium; preserve exclusively-homebrew trees with them; remove those trees from canonical class access/registries; audit embedded actor references first; never present them as official SWSE content."
+      },
+      "previousReviewRequiredReason": "UNSOURCED_OWNER_POLICY",
+      "metadataReview": "Whole record (including abilityMeta, tags, flags, prerequisitesStructured, effects) moves unchanged; nothing is dropped.",
+      "homebrewMove": {
+        "targetPack": "talents-homebrew",
+        "idPreserved": true,
+        "treeHandling": "TREE_MOVES_WITH_RECORDS",
+        "treeId": "38d7c18ce4664c66",
+        "treeName": "Mechanic",
+        "canonicalMembersRemainingInTree": 0
+      }
     },
     {
       "productionId": "b28f312432d79e77",
@@ -3887,11 +5077,11 @@
       "treeId": "cfd358ef61fb47bd",
       "treeName": "Sorcerer Of Tund",
       "group": "DEFERRED_PRODUCTION_ONLY",
-      "finalDisposition": "REVIEW_REQUIRED",
+      "finalDisposition": "MOVE_HOMEBREW_PACK",
       "survivorId": null,
-      "adjudicationStatus": "BLOCKED_ON_OWNER_POLICY",
+      "adjudicationStatus": "ADJUDICATED",
       "evidence": {
-        "status": "NO_OFFICIAL_SUPPORT_FOUND_BLOCKED_ON_POLICY",
+        "status": "ADJUDICATED_NONCANONICAL_OWNER_RULING",
         "conclusion": "No verbatim text and no talent of this name in any of the 14 committed sourcebook TXT files, and no canonical identity matches it.",
         "findings": [
           "textSupport gives the best 5-gram containment against every TXT and against the canonical corpus.",
@@ -3909,11 +5099,46 @@
         "registryStatus": "REPO_ONLY_NONCANONICAL_HOMEBREW",
         "pdfRequired": false
       },
-      "referencesToRepoint": null,
+      "referencesToRepoint": {
+        "structural": [
+          {
+            "file": "packs/talent_trees.db",
+            "treeId": "cfd358ef61fb47bd",
+            "action": "move whole tree document (same _id) to the homebrew tree pack"
+          },
+          {
+            "file": "data/generated/talent-trees.registry.json + data/fixes/talent-trees.registry.json",
+            "action": "regenerate with tools/build-talent-tree-registry.mjs"
+          }
+        ],
+        "actorPackEmbeddedItems": [],
+        "note": "Embedded actor items (if any) must have flags.core.sourceId rewritten from the talents pack to the homebrew pack before the source document leaves the canonical pack."
+      },
       "metadataTransfer": [],
-      "expectedFinal": null,
+      "expectedFinal": {
+        "recordExists": false,
+        "homebrewPackRecordExists": true,
+        "homebrewPack": "talents-homebrew",
+        "idPreserved": true,
+        "treeMembership": "tree Sorcerer Of Tund cfd358ef61fb47bd moves to the homebrew tree pack",
+        "classAccess": "no canonical class references the moved tree (verified by the dry run)",
+        "canonicalRecordsTouched": []
+      },
       "phase3cCanonicalRecordTouched": false,
-      "reviewRequiredReason": "UNSOURCED_OWNER_POLICY"
+      "ownerRuling": {
+        "decision": "OWNER_RULING_DECISION_1",
+        "summary": "Move all 50 homebrew/unsourced records (ids preserved, automation metadata preserved) into a separate explicitly noncanonical homebrew compendium; preserve exclusively-homebrew trees with them; remove those trees from canonical class access/registries; audit embedded actor references first; never present them as official SWSE content."
+      },
+      "previousReviewRequiredReason": "UNSOURCED_OWNER_POLICY",
+      "metadataReview": "Whole record (including abilityMeta, tags, flags, prerequisitesStructured, effects) moves unchanged; nothing is dropped.",
+      "homebrewMove": {
+        "targetPack": "talents-homebrew",
+        "idPreserved": true,
+        "treeHandling": "TREE_MOVES_WITH_RECORDS",
+        "treeId": "cfd358ef61fb47bd",
+        "treeName": "Sorcerer Of Tund",
+        "canonicalMembersRemainingInTree": 0
+      }
     },
     {
       "productionId": "b9fce171cad543d7",
@@ -3921,11 +5146,11 @@
       "treeId": "8e44e56069274319",
       "treeName": "Cloner",
       "group": "DEFERRED_PRODUCTION_ONLY",
-      "finalDisposition": "REVIEW_REQUIRED",
+      "finalDisposition": "MOVE_HOMEBREW_PACK",
       "survivorId": null,
-      "adjudicationStatus": "BLOCKED_ON_OWNER_POLICY",
+      "adjudicationStatus": "ADJUDICATED",
       "evidence": {
-        "status": "NO_OFFICIAL_SUPPORT_FOUND_BLOCKED_ON_POLICY",
+        "status": "ADJUDICATED_NONCANONICAL_OWNER_RULING",
         "conclusion": "No verbatim text and no talent of this name in any of the 14 committed sourcebook TXT files, and no canonical identity matches it.",
         "findings": [
           "textSupport gives the best 5-gram containment against every TXT and against the canonical corpus.",
@@ -3943,11 +5168,46 @@
         "registryStatus": "REPO_ONLY_NONCANONICAL_HOMEBREW",
         "pdfRequired": false
       },
-      "referencesToRepoint": null,
+      "referencesToRepoint": {
+        "structural": [
+          {
+            "file": "packs/talent_trees.db",
+            "treeId": "8e44e56069274319",
+            "action": "move whole tree document (same _id) to the homebrew tree pack"
+          },
+          {
+            "file": "data/generated/talent-trees.registry.json + data/fixes/talent-trees.registry.json",
+            "action": "regenerate with tools/build-talent-tree-registry.mjs"
+          }
+        ],
+        "actorPackEmbeddedItems": [],
+        "note": "Embedded actor items (if any) must have flags.core.sourceId rewritten from the talents pack to the homebrew pack before the source document leaves the canonical pack."
+      },
       "metadataTransfer": [],
-      "expectedFinal": null,
+      "expectedFinal": {
+        "recordExists": false,
+        "homebrewPackRecordExists": true,
+        "homebrewPack": "talents-homebrew",
+        "idPreserved": true,
+        "treeMembership": "tree Cloner 8e44e56069274319 moves to the homebrew tree pack",
+        "classAccess": "no canonical class references the moved tree (verified by the dry run)",
+        "canonicalRecordsTouched": []
+      },
       "phase3cCanonicalRecordTouched": false,
-      "reviewRequiredReason": "UNSOURCED_OWNER_POLICY"
+      "ownerRuling": {
+        "decision": "OWNER_RULING_DECISION_1",
+        "summary": "Move all 50 homebrew/unsourced records (ids preserved, automation metadata preserved) into a separate explicitly noncanonical homebrew compendium; preserve exclusively-homebrew trees with them; remove those trees from canonical class access/registries; audit embedded actor references first; never present them as official SWSE content."
+      },
+      "previousReviewRequiredReason": "UNSOURCED_OWNER_POLICY",
+      "metadataReview": "Whole record (including abilityMeta, tags, flags, prerequisitesStructured, effects) moves unchanged; nothing is dropped.",
+      "homebrewMove": {
+        "targetPack": "talents-homebrew",
+        "idPreserved": true,
+        "treeHandling": "TREE_MOVES_WITH_RECORDS",
+        "treeId": "8e44e56069274319",
+        "treeName": "Cloner",
+        "canonicalMembersRemainingInTree": 0
+      }
     },
     {
       "productionId": "c086c6265e224637",
@@ -4115,11 +5375,11 @@
       "treeId": "feb08c2834a447ab",
       "treeName": "Galactic Senator",
       "group": "DEFERRED_PRODUCTION_ONLY",
-      "finalDisposition": "REVIEW_REQUIRED",
+      "finalDisposition": "MOVE_HOMEBREW_PACK",
       "survivorId": null,
-      "adjudicationStatus": "BLOCKED_ON_OWNER_POLICY",
+      "adjudicationStatus": "ADJUDICATED",
       "evidence": {
-        "status": "NO_OFFICIAL_SUPPORT_FOUND_BLOCKED_ON_POLICY",
+        "status": "ADJUDICATED_NONCANONICAL_OWNER_RULING",
         "conclusion": "No verbatim text and no talent of this name in any of the 14 committed sourcebook TXT files, and no canonical identity matches it.",
         "findings": [
           "textSupport gives the best 5-gram containment against every TXT and against the canonical corpus.",
@@ -4137,11 +5397,46 @@
         "registryStatus": "REPO_ONLY_NONCANONICAL_HOMEBREW",
         "pdfRequired": false
       },
-      "referencesToRepoint": null,
+      "referencesToRepoint": {
+        "structural": [
+          {
+            "file": "packs/talent_trees.db",
+            "treeId": "feb08c2834a447ab",
+            "action": "move whole tree document (same _id) to the homebrew tree pack"
+          },
+          {
+            "file": "data/generated/talent-trees.registry.json + data/fixes/talent-trees.registry.json",
+            "action": "regenerate with tools/build-talent-tree-registry.mjs"
+          }
+        ],
+        "actorPackEmbeddedItems": [],
+        "note": "Embedded actor items (if any) must have flags.core.sourceId rewritten from the talents pack to the homebrew pack before the source document leaves the canonical pack."
+      },
       "metadataTransfer": [],
-      "expectedFinal": null,
+      "expectedFinal": {
+        "recordExists": false,
+        "homebrewPackRecordExists": true,
+        "homebrewPack": "talents-homebrew",
+        "idPreserved": true,
+        "treeMembership": "tree Galactic Senator feb08c2834a447ab moves to the homebrew tree pack",
+        "classAccess": "no canonical class references the moved tree (verified by the dry run)",
+        "canonicalRecordsTouched": []
+      },
       "phase3cCanonicalRecordTouched": false,
-      "reviewRequiredReason": "UNSOURCED_OWNER_POLICY"
+      "ownerRuling": {
+        "decision": "OWNER_RULING_DECISION_1",
+        "summary": "Move all 50 homebrew/unsourced records (ids preserved, automation metadata preserved) into a separate explicitly noncanonical homebrew compendium; preserve exclusively-homebrew trees with them; remove those trees from canonical class access/registries; audit embedded actor references first; never present them as official SWSE content."
+      },
+      "previousReviewRequiredReason": "UNSOURCED_OWNER_POLICY",
+      "metadataReview": "Whole record (including abilityMeta, tags, flags, prerequisitesStructured, effects) moves unchanged; nothing is dropped.",
+      "homebrewMove": {
+        "targetPack": "talents-homebrew",
+        "idPreserved": true,
+        "treeHandling": "TREE_MOVES_WITH_RECORDS",
+        "treeId": "feb08c2834a447ab",
+        "treeName": "Galactic Senator",
+        "canonicalMembersRemainingInTree": 0
+      }
     },
     {
       "productionId": "cc78c981176d4fed",
@@ -4149,11 +5444,11 @@
       "treeId": "25d99948c9cb41ad",
       "treeName": "Jumptrooper",
       "group": "DEFERRED_PRODUCTION_ONLY",
-      "finalDisposition": "REVIEW_REQUIRED",
+      "finalDisposition": "MOVE_HOMEBREW_PACK",
       "survivorId": null,
-      "adjudicationStatus": "BLOCKED_ON_OWNER_POLICY",
+      "adjudicationStatus": "ADJUDICATED",
       "evidence": {
-        "status": "NO_OFFICIAL_SUPPORT_FOUND_BLOCKED_ON_POLICY",
+        "status": "ADJUDICATED_NONCANONICAL_OWNER_RULING",
         "conclusion": "No verbatim text and no talent of this name in any of the 14 committed sourcebook TXT files, and no canonical identity matches it.",
         "findings": [
           "textSupport gives the best 5-gram containment against every TXT and against the canonical corpus.",
@@ -4171,11 +5466,46 @@
         "registryStatus": "REPO_ONLY_NONCANONICAL_HOMEBREW",
         "pdfRequired": false
       },
-      "referencesToRepoint": null,
+      "referencesToRepoint": {
+        "structural": [
+          {
+            "file": "packs/talent_trees.db",
+            "treeId": "25d99948c9cb41ad",
+            "action": "move whole tree document (same _id) to the homebrew tree pack"
+          },
+          {
+            "file": "data/generated/talent-trees.registry.json + data/fixes/talent-trees.registry.json",
+            "action": "regenerate with tools/build-talent-tree-registry.mjs"
+          }
+        ],
+        "actorPackEmbeddedItems": [],
+        "note": "Embedded actor items (if any) must have flags.core.sourceId rewritten from the talents pack to the homebrew pack before the source document leaves the canonical pack."
+      },
       "metadataTransfer": [],
-      "expectedFinal": null,
+      "expectedFinal": {
+        "recordExists": false,
+        "homebrewPackRecordExists": true,
+        "homebrewPack": "talents-homebrew",
+        "idPreserved": true,
+        "treeMembership": "tree Jumptrooper 25d99948c9cb41ad moves to the homebrew tree pack",
+        "classAccess": "no canonical class references the moved tree (verified by the dry run)",
+        "canonicalRecordsTouched": []
+      },
       "phase3cCanonicalRecordTouched": false,
-      "reviewRequiredReason": "UNSOURCED_OWNER_POLICY"
+      "ownerRuling": {
+        "decision": "OWNER_RULING_DECISION_1",
+        "summary": "Move all 50 homebrew/unsourced records (ids preserved, automation metadata preserved) into a separate explicitly noncanonical homebrew compendium; preserve exclusively-homebrew trees with them; remove those trees from canonical class access/registries; audit embedded actor references first; never present them as official SWSE content."
+      },
+      "previousReviewRequiredReason": "UNSOURCED_OWNER_POLICY",
+      "metadataReview": "Whole record (including abilityMeta, tags, flags, prerequisitesStructured, effects) moves unchanged; nothing is dropped.",
+      "homebrewMove": {
+        "targetPack": "talents-homebrew",
+        "idPreserved": true,
+        "treeHandling": "TREE_MOVES_WITH_RECORDS",
+        "treeId": "25d99948c9cb41ad",
+        "treeName": "Jumptrooper",
+        "canonicalMembersRemainingInTree": 0
+      }
     },
     {
       "productionId": "cc938ba0542c97e4",
@@ -4250,11 +5580,11 @@
       "treeId": "25d99948c9cb41ad",
       "treeName": "Jumptrooper",
       "group": "DEFERRED_PRODUCTION_ONLY",
-      "finalDisposition": "REVIEW_REQUIRED",
+      "finalDisposition": "MOVE_HOMEBREW_PACK",
       "survivorId": null,
-      "adjudicationStatus": "BLOCKED_ON_OWNER_POLICY",
+      "adjudicationStatus": "ADJUDICATED",
       "evidence": {
-        "status": "NO_OFFICIAL_SUPPORT_FOUND_BLOCKED_ON_POLICY",
+        "status": "ADJUDICATED_NONCANONICAL_OWNER_RULING",
         "conclusion": "No verbatim text and no talent of this name in any of the 14 committed sourcebook TXT files, and no canonical identity matches it.",
         "findings": [
           "textSupport gives the best 5-gram containment against every TXT and against the canonical corpus.",
@@ -4272,11 +5602,46 @@
         "registryStatus": "REPO_ONLY_NONCANONICAL_HOMEBREW",
         "pdfRequired": false
       },
-      "referencesToRepoint": null,
+      "referencesToRepoint": {
+        "structural": [
+          {
+            "file": "packs/talent_trees.db",
+            "treeId": "25d99948c9cb41ad",
+            "action": "move whole tree document (same _id) to the homebrew tree pack"
+          },
+          {
+            "file": "data/generated/talent-trees.registry.json + data/fixes/talent-trees.registry.json",
+            "action": "regenerate with tools/build-talent-tree-registry.mjs"
+          }
+        ],
+        "actorPackEmbeddedItems": [],
+        "note": "Embedded actor items (if any) must have flags.core.sourceId rewritten from the talents pack to the homebrew pack before the source document leaves the canonical pack."
+      },
       "metadataTransfer": [],
-      "expectedFinal": null,
+      "expectedFinal": {
+        "recordExists": false,
+        "homebrewPackRecordExists": true,
+        "homebrewPack": "talents-homebrew",
+        "idPreserved": true,
+        "treeMembership": "tree Jumptrooper 25d99948c9cb41ad moves to the homebrew tree pack",
+        "classAccess": "no canonical class references the moved tree (verified by the dry run)",
+        "canonicalRecordsTouched": []
+      },
       "phase3cCanonicalRecordTouched": false,
-      "reviewRequiredReason": "UNSOURCED_OWNER_POLICY"
+      "ownerRuling": {
+        "decision": "OWNER_RULING_DECISION_1",
+        "summary": "Move all 50 homebrew/unsourced records (ids preserved, automation metadata preserved) into a separate explicitly noncanonical homebrew compendium; preserve exclusively-homebrew trees with them; remove those trees from canonical class access/registries; audit embedded actor references first; never present them as official SWSE content."
+      },
+      "previousReviewRequiredReason": "UNSOURCED_OWNER_POLICY",
+      "metadataReview": "Whole record (including abilityMeta, tags, flags, prerequisitesStructured, effects) moves unchanged; nothing is dropped.",
+      "homebrewMove": {
+        "targetPack": "talents-homebrew",
+        "idPreserved": true,
+        "treeHandling": "TREE_MOVES_WITH_RECORDS",
+        "treeId": "25d99948c9cb41ad",
+        "treeName": "Jumptrooper",
+        "canonicalMembersRemainingInTree": 0
+      }
     },
     {
       "productionId": "d49ca4c47e704a96",
@@ -4284,11 +5649,11 @@
       "treeId": "fc978e442f544dbe",
       "treeName": "Defensive Duelist",
       "group": "DEFERRED_PRODUCTION_ONLY",
-      "finalDisposition": "REVIEW_REQUIRED",
+      "finalDisposition": "MOVE_HOMEBREW_PACK",
       "survivorId": null,
-      "adjudicationStatus": "BLOCKED_ON_OWNER_POLICY",
+      "adjudicationStatus": "ADJUDICATED",
       "evidence": {
-        "status": "NO_OFFICIAL_SUPPORT_FOUND_BLOCKED_ON_POLICY",
+        "status": "ADJUDICATED_NONCANONICAL_OWNER_RULING",
         "conclusion": "No verbatim text and no talent of this name in any of the 14 committed sourcebook TXT files, and no canonical identity matches it.",
         "findings": [
           "textSupport gives the best 5-gram containment against every TXT and against the canonical corpus.",
@@ -4306,11 +5671,46 @@
         "registryStatus": "REPO_ONLY_NONCANONICAL_HOMEBREW",
         "pdfRequired": false
       },
-      "referencesToRepoint": null,
+      "referencesToRepoint": {
+        "structural": [
+          {
+            "file": "packs/talent_trees.db",
+            "treeId": "fc978e442f544dbe",
+            "action": "move whole tree document (same _id) to the homebrew tree pack"
+          },
+          {
+            "file": "data/generated/talent-trees.registry.json + data/fixes/talent-trees.registry.json",
+            "action": "regenerate with tools/build-talent-tree-registry.mjs"
+          }
+        ],
+        "actorPackEmbeddedItems": [],
+        "note": "Embedded actor items (if any) must have flags.core.sourceId rewritten from the talents pack to the homebrew pack before the source document leaves the canonical pack."
+      },
       "metadataTransfer": [],
-      "expectedFinal": null,
+      "expectedFinal": {
+        "recordExists": false,
+        "homebrewPackRecordExists": true,
+        "homebrewPack": "talents-homebrew",
+        "idPreserved": true,
+        "treeMembership": "tree Defensive Duelist fc978e442f544dbe moves to the homebrew tree pack",
+        "classAccess": "no canonical class references the moved tree (verified by the dry run)",
+        "canonicalRecordsTouched": []
+      },
       "phase3cCanonicalRecordTouched": false,
-      "reviewRequiredReason": "UNSOURCED_OWNER_POLICY"
+      "ownerRuling": {
+        "decision": "OWNER_RULING_DECISION_1",
+        "summary": "Move all 50 homebrew/unsourced records (ids preserved, automation metadata preserved) into a separate explicitly noncanonical homebrew compendium; preserve exclusively-homebrew trees with them; remove those trees from canonical class access/registries; audit embedded actor references first; never present them as official SWSE content."
+      },
+      "previousReviewRequiredReason": "UNSOURCED_OWNER_POLICY",
+      "metadataReview": "Whole record (including abilityMeta, tags, flags, prerequisitesStructured, effects) moves unchanged; nothing is dropped.",
+      "homebrewMove": {
+        "targetPack": "talents-homebrew",
+        "idPreserved": true,
+        "treeHandling": "TREE_MOVES_WITH_RECORDS",
+        "treeId": "fc978e442f544dbe",
+        "treeName": "Defensive Duelist",
+        "canonicalMembersRemainingInTree": 0
+      }
     },
     {
       "productionId": "d7870d0940a3ce0b",
@@ -4390,11 +5790,11 @@
       "treeId": "8e44e56069274319",
       "treeName": "Cloner",
       "group": "DEFERRED_PRODUCTION_ONLY",
-      "finalDisposition": "REVIEW_REQUIRED",
+      "finalDisposition": "MOVE_HOMEBREW_PACK",
       "survivorId": null,
-      "adjudicationStatus": "BLOCKED_ON_OWNER_POLICY",
+      "adjudicationStatus": "ADJUDICATED",
       "evidence": {
-        "status": "NO_OFFICIAL_SUPPORT_FOUND_BLOCKED_ON_POLICY",
+        "status": "ADJUDICATED_NONCANONICAL_OWNER_RULING",
         "conclusion": "No verbatim text and no talent of this name in any of the 14 committed sourcebook TXT files, and no canonical identity matches it.",
         "findings": [
           "textSupport gives the best 5-gram containment against every TXT and against the canonical corpus.",
@@ -4412,11 +5812,46 @@
         "registryStatus": "REPO_ONLY_NONCANONICAL_HOMEBREW",
         "pdfRequired": false
       },
-      "referencesToRepoint": null,
+      "referencesToRepoint": {
+        "structural": [
+          {
+            "file": "packs/talent_trees.db",
+            "treeId": "8e44e56069274319",
+            "action": "move whole tree document (same _id) to the homebrew tree pack"
+          },
+          {
+            "file": "data/generated/talent-trees.registry.json + data/fixes/talent-trees.registry.json",
+            "action": "regenerate with tools/build-talent-tree-registry.mjs"
+          }
+        ],
+        "actorPackEmbeddedItems": [],
+        "note": "Embedded actor items (if any) must have flags.core.sourceId rewritten from the talents pack to the homebrew pack before the source document leaves the canonical pack."
+      },
       "metadataTransfer": [],
-      "expectedFinal": null,
+      "expectedFinal": {
+        "recordExists": false,
+        "homebrewPackRecordExists": true,
+        "homebrewPack": "talents-homebrew",
+        "idPreserved": true,
+        "treeMembership": "tree Cloner 8e44e56069274319 moves to the homebrew tree pack",
+        "classAccess": "no canonical class references the moved tree (verified by the dry run)",
+        "canonicalRecordsTouched": []
+      },
       "phase3cCanonicalRecordTouched": false,
-      "reviewRequiredReason": "UNSOURCED_OWNER_POLICY"
+      "ownerRuling": {
+        "decision": "OWNER_RULING_DECISION_1",
+        "summary": "Move all 50 homebrew/unsourced records (ids preserved, automation metadata preserved) into a separate explicitly noncanonical homebrew compendium; preserve exclusively-homebrew trees with them; remove those trees from canonical class access/registries; audit embedded actor references first; never present them as official SWSE content."
+      },
+      "previousReviewRequiredReason": "UNSOURCED_OWNER_POLICY",
+      "metadataReview": "Whole record (including abilityMeta, tags, flags, prerequisitesStructured, effects) moves unchanged; nothing is dropped.",
+      "homebrewMove": {
+        "targetPack": "talents-homebrew",
+        "idPreserved": true,
+        "treeHandling": "TREE_MOVES_WITH_RECORDS",
+        "treeId": "8e44e56069274319",
+        "treeName": "Cloner",
+        "canonicalMembersRemainingInTree": 0
+      }
     },
     {
       "productionId": "e09d40421ade49e8",
@@ -4424,11 +5859,11 @@
       "treeId": "ad16f3e5f4f7441b",
       "treeName": "Dathomiri Witch",
       "group": "DEFERRED_PRODUCTION_ONLY",
-      "finalDisposition": "REVIEW_REQUIRED",
+      "finalDisposition": "MOVE_HOMEBREW_PACK",
       "survivorId": null,
-      "adjudicationStatus": "BLOCKED_ON_OWNER_POLICY",
+      "adjudicationStatus": "ADJUDICATED",
       "evidence": {
-        "status": "ADJUDICATED_NOT_OFFICIAL_SWSE_BLOCKED_ON_POLICY",
+        "status": "ADJUDICATED_NONCANONICAL_OWNER_RULING",
         "conclusion": "Self-labelled homebrew (Homebrew Reference Book: Dathomir Field Guide); not found in any committed sourcebook TXT.",
         "findings": [
           "benefit ends \"Homebrew Reference Book: Dathomir Field Guide\"; no TXT hit for \"Binding Sickle\" or \"Chain Sickle\".",
@@ -4436,11 +5871,46 @@
         ],
         "pdfRequired": false
       },
-      "referencesToRepoint": null,
+      "referencesToRepoint": {
+        "structural": [
+          {
+            "file": "packs/talent_trees.db",
+            "treeId": "ad16f3e5f4f7441b",
+            "action": "remove system.talentIds[e09d40421ade49e8] and its talentNames entry from the canonical tree"
+          },
+          {
+            "file": "data/generated/talent-trees.registry.json + data/fixes/talent-trees.registry.json",
+            "action": "regenerate with tools/build-talent-tree-registry.mjs"
+          }
+        ],
+        "actorPackEmbeddedItems": [],
+        "note": "Embedded actor items (if any) must have flags.core.sourceId rewritten from the talents pack to the homebrew pack before the source document leaves the canonical pack."
+      },
       "metadataTransfer": [],
-      "expectedFinal": null,
+      "expectedFinal": {
+        "recordExists": false,
+        "homebrewPackRecordExists": true,
+        "homebrewPack": "talents-homebrew",
+        "idPreserved": true,
+        "treeMembership": "removed from canonical tree Dathomiri Witch ad16f3e5f4f7441b",
+        "classAccess": "no canonical class references the moved tree (verified by the dry run)",
+        "canonicalRecordsTouched": []
+      },
       "phase3cCanonicalRecordTouched": false,
-      "reviewRequiredReason": "HOMEBREW_POLICY_OWNER_DECISION"
+      "ownerRuling": {
+        "decision": "OWNER_RULING_DECISION_1",
+        "summary": "Move all 50 homebrew/unsourced records (ids preserved, automation metadata preserved) into a separate explicitly noncanonical homebrew compendium; preserve exclusively-homebrew trees with them; remove those trees from canonical class access/registries; audit embedded actor references first; never present them as official SWSE content."
+      },
+      "previousReviewRequiredReason": "HOMEBREW_POLICY_OWNER_DECISION",
+      "metadataReview": "Whole record (including abilityMeta, tags, flags, prerequisitesStructured, effects) moves unchanged; nothing is dropped.",
+      "homebrewMove": {
+        "targetPack": "talents-homebrew",
+        "idPreserved": true,
+        "treeHandling": "TREE_STAYS_CANONICAL_MEMBER_LEAVES",
+        "treeId": "ad16f3e5f4f7441b",
+        "treeName": "Dathomiri Witch",
+        "canonicalMembersRemainingInTree": 4
+      }
     },
     {
       "productionId": "e6055a514a784387",
@@ -4448,11 +5918,11 @@
       "treeId": "37f3554a2f30425a",
       "treeName": "Exceptional Followers",
       "group": "DEFERRED_PRODUCTION_ONLY",
-      "finalDisposition": "REVIEW_REQUIRED",
+      "finalDisposition": "MOVE_HOMEBREW_PACK",
       "survivorId": null,
-      "adjudicationStatus": "BLOCKED_ON_OWNER_POLICY",
+      "adjudicationStatus": "ADJUDICATED",
       "evidence": {
-        "status": "NO_OFFICIAL_SUPPORT_FOUND_BLOCKED_ON_POLICY",
+        "status": "ADJUDICATED_NONCANONICAL_OWNER_RULING",
         "conclusion": "No verbatim text and no talent of this name in any of the 14 committed sourcebook TXT files, and no canonical identity matches it.",
         "findings": [
           "textSupport gives the best 5-gram containment against every TXT and against the canonical corpus.",
@@ -4470,11 +5940,46 @@
         "registryStatus": "REPO_ONLY_NONCANONICAL_HOMEBREW",
         "pdfRequired": false
       },
-      "referencesToRepoint": null,
+      "referencesToRepoint": {
+        "structural": [
+          {
+            "file": "packs/talent_trees.db",
+            "treeId": "37f3554a2f30425a",
+            "action": "move whole tree document (same _id) to the homebrew tree pack"
+          },
+          {
+            "file": "data/generated/talent-trees.registry.json + data/fixes/talent-trees.registry.json",
+            "action": "regenerate with tools/build-talent-tree-registry.mjs"
+          }
+        ],
+        "actorPackEmbeddedItems": [],
+        "note": "Embedded actor items (if any) must have flags.core.sourceId rewritten from the talents pack to the homebrew pack before the source document leaves the canonical pack."
+      },
       "metadataTransfer": [],
-      "expectedFinal": null,
+      "expectedFinal": {
+        "recordExists": false,
+        "homebrewPackRecordExists": true,
+        "homebrewPack": "talents-homebrew",
+        "idPreserved": true,
+        "treeMembership": "tree Exceptional Followers 37f3554a2f30425a moves to the homebrew tree pack",
+        "classAccess": "no canonical class references the moved tree (verified by the dry run)",
+        "canonicalRecordsTouched": []
+      },
       "phase3cCanonicalRecordTouched": false,
-      "reviewRequiredReason": "UNSOURCED_OWNER_POLICY"
+      "ownerRuling": {
+        "decision": "OWNER_RULING_DECISION_1",
+        "summary": "Move all 50 homebrew/unsourced records (ids preserved, automation metadata preserved) into a separate explicitly noncanonical homebrew compendium; preserve exclusively-homebrew trees with them; remove those trees from canonical class access/registries; audit embedded actor references first; never present them as official SWSE content."
+      },
+      "previousReviewRequiredReason": "UNSOURCED_OWNER_POLICY",
+      "metadataReview": "Whole record (including abilityMeta, tags, flags, prerequisitesStructured, effects) moves unchanged; nothing is dropped.",
+      "homebrewMove": {
+        "targetPack": "talents-homebrew",
+        "idPreserved": true,
+        "treeHandling": "TREE_MOVES_WITH_RECORDS",
+        "treeId": "37f3554a2f30425a",
+        "treeName": "Exceptional Followers",
+        "canonicalMembersRemainingInTree": 0
+      }
     },
     {
       "productionId": "e9541e13afbb4a41",
@@ -4482,11 +5987,11 @@
       "treeId": "fc978e442f544dbe",
       "treeName": "Defensive Duelist",
       "group": "DEFERRED_PRODUCTION_ONLY",
-      "finalDisposition": "REVIEW_REQUIRED",
+      "finalDisposition": "MOVE_HOMEBREW_PACK",
       "survivorId": null,
-      "adjudicationStatus": "BLOCKED_ON_OWNER_POLICY",
+      "adjudicationStatus": "ADJUDICATED",
       "evidence": {
-        "status": "NO_OFFICIAL_SUPPORT_FOUND_BLOCKED_ON_POLICY",
+        "status": "ADJUDICATED_NONCANONICAL_OWNER_RULING",
         "conclusion": "No verbatim text and no talent of this name in any of the 14 committed sourcebook TXT files, and no canonical identity matches it.",
         "findings": [
           "textSupport gives the best 5-gram containment against every TXT and against the canonical corpus.",
@@ -4504,11 +6009,46 @@
         "registryStatus": "REPO_ONLY_NONCANONICAL_HOMEBREW",
         "pdfRequired": false
       },
-      "referencesToRepoint": null,
+      "referencesToRepoint": {
+        "structural": [
+          {
+            "file": "packs/talent_trees.db",
+            "treeId": "fc978e442f544dbe",
+            "action": "move whole tree document (same _id) to the homebrew tree pack"
+          },
+          {
+            "file": "data/generated/talent-trees.registry.json + data/fixes/talent-trees.registry.json",
+            "action": "regenerate with tools/build-talent-tree-registry.mjs"
+          }
+        ],
+        "actorPackEmbeddedItems": [],
+        "note": "Embedded actor items (if any) must have flags.core.sourceId rewritten from the talents pack to the homebrew pack before the source document leaves the canonical pack."
+      },
       "metadataTransfer": [],
-      "expectedFinal": null,
+      "expectedFinal": {
+        "recordExists": false,
+        "homebrewPackRecordExists": true,
+        "homebrewPack": "talents-homebrew",
+        "idPreserved": true,
+        "treeMembership": "tree Defensive Duelist fc978e442f544dbe moves to the homebrew tree pack",
+        "classAccess": "no canonical class references the moved tree (verified by the dry run)",
+        "canonicalRecordsTouched": []
+      },
       "phase3cCanonicalRecordTouched": false,
-      "reviewRequiredReason": "UNSOURCED_OWNER_POLICY"
+      "ownerRuling": {
+        "decision": "OWNER_RULING_DECISION_1",
+        "summary": "Move all 50 homebrew/unsourced records (ids preserved, automation metadata preserved) into a separate explicitly noncanonical homebrew compendium; preserve exclusively-homebrew trees with them; remove those trees from canonical class access/registries; audit embedded actor references first; never present them as official SWSE content."
+      },
+      "previousReviewRequiredReason": "UNSOURCED_OWNER_POLICY",
+      "metadataReview": "Whole record (including abilityMeta, tags, flags, prerequisitesStructured, effects) moves unchanged; nothing is dropped.",
+      "homebrewMove": {
+        "targetPack": "talents-homebrew",
+        "idPreserved": true,
+        "treeHandling": "TREE_MOVES_WITH_RECORDS",
+        "treeId": "fc978e442f544dbe",
+        "treeName": "Defensive Duelist",
+        "canonicalMembersRemainingInTree": 0
+      }
     },
     {
       "productionId": "ea6ee6fad799491e",
@@ -4516,11 +6056,11 @@
       "treeId": "e99cfa9db8493573",
       "treeName": "Jedi Consular",
       "group": "DEFERRED_PRODUCTION_ONLY",
-      "finalDisposition": "REVIEW_REQUIRED",
+      "finalDisposition": "MOVE_HOMEBREW_PACK",
       "survivorId": null,
-      "adjudicationStatus": "BLOCKED_ON_OWNER_POLICY",
+      "adjudicationStatus": "ADJUDICATED",
       "evidence": {
-        "status": "ADJUDICATED_NOT_OFFICIAL_SWSE_BLOCKED_ON_POLICY",
+        "status": "ADJUDICATED_NONCANONICAL_OWNER_RULING",
         "conclusion": "Self-labelled \"Homebrew Reference Book\" text; not printed in any committed sourcebook.",
         "findings": [
           "textSupport gives the best 5-gram containment against every TXT and against the canonical corpus.",
@@ -4538,11 +6078,46 @@
         "registryStatus": "REPO_TREE_PRESENT",
         "pdfRequired": false
       },
-      "referencesToRepoint": null,
+      "referencesToRepoint": {
+        "structural": [
+          {
+            "file": "packs/talent_trees.db",
+            "treeId": "e99cfa9db8493573",
+            "action": "remove system.talentIds[ea6ee6fad799491e] and its talentNames entry from the canonical tree"
+          },
+          {
+            "file": "data/generated/talent-trees.registry.json + data/fixes/talent-trees.registry.json",
+            "action": "regenerate with tools/build-talent-tree-registry.mjs"
+          }
+        ],
+        "actorPackEmbeddedItems": [],
+        "note": "Embedded actor items (if any) must have flags.core.sourceId rewritten from the talents pack to the homebrew pack before the source document leaves the canonical pack."
+      },
       "metadataTransfer": [],
-      "expectedFinal": null,
+      "expectedFinal": {
+        "recordExists": false,
+        "homebrewPackRecordExists": true,
+        "homebrewPack": "talents-homebrew",
+        "idPreserved": true,
+        "treeMembership": "removed from canonical tree Jedi Consular e99cfa9db8493573",
+        "classAccess": "no canonical class references the moved tree (verified by the dry run)",
+        "canonicalRecordsTouched": []
+      },
       "phase3cCanonicalRecordTouched": false,
-      "reviewRequiredReason": "HOMEBREW_POLICY_OWNER_DECISION"
+      "ownerRuling": {
+        "decision": "OWNER_RULING_DECISION_1",
+        "summary": "Move all 50 homebrew/unsourced records (ids preserved, automation metadata preserved) into a separate explicitly noncanonical homebrew compendium; preserve exclusively-homebrew trees with them; remove those trees from canonical class access/registries; audit embedded actor references first; never present them as official SWSE content."
+      },
+      "previousReviewRequiredReason": "HOMEBREW_POLICY_OWNER_DECISION",
+      "metadataReview": "Whole record (including abilityMeta, tags, flags, prerequisitesStructured, effects) moves unchanged; nothing is dropped.",
+      "homebrewMove": {
+        "targetPack": "talents-homebrew",
+        "idPreserved": true,
+        "treeHandling": "TREE_STAYS_CANONICAL_MEMBER_LEAVES",
+        "treeId": "e99cfa9db8493573",
+        "treeName": "Jedi Consular",
+        "canonicalMembersRemainingInTree": 20
+      }
     },
     {
       "productionId": "ebc1d6e79fa543c9",
@@ -4550,11 +6125,11 @@
       "treeId": "c1cf52502cf74435",
       "treeName": "Treatment",
       "group": "DEFERRED_PRODUCTION_ONLY",
-      "finalDisposition": "REVIEW_REQUIRED",
+      "finalDisposition": "MOVE_HOMEBREW_PACK",
       "survivorId": null,
-      "adjudicationStatus": "BLOCKED_ON_OWNER_POLICY",
+      "adjudicationStatus": "ADJUDICATED",
       "evidence": {
-        "status": "NO_OFFICIAL_SUPPORT_FOUND_BLOCKED_ON_POLICY",
+        "status": "ADJUDICATED_NONCANONICAL_OWNER_RULING",
         "conclusion": "No verbatim text and no talent of this name in any of the 14 committed sourcebook TXT files, and no canonical identity matches it.",
         "findings": [
           "textSupport gives the best 5-gram containment against every TXT and against the canonical corpus.",
@@ -4572,11 +6147,46 @@
         "registryStatus": "REPO_ONLY_NONCANONICAL_HOMEBREW",
         "pdfRequired": false
       },
-      "referencesToRepoint": null,
+      "referencesToRepoint": {
+        "structural": [
+          {
+            "file": "packs/talent_trees.db",
+            "treeId": "c1cf52502cf74435",
+            "action": "move whole tree document (same _id) to the homebrew tree pack"
+          },
+          {
+            "file": "data/generated/talent-trees.registry.json + data/fixes/talent-trees.registry.json",
+            "action": "regenerate with tools/build-talent-tree-registry.mjs"
+          }
+        ],
+        "actorPackEmbeddedItems": [],
+        "note": "Embedded actor items (if any) must have flags.core.sourceId rewritten from the talents pack to the homebrew pack before the source document leaves the canonical pack."
+      },
       "metadataTransfer": [],
-      "expectedFinal": null,
+      "expectedFinal": {
+        "recordExists": false,
+        "homebrewPackRecordExists": true,
+        "homebrewPack": "talents-homebrew",
+        "idPreserved": true,
+        "treeMembership": "tree Treatment c1cf52502cf74435 moves to the homebrew tree pack",
+        "classAccess": "no canonical class references the moved tree (verified by the dry run)",
+        "canonicalRecordsTouched": []
+      },
       "phase3cCanonicalRecordTouched": false,
-      "reviewRequiredReason": "UNSOURCED_OWNER_POLICY"
+      "ownerRuling": {
+        "decision": "OWNER_RULING_DECISION_1",
+        "summary": "Move all 50 homebrew/unsourced records (ids preserved, automation metadata preserved) into a separate explicitly noncanonical homebrew compendium; preserve exclusively-homebrew trees with them; remove those trees from canonical class access/registries; audit embedded actor references first; never present them as official SWSE content."
+      },
+      "previousReviewRequiredReason": "UNSOURCED_OWNER_POLICY",
+      "metadataReview": "Whole record (including abilityMeta, tags, flags, prerequisitesStructured, effects) moves unchanged; nothing is dropped.",
+      "homebrewMove": {
+        "targetPack": "talents-homebrew",
+        "idPreserved": true,
+        "treeHandling": "TREE_MOVES_WITH_RECORDS",
+        "treeId": "c1cf52502cf74435",
+        "treeName": "Treatment",
+        "canonicalMembersRemainingInTree": 0
+      }
     },
     {
       "productionId": "f0851e0e5a1ac771",
@@ -4711,11 +6321,11 @@
       "treeId": "d2535361d1b146cd",
       "treeName": "Blackguard Wilder",
       "group": "DEFERRED_PRODUCTION_ONLY",
-      "finalDisposition": "REVIEW_REQUIRED",
+      "finalDisposition": "MOVE_HOMEBREW_PACK",
       "survivorId": null,
-      "adjudicationStatus": "BLOCKED_ON_OWNER_POLICY",
+      "adjudicationStatus": "ADJUDICATED",
       "evidence": {
-        "status": "NO_OFFICIAL_SUPPORT_FOUND_BLOCKED_ON_POLICY",
+        "status": "ADJUDICATED_NONCANONICAL_OWNER_RULING",
         "conclusion": "No verbatim text and no talent of this name in any of the 14 committed sourcebook TXT files, and no canonical identity matches it.",
         "findings": [
           "textSupport gives the best 5-gram containment against every TXT and against the canonical corpus.",
@@ -4733,11 +6343,46 @@
         "registryStatus": "REPO_ONLY_NONCANONICAL_HOMEBREW",
         "pdfRequired": false
       },
-      "referencesToRepoint": null,
+      "referencesToRepoint": {
+        "structural": [
+          {
+            "file": "packs/talent_trees.db",
+            "treeId": "d2535361d1b146cd",
+            "action": "move whole tree document (same _id) to the homebrew tree pack"
+          },
+          {
+            "file": "data/generated/talent-trees.registry.json + data/fixes/talent-trees.registry.json",
+            "action": "regenerate with tools/build-talent-tree-registry.mjs"
+          }
+        ],
+        "actorPackEmbeddedItems": [],
+        "note": "Embedded actor items (if any) must have flags.core.sourceId rewritten from the talents pack to the homebrew pack before the source document leaves the canonical pack."
+      },
       "metadataTransfer": [],
-      "expectedFinal": null,
+      "expectedFinal": {
+        "recordExists": false,
+        "homebrewPackRecordExists": true,
+        "homebrewPack": "talents-homebrew",
+        "idPreserved": true,
+        "treeMembership": "tree Blackguard Wilder d2535361d1b146cd moves to the homebrew tree pack",
+        "classAccess": "no canonical class references the moved tree (verified by the dry run)",
+        "canonicalRecordsTouched": []
+      },
       "phase3cCanonicalRecordTouched": false,
-      "reviewRequiredReason": "UNSOURCED_OWNER_POLICY"
+      "ownerRuling": {
+        "decision": "OWNER_RULING_DECISION_1",
+        "summary": "Move all 50 homebrew/unsourced records (ids preserved, automation metadata preserved) into a separate explicitly noncanonical homebrew compendium; preserve exclusively-homebrew trees with them; remove those trees from canonical class access/registries; audit embedded actor references first; never present them as official SWSE content."
+      },
+      "previousReviewRequiredReason": "UNSOURCED_OWNER_POLICY",
+      "metadataReview": "Whole record (including abilityMeta, tags, flags, prerequisitesStructured, effects) moves unchanged; nothing is dropped.",
+      "homebrewMove": {
+        "targetPack": "talents-homebrew",
+        "idPreserved": true,
+        "treeHandling": "TREE_MOVES_WITH_RECORDS",
+        "treeId": "d2535361d1b146cd",
+        "treeName": "Blackguard Wilder",
+        "canonicalMembersRemainingInTree": 0
+      }
     },
     {
       "productionId": "f5a4088480c005ae",
@@ -4816,11 +6461,11 @@
       "treeId": "de95d37c72b1c4cd",
       "treeName": "Dark Side",
       "group": "DEFERRED_PRODUCTION_ONLY",
-      "finalDisposition": "REVIEW_REQUIRED",
+      "finalDisposition": "MOVE_HOMEBREW_PACK",
       "survivorId": null,
-      "adjudicationStatus": "BLOCKED_ON_OWNER_POLICY",
+      "adjudicationStatus": "ADJUDICATED",
       "evidence": {
-        "status": "ADJUDICATED_NOT_OFFICIAL_SWSE_BLOCKED_ON_POLICY",
+        "status": "ADJUDICATED_NONCANONICAL_OWNER_RULING",
         "conclusion": "Self-labelled homebrew (Homebrew Reference Book: Dathomir Field Guide); not found in any committed sourcebook TXT.",
         "findings": [
           "benefit ends \"Homebrew Reference Book: Dathomir Field Guide\"; the only TXT \"maelstrom\" hits are the Unleashed Force Storm feat text (FUCG) and an unrelated droid modification, neither of which is this talent.",
@@ -4828,11 +6473,46 @@
         ],
         "pdfRequired": false
       },
-      "referencesToRepoint": null,
+      "referencesToRepoint": {
+        "structural": [
+          {
+            "file": "packs/talent_trees.db",
+            "treeId": "de95d37c72b1c4cd",
+            "action": "remove system.talentIds[f785208aa6774cd7] and its talentNames entry from the canonical tree"
+          },
+          {
+            "file": "data/generated/talent-trees.registry.json + data/fixes/talent-trees.registry.json",
+            "action": "regenerate with tools/build-talent-tree-registry.mjs"
+          }
+        ],
+        "actorPackEmbeddedItems": [],
+        "note": "Embedded actor items (if any) must have flags.core.sourceId rewritten from the talents pack to the homebrew pack before the source document leaves the canonical pack."
+      },
       "metadataTransfer": [],
-      "expectedFinal": null,
+      "expectedFinal": {
+        "recordExists": false,
+        "homebrewPackRecordExists": true,
+        "homebrewPack": "talents-homebrew",
+        "idPreserved": true,
+        "treeMembership": "removed from canonical tree Dark Side de95d37c72b1c4cd",
+        "classAccess": "no canonical class references the moved tree (verified by the dry run)",
+        "canonicalRecordsTouched": []
+      },
       "phase3cCanonicalRecordTouched": false,
-      "reviewRequiredReason": "HOMEBREW_POLICY_OWNER_DECISION"
+      "ownerRuling": {
+        "decision": "OWNER_RULING_DECISION_1",
+        "summary": "Move all 50 homebrew/unsourced records (ids preserved, automation metadata preserved) into a separate explicitly noncanonical homebrew compendium; preserve exclusively-homebrew trees with them; remove those trees from canonical class access/registries; audit embedded actor references first; never present them as official SWSE content."
+      },
+      "previousReviewRequiredReason": "HOMEBREW_POLICY_OWNER_DECISION",
+      "metadataReview": "Whole record (including abilityMeta, tags, flags, prerequisitesStructured, effects) moves unchanged; nothing is dropped.",
+      "homebrewMove": {
+        "targetPack": "talents-homebrew",
+        "idPreserved": true,
+        "treeHandling": "TREE_STAYS_CANONICAL_MEMBER_LEAVES",
+        "treeId": "de95d37c72b1c4cd",
+        "treeName": "Dark Side",
+        "canonicalMembersRemainingInTree": 10
+      }
     },
     {
       "productionId": "f9352f317ad2f695",
@@ -4840,24 +6520,60 @@
       "treeId": "d1037bc7a08ea80b",
       "treeName": "Sith",
       "group": "DEFERRED_PRODUCTION_ONLY",
-      "finalDisposition": "REVIEW_REQUIRED",
+      "finalDisposition": "KEEP_CANONICAL_ADDITIONAL_PUBLICATION",
       "survivorId": null,
-      "adjudicationStatus": "BLOCKED_ON_PDF_LOOKUP",
+      "adjudicationStatus": "ADJUDICATED",
       "evidence": {
-        "status": "PARTIAL_TXT",
-        "conclusion": "A talent named \"Stolen Form\" is used in a printed stat block, so the name is official; its definition is not in any committed TXT, and the production text (\"Choose one Talent from the Lightsaber Forms Talent Tree… select multiple times\") cannot be verified.",
+        "status": "PDF_CONFIRMED_BY_OWNER",
+        "conclusion": "Stolen Form is official published SWSE content: a \"New Sith Talent\" in Threats of the Galaxy, printed page 81, in the Sith talent tree.",
         "findings": [
-          "Threats of the Galaxy TXT 8018: \"Stolen Form (Jar'Kai, Juyo, Niman)\" in a printed stat block.",
-          "Definition/prerequisites/tree unknown from the TXT; 1 heroic + 1 npc actor item (Galen Marek, Vader's Apprentice) reference this record.",
-          "Needs the PDF (or the owner's corpus) to confirm the printed text, page, tree and prerequisites."
+          "Owner checked the rendered Threats of the Galaxy PDF (not inspected by this audit; the PDF is not in the repository).",
+          "Rules (owner-confirmed): choose a Lightsaber Forms talent, gain its benefit and count as having it for prerequisites; its own prerequisites must still be met; selectable multiple times for different forms.",
+          "Prerequisites (owner-confirmed): any one Force technique; Weapon Focus (lightsabers) — matches production.",
+          "Threats of the Galaxy TXT 8018 independently shows the talent used in a printed stat block (\"Stolen Form (Jar'Kai, Juyo, Niman)\").",
+          "Production tree is Sith (d1037bc7a08ea80b); the record is referenced by 2 embedded actor items (Galen Marek) that stay valid."
         ],
-        "pdfRequired": true
+        "sourceRefs": [
+          "Threats of the Galaxy printed p.81 (owner PDF check)",
+          "reference/sourcebooks/Threats of the Galaxy_djvu.txt:8018"
+        ],
+        "pdfRequired": false,
+        "pdfNote": "Already PDF-verified by the owner; exact wording still to be transcribed when it is added to the canonical corpus."
       },
-      "referencesToRepoint": null,
+      "referencesToRepoint": {
+        "structural": [],
+        "actorPackEmbeddedItems": [
+          {
+            "pack": "heroic",
+            "actor": "Galen Marek, Vader's Apprentice",
+            "actorId": "3183170a65e05817",
+            "itemIndex": 16,
+            "embeddedItemName": "Stolen Form"
+          },
+          {
+            "pack": "npc",
+            "actor": "Galen Marek, Vader's Apprentice",
+            "actorId": "3183170a65e05817",
+            "itemIndex": 16,
+            "embeddedItemName": "Stolen Form"
+          }
+        ],
+        "note": "KEEP: actor references stay valid."
+      },
       "metadataTransfer": [],
-      "expectedFinal": null,
+      "expectedFinal": {
+        "recordExists": true,
+        "treeMembership": "unchanged (Sith d1037bc7a08ea80b)",
+        "classAccess": "unchanged",
+        "canonicalRecordsTouched": []
+      },
       "phase3cCanonicalRecordTouched": false,
-      "reviewRequiredReason": "PDF_LOOKUP_REQUIRED_DEFINITION_NOT_IN_TXT"
+      "requiredFollowUp": {
+        "kind": "CANONICAL_CORPUS_ADDITION",
+        "note": "New canonical identity through the Phase 2 → canonical → manifest chain; not an edit of one of the 1,180. Source Threats of the Galaxy p.81, Sith tree.",
+        "canonicalIdentityProposed": "Threats of the Galaxy|Sith|Stolen Form",
+        "prerequisites": "Any one Force technique, Weapon Focus (lightsabers)"
+      }
     },
     {
       "productionId": "fbaab00b6eab02a3",
@@ -4865,11 +6581,11 @@
       "treeId": "4007fa87192b5884",
       "treeName": "Mercenary",
       "group": "DEFERRED_PRODUCTION_ONLY",
-      "finalDisposition": "REVIEW_REQUIRED",
+      "finalDisposition": "MOVE_HOMEBREW_PACK",
       "survivorId": null,
-      "adjudicationStatus": "BLOCKED_ON_OWNER_POLICY",
+      "adjudicationStatus": "ADJUDICATED",
       "evidence": {
-        "status": "NO_OFFICIAL_SUPPORT_FOUND_BLOCKED_ON_POLICY",
+        "status": "ADJUDICATED_NONCANONICAL_OWNER_RULING",
         "conclusion": "No verbatim text and no talent of this name in any of the 14 committed sourcebook TXT files, and no canonical identity matches it.",
         "findings": [
           "textSupport gives the best 5-gram containment against every TXT and against the canonical corpus.",
@@ -4887,11 +6603,46 @@
         "registryStatus": "REPO_TREE_PRESENT",
         "pdfRequired": false
       },
-      "referencesToRepoint": null,
+      "referencesToRepoint": {
+        "structural": [
+          {
+            "file": "packs/talent_trees.db",
+            "treeId": "4007fa87192b5884",
+            "action": "remove system.talentIds[fbaab00b6eab02a3] and its talentNames entry from the canonical tree"
+          },
+          {
+            "file": "data/generated/talent-trees.registry.json + data/fixes/talent-trees.registry.json",
+            "action": "regenerate with tools/build-talent-tree-registry.mjs"
+          }
+        ],
+        "actorPackEmbeddedItems": [],
+        "note": "Embedded actor items (if any) must have flags.core.sourceId rewritten from the talents pack to the homebrew pack before the source document leaves the canonical pack."
+      },
       "metadataTransfer": [],
-      "expectedFinal": null,
+      "expectedFinal": {
+        "recordExists": false,
+        "homebrewPackRecordExists": true,
+        "homebrewPack": "talents-homebrew",
+        "idPreserved": true,
+        "treeMembership": "removed from canonical tree Mercenary 4007fa87192b5884",
+        "classAccess": "no canonical class references the moved tree (verified by the dry run)",
+        "canonicalRecordsTouched": []
+      },
       "phase3cCanonicalRecordTouched": false,
-      "reviewRequiredReason": "UNSOURCED_OWNER_POLICY"
+      "ownerRuling": {
+        "decision": "OWNER_RULING_DECISION_1",
+        "summary": "Move all 50 homebrew/unsourced records (ids preserved, automation metadata preserved) into a separate explicitly noncanonical homebrew compendium; preserve exclusively-homebrew trees with them; remove those trees from canonical class access/registries; audit embedded actor references first; never present them as official SWSE content."
+      },
+      "previousReviewRequiredReason": "UNSOURCED_OWNER_POLICY",
+      "metadataReview": "Whole record (including abilityMeta, tags, flags, prerequisitesStructured, effects) moves unchanged; nothing is dropped.",
+      "homebrewMove": {
+        "targetPack": "talents-homebrew",
+        "idPreserved": true,
+        "treeHandling": "TREE_STAYS_CANONICAL_MEMBER_LEAVES",
+        "treeId": "4007fa87192b5884",
+        "treeName": "Mercenary",
+        "canonicalMembersRemainingInTree": 5
+      }
     },
     {
       "productionId": "fd87928650da45fd",
@@ -4899,11 +6650,11 @@
       "treeId": "00cb74839a524276",
       "treeName": "Science",
       "group": "DEFERRED_PRODUCTION_ONLY",
-      "finalDisposition": "REVIEW_REQUIRED",
+      "finalDisposition": "MOVE_HOMEBREW_PACK",
       "survivorId": null,
-      "adjudicationStatus": "BLOCKED_ON_OWNER_POLICY",
+      "adjudicationStatus": "ADJUDICATED",
       "evidence": {
-        "status": "NO_OFFICIAL_SUPPORT_FOUND_BLOCKED_ON_POLICY",
+        "status": "ADJUDICATED_NONCANONICAL_OWNER_RULING",
         "conclusion": "No verbatim text and no talent of this name in any of the 14 committed sourcebook TXT files, and no canonical identity matches it.",
         "findings": [
           "textSupport gives the best 5-gram containment against every TXT and against the canonical corpus.",
@@ -4921,11 +6672,46 @@
         "registryStatus": "REPO_ONLY_NONCANONICAL_HOMEBREW",
         "pdfRequired": false
       },
-      "referencesToRepoint": null,
+      "referencesToRepoint": {
+        "structural": [
+          {
+            "file": "packs/talent_trees.db",
+            "treeId": "00cb74839a524276",
+            "action": "move whole tree document (same _id) to the homebrew tree pack"
+          },
+          {
+            "file": "data/generated/talent-trees.registry.json + data/fixes/talent-trees.registry.json",
+            "action": "regenerate with tools/build-talent-tree-registry.mjs"
+          }
+        ],
+        "actorPackEmbeddedItems": [],
+        "note": "Embedded actor items (if any) must have flags.core.sourceId rewritten from the talents pack to the homebrew pack before the source document leaves the canonical pack."
+      },
       "metadataTransfer": [],
-      "expectedFinal": null,
+      "expectedFinal": {
+        "recordExists": false,
+        "homebrewPackRecordExists": true,
+        "homebrewPack": "talents-homebrew",
+        "idPreserved": true,
+        "treeMembership": "tree Science 00cb74839a524276 moves to the homebrew tree pack",
+        "classAccess": "no canonical class references the moved tree (verified by the dry run)",
+        "canonicalRecordsTouched": []
+      },
       "phase3cCanonicalRecordTouched": false,
-      "reviewRequiredReason": "UNSOURCED_OWNER_POLICY"
+      "ownerRuling": {
+        "decision": "OWNER_RULING_DECISION_1",
+        "summary": "Move all 50 homebrew/unsourced records (ids preserved, automation metadata preserved) into a separate explicitly noncanonical homebrew compendium; preserve exclusively-homebrew trees with them; remove those trees from canonical class access/registries; audit embedded actor references first; never present them as official SWSE content."
+      },
+      "previousReviewRequiredReason": "UNSOURCED_OWNER_POLICY",
+      "metadataReview": "Whole record (including abilityMeta, tags, flags, prerequisitesStructured, effects) moves unchanged; nothing is dropped.",
+      "homebrewMove": {
+        "targetPack": "talents-homebrew",
+        "idPreserved": true,
+        "treeHandling": "TREE_MOVES_WITH_RECORDS",
+        "treeId": "00cb74839a524276",
+        "treeName": "Science",
+        "canonicalMembersRemainingInTree": 0
+      }
     }
   ]
 }

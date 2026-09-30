@@ -61,11 +61,16 @@ test('identity is never name-only: both Notorious canonical identities and the T
 test('adjudication touches no Phase 3C canonical record', () => {
   assert.ok(manifest.records.every(r => r.phase3cCanonicalRecordTouched === false));
 });
-test('every non-final record carries a concrete reason and none is left unexamined', () => {
-  assert.ok(manifest.records.every(r => r.adjudicationStatus !== 'PENDING_3D2'));
-  assert.ok(manifest.records.filter(r => r.finalDisposition === 'REVIEW_REQUIRED').every(r => r.reviewRequiredReason));
-  const m = clone(manifest); m.records.find(r => r.finalDisposition === 'REVIEW_REQUIRED').reviewRequiredReason = '';
-  assert.ok(run(m).some(e => /without a concrete reviewRequiredReason/.test(e)));
+test('final 3D-2 totals: REVIEW_REQUIRED is 0 and the tally matches the owner rulings', () => {
+  const tally = {}; for (const r of manifest.records) tally[r.finalDisposition] = (tally[r.finalDisposition] || 0) + 1;
+  assert.deepEqual(tally, { MERGE_DUPLICATE: 19, REMOVE_CONTAMINATION: 16, KEEP_CANONICAL_ADDITIONAL_PUBLICATION: 6, CORRECT_IDENTITY: 1, MOVE_HOMEBREW_PACK: 50 });
+  assert.ok(manifest.records.every(r => r.adjudicationStatus === 'ADJUDICATED'));
+  const m = clone(manifest); const x = m.records.find(r => r.finalDisposition === 'MOVE_HOMEBREW_PACK'); x.homebrewMove.idPreserved = false;
+  assert.ok(run(m).some(e => /must preserve the _id/.test(e)));
+});
+test('Stolen Form is kept as an official additional publication (not quarantined with the homebrew records)', () => {
+  const r = rec('f9352f317ad2f695'); assert.equal(r.finalDisposition, 'KEEP_CANONICAL_ADDITIONAL_PUBLICATION');
+  assert.equal(r.evidence.status, 'PDF_CONFIRMED_BY_OWNER'); assert.equal(r.referencesToRepoint.actorPackEmbeddedItems.length, 2);
 });
 test('a merge survivor may not itself be scheduled for deletion', () => {
   const m = clone(manifest); const a = m.records.find(r => r.finalDisposition === 'MERGE_DUPLICATE'); const b = m.records.filter(r => r.finalDisposition === 'REMOVE_CONTAMINATION')[0];

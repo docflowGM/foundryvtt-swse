@@ -14,9 +14,9 @@ Tests: `tests/talent-phase-3d-review-extras.test.mjs` · Census: `talent-phase-3
 | Missing trees (Embrace Dark Side, Force Meld) | 2 | **Adjudicated** (1 MERGE_DUPLICATE, 1 blocked on homebrew policy) |
 | Same-name / sourcebook-hit candidates | — | **Adjudicated** (see §5) |
 | Actor-referenced | — | **Adjudicated** (only Trigger Work, Hard Target, Stolen Form carry actor references among the remaining 78; all keep their references) |
-| No credible publication evidence | — | **Adjudicated** (owner-policy blocked, see §5) |
+| No credible publication evidence | 50 | **Adjudicated** (owner ruling: MOVE_HOMEBREW_PACK) |
 
-All 92 have a disposition; the 51 `REVIEW_REQUIRED` records each carry a named `reviewRequiredReason`.
+All 92 have a final disposition; `REVIEW_REQUIRED` = 0.
 
 ## 1. `a7d8c4da96eacad4` — Notorious (Infamy) → `REMOVE_CONTAMINATION`
 
@@ -126,25 +126,24 @@ Only their legacy `system.treeId` slug (`dark-side-devotee`, `jedi-guardian`) is
 
 ## 5. Remaining buckets and the full disposition table
 
-Every one of the 92 now has a disposition and a concrete reason; **none is left unexamined**.
+**Final 3D-2 state: all 92 adjudicated, `REVIEW_REQUIRED` = 0.**
 
 | Final disposition | Count |
 |---|---|
-| REMOVE_CONTAMINATION | 16 |
 | MERGE_DUPLICATE | 19 |
-| REVIEW_REQUIRED / UNSOURCED_OWNER_POLICY | 42 |
-| KEEP_CANONICAL_ADDITIONAL_PUBLICATION | 5 |
-| REVIEW_REQUIRED / HOMEBREW_POLICY_OWNER_DECISION | 8 |
+| REMOVE_CONTAMINATION | 16 |
+| KEEP_CANONICAL_ADDITIONAL_PUBLICATION | 6 |
 | CORRECT_IDENTITY | 1 |
-| REVIEW_REQUIRED / PDF_LOOKUP_REQUIRED_DEFINITION_NOT_IN_TXT | 1 |
+| MOVE_HOMEBREW_PACK | 50 |
+| REVIEW_REQUIRED | 0 |
 | **Total** | **92** |
 
-**Derived (not a target) production count if applied as adjudicated today:** 35 deletions (19 MERGE_DUPLICATE + 16 REMOVE_CONTAMINATION) → 1,272 − 35 = **1,237** talent records, provided the 51 blocked records are all kept; every one of those 51 removed would give 1,186. The final number depends on the two owner decisions below.
+### Owner rulings applied
 
-### Owner decisions needed (no evidence gap remains for these)
+1. **50 homebrew/unsourced records → `MOVE_HOMEBREW_PACK`.** Not left in `packs/talents.db`, not deleted: they move, with their `_id`s and all automation metadata, into a separate explicitly noncanonical homebrew compendium; exclusively-homebrew trees move with them and leave canonical class access and registries; embedded actor references are audited before any source document leaves the canonical pack; they are never presented as official SWSE content.
+2. **Stolen Form (`f9352f317ad2f695`) → `KEEP_CANONICAL_ADDITIONAL_PUBLICATION`.** Owner checked the rendered Threats of the Galaxy PDF: a "New Sith Talent", printed p. 81, Sith tree; choose a Lightsaber Forms talent, gain it and count as having it for prerequisites (its own prerequisites still apply), selectable multiple times; prerequisites any one Force technique + Weapon Focus (lightsabers). (Owner-confirmed; this audit did not inspect the PDF, which is not in the repository.)
 
-1. **8 self-labelled homebrew** (`HOMEBREW_POLICY_OWNER_DECISION`) and **42 unsourced** records (`UNSOURCED_OWNER_POLICY`): none of the 14 committed sourcebooks prints their text or names them as talents, and no canonical identity matches them. Where I checked the web (B'omarr Monk, Smashball Pro trees), the trees exist on the community wiki swse.fandom.com; that wiki also hosts fan-made talents (one production record embeds "created by Wikia user LilLiteralist"), so wiki presence does not make them official. Options: keep them out of the authoritative pack (move to a separate homebrew pack), keep them as-is, or delete them. One ruling resolves the class. Some are system-authored placeholders (e.g. Calming Aura: "Resolve the exact Beastwarden attitude/aura effect at the table until the beast-attitude subsystem owns this context"; Animal Companion), which suggests the project itself generated part of this content.
-2. **1 record needing the PDF** (`PDF_LOOKUP_REQUIRED_DEFINITION_NOT_IN_TXT`): *Stolen Form* (`f9352f317ad2f695`) — the name is official (printed stat block, Threats of the Galaxy TXT 8018) but its definition is not in any TXT; two actor items (Galen Marek) reference it.
+**Projected counts (derived from the dispositions, not chosen):** canonical talent pack 1,272 − 19 − 16 − 50 = **1,187**; homebrew talent pack **50**; total preserved talent records **1,237**.
 
 ### MERGE_DUPLICATE (19) — name/paraphrase variants of a canonical talent
 
@@ -191,7 +190,7 @@ Every one of the 92 now has a disposition and a concrete reason; **none is left 
 | `cb261592f68849a5` | Infused Weapon | Felucian Shaman | "Infused Weapon" conflates the tail of FUCG Infuse Weapon with a fan-made talent. |
 | `f123e0682ef74583` | Reference Book: Star Wars Saga Edition Starships of the Galaxy | Sense | The record's NAME and benefit are the literal scraper string "Reference Book: Star Wars Saga Edition Starships of the Galaxy". It is not a talent. |
 
-### KEEP / CORRECT_IDENTITY (6) — real talents the ownership model never captured
+### KEEP_CANONICAL_ADDITIONAL_PUBLICATION (6) and CORRECT_IDENTITY (1) — real talents the ownership model never captured
 
 | ID | Name | Tree | Disposition |
 |---|---|---|---|
@@ -200,65 +199,65 @@ Every one of the 92 now has a disposition and a concrete reason; **none is left 
 | `62d461ae3b0fcfa9` | Move Massive Object | Alter | KEEP_CANONICAL_ADDITIONAL_PUBLICATION |
 | `7f4edcb8aa830972` | Hard Target | Commando | KEEP_CANONICAL_ADDITIONAL_PUBLICATION |
 | `86c10d63bba2d9c8` | Trigger Work | Gunslinger | KEEP_CANONICAL_ADDITIONAL_PUBLICATION |
+| `f9352f317ad2f695` | Stolen Form | Sith | KEEP_CANONICAL_ADDITIONAL_PUBLICATION |
 | `d7870d0940a3ce0b` | Ranged Disarm | Warrior | CORRECT_IDENTITY (Warrior → Gunslinger) |
 
-These are additions to the canonical corpus (`requiredFollowUp.kind = CANONICAL_CORPUS_ADDITION`), not edits of the 1,180. **Trigger Work** and **Ranged Disarm** (Core p.217) are notable: canonical *Damaging Disarm* already lists "Ranged Disarm" as its prerequisite while no canonical identity for it exists. That suggests Phase 3B modelled only the p.216 half of the Core Gunslinger tree; a PDF pass over Core pp.216–217 could find more (out of Phase 3D's inherited 92).
+These are additions to the canonical corpus (`requiredFollowUp.kind = CANONICAL_CORPUS_ADDITION`), not edits of the 1,180. **Trigger Work** and **Ranged Disarm** (Core p.217) are notable: canonical *Damaging Disarm* already lists "Ranged Disarm" as its prerequisite while no canonical identity for it exists, which suggests Phase 3B modelled only the p.216 half of the Core Gunslinger tree. A PDF pass over Core pp.216–217 could find more (outside the inherited 92).
 
-### Blocked records (51)
+### MOVE_HOMEBREW_PACK (50)
 
-| ID | Name | Tree | Reason |
+| ID | Name | Tree | Tree handling |
 |---|---|---|---|
-| `0cdd50aaa65e4360` | Voices | Midichlorian | UNSOURCED_OWNER_POLICY |
-| `0de7338c2b984b96` | Droid Receptacle | Bomarr Monk | UNSOURCED_OWNER_POLICY |
-| `125b5aa00f5a4d0a` | Morgukai Resolve | Morgukai Warrior | UNSOURCED_OWNER_POLICY |
-| `14cc3ddc051f4ece` | Animal Companion | Beastwarden | UNSOURCED_OWNER_POLICY |
-| `1bda3fdaa84240d3` | Mobility | Jumptrooper | UNSOURCED_OWNER_POLICY |
-| `213d97c2cbbd4f81` | Not in the Face | Cowardice | UNSOURCED_OWNER_POLICY |
-| `247b9ba1f8d34683` | Retrovirus | Cloner | UNSOURCED_OWNER_POLICY |
-| `2c27842384e55cb2` | Mercenary's Grit | Mercenary | UNSOURCED_OWNER_POLICY |
-| `2f6bdc483d8f4aa8` | Serene Courage | Bomarr Monk | UNSOURCED_OWNER_POLICY |
-| `395daa7cd6f14b8f` | Rough Landings | Jumptrooper | UNSOURCED_OWNER_POLICY |
-| `3df46d093b31411d` | Indomitable class feature | Force Adept | UNSOURCED_OWNER_POLICY |
-| `4632b4bf79044752` | Nature Sense | Beastwarden | HOMEBREW_POLICY_OWNER_DECISION |
-| `4d7d5a38d0394e4c` | Force Bond | Alter | HOMEBREW_POLICY_OWNER_DECISION |
-| `588c176b47724734` | Feign Harmlessness | Cowardice | UNSOURCED_OWNER_POLICY |
-| `5e4a7f98b1e74326` | Adept Spellcaster | Sorcerer Of Tund | UNSOURCED_OWNER_POLICY |
-| `61c9413bde23411a` | Extended Sputters | Jumptrooper | UNSOURCED_OWNER_POLICY |
-| `62e70280d08f43ec` | Allure | Influence | HOMEBREW_POLICY_OWNER_DECISION |
-| `67a08d46f24c4fdd` | Crash Landings | Jumptrooper | UNSOURCED_OWNER_POLICY |
-| `747458ee63cd4a2a` | Defensive Roll | Force Warrior | UNSOURCED_OWNER_POLICY |
-| `77ab82670aa14f33` | Smashball Pass | Smashball Pro | UNSOURCED_OWNER_POLICY |
-| `78955cbbe9504d7f` | Patient Builder | Mechanic | UNSOURCED_OWNER_POLICY |
-| `7a58134276d64561` | Calming Aura | Beastwarden | UNSOURCED_OWNER_POLICY |
-| `816ac9cc1e6c413b` | Force Meld | Jedi Guardian | HOMEBREW_POLICY_OWNER_DECISION |
-| `81cd2a2473e248a0` | In Balance | Jedaii Ranger | UNSOURCED_OWNER_POLICY |
-| `85e9699cee664641` | Identify Creature | Science | UNSOURCED_OWNER_POLICY |
-| `9319584186ce4228` | Dathomiri Hunter | Dathomiri Witch | HOMEBREW_POLICY_OWNER_DECISION |
-| `933240d6581843b9` | Lasting Ichor Item | Force Item | UNSOURCED_OWNER_POLICY |
-| `9780298d28d64954` | Centerbreaker Charge | Smashball Pro | UNSOURCED_OWNER_POLICY |
-| `a0c4b4b252ee4c96` | Cortosis Staff Block | Morgukai Warrior | UNSOURCED_OWNER_POLICY |
-| `a1ef8440f49847f1` | Linebreaker Charge | Smashball Pro | UNSOURCED_OWNER_POLICY |
-| `a36f9a2eb2424f86` | Amphistaff Block | Master Of The Amphistaff | UNSOURCED_OWNER_POLICY |
-| `a4629f24bd571414` | Mercenary's Determination | Mercenary | UNSOURCED_OWNER_POLICY |
-| `a9a84d42b75f4fb1` | Lesser Mark of Illumination | Chalactan Adept | UNSOURCED_OWNER_POLICY |
-| `b1669310f65d42b7` | Engineering Savant | Mechanic | UNSOURCED_OWNER_POLICY |
-| `b431ca7ea00947b9` | Delusion | Sorcerer Of Tund | UNSOURCED_OWNER_POLICY |
-| `b9fce171cad543d7` | Clone Scientist | Cloner | UNSOURCED_OWNER_POLICY |
-| `cc1cf3a694244618` | Diplomatic Poise | Galactic Senator | UNSOURCED_OWNER_POLICY |
-| `cc78c981176d4fed` | Avoid Collisions | Jumptrooper | UNSOURCED_OWNER_POLICY |
-| `d1418afeaa3f40ec` | Reflexive Tilting | Jumptrooper | UNSOURCED_OWNER_POLICY |
-| `d49ca4c47e704a96` | Defensive Stance | Defensive Duelist | UNSOURCED_OWNER_POLICY |
-| `d9cb414fe4734507` | Mass Cloning | Cloner | UNSOURCED_OWNER_POLICY |
-| `e09d40421ade49e8` | Binding Sickle | Dathomiri Witch | HOMEBREW_POLICY_OWNER_DECISION |
-| `e6055a514a784387` | Akk Dog Master | Exceptional Followers | UNSOURCED_OWNER_POLICY |
-| `e9541e13afbb4a41` | Steady Strike | Defensive Duelist | UNSOURCED_OWNER_POLICY |
-| `ea6ee6fad799491e` | Jedi Healer | Jedi Consular | HOMEBREW_POLICY_OWNER_DECISION |
-| `ebc1d6e79fa543c9` | Steady Hands | Treatment | UNSOURCED_OWNER_POLICY |
-| `f2df5596a9db40c1` | Blackguard Initiate | Blackguard Wilder | UNSOURCED_OWNER_POLICY |
-| `f785208aa6774cd7` | Dark Side Maelstrom | Dark Side | HOMEBREW_POLICY_OWNER_DECISION |
-| `f9352f317ad2f695` | Stolen Form | Sith | PDF_LOOKUP_REQUIRED_DEFINITION_NOT_IN_TXT |
-| `fbaab00b6eab02a3` | Mercenary's Teamwork | Mercenary | UNSOURCED_OWNER_POLICY |
-| `fd87928650da45fd` | Poisoncraft | Science | UNSOURCED_OWNER_POLICY |
+| `0cdd50aaa65e4360` | Voices | Midichlorian | tree moves with the records |
+| `0de7338c2b984b96` | Droid Receptacle | Bomarr Monk | tree moves with the records |
+| `125b5aa00f5a4d0a` | Morgukai Resolve | Morgukai Warrior | tree moves with the records |
+| `14cc3ddc051f4ece` | Animal Companion | Beastwarden | member leaves the canonical tree |
+| `1bda3fdaa84240d3` | Mobility | Jumptrooper | tree moves with the records |
+| `213d97c2cbbd4f81` | Not in the Face | Cowardice | tree moves with the records |
+| `247b9ba1f8d34683` | Retrovirus | Cloner | tree moves with the records |
+| `2c27842384e55cb2` | Mercenary's Grit | Mercenary | member leaves the canonical tree |
+| `2f6bdc483d8f4aa8` | Serene Courage | Bomarr Monk | tree moves with the records |
+| `395daa7cd6f14b8f` | Rough Landings | Jumptrooper | tree moves with the records |
+| `3df46d093b31411d` | Indomitable class feature | Force Adept | member leaves the canonical tree |
+| `4632b4bf79044752` | Nature Sense | Beastwarden | member leaves the canonical tree |
+| `4d7d5a38d0394e4c` | Force Bond | Alter | member leaves the canonical tree |
+| `588c176b47724734` | Feign Harmlessness | Cowardice | tree moves with the records |
+| `5e4a7f98b1e74326` | Adept Spellcaster | Sorcerer Of Tund | tree moves with the records |
+| `61c9413bde23411a` | Extended Sputters | Jumptrooper | tree moves with the records |
+| `62e70280d08f43ec` | Allure | Influence | member leaves the canonical tree |
+| `67a08d46f24c4fdd` | Crash Landings | Jumptrooper | tree moves with the records |
+| `747458ee63cd4a2a` | Defensive Roll | Force Warrior | tree moves with the records |
+| `77ab82670aa14f33` | Smashball Pass | Smashball Pro | tree moves with the records |
+| `78955cbbe9504d7f` | Patient Builder | Mechanic | tree moves with the records |
+| `7a58134276d64561` | Calming Aura | Beastwarden | member leaves the canonical tree |
+| `816ac9cc1e6c413b` | Force Meld | Jedi Guardian | member leaves the canonical tree |
+| `81cd2a2473e248a0` | In Balance | Jedaii Ranger | tree moves with the records |
+| `85e9699cee664641` | Identify Creature | Science | tree moves with the records |
+| `9319584186ce4228` | Dathomiri Hunter | Dathomiri Witch | member leaves the canonical tree |
+| `933240d6581843b9` | Lasting Ichor Item | Force Item | member leaves the canonical tree |
+| `9780298d28d64954` | Centerbreaker Charge | Smashball Pro | tree moves with the records |
+| `a0c4b4b252ee4c96` | Cortosis Staff Block | Morgukai Warrior | tree moves with the records |
+| `a1ef8440f49847f1` | Linebreaker Charge | Smashball Pro | tree moves with the records |
+| `a36f9a2eb2424f86` | Amphistaff Block | Master Of The Amphistaff | tree moves with the records |
+| `a4629f24bd571414` | Mercenary's Determination | Mercenary | member leaves the canonical tree |
+| `a9a84d42b75f4fb1` | Lesser Mark of Illumination | Chalactan Adept | tree moves with the records |
+| `b1669310f65d42b7` | Engineering Savant | Mechanic | tree moves with the records |
+| `b431ca7ea00947b9` | Delusion | Sorcerer Of Tund | tree moves with the records |
+| `b9fce171cad543d7` | Clone Scientist | Cloner | tree moves with the records |
+| `cc1cf3a694244618` | Diplomatic Poise | Galactic Senator | tree moves with the records |
+| `cc78c981176d4fed` | Avoid Collisions | Jumptrooper | tree moves with the records |
+| `d1418afeaa3f40ec` | Reflexive Tilting | Jumptrooper | tree moves with the records |
+| `d49ca4c47e704a96` | Defensive Stance | Defensive Duelist | tree moves with the records |
+| `d9cb414fe4734507` | Mass Cloning | Cloner | tree moves with the records |
+| `e09d40421ade49e8` | Binding Sickle | Dathomiri Witch | member leaves the canonical tree |
+| `e6055a514a784387` | Akk Dog Master | Exceptional Followers | tree moves with the records |
+| `e9541e13afbb4a41` | Steady Strike | Defensive Duelist | tree moves with the records |
+| `ea6ee6fad799491e` | Jedi Healer | Jedi Consular | member leaves the canonical tree |
+| `ebc1d6e79fa543c9` | Steady Hands | Treatment | tree moves with the records |
+| `f2df5596a9db40c1` | Blackguard Initiate | Blackguard Wilder | tree moves with the records |
+| `f785208aa6774cd7` | Dark Side Maelstrom | Dark Side | member leaves the canonical tree |
+| `fbaab00b6eab02a3` | Mercenary's Teamwork | Mercenary | member leaves the canonical tree |
+| `fd87928650da45fd` | Poisoncraft | Science | tree moves with the records |
 
 ## Validation
 

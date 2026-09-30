@@ -3,7 +3,7 @@
 //  - the manifest does not account for exactly the 92 census records, once each
 //  - a disposition is unknown
 //  - a MERGE_DUPLICATE survivor / any repoint replacement does not exist in the production packs
-//  - a deletion (MERGE_DUPLICATE / REMOVE_CONTAMINATION) leaves a live actor-pack reference unlisted or unrepointed
+//  - a removal from the canonical pack (MERGE_DUPLICATE / REMOVE_CONTAMINATION / MOVE_HOMEBREW_PACK) leaves a live actor-pack reference unlisted or unrepointed
 //  - a KEEP record no longer exists
 import fs from 'node:fs';
 import path from 'node:path';
@@ -23,11 +23,12 @@ export function checkDispositions({ manifest, census, talents, actors }) {
   for (const id of expected) if (!seen.has(id)) errors.push(`missing record ${id}`);
   for (const [id, n] of seen) { if (n > 1) errors.push(`record appears ${n} times: ${id}`); if (!expected.has(id)) errors.push(`record not in census: ${id}`); }
   if (manifest.records.length !== 92 || manifest.inputPopulation !== 92) errors.push(`manifest must account for exactly 92 input records (got ${manifest.records.length})`);
-  const deletedIds = new Set(manifest.records.filter(r => r.finalDisposition === 'MERGE_DUPLICATE' || r.finalDisposition === 'REMOVE_CONTAMINATION').map(r => r.productionId));
+  const deletedIds = new Set(manifest.records.filter(r => r.finalDisposition === 'MERGE_DUPLICATE' || r.finalDisposition === 'REMOVE_CONTAMINATION' || r.finalDisposition === 'MOVE_HOMEBREW_PACK').map(r => r.productionId));
   for (const r of manifest.records) {
     const tag = `${r.productionId} ${r.name}`;
     if (!allowed.has(r.finalDisposition)) { errors.push(`${tag}: unknown disposition ${r.finalDisposition}`); continue; }
-    const deletes = r.finalDisposition === 'MERGE_DUPLICATE' || r.finalDisposition === 'REMOVE_CONTAMINATION';
+    const deletes = r.finalDisposition === 'MERGE_DUPLICATE' || r.finalDisposition === 'REMOVE_CONTAMINATION' || r.finalDisposition === 'MOVE_HOMEBREW_PACK';
+    if (r.finalDisposition === 'MOVE_HOMEBREW_PACK' && (r.homebrewMove?.idPreserved !== true || !r.homebrewMove?.targetPack)) errors.push(`${tag}: MOVE_HOMEBREW_PACK must preserve the _id and name a target pack`);
     if (r.finalDisposition === 'MERGE_DUPLICATE') {
       if (!r.survivorId || !ids.has(r.survivorId)) errors.push(`${tag}: MERGE_DUPLICATE survivor ${r.survivorId} does not exist`);
       if (r.survivorId === r.productionId) errors.push(`${tag}: survivor equals duplicate`);
