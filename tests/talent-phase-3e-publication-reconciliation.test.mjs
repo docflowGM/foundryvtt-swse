@@ -40,14 +40,17 @@ test('text drift: production text must equal certified canonical text or an appr
   assert.ok(codes(run(i => { coverFire(i).system.prerequisites = 'Battle Analysis.'; i.textCorrections.entries.forEach(e => { if (e.name === 'Cover Fire') e.verification.status = 'PDF_REQUIRED'; }); })).includes('TEXT_DRIFT'));
   assert.deepEqual(codes(run(i => { coverFire(i).system.prerequisites = 'Battle Analysis.'; })), []);
 });
-test('wrong source/page is reported as metadata (the seven 3E additions until the repair unit), not blocking', () => {
-  const before = base.findingCounts.WRONG_SOURCE_PAGE; assert.ok(before === 7 || before === 0, 'only the seven 3E additions may lack source/page');
-  const r = run(i => { const t = i.production.find(x => x.system.source); t.system.page += 1; });
-  assert.equal(r.findingCounts.WRONG_SOURCE_PAGE, before + 1); assert.deepEqual(r.blockingFindings, []);
-});
-test('stale tree slugs and tree display-name drift are tracked for Phase 3F, never normalized here', () => {
-  assert.ok(base.findingCounts.STALE_TREE_ID_SLUG > 0 && base.findingCounts.TREE_DISPLAY_NAME_DRIFT > 0);
-  for (const c of BLOCKING) assert.ok(!['STALE_TREE_ID_SLUG', 'TREE_DISPLAY_NAME_DRIFT'].includes(c));
+test('since Phase 3F every finding code is blocking: source/page, stale tree-id slugs and tree display-name drift are all zero', () => {
+  assert.deepEqual(base.blockingFindings, []);
+  for (const c of ['WRONG_SOURCE_PAGE', 'STALE_TREE_ID_SLUG', 'TREE_DISPLAY_NAME_DRIFT']) { assert.ok(BLOCKING.includes(c), c); assert.equal(base.findingCounts[c], 0, c); }
+  const src = run(i => { i.production.find(x => x.system.source).system.page += 1; });
+  assert.equal(src.findingCounts.WRONG_SOURCE_PAGE, 1); assert.ok(codes(src).includes('WRONG_SOURCE_PAGE'));
+  const slug = run(i => { const t = i.production.find(x => x.name === 'Lightsaber Combat' || x.system.treeId === i.trees[0]._id) ?? i.production[0]; t.system.treeId = 'some-slug-of-the-tree'; });
+  assert.ok(slug.findingCounts.STALE_TREE_ID_SLUG + slug.findingCounts.WRONG_TREE >= 1);
+  const drift = run(i => { i.trees.find(t => t.name === 'Jedi Guardian').name = 'Jedi  Guardian'; });
+  assert.ok(drift.findingCounts.TREE_DISPLAY_NAME_DRIFT > 0 && codes(drift).includes('TREE_DISPLAY_NAME_DRIFT'));
+  const stale = run(i => { const t = i.production.find(x => x.name === 'Lightsaber Combat' || true); const tree = i.trees.find(x => x.system.talentIds.includes(t._id)); t.system.treeId = tree.name.toLowerCase().replace(/[^a-z0-9]+/g, '-'); });
+  assert.equal(stale.findingCounts.STALE_TREE_ID_SLUG, 1, 'a name-slug treeId on a member talent is reported as STALE_TREE_ID_SLUG');
 });
 test('the committed report is current', () => {
   const r = spawnSync(process.execPath, ['tools/reconcile-talent-publication-corpus.mjs', '--check'], { encoding: 'utf8' });

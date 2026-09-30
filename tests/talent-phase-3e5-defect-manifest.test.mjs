@@ -48,7 +48,7 @@ test('dry-run touches only text leaves; ids, names, trees, source, page are neve
   for (const r of rep.records) for (const c of r.changes) assert.ok(/^system\.(prerequisites|benefit|description|summary)(\.value)?$/.test(c.leaf), `${r.name} ${c.leaf}`);
 });
 test(`state-appropriate gates pass (${state})`, () => {
-  const runs = state === 'POST_3E5'
+  const runs = (state === 'POST_3E5' || state === 'POST_LATER')
     ? [['apply-talent-phase-3e5.mjs', '--verify', '--exact'], ['build-talent-phase-3e5-defect-manifest.mjs', '--check']]
     : [['build-talent-phase-3e5-defect-manifest.mjs', '--check'], ['apply-talent-phase-3e5.mjs', '--check']];
   for (const [tool, ...args] of runs) { const r = spawnSync(process.execPath, ['tools/' + tool, ...args], { encoding: 'utf8' }); assert.equal(r.status, 0, r.stdout + r.stderr); }

@@ -140,15 +140,17 @@ export function buildReport(root = ROOT) {
 }
 
 export function detect3E4State(root = ROOT) {
-  if (isLater(root)) return 'POST_3E5';
+  if (isLater(root)) return 'POST_LATER';
   const sha = gitBlobSha(readText(TALENTS, root));
   if (!fs.existsSync(path.join(root, REPORT_PATH))) return 'PRE_3E4';
   const r = readJson(REPORT_PATH, root);
   return r.postState.talents === sha ? 'POST_3E4' : r.preState.talents === sha ? 'PRE_3E4' : 'UNKNOWN';
 }
 
+// Files a LATER certified phase (3F) legitimately rewrote: their verification belongs to that phase.
+const LATER_OWNED = new Set(['packs/talents.db', 'packs/talent_trees.db', 'data/generated/talent-trees.registry.json', 'data/fixes/talent-trees.registry.json']);
 // `later`: a certified state after 3E-4 (3E-5 repaired other records). Only the seven records and every 3E-4 invariant that 3E-5 cannot touch are checked.
-const isLater = root => { const p = path.join(root, 'data/audits/talent-phase-3e5-dry-run-report.json'); return fs.existsSync(p) && readJson('data/audits/talent-phase-3e5-dry-run-report.json', root).postState.talents === gitBlobSha(readText(TALENTS, root)); };
+const isLater = root => ['talent-phase-3e5-dry-run-report.json', 'talent-phase-3f-dry-run-report.json'].some(f => { const p = path.join(root, 'data/audits', f); return fs.existsSync(p) && JSON.parse(fs.readFileSync(p, 'utf8')).postState.talents === gitBlobSha(readText(TALENTS, root)); });
 export function verifyApplied(root = ROOT, { exact = false } = {}) {
   const later = isLater(root);
   const res = [], check = (id, ok, detail = '') => res.push({ id, ok: !!ok, detail });
@@ -164,7 +166,7 @@ export function verifyApplied(root = ROOT, { exact = false } = {}) {
   }
   check('addendum authority: source/page/prerequisites/benefit/description.value all equal', addendum.additions.every(a => { const s = by.get(a.production.id)?.system; return s && s.source === a.publication.sourcebook && s.page === a.publication.page && (s.prerequisites ?? '') === a.prerequisites && s.benefit === a.rulesText && s.description?.value === a.rulesText; }));
   if (!later) check('the other 1,180 records are unchanged', sortedFp(talents.filter(t => !ids.has(t._id))) === report.othersFingerprint);
-  for (const [rel, sha] of Object.entries(report.untouchedFiles)) if (!later || rel !== 'packs/talents.db') check(`untouched: ${rel}`, fs.existsSync(path.join(root, rel)) && gitBlobSha(readText(rel, root)) === sha);
+  for (const [rel, sha] of Object.entries(report.untouchedFiles)) if (!later || !LATER_OWNED.has(rel)) check(`untouched: ${rel}`, fs.existsSync(path.join(root, rel)) && gitBlobSha(readText(rel, root)) === sha);
   if (exact && !later) check('packs/talents.db equals the certified post-state blob', gitBlobSha(talentsText) === report.postState.talents);
   return res;
 }
@@ -172,7 +174,7 @@ export function verifyApplied(root = ROOT, { exact = false } = {}) {
 const printResults = res => { for (const r of res) console.log(`${r.ok ? 'PASS' : 'FAIL'}  ${r.id}${r.ok || !r.detail ? '' : '  [' + r.detail + ']'}`); };
 
 export function applyProduction(root = ROOT) {
-  invariant(!['POST_3E4', 'POST_3E5'].includes(detect3E4State(root)), 'REFUSED: already applied (use --verify --exact)');
+  invariant(!['POST_3E4', 'POST_LATER'].includes(detect3E4State(root)), 'REFUSED: already applied (use --verify --exact)');
   invariant(fs.existsSync(path.join(root, MANIFEST_PATH)) && fs.existsSync(path.join(root, REPORT_PATH)), 'REFUSED: manifest and dry-run report must be committed first');
   const committed = readJson(REPORT_PATH, root);
   invariant(committed.status === 'DRY_RUN_CERTIFIED', 'REFUSED: committed dry-run report is not certified');
@@ -187,7 +189,7 @@ export function main(argv = process.argv.slice(2), root = ROOT) {
   const has = f => argv.includes(f);
   const state = detect3E4State(root);
   if (has('--status')) { console.log(ERR + state); return 0; }
-  if (has('--verify') || (has('--check') && (state === 'POST_3E4' || state === 'POST_3E5'))) {
+  if (has('--verify') || (has('--check') && (state === 'POST_3E4' || state === 'POST_LATER'))) {
     const res = verifyApplied(root, { exact: has('--exact') }); printResults(res);
     const bad = res.filter(r => !r.ok).length; console.log(`\n${ERR}verify ${bad ? 'FAIL' : 'PASS'} (${res.length} checks; no files written)`); return bad ? 1 : 0;
   }

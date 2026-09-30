@@ -14,7 +14,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { execSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
-import { loadCommittedManifests } from './apply-talent-phase-3c.mjs';
+import { loadCommittedManifests, gitBlobSha as gitSha } from './apply-talent-phase-3c.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 export const OUT_JSON = 'data/audits/talent-phase-3f-tree-identity-census.json';
@@ -90,12 +90,27 @@ export const TREE_ID_READERS = {
 const EXCLUDE = /^(data\/audits|data\/audit|docs\/audits|reference|node_modules|\.git)\//;
 const SELF = new Set([OUT_JSON, OUT_MD, 'tools/census-talent-tree-identity.mjs', 'tools/apply-talent-phase-3f.mjs', 'docs/audits/talent-phase-3f-dry-run.md', 'data/audits/talent-phase-3f-normalization-manifest.json', 'data/audits/talent-phase-3f-dry-run-report.json', 'tests/talent-phase-3f-tree-identity.test.mjs', 'docs/audits/talent-phase-3f-identity-contract.md']);
 
+/** Inverse of the projection: rebuild the pre-normalization packs from the committed (pre-state) census. Lets the contract tests exercise the
+ *  BEFORE state after Phase 3F has been applied. */
+export function reverseNormalization({ trees, talents }, census) {
+  const nameOf = new Map(census.driftTrees.map(d => [d.treeId, d.currentName]));
+  const was = new Map(census.staleTalentReferences.map(r => [r.talentId, r.currentTreeId]));
+  return {
+    trees: trees.map(t => nameOf.has(t._id) ? { ...t, name: nameOf.get(t._id), system: { ...t.system, ...(t.system.talent_tree !== undefined ? { talent_tree: nameOf.get(t._id) } : {}) } } : t),
+    talents: talents.map(t => was.has(t._id) ? { ...t, system: { ...t.system, treeId: was.get(t._id) } } : t)
+  };
+}
+
 /** Pure projection of the Phase 3F normalization over the two packs (used by the dry-run and by the runtime-contract tests). */
 export function projectNormalization({ trees, talents }, census) {
   const nameOf = new Map(census.driftTrees.map(d => [d.treeId, d.canonicalName]));
   const fix = new Map(census.staleTalentReferences.map(r => [r.talentId, r.authoritativeTreeId]));
   return {
-    trees: trees.map(t => nameOf.has(t._id) ? { ...t, name: nameOf.get(t._id) } : t),
+    trees: trees.map(t => {
+      if (!nameOf.has(t._id)) return t;
+      const d = census.driftTrees.find(x => x.treeId === t._id);
+      return { ...t, name: nameOf.get(t._id), system: t.system.talent_tree === d.currentName ? { ...t.system, talent_tree: nameOf.get(t._id) } : t.system };
+    }),
     talents: talents.map(t => fix.has(t._id) ? { ...t, system: { ...t.system, treeId: fix.get(t._id) } } : t)
   };
 }
@@ -170,12 +185,26 @@ export function main(argv = process.argv.slice(2)) {
   const c = build(), json = JSON.stringify(c, null, 2) + '\n', md = renderMd(c);
   if (argv.includes('--check')) {
     const bad = [];
+    // After Phase 3F the census is a frozen record of the pre-normalization state: the live packs must be clean, and the committed census must
+    // still describe exactly the 71/12 scope that the certified 3F report applied.
+    const reportPath = path.join(ROOT, 'data/audits/talent-phase-3f-dry-run-report.json');
+    if (fs.existsSync(reportPath) && fs.existsSync(path.join(ROOT, OUT_JSON))) {
+      const rep = JSON.parse(read('data/audits/talent-phase-3f-dry-run-report.json')), committed = JSON.parse(read(OUT_JSON));
+      const crypto = gitSha; const applied = crypto(read('packs/talents.db')) === rep.postState.talents && crypto(read('packs/talent_trees.db')) === rep.postState.trees;
+      if (applied) {
+        if (c.counts.staleTalentTreeIds !== 0 || c.counts.driftTrees !== 0) bad.push(`post-3F packs still show ${c.counts.staleTalentTreeIds} stale ids / ${c.counts.driftTrees} drift trees`);
+        if (committed.counts.staleTalentTreeIds !== 71 || committed.counts.driftTrees !== 12 || committed.staleTalentReferences.length !== 71) bad.push('the frozen census no longer describes the certified 71/12 scope');
+        if (bad.length) { console.error('[tree-identity-census] FAIL: ' + bad.join(' | ')); return 1; }
+        console.log('[tree-identity-census] PASS (post-3F): packs are clean; the committed census is the frozen pre-normalization record'); return 0;
+      }
+    }
     if (c.counts.unclassifiedTreeIdReaders) bad.push('unclassified system.treeId readers: ' + c.treeIdReaders.filter(x => x.kind === 'UNCLASSIFIED').map(x => x.file).join(', '));
     if (c.counts.unclassifiedConsumers) bad.push('unclassified consumers: ' + c.consumers.filter(x => x.kind === 'UNCLASSIFIED').map(x => x.file).join(', '));
     if (!fs.existsSync(path.join(ROOT, OUT_JSON)) || read(OUT_JSON) !== json || !fs.existsSync(path.join(ROOT, OUT_MD)) || read(OUT_MD) !== md) bad.push('committed census is stale');
     if (bad.length) { console.error('[tree-identity-census] FAIL: ' + bad.join(' | ')); return 1; }
     console.log(`[tree-identity-census] PASS: ${c.counts.staleTalentTreeIds} stale ids, ${c.counts.driftTrees} drift trees, every consumer classified`); return 0;
   }
+  { const rp = path.join(ROOT, 'data/audits/talent-phase-3f-dry-run-report.json'); if (fs.existsSync(rp) && gitSha(read('packs/talents.db')) === JSON.parse(read('data/audits/talent-phase-3f-dry-run-report.json')).postState.talents) { console.error('[tree-identity-census] REFUSED: the packs are the post-3F state; the census is the frozen pre-normalization record and must not be regenerated'); return 1; } }
   fs.writeFileSync(path.join(ROOT, OUT_JSON), json); fs.writeFileSync(path.join(ROOT, OUT_MD), md);
   console.log(JSON.stringify({ counts: c.counts, invariants: c.invariants }, null, 1)); return 0;
 }
