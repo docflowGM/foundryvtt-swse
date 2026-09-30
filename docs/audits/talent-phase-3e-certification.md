@@ -5,7 +5,7 @@ Base: merged `main` @ `f3395d22201718d46954e359bd1c78f472cdc78c` (Phase 3D close
 
 ## 1. Question answered
 
-Is the 1,187-record canonical talent pack *complete* against the published SWSE corpus under correct identity, and is its text the published text?
+Is the 1,187-record canonical talent pack *complete* against the published SWSE corpus under correct identity, and how far has its production text been verified against print?
 
 **Completeness:** yes. 1,182 certified claims + 7 addendum claims = **1,189 published claims → 1,187 canonical identities → 1,187 canonical production records**, machine-enforced with zero blocking findings.
 **Text:** the 23 records the source-first census and two rendered-PDF passes proved damaged are repaired from print; a whole-corpus text invariant (`TEXT_DRIFT`) now proves production text equals the certified canonical text or an approved, PDF-verified correction. A full-text PDF comparison of all 1,187 records was not performed (see §7).
