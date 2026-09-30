@@ -19,15 +19,11 @@ const EXPECTED_ASSIGNMENTS = {
   '97a771d1f4627521': { name: 'Dark Side Bane', expectedTree: 'Dark Side', expectedId: 'de95d37c72b1c4cd' },
   '2e96f06be6b9def8': { name: 'Dark Side Scourge', expectedTree: 'Dark Side', expectedId: 'de95d37c72b1c4cd' },
   '3331d4b2b88e446f': { name: 'Resist the Dark Side', expectedTree: 'Dark Side', expectedId: 'de95d37c72b1c4cd' },
-  '3cc9552cfab59676': { name: 'Embrace Dark Side', expectedTree: 'Dark Side', expectedId: 'de95d37c72b1c4cd' },
   '181da7f36b9fba9d': { name: 'Force Treatment', expectedTree: 'Jedi Healer', expectedId: 'a2a7a376e4905da9' },
-  '893158dcfe246ad7': { name: 'Implant (general)', expectedTree: 'Implant', expectedId: 'd8a71a6c5b2b7581' },
   '24bf81bc6d74fafd': { name: 'Keep Them Reeling', expectedTree: 'Piracy', expectedId: '61db5e2c0c44ef67' },
   '9211e3f6268b3413': { name: 'Keep it Together', expectedTree: 'Expert Pilot', expectedId: 'b17c1515c06361d6' },
-  '6021056231839e7c': { name: 'Multiattack Proficiency (advanced melee)', expectedTree: 'Melee Duelist', expectedId: '1381bb8c9a838279' },
   '5ec84c7e500601e4': { name: 'Multiattack Proficiency (rifles)', expectedTree: 'Carbineer', expectedId: '1933731cc59f8463' },
   'adfb725d20faade5': { name: 'Ruthless', expectedTree: 'Assassin', expectedId: '186daeee7bd65a69' },
-  '8a6fc1f368226b7b': { name: 'Sith Alchemy (create)', expectedTree: 'Dark Side', expectedId: 'de95d37c72b1c4cd' },
   'c980750800b91061': { name: 'Stay in the Fight', expectedTree: 'Rebel Recruiter', expectedId: 'a2c6962521c29361' },
   '41426ecd7fade0b0': { name: 'Weapon Specialization', expectedTree: 'Lightsaber Combat', expectedId: '2359c05ff13f3feb' }
 };

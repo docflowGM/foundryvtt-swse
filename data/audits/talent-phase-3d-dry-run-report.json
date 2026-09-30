@@ -21,6 +21,7 @@
     "registryFixes": "0de6773b1e5e9d92a839735f616c778fd34047d0",
     "derivedGenerated": "9b436fc0a89e55184b87de8497e96a9d9a7cd8c5",
     "derivedFixes": "ad1adfe821a3e7787bd298d2220f16e2914bb0a4",
+    "archetypes": "3c11488edd8614438648eb098a70ad6d005ea040",
     "systemJson": "08f5d444ad08d13f8f419e0b53af2bcf8bde057e"
   },
   "postState": {
@@ -32,10 +33,11 @@
     "npc": "78d0cdd8b1dd271238e420b8d15f33e2547e20ba",
     "homebrewTalents": "bd4e3d4be9861f9ed0329e0f12545bf3f5dc3c72",
     "homebrewTrees": "81861fe0b948db00e4e7e344316acdc730d86a2b",
-    "registry": "ac99c0f4f47ea67e5c40e97c3bc122be0a615265",
-    "registryFixes": "ac99c0f4f47ea67e5c40e97c3bc122be0a615265",
+    "registry": "db075bbe3dd5ad36c58918c1addbb92e900f86d0",
+    "registryFixes": "db075bbe3dd5ad36c58918c1addbb92e900f86d0",
     "derivedGenerated": "3b63af6b063c3cac49fc8d9dbf6c706bf4685013",
     "derivedFixes": "c3dbe4f282062d73906e80b2b2d840e700af6ee2",
+    "archetypes": "76ca97d4b1a8aa6b631ba1bfe790e5e189f6d9e6",
     "systemJson": "7c5640b8d4c10da960356703b31d33dd16c19fbb"
   },
   "counts": {
@@ -72,7 +74,8 @@
     "treesMovedToHomebrew": 19,
     "treesLosingMembers": 38,
     "classAccessEntriesRemoved": 0,
-    "derivedEntriesDropped": 46
+    "derivedEntriesDropped": 46,
+    "runtimeDataReferencesRepointed": 2
   },
   "actorRepoints": {
     "total": 34,
@@ -878,6 +881,17 @@
     "changes": [],
     "note": "no canonical class references any tree that moves to the homebrew pack"
   },
+  "runtimeData": {
+    "repointed": [
+      {
+        "file": "data/class-archetypes.json",
+        "from": "585227ba15d24a37",
+        "to": "cf4b1e5b126a2a7e",
+        "occurrences": 2
+      }
+    ],
+    "note": "found by the repository-wide residual-reference gate; the first dry run scanned packs only"
+  },
   "derivedData": {
     "entriesDropped": {
       "data/generated/talents.fixed.json": 23,
@@ -915,7 +929,7 @@
     "Add the six KEEP records and the Ranged Disarm correction to the canonical corpus through the Phase 2 → canonical → manifest chain (CANONICAL_CORPUS_ADDITION)."
   ],
   "verification": {
-    "passed": 31,
+    "passed": 36,
     "failed": 0,
     "results": [
       {
@@ -1069,9 +1083,34 @@
         "detail": ""
       },
       {
+        "id": "runtime data files carry no leaving id after the planned repoints",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "id": "every planned runtime repoint was performed and targets a surviving record",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "id": "legacy registry aliases name no talent that is missing from the canonical pack",
+        "ok": true,
+        "detail": ""
+      },
+      {
         "id": "idempotence: a second projection refuses cleanly as already applied",
         "ok": true,
         "detail": "refused"
+      },
+      {
+        "id": "repository-wide scan: every runtime reference to a leaving id is in a file this plan rewrites",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "id": "repository-wide scan: stale tool/test references are listed for triage",
+        "ok": true,
+        "detail": "0 tool, 0 test"
       }
     ]
   }

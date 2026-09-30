@@ -35,19 +35,23 @@ const audit = (label, { talents = projected.talents, trees = projected.trees, cl
 const test = (name, fn) => { fn(); n++; console.log('  ok  ' + name); };
 const clone = v => structuredClone(v);
 const tree = id => projected.trees.find(t => t._id === id);
+// After Phase 3D the two review-extra twins no longer exist, so the twin-specific cases have no on-disk fixture;
+// the exemption code path stays covered whenever the packs are the Phase 3C state, and the current state is asserted instead.
+const post3d = detectPackState().state === 'POST_3D_STATE';
+const testPre = (name, fn) => post3d ? console.log('  skip ' + name + ' (Phase 3D applied: the twins were merged/removed)') : test(name, fn);
 
-test('projected state: the two certified review-extra twins pass, visibly, with zero unapproved duplicates', () => {
+testPre('projected state: the two certified review-extra twins pass, visibly, with zero unapproved duplicates', () => {
   const r = audit('projected');
   assert.equal(r.code, 0, r.out);
   assert.match(r.out, /allowedProtectedReviewExtraDuplicateNames: 2/);
   assert.match(r.out, /duplicateTalentNamesWithinTree: 0/);
   assert.match(r.out, /a7d8c4da96eacad4/); assert.match(r.out, /222327492c484b4a/);
 });
-test('the exemption IDs come from the closeout: without it the same state fails', () => {
+testPre('the exemption IDs come from the closeout: without it the same state fails', () => {
   const r = audit('no closeout', { withCloseout: false });
   assert.notEqual(r.code, 0); assert.match(r.out, /duplicateTalentNamesWithinTree: 2/);
 });
-test('a third arbitrary same-name duplicate in another tree is NOT tolerated', () => {
+testPre('a third arbitrary same-name duplicate in another tree is NOT tolerated', () => {
   const talents = clone(projected.talents), trees = clone(projected.trees);
   const t = trees.find(x => x._id === '67fdd8dce9abd6c1');
   const twin = clone(talents.find(x => x._id === t.system.talentIds[0])); twin._id = 'eeeeeeeeeeeeeeee';
@@ -55,7 +59,7 @@ test('a third arbitrary same-name duplicate in another tree is NOT tolerated', (
   const r = audit('third', { talents, trees });
   assert.notEqual(r.code, 0); assert.match(r.out, /duplicateTalentNamesWithinTree: 1/); assert.match(r.out, /allowedProtectedReviewExtraDuplicateNames: 2/);
 });
-test('a third same-name talent added next to an approved pair is NOT tolerated (pairs only)', () => {
+testPre('a third same-name talent added next to an approved pair is NOT tolerated (pairs only)', () => {
   const talents = clone(projected.talents), trees = clone(projected.trees);
   const infamy = trees.find(x => x._id === 'c1be604242cb328f');
   const twin = clone(talents.find(x => x._id === 'a7d8c4da96eacad4')); twin._id = 'dddddddddddddddd';
@@ -63,7 +67,7 @@ test('a third same-name talent added next to an approved pair is NOT tolerated (
   const r = audit('triple', { talents, trees });
   assert.notEqual(r.code, 0); assert.match(r.out, /duplicateTalentNamesWithinTree: 1/);
 });
-test('a review-extra ID in a tree the closeout does not record for it is NOT tolerated', () => {
+testPre('a review-extra ID in a tree the closeout does not record for it is NOT tolerated', () => {
   const shifted = clone(closeout); shifted.reviewExtras[0].treeClaims = [{ treeId: '0000000000000000', treeName: 'Elsewhere' }];
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'swse-membership-'));
   try {
@@ -75,6 +79,13 @@ test('a review-extra ID in a tree the closeout does not record for it is NOT tol
     const r = spawnSync(process.execPath, [path.join(ROOT, 'tools/audit-talent-tree-membership.mjs')], { cwd: dir, encoding: 'utf8' });
     assert.notEqual(r.status, 0); assert.match(r.stdout, /duplicateTalentNamesWithinTree: 1/); assert.match(r.stdout, /allowedProtectedReviewExtraDuplicateNames: 1/);
   } finally { fs.rmSync(dir, { recursive: true, force: true }); }
+});
+if (post3d) test('Phase 3D state: no review-extra twin remains and the audit tolerates none', () => {
+  const r = audit('post-3d');
+  assert.equal(r.code, 0, r.out);
+  assert.match(r.out, /allowedProtectedReviewExtraDuplicateNames: 0/);
+  assert.match(r.out, /duplicateTalentNamesWithinTree: 0/);
+  assert.ok(!projected.talents.some(t => t._id === 'a7d8c4da96eacad4' || t._id === '222327492c484b4a'));
 });
 test('other hard failures are never suppressed: duplicate ID, missing tree member, unclaimed talent', () => {
   const dupId = clone(projected.talents); dupId.push(clone(dupId[0]));

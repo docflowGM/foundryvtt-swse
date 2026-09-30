@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import { spawnSync } from 'node:child_process';
+import { detectPackState } from '../tools/apply-talent-phase-3c.mjs';
 
 // Phase 3D-1: the census must account for exactly the 92 records Phase 3C protected, and stay current.
 const read = p => JSON.parse(fs.readFileSync(new URL('../' + p, import.meta.url), 'utf8'));
@@ -26,7 +27,9 @@ test('census is read-only and every record is unadjudicated', () => {
 test('reference-impact report covers the same 92 ids', () => {
   assert.deepEqual(impact.records.map(r => r.productionId), census.records.map(r => r.productionId));
 });
-test('census/reference files match the generator (--check)', () => {
+const post3d = detectPackState().state === 'POST_3D_STATE';
+if (post3d) console.log('  skip census --check (the census describes the pre-3D packs; Phase 3D is applied)');
+else test('census/reference files match the generator (--check)', () => {
   const run = spawnSync(process.execPath, ['tools/build-talent-phase-3d-census.mjs', '--check'], { encoding: 'utf8' });
   assert.equal(run.status, 0, run.stdout + run.stderr);
 });

@@ -73,6 +73,19 @@ test('no orphan memberships and no nonexistent class tree references', () => {
   for (const c of p.classes) for (const ref of c.system.talentTreeSourceIds ?? []) assert.ok(trees.has(ref), `${c.name}: ${ref}`);
   assert.deepEqual(p.classes, input.classes); // nothing references a homebrew tree, so classes stay byte-identical
 });
+test('runtime data: the two class archetypes that named the contaminated Inspire Fear record now name Inspire Fear I', () => {
+  assert.deepEqual(p.runtimeRepoints, [{ file: 'data/class-archetypes.json', from: '585227ba15d24a37', to: 'cf4b1e5b126a2a7e', occurrences: 2 }]);
+  const text = p.runtimeFiles['data/class-archetypes.json'];
+  assert.ok(!text.includes('585227ba15d24a37')); JSON.parse(text);
+  assert.equal(input.talents.find(t => t._id === 'cf4b1e5b126a2a7e').name, 'Inspire Fear I');
+});
+test('legacy registry aliases are rewritten by exact leaving name (merge -> survivor name), never by guesswork', () => {
+  const alias = id => p.registry.find(e => e.id === id && !e.sourceId);
+  assert.deepEqual(alias('officer').talents, ['Combined Fire', 'Stay in the Fight']); assert.equal(alias('officer').talentCount, 2);
+  assert.deepEqual(alias('ace-pilot').talents, ['Escort Pilot']);
+  const names = new Set(p.talents.map(t => t.name));
+  for (const e of p.registry.filter(x => !x.sourceId)) for (const n of e.talents ?? []) if (input.talents.some(t => t.name === n && !names.has(n))) assert.fail(`${e.id} still names ${n}`);
+});
 test('registry is regenerated without the homebrew trees and keeps every canonical tree', () => {
   assert.ok(p.registry.every(e => !p.movedTreeIds.includes(e.sourceId)));
   for (const t of p.trees) assert.ok(p.registry.some(e => e.sourceId === t._id));
@@ -100,12 +113,12 @@ test('committed dry-run report equals a fresh projection and certifies it', () =
 test('application flow in a scratch copy: --apply, --verify --exact twice (no writes), second --apply refuses, partial state refuses', () => {
   const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'swse-3d-'));
   try {
-    for (const rel of ['packs', 'data/audits', 'data/generated', 'data/fixes', 'system.json']) fs.cpSync(rel, path.join(tmp, rel), { recursive: true });
+    for (const rel of ['packs', 'data/audits', 'data/generated', 'data/fixes', 'data/class-archetypes.json', 'system.json']) fs.cpSync(rel, path.join(tmp, rel), { recursive: true });
     const hashAll = () => { const h = crypto.createHash('sha1'); for (const rel of touchedFiles) if (fs.existsSync(path.join(tmp, rel))) h.update(rel).update(fs.readFileSync(path.join(tmp, rel))); return h.digest('hex'); };
-    const touchedFiles = ['packs/talents.db', 'packs/talent_trees.db', 'packs/classes.db', 'packs/heroic.db', 'packs/nonheroic.db', 'packs/npc.db', HOMEBREW.talentsFile, HOMEBREW.treesFile, 'data/generated/talent-trees.registry.json', 'data/fixes/talent-trees.registry.json', 'data/generated/talents.fixed.json', 'data/fixes/talents.fixed.json', 'system.json'];
+    const touchedFiles = ['packs/talents.db', 'packs/talent_trees.db', 'packs/classes.db', 'packs/heroic.db', 'packs/nonheroic.db', 'packs/npc.db', HOMEBREW.talentsFile, HOMEBREW.treesFile, 'data/generated/talent-trees.registry.json', 'data/fixes/talent-trees.registry.json', 'data/generated/talents.fixed.json', 'data/fixes/talents.fixed.json', 'data/class-archetypes.json', 'system.json'];
     const before = hashAll();
     const { written } = applyProduction(tmp);
-    assert.equal(written.length, 12); assert.ok(written.includes('system.json') && written.includes(HOMEBREW.talentsFile));
+    assert.equal(written.length, 13); assert.ok(written.includes('data/class-archetypes.json')); assert.ok(written.includes('system.json') && written.includes(HOMEBREW.talentsFile));
     assert.ok(!written.includes('packs/classes.db'), 'classes are not rewritten');
     const after = hashAll(); assert.notEqual(after, before);
     let results = verifyPostState(loadPostState(tmp), { exact: true, root: tmp, scan: false });
@@ -116,6 +129,11 @@ test('application flow in a scratch copy: --apply, --verify --exact twice (no wr
     assert.equal(hashAll(), after, 'the refused second apply must write nothing');
     // a tampered post-state fails --verify --exact
     fs.appendFileSync(path.join(tmp, 'packs/heroic.db'), '');
+    // a stale runtime reference introduced after the migration is caught by the repository-wide gate
+    fs.mkdirSync(path.join(tmp, 'scripts'), { recursive: true }); fs.writeFileSync(path.join(tmp, 'scripts/leak.js'), "const x = 'a7d8c4da96eacad4';\n");
+    const gate = verifyPostState(loadPostState(tmp), { exact: false, root: tmp });
+    assert.ok(gate.some(r => !r.ok && /residual-reference gate/.test(r.id)), 'the residual-reference gate must fail on a runtime leak');
+    fs.rmSync(path.join(tmp, 'scripts/leak.js'));
     const t = fs.readFileSync(path.join(tmp, 'packs/talents-homebrew.db'), 'utf8').split('\n').filter(Boolean); fs.writeFileSync(path.join(tmp, 'packs/talents-homebrew.db'), t.slice(1).join('\n') + '\n');
     assert.ok(verifyPostState(loadPostState(tmp), { exact: true, root: tmp, scan: false }).some(r => !r.ok));
   } finally { fs.rmSync(tmp, { recursive: true, force: true }); }
@@ -123,7 +141,7 @@ test('application flow in a scratch copy: --apply, --verify --exact twice (no wr
 test('a partial or drifted pre-state refuses to apply and writes nothing', () => {
   const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'swse-3d-'));
   try {
-    for (const rel of ['packs', 'data/audits', 'data/generated', 'data/fixes', 'system.json']) fs.cpSync(rel, path.join(tmp, rel), { recursive: true });
+    for (const rel of ['packs', 'data/audits', 'data/generated', 'data/fixes', 'data/class-archetypes.json', 'system.json']) fs.cpSync(rel, path.join(tmp, rel), { recursive: true });
     const lines = fs.readFileSync(path.join(tmp, 'packs/talents.db'), 'utf8').split('\n').filter(Boolean);
     fs.writeFileSync(path.join(tmp, 'packs/talents.db'), lines.filter(l => !l.includes('"_id":"a7d8c4da96eacad4"')).join('\n') + '\n');
     const snap = fs.readFileSync(path.join(tmp, 'packs/heroic.db'), 'utf8');

@@ -26,6 +26,20 @@ const talentsById = new Map(talents.map(d => [d._id, d]));
 const treesById = new Map(trees.map(t => [t._id, t]));
 const claimsOf = (id) => trees.filter(t => (t.system?.talentIds ?? []).includes(id));
 
+// Phase 3D state awareness: once the certified Phase 3D migration is applied, a record that was adjudicated to leave the
+// canonical pack must be gone from it (merged/removed) or isolated in the homebrew pack (moved). Before it, it is canonical.
+const p3d = readJson('data/audits/talent-phase-3d-dispositions.json');
+const leavingKind = new Map(p3d.records.filter(r => ['MERGE_DUPLICATE', 'REMOVE_CONTAMINATION', 'MOVE_HOMEBREW_PACK'].includes(r.finalDisposition)).map(r => [r.productionId, r.finalDisposition]));
+const homebrewFile = path.join(ROOT, 'packs', 'talents-homebrew.db');
+const homebrewIds = fs.existsSync(homebrewFile) ? new Set(readPack('talents-homebrew.db').map(d => d._id)) : new Set();
+const after3d = homebrewIds.size > 0;
+const leftCanonical = (id) => after3d && leavingKind.has(id);
+const assertLeftCanonical = (id) => {
+  assert.ok(!talentsById.has(id), `${id} must have left the canonical pack (Phase 3D)`);
+  assert.equal(claimsOf(id).length, 0, `${id} must not be claimed by a canonical tree`);
+  assert.equal(homebrewIds.has(id), leavingKind.get(id) === 'MOVE_HOMEBREW_PACK', `${id}: homebrew pack membership must match its Phase 3D disposition`);
+};
+
 /* ------------------------------------------------------------------ *
  * 1. The audit itself passes with no hard failures.
  * ------------------------------------------------------------------ */
@@ -116,6 +130,10 @@ const claimsOf = (id) => trees.filter(t => (t.system?.talentIds ?? []).includes(
     ['e19c06b6dfc7a703', 'ec12ce36ff7048f2'], // Seize the Moment
   ];
   for (const [a, b] of CANONICAL_CROSS_TREE_NAMES) {
+    if (leftCanonical(a) || leftCanonical(b)) {
+      for (const id of [a, b]) leftCanonical(id) ? assertLeftCanonical(id) : assert.ok(talentsById.has(id), `${id} was deleted`);
+      continue;
+    }
     assert.ok(talentsById.has(a), `${a} was deleted; same-name talents in different trees are canonical`);
     assert.ok(talentsById.has(b), `${b} was deleted; same-name talents in different trees are canonical`);
     assert.notEqual(
@@ -128,7 +146,8 @@ const claimsOf = (id) => trees.filter(t => (t.system?.talentIds ?? []).includes(
   // The corrupt Force Meld copy is retired and nothing references it.
   assert.ok(!talentsById.has('7f47394dfbc94269'), 'the corrupt Force Meld duplicate is back');
   assert.equal(claimsOf('7f47394dfbc94269').length, 0);
-  assert.ok(talentsById.has('816ac9cc1e6c413b'), 'the canonical Force Meld document was removed');
+  if (leftCanonical('816ac9cc1e6c413b')) assertLeftCanonical('816ac9cc1e6c413b'); // Phase 3D: Force Meld is self-labelled homebrew and lives in the homebrew pack
+  else assert.ok(talentsById.has('816ac9cc1e6c413b'), 'the canonical Force Meld document was removed');
 
   // The Provocateur "Seize the Moment" sits in the tree its authority names.
   const provocateur = trees.find(t => t.name === 'Provocateur');
@@ -157,6 +176,7 @@ const claimsOf = (id) => trees.filter(t => (t.system?.talentIds ?? []).includes(
     b788095a71a47be7: 'Lightsaber Combat',
   };
   for (const [id, treeName] of Object.entries(PREVIOUSLY_CROSS_CLAIMED)) {
+    if (leftCanonical(id)) { assertLeftCanonical(id); continue; }
     const claims = claimsOf(id);
     assert.equal(claims.length, 1, `${talentsById.get(id)?.name} is claimed by ${claims.length} trees`);
     assert.equal(claims[0].name, treeName);

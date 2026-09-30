@@ -2540,6 +2540,13 @@
             "file": "docs/combat-action-ability-cards-phase-t13.json",
             "classification": "DOC_OR_CLEANUP_PLAN"
           }
+        ],
+        "runtimeData": [
+          {
+            "file": "data/class-archetypes.json",
+            "occurrences": 2,
+            "replacementId": "cf4b1e5b126a2a7e"
+          }
         ]
       },
       "metadataTransfer": [],
@@ -6712,6 +6719,16 @@
         "treeName": "Science",
         "canonicalMembersRemainingInTree": 0
       }
+    }
+  ],
+  "runtimeDataRepoints": [
+    {
+      "file": "data/class-archetypes.json",
+      "from": "585227ba15d24a37",
+      "to": "cf4b1e5b126a2a7e",
+      "expectedOccurrences": 2,
+      "rationale": "Two class archetypes list the contaminated bare-name \"Inspire Fear\" record (Terrify text + scraper residue). The canonical talent of that name is the entry of the Inspire Fear series, Inspire Fear I (Core, Infamy, p.210); both archetypes are fear/intimidation leaders. Found by the repository-wide residual-reference gate; the original dry run scanned packs only.",
+      "reviewNote": "Replacement target is a judgment call (Inspire Fear I vs Terrify); flagged for owner review at the commit gate."
     }
   ]
 }

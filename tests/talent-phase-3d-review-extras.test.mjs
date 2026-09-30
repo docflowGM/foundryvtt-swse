@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import { checkDispositions } from '../tools/check-talent-phase-3d-dispositions.mjs';
+import { detectPackState } from '../tools/apply-talent-phase-3c.mjs';
 
 const rj = p => JSON.parse(fs.readFileSync(new URL('../' + p, import.meta.url), 'utf8'));
 const rdb = p => fs.readFileSync(new URL('../' + p, import.meta.url), 'utf8').split('\n').filter(Boolean).map(l => JSON.parse(l));
@@ -11,6 +12,17 @@ const actors = { heroic: rdb('packs/heroic.db'), nonheroic: rdb('packs/nonheroic
 const run = m => checkDispositions({ manifest: m, census, talents, actors });
 const clone = v => structuredClone(v);
 let passed = 0; const test = (n, fn) => { fn(); passed++; console.log('  ok  ' + n); };
+if (detectPackState().state === 'POST_3D_STATE') {
+  // The checker compares the manifest to the live pre-migration packs/actors, which no longer exist after Phase 3D is applied;
+  // the post-state is certified by tools/apply-talent-phase-3d.mjs --verify --exact and tests/talent-phase-3d-post-state.test.mjs.
+  test('final 3D-2 totals still match the owner rulings (static)', () => {
+    const tally = {}; for (const r of manifest.records) tally[r.finalDisposition] = (tally[r.finalDisposition] || 0) + 1;
+    assert.deepEqual(tally, { MERGE_DUPLICATE: 19, REMOVE_CONTAMINATION: 16, KEEP_CANONICAL_ADDITIONAL_PUBLICATION: 6, CORRECT_IDENTITY: 1, MOVE_HOMEBREW_PACK: 50 });
+  });
+  console.log('  skip live-pack checker cases (Phase 3D applied)');
+  console.log(`\n${passed} talent-phase-3d review-extra checks passed (post-state subset)`);
+  process.exit(0);
+}
 const rec = id => manifest.records.find(r => r.productionId === id);
 
 test('manifest accounts for all 92 inherited records with no checker errors', () => assert.deepEqual(run(manifest), []));

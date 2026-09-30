@@ -33,6 +33,7 @@ export const REPORT_PATH = 'data/audits/talent-phase-3d-dry-run-report.json';
 export const PACKS = { talents: 'packs/talents.db', trees: 'packs/talent_trees.db', classes: 'packs/classes.db' };
 export const ACTOR_PACKS = { heroic: 'packs/heroic.db', nonheroic: 'packs/nonheroic.db', npc: 'packs/npc.db' };
 export const DERIVED_FILES = ['data/generated/talents.fixed.json', 'data/fixes/talents.fixed.json'];
+export const RUNTIME_DATA_FILES = ['data/class-archetypes.json'];
 export const HOMEBREW = { talentsPack: 'talents-homebrew', treesPack: 'talent-trees-homebrew', talentsFile: 'packs/talents-homebrew.db', treesFile: 'packs/talent-trees-homebrew.db' };
 const SYSTEM_ID = 'foundryvtt-swse';
 
@@ -62,6 +63,7 @@ export function loadInputs(root = ROOT) {
     actors: Object.fromEntries(Object.keys(ACTOR_PACKS).map(k => [k, parseNdjson(texts[k])])),
     derived: Object.fromEntries(DERIVED_FILES.map(rel => [rel, readJson(rel, root)])),
     previousRegistry: loadPreviousRegistry(root),
+    runtimeFiles: Object.fromEntries(RUNTIME_DATA_FILES.map(rel => [rel, readText(rel, root)])),
     otherPackTexts: otherPackTexts(root)
   };
 }
@@ -164,7 +166,21 @@ export function projectPhase3D(input) {
   invariant(repointed.length === plan.size, `planned ${plan.size} actor repoints but performed ${repointed.length}`);
   operationCounts.actorItemsRepointed = repointed.length;
 
-  /* 2. No live reference to a leaving ID may remain anywhere (actors, classes, every other pack). */
+  /* 1b. Runtime data files that name a leaving record by id are repointed by plan (text-level, nothing else touched). */
+  const runtimeFiles = clone(input.runtimeFiles ?? {});
+  const runtimeRepoints = [];
+  for (const rp of manifest.runtimeDataRepoints ?? []) {
+    invariant(runtimeFiles[rp.file] !== undefined, `runtime data file ${rp.file} is not loaded`);
+    invariant(leavingIds.has(rp.from) && byId.has(rp.to) && !leavingIds.has(rp.to), `runtime repoint ${rp.from} -> ${rp.to}: source must be leaving and target must be a surviving record`);
+    const needle = `"${rp.from}"`, count = runtimeFiles[rp.file].split(needle).length - 1;
+    invariant(count === rp.expectedOccurrences, `${rp.file}: expected ${rp.expectedOccurrences} occurrences of ${rp.from}, found ${count}`);
+    runtimeFiles[rp.file] = runtimeFiles[rp.file].split(needle).join(`"${rp.to}"`);
+    JSON.parse(runtimeFiles[rp.file]); // still valid JSON
+    runtimeRepoints.push({ file: rp.file, from: rp.from, to: rp.to, occurrences: count });
+  }
+  operationCounts.runtimeDataReferencesRepointed = runtimeRepoints.reduce((n, r) => n + r.occurrences, 0);
+
+  /* 2. No live reference to a leaving ID may remain anywhere (actors, classes, every other pack, runtime data). */
   const leavingPattern = new RegExp([...leavingIds].join('|'));
   const residual = [];
   for (const [pack, list] of Object.entries(actors)) for (const actor of list) {
@@ -176,6 +192,7 @@ export function projectPhase3D(input) {
     }
   }
   for (const cls of classes) if (leavingPattern.test(JSON.stringify(cls))) residual.push(`classes:${cls.name}`);
+  for (const [file, text] of Object.entries(runtimeFiles)) if (leavingPattern.test(text)) residual.push(file);
   for (const [file, text] of Object.entries(input.otherPackTexts ?? {})) if (leavingPattern.test(text)) residual.push(`packs/${file}`);
   invariant(!residual.length, 'BLOCKED: unresolved live references to records leaving the canonical pack: ' + residual.slice(0, 10).join(', '));
 
@@ -247,12 +264,13 @@ export function projectPhase3D(input) {
   }
 
   /* 8. Runtime registry regenerated from the projected packs. */
-  const registry = buildTalentTreeRegistry({ talents: canonicalTalents, trees: canonicalTrees, classes, previousRegistry: input.previousRegistry ?? [] });
+  const registry = buildTalentTreeRegistry({ talents: canonicalTalents, trees: canonicalTrees, classes, previousRegistry: rewriteLegacyRegistry(input.previousRegistry ?? [], recs, input.talents, canonicalTalents) });
 
   return {
     talents: canonicalTalents, trees: canonicalTrees, classes, actors, derived, registry,
     homebrew: { talents: homebrewTalents, trees: homebrewTrees },
     repointed, classAccessRemoved, derivedDrops, operationCounts,
+    runtimeFiles, runtimeRepoints,
     movedTreeIds: [...movedTreeIds], mixedTrees: [...treeFate.values()].filter(f => f.staying.length).map(f => ({ treeId: f.tree._id, tree: f.tree.name, membersLeaving: f.moved.length + f.removed.length, membersRemaining: f.staying.length }))
   };
 }
@@ -280,6 +298,27 @@ function onlySnapshotChanged(beforeActors, p) {
     }
   }
   return true;
+}
+
+
+/**
+ * Legacy registry aliases (entries without a sourceId) list talent NAMES. A name that belonged to a record leaving the
+ * canonical pack is renamed to its merge survivor's name, or dropped when no canonical talent carries that name.
+ * Name-level by necessity (legacy entries carry no ids); only the exact names of leaving records are touched.
+ */
+export function rewriteLegacyRegistry(previousRegistry, recs, talentsBefore, canonicalAfter) {
+  const before = new Map(talentsBefore.map(t => [t._id, t])), canonNames = new Set(canonicalAfter.map(t => t.name));
+  const rename = new Map(), drop = new Set();
+  for (const r of recs.filter(x => REMOVING.has(x.finalDisposition))) {
+    const name = before.get(r.productionId).name;
+    if (canonNames.has(name)) continue; // the name is still carried by a canonical talent
+    if (r.finalDisposition === 'MERGE_DUPLICATE') rename.set(name, before.get(r.survivorId).name); else drop.add(name);
+  }
+  return previousRegistry.map(e => {
+    if (e.sourceId || !Array.isArray(e.talents)) return e;
+    const names = [...new Set(e.talents.filter(n => !drop.has(n)).map(n => rename.get(n) ?? n))];
+    return names.length === e.talents.length && names.every((n, i) => n === e.talents[i]) ? e : { ...e, talents: names, talentCount: names.length };
+  });
 }
 
 /* ------------------------------------------------------------------------------------------------
@@ -333,6 +372,11 @@ export function verifyProjection(input, p) {
   check('registry has an entry for every projected canonical tree', [...treeIds].every(id => reg.some(e => e.sourceId === id)));
   check('registry talentIds resolve in the canonical pack', reg.every(e => (e.talentIds ?? []).every(id => after.has(id) || !e.sourceId)));
   check('derived talents.fixed.json mirrors no longer carry leaving ids', Object.values(p.derived).every(a => a.every(e => !leavingIds.has(e._id))));
+  check('runtime data files carry no leaving id after the planned repoints', Object.values(p.runtimeFiles).every(t => ![...leavingIds].some(id => t.includes(`"${id}"`))));
+  check('every planned runtime repoint was performed and targets a surviving record', p.runtimeRepoints.length === (manifest.runtimeDataRepoints ?? []).length && p.runtimeRepoints.every(r => after.has(r.to)));
+  const legacyNames = new Set(p.registry.filter(e => !e.sourceId).flatMap(e => e.talents ?? []));
+  const canonNames = new Set(p.talents.map(t => t.name));
+  check('legacy registry aliases name no talent that is missing from the canonical pack', [...legacyNames].every(n => canonNames.has(n) || !input.talents.some(t => t.name === n && leavingIds.has(t._id))));
 
   let second = 'refused';
   try { projectPhase3D({ ...input, talents: p.talents, trees: p.trees, classes: p.classes, actors: p.actors, derived: p.derived }); second = 'applied-again'; } catch (e) { second = /already applied/.test(e.message) ? 'refused' : 'other:' + e.message.slice(0, 80); }
@@ -374,12 +418,13 @@ export function renderOutputs(input, p, root = ROOT) {
     [HOMEBREW.treesFile]: p.homebrew.trees.map(r => JSON.stringify(r)).join('\n') + '\n',
     [REGISTRY_PATHS[0]]: registryText, [REGISTRY_PATHS[1]]: registryText,
     ...Object.fromEntries(DERIVED_FILES.map(rel => [rel, JSON.stringify(p.derived[rel], null, 2) + '\n'])),
+    ...p.runtimeFiles,
     [SYSTEM_JSON]: withHomebrewPacks(readText(SYSTEM_JSON, root))
   };
   return files;
 }
 const blobOf = (files, rel) => gitBlobSha(files[rel]);
-const stateKeys = { talents: PACKS.talents, trees: PACKS.trees, heroic: ACTOR_PACKS.heroic, nonheroic: ACTOR_PACKS.nonheroic, npc: ACTOR_PACKS.npc, homebrewTalents: HOMEBREW.talentsFile, homebrewTrees: HOMEBREW.treesFile, registry: REGISTRY_PATHS[0], registryFixes: REGISTRY_PATHS[1], derivedGenerated: DERIVED_FILES[0], derivedFixes: DERIVED_FILES[1], systemJson: SYSTEM_JSON };
+const stateKeys = { talents: PACKS.talents, trees: PACKS.trees, heroic: ACTOR_PACKS.heroic, nonheroic: ACTOR_PACKS.nonheroic, npc: ACTOR_PACKS.npc, homebrewTalents: HOMEBREW.talentsFile, homebrewTrees: HOMEBREW.treesFile, registry: REGISTRY_PATHS[0], registryFixes: REGISTRY_PATHS[1], derivedGenerated: DERIVED_FILES[0], derivedFixes: DERIVED_FILES[1], archetypes: RUNTIME_DATA_FILES[0], systemJson: SYSTEM_JSON };
 
 export function buildReport(input, p, verification, root = ROOT) {
   const out = renderOutputs(input, p, root);
@@ -404,6 +449,7 @@ export function buildReport(input, p, verification, root = ROOT) {
     actorRepoints: { total: p.repointed.length, snapshotRefreshed: p.repointed.filter(r => r.snapshotRefreshed).length, byDisposition: tally(p.repointed, r => r.disposition), byTargetPack: tally(p.repointed, r => r.toPack), snapshotFields: SNAPSHOT_FIELDS, items: p.repointed },
     trees: { movedToHomebrew: p.homebrew.trees.map(t => ({ treeId: t._id, name: t.name, members: t.system.talentIds.length })), keepCanonicalLoseMembers: p.mixedTrees },
     classAccess: { changes: p.classAccessRemoved, note: p.classAccessRemoved.length ? undefined : 'no canonical class references any tree that moves to the homebrew pack' },
+    runtimeData: { repointed: p.runtimeRepoints, note: 'found by the repository-wide residual-reference gate; the first dry run scanned packs only' },
     derivedData: { entriesDropped: p.derivedDrops, note: 'data/*/talents.fixed.json are partial derived mirrors with no runtime or tool consumer found' },
     homebrewPack: {
       talentsPack: HOMEBREW.talentsPack, treesPack: HOMEBREW.treesPack, files: [HOMEBREW.talentsFile, HOMEBREW.treesFile], idsPreserved: true,
@@ -425,6 +471,8 @@ export function buildReport(input, p, verification, root = ROOT) {
  * Residual-reference gate (repository-wide). Runtime surfaces must hold ZERO references to a merged/removed id and
  * no moved id outside the homebrew packs; audit history and Phase 3D's own evidence files are classified separately.
  * ---------------------------------------------------------------------------------------------- */
+/** Tests that quote pre-migration ids as state-gated evidence (each skips or switches behavior once Phase 3D is applied). */
+export const STATE_GATED_EVIDENCE = new Set(['tests/talent-phase-3c-migration-flow.test.mjs', 'tests/talent-tree-membership-review-extras.test.mjs', 'tests/talent-membership-and-pack-completion.test.mjs']);
 export function classifyPath(rel) {
   if (/^(data\/audit\/|data\/audits\/|docs\/)/.test(rel)) return 'HISTORY';
   if (rel === HOMEBREW.talentsFile || rel === HOMEBREW.treesFile) return 'HOMEBREW_PACK';
@@ -441,9 +489,12 @@ export function scanResidualReferences({ root = ROOT, manifest }) {
   const run = spawnSync('git', args, { cwd: root, encoding: 'utf8', maxBuffer: 1 << 28 });
   invariant(run.status === 0 || run.status === 1, 'git grep failed: ' + run.stderr);
   const hits = (run.stdout || '').split('\n').filter(Boolean).map(l => { const [file, , ...rest] = l.split(':'); return { file, id: rest.join(':') }; });
-  const out = { RUNTIME: [], TEST: [], TOOL: [], HISTORY: 0, PHASE_3D_EVIDENCE: 0, HOMEBREW_PACK: 0 };
+  const out = { RUNTIME: [], TEST: [], TOOL: [], INFORMATIONAL: [], HISTORY: 0, PHASE_3D_EVIDENCE: 0, HOMEBREW_PACK: 0 };
   for (const h of hits) {
-    const cls = classifyPath(h.file);
+    let cls = classifyPath(h.file);
+    // Tools/tests: a stale merged/removed id blocks; a MOVED id (record still exists in the homebrew pack) and the explicitly
+    // state-gated pre-state tests are informational.
+    if ((cls === 'TOOL' || cls === 'TEST') && (moved.has(h.id) || STATE_GATED_EVIDENCE.has(h.file))) { out.INFORMATIONAL.push(`${h.file}:${h.id}`); continue; }
     if (cls === 'HISTORY' || cls === 'PHASE_3D_EVIDENCE') out[cls]++;
     else if (cls === 'HOMEBREW_PACK') { if (moved.has(h.id)) out.HOMEBREW_PACK++; else out.RUNTIME.push(`${h.file}:${h.id}`); }
     else if (cls === 'RUNTIME' && (h.file === 'packs/heroic.db' || h.file === 'packs/nonheroic.db' || h.file === 'packs/npc.db') && moved.has(h.id)) {
@@ -453,7 +504,7 @@ export function scanResidualReferences({ root = ROOT, manifest }) {
       if (bad) out.RUNTIME.push(`${h.file}:${h.id}`); else out.HOMEBREW_PACK++;
     } else out[cls].push(`${h.file}:${h.id}`);
   }
-  for (const k of ['RUNTIME', 'TEST', 'TOOL']) out[k] = [...new Set(out[k])].sort();
+  for (const k of ['RUNTIME', 'TEST', 'TOOL', 'INFORMATIONAL']) out[k] = [...new Set(out[k])].sort();
   return out;
 }
 
@@ -537,7 +588,14 @@ export function freshReport(root = ROOT) {
   invariant(c3.state === 'POST_STATE', `the Phase 3C certified post-state is required (found ${c3.state})`);
   const input = loadInputs(root);
   const p = projectPhase3D(input);
-  return { input, p, report: buildReport(input, p, verifyProjection(input, p), root) };
+  const verification = verifyProjection(input, p);
+  // Repository-wide: every runtime reference to a leaving id must sit in a file this plan rewrites (packs, registries, derived mirrors, runtime data).
+  const planned = new Set([...Object.values(PACKS), ...Object.values(ACTOR_PACKS), ...REGISTRY_PATHS, ...DERIVED_FILES, ...RUNTIME_DATA_FILES]);
+  const scan = scanResidualReferences({ root, manifest: input.manifest });
+  const uncovered = scan.RUNTIME.filter(h => !planned.has(h.split(':')[0]));
+  verification.push({ id: 'repository-wide scan: every runtime reference to a leaving id is in a file this plan rewrites', ok: uncovered.length === 0, detail: uncovered.slice(0, 6).join(', ') });
+  verification.push({ id: 'repository-wide scan: stale tool/test references are listed for triage', ok: true, detail: `${scan.TOOL.length} tool, ${scan.TEST.length} test` });
+  return { input, p, scan, report: buildReport(input, p, verification, root) };
 }
 
 const printResults = results => { for (const v of results) console.log(`${v.ok ? 'PASS' : 'FAIL'}  ${v.id}${v.ok || !v.detail ? '' : '  [' + v.detail + ']'}`); };

@@ -180,7 +180,7 @@
         },
         {
           "file": "tests/talent-tree-membership-review-extras.test.mjs",
-          "count": 2,
+          "count": 3,
           "classification": "TEST",
           "blocksDeletion": false,
           "mustRepoint": null,
@@ -300,16 +300,8 @@
         },
         {
           "file": "tests/talent-tree-membership-review-extras.test.mjs",
-          "count": 1,
+          "count": 2,
           "classification": "TEST",
-          "blocksDeletion": false,
-          "mustRepoint": null,
-          "replacementId": null
-        },
-        {
-          "file": "tools/fix-compendium-issues.js",
-          "count": 1,
-          "classification": "TOOL",
           "blocksDeletion": false,
           "mustRepoint": null,
           "replacementId": null
@@ -1625,22 +1617,6 @@
           "blocksDeletion": true,
           "mustRepoint": null,
           "replacementId": null
-        },
-        {
-          "file": "tools/fix-compendium-issues.js",
-          "count": 1,
-          "classification": "TOOL",
-          "blocksDeletion": false,
-          "mustRepoint": null,
-          "replacementId": null
-        },
-        {
-          "file": "tools/verify-compendium-fixes.js",
-          "count": 1,
-          "classification": "TOOL",
-          "blocksDeletion": false,
-          "mustRepoint": null,
-          "replacementId": null
         }
       ],
       "blockingReferenceCount": 5
@@ -2545,22 +2521,6 @@
           "blocksDeletion": false,
           "mustRepoint": null,
           "replacementId": null
-        },
-        {
-          "file": "tools/fix-compendium-issues.js",
-          "count": 1,
-          "classification": "TOOL",
-          "blocksDeletion": false,
-          "mustRepoint": null,
-          "replacementId": null
-        },
-        {
-          "file": "tools/verify-compendium-fixes.js",
-          "count": 1,
-          "classification": "TOOL",
-          "blocksDeletion": false,
-          "mustRepoint": null,
-          "replacementId": null
         }
       ],
       "blockingReferenceCount": 5
@@ -3436,7 +3396,7 @@
         },
         {
           "file": "tests/talent-membership-and-pack-completion.test.mjs",
-          "count": 2,
+          "count": 3,
           "classification": "TEST",
           "blocksDeletion": false,
           "mustRepoint": null,
@@ -3817,22 +3777,6 @@
           "blocksDeletion": true,
           "mustRepoint": null,
           "replacementId": null
-        },
-        {
-          "file": "tools/fix-compendium-issues.js",
-          "count": 1,
-          "classification": "TOOL",
-          "blocksDeletion": false,
-          "mustRepoint": null,
-          "replacementId": null
-        },
-        {
-          "file": "tools/verify-compendium-fixes.js",
-          "count": 1,
-          "classification": "TOOL",
-          "blocksDeletion": false,
-          "mustRepoint": null,
-          "replacementId": null
         }
       ],
       "blockingReferenceCount": 5
@@ -3911,22 +3855,6 @@
           "count": 1,
           "classification": "STRUCTURAL_TREE_MEMBERSHIP",
           "blocksDeletion": true,
-          "mustRepoint": null,
-          "replacementId": null
-        },
-        {
-          "file": "tools/fix-compendium-issues.js",
-          "count": 1,
-          "classification": "TOOL",
-          "blocksDeletion": false,
-          "mustRepoint": null,
-          "replacementId": null
-        },
-        {
-          "file": "tools/verify-compendium-fixes.js",
-          "count": 1,
-          "classification": "TOOL",
-          "blocksDeletion": false,
           "mustRepoint": null,
           "replacementId": null
         }

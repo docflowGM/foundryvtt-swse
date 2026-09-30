@@ -14,7 +14,7 @@ No production data was modified. `provisionalDisposition` is a heuristic, not a 
 - **treeMissingFromPack**: no = 90, yes = 2
 - **productionSourceField**: no-source-field (records carry no source/page in production) = 92
 - **carriesAbilityMeta**: yes = 92
-- **referenceClassesPresent**: ACTOR_OR_PACK_DATA = 6, AUDIT_HISTORY = 92, DOC_OR_CLEANUP_PLAN = 56, GENERATED_DERIVED_DATA = 30, OTHER_DATA = 1, STRUCTURAL_RUNTIME_REGISTRY = 92, STRUCTURAL_TREE_MEMBERSHIP = 92, TEST = 7, TOOL = 6
+- **referenceClassesPresent**: ACTOR_OR_PACK_DATA = 6, AUDIT_HISTORY = 92, DOC_OR_CLEANUP_PLAN = 56, GENERATED_DERIVED_DATA = 30, OTHER_DATA = 1, STRUCTURAL_RUNTIME_REGISTRY = 92, STRUCTURAL_TREE_MEMBERSHIP = 92, TEST = 7, TOOL = 1
 - **referencedByActorOrPackData**: yes = 6, no = 86
 - **provisionalDisposition**: REVIEW_REQUIRED = 82, KEEP_NONBOOK_SUPPORTED = 10
 
@@ -88,7 +88,7 @@ No production data was modified. `provisionalDisposition` is a heuristic, not a 
 | ID | Name | Tree | Registry status | Same-name canon | In sourcebook TXT | Ref files (actor/pack data) | Provisional |
 |---|---|---|---|---|---|---|---|
 | `a7d8c4da96eacad4` | Notorious | Infamy | REVIEW_EXTRA | 2 | Clone Wars Campaign Guide; Core Rulebook | 22 (3) | REVIEW_REQUIRED |
-| `222327492c484b4a` | Teräs Käsi Basics | Master of Teräs Käsi | REVIEW_EXTRA | 1 | Galaxy At War; Threats of the Galaxy | 15 (2) | REVIEW_REQUIRED |
+| `222327492c484b4a` | Teräs Käsi Basics | Master of Teräs Käsi | REVIEW_EXTRA | 1 | Galaxy At War; Threats of the Galaxy | 14 (2) | REVIEW_REQUIRED |
 | `0c9b0788ad42450c` | Extended Critical Range | Bothan Spynet | REPO_TREE_PRESENT | 0 | Force Unleashed Campaign Guide; Unknown Regions | 5 (0) | REVIEW_REQUIRED |
 | `0cdd50aaa65e4360` | Voices | Midichlorian | REPO_ONLY_NONCANONICAL_HOMEBREW | 0 | Clone Wars Campaign Guide; Galaxy At War | 6 (0) | REVIEW_REQUIRED |
 | `0de7338c2b984b96` | Droid Receptacle | Bomarr Monk | REPO_ONLY_NONCANONICAL_HOMEBREW | 0 | — | 7 (0) | REVIEW_REQUIRED |
@@ -107,7 +107,7 @@ No production data was modified. `provisionalDisposition` is a heuristic, not a 
 | `2f6bdc483d8f4aa8` | Serene Courage | Bomarr Monk | REPO_ONLY_NONCANONICAL_HOMEBREW | 0 | — | 6 (0) | REVIEW_REQUIRED |
 | `35350a8b3d2a4810` | Empowered | Force Item | REPO_TREE_PRESENT | 0 | Clone Wars Campaign Guide; Core Rulebook | 7 (0) | REVIEW_REQUIRED |
 | `395daa7cd6f14b8f` | Rough Landings | Jumptrooper | REPO_ONLY_NONCANONICAL_HOMEBREW | 0 | — | 8 (0) | REVIEW_REQUIRED |
-| `3cc9552cfab59676` | Embrace Dark Side | Dark Side Devotee | UNREGISTERED_OR_NONCANONICAL_TREE | 0 | — | 11 (0) | REVIEW_REQUIRED |
+| `3cc9552cfab59676` | Embrace Dark Side | Dark Side Devotee | UNREGISTERED_OR_NONCANONICAL_TREE | 0 | — | 9 (0) | REVIEW_REQUIRED |
 | `3df46d093b31411d` | Indomitable class feature | Force Adept | REPO_TREE_PRESENT | 0 | — | 9 (0) | REVIEW_REQUIRED |
 | `3faa4d16e28d43e4` | Weapon Proficiency (Simple Weapons) | Warrior | REPO_TREE_PRESENT | 0 | Clone Wars Campaign Guide; Core Rulebook | 6 (0) | REVIEW_REQUIRED |
 | `433c2e9c0e71aceb` | Flanking Foe | Pistoleer | REPO_TREE_PRESENT | 0 | — | 12 (0) | REVIEW_REQUIRED |
@@ -120,7 +120,7 @@ No production data was modified. `provisionalDisposition` is a heuristic, not a 
 | `585227ba15d24a37` | Inspire Fear | Infamy | REPO_TREE_PRESENT | 0 | Core Rulebook; Legacy Era Campaign Guide | 7 (0) | REVIEW_REQUIRED |
 | `588c176b47724734` | Feign Harmlessness | Cowardice | REPO_ONLY_NONCANONICAL_HOMEBREW | 0 | — | 7 (0) | REVIEW_REQUIRED |
 | `5e4a7f98b1e74326` | Adept Spellcaster | Sorcerer Of Tund | REPO_ONLY_NONCANONICAL_HOMEBREW | 1 | Jedi Academy Training Manual; Threats of the Galaxy | 8 (0) | REVIEW_REQUIRED |
-| `6021056231839e7c` | Multiattack Proficiency (advanced melee) | Privateer | REPO_TREE_PRESENT | 0 | Force Unleashed Campaign Guide; Knights of the Old Republic Campaign Guide | 12 (0) | REVIEW_REQUIRED |
+| `6021056231839e7c` | Multiattack Proficiency (advanced melee) | Privateer | REPO_TREE_PRESENT | 0 | Force Unleashed Campaign Guide; Knights of the Old Republic Campaign Guide | 10 (0) | REVIEW_REQUIRED |
 | `61c9413bde23411a` | Extended Sputters | Jumptrooper | REPO_ONLY_NONCANONICAL_HOMEBREW | 0 | — | 6 (0) | REVIEW_REQUIRED |
 | `62d461ae3b0fcfa9` | Move Massive Object | Alter | SOURCE_VERIFIED_SPECIAL_TREE | 0 | Legacy Era Campaign Guide | 9 (0) | KEEP_NONBOOK_SUPPORTED |
 | `62e70280d08f43ec` | Allure | Influence | REPO_TREE_PRESENT | 0 | Rebellion Era Campaign Guide; Unknown Regions | 6 (0) | REVIEW_REQUIRED |
@@ -138,8 +138,8 @@ No production data was modified. `provisionalDisposition` is a heuristic, not a 
 | `85e348f24a144e1c` | Inspired | Inspiration | REPO_TREE_PRESENT | 0 | Clone Wars Campaign Guide; Core Rulebook | 6 (0) | REVIEW_REQUIRED |
 | `85e9699cee664641` | Identify Creature | Science | REPO_ONLY_NONCANONICAL_HOMEBREW | 0 | — | 7 (0) | REVIEW_REQUIRED |
 | `86c10d63bba2d9c8` | Trigger Work | Gunslinger | REPO_TREE_PRESENT | 0 | Core Rulebook; Threats of the Galaxy | 13 (3) | REVIEW_REQUIRED |
-| `893158dcfe246ad7` | Implant (general) | Implant | REPO_TREE_PRESENT | 0 | — | 12 (0) | REVIEW_REQUIRED |
-| `8a6fc1f368226b7b` | Sith Alchemy (create) | Sith | REPO_TREE_PRESENT | 0 | — | 11 (0) | REVIEW_REQUIRED |
+| `893158dcfe246ad7` | Implant (general) | Implant | REPO_TREE_PRESENT | 0 | — | 10 (0) | REVIEW_REQUIRED |
+| `8a6fc1f368226b7b` | Sith Alchemy (create) | Sith | REPO_TREE_PRESENT | 0 | — | 9 (0) | REVIEW_REQUIRED |
 | `8d70989dc42f4829` | Suktub Defender | Smashball Pro | REPO_ONLY_NONCANONICAL_HOMEBREW | 0 | — | 6 (0) | REVIEW_REQUIRED |
 | `9319584186ce4228` | Dathomiri Hunter | Dathomiri Witch | SOURCE_VERIFIED_SPECIAL_TREE | 0 | — | 7 (0) | KEEP_NONBOOK_SUPPORTED |
 | `933240d6581843b9` | Lasting Ichor Item | Force Item | REPO_TREE_PRESENT | 0 | — | 5 (0) | REVIEW_REQUIRED |

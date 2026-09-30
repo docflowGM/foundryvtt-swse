@@ -122,7 +122,7 @@
       "STRUCTURAL_RUNTIME_REGISTRY": 92,
       "STRUCTURAL_TREE_MEMBERSHIP": 92,
       "TEST": 7,
-      "TOOL": 6
+      "TOOL": 1
     },
     "referencedByActorOrPackData": {
       "yes": 6,
@@ -436,7 +436,7 @@
         },
         {
           "file": "tests/talent-tree-membership-review-extras.test.mjs",
-          "count": 2,
+          "count": 3,
           "classification": "TEST"
         }
       ],
@@ -600,13 +600,8 @@
         },
         {
           "file": "tests/talent-tree-membership-review-extras.test.mjs",
-          "count": 1,
+          "count": 2,
           "classification": "TEST"
-        },
-        {
-          "file": "tools/fix-compendium-issues.js",
-          "count": 1,
-          "classification": "TOOL"
         }
       ],
       "provisionalDisposition": {
@@ -2849,16 +2844,6 @@
           "file": "packs/talent_trees.db",
           "count": 1,
           "classification": "STRUCTURAL_TREE_MEMBERSHIP"
-        },
-        {
-          "file": "tools/fix-compendium-issues.js",
-          "count": 1,
-          "classification": "TOOL"
-        },
-        {
-          "file": "tools/verify-compendium-fixes.js",
-          "count": 1,
-          "classification": "TOOL"
         }
       ],
       "provisionalDisposition": {
@@ -4400,16 +4385,6 @@
           "file": "tests/talent-membership-and-pack-completion.test.mjs",
           "count": 1,
           "classification": "TEST"
-        },
-        {
-          "file": "tools/fix-compendium-issues.js",
-          "count": 1,
-          "classification": "TOOL"
-        },
-        {
-          "file": "tools/verify-compendium-fixes.js",
-          "count": 1,
-          "classification": "TOOL"
         }
       ],
       "provisionalDisposition": {
@@ -6089,7 +6064,7 @@
         },
         {
           "file": "tests/talent-membership-and-pack-completion.test.mjs",
-          "count": 2,
+          "count": 3,
           "classification": "TEST"
         }
       ],
@@ -6753,16 +6728,6 @@
           "file": "packs/talent_trees.db",
           "count": 1,
           "classification": "STRUCTURAL_TREE_MEMBERSHIP"
-        },
-        {
-          "file": "tools/fix-compendium-issues.js",
-          "count": 1,
-          "classification": "TOOL"
-        },
-        {
-          "file": "tools/verify-compendium-fixes.js",
-          "count": 1,
-          "classification": "TOOL"
         }
       ],
       "provisionalDisposition": {
@@ -6873,16 +6838,6 @@
           "file": "packs/talent_trees.db",
           "count": 1,
           "classification": "STRUCTURAL_TREE_MEMBERSHIP"
-        },
-        {
-          "file": "tools/fix-compendium-issues.js",
-          "count": 1,
-          "classification": "TOOL"
-        },
-        {
-          "file": "tools/verify-compendium-fixes.js",
-          "count": 1,
-          "classification": "TOOL"
         }
       ],
       "provisionalDisposition": {

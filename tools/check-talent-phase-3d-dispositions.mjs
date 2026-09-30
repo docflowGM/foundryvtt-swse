@@ -51,6 +51,11 @@ export function checkDispositions({ manifest, census, talents, actors }) {
     }
     if (deletes && r.adjudicationStatus !== 'ADJUDICATED') errors.push(`${tag}: deletion disposition without adjudication`);
   }
+  for (const rp of manifest.runtimeDataRepoints ?? []) {
+    if (!deletedIds.has(rp.from)) errors.push(`runtime repoint ${rp.file}: source ${rp.from} is not a record leaving the canonical pack`);
+    if (!ids.has(rp.to) || deletedIds.has(rp.to)) errors.push(`runtime repoint ${rp.file}: target ${rp.to} must exist and stay canonical`);
+    if (!(rp.expectedOccurrences > 0)) errors.push(`runtime repoint ${rp.file}: expectedOccurrences missing`);
+  }
   return errors;
 }
 
