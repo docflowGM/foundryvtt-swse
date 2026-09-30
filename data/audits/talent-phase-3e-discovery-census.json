@@ -1,0 +1,1639 @@
+{
+  "schemaVersion": 1,
+  "phase": "3E-2b",
+  "status": "DISCOVERY_CENSUS",
+  "productionMutationPerformed": false,
+  "method": "Independent of the Phase 1D/2/3A claims: names are read from published stat blocks, canonical prerequisites and the raw TXT vocabulary.",
+  "statBlockCensus": {
+    "names": 360,
+    "matchedCanonicalTalent": 264,
+    "knownNonTalent": 13,
+    "ocrVariantOfKnown": [
+      {
+        "name": "Barn Leader",
+        "knownAs": "born leader",
+        "similarity": 0.91,
+        "refs": [
+          "Clone Wars Campaign Guide:17966"
+        ]
+      },
+      {
+        "name": "Black",
+        "knownAs": "block",
+        "similarity": 0.8,
+        "refs": [
+          "Clone Wars Campaign Guide:12339"
+        ]
+      },
+      {
+        "name": "Channe! Aggression",
+        "knownAs": "channel aggression",
+        "similarity": 0.94,
+        "refs": [
+          "Threats of the Galaxy:8347"
+        ]
+      },
+      {
+        "name": "Ciear Mind",
+        "knownAs": "clear mind",
+        "similarity": 0.9,
+        "refs": [
+          "Clone Wars Campaign Guide:12244"
+        ]
+      },
+      {
+        "name": "Conterpnch",
+        "knownAs": "counterpunch",
+        "similarity": 0.83,
+        "refs": [
+          "Scum and Villainy:8573"
+        ]
+      },
+      {
+        "name": "Dark Side Adeot",
+        "knownAs": "dark side adept",
+        "similarity": 0.93,
+        "refs": [
+          "Knights of the Old Republic Campaign Guide:15649"
+        ]
+      },
+      {
+        "name": "Devastating Atak",
+        "knownAs": "devastating attack",
+        "similarity": 0.89,
+        "refs": [
+          "Scum and Villainy:10445"
+        ]
+      },
+      {
+        "name": "Diem So",
+        "knownAs": "djem so",
+        "similarity": 0.86,
+        "refs": [
+          "Clone Wars Campaign Guide:11699",
+          "Knights of the Old Republic Campaign Guide:13252"
+        ]
+      },
+      {
+        "name": "Dual Weapon Flourish",
+        "knownAs": "dual weapon flourish i",
+        "similarity": 0.91,
+        "refs": [
+          "Knights of the Old Republic Campaign Guide:21500"
+        ]
+      },
+      {
+        "name": "Equilidrium",
+        "knownAs": "equilibrium",
+        "similarity": 0.91,
+        "refs": [
+          "Force Unleashed Campaign Guide:18435"
+        ]
+      },
+      {
+        "name": "Force Power Adeot",
+        "knownAs": "force power adept",
+        "similarity": 0.94,
+        "refs": [
+          "Threats of the Galaxy:953"
+        ]
+      },
+      {
+        "name": "Foree Perception",
+        "knownAs": "force perception",
+        "similarity": 0.94,
+        "refs": [
+          "Clone Wars Campaign Guide:17636"
+        ]
+      },
+      {
+        "name": "Full Throttie",
+        "knownAs": "full throttle",
+        "similarity": 0.92,
+        "refs": [
+          "Core Rulebook:25709"
+        ]
+      },
+      {
+        "name": "Hyperdien",
+        "knownAs": "hyperdriven",
+        "similarity": 0.82,
+        "refs": [
+          "Scum and Villainy:8775"
+        ]
+      },
+      {
+        "name": "Imaroved Initiative",
+        "knownAs": "improved initiative",
+        "similarity": 0.95,
+        "refs": [
+          "Clone Wars Campaign Guide:21396"
+        ]
+      },
+      {
+        "name": "Impel Ally",
+        "knownAs": "impel ally i",
+        "similarity": 0.83,
+        "refs": [
+          "Clone Wars Campaign Guide:21475",
+          "Clone Wars Campaign Guide:21475"
+        ]
+      },
+      {
+        "name": "Impel Ally ti",
+        "knownAs": "impel ally i",
+        "similarity": 0.92,
+        "refs": [
+          "Threats of the Galaxy:8871"
+        ]
+      },
+      {
+        "name": "Improved Armor Defense",
+        "knownAs": "improved armored defense",
+        "similarity": 0.92,
+        "refs": [
+          "Clone Wars Campaign Guide:18213"
+        ]
+      },
+      {
+        "name": "Improved Armored Defenses",
+        "knownAs": "improved armored defense",
+        "similarity": 0.96,
+        "refs": [
+          "Knights of the Old Republic Campaign Guide:21565"
+        ]
+      },
+      {
+        "name": "Improved Armored Deferse",
+        "knownAs": "improved armored defense",
+        "similarity": 0.96,
+        "refs": [
+          "Clone Wars Campaign Guide:17874"
+        ]
+      },
+      {
+        "name": "Indomitabie",
+        "knownAs": "indomitable",
+        "similarity": 0.91,
+        "refs": [
+          "Clone Wars Campaign Guide:14905"
+        ]
+      },
+      {
+        "name": "Inspire Fear",
+        "knownAs": "inspire zeal",
+        "similarity": 0.83,
+        "refs": [
+          "Legacy Era Campaign Guide:18927",
+          "Legacy Era Campaign Guide:18927"
+        ]
+      },
+      {
+        "name": "Makash:",
+        "knownAs": "makashi",
+        "similarity": 0.86,
+        "refs": [
+          "Clone Wars Campaign Guide:17636"
+        ]
+      },
+      {
+        "name": "Master Splicer",
+        "knownAs": "master slicer",
+        "similarity": 0.93,
+        "refs": [
+          "Threats of the Galaxy:14185"
+        ]
+      },
+      {
+        "name": "Meee Sash",
+        "knownAs": "melee smash",
+        "similarity": 0.82,
+        "refs": [
+          "Scum and Villainy:10264"
+        ]
+      },
+      {
+        "name": "Multattatk Proficiency",
+        "knownAs": "multiattack proficiency",
+        "similarity": 0.91,
+        "refs": [
+          "Clone Wars Campaign Guide:17636"
+        ]
+      },
+      {
+        "name": "Presenee",
+        "knownAs": "presence",
+        "similarity": 0.88,
+        "refs": [
+          "Clone Wars Campaign Guide:15136"
+        ]
+      },
+      {
+        "name": "Ryperdriven",
+        "knownAs": "hyperdriven",
+        "similarity": 0.91,
+        "refs": [
+          "Clone Wars Campaign Guide:21068"
+        ]
+      },
+      {
+        "name": "Shift Defense",
+        "knownAs": "shift defense i",
+        "similarity": 0.87,
+        "refs": [
+          "Clone Wars Campaign Guide:15054",
+          "Force Unleashed Campaign Guide:19165"
+        ]
+      },
+      {
+        "name": "Skilled Adviser",
+        "knownAs": "skilled advisor",
+        "similarity": 0.93,
+        "refs": [
+          "Legacy Era Campaign Guide:18482",
+          "Legacy Era Campaign Guide:18731"
+        ]
+      },
+      {
+        "name": "Spacchound",
+        "knownAs": "spacehound",
+        "similarity": 0.9,
+        "refs": [
+          "Scum and Villainy:8775"
+        ]
+      },
+      {
+        "name": "Teras Kasi Basics",
+        "knownAs": "ter s k si basics",
+        "similarity": 0.88,
+        "refs": [
+          "Threats of the Galaxy:5311"
+        ]
+      },
+      {
+        "name": "Teras Kasi Mastery",
+        "knownAs": "ter s k si mastery",
+        "similarity": 0.89,
+        "refs": [
+          "Threats of the Galaxy:5311"
+        ]
+      },
+      {
+        "name": "Tough as Nail",
+        "knownAs": "tough as nails",
+        "similarity": 0.93,
+        "refs": [
+          "Rebellion Era Campaign Guide:9139"
+        ]
+      },
+      {
+        "name": "Vehicle Evasion",
+        "knownAs": "vehicular evasion",
+        "similarity": 0.82,
+        "refs": [
+          "Threats of the Galaxy:6350"
+        ]
+      },
+      {
+        "name": "Watch Circle Initiate",
+        "knownAs": "watchcircle initiate",
+        "similarity": 0.95,
+        "refs": [
+          "Knights of the Old Republic Campaign Guide:12909"
+        ]
+      }
+    ],
+    "ocrNoise": 26,
+    "residual": [
+      {
+        "name": "Armored",
+        "key": "armored",
+        "closest": "marooned",
+        "similarity": 0.63,
+        "refs": [
+          "Rebellion Era Campaign Guide:15218"
+        ],
+        "kind": "OCR_LINE_ARTIFACT",
+        "note": "wrap of \"Armored Defense\""
+      },
+      {
+        "name": "Attract Student",
+        "key": "attract student",
+        "closest": "attract minion",
+        "similarity": 0.6,
+        "refs": [
+          "Knights of the Old Republic Campaign Guide:21681"
+        ],
+        "kind": "LEAD",
+        "note": "KOTOR stat block (TXT 21681); no talent definition found (Attract Minion is a different, canonical Core talent)."
+      },
+      {
+        "name": "Bate Ais Coe Fre Harm Way",
+        "key": "bate ais coe fre harm way",
+        "closest": "out of harms way",
+        "similarity": 0.48,
+        "refs": [
+          "Scum and Villainy:8890"
+        ],
+        "kind": "OCR_LINE_ARTIFACT",
+        "note": "garbled Scum and Villainy stat block (Out of Harm's Way)"
+      },
+      {
+        "name": "Crippling Strike Devastating Attack",
+        "key": "crippling strike devastating attack",
+        "closest": "greater devastating attack",
+        "similarity": 0.6,
+        "refs": [
+          "Jedi Academy Training Manual:10875"
+        ],
+        "kind": "OCR_LINE_ARTIFACT",
+        "note": "two talents merged by a lost comma"
+      },
+      {
+        "name": "Devastating",
+        "key": "devastating",
+        "closest": "evasion",
+        "similarity": 0.45,
+        "refs": [
+          "Knights of the Old Republic Campaign Guide:20368"
+        ],
+        "kind": "OCR_LINE_ARTIFACT",
+        "note": "wrap of \"Devastating Attack (…)\""
+      },
+      {
+        "name": "Elusive Target Force Perception",
+        "key": "elusive target force perception",
+        "closest": "force perception",
+        "similarity": 0.52,
+        "refs": [
+          "Jedi Academy Training Manual:10745"
+        ],
+        "kind": "OCR_LINE_ARTIFACT",
+        "note": "two talents merged by a lost comma"
+      },
+      {
+        "name": "Empower",
+        "key": "empower",
+        "closest": "spotter",
+        "similarity": 0.43,
+        "refs": [
+          "Jedi Academy Training Manual:9453"
+        ],
+        "kind": "OCR_LINE_ARTIFACT",
+        "note": "wrap of \"Empower Weapon\""
+      },
+      {
+        "name": "Feats Armor Proficiency",
+        "key": "feats armor proficiency",
+        "closest": "armor proficiency",
+        "similarity": 0.74,
+        "refs": [
+          "Threats of the Galaxy:780"
+        ],
+        "kind": "OCR_LINE_ARTIFACT",
+        "note": "section heading merged into the talent list"
+      },
+      {
+        "name": "Force Valor",
+        "key": "force valor",
+        "closest": "force pilot",
+        "similarity": 0.73,
+        "refs": [
+          "Knights of the Old Republic Campaign Guide:13933"
+        ],
+        "kind": "LEAD",
+        "note": "KOTOR stat blocks list it under Special Actions/Talents; the only definition found is the Force power \"valor\" (KOTOR TXT 4829), not a talent."
+      },
+      {
+        "name": "Gauge Force",
+        "key": "gauge force",
+        "closest": "drain force",
+        "similarity": 0.55,
+        "refs": [
+          "Force Unleashed Campaign Guide:19387"
+        ],
+        "kind": "OCR_LINE_ARTIFACT",
+        "note": "wrap of \"Gauge Force Potential\""
+      },
+      {
+        "name": "Greater",
+        "key": "greater",
+        "closest": "grabber",
+        "similarity": 0.57,
+        "refs": [
+          "Force Unleashed Campaign Guide:21972",
+          "Legacy Era Campaign Guide:18569",
+          "Threats of the Galaxy:4812",
+          "Threats of the Galaxy:15432"
+        ],
+        "kind": "OCR_LINE_ARTIFACT",
+        "note": "list wrap: \"Greater Weapon Focus/Specialization (…)\" split across a line"
+      },
+      {
+        "name": "Hunter's Target Improved Armored Defense",
+        "key": "hunters target improved armored defense",
+        "closest": "improved armored defense",
+        "similarity": 0.62,
+        "refs": [
+          "Core Rulebook:26206"
+        ],
+        "kind": "OCR_LINE_ARTIFACT",
+        "note": "two talents merged by a lost comma"
+      },
+      {
+        "name": "Master Shaper",
+        "key": "master shaper",
+        "closest": "master slicer",
+        "similarity": 0.77,
+        "refs": [
+          "Legacy Era Campaign Guide:20840"
+        ],
+        "kind": "SOURCE_STATBLOCK_DISCREPANCY_LIKELY",
+        "note": "LECG stat block (TXT 20841); the printed Shaper tree lists Biotech Mastery, Expedient Mending, Expert Shaper, Master Mender, Skilled Implanter (TXT 4135-4170): no \"Master Shaper\" talent. Probably a printed stat-block naming error."
+      },
+      {
+        "name": "Multiattack",
+        "key": "multiattack",
+        "closest": "mobile attack",
+        "similarity": 0.62,
+        "refs": [
+          "Core Rulebook:26206"
+        ],
+        "kind": "OCR_LINE_ARTIFACT",
+        "note": "wrap of \"Multiattack Proficiency (…)\""
+      },
+      {
+        "name": "Pace",
+        "key": "pace",
+        "closest": "trace",
+        "similarity": 0.6,
+        "refs": [
+          "Scum and Villainy:11055"
+        ],
+        "kind": "OCR_LINE_ARTIFACT",
+        "note": "garbled Scum and Villainy stat block"
+      },
+      {
+        "name": "Ser Wars",
+        "key": "ser wars",
+        "closest": "swarm",
+        "similarity": 0.5,
+        "refs": [
+          "Scum and Villainy:8775"
+        ],
+        "kind": "OCR_LINE_ARTIFACT",
+        "note": "garbled Scum and Villainy stat block"
+      },
+      {
+        "name": "Shocking Revelation",
+        "key": "shocking revelation",
+        "closest": "damaging deception",
+        "similarity": 0.53,
+        "refs": [
+          "Legacy Era Campaign Guide:11637"
+        ],
+        "kind": "LEAD",
+        "note": "LECG stat block lists it under Special Actions and Talents (TXT 11633/11637); no definition found."
+      },
+      {
+        "name": "Single Weapon",
+        "key": "single weapon",
+        "closest": "infuse weapon",
+        "similarity": 0.69,
+        "refs": [
+          "Knights of the Old Republic Campaign Guide:15000"
+        ],
+        "kind": "OCR_LINE_ARTIFACT",
+        "note": "wrap of \"Single Weapon Flourish\""
+      },
+      {
+        "name": "Social Engineering",
+        "key": "social engineering",
+        "closest": "skill training",
+        "similarity": 0.5,
+        "refs": [
+          "Legacy Era Campaign Guide:19380"
+        ],
+        "kind": "LEAD",
+        "note": "LECG stat block (TXT 19381); no definition found (the phrase appears only as prose elsewhere)."
+      },
+      {
+        "name": "Squad Fighter",
+        "key": "squad fighter",
+        "closest": "escort fighter",
+        "similarity": 0.64,
+        "refs": [
+          "Legacy Era Campaign Guide:19830"
+        ],
+        "kind": "LEAD",
+        "note": "LECG stat block lists it under Special Actions and Talents (TXT 19826/19830) next to the canonical Squad Superiority; no definition found."
+      },
+      {
+        "name": "Wanted Alive",
+        "key": "wanted alive",
+        "closest": "ranged flank",
+        "similarity": 0.5,
+        "refs": [
+          "Core Rulebook:25470"
+        ],
+        "kind": "LEAD",
+        "note": "Core Rulebook stat block lists the talent; no definition heading exists anywhere in the Core TXT."
+      }
+    ],
+    "residualByKind": {
+      "OCR_LINE_ARTIFACT": 14,
+      "LEAD": 6,
+      "SOURCE_STATBLOCK_DISCREPANCY_LIKELY": 1
+    }
+  },
+  "prerequisiteClosure": {
+    "unresolved": 47,
+    "byKind": {
+      "ALTERNATIVE_LIST": 1,
+      "GENERIC_DESCRIPTOR": 35,
+      "OCR_DEFECT_IN_CANONICAL_TEXT": 4,
+      "SPLIT_OR_TREE_REFERENCE": 6,
+      "UNRESOLVED_NAME_LEAD": 1
+    },
+    "items": [
+      {
+        "text": "Block or Deflect",
+        "key": "block or deflect",
+        "usedBy": [
+          "Defensive Circle",
+          "Sheltering Stance"
+        ],
+        "uses": 2,
+        "kind": "ALTERNATIVE_LIST",
+        "note": "either of two talents"
+      },
+      {
+        "text": "Armor Proficiency (light",
+        "key": "armor proficiency light",
+        "usedBy": [
+          "Cortosis Gauntlet Block"
+        ],
+        "uses": 1,
+        "kind": "GENERIC_DESCRIPTOR",
+        "note": "a generic requirement, not a named talent"
+      },
+      {
+        "text": "Armor Proficiency with the type of armor worn",
+        "key": "armor proficiency with the type of armor worn",
+        "usedBy": [
+          "Armored Augmentation II",
+          "Armored Augmentation I"
+        ],
+        "uses": 2,
+        "kind": "GENERIC_DESCRIPTOR",
+        "note": "a generic requirement, not a named talent"
+      },
+      {
+        "text": "Brutal Attack with the weapon used",
+        "key": "brutal attack with the weapon used",
+        "usedBy": [
+          "Distracting Attack"
+        ],
+        "uses": 1,
+        "kind": "GENERIC_DESCRIPTOR",
+        "note": "a generic requirement, not a named talent"
+      },
+      {
+        "text": "Double Attack (advanced melee weapons",
+        "key": "double attack advanced melee weapons",
+        "usedBy": [
+          "Single Weapon Flourish I",
+          "Single Weapon Flourish II"
+        ],
+        "uses": 2,
+        "kind": "GENERIC_DESCRIPTOR",
+        "note": "a generic requirement, not a named talent"
+      },
+      {
+        "text": "Double Attack with the chosen weapon",
+        "key": "double attack with the chosen weapon",
+        "usedBy": [
+          "Automated Strike"
+        ],
+        "uses": 1,
+        "kind": "GENERIC_DESCRIPTOR",
+        "note": "a generic requirement, not a named talent"
+      },
+      {
+        "text": "Dual Weapon Flourish I or Single Weapon Flourish I",
+        "key": "dual weapon flourish i or single weapon flourish i",
+        "usedBy": [
+          "Master of Elegance"
+        ],
+        "uses": 1,
+        "kind": "GENERIC_DESCRIPTOR",
+        "note": "a generic requirement, not a named talent"
+      },
+      {
+        "text": "Equipped with medium or better armor",
+        "key": "equipped with medium or better armor",
+        "usedBy": [
+          "Just a Scratch"
+        ],
+        "uses": 1,
+        "kind": "GENERIC_DESCRIPTOR",
+        "note": "a generic requirement, not a named talent"
+      },
+      {
+        "text": "exotic melee weapon",
+        "key": "exotic melee weapon",
+        "usedBy": [
+          "Single Weapon Flourish I",
+          "Single Weapon Flourish II"
+        ],
+        "uses": 2,
+        "kind": "GENERIC_DESCRIPTOR",
+        "note": "a generic requirement, not a named talent"
+      },
+      {
+        "text": "Familiar foe special quality",
+        "key": "familiar foe special quality",
+        "usedBy": [
+          "Familiar Enemies",
+          "Familiar Situation"
+        ],
+        "uses": 2,
+        "kind": "GENERIC_DESCRIPTOR",
+        "note": "a generic requirement, not a named talent"
+      },
+      {
+        "text": "Knowledge (galactic lore) skills",
+        "key": "knowledge skills",
+        "usedBy": [
+          "Band Together"
+        ],
+        "uses": 1,
+        "kind": "GENERIC_DESCRIPTOR",
+        "note": "a generic requirement, not a named talent"
+      },
+      {
+        "text": "Medium or larger size",
+        "key": "medium or larger size",
+        "usedBy": [
+          "Heavy-Duty Actuators"
+        ],
+        "uses": 1,
+        "kind": "GENERIC_DESCRIPTOR",
+        "note": "a generic requirement, not a named talent"
+      },
+      {
+        "text": "medium)",
+        "key": "medium",
+        "usedBy": [
+          "Cortosis Gauntlet Block"
+        ],
+        "uses": 1,
+        "kind": "GENERIC_DESCRIPTOR",
+        "note": "a generic requirement, not a named talent"
+      },
+      {
+        "text": "Must know the Binary language",
+        "key": "must know the binary language",
+        "usedBy": [
+          "Computer Language"
+        ],
+        "uses": 1,
+        "kind": "GENERIC_DESCRIPTOR",
+        "note": "a generic requirement, not a named talent"
+      },
+      {
+        "text": "or Lightsaber Forms talent tree",
+        "key": "or lightsaber forms talent tree",
+        "usedBy": [
+          "Share Talent"
+        ],
+        "uses": 1,
+        "kind": "GENERIC_DESCRIPTOR",
+        "note": "a generic requirement, not a named talent"
+      },
+      {
+        "text": "or lightsabers)",
+        "key": "or lightsabers",
+        "usedBy": [
+          "Single Weapon Flourish I",
+          "Single Weapon Flourish II"
+        ],
+        "uses": 2,
+        "kind": "GENERIC_DESCRIPTOR",
+        "note": "a generic requirement, not a named talent"
+      },
+      {
+        "text": "pistols) feats",
+        "key": "pistols feats",
+        "usedBy": [
+          "Blaster and Blade III",
+          "Blaster and Blade II",
+          "Blaster and Blade I"
+        ],
+        "uses": 3,
+        "kind": "GENERIC_DESCRIPTOR",
+        "note": "a generic requirement, not a named talent"
+      },
+      {
+        "text": "Proficiency with the discblade",
+        "key": "proficiency with the discblade",
+        "usedBy": [
+          "Discblade Arc",
+          "Distant Discblade Throw",
+          "Recall Discblade",
+          "Weapon Specialization (discblade)"
+        ],
+        "uses": 4,
+        "kind": "GENERIC_DESCRIPTOR",
+        "note": "a generic requirement, not a named talent"
+      },
+      {
+        "text": "proficient in armor worn",
+        "key": "proficient in armor worn",
+        "usedBy": [
+          "Armored Mandalorian"
+        ],
+        "uses": 1,
+        "kind": "GENERIC_DESCRIPTOR",
+        "note": "a generic requirement, not a named talent"
+      },
+      {
+        "text": "proficient in selected exotic weapon or weapon group",
+        "key": "proficient in selected exotic weapon or weapon group",
+        "usedBy": [
+          "Mandalorian Ferocity"
+        ],
+        "uses": 1,
+        "kind": "GENERIC_DESCRIPTOR",
+        "note": "a generic requirement, not a named talent"
+      },
+      {
+        "text": "proficient with that armor",
+        "key": "proficient with that armor",
+        "usedBy": [
+          "Just a Scratch"
+        ],
+        "uses": 1,
+        "kind": "GENERIC_DESCRIPTOR",
+        "note": "a generic requirement, not a named talent"
+      },
+      {
+        "text": "Proficient with the wan-shen",
+        "key": "proficient with the wan shen",
+        "usedBy": [
+          "Wan-Shen Mastery"
+        ],
+        "uses": 1,
+        "kind": "GENERIC_DESCRIPTOR",
+        "note": "a generic requirement, not a named talent"
+      },
+      {
+        "text": "Ride skills",
+        "key": "ride skills",
+        "usedBy": [
+          "Mechanized Rider"
+        ],
+        "uses": 1,
+        "kind": "GENERIC_DESCRIPTOR",
+        "note": "a generic requirement, not a named talent"
+      },
+      {
+        "text": "Share talent special quality",
+        "key": "share talent special quality",
+        "usedBy": [
+          "Irregular Tactics",
+          "Lead by Example"
+        ],
+        "uses": 2,
+        "kind": "GENERIC_DESCRIPTOR",
+        "note": "a generic requirement, not a named talent"
+      },
+      {
+        "text": "trained in the chosen skill",
+        "key": "trained in the chosen skill",
+        "usedBy": [
+          "Skill Confidence",
+          "Skill Boon",
+          "Skillful Recovery",
+          "Exceptional Skill"
+        ],
+        "uses": 4,
+        "kind": "GENERIC_DESCRIPTOR",
+        "note": "a generic requirement, not a named talent"
+      },
+      {
+        "text": "Trained in the Demolitions skill",
+        "key": "trained in the demolitions skill",
+        "usedBy": [
+          "Higher Yield"
+        ],
+        "uses": 1,
+        "kind": "GENERIC_DESCRIPTOR",
+        "note": "a generic requirement, not a named talent"
+      },
+      {
+        "text": "trained in the Use the Force skill",
+        "key": "trained in the use the force skill",
+        "usedBy": [
+          "Force Directed Shot"
+        ],
+        "uses": 1,
+        "kind": "GENERIC_DESCRIPTOR",
+        "note": "a generic requirement, not a named talent"
+      },
+      {
+        "text": "Trained in Use the Force",
+        "key": "trained in use the force",
+        "usedBy": [
+          "Telepathic Link",
+          "Telepathic Influence",
+          "Field Detection",
+          "Improved Force Sight"
+        ],
+        "uses": 6,
+        "kind": "GENERIC_DESCRIPTOR",
+        "note": "a generic requirement, not a named talent"
+      },
+      {
+        "text": "Weapon Focus with chosen exotic weapon or weapon",
+        "key": "weapon focus with chosen exotic weapon or weapon",
+        "usedBy": [
+          "Weapon Specialization"
+        ],
+        "uses": 1,
+        "kind": "GENERIC_DESCRIPTOR",
+        "note": "a generic requirement, not a named talent"
+      },
+      {
+        "text": "Weapon Focus with chosen exotic weapon or weapon group",
+        "key": "weapon focus with chosen exotic weapon or weapon group",
+        "usedBy": [
+          "Penetrating Attack"
+        ],
+        "uses": 1,
+        "kind": "GENERIC_DESCRIPTOR",
+        "note": "a generic requirement, not a named talent"
+      },
+      {
+        "text": "Weapon Focus with the chosen weapon",
+        "key": "weapon focus with the chosen weapon",
+        "usedBy": [
+          "Greater Penetrating Attack",
+          "Greater Weapon Focus",
+          "Greater Devastating Attack",
+          "Brutal Attack"
+        ],
+        "uses": 5,
+        "kind": "GENERIC_DESCRIPTOR",
+        "note": "a generic requirement, not a named talent"
+      },
+      {
+        "text": "Weapon Proficiency (advanced melee weapons",
+        "key": "weapon proficiency advanced melee weapons",
+        "usedBy": [
+          "Blaster and Blade III",
+          "Blaster and Blade II",
+          "Blaster and Blade I"
+        ],
+        "uses": 3,
+        "kind": "GENERIC_DESCRIPTOR",
+        "note": "a generic requirement, not a named talent"
+      },
+      {
+        "text": "Weapon Proficiency (rifles) feat",
+        "key": "weapon proficiency feat",
+        "usedBy": [
+          "Extended Critical Range (rifles)",
+          "Extended Critical Range (heavy weapons)",
+          "Insightful Aim"
+        ],
+        "uses": 3,
+        "kind": "GENERIC_DESCRIPTOR",
+        "note": "a generic requirement, not a named talent"
+      },
+      {
+        "text": "Weapon Proficiency feat for chosen weapon",
+        "key": "weapon proficiency feat for chosen weapon",
+        "usedBy": [
+          "Flurry Attack"
+        ],
+        "uses": 1,
+        "kind": "GENERIC_DESCRIPTOR",
+        "note": "a generic requirement, not a named talent"
+      },
+      {
+        "text": "Weapon Proficiency with weapon used",
+        "key": "weapon proficiency with weapon used",
+        "usedBy": [
+          "Extended Threat"
+        ],
+        "uses": 1,
+        "kind": "GENERIC_DESCRIPTOR",
+        "note": "a generic requirement, not a named talent"
+      },
+      {
+        "text": "Weapon Specialization with the chosen weapon",
+        "key": "weapon specialization with the chosen weapon",
+        "usedBy": [
+          "Disarming Attack",
+          "Greater Weapon Specialization"
+        ],
+        "uses": 2,
+        "kind": "GENERIC_DESCRIPTOR",
+        "note": "a generic requirement, not a named talent"
+      },
+      {
+        "text": "Battie Analysis",
+        "key": "battie analysis",
+        "usedBy": [
+          "Cover Fire"
+        ],
+        "uses": 1,
+        "kind": "OCR_DEFECT_IN_CANONICAL_TEXT",
+        "note": "Battle Analysis"
+      },
+      {
+        "text": "Enpower Weapon",
+        "key": "enpower weapon",
+        "usedBy": [
+          "Primitive Block"
+        ],
+        "uses": 1,
+        "kind": "OCR_DEFECT_IN_CANONICAL_TEXT",
+        "note": "Empower Weapon"
+      },
+      {
+        "text": "Hunter's Target. P",
+        "key": "hunters target p",
+        "usedBy": [
+          "Relentless"
+        ],
+        "uses": 1,
+        "kind": "OCR_DEFECT_IN_CANONICAL_TEXT",
+        "note": "Hunter's Target (stray \". P\")"
+      },
+      {
+        "text": "Shift Defense Il",
+        "key": "shift defense il",
+        "usedBy": [
+          "Shift Defense I"
+        ],
+        "uses": 1,
+        "kind": "OCR_DEFECT_IN_CANONICAL_TEXT",
+        "note": "Shift Defense II"
+      },
+      {
+        "text": "Adapt",
+        "key": "adapt",
+        "usedBy": [
+          "Unbalancing Adaptation"
+        ],
+        "uses": 1,
+        "kind": "SPLIT_OR_TREE_REFERENCE",
+        "note": "fragment of a compound name (\"Adapt and Survive\", \"Strike and Run\", \"Blaster and Blade I-III\") or a tree/class reference"
+      },
+      {
+        "text": "Blade I",
+        "key": "blade i",
+        "usedBy": [
+          "Blaster and Blade III",
+          "Blaster and Blade II"
+        ],
+        "uses": 2,
+        "kind": "SPLIT_OR_TREE_REFERENCE",
+        "note": "fragment of a compound name (\"Adapt and Survive\", \"Strike and Run\", \"Blaster and Blade I-III\") or a tree/class reference"
+      },
+      {
+        "text": "Blade II",
+        "key": "blade ii",
+        "usedBy": [
+          "Blaster and Blade III"
+        ],
+        "uses": 1,
+        "kind": "SPLIT_OR_TREE_REFERENCE",
+        "note": "fragment of a compound name (\"Adapt and Survive\", \"Strike and Run\", \"Blaster and Blade I-III\") or a tree/class reference"
+      },
+      {
+        "text": "Blaster",
+        "key": "blaster",
+        "usedBy": [
+          "Blaster and Blade III",
+          "Blaster and Blade II"
+        ],
+        "uses": 3,
+        "kind": "SPLIT_OR_TREE_REFERENCE",
+        "note": "fragment of a compound name (\"Adapt and Survive\", \"Strike and Run\", \"Blaster and Blade I-III\") or a tree/class reference"
+      },
+      {
+        "text": "Strike",
+        "key": "strike",
+        "usedBy": [
+          "Slippery Strike"
+        ],
+        "uses": 1,
+        "kind": "SPLIT_OR_TREE_REFERENCE",
+        "note": "fragment of a compound name (\"Adapt and Survive\", \"Strike and Run\", \"Blaster and Blade I-III\") or a tree/class reference"
+      },
+      {
+        "text": "Survive",
+        "key": "survive",
+        "usedBy": [
+          "Unbalancing Adaptation"
+        ],
+        "uses": 1,
+        "kind": "SPLIT_OR_TREE_REFERENCE",
+        "note": "fragment of a compound name (\"Adapt and Survive\", \"Strike and Run\", \"Blaster and Blade I-III\") or a tree/class reference"
+      },
+      {
+        "text": "Command Decision",
+        "key": "command decision",
+        "usedBy": [
+          "Turn the Tide"
+        ],
+        "uses": 1,
+        "kind": "UNRESOLVED_NAME_LEAD",
+        "note": "Unknown Regions prints it as a prerequisite of Turn the Tide; no committed TXT defines a talent, feat or power of that name"
+      }
+    ]
+  },
+  "rareTokenScan": {
+    "distinctTokens": 70,
+    "likelyDefects": [
+      {
+        "token": "ateam",
+        "uses": 3,
+        "example": "Bounty Hunter|Hunter's Mark",
+        "likelyDefect": true
+      },
+      {
+        "token": "nonproficiency",
+        "uses": 3,
+        "example": "Brawler|Disarm and Engage",
+        "likelyDefect": true
+      },
+      {
+        "token": "forcesensitive",
+        "uses": 3,
+        "example": "Sith|Drain Force",
+        "likelyDefect": true
+      },
+      {
+        "token": "nonenergy",
+        "uses": 3,
+        "example": "Malkite Poisoner|Malkite Techniques",
+        "likelyDefect": true
+      },
+      {
+        "token": "nonsurprised",
+        "uses": 3,
+        "example": "Disgrace|Ambush",
+        "likelyDefect": true
+      },
+      {
+        "token": "nonthreatening",
+        "uses": 3,
+        "example": "Disgrace|Two-Faced",
+        "likelyDefect": true
+      },
+      {
+        "token": "nonprestige",
+        "uses": 3,
+        "example": "Master of Intrigue|Done It All",
+        "likelyDefect": true
+      },
+      {
+        "token": "posess",
+        "uses": 3,
+        "example": "Seyugi Dervish|Seyugi Cyclone",
+        "likelyDefect": true
+      },
+      {
+        "token": "aswift",
+        "uses": 2,
+        "example": "Corporate Power|Wrong Decision",
+        "likelyDefect": true
+      },
+      {
+        "token": "theirspeed",
+        "uses": 2,
+        "example": "Corporate Power|Wrong Decision",
+        "likelyDefect": true
+      },
+      {
+        "token": "forceusers",
+        "uses": 2,
+        "example": "Jedi Refugee|Difficult to Sense",
+        "likelyDefect": true
+      }
+    ],
+    "tokens": [
+      {
+        "token": "vigor",
+        "uses": 6,
+        "example": "Piracy|Fight to the Death",
+        "likelyDefect": false
+      },
+      {
+        "token": "exclude",
+        "uses": 5,
+        "example": "Alter|Disciplined Strike",
+        "likelyDefect": false
+      },
+      {
+        "token": "selections",
+        "uses": 4,
+        "example": "Gunslinger|Multiattack Proficiency (pistols)",
+        "likelyDefect": false
+      },
+      {
+        "token": "findsman",
+        "uses": 4,
+        "example": "Gand Findsman|Findsman's Foresight",
+        "likelyDefect": false
+      },
+      {
+        "token": "ateam",
+        "uses": 3,
+        "example": "Bounty Hunter|Hunter's Mark",
+        "likelyDefect": true
+      },
+      {
+        "token": "nonproficiency",
+        "uses": 3,
+        "example": "Brawler|Disarm and Engage",
+        "likelyDefect": true
+      },
+      {
+        "token": "hunker",
+        "uses": 3,
+        "example": "Camouflage|Hunker Down",
+        "likelyDefect": false
+      },
+      {
+        "token": "scored",
+        "uses": 3,
+        "example": "Duelist|Force Fortification",
+        "likelyDefect": false
+      },
+      {
+        "token": "bolsters",
+        "uses": 3,
+        "example": "Expert Pilot|Renowned Pilot",
+        "likelyDefect": false
+      },
+      {
+        "token": "empowering",
+        "uses": 3,
+        "example": "Force Item|Empower Weapon",
+        "likelyDefect": false
+      },
+      {
+        "token": "steppe",
+        "uses": 3,
+        "example": "Jedi Sentinel|Sense Primal Force",
+        "likelyDefect": false
+      },
+      {
+        "token": "instigating",
+        "uses": 3,
+        "example": "Misfortune|Disruptive",
+        "likelyDefect": false
+      },
+      {
+        "token": "seduction",
+        "uses": 3,
+        "example": "Misfortune|Seducer",
+        "likelyDefect": false
+      },
+      {
+        "token": "forcesensitive",
+        "uses": 3,
+        "example": "Sith|Drain Force",
+        "likelyDefect": true
+      },
+      {
+        "token": "nonenergy",
+        "uses": 3,
+        "example": "Malkite Poisoner|Malkite Techniques",
+        "likelyDefect": true
+      },
+      {
+        "token": "empowers",
+        "uses": 3,
+        "example": "Ideologue|Idealist",
+        "likelyDefect": false
+      },
+      {
+        "token": "discrepancies",
+        "uses": 3,
+        "example": "Smuggling|Fast Talker",
+        "likelyDefect": false
+      },
+      {
+        "token": "nonsurprised",
+        "uses": 3,
+        "example": "Disgrace|Ambush",
+        "likelyDefect": true
+      },
+      {
+        "token": "scathing",
+        "uses": 3,
+        "example": "Disgrace|Castigate",
+        "likelyDefect": false
+      },
+      {
+        "token": "erode",
+        "uses": 3,
+        "example": "Disgrace|Castigate",
+        "likelyDefect": false
+      },
+      {
+        "token": "nonthreatening",
+        "uses": 3,
+        "example": "Disgrace|Two-Faced",
+        "likelyDefect": true
+      },
+      {
+        "token": "portents",
+        "uses": 3,
+        "example": "Gand Findsman|Findsman Ceremonies",
+        "likelyDefect": false
+      },
+      {
+        "token": "omens",
+        "uses": 3,
+        "example": "Gand Findsman|Omens",
+        "likelyDefect": false
+      },
+      {
+        "token": "twirl",
+        "uses": 3,
+        "example": "Melee Specialist|Whirling Death",
+        "likelyDefect": false
+      },
+      {
+        "token": "inflame",
+        "uses": 3,
+        "example": "Sith Commander|Power of Hatred",
+        "likelyDefect": false
+      },
+      {
+        "token": "halve",
+        "uses": 3,
+        "example": "Brigand|Easy Prey",
+        "likelyDefect": false
+      },
+      {
+        "token": "subtleties",
+        "uses": 3,
+        "example": "Elite Droid|Heuristic Mastery",
+        "likelyDefect": false
+      },
+      {
+        "token": "nonprestige",
+        "uses": 3,
+        "example": "Master of Intrigue|Done It All",
+        "likelyDefect": true
+      },
+      {
+        "token": "clothesline",
+        "uses": 3,
+        "example": "Master Scout|Tripwire",
+        "likelyDefect": false
+      },
+      {
+        "token": "unliving",
+        "uses": 3,
+        "example": "First-Degree Droid|Interrogator",
+        "likelyDefect": false
+      },
+      {
+        "token": "plugged",
+        "uses": 3,
+        "example": "Second-Degree Droid|On-Board System Link",
+        "likelyDefect": false
+      },
+      {
+        "token": "lockout",
+        "uses": 3,
+        "example": "Second-Degree Droid|Scomp Link Slicer",
+        "likelyDefect": false
+      },
+      {
+        "token": "massage",
+        "uses": 3,
+        "example": "Third-Degree Droid|Talkdroid",
+        "likelyDefect": false
+      },
+      {
+        "token": "corrosion",
+        "uses": 3,
+        "example": "Fifth-Degree Droid|Environmentally Shielded",
+        "likelyDefect": false
+      },
+      {
+        "token": "acclimate",
+        "uses": 3,
+        "example": "Baran Do Sage|Planetary Attunement",
+        "likelyDefect": false
+      },
+      {
+        "token": "veiling",
+        "uses": 3,
+        "example": "Disciple of Twilight|Cloak of Shadow",
+        "likelyDefect": false
+      },
+      {
+        "token": "priesthood",
+        "uses": 3,
+        "example": "Ember of Vahl|Initiate of Vahl",
+        "likelyDefect": false
+      },
+      {
+        "token": "wreathing",
+        "uses": 3,
+        "example": "Ember of Vahl|Vahl's Flame",
+        "likelyDefect": false
+      },
+      {
+        "token": "posess",
+        "uses": 3,
+        "example": "Seyugi Dervish|Seyugi Cyclone",
+        "likelyDefect": true
+      },
+      {
+        "token": "halves",
+        "uses": 2,
+        "example": "Duelist|Severing Strike",
+        "likelyDefect": false
+      },
+      {
+        "token": "demonstrating",
+        "uses": 2,
+        "example": "Leadership|Commanding Presence",
+        "likelyDefect": false
+      },
+      {
+        "token": "decimating",
+        "uses": 2,
+        "example": "Leadership|Commanding Presence",
+        "likelyDefect": false
+      },
+      {
+        "token": "untyped",
+        "uses": 2,
+        "example": "Leadership|Coordinated Leadership",
+        "likelyDefect": false
+      },
+      {
+        "token": "riposted",
+        "uses": 2,
+        "example": "Lightsaber Combat|Riposte",
+        "likelyDefect": false
+      },
+      {
+        "token": "impaling",
+        "uses": 2,
+        "example": "Weapon Specialist|Impaling Assault",
+        "likelyDefect": false
+      },
+      {
+        "token": "counteracting",
+        "uses": 2,
+        "example": "Naval Officer|It's a Trap!",
+        "likelyDefect": false
+      },
+      {
+        "token": "qualifying",
+        "uses": 2,
+        "example": "Outlaw Tech|Hot Wire",
+        "likelyDefect": false
+      },
+      {
+        "token": "aswift",
+        "uses": 2,
+        "example": "Corporate Power|Wrong Decision",
+        "likelyDefect": true
+      },
+      {
+        "token": "theirspeed",
+        "uses": 2,
+        "example": "Corporate Power|Wrong Decision",
+        "likelyDefect": true
+      },
+      {
+        "token": "penalize",
+        "uses": 2,
+        "example": "Loyal Protector|Protector Actions",
+        "likelyDefect": false
+      },
+      {
+        "token": "forceusers",
+        "uses": 2,
+        "example": "Jedi Refugee|Difficult to Sense",
+        "likelyDefect": true
+      },
+      {
+        "token": "dispensed",
+        "uses": 2,
+        "example": "Jedi Refugee|Jedi Network",
+        "likelyDefect": false
+      },
+      {
+        "token": "deadline",
+        "uses": 2,
+        "example": "Jedi Refugee|Jedi Network",
+        "likelyDefect": false
+      },
+      {
+        "token": "scry",
+        "uses": 2,
+        "example": "Jedi Investigator|Echoes in the Force",
+        "likelyDefect": false
+      },
+      {
+        "token": "transformations",
+        "uses": 2,
+        "example": "Sith Alchemy|Sith Alchemy",
+        "likelyDefect": false
+      },
+      {
+        "token": "dismissing",
+        "uses": 2,
+        "example": "Pathfinder|Safe Zone",
+        "likelyDefect": false
+      },
+      {
+        "token": "expeditious",
+        "uses": 2,
+        "example": "Advance Patrol|Mobile Combatant",
+        "likelyDefect": false
+      },
+      {
+        "token": "rattled",
+        "uses": 2,
+        "example": "Veteran|Seen It All",
+        "likelyDefect": false
+      },
+      {
+        "token": "consents",
+        "uses": 2,
+        "example": "Alter|Telepathic Link",
+        "likelyDefect": false
+      },
+      {
+        "token": "envelop",
+        "uses": 2,
+        "example": "Jensaarai Defender|Force Cloak Mastery",
+        "likelyDefect": false
+      },
+      {
+        "token": "glimpsing",
+        "uses": 2,
+        "example": "Sense|Visions",
+        "likelyDefect": false
+      },
+      {
+        "token": "skew",
+        "uses": 2,
+        "example": "Sense|Psychometry",
+        "likelyDefect": false
+      },
+      {
+        "token": "maim",
+        "uses": 1,
+        "example": "Duelist|Severing Strike",
+        "likelyDefect": false
+      },
+      {
+        "token": "enpower",
+        "uses": 1,
+        "example": "Force Item|Primitive Block",
+        "likelyDefect": false
+      },
+      {
+        "token": "sidestep",
+        "uses": 1,
+        "example": "Fringer|Swift Strider",
+        "likelyDefect": false
+      },
+      {
+        "token": "invoking",
+        "uses": 1,
+        "example": "Infamy|Shared Notoriety",
+        "likelyDefect": false
+      },
+      {
+        "token": "reposition",
+        "uses": 1,
+        "example": "Inspiration|Beloved",
+        "likelyDefect": false
+      },
+      {
+        "token": "resolves",
+        "uses": 1,
+        "example": "Anticipation|Get Down",
+        "likelyDefect": false
+      },
+      {
+        "token": "boosted",
+        "uses": 1,
+        "example": "Skill Challenge|Guaranteed Boon",
+        "likelyDefect": false
+      },
+      {
+        "token": "holder",
+        "uses": 1,
+        "example": "Sense|Psychometry",
+        "likelyDefect": false
+      }
+    ]
+  },
+  "leads": {
+    "missingTalentCandidates": [
+      {
+        "name": "Attract Student",
+        "kind": "STAT_BLOCK_UNDEFINED",
+        "refs": [
+          "Knights of the Old Republic Campaign Guide:21681"
+        ]
+      },
+      {
+        "name": "Force Valor",
+        "kind": "STAT_BLOCK_UNDEFINED",
+        "refs": [
+          "Knights of the Old Republic Campaign Guide:13933"
+        ]
+      },
+      {
+        "name": "Shocking Revelation",
+        "kind": "STAT_BLOCK_UNDEFINED",
+        "refs": [
+          "Legacy Era Campaign Guide:11637"
+        ]
+      },
+      {
+        "name": "Social Engineering",
+        "kind": "STAT_BLOCK_UNDEFINED",
+        "refs": [
+          "Legacy Era Campaign Guide:19380"
+        ]
+      },
+      {
+        "name": "Squad Fighter",
+        "kind": "STAT_BLOCK_UNDEFINED",
+        "refs": [
+          "Legacy Era Campaign Guide:19830"
+        ]
+      },
+      {
+        "name": "Wanted Alive",
+        "kind": "STAT_BLOCK_UNDEFINED",
+        "refs": [
+          "Core Rulebook:25470"
+        ]
+      },
+      {
+        "name": "Command Decision",
+        "kind": "PREREQUISITE_UNDEFINED",
+        "usedBy": [
+          "Turn the Tide"
+        ]
+      }
+    ],
+    "sourceDiscrepancies": [
+      "Master Shaper"
+    ],
+    "canonicalTextDefects": [
+      {
+        "text": "Battie Analysis",
+        "intended": "Battle Analysis",
+        "usedBy": [
+          "Cover Fire"
+        ]
+      },
+      {
+        "text": "Enpower Weapon",
+        "intended": "Empower Weapon",
+        "usedBy": [
+          "Primitive Block"
+        ]
+      },
+      {
+        "text": "Hunter's Target. P",
+        "intended": "Hunter's Target (stray \". P\")",
+        "usedBy": [
+          "Relentless"
+        ]
+      },
+      {
+        "text": "Shift Defense Il",
+        "intended": "Shift Defense II",
+        "usedBy": [
+          "Shift Defense I"
+        ]
+      }
+    ]
+  },
+  "unclassified": []
+}
