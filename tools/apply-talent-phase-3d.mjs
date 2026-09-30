@@ -6,12 +6,13 @@
  *   19 MERGE_DUPLICATE · 16 REMOVE_CONTAMINATION · 50 MOVE_HOMEBREW_PACK · 6 KEEP · 1 CORRECT_IDENTITY
  * including embedded-actor repointing, tree / class / registry changes and final count reconciliation.
  *
- * It never writes a pack. Modes:
+ * The dry-run modes never write a pack. Modes:
  *   (default)   print the simulated summary
  *   --status    detect the pack state (PRE_3D / POST_3D / UNKNOWN)
  *   --report    write data/audits/talent-phase-3d-dry-run-report.json (the only file this tool writes)
  *   --check     fail unless the committed report equals a fresh projection
- *   --apply     refused: Phase 3D-3 is dry-run only
+ *   --apply     Phase 3D-4: write the certified migration (uncommitted), refusing partial / drifted / unexpected states
+ *   --verify [--exact]   check the applied state (writes nothing); --exact also compares every file to the certified blob
  *
  * Reuses the Phase 3C machinery (state detection, tree edit helpers, pack serialization, registry generator)
  * instead of introducing a second migration system.
@@ -19,6 +20,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { spawnSync } from 'node:child_process';
 import {
   ROOT, detectPackState as detectPhase3cState, detachFromTree, attachToTree, serializePack, gitBlobSha, fingerprint
 } from './apply-talent-phase-3c.mjs';
@@ -79,6 +81,39 @@ export function detect3DState(manifest, talents) {
   return present === leaving.length ? 'PRE_3D' : present === 0 ? 'POST_3D' : 'PARTIAL_3D';
 }
 
+
+/* ------------------------------------------------------------------------------------------------
+ * Embedded-actor snapshot refresh. Only canonical snapshot + source-identity fields are copied from the surviving
+ * record; the embedded item's own _id, sort, ownership, effects, tags, class and every unrelated flag are preserved.
+ * ---------------------------------------------------------------------------------------------- */
+export const SNAPSHOT_FIELDS = ['name', 'system.prerequisites', 'system.benefit', 'system.description', 'system.summary', 'system.source', 'system.page', 'system.treeId', 'system.talent_tree', 'system.tree', 'system.category', 'system.class', 'flags.swse.id', 'flags.core.sourceId'];
+export function refreshSnapshot(item, survivor, survivorTree, targetPack = 'talents', classNameOf = id => id) {
+  const sys = (item.system ??= {});
+  const s = survivor.system ?? {};
+  item.name = survivor.name;
+  sys.prerequisites = s.prerequisites ?? '';
+  sys.benefit = s.benefit ?? '';
+  const desc = typeof s.description === 'object' && s.description !== null ? (s.description.value ?? '') : (s.description ?? '');
+  if (typeof sys.description === 'object' && sys.description !== null) sys.description = { ...sys.description, value: desc };
+  else sys.description = desc;
+  for (const k of ['summary', 'source', 'page']) if (s[k] !== undefined && s[k] !== null && s[k] !== '') sys[k] = s[k];
+  if (s.category) sys.category = s.category;
+  if (s.class) sys.class = classNameOf(s.class); // embedded copies store the class NAME, compendium docs store its id
+  if (survivorTree) {
+    sys.treeId = survivorTree._id;
+    if ('talent_tree' in sys) sys.talent_tree = survivorTree.name;
+    if ('tree' in sys) sys.tree = survivorTree.name;
+  }
+  item.flags ??= {};
+  const swseId = survivor.flags?.swse?.id;
+  if (swseId) { item.flags.swse ??= {}; item.flags.swse.id = swseId; }
+  else if (item.flags.swse && 'id' in item.flags.swse) delete item.flags.swse.id;
+  item.flags.core ??= {};
+  item.flags.core.sourceId = sourceIdFor(targetPack, survivor._id);
+  return item;
+}
+const snapshotMatches = (item, survivor, survivorTree, classNameOf) => same(refreshSnapshot(clone(item), survivor, survivorTree, 'talents', classNameOf), item);
+
 /* ------------------------------------------------------------------------------------------------
  * Projection. Pure: never touches disk.
  * ---------------------------------------------------------------------------------------------- */
@@ -117,8 +152,14 @@ export function projectPhase3D(input) {
     const step = plan.get(`${pack}|${actor._id}|${index}`);
     invariant(step && step.from === parsed.id, `BLOCKED: embedded item ${actor.name}/${item.name} (${pack}) references ${parsed.id}, which is leaving the canonical pack, but no repoint is planned`);
     invariant(step.toId !== parsed.id || step.toPack !== 'talents', `${actor.name}: repoint target equals source`);
-    item.flags.core.sourceId = sourceIdFor(step.toPack, step.toId);
-    repointed.push({ pack, actor: actor.name, actorId: actor._id, itemIndex: index, item: item.name, from: parsed.id, to: step.toId, toPack: step.toPack, disposition: step.disposition });
+    const refreshed = step.toPack === 'talents';
+    if (refreshed) {
+      const survivor = input.talents.find(t => t._id === step.toId);
+      invariant(survivor, `${actor.name}: repoint target ${step.toId} does not exist`);
+      const tree = input.trees.find(t => (t.system.talentIds ?? []).includes(survivor._id));
+      refreshSnapshot(item, survivor, tree, step.toPack, id => input.classes.find(c => c._id === id)?.name ?? id);
+    } else item.flags.core.sourceId = sourceIdFor(step.toPack, step.toId);
+    repointed.push({ pack, actor: actor.name, actorId: actor._id, embeddedItemId: item._id, itemIndex: index, item: item.name, from: parsed.id, to: step.toId, toPack: step.toPack, disposition: step.disposition, snapshotRefreshed: refreshed });
   });
   invariant(repointed.length === plan.size, `planned ${plan.size} actor repoints but performed ${repointed.length}`);
   operationCounts.actorItemsRepointed = repointed.length;
@@ -217,9 +258,11 @@ export function projectPhase3D(input) {
 }
 
 
-/** Every actor document is byte-identical except the planned embedded items, whose only change is flags.core.sourceId. */
-function onlySourceIdChanged(beforeActors, p) {
+/** Every actor document is byte-identical except the planned embedded items, and those change only snapshot + source-identity fields. */
+function onlySnapshotChanged(beforeActors, p) {
   const planned = new Set(p.repointed.map(r => `${r.pack}|${r.actorId}|${r.itemIndex}`));
+  const allowed = new Set(SNAPSHOT_FIELDS);
+  const flat = (o, pre = '', out = {}) => { if (o && typeof o === 'object' && !Array.isArray(o)) for (const [k, v] of Object.entries(o)) flat(v, pre + k + '.', out); else out[pre.slice(0, -1)] = o; return out; };
   for (const [pack, list] of Object.entries(beforeActors)) {
     for (const a of list) {
       const n = p.actors[pack].find(x => x._id === a._id);
@@ -227,8 +270,12 @@ function onlySourceIdChanged(beforeActors, p) {
       if (!same(bRest, nRest) || bi.length !== ni.length) return false;
       for (let i = 0; i < bi.length; i++) {
         if (!planned.has(`${pack}|${a._id}|${i}`)) { if (!same(bi[i], ni[i])) return false; continue; }
-        const c = clone(ni[i]); c.flags.core.sourceId = bi[i].flags.core.sourceId;
-        if (!same(c, bi[i])) return false;
+        if (bi[i]._id !== ni[i]._id) return false;
+        const x = flat(bi[i]), y = flat(ni[i]);
+        for (const k of new Set([...Object.keys(x), ...Object.keys(y)])) {
+          const field = [...allowed].some(f => k === f || k.startsWith(f + '.'));
+          if (!field && !same(x[k], y[k])) return false;
+        }
       }
     }
   }
@@ -276,7 +323,9 @@ export function verifyProjection(input, p) {
   check('every planned embedded-actor repoint was performed (hard prerequisite)', p.repointed.length === plannedRefs, `${p.repointed.length}/${plannedRefs}`);
   check('the 34 Notorious/Teräs Käsi actor repoints are included', p.repointed.filter(x => x.disposition === 'REMOVE_CONTAMINATION' || x.from === '222327492c484b4a').length >= 34);
   check('no embedded actor item still points at a record that left the canonical pack', Object.values(p.actors).flat().every(a => (a.items ?? []).every(i => { const s = parseSourceId(i.flags?.core?.sourceId); return !(s && s.pack === 'talents' && leavingIds.has(s.id)); })));
-  check('repointed items change only flags.core.sourceId', onlySourceIdChanged(input.actors, p));
+  check('repointed items change only snapshot + source-identity fields (embedded _id, sort, effects, tags, local flags preserved)', onlySnapshotChanged(input.actors, p));
+  check('every refreshed embedded snapshot equals its surviving canonical record', p.repointed.filter(r => r.snapshotRefreshed).every(r => { const item = p.actors[r.pack].find(a => a._id === r.actorId).items[r.itemIndex]; const survivor = after.get(r.to); const tree = p.trees.find(t => t.system.talentIds.includes(survivor._id)); return item._id === r.embeddedItemId && snapshotMatches(item, survivor, tree, id => input.classes.find(c => c._id === id)?.name ?? id); }));
+  check('no contaminated Notorious text survives in any actor item', Object.values(p.actors).flat().every(a => (a.items ?? []).filter(i => i.name === 'Notorious').every(i => !/Reference Book|Master Manipulator|small favor from someone/i.test(JSON.stringify(i.system)))));
   check('every actor target of a repoint exists (canonical pack or homebrew pack)', p.repointed.every(r => r.toPack === 'talents' ? after.has(r.to) : hbAfter.has(r.to)));
 
   const reg = p.registry, treeIds = new Set(p.trees.map(t => t._id));
@@ -292,34 +341,59 @@ export function verifyProjection(input, p) {
 }
 
 /* ------------------------------------------------------------------------------------------------
- * Report
+ * Rendered outputs (what --apply writes) and report
  * ---------------------------------------------------------------------------------------------- */
-const homebrewText = records => records.map(r => JSON.stringify(r)).join('\n') + '\n';
-export function buildReport(input, p, verification, root = ROOT) {
-  const out = {
-    talents: serializePack(input.texts.talents, p.talents), trees: serializePack(input.texts.trees, p.trees), classes: serializePack(input.texts.classes, p.classes),
-    ...Object.fromEntries(Object.keys(ACTOR_PACKS).map(k => [k, serializePack(input.texts[k], p.actors[k])])),
-    homebrewTalents: homebrewText(p.homebrew.talents), homebrewTrees: homebrewText(p.homebrew.trees)
-  };
-  const preRegistry = REGISTRY_PATHS.map(rel => fs.readFileSync(path.join(root, rel), 'utf8'));
+const SYSTEM_JSON = 'system.json';
+const HOMEBREW_PACK_BLOCKS = {
+  after_talent_trees: { name: HOMEBREW.treesPack, label: 'Talent Trees (Homebrew, Noncanonical)', path: 'packs/talent-trees-homebrew' },
+  after_talents: { name: HOMEBREW.talentsPack, label: 'Talents (Homebrew, Noncanonical)', path: 'packs/talents-homebrew' }
+};
+const packBlock = b => `    {\n      "name": "${b.name}",\n      "label": "${b.label}",\n      "type": "Item",\n      "path": "${b.path}",\n      "system": "foundryvtt-swse",\n      "flags": { "swse": { "noncanonical": true, "homebrew": true } }\n    },\n`;
+/** Textual insertion keeps every other byte of system.json; idempotent. */
+export function withHomebrewPacks(text) {
+  let out = text;
+  for (const [after, block] of [['talent_trees', HOMEBREW_PACK_BLOCKS.after_talent_trees], ['talents', HOMEBREW_PACK_BLOCKS.after_talents]]) {
+    if (out.includes(`"name": "${block.name}"`)) continue;
+    const at = out.indexOf(`"name": "${after}",`);
+    invariant(at >= 0, `system.json has no "${after}" pack entry`);
+    const close = out.indexOf('\n    },\n', at);
+    invariant(close >= 0, `cannot locate the end of the "${after}" pack entry`);
+    const insertAt = close + '\n    },\n'.length;
+    out = out.slice(0, insertAt) + packBlock(block) + out.slice(insertAt);
+  }
+  return out;
+}
+
+export function renderOutputs(input, p, root = ROOT) {
   const registryText = serializeRegistry(p.registry);
+  const files = {
+    [PACKS.talents]: serializePack(input.texts.talents, p.talents),
+    [PACKS.trees]: serializePack(input.texts.trees, p.trees),
+    ...Object.fromEntries(Object.entries(ACTOR_PACKS).map(([k, rel]) => [rel, serializePack(input.texts[k], p.actors[k])])),
+    [HOMEBREW.talentsFile]: p.homebrew.talents.map(r => JSON.stringify(r)).join('\n') + '\n',
+    [HOMEBREW.treesFile]: p.homebrew.trees.map(r => JSON.stringify(r)).join('\n') + '\n',
+    [REGISTRY_PATHS[0]]: registryText, [REGISTRY_PATHS[1]]: registryText,
+    ...Object.fromEntries(DERIVED_FILES.map(rel => [rel, JSON.stringify(p.derived[rel], null, 2) + '\n'])),
+    [SYSTEM_JSON]: withHomebrewPacks(readText(SYSTEM_JSON, root))
+  };
+  return files;
+}
+const blobOf = (files, rel) => gitBlobSha(files[rel]);
+const stateKeys = { talents: PACKS.talents, trees: PACKS.trees, heroic: ACTOR_PACKS.heroic, nonheroic: ACTOR_PACKS.nonheroic, npc: ACTOR_PACKS.npc, homebrewTalents: HOMEBREW.talentsFile, homebrewTrees: HOMEBREW.treesFile, registry: REGISTRY_PATHS[0], registryFixes: REGISTRY_PATHS[1], derivedGenerated: DERIVED_FILES[0], derivedFixes: DERIVED_FILES[1], systemJson: SYSTEM_JSON };
+
+export function buildReport(input, p, verification, root = ROOT) {
+  const out = renderOutputs(input, p, root);
   const recs = input.manifest.records;
   const gone = tally(recs.filter(r => REMOVING.has(r.finalDisposition)), r => r.finalDisposition);
+  const pre = { classes: gitBlobSha(input.texts.classes) };
+  for (const [k, rel] of Object.entries(stateKeys)) if (fs.existsSync(path.join(root, rel))) pre[k] = gitBlobSha(readText(rel, root));
+  const post = { classes: gitBlobSha(input.texts.classes) };
+  for (const [k, rel] of Object.entries(stateKeys)) post[k] = blobOf(out, rel);
   return {
-    schemaVersion: 1, phase: '3D-3', productionMutationPerformed: false, dryRun: true,
+    schemaVersion: 2, phase: '3D-3', productionMutationPerformed: false, dryRun: true,
     status: verification.every(v => v.ok) ? 'DRY_RUN_CERTIFIED' : 'DRY_RUN_FAILED',
     inputAuthority: { dispositions: MANIFEST_PATH, census: CENSUS_PATH, phase3cState: 'POST_STATE (required)', inheritedRecords: recs.length },
-    preState: {
-      talents: gitBlobSha(input.texts.talents), trees: gitBlobSha(input.texts.trees), classes: gitBlobSha(input.texts.classes),
-      ...Object.fromEntries(Object.keys(ACTOR_PACKS).map(k => [k, gitBlobSha(input.texts[k])])),
-      registry: gitBlobSha(preRegistry[0]), registryFixes: gitBlobSha(preRegistry[1])
-    },
-    postState: {
-      talents: gitBlobSha(out.talents), trees: gitBlobSha(out.trees), classes: gitBlobSha(out.classes),
-      ...Object.fromEntries(Object.keys(ACTOR_PACKS).map(k => [k, gitBlobSha(out[k])])),
-      homebrewTalents: gitBlobSha(out.homebrewTalents), homebrewTrees: gitBlobSha(out.homebrewTrees),
-      registry: gitBlobSha(registryText), registryFixes: gitBlobSha(registryText)
-    },
+    preState: pre, postState: post,
     counts: {
       before: { talents: input.talents.length, trees: input.trees.length, classes: input.classes.length },
       after: { canonicalTalents: p.talents.length, homebrewTalents: p.homebrew.talents.length, totalPreservedTalents: p.talents.length + p.homebrew.talents.length, canonicalTrees: p.trees.length, homebrewTrees: p.homebrew.trees.length, classes: p.classes.length, registryEntries: p.registry.length },
@@ -327,25 +401,132 @@ export function buildReport(input, p, verification, root = ROOT) {
     },
     dispositions: tally(recs, r => r.finalDisposition),
     operations: p.operationCounts,
-    actorRepoints: { total: p.repointed.length, byDisposition: tally(p.repointed, r => r.disposition), byTargetPack: tally(p.repointed, r => r.toPack), items: p.repointed },
+    actorRepoints: { total: p.repointed.length, snapshotRefreshed: p.repointed.filter(r => r.snapshotRefreshed).length, byDisposition: tally(p.repointed, r => r.disposition), byTargetPack: tally(p.repointed, r => r.toPack), snapshotFields: SNAPSHOT_FIELDS, items: p.repointed },
     trees: { movedToHomebrew: p.homebrew.trees.map(t => ({ treeId: t._id, name: t.name, members: t.system.talentIds.length })), keepCanonicalLoseMembers: p.mixedTrees },
     classAccess: { changes: p.classAccessRemoved, note: p.classAccessRemoved.length ? undefined : 'no canonical class references any tree that moves to the homebrew pack' },
     derivedData: { entriesDropped: p.derivedDrops, note: 'data/*/talents.fixed.json are partial derived mirrors with no runtime or tool consumer found' },
     homebrewPack: {
       talentsPack: HOMEBREW.talentsPack, treesPack: HOMEBREW.treesPack, files: [HOMEBREW.talentsFile, HOMEBREW.treesFile], idsPreserved: true,
-      systemJsonEntriesRequired: [{ name: HOMEBREW.talentsPack, label: 'SWSE Talents (Homebrew — noncanonical)', path: 'packs/talents-homebrew', type: 'Item' }, { name: HOMEBREW.treesPack, label: 'SWSE Talent Trees (Homebrew — noncanonical)', path: 'packs/talent-trees-homebrew', type: 'Item' }],
+      systemJsonEntries: [HOMEBREW_PACK_BLOCKS.after_talents, HOMEBREW_PACK_BLOCKS.after_talent_trees],
       note: 'Not loaded by any canonical talent engine; must never be presented as official SWSE content.'
     },
-    followUps3D4: [
-      'Add the two homebrew pack entries to system.json and write packs/talents-homebrew.db and packs/talent-trees-homebrew.db.',
-      'Refresh the stale snapshot text (benefit/description) of the 34 repointed Notorious/Teräs Käsi embedded actor items from their new targets (sourceId is repointed here; text is not).',
-      'Update tests that pin removed ids (talent-phase-3c-migration-flow, talent-tree-membership-review-extras, talent-membership-and-pack-completion) and retire the review-extra exemption in the membership audit.',
-      'Retire the legacy entries in tools/fix-compendium-issues.js and tools/verify-compendium-fixes.js that key on removed ids.',
-      'The Phase 3C POST_STATE CI/verify gates compare pack blob SHAs and will read UNKNOWN_STATE after 3D is applied; add a 3D post-state gate and let the 3C gate accept the certified 3D post-state.',
-      'Add the six KEEP records (and the Ranged Disarm correction) to the canonical corpus through the Phase 2 → canonical → manifest chain (CANONICAL_CORPUS_ADDITION).'
+    knownOpenFinding: {
+      danglingRuntimeIds: 'Five canonical records keep prerequisitesStructured ids that equal the flags.swse.id of a removed duplicate: swse.talent.notorious (Fearsome, Ruthless Negotiator, Shared Notoriety, Unsavory Reputation) and swse.talent.dastardly_attack (Weakening Strike). They are Phase 3C canonical records, so this application does not touch them (PHASE_3C_CANONICAL_RECORD_TOUCHED requires manifest authorization). The pre-existing mismatch is unchanged for canonical selections (the surviving records never carried those ids); only legacy actor items lose an id match.'
+    },
+    followUps: [
+      'Decide whether to authorize repointing the five dangling structured prerequisites (PHASE_3C_CANONICAL_RECORD_TOUCHED).',
+      'Add the six KEEP records and the Ranged Disarm correction to the canonical corpus through the Phase 2 → canonical → manifest chain (CANONICAL_CORPUS_ADDITION).'
     ],
     verification: { passed: verification.filter(v => v.ok).length, failed: verification.filter(v => !v.ok).length, results: verification }
   };
+}
+
+/* ------------------------------------------------------------------------------------------------
+ * Residual-reference gate (repository-wide). Runtime surfaces must hold ZERO references to a merged/removed id and
+ * no moved id outside the homebrew packs; audit history and Phase 3D's own evidence files are classified separately.
+ * ---------------------------------------------------------------------------------------------- */
+export function classifyPath(rel) {
+  if (/^(data\/audit\/|data\/audits\/|docs\/)/.test(rel)) return 'HISTORY';
+  if (rel === HOMEBREW.talentsFile || rel === HOMEBREW.treesFile) return 'HOMEBREW_PACK';
+  if (/talent-phase-3d/.test(rel)) return 'PHASE_3D_EVIDENCE';
+  if (/^tests\//.test(rel)) return 'TEST';
+  if (/^tools\//.test(rel)) return 'TOOL';
+  return 'RUNTIME';
+}
+export function scanResidualReferences({ root = ROOT, manifest }) {
+  const recs = manifest.records.filter(r => REMOVING.has(r.finalDisposition));
+  const moved = new Set(recs.filter(r => r.finalDisposition === 'MOVE_HOMEBREW_PACK').map(r => r.productionId));
+  const mode = fs.existsSync(path.join(root, '.git')) ? '--untracked' : '--no-index'; // scratch copies are not repositories
+  const args = ['grep', mode, '-a', '-n', '-o', '-F', ...recs.flatMap(r => ['-e', r.productionId]), '--', '.'];
+  const run = spawnSync('git', args, { cwd: root, encoding: 'utf8', maxBuffer: 1 << 28 });
+  invariant(run.status === 0 || run.status === 1, 'git grep failed: ' + run.stderr);
+  const hits = (run.stdout || '').split('\n').filter(Boolean).map(l => { const [file, , ...rest] = l.split(':'); return { file, id: rest.join(':') }; });
+  const out = { RUNTIME: [], TEST: [], TOOL: [], HISTORY: 0, PHASE_3D_EVIDENCE: 0, HOMEBREW_PACK: 0 };
+  for (const h of hits) {
+    const cls = classifyPath(h.file);
+    if (cls === 'HISTORY' || cls === 'PHASE_3D_EVIDENCE') out[cls]++;
+    else if (cls === 'HOMEBREW_PACK') { if (moved.has(h.id)) out.HOMEBREW_PACK++; else out.RUNTIME.push(`${h.file}:${h.id}`); }
+    else if (cls === 'RUNTIME' && (h.file === 'packs/heroic.db' || h.file === 'packs/nonheroic.db' || h.file === 'packs/npc.db') && moved.has(h.id)) {
+      // actor items may reference a moved id ONLY through the homebrew pack sourceId
+      const line = readText(h.file, root).split('\n').filter(l => l.includes(h.id));
+      const bad = line.some(l => (l.match(new RegExp(h.id, 'g')) ?? []).length !== (l.match(new RegExp(`${HOMEBREW.talentsPack}\\.${h.id}`, 'g')) ?? []).length);
+      if (bad) out.RUNTIME.push(`${h.file}:${h.id}`); else out.HOMEBREW_PACK++;
+    } else out[cls].push(`${h.file}:${h.id}`);
+  }
+  for (const k of ['RUNTIME', 'TEST', 'TOOL']) out[k] = [...new Set(out[k])].sort();
+  return out;
+}
+
+/* ------------------------------------------------------------------------------------------------
+ * Post-state verification (reads the disk; needs only the committed manifest, census and dry-run report).
+ * ---------------------------------------------------------------------------------------------- */
+export function loadPostState(root = ROOT) {
+  const read = rel => readText(rel, root);
+  return {
+    manifest: readJson(MANIFEST_PATH, root), report: readJson(REPORT_PATH, root),
+    talents: parseNdjson(read(PACKS.talents)), trees: parseNdjson(read(PACKS.trees)), classes: parseNdjson(read(PACKS.classes)),
+    actors: Object.fromEntries(Object.entries(ACTOR_PACKS).map(([k, rel]) => [k, parseNdjson(read(rel))])),
+    homebrewTalents: fs.existsSync(path.join(root, HOMEBREW.talentsFile)) ? parseNdjson(read(HOMEBREW.talentsFile)) : [],
+    homebrewTrees: fs.existsSync(path.join(root, HOMEBREW.treesFile)) ? parseNdjson(read(HOMEBREW.treesFile)) : [],
+    texts: { classes: read(PACKS.classes), ...Object.fromEntries(Object.entries(stateKeys).filter(([, rel]) => fs.existsSync(path.join(root, rel))).map(([k, rel]) => [k, read(rel)])) },
+    registry: fs.existsSync(path.join(root, REGISTRY_PATHS[0])) ? JSON.parse(read(REGISTRY_PATHS[0])) : [],
+    systemJson: JSON.parse(read(SYSTEM_JSON))
+  };
+}
+
+export function verifyPostState(st, { exact = false, root = ROOT, scan = true } = {}) {
+  const results = [];
+  const check = (id, ok, detail = '') => results.push({ id, ok: !!ok, detail });
+  const { manifest, report } = st;
+  const recs = manifest.records, by = d => recs.filter(r => r.finalDisposition === d);
+  const leaving = recs.filter(r => REMOVING.has(r.finalDisposition)), moves = by('MOVE_HOMEBREW_PACK');
+  const canon = new Map(st.talents.map(t => [t._id, t])), hb = new Map(st.homebrewTalents.map(t => [t._id, t]));
+  const exp = report.counts.after;
+
+  check('Phase 3D post-state detected (no merged/removed/moved record remains in the canonical pack)', detect3DState(manifest, st.talents) === 'POST_3D');
+  check(`canonical talents = ${exp.canonicalTalents}`, st.talents.length === exp.canonicalTalents, String(st.talents.length));
+  check(`homebrew talents = ${exp.homebrewTalents}`, st.homebrewTalents.length === exp.homebrewTalents, String(st.homebrewTalents.length));
+  check(`preserved total = ${exp.totalPreservedTalents}`, st.talents.length + st.homebrewTalents.length === exp.totalPreservedTalents);
+  check(`canonical trees = ${exp.canonicalTrees}; homebrew-only trees = ${exp.homebrewTrees}`, st.trees.length === exp.canonicalTrees && st.homebrewTrees.length === exp.homebrewTrees, `${st.trees.length}/${st.homebrewTrees.length}`);
+  check('review-required = 0', recs.every(r => r.finalDisposition !== 'REVIEW_REQUIRED'));
+  check('canonical and homebrew talent packs are disjoint and ids are unique', st.talents.length === canon.size && st.homebrewTalents.length === hb.size && [...hb.keys()].every(id => !canon.has(id)));
+  check('homebrew pack holds exactly the MOVE_HOMEBREW_PACK ids', hb.size === moves.length && moves.every(r => hb.has(r.productionId)));
+  check('merged and removed records exist in neither pack', [...by('MERGE_DUPLICATE'), ...by('REMOVE_CONTAMINATION')].every(r => !canon.has(r.productionId) && !hb.has(r.productionId)));
+  check('merge survivors, KEEP and CORRECT_IDENTITY records are in the canonical pack', [...by('MERGE_DUPLICATE').map(r => r.survivorId), ...by('KEEP_CANONICAL_ADDITIONAL_PUBLICATION').map(r => r.productionId), ...by('CORRECT_IDENTITY').map(r => r.productionId)].every(id => canon.has(id)));
+  check('Ranged Disarm is in Gunslinger only, with the corrected system.treeId', (() => { const r = by('CORRECT_IDENTITY')[0]; const owners = st.trees.filter(t => t.system.talentIds.includes(r.productionId)); return owners.length === 1 && owners[0]._id === r.correctIdentity.toTreeId && canon.get(r.productionId).system.treeId === r.correctIdentity.toTreeId; })());
+  check('every canonical tree member exists in the canonical pack and no homebrew talent is a canonical tree member', st.trees.every(t => (t.system.talentIds ?? []).every(id => canon.has(id) && !hb.has(id))));
+  check('canonical talentNames expose only canonical members', st.trees.every(t => { const names = new Set(t.system.talentIds.map(id => canon.get(id).name)); return (t.system.talentNames ?? []).every(n => names.has(n)); }));
+  check('every homebrew tree member exists in the homebrew pack; homebrew trees are not canonical trees', st.homebrewTrees.every(t => t.system.talentIds.every(id => hb.has(id)) && !st.trees.some(c => c._id === t._id)));
+  check('every homebrew talent keeps a resolvable tree context (homebrew tree, canonical tree id, or the legacy slug of a canonical tree)', st.homebrewTalents.every(t => st.homebrewTrees.some(x => x.system.talentIds.includes(t._id)) || st.trees.some(c => c._id === t.system.treeId || registrySlug(c.name) === String(t.system.treeId).replace(/_/g, '-'))));
+  const hbTreeIds = st.homebrewTrees.map(t => t._id);
+  check('no canonical class references a homebrew-only tree', st.classes.every(c => !hbTreeIds.some(id => JSON.stringify(c.system ?? {}).includes(id))));
+  check('class records are byte-identical to the Phase 3C state', gitBlobSha(st.texts.classes) === report.preState.classes);
+
+  const regIds = new Set(st.trees.map(t => t._id));
+  check('both registry files are identical and canonical-only (no homebrew tree, no homebrew talent)', st.texts.registry === st.texts.registryFixes && st.registry.every(e => !e.sourceId || regIds.has(e.sourceId)) && st.registry.every(e => (e.talentIds ?? []).every(id => !hb.has(id))));
+  check('registry has an entry for every canonical tree', [...regIds].every(id => st.registry.some(e => e.sourceId === id)));
+  const regen = serializeRegistry(buildTalentTreeRegistry({ talents: st.talents, trees: st.trees, classes: st.classes, previousRegistry: st.registry }));
+  check('registry equals a fresh generation from the packs (fresh)', regen === st.texts.registry);
+
+  const items = report.actorRepoints.items;
+  check(`all ${items.length} certified embedded actor repoints are in place, embedded _id preserved`, items.length === report.actorRepoints.total && items.every(r => { const it = st.actors[r.pack].find(a => a._id === r.actorId)?.items?.[r.itemIndex]; return it && it._id === r.embeddedItemId && it.flags?.core?.sourceId === sourceIdFor(r.toPack, r.to); }));
+  const classNameOf = id => st.classes.find(c => c._id === id)?.name ?? id;
+  check('every refreshed snapshot equals its surviving canonical record', items.filter(r => r.snapshotRefreshed).every(r => { const it = st.actors[r.pack].find(a => a._id === r.actorId).items[r.itemIndex]; const sv = canon.get(r.to); return snapshotMatches(it, sv, st.trees.find(t => t.system.talentIds.includes(sv._id)), classNameOf); }));
+  const leavingIds = new Set(leaving.map(r => r.productionId));
+  check('no embedded actor item points at a record that left the canonical pack', Object.values(st.actors).flat().every(a => (a.items ?? []).every(i => { const s = parseSourceId(i.flags?.core?.sourceId); return !(s && s.pack === 'talents' && leavingIds.has(s.id)); })));
+  check('no contaminated Notorious / merged Teräs Käsi snapshot text survives', Object.values(st.actors).flat().every(a => (a.items ?? []).every(i => !(i.name === 'Notorious' && /Reference Book|Master Manipulator|small favor from someone/i.test(JSON.stringify(i.system))) && !(i.name === 'Teräs Käsi Basics' && /Prerequisites: ,/.test(JSON.stringify(i.system))))));
+  check('derived talents.fixed.json mirrors carry no leaving id', DERIVED_FILES.every(rel => !leaving.some(r => (st.texts[rel === DERIVED_FILES[0] ? 'derivedGenerated' : 'derivedFixes'] ?? '').includes(`"${r.productionId}"`))));
+
+  const packNames = new Map(st.systemJson.packs.map(p => [p.name, p]));
+  check('system.json registers both homebrew packs as noncanonical Item compendia, and the canonical packs still exist', packNames.has(HOMEBREW.talentsPack) && packNames.has(HOMEBREW.treesPack) && packNames.get(HOMEBREW.talentsPack).flags?.swse?.noncanonical === true && packNames.get(HOMEBREW.talentsPack).path === 'packs/talents-homebrew' && packNames.has('talents') && packNames.has('talent_trees') && /Homebrew/.test(packNames.get(HOMEBREW.talentsPack).label));
+
+  if (scan) {
+    const res = scanResidualReferences({ root, manifest });
+    check('residual-reference gate: 0 runtime references to any merged/removed id (and to moved ids outside the homebrew packs)', res.RUNTIME.length === 0, res.RUNTIME.slice(0, 8).join(', '));
+    check('tools/tests outside Phase 3D evidence carry no stale reference (triage list is empty)', res.TOOL.length === 0 && res.TEST.length === 0, [...res.TOOL, ...res.TEST].slice(0, 8).join(', '));
+  }
+  if (exact) for (const [k, rel] of Object.entries(stateKeys)) check(`exact certified blob: ${rel}`, st.texts[k] !== undefined && gitBlobSha(st.texts[k]) === report.postState[k], k);
+  return results;
 }
 
 /* ------------------------------------------------------------------------------------------------
@@ -359,18 +540,52 @@ export function freshReport(root = ROOT) {
   return { input, p, report: buildReport(input, p, verifyProjection(input, p), root) };
 }
 
+const printResults = results => { for (const v of results) console.log(`${v.ok ? 'PASS' : 'FAIL'}  ${v.id}${v.ok || !v.detail ? '' : '  [' + v.detail + ']'}`); };
+
+export function applyProduction(root = ROOT) {
+  const c3 = detectPhase3cState(root);
+  invariant(c3.state === 'POST_STATE', `REFUSED: the Phase 3C certified post-state is required (found ${c3.state}); partial or unexpected pack fingerprints are not migrated`);
+  const input = loadInputs(root);
+  invariant(detect3DState(input.manifest, input.talents) === 'PRE_3D', 'REFUSED: Phase 3D is already applied (or partly applied)');
+  invariant(fs.existsSync(path.join(root, REPORT_PATH)), 'REFUSED: no committed dry-run report');
+  const committed = readJson(REPORT_PATH, root);
+  invariant(committed.dryRun === true && committed.status === 'DRY_RUN_CERTIFIED', 'REFUSED: the committed dry-run report is not certified');
+  const { report } = freshReport(root);
+  invariant(readText(REPORT_PATH, root) === JSON.stringify(report, null, 2) + '\n', 'REFUSED: the committed dry-run report differs from a fresh projection (production drifted or the report is stale)');
+  const p = projectPhase3D(input);
+  const files = renderOutputs(input, p, root);
+  // self-verify the rendered bytes before anything is written
+  const failed = verifyProjection(input, p).filter(v => !v.ok);
+  invariant(!failed.length, 'REFUSED: projection failed self-verification: ' + failed.map(f => f.id).join('; '));
+  for (const [k, rel] of Object.entries(stateKeys)) invariant(gitBlobSha(files[rel]) === committed.postState[k], `REFUSED: rendered ${rel} does not match the certified post-state blob`);
+  for (const [rel, text] of Object.entries(files)) fs.writeFileSync(path.join(root, rel), text);
+  return { written: Object.keys(files) };
+}
+
 export async function main(argv = process.argv.slice(2), root = ROOT) {
   const has = f => argv.includes(f);
-  if (has('--apply') || has('--write')) { console.error(ERR + 'REFUSED: Phase 3D-3 is dry-run only; production application is Phase 3D-4.'); return 2; }
   if (has('--status')) {
     const input = loadInputs(root);
     console.log(`${ERR}phase 3C: ${detectPhase3cState(root).state}; phase 3D: ${detect3DState(input.manifest, input.talents)}`);
     return 0;
   }
+  if (has('--apply')) {
+    const { written } = applyProduction(root);
+    console.log(`${ERR}APPLIED. Wrote ${written.length} files (uncommitted):\n  ` + written.join('\n  '));
+    return 0;
+  }
+  if (has('--verify')) {
+    const st = loadPostState(root);
+    const results = verifyPostState(st, { exact: has('--exact'), root });
+    printResults(results);
+    const bad = results.filter(r => !r.ok).length;
+    console.log(`\n${ERR}verify ${bad ? 'FAIL' : 'PASS'} (${results.length} checks; no files written)`);
+    return bad ? 1 : 0;
+  }
   const { report } = freshReport(root);
-  for (const v of report.verification.results) console.log(`${v.ok ? 'PASS' : 'FAIL'}  ${v.id}${v.ok || !v.detail ? '' : '  [' + v.detail + ']'}`);
+  printResults(report.verification.results);
   console.log(`\n${ERR}${report.status}: ${report.counts.arithmetic}`);
-  console.log(`${ERR}actor repoints ${report.actorRepoints.total} · trees to homebrew ${report.trees.movedToHomebrew.length} · mixed trees ${report.trees.keepCanonicalLoseMembers.length} · registry entries ${report.counts.after.registryEntries}`);
+  console.log(`${ERR}actor repoints ${report.actorRepoints.total} (snapshots refreshed ${report.actorRepoints.snapshotRefreshed}) · trees to homebrew ${report.trees.movedToHomebrew.length} · registry entries ${report.counts.after.registryEntries}`);
   if (report.status !== 'DRY_RUN_CERTIFIED') return 1;
   const text = JSON.stringify(report, null, 2) + '\n';
   if (has('--report')) { fs.writeFileSync(path.join(root, REPORT_PATH), text); console.log(`${ERR}wrote ${REPORT_PATH} (no pack was written)`); }

@@ -1,8 +1,11 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
+import os from 'node:os';
+import path from 'node:path';
+import crypto from 'node:crypto';
 import { spawnSync } from 'node:child_process';
 import { detectPackState } from '../tools/apply-talent-phase-3c.mjs';
-import { loadInputs, projectPhase3D, verifyProjection, detect3DState, freshReport, REPORT_PATH, HOMEBREW } from '../tools/apply-talent-phase-3d.mjs';
+import { loadInputs, projectPhase3D, verifyProjection, detect3DState, freshReport, applyProduction, loadPostState, verifyPostState, REPORT_PATH, HOMEBREW } from '../tools/apply-talent-phase-3d.mjs';
 
 // Phase 3D-3: dry-run only. These tests never write a pack; they prove the simulation and its refusals.
 if (detectPackState().state !== 'POST_STATE') { console.log('  skip talent-phase-3d applicator: packs are not the certified Phase 3C post-state'); process.exit(0); }
@@ -94,12 +97,44 @@ test('committed dry-run report equals a fresh projection and certifies it', () =
   assert.equal(fs.readFileSync(REPORT_PATH, 'utf8'), JSON.stringify(report, null, 2) + '\n');
   assert.equal(report.counts.after.totalPreservedTalents, 1237);
 });
-test('--apply is refused and no pack changes', () => {
-  const files = ['packs/talents.db', 'packs/talent_trees.db', 'packs/classes.db', 'packs/heroic.db', 'packs/npc.db'];
-  const before = files.map(f => fs.readFileSync(f, 'utf8'));
-  const run = spawnSync(process.execPath, ['tools/apply-talent-phase-3d.mjs', '--apply'], { encoding: 'utf8' });
-  assert.equal(run.status, 2); assert.match(run.stderr, /dry-run only/);
-  assert.deepEqual(files.map(f => fs.readFileSync(f, 'utf8')), before);
-  assert.ok(!fs.existsSync(HOMEBREW.talentsFile) && !fs.existsSync(HOMEBREW.treesFile));
+test('application flow in a scratch copy: --apply, --verify --exact twice (no writes), second --apply refuses, partial state refuses', () => {
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'swse-3d-'));
+  try {
+    for (const rel of ['packs', 'data/audits', 'data/generated', 'data/fixes', 'system.json']) fs.cpSync(rel, path.join(tmp, rel), { recursive: true });
+    const hashAll = () => { const h = crypto.createHash('sha1'); for (const rel of touchedFiles) if (fs.existsSync(path.join(tmp, rel))) h.update(rel).update(fs.readFileSync(path.join(tmp, rel))); return h.digest('hex'); };
+    const touchedFiles = ['packs/talents.db', 'packs/talent_trees.db', 'packs/classes.db', 'packs/heroic.db', 'packs/nonheroic.db', 'packs/npc.db', HOMEBREW.talentsFile, HOMEBREW.treesFile, 'data/generated/talent-trees.registry.json', 'data/fixes/talent-trees.registry.json', 'data/generated/talents.fixed.json', 'data/fixes/talents.fixed.json', 'system.json'];
+    const before = hashAll();
+    const { written } = applyProduction(tmp);
+    assert.equal(written.length, 12); assert.ok(written.includes('system.json') && written.includes(HOMEBREW.talentsFile));
+    assert.ok(!written.includes('packs/classes.db'), 'classes are not rewritten');
+    const after = hashAll(); assert.notEqual(after, before);
+    let results = verifyPostState(loadPostState(tmp), { exact: true, root: tmp, scan: false });
+    assert.deepEqual(results.filter(r => !r.ok), []);
+    results = verifyPostState(loadPostState(tmp), { exact: true, root: tmp, scan: false });
+    assert.deepEqual(results.filter(r => !r.ok), []); assert.equal(hashAll(), after, 'verify must write nothing');
+    assert.throws(() => applyProduction(tmp), /already applied|REFUSED/);
+    assert.equal(hashAll(), after, 'the refused second apply must write nothing');
+    // a tampered post-state fails --verify --exact
+    fs.appendFileSync(path.join(tmp, 'packs/heroic.db'), '');
+    const t = fs.readFileSync(path.join(tmp, 'packs/talents-homebrew.db'), 'utf8').split('\n').filter(Boolean); fs.writeFileSync(path.join(tmp, 'packs/talents-homebrew.db'), t.slice(1).join('\n') + '\n');
+    assert.ok(verifyPostState(loadPostState(tmp), { exact: true, root: tmp, scan: false }).some(r => !r.ok));
+  } finally { fs.rmSync(tmp, { recursive: true, force: true }); }
+});
+test('a partial or drifted pre-state refuses to apply and writes nothing', () => {
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'swse-3d-'));
+  try {
+    for (const rel of ['packs', 'data/audits', 'data/generated', 'data/fixes', 'system.json']) fs.cpSync(rel, path.join(tmp, rel), { recursive: true });
+    const lines = fs.readFileSync(path.join(tmp, 'packs/talents.db'), 'utf8').split('\n').filter(Boolean);
+    fs.writeFileSync(path.join(tmp, 'packs/talents.db'), lines.filter(l => !l.includes('"_id":"a7d8c4da96eacad4"')).join('\n') + '\n');
+    const snap = fs.readFileSync(path.join(tmp, 'packs/heroic.db'), 'utf8');
+    assert.throws(() => applyProduction(tmp), /REFUSED/);
+    assert.equal(fs.readFileSync(path.join(tmp, 'packs/heroic.db'), 'utf8'), snap); assert.ok(!fs.existsSync(path.join(tmp, HOMEBREW.talentsFile)));
+  } finally { fs.rmSync(tmp, { recursive: true, force: true }); }
+});
+test('the CLI refuses --apply on an unexpected pack state (real repository untouched)', () => {
+  const before = fs.readFileSync('packs/talents.db', 'utf8');
+  const run = spawnSync(process.execPath, ['tools/apply-talent-phase-3d.mjs', '--status'], { encoding: 'utf8' });
+  assert.equal(run.status, 0); assert.match(run.stdout, /phase 3D: PRE_3D/);
+  assert.equal(fs.readFileSync('packs/talents.db', 'utf8'), before);
 });
 console.log(`\n${passed} talent-phase-3d applicator checks passed`);

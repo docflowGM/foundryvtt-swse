@@ -1,5 +1,5 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "phase": "3D-3",
   "productionMutationPerformed": false,
   "dryRun": true,
@@ -11,26 +11,32 @@
     "inheritedRecords": 92
   },
   "preState": {
+    "classes": "2960a03039604ea06612445bad0673902a8012cc",
     "talents": "bb3e009dc17873da9bcc89c401303c299320bdfa",
     "trees": "b1f797aeb9770b73852e615cbf7c65d9b3334f7e",
-    "classes": "2960a03039604ea06612445bad0673902a8012cc",
     "heroic": "89712d40e6a5923ae94aade05ff3a7dcce6bcae6",
     "nonheroic": "d31e8d95bb15f03a6406996c3ae487a154d391d3",
     "npc": "34552eeb3390c739563a6d08878528eb5b14bfca",
     "registry": "0de6773b1e5e9d92a839735f616c778fd34047d0",
-    "registryFixes": "0de6773b1e5e9d92a839735f616c778fd34047d0"
+    "registryFixes": "0de6773b1e5e9d92a839735f616c778fd34047d0",
+    "derivedGenerated": "9b436fc0a89e55184b87de8497e96a9d9a7cd8c5",
+    "derivedFixes": "ad1adfe821a3e7787bd298d2220f16e2914bb0a4",
+    "systemJson": "08f5d444ad08d13f8f419e0b53af2bcf8bde057e"
   },
   "postState": {
+    "classes": "2960a03039604ea06612445bad0673902a8012cc",
     "talents": "4be798928b0ebd992403067b4308e99cf09ac572",
     "trees": "5cb2acafe549e1b2a38f69b644f2eb7105316c5c",
-    "classes": "2960a03039604ea06612445bad0673902a8012cc",
-    "heroic": "42a793f97fa583fa65f62062561b817241b6625f",
-    "nonheroic": "a36bcfdc228d204d4d3bc6b320cbd923f6513317",
-    "npc": "49849f90c8febef9b2dd4ef028504445f11148ff",
+    "heroic": "cbb59081ca02c06298b1647821f5b2487ea47485",
+    "nonheroic": "c05ea8896efb00e5115a53247a05bfe54c628e60",
+    "npc": "78d0cdd8b1dd271238e420b8d15f33e2547e20ba",
     "homebrewTalents": "bd4e3d4be9861f9ed0329e0f12545bf3f5dc3c72",
     "homebrewTrees": "81861fe0b948db00e4e7e344316acdc730d86a2b",
     "registry": "ac99c0f4f47ea67e5c40e97c3bc122be0a615265",
-    "registryFixes": "ac99c0f4f47ea67e5c40e97c3bc122be0a615265"
+    "registryFixes": "ac99c0f4f47ea67e5c40e97c3bc122be0a615265",
+    "derivedGenerated": "3b63af6b063c3cac49fc8d9dbf6c706bf4685013",
+    "derivedFixes": "c3dbe4f282062d73906e80b2b2d840e700af6ee2",
+    "systemJson": "7c5640b8d4c10da960356703b31d33dd16c19fbb"
   },
   "counts": {
     "before": {
@@ -70,6 +76,7 @@
   },
   "actorRepoints": {
     "total": 34,
+    "snapshotRefreshed": 34,
     "byDisposition": {
       "REMOVE_CONTAMINATION": 32,
       "MERGE_DUPLICATE": 2
@@ -77,380 +84,464 @@
     "byTargetPack": {
       "talents": 34
     },
+    "snapshotFields": [
+      "name",
+      "system.prerequisites",
+      "system.benefit",
+      "system.description",
+      "system.summary",
+      "system.source",
+      "system.page",
+      "system.treeId",
+      "system.talent_tree",
+      "system.tree",
+      "system.category",
+      "system.class",
+      "flags.swse.id",
+      "flags.core.sourceId"
+    ],
     "items": [
       {
         "pack": "heroic",
         "actor": "Rav",
         "actorId": "0586842bc819d958",
+        "embeddedItemId": "71e63cb581ef03ff",
         "itemIndex": 20,
         "item": "Notorious",
         "from": "a7d8c4da96eacad4",
         "to": "09744041cdcc9e22",
         "toPack": "talents",
-        "disposition": "REMOVE_CONTAMINATION"
+        "disposition": "REMOVE_CONTAMINATION",
+        "snapshotRefreshed": true
       },
       {
         "pack": "heroic",
         "actor": "Mynock Man",
         "actorId": "1dd36dbe4fc330bf",
+        "embeddedItemId": "a0b9c91a64aa1f3c",
         "itemIndex": 17,
         "item": "Teräs Käsi Basics",
         "from": "222327492c484b4a",
         "to": "67bddb17ae2770f3",
         "toPack": "talents",
-        "disposition": "MERGE_DUPLICATE"
+        "disposition": "MERGE_DUPLICATE",
+        "snapshotRefreshed": true
       },
       {
         "pack": "heroic",
         "actor": "Calo Nord",
         "actorId": "27501a9a2c28717d",
+        "embeddedItemId": "857b3140dd71d4c5",
         "itemIndex": 21,
         "item": "Notorious",
         "from": "a7d8c4da96eacad4",
         "to": "c67cbd59abd1cc53",
         "toPack": "talents",
-        "disposition": "REMOVE_CONTAMINATION"
+        "disposition": "REMOVE_CONTAMINATION",
+        "snapshotRefreshed": true
       },
       {
         "pack": "heroic",
         "actor": "Booster Terrik",
         "actorId": "3fa5743cbe714121",
+        "embeddedItemId": "b6624b39d09c436a",
         "itemIndex": 19,
         "item": "Notorious",
         "from": "a7d8c4da96eacad4",
         "to": "09744041cdcc9e22",
         "toPack": "talents",
-        "disposition": "REMOVE_CONTAMINATION"
+        "disposition": "REMOVE_CONTAMINATION",
+        "snapshotRefreshed": true
       },
       {
         "pack": "heroic",
         "actor": "Liash Keane",
         "actorId": "4111ecc91827a440",
+        "embeddedItemId": "1c2d4523301916e0",
         "itemIndex": 20,
         "item": "Notorious",
         "from": "a7d8c4da96eacad4",
         "to": "09744041cdcc9e22",
         "toPack": "talents",
-        "disposition": "REMOVE_CONTAMINATION"
+        "disposition": "REMOVE_CONTAMINATION",
+        "snapshotRefreshed": true
       },
       {
         "pack": "heroic",
         "actor": "Dool Pundar",
         "actorId": "42b14107f5f8ae03",
+        "embeddedItemId": "f562ee2ab2f2a724",
         "itemIndex": 24,
         "item": "Notorious",
         "from": "a7d8c4da96eacad4",
         "to": "09744041cdcc9e22",
         "toPack": "talents",
-        "disposition": "REMOVE_CONTAMINATION"
+        "disposition": "REMOVE_CONTAMINATION",
+        "snapshotRefreshed": true
       },
       {
         "pack": "heroic",
         "actor": "Jango Fett",
         "actorId": "488fcbb5da937669",
+        "embeddedItemId": "ada703e7d1848f09",
         "itemIndex": 25,
         "item": "Notorious",
         "from": "a7d8c4da96eacad4",
         "to": "c67cbd59abd1cc53",
         "toPack": "talents",
-        "disposition": "REMOVE_CONTAMINATION"
+        "disposition": "REMOVE_CONTAMINATION",
+        "snapshotRefreshed": true
       },
       {
         "pack": "heroic",
         "actor": "Dob and Del Moomo",
         "actorId": "4ddf0f74b48fbb45",
+        "embeddedItemId": "33544067c9203b9a",
         "itemIndex": 17,
         "item": "Notorious",
         "from": "a7d8c4da96eacad4",
         "to": "c67cbd59abd1cc53",
         "toPack": "talents",
-        "disposition": "REMOVE_CONTAMINATION"
+        "disposition": "REMOVE_CONTAMINATION",
+        "snapshotRefreshed": true
       },
       {
         "pack": "heroic",
         "actor": "Solvek",
         "actorId": "581c5c6f97083f6c",
+        "embeddedItemId": "9eec03b6e8cb0e06",
         "itemIndex": 20,
         "item": "Notorious",
         "from": "a7d8c4da96eacad4",
         "to": "c67cbd59abd1cc53",
         "toPack": "talents",
-        "disposition": "REMOVE_CONTAMINATION"
+        "disposition": "REMOVE_CONTAMINATION",
+        "snapshotRefreshed": true
       },
       {
         "pack": "heroic",
         "actor": "Hondo Ohnaka",
         "actorId": "8af56ba01c4c0445",
+        "embeddedItemId": "a9b2fd722016c8c9",
         "itemIndex": 14,
         "item": "Notorious",
         "from": "a7d8c4da96eacad4",
         "to": "09744041cdcc9e22",
         "toPack": "talents",
-        "disposition": "REMOVE_CONTAMINATION"
+        "disposition": "REMOVE_CONTAMINATION",
+        "snapshotRefreshed": true
       },
       {
         "pack": "heroic",
         "actor": "Sisla",
         "actorId": "8fbb2bec1261a5f4",
+        "embeddedItemId": "ead0270064365d42",
         "itemIndex": 19,
         "item": "Notorious",
         "from": "a7d8c4da96eacad4",
         "to": "c67cbd59abd1cc53",
         "toPack": "talents",
-        "disposition": "REMOVE_CONTAMINATION"
+        "disposition": "REMOVE_CONTAMINATION",
+        "snapshotRefreshed": true
       },
       {
         "pack": "heroic",
         "actor": "Prince Xizor",
         "actorId": "ab3b1612d4f500b8",
+        "embeddedItemId": "ed0387fd868061ea",
         "itemIndex": 20,
         "item": "Notorious",
         "from": "a7d8c4da96eacad4",
         "to": "09744041cdcc9e22",
         "toPack": "talents",
-        "disposition": "REMOVE_CONTAMINATION"
+        "disposition": "REMOVE_CONTAMINATION",
+        "snapshotRefreshed": true
       },
       {
         "pack": "heroic",
         "actor": "Boba Fett",
         "actorId": "d0ca9926bbdfd6c9",
+        "embeddedItemId": "c67e9ca854fff949",
         "itemIndex": 23,
         "item": "Notorious",
         "from": "a7d8c4da96eacad4",
         "to": "c67cbd59abd1cc53",
         "toPack": "talents",
-        "disposition": "REMOVE_CONTAMINATION"
+        "disposition": "REMOVE_CONTAMINATION",
+        "snapshotRefreshed": true
       },
       {
         "pack": "heroic",
         "actor": "Tyber Zann",
         "actorId": "ff05bc356760f633",
+        "embeddedItemId": "fb81c0647a96f5dd",
         "itemIndex": 22,
         "item": "Notorious",
         "from": "a7d8c4da96eacad4",
         "to": "09744041cdcc9e22",
         "toPack": "talents",
-        "disposition": "REMOVE_CONTAMINATION"
+        "disposition": "REMOVE_CONTAMINATION",
+        "snapshotRefreshed": true
       },
       {
         "pack": "nonheroic",
         "actor": "Rodian Black Sun Vigo",
         "actorId": "02f6124ea6553cb0",
+        "embeddedItemId": "c81b7db0b62460ad",
         "itemIndex": 20,
         "item": "Notorious",
         "from": "a7d8c4da96eacad4",
         "to": "09744041cdcc9e22",
         "toPack": "talents",
-        "disposition": "REMOVE_CONTAMINATION"
+        "disposition": "REMOVE_CONTAMINATION",
+        "snapshotRefreshed": true
       },
       {
         "pack": "nonheroic",
         "actor": "Hutt Crime Lord",
         "actorId": "ae0b0912d66ac17d",
+        "embeddedItemId": "33755f2ff5292e05",
         "itemIndex": 18,
         "item": "Notorious",
         "from": "a7d8c4da96eacad4",
         "to": "09744041cdcc9e22",
         "toPack": "talents",
-        "disposition": "REMOVE_CONTAMINATION"
+        "disposition": "REMOVE_CONTAMINATION",
+        "snapshotRefreshed": true
       },
       {
         "pack": "nonheroic",
         "actor": "Black Sun Vigo",
         "actorId": "f71b5e860c37e317",
+        "embeddedItemId": "63f181134b4aa68e",
         "itemIndex": 21,
         "item": "Notorious",
         "from": "a7d8c4da96eacad4",
         "to": "09744041cdcc9e22",
         "toPack": "talents",
-        "disposition": "REMOVE_CONTAMINATION"
+        "disposition": "REMOVE_CONTAMINATION",
+        "snapshotRefreshed": true
       },
       {
         "pack": "npc",
         "actor": "Rodian Black Sun Vigo",
         "actorId": "02f6124ea6553cb0",
+        "embeddedItemId": "c81b7db0b62460ad",
         "itemIndex": 20,
         "item": "Notorious",
         "from": "a7d8c4da96eacad4",
         "to": "09744041cdcc9e22",
         "toPack": "talents",
-        "disposition": "REMOVE_CONTAMINATION"
+        "disposition": "REMOVE_CONTAMINATION",
+        "snapshotRefreshed": true
       },
       {
         "pack": "npc",
         "actor": "Rav",
         "actorId": "0586842bc819d958",
+        "embeddedItemId": "71e63cb581ef03ff",
         "itemIndex": 20,
         "item": "Notorious",
         "from": "a7d8c4da96eacad4",
         "to": "09744041cdcc9e22",
         "toPack": "talents",
-        "disposition": "REMOVE_CONTAMINATION"
+        "disposition": "REMOVE_CONTAMINATION",
+        "snapshotRefreshed": true
       },
       {
         "pack": "npc",
         "actor": "Mynock Man",
         "actorId": "1dd36dbe4fc330bf",
+        "embeddedItemId": "a0b9c91a64aa1f3c",
         "itemIndex": 17,
         "item": "Teräs Käsi Basics",
         "from": "222327492c484b4a",
         "to": "67bddb17ae2770f3",
         "toPack": "talents",
-        "disposition": "MERGE_DUPLICATE"
+        "disposition": "MERGE_DUPLICATE",
+        "snapshotRefreshed": true
       },
       {
         "pack": "npc",
         "actor": "Calo Nord",
         "actorId": "27501a9a2c28717d",
+        "embeddedItemId": "857b3140dd71d4c5",
         "itemIndex": 21,
         "item": "Notorious",
         "from": "a7d8c4da96eacad4",
         "to": "c67cbd59abd1cc53",
         "toPack": "talents",
-        "disposition": "REMOVE_CONTAMINATION"
+        "disposition": "REMOVE_CONTAMINATION",
+        "snapshotRefreshed": true
       },
       {
         "pack": "npc",
         "actor": "Booster Terrik",
         "actorId": "3fa5743cbe714121",
+        "embeddedItemId": "b6624b39d09c436a",
         "itemIndex": 19,
         "item": "Notorious",
         "from": "a7d8c4da96eacad4",
         "to": "09744041cdcc9e22",
         "toPack": "talents",
-        "disposition": "REMOVE_CONTAMINATION"
+        "disposition": "REMOVE_CONTAMINATION",
+        "snapshotRefreshed": true
       },
       {
         "pack": "npc",
         "actor": "Liash Keane",
         "actorId": "4111ecc91827a440",
+        "embeddedItemId": "1c2d4523301916e0",
         "itemIndex": 20,
         "item": "Notorious",
         "from": "a7d8c4da96eacad4",
         "to": "09744041cdcc9e22",
         "toPack": "talents",
-        "disposition": "REMOVE_CONTAMINATION"
+        "disposition": "REMOVE_CONTAMINATION",
+        "snapshotRefreshed": true
       },
       {
         "pack": "npc",
         "actor": "Dool Pundar",
         "actorId": "42b14107f5f8ae03",
+        "embeddedItemId": "f562ee2ab2f2a724",
         "itemIndex": 24,
         "item": "Notorious",
         "from": "a7d8c4da96eacad4",
         "to": "09744041cdcc9e22",
         "toPack": "talents",
-        "disposition": "REMOVE_CONTAMINATION"
+        "disposition": "REMOVE_CONTAMINATION",
+        "snapshotRefreshed": true
       },
       {
         "pack": "npc",
         "actor": "Jango Fett",
         "actorId": "488fcbb5da937669",
+        "embeddedItemId": "ada703e7d1848f09",
         "itemIndex": 25,
         "item": "Notorious",
         "from": "a7d8c4da96eacad4",
         "to": "c67cbd59abd1cc53",
         "toPack": "talents",
-        "disposition": "REMOVE_CONTAMINATION"
+        "disposition": "REMOVE_CONTAMINATION",
+        "snapshotRefreshed": true
       },
       {
         "pack": "npc",
         "actor": "Dob and Del Moomo",
         "actorId": "4ddf0f74b48fbb45",
+        "embeddedItemId": "33544067c9203b9a",
         "itemIndex": 17,
         "item": "Notorious",
         "from": "a7d8c4da96eacad4",
         "to": "c67cbd59abd1cc53",
         "toPack": "talents",
-        "disposition": "REMOVE_CONTAMINATION"
+        "disposition": "REMOVE_CONTAMINATION",
+        "snapshotRefreshed": true
       },
       {
         "pack": "npc",
         "actor": "Solvek",
         "actorId": "581c5c6f97083f6c",
+        "embeddedItemId": "9eec03b6e8cb0e06",
         "itemIndex": 20,
         "item": "Notorious",
         "from": "a7d8c4da96eacad4",
         "to": "c67cbd59abd1cc53",
         "toPack": "talents",
-        "disposition": "REMOVE_CONTAMINATION"
+        "disposition": "REMOVE_CONTAMINATION",
+        "snapshotRefreshed": true
       },
       {
         "pack": "npc",
         "actor": "Hondo Ohnaka",
         "actorId": "8af56ba01c4c0445",
+        "embeddedItemId": "a9b2fd722016c8c9",
         "itemIndex": 14,
         "item": "Notorious",
         "from": "a7d8c4da96eacad4",
         "to": "09744041cdcc9e22",
         "toPack": "talents",
-        "disposition": "REMOVE_CONTAMINATION"
+        "disposition": "REMOVE_CONTAMINATION",
+        "snapshotRefreshed": true
       },
       {
         "pack": "npc",
         "actor": "Sisla",
         "actorId": "8fbb2bec1261a5f4",
+        "embeddedItemId": "ead0270064365d42",
         "itemIndex": 19,
         "item": "Notorious",
         "from": "a7d8c4da96eacad4",
         "to": "c67cbd59abd1cc53",
         "toPack": "talents",
-        "disposition": "REMOVE_CONTAMINATION"
+        "disposition": "REMOVE_CONTAMINATION",
+        "snapshotRefreshed": true
       },
       {
         "pack": "npc",
         "actor": "Prince Xizor",
         "actorId": "ab3b1612d4f500b8",
+        "embeddedItemId": "ed0387fd868061ea",
         "itemIndex": 20,
         "item": "Notorious",
         "from": "a7d8c4da96eacad4",
         "to": "09744041cdcc9e22",
         "toPack": "talents",
-        "disposition": "REMOVE_CONTAMINATION"
+        "disposition": "REMOVE_CONTAMINATION",
+        "snapshotRefreshed": true
       },
       {
         "pack": "npc",
         "actor": "Hutt Crime Lord",
         "actorId": "ae0b0912d66ac17d",
+        "embeddedItemId": "33755f2ff5292e05",
         "itemIndex": 18,
         "item": "Notorious",
         "from": "a7d8c4da96eacad4",
         "to": "09744041cdcc9e22",
         "toPack": "talents",
-        "disposition": "REMOVE_CONTAMINATION"
+        "disposition": "REMOVE_CONTAMINATION",
+        "snapshotRefreshed": true
       },
       {
         "pack": "npc",
         "actor": "Boba Fett",
         "actorId": "d0ca9926bbdfd6c9",
+        "embeddedItemId": "c67e9ca854fff949",
         "itemIndex": 23,
         "item": "Notorious",
         "from": "a7d8c4da96eacad4",
         "to": "c67cbd59abd1cc53",
         "toPack": "talents",
-        "disposition": "REMOVE_CONTAMINATION"
+        "disposition": "REMOVE_CONTAMINATION",
+        "snapshotRefreshed": true
       },
       {
         "pack": "npc",
         "actor": "Black Sun Vigo",
         "actorId": "f71b5e860c37e317",
+        "embeddedItemId": "63f181134b4aa68e",
         "itemIndex": 21,
         "item": "Notorious",
         "from": "a7d8c4da96eacad4",
         "to": "09744041cdcc9e22",
         "toPack": "talents",
-        "disposition": "REMOVE_CONTAMINATION"
+        "disposition": "REMOVE_CONTAMINATION",
+        "snapshotRefreshed": true
       },
       {
         "pack": "npc",
         "actor": "Tyber Zann",
         "actorId": "ff05bc356760f633",
+        "embeddedItemId": "fb81c0647a96f5dd",
         "itemIndex": 22,
         "item": "Notorious",
         "from": "a7d8c4da96eacad4",
         "to": "09744041cdcc9e22",
         "toPack": "talents",
-        "disposition": "REMOVE_CONTAMINATION"
+        "disposition": "REMOVE_CONTAMINATION",
+        "snapshotRefreshed": true
       }
     ]
   },
@@ -802,32 +893,29 @@
       "packs/talent-trees-homebrew.db"
     ],
     "idsPreserved": true,
-    "systemJsonEntriesRequired": [
+    "systemJsonEntries": [
       {
         "name": "talents-homebrew",
-        "label": "SWSE Talents (Homebrew — noncanonical)",
-        "path": "packs/talents-homebrew",
-        "type": "Item"
+        "label": "Talents (Homebrew, Noncanonical)",
+        "path": "packs/talents-homebrew"
       },
       {
         "name": "talent-trees-homebrew",
-        "label": "SWSE Talent Trees (Homebrew — noncanonical)",
-        "path": "packs/talent-trees-homebrew",
-        "type": "Item"
+        "label": "Talent Trees (Homebrew, Noncanonical)",
+        "path": "packs/talent-trees-homebrew"
       }
     ],
     "note": "Not loaded by any canonical talent engine; must never be presented as official SWSE content."
   },
-  "followUps3D4": [
-    "Add the two homebrew pack entries to system.json and write packs/talents-homebrew.db and packs/talent-trees-homebrew.db.",
-    "Refresh the stale snapshot text (benefit/description) of the 34 repointed Notorious/Teräs Käsi embedded actor items from their new targets (sourceId is repointed here; text is not).",
-    "Update tests that pin removed ids (talent-phase-3c-migration-flow, talent-tree-membership-review-extras, talent-membership-and-pack-completion) and retire the review-extra exemption in the membership audit.",
-    "Retire the legacy entries in tools/fix-compendium-issues.js and tools/verify-compendium-fixes.js that key on removed ids.",
-    "The Phase 3C POST_STATE CI/verify gates compare pack blob SHAs and will read UNKNOWN_STATE after 3D is applied; add a 3D post-state gate and let the 3C gate accept the certified 3D post-state.",
-    "Add the six KEEP records (and the Ranged Disarm correction) to the canonical corpus through the Phase 2 → canonical → manifest chain (CANONICAL_CORPUS_ADDITION)."
+  "knownOpenFinding": {
+    "danglingRuntimeIds": "Five canonical records keep prerequisitesStructured ids that equal the flags.swse.id of a removed duplicate: swse.talent.notorious (Fearsome, Ruthless Negotiator, Shared Notoriety, Unsavory Reputation) and swse.talent.dastardly_attack (Weakening Strike). They are Phase 3C canonical records, so this application does not touch them (PHASE_3C_CANONICAL_RECORD_TOUCHED requires manifest authorization). The pre-existing mismatch is unchanged for canonical selections (the surviving records never carried those ids); only legacy actor items lose an id match."
+  },
+  "followUps": [
+    "Decide whether to authorize repointing the five dangling structured prerequisites (PHASE_3C_CANONICAL_RECORD_TOUCHED).",
+    "Add the six KEEP records and the Ranged Disarm correction to the canonical corpus through the Phase 2 → canonical → manifest chain (CANONICAL_CORPUS_ADDITION)."
   ],
   "verification": {
-    "passed": 29,
+    "passed": 31,
     "failed": 0,
     "results": [
       {
@@ -941,7 +1029,17 @@
         "detail": ""
       },
       {
-        "id": "repointed items change only flags.core.sourceId",
+        "id": "repointed items change only snapshot + source-identity fields (embedded _id, sort, effects, tags, local flags preserved)",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "id": "every refreshed embedded snapshot equals its surviving canonical record",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "id": "no contaminated Notorious text survives in any actor item",
         "ok": true,
         "detail": ""
       },

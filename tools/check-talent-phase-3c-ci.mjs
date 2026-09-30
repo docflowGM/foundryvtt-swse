@@ -12,7 +12,10 @@
  *     1. apply-talent-phase-3c.mjs --verify --exact   proves the state from the committed manifests; never runs the builder
  *     2. build-talent-tree-registry.mjs --check       runtime registry == fresh generation from the packs
  *     3. audit-talent-tree-membership.mjs
- *   UNKNOWN_STATE: fail (the packs are neither certified state).
+ *   POST_STATE also runs the Phase 3D pre-state battery (dry-run report freshness, disposition checker, census).
+ *   POST_3D_STATE (packs == Phase 3D certified post-state): 3D --verify --exact, registry freshness, membership audit,
+ *     homebrew-pack integrity audit.
+ *   UNKNOWN_STATE: fail (the packs are not a certified state).
  */
 import path from 'node:path';
 import { spawnSync } from 'node:child_process';
@@ -33,13 +36,22 @@ const battery = {
   POST_STATE: [
     ['Phase 3C post-state verification (exact)', 'tools/apply-talent-phase-3c.mjs', '--verify', '--exact'],
     ['runtime registry freshness', 'tools/build-talent-tree-registry.mjs', '--check'],
-    ['talent/tree membership audit', 'tools/audit-talent-tree-membership.mjs']
+    ['talent/tree membership audit', 'tools/audit-talent-tree-membership.mjs'],
+    ['Phase 3D disposition manifest', 'tools/check-talent-phase-3d-dispositions.mjs'],
+    ['Phase 3D census freshness', 'tools/build-talent-phase-3d-census.mjs', '--check'],
+    ['Phase 3D dry-run report freshness', 'tools/apply-talent-phase-3d.mjs', '--check']
+  ],
+  POST_3D_STATE: [
+    ['Phase 3D post-state verification (exact)', 'tools/apply-talent-phase-3d.mjs', '--verify', '--exact'],
+    ['runtime registry freshness', 'tools/build-talent-tree-registry.mjs', '--check'],
+    ['talent/tree membership audit', 'tools/audit-talent-tree-membership.mjs'],
+    ['homebrew talent-pack integrity audit', 'tools/audit-talent-homebrew-pack.mjs']
   ],
   UNKNOWN_STATE: []
 };
 
 if (state === 'UNKNOWN_STATE') {
-  console.error('[talent-phase-3c-ci] FAIL: packs/talents.db + packs/talent_trees.db are neither the Phase 3B certified pre-state nor the Phase 3C certified post-state.');
+  console.error('[talent-phase-3c-ci] FAIL: packs/talents.db + packs/talent_trees.db are not a certified state (Phase 3B pre-state, Phase 3C post-state or Phase 3D post-state).');
   process.exit(1);
 }
 let failed = 0;
