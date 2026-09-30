@@ -1,14 +1,14 @@
 {
   "schemaVersion": 1,
   "phase": "3E-5a",
-  "status": "DEFECT_MANIFEST_PDF_PASS_1_RECORDED",
+  "status": "DEFECT_MANIFEST_PDF_VERIFIED",
   "productionMutationPerformed": false,
   "rule": "Finite list. Scans nominate; only PDF_VERIFIED entries here can ever be applied, and only through a manifest -> dry-run -> apply -> verify unit.",
   "scansUsed": [
     "rare-token scan of canonical text (3E-2b)",
     "OCR-confusable scan (mid-word capitals, Il/1I, stray \". P\")",
     "stray-digit-in-sentence scan",
-    "symbol / stray-character / stray-punctuation scan (second wave)",
+    "symbol / stray-character / stray-punctuation scan (second wave, PDF-verified by the owner)",
     "adjacent-section bleed found only by the rendered-PDF pass"
   ],
   "scanLimits": "Heuristic scans cannot prove absence of damage. The first PDF pass showed a token scan misses whole-block defects (section bleed, caption contamination); a full-text PDF comparison of all 1,187 records is outside 3E and is the one thing that would certify text completeness.",
@@ -16,14 +16,14 @@
     "talents": "6cabbb44f894586110cf1a6525975806669bf60d"
   },
   "counts": {
-    "entries": 24,
-    "pdfVerified": 17,
-    "pdfRequired": 7,
-    "recordsVerified": 16,
-    "recordsPending": 7,
+    "entries": 28,
+    "pdfVerified": 28,
+    "pdfRequired": 0,
+    "recordsVerified": 23,
+    "recordsPending": 0,
     "noChange": 6,
     "byAction": {
-      "REPLACE_TOKEN": 19,
+      "REPLACE_TOKEN": 23,
       "REPLACE_FIELDS": 5
     }
   },
@@ -508,20 +508,24 @@
       },
       "group": "MULTI_TOKEN_OCR_DAMAGE",
       "action": "REPLACE_FIELDS",
-      "confidence": "NEEDS_PRINT",
-      "evidence": "production: \"haggling over te price @ bounty ... reroll Persuasion check\" (probably \"the price of a bounty\", \"your Persuasion check\"); derived summary carries the same damage",
+      "confidence": "CERTAIN",
+      "evidence": "production: \"haggling over te price @ bounty ... reroll Persuasion check\"; the derived summary carried the same damage",
       "fields": [
         "benefit",
         "description",
         "summary"
       ],
       "verification": {
-        "status": "PDF_REQUIRED",
-        "verifiedBy": null,
-        "basis": "owner transcription of Core p.208",
-        "printedText": null
+        "status": "PDF_VERIFIED",
+        "verifiedBy": "project owner, rendered-PDF pass",
+        "basis": "PDF transcription, Core p.208 (prerequisite \"Notorious.\" already matches)",
+        "printedText": "When haggling over the price of a bounty (see the Persuasion skill, page 71), you can reroll your Persuasion check and keep the better result."
       },
-      "after": null,
+      "after": {
+        "benefit": "When haggling over the price of a bounty (see the Persuasion skill, page 71), you can reroll your Persuasion check and keep the better result.",
+        "description": "When haggling over the price of a bounty (see the Persuasion skill, page 71), you can reroll your Persuasion check and keep the better result.",
+        "summary": "When haggling over the price of a bounty, you can reroll your Persuasion check and keep the better result."
+      },
       "before": {
         "benefit": "When haggling over te price @ bounty (see the Persuasion skill, page 71), you can reroll Persuasion check and keep the better result.",
         "description": "When haggling over te price @ bounty (see the Persuasion skill, page 71), you can reroll Persuasion check and keep the better result.",
@@ -539,16 +543,17 @@
       },
       "group": "OCR_PUNCTUATION",
       "action": "REPLACE_TOKEN",
-      "confidence": "LIKELY",
+      "confidence": "CERTAIN",
       "evidence": "\"!f\" for \"If\" with the space lost",
       "fields": [
-        "benefit"
+        "benefit",
+        "description"
       ],
       "verification": {
-        "status": "PDF_REQUIRED",
-        "verifiedBy": null,
-        "basis": "confirm printed \"normal damage. If you are adjacent\"",
-        "printedText": null
+        "status": "PDF_VERIFIED",
+        "verifiedBy": "project owner, rendered-PDF pass",
+        "basis": "PDF ruling, FUCG p.57: \"...dealing its normal damage. If you are adjacent to the turret...\"",
+        "printedText": "damage. If you"
       },
       "find": "damage.!f you",
       "replace": "damage. If you"
@@ -564,21 +569,21 @@
       },
       "group": "NUMERIC_OCR_DAMAGE",
       "action": "REPLACE_TOKEN",
-      "confidence": "NEEDS_PRINT",
-      "evidence": "\"146 x your Wisdom modifier (minimum x1)\" is implausible; likely a damage die (\"1d6 x ...\") read as digits. TXT has the same string (JATM TXT 1556).",
+      "confidence": "CERTAIN",
+      "evidence": "the damage die \"1d6\" was read as \"146\" (the TXT has the same damage, JATM TXT 1556)",
       "fields": [
         "benefit",
         "description",
         "summary"
       ],
       "verification": {
-        "status": "PDF_REQUIRED",
-        "verifiedBy": null,
-        "basis": "owner transcription of JATM p.18",
-        "printedText": null
+        "status": "PDF_VERIFIED",
+        "verifiedBy": "project owner, rendered-PDF pass",
+        "basis": "PDF ruling, JATM p.18: \"Force damage equal to 1d6 x your Wisdom modifier (minimum x1)\"",
+        "printedText": "1d6 x your Wisdom modifier"
       },
       "find": "146 x your Wisdom modifier",
-      "replace": null
+      "replace": "1d6 x your Wisdom modifier"
     },
     {
       "id": "TD-23",
@@ -591,7 +596,7 @@
       },
       "group": "STRAY_OCR_FRAGMENT",
       "action": "REPLACE_TOKEN",
-      "confidence": "LIKELY",
+      "confidence": "CERTAIN",
       "evidence": "stray opening quote before \"one\"",
       "fields": [
         "benefit",
@@ -599,10 +604,10 @@
         "summary"
       ],
       "verification": {
-        "status": "PDF_REQUIRED",
-        "verifiedBy": null,
-        "basis": "confirm printed \"return one Force power\"",
-        "printedText": null
+        "status": "PDF_VERIFIED",
+        "verifiedBy": "project owner, rendered-PDF pass",
+        "basis": "PDF ruling, JATM p.15: no opening quote",
+        "printedText": "one Force power"
       },
       "find": "‘one Force power",
       "replace": "one Force power"
@@ -618,20 +623,72 @@
       },
       "group": "BULLET_GLYPH_OCR",
       "action": "REPLACE_TOKEN",
-      "confidence": "NEEDS_PRINT",
-      "evidence": "printed bullet markers read as \"e\", \"¢\", \"©\": \"e Eradicate\", \"¢ Lockout\", \"© Untraceable\" (three markers in one record)",
+      "confidence": "CERTAIN",
+      "evidence": "printed round bullet read as the letter \"e\"",
       "fields": [
         "benefit",
         "description"
       ],
       "verification": {
-        "status": "PDF_REQUIRED",
-        "verifiedBy": null,
-        "basis": "owner confirmation of the printed bullet form (and the canonical convention for it), Scavenger's p.27",
-        "printedText": null
+        "status": "PDF_VERIFIED",
+        "verifiedBy": "project owner, rendered-PDF pass",
+        "basis": "PDF ruling, Scavenger's Guide p.26/27: ordinary printed bullet",
+        "printedText": "• Eradicate:"
       },
-      "find": "e Eradicate",
-      "replace": null
+      "find": "e Eradicate:",
+      "replace": "• Eradicate:"
+    },
+    {
+      "id": "TD-24b",
+      "productionId": "3b38783594bcebce",
+      "name": "Scomp Link Slicer",
+      "canonicalIdentity": "Force Unleashed Campaign Guide|Second-Degree Droid|Scomp Link Slicer",
+      "publication": {
+        "sourcebook": "Scavenger's Guide to Droids",
+        "page": 27
+      },
+      "group": "BULLET_GLYPH_OCR",
+      "action": "REPLACE_TOKEN",
+      "confidence": "CERTAIN",
+      "evidence": "printed round bullet read as \"¢\"",
+      "fields": [
+        "benefit",
+        "description"
+      ],
+      "verification": {
+        "status": "PDF_VERIFIED",
+        "verifiedBy": "project owner, rendered-PDF pass",
+        "basis": "PDF ruling, Scavenger's Guide p.26/27: ordinary printed bullet",
+        "printedText": "• Lockout:"
+      },
+      "find": "¢ Lockout:",
+      "replace": "• Lockout:"
+    },
+    {
+      "id": "TD-24c",
+      "productionId": "3b38783594bcebce",
+      "name": "Scomp Link Slicer",
+      "canonicalIdentity": "Force Unleashed Campaign Guide|Second-Degree Droid|Scomp Link Slicer",
+      "publication": {
+        "sourcebook": "Scavenger's Guide to Droids",
+        "page": 27
+      },
+      "group": "BULLET_GLYPH_OCR",
+      "action": "REPLACE_TOKEN",
+      "confidence": "CERTAIN",
+      "evidence": "printed round bullet read as \"©\"",
+      "fields": [
+        "benefit",
+        "description"
+      ],
+      "verification": {
+        "status": "PDF_VERIFIED",
+        "verifiedBy": "project owner, rendered-PDF pass",
+        "basis": "PDF ruling, Scavenger's Guide p.26/27: ordinary printed bullet",
+        "printedText": "• Untraceable:"
+      },
+      "find": "© Untraceable:",
+      "replace": "• Untraceable:"
     },
     {
       "id": "TD-25",
@@ -644,20 +701,72 @@
       },
       "group": "BULLET_GLYPH_OCR",
       "action": "REPLACE_TOKEN",
-      "confidence": "NEEDS_PRINT",
-      "evidence": "printed bullet markers read as \"©\", \"e\", \"e\": \"© Combat Support\", \"e Director\", \"e Instant Action\"",
+      "confidence": "CERTAIN",
+      "evidence": "printed round bullet read as \"©\"",
       "fields": [
         "benefit",
         "description"
       ],
       "verification": {
-        "status": "PDF_REQUIRED",
-        "verifiedBy": null,
-        "basis": "owner confirmation of the printed bullet form, Scavenger's p.27",
-        "printedText": null
+        "status": "PDF_VERIFIED",
+        "verifiedBy": "project owner, rendered-PDF pass",
+        "basis": "PDF ruling, Scavenger's Guide p.26/27: ordinary printed bullet",
+        "printedText": "• Combat Support:"
       },
-      "find": "© Combat Support",
-      "replace": null
+      "find": "© Combat Support:",
+      "replace": "• Combat Support:"
+    },
+    {
+      "id": "TD-25b",
+      "productionId": "0025737e7198390e",
+      "name": "Supervising Droid",
+      "canonicalIdentity": "Force Unleashed Campaign Guide|Third-Degree Droid|Supervising Droid",
+      "publication": {
+        "sourcebook": "Scavenger's Guide to Droids",
+        "page": 27
+      },
+      "group": "BULLET_GLYPH_OCR",
+      "action": "REPLACE_TOKEN",
+      "confidence": "CERTAIN",
+      "evidence": "printed round bullet read as the letter \"e\"",
+      "fields": [
+        "benefit",
+        "description"
+      ],
+      "verification": {
+        "status": "PDF_VERIFIED",
+        "verifiedBy": "project owner, rendered-PDF pass",
+        "basis": "PDF ruling, Scavenger's Guide p.26/27: ordinary printed bullet",
+        "printedText": "• Director:"
+      },
+      "find": "e Director:",
+      "replace": "• Director:"
+    },
+    {
+      "id": "TD-25c",
+      "productionId": "0025737e7198390e",
+      "name": "Supervising Droid",
+      "canonicalIdentity": "Force Unleashed Campaign Guide|Third-Degree Droid|Supervising Droid",
+      "publication": {
+        "sourcebook": "Scavenger's Guide to Droids",
+        "page": 27
+      },
+      "group": "BULLET_GLYPH_OCR",
+      "action": "REPLACE_TOKEN",
+      "confidence": "CERTAIN",
+      "evidence": "printed round bullet read as the letter \"e\"",
+      "fields": [
+        "benefit",
+        "description"
+      ],
+      "verification": {
+        "status": "PDF_VERIFIED",
+        "verifiedBy": "project owner, rendered-PDF pass",
+        "basis": "PDF ruling, Scavenger's Guide p.26/27: ordinary printed bullet",
+        "printedText": "• Instant Action:"
+      },
+      "find": "e Instant Action:",
+      "replace": "• Instant Action:"
     },
     {
       "id": "TD-26",
@@ -670,17 +779,17 @@
       },
       "group": "STRAY_OCR_FRAGMENT",
       "action": "REPLACE_TOKEN",
-      "confidence": "LIKELY",
+      "confidence": "CERTAIN",
       "evidence": "trailing stray comma after the final period",
       "fields": [
         "benefit",
         "description"
       ],
       "verification": {
-        "status": "PDF_REQUIRED",
-        "verifiedBy": null,
-        "basis": "confirm the printed sentence ends at \"taking the better result.\"",
-        "printedText": null
+        "status": "PDF_VERIFIED",
+        "verifiedBy": "project owner, rendered-PDF pass",
+        "basis": "PDF ruling, Legacy p.31: the sentence ends at \"taking the better result.\"",
+        "printedText": "better result."
       },
       "find": "better result. ,",
       "replace": "better result."

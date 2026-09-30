@@ -6,16 +6,16 @@
   "source": "data/audits/talent-phase-3e5-text-defect-manifest.json (PDF_VERIFIED entries only)",
   "counts": {
     "canonicalTalents": 1187,
-    "recordsChanged": 16,
-    "leafChangesTotal": 32,
+    "recordsChanged": 23,
+    "leafChangesTotal": 49,
     "changedOutsideTargets": 0,
-    "pendingSecondWaveRecords": 7
+    "pendingSecondWaveRecords": 0
   },
   "preState": {
     "talents": "6cabbb44f894586110cf1a6525975806669bf60d"
   },
   "postState": {
-    "talents": "1896a96c011359fdf9a3a312bf06a8aa8adf2234"
+    "talents": "5093cc327cd2ab77ecea10bcf8111e0fa9e909aa"
   },
   "untouchedFiles": {
     "packs/talent_trees.db": "5cb2acafe549e1b2a38f69b644f2eb7105316c5c",
@@ -32,7 +32,7 @@
     "data/class-archetypes.json": "76ca97d4b1a8aa6b631ba1bfe790e5e189f6d9e6",
     "system.json": "7c5640b8d4c10da960356703b31d33dd16c19fbb"
   },
-  "othersFingerprint": "0bece17f3a571bd5",
+  "othersFingerprint": "5a6e3de4f56b7a87",
   "records": [
     {
       "id": "aeb8d3e495605f71",
@@ -45,6 +45,7 @@
         "description",
         "summary"
       ],
+      "restFingerprint": "f67d202f7fd0a286",
       "changes": [
         {
           "leaf": "system.benefit",
@@ -72,6 +73,7 @@
       "fieldsTouched": [
         "prerequisites"
       ],
+      "restFingerprint": "8dfc5303cd9c17da",
       "changes": [
         {
           "leaf": "system.prerequisites",
@@ -90,6 +92,7 @@
         "benefit",
         "description"
       ],
+      "restFingerprint": "c89aa0f74c5639a9",
       "changes": [
         {
           "leaf": "system.benefit",
@@ -115,6 +118,7 @@
         "description",
         "summary"
       ],
+      "restFingerprint": "2f9e2b356e65cfb5",
       "changes": [
         {
           "leaf": "system.benefit",
@@ -143,6 +147,7 @@
         "benefit",
         "description"
       ],
+      "restFingerprint": "1c36fbdad6c01195",
       "changes": [
         {
           "leaf": "system.benefit",
@@ -167,6 +172,7 @@
         "description",
         "summary"
       ],
+      "restFingerprint": "2908e75e9dd05660",
       "changes": [
         {
           "leaf": "system.benefit",
@@ -186,6 +192,36 @@
       ]
     },
     {
+      "id": "ced81064716debaa",
+      "name": "Influence Savant",
+      "entries": [
+        "TD-23"
+      ],
+      "fieldsTouched": [
+        "benefit",
+        "description",
+        "summary"
+      ],
+      "restFingerprint": "300d58db48f45711",
+      "changes": [
+        {
+          "leaf": "system.benefit",
+          "before": "Once per encounter as a swift action, you can return ‘one Force power with the [mind-affecting] descriptor to your Force suite without spending a Force Point. You can select this talent multiple times. Each time you select it, you can use it one additional time per encounter.",
+          "after": "Once per encounter as a swift action, you can return one Force power with the [mind-affecting] descriptor to your Force suite without spending a Force Point. You can select this talent multiple times. Each time you select it, you can use it one additional time per encounter."
+        },
+        {
+          "leaf": "system.description",
+          "before": "Once per encounter as a swift action, you can return ‘one Force power with the [mind-affecting] descriptor to your Force suite without spending a Force Point. You can select this talent multiple times. Each time you select it, you can use it one additional time per encounter.",
+          "after": "Once per encounter as a swift action, you can return one Force power with the [mind-affecting] descriptor to your Force suite without spending a Force Point. You can select this talent multiple times. Each time you select it, you can use it one additional time per encounter."
+        },
+        {
+          "leaf": "system.summary",
+          "before": "Once per encounter as a swift action, you can return ‘one Force power with the [mind-affecting] descriptor to your Force suite without spending a Force Point.",
+          "after": "Once per encounter as a swift action, you can return one Force power with the [mind-affecting] descriptor to your Force suite without spending a Force Point."
+        }
+      ]
+    },
+    {
       "id": "471f4294820ce5ec",
       "name": "Influential Friends",
       "entries": [
@@ -195,6 +231,7 @@
         "benefit",
         "description"
       ],
+      "restFingerprint": "38fe1e146d38a61f",
       "changes": [
         {
           "leaf": "system.benefit",
@@ -218,6 +255,7 @@
         "benefit",
         "description"
       ],
+      "restFingerprint": "5f72cdfcf974cd12",
       "changes": [
         {
           "leaf": "system.benefit",
@@ -241,6 +279,7 @@
         "benefit",
         "description"
       ],
+      "restFingerprint": "c85974f0c69bd353",
       "changes": [
         {
           "leaf": "system.benefit",
@@ -263,11 +302,42 @@
       "fieldsTouched": [
         "prerequisites"
       ],
+      "restFingerprint": "df0611a6b89880f8",
       "changes": [
         {
           "leaf": "system.prerequisites",
           "before": "Enpower Weapon",
           "after": "Empower Weapon"
+        }
+      ]
+    },
+    {
+      "id": "202a117b1b203951",
+      "name": "Psychic Defenses",
+      "entries": [
+        "TD-22"
+      ],
+      "fieldsTouched": [
+        "benefit",
+        "description",
+        "summary"
+      ],
+      "restFingerprint": "d757c51589aad937",
+      "changes": [
+        {
+          "leaf": "system.benefit",
+          "before": "Whenever another creature targets you with a Force power with the [mind-affecting] descriptor, it automatically takes Force damage equal to 146 x your Wisdom modifier (minimum x1).",
+          "after": "Whenever another creature targets you with a Force power with the [mind-affecting] descriptor, it automatically takes Force damage equal to 1d6 x your Wisdom modifier (minimum x1)."
+        },
+        {
+          "leaf": "system.description.value",
+          "before": "Whenever another creature targets you with a Force power with the [mind-affecting] descriptor, it automatically takes Force damage equal to 146 x your Wisdom modifier (minimum x1).",
+          "after": "Whenever another creature targets you with a Force power with the [mind-affecting] descriptor, it automatically takes Force damage equal to 1d6 x your Wisdom modifier (minimum x1)."
+        },
+        {
+          "leaf": "system.summary",
+          "before": "Whenever another creature targets you with a Force power with the [mind-affecting] descriptor, it automatically takes Force damage equal to 146 x your Wisdom modifier (minimum x1).",
+          "after": "Whenever another creature targets you with a Force power with the [mind-affecting] descriptor, it automatically takes Force damage equal to 1d6 x your Wisdom modifier (minimum x1)."
         }
       ]
     },
@@ -280,11 +350,68 @@
       "fieldsTouched": [
         "prerequisites"
       ],
+      "restFingerprint": "90f80c1551807863",
       "changes": [
         {
           "leaf": "system.prerequisites",
           "before": "Hunter's Mark, Hunter's Target. P",
           "after": "Hunter's Mark, Hunter's Target."
+        }
+      ]
+    },
+    {
+      "id": "8298e12805291c78",
+      "name": "Ruthless Negotiator",
+      "entries": [
+        "TD-20"
+      ],
+      "fieldsTouched": [
+        "benefit",
+        "description",
+        "summary"
+      ],
+      "restFingerprint": "1430a5d2cf01a478",
+      "changes": [
+        {
+          "leaf": "system.benefit",
+          "before": "When haggling over te price @ bounty (see the Persuasion skill, page 71), you can reroll Persuasion check and keep the better result.",
+          "after": "When haggling over the price of a bounty (see the Persuasion skill, page 71), you can reroll your Persuasion check and keep the better result."
+        },
+        {
+          "leaf": "system.description.value",
+          "before": "When haggling over te price @ bounty (see the Persuasion skill, page 71), you can reroll Persuasion check and keep the better result.",
+          "after": "When haggling over the price of a bounty (see the Persuasion skill, page 71), you can reroll your Persuasion check and keep the better result."
+        },
+        {
+          "leaf": "system.summary",
+          "before": "When haggling over te price @ bounty , you can reroll Persuasion check and keep the better result.",
+          "after": "When haggling over the price of a bounty, you can reroll your Persuasion check and keep the better result."
+        }
+      ]
+    },
+    {
+      "id": "3b38783594bcebce",
+      "name": "Scomp Link Slicer",
+      "entries": [
+        "TD-24",
+        "TD-24b",
+        "TD-24c"
+      ],
+      "fieldsTouched": [
+        "benefit",
+        "description"
+      ],
+      "restFingerprint": "31ab8652c9f9dde0",
+      "changes": [
+        {
+          "leaf": "system.benefit",
+          "before": "Your inherent speed and advanced skill reduce the danger of slicing computer systems. You must be physically linked to the system you are slicing. You can use each of the following actions once per encounter: e Eradicate: You can use Disable or Erase Program on a computer that is friendly or helpful toward you. With this talent, disabling or erasing a program takes 5 minutes and requires a DC 15 Use Computer check (see page 76 of the Saga Edition core rulebook). ¢ Lockout: If you succeed on an opposed Use Computer check when you Issue a Routine Command to counteract another programmer's actions, you automatically lock the other programmer out of the system. He or she must succeed in an opposed Use Computer check against you to regain access to the system (see page 76 of the Saga Edition core rulebook). You resist the attempt as a reaction. © Untraceable: As a reaction, you automatically keep a hostile computer from tracing your location if you fail a Use Computer check (see page 76 of the Saga Edition core rulebook) by 10 or less.",
+          "after": "Your inherent speed and advanced skill reduce the danger of slicing computer systems. You must be physically linked to the system you are slicing. You can use each of the following actions once per encounter: • Eradicate: You can use Disable or Erase Program on a computer that is friendly or helpful toward you. With this talent, disabling or erasing a program takes 5 minutes and requires a DC 15 Use Computer check (see page 76 of the Saga Edition core rulebook). • Lockout: If you succeed on an opposed Use Computer check when you Issue a Routine Command to counteract another programmer's actions, you automatically lock the other programmer out of the system. He or she must succeed in an opposed Use Computer check against you to regain access to the system (see page 76 of the Saga Edition core rulebook). You resist the attempt as a reaction. • Untraceable: As a reaction, you automatically keep a hostile computer from tracing your location if you fail a Use Computer check (see page 76 of the Saga Edition core rulebook) by 10 or less."
+        },
+        {
+          "leaf": "system.description.value",
+          "before": "Your inherent speed and advanced skill reduce the danger of slicing computer systems. You must be physically linked to the system you are slicing. You can use each of the following actions once per encounter: e Eradicate: You can use Disable or Erase Program on a computer that is friendly or helpful toward you. With this talent, disabling or erasing a program takes 5 minutes and requires a DC 15 Use Computer check (see page 76 of the Saga Edition core rulebook). ¢ Lockout: If you succeed on an opposed Use Computer check when you Issue a Routine Command to counteract another programmer's actions, you automatically lock the other programmer out of the system. He or she must succeed in an opposed Use Computer check against you to regain access to the system (see page 76 of the Saga Edition core rulebook). You resist the attempt as a reaction. © Untraceable: As a reaction, you automatically keep a hostile computer from tracing your location if you fail a Use Computer check (see page 76 of the Saga Edition core rulebook) by 10 or less.",
+          "after": "Your inherent speed and advanced skill reduce the danger of slicing computer systems. You must be physically linked to the system you are slicing. You can use each of the following actions once per encounter: • Eradicate: You can use Disable or Erase Program on a computer that is friendly or helpful toward you. With this talent, disabling or erasing a program takes 5 minutes and requires a DC 15 Use Computer check (see page 76 of the Saga Edition core rulebook). • Lockout: If you succeed on an opposed Use Computer check when you Issue a Routine Command to counteract another programmer's actions, you automatically lock the other programmer out of the system. He or she must succeed in an opposed Use Computer check against you to regain access to the system (see page 76 of the Saga Edition core rulebook). You resist the attempt as a reaction. • Untraceable: As a reaction, you automatically keep a hostile computer from tracing your location if you fail a Use Computer check (see page 76 of the Saga Edition core rulebook) by 10 or less."
         }
       ]
     },
@@ -299,6 +426,7 @@
         "description",
         "summary"
       ],
+      "restFingerprint": "63024f1649e65158",
       "changes": [
         {
           "leaf": "system.benefit",
@@ -327,6 +455,7 @@
         "benefit",
         "description"
       ],
+      "restFingerprint": "95c220163cfb2096",
       "changes": [
         {
           "leaf": "system.benefit",
@@ -349,11 +478,86 @@
       "fieldsTouched": [
         "prerequisites"
       ],
+      "restFingerprint": "039e5e6deb00bf05",
       "changes": [
         {
           "leaf": "system.prerequisites",
           "before": "Shift Defense 1, Shift Defense Il",
           "after": ""
+        }
+      ]
+    },
+    {
+      "id": "5f92ad8d44c9055c",
+      "name": "Squad Brutality",
+      "entries": [
+        "TD-26"
+      ],
+      "fieldsTouched": [
+        "benefit",
+        "description"
+      ],
+      "restFingerprint": "d0c616bf24d9df9b",
+      "changes": [
+        {
+          "leaf": "system.benefit",
+          "before": "When you succeed on a melee attack against a target that has one or more of your allies adjacent to it, you may reroll your damage roll, taking the better result. ,",
+          "after": "When you succeed on a melee attack against a target that has one or more of your allies adjacent to it, you may reroll your damage roll, taking the better result."
+        },
+        {
+          "leaf": "system.description.value",
+          "before": "When you succeed on a melee attack against a target that has one or more of your allies adjacent to it, you may reroll your damage roll, taking the better result. ,",
+          "after": "When you succeed on a melee attack against a target that has one or more of your allies adjacent to it, you may reroll your damage roll, taking the better result."
+        }
+      ]
+    },
+    {
+      "id": "0025737e7198390e",
+      "name": "Supervising Droid",
+      "entries": [
+        "TD-25",
+        "TD-25b",
+        "TD-25c"
+      ],
+      "fieldsTouched": [
+        "benefit",
+        "description"
+      ],
+      "restFingerprint": "c4077467812915bc",
+      "changes": [
+        {
+          "leaf": "system.benefit",
+          "before": "You are programmed to oversee other droids. You can use each of the following actions once per encounter: © Combat Support: As a standard action, you automatically aid another on an allied droid's attack roll, provided you are capable of using the aid another action to assist that ally. If you also have Weapon Focus with this weapon, you increase the bonus provided by the aid another action from +2 to +3. e Director: As a standard action, you automatically aid another droid with a skill you are trained in. If you also have Skill Focus in the skill, you increase the aid another bonus from +2 to +5. e Instant Action: As a swift action, you grant one ally a swift action that it can use immediately as a free action.",
+          "after": "You are programmed to oversee other droids. You can use each of the following actions once per encounter: • Combat Support: As a standard action, you automatically aid another on an allied droid's attack roll, provided you are capable of using the aid another action to assist that ally. If you also have Weapon Focus with this weapon, you increase the bonus provided by the aid another action from +2 to +3. • Director: As a standard action, you automatically aid another droid with a skill you are trained in. If you also have Skill Focus in the skill, you increase the aid another bonus from +2 to +5. • Instant Action: As a swift action, you grant one ally a swift action that it can use immediately as a free action."
+        },
+        {
+          "leaf": "system.description.value",
+          "before": "You are programmed to oversee other droids. You can use each of the following actions once per encounter: © Combat Support: As a standard action, you automatically aid another on an allied droid's attack roll, provided you are capable of using the aid another action to assist that ally. If you also have Weapon Focus with this weapon, you increase the bonus provided by the aid another action from +2 to +3. e Director: As a standard action, you automatically aid another droid with a skill you are trained in. If you also have Skill Focus in the skill, you increase the aid another bonus from +2 to +5. e Instant Action: As a swift action, you grant one ally a swift action that it can use immediately as a free action.",
+          "after": "You are programmed to oversee other droids. You can use each of the following actions once per encounter: • Combat Support: As a standard action, you automatically aid another on an allied droid's attack roll, provided you are capable of using the aid another action to assist that ally. If you also have Weapon Focus with this weapon, you increase the bonus provided by the aid another action from +2 to +3. • Director: As a standard action, you automatically aid another droid with a skill you are trained in. If you also have Skill Focus in the skill, you increase the aid another bonus from +2 to +5. • Instant Action: As a swift action, you grant one ally a swift action that it can use immediately as a free action."
+        }
+      ]
+    },
+    {
+      "id": "17ec736c3984fe43",
+      "name": "Turret Self-Destruct",
+      "entries": [
+        "TD-21"
+      ],
+      "fieldsTouched": [
+        "benefit",
+        "description"
+      ],
+      "restFingerprint": "705be64baa890d49",
+      "changes": [
+        {
+          "leaf": "system.benefit",
+          "before": "Your turret self-destructs automatically when it reaches 0 hit points. It explodes in a 2-square radius, dealing its normal damage.!f you are adjacent to the turret, you can disable this feature as a reaction.",
+          "after": "Your turret self-destructs automatically when it reaches 0 hit points. It explodes in a 2-square radius, dealing its normal damage. If you are adjacent to the turret, you can disable this feature as a reaction."
+        },
+        {
+          "leaf": "system.description.value",
+          "before": "Your turret self-destructs automatically when it reaches 0 hit points. It explodes in a 2-square radius, dealing its normal damage.!f you are adjacent to the turret, you can disable this feature as a reaction.",
+          "after": "Your turret self-destructs automatically when it reaches 0 hit points. It explodes in a 2-square radius, dealing its normal damage. If you are adjacent to the turret, you can disable this feature as a reaction."
         }
       ]
     },
@@ -367,6 +571,7 @@
         "benefit",
         "description"
       ],
+      "restFingerprint": "8a7ee39b08b630bb",
       "changes": [
         {
           "leaf": "system.benefit",
@@ -390,6 +595,7 @@
         "benefit",
         "description"
       ],
+      "restFingerprint": "f591ef023ca1b635",
       "changes": [
         {
           "leaf": "system.benefit",
@@ -406,7 +612,7 @@
   ],
   "embeddedActorItems": {
     "policy": "NOT MODIFIED (reported only); see the 3E-4 note: embedded items are independent snapshots.",
-    "total": 104,
+    "total": 110,
     "byItemName": {
       "Hunter's Mark": {
         "items": 42,
@@ -435,6 +641,14 @@
       "Difficult to Sense": {
         "items": 2,
         "verbatimCopyOfPreRepair": 0
+      },
+      "Influence Savant": {
+        "items": 2,
+        "verbatimCopyOfPreRepair": 0
+      },
+      "Squad Brutality": {
+        "items": 4,
+        "verbatimCopyOfPreRepair": 0
       }
     }
   },
@@ -451,7 +665,7 @@
         "detail": ""
       },
       {
-        "id": "target records = the PDF-verified records (16)",
+        "id": "target records = the PDF-verified records (23)",
         "ok": true,
         "detail": ""
       },
@@ -501,12 +715,22 @@
         "detail": ""
       },
       {
+        "id": "the six PDF-confirmed printed forms are unchanged (record byte-identical, token still present)",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "id": "TEXT_DRIFT is zero against the corrected authority projection (and every blocking finding stays zero)",
+        "ok": true,
+        "detail": ""
+      },
+      {
         "id": "second run is a zero diff",
         "ok": true,
         "detail": ""
       },
       {
-        "id": "serialization is surgical: only 16 lines of packs/talents.db change",
+        "id": "serialization is surgical: only 23 lines of packs/talents.db change",
         "ok": true,
         "detail": ""
       }

@@ -140,17 +140,21 @@ export function buildReport(root = ROOT) {
 }
 
 export function detect3E4State(root = ROOT) {
+  if (isLater(root)) return 'POST_3E5';
   const sha = gitBlobSha(readText(TALENTS, root));
   if (!fs.existsSync(path.join(root, REPORT_PATH))) return 'PRE_3E4';
   const r = readJson(REPORT_PATH, root);
   return r.postState.talents === sha ? 'POST_3E4' : r.preState.talents === sha ? 'PRE_3E4' : 'UNKNOWN';
 }
 
+// `later`: a certified state after 3E-4 (3E-5 repaired other records). Only the seven records and every 3E-4 invariant that 3E-5 cannot touch are checked.
+const isLater = root => { const p = path.join(root, 'data/audits/talent-phase-3e5-dry-run-report.json'); return fs.existsSync(p) && readJson('data/audits/talent-phase-3e5-dry-run-report.json', root).postState.talents === gitBlobSha(readText(TALENTS, root)); };
 export function verifyApplied(root = ROOT, { exact = false } = {}) {
+  const later = isLater(root);
   const res = [], check = (id, ok, detail = '') => res.push({ id, ok: !!ok, detail });
   const manifest = readJson(MANIFEST_PATH, root), report = readJson(REPORT_PATH, root), addendum = readJson(ADDENDUM_PATH, root);
   const talentsText = readText(TALENTS, root), talents = parse(talentsText), by = new Map(talents.map(t => [t._id, t])), ids = new Set(manifest.records.map(r => r.id));
-  check('packs/talents.db is the certified Phase 3E-4 post-state', detect3E4State(root) === 'POST_3E4');
+  if (!later) check('packs/talents.db is the certified Phase 3E-4 post-state', detect3E4State(root) === 'POST_3E4');
   check('canonical talent count 1,187', talents.length === 1187);
   for (const r of manifest.records) {
     const t = by.get(r.id);
@@ -159,16 +163,16 @@ export function verifyApplied(root = ROOT, { exact = false } = {}) {
     check(`${r.name}: rest of record untouched`, !!t && fingerprint(JSON.parse(JSON.stringify(n))) === r.restFingerprint);
   }
   check('addendum authority: source/page/prerequisites/benefit/description.value all equal', addendum.additions.every(a => { const s = by.get(a.production.id)?.system; return s && s.source === a.publication.sourcebook && s.page === a.publication.page && (s.prerequisites ?? '') === a.prerequisites && s.benefit === a.rulesText && s.description?.value === a.rulesText; }));
-  check('the other 1,180 records are unchanged', sortedFp(talents.filter(t => !ids.has(t._id))) === report.othersFingerprint);
-  for (const [rel, sha] of Object.entries(report.untouchedFiles)) check(`untouched: ${rel}`, fs.existsSync(path.join(root, rel)) && gitBlobSha(readText(rel, root)) === sha);
-  if (exact) check('packs/talents.db equals the certified post-state blob', gitBlobSha(talentsText) === report.postState.talents);
+  if (!later) check('the other 1,180 records are unchanged', sortedFp(talents.filter(t => !ids.has(t._id))) === report.othersFingerprint);
+  for (const [rel, sha] of Object.entries(report.untouchedFiles)) if (!later || rel !== 'packs/talents.db') check(`untouched: ${rel}`, fs.existsSync(path.join(root, rel)) && gitBlobSha(readText(rel, root)) === sha);
+  if (exact && !later) check('packs/talents.db equals the certified post-state blob', gitBlobSha(talentsText) === report.postState.talents);
   return res;
 }
 
 const printResults = res => { for (const r of res) console.log(`${r.ok ? 'PASS' : 'FAIL'}  ${r.id}${r.ok || !r.detail ? '' : '  [' + r.detail + ']'}`); };
 
 export function applyProduction(root = ROOT) {
-  invariant(detect3E4State(root) !== 'POST_3E4', 'REFUSED: already applied (use --verify --exact)');
+  invariant(!['POST_3E4', 'POST_3E5'].includes(detect3E4State(root)), 'REFUSED: already applied (use --verify --exact)');
   invariant(fs.existsSync(path.join(root, MANIFEST_PATH)) && fs.existsSync(path.join(root, REPORT_PATH)), 'REFUSED: manifest and dry-run report must be committed first');
   const committed = readJson(REPORT_PATH, root);
   invariant(committed.status === 'DRY_RUN_CERTIFIED', 'REFUSED: committed dry-run report is not certified');
@@ -183,7 +187,7 @@ export function main(argv = process.argv.slice(2), root = ROOT) {
   const has = f => argv.includes(f);
   const state = detect3E4State(root);
   if (has('--status')) { console.log(ERR + state); return 0; }
-  if (has('--verify') || (has('--check') && state === 'POST_3E4')) {
+  if (has('--verify') || (has('--check') && (state === 'POST_3E4' || state === 'POST_3E5'))) {
     const res = verifyApplied(root, { exact: has('--exact') }); printResults(res);
     const bad = res.filter(r => !r.ok).length; console.log(`\n${ERR}verify ${bad ? 'FAIL' : 'PASS'} (${res.length} checks; no files written)`); return bad ? 1 : 0;
   }

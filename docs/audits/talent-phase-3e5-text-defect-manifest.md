@@ -4,7 +4,7 @@ Read-only. Generator: `node tools/build-talent-phase-3e5-defect-manifest.mjs` ·
 
 Finite list. Scans nominate; only PDF_VERIFIED entries here can ever be applied, and only through a manifest -> dry-run -> apply -> verify unit.
 
-**17 PDF-verified entries on 16 records** (REPLACE_TOKEN 19, REPLACE_FIELDS 5 overall); **7 second-wave nominations on 7 records await the PDF**; 6 scan candidates are PDF-confirmed as printed (no change).
+**28 PDF-verified entries on 23 records** (REPLACE_TOKEN 23, REPLACE_FIELDS 5 overall); no nomination is outstanding; 6 scan candidates are PDF-confirmed as printed (no change).
 
 ## PDF-verified corrections (eligible for the 3E-5 dry-run)
 
@@ -27,6 +27,17 @@ Finite list. Scans nominate; only PDF_VERIFIED entries here can ever be applied,
 | TD-15 | Share Talent (Jedi Academy Training Manual p.20) | REPLACE_FIELDS | benefit, description | MULTI_TOKEN_OCR_DAMAGE |
 | TD-16 | Vital Encouragement (Jedi Academy Training Manual p.17) | REPLACE_FIELDS | benefit, description | ADJACENT_SECTION_OCR_BLEED |
 | TD-19 | Seyugi Cyclone (Jedi Academy Training Manual p.83) | REPLACE_TOKEN | benefit, description, summary | OCR_LETTER_DROP |
+| TD-20 | Ruthless Negotiator (Saga Edition Core Rulebook p.208) | REPLACE_FIELDS | benefit, description, summary | MULTI_TOKEN_OCR_DAMAGE |
+| TD-21 | Turret Self-Destruct (Force Unleashed Campaign Guide p.57) | REPLACE_TOKEN | benefit, description | OCR_PUNCTUATION |
+| TD-22 | Psychic Defenses (Jedi Academy Training Manual p.18) | REPLACE_TOKEN | benefit, description, summary | NUMERIC_OCR_DAMAGE |
+| TD-23 | Influence Savant (Jedi Academy Training Manual p.15) | REPLACE_TOKEN | benefit, description, summary | STRAY_OCR_FRAGMENT |
+| TD-24 | Scomp Link Slicer (Scavenger's Guide to Droids p.27) | REPLACE_TOKEN | benefit, description | BULLET_GLYPH_OCR |
+| TD-24b | Scomp Link Slicer (Scavenger's Guide to Droids p.27) | REPLACE_TOKEN | benefit, description | BULLET_GLYPH_OCR |
+| TD-24c | Scomp Link Slicer (Scavenger's Guide to Droids p.27) | REPLACE_TOKEN | benefit, description | BULLET_GLYPH_OCR |
+| TD-25 | Supervising Droid (Scavenger's Guide to Droids p.27) | REPLACE_TOKEN | benefit, description | BULLET_GLYPH_OCR |
+| TD-25b | Supervising Droid (Scavenger's Guide to Droids p.27) | REPLACE_TOKEN | benefit, description | BULLET_GLYPH_OCR |
+| TD-25c | Supervising Droid (Scavenger's Guide to Droids p.27) | REPLACE_TOKEN | benefit, description | BULLET_GLYPH_OCR |
+| TD-26 | Squad Brutality (Legacy Era Campaign Guide p.31) | REPLACE_TOKEN | benefit, description | STRAY_OCR_FRAGMENT |
 
 - **TD-01 Cover Fire:** the prerequisite is the Clone Wars talent "Battle Analysis" (CWCG TXT 14172/15054/18359) — PDF ruling: confirmed.
 - **TD-02 Primitive Block:** the prerequisite is the Core talent "Empower Weapon" (Core TXT 20357) — PDF ruling: confirmed.
@@ -45,26 +56,23 @@ Finite list. Scans nominate; only PDF_VERIFIED entries here can ever be applied,
 - **TD-15 Share Talent:** JATM p.20: "Lightsa-ber", "Duel-ist", comma where a period belongs, illustration caption "A Twi'Ler Jeo! INsTRUCTOR.", "one-haIf", paragraphs flattened. The prerequisite already matches print apart from its terminal period and is left unchanged. — PDF transcription, JATM p.20.
 - **TD-16 Vital Encouragement:** JATM p.17: "New Sense Talents The following talents belong to the Sense talent tree..." is the next section; "one-haIf" also repaired — PDF transcription, JATM p.17.
 - **TD-19 Seyugi Cyclone:** the TXT "posess" is itself OCR damage (promoted from the former NC-01) — PDF ruling, JATM p.83: "...even if you do not possess the Whirlwind Attack feat.".
+- **TD-20 Ruthless Negotiator:** production: "haggling over te price @ bounty ... reroll Persuasion check"; the derived summary carried the same damage — PDF transcription, Core p.208 (prerequisite "Notorious." already matches).
+- **TD-21 Turret Self-Destruct:** "!f" for "If" with the space lost — PDF ruling, FUCG p.57: "...dealing its normal damage. If you are adjacent to the turret...".
+- **TD-22 Psychic Defenses:** the damage die "1d6" was read as "146" (the TXT has the same damage, JATM TXT 1556) — PDF ruling, JATM p.18: "Force damage equal to 1d6 x your Wisdom modifier (minimum x1)".
+- **TD-23 Influence Savant:** stray opening quote before "one" — PDF ruling, JATM p.15: no opening quote.
+- **TD-24 Scomp Link Slicer:** printed round bullet read as the letter "e" — PDF ruling, Scavenger's Guide p.26/27: ordinary printed bullet.
+- **TD-24b Scomp Link Slicer:** printed round bullet read as "¢" — PDF ruling, Scavenger's Guide p.26/27: ordinary printed bullet.
+- **TD-24c Scomp Link Slicer:** printed round bullet read as "©" — PDF ruling, Scavenger's Guide p.26/27: ordinary printed bullet.
+- **TD-25 Supervising Droid:** printed round bullet read as "©" — PDF ruling, Scavenger's Guide p.26/27: ordinary printed bullet.
+- **TD-25b Supervising Droid:** printed round bullet read as the letter "e" — PDF ruling, Scavenger's Guide p.26/27: ordinary printed bullet.
+- **TD-25c Supervising Droid:** printed round bullet read as the letter "e" — PDF ruling, Scavenger's Guide p.26/27: ordinary printed bullet.
+- **TD-26 Squad Brutality:** trailing stray comma after the final period — PDF ruling, Legacy p.31: the sentence ends at "taking the better result.".
 
-## Second-wave nominations (PDF_REQUIRED — never applied unverified)
+## Outstanding nominations (PDF_REQUIRED — never applied unverified)
 
 | ID | Record | Field(s) | Production has | Proposed | Conf. |
 |---|---|---|---|---|---|
-| TD-20 | Ruthless Negotiator (Saga Edition Core Rulebook p.208) | benefit, description, summary | `When haggling over te price @ bounty (see the Persuasion skill, page 7` | **owner transcription** | NEEDS_PRINT |
-| TD-21 | Turret Self-Destruct (Force Unleashed Campaign Guide p.57) | benefit | `damage.!f you` | `damage. If you` | LIKELY |
-| TD-22 | Psychic Defenses (Jedi Academy Training Manual p.18) | benefit, description, summary | `146 x your Wisdom modifier` | **owner transcription** | NEEDS_PRINT |
-| TD-23 | Influence Savant (Jedi Academy Training Manual p.15) | benefit, description, summary | `‘one Force power` | `one Force power` | LIKELY |
-| TD-24 | Scomp Link Slicer (Scavenger's Guide to Droids p.27) | benefit, description | `e Eradicate` | **owner transcription** | NEEDS_PRINT |
-| TD-25 | Supervising Droid (Scavenger's Guide to Droids p.27) | benefit, description | `© Combat Support` | **owner transcription** | NEEDS_PRINT |
-| TD-26 | Squad Brutality (Legacy Era Campaign Guide p.31) | benefit, description | `better result. ,` | `better result.` | LIKELY |
 
-- **TD-20 Ruthless Negotiator:** production: "haggling over te price @ bounty ... reroll Persuasion check" (probably "the price of a bounty", "your Persuasion check"); derived summary carries the same damage
-- **TD-21 Turret Self-Destruct:** "!f" for "If" with the space lost
-- **TD-22 Psychic Defenses:** "146 x your Wisdom modifier (minimum x1)" is implausible; likely a damage die ("1d6 x ...") read as digits. TXT has the same string (JATM TXT 1556).
-- **TD-23 Influence Savant:** stray opening quote before "one"
-- **TD-24 Scomp Link Slicer:** printed bullet markers read as "e", "¢", "©": "e Eradicate", "¢ Lockout", "© Untraceable" (three markers in one record)
-- **TD-25 Supervising Droid:** printed bullet markers read as "©", "e", "e": "© Combat Support", "e Director", "e Instant Action"
-- **TD-26 Squad Brutality:** trailing stray comma after the final period
 
 ## PDF-confirmed as printed (no change)
 

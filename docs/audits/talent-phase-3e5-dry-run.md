@@ -1,6 +1,6 @@
 # Phase 3E-5b — text-defect repair dry-run
 
-Status: **DRY_RUN_CERTIFIED** · 16 records · 32 leaf changes · 0 changes outside the targets · 7 second-wave records left untouched. **No pack has been written.**
+Status: **DRY_RUN_CERTIFIED** · 23 records · 49 leaf changes · 0 changes outside the targets · 0 second-wave records left untouched. **No pack has been written.**
 
 Regenerate: `node tools/apply-talent-phase-3e5.mjs --report`. Only PDF_VERIFIED manifest entries are projected.
 
@@ -8,7 +8,7 @@ Regenerate: `node tools/apply-talent-phase-3e5.mjs --report`. Only PDF_VERIFIED 
 
 - PASS manifest builds (every entry locates exactly once)
 - PASS every PDF_VERIFIED edit applies cleanly (exact pre-image)
-- PASS target records = the PDF-verified records (16)
+- PASS target records = the PDF-verified records (23)
 - PASS zero changes outside the target records
 - PASS only text leaves change (prerequisites, benefit, description, summary) and only the fields each entry lists
 - PASS every target record actually changes
@@ -18,8 +18,10 @@ Regenerate: `node tools/apply-talent-phase-3e5.mjs --report`. Only PDF_VERIFIED 
 - PASS Share Talent prerequisite left as certified (print differs only by its terminal period)
 - PASS no known defect string survives anywhere in the canonical pack after the repair
 - PASS second-wave (PDF_REQUIRED) records are untouched by this repair
+- PASS the six PDF-confirmed printed forms are unchanged (record byte-identical, token still present)
+- PASS TEXT_DRIFT is zero against the corrected authority projection (and every blocking finding stays zero)
 - PASS second run is a zero diff
-- PASS serialization is surgical: only 16 lines of packs/talents.db change
+- PASS serialization is surgical: only 23 lines of packs/talents.db change
 
 ## Exact mutation set
 
@@ -67,6 +69,14 @@ Regenerate: `node tools/apply-talent-phase-3e5.mjs --report`. Only PDF_VERIFIED 
 | `system.description.value` | If you aim before making [ranged attack (see Aim, page 154), you 4 target -1 step along the condition track if the ateam] hits (see Conditions, page 14… | If you aim before making [a ranged attack (see Aim, page 154), you move the target -1 step along the condition track if the attack] hits (see Conditions, page 14… |
 | `system.summary` | If you aim before making [ranged attack , you 4 target -1 step along the condition track if the ateam hits ]. | If you aim before making [a ranged attack, you move the target -1 step along the condition track if the attack hits]. |
 
+### Influence Savant (`ced81064716debaa`) — TD-23
+
+| Leaf | Before | After |
+|---|---|---|
+| `system.benefit` | … swift action, you can return [‘]one Force power with the [mind… | … swift action, you can return []one Force power with the [mind… |
+| `system.description` | … swift action, you can return [‘]one Force power with the [mind… | … swift action, you can return []one Force power with the [mind… |
+| `system.summary` | … swift action, you can return [‘]one Force power with the [mind… | … swift action, you can return []one Force power with the [mind… |
+
 ### Influential Friends (`471f4294820ce5ec`) — TD-12
 
 | Leaf | Before | After |
@@ -94,11 +104,34 @@ Regenerate: `node tools/apply-talent-phase-3e5.mjs --report`. Only PDF_VERIFIED 
 |---|---|---|
 | `system.prerequisites` | E[n]power Weapon | E[m]power Weapon |
 
+### Psychic Defenses (`202a117b1b203951`) — TD-22
+
+| Leaf | Before | After |
+|---|---|---|
+| `system.benefit` | … takes Force damage equal to 1[4]6 x your Wisdom modifier (mini… | … takes Force damage equal to 1[d]6 x your Wisdom modifier (mini… |
+| `system.description.value` | … takes Force damage equal to 1[4]6 x your Wisdom modifier (mini… | … takes Force damage equal to 1[d]6 x your Wisdom modifier (mini… |
+| `system.summary` | … takes Force damage equal to 1[4]6 x your Wisdom modifier (mini… | … takes Force damage equal to 1[d]6 x your Wisdom modifier (mini… |
+
 ### Relentless (`7bc10cb88a6a0c92`) — TD-03
 
 | Leaf | Before | After |
 |---|---|---|
 | `system.prerequisites` | …unter's Mark, Hunter's Target.[ P] | …unter's Mark, Hunter's Target.[] |
+
+### Ruthless Negotiator (`8298e12805291c78`) — TD-20
+
+| Leaf | Before | After |
+|---|---|---|
+| `system.benefit` | When haggling over t[e price @ bounty (see the Persuasion skill, page 71), you can reroll] Persuasion check and keep the… | When haggling over t[he price of a bounty (see the Persuasion skill, page 71), you can reroll your] Persuasion check and keep the… |
+| `system.description.value` | When haggling over t[e price @ bounty (see the Persuasion skill, page 71), you can reroll] Persuasion check and keep the… | When haggling over t[he price of a bounty (see the Persuasion skill, page 71), you can reroll your] Persuasion check and keep the… |
+| `system.summary` | When haggling over t[e price @ bounty , you can reroll] Persuasion check and keep the… | When haggling over t[he price of a bounty, you can reroll your] Persuasion check and keep the… |
+
+### Scomp Link Slicer (`3b38783594bcebce`) — TD-24, TD-24b, TD-24c
+
+| Leaf | Before | After |
+|---|---|---|
+| `system.benefit` | …g actions once per encounter: [e Eradicate: You can use Disable or Erase Program on a computer that is friendly … e 76 of the Saga Edition core rulebook). You resist the attempt as a reaction. ©] Untraceable: As a reaction, y… | …g actions once per encounter: [• Eradicate: You can use Disable or Erase Program on a computer that is friendly … e 76 of the Saga Edition core rulebook). You resist the attempt as a reaction. •] Untraceable: As a reaction, y… |
+| `system.description.value` | …g actions once per encounter: [e Eradicate: You can use Disable or Erase Program on a computer that is friendly … e 76 of the Saga Edition core rulebook). You resist the attempt as a reaction. ©] Untraceable: As a reaction, y… | …g actions once per encounter: [• Eradicate: You can use Disable or Erase Program on a computer that is friendly … e 76 of the Saga Edition core rulebook). You resist the attempt as a reaction. •] Untraceable: As a reaction, y… |
 
 ### Seyugi Cyclone (`cc90a9fc255f4dc4`) — TD-19
 
@@ -121,6 +154,27 @@ Regenerate: `node tools/apply-talent-phase-3e5.mjs --report`. Only PDF_VERIFIED 
 |---|---|---|
 | `system.prerequisites` | [Shift Defense 1, Shift Defense Il] | [] |
 
+### Squad Brutality (`5f92ad8d44c9055c`) — TD-26
+
+| Leaf | Before | After |
+|---|---|---|
+| `system.benefit` | …oll, taking the better result.[ ,] | …oll, taking the better result.[] |
+| `system.description.value` | …oll, taking the better result.[ ,] | …oll, taking the better result.[] |
+
+### Supervising Droid (`0025737e7198390e`) — TD-25, TD-25b, TD-25c
+
+| Leaf | Before | After |
+|---|---|---|
+| `system.benefit` | …g actions once per encounter: [© Combat Support: As a standard action, you automatically aid another on an alli … ve Skill Focus in the skill, you increase the aid another bonus from +2 to +5. e] Instant Action: As a swift ac… | …g actions once per encounter: [• Combat Support: As a standard action, you automatically aid another on an alli … ve Skill Focus in the skill, you increase the aid another bonus from +2 to +5. •] Instant Action: As a swift ac… |
+| `system.description.value` | …g actions once per encounter: [© Combat Support: As a standard action, you automatically aid another on an alli … ve Skill Focus in the skill, you increase the aid another bonus from +2 to +5. e] Instant Action: As a swift ac… | …g actions once per encounter: [• Combat Support: As a standard action, you automatically aid another on an alli … ve Skill Focus in the skill, you increase the aid another bonus from +2 to +5. •] Instant Action: As a swift ac… |
+
+### Turret Self-Destruct (`17ec736c3984fe43`) — TD-21
+
+| Leaf | Before | After |
+|---|---|---|
+| `system.benefit` | …us, dealing its normal damage.[!]f you are adjacent to the turr… | …us, dealing its normal damage.[ I]f you are adjacent to the turr… |
+| `system.description.value` | …us, dealing its normal damage.[!]f you are adjacent to the turr… | …us, dealing its normal damage.[ I]f you are adjacent to the turr… |
+
 ### Vital Encouragement (`1215e1c464a087b0`) — TD-16
 
 | Leaf | Before | After |
@@ -137,7 +191,7 @@ Regenerate: `node tools/apply-talent-phase-3e5.mjs --report`. Only PDF_VERIFIED 
 
 ## Embedded actor items
 
-104 embedded actor items point at these records; none is modified. Items whose benefit is a verbatim copy of the pre-repair production text would now lag behind (see 3E-4 for the same policy):
+110 embedded actor items point at these records; none is modified. Items whose benefit is a verbatim copy of the pre-repair production text would now lag behind (see 3E-4 for the same policy):
 
 | Item | Embedded items | Verbatim copies of pre-repair production |
 |---|---|---|
@@ -148,3 +202,5 @@ Regenerate: `node tools/apply-talent-phase-3e5.mjs --report`. Only PDF_VERIFIED 
 | Drain Force | 6 | 0 |
 | Influential Friends | 4 | 0 |
 | Difficult to Sense | 2 | 0 |
+| Influence Savant | 2 | 0 |
+| Squad Brutality | 4 | 0 |

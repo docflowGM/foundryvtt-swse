@@ -4,8 +4,8 @@ import { loadPostState, verifyPostState } from '../tools/apply-talent-phase-3d.m
 
 // Regression guard for the certified Phase 3D post-state. Before the migration is applied this is a documented no-op.
 const packState = detectPackState().state;
-if (packState !== 'POST_3D_STATE' && packState !== 'POST_3E4_STATE') {
-  console.log('  skip talent-phase-3d post-state: packs are not the certified Phase 3D (or later 3E-4) post-state');
+if (!['POST_3D_STATE', 'POST_3E4_STATE', 'POST_3E5_STATE'].includes(packState)) {
+  console.log('  skip talent-phase-3d post-state: packs are not the certified Phase 3D (or later 3E-4/3E-5) post-state');
   process.exit(0);
 }
 const st = loadPostState();

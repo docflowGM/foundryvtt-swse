@@ -8,13 +8,16 @@
  *   --report   write data/audits/talent-phase-3e5-dry-run-report.json + docs/audits/talent-phase-3e5-dry-run.md
  *   --check    fail unless both equal a fresh projection
  *   (default)  print the verification summary
- * Apply / verify are added only after the owner authorises the exact mutation set shown here.
+ *   --apply    write packs/talents.db (uncommitted) from the committed manifest + certified dry-run; refuses drifted/partial/unexpected states
+ *   --verify [--exact]   check the applied state; --exact also compares the certified blob
+ *   --status   PRE_3E5 / POST_3E5 / UNKNOWN
  */
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { ROOT, serializePack, gitBlobSha, fingerprint } from './apply-talent-phase-3c.mjs';
 import { leavesOf, leafDiff } from './apply-talent-phase-3e4.mjs';
+import { reconcile, loadInput } from './reconcile-talent-publication-corpus.mjs';
 import { build as buildManifest, getField, setField, projectRecord, verified, FIELDS } from './build-talent-phase-3e5-defect-manifest.mjs';
 
 export const REPORT_PATH = 'data/audits/talent-phase-3e5-dry-run-report.json';
@@ -24,8 +27,12 @@ const UNTOUCHED = ['packs/talent_trees.db', 'packs/classes.db', 'packs/heroic.db
 const read = rel => fs.readFileSync(path.join(ROOT, rel), 'utf8');
 const parse = t => t.split(/\r?\n/).filter(Boolean).map(l => JSON.parse(l));
 const clone = v => structuredClone(v);
+const TALENTS = 'packs/talents.db';
+const ERR = '[talent-phase-3e5] ';
+const invariant = (ok, m) => { if (!ok) throw new Error(ERR + m); };
+const restOf = (t, fields) => { const n = clone(t); for (const f of fields) setField(n, f, undefined); return fingerprint(JSON.parse(JSON.stringify(n))); };
 /** Strings that must not survive anywhere in the canonical pack once their entries are applied. */
-const RESIDUALS = ['haIf', 'aswift', 'theirspeed', 'Forcesensitive', 'Forceusers', 'covert it', 'posess', 'Executive Leadership', 'New Sense Talents', 'Lightsa-ber', 'Duel-ist', "Twi'Ler", 'ateam', 'you 4 target', 'Battie Analysis', 'Enpower Weapon', 'Shift Defense Il'];
+const RESIDUALS = ['haIf', 'aswift', 'theirspeed', 'Forcesensitive', 'Forceusers', 'covert it', 'posess', 'Executive Leadership', 'New Sense Talents', 'Lightsa-ber', 'Duel-ist', "Twi'Ler", 'ateam', 'you 4 target', 'Battie Analysis', 'Enpower Weapon', 'Shift Defense Il', 'damage.!f', '146 x your', 'te price', '@ bounty', 'better result. ,', '\u2018one Force', 'e Eradicate:', '\u00a2 Lockout:', '\u00a9 Untraceable:', '\u00a9 Combat Support:', 'e Director:', 'e Instant Action:'];
 const allText = t => FIELDS.map(f => getField(t, f)).filter(Boolean).join('\n');
 
 export function projectPack(talents, entries) {
@@ -50,7 +57,8 @@ export function buildReport() {
   const beforeBy = new Map(talents.map(t => [t._id, t])), afterBy = new Map(after.map(t => [t._id, t]));
   const records = [...ids].map(id => {
     const es = byRec.get(id), b = beforeBy.get(id), a = afterBy.get(id);
-    return { id, name: b.name, entries: es.map(e => e.id).sort(), fieldsTouched: [...new Set(es.flatMap(e => e.fields))], changes: leafDiff(b, a) };
+    const fieldsTouched = [...new Set(es.flatMap(e => e.fields))];
+    return { id, name: b.name, entries: es.map(e => e.id).sort(), fieldsTouched, restFingerprint: restOf(a, fieldsTouched), changes: leafDiff(b, a) };
   }).sort((x, y) => x.name.localeCompare(y.name));
   const pendingIds = new Set(m.entries.filter(e => !verified(e)).map(e => e.productionId));
   const out = { b: talents.filter(t => !ids.has(t._id)), a: after.filter(t => !ids.has(t._id)) };
@@ -69,6 +77,10 @@ export function buildReport() {
   check('Share Talent prerequisite left as certified (print differs only by its terminal period)', getField(afterBy.get(m.entries.find(e => e.name === 'Share Talent').productionId), 'prerequisites') === getField(beforeBy.get(m.entries.find(e => e.name === 'Share Talent').productionId), 'prerequisites'));
   check('no known defect string survives anywhere in the canonical pack after the repair', after.every(t => !RESIDUALS.some(r => allText(t).includes(r))), after.flatMap(t => RESIDUALS.filter(r => allText(t).includes(r)).map(r => `${t.name}:${r}`)).join(', '));
   check('second-wave (PDF_REQUIRED) records are untouched by this repair', [...pendingIds].filter(id => !ids.has(id)).every(id => JSON.stringify(beforeBy.get(id)) === JSON.stringify(afterBy.get(id))));
+  const printed = [['Sidestep', 'to 1 until'], ['Malkite Techniques', 'nonenergy'], ['Disarm and Engage', 'nonproficiency'], ['Done It All', 'nonprestige'], ['Ambush', 'nonsurprised'], ['Two-Faced', 'Nonthreatening']];
+  check('the six PDF-confirmed printed forms are unchanged (record byte-identical, token still present)', printed.every(([n, tok]) => { const b = talents.find(t => t.name === n), a = after.find(t => t._id === b._id); return JSON.stringify(a) === JSON.stringify(b) && allText(a).includes(tok); }));
+  const rec = reconcile({ ...loadInput(), production: after });
+  check('TEXT_DRIFT is zero against the corrected authority projection (and every blocking finding stays zero)', rec.blockingFindings.length === 0, rec.blockingFindings.slice(0, 3).map(f => `${f.code} ${f.identity}`).join('; '));
   check('second run is a zero diff', JSON.stringify(projectPack(after, m.entries).after) === JSON.stringify(after));
   check(`serialization is surgical: only ${records.length} lines of packs/talents.db change`, (() => { const x = talentsText.split('\n'), y = afterText.split('\n'); return x.length === y.length && x.filter((l, i) => l !== y[i]).length === records.length; })());
   const untouched = Object.fromEntries(UNTOUCHED.filter(rel => fs.existsSync(path.join(ROOT, rel))).map(rel => [rel, gitBlobSha(read(rel))]));
@@ -108,7 +120,57 @@ function renderDoc(r) {
     '## Embedded actor items', '', `${r.embeddedActorItems.total} embedded actor items point at these records; none is modified. Items whose benefit is a verbatim copy of the pre-repair production text would now lag behind (see 3E-4 for the same policy):`, '', '| Item | Embedded items | Verbatim copies of pre-repair production |', '|---|---|---|', ...Object.entries(r.embeddedActorItems.byItemName).map(([k, v]) => `| ${k} | ${v.items} | ${v.verbatimCopyOfPreRepair} |`), ''].join('\n');
 }
 
+export function detect3E5State(root = ROOT) {
+  const rp = path.join(root, REPORT_PATH); if (!fs.existsSync(rp)) return 'PRE_3E5';
+  const r = JSON.parse(fs.readFileSync(rp, 'utf8')), sha = gitBlobSha(fs.readFileSync(path.join(root, TALENTS), 'utf8'));
+  return r.postState.talents === sha ? 'POST_3E5' : r.preState.talents === sha ? 'PRE_3E5' : 'UNKNOWN';
+}
+
+export function verifyApplied({ exact = false } = {}) {
+  const res = [], check = (id, ok, detail = '') => res.push({ id, ok: !!ok, detail });
+  const report = JSON.parse(read(REPORT_PATH)), m = buildManifest(), talentsText = read(TALENTS), talents = parse(talentsText), by = new Map(talents.map(t => [t._id, t]));
+  const ids = new Set(report.records.map(r => r.id));
+  check('packs/talents.db is the certified Phase 3E-5 post-state', detect3E5State() === 'POST_3E5');
+  check('defect manifest: every entry verified and located (frozen pre-state honoured)', m.errors.length === 0 && m.counts.pdfRequired === 0, m.errors.join('; '));
+  check('canonical talent count 1,187', talents.length === 1187);
+  for (const r of report.records) {
+    const t = by.get(r.id);
+    check(`${r.name}: every repaired leaf equals the certified after-value`, !!t && r.changes.every(c => JSON.stringify(leavesOf(t)[c.leaf] === undefined ? '(absent)' : JSON.parse(leavesOf(t)[c.leaf])) === JSON.stringify(c.after)));
+    check(`${r.name}: rest of the record untouched`, !!t && restOf(t, r.fieldsTouched) === r.restFingerprint);
+    check(`${r.name}: no known defect string remains`, !!t && !RESIDUALS.some(x => allText(t).includes(x)));
+  }
+  check(`the other ${talents.length - ids.size} records are unchanged`, sortedFpOf(talents.filter(t => !ids.has(t._id))) === report.othersFingerprint);
+  for (const [rel, sha] of Object.entries(report.untouchedFiles)) check(`untouched: ${rel}`, fs.existsSync(path.join(ROOT, rel)) && gitBlobSha(read(rel)) === sha);
+  const rec = reconcile(loadInput());
+  check('publication reconciliation: zero blocking findings incl. TEXT_DRIFT', rec.blockingFindings.length === 0, rec.blockingFindings.slice(0, 3).map(f => `${f.code} ${f.identity}`).join('; '));
+  if (exact) check('packs/talents.db equals the certified post-state blob', gitBlobSha(talentsText) === report.postState.talents);
+  return res;
+}
+const sortedFpOf = arr => fingerprint(arr.slice().sort((x, y) => x._id.localeCompare(y._id)));
+
+export function applyProduction() {
+  invariant(detect3E5State() !== 'POST_3E5', 'REFUSED: already applied (use --verify --exact)');
+  invariant(detect3E5State() === 'PRE_3E5', 'REFUSED: packs/talents.db is neither the pre-repair nor the certified post-state');
+  invariant(fs.existsSync(path.join(ROOT, REPORT_PATH)), 'REFUSED: no committed dry-run report');
+  const committed = JSON.parse(read(REPORT_PATH));
+  invariant(committed.status === 'DRY_RUN_CERTIFIED', 'REFUSED: committed dry-run report is not certified');
+  const fresh = buildReport();
+  invariant(read(REPORT_PATH) === JSON.stringify(fresh, null, 2) + '\n', 'REFUSED: committed dry-run report differs from a fresh projection (production drifted or stale report)');
+  const text = read(TALENTS), out = serializePack(text, projectPack(parse(text), buildManifest().entries).after);
+  invariant(gitBlobSha(out) === committed.postState.talents, 'REFUSED: rendered pack does not match the certified post-state blob');
+  fs.writeFileSync(path.join(ROOT, TALENTS), out);
+}
+
 export function main(argv = process.argv.slice(2)) {
+  const state = detect3E5State();
+  if (argv.includes('--status')) { console.log(ERR + state); return 0; }
+  if (argv.includes('--verify') || (argv.includes('--check') && state === 'POST_3E5')) {
+    const res = verifyApplied({ exact: argv.includes('--exact') });
+    for (const x of res) console.log(`${x.ok ? 'PASS' : 'FAIL'}  ${x.id}${x.ok || !x.detail ? '' : '  [' + x.detail + ']'}`);
+    const bad = res.filter(x => !x.ok).length; console.log(`\n${ERR}verify ${bad ? 'FAIL' : 'PASS'} (${res.length} checks; no files written)`); return bad ? 1 : 0;
+  }
+  if (argv.includes('--apply')) { applyProduction(); console.log(ERR + 'APPLIED packs/talents.db (uncommitted)'); return 0; }
+  invariant(state === 'PRE_3E5', `the pre-repair production pack is required for --report/--check (found ${state})`);
   const r = buildReport();
   for (const x of r.verification.results) console.log(`${x.ok ? 'PASS' : 'FAIL'}  ${x.id}${x.ok || !x.detail ? '' : '  [' + x.detail + ']'}`);
   console.log(`\n[talent-phase-3e5] ${r.status}: ${r.counts.recordsChanged} records, ${r.counts.leafChangesTotal} leaf changes, ${r.counts.changedOutsideTargets} outside targets`);

@@ -35,6 +35,8 @@ const HM = 'If you aim before making a ranged attack (see Aim, page 154), you mo
 // The corpus summary is the first clause with parentheticals dropped; the damaged one ("ranged attack , ... hits .") is repaired from the printed sentence.
 const HM_SUMMARY = 'If you aim before making a ranged attack, you move the target -1 step along the condition track if the attack hits.';
 
+const RN = 'When haggling over the price of a bounty (see the Persuasion skill, page 71), you can reroll your Persuasion check and keep the better result.';
+const RN_SUMMARY = 'When haggling over the price of a bounty, you can reroll your Persuasion check and keep the better result.';
 /** The finite list. fields = the record fields the edit may touch. */
 export const DEFECTS = [
   { id: 'TD-01', record: 'Cover Fire', action: 'REPLACE_TOKEN', fields: ['prerequisites'], group: 'OCR_DEFECT_IN_NAME_REFERENCE', find: 'Battie Analysis', replace: 'Battle Analysis', confidence: 'CERTAIN', evidence: 'the prerequisite is the Clone Wars talent "Battle Analysis" (CWCG TXT 14172/15054/18359)', verification: V('PDF ruling: confirmed', 'Battle Analysis') },
@@ -51,14 +53,18 @@ export const DEFECTS = [
   { id: 'TD-15', record: 'Share Talent', action: 'REPLACE_FIELDS', fields: ['benefit', 'description'], group: 'MULTI_TOKEN_OCR_DAMAGE', confidence: 'CERTAIN', evidence: 'JATM p.20: "Lightsa-ber", "Duel-ist", comma where a period belongs, illustration caption "A Twi\'Ler Jeo! INsTRUCTOR.", "one-haIf", paragraphs flattened. The prerequisite already matches print apart from its terminal period and is left unchanged.', after: { benefit: ST, description: ST }, verification: V('PDF transcription, JATM p.20', ST) },
   { id: 'TD-16', record: 'Vital Encouragement', action: 'REPLACE_FIELDS', fields: ['benefit', 'description'], group: 'ADJACENT_SECTION_OCR_BLEED', confidence: 'CERTAIN', evidence: 'JATM p.17: "New Sense Talents The following talents belong to the Sense talent tree..." is the next section; "one-haIf" also repaired', after: { benefit: VE, description: VE }, verification: V('PDF transcription, JATM p.17', VE) },
   { id: 'TD-19', record: 'Seyugi Cyclone', action: 'REPLACE_TOKEN', fields: ['benefit', 'description', 'summary'], group: 'OCR_LETTER_DROP', find: 'posess', replace: 'possess', confidence: 'CERTAIN', evidence: 'the TXT "posess" is itself OCR damage (promoted from the former NC-01)', verification: V('PDF ruling, JATM p.83: "...even if you do not possess the Whirlwind Attack feat."', 'possess') },
-  // --- second wave: nominated by the widened symbol/stray-character scan AFTER the owner's first pass; never applied until PDF_VERIFIED ---
-  { id: 'TD-20', record: 'Ruthless Negotiator', action: 'REPLACE_FIELDS', fields: ['benefit', 'description', 'summary'], group: 'MULTI_TOKEN_OCR_DAMAGE', confidence: 'NEEDS_PRINT', evidence: 'production: "haggling over te price @ bounty ... reroll Persuasion check" (probably "the price of a bounty", "your Persuasion check"); derived summary carries the same damage', after: null, verification: PENDING('owner transcription of Core p.208') },
-  { id: 'TD-21', record: 'Turret Self-Destruct', action: 'REPLACE_TOKEN', fields: ['benefit'], group: 'OCR_PUNCTUATION', find: 'damage.!f you', replace: 'damage. If you', confidence: 'LIKELY', evidence: '"!f" for "If" with the space lost', verification: PENDING('confirm printed "normal damage. If you are adjacent"') },
-  { id: 'TD-22', record: 'Psychic Defenses', action: 'REPLACE_TOKEN', fields: ['benefit', 'description', 'summary'], group: 'NUMERIC_OCR_DAMAGE', find: '146 x your Wisdom modifier', replace: null, confidence: 'NEEDS_PRINT', evidence: '"146 x your Wisdom modifier (minimum x1)" is implausible; likely a damage die ("1d6 x ...") read as digits. TXT has the same string (JATM TXT 1556).', verification: PENDING('owner transcription of JATM p.18') },
-  { id: 'TD-23', record: 'Influence Savant', action: 'REPLACE_TOKEN', fields: ['benefit', 'description', 'summary'], group: 'STRAY_OCR_FRAGMENT', find: '‘one Force power', replace: 'one Force power', confidence: 'LIKELY', evidence: 'stray opening quote before "one"', verification: PENDING('confirm printed "return one Force power"') },
-  { id: 'TD-24', record: 'Scomp Link Slicer', action: 'REPLACE_TOKEN', fields: ['benefit', 'description'], group: 'BULLET_GLYPH_OCR', find: 'e Eradicate', replace: null, confidence: 'NEEDS_PRINT', evidence: 'printed bullet markers read as "e", "¢", "©": "e Eradicate", "¢ Lockout", "© Untraceable" (three markers in one record)', verification: PENDING('owner confirmation of the printed bullet form (and the canonical convention for it), Scavenger\'s p.27') },
-  { id: 'TD-25', record: 'Supervising Droid', action: 'REPLACE_TOKEN', fields: ['benefit', 'description'], group: 'BULLET_GLYPH_OCR', find: '© Combat Support', replace: null, confidence: 'NEEDS_PRINT', evidence: 'printed bullet markers read as "©", "e", "e": "© Combat Support", "e Director", "e Instant Action"', verification: PENDING('owner confirmation of the printed bullet form, Scavenger\'s p.27') },
-  { id: 'TD-26', record: 'Squad Brutality', action: 'REPLACE_TOKEN', fields: ['benefit', 'description'], group: 'STRAY_OCR_FRAGMENT', find: 'better result. ,', replace: 'better result.', confidence: 'LIKELY', evidence: 'trailing stray comma after the final period', verification: PENDING('confirm the printed sentence ends at "taking the better result."') }
+  // --- second wave: nominated by the widened symbol/stray-character scan AFTER the first PDF pass; PDF-verified by the owner's second pass ---
+  { id: 'TD-20', record: 'Ruthless Negotiator', action: 'REPLACE_FIELDS', fields: ['benefit', 'description', 'summary'], group: 'MULTI_TOKEN_OCR_DAMAGE', confidence: 'CERTAIN', evidence: 'production: "haggling over te price @ bounty ... reroll Persuasion check"; the derived summary carried the same damage', after: { benefit: RN, description: RN, summary: RN_SUMMARY }, verification: V('PDF transcription, Core p.208 (prerequisite "Notorious." already matches)', RN) },
+  { id: 'TD-21', record: 'Turret Self-Destruct', action: 'REPLACE_TOKEN', fields: ['benefit', 'description'], group: 'OCR_PUNCTUATION', find: 'damage.!f you', replace: 'damage. If you', confidence: 'CERTAIN', evidence: '"!f" for "If" with the space lost', verification: V('PDF ruling, FUCG p.57: "...dealing its normal damage. If you are adjacent to the turret..."', 'damage. If you') },
+  { id: 'TD-22', record: 'Psychic Defenses', action: 'REPLACE_TOKEN', fields: ['benefit', 'description', 'summary'], group: 'NUMERIC_OCR_DAMAGE', find: '146 x your Wisdom modifier', replace: '1d6 x your Wisdom modifier', confidence: 'CERTAIN', evidence: 'the damage die "1d6" was read as "146" (the TXT has the same damage, JATM TXT 1556)', verification: V('PDF ruling, JATM p.18: "Force damage equal to 1d6 x your Wisdom modifier (minimum x1)"', '1d6 x your Wisdom modifier') },
+  { id: 'TD-23', record: 'Influence Savant', action: 'REPLACE_TOKEN', fields: ['benefit', 'description', 'summary'], group: 'STRAY_OCR_FRAGMENT', find: '\u2018one Force power', replace: 'one Force power', confidence: 'CERTAIN', evidence: 'stray opening quote before "one"', verification: V('PDF ruling, JATM p.15: no opening quote', 'one Force power') },
+  { id: 'TD-24', record: 'Scomp Link Slicer', action: 'REPLACE_TOKEN', fields: ['benefit', 'description'], group: 'BULLET_GLYPH_OCR', find: 'e Eradicate:', replace: '\u2022 Eradicate:', confidence: 'CERTAIN', evidence: 'printed round bullet read as the letter "e"', verification: V('PDF ruling, Scavenger\'s Guide p.26/27: ordinary printed bullet', '\u2022 Eradicate:') },
+  { id: 'TD-24b', record: 'Scomp Link Slicer', action: 'REPLACE_TOKEN', fields: ['benefit', 'description'], group: 'BULLET_GLYPH_OCR', find: '\u00a2 Lockout:', replace: '\u2022 Lockout:', confidence: 'CERTAIN', evidence: 'printed round bullet read as "\u00a2"', verification: V('PDF ruling, Scavenger\'s Guide p.26/27: ordinary printed bullet', '\u2022 Lockout:') },
+  { id: 'TD-24c', record: 'Scomp Link Slicer', action: 'REPLACE_TOKEN', fields: ['benefit', 'description'], group: 'BULLET_GLYPH_OCR', find: '\u00a9 Untraceable:', replace: '\u2022 Untraceable:', confidence: 'CERTAIN', evidence: 'printed round bullet read as "\u00a9"', verification: V('PDF ruling, Scavenger\'s Guide p.26/27: ordinary printed bullet', '\u2022 Untraceable:') },
+  { id: 'TD-25', record: 'Supervising Droid', action: 'REPLACE_TOKEN', fields: ['benefit', 'description'], group: 'BULLET_GLYPH_OCR', find: '\u00a9 Combat Support:', replace: '\u2022 Combat Support:', confidence: 'CERTAIN', evidence: 'printed round bullet read as "\u00a9"', verification: V('PDF ruling, Scavenger\'s Guide p.26/27: ordinary printed bullet', '\u2022 Combat Support:') },
+  { id: 'TD-25b', record: 'Supervising Droid', action: 'REPLACE_TOKEN', fields: ['benefit', 'description'], group: 'BULLET_GLYPH_OCR', find: 'e Director:', replace: '\u2022 Director:', confidence: 'CERTAIN', evidence: 'printed round bullet read as the letter "e"', verification: V('PDF ruling, Scavenger\'s Guide p.26/27: ordinary printed bullet', '\u2022 Director:') },
+  { id: 'TD-25c', record: 'Supervising Droid', action: 'REPLACE_TOKEN', fields: ['benefit', 'description'], group: 'BULLET_GLYPH_OCR', find: 'e Instant Action:', replace: '\u2022 Instant Action:', confidence: 'CERTAIN', evidence: 'printed round bullet read as the letter "e"', verification: V('PDF ruling, Scavenger\'s Guide p.26/27: ordinary printed bullet', '\u2022 Instant Action:') },
+  { id: 'TD-26', record: 'Squad Brutality', action: 'REPLACE_TOKEN', fields: ['benefit', 'description'], group: 'STRAY_OCR_FRAGMENT', find: 'better result. ,', replace: 'better result.', confidence: 'CERTAIN', evidence: 'trailing stray comma after the final period', verification: V('PDF ruling, Legacy p.31: the sentence ends at "taking the better result."', 'better result.') }
 ];
 export const NO_CHANGE = [
   { id: 'TD-17', record: 'Sidestep', token: 'to 1 until', reason: 'PDF ruling: exactly as printed (Scum and Villainy p.17); prerequisite Long Stride' },
@@ -104,14 +110,17 @@ export function build() {
   for (const { manifest } of loadCommittedManifests()) for (const r of manifest.records) { const i = r.identityResolution; idOf.set(r.canonicalIdentity, i.productionRecordId || i.createRecordId); }
   const canonByProd = new Map(canon.map(r => [idOf.get(r.canonicalIdentity), r]));
   const errors = [];
+  // After the certified repair the pack no longer holds the pre-repair text: the committed manifest's frozen `before` snapshot and
+  // pre-state blob are authoritative (same contract as 3E-4). Before the repair they are re-derived from the pack.
+  const committed = fs.existsSync(path.join(ROOT, OUT_JSON)) ? JSON.parse(read(OUT_JSON)) : null;
+  const frozen = !!committed && committed.preState?.talents && committed.preState.talents !== gitBlobSha(packText);
   const entries = DEFECTS.map(d => {
     const ps = prod.filter(t => t.name === d.record);
     if (ps.length !== 1) { errors.push(`${d.id}: ${ps.length} production records named ${d.record}`); return null; }
     const p = ps[0], c = canonByProd.get(p._id);
     const e = { id: d.id, productionId: p._id, name: d.record, canonicalIdentity: c?.canonicalIdentity, publication: { sourcebook: p.system.source, page: p.system.page }, group: d.group, action: d.action, confidence: d.confidence, evidence: d.evidence, fields: d.fields, verification: d.verification };
     if (d.action === 'REPLACE_TOKEN') { e.find = d.find; e.replace = d.replace; }
-    else if (d.after) { e.after = d.after; e.before = Object.fromEntries(d.fields.map(f => [f, getField(p, f)])); }
-    else { e.after = null; e.before = Object.fromEntries(d.fields.map(f => [f, getField(p, f)])); }
+    else { e.after = d.after; e.before = frozen ? committed.entries.find(x => x.id === d.id)?.before : Object.fromEntries(d.fields.map(f => [f, getField(p, f)])); }
     // locate in the certified canonical corpus too (canonical is immutable, so this stays true after the repair)
     if (d.action === 'REPLACE_TOKEN') for (const f of d.fields) {
       if (c && count(c[f], d.find) !== 1) errors.push(`${d.id}: "${d.find}" occurs ${count(c[f], d.find)}x in canonical ${d.record}.${f}`);
@@ -121,11 +130,11 @@ export function build() {
   const noChange = NO_CHANGE.map(n => { const p = prod.find(t => t.name === n.record); return { ...n, productionId: p?._id, publication: { sourcebook: p?.system.source, page: p?.system.page }, action: 'NO_CHANGE', verification: { status: 'PDF_VERIFIED', verifiedBy: 'project owner, rendered-PDF pass' } }; });
   const ver = entries.filter(verified), pend = entries.filter(e => !verified(e));
   return {
-    schemaVersion: 1, phase: '3E-5a', status: 'DEFECT_MANIFEST_PDF_PASS_1_RECORDED', productionMutationPerformed: false,
+    schemaVersion: 1, phase: '3E-5a', status: 'DEFECT_MANIFEST_PDF_VERIFIED', productionMutationPerformed: false,
     rule: 'Finite list. Scans nominate; only PDF_VERIFIED entries here can ever be applied, and only through a manifest -> dry-run -> apply -> verify unit.',
-    scansUsed: ['rare-token scan of canonical text (3E-2b)', 'OCR-confusable scan (mid-word capitals, Il/1I, stray ". P")', 'stray-digit-in-sentence scan', 'symbol / stray-character / stray-punctuation scan (second wave)', 'adjacent-section bleed found only by the rendered-PDF pass'],
+    scansUsed: ['rare-token scan of canonical text (3E-2b)', 'OCR-confusable scan (mid-word capitals, Il/1I, stray ". P")', 'stray-digit-in-sentence scan', 'symbol / stray-character / stray-punctuation scan (second wave, PDF-verified by the owner)', 'adjacent-section bleed found only by the rendered-PDF pass'],
     scanLimits: 'Heuristic scans cannot prove absence of damage. The first PDF pass showed a token scan misses whole-block defects (section bleed, caption contamination); a full-text PDF comparison of all 1,187 records is outside 3E and is the one thing that would certify text completeness.',
-    preState: { talents: gitBlobSha(packText) },
+    preState: { talents: frozen ? committed.preState.talents : gitBlobSha(packText) },
     counts: { entries: entries.length, pdfVerified: ver.length, pdfRequired: pend.length, recordsVerified: new Set(ver.map(e => e.productionId)).size, recordsPending: new Set(pend.map(e => e.productionId)).size, noChange: noChange.length, byAction: entries.reduce((o, e) => (o[e.action] = (o[e.action] || 0) + 1, o), {}) },
     entries, noChangeRulings: noChange, errors
   };
@@ -136,11 +145,11 @@ function renderMd(m) {
   const ver = m.entries.filter(verified), pend = m.entries.filter(e => !verified(e));
   return ['# Phase 3E-5a — Canonical text-defect manifest', '',
     'Read-only. Generator: `node tools/build-talent-phase-3e5-defect-manifest.mjs` · data: `data/audits/talent-phase-3e5-text-defect-manifest.json`.', '', m.rule, '',
-    `**${m.counts.pdfVerified} PDF-verified entries on ${m.counts.recordsVerified} records** (${Object.entries(m.counts.byAction).map(([k, v]) => `${k} ${v}`).join(', ')} overall); **${m.counts.pdfRequired} second-wave nominations on ${m.counts.recordsPending} records await the PDF**; ${m.counts.noChange} scan candidates are PDF-confirmed as printed (no change).`, '',
+    `**${m.counts.pdfVerified} PDF-verified entries on ${m.counts.recordsVerified} records** (${Object.entries(m.counts.byAction).map(([k, v]) => `${k} ${v}`).join(', ')} overall); ${m.counts.pdfRequired ? `**${m.counts.pdfRequired} nominations on ${m.counts.recordsPending} records still await the PDF**;` : 'no nomination is outstanding;'} ${m.counts.noChange} scan candidates are PDF-confirmed as printed (no change).`, '',
     '## PDF-verified corrections (eligible for the 3E-5 dry-run)', '', '| ID | Record | Action | Field(s) | Class |', '|---|---|---|---|---|',
     ...ver.map(e => `| ${e.id} | ${e.name} (${e.publication.sourcebook} p.${e.publication.page}) | ${e.action} | ${e.fields.join(', ')} | ${e.group} |`), '',
     ...ver.map(e => `- **${e.id} ${e.name}:** ${e.evidence} — ${e.verification.basis}.`), '',
-    '## Second-wave nominations (PDF_REQUIRED — never applied unverified)', '', '| ID | Record | Field(s) | Production has | Proposed | Conf. |', '|---|---|---|---|---|---|',
+    '## Outstanding nominations (PDF_REQUIRED — never applied unverified)', '', '| ID | Record | Field(s) | Production has | Proposed | Conf. |', '|---|---|---|---|---|---|',
     ...pend.map(e => `| ${e.id} | ${e.name} (${e.publication.sourcebook} p.${e.publication.page}) | ${e.fields.join(', ')} | ${cell(e.find ?? e.before?.benefit)} | ${cell(e.replace ?? null)} | ${e.confidence} |`), '',
     ...pend.map(e => `- **${e.id} ${e.name}:** ${e.evidence}`), '',
     '## PDF-confirmed as printed (no change)', '', ...m.noChangeRulings.map(n => `- **${n.id} ${n.record}** \`${n.token}\`: ${n.reason}`), '',
