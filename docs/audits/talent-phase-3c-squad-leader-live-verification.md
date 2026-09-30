@@ -1,13 +1,26 @@
 # Squad Leader — live Foundry v13 verification checklist
 
-**Status: DEFERRED_EXTERNAL_LIVE_VALIDATION** — headless runtime verification passed; live Foundry v13 client unavailable in current execution environments.
-The migrated packs are committed as a production checkpoint (`cc8262749`) but the live checklist below is **not** marked passed and the production
-branch is not merged to main until a person completes it on a machine with Foundry installed. Headless evidence: 268/268 rolling tests,
-`--verify --exact` (26 checks), registry/membership/post-state CI gates, and `tests/talent-tree-registry-runtime.test.mjs` (8/8, real `TalentTreeDB`,
-`TalentTreeRegistry` and class-access code).
+**Status: PASS** — live Foundry v13 verification completed by the project owner against the committed Phase 3C production state (`cc8262749`).
+This audit's execution environment has no Foundry client; the live result below was reported to this audit by the project owner and was not
+observed by the audit tooling.
 
-Original note (still true): **NOT YET EXECUTED live.** The automated checks below pass under Node with the foundry shim; nothing here has been run in a live
-Foundry v13 instance. The runtime issue is not certified until a person completes this checklist after the Phase 3C packs are applied.
+### Live result
+
+- Both Squad Leader tree identities loaded independently:
+  - Clone Wars Squad Leader `781feba15dc9e42f` (4 talents)
+  - Galaxy at War Squad Leader `3b30dd12884bb2e4` (5 talents)
+- Soldier resolved the Clone Wars Squad Leader tree.
+- Elite Trooper resolved the Galaxy at War Squad Leader tree.
+- Neither tree overwrote or redirected to the other; both retained their own talent memberships.
+- Reload/restart preserved both identities.
+- No relevant duplicate-ID, registry-key, hydration, missing-tree or class-access errors were observed in the console.
+
+### History
+
+1. Checklist written; **NOT YET EXECUTED** (automated Node + foundry-shim checks only).
+2. `f8c8f32f7`: recorded as `DEFERRED_EXTERNAL_LIVE_VALIDATION` — headless runtime verification passed (268/268 rolling tests, `--verify --exact` 26 checks,
+   registry/membership/post-state CI gates, `tests/talent-tree-registry-runtime.test.mjs` 8/8); live client unavailable to the audit environment.
+3. Live Foundry v13 check performed by the project owner → **PASS** (this revision).
 
 ## Why this needs a live check
 
