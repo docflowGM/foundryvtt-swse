@@ -324,8 +324,8 @@
         "refs": [
           "Knights of the Old Republic Campaign Guide:21681"
         ],
-        "kind": "LEAD",
-        "note": "KOTOR stat block (TXT 21681); no talent definition found (Attract Minion is a different, canonical Core talent)."
+        "kind": "PRINTED_REFERENCE_WITHOUT_RULE_DEFINITION",
+        "note": "KOTOR stat block (TXT 21681); no talent definition found (Attract Minion is a different, canonical Core talent). Owner PDF pass: KOTOR stat block only; no printed rule definition exists (printed stat-block inconsistency / undefined talent reference)."
       },
       {
         "name": "Bate Ais Coe Fre Harm Way",
@@ -401,8 +401,8 @@
         "refs": [
           "Knights of the Old Republic Campaign Guide:13933"
         ],
-        "kind": "LEAD",
-        "note": "KOTOR stat blocks list it under Special Actions/Talents; the only definition found is the Force power \"valor\" (KOTOR TXT 4829), not a talent."
+        "kind": "PRINTED_REFERENCE_WITHOUT_RULE_DEFINITION",
+        "note": "KOTOR stat blocks list it under Special Actions/Talents; the only definition found is the Force power \"valor\" (KOTOR TXT 4829), not a talent. Owner PDF pass: KOTOR character stat blocks only; no printed rule definition exists (printed stat-block inconsistency / undefined talent reference)."
       },
       {
         "name": "Gauge Force",
@@ -492,8 +492,8 @@
         "refs": [
           "Legacy Era Campaign Guide:11637"
         ],
-        "kind": "LEAD",
-        "note": "LECG stat block lists it under Special Actions and Talents (TXT 11633/11637); no definition found."
+        "kind": "PRINTED_REFERENCE_WITHOUT_RULE_DEFINITION",
+        "note": "LECG stat block lists it under Special Actions and Talents (TXT 11633/11637); no definition found. Owner PDF pass: Legacy Galactic Alliance covert-agent stat block only; no printed rule definition exists (printed stat-block inconsistency / undefined talent reference)."
       },
       {
         "name": "Single Weapon",
@@ -514,8 +514,8 @@
         "refs": [
           "Legacy Era Campaign Guide:19380"
         ],
-        "kind": "LEAD",
-        "note": "LECG stat block (TXT 19381); no definition found (the phrase appears only as prose elsewhere)."
+        "kind": "PRINTED_REFERENCE_WITHOUT_RULE_DEFINITION",
+        "note": "LECG stat block (TXT 19381); no definition found (the phrase appears only as prose elsewhere). Owner PDF pass: Queen Jool Legacy stat block only (elsewhere ordinary prose); no printed rule definition exists (printed stat-block inconsistency / undefined talent reference)."
       },
       {
         "name": "Squad Fighter",
@@ -525,8 +525,8 @@
         "refs": [
           "Legacy Era Campaign Guide:19830"
         ],
-        "kind": "LEAD",
-        "note": "LECG stat block lists it under Special Actions and Talents (TXT 19826/19830) next to the canonical Squad Superiority; no definition found."
+        "kind": "PRINTED_REFERENCE_WITHOUT_RULE_DEFINITION",
+        "note": "LECG stat block lists it under Special Actions and Talents (TXT 19826/19830) next to the canonical Squad Superiority; no definition found. Owner PDF pass: Legacy Wheel Thug stat block only; no printed rule definition exists (printed stat-block inconsistency / undefined talent reference)."
       },
       {
         "name": "Wanted Alive",
@@ -536,13 +536,13 @@
         "refs": [
           "Core Rulebook:25470"
         ],
-        "kind": "LEAD",
-        "note": "Core Rulebook stat block lists the talent; no definition heading exists anywhere in the Core TXT."
+        "kind": "PRINTED_REFERENCE_WITHOUT_RULE_DEFINITION",
+        "note": "Core Rulebook stat block lists the talent; no definition heading exists anywhere in the Core TXT. Owner PDF pass: Senator Padmé Amidala Core stat block only; no printed rule definition exists (printed stat-block inconsistency / undefined talent reference)."
       }
     ],
     "residualByKind": {
       "OCR_LINE_ARTIFACT": 14,
-      "LEAD": 6,
+      "PRINTED_REFERENCE_WITHOUT_RULE_DEFINITION": 6,
       "SOURCE_STATBLOCK_DISCREPANCY_LIKELY": 1
     }
   },
@@ -552,8 +552,8 @@
       "ALTERNATIVE_LIST": 1,
       "GENERIC_DESCRIPTOR": 35,
       "OCR_DEFECT_IN_CANONICAL_TEXT": 4,
-      "SPLIT_OR_TREE_REFERENCE": 6,
-      "UNRESOLVED_NAME_LEAD": 1
+      "PRINTED_REFERENCE_WITHOUT_RULE_DEFINITION": 1,
+      "SPLIT_OR_TREE_REFERENCE": 6
     },
     "items": [
       {
@@ -983,6 +983,16 @@
         "note": "Shift Defense II"
       },
       {
+        "text": "Command Decision",
+        "key": "command decision",
+        "usedBy": [
+          "Turn the Tide"
+        ],
+        "uses": 1,
+        "kind": "PRINTED_REFERENCE_WITHOUT_RULE_DEFINITION",
+        "note": "Unknown Regions p.31 prints it only as a prerequisite of Turn the Tide (Military Tactics defines Commander's Prerogative, Irregular Tactics, Lead by Example, Turn the Tide); owner PDF pass found no definition anywhere: printed prerequisite inconsistency"
+      },
+      {
         "text": "Adapt",
         "key": "adapt",
         "usedBy": [
@@ -1043,16 +1053,6 @@
         "uses": 1,
         "kind": "SPLIT_OR_TREE_REFERENCE",
         "note": "fragment of a compound name (\"Adapt and Survive\", \"Strike and Run\", \"Blaster and Blade I-III\") or a tree/class reference"
-      },
-      {
-        "text": "Command Decision",
-        "key": "command decision",
-        "usedBy": [
-          "Turn the Tide"
-        ],
-        "uses": 1,
-        "kind": "UNRESOLVED_NAME_LEAD",
-        "note": "Unknown Regions prints it as a prerequisite of Turn the Tide; no committed TXT defines a talent, feat or power of that name"
       }
     ]
   },
@@ -1550,52 +1550,54 @@
     ]
   },
   "leads": {
-    "missingTalentCandidates": [
+    "missingTalentCandidates": [],
+    "canonicalTalentsToAdd": 0,
+    "printedReferencesWithoutRuleDefinition": [
       {
         "name": "Attract Student",
-        "kind": "STAT_BLOCK_UNDEFINED",
+        "kind": "PRINTED_STAT_BLOCK_REFERENCE",
         "refs": [
           "Knights of the Old Republic Campaign Guide:21681"
         ]
       },
       {
         "name": "Force Valor",
-        "kind": "STAT_BLOCK_UNDEFINED",
+        "kind": "PRINTED_STAT_BLOCK_REFERENCE",
         "refs": [
           "Knights of the Old Republic Campaign Guide:13933"
         ]
       },
       {
         "name": "Shocking Revelation",
-        "kind": "STAT_BLOCK_UNDEFINED",
+        "kind": "PRINTED_STAT_BLOCK_REFERENCE",
         "refs": [
           "Legacy Era Campaign Guide:11637"
         ]
       },
       {
         "name": "Social Engineering",
-        "kind": "STAT_BLOCK_UNDEFINED",
+        "kind": "PRINTED_STAT_BLOCK_REFERENCE",
         "refs": [
           "Legacy Era Campaign Guide:19380"
         ]
       },
       {
         "name": "Squad Fighter",
-        "kind": "STAT_BLOCK_UNDEFINED",
+        "kind": "PRINTED_STAT_BLOCK_REFERENCE",
         "refs": [
           "Legacy Era Campaign Guide:19830"
         ]
       },
       {
         "name": "Wanted Alive",
-        "kind": "STAT_BLOCK_UNDEFINED",
+        "kind": "PRINTED_STAT_BLOCK_REFERENCE",
         "refs": [
           "Core Rulebook:25470"
         ]
       },
       {
         "name": "Command Decision",
-        "kind": "PREREQUISITE_UNDEFINED",
+        "kind": "PRINTED_PREREQUISITE_INCONSISTENCY",
         "usedBy": [
           "Turn the Tide"
         ]

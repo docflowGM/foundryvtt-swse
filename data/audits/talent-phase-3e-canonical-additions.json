@@ -183,21 +183,22 @@
       "publication": {
         "sourcebook": "Legacy Era Campaign Guide",
         "publicationType": "EXPANSION",
-        "page": null,
-        "pageStatus": "PDF_REQUIRED"
+        "page": 55,
+        "pageStatus": "PDF_VERIFIED"
       },
       "prerequisites": "Telekinetic Power, move object",
       "prerequisiteStatus": "TXT_CONFIRMED",
       "rulesText": "When you successfully use the move object power to move an object of Large size or bigger, you can make an area attack with the object instead of throwing it at or dropping it on a single target, as normal for the power. You must spend a Force Point when you activate the power to do this, and the area you target is based on the size of the object: Large, 2x2; Huge, 3x3; Gargantuan, 4x4; Colossal and larger, 6x6. When you use move object to make an area attack with the object you are moving, you compare your Use the Force check to the Reflex Defense of each creature, droid, and vehicle in the target area. If your check equals or exceeds the target's Reflex Defense, it takes damage from the object (as determined by the move object power). Otherwise, the target takes half damage. This is an area effect.",
       "rulesSummary": null,
-      "rulesTextStatus": "TXT_CONFIRMED",
+      "rulesTextStatus": "TXT_CONFIRMED_PDF_CONFIRMED",
       "ocrNormalization": [
         "\"ona single\" -> \"on a single\" (lost word space)"
       ],
       "verification": {
-        "status": "TXT_CONFIRMED_PAGE_PDF_REQUIRED",
+        "status": "PDF_VERIFIED",
         "evidence": [
-          "Legacy Era Campaign Guide TXT 4812-4828 (\"The following new talent expands the Alter talent tree (see page 100 of the Saga Edition core rulebook)\")"
+          "Legacy Era Campaign Guide TXT 4812-4828 (\"The following new talent expands the Alter talent tree (see page 100 of the Saga Edition core rulebook)\")",
+          "Legacy Era Campaign Guide PDF printed p.55 (owner-verified: page, Force Point requirement, full area-attack/damage procedure and \"Prerequisites: Telekinetic Power, move object\")"
         ]
       },
       "identityCorrection": null,
@@ -228,19 +229,20 @@
       "publication": {
         "sourcebook": "Legacy Era Campaign Guide",
         "publicationType": "EXPANSION",
-        "page": null,
-        "pageStatus": "PDF_REQUIRED"
+        "page": 55,
+        "pageStatus": "PDF_VERIFIED"
       },
       "prerequisites": "",
       "prerequisiteStatus": "TXT_CONFIRMED (none printed)",
       "rulesText": "Whenever an attack or effect would normally move you against your will (such as being targeted by a Bantha Rush, or being moved by Force thrust or stagger power), you can spend a Force Point to negate that movement.",
       "rulesSummary": null,
-      "rulesTextStatus": "TXT_CONFIRMED",
+      "rulesTextStatus": "TXT_CONFIRMED_PDF_CONFIRMED",
       "ocrNormalization": [],
       "verification": {
-        "status": "TXT_CONFIRMED_PAGE_PDF_REQUIRED",
+        "status": "PDF_VERIFIED",
         "evidence": [
-          "Legacy Era Campaign Guide TXT 4848-4855 (expands the Control talent tree, Core p.101)"
+          "Legacy Era Campaign Guide TXT 4848-4855 (expands the Control talent tree, Core p.101)",
+          "Legacy Era Campaign Guide PDF printed p.55 (owner-verified: page, Force Point requirement; no prerequisite printed)"
         ]
       },
       "identityCorrection": null,
@@ -271,19 +273,20 @@
       "publication": {
         "sourcebook": "Legacy Era Campaign Guide",
         "publicationType": "EXPANSION",
-        "page": null,
-        "pageStatus": "PDF_REQUIRED"
+        "page": 55,
+        "pageStatus": "PDF_VERIFIED"
       },
       "prerequisites": "Power of the Dark Side",
       "prerequisiteStatus": "TXT_CONFIRMED",
       "rulesText": "Whenever an effect would normally move you down the condition track, you may spend a Force Point and increase your Dark Side Score by 1 to negate that movement down the condition track.",
       "rulesSummary": null,
-      "rulesTextStatus": "TXT_CONFIRMED",
+      "rulesTextStatus": "TXT_CONFIRMED_PDF_CONFIRMED",
       "ocrNormalization": [],
       "verification": {
-        "status": "TXT_CONFIRMED_PAGE_PDF_REQUIRED",
+        "status": "PDF_VERIFIED",
         "evidence": [
-          "Legacy Era Campaign Guide TXT 4857-4866 (expands the Dark Side talent tree, Core p.101); used in a printed stat block, LECG TXT 20498"
+          "Legacy Era Campaign Guide TXT 4857-4866 (expands the Dark Side talent tree, Core p.101); used in a printed stat block, LECG TXT 20498",
+          "Legacy Era Campaign Guide PDF printed p.55 (owner-verified: page, Force Point requirement, and Dark Side Score +1 cost; \"Prerequisite: Power of the Dark Side.\")"
         ]
       },
       "identityCorrection": null,
@@ -314,19 +317,20 @@
       "publication": {
         "sourcebook": "Threats of the Galaxy",
         "publicationType": "EXPANSION",
-        "page": null,
-        "pageStatus": "PDF_REQUIRED"
+        "page": 95,
+        "pageStatus": "PDF_VERIFIED"
       },
       "prerequisites": "Tough as Nails",
-      "prerequisiteStatus": "TXT_CONFIRMED",
+      "prerequisiteStatus": "PDF_VERIFIED",
       "rulesText": "You can catch a second wind as a reaction instead of as a swift action.",
       "rulesSummary": null,
-      "rulesTextStatus": "TXT_CONFIRMED",
+      "rulesTextStatus": "PDF_VERIFIED",
       "ocrNormalization": [],
       "verification": {
-        "status": "TXT_CONFIRMED_PAGE_PDF_REQUIRED",
+        "status": "PDF_VERIFIED",
         "evidence": [
-          "Threats of the Galaxy TXT 9535-9541; used in a printed stat block, TXT 9568/9575"
+          "Threats of the Galaxy TXT 9535-9541; used in a printed stat block, TXT 9568/9575",
+          "Threats of the Galaxy PDF printed p.95 (owner-verified exact wording: \"You can catch a second wind as a reaction instead of as a swift action.\" Prerequisite: Tough as Nails.)"
         ]
       },
       "identityCorrection": null,
@@ -362,14 +366,14 @@
       },
       "prerequisites": "Any one Force technique, Weapon Focus (lightsabers)",
       "prerequisiteStatus": "PDF_VERIFIED (owner)",
-      "rulesText": null,
-      "rulesSummary": "Choose one talent from the Lightsaber Forms talent tree; you gain that talent's benefit and count as having it for prerequisites. You must still meet the prerequisites of the chosen form. May be selected multiple times, each time for a different form.",
-      "rulesTextStatus": "PDF_TRANSCRIPTION_PENDING",
+      "rulesText": "You have learned how to use a Jedi fighting technique to defeat Jedi in combat. Choose one talent from the Lightsaber Forms talent tree (SE 218); you gain the benefit of this talent and are considered to have this talent for the purpose of satisfying prerequisites. You must meet all the prerequisites as normal for the chosen lightsaber form talent, in addition to the prerequisites of this talent.\n\nYou can select this talent multiple times. Each time you select it, choose a different lightsaber form.",
+      "rulesSummary": null,
+      "rulesTextStatus": "PDF_VERIFIED",
       "ocrNormalization": [],
       "verification": {
-        "status": "PDF_VERIFIED_EXACT_WORDING_PENDING",
+        "status": "PDF_VERIFIED",
         "evidence": [
-          "Threats of the Galaxy PDF printed p.81, \"New Sith Talent\" (owner-verified; wording not transcribed by the audit)",
+          "Threats of the Galaxy PDF printed p.81, \"NEW SITH TALENT\" box (owner-verified; exact wording and \"Prerequisite: Any one Force technique, Weapon Focus (lightsabers) feat.\" transcribed in this addendum)",
           "Threats of the Galaxy TXT 8018 (printed stat block \"Stolen Form (Jar'Kai, Juyo, Niman)\")"
         ]
       },
@@ -388,7 +392,7 @@
       "productionAssessment": {
         "identityAndTreeCorrect": true,
         "sourcePageMissing": true,
-        "benefitVsPrint": "NOT_COMPARABLE_WORDING_PENDING",
+        "benefitVsPrint": "EQUIVALENT_EDITORIAL",
         "prerequisitesVsPrint": "EXACT"
       }
     }
@@ -407,15 +411,18 @@
     "benefitDiffersFromPrint": [
       {
         "name": "Move Massive Object",
-        "detail": "production benefit is a paraphrase that omits printed rules content"
+        "detail": "production benefit is a paraphrase that omits printed rules content",
+        "confirmedByPdf": "LECG p.55"
       },
       {
         "name": "Telekinetic Stability",
-        "detail": "production benefit is a paraphrase that omits printed rules content"
+        "detail": "production benefit is a paraphrase that omits printed rules content",
+        "confirmedByPdf": "LECG p.55"
       },
       {
         "name": "Dark Preservation",
-        "detail": "production benefit is a paraphrase that omits printed rules content"
+        "detail": "production benefit is a paraphrase that omits printed rules content",
+        "confirmedByPdf": "LECG p.55"
       }
     ],
     "prerequisitesDifferFromPrint": [
@@ -424,13 +431,18 @@
         "production": "Telekinetic Power",
         "printed": "Telekinetic Power, move object"
       }
+    ],
+    "editorialOnly": [
+      {
+        "name": "Ranged Disarm",
+        "detail": "capitalisation; omits printed \"(see Disarm, page 152)\""
+      },
+      {
+        "name": "Stolen Form",
+        "detail": "Talent/Talent Tree capitalisation, \"benefits\", and \"a different Talent from the Lightsaber Forms Talent Tree\" instead of \"a different lightsaber form\""
+      }
     ]
   },
-  "openPdfItems": [
-    "Move Massive Object: printed page in Legacy Era Campaign Guide (TXT cannot give it)",
-    "Telekinetic Stability: printed page in Legacy Era Campaign Guide (TXT cannot give it)",
-    "Dark Preservation: printed page in Legacy Era Campaign Guide (TXT cannot give it)",
-    "Hard Target: printed page in Threats of the Galaxy (TXT cannot give it)",
-    "Stolen Form: exact printed wording (existence, page 81, tree and prerequisites are already PDF-verified)"
-  ]
+  "openPdfItems": [],
+  "pdfResolution": "All five previously open items were answered by the owner PDF pass: LECG p.55 (x3), Threats p.95, Threats p.81 exact wording."
 }

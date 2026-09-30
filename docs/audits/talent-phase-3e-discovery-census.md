@@ -11,14 +11,14 @@ The method is independent of the Phase 1D/2/3A claims (which is what is being te
 | Name | Kind | Where | Note |
 |---|---|---|---|
 | Armored | OCR_LINE_ARTIFACT | Rebellion Era Campaign Guide:15218 | wrap of "Armored Defense" |
-| Attract Student | LEAD | Knights of the Old Republic Campaign Guide:21681 | KOTOR stat block (TXT 21681); no talent definition found (Attract Minion is a different, canonical Core talent). |
+| Attract Student | PRINTED_REFERENCE_WITHOUT_RULE_DEFINITION | Knights of the Old Republic Campaign Guide:21681 | KOTOR stat block (TXT 21681); no talent definition found (Attract Minion is a different, canonical Core talent). Owner PDF pass: KOTOR stat block only; no printed rule definition exists (printed stat-block inconsistency / undefined talent reference). |
 | Bate Ais Coe Fre Harm Way | OCR_LINE_ARTIFACT | Scum and Villainy:8890 | garbled Scum and Villainy stat block (Out of Harm's Way) |
 | Crippling Strike Devastating Attack | OCR_LINE_ARTIFACT | Jedi Academy Training Manual:10875 | two talents merged by a lost comma |
 | Devastating | OCR_LINE_ARTIFACT | Knights of the Old Republic Campaign Guide:20368 | wrap of "Devastating Attack (…)" |
 | Elusive Target Force Perception | OCR_LINE_ARTIFACT | Jedi Academy Training Manual:10745 | two talents merged by a lost comma |
 | Empower | OCR_LINE_ARTIFACT | Jedi Academy Training Manual:9453 | wrap of "Empower Weapon" |
 | Feats Armor Proficiency | OCR_LINE_ARTIFACT | Threats of the Galaxy:780 | section heading merged into the talent list |
-| Force Valor | LEAD | Knights of the Old Republic Campaign Guide:13933 | KOTOR stat blocks list it under Special Actions/Talents; the only definition found is the Force power "valor" (KOTOR TXT 4829), not a talent. |
+| Force Valor | PRINTED_REFERENCE_WITHOUT_RULE_DEFINITION | Knights of the Old Republic Campaign Guide:13933 | KOTOR stat blocks list it under Special Actions/Talents; the only definition found is the Force power "valor" (KOTOR TXT 4829), not a talent. Owner PDF pass: KOTOR character stat blocks only; no printed rule definition exists (printed stat-block inconsistency / undefined talent reference). |
 | Gauge Force | OCR_LINE_ARTIFACT | Force Unleashed Campaign Guide:19387 | wrap of "Gauge Force Potential" |
 | Greater | OCR_LINE_ARTIFACT | Force Unleashed Campaign Guide:21972, Legacy Era Campaign Guide:18569, Threats of the Galaxy:4812 | list wrap: "Greater Weapon Focus/Specialization (…)" split across a line |
 | Hunter's Target Improved Armored Defense | OCR_LINE_ARTIFACT | Core Rulebook:26206 | two talents merged by a lost comma |
@@ -26,20 +26,20 @@ The method is independent of the Phase 1D/2/3A claims (which is what is being te
 | Multiattack | OCR_LINE_ARTIFACT | Core Rulebook:26206 | wrap of "Multiattack Proficiency (…)" |
 | Pace | OCR_LINE_ARTIFACT | Scum and Villainy:11055 | garbled Scum and Villainy stat block |
 | Ser Wars | OCR_LINE_ARTIFACT | Scum and Villainy:8775 | garbled Scum and Villainy stat block |
-| Shocking Revelation | LEAD | Legacy Era Campaign Guide:11637 | LECG stat block lists it under Special Actions and Talents (TXT 11633/11637); no definition found. |
+| Shocking Revelation | PRINTED_REFERENCE_WITHOUT_RULE_DEFINITION | Legacy Era Campaign Guide:11637 | LECG stat block lists it under Special Actions and Talents (TXT 11633/11637); no definition found. Owner PDF pass: Legacy Galactic Alliance covert-agent stat block only; no printed rule definition exists (printed stat-block inconsistency / undefined talent reference). |
 | Single Weapon | OCR_LINE_ARTIFACT | Knights of the Old Republic Campaign Guide:15000 | wrap of "Single Weapon Flourish" |
-| Social Engineering | LEAD | Legacy Era Campaign Guide:19380 | LECG stat block (TXT 19381); no definition found (the phrase appears only as prose elsewhere). |
-| Squad Fighter | LEAD | Legacy Era Campaign Guide:19830 | LECG stat block lists it under Special Actions and Talents (TXT 19826/19830) next to the canonical Squad Superiority; no definition found. |
-| Wanted Alive | LEAD | Core Rulebook:25470 | Core Rulebook stat block lists the talent; no definition heading exists anywhere in the Core TXT. |
+| Social Engineering | PRINTED_REFERENCE_WITHOUT_RULE_DEFINITION | Legacy Era Campaign Guide:19380 | LECG stat block (TXT 19381); no definition found (the phrase appears only as prose elsewhere). Owner PDF pass: Queen Jool Legacy stat block only (elsewhere ordinary prose); no printed rule definition exists (printed stat-block inconsistency / undefined talent reference). |
+| Squad Fighter | PRINTED_REFERENCE_WITHOUT_RULE_DEFINITION | Legacy Era Campaign Guide:19830 | LECG stat block lists it under Special Actions and Talents (TXT 19826/19830) next to the canonical Squad Superiority; no definition found. Owner PDF pass: Legacy Wheel Thug stat block only; no printed rule definition exists (printed stat-block inconsistency / undefined talent reference). |
+| Wanted Alive | PRINTED_REFERENCE_WITHOUT_RULE_DEFINITION | Core Rulebook:25470 | Core Rulebook stat block lists the talent; no definition heading exists anywhere in the Core TXT. Owner PDF pass: Senator Padmé Amidala Core stat block only; no printed rule definition exists (printed stat-block inconsistency / undefined talent reference). |
 
-**Leads worth a lookup (7):** Attract Student; Force Valor; Shocking Revelation; Social Engineering; Squad Fighter; Wanted Alive; Command Decision. None is defined anywhere in the 14 TXT files; each is either a talent the claims layer never captured, a talent defined on a page the TXT lost, or a printed stat-block inconsistency. They need the PDF.
+**Printed references without a rule definition (7):** Attract Student; Force Valor; Shocking Revelation; Social Engineering; Squad Fighter; Wanted Alive; Command Decision. The owner's PDF pass of the rendered pages found no printed definition for any of them (Command Decision: printed prerequisite inconsistency; the other six: printed stat-block inconsistency / undefined talent reference). **No canonical talent is added** — that would fabricate rules the books never give.
 
 ## 2. Prerequisite closure
 
-47 prerequisite fragments on canonical talents do not resolve to a known name (by kind: ALTERNATIVE_LIST 1, GENERIC_DESCRIPTOR 35, OCR_DEFECT_IN_CANONICAL_TEXT 4, SPLIT_OR_TREE_REFERENCE 6, UNRESOLVED_NAME_LEAD 1).
+47 prerequisite fragments on canonical talents do not resolve to a known name (by kind: ALTERNATIVE_LIST 1, GENERIC_DESCRIPTOR 35, OCR_DEFECT_IN_CANONICAL_TEXT 4, PRINTED_REFERENCE_WITHOUT_RULE_DEFINITION 1, SPLIT_OR_TREE_REFERENCE 6).
 
 - **Canonical text defects (silent OCR errors the earlier signature gate could not see):** `Battie Analysis` (→ Battle Analysis; Cover Fire); `Enpower Weapon` (→ Empower Weapon; Primitive Block); `Hunter's Target. P` (→ Hunter's Target (stray ". P"); Relentless); `Shift Defense Il` (→ Shift Defense II; Shift Defense I).
-- **Unresolved name:** `Command Decision` — Unknown Regions prints it as a prerequisite of Turn the Tide; no committed TXT defines a talent, feat or power of that name.
+- **Printed prerequisite without a definition:** `Command Decision` — Unknown Regions p.31 prints it only as a prerequisite of Turn the Tide (Military Tactics defines Commander's Prerogative, Irregular Tactics, Lead by Example, Turn the Tide); owner PDF pass found no definition anywhere: printed prerequisite inconsistency.
 - The rest are generic descriptors ("Weapon Focus with the chosen weapon"), fragments of compound names and tree references, not missing talents.
 
 ## 3. Rare-token scan of canonical text
@@ -48,7 +48,7 @@ The method is independent of the Phase 1D/2/3A claims (which is what is being te
 
 ## What this means for completeness
 
-- No stat-block or prerequisite evidence points at a talent missing from a *defined* tree beyond the already-handled seven. The residual leads above are names **used but never defined** in the TXT; they are the honest open items for the corpus-vs-publication question.
+- No stat-block or prerequisite evidence points at a talent missing from a *defined* tree beyond the already-handled seven. The seven residual names are **printed but never defined** (owner PDF pass); they do not increase the canonical count.
 - Separately, the closure exposed a small set of canonical **text** defects (a different correction unit from completeness).
 
 Every residual is classified.

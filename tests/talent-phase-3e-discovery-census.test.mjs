@@ -9,13 +9,17 @@ let n = 0; const test = (name, fn) => { fn(); n++; console.log('  ok  ' + name);
 test('no residual lead is unclassified', () => assert.deepEqual(c.unclassified, []));
 test('the stat-block census independently finds talents the claims layer missed (they are in production via Phase 3D) and leaves named leads', () => {
   assert.ok(c.statBlockCensus.matchedCanonicalTalent >= 250);
-  assert.deepEqual(c.statBlockCensus.residual.filter(r => r.kind === 'LEAD').map(r => r.name).sort(), ['Attract Student', 'Force Valor', 'Shocking Revelation', 'Social Engineering', 'Squad Fighter', 'Wanted Alive']);
+  assert.deepEqual(c.statBlockCensus.residual.filter(r => r.kind === 'PRINTED_REFERENCE_WITHOUT_RULE_DEFINITION').map(r => r.name).sort(), ['Attract Student', 'Force Valor', 'Shocking Revelation', 'Social Engineering', 'Squad Fighter', 'Wanted Alive']);
+});
+test('the seven names without a printed definition add no canonical talent (owner PDF pass)', () => {
+  assert.equal(c.leads.canonicalTalentsToAdd, 0); assert.deepEqual(c.leads.missingTalentCandidates, []);
+  assert.equal(c.leads.printedReferencesWithoutRuleDefinition.length, 7);
 });
 test('Master Shaper is flagged as a printed stat-block discrepancy, not a missing talent', () => {
   assert.deepEqual(c.leads.sourceDiscrepancies, ['Master Shaper']);
 });
 test('prerequisite closure: one unresolved name (Command Decision) and four silent OCR defects in canonical text', () => {
-  assert.deepEqual(c.leads.missingTalentCandidates.filter(l => l.kind === 'PREREQUISITE_UNDEFINED').map(l => l.name), ['Command Decision']);
+  assert.deepEqual(c.leads.printedReferencesWithoutRuleDefinition.filter(l => l.kind === 'PRINTED_PREREQUISITE_INCONSISTENCY').map(l => l.name), ['Command Decision']);
   assert.deepEqual(c.leads.canonicalTextDefects.map(d => d.text).sort(), ['Battie Analysis', 'Enpower Weapon', "Hunter's Target. P", 'Shift Defense Il']);
 });
 test('the rare-token scan surfaces lost-space defects in canonical text', () => {

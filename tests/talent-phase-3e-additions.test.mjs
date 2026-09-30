@@ -42,9 +42,20 @@ test('PDF_VERIFIED rows must carry the exact wording and page; wording must equa
   assert.ok(has(run(i => { i.addendum.additions.find(a => a.name === 'Ranged Disarm').rulesText += ' extra words'; }), /differs from the PDF-verified census/));
   assert.ok(has(run(i => { i.addendum.additions.find(a => a.name === 'Ranged Disarm').publication.page = 216; }), /page differs from the PDF-verified census/));
 });
-test('unverified pages stay null until the PDF answers (no page is invented from OCR)', () => {
-  assert.ok(has(run(i => { i.addendum.additions.find(a => a.name === 'Hard Target').publication.page = 50; }), /PDF_REQUIRED page must stay null/));
-  assert.deepEqual(base.addendum.additions.filter(a => a.publication.pageStatus === 'PDF_REQUIRED').map(a => a.name).sort(), ['Dark Preservation', 'Hard Target', 'Move Massive Object', 'Telekinetic Stability']);
+test('every page is PDF-verified by the owner pass (no OCR-invented pages) and no PDF item remains open', () => {
+  const pages = Object.fromEntries(base.addendum.additions.map(a => [a.name, [a.publication.sourcebook, a.publication.page, a.publication.pageStatus]]));
+  assert.deepEqual(pages['Move Massive Object'], ['Legacy Era Campaign Guide', 55, 'PDF_VERIFIED']);
+  assert.deepEqual(pages['Telekinetic Stability'], ['Legacy Era Campaign Guide', 55, 'PDF_VERIFIED']);
+  assert.deepEqual(pages['Dark Preservation'], ['Legacy Era Campaign Guide', 55, 'PDF_VERIFIED']);
+  assert.deepEqual(pages['Hard Target'], ['Threats of the Galaxy', 95, 'PDF_VERIFIED']);
+  assert.deepEqual(pages['Stolen Form'], ['Threats of the Galaxy', 81, 'PDF_VERIFIED']);
+  assert.deepEqual(base.addendum.openPdfItems, []);
+  assert.ok(has(run(i => { const a = i.addendum.additions.find(x => x.name === 'Hard Target'); a.publication.pageStatus = 'PDF_REQUIRED'; a.publication.page = 50; }), /PDF_REQUIRED page must stay null/));
+});
+test('Stolen Form carries the transcribed PDF wording; the three Legacy production benefits are confirmed defects', () => {
+  const sf = base.addendum.additions.find(a => a.name === 'Stolen Form');
+  assert.ok(sf.rulesText.includes('choose a different lightsaber form') && sf.rulesTextStatus === 'PDF_VERIFIED');
+  assert.deepEqual(base.addendum.productionDefectsFound.benefitDiffersFromPrint.map(d => d.name).sort(), ['Dark Preservation', 'Move Massive Object', 'Telekinetic Stability']);
 });
 test('Gunslinger roster reconciles: Phase 1D 5 + 2 = 7 = PDF-verified source census', () => {
   const d = base.addendum.treeRosterDeltas.find(x => x.tree === 'Gunslinger'); assert.equal(d.originRosterBefore + d.add.length, 7);

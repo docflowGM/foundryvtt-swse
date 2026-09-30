@@ -55,14 +55,14 @@ for (const f of files) {
     }
   }
 }
-// Classification of residual stat-block names (each must be listed; LEAD = needs a lookup, ARTIFACT = OCR line damage / list wrap).
+// Classification of residual stat-block names (each must be listed; PRINTED_REFERENCE_WITHOUT_RULE_DEFINITION = owner PDF pass found no printed definition, ARTIFACT = OCR line damage / list wrap).
 const STAT_RESIDUAL = {
-  'wanted alive': ['LEAD', 'Core Rulebook stat block lists the talent; no definition heading exists anywhere in the Core TXT.'],
-  'force valor': ['LEAD', 'KOTOR stat blocks list it under Special Actions/Talents; the only definition found is the Force power "valor" (KOTOR TXT 4829), not a talent.'],
-  'attract student': ['LEAD', 'KOTOR stat block (TXT 21681); no talent definition found (Attract Minion is a different, canonical Core talent).'],
-  'shocking revelation': ['LEAD', 'LECG stat block lists it under Special Actions and Talents (TXT 11633/11637); no definition found.'],
-  'social engineering': ['LEAD', 'LECG stat block (TXT 19381); no definition found (the phrase appears only as prose elsewhere).'],
-  'squad fighter': ['LEAD', 'LECG stat block lists it under Special Actions and Talents (TXT 19826/19830) next to the canonical Squad Superiority; no definition found.'],
+  'wanted alive': ['PRINTED_REFERENCE_WITHOUT_RULE_DEFINITION', 'Core Rulebook stat block lists the talent; no definition heading exists anywhere in the Core TXT. Owner PDF pass: Senator Padmé Amidala Core stat block only; no printed rule definition exists (printed stat-block inconsistency / undefined talent reference).'],
+  'force valor': ['PRINTED_REFERENCE_WITHOUT_RULE_DEFINITION', 'KOTOR stat blocks list it under Special Actions/Talents; the only definition found is the Force power "valor" (KOTOR TXT 4829), not a talent. Owner PDF pass: KOTOR character stat blocks only; no printed rule definition exists (printed stat-block inconsistency / undefined talent reference).'],
+  'attract student': ['PRINTED_REFERENCE_WITHOUT_RULE_DEFINITION', 'KOTOR stat block (TXT 21681); no talent definition found (Attract Minion is a different, canonical Core talent). Owner PDF pass: KOTOR stat block only; no printed rule definition exists (printed stat-block inconsistency / undefined talent reference).'],
+  'shocking revelation': ['PRINTED_REFERENCE_WITHOUT_RULE_DEFINITION', 'LECG stat block lists it under Special Actions and Talents (TXT 11633/11637); no definition found. Owner PDF pass: Legacy Galactic Alliance covert-agent stat block only; no printed rule definition exists (printed stat-block inconsistency / undefined talent reference).'],
+  'social engineering': ['PRINTED_REFERENCE_WITHOUT_RULE_DEFINITION', 'LECG stat block (TXT 19381); no definition found (the phrase appears only as prose elsewhere). Owner PDF pass: Queen Jool Legacy stat block only (elsewhere ordinary prose); no printed rule definition exists (printed stat-block inconsistency / undefined talent reference).'],
+  'squad fighter': ['PRINTED_REFERENCE_WITHOUT_RULE_DEFINITION', 'LECG stat block lists it under Special Actions and Talents (TXT 19826/19830) next to the canonical Squad Superiority; no definition found. Owner PDF pass: Legacy Wheel Thug stat block only; no printed rule definition exists (printed stat-block inconsistency / undefined talent reference).'],
   'master shaper': ['SOURCE_STATBLOCK_DISCREPANCY_LIKELY', 'LECG stat block (TXT 20841); the printed Shaper tree lists Biotech Mastery, Expedient Mending, Expert Shaper, Master Mender, Skilled Implanter (TXT 4135-4170): no "Master Shaper" talent. Probably a printed stat-block naming error.'],
   'greater': ['OCR_LINE_ARTIFACT', 'list wrap: "Greater Weapon Focus/Specialization (…)" split across a line'],
   'commando': ['OCR_LINE_ARTIFACT', 'Galaxy at War TXT 8430: a list of tree names, not a talent'],
@@ -96,7 +96,7 @@ const PREREQ_CLASS = [
   [/^(enpower weapon)$/, 'OCR_DEFECT_IN_CANONICAL_TEXT', 'Empower Weapon'],
   [/^hunters target p$/, 'OCR_DEFECT_IN_CANONICAL_TEXT', "Hunter's Target (stray \". P\")"],
   [/^shift defense il$/, 'OCR_DEFECT_IN_CANONICAL_TEXT', 'Shift Defense II'],
-  [/^command decision$/, 'UNRESOLVED_NAME_LEAD', 'Unknown Regions prints it as a prerequisite of Turn the Tide; no committed TXT defines a talent, feat or power of that name'],
+  [/^command decision$/, 'PRINTED_REFERENCE_WITHOUT_RULE_DEFINITION', 'Unknown Regions p.31 prints it only as a prerequisite of Turn the Tide (Military Tactics defines Commander\'s Prerogative, Irregular Tactics, Lead by Example, Turn the Tide); owner PDF pass found no definition anywhere: printed prerequisite inconsistency'],
   [/^(adapt|survive|strike|blaster|blade i|blade ii|discblade|duelist)$/, 'SPLIT_OR_TREE_REFERENCE', 'fragment of a compound name ("Adapt and Survive", "Strike and Run", "Blaster and Blade I-III") or a tree/class reference'],
   [/^inspiration$/, 'TREE_REFERENCE', 'names the Inspiration talent tree'],
   [/^block or deflect$/, 'ALTERNATIVE_LIST', 'either of two talents'],
@@ -139,7 +139,7 @@ const census = {
   prerequisiteClosure: { unresolved: prereq.unresolved.length, byKind: prereq.unresolved.reduce((o, r) => (o[r.kind] = (o[r.kind] || 0) + 1, o), {}), items: prereq.unresolved },
   rareTokenScan: { distinctTokens: tokens.length, likelyDefects: tokens.filter(t => t.likelyDefect), tokens },
   leads: {
-    missingTalentCandidates: [...stat.residual.filter(r => r.kind === 'LEAD').map(r => ({ name: r.name, kind: 'STAT_BLOCK_UNDEFINED', refs: r.refs })), ...prereq.unresolved.filter(r => r.kind === 'UNRESOLVED_NAME_LEAD').map(r => ({ name: r.text, kind: 'PREREQUISITE_UNDEFINED', usedBy: r.usedBy }))],
+    missingTalentCandidates: [], canonicalTalentsToAdd: 0, printedReferencesWithoutRuleDefinition: [...stat.residual.filter(r => r.kind === 'PRINTED_REFERENCE_WITHOUT_RULE_DEFINITION').map(r => ({ name: r.name, kind: 'PRINTED_STAT_BLOCK_REFERENCE', refs: r.refs })), ...prereq.unresolved.filter(r => r.kind === 'PRINTED_REFERENCE_WITHOUT_RULE_DEFINITION').map(r => ({ name: r.text, kind: 'PRINTED_PREREQUISITE_INCONSISTENCY', usedBy: r.usedBy }))],
     sourceDiscrepancies: stat.residual.filter(r => r.kind === 'SOURCE_STATBLOCK_DISCREPANCY_LIKELY').map(r => r.name),
     canonicalTextDefects: prereq.unresolved.filter(r => r.kind === 'OCR_DEFECT_IN_CANONICAL_TEXT').map(r => ({ text: r.text, intended: r.note, usedBy: r.usedBy }))
   }
@@ -156,16 +156,16 @@ const md = [
   `${stat.names} distinct talent names appear in published stat blocks. ${stat.matchedCanonicalTalent} match a canonical talent exactly; ${stat.knownNonTalent} are known non-talents (feats, powers, class features); ${stat.ocrVariantOfKnown.length} are OCR variants of a known name; ${stat.ocrNoise} are garbled beyond recognition; **${stat.residual.length} residual**, every one classified:`, '',
   '| Name | Kind | Where | Note |', '|---|---|---|---|',
   ...stat.residual.map(r => `| ${r.name} | ${r.kind} | ${r.refs.slice(0, 3).join(', ')} | ${r.note ?? ''} |`), '',
-  `**Leads worth a lookup (${census.leads.missingTalentCandidates.length}):** ${census.leads.missingTalentCandidates.map(l => l.name).join('; ')}. None is defined anywhere in the 14 TXT files; each is either a talent the claims layer never captured, a talent defined on a page the TXT lost, or a printed stat-block inconsistency. They need the PDF.`, '',
+  `**Printed references without a rule definition (${census.leads.printedReferencesWithoutRuleDefinition.length}):** ${census.leads.printedReferencesWithoutRuleDefinition.map(l => l.name).join('; ')}. The owner's PDF pass of the rendered pages found no printed definition for any of them (Command Decision: printed prerequisite inconsistency; the other six: printed stat-block inconsistency / undefined talent reference). **No canonical talent is added** — that would fabricate rules the books never give.`, '',
   '## 2. Prerequisite closure', '',
   `${prereq.unresolved.length} prerequisite fragments on canonical talents do not resolve to a known name (by kind: ${Object.entries(census.prerequisiteClosure.byKind).map(([k, v]) => `${k} ${v}`).join(', ')}).`, '',
   '- **Canonical text defects (silent OCR errors the earlier signature gate could not see):** ' + census.leads.canonicalTextDefects.map(d => `\`${d.text}\` (→ ${d.intended}; ${d.usedBy.join(', ')})`).join('; ') + '.',
-  '- **Unresolved name:** ' + (prereq.unresolved.filter(r => r.kind === 'UNRESOLVED_NAME_LEAD').map(r => `\`${r.text}\` — ${r.note}`).join('; ') || 'none') + '.',
+  '- **Printed prerequisite without a definition:** ' + (prereq.unresolved.filter(r => r.kind === 'PRINTED_REFERENCE_WITHOUT_RULE_DEFINITION').map(r => `\`${r.text}\` — ${r.note}`).join('; ') || 'none') + '.',
   '- The rest are generic descriptors ("Weapon Focus with the chosen weapon"), fragments of compound names and tree references, not missing talents.', '',
   '## 3. Rare-token scan of canonical text', '',
   `${tokens.length} words in canonical text occur at most once in all 14 sourcebooks. Most are legitimate rare words; the lost-space/typo candidates are: ${census.rareTokenScan.likelyDefects.map(t => `\`${t.token}\` (${t.example})`).join(', ')}.`, '',
   '## What this means for completeness', '',
-  `- No stat-block or prerequisite evidence points at a talent missing from a *defined* tree beyond the already-handled seven. The residual leads above are names **used but never defined** in the TXT; they are the honest open items for the corpus-vs-publication question.`,
+  `- No stat-block or prerequisite evidence points at a talent missing from a *defined* tree beyond the already-handled seven. The seven residual names are **printed but never defined** (owner PDF pass); they do not increase the canonical count.`,
   `- Separately, the closure exposed a small set of canonical **text** defects (a different correction unit from completeness).`, '',
   census.unclassified.length ? `**UNCLASSIFIED residuals (census incomplete): ${census.unclassified.join('; ')}**` : 'Every residual is classified.', ''
 ].join('\n');
