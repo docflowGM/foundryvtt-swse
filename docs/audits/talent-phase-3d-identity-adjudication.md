@@ -10,13 +10,13 @@ Tests: `tests/talent-phase-3d-review-extras.test.mjs` · Census: `talent-phase-3
 | Bucket | Records | Status |
 |---|---|---|
 | Review extras (Notorious, Teräs Käsi Basics) | 2 | **Adjudicated** (this checkpoint) |
-| SOURCE_VERIFIED_SPECIAL_TREE | 10 | pending |
+| SOURCE_VERIFIED_SPECIAL_TREE | 10 | **Adjudicated** (3 KEEP, 3 REMOVE_CONTAMINATION, 4 blocked on homebrew policy) |
 | Missing trees (Embrace Dark Side, Force Meld) | 2 | pending |
 | Same-name / sourcebook-hit candidates | — | pending |
 | Actor-referenced | — | pending |
 | No credible publication evidence | — | pending |
 
-The other 90 sit in the manifest as `REVIEW_REQUIRED` with `adjudicationStatus: PENDING_3D2` — a placeholder, not a decision.
+The other 80 sit in the manifest as `REVIEW_REQUIRED` with `adjudicationStatus: PENDING_3D2` — a placeholder, not a decision.
 
 ## 1. `a7d8c4da96eacad4` — Notorious (Infamy) → `REMOVE_CONTAMINATION`
 
@@ -84,6 +84,33 @@ Phase 3B authority; this disposition does not re-open it and creates no new publ
 **References to resolve:** `packs/talent_trees.db` (`talentIds`; the tree keeps 5 members); registries (regenerate); **2 embedded actor items** on *Mynock Man* (heroic + npc) →
 `67bddb17ae2770f3` (plus refresh of their stale snapshot text); `tools/fix-compendium-issues.js:44` (legacy one-shot map keyed by the duplicate ID with a non-existent tree ID
 `f96cb0f2a46b4dd1` — retire the entry); `tests/talent-tree-membership-review-extras.test.mjs`; exemption in the membership audit. Historical audit/doc references need no action.
+
+## 3. Bucket: the 10 `SOURCE_VERIFIED_SPECIAL_TREE` records
+
+**The registry label is not evidence.** Of ten records carrying it, three are real published talents, three are malformed records whose text belongs to other talents,
+and four are self-labelled homebrew. Every disposition below rests on the committed TXT, not on the registry status.
+
+| ID | Record | Tree | Disposition | Basis |
+|---|---|---|---|---|
+| `192279eaa0b61d36` | Dark Preservation | Dark Side | **KEEP_CANONICAL_ADDITIONAL_PUBLICATION** | Real LECG talent (TXT 4862, prereq Power of the Dark Side). Production omits the Force Point cost. Used in a printed stat block (TXT 20498). Referenced by 1 heroic + 1 npc actor item — stays valid. |
+| `208e1e15e989323f` | Telekinetic Stability | Control | **KEEP_CANONICAL_ADDITIONAL_PUBLICATION** | Real LECG talent (TXT 4852). Production omits the Force Point cost. |
+| `62d461ae3b0fcfa9` | Move Massive Object | Alter | **KEEP_CANONICAL_ADDITIONAL_PUBLICATION** | Real LECG talent (TXT 4815-4828, prereqs Telekinetic Power + move object). Production omits the Force Point cost and the printed damage rule. |
+| `57c770c7924e4241` | "Cloak of Shadows" | Disciple of Twilight | **REMOVE_CONTAMINATION** | Text = Shadow Armor (TXT 5123) + Shadow Vision (5133), both already canonical (`4916dbbae0f18ee1`, `66b3278292626e27`). Real Cloak of Shadow (TXT 5077) is canonical as `b3fe6f7659b40a55`. |
+| `714c38c0498a4eaf` | "Empowered Weapon" | Ember of Vahl | **REMOVE_CONTAMINATION** | Text = Vahl's Brand (TXT 5205) + Vahl's Flame (5211), canonical as `a5f8ec365ef2b699` / `8ba6abad84c6d9ef`. No talent of this name exists in the tree. |
+| `f123e0682ef74583` | "Reference Book: Star Wars Saga Edition Starships of the Galaxy" | Sense | **REMOVE_CONTAMINATION** | Name and benefit are the scraper string; not a talent. |
+| `4d7d5a38d0394e4c` | Force Bond | Alter | REVIEW_REQUIRED — `HOMEBREW_POLICY_OWNER_DECISION` | Benefit ends "Homebrew Reference Book: Legacy of the Force Sourcebook"; not in any TXT. |
+| `f785208aa6774cd7` | Dark Side Maelstrom | Dark Side | REVIEW_REQUIRED — `HOMEBREW_POLICY_OWNER_DECISION` | Ends "Homebrew Reference Book: Dathomir Field Guide". |
+| `9319584186ce4228` | Dathomiri Hunter | Dathomiri Witch | REVIEW_REQUIRED — `HOMEBREW_POLICY_OWNER_DECISION` | Self-labelled homebrew (Energy Bow / Sense Surroundings). |
+| `e09d40421ade49e8` | Binding Sickle | Dathomiri Witch | REVIEW_REQUIRED — `HOMEBREW_POLICY_OWNER_DECISION` | Ends "Homebrew Reference Book: Dathomir Field Guide". |
+
+**The three KEEP records are a Phase 3B ownership-model gap, not a Phase 3C canonical edit.** They are LECG "new talents expand the X tree" entries that no canonical identity
+covers. Nothing here touches one of the 1,180. Making them canonical means a *new* identity through the Phase 2 → canonical → manifest chain (`requiredFollowUp.kind = CANONICAL_CORPUS_ADDITION`
+in the manifest, with the printed text); the printed page numbers need a PDF look. Until then they are preserved untouched. The three REMOVE records have **no actor-pack references**; their structural handling
+(tree `talentIds`/`talentNames`, registries) and the `combat-action-ability-cards-phase-t13.json` mentions are enumerated per record in the manifest.
+
+**The four homebrew records are a policy question, not an evidence question.** `KEEP_NONBOOK_SUPPORTED` requires official material (none found) and `REMOVE_CONTAMINATION`
+would delete content the project owner may have added on purpose. They stay `REVIEW_REQUIRED` with a named reason and are *not* counted as unresolved evidence gaps. The 38 `REPO_ONLY_NONCANONICAL_HOMEBREW`
+records will raise the same question, so one owner ruling (keep out of the authoritative pack / move to a separate homebrew pack / delete) resolves the whole class.
 
 ## Validation
 

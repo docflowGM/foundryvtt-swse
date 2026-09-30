@@ -13,9 +13,10 @@
   ],
   "inputPopulation": 92,
   "progress": {
-    "adjudicated": 2,
-    "pending": 90,
-    "note": "REVIEW_REQUIRED here means \"not yet adjudicated\" and is temporary; Phase 3D-2 is not complete while any remain without a concrete named reason."
+    "adjudicated": 8,
+    "blockedOnOwnerPolicy": 4,
+    "pending": 80,
+    "note": "REVIEW_REQUIRED with adjudicationStatus PENDING_3D2 means \"not yet examined\". BLOCKED_ON_OWNER_POLICY is a concrete, named reason (reviewRequiredReason)."
   },
   "records": [
     {
@@ -794,22 +795,60 @@
       "treeId": "de95d37c72b1c4cd",
       "treeName": "Dark Side",
       "group": "DEFERRED_PRODUCTION_ONLY",
-      "finalDisposition": "REVIEW_REQUIRED",
+      "finalDisposition": "KEEP_CANONICAL_ADDITIONAL_PUBLICATION",
       "survivorId": null,
-      "adjudicationStatus": "PENDING_3D2",
+      "adjudicationStatus": "ADJUDICATED",
       "evidence": {
-        "status": "NOT_YET_ADJUDICATED",
-        "census": "see data/audits/talent-phase-3d-production-extras-census.json",
-        "provisional": {
-          "value": "KEEP_NONBOOK_SUPPORTED",
-          "basis": "registry status SOURCE_VERIFIED_SPECIAL_TREE; publication evidence to be confirmed",
-          "confidence": "LOW"
-        }
+        "status": "ADJUDICATED_TXT_CONFIRMED",
+        "conclusion": "Dark Preservation is a real Legacy Era Campaign Guide talent that expands the Core Dark Side tree. The Phase 3B ownership model captured no canonical identity for it (no same-name canonical record exists); the production record is the only carrier.",
+        "findings": [
+          "Legacy Era Campaign Guide TXT 4862-4867 (\"Dark Preservation: Whenever an effect would normally move you down the condition track, you may spend a Force Point and increase your Dark Side Score by 1…\", \"Prerequisite: Power of the Dark Side\"). Production omits the Force Point cost. Also used in a printed stat block (LECG TXT 20498).",
+          "Production record carries a hand-authored runtime id swse.talent.dark_preservation; its benefit is a paraphrase, not the printed text.",
+          "Registry tag SOURCE_VERIFIED_SPECIAL_TREE was NOT used as evidence; the TXT was."
+        ],
+        "sourceRefs": [
+          "reference/sourcebooks/Legacy Era Campaign Guide_djvu.txt:4862",
+          "reference/sourcebooks/Legacy Era Campaign Guide_djvu.txt:20498"
+        ],
+        "pdfRequired": true,
+        "pdfNote": "The printed page number is not recoverable from the TXT. PDF needed only for the page (rules text is unambiguous in the TXT)."
       },
-      "referencesToRepoint": null,
+      "referencesToRepoint": {
+        "structural": [],
+        "actorPackEmbeddedItems": [
+          {
+            "pack": "heroic",
+            "actor": "Jor Torlin",
+            "actorId": "e03bd6cb501f6616",
+            "itemIndex": 14,
+            "embeddedItemName": "Dark Preservation"
+          },
+          {
+            "pack": "npc",
+            "actor": "Jor Torlin",
+            "actorId": "e03bd6cb501f6616",
+            "itemIndex": 14,
+            "embeddedItemName": "Dark Preservation"
+          }
+        ],
+        "note": "KEEP: nothing is repointed or removed; listed actor references stay valid."
+      },
       "metadataTransfer": [],
-      "expectedFinal": null,
-      "phase3cCanonicalRecordTouched": false
+      "expectedFinal": {
+        "recordExists": true,
+        "treeMembership": "unchanged (Dark Side de95d37c72b1c4cd)",
+        "classAccess": "unchanged",
+        "canonicalRecordsTouched": []
+      },
+      "phase3cCanonicalRecordTouched": false,
+      "requiredFollowUp": {
+        "kind": "CANONICAL_CORPUS_ADDITION",
+        "note": "Not a Phase 3C canonical record; adding it means a new canonical identity through the Phase 2 → canonical → manifest chain (not an edit of one of the 1,180). Until then the record is preserved untouched.",
+        "canonicalIdentityProposed": "Legacy Era Campaign Guide|Dark Side (Core tree expansion)|Dark Preservation",
+        "printedText": "Whenever an effect would normally move you down the condition track, you may spend a Force Point and increase your Dark Side Score by 1 to negate that movement down the condition track.",
+        "prerequisites": "Power of the Dark Side",
+        "productionBenefitDiffersFromPrint": true
+      }
     },
     {
       "productionId": "1bda3fdaa84240d3",
@@ -840,22 +879,44 @@
       "treeId": "d3661aa9906bdc79",
       "treeName": "Control",
       "group": "DEFERRED_PRODUCTION_ONLY",
-      "finalDisposition": "REVIEW_REQUIRED",
+      "finalDisposition": "KEEP_CANONICAL_ADDITIONAL_PUBLICATION",
       "survivorId": null,
-      "adjudicationStatus": "PENDING_3D2",
+      "adjudicationStatus": "ADJUDICATED",
       "evidence": {
-        "status": "NOT_YET_ADJUDICATED",
-        "census": "see data/audits/talent-phase-3d-production-extras-census.json",
-        "provisional": {
-          "value": "KEEP_NONBOOK_SUPPORTED",
-          "basis": "registry status SOURCE_VERIFIED_SPECIAL_TREE; publication evidence to be confirmed",
-          "confidence": "LOW"
-        }
+        "status": "ADJUDICATED_TXT_CONFIRMED",
+        "conclusion": "Telekinetic Stability is a real Legacy Era Campaign Guide talent that expands the Core Control tree. The Phase 3B ownership model captured no canonical identity for it (no same-name canonical record exists); the production record is the only carrier.",
+        "findings": [
+          "Legacy Era Campaign Guide TXT 4852-4855 (\"Telekinetic Stability: Whenever an attack or effect would normally move you against your will (…), you can spend a Force Point to negate that movement.\"). Production omits the Force Point cost.",
+          "Production record carries a hand-authored runtime id swse.talent.telekinetic_stability; its benefit is a paraphrase, not the printed text.",
+          "Registry tag SOURCE_VERIFIED_SPECIAL_TREE was NOT used as evidence; the TXT was."
+        ],
+        "sourceRefs": [
+          "reference/sourcebooks/Legacy Era Campaign Guide_djvu.txt:4852"
+        ],
+        "pdfRequired": true,
+        "pdfNote": "The printed page number is not recoverable from the TXT. PDF needed only for the page (rules text is unambiguous in the TXT)."
       },
-      "referencesToRepoint": null,
+      "referencesToRepoint": {
+        "structural": [],
+        "actorPackEmbeddedItems": [],
+        "note": "KEEP: nothing is repointed or removed; listed actor references stay valid."
+      },
       "metadataTransfer": [],
-      "expectedFinal": null,
-      "phase3cCanonicalRecordTouched": false
+      "expectedFinal": {
+        "recordExists": true,
+        "treeMembership": "unchanged (Control d3661aa9906bdc79)",
+        "classAccess": "unchanged",
+        "canonicalRecordsTouched": []
+      },
+      "phase3cCanonicalRecordTouched": false,
+      "requiredFollowUp": {
+        "kind": "CANONICAL_CORPUS_ADDITION",
+        "note": "Not a Phase 3C canonical record; adding it means a new canonical identity through the Phase 2 → canonical → manifest chain (not an edit of one of the 1,180). Until then the record is preserved untouched.",
+        "canonicalIdentityProposed": "Legacy Era Campaign Guide|Control (Core tree expansion)|Telekinetic Stability",
+        "printedText": "Whenever an attack or effect would normally move you against your will (such as being targeted by a Bantha Rush, or being moved by Force thrust or stagger power), you can spend a Force Point to negate that movement.",
+        "prerequisites": "none printed",
+        "productionBenefitDiffersFromPrint": true
+      }
     },
     {
       "productionId": "213d97c2cbbd4f81",
@@ -1187,20 +1248,21 @@
       "group": "DEFERRED_PRODUCTION_ONLY",
       "finalDisposition": "REVIEW_REQUIRED",
       "survivorId": null,
-      "adjudicationStatus": "PENDING_3D2",
+      "adjudicationStatus": "BLOCKED_ON_OWNER_POLICY",
       "evidence": {
-        "status": "NOT_YET_ADJUDICATED",
-        "census": "see data/audits/talent-phase-3d-production-extras-census.json",
-        "provisional": {
-          "value": "KEEP_NONBOOK_SUPPORTED",
-          "basis": "registry status SOURCE_VERIFIED_SPECIAL_TREE; publication evidence to be confirmed",
-          "confidence": "LOW"
-        }
+        "status": "ADJUDICATED_NOT_OFFICIAL_SWSE_BLOCKED_ON_POLICY",
+        "conclusion": "Self-labelled homebrew (Homebrew Reference Book: Legacy of the Force Sourcebook); not found in any committed sourcebook TXT.",
+        "findings": [
+          "benefit ends \"Homebrew Reference Book: Legacy of the Force Sourcebook\"; no Saga Edition sourcebook of that name exists in the corpus and \"Force Bond\" is not a talent in any TXT (the only hit is KOTOR prose about Bastila and Revan).",
+          "This is not an evidence gap: it is a policy gap. KEEP_NONBOOK_SUPPORTED requires OFFICIAL material and none has been found; REMOVE_CONTAMINATION would delete content the project owner may have added deliberately."
+        ],
+        "pdfRequired": false
       },
       "referencesToRepoint": null,
       "metadataTransfer": [],
       "expectedFinal": null,
-      "phase3cCanonicalRecordTouched": false
+      "phase3cCanonicalRecordTouched": false,
+      "reviewRequiredReason": "HOMEBREW_POLICY_OWNER_DECISION"
     },
     {
       "productionId": "4dfad6e363c11acf",
@@ -1254,22 +1316,63 @@
       "treeId": "4da769d7c5f44232",
       "treeName": "Disciple Of Twilight",
       "group": "DEFERRED_PRODUCTION_ONLY",
-      "finalDisposition": "REVIEW_REQUIRED",
+      "finalDisposition": "REMOVE_CONTAMINATION",
       "survivorId": null,
-      "adjudicationStatus": "PENDING_3D2",
+      "adjudicationStatus": "ADJUDICATED",
       "evidence": {
-        "status": "NOT_YET_ADJUDICATED",
-        "census": "see data/audits/talent-phase-3d-production-extras-census.json",
-        "provisional": {
-          "value": "KEEP_NONBOOK_SUPPORTED",
-          "basis": "registry status SOURCE_VERIFIED_SPECIAL_TREE; publication evidence to be confirmed",
-          "confidence": "LOW"
-        }
+        "status": "ADJUDICATED_TXT_CONFIRMED",
+        "conclusion": "\"Cloak of Shadows\" is a malformed record: the name is a plural misspelling of Cloak of Shadow, and the text is Shadow Armor + Shadow Vision concatenated. The real Cloak of Shadow is already canonical.",
+        "findings": [
+          "Text = Shadow Armor (\"+1 Force bonus to your Reflex Defense…\", LECG TXT 5123) followed by Shadow Vision (\"you gain low-light vision…\", 5133).",
+          "Real Cloak of Shadow (printed text about concealment after moving 3+ squares, LECG TXT 5077) is canonical as b3fe6f7659b40a55.",
+          "No source/page; tree Disciple of Twilight already holds Shadow Armor 4916dbbae0f18ee1 and Shadow Vision 66b3278292626e27."
+        ],
+        "sourceRefs": [
+          "reference/sourcebooks/Legacy Era Campaign Guide_djvu.txt:5077",
+          "reference/sourcebooks/Legacy Era Campaign Guide_djvu.txt:5123",
+          "reference/sourcebooks/Legacy Era Campaign Guide_djvu.txt:5133"
+        ],
+        "canonicalOwnersOfTheText": [
+          "4916dbbae0f18ee1 (Shadow Armor)",
+          "66b3278292626e27 (Shadow Vision)",
+          "b3fe6f7659b40a55 (Cloak of Shadow, the real one)"
+        ],
+        "pdfRequired": false,
+        "pdfNote": "TXT segments are unambiguous."
       },
-      "referencesToRepoint": null,
+      "referencesToRepoint": {
+        "structural": [
+          {
+            "file": "packs/talent_trees.db",
+            "treeId": "4da769d7c5f44232",
+            "remove": [
+              "system.talentIds[57c770c7924e4241]",
+              "system.talentNames entry"
+            ]
+          },
+          {
+            "file": "data/generated/talent-trees.registry.json + data/fixes/talent-trees.registry.json",
+            "action": "regenerate with tools/build-talent-tree-registry.mjs"
+          }
+        ],
+        "actorPackEmbeddedItems": [],
+        "otherReferences": [
+          {
+            "file": "docs/combat-action-ability-cards-phase-t13.json",
+            "classification": "DOC_OR_CLEANUP_PLAN"
+          }
+        ],
+        "note": "No embedded actor items reference this ID."
+      },
       "metadataTransfer": [],
-      "expectedFinal": null,
-      "phase3cCanonicalRecordTouched": false
+      "expectedFinal": {
+        "recordExists": false,
+        "treeMembership": "removed from Disciple Of Twilight 4da769d7c5f44232",
+        "classAccess": "unchanged",
+        "canonicalRecordsTouched": []
+      },
+      "phase3cCanonicalRecordTouched": false,
+      "metadataReview": "Nothing to transfer: the record has no independent rules content and the canonical owners of its text already exist."
     },
     {
       "productionId": "585227ba15d24a37",
@@ -1392,22 +1495,44 @@
       "treeId": "6ac3416fb6aada56",
       "treeName": "Alter",
       "group": "DEFERRED_PRODUCTION_ONLY",
-      "finalDisposition": "REVIEW_REQUIRED",
+      "finalDisposition": "KEEP_CANONICAL_ADDITIONAL_PUBLICATION",
       "survivorId": null,
-      "adjudicationStatus": "PENDING_3D2",
+      "adjudicationStatus": "ADJUDICATED",
       "evidence": {
-        "status": "NOT_YET_ADJUDICATED",
-        "census": "see data/audits/talent-phase-3d-production-extras-census.json",
-        "provisional": {
-          "value": "KEEP_NONBOOK_SUPPORTED",
-          "basis": "registry status SOURCE_VERIFIED_SPECIAL_TREE; publication evidence to be confirmed",
-          "confidence": "LOW"
-        }
+        "status": "ADJUDICATED_TXT_CONFIRMED",
+        "conclusion": "Move Massive Object is a real Legacy Era Campaign Guide talent that expands the Core Alter tree. The Phase 3B ownership model captured no canonical identity for it (no same-name canonical record exists); the production record is the only carrier.",
+        "findings": [
+          "Legacy Era Campaign Guide TXT 4815-4828 (\"Move Massive Object: …make an area attack with the object… You must spend a Force Point…\", \"Prerequisites: Telekinetic Power, move object\"). Production omits the Force Point cost and the printed damage rule, and lists only Telekinetic Power.",
+          "Production record carries a hand-authored runtime id swse.talent.move_massive_object; its benefit is a paraphrase, not the printed text.",
+          "Registry tag SOURCE_VERIFIED_SPECIAL_TREE was NOT used as evidence; the TXT was."
+        ],
+        "sourceRefs": [
+          "reference/sourcebooks/Legacy Era Campaign Guide_djvu.txt:4815"
+        ],
+        "pdfRequired": true,
+        "pdfNote": "The printed page number is not recoverable from the TXT. PDF needed only for the page (rules text is unambiguous in the TXT)."
       },
-      "referencesToRepoint": null,
+      "referencesToRepoint": {
+        "structural": [],
+        "actorPackEmbeddedItems": [],
+        "note": "KEEP: nothing is repointed or removed; listed actor references stay valid."
+      },
       "metadataTransfer": [],
-      "expectedFinal": null,
-      "phase3cCanonicalRecordTouched": false
+      "expectedFinal": {
+        "recordExists": true,
+        "treeMembership": "unchanged (Alter 6ac3416fb6aada56)",
+        "classAccess": "unchanged",
+        "canonicalRecordsTouched": []
+      },
+      "phase3cCanonicalRecordTouched": false,
+      "requiredFollowUp": {
+        "kind": "CANONICAL_CORPUS_ADDITION",
+        "note": "Not a Phase 3C canonical record; adding it means a new canonical identity through the Phase 2 → canonical → manifest chain (not an edit of one of the 1,180). Until then the record is preserved untouched.",
+        "canonicalIdentityProposed": "Legacy Era Campaign Guide|Alter (Core tree expansion)|Move Massive Object",
+        "printedText": "See LECG TXT 4815-4828 (Force Point cost, area sizes Large 2x2 / Huge 3x3 / Gargantuan 4x4 / Colossal+ 6x6, UtF vs Reflex Defense, half damage on miss, area effect).",
+        "prerequisites": "Telekinetic Power, move object (Force power)",
+        "productionBenefitDiffersFromPrint": true
+      }
     },
     {
       "productionId": "62e70280d08f43ec",
@@ -1507,22 +1632,61 @@
       "treeId": "c6eee4889411411b",
       "treeName": "Ember Of Vahl",
       "group": "DEFERRED_PRODUCTION_ONLY",
-      "finalDisposition": "REVIEW_REQUIRED",
+      "finalDisposition": "REMOVE_CONTAMINATION",
       "survivorId": null,
-      "adjudicationStatus": "PENDING_3D2",
+      "adjudicationStatus": "ADJUDICATED",
       "evidence": {
-        "status": "NOT_YET_ADJUDICATED",
-        "census": "see data/audits/talent-phase-3d-production-extras-census.json",
-        "provisional": {
-          "value": "KEEP_NONBOOK_SUPPORTED",
-          "basis": "registry status SOURCE_VERIFIED_SPECIAL_TREE; publication evidence to be confirmed",
-          "confidence": "LOW"
-        }
+        "status": "ADJUDICATED_TXT_CONFIRMED",
+        "conclusion": "\"Empowered Weapon\" in the Ember of Vahl tree is malformed: its text is Vahl's Brand + Vahl's Flame concatenated (with the \"empowered weapon\" phrase stripped out of the first sentence), under a name taken from a prerequisite reference. No talent named Empowered Weapon exists in this tree.",
+        "findings": [
+          "Text 1 = Vahl's Brand (\"Any additional damage you deal with an empowered weapon … is considered to be fire damage\", LECG TXT 5205).",
+          "Text 2 = Vahl's Flame (\"…call forth the sparks of your goddess, wreathing your weapon in flames…\", LECG TXT 5211-5215).",
+          "Both are canonical: Vahl's Brand a5f8ec365ef2b699, Vahl's Flame 8ba6abad84c6d9ef. Real Empower Weapon is a Core talent, not an Ember of Vahl talent."
+        ],
+        "sourceRefs": [
+          "reference/sourcebooks/Legacy Era Campaign Guide_djvu.txt:5205",
+          "reference/sourcebooks/Legacy Era Campaign Guide_djvu.txt:5211"
+        ],
+        "canonicalOwnersOfTheText": [
+          "a5f8ec365ef2b699 (Vahl's Brand)",
+          "8ba6abad84c6d9ef (Vahl's Flame)"
+        ],
+        "pdfRequired": false,
+        "pdfNote": "TXT segments are unambiguous."
       },
-      "referencesToRepoint": null,
+      "referencesToRepoint": {
+        "structural": [
+          {
+            "file": "packs/talent_trees.db",
+            "treeId": "c6eee4889411411b",
+            "remove": [
+              "system.talentIds[714c38c0498a4eaf]",
+              "system.talentNames entry"
+            ]
+          },
+          {
+            "file": "data/generated/talent-trees.registry.json + data/fixes/talent-trees.registry.json",
+            "action": "regenerate with tools/build-talent-tree-registry.mjs"
+          }
+        ],
+        "actorPackEmbeddedItems": [],
+        "otherReferences": [
+          {
+            "file": "docs/combat-action-ability-cards-phase-t13.json",
+            "classification": "DOC_OR_CLEANUP_PLAN"
+          }
+        ],
+        "note": "No embedded actor items reference this ID."
+      },
       "metadataTransfer": [],
-      "expectedFinal": null,
-      "phase3cCanonicalRecordTouched": false
+      "expectedFinal": {
+        "recordExists": false,
+        "treeMembership": "removed from Ember Of Vahl c6eee4889411411b",
+        "classAccess": "unchanged",
+        "canonicalRecordsTouched": []
+      },
+      "phase3cCanonicalRecordTouched": false,
+      "metadataReview": "Nothing to transfer: the record has no independent rules content and the canonical owners of its text already exist."
     },
     {
       "productionId": "747458ee63cd4a2a",
@@ -1831,20 +1995,21 @@
       "group": "DEFERRED_PRODUCTION_ONLY",
       "finalDisposition": "REVIEW_REQUIRED",
       "survivorId": null,
-      "adjudicationStatus": "PENDING_3D2",
+      "adjudicationStatus": "BLOCKED_ON_OWNER_POLICY",
       "evidence": {
-        "status": "NOT_YET_ADJUDICATED",
-        "census": "see data/audits/talent-phase-3d-production-extras-census.json",
-        "provisional": {
-          "value": "KEEP_NONBOOK_SUPPORTED",
-          "basis": "registry status SOURCE_VERIFIED_SPECIAL_TREE; publication evidence to be confirmed",
-          "confidence": "LOW"
-        }
+        "status": "ADJUDICATED_NOT_OFFICIAL_SWSE_BLOCKED_ON_POLICY",
+        "conclusion": "Self-labelled homebrew (Homebrew Reference Book: Dathomir Field Guide (Dathomiri Witch)); not found in any committed sourcebook TXT.",
+        "findings": [
+          "record text references Energy Bow / Sense Surroundings homebrew; no TXT hit for the name.",
+          "This is not an evidence gap: it is a policy gap. KEEP_NONBOOK_SUPPORTED requires OFFICIAL material and none has been found; REMOVE_CONTAMINATION would delete content the project owner may have added deliberately."
+        ],
+        "pdfRequired": false
       },
       "referencesToRepoint": null,
       "metadataTransfer": [],
       "expectedFinal": null,
-      "phase3cCanonicalRecordTouched": false
+      "phase3cCanonicalRecordTouched": false,
+      "reviewRequiredReason": "HOMEBREW_POLICY_OWNER_DECISION"
     },
     {
       "productionId": "933240d6581843b9",
@@ -2406,20 +2571,21 @@
       "group": "DEFERRED_PRODUCTION_ONLY",
       "finalDisposition": "REVIEW_REQUIRED",
       "survivorId": null,
-      "adjudicationStatus": "PENDING_3D2",
+      "adjudicationStatus": "BLOCKED_ON_OWNER_POLICY",
       "evidence": {
-        "status": "NOT_YET_ADJUDICATED",
-        "census": "see data/audits/talent-phase-3d-production-extras-census.json",
-        "provisional": {
-          "value": "KEEP_NONBOOK_SUPPORTED",
-          "basis": "registry status SOURCE_VERIFIED_SPECIAL_TREE; publication evidence to be confirmed",
-          "confidence": "LOW"
-        }
+        "status": "ADJUDICATED_NOT_OFFICIAL_SWSE_BLOCKED_ON_POLICY",
+        "conclusion": "Self-labelled homebrew (Homebrew Reference Book: Dathomir Field Guide); not found in any committed sourcebook TXT.",
+        "findings": [
+          "benefit ends \"Homebrew Reference Book: Dathomir Field Guide\"; no TXT hit for \"Binding Sickle\" or \"Chain Sickle\".",
+          "This is not an evidence gap: it is a policy gap. KEEP_NONBOOK_SUPPORTED requires OFFICIAL material and none has been found; REMOVE_CONTAMINATION would delete content the project owner may have added deliberately."
+        ],
+        "pdfRequired": false
       },
       "referencesToRepoint": null,
       "metadataTransfer": [],
       "expectedFinal": null,
-      "phase3cCanonicalRecordTouched": false
+      "phase3cCanonicalRecordTouched": false,
+      "reviewRequiredReason": "HOMEBREW_POLICY_OWNER_DECISION"
     },
     {
       "productionId": "e6055a514a784387",
@@ -2542,22 +2708,51 @@
       "treeId": "d6b4331c0e31f7e3",
       "treeName": "Sense",
       "group": "DEFERRED_PRODUCTION_ONLY",
-      "finalDisposition": "REVIEW_REQUIRED",
+      "finalDisposition": "REMOVE_CONTAMINATION",
       "survivorId": null,
-      "adjudicationStatus": "PENDING_3D2",
+      "adjudicationStatus": "ADJUDICATED",
       "evidence": {
-        "status": "NOT_YET_ADJUDICATED",
-        "census": "see data/audits/talent-phase-3d-production-extras-census.json",
-        "provisional": {
-          "value": "KEEP_NONBOOK_SUPPORTED",
-          "basis": "registry status SOURCE_VERIFIED_SPECIAL_TREE; publication evidence to be confirmed",
-          "confidence": "LOW"
-        }
+        "status": "ADJUDICATED_TXT_CONFIRMED",
+        "conclusion": "The record's NAME and benefit are the literal scraper string \"Reference Book: Star Wars Saga Edition Starships of the Galaxy\". It is not a talent.",
+        "findings": [
+          "name === benefit === import-scraper reference-book line; no rules text, no prerequisite, no source/page.",
+          "No talent by this name exists in any of the 14 committed sourcebook TXT files."
+        ],
+        "sourceRefs": [
+          "(no sourcebook text — the string is metadata residue)"
+        ],
+        "canonicalOwnersOfTheText": [],
+        "pdfRequired": false,
+        "pdfNote": "TXT segments are unambiguous."
       },
-      "referencesToRepoint": null,
+      "referencesToRepoint": {
+        "structural": [
+          {
+            "file": "packs/talent_trees.db",
+            "treeId": "d6b4331c0e31f7e3",
+            "remove": [
+              "system.talentIds[f123e0682ef74583]",
+              "system.talentNames entry"
+            ]
+          },
+          {
+            "file": "data/generated/talent-trees.registry.json + data/fixes/talent-trees.registry.json",
+            "action": "regenerate with tools/build-talent-tree-registry.mjs"
+          }
+        ],
+        "actorPackEmbeddedItems": [],
+        "otherReferences": [],
+        "note": "No embedded actor items reference this ID."
+      },
       "metadataTransfer": [],
-      "expectedFinal": null,
-      "phase3cCanonicalRecordTouched": false
+      "expectedFinal": {
+        "recordExists": false,
+        "treeMembership": "removed from Sense d6b4331c0e31f7e3",
+        "classAccess": "unchanged",
+        "canonicalRecordsTouched": []
+      },
+      "phase3cCanonicalRecordTouched": false,
+      "metadataReview": "Nothing to transfer: the record has no independent rules content and the canonical owners of its text already exist."
     },
     {
       "productionId": "f2df5596a9db40c1",
@@ -2613,20 +2808,21 @@
       "group": "DEFERRED_PRODUCTION_ONLY",
       "finalDisposition": "REVIEW_REQUIRED",
       "survivorId": null,
-      "adjudicationStatus": "PENDING_3D2",
+      "adjudicationStatus": "BLOCKED_ON_OWNER_POLICY",
       "evidence": {
-        "status": "NOT_YET_ADJUDICATED",
-        "census": "see data/audits/talent-phase-3d-production-extras-census.json",
-        "provisional": {
-          "value": "KEEP_NONBOOK_SUPPORTED",
-          "basis": "registry status SOURCE_VERIFIED_SPECIAL_TREE; publication evidence to be confirmed",
-          "confidence": "LOW"
-        }
+        "status": "ADJUDICATED_NOT_OFFICIAL_SWSE_BLOCKED_ON_POLICY",
+        "conclusion": "Self-labelled homebrew (Homebrew Reference Book: Dathomir Field Guide); not found in any committed sourcebook TXT.",
+        "findings": [
+          "benefit ends \"Homebrew Reference Book: Dathomir Field Guide\"; the only TXT \"maelstrom\" hits are the Unleashed Force Storm feat text (FUCG) and an unrelated droid modification, neither of which is this talent.",
+          "This is not an evidence gap: it is a policy gap. KEEP_NONBOOK_SUPPORTED requires OFFICIAL material and none has been found; REMOVE_CONTAMINATION would delete content the project owner may have added deliberately."
+        ],
+        "pdfRequired": false
       },
       "referencesToRepoint": null,
       "metadataTransfer": [],
       "expectedFinal": null,
-      "phase3cCanonicalRecordTouched": false
+      "phase3cCanonicalRecordTouched": false,
+      "reviewRequiredReason": "HOMEBREW_POLICY_OWNER_DECISION"
     },
     {
       "productionId": "f9352f317ad2f695",
