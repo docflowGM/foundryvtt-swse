@@ -1,0 +1,1297 @@
+{
+  "schemaVersion": 2,
+  "phase": "3D-3",
+  "productionMutationPerformed": false,
+  "dryRun": true,
+  "status": "DRY_RUN_CERTIFIED",
+  "inputAuthority": {
+    "dispositions": "data/audits/talent-phase-3d-dispositions.json",
+    "census": "data/audits/talent-phase-3d-production-extras-census.json",
+    "phase3cState": "POST_STATE (required)",
+    "inheritedRecords": 92
+  },
+  "preState": {
+    "classes": "2960a03039604ea06612445bad0673902a8012cc",
+    "talents": "bb3e009dc17873da9bcc89c401303c299320bdfa",
+    "trees": "b1f797aeb9770b73852e615cbf7c65d9b3334f7e",
+    "heroic": "89712d40e6a5923ae94aade05ff3a7dcce6bcae6",
+    "nonheroic": "d31e8d95bb15f03a6406996c3ae487a154d391d3",
+    "npc": "34552eeb3390c739563a6d08878528eb5b14bfca",
+    "registry": "0de6773b1e5e9d92a839735f616c778fd34047d0",
+    "registryFixes": "0de6773b1e5e9d92a839735f616c778fd34047d0",
+    "derivedGenerated": "9b436fc0a89e55184b87de8497e96a9d9a7cd8c5",
+    "derivedFixes": "ad1adfe821a3e7787bd298d2220f16e2914bb0a4",
+    "archetypes": "3c11488edd8614438648eb098a70ad6d005ea040",
+    "systemJson": "08f5d444ad08d13f8f419e0b53af2bcf8bde057e"
+  },
+  "postState": {
+    "classes": "2960a03039604ea06612445bad0673902a8012cc",
+    "talents": "1f5ff603819c360d04f56e47bd5dd52178296840",
+    "trees": "5cb2acafe549e1b2a38f69b644f2eb7105316c5c",
+    "heroic": "cbb59081ca02c06298b1647821f5b2487ea47485",
+    "nonheroic": "c05ea8896efb00e5115a53247a05bfe54c628e60",
+    "npc": "78d0cdd8b1dd271238e420b8d15f33e2547e20ba",
+    "homebrewTalents": "bd4e3d4be9861f9ed0329e0f12545bf3f5dc3c72",
+    "homebrewTrees": "81861fe0b948db00e4e7e344316acdc730d86a2b",
+    "registry": "db075bbe3dd5ad36c58918c1addbb92e900f86d0",
+    "registryFixes": "db075bbe3dd5ad36c58918c1addbb92e900f86d0",
+    "derivedGenerated": "3b63af6b063c3cac49fc8d9dbf6c706bf4685013",
+    "derivedFixes": "c3dbe4f282062d73906e80b2b2d840e700af6ee2",
+    "archetypes": "76ca97d4b1a8aa6b631ba1bfe790e5e189f6d9e6",
+    "systemJson": "7c5640b8d4c10da960356703b31d33dd16c19fbb"
+  },
+  "counts": {
+    "before": {
+      "talents": 1272,
+      "trees": 196,
+      "classes": 37
+    },
+    "after": {
+      "canonicalTalents": 1187,
+      "homebrewTalents": 50,
+      "totalPreservedTalents": 1237,
+      "canonicalTrees": 177,
+      "homebrewTrees": 19,
+      "classes": 37,
+      "registryEntries": 185
+    },
+    "arithmetic": "1272 - 19 merges - 16 removals - 50 moves = 1187 canonical; + 50 homebrew = 1237 preserved"
+  },
+  "dispositions": {
+    "REMOVE_CONTAMINATION": 16,
+    "MERGE_DUPLICATE": 19,
+    "MOVE_HOMEBREW_PACK": 50,
+    "KEEP_CANONICAL_ADDITIONAL_PUBLICATION": 6,
+    "CORRECT_IDENTITY": 1
+  },
+  "operations": {
+    "REMOVE_CONTAMINATION": 16,
+    "MERGE_DUPLICATE": 19,
+    "MOVE_HOMEBREW_PACK": 50,
+    "KEEP_CANONICAL_ADDITIONAL_PUBLICATION": 6,
+    "CORRECT_IDENTITY": 1,
+    "actorItemsRepointed": 34,
+    "treesMovedToHomebrew": 19,
+    "treesLosingMembers": 38,
+    "classAccessEntriesRemoved": 0,
+    "derivedEntriesDropped": 46,
+    "runtimeDataReferencesRepointed": 2,
+    "canonicalPrerequisiteRepoints": 5
+  },
+  "actorRepoints": {
+    "total": 34,
+    "snapshotRefreshed": 34,
+    "byDisposition": {
+      "REMOVE_CONTAMINATION": 32,
+      "MERGE_DUPLICATE": 2
+    },
+    "byTargetPack": {
+      "talents": 34
+    },
+    "snapshotFields": [
+      "name",
+      "system.prerequisites",
+      "system.benefit",
+      "system.description",
+      "system.summary",
+      "system.source",
+      "system.page",
+      "system.treeId",
+      "system.talent_tree",
+      "system.tree",
+      "system.category",
+      "system.class",
+      "flags.swse.id",
+      "flags.core.sourceId"
+    ],
+    "items": [
+      {
+        "pack": "heroic",
+        "actor": "Rav",
+        "actorId": "0586842bc819d958",
+        "embeddedItemId": "71e63cb581ef03ff",
+        "itemIndex": 20,
+        "item": "Notorious",
+        "from": "a7d8c4da96eacad4",
+        "to": "09744041cdcc9e22",
+        "toPack": "talents",
+        "disposition": "REMOVE_CONTAMINATION",
+        "snapshotRefreshed": true
+      },
+      {
+        "pack": "heroic",
+        "actor": "Mynock Man",
+        "actorId": "1dd36dbe4fc330bf",
+        "embeddedItemId": "a0b9c91a64aa1f3c",
+        "itemIndex": 17,
+        "item": "Teräs Käsi Basics",
+        "from": "222327492c484b4a",
+        "to": "67bddb17ae2770f3",
+        "toPack": "talents",
+        "disposition": "MERGE_DUPLICATE",
+        "snapshotRefreshed": true
+      },
+      {
+        "pack": "heroic",
+        "actor": "Calo Nord",
+        "actorId": "27501a9a2c28717d",
+        "embeddedItemId": "857b3140dd71d4c5",
+        "itemIndex": 21,
+        "item": "Notorious",
+        "from": "a7d8c4da96eacad4",
+        "to": "c67cbd59abd1cc53",
+        "toPack": "talents",
+        "disposition": "REMOVE_CONTAMINATION",
+        "snapshotRefreshed": true
+      },
+      {
+        "pack": "heroic",
+        "actor": "Booster Terrik",
+        "actorId": "3fa5743cbe714121",
+        "embeddedItemId": "b6624b39d09c436a",
+        "itemIndex": 19,
+        "item": "Notorious",
+        "from": "a7d8c4da96eacad4",
+        "to": "09744041cdcc9e22",
+        "toPack": "talents",
+        "disposition": "REMOVE_CONTAMINATION",
+        "snapshotRefreshed": true
+      },
+      {
+        "pack": "heroic",
+        "actor": "Liash Keane",
+        "actorId": "4111ecc91827a440",
+        "embeddedItemId": "1c2d4523301916e0",
+        "itemIndex": 20,
+        "item": "Notorious",
+        "from": "a7d8c4da96eacad4",
+        "to": "09744041cdcc9e22",
+        "toPack": "talents",
+        "disposition": "REMOVE_CONTAMINATION",
+        "snapshotRefreshed": true
+      },
+      {
+        "pack": "heroic",
+        "actor": "Dool Pundar",
+        "actorId": "42b14107f5f8ae03",
+        "embeddedItemId": "f562ee2ab2f2a724",
+        "itemIndex": 24,
+        "item": "Notorious",
+        "from": "a7d8c4da96eacad4",
+        "to": "09744041cdcc9e22",
+        "toPack": "talents",
+        "disposition": "REMOVE_CONTAMINATION",
+        "snapshotRefreshed": true
+      },
+      {
+        "pack": "heroic",
+        "actor": "Jango Fett",
+        "actorId": "488fcbb5da937669",
+        "embeddedItemId": "ada703e7d1848f09",
+        "itemIndex": 25,
+        "item": "Notorious",
+        "from": "a7d8c4da96eacad4",
+        "to": "c67cbd59abd1cc53",
+        "toPack": "talents",
+        "disposition": "REMOVE_CONTAMINATION",
+        "snapshotRefreshed": true
+      },
+      {
+        "pack": "heroic",
+        "actor": "Dob and Del Moomo",
+        "actorId": "4ddf0f74b48fbb45",
+        "embeddedItemId": "33544067c9203b9a",
+        "itemIndex": 17,
+        "item": "Notorious",
+        "from": "a7d8c4da96eacad4",
+        "to": "c67cbd59abd1cc53",
+        "toPack": "talents",
+        "disposition": "REMOVE_CONTAMINATION",
+        "snapshotRefreshed": true
+      },
+      {
+        "pack": "heroic",
+        "actor": "Solvek",
+        "actorId": "581c5c6f97083f6c",
+        "embeddedItemId": "9eec03b6e8cb0e06",
+        "itemIndex": 20,
+        "item": "Notorious",
+        "from": "a7d8c4da96eacad4",
+        "to": "c67cbd59abd1cc53",
+        "toPack": "talents",
+        "disposition": "REMOVE_CONTAMINATION",
+        "snapshotRefreshed": true
+      },
+      {
+        "pack": "heroic",
+        "actor": "Hondo Ohnaka",
+        "actorId": "8af56ba01c4c0445",
+        "embeddedItemId": "a9b2fd722016c8c9",
+        "itemIndex": 14,
+        "item": "Notorious",
+        "from": "a7d8c4da96eacad4",
+        "to": "09744041cdcc9e22",
+        "toPack": "talents",
+        "disposition": "REMOVE_CONTAMINATION",
+        "snapshotRefreshed": true
+      },
+      {
+        "pack": "heroic",
+        "actor": "Sisla",
+        "actorId": "8fbb2bec1261a5f4",
+        "embeddedItemId": "ead0270064365d42",
+        "itemIndex": 19,
+        "item": "Notorious",
+        "from": "a7d8c4da96eacad4",
+        "to": "c67cbd59abd1cc53",
+        "toPack": "talents",
+        "disposition": "REMOVE_CONTAMINATION",
+        "snapshotRefreshed": true
+      },
+      {
+        "pack": "heroic",
+        "actor": "Prince Xizor",
+        "actorId": "ab3b1612d4f500b8",
+        "embeddedItemId": "ed0387fd868061ea",
+        "itemIndex": 20,
+        "item": "Notorious",
+        "from": "a7d8c4da96eacad4",
+        "to": "09744041cdcc9e22",
+        "toPack": "talents",
+        "disposition": "REMOVE_CONTAMINATION",
+        "snapshotRefreshed": true
+      },
+      {
+        "pack": "heroic",
+        "actor": "Boba Fett",
+        "actorId": "d0ca9926bbdfd6c9",
+        "embeddedItemId": "c67e9ca854fff949",
+        "itemIndex": 23,
+        "item": "Notorious",
+        "from": "a7d8c4da96eacad4",
+        "to": "c67cbd59abd1cc53",
+        "toPack": "talents",
+        "disposition": "REMOVE_CONTAMINATION",
+        "snapshotRefreshed": true
+      },
+      {
+        "pack": "heroic",
+        "actor": "Tyber Zann",
+        "actorId": "ff05bc356760f633",
+        "embeddedItemId": "fb81c0647a96f5dd",
+        "itemIndex": 22,
+        "item": "Notorious",
+        "from": "a7d8c4da96eacad4",
+        "to": "09744041cdcc9e22",
+        "toPack": "talents",
+        "disposition": "REMOVE_CONTAMINATION",
+        "snapshotRefreshed": true
+      },
+      {
+        "pack": "nonheroic",
+        "actor": "Rodian Black Sun Vigo",
+        "actorId": "02f6124ea6553cb0",
+        "embeddedItemId": "c81b7db0b62460ad",
+        "itemIndex": 20,
+        "item": "Notorious",
+        "from": "a7d8c4da96eacad4",
+        "to": "09744041cdcc9e22",
+        "toPack": "talents",
+        "disposition": "REMOVE_CONTAMINATION",
+        "snapshotRefreshed": true
+      },
+      {
+        "pack": "nonheroic",
+        "actor": "Hutt Crime Lord",
+        "actorId": "ae0b0912d66ac17d",
+        "embeddedItemId": "33755f2ff5292e05",
+        "itemIndex": 18,
+        "item": "Notorious",
+        "from": "a7d8c4da96eacad4",
+        "to": "09744041cdcc9e22",
+        "toPack": "talents",
+        "disposition": "REMOVE_CONTAMINATION",
+        "snapshotRefreshed": true
+      },
+      {
+        "pack": "nonheroic",
+        "actor": "Black Sun Vigo",
+        "actorId": "f71b5e860c37e317",
+        "embeddedItemId": "63f181134b4aa68e",
+        "itemIndex": 21,
+        "item": "Notorious",
+        "from": "a7d8c4da96eacad4",
+        "to": "09744041cdcc9e22",
+        "toPack": "talents",
+        "disposition": "REMOVE_CONTAMINATION",
+        "snapshotRefreshed": true
+      },
+      {
+        "pack": "npc",
+        "actor": "Rodian Black Sun Vigo",
+        "actorId": "02f6124ea6553cb0",
+        "embeddedItemId": "c81b7db0b62460ad",
+        "itemIndex": 20,
+        "item": "Notorious",
+        "from": "a7d8c4da96eacad4",
+        "to": "09744041cdcc9e22",
+        "toPack": "talents",
+        "disposition": "REMOVE_CONTAMINATION",
+        "snapshotRefreshed": true
+      },
+      {
+        "pack": "npc",
+        "actor": "Rav",
+        "actorId": "0586842bc819d958",
+        "embeddedItemId": "71e63cb581ef03ff",
+        "itemIndex": 20,
+        "item": "Notorious",
+        "from": "a7d8c4da96eacad4",
+        "to": "09744041cdcc9e22",
+        "toPack": "talents",
+        "disposition": "REMOVE_CONTAMINATION",
+        "snapshotRefreshed": true
+      },
+      {
+        "pack": "npc",
+        "actor": "Mynock Man",
+        "actorId": "1dd36dbe4fc330bf",
+        "embeddedItemId": "a0b9c91a64aa1f3c",
+        "itemIndex": 17,
+        "item": "Teräs Käsi Basics",
+        "from": "222327492c484b4a",
+        "to": "67bddb17ae2770f3",
+        "toPack": "talents",
+        "disposition": "MERGE_DUPLICATE",
+        "snapshotRefreshed": true
+      },
+      {
+        "pack": "npc",
+        "actor": "Calo Nord",
+        "actorId": "27501a9a2c28717d",
+        "embeddedItemId": "857b3140dd71d4c5",
+        "itemIndex": 21,
+        "item": "Notorious",
+        "from": "a7d8c4da96eacad4",
+        "to": "c67cbd59abd1cc53",
+        "toPack": "talents",
+        "disposition": "REMOVE_CONTAMINATION",
+        "snapshotRefreshed": true
+      },
+      {
+        "pack": "npc",
+        "actor": "Booster Terrik",
+        "actorId": "3fa5743cbe714121",
+        "embeddedItemId": "b6624b39d09c436a",
+        "itemIndex": 19,
+        "item": "Notorious",
+        "from": "a7d8c4da96eacad4",
+        "to": "09744041cdcc9e22",
+        "toPack": "talents",
+        "disposition": "REMOVE_CONTAMINATION",
+        "snapshotRefreshed": true
+      },
+      {
+        "pack": "npc",
+        "actor": "Liash Keane",
+        "actorId": "4111ecc91827a440",
+        "embeddedItemId": "1c2d4523301916e0",
+        "itemIndex": 20,
+        "item": "Notorious",
+        "from": "a7d8c4da96eacad4",
+        "to": "09744041cdcc9e22",
+        "toPack": "talents",
+        "disposition": "REMOVE_CONTAMINATION",
+        "snapshotRefreshed": true
+      },
+      {
+        "pack": "npc",
+        "actor": "Dool Pundar",
+        "actorId": "42b14107f5f8ae03",
+        "embeddedItemId": "f562ee2ab2f2a724",
+        "itemIndex": 24,
+        "item": "Notorious",
+        "from": "a7d8c4da96eacad4",
+        "to": "09744041cdcc9e22",
+        "toPack": "talents",
+        "disposition": "REMOVE_CONTAMINATION",
+        "snapshotRefreshed": true
+      },
+      {
+        "pack": "npc",
+        "actor": "Jango Fett",
+        "actorId": "488fcbb5da937669",
+        "embeddedItemId": "ada703e7d1848f09",
+        "itemIndex": 25,
+        "item": "Notorious",
+        "from": "a7d8c4da96eacad4",
+        "to": "c67cbd59abd1cc53",
+        "toPack": "talents",
+        "disposition": "REMOVE_CONTAMINATION",
+        "snapshotRefreshed": true
+      },
+      {
+        "pack": "npc",
+        "actor": "Dob and Del Moomo",
+        "actorId": "4ddf0f74b48fbb45",
+        "embeddedItemId": "33544067c9203b9a",
+        "itemIndex": 17,
+        "item": "Notorious",
+        "from": "a7d8c4da96eacad4",
+        "to": "c67cbd59abd1cc53",
+        "toPack": "talents",
+        "disposition": "REMOVE_CONTAMINATION",
+        "snapshotRefreshed": true
+      },
+      {
+        "pack": "npc",
+        "actor": "Solvek",
+        "actorId": "581c5c6f97083f6c",
+        "embeddedItemId": "9eec03b6e8cb0e06",
+        "itemIndex": 20,
+        "item": "Notorious",
+        "from": "a7d8c4da96eacad4",
+        "to": "c67cbd59abd1cc53",
+        "toPack": "talents",
+        "disposition": "REMOVE_CONTAMINATION",
+        "snapshotRefreshed": true
+      },
+      {
+        "pack": "npc",
+        "actor": "Hondo Ohnaka",
+        "actorId": "8af56ba01c4c0445",
+        "embeddedItemId": "a9b2fd722016c8c9",
+        "itemIndex": 14,
+        "item": "Notorious",
+        "from": "a7d8c4da96eacad4",
+        "to": "09744041cdcc9e22",
+        "toPack": "talents",
+        "disposition": "REMOVE_CONTAMINATION",
+        "snapshotRefreshed": true
+      },
+      {
+        "pack": "npc",
+        "actor": "Sisla",
+        "actorId": "8fbb2bec1261a5f4",
+        "embeddedItemId": "ead0270064365d42",
+        "itemIndex": 19,
+        "item": "Notorious",
+        "from": "a7d8c4da96eacad4",
+        "to": "c67cbd59abd1cc53",
+        "toPack": "talents",
+        "disposition": "REMOVE_CONTAMINATION",
+        "snapshotRefreshed": true
+      },
+      {
+        "pack": "npc",
+        "actor": "Prince Xizor",
+        "actorId": "ab3b1612d4f500b8",
+        "embeddedItemId": "ed0387fd868061ea",
+        "itemIndex": 20,
+        "item": "Notorious",
+        "from": "a7d8c4da96eacad4",
+        "to": "09744041cdcc9e22",
+        "toPack": "talents",
+        "disposition": "REMOVE_CONTAMINATION",
+        "snapshotRefreshed": true
+      },
+      {
+        "pack": "npc",
+        "actor": "Hutt Crime Lord",
+        "actorId": "ae0b0912d66ac17d",
+        "embeddedItemId": "33755f2ff5292e05",
+        "itemIndex": 18,
+        "item": "Notorious",
+        "from": "a7d8c4da96eacad4",
+        "to": "09744041cdcc9e22",
+        "toPack": "talents",
+        "disposition": "REMOVE_CONTAMINATION",
+        "snapshotRefreshed": true
+      },
+      {
+        "pack": "npc",
+        "actor": "Boba Fett",
+        "actorId": "d0ca9926bbdfd6c9",
+        "embeddedItemId": "c67e9ca854fff949",
+        "itemIndex": 23,
+        "item": "Notorious",
+        "from": "a7d8c4da96eacad4",
+        "to": "c67cbd59abd1cc53",
+        "toPack": "talents",
+        "disposition": "REMOVE_CONTAMINATION",
+        "snapshotRefreshed": true
+      },
+      {
+        "pack": "npc",
+        "actor": "Black Sun Vigo",
+        "actorId": "f71b5e860c37e317",
+        "embeddedItemId": "63f181134b4aa68e",
+        "itemIndex": 21,
+        "item": "Notorious",
+        "from": "a7d8c4da96eacad4",
+        "to": "09744041cdcc9e22",
+        "toPack": "talents",
+        "disposition": "REMOVE_CONTAMINATION",
+        "snapshotRefreshed": true
+      },
+      {
+        "pack": "npc",
+        "actor": "Tyber Zann",
+        "actorId": "ff05bc356760f633",
+        "embeddedItemId": "fb81c0647a96f5dd",
+        "itemIndex": 22,
+        "item": "Notorious",
+        "from": "a7d8c4da96eacad4",
+        "to": "09744041cdcc9e22",
+        "toPack": "talents",
+        "disposition": "REMOVE_CONTAMINATION",
+        "snapshotRefreshed": true
+      }
+    ]
+  },
+  "trees": {
+    "movedToHomebrew": [
+      {
+        "treeId": "00cb74839a524276",
+        "name": "Science",
+        "members": 2
+      },
+      {
+        "treeId": "0a61ab9ece844326",
+        "name": "Morgukai Warrior",
+        "members": 2
+      },
+      {
+        "treeId": "11f99465ba4847e2",
+        "name": "Force Warrior",
+        "members": 1
+      },
+      {
+        "treeId": "25d99948c9cb41ad",
+        "name": "Jumptrooper",
+        "members": 6
+      },
+      {
+        "treeId": "37f3554a2f30425a",
+        "name": "Exceptional Followers",
+        "members": 1
+      },
+      {
+        "treeId": "38d7c18ce4664c66",
+        "name": "Mechanic",
+        "members": 2
+      },
+      {
+        "treeId": "8955568285ba4115",
+        "name": "Bomarr Monk",
+        "members": 2
+      },
+      {
+        "treeId": "8e44e56069274319",
+        "name": "Cloner",
+        "members": 3
+      },
+      {
+        "treeId": "acb91d3803eb4fcd",
+        "name": "Cowardice",
+        "members": 2
+      },
+      {
+        "treeId": "bfc1356c66c74783",
+        "name": "Smashball Pro",
+        "members": 3
+      },
+      {
+        "treeId": "c1cf52502cf74435",
+        "name": "Treatment",
+        "members": 1
+      },
+      {
+        "treeId": "cfd358ef61fb47bd",
+        "name": "Sorcerer Of Tund",
+        "members": 2
+      },
+      {
+        "treeId": "d2535361d1b146cd",
+        "name": "Blackguard Wilder",
+        "members": 1
+      },
+      {
+        "treeId": "d5b60c4f058c4085",
+        "name": "Master Of The Amphistaff",
+        "members": 1
+      },
+      {
+        "treeId": "dcac793cc9fe42a7",
+        "name": "Jedaii Ranger",
+        "members": 1
+      },
+      {
+        "treeId": "e85cb1a787e24cac",
+        "name": "Midichlorian",
+        "members": 1
+      },
+      {
+        "treeId": "f3881205595248d4",
+        "name": "Chalactan Adept",
+        "members": 1
+      },
+      {
+        "treeId": "fc978e442f544dbe",
+        "name": "Defensive Duelist",
+        "members": 2
+      },
+      {
+        "treeId": "feb08c2834a447ab",
+        "name": "Galactic Senator",
+        "members": 1
+      }
+    ],
+    "keepCanonicalLoseMembers": [
+      {
+        "treeId": "01e443d93e47f9c4",
+        "tree": "Force Item",
+        "membersLeaving": 2,
+        "membersRemaining": 8
+      },
+      {
+        "treeId": "057a978a7dc1d5a7",
+        "tree": "Naval Officer",
+        "membersLeaving": 1,
+        "membersRemaining": 5
+      },
+      {
+        "treeId": "10c843cef8ce2798",
+        "tree": "Jedi Guardian",
+        "membersLeaving": 1,
+        "membersRemaining": 16
+      },
+      {
+        "treeId": "12a2a02b0901605d",
+        "tree": "Gladiatorial Combat",
+        "membersLeaving": 1,
+        "membersRemaining": 8
+      },
+      {
+        "treeId": "13776eed744d410c",
+        "tree": "Warrior",
+        "membersLeaving": 1,
+        "membersRemaining": 5
+      },
+      {
+        "treeId": "1381bb8c9a838279",
+        "tree": "Melee Duelist",
+        "membersLeaving": 1,
+        "membersRemaining": 9
+      },
+      {
+        "treeId": "4007fa87192b5884",
+        "tree": "Mercenary",
+        "membersLeaving": 3,
+        "membersRemaining": 5
+      },
+      {
+        "treeId": "44554c28675292b6",
+        "tree": "Jedi Investigator",
+        "membersLeaving": 2,
+        "membersRemaining": 5
+      },
+      {
+        "treeId": "4da769d7c5f44232",
+        "tree": "Disciple Of Twilight",
+        "membersLeaving": 1,
+        "membersRemaining": 5
+      },
+      {
+        "treeId": "5f355ad4093d2bf8",
+        "tree": "Wingman",
+        "membersLeaving": 1,
+        "membersRemaining": 5
+      },
+      {
+        "treeId": "61db5e2c0c44ef67",
+        "tree": "Piracy",
+        "membersLeaving": 1,
+        "membersRemaining": 7
+      },
+      {
+        "treeId": "67b59e020c1660eb",
+        "tree": "Misfortune",
+        "membersLeaving": 1,
+        "membersRemaining": 17
+      },
+      {
+        "treeId": "67fdd8dce9abd6c1",
+        "tree": "Brawler",
+        "membersLeaving": 1,
+        "membersRemaining": 22
+      },
+      {
+        "treeId": "6ac3416fb6aada56",
+        "tree": "Alter",
+        "membersLeaving": 1,
+        "membersRemaining": 15
+      },
+      {
+        "treeId": "71e99c646b18d85c",
+        "tree": "Critical Master",
+        "membersLeaving": 1,
+        "membersRemaining": 8
+      },
+      {
+        "treeId": "72d32ebcbb607314",
+        "tree": "Inspiration",
+        "membersLeaving": 2,
+        "membersRemaining": 7
+      },
+      {
+        "treeId": "7db97c2c7ebca579",
+        "tree": "Jedi Weapon Master",
+        "membersLeaving": 1,
+        "membersRemaining": 5
+      },
+      {
+        "treeId": "8375b9b26b679901",
+        "tree": "Influence",
+        "membersLeaving": 1,
+        "membersRemaining": 6
+      },
+      {
+        "treeId": "8a61bf426391431b",
+        "tree": "Felucian Shaman",
+        "membersLeaving": 1,
+        "membersRemaining": 4
+      },
+      {
+        "treeId": "96ef43a3054dcb58",
+        "tree": "Dark Side Devotee",
+        "membersLeaving": 1,
+        "membersRemaining": 6
+      },
+      {
+        "treeId": "a2c6962521c29361",
+        "tree": "Rebel Recruiter",
+        "membersLeaving": 1,
+        "membersRemaining": 5
+      },
+      {
+        "treeId": "a3d0b7c9a6d041f2",
+        "tree": "Mystic",
+        "membersLeaving": 1,
+        "membersRemaining": 5
+      },
+      {
+        "treeId": "a67faf2ae089ab5d",
+        "tree": "Sith Alchemy",
+        "membersLeaving": 1,
+        "membersRemaining": 4
+      },
+      {
+        "treeId": "ad16f3e5f4f7441b",
+        "tree": "Dathomiri Witch",
+        "membersLeaving": 2,
+        "membersRemaining": 4
+      },
+      {
+        "treeId": "ba726f623e42f849",
+        "tree": "Master of Teräs Käsi",
+        "membersLeaving": 1,
+        "membersRemaining": 5
+      },
+      {
+        "treeId": "c1be604242cb328f",
+        "tree": "Infamy",
+        "membersLeaving": 2,
+        "membersRemaining": 11
+      },
+      {
+        "treeId": "c6eee4889411411b",
+        "tree": "Ember Of Vahl",
+        "membersLeaving": 1,
+        "membersRemaining": 5
+      },
+      {
+        "treeId": "cec49bc60d1646b1",
+        "tree": "Specialized Droid",
+        "membersLeaving": 1,
+        "membersRemaining": 7
+      },
+      {
+        "treeId": "d1037bc7a08ea80b",
+        "tree": "Sith",
+        "membersLeaving": 1,
+        "membersRemaining": 12
+      },
+      {
+        "treeId": "d20682671d035cef",
+        "tree": "Bothan Spynet",
+        "membersLeaving": 1,
+        "membersRemaining": 6
+      },
+      {
+        "treeId": "d6b4331c0e31f7e3",
+        "tree": "Sense",
+        "membersLeaving": 1,
+        "membersRemaining": 12
+      },
+      {
+        "treeId": "d8a71a6c5b2b7581",
+        "tree": "Implant",
+        "membersLeaving": 1,
+        "membersRemaining": 5
+      },
+      {
+        "treeId": "de95d37c72b1c4cd",
+        "tree": "Dark Side",
+        "membersLeaving": 1,
+        "membersRemaining": 10
+      },
+      {
+        "treeId": "df6678946610c554",
+        "tree": "Privateer",
+        "membersLeaving": 1,
+        "membersRemaining": 9
+      },
+      {
+        "treeId": "e35ee41362604227",
+        "tree": "Force Adept",
+        "membersLeaving": 1,
+        "membersRemaining": 6
+      },
+      {
+        "treeId": "e99cfa9db8493573",
+        "tree": "Jedi Consular",
+        "membersLeaving": 1,
+        "membersRemaining": 20
+      },
+      {
+        "treeId": "ed77ab2e234089ed",
+        "tree": "Pistoleer",
+        "membersLeaving": 1,
+        "membersRemaining": 5
+      },
+      {
+        "treeId": "ed899f9f41fc1391",
+        "tree": "Beastwarden",
+        "membersLeaving": 3,
+        "membersRemaining": 5
+      }
+    ]
+  },
+  "classAccess": {
+    "changes": [],
+    "note": "no canonical class references any tree that moves to the homebrew pack"
+  },
+  "retiredIdentities": [
+    "0c9b0788ad42450c",
+    "0cdd50aaa65e4360",
+    "0de7338c2b984b96",
+    "0e6854d8aacc48dc",
+    "125b5aa00f5a4d0a",
+    "12e6b524fc6959b6",
+    "14cc3ddc051f4ece",
+    "1bda3fdaa84240d3",
+    "213d97c2cbbd4f81",
+    "222327492c484b4a",
+    "23852d30490fc1e4",
+    "247b9ba1f8d34683",
+    "271024ca2ac6c04b",
+    "2c27842384e55cb2",
+    "2f6bdc483d8f4aa8",
+    "35350a8b3d2a4810",
+    "395daa7cd6f14b8f",
+    "3cc9552cfab59676",
+    "3df46d093b31411d",
+    "3faa4d16e28d43e4",
+    "433c2e9c0e71aceb",
+    "4632b4bf79044752",
+    "4d6c2d2398c33ba7",
+    "4d7d5a38d0394e4c",
+    "4dfad6e363c11acf",
+    "5644990a390a4178",
+    "57c770c7924e4241",
+    "585227ba15d24a37",
+    "588c176b47724734",
+    "5e4a7f98b1e74326",
+    "6021056231839e7c",
+    "61c9413bde23411a",
+    "62e70280d08f43ec",
+    "67a08d46f24c4fdd",
+    "6f3641f0ff39fc90",
+    "707dd4f0b5c744a6",
+    "714c38c0498a4eaf",
+    "747458ee63cd4a2a",
+    "77ab82670aa14f33",
+    "78955cbbe9504d7f",
+    "7a58134276d64561",
+    "816ac9cc1e6c413b",
+    "81cd2a2473e248a0",
+    "85e348f24a144e1c",
+    "85e9699cee664641",
+    "893158dcfe246ad7",
+    "8a6fc1f368226b7b",
+    "8d70989dc42f4829",
+    "9319584186ce4228",
+    "933240d6581843b9",
+    "96a833f805df1be1",
+    "9780298d28d64954",
+    "a0c4b4b252ee4c96",
+    "a1ef8440f49847f1",
+    "a36f9a2eb2424f86",
+    "a4629f24bd571414",
+    "a76198e5da0f6368",
+    "a7d8c4da96eacad4",
+    "a9a84d42b75f4fb1",
+    "ab6efafd94ad044e",
+    "b1669310f65d42b7",
+    "b28f312432d79e77",
+    "b431ca7ea00947b9",
+    "b9fce171cad543d7",
+    "c086c6265e224637",
+    "c6a65be235c34a6f",
+    "cb261592f68849a5",
+    "cc1cf3a694244618",
+    "cc78c981176d4fed",
+    "cc938ba0542c97e4",
+    "d1418afeaa3f40ec",
+    "d49ca4c47e704a96",
+    "d9cb414fe4734507",
+    "e09d40421ade49e8",
+    "e6055a514a784387",
+    "e9541e13afbb4a41",
+    "ea6ee6fad799491e",
+    "ebc1d6e79fa543c9",
+    "f0851e0e5a1ac771",
+    "f123e0682ef74583",
+    "f2df5596a9db40c1",
+    "f5a4088480c005ae",
+    "f785208aa6774cd7",
+    "fbaab00b6eab02a3",
+    "fd87928650da45fd",
+    "swse.talent.combined_fire_naval",
+    "swse.talent.dastardly_attack",
+    "swse.talent.echoes_in_the_force",
+    "swse.talent.embrace_dark_side",
+    "swse.talent.escort",
+    "swse.talent.extended_critical_range_heavy",
+    "swse.talent.flanking_foe",
+    "swse.talent.implant_general",
+    "swse.talent.improvised_weapon_master",
+    "swse.talent.keep_them_reeling_piracy",
+    "swse.talent.mercenarys_determination",
+    "swse.talent.mercenarys_grit",
+    "swse.talent.mercenarys_teamwork",
+    "swse.talent.multiattack_proficiency_advanced_melee",
+    "swse.talent.multiattack_proficiency_exotic",
+    "swse.talent.notorious",
+    "swse.talent.regimen_mastery",
+    "swse.talent.sith_alchemy_craft",
+    "swse.talent.sith_alchemy_create",
+    "swse.talent.stay_in_the_fight_recruit",
+    "swse.talent.unbalance_strike",
+    "swse.talent.unclouded_judgment"
+  ],
+  "canonicalRecordsTouched": {
+    "flag": "PHASE_3C_CANONICAL_RECORD_TOUCHED",
+    "count": 5,
+    "records": [
+      {
+        "recordId": "11e8f858af268e8c",
+        "name": "Fearsome",
+        "path": "system.prerequisitesStructured.conditions[0].id",
+        "from": "swse.talent.notorious",
+        "to": "c67cbd59abd1cc53",
+        "toIdentity": "Saga Edition Core Rulebook|Bounty Hunter|Notorious",
+        "mirrorEntriesUpdated": 0,
+        "flag": "PHASE_3C_CANONICAL_RECORD_TOUCHED"
+      },
+      {
+        "recordId": "8298e12805291c78",
+        "name": "Ruthless Negotiator",
+        "path": "system.prerequisitesStructured.conditions[0].id",
+        "from": "swse.talent.notorious",
+        "to": "c67cbd59abd1cc53",
+        "toIdentity": "Saga Edition Core Rulebook|Bounty Hunter|Notorious",
+        "mirrorEntriesUpdated": 0,
+        "flag": "PHASE_3C_CANONICAL_RECORD_TOUCHED"
+      },
+      {
+        "recordId": "9491f34aad83dfb1",
+        "name": "Shared Notoriety",
+        "path": "system.prerequisitesStructured.conditions[0].id",
+        "from": "swse.talent.notorious",
+        "to": "09744041cdcc9e22",
+        "toIdentity": "Saga Edition Core Rulebook|Infamy|Notorious",
+        "mirrorEntriesUpdated": 0,
+        "flag": "PHASE_3C_CANONICAL_RECORD_TOUCHED"
+      },
+      {
+        "recordId": "b0ecc747a76deb72",
+        "name": "Unsavory Reputation",
+        "path": "system.prerequisitesStructured.conditions[1].id",
+        "from": "swse.talent.notorious",
+        "to": "09744041cdcc9e22",
+        "toIdentity": "Saga Edition Core Rulebook|Infamy|Notorious",
+        "mirrorEntriesUpdated": 0,
+        "flag": "PHASE_3C_CANONICAL_RECORD_TOUCHED"
+      },
+      {
+        "recordId": "9c1e0b0566cb45c2",
+        "name": "Weakening Strike",
+        "path": "system.prerequisitesStructured.conditions[0].id",
+        "from": "swse.talent.dastardly_attack",
+        "to": "9e4345faaaa94dd8",
+        "toIdentity": "Saga Edition Core Rulebook|Misfortune|Dastardly Strike",
+        "mirrorEntriesUpdated": 0,
+        "flag": "PHASE_3C_CANONICAL_RECORD_TOUCHED"
+      }
+    ],
+    "authorization": "owner-authorized; only the listed prerequisitesStructured id leaves",
+    "note": "The CORRECT_IDENTITY record (Ranged Disarm) is one of the inherited 92 and is not counted here."
+  },
+  "runtimeData": {
+    "repointed": [
+      {
+        "file": "data/class-archetypes.json",
+        "from": "585227ba15d24a37",
+        "to": "cf4b1e5b126a2a7e",
+        "occurrences": 2
+      }
+    ],
+    "note": "found by the repository-wide residual-reference gate; the first dry run scanned packs only"
+  },
+  "derivedData": {
+    "entriesDropped": {
+      "data/generated/talents.fixed.json": 23,
+      "data/fixes/talents.fixed.json": 23
+    },
+    "note": "data/*/talents.fixed.json are partial derived mirrors with no runtime or tool consumer found"
+  },
+  "homebrewPack": {
+    "talentsPack": "talents-homebrew",
+    "treesPack": "talent-trees-homebrew",
+    "files": [
+      "packs/talents-homebrew.db",
+      "packs/talent-trees-homebrew.db"
+    ],
+    "idsPreserved": true,
+    "systemJsonEntries": [
+      {
+        "name": "talents-homebrew",
+        "label": "Talents (Homebrew, Noncanonical)",
+        "path": "packs/talents-homebrew"
+      },
+      {
+        "name": "talent-trees-homebrew",
+        "label": "Talent Trees (Homebrew, Noncanonical)",
+        "path": "packs/talent-trees-homebrew"
+      }
+    ],
+    "note": "Not loaded by any canonical talent engine; must never be presented as official SWSE content."
+  },
+  "followUps": [
+    "Structured talent prerequisites are only evaluated when a talent has no prerequisite text; all five repointed records have text, so the leaves are identity data. The survivors c67cbd59abd1cc53 (Bounty Hunter Notorious) and 9e4345faaaa94dd8 (Dastardly Strike) carry no flags.swse.id, so the production _id is stored; giving them runtime ids (or a uuid leaf) would make id-path resolution effective and is a separate canonical-record decision.",
+    "Add the six KEEP records and the Ranged Disarm correction to the canonical corpus through the Phase 2 → canonical → manifest chain (CANONICAL_CORPUS_ADDITION)."
+  ],
+  "verification": {
+    "passed": 39,
+    "failed": 0,
+    "results": [
+      {
+        "id": "canonical talent count = before - (merges + removals + moves)",
+        "ok": true,
+        "detail": "1272 - 85 = 1187, got 1187"
+      },
+      {
+        "id": "homebrew talent count = MOVE_HOMEBREW_PACK count",
+        "ok": true,
+        "detail": "50"
+      },
+      {
+        "id": "total preserved talent records = before - merges - removals",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "id": "tree count reconciles (canonical + homebrew = before)",
+        "ok": true,
+        "detail": "177+19"
+      },
+      {
+        "id": "every talent outside the 92 and the allow-listed prerequisite repoints is byte-identical",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "id": "each allow-listed canonical record changed ONLY its listed prerequisitesStructured id leaf (text, tags, abilityMeta, everything else identical)",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "id": "the four Notorious prerequisites keep their tree-specific identities (Bounty Hunter vs Infamy) and Weakening Strike names Dastardly Strike",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "id": "no canonical structured prerequisite identity points at a removed/merged/moved Phase 3D record",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "id": "KEEP records are present and unchanged",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "id": "CORRECT_IDENTITY changes only system.treeId",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "id": "merged / removed / moved records are gone from the canonical pack",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "id": "merged / removed records exist nowhere; moved records exist only in the homebrew pack",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "id": "moved records are identical to their originals (ids + all automation metadata preserved)",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "id": "merge survivors exist and are unchanged (none of the 1,180 canonical identities touched)",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "id": "no canonical tree member is missing from the canonical pack (no orphan memberships)",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "id": "every homebrew tree member exists in the homebrew pack",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "id": "a talent is never claimed by more canonical trees than before",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "id": "Ranged Disarm is claimed by exactly one canonical tree (Gunslinger)",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "id": "talentNames stay consistent with talentIds in every changed tree",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "id": "trees outside the change set are byte-identical",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "id": "no canonical class references a tree that moved to the homebrew pack",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "id": "classes are unchanged unless homebrew access had to be removed",
+        "ok": true,
+        "detail": "0 class(es) changed"
+      },
+      {
+        "id": "every planned embedded-actor repoint was performed (hard prerequisite)",
+        "ok": true,
+        "detail": "34/34"
+      },
+      {
+        "id": "the 34 Notorious/Teräs Käsi actor repoints are included",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "id": "no embedded actor item still points at a record that left the canonical pack",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "id": "repointed items change only snapshot + source-identity fields (embedded _id, sort, effects, tags, local flags preserved)",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "id": "every refreshed embedded snapshot equals its surviving canonical record",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "id": "no contaminated Notorious text survives in any actor item",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "id": "every actor target of a repoint exists (canonical pack or homebrew pack)",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "id": "registry has no entry for a tree that left the canonical pack",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "id": "registry has an entry for every projected canonical tree",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "id": "registry talentIds resolve in the canonical pack",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "id": "derived talents.fixed.json mirrors no longer carry leaving ids",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "id": "runtime data files carry no leaving id after the planned repoints",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "id": "every planned runtime repoint was performed and targets a surviving record",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "id": "legacy registry aliases name no talent that is missing from the canonical pack",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "id": "idempotence: a second projection refuses cleanly as already applied",
+        "ok": true,
+        "detail": "refused"
+      },
+      {
+        "id": "repository-wide scan: every runtime reference to a leaving id is in a file this plan rewrites",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "id": "repository-wide scan: stale tool/test references are listed for triage",
+        "ok": true,
+        "detail": "0 tool, 0 test"
+      }
+    ]
+  }
+}

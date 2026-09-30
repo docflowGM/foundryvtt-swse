@@ -26,22 +26,17 @@ const WRONG_TREE_ASSIGNMENTS = {
   '97a771d1f4627521': { name: 'Dark Side Bane', toTree: 'Dark Side' },
   '2e96f06be6b9def8': { name: 'Dark Side Scourge', toTree: 'Dark Side' },
   '3331d4b2b88e446f': { name: 'Resist the Dark Side', toTree: 'Dark Side' },
-  '3cc9552cfab59676': { name: 'Embrace Dark Side', toTree: 'Dark Side' },
   '181da7f36b9fba9d': { name: 'Force Treatment', toTree: 'Jedi Healer' },
-  '893158dcfe246ad7': { name: 'Implant (general)', toTree: 'Implant' },
   '24bf81bc6d74fafd': { name: 'Keep Them Reeling', toTree: 'Piracy' },
   '9211e3f6268b3413': { name: 'Keep it Together', toTree: 'Expert Pilot' },
-  '6021056231839e7c': { name: 'Multiattack Proficiency (advanced melee)', toTree: 'Melee Duelist' },
   '5ec84c7e500601e4': { name: 'Multiattack Proficiency (rifles)', toTree: 'Carbineer' },
   'adfb725d20faade5': { name: 'Ruthless', toTree: 'Assassin' },
-  '8a6fc1f368226b7b': { name: 'Sith Alchemy (create)', toTree: 'Dark Side' },
   'c980750800b91061': { name: 'Stay in the Fight', toTree: 'Rebel Recruiter' },
   '41426ecd7fade0b0': { name: 'Weapon Specialization', toTree: 'Lightsaber Combat' } // Keep current assignment as Soldier Combat doesn't exist
 };
 
 // Define the 2 missing trees (already seem to exist in database, but track them)
 const MISSING_TREES = {
-  '222327492c484b4a': { name: 'Teräs Käsi Basics', treeName: 'Master of Teräs Käsi', treeId: 'f96cb0f2a46b4dd1' },
   '379019c29b37d717': { name: 'Unarmed Parry', treeName: 'Master of Teräs Käsi', treeId: 'f96cb0f2a46b4dd1' }
 };
 

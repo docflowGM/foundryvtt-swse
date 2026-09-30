@@ -321,11 +321,27 @@
       "system": "foundryvtt-swse"
     },
     {
+      "name": "talent-trees-homebrew",
+      "label": "Talent Trees (Homebrew, Noncanonical)",
+      "type": "Item",
+      "path": "packs/talent-trees-homebrew",
+      "system": "foundryvtt-swse",
+      "flags": { "swse": { "noncanonical": true, "homebrew": true } }
+    },
+    {
       "name": "talents",
       "label": "Talents",
       "type": "Item",
       "path": "packs/talents",
       "system": "foundryvtt-swse"
+    },
+    {
+      "name": "talents-homebrew",
+      "label": "Talents (Homebrew, Noncanonical)",
+      "type": "Item",
+      "path": "packs/talents-homebrew",
+      "system": "foundryvtt-swse",
+      "flags": { "swse": { "noncanonical": true, "homebrew": true } }
     },
     {
       "name": "feats",

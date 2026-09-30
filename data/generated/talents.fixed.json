@@ -2316,30 +2316,6 @@
     "flags": {}
   },
   {
-    "_id": "a7d8c4da96eacad4",
-    "name": "Notorious",
-    "type": "talent",
-    "img": "icons/svg/item-bag.svg",
-    "system": {
-      "talent_tree": "Bounty Hunter",
-      "prerequisites": null,
-      "benefit": "Reroll Persuasion checks to Intimidate.",
-      "description": "Reroll Persuasion checks made to intimidate.",
-      "class": "Bounty Hunter",
-      "costNumeric": null,
-      "category": "Bounty Hunter",
-      "tree": "Infamy",
-      "treeId": "infamy"
-    },
-    "effects": [],
-    "folder": null,
-    "sort": 0,
-    "ownership": {
-      "default": 0
-    },
-    "flags": {}
-  },
-  {
     "_id": "b19ce52b1c965015",
     "name": "Nowhere to Hide",
     "type": "talent",
@@ -2993,52 +2969,6 @@
       "treeId": "brawler"
     },
     "effects": [],
-    "folder": null,
-    "sort": 0,
-    "ownership": {
-      "default": 0
-    },
-    "flags": {}
-  },
-  {
-    "_id": "12e6b524fc6959b6",
-    "name": "Unbalance Strike",
-    "type": "talent",
-    "img": "icons/svg/item-bag.svg",
-    "system": {
-      "talent_tree": "Brawler",
-      "prerequisites": "Expert Grappler",
-      "benefit": "One opponent loses their Strength bonus to melee attack rolls against you (does not affect damage).",
-      "description": "One opponent you grapple loses their Strength bonus to melee attack rolls against you.",
-      "class": "Soldier",
-      "costNumeric": null,
-      "category": "Soldier",
-      "tree": "Brawler",
-      "treeId": "brawler"
-    },
-    "effects": [
-      {
-        "_id": "134a5b32-6daf-419e-87b4-a765613b4522",
-        "name": "Unbalance Strike",
-        "type": "talent-effect",
-        "icon": "icons/svg/item-bag.svg",
-        "changes": [
-          {
-            "key": "system.attacks.unarmed",
-            "mode": 2,
-            "value": "1"
-          }
-        ],
-        "disabled": false,
-        "duration": {},
-        "flags": {
-          "swse": {
-            "source": "talent",
-            "talentName": "Unbalance Strike"
-          }
-        }
-      }
-    ],
     "folder": null,
     "sort": 0,
     "ownership": {
@@ -4648,52 +4578,6 @@
     "flags": {}
   },
   {
-    "_id": "ab6efafd94ad044e",
-    "name": "Extended Critical Range (heavy)",
-    "type": "talent",
-    "img": "icons/svg/item-bag.svg",
-    "system": {
-      "talent_tree": "Critical Master",
-      "prerequisites": "Base attack bonus +10, Weapon Proficiency (heavy)",
-      "benefit": "Increase critical range of heavy weapons by 1.",
-      "description": "With heavy weapons, increase the weapon's critical threat range by 1.",
-      "class": "Elite Trooper",
-      "costNumeric": null,
-      "category": "Elite Trooper",
-      "tree": "Critical Master",
-      "treeId": "critical-master"
-    },
-    "effects": [
-      {
-        "_id": "3aa9ccf6-cbd5-49f9-809b-5605c5e040f6",
-        "name": "Extended Critical Range (heavy)",
-        "type": "talent-effect",
-        "icon": "icons/svg/item-bag.svg",
-        "changes": [
-          {
-            "key": "system.weapons.heavy.critRange",
-            "mode": 2,
-            "value": "1"
-          }
-        ],
-        "disabled": false,
-        "duration": {},
-        "flags": {
-          "swse": {
-            "source": "talent",
-            "talentName": "Extended Critical Range (heavy)"
-          }
-        }
-      }
-    ],
-    "folder": null,
-    "sort": 0,
-    "ownership": {
-      "default": 0
-    },
-    "flags": {}
-  },
-  {
     "_id": "141e1a07b365e0fd",
     "name": "Extended Critical Range (rifles)",
     "type": "talent",
@@ -5408,30 +5292,6 @@
         }
       }
     ],
-    "folder": null,
-    "sort": 0,
-    "ownership": {
-      "default": 0
-    },
-    "flags": {}
-  },
-  {
-    "_id": "3cc9552cfab59676",
-    "name": "Embrace Dark Side",
-    "type": "talent",
-    "img": "icons/svg/item-bag.svg",
-    "system": {
-      "talent_tree": "Dark Side Devotee",
-      "prerequisites": "Channel Aggression, Channel Anger",
-      "benefit": "Whenever you use a Force Power with the [Dark Side] descriptor, you may reroll your Use the Force check, but you must accept the result of the reroll, even if it is worse.\n\nUpon choosing this Talent, you can no longer use Force Powers with the [Light Side] descriptor.",
-      "description": "Whenever you use a Force Power with the [Dark Side] descriptor, you may reroll your Use the Force check, but you must accept the result of the reroll, even if it is worse.\n\nUpon choosing this Talent, you can no longer use Force Powers with the [Light Side] descriptor.",
-      "class": "Force Adept",
-      "costNumeric": null,
-      "category": "Dark Side Devotee",
-      "tree": "Dark Side Devotee",
-      "treeId": "dark-side-devotee"
-    },
-    "effects": [],
     "folder": null,
     "sort": 0,
     "ownership": {
@@ -9178,30 +9038,6 @@
       "prerequisites": null,
       "benefit": "When you hit a moving opponent one size larger or smaller with an attack of opportunity, end their movement.",
       "description": "When you hit a moving opponent one size larger or smaller with an attack of opportunity, their movement immediately ends.",
-      "class": "Gladiator",
-      "costNumeric": null,
-      "category": "Gladiator",
-      "tree": "Gladiatorial Combat",
-      "treeId": "gladiatorial-combat"
-    },
-    "effects": [],
-    "folder": null,
-    "sort": 0,
-    "ownership": {
-      "default": 0
-    },
-    "flags": {}
-  },
-  {
-    "_id": "271024ca2ac6c04b",
-    "name": "Multiattack Proficiency (exotic)",
-    "type": "talent",
-    "img": "icons/svg/item-bag.svg",
-    "system": {
-      "talent_tree": "Gladiatorial Combat",
-      "prerequisites": "Exotic Weapons Master",
-      "benefit": "Reduce multiattack penalty by 2 for exotic weapons.",
-      "description": "Reduce the attack penalty for making multiple attacks with exotic weapons by 2.",
       "class": "Gladiator",
       "costNumeric": null,
       "category": "Gladiator",
@@ -14728,61 +14564,6 @@
     }
   },
   {
-    "_id": "a76198e5da0f6368",
-    "name": "Echoes of the Force",
-    "type": "talent",
-    "img": "icons/svg/item-bag.svg",
-    "system": {
-      "talent_tree": "Jedi Investigator",
-      "prerequisites": "Farseeing",
-      "benefit": "You can use the Farseeing Force Power on a location instead of on an individual creature, peering into the location's past to view events that occurred there. Unlike the normal use of the Farseeing Force Power, you are actually looking into the location's past (at a time you designate), and you must be standing in the location being viewed.\n\nThe target DC for your Use the Force check is 20, +1 for each day into the past that you are attempt to scry. When you look into the past, you need only specify a time in a number of days, as you can sense tremors in The Force that focus you visions on meaningful events that day.",
-      "description": {
-        "value": "<p>You can use the Farseeing Force Power on a location instead of on an individual creature, peering into the location's past to view events that occurred there. Unlike the normal use of the Farseeing Force Power, you are actually looking into the location's past (at a time you designate), and you must be standing in the location being viewed.</p><p>The target DC for your Use the Force check is 20, +1 for each day into the past that you are attempt to scry. When you look into the past, you need only specify a time in a number of days, as you can sense tremors in The Force that focus you visions on meaningful events that day.</p>"
-      },
-      "class": "Jedi Knight",
-      "costNumeric": null,
-      "category": "Jedi Knight",
-      "tree": "Jedi Investigator",
-      "treeId": "jedi-investigator",
-      "slug": "echoes-of-the-force",
-      "effect": "You can use the Farseeing Force Power on a location instead of on an individual creature, peering into the location's past to view events that occurred there. Unlike the normal use of the Farseeing Force Power, you are actually looking into the location's past (at a time you designate), and you must be standing in the location being viewed.\n\nThe target DC for your Use the Force check is 20, +1 for each day into the past that you are attempt to scry. When you look into the past, you need only specify a time in a number of days, as you can sense tremors in The Force that focus you visions on meaningful events that day.",
-      "shortSummary": "Use Farseeing on a location's past; DC 20 +1 per day into the past while standing there.",
-      "prerequisite": "Farseeing",
-      "prerequisitesText": "Farseeing",
-      "executionModel": "ACTIVE",
-      "abilityMeta": {
-        "status": "talent_backcheck_user_text_2026_06_11",
-        "description": "Use Farseeing on a location's past; DC 20 +1 per day into the past while standing there.",
-        "applicationScope": "renamed_alias_record",
-        "staticSheetPolicy": "exclude",
-        "requiresRuntimeContext": true,
-        "metadataPhase": "jedi-prestige-talent-backcheck",
-        "metadataNotes": "Renamed stale imported title to match user-provided talent text.",
-        "rules": [
-          {
-            "type": "TALENT_RULE",
-            "id": "echoes-of-the-force",
-            "label": "Echoes of the Force",
-            "summary": "Use Farseeing on a location's past; DC 20 +1 per day into the past while standing there.",
-            "action": "farseeing",
-            "text": "You can use the Farseeing Force Power on a location instead of on an individual creature, peering into the location's past to view events that occurred there. Unlike the normal use of the Farseeing Force Power, you are actually looking into the location's past (at a time you designate), and you must be standing in the location being viewed.\n\nThe target DC for your Use the Force check is 20, +1 for each day into the past that you are attempt to scry. When you look into the past, you need only specify a time in a number of days, as you can sense tremors in The Force that focus you visions on meaningful events that day."
-          }
-        ]
-      }
-    },
-    "effects": [],
-    "folder": null,
-    "sort": 0,
-    "ownership": {
-      "default": 0
-    },
-    "flags": {
-      "swse": {
-        "renamedFrom": "Echoes in the Force"
-      }
-    }
-  },
-  {
     "_id": "dfb9e58c7bcb095c",
     "name": "Jedi Quarry",
     "type": "talent",
@@ -15037,61 +14818,6 @@
             "system.abilityMeta"
           ]
         }
-      }
-    }
-  },
-  {
-    "_id": "cc938ba0542c97e4",
-    "name": "Unclouded Judgement",
-    "type": "talent",
-    "img": "icons/svg/item-bag.svg",
-    "system": {
-      "talent_tree": "Jedi Investigator",
-      "prerequisites": "Sense Deception",
-      "benefit": "Whenever you are the target of a Mind-Affecting Force Power or Force Talent, you can spend a Force Point as a Reaction to negate the effects of that Force Power or Force Talent (no Skill Check required).",
-      "description": {
-        "value": "<p>Whenever you are the target of a Mind-Affecting Force Power or Force Talent, you can spend a Force Point as a Reaction to negate the effects of that Force Power or Force Talent (no Skill Check required).</p>"
-      },
-      "class": "Jedi Knight",
-      "costNumeric": null,
-      "category": "Jedi Knight",
-      "tree": "Jedi Investigator",
-      "treeId": "jedi-investigator",
-      "slug": "unclouded-judgement",
-      "effect": "Whenever you are the target of a Mind-Affecting Force Power or Force Talent, you can spend a Force Point as a Reaction to negate the effects of that Force Power or Force Talent (no Skill Check required).",
-      "shortSummary": "Spend a Force Point as a Reaction to negate a Mind-Affecting Force Power or Force Talent targeting you.",
-      "prerequisite": "Sense Deception",
-      "prerequisitesText": "Sense Deception",
-      "executionModel": "ACTIVE",
-      "abilityMeta": {
-        "status": "talent_backcheck_user_text_2026_06_11",
-        "description": "Spend a Force Point as a Reaction to negate a Mind-Affecting Force Power or Force Talent targeting you.",
-        "applicationScope": "renamed_alias_record",
-        "staticSheetPolicy": "exclude",
-        "requiresRuntimeContext": true,
-        "metadataPhase": "jedi-prestige-talent-backcheck",
-        "metadataNotes": "Renamed stale imported title to match user-provided talent text.",
-        "rules": [
-          {
-            "type": "TALENT_RULE",
-            "id": "unclouded-judgement",
-            "label": "Unclouded Judgement",
-            "summary": "Spend a Force Point as a Reaction to negate a Mind-Affecting Force Power or Force Talent targeting you.",
-            "action": "reaction",
-            "text": "Whenever you are the target of a Mind-Affecting Force Power or Force Talent, you can spend a Force Point as a Reaction to negate the effects of that Force Power or Force Talent (no Skill Check required)."
-          }
-        ]
-      }
-    },
-    "effects": [],
-    "folder": null,
-    "sort": 0,
-    "ownership": {
-      "default": 0
-    },
-    "flags": {
-      "swse": {
-        "renamedFrom": "Unclouded Judgment"
       }
     }
   },
@@ -16484,61 +16210,6 @@
             "system.abilityMeta"
           ]
         }
-      }
-    }
-  },
-  {
-    "_id": "4dfad6e363c11acf",
-    "name": "Improvised Weapon Masteryy",
-    "type": "talent",
-    "img": "icons/svg/item-bag.svg",
-    "system": {
-      "talent_tree": "Jedi Weapon Master",
-      "prerequisites": "",
-      "benefit": "You take no penalty on attack rolls made with Improvised Weapons.",
-      "description": {
-        "value": "<p>You take no penalty on attack rolls made with Improvised Weapons.</p>"
-      },
-      "class": "Jedi Knight",
-      "costNumeric": null,
-      "category": "Jedi Knight",
-      "tree": "Jedi Weapon Master",
-      "treeId": "jedi-weapon-master",
-      "slug": "improvised-weapon-mastery",
-      "effect": "You take no penalty on attack rolls made with Improvised Weapons.",
-      "shortSummary": "Take no penalty on attack rolls with improvised weapons.",
-      "prerequisite": "",
-      "prerequisitesText": "",
-      "executionModel": "ACTIVE",
-      "abilityMeta": {
-        "status": "talent_backcheck_user_text_2026_06_11",
-        "description": "Take no penalty on attack rolls with improvised weapons.",
-        "applicationScope": "renamed_alias_record",
-        "staticSheetPolicy": "exclude",
-        "requiresRuntimeContext": true,
-        "metadataPhase": "jedi-prestige-talent-backcheck",
-        "metadataNotes": "Renamed stale imported title to match user-provided talent text.",
-        "rules": [
-          {
-            "type": "TALENT_RULE",
-            "id": "improvised-weapon-mastery",
-            "label": "Improvised Weapon Masteryy",
-            "summary": "Take no penalty on attack rolls with improvised weapons.",
-            "action": "attack-roll",
-            "text": "You take no penalty on attack rolls made with Improvised Weapons."
-          }
-        ]
-      }
-    },
-    "effects": [],
-    "folder": null,
-    "sort": 0,
-    "ownership": {
-      "default": 0
-    },
-    "flags": {
-      "swse": {
-        "renamedFrom": "Improvised Weapon Master"
       }
     }
   },
@@ -19591,30 +19262,6 @@
     "flags": {}
   },
   {
-    "_id": "f0851e0e5a1ac771",
-    "name": "Multiattack Proficiency (advanced melee)",
-    "type": "talent",
-    "img": "icons/svg/item-bag.svg",
-    "system": {
-      "talent_tree": "Melee Duelist",
-      "prerequisites": null,
-      "benefit": "Reduce multiattack penalty by 2 for advanced melee weapons.",
-      "description": "Reduce the attack penalty for multiple attacks with advanced melee weapons by 2.",
-      "class": "Melee Duelist",
-      "costNumeric": null,
-      "category": "Melee Duelist",
-      "tree": "Melee Duelist",
-      "treeId": "melee-duelist"
-    },
-    "effects": [],
-    "folder": null,
-    "sort": 0,
-    "ownership": {
-      "default": 0
-    },
-    "flags": {}
-  },
-  {
     "_id": "f7bc7dab38c43fb5",
     "name": "Out of Nowhere",
     "type": "talent",
@@ -20063,100 +19710,6 @@
           "swse": {
             "source": "talent",
             "talentName": "Focused Warrior"
-          }
-        }
-      }
-    ],
-    "folder": null,
-    "sort": 0,
-    "ownership": {
-      "default": 0
-    },
-    "flags": {}
-  },
-  {
-    "_id": "a4629f24bd571414",
-    "name": "Mercenary's Determination",
-    "type": "talent",
-    "img": "icons/svg/item-bag.svg",
-    "system": {
-      "talent_tree": "Mercenary",
-      "prerequisites": "Mercenary's Grit",
-      "benefit": "Double your speed for 1 round; must wait 5 rounds between uses.",
-      "description": "",
-      "class": "Soldier",
-      "costNumeric": null,
-      "category": "Soldier",
-      "tree": "Mercenary",
-      "treeId": "mercenary"
-    },
-    "effects": [],
-    "folder": null,
-    "sort": 0,
-    "ownership": {
-      "default": 0
-    },
-    "flags": {}
-  },
-  {
-    "_id": "2c27842384e55cb2",
-    "name": "Mercenary's Grit",
-    "type": "talent",
-    "img": "icons/svg/item-bag.svg",
-    "system": {
-      "talent_tree": "Mercenary",
-      "prerequisites": null,
-      "benefit": "When affected by a debilitating condition, convert its penalty into a bonus for 1 round, then move down the condition track.",
-      "description": "",
-      "class": "Soldier",
-      "costNumeric": null,
-      "category": "Soldier",
-      "tree": "Mercenary",
-      "treeId": "mercenary"
-    },
-    "effects": [],
-    "folder": null,
-    "sort": 0,
-    "ownership": {
-      "default": 0
-    },
-    "flags": {}
-  },
-  {
-    "_id": "fbaab00b6eab02a3",
-    "name": "Mercenary's Teamwork",
-    "type": "talent",
-    "img": "icons/svg/item-bag.svg",
-    "system": {
-      "talent_tree": "Mercenary",
-      "prerequisites": "Combined Fire",
-      "benefit": "Deal +2 damage against targets damaged by an ally since the end of your last turn (stacks up to +10).",
-      "description": "",
-      "class": "Soldier",
-      "costNumeric": null,
-      "category": "Soldier",
-      "tree": "Mercenary",
-      "treeId": "mercenary"
-    },
-    "effects": [
-      {
-        "_id": "1d62c599-b384-41fa-9bad-53ea8acf3c98",
-        "name": "Mercenary's Teamwork",
-        "type": "talent-effect",
-        "icon": "icons/svg/item-bag.svg",
-        "changes": [
-          {
-            "key": "system.damage",
-            "mode": 2,
-            "value": "2"
-          }
-        ],
-        "disabled": false,
-        "duration": {},
-        "flags": {
-          "swse": {
-            "source": "talent",
-            "talentName": "Mercenary's Teamwork"
           }
         }
       }
@@ -20864,30 +20417,6 @@
       "prerequisites": "Walk the Line",
       "benefit": "Each once per encounter after you attack: if you damage the target, impose -5 Reflex; or reduce the target’s speed by 2; or against two opponents within 2 squares, each takes -5 attack but you roll damage once.",
       "description": "After you attack, impose penalties or bonuses based on positioning.",
-      "class": "Scoundrel",
-      "costNumeric": null,
-      "category": "Scoundrel",
-      "tree": "Misfortune",
-      "treeId": "misfortune"
-    },
-    "effects": [],
-    "folder": null,
-    "sort": 0,
-    "ownership": {
-      "default": 0
-    },
-    "flags": {}
-  },
-  {
-    "_id": "f5a4088480c005ae",
-    "name": "Dastardly Attack",
-    "type": "talent",
-    "img": "icons/svg/item-bag.svg",
-    "system": {
-      "talent_tree": "Misfortune",
-      "prerequisites": "Walk the Line",
-      "benefit": "An attack against an opponent denied Dexterity to Defense moves them -1 step down the condition track.",
-      "description": "Attacks against flat-footed enemies move them down the condition track.",
       "class": "Scoundrel",
       "costNumeric": null,
       "category": "Scoundrel",
@@ -21628,141 +21157,6 @@
       }
     },
     "effects": [],
-    "folder": null,
-    "sort": 0,
-    "ownership": {
-      "default": 0
-    },
-    "flags": {}
-  },
-  {
-    "_id": "96a833f805df1be1",
-    "name": "Regimen Mastery",
-    "type": "talent",
-    "img": "icons/svg/item-bag.svg",
-    "system": {
-      "talent_tree": "Mystic",
-      "prerequisites": "Force Regimen Mastery",
-      "benefit": "You gain a +5 Force bonus on Skill Checks made to perform a Force Regimen.",
-      "description": {
-        "value": "You gain a +5 Force bonus on Skill Checks made to perform a Force Regimen."
-      },
-      "class": "Force Adept",
-      "costNumeric": null,
-      "category": "Force Adept",
-      "tree": "Mystic",
-      "treeId": "mystic",
-      "executionModel": "PASSIVE",
-      "subType": "REFERENCE",
-      "tags": [
-        "category_force_adept",
-        "force",
-        "force_adept_backcheck",
-        "phase-force-mystic-telepath",
-        "mystic"
-      ],
-      "abilityMeta": {
-        "mechanicsMode": "runtime_or_contextual",
-        "applicationScope": "force_adept_talent_runtime",
-        "staticSheetPolicy": "exclude",
-        "requiresRuntimeContext": true,
-        "manualResolution": true,
-        "modifiers": [],
-        "combatActions": [
-          {
-            "id": "regimen-mastery",
-            "name": "Regimen Mastery",
-            "label": "Regimen Mastery",
-            "actionType": "passive",
-            "cost": 0,
-            "manualResolution": true,
-            "resolutionMode": "forceAdeptTalent",
-            "useLabel": "Reference",
-            "description": "You gain a +5 Force bonus on Skill Checks made to perform a Force Regimen.",
-            "notes": "Force Regimen performance checks gain +5 Force bonus. Force Regimen UI remains the authority for selected regimens.",
-            "relatedSkills": [],
-            "resources": [
-              "Force Regimen",
-              "Skill Check"
-            ],
-            "requiredContext": [],
-            "targetHint": "",
-            "spendAction": false,
-            "ruleData": {
-              "forceAdeptTalentAction": "regimenMastery"
-            },
-            "forceAdeptTalentAction": "regimenMastery"
-          }
-        ],
-        "rules": [
-          {
-            "type": "SKILL_CONTEXT_BONUS",
-            "id": "regimen-mastery-force-regimen",
-            "label": "Regimen Mastery",
-            "bonus": 5,
-            "bonusType": "force",
-            "context": "Force Regimen performance checks",
-            "summary": "You gain a +5 Force bonus on Skill Checks made to perform a Force Regimen."
-          }
-        ],
-        "backcheckNotes": {
-          "phase": "force-mystic-telepath-backcheck",
-          "source": "user-pasted rules text",
-          "descriptionUpdated": true,
-          "runtimeAction": "regimenMastery"
-        }
-      }
-    },
-    "effects": [],
-    "folder": null,
-    "sort": 0,
-    "ownership": {
-      "default": 0
-    },
-    "flags": {
-      "swse": {
-        "id": "swse.talent.regimen_mastery"
-      }
-    }
-  },
-  {
-    "_id": "23852d30490fc1e4",
-    "name": "Combined Fire (Naval)",
-    "type": "talent",
-    "img": "icons/svg/item-bag.svg",
-    "system": {
-      "talent_tree": "Naval Officer",
-      "prerequisites": null,
-      "benefit": "Designate a single vehicle, object, or creature in line of sight; gain extra damage dice for batteries (scaling every 2 batteries) and may designate one weapon or battery to make a single attack.",
-      "description": "",
-      "class": "Officer",
-      "costNumeric": null,
-      "category": "Officer",
-      "treeId": "unknown"
-    },
-    "effects": [
-      {
-        "_id": "345ea1dc-cec0-4095-8dd7-fdb9f4a40db5",
-        "name": "Combined Fire (Naval)",
-        "type": "talent-effect",
-        "icon": "icons/svg/item-bag.svg",
-        "changes": [
-          {
-            "key": "system.attacks.vehicle",
-            "mode": 2,
-            "value": "1"
-          }
-        ],
-        "disabled": false,
-        "duration": {},
-        "flags": {
-          "swse": {
-            "source": "talent",
-            "talentName": "Combined Fire (Naval)"
-          }
-        }
-      }
-    ],
     "folder": null,
     "sort": 0,
     "ownership": {
@@ -22811,30 +22205,6 @@
     "flags": {}
   },
   {
-    "_id": "b28f312432d79e77",
-    "name": "Keep Them Reeling (Piracy)",
-    "type": "talent",
-    "img": "icons/svg/item-bag.svg",
-    "system": {
-      "talent_tree": "Piracy",
-      "prerequisites": null,
-      "benefit": "Make a single melee attack within reach; if it hits deal no damage but force the target to move or withdraw next turn.",
-      "description": "",
-      "class": "Master Privateer",
-      "costNumeric": null,
-      "category": "Master Privateer",
-      "tree": "Piracy",
-      "treeId": "piracy"
-    },
-    "effects": [],
-    "folder": null,
-    "sort": 0,
-    "ownership": {
-      "default": 0
-    },
-    "flags": {}
-  },
-  {
     "_id": "37c45caffa191816",
     "name": "Raider's Frenzy",
     "type": "talent",
@@ -22946,30 +22316,6 @@
       "prerequisites": "Dual Weapon Mastery I, Running Attack",
       "benefit": "Once per encounter with two pistols, move twice your speed and make attacks with each pistol.",
       "description": "Once per encounter, while wielding two pistols, move up to twice your speed and make one attack with each.",
-      "class": "Gunslinger",
-      "costNumeric": null,
-      "category": "Gunslinger",
-      "tree": "Pistoleer",
-      "treeId": "pistoleer"
-    },
-    "effects": [],
-    "folder": null,
-    "sort": 0,
-    "ownership": {
-      "default": 0
-    },
-    "flags": {}
-  },
-  {
-    "_id": "433c2e9c0e71aceb",
-    "name": "Flanking Foe",
-    "type": "talent",
-    "img": "icons/svg/item-bag.svg",
-    "system": {
-      "talent_tree": "Pistoleer",
-      "prerequisites": "Dual Weapon Mastery I",
-      "benefit": "If flanked and wielding two pistols, make flanking attacks as a standard action instead of a full; must attack two targets.",
-      "description": "If flanked while wielding two pistols, attack both flankers as a standard action instead of a full action.",
       "class": "Gunslinger",
       "costNumeric": null,
       "category": "Gunslinger",
@@ -23294,30 +22640,6 @@
         }
       }
     ],
-    "folder": null,
-    "sort": 0,
-    "ownership": {
-      "default": 0
-    },
-    "flags": {}
-  },
-  {
-    "_id": "6021056231839e7c",
-    "name": "Multiattack Proficiency (advanced melee)",
-    "type": "talent",
-    "img": "icons/svg/item-bag.svg",
-    "system": {
-      "talent_tree": "Privateer",
-      "prerequisites": null,
-      "benefit": "Reduce multiattack penalties by 2 for advanced melee weapons.",
-      "description": "Reduce the attack penalty for multiple attacks with advanced melee weapons by 2.",
-      "class": "Master Privateer",
-      "costNumeric": null,
-      "category": "Master Privateer",
-      "tree": "Melee Duelist",
-      "treeId": "melee-duelist"
-    },
-    "effects": [],
     "folder": null,
     "sort": 0,
     "ownership": {
@@ -24137,29 +23459,6 @@
       "category": "Officer",
       "tree": "Rebel Recruiter",
       "treeId": "rebel-recruiter"
-    },
-    "effects": [],
-    "folder": null,
-    "sort": 0,
-    "ownership": {
-      "default": 0
-    },
-    "flags": {}
-  },
-  {
-    "_id": "0e6854d8aacc48dc",
-    "name": "Stay in the Fight (Recruit)",
-    "type": "talent",
-    "img": "icons/svg/item-bag.svg",
-    "system": {
-      "talent_tree": "Rebel Recruiter",
-      "prerequisites": "Recruit Enemy",
-      "benefit": "A recruited enemy may immediately use Second Wind as a reaction.",
-      "description": "",
-      "class": "Officer",
-      "costNumeric": null,
-      "category": "Officer",
-      "treeId": "unknown"
     },
     "effects": [],
     "folder": null,
@@ -26393,52 +25692,6 @@
     }
   },
   {
-    "_id": "8a6fc1f368226b7b",
-    "name": "Sith Alchemy (create)",
-    "type": "talent",
-    "img": "icons/svg/item-bag.svg",
-    "system": {
-      "talent_tree": "Sith",
-      "prerequisites": "Dark Side Master",
-      "benefit": "Create Sith Talisman (+d6 damage to Force powers or lightsabers, grants a Dark Side point on first use) or create Sith Weapons/Armor with Sith templates.",
-      "description": "",
-      "class": "Sith Apprentice",
-      "costNumeric": null,
-      "category": "Sith Apprentice",
-      "tree": "Dark Side",
-      "treeId": "dark-side"
-    },
-    "effects": [
-      {
-        "_id": "a6c3deaa-c5cb-46c7-8335-ec7d91204537",
-        "name": "Sith Alchemy (create)",
-        "type": "talent-effect",
-        "icon": "icons/svg/item-bag.svg",
-        "changes": [
-          {
-            "key": "system.crafting.sithTalisman",
-            "mode": 5,
-            "value": "true"
-          }
-        ],
-        "disabled": false,
-        "duration": {},
-        "flags": {
-          "swse": {
-            "source": "talent",
-            "talentName": "Sith Alchemy (create)"
-          }
-        }
-      }
-    ],
-    "folder": null,
-    "sort": 0,
-    "ownership": {
-      "default": 0
-    },
-    "flags": {}
-  },
-  {
     "_id": "f9352f317ad2f695",
     "name": "Stolen Form",
     "type": "talent",
@@ -26711,30 +25964,6 @@
           }
         ]
       }
-    },
-    "effects": [],
-    "folder": null,
-    "sort": 0,
-    "ownership": {
-      "default": 0
-    },
-    "flags": {}
-  },
-  {
-    "_id": "4d6c2d2398c33ba7",
-    "name": "Sith Alchemy (craft)",
-    "type": "talent",
-    "img": "icons/svg/item-bag.svg",
-    "system": {
-      "talent_tree": "Sith Alchemy",
-      "prerequisites": null,
-      "benefit": "Create Sith Amulets, Sith Armor, Sith Talismans, or Sith Weapons per Sith Alchemy rules.",
-      "description": "",
-      "class": "Sith Apprentice",
-      "costNumeric": null,
-      "category": "Sith Apprentice",
-      "tree": "Sith Alchemy",
-      "treeId": "sith-alchemy"
     },
     "effects": [],
     "folder": null,
@@ -29276,28 +28505,6 @@
     "flags": {}
   },
   {
-    "_id": "893158dcfe246ad7",
-    "name": "Implant (general)",
-    "type": "talent",
-    "img": "icons/svg/item-bag.svg",
-    "system": {
-      "talent_tree": "Turret/Implant",
-      "prerequisites": null,
-      "benefit": "If not treated, at end of encounter the implanted target moves -3 down the condition track and requires rest or surgery to recover.",
-      "description": "",
-      "costNumeric": null,
-      "tree": "Implant",
-      "treeId": "implant"
-    },
-    "effects": [],
-    "folder": null,
-    "sort": 0,
-    "ownership": {
-      "default": 0
-    },
-    "flags": {}
-  },
-  {
     "_id": "147f70a2b815f34e",
     "name": "Aggressive Surge",
     "type": "talent",
@@ -30349,51 +29556,6 @@
       "treeId": "wingman"
     },
     "effects": [],
-    "folder": null,
-    "sort": 0,
-    "ownership": {
-      "default": 0
-    },
-    "flags": {}
-  },
-  {
-    "_id": "6f3641f0ff39fc90",
-    "name": "Escort",
-    "type": "talent",
-    "img": "icons/svg/item-bag.svg",
-    "system": {
-      "talent_tree": "Wingman",
-      "prerequisites": "Pilot",
-      "benefit": "+10 threshold for you and an adjacent ally when adjacent to a colossal or smaller allied ship.",
-      "description": "",
-      "class": "Ace Pilot",
-      "costNumeric": null,
-      "category": "Ace Pilot",
-      "treeId": "unknown"
-    },
-    "effects": [
-      {
-        "_id": "f3be860c-b1bf-45dc-8776-9403b737772f",
-        "name": "Escort",
-        "type": "talent-effect",
-        "icon": "icons/svg/item-bag.svg",
-        "changes": [
-          {
-            "key": "system.damageThreshold",
-            "mode": 2,
-            "value": "10"
-          }
-        ],
-        "disabled": false,
-        "duration": {},
-        "flags": {
-          "swse": {
-            "source": "talent",
-            "talentName": "Escort"
-          }
-        }
-      }
-    ],
     "folder": null,
     "sort": 0,
     "ownership": {
