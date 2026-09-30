@@ -55,7 +55,7 @@ function sourcebookSearch(name) {
 
 /* ---- repository reference search (by production ID) ---- */
 function repoRefs(id) {
-  const r = spawnSync('git', ['grep', '-c', '-F', id, '--', '.', ':!packs/talents.db', ':!data/audits/talent-phase-3d-*', ':!docs/audits/talent-phase-3d-*', ':!tools/*talent-phase-3d-*', ':!tests/talent-phase-3d-*'], { cwd: ROOT, encoding: 'utf8', maxBuffer: 1 << 28 });
+  const r = spawnSync('git', ['grep', '-c', '-F', id, '--', '.', ':!packs/talents.db', ':!data/audits/talent-phase-3d-*', ':!docs/audits/talent-phase-3d-*', ':!tools/*talent-phase-3d*', ':!tests/talent-phase-3d-*'], { cwd: ROOT, encoding: 'utf8', maxBuffer: 1 << 28 });
   return (r.stdout || '').split('\n').filter(Boolean).map(l => { const i = l.lastIndexOf(':'); return { file: l.slice(0, i), count: Number(l.slice(i + 1)) }; })
     .sort((a, b) => a.file.localeCompare(b.file))
     .map(x => ({ ...x, classification: classifyRef(x.file) }));
