@@ -129,7 +129,8 @@ const rare = new Map();
 for (const r of canon) for (const fld of ['benefit', 'description', 'prerequisites', 'summary']) for (const w of String(r[fld] ?? '').toLowerCase().split(/[^a-z]+/)) {
   if (w.length > 3 && (freq.get(w) || 0) <= 1) { const x = rare.get(w) ?? { token: w, uses: 0, in: new Set() }; x.uses++; x.in.add(r.canonicalIdentity.split('|').slice(1).join('|')); rare.set(w, x); }
 }
-const LOST_SPACE = /^(ateam|aswift|theirspeed|forcesensitive|forceusers|nonproficiency|nonenergy|nonsurprised|nonthreatening|nonprestige|posess)$/;
+// nonproficiency/nonenergy/nonsurprised/nonthreatening/nonprestige are printed forms (owner PDF pass); posess was OCR damage (repaired in 3E-5).
+const LOST_SPACE = /^(ateam|aswift|theirspeed|forcesensitive|forceusers|posess)$/;
 const tokens = [...rare.values()].sort((a, b) => b.uses - a.uses).map(x => ({ token: x.token, uses: x.uses, example: [...x.in][0], likelyDefect: LOST_SPACE.test(x.token) }));
 
 const census = {

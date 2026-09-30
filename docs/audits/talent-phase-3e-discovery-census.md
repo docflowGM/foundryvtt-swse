@@ -36,15 +36,15 @@ The method is independent of the Phase 1D/2/3A claims (which is what is being te
 
 ## 2. Prerequisite closure
 
-47 prerequisite fragments on canonical talents do not resolve to a known name (by kind: ALTERNATIVE_LIST 1, GENERIC_DESCRIPTOR 35, OCR_DEFECT_IN_CANONICAL_TEXT 4, PRINTED_REFERENCE_WITHOUT_RULE_DEFINITION 1, SPLIT_OR_TREE_REFERENCE 6).
+43 prerequisite fragments on canonical talents do not resolve to a known name (by kind: ALTERNATIVE_LIST 1, GENERIC_DESCRIPTOR 35, PRINTED_REFERENCE_WITHOUT_RULE_DEFINITION 1, SPLIT_OR_TREE_REFERENCE 6).
 
-- **Canonical text defects (silent OCR errors the earlier signature gate could not see):** `Battie Analysis` (→ Battle Analysis; Cover Fire); `Enpower Weapon` (→ Empower Weapon; Primitive Block); `Hunter's Target. P` (→ Hunter's Target (stray ". P"); Relentless); `Shift Defense Il` (→ Shift Defense II; Shift Defense I).
+- **Canonical text defects (silent OCR errors the earlier signature gate could not see):** .
 - **Printed prerequisite without a definition:** `Command Decision` — Unknown Regions p.31 prints it only as a prerequisite of Turn the Tide (Military Tactics defines Commander's Prerogative, Irregular Tactics, Lead by Example, Turn the Tide); owner PDF pass found no definition anywhere: printed prerequisite inconsistency.
 - The rest are generic descriptors ("Weapon Focus with the chosen weapon"), fragments of compound names and tree references, not missing talents.
 
 ## 3. Rare-token scan of canonical text
 
-70 words in canonical text occur at most once in all 14 sourcebooks. Most are legitimate rare words; the lost-space/typo candidates are: `ateam` (Bounty Hunter|Hunter's Mark), `nonproficiency` (Brawler|Disarm and Engage), `forcesensitive` (Sith|Drain Force), `nonenergy` (Malkite Poisoner|Malkite Techniques), `nonsurprised` (Disgrace|Ambush), `nonthreatening` (Disgrace|Two-Faced), `nonprestige` (Master of Intrigue|Done It All), `posess` (Seyugi Dervish|Seyugi Cyclone), `aswift` (Corporate Power|Wrong Decision), `theirspeed` (Corporate Power|Wrong Decision), `forceusers` (Jedi Refugee|Difficult to Sense).
+70 words in canonical text occur at most once in all 14 sourcebooks. Most are legitimate rare words; the lost-space/typo candidates are: `ateam` (Bounty Hunter|Hunter's Mark), `forcesensitive` (Sith|Drain Force), `posess` (Seyugi Dervish|Seyugi Cyclone), `aswift` (Corporate Power|Wrong Decision), `theirspeed` (Corporate Power|Wrong Decision), `forceusers` (Jedi Refugee|Difficult to Sense).
 
 ## What this means for completeness
 

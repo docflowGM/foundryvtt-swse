@@ -547,11 +547,10 @@
     }
   },
   "prerequisiteClosure": {
-    "unresolved": 47,
+    "unresolved": 43,
     "byKind": {
       "ALTERNATIVE_LIST": 1,
       "GENERIC_DESCRIPTOR": 35,
-      "OCR_DEFECT_IN_CANONICAL_TEXT": 4,
       "PRINTED_REFERENCE_WITHOUT_RULE_DEFINITION": 1,
       "SPLIT_OR_TREE_REFERENCE": 6
     },
@@ -943,46 +942,6 @@
         "note": "a generic requirement, not a named talent"
       },
       {
-        "text": "Battie Analysis",
-        "key": "battie analysis",
-        "usedBy": [
-          "Cover Fire"
-        ],
-        "uses": 1,
-        "kind": "OCR_DEFECT_IN_CANONICAL_TEXT",
-        "note": "Battle Analysis"
-      },
-      {
-        "text": "Enpower Weapon",
-        "key": "enpower weapon",
-        "usedBy": [
-          "Primitive Block"
-        ],
-        "uses": 1,
-        "kind": "OCR_DEFECT_IN_CANONICAL_TEXT",
-        "note": "Empower Weapon"
-      },
-      {
-        "text": "Hunter's Target. P",
-        "key": "hunters target p",
-        "usedBy": [
-          "Relentless"
-        ],
-        "uses": 1,
-        "kind": "OCR_DEFECT_IN_CANONICAL_TEXT",
-        "note": "Hunter's Target (stray \". P\")"
-      },
-      {
-        "text": "Shift Defense Il",
-        "key": "shift defense il",
-        "usedBy": [
-          "Shift Defense I"
-        ],
-        "uses": 1,
-        "kind": "OCR_DEFECT_IN_CANONICAL_TEXT",
-        "note": "Shift Defense II"
-      },
-      {
         "text": "Command Decision",
         "key": "command decision",
         "usedBy": [
@@ -1066,39 +1025,9 @@
         "likelyDefect": true
       },
       {
-        "token": "nonproficiency",
-        "uses": 3,
-        "example": "Brawler|Disarm and Engage",
-        "likelyDefect": true
-      },
-      {
         "token": "forcesensitive",
         "uses": 3,
         "example": "Sith|Drain Force",
-        "likelyDefect": true
-      },
-      {
-        "token": "nonenergy",
-        "uses": 3,
-        "example": "Malkite Poisoner|Malkite Techniques",
-        "likelyDefect": true
-      },
-      {
-        "token": "nonsurprised",
-        "uses": 3,
-        "example": "Disgrace|Ambush",
-        "likelyDefect": true
-      },
-      {
-        "token": "nonthreatening",
-        "uses": 3,
-        "example": "Disgrace|Two-Faced",
-        "likelyDefect": true
-      },
-      {
-        "token": "nonprestige",
-        "uses": 3,
-        "example": "Master of Intrigue|Done It All",
         "likelyDefect": true
       },
       {
@@ -1161,7 +1090,7 @@
         "token": "nonproficiency",
         "uses": 3,
         "example": "Brawler|Disarm and Engage",
-        "likelyDefect": true
+        "likelyDefect": false
       },
       {
         "token": "hunker",
@@ -1215,7 +1144,7 @@
         "token": "nonenergy",
         "uses": 3,
         "example": "Malkite Poisoner|Malkite Techniques",
-        "likelyDefect": true
+        "likelyDefect": false
       },
       {
         "token": "empowers",
@@ -1233,7 +1162,7 @@
         "token": "nonsurprised",
         "uses": 3,
         "example": "Disgrace|Ambush",
-        "likelyDefect": true
+        "likelyDefect": false
       },
       {
         "token": "scathing",
@@ -1251,7 +1180,7 @@
         "token": "nonthreatening",
         "uses": 3,
         "example": "Disgrace|Two-Faced",
-        "likelyDefect": true
+        "likelyDefect": false
       },
       {
         "token": "portents",
@@ -1293,7 +1222,7 @@
         "token": "nonprestige",
         "uses": 3,
         "example": "Master of Intrigue|Done It All",
-        "likelyDefect": true
+        "likelyDefect": false
       },
       {
         "token": "clothesline",
@@ -1606,36 +1535,7 @@
     "sourceDiscrepancies": [
       "Master Shaper"
     ],
-    "canonicalTextDefects": [
-      {
-        "text": "Battie Analysis",
-        "intended": "Battle Analysis",
-        "usedBy": [
-          "Cover Fire"
-        ]
-      },
-      {
-        "text": "Enpower Weapon",
-        "intended": "Empower Weapon",
-        "usedBy": [
-          "Primitive Block"
-        ]
-      },
-      {
-        "text": "Hunter's Target. P",
-        "intended": "Hunter's Target (stray \". P\")",
-        "usedBy": [
-          "Relentless"
-        ]
-      },
-      {
-        "text": "Shift Defense Il",
-        "intended": "Shift Defense II",
-        "usedBy": [
-          "Shift Defense I"
-        ]
-      }
-    ]
+    "canonicalTextDefects": []
   },
   "unclassified": []
 }
