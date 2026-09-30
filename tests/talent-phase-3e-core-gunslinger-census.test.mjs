@@ -23,8 +23,15 @@ test('the two gaps are corroborated independently of the tree text (index p.217,
   assert.equal(c.corroboration.coreIndex.length, 2); assert.ok(c.corroboration.coreBody.line > 0);
   assert.ok(c.corroboration.coreStatBlocks.length >= 2); assert.ok(c.corroboration.otherBooks.some(o => /Prerequisite: Ranged Disarm/.test(o.text)));
 });
-test('nothing is repaired and the PDF confirmation list is explicit', () => {
-  assert.equal(c.productionMutationPerformed, false); assert.ok(c.pdfRequests.length >= 4);
+test('nothing is repaired; both p.217 talents are PDF_VERIFIED with exact wording and no prerequisite', () => {
+  assert.equal(c.productionMutationPerformed, false);
+  assert.equal(c.pdfVerification.status, 'PDF_VERIFIED_BY_OWNER');
+  assert.deepEqual(c.pdfVerification.verificationStatus, { 'Ranged Disarm': 'PDF_VERIFIED', 'Trigger Work': 'PDF_VERIFIED' });
+  assert.match(c.pdfVerification.exactWording['Trigger Work'], /Rapid Shot feat\.$/);
+  assert.deepEqual(c.pdfVerification.prerequisites, { 'Ranged Disarm': 'none printed', 'Trigger Work': 'none printed' });
+});
+test('certified: 7 published -> 7 production, 0 missing, 0 unexplained extras, 0 tree mismatches', () => {
+  assert.deepEqual(c.certification, { published: 7, production: 7, missing: 0, unexplainedExtras: 0, treeMismatches: 0 });
 });
 test('the generator runs against the current repository without a stale TXT anchor', () => {
   const r = spawnSync(process.execPath, ['tools/census-talent-core-gunslinger.mjs', '--check'], { encoding: 'utf8' });

@@ -68,9 +68,10 @@ const rows = src.entries.map(e => {
 const sourceNames = new Set(src.entries.map(e => norm(e.name)));
 const expansionNames = new Set(registry.talentPublications.filter(x => x.publicationType === 'EXPANSION').flatMap(x => x.talentNames).map(norm));
 const extras = prod.filter(t => !sourceNames.has(norm(t.name)) && !expansionNames.has(norm(t.name))).map(t => ({ id: t._id, name: t.name }));
+const certification = { published: 7, production: rows.filter(r => r.production).length, missing: rows.filter(r => !r.production).length, unexplainedExtras: extras.length, treeMismatches: rows.filter(r => r.status === 'MISMATCH').length };
 const census = {
-  schemaVersion: 1, phase: '3E-2a', unit: 'Core Rulebook — Gunslinger talent tree (pp. 216-217)', status: 'CENSUS_COMPLETE_PDF_CONFIRMATION_REQUESTED', productionMutationPerformed: false,
-  source: { txt: TXT, ...src }, corroboration, sourceRoster: src.entries.map(e => e.name),
+  schemaVersion: 1, phase: '3E-2a', unit: 'Core Rulebook — Gunslinger talent tree (pp. 216-217)', status: 'CERTIFIED_7_PUBLISHED_7_PRODUCTION', productionMutationPerformed: false,
+  certification, source: { txt: TXT, ...src }, corroboration, sourceRoster: src.entries.map(e => e.name),
   layerCounts: { sourceTxt: src.entries.length, phase1dOriginRoster: registry.originTalentNames.length, canonicalOriginIdentities: canon.filter(r => r.source === 'Saga Edition Core Rulebook').length, canonicalAggregateIdentities: canon.length, productionTreeMembers: prod.length },
   rows, unexplainedProductionExtras: extras,
   findings: {
@@ -79,13 +80,21 @@ const census = {
     mismatches: rows.filter(r => r.status === 'MISMATCH').map(r => r.name),
     productionMetadataDefects: rows.filter(r => r.productionMetadataDefect).map(r => r.name)
   },
-  pdfRequests: [
-    'Core p.216-217: confirm the Gunslinger talent tree lists exactly seven talents (Debilitating Shot, Deceptive Shot, Improved Quick Draw, Knockdown Shot, Multiattack Proficiency (pistols), Ranged Disarm, Trigger Work) and that Ranged Disarm / Trigger Work are printed on p.217.',
-    'Core p.217: exact printed wording of Ranged Disarm (the TXT lost its first letter and several words).',
-    'Core p.217: exact printed wording of Trigger Work (the TXT truncated the name and the end of the benefit; "Rapid Shot" is inferred, not read).',
-    'Core p.216-217: does either Ranged Disarm or Trigger Work print a Prerequisite line? The TXT shows none.',
-    'Core p.217: confirm nothing else is printed between Trigger Work and the Trusty Sidearm class-feature heading (neighbour boundary).'
-  ]
+  pdfVerification: {
+    status: 'PDF_VERIFIED_BY_OWNER',
+    checkedBy: 'project owner (rendered Core Rulebook PDF; not inspected by the audit tooling, which has no PDFs)',
+    pageMapping: 'PDF page 217 = printed page 216; PDF page 218 = printed page 217',
+    treeRoster: 'exactly 7 talents: printed p.216 holds Debilitating Shot, Deceptive Shot, Improved Quick Draw, Knockdown Shot and Multiattack Proficiency (pistols) (its text continues onto p.217); printed p.217 holds Ranged Disarm and Trigger Work',
+    exactWording: {
+      'Ranged Disarm': "You can disarm an opponent using a ranged attack. If your ranged disarm attack fails, your opponent doesn't get to make a free attack against you (see Disarm, page 152).",
+      'Trigger Work': 'You take no penalty on your attack roll when using the Rapid Shot feat.'
+    },
+    prerequisites: { 'Ranged Disarm': 'none printed', 'Trigger Work': 'none printed' },
+    neighbourBoundary: 'Nothing is printed between Trigger Work and the Trusty Sidearm heading: sequence is Multiattack Proficiency continuation, Ranged Disarm, Trigger Work, Trusty Sidearm (no eighth talent, prerequisite paragraph, sidebar or continuation)',
+    pages: { 'Ranged Disarm': 217, 'Trigger Work': 217 },
+    verificationStatus: { 'Ranged Disarm': 'PDF_VERIFIED', 'Trigger Work': 'PDF_VERIFIED' },
+    traceNote: 'Trigger Work naming "Rapid Shot" is printed, not an inference from the stat blocks.'
+  }
 };
 census.interpretation = {
   phase1dRosterIsIncomplete: census.findings.authorityGaps.length > 0,
@@ -112,9 +121,14 @@ const md = [
   `- **Identity / tree mismatches:** ${census.findings.mismatches.length ? census.findings.mismatches.join('; ') : 'none'}.`,
   `- **Unexplained production extras in the tree:** ${extras.length ? extras.map(e => e.name).join('; ') : 'none'} (the ten other members are certified expansion publications).`,
   `- **Production metadata defect (small, separate):** ${census.findings.productionMetadataDefects.join('; ')} carry no \`source\`/\`page\` in production.`, '',
-  '## What the TXT cannot settle — PDF confirmation requested', '',
-  ...census.pdfRequests.map((q, i) => `${i + 1}. ${q}`), '',
-  'Until the PDF answers are in, the two records stay `TXT_AMBIGUOUS_PDF_REQUIRED` for exact wording and page; their existence and tree membership are `TXT_CONFIRMED` by four independent TXT anchors. No canonical text is manufactured from partial OCR.', ''
+  '## PDF verification (owner-reported, rendered Core Rulebook)', '',
+  `- Page mapping: ${census.pdfVerification.pageMapping}.`,
+  `- Roster: ${census.pdfVerification.treeRoster}.`,
+  '- **Ranged Disarm** (p.217, PDF_VERIFIED, prerequisite **none**): "' + census.pdfVerification.exactWording['Ranged Disarm'] + '"',
+  '- **Trigger Work** (p.217, PDF_VERIFIED, prerequisite **none**): "' + census.pdfVerification.exactWording['Trigger Work'] + '" (Rapid Shot is printed, not inferred).',
+  `- Neighbour boundary: ${census.pdfVerification.neighbourBoundary}.`, '',
+  `## Certification: **${certification.published} published → ${certification.production} production → ${certification.missing} missing → ${certification.unexplainedExtras} unexplained extras → ${certification.treeMismatches} tree mismatches**`, '',
+  'Both p.217 talents are `PDF_VERIFIED`. The production records still lack `source`/`page` (Core Rulebook, p.217) — a source-provable production defect to be repaired through the controlled manifest path, not by hand.', ''
 ].join('\n');
 
 if (process.argv.includes('--check')) {

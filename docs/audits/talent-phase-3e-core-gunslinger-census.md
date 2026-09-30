@@ -1,7 +1,7 @@
 # Phase 3E-2a — Core Gunslinger source census (pp. 216–217)
 
 Read-only, source-first. Generator: `node tools/census-talent-core-gunslinger.mjs` · data: `data/audits/talent-phase-3e-core-gunslinger-census.json`.
-Status: **CENSUS_COMPLETE_PDF_CONFIRMATION_REQUESTED**. Nothing was repaired; no production data was touched.
+Status: **CERTIFIED_7_PUBLISHED_7_PRODUCTION**. Nothing was repaired; no production data was touched.
 
 ## Source evidence (Core Rulebook TXT)
 
@@ -31,12 +31,14 @@ Layer counts — source TXT **7**, Phase 1D origin roster **5**, canonical corpu
 - **Unexplained production extras in the tree:** none (the ten other members are certified expansion publications).
 - **Production metadata defect (small, separate):** Ranged Disarm; Trigger Work carry no `source`/`page` in production.
 
-## What the TXT cannot settle — PDF confirmation requested
+## PDF verification (owner-reported, rendered Core Rulebook)
 
-1. Core p.216-217: confirm the Gunslinger talent tree lists exactly seven talents (Debilitating Shot, Deceptive Shot, Improved Quick Draw, Knockdown Shot, Multiattack Proficiency (pistols), Ranged Disarm, Trigger Work) and that Ranged Disarm / Trigger Work are printed on p.217.
-2. Core p.217: exact printed wording of Ranged Disarm (the TXT lost its first letter and several words).
-3. Core p.217: exact printed wording of Trigger Work (the TXT truncated the name and the end of the benefit; "Rapid Shot" is inferred, not read).
-4. Core p.216-217: does either Ranged Disarm or Trigger Work print a Prerequisite line? The TXT shows none.
-5. Core p.217: confirm nothing else is printed between Trigger Work and the Trusty Sidearm class-feature heading (neighbour boundary).
+- Page mapping: PDF page 217 = printed page 216; PDF page 218 = printed page 217.
+- Roster: exactly 7 talents: printed p.216 holds Debilitating Shot, Deceptive Shot, Improved Quick Draw, Knockdown Shot and Multiattack Proficiency (pistols) (its text continues onto p.217); printed p.217 holds Ranged Disarm and Trigger Work.
+- **Ranged Disarm** (p.217, PDF_VERIFIED, prerequisite **none**): "You can disarm an opponent using a ranged attack. If your ranged disarm attack fails, your opponent doesn't get to make a free attack against you (see Disarm, page 152)."
+- **Trigger Work** (p.217, PDF_VERIFIED, prerequisite **none**): "You take no penalty on your attack roll when using the Rapid Shot feat." (Rapid Shot is printed, not inferred).
+- Neighbour boundary: Nothing is printed between Trigger Work and the Trusty Sidearm heading: sequence is Multiattack Proficiency continuation, Ranged Disarm, Trigger Work, Trusty Sidearm (no eighth talent, prerequisite paragraph, sidebar or continuation).
 
-Until the PDF answers are in, the two records stay `TXT_AMBIGUOUS_PDF_REQUIRED` for exact wording and page; their existence and tree membership are `TXT_CONFIRMED` by four independent TXT anchors. No canonical text is manufactured from partial OCR.
+## Certification: **7 published → 7 production → 0 missing → 0 unexplained extras → 0 tree mismatches**
+
+Both p.217 talents are `PDF_VERIFIED`. The production records still lack `source`/`page` (Core Rulebook, p.217) — a source-provable production defect to be repaired through the controlled manifest path, not by hand.

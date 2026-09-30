@@ -2,8 +2,15 @@
   "schemaVersion": 1,
   "phase": "3E-2a",
   "unit": "Core Rulebook — Gunslinger talent tree (pp. 216-217)",
-  "status": "CENSUS_COMPLETE_PDF_CONFIRMATION_REQUESTED",
+  "status": "CERTIFIED_7_PUBLISHED_7_PRODUCTION",
   "productionMutationPerformed": false,
+  "certification": {
+    "published": 7,
+    "production": 7,
+    "missing": 0,
+    "unexplainedExtras": 0,
+    "treeMismatches": 0
+  },
   "source": {
     "txt": "reference/sourcebooks/Core Rulebook_djvu.txt",
     "treeHeading": {
@@ -254,13 +261,30 @@
       "Trigger Work"
     ]
   },
-  "pdfRequests": [
-    "Core p.216-217: confirm the Gunslinger talent tree lists exactly seven talents (Debilitating Shot, Deceptive Shot, Improved Quick Draw, Knockdown Shot, Multiattack Proficiency (pistols), Ranged Disarm, Trigger Work) and that Ranged Disarm / Trigger Work are printed on p.217.",
-    "Core p.217: exact printed wording of Ranged Disarm (the TXT lost its first letter and several words).",
-    "Core p.217: exact printed wording of Trigger Work (the TXT truncated the name and the end of the benefit; \"Rapid Shot\" is inferred, not read).",
-    "Core p.216-217: does either Ranged Disarm or Trigger Work print a Prerequisite line? The TXT shows none.",
-    "Core p.217: confirm nothing else is printed between Trigger Work and the Trusty Sidearm class-feature heading (neighbour boundary)."
-  ],
+  "pdfVerification": {
+    "status": "PDF_VERIFIED_BY_OWNER",
+    "checkedBy": "project owner (rendered Core Rulebook PDF; not inspected by the audit tooling, which has no PDFs)",
+    "pageMapping": "PDF page 217 = printed page 216; PDF page 218 = printed page 217",
+    "treeRoster": "exactly 7 talents: printed p.216 holds Debilitating Shot, Deceptive Shot, Improved Quick Draw, Knockdown Shot and Multiattack Proficiency (pistols) (its text continues onto p.217); printed p.217 holds Ranged Disarm and Trigger Work",
+    "exactWording": {
+      "Ranged Disarm": "You can disarm an opponent using a ranged attack. If your ranged disarm attack fails, your opponent doesn't get to make a free attack against you (see Disarm, page 152).",
+      "Trigger Work": "You take no penalty on your attack roll when using the Rapid Shot feat."
+    },
+    "prerequisites": {
+      "Ranged Disarm": "none printed",
+      "Trigger Work": "none printed"
+    },
+    "neighbourBoundary": "Nothing is printed between Trigger Work and the Trusty Sidearm heading: sequence is Multiattack Proficiency continuation, Ranged Disarm, Trigger Work, Trusty Sidearm (no eighth talent, prerequisite paragraph, sidebar or continuation)",
+    "pages": {
+      "Ranged Disarm": 217,
+      "Trigger Work": 217
+    },
+    "verificationStatus": {
+      "Ranged Disarm": "PDF_VERIFIED",
+      "Trigger Work": "PDF_VERIFIED"
+    },
+    "traceNote": "Trigger Work naming \"Rapid Shot\" is printed, not an inference from the stat blocks."
+  },
   "interpretation": {
     "phase1dRosterIsIncomplete": true,
     "productionIsCorrectForBoth": true,
