@@ -88,7 +88,7 @@ export const TREE_ID_READERS = {
   'tools/verify-compendium-fixes.js': 'TOOLING', 'tools/apply-talent-phase-3c.mjs': 'TOOLING', 'tools/audit-talent-homebrew-pack.mjs': 'TOOLING', 'tools/audit-talent-phase-3c-independent.mjs': 'TOOLING', 'tools/build-talent-phase-3b-manifest.mjs': 'TOOLING', 'tools/build-talent-phase-3d-census.mjs': 'TOOLING', 'tools/check-talent-phase-3b-global-closeout.mjs': 'TOOLING', 'tools/check-talent-phase-3e-additions.mjs': 'TOOLING', 'tools/fix-compendium-issues.js': 'TOOLING', 'tools/audit-talent-tree-membership.mjs': 'TOOLING'
 };
 const EXCLUDE = /^(data\/audits|data\/audit|docs\/audits|reference|node_modules|\.git)\//;
-const SELF = new Set([OUT_JSON, OUT_MD, 'tools/census-talent-tree-identity.mjs', 'tests/talent-phase-3f-tree-identity.test.mjs', 'docs/audits/talent-phase-3f-identity-contract.md']);
+const SELF = new Set([OUT_JSON, OUT_MD, 'tools/census-talent-tree-identity.mjs', 'tools/apply-talent-phase-3f.mjs', 'docs/audits/talent-phase-3f-dry-run.md', 'data/audits/talent-phase-3f-normalization-manifest.json', 'data/audits/talent-phase-3f-dry-run-report.json', 'tests/talent-phase-3f-tree-identity.test.mjs', 'docs/audits/talent-phase-3f-identity-contract.md']);
 
 /** Pure projection of the Phase 3F normalization over the two packs (used by the dry-run and by the runtime-contract tests). */
 export function projectNormalization({ trees, talents }, census) {
@@ -143,7 +143,7 @@ export function build() {
     for (const file of r.split('\n').filter(Boolean).map(x => x.replace(/^\.\//, ''))) if (!EXCLUDE.test(file) && !SELF.has(file) && !/^(packs\/(talents|talent_trees|talents-homebrew|talent-trees-homebrew)\.db)$/.test(file) && !/^tests\//.test(file)) hits.set(file, (hits.get(file) ?? new Set()).add(f));
   }
   let rd = ''; try { rd = execSync(`grep -rlE "system\\??\\.treeId|sys\\.treeId" scripts tools --include=*.js --include=*.mjs 2>/dev/null || true`, { cwd: ROOT, encoding: 'utf8' }); } catch { /* none */ }
-  const readerFiles = rd.split('\n').filter(Boolean).filter(f => !/^tools\/(census-talent-tree-identity|apply-talent-phase-3e[45]|reconcile-talent-publication-corpus|apply-talent-phase-3d)\./.test(f)).sort();
+  const readerFiles = rd.split('\n').filter(Boolean).filter(f => !/^tools\/(census-talent-tree-identity|apply-talent-phase-3e[45]|apply-talent-phase-3f|reconcile-talent-publication-corpus|apply-talent-phase-3d)\./.test(f)).sort();
   const treeIdReaders = readerFiles.map(file => ({ file, kind: TREE_ID_READERS[file] ?? 'UNCLASSIFIED' }));
   const consumers = [...hits.keys()].sort().map(file => ({ file, ...(CONSUMERS[file] ?? { kind: 'UNCLASSIFIED' }) }));
   return {
