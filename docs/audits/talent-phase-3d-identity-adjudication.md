@@ -10,8 +10,8 @@ Tests: `tests/talent-phase-3d-review-extras.test.mjs` · Census: `talent-phase-3
 | Bucket | Records | Status |
 |---|---|---|
 | Review extras (Notorious, Teräs Käsi Basics) | 2 | **Adjudicated** (this checkpoint) |
-| SOURCE_VERIFIED_SPECIAL_TREE | 10 | **Adjudicated** (3 KEEP, 3 REMOVE_CONTAMINATION, 4 blocked on homebrew policy) |
-| Missing trees (Embrace Dark Side, Force Meld) | 2 | **Adjudicated** (1 MERGE_DUPLICATE, 1 blocked on homebrew policy) |
+| SOURCE_VERIFIED_SPECIAL_TREE | 10 | **Adjudicated** (3 KEEP, 3 REMOVE_CONTAMINATION, 4 MOVE_HOMEBREW_PACK) |
+| Missing trees (Embrace Dark Side, Force Meld) | 2 | **Adjudicated** (1 MERGE_DUPLICATE, 1 MOVE_HOMEBREW_PACK) |
 | Same-name / sourcebook-hit candidates | — | **Adjudicated** (see §5) |
 | Actor-referenced | — | **Adjudicated** (only Trigger Work, Hard Target, Stolen Form carry actor references among the remaining 78; all keep their references) |
 | No credible publication evidence | 50 | **Adjudicated** (owner ruling: MOVE_HOMEBREW_PACK) |
@@ -98,10 +98,10 @@ and four are self-labelled homebrew. Every disposition below rests on the commit
 | `57c770c7924e4241` | "Cloak of Shadows" | Disciple of Twilight | **REMOVE_CONTAMINATION** | Text = Shadow Armor (TXT 5123) + Shadow Vision (5133), both already canonical (`4916dbbae0f18ee1`, `66b3278292626e27`). Real Cloak of Shadow (TXT 5077) is canonical as `b3fe6f7659b40a55`. |
 | `714c38c0498a4eaf` | "Empowered Weapon" | Ember of Vahl | **REMOVE_CONTAMINATION** | Text = Vahl's Brand (TXT 5205) + Vahl's Flame (5211), canonical as `a5f8ec365ef2b699` / `8ba6abad84c6d9ef`. No talent of this name exists in the tree. |
 | `f123e0682ef74583` | "Reference Book: Star Wars Saga Edition Starships of the Galaxy" | Sense | **REMOVE_CONTAMINATION** | Name and benefit are the scraper string; not a talent. |
-| `4d7d5a38d0394e4c` | Force Bond | Alter | REVIEW_REQUIRED — `HOMEBREW_POLICY_OWNER_DECISION` | Benefit ends "Homebrew Reference Book: Legacy of the Force Sourcebook"; not in any TXT. |
-| `f785208aa6774cd7` | Dark Side Maelstrom | Dark Side | REVIEW_REQUIRED — `HOMEBREW_POLICY_OWNER_DECISION` | Ends "Homebrew Reference Book: Dathomir Field Guide". |
-| `9319584186ce4228` | Dathomiri Hunter | Dathomiri Witch | REVIEW_REQUIRED — `HOMEBREW_POLICY_OWNER_DECISION` | Self-labelled homebrew (Energy Bow / Sense Surroundings). |
-| `e09d40421ade49e8` | Binding Sickle | Dathomiri Witch | REVIEW_REQUIRED — `HOMEBREW_POLICY_OWNER_DECISION` | Ends "Homebrew Reference Book: Dathomir Field Guide". |
+| `4d7d5a38d0394e4c` | Force Bond | Alter | MOVE_HOMEBREW_PACK (owner ruling; was blocked on policy) | Benefit ends "Homebrew Reference Book: Legacy of the Force Sourcebook"; not in any TXT. |
+| `f785208aa6774cd7` | Dark Side Maelstrom | Dark Side | MOVE_HOMEBREW_PACK (owner ruling; was blocked on policy) | Ends "Homebrew Reference Book: Dathomir Field Guide". |
+| `9319584186ce4228` | Dathomiri Hunter | Dathomiri Witch | MOVE_HOMEBREW_PACK (owner ruling; was blocked on policy) | Self-labelled homebrew (Energy Bow / Sense Surroundings). |
+| `e09d40421ade49e8` | Binding Sickle | Dathomiri Witch | MOVE_HOMEBREW_PACK (owner ruling; was blocked on policy) | Ends "Homebrew Reference Book: Dathomir Field Guide". |
 
 **The three KEEP records are a Phase 3B ownership-model gap, not a Phase 3C canonical edit.** They are LECG "new talents expand the X tree" entries that no canonical identity
 covers. Nothing here touches one of the 1,180. Making them canonical means a *new* identity through the Phase 2 → canonical → manifest chain (`requiredFollowUp.kind = CANONICAL_CORPUS_ADDITION`
@@ -109,7 +109,7 @@ in the manifest, with the printed text); the printed page numbers need a PDF loo
 (tree `talentIds`/`talentNames`, registries) and the `combat-action-ability-cards-phase-t13.json` mentions are enumerated per record in the manifest.
 
 **The four homebrew records are a policy question, not an evidence question.** `KEEP_NONBOOK_SUPPORTED` requires official material (none found) and `REMOVE_CONTAMINATION`
-would delete content the project owner may have added on purpose. They stay `REVIEW_REQUIRED` with a named reason and are *not* counted as unresolved evidence gaps. The 38 `REPO_ONLY_NONCANONICAL_HOMEBREW`
+would delete content the project owner may have added on purpose. The owner ruled these `MOVE_HOMEBREW_PACK` (see §5); they were never an evidence gap. The 38 `REPO_ONLY_NONCANONICAL_HOMEBREW`
 records will raise the same question, so one owner ruling (keep out of the authoritative pack / move to a separate homebrew pack / delete) resolves the whole class.
 
 ## 4. Bucket: the 2 "missing tree" records
@@ -122,7 +122,7 @@ Only their legacy `system.treeId` slug (`dark-side-devotee`, `jedi-guardian`) is
 | ID | Record | Disposition | Basis |
 |---|---|---|---|
 | `3cc9552cfab59676` | Embrace Dark Side | **MERGE_DUPLICATE** → `8e1ee6d1c756450f96d4d5eaa9657e47` | Core TXT 20232: same benefit and prerequisites as canonical *Embrace the Dark Side* (Core p.213); name shortened. Same tree. Duplicate has an incomplete `prerequisitesStructured` (omits Channel Aggression) — not migrated; nothing valid is lost. Retire its entries in `tools/fix-compendium-issues.js:29` and `tools/verify-compendium-fixes.js:22`. No actor references. |
-| `816ac9cc1e6c413b` | Force Meld | REVIEW_REQUIRED — `HOMEBREW_POLICY_OWNER_DECISION` | Ends "Homebrew Reference Book: Legacy of the Force Sourcebook"; in no TXT. `tests/talent-membership-and-pack-completion.test.mjs` pins its existence (lines 131, 149). |
+| `816ac9cc1e6c413b` | Force Meld | MOVE_HOMEBREW_PACK (owner ruling; was blocked on policy) | Ends "Homebrew Reference Book: Legacy of the Force Sourcebook"; in no TXT. `tests/talent-membership-and-pack-completion.test.mjs` pins its existence (lines 131, 149). |
 
 ## 5. Remaining buckets and the full disposition table
 
