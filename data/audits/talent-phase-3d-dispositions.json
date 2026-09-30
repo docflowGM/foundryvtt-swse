@@ -1,0 +1,2701 @@
+{
+  "schemaVersion": 1,
+  "phase": "3D-2",
+  "status": "IN_PROGRESS",
+  "productionMutationPerformed": false,
+  "allowedDispositions": [
+    "KEEP_CANONICAL_ADDITIONAL_PUBLICATION",
+    "KEEP_NONBOOK_SUPPORTED",
+    "MERGE_DUPLICATE",
+    "REMOVE_CONTAMINATION",
+    "CORRECT_IDENTITY",
+    "REVIEW_REQUIRED"
+  ],
+  "inputPopulation": 92,
+  "progress": {
+    "adjudicated": 2,
+    "pending": 90,
+    "note": "REVIEW_REQUIRED here means \"not yet adjudicated\" and is temporary; Phase 3D-2 is not complete while any remain without a concrete named reason."
+  },
+  "records": [
+    {
+      "productionId": "a7d8c4da96eacad4",
+      "name": "Notorious",
+      "treeId": "c1be604242cb328f",
+      "treeName": "Infamy",
+      "group": "REVIEW_EXTRA",
+      "finalDisposition": "REMOVE_CONTAMINATION",
+      "survivorId": null,
+      "evidence": {
+        "status": "ADJUDICATED_TXT_CONFIRMED",
+        "conclusion": "a7d8c4da96eacad4 is a malformed legacy import: its benefit/description is the concatenation of THREE different published talents' text, none of which is Notorious. It is not an older name for Notorious and not a distinct talent.",
+        "findings": [
+          "Text segment 1 = Shared Notoriety (\"When your Minions invoke your name, others take note…\"), Core Rulebook TXT line 19846 (printed p.210); canonical Infamy|Shared Notoriety already exists as 9491f34aad83dfb1.",
+          "Text segment 2 = Master Manipulator (\"When you make a successful Persuasion check, you can immediately make a second Persuasion check…\"), Unknown Regions TXT lines 2914-2921; canonical Infamy|Master Manipulator exists as 32fb42ce3ee46e6d.",
+          "Text segment 3 = Small Favor (\"You can call in a small favor from someone who owes you…\"), Unknown Regions TXT line 2923; canonical Infamy|Small Favor exists as 81e423a476c377fa.",
+          "Embedded \"Reference Book: … Scum and Villainy / Unknown Regions\" and \"Prerequisites: ,\" fragments are import-scraper residue, not printed text. Record has no source/page, empty prerequisites, class=Bounty Hunter, category=\"Bounty Hunter\" while sitting in the Crime Lord/Infamy tree.",
+          "Real Notorious exists twice canonically and is NOT this record: Infamy|Notorious (Core p.210, Crime Lord: \"Your reputation as a crime lord…\", production 09744041cdcc9e22) and Bounty Hunter|Notorious (Core p.209: \"Your skill as a bounty hunter…\", production c67cbd59abd1cc53, created in Phase 3C). Core TXT lines 19654 and 19944.",
+          "Both real Notorious rules texts are identical mechanically (reroll Persuasion to intimidate, keep the better result), so repointing actors is rules-neutral."
+        ],
+        "sourceRefs": [
+          "reference/sourcebooks/Core Rulebook_djvu.txt:19654",
+          "reference/sourcebooks/Core Rulebook_djvu.txt:19846",
+          "reference/sourcebooks/Core Rulebook_djvu.txt:19944",
+          "reference/sourcebooks/Unknown Regions_djvu.txt:2914",
+          "reference/sourcebooks/Unknown Regions_djvu.txt:2923"
+        ],
+        "whyNotMergeDuplicate": "MERGE_DUPLICATE assumes the record carries a copy of the surviving identity. This record carries no Notorious text at all; merging it would launder three other talents' text into Notorious. Because two canonical Notorious identities exist, there is also no single survivor ID; actor references are repointed by class instead.",
+        "pdfRequired": false,
+        "pdfNote": "TXT is unambiguous (three separately headed talents concatenated; both real Notorious entries are clean in the TXT)."
+      },
+      "metadataTransfer": [],
+      "metadataReview": "abilityMeta is generic T26 hunter/pursuit/fear scaffolding; its only combat-action card carries the corrupted text. Survivor 09744041 already has a correct card (notorious-infamy). Nothing valid is lost. OPTIONAL follow-up (not part of this disposition): give Bounty Hunter|Notorious c67cbd59 the same reference card as 09744041; doing so would touch a Phase 3C-created canonical record and must then be flagged PHASE_3C_CANONICAL_RECORD_TOUCHED.",
+      "referencesToRepoint": {
+        "structural": [
+          {
+            "file": "packs/talent_trees.db",
+            "treeId": "c1be604242cb328f",
+            "remove": [
+              "system.talentIds[a7d8c4da96eacad4]",
+              "system.talentNames (one of the two same-name entries; survivor keeps the name)"
+            ]
+          },
+          {
+            "file": "data/generated/talent-trees.registry.json + data/fixes/talent-trees.registry.json",
+            "action": "regenerate with tools/build-talent-tree-registry.mjs (never hand-edit)"
+          }
+        ],
+        "generatedDerived": [
+          {
+            "file": "data/generated/talents.fixed.json",
+            "action": "remove the a7d8c4da96eacad4 entry (or regenerate; producer to be confirmed in 3D-3)"
+          },
+          {
+            "file": "data/fixes/talents.fixed.json",
+            "action": "same as above"
+          }
+        ],
+        "actorPackEmbeddedItems": [
+          {
+            "pack": "heroic",
+            "actor": "Rav",
+            "actorId": "0586842bc819d958",
+            "itemIndex": 20,
+            "embeddedItemId": "71e63cb581ef03ff",
+            "embeddedItemName": "Notorious",
+            "path": "items.20.flags.core.sourceId",
+            "actorClasses": "Noble 5 / Scoundrel 3 / Lord 4",
+            "replacementId": "09744041cdcc9e22",
+            "targetIdentity": "Saga Edition Core Rulebook|Infamy|Notorious",
+            "basis": "actor class string contains Lord (Crime Lord), no Hunter"
+          },
+          {
+            "pack": "heroic",
+            "actor": "Calo Nord",
+            "actorId": "27501a9a2c28717d",
+            "itemIndex": 21,
+            "embeddedItemId": "857b3140dd71d4c5",
+            "embeddedItemName": "Notorious",
+            "path": "items.21.flags.core.sourceId",
+            "actorClasses": "Scout 3 / Soldier 4 / Hunter 4 / Gunslinger 2",
+            "replacementId": "c67cbd59abd1cc53",
+            "targetIdentity": "Saga Edition Core Rulebook|Bounty Hunter|Notorious",
+            "basis": "actor class string contains Hunter (Bounty Hunter), no Lord"
+          },
+          {
+            "pack": "heroic",
+            "actor": "Booster Terrik",
+            "actorId": "3fa5743cbe714121",
+            "itemIndex": 19,
+            "embeddedItemId": "b6624b39d09c436a",
+            "embeddedItemName": "Notorious",
+            "path": "items.19.flags.core.sourceId",
+            "actorClasses": "Scoundrel 5 / Soldier 5 / Lord 2",
+            "replacementId": "09744041cdcc9e22",
+            "targetIdentity": "Saga Edition Core Rulebook|Infamy|Notorious",
+            "basis": "actor class string contains Lord (Crime Lord), no Hunter"
+          },
+          {
+            "pack": "heroic",
+            "actor": "Liash Keane",
+            "actorId": "4111ecc91827a440",
+            "itemIndex": 20,
+            "embeddedItemId": "1c2d4523301916e0",
+            "embeddedItemName": "Notorious",
+            "path": "items.20.flags.core.sourceId",
+            "actorClasses": "Scoundrel 4 / Scout 3 / Soldier 1 / Lord 2",
+            "replacementId": "09744041cdcc9e22",
+            "targetIdentity": "Saga Edition Core Rulebook|Infamy|Notorious",
+            "basis": "actor class string contains Lord (Crime Lord), no Hunter"
+          },
+          {
+            "pack": "heroic",
+            "actor": "Dool Pundar",
+            "actorId": "42b14107f5f8ae03",
+            "itemIndex": 24,
+            "embeddedItemId": "f562ee2ab2f2a724",
+            "embeddedItemName": "Notorious",
+            "path": "items.24.flags.core.sourceId",
+            "actorClasses": "Noble 7 / Officer 5 / Lord 4",
+            "replacementId": "09744041cdcc9e22",
+            "targetIdentity": "Saga Edition Core Rulebook|Infamy|Notorious",
+            "basis": "actor class string contains Lord (Crime Lord), no Hunter"
+          },
+          {
+            "pack": "heroic",
+            "actor": "Jango Fett",
+            "actorId": "488fcbb5da937669",
+            "itemIndex": 25,
+            "embeddedItemId": "ada703e7d1848f09",
+            "embeddedItemName": "Notorious",
+            "path": "items.25.flags.core.sourceId",
+            "actorClasses": "Scout 3 / Scoundrel 3 / Soldier 3 / Gunslinger 3 / Hunter 2 / Trooper 1",
+            "replacementId": "c67cbd59abd1cc53",
+            "targetIdentity": "Saga Edition Core Rulebook|Bounty Hunter|Notorious",
+            "basis": "actor class string contains Hunter (Bounty Hunter), no Lord"
+          },
+          {
+            "pack": "heroic",
+            "actor": "Dob and Del Moomo",
+            "actorId": "4ddf0f74b48fbb45",
+            "itemIndex": 17,
+            "embeddedItemId": "33544067c9203b9a",
+            "embeddedItemName": "Notorious",
+            "path": "items.17.flags.core.sourceId",
+            "actorClasses": "Scout 3 / Soldier 4 / Hunter 3",
+            "replacementId": "c67cbd59abd1cc53",
+            "targetIdentity": "Saga Edition Core Rulebook|Bounty Hunter|Notorious",
+            "basis": "actor class string contains Hunter (Bounty Hunter), no Lord"
+          },
+          {
+            "pack": "heroic",
+            "actor": "Solvek",
+            "actorId": "581c5c6f97083f6c",
+            "itemIndex": 20,
+            "embeddedItemId": "9eec03b6e8cb0e06",
+            "embeddedItemName": "Notorious",
+            "path": "items.20.flags.core.sourceId",
+            "actorClasses": "Soldier 4 / Scout 3 / Hunter 3",
+            "replacementId": "c67cbd59abd1cc53",
+            "targetIdentity": "Saga Edition Core Rulebook|Bounty Hunter|Notorious",
+            "basis": "actor class string contains Hunter (Bounty Hunter), no Lord"
+          },
+          {
+            "pack": "heroic",
+            "actor": "Hondo Ohnaka",
+            "actorId": "8af56ba01c4c0445",
+            "itemIndex": 14,
+            "embeddedItemId": "a9b2fd722016c8c9",
+            "embeddedItemName": "Notorious",
+            "path": "items.14.flags.core.sourceId",
+            "actorClasses": "Scoundrel 5 / Noble 3 / Lord 2",
+            "replacementId": "09744041cdcc9e22",
+            "targetIdentity": "Saga Edition Core Rulebook|Infamy|Notorious",
+            "basis": "actor class string contains Lord (Crime Lord), no Hunter"
+          },
+          {
+            "pack": "heroic",
+            "actor": "Sisla",
+            "actorId": "8fbb2bec1261a5f4",
+            "itemIndex": 19,
+            "embeddedItemId": "ead0270064365d42",
+            "embeddedItemName": "Notorious",
+            "path": "items.19.flags.core.sourceId",
+            "actorClasses": "Scout 3 / Soldier 4 / Hunter 3",
+            "replacementId": "c67cbd59abd1cc53",
+            "targetIdentity": "Saga Edition Core Rulebook|Bounty Hunter|Notorious",
+            "basis": "actor class string contains Hunter (Bounty Hunter), no Lord"
+          },
+          {
+            "pack": "heroic",
+            "actor": "Prince Xizor",
+            "actorId": "ab3b1612d4f500b8",
+            "itemIndex": 20,
+            "embeddedItemId": "ed0387fd868061ea",
+            "embeddedItemName": "Notorious",
+            "path": "items.20.flags.core.sourceId",
+            "actorClasses": "Noble 7 / Lord 9",
+            "replacementId": "09744041cdcc9e22",
+            "targetIdentity": "Saga Edition Core Rulebook|Infamy|Notorious",
+            "basis": "actor class string contains Lord (Crime Lord), no Hunter"
+          },
+          {
+            "pack": "heroic",
+            "actor": "Boba Fett",
+            "actorId": "d0ca9926bbdfd6c9",
+            "itemIndex": 23,
+            "embeddedItemId": "c67e9ca854fff949",
+            "embeddedItemName": "Notorious",
+            "path": "items.23.flags.core.sourceId",
+            "actorClasses": "Scout 3 / Soldier 5 / Hunter 5 / Trooper 2",
+            "replacementId": "c67cbd59abd1cc53",
+            "targetIdentity": "Saga Edition Core Rulebook|Bounty Hunter|Notorious",
+            "basis": "actor class string contains Hunter (Bounty Hunter), no Lord"
+          },
+          {
+            "pack": "heroic",
+            "actor": "Tyber Zann",
+            "actorId": "ff05bc356760f633",
+            "itemIndex": 22,
+            "embeddedItemId": "fb81c0647a96f5dd",
+            "embeddedItemName": "Notorious",
+            "path": "items.22.flags.core.sourceId",
+            "actorClasses": "Scoundrel 5 / Soldier 4 / Lord 4",
+            "replacementId": "09744041cdcc9e22",
+            "targetIdentity": "Saga Edition Core Rulebook|Infamy|Notorious",
+            "basis": "actor class string contains Lord (Crime Lord), no Hunter"
+          },
+          {
+            "pack": "nonheroic",
+            "actor": "Rodian Black Sun Vigo",
+            "actorId": "02f6124ea6553cb0",
+            "itemIndex": 20,
+            "embeddedItemId": "c81b7db0b62460ad",
+            "embeddedItemName": "Notorious",
+            "path": "items.20.flags.core.sourceId",
+            "actorClasses": "Medium Rodian Soldier 6 / Scoundrel 1 / Crime Lord 7",
+            "replacementId": "09744041cdcc9e22",
+            "targetIdentity": "Saga Edition Core Rulebook|Infamy|Notorious",
+            "basis": "actor class string contains Lord (Crime Lord), no Hunter"
+          },
+          {
+            "pack": "nonheroic",
+            "actor": "Hutt Crime Lord",
+            "actorId": "ae0b0912d66ac17d",
+            "itemIndex": 18,
+            "embeddedItemId": "33755f2ff5292e05",
+            "embeddedItemName": "Notorious",
+            "path": "items.18.flags.core.sourceId",
+            "actorClasses": "Large Hutt Noble 5 / Scoundrel 2 / Crime Lord 4",
+            "replacementId": "09744041cdcc9e22",
+            "targetIdentity": "Saga Edition Core Rulebook|Infamy|Notorious",
+            "basis": "actor class string contains Lord (Crime Lord), no Hunter"
+          },
+          {
+            "pack": "nonheroic",
+            "actor": "Black Sun Vigo",
+            "actorId": "f71b5e860c37e317",
+            "itemIndex": 21,
+            "embeddedItemId": "63f181134b4aa68e",
+            "embeddedItemName": "Notorious",
+            "path": "items.21.flags.core.sourceId",
+            "actorClasses": "Medium Human Noble 7 / Crime Lord 7",
+            "replacementId": "09744041cdcc9e22",
+            "targetIdentity": "Saga Edition Core Rulebook|Infamy|Notorious",
+            "basis": "actor class string contains Lord (Crime Lord), no Hunter"
+          },
+          {
+            "pack": "npc",
+            "actor": "Rodian Black Sun Vigo",
+            "actorId": "02f6124ea6553cb0",
+            "itemIndex": 20,
+            "embeddedItemId": "c81b7db0b62460ad",
+            "embeddedItemName": "Notorious",
+            "path": "items.20.flags.core.sourceId",
+            "actorClasses": "Medium Rodian Soldier 6 / Scoundrel 1 / Crime Lord 7",
+            "replacementId": "09744041cdcc9e22",
+            "targetIdentity": "Saga Edition Core Rulebook|Infamy|Notorious",
+            "basis": "actor class string contains Lord (Crime Lord), no Hunter"
+          },
+          {
+            "pack": "npc",
+            "actor": "Rav",
+            "actorId": "0586842bc819d958",
+            "itemIndex": 20,
+            "embeddedItemId": "71e63cb581ef03ff",
+            "embeddedItemName": "Notorious",
+            "path": "items.20.flags.core.sourceId",
+            "actorClasses": "Noble 5 / Scoundrel 3 / Lord 4",
+            "replacementId": "09744041cdcc9e22",
+            "targetIdentity": "Saga Edition Core Rulebook|Infamy|Notorious",
+            "basis": "actor class string contains Lord (Crime Lord), no Hunter"
+          },
+          {
+            "pack": "npc",
+            "actor": "Calo Nord",
+            "actorId": "27501a9a2c28717d",
+            "itemIndex": 21,
+            "embeddedItemId": "857b3140dd71d4c5",
+            "embeddedItemName": "Notorious",
+            "path": "items.21.flags.core.sourceId",
+            "actorClasses": "Scout 3 / Soldier 4 / Hunter 4 / Gunslinger 2",
+            "replacementId": "c67cbd59abd1cc53",
+            "targetIdentity": "Saga Edition Core Rulebook|Bounty Hunter|Notorious",
+            "basis": "actor class string contains Hunter (Bounty Hunter), no Lord"
+          },
+          {
+            "pack": "npc",
+            "actor": "Booster Terrik",
+            "actorId": "3fa5743cbe714121",
+            "itemIndex": 19,
+            "embeddedItemId": "b6624b39d09c436a",
+            "embeddedItemName": "Notorious",
+            "path": "items.19.flags.core.sourceId",
+            "actorClasses": "Scoundrel 5 / Soldier 5 / Lord 2",
+            "replacementId": "09744041cdcc9e22",
+            "targetIdentity": "Saga Edition Core Rulebook|Infamy|Notorious",
+            "basis": "actor class string contains Lord (Crime Lord), no Hunter"
+          },
+          {
+            "pack": "npc",
+            "actor": "Liash Keane",
+            "actorId": "4111ecc91827a440",
+            "itemIndex": 20,
+            "embeddedItemId": "1c2d4523301916e0",
+            "embeddedItemName": "Notorious",
+            "path": "items.20.flags.core.sourceId",
+            "actorClasses": "Scoundrel 4 / Scout 3 / Soldier 1 / Lord 2",
+            "replacementId": "09744041cdcc9e22",
+            "targetIdentity": "Saga Edition Core Rulebook|Infamy|Notorious",
+            "basis": "actor class string contains Lord (Crime Lord), no Hunter"
+          },
+          {
+            "pack": "npc",
+            "actor": "Dool Pundar",
+            "actorId": "42b14107f5f8ae03",
+            "itemIndex": 24,
+            "embeddedItemId": "f562ee2ab2f2a724",
+            "embeddedItemName": "Notorious",
+            "path": "items.24.flags.core.sourceId",
+            "actorClasses": "Noble 7 / Officer 5 / Lord 4",
+            "replacementId": "09744041cdcc9e22",
+            "targetIdentity": "Saga Edition Core Rulebook|Infamy|Notorious",
+            "basis": "actor class string contains Lord (Crime Lord), no Hunter"
+          },
+          {
+            "pack": "npc",
+            "actor": "Jango Fett",
+            "actorId": "488fcbb5da937669",
+            "itemIndex": 25,
+            "embeddedItemId": "ada703e7d1848f09",
+            "embeddedItemName": "Notorious",
+            "path": "items.25.flags.core.sourceId",
+            "actorClasses": "Scout 3 / Scoundrel 3 / Soldier 3 / Gunslinger 3 / Hunter 2 / Trooper 1",
+            "replacementId": "c67cbd59abd1cc53",
+            "targetIdentity": "Saga Edition Core Rulebook|Bounty Hunter|Notorious",
+            "basis": "actor class string contains Hunter (Bounty Hunter), no Lord"
+          },
+          {
+            "pack": "npc",
+            "actor": "Dob and Del Moomo",
+            "actorId": "4ddf0f74b48fbb45",
+            "itemIndex": 17,
+            "embeddedItemId": "33544067c9203b9a",
+            "embeddedItemName": "Notorious",
+            "path": "items.17.flags.core.sourceId",
+            "actorClasses": "Scout 3 / Soldier 4 / Hunter 3",
+            "replacementId": "c67cbd59abd1cc53",
+            "targetIdentity": "Saga Edition Core Rulebook|Bounty Hunter|Notorious",
+            "basis": "actor class string contains Hunter (Bounty Hunter), no Lord"
+          },
+          {
+            "pack": "npc",
+            "actor": "Solvek",
+            "actorId": "581c5c6f97083f6c",
+            "itemIndex": 20,
+            "embeddedItemId": "9eec03b6e8cb0e06",
+            "embeddedItemName": "Notorious",
+            "path": "items.20.flags.core.sourceId",
+            "actorClasses": "Soldier 4 / Scout 3 / Hunter 3",
+            "replacementId": "c67cbd59abd1cc53",
+            "targetIdentity": "Saga Edition Core Rulebook|Bounty Hunter|Notorious",
+            "basis": "actor class string contains Hunter (Bounty Hunter), no Lord"
+          },
+          {
+            "pack": "npc",
+            "actor": "Hondo Ohnaka",
+            "actorId": "8af56ba01c4c0445",
+            "itemIndex": 14,
+            "embeddedItemId": "a9b2fd722016c8c9",
+            "embeddedItemName": "Notorious",
+            "path": "items.14.flags.core.sourceId",
+            "actorClasses": "Scoundrel 5 / Noble 3 / Lord 2",
+            "replacementId": "09744041cdcc9e22",
+            "targetIdentity": "Saga Edition Core Rulebook|Infamy|Notorious",
+            "basis": "actor class string contains Lord (Crime Lord), no Hunter"
+          },
+          {
+            "pack": "npc",
+            "actor": "Sisla",
+            "actorId": "8fbb2bec1261a5f4",
+            "itemIndex": 19,
+            "embeddedItemId": "ead0270064365d42",
+            "embeddedItemName": "Notorious",
+            "path": "items.19.flags.core.sourceId",
+            "actorClasses": "Scout 3 / Soldier 4 / Hunter 3",
+            "replacementId": "c67cbd59abd1cc53",
+            "targetIdentity": "Saga Edition Core Rulebook|Bounty Hunter|Notorious",
+            "basis": "actor class string contains Hunter (Bounty Hunter), no Lord"
+          },
+          {
+            "pack": "npc",
+            "actor": "Prince Xizor",
+            "actorId": "ab3b1612d4f500b8",
+            "itemIndex": 20,
+            "embeddedItemId": "ed0387fd868061ea",
+            "embeddedItemName": "Notorious",
+            "path": "items.20.flags.core.sourceId",
+            "actorClasses": "Noble 7 / Lord 9",
+            "replacementId": "09744041cdcc9e22",
+            "targetIdentity": "Saga Edition Core Rulebook|Infamy|Notorious",
+            "basis": "actor class string contains Lord (Crime Lord), no Hunter"
+          },
+          {
+            "pack": "npc",
+            "actor": "Hutt Crime Lord",
+            "actorId": "ae0b0912d66ac17d",
+            "itemIndex": 18,
+            "embeddedItemId": "33755f2ff5292e05",
+            "embeddedItemName": "Notorious",
+            "path": "items.18.flags.core.sourceId",
+            "actorClasses": "Large Hutt Noble 5 / Scoundrel 2 / Crime Lord 4",
+            "replacementId": "09744041cdcc9e22",
+            "targetIdentity": "Saga Edition Core Rulebook|Infamy|Notorious",
+            "basis": "actor class string contains Lord (Crime Lord), no Hunter"
+          },
+          {
+            "pack": "npc",
+            "actor": "Boba Fett",
+            "actorId": "d0ca9926bbdfd6c9",
+            "itemIndex": 23,
+            "embeddedItemId": "c67e9ca854fff949",
+            "embeddedItemName": "Notorious",
+            "path": "items.23.flags.core.sourceId",
+            "actorClasses": "Scout 3 / Soldier 5 / Hunter 5 / Trooper 2",
+            "replacementId": "c67cbd59abd1cc53",
+            "targetIdentity": "Saga Edition Core Rulebook|Bounty Hunter|Notorious",
+            "basis": "actor class string contains Hunter (Bounty Hunter), no Lord"
+          },
+          {
+            "pack": "npc",
+            "actor": "Black Sun Vigo",
+            "actorId": "f71b5e860c37e317",
+            "itemIndex": 21,
+            "embeddedItemId": "63f181134b4aa68e",
+            "embeddedItemName": "Notorious",
+            "path": "items.21.flags.core.sourceId",
+            "actorClasses": "Medium Human Noble 7 / Crime Lord 7",
+            "replacementId": "09744041cdcc9e22",
+            "targetIdentity": "Saga Edition Core Rulebook|Infamy|Notorious",
+            "basis": "actor class string contains Lord (Crime Lord), no Hunter"
+          },
+          {
+            "pack": "npc",
+            "actor": "Tyber Zann",
+            "actorId": "ff05bc356760f633",
+            "itemIndex": 22,
+            "embeddedItemId": "fb81c0647a96f5dd",
+            "embeddedItemName": "Notorious",
+            "path": "items.22.flags.core.sourceId",
+            "actorClasses": "Scoundrel 5 / Soldier 4 / Lord 4",
+            "replacementId": "09744041cdcc9e22",
+            "targetIdentity": "Saga Edition Core Rulebook|Infamy|Notorious",
+            "basis": "actor class string contains Lord (Crime Lord), no Hunter"
+          }
+        ],
+        "embeddedTextRefresh": "Each of the 32 embedded actor items is a stale snapshot of the corrupted three-talent text. Repointing sourceId alone leaves the corrupted benefit/description on the actor; 3D-4 must also refresh embedded benefit/description/summary from the target record.",
+        "testsToUpdate": [
+          "tests/talent-phase-3c-migration-flow.test.mjs",
+          "tests/talent-tree-membership-review-extras.test.mjs",
+          "tools/audit-talent-tree-membership.mjs (review-extra exemption becomes obsolete)"
+        ],
+        "historicalNoAction": [
+          "data/audit/talent_audit_master.json",
+          "data/audits/talent-phase-2-core-certification.json",
+          "data/audits/talent-phase-2-core-content-certification.json",
+          "data/audits/talent-phase-2-core-discrepancy-manifest.json",
+          "data/audits/talent-phase-3b-core-rulebook-manifest.json",
+          "data/audits/talent-phase-3b-global-closeout.json",
+          "data/audits/talent-phase-3c-dry-run-report.json",
+          "docs/audits/talent-phase-3-claude-production-handoff.md",
+          "docs/audits/talent-phase-3b-core-rulebook.md",
+          "docs/audits/talent-phase-3b-global-closeout.md",
+          "docs/audits/talent-phase-3c-claude-independent-review.md",
+          "docs/talent-martial-underworld-prestige-cleanup-phase-t12.json"
+        ]
+      },
+      "expectedFinal": {
+        "recordExists": false,
+        "treeMembership": "removed from Infamy c1be604242cb328f (Infamy keeps 09744041 as sole Notorious; 12 members)",
+        "classAccess": "unchanged (class access is per tree; no class points at this record ID)",
+        "canonicalRecordsTouched": []
+      },
+      "phase3cCanonicalRecordTouched": false,
+      "adjudicationStatus": "ADJUDICATED"
+    },
+    {
+      "productionId": "222327492c484b4a",
+      "name": "Teräs Käsi Basics",
+      "treeId": "ba726f623e42f849",
+      "treeName": "Master of Teräs Käsi",
+      "group": "REVIEW_EXTRA",
+      "finalDisposition": "MERGE_DUPLICATE",
+      "survivorId": "67bddb17ae2770f3",
+      "evidence": {
+        "status": "ADJUDICATED_PRODUCTION_PROOF_PLUS_PHASE_3B_AUTHORITY",
+        "conclusion": "222327492c484b4a is a second copy of Threats of the Galaxy | Master of Teräs Käsi | Teräs Käsi Basics: same name (accented), same tree ba726f623e42f849, same prerequisite (Martial Arts I), same benefit (identical except capital \"Unarmed\"), identical abilityMeta.rules. It has no independent identity.",
+        "findings": [
+          "Same tree ba726f623e42f849 and both listed in system.talentIds; the tree's five-talent canonical roster has exactly one Teräs Käsi Basics (canonical: Threats of the Galaxy p.53, prereq Martial Arts I).",
+          "Survivor 67bddb17ae2770f3 was chosen by Phase 3B because it carries the established runtime identity flags.swse.id = swse.talent.teras_kasi_basics, source/page/summary; the duplicate has none of these.",
+          "Field diff duplicate vs survivor: only capitalisation of \"Unarmed\"/\"unarmed\", empty class/category, extra auto-derived tags (action_economy, controller, damage_reduction, defender, sustained_damage), missing source/page/summary/swse.id, and a different migration timestamp. abilityMeta is identical.",
+          "Progression relationship is separate and not affected: Basics is the prerequisite of Ignore Damage Reduction / Teräs Käsi Mastery / Unarmed Counterstrike / Unarmed Parry (prereq strings by name).",
+          "Phase 3B/Galaxy at War TXT corroborates the tree (Master of Teräs Käsi); Threats of the Galaxy TXT lacks the tree text, so the canonical p.53 entry rests on the earlier certified Phase 3B authority. No new publication claim is created by this record."
+        ],
+        "sourceRefs": [
+          "data/canonical/talents.json (Threats of the Galaxy|Master of Teräs Käsi|Teräs Käsi Basics)",
+          "data/audits/talent-phase-3b-threats-of-the-galaxy-manifest.json",
+          "docs/audits/talent-phase-3b-threats-of-the-galaxy.md"
+        ],
+        "pdfRequired": false,
+        "pdfNote": "Not needed for this disposition (identity is settled by name+tree+text identity with the certified canonical record). The existing PDF-verification status of page 53 is inherited from Phase 3B and not re-opened."
+      },
+      "metadataTransfer": [],
+      "metadataReview": "Nothing to transfer: abilityMeta/rules identical. The five extra auto-derived tags on the duplicate (incl. a misleading damage_reduction tag) are not rules data and are deliberately NOT migrated.",
+      "referencesToRepoint": {
+        "structural": [
+          {
+            "file": "packs/talent_trees.db",
+            "treeId": "ba726f623e42f849",
+            "remove": [
+              "system.talentIds[222327492c484b4a]",
+              "system.talentNames (one of the two same-name entries; survivor keeps the name)"
+            ]
+          },
+          {
+            "file": "data/generated/talent-trees.registry.json + data/fixes/talent-trees.registry.json",
+            "action": "regenerate with tools/build-talent-tree-registry.mjs"
+          }
+        ],
+        "generatedDerived": [],
+        "actorPackEmbeddedItems": [
+          {
+            "pack": "heroic",
+            "actor": "Mynock Man",
+            "actorId": "1dd36dbe4fc330bf",
+            "itemIndex": 17,
+            "embeddedItemId": "a0b9c91a64aa1f3c",
+            "embeddedItemName": "Teräs Käsi Basics",
+            "path": "items.17.flags.core.sourceId",
+            "actorClasses": "Scout 3 / Soldier 5 / Master 3",
+            "replacementId": "67bddb17ae2770f3",
+            "targetIdentity": "Threats of the Galaxy|Master of Teräs Käsi|Teräs Käsi Basics",
+            "basis": "exact same name/tree/rules; sole surviving identity"
+          },
+          {
+            "pack": "npc",
+            "actor": "Mynock Man",
+            "actorId": "1dd36dbe4fc330bf",
+            "itemIndex": 17,
+            "embeddedItemId": "a0b9c91a64aa1f3c",
+            "embeddedItemName": "Teräs Käsi Basics",
+            "path": "items.17.flags.core.sourceId",
+            "actorClasses": "Scout 3 / Soldier 5 / Master 3",
+            "replacementId": "67bddb17ae2770f3",
+            "targetIdentity": "Threats of the Galaxy|Master of Teräs Käsi|Teräs Käsi Basics",
+            "basis": "exact same name/tree/rules; sole surviving identity"
+          }
+        ],
+        "embeddedTextRefresh": "Embedded copy on Mynock Man is a stale snapshot (prereq text merged into benefit); refresh benefit/description from survivor in 3D-4.",
+        "toolReferences": [
+          {
+            "file": "tools/fix-compendium-issues.js:44",
+            "action": "legacy one-shot compendium fix map keyed by the duplicate ID with a non-existent tree ID f96cb0f2a46b4dd1; retire or drop the entry (re-running it would re-create a stale reference)"
+          }
+        ],
+        "testsToUpdate": [
+          "tests/talent-tree-membership-review-extras.test.mjs",
+          "tools/audit-talent-tree-membership.mjs (review-extra exemption becomes obsolete)"
+        ],
+        "historicalNoAction": [
+          "data/audits/talent-phase-3b-global-closeout.json",
+          "data/audits/talent-phase-3b-threats-of-the-galaxy-manifest.json",
+          "data/audits/talent-phase-3c-dry-run-report.json",
+          "docs/audits/talent-phase-3-claude-production-handoff.md",
+          "docs/audits/talent-phase-3b-global-closeout.md",
+          "docs/audits/talent-phase-3b-threats-of-the-galaxy.md",
+          "docs/audits/talent-phase-3c-claude-independent-review.md",
+          "docs/talent-martial-arts-master-cleanup-phase-t20.json"
+        ]
+      },
+      "expectedFinal": {
+        "recordExists": false,
+        "survivorRecordExists": true,
+        "treeMembership": "removed from ba726f623e42f849; tree keeps 5 members (survivor + Unarmed Counterstrike, Unarmed Parry, Ignore Damage Reduction, Teräs Käsi Mastery)",
+        "classAccess": "unchanged",
+        "canonicalRecordsTouched": []
+      },
+      "phase3cCanonicalRecordTouched": false,
+      "adjudicationStatus": "ADJUDICATED"
+    },
+    {
+      "productionId": "0c9b0788ad42450c",
+      "name": "Extended Critical Range",
+      "treeId": "d20682671d035cef",
+      "treeName": "Bothan Spynet",
+      "group": "DEFERRED_PRODUCTION_ONLY",
+      "finalDisposition": "REVIEW_REQUIRED",
+      "survivorId": null,
+      "adjudicationStatus": "PENDING_3D2",
+      "evidence": {
+        "status": "NOT_YET_ADJUDICATED",
+        "census": "see data/audits/talent-phase-3d-production-extras-census.json",
+        "provisional": {
+          "value": "REVIEW_REQUIRED",
+          "basis": "tree exists in canon; talent is not a canonical member",
+          "confidence": "LOW"
+        }
+      },
+      "referencesToRepoint": null,
+      "metadataTransfer": [],
+      "expectedFinal": null,
+      "phase3cCanonicalRecordTouched": false
+    },
+    {
+      "productionId": "0cdd50aaa65e4360",
+      "name": "Voices",
+      "treeId": "e85cb1a787e24cac",
+      "treeName": "Midichlorian",
+      "group": "DEFERRED_PRODUCTION_ONLY",
+      "finalDisposition": "REVIEW_REQUIRED",
+      "survivorId": null,
+      "adjudicationStatus": "PENDING_3D2",
+      "evidence": {
+        "status": "NOT_YET_ADJUDICATED",
+        "census": "see data/audits/talent-phase-3d-production-extras-census.json",
+        "provisional": {
+          "value": "REVIEW_REQUIRED",
+          "basis": "registry flags repo-only noncanonical/homebrew; needs source proof (name appears in sourcebook text)",
+          "confidence": "LOW"
+        }
+      },
+      "referencesToRepoint": null,
+      "metadataTransfer": [],
+      "expectedFinal": null,
+      "phase3cCanonicalRecordTouched": false
+    },
+    {
+      "productionId": "0de7338c2b984b96",
+      "name": "Droid Receptacle",
+      "treeId": "8955568285ba4115",
+      "treeName": "Bomarr Monk",
+      "group": "DEFERRED_PRODUCTION_ONLY",
+      "finalDisposition": "REVIEW_REQUIRED",
+      "survivorId": null,
+      "adjudicationStatus": "PENDING_3D2",
+      "evidence": {
+        "status": "NOT_YET_ADJUDICATED",
+        "census": "see data/audits/talent-phase-3d-production-extras-census.json",
+        "provisional": {
+          "value": "REVIEW_REQUIRED",
+          "basis": "registry flags repo-only noncanonical/homebrew; needs source proof",
+          "confidence": "LOW"
+        }
+      },
+      "referencesToRepoint": null,
+      "metadataTransfer": [],
+      "expectedFinal": null,
+      "phase3cCanonicalRecordTouched": false
+    },
+    {
+      "productionId": "0e6854d8aacc48dc",
+      "name": "Stay in the Fight (Recruit)",
+      "treeId": "a2c6962521c29361",
+      "treeName": "Rebel Recruiter",
+      "group": "DEFERRED_PRODUCTION_ONLY",
+      "finalDisposition": "REVIEW_REQUIRED",
+      "survivorId": null,
+      "adjudicationStatus": "PENDING_3D2",
+      "evidence": {
+        "status": "NOT_YET_ADJUDICATED",
+        "census": "see data/audits/talent-phase-3d-production-extras-census.json",
+        "provisional": {
+          "value": "REVIEW_REQUIRED",
+          "basis": "tree exists in canon; talent is not a canonical member",
+          "confidence": "LOW"
+        }
+      },
+      "referencesToRepoint": null,
+      "metadataTransfer": [],
+      "expectedFinal": null,
+      "phase3cCanonicalRecordTouched": false
+    },
+    {
+      "productionId": "125b5aa00f5a4d0a",
+      "name": "Morgukai Resolve",
+      "treeId": "0a61ab9ece844326",
+      "treeName": "Morgukai Warrior",
+      "group": "DEFERRED_PRODUCTION_ONLY",
+      "finalDisposition": "REVIEW_REQUIRED",
+      "survivorId": null,
+      "adjudicationStatus": "PENDING_3D2",
+      "evidence": {
+        "status": "NOT_YET_ADJUDICATED",
+        "census": "see data/audits/talent-phase-3d-production-extras-census.json",
+        "provisional": {
+          "value": "REVIEW_REQUIRED",
+          "basis": "registry flags repo-only noncanonical/homebrew; needs source proof",
+          "confidence": "LOW"
+        }
+      },
+      "referencesToRepoint": null,
+      "metadataTransfer": [],
+      "expectedFinal": null,
+      "phase3cCanonicalRecordTouched": false
+    },
+    {
+      "productionId": "12e6b524fc6959b6",
+      "name": "Unbalance Strike",
+      "treeId": "67fdd8dce9abd6c1",
+      "treeName": "Brawler",
+      "group": "DEFERRED_PRODUCTION_ONLY",
+      "finalDisposition": "REVIEW_REQUIRED",
+      "survivorId": null,
+      "adjudicationStatus": "PENDING_3D2",
+      "evidence": {
+        "status": "NOT_YET_ADJUDICATED",
+        "census": "see data/audits/talent-phase-3d-production-extras-census.json",
+        "provisional": {
+          "value": "REVIEW_REQUIRED",
+          "basis": "tree exists in canon; talent is not a canonical member",
+          "confidence": "LOW"
+        }
+      },
+      "referencesToRepoint": null,
+      "metadataTransfer": [],
+      "expectedFinal": null,
+      "phase3cCanonicalRecordTouched": false
+    },
+    {
+      "productionId": "14cc3ddc051f4ece",
+      "name": "Animal Companion",
+      "treeId": "ed899f9f41fc1391",
+      "treeName": "Beastwarden",
+      "group": "DEFERRED_PRODUCTION_ONLY",
+      "finalDisposition": "REVIEW_REQUIRED",
+      "survivorId": null,
+      "adjudicationStatus": "PENDING_3D2",
+      "evidence": {
+        "status": "NOT_YET_ADJUDICATED",
+        "census": "see data/audits/talent-phase-3d-production-extras-census.json",
+        "provisional": {
+          "value": "REVIEW_REQUIRED",
+          "basis": "tree exists in canon; talent is not a canonical member",
+          "confidence": "LOW"
+        }
+      },
+      "referencesToRepoint": null,
+      "metadataTransfer": [],
+      "expectedFinal": null,
+      "phase3cCanonicalRecordTouched": false
+    },
+    {
+      "productionId": "192279eaa0b61d36",
+      "name": "Dark Preservation",
+      "treeId": "de95d37c72b1c4cd",
+      "treeName": "Dark Side",
+      "group": "DEFERRED_PRODUCTION_ONLY",
+      "finalDisposition": "REVIEW_REQUIRED",
+      "survivorId": null,
+      "adjudicationStatus": "PENDING_3D2",
+      "evidence": {
+        "status": "NOT_YET_ADJUDICATED",
+        "census": "see data/audits/talent-phase-3d-production-extras-census.json",
+        "provisional": {
+          "value": "KEEP_NONBOOK_SUPPORTED",
+          "basis": "registry status SOURCE_VERIFIED_SPECIAL_TREE; publication evidence to be confirmed",
+          "confidence": "LOW"
+        }
+      },
+      "referencesToRepoint": null,
+      "metadataTransfer": [],
+      "expectedFinal": null,
+      "phase3cCanonicalRecordTouched": false
+    },
+    {
+      "productionId": "1bda3fdaa84240d3",
+      "name": "Mobility",
+      "treeId": "25d99948c9cb41ad",
+      "treeName": "Jumptrooper",
+      "group": "DEFERRED_PRODUCTION_ONLY",
+      "finalDisposition": "REVIEW_REQUIRED",
+      "survivorId": null,
+      "adjudicationStatus": "PENDING_3D2",
+      "evidence": {
+        "status": "NOT_YET_ADJUDICATED",
+        "census": "see data/audits/talent-phase-3d-production-extras-census.json",
+        "provisional": {
+          "value": "REVIEW_REQUIRED",
+          "basis": "registry flags repo-only noncanonical/homebrew; needs source proof (name appears in sourcebook text)",
+          "confidence": "LOW"
+        }
+      },
+      "referencesToRepoint": null,
+      "metadataTransfer": [],
+      "expectedFinal": null,
+      "phase3cCanonicalRecordTouched": false
+    },
+    {
+      "productionId": "208e1e15e989323f",
+      "name": "Telekinetic Stability",
+      "treeId": "d3661aa9906bdc79",
+      "treeName": "Control",
+      "group": "DEFERRED_PRODUCTION_ONLY",
+      "finalDisposition": "REVIEW_REQUIRED",
+      "survivorId": null,
+      "adjudicationStatus": "PENDING_3D2",
+      "evidence": {
+        "status": "NOT_YET_ADJUDICATED",
+        "census": "see data/audits/talent-phase-3d-production-extras-census.json",
+        "provisional": {
+          "value": "KEEP_NONBOOK_SUPPORTED",
+          "basis": "registry status SOURCE_VERIFIED_SPECIAL_TREE; publication evidence to be confirmed",
+          "confidence": "LOW"
+        }
+      },
+      "referencesToRepoint": null,
+      "metadataTransfer": [],
+      "expectedFinal": null,
+      "phase3cCanonicalRecordTouched": false
+    },
+    {
+      "productionId": "213d97c2cbbd4f81",
+      "name": "Not in the Face",
+      "treeId": "acb91d3803eb4fcd",
+      "treeName": "Cowardice",
+      "group": "DEFERRED_PRODUCTION_ONLY",
+      "finalDisposition": "REVIEW_REQUIRED",
+      "survivorId": null,
+      "adjudicationStatus": "PENDING_3D2",
+      "evidence": {
+        "status": "NOT_YET_ADJUDICATED",
+        "census": "see data/audits/talent-phase-3d-production-extras-census.json",
+        "provisional": {
+          "value": "REVIEW_REQUIRED",
+          "basis": "registry flags repo-only noncanonical/homebrew; needs source proof",
+          "confidence": "LOW"
+        }
+      },
+      "referencesToRepoint": null,
+      "metadataTransfer": [],
+      "expectedFinal": null,
+      "phase3cCanonicalRecordTouched": false
+    },
+    {
+      "productionId": "23852d30490fc1e4",
+      "name": "Combined Fire (Naval)",
+      "treeId": "057a978a7dc1d5a7",
+      "treeName": "Naval Officer",
+      "group": "DEFERRED_PRODUCTION_ONLY",
+      "finalDisposition": "REVIEW_REQUIRED",
+      "survivorId": null,
+      "adjudicationStatus": "PENDING_3D2",
+      "evidence": {
+        "status": "NOT_YET_ADJUDICATED",
+        "census": "see data/audits/talent-phase-3d-production-extras-census.json",
+        "provisional": {
+          "value": "REVIEW_REQUIRED",
+          "basis": "tree exists in canon; talent is not a canonical member",
+          "confidence": "LOW"
+        }
+      },
+      "referencesToRepoint": null,
+      "metadataTransfer": [],
+      "expectedFinal": null,
+      "phase3cCanonicalRecordTouched": false
+    },
+    {
+      "productionId": "247b9ba1f8d34683",
+      "name": "Retrovirus",
+      "treeId": "8e44e56069274319",
+      "treeName": "Cloner",
+      "group": "DEFERRED_PRODUCTION_ONLY",
+      "finalDisposition": "REVIEW_REQUIRED",
+      "survivorId": null,
+      "adjudicationStatus": "PENDING_3D2",
+      "evidence": {
+        "status": "NOT_YET_ADJUDICATED",
+        "census": "see data/audits/talent-phase-3d-production-extras-census.json",
+        "provisional": {
+          "value": "REVIEW_REQUIRED",
+          "basis": "registry flags repo-only noncanonical/homebrew; needs source proof",
+          "confidence": "LOW"
+        }
+      },
+      "referencesToRepoint": null,
+      "metadataTransfer": [],
+      "expectedFinal": null,
+      "phase3cCanonicalRecordTouched": false
+    },
+    {
+      "productionId": "271024ca2ac6c04b",
+      "name": "Multiattack Proficiency (exotic)",
+      "treeId": "12a2a02b0901605d",
+      "treeName": "Gladiatorial Combat",
+      "group": "DEFERRED_PRODUCTION_ONLY",
+      "finalDisposition": "REVIEW_REQUIRED",
+      "survivorId": null,
+      "adjudicationStatus": "PENDING_3D2",
+      "evidence": {
+        "status": "NOT_YET_ADJUDICATED",
+        "census": "see data/audits/talent-phase-3d-production-extras-census.json",
+        "provisional": {
+          "value": "REVIEW_REQUIRED",
+          "basis": "tree exists in canon; talent is not a canonical member",
+          "confidence": "LOW"
+        }
+      },
+      "referencesToRepoint": null,
+      "metadataTransfer": [],
+      "expectedFinal": null,
+      "phase3cCanonicalRecordTouched": false
+    },
+    {
+      "productionId": "2c27842384e55cb2",
+      "name": "Mercenary's Grit",
+      "treeId": "4007fa87192b5884",
+      "treeName": "Mercenary",
+      "group": "DEFERRED_PRODUCTION_ONLY",
+      "finalDisposition": "REVIEW_REQUIRED",
+      "survivorId": null,
+      "adjudicationStatus": "PENDING_3D2",
+      "evidence": {
+        "status": "NOT_YET_ADJUDICATED",
+        "census": "see data/audits/talent-phase-3d-production-extras-census.json",
+        "provisional": {
+          "value": "REVIEW_REQUIRED",
+          "basis": "tree exists in canon; talent is not a canonical member",
+          "confidence": "LOW"
+        }
+      },
+      "referencesToRepoint": null,
+      "metadataTransfer": [],
+      "expectedFinal": null,
+      "phase3cCanonicalRecordTouched": false
+    },
+    {
+      "productionId": "2f6bdc483d8f4aa8",
+      "name": "Serene Courage",
+      "treeId": "8955568285ba4115",
+      "treeName": "Bomarr Monk",
+      "group": "DEFERRED_PRODUCTION_ONLY",
+      "finalDisposition": "REVIEW_REQUIRED",
+      "survivorId": null,
+      "adjudicationStatus": "PENDING_3D2",
+      "evidence": {
+        "status": "NOT_YET_ADJUDICATED",
+        "census": "see data/audits/talent-phase-3d-production-extras-census.json",
+        "provisional": {
+          "value": "REVIEW_REQUIRED",
+          "basis": "registry flags repo-only noncanonical/homebrew; needs source proof",
+          "confidence": "LOW"
+        }
+      },
+      "referencesToRepoint": null,
+      "metadataTransfer": [],
+      "expectedFinal": null,
+      "phase3cCanonicalRecordTouched": false
+    },
+    {
+      "productionId": "35350a8b3d2a4810",
+      "name": "Empowered",
+      "treeId": "01e443d93e47f9c4",
+      "treeName": "Force Item",
+      "group": "DEFERRED_PRODUCTION_ONLY",
+      "finalDisposition": "REVIEW_REQUIRED",
+      "survivorId": null,
+      "adjudicationStatus": "PENDING_3D2",
+      "evidence": {
+        "status": "NOT_YET_ADJUDICATED",
+        "census": "see data/audits/talent-phase-3d-production-extras-census.json",
+        "provisional": {
+          "value": "REVIEW_REQUIRED",
+          "basis": "tree exists in canon; talent is not a canonical member",
+          "confidence": "LOW"
+        }
+      },
+      "referencesToRepoint": null,
+      "metadataTransfer": [],
+      "expectedFinal": null,
+      "phase3cCanonicalRecordTouched": false
+    },
+    {
+      "productionId": "395daa7cd6f14b8f",
+      "name": "Rough Landings",
+      "treeId": "25d99948c9cb41ad",
+      "treeName": "Jumptrooper",
+      "group": "DEFERRED_PRODUCTION_ONLY",
+      "finalDisposition": "REVIEW_REQUIRED",
+      "survivorId": null,
+      "adjudicationStatus": "PENDING_3D2",
+      "evidence": {
+        "status": "NOT_YET_ADJUDICATED",
+        "census": "see data/audits/talent-phase-3d-production-extras-census.json",
+        "provisional": {
+          "value": "REVIEW_REQUIRED",
+          "basis": "registry flags repo-only noncanonical/homebrew; needs source proof",
+          "confidence": "LOW"
+        }
+      },
+      "referencesToRepoint": null,
+      "metadataTransfer": [],
+      "expectedFinal": null,
+      "phase3cCanonicalRecordTouched": false
+    },
+    {
+      "productionId": "3cc9552cfab59676",
+      "name": "Embrace Dark Side",
+      "treeId": "dark-side-devotee",
+      "treeName": "Dark Side Devotee",
+      "group": "DEFERRED_PRODUCTION_ONLY",
+      "finalDisposition": "REVIEW_REQUIRED",
+      "survivorId": null,
+      "adjudicationStatus": "PENDING_3D2",
+      "evidence": {
+        "status": "NOT_YET_ADJUDICATED",
+        "census": "see data/audits/talent-phase-3d-production-extras-census.json",
+        "provisional": {
+          "value": "REVIEW_REQUIRED",
+          "basis": "registry status UNREGISTERED_OR_NONCANONICAL_TREE",
+          "confidence": "LOW"
+        }
+      },
+      "referencesToRepoint": null,
+      "metadataTransfer": [],
+      "expectedFinal": null,
+      "phase3cCanonicalRecordTouched": false
+    },
+    {
+      "productionId": "3df46d093b31411d",
+      "name": "Indomitable class feature",
+      "treeId": "e35ee41362604227",
+      "treeName": "Force Adept",
+      "group": "DEFERRED_PRODUCTION_ONLY",
+      "finalDisposition": "REVIEW_REQUIRED",
+      "survivorId": null,
+      "adjudicationStatus": "PENDING_3D2",
+      "evidence": {
+        "status": "NOT_YET_ADJUDICATED",
+        "census": "see data/audits/talent-phase-3d-production-extras-census.json",
+        "provisional": {
+          "value": "REVIEW_REQUIRED",
+          "basis": "tree exists in canon; talent is not a canonical member",
+          "confidence": "LOW"
+        }
+      },
+      "referencesToRepoint": null,
+      "metadataTransfer": [],
+      "expectedFinal": null,
+      "phase3cCanonicalRecordTouched": false
+    },
+    {
+      "productionId": "3faa4d16e28d43e4",
+      "name": "Weapon Proficiency (Simple Weapons)",
+      "treeId": "13776eed744d410c",
+      "treeName": "Warrior",
+      "group": "DEFERRED_PRODUCTION_ONLY",
+      "finalDisposition": "REVIEW_REQUIRED",
+      "survivorId": null,
+      "adjudicationStatus": "PENDING_3D2",
+      "evidence": {
+        "status": "NOT_YET_ADJUDICATED",
+        "census": "see data/audits/talent-phase-3d-production-extras-census.json",
+        "provisional": {
+          "value": "REVIEW_REQUIRED",
+          "basis": "tree exists in canon; talent is not a canonical member",
+          "confidence": "LOW"
+        }
+      },
+      "referencesToRepoint": null,
+      "metadataTransfer": [],
+      "expectedFinal": null,
+      "phase3cCanonicalRecordTouched": false
+    },
+    {
+      "productionId": "433c2e9c0e71aceb",
+      "name": "Flanking Foe",
+      "treeId": "ed77ab2e234089ed",
+      "treeName": "Pistoleer",
+      "group": "DEFERRED_PRODUCTION_ONLY",
+      "finalDisposition": "REVIEW_REQUIRED",
+      "survivorId": null,
+      "adjudicationStatus": "PENDING_3D2",
+      "evidence": {
+        "status": "NOT_YET_ADJUDICATED",
+        "census": "see data/audits/talent-phase-3d-production-extras-census.json",
+        "provisional": {
+          "value": "REVIEW_REQUIRED",
+          "basis": "tree exists in canon; talent is not a canonical member",
+          "confidence": "LOW"
+        }
+      },
+      "referencesToRepoint": null,
+      "metadataTransfer": [],
+      "expectedFinal": null,
+      "phase3cCanonicalRecordTouched": false
+    },
+    {
+      "productionId": "4632b4bf79044752",
+      "name": "Nature Sense",
+      "treeId": "ed899f9f41fc1391",
+      "treeName": "Beastwarden",
+      "group": "DEFERRED_PRODUCTION_ONLY",
+      "finalDisposition": "REVIEW_REQUIRED",
+      "survivorId": null,
+      "adjudicationStatus": "PENDING_3D2",
+      "evidence": {
+        "status": "NOT_YET_ADJUDICATED",
+        "census": "see data/audits/talent-phase-3d-production-extras-census.json",
+        "provisional": {
+          "value": "REVIEW_REQUIRED",
+          "basis": "tree exists in canon; talent is not a canonical member",
+          "confidence": "LOW"
+        }
+      },
+      "referencesToRepoint": null,
+      "metadataTransfer": [],
+      "expectedFinal": null,
+      "phase3cCanonicalRecordTouched": false
+    },
+    {
+      "productionId": "4d6c2d2398c33ba7",
+      "name": "Sith Alchemy (craft)",
+      "treeId": "a67faf2ae089ab5d",
+      "treeName": "Sith Alchemy",
+      "group": "DEFERRED_PRODUCTION_ONLY",
+      "finalDisposition": "REVIEW_REQUIRED",
+      "survivorId": null,
+      "adjudicationStatus": "PENDING_3D2",
+      "evidence": {
+        "status": "NOT_YET_ADJUDICATED",
+        "census": "see data/audits/talent-phase-3d-production-extras-census.json",
+        "provisional": {
+          "value": "REVIEW_REQUIRED",
+          "basis": "tree exists in canon; talent is not a canonical member",
+          "confidence": "LOW"
+        }
+      },
+      "referencesToRepoint": null,
+      "metadataTransfer": [],
+      "expectedFinal": null,
+      "phase3cCanonicalRecordTouched": false
+    },
+    {
+      "productionId": "4d7d5a38d0394e4c",
+      "name": "Force Bond",
+      "treeId": "6ac3416fb6aada56",
+      "treeName": "Alter",
+      "group": "DEFERRED_PRODUCTION_ONLY",
+      "finalDisposition": "REVIEW_REQUIRED",
+      "survivorId": null,
+      "adjudicationStatus": "PENDING_3D2",
+      "evidence": {
+        "status": "NOT_YET_ADJUDICATED",
+        "census": "see data/audits/talent-phase-3d-production-extras-census.json",
+        "provisional": {
+          "value": "KEEP_NONBOOK_SUPPORTED",
+          "basis": "registry status SOURCE_VERIFIED_SPECIAL_TREE; publication evidence to be confirmed",
+          "confidence": "LOW"
+        }
+      },
+      "referencesToRepoint": null,
+      "metadataTransfer": [],
+      "expectedFinal": null,
+      "phase3cCanonicalRecordTouched": false
+    },
+    {
+      "productionId": "4dfad6e363c11acf",
+      "name": "Improvised Weapon Masteryy",
+      "treeId": "7db97c2c7ebca579",
+      "treeName": "Jedi Weapon Master",
+      "group": "DEFERRED_PRODUCTION_ONLY",
+      "finalDisposition": "REVIEW_REQUIRED",
+      "survivorId": null,
+      "adjudicationStatus": "PENDING_3D2",
+      "evidence": {
+        "status": "NOT_YET_ADJUDICATED",
+        "census": "see data/audits/talent-phase-3d-production-extras-census.json",
+        "provisional": {
+          "value": "REVIEW_REQUIRED",
+          "basis": "tree exists in canon; talent is not a canonical member",
+          "confidence": "LOW"
+        }
+      },
+      "referencesToRepoint": null,
+      "metadataTransfer": [],
+      "expectedFinal": null,
+      "phase3cCanonicalRecordTouched": false
+    },
+    {
+      "productionId": "5644990a390a4178",
+      "name": "Hotwire",
+      "treeId": "cec49bc60d1646b1",
+      "treeName": "Specialized Droid",
+      "group": "DEFERRED_PRODUCTION_ONLY",
+      "finalDisposition": "REVIEW_REQUIRED",
+      "survivorId": null,
+      "adjudicationStatus": "PENDING_3D2",
+      "evidence": {
+        "status": "NOT_YET_ADJUDICATED",
+        "census": "see data/audits/talent-phase-3d-production-extras-census.json",
+        "provisional": {
+          "value": "REVIEW_REQUIRED",
+          "basis": "tree exists in canon; talent is not a canonical member",
+          "confidence": "LOW"
+        }
+      },
+      "referencesToRepoint": null,
+      "metadataTransfer": [],
+      "expectedFinal": null,
+      "phase3cCanonicalRecordTouched": false
+    },
+    {
+      "productionId": "57c770c7924e4241",
+      "name": "Cloak of Shadows",
+      "treeId": "4da769d7c5f44232",
+      "treeName": "Disciple Of Twilight",
+      "group": "DEFERRED_PRODUCTION_ONLY",
+      "finalDisposition": "REVIEW_REQUIRED",
+      "survivorId": null,
+      "adjudicationStatus": "PENDING_3D2",
+      "evidence": {
+        "status": "NOT_YET_ADJUDICATED",
+        "census": "see data/audits/talent-phase-3d-production-extras-census.json",
+        "provisional": {
+          "value": "KEEP_NONBOOK_SUPPORTED",
+          "basis": "registry status SOURCE_VERIFIED_SPECIAL_TREE; publication evidence to be confirmed",
+          "confidence": "LOW"
+        }
+      },
+      "referencesToRepoint": null,
+      "metadataTransfer": [],
+      "expectedFinal": null,
+      "phase3cCanonicalRecordTouched": false
+    },
+    {
+      "productionId": "585227ba15d24a37",
+      "name": "Inspire Fear",
+      "treeId": "c1be604242cb328f",
+      "treeName": "Infamy",
+      "group": "DEFERRED_PRODUCTION_ONLY",
+      "finalDisposition": "REVIEW_REQUIRED",
+      "survivorId": null,
+      "adjudicationStatus": "PENDING_3D2",
+      "evidence": {
+        "status": "NOT_YET_ADJUDICATED",
+        "census": "see data/audits/talent-phase-3d-production-extras-census.json",
+        "provisional": {
+          "value": "REVIEW_REQUIRED",
+          "basis": "tree exists in canon; talent is not a canonical member",
+          "confidence": "LOW"
+        }
+      },
+      "referencesToRepoint": null,
+      "metadataTransfer": [],
+      "expectedFinal": null,
+      "phase3cCanonicalRecordTouched": false
+    },
+    {
+      "productionId": "588c176b47724734",
+      "name": "Feign Harmlessness",
+      "treeId": "acb91d3803eb4fcd",
+      "treeName": "Cowardice",
+      "group": "DEFERRED_PRODUCTION_ONLY",
+      "finalDisposition": "REVIEW_REQUIRED",
+      "survivorId": null,
+      "adjudicationStatus": "PENDING_3D2",
+      "evidence": {
+        "status": "NOT_YET_ADJUDICATED",
+        "census": "see data/audits/talent-phase-3d-production-extras-census.json",
+        "provisional": {
+          "value": "REVIEW_REQUIRED",
+          "basis": "registry flags repo-only noncanonical/homebrew; needs source proof",
+          "confidence": "LOW"
+        }
+      },
+      "referencesToRepoint": null,
+      "metadataTransfer": [],
+      "expectedFinal": null,
+      "phase3cCanonicalRecordTouched": false
+    },
+    {
+      "productionId": "5e4a7f98b1e74326",
+      "name": "Adept Spellcaster",
+      "treeId": "cfd358ef61fb47bd",
+      "treeName": "Sorcerer Of Tund",
+      "group": "DEFERRED_PRODUCTION_ONLY",
+      "finalDisposition": "REVIEW_REQUIRED",
+      "survivorId": null,
+      "adjudicationStatus": "PENDING_3D2",
+      "evidence": {
+        "status": "NOT_YET_ADJUDICATED",
+        "census": "see data/audits/talent-phase-3d-production-extras-census.json",
+        "provisional": {
+          "value": "REVIEW_REQUIRED",
+          "basis": "registry flags repo-only noncanonical/homebrew; needs source proof (name appears in sourcebook text)",
+          "confidence": "LOW"
+        }
+      },
+      "referencesToRepoint": null,
+      "metadataTransfer": [],
+      "expectedFinal": null,
+      "phase3cCanonicalRecordTouched": false
+    },
+    {
+      "productionId": "6021056231839e7c",
+      "name": "Multiattack Proficiency (advanced melee)",
+      "treeId": "df6678946610c554",
+      "treeName": "Privateer",
+      "group": "DEFERRED_PRODUCTION_ONLY",
+      "finalDisposition": "REVIEW_REQUIRED",
+      "survivorId": null,
+      "adjudicationStatus": "PENDING_3D2",
+      "evidence": {
+        "status": "NOT_YET_ADJUDICATED",
+        "census": "see data/audits/talent-phase-3d-production-extras-census.json",
+        "provisional": {
+          "value": "REVIEW_REQUIRED",
+          "basis": "tree exists in canon; talent is not a canonical member",
+          "confidence": "LOW"
+        }
+      },
+      "referencesToRepoint": null,
+      "metadataTransfer": [],
+      "expectedFinal": null,
+      "phase3cCanonicalRecordTouched": false
+    },
+    {
+      "productionId": "61c9413bde23411a",
+      "name": "Extended Sputters",
+      "treeId": "25d99948c9cb41ad",
+      "treeName": "Jumptrooper",
+      "group": "DEFERRED_PRODUCTION_ONLY",
+      "finalDisposition": "REVIEW_REQUIRED",
+      "survivorId": null,
+      "adjudicationStatus": "PENDING_3D2",
+      "evidence": {
+        "status": "NOT_YET_ADJUDICATED",
+        "census": "see data/audits/talent-phase-3d-production-extras-census.json",
+        "provisional": {
+          "value": "REVIEW_REQUIRED",
+          "basis": "registry flags repo-only noncanonical/homebrew; needs source proof",
+          "confidence": "LOW"
+        }
+      },
+      "referencesToRepoint": null,
+      "metadataTransfer": [],
+      "expectedFinal": null,
+      "phase3cCanonicalRecordTouched": false
+    },
+    {
+      "productionId": "62d461ae3b0fcfa9",
+      "name": "Move Massive Object",
+      "treeId": "6ac3416fb6aada56",
+      "treeName": "Alter",
+      "group": "DEFERRED_PRODUCTION_ONLY",
+      "finalDisposition": "REVIEW_REQUIRED",
+      "survivorId": null,
+      "adjudicationStatus": "PENDING_3D2",
+      "evidence": {
+        "status": "NOT_YET_ADJUDICATED",
+        "census": "see data/audits/talent-phase-3d-production-extras-census.json",
+        "provisional": {
+          "value": "KEEP_NONBOOK_SUPPORTED",
+          "basis": "registry status SOURCE_VERIFIED_SPECIAL_TREE; publication evidence to be confirmed",
+          "confidence": "LOW"
+        }
+      },
+      "referencesToRepoint": null,
+      "metadataTransfer": [],
+      "expectedFinal": null,
+      "phase3cCanonicalRecordTouched": false
+    },
+    {
+      "productionId": "62e70280d08f43ec",
+      "name": "Allure",
+      "treeId": "8375b9b26b679901",
+      "treeName": "Influence",
+      "group": "DEFERRED_PRODUCTION_ONLY",
+      "finalDisposition": "REVIEW_REQUIRED",
+      "survivorId": null,
+      "adjudicationStatus": "PENDING_3D2",
+      "evidence": {
+        "status": "NOT_YET_ADJUDICATED",
+        "census": "see data/audits/talent-phase-3d-production-extras-census.json",
+        "provisional": {
+          "value": "REVIEW_REQUIRED",
+          "basis": "tree exists in canon; talent is not a canonical member",
+          "confidence": "LOW"
+        }
+      },
+      "referencesToRepoint": null,
+      "metadataTransfer": [],
+      "expectedFinal": null,
+      "phase3cCanonicalRecordTouched": false
+    },
+    {
+      "productionId": "67a08d46f24c4fdd",
+      "name": "Crash Landings",
+      "treeId": "25d99948c9cb41ad",
+      "treeName": "Jumptrooper",
+      "group": "DEFERRED_PRODUCTION_ONLY",
+      "finalDisposition": "REVIEW_REQUIRED",
+      "survivorId": null,
+      "adjudicationStatus": "PENDING_3D2",
+      "evidence": {
+        "status": "NOT_YET_ADJUDICATED",
+        "census": "see data/audits/talent-phase-3d-production-extras-census.json",
+        "provisional": {
+          "value": "REVIEW_REQUIRED",
+          "basis": "registry flags repo-only noncanonical/homebrew; needs source proof (name appears in sourcebook text)",
+          "confidence": "LOW"
+        }
+      },
+      "referencesToRepoint": null,
+      "metadataTransfer": [],
+      "expectedFinal": null,
+      "phase3cCanonicalRecordTouched": false
+    },
+    {
+      "productionId": "6f3641f0ff39fc90",
+      "name": "Escort",
+      "treeId": "5f355ad4093d2bf8",
+      "treeName": "Wingman",
+      "group": "DEFERRED_PRODUCTION_ONLY",
+      "finalDisposition": "REVIEW_REQUIRED",
+      "survivorId": null,
+      "adjudicationStatus": "PENDING_3D2",
+      "evidence": {
+        "status": "NOT_YET_ADJUDICATED",
+        "census": "see data/audits/talent-phase-3d-production-extras-census.json",
+        "provisional": {
+          "value": "REVIEW_REQUIRED",
+          "basis": "tree exists in canon; talent is not a canonical member",
+          "confidence": "LOW"
+        }
+      },
+      "referencesToRepoint": null,
+      "metadataTransfer": [],
+      "expectedFinal": null,
+      "phase3cCanonicalRecordTouched": false
+    },
+    {
+      "productionId": "707dd4f0b5c744a6",
+      "name": "Special:",
+      "treeId": "25d99948c9cb41ad",
+      "treeName": "Jumptrooper",
+      "group": "DEFERRED_PRODUCTION_ONLY",
+      "finalDisposition": "REVIEW_REQUIRED",
+      "survivorId": null,
+      "adjudicationStatus": "PENDING_3D2",
+      "evidence": {
+        "status": "NOT_YET_ADJUDICATED",
+        "census": "see data/audits/talent-phase-3d-production-extras-census.json",
+        "provisional": {
+          "value": "REVIEW_REQUIRED",
+          "basis": "registry flags repo-only noncanonical/homebrew; needs source proof (name appears in sourcebook text)",
+          "confidence": "LOW"
+        }
+      },
+      "referencesToRepoint": null,
+      "metadataTransfer": [],
+      "expectedFinal": null,
+      "phase3cCanonicalRecordTouched": false
+    },
+    {
+      "productionId": "714c38c0498a4eaf",
+      "name": "Empowered Weapon",
+      "treeId": "c6eee4889411411b",
+      "treeName": "Ember Of Vahl",
+      "group": "DEFERRED_PRODUCTION_ONLY",
+      "finalDisposition": "REVIEW_REQUIRED",
+      "survivorId": null,
+      "adjudicationStatus": "PENDING_3D2",
+      "evidence": {
+        "status": "NOT_YET_ADJUDICATED",
+        "census": "see data/audits/talent-phase-3d-production-extras-census.json",
+        "provisional": {
+          "value": "KEEP_NONBOOK_SUPPORTED",
+          "basis": "registry status SOURCE_VERIFIED_SPECIAL_TREE; publication evidence to be confirmed",
+          "confidence": "LOW"
+        }
+      },
+      "referencesToRepoint": null,
+      "metadataTransfer": [],
+      "expectedFinal": null,
+      "phase3cCanonicalRecordTouched": false
+    },
+    {
+      "productionId": "747458ee63cd4a2a",
+      "name": "Defensive Roll",
+      "treeId": "11f99465ba4847e2",
+      "treeName": "Force Warrior",
+      "group": "DEFERRED_PRODUCTION_ONLY",
+      "finalDisposition": "REVIEW_REQUIRED",
+      "survivorId": null,
+      "adjudicationStatus": "PENDING_3D2",
+      "evidence": {
+        "status": "NOT_YET_ADJUDICATED",
+        "census": "see data/audits/talent-phase-3d-production-extras-census.json",
+        "provisional": {
+          "value": "REVIEW_REQUIRED",
+          "basis": "registry flags repo-only noncanonical/homebrew; needs source proof",
+          "confidence": "LOW"
+        }
+      },
+      "referencesToRepoint": null,
+      "metadataTransfer": [],
+      "expectedFinal": null,
+      "phase3cCanonicalRecordTouched": false
+    },
+    {
+      "productionId": "77ab82670aa14f33",
+      "name": "Smashball Pass",
+      "treeId": "bfc1356c66c74783",
+      "treeName": "Smashball Pro",
+      "group": "DEFERRED_PRODUCTION_ONLY",
+      "finalDisposition": "REVIEW_REQUIRED",
+      "survivorId": null,
+      "adjudicationStatus": "PENDING_3D2",
+      "evidence": {
+        "status": "NOT_YET_ADJUDICATED",
+        "census": "see data/audits/talent-phase-3d-production-extras-census.json",
+        "provisional": {
+          "value": "REVIEW_REQUIRED",
+          "basis": "registry flags repo-only noncanonical/homebrew; needs source proof",
+          "confidence": "LOW"
+        }
+      },
+      "referencesToRepoint": null,
+      "metadataTransfer": [],
+      "expectedFinal": null,
+      "phase3cCanonicalRecordTouched": false
+    },
+    {
+      "productionId": "78955cbbe9504d7f",
+      "name": "Patient Builder",
+      "treeId": "38d7c18ce4664c66",
+      "treeName": "Mechanic",
+      "group": "DEFERRED_PRODUCTION_ONLY",
+      "finalDisposition": "REVIEW_REQUIRED",
+      "survivorId": null,
+      "adjudicationStatus": "PENDING_3D2",
+      "evidence": {
+        "status": "NOT_YET_ADJUDICATED",
+        "census": "see data/audits/talent-phase-3d-production-extras-census.json",
+        "provisional": {
+          "value": "REVIEW_REQUIRED",
+          "basis": "registry flags repo-only noncanonical/homebrew; needs source proof",
+          "confidence": "LOW"
+        }
+      },
+      "referencesToRepoint": null,
+      "metadataTransfer": [],
+      "expectedFinal": null,
+      "phase3cCanonicalRecordTouched": false
+    },
+    {
+      "productionId": "7a58134276d64561",
+      "name": "Calming Aura",
+      "treeId": "ed899f9f41fc1391",
+      "treeName": "Beastwarden",
+      "group": "DEFERRED_PRODUCTION_ONLY",
+      "finalDisposition": "REVIEW_REQUIRED",
+      "survivorId": null,
+      "adjudicationStatus": "PENDING_3D2",
+      "evidence": {
+        "status": "NOT_YET_ADJUDICATED",
+        "census": "see data/audits/talent-phase-3d-production-extras-census.json",
+        "provisional": {
+          "value": "REVIEW_REQUIRED",
+          "basis": "tree exists in canon; talent is not a canonical member",
+          "confidence": "LOW"
+        }
+      },
+      "referencesToRepoint": null,
+      "metadataTransfer": [],
+      "expectedFinal": null,
+      "phase3cCanonicalRecordTouched": false
+    },
+    {
+      "productionId": "7f4edcb8aa830972",
+      "name": "Hard Target",
+      "treeId": "798ed0945cbdac1c",
+      "treeName": "Commando",
+      "group": "DEFERRED_PRODUCTION_ONLY",
+      "finalDisposition": "REVIEW_REQUIRED",
+      "survivorId": null,
+      "adjudicationStatus": "PENDING_3D2",
+      "evidence": {
+        "status": "NOT_YET_ADJUDICATED",
+        "census": "see data/audits/talent-phase-3d-production-extras-census.json",
+        "provisional": {
+          "value": "REVIEW_REQUIRED",
+          "basis": "tree exists in canon; talent is not a canonical member",
+          "confidence": "LOW"
+        }
+      },
+      "referencesToRepoint": null,
+      "metadataTransfer": [],
+      "expectedFinal": null,
+      "phase3cCanonicalRecordTouched": false
+    },
+    {
+      "productionId": "816ac9cc1e6c413b",
+      "name": "Force Meld",
+      "treeId": "jedi-guardian",
+      "treeName": "Jedi Guardian",
+      "group": "DEFERRED_PRODUCTION_ONLY",
+      "finalDisposition": "REVIEW_REQUIRED",
+      "survivorId": null,
+      "adjudicationStatus": "PENDING_3D2",
+      "evidence": {
+        "status": "NOT_YET_ADJUDICATED",
+        "census": "see data/audits/talent-phase-3d-production-extras-census.json",
+        "provisional": {
+          "value": "REVIEW_REQUIRED",
+          "basis": "registry status UNREGISTERED_OR_NONCANONICAL_TREE",
+          "confidence": "LOW"
+        }
+      },
+      "referencesToRepoint": null,
+      "metadataTransfer": [],
+      "expectedFinal": null,
+      "phase3cCanonicalRecordTouched": false
+    },
+    {
+      "productionId": "81cd2a2473e248a0",
+      "name": "In Balance",
+      "treeId": "dcac793cc9fe42a7",
+      "treeName": "Jedaii Ranger",
+      "group": "DEFERRED_PRODUCTION_ONLY",
+      "finalDisposition": "REVIEW_REQUIRED",
+      "survivorId": null,
+      "adjudicationStatus": "PENDING_3D2",
+      "evidence": {
+        "status": "NOT_YET_ADJUDICATED",
+        "census": "see data/audits/talent-phase-3d-production-extras-census.json",
+        "provisional": {
+          "value": "REVIEW_REQUIRED",
+          "basis": "registry flags repo-only noncanonical/homebrew; needs source proof",
+          "confidence": "LOW"
+        }
+      },
+      "referencesToRepoint": null,
+      "metadataTransfer": [],
+      "expectedFinal": null,
+      "phase3cCanonicalRecordTouched": false
+    },
+    {
+      "productionId": "85e348f24a144e1c",
+      "name": "Inspired",
+      "treeId": "72d32ebcbb607314",
+      "treeName": "Inspiration",
+      "group": "DEFERRED_PRODUCTION_ONLY",
+      "finalDisposition": "REVIEW_REQUIRED",
+      "survivorId": null,
+      "adjudicationStatus": "PENDING_3D2",
+      "evidence": {
+        "status": "NOT_YET_ADJUDICATED",
+        "census": "see data/audits/talent-phase-3d-production-extras-census.json",
+        "provisional": {
+          "value": "REVIEW_REQUIRED",
+          "basis": "tree exists in canon; talent is not a canonical member",
+          "confidence": "LOW"
+        }
+      },
+      "referencesToRepoint": null,
+      "metadataTransfer": [],
+      "expectedFinal": null,
+      "phase3cCanonicalRecordTouched": false
+    },
+    {
+      "productionId": "85e9699cee664641",
+      "name": "Identify Creature",
+      "treeId": "00cb74839a524276",
+      "treeName": "Science",
+      "group": "DEFERRED_PRODUCTION_ONLY",
+      "finalDisposition": "REVIEW_REQUIRED",
+      "survivorId": null,
+      "adjudicationStatus": "PENDING_3D2",
+      "evidence": {
+        "status": "NOT_YET_ADJUDICATED",
+        "census": "see data/audits/talent-phase-3d-production-extras-census.json",
+        "provisional": {
+          "value": "REVIEW_REQUIRED",
+          "basis": "registry flags repo-only noncanonical/homebrew; needs source proof",
+          "confidence": "LOW"
+        }
+      },
+      "referencesToRepoint": null,
+      "metadataTransfer": [],
+      "expectedFinal": null,
+      "phase3cCanonicalRecordTouched": false
+    },
+    {
+      "productionId": "86c10d63bba2d9c8",
+      "name": "Trigger Work",
+      "treeId": "cb6f775cd227a3e3",
+      "treeName": "Gunslinger",
+      "group": "DEFERRED_PRODUCTION_ONLY",
+      "finalDisposition": "REVIEW_REQUIRED",
+      "survivorId": null,
+      "adjudicationStatus": "PENDING_3D2",
+      "evidence": {
+        "status": "NOT_YET_ADJUDICATED",
+        "census": "see data/audits/talent-phase-3d-production-extras-census.json",
+        "provisional": {
+          "value": "REVIEW_REQUIRED",
+          "basis": "tree exists in canon; talent is not a canonical member",
+          "confidence": "LOW"
+        }
+      },
+      "referencesToRepoint": null,
+      "metadataTransfer": [],
+      "expectedFinal": null,
+      "phase3cCanonicalRecordTouched": false
+    },
+    {
+      "productionId": "893158dcfe246ad7",
+      "name": "Implant (general)",
+      "treeId": "d8a71a6c5b2b7581",
+      "treeName": "Implant",
+      "group": "DEFERRED_PRODUCTION_ONLY",
+      "finalDisposition": "REVIEW_REQUIRED",
+      "survivorId": null,
+      "adjudicationStatus": "PENDING_3D2",
+      "evidence": {
+        "status": "NOT_YET_ADJUDICATED",
+        "census": "see data/audits/talent-phase-3d-production-extras-census.json",
+        "provisional": {
+          "value": "REVIEW_REQUIRED",
+          "basis": "tree exists in canon; talent is not a canonical member",
+          "confidence": "LOW"
+        }
+      },
+      "referencesToRepoint": null,
+      "metadataTransfer": [],
+      "expectedFinal": null,
+      "phase3cCanonicalRecordTouched": false
+    },
+    {
+      "productionId": "8a6fc1f368226b7b",
+      "name": "Sith Alchemy (create)",
+      "treeId": "d1037bc7a08ea80b",
+      "treeName": "Sith",
+      "group": "DEFERRED_PRODUCTION_ONLY",
+      "finalDisposition": "REVIEW_REQUIRED",
+      "survivorId": null,
+      "adjudicationStatus": "PENDING_3D2",
+      "evidence": {
+        "status": "NOT_YET_ADJUDICATED",
+        "census": "see data/audits/talent-phase-3d-production-extras-census.json",
+        "provisional": {
+          "value": "REVIEW_REQUIRED",
+          "basis": "tree exists in canon; talent is not a canonical member",
+          "confidence": "LOW"
+        }
+      },
+      "referencesToRepoint": null,
+      "metadataTransfer": [],
+      "expectedFinal": null,
+      "phase3cCanonicalRecordTouched": false
+    },
+    {
+      "productionId": "8d70989dc42f4829",
+      "name": "Suktub Defender",
+      "treeId": "bfc1356c66c74783",
+      "treeName": "Smashball Pro",
+      "group": "DEFERRED_PRODUCTION_ONLY",
+      "finalDisposition": "REVIEW_REQUIRED",
+      "survivorId": null,
+      "adjudicationStatus": "PENDING_3D2",
+      "evidence": {
+        "status": "NOT_YET_ADJUDICATED",
+        "census": "see data/audits/talent-phase-3d-production-extras-census.json",
+        "provisional": {
+          "value": "REVIEW_REQUIRED",
+          "basis": "registry flags repo-only noncanonical/homebrew; needs source proof",
+          "confidence": "LOW"
+        }
+      },
+      "referencesToRepoint": null,
+      "metadataTransfer": [],
+      "expectedFinal": null,
+      "phase3cCanonicalRecordTouched": false
+    },
+    {
+      "productionId": "9319584186ce4228",
+      "name": "Dathomiri Hunter",
+      "treeId": "ad16f3e5f4f7441b",
+      "treeName": "Dathomiri Witch",
+      "group": "DEFERRED_PRODUCTION_ONLY",
+      "finalDisposition": "REVIEW_REQUIRED",
+      "survivorId": null,
+      "adjudicationStatus": "PENDING_3D2",
+      "evidence": {
+        "status": "NOT_YET_ADJUDICATED",
+        "census": "see data/audits/talent-phase-3d-production-extras-census.json",
+        "provisional": {
+          "value": "KEEP_NONBOOK_SUPPORTED",
+          "basis": "registry status SOURCE_VERIFIED_SPECIAL_TREE; publication evidence to be confirmed",
+          "confidence": "LOW"
+        }
+      },
+      "referencesToRepoint": null,
+      "metadataTransfer": [],
+      "expectedFinal": null,
+      "phase3cCanonicalRecordTouched": false
+    },
+    {
+      "productionId": "933240d6581843b9",
+      "name": "Lasting Ichor Item",
+      "treeId": "01e443d93e47f9c4",
+      "treeName": "Force Item",
+      "group": "DEFERRED_PRODUCTION_ONLY",
+      "finalDisposition": "REVIEW_REQUIRED",
+      "survivorId": null,
+      "adjudicationStatus": "PENDING_3D2",
+      "evidence": {
+        "status": "NOT_YET_ADJUDICATED",
+        "census": "see data/audits/talent-phase-3d-production-extras-census.json",
+        "provisional": {
+          "value": "REVIEW_REQUIRED",
+          "basis": "tree exists in canon; talent is not a canonical member",
+          "confidence": "LOW"
+        }
+      },
+      "referencesToRepoint": null,
+      "metadataTransfer": [],
+      "expectedFinal": null,
+      "phase3cCanonicalRecordTouched": false
+    },
+    {
+      "productionId": "96a833f805df1be1",
+      "name": "Regimen Mastery",
+      "treeId": "a3d0b7c9a6d041f2",
+      "treeName": "Mystic",
+      "group": "DEFERRED_PRODUCTION_ONLY",
+      "finalDisposition": "REVIEW_REQUIRED",
+      "survivorId": null,
+      "adjudicationStatus": "PENDING_3D2",
+      "evidence": {
+        "status": "NOT_YET_ADJUDICATED",
+        "census": "see data/audits/talent-phase-3d-production-extras-census.json",
+        "provisional": {
+          "value": "REVIEW_REQUIRED",
+          "basis": "tree exists in canon; talent is not a canonical member",
+          "confidence": "LOW"
+        }
+      },
+      "referencesToRepoint": null,
+      "metadataTransfer": [],
+      "expectedFinal": null,
+      "phase3cCanonicalRecordTouched": false
+    },
+    {
+      "productionId": "9780298d28d64954",
+      "name": "Centerbreaker Charge",
+      "treeId": "bfc1356c66c74783",
+      "treeName": "Smashball Pro",
+      "group": "DEFERRED_PRODUCTION_ONLY",
+      "finalDisposition": "REVIEW_REQUIRED",
+      "survivorId": null,
+      "adjudicationStatus": "PENDING_3D2",
+      "evidence": {
+        "status": "NOT_YET_ADJUDICATED",
+        "census": "see data/audits/talent-phase-3d-production-extras-census.json",
+        "provisional": {
+          "value": "REVIEW_REQUIRED",
+          "basis": "registry flags repo-only noncanonical/homebrew; needs source proof",
+          "confidence": "LOW"
+        }
+      },
+      "referencesToRepoint": null,
+      "metadataTransfer": [],
+      "expectedFinal": null,
+      "phase3cCanonicalRecordTouched": false
+    },
+    {
+      "productionId": "a0c4b4b252ee4c96",
+      "name": "Cortosis Staff Block",
+      "treeId": "0a61ab9ece844326",
+      "treeName": "Morgukai Warrior",
+      "group": "DEFERRED_PRODUCTION_ONLY",
+      "finalDisposition": "REVIEW_REQUIRED",
+      "survivorId": null,
+      "adjudicationStatus": "PENDING_3D2",
+      "evidence": {
+        "status": "NOT_YET_ADJUDICATED",
+        "census": "see data/audits/talent-phase-3d-production-extras-census.json",
+        "provisional": {
+          "value": "REVIEW_REQUIRED",
+          "basis": "registry flags repo-only noncanonical/homebrew; needs source proof",
+          "confidence": "LOW"
+        }
+      },
+      "referencesToRepoint": null,
+      "metadataTransfer": [],
+      "expectedFinal": null,
+      "phase3cCanonicalRecordTouched": false
+    },
+    {
+      "productionId": "a1ef8440f49847f1",
+      "name": "Linebreaker Charge",
+      "treeId": "bfc1356c66c74783",
+      "treeName": "Smashball Pro",
+      "group": "DEFERRED_PRODUCTION_ONLY",
+      "finalDisposition": "REVIEW_REQUIRED",
+      "survivorId": null,
+      "adjudicationStatus": "PENDING_3D2",
+      "evidence": {
+        "status": "NOT_YET_ADJUDICATED",
+        "census": "see data/audits/talent-phase-3d-production-extras-census.json",
+        "provisional": {
+          "value": "REVIEW_REQUIRED",
+          "basis": "registry flags repo-only noncanonical/homebrew; needs source proof",
+          "confidence": "LOW"
+        }
+      },
+      "referencesToRepoint": null,
+      "metadataTransfer": [],
+      "expectedFinal": null,
+      "phase3cCanonicalRecordTouched": false
+    },
+    {
+      "productionId": "a36f9a2eb2424f86",
+      "name": "Amphistaff Block",
+      "treeId": "d5b60c4f058c4085",
+      "treeName": "Master Of The Amphistaff",
+      "group": "DEFERRED_PRODUCTION_ONLY",
+      "finalDisposition": "REVIEW_REQUIRED",
+      "survivorId": null,
+      "adjudicationStatus": "PENDING_3D2",
+      "evidence": {
+        "status": "NOT_YET_ADJUDICATED",
+        "census": "see data/audits/talent-phase-3d-production-extras-census.json",
+        "provisional": {
+          "value": "REVIEW_REQUIRED",
+          "basis": "registry flags repo-only noncanonical/homebrew; needs source proof",
+          "confidence": "LOW"
+        }
+      },
+      "referencesToRepoint": null,
+      "metadataTransfer": [],
+      "expectedFinal": null,
+      "phase3cCanonicalRecordTouched": false
+    },
+    {
+      "productionId": "a4629f24bd571414",
+      "name": "Mercenary's Determination",
+      "treeId": "4007fa87192b5884",
+      "treeName": "Mercenary",
+      "group": "DEFERRED_PRODUCTION_ONLY",
+      "finalDisposition": "REVIEW_REQUIRED",
+      "survivorId": null,
+      "adjudicationStatus": "PENDING_3D2",
+      "evidence": {
+        "status": "NOT_YET_ADJUDICATED",
+        "census": "see data/audits/talent-phase-3d-production-extras-census.json",
+        "provisional": {
+          "value": "REVIEW_REQUIRED",
+          "basis": "tree exists in canon; talent is not a canonical member",
+          "confidence": "LOW"
+        }
+      },
+      "referencesToRepoint": null,
+      "metadataTransfer": [],
+      "expectedFinal": null,
+      "phase3cCanonicalRecordTouched": false
+    },
+    {
+      "productionId": "a76198e5da0f6368",
+      "name": "Echoes of the Force",
+      "treeId": "44554c28675292b6",
+      "treeName": "Jedi Investigator",
+      "group": "DEFERRED_PRODUCTION_ONLY",
+      "finalDisposition": "REVIEW_REQUIRED",
+      "survivorId": null,
+      "adjudicationStatus": "PENDING_3D2",
+      "evidence": {
+        "status": "NOT_YET_ADJUDICATED",
+        "census": "see data/audits/talent-phase-3d-production-extras-census.json",
+        "provisional": {
+          "value": "REVIEW_REQUIRED",
+          "basis": "tree exists in canon; talent is not a canonical member",
+          "confidence": "LOW"
+        }
+      },
+      "referencesToRepoint": null,
+      "metadataTransfer": [],
+      "expectedFinal": null,
+      "phase3cCanonicalRecordTouched": false
+    },
+    {
+      "productionId": "a9a84d42b75f4fb1",
+      "name": "Lesser Mark of Illumination",
+      "treeId": "f3881205595248d4",
+      "treeName": "Chalactan Adept",
+      "group": "DEFERRED_PRODUCTION_ONLY",
+      "finalDisposition": "REVIEW_REQUIRED",
+      "survivorId": null,
+      "adjudicationStatus": "PENDING_3D2",
+      "evidence": {
+        "status": "NOT_YET_ADJUDICATED",
+        "census": "see data/audits/talent-phase-3d-production-extras-census.json",
+        "provisional": {
+          "value": "REVIEW_REQUIRED",
+          "basis": "registry flags repo-only noncanonical/homebrew; needs source proof",
+          "confidence": "LOW"
+        }
+      },
+      "referencesToRepoint": null,
+      "metadataTransfer": [],
+      "expectedFinal": null,
+      "phase3cCanonicalRecordTouched": false
+    },
+    {
+      "productionId": "ab6efafd94ad044e",
+      "name": "Extended Critical Range (heavy)",
+      "treeId": "71e99c646b18d85c",
+      "treeName": "Critical Master",
+      "group": "DEFERRED_PRODUCTION_ONLY",
+      "finalDisposition": "REVIEW_REQUIRED",
+      "survivorId": null,
+      "adjudicationStatus": "PENDING_3D2",
+      "evidence": {
+        "status": "NOT_YET_ADJUDICATED",
+        "census": "see data/audits/talent-phase-3d-production-extras-census.json",
+        "provisional": {
+          "value": "REVIEW_REQUIRED",
+          "basis": "tree exists in canon; talent is not a canonical member",
+          "confidence": "LOW"
+        }
+      },
+      "referencesToRepoint": null,
+      "metadataTransfer": [],
+      "expectedFinal": null,
+      "phase3cCanonicalRecordTouched": false
+    },
+    {
+      "productionId": "b1669310f65d42b7",
+      "name": "Engineering Savant",
+      "treeId": "38d7c18ce4664c66",
+      "treeName": "Mechanic",
+      "group": "DEFERRED_PRODUCTION_ONLY",
+      "finalDisposition": "REVIEW_REQUIRED",
+      "survivorId": null,
+      "adjudicationStatus": "PENDING_3D2",
+      "evidence": {
+        "status": "NOT_YET_ADJUDICATED",
+        "census": "see data/audits/talent-phase-3d-production-extras-census.json",
+        "provisional": {
+          "value": "REVIEW_REQUIRED",
+          "basis": "registry flags repo-only noncanonical/homebrew; needs source proof",
+          "confidence": "LOW"
+        }
+      },
+      "referencesToRepoint": null,
+      "metadataTransfer": [],
+      "expectedFinal": null,
+      "phase3cCanonicalRecordTouched": false
+    },
+    {
+      "productionId": "b28f312432d79e77",
+      "name": "Keep Them Reeling (Piracy)",
+      "treeId": "61db5e2c0c44ef67",
+      "treeName": "Piracy",
+      "group": "DEFERRED_PRODUCTION_ONLY",
+      "finalDisposition": "REVIEW_REQUIRED",
+      "survivorId": null,
+      "adjudicationStatus": "PENDING_3D2",
+      "evidence": {
+        "status": "NOT_YET_ADJUDICATED",
+        "census": "see data/audits/talent-phase-3d-production-extras-census.json",
+        "provisional": {
+          "value": "REVIEW_REQUIRED",
+          "basis": "tree exists in canon; talent is not a canonical member",
+          "confidence": "LOW"
+        }
+      },
+      "referencesToRepoint": null,
+      "metadataTransfer": [],
+      "expectedFinal": null,
+      "phase3cCanonicalRecordTouched": false
+    },
+    {
+      "productionId": "b431ca7ea00947b9",
+      "name": "Delusion",
+      "treeId": "cfd358ef61fb47bd",
+      "treeName": "Sorcerer Of Tund",
+      "group": "DEFERRED_PRODUCTION_ONLY",
+      "finalDisposition": "REVIEW_REQUIRED",
+      "survivorId": null,
+      "adjudicationStatus": "PENDING_3D2",
+      "evidence": {
+        "status": "NOT_YET_ADJUDICATED",
+        "census": "see data/audits/talent-phase-3d-production-extras-census.json",
+        "provisional": {
+          "value": "REVIEW_REQUIRED",
+          "basis": "registry flags repo-only noncanonical/homebrew; needs source proof (name appears in sourcebook text)",
+          "confidence": "LOW"
+        }
+      },
+      "referencesToRepoint": null,
+      "metadataTransfer": [],
+      "expectedFinal": null,
+      "phase3cCanonicalRecordTouched": false
+    },
+    {
+      "productionId": "b9fce171cad543d7",
+      "name": "Clone Scientist",
+      "treeId": "8e44e56069274319",
+      "treeName": "Cloner",
+      "group": "DEFERRED_PRODUCTION_ONLY",
+      "finalDisposition": "REVIEW_REQUIRED",
+      "survivorId": null,
+      "adjudicationStatus": "PENDING_3D2",
+      "evidence": {
+        "status": "NOT_YET_ADJUDICATED",
+        "census": "see data/audits/talent-phase-3d-production-extras-census.json",
+        "provisional": {
+          "value": "REVIEW_REQUIRED",
+          "basis": "registry flags repo-only noncanonical/homebrew; needs source proof",
+          "confidence": "LOW"
+        }
+      },
+      "referencesToRepoint": null,
+      "metadataTransfer": [],
+      "expectedFinal": null,
+      "phase3cCanonicalRecordTouched": false
+    },
+    {
+      "productionId": "c086c6265e224637",
+      "name": "Shedding of the Body",
+      "treeId": "8955568285ba4115",
+      "treeName": "Bomarr Monk",
+      "group": "DEFERRED_PRODUCTION_ONLY",
+      "finalDisposition": "REVIEW_REQUIRED",
+      "survivorId": null,
+      "adjudicationStatus": "PENDING_3D2",
+      "evidence": {
+        "status": "NOT_YET_ADJUDICATED",
+        "census": "see data/audits/talent-phase-3d-production-extras-census.json",
+        "provisional": {
+          "value": "REVIEW_REQUIRED",
+          "basis": "registry flags repo-only noncanonical/homebrew; needs source proof",
+          "confidence": "LOW"
+        }
+      },
+      "referencesToRepoint": null,
+      "metadataTransfer": [],
+      "expectedFinal": null,
+      "phase3cCanonicalRecordTouched": false
+    },
+    {
+      "productionId": "c6a65be235c34a6f",
+      "name": "Bolster",
+      "treeId": "72d32ebcbb607314",
+      "treeName": "Inspiration",
+      "group": "DEFERRED_PRODUCTION_ONLY",
+      "finalDisposition": "REVIEW_REQUIRED",
+      "survivorId": null,
+      "adjudicationStatus": "PENDING_3D2",
+      "evidence": {
+        "status": "NOT_YET_ADJUDICATED",
+        "census": "see data/audits/talent-phase-3d-production-extras-census.json",
+        "provisional": {
+          "value": "REVIEW_REQUIRED",
+          "basis": "tree exists in canon; talent is not a canonical member",
+          "confidence": "LOW"
+        }
+      },
+      "referencesToRepoint": null,
+      "metadataTransfer": [],
+      "expectedFinal": null,
+      "phase3cCanonicalRecordTouched": false
+    },
+    {
+      "productionId": "cb261592f68849a5",
+      "name": "Infused Weapon",
+      "treeId": "8a61bf426391431b",
+      "treeName": "Felucian Shaman",
+      "group": "DEFERRED_PRODUCTION_ONLY",
+      "finalDisposition": "REVIEW_REQUIRED",
+      "survivorId": null,
+      "adjudicationStatus": "PENDING_3D2",
+      "evidence": {
+        "status": "NOT_YET_ADJUDICATED",
+        "census": "see data/audits/talent-phase-3d-production-extras-census.json",
+        "provisional": {
+          "value": "REVIEW_REQUIRED",
+          "basis": "registry status REPO_ONLY_SPECIAL_OR_UNRESOLVED",
+          "confidence": "LOW"
+        }
+      },
+      "referencesToRepoint": null,
+      "metadataTransfer": [],
+      "expectedFinal": null,
+      "phase3cCanonicalRecordTouched": false
+    },
+    {
+      "productionId": "cc1cf3a694244618",
+      "name": "Diplomatic Poise",
+      "treeId": "feb08c2834a447ab",
+      "treeName": "Galactic Senator",
+      "group": "DEFERRED_PRODUCTION_ONLY",
+      "finalDisposition": "REVIEW_REQUIRED",
+      "survivorId": null,
+      "adjudicationStatus": "PENDING_3D2",
+      "evidence": {
+        "status": "NOT_YET_ADJUDICATED",
+        "census": "see data/audits/talent-phase-3d-production-extras-census.json",
+        "provisional": {
+          "value": "REVIEW_REQUIRED",
+          "basis": "registry flags repo-only noncanonical/homebrew; needs source proof",
+          "confidence": "LOW"
+        }
+      },
+      "referencesToRepoint": null,
+      "metadataTransfer": [],
+      "expectedFinal": null,
+      "phase3cCanonicalRecordTouched": false
+    },
+    {
+      "productionId": "cc78c981176d4fed",
+      "name": "Avoid Collisions",
+      "treeId": "25d99948c9cb41ad",
+      "treeName": "Jumptrooper",
+      "group": "DEFERRED_PRODUCTION_ONLY",
+      "finalDisposition": "REVIEW_REQUIRED",
+      "survivorId": null,
+      "adjudicationStatus": "PENDING_3D2",
+      "evidence": {
+        "status": "NOT_YET_ADJUDICATED",
+        "census": "see data/audits/talent-phase-3d-production-extras-census.json",
+        "provisional": {
+          "value": "REVIEW_REQUIRED",
+          "basis": "registry flags repo-only noncanonical/homebrew; needs source proof (name appears in sourcebook text)",
+          "confidence": "LOW"
+        }
+      },
+      "referencesToRepoint": null,
+      "metadataTransfer": [],
+      "expectedFinal": null,
+      "phase3cCanonicalRecordTouched": false
+    },
+    {
+      "productionId": "cc938ba0542c97e4",
+      "name": "Unclouded Judgement",
+      "treeId": "44554c28675292b6",
+      "treeName": "Jedi Investigator",
+      "group": "DEFERRED_PRODUCTION_ONLY",
+      "finalDisposition": "REVIEW_REQUIRED",
+      "survivorId": null,
+      "adjudicationStatus": "PENDING_3D2",
+      "evidence": {
+        "status": "NOT_YET_ADJUDICATED",
+        "census": "see data/audits/talent-phase-3d-production-extras-census.json",
+        "provisional": {
+          "value": "REVIEW_REQUIRED",
+          "basis": "tree exists in canon; talent is not a canonical member",
+          "confidence": "LOW"
+        }
+      },
+      "referencesToRepoint": null,
+      "metadataTransfer": [],
+      "expectedFinal": null,
+      "phase3cCanonicalRecordTouched": false
+    },
+    {
+      "productionId": "d1418afeaa3f40ec",
+      "name": "Reflexive Tilting",
+      "treeId": "25d99948c9cb41ad",
+      "treeName": "Jumptrooper",
+      "group": "DEFERRED_PRODUCTION_ONLY",
+      "finalDisposition": "REVIEW_REQUIRED",
+      "survivorId": null,
+      "adjudicationStatus": "PENDING_3D2",
+      "evidence": {
+        "status": "NOT_YET_ADJUDICATED",
+        "census": "see data/audits/talent-phase-3d-production-extras-census.json",
+        "provisional": {
+          "value": "REVIEW_REQUIRED",
+          "basis": "registry flags repo-only noncanonical/homebrew; needs source proof",
+          "confidence": "LOW"
+        }
+      },
+      "referencesToRepoint": null,
+      "metadataTransfer": [],
+      "expectedFinal": null,
+      "phase3cCanonicalRecordTouched": false
+    },
+    {
+      "productionId": "d49ca4c47e704a96",
+      "name": "Defensive Stance",
+      "treeId": "fc978e442f544dbe",
+      "treeName": "Defensive Duelist",
+      "group": "DEFERRED_PRODUCTION_ONLY",
+      "finalDisposition": "REVIEW_REQUIRED",
+      "survivorId": null,
+      "adjudicationStatus": "PENDING_3D2",
+      "evidence": {
+        "status": "NOT_YET_ADJUDICATED",
+        "census": "see data/audits/talent-phase-3d-production-extras-census.json",
+        "provisional": {
+          "value": "REVIEW_REQUIRED",
+          "basis": "registry flags repo-only noncanonical/homebrew; needs source proof",
+          "confidence": "LOW"
+        }
+      },
+      "referencesToRepoint": null,
+      "metadataTransfer": [],
+      "expectedFinal": null,
+      "phase3cCanonicalRecordTouched": false
+    },
+    {
+      "productionId": "d7870d0940a3ce0b",
+      "name": "Ranged Disarm",
+      "treeId": "13776eed744d410c",
+      "treeName": "Warrior",
+      "group": "DEFERRED_PRODUCTION_ONLY",
+      "finalDisposition": "REVIEW_REQUIRED",
+      "survivorId": null,
+      "adjudicationStatus": "PENDING_3D2",
+      "evidence": {
+        "status": "NOT_YET_ADJUDICATED",
+        "census": "see data/audits/talent-phase-3d-production-extras-census.json",
+        "provisional": {
+          "value": "REVIEW_REQUIRED",
+          "basis": "tree exists in canon; talent is not a canonical member",
+          "confidence": "LOW"
+        }
+      },
+      "referencesToRepoint": null,
+      "metadataTransfer": [],
+      "expectedFinal": null,
+      "phase3cCanonicalRecordTouched": false
+    },
+    {
+      "productionId": "d9cb414fe4734507",
+      "name": "Mass Cloning",
+      "treeId": "8e44e56069274319",
+      "treeName": "Cloner",
+      "group": "DEFERRED_PRODUCTION_ONLY",
+      "finalDisposition": "REVIEW_REQUIRED",
+      "survivorId": null,
+      "adjudicationStatus": "PENDING_3D2",
+      "evidence": {
+        "status": "NOT_YET_ADJUDICATED",
+        "census": "see data/audits/talent-phase-3d-production-extras-census.json",
+        "provisional": {
+          "value": "REVIEW_REQUIRED",
+          "basis": "registry flags repo-only noncanonical/homebrew; needs source proof",
+          "confidence": "LOW"
+        }
+      },
+      "referencesToRepoint": null,
+      "metadataTransfer": [],
+      "expectedFinal": null,
+      "phase3cCanonicalRecordTouched": false
+    },
+    {
+      "productionId": "e09d40421ade49e8",
+      "name": "Binding Sickle",
+      "treeId": "ad16f3e5f4f7441b",
+      "treeName": "Dathomiri Witch",
+      "group": "DEFERRED_PRODUCTION_ONLY",
+      "finalDisposition": "REVIEW_REQUIRED",
+      "survivorId": null,
+      "adjudicationStatus": "PENDING_3D2",
+      "evidence": {
+        "status": "NOT_YET_ADJUDICATED",
+        "census": "see data/audits/talent-phase-3d-production-extras-census.json",
+        "provisional": {
+          "value": "KEEP_NONBOOK_SUPPORTED",
+          "basis": "registry status SOURCE_VERIFIED_SPECIAL_TREE; publication evidence to be confirmed",
+          "confidence": "LOW"
+        }
+      },
+      "referencesToRepoint": null,
+      "metadataTransfer": [],
+      "expectedFinal": null,
+      "phase3cCanonicalRecordTouched": false
+    },
+    {
+      "productionId": "e6055a514a784387",
+      "name": "Akk Dog Master",
+      "treeId": "37f3554a2f30425a",
+      "treeName": "Exceptional Followers",
+      "group": "DEFERRED_PRODUCTION_ONLY",
+      "finalDisposition": "REVIEW_REQUIRED",
+      "survivorId": null,
+      "adjudicationStatus": "PENDING_3D2",
+      "evidence": {
+        "status": "NOT_YET_ADJUDICATED",
+        "census": "see data/audits/talent-phase-3d-production-extras-census.json",
+        "provisional": {
+          "value": "REVIEW_REQUIRED",
+          "basis": "registry flags repo-only noncanonical/homebrew; needs source proof (name appears in sourcebook text)",
+          "confidence": "LOW"
+        }
+      },
+      "referencesToRepoint": null,
+      "metadataTransfer": [],
+      "expectedFinal": null,
+      "phase3cCanonicalRecordTouched": false
+    },
+    {
+      "productionId": "e9541e13afbb4a41",
+      "name": "Steady Strike",
+      "treeId": "fc978e442f544dbe",
+      "treeName": "Defensive Duelist",
+      "group": "DEFERRED_PRODUCTION_ONLY",
+      "finalDisposition": "REVIEW_REQUIRED",
+      "survivorId": null,
+      "adjudicationStatus": "PENDING_3D2",
+      "evidence": {
+        "status": "NOT_YET_ADJUDICATED",
+        "census": "see data/audits/talent-phase-3d-production-extras-census.json",
+        "provisional": {
+          "value": "REVIEW_REQUIRED",
+          "basis": "registry flags repo-only noncanonical/homebrew; needs source proof",
+          "confidence": "LOW"
+        }
+      },
+      "referencesToRepoint": null,
+      "metadataTransfer": [],
+      "expectedFinal": null,
+      "phase3cCanonicalRecordTouched": false
+    },
+    {
+      "productionId": "ea6ee6fad799491e",
+      "name": "Jedi Healer",
+      "treeId": "e99cfa9db8493573",
+      "treeName": "Jedi Consular",
+      "group": "DEFERRED_PRODUCTION_ONLY",
+      "finalDisposition": "REVIEW_REQUIRED",
+      "survivorId": null,
+      "adjudicationStatus": "PENDING_3D2",
+      "evidence": {
+        "status": "NOT_YET_ADJUDICATED",
+        "census": "see data/audits/talent-phase-3d-production-extras-census.json",
+        "provisional": {
+          "value": "REVIEW_REQUIRED",
+          "basis": "tree exists in canon; talent is not a canonical member",
+          "confidence": "LOW"
+        }
+      },
+      "referencesToRepoint": null,
+      "metadataTransfer": [],
+      "expectedFinal": null,
+      "phase3cCanonicalRecordTouched": false
+    },
+    {
+      "productionId": "ebc1d6e79fa543c9",
+      "name": "Steady Hands",
+      "treeId": "c1cf52502cf74435",
+      "treeName": "Treatment",
+      "group": "DEFERRED_PRODUCTION_ONLY",
+      "finalDisposition": "REVIEW_REQUIRED",
+      "survivorId": null,
+      "adjudicationStatus": "PENDING_3D2",
+      "evidence": {
+        "status": "NOT_YET_ADJUDICATED",
+        "census": "see data/audits/talent-phase-3d-production-extras-census.json",
+        "provisional": {
+          "value": "REVIEW_REQUIRED",
+          "basis": "registry flags repo-only noncanonical/homebrew; needs source proof",
+          "confidence": "LOW"
+        }
+      },
+      "referencesToRepoint": null,
+      "metadataTransfer": [],
+      "expectedFinal": null,
+      "phase3cCanonicalRecordTouched": false
+    },
+    {
+      "productionId": "f0851e0e5a1ac771",
+      "name": "Multiattack Proficiency (advanced melee)",
+      "treeId": "1381bb8c9a838279",
+      "treeName": "Melee Duelist",
+      "group": "DEFERRED_PRODUCTION_ONLY",
+      "finalDisposition": "REVIEW_REQUIRED",
+      "survivorId": null,
+      "adjudicationStatus": "PENDING_3D2",
+      "evidence": {
+        "status": "NOT_YET_ADJUDICATED",
+        "census": "see data/audits/talent-phase-3d-production-extras-census.json",
+        "provisional": {
+          "value": "REVIEW_REQUIRED",
+          "basis": "tree exists in canon; talent is not a canonical member",
+          "confidence": "LOW"
+        }
+      },
+      "referencesToRepoint": null,
+      "metadataTransfer": [],
+      "expectedFinal": null,
+      "phase3cCanonicalRecordTouched": false
+    },
+    {
+      "productionId": "f123e0682ef74583",
+      "name": "Reference Book: Star Wars Saga Edition Starships of the Galaxy",
+      "treeId": "d6b4331c0e31f7e3",
+      "treeName": "Sense",
+      "group": "DEFERRED_PRODUCTION_ONLY",
+      "finalDisposition": "REVIEW_REQUIRED",
+      "survivorId": null,
+      "adjudicationStatus": "PENDING_3D2",
+      "evidence": {
+        "status": "NOT_YET_ADJUDICATED",
+        "census": "see data/audits/talent-phase-3d-production-extras-census.json",
+        "provisional": {
+          "value": "KEEP_NONBOOK_SUPPORTED",
+          "basis": "registry status SOURCE_VERIFIED_SPECIAL_TREE; publication evidence to be confirmed",
+          "confidence": "LOW"
+        }
+      },
+      "referencesToRepoint": null,
+      "metadataTransfer": [],
+      "expectedFinal": null,
+      "phase3cCanonicalRecordTouched": false
+    },
+    {
+      "productionId": "f2df5596a9db40c1",
+      "name": "Blackguard Initiate",
+      "treeId": "d2535361d1b146cd",
+      "treeName": "Blackguard Wilder",
+      "group": "DEFERRED_PRODUCTION_ONLY",
+      "finalDisposition": "REVIEW_REQUIRED",
+      "survivorId": null,
+      "adjudicationStatus": "PENDING_3D2",
+      "evidence": {
+        "status": "NOT_YET_ADJUDICATED",
+        "census": "see data/audits/talent-phase-3d-production-extras-census.json",
+        "provisional": {
+          "value": "REVIEW_REQUIRED",
+          "basis": "registry flags repo-only noncanonical/homebrew; needs source proof",
+          "confidence": "LOW"
+        }
+      },
+      "referencesToRepoint": null,
+      "metadataTransfer": [],
+      "expectedFinal": null,
+      "phase3cCanonicalRecordTouched": false
+    },
+    {
+      "productionId": "f5a4088480c005ae",
+      "name": "Dastardly Attack",
+      "treeId": "67b59e020c1660eb",
+      "treeName": "Misfortune",
+      "group": "DEFERRED_PRODUCTION_ONLY",
+      "finalDisposition": "REVIEW_REQUIRED",
+      "survivorId": null,
+      "adjudicationStatus": "PENDING_3D2",
+      "evidence": {
+        "status": "NOT_YET_ADJUDICATED",
+        "census": "see data/audits/talent-phase-3d-production-extras-census.json",
+        "provisional": {
+          "value": "REVIEW_REQUIRED",
+          "basis": "tree exists in canon; talent is not a canonical member",
+          "confidence": "LOW"
+        }
+      },
+      "referencesToRepoint": null,
+      "metadataTransfer": [],
+      "expectedFinal": null,
+      "phase3cCanonicalRecordTouched": false
+    },
+    {
+      "productionId": "f785208aa6774cd7",
+      "name": "Dark Side Maelstrom",
+      "treeId": "de95d37c72b1c4cd",
+      "treeName": "Dark Side",
+      "group": "DEFERRED_PRODUCTION_ONLY",
+      "finalDisposition": "REVIEW_REQUIRED",
+      "survivorId": null,
+      "adjudicationStatus": "PENDING_3D2",
+      "evidence": {
+        "status": "NOT_YET_ADJUDICATED",
+        "census": "see data/audits/talent-phase-3d-production-extras-census.json",
+        "provisional": {
+          "value": "KEEP_NONBOOK_SUPPORTED",
+          "basis": "registry status SOURCE_VERIFIED_SPECIAL_TREE; publication evidence to be confirmed",
+          "confidence": "LOW"
+        }
+      },
+      "referencesToRepoint": null,
+      "metadataTransfer": [],
+      "expectedFinal": null,
+      "phase3cCanonicalRecordTouched": false
+    },
+    {
+      "productionId": "f9352f317ad2f695",
+      "name": "Stolen Form",
+      "treeId": "d1037bc7a08ea80b",
+      "treeName": "Sith",
+      "group": "DEFERRED_PRODUCTION_ONLY",
+      "finalDisposition": "REVIEW_REQUIRED",
+      "survivorId": null,
+      "adjudicationStatus": "PENDING_3D2",
+      "evidence": {
+        "status": "NOT_YET_ADJUDICATED",
+        "census": "see data/audits/talent-phase-3d-production-extras-census.json",
+        "provisional": {
+          "value": "REVIEW_REQUIRED",
+          "basis": "tree exists in canon; talent is not a canonical member",
+          "confidence": "LOW"
+        }
+      },
+      "referencesToRepoint": null,
+      "metadataTransfer": [],
+      "expectedFinal": null,
+      "phase3cCanonicalRecordTouched": false
+    },
+    {
+      "productionId": "fbaab00b6eab02a3",
+      "name": "Mercenary's Teamwork",
+      "treeId": "4007fa87192b5884",
+      "treeName": "Mercenary",
+      "group": "DEFERRED_PRODUCTION_ONLY",
+      "finalDisposition": "REVIEW_REQUIRED",
+      "survivorId": null,
+      "adjudicationStatus": "PENDING_3D2",
+      "evidence": {
+        "status": "NOT_YET_ADJUDICATED",
+        "census": "see data/audits/talent-phase-3d-production-extras-census.json",
+        "provisional": {
+          "value": "REVIEW_REQUIRED",
+          "basis": "tree exists in canon; talent is not a canonical member",
+          "confidence": "LOW"
+        }
+      },
+      "referencesToRepoint": null,
+      "metadataTransfer": [],
+      "expectedFinal": null,
+      "phase3cCanonicalRecordTouched": false
+    },
+    {
+      "productionId": "fd87928650da45fd",
+      "name": "Poisoncraft",
+      "treeId": "00cb74839a524276",
+      "treeName": "Science",
+      "group": "DEFERRED_PRODUCTION_ONLY",
+      "finalDisposition": "REVIEW_REQUIRED",
+      "survivorId": null,
+      "adjudicationStatus": "PENDING_3D2",
+      "evidence": {
+        "status": "NOT_YET_ADJUDICATED",
+        "census": "see data/audits/talent-phase-3d-production-extras-census.json",
+        "provisional": {
+          "value": "REVIEW_REQUIRED",
+          "basis": "registry flags repo-only noncanonical/homebrew; needs source proof",
+          "confidence": "LOW"
+        }
+      },
+      "referencesToRepoint": null,
+      "metadataTransfer": [],
+      "expectedFinal": null,
+      "phase3cCanonicalRecordTouched": false
+    }
+  ]
+}
