@@ -70,6 +70,7 @@ function getTreeIdentityKeys(tree) {
 function getClaimedTalentRefs(tree, registryEntry = null) {
   return [...new Set([
     ...(Array.isArray(registryEntry?.talents) ? registryEntry.talents : []),
+    ...(Array.isArray(registryEntry?.talentIds) ? registryEntry.talentIds : []),
     ...(Array.isArray(tree?.talentNames) ? tree.talentNames : []),
     ...(Array.isArray(tree?.talentIds) ? tree.talentIds : []),
     ...(Array.isArray(tree?.system?.talentNames) ? tree.system.talentNames : []),
@@ -119,6 +120,7 @@ async function loadRegistry() {
         for (const tree of data) {
           if (!tree?.id || !Array.isArray(tree.talents)) continue;
           const keys = [
+            tree.sourceId,
             tree.id,
             tree.key,
             tree.name,
@@ -258,9 +260,10 @@ function isStrictRegistryTree(tree, registryEntry = null) {
 function tryRegistryLookup(registry, tree) {
   if (!tree || !registry) return null;
 
+  // sourceId first: same-name trees (Squad Leader) share id/name keys; the pack _id is the unambiguous one.
   const keys = [
-    tree.id,
     tree.sourceId,
+    tree.id,
     tree.key,
     tree.name,
     tree.displayName,
@@ -367,6 +370,22 @@ function emitMembershipAudit(tree, audit) {
   }
 }
 
+const PACK_ID_PATTERN = /^[0-9a-f]{16}$/;
+
+/**
+ * A talent that explicitly claims a DIFFERENT tree by pack _id is not a member of this tree. Name-based fallbacks
+ * (talentNames, category scans, shared display names) must not override that: SWSE reuses names across trees on
+ * purpose (Core vs JATM Charm Beast) and two trees can share a display name (Squad Leader). Legacy slug treeIds are
+ * left to the existing name logic.
+ */
+function dropForeignTreeClaims(talents, tree) {
+  if (!Array.isArray(talents) || !PACK_ID_PATTERN.test(String(tree?.sourceId ?? ''))) return talents;
+  return talents.filter(talent => {
+    const claimed = String(talent?.system?.treeId ?? talent?.treeId ?? '').trim();
+    return !PACK_ID_PATTERN.test(claimed) || claimed === tree.sourceId;
+  });
+}
+
 /**
  * Get talent membership for a tree with additive source merging.
  *
@@ -395,7 +414,12 @@ export async function getTalentMembership(tree) {
   if (registryEntry && Array.isArray(registryEntry.talents)) {
     methodsTried.push('registry-lookup');
     const registryResolved = [];
-    for (const talentRef of registryEntry.talents) {
+    // Generated entries carry talentIds: resolve by ID so same-name talents in different trees
+    // (Core vs JATM Charm Beast) are never conflated. Legacy entries only have names.
+    const registryRefs = Array.isArray(registryEntry.talentIds) && registryEntry.talentIds.length
+      ? registryEntry.talentIds
+      : registryEntry.talents;
+    for (const talentRef of registryRefs) {
       const talent = resolveTalentReference(talentRef);
       if (talent) registryResolved.push(talent);
     }
@@ -412,7 +436,7 @@ export async function getTalentMembership(tree) {
         resolvedCount: strictList.length,
         resolvedTalents: strictList,
       });
-      return strictList;
+      return dropForeignTreeClaims(strictList, tree);
     }
 
     mergeTalentList(merged, registryResolved, 'registry-lookup', seen, sourceStats);
@@ -435,8 +459,9 @@ export async function getTalentMembership(tree) {
     resolvedTalents: merged,
   });
 
-  if (merged.length > 0) {
-    return merged;
+  const owned = dropForeignTreeClaims(merged, tree);
+  if (owned.length > 0) {
+    return owned;
   }
 
   emitDiagnostic(tree, methodsTried);

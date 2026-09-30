@@ -37,7 +37,7 @@ const MANIFESTS = [
   'scum-and-villainy', 'starships-of-the-galaxy', 'threats-of-the-galaxy', 'unknown-regions'
 ].map(k => `data/audits/talent-phase-3b-${k}-manifest.json`);
 
-export const BLOCKER_SAME_NAME_IN_TREE = 'projected state has no same-name talent pair inside one tree (repo membership audit hard-fail)';
+export const SAME_NAME_IN_TREE_CHECK = 'no unapproved same-name talent pair inside one tree (only the 2 certified protected review-extra twins are tolerated)';
 const clone = v => structuredClone(v);
 const readText = rel => fs.readFileSync(path.join(ROOT, rel), 'utf8');
 const readJson = rel => JSON.parse(readText(rel));
@@ -382,18 +382,27 @@ export function checkInvariants(inputs, after, { reference = null } = {}) {
     ]);
     for (const [id, t] of RB) if (!touched.has(id)) assert.equal(JSON.stringify(R.get(id)), JSON.stringify(t), 'untouched tree changed ' + id);
   });
-  check(BLOCKER_SAME_NAME_IN_TREE, () => {
-    // Mirrors tools/audit-talent-tree-membership.mjs `duplicateTalentNamesWithinTree` (a hard failure in CI).
-    const bad = [];
+  check(SAME_NAME_IN_TREE_CHECK, () => {
+    // Mirrors tools/audit-talent-tree-membership.mjs `duplicateTalentNamesWithinTree` including its ID-specific
+    // exemption for the certified review extras (derived from the closeout, tolerated only as a pair in their tree).
+    const extras = new Map(closeout.reviewExtras.map(x => [x.productionRecordId, new Set(x.treeClaims.map(c => c.treeId))]));
+    const bad = []; let tolerated = 0;
     for (const t of after.trees) {
       const seen = new Map();
       for (const i of t.system.talentIds) {
         const k = (T.get(i)?.name ?? '').normalize('NFKD').replace(/[^\w]+/g, '').toLowerCase();
         seen.set(k, [...(seen.get(k) ?? []), i]);
       }
-      for (const [k, v] of seen) if (v.length > 1) bad.push(t.name + ': ' + T.get(v[0]).name + ' -> ' + v.join(','));
+      for (const v of seen.values()) {
+        if (v.length < 2) continue;
+        const ex = v.filter(i => extras.has(i));
+        if (v.length === 2 && ex.length === 1 && extras.get(ex[0]).has(t._id)) tolerated++;
+        else bad.push(t.name + ': ' + T.get(v[0]).name + ' -> ' + v.join(','));
+      }
     }
-    assert.equal(bad.length, 0, bad.length + ' same-name pairs within a tree: ' + bad.join(' | '));
+    assert.equal(bad.length, 0, bad.length + ' unapproved same-name pairs within a tree: ' + bad.join(' | '));
+    assert.equal(tolerated, 2, 'expected exactly the 2 certified protected review-extra twins');
+    return tolerated + ' protected review-extra twins tolerated';
   });
   if (reference !== undefined && reference !== null) {
     check('idempotence: second application yields deep-equal state (order-sensitive)', () => {
@@ -413,6 +422,11 @@ export function runAudit() {
 
 const isMain = process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url);
 if (isMain) {
+  const { detectPackState } = await import('./apply-talent-phase-3c.mjs');
+  if (detectPackState().state !== 'PRE_STATE') {
+    console.log('SKIP: production packs are not the certified pre-state; use node tools/apply-talent-phase-3c.mjs --verify');
+    process.exit(0);
+  }
   const { results } = runAudit();
   if (process.argv.includes('--json')) console.log(JSON.stringify(results, null, 2));
   else for (const r of results) console.log((r.ok ? 'PASS' : 'FAIL') + '  ' + r.id + (r.detail ? '  [' + r.detail + ']' : ''));

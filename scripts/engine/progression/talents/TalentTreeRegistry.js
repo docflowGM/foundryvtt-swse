@@ -71,7 +71,8 @@ export class TalentTreeRegistry {
           if (reqId) graph.linkRequirement(n.id, reqId);
         }
       }
-      this.trees.set(tree.name, graph);
+      // Same-name trees (Squad Leader in two books) must not overwrite each other in the name-keyed map.
+      this.trees.set(this.trees.has(tree.name) && tree.sourceId ? `${tree.name} (${tree.sourceId})` : tree.name, graph);
     }
 
     SWSELogger.log(`[TALENT-TREE-REGISTRY] build: Built ${this.trees.size} graphs from canonical talent tree data`);
