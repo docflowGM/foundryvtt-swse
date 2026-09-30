@@ -1,0 +1,702 @@
+{
+  "schemaVersion": 1,
+  "phase": "3E-5a",
+  "status": "DEFECT_MANIFEST_AWAITING_PDF",
+  "productionMutationPerformed": false,
+  "rule": "Finite list. Scans nominate; only entries here can ever be applied, and only once verification.status is PDF_VERIFIED with the printed text recorded.",
+  "scansUsed": [
+    "rare-token scan of canonical text (3E-2b)",
+    "OCR-confusable scan (mid-word capitals, Il/1I, stray \". P\")",
+    "stray-digit-in-sentence scan"
+  ],
+  "scanLimits": "Heuristic scans cannot prove absence of damage; they bound the nominated universe, they do not certify the corpus text. A full-text PDF comparison is out of 3E scope.",
+  "counts": {
+    "defects": 17,
+    "byConfidence": {
+      "CERTAIN": 13,
+      "LIKELY": 2,
+      "NEEDS_PRINT": 2
+    },
+    "ownerTranscriptionRequired": 2,
+    "noChangeCandidates": 6,
+    "recordsAffected": 16
+  },
+  "entries": [
+    {
+      "id": "TD-01",
+      "productionId": "049820827d7ef32b",
+      "name": "Cover Fire",
+      "canonicalIdentity": "Saga Edition Core Rulebook|Commando|Cover Fire",
+      "publication": {
+        "sourcebook": "Saga Edition Core Rulebook",
+        "page": 52
+      },
+      "group": "OCR_DEFECT_IN_NAME_REFERENCE",
+      "find": "Battie Analysis",
+      "replace": "Battle Analysis",
+      "fields": {
+        "prerequisites": {
+          "productionOccurrences": 1,
+          "canonicalOccurrences": 1,
+          "productionValue": "Battie Analysis.",
+          "canonicalValue": "Battie Analysis."
+        }
+      },
+      "confidence": "CERTAIN",
+      "evidence": "the prerequisite is the Clone Wars talent \"Battle Analysis\" (CWCG TXT 14172/15054/18359)",
+      "action": "REPLACE",
+      "verification": {
+        "status": "PDF_REQUIRED",
+        "verifiedText": null,
+        "question": "Confirm the printed text of Cover Fire (Saga Edition Core Rulebook p.52) reads \"Battle Analysis\" where production has \"Battie Analysis\""
+      }
+    },
+    {
+      "id": "TD-02",
+      "productionId": "d043a3c0494345ac",
+      "name": "Primitive Block",
+      "canonicalIdentity": "Saga Edition Core Rulebook|Force Item|Primitive Block",
+      "publication": {
+        "sourcebook": "Knights of the Old Republic Campaign Guide",
+        "page": 38
+      },
+      "group": "OCR_DEFECT_IN_NAME_REFERENCE",
+      "find": "Enpower Weapon",
+      "replace": "Empower Weapon",
+      "fields": {
+        "prerequisites": {
+          "productionOccurrences": 1,
+          "canonicalOccurrences": 1,
+          "productionValue": "Enpower Weapon",
+          "canonicalValue": "Enpower Weapon"
+        }
+      },
+      "confidence": "CERTAIN",
+      "evidence": "the prerequisite is the Core talent \"Empower Weapon\" (Core TXT 20357, index 27973)",
+      "action": "REPLACE",
+      "verification": {
+        "status": "PDF_REQUIRED",
+        "verifiedText": null,
+        "question": "Confirm the printed text of Primitive Block (Knights of the Old Republic Campaign Guide p.38) reads \"Empower Weapon\" where production has \"Enpower Weapon\""
+      }
+    },
+    {
+      "id": "TD-03",
+      "productionId": "7bc10cb88a6a0c92",
+      "name": "Relentless",
+      "canonicalIdentity": "Saga Edition Core Rulebook|Bounty Hunter|Relentless",
+      "publication": {
+        "sourcebook": "Saga Edition Core Rulebook",
+        "page": 208
+      },
+      "group": "STRAY_OCR_FRAGMENT",
+      "find": "Hunter's Target. P",
+      "replace": "Hunter's Target.",
+      "fields": {
+        "prerequisites": {
+          "productionOccurrences": 1,
+          "canonicalOccurrences": 1,
+          "productionValue": "Hunter's Mark, Hunter's Target. P",
+          "canonicalValue": "Hunter's Mark, Hunter's Target. P"
+        }
+      },
+      "confidence": "LIKELY",
+      "evidence": "Core TXT 19703 prints \"Prerequisites: Hunter's Mark, Hunter's Target. P\" with the stray \"P\" from the next text run; the talent list ends at Hunter's Target",
+      "action": "REPLACE",
+      "verification": {
+        "status": "PDF_REQUIRED",
+        "verifiedText": null,
+        "question": "Confirm the printed text of Relentless (Saga Edition Core Rulebook p.208) reads \"Hunter's Target.\" where production has \"Hunter's Target. P\""
+      }
+    },
+    {
+      "id": "TD-04",
+      "productionId": "cb981391d4d16c59",
+      "name": "Shift Defense I",
+      "canonicalIdentity": "Saga Edition Core Rulebook|Military Tactics|Shift Defense I",
+      "publication": {
+        "sourcebook": "Saga Edition Core Rulebook",
+        "page": 222
+      },
+      "group": "MISATTACHED_PREREQUISITE",
+      "find": "Shift Defense 1, Shift Defense Il",
+      "replace": "",
+      "fields": {
+        "prerequisites": {
+          "productionOccurrences": 1,
+          "canonicalOccurrences": 1,
+          "productionValue": "Shift Defense 1, Shift Defense Il",
+          "canonicalValue": "Shift Defense 1, Shift Defense Il"
+        }
+      },
+      "confidence": "LIKELY",
+      "evidence": "Core TXT 21224 prints Shift Defense I with no prerequisite; the string belongs to Shift Defense III (Core TXT 21240 \"Prerequisites: Shift Defense 1, Shift Defense Il\"), whose own record already reads \"Shift Defense I; Shift Defense II\". Not merely OCR: the prerequisite of tier I is wrong (and self-referential).",
+      "action": "REPLACE",
+      "verification": {
+        "status": "PDF_REQUIRED",
+        "verifiedText": null,
+        "question": "Confirm the printed text of Shift Defense I (Saga Edition Core Rulebook p.222) reads \"\" where production has \"Shift Defense 1, Shift Defense Il\""
+      }
+    },
+    {
+      "id": "TD-05",
+      "productionId": "74fb6b37af983a4c",
+      "name": "Hunter's Mark",
+      "canonicalIdentity": "Saga Edition Core Rulebook|Bounty Hunter|Hunter's Mark",
+      "publication": {
+        "sourcebook": "Saga Edition Core Rulebook",
+        "page": 208
+      },
+      "group": "MULTI_TOKEN_OCR_DAMAGE",
+      "find": "you 4 target -1 step along the condition track if the ateam hits",
+      "replace": null,
+      "fields": {
+        "benefit": {
+          "productionOccurrences": 1,
+          "canonicalOccurrences": 1,
+          "productionValue": "If you aim before making ranged attack (see Aim, page 154), you 4 target -1 step along the condition track if the ateam hits (see Conditions, page 148).",
+          "canonicalValue": "If you aim before making ranged attack (see Aim, page 154), you 4 target -1 step along the condition track if the ateam hits (see Conditions, page 148)."
+        },
+        "description": {
+          "productionOccurrences": 1,
+          "canonicalOccurrences": 1,
+          "productionValue": "If you aim before making ranged attack (see Aim, page 154), you 4 target -1 step along the condition track if the ateam hits (see Conditions, page 148).",
+          "canonicalValue": "If you aim before making ranged attack (see Aim, page 154), you 4 target -1 step along the condition track if the ateam hits (see Conditions, page 148)."
+        },
+        "summary": {
+          "productionOccurrences": 1,
+          "canonicalOccurrences": 1,
+          "productionValue": "If you aim before making ranged attack , you 4 target -1 step along the condition track if the ateam hits .",
+          "canonicalValue": "If you aim before making ranged attack , you 4 target -1 step along the condition track if the ateam hits ."
+        }
+      },
+      "confidence": "NEEDS_PRINT",
+      "evidence": "Core TXT 19643-19645 is garbled in three places (\"ranged attack\" missing its article, \"you 4 target\", \"ateam\"); the exact printed sentence cannot be reconstructed from the TXT",
+      "action": "OWNER_TRANSCRIPTION_REQUIRED",
+      "verification": {
+        "status": "PDF_REQUIRED",
+        "verifiedText": null,
+        "question": "Transcribe the exact printed text of Hunter's Mark (Saga Edition Core Rulebook p.208) around: \"you 4 target -1 step along the condition track if the ateam hits\""
+      }
+    },
+    {
+      "id": "TD-06",
+      "productionId": "463ae052e705eaf3",
+      "name": "Wrong Decision",
+      "canonicalIdentity": "Knights of the Old Republic Campaign Guide|Corporate Power|Wrong Decision",
+      "publication": {
+        "sourcebook": "Knights of the Old Republic Campaign Guide",
+        "page": 43
+      },
+      "group": "OCR_LOST_SPACE",
+      "find": "aswift",
+      "replace": "a swift",
+      "fields": {
+        "benefit": {
+          "productionOccurrences": 1,
+          "canonicalOccurrences": 1,
+          "productionValue": "Each time you are attacked, the opponent that attacked you takes a -2 morale penalty to its Will Defense until the end of your next turn. This penalty is not cumulative, so if a target makes multiple attacks against you it only incurs the penalty once per turn.\n\nExecutive Leadership\n\nAs aswift action, as many times an encounter equal to half your corporate agent level, you can grant an ally within line of sight a temporary boost to theirspeed, attacks, or defenses. Until the end of their turn they can gain one of the following benefits (your choice): increase base speed by 2 squares, a +2 morale bonus to attack rolls, or a +2 morale bonus to all defenses.",
+          "canonicalValue": "Each time you are attacked, the opponent that attacked you takes a -2 morale penalty to its Will Defense until the end of your next turn. This penalty is not cumulative, so if a target makes multiple attacks against you it only incurs the penalty once per turn.\n\nExecutive Leadership\n\nAs aswift action, as many times an encounter equal to half your corporate agent level, you can grant an ally within line of sight a temporary boost to theirspeed, attacks, or defenses. Until the end of their turn they can gain one of the following benefits (your choice): increase base speed by 2 squares, a +2 morale bonus to attack rolls, or a +2 morale bonus to all defenses."
+        },
+        "description": {
+          "productionOccurrences": 1,
+          "canonicalOccurrences": 1,
+          "productionValue": "Each time you are attacked, the opponent that attacked you takes a -2 morale penalty to its Will Defense until the end of your next turn. This penalty is not cumulative, so if a target makes multiple attacks against you it only incurs the penalty once per turn.\n\nExecutive Leadership\n\nAs aswift action, as many times an encounter equal to half your corporate agent level, you can grant an ally within line of sight a temporary boost to theirspeed, attacks, or defenses. Until the end of their turn they can gain one of the following benefits (your choice): increase base speed by 2 squares, a +2 morale bonus to attack rolls, or a +2 morale bonus to all defenses.",
+          "canonicalValue": "Each time you are attacked, the opponent that attacked you takes a -2 morale penalty to its Will Defense until the end of your next turn. This penalty is not cumulative, so if a target makes multiple attacks against you it only incurs the penalty once per turn.\n\nExecutive Leadership\n\nAs aswift action, as many times an encounter equal to half your corporate agent level, you can grant an ally within line of sight a temporary boost to theirspeed, attacks, or defenses. Until the end of their turn they can gain one of the following benefits (your choice): increase base speed by 2 squares, a +2 morale bonus to attack rolls, or a +2 morale bonus to all defenses."
+        }
+      },
+      "confidence": "CERTAIN",
+      "evidence": "\"As aswift action\" (KOTOR TXT 4037); the same book prints \"a swift action\" elsewhere (TXT 4022)",
+      "action": "REPLACE",
+      "verification": {
+        "status": "PDF_REQUIRED",
+        "verifiedText": null,
+        "question": "Confirm the printed text of Wrong Decision (Knights of the Old Republic Campaign Guide p.43) reads \"a swift\" where production has \"aswift\""
+      }
+    },
+    {
+      "id": "TD-07",
+      "productionId": "463ae052e705eaf3",
+      "name": "Wrong Decision",
+      "canonicalIdentity": "Knights of the Old Republic Campaign Guide|Corporate Power|Wrong Decision",
+      "publication": {
+        "sourcebook": "Knights of the Old Republic Campaign Guide",
+        "page": 43
+      },
+      "group": "OCR_LOST_SPACE",
+      "find": "theirspeed",
+      "replace": "their speed",
+      "fields": {
+        "benefit": {
+          "productionOccurrences": 1,
+          "canonicalOccurrences": 1,
+          "productionValue": "Each time you are attacked, the opponent that attacked you takes a -2 morale penalty to its Will Defense until the end of your next turn. This penalty is not cumulative, so if a target makes multiple attacks against you it only incurs the penalty once per turn.\n\nExecutive Leadership\n\nAs aswift action, as many times an encounter equal to half your corporate agent level, you can grant an ally within line of sight a temporary boost to theirspeed, attacks, or defenses. Until the end of their turn they can gain one of the following benefits (your choice): increase base speed by 2 squares, a +2 morale bonus to attack rolls, or a +2 morale bonus to all defenses.",
+          "canonicalValue": "Each time you are attacked, the opponent that attacked you takes a -2 morale penalty to its Will Defense until the end of your next turn. This penalty is not cumulative, so if a target makes multiple attacks against you it only incurs the penalty once per turn.\n\nExecutive Leadership\n\nAs aswift action, as many times an encounter equal to half your corporate agent level, you can grant an ally within line of sight a temporary boost to theirspeed, attacks, or defenses. Until the end of their turn they can gain one of the following benefits (your choice): increase base speed by 2 squares, a +2 morale bonus to attack rolls, or a +2 morale bonus to all defenses."
+        },
+        "description": {
+          "productionOccurrences": 1,
+          "canonicalOccurrences": 1,
+          "productionValue": "Each time you are attacked, the opponent that attacked you takes a -2 morale penalty to its Will Defense until the end of your next turn. This penalty is not cumulative, so if a target makes multiple attacks against you it only incurs the penalty once per turn.\n\nExecutive Leadership\n\nAs aswift action, as many times an encounter equal to half your corporate agent level, you can grant an ally within line of sight a temporary boost to theirspeed, attacks, or defenses. Until the end of their turn they can gain one of the following benefits (your choice): increase base speed by 2 squares, a +2 morale bonus to attack rolls, or a +2 morale bonus to all defenses.",
+          "canonicalValue": "Each time you are attacked, the opponent that attacked you takes a -2 morale penalty to its Will Defense until the end of your next turn. This penalty is not cumulative, so if a target makes multiple attacks against you it only incurs the penalty once per turn.\n\nExecutive Leadership\n\nAs aswift action, as many times an encounter equal to half your corporate agent level, you can grant an ally within line of sight a temporary boost to theirspeed, attacks, or defenses. Until the end of their turn they can gain one of the following benefits (your choice): increase base speed by 2 squares, a +2 morale bonus to attack rolls, or a +2 morale bonus to all defenses."
+        }
+      },
+      "confidence": "CERTAIN",
+      "evidence": "KOTOR TXT 4039 reads \"theirspeed\" (lost space)",
+      "action": "REPLACE",
+      "verification": {
+        "status": "PDF_REQUIRED",
+        "verifiedText": null,
+        "question": "Confirm the printed text of Wrong Decision (Knights of the Old Republic Campaign Guide p.43) reads \"their speed\" where production has \"theirspeed\""
+      }
+    },
+    {
+      "id": "TD-08",
+      "productionId": "2056998b5afa4e00",
+      "name": "Drain Force",
+      "canonicalIdentity": "Saga Edition Core Rulebook|Sith|Drain Force",
+      "publication": {
+        "sourcebook": "Knights of the Old Republic Campaign Guide",
+        "page": 40
+      },
+      "group": "OCR_LOST_HYPHEN",
+      "find": "Forcesensitive",
+      "replace": "Force-sensitive",
+      "fields": {
+        "benefit": {
+          "productionOccurrences": 1,
+          "canonicalOccurrences": 1,
+          "productionValue": "Once per encounter, as a reaction when you damage a Forcesensitive opponent, the dark taint of your power allows you to sap some of the opponent's strength and covert it to personal power, regaining one spent Force power. Additionally, the target loses one Force Point.",
+          "canonicalValue": "Once per encounter, as a reaction when you damage a Forcesensitive opponent, the dark taint of your power allows you to sap some of the opponent's strength and covert it to personal power, regaining one spent Force power. Additionally, the target loses one Force Point."
+        },
+        "description": {
+          "productionOccurrences": 1,
+          "canonicalOccurrences": 1,
+          "productionValue": "Once per encounter, as a reaction when you damage a Forcesensitive opponent, the dark taint of your power allows you to sap some of the opponent's strength and covert it to personal power, regaining one spent Force power. Additionally, the target loses one Force Point.",
+          "canonicalValue": "Once per encounter, as a reaction when you damage a Forcesensitive opponent, the dark taint of your power allows you to sap some of the opponent's strength and covert it to personal power, regaining one spent Force power. Additionally, the target loses one Force Point."
+        },
+        "summary": {
+          "productionOccurrences": 1,
+          "canonicalOccurrences": 1,
+          "productionValue": "Once per encounter, as a reaction when you damage a Forcesensitive opponent, the dark taint of your power allows you to sap some of the opponent's strength and covert it to personal power, regaining one spent Force power.",
+          "canonicalValue": "Once per encounter, as a reaction when you damage a Forcesensitive opponent, the dark taint of your power allows you to sap some of the opponent's strength and covert it to personal power, regaining one spent Force power."
+        }
+      },
+      "confidence": "CERTAIN",
+      "evidence": "the books print \"Force-sensitive\" (e.g. KOTOR TXT 15343)",
+      "action": "REPLACE",
+      "verification": {
+        "status": "PDF_REQUIRED",
+        "verifiedText": null,
+        "question": "Confirm the printed text of Drain Force (Knights of the Old Republic Campaign Guide p.40) reads \"Force-sensitive\" where production has \"Forcesensitive\""
+      }
+    },
+    {
+      "id": "TD-09",
+      "productionId": "8c47c02ec74fa858",
+      "name": "Difficult to Sense",
+      "canonicalIdentity": "Legacy Era Campaign Guide|Jedi Refugee|Difficult to Sense",
+      "publication": {
+        "sourcebook": "Legacy Era Campaign Guide",
+        "page": 41
+      },
+      "group": "OCR_LOST_HYPHEN",
+      "find": "Forceusers",
+      "replace": "Force-users",
+      "fields": {
+        "benefit": {
+          "productionOccurrences": 1,
+          "canonicalOccurrences": 1,
+          "productionValue": "You are skilled at concealing your presence from other Force-users. You may reroll any opposed Use the Force check made to conceal your presence from someone who attempts to sense other Forceusers, keeping the better result.",
+          "canonicalValue": "You are skilled at concealing your presence from other Force-users. You may reroll any opposed Use the Force check made to conceal your presence from someone who attempts to sense other Forceusers, keeping the better result."
+        },
+        "description": {
+          "productionOccurrences": 1,
+          "canonicalOccurrences": 1,
+          "productionValue": "You are skilled at concealing your presence from other Force-users. You may reroll any opposed Use the Force check made to conceal your presence from someone who attempts to sense other Forceusers, keeping the better result.",
+          "canonicalValue": "You are skilled at concealing your presence from other Force-users. You may reroll any opposed Use the Force check made to conceal your presence from someone who attempts to sense other Forceusers, keeping the better result."
+        }
+      },
+      "confidence": "CERTAIN",
+      "evidence": "Legacy Era Campaign Guide TXT 3598/3602 prints \"Force-users\"",
+      "action": "REPLACE",
+      "verification": {
+        "status": "PDF_REQUIRED",
+        "verifiedText": null,
+        "question": "Confirm the printed text of Difficult to Sense (Legacy Era Campaign Guide p.41) reads \"Force-users\" where production has \"Forceusers\""
+      }
+    },
+    {
+      "id": "TD-10",
+      "productionId": "aeb8d3e495605f71",
+      "name": "Bring Them Back",
+      "canonicalIdentity": "Force Unleashed Campaign Guide|Advanced Medicine|Bring Them Back",
+      "publication": {
+        "sourcebook": "Force Unleashed Campaign Guide",
+        "page": 54
+      },
+      "group": "OCR_CONFUSABLE_LETTER",
+      "find": "haIf",
+      "replace": "half",
+      "fields": {
+        "benefit": {
+          "productionOccurrences": 1,
+          "canonicalOccurrences": 1,
+          "productionValue": "You can use the revivify application of the Treat Injury skill on a target that has died anytime within a number of rounds equal to one-haIf your heroic level.",
+          "canonicalValue": "You can use the revivify application of the Treat Injury skill on a target that has died anytime within a number of rounds equal to one-haIf your heroic level."
+        },
+        "description": {
+          "productionOccurrences": 1,
+          "canonicalOccurrences": 1,
+          "productionValue": "You can use the revivify application of the Treat Injury skill on a target that has died anytime within a number of rounds equal to one-haIf your heroic level.",
+          "canonicalValue": "You can use the revivify application of the Treat Injury skill on a target that has died anytime within a number of rounds equal to one-haIf your heroic level."
+        },
+        "summary": {
+          "productionOccurrences": 1,
+          "canonicalOccurrences": 1,
+          "productionValue": "You can use the revivify application of the Treat Injury skill on a target that has died anytime within a number of rounds equal to one-haIf your heroic level.",
+          "canonicalValue": "You can use the revivify application of the Treat Injury skill on a target that has died anytime within a number of rounds equal to one-haIf your heroic level."
+        }
+      },
+      "confidence": "CERTAIN",
+      "evidence": "capital \"I\" read for lowercase \"l\"; every other record prints \"one-half\"",
+      "action": "REPLACE",
+      "verification": {
+        "status": "PDF_REQUIRED",
+        "verifiedText": null,
+        "question": "Confirm the printed text of Bring Them Back (Force Unleashed Campaign Guide p.54) reads \"half\" where production has \"haIf\""
+      }
+    },
+    {
+      "id": "TD-11",
+      "productionId": "e9a5fe40ce95a053",
+      "name": "Hotwired Processor",
+      "canonicalIdentity": "Force Unleashed Campaign Guide|Specialized Droid|Hotwired Processor",
+      "publication": {
+        "sourcebook": "Force Unleashed Campaign Guide",
+        "page": 47
+      },
+      "group": "OCR_CONFUSABLE_LETTER",
+      "find": "haIf",
+      "replace": "half",
+      "fields": {
+        "benefit": {
+          "productionOccurrences": 1,
+          "canonicalOccurrences": 1,
+          "productionValue": "You gain temporary processing power, enhancing your mental attributes. When you hotwire your processor (a swift action), you gain a +5 circumstance bonus on Intelligence- and Wisdom-based skill checks and a +1 circumstance bonus on ranged attack rolls. A hotwiring lasts for a number of rounds equal to one-haIf your level (rounded down). When the hotwiring ends, you move -1 persistent step along the condition track. The penalties imposed by this condition persist until you receive repairs (using the repair droid application of the Mechanics skill).",
+          "canonicalValue": "You gain temporary processing power, enhancing your mental attributes. When you hotwire your processor (a swift action), you gain a +5 circumstance bonus on Intelligence- and Wisdom-based skill checks and a +1 circumstance bonus on ranged attack rolls. A hotwiring lasts for a number of rounds equal to one-haIf your level (rounded down). When the hotwiring ends, you move -1 persistent step along the condition track. The penalties imposed by this condition persist until you receive repairs (using the repair droid application of the Mechanics skill)."
+        },
+        "description": {
+          "productionOccurrences": 1,
+          "canonicalOccurrences": 1,
+          "productionValue": "You gain temporary processing power, enhancing your mental attributes. When you hotwire your processor (a swift action), you gain a +5 circumstance bonus on Intelligence- and Wisdom-based skill checks and a +1 circumstance bonus on ranged attack rolls. A hotwiring lasts for a number of rounds equal to one-haIf your level (rounded down). When the hotwiring ends, you move -1 persistent step along the condition track. The penalties imposed by this condition persist until you receive repairs (using the repair droid application of the Mechanics skill).",
+          "canonicalValue": "You gain temporary processing power, enhancing your mental attributes. When you hotwire your processor (a swift action), you gain a +5 circumstance bonus on Intelligence- and Wisdom-based skill checks and a +1 circumstance bonus on ranged attack rolls. A hotwiring lasts for a number of rounds equal to one-haIf your level (rounded down). When the hotwiring ends, you move -1 persistent step along the condition track. The penalties imposed by this condition persist until you receive repairs (using the repair droid application of the Mechanics skill)."
+        }
+      },
+      "confidence": "CERTAIN",
+      "evidence": "capital \"I\" read for lowercase \"l\"; every other record prints \"one-half\"",
+      "action": "REPLACE",
+      "verification": {
+        "status": "PDF_REQUIRED",
+        "verifiedText": null,
+        "question": "Confirm the printed text of Hotwired Processor (Force Unleashed Campaign Guide p.47) reads \"half\" where production has \"haIf\""
+      }
+    },
+    {
+      "id": "TD-12",
+      "productionId": "471f4294820ce5ec",
+      "name": "Influential Friends",
+      "canonicalIdentity": "Saga Edition Core Rulebook|Lineage|Influential Friends",
+      "publication": {
+        "sourcebook": "Force Unleashed Campaign Guide",
+        "page": 25
+      },
+      "group": "OCR_CONFUSABLE_LETTER",
+      "find": "haIf",
+      "replace": "half",
+      "fields": {
+        "benefit": {
+          "productionOccurrences": 1,
+          "canonicalOccurrences": 1,
+          "productionValue": "You have influential contacts within a certain organization, planet, or region who can provide concrete information to you on certain subjects. Once per day, you can have one of those contacts make a skill check on your behalf. The contact always takes 20 on the skill check (even if the skill would normally not allow taking 20) and has a skill modifier equal to 5 + one-haIf your heroic level. Contacting your influential allies and receiving the benefit of the skill check takes a number of minutes equal to 10 x the skill check result.",
+          "canonicalValue": "You have influential contacts within a certain organization, planet, or region who can provide concrete information to you on certain subjects. Once per day, you can have one of those contacts make a skill check on your behalf. The contact always takes 20 on the skill check (even if the skill would normally not allow taking 20) and has a skill modifier equal to 5 + one-haIf your heroic level. Contacting your influential allies and receiving the benefit of the skill check takes a number of minutes equal to 10 x the skill check result."
+        },
+        "description": {
+          "productionOccurrences": 1,
+          "canonicalOccurrences": 1,
+          "productionValue": "You have influential contacts within a certain organization, planet, or region who can provide concrete information to you on certain subjects. Once per day, you can have one of those contacts make a skill check on your behalf. The contact always takes 20 on the skill check (even if the skill would normally not allow taking 20) and has a skill modifier equal to 5 + one-haIf your heroic level. Contacting your influential allies and receiving the benefit of the skill check takes a number of minutes equal to 10 x the skill check result.",
+          "canonicalValue": "You have influential contacts within a certain organization, planet, or region who can provide concrete information to you on certain subjects. Once per day, you can have one of those contacts make a skill check on your behalf. The contact always takes 20 on the skill check (even if the skill would normally not allow taking 20) and has a skill modifier equal to 5 + one-haIf your heroic level. Contacting your influential allies and receiving the benefit of the skill check takes a number of minutes equal to 10 x the skill check result."
+        }
+      },
+      "confidence": "CERTAIN",
+      "evidence": "capital \"I\" read for lowercase \"l\"; every other record prints \"one-half\"",
+      "action": "REPLACE",
+      "verification": {
+        "status": "PDF_REQUIRED",
+        "verifiedText": null,
+        "question": "Confirm the printed text of Influential Friends (Force Unleashed Campaign Guide p.25) reads \"half\" where production has \"haIf\""
+      }
+    },
+    {
+      "id": "TD-13",
+      "productionId": "eb503c1c3fb945a6",
+      "name": "Power Boost",
+      "canonicalIdentity": "Force Unleashed Campaign Guide|Specialized Droid|Power Boost",
+      "publication": {
+        "sourcebook": "Scavenger's Guide to Droids",
+        "page": 28
+      },
+      "group": "OCR_CONFUSABLE_LETTER",
+      "find": "haIf",
+      "replace": "half",
+      "fields": {
+        "benefit": {
+          "productionOccurrences": 1,
+          "canonicalOccurrences": 1,
+          "productionValue": "You channel your power surge into a boost for your locomotion system. When you initiate a power surge, you can use one of the following bonuses with your installed locomotion system: Jump +4 squares (walking or wheeled locomotion), or increase hovering height by 4 squares (hovering locomotion). You can use this talent for a number of rounds equal to one-haIf your level (rounded down). At the end of a power boost, you move -1 persistent step on the condition track. The penalties imposed by this condition persist until you receive repairs (using the Repair Droid application of the Mechanics skill). You can use both Power Surge and Power Boost at the same time, but you must move -2 persistent steps on the condition track.",
+          "canonicalValue": "You channel your power surge into a boost for your locomotion system. When you initiate a power surge, you can use one of the following bonuses with your installed locomotion system: Jump +4 squares (walking or wheeled locomotion), or increase hovering height by 4 squares (hovering locomotion). You can use this talent for a number of rounds equal to one-haIf your level (rounded down). At the end of a power boost, you move -1 persistent step on the condition track. The penalties imposed by this condition persist until you receive repairs (using the Repair Droid application of the Mechanics skill). You can use both Power Surge and Power Boost at the same time, but you must move -2 persistent steps on the condition track."
+        },
+        "description": {
+          "productionOccurrences": 1,
+          "canonicalOccurrences": 1,
+          "productionValue": "You channel your power surge into a boost for your locomotion system. When you initiate a power surge, you can use one of the following bonuses with your installed locomotion system: Jump +4 squares (walking or wheeled locomotion), or increase hovering height by 4 squares (hovering locomotion). You can use this talent for a number of rounds equal to one-haIf your level (rounded down). At the end of a power boost, you move -1 persistent step on the condition track. The penalties imposed by this condition persist until you receive repairs (using the Repair Droid application of the Mechanics skill). You can use both Power Surge and Power Boost at the same time, but you must move -2 persistent steps on the condition track.",
+          "canonicalValue": "You channel your power surge into a boost for your locomotion system. When you initiate a power surge, you can use one of the following bonuses with your installed locomotion system: Jump +4 squares (walking or wheeled locomotion), or increase hovering height by 4 squares (hovering locomotion). You can use this talent for a number of rounds equal to one-haIf your level (rounded down). At the end of a power boost, you move -1 persistent step on the condition track. The penalties imposed by this condition persist until you receive repairs (using the Repair Droid application of the Mechanics skill). You can use both Power Surge and Power Boost at the same time, but you must move -2 persistent steps on the condition track."
+        }
+      },
+      "confidence": "CERTAIN",
+      "evidence": "capital \"I\" read for lowercase \"l\"; every other record prints \"one-half\"",
+      "action": "REPLACE",
+      "verification": {
+        "status": "PDF_REQUIRED",
+        "verifiedText": null,
+        "question": "Confirm the printed text of Power Boost (Scavenger's Guide to Droids p.28) reads \"half\" where production has \"haIf\""
+      }
+    },
+    {
+      "id": "TD-14",
+      "productionId": "77d09ca0a54f4c36",
+      "name": "Power Surge",
+      "canonicalIdentity": "Force Unleashed Campaign Guide|Specialized Droid|Power Surge",
+      "publication": {
+        "sourcebook": "Force Unleashed Campaign Guide",
+        "page": 48
+      },
+      "group": "OCR_CONFUSABLE_LETTER",
+      "find": "haIf",
+      "replace": "half",
+      "fields": {
+        "benefit": {
+          "productionOccurrences": 1,
+          "canonicalOccurrences": 1,
+          "productionValue": "You temporarily surge your power systems to enhance your physical abilities. When you initiate a power surge (a swift action), you gain a +1 circumstance bonus on melee attack rolls, +1 die of damage on melee damage rolls, and an increase of 2 squares to your speed. A power surge lasts for a number of rounds equal to one-haIf your level (rounded down). At the end of a power surge, you move -1 persistent step along the condition track. The penalties imposed by this condition persist until you receive repairs (using the repair droid application of the Mechanics skill).",
+          "canonicalValue": "You temporarily surge your power systems to enhance your physical abilities. When you initiate a power surge (a swift action), you gain a +1 circumstance bonus on melee attack rolls, +1 die of damage on melee damage rolls, and an increase of 2 squares to your speed. A power surge lasts for a number of rounds equal to one-haIf your level (rounded down). At the end of a power surge, you move -1 persistent step along the condition track. The penalties imposed by this condition persist until you receive repairs (using the repair droid application of the Mechanics skill)."
+        },
+        "description": {
+          "productionOccurrences": 1,
+          "canonicalOccurrences": 1,
+          "productionValue": "You temporarily surge your power systems to enhance your physical abilities. When you initiate a power surge (a swift action), you gain a +1 circumstance bonus on melee attack rolls, +1 die of damage on melee damage rolls, and an increase of 2 squares to your speed. A power surge lasts for a number of rounds equal to one-haIf your level (rounded down). At the end of a power surge, you move -1 persistent step along the condition track. The penalties imposed by this condition persist until you receive repairs (using the repair droid application of the Mechanics skill).",
+          "canonicalValue": "You temporarily surge your power systems to enhance your physical abilities. When you initiate a power surge (a swift action), you gain a +1 circumstance bonus on melee attack rolls, +1 die of damage on melee damage rolls, and an increase of 2 squares to your speed. A power surge lasts for a number of rounds equal to one-haIf your level (rounded down). At the end of a power surge, you move -1 persistent step along the condition track. The penalties imposed by this condition persist until you receive repairs (using the repair droid application of the Mechanics skill)."
+        }
+      },
+      "confidence": "CERTAIN",
+      "evidence": "capital \"I\" read for lowercase \"l\"; every other record prints \"one-half\"",
+      "action": "REPLACE",
+      "verification": {
+        "status": "PDF_REQUIRED",
+        "verifiedText": null,
+        "question": "Confirm the printed text of Power Surge (Force Unleashed Campaign Guide p.48) reads \"half\" where production has \"haIf\""
+      }
+    },
+    {
+      "id": "TD-15",
+      "productionId": "2f00c50f3bf6bf5a",
+      "name": "Share Talent",
+      "canonicalIdentity": "Jedi Academy Training Manual|Jedi Instructor|Share Talent",
+      "publication": {
+        "sourcebook": "Jedi Academy Training Manual",
+        "page": 20
+      },
+      "group": "OCR_CONFUSABLE_LETTER",
+      "find": "haIf",
+      "replace": "half",
+      "fields": {
+        "benefit": {
+          "productionOccurrences": 1,
+          "canonicalOccurrences": 1,
+          "productionValue": "Choose a talent that you already possess. The talent must be from the Lightsa-ber Combat talent tree, the Duel-ist talent tree, or the Lightsaber Forms talent tree. Once per day as a standard action, you can spend a Force Point to impart the benefits of the chosen talent to one or more allies, effectively granting them the talent (even if they don't meet the prerequisites), An ally must be within 12 squares of you and must be able to see and hear you to gain the talent; once gained, its benefits last until the end of the encounter. You can share the talent with a number of allies equal to one-haIf your class level, rounded down. Only allies who are trained in the Use the Force skill can gain the benefits of the shared talent. A Twi'Ler Jeo! INsTRUCTOR. You can take this talent multiple times. Each time you do so, you must select a different talent to share with this ability. You can share each talent with your allies only once per day.",
+          "canonicalValue": "Choose a talent that you already possess. The talent must be from the Lightsa-ber Combat talent tree, the Duel-ist talent tree, or the Lightsaber Forms talent tree. Once per day as a standard action, you can spend a Force Point to impart the benefits of the chosen talent to one or more allies, effectively granting them the talent (even if they don't meet the prerequisites), An ally must be within 12 squares of you and must be able to see and hear you to gain the talent; once gained, its benefits last until the end of the encounter. You can share the talent with a number of allies equal to one-haIf your class level, rounded down. Only allies who are trained in the Use the Force skill can gain the benefits of the shared talent. A Twi'Ler Jeo! INsTRUCTOR. You can take this talent multiple times. Each time you do so, you must select a different talent to share with this ability. You can share each talent with your allies only once per day."
+        },
+        "description": {
+          "productionOccurrences": 1,
+          "canonicalOccurrences": 1,
+          "productionValue": "Choose a talent that you already possess. The talent must be from the Lightsa-ber Combat talent tree, the Duel-ist talent tree, or the Lightsaber Forms talent tree. Once per day as a standard action, you can spend a Force Point to impart the benefits of the chosen talent to one or more allies, effectively granting them the talent (even if they don't meet the prerequisites), An ally must be within 12 squares of you and must be able to see and hear you to gain the talent; once gained, its benefits last until the end of the encounter. You can share the talent with a number of allies equal to one-haIf your class level, rounded down. Only allies who are trained in the Use the Force skill can gain the benefits of the shared talent. A Twi'Ler Jeo! INsTRUCTOR. You can take this talent multiple times. Each time you do so, you must select a different talent to share with this ability. You can share each talent with your allies only once per day.",
+          "canonicalValue": "Choose a talent that you already possess. The talent must be from the Lightsa-ber Combat talent tree, the Duel-ist talent tree, or the Lightsaber Forms talent tree. Once per day as a standard action, you can spend a Force Point to impart the benefits of the chosen talent to one or more allies, effectively granting them the talent (even if they don't meet the prerequisites), An ally must be within 12 squares of you and must be able to see and hear you to gain the talent; once gained, its benefits last until the end of the encounter. You can share the talent with a number of allies equal to one-haIf your class level, rounded down. Only allies who are trained in the Use the Force skill can gain the benefits of the shared talent. A Twi'Ler Jeo! INsTRUCTOR. You can take this talent multiple times. Each time you do so, you must select a different talent to share with this ability. You can share each talent with your allies only once per day."
+        }
+      },
+      "confidence": "CERTAIN",
+      "evidence": "capital \"I\" read for lowercase \"l\"; every other record prints \"one-half\"",
+      "action": "REPLACE",
+      "verification": {
+        "status": "PDF_REQUIRED",
+        "verifiedText": null,
+        "question": "Confirm the printed text of Share Talent (Jedi Academy Training Manual p.20) reads \"half\" where production has \"haIf\""
+      }
+    },
+    {
+      "id": "TD-16",
+      "productionId": "1215e1c464a087b0",
+      "name": "Vital Encouragement",
+      "canonicalIdentity": "Jedi Academy Training Manual|Guardian Spirit|Vital Encouragement",
+      "publication": {
+        "sourcebook": "Jedi Academy Training Manual",
+        "page": 17
+      },
+      "group": "OCR_CONFUSABLE_LETTER",
+      "find": "haIf",
+      "replace": "half",
+      "fields": {
+        "benefit": {
+          "productionOccurrences": 1,
+          "canonicalOccurrences": 1,
+          "productionValue": "Once per encounter, your guardian spirit offers you vital encouragement, urging you to press on despite adversity. As a free action, you gain bonus hit points equal to 10 + one-haIf your heroic level. Damage is subtracted from bonus hit points first, and any bonus hit points remaining at the end of the encounter are lost. New Sense Talents The following talents belong to the Sense talent tree (see page 101 of the Saga Edition core rulebook)",
+          "canonicalValue": "Once per encounter, your guardian spirit offers you vital encouragement, urging you to press on despite adversity. As a free action, you gain bonus hit points equal to 10 + one-haIf your heroic level. Damage is subtracted from bonus hit points first, and any bonus hit points remaining at the end of the encounter are lost. New Sense Talents The following talents belong to the Sense talent tree (see page 101 of the Saga Edition core rulebook)"
+        },
+        "description": {
+          "productionOccurrences": 1,
+          "canonicalOccurrences": 1,
+          "productionValue": "Once per encounter, your guardian spirit offers you vital encouragement, urging you to press on despite adversity. As a free action, you gain bonus hit points equal to 10 + one-haIf your heroic level. Damage is subtracted from bonus hit points first, and any bonus hit points remaining at the end of the encounter are lost. New Sense Talents The following talents belong to the Sense talent tree (see page 101 of the Saga Edition core rulebook)",
+          "canonicalValue": "Once per encounter, your guardian spirit offers you vital encouragement, urging you to press on despite adversity. As a free action, you gain bonus hit points equal to 10 + one-haIf your heroic level. Damage is subtracted from bonus hit points first, and any bonus hit points remaining at the end of the encounter are lost. New Sense Talents The following talents belong to the Sense talent tree (see page 101 of the Saga Edition core rulebook)"
+        }
+      },
+      "confidence": "CERTAIN",
+      "evidence": "capital \"I\" read for lowercase \"l\"; every other record prints \"one-half\"",
+      "action": "REPLACE",
+      "verification": {
+        "status": "PDF_REQUIRED",
+        "verifiedText": null,
+        "question": "Confirm the printed text of Vital Encouragement (Jedi Academy Training Manual p.17) reads \"half\" where production has \"haIf\""
+      }
+    },
+    {
+      "id": "TD-17",
+      "productionId": "b4ae0f26326cdf71",
+      "name": "Sidestep",
+      "canonicalIdentity": "Saga Edition Core Rulebook|Fringer|Sidestep",
+      "publication": {
+        "sourcebook": "Scum and Villainy",
+        "page": 17
+      },
+      "group": "SUSPECT_SENTENCE",
+      "find": "move into a diagonal space to 1 until the end of your turn",
+      "replace": null,
+      "fields": {
+        "benefit": {
+          "productionOccurrences": 1,
+          "canonicalOccurrences": 1,
+          "productionValue": "You can use a swift action to reduce the cost of each move into a diagonal space to 1 until the end of your turn if you are wearing light armor or no armor. You cannot use this talent if you are wearing medium or heavy armor.",
+          "canonicalValue": "You can use a swift action to reduce the cost of each move into a diagonal space to 1 until the end of your turn if you are wearing light armor or no armor. You cannot use this talent if you are wearing medium or heavy armor."
+        }
+      },
+      "confidence": "NEEDS_PRINT",
+      "evidence": "flagged by the stray-digit scan (\"to 1 until\"): possibly damaged; no TXT comparison made. Owner to confirm the printed sentence; if it is correct as shown, close as NO_CHANGE.",
+      "action": "OWNER_TRANSCRIPTION_REQUIRED",
+      "verification": {
+        "status": "PDF_REQUIRED",
+        "verifiedText": null,
+        "question": "Transcribe the exact printed text of Sidestep (Scum and Villainy p.17) around: \"move into a diagonal space to 1 until the end of your turn\""
+      }
+    }
+  ],
+  "noChangeCandidates": [
+    {
+      "id": "NC-01",
+      "record": "Seyugi Cyclone",
+      "token": "posess",
+      "reason": "printed typo: Jedi Academy Training Manual TXT 7645 prints \"posess\" exactly as canonical; canonical text = published text. Owner decision: PRESERVE_PRINTED_TYPO (recommended) or CORRECT.",
+      "productionId": "cc90a9fc255f4dc4",
+      "publication": {
+        "sourcebook": "Jedi Academy Training Manual",
+        "page": 83
+      },
+      "action": "NO_CHANGE",
+      "verification": {
+        "status": "PDF_OPTIONAL"
+      }
+    },
+    {
+      "id": "NC-02",
+      "record": "Malkite Techniques",
+      "token": "nonenergy",
+      "reason": "printed form (Threats TXT 1118)",
+      "productionId": "744c2eaaa48e15af",
+      "publication": {
+        "sourcebook": "Threats of the Galaxy",
+        "page": 13
+      },
+      "action": "NO_CHANGE",
+      "verification": {
+        "status": "PDF_OPTIONAL"
+      }
+    },
+    {
+      "id": "NC-03",
+      "record": "Disarm and Engage",
+      "token": "nonproficiency",
+      "reason": "printed form (Galaxy of Intrigue TXT 1980)",
+      "productionId": "f61d70448c4cd14e",
+      "publication": {
+        "sourcebook": "Galaxy of Intrigue",
+        "page": 23
+      },
+      "action": "NO_CHANGE",
+      "verification": {
+        "status": "PDF_OPTIONAL"
+      }
+    },
+    {
+      "id": "NC-04",
+      "record": "Done It All",
+      "token": "nonprestige",
+      "reason": "printed form (Galaxy of Intrigue TXT 1636)",
+      "productionId": "d376f165f1a47281",
+      "publication": {
+        "sourcebook": "Galaxy of Intrigue",
+        "page": 20
+      },
+      "action": "NO_CHANGE",
+      "verification": {
+        "status": "PDF_OPTIONAL"
+      }
+    },
+    {
+      "id": "NC-05",
+      "record": "Ambush",
+      "token": "nonsurprised",
+      "reason": "no TXT comparison available; the SWSE \"non\" prefix is unhyphenated elsewhere. Change only if the PDF shows a hyphen or space.",
+      "productionId": "a3ac90e84127805d",
+      "publication": {
+        "sourcebook": "Scum and Villainy",
+        "page": 13
+      },
+      "action": "NO_CHANGE",
+      "verification": {
+        "status": "PDF_OPTIONAL"
+      }
+    },
+    {
+      "id": "NC-06",
+      "record": "Two-Faced",
+      "token": "nonthreatening",
+      "reason": "option label \"Nonthreatening:\" (printed label form); change only if the PDF disagrees",
+      "productionId": "cef9b7ca6a26f4a6",
+      "publication": {
+        "sourcebook": "Scum and Villainy",
+        "page": 14
+      },
+      "action": "NO_CHANGE",
+      "verification": {
+        "status": "PDF_OPTIONAL"
+      }
+    }
+  ],
+  "errors": []
+}
