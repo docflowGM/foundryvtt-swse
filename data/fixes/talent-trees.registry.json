@@ -129,7 +129,7 @@
     "displayName": "Ace Pilot",
     "talentCount": 1,
     "talents": [
-      "Escort"
+      "Escort Pilot"
     ]
   },
   {
@@ -224,14 +224,13 @@
   {
     "id": "alter",
     "displayName": "Alter",
-    "talentCount": 16,
+    "talentCount": 15,
     "talents": [
       "Disciplined Strike",
       "Telekinetic Power",
       "Aversion",
       "Telepathic Link",
       "Telepathic Influence",
-      "Force Bond",
       "Move Massive Object",
       "Illusion",
       "Telekinetic Prodigy",
@@ -249,7 +248,6 @@
       "13cc978a8023eaa4",
       "25dd9d9b3b66c048",
       "3b30ffbfc3e3270f",
-      "4d7d5a38d0394e4c",
       "62d461ae3b0fcfa9",
       "708a47d1be414990",
       "7af4caf439358120",
@@ -475,12 +473,9 @@
   {
     "id": "beastwarden",
     "displayName": "Beastwarden",
-    "talentCount": 8,
+    "talentCount": 5,
     "talents": [
       "Soothing Presence",
-      "Animal Companion",
-      "Nature Sense",
-      "Calming Aura",
       "Bonded Mount",
       "Entreat Beast",
       "Wild Sense",
@@ -488,9 +483,6 @@
     ],
     "talentIds": [
       "0a65325a98b108a7",
-      "14cc3ddc051f4ece",
-      "4632b4bf79044752",
-      "7a58134276d64561",
       "9c88f3f82e6e2082",
       "b15fa2f45baf55ea",
       "b6e75c52f5d66ade",
@@ -520,19 +512,6 @@
       "81b2b88df9600ca7"
     ],
     "sourceId": "92c32621101a11f9",
-    "classAccess": []
-  },
-  {
-    "id": "blackguard-wilder",
-    "displayName": "Blackguard Wilder",
-    "talentCount": 1,
-    "talents": [
-      "Blackguard Initiate"
-    ],
-    "talentIds": [
-      "f2df5596a9db40c1"
-    ],
-    "sourceId": "d2535361d1b146cd",
     "classAccess": []
   },
   {
@@ -578,28 +557,10 @@
     ]
   },
   {
-    "id": "bomarr-monk",
-    "displayName": "Bomarr Monk",
-    "talentCount": 3,
-    "talents": [
-      "Droid Receptacle",
-      "Serene Courage",
-      "Shedding of the Body"
-    ],
-    "talentIds": [
-      "0de7338c2b984b96",
-      "2f6bdc483d8f4aa8",
-      "c086c6265e224637"
-    ],
-    "sourceId": "8955568285ba4115",
-    "classAccess": []
-  },
-  {
     "id": "bothan-spynet",
     "displayName": "Bothan Spynet",
-    "talentCount": 7,
+    "talentCount": 6,
     "talents": [
-      "Extended Critical Range",
       "Six Questions",
       "Spynet Agent",
       "Knowledge Is Life",
@@ -608,7 +569,6 @@
       "Knowledge Is Strength"
     ],
     "talentIds": [
-      "0c9b0788ad42450c",
       "46946e7208f1cf05",
       "648d9634a3795988",
       "94aa0ef55bace440",
@@ -673,10 +633,9 @@
   {
     "id": "brawler",
     "displayName": "Brawler",
-    "talentCount": 23,
+    "talentCount": 22,
     "talents": [
       "Unrelenting Assault",
-      "Unbalance Strike",
       "Cantina Brawler",
       "Hammerblow",
       "Sucker Punch",
@@ -701,7 +660,6 @@
     ],
     "talentIds": [
       "0b2c53ed53f20751",
-      "12e6b524fc6959b6",
       "430b73348460715e",
       "4356ac9986934fbf",
       "6044037b6eb3ede9",
@@ -839,36 +797,6 @@
     ]
   },
   {
-    "id": "chalactan-adept",
-    "displayName": "Chalactan Adept",
-    "talentCount": 1,
-    "talents": [
-      "Lesser Mark of Illumination"
-    ],
-    "talentIds": [
-      "a9a84d42b75f4fb1"
-    ],
-    "sourceId": "f3881205595248d4",
-    "classAccess": []
-  },
-  {
-    "id": "cloner",
-    "displayName": "Cloner",
-    "talentCount": 3,
-    "talents": [
-      "Retrovirus",
-      "Clone Scientist",
-      "Mass Cloning"
-    ],
-    "talentIds": [
-      "247b9ba1f8d34683",
-      "b9fce171cad543d7",
-      "d9cb414fe4734507"
-    ],
-    "sourceId": "8e44e56069274319",
-    "classAccess": []
-  },
-  {
     "id": "collaborator",
     "displayName": "Collaborator",
     "talentCount": 5,
@@ -997,31 +925,15 @@
     ]
   },
   {
-    "id": "cowardice",
-    "displayName": "Cowardice",
-    "talentCount": 2,
-    "talents": [
-      "Not in the Face",
-      "Feign Harmlessness"
-    ],
-    "talentIds": [
-      "213d97c2cbbd4f81",
-      "588c176b47724734"
-    ],
-    "sourceId": "acb91d3803eb4fcd",
-    "classAccess": []
-  },
-  {
     "id": "critical-master",
     "displayName": "Critical Master",
-    "talentCount": 9,
+    "talentCount": 8,
     "talents": [
       "Extended Critical Range (rifles)",
       "Deny Move",
       "Reduce Defense",
       "Knockback",
       "Flurry Attack",
-      "Extended Critical Range (heavy)",
       "Reduce Mobility",
       "Extended Critical Range (heavy weapons)",
       "Extended Critical Range (simple weapons)"
@@ -1032,7 +944,6 @@
       "874ffa6b66cf2c37",
       "9d235eba6b3e5daf",
       "9e2092257b53cd21",
-      "ab6efafd94ad044e",
       "c80edefd9c32ad02",
       "04985a42930dff2a",
       "7cbd576e420a36b0"
@@ -1045,7 +956,7 @@
   {
     "id": "dark-side",
     "displayName": "Dark Side",
-    "talentCount": 11,
+    "talentCount": 10,
     "talents": [
       "Swift Power",
       "Dark Preservation",
@@ -1056,8 +967,7 @@
       "Transfer Essence",
       "Revenge",
       "Drain Knowledge",
-      "Wrath of the Dark Side",
-      "Dark Side Maelstrom"
+      "Wrath of the Dark Side"
     ],
     "talentIds": [
       "09609e71ba6cd4aa",
@@ -1069,8 +979,7 @@
       "c1be1f29c00436d5",
       "c83f18465c3b9d91",
       "d46612d82307f0db",
-      "f5ebaf5d77257e0c",
-      "f785208aa6774cd7"
+      "f5ebaf5d77257e0c"
     ],
     "sourceId": "de95d37c72b1c4cd",
     "classAccess": []
@@ -1078,10 +987,9 @@
   {
     "id": "dark-side-devotee",
     "displayName": "Dark Side Devotee",
-    "talentCount": 7,
+    "talentCount": 6,
     "talents": [
       "Channel Anger",
-      "Embrace Dark Side",
       "Crippling Strike",
       "Embrace the Dark Side",
       "Greater Dark Side Talisman",
@@ -1090,7 +998,6 @@
     ],
     "talentIds": [
       "37ee909a7de54768",
-      "3cc9552cfab59676",
       "8b3cb561c294fa11",
       "8e1ee6d1c756450f96d4d5eaa9657e47",
       "c8bf9ab9d1f8588a",
@@ -1105,19 +1012,15 @@
   {
     "id": "dathomiri-witch",
     "displayName": "Dathomiri Witch",
-    "talentCount": 6,
+    "talentCount": 4,
     "talents": [
       "Adept Spellcaster",
-      "Dathomiri Hunter",
-      "Binding Sickle",
       "Charm Beast",
       "Command Beast",
       "Flight"
     ],
     "talentIds": [
       "12b7eb5d32bd440e",
-      "9319584186ce4228",
-      "e09d40421ade49e8",
       "c919d7682bd9df40",
       "6f158211516da82a",
       "c518a366d0eb0a8a"
@@ -1126,26 +1029,10 @@
     "classAccess": []
   },
   {
-    "id": "defensive-duelist",
-    "displayName": "Defensive Duelist",
-    "talentCount": 2,
-    "talents": [
-      "Defensive Stance",
-      "Steady Strike"
-    ],
-    "talentIds": [
-      "d49ca4c47e704a96",
-      "e9541e13afbb4a41"
-    ],
-    "sourceId": "fc978e442f544dbe",
-    "classAccess": []
-  },
-  {
     "id": "disciple-of-twilight",
     "displayName": "Disciple Of Twilight",
-    "talentCount": 6,
+    "talentCount": 5,
     "talents": [
-      "Cloak of Shadows",
       "Cloak of Shadow",
       "Phantasm",
       "Revelation",
@@ -1153,7 +1040,6 @@
       "Shadow Vision"
     ],
     "talentIds": [
-      "57c770c7924e4241",
       "b3fe6f7659b40a55",
       "943f8753f56f3a63",
       "35af8366f831bd8b",
@@ -1280,10 +1166,9 @@
   {
     "id": "ember-of-vahl",
     "displayName": "Ember Of Vahl",
-    "talentCount": 6,
+    "talentCount": 5,
     "talents": [
       "Initiate of Vahl",
-      "Empowered Weapon",
       "Reading the Flame",
       "Sword of Vahl",
       "Vahl's Brand",
@@ -1291,7 +1176,6 @@
     ],
     "talentIds": [
       "510a0f02ffa843e3",
-      "714c38c0498a4eaf",
       "12f61917f809a3fb",
       "b1a9d6277428e6c0",
       "a5f8ec365ef2b699",
@@ -1349,19 +1233,6 @@
     "classAccess": [
       "Scout"
     ]
-  },
-  {
-    "id": "exceptional-followers",
-    "displayName": "Exceptional Followers",
-    "talentCount": 1,
-    "talents": [
-      "Akk Dog Master"
-    ],
-    "talentIds": [
-      "e6055a514a784387"
-    ],
-    "sourceId": "37f3554a2f30425a",
-    "classAccess": []
   },
   {
     "id": "exile",
@@ -1432,16 +1303,14 @@
   {
     "id": "felucian-shaman",
     "displayName": "Felucian Shaman",
-    "talentCount": 5,
+    "talentCount": 4,
     "talents": [
-      "Infused Weapon",
       "Detonate",
       "Hive Mind",
       "Infuse Weapon",
       "Sickening Blast"
     ],
     "talentIds": [
-      "cb261592f68849a5",
       "bf1a79b50e129dc7",
       "ba740330cf490549",
       "0df15b0ea7721c50",
@@ -1476,10 +1345,9 @@
   {
     "id": "force-adept",
     "displayName": "Force Adept",
-    "talentCount": 7,
+    "talentCount": 6,
     "talents": [
       "Force Treatment",
-      "Indomitable class feature",
       "Mystical Link",
       "Fortified Body",
       "Force Power Adept",
@@ -1488,7 +1356,6 @@
     ],
     "talentIds": [
       "181da7f36b9fba9d",
-      "3df46d093b31411d",
       "45c4e72d74c44acb",
       "6714ab8e28708f50",
       "90d9a2e7dbc160d1",
@@ -1529,28 +1396,24 @@
   {
     "id": "force-item",
     "displayName": "Force Item",
-    "talentCount": 10,
+    "talentCount": 8,
     "talents": [
       "Greater Force Talisman",
       "Focused Force Talisman",
-      "Empowered",
       "Greater Focused Force Talisman",
       "Empower Weapon",
       "Force Talisman",
       "Force Throw",
-      "Lasting Ichor Item",
       "Attune Weapon",
       "Primitive Block"
     ],
     "talentIds": [
       "0c636cdbb63cdba3",
       "12eea831f06c45f7",
-      "35350a8b3d2a4810",
       "4ae840aaa4e0eba0",
       "5218d5971b78119b",
       "66b23ee79bd33bf1",
       "86565bbe8b8fd1a2",
-      "933240d6581843b9",
       "aa9b67c6737c2549",
       "d043a3c0494345ac"
     ],
@@ -1558,19 +1421,6 @@
     "classAccess": [
       "Force Adept"
     ]
-  },
-  {
-    "id": "force-warrior",
-    "displayName": "Force Warrior",
-    "talentCount": 1,
-    "talents": [
-      "Defensive Roll"
-    ],
-    "talentIds": [
-      "747458ee63cd4a2a"
-    ],
-    "sourceId": "11f99465ba4847e2",
-    "classAccess": []
   },
   {
     "id": "fortune",
@@ -1670,19 +1520,6 @@
     ]
   },
   {
-    "id": "galactic-senator",
-    "displayName": "Galactic Senator",
-    "talentCount": 1,
-    "talents": [
-      "Diplomatic Poise"
-    ],
-    "talentIds": [
-      "cc1cf3a694244618"
-    ],
-    "sourceId": "feb08c2834a447ab",
-    "classAccess": []
-  },
-  {
     "id": "gambling-leader",
     "displayName": "Gambling Leader",
     "talentCount": 5,
@@ -1752,9 +1589,8 @@
   {
     "id": "gladiatorial-combat",
     "displayName": "Gladiatorial Combat",
-    "talentCount": 9,
+    "talentCount": 8,
     "talents": [
-      "Multiattack Proficiency (exotic)",
       "Exotic Weapons Master",
       "Call Out",
       "Unstoppable",
@@ -1765,7 +1601,6 @@
       "Multiattack Proficiency (exotic weapons)"
     ],
     "talentIds": [
-      "271024ca2ac6c04b",
       "5a2dee101c2217b3",
       "5c3036b82c047490",
       "9c0c0966b7c7c30e",
@@ -1835,7 +1670,7 @@
   {
     "id": "gunslinger",
     "displayName": "Gunslinger",
-    "talentCount": 16,
+    "talentCount": 17,
     "talents": [
       "Debilitating Shot",
       "Mobile Attack (pistols)",
@@ -1852,7 +1687,8 @@
       "Lingering Debilitation",
       "Retreating Fire",
       "Slowing Shot",
-      "Swift Shot"
+      "Swift Shot",
+      "Ranged Disarm"
     ],
     "talentIds": [
       "52f51a77fd60f56f",
@@ -1870,7 +1706,8 @@
       "1250a3dac18104eb",
       "c92468ee73588b90",
       "c04e66a3f2577e62",
-      "dccac6744e458608"
+      "dccac6744e458608",
+      "d7870d0940a3ce0b"
     ],
     "sourceId": "cb6f775cd227a3e3",
     "classAccess": [
@@ -1949,9 +1786,8 @@
   {
     "id": "implant",
     "displayName": "Implant",
-    "talentCount": 6,
+    "talentCount": 5,
     "talents": [
-      "Implant (general)",
       "Adrenaline Implant",
       "Precision Implant",
       "Resilience Implant",
@@ -1959,7 +1795,6 @@
       "Speed Implant"
     ],
     "talentIds": [
-      "893158dcfe246ad7",
       "2fdf215a5da99e00",
       "58e37d40d3aa7d4b",
       "94b1951d4795f602",
@@ -1997,16 +1832,14 @@
   {
     "id": "infamy",
     "displayName": "Infamy",
-    "talentCount": 13,
+    "talentCount": 11,
     "talents": [
       "Notorious",
       "Frighten",
-      "Inspire Fear",
       "Inspire Fear II",
       "Terrify",
       "Shared Notoriety",
       "Fear Me!",
-      "Notorious",
       "Unsavory Reputation",
       "Inspire Fear III",
       "Inspire Fear I",
@@ -2016,12 +1849,10 @@
     "talentIds": [
       "09744041cdcc9e22",
       "50273d5ce8f84c31",
-      "585227ba15d24a37",
       "71bc6b43ab504b90",
       "8ed7b1889b1416d4",
       "9491f34aad83dfb1",
       "a49074cc564848bb",
-      "a7d8c4da96eacad4",
       "b0ecc747a76deb72",
       "bd11bfb793096483",
       "cf4b1e5b126a2a7e",
@@ -2060,10 +1891,9 @@
   {
     "id": "influence",
     "displayName": "Influence",
-    "talentCount": 7,
+    "talentCount": 6,
     "talents": [
       "Weaken Resolve",
-      "Allure",
       "Intimidating Defense",
       "Fluster",
       "Presence",
@@ -2072,7 +1902,6 @@
     ],
     "talentIds": [
       "28c306c37ccb9fcf",
-      "62e70280d08f43ec",
       "de751f28fc269c85",
       "e6d56fb82c669b9d",
       "ec8f2ba706cc2c05",
@@ -2088,16 +1917,14 @@
   {
     "id": "inspiration",
     "displayName": "Inspiration",
-    "talentCount": 9,
+    "talentCount": 7,
     "talents": [
       "Ignite Fervor",
       "Inspire Zeal",
       "Beloved",
       "Inspire Confidence",
-      "Inspired",
       "Willpower",
       "Inspire Haste",
-      "Bolster",
       "Bolster Ally"
     ],
     "talentIds": [
@@ -2105,10 +1932,8 @@
       "40508f87f3a8f33f",
       "444c032c563c18a1",
       "4d8882a28da30454",
-      "85e348f24a144e1c",
       "ae9cf46162b4bc42",
       "c5f8d32dbc5afcc4",
-      "c6a65be235c34a6f",
       "d6e7f7178e643717"
     ],
     "sourceId": "72d32ebcbb607314",
@@ -2155,19 +1980,6 @@
       "04eca2813630e8d4"
     ],
     "sourceId": "db1964d1e1d14b5a",
-    "classAccess": []
-  },
-  {
-    "id": "jedaii-ranger",
-    "displayName": "Jedaii Ranger",
-    "talentCount": 1,
-    "talents": [
-      "In Balance"
-    ],
-    "talentIds": [
-      "81cd2a2473e248a0"
-    ],
-    "sourceId": "dcac793cc9fe42a7",
     "classAccess": []
   },
   {
@@ -2274,7 +2086,7 @@
   {
     "id": "jedi-consular",
     "displayName": "Jedi Consular",
-    "talentCount": 21,
+    "talentCount": 20,
     "talents": [
       "Recall",
       "Visionary Defense",
@@ -2293,7 +2105,6 @@
       "Force Persuasion",
       "Collective Visions",
       "Guiding Strikes",
-      "Jedi Healer",
       "Entreat Aid",
       "Aggressive Negotiator",
       "Skilled Advisor"
@@ -2316,7 +2127,6 @@
       "d1fd547124c1901c",
       "e5bef6ccacb51788",
       "e797ad357746be9f",
-      "ea6ee6fad799491e",
       "f561d569196bdda5",
       "f7bf586a35299965",
       "35cbdbe9c91ba1d0"
@@ -2329,7 +2139,7 @@
   {
     "id": "jedi-guardian",
     "displayName": "Jedi Guardian",
-    "talentCount": 17,
+    "talentCount": 16,
     "talents": [
       "Acrobatic Recovery",
       "Battle Meditation",
@@ -2346,8 +2156,7 @@
       "Hold the Line",
       "Immovable",
       "Improved Battle Meditation",
-      "Mobile Combatant",
-      "Force Meld"
+      "Mobile Combatant"
     ],
     "talentIds": [
       "5d4a63123e5a5eb4",
@@ -2365,8 +2174,7 @@
       "a843f45ec0f99db6",
       "14306c13238ccb83",
       "d6a04668587e2c03",
-      "198b68c0ca770ad7",
-      "816ac9cc1e6c413b"
+      "198b68c0ca770ad7"
     ],
     "sourceId": "10c843cef8ce2798",
     "classAccess": [
@@ -2420,21 +2228,17 @@
   {
     "id": "jedi-investigator",
     "displayName": "Jedi Investigator",
-    "talentCount": 7,
+    "talentCount": 5,
     "talents": [
       "Sense Deception",
-      "Echoes of the Force",
       "Prepared for Danger",
-      "Unclouded Judgement",
       "Jedi Quarry",
       "Echoes in the Force",
       "Unclouded Judgment"
     ],
     "talentIds": [
       "467accea4a3c8cbd",
-      "a76198e5da0f6368",
       "aa5b9fe99274274a",
-      "cc938ba0542c97e4",
       "dfb9e58c7bcb095c",
       "e26abfa7fe650912",
       "4a0ed533e99848a8"
@@ -2573,9 +2377,8 @@
   {
     "id": "jedi-weapon-master",
     "displayName": "Jedi Weapon Master",
-    "talentCount": 6,
+    "talentCount": 5,
     "talents": [
-      "Improvised Weapon Masteryy",
       "Twin Weapon Style",
       "Combat Trance",
       "Shoto Pin",
@@ -2583,7 +2386,6 @@
       "Improvised Weapon Master"
     ],
     "talentIds": [
-      "4dfad6e363c11acf",
       "5ea9a4c30dff1ac8",
       "675bfa10691b60f6",
       "ab4b51be30dfa9bc",
@@ -2612,31 +2414,6 @@
       "dd7a357a59b8ebc0"
     ],
     "sourceId": "f5c62e2e81f648aa",
-    "classAccess": []
-  },
-  {
-    "id": "jumptrooper",
-    "displayName": "Jumptrooper",
-    "talentCount": 7,
-    "talents": [
-      "Mobility",
-      "Rough Landings",
-      "Extended Sputters",
-      "Crash Landings",
-      "Special:",
-      "Avoid Collisions",
-      "Reflexive Tilting"
-    ],
-    "talentIds": [
-      "1bda3fdaa84240d3",
-      "395daa7cd6f14b8f",
-      "61c9413bde23411a",
-      "67a08d46f24c4fdd",
-      "707dd4f0b5c744a6",
-      "cc78c981176d4fed",
-      "d1418afeaa3f40ec"
-    ],
-    "sourceId": "25d99948c9cb41ad",
     "classAccess": []
   },
   {
@@ -3073,9 +2850,8 @@
   {
     "id": "master-of-teras-kasi",
     "displayName": "Master of Teräs Käsi",
-    "talentCount": 6,
+    "talentCount": 5,
     "talents": [
-      "Teräs Käsi Basics",
       "Unarmed Counterstrike",
       "Unarmed Parry",
       "Ignore Damage Reduction",
@@ -3083,7 +2859,6 @@
       "Teräs Käsi Mastery"
     ],
     "talentIds": [
-      "222327492c484b4a",
       "3282f9b1d3769f9c",
       "379019c29b37d717",
       "566e0020c5866222",
@@ -3095,19 +2870,6 @@
       "Elite Trooper",
       "Martial Arts Master"
     ]
-  },
-  {
-    "id": "master-of-the-amphistaff",
-    "displayName": "Master Of The Amphistaff",
-    "talentCount": 1,
-    "talents": [
-      "Amphistaff Block"
-    ],
-    "talentIds": [
-      "a36f9a2eb2424f86"
-    ],
-    "sourceId": "d5b60c4f058c4085",
-    "classAccess": []
   },
   {
     "id": "master-scout",
@@ -3199,24 +2961,9 @@
     "classAccess": []
   },
   {
-    "id": "mechanic",
-    "displayName": "Mechanic",
-    "talentCount": 2,
-    "talents": [
-      "Patient Builder",
-      "Engineering Savant"
-    ],
-    "talentIds": [
-      "78955cbbe9504d7f",
-      "b1669310f65d42b7"
-    ],
-    "sourceId": "38d7c18ce4664c66",
-    "classAccess": []
-  },
-  {
     "id": "melee-duelist",
     "displayName": "Melee Duelist",
-    "talentCount": 10,
+    "talentCount": 9,
     "talents": [
       "Dual Weapon Flourish II",
       "Dirty Tricks",
@@ -3224,7 +2971,6 @@
       "Dual Weapon Flourish I",
       "Single Weapon Flourish II",
       "Advantageous Strike",
-      "Multiattack Proficiency (advanced melee)",
       "Out of Nowhere",
       "Master of Elegance",
       "Multiattack Proficiency (advanced melee weapons)"
@@ -3236,7 +2982,6 @@
       "5004013069710c3e",
       "bf23bf3704382723",
       "c740ed344484a2b5",
-      "f0851e0e5a1ac771",
       "f7bc7dab38c43fb5",
       "fc986d810732ff3a",
       "35375c6c9505e6f5"
@@ -3272,44 +3017,25 @@
   {
     "id": "mercenary",
     "displayName": "Mercenary",
-    "talentCount": 8,
+    "talentCount": 5,
     "talents": [
-      "Mercenary's Grit",
       "Focused Warrior",
       "Commanding Presence",
-      "Mercenary's Determination",
       "Ruthless",
       "Dirty Fighting",
-      "Feared Warrior",
-      "Mercenary's Teamwork"
+      "Feared Warrior"
     ],
     "talentIds": [
-      "2c27842384e55cb2",
       "42f9f503f5e26de7",
       "438e13c99c7b53a6",
-      "a4629f24bd571414",
       "adfb725d20faade5",
       "c07b6c68e715b9ff",
-      "cfd5d3f677b2bf1a",
-      "fbaab00b6eab02a3"
+      "cfd5d3f677b2bf1a"
     ],
     "sourceId": "4007fa87192b5884",
     "classAccess": [
       "Soldier"
     ]
-  },
-  {
-    "id": "midichlorian",
-    "displayName": "Midichlorian",
-    "talentCount": 1,
-    "talents": [
-      "Voices"
-    ],
-    "talentIds": [
-      "0cdd50aaa65e4360"
-    ],
-    "sourceId": "e85cb1a787e24cac",
-    "classAccess": []
   },
   {
     "id": "military-engineer",
@@ -3392,7 +3118,7 @@
   {
     "id": "misfortune",
     "displayName": "Misfortune",
-    "talentCount": 18,
+    "talentCount": 17,
     "talents": [
       "Sudden Strike",
       "Sneak Attack",
@@ -3408,7 +3134,6 @@
       "Improved Skirmisher",
       "Seize Object",
       "Stymie",
-      "Dastardly Attack",
       "Backstabber",
       "Improved Sneak Attack",
       "Seducer"
@@ -3428,7 +3153,6 @@
       "dd69400f0069f846",
       "e97177f243cb2b0a",
       "f16128ef7a76aa03",
-      "f5a4088480c005ae",
       "367b23802f5f4d8b",
       "edd7a0b36b9e727b",
       "d21d7d3d4d7be0d2"
@@ -3461,29 +3185,13 @@
     "classAccess": []
   },
   {
-    "id": "morgukai-warrior",
-    "displayName": "Morgukai Warrior",
-    "talentCount": 2,
-    "talents": [
-      "Morgukai Resolve",
-      "Cortosis Staff Block"
-    ],
-    "talentIds": [
-      "125b5aa00f5a4d0a",
-      "a0c4b4b252ee4c96"
-    ],
-    "sourceId": "0a61ab9ece844326",
-    "classAccess": []
-  },
-  {
     "id": "mystic",
     "displayName": "Mystic",
-    "talentCount": 6,
+    "talentCount": 5,
     "talents": [
       "Closed Mind",
       "Esoteric Technique",
       "Mystic Mastery",
-      "Regimen Mastery",
       "Channel Vitality",
       "Regimen Aptitude"
     ],
@@ -3491,7 +3199,6 @@
       "084423db749d2bb3",
       "08e904def2f9ea5c",
       "4ec766d6818c373f",
-      "96a833f805df1be1",
       "cddfb9833c7d3344",
       "605e0a2ac655e184"
     ],
@@ -3503,10 +3210,9 @@
   {
     "id": "naval-officer",
     "displayName": "Naval Officer",
-    "talentCount": 6,
+    "talentCount": 5,
     "talents": [
       "Combined Fire",
-      "Combined Fire (Naval)",
       "It's a Trap!",
       "Legendary Commander",
       "Fleet Deployment",
@@ -3514,7 +3220,6 @@
     ],
     "talentIds": [
       "17518b7669101122",
-      "23852d30490fc1e4",
       "8fe560a110d8f4ee",
       "d1683318140f3906",
       "d1c2e9bdbb58b715",
@@ -3530,8 +3235,8 @@
     "displayName": "Officer",
     "talentCount": 2,
     "talents": [
-      "Combined Fire (Naval)",
-      "Stay in the Fight (Recruit)"
+      "Combined Fire",
+      "Stay in the Fight"
     ]
   },
   {
@@ -3702,14 +3407,13 @@
   {
     "id": "piracy",
     "displayName": "Piracy",
-    "talentCount": 8,
+    "talentCount": 7,
     "talents": [
       "Bloodthirsty",
       "Raider's Frenzy",
       "Raider's Surge",
       "Savage Reputation",
       "Fight to the Death",
-      "Keep Them Reeling (Piracy)",
       "Take Them Alive",
       "Keep Them Reeling"
     ],
@@ -3719,7 +3423,6 @@
       "50285aaa58fed099",
       "994e8232ccd3847c",
       "ae97654ded718351",
-      "b28f312432d79e77",
       "cf59931d6a0c0719",
       "9fe189e1376feec5"
     ],
@@ -3731,10 +3434,9 @@
   {
     "id": "pistoleer",
     "displayName": "Pistoleer",
-    "talentCount": 6,
+    "talentCount": 5,
     "talents": [
       "Hailfire",
-      "Flanking Foe",
       "Guaranteed Shot",
       "Twin Shot",
       "Dash and Blast",
@@ -3742,7 +3444,6 @@
     ],
     "talentIds": [
       "223ba62ffbabb9c2",
-      "433c2e9c0e71aceb",
       "52a4914cca90cc4d",
       "c219dc05ccc7db81",
       "c41461c3bdd0165d",
@@ -3756,13 +3457,12 @@
   {
     "id": "privateer",
     "displayName": "Privateer",
-    "talentCount": 10,
+    "talentCount": 9,
     "talents": [
       "Armored Spacer",
       "Boarder",
       "Blaster and Blade III",
       "Blaster and Blade II",
-      "Multiattack Proficiency (advanced melee)",
       "Attract Privateer",
       "Blaster and Blade I",
       "Preserving Shot",
@@ -3774,7 +3474,6 @@
       "34669d959223b187",
       "584bf5a0f7381648",
       "5e895be4051e1408",
-      "6021056231839e7c",
       "7a049ee1ecc3891b",
       "976c36831fecbd2b",
       "a594f0b9ff786a6c",
@@ -3866,9 +3565,8 @@
   {
     "id": "rebel-recruiter",
     "displayName": "Rebel Recruiter",
-    "talentCount": 6,
+    "talentCount": 5,
     "talents": [
-      "Stay in the Fight (Recruit)",
       "Noble Sacrifice",
       "Bolstered Numbers",
       "Recruit Enemy",
@@ -3876,7 +3574,6 @@
       "Stay in the Fight"
     ],
     "talentIds": [
-      "0e6854d8aacc48dc",
       "1fc568c1bbdd94e0",
       "4348c2bca983e4a9",
       "43ac0c4b1759507a",
@@ -4046,21 +3743,6 @@
     ]
   },
   {
-    "id": "science",
-    "displayName": "Science",
-    "talentCount": 2,
-    "talents": [
-      "Identify Creature",
-      "Poisoncraft"
-    ],
-    "talentIds": [
-      "85e9699cee664641",
-      "fd87928650da45fd"
-    ],
-    "sourceId": "00cb74839a524276",
-    "classAccess": []
-  },
-  {
     "id": "scoundrel",
     "displayName": "Scoundrel",
     "talentCount": 2,
@@ -4072,7 +3754,7 @@
   {
     "id": "sense",
     "displayName": "Sense",
-    "talentCount": 13,
+    "talentCount": 12,
     "talents": [
       "Instinctive Navigation",
       "Heightened Awareness",
@@ -4083,7 +3765,6 @@
       "Force Perception",
       "Foresight",
       "Force Reflexes",
-      "Reference Book: Star Wars Saga Edition Starships of the Galaxy",
       "Gauge Force Potential",
       "Motion of the Future",
       "Visions"
@@ -4098,7 +3779,6 @@
       "a358402a9fc26c02",
       "d10cdcba4faae7bb",
       "ece2612b7449f39a",
-      "f123e0682ef74583",
       "fdc4061afb97e87f",
       "ff2201a270efa29e",
       "da12fc505efc5eea"
@@ -4216,14 +3896,13 @@
   {
     "id": "sith",
     "displayName": "Sith",
-    "talentCount": 13,
+    "talentCount": 12,
     "talents": [
       "Dark Healing",
       "Dark Scourge",
       "Drain Force",
       "Affliction",
       "Dark Healing Field",
-      "Sith Alchemy (create)",
       "Force Deception",
       "Improved Dark Healing",
       "Dark Side Adept",
@@ -4238,7 +3917,6 @@
       "2056998b5afa4e00",
       "776a0fa8ae532ccc",
       "89a8c710bb68901c",
-      "8a6fc1f368226b7b",
       "a40e25585a6f8c2b",
       "b03db168b3f23da0",
       "cfdd73f3d939799d",
@@ -4256,16 +3934,14 @@
   {
     "id": "sith-alchemy",
     "displayName": "Sith Alchemy",
-    "talentCount": 5,
+    "talentCount": 4,
     "talents": [
-      "Sith Alchemy (craft)",
       "Rapid Alchemy",
       "Sith Alchemy Specialist",
       "Cause Mutation",
       "Sith Alchemy"
     ],
     "talentIds": [
-      "4d6c2d2398c33ba7",
       "69420a9a5ff5d8b9",
       "9bee4563b328def7",
       "c59de6f440c92832",
@@ -4348,25 +4024,6 @@
     ]
   },
   {
-    "id": "smashball-pro",
-    "displayName": "Smashball Pro",
-    "talentCount": 4,
-    "talents": [
-      "Smashball Pass",
-      "Suktub Defender",
-      "Centerbreaker Charge",
-      "Linebreaker Charge"
-    ],
-    "talentIds": [
-      "77ab82670aa14f33",
-      "8d70989dc42f4829",
-      "9780298d28d64954",
-      "a1ef8440f49847f1"
-    ],
-    "sourceId": "bfc1356c66c74783",
-    "classAccess": []
-  },
-  {
     "id": "smuggling",
     "displayName": "Smuggling",
     "talentCount": 5,
@@ -4432,26 +4089,10 @@
   {
     "id": "soldier-combat",
     "displayName": "Soldier Combat",
-    "talentCount": 2,
+    "talentCount": 1,
     "talents": [
-      "Weapon Specialization",
       "Weapon Specialization"
     ]
-  },
-  {
-    "id": "sorcerer-of-tund",
-    "displayName": "Sorcerer Of Tund",
-    "talentCount": 2,
-    "talents": [
-      "Adept Spellcaster",
-      "Delusion"
-    ],
-    "talentIds": [
-      "5e4a7f98b1e74326",
-      "b431ca7ea00947b9"
-    ],
-    "sourceId": "cfd358ef61fb47bd",
-    "classAccess": []
   },
   {
     "id": "spacer",
@@ -4485,9 +4126,8 @@
   {
     "id": "specialized-droid",
     "displayName": "Specialized Droid",
-    "talentCount": 8,
+    "talentCount": 7,
     "talents": [
-      "Hotwire",
       "Power Surge",
       "Power Boost",
       "Computer Language",
@@ -4497,7 +4137,6 @@
       "Skill Conversion"
     ],
     "talentIds": [
-      "5644990a390a4178",
       "77d09ca0a54f4c36",
       "eb503c1c3fb945a6",
       "662eb601a2686349",
@@ -4700,19 +4339,6 @@
     "classAccess": [
       "Force Adept"
     ]
-  },
-  {
-    "id": "treatment",
-    "displayName": "Treatment",
-    "talentCount": 1,
-    "talents": [
-      "Steady Hands"
-    ],
-    "talentIds": [
-      "ebc1d6e79fa543c9"
-    ],
-    "sourceId": "c1cf52502cf74435",
-    "classAccess": []
   },
   {
     "id": "trickery",
@@ -4949,20 +4575,16 @@
   {
     "id": "warrior",
     "displayName": "Warrior",
-    "talentCount": 7,
+    "talentCount": 5,
     "talents": [
-      "Weapon Proficiency (Simple Weapons)",
       "Warrior's Awareness",
-      "Ranged Disarm",
       "Champion",
       "Quick Study",
       "Simple Opportunity",
       "Warrior's Determination"
     ],
     "talentIds": [
-      "3faa4d16e28d43e4",
       "a36c49bcd3fa4395",
-      "d7870d0940a3ce0b",
       "a7aea0411eb4fbc0",
       "fd37b68c6fb620f6",
       "7ca8719e6fdf7a2a",
@@ -5064,10 +4686,9 @@
   {
     "id": "wingman",
     "displayName": "Wingman",
-    "talentCount": 6,
+    "talentCount": 5,
     "talents": [
       "Wingman Retribution",
-      "Escort",
       "Concentrate All Fire",
       "Escort Pilot",
       "Run Interference",
@@ -5075,7 +4696,6 @@
     ],
     "talentIds": [
       "3c4c26a54de7c1c1",
-      "6f3641f0ff39fc90",
       "6f6cd1c453dc1828",
       "7aa3eec9b7f748ef",
       "9fd409d9ceaf6733",
