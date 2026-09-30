@@ -1,0 +1,436 @@
+{
+  "schemaVersion": 1,
+  "phase": "3E-1",
+  "status": "AUTHORITY_ADDENDUM_COMPLETE",
+  "productionMutationPerformed": false,
+  "purpose": "Bring the authority layer level with production for the seven identities Phase 3D certified in production but Phase 1D/2/3A never recorded. A layered addendum, not an edit: the certified Phase 1D/2/3A/3B artifacts are immutable (the 3B builders byte-compare them).",
+  "authorityRule": "canonicalTreeKey + talent name; one claim = one (sourcebook, page, tree, name) publication.",
+  "arithmetic": {
+    "certifiedClaims": 1182,
+    "certifiedIdentities": 1180,
+    "additionsClaims": 7,
+    "additionsIdentities": 7,
+    "resultingClaims": 1189,
+    "resultingIdentities": 1187,
+    "productionCanonicalPack": 1187,
+    "note": "The 1,180 certified identities map 1:1 to 1,180 production ids through the Phase 3B manifests; the seven ids left over in the 1,187-record production pack are exactly these additions."
+  },
+  "treeRosterDeltas": [
+    {
+      "tree": "Gunslinger",
+      "originRosterBefore": 5,
+      "originRosterAfter": 7,
+      "add": [
+        "Ranged Disarm",
+        "Trigger Work"
+      ],
+      "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+      "sourcebook": "Saga Edition Core Rulebook",
+      "page": 217
+    },
+    {
+      "tree": "Alter",
+      "expansion": [
+        {
+          "sourcebook": "Legacy Era Campaign Guide",
+          "add": [
+            "Move Massive Object"
+          ]
+        }
+      ]
+    },
+    {
+      "tree": "Control",
+      "expansion": [
+        {
+          "sourcebook": "Legacy Era Campaign Guide",
+          "add": [
+            "Telekinetic Stability"
+          ]
+        }
+      ]
+    },
+    {
+      "tree": "Dark Side",
+      "expansion": [
+        {
+          "sourcebook": "Legacy Era Campaign Guide",
+          "add": [
+            "Dark Preservation"
+          ]
+        }
+      ]
+    },
+    {
+      "tree": "Commando",
+      "expansion": [
+        {
+          "sourcebook": "Threats of the Galaxy",
+          "add": [
+            "Hard Target"
+          ]
+        }
+      ]
+    },
+    {
+      "tree": "Sith",
+      "expansion": [
+        {
+          "sourcebook": "Threats of the Galaxy",
+          "add": [
+            "Stolen Form"
+          ]
+        }
+      ]
+    }
+  ],
+  "additions": [
+    {
+      "canonicalIdentity": "Saga Edition Core Rulebook|Gunslinger|Trigger Work",
+      "name": "Trigger Work",
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Gunslinger",
+      "treeName": "Gunslinger",
+      "treeOriginSourcebook": "Saga Edition Core Rulebook",
+      "publication": {
+        "sourcebook": "Saga Edition Core Rulebook",
+        "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+        "page": 217,
+        "pageStatus": "PDF_VERIFIED"
+      },
+      "prerequisites": "",
+      "prerequisiteStatus": "PDF_VERIFIED (none printed)",
+      "rulesText": "You take no penalty on your attack roll when using the Rapid Shot feat.",
+      "rulesSummary": null,
+      "rulesTextStatus": "PDF_VERIFIED",
+      "ocrNormalization": [],
+      "verification": {
+        "status": "PDF_VERIFIED",
+        "evidence": [
+          "Core Rulebook PDF printed p.217 (owner-verified; exact wording and absence of a Prerequisite line recorded in talent-phase-3e-core-gunslinger-census.json)",
+          "Core TXT 20645 (OCR-damaged), index 28238 (\"Trigger Work 217\"), stat blocks Core 25679/25710, Threats of the Galaxy 1791/1803"
+        ]
+      },
+      "identityCorrection": null,
+      "production": {
+        "id": "86c10d63bba2d9c8",
+        "treeId": "cb6f775cd227a3e3",
+        "registryTreeIds": [
+          "cb6f775cd227a3e3"
+        ],
+        "source": null,
+        "page": null,
+        "prerequisites": "",
+        "benefit": "You take no penalty on your attack roll when using the Rapid Shot feat."
+      },
+      "productionAssessment": {
+        "identityAndTreeCorrect": true,
+        "sourcePageMissing": true,
+        "benefitVsPrint": "EXACT",
+        "prerequisitesVsPrint": "EXACT"
+      }
+    },
+    {
+      "canonicalIdentity": "Saga Edition Core Rulebook|Gunslinger|Ranged Disarm",
+      "name": "Ranged Disarm",
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Gunslinger",
+      "treeName": "Gunslinger",
+      "treeOriginSourcebook": "Saga Edition Core Rulebook",
+      "publication": {
+        "sourcebook": "Saga Edition Core Rulebook",
+        "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+        "page": 217,
+        "pageStatus": "PDF_VERIFIED"
+      },
+      "prerequisites": "",
+      "prerequisiteStatus": "PDF_VERIFIED (none printed)",
+      "rulesText": "You can disarm an opponent using a ranged attack. If your ranged disarm attack fails, your opponent doesn't get to make a free attack against you (see Disarm, page 152).",
+      "rulesSummary": null,
+      "rulesTextStatus": "PDF_VERIFIED",
+      "ocrNormalization": [],
+      "verification": {
+        "status": "PDF_VERIFIED",
+        "evidence": [
+          "Core Rulebook PDF printed p.217 (owner-verified)",
+          "Core TXT 20640 (damaged), index 28138, body cross-reference 14492 (\"Ranged Disarm talent (see page 217\")",
+          "Galaxy of Intrigue TXT 2180: Damaging Disarm \"Prerequisite: Ranged Disarm.\""
+        ]
+      },
+      "identityCorrection": "Production filed this record under the Unknown Regions Warrior tree; Phase 3D (CORRECT_IDENTITY) moved it to Gunslinger.",
+      "production": {
+        "id": "d7870d0940a3ce0b",
+        "treeId": "cb6f775cd227a3e3",
+        "registryTreeIds": [
+          "cb6f775cd227a3e3"
+        ],
+        "source": null,
+        "page": null,
+        "prerequisites": "",
+        "benefit": "You can Disarm an opponent using a ranged attack. If your ranged Disarm attack fails, your opponent doesn't get to make a free attack against you."
+      },
+      "productionAssessment": {
+        "identityAndTreeCorrect": true,
+        "sourcePageMissing": true,
+        "benefitVsPrint": "EQUIVALENT_EDITORIAL",
+        "prerequisitesVsPrint": "EXACT"
+      }
+    },
+    {
+      "canonicalIdentity": "Saga Edition Core Rulebook|Alter|Move Massive Object",
+      "name": "Move Massive Object",
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Alter",
+      "treeName": "Alter",
+      "treeOriginSourcebook": "Saga Edition Core Rulebook",
+      "publication": {
+        "sourcebook": "Legacy Era Campaign Guide",
+        "publicationType": "EXPANSION",
+        "page": null,
+        "pageStatus": "PDF_REQUIRED"
+      },
+      "prerequisites": "Telekinetic Power, move object",
+      "prerequisiteStatus": "TXT_CONFIRMED",
+      "rulesText": "When you successfully use the move object power to move an object of Large size or bigger, you can make an area attack with the object instead of throwing it at or dropping it on a single target, as normal for the power. You must spend a Force Point when you activate the power to do this, and the area you target is based on the size of the object: Large, 2x2; Huge, 3x3; Gargantuan, 4x4; Colossal and larger, 6x6. When you use move object to make an area attack with the object you are moving, you compare your Use the Force check to the Reflex Defense of each creature, droid, and vehicle in the target area. If your check equals or exceeds the target's Reflex Defense, it takes damage from the object (as determined by the move object power). Otherwise, the target takes half damage. This is an area effect.",
+      "rulesSummary": null,
+      "rulesTextStatus": "TXT_CONFIRMED",
+      "ocrNormalization": [
+        "\"ona single\" -> \"on a single\" (lost word space)"
+      ],
+      "verification": {
+        "status": "TXT_CONFIRMED_PAGE_PDF_REQUIRED",
+        "evidence": [
+          "Legacy Era Campaign Guide TXT 4812-4828 (\"The following new talent expands the Alter talent tree (see page 100 of the Saga Edition core rulebook)\")"
+        ]
+      },
+      "identityCorrection": null,
+      "production": {
+        "id": "62d461ae3b0fcfa9",
+        "treeId": "6ac3416fb6aada56",
+        "registryTreeIds": [
+          "6ac3416fb6aada56"
+        ],
+        "source": null,
+        "page": null,
+        "prerequisites": "Telekinetic Power",
+        "benefit": "Use Move Object to make an area attack (sizes: Large 2x2, Huge 3x3, Gargantuan 4x4, Colossal 6x6); compare Use the Force to Reflex Defense."
+      },
+      "productionAssessment": {
+        "identityAndTreeCorrect": true,
+        "sourcePageMissing": true,
+        "benefitVsPrint": "DIFFERS_FROM_PRINT",
+        "prerequisitesVsPrint": "DIFFERS_FROM_PRINT"
+      }
+    },
+    {
+      "canonicalIdentity": "Saga Edition Core Rulebook|Control|Telekinetic Stability",
+      "name": "Telekinetic Stability",
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Control",
+      "treeName": "Control",
+      "treeOriginSourcebook": "Saga Edition Core Rulebook",
+      "publication": {
+        "sourcebook": "Legacy Era Campaign Guide",
+        "publicationType": "EXPANSION",
+        "page": null,
+        "pageStatus": "PDF_REQUIRED"
+      },
+      "prerequisites": "",
+      "prerequisiteStatus": "TXT_CONFIRMED (none printed)",
+      "rulesText": "Whenever an attack or effect would normally move you against your will (such as being targeted by a Bantha Rush, or being moved by Force thrust or stagger power), you can spend a Force Point to negate that movement.",
+      "rulesSummary": null,
+      "rulesTextStatus": "TXT_CONFIRMED",
+      "ocrNormalization": [],
+      "verification": {
+        "status": "TXT_CONFIRMED_PAGE_PDF_REQUIRED",
+        "evidence": [
+          "Legacy Era Campaign Guide TXT 4848-4855 (expands the Control talent tree, Core p.101)"
+        ]
+      },
+      "identityCorrection": null,
+      "production": {
+        "id": "208e1e15e989323f",
+        "treeId": "d3661aa9906bdc79",
+        "registryTreeIds": [
+          "d3661aa9906bdc79"
+        ],
+        "source": null,
+        "page": null,
+        "prerequisites": "",
+        "benefit": "Negate forced movement when being moved against your will."
+      },
+      "productionAssessment": {
+        "identityAndTreeCorrect": true,
+        "sourcePageMissing": true,
+        "benefitVsPrint": "DIFFERS_FROM_PRINT",
+        "prerequisitesVsPrint": "EXACT"
+      }
+    },
+    {
+      "canonicalIdentity": "Saga Edition Core Rulebook|Dark Side|Dark Preservation",
+      "name": "Dark Preservation",
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Dark Side",
+      "treeName": "Dark Side",
+      "treeOriginSourcebook": "Saga Edition Core Rulebook",
+      "publication": {
+        "sourcebook": "Legacy Era Campaign Guide",
+        "publicationType": "EXPANSION",
+        "page": null,
+        "pageStatus": "PDF_REQUIRED"
+      },
+      "prerequisites": "Power of the Dark Side",
+      "prerequisiteStatus": "TXT_CONFIRMED",
+      "rulesText": "Whenever an effect would normally move you down the condition track, you may spend a Force Point and increase your Dark Side Score by 1 to negate that movement down the condition track.",
+      "rulesSummary": null,
+      "rulesTextStatus": "TXT_CONFIRMED",
+      "ocrNormalization": [],
+      "verification": {
+        "status": "TXT_CONFIRMED_PAGE_PDF_REQUIRED",
+        "evidence": [
+          "Legacy Era Campaign Guide TXT 4857-4866 (expands the Dark Side talent tree, Core p.101); used in a printed stat block, LECG TXT 20498"
+        ]
+      },
+      "identityCorrection": null,
+      "production": {
+        "id": "192279eaa0b61d36",
+        "treeId": "de95d37c72b1c4cd",
+        "registryTreeIds": [
+          "de95d37c72b1c4cd"
+        ],
+        "source": null,
+        "page": null,
+        "prerequisites": "Power of the Dark Side",
+        "benefit": "Increase your Dark Side Score by 1 to stop moving down the condition track."
+      },
+      "productionAssessment": {
+        "identityAndTreeCorrect": true,
+        "sourcePageMissing": true,
+        "benefitVsPrint": "DIFFERS_FROM_PRINT",
+        "prerequisitesVsPrint": "EXACT"
+      }
+    },
+    {
+      "canonicalIdentity": "Saga Edition Core Rulebook|Commando|Hard Target",
+      "name": "Hard Target",
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Commando",
+      "treeName": "Commando",
+      "treeOriginSourcebook": "Saga Edition Core Rulebook",
+      "publication": {
+        "sourcebook": "Threats of the Galaxy",
+        "publicationType": "EXPANSION",
+        "page": null,
+        "pageStatus": "PDF_REQUIRED"
+      },
+      "prerequisites": "Tough as Nails",
+      "prerequisiteStatus": "TXT_CONFIRMED",
+      "rulesText": "You can catch a second wind as a reaction instead of as a swift action.",
+      "rulesSummary": null,
+      "rulesTextStatus": "TXT_CONFIRMED",
+      "ocrNormalization": [],
+      "verification": {
+        "status": "TXT_CONFIRMED_PAGE_PDF_REQUIRED",
+        "evidence": [
+          "Threats of the Galaxy TXT 9535-9541; used in a printed stat block, TXT 9568/9575"
+        ]
+      },
+      "identityCorrection": null,
+      "production": {
+        "id": "7f4edcb8aa830972",
+        "treeId": "798ed0945cbdac1c",
+        "registryTreeIds": [
+          "798ed0945cbdac1c"
+        ],
+        "source": null,
+        "page": null,
+        "prerequisites": "Tough as Nails",
+        "benefit": "You can Catch a Second Wind as a Reaction, instead of as a Swift Action."
+      },
+      "productionAssessment": {
+        "identityAndTreeCorrect": true,
+        "sourcePageMissing": true,
+        "benefitVsPrint": "EXACT",
+        "prerequisitesVsPrint": "EXACT"
+      }
+    },
+    {
+      "canonicalIdentity": "Saga Edition Core Rulebook|Sith|Stolen Form",
+      "name": "Stolen Form",
+      "canonicalTreeKey": "Saga Edition Core Rulebook|Sith",
+      "treeName": "Sith",
+      "treeOriginSourcebook": "Saga Edition Core Rulebook",
+      "publication": {
+        "sourcebook": "Threats of the Galaxy",
+        "publicationType": "EXPANSION",
+        "page": 81,
+        "pageStatus": "PDF_VERIFIED"
+      },
+      "prerequisites": "Any one Force technique, Weapon Focus (lightsabers)",
+      "prerequisiteStatus": "PDF_VERIFIED (owner)",
+      "rulesText": null,
+      "rulesSummary": "Choose one talent from the Lightsaber Forms talent tree; you gain that talent's benefit and count as having it for prerequisites. You must still meet the prerequisites of the chosen form. May be selected multiple times, each time for a different form.",
+      "rulesTextStatus": "PDF_TRANSCRIPTION_PENDING",
+      "ocrNormalization": [],
+      "verification": {
+        "status": "PDF_VERIFIED_EXACT_WORDING_PENDING",
+        "evidence": [
+          "Threats of the Galaxy PDF printed p.81, \"New Sith Talent\" (owner-verified; wording not transcribed by the audit)",
+          "Threats of the Galaxy TXT 8018 (printed stat block \"Stolen Form (Jar'Kai, Juyo, Niman)\")"
+        ]
+      },
+      "identityCorrection": null,
+      "production": {
+        "id": "f9352f317ad2f695",
+        "treeId": "d1037bc7a08ea80b",
+        "registryTreeIds": [
+          "d1037bc7a08ea80b"
+        ],
+        "source": null,
+        "page": null,
+        "prerequisites": "Any One Force Technique, Weapon Focus (Lightsabers)",
+        "benefit": "You have learned how to use a Jedi fighting technique to defeat Jedi in combat. Choose one Talent from the Lightsaber Forms Talent Tree; you gain the benefits of this Talent and are considered to have this Talent for the purpose of satisfying prerequisites. You must meet all the prerequisites as normal for the chosen Talent, in addition to the prerequisites of this Talent.\n\nYou can select this Talent multiple times. Each time you select it, choose a different Talent from the Lightsaber Forms Talent Tree."
+      },
+      "productionAssessment": {
+        "identityAndTreeCorrect": true,
+        "sourcePageMissing": true,
+        "benefitVsPrint": "NOT_COMPARABLE_WORDING_PENDING",
+        "prerequisitesVsPrint": "EXACT"
+      }
+    }
+  ],
+  "productionDefectsFound": {
+    "note": "Separate from the authority gap: production already holds these identities in the correct trees. These are defects of production *content/metadata*, to be repaired only through the manifest -> dry-run -> apply -> verify contract.",
+    "sourcePageMissingOnAll": [
+      "Trigger Work",
+      "Ranged Disarm",
+      "Move Massive Object",
+      "Telekinetic Stability",
+      "Dark Preservation",
+      "Hard Target",
+      "Stolen Form"
+    ],
+    "benefitDiffersFromPrint": [
+      {
+        "name": "Move Massive Object",
+        "detail": "production benefit is a paraphrase that omits printed rules content"
+      },
+      {
+        "name": "Telekinetic Stability",
+        "detail": "production benefit is a paraphrase that omits printed rules content"
+      },
+      {
+        "name": "Dark Preservation",
+        "detail": "production benefit is a paraphrase that omits printed rules content"
+      }
+    ],
+    "prerequisitesDifferFromPrint": [
+      {
+        "name": "Move Massive Object",
+        "production": "Telekinetic Power",
+        "printed": "Telekinetic Power, move object"
+      }
+    ]
+  },
+  "openPdfItems": [
+    "Move Massive Object: printed page in Legacy Era Campaign Guide (TXT cannot give it)",
+    "Telekinetic Stability: printed page in Legacy Era Campaign Guide (TXT cannot give it)",
+    "Dark Preservation: printed page in Legacy Era Campaign Guide (TXT cannot give it)",
+    "Hard Target: printed page in Threats of the Galaxy (TXT cannot give it)",
+    "Stolen Form: exact printed wording (existence, page 81, tree and prerequisites are already PDF-verified)"
+  ]
+}
