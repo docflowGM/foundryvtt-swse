@@ -1,6 +1,12 @@
 # Squad Leader — live Foundry v13 verification checklist
 
-**Status: NOT YET EXECUTED.** The automated checks below pass under Node with the foundry shim; nothing here has been run in a live
+**Status: DEFERRED_EXTERNAL_LIVE_VALIDATION** — headless runtime verification passed; live Foundry v13 client unavailable in current execution environments.
+The migrated packs are committed as a production checkpoint (`cc8262749`) but the live checklist below is **not** marked passed and the production
+branch is not merged to main until a person completes it on a machine with Foundry installed. Headless evidence: 268/268 rolling tests,
+`--verify --exact` (26 checks), registry/membership/post-state CI gates, and `tests/talent-tree-registry-runtime.test.mjs` (8/8, real `TalentTreeDB`,
+`TalentTreeRegistry` and class-access code).
+
+Original note (still true): **NOT YET EXECUTED live.** The automated checks below pass under Node with the foundry shim; nothing here has been run in a live
 Foundry v13 instance. The runtime issue is not certified until a person completes this checklist after the Phase 3C packs are applied.
 
 ## Why this needs a live check
