@@ -3,12 +3,15 @@ import { detectPackState } from '../tools/apply-talent-phase-3c.mjs';
 import { loadPostState, verifyPostState } from '../tools/apply-talent-phase-3d.mjs';
 
 // Regression guard for the certified Phase 3D post-state. Before the migration is applied this is a documented no-op.
-if (detectPackState().state !== 'POST_3D_STATE') {
-  console.log('  skip talent-phase-3d post-state: packs are not the certified Phase 3D post-state');
+const packState = detectPackState().state;
+if (!['POST_3D_STATE', 'POST_3E4_STATE', 'POST_3E5_STATE'].includes(packState)) {
+  console.log('  skip talent-phase-3d post-state: packs are not the certified Phase 3D (or later 3E-4/3E-5) post-state');
   process.exit(0);
 }
 const st = loadPostState();
-const results = verifyPostState(st, { exact: true });
+// In the later Phase 3E-4 state only the seven repaired records differ from the 3D blob, so the blob-exact check is superseded
+// by tools/apply-talent-phase-3e4.mjs --verify --exact; every structural 3D invariant must still hold.
+const results = verifyPostState(st, { exact: packState === 'POST_3D_STATE' });
 let passed = 0; const test = (n, fn) => { fn(); passed++; console.log('  ok  ' + n); };
 test('--verify --exact passes (every check, every certified blob, residual-reference gate)', () => assert.deepEqual(results.filter(r => !r.ok), []));
 test('certified counts: 1,187 canonical + 50 homebrew = 1,237; 177 canonical trees + 19 homebrew-only trees', () => {

@@ -1,0 +1,564 @@
+{
+  "schemaVersion": 1,
+  "phase": "3E-4",
+  "dryRun": true,
+  "status": "DRY_RUN_CERTIFIED",
+  "targetIds": [
+    "86c10d63bba2d9c8",
+    "d7870d0940a3ce0b",
+    "62d461ae3b0fcfa9",
+    "208e1e15e989323f",
+    "192279eaa0b61d36",
+    "7f4edcb8aa830972",
+    "f9352f317ad2f695"
+  ],
+  "counts": {
+    "canonicalTalents": 1187,
+    "recordsChanged": 7,
+    "leafChangesTotal": 32,
+    "changedOutsideSeven": 0
+  },
+  "preState": {
+    "talents": "1f5ff603819c360d04f56e47bd5dd52178296840",
+    "trees": "5cb2acafe549e1b2a38f69b644f2eb7105316c5c",
+    "classes": "2960a03039604ea06612445bad0673902a8012cc"
+  },
+  "postState": {
+    "talents": "6cabbb44f894586110cf1a6525975806669bf60d",
+    "trees": "5cb2acafe549e1b2a38f69b644f2eb7105316c5c",
+    "classes": "2960a03039604ea06612445bad0673902a8012cc"
+  },
+  "untouchedFiles": {
+    "packs/talent_trees.db": "5cb2acafe549e1b2a38f69b644f2eb7105316c5c",
+    "packs/classes.db": "2960a03039604ea06612445bad0673902a8012cc",
+    "packs/heroic.db": "cbb59081ca02c06298b1647821f5b2487ea47485",
+    "packs/nonheroic.db": "c05ea8896efb00e5115a53247a05bfe54c628e60",
+    "packs/npc.db": "78d0cdd8b1dd271238e420b8d15f33e2547e20ba",
+    "packs/talents-homebrew.db": "bd4e3d4be9861f9ed0329e0f12545bf3f5dc3c72",
+    "packs/talent-trees-homebrew.db": "81861fe0b948db00e4e7e344316acdc730d86a2b",
+    "data/generated/talent-trees.registry.json": "db075bbe3dd5ad36c58918c1addbb92e900f86d0",
+    "data/fixes/talent-trees.registry.json": "db075bbe3dd5ad36c58918c1addbb92e900f86d0",
+    "data/generated/talents.fixed.json": "3b63af6b063c3cac49fc8d9dbf6c706bf4685013",
+    "data/fixes/talents.fixed.json": "c3dbe4f282062d73906e80b2b2d840e700af6ee2",
+    "data/class-archetypes.json": "76ca97d4b1a8aa6b631ba1bfe790e5e189f6d9e6",
+    "system.json": "7c5640b8d4c10da960356703b31d33dd16c19fbb"
+  },
+  "othersFingerprint": "fbe3c09e4a76144e",
+  "leafChanges": [
+    {
+      "id": "86c10d63bba2d9c8",
+      "name": "Trigger Work",
+      "changes": [
+        {
+          "leaf": "system.page",
+          "before": "(absent)",
+          "after": 217
+        },
+        {
+          "leaf": "system.source",
+          "before": "(absent)",
+          "after": "Saga Edition Core Rulebook"
+        }
+      ]
+    },
+    {
+      "id": "d7870d0940a3ce0b",
+      "name": "Ranged Disarm",
+      "changes": [
+        {
+          "leaf": "system.benefit",
+          "before": "You can Disarm an opponent using a ranged attack. If your ranged Disarm attack fails, your opponent doesn't get to make a free attack against you.",
+          "after": "You can disarm an opponent using a ranged attack. If your ranged disarm attack fails, your opponent doesn't get to make a free attack against you (see Disarm, page 152)."
+        },
+        {
+          "leaf": "system.description.value",
+          "before": "You can Disarm an opponent using a ranged attack. If your ranged Disarm attack fails, your opponent doesn't get to make a free attack against you.",
+          "after": "You can disarm an opponent using a ranged attack. If your ranged disarm attack fails, your opponent doesn't get to make a free attack against you (see Disarm, page 152)."
+        },
+        {
+          "leaf": "system.page",
+          "before": "(absent)",
+          "after": 217
+        },
+        {
+          "leaf": "system.source",
+          "before": "(absent)",
+          "after": "Saga Edition Core Rulebook"
+        }
+      ]
+    },
+    {
+      "id": "62d461ae3b0fcfa9",
+      "name": "Move Massive Object",
+      "changes": [
+        {
+          "leaf": "system.benefit",
+          "before": "Use Move Object to make an area attack (sizes: Large 2x2, Huge 3x3, Gargantuan 4x4, Colossal 6x6); compare Use the Force to Reflex Defense.",
+          "after": "When you successfully use the move object power to move an object of Large size or bigger, you can make an area attack with the object instead of throwing it at or dropping it on a single target, as normal for the power. You must spend a Force Point when you activate the power to do this, and the area you target is based on the size of the object: Large, 2x2; Huge, 3x3; Gargantuan, 4x4; Colossal and larger, 6x6. When you use move object to make an area attack with the object you are moving, you compare your Use the Force check to the Reflex Defense of each creature, droid, and vehicle in the target area. If your check equals or exceeds the target's Reflex Defense, it takes damage from the object (as determined by the move object power). Otherwise, the target takes half damage. This is an area effect."
+        },
+        {
+          "leaf": "system.description",
+          "before": "Use Move Object to create an area attack based on object size.",
+          "after": "(absent)"
+        },
+        {
+          "leaf": "system.description.value",
+          "before": "(absent)",
+          "after": "When you successfully use the move object power to move an object of Large size or bigger, you can make an area attack with the object instead of throwing it at or dropping it on a single target, as normal for the power. You must spend a Force Point when you activate the power to do this, and the area you target is based on the size of the object: Large, 2x2; Huge, 3x3; Gargantuan, 4x4; Colossal and larger, 6x6. When you use move object to make an area attack with the object you are moving, you compare your Use the Force check to the Reflex Defense of each creature, droid, and vehicle in the target area. If your check equals or exceeds the target's Reflex Defense, it takes damage from the object (as determined by the move object power). Otherwise, the target takes half damage. This is an area effect."
+        },
+        {
+          "leaf": "system.page",
+          "before": "(absent)",
+          "after": 55
+        },
+        {
+          "leaf": "system.prerequisites",
+          "before": "Telekinetic Power",
+          "after": "Telekinetic Power, move object"
+        },
+        {
+          "leaf": "system.source",
+          "before": "(absent)",
+          "after": "Legacy Era Campaign Guide"
+        }
+      ]
+    },
+    {
+      "id": "208e1e15e989323f",
+      "name": "Telekinetic Stability",
+      "changes": [
+        {
+          "leaf": "system.benefit",
+          "before": "Negate forced movement when being moved against your will.",
+          "after": "Whenever an attack or effect would normally move you against your will (such as being targeted by a Bantha Rush, or being moved by Force thrust or stagger power), you can spend a Force Point to negate that movement."
+        },
+        {
+          "leaf": "system.description",
+          "before": "Negate forced movement against your will.",
+          "after": "(absent)"
+        },
+        {
+          "leaf": "system.description.value",
+          "before": "(absent)",
+          "after": "Whenever an attack or effect would normally move you against your will (such as being targeted by a Bantha Rush, or being moved by Force thrust or stagger power), you can spend a Force Point to negate that movement."
+        },
+        {
+          "leaf": "system.page",
+          "before": "(absent)",
+          "after": 55
+        },
+        {
+          "leaf": "system.prerequisites",
+          "before": null,
+          "after": ""
+        },
+        {
+          "leaf": "system.source",
+          "before": "(absent)",
+          "after": "Legacy Era Campaign Guide"
+        }
+      ]
+    },
+    {
+      "id": "192279eaa0b61d36",
+      "name": "Dark Preservation",
+      "changes": [
+        {
+          "leaf": "system.benefit",
+          "before": "Increase your Dark Side Score by 1 to stop moving down the condition track.",
+          "after": "Whenever an effect would normally move you down the condition track, you may spend a Force Point and increase your Dark Side Score by 1 to negate that movement down the condition track."
+        },
+        {
+          "leaf": "system.description",
+          "before": "Increase your Dark Side Score by 1 to prevent moving down the condition track.",
+          "after": "(absent)"
+        },
+        {
+          "leaf": "system.description.value",
+          "before": "(absent)",
+          "after": "Whenever an effect would normally move you down the condition track, you may spend a Force Point and increase your Dark Side Score by 1 to negate that movement down the condition track."
+        },
+        {
+          "leaf": "system.page",
+          "before": "(absent)",
+          "after": 55
+        },
+        {
+          "leaf": "system.source",
+          "before": "(absent)",
+          "after": "Legacy Era Campaign Guide"
+        }
+      ]
+    },
+    {
+      "id": "7f4edcb8aa830972",
+      "name": "Hard Target",
+      "changes": [
+        {
+          "leaf": "system.benefit",
+          "before": "You can Catch a Second Wind as a Reaction, instead of as a Swift Action.",
+          "after": "You can catch a second wind as a reaction instead of as a swift action."
+        },
+        {
+          "leaf": "system.description.value",
+          "before": "You can Catch a Second Wind as a Reaction, instead of as a Swift Action.",
+          "after": "You can catch a second wind as a reaction instead of as a swift action."
+        },
+        {
+          "leaf": "system.page",
+          "before": "(absent)",
+          "after": 95
+        },
+        {
+          "leaf": "system.source",
+          "before": "(absent)",
+          "after": "Threats of the Galaxy"
+        }
+      ]
+    },
+    {
+      "id": "f9352f317ad2f695",
+      "name": "Stolen Form",
+      "changes": [
+        {
+          "leaf": "system.benefit",
+          "before": "You have learned how to use a Jedi fighting technique to defeat Jedi in combat. Choose one Talent from the Lightsaber Forms Talent Tree; you gain the benefits of this Talent and are considered to have this Talent for the purpose of satisfying prerequisites. You must meet all the prerequisites as normal for the chosen Talent, in addition to the prerequisites of this Talent.\n\nYou can select this Talent multiple times. Each time you select it, choose a different Talent from the Lightsaber Forms Talent Tree.",
+          "after": "You have learned how to use a Jedi fighting technique to defeat Jedi in combat. Choose one talent from the Lightsaber Forms talent tree (SE 218); you gain the benefit of this talent and are considered to have this talent for the purpose of satisfying prerequisites. You must meet all the prerequisites as normal for the chosen lightsaber form talent, in addition to the prerequisites of this talent.\n\nYou can select this talent multiple times. Each time you select it, choose a different lightsaber form."
+        },
+        {
+          "leaf": "system.description.value",
+          "before": "You have learned how to use a Jedi fighting technique to defeat Jedi in combat. Choose one Talent from the Lightsaber Forms Talent Tree; you gain the benefits of this Talent and are considered to have this Talent for the purpose of satisfying prerequisites. You must meet all the prerequisites as normal for the chosen Talent, in addition to the prerequisites of this Talent.\n\nYou can select this Talent multiple times. Each time you select it, choose a different Talent from the Lightsaber Forms Talent Tree.",
+          "after": "You have learned how to use a Jedi fighting technique to defeat Jedi in combat. Choose one talent from the Lightsaber Forms talent tree (SE 218); you gain the benefit of this talent and are considered to have this talent for the purpose of satisfying prerequisites. You must meet all the prerequisites as normal for the chosen lightsaber form talent, in addition to the prerequisites of this talent.\n\nYou can select this talent multiple times. Each time you select it, choose a different lightsaber form."
+        },
+        {
+          "leaf": "system.page",
+          "before": "(absent)",
+          "after": 81
+        },
+        {
+          "leaf": "system.prerequisites",
+          "before": "Any One Force Technique, Weapon Focus (Lightsabers)",
+          "after": "Any one Force technique, Weapon Focus (lightsabers)"
+        },
+        {
+          "leaf": "system.source",
+          "before": "(absent)",
+          "after": "Threats of the Galaxy"
+        }
+      ]
+    }
+  ],
+  "embeddedActorItems": {
+    "policy": "NOT MODIFIED. Embedded actor items are independent snapshots; most already differ from production before this repair (they are not kept in sync outside the Phase 3D repoint refresh). No runtime path was found that requires them to equal the compendium text.",
+    "total": 24,
+    "byProductionId": {
+      "86c10d63bba2d9c8": {
+        "name": "Trigger Work",
+        "items": 18,
+        "verbatimCopyOfPreRepairProduction": 0
+      },
+      "f9352f317ad2f695": {
+        "name": "Stolen Form",
+        "items": 2,
+        "verbatimCopyOfPreRepairProduction": 0
+      },
+      "192279eaa0b61d36": {
+        "name": "Dark Preservation",
+        "items": 2,
+        "verbatimCopyOfPreRepairProduction": 2
+      },
+      "7f4edcb8aa830972": {
+        "name": "Hard Target",
+        "items": 2,
+        "verbatimCopyOfPreRepairProduction": 0
+      }
+    },
+    "items": [
+      {
+        "pack": "heroic",
+        "actor": "Han Solo, Galactic Hero",
+        "item": "Trigger Work",
+        "itemId": "0c190ee0441ef838",
+        "productionId": "86c10d63bba2d9c8",
+        "benefitEqualsProductionBefore": false,
+        "benefitEqualsProductionAfter": false
+      },
+      {
+        "pack": "heroic",
+        "actor": "Jodo Kast",
+        "item": "Trigger Work",
+        "itemId": "b9e7b03535184da2",
+        "productionId": "86c10d63bba2d9c8",
+        "benefitEqualsProductionBefore": false,
+        "benefitEqualsProductionAfter": false
+      },
+      {
+        "pack": "heroic",
+        "actor": "Galen Marek, Vader's Apprentice",
+        "item": "Stolen Form",
+        "itemId": "5a5a223f41e71d9e",
+        "productionId": "f9352f317ad2f695",
+        "benefitEqualsProductionBefore": false,
+        "benefitEqualsProductionAfter": false
+      },
+      {
+        "pack": "heroic",
+        "actor": "Han Solo, Smuggler",
+        "item": "Trigger Work",
+        "itemId": "5e01072c5733feb5",
+        "productionId": "86c10d63bba2d9c8",
+        "benefitEqualsProductionBefore": false,
+        "benefitEqualsProductionAfter": false
+      },
+      {
+        "pack": "heroic",
+        "actor": "Jango Fett",
+        "item": "Trigger Work",
+        "itemId": "0e1199e852128e46",
+        "productionId": "86c10d63bba2d9c8",
+        "benefitEqualsProductionBefore": false,
+        "benefitEqualsProductionAfter": false
+      },
+      {
+        "pack": "heroic",
+        "actor": "Han Solo",
+        "item": "Trigger Work",
+        "itemId": "65dc447c9e7ed512",
+        "productionId": "86c10d63bba2d9c8",
+        "benefitEqualsProductionBefore": false,
+        "benefitEqualsProductionAfter": false
+      },
+      {
+        "pack": "heroic",
+        "actor": "Han Solo, Stormtrooper Armor",
+        "item": "Trigger Work",
+        "itemId": "5fb41f00d9e9a7d6",
+        "productionId": "86c10d63bba2d9c8",
+        "benefitEqualsProductionBefore": false,
+        "benefitEqualsProductionAfter": false
+      },
+      {
+        "pack": "heroic",
+        "actor": "Jor Torlin",
+        "item": "Dark Preservation",
+        "itemId": "be83b13e6078d408",
+        "productionId": "192279eaa0b61d36",
+        "benefitEqualsProductionBefore": true,
+        "benefitEqualsProductionAfter": false
+      },
+      {
+        "pack": "heroic",
+        "actor": "Vril Vrakth",
+        "item": "Trigger Work",
+        "itemId": "897c15bda2dcce5d",
+        "productionId": "86c10d63bba2d9c8",
+        "benefitEqualsProductionBefore": false,
+        "benefitEqualsProductionAfter": false
+      },
+      {
+        "pack": "nonheroic",
+        "actor": "Notorious Outlaw",
+        "item": "Trigger Work",
+        "itemId": "54a16ffbf0696503",
+        "productionId": "86c10d63bba2d9c8",
+        "benefitEqualsProductionBefore": false,
+        "benefitEqualsProductionAfter": false
+      },
+      {
+        "pack": "nonheroic",
+        "actor": "SpecForce Elite Soldier",
+        "item": "Hard Target",
+        "itemId": "ac7e4a565ace2267",
+        "productionId": "7f4edcb8aa830972",
+        "benefitEqualsProductionBefore": false,
+        "benefitEqualsProductionAfter": false
+      },
+      {
+        "pack": "nonheroic",
+        "actor": "Trandoshan Raider",
+        "item": "Trigger Work",
+        "itemId": "41199d27b7f75a98",
+        "productionId": "86c10d63bba2d9c8",
+        "benefitEqualsProductionBefore": false,
+        "benefitEqualsProductionAfter": false
+      },
+      {
+        "pack": "npc",
+        "actor": "Notorious Outlaw",
+        "item": "Trigger Work",
+        "itemId": "54a16ffbf0696503",
+        "productionId": "86c10d63bba2d9c8",
+        "benefitEqualsProductionBefore": false,
+        "benefitEqualsProductionAfter": false
+      },
+      {
+        "pack": "npc",
+        "actor": "Han Solo, Galactic Hero",
+        "item": "Trigger Work",
+        "itemId": "0c190ee0441ef838",
+        "productionId": "86c10d63bba2d9c8",
+        "benefitEqualsProductionBefore": false,
+        "benefitEqualsProductionAfter": false
+      },
+      {
+        "pack": "npc",
+        "actor": "SpecForce Elite Soldier",
+        "item": "Hard Target",
+        "itemId": "ac7e4a565ace2267",
+        "productionId": "7f4edcb8aa830972",
+        "benefitEqualsProductionBefore": false,
+        "benefitEqualsProductionAfter": false
+      },
+      {
+        "pack": "npc",
+        "actor": "Jodo Kast",
+        "item": "Trigger Work",
+        "itemId": "b9e7b03535184da2",
+        "productionId": "86c10d63bba2d9c8",
+        "benefitEqualsProductionBefore": false,
+        "benefitEqualsProductionAfter": false
+      },
+      {
+        "pack": "npc",
+        "actor": "Galen Marek, Vader's Apprentice",
+        "item": "Stolen Form",
+        "itemId": "5a5a223f41e71d9e",
+        "productionId": "f9352f317ad2f695",
+        "benefitEqualsProductionBefore": false,
+        "benefitEqualsProductionAfter": false
+      },
+      {
+        "pack": "npc",
+        "actor": "Han Solo, Smuggler",
+        "item": "Trigger Work",
+        "itemId": "5e01072c5733feb5",
+        "productionId": "86c10d63bba2d9c8",
+        "benefitEqualsProductionBefore": false,
+        "benefitEqualsProductionAfter": false
+      },
+      {
+        "pack": "npc",
+        "actor": "Jango Fett",
+        "item": "Trigger Work",
+        "itemId": "0e1199e852128e46",
+        "productionId": "86c10d63bba2d9c8",
+        "benefitEqualsProductionBefore": false,
+        "benefitEqualsProductionAfter": false
+      },
+      {
+        "pack": "npc",
+        "actor": "Han Solo",
+        "item": "Trigger Work",
+        "itemId": "65dc447c9e7ed512",
+        "productionId": "86c10d63bba2d9c8",
+        "benefitEqualsProductionBefore": false,
+        "benefitEqualsProductionAfter": false
+      },
+      {
+        "pack": "npc",
+        "actor": "Han Solo, Stormtrooper Armor",
+        "item": "Trigger Work",
+        "itemId": "5fb41f00d9e9a7d6",
+        "productionId": "86c10d63bba2d9c8",
+        "benefitEqualsProductionBefore": false,
+        "benefitEqualsProductionAfter": false
+      },
+      {
+        "pack": "npc",
+        "actor": "Trandoshan Raider",
+        "item": "Trigger Work",
+        "itemId": "41199d27b7f75a98",
+        "productionId": "86c10d63bba2d9c8",
+        "benefitEqualsProductionBefore": false,
+        "benefitEqualsProductionAfter": false
+      },
+      {
+        "pack": "npc",
+        "actor": "Jor Torlin",
+        "item": "Dark Preservation",
+        "itemId": "be83b13e6078d408",
+        "productionId": "192279eaa0b61d36",
+        "benefitEqualsProductionBefore": true,
+        "benefitEqualsProductionAfter": false
+      },
+      {
+        "pack": "npc",
+        "actor": "Vril Vrakth",
+        "item": "Trigger Work",
+        "itemId": "897c15bda2dcce5d",
+        "productionId": "86c10d63bba2d9c8",
+        "benefitEqualsProductionBefore": false,
+        "benefitEqualsProductionAfter": false
+      }
+    ]
+  },
+  "verification": {
+    "results": [
+      {
+        "id": "exactly seven target ids, each present once in the canonical pack",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "id": "target ids are exactly the Phase 3E addendum production ids",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "id": "pack size unchanged (1,187)",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "id": "zero changes outside the seven records",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "id": "only permitted leaves change (source, page, prerequisites, benefit, description)",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "id": "no id / name / tree / tag / flag / effect change on the seven",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "id": "source/page equal the addendum publication (PDF-verified)",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "id": "benefit == description.value == addendum exact wording",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "id": "prerequisites equal the addendum",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "id": "rest-of-record fingerprints (everything except the set leaves) are unchanged",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "id": "no system.summary written",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "id": "second run is a zero diff",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "id": "serialization is surgical: only the seven lines of packs/talents.db change",
+        "ok": true,
+        "detail": ""
+      }
+    ]
+  }
+}

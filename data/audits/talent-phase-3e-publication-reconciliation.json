@@ -1,0 +1,756 @@
+{
+  "schemaVersion": 1,
+  "phase": "3E-3",
+  "productionMutationPerformed": false,
+  "invariant": "every certified published claim maps to exactly one canonical production record, and every canonical production record is explained by exactly one certified identity",
+  "textInvariant": {
+    "fieldsChecked": 4741,
+    "fieldsAtApprovedCorrection": 49
+  },
+  "denominator": {
+    "certifiedClaims": 1182,
+    "addendumClaims": 7,
+    "totalClaims": 1189,
+    "identities": 1187,
+    "productionCanonicalRecords": 1187,
+    "homebrewExcluded": 50,
+    "crossTreeSameNameGroups": 19
+  },
+  "sourcePageAgreement": {
+    "exactSourcePage": 1187,
+    "wrongSourcePage": 0
+  },
+  "findingCounts": {
+    "CLAIM_WITHOUT_RECORD": 0,
+    "RECORD_WITHOUT_CLAIM": 0,
+    "DUPLICATE_MAPPING": 0,
+    "DUPLICATE_RECORD_IN_TREE": 0,
+    "WRONG_TREE": 0,
+    "NAME_MISMATCH": 0,
+    "UNRESOLVED_SAME_NAME_AMBIGUITY": 0,
+    "CLAIM_COUNT_MISMATCH": 0,
+    "HOMEBREW_IN_DENOMINATOR": 0,
+    "TEXT_DRIFT": 0,
+    "WRONG_SOURCE_PAGE": 0,
+    "STALE_TREE_ID_SLUG": 71,
+    "TREE_DISPLAY_NAME_DRIFT": 72
+  },
+  "blockingFindings": [],
+  "metadataFindings": [
+    {
+      "code": "STALE_TREE_ID_SLUG",
+      "identity": "Saga Edition Core Rulebook|Armor Specialist|Armor Mastery",
+      "detail": "system.treeId \"armor-specialist\" is the slug of the correct tree"
+    },
+    {
+      "code": "STALE_TREE_ID_SLUG",
+      "identity": "Saga Edition Core Rulebook|Dark Side Devotee|Channel Aggression",
+      "detail": "system.treeId \"dark-side-devotee\" is the slug of the correct tree"
+    },
+    {
+      "code": "STALE_TREE_ID_SLUG",
+      "identity": "Saga Edition Core Rulebook|Dark Side Devotee|Channel Anger",
+      "detail": "system.treeId \"dark-side-devotee\" is the slug of the correct tree"
+    },
+    {
+      "code": "STALE_TREE_ID_SLUG",
+      "identity": "Saga Edition Core Rulebook|Dark Side Devotee|Crippling Strike",
+      "detail": "system.treeId \"dark-side-devotee\" is the slug of the correct tree"
+    },
+    {
+      "code": "STALE_TREE_ID_SLUG",
+      "identity": "Saga Edition Core Rulebook|Dark Side Devotee|Embrace the Dark Side",
+      "detail": "system.treeId \"dark-side-devotee\" is the slug of the correct tree"
+    },
+    {
+      "code": "STALE_TREE_ID_SLUG",
+      "identity": "Saga Edition Core Rulebook|Dark Side Devotee|Dark Side Talisman",
+      "detail": "system.treeId \"dark-side-devotee\" is the slug of the correct tree"
+    },
+    {
+      "code": "STALE_TREE_ID_SLUG",
+      "identity": "Saga Edition Core Rulebook|Dark Side Devotee|Greater Dark Side Talisman",
+      "detail": "system.treeId \"dark-side-devotee\" is the slug of the correct tree"
+    },
+    {
+      "code": "STALE_TREE_ID_SLUG",
+      "identity": "Saga Edition Core Rulebook|Jedi Guardian|Acrobatic Recovery",
+      "detail": "system.treeId \"jedi-guardian\" is the slug of the correct tree"
+    },
+    {
+      "code": "STALE_TREE_ID_SLUG",
+      "identity": "Saga Edition Core Rulebook|Jedi Guardian|Battle Meditation",
+      "detail": "system.treeId \"jedi-guardian\" is the slug of the correct tree"
+    },
+    {
+      "code": "STALE_TREE_ID_SLUG",
+      "identity": "Saga Edition Core Rulebook|Jedi Guardian|Elusive Target",
+      "detail": "system.treeId \"jedi-guardian\" is the slug of the correct tree"
+    },
+    {
+      "code": "STALE_TREE_ID_SLUG",
+      "identity": "Saga Edition Core Rulebook|Jedi Guardian|Force Intuition",
+      "detail": "system.treeId \"jedi-guardian\" is the slug of the correct tree"
+    },
+    {
+      "code": "STALE_TREE_ID_SLUG",
+      "identity": "Saga Edition Core Rulebook|Jedi Guardian|Resilience",
+      "detail": "system.treeId \"jedi-guardian\" is the slug of the correct tree"
+    },
+    {
+      "code": "STALE_TREE_ID_SLUG",
+      "identity": "Saga Edition Core Rulebook|Jedi Guardian|Exposing Strike",
+      "detail": "system.treeId \"jedi-guardian\" is the slug of the correct tree"
+    },
+    {
+      "code": "STALE_TREE_ID_SLUG",
+      "identity": "Saga Edition Core Rulebook|Jedi Guardian|Guardian Strike",
+      "detail": "system.treeId \"jedi-guardian\" is the slug of the correct tree"
+    },
+    {
+      "code": "STALE_TREE_ID_SLUG",
+      "identity": "Saga Edition Core Rulebook|Jedi Guardian|Forceful Warrior",
+      "detail": "system.treeId \"jedi-guardian\" is the slug of the correct tree"
+    },
+    {
+      "code": "STALE_TREE_ID_SLUG",
+      "identity": "Saga Edition Core Rulebook|Jedi Guardian|Mobile Combatant",
+      "detail": "system.treeId \"jedi-guardian\" is the slug of the correct tree"
+    },
+    {
+      "code": "STALE_TREE_ID_SLUG",
+      "identity": "Saga Edition Core Rulebook|Jedi Guardian|Defensive Acuity",
+      "detail": "system.treeId \"jedi-guardian\" is the slug of the correct tree"
+    },
+    {
+      "code": "STALE_TREE_ID_SLUG",
+      "identity": "Saga Edition Core Rulebook|Jedi Guardian|Improved Battle Meditation",
+      "detail": "system.treeId \"jedi-guardian\" is the slug of the correct tree"
+    },
+    {
+      "code": "STALE_TREE_ID_SLUG",
+      "identity": "Saga Edition Core Rulebook|Jedi Guardian|Cover Escape",
+      "detail": "system.treeId \"jedi-guardian\" is the slug of the correct tree"
+    },
+    {
+      "code": "STALE_TREE_ID_SLUG",
+      "identity": "Saga Edition Core Rulebook|Jedi Guardian|Close Maneuvering",
+      "detail": "system.treeId \"jedi-guardian\" is the slug of the correct tree"
+    },
+    {
+      "code": "STALE_TREE_ID_SLUG",
+      "identity": "Saga Edition Core Rulebook|Jedi Guardian|Immovable",
+      "detail": "system.treeId \"jedi-guardian\" is the slug of the correct tree"
+    },
+    {
+      "code": "STALE_TREE_ID_SLUG",
+      "identity": "Saga Edition Core Rulebook|Jedi Guardian|Grenade Defense",
+      "detail": "system.treeId \"jedi-guardian\" is the slug of the correct tree"
+    },
+    {
+      "code": "STALE_TREE_ID_SLUG",
+      "identity": "Saga Edition Core Rulebook|Jedi Guardian|Hold the Line",
+      "detail": "system.treeId \"jedi-guardian\" is the slug of the correct tree"
+    },
+    {
+      "code": "STALE_TREE_ID_SLUG",
+      "identity": "Saga Edition Core Rulebook|Jedi Sentinel|Prime Targets",
+      "detail": "system.treeId \"jedi-sentinel\" is the slug of the correct tree"
+    },
+    {
+      "code": "STALE_TREE_ID_SLUG",
+      "identity": "Saga Edition Core Rulebook|Jedi Sentinel|Sense Primal Force",
+      "detail": "system.treeId \"jedi-sentinel\" is the slug of the correct tree"
+    },
+    {
+      "code": "STALE_TREE_ID_SLUG",
+      "identity": "Saga Edition Core Rulebook|Lightsaber Combat|Block",
+      "detail": "system.treeId \"lightsaber-combat\" is the slug of the correct tree"
+    },
+    {
+      "code": "STALE_TREE_ID_SLUG",
+      "identity": "Saga Edition Core Rulebook|Lightsaber Combat|Deflect",
+      "detail": "system.treeId \"lightsaber-combat\" is the slug of the correct tree"
+    },
+    {
+      "code": "STALE_TREE_ID_SLUG",
+      "identity": "Saga Edition Core Rulebook|Lightsaber Combat|Lightsaber Defense",
+      "detail": "system.treeId \"lightsaber-combat\" is the slug of the correct tree"
+    },
+    {
+      "code": "STALE_TREE_ID_SLUG",
+      "identity": "Saga Edition Core Rulebook|Lightsaber Combat|Lightsaber Throw",
+      "detail": "system.treeId \"lightsaber-combat\" is the slug of the correct tree"
+    },
+    {
+      "code": "STALE_TREE_ID_SLUG",
+      "identity": "Saga Edition Core Rulebook|Lightsaber Combat|Redirect Shot",
+      "detail": "system.treeId \"lightsaber-combat\" is the slug of the correct tree"
+    },
+    {
+      "code": "STALE_TREE_ID_SLUG",
+      "identity": "Saga Edition Core Rulebook|Lightsaber Combat|Weapon Specialization (Lightsabers)",
+      "detail": "system.treeId \"lightsaber-combat\" is the slug of the correct tree"
+    },
+    {
+      "code": "STALE_TREE_ID_SLUG",
+      "identity": "Saga Edition Core Rulebook|Lightsaber Combat|Cortosis Gauntlet Block",
+      "detail": "system.treeId \"lightsaber-combat\" is the slug of the correct tree"
+    },
+    {
+      "code": "STALE_TREE_ID_SLUG",
+      "identity": "Saga Edition Core Rulebook|Lightsaber Combat|Precision",
+      "detail": "system.treeId \"lightsaber-combat\" is the slug of the correct tree"
+    },
+    {
+      "code": "STALE_TREE_ID_SLUG",
+      "identity": "Saga Edition Core Rulebook|Lightsaber Combat|Riposte",
+      "detail": "system.treeId \"lightsaber-combat\" is the slug of the correct tree"
+    },
+    {
+      "code": "STALE_TREE_ID_SLUG",
+      "identity": "Saga Edition Core Rulebook|Lightsaber Combat|Precise Redirect",
+      "detail": "system.treeId \"lightsaber-combat\" is the slug of the correct tree"
+    },
+    {
+      "code": "STALE_TREE_ID_SLUG",
+      "identity": "Saga Edition Core Rulebook|Lightsaber Combat|Shoto Focus",
+      "detail": "system.treeId \"lightsaber-combat\" is the slug of the correct tree"
+    },
+    {
+      "code": "STALE_TREE_ID_SLUG",
+      "identity": "Saga Edition Core Rulebook|Lightsaber Forms|Ataru",
+      "detail": "system.treeId \"lightsaber-forms\" is the slug of the correct tree"
+    },
+    {
+      "code": "STALE_TREE_ID_SLUG",
+      "identity": "Saga Edition Core Rulebook|Lightsaber Forms|Djem So",
+      "detail": "system.treeId \"lightsaber-forms\" is the slug of the correct tree"
+    },
+    {
+      "code": "STALE_TREE_ID_SLUG",
+      "identity": "Saga Edition Core Rulebook|Lightsaber Forms|Jar'Kai",
+      "detail": "system.treeId \"lightsaber-forms\" is the slug of the correct tree"
+    },
+    {
+      "code": "STALE_TREE_ID_SLUG",
+      "identity": "Saga Edition Core Rulebook|Lightsaber Forms|Juyo",
+      "detail": "system.treeId \"lightsaber-forms\" is the slug of the correct tree"
+    },
+    {
+      "code": "STALE_TREE_ID_SLUG",
+      "identity": "Saga Edition Core Rulebook|Lightsaber Forms|Makashi",
+      "detail": "system.treeId \"lightsaber-forms\" is the slug of the correct tree"
+    },
+    {
+      "code": "STALE_TREE_ID_SLUG",
+      "identity": "Saga Edition Core Rulebook|Lightsaber Forms|Niman",
+      "detail": "system.treeId \"lightsaber-forms\" is the slug of the correct tree"
+    },
+    {
+      "code": "STALE_TREE_ID_SLUG",
+      "identity": "Saga Edition Core Rulebook|Lightsaber Forms|Shien",
+      "detail": "system.treeId \"lightsaber-forms\" is the slug of the correct tree"
+    },
+    {
+      "code": "STALE_TREE_ID_SLUG",
+      "identity": "Saga Edition Core Rulebook|Lightsaber Forms|Shii-Cho",
+      "detail": "system.treeId \"lightsaber-forms\" is the slug of the correct tree"
+    },
+    {
+      "code": "STALE_TREE_ID_SLUG",
+      "identity": "Saga Edition Core Rulebook|Lightsaber Forms|Sokan",
+      "detail": "system.treeId \"lightsaber-forms\" is the slug of the correct tree"
+    },
+    {
+      "code": "STALE_TREE_ID_SLUG",
+      "identity": "Saga Edition Core Rulebook|Lightsaber Forms|Soresu",
+      "detail": "system.treeId \"lightsaber-forms\" is the slug of the correct tree"
+    },
+    {
+      "code": "STALE_TREE_ID_SLUG",
+      "identity": "Saga Edition Core Rulebook|Lightsaber Forms|Trakata",
+      "detail": "system.treeId \"lightsaber-forms\" is the slug of the correct tree"
+    },
+    {
+      "code": "STALE_TREE_ID_SLUG",
+      "identity": "Saga Edition Core Rulebook|Lightsaber Forms|Vaapad",
+      "detail": "system.treeId \"lightsaber-forms\" is the slug of the correct tree"
+    },
+    {
+      "code": "TREE_DISPLAY_NAME_DRIFT",
+      "identity": "Force Unleashed Campaign Guide|Bothan SpyNet|Bothan Resources",
+      "detail": "tree d20682671d035cef is named \"Bothan Spynet\", canonical \"Bothan SpyNet\""
+    },
+    {
+      "code": "TREE_DISPLAY_NAME_DRIFT",
+      "identity": "Force Unleashed Campaign Guide|Bothan SpyNet|Knowledge Is Life",
+      "detail": "tree d20682671d035cef is named \"Bothan Spynet\", canonical \"Bothan SpyNet\""
+    },
+    {
+      "code": "TREE_DISPLAY_NAME_DRIFT",
+      "identity": "Force Unleashed Campaign Guide|Bothan SpyNet|Knowledge Is Power",
+      "detail": "tree d20682671d035cef is named \"Bothan Spynet\", canonical \"Bothan SpyNet\""
+    },
+    {
+      "code": "TREE_DISPLAY_NAME_DRIFT",
+      "identity": "Force Unleashed Campaign Guide|Bothan SpyNet|Knowledge Is Strength",
+      "detail": "tree d20682671d035cef is named \"Bothan Spynet\", canonical \"Bothan SpyNet\""
+    },
+    {
+      "code": "TREE_DISPLAY_NAME_DRIFT",
+      "identity": "Force Unleashed Campaign Guide|Bothan SpyNet|Six Questions",
+      "detail": "tree d20682671d035cef is named \"Bothan Spynet\", canonical \"Bothan SpyNet\""
+    },
+    {
+      "code": "TREE_DISPLAY_NAME_DRIFT",
+      "identity": "Force Unleashed Campaign Guide|Bothan SpyNet|Spynet Agent",
+      "detail": "tree d20682671d035cef is named \"Bothan Spynet\", canonical \"Bothan SpyNet\""
+    },
+    {
+      "code": "STALE_TREE_ID_SLUG",
+      "identity": "Jedi Academy Training Manual|Beastwarden|Charm Beast",
+      "detail": "system.treeId \"beastwarden\" is the slug of the correct tree"
+    },
+    {
+      "code": "STALE_TREE_ID_SLUG",
+      "identity": "Jedi Academy Training Manual|Beastwarden|Bonded Mount",
+      "detail": "system.treeId \"beastwarden\" is the slug of the correct tree"
+    },
+    {
+      "code": "STALE_TREE_ID_SLUG",
+      "identity": "Jedi Academy Training Manual|Beastwarden|Entreat Beast",
+      "detail": "system.treeId \"beastwarden\" is the slug of the correct tree"
+    },
+    {
+      "code": "STALE_TREE_ID_SLUG",
+      "identity": "Jedi Academy Training Manual|Beastwarden|Soothing Presence",
+      "detail": "system.treeId \"beastwarden\" is the slug of the correct tree"
+    },
+    {
+      "code": "STALE_TREE_ID_SLUG",
+      "identity": "Jedi Academy Training Manual|Beastwarden|Wild Sense",
+      "detail": "system.treeId \"beastwarden\" is the slug of the correct tree"
+    },
+    {
+      "code": "TREE_DISPLAY_NAME_DRIFT",
+      "identity": "Galaxy of Intrigue|Master of Intrigue|Advanced Planning",
+      "detail": "tree 0ffc37dac946477d is named \"Master Of Intrigue\", canonical \"Master of Intrigue\""
+    },
+    {
+      "code": "TREE_DISPLAY_NAME_DRIFT",
+      "identity": "Galaxy of Intrigue|Master of Intrigue|Blend In",
+      "detail": "tree 0ffc37dac946477d is named \"Master Of Intrigue\", canonical \"Master of Intrigue\""
+    },
+    {
+      "code": "TREE_DISPLAY_NAME_DRIFT",
+      "identity": "Galaxy of Intrigue|Master of Intrigue|Done It All",
+      "detail": "tree 0ffc37dac946477d is named \"Master Of Intrigue\", canonical \"Master of Intrigue\""
+    },
+    {
+      "code": "TREE_DISPLAY_NAME_DRIFT",
+      "identity": "Galaxy of Intrigue|Master of Intrigue|Get into Position",
+      "detail": "tree 0ffc37dac946477d is named \"Master Of Intrigue\", canonical \"Master of Intrigue\""
+    },
+    {
+      "code": "TREE_DISPLAY_NAME_DRIFT",
+      "identity": "Galaxy of Intrigue|Master of Intrigue|Master Manipulator",
+      "detail": "tree 0ffc37dac946477d is named \"Master Of Intrigue\", canonical \"Master of Intrigue\""
+    },
+    {
+      "code": "TREE_DISPLAY_NAME_DRIFT",
+      "identity": "Galaxy of Intrigue|Master of Intrigue|Retaliation",
+      "detail": "tree 0ffc37dac946477d is named \"Master Of Intrigue\", canonical \"Master of Intrigue\""
+    },
+    {
+      "code": "TREE_DISPLAY_NAME_DRIFT",
+      "identity": "Force Unleashed Campaign Guide|First-Degree Droid|Dull the Pain",
+      "detail": "tree a212850887fe41da is named \"1stdegree Droid\", canonical \"First-Degree Droid\""
+    },
+    {
+      "code": "TREE_DISPLAY_NAME_DRIFT",
+      "identity": "Force Unleashed Campaign Guide|First-Degree Droid|Interrogator",
+      "detail": "tree a212850887fe41da is named \"1stdegree Droid\", canonical \"First-Degree Droid\""
+    },
+    {
+      "code": "TREE_DISPLAY_NAME_DRIFT",
+      "identity": "Force Unleashed Campaign Guide|First-Degree Droid|Medical Droid",
+      "detail": "tree a212850887fe41da is named \"1stdegree Droid\", canonical \"First-Degree Droid\""
+    },
+    {
+      "code": "TREE_DISPLAY_NAME_DRIFT",
+      "identity": "Force Unleashed Campaign Guide|First-Degree Droid|Known Vulnerability",
+      "detail": "tree a212850887fe41da is named \"1stdegree Droid\", canonical \"First-Degree Droid\""
+    },
+    {
+      "code": "TREE_DISPLAY_NAME_DRIFT",
+      "identity": "Force Unleashed Campaign Guide|First-Degree Droid|Medical Analyzer",
+      "detail": "tree a212850887fe41da is named \"1stdegree Droid\", canonical \"First-Degree Droid\""
+    },
+    {
+      "code": "TREE_DISPLAY_NAME_DRIFT",
+      "identity": "Force Unleashed Campaign Guide|First-Degree Droid|Science Analyzer",
+      "detail": "tree a212850887fe41da is named \"1stdegree Droid\", canonical \"First-Degree Droid\""
+    },
+    {
+      "code": "TREE_DISPLAY_NAME_DRIFT",
+      "identity": "Force Unleashed Campaign Guide|First-Degree Droid|Triage Scan",
+      "detail": "tree a212850887fe41da is named \"1stdegree Droid\", canonical \"First-Degree Droid\""
+    },
+    {
+      "code": "TREE_DISPLAY_NAME_DRIFT",
+      "identity": "Force Unleashed Campaign Guide|Second-Degree Droid|Adept Assistant",
+      "detail": "tree ad499981ddb8450e is named \"2nddegree Droid\", canonical \"Second-Degree Droid\""
+    },
+    {
+      "code": "TREE_DISPLAY_NAME_DRIFT",
+      "identity": "Force Unleashed Campaign Guide|Second-Degree Droid|Mechanics Mastery",
+      "detail": "tree ad499981ddb8450e is named \"2nddegree Droid\", canonical \"Second-Degree Droid\""
+    },
+    {
+      "code": "TREE_DISPLAY_NAME_DRIFT",
+      "identity": "Force Unleashed Campaign Guide|Second-Degree Droid|Vehicle Mechanic",
+      "detail": "tree ad499981ddb8450e is named \"2nddegree Droid\", canonical \"Second-Degree Droid\""
+    },
+    {
+      "code": "TREE_DISPLAY_NAME_DRIFT",
+      "identity": "Force Unleashed Campaign Guide|Second-Degree Droid|Burst Transfer",
+      "detail": "tree ad499981ddb8450e is named \"2nddegree Droid\", canonical \"Second-Degree Droid\""
+    },
+    {
+      "code": "TREE_DISPLAY_NAME_DRIFT",
+      "identity": "Force Unleashed Campaign Guide|Second-Degree Droid|On-Board System Link",
+      "detail": "tree ad499981ddb8450e is named \"2nddegree Droid\", canonical \"Second-Degree Droid\""
+    },
+    {
+      "code": "TREE_DISPLAY_NAME_DRIFT",
+      "identity": "Force Unleashed Campaign Guide|Second-Degree Droid|Quick Astrogation",
+      "detail": "tree ad499981ddb8450e is named \"2nddegree Droid\", canonical \"Second-Degree Droid\""
+    },
+    {
+      "code": "TREE_DISPLAY_NAME_DRIFT",
+      "identity": "Force Unleashed Campaign Guide|Second-Degree Droid|Scomp Link Slicer",
+      "detail": "tree ad499981ddb8450e is named \"2nddegree Droid\", canonical \"Second-Degree Droid\""
+    },
+    {
+      "code": "TREE_DISPLAY_NAME_DRIFT",
+      "identity": "Force Unleashed Campaign Guide|Third-Degree Droid|Etiquette",
+      "detail": "tree af077700c1b8433f is named \"3rddegree Droid\", canonical \"Third-Degree Droid\""
+    },
+    {
+      "code": "TREE_DISPLAY_NAME_DRIFT",
+      "identity": "Force Unleashed Campaign Guide|Third-Degree Droid|Helpful",
+      "detail": "tree af077700c1b8433f is named \"3rddegree Droid\", canonical \"Third-Degree Droid\""
+    },
+    {
+      "code": "TREE_DISPLAY_NAME_DRIFT",
+      "identity": "Force Unleashed Campaign Guide|Third-Degree Droid|Protocol",
+      "detail": "tree af077700c1b8433f is named \"3rddegree Droid\", canonical \"Third-Degree Droid\""
+    },
+    {
+      "code": "TREE_DISPLAY_NAME_DRIFT",
+      "identity": "Force Unleashed Campaign Guide|Third-Degree Droid|Nuanced",
+      "detail": "tree af077700c1b8433f is named \"3rddegree Droid\", canonical \"Third-Degree Droid\""
+    },
+    {
+      "code": "TREE_DISPLAY_NAME_DRIFT",
+      "identity": "Force Unleashed Campaign Guide|Third-Degree Droid|Observant",
+      "detail": "tree af077700c1b8433f is named \"3rddegree Droid\", canonical \"Third-Degree Droid\""
+    },
+    {
+      "code": "TREE_DISPLAY_NAME_DRIFT",
+      "identity": "Force Unleashed Campaign Guide|Third-Degree Droid|Supervising Droid",
+      "detail": "tree af077700c1b8433f is named \"3rddegree Droid\", canonical \"Third-Degree Droid\""
+    },
+    {
+      "code": "TREE_DISPLAY_NAME_DRIFT",
+      "identity": "Force Unleashed Campaign Guide|Third-Degree Droid|Talkdroid",
+      "detail": "tree af077700c1b8433f is named \"3rddegree Droid\", canonical \"Third-Degree Droid\""
+    },
+    {
+      "code": "TREE_DISPLAY_NAME_DRIFT",
+      "identity": "Force Unleashed Campaign Guide|Fourth-Degree Droid|Combat Repairs",
+      "detail": "tree 73814706c00849c6 is named \"4thdegree Droid\", canonical \"Fourth-Degree Droid\""
+    },
+    {
+      "code": "TREE_DISPLAY_NAME_DRIFT",
+      "identity": "Force Unleashed Campaign Guide|Fourth-Degree Droid|Droid Smash",
+      "detail": "tree 73814706c00849c6 is named \"4thdegree Droid\", canonical \"Fourth-Degree Droid\""
+    },
+    {
+      "code": "TREE_DISPLAY_NAME_DRIFT",
+      "identity": "Force Unleashed Campaign Guide|Fourth-Degree Droid|Targeting Package",
+      "detail": "tree 73814706c00849c6 is named \"4thdegree Droid\", canonical \"Fourth-Degree Droid\""
+    },
+    {
+      "code": "TREE_DISPLAY_NAME_DRIFT",
+      "identity": "Force Unleashed Campaign Guide|Fourth-Degree Droid|Just a Scratch",
+      "detail": "tree 73814706c00849c6 is named \"4thdegree Droid\", canonical \"Fourth-Degree Droid\""
+    },
+    {
+      "code": "TREE_DISPLAY_NAME_DRIFT",
+      "identity": "Force Unleashed Campaign Guide|Fourth-Degree Droid|Target Acquisition",
+      "detail": "tree 73814706c00849c6 is named \"4thdegree Droid\", canonical \"Fourth-Degree Droid\""
+    },
+    {
+      "code": "TREE_DISPLAY_NAME_DRIFT",
+      "identity": "Force Unleashed Campaign Guide|Fourth-Degree Droid|Target Lock",
+      "detail": "tree 73814706c00849c6 is named \"4thdegree Droid\", canonical \"Fourth-Degree Droid\""
+    },
+    {
+      "code": "TREE_DISPLAY_NAME_DRIFT",
+      "identity": "Force Unleashed Campaign Guide|Fourth-Degree Droid|Weapons Power Surge",
+      "detail": "tree 73814706c00849c6 is named \"4thdegree Droid\", canonical \"Fourth-Degree Droid\""
+    },
+    {
+      "code": "TREE_DISPLAY_NAME_DRIFT",
+      "identity": "Force Unleashed Campaign Guide|Fifth-Degree Droid|Cargo Hauler",
+      "detail": "tree c4e48efaad1f49af is named \"5thdegree Droid\", canonical \"Fifth-Degree Droid\""
+    },
+    {
+      "code": "TREE_DISPLAY_NAME_DRIFT",
+      "identity": "Force Unleashed Campaign Guide|Fifth-Degree Droid|Environmentally Shielded",
+      "detail": "tree c4e48efaad1f49af is named \"5thdegree Droid\", canonical \"Fifth-Degree Droid\""
+    },
+    {
+      "code": "TREE_DISPLAY_NAME_DRIFT",
+      "identity": "Force Unleashed Campaign Guide|Fifth-Degree Droid|Power Supply",
+      "detail": "tree c4e48efaad1f49af is named \"5thdegree Droid\", canonical \"Fifth-Degree Droid\""
+    },
+    {
+      "code": "TREE_DISPLAY_NAME_DRIFT",
+      "identity": "Force Unleashed Campaign Guide|Fifth-Degree Droid|Durable",
+      "detail": "tree c4e48efaad1f49af is named \"5thdegree Droid\", canonical \"Fifth-Degree Droid\""
+    },
+    {
+      "code": "TREE_DISPLAY_NAME_DRIFT",
+      "identity": "Force Unleashed Campaign Guide|Fifth-Degree Droid|Heavy-Duty Actuators",
+      "detail": "tree c4e48efaad1f49af is named \"5thdegree Droid\", canonical \"Fifth-Degree Droid\""
+    },
+    {
+      "code": "TREE_DISPLAY_NAME_DRIFT",
+      "identity": "Force Unleashed Campaign Guide|Fifth-Degree Droid|Load Launcher",
+      "detail": "tree c4e48efaad1f49af is named \"5thdegree Droid\", canonical \"Fifth-Degree Droid\""
+    },
+    {
+      "code": "TREE_DISPLAY_NAME_DRIFT",
+      "identity": "Force Unleashed Campaign Guide|Fifth-Degree Droid|Task Optimization",
+      "detail": "tree c4e48efaad1f49af is named \"5thdegree Droid\", canonical \"Fifth-Degree Droid\""
+    },
+    {
+      "code": "TREE_DISPLAY_NAME_DRIFT",
+      "identity": "Force Unleashed Campaign Guide|Agent of Ossus|Buried Presence",
+      "detail": "tree 754907ded50d4f46 is named \"Agent Of Ossus\", canonical \"Agent of Ossus\""
+    },
+    {
+      "code": "TREE_DISPLAY_NAME_DRIFT",
+      "identity": "Force Unleashed Campaign Guide|Agent of Ossus|Conceal Other",
+      "detail": "tree 754907ded50d4f46 is named \"Agent Of Ossus\", canonical \"Agent of Ossus\""
+    },
+    {
+      "code": "TREE_DISPLAY_NAME_DRIFT",
+      "identity": "Force Unleashed Campaign Guide|Agent of Ossus|Insightful Aim",
+      "detail": "tree 754907ded50d4f46 is named \"Agent Of Ossus\", canonical \"Agent of Ossus\""
+    },
+    {
+      "code": "TREE_DISPLAY_NAME_DRIFT",
+      "identity": "Force Unleashed Campaign Guide|Agent of Ossus|Vanish",
+      "detail": "tree 754907ded50d4f46 is named \"Agent Of Ossus\", canonical \"Agent of Ossus\""
+    },
+    {
+      "code": "TREE_DISPLAY_NAME_DRIFT",
+      "identity": "Jedi Academy Training Manual|Aing-Tii Monk|Aura of Freedom",
+      "detail": "tree f8e7edab5f234e27 is named \"Aingtii Monk\", canonical \"Aing-Tii Monk\""
+    },
+    {
+      "code": "TREE_DISPLAY_NAME_DRIFT",
+      "identity": "Jedi Academy Training Manual|Aing-Tii Monk|Folded Space Mastery",
+      "detail": "tree f8e7edab5f234e27 is named \"Aingtii Monk\", canonical \"Aing-Tii Monk\""
+    },
+    {
+      "code": "TREE_DISPLAY_NAME_DRIFT",
+      "identity": "Jedi Academy Training Manual|Aing-Tii Monk|Liberate",
+      "detail": "tree f8e7edab5f234e27 is named \"Aingtii Monk\", canonical \"Aing-Tii Monk\""
+    },
+    {
+      "code": "TREE_DISPLAY_NAME_DRIFT",
+      "identity": "Jedi Academy Training Manual|Aing-Tii Monk|Many Shades of the Force",
+      "detail": "tree f8e7edab5f234e27 is named \"Aingtii Monk\", canonical \"Aing-Tii Monk\""
+    },
+    {
+      "code": "TREE_DISPLAY_NAME_DRIFT",
+      "identity": "Jedi Academy Training Manual|Aing-Tii Monk|Spatial Integrity",
+      "detail": "tree f8e7edab5f234e27 is named \"Aingtii Monk\", canonical \"Aing-Tii Monk\""
+    },
+    {
+      "code": "STALE_TREE_ID_SLUG",
+      "identity": "Clone Wars Campaign Guide|Bando Gora Captain|Bando Gora Surge",
+      "detail": "system.treeId \"bando-gora-captain\" is the slug of the correct tree"
+    },
+    {
+      "code": "STALE_TREE_ID_SLUG",
+      "identity": "Clone Wars Campaign Guide|Bando Gora Captain|Force Fighter",
+      "detail": "system.treeId \"bando-gora-captain\" is the slug of the correct tree"
+    },
+    {
+      "code": "STALE_TREE_ID_SLUG",
+      "identity": "Clone Wars Campaign Guide|Bando Gora Captain|Resist Enervation",
+      "detail": "system.treeId \"bando-gora-captain\" is the slug of the correct tree"
+    },
+    {
+      "code": "STALE_TREE_ID_SLUG",
+      "identity": "Clone Wars Campaign Guide|Bando Gora Captain|Victorious Force Mastery",
+      "detail": "system.treeId \"bando-gora-captain\" is the slug of the correct tree"
+    },
+    {
+      "code": "STALE_TREE_ID_SLUG",
+      "identity": "Clone Wars Campaign Guide|Believer Disciple|Believer Intuition",
+      "detail": "system.treeId \"believer-disciple\" is the slug of the correct tree"
+    },
+    {
+      "code": "STALE_TREE_ID_SLUG",
+      "identity": "Clone Wars Campaign Guide|Believer Disciple|Defense Boost",
+      "detail": "system.treeId \"believer-disciple\" is the slug of the correct tree"
+    },
+    {
+      "code": "STALE_TREE_ID_SLUG",
+      "identity": "Clone Wars Campaign Guide|Believer Disciple|Hardiness",
+      "detail": "system.treeId \"believer-disciple\" is the slug of the correct tree"
+    },
+    {
+      "code": "STALE_TREE_ID_SLUG",
+      "identity": "Clone Wars Campaign Guide|Believer Disciple|High Impact",
+      "detail": "system.treeId \"believer-disciple\" is the slug of the correct tree"
+    },
+    {
+      "code": "STALE_TREE_ID_SLUG",
+      "identity": "Clone Wars Campaign Guide|Believer Disciple|Sith Reverence",
+      "detail": "system.treeId \"believer-disciple\" is the slug of the correct tree"
+    },
+    {
+      "code": "TREE_DISPLAY_NAME_DRIFT",
+      "identity": "Legacy Era Campaign Guide|Disciple of Twilight|Cloak of Shadow",
+      "detail": "tree 4da769d7c5f44232 is named \"Disciple Of Twilight\", canonical \"Disciple of Twilight\""
+    },
+    {
+      "code": "TREE_DISPLAY_NAME_DRIFT",
+      "identity": "Legacy Era Campaign Guide|Disciple of Twilight|Phantasm",
+      "detail": "tree 4da769d7c5f44232 is named \"Disciple Of Twilight\", canonical \"Disciple of Twilight\""
+    },
+    {
+      "code": "TREE_DISPLAY_NAME_DRIFT",
+      "identity": "Legacy Era Campaign Guide|Disciple of Twilight|Revelation",
+      "detail": "tree 4da769d7c5f44232 is named \"Disciple Of Twilight\", canonical \"Disciple of Twilight\""
+    },
+    {
+      "code": "TREE_DISPLAY_NAME_DRIFT",
+      "identity": "Legacy Era Campaign Guide|Disciple of Twilight|Shadow Armor",
+      "detail": "tree 4da769d7c5f44232 is named \"Disciple Of Twilight\", canonical \"Disciple of Twilight\""
+    },
+    {
+      "code": "TREE_DISPLAY_NAME_DRIFT",
+      "identity": "Legacy Era Campaign Guide|Disciple of Twilight|Shadow Vision",
+      "detail": "tree 4da769d7c5f44232 is named \"Disciple Of Twilight\", canonical \"Disciple of Twilight\""
+    },
+    {
+      "code": "TREE_DISPLAY_NAME_DRIFT",
+      "identity": "Legacy Era Campaign Guide|Ember of Vahl|Initiate of Vahl",
+      "detail": "tree c6eee4889411411b is named \"Ember Of Vahl\", canonical \"Ember of Vahl\""
+    },
+    {
+      "code": "TREE_DISPLAY_NAME_DRIFT",
+      "identity": "Legacy Era Campaign Guide|Ember of Vahl|Reading the Flame",
+      "detail": "tree c6eee4889411411b is named \"Ember Of Vahl\", canonical \"Ember of Vahl\""
+    },
+    {
+      "code": "TREE_DISPLAY_NAME_DRIFT",
+      "identity": "Legacy Era Campaign Guide|Ember of Vahl|Sword of Vahl",
+      "detail": "tree c6eee4889411411b is named \"Ember Of Vahl\", canonical \"Ember of Vahl\""
+    },
+    {
+      "code": "TREE_DISPLAY_NAME_DRIFT",
+      "identity": "Legacy Era Campaign Guide|Ember of Vahl|Vahl's Brand",
+      "detail": "tree c6eee4889411411b is named \"Ember Of Vahl\", canonical \"Ember of Vahl\""
+    },
+    {
+      "code": "TREE_DISPLAY_NAME_DRIFT",
+      "identity": "Legacy Era Campaign Guide|Ember of Vahl|Vahl's Flame",
+      "detail": "tree c6eee4889411411b is named \"Ember Of Vahl\", canonical \"Ember of Vahl\""
+    },
+    {
+      "code": "STALE_TREE_ID_SLUG",
+      "identity": "Jedi Academy Training Manual|Iron Knight|Droid Duelist",
+      "detail": "system.treeId \"iron-knight\" is the slug of the correct tree"
+    },
+    {
+      "code": "STALE_TREE_ID_SLUG",
+      "identity": "Jedi Academy Training Manual|Iron Knight|Force Repair",
+      "detail": "system.treeId \"iron-knight\" is the slug of the correct tree"
+    },
+    {
+      "code": "STALE_TREE_ID_SLUG",
+      "identity": "Jedi Academy Training Manual|Iron Knight|Heal Droid",
+      "detail": "system.treeId \"iron-knight\" is the slug of the correct tree"
+    },
+    {
+      "code": "STALE_TREE_ID_SLUG",
+      "identity": "Jedi Academy Training Manual|Iron Knight|Mask Presence",
+      "detail": "system.treeId \"iron-knight\" is the slug of the correct tree"
+    },
+    {
+      "code": "STALE_TREE_ID_SLUG",
+      "identity": "Jedi Academy Training Manual|Iron Knight|Silicon Mind",
+      "detail": "system.treeId \"iron-knight\" is the slug of the correct tree"
+    },
+    {
+      "code": "STALE_TREE_ID_SLUG",
+      "identity": "Knights of the Old Republic Campaign Guide|Order of Shasa|Deception Awareness",
+      "detail": "system.treeId \"order-of-shasa\" is the slug of the correct tree"
+    },
+    {
+      "code": "STALE_TREE_ID_SLUG",
+      "identity": "Knights of the Old Republic Campaign Guide|Order of Shasa|Greater Weapon Focus (Fira)",
+      "detail": "system.treeId \"order-of-shasa\" is the slug of the correct tree"
+    },
+    {
+      "code": "STALE_TREE_ID_SLUG",
+      "identity": "Knights of the Old Republic Campaign Guide|Order of Shasa|Progenitor's Call",
+      "detail": "system.treeId \"order-of-shasa\" is the slug of the correct tree"
+    },
+    {
+      "code": "STALE_TREE_ID_SLUG",
+      "identity": "Knights of the Old Republic Campaign Guide|Order of Shasa|Waveform",
+      "detail": "system.treeId \"order-of-shasa\" is the slug of the correct tree"
+    },
+    {
+      "code": "TREE_DISPLAY_NAME_DRIFT",
+      "identity": "Jedi Academy Training Manual|Warden of the Sky|Brutal Unarmed Strike",
+      "detail": "tree 899038f739294c81 is named \"Warden Of The Sky\", canonical \"Warden of the Sky\""
+    },
+    {
+      "code": "TREE_DISPLAY_NAME_DRIFT",
+      "identity": "Jedi Academy Training Manual|Warden of the Sky|Martial Resurgence",
+      "detail": "tree 899038f739294c81 is named \"Warden Of The Sky\", canonical \"Warden of the Sky\""
+    },
+    {
+      "code": "TREE_DISPLAY_NAME_DRIFT",
+      "identity": "Jedi Academy Training Manual|Warden of the Sky|Rebound Leap",
+      "detail": "tree 899038f739294c81 is named \"Warden Of The Sky\", canonical \"Warden of the Sky\""
+    },
+    {
+      "code": "TREE_DISPLAY_NAME_DRIFT",
+      "identity": "Jedi Academy Training Manual|Warden of the Sky|Simultaneous Strike",
+      "detail": "tree 899038f739294c81 is named \"Warden Of The Sky\", canonical \"Warden of the Sky\""
+    },
+    {
+      "code": "TREE_DISPLAY_NAME_DRIFT",
+      "identity": "Jedi Academy Training Manual|Warden of the Sky|Telekinetic Strike",
+      "detail": "tree 899038f739294c81 is named \"Warden Of The Sky\", canonical \"Warden of the Sky\""
+    },
+    {
+      "code": "TREE_DISPLAY_NAME_DRIFT",
+      "identity": "Jedi Academy Training Manual|Warden of the Sky|Telekinetic Throw",
+      "detail": "tree 899038f739294c81 is named \"Warden Of The Sky\", canonical \"Warden of the Sky\""
+    }
+  ]
+}
