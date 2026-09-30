@@ -348,7 +348,7 @@
       "productionAssessment": {
         "identityAndTreeCorrect": true,
         "sourcePageMissing": true,
-        "benefitVsPrint": "EXACT",
+        "benefitVsPrint": "EQUIVALENT_EDITORIAL",
         "prerequisitesVsPrint": "EXACT"
       }
     },
@@ -393,7 +393,7 @@
         "identityAndTreeCorrect": true,
         "sourcePageMissing": true,
         "benefitVsPrint": "EQUIVALENT_EDITORIAL",
-        "prerequisitesVsPrint": "EXACT"
+        "prerequisitesVsPrint": "EQUIVALENT_EDITORIAL"
       }
     }
   ],
@@ -440,6 +440,14 @@
       {
         "name": "Stolen Form",
         "detail": "Talent/Talent Tree capitalisation, \"benefits\", and \"a different Talent from the Lightsaber Forms Talent Tree\" instead of \"a different lightsaber form\""
+      },
+      {
+        "name": "Hard Target",
+        "detail": "production capitalises \"Catch a Second Wind\"/\"Reaction\"/\"Swift Action\" and adds a comma; print is lower case without the comma (found by the strict, case-sensitive comparison the 3E-4 repair uses)"
+      },
+      {
+        "name": "Stolen Form (prerequisites)",
+        "detail": "production title-cases \"Any One Force Technique, Weapon Focus (Lightsabers)\"; print is \"Any one Force technique, Weapon Focus (lightsabers)\""
       }
     ]
   },

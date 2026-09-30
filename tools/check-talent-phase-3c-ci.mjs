@@ -16,6 +16,8 @@
  *   POST_3D_STATE (packs == Phase 3D certified post-state): 3D --verify --exact, registry freshness, membership audit,
  *     homebrew-pack integrity audit.
  *     plus the Phase 3E completeness gates (Gunslinger census, authority addendum, discovery census, publication reconciliation).
+ *   POST_3E4_STATE (packs == Phase 3E-4 certified post-state, the seven-record canonical repair): 3E-4 --verify --exact, registry,
+ *     membership, homebrew and the Phase 3E completeness gates.
  *   UNKNOWN_STATE: fail (the packs are not a certified state).
  */
 import path from 'node:path';
@@ -47,6 +49,17 @@ const battery = {
     ['runtime registry freshness', 'tools/build-talent-tree-registry.mjs', '--check'],
     ['talent/tree membership audit', 'tools/audit-talent-tree-membership.mjs'],
     ['homebrew talent-pack integrity audit', 'tools/audit-talent-homebrew-pack.mjs'],
+    ['Phase 3E-4 dry-run report and manifest freshness', 'tools/apply-talent-phase-3e4.mjs', '--check'],
+    ['Phase 3E core Gunslinger census', 'tools/census-talent-core-gunslinger.mjs', '--check'],
+    ['Phase 3E authority addendum', 'tools/check-talent-phase-3e-additions.mjs'],
+    ['Phase 3E discovery census', 'tools/census-talent-source-discovery.mjs', '--check'],
+    ['Phase 3E publication-to-production reconciliation', 'tools/reconcile-talent-publication-corpus.mjs', '--check']
+  ],
+  POST_3E4_STATE: [
+    ['Phase 3E-4 post-state verification (exact)', 'tools/apply-talent-phase-3e4.mjs', '--verify', '--exact'],
+    ['runtime registry freshness', 'tools/build-talent-tree-registry.mjs', '--check'],
+    ['talent/tree membership audit', 'tools/audit-talent-tree-membership.mjs'],
+    ['homebrew talent-pack integrity audit', 'tools/audit-talent-homebrew-pack.mjs'],
     ['Phase 3E core Gunslinger census', 'tools/census-talent-core-gunslinger.mjs', '--check'],
     ['Phase 3E authority addendum', 'tools/check-talent-phase-3e-additions.mjs'],
     ['Phase 3E discovery census', 'tools/census-talent-source-discovery.mjs', '--check'],
@@ -56,7 +69,7 @@ const battery = {
 };
 
 if (state === 'UNKNOWN_STATE') {
-  console.error('[talent-phase-3c-ci] FAIL: packs/talents.db + packs/talent_trees.db are not a certified state (Phase 3B pre-state, Phase 3C post-state or Phase 3D post-state).');
+  console.error('[talent-phase-3c-ci] FAIL: packs/talents.db + packs/talent_trees.db are not a certified state (Phase 3B pre-state, Phase 3C post-state, Phase 3D post-state or Phase 3E-4 post-state).');
   process.exit(1);
 }
 let failed = 0;

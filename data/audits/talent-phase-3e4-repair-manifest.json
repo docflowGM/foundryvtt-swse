@@ -1,0 +1,217 @@
+{
+  "schemaVersion": 1,
+  "phase": "3E-4",
+  "status": "REPAIR_MANIFEST",
+  "authority": "data/audits/talent-phase-3e-canonical-additions.json",
+  "boundary": "exactly the seven Phase 3E addendum identities; leaves limited to system.source, system.page, system.prerequisites, system.benefit, system.description",
+  "summaryPolicy": "system.summary is neither written nor invented (the seven records carry none).",
+  "preState": {
+    "talents": "1f5ff603819c360d04f56e47bd5dd52178296840"
+  },
+  "records": [
+    {
+      "id": "86c10d63bba2d9c8",
+      "canonicalIdentity": "Saga Edition Core Rulebook|Gunslinger|Trigger Work",
+      "name": "Trigger Work",
+      "publication": {
+        "sourcebook": "Saga Edition Core Rulebook",
+        "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+        "page": 217,
+        "pageStatus": "PDF_VERIFIED"
+      },
+      "set": {
+        "system.source": "Saga Edition Core Rulebook",
+        "system.page": 217,
+        "system.prerequisites": "",
+        "system.benefit": "You take no penalty on your attack roll when using the Rapid Shot feat.",
+        "system.description": {
+          "value": "You take no penalty on your attack roll when using the Rapid Shot feat."
+        }
+      },
+      "before": {
+        "system.source": null,
+        "system.page": null,
+        "system.prerequisites": "",
+        "system.benefit": "You take no penalty on your attack roll when using the Rapid Shot feat.",
+        "system.description": {
+          "value": "You take no penalty on your attack roll when using the Rapid Shot feat."
+        }
+      },
+      "restFingerprint": "c41bee484e69ad4c"
+    },
+    {
+      "id": "d7870d0940a3ce0b",
+      "canonicalIdentity": "Saga Edition Core Rulebook|Gunslinger|Ranged Disarm",
+      "name": "Ranged Disarm",
+      "publication": {
+        "sourcebook": "Saga Edition Core Rulebook",
+        "publicationType": "TREE_ORIGIN_MEMBERSHIP",
+        "page": 217,
+        "pageStatus": "PDF_VERIFIED"
+      },
+      "set": {
+        "system.source": "Saga Edition Core Rulebook",
+        "system.page": 217,
+        "system.prerequisites": "",
+        "system.benefit": "You can disarm an opponent using a ranged attack. If your ranged disarm attack fails, your opponent doesn't get to make a free attack against you (see Disarm, page 152).",
+        "system.description": {
+          "value": "You can disarm an opponent using a ranged attack. If your ranged disarm attack fails, your opponent doesn't get to make a free attack against you (see Disarm, page 152)."
+        }
+      },
+      "before": {
+        "system.source": null,
+        "system.page": null,
+        "system.prerequisites": "",
+        "system.benefit": "You can Disarm an opponent using a ranged attack. If your ranged Disarm attack fails, your opponent doesn't get to make a free attack against you.",
+        "system.description": {
+          "value": "You can Disarm an opponent using a ranged attack. If your ranged Disarm attack fails, your opponent doesn't get to make a free attack against you."
+        }
+      },
+      "restFingerprint": "18a4e928ccf3ca04"
+    },
+    {
+      "id": "62d461ae3b0fcfa9",
+      "canonicalIdentity": "Saga Edition Core Rulebook|Alter|Move Massive Object",
+      "name": "Move Massive Object",
+      "publication": {
+        "sourcebook": "Legacy Era Campaign Guide",
+        "publicationType": "EXPANSION",
+        "page": 55,
+        "pageStatus": "PDF_VERIFIED"
+      },
+      "set": {
+        "system.source": "Legacy Era Campaign Guide",
+        "system.page": 55,
+        "system.prerequisites": "Telekinetic Power, move object",
+        "system.benefit": "When you successfully use the move object power to move an object of Large size or bigger, you can make an area attack with the object instead of throwing it at or dropping it on a single target, as normal for the power. You must spend a Force Point when you activate the power to do this, and the area you target is based on the size of the object: Large, 2x2; Huge, 3x3; Gargantuan, 4x4; Colossal and larger, 6x6. When you use move object to make an area attack with the object you are moving, you compare your Use the Force check to the Reflex Defense of each creature, droid, and vehicle in the target area. If your check equals or exceeds the target's Reflex Defense, it takes damage from the object (as determined by the move object power). Otherwise, the target takes half damage. This is an area effect.",
+        "system.description": {
+          "value": "When you successfully use the move object power to move an object of Large size or bigger, you can make an area attack with the object instead of throwing it at or dropping it on a single target, as normal for the power. You must spend a Force Point when you activate the power to do this, and the area you target is based on the size of the object: Large, 2x2; Huge, 3x3; Gargantuan, 4x4; Colossal and larger, 6x6. When you use move object to make an area attack with the object you are moving, you compare your Use the Force check to the Reflex Defense of each creature, droid, and vehicle in the target area. If your check equals or exceeds the target's Reflex Defense, it takes damage from the object (as determined by the move object power). Otherwise, the target takes half damage. This is an area effect."
+        }
+      },
+      "before": {
+        "system.source": null,
+        "system.page": null,
+        "system.prerequisites": "Telekinetic Power",
+        "system.benefit": "Use Move Object to make an area attack (sizes: Large 2x2, Huge 3x3, Gargantuan 4x4, Colossal 6x6); compare Use the Force to Reflex Defense.",
+        "system.description": "Use Move Object to create an area attack based on object size."
+      },
+      "restFingerprint": "1c4b7eb40e11403d"
+    },
+    {
+      "id": "208e1e15e989323f",
+      "canonicalIdentity": "Saga Edition Core Rulebook|Control|Telekinetic Stability",
+      "name": "Telekinetic Stability",
+      "publication": {
+        "sourcebook": "Legacy Era Campaign Guide",
+        "publicationType": "EXPANSION",
+        "page": 55,
+        "pageStatus": "PDF_VERIFIED"
+      },
+      "set": {
+        "system.source": "Legacy Era Campaign Guide",
+        "system.page": 55,
+        "system.prerequisites": "",
+        "system.benefit": "Whenever an attack or effect would normally move you against your will (such as being targeted by a Bantha Rush, or being moved by Force thrust or stagger power), you can spend a Force Point to negate that movement.",
+        "system.description": {
+          "value": "Whenever an attack or effect would normally move you against your will (such as being targeted by a Bantha Rush, or being moved by Force thrust or stagger power), you can spend a Force Point to negate that movement."
+        }
+      },
+      "before": {
+        "system.source": null,
+        "system.page": null,
+        "system.prerequisites": null,
+        "system.benefit": "Negate forced movement when being moved against your will.",
+        "system.description": "Negate forced movement against your will."
+      },
+      "restFingerprint": "01526aae020c4e1e"
+    },
+    {
+      "id": "192279eaa0b61d36",
+      "canonicalIdentity": "Saga Edition Core Rulebook|Dark Side|Dark Preservation",
+      "name": "Dark Preservation",
+      "publication": {
+        "sourcebook": "Legacy Era Campaign Guide",
+        "publicationType": "EXPANSION",
+        "page": 55,
+        "pageStatus": "PDF_VERIFIED"
+      },
+      "set": {
+        "system.source": "Legacy Era Campaign Guide",
+        "system.page": 55,
+        "system.prerequisites": "Power of the Dark Side",
+        "system.benefit": "Whenever an effect would normally move you down the condition track, you may spend a Force Point and increase your Dark Side Score by 1 to negate that movement down the condition track.",
+        "system.description": {
+          "value": "Whenever an effect would normally move you down the condition track, you may spend a Force Point and increase your Dark Side Score by 1 to negate that movement down the condition track."
+        }
+      },
+      "before": {
+        "system.source": null,
+        "system.page": null,
+        "system.prerequisites": "Power of the Dark Side",
+        "system.benefit": "Increase your Dark Side Score by 1 to stop moving down the condition track.",
+        "system.description": "Increase your Dark Side Score by 1 to prevent moving down the condition track."
+      },
+      "restFingerprint": "8d6a1b736d67a50b"
+    },
+    {
+      "id": "7f4edcb8aa830972",
+      "canonicalIdentity": "Saga Edition Core Rulebook|Commando|Hard Target",
+      "name": "Hard Target",
+      "publication": {
+        "sourcebook": "Threats of the Galaxy",
+        "publicationType": "EXPANSION",
+        "page": 95,
+        "pageStatus": "PDF_VERIFIED"
+      },
+      "set": {
+        "system.source": "Threats of the Galaxy",
+        "system.page": 95,
+        "system.prerequisites": "Tough as Nails",
+        "system.benefit": "You can catch a second wind as a reaction instead of as a swift action.",
+        "system.description": {
+          "value": "You can catch a second wind as a reaction instead of as a swift action."
+        }
+      },
+      "before": {
+        "system.source": null,
+        "system.page": null,
+        "system.prerequisites": "Tough as Nails",
+        "system.benefit": "You can Catch a Second Wind as a Reaction, instead of as a Swift Action.",
+        "system.description": {
+          "value": "You can Catch a Second Wind as a Reaction, instead of as a Swift Action."
+        }
+      },
+      "restFingerprint": "570686acc034b09e"
+    },
+    {
+      "id": "f9352f317ad2f695",
+      "canonicalIdentity": "Saga Edition Core Rulebook|Sith|Stolen Form",
+      "name": "Stolen Form",
+      "publication": {
+        "sourcebook": "Threats of the Galaxy",
+        "publicationType": "EXPANSION",
+        "page": 81,
+        "pageStatus": "PDF_VERIFIED"
+      },
+      "set": {
+        "system.source": "Threats of the Galaxy",
+        "system.page": 81,
+        "system.prerequisites": "Any one Force technique, Weapon Focus (lightsabers)",
+        "system.benefit": "You have learned how to use a Jedi fighting technique to defeat Jedi in combat. Choose one talent from the Lightsaber Forms talent tree (SE 218); you gain the benefit of this talent and are considered to have this talent for the purpose of satisfying prerequisites. You must meet all the prerequisites as normal for the chosen lightsaber form talent, in addition to the prerequisites of this talent.\n\nYou can select this talent multiple times. Each time you select it, choose a different lightsaber form.",
+        "system.description": {
+          "value": "You have learned how to use a Jedi fighting technique to defeat Jedi in combat. Choose one talent from the Lightsaber Forms talent tree (SE 218); you gain the benefit of this talent and are considered to have this talent for the purpose of satisfying prerequisites. You must meet all the prerequisites as normal for the chosen lightsaber form talent, in addition to the prerequisites of this talent.\n\nYou can select this talent multiple times. Each time you select it, choose a different lightsaber form."
+        }
+      },
+      "before": {
+        "system.source": null,
+        "system.page": null,
+        "system.prerequisites": "Any One Force Technique, Weapon Focus (Lightsabers)",
+        "system.benefit": "You have learned how to use a Jedi fighting technique to defeat Jedi in combat. Choose one Talent from the Lightsaber Forms Talent Tree; you gain the benefits of this Talent and are considered to have this Talent for the purpose of satisfying prerequisites. You must meet all the prerequisites as normal for the chosen Talent, in addition to the prerequisites of this Talent.\n\nYou can select this Talent multiple times. Each time you select it, choose a different Talent from the Lightsaber Forms Talent Tree.",
+        "system.description": {
+          "value": "You have learned how to use a Jedi fighting technique to defeat Jedi in combat. Choose one Talent from the Lightsaber Forms Talent Tree; you gain the benefits of this Talent and are considered to have this Talent for the purpose of satisfying prerequisites. You must meet all the prerequisites as normal for the chosen Talent, in addition to the prerequisites of this Talent.\n\nYou can select this Talent multiple times. Each time you select it, choose a different Talent from the Lightsaber Forms Talent Tree."
+        }
+      },
+      "restFingerprint": "e94c47198c56b39b"
+    }
+  ]
+}
