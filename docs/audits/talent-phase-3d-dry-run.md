@@ -6,7 +6,7 @@ Tests: `tests/talent-phase-3d-applicator.test.mjs` (17) · Input: `data/audits/t
 **Dry-run only. No production pack, registry or `system.json` was written.** `--apply` is refused (exit 2); `--report` writes only the report file.
 It reuses the Phase 3C machinery (state detection, tree-edit helpers, pack serialization, the registry generator) rather than adding a second migration system.
 
-## Result: `DRY_RUN_CERTIFIED` (28 simulated invariants, all passing)
+## Result: `DRY_RUN_CERTIFIED` (29 simulated invariants, all passing)
 
 | | Before | After |
 |---|---|---|
@@ -35,8 +35,8 @@ It reuses the Phase 3C machinery (state detection, tree-edit helpers, pack seria
 | Class-access entries removed | 0 (no class references any homebrew tree, by id, name, slug or uuid) |
 | `data/*/talents.fixed.json` mirror entries dropped (no runtime/tool consumer found) | 46 (23 + 23) |
 
-The 50 homebrew records sit in 29 trees: 19 trees are exclusively homebrew (37 records; the tree documents move with them) and 10 canonical trees lose a member
-(13 records). Those 13 keep `system.treeId` pointing at their canonical tree; the homebrew pack has no tree document for them, so nothing new is invented.
+The 50 homebrew records sit in 29 trees: 19 trees are exclusively homebrew (35 records; the tree documents move with them) and 10 canonical trees lose members
+(15 records). Those 15 keep `system.treeId` pointing at their canonical tree; the homebrew pack has no tree document for them, so nothing new is invented.
 
 ## Hard prerequisite: actor repoints before removal
 
