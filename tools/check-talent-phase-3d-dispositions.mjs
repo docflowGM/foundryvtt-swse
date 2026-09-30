@@ -23,6 +23,7 @@ export function checkDispositions({ manifest, census, talents, actors }) {
   for (const id of expected) if (!seen.has(id)) errors.push(`missing record ${id}`);
   for (const [id, n] of seen) { if (n > 1) errors.push(`record appears ${n} times: ${id}`); if (!expected.has(id)) errors.push(`record not in census: ${id}`); }
   if (manifest.records.length !== 92 || manifest.inputPopulation !== 92) errors.push(`manifest must account for exactly 92 input records (got ${manifest.records.length})`);
+  const deletedIds = new Set(manifest.records.filter(r => r.finalDisposition === 'MERGE_DUPLICATE' || r.finalDisposition === 'REMOVE_CONTAMINATION').map(r => r.productionId));
   for (const r of manifest.records) {
     const tag = `${r.productionId} ${r.name}`;
     if (!allowed.has(r.finalDisposition)) { errors.push(`${tag}: unknown disposition ${r.finalDisposition}`); continue; }
@@ -31,6 +32,8 @@ export function checkDispositions({ manifest, census, talents, actors }) {
       if (!r.survivorId || !ids.has(r.survivorId)) errors.push(`${tag}: MERGE_DUPLICATE survivor ${r.survivorId} does not exist`);
       if (r.survivorId === r.productionId) errors.push(`${tag}: survivor equals duplicate`);
     }
+    if (r.finalDisposition === 'MERGE_DUPLICATE' && deletedIds.has(r.survivorId)) errors.push(`${tag}: survivor ${r.survivorId} is itself scheduled for deletion`);
+    if (r.finalDisposition === 'REVIEW_REQUIRED' && !r.reviewRequiredReason) errors.push(`${tag}: REVIEW_REQUIRED without a concrete reviewRequiredReason`);
     if (r.finalDisposition.startsWith('KEEP') && !ids.has(r.productionId)) errors.push(`${tag}: KEEP record missing from production`);
     if (deletes && r.adjudicationStatus === 'ADJUDICATED') {
       const listed = r.referencesToRepoint?.actorPackEmbeddedItems || [];

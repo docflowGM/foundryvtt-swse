@@ -61,4 +61,21 @@ test('identity is never name-only: both Notorious canonical identities and the T
 test('adjudication touches no Phase 3C canonical record', () => {
   assert.ok(manifest.records.every(r => r.phase3cCanonicalRecordTouched === false));
 });
+test('every non-final record carries a concrete reason and none is left unexamined', () => {
+  assert.ok(manifest.records.every(r => r.adjudicationStatus !== 'PENDING_3D2'));
+  assert.ok(manifest.records.filter(r => r.finalDisposition === 'REVIEW_REQUIRED').every(r => r.reviewRequiredReason));
+  const m = clone(manifest); m.records.find(r => r.finalDisposition === 'REVIEW_REQUIRED').reviewRequiredReason = '';
+  assert.ok(run(m).some(e => /without a concrete reviewRequiredReason/.test(e)));
+});
+test('a merge survivor may not itself be scheduled for deletion', () => {
+  const m = clone(manifest); const a = m.records.find(r => r.finalDisposition === 'MERGE_DUPLICATE'); const b = m.records.filter(r => r.finalDisposition === 'REMOVE_CONTAMINATION')[0];
+  a.survivorId = b.productionId; assert.ok(run(m).some(e => /scheduled for deletion/.test(e)));
+});
+test('name-variant merges keep the survivor in the same tree as the duplicate (Hotwire is the one documented cross-tree case)', () => {
+  const T = new Map(talents.map(t => [t._id, t]));
+  for (const r of manifest.records.filter(x => x.finalDisposition === 'MERGE_DUPLICATE' && x.productionId !== '5644990a390a4178')) {
+    const dupTree = T.get(r.productionId).system.treeId, survTree = T.get(r.survivorId).system.treeId;
+    assert.equal(dupTree, survTree, `${r.name}: duplicate and survivor are in different trees`);
+  }
+});
 console.log(`\n${passed} talent-phase-3d review-extra checks passed`);
