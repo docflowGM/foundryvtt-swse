@@ -1,0 +1,515 @@
+{
+  "schemaVersion": 1,
+  "phase": "3E-5b",
+  "dryRun": true,
+  "status": "DRY_RUN_CERTIFIED",
+  "source": "data/audits/talent-phase-3e5-text-defect-manifest.json (PDF_VERIFIED entries only)",
+  "counts": {
+    "canonicalTalents": 1187,
+    "recordsChanged": 16,
+    "leafChangesTotal": 32,
+    "changedOutsideTargets": 0,
+    "pendingSecondWaveRecords": 7
+  },
+  "preState": {
+    "talents": "6cabbb44f894586110cf1a6525975806669bf60d"
+  },
+  "postState": {
+    "talents": "1896a96c011359fdf9a3a312bf06a8aa8adf2234"
+  },
+  "untouchedFiles": {
+    "packs/talent_trees.db": "5cb2acafe549e1b2a38f69b644f2eb7105316c5c",
+    "packs/classes.db": "2960a03039604ea06612445bad0673902a8012cc",
+    "packs/heroic.db": "cbb59081ca02c06298b1647821f5b2487ea47485",
+    "packs/nonheroic.db": "c05ea8896efb00e5115a53247a05bfe54c628e60",
+    "packs/npc.db": "78d0cdd8b1dd271238e420b8d15f33e2547e20ba",
+    "packs/talents-homebrew.db": "bd4e3d4be9861f9ed0329e0f12545bf3f5dc3c72",
+    "packs/talent-trees-homebrew.db": "81861fe0b948db00e4e7e344316acdc730d86a2b",
+    "data/generated/talent-trees.registry.json": "db075bbe3dd5ad36c58918c1addbb92e900f86d0",
+    "data/fixes/talent-trees.registry.json": "db075bbe3dd5ad36c58918c1addbb92e900f86d0",
+    "data/generated/talents.fixed.json": "3b63af6b063c3cac49fc8d9dbf6c706bf4685013",
+    "data/fixes/talents.fixed.json": "c3dbe4f282062d73906e80b2b2d840e700af6ee2",
+    "data/class-archetypes.json": "76ca97d4b1a8aa6b631ba1bfe790e5e189f6d9e6",
+    "system.json": "7c5640b8d4c10da960356703b31d33dd16c19fbb"
+  },
+  "othersFingerprint": "0bece17f3a571bd5",
+  "records": [
+    {
+      "id": "aeb8d3e495605f71",
+      "name": "Bring Them Back",
+      "entries": [
+        "TD-10"
+      ],
+      "fieldsTouched": [
+        "benefit",
+        "description",
+        "summary"
+      ],
+      "changes": [
+        {
+          "leaf": "system.benefit",
+          "before": "You can use the revivify application of the Treat Injury skill on a target that has died anytime within a number of rounds equal to one-haIf your heroic level.",
+          "after": "You can use the revivify application of the Treat Injury skill on a target that has died anytime within a number of rounds equal to one-half your heroic level."
+        },
+        {
+          "leaf": "system.description.value",
+          "before": "You can use the revivify application of the Treat Injury skill on a target that has died anytime within a number of rounds equal to one-haIf your heroic level.",
+          "after": "You can use the revivify application of the Treat Injury skill on a target that has died anytime within a number of rounds equal to one-half your heroic level."
+        },
+        {
+          "leaf": "system.summary",
+          "before": "You can use the revivify application of the Treat Injury skill on a target that has died anytime within a number of rounds equal to one-haIf your heroic level.",
+          "after": "You can use the revivify application of the Treat Injury skill on a target that has died anytime within a number of rounds equal to one-half your heroic level."
+        }
+      ]
+    },
+    {
+      "id": "049820827d7ef32b",
+      "name": "Cover Fire",
+      "entries": [
+        "TD-01"
+      ],
+      "fieldsTouched": [
+        "prerequisites"
+      ],
+      "changes": [
+        {
+          "leaf": "system.prerequisites",
+          "before": "Battie Analysis.",
+          "after": "Battle Analysis."
+        }
+      ]
+    },
+    {
+      "id": "8c47c02ec74fa858",
+      "name": "Difficult to Sense",
+      "entries": [
+        "TD-09"
+      ],
+      "fieldsTouched": [
+        "benefit",
+        "description"
+      ],
+      "changes": [
+        {
+          "leaf": "system.benefit",
+          "before": "You are skilled at concealing your presence from other Force-users. You may reroll any opposed Use the Force check made to conceal your presence from someone who attempts to sense other Forceusers, keeping the better result.",
+          "after": "You are skilled at concealing your presence from other Force-users. You may reroll any opposed Use the Force check made to conceal your presence from someone who attempts to sense other Force-users, keeping the better result."
+        },
+        {
+          "leaf": "system.description.value",
+          "before": "You are skilled at concealing your presence from other Force-users. You may reroll any opposed Use the Force check made to conceal your presence from someone who attempts to sense other Forceusers, keeping the better result.",
+          "after": "You are skilled at concealing your presence from other Force-users. You may reroll any opposed Use the Force check made to conceal your presence from someone who attempts to sense other Force-users, keeping the better result."
+        }
+      ]
+    },
+    {
+      "id": "2056998b5afa4e00",
+      "name": "Drain Force",
+      "entries": [
+        "TD-08",
+        "TD-18"
+      ],
+      "fieldsTouched": [
+        "benefit",
+        "description",
+        "summary"
+      ],
+      "changes": [
+        {
+          "leaf": "system.benefit",
+          "before": "Once per encounter, as a reaction when you damage a Forcesensitive opponent, the dark taint of your power allows you to sap some of the opponent's strength and covert it to personal power, regaining one spent Force power. Additionally, the target loses one Force Point.",
+          "after": "Once per encounter, as a reaction when you damage a Force-sensitive opponent, the dark taint of your power allows you to sap some of the opponent's strength and convert it to personal power, regaining one spent Force power. Additionally, the target loses one Force Point."
+        },
+        {
+          "leaf": "system.description.value",
+          "before": "Once per encounter, as a reaction when you damage a Forcesensitive opponent, the dark taint of your power allows you to sap some of the opponent's strength and covert it to personal power, regaining one spent Force power. Additionally, the target loses one Force Point.",
+          "after": "Once per encounter, as a reaction when you damage a Force-sensitive opponent, the dark taint of your power allows you to sap some of the opponent's strength and convert it to personal power, regaining one spent Force power. Additionally, the target loses one Force Point."
+        },
+        {
+          "leaf": "system.summary",
+          "before": "Once per encounter, as a reaction when you damage a Forcesensitive opponent, the dark taint of your power allows you to sap some of the opponent's strength and covert it to personal power, regaining one spent Force power.",
+          "after": "Once per encounter, as a reaction when you damage a Force-sensitive opponent, the dark taint of your power allows you to sap some of the opponent's strength and convert it to personal power, regaining one spent Force power."
+        }
+      ]
+    },
+    {
+      "id": "e9a5fe40ce95a053",
+      "name": "Hotwired Processor",
+      "entries": [
+        "TD-11"
+      ],
+      "fieldsTouched": [
+        "benefit",
+        "description"
+      ],
+      "changes": [
+        {
+          "leaf": "system.benefit",
+          "before": "You gain temporary processing power, enhancing your mental attributes. When you hotwire your processor (a swift action), you gain a +5 circumstance bonus on Intelligence- and Wisdom-based skill checks and a +1 circumstance bonus on ranged attack rolls. A hotwiring lasts for a number of rounds equal to one-haIf your level (rounded down). When the hotwiring ends, you move -1 persistent step along the condition track. The penalties imposed by this condition persist until you receive repairs (using the repair droid application of the Mechanics skill).",
+          "after": "You gain temporary processing power, enhancing your mental attributes. When you hotwire your processor (a swift action), you gain a +5 circumstance bonus on Intelligence- and Wisdom-based skill checks and a +1 circumstance bonus on ranged attack rolls. A hotwiring lasts for a number of rounds equal to one-half your level (rounded down). When the hotwiring ends, you move -1 persistent step along the condition track. The penalties imposed by this condition persist until you receive repairs (using the repair droid application of the Mechanics skill)."
+        },
+        {
+          "leaf": "system.description.value",
+          "before": "You gain temporary processing power, enhancing your mental attributes. When you hotwire your processor (a swift action), you gain a +5 circumstance bonus on Intelligence- and Wisdom-based skill checks and a +1 circumstance bonus on ranged attack rolls. A hotwiring lasts for a number of rounds equal to one-haIf your level (rounded down). When the hotwiring ends, you move -1 persistent step along the condition track. The penalties imposed by this condition persist until you receive repairs (using the repair droid application of the Mechanics skill).",
+          "after": "You gain temporary processing power, enhancing your mental attributes. When you hotwire your processor (a swift action), you gain a +5 circumstance bonus on Intelligence- and Wisdom-based skill checks and a +1 circumstance bonus on ranged attack rolls. A hotwiring lasts for a number of rounds equal to one-half your level (rounded down). When the hotwiring ends, you move -1 persistent step along the condition track. The penalties imposed by this condition persist until you receive repairs (using the repair droid application of the Mechanics skill)."
+        }
+      ]
+    },
+    {
+      "id": "74fb6b37af983a4c",
+      "name": "Hunter's Mark",
+      "entries": [
+        "TD-05"
+      ],
+      "fieldsTouched": [
+        "benefit",
+        "description",
+        "summary"
+      ],
+      "changes": [
+        {
+          "leaf": "system.benefit",
+          "before": "If you aim before making ranged attack (see Aim, page 154), you 4 target -1 step along the condition track if the ateam hits (see Conditions, page 148).",
+          "after": "If you aim before making a ranged attack (see Aim, page 154), you move the target -1 step along the condition track if the attack hits (see Conditions, page 148)."
+        },
+        {
+          "leaf": "system.description.value",
+          "before": "If you aim before making ranged attack (see Aim, page 154), you 4 target -1 step along the condition track if the ateam hits (see Conditions, page 148).",
+          "after": "If you aim before making a ranged attack (see Aim, page 154), you move the target -1 step along the condition track if the attack hits (see Conditions, page 148)."
+        },
+        {
+          "leaf": "system.summary",
+          "before": "If you aim before making ranged attack , you 4 target -1 step along the condition track if the ateam hits .",
+          "after": "If you aim before making a ranged attack, you move the target -1 step along the condition track if the attack hits."
+        }
+      ]
+    },
+    {
+      "id": "471f4294820ce5ec",
+      "name": "Influential Friends",
+      "entries": [
+        "TD-12"
+      ],
+      "fieldsTouched": [
+        "benefit",
+        "description"
+      ],
+      "changes": [
+        {
+          "leaf": "system.benefit",
+          "before": "You have influential contacts within a certain organization, planet, or region who can provide concrete information to you on certain subjects. Once per day, you can have one of those contacts make a skill check on your behalf. The contact always takes 20 on the skill check (even if the skill would normally not allow taking 20) and has a skill modifier equal to 5 + one-haIf your heroic level. Contacting your influential allies and receiving the benefit of the skill check takes a number of minutes equal to 10 x the skill check result.",
+          "after": "You have influential contacts within a certain organization, planet, or region who can provide concrete information to you on certain subjects. Once per day, you can have one of those contacts make a skill check on your behalf. The contact always takes 20 on the skill check (even if the skill would normally not allow taking 20) and has a skill modifier equal to 5 + one-half your heroic level. Contacting your influential allies and receiving the benefit of the skill check takes a number of minutes equal to 10 x the skill check result."
+        },
+        {
+          "leaf": "system.description.value",
+          "before": "You have influential contacts within a certain organization, planet, or region who can provide concrete information to you on certain subjects. Once per day, you can have one of those contacts make a skill check on your behalf. The contact always takes 20 on the skill check (even if the skill would normally not allow taking 20) and has a skill modifier equal to 5 + one-haIf your heroic level. Contacting your influential allies and receiving the benefit of the skill check takes a number of minutes equal to 10 x the skill check result.",
+          "after": "You have influential contacts within a certain organization, planet, or region who can provide concrete information to you on certain subjects. Once per day, you can have one of those contacts make a skill check on your behalf. The contact always takes 20 on the skill check (even if the skill would normally not allow taking 20) and has a skill modifier equal to 5 + one-half your heroic level. Contacting your influential allies and receiving the benefit of the skill check takes a number of minutes equal to 10 x the skill check result."
+        }
+      ]
+    },
+    {
+      "id": "eb503c1c3fb945a6",
+      "name": "Power Boost",
+      "entries": [
+        "TD-13"
+      ],
+      "fieldsTouched": [
+        "benefit",
+        "description"
+      ],
+      "changes": [
+        {
+          "leaf": "system.benefit",
+          "before": "You channel your power surge into a boost for your locomotion system. When you initiate a power surge, you can use one of the following bonuses with your installed locomotion system: Jump +4 squares (walking or wheeled locomotion), or increase hovering height by 4 squares (hovering locomotion). You can use this talent for a number of rounds equal to one-haIf your level (rounded down). At the end of a power boost, you move -1 persistent step on the condition track. The penalties imposed by this condition persist until you receive repairs (using the Repair Droid application of the Mechanics skill). You can use both Power Surge and Power Boost at the same time, but you must move -2 persistent steps on the condition track.",
+          "after": "You channel your power surge into a boost for your locomotion system. When you initiate a power surge, you can use one of the following bonuses with your installed locomotion system: Jump +4 squares (walking or wheeled locomotion), or increase hovering height by 4 squares (hovering locomotion). You can use this talent for a number of rounds equal to one-half your level (rounded down). At the end of a power boost, you move -1 persistent step on the condition track. The penalties imposed by this condition persist until you receive repairs (using the Repair Droid application of the Mechanics skill). You can use both Power Surge and Power Boost at the same time, but you must move -2 persistent steps on the condition track."
+        },
+        {
+          "leaf": "system.description.value",
+          "before": "You channel your power surge into a boost for your locomotion system. When you initiate a power surge, you can use one of the following bonuses with your installed locomotion system: Jump +4 squares (walking or wheeled locomotion), or increase hovering height by 4 squares (hovering locomotion). You can use this talent for a number of rounds equal to one-haIf your level (rounded down). At the end of a power boost, you move -1 persistent step on the condition track. The penalties imposed by this condition persist until you receive repairs (using the Repair Droid application of the Mechanics skill). You can use both Power Surge and Power Boost at the same time, but you must move -2 persistent steps on the condition track.",
+          "after": "You channel your power surge into a boost for your locomotion system. When you initiate a power surge, you can use one of the following bonuses with your installed locomotion system: Jump +4 squares (walking or wheeled locomotion), or increase hovering height by 4 squares (hovering locomotion). You can use this talent for a number of rounds equal to one-half your level (rounded down). At the end of a power boost, you move -1 persistent step on the condition track. The penalties imposed by this condition persist until you receive repairs (using the Repair Droid application of the Mechanics skill). You can use both Power Surge and Power Boost at the same time, but you must move -2 persistent steps on the condition track."
+        }
+      ]
+    },
+    {
+      "id": "77d09ca0a54f4c36",
+      "name": "Power Surge",
+      "entries": [
+        "TD-14"
+      ],
+      "fieldsTouched": [
+        "benefit",
+        "description"
+      ],
+      "changes": [
+        {
+          "leaf": "system.benefit",
+          "before": "You temporarily surge your power systems to enhance your physical abilities. When you initiate a power surge (a swift action), you gain a +1 circumstance bonus on melee attack rolls, +1 die of damage on melee damage rolls, and an increase of 2 squares to your speed. A power surge lasts for a number of rounds equal to one-haIf your level (rounded down). At the end of a power surge, you move -1 persistent step along the condition track. The penalties imposed by this condition persist until you receive repairs (using the repair droid application of the Mechanics skill).",
+          "after": "You temporarily surge your power systems to enhance your physical abilities. When you initiate a power surge (a swift action), you gain a +1 circumstance bonus on melee attack rolls, +1 die of damage on melee damage rolls, and an increase of 2 squares to your speed. A power surge lasts for a number of rounds equal to one-half your level (rounded down). At the end of a power surge, you move -1 persistent step along the condition track. The penalties imposed by this condition persist until you receive repairs (using the repair droid application of the Mechanics skill)."
+        },
+        {
+          "leaf": "system.description.value",
+          "before": "You temporarily surge your power systems to enhance your physical abilities. When you initiate a power surge (a swift action), you gain a +1 circumstance bonus on melee attack rolls, +1 die of damage on melee damage rolls, and an increase of 2 squares to your speed. A power surge lasts for a number of rounds equal to one-haIf your level (rounded down). At the end of a power surge, you move -1 persistent step along the condition track. The penalties imposed by this condition persist until you receive repairs (using the repair droid application of the Mechanics skill).",
+          "after": "You temporarily surge your power systems to enhance your physical abilities. When you initiate a power surge (a swift action), you gain a +1 circumstance bonus on melee attack rolls, +1 die of damage on melee damage rolls, and an increase of 2 squares to your speed. A power surge lasts for a number of rounds equal to one-half your level (rounded down). At the end of a power surge, you move -1 persistent step along the condition track. The penalties imposed by this condition persist until you receive repairs (using the repair droid application of the Mechanics skill)."
+        }
+      ]
+    },
+    {
+      "id": "d043a3c0494345ac",
+      "name": "Primitive Block",
+      "entries": [
+        "TD-02"
+      ],
+      "fieldsTouched": [
+        "prerequisites"
+      ],
+      "changes": [
+        {
+          "leaf": "system.prerequisites",
+          "before": "Enpower Weapon",
+          "after": "Empower Weapon"
+        }
+      ]
+    },
+    {
+      "id": "7bc10cb88a6a0c92",
+      "name": "Relentless",
+      "entries": [
+        "TD-03"
+      ],
+      "fieldsTouched": [
+        "prerequisites"
+      ],
+      "changes": [
+        {
+          "leaf": "system.prerequisites",
+          "before": "Hunter's Mark, Hunter's Target. P",
+          "after": "Hunter's Mark, Hunter's Target."
+        }
+      ]
+    },
+    {
+      "id": "cc90a9fc255f4dc4",
+      "name": "Seyugi Cyclone",
+      "entries": [
+        "TD-19"
+      ],
+      "fieldsTouched": [
+        "benefit",
+        "description",
+        "summary"
+      ],
+      "changes": [
+        {
+          "leaf": "system.benefit",
+          "before": "If you are wielding no weapons (other than combat gloves or stun gauntlets), you can use the Whirlwind Attack feat as a standard action by spending a Force Point even if you do not posess the Whirlwind Attack feat. Additionally, this talent satisfies the prerequisites for the Whirlwind Attack feat.",
+          "after": "If you are wielding no weapons (other than combat gloves or stun gauntlets), you can use the Whirlwind Attack feat as a standard action by spending a Force Point even if you do not possess the Whirlwind Attack feat. Additionally, this talent satisfies the prerequisites for the Whirlwind Attack feat."
+        },
+        {
+          "leaf": "system.description",
+          "before": "If you are wielding no weapons (other than combat gloves or stun gauntlets), you can use the Whirlwind Attack feat as a standard action by spending a Force Point even if you do not posess the Whirlwind Attack feat. Additionally, this talent satisfies the prerequisites for the Whirlwind Attack feat.",
+          "after": "If you are wielding no weapons (other than combat gloves or stun gauntlets), you can use the Whirlwind Attack feat as a standard action by spending a Force Point even if you do not possess the Whirlwind Attack feat. Additionally, this talent satisfies the prerequisites for the Whirlwind Attack feat."
+        },
+        {
+          "leaf": "system.summary",
+          "before": "If you are wielding no weapons (other than combat gloves or stun gauntlets), you can use the Whirlwind Attack feat as a standard action by spending a Force Point even if you do not posess the Whirlwind Attack feat.",
+          "after": "If you are wielding no weapons (other than combat gloves or stun gauntlets), you can use the Whirlwind Attack feat as a standard action by spending a Force Point even if you do not possess the Whirlwind Attack feat."
+        }
+      ]
+    },
+    {
+      "id": "2f00c50f3bf6bf5a",
+      "name": "Share Talent",
+      "entries": [
+        "TD-15"
+      ],
+      "fieldsTouched": [
+        "benefit",
+        "description"
+      ],
+      "changes": [
+        {
+          "leaf": "system.benefit",
+          "before": "Choose a talent that you already possess. The talent must be from the Lightsa-ber Combat talent tree, the Duel-ist talent tree, or the Lightsaber Forms talent tree. Once per day as a standard action, you can spend a Force Point to impart the benefits of the chosen talent to one or more allies, effectively granting them the talent (even if they don't meet the prerequisites), An ally must be within 12 squares of you and must be able to see and hear you to gain the talent; once gained, its benefits last until the end of the encounter. You can share the talent with a number of allies equal to one-haIf your class level, rounded down. Only allies who are trained in the Use the Force skill can gain the benefits of the shared talent. A Twi'Ler Jeo! INsTRUCTOR. You can take this talent multiple times. Each time you do so, you must select a different talent to share with this ability. You can share each talent with your allies only once per day.",
+          "after": "Choose a talent that you already possess. The talent must be from the Lightsaber Combat talent tree, the Duelist talent tree, or the Lightsaber Forms talent tree. Once per day as a standard action, you can spend a Force Point to impart the benefits of the chosen talent to one or more allies, effectively granting them the talent (even if they don't meet the prerequisites). An ally must be within 12 squares of you and must be able to see and hear you to gain the talent; once gained, its benefits last until the end of the encounter.\n\nYou can share the talent with a number of allies equal to one-half your class level, rounded down. Only allies who are trained in the Use the Force skill can gain the benefits of the shared talent.\n\nYou can take this talent multiple times. Each time you do so, you must select a different talent to share with this ability. You can share each talent with your allies only once per day."
+        },
+        {
+          "leaf": "system.description.value",
+          "before": "Choose a talent that you already possess. The talent must be from the Lightsa-ber Combat talent tree, the Duel-ist talent tree, or the Lightsaber Forms talent tree. Once per day as a standard action, you can spend a Force Point to impart the benefits of the chosen talent to one or more allies, effectively granting them the talent (even if they don't meet the prerequisites), An ally must be within 12 squares of you and must be able to see and hear you to gain the talent; once gained, its benefits last until the end of the encounter. You can share the talent with a number of allies equal to one-haIf your class level, rounded down. Only allies who are trained in the Use the Force skill can gain the benefits of the shared talent. A Twi'Ler Jeo! INsTRUCTOR. You can take this talent multiple times. Each time you do so, you must select a different talent to share with this ability. You can share each talent with your allies only once per day.",
+          "after": "Choose a talent that you already possess. The talent must be from the Lightsaber Combat talent tree, the Duelist talent tree, or the Lightsaber Forms talent tree. Once per day as a standard action, you can spend a Force Point to impart the benefits of the chosen talent to one or more allies, effectively granting them the talent (even if they don't meet the prerequisites). An ally must be within 12 squares of you and must be able to see and hear you to gain the talent; once gained, its benefits last until the end of the encounter.\n\nYou can share the talent with a number of allies equal to one-half your class level, rounded down. Only allies who are trained in the Use the Force skill can gain the benefits of the shared talent.\n\nYou can take this talent multiple times. Each time you do so, you must select a different talent to share with this ability. You can share each talent with your allies only once per day."
+        }
+      ]
+    },
+    {
+      "id": "cb981391d4d16c59",
+      "name": "Shift Defense I",
+      "entries": [
+        "TD-04"
+      ],
+      "fieldsTouched": [
+        "prerequisites"
+      ],
+      "changes": [
+        {
+          "leaf": "system.prerequisites",
+          "before": "Shift Defense 1, Shift Defense Il",
+          "after": ""
+        }
+      ]
+    },
+    {
+      "id": "1215e1c464a087b0",
+      "name": "Vital Encouragement",
+      "entries": [
+        "TD-16"
+      ],
+      "fieldsTouched": [
+        "benefit",
+        "description"
+      ],
+      "changes": [
+        {
+          "leaf": "system.benefit",
+          "before": "Once per encounter, your guardian spirit offers you vital encouragement, urging you to press on despite adversity. As a free action, you gain bonus hit points equal to 10 + one-haIf your heroic level. Damage is subtracted from bonus hit points first, and any bonus hit points remaining at the end of the encounter are lost. New Sense Talents The following talents belong to the Sense talent tree (see page 101 of the Saga Edition core rulebook)",
+          "after": "Once per encounter, your guardian spirit offers you vital encouragement, urging you to press on despite adversity. As a free action, you gain bonus hit points equal to 10 + one-half your heroic level. Damage is subtracted from bonus hit points first, and any bonus hit points remaining at the end of the encounter are lost."
+        },
+        {
+          "leaf": "system.description",
+          "before": "Once per encounter, your guardian spirit offers you vital encouragement, urging you to press on despite adversity. As a free action, you gain bonus hit points equal to 10 + one-haIf your heroic level. Damage is subtracted from bonus hit points first, and any bonus hit points remaining at the end of the encounter are lost. New Sense Talents The following talents belong to the Sense talent tree (see page 101 of the Saga Edition core rulebook)",
+          "after": "Once per encounter, your guardian spirit offers you vital encouragement, urging you to press on despite adversity. As a free action, you gain bonus hit points equal to 10 + one-half your heroic level. Damage is subtracted from bonus hit points first, and any bonus hit points remaining at the end of the encounter are lost."
+        }
+      ]
+    },
+    {
+      "id": "463ae052e705eaf3",
+      "name": "Wrong Decision",
+      "entries": [
+        "TD-06"
+      ],
+      "fieldsTouched": [
+        "benefit",
+        "description"
+      ],
+      "changes": [
+        {
+          "leaf": "system.benefit",
+          "before": "Each time you are attacked, the opponent that attacked you takes a -2 morale penalty to its Will Defense until the end of your next turn. This penalty is not cumulative, so if a target makes multiple attacks against you it only incurs the penalty once per turn.\n\nExecutive Leadership\n\nAs aswift action, as many times an encounter equal to half your corporate agent level, you can grant an ally within line of sight a temporary boost to theirspeed, attacks, or defenses. Until the end of their turn they can gain one of the following benefits (your choice): increase base speed by 2 squares, a +2 morale bonus to attack rolls, or a +2 morale bonus to all defenses.",
+          "after": "Each time you are attacked, the opponent that attacked you takes a -2 morale penalty to its Will Defense until the end of your next turn. This penalty is not cumulative, so if a target makes multiple attacks against you it only incurs the penalty once per turn."
+        },
+        {
+          "leaf": "system.description.value",
+          "before": "Each time you are attacked, the opponent that attacked you takes a -2 morale penalty to its Will Defense until the end of your next turn. This penalty is not cumulative, so if a target makes multiple attacks against you it only incurs the penalty once per turn.\n\nExecutive Leadership\n\nAs aswift action, as many times an encounter equal to half your corporate agent level, you can grant an ally within line of sight a temporary boost to theirspeed, attacks, or defenses. Until the end of their turn they can gain one of the following benefits (your choice): increase base speed by 2 squares, a +2 morale bonus to attack rolls, or a +2 morale bonus to all defenses.",
+          "after": "Each time you are attacked, the opponent that attacked you takes a -2 morale penalty to its Will Defense until the end of your next turn. This penalty is not cumulative, so if a target makes multiple attacks against you it only incurs the penalty once per turn."
+        }
+      ]
+    }
+  ],
+  "embeddedActorItems": {
+    "policy": "NOT MODIFIED (reported only); see the 3E-4 note: embedded items are independent snapshots.",
+    "total": 104,
+    "byItemName": {
+      "Hunter's Mark": {
+        "items": 42,
+        "verbatimCopyOfPreRepair": 0
+      },
+      "Cover Fire": {
+        "items": 32,
+        "verbatimCopyOfPreRepair": 0
+      },
+      "Shift Defense I": {
+        "items": 16,
+        "verbatimCopyOfPreRepair": 0
+      },
+      "Wrong Decision": {
+        "items": 2,
+        "verbatimCopyOfPreRepair": 0
+      },
+      "Drain Force": {
+        "items": 6,
+        "verbatimCopyOfPreRepair": 0
+      },
+      "Influential Friends": {
+        "items": 4,
+        "verbatimCopyOfPreRepair": 0
+      },
+      "Difficult to Sense": {
+        "items": 2,
+        "verbatimCopyOfPreRepair": 0
+      }
+    }
+  },
+  "verification": {
+    "results": [
+      {
+        "id": "manifest builds (every entry locates exactly once)",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "id": "every PDF_VERIFIED edit applies cleanly (exact pre-image)",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "id": "target records = the PDF-verified records (16)",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "id": "zero changes outside the target records",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "id": "only text leaves change (prerequisites, benefit, description, summary) and only the fields each entry lists",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "id": "every target record actually changes",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "id": "no id / name / tree / source / page / tag / flag / effect change",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "id": "description shape preserved (string stays string, {value} stays {value})",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "id": "benefit and description stay mirrors where they mirrored before",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "id": "Share Talent prerequisite left as certified (print differs only by its terminal period)",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "id": "no known defect string survives anywhere in the canonical pack after the repair",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "id": "second-wave (PDF_REQUIRED) records are untouched by this repair",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "id": "second run is a zero diff",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "id": "serialization is surgical: only 16 lines of packs/talents.db change",
+        "ok": true,
+        "detail": ""
+      }
+    ]
+  }
+}

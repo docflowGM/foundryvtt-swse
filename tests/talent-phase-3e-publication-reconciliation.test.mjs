@@ -31,6 +31,15 @@ test('unresolved same-name cross-tree ambiguity (two same-name identities collap
 })).includes('UNRESOLVED_SAME_NAME_AMBIGUITY')));
 test('claim count must equal the Phase 2 closeout certificate', () => assert.ok(codes(run(i => { i.closeout.totals.certifiedPublicationClaims += 1; })).includes('CLAIM_COUNT_MISMATCH')));
 test('homebrew is outside the denominator and must stay disjoint', () => assert.ok(codes(run(i => { i.homebrew.push({ _id: i.production[0]._id, name: 'x' }); })).includes('HOMEBREW_IN_DENOMINATOR')));
+test('text drift: production text must equal certified canonical text or an approved (PDF-verified) correction', () => {
+  assert.equal(base.findingCounts.TEXT_DRIFT, 0);
+  assert.ok(codes(run(i => { const t = i.production.find(x => x.name === 'Armor Mastery'); t.system.benefit += ' extra'; })).includes('TEXT_DRIFT'));
+  assert.ok(codes(run(i => { const t = i.production.find(x => x.name === 'Cover Fire'); t.system.prerequisites = 'Something Else.'; })).includes('TEXT_DRIFT'));
+  // an unapproved (PDF_REQUIRED) correction does not whitelist new text; a PDF_VERIFIED one does
+  const coverFire = i => i.production.find(x => x.name === 'Cover Fire');
+  assert.ok(codes(run(i => { coverFire(i).system.prerequisites = 'Battle Analysis.'; i.textCorrections.entries.forEach(e => { if (e.name === 'Cover Fire') e.verification.status = 'PDF_REQUIRED'; }); })).includes('TEXT_DRIFT'));
+  assert.deepEqual(codes(run(i => { coverFire(i).system.prerequisites = 'Battle Analysis.'; })), []);
+});
 test('wrong source/page is reported as metadata (the seven 3E additions until the repair unit), not blocking', () => {
   const before = base.findingCounts.WRONG_SOURCE_PAGE; assert.ok(before === 7 || before === 0, 'only the seven 3E additions may lack source/page');
   const r = run(i => { const t = i.production.find(x => x.system.source); t.system.page += 1; });

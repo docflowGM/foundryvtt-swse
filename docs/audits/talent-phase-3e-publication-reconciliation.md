@@ -17,9 +17,12 @@ Denominator: 1182 certified claims + 7 3E addendum claims = 1189 claims → 1187
 | UNRESOLVED_SAME_NAME_AMBIGUITY | 0 | yes |
 | CLAIM_COUNT_MISMATCH | 0 | yes |
 | HOMEBREW_IN_DENOMINATOR | 0 | yes |
+| TEXT_DRIFT | 0 | yes |
 | WRONG_SOURCE_PAGE | 0 | no (metadata: source/page repair unit or Phase 3F) |
 | STALE_TREE_ID_SLUG | 71 | no (metadata: source/page repair unit or Phase 3F) |
 | TREE_DISPLAY_NAME_DRIFT | 72 | no (metadata: source/page repair unit or Phase 3F) |
+
+Text invariant: 4741 text fields (prerequisites, benefit, description, summary) equal the certified canonical text or an approved correction (0 currently at an approved correction).
 
 Source/page agreement: 1187 of 1187 identities carry a production source/page that matches a certified publication.
 

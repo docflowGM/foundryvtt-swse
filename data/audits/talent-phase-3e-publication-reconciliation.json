@@ -3,6 +3,10 @@
   "phase": "3E-3",
   "productionMutationPerformed": false,
   "invariant": "every certified published claim maps to exactly one canonical production record, and every canonical production record is explained by exactly one certified identity",
+  "textInvariant": {
+    "fieldsChecked": 4741,
+    "fieldsAtApprovedCorrection": 0
+  },
   "denominator": {
     "certifiedClaims": 1182,
     "addendumClaims": 7,
@@ -26,6 +30,7 @@
     "UNRESOLVED_SAME_NAME_AMBIGUITY": 0,
     "CLAIM_COUNT_MISMATCH": 0,
     "HOMEBREW_IN_DENOMINATOR": 0,
+    "TEXT_DRIFT": 0,
     "WRONG_SOURCE_PAGE": 0,
     "STALE_TREE_ID_SLUG": 71,
     "TREE_DISPLAY_NAME_DRIFT": 72

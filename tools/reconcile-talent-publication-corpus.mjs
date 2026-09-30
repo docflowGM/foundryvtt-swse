@@ -19,7 +19,7 @@ const readJson = rel => JSON.parse(read(rel));
 const ndjson = rel => read(rel).split('\n').filter(Boolean).map(JSON.parse);
 
 // Finding codes. BLOCKING codes break the invariant; the METADATA code is a known production-content gap handled by a separate repair unit.
-export const BLOCKING = ['CLAIM_WITHOUT_RECORD', 'RECORD_WITHOUT_CLAIM', 'DUPLICATE_MAPPING', 'DUPLICATE_RECORD_IN_TREE', 'WRONG_TREE', 'NAME_MISMATCH', 'UNRESOLVED_SAME_NAME_AMBIGUITY', 'CLAIM_COUNT_MISMATCH', 'HOMEBREW_IN_DENOMINATOR'];
+export const BLOCKING = ['CLAIM_WITHOUT_RECORD', 'RECORD_WITHOUT_CLAIM', 'DUPLICATE_MAPPING', 'DUPLICATE_RECORD_IN_TREE', 'WRONG_TREE', 'NAME_MISMATCH', 'UNRESOLVED_SAME_NAME_AMBIGUITY', 'CLAIM_COUNT_MISMATCH', 'HOMEBREW_IN_DENOMINATOR', 'TEXT_DRIFT'];
 // STALE_TREE_ID_SLUG: membership is correct but system.treeId holds a slug instead of the tree _id (Phase 3F scope; not normalized here).
 // TREE_DISPLAY_NAME_DRIFT: the production tree is the manifest's target tree (identity is certain by _id) but its display name differs from the canonical name (Phase 3F scope).
 export const METADATA = ['WRONG_SOURCE_PAGE', 'STALE_TREE_ID_SLUG', 'TREE_DISPLAY_NAME_DRIFT'];
@@ -34,12 +34,13 @@ export function loadInput(root = ROOT) {
     addendum: rd('data/audits/talent-phase-3e-canonical-additions.json'),
     registry: rd('data/audits/talent-canonical-tree-registry.json').entries,
     closeout: rd('data/audits/talent-phase-2-closeout.json'),
+    textCorrections: fs.existsSync(path.join(root, 'data/audits/talent-phase-3e5-text-defect-manifest.json')) ? rd('data/audits/talent-phase-3e5-text-defect-manifest.json') : { entries: [] },
     production: nd('packs/talents.db'), trees: nd('packs/talent_trees.db'),
     homebrew: fs.existsSync(path.join(root, 'packs/talents-homebrew.db')) ? nd('packs/talents-homebrew.db') : []
   };
 }
 
-export function reconcile({ canonical, manifests, addendum, registry, closeout, production, trees, homebrew }) {
+export function reconcile({ canonical, manifests, addendum, registry, closeout, production, trees, homebrew, textCorrections = { entries: [] } }) {
   const findings = [];
   const add = (code, identity, detail) => findings.push({ code, identity, detail });
   const prodById = new Map(production.map(t => [t._id, t]));
@@ -120,6 +121,36 @@ export function reconcile({ canonical, manifests, addendum, registry, closeout, 
   }
   for (const g of canonical.sameNameDifferentTreeGroups) if ((nameGroups.get(g.name) ?? []).length < 2) add('UNRESOLVED_SAME_NAME_AMBIGUITY', g.name, 'certified same-name group no longer has two identities');
 
+  // --- text: production must equal the certified canonical text (whitespace-insensitive), or the text after an APPROVED correction
+  //     (3E addendum rows; PDF_VERIFIED 3E-5 defect entries). Anything else is silent drift. ---
+  const ws = x => String(x ?? '').replace(/\s+/g, ' ').trim();
+  const descOf = t => (t.system.description && typeof t.system.description === 'object') ? t.system.description.value : t.system.description;
+  const prodText = t => ({ prerequisites: t.system.prerequisites, benefit: t.system.benefit, description: descOf(t), summary: t.system.summary });
+  const canonByIdentity = new Map(canonical.records.map(r => [r.canonicalIdentity, r]));
+  const fixesByProd = new Map();
+  for (const e of textCorrections.entries) if (e.verification?.status === 'PDF_VERIFIED') fixesByProd.set(e.productionId, [...(fixesByProd.get(e.productionId) ?? []), e]);
+  let textChecked = 0, textCorrected = 0;
+  for (const [identity] of authority) {
+    const pid = idToProd.get(identity), p = pid && prodById.get(pid); if (!p) continue;
+    const cur = prodText(p), allowed = {};
+    const c = canonByIdentity.get(identity), addRow = addendum.additions.find(a => a.canonicalIdentity === identity);
+    if (c) for (const f of Object.keys(cur)) allowed[f] = [ws(c[f])];
+    else if (addRow) { allowed.prerequisites = [ws(addRow.prerequisites), ws(addRow.production.prerequisites)]; allowed.benefit = allowed.description = [ws(addRow.rulesText), ws(addRow.production.benefit)]; }
+    // approved corrections apply in id order; every intermediate state is an allowed state (base, after TD-a, after TD-a+TD-b, ...)
+    for (const e of (fixesByProd.get(pid) ?? []).sort((x, y) => x.id.localeCompare(y.id))) for (const f of e.fields) {
+      const prev = allowed[f]?.at(-1) ?? '';
+      const next = e.action === 'REPLACE_FIELDS' ? ws(e.after[f]) : ws(prev.replace(ws(e.find), ws(e.replace)));
+      allowed[f] = [...(allowed[f] ?? []), next];
+    }
+    for (const f of Object.keys(allowed)) {
+      if (f === 'summary' && (cur.summary === undefined || cur.summary === null) && !c) continue;
+      textChecked++;
+      const got = ws(cur[f]);
+      if (!allowed[f].includes(got)) add('TEXT_DRIFT', identity, `${f} in production matches neither the certified canonical text nor an approved correction`);
+      else if (got !== allowed[f][0]) textCorrected++;
+    }
+  }
+
   // --- homebrew is outside the denominator ---
   for (const h of homebrew) if (prodById.has(h._id)) add('HOMEBREW_IN_DENOMINATOR', `${h._id} ${h.name}`, 'homebrew talent id also in the canonical pack');
 
@@ -127,6 +158,7 @@ export function reconcile({ canonical, manifests, addendum, registry, closeout, 
   return {
     schemaVersion: 1, phase: '3E-3', productionMutationPerformed: false,
     invariant: 'every certified published claim maps to exactly one canonical production record, and every canonical production record is explained by exactly one certified identity',
+    textInvariant: { fieldsChecked: textChecked, fieldsAtApprovedCorrection: textCorrected },
     denominator: { certifiedClaims, addendumClaims: addendum.additions.length, totalClaims: claims, identities: authority.size, productionCanonicalRecords: production.length, homebrewExcluded: homebrew.length, crossTreeSameNameGroups: crossTreeGroups },
     sourcePageAgreement: stats,
     findingCounts: { ...count(BLOCKING), ...count(METADATA) },
@@ -143,6 +175,7 @@ function renderMd(r) {
     `Denominator: ${d.certifiedClaims} certified claims + ${d.addendumClaims} 3E addendum claims = ${d.totalClaims} claims → ${d.identities} identities ↔ ${d.productionCanonicalRecords} canonical production records. ${d.homebrewExcluded} homebrew talents are outside the denominator; ${d.crossTreeSameNameGroups} same-name cross-tree groups are resolved by tree identity, never by name.`, '',
     '| Finding | Count | Blocking |', '|---|---|---|',
     ...Object.entries(r.findingCounts).map(([k, v]) => `| ${k} | ${v} | ${BLOCKING.includes(k) ? 'yes' : 'no (metadata: source/page repair unit or Phase 3F)'} |`), '',
+    `Text invariant: ${r.textInvariant.fieldsChecked} text fields (prerequisites, benefit, description, summary) equal the certified canonical text or an approved correction (${r.textInvariant.fieldsAtApprovedCorrection} currently at an approved correction).`, '',
     `Source/page agreement: ${r.sourcePageAgreement.exactSourcePage} of ${r.sourcePageAgreement.exactSourcePage + r.sourcePageAgreement.wrongSourcePage} identities carry a production source/page that matches a certified publication.`, '',
     r.blockingFindings.length ? '## Blocking findings\n\n' + r.blockingFindings.map(f => `- **${f.code}** ${f.identity}: ${f.detail}`).join('\n') + '\n' : 'No blocking findings.', '',
     r.metadataFindings.length ? '## Source/page metadata findings\n\n' + r.metadataFindings.map(f => `- ${f.identity}: ${f.detail}`).join('\n') + '\n' : 'No source/page findings.', ''].join('\n');
