@@ -18,11 +18,12 @@ const read = rel => fs.readFileSync(path.join(ROOT, rel), 'utf8');
 const readJson = rel => JSON.parse(read(rel));
 const ndjson = rel => read(rel).split('\n').filter(Boolean).map(JSON.parse);
 
-// Finding codes. BLOCKING codes break the invariant; the METADATA code is a known production-content gap handled by a separate repair unit.
-export const BLOCKING = ['CLAIM_WITHOUT_RECORD', 'RECORD_WITHOUT_CLAIM', 'DUPLICATE_MAPPING', 'DUPLICATE_RECORD_IN_TREE', 'WRONG_TREE', 'NAME_MISMATCH', 'UNRESOLVED_SAME_NAME_AMBIGUITY', 'CLAIM_COUNT_MISMATCH', 'HOMEBREW_IN_DENOMINATOR', 'TEXT_DRIFT'];
-// STALE_TREE_ID_SLUG: membership is correct but system.treeId holds a slug instead of the tree _id (Phase 3F scope; not normalized here).
-// TREE_DISPLAY_NAME_DRIFT: the production tree is the manifest's target tree (identity is certain by _id) but its display name differs from the canonical name (Phase 3F scope).
-export const METADATA = ['WRONG_SOURCE_PAGE', 'STALE_TREE_ID_SLUG', 'TREE_DISPLAY_NAME_DRIFT'];
+// Finding codes. Since Phase 3F every code is blocking: source/page, tree-id slugs and tree display names are all certified clean.
+export const BLOCKING = ['CLAIM_WITHOUT_RECORD', 'RECORD_WITHOUT_CLAIM', 'DUPLICATE_MAPPING', 'DUPLICATE_RECORD_IN_TREE', 'WRONG_TREE', 'NAME_MISMATCH', 'UNRESOLVED_SAME_NAME_AMBIGUITY', 'CLAIM_COUNT_MISMATCH', 'HOMEBREW_IN_DENOMINATOR', 'TEXT_DRIFT',
+  'WRONG_SOURCE_PAGE', // the seven 3E addendum records lacked source/page until Phase 3E-4
+  'STALE_TREE_ID_SLUG', // system.treeId must be the persistent tree _id, never a name slug (Phase 3F)
+  'TREE_DISPLAY_NAME_DRIFT']; // the production tree name must equal the canonical name (Phase 3F)
+export const METADATA = [];
 const slugify = s => String(s).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
 
 export function loadInput(root = ROOT) {

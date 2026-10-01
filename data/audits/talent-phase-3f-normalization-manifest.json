@@ -1,0 +1,1729 @@
+{
+  "schemaVersion": 1,
+  "phase": "3F-3",
+  "status": "NORMALIZATION_MANIFEST",
+  "census": {
+    "staleTalentReferences": [
+      {
+        "talentId": "4fc3fe4c1e7f9ba0",
+        "talent": "Armor Mastery",
+        "identity": "Saga Edition Core Rulebook|Armor Specialist|Armor Mastery",
+        "currentTreeId": "armor-specialist",
+        "authoritativeTreeId": "17cec542331cb4e4",
+        "canonicalTreeKey": "Saga Edition Core Rulebook|Armor Specialist",
+        "currentTreeName": "Armor Specialist",
+        "canonicalTreeName": "Armor Specialist",
+        "runtimeTreeId": "armor_specialist",
+        "slugMatchesTree": true,
+        "inTreeMembership": true
+      },
+      {
+        "talentId": "ef3ec55015c60bda",
+        "talent": "Channel Aggression",
+        "identity": "Saga Edition Core Rulebook|Dark Side Devotee|Channel Aggression",
+        "currentTreeId": "dark-side-devotee",
+        "authoritativeTreeId": "96ef43a3054dcb58",
+        "canonicalTreeKey": "Saga Edition Core Rulebook|Dark Side Devotee",
+        "currentTreeName": "Dark Side Devotee",
+        "canonicalTreeName": "Dark Side Devotee",
+        "runtimeTreeId": "dark_side_devotee",
+        "slugMatchesTree": true,
+        "inTreeMembership": true
+      },
+      {
+        "talentId": "37ee909a7de54768",
+        "talent": "Channel Anger",
+        "identity": "Saga Edition Core Rulebook|Dark Side Devotee|Channel Anger",
+        "currentTreeId": "dark-side-devotee",
+        "authoritativeTreeId": "96ef43a3054dcb58",
+        "canonicalTreeKey": "Saga Edition Core Rulebook|Dark Side Devotee",
+        "currentTreeName": "Dark Side Devotee",
+        "canonicalTreeName": "Dark Side Devotee",
+        "runtimeTreeId": "dark_side_devotee",
+        "slugMatchesTree": true,
+        "inTreeMembership": true
+      },
+      {
+        "talentId": "8b3cb561c294fa11",
+        "talent": "Crippling Strike",
+        "identity": "Saga Edition Core Rulebook|Dark Side Devotee|Crippling Strike",
+        "currentTreeId": "dark-side-devotee",
+        "authoritativeTreeId": "96ef43a3054dcb58",
+        "canonicalTreeKey": "Saga Edition Core Rulebook|Dark Side Devotee",
+        "currentTreeName": "Dark Side Devotee",
+        "canonicalTreeName": "Dark Side Devotee",
+        "runtimeTreeId": "dark_side_devotee",
+        "slugMatchesTree": true,
+        "inTreeMembership": true
+      },
+      {
+        "talentId": "8e1ee6d1c756450f96d4d5eaa9657e47",
+        "talent": "Embrace the Dark Side",
+        "identity": "Saga Edition Core Rulebook|Dark Side Devotee|Embrace the Dark Side",
+        "currentTreeId": "dark-side-devotee",
+        "authoritativeTreeId": "96ef43a3054dcb58",
+        "canonicalTreeKey": "Saga Edition Core Rulebook|Dark Side Devotee",
+        "currentTreeName": "Dark Side Devotee",
+        "canonicalTreeName": "Dark Side Devotee",
+        "runtimeTreeId": "dark_side_devotee",
+        "slugMatchesTree": true,
+        "inTreeMembership": true
+      },
+      {
+        "talentId": "e96812723ff4eb04",
+        "talent": "Dark Side Talisman",
+        "identity": "Saga Edition Core Rulebook|Dark Side Devotee|Dark Side Talisman",
+        "currentTreeId": "dark-side-devotee",
+        "authoritativeTreeId": "96ef43a3054dcb58",
+        "canonicalTreeKey": "Saga Edition Core Rulebook|Dark Side Devotee",
+        "currentTreeName": "Dark Side Devotee",
+        "canonicalTreeName": "Dark Side Devotee",
+        "runtimeTreeId": "dark_side_devotee",
+        "slugMatchesTree": true,
+        "inTreeMembership": true
+      },
+      {
+        "talentId": "c8bf9ab9d1f8588a",
+        "talent": "Greater Dark Side Talisman",
+        "identity": "Saga Edition Core Rulebook|Dark Side Devotee|Greater Dark Side Talisman",
+        "currentTreeId": "dark-side-devotee",
+        "authoritativeTreeId": "96ef43a3054dcb58",
+        "canonicalTreeKey": "Saga Edition Core Rulebook|Dark Side Devotee",
+        "currentTreeName": "Dark Side Devotee",
+        "canonicalTreeName": "Dark Side Devotee",
+        "runtimeTreeId": "dark_side_devotee",
+        "slugMatchesTree": true,
+        "inTreeMembership": true
+      },
+      {
+        "talentId": "5d4a63123e5a5eb4",
+        "talent": "Acrobatic Recovery",
+        "identity": "Saga Edition Core Rulebook|Jedi Guardian|Acrobatic Recovery",
+        "currentTreeId": "jedi-guardian",
+        "authoritativeTreeId": "10c843cef8ce2798",
+        "canonicalTreeKey": "Saga Edition Core Rulebook|Jedi Guardian",
+        "currentTreeName": "Jedi Guardian",
+        "canonicalTreeName": "Jedi Guardian",
+        "runtimeTreeId": "jedi_guardian",
+        "slugMatchesTree": true,
+        "inTreeMembership": true
+      },
+      {
+        "talentId": "9461c7aa79dd07c6",
+        "talent": "Battle Meditation",
+        "identity": "Saga Edition Core Rulebook|Jedi Guardian|Battle Meditation",
+        "currentTreeId": "jedi-guardian",
+        "authoritativeTreeId": "10c843cef8ce2798",
+        "canonicalTreeKey": "Saga Edition Core Rulebook|Jedi Guardian",
+        "currentTreeName": "Jedi Guardian",
+        "canonicalTreeName": "Jedi Guardian",
+        "runtimeTreeId": "jedi_guardian",
+        "slugMatchesTree": true,
+        "inTreeMembership": true
+      },
+      {
+        "talentId": "a0ace6dcc1c67d48",
+        "talent": "Elusive Target",
+        "identity": "Saga Edition Core Rulebook|Jedi Guardian|Elusive Target",
+        "currentTreeId": "jedi-guardian",
+        "authoritativeTreeId": "10c843cef8ce2798",
+        "canonicalTreeKey": "Saga Edition Core Rulebook|Jedi Guardian",
+        "currentTreeName": "Jedi Guardian",
+        "canonicalTreeName": "Jedi Guardian",
+        "runtimeTreeId": "jedi_guardian",
+        "slugMatchesTree": true,
+        "inTreeMembership": true
+      },
+      {
+        "talentId": "00deb8b4cce303b6",
+        "talent": "Force Intuition",
+        "identity": "Saga Edition Core Rulebook|Jedi Guardian|Force Intuition",
+        "currentTreeId": "jedi-guardian",
+        "authoritativeTreeId": "10c843cef8ce2798",
+        "canonicalTreeKey": "Saga Edition Core Rulebook|Jedi Guardian",
+        "currentTreeName": "Jedi Guardian",
+        "canonicalTreeName": "Jedi Guardian",
+        "runtimeTreeId": "jedi_guardian",
+        "slugMatchesTree": true,
+        "inTreeMembership": true
+      },
+      {
+        "talentId": "0dde210ea6d197ef",
+        "talent": "Resilience",
+        "identity": "Saga Edition Core Rulebook|Jedi Guardian|Resilience",
+        "currentTreeId": "jedi-guardian",
+        "authoritativeTreeId": "10c843cef8ce2798",
+        "canonicalTreeKey": "Saga Edition Core Rulebook|Jedi Guardian",
+        "currentTreeName": "Jedi Guardian",
+        "canonicalTreeName": "Jedi Guardian",
+        "runtimeTreeId": "jedi_guardian",
+        "slugMatchesTree": true,
+        "inTreeMembership": true
+      },
+      {
+        "talentId": "2afe84b999aa1c43",
+        "talent": "Exposing Strike",
+        "identity": "Saga Edition Core Rulebook|Jedi Guardian|Exposing Strike",
+        "currentTreeId": "jedi-guardian",
+        "authoritativeTreeId": "10c843cef8ce2798",
+        "canonicalTreeKey": "Saga Edition Core Rulebook|Jedi Guardian",
+        "currentTreeName": "Jedi Guardian",
+        "canonicalTreeName": "Jedi Guardian",
+        "runtimeTreeId": "jedi_guardian",
+        "slugMatchesTree": true,
+        "inTreeMembership": true
+      },
+      {
+        "talentId": "f15b54aeaaa5c578",
+        "talent": "Guardian Strike",
+        "identity": "Saga Edition Core Rulebook|Jedi Guardian|Guardian Strike",
+        "currentTreeId": "jedi-guardian",
+        "authoritativeTreeId": "10c843cef8ce2798",
+        "canonicalTreeKey": "Saga Edition Core Rulebook|Jedi Guardian",
+        "currentTreeName": "Jedi Guardian",
+        "canonicalTreeName": "Jedi Guardian",
+        "runtimeTreeId": "jedi_guardian",
+        "slugMatchesTree": true,
+        "inTreeMembership": true
+      },
+      {
+        "talentId": "f4b22e32d448b703",
+        "talent": "Forceful Warrior",
+        "identity": "Saga Edition Core Rulebook|Jedi Guardian|Forceful Warrior",
+        "currentTreeId": "jedi-guardian",
+        "authoritativeTreeId": "10c843cef8ce2798",
+        "canonicalTreeKey": "Saga Edition Core Rulebook|Jedi Guardian",
+        "currentTreeName": "Jedi Guardian",
+        "canonicalTreeName": "Jedi Guardian",
+        "runtimeTreeId": "jedi_guardian",
+        "slugMatchesTree": true,
+        "inTreeMembership": true
+      },
+      {
+        "talentId": "198b68c0ca770ad7",
+        "talent": "Mobile Combatant",
+        "identity": "Saga Edition Core Rulebook|Jedi Guardian|Mobile Combatant",
+        "currentTreeId": "jedi-guardian",
+        "authoritativeTreeId": "10c843cef8ce2798",
+        "canonicalTreeKey": "Saga Edition Core Rulebook|Jedi Guardian",
+        "currentTreeName": "Jedi Guardian",
+        "canonicalTreeName": "Jedi Guardian",
+        "runtimeTreeId": "jedi_guardian",
+        "slugMatchesTree": true,
+        "inTreeMembership": true
+      },
+      {
+        "talentId": "0bc102751285d17c",
+        "talent": "Defensive Acuity",
+        "identity": "Saga Edition Core Rulebook|Jedi Guardian|Defensive Acuity",
+        "currentTreeId": "jedi-guardian",
+        "authoritativeTreeId": "10c843cef8ce2798",
+        "canonicalTreeKey": "Saga Edition Core Rulebook|Jedi Guardian",
+        "currentTreeName": "Jedi Guardian",
+        "canonicalTreeName": "Jedi Guardian",
+        "runtimeTreeId": "jedi_guardian",
+        "slugMatchesTree": true,
+        "inTreeMembership": true
+      },
+      {
+        "talentId": "d6a04668587e2c03",
+        "talent": "Improved Battle Meditation",
+        "identity": "Saga Edition Core Rulebook|Jedi Guardian|Improved Battle Meditation",
+        "currentTreeId": "jedi-guardian",
+        "authoritativeTreeId": "10c843cef8ce2798",
+        "canonicalTreeKey": "Saga Edition Core Rulebook|Jedi Guardian",
+        "currentTreeName": "Jedi Guardian",
+        "canonicalTreeName": "Jedi Guardian",
+        "runtimeTreeId": "jedi_guardian",
+        "slugMatchesTree": true,
+        "inTreeMembership": true
+      },
+      {
+        "talentId": "fcd7c1e0bd15df71",
+        "talent": "Cover Escape",
+        "identity": "Saga Edition Core Rulebook|Jedi Guardian|Cover Escape",
+        "currentTreeId": "jedi-guardian",
+        "authoritativeTreeId": "10c843cef8ce2798",
+        "canonicalTreeKey": "Saga Edition Core Rulebook|Jedi Guardian",
+        "currentTreeName": "Jedi Guardian",
+        "canonicalTreeName": "Jedi Guardian",
+        "runtimeTreeId": "jedi_guardian",
+        "slugMatchesTree": true,
+        "inTreeMembership": true
+      },
+      {
+        "talentId": "7355c8afe9509dad",
+        "talent": "Close Maneuvering",
+        "identity": "Saga Edition Core Rulebook|Jedi Guardian|Close Maneuvering",
+        "currentTreeId": "jedi-guardian",
+        "authoritativeTreeId": "10c843cef8ce2798",
+        "canonicalTreeKey": "Saga Edition Core Rulebook|Jedi Guardian",
+        "currentTreeName": "Jedi Guardian",
+        "canonicalTreeName": "Jedi Guardian",
+        "runtimeTreeId": "jedi_guardian",
+        "slugMatchesTree": true,
+        "inTreeMembership": true
+      },
+      {
+        "talentId": "14306c13238ccb83",
+        "talent": "Immovable",
+        "identity": "Saga Edition Core Rulebook|Jedi Guardian|Immovable",
+        "currentTreeId": "jedi-guardian",
+        "authoritativeTreeId": "10c843cef8ce2798",
+        "canonicalTreeKey": "Saga Edition Core Rulebook|Jedi Guardian",
+        "currentTreeName": "Jedi Guardian",
+        "canonicalTreeName": "Jedi Guardian",
+        "runtimeTreeId": "jedi_guardian",
+        "slugMatchesTree": true,
+        "inTreeMembership": true
+      },
+      {
+        "talentId": "27a67c4c00c1b9ae",
+        "talent": "Grenade Defense",
+        "identity": "Saga Edition Core Rulebook|Jedi Guardian|Grenade Defense",
+        "currentTreeId": "jedi-guardian",
+        "authoritativeTreeId": "10c843cef8ce2798",
+        "canonicalTreeKey": "Saga Edition Core Rulebook|Jedi Guardian",
+        "currentTreeName": "Jedi Guardian",
+        "canonicalTreeName": "Jedi Guardian",
+        "runtimeTreeId": "jedi_guardian",
+        "slugMatchesTree": true,
+        "inTreeMembership": true
+      },
+      {
+        "talentId": "a843f45ec0f99db6",
+        "talent": "Hold the Line",
+        "identity": "Saga Edition Core Rulebook|Jedi Guardian|Hold the Line",
+        "currentTreeId": "jedi-guardian",
+        "authoritativeTreeId": "10c843cef8ce2798",
+        "canonicalTreeKey": "Saga Edition Core Rulebook|Jedi Guardian",
+        "currentTreeName": "Jedi Guardian",
+        "canonicalTreeName": "Jedi Guardian",
+        "runtimeTreeId": "jedi_guardian",
+        "slugMatchesTree": true,
+        "inTreeMembership": true
+      },
+      {
+        "talentId": "ce151ce88fd55934",
+        "talent": "Prime Targets",
+        "identity": "Saga Edition Core Rulebook|Jedi Sentinel|Prime Targets",
+        "currentTreeId": "jedi-sentinel",
+        "authoritativeTreeId": "36f18f3e974feb33",
+        "canonicalTreeKey": "Saga Edition Core Rulebook|Jedi Sentinel",
+        "currentTreeName": "Jedi Sentinel",
+        "canonicalTreeName": "Jedi Sentinel",
+        "runtimeTreeId": "jedi_sentinel",
+        "slugMatchesTree": true,
+        "inTreeMembership": true
+      },
+      {
+        "talentId": "a1355dcae60772f5",
+        "talent": "Sense Primal Force",
+        "identity": "Saga Edition Core Rulebook|Jedi Sentinel|Sense Primal Force",
+        "currentTreeId": "jedi-sentinel",
+        "authoritativeTreeId": "36f18f3e974feb33",
+        "canonicalTreeKey": "Saga Edition Core Rulebook|Jedi Sentinel",
+        "currentTreeName": "Jedi Sentinel",
+        "canonicalTreeName": "Jedi Sentinel",
+        "runtimeTreeId": "jedi_sentinel",
+        "slugMatchesTree": true,
+        "inTreeMembership": true
+      },
+      {
+        "talentId": "9379daa94a228c04",
+        "talent": "Block",
+        "identity": "Saga Edition Core Rulebook|Lightsaber Combat|Block",
+        "currentTreeId": "lightsaber-combat",
+        "authoritativeTreeId": "2359c05ff13f3feb",
+        "canonicalTreeKey": "Saga Edition Core Rulebook|Lightsaber Combat",
+        "currentTreeName": "Lightsaber Combat",
+        "canonicalTreeName": "Lightsaber Combat",
+        "runtimeTreeId": "lightsaber_combat",
+        "slugMatchesTree": true,
+        "inTreeMembership": true
+      },
+      {
+        "talentId": "72c644f7a09b1186",
+        "talent": "Deflect",
+        "identity": "Saga Edition Core Rulebook|Lightsaber Combat|Deflect",
+        "currentTreeId": "lightsaber-combat",
+        "authoritativeTreeId": "2359c05ff13f3feb",
+        "canonicalTreeKey": "Saga Edition Core Rulebook|Lightsaber Combat",
+        "currentTreeName": "Lightsaber Combat",
+        "canonicalTreeName": "Lightsaber Combat",
+        "runtimeTreeId": "lightsaber_combat",
+        "slugMatchesTree": true,
+        "inTreeMembership": true
+      },
+      {
+        "talentId": "e8bf1222fd6289e4",
+        "talent": "Lightsaber Defense",
+        "identity": "Saga Edition Core Rulebook|Lightsaber Combat|Lightsaber Defense",
+        "currentTreeId": "lightsaber-combat",
+        "authoritativeTreeId": "2359c05ff13f3feb",
+        "canonicalTreeKey": "Saga Edition Core Rulebook|Lightsaber Combat",
+        "currentTreeName": "Lightsaber Combat",
+        "canonicalTreeName": "Lightsaber Combat",
+        "runtimeTreeId": "lightsaber_combat",
+        "slugMatchesTree": true,
+        "inTreeMembership": true
+      },
+      {
+        "talentId": "e54ecc0ff06e61f3",
+        "talent": "Lightsaber Throw",
+        "identity": "Saga Edition Core Rulebook|Lightsaber Combat|Lightsaber Throw",
+        "currentTreeId": "lightsaber-combat",
+        "authoritativeTreeId": "2359c05ff13f3feb",
+        "canonicalTreeKey": "Saga Edition Core Rulebook|Lightsaber Combat",
+        "currentTreeName": "Lightsaber Combat",
+        "canonicalTreeName": "Lightsaber Combat",
+        "runtimeTreeId": "lightsaber_combat",
+        "slugMatchesTree": true,
+        "inTreeMembership": true
+      },
+      {
+        "talentId": "941c1dfd00e697da",
+        "talent": "Redirect Shot",
+        "identity": "Saga Edition Core Rulebook|Lightsaber Combat|Redirect Shot",
+        "currentTreeId": "lightsaber-combat",
+        "authoritativeTreeId": "2359c05ff13f3feb",
+        "canonicalTreeKey": "Saga Edition Core Rulebook|Lightsaber Combat",
+        "currentTreeName": "Lightsaber Combat",
+        "canonicalTreeName": "Lightsaber Combat",
+        "runtimeTreeId": "lightsaber_combat",
+        "slugMatchesTree": true,
+        "inTreeMembership": true
+      },
+      {
+        "talentId": "bcd9981b3c6a46dc",
+        "talent": "Weapon Specialization (Lightsabers)",
+        "identity": "Saga Edition Core Rulebook|Lightsaber Combat|Weapon Specialization (Lightsabers)",
+        "currentTreeId": "lightsaber-combat",
+        "authoritativeTreeId": "2359c05ff13f3feb",
+        "canonicalTreeKey": "Saga Edition Core Rulebook|Lightsaber Combat",
+        "currentTreeName": "Lightsaber Combat",
+        "canonicalTreeName": "Lightsaber Combat",
+        "runtimeTreeId": "lightsaber_combat",
+        "slugMatchesTree": true,
+        "inTreeMembership": true
+      },
+      {
+        "talentId": "8989464c43d81045",
+        "talent": "Cortosis Gauntlet Block",
+        "identity": "Saga Edition Core Rulebook|Lightsaber Combat|Cortosis Gauntlet Block",
+        "currentTreeId": "lightsaber-combat",
+        "authoritativeTreeId": "2359c05ff13f3feb",
+        "canonicalTreeKey": "Saga Edition Core Rulebook|Lightsaber Combat",
+        "currentTreeName": "Lightsaber Combat",
+        "canonicalTreeName": "Lightsaber Combat",
+        "runtimeTreeId": "lightsaber_combat",
+        "slugMatchesTree": true,
+        "inTreeMembership": true
+      },
+      {
+        "talentId": "80e14ef4d1f52a4a",
+        "talent": "Precision",
+        "identity": "Saga Edition Core Rulebook|Lightsaber Combat|Precision",
+        "currentTreeId": "lightsaber-combat",
+        "authoritativeTreeId": "2359c05ff13f3feb",
+        "canonicalTreeKey": "Saga Edition Core Rulebook|Lightsaber Combat",
+        "currentTreeName": "Lightsaber Combat",
+        "canonicalTreeName": "Lightsaber Combat",
+        "runtimeTreeId": "lightsaber_combat",
+        "slugMatchesTree": true,
+        "inTreeMembership": true
+      },
+      {
+        "talentId": "b788095a71a47be7",
+        "talent": "Riposte",
+        "identity": "Saga Edition Core Rulebook|Lightsaber Combat|Riposte",
+        "currentTreeId": "lightsaber-combat",
+        "authoritativeTreeId": "2359c05ff13f3feb",
+        "canonicalTreeKey": "Saga Edition Core Rulebook|Lightsaber Combat",
+        "currentTreeName": "Lightsaber Combat",
+        "canonicalTreeName": "Lightsaber Combat",
+        "runtimeTreeId": "lightsaber_combat",
+        "slugMatchesTree": true,
+        "inTreeMembership": true
+      },
+      {
+        "talentId": "515d69c71897e431",
+        "talent": "Precise Redirect",
+        "identity": "Saga Edition Core Rulebook|Lightsaber Combat|Precise Redirect",
+        "currentTreeId": "lightsaber-combat",
+        "authoritativeTreeId": "2359c05ff13f3feb",
+        "canonicalTreeKey": "Saga Edition Core Rulebook|Lightsaber Combat",
+        "currentTreeName": "Lightsaber Combat",
+        "canonicalTreeName": "Lightsaber Combat",
+        "runtimeTreeId": "lightsaber_combat",
+        "slugMatchesTree": true,
+        "inTreeMembership": true
+      },
+      {
+        "talentId": "e0f66d77a2b065a7",
+        "talent": "Shoto Focus",
+        "identity": "Saga Edition Core Rulebook|Lightsaber Combat|Shoto Focus",
+        "currentTreeId": "lightsaber-combat",
+        "authoritativeTreeId": "2359c05ff13f3feb",
+        "canonicalTreeKey": "Saga Edition Core Rulebook|Lightsaber Combat",
+        "currentTreeName": "Lightsaber Combat",
+        "canonicalTreeName": "Lightsaber Combat",
+        "runtimeTreeId": "lightsaber_combat",
+        "slugMatchesTree": true,
+        "inTreeMembership": true
+      },
+      {
+        "talentId": "0b3f4075ed84aee0",
+        "talent": "Ataru",
+        "identity": "Saga Edition Core Rulebook|Lightsaber Forms|Ataru",
+        "currentTreeId": "lightsaber-forms",
+        "authoritativeTreeId": "2bc2572e852832e4",
+        "canonicalTreeKey": "Saga Edition Core Rulebook|Lightsaber Forms",
+        "currentTreeName": "Lightsaber Forms",
+        "canonicalTreeName": "Lightsaber Forms",
+        "runtimeTreeId": "lightsaber_forms",
+        "slugMatchesTree": true,
+        "inTreeMembership": true
+      },
+      {
+        "talentId": "9dfce712a60a097f",
+        "talent": "Djem So",
+        "identity": "Saga Edition Core Rulebook|Lightsaber Forms|Djem So",
+        "currentTreeId": "lightsaber-forms",
+        "authoritativeTreeId": "2bc2572e852832e4",
+        "canonicalTreeKey": "Saga Edition Core Rulebook|Lightsaber Forms",
+        "currentTreeName": "Lightsaber Forms",
+        "canonicalTreeName": "Lightsaber Forms",
+        "runtimeTreeId": "lightsaber_forms",
+        "slugMatchesTree": true,
+        "inTreeMembership": true
+      },
+      {
+        "talentId": "4552785ad56d90d4",
+        "talent": "Jar'Kai",
+        "identity": "Saga Edition Core Rulebook|Lightsaber Forms|Jar'Kai",
+        "currentTreeId": "lightsaber-forms",
+        "authoritativeTreeId": "2bc2572e852832e4",
+        "canonicalTreeKey": "Saga Edition Core Rulebook|Lightsaber Forms",
+        "currentTreeName": "Lightsaber Forms",
+        "canonicalTreeName": "Lightsaber Forms",
+        "runtimeTreeId": "lightsaber_forms",
+        "slugMatchesTree": true,
+        "inTreeMembership": true
+      },
+      {
+        "talentId": "5fd19be0deca1115",
+        "talent": "Juyo",
+        "identity": "Saga Edition Core Rulebook|Lightsaber Forms|Juyo",
+        "currentTreeId": "lightsaber-forms",
+        "authoritativeTreeId": "2bc2572e852832e4",
+        "canonicalTreeKey": "Saga Edition Core Rulebook|Lightsaber Forms",
+        "currentTreeName": "Lightsaber Forms",
+        "canonicalTreeName": "Lightsaber Forms",
+        "runtimeTreeId": "lightsaber_forms",
+        "slugMatchesTree": true,
+        "inTreeMembership": true
+      },
+      {
+        "talentId": "8ddbb7f6d4a11725",
+        "talent": "Makashi",
+        "identity": "Saga Edition Core Rulebook|Lightsaber Forms|Makashi",
+        "currentTreeId": "lightsaber-forms",
+        "authoritativeTreeId": "2bc2572e852832e4",
+        "canonicalTreeKey": "Saga Edition Core Rulebook|Lightsaber Forms",
+        "currentTreeName": "Lightsaber Forms",
+        "canonicalTreeName": "Lightsaber Forms",
+        "runtimeTreeId": "lightsaber_forms",
+        "slugMatchesTree": true,
+        "inTreeMembership": true
+      },
+      {
+        "talentId": "7842befd5a8713c5",
+        "talent": "Niman",
+        "identity": "Saga Edition Core Rulebook|Lightsaber Forms|Niman",
+        "currentTreeId": "lightsaber-forms",
+        "authoritativeTreeId": "2bc2572e852832e4",
+        "canonicalTreeKey": "Saga Edition Core Rulebook|Lightsaber Forms",
+        "currentTreeName": "Lightsaber Forms",
+        "canonicalTreeName": "Lightsaber Forms",
+        "runtimeTreeId": "lightsaber_forms",
+        "slugMatchesTree": true,
+        "inTreeMembership": true
+      },
+      {
+        "talentId": "e0223a2b572f2ef5",
+        "talent": "Shien",
+        "identity": "Saga Edition Core Rulebook|Lightsaber Forms|Shien",
+        "currentTreeId": "lightsaber-forms",
+        "authoritativeTreeId": "2bc2572e852832e4",
+        "canonicalTreeKey": "Saga Edition Core Rulebook|Lightsaber Forms",
+        "currentTreeName": "Lightsaber Forms",
+        "canonicalTreeName": "Lightsaber Forms",
+        "runtimeTreeId": "lightsaber_forms",
+        "slugMatchesTree": true,
+        "inTreeMembership": true
+      },
+      {
+        "talentId": "c116f6249f4f47c9",
+        "talent": "Shii-Cho",
+        "identity": "Saga Edition Core Rulebook|Lightsaber Forms|Shii-Cho",
+        "currentTreeId": "lightsaber-forms",
+        "authoritativeTreeId": "2bc2572e852832e4",
+        "canonicalTreeKey": "Saga Edition Core Rulebook|Lightsaber Forms",
+        "currentTreeName": "Lightsaber Forms",
+        "canonicalTreeName": "Lightsaber Forms",
+        "runtimeTreeId": "lightsaber_forms",
+        "slugMatchesTree": true,
+        "inTreeMembership": true
+      },
+      {
+        "talentId": "c95b1077ab31f9b0",
+        "talent": "Sokan",
+        "identity": "Saga Edition Core Rulebook|Lightsaber Forms|Sokan",
+        "currentTreeId": "lightsaber-forms",
+        "authoritativeTreeId": "2bc2572e852832e4",
+        "canonicalTreeKey": "Saga Edition Core Rulebook|Lightsaber Forms",
+        "currentTreeName": "Lightsaber Forms",
+        "canonicalTreeName": "Lightsaber Forms",
+        "runtimeTreeId": "lightsaber_forms",
+        "slugMatchesTree": true,
+        "inTreeMembership": true
+      },
+      {
+        "talentId": "af8c6f9b6c06b448",
+        "talent": "Soresu",
+        "identity": "Saga Edition Core Rulebook|Lightsaber Forms|Soresu",
+        "currentTreeId": "lightsaber-forms",
+        "authoritativeTreeId": "2bc2572e852832e4",
+        "canonicalTreeKey": "Saga Edition Core Rulebook|Lightsaber Forms",
+        "currentTreeName": "Lightsaber Forms",
+        "canonicalTreeName": "Lightsaber Forms",
+        "runtimeTreeId": "lightsaber_forms",
+        "slugMatchesTree": true,
+        "inTreeMembership": true
+      },
+      {
+        "talentId": "629a0efa292511b7",
+        "talent": "Trakata",
+        "identity": "Saga Edition Core Rulebook|Lightsaber Forms|Trakata",
+        "currentTreeId": "lightsaber-forms",
+        "authoritativeTreeId": "2bc2572e852832e4",
+        "canonicalTreeKey": "Saga Edition Core Rulebook|Lightsaber Forms",
+        "currentTreeName": "Lightsaber Forms",
+        "canonicalTreeName": "Lightsaber Forms",
+        "runtimeTreeId": "lightsaber_forms",
+        "slugMatchesTree": true,
+        "inTreeMembership": true
+      },
+      {
+        "talentId": "87c0a929a04eb870",
+        "talent": "Vaapad",
+        "identity": "Saga Edition Core Rulebook|Lightsaber Forms|Vaapad",
+        "currentTreeId": "lightsaber-forms",
+        "authoritativeTreeId": "2bc2572e852832e4",
+        "canonicalTreeKey": "Saga Edition Core Rulebook|Lightsaber Forms",
+        "currentTreeName": "Lightsaber Forms",
+        "canonicalTreeName": "Lightsaber Forms",
+        "runtimeTreeId": "lightsaber_forms",
+        "slugMatchesTree": true,
+        "inTreeMembership": true
+      },
+      {
+        "talentId": "bab9a1ce285f98b9",
+        "talent": "Charm Beast",
+        "identity": "Jedi Academy Training Manual|Beastwarden|Charm Beast",
+        "currentTreeId": "beastwarden",
+        "authoritativeTreeId": "ed899f9f41fc1391",
+        "canonicalTreeKey": "Jedi Academy Training Manual|Beastwarden",
+        "currentTreeName": "Beastwarden",
+        "canonicalTreeName": "Beastwarden",
+        "runtimeTreeId": "beastwarden",
+        "slugMatchesTree": true,
+        "inTreeMembership": true
+      },
+      {
+        "talentId": "9c88f3f82e6e2082",
+        "talent": "Bonded Mount",
+        "identity": "Jedi Academy Training Manual|Beastwarden|Bonded Mount",
+        "currentTreeId": "beastwarden",
+        "authoritativeTreeId": "ed899f9f41fc1391",
+        "canonicalTreeKey": "Jedi Academy Training Manual|Beastwarden",
+        "currentTreeName": "Beastwarden",
+        "canonicalTreeName": "Beastwarden",
+        "runtimeTreeId": "beastwarden",
+        "slugMatchesTree": true,
+        "inTreeMembership": true
+      },
+      {
+        "talentId": "b15fa2f45baf55ea",
+        "talent": "Entreat Beast",
+        "identity": "Jedi Academy Training Manual|Beastwarden|Entreat Beast",
+        "currentTreeId": "beastwarden",
+        "authoritativeTreeId": "ed899f9f41fc1391",
+        "canonicalTreeKey": "Jedi Academy Training Manual|Beastwarden",
+        "currentTreeName": "Beastwarden",
+        "canonicalTreeName": "Beastwarden",
+        "runtimeTreeId": "beastwarden",
+        "slugMatchesTree": true,
+        "inTreeMembership": true
+      },
+      {
+        "talentId": "0a65325a98b108a7",
+        "talent": "Soothing Presence",
+        "identity": "Jedi Academy Training Manual|Beastwarden|Soothing Presence",
+        "currentTreeId": "beastwarden",
+        "authoritativeTreeId": "ed899f9f41fc1391",
+        "canonicalTreeKey": "Jedi Academy Training Manual|Beastwarden",
+        "currentTreeName": "Beastwarden",
+        "canonicalTreeName": "Beastwarden",
+        "runtimeTreeId": "beastwarden",
+        "slugMatchesTree": true,
+        "inTreeMembership": true
+      },
+      {
+        "talentId": "b6e75c52f5d66ade",
+        "talent": "Wild Sense",
+        "identity": "Jedi Academy Training Manual|Beastwarden|Wild Sense",
+        "currentTreeId": "beastwarden",
+        "authoritativeTreeId": "ed899f9f41fc1391",
+        "canonicalTreeKey": "Jedi Academy Training Manual|Beastwarden",
+        "currentTreeName": "Beastwarden",
+        "canonicalTreeName": "Beastwarden",
+        "runtimeTreeId": "beastwarden",
+        "slugMatchesTree": true,
+        "inTreeMembership": true
+      },
+      {
+        "talentId": "6cb7efd0785d4114",
+        "talent": "Bando Gora Surge",
+        "identity": "Clone Wars Campaign Guide|Bando Gora Captain|Bando Gora Surge",
+        "currentTreeId": "bando-gora-captain",
+        "authoritativeTreeId": "b7fb2b10740923f6",
+        "canonicalTreeKey": "Clone Wars Campaign Guide|Bando Gora Captain",
+        "currentTreeName": "Bando Gora Captain",
+        "canonicalTreeName": "Bando Gora Captain",
+        "runtimeTreeId": "bando_gora_captain",
+        "slugMatchesTree": true,
+        "inTreeMembership": true
+      },
+      {
+        "talentId": "3684019966515ceb",
+        "talent": "Force Fighter",
+        "identity": "Clone Wars Campaign Guide|Bando Gora Captain|Force Fighter",
+        "currentTreeId": "bando-gora-captain",
+        "authoritativeTreeId": "b7fb2b10740923f6",
+        "canonicalTreeKey": "Clone Wars Campaign Guide|Bando Gora Captain",
+        "currentTreeName": "Bando Gora Captain",
+        "canonicalTreeName": "Bando Gora Captain",
+        "runtimeTreeId": "bando_gora_captain",
+        "slugMatchesTree": true,
+        "inTreeMembership": true
+      },
+      {
+        "talentId": "3fa908b70c8d97a6",
+        "talent": "Resist Enervation",
+        "identity": "Clone Wars Campaign Guide|Bando Gora Captain|Resist Enervation",
+        "currentTreeId": "bando-gora-captain",
+        "authoritativeTreeId": "b7fb2b10740923f6",
+        "canonicalTreeKey": "Clone Wars Campaign Guide|Bando Gora Captain",
+        "currentTreeName": "Bando Gora Captain",
+        "canonicalTreeName": "Bando Gora Captain",
+        "runtimeTreeId": "bando_gora_captain",
+        "slugMatchesTree": true,
+        "inTreeMembership": true
+      },
+      {
+        "talentId": "0742d901c13ea130",
+        "talent": "Victorious Force Mastery",
+        "identity": "Clone Wars Campaign Guide|Bando Gora Captain|Victorious Force Mastery",
+        "currentTreeId": "bando-gora-captain",
+        "authoritativeTreeId": "b7fb2b10740923f6",
+        "canonicalTreeKey": "Clone Wars Campaign Guide|Bando Gora Captain",
+        "currentTreeName": "Bando Gora Captain",
+        "canonicalTreeName": "Bando Gora Captain",
+        "runtimeTreeId": "bando_gora_captain",
+        "slugMatchesTree": true,
+        "inTreeMembership": true
+      },
+      {
+        "talentId": "3c7eff4b63880ee2",
+        "talent": "Believer Intuition",
+        "identity": "Clone Wars Campaign Guide|Believer Disciple|Believer Intuition",
+        "currentTreeId": "believer-disciple",
+        "authoritativeTreeId": "92c32621101a11f9",
+        "canonicalTreeKey": "Clone Wars Campaign Guide|Believer Disciple",
+        "currentTreeName": "Believer Disciple",
+        "canonicalTreeName": "Believer Disciple",
+        "runtimeTreeId": "believer_disciple",
+        "slugMatchesTree": true,
+        "inTreeMembership": true
+      },
+      {
+        "talentId": "7d4f036dbaabdd02",
+        "talent": "Defense Boost",
+        "identity": "Clone Wars Campaign Guide|Believer Disciple|Defense Boost",
+        "currentTreeId": "believer-disciple",
+        "authoritativeTreeId": "92c32621101a11f9",
+        "canonicalTreeKey": "Clone Wars Campaign Guide|Believer Disciple",
+        "currentTreeName": "Believer Disciple",
+        "canonicalTreeName": "Believer Disciple",
+        "runtimeTreeId": "believer_disciple",
+        "slugMatchesTree": true,
+        "inTreeMembership": true
+      },
+      {
+        "talentId": "038fcce2b039ece5",
+        "talent": "Hardiness",
+        "identity": "Clone Wars Campaign Guide|Believer Disciple|Hardiness",
+        "currentTreeId": "believer-disciple",
+        "authoritativeTreeId": "92c32621101a11f9",
+        "canonicalTreeKey": "Clone Wars Campaign Guide|Believer Disciple",
+        "currentTreeName": "Believer Disciple",
+        "canonicalTreeName": "Believer Disciple",
+        "runtimeTreeId": "believer_disciple",
+        "slugMatchesTree": true,
+        "inTreeMembership": true
+      },
+      {
+        "talentId": "71bba39bd4ad95ae",
+        "talent": "High Impact",
+        "identity": "Clone Wars Campaign Guide|Believer Disciple|High Impact",
+        "currentTreeId": "believer-disciple",
+        "authoritativeTreeId": "92c32621101a11f9",
+        "canonicalTreeKey": "Clone Wars Campaign Guide|Believer Disciple",
+        "currentTreeName": "Believer Disciple",
+        "canonicalTreeName": "Believer Disciple",
+        "runtimeTreeId": "believer_disciple",
+        "slugMatchesTree": true,
+        "inTreeMembership": true
+      },
+      {
+        "talentId": "81b2b88df9600ca7",
+        "talent": "Sith Reverence",
+        "identity": "Clone Wars Campaign Guide|Believer Disciple|Sith Reverence",
+        "currentTreeId": "believer-disciple",
+        "authoritativeTreeId": "92c32621101a11f9",
+        "canonicalTreeKey": "Clone Wars Campaign Guide|Believer Disciple",
+        "currentTreeName": "Believer Disciple",
+        "canonicalTreeName": "Believer Disciple",
+        "runtimeTreeId": "believer_disciple",
+        "slugMatchesTree": true,
+        "inTreeMembership": true
+      },
+      {
+        "talentId": "b4ccb329f72bd67f",
+        "talent": "Droid Duelist",
+        "identity": "Jedi Academy Training Manual|Iron Knight|Droid Duelist",
+        "currentTreeId": "iron-knight",
+        "authoritativeTreeId": "a7dc5adf97fd6a67",
+        "canonicalTreeKey": "Jedi Academy Training Manual|Iron Knight",
+        "currentTreeName": "Iron Knight",
+        "canonicalTreeName": "Iron Knight",
+        "runtimeTreeId": "iron_knight",
+        "slugMatchesTree": true,
+        "inTreeMembership": true
+      },
+      {
+        "talentId": "5731c9fdc0b11421",
+        "talent": "Force Repair",
+        "identity": "Jedi Academy Training Manual|Iron Knight|Force Repair",
+        "currentTreeId": "iron-knight",
+        "authoritativeTreeId": "a7dc5adf97fd6a67",
+        "canonicalTreeKey": "Jedi Academy Training Manual|Iron Knight",
+        "currentTreeName": "Iron Knight",
+        "canonicalTreeName": "Iron Knight",
+        "runtimeTreeId": "iron_knight",
+        "slugMatchesTree": true,
+        "inTreeMembership": true
+      },
+      {
+        "talentId": "138586f784e21d7e",
+        "talent": "Heal Droid",
+        "identity": "Jedi Academy Training Manual|Iron Knight|Heal Droid",
+        "currentTreeId": "iron-knight",
+        "authoritativeTreeId": "a7dc5adf97fd6a67",
+        "canonicalTreeKey": "Jedi Academy Training Manual|Iron Knight",
+        "currentTreeName": "Iron Knight",
+        "canonicalTreeName": "Iron Knight",
+        "runtimeTreeId": "iron_knight",
+        "slugMatchesTree": true,
+        "inTreeMembership": true
+      },
+      {
+        "talentId": "6f7fa0ea2ad38e50",
+        "talent": "Mask Presence",
+        "identity": "Jedi Academy Training Manual|Iron Knight|Mask Presence",
+        "currentTreeId": "iron-knight",
+        "authoritativeTreeId": "a7dc5adf97fd6a67",
+        "canonicalTreeKey": "Jedi Academy Training Manual|Iron Knight",
+        "currentTreeName": "Iron Knight",
+        "canonicalTreeName": "Iron Knight",
+        "runtimeTreeId": "iron_knight",
+        "slugMatchesTree": true,
+        "inTreeMembership": true
+      },
+      {
+        "talentId": "d2ffe0250af82d28",
+        "talent": "Silicon Mind",
+        "identity": "Jedi Academy Training Manual|Iron Knight|Silicon Mind",
+        "currentTreeId": "iron-knight",
+        "authoritativeTreeId": "a7dc5adf97fd6a67",
+        "canonicalTreeKey": "Jedi Academy Training Manual|Iron Knight",
+        "currentTreeName": "Iron Knight",
+        "canonicalTreeName": "Iron Knight",
+        "runtimeTreeId": "iron_knight",
+        "slugMatchesTree": true,
+        "inTreeMembership": true
+      },
+      {
+        "talentId": "4cc3f26d58c3302b",
+        "talent": "Deception Awareness",
+        "identity": "Knights of the Old Republic Campaign Guide|Order of Shasa|Deception Awareness",
+        "currentTreeId": "order-of-shasa",
+        "authoritativeTreeId": "d2e4cd882822dcf2",
+        "canonicalTreeKey": "Knights of the Old Republic Campaign Guide|Order of Shasa",
+        "currentTreeName": "Order of Shasa",
+        "canonicalTreeName": "Order of Shasa",
+        "runtimeTreeId": "order_of_shasa",
+        "slugMatchesTree": true,
+        "inTreeMembership": true
+      },
+      {
+        "talentId": "f9c5c2077e398e60",
+        "talent": "Greater Weapon Focus (Fira)",
+        "identity": "Knights of the Old Republic Campaign Guide|Order of Shasa|Greater Weapon Focus (Fira)",
+        "currentTreeId": "order-of-shasa",
+        "authoritativeTreeId": "d2e4cd882822dcf2",
+        "canonicalTreeKey": "Knights of the Old Republic Campaign Guide|Order of Shasa",
+        "currentTreeName": "Order of Shasa",
+        "canonicalTreeName": "Order of Shasa",
+        "runtimeTreeId": "order_of_shasa",
+        "slugMatchesTree": true,
+        "inTreeMembership": true
+      },
+      {
+        "talentId": "4ebb3a798e36afe6",
+        "talent": "Progenitor's Call",
+        "identity": "Knights of the Old Republic Campaign Guide|Order of Shasa|Progenitor's Call",
+        "currentTreeId": "order-of-shasa",
+        "authoritativeTreeId": "d2e4cd882822dcf2",
+        "canonicalTreeKey": "Knights of the Old Republic Campaign Guide|Order of Shasa",
+        "currentTreeName": "Order of Shasa",
+        "canonicalTreeName": "Order of Shasa",
+        "runtimeTreeId": "order_of_shasa",
+        "slugMatchesTree": true,
+        "inTreeMembership": true
+      },
+      {
+        "talentId": "29ae5a7db772d779",
+        "talent": "Waveform",
+        "identity": "Knights of the Old Republic Campaign Guide|Order of Shasa|Waveform",
+        "currentTreeId": "order-of-shasa",
+        "authoritativeTreeId": "d2e4cd882822dcf2",
+        "canonicalTreeKey": "Knights of the Old Republic Campaign Guide|Order of Shasa",
+        "currentTreeName": "Order of Shasa",
+        "canonicalTreeName": "Order of Shasa",
+        "runtimeTreeId": "order_of_shasa",
+        "slugMatchesTree": true,
+        "inTreeMembership": true
+      }
+    ],
+    "driftTrees": [
+      {
+        "treeId": "a212850887fe41da",
+        "currentName": "1stdegree Droid",
+        "canonicalName": "First-Degree Droid",
+        "canonicalTreeKey": "Force Unleashed Campaign Guide|First-Degree Droid",
+        "talentInstances": 7,
+        "runtimeIdBefore": "1stdegree_droid",
+        "runtimeIdAfter": "first_degree_droid",
+        "runtimeIdChanges": true,
+        "registrySlugBefore": "1stdegree-droid",
+        "registrySlugAfter": "first-degree-droid",
+        "memberCount": 7,
+        "treeSourceId": "a212850887fe41da"
+      },
+      {
+        "treeId": "ad499981ddb8450e",
+        "currentName": "2nddegree Droid",
+        "canonicalName": "Second-Degree Droid",
+        "canonicalTreeKey": "Force Unleashed Campaign Guide|Second-Degree Droid",
+        "talentInstances": 7,
+        "runtimeIdBefore": "2nddegree_droid",
+        "runtimeIdAfter": "second_degree_droid",
+        "runtimeIdChanges": true,
+        "registrySlugBefore": "2nddegree-droid",
+        "registrySlugAfter": "second-degree-droid",
+        "memberCount": 7,
+        "treeSourceId": "ad499981ddb8450e"
+      },
+      {
+        "treeId": "af077700c1b8433f",
+        "currentName": "3rddegree Droid",
+        "canonicalName": "Third-Degree Droid",
+        "canonicalTreeKey": "Force Unleashed Campaign Guide|Third-Degree Droid",
+        "talentInstances": 7,
+        "runtimeIdBefore": "3rddegree_droid",
+        "runtimeIdAfter": "third_degree_droid",
+        "runtimeIdChanges": true,
+        "registrySlugBefore": "3rddegree-droid",
+        "registrySlugAfter": "third-degree-droid",
+        "memberCount": 7,
+        "treeSourceId": "af077700c1b8433f"
+      },
+      {
+        "treeId": "73814706c00849c6",
+        "currentName": "4thdegree Droid",
+        "canonicalName": "Fourth-Degree Droid",
+        "canonicalTreeKey": "Force Unleashed Campaign Guide|Fourth-Degree Droid",
+        "talentInstances": 7,
+        "runtimeIdBefore": "4thdegree_droid",
+        "runtimeIdAfter": "fourth_degree_droid",
+        "runtimeIdChanges": true,
+        "registrySlugBefore": "4thdegree-droid",
+        "registrySlugAfter": "fourth-degree-droid",
+        "memberCount": 7,
+        "treeSourceId": "73814706c00849c6"
+      },
+      {
+        "treeId": "c4e48efaad1f49af",
+        "currentName": "5thdegree Droid",
+        "canonicalName": "Fifth-Degree Droid",
+        "canonicalTreeKey": "Force Unleashed Campaign Guide|Fifth-Degree Droid",
+        "talentInstances": 7,
+        "runtimeIdBefore": "5thdegree_droid",
+        "runtimeIdAfter": "fifth_degree_droid",
+        "runtimeIdChanges": true,
+        "registrySlugBefore": "5thdegree-droid",
+        "registrySlugAfter": "fifth-degree-droid",
+        "memberCount": 7,
+        "treeSourceId": "c4e48efaad1f49af"
+      },
+      {
+        "treeId": "754907ded50d4f46",
+        "currentName": "Agent Of Ossus",
+        "canonicalName": "Agent of Ossus",
+        "canonicalTreeKey": "Force Unleashed Campaign Guide|Agent of Ossus",
+        "talentInstances": 4,
+        "runtimeIdBefore": "agent_of_ossus",
+        "runtimeIdAfter": "agent_of_ossus",
+        "runtimeIdChanges": false,
+        "registrySlugBefore": "agent-of-ossus",
+        "registrySlugAfter": "agent-of-ossus",
+        "memberCount": 4,
+        "treeSourceId": "754907ded50d4f46"
+      },
+      {
+        "treeId": "f8e7edab5f234e27",
+        "currentName": "Aingtii Monk",
+        "canonicalName": "Aing-Tii Monk",
+        "canonicalTreeKey": "Jedi Academy Training Manual|Aing-Tii Monk",
+        "talentInstances": 5,
+        "runtimeIdBefore": "aingtii_monk",
+        "runtimeIdAfter": "aing_tii_monk",
+        "runtimeIdChanges": true,
+        "registrySlugBefore": "aingtii-monk",
+        "registrySlugAfter": "aing-tii-monk",
+        "memberCount": 5,
+        "treeSourceId": "f8e7edab5f234e27"
+      },
+      {
+        "treeId": "d20682671d035cef",
+        "currentName": "Bothan Spynet",
+        "canonicalName": "Bothan SpyNet",
+        "canonicalTreeKey": "Force Unleashed Campaign Guide|Bothan SpyNet",
+        "talentInstances": 6,
+        "runtimeIdBefore": "bothan_spynet",
+        "runtimeIdAfter": "bothan_spynet",
+        "runtimeIdChanges": false,
+        "registrySlugBefore": "bothan-spynet",
+        "registrySlugAfter": "bothan-spynet",
+        "memberCount": 6,
+        "treeSourceId": "d20682671d035cef"
+      },
+      {
+        "treeId": "4da769d7c5f44232",
+        "currentName": "Disciple Of Twilight",
+        "canonicalName": "Disciple of Twilight",
+        "canonicalTreeKey": "Legacy Era Campaign Guide|Disciple of Twilight",
+        "talentInstances": 5,
+        "runtimeIdBefore": "disciple_of_twilight",
+        "runtimeIdAfter": "disciple_of_twilight",
+        "runtimeIdChanges": false,
+        "registrySlugBefore": "disciple-of-twilight",
+        "registrySlugAfter": "disciple-of-twilight",
+        "memberCount": 5,
+        "treeSourceId": "4da769d7c5f44232"
+      },
+      {
+        "treeId": "c6eee4889411411b",
+        "currentName": "Ember Of Vahl",
+        "canonicalName": "Ember of Vahl",
+        "canonicalTreeKey": "Legacy Era Campaign Guide|Ember of Vahl",
+        "talentInstances": 5,
+        "runtimeIdBefore": "ember_of_vahl",
+        "runtimeIdAfter": "ember_of_vahl",
+        "runtimeIdChanges": false,
+        "registrySlugBefore": "ember-of-vahl",
+        "registrySlugAfter": "ember-of-vahl",
+        "memberCount": 5,
+        "treeSourceId": "c6eee4889411411b"
+      },
+      {
+        "treeId": "0ffc37dac946477d",
+        "currentName": "Master Of Intrigue",
+        "canonicalName": "Master of Intrigue",
+        "canonicalTreeKey": "Galaxy of Intrigue|Master of Intrigue",
+        "talentInstances": 6,
+        "runtimeIdBefore": "master_of_intrigue",
+        "runtimeIdAfter": "master_of_intrigue",
+        "runtimeIdChanges": false,
+        "registrySlugBefore": "master-of-intrigue",
+        "registrySlugAfter": "master-of-intrigue",
+        "memberCount": 6,
+        "treeSourceId": "0ffc37dac946477d"
+      },
+      {
+        "treeId": "899038f739294c81",
+        "currentName": "Warden Of The Sky",
+        "canonicalName": "Warden of the Sky",
+        "canonicalTreeKey": "Jedi Academy Training Manual|Warden of the Sky",
+        "talentInstances": 6,
+        "runtimeIdBefore": "warden_of_the_sky",
+        "runtimeIdAfter": "warden_of_the_sky",
+        "runtimeIdChanges": false,
+        "registrySlugBefore": "warden-of-the-sky",
+        "registrySlugAfter": "warden-of-the-sky",
+        "memberCount": 6,
+        "treeSourceId": "899038f739294c81"
+      }
+    ]
+  },
+  "boundary": "71 talent system.treeId leaves + 12 tree name / system.talent_tree leaves; registries regenerated from the packs",
+  "preState": {
+    "talents": "5093cc327cd2ab77ecea10bcf8111e0fa9e909aa",
+    "trees": "5cb2acafe549e1b2a38f69b644f2eb7105316c5c",
+    "registry": "db075bbe3dd5ad36c58918c1addbb92e900f86d0"
+  },
+  "talents": [
+    {
+      "id": "4fc3fe4c1e7f9ba0",
+      "name": "Armor Mastery",
+      "before": "armor-specialist",
+      "after": "17cec542331cb4e4",
+      "tree": "Saga Edition Core Rulebook|Armor Specialist"
+    },
+    {
+      "id": "ef3ec55015c60bda",
+      "name": "Channel Aggression",
+      "before": "dark-side-devotee",
+      "after": "96ef43a3054dcb58",
+      "tree": "Saga Edition Core Rulebook|Dark Side Devotee"
+    },
+    {
+      "id": "37ee909a7de54768",
+      "name": "Channel Anger",
+      "before": "dark-side-devotee",
+      "after": "96ef43a3054dcb58",
+      "tree": "Saga Edition Core Rulebook|Dark Side Devotee"
+    },
+    {
+      "id": "8b3cb561c294fa11",
+      "name": "Crippling Strike",
+      "before": "dark-side-devotee",
+      "after": "96ef43a3054dcb58",
+      "tree": "Saga Edition Core Rulebook|Dark Side Devotee"
+    },
+    {
+      "id": "8e1ee6d1c756450f96d4d5eaa9657e47",
+      "name": "Embrace the Dark Side",
+      "before": "dark-side-devotee",
+      "after": "96ef43a3054dcb58",
+      "tree": "Saga Edition Core Rulebook|Dark Side Devotee"
+    },
+    {
+      "id": "e96812723ff4eb04",
+      "name": "Dark Side Talisman",
+      "before": "dark-side-devotee",
+      "after": "96ef43a3054dcb58",
+      "tree": "Saga Edition Core Rulebook|Dark Side Devotee"
+    },
+    {
+      "id": "c8bf9ab9d1f8588a",
+      "name": "Greater Dark Side Talisman",
+      "before": "dark-side-devotee",
+      "after": "96ef43a3054dcb58",
+      "tree": "Saga Edition Core Rulebook|Dark Side Devotee"
+    },
+    {
+      "id": "5d4a63123e5a5eb4",
+      "name": "Acrobatic Recovery",
+      "before": "jedi-guardian",
+      "after": "10c843cef8ce2798",
+      "tree": "Saga Edition Core Rulebook|Jedi Guardian"
+    },
+    {
+      "id": "9461c7aa79dd07c6",
+      "name": "Battle Meditation",
+      "before": "jedi-guardian",
+      "after": "10c843cef8ce2798",
+      "tree": "Saga Edition Core Rulebook|Jedi Guardian"
+    },
+    {
+      "id": "a0ace6dcc1c67d48",
+      "name": "Elusive Target",
+      "before": "jedi-guardian",
+      "after": "10c843cef8ce2798",
+      "tree": "Saga Edition Core Rulebook|Jedi Guardian"
+    },
+    {
+      "id": "00deb8b4cce303b6",
+      "name": "Force Intuition",
+      "before": "jedi-guardian",
+      "after": "10c843cef8ce2798",
+      "tree": "Saga Edition Core Rulebook|Jedi Guardian"
+    },
+    {
+      "id": "0dde210ea6d197ef",
+      "name": "Resilience",
+      "before": "jedi-guardian",
+      "after": "10c843cef8ce2798",
+      "tree": "Saga Edition Core Rulebook|Jedi Guardian"
+    },
+    {
+      "id": "2afe84b999aa1c43",
+      "name": "Exposing Strike",
+      "before": "jedi-guardian",
+      "after": "10c843cef8ce2798",
+      "tree": "Saga Edition Core Rulebook|Jedi Guardian"
+    },
+    {
+      "id": "f15b54aeaaa5c578",
+      "name": "Guardian Strike",
+      "before": "jedi-guardian",
+      "after": "10c843cef8ce2798",
+      "tree": "Saga Edition Core Rulebook|Jedi Guardian"
+    },
+    {
+      "id": "f4b22e32d448b703",
+      "name": "Forceful Warrior",
+      "before": "jedi-guardian",
+      "after": "10c843cef8ce2798",
+      "tree": "Saga Edition Core Rulebook|Jedi Guardian"
+    },
+    {
+      "id": "198b68c0ca770ad7",
+      "name": "Mobile Combatant",
+      "before": "jedi-guardian",
+      "after": "10c843cef8ce2798",
+      "tree": "Saga Edition Core Rulebook|Jedi Guardian"
+    },
+    {
+      "id": "0bc102751285d17c",
+      "name": "Defensive Acuity",
+      "before": "jedi-guardian",
+      "after": "10c843cef8ce2798",
+      "tree": "Saga Edition Core Rulebook|Jedi Guardian"
+    },
+    {
+      "id": "d6a04668587e2c03",
+      "name": "Improved Battle Meditation",
+      "before": "jedi-guardian",
+      "after": "10c843cef8ce2798",
+      "tree": "Saga Edition Core Rulebook|Jedi Guardian"
+    },
+    {
+      "id": "fcd7c1e0bd15df71",
+      "name": "Cover Escape",
+      "before": "jedi-guardian",
+      "after": "10c843cef8ce2798",
+      "tree": "Saga Edition Core Rulebook|Jedi Guardian"
+    },
+    {
+      "id": "7355c8afe9509dad",
+      "name": "Close Maneuvering",
+      "before": "jedi-guardian",
+      "after": "10c843cef8ce2798",
+      "tree": "Saga Edition Core Rulebook|Jedi Guardian"
+    },
+    {
+      "id": "14306c13238ccb83",
+      "name": "Immovable",
+      "before": "jedi-guardian",
+      "after": "10c843cef8ce2798",
+      "tree": "Saga Edition Core Rulebook|Jedi Guardian"
+    },
+    {
+      "id": "27a67c4c00c1b9ae",
+      "name": "Grenade Defense",
+      "before": "jedi-guardian",
+      "after": "10c843cef8ce2798",
+      "tree": "Saga Edition Core Rulebook|Jedi Guardian"
+    },
+    {
+      "id": "a843f45ec0f99db6",
+      "name": "Hold the Line",
+      "before": "jedi-guardian",
+      "after": "10c843cef8ce2798",
+      "tree": "Saga Edition Core Rulebook|Jedi Guardian"
+    },
+    {
+      "id": "ce151ce88fd55934",
+      "name": "Prime Targets",
+      "before": "jedi-sentinel",
+      "after": "36f18f3e974feb33",
+      "tree": "Saga Edition Core Rulebook|Jedi Sentinel"
+    },
+    {
+      "id": "a1355dcae60772f5",
+      "name": "Sense Primal Force",
+      "before": "jedi-sentinel",
+      "after": "36f18f3e974feb33",
+      "tree": "Saga Edition Core Rulebook|Jedi Sentinel"
+    },
+    {
+      "id": "9379daa94a228c04",
+      "name": "Block",
+      "before": "lightsaber-combat",
+      "after": "2359c05ff13f3feb",
+      "tree": "Saga Edition Core Rulebook|Lightsaber Combat"
+    },
+    {
+      "id": "72c644f7a09b1186",
+      "name": "Deflect",
+      "before": "lightsaber-combat",
+      "after": "2359c05ff13f3feb",
+      "tree": "Saga Edition Core Rulebook|Lightsaber Combat"
+    },
+    {
+      "id": "e8bf1222fd6289e4",
+      "name": "Lightsaber Defense",
+      "before": "lightsaber-combat",
+      "after": "2359c05ff13f3feb",
+      "tree": "Saga Edition Core Rulebook|Lightsaber Combat"
+    },
+    {
+      "id": "e54ecc0ff06e61f3",
+      "name": "Lightsaber Throw",
+      "before": "lightsaber-combat",
+      "after": "2359c05ff13f3feb",
+      "tree": "Saga Edition Core Rulebook|Lightsaber Combat"
+    },
+    {
+      "id": "941c1dfd00e697da",
+      "name": "Redirect Shot",
+      "before": "lightsaber-combat",
+      "after": "2359c05ff13f3feb",
+      "tree": "Saga Edition Core Rulebook|Lightsaber Combat"
+    },
+    {
+      "id": "bcd9981b3c6a46dc",
+      "name": "Weapon Specialization (Lightsabers)",
+      "before": "lightsaber-combat",
+      "after": "2359c05ff13f3feb",
+      "tree": "Saga Edition Core Rulebook|Lightsaber Combat"
+    },
+    {
+      "id": "8989464c43d81045",
+      "name": "Cortosis Gauntlet Block",
+      "before": "lightsaber-combat",
+      "after": "2359c05ff13f3feb",
+      "tree": "Saga Edition Core Rulebook|Lightsaber Combat"
+    },
+    {
+      "id": "80e14ef4d1f52a4a",
+      "name": "Precision",
+      "before": "lightsaber-combat",
+      "after": "2359c05ff13f3feb",
+      "tree": "Saga Edition Core Rulebook|Lightsaber Combat"
+    },
+    {
+      "id": "b788095a71a47be7",
+      "name": "Riposte",
+      "before": "lightsaber-combat",
+      "after": "2359c05ff13f3feb",
+      "tree": "Saga Edition Core Rulebook|Lightsaber Combat"
+    },
+    {
+      "id": "515d69c71897e431",
+      "name": "Precise Redirect",
+      "before": "lightsaber-combat",
+      "after": "2359c05ff13f3feb",
+      "tree": "Saga Edition Core Rulebook|Lightsaber Combat"
+    },
+    {
+      "id": "e0f66d77a2b065a7",
+      "name": "Shoto Focus",
+      "before": "lightsaber-combat",
+      "after": "2359c05ff13f3feb",
+      "tree": "Saga Edition Core Rulebook|Lightsaber Combat"
+    },
+    {
+      "id": "0b3f4075ed84aee0",
+      "name": "Ataru",
+      "before": "lightsaber-forms",
+      "after": "2bc2572e852832e4",
+      "tree": "Saga Edition Core Rulebook|Lightsaber Forms"
+    },
+    {
+      "id": "9dfce712a60a097f",
+      "name": "Djem So",
+      "before": "lightsaber-forms",
+      "after": "2bc2572e852832e4",
+      "tree": "Saga Edition Core Rulebook|Lightsaber Forms"
+    },
+    {
+      "id": "4552785ad56d90d4",
+      "name": "Jar'Kai",
+      "before": "lightsaber-forms",
+      "after": "2bc2572e852832e4",
+      "tree": "Saga Edition Core Rulebook|Lightsaber Forms"
+    },
+    {
+      "id": "5fd19be0deca1115",
+      "name": "Juyo",
+      "before": "lightsaber-forms",
+      "after": "2bc2572e852832e4",
+      "tree": "Saga Edition Core Rulebook|Lightsaber Forms"
+    },
+    {
+      "id": "8ddbb7f6d4a11725",
+      "name": "Makashi",
+      "before": "lightsaber-forms",
+      "after": "2bc2572e852832e4",
+      "tree": "Saga Edition Core Rulebook|Lightsaber Forms"
+    },
+    {
+      "id": "7842befd5a8713c5",
+      "name": "Niman",
+      "before": "lightsaber-forms",
+      "after": "2bc2572e852832e4",
+      "tree": "Saga Edition Core Rulebook|Lightsaber Forms"
+    },
+    {
+      "id": "e0223a2b572f2ef5",
+      "name": "Shien",
+      "before": "lightsaber-forms",
+      "after": "2bc2572e852832e4",
+      "tree": "Saga Edition Core Rulebook|Lightsaber Forms"
+    },
+    {
+      "id": "c116f6249f4f47c9",
+      "name": "Shii-Cho",
+      "before": "lightsaber-forms",
+      "after": "2bc2572e852832e4",
+      "tree": "Saga Edition Core Rulebook|Lightsaber Forms"
+    },
+    {
+      "id": "c95b1077ab31f9b0",
+      "name": "Sokan",
+      "before": "lightsaber-forms",
+      "after": "2bc2572e852832e4",
+      "tree": "Saga Edition Core Rulebook|Lightsaber Forms"
+    },
+    {
+      "id": "af8c6f9b6c06b448",
+      "name": "Soresu",
+      "before": "lightsaber-forms",
+      "after": "2bc2572e852832e4",
+      "tree": "Saga Edition Core Rulebook|Lightsaber Forms"
+    },
+    {
+      "id": "629a0efa292511b7",
+      "name": "Trakata",
+      "before": "lightsaber-forms",
+      "after": "2bc2572e852832e4",
+      "tree": "Saga Edition Core Rulebook|Lightsaber Forms"
+    },
+    {
+      "id": "87c0a929a04eb870",
+      "name": "Vaapad",
+      "before": "lightsaber-forms",
+      "after": "2bc2572e852832e4",
+      "tree": "Saga Edition Core Rulebook|Lightsaber Forms"
+    },
+    {
+      "id": "bab9a1ce285f98b9",
+      "name": "Charm Beast",
+      "before": "beastwarden",
+      "after": "ed899f9f41fc1391",
+      "tree": "Jedi Academy Training Manual|Beastwarden"
+    },
+    {
+      "id": "9c88f3f82e6e2082",
+      "name": "Bonded Mount",
+      "before": "beastwarden",
+      "after": "ed899f9f41fc1391",
+      "tree": "Jedi Academy Training Manual|Beastwarden"
+    },
+    {
+      "id": "b15fa2f45baf55ea",
+      "name": "Entreat Beast",
+      "before": "beastwarden",
+      "after": "ed899f9f41fc1391",
+      "tree": "Jedi Academy Training Manual|Beastwarden"
+    },
+    {
+      "id": "0a65325a98b108a7",
+      "name": "Soothing Presence",
+      "before": "beastwarden",
+      "after": "ed899f9f41fc1391",
+      "tree": "Jedi Academy Training Manual|Beastwarden"
+    },
+    {
+      "id": "b6e75c52f5d66ade",
+      "name": "Wild Sense",
+      "before": "beastwarden",
+      "after": "ed899f9f41fc1391",
+      "tree": "Jedi Academy Training Manual|Beastwarden"
+    },
+    {
+      "id": "6cb7efd0785d4114",
+      "name": "Bando Gora Surge",
+      "before": "bando-gora-captain",
+      "after": "b7fb2b10740923f6",
+      "tree": "Clone Wars Campaign Guide|Bando Gora Captain"
+    },
+    {
+      "id": "3684019966515ceb",
+      "name": "Force Fighter",
+      "before": "bando-gora-captain",
+      "after": "b7fb2b10740923f6",
+      "tree": "Clone Wars Campaign Guide|Bando Gora Captain"
+    },
+    {
+      "id": "3fa908b70c8d97a6",
+      "name": "Resist Enervation",
+      "before": "bando-gora-captain",
+      "after": "b7fb2b10740923f6",
+      "tree": "Clone Wars Campaign Guide|Bando Gora Captain"
+    },
+    {
+      "id": "0742d901c13ea130",
+      "name": "Victorious Force Mastery",
+      "before": "bando-gora-captain",
+      "after": "b7fb2b10740923f6",
+      "tree": "Clone Wars Campaign Guide|Bando Gora Captain"
+    },
+    {
+      "id": "3c7eff4b63880ee2",
+      "name": "Believer Intuition",
+      "before": "believer-disciple",
+      "after": "92c32621101a11f9",
+      "tree": "Clone Wars Campaign Guide|Believer Disciple"
+    },
+    {
+      "id": "7d4f036dbaabdd02",
+      "name": "Defense Boost",
+      "before": "believer-disciple",
+      "after": "92c32621101a11f9",
+      "tree": "Clone Wars Campaign Guide|Believer Disciple"
+    },
+    {
+      "id": "038fcce2b039ece5",
+      "name": "Hardiness",
+      "before": "believer-disciple",
+      "after": "92c32621101a11f9",
+      "tree": "Clone Wars Campaign Guide|Believer Disciple"
+    },
+    {
+      "id": "71bba39bd4ad95ae",
+      "name": "High Impact",
+      "before": "believer-disciple",
+      "after": "92c32621101a11f9",
+      "tree": "Clone Wars Campaign Guide|Believer Disciple"
+    },
+    {
+      "id": "81b2b88df9600ca7",
+      "name": "Sith Reverence",
+      "before": "believer-disciple",
+      "after": "92c32621101a11f9",
+      "tree": "Clone Wars Campaign Guide|Believer Disciple"
+    },
+    {
+      "id": "b4ccb329f72bd67f",
+      "name": "Droid Duelist",
+      "before": "iron-knight",
+      "after": "a7dc5adf97fd6a67",
+      "tree": "Jedi Academy Training Manual|Iron Knight"
+    },
+    {
+      "id": "5731c9fdc0b11421",
+      "name": "Force Repair",
+      "before": "iron-knight",
+      "after": "a7dc5adf97fd6a67",
+      "tree": "Jedi Academy Training Manual|Iron Knight"
+    },
+    {
+      "id": "138586f784e21d7e",
+      "name": "Heal Droid",
+      "before": "iron-knight",
+      "after": "a7dc5adf97fd6a67",
+      "tree": "Jedi Academy Training Manual|Iron Knight"
+    },
+    {
+      "id": "6f7fa0ea2ad38e50",
+      "name": "Mask Presence",
+      "before": "iron-knight",
+      "after": "a7dc5adf97fd6a67",
+      "tree": "Jedi Academy Training Manual|Iron Knight"
+    },
+    {
+      "id": "d2ffe0250af82d28",
+      "name": "Silicon Mind",
+      "before": "iron-knight",
+      "after": "a7dc5adf97fd6a67",
+      "tree": "Jedi Academy Training Manual|Iron Knight"
+    },
+    {
+      "id": "4cc3f26d58c3302b",
+      "name": "Deception Awareness",
+      "before": "order-of-shasa",
+      "after": "d2e4cd882822dcf2",
+      "tree": "Knights of the Old Republic Campaign Guide|Order of Shasa"
+    },
+    {
+      "id": "f9c5c2077e398e60",
+      "name": "Greater Weapon Focus (Fira)",
+      "before": "order-of-shasa",
+      "after": "d2e4cd882822dcf2",
+      "tree": "Knights of the Old Republic Campaign Guide|Order of Shasa"
+    },
+    {
+      "id": "4ebb3a798e36afe6",
+      "name": "Progenitor's Call",
+      "before": "order-of-shasa",
+      "after": "d2e4cd882822dcf2",
+      "tree": "Knights of the Old Republic Campaign Guide|Order of Shasa"
+    },
+    {
+      "id": "29ae5a7db772d779",
+      "name": "Waveform",
+      "before": "order-of-shasa",
+      "after": "d2e4cd882822dcf2",
+      "tree": "Knights of the Old Republic Campaign Guide|Order of Shasa"
+    }
+  ],
+  "trees": [
+    {
+      "id": "a212850887fe41da",
+      "nameBefore": "1stdegree Droid",
+      "nameAfter": "First-Degree Droid",
+      "talentTreeLabelBefore": "1stdegree Droid",
+      "runtimeIdBefore": "1stdegree_droid",
+      "runtimeIdAfter": "first_degree_droid",
+      "registryIdBefore": "1stdegree-droid",
+      "registryIdAfter": "first-degree-droid"
+    },
+    {
+      "id": "ad499981ddb8450e",
+      "nameBefore": "2nddegree Droid",
+      "nameAfter": "Second-Degree Droid",
+      "talentTreeLabelBefore": "2nddegree Droid",
+      "runtimeIdBefore": "2nddegree_droid",
+      "runtimeIdAfter": "second_degree_droid",
+      "registryIdBefore": "2nddegree-droid",
+      "registryIdAfter": "second-degree-droid"
+    },
+    {
+      "id": "af077700c1b8433f",
+      "nameBefore": "3rddegree Droid",
+      "nameAfter": "Third-Degree Droid",
+      "talentTreeLabelBefore": "3rddegree Droid",
+      "runtimeIdBefore": "3rddegree_droid",
+      "runtimeIdAfter": "third_degree_droid",
+      "registryIdBefore": "3rddegree-droid",
+      "registryIdAfter": "third-degree-droid"
+    },
+    {
+      "id": "73814706c00849c6",
+      "nameBefore": "4thdegree Droid",
+      "nameAfter": "Fourth-Degree Droid",
+      "talentTreeLabelBefore": "4thdegree Droid",
+      "runtimeIdBefore": "4thdegree_droid",
+      "runtimeIdAfter": "fourth_degree_droid",
+      "registryIdBefore": "4thdegree-droid",
+      "registryIdAfter": "fourth-degree-droid"
+    },
+    {
+      "id": "c4e48efaad1f49af",
+      "nameBefore": "5thdegree Droid",
+      "nameAfter": "Fifth-Degree Droid",
+      "talentTreeLabelBefore": "5thdegree Droid",
+      "runtimeIdBefore": "5thdegree_droid",
+      "runtimeIdAfter": "fifth_degree_droid",
+      "registryIdBefore": "5thdegree-droid",
+      "registryIdAfter": "fifth-degree-droid"
+    },
+    {
+      "id": "754907ded50d4f46",
+      "nameBefore": "Agent Of Ossus",
+      "nameAfter": "Agent of Ossus",
+      "talentTreeLabelBefore": "Agent Of Ossus",
+      "runtimeIdBefore": "agent_of_ossus",
+      "runtimeIdAfter": "agent_of_ossus",
+      "registryIdBefore": "agent-of-ossus",
+      "registryIdAfter": "agent-of-ossus"
+    },
+    {
+      "id": "f8e7edab5f234e27",
+      "nameBefore": "Aingtii Monk",
+      "nameAfter": "Aing-Tii Monk",
+      "talentTreeLabelBefore": "Aingtii Monk",
+      "runtimeIdBefore": "aingtii_monk",
+      "runtimeIdAfter": "aing_tii_monk",
+      "registryIdBefore": "aingtii-monk",
+      "registryIdAfter": "aing-tii-monk"
+    },
+    {
+      "id": "d20682671d035cef",
+      "nameBefore": "Bothan Spynet",
+      "nameAfter": "Bothan SpyNet",
+      "talentTreeLabelBefore": "Bothan Spynet",
+      "runtimeIdBefore": "bothan_spynet",
+      "runtimeIdAfter": "bothan_spynet",
+      "registryIdBefore": "bothan-spynet",
+      "registryIdAfter": "bothan-spynet"
+    },
+    {
+      "id": "4da769d7c5f44232",
+      "nameBefore": "Disciple Of Twilight",
+      "nameAfter": "Disciple of Twilight",
+      "talentTreeLabelBefore": "Disciple Of Twilight",
+      "runtimeIdBefore": "disciple_of_twilight",
+      "runtimeIdAfter": "disciple_of_twilight",
+      "registryIdBefore": "disciple-of-twilight",
+      "registryIdAfter": "disciple-of-twilight"
+    },
+    {
+      "id": "c6eee4889411411b",
+      "nameBefore": "Ember Of Vahl",
+      "nameAfter": "Ember of Vahl",
+      "talentTreeLabelBefore": "Ember Of Vahl",
+      "runtimeIdBefore": "ember_of_vahl",
+      "runtimeIdAfter": "ember_of_vahl",
+      "registryIdBefore": "ember-of-vahl",
+      "registryIdAfter": "ember-of-vahl"
+    },
+    {
+      "id": "0ffc37dac946477d",
+      "nameBefore": "Master Of Intrigue",
+      "nameAfter": "Master of Intrigue",
+      "talentTreeLabelBefore": "Master Of Intrigue",
+      "runtimeIdBefore": "master_of_intrigue",
+      "runtimeIdAfter": "master_of_intrigue",
+      "registryIdBefore": "master-of-intrigue",
+      "registryIdAfter": "master-of-intrigue"
+    },
+    {
+      "id": "899038f739294c81",
+      "nameBefore": "Warden Of The Sky",
+      "nameAfter": "Warden of the Sky",
+      "talentTreeLabelBefore": "Warden Of The Sky",
+      "runtimeIdBefore": "warden_of_the_sky",
+      "runtimeIdAfter": "warden_of_the_sky",
+      "registryIdBefore": "warden-of-the-sky",
+      "registryIdAfter": "warden-of-the-sky"
+    }
+  ]
+}

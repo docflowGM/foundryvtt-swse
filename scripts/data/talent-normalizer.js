@@ -84,8 +84,18 @@ export function normalizeTalent(rawTalent, treeMap = null) {
     // Explicit compendium fallback: some legacy talent rows have a valid treeId
     // but were not present in the tree's talentIds inverse index. Use it only
     // when it matches a known tree document so we do not invent tree authority.
-    if (!treeId && sys.treeId && treeMap && treeMap.trees instanceof Map && treeMap.trees.has(sys.treeId)) {
-        treeId = sys.treeId;
+    //
+    // Identity contract (Phase 3F): a talent's persisted `system.treeId` is the tree's persistent
+    // compendium `_id` (TalentTreeDB.sourceId). The runtime `tree.id` is derived from the display name,
+    // so the persistent value is converted explicitly through TalentTreeDB.bySourceId() and the
+    // RUNTIME id is returned. A value that is already a runtime id is still accepted.
+    if (!treeId && sys.treeId && treeMap) {
+        const bySource = typeof treeMap.bySourceId === 'function' ? treeMap.bySourceId(sys.treeId) : null;
+        if (bySource?.id) {
+            treeId = bySource.id;
+        } else if (treeMap.trees instanceof Map && treeMap.trees.has(sys.treeId)) {
+            treeId = sys.treeId;
+        }
     }
 
     // Legacy fallback (only if inverse index missing)

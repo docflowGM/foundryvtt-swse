@@ -51,7 +51,7 @@ test('the set leaves are all that a record may differ by (rest fingerprint contr
   assert.equal(Object.keys(leavesOf({ system: { description: { value: 'x' } } })).join(), 'system.description.value');
 });
 test(`state-appropriate gate passes (${state})`, () => {
-  const args = state === 'POST_3E4' ? ['--verify', '--exact'] : state === 'POST_3E5' ? ['--verify'] : ['--check'];
+  const args = state === 'POST_3E4' ? ['--verify', '--exact'] : (state === 'POST_3E5' || state === 'POST_LATER') ? ['--verify'] : ['--check'];
   const r = spawnSync(process.execPath, ['tools/apply-talent-phase-3e4.mjs', ...args], { encoding: 'utf8' });
   assert.equal(r.status, 0, r.stdout + r.stderr);
 });

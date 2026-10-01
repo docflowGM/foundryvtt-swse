@@ -1,130 +1,5 @@
 [
   {
-    "id": "1stdegree-droid",
-    "displayName": "1stdegree Droid",
-    "talentCount": 7,
-    "talents": [
-      "Medical Droid",
-      "Dull the Pain",
-      "Interrogator",
-      "Known Vulnerability",
-      "Medical Analyzer",
-      "Science Analyzer",
-      "Triage Scan"
-    ],
-    "talentIds": [
-      "97faaefe3487494c",
-      "d32459fe16029f2a",
-      "aab9d63888f12dba",
-      "852c4b043904102f",
-      "7fb6b7d078bdb493",
-      "739397eded522cd8",
-      "c9433c6bcb4133d5"
-    ],
-    "sourceId": "a212850887fe41da",
-    "classAccess": []
-  },
-  {
-    "id": "2nddegree-droid",
-    "displayName": "2nddegree Droid",
-    "talentCount": 7,
-    "talents": [
-      "Burst Transfer",
-      "Adept Assistant",
-      "Mechanics Mastery",
-      "Vehicle Mechanic",
-      "On-Board System Link",
-      "Quick Astrogation",
-      "Scomp Link Slicer"
-    ],
-    "talentIds": [
-      "df91dea8db444459",
-      "7cbae1f695df81c5",
-      "88d01facdd76940e",
-      "5ea7a0fd9015b29c",
-      "31461ebe45c5f4c9",
-      "cdbaa45c44141d9c",
-      "3b38783594bcebce"
-    ],
-    "sourceId": "ad499981ddb8450e",
-    "classAccess": []
-  },
-  {
-    "id": "3rddegree-droid",
-    "displayName": "3rddegree Droid",
-    "talentCount": 7,
-    "talents": [
-      "Observant",
-      "Etiquette",
-      "Helpful",
-      "Protocol",
-      "Nuanced",
-      "Supervising Droid",
-      "Talkdroid"
-    ],
-    "talentIds": [
-      "175c46931a9e474a",
-      "9a0c74195f3d4ac3",
-      "342fd105ca6369c7",
-      "058898a456a9a8fb",
-      "8f4fed2c36ab4c2a",
-      "0025737e7198390e",
-      "4e52d41e355b5923"
-    ],
-    "sourceId": "af077700c1b8433f",
-    "classAccess": []
-  },
-  {
-    "id": "4thdegree-droid",
-    "displayName": "4thdegree Droid",
-    "talentCount": 7,
-    "talents": [
-      "Target Acquisition",
-      "Combat Repairs",
-      "Droid Smash",
-      "Targeting Package",
-      "Just a Scratch",
-      "Target Lock",
-      "Weapons Power Surge"
-    ],
-    "talentIds": [
-      "6ef413a824474491",
-      "428896be183fadb1",
-      "236bf4d940eb6b12",
-      "ac8c46e1f6365c4a",
-      "81acbac191981ace",
-      "3d2805cd83bb0cc4",
-      "09e7eeda16a7814f"
-    ],
-    "sourceId": "73814706c00849c6",
-    "classAccess": []
-  },
-  {
-    "id": "5thdegree-droid",
-    "displayName": "5thdegree Droid",
-    "talentCount": 7,
-    "talents": [
-      "Heavy-Duty Actuators",
-      "Cargo Hauler",
-      "Environmentally Shielded",
-      "Power Supply",
-      "Durable",
-      "Load Launcher",
-      "Task Optimization"
-    ],
-    "talentIds": [
-      "f733e1a56fba443b",
-      "ce141cbd257003bc",
-      "aadcae548952b7eb",
-      "56a3b3c9b57f11fa",
-      "c5410351fc7c7aa7",
-      "b1090fa2d2ebc982",
-      "8f26ca25481d612f"
-    ],
-    "sourceId": "c4e48efaad1f49af",
-    "classAccess": []
-  },
-  {
     "id": "ace-pilot",
     "displayName": "Ace Pilot",
     "talentCount": 1,
@@ -183,7 +58,7 @@
   },
   {
     "id": "agent-of-ossus",
-    "displayName": "Agent Of Ossus",
+    "displayName": "Agent of Ossus",
     "talentCount": 4,
     "talents": [
       "Buried Presence",
@@ -201,8 +76,8 @@
     "classAccess": []
   },
   {
-    "id": "aingtii-monk",
-    "displayName": "Aingtii Monk",
+    "id": "aing-tii-monk",
+    "displayName": "Aing-Tii Monk",
     "talentCount": 5,
     "talents": [
       "Aura of Freedom",
@@ -558,7 +433,7 @@
   },
   {
     "id": "bothan-spynet",
-    "displayName": "Bothan Spynet",
+    "displayName": "Bothan SpyNet",
     "talentCount": 6,
     "talents": [
       "Six Questions",
@@ -1030,7 +905,7 @@
   },
   {
     "id": "disciple-of-twilight",
-    "displayName": "Disciple Of Twilight",
+    "displayName": "Disciple of Twilight",
     "talentCount": 5,
     "talents": [
       "Cloak of Shadow",
@@ -1165,7 +1040,7 @@
   },
   {
     "id": "ember-of-vahl",
-    "displayName": "Ember Of Vahl",
+    "displayName": "Ember of Vahl",
     "talentCount": 5,
     "talents": [
       "Initiate of Vahl",
@@ -1343,6 +1218,56 @@
     ]
   },
   {
+    "id": "fifth-degree-droid",
+    "displayName": "Fifth-Degree Droid",
+    "talentCount": 7,
+    "talents": [
+      "Heavy-Duty Actuators",
+      "Cargo Hauler",
+      "Environmentally Shielded",
+      "Power Supply",
+      "Durable",
+      "Load Launcher",
+      "Task Optimization"
+    ],
+    "talentIds": [
+      "f733e1a56fba443b",
+      "ce141cbd257003bc",
+      "aadcae548952b7eb",
+      "56a3b3c9b57f11fa",
+      "c5410351fc7c7aa7",
+      "b1090fa2d2ebc982",
+      "8f26ca25481d612f"
+    ],
+    "sourceId": "c4e48efaad1f49af",
+    "classAccess": []
+  },
+  {
+    "id": "first-degree-droid",
+    "displayName": "First-Degree Droid",
+    "talentCount": 7,
+    "talents": [
+      "Medical Droid",
+      "Dull the Pain",
+      "Interrogator",
+      "Known Vulnerability",
+      "Medical Analyzer",
+      "Science Analyzer",
+      "Triage Scan"
+    ],
+    "talentIds": [
+      "97faaefe3487494c",
+      "d32459fe16029f2a",
+      "aab9d63888f12dba",
+      "852c4b043904102f",
+      "7fb6b7d078bdb493",
+      "739397eded522cd8",
+      "c9433c6bcb4133d5"
+    ],
+    "sourceId": "a212850887fe41da",
+    "classAccess": []
+  },
+  {
     "id": "force-adept",
     "displayName": "Force Adept",
     "talentCount": 6,
@@ -1461,6 +1386,31 @@
       "Gunslinger",
       "Scoundrel"
     ]
+  },
+  {
+    "id": "fourth-degree-droid",
+    "displayName": "Fourth-Degree Droid",
+    "talentCount": 7,
+    "talents": [
+      "Target Acquisition",
+      "Combat Repairs",
+      "Droid Smash",
+      "Targeting Package",
+      "Just a Scratch",
+      "Target Lock",
+      "Weapons Power Surge"
+    ],
+    "talentIds": [
+      "6ef413a824474491",
+      "428896be183fadb1",
+      "236bf4d940eb6b12",
+      "ac8c46e1f6365c4a",
+      "81acbac191981ace",
+      "3d2805cd83bb0cc4",
+      "09e7eeda16a7814f"
+    ],
+    "sourceId": "73814706c00849c6",
+    "classAccess": []
   },
   {
     "id": "fringer",
@@ -2826,7 +2776,7 @@
   },
   {
     "id": "master-of-intrigue",
-    "displayName": "Master Of Intrigue",
+    "displayName": "Master of Intrigue",
     "talentCount": 6,
     "talents": [
       "Advanced Planning",
@@ -3752,6 +3702,31 @@
     ]
   },
   {
+    "id": "second-degree-droid",
+    "displayName": "Second-Degree Droid",
+    "talentCount": 7,
+    "talents": [
+      "Burst Transfer",
+      "Adept Assistant",
+      "Mechanics Mastery",
+      "Vehicle Mechanic",
+      "On-Board System Link",
+      "Quick Astrogation",
+      "Scomp Link Slicer"
+    ],
+    "talentIds": [
+      "df91dea8db444459",
+      "7cbae1f695df81c5",
+      "88d01facdd76940e",
+      "5ea7a0fd9015b29c",
+      "31461ebe45c5f4c9",
+      "cdbaa45c44141d9c",
+      "3b38783594bcebce"
+    ],
+    "sourceId": "ad499981ddb8450e",
+    "classAccess": []
+  },
+  {
     "id": "sense",
     "displayName": "Sense",
     "talentCount": 12,
@@ -4341,6 +4316,31 @@
     ]
   },
   {
+    "id": "third-degree-droid",
+    "displayName": "Third-Degree Droid",
+    "talentCount": 7,
+    "talents": [
+      "Observant",
+      "Etiquette",
+      "Helpful",
+      "Protocol",
+      "Nuanced",
+      "Supervising Droid",
+      "Talkdroid"
+    ],
+    "talentIds": [
+      "175c46931a9e474a",
+      "9a0c74195f3d4ac3",
+      "342fd105ca6369c7",
+      "058898a456a9a8fb",
+      "8f4fed2c36ab4c2a",
+      "0025737e7198390e",
+      "4e52d41e355b5923"
+    ],
+    "sourceId": "af077700c1b8433f",
+    "classAccess": []
+  },
+  {
     "id": "trickery",
     "displayName": "Trickery",
     "talentCount": 6,
@@ -4551,7 +4551,7 @@
   },
   {
     "id": "warden-of-the-sky",
-    "displayName": "Warden Of The Sky",
+    "displayName": "Warden of the Sky",
     "talentCount": 6,
     "talents": [
       "Telekinetic Strike",

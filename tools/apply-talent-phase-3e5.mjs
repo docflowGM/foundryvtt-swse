@@ -120,36 +120,42 @@ function renderDoc(r) {
     '## Embedded actor items', '', `${r.embeddedActorItems.total} embedded actor items point at these records; none is modified. Items whose benefit is a verbatim copy of the pre-repair production text would now lag behind (see 3E-4 for the same policy):`, '', '| Item | Embedded items | Verbatim copies of pre-repair production |', '|---|---|---|', ...Object.entries(r.embeddedActorItems.byItemName).map(([k, v]) => `| ${k} | ${v.items} | ${v.verbatimCopyOfPreRepair} |`), ''].join('\n');
 }
 
+// Files a LATER certified phase (3F) legitimately rewrote: their verification belongs to that phase.
+const LATER_OWNED = new Set(['packs/talents.db', 'packs/talent_trees.db', 'data/generated/talent-trees.registry.json', 'data/fixes/talent-trees.registry.json']);
+const after3F = () => { const p = path.join(ROOT, 'data/audits/talent-phase-3f-dry-run-report.json'); return fs.existsSync(p) && JSON.parse(fs.readFileSync(p, 'utf8')).postState.talents === gitBlobSha(fs.readFileSync(path.join(ROOT, TALENTS), 'utf8')); };
 export function detect3E5State(root = ROOT) {
   const rp = path.join(root, REPORT_PATH); if (!fs.existsSync(rp)) return 'PRE_3E5';
   const r = JSON.parse(fs.readFileSync(rp, 'utf8')), sha = gitBlobSha(fs.readFileSync(path.join(root, TALENTS), 'utf8'));
-  return r.postState.talents === sha ? 'POST_3E5' : r.preState.talents === sha ? 'PRE_3E5' : 'UNKNOWN';
+  return r.postState.talents === sha ? 'POST_3E5' : r.preState.talents === sha ? 'PRE_3E5' : after3F() ? 'POST_LATER' : 'UNKNOWN';
 }
 
+// `later` (Phase 3F normalized system.treeId on other records): the 23 repaired leaves, residual-defect and reconciliation checks stay;
+// the whole-pack fingerprints and blob equality are superseded by the later certified state.
 export function verifyApplied({ exact = false } = {}) {
+  const later = detect3E5State() === 'POST_LATER';
   const res = [], check = (id, ok, detail = '') => res.push({ id, ok: !!ok, detail });
   const report = JSON.parse(read(REPORT_PATH)), m = buildManifest(), talentsText = read(TALENTS), talents = parse(talentsText), by = new Map(talents.map(t => [t._id, t]));
   const ids = new Set(report.records.map(r => r.id));
-  check('packs/talents.db is the certified Phase 3E-5 post-state', detect3E5State() === 'POST_3E5');
+  if (!later) check('packs/talents.db is the certified Phase 3E-5 post-state', detect3E5State() === 'POST_3E5');
   check('defect manifest: every entry verified and located (frozen pre-state honoured)', m.errors.length === 0 && m.counts.pdfRequired === 0, m.errors.join('; '));
   check('canonical talent count 1,187', talents.length === 1187);
   for (const r of report.records) {
     const t = by.get(r.id);
     check(`${r.name}: every repaired leaf equals the certified after-value`, !!t && r.changes.every(c => JSON.stringify(leavesOf(t)[c.leaf] === undefined ? '(absent)' : JSON.parse(leavesOf(t)[c.leaf])) === JSON.stringify(c.after)));
-    check(`${r.name}: rest of the record untouched`, !!t && restOf(t, r.fieldsTouched) === r.restFingerprint);
+    if (!later) check(`${r.name}: rest of the record untouched`, !!t && restOf(t, r.fieldsTouched) === r.restFingerprint);
     check(`${r.name}: no known defect string remains`, !!t && !RESIDUALS.some(x => allText(t).includes(x)));
   }
-  check(`the other ${talents.length - ids.size} records are unchanged`, sortedFpOf(talents.filter(t => !ids.has(t._id))) === report.othersFingerprint);
-  for (const [rel, sha] of Object.entries(report.untouchedFiles)) check(`untouched: ${rel}`, fs.existsSync(path.join(ROOT, rel)) && gitBlobSha(read(rel)) === sha);
+  if (!later) check(`the other ${talents.length - ids.size} records are unchanged`, sortedFpOf(talents.filter(t => !ids.has(t._id))) === report.othersFingerprint);
+  for (const [rel, sha] of Object.entries(report.untouchedFiles)) if (!later || !LATER_OWNED.has(rel)) check(`untouched: ${rel}`, fs.existsSync(path.join(ROOT, rel)) && gitBlobSha(read(rel)) === sha);
   const rec = reconcile(loadInput());
   check('publication reconciliation: zero blocking findings incl. TEXT_DRIFT', rec.blockingFindings.length === 0, rec.blockingFindings.slice(0, 3).map(f => `${f.code} ${f.identity}`).join('; '));
-  if (exact) check('packs/talents.db equals the certified post-state blob', gitBlobSha(talentsText) === report.postState.talents);
+  if (exact && !later) check('packs/talents.db equals the certified post-state blob', gitBlobSha(talentsText) === report.postState.talents);
   return res;
 }
 const sortedFpOf = arr => fingerprint(arr.slice().sort((x, y) => x._id.localeCompare(y._id)));
 
 export function applyProduction() {
-  invariant(detect3E5State() !== 'POST_3E5', 'REFUSED: already applied (use --verify --exact)');
+  invariant(!['POST_3E5', 'POST_LATER'].includes(detect3E5State()), 'REFUSED: already applied (use --verify --exact)');
   invariant(detect3E5State() === 'PRE_3E5', 'REFUSED: packs/talents.db is neither the pre-repair nor the certified post-state');
   invariant(fs.existsSync(path.join(ROOT, REPORT_PATH)), 'REFUSED: no committed dry-run report');
   const committed = JSON.parse(read(REPORT_PATH));
@@ -164,7 +170,7 @@ export function applyProduction() {
 export function main(argv = process.argv.slice(2)) {
   const state = detect3E5State();
   if (argv.includes('--status')) { console.log(ERR + state); return 0; }
-  if (argv.includes('--verify') || (argv.includes('--check') && state === 'POST_3E5')) {
+  if (argv.includes('--verify') || (argv.includes('--check') && (state === 'POST_3E5' || state === 'POST_LATER'))) {
     const res = verifyApplied({ exact: argv.includes('--exact') });
     for (const x of res) console.log(`${x.ok ? 'PASS' : 'FAIL'}  ${x.id}${x.ok || !x.detail ? '' : '  [' + x.detail + ']'}`);
     const bad = res.filter(x => !x.ok).length; console.log(`\n${ERR}verify ${bad ? 'FAIL' : 'PASS'} (${res.length} checks; no files written)`); return bad ? 1 : 0;

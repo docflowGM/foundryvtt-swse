@@ -1,0 +1,878 @@
+{
+  "schemaVersion": 1,
+  "phase": "3F-3",
+  "dryRun": true,
+  "status": "DRY_RUN_CERTIFIED",
+  "counts": {
+    "talentsChanged": 71,
+    "treesChanged": 12,
+    "talentLeafChanges": 71,
+    "treeLeafChanges": 24,
+    "registryEntriesChanged": 12,
+    "changedOutsideTargets": 0
+  },
+  "preState": {
+    "talents": "5093cc327cd2ab77ecea10bcf8111e0fa9e909aa",
+    "trees": "5cb2acafe549e1b2a38f69b644f2eb7105316c5c",
+    "registryGenerated": "db075bbe3dd5ad36c58918c1addbb92e900f86d0",
+    "registryFixes": "db075bbe3dd5ad36c58918c1addbb92e900f86d0"
+  },
+  "postState": {
+    "talents": "c79c82b905fdd48e0b202bb6e25f7aab532e55ed",
+    "trees": "ad577cb9658a532d535ae97f9e1cf1c75ee11de2",
+    "registryGenerated": "62d40efe9c9cb3e2dde9cffc08feb0439617976f",
+    "registryFixes": "62d40efe9c9cb3e2dde9cffc08feb0439617976f"
+  },
+  "untouchedFiles": {
+    "packs/classes.db": "2960a03039604ea06612445bad0673902a8012cc",
+    "packs/heroic.db": "cbb59081ca02c06298b1647821f5b2487ea47485",
+    "packs/nonheroic.db": "c05ea8896efb00e5115a53247a05bfe54c628e60",
+    "packs/npc.db": "78d0cdd8b1dd271238e420b8d15f33e2547e20ba",
+    "packs/talents-homebrew.db": "bd4e3d4be9861f9ed0329e0f12545bf3f5dc3c72",
+    "packs/talent-trees-homebrew.db": "81861fe0b948db00e4e7e344316acdc730d86a2b",
+    "data/generated/talents.fixed.json": "3b63af6b063c3cac49fc8d9dbf6c706bf4685013",
+    "data/fixes/talents.fixed.json": "c3dbe4f282062d73906e80b2b2d840e700af6ee2",
+    "data/canonical/talents.json": "d0add2069f174cedc9f4a01500477f4dc62b6fb4",
+    "data/class-archetypes.json": "76ca97d4b1a8aa6b631ba1bfe790e5e189f6d9e6",
+    "system.json": "7c5640b8d4c10da960356703b31d33dd16c19fbb"
+  },
+  "talentOthersFingerprint": "e81c281bb2dee6b0",
+  "treeOthersFingerprint": "6e766b0b5aa80b12",
+  "talentChanges": [
+    {
+      "id": "4fc3fe4c1e7f9ba0",
+      "name": "Armor Mastery",
+      "before": "armor-specialist",
+      "after": "17cec542331cb4e4"
+    },
+    {
+      "id": "ef3ec55015c60bda",
+      "name": "Channel Aggression",
+      "before": "dark-side-devotee",
+      "after": "96ef43a3054dcb58"
+    },
+    {
+      "id": "37ee909a7de54768",
+      "name": "Channel Anger",
+      "before": "dark-side-devotee",
+      "after": "96ef43a3054dcb58"
+    },
+    {
+      "id": "8b3cb561c294fa11",
+      "name": "Crippling Strike",
+      "before": "dark-side-devotee",
+      "after": "96ef43a3054dcb58"
+    },
+    {
+      "id": "8e1ee6d1c756450f96d4d5eaa9657e47",
+      "name": "Embrace the Dark Side",
+      "before": "dark-side-devotee",
+      "after": "96ef43a3054dcb58"
+    },
+    {
+      "id": "e96812723ff4eb04",
+      "name": "Dark Side Talisman",
+      "before": "dark-side-devotee",
+      "after": "96ef43a3054dcb58"
+    },
+    {
+      "id": "c8bf9ab9d1f8588a",
+      "name": "Greater Dark Side Talisman",
+      "before": "dark-side-devotee",
+      "after": "96ef43a3054dcb58"
+    },
+    {
+      "id": "5d4a63123e5a5eb4",
+      "name": "Acrobatic Recovery",
+      "before": "jedi-guardian",
+      "after": "10c843cef8ce2798"
+    },
+    {
+      "id": "9461c7aa79dd07c6",
+      "name": "Battle Meditation",
+      "before": "jedi-guardian",
+      "after": "10c843cef8ce2798"
+    },
+    {
+      "id": "a0ace6dcc1c67d48",
+      "name": "Elusive Target",
+      "before": "jedi-guardian",
+      "after": "10c843cef8ce2798"
+    },
+    {
+      "id": "00deb8b4cce303b6",
+      "name": "Force Intuition",
+      "before": "jedi-guardian",
+      "after": "10c843cef8ce2798"
+    },
+    {
+      "id": "0dde210ea6d197ef",
+      "name": "Resilience",
+      "before": "jedi-guardian",
+      "after": "10c843cef8ce2798"
+    },
+    {
+      "id": "2afe84b999aa1c43",
+      "name": "Exposing Strike",
+      "before": "jedi-guardian",
+      "after": "10c843cef8ce2798"
+    },
+    {
+      "id": "f15b54aeaaa5c578",
+      "name": "Guardian Strike",
+      "before": "jedi-guardian",
+      "after": "10c843cef8ce2798"
+    },
+    {
+      "id": "f4b22e32d448b703",
+      "name": "Forceful Warrior",
+      "before": "jedi-guardian",
+      "after": "10c843cef8ce2798"
+    },
+    {
+      "id": "198b68c0ca770ad7",
+      "name": "Mobile Combatant",
+      "before": "jedi-guardian",
+      "after": "10c843cef8ce2798"
+    },
+    {
+      "id": "0bc102751285d17c",
+      "name": "Defensive Acuity",
+      "before": "jedi-guardian",
+      "after": "10c843cef8ce2798"
+    },
+    {
+      "id": "d6a04668587e2c03",
+      "name": "Improved Battle Meditation",
+      "before": "jedi-guardian",
+      "after": "10c843cef8ce2798"
+    },
+    {
+      "id": "fcd7c1e0bd15df71",
+      "name": "Cover Escape",
+      "before": "jedi-guardian",
+      "after": "10c843cef8ce2798"
+    },
+    {
+      "id": "7355c8afe9509dad",
+      "name": "Close Maneuvering",
+      "before": "jedi-guardian",
+      "after": "10c843cef8ce2798"
+    },
+    {
+      "id": "14306c13238ccb83",
+      "name": "Immovable",
+      "before": "jedi-guardian",
+      "after": "10c843cef8ce2798"
+    },
+    {
+      "id": "27a67c4c00c1b9ae",
+      "name": "Grenade Defense",
+      "before": "jedi-guardian",
+      "after": "10c843cef8ce2798"
+    },
+    {
+      "id": "a843f45ec0f99db6",
+      "name": "Hold the Line",
+      "before": "jedi-guardian",
+      "after": "10c843cef8ce2798"
+    },
+    {
+      "id": "ce151ce88fd55934",
+      "name": "Prime Targets",
+      "before": "jedi-sentinel",
+      "after": "36f18f3e974feb33"
+    },
+    {
+      "id": "a1355dcae60772f5",
+      "name": "Sense Primal Force",
+      "before": "jedi-sentinel",
+      "after": "36f18f3e974feb33"
+    },
+    {
+      "id": "9379daa94a228c04",
+      "name": "Block",
+      "before": "lightsaber-combat",
+      "after": "2359c05ff13f3feb"
+    },
+    {
+      "id": "72c644f7a09b1186",
+      "name": "Deflect",
+      "before": "lightsaber-combat",
+      "after": "2359c05ff13f3feb"
+    },
+    {
+      "id": "e8bf1222fd6289e4",
+      "name": "Lightsaber Defense",
+      "before": "lightsaber-combat",
+      "after": "2359c05ff13f3feb"
+    },
+    {
+      "id": "e54ecc0ff06e61f3",
+      "name": "Lightsaber Throw",
+      "before": "lightsaber-combat",
+      "after": "2359c05ff13f3feb"
+    },
+    {
+      "id": "941c1dfd00e697da",
+      "name": "Redirect Shot",
+      "before": "lightsaber-combat",
+      "after": "2359c05ff13f3feb"
+    },
+    {
+      "id": "bcd9981b3c6a46dc",
+      "name": "Weapon Specialization (Lightsabers)",
+      "before": "lightsaber-combat",
+      "after": "2359c05ff13f3feb"
+    },
+    {
+      "id": "8989464c43d81045",
+      "name": "Cortosis Gauntlet Block",
+      "before": "lightsaber-combat",
+      "after": "2359c05ff13f3feb"
+    },
+    {
+      "id": "80e14ef4d1f52a4a",
+      "name": "Precision",
+      "before": "lightsaber-combat",
+      "after": "2359c05ff13f3feb"
+    },
+    {
+      "id": "b788095a71a47be7",
+      "name": "Riposte",
+      "before": "lightsaber-combat",
+      "after": "2359c05ff13f3feb"
+    },
+    {
+      "id": "515d69c71897e431",
+      "name": "Precise Redirect",
+      "before": "lightsaber-combat",
+      "after": "2359c05ff13f3feb"
+    },
+    {
+      "id": "e0f66d77a2b065a7",
+      "name": "Shoto Focus",
+      "before": "lightsaber-combat",
+      "after": "2359c05ff13f3feb"
+    },
+    {
+      "id": "0b3f4075ed84aee0",
+      "name": "Ataru",
+      "before": "lightsaber-forms",
+      "after": "2bc2572e852832e4"
+    },
+    {
+      "id": "9dfce712a60a097f",
+      "name": "Djem So",
+      "before": "lightsaber-forms",
+      "after": "2bc2572e852832e4"
+    },
+    {
+      "id": "4552785ad56d90d4",
+      "name": "Jar'Kai",
+      "before": "lightsaber-forms",
+      "after": "2bc2572e852832e4"
+    },
+    {
+      "id": "5fd19be0deca1115",
+      "name": "Juyo",
+      "before": "lightsaber-forms",
+      "after": "2bc2572e852832e4"
+    },
+    {
+      "id": "8ddbb7f6d4a11725",
+      "name": "Makashi",
+      "before": "lightsaber-forms",
+      "after": "2bc2572e852832e4"
+    },
+    {
+      "id": "7842befd5a8713c5",
+      "name": "Niman",
+      "before": "lightsaber-forms",
+      "after": "2bc2572e852832e4"
+    },
+    {
+      "id": "e0223a2b572f2ef5",
+      "name": "Shien",
+      "before": "lightsaber-forms",
+      "after": "2bc2572e852832e4"
+    },
+    {
+      "id": "c116f6249f4f47c9",
+      "name": "Shii-Cho",
+      "before": "lightsaber-forms",
+      "after": "2bc2572e852832e4"
+    },
+    {
+      "id": "c95b1077ab31f9b0",
+      "name": "Sokan",
+      "before": "lightsaber-forms",
+      "after": "2bc2572e852832e4"
+    },
+    {
+      "id": "af8c6f9b6c06b448",
+      "name": "Soresu",
+      "before": "lightsaber-forms",
+      "after": "2bc2572e852832e4"
+    },
+    {
+      "id": "629a0efa292511b7",
+      "name": "Trakata",
+      "before": "lightsaber-forms",
+      "after": "2bc2572e852832e4"
+    },
+    {
+      "id": "87c0a929a04eb870",
+      "name": "Vaapad",
+      "before": "lightsaber-forms",
+      "after": "2bc2572e852832e4"
+    },
+    {
+      "id": "bab9a1ce285f98b9",
+      "name": "Charm Beast",
+      "before": "beastwarden",
+      "after": "ed899f9f41fc1391"
+    },
+    {
+      "id": "9c88f3f82e6e2082",
+      "name": "Bonded Mount",
+      "before": "beastwarden",
+      "after": "ed899f9f41fc1391"
+    },
+    {
+      "id": "b15fa2f45baf55ea",
+      "name": "Entreat Beast",
+      "before": "beastwarden",
+      "after": "ed899f9f41fc1391"
+    },
+    {
+      "id": "0a65325a98b108a7",
+      "name": "Soothing Presence",
+      "before": "beastwarden",
+      "after": "ed899f9f41fc1391"
+    },
+    {
+      "id": "b6e75c52f5d66ade",
+      "name": "Wild Sense",
+      "before": "beastwarden",
+      "after": "ed899f9f41fc1391"
+    },
+    {
+      "id": "6cb7efd0785d4114",
+      "name": "Bando Gora Surge",
+      "before": "bando-gora-captain",
+      "after": "b7fb2b10740923f6"
+    },
+    {
+      "id": "3684019966515ceb",
+      "name": "Force Fighter",
+      "before": "bando-gora-captain",
+      "after": "b7fb2b10740923f6"
+    },
+    {
+      "id": "3fa908b70c8d97a6",
+      "name": "Resist Enervation",
+      "before": "bando-gora-captain",
+      "after": "b7fb2b10740923f6"
+    },
+    {
+      "id": "0742d901c13ea130",
+      "name": "Victorious Force Mastery",
+      "before": "bando-gora-captain",
+      "after": "b7fb2b10740923f6"
+    },
+    {
+      "id": "3c7eff4b63880ee2",
+      "name": "Believer Intuition",
+      "before": "believer-disciple",
+      "after": "92c32621101a11f9"
+    },
+    {
+      "id": "7d4f036dbaabdd02",
+      "name": "Defense Boost",
+      "before": "believer-disciple",
+      "after": "92c32621101a11f9"
+    },
+    {
+      "id": "038fcce2b039ece5",
+      "name": "Hardiness",
+      "before": "believer-disciple",
+      "after": "92c32621101a11f9"
+    },
+    {
+      "id": "71bba39bd4ad95ae",
+      "name": "High Impact",
+      "before": "believer-disciple",
+      "after": "92c32621101a11f9"
+    },
+    {
+      "id": "81b2b88df9600ca7",
+      "name": "Sith Reverence",
+      "before": "believer-disciple",
+      "after": "92c32621101a11f9"
+    },
+    {
+      "id": "b4ccb329f72bd67f",
+      "name": "Droid Duelist",
+      "before": "iron-knight",
+      "after": "a7dc5adf97fd6a67"
+    },
+    {
+      "id": "5731c9fdc0b11421",
+      "name": "Force Repair",
+      "before": "iron-knight",
+      "after": "a7dc5adf97fd6a67"
+    },
+    {
+      "id": "138586f784e21d7e",
+      "name": "Heal Droid",
+      "before": "iron-knight",
+      "after": "a7dc5adf97fd6a67"
+    },
+    {
+      "id": "6f7fa0ea2ad38e50",
+      "name": "Mask Presence",
+      "before": "iron-knight",
+      "after": "a7dc5adf97fd6a67"
+    },
+    {
+      "id": "d2ffe0250af82d28",
+      "name": "Silicon Mind",
+      "before": "iron-knight",
+      "after": "a7dc5adf97fd6a67"
+    },
+    {
+      "id": "4cc3f26d58c3302b",
+      "name": "Deception Awareness",
+      "before": "order-of-shasa",
+      "after": "d2e4cd882822dcf2"
+    },
+    {
+      "id": "f9c5c2077e398e60",
+      "name": "Greater Weapon Focus (Fira)",
+      "before": "order-of-shasa",
+      "after": "d2e4cd882822dcf2"
+    },
+    {
+      "id": "4ebb3a798e36afe6",
+      "name": "Progenitor's Call",
+      "before": "order-of-shasa",
+      "after": "d2e4cd882822dcf2"
+    },
+    {
+      "id": "29ae5a7db772d779",
+      "name": "Waveform",
+      "before": "order-of-shasa",
+      "after": "d2e4cd882822dcf2"
+    }
+  ],
+  "treeChanges": [
+    {
+      "id": "a212850887fe41da",
+      "name": "1stdegree Droid",
+      "changes": [
+        {
+          "leaf": "name",
+          "before": "1stdegree Droid",
+          "after": "First-Degree Droid"
+        },
+        {
+          "leaf": "system.talent_tree",
+          "before": "1stdegree Droid",
+          "after": "First-Degree Droid"
+        }
+      ]
+    },
+    {
+      "id": "ad499981ddb8450e",
+      "name": "2nddegree Droid",
+      "changes": [
+        {
+          "leaf": "name",
+          "before": "2nddegree Droid",
+          "after": "Second-Degree Droid"
+        },
+        {
+          "leaf": "system.talent_tree",
+          "before": "2nddegree Droid",
+          "after": "Second-Degree Droid"
+        }
+      ]
+    },
+    {
+      "id": "af077700c1b8433f",
+      "name": "3rddegree Droid",
+      "changes": [
+        {
+          "leaf": "name",
+          "before": "3rddegree Droid",
+          "after": "Third-Degree Droid"
+        },
+        {
+          "leaf": "system.talent_tree",
+          "before": "3rddegree Droid",
+          "after": "Third-Degree Droid"
+        }
+      ]
+    },
+    {
+      "id": "73814706c00849c6",
+      "name": "4thdegree Droid",
+      "changes": [
+        {
+          "leaf": "name",
+          "before": "4thdegree Droid",
+          "after": "Fourth-Degree Droid"
+        },
+        {
+          "leaf": "system.talent_tree",
+          "before": "4thdegree Droid",
+          "after": "Fourth-Degree Droid"
+        }
+      ]
+    },
+    {
+      "id": "c4e48efaad1f49af",
+      "name": "5thdegree Droid",
+      "changes": [
+        {
+          "leaf": "name",
+          "before": "5thdegree Droid",
+          "after": "Fifth-Degree Droid"
+        },
+        {
+          "leaf": "system.talent_tree",
+          "before": "5thdegree Droid",
+          "after": "Fifth-Degree Droid"
+        }
+      ]
+    },
+    {
+      "id": "754907ded50d4f46",
+      "name": "Agent Of Ossus",
+      "changes": [
+        {
+          "leaf": "name",
+          "before": "Agent Of Ossus",
+          "after": "Agent of Ossus"
+        },
+        {
+          "leaf": "system.talent_tree",
+          "before": "Agent Of Ossus",
+          "after": "Agent of Ossus"
+        }
+      ]
+    },
+    {
+      "id": "f8e7edab5f234e27",
+      "name": "Aingtii Monk",
+      "changes": [
+        {
+          "leaf": "name",
+          "before": "Aingtii Monk",
+          "after": "Aing-Tii Monk"
+        },
+        {
+          "leaf": "system.talent_tree",
+          "before": "Aingtii Monk",
+          "after": "Aing-Tii Monk"
+        }
+      ]
+    },
+    {
+      "id": "d20682671d035cef",
+      "name": "Bothan Spynet",
+      "changes": [
+        {
+          "leaf": "name",
+          "before": "Bothan Spynet",
+          "after": "Bothan SpyNet"
+        },
+        {
+          "leaf": "system.talent_tree",
+          "before": "Bothan Spynet",
+          "after": "Bothan SpyNet"
+        }
+      ]
+    },
+    {
+      "id": "4da769d7c5f44232",
+      "name": "Disciple Of Twilight",
+      "changes": [
+        {
+          "leaf": "name",
+          "before": "Disciple Of Twilight",
+          "after": "Disciple of Twilight"
+        },
+        {
+          "leaf": "system.talent_tree",
+          "before": "Disciple Of Twilight",
+          "after": "Disciple of Twilight"
+        }
+      ]
+    },
+    {
+      "id": "c6eee4889411411b",
+      "name": "Ember Of Vahl",
+      "changes": [
+        {
+          "leaf": "name",
+          "before": "Ember Of Vahl",
+          "after": "Ember of Vahl"
+        },
+        {
+          "leaf": "system.talent_tree",
+          "before": "Ember Of Vahl",
+          "after": "Ember of Vahl"
+        }
+      ]
+    },
+    {
+      "id": "0ffc37dac946477d",
+      "name": "Master Of Intrigue",
+      "changes": [
+        {
+          "leaf": "name",
+          "before": "Master Of Intrigue",
+          "after": "Master of Intrigue"
+        },
+        {
+          "leaf": "system.talent_tree",
+          "before": "Master Of Intrigue",
+          "after": "Master of Intrigue"
+        }
+      ]
+    },
+    {
+      "id": "899038f739294c81",
+      "name": "Warden Of The Sky",
+      "changes": [
+        {
+          "leaf": "name",
+          "before": "Warden Of The Sky",
+          "after": "Warden of the Sky"
+        },
+        {
+          "leaf": "system.talent_tree",
+          "before": "Warden Of The Sky",
+          "after": "Warden of the Sky"
+        }
+      ]
+    }
+  ],
+  "registryChanges": [
+    {
+      "sourceId": "a212850887fe41da",
+      "before": {
+        "id": "1stdegree-droid",
+        "displayName": "1stdegree Droid"
+      },
+      "after": {
+        "id": "first-degree-droid",
+        "displayName": "First-Degree Droid"
+      },
+      "onlyIdAndDisplayNameChanged": true
+    },
+    {
+      "sourceId": "ad499981ddb8450e",
+      "before": {
+        "id": "2nddegree-droid",
+        "displayName": "2nddegree Droid"
+      },
+      "after": {
+        "id": "second-degree-droid",
+        "displayName": "Second-Degree Droid"
+      },
+      "onlyIdAndDisplayNameChanged": true
+    },
+    {
+      "sourceId": "af077700c1b8433f",
+      "before": {
+        "id": "3rddegree-droid",
+        "displayName": "3rddegree Droid"
+      },
+      "after": {
+        "id": "third-degree-droid",
+        "displayName": "Third-Degree Droid"
+      },
+      "onlyIdAndDisplayNameChanged": true
+    },
+    {
+      "sourceId": "73814706c00849c6",
+      "before": {
+        "id": "4thdegree-droid",
+        "displayName": "4thdegree Droid"
+      },
+      "after": {
+        "id": "fourth-degree-droid",
+        "displayName": "Fourth-Degree Droid"
+      },
+      "onlyIdAndDisplayNameChanged": true
+    },
+    {
+      "sourceId": "c4e48efaad1f49af",
+      "before": {
+        "id": "5thdegree-droid",
+        "displayName": "5thdegree Droid"
+      },
+      "after": {
+        "id": "fifth-degree-droid",
+        "displayName": "Fifth-Degree Droid"
+      },
+      "onlyIdAndDisplayNameChanged": true
+    },
+    {
+      "sourceId": "754907ded50d4f46",
+      "before": {
+        "id": "agent-of-ossus",
+        "displayName": "Agent Of Ossus"
+      },
+      "after": {
+        "id": "agent-of-ossus",
+        "displayName": "Agent of Ossus"
+      },
+      "onlyIdAndDisplayNameChanged": true
+    },
+    {
+      "sourceId": "f8e7edab5f234e27",
+      "before": {
+        "id": "aingtii-monk",
+        "displayName": "Aingtii Monk"
+      },
+      "after": {
+        "id": "aing-tii-monk",
+        "displayName": "Aing-Tii Monk"
+      },
+      "onlyIdAndDisplayNameChanged": true
+    },
+    {
+      "sourceId": "d20682671d035cef",
+      "before": {
+        "id": "bothan-spynet",
+        "displayName": "Bothan Spynet"
+      },
+      "after": {
+        "id": "bothan-spynet",
+        "displayName": "Bothan SpyNet"
+      },
+      "onlyIdAndDisplayNameChanged": true
+    },
+    {
+      "sourceId": "4da769d7c5f44232",
+      "before": {
+        "id": "disciple-of-twilight",
+        "displayName": "Disciple Of Twilight"
+      },
+      "after": {
+        "id": "disciple-of-twilight",
+        "displayName": "Disciple of Twilight"
+      },
+      "onlyIdAndDisplayNameChanged": true
+    },
+    {
+      "sourceId": "c6eee4889411411b",
+      "before": {
+        "id": "ember-of-vahl",
+        "displayName": "Ember Of Vahl"
+      },
+      "after": {
+        "id": "ember-of-vahl",
+        "displayName": "Ember of Vahl"
+      },
+      "onlyIdAndDisplayNameChanged": true
+    },
+    {
+      "sourceId": "0ffc37dac946477d",
+      "before": {
+        "id": "master-of-intrigue",
+        "displayName": "Master Of Intrigue"
+      },
+      "after": {
+        "id": "master-of-intrigue",
+        "displayName": "Master of Intrigue"
+      },
+      "onlyIdAndDisplayNameChanged": true
+    },
+    {
+      "sourceId": "899038f739294c81",
+      "before": {
+        "id": "warden-of-the-sky",
+        "displayName": "Warden Of The Sky"
+      },
+      "after": {
+        "id": "warden-of-the-sky",
+        "displayName": "Warden of the Sky"
+      },
+      "onlyIdAndDisplayNameChanged": true
+    }
+  ],
+  "verification": {
+    "results": [
+      {
+        "id": "manifest scope is exactly 71 talents and 12 trees",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "id": "every talent change is exactly the `system.treeId` leaf, and the new value is the `_id` of a tree that contains the talent",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "id": "every tree change is exactly `name` and the mirrored `system.talent_tree` label (old -> canonical), nothing else",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "id": "zero changes outside the 71 talents and the 12 trees",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "id": "no talent id / name / text / source / page / tag / flag / effect change; no tree id / member list change",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "id": "talent and tree counts unchanged (1,187 / 177); tree ids and talent ids preserved",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "id": "reconciler on the projected packs: STALE_TREE_ID_SLUG 0, TREE_DISPLAY_NAME_DRIFT 0, every blocking finding 0",
+        "ok": true,
+        "detail": "{\"CLAIM_WITHOUT_RECORD\":0,\"RECORD_WITHOUT_CLAIM\":0,\"DUPLICATE_MAPPING\":0,\"DUPLICATE_RECORD_IN_TREE\":0,\"WRONG_TREE\":0,\"NAME_MISMATCH\":0,\"UNRESOLVED_SAME_NAME_AMBIGUITY\":0,\"CLAIM_COUNT_MISMATCH\":0,\"HOMEBREW_IN_DENOMINATOR\":0,\"TEXT_DRIFT\":0,\"WRONG_SOURCE_PAGE\":0,\"STALE_TREE_ID_SLUG\":0,\"TREE_DISPLAY_NAME_DRIFT\":0}"
+      },
+      {
+        "id": "registry: only the 12 trees change, and only their `id` (slug) / `displayName`; membership, counts and classAccess identical",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "id": "registry slug ids change only for the six trees whose runtime id changes (case-only renames keep id and slug)",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "id": "no runtime-id collision, and every other tree keeps its runtime id",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "id": "the registry generator (as invoked here) reproduces the on-disk registry from the CURRENT packs byte-for-byte",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "id": "second run is a zero diff",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "id": "serialization is surgical: 71 talent lines and 12 tree lines change",
+        "ok": true,
+        "detail": ""
+      }
+    ]
+  }
+}
