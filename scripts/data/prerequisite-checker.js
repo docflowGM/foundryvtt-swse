@@ -3961,11 +3961,11 @@ function getCanonicalTalentTreeIds(talent) {
 
     // Tree identity comes ONLY from structured fields and the certified tree-membership authority (TalentTreeDB).
     // `system.tags` is semantic/mechanical metadata and is never tree evidence (Phase 11-2C owner ruling).
+    // `category` / `system.category` is classification/access metadata, not tree membership, and has zero tree-credit authority (Phase 11-2D owner ruling).
     const candidates = [
         talent.treeId,
         talent.tree,
         talent.treeName,
-        talent.category,
         talent.sourceId,
         talent.system?.treeId,
         talent.system?.tree,
@@ -3974,7 +3974,6 @@ function getCanonicalTalentTreeIds(talent) {
         talent.system?.talent_tree,
         talent.system?.talentTreeId,
         talent.system?.talent_tree_id,
-        talent.system?.category,
         talent.system?.sourceId,
     ];
 
