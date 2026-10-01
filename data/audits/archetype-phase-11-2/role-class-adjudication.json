@@ -1,0 +1,240 @@
+{
+  "schemaVersion": 1,
+  "phase": "11-2B2",
+  "title": "Role and class legacy-tag adjudication",
+  "status": "OWNER_DESIGN_PASS",
+  "productionMutationPerformed": false,
+  "policy": {
+    "rule": "Keep only reusable identity/mechanical concepts independent of class/archetype names. Class, faction, and archetype labels belong in route/narrative metadata.",
+    "normalizationWarning": "NORMALIZE identifies the intended canonical concept but does not authorize blind migration of every historical assignment; assignments must be re-derived from canonical rule meaning.",
+    "replacementWarning": "DELETE replacement arrays are decomposition guidance, not automatic per-record mappings."
+  },
+  "counts": {
+    "KEEP": 2,
+    "NORMALIZE": 3,
+    "DELETE": 17
+  },
+  "decisions": [
+    {
+      "tag": "striker",
+      "decision": "DELETE",
+      "replacement": [
+        "damage",
+        "mobility",
+        "precision",
+        "single_target"
+      ],
+      "rationale": "Legacy scoring role is too broad and over-applied to 491 Talents. Re-derive actual offensive mechanics from rules instead of preserving a role label."
+    },
+    {
+      "tag": "positioning",
+      "decision": "KEEP",
+      "canonical": "positioning",
+      "rationale": "Reusable mechanical concept: movement, placement, adjacency, range-band, or battlefield-location manipulation. Independent of class/archetype identity."
+    },
+    {
+      "tag": "controller",
+      "decision": "NORMALIZE",
+      "canonical": "control",
+      "rationale": "Role noun duplicates the existing reusable semantic/mechanical concept `control`. Historical assignments must still be revalidated; do not bulk-map blindly."
+    },
+    {
+      "tag": "defender",
+      "decision": "NORMALIZE",
+      "canonical": "defense",
+      "rationale": "Role noun duplicates the broader reusable `defense` concept. Historical assignments require revalidation."
+    },
+    {
+      "tag": "skills",
+      "decision": "KEEP",
+      "canonical": "skills",
+      "rationale": "Useful broad mechanical-domain tag for options whose identity is skill use, skill checks, skill access, or broad skill enhancement."
+    },
+    {
+      "tag": "jedi",
+      "decision": "DELETE",
+      "replacement": [
+        "force",
+        "lightsaber",
+        "use_the_force",
+        "light_side"
+      ],
+      "rationale": "Class/order identity belongs in route/narrative data. Mechanical meaning should be expressed by actual Force/lightsaber/etc. concepts."
+    },
+    {
+      "tag": "scout",
+      "decision": "DELETE",
+      "replacement": [
+        "fieldcraft",
+        "survival",
+        "perception",
+        "mobility",
+        "recon"
+      ],
+      "rationale": "Class label, not a mechanic. Re-express through actual fieldcraft/exploration mechanics."
+    },
+    {
+      "tag": "scoundrel",
+      "decision": "DELETE",
+      "replacement": [
+        "social",
+        "deception",
+        "tech",
+        "mobility",
+        "ranged"
+      ],
+      "rationale": "Class label is too broad. Mechanical identity varies and should be derived from the rule."
+    },
+    {
+      "tag": "soldier",
+      "decision": "DELETE",
+      "replacement": [
+        "melee",
+        "ranged",
+        "armor",
+        "damage",
+        "defense"
+      ],
+      "rationale": "Class label is not reusable mechanics; actual combat expression should carry the signal."
+    },
+    {
+      "tag": "leader",
+      "decision": "NORMALIZE",
+      "canonical": "leadership",
+      "rationale": "Role noun maps cleanly to existing Phase 11 semantic concept `leadership`; individual Talent assignments still require evidence."
+    },
+    {
+      "tag": "noble",
+      "decision": "DELETE",
+      "replacement": [
+        "social",
+        "leadership",
+        "support",
+        "persuasion",
+        "intrigue"
+      ],
+      "rationale": "Class label, not mechanics. Preserve actual social/leadership mechanics instead."
+    },
+    {
+      "tag": "mystic",
+      "decision": "DELETE",
+      "replacement": [
+        "force",
+        "use_the_force",
+        "force_training",
+        "telepathy",
+        "precognition"
+      ],
+      "rationale": "Narrative/archetype identity rather than a discrete mechanic. Specific Force domains are more descriptive."
+    },
+    {
+      "tag": "hunter",
+      "decision": "DELETE",
+      "replacement": [
+        "pursuit",
+        "tracking",
+        "targeting",
+        "perception",
+        "survival"
+      ],
+      "rationale": "Broad role label. The useful mechanical identity is pursuit/tracking/target acquisition."
+    },
+    {
+      "tag": "bounty-hunter",
+      "decision": "DELETE",
+      "replacement": [
+        "pursuit",
+        "targeting",
+        "tracking",
+        "fear",
+        "ranged"
+      ],
+      "rationale": "Prestige/class-archetype label. Decompose into actual hunting/combat mechanics."
+    },
+    {
+      "tag": "duelist",
+      "decision": "DELETE",
+      "replacement": [
+        "melee",
+        "reaction",
+        "melee_defense",
+        "mobility",
+        "precision"
+      ],
+      "rationale": "Archetype/role label. Mechanical style is better represented by its component mechanics."
+    },
+    {
+      "tag": "opportunist",
+      "decision": "DELETE",
+      "replacement": [
+        "reaction",
+        "ambush",
+        "precision",
+        "counterattack",
+        "positioning"
+      ],
+      "rationale": "Role label is ambiguous. Actual trigger/reactive mechanics should be tagged directly."
+    },
+    {
+      "tag": "imperial",
+      "decision": "DELETE",
+      "replacement": [],
+      "rationale": "Faction/organization identity belongs in narrative/affiliation taxonomy, not shared mechanical ontology."
+    },
+    {
+      "tag": "force-hunter",
+      "decision": "DELETE",
+      "replacement": [
+        "anti_force",
+        "pursuit",
+        "targeting",
+        "reaction"
+      ],
+      "rationale": "Compound archetype label. The reusable mechanics are anti-Force interaction and pursuit/targeting."
+    },
+    {
+      "tag": "outlaw",
+      "decision": "DELETE",
+      "replacement": [
+        "mobility",
+        "reaction",
+        "survivability",
+        "pursuit"
+      ],
+      "rationale": "Archetype/tree label, not a reusable mechanic. Preserve actual play pattern instead."
+    },
+    {
+      "tag": "force-adept",
+      "decision": "DELETE",
+      "replacement": [
+        "force",
+        "use_the_force",
+        "force_training"
+      ],
+      "rationale": "Class/archetype identity belongs in route data; mechanics are represented by Force-domain concepts."
+    },
+    {
+      "tag": "inquisitor",
+      "decision": "DELETE",
+      "replacement": [
+        "force",
+        "anti_force",
+        "intimidation",
+        "persuasion",
+        "targeting"
+      ],
+      "rationale": "Archetype/organization identity; decompose to actual Force/hunting/social mechanics."
+    },
+    {
+      "tag": "veteran",
+      "decision": "DELETE",
+      "replacement": [
+        "survivability",
+        "awareness",
+        "defense",
+        "action_economy"
+      ],
+      "rationale": "Narrative experience label with no stable mechanical meaning; use the actual mechanics."
+    }
+  ]
+}

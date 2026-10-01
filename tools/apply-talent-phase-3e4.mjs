@@ -150,8 +150,9 @@ export function detect3E4State(root = ROOT) {
 // Files a LATER certified phase (3F) legitimately rewrote: their verification belongs to that phase.
 const LATER_OWNED = new Set(['packs/talents.db', 'packs/talent_trees.db', 'data/generated/talent-trees.registry.json', 'data/fixes/talent-trees.registry.json']);
 // `later`: a certified state after 3E-4 (3E-5 repaired other records). Only the seven records and every 3E-4 invariant that 3E-5 cannot touch are checked.
-const isLater = root => ['talent-phase-3e5-dry-run-report.json', 'talent-phase-3f-dry-run-report.json', 'talent-phase-3g-dry-run-report.json', 'talent-phase-11-2a-dry-run-report.json'].some(f => { const p = path.join(root, 'data/audits', f); return fs.existsSync(p) && JSON.parse(fs.readFileSync(p, 'utf8')).postState.talents === gitBlobSha(readText(TALENTS, root)); });
+const isLater = root => ['talent-phase-3e5-dry-run-report.json', 'talent-phase-3f-dry-run-report.json', 'talent-phase-3g-dry-run-report.json', 'talent-phase-11-2a-dry-run-report.json', 'talent-phase-11-2b-dry-run-report.json'].some(f => { const p = path.join(root, 'data/audits', f); return fs.existsSync(p) && JSON.parse(fs.readFileSync(p, 'utf8')).postState.talents === gitBlobSha(readText(TALENTS, root)); });
 const g112aRow = (root, id) => { const p = path.join(root, 'data/audits/talent-phase-11-2a-deletion-manifest.json'); return fs.existsSync(p) ? JSON.parse(fs.readFileSync(p, 'utf8')).rows.find(x => x.id === id) : null; };
+const g112bRow = (root, id) => { const p = path.join(root, 'data/audits/talent-phase-11-2b-cleanup-manifest.json'); return fs.existsSync(p) ? JSON.parse(fs.readFileSync(p, 'utf8')).rows.find(x => x.id === id) : null; };
 const g3Rows = root => { const p = path.join(root, 'data/audits/talent-phase-3g-migration-manifest.json'); return fs.existsSync(p) ? JSON.parse(fs.readFileSync(p, 'utf8')).rows : []; };
 export function verifyApplied(root = ROOT, { exact = false } = {}) {
   const later = isLater(root);
@@ -166,7 +167,8 @@ export function verifyApplied(root = ROOT, { exact = false } = {}) {
     const n = clone(t ?? {}); for (const l of SET_LEAVES) if (t) setPath(n, l, undefined);
     // Phase 3G (a later certified state) migrated structured talent leaves to uuid on these records: reverse that one change (3G manifest) before comparing.
     // Phase 11-2A (later still) deleted junk tags on these records: restore the certified pre-deletion tags (its manifest) before comparing.
-    if (t && later) { const d = g112aRow(root, r.id); if (d) n.system.tags = d.before; }
+    // (and Phase 11-2B after it): the oldest certified `before` of the tag set is the 3E-4-era value
+    if (t && later) { const d = g112aRow(root, r.id) ?? g112bRow(root, r.id); if (d) n.system.tags = d.before; }
     if (t && later) for (const x of g3Rows(root).filter(x => x.ownerId === r.id)) { const m = /conditions\[(\d+)\]$/.exec(x.path); n.system.prerequisitesStructured.conditions[Number(m[1])] = { type: 'talent', id: x.existing.id }; }
     check(`${r.name}: rest of record untouched`, !!t && fingerprint(JSON.parse(JSON.stringify(n))) === r.restFingerprint);
   }
