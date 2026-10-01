@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "phase": "11-2B6",
+  "title": "Final Reconsider loose-end resolution",
+  "status": "OWNER_DESIGN_PASS",
+  "productionMutationPerformed": false,
+  "decisions": [
+    {
+      "tagPair": [
+        "force-item",
+        "force_item"
+      ],
+      "decision": "DELETE_DECOMPOSE",
+      "replacement": [
+        "force",
+        "equipment",
+        "crafting",
+        "empowerment"
+      ],
+      "rationale": "The spellings are equivalent, but the historical assignments are not semantically coherent (including Charm Beast). Do not preserve a generic force_item concept; use specific Force/equipment/crafting/empowerment concepts only where the canonical rule supports them."
+    }
+  ]
+}

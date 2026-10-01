@@ -1,0 +1,320 @@
+{
+  "schemaVersion": 1,
+  "phase": "11-2B4",
+  "title": "Structural/tree/organization Reconsider adjudication",
+  "status": "OWNER_DESIGN_PASS",
+  "productionMutationPerformed": false,
+  "policy": {
+    "replacementWarning": "Replacement arrays are decomposition guidance only; never bulk-assign without canonical rule evidence."
+  },
+  "counts": {
+    "NORMALIZE": 2,
+    "DELETE_DECOMPOSE": 23,
+    "KEEP": 8,
+    "DELETE": 1
+  },
+  "decisions": [
+    {
+      "tag": "battlefield-control",
+      "decision": "NORMALIZE",
+      "canonical": "battlefield_control",
+      "rationale": "Reusable battlefield manipulation mechanic; normalize spelling."
+    },
+    {
+      "tag": "force-tradition",
+      "decision": "DELETE_DECOMPOSE",
+      "replacement": [
+        "force"
+      ],
+      "rationale": "Tradition membership is narrative/access metadata, not a mechanical tag."
+    },
+    {
+      "tag": "battlefield_control",
+      "decision": "KEEP",
+      "canonical": "battlefield_control",
+      "rationale": "Reusable mechanic for controlling spaces, movement, zones, and enemy positioning."
+    },
+    {
+      "tag": "jedi-guardian",
+      "decision": "DELETE_DECOMPOSE",
+      "replacement": [
+        "force",
+        "lightsaber",
+        "melee",
+        "defense"
+      ],
+      "rationale": "Class/archetype label; actual combat mechanics carry the signal."
+    },
+    {
+      "tag": "martial_arts",
+      "decision": "KEEP",
+      "canonical": "martial_arts",
+      "rationale": "Reusable combat domain for unarmed/martial-arts mechanics, independent of a single tree."
+    },
+    {
+      "tag": "beast_companion",
+      "decision": "KEEP",
+      "canonical": "beast_companion",
+      "rationale": "Reusable companion/scope mechanic across beast-focused content."
+    },
+    {
+      "tag": "imperial-knight",
+      "decision": "DELETE_DECOMPOSE",
+      "replacement": [
+        "force",
+        "lightsaber",
+        "armor",
+        "defense",
+        "leadership"
+      ],
+      "rationale": "Order identity belongs in affiliation/narrative metadata."
+    },
+    {
+      "tag": "lightsaber-combat",
+      "decision": "DELETE_DECOMPOSE",
+      "replacement": [
+        "lightsaber",
+        "melee"
+      ],
+      "rationale": "Redundant compound label; component concepts are clearer."
+    },
+    {
+      "tag": "dark_side_mastery",
+      "decision": "DELETE_DECOMPOSE",
+      "replacement": [
+        "dark_side",
+        "force",
+        "scaling"
+      ],
+      "rationale": "Tree-derived mastery label; express actual Dark Side/Force scaling mechanics."
+    },
+    {
+      "tag": "pathfinder",
+      "decision": "DELETE_DECOMPOSE",
+      "replacement": [
+        "exploration",
+        "survival",
+        "recon",
+        "mobility"
+      ],
+      "rationale": "Archetype/tree label rather than a mechanic."
+    },
+    {
+      "tag": "infamy",
+      "decision": "DELETE_DECOMPOSE",
+      "replacement": [
+        "fear",
+        "intimidation",
+        "social",
+        "mind_affecting"
+      ],
+      "rationale": "Tree identity is narrower than the actual reputation/fear mechanics; preserve those directly."
+    },
+    {
+      "tag": "martial",
+      "decision": "DELETE_DECOMPOSE",
+      "replacement": [
+        "melee",
+        "unarmed",
+        "martial_arts"
+      ],
+      "rationale": "Too broad/ambiguous to discriminate builds."
+    },
+    {
+      "tag": "minion",
+      "decision": "KEEP",
+      "canonical": "minion",
+      "rationale": "Reusable target/relationship scope for subordinate/minion mechanics."
+    },
+    {
+      "tag": "law_enforcement",
+      "decision": "DELETE_DECOMPOSE",
+      "replacement": [
+        "control",
+        "nonlethal",
+        "pursuit",
+        "vehicle"
+      ],
+      "rationale": "Occupation/affiliation label; actual enforcement mechanics are reusable."
+    },
+    {
+      "tag": "law-enforcement",
+      "decision": "DELETE_DECOMPOSE",
+      "replacement": [
+        "control",
+        "nonlethal",
+        "pursuit",
+        "vehicle"
+      ],
+      "rationale": "Duplicate occupation/affiliation spelling; do not preserve as ontology."
+    },
+    {
+      "tag": "bothan-spynet",
+      "decision": "DELETE_DECOMPOSE",
+      "replacement": [
+        "network",
+        "investigation",
+        "knowledge",
+        "social"
+      ],
+      "rationale": "Specific organization; affiliation belongs outside mechanical ontology."
+    },
+    {
+      "tag": "social_network",
+      "decision": "KEEP",
+      "canonical": "social_network",
+      "rationale": "Reusable social-resource/contact-network mechanic."
+    },
+    {
+      "tag": "spynet",
+      "decision": "DELETE_DECOMPOSE",
+      "replacement": [
+        "network",
+        "investigation",
+        "knowledge"
+      ],
+      "rationale": "Specific organizational shorthand rather than a general mechanic."
+    },
+    {
+      "tag": "believer-disciple",
+      "decision": "DELETE_DECOMPOSE",
+      "replacement": [
+        "force",
+        "support"
+      ],
+      "rationale": "Tree/archetype identity rather than reusable mechanics."
+    },
+    {
+      "tag": "guardian_spirit",
+      "decision": "DELETE_DECOMPOSE",
+      "replacement": [
+        "ally_support",
+        "force",
+        "healing",
+        "support"
+      ],
+      "rationale": "Specific tree/tradition identity; actual companion/support effects are reusable."
+    },
+    {
+      "tag": "iron-knight",
+      "decision": "DELETE_DECOMPOSE",
+      "replacement": [
+        "droid",
+        "force",
+        "defense"
+      ],
+      "rationale": "Specific order/archetype identity."
+    },
+    {
+      "tag": "bando-gora-captain",
+      "decision": "DELETE_DECOMPOSE",
+      "replacement": [
+        "leadership",
+        "fear",
+        "control"
+      ],
+      "rationale": "Specific organization/rank identity."
+    },
+    {
+      "tag": "elite-droid",
+      "decision": "DELETE_DECOMPOSE",
+      "replacement": [
+        "droid",
+        "durability",
+        "tech"
+      ],
+      "rationale": "Archetype/tree label; use actual droid mechanics."
+    },
+    {
+      "tag": "followers",
+      "decision": "KEEP",
+      "canonical": "followers",
+      "rationale": "Reusable scope for mechanics that grant or command follower units."
+    },
+    {
+      "tag": "independent-droid",
+      "decision": "DELETE_DECOMPOSE",
+      "replacement": [
+        "droid",
+        "durability",
+        "self_repair",
+        "tech"
+      ],
+      "rationale": "Archetype identity; use autonomy/survivability mechanics."
+    },
+    {
+      "tag": "krath",
+      "decision": "DELETE_DECOMPOSE",
+      "replacement": [
+        "force",
+        "dark_side"
+      ],
+      "rationale": "Specific organization/tradition identity."
+    },
+    {
+      "tag": "order-of-shasa",
+      "decision": "DELETE_DECOMPOSE",
+      "replacement": [
+        "force",
+        "melee",
+        "defense"
+      ],
+      "rationale": "Specific organization/tradition identity."
+    },
+    {
+      "tag": "sith_alchemy",
+      "decision": "DELETE_DECOMPOSE",
+      "replacement": [
+        "alchemy",
+        "dark_side",
+        "force",
+        "crafting"
+      ],
+      "rationale": "Redundant compound; general alchemy + Force/Dark Side concepts are more reusable."
+    },
+    {
+      "tag": "akk-dog",
+      "decision": "DELETE_DECOMPOSE",
+      "replacement": [
+        "beast_companion",
+        "beast",
+        "mount"
+      ],
+      "rationale": "Species-specific scope is too narrow for shared ontology."
+    },
+    {
+      "tag": "follower",
+      "decision": "NORMALIZE",
+      "canonical": "followers",
+      "rationale": "Singular/plural spelling of the reusable follower mechanic."
+    },
+    {
+      "tag": "genohardan",
+      "decision": "DELETE_DECOMPOSE",
+      "replacement": [
+        "pursuit",
+        "deception",
+        "manipulation"
+      ],
+      "rationale": "Specific organization identity."
+    },
+    {
+      "tag": "lightsaber_polearm",
+      "decision": "KEEP",
+      "canonical": "lightsaber_polearm",
+      "rationale": "Reusable weapon-scope concept for a distinct lightsaber/polearm fighting domain."
+    },
+    {
+      "tag": "network",
+      "decision": "KEEP",
+      "canonical": "network",
+      "rationale": "Reusable broad network/contact/information-link scope across social and technical contexts."
+    },
+    {
+      "tag": "unknown-regions",
+      "decision": "DELETE",
+      "replacement": [],
+      "rationale": "Source/geography label, not a mechanic."
+    }
+  ]
+}

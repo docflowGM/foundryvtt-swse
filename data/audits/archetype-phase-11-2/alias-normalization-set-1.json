@@ -1,0 +1,121 @@
+{
+  "schemaVersion": 1,
+  "phase": "11-2B1",
+  "title": "Alias and spelling normalization decisions - set 1",
+  "status": "OWNER_DESIGN_PASS",
+  "productionMutationPerformed": false,
+  "rules": {
+    "canonicalStyle": "lower_snake_case",
+    "normalizationDoesNotApproveAssignments": true,
+    "assignmentQualityReviewedSeparately": true
+  },
+  "counts": {
+    "total": 17,
+    "keepCanonicalTarget": 16,
+    "normalizeButReconsiderTarget": 1
+  },
+  "decisions": [
+    {
+      "source": "action-economy",
+      "target": "action_economy",
+      "decision": "KEEP",
+      "rationale": "Same mechanic; canonical lower_snake_case. 169+136 historical uses."
+    },
+    {
+      "source": "light-side",
+      "target": "light_side",
+      "decision": "KEEP",
+      "rationale": "Same semantic concept; canonical lower_snake_case."
+    },
+    {
+      "source": "force-offense",
+      "target": "force_offense",
+      "decision": "KEEP",
+      "rationale": "Same mechanical/semantic concept; canonical lower_snake_case."
+    },
+    {
+      "source": "damage-reduction",
+      "target": "damage_reduction",
+      "decision": "KEEP",
+      "rationale": "Same defensive mechanic; canonical lower_snake_case."
+    },
+    {
+      "source": "force-control",
+      "target": "force_control",
+      "decision": "KEEP",
+      "rationale": "Same Force-control concept; canonical lower_snake_case."
+    },
+    {
+      "source": "condition-removal",
+      "target": "condition_removal",
+      "decision": "KEEP",
+      "rationale": "Same recovery/condition mechanic; canonical lower_snake_case."
+    },
+    {
+      "source": "force-defense",
+      "target": "force_defense",
+      "decision": "KEEP",
+      "rationale": "Same Force-defense concept; canonical lower_snake_case."
+    },
+    {
+      "source": "burst-damage",
+      "target": "burst_damage",
+      "decision": "KEEP",
+      "rationale": "Same damage-profile concept; canonical lower_snake_case."
+    },
+    {
+      "source": "dual-wield",
+      "target": "dual_wield",
+      "decision": "KEEP",
+      "rationale": "Reusable weapon-style mechanic. Historical assignments are noisy, but the concept is valid; assignment cleanup is separate."
+    },
+    {
+      "source": "precision-damage",
+      "target": "precision_damage",
+      "decision": "KEEP",
+      "rationale": "Same precision-damage concept; canonical lower_snake_case."
+    },
+    {
+      "source": "use-computer",
+      "target": "use_computer",
+      "decision": "KEEP",
+      "rationale": "Canonical Phase 11 vocabulary term; normalize legacy hyphenated spelling."
+    },
+    {
+      "source": "self-repair",
+      "target": "self_repair",
+      "decision": "KEEP",
+      "rationale": "Same repair mechanic; canonical lower_snake_case."
+    },
+    {
+      "source": "use-the-force",
+      "target": "use_the_force",
+      "decision": "KEEP",
+      "rationale": "Canonical Phase 11 vocabulary term; normalize legacy hyphenated spelling."
+    },
+    {
+      "source": "ally-support",
+      "target": "ally_support",
+      "decision": "KEEP",
+      "rationale": "Canonical Phase 11 vocabulary term; normalize legacy hyphenated spelling."
+    },
+    {
+      "source": "critical-success",
+      "target": "critical_success",
+      "decision": "KEEP",
+      "rationale": "Broad mechanical concept distinct from critical_hit; after alias consolidation it is not a singleton."
+    },
+    {
+      "source": "force-item",
+      "target": "force_item",
+      "decision": "RECONSIDER",
+      "rationale": "Spelling is clearly equivalent, but current assignments are semantically inconsistent; normalize only for review, not ontology approval."
+    },
+    {
+      "source": "swift-action",
+      "target": "swift_action",
+      "decision": "KEEP",
+      "rationale": "Same action-economy concept; canonical lower_snake_case."
+    }
+  ]
+}
