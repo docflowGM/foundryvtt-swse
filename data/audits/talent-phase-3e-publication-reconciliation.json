@@ -5,7 +5,7 @@
   "invariant": "every certified published claim maps to exactly one canonical production record, and every canonical production record is explained by exactly one certified identity",
   "textInvariant": {
     "fieldsChecked": 4741,
-    "fieldsAtApprovedCorrection": 49
+    "fieldsAtApprovedCorrection": 53
   },
   "denominator": {
     "certifiedClaims": 1182,

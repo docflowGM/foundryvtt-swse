@@ -22,7 +22,7 @@ Denominator: 1182 certified claims + 7 3E addendum claims = 1189 claims → 1187
 | STALE_TREE_ID_SLUG | 0 | yes |
 | TREE_DISPLAY_NAME_DRIFT | 0 | yes |
 
-Text invariant: 4741 text fields (prerequisites, benefit, description, summary) equal the certified canonical text or an approved correction (49 currently at an approved correction).
+Text invariant: 4741 text fields (prerequisites, benefit, description, summary) equal the certified canonical text or an approved correction (53 currently at an approved correction).
 
 Source/page agreement: 1187 of 1187 identities carry a production source/page that matches a certified publication.
 

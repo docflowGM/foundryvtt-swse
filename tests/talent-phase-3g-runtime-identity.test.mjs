@@ -86,7 +86,7 @@ await test('PHASE 3D REPAIRS: the five production-id leaves now succeed at runti
   const five = [['Fearsome', 'Notorious', 'Bounty Hunter'], ['Ruthless Negotiator', 'Notorious', 'Bounty Hunter'], ['Shared Notoriety', 'Notorious', 'Infamy'], ['Unsavory Reputation', 'Notorious', 'Infamy'], ['Weakening Strike', 'Dastardly Strike', 'Misfortune']];
   for (const [owner, target, tree] of five) {
     const o = rec(owner), tgt = rec(target, tree);
-    const cur = o.system.prerequisitesStructured.conditions.find(c => c.type === 'talent' && c.id === tgt._id); assert.ok(cur, `${owner}: the 3D leaf points at ${target}|${tree}`);
+    const cur = o.system.prerequisitesStructured.conditions.find(c => c.type === 'talent' && (c.id === tgt._id || c.uuid === v13(tgt))); assert.ok(cur, `${owner}: the 3D leaf points at ${target}|${tree}`);
     for (const l of [cur, leaf(tgt)]) {
       assert.equal(check(l, actor([embedded(tgt, v13(tgt))])).met, true, `${owner}: embedded`);
       assert.equal(check(l, actor([embedded(tgt, legacy(tgt))])).met, true, `${owner}: legacy source link`);

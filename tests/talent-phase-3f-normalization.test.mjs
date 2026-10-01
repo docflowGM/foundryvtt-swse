@@ -32,7 +32,7 @@ test('dry-run report: certified, zero changes outside the targets, classes/actor
   if (state === 'PRE_3F') assert.deepEqual(buildReport().verification.results.filter(r => !r.ok), []);
 });
 test(`state-appropriate gate passes (${state})`, () => {
-  const r = spawnSync(process.execPath, ['tools/apply-talent-phase-3f.mjs', ...(state === 'POST_3F' ? ['--verify', '--exact'] : ['--check'])], { encoding: 'utf8' });
+  const r = spawnSync(process.execPath, ['tools/apply-talent-phase-3f.mjs', ...(state === 'POST_3F' ? ['--verify', '--exact'] : state === 'POST_LATER' ? ['--verify'] : ['--check'])], { encoding: 'utf8' });
   assert.equal(r.status, 0, r.stdout + r.stderr);
 });
 console.log(`\n${n} talent-phase-3f normalization checks passed (${state})`);

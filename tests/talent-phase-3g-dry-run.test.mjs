@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
+import { spawnSync } from 'node:child_process';
 import { canonicalTalentUuid, canonicalTalentId, sameTalentUuid } from '../scripts/data/talent-source-identity.js';
 
 // Phase 3G-3: pins the migration manifest, the dry-run certification, the owner ruling and the schema decision.
@@ -49,5 +50,10 @@ test('source rulings: four false conditions removed (container dropped), five re
   for (const x of rt) assert.equal(x.target.uuid, x.ownerName === 'Stay in the Fight' ? 'Compendium.foundryvtt-swse.talents.Item.d9ffff2586cd259b' : 'Compendium.foundryvtt-swse.talents.Item.5fbf1a3504865fba');
   assert.deepEqual(m.textCorrections.map(c => [c.name, c.after.prerequisites]).sort(), [['Force Haze', 'Clear Mind'], ['Sow Confusion', 'Hesitate'], ['Starship Raider', 'Spacehound'], ['Swift Power', 'Power of the Dark Side']]);
   const sc = rd('data/audits/talent-phase-3g-source-corrections.json'); assert.equal(sc.entries.length, 4); assert.ok(sc.entries.every(e => e.verification.status === 'PDF_VERIFIED' && e.fields.join() === 'prerequisites'));
+});
+test('state-appropriate gate passes: the applied pack verifies exactly (or the dry-run is fresh pre-apply)', () => {
+  const st = spawnSync(process.execPath, ['tools/apply-talent-phase-3g.mjs', '--status'], { encoding: 'utf8' }); const state = (st.stdout + st.stderr).trim().split(' ').pop();
+  const r = spawnSync(process.execPath, ['tools/apply-talent-phase-3g.mjs', ...(state === 'POST_3G' ? ['--verify', '--exact'] : ['--check'])], { encoding: 'utf8' });
+  assert.equal(r.status, 0, state + ' ' + r.stdout + r.stderr);
 });
 console.log(`talent-phase-3g-dry-run: ${n} checks passed`);
