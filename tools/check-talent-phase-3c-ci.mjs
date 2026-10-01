@@ -93,8 +93,8 @@ const battery = {
     ['talent/tree membership audit', 'tools/audit-talent-tree-membership.mjs'],
     ['homebrew talent-pack integrity audit', 'tools/audit-talent-homebrew-pack.mjs'],
     ['Phase 3E-5 text-defect manifest', 'tools/build-talent-phase-3e5-defect-manifest.mjs', '--check'],
-    ['Phase 3G structured-prerequisite identity census', 'tools/census-talent-prerequisite-identity.mjs', '--check'],
-    ['Phase 3G identity experiments', 'tools/audit-talent-prerequisite-identity-experiments.mjs', '--check'],
+    // The 3G census is a FROZEN pre-3G-2 baseline (its runtime columns measured the old checker); tests pin the committed file. The dry-run is the live proof.
+    ['Phase 3G migration manifest and dry-run freshness', 'tools/apply-talent-phase-3g.mjs', '--check'],
     ['Phase 3F tree identity census', 'tools/census-talent-tree-identity.mjs', '--check'],
     ['Phase 3E core Gunslinger census', 'tools/census-talent-core-gunslinger.mjs', '--check'],
     ['Phase 3E authority addendum', 'tools/check-talent-phase-3e-additions.mjs'],

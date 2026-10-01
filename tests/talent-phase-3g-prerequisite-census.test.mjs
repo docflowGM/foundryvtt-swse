@@ -1,6 +1,5 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
-import { spawnSync } from 'node:child_process';
 
 // Phase 3G-0/1: pins the structured talent-prerequisite identity census and the identity experiments (read-only audit records).
 const rd = rel => JSON.parse(fs.readFileSync(new URL('../' + rel, import.meta.url), 'utf8'));
@@ -39,9 +38,5 @@ test('identity experiments: id leaves resolve only via flags.swse.id on embedded
   assert.equal(ex['E5c uuid prereq vs pending [{uuid}]'].via, 'uuid'); assert.equal(ex['E5d uuid prereq vs pending [{id: compendium _id}] (no uuid)'].met, false);
   assert.equal(ex['E6 dead uuid, name present'].via, 'name'); assert.equal(ex['E6b dead uuid, no name'].met, false);
 });
-test('the committed census and experiment record are current', () => {
-  for (const [tool, args] of [['census-talent-prerequisite-identity.mjs', ['--check']], ['audit-talent-prerequisite-identity-experiments.mjs', ['--check']]]) {
-    const r = spawnSync(process.execPath, ['tools/' + tool, ...args], { encoding: 'utf8' }); assert.equal(r.status, 0, r.stdout + r.stderr);
-  }
-});
+// The census and experiment records are FROZEN pre-3G-2 baselines (they measured the checker before the identity helper). The live proof is the 3G dry-run (tests/talent-phase-3g-dry-run.test.mjs).
 console.log(`\n${n} talent-phase-3g census checks passed`);

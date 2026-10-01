@@ -50,3 +50,9 @@ Findings:
 ## 4. Scope boundaries held
 
 Talent-to-talent structured identity only; no rewrite of text prerequisites, feat/skill/class/force-power identity, no removal of legacy parsing, no actor-snapshot refresh, no change to canonical prerequisite wording.
+
+## Status after 3G-2/3 (runtime implementation + dry-run)
+
+- The census and experiment records are **frozen pre-3G-2 baselines**: they measured the checker before `scripts/data/talent-source-identity.js`, finalizer stamping and pending threading existed, so they are no longer regenerated or CI-checked. The live proof is `docs/audits/talent-phase-3g-dry-run.md`.
+- **Owner ruling (recorded):** `Scum and Villainy|Outlaw|Find an Opening` requires `Scum and Villainy|Outlaw|Seize the Moment` (`_id` `e19c06b6dfc7a703`, `Compendium.foundryvtt-swse.talents.Item.e19c06b6dfc7a703`) — the Outlaw talent, not the Provocateur same-name talent. Pinned in `tools/apply-talent-phase-3g.mjs` (`OWNER_RULINGS`) and `tests/talent-phase-3g-dry-run.test.mjs`.
+- Nine legacy production talents carry 32-hex `_id`s; the helper treats 16- and 32-hex ids as real compendium ids.

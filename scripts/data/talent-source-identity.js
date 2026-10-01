@@ -18,8 +18,9 @@
 // ============================================
 
 export const TALENT_PACK = 'foundryvtt-swse.talents';
-const PACK_ID = /^[0-9a-f]{16}$/;
-const UUID = /^Compendium\.([^.]+\.[^.]+)\.(?:Item\.)?([0-9a-zA-Z]{16})$/;
+// Production ids are 16 hex; nine legacy records carry 32-hex ids — both are real compendium _ids.
+const PACK_ID = /^(?:[0-9a-f]{16}|[0-9a-f]{32})$/;
+const UUID = /^Compendium\.([^.]+\.[^.]+)\.(?:Item\.)?([0-9a-zA-Z]{16}|[0-9a-f]{32})$/;
 
 /** @returns {string|null} the canonical talent `_id` for a bare pack id or either UUID form; null for anything else. */
 export function canonicalTalentId(value) {

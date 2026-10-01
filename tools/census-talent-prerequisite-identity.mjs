@@ -37,7 +37,7 @@ export function leavesOf(structured, base = 'system.prerequisitesStructured') {
   return out;
 }
 
-async function loadRuntime(talents, trees) {
+export async function loadRuntime(talents, trees) {
   const say = console.log.bind(console);
   for (const l of ['log', 'info', 'debug', 'warn', 'error']) console[l] = () => {};
   registerFoundryPathLoader(); installFoundryShimGlobals();
@@ -55,11 +55,11 @@ async function loadRuntime(talents, trees) {
 const clone = v => JSON.parse(JSON.stringify(v));
 let seq = 0;
 /** The embedded talent exactly as FeatTalentPlanBuilder creates it: resolvedDoc.toObject() clone (flags preserved), a NEW _id, no compendium source link. */
-const finalizerEmbedded = doc => ({ ...clone(doc), _id: `EMB${++seq}`, id: `EMB${++seq}` });
+export const finalizerEmbedded = doc => ({ ...clone(doc), _id: `EMB${++seq}`, id: `EMB${++seq}` });
 /** The same item once a source link exists (the shape of the Phase-3D-refreshed actor-pack snapshots). */
-const sourceLinked = doc => { const e = finalizerEmbedded(doc); e.flags = { ...(e.flags ?? {}), core: { sourceId: `Compendium.${TALENT_PACK}.${doc._id}` } }; return e; };
+export const sourceLinked = doc => { const e = finalizerEmbedded(doc); e.flags = { ...(e.flags ?? {}), core: { sourceId: `Compendium.${TALENT_PACK}.${doc._id}` } }; return e; };
 /** The pending selection exactly as talent-step._buildCanonicalTalentSelection builds it: id = compendium _id, name, system copy, NO flags / uuid / sourceId. */
-const pendingEntry = doc => ({ id: doc._id, name: doc.name, type: 'talent', system: clone(doc.system) });
+export const pendingEntry = doc => ({ id: doc._id, name: doc.name, type: 'talent', system: clone(doc.system) });
 
 export async function build() {
   const talents = nd('packs/talents.db'), trees = nd('packs/talent_trees.db'), canonical = JSON.parse(read('data/canonical/talents.json'));
