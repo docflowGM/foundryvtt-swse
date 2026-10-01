@@ -1,0 +1,190 @@
+{
+  "schemaVersion": 1,
+  "phase": "11-2B3",
+  "title": "category_* decomposition",
+  "status": "OWNER_DESIGN_PASS",
+  "productionMutationPerformed": false,
+  "policy": {
+    "categoryLabelsSurvive": false,
+    "replacementWarning": "Replacement arrays are decomposition guidance only. Do not bulk-assign them to every record carrying the category tag; derive final tags from canonical rule meaning."
+  },
+  "counts": {
+    "total": 14,
+    "deleteDecompose": 14
+  },
+  "decisions": [
+    {
+      "tag": "category_force_adept",
+      "decision": "DELETE_DECOMPOSE",
+      "replacement": [
+        "force",
+        "use_the_force",
+        "force_training",
+        "force_capacity"
+      ],
+      "rationale": "Structural category, not mechanics. Preserve actual Force-use/capacity mechanics."
+    },
+    {
+      "tag": "category_sith_apprentice",
+      "decision": "DELETE_DECOMPOSE",
+      "replacement": [
+        "force",
+        "dark_side",
+        "force_offense",
+        "force_training"
+      ],
+      "rationale": "Class/category identity; express Dark Side and Force mechanics directly."
+    },
+    {
+      "tag": "category_imperial_knight",
+      "decision": "DELETE_DECOMPOSE",
+      "replacement": [
+        "force",
+        "lightsaber",
+        "defense",
+        "armor",
+        "leadership",
+        "ally_support"
+      ],
+      "rationale": "Order/category identity; retain actual defensive, lightsaber, Force, and leadership mechanics."
+    },
+    {
+      "tag": "category_improviser",
+      "decision": "DELETE_DECOMPOSE",
+      "replacement": [
+        "tech",
+        "crafting",
+        "jury_rig",
+        "mechanics",
+        "equipment"
+      ],
+      "rationale": "Category label; actual play pattern is improvisation through technical/equipment mechanics."
+    },
+    {
+      "tag": "category_pathfinder",
+      "decision": "DELETE_DECOMPOSE",
+      "replacement": [
+        "exploration",
+        "survival",
+        "recon",
+        "mobility",
+        "cover",
+        "perception"
+      ],
+      "rationale": "Category label; actual identity is exploration/navigation/recon and terrain positioning."
+    },
+    {
+      "tag": "category_shaper",
+      "decision": "DELETE_DECOMPOSE",
+      "replacement": [
+        "biotech",
+        "crafting",
+        "healing",
+        "ability_enhancement",
+        "implant",
+        "equipment"
+      ],
+      "rationale": "Category label; mechanics are biotech creation, augmentation, healing, and implants."
+    },
+    {
+      "tag": "category_assassin",
+      "decision": "DELETE_DECOMPOSE",
+      "replacement": [
+        "stealth",
+        "precision_damage",
+        "ambush",
+        "pursuit",
+        "targeting"
+      ],
+      "rationale": "Category label; actual mechanics are stealth, target selection, and precision/ambush damage."
+    },
+    {
+      "tag": "category_medic",
+      "decision": "DELETE_DECOMPOSE",
+      "replacement": [
+        "healing",
+        "medical",
+        "treat_injury",
+        "support",
+        "teamwork",
+        "survivability"
+      ],
+      "rationale": "Category label; actual mechanics are medical support and recovery."
+    },
+    {
+      "tag": "category_outlaw",
+      "decision": "DELETE_DECOMPOSE",
+      "replacement": [
+        "mobility",
+        "reaction",
+        "survivability",
+        "pursuit",
+        "action_economy"
+      ],
+      "rationale": "Category label; actual play pattern is reactive mobility, pursuit, and survival."
+    },
+    {
+      "tag": "category_vanguard",
+      "decision": "DELETE_DECOMPOSE",
+      "replacement": [
+        "cover",
+        "ranged",
+        "support",
+        "recon",
+        "targeting",
+        "teamwork",
+        "defense"
+      ],
+      "rationale": "Category label; actual mechanics are ranged team support, cover, recon, and targeting."
+    },
+    {
+      "tag": "category_corporate_agent",
+      "decision": "DELETE_DECOMPOSE",
+      "replacement": [
+        "social",
+        "deception",
+        "persuasion",
+        "leadership",
+        "control"
+      ],
+      "rationale": "Category label; actual mechanics are social leverage, leadership, and influence/control."
+    },
+    {
+      "tag": "category_enforcer",
+      "decision": "DELETE_DECOMPOSE",
+      "replacement": [
+        "control",
+        "nonlethal",
+        "pursuit",
+        "ranged",
+        "vehicle",
+        "pilot"
+      ],
+      "rationale": "Category label; actual mechanics are pursuit, restraint/nonlethal control, and vehicle/ranged enforcement."
+    },
+    {
+      "tag": "category_independent_droid",
+      "decision": "DELETE_DECOMPOSE",
+      "replacement": [
+        "droid",
+        "durability",
+        "self_repair",
+        "tech",
+        "mechanics"
+      ],
+      "rationale": "Category label; actual mechanics are droid autonomy/survivability, self-repair, and technical capability."
+    },
+    {
+      "tag": "category_charlatan",
+      "decision": "DELETE_DECOMPOSE",
+      "replacement": [
+        "deception",
+        "social",
+        "control",
+        "stealth",
+        "action_economy"
+      ],
+      "rationale": "Category label; actual mechanics are deception, social manipulation, concealment, and timing."
+    }
+  ]
+}
