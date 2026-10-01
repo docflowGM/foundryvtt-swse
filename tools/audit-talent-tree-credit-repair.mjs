@@ -58,21 +58,37 @@ export async function build() {
       const o = credited(oldFn, oldItem, nm), f = credited(newFn, fieldsOnly, nm), n = credited(newFn, linked, nm);
       if (member && !primary && n) secondary.push({ id: t._id, name: t.name, tree: nm });
       if (member && !n) (primary ? missingPrimary : missingMembership).push({ id: t._id, name: t.name, tree: nm });
-      if (o && !f) { const row = { id: t._id, name: t.name, tree: nm, primary }; if (member) { restored.push(row); if (!n) missingMembership.push(row); } else { polluting.push(row); if (n) remaining.push(row); } }
+      if (o && !f) {
+        // origin of the OLD credit: a tag, the category field, or another structured field
+        const noTags = { ...oldItem, system: { ...oldItem.system, tags: [] } }, origin = !credited(oldFn, noTags, nm) ? 'tag' : !credited(oldFn, noCategory(oldItem), nm) ? 'category' : 'field';
+        const row = { id: t._id, name: t.name, tree: nm, primary, origin, survivesWithoutTags: credited(oldFn, noTags, nm), survivesWithoutCategory: credited(oldFn, noCategory(oldItem), nm) };
+        if (member) { restored.push(row); if (!n) missingMembership.push(row); } else { polluting.push(row); if (n) remaining.push(row); }
+      }
       if (!member && n) (f ? categoryFieldCredits : remaining).push({ id: t._id, name: t.name, tree: nm, viaCategoryField: f && !credited(newFn, noCategory(fieldsOnly), nm) });
     }
   }
   restore();
+  const stripped = sliceFunction(newSrc, 'getCanonicalTalentTreeIds').replace(/\/\/.*$/gm, '').replace(/\/\*[\s\S]*?\*\//g, '');
+  const noCategory2 = !/\bcategory\b/.test(stripped);
   const noTags = !/\.tags\b|system\?\.tags/.test(sliceFunction(newSrc, 'getCanonicalTalentTreeIds').replace(/\/\/.*$/gm, '').replace(/\/\*[\s\S]*?\*\//g, ''));
   return { schemaVersion: 1, phase: '11-2C', status: 'TREE_CREDIT_REPAIR_AUDIT', oldReference: `checker + pack at ${OLD_COMMIT}`,
     counts: { talents: talents.length, primaryTreesResolved: talents.length - new Set(missingPrimary.map(m => m.id)).size, primaryTreesUnresolved: new Set(missingPrimary.map(m => m.id)).size, secondaryMembershipRelationshipsResolvedByAuthority: secondary.length,
-      oldTagCreditsMirroringCertifiedMembership: restored.length, ofWhichPrimaryTreeSpelledDifferently: restored.filter(r => r.primary).length, ofWhichRestoredByAuthority: restored.filter(r => !missingMembership.some(m => m.id === r.id && m.tree === r.tree)).length, certifiedRelationshipsNotResolved: missingMembership.length,
-      oldPollutingTagCredits: polluting.length, pollutingCreditsRemaining: remaining.length, creditsFromStructuredFieldsWithoutMembership: categoryFieldCredits.length, ofWhichFromTheCategoryField: categoryFieldCredits.filter(c => c.viaCategoryField).length, checkerReadsTagsForTreeIdentity: !noTags },
+      oldTagCreditsMirroringCertifiedMembership: restored.filter(r => r.origin === 'tag').length, ofWhichPrimaryTreeSpelledDifferently: restored.filter(r => r.origin === 'tag' && r.primary).length, ofWhichRestoredByAuthority: restored.filter(r => r.origin === 'tag' && !missingMembership.some(m => m.id === r.id && m.tree === r.tree)).length, oldCategoryCreditsMirroringCertifiedMembership: restored.filter(r => r.origin === 'category').length, oldCategoryCreditsRestoredByAuthority: restored.filter(r => r.origin === 'category' && !missingMembership.some(m => m.id === r.id && m.tree === r.tree)).length, certifiedRelationshipsNotResolved: missingMembership.length,
+      oldPollutingTagCredits: polluting.filter(r => r.origin === 'tag').length, oldFalseCategoryCredits: polluting.filter(r => r.origin === 'category').length, oldFalseCategoryCreditsIncludingTagOverlap: polluting.filter(r => r.survivesWithoutTags).length, oldCreditsGrantedByBothTagAndCategory: polluting.filter(r => r.origin === 'field').length, pollutingCreditsRemaining: remaining.length, creditsFromStructuredFieldsWithoutMembership: categoryFieldCredits.length, ofWhichFromTheCategoryField: categoryFieldCredits.filter(c => c.viaCategoryField).length, checkerReadsTagsForTreeIdentity: !noTags, checkerReadsCategoryForTreeIdentity: !noCategory2, creditsFromCategoryField: categoryFieldCredits.filter(c => c.viaCategoryField).length },
     primaryUnresolved: missingPrimary, falseCreditsRemaining: remaining, creditsFromStructuredFieldsWithoutMembership: categoryFieldCredits, certifiedRelationshipsUnresolved: missingMembership, restoredRelationships: restored, pollutingCreditsThatStayGone: polluting, secondaryMembership: secondary };
+}
+/** Hard invariants (Phase 11-2C + 11-2D): the audit FAILS if any tree credit is granted by a tag or the category field, or any certified identity is unresolved. */
+export function violations(c) {
+  const v = [];
+  if (c.primaryTreesUnresolved !== 0) v.push('primary tree unresolved'); if (c.certifiedRelationshipsNotResolved !== 0) v.push('certified relationship unresolved');
+  if (c.pollutingCreditsRemaining !== 0) v.push('polluting credit remains'); if (c.creditsFromStructuredFieldsWithoutMembership !== 0) v.push('credit from a structured field without certified membership');
+  if (c.creditsFromCategoryField !== 0 || c.checkerReadsCategoryForTreeIdentity) v.push('category grants tree credit'); if (c.checkerReadsTagsForTreeIdentity) v.push('tags grant tree identity');
+  return v;
 }
 export async function main(argv = process.argv.slice(2)) {
   if (argv.includes('--snapshot-reference')) { fs.writeFileSync(path.join(ROOT, REF), JSON.stringify(snapshotReference()) + '\n'); console.log('[tree-credit-repair] wrote ' + REF); return 0; }
-  const a = await build(), json = JSON.stringify(a, null, 1) + '\n';
+  const a = await build(), json = JSON.stringify(a, null, 1) + '\n', bad = violations(a.counts);
+  if (bad.length) { process.stderr.write('[tree-credit-repair] INVARIANT VIOLATED: ' + bad.join('; ') + '\n'); return 1; }
   if (argv.includes('--check')) { if (!fs.existsSync(path.join(ROOT, OUT)) || read(OUT) !== json) { console.error('[tree-credit-repair] STALE'); return 1; } console.log('[tree-credit-repair] PASS'); return 0; }
   fs.writeFileSync(path.join(ROOT, OUT), json); process.stderr.write(JSON.stringify(a.counts, null, 1) + '\n'); return 0;
 }

@@ -11,846 +11,1545 @@
   "oldTagCreditsMirroringCertifiedMembership": 79,
   "ofWhichPrimaryTreeSpelledDifferently": 79,
   "ofWhichRestoredByAuthority": 79,
+  "oldCategoryCreditsMirroringCertifiedMembership": 55,
+  "oldCategoryCreditsRestoredByAuthority": 55,
   "certifiedRelationshipsNotResolved": 0,
   "oldPollutingTagCredits": 298,
+  "oldFalseCategoryCredits": 54,
+  "oldFalseCategoryCreditsIncludingTagOverlap": 59,
+  "oldCreditsGrantedByBothTagAndCategory": 5,
   "pollutingCreditsRemaining": 0,
-  "creditsFromStructuredFieldsWithoutMembership": 59,
-  "ofWhichFromTheCategoryField": 59,
-  "checkerReadsTagsForTreeIdentity": false
+  "creditsFromStructuredFieldsWithoutMembership": 0,
+  "ofWhichFromTheCategoryField": 0,
+  "checkerReadsTagsForTreeIdentity": false,
+  "checkerReadsCategoryForTreeIdentity": false,
+  "creditsFromCategoryField": 0
  },
  "primaryUnresolved": [],
  "falseCreditsRemaining": [],
- "creditsFromStructuredFieldsWithoutMembership": [
-  {
-   "id": "028e4e50565971ee",
-   "name": "Temporal Awareness",
-   "tree": "Bounty Hunter",
-   "viaCategoryField": true
-  },
-  {
-   "id": "084423db749d2bb3",
-   "name": "Closed Mind",
-   "tree": "Force Adept",
-   "viaCategoryField": true
-  },
-  {
-   "id": "08e904def2f9ea5c",
-   "name": "Esoteric Technique",
-   "tree": "Force Adept",
-   "viaCategoryField": true
-  },
-  {
-   "id": "0a65325a98b108a7",
-   "name": "Soothing Presence",
-   "tree": "Force Adept",
-   "viaCategoryField": true
-  },
-  {
-   "id": "0c636cdbb63cdba3",
-   "name": "Greater Force Talisman",
-   "tree": "Force Adept",
-   "viaCategoryField": true
-  },
-  {
-   "id": "0e36a04342959256",
-   "name": "Cower Enemies",
-   "tree": "Force Adept",
-   "viaCategoryField": true
-  },
-  {
-   "id": "12eea831f06c45f7",
-   "name": "Focused Force Talisman",
-   "tree": "Force Adept",
-   "viaCategoryField": true
-  },
-  {
-   "id": "19ba6767726bdc86",
-   "name": "Steel Mind",
-   "tree": "Bounty Hunter",
-   "viaCategoryField": true
-  },
-  {
-   "id": "202a117b1b203951",
-   "name": "Psychic Defenses",
-   "tree": "Force Adept",
-   "viaCategoryField": true
-  },
-  {
-   "id": "203464310c5c2492",
-   "name": "Telekinetic Resistance",
-   "tree": "Bounty Hunter",
-   "viaCategoryField": true
-  },
-  {
-   "id": "223ba62ffbabb9c2",
-   "name": "Hailfire",
-   "tree": "Gunslinger",
-   "viaCategoryField": true
-  },
-  {
-   "id": "2acaa4620d396fe9",
-   "name": "Force Interrogation",
-   "tree": "Force Adept",
-   "viaCategoryField": true
-  },
-  {
-   "id": "2c1268268212d135",
-   "name": "Snap Shot",
-   "tree": "Gunslinger",
-   "viaCategoryField": true
-  },
-  {
-   "id": "2da74bc3f4d45d2d",
-   "name": "Perfect Telepathy",
-   "tree": "Force Adept",
-   "viaCategoryField": true
-  },
-  {
-   "id": "2fdf215a5da99e00",
-   "name": "Adrenaline Implant",
-   "tree": "Shaper",
-   "viaCategoryField": true
-  },
-  {
-   "id": "443bfe7fa33dd627",
-   "name": "Telepathic Intruder",
-   "tree": "Force Adept",
-   "viaCategoryField": true
-  },
-  {
-   "id": "4ae840aaa4e0eba0",
-   "name": "Greater Focused Force Talisman",
-   "tree": "Force Adept",
-   "viaCategoryField": true
-  },
-  {
-   "id": "4ec766d6818c373f",
-   "name": "Mystic Mastery",
-   "tree": "Force Adept",
-   "viaCategoryField": true
-  },
-  {
-   "id": "5218d5971b78119b",
-   "name": "Empower Weapon",
-   "tree": "Force Adept",
-   "viaCategoryField": true
-  },
-  {
-   "id": "52a4914cca90cc4d",
-   "name": "Guaranteed Shot",
-   "tree": "Gunslinger",
-   "viaCategoryField": true
-  },
-  {
-   "id": "546034f073eab1fd",
-   "name": "Psychic Citadel",
-   "tree": "Force Adept",
-   "viaCategoryField": true
-  },
-  {
-   "id": "554e245686231855",
-   "name": "Shoot from the Hip",
-   "tree": "Gunslinger",
-   "viaCategoryField": true
-  },
-  {
-   "id": "5621a55aea1936b2",
-   "name": "Strong-Willed",
-   "tree": "Bounty Hunter",
-   "viaCategoryField": true
-  },
-  {
-   "id": "58e37d40d3aa7d4b",
-   "name": "Precision Implant",
-   "tree": "Shaper",
-   "viaCategoryField": true
-  },
-  {
-   "id": "5cd160036d6bba05",
-   "name": "Just What Is Needed",
-   "tree": "Improviser",
-   "viaCategoryField": true
-  },
-  {
-   "id": "661c2c0665e911f6",
-   "name": "Findsman Ceremonies",
-   "tree": "Bounty Hunter",
-   "viaCategoryField": true
-  },
-  {
-   "id": "66b23ee79bd33bf1",
-   "name": "Force Talisman",
-   "tree": "Force Adept",
-   "viaCategoryField": true
-  },
-  {
-   "id": "76ff0ba56aa3864b",
-   "name": "Inquisition",
-   "tree": "Force Adept",
-   "viaCategoryField": true
-  },
-  {
-   "id": "7d30702a5a2640a4",
-   "name": "Close Contact",
-   "tree": "Gunslinger",
-   "viaCategoryField": true
-  },
-  {
-   "id": "85318987b48d5caa",
-   "name": "Excellent Kit",
-   "tree": "Improviser",
-   "viaCategoryField": true
-  },
-  {
-   "id": "86565bbe8b8fd1a2",
-   "name": "Force Throw",
-   "tree": "Force Adept",
-   "viaCategoryField": true
-  },
-  {
-   "id": "94b1951d4795f602",
-   "name": "Resilience Implant",
-   "tree": "Shaper",
-   "viaCategoryField": true
-  },
-  {
-   "id": "970d8d555645604d",
-   "name": "Old Faithful",
-   "tree": "Gunslinger",
-   "viaCategoryField": true
-  },
-  {
-   "id": "9b337a844329fa17",
-   "name": "Blowback",
-   "tree": "Gunslinger",
-   "viaCategoryField": true
-  },
-  {
-   "id": "9c88f3f82e6e2082",
-   "name": "Bonded Mount",
-   "tree": "Force Adept",
-   "viaCategoryField": true
-  },
-  {
-   "id": "aa9b67c6737c2549",
-   "name": "Attune Weapon",
-   "tree": "Force Adept",
-   "viaCategoryField": true
-  },
-  {
-   "id": "b08c8efbea22f604",
-   "name": "Omens",
-   "tree": "Bounty Hunter",
-   "viaCategoryField": true
-  },
-  {
-   "id": "b15fa2f45baf55ea",
-   "name": "Entreat Beast",
-   "tree": "Force Adept",
-   "viaCategoryField": true
-  },
-  {
-   "id": "b3ce8b08a8cb95fa",
-   "name": "Lightsaber Evasion",
-   "tree": "Bounty Hunter",
-   "viaCategoryField": true
-  },
-  {
-   "id": "b5eba49d8305b689",
-   "name": "Only the Finest",
-   "tree": "Improviser",
-   "viaCategoryField": true
-  },
-  {
-   "id": "b6e75c52f5d66ade",
-   "name": "Wild Sense",
-   "tree": "Force Adept",
-   "viaCategoryField": true
-  },
-  {
-   "id": "bab9a1ce285f98b9",
-   "name": "Charm Beast",
-   "tree": "Force Adept",
-   "viaCategoryField": true
-  },
-  {
-   "id": "bef731c3743c2c7f",
-   "name": "Precision Fire",
-   "tree": "Bounty Hunter",
-   "viaCategoryField": true
-  },
-  {
-   "id": "c006a4be6de26139",
-   "name": "Black Market Buyer",
-   "tree": "Improviser",
-   "viaCategoryField": true
-  },
-  {
-   "id": "c219dc05ccc7db81",
-   "name": "Twin Shot",
-   "tree": "Gunslinger",
-   "viaCategoryField": true
-  },
-  {
-   "id": "c41461c3bdd0165d",
-   "name": "Dash and Blast",
-   "tree": "Gunslinger",
-   "viaCategoryField": true
-  },
-  {
-   "id": "cb0dcc59f7ced910",
-   "name": "Strength Implant",
-   "tree": "Shaper",
-   "viaCategoryField": true
-  },
-  {
-   "id": "ccaa66ed749e3317",
-   "name": "Mind Probe",
-   "tree": "Force Adept",
-   "viaCategoryField": true
-  },
-  {
-   "id": "cdcdb85912d9eb67",
-   "name": "Force Blank",
-   "tree": "Bounty Hunter",
-   "viaCategoryField": true
-  },
-  {
-   "id": "cddfb9833c7d3344",
-   "name": "Channel Vitality",
-   "tree": "Force Adept",
-   "viaCategoryField": true
-  },
-  {
-   "id": "d043a3c0494345ac",
-   "name": "Primitive Block",
-   "tree": "Force Adept",
-   "viaCategoryField": true
-  },
-  {
-   "id": "d24b04541998b27b",
-   "name": "Rifle Master",
-   "tree": "Gunslinger",
-   "viaCategoryField": true
-  },
-  {
-   "id": "d61e3a2afe8ab339",
-   "name": "Target Visions",
-   "tree": "Bounty Hunter",
-   "viaCategoryField": true
-  },
-  {
-   "id": "d6d3b0a2ec01ca9a",
-   "name": "Speed Implant",
-   "tree": "Shaper",
-   "viaCategoryField": true
-  },
-  {
-   "id": "dd488c2dc43d14ab",
-   "name": "Unsettling Presence",
-   "tree": "Force Adept",
-   "viaCategoryField": true
-  },
-  {
-   "id": "e8fe6087eef386c7",
-   "name": "Findsman's Foresight",
-   "tree": "Bounty Hunter",
-   "viaCategoryField": true
-  },
-  {
-   "id": "ecb678c47bb2cb43",
-   "name": "Multiattack Proficiency (rifles)",
-   "tree": "Gunslinger",
-   "viaCategoryField": true
-  },
-  {
-   "id": "f09f37cda0fc10e1",
-   "name": "Right Gear for the Job",
-   "tree": "Improviser",
-   "viaCategoryField": true
-  },
-  {
-   "id": "f5fcf2752e99961a",
-   "name": "Opportunity Fire",
-   "tree": "Gunslinger",
-   "viaCategoryField": true
-  }
- ],
+ "creditsFromStructuredFieldsWithoutMembership": [],
  "certifiedRelationshipsUnresolved": [],
  "restoredRelationships": [
   {
    "id": "0290634450ab1637",
    "name": "Electronic Sabotage",
    "tree": "Slicer",
-   "primary": true
+   "primary": true,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
+  },
+  {
+   "id": "02c69474cc7bbedd",
+   "name": "Dual Weapon Flourish II",
+   "tree": "Melee Duelist",
+   "primary": true,
+   "origin": "category",
+   "survivesWithoutTags": true,
+   "survivesWithoutCategory": false
+  },
+  {
+   "id": "07174b444852424c",
+   "name": "Obscuring Defenses",
+   "tree": "Pathfinder",
+   "primary": true,
+   "origin": "field",
+   "survivesWithoutTags": true,
+   "survivesWithoutCategory": true
   },
   {
    "id": "084423db749d2bb3",
    "name": "Closed Mind",
    "tree": "Mystic",
-   "primary": true
+   "primary": true,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "08e904def2f9ea5c",
    "name": "Esoteric Technique",
    "tree": "Mystic",
-   "primary": true
+   "primary": true,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "09609e71ba6cd4aa",
    "name": "Swift Power",
    "tree": "Dark Side",
-   "primary": true
+   "primary": true,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "09744041cdcc9e22",
    "name": "Notorious",
    "tree": "Infamy",
-   "primary": true
+   "primary": true,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
+  },
+  {
+   "id": "0991f4321b429bf5",
+   "name": "Escort Fighter",
+   "tree": "Pathfinder",
+   "primary": true,
+   "origin": "field",
+   "survivesWithoutTags": true,
+   "survivesWithoutCategory": true
   },
   {
    "id": "0b18181b971fc505",
    "name": "Guardian Spirit",
    "tree": "Guardian Spirit",
-   "primary": true
+   "primary": true,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
+  },
+  {
+   "id": "0d58e041b9bf0be8",
+   "name": "Murderous Arts I",
+   "tree": "Assassin",
+   "primary": true,
+   "origin": "category",
+   "survivesWithoutTags": true,
+   "survivesWithoutCategory": false
+  },
+  {
+   "id": "10a678b2b7e3ac0e",
+   "name": "Mark the Target",
+   "tree": "Vanguard",
+   "primary": true,
+   "origin": "category",
+   "survivesWithoutTags": true,
+   "survivesWithoutCategory": false
+  },
+  {
+   "id": "11e8f858af268e8c",
+   "name": "Fearsome",
+   "tree": "Bounty Hunter",
+   "primary": true,
+   "origin": "field",
+   "survivesWithoutTags": true,
+   "survivesWithoutCategory": true
   },
   {
    "id": "1215e1c464a087b0",
    "name": "Vital Encouragement",
    "tree": "Guardian Spirit",
-   "primary": true
+   "primary": true,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
+  },
+  {
+   "id": "148e7a10a55d6ed3",
+   "name": "Soften the Target",
+   "tree": "Vanguard",
+   "primary": true,
+   "origin": "category",
+   "survivesWithoutTags": true,
+   "survivesWithoutCategory": false
+  },
+  {
+   "id": "1584c86ad48d7b81",
+   "name": "Impenetrable Cover",
+   "tree": "Vanguard",
+   "primary": true,
+   "origin": "category",
+   "survivesWithoutTags": true,
+   "survivesWithoutCategory": false
+  },
+  {
+   "id": "16dd1c81c5145dd8",
+   "name": "Repairs on the Fly",
+   "tree": "Military Engineer",
+   "primary": true,
+   "origin": "category",
+   "survivesWithoutTags": true,
+   "survivesWithoutCategory": false
+  },
+  {
+   "id": "16f53472844251a7",
+   "name": "Problem Solver",
+   "tree": "Military Engineer",
+   "primary": true,
+   "origin": "category",
+   "survivesWithoutTags": true,
+   "survivesWithoutCategory": false
+  },
+  {
+   "id": "181da7f36b9fba9d",
+   "name": "Force Treatment",
+   "tree": "Force Adept",
+   "primary": true,
+   "origin": "field",
+   "survivesWithoutTags": true,
+   "survivesWithoutCategory": true
   },
   {
    "id": "192279eaa0b61d36",
    "name": "Dark Preservation",
    "tree": "Dark Side",
-   "primary": true
+   "primary": true,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "19ba6767726bdc86",
    "name": "Steel Mind",
    "tree": "Force Hunter",
-   "primary": true
+   "primary": true,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
+  },
+  {
+   "id": "1d50b01d5151c3eb",
+   "name": "Enhance Cover",
+   "tree": "Pathfinder",
+   "primary": true,
+   "origin": "field",
+   "survivesWithoutTags": true,
+   "survivesWithoutCategory": true
+  },
+  {
+   "id": "1e32cec439c5ecad",
+   "name": "Quick Modifications",
+   "tree": "Military Engineer",
+   "primary": true,
+   "origin": "category",
+   "survivesWithoutTags": true,
+   "survivesWithoutCategory": false
   },
   {
    "id": "202a117b1b203951",
    "name": "Psychic Defenses",
    "tree": "Telepath",
-   "primary": true
+   "primary": true,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "203464310c5c2492",
    "name": "Telekinetic Resistance",
    "tree": "Force Hunter",
-   "primary": true
+   "primary": true,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "20ce23e9cc418512",
    "name": "Crucial Advice",
    "tree": "Guardian Spirit",
-   "primary": true
+   "primary": true,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
+  },
+  {
+   "id": "216f5ea65b7c04fb",
+   "name": "Sniping Master",
+   "tree": "Assassin",
+   "primary": true,
+   "origin": "category",
+   "survivesWithoutTags": true,
+   "survivesWithoutCategory": false
+  },
+  {
+   "id": "226aea42fcdd30b0",
+   "name": "Jedi Hunter",
+   "tree": "Bounty Hunter",
+   "primary": true,
+   "origin": "field",
+   "survivesWithoutTags": true,
+   "survivesWithoutCategory": true
+  },
+  {
+   "id": "252285ae33a2a2d5",
+   "name": "Uncanny Instincts",
+   "tree": "Outlaw",
+   "primary": true,
+   "origin": "field",
+   "survivesWithoutTags": true,
+   "survivesWithoutCategory": true
   },
   {
    "id": "27dd504c877a4de5",
    "name": "Detective",
    "tree": "Bounty Hunter",
-   "primary": true
+   "primary": true,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
+  },
+  {
+   "id": "2871d6138603fbcc",
+   "name": "Get Some Distance",
+   "tree": "Assassin",
+   "primary": true,
+   "origin": "category",
+   "survivesWithoutTags": true,
+   "survivesWithoutCategory": false
+  },
+  {
+   "id": "28a61dadc073cd84",
+   "name": "Tag",
+   "tree": "Bounty Hunter",
+   "primary": true,
+   "origin": "field",
+   "survivesWithoutTags": true,
+   "survivesWithoutCategory": true
+  },
+  {
+   "id": "28b781d7186a03a9",
+   "name": "Sniping Marksman",
+   "tree": "Assassin",
+   "primary": true,
+   "origin": "category",
+   "survivesWithoutTags": true,
+   "survivesWithoutCategory": false
   },
   {
    "id": "2931a9052148e79a",
    "name": "Creeping Approach",
    "tree": "Infiltration",
-   "primary": true
+   "primary": true,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "2da74bc3f4d45d2d",
    "name": "Perfect Telepathy",
    "tree": "Telepath",
-   "primary": true
+   "primary": true,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "2e500e16dc0c4a73",
    "name": "Outsider's Eye",
    "tree": "Outsider",
-   "primary": true
+   "primary": true,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "2fc019fa8c4108a7",
    "name": "Focused Attack",
    "tree": "Light Side",
-   "primary": true
+   "primary": true,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "2fdf215a5da99e00",
    "name": "Adrenaline Implant",
    "tree": "Implant",
-   "primary": true
+   "primary": true,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "319c5ded54dbc4e6",
    "name": "Electronic Forgery",
    "tree": "Slicer",
-   "primary": true
+   "primary": true,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
+  },
+  {
+   "id": "32029a2f0dbb7104",
+   "name": "Prepared Explosive",
+   "tree": "Military Engineer",
+   "primary": true,
+   "origin": "category",
+   "survivesWithoutTags": true,
+   "survivesWithoutCategory": false
   },
   {
    "id": "3449cb22b384498b",
    "name": "Manifest Guardian Spirit",
    "tree": "Guardian Spirit",
-   "primary": true
+   "primary": true,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
+  },
+  {
+   "id": "3991e671da41995a",
+   "name": "Find an Opening",
+   "tree": "Outlaw",
+   "primary": true,
+   "origin": "field",
+   "survivesWithoutTags": true,
+   "survivesWithoutCategory": true
+  },
+  {
+   "id": "3aeee38a6c7b7f12",
+   "name": "Double Up",
+   "tree": "Outlaw",
+   "primary": true,
+   "origin": "field",
+   "survivesWithoutTags": true,
+   "survivesWithoutCategory": true
   },
   {
    "id": "443bfe7fa33dd627",
    "name": "Telepathic Intruder",
    "tree": "Telepath",
-   "primary": true
+   "primary": true,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "45c4e72d74c44acb",
    "name": "Mystical Link",
    "tree": "Force Adept",
-   "primary": true
+   "primary": true,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "46946e7208f1cf05",
    "name": "Six Questions",
    "tree": "Bothan SpyNet",
-   "primary": true
+   "primary": true,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
+  },
+  {
+   "id": "46ef0773cd6ef86d",
+   "name": "Dirty Tricks",
+   "tree": "Melee Duelist",
+   "primary": true,
+   "origin": "category",
+   "survivesWithoutTags": true,
+   "survivesWithoutCategory": false
+  },
+  {
+   "id": "48734ec40189bb12",
+   "name": "Murderous Arts II",
+   "tree": "Assassin",
+   "primary": true,
+   "origin": "category",
+   "survivesWithoutTags": true,
+   "survivesWithoutCategory": false
+  },
+  {
+   "id": "499cfbb7489b1244",
+   "name": "Single Weapon Flourish I",
+   "tree": "Melee Duelist",
+   "primary": true,
+   "origin": "category",
+   "survivesWithoutTags": true,
+   "survivesWithoutCategory": false
   },
   {
    "id": "49f6a9ed0c91f847",
    "name": "Always Ready",
    "tree": "Infiltration",
-   "primary": true
+   "primary": true,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
+  },
+  {
+   "id": "4df672d524de7aa0",
+   "name": "Preternatural Senses",
+   "tree": "Outlaw",
+   "primary": true,
+   "origin": "field",
+   "survivesWithoutTags": true,
+   "survivesWithoutCategory": true
   },
   {
    "id": "4ec766d6818c373f",
    "name": "Mystic Mastery",
    "tree": "Mystic",
-   "primary": true
+   "primary": true,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
+  },
+  {
+   "id": "5004013069710c3e",
+   "name": "Dual Weapon Flourish I",
+   "tree": "Melee Duelist",
+   "primary": true,
+   "origin": "category",
+   "survivesWithoutTags": true,
+   "survivesWithoutCategory": false
   },
   {
    "id": "50273d5ce8f84c31",
    "name": "Frighten",
    "tree": "Infamy",
-   "primary": true
+   "primary": true,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "51ee1b777709cc4e",
    "name": "Security Slicer",
    "tree": "Slicer",
-   "primary": true
+   "primary": true,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
+  },
+  {
+   "id": "52f51a77fd60f56f",
+   "name": "Debilitating Shot",
+   "tree": "Gunslinger",
+   "primary": true,
+   "origin": "category",
+   "survivesWithoutTags": true,
+   "survivesWithoutCategory": false
   },
   {
    "id": "54065380bb20e8d8",
    "name": "Trace",
    "tree": "Slicer",
-   "primary": true
+   "primary": true,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "546034f073eab1fd",
    "name": "Psychic Citadel",
    "tree": "Telepath",
-   "primary": true
+   "primary": true,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "5621a55aea1936b2",
    "name": "Strong-Willed",
    "tree": "Force Hunter",
-   "primary": true
+   "primary": true,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "58e37d40d3aa7d4b",
    "name": "Precision Implant",
    "tree": "Implant",
-   "primary": true
+   "primary": true,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
+  },
+  {
+   "id": "5989079457c8a3cf",
+   "name": "Safe Zone",
+   "tree": "Pathfinder",
+   "primary": true,
+   "origin": "field",
+   "survivesWithoutTags": true,
+   "survivesWithoutCategory": true
   },
   {
    "id": "59b2b90ad0ae8eb8",
    "name": "Concealed Weapon Expert",
    "tree": "Infiltration",
-   "primary": true
+   "primary": true,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "5bf2f1759ee54834",
    "name": "Advanced Planning",
    "tree": "Master of Intrigue",
-   "primary": true
+   "primary": true,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "606e14c428f1d159",
    "name": "Dark Presence",
    "tree": "Dark Side",
-   "primary": true
+   "primary": true,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "627bd3abd30b973f",
    "name": "Power of the Dark Side",
    "tree": "Dark Side",
-   "primary": true
+   "primary": true,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "648d9634a3795988",
    "name": "Spynet Agent",
    "tree": "Bothan SpyNet",
-   "primary": true
+   "primary": true,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
+  },
+  {
+   "id": "6714ab8e28708f50",
+   "name": "Fortified Body",
+   "tree": "Force Adept",
+   "primary": true,
+   "origin": "field",
+   "survivesWithoutTags": true,
+   "survivesWithoutCategory": true
+  },
+  {
+   "id": "67186d921e94d636",
+   "name": "Defensive Measures",
+   "tree": "Pathfinder",
+   "primary": true,
+   "origin": "field",
+   "survivesWithoutTags": true,
+   "survivesWithoutCategory": true
+  },
+  {
+   "id": "68e476fdeb434b01",
+   "name": "Relocate",
+   "tree": "Pathfinder",
+   "primary": true,
+   "origin": "field",
+   "survivesWithoutTags": true,
+   "survivesWithoutCategory": true
   },
   {
    "id": "69420a9a5ff5d8b9",
    "name": "Rapid Alchemy",
    "tree": "Sith Alchemy",
-   "primary": true
+   "primary": true,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
+  },
+  {
+   "id": "6e3c1c77acfb0141",
+   "name": "Improved Jury-Rig",
+   "tree": "Improviser",
+   "primary": true,
+   "origin": "category",
+   "survivesWithoutTags": true,
+   "survivesWithoutCategory": false
+  },
+  {
+   "id": "6ea04b7286133846",
+   "name": "Sniping Assassin",
+   "tree": "Assassin",
+   "primary": true,
+   "origin": "category",
+   "survivesWithoutTags": true,
+   "survivesWithoutCategory": false
   },
   {
    "id": "71bc6b43ab504b90",
    "name": "Inspire Fear II",
    "tree": "Infamy",
-   "primary": true
+   "primary": true,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
+  },
+  {
+   "id": "74fb6b37af983a4c",
+   "name": "Hunter's Mark",
+   "tree": "Bounty Hunter",
+   "primary": true,
+   "origin": "field",
+   "survivesWithoutTags": true,
+   "survivesWithoutCategory": true
+  },
+  {
+   "id": "782768cab6bd13de",
+   "name": "Dread",
+   "tree": "Bounty Hunter",
+   "primary": true,
+   "origin": "field",
+   "survivesWithoutTags": true,
+   "survivesWithoutCategory": true
+  },
+  {
+   "id": "7aa4ca13a96d8770",
+   "name": "Ruthless",
+   "tree": "Assassin",
+   "primary": true,
+   "origin": "category",
+   "survivesWithoutTags": true,
+   "survivesWithoutCategory": false
+  },
+  {
+   "id": "7bc10cb88a6a0c92",
+   "name": "Relentless",
+   "tree": "Bounty Hunter",
+   "primary": true,
+   "origin": "field",
+   "survivesWithoutTags": true,
+   "survivesWithoutCategory": true
+  },
+  {
+   "id": "7f792f0e531e9abb",
+   "name": "Expedient Mending",
+   "tree": "Shaper",
+   "primary": true,
+   "origin": "category",
+   "survivesWithoutTags": true,
+   "survivesWithoutCategory": false
   },
   {
    "id": "8223d30bfce0c14d",
    "name": "Surge of Light",
    "tree": "Light Side",
-   "primary": true
+   "primary": true,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
+  },
+  {
+   "id": "8298e12805291c78",
+   "name": "Ruthless Negotiator",
+   "tree": "Bounty Hunter",
+   "primary": true,
+   "origin": "field",
+   "survivesWithoutTags": true,
+   "survivesWithoutCategory": true
+  },
+  {
+   "id": "84d4e92693185028",
+   "name": "Improvised Device",
+   "tree": "Improviser",
+   "primary": true,
+   "origin": "category",
+   "survivesWithoutTags": true,
+   "survivesWithoutCategory": false
+  },
+  {
+   "id": "855d544f08e54afc",
+   "name": "Mobile Attack (pistols)",
+   "tree": "Gunslinger",
+   "primary": true,
+   "origin": "category",
+   "survivesWithoutTags": true,
+   "survivesWithoutCategory": false
+  },
+  {
+   "id": "856812052aa6c6d2",
+   "name": "Vehicular Boost",
+   "tree": "Military Engineer",
+   "primary": true,
+   "origin": "category",
+   "survivesWithoutTags": true,
+   "survivesWithoutCategory": false
+  },
+  {
+   "id": "86c10d63bba2d9c8",
+   "name": "Trigger Work",
+   "tree": "Gunslinger",
+   "primary": true,
+   "origin": "category",
+   "survivesWithoutTags": true,
+   "survivesWithoutCategory": false
   },
   {
    "id": "878d89b7232413cf",
    "name": "Set for Stun",
    "tree": "Infiltration",
-   "primary": true
+   "primary": true,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "8d8937a416fc0d81",
    "name": "Gimmick",
    "tree": "Slicer",
-   "primary": true
+   "primary": true,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "8ed7b1889b1416d4",
    "name": "Terrify",
    "tree": "Infamy",
-   "primary": true
+   "primary": true,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
+  },
+  {
+   "id": "907906934ba3c563",
+   "name": "Hunter's Target",
+   "tree": "Bounty Hunter",
+   "primary": true,
+   "origin": "field",
+   "survivesWithoutTags": true,
+   "survivesWithoutCategory": true
+  },
+  {
+   "id": "90d9a2e7dbc160d1",
+   "name": "Force Power Adept",
+   "tree": "Force Adept",
+   "primary": true,
+   "origin": "field",
+   "survivesWithoutTags": true,
+   "survivesWithoutCategory": true
+  },
+  {
+   "id": "92a32b96dacae82d",
+   "name": "Knockdown Shot",
+   "tree": "Gunslinger",
+   "primary": true,
+   "origin": "category",
+   "survivesWithoutTags": true,
+   "survivesWithoutCategory": false
+  },
+  {
+   "id": "93a41831fe6bfc09",
+   "name": "Nowhere to Run",
+   "tree": "Bounty Hunter",
+   "primary": true,
+   "origin": "field",
+   "survivesWithoutTags": true,
+   "survivesWithoutCategory": true
   },
   {
    "id": "9491f34aad83dfb1",
    "name": "Shared Notoriety",
    "tree": "Infamy",
-   "primary": true
+   "primary": true,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "94aa0ef55bace440",
    "name": "Knowledge Is Life",
    "tree": "Bothan SpyNet",
-   "primary": true
+   "primary": true,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "94b1951d4795f602",
    "name": "Resilience Implant",
    "tree": "Implant",
-   "primary": true
+   "primary": true,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
+  },
+  {
+   "id": "96d4cfaa29cab92b",
+   "name": "Breaching Explosive",
+   "tree": "Military Engineer",
+   "primary": true,
+   "origin": "category",
+   "survivesWithoutTags": true,
+   "survivesWithoutCategory": false
+  },
+  {
+   "id": "9aa564522f427214",
+   "name": "Launch Point",
+   "tree": "Pathfinder",
+   "primary": true,
+   "origin": "field",
+   "survivesWithoutTags": true,
+   "survivesWithoutCategory": true
+  },
+  {
+   "id": "9ae263137f27e220",
+   "name": "Capture Droid",
+   "tree": "Improviser",
+   "primary": true,
+   "origin": "category",
+   "survivesWithoutTags": true,
+   "survivesWithoutCategory": false
   },
   {
    "id": "9bee4563b328def7",
    "name": "Sith Alchemy Specialist",
    "tree": "Sith Alchemy",
-   "primary": true
+   "primary": true,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "9f01b5c07bbd5f76",
    "name": "Manipulating Strike",
    "tree": "GenoHaradan",
-   "primary": true
+   "primary": true,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
+  },
+  {
+   "id": "a1e013f8cfc15a86",
+   "name": "Improved Quick Draw",
+   "tree": "Gunslinger",
+   "primary": true,
+   "origin": "category",
+   "survivesWithoutTags": true,
+   "survivesWithoutCategory": false
   },
   {
    "id": "a36c49bcd3fa4395",
    "name": "Warrior's Awareness",
    "tree": "Warrior",
-   "primary": true
+   "primary": true,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "a49074cc564848bb",
    "name": "Fear Me!",
    "tree": "Infamy",
-   "primary": true
+   "primary": true,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
+  },
+  {
+   "id": "a68be9fa4ffe98af",
+   "name": "Zone of Recuperation",
+   "tree": "Pathfinder",
+   "primary": true,
+   "origin": "field",
+   "survivesWithoutTags": true,
+   "survivesWithoutCategory": true
+  },
+  {
+   "id": "a6e38142447c64a9",
+   "name": "Ranged Flank",
+   "tree": "Gunslinger",
+   "primary": true,
+   "origin": "category",
+   "survivesWithoutTags": true,
+   "survivesWithoutCategory": false
+  },
+  {
+   "id": "a6fa8cb695f2882c",
+   "name": "Signature Item",
+   "tree": "Bounty Hunter",
+   "primary": true,
+   "origin": "field",
+   "survivesWithoutTags": true,
+   "survivesWithoutCategory": true
+  },
+  {
+   "id": "a7cb4c0dbcdd0fb8",
+   "name": "Shift",
+   "tree": "Assassin",
+   "primary": true,
+   "origin": "category",
+   "survivesWithoutTags": true,
+   "survivesWithoutCategory": false
   },
   {
    "id": "aa964478cf5b30e8",
    "name": "Virus",
    "tree": "Slicer",
-   "primary": true
+   "primary": true,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "b0ecc747a76deb72",
    "name": "Unsavory Reputation",
    "tree": "Infamy",
-   "primary": true
+   "primary": true,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "b1960cbc28776a53",
    "name": "Silent Takedown",
    "tree": "Infiltration",
-   "primary": true
+   "primary": true,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
+  },
+  {
+   "id": "b19ce52b1c965015",
+   "name": "Nowhere to Hide",
+   "tree": "Bounty Hunter",
+   "primary": true,
+   "origin": "field",
+   "survivesWithoutTags": true,
+   "survivesWithoutCategory": true
+  },
+  {
+   "id": "b1afecfea833a2a5",
+   "name": "Deceptive Shot",
+   "tree": "Gunslinger",
+   "primary": true,
+   "origin": "category",
+   "survivesWithoutTags": true,
+   "survivesWithoutCategory": false
+  },
+  {
+   "id": "b2b2176b7d9360e0",
+   "name": "Advantageous Positioning",
+   "tree": "Assassin",
+   "primary": true,
+   "origin": "category",
+   "survivesWithoutTags": true,
+   "survivesWithoutCategory": false
   },
   {
    "id": "b3255436ba174a17",
    "name": "Seen It All",
    "tree": "Veteran",
-   "primary": true
+   "primary": true,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "b3634baba7004d27",
    "name": "Cheap Trick",
    "tree": "Brigand",
-   "primary": true
+   "primary": true,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "b3ce8b08a8cb95fa",
    "name": "Lightsaber Evasion",
    "tree": "Force Hunter",
-   "primary": true
+   "primary": true,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "b47beb909e6fce63",
    "name": "Dark Side Savant",
    "tree": "Dark Side",
-   "primary": true
+   "primary": true,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "b4d45c6951deb889",
    "name": "Consumed by Darkness",
    "tree": "Dark Side",
-   "primary": true
+   "primary": true,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
+  },
+  {
+   "id": "b812c197daea93fd",
+   "name": "Multiattack Proficiency (pistols)",
+   "tree": "Gunslinger",
+   "primary": true,
+   "origin": "category",
+   "survivesWithoutTags": true,
+   "survivesWithoutCategory": false
+  },
+  {
+   "id": "b8472ec0498d2c20",
+   "name": "Custom Model",
+   "tree": "Improviser",
+   "primary": true,
+   "origin": "category",
+   "survivesWithoutTags": true,
+   "survivesWithoutCategory": false
   },
   {
    "id": "b85b92b788f7fa54",
    "name": "Distracting Apparition",
    "tree": "Guardian Spirit",
-   "primary": true
+   "primary": true,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "bae4b0a8a3554cca",
    "name": "Master Slicer",
    "tree": "Slicer",
-   "primary": true
+   "primary": true,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
+  },
+  {
+   "id": "bb484bdbc96c96ad",
+   "name": "Blind Shot",
+   "tree": "Gunslinger",
+   "primary": true,
+   "origin": "category",
+   "survivesWithoutTags": true,
+   "survivesWithoutCategory": false
   },
   {
    "id": "bd11bfb793096483",
    "name": "Inspire Fear III",
    "tree": "Infamy",
-   "primary": true
+   "primary": true,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
+  },
+  {
+   "id": "bd6cbb85cf7fc8a2",
+   "name": "Triangulate",
+   "tree": "Vanguard",
+   "primary": true,
+   "origin": "category",
+   "survivesWithoutTags": true,
+   "survivesWithoutCategory": false
   },
   {
    "id": "bd797d3f83d0f61f",
    "name": "Attuned",
    "tree": "Light Side",
-   "primary": true
+   "primary": true,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
+  },
+  {
+   "id": "bebc181408831371",
+   "name": "Master Mender",
+   "tree": "Shaper",
+   "primary": true,
+   "origin": "category",
+   "survivesWithoutTags": true,
+   "survivesWithoutCategory": false
   },
   {
    "id": "bef731c3743c2c7f",
    "name": "Precision Fire",
    "tree": "Force Hunter",
-   "primary": true
+   "primary": true,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
+  },
+  {
+   "id": "befa9b2b15e54ff0",
+   "name": "Droid Expert",
+   "tree": "Military Engineer",
+   "primary": true,
+   "origin": "category",
+   "survivesWithoutTags": true,
+   "survivesWithoutCategory": false
+  },
+  {
+   "id": "bf0c791fe21df919",
+   "name": "Skilled Implanter",
+   "tree": "Shaper",
+   "primary": true,
+   "origin": "category",
+   "survivesWithoutTags": true,
+   "survivesWithoutCategory": false
+  },
+  {
+   "id": "bf23bf3704382723",
+   "name": "Single Weapon Flourish II",
+   "tree": "Melee Duelist",
+   "primary": true,
+   "origin": "category",
+   "survivesWithoutTags": true,
+   "survivesWithoutCategory": false
   },
   {
    "id": "c11e9edfda40c53d",
    "name": "Bothan Resources",
    "tree": "Bothan SpyNet",
-   "primary": true
+   "primary": true,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "c1be1f29c00436d5",
    "name": "Transfer Essence",
    "tree": "Dark Side",
-   "primary": true
+   "primary": true,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "c59de6f440c92832",
    "name": "Cause Mutation",
    "tree": "Sith Alchemy",
-   "primary": true
+   "primary": true,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
+  },
+  {
+   "id": "c740ed344484a2b5",
+   "name": "Advantageous Strike",
+   "tree": "Melee Duelist",
+   "primary": true,
+   "origin": "category",
+   "survivesWithoutTags": true,
+   "survivesWithoutCategory": false
   },
   {
    "id": "c83f18465c3b9d91",
    "name": "Revenge",
    "tree": "Dark Side",
-   "primary": true
+   "primary": true,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "cb0dcc59f7ced910",
    "name": "Strength Implant",
    "tree": "Implant",
-   "primary": true
+   "primary": true,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
+  },
+  {
+   "id": "cc96a480b69ddc59",
+   "name": "Bunker Blaster",
+   "tree": "Pathfinder",
+   "primary": true,
+   "origin": "field",
+   "survivesWithoutTags": true,
+   "survivesWithoutCategory": true
   },
   {
    "id": "ccaa66ed749e3317",
    "name": "Mind Probe",
    "tree": "Telepath",
-   "primary": true
+   "primary": true,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "cccea4e91352482a",
    "name": "Tested in Battle",
    "tree": "Veteran",
-   "primary": true
+   "primary": true,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "cdcdb85912d9eb67",
    "name": "Force Blank",
    "tree": "Force Hunter",
-   "primary": true
+   "primary": true,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "cddfb9833c7d3344",
    "name": "Channel Vitality",
    "tree": "Mystic",
-   "primary": true
+   "primary": true,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "cdf46b8cdde49733",
    "name": "Knowledge Is Power",
    "tree": "Bothan SpyNet",
-   "primary": true
+   "primary": true,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "cf4b1e5b126a2a7e",
    "name": "Inspire Fear I",
    "tree": "Infamy",
-   "primary": true
+   "primary": true,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "d054d594fe0ceba2",
    "name": "At Peace",
    "tree": "Light Side",
-   "primary": true
+   "primary": true,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "d26506bfba104470",
    "name": "Electronic Trail",
    "tree": "Bounty Hunter",
-   "primary": true
+   "primary": true,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "d46612d82307f0db",
    "name": "Drain Knowledge",
    "tree": "Dark Side",
-   "primary": true
+   "primary": true,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
+  },
+  {
+   "id": "d4a94695e27f60a1",
+   "name": "Pistol Duelist",
+   "tree": "Gunslinger",
+   "primary": true,
+   "origin": "field",
+   "survivesWithoutTags": true,
+   "survivesWithoutCategory": true
   },
   {
    "id": "d6d3b0a2ec01ca9a",
    "name": "Speed Implant",
    "tree": "Implant",
-   "primary": true
+   "primary": true,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
+  },
+  {
+   "id": "d6f62f5d8b003e14",
+   "name": "Enhanced Vision",
+   "tree": "Vanguard",
+   "primary": true,
+   "origin": "category",
+   "survivesWithoutTags": true,
+   "survivesWithoutCategory": false
+  },
+  {
+   "id": "d7870d0940a3ce0b",
+   "name": "Ranged Disarm",
+   "tree": "Gunslinger",
+   "primary": true,
+   "origin": "category",
+   "survivesWithoutTags": true,
+   "survivesWithoutCategory": false
+  },
+  {
+   "id": "da891615bb87a9e6",
+   "name": "Breach Cover",
+   "tree": "Military Engineer",
+   "primary": true,
+   "origin": "category",
+   "survivesWithoutTags": true,
+   "survivesWithoutCategory": false
+  },
+  {
+   "id": "dc61d67946b1c1d6",
+   "name": "Bigger Bang",
+   "tree": "Improviser",
+   "primary": true,
+   "origin": "category",
+   "survivesWithoutTags": true,
+   "survivesWithoutCategory": false
+  },
+  {
+   "id": "e19c06b6dfc7a703",
+   "name": "Seize the Moment",
+   "tree": "Outlaw",
+   "primary": true,
+   "origin": "field",
+   "survivesWithoutTags": true,
+   "survivesWithoutCategory": true
   },
   {
    "id": "e2690af7f6700f95",
    "name": "Knowledge Is Strength",
    "tree": "Bothan SpyNet",
-   "primary": true
+   "primary": true,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
+  },
+  {
+   "id": "e49c62d72e8b28d3",
+   "name": "Tangle Up",
+   "tree": "Outlaw",
+   "primary": true,
+   "origin": "field",
+   "survivesWithoutTags": true,
+   "survivesWithoutCategory": true
+  },
+  {
+   "id": "e53cad01df3f27dd",
+   "name": "Tech Savant",
+   "tree": "Military Engineer",
+   "primary": true,
+   "origin": "category",
+   "survivesWithoutTags": true,
+   "survivesWithoutCategory": false
+  },
+  {
+   "id": "e857b1e13073b0a9",
+   "name": "Safe Passage",
+   "tree": "Pathfinder",
+   "primary": true,
+   "origin": "field",
+   "survivesWithoutTags": true,
+   "survivesWithoutCategory": true
+  },
+  {
+   "id": "f0ade00000000001",
+   "name": "Instrument of the Force",
+   "tree": "Force Adept",
+   "primary": true,
+   "origin": "field",
+   "survivesWithoutTags": true,
+   "survivesWithoutCategory": true
+  },
+  {
+   "id": "f0ade00000000002",
+   "name": "Long Call",
+   "tree": "Force Adept",
+   "primary": true,
+   "origin": "field",
+   "survivesWithoutTags": true,
+   "survivesWithoutCategory": true
   },
   {
    "id": "f5ebaf5d77257e0c",
    "name": "Wrath of the Dark Side",
    "tree": "Dark Side",
-   "primary": true
+   "primary": true,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
+  },
+  {
+   "id": "f75fa286772de3e7",
+   "name": "Shellshock",
+   "tree": "Vanguard",
+   "primary": true,
+   "origin": "category",
+   "survivesWithoutTags": true,
+   "survivesWithoutCategory": false
+  },
+  {
+   "id": "f7b8af6b2e6b50c3",
+   "name": "Maximize Cover",
+   "tree": "Vanguard",
+   "primary": true,
+   "origin": "category",
+   "survivesWithoutTags": true,
+   "survivesWithoutCategory": false
+  },
+  {
+   "id": "f7bc7dab38c43fb5",
+   "name": "Out of Nowhere",
+   "tree": "Melee Duelist",
+   "primary": true,
+   "origin": "category",
+   "survivesWithoutTags": true,
+   "survivesWithoutCategory": false
+  },
+  {
+   "id": "f9047f30ef6712af",
+   "name": "Expert Shaper",
+   "tree": "Shaper",
+   "primary": true,
+   "origin": "category",
+   "survivesWithoutTags": true,
+   "survivesWithoutCategory": false
+  },
+  {
+   "id": "fb495a33cd53da43",
+   "name": "Invisible Attacker",
+   "tree": "Vanguard",
+   "primary": true,
+   "origin": "category",
+   "survivesWithoutTags": true,
+   "survivesWithoutCategory": false
+  },
+  {
+   "id": "fbe4b1551ef49a84",
+   "name": "Sabotage Device",
+   "tree": "Military Engineer",
+   "primary": true,
+   "origin": "category",
+   "survivesWithoutTags": true,
+   "survivesWithoutCategory": false
+  },
+  {
+   "id": "fc91564e800719be",
+   "name": "Biotech Mastery",
+   "tree": "Shaper",
+   "primary": true,
+   "origin": "category",
+   "survivesWithoutTags": true,
+   "survivesWithoutCategory": false
+  },
+  {
+   "id": "fc986d810732ff3a",
+   "name": "Master of Elegance",
+   "tree": "Melee Duelist",
+   "primary": true,
+   "origin": "category",
+   "survivesWithoutTags": true,
+   "survivesWithoutCategory": false
+  },
+  {
+   "id": "fd35b51c26fa0d5c",
+   "name": "Confounding Attack",
+   "tree": "Outlaw",
+   "primary": true,
+   "origin": "field",
+   "survivesWithoutTags": true,
+   "survivesWithoutCategory": true
+  },
+  {
+   "id": "ffdca1739d401042",
+   "name": "Opportunistic Defense",
+   "tree": "Outlaw",
+   "primary": true,
+   "origin": "field",
+   "survivesWithoutTags": true,
+   "survivesWithoutCategory": true
   }
  ],
  "pollutingCreditsThatStayGone": [
@@ -858,1789 +1557,3214 @@
    "id": "008b28849b74234d",
    "name": "Dark Healing",
    "tree": "Dark Side",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "00deb8b4cce303b6",
    "name": "Force Intuition",
    "tree": "Light Side",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "00deb8b4cce303b6",
    "name": "Force Intuition",
    "tree": "Dark Side",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "014d291a6e16cc12",
    "name": "Friend or Foe",
    "tree": "Control",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "0178e98b17ab2bcc",
    "name": "Force Warning",
    "tree": "Light Side",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "01bcee2365b82ce6",
    "name": "Unreadable",
    "tree": "Control",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
+  },
+  {
+   "id": "028e4e50565971ee",
+   "name": "Temporal Awareness",
+   "tree": "Bounty Hunter",
+   "primary": false,
+   "origin": "field",
+   "survivesWithoutTags": true,
+   "survivesWithoutCategory": true
+  },
+  {
+   "id": "084423db749d2bb3",
+   "name": "Closed Mind",
+   "tree": "Force Adept",
+   "primary": false,
+   "origin": "category",
+   "survivesWithoutTags": true,
+   "survivesWithoutCategory": false
   },
   {
    "id": "0890f9e1c0858993",
    "name": "Recall",
    "tree": "Light Side",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
+  },
+  {
+   "id": "08e904def2f9ea5c",
+   "name": "Esoteric Technique",
+   "tree": "Force Adept",
+   "primary": false,
+   "origin": "category",
+   "survivesWithoutTags": true,
+   "survivesWithoutCategory": false
   },
   {
    "id": "08fc3247755c5ebe",
    "name": "Dark Scourge",
    "tree": "Light Side",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "08fc3247755c5ebe",
    "name": "Dark Scourge",
    "tree": "Dark Side",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "0a65325a98b108a7",
    "name": "Soothing Presence",
    "tree": "Mystic",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
+  },
+  {
+   "id": "0a65325a98b108a7",
+   "name": "Soothing Presence",
+   "tree": "Force Adept",
+   "primary": false,
+   "origin": "category",
+   "survivesWithoutTags": true,
+   "survivesWithoutCategory": false
   },
   {
    "id": "0adc25cfaa35147a",
    "name": "Insight of the Force",
    "tree": "Light Side",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "0bbfcac85b09416a",
    "name": "Siang Lance Mastery",
    "tree": "Duelist",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "0bc102751285d17c",
    "name": "Defensive Acuity",
    "tree": "Light Side",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "0c636cdbb63cdba3",
    "name": "Greater Force Talisman",
    "tree": "Mystic",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
+  },
+  {
+   "id": "0c636cdbb63cdba3",
+   "name": "Greater Force Talisman",
+   "tree": "Force Adept",
+   "primary": false,
+   "origin": "category",
+   "survivesWithoutTags": true,
+   "survivesWithoutCategory": false
   },
   {
    "id": "0dde210ea6d197ef",
    "name": "Resilience",
    "tree": "Light Side",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "0e36a04342959256",
    "name": "Cower Enemies",
    "tree": "Force Hunter",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "0e36a04342959256",
    "name": "Cower Enemies",
    "tree": "Mystic",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
+  },
+  {
+   "id": "0e36a04342959256",
+   "name": "Cower Enemies",
+   "tree": "Force Adept",
+   "primary": false,
+   "origin": "category",
+   "survivesWithoutTags": true,
+   "survivesWithoutCategory": false
   },
   {
    "id": "0e6a784501100693",
    "name": "Healing Boost",
    "tree": "Light Side",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "0fa7aace1d7606c6",
    "name": "Innocuous",
    "tree": "Opportunist",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "0fa7aace1d7606c6",
    "name": "Innocuous",
    "tree": "Control",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "0fd8fc8cfae6f516",
    "name": "Impose Hesitation",
    "tree": "Control",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "11cae48e1213c407",
    "name": "Telekinetic Power",
    "tree": "Light Side",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "11cae48e1213c407",
    "name": "Telekinetic Power",
    "tree": "Control",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "12eea831f06c45f7",
    "name": "Focused Force Talisman",
    "tree": "Mystic",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
+  },
+  {
+   "id": "12eea831f06c45f7",
+   "name": "Focused Force Talisman",
+   "tree": "Force Adept",
+   "primary": false,
+   "origin": "category",
+   "survivesWithoutTags": true,
+   "survivesWithoutCategory": false
   },
   {
    "id": "14306c13238ccb83",
    "name": "Immovable",
    "tree": "Light Side",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "153f4b3c6510023d",
    "name": "Visionary Defense",
    "tree": "Light Side",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "1681031c6828d556",
    "name": "Improved Soft Cover",
    "tree": "Opportunist",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "1681031c6828d556",
    "name": "Improved Soft Cover",
    "tree": "Control",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "175c46931a9e474a",
    "name": "Observant",
    "tree": "Awareness",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "175c46931a9e474a",
    "name": "Observant",
    "tree": "Leadership",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "181da7f36b9fba9d",
    "name": "Force Treatment",
    "tree": "Mystic",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "196b54d69bd54983",
    "name": "Telekinetic Strike",
    "tree": "Control",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "198b68c0ca770ad7",
    "name": "Mobile Combatant",
    "tree": "Light Side",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
+  },
+  {
+   "id": "19ba6767726bdc86",
+   "name": "Steel Mind",
+   "tree": "Bounty Hunter",
+   "primary": false,
+   "origin": "category",
+   "survivesWithoutTags": true,
+   "survivesWithoutCategory": false
   },
   {
    "id": "1e7a0010a589b870",
    "name": "Dirty Tactics",
    "tree": "Control",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "202a117b1b203951",
    "name": "Psychic Defenses",
    "tree": "Mystic",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
+  },
+  {
+   "id": "202a117b1b203951",
+   "name": "Psychic Defenses",
+   "tree": "Force Adept",
+   "primary": false,
+   "origin": "category",
+   "survivesWithoutTags": true,
+   "survivesWithoutCategory": false
+  },
+  {
+   "id": "203464310c5c2492",
+   "name": "Telekinetic Resistance",
+   "tree": "Bounty Hunter",
+   "primary": false,
+   "origin": "category",
+   "survivesWithoutTags": true,
+   "survivesWithoutCategory": false
   },
   {
    "id": "2056998b5afa4e00",
    "name": "Drain Force",
    "tree": "Dark Side",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
+  },
+  {
+   "id": "223ba62ffbabb9c2",
+   "name": "Hailfire",
+   "tree": "Gunslinger",
+   "primary": false,
+   "origin": "category",
+   "survivesWithoutTags": true,
+   "survivesWithoutCategory": false
   },
   {
    "id": "226aea42fcdd30b0",
    "name": "Jedi Hunter",
    "tree": "Light Side",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "226b0a05cebd81ab",
    "name": "Intentional Crash",
    "tree": "Control",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "236e5a8ef7bbcfa6",
    "name": "Dampen Presence",
    "tree": "Light Side",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "251462d5e3aaa4ce",
    "name": "Jedi Network",
    "tree": "Light Side",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "252285ae33a2a2d5",
    "name": "Uncanny Instincts",
    "tree": "Duelist",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "252285ae33a2a2d5",
    "name": "Uncanny Instincts",
    "tree": "Opportunist",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "25dd9d9b3b66c048",
    "name": "Telepathic Link",
    "tree": "Light Side",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "25f285b1cf4cff35",
    "name": "Pursuit",
    "tree": "Control",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "291937f2d45a01bc",
    "name": "Gradual Resistance",
    "tree": "Light Side",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "299c45ac33bf1485",
    "name": "Visionary Attack",
    "tree": "Light Side",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "2acaa4620d396fe9",
    "name": "Force Interrogation",
    "tree": "Force Hunter",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "2acaa4620d396fe9",
    "name": "Force Interrogation",
    "tree": "Mystic",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
+  },
+  {
+   "id": "2acaa4620d396fe9",
+   "name": "Force Interrogation",
+   "tree": "Force Adept",
+   "primary": false,
+   "origin": "category",
+   "survivesWithoutTags": true,
+   "survivesWithoutCategory": false
   },
   {
    "id": "2afe84b999aa1c43",
    "name": "Exposing Strike",
    "tree": "Light Side",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "2b4ffff03274a825",
    "name": "Dark Retaliation",
    "tree": "Light Side",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "2b4ffff03274a825",
    "name": "Dark Retaliation",
    "tree": "Dark Side",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
+  },
+  {
+   "id": "2c1268268212d135",
+   "name": "Snap Shot",
+   "tree": "Gunslinger",
+   "primary": false,
+   "origin": "category",
+   "survivesWithoutTags": true,
+   "survivesWithoutCategory": false
   },
   {
    "id": "2c18d68d5e294dc8",
    "name": "Natural Healing",
    "tree": "Control",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "2da74bc3f4d45d2d",
    "name": "Perfect Telepathy",
    "tree": "Mystic",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
+  },
+  {
+   "id": "2da74bc3f4d45d2d",
+   "name": "Perfect Telepathy",
+   "tree": "Force Adept",
+   "primary": false,
+   "origin": "category",
+   "survivesWithoutTags": true,
+   "survivesWithoutCategory": false
   },
   {
    "id": "2db9534917366b8d",
    "name": "Heightened Awareness",
    "tree": "Awareness",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "2dc6ad1667133f2d",
    "name": "Share Force Secret",
    "tree": "Light Side",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "2e96f06be6b9def8",
    "name": "Dark Side Scourge",
    "tree": "Light Side",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "2e96f06be6b9def8",
    "name": "Dark Side Scourge",
    "tree": "Dark Side",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "2f00c50f3bf6bf5a",
    "name": "Share Talent",
    "tree": "Light Side",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "2fc019fa8c4108a7",
    "name": "Focused Attack",
    "tree": "Dark Side",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
+  },
+  {
+   "id": "2fdf215a5da99e00",
+   "name": "Adrenaline Implant",
+   "tree": "Shaper",
+   "primary": false,
+   "origin": "category",
+   "survivesWithoutTags": true,
+   "survivesWithoutCategory": false
   },
   {
    "id": "317400e9ea2b66c7",
    "name": "Multiattack Proficiency (lightsabers)",
    "tree": "Light Side",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "321a3e9b59e7c7d7",
    "name": "Consular's Wisdom",
    "tree": "Light Side",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "3282f9b1d3769f9c",
    "name": "Unarmed Counterstrike",
    "tree": "Duelist",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "328a880e60f2320f",
    "name": "Equilibrium",
    "tree": "Dark Side",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "328a880e60f2320f",
    "name": "Equilibrium",
    "tree": "Force Adept",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "3331d4b2b88e446f",
    "name": "Resist the Dark Side",
    "tree": "Light Side",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "3331d4b2b88e446f",
    "name": "Resist the Dark Side",
    "tree": "Dark Side",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "3340f268613c0349",
    "name": "Cunning Distraction",
    "tree": "Opportunist",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "3340f268613c0349",
    "name": "Cunning Distraction",
    "tree": "Control",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "35cbdbe9c91ba1d0",
    "name": "Skilled Advisor",
    "tree": "Light Side",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "3713870862584269",
    "name": "Soothe",
    "tree": "Light Side",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "379019c29b37d717",
    "name": "Unarmed Parry",
    "tree": "Duelist",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "37ee909a7de54768",
    "name": "Channel Anger",
    "tree": "Mystic",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "37ee909a7de54768",
    "name": "Channel Anger",
    "tree": "Dark Side",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "3991e671da41995a",
    "name": "Find an Opening",
    "tree": "Duelist",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "3991e671da41995a",
    "name": "Find an Opening",
    "tree": "Opportunist",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "3aeee38a6c7b7f12",
    "name": "Double Up",
    "tree": "Duelist",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "3aeee38a6c7b7f12",
    "name": "Double Up",
    "tree": "Opportunist",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "3d3806bd03110ee8",
    "name": "Improved Consular's Vitality",
    "tree": "Light Side",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "3e18acc25d6c03db",
    "name": "Steel Resolve",
    "tree": "Light Side",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "3f5b1b3566f16ff5",
    "name": "Taint of the Dark Side",
    "tree": "Light Side",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "3f5b1b3566f16ff5",
    "name": "Taint of the Dark Side",
    "tree": "Dark Side",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "437443efb52249aa",
    "name": "Aura of Freedom",
    "tree": "Light Side",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "437443efb52249aa",
    "name": "Aura of Freedom",
    "tree": "Dark Side",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "43ee5741f4b2375c",
    "name": "Cover Your Tracks",
    "tree": "Light Side",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "443373859f1ecca3",
    "name": "Force Pilot",
    "tree": "Light Side",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "443373859f1ecca3",
    "name": "Force Pilot",
    "tree": "Dark Side",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "443bfe7fa33dd627",
    "name": "Telepathic Intruder",
    "tree": "Mystic",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
+  },
+  {
+   "id": "443bfe7fa33dd627",
+   "name": "Telepathic Intruder",
+   "tree": "Force Adept",
+   "primary": false,
+   "origin": "category",
+   "survivesWithoutTags": true,
+   "survivesWithoutCategory": false
   },
   {
    "id": "4635850263c7bf94",
    "name": "Misplaced Loyalty",
    "tree": "Control",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "463ae052e705eaf3",
    "name": "Wrong Decision",
    "tree": "Control",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "467accea4a3c8cbd",
    "name": "Sense Deception",
    "tree": "Light Side",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "475fef43d75f3bff",
    "name": "Nonlethal Tactics",
    "tree": "Control",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "488aaac69a9829bc",
    "name": "Transfer Power",
    "tree": "Light Side",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "4acfb3b5a7a402fd",
    "name": "Competitive Edge",
    "tree": "Control",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "4ae840aaa4e0eba0",
    "name": "Greater Focused Force Talisman",
    "tree": "Mystic",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
+  },
+  {
+   "id": "4ae840aaa4e0eba0",
+   "name": "Greater Focused Force Talisman",
+   "tree": "Force Adept",
+   "primary": false,
+   "origin": "category",
+   "survivesWithoutTags": true,
+   "survivesWithoutCategory": false
   },
   {
    "id": "4df672d524de7aa0",
    "name": "Preternatural Senses",
    "tree": "Duelist",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "4df672d524de7aa0",
    "name": "Preternatural Senses",
    "tree": "Opportunist",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
+  },
+  {
+   "id": "4ec766d6818c373f",
+   "name": "Mystic Mastery",
+   "tree": "Force Adept",
+   "primary": false,
+   "origin": "category",
+   "survivesWithoutTags": true,
+   "survivesWithoutCategory": false
   },
   {
    "id": "4fa3e301abad7a48",
    "name": "Force Veil",
    "tree": "Light Side",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "50073b86c51c52cd",
    "name": "Corporate Clout",
    "tree": "Control",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "51a8e7a193955f11",
    "name": "Power of Hatred",
    "tree": "Dark Side",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "5218d5971b78119b",
    "name": "Empower Weapon",
    "tree": "Mystic",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
+  },
+  {
+   "id": "5218d5971b78119b",
+   "name": "Empower Weapon",
+   "tree": "Force Adept",
+   "primary": false,
+   "origin": "category",
+   "survivesWithoutTags": true,
+   "survivesWithoutCategory": false
+  },
+  {
+   "id": "52a4914cca90cc4d",
+   "name": "Guaranteed Shot",
+   "tree": "Gunslinger",
+   "primary": false,
+   "origin": "category",
+   "survivesWithoutTags": true,
+   "survivesWithoutCategory": false
   },
   {
    "id": "533867af3de50833",
    "name": "Damaging Deception",
    "tree": "Opportunist",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "533867af3de50833",
    "name": "Damaging Deception",
    "tree": "Control",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "53b0aa17a95ba670",
    "name": "Competitive Drive",
    "tree": "Control",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "53c5a847e3396d13",
    "name": "Apprentice Boon",
    "tree": "Light Side",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "546034f073eab1fd",
    "name": "Psychic Citadel",
    "tree": "Mystic",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
+  },
+  {
+   "id": "546034f073eab1fd",
+   "name": "Psychic Citadel",
+   "tree": "Force Adept",
+   "primary": false,
+   "origin": "category",
+   "survivesWithoutTags": true,
+   "survivesWithoutCategory": false
   },
   {
    "id": "55379010171cf765",
    "name": "Rebuke the Dark",
    "tree": "Light Side",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "55379010171cf765",
    "name": "Rebuke the Dark",
    "tree": "Dark Side",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
+  },
+  {
+   "id": "554e245686231855",
+   "name": "Shoot from the Hip",
+   "tree": "Gunslinger",
+   "primary": false,
+   "origin": "category",
+   "survivesWithoutTags": true,
+   "survivesWithoutCategory": false
+  },
+  {
+   "id": "5621a55aea1936b2",
+   "name": "Strong-Willed",
+   "tree": "Bounty Hunter",
+   "primary": false,
+   "origin": "category",
+   "survivesWithoutTags": true,
+   "survivesWithoutCategory": false
   },
   {
    "id": "566e0020c5866222",
    "name": "Ignore Damage Reduction",
    "tree": "Duelist",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "57823500e878124a",
    "name": "Jedi Battle Commander",
    "tree": "Light Side",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "58c3d63d94288eb2",
    "name": "Deadly Repercussions",
    "tree": "Control",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
+  },
+  {
+   "id": "58e37d40d3aa7d4b",
+   "name": "Precision Implant",
+   "tree": "Shaper",
+   "primary": false,
+   "origin": "category",
+   "survivesWithoutTags": true,
+   "survivesWithoutCategory": false
+  },
+  {
+   "id": "5cd160036d6bba05",
+   "name": "Just What Is Needed",
+   "tree": "Improviser",
+   "primary": false,
+   "origin": "category",
+   "survivesWithoutTags": true,
+   "survivesWithoutCategory": false
   },
   {
    "id": "5cd160036d6bba05",
    "name": "Just What Is Needed",
    "tree": "Control",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "5d682aa33468b683",
    "name": "Impart Knowledge",
    "tree": "Light Side",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "5ea9a4c30dff1ac8",
    "name": "Twin Weapon Style",
    "tree": "Light Side",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "5fd19be0deca1115",
    "name": "Juyo",
    "tree": "Dark Side",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "61302cbe9ccdea12",
    "name": "Renew Vision",
    "tree": "Light Side",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "627bd3abd30b973f",
    "name": "Power of the Dark Side",
    "tree": "Light Side",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "63143040b7c229a7",
    "name": "Scholarly Knowledge",
    "tree": "Light Side",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
+  },
+  {
+   "id": "661c2c0665e911f6",
+   "name": "Findsman Ceremonies",
+   "tree": "Bounty Hunter",
+   "primary": false,
+   "origin": "field",
+   "survivesWithoutTags": true,
+   "survivesWithoutCategory": true
   },
   {
    "id": "66b23ee79bd33bf1",
    "name": "Force Talisman",
    "tree": "Mystic",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
+  },
+  {
+   "id": "66b23ee79bd33bf1",
+   "name": "Force Talisman",
+   "tree": "Force Adept",
+   "primary": false,
+   "origin": "category",
+   "survivesWithoutTags": true,
+   "survivesWithoutCategory": false
   },
   {
    "id": "6714ab8e28708f50",
    "name": "Fortified Body",
    "tree": "Mystic",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "675bfa10691b60f6",
    "name": "Combat Trance",
    "tree": "Light Side",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "67bddb17ae2770f3",
    "name": "Teräs Käsi Basics",
    "tree": "Duelist",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "69420a9a5ff5d8b9",
    "name": "Rapid Alchemy",
    "tree": "Dark Side",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "69da2f9701ef65b4",
    "name": "Teräs Käsi Mastery",
    "tree": "Duelist",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "6a52361527b64513",
    "name": "Entangler",
    "tree": "Control",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "6c62f35fddd45d66",
    "name": "Distracting Shout",
    "tree": "Opportunist",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "6c62f35fddd45d66",
    "name": "Distracting Shout",
    "tree": "Control",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "6e3c1c77acfb0141",
    "name": "Improved Jury-Rig",
    "tree": "Control",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "6fe17dc4f0f03c12",
    "name": "Lightsaber Specialist",
    "tree": "Light Side",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "705f100f5703e707",
    "name": "Improved Lightsaber Throw",
    "tree": "Light Side",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "708a47d1be414990",
    "name": "Illusion",
    "tree": "Light Side",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "7355c8afe9509dad",
    "name": "Close Maneuvering",
    "tree": "Light Side",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "76ff0ba56aa3864b",
    "name": "Inquisition",
    "tree": "Force Hunter",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "76ff0ba56aa3864b",
    "name": "Inquisition",
    "tree": "Mystic",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
+  },
+  {
+   "id": "76ff0ba56aa3864b",
+   "name": "Inquisition",
+   "tree": "Force Adept",
+   "primary": false,
+   "origin": "category",
+   "survivesWithoutTags": true,
+   "survivesWithoutCategory": false
   },
   {
    "id": "776a0fa8ae532ccc",
    "name": "Affliction",
    "tree": "Dark Side",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "797de6f9dab4d578",
    "name": "Persistent Haze",
    "tree": "Light Side",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "7acc479dee2d3b10",
    "name": "Adept Negotiator",
    "tree": "Light Side",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "7d02251f13fd5645",
    "name": "Share Force Technique",
    "tree": "Light Side",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
+  },
+  {
+   "id": "7d30702a5a2640a4",
+   "name": "Close Contact",
+   "tree": "Gunslinger",
+   "primary": false,
+   "origin": "category",
+   "survivesWithoutTags": true,
+   "survivesWithoutCategory": false
   },
   {
    "id": "7e0b34a95b5f465d",
    "name": "Begin Attack Run",
    "tree": "Light Side",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "81154e9fc33e43b3",
    "name": "Direct",
    "tree": "Light Side",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "83dce0bf42928741",
    "name": "Force Revive",
    "tree": "Light Side",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "8488911915ea094d",
    "name": "Respected Officer",
    "tree": "Control",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "84d4e92693185028",
    "name": "Improvised Device",
    "tree": "Control",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "852bca9332684a2b",
    "name": "Shield Gauntlet Defense",
    "tree": "Duelist",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
+  },
+  {
+   "id": "85318987b48d5caa",
+   "name": "Excellent Kit",
+   "tree": "Improviser",
+   "primary": false,
+   "origin": "category",
+   "survivesWithoutTags": true,
+   "survivesWithoutCategory": false
   },
   {
    "id": "85318987b48d5caa",
    "name": "Excellent Kit",
    "tree": "Control",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "86565bbe8b8fd1a2",
    "name": "Force Throw",
    "tree": "Mystic",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
+  },
+  {
+   "id": "86565bbe8b8fd1a2",
+   "name": "Force Throw",
+   "tree": "Force Adept",
+   "primary": false,
+   "origin": "category",
+   "survivesWithoutTags": true,
+   "survivesWithoutCategory": false
   },
   {
    "id": "871638a983029bc4",
    "name": "Demand Surrender",
    "tree": "Light Side",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "89a8c710bb68901c",
    "name": "Dark Healing Field",
    "tree": "Dark Side",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "89d557f60251f4a5",
    "name": "Strong Grab",
    "tree": "Control",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "8b3cb561c294fa11",
    "name": "Crippling Strike",
    "tree": "Mystic",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "8b3cb561c294fa11",
    "name": "Crippling Strike",
    "tree": "Dark Side",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "8bd201bb22c8da3a",
    "name": "Clear Mind",
    "tree": "Light Side",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "8c47c02ec74fa858",
    "name": "Difficult to Sense",
    "tree": "Light Side",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "8d14ab116a78dfd6",
    "name": "Improved Manipulating Strike",
    "tree": "Control",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "8e1ee6d1c756450f96d4d5eaa9657e47",
    "name": "Embrace the Dark Side",
    "tree": "Light Side",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "8e1ee6d1c756450f96d4d5eaa9657e47",
    "name": "Embrace the Dark Side",
    "tree": "Dark Side",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "8f64ec5c81784b2d",
    "name": "Tyia Adept",
    "tree": "Dark Side",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "902c2cef66cf4df6",
    "name": "Reap Retribution",
    "tree": "Light Side",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "90820963f87dd268",
    "name": "Krath Illusions",
    "tree": "Dark Side",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "90d9a2e7dbc160d1",
    "name": "Force Power Adept",
    "tree": "Mystic",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "9379daa94a228c04",
    "name": "Block",
    "tree": "Dark Side",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "9408056ede41b43f",
    "name": "Cast Suspicion",
    "tree": "Control",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
+  },
+  {
+   "id": "94b1951d4795f602",
+   "name": "Resilience Implant",
+   "tree": "Shaper",
+   "primary": false,
+   "origin": "category",
+   "survivesWithoutTags": true,
+   "survivesWithoutCategory": false
+  },
+  {
+   "id": "970d8d555645604d",
+   "name": "Old Faithful",
+   "tree": "Gunslinger",
+   "primary": false,
+   "origin": "category",
+   "survivesWithoutTags": true,
+   "survivesWithoutCategory": false
   },
   {
    "id": "974c24246ed2b972",
    "name": "Distress to Discord",
    "tree": "Control",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "97a771d1f4627521",
    "name": "Dark Side Bane",
    "tree": "Light Side",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "97a771d1f4627521",
    "name": "Dark Side Bane",
    "tree": "Dark Side",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "97faaefe3487494c",
    "name": "Medical Droid",
    "tree": "Control",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "98c720992c5b428e",
    "name": "Focus Terror",
    "tree": "Dark Side",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "991dbfc3a436b5a1",
    "name": "Squadron Maneuvers",
    "tree": "Light Side",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "9992fb4ee6ab40df",
    "name": "Tripwire",
    "tree": "Control",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "9ae263137f27e220",
    "name": "Capture Droid",
    "tree": "Control",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
+  },
+  {
+   "id": "9b337a844329fa17",
+   "name": "Blowback",
+   "tree": "Gunslinger",
+   "primary": false,
+   "origin": "category",
+   "survivesWithoutTags": true,
+   "survivesWithoutCategory": false
   },
   {
    "id": "9bee4563b328def7",
    "name": "Sith Alchemy Specialist",
    "tree": "Dark Side",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "9c88f3f82e6e2082",
    "name": "Bonded Mount",
    "tree": "Mystic",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "9c88f3f82e6e2082",
    "name": "Bonded Mount",
    "tree": "Dark Side",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
+  },
+  {
+   "id": "9c88f3f82e6e2082",
+   "name": "Bonded Mount",
+   "tree": "Force Adept",
+   "primary": false,
+   "origin": "category",
+   "survivesWithoutTags": true,
+   "survivesWithoutCategory": false
   },
   {
    "id": "9dc39670f94a6ef2",
    "name": "Master Negotiator",
    "tree": "Light Side",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "9f01b5c07bbd5f76",
    "name": "Manipulating Strike",
    "tree": "Control",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "a0ace6dcc1c67d48",
    "name": "Elusive Target",
    "tree": "Light Side",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "a358402a9fc26c02",
    "name": "Force Perception",
    "tree": "Light Side",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "a36c49bcd3fa4395",
    "name": "Warrior's Awareness",
    "tree": "Awareness",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "a3ac90e84127805d",
    "name": "Ambush",
    "tree": "Control",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "a40e25585a6f8c2b",
    "name": "Force Deception",
    "tree": "Dark Side",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "a64c01df9eba3147",
    "name": "Masterwork Lightsaber",
    "tree": "Light Side",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "a6ad65c1275faa33",
    "name": "Force Treatment",
    "tree": "Light Side",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "a8347dda0f619f2d",
    "name": "Adversary Lore",
    "tree": "Light Side",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "aa5b9fe99274274a",
    "name": "Prepared for Danger",
    "tree": "Light Side",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "aa9b67c6737c2549",
    "name": "Attune Weapon",
    "tree": "Mystic",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
+  },
+  {
+   "id": "aa9b67c6737c2549",
+   "name": "Attune Weapon",
+   "tree": "Force Adept",
+   "primary": false,
+   "origin": "category",
+   "survivesWithoutTags": true,
+   "survivesWithoutCategory": false
   },
   {
    "id": "ab4b51be30dfa9bc",
    "name": "Shoto Pin",
    "tree": "Light Side",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "ab9f1497d0b2d7c2",
    "name": "WatchCircle Initiate",
    "tree": "Light Side",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "abe485644b195f0b",
    "name": "Vigilance",
    "tree": "Light Side",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "ac11f849b15c784c",
    "name": "Quick Modification",
    "tree": "Light Side",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "acb9d2dddeea7efd",
    "name": "Improved Quick Draw (lightsabers)",
    "tree": "Light Side",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "b03db168b3f23da0",
    "name": "Improved Dark Healing",
    "tree": "Dark Side",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "b0898acb0a19a3cd",
    "name": "Force Flow",
    "tree": "Light Side",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
+  },
+  {
+   "id": "b08c8efbea22f604",
+   "name": "Omens",
+   "tree": "Bounty Hunter",
+   "primary": false,
+   "origin": "field",
+   "survivesWithoutTags": true,
+   "survivesWithoutCategory": true
   },
   {
    "id": "b15fa2f45baf55ea",
    "name": "Entreat Beast",
    "tree": "Mystic",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
+  },
+  {
+   "id": "b15fa2f45baf55ea",
+   "name": "Entreat Beast",
+   "tree": "Force Adept",
+   "primary": false,
+   "origin": "category",
+   "survivesWithoutTags": true,
+   "survivesWithoutCategory": false
   },
   {
    "id": "b3255436ba174a17",
    "name": "Seen It All",
    "tree": "Awareness",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "b3538b62448c840e",
    "name": "Force of Will",
    "tree": "Light Side",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "b3634baba7004d27",
    "name": "Cheap Trick",
    "tree": "Opportunist",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
+  },
+  {
+   "id": "b3ce8b08a8cb95fa",
+   "name": "Lightsaber Evasion",
+   "tree": "Bounty Hunter",
+   "primary": false,
+   "origin": "category",
+   "survivesWithoutTags": true,
+   "survivesWithoutCategory": false
   },
   {
    "id": "b47beb909e6fce63",
    "name": "Dark Side Savant",
    "tree": "Light Side",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
+  },
+  {
+   "id": "b5eba49d8305b689",
+   "name": "Only the Finest",
+   "tree": "Improviser",
+   "primary": false,
+   "origin": "category",
+   "survivesWithoutTags": true,
+   "survivesWithoutCategory": false
   },
   {
    "id": "b5eba49d8305b689",
    "name": "Only the Finest",
    "tree": "Control",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "b6e75c52f5d66ade",
    "name": "Wild Sense",
    "tree": "Mystic",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
+  },
+  {
+   "id": "b6e75c52f5d66ade",
+   "name": "Wild Sense",
+   "tree": "Force Adept",
+   "primary": false,
+   "origin": "category",
+   "survivesWithoutTags": true,
+   "survivesWithoutCategory": false
   },
   {
    "id": "b8472ec0498d2c20",
    "name": "Custom Model",
    "tree": "Control",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "b8a9dd4c950a96f5",
    "name": "Incite Rage",
    "tree": "Dark Side",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "bab9a1ce285f98b9",
    "name": "Charm Beast",
    "tree": "Force Item",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "bab9a1ce285f98b9",
    "name": "Charm Beast",
    "tree": "Mystic",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
+  },
+  {
+   "id": "bab9a1ce285f98b9",
+   "name": "Charm Beast",
+   "tree": "Force Adept",
+   "primary": false,
+   "origin": "category",
+   "survivesWithoutTags": true,
+   "survivesWithoutCategory": false
   },
   {
    "id": "bb6511073dfb4774",
    "name": "Force Delay",
    "tree": "Control",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "bcd9981b3c6a46dc",
    "name": "Weapon Specialization (Lightsabers)",
    "tree": "Dark Side",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "bec7535325ee1eb1",
    "name": "Call Weapon",
    "tree": "Light Side",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
+  },
+  {
+   "id": "bef731c3743c2c7f",
+   "name": "Precision Fire",
+   "tree": "Bounty Hunter",
+   "primary": false,
+   "origin": "category",
+   "survivesWithoutTags": true,
+   "survivesWithoutCategory": false
+  },
+  {
+   "id": "c006a4be6de26139",
+   "name": "Black Market Buyer",
+   "tree": "Improviser",
+   "primary": false,
+   "origin": "category",
+   "survivesWithoutTags": true,
+   "survivesWithoutCategory": false
   },
   {
    "id": "c006a4be6de26139",
    "name": "Black Market Buyer",
    "tree": "Control",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
+  },
+  {
+   "id": "c219dc05ccc7db81",
+   "name": "Twin Shot",
+   "tree": "Gunslinger",
+   "primary": false,
+   "origin": "category",
+   "survivesWithoutTags": true,
+   "survivesWithoutCategory": false
+  },
+  {
+   "id": "c41461c3bdd0165d",
+   "name": "Dash and Blast",
+   "tree": "Gunslinger",
+   "primary": false,
+   "origin": "category",
+   "survivesWithoutTags": true,
+   "survivesWithoutCategory": false
   },
   {
    "id": "c59de6f440c92832",
    "name": "Cause Mutation",
    "tree": "Dark Side",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "c59e7eba84e6d4eb",
    "name": "Cover Bracing",
    "tree": "Control",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "c62073de45482781",
    "name": "Improved Sentinel's Gambit",
    "tree": "Light Side",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "c67e45ac79e6f0d7",
    "name": "Perfect Attunement",
    "tree": "Light Side",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "c87b8389c8ca6ea9",
    "name": "Consular's Vitality",
    "tree": "Light Side",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "c8bf9ab9d1f8588a",
    "name": "Greater Dark Side Talisman",
    "tree": "Light Side",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "c8bf9ab9d1f8588a",
    "name": "Greater Dark Side Talisman",
    "tree": "Mystic",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "c8bf9ab9d1f8588a",
    "name": "Greater Dark Side Talisman",
    "tree": "Dark Side",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "c93a9e38c432551b",
    "name": "Cleanse Mind",
    "tree": "Light Side",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "ca30265867f3dcb1",
    "name": "Krath Surge",
    "tree": "Dark Side",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "cad07bbaa57634c0",
    "name": "Castigate",
    "tree": "Control",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
+  },
+  {
+   "id": "cb0dcc59f7ced910",
+   "name": "Strength Implant",
+   "tree": "Shaper",
+   "primary": false,
+   "origin": "category",
+   "survivesWithoutTags": true,
+   "survivesWithoutCategory": false
   },
   {
    "id": "cb4984135c665c4b",
    "name": "Twin Weapon Mastery",
    "tree": "Light Side",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "ccaa66ed749e3317",
    "name": "Mind Probe",
    "tree": "Mystic",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
+  },
+  {
+   "id": "ccaa66ed749e3317",
+   "name": "Mind Probe",
+   "tree": "Force Adept",
+   "primary": false,
+   "origin": "category",
+   "survivesWithoutTags": true,
+   "survivesWithoutCategory": false
   },
   {
    "id": "cccea4e91352482a",
    "name": "Tested in Battle",
    "tree": "Awareness",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
+  },
+  {
+   "id": "cdcdb85912d9eb67",
+   "name": "Force Blank",
+   "tree": "Bounty Hunter",
+   "primary": false,
+   "origin": "category",
+   "survivesWithoutTags": true,
+   "survivesWithoutCategory": false
+  },
+  {
+   "id": "cddfb9833c7d3344",
+   "name": "Channel Vitality",
+   "tree": "Force Adept",
+   "primary": false,
+   "origin": "category",
+   "survivesWithoutTags": true,
+   "survivesWithoutCategory": false
   },
   {
    "id": "ce1f5d3316b052f6",
    "name": "True Betrayal",
    "tree": "Control",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "cef9b7ca6a26f4a6",
    "name": "Two-Faced",
    "tree": "Control",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "cf2d518039afd828",
    "name": "Sentinel Strike",
    "tree": "Light Side",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "cfdd73f3d939799d",
    "name": "Dark Side Adept",
    "tree": "Light Side",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "cfdd73f3d939799d",
    "name": "Dark Side Adept",
    "tree": "Dark Side",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "d043a3c0494345ac",
    "name": "Primitive Block",
    "tree": "Mystic",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "d043a3c0494345ac",
    "name": "Primitive Block",
    "tree": "Dark Side",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
+  },
+  {
+   "id": "d043a3c0494345ac",
+   "name": "Primitive Block",
+   "tree": "Force Adept",
+   "primary": false,
+   "origin": "category",
+   "survivesWithoutTags": true,
+   "survivesWithoutCategory": false
   },
   {
    "id": "d091b5f6b34b4967",
    "name": "Rising Panic",
    "tree": "Control",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "d0b25a52cdc093bf",
    "name": "Know Weakness",
    "tree": "Light Side",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "d11f6beaa5f93e66",
    "name": "Desperate Measures",
    "tree": "Dark Side",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "d137ae2e8be700b3",
    "name": "Stolen Advantage",
    "tree": "Control",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "d1561acfdeac3d78",
    "name": "Dark Deception",
    "tree": "Light Side",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "d1561acfdeac3d78",
    "name": "Dark Deception",
    "tree": "Dark Side",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "d1fd547124c1901c",
    "name": "Force Persuasion",
    "tree": "Light Side",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
+  },
+  {
+   "id": "d24b04541998b27b",
+   "name": "Rifle Master",
+   "tree": "Gunslinger",
+   "primary": false,
+   "origin": "category",
+   "survivesWithoutTags": true,
+   "survivesWithoutCategory": false
   },
   {
    "id": "d350b28e72652d29",
    "name": "Wicked Strike",
    "tree": "Dark Side",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "d4da27798cbb18e6",
    "name": "Impose Confusion",
    "tree": "Control",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "d4fe49ef1701891e",
    "name": "Dark Side Master",
    "tree": "Dark Side",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "d587fb91aedddd09",
    "name": "Slashing Charge",
    "tree": "Light Side",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
+  },
+  {
+   "id": "d61e3a2afe8ab339",
+   "name": "Target Visions",
+   "tree": "Bounty Hunter",
+   "primary": false,
+   "origin": "field",
+   "survivesWithoutTags": true,
+   "survivesWithoutCategory": true
   },
   {
    "id": "d6a04668587e2c03",
    "name": "Improved Battle Meditation",
    "tree": "Light Side",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
+  },
+  {
+   "id": "d6d3b0a2ec01ca9a",
+   "name": "Speed Implant",
+   "tree": "Shaper",
+   "primary": false,
+   "origin": "category",
+   "survivesWithoutTags": true,
+   "survivesWithoutCategory": false
   },
   {
    "id": "d6faa4b87d5c35ce",
    "name": "Pulling the Strings",
    "tree": "Control",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "d838141fe404a9fb",
    "name": "Defensive Circle",
    "tree": "Light Side",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "d9fe8a0c76d845d4",
    "name": "Assault Tactics",
    "tree": "Leadership",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "da5096b45d174f36",
    "name": "Shield Gauntlet Deflect",
    "tree": "Duelist",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "da672f7b558a75ba",
    "name": "Sentinel's Observation",
    "tree": "Light Side",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "dc61d67946b1c1d6",
    "name": "Bigger Bang",
    "tree": "Control",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "dd488c2dc43d14ab",
    "name": "Unsettling Presence",
    "tree": "Force Hunter",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "dd488c2dc43d14ab",
    "name": "Unsettling Presence",
    "tree": "Mystic",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
+  },
+  {
+   "id": "dd488c2dc43d14ab",
+   "name": "Unsettling Presence",
+   "tree": "Force Adept",
+   "primary": false,
+   "origin": "category",
+   "survivesWithoutTags": true,
+   "survivesWithoutCategory": false
   },
   {
    "id": "df1bdd9ca78ad14d",
    "name": "Link",
    "tree": "Light Side",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "df40e8294bd43fe7",
    "name": "Sentinel's Gambit",
    "tree": "Light Side",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "df40e8294bd43fe7",
    "name": "Sentinel's Gambit",
    "tree": "Dark Side",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "dfb9e58c7bcb095c",
    "name": "Jedi Quarry",
    "tree": "Light Side",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "e19c06b6dfc7a703",
    "name": "Seize the Moment",
    "tree": "Duelist",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "e19c06b6dfc7a703",
    "name": "Seize the Moment",
    "tree": "Opportunist",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "e289618b92890003",
    "name": "Treacherous",
    "tree": "Opportunist",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "e289618b92890003",
    "name": "Treacherous",
    "tree": "Control",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "e3927fc5314cc492",
    "name": "Watchman's Advance",
    "tree": "Light Side",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "e49c62d72e8b28d3",
    "name": "Tangle Up",
    "tree": "Duelist",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "e49c62d72e8b28d3",
    "name": "Tangle Up",
    "tree": "Opportunist",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "e5bef6ccacb51788",
    "name": "Collective Visions",
    "tree": "Light Side",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "e6c4f05db6ac6c06",
    "name": "Master Advisor",
    "tree": "Light Side",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "e797ad357746be9f",
    "name": "Guiding Strikes",
    "tree": "Light Side",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "e885f64758f5e2bd",
    "name": "Dark Side Sense",
    "tree": "Light Side",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "e885f64758f5e2bd",
    "name": "Dark Side Sense",
    "tree": "Dark Side",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
+  },
+  {
+   "id": "e8fe6087eef386c7",
+   "name": "Findsman's Foresight",
+   "tree": "Bounty Hunter",
+   "primary": false,
+   "origin": "field",
+   "survivesWithoutTags": true,
+   "survivesWithoutCategory": true
   },
   {
    "id": "e96812723ff4eb04",
    "name": "Dark Side Talisman",
    "tree": "Light Side",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "e96812723ff4eb04",
    "name": "Dark Side Talisman",
    "tree": "Mystic",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "e96812723ff4eb04",
    "name": "Dark Side Talisman",
    "tree": "Dark Side",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "eaaecdfd7a538975",
    "name": "Dark Side Manipulation",
    "tree": "Dark Side",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "eb4f3e8660bc476589d0323d4cc00845",
    "name": "Sith Alchemy",
    "tree": "Dark Side",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "eb701499ba157c6a",
    "name": "Mobile Attack (lightsabers)",
    "tree": "Light Side",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
+  },
+  {
+   "id": "ecb678c47bb2cb43",
+   "name": "Multiattack Proficiency (rifles)",
+   "tree": "Gunslinger",
+   "primary": false,
+   "origin": "category",
+   "survivesWithoutTags": true,
+   "survivesWithoutCategory": false
   },
   {
    "id": "ed0304eebd82042b",
    "name": "Krath Intuition",
    "tree": "Sith Alchemy",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "ed0304eebd82042b",
    "name": "Krath Intuition",
    "tree": "Dark Side",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "ee2cbf6681a5a7e1",
    "name": "Master of the Great Hunt",
    "tree": "Light Side",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "ee2cbf6681a5a7e1",
    "name": "Master of the Great Hunt",
    "tree": "Dark Side",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "ef3ec55015c60bda",
    "name": "Channel Aggression",
    "tree": "Light Side",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "ef3ec55015c60bda",
    "name": "Channel Aggression",
    "tree": "Mystic",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "ef3ec55015c60bda",
    "name": "Channel Aggression",
    "tree": "Dark Side",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "f098749cb8767a5f",
    "name": "Force Haze",
    "tree": "Light Side",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "f098749cb8767a5f",
    "name": "Force Haze",
    "tree": "Dark Side",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
+  },
+  {
+   "id": "f09f37cda0fc10e1",
+   "name": "Right Gear for the Job",
+   "tree": "Improviser",
+   "primary": false,
+   "origin": "category",
+   "survivesWithoutTags": true,
+   "survivesWithoutCategory": false
   },
   {
    "id": "f09f37cda0fc10e1",
    "name": "Right Gear for the Job",
    "tree": "Control",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "f0ade00000000001",
    "name": "Instrument of the Force",
    "tree": "Force Item",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "f0ade00000000002",
    "name": "Long Call",
    "tree": "Force Item",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "f0c13c60b2e3f35b",
    "name": "Willful Resolve",
    "tree": "Control",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "f15b54aeaaa5c578",
    "name": "Guardian Strike",
    "tree": "Light Side",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "f29d5c0628459c94",
    "name": "Draw Fire",
    "tree": "Control",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "f4b22e32d448b703",
    "name": "Forceful Warrior",
    "tree": "Light Side",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "f541b5e57c5af27e",
    "name": "Sheltering Stance",
    "tree": "Light Side",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "f561d569196bdda5",
    "name": "Entreat Aid",
    "tree": "Light Side",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
+  },
+  {
+   "id": "f5fcf2752e99961a",
+   "name": "Opportunity Fire",
+   "tree": "Gunslinger",
+   "primary": false,
+   "origin": "category",
+   "survivesWithoutTags": true,
+   "survivesWithoutCategory": false
   },
   {
    "id": "f6a7cb3c07ded492",
    "name": "Unseen Eyes",
    "tree": "Light Side",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "f7bf586a35299965",
    "name": "Aggressive Negotiator",
    "tree": "Light Side",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "f836070c4a153ba0",
    "name": "Improved Sentinel Strike",
    "tree": "Light Side",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "f9352f317ad2f695",
    "name": "Stolen Form",
    "tree": "Dark Side",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "fa20a7209820d512",
    "name": "Slowing Stun",
    "tree": "Control",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "fb2bb5613e7edd49",
    "name": "Improved Healing Boost",
    "tree": "Light Side",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "fbac177b74fcea09",
    "name": "Takedown",
    "tree": "Control",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "fd35b51c26fa0d5c",
    "name": "Confounding Attack",
    "tree": "Duelist",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "fd35b51c26fa0d5c",
    "name": "Confounding Attack",
    "tree": "Opportunist",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "ffdca1739d401042",
    "name": "Opportunistic Defense",
    "tree": "Duelist",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   },
   {
    "id": "ffdca1739d401042",
    "name": "Opportunistic Defense",
    "tree": "Opportunist",
-   "primary": false
+   "primary": false,
+   "origin": "tag",
+   "survivesWithoutTags": false,
+   "survivesWithoutCategory": true
   }
  ],
  "secondaryMembership": []
