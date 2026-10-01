@@ -1,0 +1,3907 @@
+{
+  "schemaVersion": 1,
+  "phase": "11-2A",
+  "title": "Archetype Mechanical Identity Expansion - Raw Tag Pruning Pass 1",
+  "status": "OWNER_DESIGN_PASS",
+  "productionMutationPerformed": false,
+  "source": {
+    "branch": "audit/talent-phase-3h-semantic-metadata",
+    "commit": "d72573514c25866a91ca56dc061bf1f549df2ec2",
+    "censusPath": "data/audits/talent-phase-3h-metadata-census.json",
+    "censusBlobSha": "bfa04326f131354f7d9cb13b9e99ad204a5d3365",
+    "rawTagCount": 430
+  },
+  "policy": {
+    "buckets": [
+      "KEEP",
+      "DELETE",
+      "RECONSIDER",
+      "BESPOKE"
+    ],
+    "keep": "Clearly reusable semantic, mechanical, or scope concept.",
+    "delete": "Structural, audit, bookkeeping, or implementation residue with no ontology value.",
+    "reconsider": "Potentially useful but ambiguous, compound, class/category/tree-derived, alias-like, too broad/narrow, or in need of decomposition.",
+    "bespoke": "Current singleton. One-use tags are quarantined by rule; they do not enter the shared ontology without explicit review.",
+    "categoryAliasRule": "All category_* tags go to RECONSIDER, never automatic DELETE, because they may encode latent mechanics that should be decomposed.",
+    "singletonRule": "Any tag with current talentCount === 1 goes to BESPOKE before any other rule.",
+    "ontologyGoal": "Remove noise and normalize meaning without optimizing for a small tag count."
+  },
+  "counts": {
+    "KEEP": 123,
+    "DELETE": 74,
+    "RECONSIDER": 125,
+    "BESPOKE": 108
+  },
+  "tags": [
+    {
+      "tag": "striker",
+      "talentCount": 491,
+      "bucket": "RECONSIDER",
+      "rationale": "ROLE_OR_CLASS_BIAS may carry latent useful meaning but should be decomposed, normalized, or replaced rather than preserved unchanged.",
+      "legacyDisposition": "LEGACY_ARCHETYPE_SCORING",
+      "legacyKind": "ROLE_OR_CLASS_BIAS",
+      "legacyTarget": null
+    },
+    {
+      "tag": "force",
+      "talentCount": 357,
+      "bucket": "KEEP",
+      "rationale": "Existing reusable Phase 11 semantic concept.",
+      "legacyDisposition": "KEEP_CANONICAL",
+      "legacyKind": null,
+      "legacyTarget": "force"
+    },
+    {
+      "tag": "positioning",
+      "talentCount": 316,
+      "bucket": "RECONSIDER",
+      "rationale": "ROLE_OR_CLASS_BIAS may carry latent useful meaning but should be decomposed, normalized, or replaced rather than preserved unchanged.",
+      "legacyDisposition": "LEGACY_ARCHETYPE_SCORING",
+      "legacyKind": "ROLE_OR_CLASS_BIAS",
+      "legacyTarget": null
+    },
+    {
+      "tag": "mobility",
+      "talentCount": 314,
+      "bucket": "KEEP",
+      "rationale": "Existing reusable Phase 11 semantic concept.",
+      "legacyDisposition": "KEEP_CANONICAL",
+      "legacyKind": null,
+      "legacyTarget": "mobility"
+    },
+    {
+      "tag": "controller",
+      "talentCount": 312,
+      "bucket": "RECONSIDER",
+      "rationale": "ROLE_OR_CLASS_BIAS may carry latent useful meaning but should be decomposed, normalized, or replaced rather than preserved unchanged.",
+      "legacyDisposition": "LEGACY_ARCHETYPE_SCORING",
+      "legacyKind": "ROLE_OR_CLASS_BIAS",
+      "legacyTarget": null
+    },
+    {
+      "tag": "feat-chain",
+      "talentCount": 299,
+      "bucket": "DELETE",
+      "rationale": "BOOKKEEPING is structural/audit residue rather than descriptive identity, mechanics, or scope.",
+      "legacyDisposition": "REMOVE_OBSOLETE",
+      "legacyKind": "BOOKKEEPING",
+      "legacyTarget": null
+    },
+    {
+      "tag": "talent-chain",
+      "talentCount": 299,
+      "bucket": "DELETE",
+      "rationale": "BOOKKEEPING is structural/audit residue rather than descriptive identity, mechanics, or scope.",
+      "legacyDisposition": "REMOVE_OBSOLETE",
+      "legacyKind": "BOOKKEEPING",
+      "legacyTarget": null
+    },
+    {
+      "tag": "support",
+      "talentCount": 255,
+      "bucket": "KEEP",
+      "rationale": "Existing reusable Phase 11 semantic concept.",
+      "legacyDisposition": "KEEP_CANONICAL",
+      "legacyKind": null,
+      "legacyTarget": "support"
+    },
+    {
+      "tag": "defender",
+      "talentCount": 245,
+      "bucket": "RECONSIDER",
+      "rationale": "ROLE_OR_CLASS_BIAS may carry latent useful meaning but should be decomposed, normalized, or replaced rather than preserved unchanged.",
+      "legacyDisposition": "LEGACY_ARCHETYPE_SCORING",
+      "legacyKind": "ROLE_OR_CLASS_BIAS",
+      "legacyTarget": null
+    },
+    {
+      "tag": "skills",
+      "talentCount": 202,
+      "bucket": "RECONSIDER",
+      "rationale": "ROLE_OR_CLASS_BIAS may carry latent useful meaning but should be decomposed, normalized, or replaced rather than preserved unchanged.",
+      "legacyDisposition": "LEGACY_ARCHETYPE_SCORING",
+      "legacyKind": "ROLE_OR_CLASS_BIAS",
+      "legacyTarget": null
+    },
+    {
+      "tag": "action-economy",
+      "talentCount": 169,
+      "bucket": "RECONSIDER",
+      "rationale": "Runtime-derived wording may encode a reusable mechanic, but needs design review and likely normalization.",
+      "legacyDisposition": "NON_SEMANTIC_RUNTIME_METADATA",
+      "legacyKind": "AUTOMATION_OR_ACTION_DESCRIPTOR",
+      "legacyTarget": null
+    },
+    {
+      "tag": "melee",
+      "talentCount": 168,
+      "bucket": "KEEP",
+      "rationale": "Existing reusable Phase 11 semantic concept.",
+      "legacyDisposition": "KEEP_CANONICAL",
+      "legacyKind": null,
+      "legacyTarget": "melee"
+    },
+    {
+      "tag": "uncategorized_talent",
+      "talentCount": 154,
+      "bucket": "DELETE",
+      "rationale": "BOOKKEEPING is structural/audit residue rather than descriptive identity, mechanics, or scope.",
+      "legacyDisposition": "REMOVE_OBSOLETE",
+      "legacyKind": "BOOKKEEPING",
+      "legacyTarget": null
+    },
+    {
+      "tag": "jedi",
+      "talentCount": 150,
+      "bucket": "RECONSIDER",
+      "rationale": "ROLE_OR_CLASS_BIAS may carry latent useful meaning but should be decomposed, normalized, or replaced rather than preserved unchanged.",
+      "legacyDisposition": "LEGACY_ARCHETYPE_SCORING",
+      "legacyKind": "ROLE_OR_CLASS_BIAS",
+      "legacyTarget": null
+    },
+    {
+      "tag": "action_economy",
+      "talentCount": 136,
+      "bucket": "KEEP",
+      "rationale": "Broadly reusable mechanical/action concept; preserve even though the legacy census treated it as runtime metadata.",
+      "legacyDisposition": "NON_SEMANTIC_RUNTIME_METADATA",
+      "legacyKind": "AUTOMATION_OR_ACTION_DESCRIPTOR",
+      "legacyTarget": null
+    },
+    {
+      "tag": "ranged",
+      "talentCount": 133,
+      "bucket": "KEEP",
+      "rationale": "Existing reusable Phase 11 semantic concept.",
+      "legacyDisposition": "KEEP_CANONICAL",
+      "legacyKind": null,
+      "legacyTarget": "ranged"
+    },
+    {
+      "tag": "scout",
+      "talentCount": 123,
+      "bucket": "RECONSIDER",
+      "rationale": "ROLE_OR_CLASS_BIAS may carry latent useful meaning but should be decomposed, normalized, or replaced rather than preserved unchanged.",
+      "legacyDisposition": "LEGACY_ARCHETYPE_SCORING",
+      "legacyKind": "ROLE_OR_CLASS_BIAS",
+      "legacyTarget": null
+    },
+    {
+      "tag": "social",
+      "talentCount": 123,
+      "bucket": "KEEP",
+      "rationale": "Existing reusable Phase 11 semantic concept.",
+      "legacyDisposition": "KEEP_CANONICAL",
+      "legacyKind": null,
+      "legacyTarget": "social"
+    },
+    {
+      "tag": "feat_chain",
+      "talentCount": 115,
+      "bucket": "DELETE",
+      "rationale": "BOOKKEEPING is structural/audit residue rather than descriptive identity, mechanics, or scope.",
+      "legacyDisposition": "REMOVE_OBSOLETE",
+      "legacyKind": "BOOKKEEPING",
+      "legacyTarget": null
+    },
+    {
+      "tag": "talent_chain",
+      "talentCount": 115,
+      "bucket": "DELETE",
+      "rationale": "BOOKKEEPING is structural/audit residue rather than descriptive identity, mechanics, or scope.",
+      "legacyDisposition": "REMOVE_OBSOLETE",
+      "legacyKind": "BOOKKEEPING",
+      "legacyTarget": null
+    },
+    {
+      "tag": "scoundrel",
+      "talentCount": 112,
+      "bucket": "RECONSIDER",
+      "rationale": "ROLE_OR_CLASS_BIAS may carry latent useful meaning but should be decomposed, normalized, or replaced rather than preserved unchanged.",
+      "legacyDisposition": "LEGACY_ARCHETYPE_SCORING",
+      "legacyKind": "ROLE_OR_CLASS_BIAS",
+      "legacyTarget": null
+    },
+    {
+      "tag": "soldier",
+      "talentCount": 108,
+      "bucket": "RECONSIDER",
+      "rationale": "ROLE_OR_CLASS_BIAS may carry latent useful meaning but should be decomposed, normalized, or replaced rather than preserved unchanged.",
+      "legacyDisposition": "LEGACY_ARCHETYPE_SCORING",
+      "legacyKind": "ROLE_OR_CLASS_BIAS",
+      "legacyTarget": null
+    },
+    {
+      "tag": "light-side",
+      "talentCount": 99,
+      "bucket": "RECONSIDER",
+      "rationale": "Potentially meaningful legacy concept; retain for manual ontology review rather than deleting.",
+      "legacyDisposition": "UNSUPPORTED",
+      "legacyKind": "NOT_IN_PHASE11_VOCABULARY",
+      "legacyTarget": null
+    },
+    {
+      "tag": "phase-t27-reviewed",
+      "talentCount": 96,
+      "bucket": "DELETE",
+      "rationale": "AUDIT_MARKER is structural/audit residue rather than descriptive identity, mechanics, or scope.",
+      "legacyDisposition": "REMOVE_OBSOLETE",
+      "legacyKind": "AUDIT_MARKER",
+      "legacyTarget": null
+    },
+    {
+      "tag": "leader",
+      "talentCount": 93,
+      "bucket": "RECONSIDER",
+      "rationale": "ROLE_OR_CLASS_BIAS may carry latent useful meaning but should be decomposed, normalized, or replaced rather than preserved unchanged.",
+      "legacyDisposition": "LEGACY_ARCHETYPE_SCORING",
+      "legacyKind": "ROLE_OR_CLASS_BIAS",
+      "legacyTarget": null
+    },
+    {
+      "tag": "force_execution",
+      "talentCount": 88,
+      "bucket": "RECONSIDER",
+      "rationale": "Potentially useful, but compound, alias-like, broad, or insufficiently defined for direct admission.",
+      "legacyDisposition": "UNSUPPORTED",
+      "legacyKind": "NOT_IN_PHASE11_VOCABULARY",
+      "legacyTarget": null
+    },
+    {
+      "tag": "lightsaber",
+      "talentCount": 83,
+      "bucket": "KEEP",
+      "rationale": "Existing reusable Phase 11 semantic concept.",
+      "legacyDisposition": "KEEP_CANONICAL",
+      "legacyKind": null,
+      "legacyTarget": "lightsaber"
+    },
+    {
+      "tag": "sustained-damage",
+      "talentCount": 78,
+      "bucket": "RECONSIDER",
+      "rationale": "Potentially meaningful legacy concept; retain for manual ontology review rather than deleting.",
+      "legacyDisposition": "UNSUPPORTED",
+      "legacyKind": "NOT_IN_PHASE11_VOCABULARY",
+      "legacyTarget": null
+    },
+    {
+      "tag": "force-offense",
+      "talentCount": 73,
+      "bucket": "RECONSIDER",
+      "rationale": "Potentially useful, but compound, alias-like, broad, or insufficiently defined for direct admission.",
+      "legacyDisposition": "UNSUPPORTED",
+      "legacyKind": "NOT_IN_PHASE11_VOCABULARY",
+      "legacyTarget": null
+    },
+    {
+      "tag": "phase-t31-reviewed",
+      "talentCount": 69,
+      "bucket": "DELETE",
+      "rationale": "AUDIT_MARKER is structural/audit residue rather than descriptive identity, mechanics, or scope.",
+      "legacyDisposition": "REMOVE_OBSOLETE",
+      "legacyKind": "AUDIT_MARKER",
+      "legacyTarget": null
+    },
+    {
+      "tag": "noble",
+      "talentCount": 65,
+      "bucket": "RECONSIDER",
+      "rationale": "ROLE_OR_CLASS_BIAS may carry latent useful meaning but should be decomposed, normalized, or replaced rather than preserved unchanged.",
+      "legacyDisposition": "LEGACY_ARCHETYPE_SCORING",
+      "legacyKind": "ROLE_OR_CLASS_BIAS",
+      "legacyTarget": null
+    },
+    {
+      "tag": "damage-reduction",
+      "talentCount": 64,
+      "bucket": "RECONSIDER",
+      "rationale": "Potentially useful, but compound, alias-like, broad, or insufficiently defined for direct admission.",
+      "legacyDisposition": "UNSUPPORTED",
+      "legacyKind": "NOT_IN_PHASE11_VOCABULARY",
+      "legacyTarget": null
+    },
+    {
+      "tag": "force_capacity",
+      "talentCount": 63,
+      "bucket": "RECONSIDER",
+      "rationale": "Potentially useful, but compound, alias-like, broad, or insufficiently defined for direct admission.",
+      "legacyDisposition": "UNSUPPORTED",
+      "legacyKind": "NOT_IN_PHASE11_VOCABULARY",
+      "legacyTarget": null
+    },
+    {
+      "tag": "reaction",
+      "talentCount": 63,
+      "bucket": "KEEP",
+      "rationale": "Broadly reusable mechanical/action concept; preserve even though the legacy census treated it as runtime metadata.",
+      "legacyDisposition": "NON_SEMANTIC_RUNTIME_METADATA",
+      "legacyKind": "AUTOMATION_OR_ACTION_DESCRIPTOR",
+      "legacyTarget": null
+    },
+    {
+      "tag": "force_offense",
+      "talentCount": 62,
+      "bucket": "KEEP",
+      "rationale": "Clearly reusable semantic, mechanical, or scope concept worth preserving for Phase 11-2.",
+      "legacyDisposition": "UNSUPPORTED",
+      "legacyKind": "NOT_IN_PHASE11_VOCABULARY",
+      "legacyTarget": null
+    },
+    {
+      "tag": "scaling",
+      "talentCount": 61,
+      "bucket": "RECONSIDER",
+      "rationale": "Runtime-derived wording may encode a reusable mechanic, but needs design review and likely normalization.",
+      "legacyDisposition": "NON_SEMANTIC_RUNTIME_METADATA",
+      "legacyKind": "AUTOMATION_OR_ACTION_DESCRIPTOR",
+      "legacyTarget": null
+    },
+    {
+      "tag": "resource_spend",
+      "talentCount": 56,
+      "bucket": "KEEP",
+      "rationale": "Broadly reusable mechanical/action concept; preserve even though the legacy census treated it as runtime metadata.",
+      "legacyDisposition": "NON_SEMANTIC_RUNTIME_METADATA",
+      "legacyKind": "AUTOMATION_OR_ACTION_DESCRIPTOR",
+      "legacyTarget": null
+    },
+    {
+      "tag": "control",
+      "talentCount": 55,
+      "bucket": "KEEP",
+      "rationale": "Existing reusable Phase 11 semantic concept.",
+      "legacyDisposition": "KEEP_CANONICAL",
+      "legacyKind": null,
+      "legacyTarget": "control"
+    },
+    {
+      "tag": "force_point_spend",
+      "talentCount": 55,
+      "bucket": "KEEP",
+      "rationale": "Broadly reusable mechanical/action concept; preserve even though the legacy census treated it as runtime metadata.",
+      "legacyDisposition": "NON_SEMANTIC_RUNTIME_METADATA",
+      "legacyKind": "AUTOMATION_OR_ACTION_DESCRIPTOR",
+      "legacyTarget": null
+    },
+    {
+      "tag": "pursuit",
+      "talentCount": 53,
+      "bucket": "KEEP",
+      "rationale": "Clearly reusable semantic, mechanical, or scope concept worth preserving for Phase 11-2.",
+      "legacyDisposition": "UNSUPPORTED",
+      "legacyKind": "NOT_IN_PHASE11_VOCABULARY",
+      "legacyTarget": null
+    },
+    {
+      "tag": "use_the_force",
+      "talentCount": 51,
+      "bucket": "KEEP",
+      "rationale": "Existing reusable Phase 11 semantic concept.",
+      "legacyDisposition": "KEEP_CANONICAL",
+      "legacyKind": null,
+      "legacyTarget": "use_the_force"
+    },
+    {
+      "tag": "stealth",
+      "talentCount": 50,
+      "bucket": "KEEP",
+      "rationale": "Existing reusable Phase 11 semantic concept.",
+      "legacyDisposition": "KEEP_CANONICAL",
+      "legacyKind": null,
+      "legacyTarget": "stealth"
+    },
+    {
+      "tag": "sustained_damage",
+      "talentCount": 49,
+      "bucket": "KEEP",
+      "rationale": "Clearly reusable semantic, mechanical, or scope concept worth preserving for Phase 11-2.",
+      "legacyDisposition": "UNSUPPORTED",
+      "legacyKind": "NOT_IN_PHASE11_VOCABULARY",
+      "legacyTarget": null
+    },
+    {
+      "tag": "swift_action",
+      "talentCount": 49,
+      "bucket": "KEEP",
+      "rationale": "Broadly reusable mechanical/action concept; preserve even though the legacy census treated it as runtime metadata.",
+      "legacyDisposition": "NON_SEMANTIC_RUNTIME_METADATA",
+      "legacyKind": "AUTOMATION_OR_ACTION_DESCRIPTOR",
+      "legacyTarget": null
+    },
+    {
+      "tag": "rules-text-verified",
+      "talentCount": 46,
+      "bucket": "DELETE",
+      "rationale": "AUDIT_MARKER is structural/audit residue rather than descriptive identity, mechanics, or scope.",
+      "legacyDisposition": "REMOVE_OBSOLETE",
+      "legacyKind": "AUDIT_MARKER",
+      "legacyTarget": null
+    },
+    {
+      "tag": "talent-backcheck-implemented",
+      "talentCount": 46,
+      "bucket": "DELETE",
+      "rationale": "AUDIT_MARKER is structural/audit residue rather than descriptive identity, mechanics, or scope.",
+      "legacyDisposition": "REMOVE_OBSOLETE",
+      "legacyKind": "AUDIT_MARKER",
+      "legacyTarget": null
+    },
+    {
+      "tag": "new_action",
+      "talentCount": 45,
+      "bucket": "RECONSIDER",
+      "rationale": "Runtime-derived wording may encode a reusable mechanic, but needs design review and likely normalization.",
+      "legacyDisposition": "NON_SEMANTIC_RUNTIME_METADATA",
+      "legacyKind": "AUTOMATION_OR_ACTION_DESCRIPTOR",
+      "legacyTarget": null
+    },
+    {
+      "tag": "standard_action",
+      "talentCount": 44,
+      "bucket": "KEEP",
+      "rationale": "Broadly reusable mechanical/action concept; preserve even though the legacy census treated it as runtime metadata.",
+      "legacyDisposition": "NON_SEMANTIC_RUNTIME_METADATA",
+      "legacyKind": "AUTOMATION_OR_ACTION_DESCRIPTOR",
+      "legacyTarget": null
+    },
+    {
+      "tag": "dark_side",
+      "talentCount": 43,
+      "bucket": "KEEP",
+      "rationale": "Existing reusable Phase 11 semantic concept.",
+      "legacyDisposition": "KEEP_CANONICAL",
+      "legacyKind": null,
+      "legacyTarget": "dark_side"
+    },
+    {
+      "tag": "healing",
+      "talentCount": 42,
+      "bucket": "KEEP",
+      "rationale": "Existing reusable Phase 11 semantic concept.",
+      "legacyDisposition": "KEEP_CANONICAL",
+      "legacyKind": null,
+      "legacyTarget": "healing"
+    },
+    {
+      "tag": "perception",
+      "talentCount": 41,
+      "bucket": "KEEP",
+      "rationale": "Existing reusable Phase 11 semantic concept.",
+      "legacyDisposition": "KEEP_CANONICAL",
+      "legacyKind": null,
+      "legacyTarget": "perception"
+    },
+    {
+      "tag": "combat",
+      "talentCount": 38,
+      "bucket": "RECONSIDER",
+      "rationale": "Potentially useful, but compound, alias-like, broad, or insufficiently defined for direct admission.",
+      "legacyDisposition": "UNSUPPORTED",
+      "legacyKind": "NOT_IN_PHASE11_VOCABULARY",
+      "legacyTarget": null
+    },
+    {
+      "tag": "force-control",
+      "talentCount": 37,
+      "bucket": "RECONSIDER",
+      "rationale": "Potentially useful, but compound, alias-like, broad, or insufficiently defined for direct admission.",
+      "legacyDisposition": "UNSUPPORTED",
+      "legacyKind": "NOT_IN_PHASE11_VOCABULARY",
+      "legacyTarget": null
+    },
+    {
+      "tag": "force_control",
+      "talentCount": 36,
+      "bucket": "KEEP",
+      "rationale": "Clearly reusable semantic, mechanical, or scope concept worth preserving for Phase 11-2.",
+      "legacyDisposition": "UNSUPPORTED",
+      "legacyKind": "NOT_IN_PHASE11_VOCABULARY",
+      "legacyTarget": null
+    },
+    {
+      "tag": "force_power_synergy",
+      "talentCount": 36,
+      "bucket": "RECONSIDER",
+      "rationale": "Potentially useful, but compound, alias-like, broad, or insufficiently defined for direct admission.",
+      "legacyDisposition": "UNSUPPORTED",
+      "legacyKind": "NOT_IN_PHASE11_VOCABULARY",
+      "legacyTarget": null
+    },
+    {
+      "tag": "mechanics",
+      "talentCount": 36,
+      "bucket": "KEEP",
+      "rationale": "Existing reusable Phase 11 semantic concept.",
+      "legacyDisposition": "KEEP_CANONICAL",
+      "legacyKind": null,
+      "legacyTarget": "mechanics"
+    },
+    {
+      "tag": "offense_melee",
+      "talentCount": 35,
+      "bucket": "KEEP",
+      "rationale": "Clearly reusable semantic, mechanical, or scope concept worth preserving for Phase 11-2.",
+      "legacyDisposition": "UNSUPPORTED",
+      "legacyKind": "NOT_IN_PHASE11_VOCABULARY",
+      "legacyTarget": null
+    },
+    {
+      "tag": "category_force_adept",
+      "talentCount": 34,
+      "bucket": "RECONSIDER",
+      "rationale": "CATEGORY_ALIAS may carry latent useful meaning but should be decomposed, normalized, or replaced rather than preserved unchanged.",
+      "legacyDisposition": "NON_SEMANTIC_RUNTIME_METADATA",
+      "legacyKind": "CATEGORY_ALIAS",
+      "legacyTarget": null
+    },
+    {
+      "tag": "force_defense",
+      "talentCount": 34,
+      "bucket": "KEEP",
+      "rationale": "Clearly reusable semantic, mechanical, or scope concept worth preserving for Phase 11-2.",
+      "legacyDisposition": "UNSUPPORTED",
+      "legacyKind": "NOT_IN_PHASE11_VOCABULARY",
+      "legacyTarget": null
+    },
+    {
+      "tag": "force_training",
+      "talentCount": 34,
+      "bucket": "KEEP",
+      "rationale": "Existing reusable Phase 11 semantic concept.",
+      "legacyDisposition": "KEEP_CANONICAL",
+      "legacyKind": null,
+      "legacyTarget": "force_training"
+    },
+    {
+      "tag": "mystic",
+      "talentCount": 34,
+      "bucket": "RECONSIDER",
+      "rationale": "ROLE_OR_CLASS_BIAS may carry latent useful meaning but should be decomposed, normalized, or replaced rather than preserved unchanged.",
+      "legacyDisposition": "LEGACY_ARCHETYPE_SCORING",
+      "legacyKind": "ROLE_OR_CLASS_BIAS",
+      "legacyTarget": null
+    },
+    {
+      "tag": "precision",
+      "talentCount": 34,
+      "bucket": "KEEP",
+      "rationale": "Clearly reusable semantic, mechanical, or scope concept worth preserving for Phase 11-2.",
+      "legacyDisposition": "UNSUPPORTED",
+      "legacyKind": "NOT_IN_PHASE11_VOCABULARY",
+      "legacyTarget": null
+    },
+    {
+      "tag": "condition-removal",
+      "talentCount": 33,
+      "bucket": "RECONSIDER",
+      "rationale": "Potentially useful, but compound, alias-like, broad, or insufficiently defined for direct admission.",
+      "legacyDisposition": "UNSUPPORTED",
+      "legacyKind": "NOT_IN_PHASE11_VOCABULARY",
+      "legacyTarget": null
+    },
+    {
+      "tag": "survival",
+      "talentCount": 33,
+      "bucket": "KEEP",
+      "rationale": "Existing reusable Phase 11 semantic concept.",
+      "legacyDisposition": "KEEP_CANONICAL",
+      "legacyKind": null,
+      "legacyTarget": "survival"
+    },
+    {
+      "tag": "condition_removal",
+      "talentCount": 32,
+      "bucket": "KEEP",
+      "rationale": "Clearly reusable semantic, mechanical, or scope concept worth preserving for Phase 11-2.",
+      "legacyDisposition": "UNSUPPORTED",
+      "legacyKind": "NOT_IN_PHASE11_VOCABULARY",
+      "legacyTarget": null
+    },
+    {
+      "tag": "deception",
+      "talentCount": 32,
+      "bucket": "KEEP",
+      "rationale": "Existing reusable Phase 11 semantic concept.",
+      "legacyDisposition": "KEEP_CANONICAL",
+      "legacyKind": null,
+      "legacyTarget": "deception"
+    },
+    {
+      "tag": "exploration",
+      "talentCount": 32,
+      "bucket": "KEEP",
+      "rationale": "Clearly reusable semantic, mechanical, or scope concept worth preserving for Phase 11-2.",
+      "legacyDisposition": "UNSUPPORTED",
+      "legacyKind": "NOT_IN_PHASE11_VOCABULARY",
+      "legacyTarget": null
+    },
+    {
+      "tag": "tech",
+      "talentCount": 31,
+      "bucket": "KEEP",
+      "rationale": "Existing reusable Phase 11 semantic concept.",
+      "legacyDisposition": "KEEP_CANONICAL",
+      "legacyKind": null,
+      "legacyTarget": "tech"
+    },
+    {
+      "tag": "armor",
+      "talentCount": 30,
+      "bucket": "KEEP",
+      "rationale": "Clearly reusable semantic, mechanical, or scope concept worth preserving for Phase 11-2.",
+      "legacyDisposition": "UNSUPPORTED",
+      "legacyKind": "NOT_IN_PHASE11_VOCABULARY",
+      "legacyTarget": null
+    },
+    {
+      "tag": "defense",
+      "talentCount": 30,
+      "bucket": "KEEP",
+      "rationale": "Existing reusable Phase 11 semantic concept.",
+      "legacyDisposition": "KEEP_CANONICAL",
+      "legacyKind": null,
+      "legacyTarget": "defense"
+    },
+    {
+      "tag": "force-defense",
+      "talentCount": 30,
+      "bucket": "RECONSIDER",
+      "rationale": "Potentially useful, but compound, alias-like, broad, or insufficiently defined for direct admission.",
+      "legacyDisposition": "UNSUPPORTED",
+      "legacyKind": "NOT_IN_PHASE11_VOCABULARY",
+      "legacyTarget": null
+    },
+    {
+      "tag": "survivability",
+      "talentCount": 29,
+      "bucket": "KEEP",
+      "rationale": "Existing reusable Phase 11 semantic concept.",
+      "legacyDisposition": "KEEP_CANONICAL",
+      "legacyKind": null,
+      "legacyTarget": "survivability"
+    },
+    {
+      "tag": "damage_reduction",
+      "talentCount": 28,
+      "bucket": "KEEP",
+      "rationale": "Clearly reusable semantic, mechanical, or scope concept worth preserving for Phase 11-2.",
+      "legacyDisposition": "UNSUPPORTED",
+      "legacyKind": "NOT_IN_PHASE11_VOCABULARY",
+      "legacyTarget": null
+    },
+    {
+      "tag": "battlefield-control",
+      "talentCount": 27,
+      "bucket": "RECONSIDER",
+      "rationale": "REDUNDANT_TREE_OR_ORGANIZATION_LABEL may carry latent useful meaning but should be decomposed, normalized, or replaced rather than preserved unchanged.",
+      "legacyDisposition": "REMOVE_OBSOLETE",
+      "legacyKind": "REDUNDANT_TREE_OR_ORGANIZATION_LABEL",
+      "legacyTarget": null
+    },
+    {
+      "tag": "evasion",
+      "talentCount": 27,
+      "bucket": "KEEP",
+      "rationale": "Clearly reusable semantic, mechanical, or scope concept worth preserving for Phase 11-2.",
+      "legacyDisposition": "UNSUPPORTED",
+      "legacyKind": "NOT_IN_PHASE11_VOCABULARY",
+      "legacyTarget": null
+    },
+    {
+      "tag": "ambush",
+      "talentCount": 26,
+      "bucket": "KEEP",
+      "rationale": "Clearly reusable semantic, mechanical, or scope concept worth preserving for Phase 11-2.",
+      "legacyDisposition": "UNSUPPORTED",
+      "legacyKind": "NOT_IN_PHASE11_VOCABULARY",
+      "legacyTarget": null
+    },
+    {
+      "tag": "pilot",
+      "talentCount": 26,
+      "bucket": "KEEP",
+      "rationale": "Existing reusable Phase 11 semantic concept.",
+      "legacyDisposition": "KEEP_CANONICAL",
+      "legacyKind": null,
+      "legacyTarget": "pilot"
+    },
+    {
+      "tag": "vehicle",
+      "talentCount": 25,
+      "bucket": "KEEP",
+      "rationale": "Existing reusable Phase 11 semantic concept.",
+      "legacyDisposition": "KEEP_CANONICAL",
+      "legacyKind": null,
+      "legacyTarget": "vehicle"
+    },
+    {
+      "tag": "crafting",
+      "talentCount": 24,
+      "bucket": "KEEP",
+      "rationale": "Clearly reusable semantic, mechanical, or scope concept worth preserving for Phase 11-2.",
+      "legacyDisposition": "UNSUPPORTED",
+      "legacyKind": "NOT_IN_PHASE11_VOCABULARY",
+      "legacyTarget": null
+    },
+    {
+      "tag": "droid",
+      "talentCount": 24,
+      "bucket": "KEEP",
+      "rationale": "Existing reusable Phase 11 semantic concept.",
+      "legacyDisposition": "KEEP_CANONICAL",
+      "legacyKind": null,
+      "legacyTarget": "droid"
+    },
+    {
+      "tag": "fear",
+      "talentCount": 24,
+      "bucket": "KEEP",
+      "rationale": "Clearly reusable semantic, mechanical, or scope concept worth preserving for Phase 11-2.",
+      "legacyDisposition": "UNSUPPORTED",
+      "legacyKind": "NOT_IN_PHASE11_VOCABULARY",
+      "legacyTarget": null
+    },
+    {
+      "tag": "recon",
+      "talentCount": 24,
+      "bucket": "KEEP",
+      "rationale": "Clearly reusable semantic, mechanical, or scope concept worth preserving for Phase 11-2.",
+      "legacyDisposition": "UNSUPPORTED",
+      "legacyKind": "NOT_IN_PHASE11_VOCABULARY",
+      "legacyTarget": null
+    },
+    {
+      "tag": "cover",
+      "talentCount": 23,
+      "bucket": "KEEP",
+      "rationale": "Clearly reusable semantic, mechanical, or scope concept worth preserving for Phase 11-2.",
+      "legacyDisposition": "UNSUPPORTED",
+      "legacyKind": "NOT_IN_PHASE11_VOCABULARY",
+      "legacyTarget": null
+    },
+    {
+      "tag": "hunter",
+      "talentCount": 23,
+      "bucket": "RECONSIDER",
+      "rationale": "ROLE_OR_CLASS_BIAS may carry latent useful meaning but should be decomposed, normalized, or replaced rather than preserved unchanged.",
+      "legacyDisposition": "LEGACY_ARCHETYPE_SCORING",
+      "legacyKind": "ROLE_OR_CLASS_BIAS",
+      "legacyTarget": null
+    },
+    {
+      "tag": "offense_ranged",
+      "talentCount": 23,
+      "bucket": "KEEP",
+      "rationale": "Clearly reusable semantic, mechanical, or scope concept worth preserving for Phase 11-2.",
+      "legacyDisposition": "UNSUPPORTED",
+      "legacyKind": "NOT_IN_PHASE11_VOCABULARY",
+      "legacyTarget": null
+    },
+    {
+      "tag": "force-tradition",
+      "talentCount": 22,
+      "bucket": "RECONSIDER",
+      "rationale": "REDUNDANT_TREE_OR_ORGANIZATION_LABEL may carry latent useful meaning but should be decomposed, normalized, or replaced rather than preserved unchanged.",
+      "legacyDisposition": "REMOVE_OBSOLETE",
+      "legacyKind": "REDUNDANT_TREE_OR_ORGANIZATION_LABEL",
+      "legacyTarget": null
+    },
+    {
+      "tag": "light_side",
+      "talentCount": 20,
+      "bucket": "KEEP",
+      "rationale": "Clearly reusable semantic, mechanical, or scope concept worth preserving for Phase 11-2.",
+      "legacyDisposition": "UNSUPPORTED",
+      "legacyKind": "NOT_IN_PHASE11_VOCABULARY",
+      "legacyTarget": null
+    },
+    {
+      "tag": "medicine",
+      "talentCount": 19,
+      "bucket": "KEEP",
+      "rationale": "Clearly reusable semantic, mechanical, or scope concept worth preserving for Phase 11-2.",
+      "legacyDisposition": "UNSUPPORTED",
+      "legacyKind": "NOT_IN_PHASE11_VOCABULARY",
+      "legacyTarget": null
+    },
+    {
+      "tag": "persuasion",
+      "talentCount": 19,
+      "bucket": "KEEP",
+      "rationale": "Existing reusable Phase 11 semantic concept.",
+      "legacyDisposition": "KEEP_CANONICAL",
+      "legacyKind": null,
+      "legacyTarget": "persuasion"
+    },
+    {
+      "tag": "phase-t28-reviewed",
+      "talentCount": 19,
+      "bucket": "DELETE",
+      "rationale": "AUDIT_MARKER is structural/audit residue rather than descriptive identity, mechanics, or scope.",
+      "legacyDisposition": "REMOVE_OBSOLETE",
+      "legacyKind": "AUDIT_MARKER",
+      "legacyTarget": null
+    },
+    {
+      "tag": "target-designation",
+      "talentCount": 19,
+      "bucket": "KEEP",
+      "rationale": "Clearly reusable semantic, mechanical, or scope concept worth preserving for Phase 11-2.",
+      "legacyDisposition": "UNSUPPORTED",
+      "legacyKind": "NOT_IN_PHASE11_VOCABULARY",
+      "legacyTarget": null
+    },
+    {
+      "tag": "battlefield_control",
+      "talentCount": 18,
+      "bucket": "RECONSIDER",
+      "rationale": "REDUNDANT_TREE_OR_ORGANIZATION_LABEL may carry latent useful meaning but should be decomposed, normalized, or replaced rather than preserved unchanged.",
+      "legacyDisposition": "REMOVE_OBSOLETE",
+      "legacyKind": "REDUNDANT_TREE_OR_ORGANIZATION_LABEL",
+      "legacyTarget": null
+    },
+    {
+      "tag": "bounty-hunter",
+      "talentCount": 18,
+      "bucket": "RECONSIDER",
+      "rationale": "ROLE_OR_CLASS_BIAS may carry latent useful meaning but should be decomposed, normalized, or replaced rather than preserved unchanged.",
+      "legacyDisposition": "LEGACY_ARCHETYPE_SCORING",
+      "legacyKind": "ROLE_OR_CLASS_BIAS",
+      "legacyTarget": null
+    },
+    {
+      "tag": "category_sith_apprentice",
+      "talentCount": 18,
+      "bucket": "RECONSIDER",
+      "rationale": "CATEGORY_ALIAS may carry latent useful meaning but should be decomposed, normalized, or replaced rather than preserved unchanged.",
+      "legacyDisposition": "NON_SEMANTIC_RUNTIME_METADATA",
+      "legacyKind": "CATEGORY_ALIAS",
+      "legacyTarget": null
+    },
+    {
+      "tag": "dark-side",
+      "talentCount": 18,
+      "bucket": "RECONSIDER",
+      "rationale": "MAP_ALIAS may carry latent useful meaning but should be decomposed, normalized, or replaced rather than preserved unchanged.",
+      "legacyDisposition": "MAP_ALIAS",
+      "legacyKind": null,
+      "legacyTarget": "dark_side"
+    },
+    {
+      "tag": "initiative",
+      "talentCount": 18,
+      "bucket": "KEEP",
+      "rationale": "Existing reusable Phase 11 semantic concept.",
+      "legacyDisposition": "KEEP_CANONICAL",
+      "legacyKind": null,
+      "legacyTarget": "initiative"
+    },
+    {
+      "tag": "mind-affecting",
+      "talentCount": 18,
+      "bucket": "KEEP",
+      "rationale": "Clearly reusable semantic, mechanical, or scope concept worth preserving for Phase 11-2.",
+      "legacyDisposition": "UNSUPPORTED",
+      "legacyKind": "NOT_IN_PHASE11_VOCABULARY",
+      "legacyTarget": null
+    },
+    {
+      "tag": "unarmed",
+      "talentCount": 18,
+      "bucket": "KEEP",
+      "rationale": "Clearly reusable semantic, mechanical, or scope concept worth preserving for Phase 11-2.",
+      "legacyDisposition": "UNSUPPORTED",
+      "legacyKind": "NOT_IN_PHASE11_VOCABULARY",
+      "legacyTarget": null
+    },
+    {
+      "tag": "intrigue",
+      "talentCount": 17,
+      "bucket": "KEEP",
+      "rationale": "Clearly reusable semantic, mechanical, or scope concept worth preserving for Phase 11-2.",
+      "legacyDisposition": "UNSUPPORTED",
+      "legacyKind": "NOT_IN_PHASE11_VOCABULARY",
+      "legacyTarget": null
+    },
+    {
+      "tag": "teamwork",
+      "talentCount": 17,
+      "bucket": "KEEP",
+      "rationale": "Clearly reusable semantic, mechanical, or scope concept worth preserving for Phase 11-2.",
+      "legacyDisposition": "UNSUPPORTED",
+      "legacyKind": "NOT_IN_PHASE11_VOCABULARY",
+      "legacyTarget": null
+    },
+    {
+      "tag": "telekinesis",
+      "talentCount": 17,
+      "bucket": "KEEP",
+      "rationale": "Clearly reusable semantic, mechanical, or scope concept worth preserving for Phase 11-2.",
+      "legacyDisposition": "UNSUPPORTED",
+      "legacyKind": "NOT_IN_PHASE11_VOCABULARY",
+      "legacyTarget": null
+    },
+    {
+      "tag": "utility",
+      "talentCount": 17,
+      "bucket": "RECONSIDER",
+      "rationale": "Potentially useful, but compound, alias-like, broad, or insufficiently defined for direct admission.",
+      "legacyDisposition": "UNSUPPORTED",
+      "legacyKind": "NOT_IN_PHASE11_VOCABULARY",
+      "legacyTarget": null
+    },
+    {
+      "tag": "duelist",
+      "talentCount": 16,
+      "bucket": "RECONSIDER",
+      "rationale": "ROLE_OR_CLASS_BIAS may carry latent useful meaning but should be decomposed, normalized, or replaced rather than preserved unchanged.",
+      "legacyDisposition": "LEGACY_ARCHETYPE_SCORING",
+      "legacyKind": "ROLE_OR_CLASS_BIAS",
+      "legacyTarget": null
+    },
+    {
+      "tag": "jedi-guardian",
+      "talentCount": 16,
+      "bucket": "RECONSIDER",
+      "rationale": "REDUNDANT_TREE_OR_ORGANIZATION_LABEL may carry latent useful meaning but should be decomposed, normalized, or replaced rather than preserved unchanged.",
+      "legacyDisposition": "REMOVE_OBSOLETE",
+      "legacyKind": "REDUNDANT_TREE_OR_ORGANIZATION_LABEL",
+      "legacyTarget": null
+    },
+    {
+      "tag": "ranged_support",
+      "talentCount": 16,
+      "bucket": "RECONSIDER",
+      "rationale": "Potentially useful, but compound, alias-like, broad, or insufficiently defined for direct admission.",
+      "legacyDisposition": "UNSUPPORTED",
+      "legacyKind": "NOT_IN_PHASE11_VOCABULARY",
+      "legacyTarget": null
+    },
+    {
+      "tag": "resource_recovery",
+      "talentCount": 16,
+      "bucket": "KEEP",
+      "rationale": "Broadly reusable mechanical/action concept; preserve even though the legacy census treated it as runtime metadata.",
+      "legacyDisposition": "NON_SEMANTIC_RUNTIME_METADATA",
+      "legacyKind": "AUTOMATION_OR_ACTION_DESCRIPTOR",
+      "legacyTarget": null
+    },
+    {
+      "tag": "skill_substitution",
+      "talentCount": 16,
+      "bucket": "KEEP",
+      "rationale": "Clearly reusable semantic, mechanical, or scope concept worth preserving for Phase 11-2.",
+      "legacyDisposition": "UNSUPPORTED",
+      "legacyKind": "NOT_IN_PHASE11_VOCABULARY",
+      "legacyTarget": null
+    },
+    {
+      "tag": "telepathy",
+      "talentCount": 16,
+      "bucket": "KEEP",
+      "rationale": "Clearly reusable semantic, mechanical, or scope concept worth preserving for Phase 11-2.",
+      "legacyDisposition": "UNSUPPORTED",
+      "legacyKind": "NOT_IN_PHASE11_VOCABULARY",
+      "legacyTarget": null
+    },
+    {
+      "tag": "will_defense",
+      "talentCount": 16,
+      "bucket": "KEEP",
+      "rationale": "Clearly reusable semantic, mechanical, or scope concept worth preserving for Phase 11-2.",
+      "legacyDisposition": "UNSUPPORTED",
+      "legacyKind": "NOT_IN_PHASE11_VOCABULARY",
+      "legacyTarget": null
+    },
+    {
+      "tag": "backchecked",
+      "talentCount": 15,
+      "bucket": "DELETE",
+      "rationale": "AUDIT_MARKER is structural/audit residue rather than descriptive identity, mechanics, or scope.",
+      "legacyDisposition": "REMOVE_OBSOLETE",
+      "legacyKind": "AUDIT_MARKER",
+      "legacyTarget": null
+    },
+    {
+      "tag": "gear",
+      "talentCount": 15,
+      "bucket": "RECONSIDER",
+      "rationale": "Potentially useful, but compound, alias-like, broad, or insufficiently defined for direct admission.",
+      "legacyDisposition": "UNSUPPORTED",
+      "legacyKind": "NOT_IN_PHASE11_VOCABULARY",
+      "legacyTarget": null
+    },
+    {
+      "tag": "investigation",
+      "talentCount": 15,
+      "bucket": "KEEP",
+      "rationale": "Clearly reusable semantic, mechanical, or scope concept worth preserving for Phase 11-2.",
+      "legacyDisposition": "UNSUPPORTED",
+      "legacyKind": "NOT_IN_PHASE11_VOCABULARY",
+      "legacyTarget": null
+    },
+    {
+      "tag": "opportunist",
+      "talentCount": 15,
+      "bucket": "RECONSIDER",
+      "rationale": "ROLE_OR_CLASS_BIAS may carry latent useful meaning but should be decomposed, normalized, or replaced rather than preserved unchanged.",
+      "legacyDisposition": "LEGACY_ARCHETYPE_SCORING",
+      "legacyKind": "ROLE_OR_CLASS_BIAS",
+      "legacyTarget": null
+    },
+    {
+      "tag": "talent-action",
+      "talentCount": 15,
+      "bucket": "DELETE",
+      "rationale": "Implementation/configuration marker rather than a reusable archetype identity, mechanic, or scope concept.",
+      "legacyDisposition": "NON_SEMANTIC_RUNTIME_METADATA",
+      "legacyKind": "AUTOMATION_OR_ACTION_DESCRIPTOR",
+      "legacyTarget": null
+    },
+    {
+      "tag": "tree_6ac3416fb6aada56",
+      "talentCount": 15,
+      "bucket": "DELETE",
+      "rationale": "TREE_ID_ALIAS is structural/audit residue rather than descriptive identity, mechanics, or scope.",
+      "legacyDisposition": "NON_SEMANTIC_RUNTIME_METADATA",
+      "legacyKind": "TREE_ID_ALIAS",
+      "legacyTarget": null
+    },
+    {
+      "tag": "burst-damage",
+      "talentCount": 14,
+      "bucket": "RECONSIDER",
+      "rationale": "Potentially useful, but compound, alias-like, broad, or insufficiently defined for direct admission.",
+      "legacyDisposition": "UNSUPPORTED",
+      "legacyKind": "NOT_IN_PHASE11_VOCABULARY",
+      "legacyTarget": null
+    },
+    {
+      "tag": "imperial",
+      "talentCount": 14,
+      "bucket": "RECONSIDER",
+      "rationale": "ROLE_OR_CLASS_BIAS may carry latent useful meaning but should be decomposed, normalized, or replaced rather than preserved unchanged.",
+      "legacyDisposition": "LEGACY_ARCHETYPE_SCORING",
+      "legacyKind": "ROLE_OR_CLASS_BIAS",
+      "legacyTarget": null
+    },
+    {
+      "tag": "knowledge",
+      "talentCount": 14,
+      "bucket": "KEEP",
+      "rationale": "Existing reusable Phase 11 semantic concept.",
+      "legacyDisposition": "KEEP_CANONICAL",
+      "legacyKind": null,
+      "legacyTarget": "knowledge"
+    },
+    {
+      "tag": "manual_resolution",
+      "talentCount": 14,
+      "bucket": "DELETE",
+      "rationale": "Implementation/configuration marker rather than a reusable archetype identity, mechanic, or scope concept.",
+      "legacyDisposition": "NON_SEMANTIC_RUNTIME_METADATA",
+      "legacyKind": "AUTOMATION_OR_ACTION_DESCRIPTOR",
+      "legacyTarget": null
+    },
+    {
+      "tag": "no_static_runtime_bonus",
+      "talentCount": 14,
+      "bucket": "DELETE",
+      "rationale": "Implementation/configuration marker rather than a reusable archetype identity, mechanic, or scope concept.",
+      "legacyDisposition": "NON_SEMANTIC_RUNTIME_METADATA",
+      "legacyKind": "AUTOMATION_OR_ACTION_DESCRIPTOR",
+      "legacyTarget": null
+    },
+    {
+      "tag": "phase-t29-reviewed",
+      "talentCount": 14,
+      "bucket": "DELETE",
+      "rationale": "AUDIT_MARKER is structural/audit residue rather than descriptive identity, mechanics, or scope.",
+      "legacyDisposition": "REMOVE_OBSOLETE",
+      "legacyKind": "AUDIT_MARKER",
+      "legacyTarget": null
+    },
+    {
+      "tag": "social_control",
+      "talentCount": 14,
+      "bucket": "RECONSIDER",
+      "rationale": "Potentially useful, but compound, alias-like, broad, or insufficiently defined for direct admission.",
+      "legacyDisposition": "UNSUPPORTED",
+      "legacyKind": "NOT_IN_PHASE11_VOCABULARY",
+      "legacyTarget": null
+    },
+    {
+      "tag": "force_adept_backcheck",
+      "talentCount": 13,
+      "bucket": "DELETE",
+      "rationale": "AUDIT_MARKER is structural/audit residue rather than descriptive identity, mechanics, or scope.",
+      "legacyDisposition": "REMOVE_OBSOLETE",
+      "legacyKind": "AUDIT_MARKER",
+      "legacyTarget": null
+    },
+    {
+      "tag": "heavy-weapons",
+      "talentCount": 13,
+      "bucket": "RECONSIDER",
+      "rationale": "MAP_ALIAS may carry latent useful meaning but should be decomposed, normalized, or replaced rather than preserved unchanged.",
+      "legacyDisposition": "MAP_ALIAS",
+      "legacyKind": null,
+      "legacyTarget": "heavy_weapon"
+    },
+    {
+      "tag": "martial_arts",
+      "talentCount": 13,
+      "bucket": "RECONSIDER",
+      "rationale": "REDUNDANT_TREE_OR_ORGANIZATION_LABEL may carry latent useful meaning but should be decomposed, normalized, or replaced rather than preserved unchanged.",
+      "legacyDisposition": "REMOVE_OBSOLETE",
+      "legacyKind": "REDUNDANT_TREE_OR_ORGANIZATION_LABEL",
+      "legacyTarget": null
+    },
+    {
+      "tag": "phase-force-mystic-telepath",
+      "talentCount": 13,
+      "bucket": "DELETE",
+      "rationale": "AUDIT_MARKER is structural/audit residue rather than descriptive identity, mechanics, or scope.",
+      "legacyDisposition": "REMOVE_OBSOLETE",
+      "legacyKind": "AUDIT_MARKER",
+      "legacyTarget": null
+    },
+    {
+      "tag": "shields",
+      "talentCount": 13,
+      "bucket": "KEEP",
+      "rationale": "Clearly reusable semantic, mechanical, or scope concept worth preserving for Phase 11-2.",
+      "legacyDisposition": "UNSUPPORTED",
+      "legacyKind": "NOT_IN_PHASE11_VOCABULARY",
+      "legacyTarget": null
+    },
+    {
+      "tag": "ally_support",
+      "talentCount": 12,
+      "bucket": "KEEP",
+      "rationale": "Existing reusable Phase 11 semantic concept.",
+      "legacyDisposition": "KEEP_CANONICAL",
+      "legacyKind": null,
+      "legacyTarget": "ally_support"
+    },
+    {
+      "tag": "beast_companion",
+      "talentCount": 12,
+      "bucket": "RECONSIDER",
+      "rationale": "REDUNDANT_TREE_OR_ORGANIZATION_LABEL may carry latent useful meaning but should be decomposed, normalized, or replaced rather than preserved unchanged.",
+      "legacyDisposition": "REMOVE_OBSOLETE",
+      "legacyKind": "REDUNDANT_TREE_OR_ORGANIZATION_LABEL",
+      "legacyTarget": null
+    },
+    {
+      "tag": "precision_damage",
+      "talentCount": 12,
+      "bucket": "KEEP",
+      "rationale": "Clearly reusable semantic, mechanical, or scope concept worth preserving for Phase 11-2.",
+      "legacyDisposition": "UNSUPPORTED",
+      "legacyKind": "NOT_IN_PHASE11_VOCABULARY",
+      "legacyTarget": null
+    },
+    {
+      "tag": "precognition",
+      "talentCount": 12,
+      "bucket": "KEEP",
+      "rationale": "Clearly reusable semantic, mechanical, or scope concept worth preserving for Phase 11-2.",
+      "legacyDisposition": "UNSUPPORTED",
+      "legacyKind": "NOT_IN_PHASE11_VOCABULARY",
+      "legacyTarget": null
+    },
+    {
+      "tag": "recovery",
+      "talentCount": 12,
+      "bucket": "RECONSIDER",
+      "rationale": "Potentially useful, but compound, alias-like, broad, or insufficiently defined for direct admission.",
+      "legacyDisposition": "UNSUPPORTED",
+      "legacyKind": "NOT_IN_PHASE11_VOCABULARY",
+      "legacyTarget": null
+    },
+    {
+      "tag": "sniping",
+      "talentCount": 12,
+      "bucket": "RECONSIDER",
+      "rationale": "MAP_ALIAS may carry latent useful meaning but should be decomposed, normalized, or replaced rather than preserved unchanged.",
+      "legacyDisposition": "MAP_ALIAS",
+      "legacyKind": null,
+      "legacyTarget": "sniper"
+    },
+    {
+      "tag": "targeting",
+      "talentCount": 12,
+      "bucket": "KEEP",
+      "rationale": "Clearly reusable semantic, mechanical, or scope concept worth preserving for Phase 11-2.",
+      "legacyDisposition": "UNSUPPORTED",
+      "legacyKind": "NOT_IN_PHASE11_VOCABULARY",
+      "legacyTarget": null
+    },
+    {
+      "tag": "forecast_value",
+      "talentCount": 11,
+      "bucket": "DELETE",
+      "rationale": "Implementation/configuration marker rather than a reusable archetype identity, mechanic, or scope concept.",
+      "legacyDisposition": "NON_SEMANTIC_RUNTIME_METADATA",
+      "legacyKind": "AUTOMATION_OR_ACTION_DESCRIPTOR",
+      "legacyTarget": null
+    },
+    {
+      "tag": "imperial-knight",
+      "talentCount": 11,
+      "bucket": "RECONSIDER",
+      "rationale": "REDUNDANT_TREE_OR_ORGANIZATION_LABEL may carry latent useful meaning but should be decomposed, normalized, or replaced rather than preserved unchanged.",
+      "legacyDisposition": "REMOVE_OBSOLETE",
+      "legacyKind": "REDUNDANT_TREE_OR_ORGANIZATION_LABEL",
+      "legacyTarget": null
+    },
+    {
+      "tag": "lightsaber-combat",
+      "talentCount": 11,
+      "bucket": "RECONSIDER",
+      "rationale": "REDUNDANT_TREE_OR_ORGANIZATION_LABEL may carry latent useful meaning but should be decomposed, normalized, or replaced rather than preserved unchanged.",
+      "legacyDisposition": "REMOVE_OBSOLETE",
+      "legacyKind": "REDUNDANT_TREE_OR_ORGANIZATION_LABEL",
+      "legacyTarget": null
+    },
+    {
+      "tag": "phase-darkside-beast-reviewed",
+      "talentCount": 11,
+      "bucket": "DELETE",
+      "rationale": "AUDIT_MARKER is structural/audit residue rather than descriptive identity, mechanics, or scope.",
+      "legacyDisposition": "REMOVE_OBSOLETE",
+      "legacyKind": "AUDIT_MARKER",
+      "legacyTarget": null
+    },
+    {
+      "tag": "piloting",
+      "talentCount": 11,
+      "bucket": "RECONSIDER",
+      "rationale": "MAP_ALIAS may carry latent useful meaning but should be decomposed, normalized, or replaced rather than preserved unchanged.",
+      "legacyDisposition": "MAP_ALIAS",
+      "legacyKind": null,
+      "legacyTarget": "pilot"
+    },
+    {
+      "tag": "resilience",
+      "talentCount": 11,
+      "bucket": "RECONSIDER",
+      "rationale": "Potentially useful, but compound, alias-like, broad, or insufficiently defined for direct admission.",
+      "legacyDisposition": "UNSUPPORTED",
+      "legacyKind": "NOT_IN_PHASE11_VOCABULARY",
+      "legacyTarget": null
+    },
+    {
+      "tag": "senses",
+      "talentCount": 11,
+      "bucket": "RECONSIDER",
+      "rationale": "Potentially useful, but compound, alias-like, broad, or insufficiently defined for direct admission.",
+      "legacyDisposition": "UNSUPPORTED",
+      "legacyKind": "NOT_IN_PHASE11_VOCABULARY",
+      "legacyTarget": null
+    },
+    {
+      "tag": "tree_d3661aa9906bdc79",
+      "talentCount": 11,
+      "bucket": "DELETE",
+      "rationale": "TREE_ID_ALIAS is structural/audit residue rather than descriptive identity, mechanics, or scope.",
+      "legacyDisposition": "NON_SEMANTIC_RUNTIME_METADATA",
+      "legacyKind": "TREE_ID_ALIAS",
+      "legacyTarget": null
+    },
+    {
+      "tag": "tree_d6b4331c0e31f7e3",
+      "talentCount": 11,
+      "bucket": "DELETE",
+      "rationale": "TREE_ID_ALIAS is structural/audit residue rather than descriptive identity, mechanics, or scope.",
+      "legacyDisposition": "NON_SEMANTIC_RUNTIME_METADATA",
+      "legacyKind": "TREE_ID_ALIAS",
+      "legacyTarget": null
+    },
+    {
+      "tag": "ability_enhancement",
+      "talentCount": 10,
+      "bucket": "RECONSIDER",
+      "rationale": "Potentially useful, but compound, alias-like, broad, or insufficiently defined for direct admission.",
+      "legacyDisposition": "UNSUPPORTED",
+      "legacyKind": "NOT_IN_PHASE11_VOCABULARY",
+      "legacyTarget": null
+    },
+    {
+      "tag": "biotech",
+      "talentCount": 10,
+      "bucket": "KEEP",
+      "rationale": "Clearly reusable semantic, mechanical, or scope concept worth preserving for Phase 11-2.",
+      "legacyDisposition": "UNSUPPORTED",
+      "legacyKind": "NOT_IN_PHASE11_VOCABULARY",
+      "legacyTarget": null
+    },
+    {
+      "tag": "category_imperial_knight",
+      "talentCount": 10,
+      "bucket": "RECONSIDER",
+      "rationale": "CATEGORY_ALIAS may carry latent useful meaning but should be decomposed, normalized, or replaced rather than preserved unchanged.",
+      "legacyDisposition": "NON_SEMANTIC_RUNTIME_METADATA",
+      "legacyKind": "CATEGORY_ALIAS",
+      "legacyTarget": null
+    },
+    {
+      "tag": "category_improviser",
+      "talentCount": 10,
+      "bucket": "RECONSIDER",
+      "rationale": "CATEGORY_ALIAS may carry latent useful meaning but should be decomposed, normalized, or replaced rather than preserved unchanged.",
+      "legacyDisposition": "NON_SEMANTIC_RUNTIME_METADATA",
+      "legacyKind": "CATEGORY_ALIAS",
+      "legacyTarget": null
+    },
+    {
+      "tag": "category_pathfinder",
+      "talentCount": 10,
+      "bucket": "RECONSIDER",
+      "rationale": "CATEGORY_ALIAS may carry latent useful meaning but should be decomposed, normalized, or replaced rather than preserved unchanged.",
+      "legacyDisposition": "NON_SEMANTIC_RUNTIME_METADATA",
+      "legacyKind": "CATEGORY_ALIAS",
+      "legacyTarget": null
+    },
+    {
+      "tag": "category_shaper",
+      "talentCount": 10,
+      "bucket": "RECONSIDER",
+      "rationale": "CATEGORY_ALIAS may carry latent useful meaning but should be decomposed, normalized, or replaced rather than preserved unchanged.",
+      "legacyDisposition": "NON_SEMANTIC_RUNTIME_METADATA",
+      "legacyKind": "CATEGORY_ALIAS",
+      "legacyTarget": null
+    },
+    {
+      "tag": "dark_side_mastery",
+      "talentCount": 10,
+      "bucket": "RECONSIDER",
+      "rationale": "REDUNDANT_TREE_OR_ORGANIZATION_LABEL may carry latent useful meaning but should be decomposed, normalized, or replaced rather than preserved unchanged.",
+      "legacyDisposition": "REMOVE_OBSOLETE",
+      "legacyKind": "REDUNDANT_TREE_OR_ORGANIZATION_LABEL",
+      "legacyTarget": null
+    },
+    {
+      "tag": "dual-wield",
+      "talentCount": 10,
+      "bucket": "RECONSIDER",
+      "rationale": "Potentially useful, but compound, alias-like, broad, or insufficiently defined for direct admission.",
+      "legacyDisposition": "UNSUPPORTED",
+      "legacyKind": "NOT_IN_PHASE11_VOCABULARY",
+      "legacyTarget": null
+    },
+    {
+      "tag": "durability",
+      "talentCount": 10,
+      "bucket": "RECONSIDER",
+      "rationale": "Potentially useful, but compound, alias-like, broad, or insufficiently defined for direct admission.",
+      "legacyDisposition": "UNSUPPORTED",
+      "legacyKind": "NOT_IN_PHASE11_VOCABULARY",
+      "legacyTarget": null
+    },
+    {
+      "tag": "force_multiplier",
+      "talentCount": 10,
+      "bucket": "RECONSIDER",
+      "rationale": "Potentially useful, but compound, alias-like, broad, or insufficiently defined for direct admission.",
+      "legacyDisposition": "UNSUPPORTED",
+      "legacyKind": "NOT_IN_PHASE11_VOCABULARY",
+      "legacyTarget": null
+    },
+    {
+      "tag": "force-hunter",
+      "talentCount": 10,
+      "bucket": "RECONSIDER",
+      "rationale": "ROLE_OR_CLASS_BIAS may carry latent useful meaning but should be decomposed, normalized, or replaced rather than preserved unchanged.",
+      "legacyDisposition": "LEGACY_ARCHETYPE_SCORING",
+      "legacyKind": "ROLE_OR_CLASS_BIAS",
+      "legacyTarget": null
+    },
+    {
+      "tag": "jury_rig",
+      "talentCount": 10,
+      "bucket": "KEEP",
+      "rationale": "Clearly reusable semantic, mechanical, or scope concept worth preserving for Phase 11-2.",
+      "legacyDisposition": "UNSUPPORTED",
+      "legacyKind": "NOT_IN_PHASE11_VOCABULARY",
+      "legacyTarget": null
+    },
+    {
+      "tag": "melee_defense",
+      "talentCount": 10,
+      "bucket": "KEEP",
+      "rationale": "Clearly reusable semantic, mechanical, or scope concept worth preserving for Phase 11-2.",
+      "legacyDisposition": "UNSUPPORTED",
+      "legacyKind": "NOT_IN_PHASE11_VOCABULARY",
+      "legacyTarget": null
+    },
+    {
+      "tag": "move_action",
+      "talentCount": 10,
+      "bucket": "KEEP",
+      "rationale": "Broadly reusable mechanical/action concept; preserve even though the legacy census treated it as runtime metadata.",
+      "legacyDisposition": "NON_SEMANTIC_RUNTIME_METADATA",
+      "legacyKind": "AUTOMATION_OR_ACTION_DESCRIPTOR",
+      "legacyTarget": null
+    },
+    {
+      "tag": "natural_weapon",
+      "talentCount": 10,
+      "bucket": "KEEP",
+      "rationale": "Clearly reusable semantic, mechanical, or scope concept worth preserving for Phase 11-2.",
+      "legacyDisposition": "UNSUPPORTED",
+      "legacyKind": "NOT_IN_PHASE11_VOCABULARY",
+      "legacyTarget": null
+    },
+    {
+      "tag": "pathfinder",
+      "talentCount": 10,
+      "bucket": "RECONSIDER",
+      "rationale": "REDUNDANT_TREE_OR_ORGANIZATION_LABEL may carry latent useful meaning but should be decomposed, normalized, or replaced rather than preserved unchanged.",
+      "legacyDisposition": "REMOVE_OBSOLETE",
+      "legacyKind": "REDUNDANT_TREE_OR_ORGANIZATION_LABEL",
+      "legacyTarget": null
+    },
+    {
+      "tag": "safe_zone",
+      "talentCount": 10,
+      "bucket": "DELETE",
+      "rationale": "Implementation/configuration marker rather than a reusable archetype identity, mechanic, or scope concept.",
+      "legacyDisposition": "NON_SEMANTIC_RUNTIME_METADATA",
+      "legacyKind": "AUTOMATION_OR_ACTION_DESCRIPTOR",
+      "legacyTarget": null
+    },
+    {
+      "tag": "slicing",
+      "talentCount": 10,
+      "bucket": "KEEP",
+      "rationale": "Clearly reusable semantic, mechanical, or scope concept worth preserving for Phase 11-2.",
+      "legacyDisposition": "UNSUPPORTED",
+      "legacyKind": "NOT_IN_PHASE11_VOCABULARY",
+      "legacyTarget": null
+    },
+    {
+      "tag": "tree_383ff8d392488cf8",
+      "talentCount": 10,
+      "bucket": "DELETE",
+      "rationale": "TREE_ID_ALIAS is structural/audit residue rather than descriptive identity, mechanics, or scope.",
+      "legacyDisposition": "NON_SEMANTIC_RUNTIME_METADATA",
+      "legacyKind": "TREE_ID_ALIAS",
+      "legacyTarget": null
+    },
+    {
+      "tag": "tree_de95d37c72b1c4cd",
+      "talentCount": 10,
+      "bucket": "DELETE",
+      "rationale": "TREE_ID_ALIAS is structural/audit residue rather than descriptive identity, mechanics, or scope.",
+      "legacyDisposition": "NON_SEMANTIC_RUNTIME_METADATA",
+      "legacyKind": "TREE_ID_ALIAS",
+      "legacyTarget": null
+    },
+    {
+      "tag": "category_assassin",
+      "talentCount": 9,
+      "bucket": "RECONSIDER",
+      "rationale": "CATEGORY_ALIAS may carry latent useful meaning but should be decomposed, normalized, or replaced rather than preserved unchanged.",
+      "legacyDisposition": "NON_SEMANTIC_RUNTIME_METADATA",
+      "legacyKind": "CATEGORY_ALIAS",
+      "legacyTarget": null
+    },
+    {
+      "tag": "combat_action",
+      "talentCount": 9,
+      "bucket": "DELETE",
+      "rationale": "Implementation/configuration marker rather than a reusable archetype identity, mechanic, or scope concept.",
+      "legacyDisposition": "NON_SEMANTIC_RUNTIME_METADATA",
+      "legacyKind": "AUTOMATION_OR_ACTION_DESCRIPTOR",
+      "legacyTarget": null
+    },
+    {
+      "tag": "implemented",
+      "talentCount": 9,
+      "bucket": "DELETE",
+      "rationale": "AUDIT_MARKER is structural/audit residue rather than descriptive identity, mechanics, or scope.",
+      "legacyDisposition": "REMOVE_OBSOLETE",
+      "legacyKind": "AUDIT_MARKER",
+      "legacyTarget": null
+    },
+    {
+      "tag": "infamy",
+      "talentCount": 9,
+      "bucket": "RECONSIDER",
+      "rationale": "REDUNDANT_TREE_OR_ORGANIZATION_LABEL may carry latent useful meaning but should be decomposed, normalized, or replaced rather than preserved unchanged.",
+      "legacyDisposition": "REMOVE_OBSOLETE",
+      "legacyKind": "REDUNDANT_TREE_OR_ORGANIZATION_LABEL",
+      "legacyTarget": null
+    },
+    {
+      "tag": "intimidation",
+      "talentCount": 9,
+      "bucket": "KEEP",
+      "rationale": "Clearly reusable semantic, mechanical, or scope concept worth preserving for Phase 11-2.",
+      "legacyDisposition": "UNSUPPORTED",
+      "legacyKind": "NOT_IN_PHASE11_VOCABULARY",
+      "legacyTarget": null
+    },
+    {
+      "tag": "martial",
+      "talentCount": 9,
+      "bucket": "RECONSIDER",
+      "rationale": "REDUNDANT_TREE_OR_ORGANIZATION_LABEL may carry latent useful meaning but should be decomposed, normalized, or replaced rather than preserved unchanged.",
+      "legacyDisposition": "REMOVE_OBSOLETE",
+      "legacyKind": "REDUNDANT_TREE_OR_ORGANIZATION_LABEL",
+      "legacyTarget": null
+    },
+    {
+      "tag": "minion",
+      "talentCount": 9,
+      "bucket": "RECONSIDER",
+      "rationale": "REDUNDANT_TREE_OR_ORGANIZATION_LABEL may carry latent useful meaning but should be decomposed, normalized, or replaced rather than preserved unchanged.",
+      "legacyDisposition": "REMOVE_OBSOLETE",
+      "legacyKind": "REDUNDANT_TREE_OR_ORGANIZATION_LABEL",
+      "legacyTarget": null
+    },
+    {
+      "tag": "poison",
+      "talentCount": 9,
+      "bucket": "KEEP",
+      "rationale": "Clearly reusable semantic, mechanical, or scope concept worth preserving for Phase 11-2.",
+      "legacyDisposition": "UNSUPPORTED",
+      "legacyKind": "NOT_IN_PHASE11_VOCABULARY",
+      "legacyTarget": null
+    },
+    {
+      "tag": "precision-damage",
+      "talentCount": 9,
+      "bucket": "RECONSIDER",
+      "rationale": "Potentially useful, but compound, alias-like, broad, or insufficiently defined for direct admission.",
+      "legacyDisposition": "UNSUPPORTED",
+      "legacyKind": "NOT_IN_PHASE11_VOCABULARY",
+      "legacyTarget": null
+    },
+    {
+      "tag": "tree_186daeee7bd65a69",
+      "talentCount": 9,
+      "bucket": "DELETE",
+      "rationale": "TREE_ID_ALIAS is structural/audit residue rather than descriptive identity, mechanics, or scope.",
+      "legacyDisposition": "NON_SEMANTIC_RUNTIME_METADATA",
+      "legacyKind": "TREE_ID_ALIAS",
+      "legacyTarget": null
+    },
+    {
+      "tag": "alchemy",
+      "talentCount": 8,
+      "bucket": "KEEP",
+      "rationale": "Clearly reusable semantic, mechanical, or scope concept worth preserving for Phase 11-2.",
+      "legacyDisposition": "UNSUPPORTED",
+      "legacyKind": "NOT_IN_PHASE11_VOCABULARY",
+      "legacyTarget": null
+    },
+    {
+      "tag": "category_medic",
+      "talentCount": 8,
+      "bucket": "RECONSIDER",
+      "rationale": "CATEGORY_ALIAS may carry latent useful meaning but should be decomposed, normalized, or replaced rather than preserved unchanged.",
+      "legacyDisposition": "NON_SEMANTIC_RUNTIME_METADATA",
+      "legacyKind": "CATEGORY_ALIAS",
+      "legacyTarget": null
+    },
+    {
+      "tag": "category_outlaw",
+      "talentCount": 8,
+      "bucket": "RECONSIDER",
+      "rationale": "CATEGORY_ALIAS may carry latent useful meaning but should be decomposed, normalized, or replaced rather than preserved unchanged.",
+      "legacyDisposition": "NON_SEMANTIC_RUNTIME_METADATA",
+      "legacyKind": "CATEGORY_ALIAS",
+      "legacyTarget": null
+    },
+    {
+      "tag": "category_vanguard",
+      "talentCount": 8,
+      "bucket": "RECONSIDER",
+      "rationale": "CATEGORY_ALIAS may carry latent useful meaning but should be decomposed, normalized, or replaced rather than preserved unchanged.",
+      "legacyDisposition": "NON_SEMANTIC_RUNTIME_METADATA",
+      "legacyKind": "CATEGORY_ALIAS",
+      "legacyTarget": null
+    },
+    {
+      "tag": "empowerment",
+      "talentCount": 8,
+      "bucket": "RECONSIDER",
+      "rationale": "Potentially useful, but compound, alias-like, broad, or insufficiently defined for direct admission.",
+      "legacyDisposition": "UNSUPPORTED",
+      "legacyKind": "NOT_IN_PHASE11_VOCABULARY",
+      "legacyTarget": null
+    },
+    {
+      "tag": "outlaw",
+      "talentCount": 8,
+      "bucket": "RECONSIDER",
+      "rationale": "ROLE_OR_CLASS_BIAS may carry latent useful meaning but should be decomposed, normalized, or replaced rather than preserved unchanged.",
+      "legacyDisposition": "LEGACY_ARCHETYPE_SCORING",
+      "legacyKind": "ROLE_OR_CLASS_BIAS",
+      "legacyTarget": null
+    },
+    {
+      "tag": "treat_injury",
+      "talentCount": 8,
+      "bucket": "KEEP",
+      "rationale": "Clearly reusable semantic, mechanical, or scope concept worth preserving for Phase 11-2.",
+      "legacyDisposition": "UNSUPPORTED",
+      "legacyKind": "NOT_IN_PHASE11_VOCABULARY",
+      "legacyTarget": null
+    },
+    {
+      "tag": "tree_01e443d93e47f9c4",
+      "talentCount": 8,
+      "bucket": "DELETE",
+      "rationale": "TREE_ID_ALIAS is structural/audit residue rather than descriptive identity, mechanics, or scope.",
+      "legacyDisposition": "NON_SEMANTIC_RUNTIME_METADATA",
+      "legacyKind": "TREE_ID_ALIAS",
+      "legacyTarget": null
+    },
+    {
+      "tag": "use-computer",
+      "talentCount": 8,
+      "bucket": "RECONSIDER",
+      "rationale": "MAP_ALIAS may carry latent useful meaning but should be decomposed, normalized, or replaced rather than preserved unchanged.",
+      "legacyDisposition": "MAP_ALIAS",
+      "legacyKind": null,
+      "legacyTarget": "use_computer"
+    },
+    {
+      "tag": "category_corporate_agent",
+      "talentCount": 7,
+      "bucket": "RECONSIDER",
+      "rationale": "CATEGORY_ALIAS may carry latent useful meaning but should be decomposed, normalized, or replaced rather than preserved unchanged.",
+      "legacyDisposition": "NON_SEMANTIC_RUNTIME_METADATA",
+      "legacyKind": "CATEGORY_ALIAS",
+      "legacyTarget": null
+    },
+    {
+      "tag": "category_enforcer",
+      "talentCount": 7,
+      "bucket": "RECONSIDER",
+      "rationale": "CATEGORY_ALIAS may carry latent useful meaning but should be decomposed, normalized, or replaced rather than preserved unchanged.",
+      "legacyDisposition": "NON_SEMANTIC_RUNTIME_METADATA",
+      "legacyKind": "CATEGORY_ALIAS",
+      "legacyTarget": null
+    },
+    {
+      "tag": "category_independent_droid",
+      "talentCount": 7,
+      "bucket": "RECONSIDER",
+      "rationale": "CATEGORY_ALIAS may carry latent useful meaning but should be decomposed, normalized, or replaced rather than preserved unchanged.",
+      "legacyDisposition": "NON_SEMANTIC_RUNTIME_METADATA",
+      "legacyKind": "CATEGORY_ALIAS",
+      "legacyTarget": null
+    },
+    {
+      "tag": "choice_required",
+      "talentCount": 7,
+      "bucket": "DELETE",
+      "rationale": "Implementation/configuration marker rather than a reusable archetype identity, mechanic, or scope concept.",
+      "legacyDisposition": "NON_SEMANTIC_RUNTIME_METADATA",
+      "legacyKind": "AUTOMATION_OR_ACTION_DESCRIPTOR",
+      "legacyTarget": null
+    },
+    {
+      "tag": "choice_source_prerequisite",
+      "talentCount": 7,
+      "bucket": "DELETE",
+      "rationale": "Implementation/configuration marker rather than a reusable archetype identity, mechanic, or scope concept.",
+      "legacyDisposition": "NON_SEMANTIC_RUNTIME_METADATA",
+      "legacyKind": "AUTOMATION_OR_ACTION_DESCRIPTOR",
+      "legacyTarget": null
+    },
+    {
+      "tag": "counterattack",
+      "talentCount": 7,
+      "bucket": "KEEP",
+      "rationale": "Clearly reusable semantic, mechanical, or scope concept worth preserving for Phase 11-2.",
+      "legacyDisposition": "UNSUPPORTED",
+      "legacyKind": "NOT_IN_PHASE11_VOCABULARY",
+      "legacyTarget": null
+    },
+    {
+      "tag": "force-adept",
+      "talentCount": 7,
+      "bucket": "RECONSIDER",
+      "rationale": "ROLE_OR_CLASS_BIAS may carry latent useful meaning but should be decomposed, normalized, or replaced rather than preserved unchanged.",
+      "legacyDisposition": "LEGACY_ARCHETYPE_SCORING",
+      "legacyKind": "ROLE_OR_CLASS_BIAS",
+      "legacyTarget": null
+    },
+    {
+      "tag": "immediate_choice",
+      "talentCount": 7,
+      "bucket": "DELETE",
+      "rationale": "Implementation/configuration marker rather than a reusable archetype identity, mechanic, or scope concept.",
+      "legacyDisposition": "NON_SEMANTIC_RUNTIME_METADATA",
+      "legacyKind": "AUTOMATION_OR_ACTION_DESCRIPTOR",
+      "legacyTarget": null
+    },
+    {
+      "tag": "law_enforcement",
+      "talentCount": 7,
+      "bucket": "RECONSIDER",
+      "rationale": "REDUNDANT_TREE_OR_ORGANIZATION_LABEL may carry latent useful meaning but should be decomposed, normalized, or replaced rather than preserved unchanged.",
+      "legacyDisposition": "REMOVE_OBSOLETE",
+      "legacyKind": "REDUNDANT_TREE_OR_ORGANIZATION_LABEL",
+      "legacyTarget": null
+    },
+    {
+      "tag": "law-enforcement",
+      "talentCount": 7,
+      "bucket": "RECONSIDER",
+      "rationale": "REDUNDANT_TREE_OR_ORGANIZATION_LABEL may carry latent useful meaning but should be decomposed, normalized, or replaced rather than preserved unchanged.",
+      "legacyDisposition": "REMOVE_OBSOLETE",
+      "legacyKind": "REDUNDANT_TREE_OR_ORGANIZATION_LABEL",
+      "legacyTarget": null
+    },
+    {
+      "tag": "nonlethal",
+      "talentCount": 7,
+      "bucket": "KEEP",
+      "rationale": "Clearly reusable semantic, mechanical, or scope concept worth preserving for Phase 11-2.",
+      "legacyDisposition": "UNSUPPORTED",
+      "legacyKind": "NOT_IN_PHASE11_VOCABULARY",
+      "legacyTarget": null
+    },
+    {
+      "tag": "self_repair",
+      "talentCount": 7,
+      "bucket": "KEEP",
+      "rationale": "Clearly reusable semantic, mechanical, or scope concept worth preserving for Phase 11-2.",
+      "legacyDisposition": "UNSUPPORTED",
+      "legacyKind": "NOT_IN_PHASE11_VOCABULARY",
+      "legacyTarget": null
+    },
+    {
+      "tag": "self-repair",
+      "talentCount": 7,
+      "bucket": "RECONSIDER",
+      "rationale": "Potentially useful, but compound, alias-like, broad, or insufficiently defined for direct admission.",
+      "legacyDisposition": "UNSUPPORTED",
+      "legacyKind": "NOT_IN_PHASE11_VOCABULARY",
+      "legacyTarget": null
+    },
+    {
+      "tag": "skill_stealth",
+      "talentCount": 7,
+      "bucket": "RECONSIDER",
+      "rationale": "Potentially useful, but compound, alias-like, broad, or insufficiently defined for direct admission.",
+      "legacyDisposition": "UNSUPPORTED",
+      "legacyKind": "NOT_IN_PHASE11_VOCABULARY",
+      "legacyTarget": null
+    },
+    {
+      "tag": "skill-mastery",
+      "talentCount": 7,
+      "bucket": "KEEP",
+      "rationale": "Clearly reusable semantic, mechanical, or scope concept worth preserving for Phase 11-2.",
+      "legacyDisposition": "UNSUPPORTED",
+      "legacyKind": "NOT_IN_PHASE11_VOCABULARY",
+      "legacyTarget": null
+    },
+    {
+      "tag": "slicer",
+      "talentCount": 7,
+      "bucket": "RECONSIDER",
+      "rationale": "Potentially useful, but compound, alias-like, broad, or insufficiently defined for direct admission.",
+      "legacyDisposition": "UNSUPPORTED",
+      "legacyKind": "NOT_IN_PHASE11_VOCABULARY",
+      "legacyTarget": null
+    },
+    {
+      "tag": "superior-skills",
+      "talentCount": 7,
+      "bucket": "RECONSIDER",
+      "rationale": "Potentially useful, but compound, alias-like, broad, or insufficiently defined for direct admission.",
+      "legacyDisposition": "UNSUPPORTED",
+      "legacyKind": "NOT_IN_PHASE11_VOCABULARY",
+      "legacyTarget": null
+    },
+    {
+      "tag": "trap",
+      "talentCount": 7,
+      "bucket": "KEEP",
+      "rationale": "Clearly reusable semantic, mechanical, or scope concept worth preserving for Phase 11-2.",
+      "legacyDisposition": "UNSUPPORTED",
+      "legacyKind": "NOT_IN_PHASE11_VOCABULARY",
+      "legacyTarget": null
+    },
+    {
+      "tag": "tree_04a6f32128cc4b98",
+      "talentCount": 7,
+      "bucket": "DELETE",
+      "rationale": "TREE_ID_ALIAS is structural/audit residue rather than descriptive identity, mechanics, or scope.",
+      "legacyDisposition": "NON_SEMANTIC_RUNTIME_METADATA",
+      "legacyKind": "TREE_ID_ALIAS",
+      "legacyTarget": null
+    },
+    {
+      "tag": "tree_2d164f62e17bed8c",
+      "talentCount": 7,
+      "bucket": "DELETE",
+      "rationale": "TREE_ID_ALIAS is structural/audit residue rather than descriptive identity, mechanics, or scope.",
+      "legacyDisposition": "NON_SEMANTIC_RUNTIME_METADATA",
+      "legacyKind": "TREE_ID_ALIAS",
+      "legacyTarget": null
+    },
+    {
+      "tag": "tree_9fe73a3703fa45fca628fd43cae6bf7f",
+      "talentCount": 7,
+      "bucket": "DELETE",
+      "rationale": "TREE_ID_ALIAS is structural/audit residue rather than descriptive identity, mechanics, or scope.",
+      "legacyDisposition": "NON_SEMANTIC_RUNTIME_METADATA",
+      "legacyKind": "TREE_ID_ALIAS",
+      "legacyTarget": null
+    },
+    {
+      "tag": "tree_e91cc675fbf9ba6e",
+      "talentCount": 7,
+      "bucket": "DELETE",
+      "rationale": "TREE_ID_ALIAS is structural/audit residue rather than descriptive identity, mechanics, or scope.",
+      "legacyDisposition": "NON_SEMANTIC_RUNTIME_METADATA",
+      "legacyKind": "TREE_ID_ALIAS",
+      "legacyTarget": null
+    },
+    {
+      "tag": "use-the-force",
+      "talentCount": 7,
+      "bucket": "RECONSIDER",
+      "rationale": "MAP_ALIAS may carry latent useful meaning but should be decomposed, normalized, or replaced rather than preserved unchanged.",
+      "legacyDisposition": "MAP_ALIAS",
+      "legacyKind": null,
+      "legacyTarget": "use_the_force"
+    },
+    {
+      "tag": "weapon_choice",
+      "talentCount": 7,
+      "bucket": "DELETE",
+      "rationale": "Implementation/configuration marker rather than a reusable archetype identity, mechanic, or scope concept.",
+      "legacyDisposition": "NON_SEMANTIC_RUNTIME_METADATA",
+      "legacyKind": "AUTOMATION_OR_ACTION_DESCRIPTOR",
+      "legacyTarget": null
+    },
+    {
+      "tag": "anti-force",
+      "talentCount": 6,
+      "bucket": "KEEP",
+      "rationale": "Clearly reusable semantic, mechanical, or scope concept worth preserving for Phase 11-2.",
+      "legacyDisposition": "UNSUPPORTED",
+      "legacyKind": "NOT_IN_PHASE11_VOCABULARY",
+      "legacyTarget": null
+    },
+    {
+      "tag": "bothan-spynet",
+      "talentCount": 6,
+      "bucket": "RECONSIDER",
+      "rationale": "REDUNDANT_TREE_OR_ORGANIZATION_LABEL may carry latent useful meaning but should be decomposed, normalized, or replaced rather than preserved unchanged.",
+      "legacyDisposition": "REMOVE_OBSOLETE",
+      "legacyKind": "REDUNDANT_TREE_OR_ORGANIZATION_LABEL",
+      "legacyTarget": null
+    },
+    {
+      "tag": "category_charlatan",
+      "talentCount": 6,
+      "bucket": "RECONSIDER",
+      "rationale": "CATEGORY_ALIAS may carry latent useful meaning but should be decomposed, normalized, or replaced rather than preserved unchanged.",
+      "legacyDisposition": "NON_SEMANTIC_RUNTIME_METADATA",
+      "legacyKind": "CATEGORY_ALIAS",
+      "legacyTarget": null
+    },
+    {
+      "tag": "contextual",
+      "talentCount": 6,
+      "bucket": "DELETE",
+      "rationale": "Implementation/configuration marker rather than a reusable archetype identity, mechanic, or scope concept.",
+      "legacyDisposition": "NON_SEMANTIC_RUNTIME_METADATA",
+      "legacyKind": "AUTOMATION_OR_ACTION_DESCRIPTOR",
+      "legacyTarget": null
+    },
+    {
+      "tag": "force-point",
+      "talentCount": 6,
+      "bucket": "KEEP",
+      "rationale": "Clearly reusable semantic, mechanical, or scope concept worth preserving for Phase 11-2.",
+      "legacyDisposition": "UNSUPPORTED",
+      "legacyKind": "NOT_IN_PHASE11_VOCABULARY",
+      "legacyTarget": null
+    },
+    {
+      "tag": "force-support",
+      "talentCount": 6,
+      "bucket": "RECONSIDER",
+      "rationale": "Potentially useful, but compound, alias-like, broad, or insufficiently defined for direct admission.",
+      "legacyDisposition": "UNSUPPORTED",
+      "legacyKind": "NOT_IN_PHASE11_VOCABULARY",
+      "legacyTarget": null
+    },
+    {
+      "tag": "intelligence",
+      "talentCount": 6,
+      "bucket": "RECONSIDER",
+      "rationale": "Potentially useful, but compound, alias-like, broad, or insufficiently defined for direct admission.",
+      "legacyDisposition": "UNSUPPORTED",
+      "legacyKind": "NOT_IN_PHASE11_VOCABULARY",
+      "legacyTarget": null
+    },
+    {
+      "tag": "medical",
+      "talentCount": 6,
+      "bucket": "KEEP",
+      "rationale": "Existing reusable Phase 11 semantic concept.",
+      "legacyDisposition": "KEEP_CANONICAL",
+      "legacyKind": null,
+      "legacyTarget": "medical"
+    },
+    {
+      "tag": "once-per-encounter",
+      "talentCount": 6,
+      "bucket": "KEEP",
+      "rationale": "Broadly reusable mechanical/action concept; preserve even though the legacy census treated it as runtime metadata.",
+      "legacyDisposition": "NON_SEMANTIC_RUNTIME_METADATA",
+      "legacyKind": "AUTOMATION_OR_ACTION_DESCRIPTOR",
+      "legacyTarget": null
+    },
+    {
+      "tag": "resources",
+      "talentCount": 6,
+      "bucket": "RECONSIDER",
+      "rationale": "Runtime-derived wording may encode a reusable mechanic, but needs design review and likely normalization.",
+      "legacyDisposition": "NON_SEMANTIC_RUNTIME_METADATA",
+      "legacyKind": "AUTOMATION_OR_ACTION_DESCRIPTOR",
+      "legacyTarget": null
+    },
+    {
+      "tag": "shield",
+      "talentCount": 6,
+      "bucket": "RECONSIDER",
+      "rationale": "Potentially meaningful legacy concept; retain for manual ontology review rather than deleting.",
+      "legacyDisposition": "UNSUPPORTED",
+      "legacyKind": "NOT_IN_PHASE11_VOCABULARY",
+      "legacyTarget": null
+    },
+    {
+      "tag": "social_network",
+      "talentCount": 6,
+      "bucket": "RECONSIDER",
+      "rationale": "REDUNDANT_TREE_OR_ORGANIZATION_LABEL may carry latent useful meaning but should be decomposed, normalized, or replaced rather than preserved unchanged.",
+      "legacyDisposition": "REMOVE_OBSOLETE",
+      "legacyKind": "REDUNDANT_TREE_OR_ORGANIZATION_LABEL",
+      "legacyTarget": null
+    },
+    {
+      "tag": "spynet",
+      "talentCount": 6,
+      "bucket": "RECONSIDER",
+      "rationale": "REDUNDANT_TREE_OR_ORGANIZATION_LABEL may carry latent useful meaning but should be decomposed, normalized, or replaced rather than preserved unchanged.",
+      "legacyDisposition": "REMOVE_OBSOLETE",
+      "legacyKind": "REDUNDANT_TREE_OR_ORGANIZATION_LABEL",
+      "legacyTarget": null
+    },
+    {
+      "tag": "tree_96ef43a3054dcb58",
+      "talentCount": 6,
+      "bucket": "DELETE",
+      "rationale": "TREE_ID_ALIAS is structural/audit residue rather than descriptive identity, mechanics, or scope.",
+      "legacyDisposition": "NON_SEMANTIC_RUNTIME_METADATA",
+      "legacyKind": "TREE_ID_ALIAS",
+      "legacyTarget": null
+    },
+    {
+      "tag": "tree_d20682671d035cef",
+      "talentCount": 6,
+      "bucket": "DELETE",
+      "rationale": "TREE_ID_ALIAS is structural/audit residue rather than descriptive identity, mechanics, or scope.",
+      "legacyDisposition": "NON_SEMANTIC_RUNTIME_METADATA",
+      "legacyKind": "TREE_ID_ALIAS",
+      "legacyTarget": null
+    },
+    {
+      "tag": "tree_da34105c875650ae",
+      "talentCount": 6,
+      "bucket": "DELETE",
+      "rationale": "TREE_ID_ALIAS is structural/audit residue rather than descriptive identity, mechanics, or scope.",
+      "legacyDisposition": "NON_SEMANTIC_RUNTIME_METADATA",
+      "legacyKind": "TREE_ID_ALIAS",
+      "legacyTarget": null
+    },
+    {
+      "tag": "tree_ea01d740c91888b3",
+      "talentCount": 6,
+      "bucket": "DELETE",
+      "rationale": "TREE_ID_ALIAS is structural/audit residue rather than descriptive identity, mechanics, or scope.",
+      "legacyDisposition": "NON_SEMANTIC_RUNTIME_METADATA",
+      "legacyKind": "TREE_ID_ALIAS",
+      "legacyTarget": null
+    },
+    {
+      "tag": "visions",
+      "talentCount": 6,
+      "bucket": "KEEP",
+      "rationale": "Clearly reusable semantic, mechanical, or scope concept worth preserving for Phase 11-2.",
+      "legacyDisposition": "UNSUPPORTED",
+      "legacyKind": "NOT_IN_PHASE11_VOCABULARY",
+      "legacyTarget": null
+    },
+    {
+      "tag": "ally-support",
+      "talentCount": 5,
+      "bucket": "RECONSIDER",
+      "rationale": "MAP_ALIAS may carry latent useful meaning but should be decomposed, normalized, or replaced rather than preserved unchanged.",
+      "legacyDisposition": "MAP_ALIAS",
+      "legacyKind": null,
+      "legacyTarget": "ally_support"
+    },
+    {
+      "tag": "ally-trigger",
+      "talentCount": 5,
+      "bucket": "KEEP",
+      "rationale": "Broadly reusable mechanical/action concept; preserve even though the legacy census treated it as runtime metadata.",
+      "legacyDisposition": "NON_SEMANTIC_RUNTIME_METADATA",
+      "legacyKind": "AUTOMATION_OR_ACTION_DESCRIPTOR",
+      "legacyTarget": null
+    },
+    {
+      "tag": "awareness",
+      "talentCount": 5,
+      "bucket": "KEEP",
+      "rationale": "Clearly reusable semantic, mechanical, or scope concept worth preserving for Phase 11-2.",
+      "legacyDisposition": "UNSUPPORTED",
+      "legacyKind": "NOT_IN_PHASE11_VOCABULARY",
+      "legacyTarget": null
+    },
+    {
+      "tag": "balance",
+      "talentCount": 5,
+      "bucket": "KEEP",
+      "rationale": "Clearly reusable semantic, mechanical, or scope concept worth preserving for Phase 11-2.",
+      "legacyDisposition": "UNSUPPORTED",
+      "legacyKind": "NOT_IN_PHASE11_VOCABULARY",
+      "legacyTarget": null
+    },
+    {
+      "tag": "believer-disciple",
+      "talentCount": 5,
+      "bucket": "RECONSIDER",
+      "rationale": "REDUNDANT_TREE_OR_ORGANIZATION_LABEL may carry latent useful meaning but should be decomposed, normalized, or replaced rather than preserved unchanged.",
+      "legacyDisposition": "REMOVE_OBSOLETE",
+      "legacyKind": "REDUNDANT_TREE_OR_ORGANIZATION_LABEL",
+      "legacyTarget": null
+    },
+    {
+      "tag": "block",
+      "talentCount": 5,
+      "bucket": "KEEP",
+      "rationale": "Clearly reusable semantic, mechanical, or scope concept worth preserving for Phase 11-2.",
+      "legacyDisposition": "UNSUPPORTED",
+      "legacyKind": "NOT_IN_PHASE11_VOCABULARY",
+      "legacyTarget": null
+    },
+    {
+      "tag": "force_support",
+      "talentCount": 5,
+      "bucket": "RECONSIDER",
+      "rationale": "Potentially useful, but compound, alias-like, broad, or insufficiently defined for direct admission.",
+      "legacyDisposition": "UNSUPPORTED",
+      "legacyKind": "NOT_IN_PHASE11_VOCABULARY",
+      "legacyTarget": null
+    },
+    {
+      "tag": "guardian_spirit",
+      "talentCount": 5,
+      "bucket": "RECONSIDER",
+      "rationale": "REDUNDANT_TREE_OR_ORGANIZATION_LABEL may carry latent useful meaning but should be decomposed, normalized, or replaced rather than preserved unchanged.",
+      "legacyDisposition": "REMOVE_OBSOLETE",
+      "legacyKind": "REDUNDANT_TREE_OR_ORGANIZATION_LABEL",
+      "legacyTarget": null
+    },
+    {
+      "tag": "implant",
+      "talentCount": 5,
+      "bucket": "KEEP",
+      "rationale": "Clearly reusable semantic, mechanical, or scope concept worth preserving for Phase 11-2.",
+      "legacyDisposition": "UNSUPPORTED",
+      "legacyKind": "NOT_IN_PHASE11_VOCABULARY",
+      "legacyTarget": null
+    },
+    {
+      "tag": "infiltration",
+      "talentCount": 5,
+      "bucket": "KEEP",
+      "rationale": "Clearly reusable semantic, mechanical, or scope concept worth preserving for Phase 11-2.",
+      "legacyDisposition": "UNSUPPORTED",
+      "legacyKind": "NOT_IN_PHASE11_VOCABULARY",
+      "legacyTarget": null
+    },
+    {
+      "tag": "iron-knight",
+      "talentCount": 5,
+      "bucket": "RECONSIDER",
+      "rationale": "REDUNDANT_TREE_OR_ORGANIZATION_LABEL may carry latent useful meaning but should be decomposed, normalized, or replaced rather than preserved unchanged.",
+      "legacyDisposition": "REMOVE_OBSOLETE",
+      "legacyKind": "REDUNDANT_TREE_OR_ORGANIZATION_LABEL",
+      "legacyTarget": null
+    },
+    {
+      "tag": "new_option",
+      "talentCount": 5,
+      "bucket": "DELETE",
+      "rationale": "Implementation/configuration marker rather than a reusable archetype identity, mechanic, or scope concept.",
+      "legacyDisposition": "NON_SEMANTIC_RUNTIME_METADATA",
+      "legacyKind": "AUTOMATION_OR_ACTION_DESCRIPTOR",
+      "legacyTarget": null
+    },
+    {
+      "tag": "science",
+      "talentCount": 5,
+      "bucket": "KEEP",
+      "rationale": "Clearly reusable semantic, mechanical, or scope concept worth preserving for Phase 11-2.",
+      "legacyDisposition": "UNSUPPORTED",
+      "legacyKind": "NOT_IN_PHASE11_VOCABULARY",
+      "legacyTarget": null
+    },
+    {
+      "tag": "space",
+      "talentCount": 5,
+      "bucket": "KEEP",
+      "rationale": "Clearly reusable semantic, mechanical, or scope concept worth preserving for Phase 11-2.",
+      "legacyDisposition": "UNSUPPORTED",
+      "legacyKind": "NOT_IN_PHASE11_VOCABULARY",
+      "legacyTarget": null
+    },
+    {
+      "tag": "stun",
+      "talentCount": 5,
+      "bucket": "KEEP",
+      "rationale": "Clearly reusable semantic, mechanical, or scope concept worth preserving for Phase 11-2.",
+      "legacyDisposition": "UNSUPPORTED",
+      "legacyKind": "NOT_IN_PHASE11_VOCABULARY",
+      "legacyTarget": null
+    },
+    {
+      "tag": "telepath",
+      "talentCount": 5,
+      "bucket": "KEEP",
+      "rationale": "Clearly reusable semantic, mechanical, or scope concept worth preserving for Phase 11-2.",
+      "legacyDisposition": "UNSUPPORTED",
+      "legacyKind": "NOT_IN_PHASE11_VOCABULARY",
+      "legacyTarget": null
+    },
+    {
+      "tag": "tree_022b31d355c840a9",
+      "talentCount": 5,
+      "bucket": "DELETE",
+      "rationale": "TREE_ID_ALIAS is structural/audit residue rather than descriptive identity, mechanics, or scope.",
+      "legacyDisposition": "NON_SEMANTIC_RUNTIME_METADATA",
+      "legacyKind": "TREE_ID_ALIAS",
+      "legacyTarget": null
+    },
+    {
+      "tag": "tree_089933380b40ce20",
+      "talentCount": 5,
+      "bucket": "DELETE",
+      "rationale": "TREE_ID_ALIAS is structural/audit residue rather than descriptive identity, mechanics, or scope.",
+      "legacyDisposition": "NON_SEMANTIC_RUNTIME_METADATA",
+      "legacyKind": "TREE_ID_ALIAS",
+      "legacyTarget": null
+    },
+    {
+      "tag": "tree_4dc70f924e7794ac",
+      "talentCount": 5,
+      "bucket": "DELETE",
+      "rationale": "TREE_ID_ALIAS is structural/audit residue rather than descriptive identity, mechanics, or scope.",
+      "legacyDisposition": "NON_SEMANTIC_RUNTIME_METADATA",
+      "legacyKind": "TREE_ID_ALIAS",
+      "legacyTarget": null
+    },
+    {
+      "tag": "tree_6629c34384c4ca53",
+      "talentCount": 5,
+      "bucket": "DELETE",
+      "rationale": "TREE_ID_ALIAS is structural/audit residue rather than descriptive identity, mechanics, or scope.",
+      "legacyDisposition": "NON_SEMANTIC_RUNTIME_METADATA",
+      "legacyKind": "TREE_ID_ALIAS",
+      "legacyTarget": null
+    },
+    {
+      "tag": "tree_8048efd85ae61101",
+      "talentCount": 5,
+      "bucket": "DELETE",
+      "rationale": "TREE_ID_ALIAS is structural/audit residue rather than descriptive identity, mechanics, or scope.",
+      "legacyDisposition": "NON_SEMANTIC_RUNTIME_METADATA",
+      "legacyKind": "TREE_ID_ALIAS",
+      "legacyTarget": null
+    },
+    {
+      "tag": "tree_ba726f623e42f849",
+      "talentCount": 5,
+      "bucket": "DELETE",
+      "rationale": "TREE_ID_ALIAS is structural/audit residue rather than descriptive identity, mechanics, or scope.",
+      "legacyDisposition": "NON_SEMANTIC_RUNTIME_METADATA",
+      "legacyKind": "TREE_ID_ALIAS",
+      "legacyTarget": null
+    },
+    {
+      "tag": "tree_d8a71a6c5b2b7581",
+      "talentCount": 5,
+      "bucket": "DELETE",
+      "rationale": "TREE_ID_ALIAS is structural/audit residue rather than descriptive identity, mechanics, or scope.",
+      "legacyDisposition": "NON_SEMANTIC_RUNTIME_METADATA",
+      "legacyKind": "TREE_ID_ALIAS",
+      "legacyTarget": null
+    },
+    {
+      "tag": "tree_e35ee41362604227",
+      "talentCount": 5,
+      "bucket": "DELETE",
+      "rationale": "TREE_ID_ALIAS is structural/audit residue rather than descriptive identity, mechanics, or scope.",
+      "legacyDisposition": "NON_SEMANTIC_RUNTIME_METADATA",
+      "legacyKind": "TREE_ID_ALIAS",
+      "legacyTarget": null
+    },
+    {
+      "tag": "ambush_defense",
+      "talentCount": 4,
+      "bucket": "KEEP",
+      "rationale": "Clearly reusable semantic, mechanical, or scope concept worth preserving for Phase 11-2.",
+      "legacyDisposition": "UNSUPPORTED",
+      "legacyKind": "NOT_IN_PHASE11_VOCABULARY",
+      "legacyTarget": null
+    },
+    {
+      "tag": "bando-gora-captain",
+      "talentCount": 4,
+      "bucket": "RECONSIDER",
+      "rationale": "REDUNDANT_TREE_OR_ORGANIZATION_LABEL may carry latent useful meaning but should be decomposed, normalized, or replaced rather than preserved unchanged.",
+      "legacyDisposition": "REMOVE_OBSOLETE",
+      "legacyKind": "REDUNDANT_TREE_OR_ORGANIZATION_LABEL",
+      "legacyTarget": null
+    },
+    {
+      "tag": "beast",
+      "talentCount": 4,
+      "bucket": "KEEP",
+      "rationale": "Clearly reusable semantic, mechanical, or scope concept worth preserving for Phase 11-2.",
+      "legacyDisposition": "UNSUPPORTED",
+      "legacyKind": "NOT_IN_PHASE11_VOCABULARY",
+      "legacyTarget": null
+    },
+    {
+      "tag": "burst_damage",
+      "talentCount": 4,
+      "bucket": "KEEP",
+      "rationale": "Clearly reusable semantic, mechanical, or scope concept worth preserving for Phase 11-2.",
+      "legacyDisposition": "UNSUPPORTED",
+      "legacyKind": "NOT_IN_PHASE11_VOCABULARY",
+      "legacyTarget": null
+    },
+    {
+      "tag": "critical_hit",
+      "talentCount": 4,
+      "bucket": "KEEP",
+      "rationale": "Clearly reusable semantic, mechanical, or scope concept worth preserving for Phase 11-2.",
+      "legacyDisposition": "UNSUPPORTED",
+      "legacyKind": "NOT_IN_PHASE11_VOCABULARY",
+      "legacyTarget": null
+    },
+    {
+      "tag": "deflect",
+      "talentCount": 4,
+      "bucket": "KEEP",
+      "rationale": "Clearly reusable semantic, mechanical, or scope concept worth preserving for Phase 11-2.",
+      "legacyDisposition": "UNSUPPORTED",
+      "legacyKind": "NOT_IN_PHASE11_VOCABULARY",
+      "legacyTarget": null
+    },
+    {
+      "tag": "elite-droid",
+      "talentCount": 4,
+      "bucket": "RECONSIDER",
+      "rationale": "REDUNDANT_TREE_OR_ORGANIZATION_LABEL may carry latent useful meaning but should be decomposed, normalized, or replaced rather than preserved unchanged.",
+      "legacyDisposition": "REMOVE_OBSOLETE",
+      "legacyKind": "REDUNDANT_TREE_OR_ORGANIZATION_LABEL",
+      "legacyTarget": null
+    },
+    {
+      "tag": "followers",
+      "talentCount": 4,
+      "bucket": "RECONSIDER",
+      "rationale": "REDUNDANT_TREE_OR_ORGANIZATION_LABEL may carry latent useful meaning but should be decomposed, normalized, or replaced rather than preserved unchanged.",
+      "legacyDisposition": "REMOVE_OBSOLETE",
+      "legacyKind": "REDUNDANT_TREE_OR_ORGANIZATION_LABEL",
+      "legacyTarget": null
+    },
+    {
+      "tag": "grapple",
+      "talentCount": 4,
+      "bucket": "KEEP",
+      "rationale": "Clearly reusable semantic, mechanical, or scope concept worth preserving for Phase 11-2.",
+      "legacyDisposition": "UNSUPPORTED",
+      "legacyKind": "NOT_IN_PHASE11_VOCABULARY",
+      "legacyTarget": null
+    },
+    {
+      "tag": "illusion",
+      "talentCount": 4,
+      "bucket": "KEEP",
+      "rationale": "Clearly reusable semantic, mechanical, or scope concept worth preserving for Phase 11-2.",
+      "legacyDisposition": "UNSUPPORTED",
+      "legacyKind": "NOT_IN_PHASE11_VOCABULARY",
+      "legacyTarget": null
+    },
+    {
+      "tag": "independent-droid",
+      "talentCount": 4,
+      "bucket": "RECONSIDER",
+      "rationale": "REDUNDANT_TREE_OR_ORGANIZATION_LABEL may carry latent useful meaning but should be decomposed, normalized, or replaced rather than preserved unchanged.",
+      "legacyDisposition": "REMOVE_OBSOLETE",
+      "legacyKind": "REDUNDANT_TREE_OR_ORGANIZATION_LABEL",
+      "legacyTarget": null
+    },
+    {
+      "tag": "inquisitor",
+      "talentCount": 4,
+      "bucket": "RECONSIDER",
+      "rationale": "ROLE_OR_CLASS_BIAS may carry latent useful meaning but should be decomposed, normalized, or replaced rather than preserved unchanged.",
+      "legacyDisposition": "LEGACY_ARCHETYPE_SCORING",
+      "legacyKind": "ROLE_OR_CLASS_BIAS",
+      "legacyTarget": null
+    },
+    {
+      "tag": "krath",
+      "talentCount": 4,
+      "bucket": "RECONSIDER",
+      "rationale": "REDUNDANT_TREE_OR_ORGANIZATION_LABEL may carry latent useful meaning but should be decomposed, normalized, or replaced rather than preserved unchanged.",
+      "legacyDisposition": "REMOVE_OBSOLETE",
+      "legacyKind": "REDUNDANT_TREE_OR_ORGANIZATION_LABEL",
+      "legacyTarget": null
+    },
+    {
+      "tag": "manipulation",
+      "talentCount": 4,
+      "bucket": "RECONSIDER",
+      "rationale": "Potentially meaningful legacy concept; retain for manual ontology review rather than deleting.",
+      "legacyDisposition": "UNSUPPORTED",
+      "legacyKind": "NOT_IN_PHASE11_VOCABULARY",
+      "legacyTarget": null
+    },
+    {
+      "tag": "nature",
+      "talentCount": 4,
+      "bucket": "KEEP",
+      "rationale": "Clearly reusable semantic, mechanical, or scope concept worth preserving for Phase 11-2.",
+      "legacyDisposition": "UNSUPPORTED",
+      "legacyKind": "NOT_IN_PHASE11_VOCABULARY",
+      "legacyTarget": null
+    },
+    {
+      "tag": "order-of-shasa",
+      "talentCount": 4,
+      "bucket": "RECONSIDER",
+      "rationale": "REDUNDANT_TREE_OR_ORGANIZATION_LABEL may carry latent useful meaning but should be decomposed, normalized, or replaced rather than preserved unchanged.",
+      "legacyDisposition": "REMOVE_OBSOLETE",
+      "legacyKind": "REDUNDANT_TREE_OR_ORGANIZATION_LABEL",
+      "legacyTarget": null
+    },
+    {
+      "tag": "sith_alchemy",
+      "talentCount": 4,
+      "bucket": "RECONSIDER",
+      "rationale": "REDUNDANT_TREE_OR_ORGANIZATION_LABEL may carry latent useful meaning but should be decomposed, normalized, or replaced rather than preserved unchanged.",
+      "legacyDisposition": "REMOVE_OBSOLETE",
+      "legacyKind": "REDUNDANT_TREE_OR_ORGANIZATION_LABEL",
+      "legacyTarget": null
+    },
+    {
+      "tag": "tree_001a438135e03588",
+      "talentCount": 4,
+      "bucket": "DELETE",
+      "rationale": "TREE_ID_ALIAS is structural/audit residue rather than descriptive identity, mechanics, or scope.",
+      "legacyDisposition": "NON_SEMANTIC_RUNTIME_METADATA",
+      "legacyKind": "TREE_ID_ALIAS",
+      "legacyTarget": null
+    },
+    {
+      "tag": "tree_46d03bab0cf74a14",
+      "talentCount": 4,
+      "bucket": "DELETE",
+      "rationale": "TREE_ID_ALIAS is structural/audit residue rather than descriptive identity, mechanics, or scope.",
+      "legacyDisposition": "NON_SEMANTIC_RUNTIME_METADATA",
+      "legacyKind": "TREE_ID_ALIAS",
+      "legacyTarget": null
+    },
+    {
+      "tag": "tree_860fa1a66c837574",
+      "talentCount": 4,
+      "bucket": "DELETE",
+      "rationale": "TREE_ID_ALIAS is structural/audit residue rather than descriptive identity, mechanics, or scope.",
+      "legacyDisposition": "NON_SEMANTIC_RUNTIME_METADATA",
+      "legacyKind": "TREE_ID_ALIAS",
+      "legacyTarget": null
+    },
+    {
+      "tag": "tree_9b06340233eb3cdd",
+      "talentCount": 4,
+      "bucket": "DELETE",
+      "rationale": "TREE_ID_ALIAS is structural/audit residue rather than descriptive identity, mechanics, or scope.",
+      "legacyDisposition": "NON_SEMANTIC_RUNTIME_METADATA",
+      "legacyKind": "TREE_ID_ALIAS",
+      "legacyTarget": null
+    },
+    {
+      "tag": "tree_a67faf2ae089ab5d",
+      "talentCount": 4,
+      "bucket": "DELETE",
+      "rationale": "TREE_ID_ALIAS is structural/audit residue rather than descriptive identity, mechanics, or scope.",
+      "legacyDisposition": "NON_SEMANTIC_RUNTIME_METADATA",
+      "legacyKind": "TREE_ID_ALIAS",
+      "legacyTarget": null
+    },
+    {
+      "tag": "tree_a6ee1a0c534cbc73",
+      "talentCount": 4,
+      "bucket": "DELETE",
+      "rationale": "TREE_ID_ALIAS is structural/audit residue rather than descriptive identity, mechanics, or scope.",
+      "legacyDisposition": "NON_SEMANTIC_RUNTIME_METADATA",
+      "legacyKind": "TREE_ID_ALIAS",
+      "legacyTarget": null
+    },
+    {
+      "tag": "tree_b968ecab63bc4cf4",
+      "talentCount": 4,
+      "bucket": "DELETE",
+      "rationale": "TREE_ID_ALIAS is structural/audit residue rather than descriptive identity, mechanics, or scope.",
+      "legacyDisposition": "NON_SEMANTIC_RUNTIME_METADATA",
+      "legacyKind": "TREE_ID_ALIAS",
+      "legacyTarget": null
+    },
+    {
+      "tag": "tree_d29a7261c1be4b83",
+      "talentCount": 4,
+      "bucket": "DELETE",
+      "rationale": "TREE_ID_ALIAS is structural/audit residue rather than descriptive identity, mechanics, or scope.",
+      "legacyDisposition": "NON_SEMANTIC_RUNTIME_METADATA",
+      "legacyKind": "TREE_ID_ALIAS",
+      "legacyTarget": null
+    },
+    {
+      "tag": "tree_dca33c0215264a02",
+      "talentCount": 4,
+      "bucket": "DELETE",
+      "rationale": "TREE_ID_ALIAS is structural/audit residue rather than descriptive identity, mechanics, or scope.",
+      "legacyDisposition": "NON_SEMANTIC_RUNTIME_METADATA",
+      "legacyKind": "TREE_ID_ALIAS",
+      "legacyTarget": null
+    },
+    {
+      "tag": "tree_ed899f9f41fc1391",
+      "talentCount": 4,
+      "bucket": "DELETE",
+      "rationale": "TREE_ID_ALIAS is structural/audit residue rather than descriptive identity, mechanics, or scope.",
+      "legacyDisposition": "NON_SEMANTIC_RUNTIME_METADATA",
+      "legacyKind": "TREE_ID_ALIAS",
+      "legacyTarget": null
+    },
+    {
+      "tag": "akk-dog",
+      "talentCount": 3,
+      "bucket": "RECONSIDER",
+      "rationale": "REDUNDANT_TREE_OR_ORGANIZATION_LABEL may carry latent useful meaning but should be decomposed, normalized, or replaced rather than preserved unchanged.",
+      "legacyDisposition": "REMOVE_OBSOLETE",
+      "legacyKind": "REDUNDANT_TREE_OR_ORGANIZATION_LABEL",
+      "legacyTarget": null
+    },
+    {
+      "tag": "damage",
+      "talentCount": 3,
+      "bucket": "KEEP",
+      "rationale": "Existing reusable Phase 11 semantic concept.",
+      "legacyDisposition": "KEEP_CANONICAL",
+      "legacyKind": null,
+      "legacyTarget": "damage"
+    },
+    {
+      "tag": "equipped_context",
+      "talentCount": 3,
+      "bucket": "DELETE",
+      "rationale": "Implementation/configuration marker rather than a reusable archetype identity, mechanic, or scope concept.",
+      "legacyDisposition": "NON_SEMANTIC_RUNTIME_METADATA",
+      "legacyKind": "AUTOMATION_OR_ACTION_DESCRIPTOR",
+      "legacyTarget": null
+    },
+    {
+      "tag": "follower",
+      "talentCount": 3,
+      "bucket": "RECONSIDER",
+      "rationale": "REDUNDANT_TREE_OR_ORGANIZATION_LABEL may carry latent useful meaning but should be decomposed, normalized, or replaced rather than preserved unchanged.",
+      "legacyDisposition": "REMOVE_OBSOLETE",
+      "legacyKind": "REDUNDANT_TREE_OR_ORGANIZATION_LABEL",
+      "legacyTarget": null
+    },
+    {
+      "tag": "genohardan",
+      "talentCount": 3,
+      "bucket": "RECONSIDER",
+      "rationale": "REDUNDANT_TREE_OR_ORGANIZATION_LABEL may carry latent useful meaning but should be decomposed, normalized, or replaced rather than preserved unchanged.",
+      "legacyDisposition": "REMOVE_OBSOLETE",
+      "legacyKind": "REDUNDANT_TREE_OR_ORGANIZATION_LABEL",
+      "legacyTarget": null
+    },
+    {
+      "tag": "grab",
+      "talentCount": 3,
+      "bucket": "RECONSIDER",
+      "rationale": "Potentially meaningful legacy concept; retain for manual ontology review rather than deleting.",
+      "legacyDisposition": "UNSUPPORTED",
+      "legacyKind": "NOT_IN_PHASE11_VOCABULARY",
+      "legacyTarget": null
+    },
+    {
+      "tag": "lightsaber_polearm",
+      "talentCount": 3,
+      "bucket": "RECONSIDER",
+      "rationale": "REDUNDANT_TREE_OR_ORGANIZATION_LABEL may carry latent useful meaning but should be decomposed, normalized, or replaced rather than preserved unchanged.",
+      "legacyDisposition": "REMOVE_OBSOLETE",
+      "legacyKind": "REDUNDANT_TREE_OR_ORGANIZATION_LABEL",
+      "legacyTarget": null
+    },
+    {
+      "tag": "ranged_defense",
+      "talentCount": 3,
+      "bucket": "KEEP",
+      "rationale": "Clearly reusable semantic, mechanical, or scope concept worth preserving for Phase 11-2.",
+      "legacyDisposition": "UNSUPPORTED",
+      "legacyKind": "NOT_IN_PHASE11_VOCABULARY",
+      "legacyTarget": null
+    },
+    {
+      "tag": "repair",
+      "talentCount": 3,
+      "bucket": "KEEP",
+      "rationale": "Clearly reusable semantic, mechanical, or scope concept worth preserving for Phase 11-2.",
+      "legacyDisposition": "UNSUPPORTED",
+      "legacyKind": "NOT_IN_PHASE11_VOCABULARY",
+      "legacyTarget": null
+    },
+    {
+      "tag": "reroll",
+      "talentCount": 3,
+      "bucket": "KEEP",
+      "rationale": "Broadly reusable mechanical/action concept; preserve even though the legacy census treated it as runtime metadata.",
+      "legacyDisposition": "NON_SEMANTIC_RUNTIME_METADATA",
+      "legacyKind": "AUTOMATION_OR_ACTION_DESCRIPTOR",
+      "legacyTarget": null
+    },
+    {
+      "tag": "sensors",
+      "talentCount": 3,
+      "bucket": "KEEP",
+      "rationale": "Clearly reusable semantic, mechanical, or scope concept worth preserving for Phase 11-2.",
+      "legacyDisposition": "UNSUPPORTED",
+      "legacyKind": "NOT_IN_PHASE11_VOCABULARY",
+      "legacyTarget": null
+    },
+    {
+      "tag": "tree_2a1838832f6146e2",
+      "talentCount": 3,
+      "bucket": "DELETE",
+      "rationale": "TREE_ID_ALIAS is structural/audit residue rather than descriptive identity, mechanics, or scope.",
+      "legacyDisposition": "NON_SEMANTIC_RUNTIME_METADATA",
+      "legacyKind": "TREE_ID_ALIAS",
+      "legacyTarget": null
+    },
+    {
+      "tag": "tree_d203a51d6d0a4c65",
+      "talentCount": 3,
+      "bucket": "DELETE",
+      "rationale": "TREE_ID_ALIAS is structural/audit residue rather than descriptive identity, mechanics, or scope.",
+      "legacyDisposition": "NON_SEMANTIC_RUNTIME_METADATA",
+      "legacyKind": "TREE_ID_ALIAS",
+      "legacyTarget": null
+    },
+    {
+      "tag": "tree_db1b30c2163d0650",
+      "talentCount": 3,
+      "bucket": "DELETE",
+      "rationale": "TREE_ID_ALIAS is structural/audit residue rather than descriptive identity, mechanics, or scope.",
+      "legacyDisposition": "NON_SEMANTIC_RUNTIME_METADATA",
+      "legacyKind": "TREE_ID_ALIAS",
+      "legacyTarget": null
+    },
+    {
+      "tag": "concealment",
+      "talentCount": 2,
+      "bucket": "KEEP",
+      "rationale": "Clearly reusable semantic, mechanical, or scope concept worth preserving for Phase 11-2.",
+      "legacyDisposition": "UNSUPPORTED",
+      "legacyKind": "NOT_IN_PHASE11_VOCABULARY",
+      "legacyTarget": null
+    },
+    {
+      "tag": "critical-success",
+      "talentCount": 2,
+      "bucket": "RECONSIDER",
+      "rationale": "Potentially useful, but compound, alias-like, broad, or insufficiently defined for direct admission.",
+      "legacyDisposition": "UNSUPPORTED",
+      "legacyKind": "NOT_IN_PHASE11_VOCABULARY",
+      "legacyTarget": null
+    },
+    {
+      "tag": "damage_bonus",
+      "talentCount": 2,
+      "bucket": "KEEP",
+      "rationale": "Clearly reusable semantic, mechanical, or scope concept worth preserving for Phase 11-2.",
+      "legacyDisposition": "UNSUPPORTED",
+      "legacyKind": "NOT_IN_PHASE11_VOCABULARY",
+      "legacyTarget": null
+    },
+    {
+      "tag": "dual_wield",
+      "talentCount": 2,
+      "bucket": "RECONSIDER",
+      "rationale": "Potentially meaningful legacy concept; retain for manual ontology review rather than deleting.",
+      "legacyDisposition": "UNSUPPORTED",
+      "legacyKind": "NOT_IN_PHASE11_VOCABULARY",
+      "legacyTarget": null
+    },
+    {
+      "tag": "encounter",
+      "talentCount": 2,
+      "bucket": "RECONSIDER",
+      "rationale": "Runtime-derived wording may encode a reusable mechanic, but needs design review and likely normalization.",
+      "legacyDisposition": "NON_SEMANTIC_RUNTIME_METADATA",
+      "legacyKind": "AUTOMATION_OR_ACTION_DESCRIPTOR",
+      "legacyTarget": null
+    },
+    {
+      "tag": "force-item",
+      "talentCount": 2,
+      "bucket": "RECONSIDER",
+      "rationale": "Potentially useful, but compound, alias-like, broad, or insufficiently defined for direct admission.",
+      "legacyDisposition": "UNSUPPORTED",
+      "legacyKind": "NOT_IN_PHASE11_VOCABULARY",
+      "legacyTarget": null
+    },
+    {
+      "tag": "immersion",
+      "talentCount": 2,
+      "bucket": "RECONSIDER",
+      "rationale": "Potentially meaningful legacy concept; retain for manual ontology review rather than deleting.",
+      "legacyDisposition": "UNSUPPORTED",
+      "legacyKind": "NOT_IN_PHASE11_VOCABULARY",
+      "legacyTarget": null
+    },
+    {
+      "tag": "intel",
+      "talentCount": 2,
+      "bucket": "RECONSIDER",
+      "rationale": "Potentially meaningful legacy concept; retain for manual ontology review rather than deleting.",
+      "legacyDisposition": "UNSUPPORTED",
+      "legacyKind": "NOT_IN_PHASE11_VOCABULARY",
+      "legacyTarget": null
+    },
+    {
+      "tag": "leadership",
+      "talentCount": 2,
+      "bucket": "KEEP",
+      "rationale": "Existing reusable Phase 11 semantic concept.",
+      "legacyDisposition": "KEEP_CANONICAL",
+      "legacyKind": null,
+      "legacyTarget": "leadership"
+    },
+    {
+      "tag": "morale",
+      "talentCount": 2,
+      "bucket": "KEEP",
+      "rationale": "Clearly reusable semantic, mechanical, or scope concept worth preserving for Phase 11-2.",
+      "legacyDisposition": "UNSUPPORTED",
+      "legacyKind": "NOT_IN_PHASE11_VOCABULARY",
+      "legacyTarget": null
+    },
+    {
+      "tag": "mount",
+      "talentCount": 2,
+      "bucket": "KEEP",
+      "rationale": "Clearly reusable semantic, mechanical, or scope concept worth preserving for Phase 11-2.",
+      "legacyDisposition": "UNSUPPORTED",
+      "legacyKind": "NOT_IN_PHASE11_VOCABULARY",
+      "legacyTarget": null
+    },
+    {
+      "tag": "network",
+      "talentCount": 2,
+      "bucket": "RECONSIDER",
+      "rationale": "REDUNDANT_TREE_OR_ORGANIZATION_LABEL may carry latent useful meaning but should be decomposed, normalized, or replaced rather than preserved unchanged.",
+      "legacyDisposition": "REMOVE_OBSOLETE",
+      "legacyKind": "REDUNDANT_TREE_OR_ORGANIZATION_LABEL",
+      "legacyTarget": null
+    },
+    {
+      "tag": "overwatch",
+      "talentCount": 2,
+      "bucket": "KEEP",
+      "rationale": "Clearly reusable semantic, mechanical, or scope concept worth preserving for Phase 11-2.",
+      "legacyDisposition": "UNSUPPORTED",
+      "legacyKind": "NOT_IN_PHASE11_VOCABULARY",
+      "legacyTarget": null
+    },
+    {
+      "tag": "power_systems",
+      "talentCount": 2,
+      "bucket": "KEEP",
+      "rationale": "Clearly reusable semantic, mechanical, or scope concept worth preserving for Phase 11-2.",
+      "legacyDisposition": "UNSUPPORTED",
+      "legacyKind": "NOT_IN_PHASE11_VOCABULARY",
+      "legacyTarget": null
+    },
+    {
+      "tag": "rider",
+      "talentCount": 2,
+      "bucket": "KEEP",
+      "rationale": "Clearly reusable semantic, mechanical, or scope concept worth preserving for Phase 11-2.",
+      "legacyDisposition": "UNSUPPORTED",
+      "legacyKind": "NOT_IN_PHASE11_VOCABULARY",
+      "legacyTarget": null
+    },
+    {
+      "tag": "setup",
+      "talentCount": 2,
+      "bucket": "RECONSIDER",
+      "rationale": "Runtime-derived wording may encode a reusable mechanic, but needs design review and likely normalization.",
+      "legacyDisposition": "NON_SEMANTIC_RUNTIME_METADATA",
+      "legacyKind": "AUTOMATION_OR_ACTION_DESCRIPTOR",
+      "legacyTarget": null
+    },
+    {
+      "tag": "swift-action",
+      "talentCount": 2,
+      "bucket": "RECONSIDER",
+      "rationale": "Runtime-derived wording may encode a reusable mechanic, but needs design review and likely normalization.",
+      "legacyDisposition": "NON_SEMANTIC_RUNTIME_METADATA",
+      "legacyKind": "AUTOMATION_OR_ACTION_DESCRIPTOR",
+      "legacyTarget": null
+    },
+    {
+      "tag": "tactics",
+      "talentCount": 2,
+      "bucket": "KEEP",
+      "rationale": "Clearly reusable semantic, mechanical, or scope concept worth preserving for Phase 11-2.",
+      "legacyDisposition": "UNSUPPORTED",
+      "legacyKind": "NOT_IN_PHASE11_VOCABULARY",
+      "legacyTarget": null
+    },
+    {
+      "tag": "talisman",
+      "talentCount": 2,
+      "bucket": "KEEP",
+      "rationale": "Clearly reusable semantic, mechanical, or scope concept worth preserving for Phase 11-2.",
+      "legacyDisposition": "UNSUPPORTED",
+      "legacyKind": "NOT_IN_PHASE11_VOCABULARY",
+      "legacyTarget": null
+    },
+    {
+      "tag": "tracking",
+      "talentCount": 2,
+      "bucket": "KEEP",
+      "rationale": "Clearly reusable semantic, mechanical, or scope concept worth preserving for Phase 11-2.",
+      "legacyDisposition": "UNSUPPORTED",
+      "legacyKind": "NOT_IN_PHASE11_VOCABULARY",
+      "legacyTarget": null
+    },
+    {
+      "tag": "tree_3a785c985eae4d00",
+      "talentCount": 2,
+      "bucket": "DELETE",
+      "rationale": "TREE_ID_ALIAS is structural/audit residue rather than descriptive identity, mechanics, or scope.",
+      "legacyDisposition": "NON_SEMANTIC_RUNTIME_METADATA",
+      "legacyKind": "TREE_ID_ALIAS",
+      "legacyTarget": null
+    },
+    {
+      "tag": "tree_4509306f66d744bf",
+      "talentCount": 2,
+      "bucket": "DELETE",
+      "rationale": "TREE_ID_ALIAS is structural/audit residue rather than descriptive identity, mechanics, or scope.",
+      "legacyDisposition": "NON_SEMANTIC_RUNTIME_METADATA",
+      "legacyKind": "TREE_ID_ALIAS",
+      "legacyTarget": null
+    },
+    {
+      "tag": "tree_9688ed3500084dca",
+      "talentCount": 2,
+      "bucket": "DELETE",
+      "rationale": "TREE_ID_ALIAS is structural/audit residue rather than descriptive identity, mechanics, or scope.",
+      "legacyDisposition": "NON_SEMANTIC_RUNTIME_METADATA",
+      "legacyKind": "TREE_ID_ALIAS",
+      "legacyTarget": null
+    },
+    {
+      "tag": "tree_96c390430d7a4975",
+      "talentCount": 2,
+      "bucket": "DELETE",
+      "rationale": "TREE_ID_ALIAS is structural/audit residue rather than descriptive identity, mechanics, or scope.",
+      "legacyDisposition": "NON_SEMANTIC_RUNTIME_METADATA",
+      "legacyKind": "TREE_ID_ALIAS",
+      "legacyTarget": null
+    },
+    {
+      "tag": "tree_9d826906ad8945b0",
+      "talentCount": 2,
+      "bucket": "DELETE",
+      "rationale": "TREE_ID_ALIAS is structural/audit residue rather than descriptive identity, mechanics, or scope.",
+      "legacyDisposition": "NON_SEMANTIC_RUNTIME_METADATA",
+      "legacyKind": "TREE_ID_ALIAS",
+      "legacyTarget": null
+    },
+    {
+      "tag": "tree_a47ed82a822e3962",
+      "talentCount": 2,
+      "bucket": "DELETE",
+      "rationale": "TREE_ID_ALIAS is structural/audit residue rather than descriptive identity, mechanics, or scope.",
+      "legacyDisposition": "NON_SEMANTIC_RUNTIME_METADATA",
+      "legacyKind": "TREE_ID_ALIAS",
+      "legacyTarget": null
+    },
+    {
+      "tag": "tree_abc3466390fe4050",
+      "talentCount": 2,
+      "bucket": "DELETE",
+      "rationale": "TREE_ID_ALIAS is structural/audit residue rather than descriptive identity, mechanics, or scope.",
+      "legacyDisposition": "NON_SEMANTIC_RUNTIME_METADATA",
+      "legacyKind": "TREE_ID_ALIAS",
+      "legacyTarget": null
+    },
+    {
+      "tag": "tree_cec49bc60d1646b1",
+      "talentCount": 2,
+      "bucket": "DELETE",
+      "rationale": "TREE_ID_ALIAS is structural/audit residue rather than descriptive identity, mechanics, or scope.",
+      "legacyDisposition": "NON_SEMANTIC_RUNTIME_METADATA",
+      "legacyKind": "TREE_ID_ALIAS",
+      "legacyTarget": null
+    },
+    {
+      "tag": "ui_deferred",
+      "talentCount": 2,
+      "bucket": "DELETE",
+      "rationale": "AUDIT_MARKER is structural/audit residue rather than descriptive identity, mechanics, or scope.",
+      "legacyDisposition": "REMOVE_OBSOLETE",
+      "legacyKind": "AUDIT_MARKER",
+      "legacyTarget": null
+    },
+    {
+      "tag": "unknown-regions",
+      "talentCount": 2,
+      "bucket": "RECONSIDER",
+      "rationale": "REDUNDANT_TREE_OR_ORGANIZATION_LABEL may carry latent useful meaning but should be decomposed, normalized, or replaced rather than preserved unchanged.",
+      "legacyDisposition": "REMOVE_OBSOLETE",
+      "legacyKind": "REDUNDANT_TREE_OR_ORGANIZATION_LABEL",
+      "legacyTarget": null
+    },
+    {
+      "tag": "veteran",
+      "talentCount": 2,
+      "bucket": "RECONSIDER",
+      "rationale": "ROLE_OR_CLASS_BIAS may carry latent useful meaning but should be decomposed, normalized, or replaced rather than preserved unchanged.",
+      "legacyDisposition": "LEGACY_ARCHETYPE_SCORING",
+      "legacyKind": "ROLE_OR_CLASS_BIAS",
+      "legacyTarget": null
+    },
+    {
+      "tag": "weapon_empowerment",
+      "talentCount": 2,
+      "bucket": "KEEP",
+      "rationale": "Clearly reusable semantic, mechanical, or scope concept worth preserving for Phase 11-2.",
+      "legacyDisposition": "UNSUPPORTED",
+      "legacyKind": "NOT_IN_PHASE11_VOCABULARY",
+      "legacyTarget": null
+    },
+    {
+      "tag": "white_current",
+      "talentCount": 2,
+      "bucket": "RECONSIDER",
+      "rationale": "Potentially meaningful legacy concept; retain for manual ontology review rather than deleting.",
+      "legacyDisposition": "UNSUPPORTED",
+      "legacyKind": "NOT_IN_PHASE11_VOCABULARY",
+      "legacyTarget": null
+    },
+    {
+      "tag": "ally_0hp",
+      "talentCount": 1,
+      "bucket": "BESPOKE",
+      "rationale": "Current singleton. Phase 11-2 policy quarantines every one-use tag for dedicated review before it may be generalized, merged, or deleted.",
+      "legacyDisposition": "NON_SEMANTIC_RUNTIME_METADATA",
+      "legacyKind": "AUTOMATION_OR_ACTION_DESCRIPTOR",
+      "legacyTarget": null
+    },
+    {
+      "tag": "ally_aura",
+      "talentCount": 1,
+      "bucket": "BESPOKE",
+      "rationale": "Current singleton. Phase 11-2 policy quarantines every one-use tag for dedicated review before it may be generalized, merged, or deleted.",
+      "legacyDisposition": "UNSUPPORTED",
+      "legacyKind": "NOT_IN_PHASE11_VOCABULARY",
+      "legacyTarget": null
+    },
+    {
+      "tag": "attack_of_opportunity",
+      "talentCount": 1,
+      "bucket": "BESPOKE",
+      "rationale": "Current singleton. Phase 11-2 policy quarantines every one-use tag for dedicated review before it may be generalized, merged, or deleted.",
+      "legacyDisposition": "UNSUPPORTED",
+      "legacyKind": "NOT_IN_PHASE11_VOCABULARY",
+      "legacyTarget": null
+    },
+    {
+      "tag": "battlefield",
+      "talentCount": 1,
+      "bucket": "BESPOKE",
+      "rationale": "Current singleton. Phase 11-2 policy quarantines every one-use tag for dedicated review before it may be generalized, merged, or deleted.",
+      "legacyDisposition": "UNSUPPORTED",
+      "legacyKind": "NOT_IN_PHASE11_VOCABULARY",
+      "legacyTarget": null
+    },
+    {
+      "tag": "bayonet",
+      "talentCount": 1,
+      "bucket": "BESPOKE",
+      "rationale": "Current singleton. Phase 11-2 policy quarantines every one-use tag for dedicated review before it may be generalized, merged, or deleted.",
+      "legacyDisposition": "UNSUPPORTED",
+      "legacyKind": "NOT_IN_PHASE11_VOCABULARY",
+      "legacyTarget": null
+    },
+    {
+      "tag": "behavioral-inhibitor",
+      "talentCount": 1,
+      "bucket": "BESPOKE",
+      "rationale": "Current singleton. Phase 11-2 policy quarantines every one-use tag for dedicated review before it may be generalized, merged, or deleted.",
+      "legacyDisposition": "UNSUPPORTED",
+      "legacyKind": "NOT_IN_PHASE11_VOCABULARY",
+      "legacyTarget": null
+    },
+    {
+      "tag": "bodyguard",
+      "talentCount": 1,
+      "bucket": "BESPOKE",
+      "rationale": "Current singleton. Phase 11-2 policy quarantines every one-use tag for dedicated review before it may be generalized, merged, or deleted.",
+      "legacyDisposition": "LEGACY_ARCHETYPE_SCORING",
+      "legacyKind": "ROLE_OR_CLASS_BIAS",
+      "legacyTarget": null
+    },
+    {
+      "tag": "bonus-force-point",
+      "talentCount": 1,
+      "bucket": "BESPOKE",
+      "rationale": "Current singleton. Phase 11-2 policy quarantines every one-use tag for dedicated review before it may be generalized, merged, or deleted.",
+      "legacyDisposition": "UNSUPPORTED",
+      "legacyKind": "NOT_IN_PHASE11_VOCABULARY",
+      "legacyTarget": null
+    },
+    {
+      "tag": "brigand",
+      "talentCount": 1,
+      "bucket": "BESPOKE",
+      "rationale": "Current singleton. Phase 11-2 policy quarantines every one-use tag for dedicated review before it may be generalized, merged, or deleted.",
+      "legacyDisposition": "LEGACY_ARCHETYPE_SCORING",
+      "legacyKind": "ROLE_OR_CLASS_BIAS",
+      "legacyTarget": null
+    },
+    {
+      "tag": "cheap_shot",
+      "talentCount": 1,
+      "bucket": "BESPOKE",
+      "rationale": "Current singleton. Phase 11-2 policy quarantines every one-use tag for dedicated review before it may be generalized, merged, or deleted.",
+      "legacyDisposition": "UNSUPPORTED",
+      "legacyKind": "NOT_IN_PHASE11_VOCABULARY",
+      "legacyTarget": null
+    },
+    {
+      "tag": "combat-action",
+      "talentCount": 1,
+      "bucket": "BESPOKE",
+      "rationale": "Current singleton. Phase 11-2 policy quarantines every one-use tag for dedicated review before it may be generalized, merged, or deleted.",
+      "legacyDisposition": "NON_SEMANTIC_RUNTIME_METADATA",
+      "legacyKind": "AUTOMATION_OR_ACTION_DESCRIPTOR",
+      "legacyTarget": null
+    },
+    {
+      "tag": "command",
+      "talentCount": 1,
+      "bucket": "BESPOKE",
+      "rationale": "Current singleton. Phase 11-2 policy quarantines every one-use tag for dedicated review before it may be generalized, merged, or deleted.",
+      "legacyDisposition": "UNSUPPORTED",
+      "legacyKind": "NOT_IN_PHASE11_VOCABULARY",
+      "legacyTarget": null
+    },
+    {
+      "tag": "commander",
+      "talentCount": 1,
+      "bucket": "BESPOKE",
+      "rationale": "Current singleton. Phase 11-2 policy quarantines every one-use tag for dedicated review before it may be generalized, merged, or deleted.",
+      "legacyDisposition": "LEGACY_ARCHETYPE_SCORING",
+      "legacyKind": "ROLE_OR_CLASS_BIAS",
+      "legacyTarget": null
+    },
+    {
+      "tag": "critical_success",
+      "talentCount": 1,
+      "bucket": "BESPOKE",
+      "rationale": "Current singleton. Phase 11-2 policy quarantines every one-use tag for dedicated review before it may be generalized, merged, or deleted.",
+      "legacyDisposition": "UNSUPPORTED",
+      "legacyKind": "NOT_IN_PHASE11_VOCABULARY",
+      "legacyTarget": null
+    },
+    {
+      "tag": "damage_scaling",
+      "talentCount": 1,
+      "bucket": "BESPOKE",
+      "rationale": "Current singleton. Phase 11-2 policy quarantines every one-use tag for dedicated review before it may be generalized, merged, or deleted.",
+      "legacyDisposition": "UNSUPPORTED",
+      "legacyKind": "NOT_IN_PHASE11_VOCABULARY",
+      "legacyTarget": null
+    },
+    {
+      "tag": "damage-threshold",
+      "talentCount": 1,
+      "bucket": "BESPOKE",
+      "rationale": "Current singleton. Phase 11-2 policy quarantines every one-use tag for dedicated review before it may be generalized, merged, or deleted.",
+      "legacyDisposition": "UNSUPPORTED",
+      "legacyKind": "NOT_IN_PHASE11_VOCABULARY",
+      "legacyTarget": null
+    },
+    {
+      "tag": "danger_sense",
+      "talentCount": 1,
+      "bucket": "BESPOKE",
+      "rationale": "Current singleton. Phase 11-2 policy quarantines every one-use tag for dedicated review before it may be generalized, merged, or deleted.",
+      "legacyDisposition": "UNSUPPORTED",
+      "legacyKind": "NOT_IN_PHASE11_VOCABULARY",
+      "legacyTarget": null
+    },
+    {
+      "tag": "dark-side-score",
+      "talentCount": 1,
+      "bucket": "BESPOKE",
+      "rationale": "Current singleton. Phase 11-2 policy quarantines every one-use tag for dedicated review before it may be generalized, merged, or deleted.",
+      "legacyDisposition": "UNSUPPORTED",
+      "legacyKind": "NOT_IN_PHASE11_VOCABULARY",
+      "legacyTarget": null
+    },
+    {
+      "tag": "delay",
+      "talentCount": 1,
+      "bucket": "BESPOKE",
+      "rationale": "Current singleton. Phase 11-2 policy quarantines every one-use tag for dedicated review before it may be generalized, merged, or deleted.",
+      "legacyDisposition": "NON_SEMANTIC_RUNTIME_METADATA",
+      "legacyKind": "AUTOMATION_OR_ACTION_DESCRIPTOR",
+      "legacyTarget": null
+    },
+    {
+      "tag": "detection",
+      "talentCount": 1,
+      "bucket": "BESPOKE",
+      "rationale": "Current singleton. Phase 11-2 policy quarantines every one-use tag for dedicated review before it may be generalized, merged, or deleted.",
+      "legacyDisposition": "UNSUPPORTED",
+      "legacyKind": "NOT_IN_PHASE11_VOCABULARY",
+      "legacyTarget": null
+    },
+    {
+      "tag": "double_weapon",
+      "talentCount": 1,
+      "bucket": "BESPOKE",
+      "rationale": "Current singleton. Phase 11-2 policy quarantines every one-use tag for dedicated review before it may be generalized, merged, or deleted.",
+      "legacyDisposition": "UNSUPPORTED",
+      "legacyKind": "NOT_IN_PHASE11_VOCABULARY",
+      "legacyTarget": null
+    },
+    {
+      "tag": "entangle",
+      "talentCount": 1,
+      "bucket": "BESPOKE",
+      "rationale": "Current singleton. Phase 11-2 policy quarantines every one-use tag for dedicated review before it may be generalized, merged, or deleted.",
+      "legacyDisposition": "UNSUPPORTED",
+      "legacyKind": "NOT_IN_PHASE11_VOCABULARY",
+      "legacyTarget": null
+    },
+    {
+      "tag": "escort",
+      "talentCount": 1,
+      "bucket": "BESPOKE",
+      "rationale": "Current singleton. Phase 11-2 policy quarantines every one-use tag for dedicated review before it may be generalized, merged, or deleted.",
+      "legacyDisposition": "UNSUPPORTED",
+      "legacyKind": "NOT_IN_PHASE11_VOCABULARY",
+      "legacyTarget": null
+    },
+    {
+      "tag": "exotic_weapon",
+      "talentCount": 1,
+      "bucket": "BESPOKE",
+      "rationale": "Current singleton. Phase 11-2 policy quarantines every one-use tag for dedicated review before it may be generalized, merged, or deleted.",
+      "legacyDisposition": "UNSUPPORTED",
+      "legacyKind": "NOT_IN_PHASE11_VOCABULARY",
+      "legacyTarget": null
+    },
+    {
+      "tag": "feint",
+      "talentCount": 1,
+      "bucket": "BESPOKE",
+      "rationale": "Current singleton. Phase 11-2 policy quarantines every one-use tag for dedicated review before it may be generalized, merged, or deleted.",
+      "legacyDisposition": "UNSUPPORTED",
+      "legacyKind": "NOT_IN_PHASE11_VOCABULARY",
+      "legacyTarget": null
+    },
+    {
+      "tag": "fighting_defensively",
+      "talentCount": 1,
+      "bucket": "BESPOKE",
+      "rationale": "Current singleton. Phase 11-2 policy quarantines every one-use tag for dedicated review before it may be generalized, merged, or deleted.",
+      "legacyDisposition": "UNSUPPORTED",
+      "legacyKind": "NOT_IN_PHASE11_VOCABULARY",
+      "legacyTarget": null
+    },
+    {
+      "tag": "flanked",
+      "talentCount": 1,
+      "bucket": "BESPOKE",
+      "rationale": "Current singleton. Phase 11-2 policy quarantines every one-use tag for dedicated review before it may be generalized, merged, or deleted.",
+      "legacyDisposition": "NON_SEMANTIC_RUNTIME_METADATA",
+      "legacyKind": "AUTOMATION_OR_ACTION_DESCRIPTOR",
+      "legacyTarget": null
+    },
+    {
+      "tag": "force_item",
+      "talentCount": 1,
+      "bucket": "BESPOKE",
+      "rationale": "Current singleton. Phase 11-2 policy quarantines every one-use tag for dedicated review before it may be generalized, merged, or deleted.",
+      "legacyDisposition": "UNSUPPORTED",
+      "legacyKind": "NOT_IN_PHASE11_VOCABULARY",
+      "legacyTarget": null
+    },
+    {
+      "tag": "force-power",
+      "talentCount": 1,
+      "bucket": "BESPOKE",
+      "rationale": "Current singleton. Phase 11-2 policy quarantines every one-use tag for dedicated review before it may be generalized, merged, or deleted.",
+      "legacyDisposition": "MAP_ALIAS",
+      "legacyKind": null,
+      "legacyTarget": "force_power"
+    },
+    {
+      "tag": "freedom",
+      "talentCount": 1,
+      "bucket": "BESPOKE",
+      "rationale": "Current singleton. Phase 11-2 policy quarantines every one-use tag for dedicated review before it may be generalized, merged, or deleted.",
+      "legacyDisposition": "UNSUPPORTED",
+      "legacyKind": "NOT_IN_PHASE11_VOCABULARY",
+      "legacyTarget": null
+    },
+    {
+      "tag": "full_attack",
+      "talentCount": 1,
+      "bucket": "BESPOKE",
+      "rationale": "Current singleton. Phase 11-2 policy quarantines every one-use tag for dedicated review before it may be generalized, merged, or deleted.",
+      "legacyDisposition": "UNSUPPORTED",
+      "legacyKind": "NOT_IN_PHASE11_VOCABULARY",
+      "legacyTarget": null
+    },
+    {
+      "tag": "galactic-lore",
+      "talentCount": 1,
+      "bucket": "BESPOKE",
+      "rationale": "Current singleton. Phase 11-2 policy quarantines every one-use tag for dedicated review before it may be generalized, merged, or deleted.",
+      "legacyDisposition": "REMOVE_OBSOLETE",
+      "legacyKind": "REDUNDANT_TREE_OR_ORGANIZATION_LABEL",
+      "legacyTarget": null
+    },
+    {
+      "tag": "genoharadan",
+      "talentCount": 1,
+      "bucket": "BESPOKE",
+      "rationale": "Current singleton. Phase 11-2 policy quarantines every one-use tag for dedicated review before it may be generalized, merged, or deleted.",
+      "legacyDisposition": "REMOVE_OBSOLETE",
+      "legacyKind": "REDUNDANT_TREE_OR_ORGANIZATION_LABEL",
+      "legacyTarget": null
+    },
+    {
+      "tag": "guidance",
+      "talentCount": 1,
+      "bucket": "BESPOKE",
+      "rationale": "Current singleton. Phase 11-2 policy quarantines every one-use tag for dedicated review before it may be generalized, merged, or deleted.",
+      "legacyDisposition": "UNSUPPORTED",
+      "legacyKind": "NOT_IN_PHASE11_VOCABULARY",
+      "legacyTarget": null
+    },
+    {
+      "tag": "gunslinger",
+      "talentCount": 1,
+      "bucket": "BESPOKE",
+      "rationale": "Current singleton. Phase 11-2 policy quarantines every one-use tag for dedicated review before it may be generalized, merged, or deleted.",
+      "legacyDisposition": "LEGACY_ARCHETYPE_SCORING",
+      "legacyKind": "ROLE_OR_CLASS_BIAS",
+      "legacyTarget": null
+    },
+    {
+      "tag": "heavy_weapons",
+      "talentCount": 1,
+      "bucket": "BESPOKE",
+      "rationale": "Current singleton. Phase 11-2 policy quarantines every one-use tag for dedicated review before it may be generalized, merged, or deleted.",
+      "legacyDisposition": "MAP_ALIAS",
+      "legacyKind": null,
+      "legacyTarget": "heavy_weapon"
+    },
+    {
+      "tag": "implemented_derived_calculator",
+      "talentCount": 1,
+      "bucket": "BESPOKE",
+      "rationale": "Current singleton. Phase 11-2 policy quarantines every one-use tag for dedicated review before it may be generalized, merged, or deleted.",
+      "legacyDisposition": "REMOVE_OBSOLETE",
+      "legacyKind": "AUDIT_MARKER",
+      "legacyTarget": null
+    },
+    {
+      "tag": "improvised_weapon",
+      "talentCount": 1,
+      "bucket": "BESPOKE",
+      "rationale": "Current singleton. Phase 11-2 policy quarantines every one-use tag for dedicated review before it may be generalized, merged, or deleted.",
+      "legacyDisposition": "UNSUPPORTED",
+      "legacyKind": "NOT_IN_PHASE11_VOCABULARY",
+      "legacyTarget": null
+    },
+    {
+      "tag": "independent-spirit",
+      "talentCount": 1,
+      "bucket": "BESPOKE",
+      "rationale": "Current singleton. Phase 11-2 policy quarantines every one-use tag for dedicated review before it may be generalized, merged, or deleted.",
+      "legacyDisposition": "REMOVE_OBSOLETE",
+      "legacyKind": "REDUNDANT_TREE_OR_ORGANIZATION_LABEL",
+      "legacyTarget": null
+    },
+    {
+      "tag": "kata",
+      "talentCount": 1,
+      "bucket": "BESPOKE",
+      "rationale": "Current singleton. Phase 11-2 policy quarantines every one-use tag for dedicated review before it may be generalized, merged, or deleted.",
+      "legacyDisposition": "UNSUPPORTED",
+      "legacyKind": "NOT_IN_PHASE11_VOCABULARY",
+      "legacyTarget": null
+    },
+    {
+      "tag": "master-of-intrigue",
+      "talentCount": 1,
+      "bucket": "BESPOKE",
+      "rationale": "Current singleton. Phase 11-2 policy quarantines every one-use tag for dedicated review before it may be generalized, merged, or deleted.",
+      "legacyDisposition": "REMOVE_OBSOLETE",
+      "legacyKind": "REDUNDANT_TREE_OR_ORGANIZATION_LABEL",
+      "legacyTarget": null
+    },
+    {
+      "tag": "meditation",
+      "talentCount": 1,
+      "bucket": "BESPOKE",
+      "rationale": "Current singleton. Phase 11-2 policy quarantines every one-use tag for dedicated review before it may be generalized, merged, or deleted.",
+      "legacyDisposition": "UNSUPPORTED",
+      "legacyKind": "NOT_IN_PHASE11_VOCABULARY",
+      "legacyTarget": null
+    },
+    {
+      "tag": "melee_support",
+      "talentCount": 1,
+      "bucket": "BESPOKE",
+      "rationale": "Current singleton. Phase 11-2 policy quarantines every one-use tag for dedicated review before it may be generalized, merged, or deleted.",
+      "legacyDisposition": "UNSUPPORTED",
+      "legacyKind": "NOT_IN_PHASE11_VOCABULARY",
+      "legacyTarget": null
+    },
+    {
+      "tag": "miss_rider",
+      "talentCount": 1,
+      "bucket": "BESPOKE",
+      "rationale": "Current singleton. Phase 11-2 policy quarantines every one-use tag for dedicated review before it may be generalized, merged, or deleted.",
+      "legacyDisposition": "NON_SEMANTIC_RUNTIME_METADATA",
+      "legacyKind": "AUTOMATION_OR_ACTION_DESCRIPTOR",
+      "legacyTarget": null
+    },
+    {
+      "tag": "modification",
+      "talentCount": 1,
+      "bucket": "BESPOKE",
+      "rationale": "Current singleton. Phase 11-2 policy quarantines every one-use tag for dedicated review before it may be generalized, merged, or deleted.",
+      "legacyDisposition": "UNSUPPORTED",
+      "legacyKind": "NOT_IN_PHASE11_VOCABULARY",
+      "legacyTarget": null
+    },
+    {
+      "tag": "movement",
+      "talentCount": 1,
+      "bucket": "BESPOKE",
+      "rationale": "Current singleton. Phase 11-2 policy quarantines every one-use tag for dedicated review before it may be generalized, merged, or deleted.",
+      "legacyDisposition": "UNSUPPORTED",
+      "legacyKind": "NOT_IN_PHASE11_VOCABULARY",
+      "legacyTarget": null
+    },
+    {
+      "tag": "no_static_defense_bonus",
+      "talentCount": 1,
+      "bucket": "BESPOKE",
+      "rationale": "Current singleton. Phase 11-2 policy quarantines every one-use tag for dedicated review before it may be generalized, merged, or deleted.",
+      "legacyDisposition": "NON_SEMANTIC_RUNTIME_METADATA",
+      "legacyKind": "AUTOMATION_OR_ACTION_DESCRIPTOR",
+      "legacyTarget": null
+    },
+    {
+      "tag": "no_unconditional_static_bonus",
+      "talentCount": 1,
+      "bucket": "BESPOKE",
+      "rationale": "Current singleton. Phase 11-2 policy quarantines every one-use tag for dedicated review before it may be generalized, merged, or deleted.",
+      "legacyDisposition": "NON_SEMANTIC_RUNTIME_METADATA",
+      "legacyKind": "AUTOMATION_OR_ACTION_DESCRIPTOR",
+      "legacyTarget": null
+    },
+    {
+      "tag": "opposed-check",
+      "talentCount": 1,
+      "bucket": "BESPOKE",
+      "rationale": "Current singleton. Phase 11-2 policy quarantines every one-use tag for dedicated review before it may be generalized, merged, or deleted.",
+      "legacyDisposition": "UNSUPPORTED",
+      "legacyKind": "NOT_IN_PHASE11_VOCABULARY",
+      "legacyTarget": null
+    },
+    {
+      "tag": "outsider",
+      "talentCount": 1,
+      "bucket": "BESPOKE",
+      "rationale": "Current singleton. Phase 11-2 policy quarantines every one-use tag for dedicated review before it may be generalized, merged, or deleted.",
+      "legacyDisposition": "UNSUPPORTED",
+      "legacyKind": "NOT_IN_PHASE11_VOCABULARY",
+      "legacyTarget": null
+    },
+    {
+      "tag": "panic",
+      "talentCount": 1,
+      "bucket": "BESPOKE",
+      "rationale": "Current singleton. Phase 11-2 policy quarantines every one-use tag for dedicated review before it may be generalized, merged, or deleted.",
+      "legacyDisposition": "UNSUPPORTED",
+      "legacyKind": "NOT_IN_PHASE11_VOCABULARY",
+      "legacyTarget": null
+    },
+    {
+      "tag": "pistol",
+      "talentCount": 1,
+      "bucket": "BESPOKE",
+      "rationale": "Current singleton. Phase 11-2 policy quarantines every one-use tag for dedicated review before it may be generalized, merged, or deleted.",
+      "legacyDisposition": "KEEP_CANONICAL",
+      "legacyKind": null,
+      "legacyTarget": "pistol"
+    },
+    {
+      "tag": "planning",
+      "talentCount": 1,
+      "bucket": "BESPOKE",
+      "rationale": "Current singleton. Phase 11-2 policy quarantines every one-use tag for dedicated review before it may be generalized, merged, or deleted.",
+      "legacyDisposition": "UNSUPPORTED",
+      "legacyKind": "NOT_IN_PHASE11_VOCABULARY",
+      "legacyTarget": null
+    },
+    {
+      "tag": "provocateur",
+      "talentCount": 1,
+      "bucket": "BESPOKE",
+      "rationale": "Current singleton. Phase 11-2 policy quarantines every one-use tag for dedicated review before it may be generalized, merged, or deleted.",
+      "legacyDisposition": "LEGACY_ARCHETYPE_SCORING",
+      "legacyKind": "ROLE_OR_CLASS_BIAS",
+      "legacyTarget": null
+    },
+    {
+      "tag": "range",
+      "talentCount": 1,
+      "bucket": "BESPOKE",
+      "rationale": "Current singleton. Phase 11-2 policy quarantines every one-use tag for dedicated review before it may be generalized, merged, or deleted.",
+      "legacyDisposition": "UNSUPPORTED",
+      "legacyKind": "NOT_IN_PHASE11_VOCABULARY",
+      "legacyTarget": null
+    },
+    {
+      "tag": "ranged_control",
+      "talentCount": 1,
+      "bucket": "BESPOKE",
+      "rationale": "Current singleton. Phase 11-2 policy quarantines every one-use tag for dedicated review before it may be generalized, merged, or deleted.",
+      "legacyDisposition": "UNSUPPORTED",
+      "legacyKind": "NOT_IN_PHASE11_VOCABULARY",
+      "legacyTarget": null
+    },
+    {
+      "tag": "reliability",
+      "talentCount": 1,
+      "bucket": "BESPOKE",
+      "rationale": "Current singleton. Phase 11-2 policy quarantines every one-use tag for dedicated review before it may be generalized, merged, or deleted.",
+      "legacyDisposition": "UNSUPPORTED",
+      "legacyKind": "NOT_IN_PHASE11_VOCABULARY",
+      "legacyTarget": null
+    },
+    {
+      "tag": "restrain",
+      "talentCount": 1,
+      "bucket": "BESPOKE",
+      "rationale": "Current singleton. Phase 11-2 policy quarantines every one-use tag for dedicated review before it may be generalized, merged, or deleted.",
+      "legacyDisposition": "UNSUPPORTED",
+      "legacyKind": "NOT_IN_PHASE11_VOCABULARY",
+      "legacyTarget": null
+    },
+    {
+      "tag": "ride",
+      "talentCount": 1,
+      "bucket": "BESPOKE",
+      "rationale": "Current singleton. Phase 11-2 policy quarantines every one-use tag for dedicated review before it may be generalized, merged, or deleted.",
+      "legacyDisposition": "KEEP_CANONICAL",
+      "legacyKind": null,
+      "legacyTarget": "ride"
+    },
+    {
+      "tag": "runtime",
+      "talentCount": 1,
+      "bucket": "BESPOKE",
+      "rationale": "Current singleton. Phase 11-2 policy quarantines every one-use tag for dedicated review before it may be generalized, merged, or deleted.",
+      "legacyDisposition": "REMOVE_OBSOLETE",
+      "legacyKind": "AUDIT_MARKER",
+      "legacyTarget": null
+    },
+    {
+      "tag": "search-your-feelings",
+      "talentCount": 1,
+      "bucket": "BESPOKE",
+      "rationale": "Current singleton. Phase 11-2 policy quarantines every one-use tag for dedicated review before it may be generalized, merged, or deleted.",
+      "legacyDisposition": "REMOVE_OBSOLETE",
+      "legacyKind": "REDUNDANT_TREE_OR_ORGANIZATION_LABEL",
+      "legacyTarget": null
+    },
+    {
+      "tag": "sith-alchemy",
+      "talentCount": 1,
+      "bucket": "BESPOKE",
+      "rationale": "Current singleton. Phase 11-2 policy quarantines every one-use tag for dedicated review before it may be generalized, merged, or deleted.",
+      "legacyDisposition": "REMOVE_OBSOLETE",
+      "legacyKind": "REDUNDANT_TREE_OR_ORGANIZATION_LABEL",
+      "legacyTarget": null
+    },
+    {
+      "tag": "skill_mastery",
+      "talentCount": 1,
+      "bucket": "BESPOKE",
+      "rationale": "Current singleton. Phase 11-2 policy quarantines every one-use tag for dedicated review before it may be generalized, merged, or deleted.",
+      "legacyDisposition": "UNSUPPORTED",
+      "legacyKind": "NOT_IN_PHASE11_VOCABULARY",
+      "legacyTarget": null
+    },
+    {
+      "tag": "social_defense",
+      "talentCount": 1,
+      "bucket": "BESPOKE",
+      "rationale": "Current singleton. Phase 11-2 policy quarantines every one-use tag for dedicated review before it may be generalized, merged, or deleted.",
+      "legacyDisposition": "UNSUPPORTED",
+      "legacyKind": "NOT_IN_PHASE11_VOCABULARY",
+      "legacyTarget": null
+    },
+    {
+      "tag": "spellcasting",
+      "talentCount": 1,
+      "bucket": "BESPOKE",
+      "rationale": "Current singleton. Phase 11-2 policy quarantines every one-use tag for dedicated review before it may be generalized, merged, or deleted.",
+      "legacyDisposition": "UNSUPPORTED",
+      "legacyKind": "NOT_IN_PHASE11_VOCABULARY",
+      "legacyTarget": null
+    },
+    {
+      "tag": "standard-action",
+      "talentCount": 1,
+      "bucket": "BESPOKE",
+      "rationale": "Current singleton. Phase 11-2 policy quarantines every one-use tag for dedicated review before it may be generalized, merged, or deleted.",
+      "legacyDisposition": "NON_SEMANTIC_RUNTIME_METADATA",
+      "legacyKind": "AUTOMATION_OR_ACTION_DESCRIPTOR",
+      "legacyTarget": null
+    },
+    {
+      "tag": "strength_enhancement",
+      "talentCount": 1,
+      "bucket": "BESPOKE",
+      "rationale": "Current singleton. Phase 11-2 policy quarantines every one-use tag for dedicated review before it may be generalized, merged, or deleted.",
+      "legacyDisposition": "UNSUPPORTED",
+      "legacyKind": "NOT_IN_PHASE11_VOCABULARY",
+      "legacyTarget": null
+    },
+    {
+      "tag": "surprise_round",
+      "talentCount": 1,
+      "bucket": "BESPOKE",
+      "rationale": "Current singleton. Phase 11-2 policy quarantines every one-use tag for dedicated review before it may be generalized, merged, or deleted.",
+      "legacyDisposition": "NON_SEMANTIC_RUNTIME_METADATA",
+      "legacyKind": "AUTOMATION_OR_ACTION_DESCRIPTOR",
+      "legacyTarget": null
+    },
+    {
+      "tag": "transfer",
+      "talentCount": 1,
+      "bucket": "BESPOKE",
+      "rationale": "Current singleton. Phase 11-2 policy quarantines every one-use tag for dedicated review before it may be generalized, merged, or deleted.",
+      "legacyDisposition": "UNSUPPORTED",
+      "legacyKind": "NOT_IN_PHASE11_VOCABULARY",
+      "legacyTarget": null
+    },
+    {
+      "tag": "tree_01cb1ca2a10640b3",
+      "talentCount": 1,
+      "bucket": "BESPOKE",
+      "rationale": "Current singleton. Phase 11-2 policy quarantines every one-use tag for dedicated review before it may be generalized, merged, or deleted.",
+      "legacyDisposition": "NON_SEMANTIC_RUNTIME_METADATA",
+      "legacyKind": "TREE_ID_ALIAS",
+      "legacyTarget": null
+    },
+    {
+      "tag": "tree_0b5857edbcf049a2",
+      "talentCount": 1,
+      "bucket": "BESPOKE",
+      "rationale": "Current singleton. Phase 11-2 policy quarantines every one-use tag for dedicated review before it may be generalized, merged, or deleted.",
+      "legacyDisposition": "NON_SEMANTIC_RUNTIME_METADATA",
+      "legacyKind": "TREE_ID_ALIAS",
+      "legacyTarget": null
+    },
+    {
+      "tag": "tree_0ffc37dac946477d",
+      "talentCount": 1,
+      "bucket": "BESPOKE",
+      "rationale": "Current singleton. Phase 11-2 policy quarantines every one-use tag for dedicated review before it may be generalized, merged, or deleted.",
+      "legacyDisposition": "NON_SEMANTIC_RUNTIME_METADATA",
+      "legacyKind": "TREE_ID_ALIAS",
+      "legacyTarget": null
+    },
+    {
+      "tag": "tree_13776eed744d410c",
+      "talentCount": 1,
+      "bucket": "BESPOKE",
+      "rationale": "Current singleton. Phase 11-2 policy quarantines every one-use tag for dedicated review before it may be generalized, merged, or deleted.",
+      "legacyDisposition": "NON_SEMANTIC_RUNTIME_METADATA",
+      "legacyKind": "TREE_ID_ALIAS",
+      "legacyTarget": null
+    },
+    {
+      "tag": "tree_3e807e87cac844ba",
+      "talentCount": 1,
+      "bucket": "BESPOKE",
+      "rationale": "Current singleton. Phase 11-2 policy quarantines every one-use tag for dedicated review before it may be generalized, merged, or deleted.",
+      "legacyDisposition": "NON_SEMANTIC_RUNTIME_METADATA",
+      "legacyKind": "TREE_ID_ALIAS",
+      "legacyTarget": null
+    },
+    {
+      "tag": "tree_427213bd55e04e27",
+      "talentCount": 1,
+      "bucket": "BESPOKE",
+      "rationale": "Current singleton. Phase 11-2 policy quarantines every one-use tag for dedicated review before it may be generalized, merged, or deleted.",
+      "legacyDisposition": "NON_SEMANTIC_RUNTIME_METADATA",
+      "legacyKind": "TREE_ID_ALIAS",
+      "legacyTarget": null
+    },
+    {
+      "tag": "tree_5f355ad4093d2bf8",
+      "talentCount": 1,
+      "bucket": "BESPOKE",
+      "rationale": "Current singleton. Phase 11-2 policy quarantines every one-use tag for dedicated review before it may be generalized, merged, or deleted.",
+      "legacyDisposition": "NON_SEMANTIC_RUNTIME_METADATA",
+      "legacyKind": "TREE_ID_ALIAS",
+      "legacyTarget": null
+    },
+    {
+      "tag": "tree_67b59e020c1660eb",
+      "talentCount": 1,
+      "bucket": "BESPOKE",
+      "rationale": "Current singleton. Phase 11-2 policy quarantines every one-use tag for dedicated review before it may be generalized, merged, or deleted.",
+      "legacyDisposition": "NON_SEMANTIC_RUNTIME_METADATA",
+      "legacyKind": "TREE_ID_ALIAS",
+      "legacyTarget": null
+    },
+    {
+      "tag": "tree_67fdd8dce9abd6c1",
+      "talentCount": 1,
+      "bucket": "BESPOKE",
+      "rationale": "Current singleton. Phase 11-2 policy quarantines every one-use tag for dedicated review before it may be generalized, merged, or deleted.",
+      "legacyDisposition": "NON_SEMANTIC_RUNTIME_METADATA",
+      "legacyKind": "TREE_ID_ALIAS",
+      "legacyTarget": null
+    },
+    {
+      "tag": "tree_73814706c00849c6",
+      "talentCount": 1,
+      "bucket": "BESPOKE",
+      "rationale": "Current singleton. Phase 11-2 policy quarantines every one-use tag for dedicated review before it may be generalized, merged, or deleted.",
+      "legacyDisposition": "NON_SEMANTIC_RUNTIME_METADATA",
+      "legacyKind": "TREE_ID_ALIAS",
+      "legacyTarget": null
+    },
+    {
+      "tag": "tree_754907ded50d4f46",
+      "talentCount": 1,
+      "bucket": "BESPOKE",
+      "rationale": "Current singleton. Phase 11-2 policy quarantines every one-use tag for dedicated review before it may be generalized, merged, or deleted.",
+      "legacyDisposition": "NON_SEMANTIC_RUNTIME_METADATA",
+      "legacyKind": "TREE_ID_ALIAS",
+      "legacyTarget": null
+    },
+    {
+      "tag": "tree_798ed0945cbdac1c",
+      "talentCount": 1,
+      "bucket": "BESPOKE",
+      "rationale": "Current singleton. Phase 11-2 policy quarantines every one-use tag for dedicated review before it may be generalized, merged, or deleted.",
+      "legacyDisposition": "NON_SEMANTIC_RUNTIME_METADATA",
+      "legacyKind": "TREE_ID_ALIAS",
+      "legacyTarget": null
+    },
+    {
+      "tag": "tree_7c6d007b549c4a4a",
+      "talentCount": 1,
+      "bucket": "BESPOKE",
+      "rationale": "Current singleton. Phase 11-2 policy quarantines every one-use tag for dedicated review before it may be generalized, merged, or deleted.",
+      "legacyDisposition": "NON_SEMANTIC_RUNTIME_METADATA",
+      "legacyKind": "TREE_ID_ALIAS",
+      "legacyTarget": null
+    },
+    {
+      "tag": "tree_899038f739294c81",
+      "talentCount": 1,
+      "bucket": "BESPOKE",
+      "rationale": "Current singleton. Phase 11-2 policy quarantines every one-use tag for dedicated review before it may be generalized, merged, or deleted.",
+      "legacyDisposition": "NON_SEMANTIC_RUNTIME_METADATA",
+      "legacyKind": "TREE_ID_ALIAS",
+      "legacyTarget": null
+    },
+    {
+      "tag": "tree_8a61bf426391431b",
+      "talentCount": 1,
+      "bucket": "BESPOKE",
+      "rationale": "Current singleton. Phase 11-2 policy quarantines every one-use tag for dedicated review before it may be generalized, merged, or deleted.",
+      "legacyDisposition": "NON_SEMANTIC_RUNTIME_METADATA",
+      "legacyKind": "TREE_ID_ALIAS",
+      "legacyTarget": null
+    },
+    {
+      "tag": "tree_9253ace716c3e966",
+      "talentCount": 1,
+      "bucket": "BESPOKE",
+      "rationale": "Current singleton. Phase 11-2 policy quarantines every one-use tag for dedicated review before it may be generalized, merged, or deleted.",
+      "legacyDisposition": "NON_SEMANTIC_RUNTIME_METADATA",
+      "legacyKind": "TREE_ID_ALIAS",
+      "legacyTarget": null
+    },
+    {
+      "tag": "tree_9a5efe5d0e9b43a1",
+      "talentCount": 1,
+      "bucket": "BESPOKE",
+      "rationale": "Current singleton. Phase 11-2 policy quarantines every one-use tag for dedicated review before it may be generalized, merged, or deleted.",
+      "legacyDisposition": "NON_SEMANTIC_RUNTIME_METADATA",
+      "legacyKind": "TREE_ID_ALIAS",
+      "legacyTarget": null
+    },
+    {
+      "tag": "tree_a212850887fe41da",
+      "talentCount": 1,
+      "bucket": "BESPOKE",
+      "rationale": "Current singleton. Phase 11-2 policy quarantines every one-use tag for dedicated review before it may be generalized, merged, or deleted.",
+      "legacyDisposition": "NON_SEMANTIC_RUNTIME_METADATA",
+      "legacyKind": "TREE_ID_ALIAS",
+      "legacyTarget": null
+    },
+    {
+      "tag": "tree_a7ad797b01114925",
+      "talentCount": 1,
+      "bucket": "BESPOKE",
+      "rationale": "Current singleton. Phase 11-2 policy quarantines every one-use tag for dedicated review before it may be generalized, merged, or deleted.",
+      "legacyDisposition": "NON_SEMANTIC_RUNTIME_METADATA",
+      "legacyKind": "TREE_ID_ALIAS",
+      "legacyTarget": null
+    },
+    {
+      "tag": "tree_ad16f3e5f4f7441b",
+      "talentCount": 1,
+      "bucket": "BESPOKE",
+      "rationale": "Current singleton. Phase 11-2 policy quarantines every one-use tag for dedicated review before it may be generalized, merged, or deleted.",
+      "legacyDisposition": "NON_SEMANTIC_RUNTIME_METADATA",
+      "legacyKind": "TREE_ID_ALIAS",
+      "legacyTarget": null
+    },
+    {
+      "tag": "tree_ad499981ddb8450e",
+      "talentCount": 1,
+      "bucket": "BESPOKE",
+      "rationale": "Current singleton. Phase 11-2 policy quarantines every one-use tag for dedicated review before it may be generalized, merged, or deleted.",
+      "legacyDisposition": "NON_SEMANTIC_RUNTIME_METADATA",
+      "legacyKind": "TREE_ID_ALIAS",
+      "legacyTarget": null
+    },
+    {
+      "tag": "tree_b15586b9c9554cf8",
+      "talentCount": 1,
+      "bucket": "BESPOKE",
+      "rationale": "Current singleton. Phase 11-2 policy quarantines every one-use tag for dedicated review before it may be generalized, merged, or deleted.",
+      "legacyDisposition": "NON_SEMANTIC_RUNTIME_METADATA",
+      "legacyKind": "TREE_ID_ALIAS",
+      "legacyTarget": null
+    },
+    {
+      "tag": "tree_c4e48efaad1f49af",
+      "talentCount": 1,
+      "bucket": "BESPOKE",
+      "rationale": "Current singleton. Phase 11-2 policy quarantines every one-use tag for dedicated review before it may be generalized, merged, or deleted.",
+      "legacyDisposition": "NON_SEMANTIC_RUNTIME_METADATA",
+      "legacyKind": "TREE_ID_ALIAS",
+      "legacyTarget": null
+    },
+    {
+      "tag": "tree_c6eee4889411411b",
+      "talentCount": 1,
+      "bucket": "BESPOKE",
+      "rationale": "Current singleton. Phase 11-2 policy quarantines every one-use tag for dedicated review before it may be generalized, merged, or deleted.",
+      "legacyDisposition": "NON_SEMANTIC_RUNTIME_METADATA",
+      "legacyKind": "TREE_ID_ALIAS",
+      "legacyTarget": null
+    },
+    {
+      "tag": "tree_c7a4e66f46044c7a",
+      "talentCount": 1,
+      "bucket": "BESPOKE",
+      "rationale": "Current singleton. Phase 11-2 policy quarantines every one-use tag for dedicated review before it may be generalized, merged, or deleted.",
+      "legacyDisposition": "NON_SEMANTIC_RUNTIME_METADATA",
+      "legacyKind": "TREE_ID_ALIAS",
+      "legacyTarget": null
+    },
+    {
+      "tag": "tree_ca65ba0c33cd4c7d",
+      "talentCount": 1,
+      "bucket": "BESPOKE",
+      "rationale": "Current singleton. Phase 11-2 policy quarantines every one-use tag for dedicated review before it may be generalized, merged, or deleted.",
+      "legacyDisposition": "NON_SEMANTIC_RUNTIME_METADATA",
+      "legacyKind": "TREE_ID_ALIAS",
+      "legacyTarget": null
+    },
+    {
+      "tag": "tree_da7b731a3e434a7a",
+      "talentCount": 1,
+      "bucket": "BESPOKE",
+      "rationale": "Current singleton. Phase 11-2 policy quarantines every one-use tag for dedicated review before it may be generalized, merged, or deleted.",
+      "legacyDisposition": "NON_SEMANTIC_RUNTIME_METADATA",
+      "legacyKind": "TREE_ID_ALIAS",
+      "legacyTarget": null
+    },
+    {
+      "tag": "tree_dad3c0da191748c1",
+      "talentCount": 1,
+      "bucket": "BESPOKE",
+      "rationale": "Current singleton. Phase 11-2 policy quarantines every one-use tag for dedicated review before it may be generalized, merged, or deleted.",
+      "legacyDisposition": "NON_SEMANTIC_RUNTIME_METADATA",
+      "legacyKind": "TREE_ID_ALIAS",
+      "legacyTarget": null
+    },
+    {
+      "tag": "tree_db1964d1e1d14b5a",
+      "talentCount": 1,
+      "bucket": "BESPOKE",
+      "rationale": "Current singleton. Phase 11-2 policy quarantines every one-use tag for dedicated review before it may be generalized, merged, or deleted.",
+      "legacyDisposition": "NON_SEMANTIC_RUNTIME_METADATA",
+      "legacyKind": "TREE_ID_ALIAS",
+      "legacyTarget": null
+    },
+    {
+      "tag": "tree_e6a9c40b900847bd",
+      "talentCount": 1,
+      "bucket": "BESPOKE",
+      "rationale": "Current singleton. Phase 11-2 policy quarantines every one-use tag for dedicated review before it may be generalized, merged, or deleted.",
+      "legacyDisposition": "NON_SEMANTIC_RUNTIME_METADATA",
+      "legacyKind": "TREE_ID_ALIAS",
+      "legacyTarget": null
+    },
+    {
+      "tag": "tree_e6e3fc102bb54b20",
+      "talentCount": 1,
+      "bucket": "BESPOKE",
+      "rationale": "Current singleton. Phase 11-2 policy quarantines every one-use tag for dedicated review before it may be generalized, merged, or deleted.",
+      "legacyDisposition": "NON_SEMANTIC_RUNTIME_METADATA",
+      "legacyKind": "TREE_ID_ALIAS",
+      "legacyTarget": null
+    },
+    {
+      "tag": "tree_f5c62e2e81f648aa",
+      "talentCount": 1,
+      "bucket": "BESPOKE",
+      "rationale": "Current singleton. Phase 11-2 policy quarantines every one-use tag for dedicated review before it may be generalized, merged, or deleted.",
+      "legacyDisposition": "NON_SEMANTIC_RUNTIME_METADATA",
+      "legacyKind": "TREE_ID_ALIAS",
+      "legacyTarget": null
+    },
+    {
+      "tag": "tree_f8e7edab5f234e27",
+      "talentCount": 1,
+      "bucket": "BESPOKE",
+      "rationale": "Current singleton. Phase 11-2 policy quarantines every one-use tag for dedicated review before it may be generalized, merged, or deleted.",
+      "legacyDisposition": "NON_SEMANTIC_RUNTIME_METADATA",
+      "legacyKind": "TREE_ID_ALIAS",
+      "legacyTarget": null
+    },
+    {
+      "tag": "tyia",
+      "talentCount": 1,
+      "bucket": "BESPOKE",
+      "rationale": "Current singleton. Phase 11-2 policy quarantines every one-use tag for dedicated review before it may be generalized, merged, or deleted.",
+      "legacyDisposition": "REMOVE_OBSOLETE",
+      "legacyKind": "REDUNDANT_TREE_OR_ORGANIZATION_LABEL",
+      "legacyTarget": null
+    },
+    {
+      "tag": "vahl",
+      "talentCount": 1,
+      "bucket": "BESPOKE",
+      "rationale": "Current singleton. Phase 11-2 policy quarantines every one-use tag for dedicated review before it may be generalized, merged, or deleted.",
+      "legacyDisposition": "REMOVE_OBSOLETE",
+      "legacyKind": "REDUNDANT_TREE_OR_ORGANIZATION_LABEL",
+      "legacyTarget": null
+    },
+    {
+      "tag": "warrior",
+      "talentCount": 1,
+      "bucket": "BESPOKE",
+      "rationale": "Current singleton. Phase 11-2 policy quarantines every one-use tag for dedicated review before it may be generalized, merged, or deleted.",
+      "legacyDisposition": "LEGACY_ARCHETYPE_SCORING",
+      "legacyKind": "ROLE_OR_CLASS_BIAS",
+      "legacyTarget": null
+    },
+    {
+      "tag": "weapon_specialization",
+      "talentCount": 1,
+      "bucket": "BESPOKE",
+      "rationale": "Current singleton. Phase 11-2 policy quarantines every one-use tag for dedicated review before it may be generalized, merged, or deleted.",
+      "legacyDisposition": "UNSUPPORTED",
+      "legacyKind": "NOT_IN_PHASE11_VOCABULARY",
+      "legacyTarget": null
+    },
+    {
+      "tag": "weapon_training",
+      "talentCount": 1,
+      "bucket": "BESPOKE",
+      "rationale": "Current singleton. Phase 11-2 policy quarantines every one-use tag for dedicated review before it may be generalized, merged, or deleted.",
+      "legacyDisposition": "UNSUPPORTED",
+      "legacyKind": "NOT_IN_PHASE11_VOCABULARY",
+      "legacyTarget": null
+    },
+    {
+      "tag": "witchcraft",
+      "talentCount": 1,
+      "bucket": "BESPOKE",
+      "rationale": "Current singleton. Phase 11-2 policy quarantines every one-use tag for dedicated review before it may be generalized, merged, or deleted.",
+      "legacyDisposition": "UNSUPPORTED",
+      "legacyKind": "NOT_IN_PHASE11_VOCABULARY",
+      "legacyTarget": null
+    }
+  ]
+}
