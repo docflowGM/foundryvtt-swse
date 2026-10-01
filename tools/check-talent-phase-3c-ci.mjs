@@ -113,6 +113,12 @@ const battery = {
     ['homebrew talent-pack integrity audit', 'tools/audit-talent-homebrew-pack.mjs'],
     ['Phase 3E-5 text-defect manifest', 'tools/build-talent-phase-3e5-defect-manifest.mjs', '--check'],
     // The 3G census is a FROZEN pre-3G-2 baseline (its runtime columns measured the old checker); tests pin the committed file. The dry-run is the live proof.
+    ['Phase 3H semantic vocabulary authority', 'tools/promote-semantic-vocabulary.mjs', '--check'],
+    ['Phase 3H talent metadata census', 'tools/census-talent-semantic-metadata.mjs', '--check'],
+    ['Phase 3H canonical semantic authority', 'tools/derive-talent-semantic-authority.mjs', '--check'],
+    ['Phase 3H archetype cross-check (one-way QA)', 'tools/qa-talent-semantic-vs-archetypes.mjs', '--check'],
+    ['Phase 3H archetype exact-reference bridge', 'tools/bridge-archetype-talent-references.mjs', '--check'],
+    ['Phase 3H migration manifest and dry-run freshness', 'tools/apply-talent-phase-3h.mjs', '--check'],
     ['Phase 3F tree identity census', 'tools/census-talent-tree-identity.mjs', '--check'],
     ['Phase 3E core Gunslinger census', 'tools/census-talent-core-gunslinger.mjs', '--check'],
     ['Phase 3E authority addendum', 'tools/check-talent-phase-3e-additions.mjs'],

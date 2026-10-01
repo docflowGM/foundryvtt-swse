@@ -1,7 +1,7 @@
 /**
  * Phase 3H-2 — evidence rules: what a talent's PUBLISHED RULE TEXT must say to earn each Phase 11 tag.
  *
- * Direction of authority: published rule -> canonical meaning -> semantic tag. These rules read ONLY the talent's own benefit/description
+ * Direction of authority: published rule -> rule meaning -> derived semantic tag. These rules read ONLY the talent's own benefit/description
  * (and, where a tree is genuinely semantic, its tree). Archetype recommendations, legacy tags, prerequisites and class/role labels are never evidence.
  *
  * `confidence` HIGH  = the text names the concept explicitly (a skill, weapon group, named mechanic).

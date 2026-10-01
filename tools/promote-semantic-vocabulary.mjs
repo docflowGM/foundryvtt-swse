@@ -35,7 +35,7 @@ export function promote() {
     schemaVersion: 1, phase: '3H-0', status: 'SEMANTIC_VOCABULARY_AUTHORITY',
     authority: 'Archetype Phase 11 (final, roadmap 0-11 closed). Exactly the vocabulary used by the 297 canonical archetypes; no tag is invented, renamed or inferred here.',
     style: 'lower_snake_case', count: tags.length,
-    rules: ['Exact canonical references outrank tags.', 'Tags are semantic signals only.', 'Archetype relationship strength (primary/supporting) lives in archetype data, never in talent tags.', 'Class routes are separate from semantic tags.', 'No per-record numeric tag weights.', 'Direction of authority: published rule -> canonical meaning -> canonical semantic tags -> archetype/suggestion consumption.'],
+    rules: ['Exact canonical references outrank tags.', 'Tags are semantic signals only.', 'Archetype relationship strength (primary/supporting) lives in archetype data, never in talent tags.', 'Class routes are separate from semantic tags.', 'No per-record numeric tag weights.', 'Direction of authority: published SWSE rules -> canonical talent identity/content -> derived certified semantic facts -> exact archetype references + archetype semantic relationships -> suggestion/mentor interpretation. The 57 tags are the project\'s CERTIFIED SHARED SEMANTIC VOCABULARY, not published SWSE canon.'],
     sources: Object.fromEntries(Object.entries(SOURCES).map(([k, rel]) => [k, { path: rel, sha1: sha(rel) }])),
     tags, archetypeUsage: usage
   };
