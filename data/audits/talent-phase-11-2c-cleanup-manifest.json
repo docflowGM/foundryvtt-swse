@@ -1,0 +1,2430 @@
+{
+ "schemaVersion": 1,
+ "phase": "11-2C",
+ "status": "CLEANUP_MANIFEST",
+ "authority": "data/audits/archetype-phase-11-2/bespoke-adjudication.json",
+ "boundary": "system.tags of canonical talents: certified BESPOKE actions only",
+ "actions": {
+  "normalize": {
+   "standard-action": "standard_action",
+   "heavy_weapons": "heavy_weapon",
+   "force-power": "force_power",
+   "flanked": "flanking",
+   "galactic-lore": "galactic_lore",
+   "search-your-feelings": "search_your_feelings",
+   "damage-threshold": "damage_threshold",
+   "dark-side-score": "dark_side_score",
+   "opposed-check": "opposed_check"
+  },
+  "remove": {
+   "tree_01cb1ca2a10640b3": "DELETE_TREE_ID_ALIAS",
+   "tree_0b5857edbcf049a2": "DELETE_TREE_ID_ALIAS",
+   "tree_0ffc37dac946477d": "DELETE_TREE_ID_ALIAS",
+   "tree_13776eed744d410c": "DELETE_TREE_ID_ALIAS",
+   "tree_3e807e87cac844ba": "DELETE_TREE_ID_ALIAS",
+   "tree_427213bd55e04e27": "DELETE_TREE_ID_ALIAS",
+   "tree_5f355ad4093d2bf8": "DELETE_TREE_ID_ALIAS",
+   "tree_67b59e020c1660eb": "DELETE_TREE_ID_ALIAS",
+   "tree_67fdd8dce9abd6c1": "DELETE_TREE_ID_ALIAS",
+   "tree_73814706c00849c6": "DELETE_TREE_ID_ALIAS",
+   "tree_754907ded50d4f46": "DELETE_TREE_ID_ALIAS",
+   "tree_798ed0945cbdac1c": "DELETE_TREE_ID_ALIAS",
+   "tree_7c6d007b549c4a4a": "DELETE_TREE_ID_ALIAS",
+   "tree_899038f739294c81": "DELETE_TREE_ID_ALIAS",
+   "tree_8a61bf426391431b": "DELETE_TREE_ID_ALIAS",
+   "tree_9253ace716c3e966": "DELETE_TREE_ID_ALIAS",
+   "tree_9a5efe5d0e9b43a1": "DELETE_TREE_ID_ALIAS",
+   "tree_a212850887fe41da": "DELETE_TREE_ID_ALIAS",
+   "tree_a7ad797b01114925": "DELETE_TREE_ID_ALIAS",
+   "tree_ad16f3e5f4f7441b": "DELETE_TREE_ID_ALIAS",
+   "tree_ad499981ddb8450e": "DELETE_TREE_ID_ALIAS",
+   "tree_b15586b9c9554cf8": "DELETE_TREE_ID_ALIAS",
+   "tree_c4e48efaad1f49af": "DELETE_TREE_ID_ALIAS",
+   "tree_c6eee4889411411b": "DELETE_TREE_ID_ALIAS",
+   "tree_c7a4e66f46044c7a": "DELETE_TREE_ID_ALIAS",
+   "tree_ca65ba0c33cd4c7d": "DELETE_TREE_ID_ALIAS",
+   "tree_da7b731a3e434a7a": "DELETE_TREE_ID_ALIAS",
+   "tree_dad3c0da191748c1": "DELETE_TREE_ID_ALIAS",
+   "tree_db1964d1e1d14b5a": "DELETE_TREE_ID_ALIAS",
+   "tree_e6a9c40b900847bd": "DELETE_TREE_ID_ALIAS",
+   "tree_e6e3fc102bb54b20": "DELETE_TREE_ID_ALIAS",
+   "tree_f5c62e2e81f648aa": "DELETE_TREE_ID_ALIAS",
+   "tree_f8e7edab5f234e27": "DELETE_TREE_ID_ALIAS",
+   "battlefield": "DELETE",
+   "behavioral-inhibitor": "DELETE",
+   "bodyguard": "DELETE",
+   "brigand": "DELETE",
+   "cheap_shot": "DELETE",
+   "combat-action": "DELETE",
+   "commander": "DELETE",
+   "damage_scaling": "DELETE",
+   "escort": "DELETE",
+   "genoharadan": "DELETE",
+   "guidance": "DELETE",
+   "gunslinger": "DELETE",
+   "implemented_derived_calculator": "DELETE",
+   "independent-spirit": "DELETE",
+   "kata": "DELETE",
+   "master-of-intrigue": "DELETE",
+   "melee_support": "DELETE",
+   "miss_rider": "DELETE",
+   "no_static_defense_bonus": "DELETE",
+   "no_unconditional_static_bonus": "DELETE",
+   "outsider": "DELETE",
+   "panic": "DELETE",
+   "provocateur": "DELETE",
+   "range": "DELETE",
+   "ranged_control": "DELETE",
+   "runtime": "DELETE",
+   "sith-alchemy": "DELETE",
+   "social_defense": "DELETE",
+   "strength_enhancement": "DELETE",
+   "tyia": "DELETE",
+   "vahl": "DELETE",
+   "warrior": "DELETE",
+   "witchcraft": "DELETE",
+   "ally_0hp": "DELETE_DECOMPOSE",
+   "ally_aura": "DELETE_DECOMPOSE",
+   "bayonet": "DELETE_DECOMPOSE",
+   "bonus-force-point": "DELETE_DECOMPOSE",
+   "danger_sense": "DELETE_DECOMPOSE",
+   "delay": "DELETE_DECOMPOSE",
+   "freedom": "DELETE_DECOMPOSE",
+   "transfer": "DELETE_DECOMPOSE"
+  },
+  "promotedKeep": [
+   "attack_of_opportunity",
+   "command",
+   "critical_success",
+   "damage_threshold",
+   "dark_side_score",
+   "detection",
+   "double_weapon",
+   "entangle",
+   "exotic_weapon",
+   "feint",
+   "fighting_defensively",
+   "flanking",
+   "force_power",
+   "full_attack",
+   "galactic_lore",
+   "improvised_weapon",
+   "meditation",
+   "modification",
+   "movement",
+   "opposed_check",
+   "pistol",
+   "planning",
+   "reliability",
+   "restrain",
+   "ride",
+   "search_your_feelings",
+   "skill_mastery",
+   "spellcasting",
+   "surprise_round",
+   "weapon_specialization",
+   "weapon_training"
+  ]
+ },
+ "bespokeAlreadyResolvedBefore11_2C": [
+  "force_item"
+ ],
+ "counts": {
+  "deleteRules": 74,
+  "normalizeRules": 9,
+  "promotedKeep": 31,
+  "recordsChanged": 54,
+  "tagElementsRemoved": 74,
+  "tagElementsNormalized": 9,
+  "duplicateTargetsAvoided": 0
+ },
+ "preState": {
+  "talents": "ccaea7b2dabf579ae22e4171480eff36fa9cc989",
+  "homebrew": "bd4e3d4be9861f9ed0329e0f12545bf3f5dc3c72"
+ },
+ "rows": [
+  {
+   "id": "00deb8b4cce303b6",
+   "canonicalIdentity": "Saga Edition Core Rulebook|Jedi Guardian|Force Intuition",
+   "name": "Force Intuition",
+   "path": "system.tags",
+   "before": [
+    "dark_side",
+    "force",
+    "force_offense",
+    "light_side",
+    "skills",
+    "support",
+    "sustained_damage",
+    "skill_substitution",
+    "initiative",
+    "use_the_force",
+    "implemented_derived_calculator",
+    "no_static_defense_bonus"
+   ],
+   "after": [
+    "dark_side",
+    "force",
+    "force_offense",
+    "light_side",
+    "skills",
+    "support",
+    "sustained_damage",
+    "skill_substitution",
+    "initiative",
+    "use_the_force"
+   ],
+   "removed": [
+    {
+     "tag": "implemented_derived_calculator",
+     "action": "DELETE"
+    },
+    {
+     "tag": "no_static_defense_bonus",
+     "action": "DELETE"
+    }
+   ],
+   "normalized": [],
+   "canonicalAlreadyPresent": []
+  },
+  {
+   "id": "0b2c53ed53f20751",
+   "canonicalIdentity": "Saga Edition Core Rulebook|Brawler|Unrelenting Assault",
+   "name": "Unrelenting Assault",
+   "path": "system.tags",
+   "before": [
+    "melee",
+    "miss_rider"
+   ],
+   "after": [
+    "melee"
+   ],
+   "removed": [
+    {
+     "tag": "miss_rider",
+     "action": "DELETE"
+    }
+   ],
+   "normalized": [],
+   "canonicalAlreadyPresent": []
+  },
+  {
+   "id": "12b7eb5d32bd440e",
+   "canonicalIdentity": "Saga Edition Core Rulebook|Dathomiri Witch|Adept Spellcaster",
+   "name": "Adept Spellcaster",
+   "path": "system.tags",
+   "before": [
+    "action_economy",
+    "exotic_weapon",
+    "force",
+    "force_capacity",
+    "force_offense",
+    "force_point_spend",
+    "force_power_synergy",
+    "mobility",
+    "ranged",
+    "ranged_control",
+    "resource_spend",
+    "spellcasting",
+    "sustained_damage",
+    "swift_action",
+    "tree_ad16f3e5f4f7441b",
+    "use_the_force",
+    "witchcraft"
+   ],
+   "after": [
+    "action_economy",
+    "exotic_weapon",
+    "force",
+    "force_capacity",
+    "force_offense",
+    "force_point_spend",
+    "force_power_synergy",
+    "mobility",
+    "ranged",
+    "resource_spend",
+    "spellcasting",
+    "sustained_damage",
+    "swift_action",
+    "use_the_force"
+   ],
+   "removed": [
+    {
+     "tag": "ranged_control",
+     "action": "DELETE"
+    },
+    {
+     "tag": "tree_ad16f3e5f4f7441b",
+     "action": "DELETE_TREE_ID_ALIAS"
+    },
+    {
+     "tag": "witchcraft",
+     "action": "DELETE"
+    }
+   ],
+   "normalized": [],
+   "canonicalAlreadyPresent": []
+  },
+  {
+   "id": "196b54d69bd54983",
+   "canonicalIdentity": "Jedi Academy Training Manual|Warden of the Sky|Telekinetic Strike",
+   "name": "Telekinetic Strike",
+   "path": "system.tags",
+   "before": [
+    "action_economy",
+    "control",
+    "damage_reduction",
+    "force",
+    "force_capacity",
+    "force_control",
+    "force_offense",
+    "force_point_spend",
+    "force_power_synergy",
+    "martial_arts",
+    "mobility",
+    "offense_melee",
+    "offense_ranged",
+    "positioning",
+    "ranged",
+    "resource_spend",
+    "standard_action",
+    "telekinesis",
+    "trap",
+    "tree_899038f739294c81",
+    "unarmed"
+   ],
+   "after": [
+    "action_economy",
+    "control",
+    "damage_reduction",
+    "force",
+    "force_capacity",
+    "force_control",
+    "force_offense",
+    "force_point_spend",
+    "force_power_synergy",
+    "martial_arts",
+    "mobility",
+    "offense_melee",
+    "offense_ranged",
+    "positioning",
+    "ranged",
+    "resource_spend",
+    "standard_action",
+    "telekinesis",
+    "trap",
+    "unarmed"
+   ],
+   "removed": [
+    {
+     "tag": "tree_899038f739294c81",
+     "action": "DELETE_TREE_ID_ALIAS"
+    }
+   ],
+   "normalized": [],
+   "canonicalAlreadyPresent": []
+  },
+  {
+   "id": "27604b55a6fd41ffbc04f05cec16463d",
+   "canonicalIdentity": "Force Unleashed Campaign Guide|Autonomy|Just a Droid",
+   "name": "Just a Droid",
+   "path": "system.tags",
+   "before": [
+    "action_economy",
+    "deception",
+    "droid",
+    "durability",
+    "self_repair",
+    "social_defense",
+    "stealth",
+    "tech"
+   ],
+   "after": [
+    "action_economy",
+    "deception",
+    "droid",
+    "durability",
+    "self_repair",
+    "stealth",
+    "tech"
+   ],
+   "removed": [
+    {
+     "tag": "social_defense",
+     "action": "DELETE"
+    }
+   ],
+   "normalized": [],
+   "canonicalAlreadyPresent": []
+  },
+  {
+   "id": "2c18952e0c014127",
+   "canonicalIdentity": "Saga Edition Core Rulebook|Jensaarai Defender|Force Cloak",
+   "name": "Force Cloak",
+   "path": "system.tags",
+   "before": [
+    "action_economy",
+    "concealment",
+    "force",
+    "force_defense",
+    "force_offense",
+    "mobility",
+    "standard_action",
+    "stealth",
+    "support",
+    "swift_action",
+    "tree_f5c62e2e81f648aa"
+   ],
+   "after": [
+    "action_economy",
+    "concealment",
+    "force",
+    "force_defense",
+    "force_offense",
+    "mobility",
+    "standard_action",
+    "stealth",
+    "support",
+    "swift_action"
+   ],
+   "removed": [
+    {
+     "tag": "tree_f5c62e2e81f648aa",
+     "action": "DELETE_TREE_ID_ALIAS"
+    }
+   ],
+   "normalized": [],
+   "canonicalAlreadyPresent": []
+  },
+  {
+   "id": "2e500e16dc0c4a73",
+   "canonicalIdentity": "Unknown Regions|Outsider|Outsider's Eye",
+   "name": "Outsider's Eye",
+   "path": "system.tags",
+   "before": [
+    "action_economy",
+    "mobility",
+    "outsider",
+    "perception",
+    "precision",
+    "skills",
+    "social",
+    "standard_action",
+    "stealth",
+    "tree_b15586b9c9554cf8"
+   ],
+   "after": [
+    "action_economy",
+    "mobility",
+    "perception",
+    "precision",
+    "skills",
+    "social",
+    "standard_action",
+    "stealth"
+   ],
+   "removed": [
+    {
+     "tag": "outsider",
+     "action": "DELETE"
+    },
+    {
+     "tag": "tree_b15586b9c9554cf8",
+     "action": "DELETE_TREE_ID_ALIAS"
+    }
+   ],
+   "normalized": [],
+   "canonicalAlreadyPresent": []
+  },
+  {
+   "id": "3a34ce2ef55c41b1",
+   "canonicalIdentity": "Scavenger's Guide to Droids|Override|Directed Action",
+   "name": "Directed Action",
+   "path": "system.tags",
+   "before": [
+    "action_economy",
+    "ally_support",
+    "deception",
+    "droid",
+    "healing",
+    "melee",
+    "mobility",
+    "persuasion",
+    "pilot",
+    "positioning",
+    "ranged",
+    "social",
+    "standard_action",
+    "support",
+    "sustained_damage",
+    "tactics",
+    "teamwork",
+    "tree_01cb1ca2a10640b3",
+    "vehicle",
+    "tech",
+    "command"
+   ],
+   "after": [
+    "action_economy",
+    "ally_support",
+    "deception",
+    "droid",
+    "healing",
+    "melee",
+    "mobility",
+    "persuasion",
+    "pilot",
+    "positioning",
+    "ranged",
+    "social",
+    "standard_action",
+    "support",
+    "sustained_damage",
+    "tactics",
+    "teamwork",
+    "vehicle",
+    "tech",
+    "command"
+   ],
+   "removed": [
+    {
+     "tag": "tree_01cb1ca2a10640b3",
+     "action": "DELETE_TREE_ID_ALIAS"
+    }
+   ],
+   "normalized": [],
+   "canonicalAlreadyPresent": []
+  },
+  {
+   "id": "430b73348460715e",
+   "canonicalIdentity": "Saga Edition Core Rulebook|Brawler|Cantina Brawler",
+   "name": "Cantina Brawler",
+   "path": "system.tags",
+   "before": [
+    "action_economy",
+    "ambush",
+    "melee",
+    "positioning",
+    "support",
+    "sustained_damage",
+    "unarmed",
+    "natural_weapon",
+    "flanked"
+   ],
+   "after": [
+    "action_economy",
+    "ambush",
+    "melee",
+    "positioning",
+    "support",
+    "sustained_damage",
+    "unarmed",
+    "natural_weapon",
+    "flanking"
+   ],
+   "removed": [],
+   "normalized": [
+    {
+     "from": "flanked",
+     "to": "flanking"
+    }
+   ],
+   "canonicalAlreadyPresent": []
+  },
+  {
+   "id": "437443efb52249aa",
+   "canonicalIdentity": "Jedi Academy Training Manual|Aing-Tii Monk|Aura of Freedom",
+   "name": "Aura of Freedom",
+   "path": "system.tags",
+   "before": [
+    "action_economy",
+    "ally_support",
+    "damage_reduction",
+    "dark_side",
+    "defense",
+    "force",
+    "force_capacity",
+    "force_control",
+    "force_offense",
+    "force_point_spend",
+    "force_power_synergy",
+    "freedom",
+    "light_side",
+    "mobility",
+    "pilot",
+    "positioning",
+    "reaction",
+    "resource_spend",
+    "support",
+    "swift_action",
+    "tree_f8e7edab5f234e27",
+    "use_the_force",
+    "vehicle"
+   ],
+   "after": [
+    "action_economy",
+    "ally_support",
+    "damage_reduction",
+    "dark_side",
+    "defense",
+    "force",
+    "force_capacity",
+    "force_control",
+    "force_offense",
+    "force_point_spend",
+    "force_power_synergy",
+    "light_side",
+    "mobility",
+    "pilot",
+    "positioning",
+    "reaction",
+    "resource_spend",
+    "support",
+    "swift_action",
+    "use_the_force",
+    "vehicle"
+   ],
+   "removed": [
+    {
+     "tag": "freedom",
+     "action": "DELETE_DECOMPOSE"
+    },
+    {
+     "tag": "tree_f8e7edab5f234e27",
+     "action": "DELETE_TREE_ID_ALIAS"
+    }
+   ],
+   "normalized": [],
+   "canonicalAlreadyPresent": []
+  },
+  {
+   "id": "510a0f02ffa843e3",
+   "canonicalIdentity": "Legacy Era Campaign Guide|Ember of Vahl|Initiate of Vahl",
+   "name": "Initiate of Vahl",
+   "path": "system.tags",
+   "before": [
+    "force",
+    "force_capacity",
+    "force_control",
+    "force_offense",
+    "force_power_synergy",
+    "melee_support",
+    "mobility",
+    "skills",
+    "tree_c6eee4889411411b",
+    "use_the_force",
+    "vahl",
+    "weapon_empowerment"
+   ],
+   "after": [
+    "force",
+    "force_capacity",
+    "force_control",
+    "force_offense",
+    "force_power_synergy",
+    "mobility",
+    "skills",
+    "use_the_force",
+    "weapon_empowerment"
+   ],
+   "removed": [
+    {
+     "tag": "melee_support",
+     "action": "DELETE"
+    },
+    {
+     "tag": "tree_c6eee4889411411b",
+     "action": "DELETE_TREE_ID_ALIAS"
+    },
+    {
+     "tag": "vahl",
+     "action": "DELETE"
+    }
+   ],
+   "normalized": [],
+   "canonicalAlreadyPresent": []
+  },
+  {
+   "id": "5bf2f1759ee54834",
+   "canonicalIdentity": "Galaxy of Intrigue|Master of Intrigue|Advanced Planning",
+   "name": "Advanced Planning",
+   "path": "system.tags",
+   "before": [
+    "action_economy",
+    "condition_removal",
+    "force",
+    "force_control",
+    "force_defense",
+    "force_offense",
+    "melee",
+    "mobility",
+    "planning",
+    "positioning",
+    "ranged",
+    "setup",
+    "support",
+    "tree_0ffc37dac946477d",
+    "social",
+    "initiative",
+    "tactics",
+    "master-of-intrigue"
+   ],
+   "after": [
+    "action_economy",
+    "condition_removal",
+    "force",
+    "force_control",
+    "force_defense",
+    "force_offense",
+    "melee",
+    "mobility",
+    "planning",
+    "positioning",
+    "ranged",
+    "setup",
+    "support",
+    "social",
+    "initiative",
+    "tactics"
+   ],
+   "removed": [
+    {
+     "tag": "tree_0ffc37dac946477d",
+     "action": "DELETE_TREE_ID_ALIAS"
+    },
+    {
+     "tag": "master-of-intrigue",
+     "action": "DELETE"
+    }
+   ],
+   "normalized": [],
+   "canonicalAlreadyPresent": []
+  },
+  {
+   "id": "603e7e5d628a435d",
+   "canonicalIdentity": "Galaxy of Intrigue|Revolutionary|Make an Example",
+   "name": "Make an Example",
+   "path": "system.tags",
+   "before": [
+    "action_economy",
+    "fear",
+    "mobility",
+    "persuasion",
+    "positioning",
+    "skills",
+    "social",
+    "standard_action",
+    "support",
+    "tree_e6a9c40b900847bd"
+   ],
+   "after": [
+    "action_economy",
+    "fear",
+    "mobility",
+    "persuasion",
+    "positioning",
+    "skills",
+    "social",
+    "standard_action",
+    "support"
+   ],
+   "removed": [
+    {
+     "tag": "tree_e6a9c40b900847bd",
+     "action": "DELETE_TREE_ID_ALIAS"
+    }
+   ],
+   "normalized": [],
+   "canonicalAlreadyPresent": []
+  },
+  {
+   "id": "6a52361527b64513",
+   "canonicalIdentity": "Saga Edition Core Rulebook|Brawler|Entangler",
+   "name": "Entangler",
+   "path": "system.tags",
+   "before": [
+    "control",
+    "entangle",
+    "positioning",
+    "restrain",
+    "tree_67fdd8dce9abd6c1",
+    "grab",
+    "grapple",
+    "natural_weapon"
+   ],
+   "after": [
+    "control",
+    "entangle",
+    "positioning",
+    "restrain",
+    "grab",
+    "grapple",
+    "natural_weapon"
+   ],
+   "removed": [
+    {
+     "tag": "tree_67fdd8dce9abd6c1",
+     "action": "DELETE_TREE_ID_ALIAS"
+    }
+   ],
+   "normalized": [],
+   "canonicalAlreadyPresent": []
+  },
+  {
+   "id": "6ef413a824474491",
+   "canonicalIdentity": "Force Unleashed Campaign Guide|Fourth-Degree Droid|Target Acquisition",
+   "name": "Target Acquisition",
+   "path": "system.tags",
+   "before": [
+    "action_economy",
+    "condition_removal",
+    "perception",
+    "ranged",
+    "reaction",
+    "setup",
+    "skills",
+    "stealth",
+    "support",
+    "targeting",
+    "tree_73814706c00849c6"
+   ],
+   "after": [
+    "action_economy",
+    "condition_removal",
+    "perception",
+    "ranged",
+    "reaction",
+    "setup",
+    "skills",
+    "stealth",
+    "support",
+    "targeting"
+   ],
+   "removed": [
+    {
+     "tag": "tree_73814706c00849c6",
+     "action": "DELETE_TREE_ID_ALIAS"
+    }
+   ],
+   "normalized": [],
+   "canonicalAlreadyPresent": []
+  },
+  {
+   "id": "6fdbdd17eba93006",
+   "canonicalIdentity": "Scavenger's Guide to Droids|Elite Droid|Ultra Resilient",
+   "name": "Ultra Resilient",
+   "path": "system.tags",
+   "before": [
+    "damage-threshold",
+    "droid",
+    "once-per-encounter",
+    "reaction",
+    "survivability"
+   ],
+   "after": [
+    "damage_threshold",
+    "droid",
+    "once-per-encounter",
+    "reaction",
+    "survivability"
+   ],
+   "removed": [],
+   "normalized": [
+    {
+     "from": "damage-threshold",
+     "to": "damage_threshold"
+    }
+   ],
+   "canonicalAlreadyPresent": []
+  },
+  {
+   "id": "700ec3d782794d11",
+   "canonicalIdentity": "Knights of the Old Republic Campaign Guide|Luka Sene|Field Detection",
+   "name": "Field Detection",
+   "path": "system.tags",
+   "before": [
+    "action_economy",
+    "detection",
+    "force",
+    "force_capacity",
+    "force_defense",
+    "force_offense",
+    "force_point_spend",
+    "force_power_synergy",
+    "perception",
+    "positioning",
+    "resource_spend",
+    "sensors",
+    "skills",
+    "tree_e6e3fc102bb54b20",
+    "use_the_force"
+   ],
+   "after": [
+    "action_economy",
+    "detection",
+    "force",
+    "force_capacity",
+    "force_defense",
+    "force_offense",
+    "force_point_spend",
+    "force_power_synergy",
+    "perception",
+    "positioning",
+    "resource_spend",
+    "sensors",
+    "skills",
+    "use_the_force"
+   ],
+   "removed": [
+    {
+     "tag": "tree_e6e3fc102bb54b20",
+     "action": "DELETE_TREE_ID_ALIAS"
+    }
+   ],
+   "normalized": [],
+   "canonicalAlreadyPresent": []
+  },
+  {
+   "id": "7842befd5a8713c5",
+   "canonicalIdentity": "Saga Edition Core Rulebook|Lightsaber Forms|Niman",
+   "name": "Niman",
+   "path": "system.tags",
+   "before": [
+    "lightsaber",
+    "melee",
+    "no_unconditional_static_bonus",
+    "force"
+   ],
+   "after": [
+    "lightsaber",
+    "melee",
+    "force"
+   ],
+   "removed": [
+    {
+     "tag": "no_unconditional_static_bonus",
+     "action": "DELETE"
+    }
+   ],
+   "normalized": [],
+   "canonicalAlreadyPresent": []
+  },
+  {
+   "id": "7aa3eec9b7f748ef",
+   "canonicalIdentity": "Rebellion Era Campaign Guide|Wingman|Escort Pilot",
+   "name": "Escort Pilot",
+   "path": "system.tags",
+   "before": [
+    "action_economy",
+    "ally_support",
+    "escort",
+    "pilot",
+    "positioning",
+    "support",
+    "sustained_damage",
+    "tree_5f355ad4093d2bf8",
+    "vehicle"
+   ],
+   "after": [
+    "action_economy",
+    "ally_support",
+    "pilot",
+    "positioning",
+    "support",
+    "sustained_damage",
+    "vehicle"
+   ],
+   "removed": [
+    {
+     "tag": "escort",
+     "action": "DELETE"
+    },
+    {
+     "tag": "tree_5f355ad4093d2bf8",
+     "action": "DELETE_TREE_ID_ALIAS"
+    }
+   ],
+   "normalized": [],
+   "canonicalAlreadyPresent": []
+  },
+  {
+   "id": "84d4e92693185028",
+   "canonicalIdentity": "Rebellion Era Campaign Guide|Improviser|Improvised Device",
+   "name": "Improvised Device",
+   "path": "system.tags",
+   "before": [
+    "action_economy",
+    "condition_removal",
+    "control",
+    "damage_reduction",
+    "equipment",
+    "heavy_weapons",
+    "jury_rig",
+    "mechanics",
+    "mobility",
+    "positioning",
+    "skills",
+    "support",
+    "sustained_damage",
+    "tech"
+   ],
+   "after": [
+    "action_economy",
+    "condition_removal",
+    "control",
+    "damage_reduction",
+    "equipment",
+    "heavy_weapon",
+    "jury_rig",
+    "mechanics",
+    "mobility",
+    "positioning",
+    "skills",
+    "support",
+    "sustained_damage",
+    "tech"
+   ],
+   "removed": [],
+   "normalized": [
+    {
+     "from": "heavy_weapons",
+     "to": "heavy_weapon"
+    }
+   ],
+   "canonicalAlreadyPresent": []
+  },
+  {
+   "id": "8d0657e7ade688bd",
+   "canonicalIdentity": "Scavenger's Guide to Droids|Elite Droid|Scripted Routines",
+   "name": "Scripted Routines",
+   "path": "system.tags",
+   "before": [
+    "action_economy",
+    "droid",
+    "independent-spirit",
+    "once-per-encounter",
+    "skills"
+   ],
+   "after": [
+    "action_economy",
+    "droid",
+    "once-per-encounter",
+    "skills"
+   ],
+   "removed": [
+    {
+     "tag": "independent-spirit",
+     "action": "DELETE"
+    }
+   ],
+   "normalized": [],
+   "canonicalAlreadyPresent": []
+  },
+  {
+   "id": "8f64ec5c81784b2d",
+   "canonicalIdentity": "Jedi Academy Training Manual|Tyia Adept|Tyia Adept",
+   "name": "Tyia Adept",
+   "path": "system.tags",
+   "before": [
+    "action_economy",
+    "condition_removal",
+    "dark_side",
+    "defense",
+    "droid",
+    "force",
+    "force_capacity",
+    "force_control",
+    "force_offense",
+    "force_point_spend",
+    "force_power_synergy",
+    "meditation",
+    "mobility",
+    "positioning",
+    "reaction",
+    "resource_spend",
+    "support",
+    "swift_action",
+    "tree_9a5efe5d0e9b43a1",
+    "tyia",
+    "use_the_force"
+   ],
+   "after": [
+    "action_economy",
+    "condition_removal",
+    "dark_side",
+    "defense",
+    "droid",
+    "force",
+    "force_capacity",
+    "force_control",
+    "force_offense",
+    "force_point_spend",
+    "force_power_synergy",
+    "meditation",
+    "mobility",
+    "positioning",
+    "reaction",
+    "resource_spend",
+    "support",
+    "swift_action",
+    "use_the_force"
+   ],
+   "removed": [
+    {
+     "tag": "tree_9a5efe5d0e9b43a1",
+     "action": "DELETE_TREE_ID_ALIAS"
+    },
+    {
+     "tag": "tyia",
+     "action": "DELETE"
+    }
+   ],
+   "normalized": [],
+   "canonicalAlreadyPresent": []
+  },
+  {
+   "id": "916a526d8c166005",
+   "canonicalIdentity": "Saga Edition Core Rulebook|Brawler|Expert Grappler",
+   "name": "Expert Grappler",
+   "path": "system.tags",
+   "before": [
+    "melee",
+    "grapple",
+    "runtime"
+   ],
+   "after": [
+    "melee",
+    "grapple"
+   ],
+   "removed": [
+    {
+     "tag": "runtime",
+     "action": "DELETE"
+    }
+   ],
+   "normalized": [],
+   "canonicalAlreadyPresent": []
+  },
+  {
+   "id": "97faaefe3487494c",
+   "canonicalIdentity": "Force Unleashed Campaign Guide|First-Degree Droid|Medical Droid",
+   "name": "Medical Droid",
+   "path": "system.tags",
+   "before": [
+    "action_economy",
+    "condition_removal",
+    "control",
+    "droid",
+    "healing",
+    "investigation",
+    "knowledge",
+    "martial_arts",
+    "medical",
+    "medicine",
+    "melee",
+    "mobility",
+    "offense_melee",
+    "persuasion",
+    "poison",
+    "positioning",
+    "scaling",
+    "skills",
+    "social",
+    "standard_action",
+    "support",
+    "sustained_damage",
+    "trap",
+    "tree_a212850887fe41da",
+    "unarmed"
+   ],
+   "after": [
+    "action_economy",
+    "condition_removal",
+    "control",
+    "droid",
+    "healing",
+    "investigation",
+    "knowledge",
+    "martial_arts",
+    "medical",
+    "medicine",
+    "melee",
+    "mobility",
+    "offense_melee",
+    "persuasion",
+    "poison",
+    "positioning",
+    "scaling",
+    "skills",
+    "social",
+    "standard_action",
+    "support",
+    "sustained_damage",
+    "trap",
+    "unarmed"
+   ],
+   "removed": [
+    {
+     "tag": "tree_a212850887fe41da",
+     "action": "DELETE_TREE_ID_ALIAS"
+    }
+   ],
+   "normalized": [],
+   "canonicalAlreadyPresent": []
+  },
+  {
+   "id": "9992fb4ee6ab40df",
+   "canonicalIdentity": "Unknown Regions|Master Scout|Tripwire",
+   "name": "Tripwire",
+   "path": "system.tags",
+   "before": [
+    "action_economy",
+    "battlefield",
+    "control",
+    "deception",
+    "mobility",
+    "standard_action",
+    "trap",
+    "survival",
+    "exploration"
+   ],
+   "after": [
+    "action_economy",
+    "control",
+    "deception",
+    "mobility",
+    "standard_action",
+    "trap",
+    "survival",
+    "exploration"
+   ],
+   "removed": [
+    {
+     "tag": "battlefield",
+     "action": "DELETE"
+    }
+   ],
+   "normalized": [],
+   "canonicalAlreadyPresent": []
+  },
+  {
+   "id": "9e4345faaaa94dd8",
+   "canonicalIdentity": "Saga Edition Core Rulebook|Misfortune|Dastardly Strike",
+   "name": "Dastardly Strike",
+   "path": "system.tags",
+   "before": [
+    "condition_removal",
+    "force",
+    "force_control",
+    "force_defense",
+    "force_offense",
+    "lightsaber",
+    "melee",
+    "mobility",
+    "offense_melee",
+    "pilot",
+    "precision_damage",
+    "tree_67b59e020c1660eb",
+    "vehicle"
+   ],
+   "after": [
+    "condition_removal",
+    "force",
+    "force_control",
+    "force_defense",
+    "force_offense",
+    "lightsaber",
+    "melee",
+    "mobility",
+    "offense_melee",
+    "pilot",
+    "precision_damage",
+    "vehicle"
+   ],
+   "removed": [
+    {
+     "tag": "tree_67b59e020c1660eb",
+     "action": "DELETE_TREE_ID_ALIAS"
+    }
+   ],
+   "normalized": [],
+   "canonicalAlreadyPresent": []
+  },
+  {
+   "id": "9f01b5c07bbd5f76",
+   "canonicalIdentity": "Scum and Villainy|GenoHaradan|Manipulating Strike",
+   "name": "Manipulating Strike",
+   "path": "system.tags",
+   "before": [
+    "action_economy",
+    "control",
+    "manipulation",
+    "melee",
+    "mobility",
+    "persuasion",
+    "positioning",
+    "ranged",
+    "skills",
+    "social",
+    "swift_action",
+    "trap",
+    "tree_da7b731a3e434a7a",
+    "pursuit",
+    "mind-affecting",
+    "genoharadan"
+   ],
+   "after": [
+    "action_economy",
+    "control",
+    "manipulation",
+    "melee",
+    "mobility",
+    "persuasion",
+    "positioning",
+    "ranged",
+    "skills",
+    "social",
+    "swift_action",
+    "trap",
+    "pursuit",
+    "mind-affecting"
+   ],
+   "removed": [
+    {
+     "tag": "tree_da7b731a3e434a7a",
+     "action": "DELETE_TREE_ID_ALIAS"
+    },
+    {
+     "tag": "genoharadan",
+     "action": "DELETE"
+    }
+   ],
+   "normalized": [],
+   "canonicalAlreadyPresent": []
+  },
+  {
+   "id": "a36c49bcd3fa4395",
+   "canonicalIdentity": "Unknown Regions|Warrior|Warrior's Awareness",
+   "name": "Warrior's Awareness",
+   "path": "system.tags",
+   "before": [
+    "action_economy",
+    "awareness",
+    "force",
+    "force_defense",
+    "force_offense",
+    "offense_melee",
+    "reaction",
+    "tree_13776eed744d410c",
+    "warrior",
+    "weapon_training"
+   ],
+   "after": [
+    "action_economy",
+    "awareness",
+    "force",
+    "force_defense",
+    "force_offense",
+    "offense_melee",
+    "reaction",
+    "weapon_training"
+   ],
+   "removed": [
+    {
+     "tag": "tree_13776eed744d410c",
+     "action": "DELETE_TREE_ID_ALIAS"
+    },
+    {
+     "tag": "warrior",
+     "action": "DELETE"
+    }
+   ],
+   "normalized": [],
+   "canonicalAlreadyPresent": []
+  },
+  {
+   "id": "ae3fd778e4a34798",
+   "canonicalIdentity": "Jedi Academy Training Manual|Matukai Adept|Wan-Shen Kata",
+   "name": "Wan-Shen Kata",
+   "path": "system.tags",
+   "before": [
+    "action_economy",
+    "kata",
+    "martial_arts",
+    "melee",
+    "mobility",
+    "standard_action",
+    "tree_ca65ba0c33cd4c7d"
+   ],
+   "after": [
+    "action_economy",
+    "martial_arts",
+    "melee",
+    "mobility",
+    "standard_action"
+   ],
+   "removed": [
+    {
+     "tag": "kata",
+     "action": "DELETE"
+    },
+    {
+     "tag": "tree_ca65ba0c33cd4c7d",
+     "action": "DELETE_TREE_ID_ALIAS"
+    }
+   ],
+   "normalized": [],
+   "canonicalAlreadyPresent": []
+  },
+  {
+   "id": "b3634baba7004d27",
+   "canonicalIdentity": "Galaxy at War|Brigand|Cheap Trick",
+   "name": "Cheap Trick",
+   "path": "system.tags",
+   "before": [
+    "action_economy",
+    "battlefield_control",
+    "cheap_shot",
+    "condition_removal",
+    "damage_reduction",
+    "deception",
+    "melee",
+    "mobility",
+    "positioning",
+    "ranged",
+    "support",
+    "sustained_damage",
+    "tree_7c6d007b549c4a4a",
+    "social",
+    "feint",
+    "brigand"
+   ],
+   "after": [
+    "action_economy",
+    "battlefield_control",
+    "condition_removal",
+    "damage_reduction",
+    "deception",
+    "melee",
+    "mobility",
+    "positioning",
+    "ranged",
+    "support",
+    "sustained_damage",
+    "social",
+    "feint"
+   ],
+   "removed": [
+    {
+     "tag": "cheap_shot",
+     "action": "DELETE"
+    },
+    {
+     "tag": "tree_7c6d007b549c4a4a",
+     "action": "DELETE_TREE_ID_ALIAS"
+    },
+    {
+     "tag": "brigand",
+     "action": "DELETE"
+    }
+   ],
+   "normalized": [],
+   "canonicalAlreadyPresent": []
+  },
+  {
+   "id": "b62303265cab4eeb",
+   "canonicalIdentity": "Unknown Regions|Exile|Galactic Guidance",
+   "name": "Galactic Guidance",
+   "path": "system.tags",
+   "before": [
+    "action_economy",
+    "guidance",
+    "investigation",
+    "knowledge",
+    "mobility",
+    "perception",
+    "positioning",
+    "reaction",
+    "skills",
+    "social",
+    "support",
+    "tree_0b5857edbcf049a2",
+    "galactic-lore"
+   ],
+   "after": [
+    "action_economy",
+    "investigation",
+    "knowledge",
+    "mobility",
+    "perception",
+    "positioning",
+    "reaction",
+    "skills",
+    "social",
+    "support",
+    "galactic_lore"
+   ],
+   "removed": [
+    {
+     "tag": "guidance",
+     "action": "DELETE"
+    },
+    {
+     "tag": "tree_0b5857edbcf049a2",
+     "action": "DELETE_TREE_ID_ALIAS"
+    }
+   ],
+   "normalized": [
+    {
+     "from": "galactic-lore",
+     "to": "galactic_lore"
+    }
+   ],
+   "canonicalAlreadyPresent": []
+  },
+  {
+   "id": "b6e600188cf5597f",
+   "canonicalIdentity": "Saga Edition Core Rulebook|Brawler|Bayonet Master",
+   "name": "Bayonet Master",
+   "path": "system.tags",
+   "before": [
+    "positioning",
+    "ranged",
+    "full_attack",
+    "double_weapon",
+    "bayonet"
+   ],
+   "after": [
+    "positioning",
+    "ranged",
+    "full_attack",
+    "double_weapon"
+   ],
+   "removed": [
+    {
+     "tag": "bayonet",
+     "action": "DELETE_DECOMPOSE"
+    }
+   ],
+   "normalized": [],
+   "canonicalAlreadyPresent": []
+  },
+  {
+   "id": "b9169c3ac22d4652",
+   "canonicalIdentity": "Unknown Regions|Mobile Scout|Expert Rider",
+   "name": "Expert Rider",
+   "path": "system.tags",
+   "before": [
+    "action_economy",
+    "damage_reduction",
+    "force",
+    "force_control",
+    "force_offense",
+    "mobility",
+    "mount",
+    "ride",
+    "scaling",
+    "tree_c7a4e66f46044c7a",
+    "survival",
+    "exploration"
+   ],
+   "after": [
+    "action_economy",
+    "damage_reduction",
+    "force",
+    "force_control",
+    "force_offense",
+    "mobility",
+    "mount",
+    "ride",
+    "scaling",
+    "survival",
+    "exploration"
+   ],
+   "removed": [
+    {
+     "tag": "tree_c7a4e66f46044c7a",
+     "action": "DELETE_TREE_ID_ALIAS"
+    }
+   ],
+   "normalized": [],
+   "canonicalAlreadyPresent": []
+  },
+  {
+   "id": "bab9a1ce285f98b9",
+   "canonicalIdentity": "Jedi Academy Training Manual|Beastwarden|Charm Beast",
+   "name": "Charm Beast",
+   "path": "system.tags",
+   "before": [
+    "action_economy",
+    "battlefield_control",
+    "beast_companion",
+    "force",
+    "force_capacity",
+    "force_defense",
+    "force_offense",
+    "force_training",
+    "melee",
+    "mobility",
+    "persuasion",
+    "positioning",
+    "social",
+    "support",
+    "sustained_damage",
+    "tree_8a61bf426391431b",
+    "use_the_force",
+    "weapon_empowerment"
+   ],
+   "after": [
+    "action_economy",
+    "battlefield_control",
+    "beast_companion",
+    "force",
+    "force_capacity",
+    "force_defense",
+    "force_offense",
+    "force_training",
+    "melee",
+    "mobility",
+    "persuasion",
+    "positioning",
+    "social",
+    "support",
+    "sustained_damage",
+    "use_the_force",
+    "weapon_empowerment"
+   ],
+   "removed": [
+    {
+     "tag": "tree_8a61bf426391431b",
+     "action": "DELETE_TREE_ID_ALIAS"
+    }
+   ],
+   "normalized": [],
+   "canonicalAlreadyPresent": []
+  },
+  {
+   "id": "bb6511073dfb4774",
+   "canonicalIdentity": "Knights of the Old Republic Campaign Guide|Jal Shey|Force Delay",
+   "name": "Force Delay",
+   "path": "system.tags",
+   "before": [
+    "action_economy",
+    "armor",
+    "control",
+    "delay",
+    "force",
+    "force_control",
+    "force_defense",
+    "force_point_spend",
+    "investigation",
+    "knowledge",
+    "mobility",
+    "move_action",
+    "persuasion",
+    "positioning",
+    "reaction",
+    "resource_spend",
+    "skills",
+    "social",
+    "standard_action",
+    "support",
+    "sustained_damage",
+    "swift_action",
+    "tree_db1964d1e1d14b5a",
+    "use_the_force"
+   ],
+   "after": [
+    "action_economy",
+    "armor",
+    "control",
+    "force",
+    "force_control",
+    "force_defense",
+    "force_point_spend",
+    "investigation",
+    "knowledge",
+    "mobility",
+    "move_action",
+    "persuasion",
+    "positioning",
+    "reaction",
+    "resource_spend",
+    "skills",
+    "social",
+    "standard_action",
+    "support",
+    "sustained_damage",
+    "swift_action",
+    "use_the_force"
+   ],
+   "removed": [
+    {
+     "tag": "delay",
+     "action": "DELETE_DECOMPOSE"
+    },
+    {
+     "tag": "tree_db1964d1e1d14b5a",
+     "action": "DELETE_TREE_ID_ALIAS"
+    }
+   ],
+   "normalized": [],
+   "canonicalAlreadyPresent": []
+  },
+  {
+   "id": "bcd9981b3c6a46dc",
+   "canonicalIdentity": "Saga Edition Core Rulebook|Lightsaber Combat|Weapon Specialization (Lightsabers)",
+   "name": "Weapon Specialization (Lightsabers)",
+   "path": "system.tags",
+   "before": [
+    "action_economy",
+    "condition_removal",
+    "damage_scaling",
+    "dark_side",
+    "force",
+    "force_control",
+    "force_offense",
+    "lightsaber",
+    "melee",
+    "mobility",
+    "offense_melee",
+    "precision",
+    "weapon_specialization",
+    "damage_bonus"
+   ],
+   "after": [
+    "action_economy",
+    "condition_removal",
+    "dark_side",
+    "force",
+    "force_control",
+    "force_offense",
+    "lightsaber",
+    "melee",
+    "mobility",
+    "offense_melee",
+    "precision",
+    "weapon_specialization",
+    "damage_bonus"
+   ],
+   "removed": [
+    {
+     "tag": "damage_scaling",
+     "action": "DELETE"
+    }
+   ],
+   "normalized": [],
+   "canonicalAlreadyPresent": []
+  },
+  {
+   "id": "c913aa5322934cfd",
+   "canonicalIdentity": "Force Unleashed Campaign Guide|Agent of Ossus|Buried Presence",
+   "name": "Buried Presence",
+   "path": "system.tags",
+   "before": [
+    "action_economy",
+    "concealment",
+    "force",
+    "force_defense",
+    "force_offense",
+    "force_point_spend",
+    "mobility",
+    "offense_ranged",
+    "positioning",
+    "ranged",
+    "resource_spend",
+    "scaling",
+    "stealth",
+    "swift_action",
+    "tree_754907ded50d4f46",
+    "use_the_force"
+   ],
+   "after": [
+    "action_economy",
+    "concealment",
+    "force",
+    "force_defense",
+    "force_offense",
+    "force_point_spend",
+    "mobility",
+    "offense_ranged",
+    "positioning",
+    "ranged",
+    "resource_spend",
+    "scaling",
+    "stealth",
+    "swift_action",
+    "use_the_force"
+   ],
+   "removed": [
+    {
+     "tag": "tree_754907ded50d4f46",
+     "action": "DELETE_TREE_ID_ALIAS"
+    }
+   ],
+   "normalized": [],
+   "canonicalAlreadyPresent": []
+  },
+  {
+   "id": "ca30265867f3dcb1",
+   "canonicalIdentity": "Knights of the Old Republic Campaign Guide|Krath|Krath Surge",
+   "name": "Krath Surge",
+   "path": "system.tags",
+   "before": [
+    "damage",
+    "dark_side",
+    "force",
+    "force-power",
+    "once-per-encounter",
+    "range",
+    "swift_action"
+   ],
+   "after": [
+    "damage",
+    "dark_side",
+    "force",
+    "force_power",
+    "once-per-encounter",
+    "swift_action"
+   ],
+   "removed": [
+    {
+     "tag": "range",
+     "action": "DELETE"
+    }
+   ],
+   "normalized": [
+    {
+     "from": "force-power",
+     "to": "force_power"
+    }
+   ],
+   "canonicalAlreadyPresent": []
+  },
+  {
+   "id": "cb3bbc1e7d8829e9",
+   "canonicalIdentity": "Scavenger's Guide to Droids|Elite Droid|Break Program",
+   "name": "Break Program",
+   "path": "system.tags",
+   "before": [
+    "behavioral-inhibitor",
+    "droid",
+    "opposed-check",
+    "use_computer"
+   ],
+   "after": [
+    "droid",
+    "opposed_check",
+    "use_computer"
+   ],
+   "removed": [
+    {
+     "tag": "behavioral-inhibitor",
+     "action": "DELETE"
+    }
+   ],
+   "normalized": [
+    {
+     "from": "opposed-check",
+     "to": "opposed_check"
+    }
+   ],
+   "canonicalAlreadyPresent": []
+  },
+  {
+   "id": "cc90a9fc255f4dc4",
+   "canonicalIdentity": "Jedi Academy Training Manual|Seyugi Dervish|Seyugi Cyclone",
+   "name": "Seyugi Cyclone",
+   "path": "system.tags",
+   "before": [
+    "action_economy",
+    "force",
+    "force_control",
+    "force_defense",
+    "force_offense",
+    "force_point_spend",
+    "martial_arts",
+    "melee",
+    "mobility",
+    "offense_melee",
+    "positioning",
+    "resource_spend",
+    "tree_a7ad797b01114925"
+   ],
+   "after": [
+    "action_economy",
+    "force",
+    "force_control",
+    "force_defense",
+    "force_offense",
+    "force_point_spend",
+    "martial_arts",
+    "melee",
+    "mobility",
+    "offense_melee",
+    "positioning",
+    "resource_spend"
+   ],
+   "removed": [
+    {
+     "tag": "tree_a7ad797b01114925",
+     "action": "DELETE_TREE_ID_ALIAS"
+    }
+   ],
+   "normalized": [],
+   "canonicalAlreadyPresent": []
+  },
+  {
+   "id": "d091b5f6b34b4967",
+   "canonicalIdentity": "Unknown Regions|Blazing Chain|Rising Panic",
+   "name": "Rising Panic",
+   "path": "system.tags",
+   "before": [
+    "action_economy",
+    "condition_removal",
+    "control",
+    "fear",
+    "force",
+    "force_control",
+    "force_defense",
+    "force_offense",
+    "mobility",
+    "panic",
+    "reaction",
+    "sustained_damage",
+    "tree_427213bd55e04e27",
+    "use_the_force"
+   ],
+   "after": [
+    "action_economy",
+    "condition_removal",
+    "control",
+    "fear",
+    "force",
+    "force_control",
+    "force_defense",
+    "force_offense",
+    "mobility",
+    "reaction",
+    "sustained_damage",
+    "use_the_force"
+   ],
+   "removed": [
+    {
+     "tag": "panic",
+     "action": "DELETE"
+    },
+    {
+     "tag": "tree_427213bd55e04e27",
+     "action": "DELETE_TREE_ID_ALIAS"
+    }
+   ],
+   "normalized": [],
+   "canonicalAlreadyPresent": []
+  },
+  {
+   "id": "d18f6de464dc42cf",
+   "canonicalIdentity": "Saga Edition Core Rulebook|Military Tactics|Commander's Prerogative",
+   "name": "Commander's Prerogative",
+   "path": "system.tags",
+   "before": [
+    "action_economy",
+    "ally_support",
+    "commander",
+    "morale",
+    "positioning",
+    "skills",
+    "support",
+    "sustained_damage",
+    "tree_9253ace716c3e966"
+   ],
+   "after": [
+    "action_economy",
+    "ally_support",
+    "morale",
+    "positioning",
+    "skills",
+    "support",
+    "sustained_damage"
+   ],
+   "removed": [
+    {
+     "tag": "commander",
+     "action": "DELETE"
+    },
+    {
+     "tag": "tree_9253ace716c3e966",
+     "action": "DELETE_TREE_ID_ALIAS"
+    }
+   ],
+   "normalized": [],
+   "canonicalAlreadyPresent": []
+  },
+  {
+   "id": "d4a94695e27f60a1",
+   "canonicalIdentity": "Saga Edition Core Rulebook|Gunslinger|Pistol Duelist",
+   "name": "Pistol Duelist",
+   "path": "system.tags",
+   "before": [
+    "action_economy",
+    "combat-action",
+    "gunslinger",
+    "pistol",
+    "ranged",
+    "standard-action"
+   ],
+   "after": [
+    "action_economy",
+    "pistol",
+    "ranged",
+    "standard_action"
+   ],
+   "removed": [
+    {
+     "tag": "combat-action",
+     "action": "DELETE"
+    },
+    {
+     "tag": "gunslinger",
+     "action": "DELETE"
+    }
+   ],
+   "normalized": [
+    {
+     "from": "standard-action",
+     "to": "standard_action"
+    }
+   ],
+   "canonicalAlreadyPresent": []
+  },
+  {
+   "id": "da12fc505efc5eea",
+   "canonicalIdentity": "Saga Edition Core Rulebook|Sense|Visions",
+   "name": "Visions",
+   "path": "system.tags",
+   "before": [
+    "damage_reduction",
+    "force",
+    "force_point_spend",
+    "positioning",
+    "precognition",
+    "resource_spend",
+    "tree_dad3c0da191748c1",
+    "visions"
+   ],
+   "after": [
+    "damage_reduction",
+    "force",
+    "force_point_spend",
+    "positioning",
+    "precognition",
+    "resource_spend",
+    "visions"
+   ],
+   "removed": [
+    {
+     "tag": "tree_dad3c0da191748c1",
+     "action": "DELETE_TREE_ID_ALIAS"
+    }
+   ],
+   "normalized": [],
+   "canonicalAlreadyPresent": []
+  },
+  {
+   "id": "da6a06aaf630376d",
+   "canonicalIdentity": "Saga Edition Core Rulebook|Brawler|Man Down",
+   "name": "Man Down",
+   "path": "system.tags",
+   "before": [
+    "damage_reduction",
+    "mobility",
+    "positioning",
+    "support",
+    "reaction",
+    "movement",
+    "ally_0hp"
+   ],
+   "after": [
+    "damage_reduction",
+    "mobility",
+    "positioning",
+    "support",
+    "reaction",
+    "movement"
+   ],
+   "removed": [
+    {
+     "tag": "ally_0hp",
+     "action": "DELETE_DECOMPOSE"
+    }
+   ],
+   "normalized": [],
+   "canonicalAlreadyPresent": []
+  },
+  {
+   "id": "df91dea8db444459",
+   "canonicalIdentity": "Force Unleashed Campaign Guide|Second-Degree Droid|Burst Transfer",
+   "name": "Burst Transfer",
+   "path": "system.tags",
+   "before": [
+    "action_economy",
+    "damage_reduction",
+    "droid",
+    "healing",
+    "mechanics",
+    "mobility",
+    "pilot",
+    "reaction",
+    "shields",
+    "skills",
+    "slicing",
+    "standard_action",
+    "support",
+    "sustained_damage",
+    "transfer",
+    "tree_ad499981ddb8450e",
+    "vehicle"
+   ],
+   "after": [
+    "action_economy",
+    "damage_reduction",
+    "droid",
+    "healing",
+    "mechanics",
+    "mobility",
+    "pilot",
+    "reaction",
+    "shields",
+    "skills",
+    "slicing",
+    "standard_action",
+    "support",
+    "sustained_damage",
+    "vehicle"
+   ],
+   "removed": [
+    {
+     "tag": "transfer",
+     "action": "DELETE_DECOMPOSE"
+    },
+    {
+     "tag": "tree_ad499981ddb8450e",
+     "action": "DELETE_TREE_ID_ALIAS"
+    }
+   ],
+   "normalized": [],
+   "canonicalAlreadyPresent": []
+  },
+  {
+   "id": "eaaecdfd7a538975",
+   "canonicalIdentity": "Knights of the Old Republic Campaign Guide|Krath|Dark Side Manipulation",
+   "name": "Dark Side Manipulation",
+   "path": "system.tags",
+   "before": [
+    "dark_side",
+    "dark-side-score",
+    "force",
+    "force-point",
+    "once-per-encounter"
+   ],
+   "after": [
+    "dark_side",
+    "dark_side_score",
+    "force",
+    "force-point",
+    "once-per-encounter"
+   ],
+   "removed": [],
+   "normalized": [
+    {
+     "from": "dark-side-score",
+     "to": "dark_side_score"
+    }
+   ],
+   "canonicalAlreadyPresent": []
+  },
+  {
+   "id": "ec12ce36ff7048f2",
+   "canonicalIdentity": "Legacy Era Campaign Guide|Provocateur|Seize the Moment",
+   "name": "Seize the Moment",
+   "path": "system.tags",
+   "before": [
+    "action_economy",
+    "damage_reduction",
+    "melee",
+    "mobility",
+    "positioning",
+    "ranged",
+    "shields",
+    "support",
+    "pursuit",
+    "reaction",
+    "provocateur"
+   ],
+   "after": [
+    "action_economy",
+    "damage_reduction",
+    "melee",
+    "mobility",
+    "positioning",
+    "ranged",
+    "shields",
+    "support",
+    "pursuit",
+    "reaction"
+   ],
+   "removed": [
+    {
+     "tag": "provocateur",
+     "action": "DELETE"
+    }
+   ],
+   "normalized": [],
+   "canonicalAlreadyPresent": []
+  },
+  {
+   "id": "ed0304eebd82042b",
+   "canonicalIdentity": "Knights of the Old Republic Campaign Guide|Krath|Krath Intuition",
+   "name": "Krath Intuition",
+   "path": "system.tags",
+   "before": [
+    "damage",
+    "dark_side",
+    "force",
+    "force-point",
+    "once-per-encounter",
+    "sith-alchemy"
+   ],
+   "after": [
+    "damage",
+    "dark_side",
+    "force",
+    "force-point",
+    "once-per-encounter"
+   ],
+   "removed": [
+    {
+     "tag": "sith-alchemy",
+     "action": "DELETE"
+    }
+   ],
+   "normalized": [],
+   "canonicalAlreadyPresent": []
+  },
+  {
+   "id": "f0ade00000000001",
+   "canonicalIdentity": "Saga Edition Core Rulebook|Force Adept|Instrument of the Force",
+   "name": "Instrument of the Force",
+   "path": "system.tags",
+   "before": [
+    "force",
+    "search-your-feelings",
+    "bonus-force-point"
+   ],
+   "after": [
+    "force",
+    "search_your_feelings"
+   ],
+   "removed": [
+    {
+     "tag": "bonus-force-point",
+     "action": "DELETE_DECOMPOSE"
+    }
+   ],
+   "normalized": [
+    {
+     "from": "search-your-feelings",
+     "to": "search_your_feelings"
+    }
+   ],
+   "canonicalAlreadyPresent": []
+  },
+  {
+   "id": "f29c25c955f24e57",
+   "canonicalIdentity": "Jedi Academy Training Manual|Baran Do Sage|Enhanced Danger Sense",
+   "name": "Enhanced Danger Sense",
+   "path": "system.tags",
+   "before": [
+    "action_economy",
+    "battlefield_control",
+    "danger_sense",
+    "force",
+    "force_defense",
+    "force_offense",
+    "force_point_spend",
+    "initiative",
+    "mobility",
+    "perception",
+    "pilot",
+    "positioning",
+    "resource_spend",
+    "support",
+    "sustained_damage",
+    "tree_3e807e87cac844ba",
+    "vehicle"
+   ],
+   "after": [
+    "action_economy",
+    "battlefield_control",
+    "force",
+    "force_defense",
+    "force_offense",
+    "force_point_spend",
+    "initiative",
+    "mobility",
+    "perception",
+    "pilot",
+    "positioning",
+    "resource_spend",
+    "support",
+    "sustained_damage",
+    "vehicle"
+   ],
+   "removed": [
+    {
+     "tag": "danger_sense",
+     "action": "DELETE_DECOMPOSE"
+    },
+    {
+     "tag": "tree_3e807e87cac844ba",
+     "action": "DELETE_TREE_ID_ALIAS"
+    }
+   ],
+   "normalized": [],
+   "canonicalAlreadyPresent": []
+  },
+  {
+   "id": "f3a1542edd5f4259",
+   "canonicalIdentity": "Saga Edition Core Rulebook|Commando|Dedicated Protector",
+   "name": "Dedicated Protector",
+   "path": "system.tags",
+   "before": [
+    "action_economy",
+    "ally_support",
+    "battlefield_control",
+    "bodyguard",
+    "condition_removal",
+    "damage_reduction",
+    "defense",
+    "evasion",
+    "mobility",
+    "positioning",
+    "shields",
+    "support",
+    "tree_798ed0945cbdac1c"
+   ],
+   "after": [
+    "action_economy",
+    "ally_support",
+    "battlefield_control",
+    "condition_removal",
+    "damage_reduction",
+    "defense",
+    "evasion",
+    "mobility",
+    "positioning",
+    "shields",
+    "support"
+   ],
+   "removed": [
+    {
+     "tag": "bodyguard",
+     "action": "DELETE"
+    },
+    {
+     "tag": "tree_798ed0945cbdac1c",
+     "action": "DELETE_TREE_ID_ALIAS"
+    }
+   ],
+   "normalized": [],
+   "canonicalAlreadyPresent": []
+  },
+  {
+   "id": "f733e1a56fba443b",
+   "canonicalIdentity": "Force Unleashed Campaign Guide|Fifth-Degree Droid|Heavy-Duty Actuators",
+   "name": "Heavy-Duty Actuators",
+   "path": "system.tags",
+   "before": [
+    "action_economy",
+    "burst_damage",
+    "droid",
+    "durability",
+    "martial_arts",
+    "melee",
+    "mobility",
+    "move_action",
+    "offense_melee",
+    "offense_ranged",
+    "positioning",
+    "ranged",
+    "standard_action",
+    "strength_enhancement",
+    "support",
+    "sustained_damage",
+    "swift_action",
+    "tree_c4e48efaad1f49af",
+    "unarmed"
+   ],
+   "after": [
+    "action_economy",
+    "burst_damage",
+    "droid",
+    "durability",
+    "martial_arts",
+    "melee",
+    "mobility",
+    "move_action",
+    "offense_melee",
+    "offense_ranged",
+    "positioning",
+    "ranged",
+    "standard_action",
+    "support",
+    "sustained_damage",
+    "swift_action",
+    "unarmed"
+   ],
+   "removed": [
+    {
+     "tag": "strength_enhancement",
+     "action": "DELETE"
+    },
+    {
+     "tag": "tree_c4e48efaad1f49af",
+     "action": "DELETE_TREE_ID_ALIAS"
+    }
+   ],
+   "normalized": [],
+   "canonicalAlreadyPresent": []
+  },
+  {
+   "id": "ffe31e578e9abeee",
+   "canonicalIdentity": "Saga Edition Core Rulebook|Brawler|Pick a Fight",
+   "name": "Pick a Fight",
+   "path": "system.tags",
+   "before": [
+    "ambush",
+    "positioning",
+    "sustained_damage",
+    "surprise_round",
+    "morale",
+    "ally_aura"
+   ],
+   "after": [
+    "ambush",
+    "positioning",
+    "sustained_damage",
+    "surprise_round",
+    "morale"
+   ],
+   "removed": [
+    {
+     "tag": "ally_aura",
+     "action": "DELETE_DECOMPOSE"
+    }
+   ],
+   "normalized": [],
+   "canonicalAlreadyPresent": []
+  }
+ ]
+}
