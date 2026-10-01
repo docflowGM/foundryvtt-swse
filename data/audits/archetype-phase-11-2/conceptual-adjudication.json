@@ -1,0 +1,280 @@
+{
+  "schemaVersion": 1,
+  "phase": "11-2B5",
+  "title": "Conceptual Reconsider adjudication",
+  "status": "OWNER_DESIGN_PASS",
+  "productionMutationPerformed": false,
+  "policy": {
+    "replacementWarning": "Replacement arrays are decomposition guidance only; never bulk-assign without canonical rule evidence."
+  },
+  "counts": {
+    "DELETE_DECOMPOSE": 9,
+    "NORMALIZE": 9,
+    "KEEP": 16,
+    "DELETE": 4
+  },
+  "decisions": [
+    {
+      "tag": "force_execution",
+      "decision": "DELETE_DECOMPOSE",
+      "replacement": [
+        "force",
+        "action_economy",
+        "use_the_force"
+      ],
+      "rationale": "Legacy catch-all for implementation/execution; too vague to be a semantic mechanic."
+    },
+    {
+      "tag": "sustained-damage",
+      "decision": "NORMALIZE",
+      "canonical": "sustained_damage",
+      "rationale": "Spelling alias for reusable damage-profile concept."
+    },
+    {
+      "tag": "force_capacity",
+      "decision": "KEEP",
+      "canonical": "force_capacity",
+      "rationale": "Reusable mechanical concept for Force capacity/reserve/availability."
+    },
+    {
+      "tag": "scaling",
+      "decision": "KEEP",
+      "canonical": "scaling",
+      "rationale": "Reusable mechanic for effects that scale with level, score, uses, or another progression variable."
+    },
+    {
+      "tag": "new_action",
+      "decision": "DELETE",
+      "replacement": [],
+      "rationale": "Implementation shape belongs in executable metadata; not descriptive enough for archetype identity."
+    },
+    {
+      "tag": "combat",
+      "decision": "DELETE",
+      "replacement": [],
+      "rationale": "Too broad to discriminate archetypes or options; use actual combat mechanics."
+    },
+    {
+      "tag": "force_power_synergy",
+      "decision": "KEEP",
+      "canonical": "force_power_synergy",
+      "rationale": "Reusable mechanic for rules that modify, combine with, or leverage Force powers."
+    },
+    {
+      "tag": "dark-side",
+      "decision": "NORMALIZE",
+      "canonical": "dark_side",
+      "rationale": "Spelling alias of existing canonical semantic concept."
+    },
+    {
+      "tag": "utility",
+      "decision": "DELETE",
+      "replacement": [],
+      "rationale": "Too broad and subjective to guide granular decisions."
+    },
+    {
+      "tag": "ranged_support",
+      "decision": "DELETE_DECOMPOSE",
+      "replacement": [
+        "ranged",
+        "support"
+      ],
+      "rationale": "Compound adds no meaning beyond reusable components."
+    },
+    {
+      "tag": "gear",
+      "decision": "NORMALIZE",
+      "canonical": "equipment",
+      "rationale": "Synonym of established Phase 11 equipment concept."
+    },
+    {
+      "tag": "social_control",
+      "decision": "DELETE_DECOMPOSE",
+      "replacement": [
+        "social",
+        "control"
+      ],
+      "rationale": "Compound is cleanly represented by component tags."
+    },
+    {
+      "tag": "heavy-weapons",
+      "decision": "NORMALIZE",
+      "canonical": "heavy_weapon",
+      "rationale": "Legacy plural spelling of canonical weapon-scope concept."
+    },
+    {
+      "tag": "recovery",
+      "decision": "KEEP",
+      "canonical": "recovery",
+      "rationale": "Reusable mechanical concept for recovering conditions, resources, capability, or readiness."
+    },
+    {
+      "tag": "sniping",
+      "decision": "NORMALIZE",
+      "canonical": "sniper",
+      "rationale": "Existing Phase 11 concept captures the precision long-range/sniping domain; historical assignments still require validation."
+    },
+    {
+      "tag": "piloting",
+      "decision": "NORMALIZE",
+      "canonical": "pilot",
+      "rationale": "Legacy noun/gerund variant of canonical pilot concept."
+    },
+    {
+      "tag": "resilience",
+      "decision": "KEEP",
+      "canonical": "resilience",
+      "rationale": "Reusable defensive/endurance mechanic distinct from generic defense."
+    },
+    {
+      "tag": "senses",
+      "decision": "KEEP",
+      "canonical": "senses",
+      "rationale": "Reusable perception/sensory-domain mechanic, including Force-enhanced sensing."
+    },
+    {
+      "tag": "ability_enhancement",
+      "decision": "KEEP",
+      "canonical": "ability_enhancement",
+      "rationale": "Reusable mechanic for improving or substituting ability-derived performance."
+    },
+    {
+      "tag": "durability",
+      "decision": "KEEP",
+      "canonical": "durability",
+      "rationale": "Reusable survivability mechanic for objects, droids, armor, and characters."
+    },
+    {
+      "tag": "force_multiplier",
+      "decision": "KEEP",
+      "canonical": "force_multiplier",
+      "rationale": "Reusable Force amplification mechanic; distinct from generic scaling because it specifically magnifies Force effects/resources."
+    },
+    {
+      "tag": "empowerment",
+      "decision": "KEEP",
+      "canonical": "empowerment",
+      "rationale": "Reusable mechanic for enhancing/attuning items, weapons, allies, or effects."
+    },
+    {
+      "tag": "skill_stealth",
+      "decision": "NORMALIZE",
+      "canonical": "stealth",
+      "rationale": "Redundant skill-prefixed alias of canonical stealth concept."
+    },
+    {
+      "tag": "slicer",
+      "decision": "DELETE_DECOMPOSE",
+      "replacement": [
+        "hacking",
+        "use_computer",
+        "tech"
+      ],
+      "rationale": "Archetype/tree label; use actual technical mechanics."
+    },
+    {
+      "tag": "superior-skills",
+      "decision": "DELETE_DECOMPOSE",
+      "replacement": [
+        "skills",
+        "skill_mastery"
+      ],
+      "rationale": "Tree label; actual broad skill-mastery mechanics are reusable."
+    },
+    {
+      "tag": "force-support",
+      "decision": "NORMALIZE",
+      "canonical": "force_support",
+      "rationale": "Spelling alias of reusable Force-support compound concept."
+    },
+    {
+      "tag": "intelligence",
+      "decision": "DELETE_DECOMPOSE",
+      "replacement": [
+        "investigation",
+        "knowledge",
+        "network"
+      ],
+      "rationale": "Ambiguous with Intelligence ability; current use means intelligence-gathering, so preserve those clearer mechanics instead."
+    },
+    {
+      "tag": "resources",
+      "decision": "KEEP",
+      "canonical": "resources",
+      "rationale": "Reusable access/economy/network-resource concept for organizational or material support."
+    },
+    {
+      "tag": "shield",
+      "decision": "NORMALIZE",
+      "canonical": "shields",
+      "rationale": "Singular/plural variant of shield mechanics."
+    },
+    {
+      "tag": "force_support",
+      "decision": "KEEP",
+      "canonical": "force_support",
+      "rationale": "Reusable compound for Force-based ally/support mechanics."
+    },
+    {
+      "tag": "manipulation",
+      "decision": "KEEP",
+      "canonical": "manipulation",
+      "rationale": "Reusable social/control mechanic for coercion, deception, or directing behavior."
+    },
+    {
+      "tag": "grab",
+      "decision": "KEEP",
+      "canonical": "grab",
+      "rationale": "Distinct combat mechanic from broader grapple; reusable across unarmed/control content."
+    },
+    {
+      "tag": "dual_wield",
+      "decision": "KEEP",
+      "canonical": "dual_wield",
+      "rationale": "Already certified in alias pass; reusable weapon-style mechanic."
+    },
+    {
+      "tag": "encounter",
+      "decision": "DELETE",
+      "replacement": [],
+      "rationale": "Bare encounter label is ambiguous. Frequency belongs in `once_per_encounter` when canonical text supports it."
+    },
+    {
+      "tag": "immersion",
+      "decision": "DELETE_DECOMPOSE",
+      "replacement": [
+        "force",
+        "stealth",
+        "evasion"
+      ],
+      "rationale": "Current use is White Current-specific; component mechanics are reusable."
+    },
+    {
+      "tag": "intel",
+      "decision": "DELETE_DECOMPOSE",
+      "replacement": [
+        "investigation",
+        "knowledge",
+        "network"
+      ],
+      "rationale": "Abbreviation is ambiguous; preserve intelligence-gathering mechanics explicitly."
+    },
+    {
+      "tag": "setup",
+      "decision": "KEEP",
+      "canonical": "setup",
+      "rationale": "Reusable mechanic for preparatory actions/states that establish later advantages."
+    },
+    {
+      "tag": "white_current",
+      "decision": "DELETE_DECOMPOSE",
+      "replacement": [
+        "force",
+        "stealth",
+        "evasion",
+        "perception"
+      ],
+      "rationale": "Specific Force tradition identity belongs in narrative/access metadata."
+    }
+  ]
+}
