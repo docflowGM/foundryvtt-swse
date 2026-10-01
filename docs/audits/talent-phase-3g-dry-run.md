@@ -1,20 +1,27 @@
 # Phase 3G-3 — structured talent-prerequisite identity migration: dry-run
 
-Status: **DRY_RUN_CERTIFIED** · **315 structured talent-to-talent leaves** on **300 records** · 945 field-level leaf mutations (each leaf: `id` removed, `uuid` and `name` added) · 181 distinct targets. **No pack has been written.**
+Status: **DRY_RUN_CERTIFIED** · **311 structured talent-to-talent leaves** on **300 records** · 945 field-level leaf mutations (311 leaves migrated [5 retargeted], 4 false conditions removed, 4 text lines restored) · 183 distinct targets. **No pack has been written.**
 
 ## Verification
 
-- PASS 315 / 315 structured talent-to-talent leaves map to exactly one canonical UUID
+- PASS 311 source-valid structured talent-to-talent leaves, 311 / 311 map to exactly one canonical UUID
 - PASS 0 unresolved, 0 ambiguous, 0 dangling (every row has a unique derivation)
 - PASS every target exists in the canonical 1,187-talent pack
-- PASS every unique-candidate target is confirmed by the owner's certified prerequisite text, or the contradiction/absence is itemised below — 302 confirmed, 8 owners have no printed text, 5 contradict it
+- PASS every unique-candidate target is confirmed by the owner's certified prerequisite text, or the contradiction/absence is itemised below — 311 confirmed, 0 owners have no printed text, 0 contradict it
 - PASS Find an Opening resolves specifically to Scum and Villainy|Outlaw|Seize the Moment (e19c06b6dfc7a703)
 - PASS the five Phase 3D repairs are in the manifest and become runtime-effective
-- PASS every migrated prerequisite works against embedded source-linked items (v13 and legacy link form) — {"rows":315,"embeddedSourceLinked":315,"embeddedLegacyLinkForm":315,"pending":315,"wrongSameNameChecked":13,"wrongSameNameRejected":13,"unlinkedLegacyFallbackMet":315,"unlinkedWrongTreeRejected":13,"unlinkedWrongTreeChecked":13,"viaUuidEmbedded":315,"viaUuidPending":315,"failures":[]}
+- PASS every migrated prerequisite works against embedded source-linked items (v13 and legacy link form) — {"rows":311,"embeddedSourceLinked":311,"embeddedLegacyLinkForm":311,"pending":311,"wrongSameNameChecked":13,"wrongSameNameRejected":13,"unlinkedLegacyFallbackMet":311,"unlinkedWrongTreeRejected":13,"unlinkedWrongTreeChecked":13,"viaUuidEmbedded":311,"viaUuidPending":311,"failures":[]}
 - PASS every migrated prerequisite works against pending selections (carrying the threaded identity)
-- PASS identity (not name) decides: all 315 embedded and all 315 pending resolutions are authoritative uuid matches with no fallback
+- PASS identity (not name) decides: all 311 embedded and all 311 pending resolutions are authoritative uuid matches with no fallback
 - PASS same-name targets are disambiguated by identity: every wrong same-name copy (linked and unlinked) is rejected
-- PASS only the structured talent leaves change: prerequisites, benefit, description, summary, name, source, page, tree, tags, flags, effects are untouched
+- PASS only structured prerequisite data (and the four approved prerequisite-text lines) changes: benefit, description, summary, name, source, page, tree, tags, flags, effects are untouched
+- PASS no other system.prerequisites text changes (exactly the 4 approved source corrections)
+- PASS Fortune quartet structured sets are exactly {Knack, Lucky Shot}; no Fool's Luck
+- PASS Stay in the Fight (Legacy) structured set is exactly {Stalwart Subordinates}; Rebellion Stay in the Fight untouched
+- PASS 0 structured prerequisites on Assassin|Ruthless, Expert Pilot|Keep It Together, Knight's Armor|Armor Mastery, Outlaw|Seize the Moment (container dropped, repository standard shape)
+- PASS the same-name Ruthless / Armor Mastery / Seize the Moment owners that DO carry the prerequisite keep it
+- PASS Swift Power / Starship Raider / Sow Confusion / Force Haze printed prerequisite text restored
+- PASS benefit, description, summary, source, page, treeId unchanged on every record
 - PASS zero changes outside the owning records
 - PASS the unmigrated structured conditions (skill/attribute/bab) and the group wrapper are untouched
 - PASS the migrated pack contains no structured talent leaf without a canonical uuid
@@ -32,41 +39,45 @@ Status: **DRY_RUN_CERTIFIED** · **315 structured talent-to-talent leaves** on *
 
 ## Derivation basis
 
-- UNIQUE_FLAG_ID: 309
+- UNIQUE_FLAG_ID: 300
 - EXISTING_PRODUCTION_ID (Phase 3D repair): 5
 - AMBIGUOUS_FLAG_ID_RESOLVED_BY_OWNER_TREE + OWNER_RULING: 1
-- targets in same-name cross-tree groups: 13; target in the owner's own tree: 298
-- certified prerequisite text names the target: 302; owner has no printed text: 8; text does not name the target: 5
+- SOURCE_RULING_RETARGET: 5
+- targets in same-name cross-tree groups: 13; target in the owner's own tree: 299
+- certified prerequisite text names the target: 311; owner has no printed text: 0; text does not name the target: 0
 
-## Runtime effectiveness (real `PrerequisiteChecker`, all 315 leaves)
+## Runtime effectiveness (real `PrerequisiteChecker`, all migrated leaves)
 
 | Scenario | Satisfied |
 |---|---|
-| embedded copy, `flags.core.sourceId` v13 | 315 / 315 |
-| embedded copy, legacy link form | 315 / 315 |
-| pending selection (threaded identity) | 315 / 315 |
-| authoritative uuid match, embedded / pending (no fallback) | 315 / 315 |
+| embedded copy, `flags.core.sourceId` v13 | 311 / 311 |
+| embedded copy, legacy link form | 311 / 311 |
+| pending selection (threaded identity) | 311 / 311 |
+| authoritative uuid match, embedded / pending (no fallback) | 311 / 311 |
 | wrong same-name copy rejected (linked) | 13 / 13 |
 | wrong same-name copy rejected (unlinked legacy, tree guard) | 13 / 13 |
-| unlinked legacy correct-tree copy met via guarded name fallback | 315 (reported as fallback) |
+| unlinked legacy correct-tree copy met via guarded name fallback | 311 (reported as fallback) |
 
-## Findings for the owner (not changed by 3G)
+## Owner source rulings applied
 
-**8 owners have no printed prerequisite text but carry a structured talent prerequisite** (so the structured leaf is their only runtime gate):
+**4 false structured prerequisites removed** (printed talent has no prerequisite; not migrated; container dropped):
 
-- Saga Edition Core Rulebook|Dark Side|Swift Power → Saga Edition Core Rulebook|Dark Side|Power of the Dark Side
-- Saga Edition Core Rulebook|Spacer|Starship Raider → Saga Edition Core Rulebook|Spacer|Spacehound
-- Saga Edition Core Rulebook|Misfortune|Sow Confusion → Saga Edition Core Rulebook|Misfortune|Hesitate
-- Scum and Villainy|Assassin|Ruthless → Force Unleashed Campaign Guide|Mercenary|Dirty Fighting (target in a different tree)
-- Saga Edition Core Rulebook|Expert Pilot|Keep It Together → Saga Edition Core Rulebook|Fringer|Jury-Rigger (target in a different tree)
-- Legacy Era Campaign Guide|Knight's Armor|Armor Mastery → Saga Edition Core Rulebook|Armor Specialist|Armored Defense (target in a different tree)
-- Scum and Villainy|Outlaw|Seize the Moment → Legacy Era Campaign Guide|Provocateur|Distress to Discord (target in a different tree)
-- Saga Edition Core Rulebook|Jedi Sentinel|Force Haze → Saga Edition Core Rulebook|Jedi Sentinel|Clear Mind
+- Scum and Villainy|Assassin|Ruthless — removed `swse.talent.dirty_fighting`. Scum and Villainy p.29: Assassin | Ruthless has no prerequisite; Dirty Fighting belongs to FUCG Mercenary | Ruthless
+- Saga Edition Core Rulebook|Expert Pilot|Keep It Together — removed `swse.talent.jury_rigger`. Core p.207: Expert Pilot | Keep It Together has no prerequisite
+- Legacy Era Campaign Guide|Knight's Armor|Armor Mastery — removed `swse.talent.armored_defense`. Legacy p.45: Knight's Armor | Armor Mastery has no prerequisite; Core Armor Specialist | Armor Mastery requires Armored Defense
+- Scum and Villainy|Outlaw|Seize the Moment — removed `swse.talent.distress_to_discord`. Scum and Villainy p.35: Outlaw | Seize the Moment has no prerequisite; Distress to Discord belongs to Legacy Provocateur | Seize the Moment
 
-**5 structured leaves are not named by the owner's printed text:**
+**5 leaves retargeted to the printed prerequisite:**
 
-- Saga Edition Core Rulebook|Fortune|Ricochet Shot: printed "Knack, Lucky Shot" but structured also requires Saga Edition Core Rulebook|Fortune|Fool's Luck
-- Saga Edition Core Rulebook|Fortune|Dumb Luck: printed "Knack, Lucky Shot" but structured also requires Saga Edition Core Rulebook|Fortune|Fool's Luck
-- Saga Edition Core Rulebook|Fortune|Unlikely Shot: printed "Knack, Lucky Shot" but structured also requires Saga Edition Core Rulebook|Fortune|Fool's Luck
-- Legacy Era Campaign Guide|Fugitive Commander|Stay in the Fight: printed "Stalwart Subordinates" but structured also requires Rebellion Era Campaign Guide|Rebel Recruiter|Recruit Enemy
-- Saga Edition Core Rulebook|Fortune|Uncanny Luck: printed "Knack, Lucky Shot" but structured also requires Saga Edition Core Rulebook|Fortune|Fool's Luck
+- Saga Edition Core Rulebook|Fortune|Ricochet Shot: `swse.talent.fools_luck` → Saga Edition Core Rulebook|Fortune|Lucky Shot
+- Saga Edition Core Rulebook|Fortune|Dumb Luck: `swse.talent.fools_luck` → Saga Edition Core Rulebook|Fortune|Lucky Shot
+- Saga Edition Core Rulebook|Fortune|Unlikely Shot: `swse.talent.fools_luck` → Saga Edition Core Rulebook|Fortune|Lucky Shot
+- Legacy Era Campaign Guide|Fugitive Commander|Stay in the Fight: `swse.talent.recruit_enemy` → Legacy Era Campaign Guide|Fugitive Commander|Stalwart Subordinates
+- Saga Edition Core Rulebook|Fortune|Uncanny Luck: `swse.talent.fools_luck` → Saga Edition Core Rulebook|Fortune|Lucky Shot
+
+**4 printed prerequisite lines restored** (layered correction `data/audits/talent-phase-3g-source-corrections.json`; the certified Phase 2 artifact is not edited):
+
+- Saga Edition Core Rulebook|Dark Side|Swift Power: "" → "Power of the Dark Side" (3G-SC-01)
+- Saga Edition Core Rulebook|Spacer|Starship Raider: "" → "Spacehound" (3G-SC-02)
+- Saga Edition Core Rulebook|Misfortune|Sow Confusion: "" → "Hesitate" (3G-SC-03)
+- Saga Edition Core Rulebook|Jedi Sentinel|Force Haze: "" → "Clear Mind" (3G-SC-04)

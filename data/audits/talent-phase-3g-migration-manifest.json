@@ -3,7 +3,7 @@
   "phase": "3G-3",
   "status": "MIGRATION_MANIFEST",
   "census": "data/audits/talent-phase-3g-prerequisite-identity-census.json",
-  "boundary": "every structured talent-to-talent condition (315) -> { type:\"talent\", uuid, name }",
+  "boundary": "every source-valid structured talent-to-talent condition -> { type:\"talent\", uuid, name }",
   "schemaDecision": {
     "uuid": "authoritative: canonical v13 compendium UUID of the target (the one durable talent identity)",
     "name": "retained: human-readable label for UI/diagnostics and the legacy unlinked-copy fallback (guarded by the tree check); never authoritative",
@@ -511,8 +511,8 @@
       "derivation": {
         "basis": "UNIQUE_FLAG_ID",
         "candidates": 1,
-        "textPrerequisite": "",
-        "textConfirmsTargetName": null,
+        "textPrerequisite": "Power of the Dark Side",
+        "textConfirmsTargetName": true,
         "ownerRuling": null
       },
       "currentResolution": {
@@ -1414,8 +1414,8 @@
       "derivation": {
         "basis": "UNIQUE_FLAG_ID",
         "candidates": 1,
-        "textPrerequisite": "",
-        "textConfirmsTargetName": null,
+        "textPrerequisite": "Spacehound",
+        "textConfirmsTargetName": true,
         "ownerRuling": null
       },
       "currentResolution": {
@@ -4025,21 +4025,21 @@
         "name": null
       },
       "target": {
-        "id": "5319a796f2c4ff64",
-        "name": "Fool's Luck",
-        "canonicalIdentity": "Saga Edition Core Rulebook|Fortune|Fool's Luck",
+        "id": "5fbf1a3504865fba",
+        "name": "Lucky Shot",
+        "canonicalIdentity": "Saga Edition Core Rulebook|Fortune|Lucky Shot",
         "tree": "Fortune",
         "treeId": "cee9b9398682b7d0",
-        "uuid": "Compendium.foundryvtt-swse.talents.Item.5319a796f2c4ff64",
+        "uuid": "Compendium.foundryvtt-swse.talents.Item.5fbf1a3504865fba",
         "inSameNameCrossTreeGroup": false,
         "sameTreeAsOwner": true
       },
       "derivation": {
-        "basis": "UNIQUE_FLAG_ID",
+        "basis": "SOURCE_RULING_RETARGET",
         "candidates": 1,
         "textPrerequisite": "Knack, Lucky Shot",
-        "textConfirmsTargetName": false,
-        "ownerRuling": null
+        "textConfirmsTargetName": true,
+        "ownerRuling": "Scum and Villainy p.14-15 prints \"Knack, Lucky Shot\" (the structured Fool's Luck is wrong)"
       },
       "currentResolution": {
         "embeddedFinalizerShape": "id",
@@ -4051,8 +4051,8 @@
       },
       "proposed": {
         "type": "talent",
-        "uuid": "Compendium.foundryvtt-swse.talents.Item.5319a796f2c4ff64",
-        "name": "Fool's Luck"
+        "uuid": "Compendium.foundryvtt-swse.talents.Item.5fbf1a3504865fba",
+        "name": "Lucky Shot"
       }
     },
     {
@@ -4082,7 +4082,7 @@
         "candidates": 1,
         "textPrerequisite": "Knack, Lucky Shot",
         "textConfirmsTargetName": true,
-        "ownerRuling": null
+        "ownerRuling": "Scum and Villainy p.14-15 prints \"Knack, Lucky Shot\" (the structured Fool's Luck is wrong)"
       },
       "currentResolution": {
         "embeddedFinalizerShape": "id",
@@ -5112,8 +5112,8 @@
       "derivation": {
         "basis": "UNIQUE_FLAG_ID",
         "candidates": 1,
-        "textPrerequisite": "",
-        "textConfirmsTargetName": null,
+        "textPrerequisite": "Hesitate",
+        "textConfirmsTargetName": true,
         "ownerRuling": null
       },
       "currentResolution": {
@@ -5573,21 +5573,21 @@
         "name": null
       },
       "target": {
-        "id": "5319a796f2c4ff64",
-        "name": "Fool's Luck",
-        "canonicalIdentity": "Saga Edition Core Rulebook|Fortune|Fool's Luck",
+        "id": "5fbf1a3504865fba",
+        "name": "Lucky Shot",
+        "canonicalIdentity": "Saga Edition Core Rulebook|Fortune|Lucky Shot",
         "tree": "Fortune",
         "treeId": "cee9b9398682b7d0",
-        "uuid": "Compendium.foundryvtt-swse.talents.Item.5319a796f2c4ff64",
+        "uuid": "Compendium.foundryvtt-swse.talents.Item.5fbf1a3504865fba",
         "inSameNameCrossTreeGroup": false,
         "sameTreeAsOwner": true
       },
       "derivation": {
-        "basis": "UNIQUE_FLAG_ID",
+        "basis": "SOURCE_RULING_RETARGET",
         "candidates": 1,
         "textPrerequisite": "Knack, Lucky Shot",
-        "textConfirmsTargetName": false,
-        "ownerRuling": null
+        "textConfirmsTargetName": true,
+        "ownerRuling": "Scum and Villainy p.14-15 prints \"Knack, Lucky Shot\" (the structured Fool's Luck is wrong)"
       },
       "currentResolution": {
         "embeddedFinalizerShape": "id",
@@ -5599,8 +5599,8 @@
       },
       "proposed": {
         "type": "talent",
-        "uuid": "Compendium.foundryvtt-swse.talents.Item.5319a796f2c4ff64",
-        "name": "Fool's Luck"
+        "uuid": "Compendium.foundryvtt-swse.talents.Item.5fbf1a3504865fba",
+        "name": "Lucky Shot"
       }
     },
     {
@@ -5630,7 +5630,7 @@
         "candidates": 1,
         "textPrerequisite": "Knack, Lucky Shot",
         "textConfirmsTargetName": true,
-        "ownerRuling": null
+        "ownerRuling": "Scum and Villainy p.14-15 prints \"Knack, Lucky Shot\" (the structured Fool's Luck is wrong)"
       },
       "currentResolution": {
         "embeddedFinalizerShape": "id",
@@ -5644,49 +5644,6 @@
         "type": "talent",
         "uuid": "Compendium.foundryvtt-swse.talents.Item.ac6baadb9d65ff7f",
         "name": "Knack"
-      }
-    },
-    {
-      "ownerId": "7aa4ca13a96d8770",
-      "ownerName": "Ruthless",
-      "ownerCanonicalIdentity": "Scum and Villainy|Assassin|Ruthless",
-      "ownerTree": "Assassin",
-      "path": "system.prerequisitesStructured.conditions[0]",
-      "existing": {
-        "id": "swse.talent.dirty_fighting",
-        "uuid": null,
-        "slug": null,
-        "name": null
-      },
-      "target": {
-        "id": "c07b6c68e715b9ff",
-        "name": "Dirty Fighting",
-        "canonicalIdentity": "Force Unleashed Campaign Guide|Mercenary|Dirty Fighting",
-        "tree": "Mercenary",
-        "treeId": "4007fa87192b5884",
-        "uuid": "Compendium.foundryvtt-swse.talents.Item.c07b6c68e715b9ff",
-        "inSameNameCrossTreeGroup": false,
-        "sameTreeAsOwner": false
-      },
-      "derivation": {
-        "basis": "UNIQUE_FLAG_ID",
-        "candidates": 1,
-        "textPrerequisite": "",
-        "textConfirmsTargetName": null,
-        "ownerRuling": null
-      },
-      "currentResolution": {
-        "embeddedFinalizerShape": "id",
-        "pendingTalentStepShape": "UNMET"
-      },
-      "postMigrationResolution": {
-        "embeddedSourceLinked": "uuid",
-        "pendingTalentStepShape": "uuid"
-      },
-      "proposed": {
-        "type": "talent",
-        "uuid": "Compendium.foundryvtt-swse.talents.Item.c07b6c68e715b9ff",
-        "name": "Dirty Fighting"
       }
     },
     {
@@ -9001,49 +8958,6 @@
       }
     },
     {
-      "ownerId": "b7d5a1bc3d40b964",
-      "ownerName": "Keep It Together",
-      "ownerCanonicalIdentity": "Saga Edition Core Rulebook|Expert Pilot|Keep It Together",
-      "ownerTree": "Expert Pilot",
-      "path": "system.prerequisitesStructured.conditions[0]",
-      "existing": {
-        "id": "swse.talent.jury_rigger",
-        "uuid": null,
-        "slug": null,
-        "name": null
-      },
-      "target": {
-        "id": "e15a3408b9474354",
-        "name": "Jury-Rigger",
-        "canonicalIdentity": "Saga Edition Core Rulebook|Fringer|Jury-Rigger",
-        "tree": "Fringer",
-        "treeId": "7c47d36dc1f77d9c",
-        "uuid": "Compendium.foundryvtt-swse.talents.Item.e15a3408b9474354",
-        "inSameNameCrossTreeGroup": false,
-        "sameTreeAsOwner": false
-      },
-      "derivation": {
-        "basis": "UNIQUE_FLAG_ID",
-        "candidates": 1,
-        "textPrerequisite": "",
-        "textConfirmsTargetName": null,
-        "ownerRuling": null
-      },
-      "currentResolution": {
-        "embeddedFinalizerShape": "id",
-        "pendingTalentStepShape": "UNMET"
-      },
-      "postMigrationResolution": {
-        "embeddedSourceLinked": "uuid",
-        "pendingTalentStepShape": "uuid"
-      },
-      "proposed": {
-        "type": "talent",
-        "uuid": "Compendium.foundryvtt-swse.talents.Item.e15a3408b9474354",
-        "name": "Jury-Rigger"
-      }
-    },
-    {
       "ownerId": "b8472ec0498d2c20",
       "ownerName": "Custom Model",
       "ownerCanonicalIdentity": "Rebellion Era Campaign Guide|Improviser|Custom Model",
@@ -9486,21 +9400,21 @@
         "name": null
       },
       "target": {
-        "id": "5319a796f2c4ff64",
-        "name": "Fool's Luck",
-        "canonicalIdentity": "Saga Edition Core Rulebook|Fortune|Fool's Luck",
+        "id": "5fbf1a3504865fba",
+        "name": "Lucky Shot",
+        "canonicalIdentity": "Saga Edition Core Rulebook|Fortune|Lucky Shot",
         "tree": "Fortune",
         "treeId": "cee9b9398682b7d0",
-        "uuid": "Compendium.foundryvtt-swse.talents.Item.5319a796f2c4ff64",
+        "uuid": "Compendium.foundryvtt-swse.talents.Item.5fbf1a3504865fba",
         "inSameNameCrossTreeGroup": false,
         "sameTreeAsOwner": true
       },
       "derivation": {
-        "basis": "UNIQUE_FLAG_ID",
+        "basis": "SOURCE_RULING_RETARGET",
         "candidates": 1,
         "textPrerequisite": "Knack, Lucky Shot",
-        "textConfirmsTargetName": false,
-        "ownerRuling": null
+        "textConfirmsTargetName": true,
+        "ownerRuling": "Scum and Villainy p.14-15 prints \"Knack, Lucky Shot\" (the structured Fool's Luck is wrong)"
       },
       "currentResolution": {
         "embeddedFinalizerShape": "id",
@@ -9512,8 +9426,8 @@
       },
       "proposed": {
         "type": "talent",
-        "uuid": "Compendium.foundryvtt-swse.talents.Item.5319a796f2c4ff64",
-        "name": "Fool's Luck"
+        "uuid": "Compendium.foundryvtt-swse.talents.Item.5fbf1a3504865fba",
+        "name": "Lucky Shot"
       }
     },
     {
@@ -9543,7 +9457,7 @@
         "candidates": 1,
         "textPrerequisite": "Knack, Lucky Shot",
         "textConfirmsTargetName": true,
-        "ownerRuling": null
+        "ownerRuling": "Scum and Villainy p.14-15 prints \"Knack, Lucky Shot\" (the structured Fool's Luck is wrong)"
       },
       "currentResolution": {
         "embeddedFinalizerShape": "id",
@@ -10260,21 +10174,21 @@
         "name": null
       },
       "target": {
-        "id": "43ac0c4b1759507a",
-        "name": "Recruit Enemy",
-        "canonicalIdentity": "Rebellion Era Campaign Guide|Rebel Recruiter|Recruit Enemy",
-        "tree": "Rebel Recruiter",
-        "treeId": "a2c6962521c29361",
-        "uuid": "Compendium.foundryvtt-swse.talents.Item.43ac0c4b1759507a",
+        "id": "d9ffff2586cd259b",
+        "name": "Stalwart Subordinates",
+        "canonicalIdentity": "Legacy Era Campaign Guide|Fugitive Commander|Stalwart Subordinates",
+        "tree": "Fugitive Commander",
+        "treeId": "61b74c82cb56876c",
+        "uuid": "Compendium.foundryvtt-swse.talents.Item.d9ffff2586cd259b",
         "inSameNameCrossTreeGroup": false,
-        "sameTreeAsOwner": false
+        "sameTreeAsOwner": true
       },
       "derivation": {
-        "basis": "UNIQUE_FLAG_ID",
+        "basis": "SOURCE_RULING_RETARGET",
         "candidates": 1,
         "textPrerequisite": "Stalwart Subordinates",
-        "textConfirmsTargetName": false,
-        "ownerRuling": null
+        "textConfirmsTargetName": true,
+        "ownerRuling": "Legacy p.42 prints \"Stalwart Subordinates\" (the structured Recruit Enemy is the Rebellion-era talent)"
       },
       "currentResolution": {
         "embeddedFinalizerShape": "id",
@@ -10286,8 +10200,8 @@
       },
       "proposed": {
         "type": "talent",
-        "uuid": "Compendium.foundryvtt-swse.talents.Item.43ac0c4b1759507a",
-        "name": "Recruit Enemy"
+        "uuid": "Compendium.foundryvtt-swse.talents.Item.d9ffff2586cd259b",
+        "name": "Stalwart Subordinates"
       }
     },
     {
@@ -11366,49 +11280,6 @@
       }
     },
     {
-      "ownerId": "d9e707f23fffc2af",
-      "ownerName": "Armor Mastery",
-      "ownerCanonicalIdentity": "Legacy Era Campaign Guide|Knight's Armor|Armor Mastery",
-      "ownerTree": "Knight's Armor",
-      "path": "system.prerequisitesStructured.conditions[0]",
-      "existing": {
-        "id": "swse.talent.armored_defense",
-        "uuid": null,
-        "slug": null,
-        "name": null
-      },
-      "target": {
-        "id": "4c236343b01ea763",
-        "name": "Armored Defense",
-        "canonicalIdentity": "Saga Edition Core Rulebook|Armor Specialist|Armored Defense",
-        "tree": "Armor Specialist",
-        "treeId": "17cec542331cb4e4",
-        "uuid": "Compendium.foundryvtt-swse.talents.Item.4c236343b01ea763",
-        "inSameNameCrossTreeGroup": false,
-        "sameTreeAsOwner": false
-      },
-      "derivation": {
-        "basis": "UNIQUE_FLAG_ID",
-        "candidates": 1,
-        "textPrerequisite": "",
-        "textConfirmsTargetName": null,
-        "ownerRuling": null
-      },
-      "currentResolution": {
-        "embeddedFinalizerShape": "id",
-        "pendingTalentStepShape": "UNMET"
-      },
-      "postMigrationResolution": {
-        "embeddedSourceLinked": "uuid",
-        "pendingTalentStepShape": "uuid"
-      },
-      "proposed": {
-        "type": "talent",
-        "uuid": "Compendium.foundryvtt-swse.talents.Item.4c236343b01ea763",
-        "name": "Armored Defense"
-      }
-    },
-    {
       "ownerId": "da12fc505efc5eea",
       "ownerName": "Visions",
       "ownerCanonicalIdentity": "Saga Edition Core Rulebook|Sense|Visions",
@@ -11882,49 +11753,6 @@
       }
     },
     {
-      "ownerId": "e19c06b6dfc7a703",
-      "ownerName": "Seize the Moment",
-      "ownerCanonicalIdentity": "Scum and Villainy|Outlaw|Seize the Moment",
-      "ownerTree": "Outlaw",
-      "path": "system.prerequisitesStructured.conditions[0]",
-      "existing": {
-        "id": "swse.talent.distress_to_discord",
-        "uuid": null,
-        "slug": null,
-        "name": null
-      },
-      "target": {
-        "id": "974c24246ed2b972",
-        "name": "Distress to Discord",
-        "canonicalIdentity": "Legacy Era Campaign Guide|Provocateur|Distress to Discord",
-        "tree": "Provocateur",
-        "treeId": "da34105c875650ae",
-        "uuid": "Compendium.foundryvtt-swse.talents.Item.974c24246ed2b972",
-        "inSameNameCrossTreeGroup": false,
-        "sameTreeAsOwner": false
-      },
-      "derivation": {
-        "basis": "UNIQUE_FLAG_ID",
-        "candidates": 1,
-        "textPrerequisite": "",
-        "textConfirmsTargetName": null,
-        "ownerRuling": null
-      },
-      "currentResolution": {
-        "embeddedFinalizerShape": "id",
-        "pendingTalentStepShape": "UNMET"
-      },
-      "postMigrationResolution": {
-        "embeddedSourceLinked": "uuid",
-        "pendingTalentStepShape": "uuid"
-      },
-      "proposed": {
-        "type": "talent",
-        "uuid": "Compendium.foundryvtt-swse.talents.Item.974c24246ed2b972",
-        "name": "Distress to Discord"
-      }
-    },
-    {
       "ownerId": "e1cb0fd81f7f6d44",
       "ownerName": "Crushing Assault",
       "ownerCanonicalIdentity": "Saga Edition Core Rulebook|Weapon Specialist|Crushing Assault",
@@ -12109,21 +11937,21 @@
         "name": null
       },
       "target": {
-        "id": "5319a796f2c4ff64",
-        "name": "Fool's Luck",
-        "canonicalIdentity": "Saga Edition Core Rulebook|Fortune|Fool's Luck",
+        "id": "5fbf1a3504865fba",
+        "name": "Lucky Shot",
+        "canonicalIdentity": "Saga Edition Core Rulebook|Fortune|Lucky Shot",
         "tree": "Fortune",
         "treeId": "cee9b9398682b7d0",
-        "uuid": "Compendium.foundryvtt-swse.talents.Item.5319a796f2c4ff64",
+        "uuid": "Compendium.foundryvtt-swse.talents.Item.5fbf1a3504865fba",
         "inSameNameCrossTreeGroup": false,
         "sameTreeAsOwner": true
       },
       "derivation": {
-        "basis": "UNIQUE_FLAG_ID",
+        "basis": "SOURCE_RULING_RETARGET",
         "candidates": 1,
         "textPrerequisite": "Knack, Lucky Shot",
-        "textConfirmsTargetName": false,
-        "ownerRuling": null
+        "textConfirmsTargetName": true,
+        "ownerRuling": "Scum and Villainy p.14-15 prints \"Knack, Lucky Shot\" (the structured Fool's Luck is wrong)"
       },
       "currentResolution": {
         "embeddedFinalizerShape": "id",
@@ -12135,8 +11963,8 @@
       },
       "proposed": {
         "type": "talent",
-        "uuid": "Compendium.foundryvtt-swse.talents.Item.5319a796f2c4ff64",
-        "name": "Fool's Luck"
+        "uuid": "Compendium.foundryvtt-swse.talents.Item.5fbf1a3504865fba",
+        "name": "Lucky Shot"
       }
     },
     {
@@ -12166,7 +11994,7 @@
         "candidates": 1,
         "textPrerequisite": "Knack, Lucky Shot",
         "textConfirmsTargetName": true,
-        "ownerRuling": null
+        "ownerRuling": "Scum and Villainy p.14-15 prints \"Knack, Lucky Shot\" (the structured Fool's Luck is wrong)"
       },
       "currentResolution": {
         "embeddedFinalizerShape": "id",
@@ -12680,8 +12508,8 @@
       "derivation": {
         "basis": "UNIQUE_FLAG_ID",
         "candidates": 1,
-        "textPrerequisite": "",
-        "textConfirmsTargetName": null,
+        "textPrerequisite": "Clear Mind",
+        "textConfirmsTargetName": true,
         "ownerRuling": null
       },
       "currentResolution": {
@@ -13556,6 +13384,174 @@
         "type": "talent",
         "uuid": "Compendium.foundryvtt-swse.talents.Item.430b73348460715e",
         "name": "Cantina Brawler"
+      }
+    }
+  ],
+  "removals": [
+    {
+      "ownerId": "7aa4ca13a96d8770",
+      "ownerName": "Ruthless",
+      "ownerCanonicalIdentity": "Scum and Villainy|Assassin|Ruthless",
+      "ownerTree": "Assassin",
+      "path": "system.prerequisitesStructured.conditions[0]",
+      "existing": {
+        "id": "swse.talent.dirty_fighting"
+      },
+      "printedPrerequisite": null,
+      "basis": "Scum and Villainy p.29: Assassin | Ruthless has no prerequisite; Dirty Fighting belongs to FUCG Mercenary | Ruthless"
+    },
+    {
+      "ownerId": "b7d5a1bc3d40b964",
+      "ownerName": "Keep It Together",
+      "ownerCanonicalIdentity": "Saga Edition Core Rulebook|Expert Pilot|Keep It Together",
+      "ownerTree": "Expert Pilot",
+      "path": "system.prerequisitesStructured.conditions[0]",
+      "existing": {
+        "id": "swse.talent.jury_rigger"
+      },
+      "printedPrerequisite": null,
+      "basis": "Core p.207: Expert Pilot | Keep It Together has no prerequisite"
+    },
+    {
+      "ownerId": "d9e707f23fffc2af",
+      "ownerName": "Armor Mastery",
+      "ownerCanonicalIdentity": "Legacy Era Campaign Guide|Knight's Armor|Armor Mastery",
+      "ownerTree": "Knight's Armor",
+      "path": "system.prerequisitesStructured.conditions[0]",
+      "existing": {
+        "id": "swse.talent.armored_defense"
+      },
+      "printedPrerequisite": null,
+      "basis": "Legacy p.45: Knight's Armor | Armor Mastery has no prerequisite; Core Armor Specialist | Armor Mastery requires Armored Defense"
+    },
+    {
+      "ownerId": "e19c06b6dfc7a703",
+      "ownerName": "Seize the Moment",
+      "ownerCanonicalIdentity": "Scum and Villainy|Outlaw|Seize the Moment",
+      "ownerTree": "Outlaw",
+      "path": "system.prerequisitesStructured.conditions[0]",
+      "existing": {
+        "id": "swse.talent.distress_to_discord"
+      },
+      "printedPrerequisite": null,
+      "basis": "Scum and Villainy p.35: Outlaw | Seize the Moment has no prerequisite; Distress to Discord belongs to Legacy Provocateur | Seize the Moment"
+    }
+  ],
+  "textCorrections": [
+    {
+      "id": "3G-SC-01",
+      "productionId": "09609e71ba6cd4aa",
+      "name": "Swift Power",
+      "canonicalIdentity": "Saga Edition Core Rulebook|Dark Side|Swift Power",
+      "publication": {
+        "sourcebook": "Saga Edition Core Rulebook",
+        "page": 101
+      },
+      "group": "PRINTED_PREREQUISITE_MISSING_FROM_CANONICAL_AUTHORITY",
+      "action": "REPLACE_FIELDS",
+      "confidence": "CERTAIN",
+      "fields": [
+        "prerequisites"
+      ],
+      "before": {
+        "prerequisites": ""
+      },
+      "after": {
+        "prerequisites": "Power of the Dark Side"
+      },
+      "evidence": "Core p.101: printed prerequisite \"Power of the Dark Side\"; the certified Phase 2 authority omitted the line. The structured relationship was already correct.",
+      "verification": {
+        "status": "PDF_VERIFIED",
+        "verifiedBy": "project owner, rendered-sourcebook review",
+        "basis": "Phase 3G source ruling",
+        "printedText": "Power of the Dark Side"
+      }
+    },
+    {
+      "id": "3G-SC-02",
+      "productionId": "224906e573330bf2",
+      "name": "Starship Raider",
+      "canonicalIdentity": "Saga Edition Core Rulebook|Spacer|Starship Raider",
+      "publication": {
+        "sourcebook": "Saga Edition Core Rulebook",
+        "page": 47
+      },
+      "group": "PRINTED_PREREQUISITE_MISSING_FROM_CANONICAL_AUTHORITY",
+      "action": "REPLACE_FIELDS",
+      "confidence": "CERTAIN",
+      "fields": [
+        "prerequisites"
+      ],
+      "before": {
+        "prerequisites": ""
+      },
+      "after": {
+        "prerequisites": "Spacehound"
+      },
+      "evidence": "Core p.47: printed prerequisite \"Spacehound\"; the certified Phase 2 authority omitted the line. The structured relationship was already correct.",
+      "verification": {
+        "status": "PDF_VERIFIED",
+        "verifiedBy": "project owner, rendered-sourcebook review",
+        "basis": "Phase 3G source ruling",
+        "printedText": "Spacehound"
+      }
+    },
+    {
+      "id": "3G-SC-03",
+      "productionId": "6b09fe0c6fe98367",
+      "name": "Sow Confusion",
+      "canonicalIdentity": "Saga Edition Core Rulebook|Misfortune|Sow Confusion",
+      "publication": {
+        "sourcebook": "Scum and Villainy",
+        "page": 15
+      },
+      "group": "PRINTED_PREREQUISITE_MISSING_FROM_CANONICAL_AUTHORITY",
+      "action": "REPLACE_FIELDS",
+      "confidence": "CERTAIN",
+      "fields": [
+        "prerequisites"
+      ],
+      "before": {
+        "prerequisites": ""
+      },
+      "after": {
+        "prerequisites": "Hesitate"
+      },
+      "evidence": "Scum and Villainy p.15: printed prerequisite \"Hesitate\"; the certified Phase 2 authority omitted the line. The structured relationship was already correct.",
+      "verification": {
+        "status": "PDF_VERIFIED",
+        "verifiedBy": "project owner, rendered-sourcebook review",
+        "basis": "Phase 3G source ruling",
+        "printedText": "Hesitate"
+      }
+    },
+    {
+      "id": "3G-SC-04",
+      "productionId": "f098749cb8767a5f",
+      "name": "Force Haze",
+      "canonicalIdentity": "Saga Edition Core Rulebook|Jedi Sentinel|Force Haze",
+      "publication": {
+        "sourcebook": "Saga Edition Core Rulebook",
+        "page": 41
+      },
+      "group": "PRINTED_PREREQUISITE_MISSING_FROM_CANONICAL_AUTHORITY",
+      "action": "REPLACE_FIELDS",
+      "confidence": "CERTAIN",
+      "fields": [
+        "prerequisites"
+      ],
+      "before": {
+        "prerequisites": ""
+      },
+      "after": {
+        "prerequisites": "Clear Mind"
+      },
+      "evidence": "Core pp.40-41: printed prerequisite \"Clear Mind\"; the certified Phase 2 authority omitted the line. The structured relationship was already correct.",
+      "verification": {
+        "status": "PDF_VERIFIED",
+        "verifiedBy": "project owner, rendered-sourcebook review",
+        "basis": "Phase 3G source ruling",
+        "printedText": "Clear Mind"
       }
     }
   ]

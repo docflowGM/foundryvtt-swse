@@ -4,105 +4,115 @@
   "dryRun": true,
   "status": "DRY_RUN_CERTIFIED",
   "counts": {
-    "talentLeavesMigrated": 315,
+    "talentLeavesMigrated": 311,
+    "falseConditionsRemoved": 4,
+    "leavesRetargeted": 5,
+    "prerequisiteTextLinesRestored": 4,
     "recordsChanged": 300,
     "fieldLevelLeafMutations": 945,
-    "distinctTargets": 181,
+    "distinctTargets": 183,
     "byDerivationBasis": {
-      "UNIQUE_FLAG_ID": 309,
+      "UNIQUE_FLAG_ID": 300,
       "EXISTING_PRODUCTION_ID (Phase 3D repair)": 5,
-      "AMBIGUOUS_FLAG_ID_RESOLVED_BY_OWNER_TREE + OWNER_RULING": 1
+      "AMBIGUOUS_FLAG_ID_RESOLVED_BY_OWNER_TREE + OWNER_RULING": 1,
+      "SOURCE_RULING_RETARGET": 5
     },
     "targetsInSameNameCrossTreeGroups": 13,
-    "sameTreeAsOwner": 298,
-    "textConfirmed": 302,
-    "ownersWithoutPrintedText": 8,
-    "textContradicting": 5,
-    "unlinkedLegacyCopiesStillMeetingByNameFallback": 315
+    "sameTreeAsOwner": 299,
+    "textConfirmed": 311,
+    "ownersWithoutPrintedText": 0,
+    "textContradicting": 0,
+    "unlinkedLegacyCopiesStillMeetingByNameFallback": 311
   },
   "runtimeEffectiveness": {
-    "rows": 315,
-    "embeddedSourceLinked": 315,
-    "embeddedLegacyLinkForm": 315,
-    "pending": 315,
+    "rows": 311,
+    "embeddedSourceLinked": 311,
+    "embeddedLegacyLinkForm": 311,
+    "pending": 311,
     "wrongSameNameChecked": 13,
     "wrongSameNameRejected": 13,
-    "unlinkedLegacyFallbackMet": 315,
+    "unlinkedLegacyFallbackMet": 311,
     "unlinkedWrongTreeRejected": 13,
     "unlinkedWrongTreeChecked": 13,
-    "viaUuidEmbedded": 315,
-    "viaUuidPending": 315,
+    "viaUuidEmbedded": 311,
+    "viaUuidPending": 311,
     "failures": []
   },
-  "findingsForOwner": {
-    "note": "Identity-faithful migration: these are NOT changed here. They are structured-data/text disagreements surfaced by the migration, outside the 3G boundary.",
-    "ownersWithoutPrintedPrerequisiteText": [
-      {
-        "owner": "Saga Edition Core Rulebook|Dark Side|Swift Power",
-        "structuredTarget": "Saga Edition Core Rulebook|Dark Side|Power of the Dark Side",
-        "targetTreeIsOwnerTree": true
-      },
-      {
-        "owner": "Saga Edition Core Rulebook|Spacer|Starship Raider",
-        "structuredTarget": "Saga Edition Core Rulebook|Spacer|Spacehound",
-        "targetTreeIsOwnerTree": true
-      },
-      {
-        "owner": "Saga Edition Core Rulebook|Misfortune|Sow Confusion",
-        "structuredTarget": "Saga Edition Core Rulebook|Misfortune|Hesitate",
-        "targetTreeIsOwnerTree": true
-      },
+  "sourceRulings": {
+    "note": "Owner source rulings (rendered-sourcebook review) resolved the 13 findings of the first dry-run.",
+    "falseConditionsRemoved": [
       {
         "owner": "Scum and Villainy|Assassin|Ruthless",
-        "structuredTarget": "Force Unleashed Campaign Guide|Mercenary|Dirty Fighting",
-        "targetTreeIsOwnerTree": false
+        "removedLeaf": "swse.talent.dirty_fighting",
+        "basis": "Scum and Villainy p.29: Assassin | Ruthless has no prerequisite; Dirty Fighting belongs to FUCG Mercenary | Ruthless"
       },
       {
         "owner": "Saga Edition Core Rulebook|Expert Pilot|Keep It Together",
-        "structuredTarget": "Saga Edition Core Rulebook|Fringer|Jury-Rigger",
-        "targetTreeIsOwnerTree": false
+        "removedLeaf": "swse.talent.jury_rigger",
+        "basis": "Core p.207: Expert Pilot | Keep It Together has no prerequisite"
       },
       {
         "owner": "Legacy Era Campaign Guide|Knight's Armor|Armor Mastery",
-        "structuredTarget": "Saga Edition Core Rulebook|Armor Specialist|Armored Defense",
-        "targetTreeIsOwnerTree": false
+        "removedLeaf": "swse.talent.armored_defense",
+        "basis": "Legacy p.45: Knight's Armor | Armor Mastery has no prerequisite; Core Armor Specialist | Armor Mastery requires Armored Defense"
       },
       {
         "owner": "Scum and Villainy|Outlaw|Seize the Moment",
-        "structuredTarget": "Legacy Era Campaign Guide|Provocateur|Distress to Discord",
-        "targetTreeIsOwnerTree": false
-      },
-      {
-        "owner": "Saga Edition Core Rulebook|Jedi Sentinel|Force Haze",
-        "structuredTarget": "Saga Edition Core Rulebook|Jedi Sentinel|Clear Mind",
-        "targetTreeIsOwnerTree": true
+        "removedLeaf": "swse.talent.distress_to_discord",
+        "basis": "Scum and Villainy p.35: Outlaw | Seize the Moment has no prerequisite; Distress to Discord belongs to Legacy Provocateur | Seize the Moment"
       }
     ],
-    "structuredLeavesNotNamedByPrintedText": [
+    "leavesRetargeted": [
       {
         "owner": "Saga Edition Core Rulebook|Fortune|Ricochet Shot",
-        "printedText": "Knack, Lucky Shot",
-        "structuredTarget": "Saga Edition Core Rulebook|Fortune|Fool's Luck"
+        "from": "swse.talent.fools_luck",
+        "to": "Saga Edition Core Rulebook|Fortune|Lucky Shot"
       },
       {
         "owner": "Saga Edition Core Rulebook|Fortune|Dumb Luck",
-        "printedText": "Knack, Lucky Shot",
-        "structuredTarget": "Saga Edition Core Rulebook|Fortune|Fool's Luck"
+        "from": "swse.talent.fools_luck",
+        "to": "Saga Edition Core Rulebook|Fortune|Lucky Shot"
       },
       {
         "owner": "Saga Edition Core Rulebook|Fortune|Unlikely Shot",
-        "printedText": "Knack, Lucky Shot",
-        "structuredTarget": "Saga Edition Core Rulebook|Fortune|Fool's Luck"
+        "from": "swse.talent.fools_luck",
+        "to": "Saga Edition Core Rulebook|Fortune|Lucky Shot"
       },
       {
         "owner": "Legacy Era Campaign Guide|Fugitive Commander|Stay in the Fight",
-        "printedText": "Stalwart Subordinates",
-        "structuredTarget": "Rebellion Era Campaign Guide|Rebel Recruiter|Recruit Enemy"
+        "from": "swse.talent.recruit_enemy",
+        "to": "Legacy Era Campaign Guide|Fugitive Commander|Stalwart Subordinates"
       },
       {
         "owner": "Saga Edition Core Rulebook|Fortune|Uncanny Luck",
-        "printedText": "Knack, Lucky Shot",
-        "structuredTarget": "Saga Edition Core Rulebook|Fortune|Fool's Luck"
+        "from": "swse.talent.fools_luck",
+        "to": "Saga Edition Core Rulebook|Fortune|Lucky Shot"
+      }
+    ],
+    "prerequisiteTextLinesRestored": [
+      {
+        "owner": "Saga Edition Core Rulebook|Dark Side|Swift Power",
+        "before": "",
+        "after": "Power of the Dark Side",
+        "correction": "3G-SC-01"
+      },
+      {
+        "owner": "Saga Edition Core Rulebook|Spacer|Starship Raider",
+        "before": "",
+        "after": "Spacehound",
+        "correction": "3G-SC-02"
+      },
+      {
+        "owner": "Saga Edition Core Rulebook|Misfortune|Sow Confusion",
+        "before": "",
+        "after": "Hesitate",
+        "correction": "3G-SC-03"
+      },
+      {
+        "owner": "Saga Edition Core Rulebook|Jedi Sentinel|Force Haze",
+        "before": "",
+        "after": "Clear Mind",
+        "correction": "3G-SC-04"
       }
     ]
   },
@@ -110,7 +120,7 @@
     "talents": "c79c82b905fdd48e0b202bb6e25f7aab532e55ed"
   },
   "postState": {
-    "talents": "ed243cdd856f172eecf416572a81458140f47f27"
+    "talents": "94709cf4b4104ce1adeba73c253752cbf2a30c41"
   },
   "untouchedFiles": {
     "packs/talent_trees.db": "ad577cb9658a532d535ae97f9e1cf1c75ee11de2",
@@ -158,7 +168,7 @@
     {
       "id": "d9e707f23fffc2af",
       "name": "Armor Mastery",
-      "leaves": 1
+      "leaves": 3
     },
     {
       "id": "51588e91f335bb67",
@@ -568,7 +578,7 @@
     {
       "id": "f098749cb8767a5f",
       "name": "Force Haze",
-      "leaves": 1
+      "leaves": 2
     },
     {
       "id": "d1fd547124c1901c",
@@ -853,7 +863,7 @@
     {
       "id": "b7d5a1bc3d40b964",
       "name": "Keep It Together",
-      "leaves": 1
+      "leaves": 3
     },
     {
       "id": "24bf81bc6d74fafd",
@@ -1156,14 +1166,14 @@
       "leaves": 1
     },
     {
-      "id": "7aa4ca13a96d8770",
+      "id": "adfb725d20faade5",
       "name": "Ruthless",
       "leaves": 1
     },
     {
-      "id": "adfb725d20faade5",
+      "id": "7aa4ca13a96d8770",
       "name": "Ruthless",
-      "leaves": 1
+      "leaves": 3
     },
     {
       "id": "8298e12805291c78",
@@ -1191,14 +1201,14 @@
       "leaves": 1
     },
     {
-      "id": "e19c06b6dfc7a703",
+      "id": "ec12ce36ff7048f2",
       "name": "Seize the Moment",
       "leaves": 1
     },
     {
-      "id": "ec12ce36ff7048f2",
+      "id": "e19c06b6dfc7a703",
       "name": "Seize the Moment",
-      "leaves": 1
+      "leaves": 3
     },
     {
       "id": "bca8ce9a488cf3d8",
@@ -1273,7 +1283,7 @@
     {
       "id": "6b09fe0c6fe98367",
       "name": "Sow Confusion",
-      "leaves": 1
+      "leaves": 2
     },
     {
       "id": "85fddc83428358ae",
@@ -1288,7 +1298,7 @@
     {
       "id": "224906e573330bf2",
       "name": "Starship Raider",
-      "leaves": 1
+      "leaves": 2
     },
     {
       "id": "c980750800b91061",
@@ -1358,7 +1368,7 @@
     {
       "id": "09609e71ba6cd4aa",
       "name": "Swift Power",
-      "leaves": 1
+      "leaves": 2
     },
     {
       "id": "cae4f000dcfddd99",
@@ -1634,7 +1644,7 @@
   "verification": {
     "results": [
       {
-        "id": "315 / 315 structured talent-to-talent leaves map to exactly one canonical UUID",
+        "id": "311 source-valid structured talent-to-talent leaves, 311 / 311 map to exactly one canonical UUID",
         "ok": true,
         "detail": ""
       },
@@ -1651,7 +1661,7 @@
       {
         "id": "every unique-candidate target is confirmed by the owner's certified prerequisite text, or the contradiction/absence is itemised below",
         "ok": true,
-        "detail": "302 confirmed, 8 owners have no printed text, 5 contradict it"
+        "detail": "311 confirmed, 0 owners have no printed text, 0 contradict it"
       },
       {
         "id": "Find an Opening resolves specifically to Scum and Villainy|Outlaw|Seize the Moment (e19c06b6dfc7a703)",
@@ -1666,7 +1676,7 @@
       {
         "id": "every migrated prerequisite works against embedded source-linked items (v13 and legacy link form)",
         "ok": true,
-        "detail": "{\"rows\":315,\"embeddedSourceLinked\":315,\"embeddedLegacyLinkForm\":315,\"pending\":315,\"wrongSameNameChecked\":13,\"wrongSameNameRejected\":13,\"unlinkedLegacyFallbackMet\":315,\"unlinkedWrongTreeRejected\":13,\"unlinkedWrongTreeChecked\":13,\"viaUuidEmbedded\":315,\"viaUuidPending\":315,\"failures\":[]}"
+        "detail": "{\"rows\":311,\"embeddedSourceLinked\":311,\"embeddedLegacyLinkForm\":311,\"pending\":311,\"wrongSameNameChecked\":13,\"wrongSameNameRejected\":13,\"unlinkedLegacyFallbackMet\":311,\"unlinkedWrongTreeRejected\":13,\"unlinkedWrongTreeChecked\":13,\"viaUuidEmbedded\":311,\"viaUuidPending\":311,\"failures\":[]}"
       },
       {
         "id": "every migrated prerequisite works against pending selections (carrying the threaded identity)",
@@ -1674,7 +1684,7 @@
         "detail": ""
       },
       {
-        "id": "identity (not name) decides: all 315 embedded and all 315 pending resolutions are authoritative uuid matches with no fallback",
+        "id": "identity (not name) decides: all 311 embedded and all 311 pending resolutions are authoritative uuid matches with no fallback",
         "ok": true,
         "detail": ""
       },
@@ -1684,7 +1694,42 @@
         "detail": ""
       },
       {
-        "id": "only the structured talent leaves change: prerequisites, benefit, description, summary, name, source, page, tree, tags, flags, effects are untouched",
+        "id": "only structured prerequisite data (and the four approved prerequisite-text lines) changes: benefit, description, summary, name, source, page, tree, tags, flags, effects are untouched",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "id": "no other system.prerequisites text changes (exactly the 4 approved source corrections)",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "id": "Fortune quartet structured sets are exactly {Knack, Lucky Shot}; no Fool's Luck",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "id": "Stay in the Fight (Legacy) structured set is exactly {Stalwart Subordinates}; Rebellion Stay in the Fight untouched",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "id": "0 structured prerequisites on Assassin|Ruthless, Expert Pilot|Keep It Together, Knight's Armor|Armor Mastery, Outlaw|Seize the Moment (container dropped, repository standard shape)",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "id": "the same-name Ruthless / Armor Mastery / Seize the Moment owners that DO carry the prerequisite keep it",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "id": "Swift Power / Starship Raider / Sow Confusion / Force Haze printed prerequisite text restored",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "id": "benefit, description, summary, source, page, treeId unchanged on every record",
         "ok": true,
         "detail": ""
       },
