@@ -135,8 +135,8 @@ export function detect11_2aState() {
   const r = readJson(REPORT_PATH), sha = gitBlobSha(read(TALENTS));
   if (r.postState.talents === sha) return 'POST_11_2A';
   if (r.preState.talents === sha) return 'PRE_11_2A';
-  const h = path.join(ROOT, 'data/audits/talent-phase-11-2b-dry-run-report.json'); // Phase 11-2B (later) cleaned further legacy tags
-  return fs.existsSync(h) && readJson('data/audits/talent-phase-11-2b-dry-run-report.json').postState.talents === sha ? 'POST_LATER' : 'UNKNOWN';
+  // Phase 11-2B / 11-2C (later) cleaned further legacy tags
+  return ['talent-phase-11-2b-dry-run-report.json', 'talent-phase-11-2c-dry-run-report.json'].some(f => fs.existsSync(path.join(ROOT, 'data/audits', f)) && readJson('data/audits/' + f).postState.talents === sha) ? 'POST_LATER' : 'UNKNOWN';
 }
 
 export async function verifyApplied({ exact = false } = {}) {

@@ -38,7 +38,10 @@ export async function createProbe() {
   const cf = await import('/systems/foundryvtt-swse/scripts/engine/combat/features/combat-feature-classifier.js');
   const { normalizeTalentTreeId } = await import('/systems/foundryvtt-swse/scripts/data/talent-tree-normalizer.js');
   const src = read('scripts/data/prerequisite-checker.js');
-  const treeIdsOf = new Function('normalizeTalentTreeId', `${sliceFunction(src, 'normalizeTextTokens')}\n${sliceFunction(src, 'getCanonicalTalentTreeIds')}\nreturn getCanonicalTalentTreeIds;`)(normalizeTalentTreeId);
+  const { TalentTreeDB } = await import('/systems/foundryvtt-swse/scripts/data/talent-tree-db.js');
+  const { canonicalTalentId, canonicalTalentUuid, sourceIdentityOf } = await import('/systems/foundryvtt-swse/scripts/data/talent-source-identity.js');
+  await TalentTreeDB.build();
+  const treeIdsOf = new Function('normalizeTalentTreeId', 'TalentTreeDB', 'canonicalTalentId', 'sourceIdentityOf', `${sliceFunction(src, 'normalizeTextTokens')}\n${sliceFunction(src, 'getCanonicalTalentTreeIds')}\nreturn getCanonicalTalentTreeIds;`)(normalizeTalentTreeId, TalentTreeDB, canonicalTalentId, sourceIdentityOf);
   // Tree identity only matters against REAL tree ids (a prerequisite names a tree); extra tokens that are not any tree's id can never match.
   const universe = new Set(trees.flatMap(t => [...treeIdsOf({ treeId: t.name }), ...treeIdsOf({ treeId: t._id }), ...treeIdsOf({ treeId: t.system?.talent_tree ?? t.name })]));
   const tokenToTrees = new Map();
@@ -57,7 +60,7 @@ export async function createProbe() {
       classification: [ic.isForcePowerItem(item), ic.isClassFeatureItem(item), ic.isFeatLikeItem(item), ic.isTalentLikeItem(item)].join(),
       combatCandidate: String(cf.isCombatFeatureCandidate(item)),
       combatFeature: JSON.stringify(omit(cf.classifyCombatFeatureItem(actor, item), ['tags'])),
-      treeIdentity: realTreeIds(item),
+      treeIdentity: realTreeIds({ ...item, flags: { ...(item.flags ?? {}), core: { ...(item.flags?.core ?? {}), sourceId: canonicalTalentUuid(t._id) } } }), // as the finalizer embeds it: source-linked
       forceTalentCount: !!(item.system.isForce || tg.includes('force')),
       mysticMasteryForceTalent: forceRe.test([item.system.category, item.system.talent_tree, item.system.tree, ...tg].join(' ')),
       lightsaberFormLookup: (() => { const hs = [item.system.tree, item.system.talent_tree, item.system.category, item.system.treeId, ...tg].join(' ').toLowerCase(); return hs.includes('lightsaber form') || hs.includes('lightsaber_forms') || hs.includes('lightsaber-forms'); })()
