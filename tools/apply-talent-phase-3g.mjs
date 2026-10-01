@@ -74,6 +74,14 @@ export const OWNER_RULINGS = {
   'Scum and Villainy|Outlaw|Find an Opening': { leafId: 'swse.talent.seize_the_moment', targetIdentity: 'Scum and Villainy|Outlaw|Seize the Moment', targetId: 'e19c06b6dfc7a703', basis: 'Owner ruling (certified Scum and Villainy authority, printed p.35): Find an Opening and its prerequisite Seize the Moment are both Outlaw-tree talents of the same published chain; the Provocateur Seize the Moment (Legacy Era Campaign Guide) is not the intended prerequisite.' }
 };
 
+/** production `_id` -> certified canonical identity (Phase 3B manifests + the 3E addendum). Shared by later phases. */
+export function loadIdentityOf() {
+  const identityOf = new Map();
+  for (const { manifest } of loadCommittedManifests()) for (const r of manifest.records) { const i = r.identityResolution; identityOf.set(i.productionRecordId || i.createRecordId, r.canonicalIdentity); }
+  for (const a of readJson('data/audits/talent-phase-3e-canonical-additions.json').additions) identityOf.set(a.production.id, a.canonicalIdentity);
+  return identityOf;
+}
+
 /** Layered source-correction entries (same entry shape the reconciler already honours for 3E-5: REPLACE_FIELDS + PDF_VERIFIED). */
 function textCorrections(talents, identityOf) {
   const byId = new Map(talents.map(t => [t._id, t]));
@@ -94,9 +102,7 @@ export function deriveManifest() {
   const byId = new Map(talents.map(t => [t._id, t])), bySwse = new Map();
   for (const t of talents) { const f = t.flags?.swse?.id; if (f) bySwse.set(f, [...(bySwse.get(f) ?? []), t]); }
   const treeOf = new Map(); for (const tr of trees) for (const id of tr.system.talentIds) treeOf.set(id, tr);
-  const identityOf = new Map();
-  for (const { manifest } of loadCommittedManifests()) for (const r of manifest.records) { const i = r.identityResolution; identityOf.set(i.productionRecordId || i.createRecordId, r.canonicalIdentity); }
-  for (const a of readJson('data/audits/talent-phase-3e-canonical-additions.json').additions) identityOf.set(a.production.id, a.canonicalIdentity);
+  const identityOf = loadIdentityOf();
   const sameNameNames = new Set(readJson('data/canonical/talents.json').sameNameDifferentTreeGroups.map(g => g.name.toLowerCase()));
   const census = readJson('data/audits/talent-phase-3g-prerequisite-identity-census.json');
   const censusByKey = new Map(census.rows.map(r => [`${r.owner.id}|${r.path}`, r]));
@@ -279,25 +285,29 @@ function renderDoc(r) {
 export function detect3GState() {
   if (!fs.existsSync(path.join(ROOT, REPORT_PATH))) return 'PRE_3G';
   const r = readJson(REPORT_PATH), sha = gitBlobSha(read(TALENTS));
-  return r.postState.talents === sha ? 'POST_3G' : r.preState.talents === sha ? 'PRE_3G' : 'UNKNOWN';
+  if (r.postState.talents === sha) return 'POST_3G';
+  if (r.preState.talents === sha) return 'PRE_3G';
+  const h = path.join(ROOT, 'data/audits/talent-phase-11-2a-dry-run-report.json'); // Phase 11-2A (later) deleted junk tags on other records
+  return fs.existsSync(h) && readJson('data/audits/talent-phase-11-2a-dry-run-report.json').postState.talents === sha ? 'POST_LATER' : 'UNKNOWN';
 }
 
 export async function verifyApplied({ exact = false } = {}) {
   const res = [], check = (id, ok, detail = '') => res.push({ id, ok: !!ok, detail });
   const report = readJson(REPORT_PATH), manifest = readJson(MANIFEST_PATH), talentsText = read(TALENTS), talents = parse(talentsText), ta = new Map(talents.map(t => [t._id, t]));
   const ownerIds = new Set([...manifest.rows.map(r => r.ownerId), ...manifest.removals.map(r => r.ownerId), ...manifest.textCorrections.map(r => r.productionId)]);
-  check('packs/talents.db is the certified Phase 3G post-state', detect3GState() === 'POST_3G');
+  const later = detect3GState() === 'POST_LATER'; // whole-pack fingerprints/blob are superseded by the later certified state; every 3G invariant below is still checked
+  check('packs/talents.db is the certified Phase 3G post-state (or a later certified state)', ['POST_3G', 'POST_LATER'].includes(detect3GState()));
   check('talent count unchanged (1,187)', talents.length === 1187);
   check(`every one of the ${manifest.rows.length} source-valid leaves is { type, uuid, name } at its certified target, and no structured talent leaf lacks a uuid`, manifest.rows.every(r => { const c = ta.get(r.ownerId).system.prerequisitesStructured?.conditions?.find(x => x.uuid === r.proposed.uuid); return c && JSON.stringify(c) === JSON.stringify(r.proposed) && !('id' in c) && ta.has(r.target.id); }) && talents.every(t => !t.system.prerequisitesStructured || structuredLeaves(t.system.prerequisitesStructured).filter(l => l.condition.type === 'talent').every(l => /^Compendium\.foundryvtt-swse\.talents\.Item\.(?:[0-9a-f]{16}|[0-9a-f]{32})$/.test(l.condition.uuid ?? ''))));
   check('the four false structured prerequisites are gone (no structured container)', manifest.removals.every(r => !('prerequisitesStructured' in ta.get(r.ownerId).system)));
   check('the four printed prerequisite lines are restored', manifest.textCorrections.every(c => ta.get(c.productionId).system.prerequisites === c.after.prerequisites));
-  check('the other talents are unchanged', sortedFp(talents.filter(t => !ownerIds.has(t._id))) === report.othersFingerprint);
+  if (!later) check('the other talents are unchanged', sortedFp(talents.filter(t => !ownerIds.has(t._id))) === report.othersFingerprint);
   for (const [rel, sha] of Object.entries(report.untouchedFiles)) check(`untouched: ${rel}`, fs.existsSync(path.join(ROOT, rel)) && gitBlobSha(read(rel)) === sha);
   const rec = reconcile(loadInput());
   check('reconciler: zero blocking findings (3E corpus/text incl. the 3G correction layer, 3F tree identity)', rec.blockingFindings.length === 0, JSON.stringify(rec.findingCounts));
   const eff = await runtimeEffectiveness(manifest, talents, parse(read('packs/talent_trees.db')));
   check('runtime (real checker, applied pack): every leaf satisfied by embedded source-linked and pending selections via uuid; wrong same-name identities rejected', eff.embeddedSourceLinked === manifest.rows.length && eff.pending === manifest.rows.length && eff.viaUuidEmbedded === manifest.rows.length && eff.viaUuidPending === manifest.rows.length && eff.failures.length === 0);
-  if (exact) check('packs/talents.db equals the certified blob', gitBlobSha(talentsText) === report.postState.talents);
+  if (exact && !later) check('packs/talents.db equals the certified blob', gitBlobSha(talentsText) === report.postState.talents);
   return res;
 }
 
@@ -315,7 +325,7 @@ export async function main(argv = process.argv.slice(2)) {
   const has = f => argv.includes(f), state = detect3GState();
   const pr = res => { for (const x of res) console.log(`${x.ok ? 'PASS' : 'FAIL'}  ${x.id}${x.ok || !x.detail ? '' : '  [' + x.detail + ']'}`); return res.filter(x => !x.ok).length; };
   if (has('--status')) { console.log(ERR + state); return 0; }
-  if (has('--verify') || (has('--check') && state === 'POST_3G')) { const bad = pr(await verifyApplied({ exact: has('--exact') })); console.log(`\n${ERR}verify ${bad ? 'FAIL' : 'PASS'}`); return bad ? 1 : 0; }
+  if (has('--verify') || (has('--check') && (state === 'POST_3G' || state === 'POST_LATER'))) { const bad = pr(await verifyApplied({ exact: has('--exact') })); console.log(`\n${ERR}verify ${bad ? 'FAIL' : 'PASS'}`); return bad ? 1 : 0; }
   if (has('--apply')) {
     // the committed report must equal a fresh projection of the committed manifest before anything is written
     const fresh = await buildReport(); invariant(read(REPORT_PATH) === JSON.stringify(fresh, null, 2) + '\n', 'REFUSED: committed dry-run report differs from a fresh projection');

@@ -40,6 +40,7 @@ const PHASE_3E4_REPORT_PATH = 'data/audits/talent-phase-3e4-dry-run-report.json'
 const PHASE_3E5_REPORT_PATH = 'data/audits/talent-phase-3e5-dry-run-report.json';
 const PHASE_3F_REPORT_PATH = 'data/audits/talent-phase-3f-dry-run-report.json';
 const PHASE_3G_REPORT_PATH = 'data/audits/talent-phase-3g-dry-run-report.json';
+const PHASE_11_2A_REPORT_PATH = 'data/audits/talent-phase-11-2a-dry-run-report.json';
 export const PACKS = { talents: 'packs/talents.db', trees: 'packs/talent_trees.db', classes: 'packs/classes.db' };
 export const MANIFEST_SPECS = [
   ['clone-wars', 'data/audits/talent-phase-3b-clone-wars-campaign-guide-manifest.json'],
@@ -173,7 +174,13 @@ export function detectPackState(root = ROOT) {
     const p7 = readJson(PHASE_3G_REPORT_PATH, root).postState ?? {};
     post3g = p7.talents === sha.talents && sha.trees === readJson(PHASE_3F_REPORT_PATH, root).postState.trees;
   }
-  return { state: pre ? 'PRE_STATE' : post ? 'POST_STATE' : post3d ? 'POST_3D_STATE' : post3e4 ? 'POST_3E4_STATE' : post3e5 ? 'POST_3E5_STATE' : post3f ? 'POST_3F_STATE' : post3g ? 'POST_3G_STATE' : 'UNKNOWN_STATE', sha };
+  // Phase 11-2A (certified junk-tag deletion, the latest certified state): tools/apply-talent-phase-11-2a.mjs --verify --exact owns it.
+  let post112a = false;
+  if (!pre && !post && !post3d && !post3e4 && !post3e5 && !post3f && !post3g && fs.existsSync(path.join(root, PHASE_11_2A_REPORT_PATH))) {
+    const p8 = readJson(PHASE_11_2A_REPORT_PATH, root).postState ?? {};
+    post112a = p8.talents === sha.talents && sha.trees === readJson(PHASE_3F_REPORT_PATH, root).postState.trees;
+  }
+  return { state: pre ? 'PRE_STATE' : post ? 'POST_STATE' : post3d ? 'POST_3D_STATE' : post3e4 ? 'POST_3E4_STATE' : post3e5 ? 'POST_3E5_STATE' : post3f ? 'POST_3F_STATE' : post3g ? 'POST_3G_STATE' : post112a ? 'POST_11_2A_STATE' : 'UNKNOWN_STATE', sha };
 }
 
 /* ------------------------------------------------------------------------------------------------
@@ -739,7 +746,7 @@ function requirePreState(root) {
   invariant(state === 'PRE_STATE',
     state === 'POST_STATE'
       ? 'already applied: production packs are the certified Phase 3C post-state; use --verify (pre-state fingerprint mismatch)'
-      : state === 'POST_3D_STATE' || state === 'POST_3E4_STATE' || state === 'POST_3E5_STATE' || state === 'POST_3F_STATE' || state === 'POST_3G_STATE' ? 'already applied: production packs are a certified post-state later than Phase 3C'
+      : state === 'POST_3D_STATE' || state === 'POST_3E4_STATE' || state === 'POST_3E5_STATE' || state === 'POST_3F_STATE' || state === 'POST_3G_STATE' || state === 'POST_11_2A_STATE' ? 'already applied: production packs are a certified post-state later than Phase 3C'
       : `pre-state fingerprint mismatch: packs match neither the Phase 3B certified pre-state nor the Phase 3C post-state (talents ${sha.talents}, trees ${sha.trees})`);
 }
 
@@ -772,7 +779,7 @@ export async function main(argv = process.argv.slice(2), root = ROOT) {
   if (has('--verify')) {
     const { state } = detectPackState(root);
     invariant(state !== 'PRE_STATE', 'production is still the certified pre-state; nothing to verify (use --check for the dry-run report)');
-    invariant(state !== 'POST_3D_STATE' && state !== 'POST_3E4_STATE' && state !== 'POST_3E5_STATE' && state !== 'POST_3F_STATE' && state !== 'POST_3G_STATE', 'packs are a later certified post-state, which supersedes this verifier; use tools/apply-talent-phase-3d.mjs / apply-talent-phase-3e4.mjs --verify --exact');
+    invariant(state !== 'POST_3D_STATE' && state !== 'POST_3E4_STATE' && state !== 'POST_3E5_STATE' && state !== 'POST_3F_STATE' && state !== 'POST_3G_STATE' && state !== 'POST_11_2A_STATE', 'packs are a later certified post-state, which supersedes this verifier; use tools/apply-talent-phase-3d.mjs / apply-talent-phase-3e4.mjs --verify --exact');
     const closeout = readJson(CLOSEOUT_PATH, root);
     const manifests = loadCommittedManifests(root);
     const report = readJson(REPORT_PATH, root);
