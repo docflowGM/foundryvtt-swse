@@ -28,6 +28,7 @@
 
 import { toStableKey } from "/systems/foundryvtt-swse/scripts/utils/stable-key.js";
 import { TalentTreeDB } from "/systems/foundryvtt-swse/scripts/data/talent-tree-db.js";
+import { decideCandidate, targetIdentityOfLeaf } from "/systems/foundryvtt-swse/scripts/data/talent-source-identity.js";
 import { normalizeTalentTreeId } from "/systems/foundryvtt-swse/scripts/data/talent-tree-normalizer.js";
 import { PRESTIGE_PREREQUISITES } from "/systems/foundryvtt-swse/scripts/data/prestige-prerequisites.js";
 import { CANONICAL_SKILL_DEFS } from "/systems/foundryvtt-swse/scripts/utils/skill-normalization.js";
@@ -265,12 +266,15 @@ export function normalizeFeatRequirement(value, source = 'unknown') {
 export function normalizeTalentRequirement(value, source = 'unknown') {
   if (!value) return null;
   const rawName = typeof value === 'string' ? value : (value?.name || value?.talentName || '');
-  if (!rawName) return null;
-  const canonName = resolveCanonicalTalentName(rawName) || rawName;
+  // Phase 3G: a structured leaf may identify its talent by canonical UUID (or a compendium _id) alone; keep that identity on the requirement.
+  const uuid = typeof value === 'object' ? (targetIdentityOfLeaf(value)?.uuid ?? null) : null;
+  if (!rawName && !uuid) return null;
+  const canonName = rawName ? (resolveCanonicalTalentName(rawName) || rawName) : '';
   return {
     type: 'talent',
-    key: stableKey(canonName),
+    key: canonName ? stableKey(canonName) : uuid,
     name: canonName,
+    ...(uuid ? { uuid } : {}),
     source,
     optional: false,
   };

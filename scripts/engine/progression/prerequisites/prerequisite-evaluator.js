@@ -253,13 +253,14 @@ function evalTalent(snapshot, req, opts) {
   if (forcePowerName) {
     return evalForcePower(snapshot, { ...req, type: 'force_power', name: forcePowerName, key: forcePowerName }, opts);
   }
-  const has = snapshot.talents.has(talentName);
+  // Phase 3G: a requirement that carries a canonical UUID is decided by identity (never by a same-name talent in another tree).
+  const has = req.uuid ? !!snapshot.talents.hasIdentity?.(req.uuid, req.name || null) : snapshot.talents.has(talentName);
   return {
     passed: has,
     advisory: false,
     unresolved: false,
     requirement: req,
-    message: has ? '' : `Requires talent: ${talentName}`,
+    message: has ? '' : `Requires talent: ${req.name || talentName}`,
   };
 }
 

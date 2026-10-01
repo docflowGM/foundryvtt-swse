@@ -24,6 +24,7 @@
 // ============================================
 
 import { TalentTreeDB } from "/systems/foundryvtt-swse/scripts/data/talent-tree-db.js";
+import { decideCandidate, targetIdentityOfLeaf } from "/systems/foundryvtt-swse/scripts/data/talent-source-identity.js";
 import { normalizeTalentTreeId } from "/systems/foundryvtt-swse/scripts/data/talent-tree-normalizer.js";
 import { DSPEngine } from "/systems/foundryvtt-swse/scripts/engine/darkside/dsp-engine.js";
 import { FeatChoiceResolver } from "/systems/foundryvtt-swse/scripts/engine/progression/feats/feat-choice-resolver.js";
@@ -463,6 +464,13 @@ function buildTalentsSection(actor, pending) {
         || sourceIds.has(nameOrKey) || uuids.has(nameOrKey);
     },
 
+    /** Phase 3G: identity-first talent ownership (canonical UUID either spelling; same decision rule as the checker). */
+    hasIdentity(uuid, name = null) {
+      const target = targetIdentityOfLeaf({ uuid });
+      if (!target?.uuid) return false;
+      return items.some(entry => decideCandidate(target, entry, { name, db: TalentTreeDB }).match === true);
+    },
+
     hasChoice(baseTalent, choice) {
       if (!baseTalent || !choice) return false;
       const bKey = looseKey(baseTalent);
@@ -893,7 +901,7 @@ function _emptySnapshot(actor, pending) {
     actor: actor || null,
     pending: pending || {},
     feats: { items: [], names: emptySet, slugs: emptySet, sourceIds: emptySet, uuids: emptySet, baseNames: emptySet, choices: emptyMap, has: noop, hasChoice: noop, hasAnyChoice: noop },
-    talents: { items: [], names: emptySet, slugs: emptySet, sourceIds: emptySet, uuids: emptySet, baseNames: emptySet, choices: emptyMap, treeKeys: emptySet, byTree: emptyMap, has: noop, hasChoice: noop, hasAnyChoice: noop, countInTrees: noopNum, getFromTree: () => [] },
+    talents: { items: [], names: emptySet, slugs: emptySet, sourceIds: emptySet, uuids: emptySet, baseNames: emptySet, choices: emptyMap, treeKeys: emptySet, byTree: emptyMap, has: noop, hasIdentity: noop, hasChoice: noop, hasAnyChoice: noop, countInTrees: noopNum, getFromTree: () => [] },
     classes: { items: [], names: emptySet, slugs: emptySet, sourceIds: emptySet, uuids: emptySet, levelsByClass: emptyMap, totalLevel: 0, bab: 0, has: noop, getLevel: noopNum },
     species: { names: emptySet, keys: emptySet, isDroid: false, droidDegree: null, droidChassis: null, has: noop },
     force: { forceSensitive: false, forceTrainingCount: 0, powers: emptySet, powerCount: 0, techniques: emptySet, secrets: emptySet, traditions: emptySet, disciplines: emptySet },
