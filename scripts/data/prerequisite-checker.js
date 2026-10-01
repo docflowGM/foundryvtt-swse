@@ -56,7 +56,7 @@ import { ActorAbilityBridge } from "/systems/foundryvtt-swse/scripts/adapters/Ac
 // - reasons: getter returning .missing
 // ============================================
 
-import { canonicalTalentUuid, decideCandidate, swseTalentIdOf, targetIdentityOfLeaf } from "/systems/foundryvtt-swse/scripts/data/talent-source-identity.js";
+import { canonicalTalentUuid, canonicalTalentId, decideCandidate, sourceIdentityOf, swseTalentIdOf, targetIdentityOfLeaf } from "/systems/foundryvtt-swse/scripts/data/talent-source-identity.js";
 import { PRESTIGE_PREREQUISITES } from "/systems/foundryvtt-swse/scripts/data/prestige-prerequisites.js";
 import { TalentTreeDB } from "/systems/foundryvtt-swse/scripts/data/talent-tree-db.js";
 import { normalizeTalentTreeId } from "/systems/foundryvtt-swse/scripts/data/talent-tree-normalizer.js";
@@ -3959,6 +3959,8 @@ function normalizeTextTokens(value) {
 function getCanonicalTalentTreeIds(talent) {
     if (!talent) return [];
 
+    // Tree identity comes ONLY from structured fields and the certified tree-membership authority (TalentTreeDB).
+    // `system.tags` is semantic/mechanical metadata and is never tree evidence (Phase 11-2C owner ruling).
     const candidates = [
         talent.treeId,
         talent.tree,
@@ -3974,13 +3976,21 @@ function getCanonicalTalentTreeIds(talent) {
         talent.system?.talent_tree_id,
         talent.system?.category,
         talent.system?.sourceId,
-        talent.system?.tags,
     ];
 
     const ids = new Set();
     for (const token of normalizeTextTokens(candidates)) {
         const normalized = normalizeTalentTreeId(token);
         if (normalized) ids.add(normalized);
+    }
+
+    // Certified (primary + multi-tree) membership of the talent's canonical identity. Identity-safe: by compendium _id only, never by name.
+    const canonicalId = canonicalTalentId(sourceIdentityOf(talent)?.uuid);
+    if (canonicalId) {
+        for (const treeId of TalentTreeDB.getTreeIdsForTalentId?.(canonicalId) ?? []) {
+            const normalized = normalizeTalentTreeId(treeId);
+            if (normalized) ids.add(normalized);
+        }
     }
     return Array.from(ids);
 }

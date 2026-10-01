@@ -162,6 +162,7 @@ const battery = {
   ],
   POST_11_2C_STATE: [
     ['Phase 11-2C post-state verification (exact)', 'tools/apply-talent-phase-11-2c.mjs', '--verify', '--exact'],
+    ['Phase 11-2C tree-credit authority repair audit', 'tools/audit-talent-tree-credit-repair.mjs', '--check'],
     ['Phase 11-2B reconsider cleanup still intact', 'tools/apply-talent-phase-11-2b.mjs', '--verify'],
     ['Phase 11-2A junk-tag deletion still intact', 'tools/apply-talent-phase-11-2a.mjs', '--verify'],
     ['Phase 3G structured-prerequisite repair still intact', 'tools/apply-talent-phase-3g.mjs', '--verify'],

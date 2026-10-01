@@ -24,7 +24,7 @@
 // ============================================
 
 import { TalentTreeDB } from "/systems/foundryvtt-swse/scripts/data/talent-tree-db.js";
-import { decideCandidate, targetIdentityOfLeaf } from "/systems/foundryvtt-swse/scripts/data/talent-source-identity.js";
+import { canonicalTalentId, decideCandidate, sourceIdentityOf, targetIdentityOfLeaf } from "/systems/foundryvtt-swse/scripts/data/talent-source-identity.js";
 import { normalizeTalentTreeId } from "/systems/foundryvtt-swse/scripts/data/talent-tree-normalizer.js";
 import { DSPEngine } from "/systems/foundryvtt-swse/scripts/engine/darkside/dsp-engine.js";
 import { FeatChoiceResolver } from "/systems/foundryvtt-swse/scripts/engine/progression/feats/feat-choice-resolver.js";
@@ -121,6 +121,10 @@ function getTalentTreeKeys(talent) {
   // SSOT inverse lookup via TalentTreeDB
   [talent?.id, talent?._id, talent?.flags?.swse?.id, talent?.name]
     .forEach((id) => addTree(TalentTreeDB.getTreeForTalent?.(id)));
+
+  // Certified multi-tree membership by canonical identity (id only — never by name, never by tags).
+  const canonicalId = canonicalTalentId(sourceIdentityOf(talent)?.uuid);
+  if (canonicalId) for (const treeId of TalentTreeDB.getTreeIdsForTalentId?.(canonicalId) ?? []) addTree(treeId);
 
   return Array.from(keys);
 }

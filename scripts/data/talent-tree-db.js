@@ -104,6 +104,10 @@ export const TalentTreeDB = {
     // SSOT inverse index: talentId -> treeId (built from tree.system.talentIds)
     talentToTree: new Map(),
 
+    // Certified MULTI-tree membership: canonical talent _id -> Set(tree runtime ids), from tree.talentIds only (identity-safe: ids, never names).
+    // Tags never carry tree identity; this is the one place a talent's secondary trees come from.
+    talentToTrees: new Map(),
+
     isBuilt: false,
     lastBuildAudit: null,
 
@@ -137,6 +141,7 @@ export const TalentTreeDB = {
             this._byKey.clear();
             this._legacyIdMap.clear();
             this.talentToTree.clear();
+            this.talentToTrees.clear();
             this.isBuilt = false;
 
             // Use getIndex with expanded fields - NOT getDocuments (see note above)
@@ -456,6 +461,7 @@ export const TalentTreeDB = {
      */
     buildTalentIndex() {
         this.talentToTree.clear();
+        this.talentToTrees.clear();
         const addTalentKey = (key, treeId) => {
             const raw = String(key || '').trim();
             if (!raw || !treeId) {return;}
@@ -474,11 +480,23 @@ export const TalentTreeDB = {
         for (const tree of this.trees.values()) {
             for (const talentId of tree.talentIds || []) {
                 addTalentKey(talentId, tree.id);
+                const raw = String(talentId || '').trim();
+                if (raw && tree.id) { (this.talentToTrees.get(raw) ?? this.talentToTrees.set(raw, new Set()).get(raw)).add(tree.id); }
             }
             for (const talentName of tree.talentNames || []) {
                 addTalentKey(talentName, tree.id);
             }
         }
+    },
+
+    /**
+     * ALL trees (runtime ids) that certify a canonical talent `_id` as a member — primary and secondary.
+     * @param {string} talentId canonical talent _id
+     * @returns {string[]}
+     */
+    getTreeIdsForTalentId(talentId) {
+        const raw = String(talentId || '').trim();
+        return raw ? Array.from(this.talentToTrees.get(raw) ?? []) : [];
     },
 
     /**
