@@ -16,20 +16,27 @@ import { fileURLToPath } from 'node:url';
 import { ROOT, read, readJson, parse, TALENTS, TREES } from './talent-tag-io.mjs';
 import { loadRuntime } from './census-talent-prerequisite-identity.mjs';
 
-export const OUT = 'data/audits/talent-phase-11-2c-tree-credit-repair.json';
+export const OUT = 'data/audits/talent-phase-11-2c-tree-credit-repair.json', REF = 'data/audits/talent-phase-11-2c-tree-credit-repair-reference.json';
 const OLD_COMMIT = 'a5fe0d84a'; // Phase 11-2A production apply: last state in which tags were still tree evidence in the pack AND in the checker
 const sliceFunction = (src, name) => { const i = src.indexOf(`function ${name}(`); let d = 0, j = src.indexOf('{', i); for (let k = j; k < src.length; k++) { if (src[k] === '{') d++; else if (src[k] === '}' && --d === 0) return src.slice(i, k + 1); } throw new Error('slice ' + name); };
 const git = rel => execSync(`git show ${OLD_COMMIT}:${rel}`, { cwd: ROOT, encoding: 'utf8', maxBuffer: 1 << 28 });
+/** The OLD reference (pre-repair checker functions + Phase 11-2A tags) is frozen into the repo so the audit never needs git history (CI checks out depth 1). `--snapshot-reference` regenerates it from git. */
+export function snapshotReference() {
+  const src = git('scripts/data/prerequisite-checker.js'), tags = {};
+  for (const t of parse(git(TALENTS))) if (Array.isArray(t.system.tags) && t.system.tags.length) tags[t._id] = t.system.tags;
+  return { schemaVersion: 1, source: `git ${OLD_COMMIT}: scripts/data/prerequisite-checker.js (getCanonicalTalentTreeIds, normalizeTextTokens) + packs/talents.db system.tags`, checkerSource: `${sliceFunction(src, 'normalizeTextTokens')}\n${sliceFunction(src, 'getCanonicalTalentTreeIds')}`, tagsById: tags };
+}
+const reference = () => fs.existsSync(path.join(ROOT, REF)) ? readJson(REF) : snapshotReference();
 
 export async function build() {
-  const talents = parse(read(TALENTS)), trees = parse(read(TREES)), oldTalents = new Map(parse(git(TALENTS)).map(t => [t._id, t]));
+  const talents = parse(read(TALENTS)), trees = parse(read(TREES)), ref = reference();
   const { restore } = await loadRuntime(talents, trees);
   const { TalentTreeDB } = await import('/systems/foundryvtt-swse/scripts/data/talent-tree-db.js');
   const { normalizeTalentTreeId } = await import('/systems/foundryvtt-swse/scripts/data/talent-tree-normalizer.js');
   const { canonicalTalentId, canonicalTalentUuid, sourceIdentityOf } = await import('/systems/foundryvtt-swse/scripts/data/talent-source-identity.js');
   TalentTreeDB.isBuilt = false; await TalentTreeDB.build();
   const mk = (src, ...extra) => new Function('normalizeTalentTreeId', 'TalentTreeDB', 'canonicalTalentId', 'sourceIdentityOf', `${sliceFunction(src, 'normalizeTextTokens')}\n${sliceFunction(src, 'getCanonicalTalentTreeIds')}\nreturn getCanonicalTalentTreeIds;`)(normalizeTalentTreeId, TalentTreeDB, canonicalTalentId, sourceIdentityOf);
-  const oldFn = mk(git('scripts/data/prerequisite-checker.js')), newSrc = read('scripts/data/prerequisite-checker.js'), newFn = mk(newSrc);
+  const oldFn = new Function('normalizeTalentTreeId', 'TalentTreeDB', 'canonicalTalentId', 'sourceIdentityOf', `${ref.checkerSource}\nreturn getCanonicalTalentTreeIds;`)(normalizeTalentTreeId, TalentTreeDB, canonicalTalentId, sourceIdentityOf), newSrc = read('scripts/data/prerequisite-checker.js'), newFn = mk(newSrc);
   const tokens = new Map(); for (const t of trees) for (const k of [...newFn({ treeId: t.name }), ...newFn({ treeId: t._id }), ...newFn({ treeId: t.system?.talent_tree ?? t.name })]) (tokens.get(k) ?? tokens.set(k, new Set()).get(k)).add(t._id);
   const members = new Map(trees.map(t => [t._id, new Set(t.system.talentIds)]));
   // The checker compares SPELLED tree tokens: a prerequisite names a tree (by name), a talent matches when any required token appears among its own tokens.
@@ -45,7 +52,7 @@ export async function build() {
   const restored = [], polluting = [], secondary = [], remaining = [], categoryFieldCredits = [], missingPrimary = [], missingMembership = [];
   for (const t of talents) {
     const linked = { ...t, flags: { ...(t.flags ?? {}), core: { sourceId: canonicalTalentUuid(t._id) } } };
-    const oldTags = oldTalents.get(t._id)?.system.tags ?? [], oldItem = { ...t, system: { ...t.system, tags: oldTags } }, fieldsOnly = { ...t, flags: undefined };
+    const oldTags = ref.tagsById[t._id] ?? [], oldItem = { ...t, system: { ...t.system, tags: oldTags } }, fieldsOnly = { ...t, flags: undefined };
     for (const [nm, grp] of groups) {
       const member = grp.some(x => members.get(x._id).has(t._id)), primary = grp.some(x => x._id === t.system.treeId);
       const o = credited(oldFn, oldItem, nm), f = credited(newFn, fieldsOnly, nm), n = credited(newFn, linked, nm);
@@ -64,6 +71,7 @@ export async function build() {
     primaryUnresolved: missingPrimary, falseCreditsRemaining: remaining, creditsFromStructuredFieldsWithoutMembership: categoryFieldCredits, certifiedRelationshipsUnresolved: missingMembership, restoredRelationships: restored, pollutingCreditsThatStayGone: polluting, secondaryMembership: secondary };
 }
 export async function main(argv = process.argv.slice(2)) {
+  if (argv.includes('--snapshot-reference')) { fs.writeFileSync(path.join(ROOT, REF), JSON.stringify(snapshotReference()) + '\n'); console.log('[tree-credit-repair] wrote ' + REF); return 0; }
   const a = await build(), json = JSON.stringify(a, null, 1) + '\n';
   if (argv.includes('--check')) { if (!fs.existsSync(path.join(ROOT, OUT)) || read(OUT) !== json) { console.error('[tree-credit-repair] STALE'); return 1; } console.log('[tree-credit-repair] PASS'); return 0; }
   fs.writeFileSync(path.join(ROOT, OUT), json); process.stderr.write(JSON.stringify(a.counts, null, 1) + '\n'); return 0;
