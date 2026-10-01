@@ -111,7 +111,8 @@ const krathTree = treeDocs.find(doc => doc._id === TREE_ID);
     }
     assert.ok(String(doc.system.benefit || '').length > 40, `${expected.name} has no benefit text`);
     assert.equal(doc.system.description?.value, doc.system.benefit);
-    assert.ok(doc.system.tags.includes(`tree_${TREE_ID}`));
+    // Phase 11-2A deleted the tree_<id> alias tags; tree identity is system.treeId (the persistent tree _id)
+    assert.equal(doc.system.treeId, TREE_ID);
     assert.ok(doc.system.tags.includes('krath'));
 
     // Context-dependent mechanics must not be modelled as passive static bonuses.

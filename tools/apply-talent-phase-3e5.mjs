@@ -122,7 +122,7 @@ function renderDoc(r) {
 
 // Files a LATER certified phase (3F) legitimately rewrote: their verification belongs to that phase.
 const LATER_OWNED = new Set(['packs/talents.db', 'packs/talent_trees.db', 'data/generated/talent-trees.registry.json', 'data/fixes/talent-trees.registry.json']);
-const afterLater = () => ['talent-phase-3f-dry-run-report.json', 'talent-phase-3g-dry-run-report.json'].some(f => { const p = path.join(ROOT, 'data/audits', f); return fs.existsSync(p) && JSON.parse(fs.readFileSync(p, 'utf8')).postState.talents === gitBlobSha(fs.readFileSync(path.join(ROOT, TALENTS), 'utf8')); });
+const afterLater = () => ['talent-phase-3f-dry-run-report.json', 'talent-phase-3g-dry-run-report.json', 'talent-phase-11-2a-dry-run-report.json'].some(f => { const p = path.join(ROOT, 'data/audits', f); return fs.existsSync(p) && JSON.parse(fs.readFileSync(p, 'utf8')).postState.talents === gitBlobSha(fs.readFileSync(path.join(ROOT, TALENTS), 'utf8')); });
 export function detect3E5State(root = ROOT) {
   const rp = path.join(root, REPORT_PATH); if (!fs.existsSync(rp)) return 'PRE_3E5';
   const r = JSON.parse(fs.readFileSync(rp, 'utf8')), sha = gitBlobSha(fs.readFileSync(path.join(root, TALENTS), 'utf8'));
