@@ -12,7 +12,7 @@ const actors = { heroic: rdb('packs/heroic.db'), nonheroic: rdb('packs/nonheroic
 const run = m => checkDispositions({ manifest: m, census, talents, actors });
 const clone = v => structuredClone(v);
 let passed = 0; const test = (n, fn) => { fn(); passed++; console.log('  ok  ' + n); };
-if (['POST_3D_STATE', 'POST_3E4_STATE', 'POST_3E5_STATE', 'POST_3F_STATE', 'POST_3G_STATE', 'POST_11_2A_STATE', 'POST_11_2B_STATE'].includes(detectPackState().state)) {
+if (['POST_3D_STATE', 'POST_3E4_STATE', 'POST_3E5_STATE', 'POST_3F_STATE', 'POST_3G_STATE', 'POST_11_2A_STATE', 'POST_11_2B_STATE', 'POST_11_2C_STATE'].includes(detectPackState().state)) {
   // The checker compares the manifest to the live pre-migration packs/actors, which no longer exist after Phase 3D is applied;
   // the post-state is certified by tools/apply-talent-phase-3d.mjs --verify --exact and tests/talent-phase-3d-post-state.test.mjs.
   test('final 3D-2 totals still match the owner rulings (static)', () => {
