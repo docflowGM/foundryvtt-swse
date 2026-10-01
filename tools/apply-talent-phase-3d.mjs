@@ -627,7 +627,8 @@ export function verifyPostState(st, { exact = false, root = ROOT, scan = true } 
   check('no embedded actor item points at a record that left the canonical pack', Object.values(st.actors).flat().every(a => (a.items ?? []).every(i => { const s = parseSourceId(i.flags?.core?.sourceId); return !(s && s.pack === 'talents' && leavingIds.has(s.id)); })));
   check('no contaminated Notorious / merged Teräs Käsi snapshot text survives', Object.values(st.actors).flat().every(a => (a.items ?? []).every(i => !(i.name === 'Notorious' && /Reference Book|Master Manipulator|small favor from someone/i.test(JSON.stringify(i.system))) && !(i.name === 'Teräs Käsi Basics' && /Prerequisites: ,/.test(JSON.stringify(i.system))))));
   check('no canonical structured prerequisite identity points at a removed/merged/moved Phase 3D record (zero dangling)', (report.retiredIdentities ?? []).length > 0 && danglingFromRetired(report.retiredIdentities, st.talents).length === 0);
-  check('allow-listed canonical prerequisite repoints are in place with prerequisite text preserved', (manifest.canonicalPrerequisiteRepoints?.repoints ?? []).every(r => { const i = Number(/\[(\d+)\]/.exec(r.path)[1]); const t = canon.get(r.recordId); return t?.system?.prerequisitesStructured?.conditions?.[i]?.id === r.to && t.system.prerequisites === r.preservePrerequisiteText; }));
+  check('allow-listed canonical prerequisite repoints are in place with prerequisite text preserved', (manifest.canonicalPrerequisiteRepoints?.repoints ?? []).every(r => { const i = Number(/\[(\d+)\]/.exec(r.path)[1]); const t = canon.get(r.recordId); return [t?.system?.prerequisitesStructured?.conditions?.[i]?.id, t?.system?.prerequisitesStructured?.conditions?.[i]?.uuid].some(x => x === r.to || x === `Compendium.foundryvtt-swse.talents.Item.${r.to}`) && // Phase 3G (later state) migrated the leaf to its uuid
+     t.system.prerequisites === r.preservePrerequisiteText; }));
   check('derived talents.fixed.json mirrors carry no leaving id', DERIVED_FILES.every(rel => !leaving.some(r => (st.texts[rel === DERIVED_FILES[0] ? 'derivedGenerated' : 'derivedFixes'] ?? '').includes(`"${r.productionId}"`))));
 
   const packNames = new Map(st.systemJson.packs.map(p => [p.name, p]));
@@ -664,7 +665,7 @@ const printResults = results => { for (const v of results) console.log(`${v.ok ?
 
 export function applyProduction(root = ROOT) {
   const c3 = detectPhase3cState(root);
-  invariant(c3.state !== 'POST_3D_STATE' && c3.state !== 'POST_3E4_STATE' && c3.state !== 'POST_3E5_STATE' && c3.state !== 'POST_3F_STATE', 'REFUSED: already applied — the packs are the Phase 3D certified post-state (use --verify --exact)');
+  invariant(c3.state !== 'POST_3D_STATE' && c3.state !== 'POST_3E4_STATE' && c3.state !== 'POST_3E5_STATE' && c3.state !== 'POST_3F_STATE' && c3.state !== 'POST_3G_STATE', 'REFUSED: already applied — the packs are the Phase 3D certified post-state (use --verify --exact)');
   invariant(c3.state === 'POST_STATE', `REFUSED: the Phase 3C certified post-state is required (found ${c3.state}); partial or unexpected pack fingerprints are not migrated`);
   const input = loadInputs(root);
   invariant(detect3DState(input.manifest, input.talents) === 'PRE_3D', 'REFUSED: Phase 3D is already applied (or partly applied)');

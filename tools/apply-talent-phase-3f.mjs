@@ -115,6 +115,9 @@ function renderDoc(r) {
 export function detect3FState() {
   if (!fs.existsSync(path.join(ROOT, REPORT_PATH))) return 'PRE_3F';
   const r = readJson(REPORT_PATH), t = gitBlobSha(read(P.talents)), n = gitBlobSha(read(P.trees));
+  // Phase 3G (structured prerequisites) is a later certified state that rewrites other talent records; the tree pack and registries stay 3F's.
+  const g = path.join(ROOT, 'data/audits/talent-phase-3g-dry-run-report.json');
+  if (fs.existsSync(g) && r.postState.trees === n && JSON.parse(fs.readFileSync(g, 'utf8')).postState.talents === t) return 'POST_LATER';
   return r.postState.talents === t && r.postState.trees === n ? 'POST_3F' : r.preState.talents === t && r.preState.trees === n ? 'PRE_3F' : 'UNKNOWN';
 }
 
@@ -123,17 +126,19 @@ export function verifyApplied({ exact = false } = {}) {
   const report = readJson(REPORT_PATH), manifest = readJson(MANIFEST_PATH);
   const talents = parse(read(P.talents)), trees = parse(read(P.trees)), tb = new Map(talents.map(t => [t._id, t])), nb = new Map(trees.map(t => [t._id, t]));
   const tIds = new Set(manifest.talents.map(t => t.id)), nIds = new Set(manifest.trees.map(t => t.id));
-  check('packs are the certified Phase 3F post-state', detect3FState() === 'POST_3F');
+  const later = detect3FState() === 'POST_LATER'; // 3G rewrote prerequisite data on other talent records: whole-pack talent fingerprints/blob are superseded
+  if (!later) check('packs are the certified Phase 3F post-state', detect3FState() === 'POST_3F');
+  else check('tree pack is the certified Phase 3F post-state (talent pack is a later certified state)', gitBlobSha(read(P.trees)) === report.postState.trees);
   check('talent and tree counts unchanged (1,187 / 177)', talents.length === 1187 && trees.length === 177);
   check('all 71 talents carry their tree `_id` in system.treeId, and that tree contains them', manifest.talents.every(m => tb.get(m.id)?.system.treeId === m.after && nb.get(m.after)?.system.talentIds.includes(m.id)));
   check('all 12 trees carry the canonical display name (and mirrored label)', manifest.trees.every(m => nb.get(m.id)?.name === m.nameAfter && (nb.get(m.id).system.talent_tree ?? m.nameAfter) === m.nameAfter));
-  check('the other talents are unchanged', sortedFp(talents.filter(t => !tIds.has(t._id))) === report.talentOthersFingerprint);
+  if (!later) check('the other talents are unchanged', sortedFp(talents.filter(t => !tIds.has(t._id))) === report.talentOthersFingerprint);
   check('the other trees are unchanged', sortedFp(trees.filter(t => !nIds.has(t._id))) === report.treeOthersFingerprint);
   check('runtime registries equal a fresh generation from the packs', REGISTRY_PATHS.every(rel => gitBlobSha(read(rel)) === report.postState.registryGenerated));
   for (const [rel, sha] of Object.entries(report.untouchedFiles)) check(`untouched: ${rel}`, fs.existsSync(path.join(ROOT, rel)) && gitBlobSha(read(rel)) === sha);
   const rec = reconcile(loadInput());
   check('reconciler: STALE_TREE_ID_SLUG 0, TREE_DISPLAY_NAME_DRIFT 0, zero blocking findings', rec.findingCounts.STALE_TREE_ID_SLUG === 0 && rec.findingCounts.TREE_DISPLAY_NAME_DRIFT === 0 && rec.blockingFindings.length === 0, JSON.stringify(rec.findingCounts));
-  if (exact) { check('packs/talents.db equals the certified blob', gitBlobSha(read(P.talents)) === report.postState.talents); check('packs/talent_trees.db equals the certified blob', gitBlobSha(read(P.trees)) === report.postState.trees); }
+  if (exact) { if (!later) check('packs/talents.db equals the certified blob', gitBlobSha(read(P.talents)) === report.postState.talents); check('packs/talent_trees.db equals the certified blob', gitBlobSha(read(P.trees)) === report.postState.trees); }
   return res;
 }
 

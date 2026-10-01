@@ -56,6 +56,7 @@ import { ActorAbilityBridge } from "/systems/foundryvtt-swse/scripts/adapters/Ac
 // - reasons: getter returning .missing
 // ============================================
 
+import { canonicalTalentUuid, decideCandidate, swseTalentIdOf, targetIdentityOfLeaf } from "/systems/foundryvtt-swse/scripts/data/talent-source-identity.js";
 import { PRESTIGE_PREREQUISITES } from "/systems/foundryvtt-swse/scripts/data/prestige-prerequisites.js";
 import { TalentTreeDB } from "/systems/foundryvtt-swse/scripts/data/talent-tree-db.js";
 import { normalizeTalentTreeId } from "/systems/foundryvtt-swse/scripts/data/talent-tree-normalizer.js";
@@ -459,6 +460,63 @@ export class PrerequisiteChecker {
     }
 
     /**
+     * Talent prerequisite resolution (Phase 3G). Order:
+     *   1. canonical source identity (UUID in either spelling, via talent-source-identity.js) against embedded items AND pending selections
+     *   2. legacy `id` leaves: `flags.swse.id` (actor items and pending entries that carry it) — compatibility evidence only
+     *   3. slug, 4. name — both ONLY for candidates that carry no canonical identity; a candidate with a DIFFERENT canonical identity
+     *      is a definite non-match and is never downgraded to a name match. When both are known, a tree mismatch also rejects a fallback.
+     * @returns {{resolved:Object|null, via:string|null, fallback:boolean, authoritative:boolean, basis?:string, source?:string}}
+     * @private
+     */
+    static _resolveTalentPrerequisite(prereq, actor, pending) {
+        const target = targetIdentityOfLeaf(prereq);
+        const actorTalents = Array.from(actor?.items ?? []).filter(i => i?.type === 'talent').map(item => ({ item, source: 'actor' }));
+        const pendingTalents = (Array.isArray(pending?.selectedTalents) ? pending.selectedTalents : []).filter(Boolean).map(item => ({ item, source: 'pending' }));
+        const candidates = [...actorTalents, ...pendingTalents];
+        const hit = (c, via, fallback, authoritative, extra = {}) => ({ resolved: c.item, via, fallback, authoritative, source: c.source, ...extra });
+
+        // 1. canonical identity (UUID either spelling; a different canonical identity is a definite non-match)
+        if (target?.uuid) {
+            for (const c of candidates) {
+                const d = decideCandidate(target, c.item, { db: TalentTreeDB });
+                if (d.match === true) return hit(c, d.via, false, d.authoritative, { basis: d.basis });
+            }
+        }
+
+        // 2. legacy flag-id leaves (swse.talent.*) and other non-pack ids
+        if (prereq?.id && !(target?.basis === 'compendiumId')) {
+            const wanted = String(prereq.id);
+            for (const c of candidates) {
+                const it = c.item;
+                if (it.id === wanted || it._id === wanted || swseTalentIdOf(it) === wanted) return hit(c, 'id', false, false, { basis: 'flags.swse.id' });
+            }
+        }
+
+        // 3. slug (legacy) — only for candidates with no canonical identity of their own
+        if (prereq?.slug) {
+            const c = candidates.find(x => x.item.system?.slug === prereq.slug && !(target?.uuid && decideCandidate(target, x.item).match === false));
+            if (c) {
+                this._logResolutionWarning(prereq, 'talent', 'Slug-based resolution (no canonical identity matched)');
+                return hit(c, 'slug', true, false);
+            }
+        }
+
+        // 4. name (legacy compatibility; the leaf must carry a name; decideCandidate applies the same-name/tree guards)
+        if (prereq?.name) {
+            for (const c of candidates) {
+                const d = decideCandidate(target ?? { uuid: null }, c.item, { name: prereq.name, db: TalentTreeDB });
+                if (d.match === true && d.via === 'name') {
+                    this._logResolutionWarning(prereq, 'talent', target?.uuid ? 'Name-based resolution (the canonical UUID matched no linked item; legacy unlinked candidate)' : 'Name-based resolution (no canonical identity on the prerequisite)');
+                    return hit(c, 'name', true, false, { deadOrUnlinkedIdentity: !!target?.uuid });
+                }
+            }
+        }
+
+        if (target?.uuid) this._logResolutionWarning(prereq, 'talent', `canonical talent identity ${target.uuid} is not owned or pending`);
+        return { resolved: null, via: null, fallback: false, authoritative: !!target?.uuid };
+    }
+
+    /**
      * UUID-FIRST RESOLUTION for structured prerequisites.
      *
      * Resolution order:
@@ -479,6 +537,8 @@ export class PrerequisiteChecker {
      * @private
      */
     static _resolvePrerequisiteByUuid(prereq, itemType, actor, pending) {
+        // Talents resolve through the centralized canonical source-identity helper (Phase 3G).
+        if (itemType === 'talent') return this._resolveTalentPrerequisite(prereq, actor, pending);
         if (prereq.id) {
             const actorItemByStableId = actor.items?.find(i =>
                 i.type === itemType && (
@@ -1504,6 +1564,11 @@ export class PrerequisiteChecker {
                 met: true,
                 message: ''
             };
+        }
+
+        // A canonical UUID target that matched nothing is NOT retried by loose name: a same-name talent in another tree must not satisfy it.
+        if (targetIdentityOfLeaf(prereq)?.uuid) {
+            return { met: false, message: `Requires talent: ${prereq.name || canonicalTalentUuid(prereq.uuid || prereq.id)}` };
         }
 
         const rawTalentName = prereq.name || prereq.talentName || prereq.slug || prereq.id || prereq.uuid || '';

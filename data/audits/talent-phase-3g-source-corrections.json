@@ -1,0 +1,124 @@
+{
+  "schemaVersion": 1,
+  "phase": "3G-3",
+  "status": "SOURCE_CORRECTION_LAYER",
+  "rule": "Finite, owner-verified (rendered sourcebook) corrections layered ABOVE the immutable Phase 2 canonical artifact; the reconciler treats base and corrected text as the allowed states. Only system.prerequisites changes.",
+  "entries": [
+    {
+      "id": "3G-SC-01",
+      "productionId": "09609e71ba6cd4aa",
+      "name": "Swift Power",
+      "canonicalIdentity": "Saga Edition Core Rulebook|Dark Side|Swift Power",
+      "publication": {
+        "sourcebook": "Saga Edition Core Rulebook",
+        "page": 101
+      },
+      "group": "PRINTED_PREREQUISITE_MISSING_FROM_CANONICAL_AUTHORITY",
+      "action": "REPLACE_FIELDS",
+      "confidence": "CERTAIN",
+      "fields": [
+        "prerequisites"
+      ],
+      "before": {
+        "prerequisites": ""
+      },
+      "after": {
+        "prerequisites": "Power of the Dark Side"
+      },
+      "evidence": "Core p.101: printed prerequisite \"Power of the Dark Side\"; the certified Phase 2 authority omitted the line. The structured relationship was already correct.",
+      "verification": {
+        "status": "PDF_VERIFIED",
+        "verifiedBy": "project owner, rendered-sourcebook review",
+        "basis": "Phase 3G source ruling",
+        "printedText": "Power of the Dark Side"
+      }
+    },
+    {
+      "id": "3G-SC-02",
+      "productionId": "224906e573330bf2",
+      "name": "Starship Raider",
+      "canonicalIdentity": "Saga Edition Core Rulebook|Spacer|Starship Raider",
+      "publication": {
+        "sourcebook": "Saga Edition Core Rulebook",
+        "page": 47
+      },
+      "group": "PRINTED_PREREQUISITE_MISSING_FROM_CANONICAL_AUTHORITY",
+      "action": "REPLACE_FIELDS",
+      "confidence": "CERTAIN",
+      "fields": [
+        "prerequisites"
+      ],
+      "before": {
+        "prerequisites": ""
+      },
+      "after": {
+        "prerequisites": "Spacehound"
+      },
+      "evidence": "Core p.47: printed prerequisite \"Spacehound\"; the certified Phase 2 authority omitted the line. The structured relationship was already correct.",
+      "verification": {
+        "status": "PDF_VERIFIED",
+        "verifiedBy": "project owner, rendered-sourcebook review",
+        "basis": "Phase 3G source ruling",
+        "printedText": "Spacehound"
+      }
+    },
+    {
+      "id": "3G-SC-03",
+      "productionId": "6b09fe0c6fe98367",
+      "name": "Sow Confusion",
+      "canonicalIdentity": "Saga Edition Core Rulebook|Misfortune|Sow Confusion",
+      "publication": {
+        "sourcebook": "Scum and Villainy",
+        "page": 15
+      },
+      "group": "PRINTED_PREREQUISITE_MISSING_FROM_CANONICAL_AUTHORITY",
+      "action": "REPLACE_FIELDS",
+      "confidence": "CERTAIN",
+      "fields": [
+        "prerequisites"
+      ],
+      "before": {
+        "prerequisites": ""
+      },
+      "after": {
+        "prerequisites": "Hesitate"
+      },
+      "evidence": "Scum and Villainy p.15: printed prerequisite \"Hesitate\"; the certified Phase 2 authority omitted the line. The structured relationship was already correct.",
+      "verification": {
+        "status": "PDF_VERIFIED",
+        "verifiedBy": "project owner, rendered-sourcebook review",
+        "basis": "Phase 3G source ruling",
+        "printedText": "Hesitate"
+      }
+    },
+    {
+      "id": "3G-SC-04",
+      "productionId": "f098749cb8767a5f",
+      "name": "Force Haze",
+      "canonicalIdentity": "Saga Edition Core Rulebook|Jedi Sentinel|Force Haze",
+      "publication": {
+        "sourcebook": "Saga Edition Core Rulebook",
+        "page": 41
+      },
+      "group": "PRINTED_PREREQUISITE_MISSING_FROM_CANONICAL_AUTHORITY",
+      "action": "REPLACE_FIELDS",
+      "confidence": "CERTAIN",
+      "fields": [
+        "prerequisites"
+      ],
+      "before": {
+        "prerequisites": ""
+      },
+      "after": {
+        "prerequisites": "Clear Mind"
+      },
+      "evidence": "Core pp.40-41: printed prerequisite \"Clear Mind\"; the certified Phase 2 authority omitted the line. The structured relationship was already correct.",
+      "verification": {
+        "status": "PDF_VERIFIED",
+        "verifiedBy": "project owner, rendered-sourcebook review",
+        "basis": "Phase 3G source ruling",
+        "printedText": "Clear Mind"
+      }
+    }
+  ]
+}

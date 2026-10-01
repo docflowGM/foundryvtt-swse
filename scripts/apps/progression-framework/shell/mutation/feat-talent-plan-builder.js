@@ -11,6 +11,7 @@
 
 import { ProgressionContentAuthority } from '/systems/foundryvtt-swse/scripts/engine/progression/content/progression-content-authority.js';
 import { getFollowerTalentConfig } from '/systems/foundryvtt-swse/scripts/engine/crew/follower-talent-config.js';
+import { stampSourceLink, canonicalTalentUuid } from '/systems/foundryvtt-swse/scripts/data/talent-source-identity.js';
 
 function normalizeNameKey(value) {
   return String(value ?? '')
@@ -320,6 +321,13 @@ export class FeatTalentPlanBuilder {
             inplace: false,
             recursive: true,
           });
+
+          // Phase 3G: record where the embedded talent came from. The embedded copy keeps a NEW Foundry _id; its origin is the canonical
+          // compendium UUID (v13 form) in flags.core.sourceId, written by the central helper so prerequisites can identify it by identity.
+          if (domain.key === 'talents') {
+            const origin = resolvedData?._id ?? rawEntry?.sourceUuid ?? rawEntry?.uuid ?? rawEntry?.flags?.core?.sourceId ?? rawEntry?.id;
+            if (canonicalTalentUuid(origin)) stampSourceLink(baseItem, origin);
+          }
 
           items.push(baseItem);
           existingMarkers.exact.add(sessionMarker);

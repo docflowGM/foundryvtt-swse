@@ -35,7 +35,8 @@ export function loadInput(root = ROOT) {
     addendum: rd('data/audits/talent-phase-3e-canonical-additions.json'),
     registry: rd('data/audits/talent-canonical-tree-registry.json').entries,
     closeout: rd('data/audits/talent-phase-2-closeout.json'),
-    textCorrections: fs.existsSync(path.join(root, 'data/audits/talent-phase-3e5-text-defect-manifest.json')) ? rd('data/audits/talent-phase-3e5-text-defect-manifest.json') : { entries: [] },
+    // approved correction layers (3E-5 OCR defects; 3G printed-prerequisite additions) — each is a finite, owner-verified layer above the immutable Phase 2 artifact
+    textCorrections: { entries: ['data/audits/talent-phase-3e5-text-defect-manifest.json', 'data/audits/talent-phase-3g-source-corrections.json'].filter(f => fs.existsSync(path.join(root, f))).flatMap(f => rd(f).entries) },
     production: nd('packs/talents.db'), trees: nd('packs/talent_trees.db'),
     homebrew: fs.existsSync(path.join(root, 'packs/talents-homebrew.db')) ? nd('packs/talents-homebrew.db') : []
   };

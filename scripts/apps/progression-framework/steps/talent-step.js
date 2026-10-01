@@ -15,6 +15,7 @@
  * Key principle: The graph shows structure. The details panel explains meaning.
  */
 
+import { pendingSourceFields } from '/systems/foundryvtt-swse/scripts/data/talent-source-identity.js';
 import { ProgressionStepPlugin } from './step-plugin-base.js';
 import { TalentTreeDB } from '/systems/foundryvtt-swse/scripts/data/talent-tree-db.js';
 import { TalentRegistry } from '/systems/foundryvtt-swse/scripts/registries/talent-registry.js';
@@ -1775,6 +1776,8 @@ export class TalentStep extends ProgressionStepPlugin {
     const repeatable = isRepeatableTalentEntry(talent);
     return {
       id: talent.id || talent._id,
+      // Phase 3G: carry the canonical source identity so the selection satisfies UUID-targeted prerequisites before it is embedded.
+      ...pendingSourceFields(talent.sourceId ?? talent._id ?? talent.id),
       name: talent.name || '',
       type: talent.type || 'talent',
       description: talent.description || talent.system?.description || '',

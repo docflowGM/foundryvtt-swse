@@ -1,0 +1,1768 @@
+{
+  "schemaVersion": 1,
+  "phase": "3G-3",
+  "dryRun": true,
+  "status": "DRY_RUN_CERTIFIED",
+  "counts": {
+    "talentLeavesMigrated": 311,
+    "falseConditionsRemoved": 4,
+    "leavesRetargeted": 5,
+    "prerequisiteTextLinesRestored": 4,
+    "recordsChanged": 300,
+    "fieldLevelLeafMutations": 945,
+    "distinctTargets": 183,
+    "byDerivationBasis": {
+      "UNIQUE_FLAG_ID": 300,
+      "EXISTING_PRODUCTION_ID (Phase 3D repair)": 5,
+      "AMBIGUOUS_FLAG_ID_RESOLVED_BY_OWNER_TREE + OWNER_RULING": 1,
+      "SOURCE_RULING_RETARGET": 5
+    },
+    "targetsInSameNameCrossTreeGroups": 13,
+    "sameTreeAsOwner": 299,
+    "textConfirmed": 311,
+    "ownersWithoutPrintedText": 0,
+    "textContradicting": 0,
+    "unlinkedLegacyCopiesStillMeetingByNameFallback": 311
+  },
+  "runtimeEffectiveness": {
+    "rows": 311,
+    "embeddedSourceLinked": 311,
+    "embeddedLegacyLinkForm": 311,
+    "pending": 311,
+    "wrongSameNameChecked": 13,
+    "wrongSameNameRejected": 13,
+    "unlinkedLegacyFallbackMet": 311,
+    "unlinkedWrongTreeRejected": 13,
+    "unlinkedWrongTreeChecked": 13,
+    "viaUuidEmbedded": 311,
+    "viaUuidPending": 311,
+    "failures": []
+  },
+  "sourceRulings": {
+    "note": "Owner source rulings (rendered-sourcebook review) resolved the 13 findings of the first dry-run.",
+    "falseConditionsRemoved": [
+      {
+        "owner": "Scum and Villainy|Assassin|Ruthless",
+        "removedLeaf": "swse.talent.dirty_fighting",
+        "basis": "Scum and Villainy p.29: Assassin | Ruthless has no prerequisite; Dirty Fighting belongs to FUCG Mercenary | Ruthless"
+      },
+      {
+        "owner": "Saga Edition Core Rulebook|Expert Pilot|Keep It Together",
+        "removedLeaf": "swse.talent.jury_rigger",
+        "basis": "Core p.207: Expert Pilot | Keep It Together has no prerequisite"
+      },
+      {
+        "owner": "Legacy Era Campaign Guide|Knight's Armor|Armor Mastery",
+        "removedLeaf": "swse.talent.armored_defense",
+        "basis": "Legacy p.45: Knight's Armor | Armor Mastery has no prerequisite; Core Armor Specialist | Armor Mastery requires Armored Defense"
+      },
+      {
+        "owner": "Scum and Villainy|Outlaw|Seize the Moment",
+        "removedLeaf": "swse.talent.distress_to_discord",
+        "basis": "Scum and Villainy p.35: Outlaw | Seize the Moment has no prerequisite; Distress to Discord belongs to Legacy Provocateur | Seize the Moment"
+      }
+    ],
+    "leavesRetargeted": [
+      {
+        "owner": "Saga Edition Core Rulebook|Fortune|Ricochet Shot",
+        "from": "swse.talent.fools_luck",
+        "to": "Saga Edition Core Rulebook|Fortune|Lucky Shot"
+      },
+      {
+        "owner": "Saga Edition Core Rulebook|Fortune|Dumb Luck",
+        "from": "swse.talent.fools_luck",
+        "to": "Saga Edition Core Rulebook|Fortune|Lucky Shot"
+      },
+      {
+        "owner": "Saga Edition Core Rulebook|Fortune|Unlikely Shot",
+        "from": "swse.talent.fools_luck",
+        "to": "Saga Edition Core Rulebook|Fortune|Lucky Shot"
+      },
+      {
+        "owner": "Legacy Era Campaign Guide|Fugitive Commander|Stay in the Fight",
+        "from": "swse.talent.recruit_enemy",
+        "to": "Legacy Era Campaign Guide|Fugitive Commander|Stalwart Subordinates"
+      },
+      {
+        "owner": "Saga Edition Core Rulebook|Fortune|Uncanny Luck",
+        "from": "swse.talent.fools_luck",
+        "to": "Saga Edition Core Rulebook|Fortune|Lucky Shot"
+      }
+    ],
+    "prerequisiteTextLinesRestored": [
+      {
+        "owner": "Saga Edition Core Rulebook|Dark Side|Swift Power",
+        "before": "",
+        "after": "Power of the Dark Side",
+        "correction": "3G-SC-01"
+      },
+      {
+        "owner": "Saga Edition Core Rulebook|Spacer|Starship Raider",
+        "before": "",
+        "after": "Spacehound",
+        "correction": "3G-SC-02"
+      },
+      {
+        "owner": "Saga Edition Core Rulebook|Misfortune|Sow Confusion",
+        "before": "",
+        "after": "Hesitate",
+        "correction": "3G-SC-03"
+      },
+      {
+        "owner": "Saga Edition Core Rulebook|Jedi Sentinel|Force Haze",
+        "before": "",
+        "after": "Clear Mind",
+        "correction": "3G-SC-04"
+      }
+    ]
+  },
+  "preState": {
+    "talents": "c79c82b905fdd48e0b202bb6e25f7aab532e55ed"
+  },
+  "postState": {
+    "talents": "94709cf4b4104ce1adeba73c253752cbf2a30c41"
+  },
+  "untouchedFiles": {
+    "packs/talent_trees.db": "ad577cb9658a532d535ae97f9e1cf1c75ee11de2",
+    "packs/classes.db": "2960a03039604ea06612445bad0673902a8012cc",
+    "packs/heroic.db": "cbb59081ca02c06298b1647821f5b2487ea47485",
+    "packs/nonheroic.db": "c05ea8896efb00e5115a53247a05bfe54c628e60",
+    "packs/npc.db": "78d0cdd8b1dd271238e420b8d15f33e2547e20ba",
+    "packs/talents-homebrew.db": "bd4e3d4be9861f9ed0329e0f12545bf3f5dc3c72",
+    "packs/talent-trees-homebrew.db": "81861fe0b948db00e4e7e344316acdc730d86a2b",
+    "data/generated/talent-trees.registry.json": "62d40efe9c9cb3e2dde9cffc08feb0439617976f",
+    "data/fixes/talent-trees.registry.json": "62d40efe9c9cb3e2dde9cffc08feb0439617976f",
+    "data/generated/talents.fixed.json": "3b63af6b063c3cac49fc8d9dbf6c706bf4685013",
+    "data/fixes/talents.fixed.json": "c3dbe4f282062d73906e80b2b2d840e700af6ee2",
+    "data/canonical/talents.json": "d0add2069f174cedc9f4a01500477f4dc62b6fb4",
+    "data/class-archetypes.json": "76ca97d4b1a8aa6b631ba1bfe790e5e189f6d9e6",
+    "system.json": "7c5640b8d4c10da960356703b31d33dd16c19fbb"
+  },
+  "othersFingerprint": "17526e510c647017",
+  "records": [
+    {
+      "id": "b48e17b423ae8300",
+      "name": "Advanced Intel",
+      "leaves": 1
+    },
+    {
+      "id": "b2b2176b7d9360e0",
+      "name": "Advantageous Positioning",
+      "leaves": 1
+    },
+    {
+      "id": "f7bf586a35299965",
+      "name": "Aggressive Negotiator",
+      "leaves": 1
+    },
+    {
+      "id": "a3ac90e84127805d",
+      "name": "Ambush",
+      "leaves": 1
+    },
+    {
+      "id": "4fc3fe4c1e7f9ba0",
+      "name": "Armor Mastery",
+      "leaves": 1
+    },
+    {
+      "id": "d9e707f23fffc2af",
+      "name": "Armor Mastery",
+      "leaves": 3
+    },
+    {
+      "id": "51588e91f335bb67",
+      "name": "Armored Augmentation II",
+      "leaves": 1
+    },
+    {
+      "id": "514b1225139b22b8",
+      "name": "Armored Guard",
+      "leaves": 1
+    },
+    {
+      "id": "c3b22fdc6ca5af8e",
+      "name": "Armored Mandalorian",
+      "leaves": 1
+    },
+    {
+      "id": "bd797d3f83d0f61f",
+      "name": "Attuned",
+      "leaves": 1
+    },
+    {
+      "id": "f453d09361b02e5a",
+      "name": "Avert Disaster",
+      "leaves": 1
+    },
+    {
+      "id": "b6e600188cf5597f",
+      "name": "Bayonet Master",
+      "leaves": 1
+    },
+    {
+      "id": "444c032c563c18a1",
+      "name": "Beloved",
+      "leaves": 1
+    },
+    {
+      "id": "dc61d67946b1c1d6",
+      "name": "Bigger Bang",
+      "leaves": 1
+    },
+    {
+      "id": "1b1f818e56956bc5",
+      "name": "Blaster Turret II",
+      "leaves": 1
+    },
+    {
+      "id": "aa2a3697eeab3e35",
+      "name": "Blaster Turret III",
+      "leaves": 1
+    },
+    {
+      "id": "58789f9d0a49f215",
+      "name": "Bodyguard I",
+      "leaves": 1
+    },
+    {
+      "id": "7679eae1004af0cc",
+      "name": "Bodyguard II",
+      "leaves": 1
+    },
+    {
+      "id": "9c2a4cbe82e922ec",
+      "name": "Bodyguard III",
+      "leaves": 1
+    },
+    {
+      "id": "4348c2bca983e4a9",
+      "name": "Bolstered Numbers",
+      "leaves": 1
+    },
+    {
+      "id": "9c88f3f82e6e2082",
+      "name": "Bonded Mount",
+      "leaves": 1
+    },
+    {
+      "id": "c11e9edfda40c53d",
+      "name": "Bothan Resources",
+      "leaves": 1
+    },
+    {
+      "id": "be617461ca46a5ad",
+      "name": "Burning Assault",
+      "leaves": 1
+    },
+    {
+      "id": "5c3036b82c047490",
+      "name": "Call Out",
+      "leaves": 1
+    },
+    {
+      "id": "c59de6f440c92832",
+      "name": "Cause Mutation",
+      "leaves": 1
+    },
+    {
+      "id": "37ee909a7de54768",
+      "name": "Channel Anger",
+      "leaves": 1
+    },
+    {
+      "id": "32a76fe000898f90",
+      "name": "Cheap Shot",
+      "leaves": 1
+    },
+    {
+      "id": "9af262765ace3af1",
+      "name": "Close Cover",
+      "leaves": 1
+    },
+    {
+      "id": "fd35b51c26fa0d5c",
+      "name": "Confounding Attack",
+      "leaves": 1
+    },
+    {
+      "id": "321a3e9b59e7c7d7",
+      "name": "Consular's Wisdom",
+      "leaves": 1
+    },
+    {
+      "id": "4559e2e975f552fa",
+      "name": "Coordinated Tactics",
+      "leaves": 1
+    },
+    {
+      "id": "50073b86c51c52cd",
+      "name": "Corporate Clout",
+      "leaves": 1
+    },
+    {
+      "id": "22ce14b57f9b8c1a",
+      "name": "Cortosis Retaliation",
+      "leaves": 1
+    },
+    {
+      "id": "049820827d7ef32b",
+      "name": "Cover Fire",
+      "leaves": 1
+    },
+    {
+      "id": "0e36a04342959256",
+      "name": "Cower Enemies",
+      "leaves": 1
+    },
+    {
+      "id": "2b424f7cc4115acf",
+      "name": "Cramped Quarters Fighting",
+      "leaves": 1
+    },
+    {
+      "id": "4a78bd6bfe03eb8c",
+      "name": "Crippling Hit",
+      "leaves": 1
+    },
+    {
+      "id": "8b3cb561c294fa11",
+      "name": "Crippling Strike",
+      "leaves": 1
+    },
+    {
+      "id": "e1cb0fd81f7f6d44",
+      "name": "Crushing Assault",
+      "leaves": 1
+    },
+    {
+      "id": "94adb5de4d3a7b20",
+      "name": "Cunning Strategist",
+      "leaves": 1
+    },
+    {
+      "id": "76eb427551c6495c",
+      "name": "Curved Throw",
+      "leaves": 1
+    },
+    {
+      "id": "b8472ec0498d2c20",
+      "name": "Custom Model",
+      "leaves": 1
+    },
+    {
+      "id": "533867af3de50833",
+      "name": "Damaging Deception",
+      "leaves": 1
+    },
+    {
+      "id": "606e14c428f1d159",
+      "name": "Dark Presence",
+      "leaves": 1
+    },
+    {
+      "id": "192279eaa0b61d36",
+      "name": "Dark Preservation",
+      "leaves": 1
+    },
+    {
+      "id": "2b4ffff03274a825",
+      "name": "Dark Retaliation",
+      "leaves": 1
+    },
+    {
+      "id": "97a771d1f4627521",
+      "name": "Dark Side Bane",
+      "leaves": 1
+    },
+    {
+      "id": "d4fe49ef1701891e",
+      "name": "Dark Side Master",
+      "leaves": 1
+    },
+    {
+      "id": "2e96f06be6b9def8",
+      "name": "Dark Side Scourge",
+      "leaves": 1
+    },
+    {
+      "id": "67186d921e94d636",
+      "name": "Defensive Measures",
+      "leaves": 1
+    },
+    {
+      "id": "871638a983029bc4",
+      "name": "Demand Surrender",
+      "leaves": 1
+    },
+    {
+      "id": "4c7eb9c679ee43a8",
+      "name": "Demoralizing Defense",
+      "leaves": 1
+    },
+    {
+      "id": "72ccf7bbe3048453",
+      "name": "Deny Move",
+      "leaves": 1
+    },
+    {
+      "id": "d11f6beaa5f93e66",
+      "name": "Desperate Measures",
+      "leaves": 1
+    },
+    {
+      "id": "5d608b1083cfc31d",
+      "name": "Destructive Ambusher",
+      "leaves": 1
+    },
+    {
+      "id": "d7e9b15e21ea1c4e",
+      "name": "Devastating Melee Smash",
+      "leaves": 1
+    },
+    {
+      "id": "c64393b9304034ab",
+      "name": "Direct Fire",
+      "leaves": 1
+    },
+    {
+      "id": "456a0aa44da5105c",
+      "name": "Disarming Attack",
+      "leaves": 1
+    },
+    {
+      "id": "64fa257cd511314d",
+      "name": "Distant Command",
+      "leaves": 1
+    },
+    {
+      "id": "b85b92b788f7fa54",
+      "name": "Distracting Apparition",
+      "leaves": 1
+    },
+    {
+      "id": "cdf3e44536031f53",
+      "name": "Distracting Attack",
+      "leaves": 1
+    },
+    {
+      "id": "6c62f35fddd45d66",
+      "name": "Distracting Shout",
+      "leaves": 1
+    },
+    {
+      "id": "f52cadb1ae252d0c",
+      "name": "Dogfight Gunner",
+      "leaves": 1
+    },
+    {
+      "id": "3aeee38a6c7b7f12",
+      "name": "Double Up",
+      "leaves": 1
+    },
+    {
+      "id": "782768cab6bd13de",
+      "name": "Dread",
+      "leaves": 1
+    },
+    {
+      "id": "7a024dac260bf9ec",
+      "name": "Dumb Luck",
+      "leaves": 1
+    },
+    {
+      "id": "c727d7a40330d10d",
+      "name": "Engineer",
+      "leaves": 1
+    },
+    {
+      "id": "b15fa2f45baf55ea",
+      "name": "Entreat Beast",
+      "leaves": 1
+    },
+    {
+      "id": "7f792f0e531e9abb",
+      "name": "Expedient Mending",
+      "leaves": 1
+    },
+    {
+      "id": "bab0b5d081e304b6",
+      "name": "Experienced Brawler",
+      "leaves": 1
+    },
+    {
+      "id": "16e18057bc92365c",
+      "name": "Expert Tracker",
+      "leaves": 1
+    },
+    {
+      "id": "8ba50ebccb1f938e",
+      "name": "Exploit Weakness",
+      "leaves": 1
+    },
+    {
+      "id": "ddf81a7bb146ed87",
+      "name": "Extreme Explosion",
+      "leaves": 1
+    },
+    {
+      "id": "eeed98748becb161",
+      "name": "Fast Talker",
+      "leaves": 1
+    },
+    {
+      "id": "a49074cc564848bb",
+      "name": "Fear Me!",
+      "leaves": 1
+    },
+    {
+      "id": "cfd5d3f677b2bf1a",
+      "name": "Feared Warrior",
+      "leaves": 1
+    },
+    {
+      "id": "226e4f61e29df36f",
+      "name": "Fearless Leader",
+      "leaves": 1
+    },
+    {
+      "id": "11e8f858af268e8c",
+      "name": "Fearsome",
+      "leaves": 1
+    },
+    {
+      "id": "5bdbf0148a6eb7b0",
+      "name": "Field Tactics",
+      "leaves": 1
+    },
+    {
+      "id": "3991e671da41995a",
+      "name": "Find an Opening",
+      "leaves": 1
+    },
+    {
+      "id": "e8fe6087eef386c7",
+      "name": "Findsman's Foresight",
+      "leaves": 1
+    },
+    {
+      "id": "fa113b33ac66c3b9",
+      "name": "Fire at Will",
+      "leaves": 1
+    },
+    {
+      "id": "9ee88ce289527ed3",
+      "name": "Flee",
+      "leaves": 1
+    },
+    {
+      "id": "d8d7218123a28f39",
+      "name": "Fleet Tactics",
+      "leaves": 1
+    },
+    {
+      "id": "e6d56fb82c669b9d",
+      "name": "Fluster",
+      "leaves": 1
+    },
+    {
+      "id": "12eea831f06c45f7",
+      "name": "Focused Force Talisman",
+      "leaves": 1
+    },
+    {
+      "id": "6c52d837af948ca0",
+      "name": "Focused Targeting",
+      "leaves": 1
+    },
+    {
+      "id": "f098749cb8767a5f",
+      "name": "Force Haze",
+      "leaves": 2
+    },
+    {
+      "id": "d1fd547124c1901c",
+      "name": "Force Persuasion",
+      "leaves": 1
+    },
+    {
+      "id": "a691cc0212b6176c",
+      "name": "Force Recovery",
+      "leaves": 1
+    },
+    {
+      "id": "ece2612b7449f39a",
+      "name": "Force Reflexes",
+      "leaves": 1
+    },
+    {
+      "id": "86565bbe8b8fd1a2",
+      "name": "Force Throw",
+      "leaves": 1
+    },
+    {
+      "id": "d10cdcba4faae7bb",
+      "name": "Foresight",
+      "leaves": 1
+    },
+    {
+      "id": "6714ab8e28708f50",
+      "name": "Fortified Body",
+      "leaves": 1
+    },
+    {
+      "id": "014d291a6e16cc12",
+      "name": "Friend or Foe",
+      "leaves": 1
+    },
+    {
+      "id": "5cb9f0f6011a1bab",
+      "name": "Friendly Fire",
+      "leaves": 1
+    },
+    {
+      "id": "50273d5ce8f84c31",
+      "name": "Frighten",
+      "leaves": 1
+    },
+    {
+      "id": "fdc4061afb97e87f",
+      "name": "Gauge Force Potential",
+      "leaves": 1
+    },
+    {
+      "id": "2871d6138603fbcc",
+      "name": "Get Some Distance",
+      "leaves": 1
+    },
+    {
+      "id": "c8bf9ab9d1f8588a",
+      "name": "Greater Dark Side Talisman",
+      "leaves": 1
+    },
+    {
+      "id": "d3b19d5e369f579d",
+      "name": "Greater Devastating Attack",
+      "leaves": 1
+    },
+    {
+      "id": "4ae840aaa4e0eba0",
+      "name": "Greater Focused Force Talisman",
+      "leaves": 1
+    },
+    {
+      "id": "0c636cdbb63cdba3",
+      "name": "Greater Force Talisman",
+      "leaves": 1
+    },
+    {
+      "id": "e9820b341bf94de1",
+      "name": "Greater Weapon Specialization",
+      "leaves": 1
+    },
+    {
+      "id": "bffc3826d39f3946",
+      "name": "Guard's Endurance",
+      "leaves": 1
+    },
+    {
+      "id": "7f4edcb8aa830972",
+      "name": "Hard Target",
+      "leaves": 1
+    },
+    {
+      "id": "d0dad96e182d63d4",
+      "name": "Hidden Movement",
+      "leaves": 1
+    },
+    {
+      "id": "234f9d660d14220c",
+      "name": "Hidden Weapons",
+      "leaves": 1
+    },
+    {
+      "id": "f25d28252bade7d1",
+      "name": "Hide in Plain Sight",
+      "leaves": 1
+    },
+    {
+      "id": "907906934ba3c563",
+      "name": "Hunter's Target",
+      "leaves": 1
+    },
+    {
+      "id": "0703de963a247170",
+      "name": "Ignite Fervor",
+      "leaves": 1
+    },
+    {
+      "id": "566e0020c5866222",
+      "name": "Ignore Damage Reduction",
+      "leaves": 1
+    },
+    {
+      "id": "cd4803e05638b4ab",
+      "name": "Illusion Bond",
+      "leaves": 1
+    },
+    {
+      "id": "86a8e796b6c4deae",
+      "name": "Impaling Assault",
+      "leaves": 1
+    },
+    {
+      "id": "b11a87e70f957ed2",
+      "name": "Impel Ally II",
+      "leaves": 1
+    },
+    {
+      "id": "3f01107ed7779426",
+      "name": "Impel Ally III",
+      "leaves": 1
+    },
+    {
+      "id": "d4da27798cbb18e6",
+      "name": "Impose Confusion",
+      "leaves": 1
+    },
+    {
+      "id": "394809ed8baff1b9",
+      "name": "Improved Armored Defense",
+      "leaves": 1
+    },
+    {
+      "id": "d6a04668587e2c03",
+      "name": "Improved Battle Meditation",
+      "leaves": 1
+    },
+    {
+      "id": "3d3806bd03110ee8",
+      "name": "Improved Consular's Vitality",
+      "leaves": 1
+    },
+    {
+      "id": "b03db168b3f23da0",
+      "name": "Improved Dark Healing",
+      "leaves": 1
+    },
+    {
+      "id": "9840f0e8b8f53bb5",
+      "name": "Improved Initiative",
+      "leaves": 1
+    },
+    {
+      "id": "dd69400f0069f846",
+      "name": "Improved Skirmisher",
+      "leaves": 1
+    },
+    {
+      "id": "1681031c6828d556",
+      "name": "Improved Soft Cover",
+      "leaves": 1
+    },
+    {
+      "id": "680d3741dcaea6fe",
+      "name": "Improved Stunning Strike",
+      "leaves": 1
+    },
+    {
+      "id": "8070dbbea2886bbd",
+      "name": "Improved Surveillance",
+      "leaves": 1
+    },
+    {
+      "id": "f96f1d48cf6604c2",
+      "name": "Improved Trajectory",
+      "leaves": 1
+    },
+    {
+      "id": "f3ac8054a0c60760",
+      "name": "Improved Weaken Resolve",
+      "leaves": 1
+    },
+    {
+      "id": "55988579a1906e5e",
+      "name": "Incognito",
+      "leaves": 1
+    },
+    {
+      "id": "471f4294820ce5ec",
+      "name": "Influential Friends",
+      "leaves": 1
+    },
+    {
+      "id": "71bc6b43ab504b90",
+      "name": "Inspire Fear II",
+      "leaves": 1
+    },
+    {
+      "id": "dbe08a93276b6c25",
+      "name": "Inspire Wrath",
+      "leaves": 1
+    },
+    {
+      "id": "40508f87f3a8f33f",
+      "name": "Inspire Zeal",
+      "leaves": 1
+    },
+    {
+      "id": "2d392f2b63b738ed",
+      "name": "Instinctive Navigation",
+      "leaves": 1
+    },
+    {
+      "id": "a810b68876f7e44e",
+      "name": "Intimate Knowledge",
+      "leaves": 1
+    },
+    {
+      "id": "de751f28fc269c85",
+      "name": "Intimidating Defense",
+      "leaves": 1
+    },
+    {
+      "id": "fb495a33cd53da43",
+      "name": "Invisible Attacker",
+      "leaves": 1
+    },
+    {
+      "id": "c2f332d1e74e3e1a",
+      "name": "Ion Turret",
+      "leaves": 1
+    },
+    {
+      "id": "4c23c64e3ab8dcc6",
+      "name": "Jet Pack Withdraw",
+      "leaves": 1
+    },
+    {
+      "id": "55f4a04087dacddc",
+      "name": "Juggernaut",
+      "leaves": 1
+    },
+    {
+      "id": "d001094556c97a92",
+      "name": "Juke",
+      "leaves": 1
+    },
+    {
+      "id": "aca0598e9b0eb935",
+      "name": "Keen Shot",
+      "leaves": 1
+    },
+    {
+      "id": "34f21902e365a861",
+      "name": "Keep It Going",
+      "leaves": 1
+    },
+    {
+      "id": "9211e3f6268b3413",
+      "name": "Keep it Together",
+      "leaves": 1
+    },
+    {
+      "id": "b7d5a1bc3d40b964",
+      "name": "Keep It Together",
+      "leaves": 3
+    },
+    {
+      "id": "24bf81bc6d74fafd",
+      "name": "Keep Them Reeling",
+      "leaves": 1
+    },
+    {
+      "id": "94aa0ef55bace440",
+      "name": "Knowledge Is Life",
+      "leaves": 1
+    },
+    {
+      "id": "cdf46b8cdde49733",
+      "name": "Knowledge Is Power",
+      "leaves": 1
+    },
+    {
+      "id": "e2690af7f6700f95",
+      "name": "Knowledge Is Strength",
+      "leaves": 1
+    },
+    {
+      "id": "e15adb60be0dda02",
+      "name": "Known Dissident",
+      "leaves": 1
+    },
+    {
+      "id": "9aa564522f427214",
+      "name": "Launch Point",
+      "leaves": 1
+    },
+    {
+      "id": "a67a1a657fe5665c",
+      "name": "Lead From the Front",
+      "leaves": 1
+    },
+    {
+      "id": "d68318a928d3d5c7",
+      "name": "Leading Feint",
+      "leaves": 1
+    },
+    {
+      "id": "d1683318140f3906",
+      "name": "Legendary Commander",
+      "leaves": 1
+    },
+    {
+      "id": "8eace9d86fc60711",
+      "name": "Lifesaver",
+      "leaves": 1
+    },
+    {
+      "id": "c2447676a43a70a2",
+      "name": "Luck Favors the Bold",
+      "leaves": 1
+    },
+    {
+      "id": "5fbf1a3504865fba",
+      "name": "Lucky Shot",
+      "leaves": 1
+    },
+    {
+      "id": "a64632cafe74b864",
+      "name": "Lucky Stop",
+      "leaves": 1
+    },
+    {
+      "id": "c2d2d55ee60f886f",
+      "name": "Lure Closer",
+      "leaves": 1
+    },
+    {
+      "id": "294bad1c8a7b4132",
+      "name": "Make a Break for It",
+      "leaves": 1
+    },
+    {
+      "id": "86fbb269a17a8c5e",
+      "name": "Masquerade",
+      "leaves": 1
+    },
+    {
+      "id": "bebc181408831371",
+      "name": "Master Mender",
+      "leaves": 1
+    },
+    {
+      "id": "9dc39670f94a6ef2",
+      "name": "Master Negotiator",
+      "leaves": 1
+    },
+    {
+      "id": "bae4b0a8a3554cca",
+      "name": "Master Slicer",
+      "leaves": 1
+    },
+    {
+      "id": "4635850263c7bf94",
+      "name": "Misplaced Loyalty",
+      "leaves": 1
+    },
+    {
+      "id": "661899f73e20f2ce",
+      "name": "Modify Poison",
+      "leaves": 1
+    },
+    {
+      "id": "62d461ae3b0fcfa9",
+      "name": "Move Massive Object",
+      "leaves": 1
+    },
+    {
+      "id": "48734ec40189bb12",
+      "name": "Murderous Arts II",
+      "leaves": 1
+    },
+    {
+      "id": "f0bfcfc354862328",
+      "name": "No Escape",
+      "leaves": 1
+    },
+    {
+      "id": "1fc568c1bbdd94e0",
+      "name": "Noble Sacrifice",
+      "leaves": 1
+    },
+    {
+      "id": "93a41831fe6bfc09",
+      "name": "Nowhere to Run",
+      "leaves": 1
+    },
+    {
+      "id": "458647466717fcc2",
+      "name": "Numbing Poison",
+      "leaves": 1
+    },
+    {
+      "id": "07174b444852424c",
+      "name": "Obscuring Defenses",
+      "leaves": 1
+    },
+    {
+      "id": "b08c8efbea22f604",
+      "name": "Omens",
+      "leaves": 1
+    },
+    {
+      "id": "f7ddece8fd2141f5",
+      "name": "One for the Team",
+      "leaves": 1
+    },
+    {
+      "id": "b5eba49d8305b689",
+      "name": "Only the Finest",
+      "leaves": 1
+    },
+    {
+      "id": "ffdca1739d401042",
+      "name": "Opportunistic Defense",
+      "leaves": 1
+    },
+    {
+      "id": "95697c5a4459d7e4",
+      "name": "Outmaneuver",
+      "leaves": 1
+    },
+    {
+      "id": "f4c2b1e5cdf5551a",
+      "name": "Perceptive Ambusher",
+      "leaves": 1
+    },
+    {
+      "id": "797de6f9dab4d578",
+      "name": "Persistent Haze",
+      "leaves": 1
+    },
+    {
+      "id": "8b8c0f8c9d62f410",
+      "name": "Personal Affront",
+      "leaves": 1
+    },
+    {
+      "id": "e02a3171a6862f02",
+      "name": "Phalanx",
+      "leaves": 1
+    },
+    {
+      "id": "ffe31e578e9abeee",
+      "name": "Pick a Fight",
+      "leaves": 1
+    },
+    {
+      "id": "51a8e7a193955f11",
+      "name": "Power of Hatred",
+      "leaves": 1
+    },
+    {
+      "id": "62d47b8982b6591e",
+      "name": "Powerful Friends",
+      "leaves": 1
+    },
+    {
+      "id": "16aa9efd54967320",
+      "name": "Praetoria Ishu",
+      "leaves": 1
+    },
+    {
+      "id": "515d69c71897e431",
+      "name": "Precise Redirect",
+      "leaves": 1
+    },
+    {
+      "id": "d043a3c0494345ac",
+      "name": "Primitive Block",
+      "leaves": 1
+    },
+    {
+      "id": "76352a9b615287f8",
+      "name": "Protection",
+      "leaves": 1
+    },
+    {
+      "id": "202a117b1b203951",
+      "name": "Psychic Defenses",
+      "leaves": 1
+    },
+    {
+      "id": "8ff0ec89e13b6d51",
+      "name": "Psychometry",
+      "leaves": 1
+    },
+    {
+      "id": "b3590045fcd7c28c",
+      "name": "Punishing Protection",
+      "leaves": 1
+    },
+    {
+      "id": "12ffb24378b60c13",
+      "name": "Quick Trigger",
+      "leaves": 1
+    },
+    {
+      "id": "962c8a24f9caaba0",
+      "name": "Rally",
+      "leaves": 1
+    },
+    {
+      "id": "bc8667e10d541cb8",
+      "name": "Reactionary Attack",
+      "leaves": 1
+    },
+    {
+      "id": "941c1dfd00e697da",
+      "name": "Redirect Shot",
+      "leaves": 1
+    },
+    {
+      "id": "7bc10cb88a6a0c92",
+      "name": "Relentless",
+      "leaves": 1
+    },
+    {
+      "id": "68e476fdeb434b01",
+      "name": "Relocate",
+      "leaves": 1
+    },
+    {
+      "id": "97eeb67b9428f0eb",
+      "name": "Reset Initiative",
+      "leaves": 1
+    },
+    {
+      "id": "3331d4b2b88e446f",
+      "name": "Resist the Dark Side",
+      "leaves": 1
+    },
+    {
+      "id": "c83f18465c3b9d91",
+      "name": "Revenge",
+      "leaves": 1
+    },
+    {
+      "id": "5459cc5eedf15c8d",
+      "name": "Ricochet Shot",
+      "leaves": 1
+    },
+    {
+      "id": "b788095a71a47be7",
+      "name": "Riposte",
+      "leaves": 1
+    },
+    {
+      "id": "04b9cb3683c6e485",
+      "name": "Risk for Reward",
+      "leaves": 1
+    },
+    {
+      "id": "f4ca7e7a674372a5",
+      "name": "Roll With It",
+      "leaves": 1
+    },
+    {
+      "id": "adfb725d20faade5",
+      "name": "Ruthless",
+      "leaves": 1
+    },
+    {
+      "id": "7aa4ca13a96d8770",
+      "name": "Ruthless",
+      "leaves": 3
+    },
+    {
+      "id": "8298e12805291c78",
+      "name": "Ruthless Negotiator",
+      "leaves": 1
+    },
+    {
+      "id": "e857b1e13073b0a9",
+      "name": "Safe Passage",
+      "leaves": 1
+    },
+    {
+      "id": "eafb1ee6cacedd20",
+      "name": "Second Skin",
+      "leaves": 1
+    },
+    {
+      "id": "55b2475e42ce79f2",
+      "name": "Second Strike",
+      "leaves": 1
+    },
+    {
+      "id": "adacf682b6ccf21c",
+      "name": "Seek and Destroy",
+      "leaves": 1
+    },
+    {
+      "id": "ec12ce36ff7048f2",
+      "name": "Seize the Moment",
+      "leaves": 1
+    },
+    {
+      "id": "e19c06b6dfc7a703",
+      "name": "Seize the Moment",
+      "leaves": 3
+    },
+    {
+      "id": "bca8ce9a488cf3d8",
+      "name": "Shadow Striker",
+      "leaves": 1
+    },
+    {
+      "id": "7ab4fcbe5a8b7714",
+      "name": "Shaped Explosion",
+      "leaves": 1
+    },
+    {
+      "id": "9491f34aad83dfb1",
+      "name": "Shared Notoriety",
+      "leaves": 1
+    },
+    {
+      "id": "f75fa286772de3e7",
+      "name": "Shellshock",
+      "leaves": 1
+    },
+    {
+      "id": "e37a169786348439",
+      "name": "Shelter",
+      "leaves": 1
+    },
+    {
+      "id": "c6739fcf6d2107d6",
+      "name": "Shift Defense II",
+      "leaves": 1
+    },
+    {
+      "id": "6996c6ba09d63ab7",
+      "name": "Shift Defense III",
+      "leaves": 1
+    },
+    {
+      "id": "b4ae0f26326cdf71",
+      "name": "Sidestep",
+      "leaves": 1
+    },
+    {
+      "id": "9bee4563b328def7",
+      "name": "Sith Alchemy Specialist",
+      "leaves": 1
+    },
+    {
+      "id": "46946e7208f1cf05",
+      "name": "Six Questions",
+      "leaves": 1
+    },
+    {
+      "id": "a1a905019e7f17c0",
+      "name": "Slippery Strike",
+      "leaves": 1
+    },
+    {
+      "id": "28b781d7186a03a9",
+      "name": "Sniping Marksman",
+      "leaves": 1
+    },
+    {
+      "id": "216f5ea65b7c04fb",
+      "name": "Sniping Master",
+      "leaves": 1
+    },
+    {
+      "id": "0a65325a98b108a7",
+      "name": "Soothing Presence",
+      "leaves": 1
+    },
+    {
+      "id": "6b09fe0c6fe98367",
+      "name": "Sow Confusion",
+      "leaves": 2
+    },
+    {
+      "id": "85fddc83428358ae",
+      "name": "Spontaneous Skill",
+      "leaves": 1
+    },
+    {
+      "id": "ec12bc7f161a0893",
+      "name": "Squadron Tactics",
+      "leaves": 1
+    },
+    {
+      "id": "224906e573330bf2",
+      "name": "Starship Raider",
+      "leaves": 2
+    },
+    {
+      "id": "c980750800b91061",
+      "name": "Stay in the Fight",
+      "leaves": 1
+    },
+    {
+      "id": "c483676cb3c07cb3",
+      "name": "Stealthy Withdrawal",
+      "leaves": 1
+    },
+    {
+      "id": "f92583cf04620d84",
+      "name": "Stellar Warrior",
+      "leaves": 1
+    },
+    {
+      "id": "729a17e25b873f4f",
+      "name": "Stick Together",
+      "leaves": 1
+    },
+    {
+      "id": "cdb01f90827fad8c",
+      "name": "Stinging Assault",
+      "leaves": 1
+    },
+    {
+      "id": "d137ae2e8be700b3",
+      "name": "Stolen Advantage",
+      "leaves": 1
+    },
+    {
+      "id": "2b808a4a90614f92",
+      "name": "Strength of the Empire",
+      "leaves": 1
+    },
+    {
+      "id": "8a551fd42b051d0e",
+      "name": "Stun Turret",
+      "leaves": 1
+    },
+    {
+      "id": "9292819462b46074",
+      "name": "Stunning Strike",
+      "leaves": 1
+    },
+    {
+      "id": "08c80cfea1a3b886",
+      "name": "Sudden Strike",
+      "leaves": 1
+    },
+    {
+      "id": "ec3e6a05561ddc07",
+      "name": "Suppress Force",
+      "leaves": 1
+    },
+    {
+      "id": "0a0681811f43b128",
+      "name": "Surge",
+      "leaves": 1
+    },
+    {
+      "id": "99c685b0631a5601",
+      "name": "Swerve",
+      "leaves": 1
+    },
+    {
+      "id": "09609e71ba6cd4aa",
+      "name": "Swift Power",
+      "leaves": 2
+    },
+    {
+      "id": "cae4f000dcfddd99",
+      "name": "Swift Strider",
+      "leaves": 1
+    },
+    {
+      "id": "388f30468a80f221",
+      "name": "Synchronized Fire",
+      "leaves": 1
+    },
+    {
+      "id": "da9e6511f3ae8435",
+      "name": "System Hit",
+      "leaves": 1
+    },
+    {
+      "id": "28a61dadc073cd84",
+      "name": "Tag",
+      "leaves": 1
+    },
+    {
+      "id": "450aa69ead3975f2",
+      "name": "Take the Hit",
+      "leaves": 1
+    },
+    {
+      "id": "e49c62d72e8b28d3",
+      "name": "Tangle Up",
+      "leaves": 1
+    },
+    {
+      "id": "d61e3a2afe8ab339",
+      "name": "Target Visions",
+      "leaves": 1
+    },
+    {
+      "id": "a3f4bc7671830701",
+      "name": "Team Recruiting",
+      "leaves": 1
+    },
+    {
+      "id": "7af4caf439358120",
+      "name": "Telekinetic Prodigy",
+      "leaves": 1
+    },
+    {
+      "id": "3b30ffbfc3e3270f",
+      "name": "Telepathic Influence",
+      "leaves": 1
+    },
+    {
+      "id": "028e4e50565971ee",
+      "name": "Temporal Awareness",
+      "leaves": 1
+    },
+    {
+      "id": "69da2f9701ef65b4",
+      "name": "Teräs Käsi Mastery",
+      "leaves": 1
+    },
+    {
+      "id": "8ed7b1889b1416d4",
+      "name": "Terrify",
+      "leaves": 1
+    },
+    {
+      "id": "4bdb0bda258c609e",
+      "name": "Thrive on Chaos",
+      "leaves": 1
+    },
+    {
+      "id": "9d183b40a16b1376",
+      "name": "Total Concealment",
+      "leaves": 1
+    },
+    {
+      "id": "39b5423e255e14b1",
+      "name": "Transposing Strike",
+      "leaves": 1
+    },
+    {
+      "id": "e289618b92890003",
+      "name": "Treacherous",
+      "leaves": 1
+    },
+    {
+      "id": "bd6cbb85cf7fc8a2",
+      "name": "Triangulate",
+      "leaves": 1
+    },
+    {
+      "id": "ce1f5d3316b052f6",
+      "name": "True Betrayal",
+      "leaves": 1
+    },
+    {
+      "id": "5e1065e8f4ab39b2",
+      "name": "Trust",
+      "leaves": 1
+    },
+    {
+      "id": "17ec736c3984fe43",
+      "name": "Turret Self-Destruct",
+      "leaves": 1
+    },
+    {
+      "id": "cef9b7ca6a26f4a6",
+      "name": "Two-Faced",
+      "leaves": 1
+    },
+    {
+      "id": "3282f9b1d3769f9c",
+      "name": "Unarmed Counterstrike",
+      "leaves": 1
+    },
+    {
+      "id": "379019c29b37d717",
+      "name": "Unarmed Parry",
+      "leaves": 1
+    },
+    {
+      "id": "02bf213d8104b017",
+      "name": "Unbalancing Adaptation",
+      "leaves": 1
+    },
+    {
+      "id": "df9c364e91826cbf",
+      "name": "Uncanny Dodge I",
+      "leaves": 1
+    },
+    {
+      "id": "c7f46a5c92d7dd5e",
+      "name": "Uncanny Dodge II",
+      "leaves": 1
+    },
+    {
+      "id": "e435b618793d8bc7",
+      "name": "Uncanny Luck",
+      "leaves": 1
+    },
+    {
+      "id": "c5726f0e65f643ab",
+      "name": "Undetectable Poison",
+      "leaves": 1
+    },
+    {
+      "id": "2a209f3e58d8528c",
+      "name": "Undying Loyalty",
+      "leaves": 1
+    },
+    {
+      "id": "beae25ca4ed40eea",
+      "name": "Unlikely Shot",
+      "leaves": 1
+    },
+    {
+      "id": "0b2c53ed53f20751",
+      "name": "Unrelenting Assault",
+      "leaves": 1
+    },
+    {
+      "id": "b0ecc747a76deb72",
+      "name": "Unsavory Reputation",
+      "leaves": 1
+    },
+    {
+      "id": "f6a7cb3c07ded492",
+      "name": "Unseen Eyes",
+      "leaves": 1
+    },
+    {
+      "id": "dd488c2dc43d14ab",
+      "name": "Unsettling Presence",
+      "leaves": 1
+    },
+    {
+      "id": "a45e2213dd7eb4ca",
+      "name": "Urgency",
+      "leaves": 1
+    },
+    {
+      "id": "b9c850fce4aa9c55",
+      "name": "Vicious Poison",
+      "leaves": 1
+    },
+    {
+      "id": "a3ab3f2ad47c8775",
+      "name": "Vindication",
+      "leaves": 1
+    },
+    {
+      "id": "aa964478cf5b30e8",
+      "name": "Virus",
+      "leaves": 1
+    },
+    {
+      "id": "299c45ac33bf1485",
+      "name": "Visionary Attack",
+      "leaves": 1
+    },
+    {
+      "id": "153f4b3c6510023d",
+      "name": "Visionary Defense",
+      "leaves": 1
+    },
+    {
+      "id": "da12fc505efc5eea",
+      "name": "Visions",
+      "leaves": 1
+    },
+    {
+      "id": "3f8f5305eabc525e",
+      "name": "Walk the Line",
+      "leaves": 1
+    },
+    {
+      "id": "18bbce2836989fc5",
+      "name": "Weak Point",
+      "leaves": 1
+    },
+    {
+      "id": "28c306c37ccb9fcf",
+      "name": "Weaken Resolve",
+      "leaves": 1
+    },
+    {
+      "id": "9c1e0b0566cb45c2",
+      "name": "Weakening Strike",
+      "leaves": 1
+    },
+    {
+      "id": "397ba7dc962f6ebc",
+      "name": "Wealth of Allies",
+      "leaves": 1
+    },
+    {
+      "id": "032242fb87215e06",
+      "name": "Weapon Shift",
+      "leaves": 1
+    },
+    {
+      "id": "98a88ebf26ac318a",
+      "name": "Whirling Death",
+      "leaves": 1
+    },
+    {
+      "id": "d350b28e72652d29",
+      "name": "Wicked Strike",
+      "leaves": 1
+    },
+    {
+      "id": "b6e75c52f5d66ade",
+      "name": "Wild Sense",
+      "leaves": 1
+    },
+    {
+      "id": "ae9cf46162b4bc42",
+      "name": "Willpower",
+      "leaves": 1
+    },
+    {
+      "id": "f5ebaf5d77257e0c",
+      "name": "Wrath of the Dark Side",
+      "leaves": 1
+    },
+    {
+      "id": "a68be9fa4ffe98af",
+      "name": "Zone of Recuperation",
+      "leaves": 1
+    }
+  ],
+  "verification": {
+    "results": [
+      {
+        "id": "311 source-valid structured talent-to-talent leaves, 311 / 311 map to exactly one canonical UUID",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "id": "0 unresolved, 0 ambiguous, 0 dangling (every row has a unique derivation)",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "id": "every target exists in the canonical 1,187-talent pack",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "id": "every unique-candidate target is confirmed by the owner's certified prerequisite text, or the contradiction/absence is itemised below",
+        "ok": true,
+        "detail": "311 confirmed, 0 owners have no printed text, 0 contradict it"
+      },
+      {
+        "id": "Find an Opening resolves specifically to Scum and Villainy|Outlaw|Seize the Moment (e19c06b6dfc7a703)",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "id": "the five Phase 3D repairs are in the manifest and become runtime-effective",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "id": "every migrated prerequisite works against embedded source-linked items (v13 and legacy link form)",
+        "ok": true,
+        "detail": "{\"rows\":311,\"embeddedSourceLinked\":311,\"embeddedLegacyLinkForm\":311,\"pending\":311,\"wrongSameNameChecked\":13,\"wrongSameNameRejected\":13,\"unlinkedLegacyFallbackMet\":311,\"unlinkedWrongTreeRejected\":13,\"unlinkedWrongTreeChecked\":13,\"viaUuidEmbedded\":311,\"viaUuidPending\":311,\"failures\":[]}"
+      },
+      {
+        "id": "every migrated prerequisite works against pending selections (carrying the threaded identity)",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "id": "identity (not name) decides: all 311 embedded and all 311 pending resolutions are authoritative uuid matches with no fallback",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "id": "same-name targets are disambiguated by identity: every wrong same-name copy (linked and unlinked) is rejected",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "id": "only structured prerequisite data (and the four approved prerequisite-text lines) changes: benefit, description, summary, name, source, page, tree, tags, flags, effects are untouched",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "id": "no other system.prerequisites text changes (exactly the 4 approved source corrections)",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "id": "Fortune quartet structured sets are exactly {Knack, Lucky Shot}; no Fool's Luck",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "id": "Stay in the Fight (Legacy) structured set is exactly {Stalwart Subordinates}; Rebellion Stay in the Fight untouched",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "id": "0 structured prerequisites on Assassin|Ruthless, Expert Pilot|Keep It Together, Knight's Armor|Armor Mastery, Outlaw|Seize the Moment (container dropped, repository standard shape)",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "id": "the same-name Ruthless / Armor Mastery / Seize the Moment owners that DO carry the prerequisite keep it",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "id": "Swift Power / Starship Raider / Sow Confusion / Force Haze printed prerequisite text restored",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "id": "benefit, description, summary, source, page, treeId unchanged on every record",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "id": "zero changes outside the owning records",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "id": "the unmigrated structured conditions (skill/attribute/bab) and the group wrapper are untouched",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "id": "the migrated pack contains no structured talent leaf without a canonical uuid",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "id": "Phase 3E corpus + 3F tree-identity invariants stay clean (reconciler: 0 blocking incl. TEXT_DRIFT, STALE_TREE_ID_SLUG, TREE_DISPLAY_NAME_DRIFT)",
+        "ok": true,
+        "detail": "{\"CLAIM_WITHOUT_RECORD\":0,\"RECORD_WITHOUT_CLAIM\":0,\"DUPLICATE_MAPPING\":0,\"DUPLICATE_RECORD_IN_TREE\":0,\"WRONG_TREE\":0,\"NAME_MISMATCH\":0,\"UNRESOLVED_SAME_NAME_AMBIGUITY\":0,\"CLAIM_COUNT_MISMATCH\":0,\"HOMEBREW_IN_DENOMINATOR\":0,\"TEXT_DRIFT\":0,\"WRONG_SOURCE_PAGE\":0,\"STALE_TREE_ID_SLUG\":0,\"TREE_DISPLAY_NAME_DRIFT\":0}"
+      },
+      {
+        "id": "second run is a zero diff",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "id": "serialization is surgical: only 300 lines of packs/talents.db change",
+        "ok": true,
+        "detail": ""
+      }
+    ]
+  }
+}

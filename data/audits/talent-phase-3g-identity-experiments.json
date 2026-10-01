@@ -1,0 +1,152 @@
+{
+  "schemaVersion": 1,
+  "phase": "3G-0",
+  "note": "real PrerequisiteChecker, real pack records; see docs/audits/talent-phase-3g-identity-contract.md",
+  "experiments": {
+    "cast_embedded_flags": {
+      "swseId": "swse.talent.cast_suspicion",
+      "coreSource": null,
+      "stats": null
+    },
+    "E1 swse.talent id vs embedded copy (flags.swse.id kept)": {
+      "via": "id",
+      "fallback": false,
+      "resolvedId": true,
+      "met": true
+    },
+    "E1b same, embedded copy with flags stripped": {
+      "via": null,
+      "fallback": false,
+      "resolvedId": false,
+      "met": false
+    },
+    "E2 swse.talent id vs pending [{name}]": {
+      "via": null,
+      "fallback": false,
+      "resolvedId": false,
+      "met": false
+    },
+    "E2b pending [{id: compendium _id}]": {
+      "via": null,
+      "fallback": false,
+      "resolvedId": false,
+      "met": false
+    },
+    "E2c pending [{id: swse.talent id, name}]": {
+      "via": null,
+      "fallback": false,
+      "resolvedId": false,
+      "met": false
+    },
+    "E2d pending only {id: swse.talent id} (no name)": {
+      "via": null,
+      "fallback": false,
+      "resolvedId": false,
+      "met": false
+    },
+    "notorious": [
+      {
+        "_id": "09744041cdcc9e22",
+        "tree": "c1be604242cb328f",
+        "swseId": "swse.talent.notorious_infamy"
+      },
+      {
+        "_id": "c67cbd59abd1cc53",
+        "tree": "a47ed82a822e3962",
+        "swseId": null
+      }
+    ],
+    "E3 3D prereq {id: production _id 09744041cdcc9e22} vs embedded copy": {
+      "via": null,
+      "fallback": false,
+      "resolvedId": false,
+      "met": false
+    },
+    "E3b same, vs actor with source-linked copy (flags.core.sourceId set)": {
+      "via": null,
+      "fallback": false,
+      "resolvedId": false,
+      "met": false
+    },
+    "E3c same, vs pending [{id: _id, name}]": {
+      "via": null,
+      "fallback": false,
+      "resolvedId": false,
+      "met": false
+    },
+    "E3 3D prereq {id: production _id c67cbd59abd1cc53} vs embedded copy": {
+      "via": null,
+      "fallback": false,
+      "resolvedId": false,
+      "met": false
+    },
+    "seize": [
+      {
+        "_id": "e19c06b6dfc7a703",
+        "tree": "3caa80f6bef04200",
+        "swseId": "swse.talent.seize_the_moment"
+      },
+      {
+        "_id": "ec12ce36ff7048f2",
+        "tree": "da34105c875650ae",
+        "swseId": "swse.talent.seize_the_moment"
+      }
+    ],
+    "E4 same-name: prereq swse.talent.seize_the_moment vs EITHER Seize copy": [
+      {
+        "via": "id",
+        "fallback": false,
+        "resolvedId": true,
+        "met": true
+      },
+      {
+        "via": "id",
+        "fallback": false,
+        "resolvedId": true,
+        "met": true
+      }
+    ],
+    "E4b production-_id prereq (target 1) vs the WRONG-tree copy, name-only embedded": {
+      "via": null,
+      "fallback": false,
+      "resolvedId": false,
+      "met": false
+    },
+    "E5 uuid prereq vs embedded w/ core.sourceId (id format Compendium.<pack>.<id>)": {
+      "via": "uuid",
+      "fallback": false,
+      "resolvedId": true,
+      "met": true
+    },
+    "E5b uuid prereq (v13 form with .Item.) vs same sourceId (legacy form)": {
+      "via": null,
+      "fallback": false,
+      "resolvedId": false,
+      "met": false
+    },
+    "E5c uuid prereq vs pending [{uuid}]": {
+      "via": "uuid",
+      "fallback": false,
+      "resolvedId": true,
+      "met": true
+    },
+    "E5d uuid prereq vs pending [{id: compendium _id}] (no uuid)": {
+      "via": null,
+      "fallback": false,
+      "resolvedId": false,
+      "met": false
+    },
+    "E6 dead uuid, name present": {
+      "via": "name",
+      "fallback": true,
+      "resolvedId": true,
+      "met": true
+    },
+    "E6b dead uuid, no name": {
+      "via": null,
+      "fallback": false,
+      "resolvedId": false,
+      "met": false
+    }
+  }
+}

@@ -22,6 +22,8 @@
  *     check, registry, membership, homebrew and the Phase 3E completeness gates. This is the Phase 3E final state.
  *   POST_3F_STATE (packs == Phase 3F certified post-state: talent-tree identity normalization): 3F --verify --exact, the 3E-5 and 3E-4 repairs still
  *     intact (later-state mode), registry, membership, homebrew, the tree-identity census (frozen record) and the Phase 3E completeness gates. FINAL state.
+ *   POST_3G_STATE (packs == Phase 3G certified post-state: structured talent-prerequisite identity): 3G --verify --exact, the 3F/3E-5/3E-4 repairs still intact
+ *     (later-state mode), registry, membership, homebrew, frozen censuses and the Phase 3E completeness gates. FINAL state.
  *   UNKNOWN_STATE: fail (the packs are not a certified state).
  */
 import path from 'node:path';
@@ -93,6 +95,24 @@ const battery = {
     ['talent/tree membership audit', 'tools/audit-talent-tree-membership.mjs'],
     ['homebrew talent-pack integrity audit', 'tools/audit-talent-homebrew-pack.mjs'],
     ['Phase 3E-5 text-defect manifest', 'tools/build-talent-phase-3e5-defect-manifest.mjs', '--check'],
+    // The 3G census is a FROZEN pre-3G-2 baseline (its runtime columns measured the old checker); tests pin the committed file. The dry-run is the live proof.
+    ['Phase 3G migration manifest and dry-run freshness', 'tools/apply-talent-phase-3g.mjs', '--check'],
+    ['Phase 3F tree identity census', 'tools/census-talent-tree-identity.mjs', '--check'],
+    ['Phase 3E core Gunslinger census', 'tools/census-talent-core-gunslinger.mjs', '--check'],
+    ['Phase 3E authority addendum', 'tools/check-talent-phase-3e-additions.mjs'],
+    ['Phase 3E discovery census', 'tools/census-talent-source-discovery.mjs', '--check'],
+    ['Phase 3E publication-to-production reconciliation', 'tools/reconcile-talent-publication-corpus.mjs', '--check']
+  ],
+  POST_3G_STATE: [
+    ['Phase 3G post-state verification (exact)', 'tools/apply-talent-phase-3g.mjs', '--verify', '--exact'],
+    ['Phase 3F tree-identity repair still intact', 'tools/apply-talent-phase-3f.mjs', '--verify'],
+    ['Phase 3E-5 text repair still intact', 'tools/apply-talent-phase-3e5.mjs', '--verify'],
+    ['Phase 3E-4 seven-record repair still intact', 'tools/apply-talent-phase-3e4.mjs', '--verify'],
+    ['runtime registry freshness', 'tools/build-talent-tree-registry.mjs', '--check'],
+    ['talent/tree membership audit', 'tools/audit-talent-tree-membership.mjs'],
+    ['homebrew talent-pack integrity audit', 'tools/audit-talent-homebrew-pack.mjs'],
+    ['Phase 3E-5 text-defect manifest', 'tools/build-talent-phase-3e5-defect-manifest.mjs', '--check'],
+    // The 3G census is a FROZEN pre-3G-2 baseline (its runtime columns measured the old checker); tests pin the committed file. The dry-run is the live proof.
     ['Phase 3F tree identity census', 'tools/census-talent-tree-identity.mjs', '--check'],
     ['Phase 3E core Gunslinger census', 'tools/census-talent-core-gunslinger.mjs', '--check'],
     ['Phase 3E authority addendum', 'tools/check-talent-phase-3e-additions.mjs'],
