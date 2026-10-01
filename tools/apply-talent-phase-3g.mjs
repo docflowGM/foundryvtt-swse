@@ -282,10 +282,45 @@ export function detect3GState() {
   return r.postState.talents === sha ? 'POST_3G' : r.preState.talents === sha ? 'PRE_3G' : 'UNKNOWN';
 }
 
+export async function verifyApplied({ exact = false } = {}) {
+  const res = [], check = (id, ok, detail = '') => res.push({ id, ok: !!ok, detail });
+  const report = readJson(REPORT_PATH), manifest = readJson(MANIFEST_PATH), talentsText = read(TALENTS), talents = parse(talentsText), ta = new Map(talents.map(t => [t._id, t]));
+  const ownerIds = new Set([...manifest.rows.map(r => r.ownerId), ...manifest.removals.map(r => r.ownerId), ...manifest.textCorrections.map(r => r.productionId)]);
+  check('packs/talents.db is the certified Phase 3G post-state', detect3GState() === 'POST_3G');
+  check('talent count unchanged (1,187)', talents.length === 1187);
+  check(`every one of the ${manifest.rows.length} source-valid leaves is { type, uuid, name } at its certified target, and no structured talent leaf lacks a uuid`, manifest.rows.every(r => { const c = ta.get(r.ownerId).system.prerequisitesStructured?.conditions?.find(x => x.uuid === r.proposed.uuid); return c && JSON.stringify(c) === JSON.stringify(r.proposed) && !('id' in c) && ta.has(r.target.id); }) && talents.every(t => !t.system.prerequisitesStructured || structuredLeaves(t.system.prerequisitesStructured).filter(l => l.condition.type === 'talent').every(l => /^Compendium\.foundryvtt-swse\.talents\.Item\.(?:[0-9a-f]{16}|[0-9a-f]{32})$/.test(l.condition.uuid ?? ''))));
+  check('the four false structured prerequisites are gone (no structured container)', manifest.removals.every(r => !('prerequisitesStructured' in ta.get(r.ownerId).system)));
+  check('the four printed prerequisite lines are restored', manifest.textCorrections.every(c => ta.get(c.productionId).system.prerequisites === c.after.prerequisites));
+  check('the other talents are unchanged', sortedFp(talents.filter(t => !ownerIds.has(t._id))) === report.othersFingerprint);
+  for (const [rel, sha] of Object.entries(report.untouchedFiles)) check(`untouched: ${rel}`, fs.existsSync(path.join(ROOT, rel)) && gitBlobSha(read(rel)) === sha);
+  const rec = reconcile(loadInput());
+  check('reconciler: zero blocking findings (3E corpus/text incl. the 3G correction layer, 3F tree identity)', rec.blockingFindings.length === 0, JSON.stringify(rec.findingCounts));
+  const eff = await runtimeEffectiveness(manifest, talents, parse(read('packs/talent_trees.db')));
+  check('runtime (real checker, applied pack): every leaf satisfied by embedded source-linked and pending selections via uuid; wrong same-name identities rejected', eff.embeddedSourceLinked === manifest.rows.length && eff.pending === manifest.rows.length && eff.viaUuidEmbedded === manifest.rows.length && eff.viaUuidPending === manifest.rows.length && eff.failures.length === 0);
+  if (exact) check('packs/talents.db equals the certified blob', gitBlobSha(talentsText) === report.postState.talents);
+  return res;
+}
+
+export function applyProduction() {
+  invariant(detect3GState() === 'PRE_3G', 'REFUSED: packs are not the pre-migration state (already applied or drifted)');
+  invariant(fs.existsSync(path.join(ROOT, REPORT_PATH)) && fs.existsSync(path.join(ROOT, MANIFEST_PATH)) && fs.existsSync(path.join(ROOT, CORRECTIONS_PATH)), 'REFUSED: manifest, correction layer and dry-run report must be committed first');
+  const committed = readJson(REPORT_PATH); invariant(committed.status === 'DRY_RUN_CERTIFIED', 'REFUSED: dry-run report is not certified');
+  const manifest = readJson(MANIFEST_PATH), texts = read(TALENTS);
+  const out = serializePack(texts, project(manifest, parse(texts)));
+  invariant(gitBlobSha(out) === committed.postState.talents, 'REFUSED: rendered output does not match the certified post-state blob');
+  fs.writeFileSync(path.join(ROOT, TALENTS), out);
+}
+
 export async function main(argv = process.argv.slice(2)) {
   const has = f => argv.includes(f), state = detect3GState();
+  const pr = res => { for (const x of res) console.log(`${x.ok ? 'PASS' : 'FAIL'}  ${x.id}${x.ok || !x.detail ? '' : '  [' + x.detail + ']'}`); return res.filter(x => !x.ok).length; };
   if (has('--status')) { console.log(ERR + state); return 0; }
-  invariant(!has('--apply') && !has('--verify'), 'apply/verify are intentionally not implemented in the dry-run revision');
+  if (has('--verify') || (has('--check') && state === 'POST_3G')) { const bad = pr(await verifyApplied({ exact: has('--exact') })); console.log(`\n${ERR}verify ${bad ? 'FAIL' : 'PASS'}`); return bad ? 1 : 0; }
+  if (has('--apply')) {
+    // the committed report must equal a fresh projection of the committed manifest before anything is written
+    const fresh = await buildReport(); invariant(read(REPORT_PATH) === JSON.stringify(fresh, null, 2) + '\n', 'REFUSED: committed dry-run report differs from a fresh projection');
+    applyProduction(); console.log(ERR + 'APPLIED packs/talents.db (uncommitted)'); return 0;
+  }
   invariant(state === 'PRE_3G', `the pre-migration pack is required (found ${state})`);
   if (has('--manifest')) { const m = deriveManifest(); fs.writeFileSync(path.join(ROOT, MANIFEST_PATH), JSON.stringify(m, null, 2) + '\n'); fs.writeFileSync(path.join(ROOT, CORRECTIONS_PATH), JSON.stringify(correctionsFile(m), null, 2) + '\n'); console.log(ERR + 'wrote ' + MANIFEST_PATH + ' and ' + CORRECTIONS_PATH); return 0; }
   if (has('--check')) {
