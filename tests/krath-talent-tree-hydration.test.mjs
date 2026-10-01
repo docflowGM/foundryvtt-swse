@@ -113,7 +113,7 @@ const krathTree = treeDocs.find(doc => doc._id === TREE_ID);
     assert.equal(doc.system.description?.value, doc.system.benefit);
     // Phase 11-2A deleted the tree_<id> alias tags; tree identity is system.treeId (the persistent tree _id)
     assert.equal(doc.system.treeId, TREE_ID);
-    assert.ok(doc.system.tags.includes('krath'));
+    // Phase 11-2B removed the 'krath' tree-label tag (certified DELETE_DECOMPOSE); tree identity is the treeId assertion above
 
     // Context-dependent mechanics must not be modelled as passive static bonuses.
     assert.equal(doc.system.executionModel, 'ACTIVE', `${expected.name} is marked passive`);

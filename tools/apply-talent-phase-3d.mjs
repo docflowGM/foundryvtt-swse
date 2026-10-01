@@ -665,7 +665,7 @@ const printResults = results => { for (const v of results) console.log(`${v.ok ?
 
 export function applyProduction(root = ROOT) {
   const c3 = detectPhase3cState(root);
-  invariant(c3.state !== 'POST_3D_STATE' && c3.state !== 'POST_3E4_STATE' && c3.state !== 'POST_3E5_STATE' && c3.state !== 'POST_3F_STATE' && c3.state !== 'POST_3G_STATE' && c3.state !== 'POST_11_2A_STATE', 'REFUSED: already applied — the packs are the Phase 3D certified post-state (use --verify --exact)');
+  invariant(c3.state !== 'POST_3D_STATE' && c3.state !== 'POST_3E4_STATE' && c3.state !== 'POST_3E5_STATE' && c3.state !== 'POST_3F_STATE' && c3.state !== 'POST_3G_STATE' && c3.state !== 'POST_11_2A_STATE' && c3.state !== 'POST_11_2B_STATE', 'REFUSED: already applied — the packs are the Phase 3D certified post-state (use --verify --exact)');
   invariant(c3.state === 'POST_STATE', `REFUSED: the Phase 3C certified post-state is required (found ${c3.state}); partial or unexpected pack fingerprints are not migrated`);
   const input = loadInputs(root);
   invariant(detect3DState(input.manifest, input.talents) === 'PRE_3D', 'REFUSED: Phase 3D is already applied (or partly applied)');

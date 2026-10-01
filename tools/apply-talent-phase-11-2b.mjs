@@ -165,7 +165,7 @@ export async function verifyApplied({ exact = false } = {}) {
   check('talent count unchanged (1,187)', talents.length === 1187);
   check('no normalized source, removed tag or HOLD_NOISY_MAPPING label remains on any canonical talent', [...Object.keys(A.normalize), ...Object.keys(A.remove)].every(k => !c.byTag[k]));
   check('every manifest record carries exactly its certified tags', manifest.rows.every(r => JSON.stringify(by.get(r.id)?.system.tags) === JSON.stringify(r.after)));
-  check('post census equals the certified census', JSON.stringify(c.byTag) === JSON.stringify(Object.fromEntries(Object.entries(report.postCensus.byTag))) );
+  check('post census equals the certified census', Object.keys(c.byTag).length === Object.keys(report.postCensus.byTag).length && Object.entries(c.byTag).every(([k, n]) => report.postCensus.byTag[k] === n));
   check('other talents unchanged', sortedFp(talents.filter(t => !ids.has(t._id))) === report.othersFingerprint);
   check('homebrew pack unchanged', gitBlobSha(read(HOMEBREW)) === report.preState.homebrew);
   const rec = reconcile(loadInput()); check('reconciler: zero blocking findings', rec.blockingFindings.length === 0, JSON.stringify(rec.findingCounts));

@@ -133,23 +133,27 @@ const renderDoc = r => { const c = r.counts, x = r.runtimeConsumers; return ['# 
 export function detect11_2aState() {
   if (!fs.existsSync(path.join(ROOT, REPORT_PATH))) return 'PRE_11_2A';
   const r = readJson(REPORT_PATH), sha = gitBlobSha(read(TALENTS));
-  return r.postState.talents === sha ? 'POST_11_2A' : r.preState.talents === sha ? 'PRE_11_2A' : 'UNKNOWN';
+  if (r.postState.talents === sha) return 'POST_11_2A';
+  if (r.preState.talents === sha) return 'PRE_11_2A';
+  const h = path.join(ROOT, 'data/audits/talent-phase-11-2b-dry-run-report.json'); // Phase 11-2B (later) cleaned further legacy tags
+  return fs.existsSync(h) && readJson('data/audits/talent-phase-11-2b-dry-run-report.json').postState.talents === sha ? 'POST_LATER' : 'UNKNOWN';
 }
 
 export async function verifyApplied({ exact = false } = {}) {
   const res = [], check = (id, ok, detail = '') => res.push({ id, ok: !!ok, detail });
   const report = readJson(REPORT_PATH), manifest = readJson(MANIFEST_PATH), talentsText = read(TALENTS), talents = parse(talentsText), del = new Set(manifest.deleteTags), ids = new Set(manifest.rows.map(r => r.id)), by = new Map(talents.map(t => [t._id, t]));
   const auth = readJson(AUTH), buckets = {}; for (const t of auth.tags) (buckets[t.bucket] ??= new Set()).add(t.tag);
-  check('packs/talents.db is the certified Phase 11-2A post-state', detect11_2aState() === 'POST_11_2A');
+  const later = detect11_2aState() === 'POST_LATER'; // 11-2B removed/renamed further tags: manifest tag sets, census counts and the fingerprint are superseded; the 74-tag absence is still checked
+  check('packs/talents.db is the certified Phase 11-2A post-state (or a later certified state)', ['POST_11_2A', 'POST_LATER'].includes(detect11_2aState()));
   check('talent count unchanged (1,187)', talents.length === 1187);
   check('none of the 74 DELETE-bucket tags remains on any canonical talent', talents.every(t => (t.system.tags ?? []).every(x => !del.has(x))));
-  check('every manifest record carries exactly its certified surviving tags', manifest.rows.every(r => JSON.stringify(by.get(r.id)?.system.tags) === JSON.stringify(r.after)));
+  if (!later) check('every manifest record carries exactly its certified surviving tags', manifest.rows.every(r => JSON.stringify(by.get(r.id)?.system.tags) === JSON.stringify(r.after)));
   const c = censusOf(talents);
-  check('surviving census: every KEEP/RECONSIDER/BESPOKE tag keeps its certified count', [...(buckets.KEEP ?? []), ...(buckets.RECONSIDER ?? []), ...(buckets.BESPOKE ?? [])].every(k => c.byTag[k] === report.postCensus.byTag[k]) && c.uniqueRawTags === report.counts.rawTagsAfter);
-  check('other talents unchanged', sortedFp(talents.filter(t => !ids.has(t._id))) === report.othersFingerprint);
+  if (!later) check('surviving census: every KEEP/RECONSIDER/BESPOKE tag keeps its certified count', [...(buckets.KEEP ?? []), ...(buckets.RECONSIDER ?? []), ...(buckets.BESPOKE ?? [])].every(k => c.byTag[k] === report.postCensus.byTag[k]) && c.uniqueRawTags === report.counts.rawTagsAfter);
+  if (!later) check('other talents unchanged', sortedFp(talents.filter(t => !ids.has(t._id))) === report.othersFingerprint);
   check('homebrew pack unchanged', gitBlobSha(read(HOMEBREW)) === report.preState.homebrew);
   const rec = reconcile(loadInput()); check('reconciler: zero blocking findings', rec.blockingFindings.length === 0, JSON.stringify(rec.findingCounts));
-  if (exact) check('packs/talents.db equals the certified blob', gitBlobSha(talentsText) === report.postState.talents);
+  if (exact && !later) check('packs/talents.db equals the certified blob', gitBlobSha(talentsText) === report.postState.talents);
   return res;
 }
 
@@ -165,7 +169,7 @@ export async function main(argv = process.argv.slice(2)) {
   const has = f => argv.includes(f), state = detect11_2aState();
   const pr = res => { for (const x of res) console.log(`${x.ok ? 'PASS' : 'FAIL'}  ${x.id}${x.ok || !x.detail ? '' : '  [' + x.detail + ']'}`); return res.filter(x => !x.ok).length; };
   if (has('--status')) { console.log(ERR + state); return 0; }
-  if (has('--verify') || (has('--check') && state === 'POST_11_2A')) { const bad = pr(await verifyApplied({ exact: has('--exact') })); console.log(`\n${ERR}verify ${bad ? 'FAIL' : 'PASS'}`); return bad ? 1 : 0; }
+  if (has('--verify') || (has('--check') && (state === 'POST_11_2A' || state === 'POST_LATER'))) { const bad = pr(await verifyApplied({ exact: has('--exact') })); console.log(`\n${ERR}verify ${bad ? 'FAIL' : 'PASS'}`); return bad ? 1 : 0; }
   if (has('--apply')) { const fresh = await buildReport(); invariant(read(REPORT_PATH) === JSON.stringify(fresh, null, 1) + '\n', 'REFUSED: committed dry-run report differs from a fresh projection'); applyProduction(); console.log(ERR + 'APPLIED packs/talents.db (uncommitted)'); return 0; }
   invariant(state === 'PRE_11_2A', `the pre-deletion pack is required (found ${state})`);
   if (has('--manifest')) { fs.writeFileSync(path.join(ROOT, MANIFEST_PATH), JSON.stringify(deriveManifest(), null, 1) + '\n'); console.log(ERR + 'wrote ' + MANIFEST_PATH); return 0; }

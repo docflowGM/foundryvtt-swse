@@ -165,7 +165,7 @@ const talentsByName = new Map(talentDocs.map(doc => [doc.name.toLowerCase(), doc
     assert.equal(doc.system.talent_tree, TREE_NAME, `${name} does not declare the Superior Skills tree name`);
     assert.equal(doc.system.source, 'Galaxy of Intrigue', `${name} has the wrong source book`);
     assert.equal(doc.system.page, 21, `${name} has the wrong source page`);
-    assert.ok(doc.system.tags.includes('superior-skills'), `${name} is missing the superior-skills tag`);
+    // Phase 11-2B removed the 'superior-skills' tag (certified DELETE_DECOMPOSE); the surviving 'skills' tag is still asserted below
     assert.ok(doc.system.tags.includes('skills'), `${name} is missing the skills tag`);
     assert.ok(String(doc.system.benefit || '').length > 40, `${name} has no benefit text`);
     assert.ok(String(doc.system.description?.value || '').length > 40, `${name} has no description text`);

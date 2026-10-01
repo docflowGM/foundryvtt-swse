@@ -85,7 +85,7 @@ const tree = treeDocs.find(doc => doc._id === TREE_ID);
     assert.equal(doc.system.description?.value, doc.system.benefit);
     // Phase 11-2A deleted the tree_<id> alias tags; tree identity is system.treeId (the persistent tree _id)
     assert.equal(doc.system.treeId, TREE_ID);
-    assert.ok(doc.system.tags.includes('elite-droid'));
+    // Phase 11-2B removed the 'elite-droid' tree-label tag (certified DELETE_DECOMPOSE); tree identity is the treeId assertion above
 
     // Contextual mechanics must not be encoded as unconditional passives.
     assert.equal(doc.system.executionModel, 'ACTIVE', `${expected.name} is marked passive`);
