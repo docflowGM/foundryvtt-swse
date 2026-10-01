@@ -74,6 +74,14 @@ export const OWNER_RULINGS = {
   'Scum and Villainy|Outlaw|Find an Opening': { leafId: 'swse.talent.seize_the_moment', targetIdentity: 'Scum and Villainy|Outlaw|Seize the Moment', targetId: 'e19c06b6dfc7a703', basis: 'Owner ruling (certified Scum and Villainy authority, printed p.35): Find an Opening and its prerequisite Seize the Moment are both Outlaw-tree talents of the same published chain; the Provocateur Seize the Moment (Legacy Era Campaign Guide) is not the intended prerequisite.' }
 };
 
+/** production `_id` -> certified canonical identity (Phase 3B manifests + the 3E addendum). Shared by later phases. */
+export function loadIdentityOf() {
+  const identityOf = new Map();
+  for (const { manifest } of loadCommittedManifests()) for (const r of manifest.records) { const i = r.identityResolution; identityOf.set(i.productionRecordId || i.createRecordId, r.canonicalIdentity); }
+  for (const a of readJson('data/audits/talent-phase-3e-canonical-additions.json').additions) identityOf.set(a.production.id, a.canonicalIdentity);
+  return identityOf;
+}
+
 /** Layered source-correction entries (same entry shape the reconciler already honours for 3E-5: REPLACE_FIELDS + PDF_VERIFIED). */
 function textCorrections(talents, identityOf) {
   const byId = new Map(talents.map(t => [t._id, t]));
@@ -94,9 +102,7 @@ export function deriveManifest() {
   const byId = new Map(talents.map(t => [t._id, t])), bySwse = new Map();
   for (const t of talents) { const f = t.flags?.swse?.id; if (f) bySwse.set(f, [...(bySwse.get(f) ?? []), t]); }
   const treeOf = new Map(); for (const tr of trees) for (const id of tr.system.talentIds) treeOf.set(id, tr);
-  const identityOf = new Map();
-  for (const { manifest } of loadCommittedManifests()) for (const r of manifest.records) { const i = r.identityResolution; identityOf.set(i.productionRecordId || i.createRecordId, r.canonicalIdentity); }
-  for (const a of readJson('data/audits/talent-phase-3e-canonical-additions.json').additions) identityOf.set(a.production.id, a.canonicalIdentity);
+  const identityOf = loadIdentityOf();
   const sameNameNames = new Set(readJson('data/canonical/talents.json').sameNameDifferentTreeGroups.map(g => g.name.toLowerCase()));
   const census = readJson('data/audits/talent-phase-3g-prerequisite-identity-census.json');
   const censusByKey = new Map(census.rows.map(r => [`${r.owner.id}|${r.path}`, r]));

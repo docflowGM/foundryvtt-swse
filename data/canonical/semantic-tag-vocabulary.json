@@ -1,0 +1,319 @@
+{
+  "schemaVersion": 1,
+  "phase": "3H-0",
+  "status": "SEMANTIC_VOCABULARY_AUTHORITY",
+  "authority": "Archetype Phase 11 (final, roadmap 0-11 closed). Exactly the vocabulary used by the 297 canonical archetypes; no tag is invented, renamed or inferred here.",
+  "style": "lower_snake_case",
+  "count": 57,
+  "rules": [
+    "Exact canonical references outrank tags.",
+    "Tags are semantic signals only.",
+    "Archetype relationship strength (primary/supporting) lives in archetype data, never in talent tags.",
+    "Class routes are separate from semantic tags.",
+    "No per-record numeric tag weights.",
+    "Direction of authority: published rule -> canonical meaning -> canonical semantic tags -> archetype/suggestion consumption."
+  ],
+  "sources": {
+    "dataset": {
+      "path": "data/audits/archetype-phase-11/SWSE_Archetypes_Phase_11_Canonical_Metadata.json",
+      "sha1": "3dcf0d235453daebbd0d4fd0e832e1babad501bc"
+    },
+    "vocabulary": {
+      "path": "data/audits/archetype-phase-11/SWSE_Archetype_Phase_11_Metadata_Vocabulary.json",
+      "sha1": "697436157de91de54d3f887afedb3d818fdf8199"
+    },
+    "report": {
+      "path": "data/audits/archetype-phase-11/SWSE_Archetype_Phase_11_Canonical_Metadata_Convergence.md",
+      "sha1": "3cc4c3ebc1565cd905ab6136fd4fe3cd17387f4c"
+    }
+  },
+  "tags": [
+    "ability_cha",
+    "ability_con",
+    "ability_dex",
+    "ability_int",
+    "ability_str",
+    "ability_wis",
+    "accuracy",
+    "advanced_melee",
+    "ally_support",
+    "area_damage",
+    "climb",
+    "control",
+    "damage",
+    "dark_side",
+    "deception",
+    "defense",
+    "droid",
+    "endurance",
+    "equipment",
+    "fieldcraft",
+    "finesse",
+    "force",
+    "force_power",
+    "force_training",
+    "gather_information",
+    "hacking",
+    "healing",
+    "heavy_weapon",
+    "initiative",
+    "jump",
+    "knowledge",
+    "leadership",
+    "lightsaber",
+    "lightsaber_form",
+    "mechanics",
+    "medical",
+    "melee",
+    "mobility",
+    "perception",
+    "persuasion",
+    "pilot",
+    "pistol",
+    "ranged",
+    "ride",
+    "rifle",
+    "sniper",
+    "social",
+    "starship",
+    "stealth",
+    "support",
+    "survivability",
+    "survival",
+    "swim",
+    "tech",
+    "use_computer",
+    "use_the_force",
+    "vehicle"
+  ],
+  "archetypeUsage": {
+    "ability_cha": {
+      "archetypesPrimary": 149,
+      "archetypesSupporting": 50
+    },
+    "ability_con": {
+      "archetypesPrimary": 24,
+      "archetypesSupporting": 73
+    },
+    "ability_dex": {
+      "archetypesPrimary": 71,
+      "archetypesSupporting": 93
+    },
+    "ability_int": {
+      "archetypesPrimary": 133,
+      "archetypesSupporting": 82
+    },
+    "ability_str": {
+      "archetypesPrimary": 32,
+      "archetypesSupporting": 19
+    },
+    "ability_wis": {
+      "archetypesPrimary": 154,
+      "archetypesSupporting": 128
+    },
+    "accuracy": {
+      "archetypesPrimary": 1,
+      "archetypesSupporting": 14
+    },
+    "advanced_melee": {
+      "archetypesPrimary": 0,
+      "archetypesSupporting": 19
+    },
+    "ally_support": {
+      "archetypesPrimary": 29,
+      "archetypesSupporting": 8
+    },
+    "area_damage": {
+      "archetypesPrimary": 0,
+      "archetypesSupporting": 1
+    },
+    "climb": {
+      "archetypesPrimary": 0,
+      "archetypesSupporting": 17
+    },
+    "control": {
+      "archetypesPrimary": 3,
+      "archetypesSupporting": 18
+    },
+    "damage": {
+      "archetypesPrimary": 2,
+      "archetypesSupporting": 45
+    },
+    "dark_side": {
+      "archetypesPrimary": 16,
+      "archetypesSupporting": 1
+    },
+    "deception": {
+      "archetypesPrimary": 20,
+      "archetypesSupporting": 55
+    },
+    "defense": {
+      "archetypesPrimary": 20,
+      "archetypesSupporting": 66
+    },
+    "droid": {
+      "archetypesPrimary": 5,
+      "archetypesSupporting": 6
+    },
+    "endurance": {
+      "archetypesPrimary": 27,
+      "archetypesSupporting": 43
+    },
+    "equipment": {
+      "archetypesPrimary": 1,
+      "archetypesSupporting": 1
+    },
+    "fieldcraft": {
+      "archetypesPrimary": 134,
+      "archetypesSupporting": 144
+    },
+    "finesse": {
+      "archetypesPrimary": 0,
+      "archetypesSupporting": 13
+    },
+    "force": {
+      "archetypesPrimary": 66,
+      "archetypesSupporting": 0
+    },
+    "force_power": {
+      "archetypesPrimary": 66,
+      "archetypesSupporting": 0
+    },
+    "force_training": {
+      "archetypesPrimary": 66,
+      "archetypesSupporting": 0
+    },
+    "gather_information": {
+      "archetypesPrimary": 20,
+      "archetypesSupporting": 49
+    },
+    "hacking": {
+      "archetypesPrimary": 0,
+      "archetypesSupporting": 1
+    },
+    "healing": {
+      "archetypesPrimary": 12,
+      "archetypesSupporting": 7
+    },
+    "heavy_weapon": {
+      "archetypesPrimary": 0,
+      "archetypesSupporting": 2
+    },
+    "initiative": {
+      "archetypesPrimary": 24,
+      "archetypesSupporting": 70
+    },
+    "jump": {
+      "archetypesPrimary": 0,
+      "archetypesSupporting": 18
+    },
+    "knowledge": {
+      "archetypesPrimary": 90,
+      "archetypesSupporting": 109
+    },
+    "leadership": {
+      "archetypesPrimary": 29,
+      "archetypesSupporting": 15
+    },
+    "lightsaber": {
+      "archetypesPrimary": 6,
+      "archetypesSupporting": 7
+    },
+    "lightsaber_form": {
+      "archetypesPrimary": 6,
+      "archetypesSupporting": 7
+    },
+    "mechanics": {
+      "archetypesPrimary": 33,
+      "archetypesSupporting": 22
+    },
+    "medical": {
+      "archetypesPrimary": 15,
+      "archetypesSupporting": 28
+    },
+    "melee": {
+      "archetypesPrimary": 8,
+      "archetypesSupporting": 58
+    },
+    "mobility": {
+      "archetypesPrimary": 0,
+      "archetypesSupporting": 26
+    },
+    "perception": {
+      "archetypesPrimary": 100,
+      "archetypesSupporting": 177
+    },
+    "persuasion": {
+      "archetypesPrimary": 83,
+      "archetypesSupporting": 31
+    },
+    "pilot": {
+      "archetypesPrimary": 29,
+      "archetypesSupporting": 19
+    },
+    "pistol": {
+      "archetypesPrimary": 18,
+      "archetypesSupporting": 5
+    },
+    "ranged": {
+      "archetypesPrimary": 20,
+      "archetypesSupporting": 13
+    },
+    "ride": {
+      "archetypesPrimary": 3,
+      "archetypesSupporting": 3
+    },
+    "rifle": {
+      "archetypesPrimary": 18,
+      "archetypesSupporting": 2
+    },
+    "sniper": {
+      "archetypesPrimary": 0,
+      "archetypesSupporting": 1
+    },
+    "social": {
+      "archetypesPrimary": 106,
+      "archetypesSupporting": 44
+    },
+    "starship": {
+      "archetypesPrimary": 5,
+      "archetypesSupporting": 19
+    },
+    "stealth": {
+      "archetypesPrimary": 20,
+      "archetypesSupporting": 17
+    },
+    "support": {
+      "archetypesPrimary": 9,
+      "archetypesSupporting": 10
+    },
+    "survivability": {
+      "archetypesPrimary": 1,
+      "archetypesSupporting": 44
+    },
+    "survival": {
+      "archetypesPrimary": 41,
+      "archetypesSupporting": 36
+    },
+    "swim": {
+      "archetypesPrimary": 0,
+      "archetypesSupporting": 1
+    },
+    "tech": {
+      "archetypesPrimary": 51,
+      "archetypesSupporting": 60
+    },
+    "use_computer": {
+      "archetypesPrimary": 17,
+      "archetypesSupporting": 76
+    },
+    "use_the_force": {
+      "archetypesPrimary": 56,
+      "archetypesSupporting": 5
+    },
+    "vehicle": {
+      "archetypesPrimary": 35,
+      "archetypesSupporting": 20
+    }
+  }
+}
