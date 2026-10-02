@@ -6,7 +6,7 @@ This closes **Phase 12-1 only**: the owner-certified semantic tags for the 311-t
 
 - Starting point: `origin/main` at `02a239e47ff3ade20d0a16ca07dd75d46ffa0250` (Phase 11-2D merged). Working tree was clean; the execution branch was cut fresh from that commit.
 - Execution branch: `audit/talent-phase-12-semantic-tags` (not merged to `main`).
-- Final semantic authority (QA3, frozen):
+- Final semantic authority (QA3 plus the 11-record global-QA reconciliation, frozen):
   - `data/audits/talent-phase-12-1-semantic-tag-authority.json` (machine)
   - `docs/audits/talent-phase-12-1-semantic-tag-authority.md` (human)
   - Execution metadata was set to `FINAL_FOR_EXECUTION`, `ownerAuthorized: true`, `executionEnabled: true`, `finalSemanticPayload: "QA3"`, with an `executionAuthorization` record. No `auditKey`, `canonicalId`, `finalTags`, `rationale`, `sourceAuthority`, QA result or deferred decision was changed.
@@ -22,6 +22,26 @@ The QA3 files were delivered inline in the instruction (they were not attached a
 4. every final tag belongs to the 184-string vocabulary read from the pack.
 
 Rationale strings are preserved verbatim, including the character-encoding damage (mojibake, e.g. "location’s" rendered as `â` + two control characters) that appears in a few JATM rationales in the supplied JSON. It is cosmetic, lives only in `rationale`, and does not affect any tag.
+
+## Global-QA reconciliation (second commit)
+
+After the first commit, the owner supplied the global consistency sweep (QA-1 to QA-5, report plus authority files). Its Phase 12-1 delta differs from the applied QA3 arrays on exactly **11** talents; at the owner's instruction it was applied as a second commit on this PR. The manifest, dry-run report and pack were regenerated from the Phase 11-2C pre-state through the same tool (one certified `POST_12_1` state, no second ledger), so the final pack equals QA3 + this delta. The 11-record delta is stored as `globalQaReconciliation` in the authority JSON (QA3 tags, final tags, added/removed, reason) and in the Markdown authority.
+
+| Talent | Change |
+|---|---|
+| UR-044 Turn the Tide | + `reliability` |
+| GAW-041 Stava Expertise | + `reliability` |
+| JATM-027 Fluidity | + `reliability` |
+| TFU-007 Computer Language | + `reroll`, `reliability` |
+| CORE-013 Devastating Attack | + `melee`, `ranged`, `targeting`; − `precision` |
+| CORE-015 Charm Beast | + `manipulation`, `control`; − `nature` |
+| CORE-023 Notorious | − `mind-affecting` |
+| CORE-027 Shift Defense II | + `setup`; − `resilience`, `survivability` |
+| CORE-028 Shift Defense III | + `setup`; − `resilience`, `survivability` |
+| KOTOR-001 Weak Point | + `target-designation` |
+| KOTOR-017 Past Visions | − `reliability` |
+
+Verified: exactly these 11 pack lines differ from the first commit (0 non-tag changes); all 309 applied arrays equal the QA5 `certifiedAssignments`; the QA5 integrity gates (reroll→reliability, action tags→action_economy, force_point_spend→resource_spend, condition_removal→recovery, use_the_force/force_power_synergy→force, ally_support→support) hold on the 309; 0 new tag strings. The delta file's rationale text for 8 JATM records differs from the first-commit copy (encoding repair only); rationale was left as already recorded. The 13 Phase 12-2 revisions in the same sweep are not applied here.
 
 ## Scope of the mutation
 
@@ -41,7 +61,7 @@ Targets resolve by canonical `_id` only; name, source and page are stop-guards, 
 |---|---:|---:|
 | Zero-tag canonical talents | 311 | **2** (Quick Study, Done It All) |
 | Raw tag strings | 184 | 184 (none new, none lost) |
-| Tag instances | 5,228 | 7,571 (+2,343 = sum of the 309 `finalTags` lengths) |
+| Tag instances | 5,228 | 7,576 (+2,348 = sum of the 309 `finalTags` lengths) |
 | Records whose line changed in `packs/talents.db` | — | 309 |
 
 The pre-state matched the frozen baseline exactly (`packs/talents.db` blob `6fe0b15020d4c723cb04d506ae8f7c5f4868b33c`), so no repository drift had to be reconciled.

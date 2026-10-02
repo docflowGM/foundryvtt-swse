@@ -1,6 +1,6 @@
 # Phase 12-1 — certified orphan semantic tags (Talents) — dry run
 
-Status: **DRY_RUN_CERTIFIED**. **309 records** change (`system.tags` only): 2343 tag elements added from an empty array (no merge, no union). Reviewed 311 = 309 certified + 2 deferred (UR-022 Quick Study, GOI-002 Done It All — untouched). Zero-tag talents 311 → 2; raw tag strings 184 → 184 (no new string); tag instances 5228 → 7571. QA history: 83 arrays revised across QA2 + QA3, 226 retained.
+Status: **DRY_RUN_CERTIFIED**. **309 records** change (`system.tags` only): 2348 tag elements added from an empty array (no merge, no union). Reviewed 311 = 309 certified + 2 deferred (UR-022 Quick Study, GOI-002 Done It All — untouched). Zero-tag talents 311 → 2; raw tag strings 184 → 184 (no new string); tag instances 5228 → 7576. QA history: 83 arrays revised across QA2 + QA3, 226 retained.
 
 ## Verification
 

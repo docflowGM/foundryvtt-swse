@@ -5,12 +5,12 @@
   "status": "FINAL_FOR_EXECUTION",
   "ownerAuthorized": true,
   "executionEnabled": true,
-  "finalSemanticPayload": "QA3",
+  "finalSemanticPayload": "QA3+GLOBAL_QA_DELTA",
   "executionAuthorization": {
     "scope": "Phase 12-1 orphan semantic tags only (309 CERTIFIED assignments); the 2 unresolvedTagConcepts and the 876 non-orphan talents are out of scope",
     "authorizedBy": "repository owner (Phase 12-1 execution command)",
     "authorizedOn": "2026-10-02",
-    "note": "QA3 is the final semantic payload. Only these execution-metadata fields differ from the supplied QA3 file; no auditKey, canonicalId, finalTags, rationale, sourceAuthority, QA result or deferred decision was changed. Rationale strings are preserved verbatim, including the mojibake in a few JATM rationales."
+    "note": "QA3 is the final semantic payload. Only these execution-metadata fields differ from the supplied QA3 file; no auditKey, canonicalId, finalTags, rationale, sourceAuthority, QA result or deferred decision was changed. Rationale strings are preserved verbatim, including the mojibake in a few JATM rationales. Reconciliation (2026-10-02): at the owner's instruction the 11 Phase 12-1 revisions of the global QA (QA-1..QA-5) sweep were applied on top of QA3; see globalQaReconciliation. Only those 11 finalTags arrays changed (array order taken from the global-QA file)."
   },
   "repository": "docflowGM/foundryvtt-swse",
   "baseline": {
@@ -1042,7 +1042,8 @@
             "reroll",
             "ally_support",
             "support",
-            "teamwork"
+            "teamwork",
+            "reliability"
           ],
           "rationale": "Tactics check forces affected enemies to reroll Initiative next round while allies may choose to reroll."
         },
@@ -2164,7 +2165,8 @@
             "restrain",
             "control",
             "opposed_check",
-            "reroll"
+            "reroll",
+            "reliability"
           ],
           "rationale": "A successful grab forces an opposed grapple check to escape, and grapple checks you initiate can be rerolled with the second result required."
         },
@@ -2886,7 +2888,8 @@
             "grapple",
             "opposed_check",
             "force_point_spend",
-            "resource_spend"
+            "resource_spend",
+            "reliability"
           ],
           "rationale": "Substitutes Use the Force for Acrobatics, carries applicable rerolls to the substituted check, and can spend a Force Point to improve effective size for grapple checks."
         },
@@ -3424,7 +3427,9 @@
             "persuasion",
             "skill_substitution",
             "skills",
-            "tech"
+            "tech",
+            "reroll",
+            "reliability"
           ],
           "rationale": "Substitutes Persuasion for Use Computer, including training qualification and any rerolls that would apply to the original Use Computer check."
         },
@@ -5035,9 +5040,11 @@
           "name": "Devastating Attack",
           "page": 53,
           "finalTags": [
-            "damage_threshold",
             "weapon_training",
-            "precision"
+            "damage_threshold",
+            "melee",
+            "ranged",
+            "targeting"
           ],
           "rationale": "For a chosen proficient exotic weapon or weapon group, successful attacks treat the target's Damage Threshold as 5 lower; Heavy Weapons can extend the mechanic to vehicle weapon attacks.",
           "sourcebook": "Saga Edition Core Rulebook",
@@ -5085,12 +5092,13 @@
           "finalTags": [
             "force",
             "use_the_force",
-            "skill_substitution",
+            "beast",
             "persuasion",
             "social",
             "skills",
-            "beast",
-            "nature"
+            "skill_substitution",
+            "manipulation",
+            "control"
           ],
           "rationale": "Substitutes Use the Force for Persuasion when changing the attitude of low-Intelligence undomesticated creatures and removes the normal language penalty.",
           "sourcebook": "Saga Edition Core Rulebook",
@@ -5294,7 +5302,6 @@
             "persuasion",
             "intimidation",
             "fear",
-            "mind-affecting",
             "skills",
             "reroll",
             "reliability"
@@ -5385,11 +5392,10 @@
           "name": "Shift Defense II",
           "page": 222,
           "finalTags": [
-            "defense",
-            "resilience",
-            "survivability",
             "swift_action",
-            "action_economy"
+            "action_economy",
+            "defense",
+            "setup"
           ],
           "rationale": "A swift action trades a -5 penalty to one defense for a +2 competence bonus to another defense until the next turn.",
           "sourcebook": "Saga Edition Core Rulebook",
@@ -5406,11 +5412,10 @@
           "name": "Shift Defense III",
           "page": 222,
           "finalTags": [
-            "defense",
-            "resilience",
-            "survivability",
             "swift_action",
-            "action_economy"
+            "action_economy",
+            "defense",
+            "setup"
           ],
           "rationale": "A swift action grants +5 competence to one defense by imposing -5 on the other two defenses until the next turn.",
           "sourcebook": "Saga Edition Core Rulebook",
@@ -5444,7 +5449,8 @@
             "swift_action",
             "action_economy",
             "once-per-encounter",
-            "sustained_damage"
+            "sustained_damage",
+            "target-designation"
           ],
           "rationale": "Once per encounter, a swift action designates one visible target and ignores that target's Damage Reduction for the rest of the user's turn, allowing repeated attacks that turn to bypass DR.",
           "sourcebook": "Knights of the Old Republic Campaign Guide",
@@ -5857,8 +5863,7 @@
             "senses",
             "investigation",
             "recon",
-            "exploration",
-            "reliability"
+            "exploration"
           ],
           "rationale": "Improves farseeing into the past by halving its DCs and revealing the area around the viewed target without the normal Force Point expenditure, strengthening historical investigation and remote reconnaissance.",
           "sourcebook": "Knights of the Old Republic Campaign Guide",
@@ -7845,5 +7850,355 @@
         "authority": "PDF_VERIFIED_AFTER_TXT_CORRUPTION"
       }
     }
+  },
+  "globalQaReconciliation": {
+    "source": "talent-phase-12-global-semantic-authority_QA5 / talent-phase-12-semantic-tag-authority_12-1_GLOBAL_QA",
+    "supersedesForSemanticDesign": "talent-phase-12-semantic-tag-authority_12-1_COMPLETE_QA3.json",
+    "revisedCertifiedRecords": 11,
+    "newTagStringsAuthorized": 0,
+    "revisions": [
+      {
+        "qaPhase": "QA-1",
+        "auditKey": "CORE-015",
+        "canonicalId": "c919d7682bd9df40",
+        "name": "Charm Beast",
+        "qa3FinalTags": [
+          "force",
+          "use_the_force",
+          "skill_substitution",
+          "persuasion",
+          "social",
+          "skills",
+          "beast",
+          "nature"
+        ],
+        "finalTags": [
+          "force",
+          "use_the_force",
+          "beast",
+          "persuasion",
+          "social",
+          "skills",
+          "skill_substitution",
+          "manipulation",
+          "control"
+        ],
+        "added": [
+          "manipulation",
+          "control"
+        ],
+        "removed": [
+          "nature"
+        ],
+        "reason": "Core and Jedi Academy explicitly identify Charm Beast as the same talent. Normalize to the direct mechanic: Force-based Persuasion substitution against beasts, with social manipulation/control; remove broad `nature` leakage."
+      },
+      {
+        "qaPhase": "QA-1",
+        "auditKey": "CORE-023",
+        "canonicalId": "c67cbd59abd1cc53",
+        "name": "Notorious",
+        "qa3FinalTags": [
+          "social",
+          "persuasion",
+          "intimidation",
+          "fear",
+          "mind-affecting",
+          "skills",
+          "reroll",
+          "reliability"
+        ],
+        "finalTags": [
+          "social",
+          "persuasion",
+          "intimidation",
+          "fear",
+          "skills",
+          "reroll",
+          "reliability"
+        ],
+        "added": [],
+        "removed": [
+          "mind-affecting"
+        ],
+        "reason": "The two Core Notorious records have the same intimidation-reroll mechanic. The text does not explicitly make the talent itself a mind-affecting effect, so remove the inconsistent `mind-affecting` tag."
+      },
+      {
+        "qaPhase": "QA-1",
+        "auditKey": "CORE-027",
+        "canonicalId": "c6739fcf6d2107d6",
+        "name": "Shift Defense II",
+        "qa3FinalTags": [
+          "defense",
+          "resilience",
+          "survivability",
+          "swift_action",
+          "action_economy"
+        ],
+        "finalTags": [
+          "swift_action",
+          "action_economy",
+          "defense",
+          "setup"
+        ],
+        "added": [
+          "setup"
+        ],
+        "removed": [
+          "resilience",
+          "survivability"
+        ],
+        "reason": "Shift Defense I–III are one progression with the same defensive trade mechanic. Normalize to action/defense/setup semantics; generic survivability/resilience overstates the mechanic."
+      },
+      {
+        "qaPhase": "QA-1",
+        "auditKey": "CORE-028",
+        "canonicalId": "6996c6ba09d63ab7",
+        "name": "Shift Defense III",
+        "qa3FinalTags": [
+          "defense",
+          "resilience",
+          "survivability",
+          "swift_action",
+          "action_economy"
+        ],
+        "finalTags": [
+          "swift_action",
+          "action_economy",
+          "defense",
+          "setup"
+        ],
+        "added": [
+          "setup"
+        ],
+        "removed": [
+          "resilience",
+          "survivability"
+        ],
+        "reason": "Shift Defense I–III are one progression with the same defensive trade mechanic. Normalize to action/defense/setup semantics; generic survivability/resilience overstates the mechanic."
+      },
+      {
+        "qaPhase": "QA-2",
+        "auditKey": "UR-044",
+        "canonicalId": "4a3fdcd0f32062b2",
+        "name": "Turn the Tide",
+        "qa3FinalTags": [
+          "tactics",
+          "knowledge",
+          "skills",
+          "initiative",
+          "control",
+          "battlefield_control",
+          "planning",
+          "once-per-encounter",
+          "reroll",
+          "ally_support",
+          "support",
+          "teamwork"
+        ],
+        "finalTags": [
+          "tactics",
+          "knowledge",
+          "skills",
+          "initiative",
+          "control",
+          "battlefield_control",
+          "planning",
+          "once-per-encounter",
+          "reroll",
+          "ally_support",
+          "support",
+          "teamwork",
+          "reliability"
+        ],
+        "added": [
+          "reliability"
+        ],
+        "removed": [],
+        "reason": "Turn the Tide explicitly causes Initiative rerolls; under the tightened global rule, every actual reroll mechanic also carries `reliability`."
+      },
+      {
+        "qaPhase": "QA-2",
+        "auditKey": "GAW-041",
+        "canonicalId": "41d3f44653a1fe34",
+        "name": "Stava Expertise",
+        "qa3FinalTags": [
+          "martial_arts",
+          "melee",
+          "grab",
+          "grapple",
+          "restrain",
+          "control",
+          "opposed_check",
+          "reroll"
+        ],
+        "finalTags": [
+          "martial_arts",
+          "melee",
+          "grab",
+          "grapple",
+          "restrain",
+          "control",
+          "opposed_check",
+          "reroll",
+          "reliability"
+        ],
+        "added": [
+          "reliability"
+        ],
+        "removed": [],
+        "reason": "Stava Expertise explicitly rerolls grapple checks; add `reliability` to match every other direct reroll mechanic."
+      },
+      {
+        "qaPhase": "QA-2",
+        "auditKey": "JATM-027",
+        "canonicalId": "5567797336fc8571",
+        "name": "Fluidity",
+        "qa3FinalTags": [
+          "force",
+          "use_the_force",
+          "skill_substitution",
+          "skills",
+          "mobility",
+          "reroll",
+          "grapple",
+          "opposed_check",
+          "force_point_spend",
+          "resource_spend"
+        ],
+        "finalTags": [
+          "force",
+          "use_the_force",
+          "skill_substitution",
+          "skills",
+          "mobility",
+          "reroll",
+          "grapple",
+          "opposed_check",
+          "force_point_spend",
+          "resource_spend",
+          "reliability"
+        ],
+        "added": [
+          "reliability"
+        ],
+        "removed": [],
+        "reason": "Fluidity carries applicable Acrobatics rerolls to the substituted Use the Force check; add `reliability` for reroll consistency."
+      },
+      {
+        "qaPhase": "QA-2",
+        "auditKey": "TFU-007",
+        "canonicalId": "662eb601a2686349",
+        "name": "Computer Language",
+        "qa3FinalTags": [
+          "use_computer",
+          "persuasion",
+          "skill_substitution",
+          "skills",
+          "tech"
+        ],
+        "finalTags": [
+          "use_computer",
+          "persuasion",
+          "skill_substitution",
+          "skills",
+          "tech",
+          "reroll",
+          "reliability"
+        ],
+        "added": [
+          "reroll",
+          "reliability"
+        ],
+        "removed": [],
+        "reason": "Computer Language transfers applicable Use Computer rerolls to Persuasion. It was the only substitution talent with this printed clause missing both `reroll` and `reliability`."
+      },
+      {
+        "qaPhase": "QA-2",
+        "auditKey": "KOTOR-017",
+        "canonicalId": "462df9a631ee50f4",
+        "name": "Past Visions",
+        "qa3FinalTags": [
+          "force",
+          "force_power_synergy",
+          "use_the_force",
+          "visions",
+          "senses",
+          "investigation",
+          "recon",
+          "exploration",
+          "reliability"
+        ],
+        "finalTags": [
+          "force",
+          "force_power_synergy",
+          "use_the_force",
+          "visions",
+          "senses",
+          "investigation",
+          "recon",
+          "exploration"
+        ],
+        "added": [],
+        "removed": [
+          "reliability"
+        ],
+        "reason": "Past Visions halves farseeing DCs and removes a Force Point requirement; that is difficulty/resource improvement, not reroll/fixed-result/failure-rescue reliability."
+      },
+      {
+        "qaPhase": "QA-3",
+        "auditKey": "CORE-013",
+        "canonicalId": "383915a7d11e1225",
+        "name": "Devastating Attack",
+        "qa3FinalTags": [
+          "damage_threshold",
+          "weapon_training",
+          "precision"
+        ],
+        "finalTags": [
+          "weapon_training",
+          "damage_threshold",
+          "melee",
+          "ranged",
+          "targeting"
+        ],
+        "added": [
+          "melee",
+          "ranged",
+          "targeting"
+        ],
+        "removed": [
+          "precision"
+        ],
+        "reason": "Devastating Attack and Greater Devastating Attack are the same threshold-bypass family at different magnitudes. `precision` is reserved for attack-roll improvement, not threshold reduction."
+      },
+      {
+        "qaPhase": "QA-4",
+        "auditKey": "KOTOR-001",
+        "canonicalId": "18bbce2836989fc5",
+        "name": "Weak Point",
+        "qa3FinalTags": [
+          "damage_reduction",
+          "targeting",
+          "swift_action",
+          "action_economy",
+          "once-per-encounter",
+          "sustained_damage"
+        ],
+        "finalTags": [
+          "damage_reduction",
+          "targeting",
+          "swift_action",
+          "action_economy",
+          "once-per-encounter",
+          "sustained_damage",
+          "target-designation"
+        ],
+        "added": [
+          "target-designation"
+        ],
+        "removed": [],
+        "reason": "Weak Point explicitly designates one visible target before bypassing that target's DR; add `target-designation`."
+      }
+    ]
   }
 }

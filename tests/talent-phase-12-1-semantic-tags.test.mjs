@@ -12,8 +12,8 @@ let n = 0; const test = (name, fn) => { fn(); n++; console.log('  ok  ' + name);
 const authority = rd(AUTH), { certified, deferred, defIds } = loadAuthority(), man = rd(MANIFEST_PATH), rep = rd(REPORT_PATH);
 const talents = nd('packs/talents.db'), byId = new Map(talents.map(t => [t._id, t])), tagsOf = t => (Array.isArray(t?.system?.tags) ? t.system.tags : []);
 
-test('authority is the QA3 final payload: FINAL_FOR_EXECUTION, owner-authorized, 311 reviewed = 309 certified + exactly 2 deferred', () => {
-  assert.equal(authority.status, 'FINAL_FOR_EXECUTION'); assert.equal(authority.ownerAuthorized, true); assert.equal(authority.executionEnabled, true); assert.equal(authority.finalSemanticPayload, 'QA3');
+test('authority is the QA3 + global-QA-delta final payload: FINAL_FOR_EXECUTION, owner-authorized, 311 reviewed = 309 certified + exactly 2 deferred', () => {
+  assert.equal(authority.status, 'FINAL_FOR_EXECUTION'); assert.equal(authority.ownerAuthorized, true); assert.equal(authority.executionEnabled, true); assert.equal(authority.finalSemanticPayload, 'QA3+GLOBAL_QA_DELTA');
   assert.equal(certified.length, 309); assert.equal(deferred.length, 2); assert.equal(authority.qualitySweep.revisedTalentCount, 83); assert.equal(authority.qualitySweep.unchangedCertifiedTalentCount, 226);
   assert.deepEqual(deferred.map(d => d.auditKey).sort(), ['GOI-002', 'UR-022']); assert.deepEqual([...defIds].sort(), ['d376f165f1a47281', 'fd37b68c6fb620f6']);
   assert.ok(deferred.every(d => d.conceptFamily === 'TEMPORARY_TALENT_ACCESS' && d.status === 'AWAITING_DESIGNER_ADJUDICATION'));
@@ -59,6 +59,20 @@ test('dry-run certified: 309 records, zero-tag 311 -> 2, 184 raw tags before and
   assert.deepEqual([rep.counts.recordsChanged, rep.counts.zeroTagBefore, rep.counts.zeroTagAfter, rep.counts.rawTagsBefore, rep.counts.rawTagsAfter], [309, 311, 2, 184, 184]);
   assert.deepEqual([rep.counts.nonTargetRecordsChanged, rep.counts.nonTagFieldChanges, rep.counts.vocabularyViolations], [0, 0, 0]); assert.equal(rep.runtimeConsumers.treeIdentityChanged, 0);
   assert.equal(rep.counts.tagInstancesAfter - rep.counts.tagInstancesBefore, certified.reduce((s, x) => s + x.finalTags.length, 0));
+});
+test('global-QA reconciliation: exactly 11 arrays differ from QA3, each recorded with its QA3 tags, added/removed lists and reason; final arrays equal the pack', () => {
+  const rec = authority.globalQaReconciliation; assert.equal(rec.revisedCertifiedRecords, 11); assert.equal(rec.revisions.length, 11); assert.equal(rec.newTagStringsAuthorized, 0);
+  assert.deepEqual(rec.revisions.map(r => r.auditKey).sort(), ['CORE-013', 'CORE-015', 'CORE-023', 'CORE-027', 'CORE-028', 'GAW-041', 'JATM-027', 'KOTOR-001', 'KOTOR-017', 'TFU-007', 'UR-044']);
+  for (const r of rec.revisions) {
+    const x = certified.find(y => y.canonicalId === r.canonicalId); assert.ok(x, r.auditKey); assert.deepEqual(x.finalTags, r.finalTags); assert.notDeepEqual(r.qa3FinalTags, r.finalTags);
+    assert.deepEqual(r.finalTags.filter(t => !r.qa3FinalTags.includes(t)).sort(), [...r.added].sort(), r.auditKey); assert.deepEqual(r.qa3FinalTags.filter(t => !r.finalTags.includes(t)).sort(), [...r.removed].sort(), r.auditKey);
+    assert.deepEqual(byId.get(r.canonicalId).system.tags, r.finalTags, r.auditKey);
+  }
+});
+test('global-QA integrity gates hold on the 309 applied arrays (reroll->reliability, action tags->action_economy, force_point_spend->resource_spend, condition_removal->recovery, use_the_force/force_power_synergy->force, ally_support->support)', () => {
+  const sets = certified.map(x => new Set(byId.get(x.canonicalId).system.tags)), imp = (a, b) => sets.filter(t => t.has(a) && !t.has(b)).length;
+  for (const [a, b] of [['reroll', 'reliability'], ['force_point_spend', 'resource_spend'], ['condition_removal', 'recovery'], ['use_the_force', 'force'], ['force_power_synergy', 'force'], ['ally_support', 'support']]) assert.equal(imp(a, b), 0, `${a} -> ${b}`);
+  for (const a of ['reaction', 'swift_action', 'move_action', 'standard_action']) assert.equal(imp(a, 'action_economy'), 0, `${a} -> action_economy`);
 });
 test('state-appropriate gate passes: the pack is the Phase 12-1 post-state, --verify --exact passes and the CI detector reports POST_12_1_STATE', () => {
   // A later certified phase must add its own later-state mode here (as 11-2C/11-2B/... did) before it can change the pack.

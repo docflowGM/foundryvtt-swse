@@ -4,7 +4,7 @@
 
 FINAL_FOR_EXECUTION — OWNER-AUTHORIZED (Phase 12-1 orphan scope only)
 
-The repository owner authorized execution of the completed Phase 12-1 design on 2026-10-02. QA3 (this file plus data/audits/talent-phase-12-1-semantic-tag-authority.json) is the final Phase 12-1 semantic payload and supersedes every earlier Phase 12-1 draft. Execution covers the 309 CERTIFIED assignments only; the two deferred records (UR-022, GOI-002) and the 876 non-orphan talents (Phase 12-2) are out of scope. The body below is the supplied QA3 text, unchanged; statements elsewhere that execution is disabled are historical.
+The repository owner authorized execution of the completed Phase 12-1 design on 2026-10-02. QA3 plus the 11-record global-QA reconciliation (see the final section; this file plus data/audits/talent-phase-12-1-semantic-tag-authority.json) is the final Phase 12-1 semantic payload and supersedes every earlier Phase 12-1 draft. Execution covers the 309 CERTIFIED assignments only; the two deferred records (UR-022, GOI-002) and the 876 non-orphan talents (Phase 12-2) are out of scope. The body below is the supplied QA3 text, unchanged; statements elsewhere that execution is disabled are historical.
 
 This is the single rolling human-readable authority for Phase 12. It will be updated through every Phase 12-1 and Phase 12-3 batch. Do not create per-book replacement documents. The paired JSON file is the machine execution manifest.
 
@@ -309,7 +309,7 @@ UR-043 — Swift Shot
 UR-044 — Turn the Tide
 
 • Canonical ID: 4a3fdcd0f32062b2 · Page: 31 · Source: Unknown Regions_djvu.txt · Authority: TXT_VERIFIED
-• Final tags: tactics, knowledge, skills, initiative, control, battlefield_control, planning, once-per-encounter, reroll, ally_support, support, teamwork
+• Final tags: tactics, knowledge, skills, initiative, control, battlefield_control, planning, once-per-encounter, reroll, ally_support, support, teamwork, reliability
 • Rationale: Tactics check forces affected enemies to reroll Initiative next round while allies may choose to reroll.
 
 UR-045 — Force Directed Shot
@@ -584,7 +584,7 @@ GAW-040 — Punishing Strike
 GAW-041 — Stava Expertise
 
 • Canonical ID: 41d3f44653a1fe34 · Page: 33 · Source: SW_Saga_Galaxy_at_War.pdf (TXT escalation from Galaxy At War_djvu.txt; physical PDF page 34) · Authority: PDF_VERIFIED_AFTER_TXT_CORRUPTION
-• Final tags: martial_arts, melee, grab, grapple, restrain, control, opposed_check, reroll
+• Final tags: martial_arts, melee, grab, grapple, restrain, control, opposed_check, reroll, reliability
 • Rationale: A successful grab forces an opposed grapple check to escape, and grapple checks you initiate can be rerolled with the second result required.
 
 GAW-042 — Tae-Jitsu Expertise
@@ -766,7 +766,7 @@ JATM-026 — Earth Buckle
 JATM-027 — Fluidity
 
 • Canonical ID: 5567797336fc8571 · Page: 85 · Source: Jedi Academy Training Manual_djvu.txt · Authority: TXT_VERIFIED
-• Final tags: force, use_the_force, skill_substitution, skills, mobility, reroll, grapple, opposed_check, force_point_spend, resource_spend
+• Final tags: force, use_the_force, skill_substitution, skills, mobility, reroll, grapple, opposed_check, force_point_spend, resource_spend, reliability
 • Rationale: Substitutes Use the Force for Acrobatics, carries applicable rerolls to the substituted check, and can spend a Force Point to improve effective size for grapple checks.
 
 JATM-028 — Thunderclap
@@ -912,7 +912,7 @@ TFU-006 — Extended Critical Range (heavy weapons)
 TFU-007 — Computer Language
 
 • Canonical ID: 662eb601a2686349 · Page: 47 · Source: Force Unleashed Campaign Guide_djvu.txt · Authority: TXT_VERIFIED
-• Final tags: use_computer, persuasion, skill_substitution, skills, tech
+• Final tags: use_computer, persuasion, skill_substitution, skills, tech, reroll, reliability
 • Rationale: Substitutes Persuasion for Use Computer, including training qualification and any rerolls that would apply to the original Use Computer check.
 
 TFU-008 — Computer Master
@@ -1347,7 +1347,7 @@ CORE-012 — Unbalance Opponent
 CORE-013 — Devastating Attack
 
 • Canonical ID: 383915a7d11e1225 · Page: 53 · Source: Core Rulebook_djvu.txt · Authority: TXT_VERIFIED
-• Final tags: damage_threshold, weapon_training, precision
+• Final tags: weapon_training, damage_threshold, melee, ranged, targeting
 • Rationale: For a chosen proficient exotic weapon or weapon group, successful attacks treat the target’s Damage Threshold as 5 lower; Heavy Weapons can extend the mechanic to vehicle weapon attacks.
 
 CORE-014 — Attune Armor
@@ -1359,7 +1359,7 @@ CORE-014 — Attune Armor
 CORE-015 — Charm Beast
 
 • Canonical ID: c919d7682bd9df40 · Page: 107 · Source: Core Rulebook_djvu.txt · Authority: TXT_VERIFIED
-• Final tags: force, use_the_force, skill_substitution, persuasion, social, skills, beast, nature
+• Final tags: force, use_the_force, beast, persuasion, social, skills, skill_substitution, manipulation, control
 • Rationale: Substitutes Use the Force for Persuasion when changing the attitude of low-Intelligence undomesticated creatures and removes the normal language penalty.
 
 CORE-016 — Command Beast
@@ -1407,7 +1407,7 @@ CORE-022 — Relentless Pursuit
 CORE-023 — Notorious
 
 • Canonical ID: c67cbd59abd1cc53 · Page: 209 · Source: Core Rulebook_djvu.txt · Authority: TXT_VERIFIED
-• Final tags: social, persuasion, intimidation, fear, mind-affecting, skills, reroll, reliability
+• Final tags: social, persuasion, intimidation, fear, skills, reroll, reliability
 • Rationale: When undisguised, rerolls Persuasion checks made to intimidate and keeps the better result.
 
 CORE-024 — Exotic Weapon Mastery
@@ -1431,13 +1431,13 @@ CORE-026 — Severing Strike
 CORE-027 — Shift Defense II
 
 • Canonical ID: c6739fcf6d2107d6 · Page: 222 · Source: Core Rulebook_djvu.txt · Authority: TXT_VERIFIED
-• Final tags: defense, resilience, survivability, swift_action, action_economy
+• Final tags: swift_action, action_economy, defense, setup
 • Rationale: A swift action trades a -5 penalty to one defense for a +2 competence bonus to another defense until the next turn.
 
 CORE-028 — Shift Defense III
 
 • Canonical ID: 6996c6ba09d63ab7 · Page: 222 · Source: Core Rulebook_djvu.txt · Authority: TXT_VERIFIED
-• Final tags: defense, resilience, survivability, swift_action, action_economy
+• Final tags: swift_action, action_economy, defense, setup
 • Rationale: A swift action grants +5 competence to one defense by imposing -5 on the other two defenses until the next turn.
 
 ## Phase 12-1G — Knights of the Old Republic Campaign Guide
@@ -1452,7 +1452,7 @@ CORE-028 — Shift Defense III
 KOTOR-001 — Weak Point
 
 • Canonical ID: 18bbce2836989fc5 · Page: 28 · Source: Knights of the Old Republic Campaign Guide_djvu.txt · Authority: TXT_VERIFIED
-• Final tags: damage_reduction, targeting, swift_action, action_economy, once-per-encounter, sustained_damage
+• Final tags: damage_reduction, targeting, swift_action, action_economy, once-per-encounter, sustained_damage, target-designation
 • Rationale: Once per encounter, a swift action designates one visible target and ignores that target’s Damage Reduction for the rest of the user’s turn, allowing repeated attacks that turn to bypass DR.
 
 KOTOR-002 — Improved Redirect
@@ -1548,7 +1548,7 @@ KOTOR-016 — Force Momentum
 KOTOR-017 — Past Visions
 
 • Canonical ID: 462df9a631ee50f4 · Page: 58 · Source: Knights of the Old Republic Campaign Guide_djvu.txt · Authority: TXT_VERIFIED
-• Final tags: force, force_power_synergy, use_the_force, visions, senses, investigation, recon, exploration, reliability
+• Final tags: force, force_power_synergy, use_the_force, visions, senses, investigation, recon, exploration
 • Rationale: Improves farseeing into the past by halving its DCs and revealing the area around the viewed target without the normal Force Point expenditure, strengthening historical investigation and remote reconnaissance.
 
 KOTOR-018 — Improved Force Sight
@@ -2219,3 +2219,30 @@ Cumulative Phase 12-1 integrity state
 |12-1K|Scum and Villainy                         |11     |11       |0       |11             |Design pass complete; PDF-verified after TXT OCR corruption|
 |12-1L|Rebellion Era Campaign Guide              |8      |8        |0       |0              |Design pass complete                                       |
 |12-1M|Starships of the Galaxy                   |3      |3        |0       |0              |Design pass complete                                       |
+
+## Global-QA reconciliation (applied on top of QA3)
+
+At the owner's instruction (2026-10-02) the 11 Phase 12-1 revisions of the global consistency sweep (QA-1 through QA-5) were applied to the QA3 arrays above; the entries in the batch sections already show the reconciled final tags. 0 new tag strings. The machine record (QA3 tags, final tags, added/removed, reason) is `globalQaReconciliation` in the JSON authority.
+
+• CORE-015 — Charm Beast (QA-1): added manipulation, control; removed nature.
+  • Core and Jedi Academy explicitly identify Charm Beast as the same talent. Normalize to the direct mechanic: Force-based Persuasion substitution against beasts, with social manipulation/control; remove broad `nature` leakage.
+• CORE-023 — Notorious (QA-1): removed mind-affecting.
+  • The two Core Notorious records have the same intimidation-reroll mechanic. The text does not explicitly make the talent itself a mind-affecting effect, so remove the inconsistent `mind-affecting` tag.
+• CORE-027 — Shift Defense II (QA-1): added setup; removed resilience, survivability.
+  • Shift Defense I–III are one progression with the same defensive trade mechanic. Normalize to action/defense/setup semantics; generic survivability/resilience overstates the mechanic.
+• CORE-028 — Shift Defense III (QA-1): added setup; removed resilience, survivability.
+  • Shift Defense I–III are one progression with the same defensive trade mechanic. Normalize to action/defense/setup semantics; generic survivability/resilience overstates the mechanic.
+• UR-044 — Turn the Tide (QA-2): added reliability.
+  • Turn the Tide explicitly causes Initiative rerolls; under the tightened global rule, every actual reroll mechanic also carries `reliability`.
+• GAW-041 — Stava Expertise (QA-2): added reliability.
+  • Stava Expertise explicitly rerolls grapple checks; add `reliability` to match every other direct reroll mechanic.
+• JATM-027 — Fluidity (QA-2): added reliability.
+  • Fluidity carries applicable Acrobatics rerolls to the substituted Use the Force check; add `reliability` for reroll consistency.
+• TFU-007 — Computer Language (QA-2): added reroll, reliability.
+  • Computer Language transfers applicable Use Computer rerolls to Persuasion. It was the only substitution talent with this printed clause missing both `reroll` and `reliability`.
+• KOTOR-017 — Past Visions (QA-2): removed reliability.
+  • Past Visions halves farseeing DCs and removes a Force Point requirement; that is difficulty/resource improvement, not reroll/fixed-result/failure-rescue reliability.
+• CORE-013 — Devastating Attack (QA-3): added melee, ranged, targeting; removed precision.
+  • Devastating Attack and Greater Devastating Attack are the same threshold-bypass family at different magnitudes. `precision` is reserved for attack-roll improvement, not threshold reduction.
+• KOTOR-001 — Weak Point (QA-4): added target-designation.
+  • Weak Point explicitly designates one visible target before bypassing that target's DR; add `target-designation`.

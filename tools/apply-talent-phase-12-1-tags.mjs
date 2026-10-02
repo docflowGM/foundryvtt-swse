@@ -34,7 +34,7 @@ const byId = talents => { const m = new Map(); for (const t of talents) { invari
 export const loadAuthority = () => validateAuthority(readJson(AUTH));
 export function validateAuthority(a) {
   invariant(a.status === 'FINAL_FOR_EXECUTION' && a.ownerAuthorized === true && a.executionEnabled === true && a.claudeExecutionContract?.enabled === true, 'the authority is not marked FINAL_FOR_EXECUTION / owner-authorized');
-  invariant(a.finalSemanticPayload === 'QA3', 'QA3 must be the final semantic payload');
+  invariant(a.finalSemanticPayload === 'QA3+GLOBAL_QA_DELTA' && a.globalQaReconciliation?.revisedCertifiedRecords === 11, 'the final semantic payload must be QA3 + the 11-record global-QA reconciliation');
   const all = Object.values(a.batches).flatMap(b => b.assignments), certified = all.filter(x => x.status === 'CERTIFIED'), deferred = a.unresolvedTagConcepts;
   invariant(all.length === certified.length, 'every batch assignment must be CERTIFIED (deferrals live only in unresolvedTagConcepts)');
   invariant(certified.length === 309, `expected 309 certified assignments (found ${certified.length})`);

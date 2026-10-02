@@ -9,7 +9,7 @@
   "certified": 309,
   "deferred": 2,
   "recordsChanged": 309,
-  "tagElementsAdded": 2343,
+  "tagElementsAdded": 2348,
   "vocabularySize": 184
  },
  "deferred": [
@@ -600,7 +600,8 @@
     "swift_action",
     "action_economy",
     "once-per-encounter",
-    "sustained_damage"
+    "sustained_damage",
+    "target-designation"
    ]
   },
   {
@@ -1186,9 +1187,11 @@
    "path": "system.tags",
    "before": [],
    "after": [
-    "damage_threshold",
     "weapon_training",
-    "precision"
+    "damage_threshold",
+    "melee",
+    "ranged",
+    "targeting"
    ]
   },
   {
@@ -1355,7 +1358,8 @@
     "restrain",
     "control",
     "opposed_check",
-    "reroll"
+    "reroll",
+    "reliability"
    ]
   },
   {
@@ -1488,8 +1492,7 @@
     "senses",
     "investigation",
     "recon",
-    "exploration",
-    "reliability"
+    "exploration"
    ]
   },
   {
@@ -1657,7 +1660,8 @@
     "reroll",
     "ally_support",
     "support",
-    "teamwork"
+    "teamwork",
+    "reliability"
    ]
   },
   {
@@ -1850,7 +1854,8 @@
     "grapple",
     "opposed_check",
     "force_point_spend",
-    "resource_spend"
+    "resource_spend",
+    "reliability"
    ]
   },
   {
@@ -2207,7 +2212,9 @@
     "persuasion",
     "skill_substitution",
     "skills",
-    "tech"
+    "tech",
+    "reroll",
+    "reliability"
    ]
   },
   {
@@ -2334,11 +2341,10 @@
    "path": "system.tags",
    "before": [],
    "after": [
-    "defense",
-    "resilience",
-    "survivability",
     "swift_action",
-    "action_economy"
+    "action_economy",
+    "defense",
+    "setup"
    ]
   },
   {
@@ -4514,11 +4520,10 @@
    "path": "system.tags",
    "before": [],
    "after": [
-    "defense",
-    "resilience",
-    "survivability",
     "swift_action",
-    "action_economy"
+    "action_economy",
+    "defense",
+    "setup"
    ]
   },
   {
@@ -4534,7 +4539,6 @@
     "persuasion",
     "intimidation",
     "fear",
-    "mind-affecting",
     "skills",
     "reroll",
     "reliability"
@@ -4551,12 +4555,13 @@
    "after": [
     "force",
     "use_the_force",
-    "skill_substitution",
+    "beast",
     "persuasion",
     "social",
     "skills",
-    "beast",
-    "nature"
+    "skill_substitution",
+    "manipulation",
+    "control"
    ]
   },
   {
