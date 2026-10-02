@@ -48,9 +48,9 @@ Authorities (committed in `data/audits/`): `talent-phase-12-1-semantic-tag-autho
 
 They intentionally await ontology-owner adjudication of a temporary-talent-access/mimicry concept. No tag was assigned, no `temporary_talent_access` tag was created, and neither record was modified; they are the only two untagged canonical talents.
 
-## Finding for follow-up: runtime consumers of `system.tags`
+## Consumer correction (before merge)
 
-Tag arrays changed on 876 talents, so code that reads tags can classify talents differently. Probes (real runtime functions): tree identity/credit **0** changes (it never reads tags); droid gate, resolver, item classification and combat-feature classification **0**; **Force-talent counting** (`tags.includes('force')`, read in `prerequisite-checker.js` and `prerequisite-evaluator.js`) changes for **136** talents and the Mystic Mastery regex for **67**. Across the corpus the `force` tag moved from 421 to 289 talents (134 lost, 2 gained): the authority removes `force` from talents whose mechanics do not use the Force (for example Enforcement, Corporate Power, Gunslinger, Melee Duelist, Lightsaber Forms entries). No consumer was altered and no test regressed. Whether any "N Force talents" prerequisite should be re-based on a different signal than the tag is a separate consumer-side decision.
+The Force-talent finding was resolved before merge in a fourth commit: RAW "Force talent" means membership in a Force talent tree, so the prerequisite checker, structured evaluator and Mystic Mastery now share one structural classifier in `tree-authority.js` instead of reading the semantic `force` tag (or a regex). Phase 12 semantic data is unchanged. See `docs/audits/talent-phase-12-force-talent-consumer-correction.md`.
 
 ## Confirmation
 

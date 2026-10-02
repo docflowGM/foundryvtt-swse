@@ -8,6 +8,7 @@
 
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { TalentTreeDB } from "/systems/foundryvtt-swse/scripts/data/talent-tree-db.js";
+import { canonicalTalentId, sourceIdentityOf } from "/systems/foundryvtt-swse/scripts/data/talent-source-identity.js";
 import { resolveClassModel, getClassTalentTreeLookupKeys } from "/systems/foundryvtt-swse/scripts/engine/progression/utils/class-resolution.js";
 import { restrictPrestigeForceTraditionsToMembership } from "/systems/foundryvtt-swse/scripts/settings/force-tradition-house-rules.js";
 
@@ -144,6 +145,63 @@ function resolveTalentTreeKeys(canonicalKeys = []) {
 
 function getAllForceTraditionTreeKeys() {
   return resolveTalentTreeKeys(FORCE_TRADITION_TREE_RULES.map(([treeKey]) => treeKey));
+}
+
+// ---------------------------------------------------------------------------------------------------------------------------------------------
+// RAW "Force talent" identity (Phase 12 consumer correction).
+// A Force talent is a talent that belongs to a Force talent tree: one of the generic Force trees or a published Force-tradition tree
+// (class talent trees such as Jedi Guardian are NOT Force talent trees). Identity is structural: certified canonical tree membership by
+// compendium `_id` (TalentTreeDB). `system.tags` (semantic metadata), names, categories and descriptions are never evidence.
+// ---------------------------------------------------------------------------------------------------------------------------------------------
+let forceTreeCache = { trees: null, size: -1, built: false, ids: new Set() };
+
+/** Runtime tree ids (TalentTreeDB ids) of every RAW Force talent tree: generic Force trees + official Force-tradition trees. */
+export function getCanonicalForceTalentTreeIds() {
+  const trees = TalentTreeDB.trees;
+  const size = trees?.size ?? 0;
+  if (forceTreeCache.trees === trees && forceTreeCache.size === size && forceTreeCache.built === !!TalentTreeDB.isBuilt) return forceTreeCache.ids;
+  const wanted = new Set([...FORCE_GENERIC_TREE_KEYS, ...FORCE_TRADITION_TREE_RULES.map(([treeKey]) => treeKey)].map(normalizeAccessKey));
+  const ids = new Set();
+  for (const tree of TalentTreeDB.all?.() || []) {
+    if (tree?.id && getTreeKeys(tree).some(key => wanted.has(key))) ids.add(tree.id);
+  }
+  forceTreeCache = { trees, size, built: !!TalentTreeDB.isBuilt, ids };
+  return ids;
+}
+
+export function isCanonicalForceTalentTree(treeId) {
+  return getCanonicalForceTalentTreeIds().has(treeId);
+}
+
+/** Canonical compendium `_id` of a compendium record, an actor-owned clone, or a pending selection; null when identity is not resolvable. */
+function canonicalIdOfTalent(talent) {
+  const fromSource = canonicalTalentId(sourceIdentityOf(talent)?.uuid);
+  if (fromSource) return fromSource;
+  // A bare compendium record: its own `_id` is the canonical id. An embedded item's `_id` is a fresh Foundry id and is never trusted.
+  if (talent && !talent._stats && !talent.parent && !talent.flags?.core) return canonicalTalentId(talent._id);
+  return null;
+}
+
+/**
+ * Force-talent classification with identity transparency.
+ * @returns {{isForce:boolean, resolved:boolean, canonicalId:string|null, treeIds:string[]}}
+ *   resolved=false means the talent has no canonical identity or no certified tree membership; it is never counted as a Force talent.
+ */
+export function classifyForceTalent(talent) {
+  const canonicalId = canonicalIdOfTalent(talent);
+  const treeIds = canonicalId ? (TalentTreeDB.getTreeIdsForTalentId?.(canonicalId) ?? []) : [];
+  const forceIds = getCanonicalForceTalentTreeIds();
+  return { isForce: treeIds.some(id => forceIds.has(id)), resolved: treeIds.length > 0, canonicalId, treeIds };
+}
+
+export function isForceTalent(talent) {
+  return classifyForceTalent(talent).isForce;
+}
+
+export function countForceTalents(talents) {
+  let n = 0;
+  for (const talent of talents || []) if (isForceTalent(talent)) n++;
+  return n;
 }
 
 export function actorHasForceSensitivity(actor, context = {}) {
@@ -400,6 +458,11 @@ export function isTreeAccessible(actor, slot, treeId) {
 export default {
   getAllowedTalentTrees,
   getForceTalentTreeAccessKeys,
+  getCanonicalForceTalentTreeIds,
+  isCanonicalForceTalentTree,
+  classifyForceTalent,
+  isForceTalent,
+  countForceTalents,
   actorHasForceSensitivity,
   getActorForceTraditions,
   getActorCustomForceTraditions,

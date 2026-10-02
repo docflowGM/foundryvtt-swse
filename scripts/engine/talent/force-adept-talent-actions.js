@@ -6,6 +6,7 @@ import { rollAttack, rollDamage } from "/systems/foundryvtt-swse/scripts/combat/
 import { getClassLevel, getTotalLevel } from "/systems/foundryvtt-swse/scripts/actors/derived/level-split.js";
 import { DSPEngine } from "/systems/foundryvtt-swse/scripts/engine/darkside/dsp-engine.js";
 import { openForceAlchemyWorkbench } from "/systems/foundryvtt-swse/scripts/apps/force-alchemy/force-alchemy-workbench-app.js";
+import { countForceTalents } from "/systems/foundryvtt-swse/scripts/engine/progression/talents/tree-authority.js";
 import { getTalentAbilityMod as abilityMod } from "/systems/foundryvtt-swse/scripts/engine/talent/talent-ability-helpers.js";
 
 const NS = 'swse';
@@ -648,7 +649,8 @@ export class ForceAdeptTalentActions {
   }
 
   static async announceMysticMastery(actor) {
-    const forceTalentCount = Array.from(actor?.items ?? []).filter(item => item?.type === 'talent' && /force|mystic|telepath|adept|jedi|sith/i.test([item?.system?.category, item?.system?.talent_tree, item?.system?.tree, ...(Array.isArray(item?.system?.tags) ? item.system.tags : [])].join(' '))).length;
+    // RAW Force talent count: same structural authority as Force Adept qualification (no tag/name/category heuristics).
+    const forceTalentCount = countForceTalents(Array.from(actor?.items ?? []).filter(item => item?.type === 'talent'));
     const bonus = Math.min(6, Math.max(0, forceTalentCount));
     return postCard(actor, 'Mystic Mastery', `<p>At level gain, ${esc(actor.name)} gains additional Force Points equal to their Force Talents, maximum +6.</p><p><strong>Current estimated Force Talent count:</strong> ${forceTalentCount}; level-up bonus cap result: <strong>+${bonus}</strong>.</p><p>This is a progression/reconciliation benefit; apply during level-up Force Point reconciliation.</p>`, { estimatedForceTalentCount: forceTalentCount, forcePointLevelUpBonus: bonus });
   }

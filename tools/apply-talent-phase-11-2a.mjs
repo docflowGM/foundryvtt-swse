@@ -23,7 +23,7 @@ const ERR = '[talent-phase-11-2a] ';
 const invariant = (ok, m) => { if (!ok) throw new Error(ERR + m); };
 const sortedFp = arr => fingerprint(arr.slice().sort((x, y) => x._id.localeCompare(y._id)));
 const withoutTags = t => { const c = structuredClone(t); delete c.system.tags; return c; };
-const EXACT_PROBES = ['droidGate', 'resolved', 'classification', 'combatCandidate', 'combatFeature', 'forceTalentCount', 'lightsaberFormLookup'];
+const EXACT_PROBES = ['droidGate', 'resolved', 'classification', 'combatCandidate', 'combatFeature', 'forceTalent', 'lightsaberFormLookup'];
 
 export function loadBuckets(talents) {
   const a = readJson(AUTH), by = { KEEP: new Set(), DELETE: new Set(), RECONSIDER: new Set(), BESPOKE: new Set() };
