@@ -136,7 +136,7 @@ export function detect11_2aState() {
   if (r.postState.talents === sha) return 'POST_11_2A';
   if (r.preState.talents === sha) return 'PRE_11_2A';
   // Phase 11-2B / 11-2C (later) cleaned further legacy tags
-  return ['talent-phase-11-2b-dry-run-report.json', 'talent-phase-11-2c-dry-run-report.json'].some(f => fs.existsSync(path.join(ROOT, 'data/audits', f)) && readJson('data/audits/' + f).postState.talents === sha) ? 'POST_LATER' : 'UNKNOWN';
+  return ['talent-phase-11-2b-dry-run-report.json', 'talent-phase-11-2c-dry-run-report.json', 'talent-phase-12-1-dry-run-report.json'].some(f => fs.existsSync(path.join(ROOT, 'data/audits', f)) && readJson('data/audits/' + f).postState.talents === sha) ? 'POST_LATER' : 'UNKNOWN';
 }
 
 export async function verifyApplied({ exact = false } = {}) {

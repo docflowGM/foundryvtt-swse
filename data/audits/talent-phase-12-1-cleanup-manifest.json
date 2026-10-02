@@ -1,0 +1,5776 @@
+{
+ "schemaVersion": 1,
+ "phase": "12-1",
+ "status": "CLEANUP_MANIFEST",
+ "authority": "data/audits/talent-phase-12-1-semantic-tag-authority.json",
+ "boundary": "system.tags of the 309 CERTIFIED Phase 12-1 orphan talents: exact finalTags only",
+ "counts": {
+  "reviewed": 311,
+  "certified": 309,
+  "deferred": 2,
+  "recordsChanged": 309,
+  "tagElementsAdded": 2343,
+  "vocabularySize": 184
+ },
+ "deferred": [
+  {
+   "auditKey": "UR-022",
+   "id": "fd37b68c6fb620f6",
+   "name": "Quick Study"
+  },
+  {
+   "auditKey": "GOI-002",
+   "id": "d376f165f1a47281",
+   "name": "Done It All"
+  }
+ ],
+ "preState": {
+  "talents": "6fe0b15020d4c723cb04d506ae8f7c5f4868b33c",
+  "homebrew": "bd4e3d4be9861f9ed0329e0f12545bf3f5dc3c72",
+  "zeroTagTalents": 311
+ },
+ "rows": [
+  {
+   "id": "0025737e7198390e",
+   "auditKey": "SGD-012",
+   "canonicalIdentity": "Force Unleashed Campaign Guide|Third-Degree Droid|Supervising Droid",
+   "name": "Supervising Droid",
+   "sourcebook": "Scavenger's Guide to Droids",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "droid",
+    "ally_support",
+    "support",
+    "teamwork",
+    "skills",
+    "standard_action",
+    "swift_action",
+    "action_economy",
+    "once-per-encounter",
+    "reliability"
+   ]
+  },
+  {
+   "id": "002c2d4fd8383a3e",
+   "auditKey": "GOI-020",
+   "canonicalIdentity": "Saga Edition Core Rulebook|Brawler|Reverse Strength",
+   "name": "Reverse Strength",
+   "sourcebook": "Galaxy of Intrigue",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "grapple",
+    "control",
+    "battlefield_control",
+    "melee",
+    "unarmed",
+    "damage",
+    "scaling"
+   ]
+  },
+  {
+   "id": "004732cba6bfa4a7",
+   "auditKey": "JATM-018",
+   "canonicalIdentity": "Jedi Academy Training Manual|Matukai Adept|Soft to Solid",
+   "name": "Soft to Solid",
+   "sourcebook": "Jedi Academy Training Manual",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "force",
+    "reaction",
+    "action_economy",
+    "force_point_spend",
+    "resource_spend",
+    "damage_reduction",
+    "defense",
+    "resilience",
+    "survivability"
+   ]
+  },
+  {
+   "id": "02bf213d8104b017",
+   "auditKey": "LEG-001",
+   "canonicalIdentity": "Legacy Era Campaign Guide|Versatility|Unbalancing Adaptation",
+   "name": "Unbalancing Adaptation",
+   "sourcebook": "Legacy Era Campaign Guide",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "control",
+    "battlefield_control",
+    "morale"
+   ]
+  },
+  {
+   "id": "03123bd5c86beaa0",
+   "auditKey": "UR-002",
+   "canonicalIdentity": "Unknown Regions|Exile|Band Together",
+   "name": "Band Together",
+   "sourcebook": "Unknown Regions",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "ally_support",
+    "support",
+    "teamwork",
+    "leadership",
+    "target-designation",
+    "damage_bonus",
+    "will_defense",
+    "persuasion",
+    "social",
+    "mind-affecting",
+    "control",
+    "swift_action",
+    "action_economy",
+    "once-per-encounter",
+    "sustained_damage"
+   ]
+  },
+  {
+   "id": "040e50766b518ea6",
+   "auditKey": "JATM-037",
+   "canonicalIdentity": "Jedi Academy Training Manual|Warden of the Sky|Simultaneous Strike",
+   "name": "Simultaneous Strike",
+   "sourcebook": "Jedi Academy Training Manual",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "unarmed",
+    "martial_arts",
+    "melee",
+    "standard_action",
+    "action_economy",
+    "burst_damage",
+    "positioning"
+   ]
+  },
+  {
+   "id": "04985a42930dff2a",
+   "auditKey": "TFU-006",
+   "canonicalIdentity": "Force Unleashed Campaign Guide|Critical Master|Extended Critical Range (heavy weapons)",
+   "name": "Extended Critical Range (heavy weapons)",
+   "sourcebook": "Force Unleashed Campaign Guide",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "heavy_weapon",
+    "ranged",
+    "critical_hit",
+    "precision",
+    "weapon_training"
+   ]
+  },
+  {
+   "id": "04b9cb3683c6e485",
+   "auditKey": "REB-001",
+   "canonicalIdentity": "Rebellion Era Campaign Guide|Recklessness|Risk for Reward",
+   "name": "Risk for Reward",
+   "sourcebook": "Rebellion Era Campaign Guide",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "reaction",
+    "action_economy",
+    "counterattack",
+    "attack_of_opportunity",
+    "melee",
+    "ranged"
+   ]
+  },
+  {
+   "id": "04eca2813630e8d4",
+   "auditKey": "KOTOR-013",
+   "canonicalIdentity": "Knights of the Old Republic Campaign Guide|Jal Shey|Knowledge of the Force",
+   "name": "Knowledge of the Force",
+   "sourcebook": "Knights of the Old Republic Campaign Guide",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "force",
+    "use_the_force",
+    "force_support",
+    "ally_support",
+    "support",
+    "teamwork",
+    "skills",
+    "reaction",
+    "action_economy",
+    "force_point_spend",
+    "resource_spend"
+   ]
+  },
+  {
+   "id": "058898a456a9a8fb",
+   "auditKey": "TFU-034",
+   "canonicalIdentity": "Force Unleashed Campaign Guide|Third-Degree Droid|Protocol",
+   "name": "Protocol",
+   "sourcebook": "Force Unleashed Campaign Guide",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "ally_support",
+    "support",
+    "teamwork",
+    "skills",
+    "deception",
+    "knowledge",
+    "persuasion",
+    "social",
+    "reliability"
+   ]
+  },
+  {
+   "id": "06ab0e40780ea63d",
+   "auditKey": "JATM-010",
+   "canonicalIdentity": "Jedi Academy Training Manual|Baran Do Sage|Knowledge and Defense",
+   "name": "Knowledge and Defense",
+   "sourcebook": "Jedi Academy Training Manual",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "defense",
+    "ambush_defense",
+    "survivability",
+    "ability_enhancement"
+   ]
+  },
+  {
+   "id": "0703de963a247170",
+   "auditKey": "CORE-001",
+   "canonicalIdentity": "Saga Edition Core Rulebook|Inspiration|Ignite Fervor",
+   "name": "Ignite Fervor",
+   "sourcebook": "Saga Edition Core Rulebook",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "ally_support",
+    "support",
+    "teamwork",
+    "damage_bonus",
+    "melee",
+    "ranged",
+    "scaling",
+    "action_economy"
+   ]
+  },
+  {
+   "id": "084f71defa56162a",
+   "auditKey": "UR-014",
+   "canonicalIdentity": "Knights of the Old Republic Campaign Guide|Hyperspace Explorer|Silent Movement",
+   "name": "Silent Movement",
+   "sourcebook": "Unknown Regions",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "stealth",
+    "skills",
+    "mobility",
+    "exploration",
+    "ally_support",
+    "support",
+    "teamwork",
+    "reliability"
+   ]
+  },
+  {
+   "id": "09e7eeda16a7814f",
+   "auditKey": "SGD-016",
+   "canonicalIdentity": "Force Unleashed Campaign Guide|Fourth-Degree Droid|Weapons Power Surge",
+   "name": "Weapons Power Surge",
+   "sourcebook": "Scavenger's Guide to Droids",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "droid",
+    "damage_bonus",
+    "burst_damage",
+    "once-per-encounter",
+    "action_economy",
+    "resource_spend",
+    "equipment",
+    "power_systems"
+   ]
+  },
+  {
+   "id": "0cd242fd0b3f8062",
+   "auditKey": "GAW-020",
+   "canonicalIdentity": "Galaxy at War|Veteran|Grizzled Warrior",
+   "name": "Grizzled Warrior",
+   "sourcebook": "Galaxy at War",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "once-per-encounter",
+    "standard_action",
+    "action_economy",
+    "melee",
+    "ranged",
+    "survivability",
+    "resilience",
+    "defense",
+    "ally_support",
+    "support",
+    "teamwork",
+    "damage_bonus",
+    "scaling",
+    "durability"
+   ]
+  },
+  {
+   "id": "0df15b0ea7721c50",
+   "auditKey": "TFU-020",
+   "canonicalIdentity": "Force Unleashed Campaign Guide|Felucian Shaman|Infuse Weapon",
+   "name": "Infuse Weapon",
+   "sourcebook": "Force Unleashed Campaign Guide",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "force",
+    "force_point_spend",
+    "resource_spend",
+    "empowerment",
+    "weapon_empowerment",
+    "equipment",
+    "melee",
+    "damage_reduction",
+    "durability",
+    "damage_bonus",
+    "sustained_damage"
+   ]
+  },
+  {
+   "id": "0fb750f0f0e6f767",
+   "auditKey": "JATM-035",
+   "canonicalIdentity": "Jedi Academy Training Manual|Warden of the Sky|Martial Resurgence",
+   "name": "Martial Resurgence",
+   "sourcebook": "Jedi Academy Training Manual",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "unarmed",
+    "martial_arts",
+    "melee",
+    "critical_hit",
+    "force",
+    "force_power_synergy",
+    "force_capacity",
+    "resource_recovery",
+    "recovery"
+   ]
+  },
+  {
+   "id": "107b66a6cc86e6d6",
+   "auditKey": "GAW-008",
+   "canonicalIdentity": "Galaxy at War|Anticipation|Summon Aid",
+   "name": "Summon Aid",
+   "sourcebook": "Galaxy at War",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "reaction",
+    "ally_support",
+    "support",
+    "teamwork",
+    "melee",
+    "mobility",
+    "positioning",
+    "action_economy",
+    "battlefield_control",
+    "overwatch"
+   ]
+  },
+  {
+   "id": "111b0a9d1f8d5111",
+   "auditKey": "SOTG-001",
+   "canonicalIdentity": "Starships of the Galaxy|Outlaw Tech|Personalized Modifications",
+   "name": "Personalized Modifications",
+   "sourcebook": "Starships of the Galaxy",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "tech",
+    "modification",
+    "equipment",
+    "standard_action",
+    "action_economy",
+    "precision",
+    "damage_bonus",
+    "melee",
+    "ranged",
+    "sustained_damage"
+   ]
+  },
+  {
+   "id": "11b45afc4136594c",
+   "auditKey": "GAW-036",
+   "canonicalIdentity": "Galaxy at War|Unarmed Mastery|Flurry of Blows",
+   "name": "Flurry of Blows",
+   "sourcebook": "Galaxy at War",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "unarmed",
+    "martial_arts",
+    "melee",
+    "full_attack",
+    "sustained_damage",
+    "scaling",
+    "precision"
+   ]
+  },
+  {
+   "id": "1204459eaaff9efa",
+   "auditKey": "JATM-011",
+   "canonicalIdentity": "Jedi Academy Training Manual|Baran Do Sage|Planetary Attunement",
+   "name": "Planetary Attunement",
+   "sourcebook": "Jedi Academy Training Manual",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "force",
+    "force_point_spend",
+    "resource_spend",
+    "exploration",
+    "survival",
+    "nature",
+    "defense",
+    "mobility",
+    "senses",
+    "precognition",
+    "planning"
+   ]
+  },
+  {
+   "id": "1250a3dac18104eb",
+   "auditKey": "UR-040",
+   "canonicalIdentity": "Saga Edition Core Rulebook|Gunslinger|Lingering Debilitation",
+   "name": "Lingering Debilitation",
+   "sourcebook": "Unknown Regions",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "ranged",
+    "control",
+    "battlefield_control",
+    "pursuit",
+    "once-per-encounter"
+   ]
+  },
+  {
+   "id": "125c8b753d186f6d",
+   "auditKey": "GAW-024",
+   "canonicalIdentity": "Galaxy at War|Veteran|Reckless",
+   "name": "Reckless",
+   "sourcebook": "Galaxy at War",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "melee",
+    "mobility",
+    "positioning",
+    "damage_bonus",
+    "scaling",
+    "burst_damage"
+   ]
+  },
+  {
+   "id": "12f61917f809a3fb",
+   "auditKey": "LEG-009",
+   "canonicalIdentity": "Legacy Era Campaign Guide|Ember of Vahl|Reading the Flame",
+   "name": "Reading the Flame",
+   "sourcebook": "Legacy Era Campaign Guide",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "force",
+    "force_power_synergy",
+    "use_the_force",
+    "visions",
+    "search_your_feelings",
+    "precognition",
+    "meditation",
+    "reroll",
+    "reliability"
+   ]
+  },
+  {
+   "id": "12ffb24378b60c13",
+   "auditKey": "CORE-021",
+   "canonicalIdentity": "Saga Edition Core Rulebook|Gunner|Quick Trigger",
+   "name": "Quick Trigger",
+   "sourcebook": "Saga Edition Core Rulebook",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "vehicle",
+    "ranged",
+    "attack_of_opportunity",
+    "reaction",
+    "counterattack",
+    "positioning",
+    "pursuit",
+    "targeting",
+    "action_economy"
+   ]
+  },
+  {
+   "id": "160cab566fd1ea2c",
+   "auditKey": "JATM-021",
+   "canonicalIdentity": "Jedi Academy Training Manual|Seyugi Dervish|Mobile Whirlwind",
+   "name": "Mobile Whirlwind",
+   "sourcebook": "Jedi Academy Training Manual",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "melee",
+    "mobility",
+    "positioning",
+    "action_economy"
+   ]
+  },
+  {
+   "id": "16b020752725d7a9",
+   "auditKey": "GAW-027",
+   "canonicalIdentity": "Galaxy at War|Squad Leader|Fall Back",
+   "name": "Fall Back",
+   "sourcebook": "Galaxy at War",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "move_action",
+    "action_economy",
+    "ally_support",
+    "support",
+    "teamwork",
+    "leadership",
+    "command",
+    "mobility",
+    "positioning",
+    "evasion",
+    "attack_of_opportunity"
+   ]
+  },
+  {
+   "id": "16d615430294378b",
+   "auditKey": "UR-001",
+   "canonicalIdentity": "Unknown Regions|Exile|Arrogant Bluster",
+   "name": "Arrogant Bluster",
+   "sourcebook": "Unknown Regions",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "persuasion",
+    "social",
+    "control",
+    "will_defense",
+    "mind-affecting",
+    "force_point_spend",
+    "resource_spend"
+   ]
+  },
+  {
+   "id": "17cdb585c58c2f19",
+   "auditKey": "JATM-004",
+   "canonicalIdentity": "Jedi Academy Training Manual|Jedi Weapon Master|Improvised Weapon Master",
+   "name": "Improvised Weapon Master",
+   "sourcebook": "Jedi Academy Training Manual",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "improvised_weapon",
+    "melee",
+    "weapon_training",
+    "precision"
+   ]
+  },
+  {
+   "id": "18bbce2836989fc5",
+   "auditKey": "KOTOR-001",
+   "canonicalIdentity": "Saga Edition Core Rulebook|Awareness|Weak Point",
+   "name": "Weak Point",
+   "sourcebook": "Knights of the Old Republic Campaign Guide",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "damage_reduction",
+    "targeting",
+    "swift_action",
+    "action_economy",
+    "once-per-encounter",
+    "sustained_damage"
+   ]
+  },
+  {
+   "id": "1907d80212a12c68",
+   "auditKey": "GAW-033",
+   "canonicalIdentity": "Galaxy at War|Squad Leader|Search and Destroy",
+   "name": "Search and Destroy",
+   "sourcebook": "Galaxy at War",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "move_action",
+    "action_economy",
+    "ally_support",
+    "support",
+    "teamwork",
+    "leadership",
+    "command",
+    "morale",
+    "perception",
+    "skills",
+    "recon",
+    "detection",
+    "awareness"
+   ]
+  },
+  {
+   "id": "1946e16d1e6c831c",
+   "auditKey": "UR-021",
+   "canonicalIdentity": "Saga Edition Core Rulebook|Commando|Out of Harm's Way",
+   "name": "Out of Harm's Way",
+   "sourcebook": "Unknown Regions",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "reaction",
+    "ally_support",
+    "support",
+    "teamwork",
+    "mobility",
+    "positioning",
+    "evasion",
+    "survivability",
+    "action_economy"
+   ]
+  },
+  {
+   "id": "1b41d42e6adb0d46",
+   "auditKey": "JATM-036",
+   "canonicalIdentity": "Jedi Academy Training Manual|Warden of the Sky|Rebound Leap",
+   "name": "Rebound Leap",
+   "sourcebook": "Jedi Academy Training Manual",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "unarmed",
+    "martial_arts",
+    "melee",
+    "mobility",
+    "movement",
+    "positioning",
+    "skills",
+    "action_economy"
+   ]
+  },
+  {
+   "id": "1bce5b5ca81d0873",
+   "auditKey": "JATM-038",
+   "canonicalIdentity": "Jedi Academy Training Manual|Warden of the Sky|Telekinetic Throw",
+   "name": "Telekinetic Throw",
+   "sourcebook": "Jedi Academy Training Manual",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "unarmed",
+    "martial_arts",
+    "melee",
+    "grapple",
+    "control",
+    "battlefield_control",
+    "movement",
+    "positioning"
+   ]
+  },
+  {
+   "id": "1e32cec439c5ecad",
+   "auditKey": "CW-001",
+   "canonicalIdentity": "Clone Wars Campaign Guide|Military Engineer|Quick Modifications",
+   "name": "Quick Modifications",
+   "sourcebook": "Clone Wars Campaign Guide",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "crafting",
+    "tech",
+    "modification",
+    "equipment"
+   ]
+  },
+  {
+   "id": "1e984785c24ab9c0",
+   "auditKey": "CW-011",
+   "canonicalIdentity": "Clone Wars Campaign Guide|Droid Commander|Maintain Focus",
+   "name": "Maintain Focus",
+   "sourcebook": "Clone Wars Campaign Guide",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "droid",
+    "ally_support",
+    "support",
+    "recovery",
+    "condition_removal",
+    "swift_action",
+    "action_economy"
+   ]
+  },
+  {
+   "id": "1f6b9d509a07f881",
+   "auditKey": "SAV-010",
+   "canonicalIdentity": "Scum and Villainy|Pistoleer|Flanking Fire",
+   "name": "Flanking Fire",
+   "sourcebook": "Scum and Villainy",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "pistol",
+    "ranged",
+    "dual_wield",
+    "flanking",
+    "full_attack",
+    "standard_action",
+    "action_economy",
+    "sustained_damage",
+    "positioning"
+   ]
+  },
+  {
+   "id": "1fc568c1bbdd94e0",
+   "auditKey": "REB-002",
+   "canonicalIdentity": "Rebellion Era Campaign Guide|Rebel Recruiter|Noble Sacrifice",
+   "name": "Noble Sacrifice",
+   "sourcebook": "Rebellion Era Campaign Guide",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "ally_support",
+    "support",
+    "teamwork",
+    "reaction",
+    "action_economy",
+    "survivability",
+    "durability",
+    "scaling"
+   ]
+  },
+  {
+   "id": "224906e573330bf2",
+   "auditKey": "CORE-010",
+   "canonicalIdentity": "Saga Edition Core Rulebook|Spacer|Starship Raider",
+   "name": "Starship Raider",
+   "sourcebook": "Saga Edition Core Rulebook",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "vehicle",
+    "space",
+    "precision"
+   ]
+  },
+  {
+   "id": "226e4f61e29df36f",
+   "auditKey": "CORE-006",
+   "canonicalIdentity": "Saga Edition Core Rulebook|Leadership|Fearless Leader",
+   "name": "Fearless Leader",
+   "sourcebook": "Saga Edition Core Rulebook",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "ally_support",
+    "support",
+    "teamwork",
+    "leadership",
+    "morale",
+    "fear",
+    "will_defense",
+    "defense",
+    "swift_action",
+    "action_economy"
+   ]
+  },
+  {
+   "id": "236bf4d940eb6b12",
+   "auditKey": "TFU-029",
+   "canonicalIdentity": "Force Unleashed Campaign Guide|Fourth-Degree Droid|Droid Smash",
+   "name": "Droid Smash",
+   "sourcebook": "Force Unleashed Campaign Guide",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "melee",
+    "offense_melee",
+    "damage_bonus",
+    "scaling",
+    "ability_enhancement",
+    "sustained_damage"
+   ]
+  },
+  {
+   "id": "26e3d987f7b984cf",
+   "auditKey": "JATM-017",
+   "canonicalIdentity": "Jedi Academy Training Manual|Matukai Adept|Physical Surge",
+   "name": "Physical Surge",
+   "sourcebook": "Jedi Academy Training Manual",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "initiative",
+    "surprise_round",
+    "ambush_defense",
+    "swift_action",
+    "action_economy"
+   ]
+  },
+  {
+   "id": "28c306c37ccb9fcf",
+   "auditKey": "CORE-003",
+   "canonicalIdentity": "Saga Edition Core Rulebook|Influence|Weaken Resolve",
+   "name": "Weaken Resolve",
+   "sourcebook": "Saga Edition Core Rulebook",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "persuasion",
+    "intimidation",
+    "social",
+    "fear",
+    "mind-affecting",
+    "control",
+    "battlefield_control",
+    "damage_threshold",
+    "will_defense",
+    "mobility",
+    "action_economy",
+    "force_point_spend",
+    "resource_spend"
+   ]
+  },
+  {
+   "id": "29e32c30fda1a234",
+   "auditKey": "GAW-028",
+   "canonicalIdentity": "Galaxy at War|Squad Leader|Form Up",
+   "name": "Form Up",
+   "sourcebook": "Galaxy at War",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "move_action",
+    "action_economy",
+    "ally_support",
+    "support",
+    "teamwork",
+    "leadership",
+    "command",
+    "morale",
+    "defense",
+    "positioning",
+    "survivability"
+   ]
+  },
+  {
+   "id": "29f73c36cabdeaf5",
+   "auditKey": "CORE-009",
+   "canonicalIdentity": "Saga Edition Core Rulebook|Spacer|Hyperdriven",
+   "name": "Hyperdriven",
+   "sourcebook": "Saga Edition Core Rulebook",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "vehicle",
+    "space",
+    "skills",
+    "ability_enhancement",
+    "precision",
+    "scaling",
+    "reliability"
+   ]
+  },
+  {
+   "id": "2a209f3e58d8528c",
+   "auditKey": "CW-002",
+   "canonicalIdentity": "Clone Wars Campaign Guide|Loyal Protector|Undying Loyalty",
+   "name": "Undying Loyalty",
+   "sourcebook": "Clone Wars Campaign Guide",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "followers",
+    "minion",
+    "ally_support",
+    "support",
+    "survivability",
+    "durability"
+   ]
+  },
+  {
+   "id": "2bae1dc009d4f2d2",
+   "auditKey": "REB-007",
+   "canonicalIdentity": "Rebellion Era Campaign Guide|Kilian Ranger|Empower Siang Lance",
+   "name": "Empower Siang Lance",
+   "sourcebook": "Rebellion Era Campaign Guide",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "force",
+    "force_point_spend",
+    "resource_spend",
+    "weapon_empowerment",
+    "empowerment",
+    "equipment",
+    "exotic_weapon",
+    "ranged",
+    "damage_bonus",
+    "sustained_damage",
+    "action_economy"
+   ]
+  },
+  {
+   "id": "2be9f49f9c675bfb",
+   "auditKey": "UR-038",
+   "canonicalIdentity": "Saga Edition Core Rulebook|Military Tactics|Irregular Tactics",
+   "name": "Irregular Tactics",
+   "sourcebook": "Unknown Regions",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "tactics",
+    "knowledge",
+    "skills",
+    "support",
+    "teamwork",
+    "defense"
+   ]
+  },
+  {
+   "id": "2d70ebe43ad9c7b0",
+   "auditKey": "GAW-016",
+   "canonicalIdentity": "Galaxy at War|Advance Patrol|Trailblazer",
+   "name": "Trailblazer",
+   "sourcebook": "Galaxy at War",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "swift_action",
+    "action_economy",
+    "ally_support",
+    "support",
+    "teamwork",
+    "mobility",
+    "positioning",
+    "exploration",
+    "battlefield_control"
+   ]
+  },
+  {
+   "id": "2fe6d21e112e43cd",
+   "auditKey": "REB-008",
+   "canonicalIdentity": "Rebellion Era Campaign Guide|Kilian Ranger|Shield Gauntlet Redirect",
+   "name": "Shield Gauntlet Redirect",
+   "sourcebook": "Rebellion Era Campaign Guide",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "shields",
+    "equipment",
+    "deflect",
+    "ranged_defense",
+    "counterattack",
+    "ranged",
+    "targeting",
+    "reaction",
+    "action_economy"
+   ]
+  },
+  {
+   "id": "30b5540645eb4287",
+   "auditKey": "JATM-032",
+   "canonicalIdentity": "Jedi Academy Training Manual|Tyia Adept|Repel Discord",
+   "name": "Repel Discord",
+   "sourcebook": "Jedi Academy Training Manual",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "force",
+    "dark_side",
+    "dark_side_score",
+    "anti-force",
+    "force_defense",
+    "use_the_force",
+    "reaction",
+    "action_economy",
+    "force_point_spend",
+    "resource_spend",
+    "scaling"
+   ]
+  },
+  {
+   "id": "31461ebe45c5f4c9",
+   "auditKey": "SGD-008",
+   "canonicalIdentity": "Force Unleashed Campaign Guide|Second-Degree Droid|On-Board System Link",
+   "name": "On-Board System Link",
+   "sourcebook": "Scavenger's Guide to Droids",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "vehicle",
+    "tech",
+    "power_systems",
+    "shields",
+    "swift_action",
+    "action_economy"
+   ]
+  },
+  {
+   "id": "32fb42ce3ee46e6d",
+   "auditKey": "UR-028",
+   "canonicalIdentity": "Saga Edition Core Rulebook|Infamy|Master Manipulator",
+   "name": "Master Manipulator",
+   "sourcebook": "Unknown Regions",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "persuasion",
+    "social",
+    "manipulation",
+    "skills",
+    "control",
+    "action_economy"
+   ]
+  },
+  {
+   "id": "342fd105ca6369c7",
+   "auditKey": "TFU-032",
+   "canonicalIdentity": "Force Unleashed Campaign Guide|Third-Degree Droid|Helpful",
+   "name": "Helpful",
+   "sourcebook": "Force Unleashed Campaign Guide",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "ally_support",
+    "support",
+    "teamwork",
+    "skills",
+    "swift_action",
+    "action_economy"
+   ]
+  },
+  {
+   "id": "3524a8f7582708d9",
+   "auditKey": "UR-031",
+   "canonicalIdentity": "Saga Edition Core Rulebook|Expert Pilot|Roll Out",
+   "name": "Roll Out",
+   "sourcebook": "Unknown Regions",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "vehicle",
+    "pilot",
+    "space",
+    "evasion",
+    "reroll",
+    "skills",
+    "pursuit",
+    "reliability"
+   ]
+  },
+  {
+   "id": "35375c6c9505e6f5",
+   "auditKey": "KOTOR-010",
+   "canonicalIdentity": "Knights of the Old Republic Campaign Guide|Melee Duelist|Multiattack Proficiency (advanced melee weapons)",
+   "name": "Multiattack Proficiency (advanced melee weapons)",
+   "sourcebook": "Knights of the Old Republic Campaign Guide",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "melee",
+    "full_attack",
+    "sustained_damage",
+    "precision",
+    "weapon_training"
+   ]
+  },
+  {
+   "id": "35af8366f831bd8b",
+   "auditKey": "LEG-006",
+   "canonicalIdentity": "Legacy Era Campaign Guide|Disciple of Twilight|Revelation",
+   "name": "Revelation",
+   "sourcebook": "Legacy Era Campaign Guide",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "force",
+    "use_the_force",
+    "standard_action",
+    "action_economy",
+    "detection",
+    "concealment",
+    "targeting",
+    "precision",
+    "will_defense",
+    "control"
+   ]
+  },
+  {
+   "id": "366ac9dea2e484d3",
+   "auditKey": "KOTOR-002",
+   "canonicalIdentity": "Saga Edition Core Rulebook|Duelist|Improved Redirect",
+   "name": "Improved Redirect",
+   "sourcebook": "Knights of the Old Republic Campaign Guide",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "force",
+    "deflect",
+    "ranged",
+    "ranged_defense",
+    "counterattack",
+    "reaction",
+    "action_economy",
+    "use_the_force",
+    "reliability"
+   ]
+  },
+  {
+   "id": "367b23802f5f4d8b",
+   "auditKey": "GAW-010",
+   "canonicalIdentity": "Saga Edition Core Rulebook|Misfortune|Backstabber",
+   "name": "Backstabber",
+   "sourcebook": "Galaxy at War",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "flanking",
+    "precision",
+    "positioning",
+    "setup",
+    "control"
+   ]
+  },
+  {
+   "id": "37bf53b4b2c0e539",
+   "auditKey": "CORE-007",
+   "canonicalIdentity": "Saga Edition Core Rulebook|Lineage|Wealth",
+   "name": "Wealth",
+   "sourcebook": "Saga Edition Core Rulebook",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "resources",
+    "scaling"
+   ]
+  },
+  {
+   "id": "37cdbac0dee1b93a",
+   "auditKey": "TFU-009",
+   "canonicalIdentity": "Force Unleashed Campaign Guide|Specialized Droid|Enhanced Manipulation",
+   "name": "Enhanced Manipulation",
+   "sourcebook": "Force Unleashed Campaign Guide",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "skills",
+    "skill_mastery",
+    "reliability"
+   ]
+  },
+  {
+   "id": "383915a7d11e1225",
+   "auditKey": "CORE-013",
+   "canonicalIdentity": "Saga Edition Core Rulebook|Weapon Specialist|Devastating Attack",
+   "name": "Devastating Attack",
+   "sourcebook": "Saga Edition Core Rulebook",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "damage_threshold",
+    "weapon_training",
+    "precision"
+   ]
+  },
+  {
+   "id": "38f57c9f9cd0b727",
+   "auditKey": "KOTOR-018",
+   "canonicalIdentity": "Knights of the Old Republic Campaign Guide|Luka Sene|Improved Force Sight",
+   "name": "Improved Force Sight",
+   "sourcebook": "Knights of the Old Republic Campaign Guide",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "force",
+    "use_the_force",
+    "perception",
+    "skills",
+    "senses",
+    "detection",
+    "recon",
+    "awareness",
+    "swift_action",
+    "action_economy",
+    "reliability"
+   ]
+  },
+  {
+   "id": "397ba7dc962f6ebc",
+   "auditKey": "SAV-001",
+   "canonicalIdentity": "Saga Edition Core Rulebook|Mastermind|Wealth of Allies",
+   "name": "Wealth of Allies",
+   "sourcebook": "Scum and Villainy",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "followers",
+    "minion",
+    "resources",
+    "resource_recovery"
+   ]
+  },
+  {
+   "id": "3b38783594bcebce",
+   "auditKey": "SGD-010",
+   "canonicalIdentity": "Force Unleashed Campaign Guide|Second-Degree Droid|Scomp Link Slicer",
+   "name": "Scomp Link Slicer",
+   "sourcebook": "Scavenger's Guide to Droids",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "slicing",
+    "use_computer",
+    "tech",
+    "skills",
+    "once-per-encounter",
+    "control",
+    "opposed_check",
+    "reaction",
+    "action_economy",
+    "infiltration",
+    "reliability"
+   ]
+  },
+  {
+   "id": "3d17761d072eeb53",
+   "auditKey": "TFU-011",
+   "canonicalIdentity": "Force Unleashed Campaign Guide|Specialized Droid|Skill Conversion",
+   "name": "Skill Conversion",
+   "sourcebook": "Force Unleashed Campaign Guide",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "droid",
+    "tech",
+    "modification",
+    "skills",
+    "skill_mastery"
+   ]
+  },
+  {
+   "id": "3d2805cd83bb0cc4",
+   "auditKey": "SGD-015",
+   "canonicalIdentity": "Force Unleashed Campaign Guide|Fourth-Degree Droid|Target Lock",
+   "name": "Target Lock",
+   "sourcebook": "Scavenger's Guide to Droids",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "targeting",
+    "target-designation",
+    "perception",
+    "skills",
+    "detection",
+    "stealth",
+    "reaction",
+    "action_economy",
+    "reliability"
+   ]
+  },
+  {
+   "id": "3d7da7d62139a6e9",
+   "auditKey": "JATM-039",
+   "canonicalIdentity": "Jedi Academy Training Manual|Zeison Sha Warrior|Discblade Arc",
+   "name": "Discblade Arc",
+   "sourcebook": "Jedi Academy Training Manual",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "exotic_weapon",
+    "ranged",
+    "burst_damage",
+    "targeting",
+    "positioning",
+    "action_economy"
+   ]
+  },
+  {
+   "id": "3f8f5305eabc525e",
+   "auditKey": "CORE-008",
+   "canonicalIdentity": "Saga Edition Core Rulebook|Misfortune|Walk the Line",
+   "name": "Walk the Line",
+   "sourcebook": "Saga Edition Core Rulebook",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "control",
+    "battlefield_control",
+    "positioning",
+    "standard_action",
+    "action_economy",
+    "setup"
+   ]
+  },
+  {
+   "id": "4161fc38ed0d7c9a",
+   "auditKey": "GAW-018",
+   "canonicalIdentity": "Galaxy at War|Shockboxer|Defensive Jab",
+   "name": "Defensive Jab",
+   "sourcebook": "Galaxy at War",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "unarmed",
+    "martial_arts",
+    "fighting_defensively",
+    "defense",
+    "melee",
+    "action_economy",
+    "burst_damage",
+    "positioning"
+   ]
+  },
+  {
+   "id": "41d3f44653a1fe34",
+   "auditKey": "GAW-041",
+   "canonicalIdentity": "Galaxy at War|Martial Arts Forms|Stava Expertise",
+   "name": "Stava Expertise",
+   "sourcebook": "Galaxy at War",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "martial_arts",
+    "melee",
+    "grab",
+    "grapple",
+    "restrain",
+    "control",
+    "opposed_check",
+    "reroll"
+   ]
+  },
+  {
+   "id": "421af33d2ee72101",
+   "auditKey": "UR-047",
+   "canonicalIdentity": "Unknown Regions|Blazing Chain|Rising Anger",
+   "name": "Rising Anger",
+   "sourcebook": "Unknown Regions",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "reaction",
+    "ally-trigger",
+    "morale",
+    "scaling",
+    "precision",
+    "action_economy"
+   ]
+  },
+  {
+   "id": "428896be183fadb1",
+   "auditKey": "TFU-028",
+   "canonicalIdentity": "Force Unleashed Campaign Guide|Fourth-Degree Droid|Combat Repairs",
+   "name": "Combat Repairs",
+   "sourcebook": "Force Unleashed Campaign Guide",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "droid",
+    "mechanics",
+    "tech",
+    "skills",
+    "self_repair",
+    "repair",
+    "recovery",
+    "durability",
+    "action_economy"
+   ]
+  },
+  {
+   "id": "4348c2bca983e4a9",
+   "auditKey": "REB-003",
+   "canonicalIdentity": "Rebellion Era Campaign Guide|Rebel Recruiter|Bolstered Numbers",
+   "name": "Bolstered Numbers",
+   "sourcebook": "Rebellion Era Campaign Guide",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "ally_support",
+    "support",
+    "teamwork",
+    "morale",
+    "precision"
+   ]
+  },
+  {
+   "id": "438abc85b1f7d25d",
+   "auditKey": "GAW-031",
+   "canonicalIdentity": "Galaxy at War|Squad Leader|Hold Steady",
+   "name": "Hold Steady",
+   "sourcebook": "Galaxy at War",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "once-per-encounter",
+    "standard_action",
+    "action_economy",
+    "ally_support",
+    "support",
+    "teamwork",
+    "leadership",
+    "command",
+    "recovery",
+    "condition_removal",
+    "survivability"
+   ]
+  },
+  {
+   "id": "450d2fd8991be551",
+   "auditKey": "UR-007",
+   "canonicalIdentity": "Unknown Regions|Exile|Rant",
+   "name": "Rant",
+   "sourcebook": "Unknown Regions",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "persuasion",
+    "intimidation",
+    "social",
+    "control",
+    "battlefield_control",
+    "ally_support",
+    "support",
+    "teamwork",
+    "action_economy",
+    "move_action",
+    "reaction"
+   ]
+  },
+  {
+   "id": "4559e2e975f552fa",
+   "auditKey": "CW-003",
+   "canonicalIdentity": "Clone Wars Campaign Guide|Squad Leader|Coordinated Tactics",
+   "name": "Coordinated Tactics",
+   "sourcebook": "Clone Wars Campaign Guide",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "followers",
+    "minion",
+    "ally_support",
+    "support",
+    "teamwork",
+    "tactics"
+   ]
+  },
+  {
+   "id": "462df9a631ee50f4",
+   "auditKey": "KOTOR-017",
+   "canonicalIdentity": "Knights of the Old Republic Campaign Guide|Keetael|Past Visions",
+   "name": "Past Visions",
+   "sourcebook": "Knights of the Old Republic Campaign Guide",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "force",
+    "force_power_synergy",
+    "use_the_force",
+    "visions",
+    "senses",
+    "investigation",
+    "recon",
+    "exploration",
+    "reliability"
+   ]
+  },
+  {
+   "id": "4699879601d8891c",
+   "auditKey": "UR-034",
+   "canonicalIdentity": "Saga Edition Core Rulebook|Weapon Master|Extended Threat",
+   "name": "Extended Threat",
+   "sourcebook": "Unknown Regions",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "ranged",
+    "attack_of_opportunity",
+    "positioning",
+    "battlefield_control",
+    "overwatch"
+   ]
+  },
+  {
+   "id": "46ebeef2d6de4837",
+   "auditKey": "GOI-016",
+   "canonicalIdentity": "Galaxy of Intrigue|Revolutionary|Revolutionary Rhetoric",
+   "name": "Revolutionary Rhetoric",
+   "sourcebook": "Galaxy of Intrigue",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "persuasion",
+    "social",
+    "skills",
+    "mind-affecting",
+    "control",
+    "manipulation",
+    "battlefield_control",
+    "will_defense",
+    "standard_action",
+    "action_economy"
+   ]
+  },
+  {
+   "id": "471f4294820ce5ec",
+   "auditKey": "TFU-002",
+   "canonicalIdentity": "Saga Edition Core Rulebook|Lineage|Influential Friends",
+   "name": "Influential Friends",
+   "sourcebook": "Force Unleashed Campaign Guide",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "social_network",
+    "resources",
+    "skills",
+    "support",
+    "reliability",
+    "scaling"
+   ]
+  },
+  {
+   "id": "4764dc69f0d11695",
+   "auditKey": "SOTG-002",
+   "canonicalIdentity": "Saga Edition Core Rulebook|Expert Pilot|Vehicle Focus",
+   "name": "Vehicle Focus",
+   "sourcebook": "Starships of the Galaxy",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "vehicle",
+    "pilot",
+    "skills",
+    "reliability",
+    "precision",
+    "ranged",
+    "targeting"
+   ]
+  },
+  {
+   "id": "48024c68e89b1f5b",
+   "auditKey": "GAW-023",
+   "canonicalIdentity": "Saga Edition Core Rulebook|Weapon Specialist|Autofire Assault",
+   "name": "Autofire Assault",
+   "sourcebook": "Galaxy at War",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "ranged",
+    "weapon_training",
+    "setup",
+    "sustained_damage",
+    "battlefield_control"
+   ]
+  },
+  {
+   "id": "4816e7970b4241c2",
+   "auditKey": "TFU-017",
+   "canonicalIdentity": "Force Unleashed Campaign Guide|Agent of Ossus|Vanish",
+   "name": "Vanish",
+   "sourcebook": "Force Unleashed Campaign Guide",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "force",
+    "use_the_force",
+    "swift_action",
+    "action_economy",
+    "concealment",
+    "stealth",
+    "evasion",
+    "force_defense"
+   ]
+  },
+  {
+   "id": "4916dbbae0f18ee1",
+   "auditKey": "LEG-007",
+   "canonicalIdentity": "Legacy Era Campaign Guide|Disciple of Twilight|Shadow Armor",
+   "name": "Shadow Armor",
+   "sourcebook": "Legacy Era Campaign Guide",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "force",
+    "defense",
+    "evasion",
+    "swift_action",
+    "action_economy",
+    "scaling"
+   ]
+  },
+  {
+   "id": "4a0ed533e99848a8",
+   "auditKey": "JATM-003",
+   "canonicalIdentity": "Jedi Academy Training Manual|Jedi Investigator|Unclouded Judgment",
+   "name": "Unclouded Judgment",
+   "sourcebook": "Jedi Academy Training Manual",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "force",
+    "force_defense",
+    "anti-force",
+    "mind-affecting",
+    "will_defense",
+    "defense",
+    "reaction",
+    "action_economy",
+    "force_point_spend",
+    "resource_spend"
+   ]
+  },
+  {
+   "id": "4a3fdcd0f32062b2",
+   "auditKey": "UR-044",
+   "canonicalIdentity": "Saga Edition Core Rulebook|Military Tactics|Turn the Tide",
+   "name": "Turn the Tide",
+   "sourcebook": "Unknown Regions",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "tactics",
+    "knowledge",
+    "skills",
+    "initiative",
+    "control",
+    "battlefield_control",
+    "planning",
+    "once-per-encounter",
+    "reroll",
+    "ally_support",
+    "support",
+    "teamwork"
+   ]
+  },
+  {
+   "id": "4a6a7eccce089a4e",
+   "auditKey": "JATM-009",
+   "canonicalIdentity": "Jedi Academy Training Manual|Baran Do Sage|Expanded Horizon",
+   "name": "Expanded Horizon",
+   "sourcebook": "Jedi Academy Training Manual",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "force",
+    "use_the_force",
+    "search_your_feelings",
+    "visions",
+    "precognition",
+    "planning",
+    "force_point_spend",
+    "resource_spend"
+   ]
+  },
+  {
+   "id": "4a6da8249db460f6",
+   "auditKey": "GOI-001",
+   "canonicalIdentity": "Galaxy of Intrigue|Master of Intrigue|Blend In",
+   "name": "Blend In",
+   "sourcebook": "Galaxy of Intrigue",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "concealment",
+    "positioning",
+    "defense",
+    "evasion",
+    "swift_action",
+    "action_economy"
+   ]
+  },
+  {
+   "id": "4cb2cf521a4d2175",
+   "auditKey": "KOTOR-016",
+   "canonicalIdentity": "Knights of the Old Republic Campaign Guide|Keetael|Force Momentum",
+   "name": "Force Momentum",
+   "sourcebook": "Knights of the Old Republic Campaign Guide",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "force",
+    "force_offense",
+    "melee",
+    "offense_melee",
+    "precision",
+    "damage_bonus",
+    "burst_damage",
+    "force_point_spend",
+    "resource_spend"
+   ]
+  },
+  {
+   "id": "4e52d41e355b5923",
+   "auditKey": "SGD-013",
+   "canonicalIdentity": "Force Unleashed Campaign Guide|Third-Degree Droid|Talkdroid",
+   "name": "Talkdroid",
+   "sourcebook": "Scavenger's Guide to Droids",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "ally_support",
+    "support",
+    "teamwork",
+    "persuasion",
+    "social",
+    "skills"
+   ]
+  },
+  {
+   "id": "4f60988cc2260277",
+   "auditKey": "GAW-029",
+   "canonicalIdentity": "Galaxy at War|Squad Leader|Full Advance",
+   "name": "Full Advance",
+   "sourcebook": "Galaxy at War",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "move_action",
+    "action_economy",
+    "ally_support",
+    "support",
+    "teamwork",
+    "leadership",
+    "command",
+    "morale",
+    "damage_bonus",
+    "sustained_damage"
+   ]
+  },
+  {
+   "id": "510d4b2aadbbc2de",
+   "auditKey": "SGD-001",
+   "canonicalIdentity": "Scavenger's Guide to Droids|Override|Directed Movement",
+   "name": "Directed Movement",
+   "sourcebook": "Scavenger's Guide to Droids",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "droid",
+    "ally_support",
+    "support",
+    "teamwork",
+    "move_action",
+    "action_economy",
+    "mobility",
+    "movement",
+    "skills",
+    "ability_enhancement"
+   ]
+  },
+  {
+   "id": "527289442596a891",
+   "auditKey": "GOI-017",
+   "canonicalIdentity": "Saga Edition Core Rulebook|Commando|Coordinated Effort",
+   "name": "Coordinated Effort",
+   "sourcebook": "Galaxy of Intrigue",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "ally_support",
+    "support",
+    "teamwork",
+    "damage_bonus",
+    "melee",
+    "ranged"
+   ]
+  },
+  {
+   "id": "52bedcae0b3729de",
+   "auditKey": "GOI-022",
+   "canonicalIdentity": "Saga Edition Core Rulebook|Expert Pilot|Clip",
+   "name": "Clip",
+   "sourcebook": "Galaxy of Intrigue",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "vehicle",
+    "pilot",
+    "damage_reduction",
+    "survivability",
+    "durability"
+   ]
+  },
+  {
+   "id": "537afb4984d1ca61",
+   "auditKey": "KOTOR-020",
+   "canonicalIdentity": "Knights of the Old Republic Campaign Guide|Luka Sene|Quickseeing",
+   "name": "Quickseeing",
+   "sourcebook": "Knights of the Old Republic Campaign Guide",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "force",
+    "force_power_synergy",
+    "force_offense",
+    "use_the_force",
+    "visions",
+    "senses",
+    "targeting",
+    "precision",
+    "will_defense",
+    "melee",
+    "ranged",
+    "action_economy",
+    "resource_spend"
+   ]
+  },
+  {
+   "id": "5567797336fc8571",
+   "auditKey": "JATM-027",
+   "canonicalIdentity": "Jedi Academy Training Manual|Shapers of Kro Var|Fluidity",
+   "name": "Fluidity",
+   "sourcebook": "Jedi Academy Training Manual",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "force",
+    "use_the_force",
+    "skill_substitution",
+    "skills",
+    "mobility",
+    "reroll",
+    "grapple",
+    "opposed_check",
+    "force_point_spend",
+    "resource_spend"
+   ]
+  },
+  {
+   "id": "562148487d7aa43c",
+   "auditKey": "GOI-023",
+   "canonicalIdentity": "Saga Edition Core Rulebook|Commando|Dedicated Guardian",
+   "name": "Dedicated Guardian",
+   "sourcebook": "Galaxy of Intrigue",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "ally_support",
+    "ally-trigger",
+    "support",
+    "teamwork",
+    "defense",
+    "evasion",
+    "damage_reduction",
+    "flanking",
+    "positioning",
+    "melee",
+    "reaction",
+    "swift_action",
+    "action_economy",
+    "once-per-encounter",
+    "survivability"
+   ]
+  },
+  {
+   "id": "56a3b3c9b57f11fa",
+   "auditKey": "TFU-033",
+   "canonicalIdentity": "Force Unleashed Campaign Guide|Fifth-Degree Droid|Power Supply",
+   "name": "Power Supply",
+   "sourcebook": "Force Unleashed Campaign Guide",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "power_systems",
+    "tech",
+    "equipment",
+    "support",
+    "vehicle",
+    "shields",
+    "swift_action",
+    "action_economy"
+   ]
+  },
+  {
+   "id": "5730c15fad41ebb3",
+   "auditKey": "UR-037",
+   "canonicalIdentity": "Saga Edition Core Rulebook|Weapon Master|Two-For-One Throw",
+   "name": "Two-For-One Throw",
+   "sourcebook": "Unknown Regions",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "ranged",
+    "dual_wield",
+    "burst_damage",
+    "standard_action",
+    "action_economy"
+   ]
+  },
+  {
+   "id": "5854b821895ffdd9",
+   "auditKey": "JATM-043",
+   "canonicalIdentity": "Jedi Academy Training Manual|Zeison Sha Warrior|Weapon Specialization (discblade)",
+   "name": "Weapon Specialization (discblade)",
+   "sourcebook": "Jedi Academy Training Manual",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "exotic_weapon",
+    "melee",
+    "weapon_specialization",
+    "damage_bonus",
+    "sustained_damage"
+   ]
+  },
+  {
+   "id": "598c2b9b9bb1136f",
+   "auditKey": "UR-019",
+   "canonicalIdentity": "Unknown Regions|Mobile Scout|Terrain Guidance",
+   "name": "Terrain Guidance",
+   "sourcebook": "Unknown Regions",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "mount",
+    "ride",
+    "rider",
+    "mobility",
+    "exploration",
+    "skills",
+    "swift_action",
+    "action_economy"
+   ]
+  },
+  {
+   "id": "5a858011286f5809",
+   "auditKey": "JATM-006",
+   "canonicalIdentity": "Jedi Academy Training Manual|Aing-Tii Monk|Liberate",
+   "name": "Liberate",
+   "sourcebook": "Jedi Academy Training Manual",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "force",
+    "ally_support",
+    "support",
+    "force_point_spend",
+    "resource_spend",
+    "swift_action",
+    "reaction",
+    "action_economy",
+    "grab",
+    "grapple",
+    "restrain",
+    "condition_removal",
+    "recovery",
+    "mobility",
+    "positioning"
+   ]
+  },
+  {
+   "id": "5ae43bdec20b714c",
+   "auditKey": "UR-026",
+   "canonicalIdentity": "Saga Edition Core Rulebook|Bounty Hunter|Familiar Situation",
+   "name": "Familiar Situation",
+   "sourcebook": "Unknown Regions",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "target-designation",
+    "pursuit",
+    "defense",
+    "will_defense",
+    "resilience"
+   ]
+  },
+  {
+   "id": "5ba7da84697a94dd",
+   "auditKey": "GOI-024",
+   "canonicalIdentity": "Saga Edition Core Rulebook|Expert Pilot|Master Defender",
+   "name": "Master Defender",
+   "sourcebook": "Galaxy of Intrigue",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "vehicle",
+    "pilot",
+    "defense",
+    "fighting_defensively",
+    "survivability"
+   ]
+  },
+  {
+   "id": "5c3036b82c047490",
+   "auditKey": "KOTOR-003",
+   "canonicalIdentity": "Knights of the Old Republic Campaign Guide|Gladiatorial Combat|Call Out",
+   "name": "Call Out",
+   "sourcebook": "Knights of the Old Republic Campaign Guide",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "social",
+    "mind-affecting",
+    "control",
+    "battlefield_control",
+    "target-designation",
+    "ally_support",
+    "support"
+   ]
+  },
+  {
+   "id": "5d608b1083cfc31d",
+   "auditKey": "REB-004",
+   "canonicalIdentity": "Rebellion Era Campaign Guide|Ambusher|Destructive Ambusher",
+   "name": "Destructive Ambusher",
+   "sourcebook": "Rebellion Era Campaign Guide",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "ambush",
+    "targeting",
+    "target-designation",
+    "damage_bonus",
+    "sustained_damage"
+   ]
+  },
+  {
+   "id": "5d9cd611ff499100",
+   "auditKey": "UR-009",
+   "canonicalIdentity": "Unknown Regions|Outsider|Wary",
+   "name": "Wary",
+   "sourcebook": "Unknown Regions",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "awareness",
+    "perception",
+    "stealth",
+    "deception",
+    "ambush_defense",
+    "reaction",
+    "move_action",
+    "action_economy",
+    "mobility"
+   ]
+  },
+  {
+   "id": "5e972b61a1f9ecce",
+   "auditKey": "KOTOR-012",
+   "canonicalIdentity": "Knights of the Old Republic Campaign Guide|Jal Shey|Imbue Item",
+   "name": "Imbue Item",
+   "sourcebook": "Knights of the Old Republic Campaign Guide",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "force",
+    "equipment",
+    "crafting",
+    "modification",
+    "empowerment",
+    "resources",
+    "force_point_spend",
+    "resource_spend",
+    "swift_action",
+    "action_economy"
+   ]
+  },
+  {
+   "id": "5ea7a0fd9015b29c",
+   "auditKey": "TFU-026",
+   "canonicalIdentity": "Force Unleashed Campaign Guide|Second-Degree Droid|Vehicle Mechanic",
+   "name": "Vehicle Mechanic",
+   "sourcebook": "Force Unleashed Campaign Guide",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "vehicle",
+    "mechanics",
+    "tech",
+    "skills",
+    "repair",
+    "healing",
+    "recovery",
+    "condition_removal",
+    "durability",
+    "support",
+    "swift_action",
+    "action_economy",
+    "scaling"
+   ]
+  },
+  {
+   "id": "605e0a2ac655e184",
+   "auditKey": "JATM-001",
+   "canonicalIdentity": "Jedi Academy Training Manual|Mystic|Regimen Aptitude",
+   "name": "Regimen Aptitude",
+   "sourcebook": "Jedi Academy Training Manual",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "force",
+    "force_training",
+    "skills"
+   ]
+  },
+  {
+   "id": "62320a2cbed97211",
+   "auditKey": "UR-011",
+   "canonicalIdentity": "Saga Edition Core Rulebook|Camouflage|Extended Ambush",
+   "name": "Extended Ambush",
+   "sourcebook": "Unknown Regions",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "ambush",
+    "surprise_round",
+    "ranged",
+    "sniper",
+    "targeting",
+    "precision",
+    "action_economy",
+    "setup"
+   ]
+  },
+  {
+   "id": "64b2d76b27852887",
+   "auditKey": "GAW-001",
+   "canonicalIdentity": "Galaxy at War|Anticipation|Anticipate Movement",
+   "name": "Anticipate Movement",
+   "sourcebook": "Galaxy at War",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "reaction",
+    "ally_support",
+    "support",
+    "teamwork",
+    "mobility",
+    "positioning",
+    "action_economy"
+   ]
+  },
+  {
+   "id": "64fa257cd511314d",
+   "auditKey": "CORE-005",
+   "canonicalIdentity": "Saga Edition Core Rulebook|Leadership|Distant Command",
+   "name": "Distant Command",
+   "sourcebook": "Saga Edition Core Rulebook",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "ally_support",
+    "support",
+    "teamwork",
+    "leadership",
+    "positioning"
+   ]
+  },
+  {
+   "id": "65f3bc5663794697",
+   "auditKey": "JATM-016",
+   "canonicalIdentity": "Jedi Academy Training Manual|Matukai Adept|Body Control",
+   "name": "Body Control",
+   "sourcebook": "Jedi Academy Training Manual",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "force",
+    "defense",
+    "ability_enhancement",
+    "resilience",
+    "survivability",
+    "poison",
+    "force_point_spend",
+    "resource_spend",
+    "swift_action",
+    "action_economy"
+   ]
+  },
+  {
+   "id": "662eb601a2686349",
+   "auditKey": "TFU-007",
+   "canonicalIdentity": "Force Unleashed Campaign Guide|Specialized Droid|Computer Language",
+   "name": "Computer Language",
+   "sourcebook": "Force Unleashed Campaign Guide",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "use_computer",
+    "persuasion",
+    "skill_substitution",
+    "skills",
+    "tech"
+   ]
+  },
+  {
+   "id": "669aae58e8d0d90f",
+   "auditKey": "GOI-004",
+   "canonicalIdentity": "Galaxy of Intrigue|Skill Challenge|Guaranteed Boon",
+   "name": "Guaranteed Boon",
+   "sourcebook": "Galaxy of Intrigue",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "force_point_spend",
+    "resource_spend",
+    "resource_recovery",
+    "skills"
+   ]
+  },
+  {
+   "id": "66b3278292626e27",
+   "auditKey": "LEG-008",
+   "canonicalIdentity": "Legacy Era Campaign Guide|Disciple of Twilight|Shadow Vision",
+   "name": "Shadow Vision",
+   "sourcebook": "Legacy Era Campaign Guide",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "force",
+    "senses",
+    "detection",
+    "awareness",
+    "concealment",
+    "swift_action",
+    "action_economy"
+   ]
+  },
+  {
+   "id": "66c8f9d94547b5e6",
+   "auditKey": "KOTOR-009",
+   "canonicalIdentity": "Knights of the Old Republic Campaign Guide|Gladiatorial Combat|Multiattack Proficiency (exotic weapons)",
+   "name": "Multiattack Proficiency (exotic weapons)",
+   "sourcebook": "Knights of the Old Republic Campaign Guide",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "exotic_weapon",
+    "full_attack",
+    "sustained_damage",
+    "precision",
+    "weapon_training"
+   ]
+  },
+  {
+   "id": "67c0e483d52bee0d",
+   "auditKey": "SGD-002",
+   "canonicalIdentity": "Scavenger's Guide to Droids|Override|Full Control",
+   "name": "Full Control",
+   "sourcebook": "Scavenger's Guide to Droids",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "droid",
+    "ally_support",
+    "support",
+    "teamwork",
+    "full_attack",
+    "sustained_damage",
+    "action_economy",
+    "precision",
+    "ability_enhancement"
+   ]
+  },
+  {
+   "id": "6908d612b77c6f92",
+   "auditKey": "GAW-012",
+   "canonicalIdentity": "Saga Edition Core Rulebook|Camouflage|Ghost Assailant",
+   "name": "Ghost Assailant",
+   "sourcebook": "Galaxy at War",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "stealth",
+    "skills",
+    "swift_action",
+    "action_economy",
+    "cover",
+    "concealment",
+    "ambush",
+    "precision",
+    "setup",
+    "control",
+    "opposed_check",
+    "positioning"
+   ]
+  },
+  {
+   "id": "696f7eed2cc08299",
+   "auditKey": "UR-010",
+   "canonicalIdentity": "Saga Edition Core Rulebook|Spacer|Deep Space Raider",
+   "name": "Deep Space Raider",
+   "sourcebook": "Unknown Regions",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "vehicle",
+    "pilot",
+    "space",
+    "ranged",
+    "mobility",
+    "positioning",
+    "control",
+    "battlefield_control",
+    "pursuit",
+    "shields",
+    "action_economy",
+    "once-per-encounter"
+   ]
+  },
+  {
+   "id": "6996c6ba09d63ab7",
+   "auditKey": "CORE-028",
+   "canonicalIdentity": "Saga Edition Core Rulebook|Military Tactics|Shift Defense III",
+   "name": "Shift Defense III",
+   "sourcebook": "Saga Edition Core Rulebook",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "defense",
+    "resilience",
+    "survivability",
+    "swift_action",
+    "action_economy"
+   ]
+  },
+  {
+   "id": "6add44bebe61f2f3",
+   "auditKey": "JATM-013",
+   "canonicalIdentity": "Jedi Academy Training Manual|White Current Adept|Immerse Another",
+   "name": "Immerse Another",
+   "sourcebook": "Jedi Academy Training Manual",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "force",
+    "stealth",
+    "use_the_force",
+    "skills",
+    "ally_support",
+    "support",
+    "teamwork",
+    "evasion",
+    "positioning",
+    "force_point_spend",
+    "resource_spend"
+   ]
+  },
+  {
+   "id": "6b2b31d1b90739d1",
+   "auditKey": "CW-008",
+   "canonicalIdentity": "Clone Wars Campaign Guide|Droid Commander|Automated Strike",
+   "name": "Automated Strike",
+   "sourcebook": "Clone Wars Campaign Guide",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "droid",
+    "ally_support",
+    "support",
+    "teamwork",
+    "tactics",
+    "knowledge",
+    "skills",
+    "swift_action",
+    "action_economy",
+    "full_attack",
+    "sustained_damage",
+    "weapon_training"
+   ]
+  },
+  {
+   "id": "6b55ee89c322b99d",
+   "auditKey": "GAW-035",
+   "canonicalIdentity": "Galaxy at War|Martial Arts Forms|Hijkata Expertise",
+   "name": "Hijkata Expertise",
+   "sourcebook": "Galaxy at War",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "unarmed",
+    "martial_arts",
+    "melee",
+    "control",
+    "battlefield_control",
+    "defense",
+    "scaling"
+   ]
+  },
+  {
+   "id": "6bfdeeec8ccd21bb",
+   "auditKey": "CW-013",
+   "canonicalIdentity": "Clone Wars Campaign Guide|Droid Commander|Reinforced Commands",
+   "name": "Reinforced Commands",
+   "sourcebook": "Clone Wars Campaign Guide",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "droid",
+    "ally_support",
+    "support",
+    "teamwork",
+    "morale",
+    "empowerment"
+   ]
+  },
+  {
+   "id": "6cf364c5b9556770",
+   "auditKey": "REB-006",
+   "canonicalIdentity": "Rebellion Era Campaign Guide|Rebel Recruiter|Stay in the Fight",
+   "name": "Stay in the Fight",
+   "sourcebook": "Rebellion Era Campaign Guide",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "ally_support",
+    "support",
+    "reaction",
+    "action_economy",
+    "healing",
+    "recovery",
+    "survivability"
+   ]
+  },
+  {
+   "id": "6dcf10db37160d23",
+   "auditKey": "GOI-006",
+   "canonicalIdentity": "Galaxy of Intrigue|Skill Challenge|Learn from Mistakes",
+   "name": "Learn from Mistakes",
+   "sourcebook": "Galaxy of Intrigue",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "skills",
+    "ally_support",
+    "support",
+    "teamwork",
+    "setup"
+   ]
+  },
+  {
+   "id": "6e57387d51372de7",
+   "auditKey": "UR-005",
+   "canonicalIdentity": "Unknown Regions|Outsider|Oafish",
+   "name": "Oafish",
+   "sourcebook": "Unknown Regions",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "deception",
+    "persuasion",
+    "social",
+    "skills",
+    "reliability",
+    "once-per-encounter"
+   ]
+  },
+  {
+   "id": "6e638242c0af18df",
+   "auditKey": "GAW-042",
+   "canonicalIdentity": "Galaxy at War|Martial Arts Forms|Tae-Jitsu Expertise",
+   "name": "Tae-Jitsu Expertise",
+   "sourcebook": "Galaxy at War",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "unarmed",
+    "martial_arts",
+    "melee",
+    "damage_threshold",
+    "control",
+    "battlefield_control",
+    "precision"
+   ]
+  },
+  {
+   "id": "6ef0900cd62869e7",
+   "auditKey": "LEG-002",
+   "canonicalIdentity": "Legacy Era Campaign Guide|Yuuzhan Vong Biotech|Surprising Weapons",
+   "name": "Surprising Weapons",
+   "sourcebook": "Legacy Era Campaign Guide",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "biotech",
+    "melee",
+    "ranged",
+    "will_defense",
+    "precision",
+    "control",
+    "setup"
+   ]
+  },
+  {
+   "id": "6f158211516da82a",
+   "auditKey": "CORE-016",
+   "canonicalIdentity": "Saga Edition Core Rulebook|Dathomiri Witch|Command Beast",
+   "name": "Command Beast",
+   "sourcebook": "Saga Edition Core Rulebook",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "beast",
+    "nature",
+    "control",
+    "mount",
+    "ride",
+    "rider"
+   ]
+  },
+  {
+   "id": "6f32f14243bd4856",
+   "auditKey": "TFU-021",
+   "canonicalIdentity": "Force Unleashed Campaign Guide|Felucian Shaman|Sickening Blast",
+   "name": "Sickening Blast",
+   "sourcebook": "Force Unleashed Campaign Guide",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "force",
+    "force_power_synergy",
+    "force_offense",
+    "use_the_force",
+    "dark_side",
+    "dark_side_score",
+    "control",
+    "battlefield_control"
+   ]
+  },
+  {
+   "id": "70929db4d14b8ae8",
+   "auditKey": "GOI-014",
+   "canonicalIdentity": "Galaxy of Intrigue|Espionage|Prudent Escape",
+   "name": "Prudent Escape",
+   "sourcebook": "Galaxy of Intrigue",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "ally_support",
+    "support",
+    "teamwork",
+    "reaction",
+    "action_economy",
+    "mobility",
+    "positioning",
+    "evasion",
+    "attack_of_opportunity"
+   ]
+  },
+  {
+   "id": "71908efcdb7e6711",
+   "auditKey": "GOI-029",
+   "canonicalIdentity": "Saga Edition Core Rulebook|Bounty Hunter|Revealing Secrets",
+   "name": "Revealing Secrets",
+   "sourcebook": "Galaxy of Intrigue",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "investigation",
+    "intrigue",
+    "skills",
+    "social",
+    "social_network",
+    "network",
+    "resources"
+   ]
+  },
+  {
+   "id": "7369f8ce78ce4821",
+   "auditKey": "UR-039",
+   "canonicalIdentity": "Saga Edition Core Rulebook|Military Tactics|Lead by Example",
+   "name": "Lead by Example",
+   "sourcebook": "Unknown Regions",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "leadership",
+    "ally_support",
+    "support",
+    "teamwork",
+    "empowerment"
+   ]
+  },
+  {
+   "id": "739397eded522cd8",
+   "auditKey": "SGD-006",
+   "canonicalIdentity": "Force Unleashed Campaign Guide|First-Degree Droid|Science Analyzer",
+   "name": "Science Analyzer",
+   "sourcebook": "Scavenger's Guide to Droids",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "knowledge",
+    "science",
+    "skills",
+    "ability_enhancement"
+   ]
+  },
+  {
+   "id": "75c0b084b706be38",
+   "auditKey": "GAW-043",
+   "canonicalIdentity": "Galaxy at War|Martial Arts Forms|Wrruushi Expertise",
+   "name": "Wrruushi Expertise",
+   "sourcebook": "Galaxy at War",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "unarmed",
+    "martial_arts",
+    "melee",
+    "control",
+    "battlefield_control",
+    "action_economy",
+    "swift_action",
+    "precision"
+   ]
+  },
+  {
+   "id": "7679eae1004af0cc",
+   "auditKey": "SAV-002",
+   "canonicalIdentity": "Saga Edition Core Rulebook|Mastermind|Bodyguard II",
+   "name": "Bodyguard II",
+   "sourcebook": "Scum and Villainy",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "followers",
+    "minion",
+    "ally_support",
+    "support",
+    "teamwork",
+    "defense",
+    "survivability",
+    "scaling"
+   ]
+  },
+  {
+   "id": "77293789b3e9e38a",
+   "auditKey": "GOI-012",
+   "canonicalIdentity": "Galaxy of Intrigue|Espionage|Fade Out",
+   "name": "Fade Out",
+   "sourcebook": "Galaxy of Intrigue",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "stealth",
+    "deception",
+    "skill_substitution",
+    "skills",
+    "infiltration",
+    "setup"
+   ]
+  },
+  {
+   "id": "7a049ee1ecc3891b",
+   "auditKey": "TFU-012",
+   "canonicalIdentity": "Force Unleashed Campaign Guide|Privateer|Attract Privateer",
+   "name": "Attract Privateer",
+   "sourcebook": "Force Unleashed Campaign Guide",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "followers",
+    "minion",
+    "support",
+    "resources",
+    "scaling"
+   ]
+  },
+  {
+   "id": "7a8b247639d32740",
+   "auditKey": "GOI-027",
+   "canonicalIdentity": "Saga Edition Core Rulebook|Mastermind|Contingency Plan",
+   "name": "Contingency Plan",
+   "sourcebook": "Galaxy of Intrigue",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "once-per-encounter",
+    "reaction",
+    "action_economy",
+    "mobility",
+    "positioning",
+    "evasion",
+    "skills",
+    "opposed_check"
+   ]
+  },
+  {
+   "id": "7b921008eb97b266",
+   "auditKey": "JATM-030",
+   "canonicalIdentity": "Jedi Academy Training Manual|Tyia Adept|Cycle of Harmony",
+   "name": "Cycle of Harmony",
+   "sourcebook": "Jedi Academy Training Manual",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "ally_support",
+    "support",
+    "ally-trigger",
+    "reaction",
+    "action_economy",
+    "survivability",
+    "scaling",
+    "positioning",
+    "durability"
+   ]
+  },
+  {
+   "id": "7ca8719e6fdf7a2a",
+   "auditKey": "UR-023",
+   "canonicalIdentity": "Unknown Regions|Warrior|Simple Opportunity",
+   "name": "Simple Opportunity",
+   "sourcebook": "Unknown Regions",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "attack_of_opportunity",
+    "ranged",
+    "positioning",
+    "battlefield_control",
+    "overwatch"
+   ]
+  },
+  {
+   "id": "7cbae1f695df81c5",
+   "auditKey": "TFU-022",
+   "canonicalIdentity": "Force Unleashed Campaign Guide|Second-Degree Droid|Adept Assistant",
+   "name": "Adept Assistant",
+   "sourcebook": "Force Unleashed Campaign Guide",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "ally_support",
+    "support",
+    "teamwork",
+    "mechanics",
+    "pilot",
+    "use_computer",
+    "tech",
+    "skills"
+   ]
+  },
+  {
+   "id": "7cbd576e420a36b0",
+   "auditKey": "UR-033",
+   "canonicalIdentity": "Force Unleashed Campaign Guide|Critical Master|Extended Critical Range (simple weapons)",
+   "name": "Extended Critical Range (simple weapons)",
+   "sourcebook": "Unknown Regions",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "critical_hit",
+    "precision",
+    "weapon_training"
+   ]
+  },
+  {
+   "id": "7f63f6f3fec96bf3",
+   "auditKey": "JATM-028",
+   "canonicalIdentity": "Jedi Academy Training Manual|Shapers of Kro Var|Thunderclap",
+   "name": "Thunderclap",
+   "sourcebook": "Jedi Academy Training Manual",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "force",
+    "force_power_synergy",
+    "force_offense",
+    "battlefield_control",
+    "control",
+    "movement",
+    "positioning"
+   ]
+  },
+  {
+   "id": "7fb6b7d078bdb493",
+   "auditKey": "SGD-005",
+   "canonicalIdentity": "Force Unleashed Campaign Guide|First-Degree Droid|Medical Analyzer",
+   "name": "Medical Analyzer",
+   "sourcebook": "Scavenger's Guide to Droids",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "droid",
+    "medical",
+    "medicine",
+    "treat_injury",
+    "skills",
+    "poison",
+    "recovery",
+    "ability_enhancement"
+   ]
+  },
+  {
+   "id": "8070dbbea2886bbd",
+   "auditKey": "TFU-004",
+   "canonicalIdentity": "Force Unleashed Campaign Guide|Spy|Improved Surveillance",
+   "name": "Improved Surveillance",
+   "sourcebook": "Force Unleashed Campaign Guide",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "perception",
+    "recon",
+    "target-designation",
+    "ally_support",
+    "support",
+    "teamwork",
+    "defense"
+   ]
+  },
+  {
+   "id": "810160a476804e61",
+   "auditKey": "GOI-015",
+   "canonicalIdentity": "Galaxy of Intrigue|Espionage|Reactive Stealth",
+   "name": "Reactive Stealth",
+   "sourcebook": "Galaxy of Intrigue",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "ranged",
+    "reaction",
+    "action_economy",
+    "mobility",
+    "positioning",
+    "stealth",
+    "concealment",
+    "cover",
+    "evasion"
+   ]
+  },
+  {
+   "id": "8149b23aece320fd",
+   "auditKey": "UR-035",
+   "canonicalIdentity": "Saga Edition Core Rulebook|Mastermind|Master's Orders",
+   "name": "Master's Orders",
+   "sourcebook": "Unknown Regions",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "leadership",
+    "ally_support",
+    "support",
+    "teamwork",
+    "reroll",
+    "action_economy",
+    "reliability"
+   ]
+  },
+  {
+   "id": "81acbac191981ace",
+   "auditKey": "SGD-014",
+   "canonicalIdentity": "Force Unleashed Campaign Guide|Fourth-Degree Droid|Just a Scratch",
+   "name": "Just a Scratch",
+   "sourcebook": "Scavenger's Guide to Droids",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "armor",
+    "defense",
+    "damage_reduction",
+    "resilience",
+    "survivability",
+    "reaction",
+    "action_economy",
+    "once-per-encounter"
+   ]
+  },
+  {
+   "id": "81e423a476c377fa",
+   "auditKey": "UR-032",
+   "canonicalIdentity": "Saga Edition Core Rulebook|Infamy|Small Favor",
+   "name": "Small Favor",
+   "sourcebook": "Unknown Regions",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "persuasion",
+    "social",
+    "social_network",
+    "resources",
+    "knowledge",
+    "investigation",
+    "skills",
+    "support"
+   ]
+  },
+  {
+   "id": "8306c13c16ae0af8",
+   "auditKey": "GAW-030",
+   "canonicalIdentity": "Galaxy at War|Sharpshooter|Harrying Shot",
+   "name": "Harrying Shot",
+   "sourcebook": "Galaxy at War",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "ranged",
+    "offense_ranged",
+    "sniper",
+    "precision",
+    "targeting",
+    "setup",
+    "control",
+    "battlefield_control",
+    "action_economy",
+    "stun"
+   ]
+  },
+  {
+   "id": "837af2972223104f",
+   "auditKey": "KOTOR-011",
+   "canonicalIdentity": "Knights of the Old Republic Campaign Guide|Jal Shey|Action Exchange",
+   "name": "Action Exchange",
+   "sourcebook": "Knights of the Old Republic Campaign Guide",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "force",
+    "force_support",
+    "ally_support",
+    "support",
+    "teamwork",
+    "action_economy",
+    "move_action",
+    "standard_action",
+    "once-per-encounter"
+   ]
+  },
+  {
+   "id": "842d1dfc65cce80a",
+   "auditKey": "UR-030",
+   "canonicalIdentity": "Saga Edition Core Rulebook|Bounty Hunter|Quick Cuffs",
+   "name": "Quick Cuffs",
+   "sourcebook": "Unknown Regions",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "restrain",
+    "grab",
+    "control",
+    "equipment",
+    "melee",
+    "swift_action",
+    "action_economy"
+   ]
+  },
+  {
+   "id": "8436e1f101dc438c",
+   "auditKey": "JATM-026",
+   "canonicalIdentity": "Jedi Academy Training Manual|Shapers of Kro Var|Earth Buckle",
+   "name": "Earth Buckle",
+   "sourcebook": "Jedi Academy Training Manual",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "force",
+    "force_point_spend",
+    "resource_spend",
+    "swift_action",
+    "action_economy",
+    "battlefield_control",
+    "control",
+    "positioning",
+    "mobility"
+   ]
+  },
+  {
+   "id": "852c4b043904102f",
+   "auditKey": "SGD-004",
+   "canonicalIdentity": "Force Unleashed Campaign Guide|First-Degree Droid|Known Vulnerability",
+   "name": "Known Vulnerability",
+   "sourcebook": "Scavenger's Guide to Droids",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "knowledge",
+    "science",
+    "skills",
+    "setup",
+    "melee",
+    "unarmed",
+    "control",
+    "battlefield_control"
+   ]
+  },
+  {
+   "id": "853d7f87a4610f85",
+   "auditKey": "CW-010",
+   "canonicalIdentity": "Clone Wars Campaign Guide|Droid Commander|Inspire Competence",
+   "name": "Inspire Competence",
+   "sourcebook": "Clone Wars Campaign Guide",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "droid",
+    "ally_support",
+    "support",
+    "targeting",
+    "precision",
+    "swift_action",
+    "action_economy",
+    "scaling"
+   ]
+  },
+  {
+   "id": "8637ce4c8b274df4",
+   "auditKey": "GAW-040",
+   "canonicalIdentity": "Galaxy at War|Unarmed Mastery|Punishing Strike",
+   "name": "Punishing Strike",
+   "sourcebook": "Galaxy at War",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "unarmed",
+    "martial_arts",
+    "melee",
+    "critical_hit",
+    "action_economy",
+    "burst_damage",
+    "sustained_damage"
+   ]
+  },
+  {
+   "id": "86da8cfcddb94adb",
+   "auditKey": "SGD-003",
+   "canonicalIdentity": "Scavenger's Guide to Droids|Override|Remote Attack",
+   "name": "Remote Attack",
+   "sourcebook": "Scavenger's Guide to Droids",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "droid",
+    "ally_support",
+    "support",
+    "teamwork",
+    "standard_action",
+    "action_economy",
+    "melee",
+    "ranged",
+    "precision",
+    "ability_enhancement"
+   ]
+  },
+  {
+   "id": "88ca4add87c2a86a",
+   "auditKey": "GAW-034",
+   "canonicalIdentity": "Galaxy at War|Martial Arts Forms|Echani Expertise",
+   "name": "Echani Expertise",
+   "sourcebook": "Galaxy at War",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "unarmed",
+    "martial_arts",
+    "melee",
+    "critical_hit",
+    "precision"
+   ]
+  },
+  {
+   "id": "88d01facdd76940e",
+   "auditKey": "TFU-025",
+   "canonicalIdentity": "Force Unleashed Campaign Guide|Second-Degree Droid|Mechanics Mastery",
+   "name": "Mechanics Mastery",
+   "sourcebook": "Force Unleashed Campaign Guide",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "mechanics",
+    "tech",
+    "skills",
+    "skill_mastery",
+    "reliability"
+   ]
+  },
+  {
+   "id": "897c61c8054bdd9e",
+   "auditKey": "JATM-029",
+   "canonicalIdentity": "Jedi Academy Training Manual|Shapers of Kro Var|Wind Vortex",
+   "name": "Wind Vortex",
+   "sourcebook": "Jedi Academy Training Manual",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "force",
+    "force_point_spend",
+    "resource_spend",
+    "swift_action",
+    "action_economy",
+    "concealment",
+    "defense",
+    "ranged_defense",
+    "evasion",
+    "survivability"
+   ]
+  },
+  {
+   "id": "8a412e9a700b06d5",
+   "auditKey": "GOI-018",
+   "canonicalIdentity": "Saga Edition Core Rulebook|Brawler|Crowd Control",
+   "name": "Crowd Control",
+   "sourcebook": "Galaxy of Intrigue",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "grab",
+    "restrain",
+    "control",
+    "battlefield_control",
+    "positioning"
+   ]
+  },
+  {
+   "id": "8ba50ebccb1f938e",
+   "auditKey": "CW-004",
+   "canonicalIdentity": "Saga Edition Core Rulebook|Military Tactics|Exploit Weakness",
+   "name": "Exploit Weakness",
+   "sourcebook": "Clone Wars Campaign Guide",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "ally_support",
+    "support",
+    "teamwork",
+    "setup",
+    "control",
+    "battlefield_control",
+    "targeting",
+    "precision"
+   ]
+  },
+  {
+   "id": "8ba6abad84c6d9ef",
+   "auditKey": "LEG-012",
+   "canonicalIdentity": "Legacy Era Campaign Guide|Ember of Vahl|Vahl's Flame",
+   "name": "Vahl's Flame",
+   "sourcebook": "Legacy Era Campaign Guide",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "force",
+    "swift_action",
+    "action_economy",
+    "melee",
+    "damage_bonus",
+    "sustained_damage"
+   ]
+  },
+  {
+   "id": "8d7cbcbbf1dc58bb",
+   "auditKey": "TFU-008",
+   "canonicalIdentity": "Force Unleashed Campaign Guide|Specialized Droid|Computer Master",
+   "name": "Computer Master",
+   "sourcebook": "Force Unleashed Campaign Guide",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "use_computer",
+    "tech",
+    "skills",
+    "reroll",
+    "opposed_check",
+    "reliability"
+   ]
+  },
+  {
+   "id": "8ddbbeb09758295d",
+   "auditKey": "JATM-042",
+   "canonicalIdentity": "Jedi Academy Training Manual|Zeison Sha Warrior|Telekinetic Vigilance",
+   "name": "Telekinetic Vigilance",
+   "sourcebook": "Jedi Academy Training Manual",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "force",
+    "force_power_synergy",
+    "telekinesis",
+    "force_capacity",
+    "resource_recovery",
+    "swift_action",
+    "action_economy"
+   ]
+  },
+  {
+   "id": "8e0f2208941073d9",
+   "auditKey": "UR-008",
+   "canonicalIdentity": "Unknown Regions|Exile|Self-Reliant",
+   "name": "Self-Reliant",
+   "sourcebook": "Unknown Regions",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "support",
+    "empowerment",
+    "once-per-encounter"
+   ]
+  },
+  {
+   "id": "8ed2a9fd50053e3b",
+   "auditKey": "GOI-008",
+   "canonicalIdentity": "Galaxy of Intrigue|Master of Intrigue|Retaliation",
+   "name": "Retaliation",
+   "sourcebook": "Galaxy of Intrigue",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "damage_threshold",
+    "counterattack",
+    "melee",
+    "ranged",
+    "control"
+   ]
+  },
+  {
+   "id": "8f172c307cdec956",
+   "auditKey": "JATM-040",
+   "canonicalIdentity": "Jedi Academy Training Manual|Zeison Sha Warrior|Distant Discblade Throw",
+   "name": "Distant Discblade Throw",
+   "sourcebook": "Jedi Academy Training Manual",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "exotic_weapon",
+    "ranged",
+    "pistol"
+   ]
+  },
+  {
+   "id": "8f26ca25481d612f",
+   "auditKey": "SGD-019",
+   "canonicalIdentity": "Force Unleashed Campaign Guide|Fifth-Degree Droid|Task Optimization",
+   "name": "Task Optimization",
+   "sourcebook": "Scavenger's Guide to Droids",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "skills",
+    "once-per-encounter",
+    "action_economy"
+   ]
+  },
+  {
+   "id": "8f4fed2c36ab4c2a",
+   "auditKey": "SGD-011",
+   "canonicalIdentity": "Force Unleashed Campaign Guide|Third-Degree Droid|Nuanced",
+   "name": "Nuanced",
+   "sourcebook": "Scavenger's Guide to Droids",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "persuasion",
+    "social",
+    "skills",
+    "once-per-encounter",
+    "ability_enhancement"
+   ]
+  },
+  {
+   "id": "913424086fa8f374",
+   "auditKey": "GAW-009",
+   "canonicalIdentity": "Saga Edition Core Rulebook|Leadership|Tactical Savvy",
+   "name": "Tactical Savvy",
+   "sourcebook": "Galaxy at War",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "ally_support",
+    "support",
+    "teamwork",
+    "leadership",
+    "force_point_spend",
+    "resource_spend",
+    "scaling",
+    "precision"
+   ]
+  },
+  {
+   "id": "913a0ca43e032caa",
+   "auditKey": "GAW-021",
+   "canonicalIdentity": "Galaxy at War|Shockboxer|Nimble Dodge",
+   "name": "Nimble Dodge",
+   "sourcebook": "Galaxy at War",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "reaction",
+    "evasion",
+    "mobility",
+    "positioning",
+    "melee_defense",
+    "defense",
+    "survivability",
+    "action_economy"
+   ]
+  },
+  {
+   "id": "91c910b9c46a8649",
+   "auditKey": "KOTOR-004",
+   "canonicalIdentity": "Saga Edition Core Rulebook|Duelist|Improved Riposte",
+   "name": "Improved Riposte",
+   "sourcebook": "Knights of the Old Republic Campaign Guide",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "force",
+    "block",
+    "melee",
+    "melee_defense",
+    "counterattack",
+    "reaction",
+    "action_economy",
+    "use_the_force",
+    "reliability"
+   ]
+  },
+  {
+   "id": "93b73db64423a7a3",
+   "auditKey": "UR-018",
+   "canonicalIdentity": "Unknown Regions|Mobile Scout|Mechanized Rider",
+   "name": "Mechanized Rider",
+   "sourcebook": "Unknown Regions",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "vehicle",
+    "pilot",
+    "ride",
+    "rider",
+    "mobility",
+    "cover",
+    "skills"
+   ]
+  },
+  {
+   "id": "93bb4f8c058655f9",
+   "auditKey": "JATM-005",
+   "canonicalIdentity": "Jedi Academy Training Manual|Aing-Tii Monk|Folded Space Mastery",
+   "name": "Folded Space Mastery",
+   "sourcebook": "Jedi Academy Training Manual",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "force",
+    "force_power_synergy",
+    "use_the_force",
+    "vehicle",
+    "pilot",
+    "space",
+    "mobility",
+    "exploration",
+    "skill_substitution"
+   ]
+  },
+  {
+   "id": "943f8753f56f3a63",
+   "auditKey": "LEG-005",
+   "canonicalIdentity": "Legacy Era Campaign Guide|Disciple of Twilight|Phantasm",
+   "name": "Phantasm",
+   "sourcebook": "Legacy Era Campaign Guide",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "force",
+    "force_power_synergy",
+    "mind-affecting",
+    "illusion",
+    "concealment",
+    "ally_support",
+    "support",
+    "force_point_spend",
+    "resource_spend",
+    "swift_action",
+    "action_economy",
+    "defense",
+    "evasion"
+   ]
+  },
+  {
+   "id": "953e539478ea6c3e",
+   "auditKey": "JATM-025",
+   "canonicalIdentity": "Jedi Academy Training Manual|Shapers of Kro Var|Combustion",
+   "name": "Combustion",
+   "sourcebook": "Jedi Academy Training Manual",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "force",
+    "force_power_synergy",
+    "force_offense",
+    "force_point_spend",
+    "resource_spend",
+    "swift_action",
+    "action_economy",
+    "damage_bonus",
+    "burst_damage",
+    "sustained_damage"
+   ]
+  },
+  {
+   "id": "95579a44ff466f19",
+   "auditKey": "GOI-021",
+   "canonicalIdentity": "Galaxy of Intrigue|Espionage|Sizing Up",
+   "name": "Sizing Up",
+   "sourcebook": "Galaxy of Intrigue",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "perception",
+    "awareness",
+    "skills",
+    "will_defense",
+    "target-designation",
+    "targeting",
+    "setup",
+    "precision",
+    "once-per-encounter"
+   ]
+  },
+  {
+   "id": "959f16cb707d8360",
+   "auditKey": "GOI-010",
+   "canonicalIdentity": "Galaxy of Intrigue|Revolutionary|Bomb Thrower",
+   "name": "Bomb Thrower",
+   "sourcebook": "Galaxy of Intrigue",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "mechanics",
+    "skills",
+    "crafting",
+    "equipment",
+    "tech"
+   ]
+  },
+  {
+   "id": "960a9095402d23ee",
+   "auditKey": "JATM-019",
+   "canonicalIdentity": "Jedi Academy Training Manual|Matukai Adept|Wan-Shen Defense",
+   "name": "Wan-Shen Defense",
+   "sourcebook": "Jedi Academy Training Manual",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "melee",
+    "melee_defense",
+    "defense",
+    "swift_action",
+    "action_economy",
+    "scaling"
+   ]
+  },
+  {
+   "id": "9687660c05ff7992",
+   "auditKey": "UR-046",
+   "canonicalIdentity": "Unknown Regions|Blazing Chain|Negate and Redirect",
+   "name": "Negate and Redirect",
+   "sourcebook": "Unknown Regions",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "force",
+    "force_power_synergy",
+    "force_defense",
+    "force_offense",
+    "use_the_force",
+    "counterattack",
+    "ranged",
+    "action_economy"
+   ]
+  },
+  {
+   "id": "9a0c74195f3d4ac3",
+   "auditKey": "TFU-031",
+   "canonicalIdentity": "Force Unleashed Campaign Guide|Third-Degree Droid|Etiquette",
+   "name": "Etiquette",
+   "sourcebook": "Force Unleashed Campaign Guide",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "persuasion",
+    "social",
+    "skills",
+    "manipulation",
+    "control"
+   ]
+  },
+  {
+   "id": "9c2a4cbe82e922ec",
+   "auditKey": "SAV-003",
+   "canonicalIdentity": "Saga Edition Core Rulebook|Mastermind|Bodyguard III",
+   "name": "Bodyguard III",
+   "sourcebook": "Scum and Villainy",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "followers",
+    "minion",
+    "ally_support",
+    "support",
+    "teamwork",
+    "counterattack",
+    "melee",
+    "ranged",
+    "defense",
+    "survivability",
+    "scaling"
+   ]
+  },
+  {
+   "id": "9d183b40a16b1376",
+   "auditKey": "CORE-011",
+   "canonicalIdentity": "Saga Edition Core Rulebook|Camouflage|Total Concealment",
+   "name": "Total Concealment",
+   "sourcebook": "Saga Edition Core Rulebook",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "concealment",
+    "stealth",
+    "defense",
+    "evasion",
+    "survivability"
+   ]
+  },
+  {
+   "id": "9d1c806bdee12411",
+   "auditKey": "KOTOR-005",
+   "canonicalIdentity": "Knights of the Old Republic Campaign Guide|Mandalorian Warrior|Mandalorian Ferocity",
+   "name": "Mandalorian Ferocity",
+   "sourcebook": "Knights of the Old Republic Campaign Guide",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "melee",
+    "ranged",
+    "damage_bonus",
+    "burst_damage",
+    "sustained_damage",
+    "once-per-encounter",
+    "weapon_training"
+   ]
+  },
+  {
+   "id": "9db016b2e528beb4",
+   "auditKey": "JATM-033",
+   "canonicalIdentity": "Jedi Academy Training Manual|Tyia Adept|Stifle Conflict",
+   "name": "Stifle Conflict",
+   "sourcebook": "Jedi Academy Training Manual",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "force",
+    "force_power_synergy",
+    "force_control",
+    "damage",
+    "nonlethal",
+    "stun"
+   ]
+  },
+  {
+   "id": "9ef268e31963cf70",
+   "auditKey": "GOI-026",
+   "canonicalIdentity": "Saga Edition Core Rulebook|Mastermind|Attract Superior Minion",
+   "name": "Attract Superior Minion",
+   "sourcebook": "Galaxy of Intrigue",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "minion",
+    "followers",
+    "scaling",
+    "resources"
+   ]
+  },
+  {
+   "id": "9f02751f14ad2de8",
+   "auditKey": "GAW-039",
+   "canonicalIdentity": "Galaxy at War|Martial Arts Forms|K'thri Expertise",
+   "name": "K'thri Expertise",
+   "sourcebook": "Galaxy at War",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "martial_arts",
+    "melee",
+    "attack_of_opportunity",
+    "positioning",
+    "battlefield_control",
+    "control",
+    "damage_bonus",
+    "scaling",
+    "sustained_damage"
+   ]
+  },
+  {
+   "id": "9f46358606d3f8fb",
+   "auditKey": "GAW-002",
+   "canonicalIdentity": "Galaxy at War|Anticipation|Heavy Fire Zone",
+   "name": "Heavy Fire Zone",
+   "sourcebook": "Galaxy at War",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "swift_action",
+    "action_economy",
+    "battlefield_control",
+    "control",
+    "positioning",
+    "setup",
+    "ally_support",
+    "support",
+    "teamwork",
+    "attack_of_opportunity",
+    "overwatch"
+   ]
+  },
+  {
+   "id": "9fe189e1376feec5",
+   "auditKey": "SAV-011",
+   "canonicalIdentity": "Scum and Villainy|Piracy|Keep Them Reeling",
+   "name": "Keep Them Reeling",
+   "sourcebook": "Scum and Villainy",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "melee",
+    "standard_action",
+    "action_economy",
+    "control",
+    "battlefield_control",
+    "movement",
+    "positioning"
+   ]
+  },
+  {
+   "id": "a0099db14b3fc3e7",
+   "auditKey": "SAV-004",
+   "canonicalIdentity": "Scum and Villainy|Blockade Runner|Punch Through",
+   "name": "Punch Through",
+   "sourcebook": "Scum and Villainy",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "vehicle",
+    "pilot",
+    "opposed_check",
+    "pursuit",
+    "control",
+    "evasion"
+   ]
+  },
+  {
+   "id": "a12b5e12c3358182",
+   "auditKey": "GOI-025",
+   "canonicalIdentity": "Saga Edition Core Rulebook|Expert Pilot|Shunt Damage",
+   "name": "Shunt Damage",
+   "sourcebook": "Galaxy of Intrigue",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "vehicle",
+    "pilot",
+    "skills",
+    "damage_reduction",
+    "survivability",
+    "positioning",
+    "once-per-encounter"
+   ]
+  },
+  {
+   "id": "a1355dcae60772f5",
+   "auditKey": "UR-003",
+   "canonicalIdentity": "Saga Edition Core Rulebook|Jedi Sentinel|Sense Primal Force",
+   "name": "Sense Primal Force",
+   "sourcebook": "Unknown Regions",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "force",
+    "use_the_force",
+    "senses",
+    "perception",
+    "detection",
+    "recon",
+    "exploration",
+    "nature"
+   ]
+  },
+  {
+   "id": "a1a905019e7f17c0",
+   "auditKey": "KOTOR-006",
+   "canonicalIdentity": "Knights of the Old Republic Campaign Guide|Run and Gun|Slippery Strike",
+   "name": "Slippery Strike",
+   "sourcebook": "Knights of the Old Republic Campaign Guide",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "once-per-encounter",
+    "reaction",
+    "action_economy",
+    "attack_of_opportunity",
+    "evasion",
+    "mobility",
+    "positioning",
+    "setup"
+   ]
+  },
+  {
+   "id": "a497a8c8c14acb9d",
+   "auditKey": "GAW-037",
+   "canonicalIdentity": "Galaxy at War|Unarmed Mastery|Hardened Strike",
+   "name": "Hardened Strike",
+   "sourcebook": "Galaxy at War",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "unarmed",
+    "martial_arts",
+    "melee",
+    "damage_reduction",
+    "setup",
+    "sustained_damage"
+   ]
+  },
+  {
+   "id": "a52044feeab3fe05",
+   "auditKey": "CORE-004",
+   "canonicalIdentity": "Saga Edition Core Rulebook|Leadership|Coordinate",
+   "name": "Coordinate",
+   "sourcebook": "Saga Edition Core Rulebook",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "ally_support",
+    "support",
+    "teamwork",
+    "leadership",
+    "standard_action",
+    "action_economy",
+    "scaling"
+   ]
+  },
+  {
+   "id": "a5f8ec365ef2b699",
+   "auditKey": "LEG-011",
+   "canonicalIdentity": "Legacy Era Campaign Guide|Ember of Vahl|Vahl's Brand",
+   "name": "Vahl's Brand",
+   "sourcebook": "Legacy Era Campaign Guide",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "force",
+    "weapon_empowerment",
+    "empowerment",
+    "equipment",
+    "damage"
+   ]
+  },
+  {
+   "id": "a7aea0411eb4fbc0",
+   "auditKey": "UR-020",
+   "canonicalIdentity": "Unknown Regions|Warrior|Champion",
+   "name": "Champion",
+   "sourcebook": "Unknown Regions",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "once-per-encounter",
+    "recovery",
+    "condition_removal",
+    "resilience",
+    "survivability",
+    "fear",
+    "mind-affecting",
+    "damage_threshold",
+    "control",
+    "melee",
+    "unarmed",
+    "burst_damage",
+    "scaling",
+    "precision",
+    "healing"
+   ]
+  },
+  {
+   "id": "aab9d63888f12dba",
+   "auditKey": "TFU-024",
+   "canonicalIdentity": "Force Unleashed Campaign Guide|First-Degree Droid|Interrogator",
+   "name": "Interrogator",
+   "sourcebook": "Force Unleashed Campaign Guide",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "treat_injury",
+    "medicine",
+    "medical",
+    "persuasion",
+    "intimidation",
+    "social",
+    "skill_substitution",
+    "skills",
+    "control",
+    "manipulation"
+   ]
+  },
+  {
+   "id": "aadcae548952b7eb",
+   "auditKey": "TFU-030",
+   "canonicalIdentity": "Force Unleashed Campaign Guide|Fifth-Degree Droid|Environmentally Shielded",
+   "name": "Environmentally Shielded",
+   "sourcebook": "Force Unleashed Campaign Guide",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "defense",
+    "resilience",
+    "survivability",
+    "exploration",
+    "survival"
+   ]
+  },
+  {
+   "id": "abbf02a67dbe0c89",
+   "auditKey": "JATM-041",
+   "canonicalIdentity": "Jedi Academy Training Manual|Zeison Sha Warrior|Recall Discblade",
+   "name": "Recall Discblade",
+   "sourcebook": "Jedi Academy Training Manual",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "exotic_weapon",
+    "ranged",
+    "force",
+    "use_the_force",
+    "telekinesis",
+    "action_economy"
+   ]
+  },
+  {
+   "id": "ac8c46e1f6365c4a",
+   "auditKey": "TFU-035",
+   "canonicalIdentity": "Force Unleashed Campaign Guide|Fourth-Degree Droid|Targeting Package",
+   "name": "Targeting Package",
+   "sourcebook": "Force Unleashed Campaign Guide",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "targeting",
+    "precision",
+    "setup",
+    "swift_action",
+    "action_economy",
+    "damage_bonus",
+    "melee",
+    "ranged",
+    "offense_melee",
+    "offense_ranged",
+    "positioning",
+    "tech"
+   ]
+  },
+  {
+   "id": "ad08d7ea0c5e859e",
+   "auditKey": "UR-024",
+   "canonicalIdentity": "Unknown Regions|Warrior|Warrior's Determination",
+   "name": "Warrior's Determination",
+   "sourcebook": "Unknown Regions",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "once-per-encounter",
+    "reaction",
+    "defense",
+    "resilience",
+    "survivability",
+    "will_defense",
+    "mind-affecting",
+    "force_point_spend",
+    "resource_spend",
+    "action_economy"
+   ]
+  },
+  {
+   "id": "ad4d87fb9aebe330",
+   "auditKey": "GAW-007",
+   "canonicalIdentity": "Galaxy at War|Brigand|Sly Combatant",
+   "name": "Sly Combatant",
+   "sourcebook": "Galaxy at War",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "once-per-encounter",
+    "standard_action",
+    "action_economy",
+    "melee",
+    "ranged",
+    "control",
+    "battlefield_control",
+    "damage_bonus",
+    "teamwork",
+    "positioning"
+   ]
+  },
+  {
+   "id": "adfb725d20faade5",
+   "auditKey": "TFU-005",
+   "canonicalIdentity": "Force Unleashed Campaign Guide|Mercenary|Ruthless",
+   "name": "Ruthless",
+   "sourcebook": "Force Unleashed Campaign Guide",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "melee",
+    "ranged",
+    "damage_threshold",
+    "damage_bonus",
+    "sustained_damage",
+    "target-designation"
+   ]
+  },
+  {
+   "id": "ae9cf46162b4bc42",
+   "auditKey": "TFU-003",
+   "canonicalIdentity": "Saga Edition Core Rulebook|Inspiration|Willpower",
+   "name": "Willpower",
+   "sourcebook": "Force Unleashed Campaign Guide",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "ally_support",
+    "support",
+    "teamwork",
+    "morale",
+    "will_defense",
+    "swift_action",
+    "action_economy",
+    "once-per-encounter"
+   ]
+  },
+  {
+   "id": "af5f776f895e6caf",
+   "auditKey": "GAW-011",
+   "canonicalIdentity": "Saga Edition Core Rulebook|Camouflage|Dig In",
+   "name": "Dig In",
+   "sourcebook": "Galaxy at War",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "swift_action",
+    "action_economy",
+    "concealment",
+    "defense",
+    "ranged_defense",
+    "positioning",
+    "setup",
+    "survivability"
+   ]
+  },
+  {
+   "id": "b0427980c49cd650",
+   "auditKey": "KOTOR-019",
+   "canonicalIdentity": "Knights of the Old Republic Campaign Guide|Luka Sene|Luka Sene Master",
+   "name": "Luka Sene Master",
+   "sourcebook": "Knights of the Old Republic Campaign Guide",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "force",
+    "force_power_synergy",
+    "use_the_force",
+    "senses",
+    "visions",
+    "search_your_feelings",
+    "recon",
+    "detection",
+    "resources",
+    "force_point_spend",
+    "resource_spend",
+    "once-per-encounter"
+   ]
+  },
+  {
+   "id": "b1090fa2d2ebc982",
+   "auditKey": "SGD-018",
+   "canonicalIdentity": "Force Unleashed Campaign Guide|Fifth-Degree Droid|Load Launcher",
+   "name": "Load Launcher",
+   "sourcebook": "Scavenger's Guide to Droids",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "improvised_weapon",
+    "ranged",
+    "weapon_training",
+    "damage_bonus",
+    "scaling"
+   ]
+  },
+  {
+   "id": "b1a9d6277428e6c0",
+   "auditKey": "LEG-010",
+   "canonicalIdentity": "Legacy Era Campaign Guide|Ember of Vahl|Sword of Vahl",
+   "name": "Sword of Vahl",
+   "sourcebook": "Legacy Era Campaign Guide",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "force",
+    "weapon_training",
+    "precision",
+    "melee",
+    "ranged"
+   ]
+  },
+  {
+   "id": "b1f19c1c86bdcae9",
+   "auditKey": "GAW-015",
+   "canonicalIdentity": "Saga Edition Core Rulebook|Camouflage|Slip By",
+   "name": "Slip By",
+   "sourcebook": "Galaxy at War",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "stealth",
+    "skills",
+    "skill_substitution",
+    "evasion",
+    "mobility",
+    "positioning",
+    "attack_of_opportunity",
+    "defense",
+    "survivability"
+   ]
+  },
+  {
+   "id": "b315da0532ce8b75",
+   "auditKey": "CORE-014",
+   "canonicalIdentity": "Saga Edition Core Rulebook|Jensaarai Defender|Attune Armor",
+   "name": "Attune Armor",
+   "sourcebook": "Saga Edition Core Rulebook",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "force",
+    "armor",
+    "equipment",
+    "empowerment",
+    "modification",
+    "defense",
+    "force_point_spend",
+    "resource_spend",
+    "action_economy"
+   ]
+  },
+  {
+   "id": "b3fe6f7659b40a55",
+   "auditKey": "LEG-004",
+   "canonicalIdentity": "Legacy Era Campaign Guide|Disciple of Twilight|Cloak of Shadow",
+   "name": "Cloak of Shadow",
+   "sourcebook": "Legacy Era Campaign Guide",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "force",
+    "force_point_spend",
+    "resource_spend",
+    "swift_action",
+    "action_economy",
+    "concealment",
+    "stealth",
+    "mobility",
+    "movement",
+    "evasion",
+    "defense"
+   ]
+  },
+  {
+   "id": "b65f65bc442fd695",
+   "auditKey": "UR-016",
+   "canonicalIdentity": "Unknown Regions|Master Scout|Surprisingly Quick",
+   "name": "Surprisingly Quick",
+   "sourcebook": "Unknown Regions",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "surprise_round",
+    "ambush_defense",
+    "initiative",
+    "swift_action",
+    "action_economy"
+   ]
+  },
+  {
+   "id": "b7caecab09bb3f77",
+   "auditKey": "CORE-022",
+   "canonicalIdentity": "Saga Edition Core Rulebook|Expert Pilot|Relentless Pursuit",
+   "name": "Relentless Pursuit",
+   "sourcebook": "Saga Edition Core Rulebook",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "vehicle",
+    "pilot",
+    "skills",
+    "opposed_check",
+    "reroll",
+    "reliability",
+    "pursuit",
+    "space"
+   ]
+  },
+  {
+   "id": "b9894d35f93cae97",
+   "auditKey": "UR-029",
+   "canonicalIdentity": "Saga Edition Core Rulebook|Gunner|Overcharged Shot",
+   "name": "Overcharged Shot",
+   "sourcebook": "Unknown Regions",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "vehicle",
+    "ranged",
+    "burst_damage",
+    "damage_bonus",
+    "swift_action",
+    "action_economy",
+    "setup"
+   ]
+  },
+  {
+   "id": "ba740330cf490549",
+   "auditKey": "TFU-019",
+   "canonicalIdentity": "Force Unleashed Campaign Guide|Felucian Shaman|Hive Mind",
+   "name": "Hive Mind",
+   "sourcebook": "Force Unleashed Campaign Guide",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "force",
+    "telepathy",
+    "use_the_force",
+    "swift_action",
+    "action_economy",
+    "reliability"
+   ]
+  },
+  {
+   "id": "bb7ee79cbdd2c018",
+   "auditKey": "GOI-003",
+   "canonicalIdentity": "Galaxy of Intrigue|Master of Intrigue|Get into Position",
+   "name": "Get into Position",
+   "sourcebook": "Galaxy of Intrigue",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "ally_support",
+    "support",
+    "teamwork",
+    "mobility",
+    "positioning",
+    "reaction",
+    "action_economy",
+    "once-per-encounter",
+    "setup"
+   ]
+  },
+  {
+   "id": "bc7647fb4684b80f",
+   "auditKey": "GAW-017",
+   "canonicalIdentity": "Galaxy at War|Veteran|Battlefield Remedy",
+   "name": "Battlefield Remedy",
+   "sourcebook": "Galaxy at War",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "treat_injury",
+    "medicine",
+    "medical",
+    "healing",
+    "recovery",
+    "condition_removal",
+    "skills",
+    "support",
+    "survivability"
+   ]
+  },
+  {
+   "id": "bde10cfd33efc3d0",
+   "auditKey": "GAW-022",
+   "canonicalIdentity": "Galaxy at War|Shockboxer|Stunning Shockboxer",
+   "name": "Stunning Shockboxer",
+   "sourcebook": "Galaxy at War",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "unarmed",
+    "martial_arts",
+    "melee",
+    "stun",
+    "nonlethal",
+    "damage_bonus",
+    "burst_damage",
+    "sustained_damage"
+   ]
+  },
+  {
+   "id": "bea59db82b097eea",
+   "auditKey": "SAV-005",
+   "canonicalIdentity": "Saga Edition Core Rulebook|Fortune|Better Lucky than Dead",
+   "name": "Better Lucky than Dead",
+   "sourcebook": "Scum and Villainy",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "once-per-encounter",
+    "reaction",
+    "action_economy",
+    "defense",
+    "survivability"
+   ]
+  },
+  {
+   "id": "bf1a79b50e129dc7",
+   "auditKey": "TFU-018",
+   "canonicalIdentity": "Force Unleashed Campaign Guide|Felucian Shaman|Detonate",
+   "name": "Detonate",
+   "sourcebook": "Force Unleashed Campaign Guide",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "force",
+    "force_power_synergy",
+    "force_offense",
+    "use_the_force",
+    "force_point_spend",
+    "resource_spend",
+    "burst_damage",
+    "battlefield_control",
+    "positioning"
+   ]
+  },
+  {
+   "id": "bf27fc2e540e2ed5",
+   "auditKey": "GOI-009",
+   "canonicalIdentity": "Galaxy of Intrigue|Skill Challenge|Try Your Luck",
+   "name": "Try Your Luck",
+   "sourcebook": "Galaxy of Intrigue",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "skills",
+    "ally_support",
+    "support",
+    "teamwork",
+    "reroll",
+    "reliability",
+    "setup"
+   ]
+  },
+  {
+   "id": "bfb04c89df257f8b",
+   "auditKey": "UR-015",
+   "canonicalIdentity": "Unknown Regions|Master Scout|Speedclimber",
+   "name": "Speedclimber",
+   "sourcebook": "Unknown Regions",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "skills",
+    "mobility",
+    "exploration"
+   ]
+  },
+  {
+   "id": "c04e66a3f2577e62",
+   "auditKey": "UR-042",
+   "canonicalIdentity": "Saga Edition Core Rulebook|Gunslinger|Slowing Shot",
+   "name": "Slowing Shot",
+   "sourcebook": "Unknown Regions",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "ranged",
+    "control",
+    "battlefield_control",
+    "mobility",
+    "positioning",
+    "force_point_spend",
+    "resource_spend"
+   ]
+  },
+  {
+   "id": "c08976a5f4ab88d8",
+   "auditKey": "UR-012",
+   "canonicalIdentity": "Unknown Regions|Master Scout|Piercing Hit",
+   "name": "Piercing Hit",
+   "sourcebook": "Unknown Regions",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "melee",
+    "ranged",
+    "armor",
+    "control",
+    "battlefield_control",
+    "concealment",
+    "mobility",
+    "positioning",
+    "standard_action",
+    "once-per-encounter",
+    "action_economy"
+   ]
+  },
+  {
+   "id": "c101826c205debf2",
+   "auditKey": "JATM-023",
+   "canonicalIdentity": "Jedi Academy Training Manual|Seyugi Dervish|Sudden Storm",
+   "name": "Sudden Storm",
+   "sourcebook": "Jedi Academy Training Manual",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "force",
+    "force_point_spend",
+    "resource_spend",
+    "unarmed",
+    "melee",
+    "burst_damage",
+    "battlefield_control",
+    "mobility",
+    "positioning",
+    "action_economy"
+   ]
+  },
+  {
+   "id": "c2447676a43a70a2",
+   "auditKey": "REB-005",
+   "canonicalIdentity": "Rebellion Era Campaign Guide|Gambling Leader|Luck Favors the Bold",
+   "name": "Luck Favors the Bold",
+   "sourcebook": "Rebellion Era Campaign Guide",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "survivability",
+    "durability",
+    "scaling",
+    "cover",
+    "positioning"
+   ]
+  },
+  {
+   "id": "c349d17c69af3681",
+   "auditKey": "UR-004",
+   "canonicalIdentity": "Saga Edition Core Rulebook|Leadership|Coordinated Leadership",
+   "name": "Coordinated Leadership",
+   "sourcebook": "Unknown Regions",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "leadership",
+    "ally_support",
+    "support",
+    "teamwork",
+    "empowerment"
+   ]
+  },
+  {
+   "id": "c518a366d0eb0a8a",
+   "auditKey": "CORE-017",
+   "canonicalIdentity": "Saga Edition Core Rulebook|Dathomiri Witch|Flight",
+   "name": "Flight",
+   "sourcebook": "Saga Edition Core Rulebook",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "force",
+    "force_point_spend",
+    "resource_spend",
+    "swift_action",
+    "action_economy",
+    "mobility",
+    "movement",
+    "positioning",
+    "exploration"
+   ]
+  },
+  {
+   "id": "c5410351fc7c7aa7",
+   "auditKey": "SGD-017",
+   "canonicalIdentity": "Force Unleashed Campaign Guide|Fifth-Degree Droid|Durable",
+   "name": "Durable",
+   "sourcebook": "Scavenger's Guide to Droids",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "droid",
+    "durability",
+    "resilience",
+    "survivability",
+    "force_point_spend",
+    "resource_spend",
+    "reaction",
+    "action_economy",
+    "once-per-encounter"
+   ]
+  },
+  {
+   "id": "c5996de1e3c69c04",
+   "auditKey": "CW-005",
+   "canonicalIdentity": "Clone Wars Campaign Guide|Republic Commando|Ambush",
+   "name": "Ambush",
+   "sourcebook": "Clone Wars Campaign Guide",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "ambush",
+    "burst_damage",
+    "damage_bonus",
+    "melee",
+    "ranged"
+   ]
+  },
+  {
+   "id": "c5a043b596f544d0",
+   "auditKey": "GOI-007",
+   "canonicalIdentity": "Galaxy of Intrigue|Master of Intrigue|Master Manipulator",
+   "name": "Master Manipulator",
+   "sourcebook": "Galaxy of Intrigue",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "ally_support",
+    "support",
+    "teamwork",
+    "condition_removal",
+    "recovery",
+    "morale",
+    "control",
+    "manipulation",
+    "defense",
+    "reaction",
+    "swift_action",
+    "action_economy",
+    "once-per-encounter",
+    "reliability",
+    "skills"
+   ]
+  },
+  {
+   "id": "c60790c84a0be9cf",
+   "auditKey": "TFU-016",
+   "canonicalIdentity": "Force Unleashed Campaign Guide|Agent of Ossus|Insightful Aim",
+   "name": "Insightful Aim",
+   "sourcebook": "Force Unleashed Campaign Guide",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "force",
+    "force_point_spend",
+    "resource_spend",
+    "swift_action",
+    "action_economy",
+    "use_the_force",
+    "skill_substitution",
+    "ranged",
+    "offense_ranged",
+    "precision"
+   ]
+  },
+  {
+   "id": "c6708ba5777c248e",
+   "auditKey": "UR-027",
+   "canonicalIdentity": "Saga Edition Core Rulebook|Gunner|Fast Attack Specialist",
+   "name": "Fast Attack Specialist",
+   "sourcebook": "Unknown Regions",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "vehicle",
+    "pilot",
+    "ranged",
+    "full_attack",
+    "standard_action",
+    "action_economy",
+    "sustained_damage",
+    "once-per-encounter",
+    "force_point_spend",
+    "resource_spend"
+   ]
+  },
+  {
+   "id": "c6739fcf6d2107d6",
+   "auditKey": "CORE-027",
+   "canonicalIdentity": "Saga Edition Core Rulebook|Military Tactics|Shift Defense II",
+   "name": "Shift Defense II",
+   "sourcebook": "Saga Edition Core Rulebook",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "defense",
+    "resilience",
+    "survivability",
+    "swift_action",
+    "action_economy"
+   ]
+  },
+  {
+   "id": "c67cbd59abd1cc53",
+   "auditKey": "CORE-023",
+   "canonicalIdentity": "Saga Edition Core Rulebook|Bounty Hunter|Notorious",
+   "name": "Notorious",
+   "sourcebook": "Saga Edition Core Rulebook",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "social",
+    "persuasion",
+    "intimidation",
+    "fear",
+    "mind-affecting",
+    "skills",
+    "reroll",
+    "reliability"
+   ]
+  },
+  {
+   "id": "c919d7682bd9df40",
+   "auditKey": "CORE-015",
+   "canonicalIdentity": "Saga Edition Core Rulebook|Dathomiri Witch|Charm Beast",
+   "name": "Charm Beast",
+   "sourcebook": "Saga Edition Core Rulebook",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "force",
+    "use_the_force",
+    "skill_substitution",
+    "persuasion",
+    "social",
+    "skills",
+    "beast",
+    "nature"
+   ]
+  },
+  {
+   "id": "c92468ee73588b90",
+   "auditKey": "UR-041",
+   "canonicalIdentity": "Saga Edition Core Rulebook|Gunslinger|Retreating Fire",
+   "name": "Retreating Fire",
+   "sourcebook": "Unknown Regions",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "ranged",
+    "mobility",
+    "positioning",
+    "pursuit",
+    "action_economy",
+    "force_point_spend",
+    "resource_spend"
+   ]
+  },
+  {
+   "id": "c9433c6bcb4133d5",
+   "auditKey": "SGD-007",
+   "canonicalIdentity": "Force Unleashed Campaign Guide|First-Degree Droid|Triage Scan",
+   "name": "Triage Scan",
+   "sourcebook": "Scavenger's Guide to Droids",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "droid",
+    "medical",
+    "medicine",
+    "treat_injury",
+    "skills",
+    "standard_action",
+    "action_economy",
+    "detection",
+    "awareness"
+   ]
+  },
+  {
+   "id": "cafcd19016e17d00",
+   "auditKey": "GAW-038",
+   "canonicalIdentity": "Galaxy at War|Martial Arts Forms|K'tara Expertise",
+   "name": "K'tara Expertise",
+   "sourcebook": "Galaxy at War",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "unarmed",
+    "martial_arts",
+    "melee",
+    "control",
+    "battlefield_control",
+    "swift_action",
+    "action_economy",
+    "precision"
+   ]
+  },
+  {
+   "id": "cb018e0f620614fd",
+   "auditKey": "CW-006",
+   "canonicalIdentity": "Clone Wars Campaign Guide|Surveillance|Hunt the Hunter",
+   "name": "Hunt the Hunter",
+   "sourcebook": "Clone Wars Campaign Guide",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "perception",
+    "skills",
+    "detection",
+    "awareness",
+    "stealth",
+    "recon",
+    "standard_action",
+    "action_economy",
+    "melee",
+    "ranged"
+   ]
+  },
+  {
+   "id": "cdbaa45c44141d9c",
+   "auditKey": "SGD-009",
+   "canonicalIdentity": "Force Unleashed Campaign Guide|Second-Degree Droid|Quick Astrogation",
+   "name": "Quick Astrogation",
+   "sourcebook": "Scavenger's Guide to Droids",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "use_computer",
+    "skills",
+    "space",
+    "exploration",
+    "standard_action",
+    "action_economy"
+   ]
+  },
+  {
+   "id": "cdf3e44536031f53",
+   "auditKey": "KOTOR-007",
+   "canonicalIdentity": "Knights of the Old Republic Campaign Guide|Gladiatorial Combat|Distracting Attack",
+   "name": "Distracting Attack",
+   "sourcebook": "Knights of the Old Republic Campaign Guide",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "melee",
+    "ranged",
+    "will_defense",
+    "control",
+    "battlefield_control",
+    "setup",
+    "targeting",
+    "precision"
+   ]
+  },
+  {
+   "id": "ce141cbd257003bc",
+   "auditKey": "TFU-027",
+   "canonicalIdentity": "Force Unleashed Campaign Guide|Fifth-Degree Droid|Cargo Hauler",
+   "name": "Cargo Hauler",
+   "sourcebook": "Force Unleashed Campaign Guide",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "skills",
+    "ability_enhancement"
+   ]
+  },
+  {
+   "id": "ce151ce88fd55934",
+   "auditKey": "GAW-003",
+   "canonicalIdentity": "Saga Edition Core Rulebook|Jedi Sentinel|Prime Targets",
+   "name": "Prime Targets",
+   "sourcebook": "Galaxy at War",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "lightsaber",
+    "melee",
+    "burst_damage",
+    "damage_bonus",
+    "targeting"
+   ]
+  },
+  {
+   "id": "cebb24b483fb5365",
+   "auditKey": "GAW-025",
+   "canonicalIdentity": "Saga Edition Core Rulebook|Weapon Master|Ferocious Assault",
+   "name": "Ferocious Assault",
+   "sourcebook": "Galaxy at War",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "once-per-encounter",
+    "ranged",
+    "burst_damage",
+    "battlefield_control",
+    "control",
+    "positioning",
+    "resource_spend"
+   ]
+  },
+  {
+   "id": "d1ced133cee0a6fa",
+   "auditKey": "JATM-015",
+   "canonicalIdentity": "Jedi Academy Training Manual|White Current Adept|Surrender to the Current",
+   "name": "Surrender to the Current",
+   "sourcebook": "Jedi Academy Training Manual",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "force",
+    "force_power_synergy",
+    "force_capacity",
+    "resource_recovery",
+    "recovery",
+    "swift_action",
+    "action_economy"
+   ]
+  },
+  {
+   "id": "d1eab380f7ec9b29",
+   "auditKey": "GAW-006",
+   "canonicalIdentity": "Galaxy at War|Brigand|Quick Strike",
+   "name": "Quick Strike",
+   "sourcebook": "Galaxy at War",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "ambush",
+    "action_economy",
+    "burst_damage",
+    "melee",
+    "ranged",
+    "targeting",
+    "positioning"
+   ]
+  },
+  {
+   "id": "d20ee3d5e6b8e703",
+   "auditKey": "UR-025",
+   "canonicalIdentity": "Saga Edition Core Rulebook|Bounty Hunter|Familiar Enemies",
+   "name": "Familiar Enemies",
+   "sourcebook": "Unknown Regions",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "target-designation",
+    "pursuit"
+   ]
+  },
+  {
+   "id": "d32459fe16029f2a",
+   "auditKey": "TFU-023",
+   "canonicalIdentity": "Force Unleashed Campaign Guide|First-Degree Droid|Dull the Pain",
+   "name": "Dull the Pain",
+   "sourcebook": "Force Unleashed Campaign Guide",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "treat_injury",
+    "medicine",
+    "medical",
+    "recovery",
+    "condition_removal",
+    "ally_support",
+    "support",
+    "skills"
+   ]
+  },
+  {
+   "id": "d442508aa9d9bdf6",
+   "auditKey": "GAW-004",
+   "canonicalIdentity": "Saga Edition Core Rulebook|Leadership|Commanding Presence",
+   "name": "Commanding Presence",
+   "sourcebook": "Galaxy at War",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "once-per-encounter",
+    "standard_action",
+    "action_economy",
+    "melee",
+    "ranged",
+    "ally_support",
+    "support",
+    "teamwork",
+    "leadership",
+    "command",
+    "morale",
+    "defense",
+    "damage_bonus",
+    "mobility",
+    "positioning",
+    "precision",
+    "sustained_damage"
+   ]
+  },
+  {
+   "id": "d444b28e15a5a9c3",
+   "auditKey": "JATM-007",
+   "canonicalIdentity": "Jedi Academy Training Manual|Aing-Tii Monk|Many Shades of the Force",
+   "name": "Many Shades of the Force",
+   "sourcebook": "Jedi Academy Training Manual",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "force",
+    "force_power_synergy",
+    "force_control",
+    "dark_side",
+    "light_side"
+   ]
+  },
+  {
+   "id": "d554c045a75af1a3",
+   "auditKey": "UR-006",
+   "canonicalIdentity": "Unknown Regions|Outsider|Outsider's Query",
+   "name": "Outsider's Query",
+   "sourcebook": "Unknown Regions",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "persuasion",
+    "social",
+    "skills",
+    "reliability"
+   ]
+  },
+  {
+   "id": "d620ea6e88436467",
+   "auditKey": "UR-013",
+   "canonicalIdentity": "Unknown Regions|Master Scout|Quicktrap",
+   "name": "Quicktrap",
+   "sourcebook": "Unknown Regions",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "trap",
+    "mechanics",
+    "skills",
+    "action_economy",
+    "move_action"
+   ]
+  },
+  {
+   "id": "d65ad7fb7a374762",
+   "auditKey": "KOTOR-015",
+   "canonicalIdentity": "Knights of the Old Republic Campaign Guide|Keetael|Force Direction",
+   "name": "Force Direction",
+   "sourcebook": "Knights of the Old Republic Campaign Guide",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "force",
+    "force_offense",
+    "ranged",
+    "offense_ranged",
+    "precision",
+    "reliability",
+    "force_point_spend",
+    "resource_spend"
+   ]
+  },
+  {
+   "id": "d7ba5fb8b677a2f4",
+   "auditKey": "TFU-014",
+   "canonicalIdentity": "Force Unleashed Campaign Guide|Privateer|Multiattack Proficiency (advanced melee weapons)",
+   "name": "Multiattack Proficiency (advanced melee weapons)",
+   "sourcebook": "Force Unleashed Campaign Guide",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "melee",
+    "full_attack",
+    "sustained_damage",
+    "precision",
+    "weapon_training"
+   ]
+  },
+  {
+   "id": "d7e9ee3d29107c62",
+   "auditKey": "GAW-005",
+   "canonicalIdentity": "Galaxy at War|Brigand|Easy Prey",
+   "name": "Easy Prey",
+   "sourcebook": "Galaxy at War",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "standard_action",
+    "action_economy",
+    "control",
+    "precision",
+    "targeting",
+    "setup"
+   ]
+  },
+  {
+   "id": "d8d7218123a28f39",
+   "auditKey": "SOTG-003",
+   "canonicalIdentity": "Starships of the Galaxy|Naval Officer|Fleet Tactics",
+   "name": "Fleet Tactics",
+   "sourcebook": "Starships of the Galaxy",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "vehicle",
+    "tactics",
+    "knowledge",
+    "skills",
+    "standard_action",
+    "action_economy",
+    "ally_support",
+    "support",
+    "teamwork",
+    "target-designation",
+    "targeting",
+    "ranged",
+    "damage_bonus",
+    "sustained_damage",
+    "mind-affecting"
+   ]
+  },
+  {
+   "id": "dbc150d8f2de73c1",
+   "auditKey": "JATM-034",
+   "canonicalIdentity": "Jedi Academy Training Manual|Warden of the Sky|Brutal Unarmed Strike",
+   "name": "Brutal Unarmed Strike",
+   "sourcebook": "Jedi Academy Training Manual",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "unarmed",
+    "martial_arts",
+    "melee",
+    "damage",
+    "reroll",
+    "reliability",
+    "sustained_damage"
+   ]
+  },
+  {
+   "id": "dbe08a93276b6c25",
+   "auditKey": "SAV-006",
+   "canonicalIdentity": "Saga Edition Core Rulebook|Mastermind|Inspire Wrath",
+   "name": "Inspire Wrath",
+   "sourcebook": "Scum and Villainy",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "ally_support",
+    "support",
+    "teamwork",
+    "morale",
+    "standard_action",
+    "action_economy",
+    "target-designation",
+    "targeting",
+    "skills",
+    "precision"
+   ]
+  },
+  {
+   "id": "dccac6744e458608",
+   "auditKey": "UR-043",
+   "canonicalIdentity": "Saga Edition Core Rulebook|Gunslinger|Swift Shot",
+   "name": "Swift Shot",
+   "sourcebook": "Unknown Regions",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "ranged",
+    "swift_action",
+    "action_economy",
+    "once-per-encounter"
+   ]
+  },
+  {
+   "id": "dceb4b975170edda",
+   "auditKey": "GOI-028",
+   "canonicalIdentity": "Saga Edition Core Rulebook|Gunslinger|Damaging Disarm",
+   "name": "Damaging Disarm",
+   "sourcebook": "Galaxy of Intrigue",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "ranged",
+    "control",
+    "battlefield_control",
+    "damage",
+    "precision"
+   ]
+  },
+  {
+   "id": "dd7a357a59b8ebc0",
+   "auditKey": "CORE-019",
+   "canonicalIdentity": "Saga Edition Core Rulebook|Jensaarai Defender|Linked Defense",
+   "name": "Linked Defense",
+   "sourcebook": "Saga Edition Core Rulebook",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "force",
+    "force_support",
+    "force_defense",
+    "ally_support",
+    "support",
+    "teamwork",
+    "defense",
+    "positioning",
+    "scaling",
+    "swift_action",
+    "action_economy"
+   ]
+  },
+  {
+   "id": "de31c189f3416df7",
+   "auditKey": "GOI-013",
+   "canonicalIdentity": "Galaxy of Intrigue|Espionage|Keep Together",
+   "name": "Keep Together",
+   "sourcebook": "Galaxy of Intrigue",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "reaction",
+    "action_economy",
+    "mobility",
+    "positioning",
+    "evasion",
+    "melee",
+    "ranged",
+    "teamwork",
+    "attack_of_opportunity"
+   ]
+  },
+  {
+   "id": "deb5ce7af3c824ff",
+   "auditKey": "KOTOR-014",
+   "canonicalIdentity": "Knights of the Old Republic Campaign Guide|Keetael|Conceal Force Use",
+   "name": "Conceal Force Use",
+   "sourcebook": "Knights of the Old Republic Campaign Guide",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "force",
+    "use_the_force",
+    "deception",
+    "skills",
+    "stealth",
+    "concealment",
+    "infiltration",
+    "swift_action",
+    "action_economy"
+   ]
+  },
+  {
+   "id": "df6c20e602190daa",
+   "auditKey": "JATM-014",
+   "canonicalIdentity": "Jedi Academy Training Manual|White Current Adept|Ride the Current",
+   "name": "Ride the Current",
+   "sourcebook": "Jedi Academy Training Manual",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "force",
+    "reaction",
+    "action_economy",
+    "force_point_spend",
+    "resource_spend",
+    "concealment",
+    "evasion",
+    "defense",
+    "recovery",
+    "healing",
+    "survivability"
+   ]
+  },
+  {
+   "id": "df8f36d21dc4d23c",
+   "auditKey": "GOI-011",
+   "canonicalIdentity": "Galaxy of Intrigue|Revolutionary|For the Cause",
+   "name": "For the Cause",
+   "sourcebook": "Galaxy of Intrigue",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "damage_threshold",
+    "ally-trigger",
+    "ally_support",
+    "support",
+    "teamwork",
+    "damage_bonus",
+    "sustained_damage",
+    "positioning",
+    "precision"
+   ]
+  },
+  {
+   "id": "df9c25340dcb7c95",
+   "auditKey": "TFU-013",
+   "canonicalIdentity": "Force Unleashed Campaign Guide|Privateer|Ion Mastery",
+   "name": "Ion Mastery",
+   "sourcebook": "Force Unleashed Campaign Guide",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "ranged",
+    "offense_ranged",
+    "precision",
+    "damage_bonus",
+    "nonlethal",
+    "droid",
+    "vehicle",
+    "sustained_damage"
+   ]
+  },
+  {
+   "id": "e07f87b5dbcf035f",
+   "auditKey": "SAV-007",
+   "canonicalIdentity": "Saga Edition Core Rulebook|Fortune|Labyrinthine Mind",
+   "name": "Labyrinthine Mind",
+   "sourcebook": "Scum and Villainy",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "once-per-encounter",
+    "reaction",
+    "action_economy",
+    "mind-affecting",
+    "defense",
+    "resilience",
+    "condition_removal",
+    "recovery"
+   ]
+  },
+  {
+   "id": "e1557fe93f2d960c",
+   "auditKey": "UR-045",
+   "canonicalIdentity": "Unknown Regions|Blazing Chain|Force Directed Shot",
+   "name": "Force Directed Shot",
+   "sourcebook": "Unknown Regions",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "force",
+    "ranged",
+    "offense_ranged",
+    "positioning",
+    "cover",
+    "concealment",
+    "targeting",
+    "swift_action",
+    "action_economy"
+   ]
+  },
+  {
+   "id": "e17a8eea5c111f48",
+   "auditKey": "JATM-020",
+   "canonicalIdentity": "Jedi Academy Training Manual|Matukai Adept|Wan-Shen Mastery",
+   "name": "Wan-Shen Mastery",
+   "sourcebook": "Jedi Academy Training Manual",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "melee",
+    "standard_action",
+    "action_economy",
+    "burst_damage",
+    "positioning"
+   ]
+  },
+  {
+   "id": "e1cb0fd81f7f6d44",
+   "auditKey": "SAV-008",
+   "canonicalIdentity": "Saga Edition Core Rulebook|Weapon Specialist|Crushing Assault",
+   "name": "Crushing Assault",
+   "sourcebook": "Scum and Villainy",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "weapon_specialization",
+    "setup",
+    "precision",
+    "damage_bonus"
+   ]
+  },
+  {
+   "id": "e26abfa7fe650912",
+   "auditKey": "JATM-002",
+   "canonicalIdentity": "Jedi Academy Training Manual|Jedi Investigator|Echoes in the Force",
+   "name": "Echoes in the Force",
+   "sourcebook": "Jedi Academy Training Manual",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "force",
+    "force_power_synergy",
+    "use_the_force",
+    "visions",
+    "investigation",
+    "recon"
+   ]
+  },
+  {
+   "id": "e293cb03d35c2bff",
+   "auditKey": "CORE-012",
+   "canonicalIdentity": "Saga Edition Core Rulebook|Brawler|Unbalance Opponent",
+   "name": "Unbalance Opponent",
+   "sourcebook": "Saga Edition Core Rulebook",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "melee",
+    "control",
+    "target-designation",
+    "melee_defense",
+    "defense"
+   ]
+  },
+  {
+   "id": "e40620e2dca73682",
+   "auditKey": "JATM-008",
+   "canonicalIdentity": "Jedi Academy Training Manual|Aing-Tii Monk|Spatial Integrity",
+   "name": "Spatial Integrity",
+   "sourcebook": "Jedi Academy Training Manual",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "force",
+    "vehicle",
+    "use_the_force",
+    "force_point_spend",
+    "resource_spend",
+    "reaction",
+    "action_economy",
+    "damage_reduction",
+    "defense",
+    "durability",
+    "survivability"
+   ]
+  },
+  {
+   "id": "e435b618793d8bc7",
+   "auditKey": "SAV-009",
+   "canonicalIdentity": "Saga Edition Core Rulebook|Fortune|Uncanny Luck",
+   "name": "Uncanny Luck",
+   "sourcebook": "Scum and Villainy",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "once-per-encounter",
+    "critical_success",
+    "reliability"
+   ]
+  },
+  {
+   "id": "e55e9497ecf6303d",
+   "auditKey": "CW-009",
+   "canonicalIdentity": "Clone Wars Campaign Guide|Droid Commander|Droid Mettle",
+   "name": "Droid Mettle",
+   "sourcebook": "Clone Wars Campaign Guide",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "droid",
+    "ally_support",
+    "support",
+    "survivability",
+    "durability",
+    "swift_action",
+    "action_economy",
+    "scaling"
+   ]
+  },
+  {
+   "id": "e8922370838f2965",
+   "auditKey": "TFU-001",
+   "canonicalIdentity": "Force Unleashed Campaign Guide|Ideologue|Idealist",
+   "name": "Idealist",
+   "sourcebook": "Force Unleashed Campaign Guide",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "will_defense",
+    "defense",
+    "ability_enhancement",
+    "resilience"
+   ]
+  },
+  {
+   "id": "e9820b341bf94de1",
+   "auditKey": "CORE-025",
+   "canonicalIdentity": "Saga Edition Core Rulebook|Weapon Master|Greater Weapon Specialization",
+   "name": "Greater Weapon Specialization",
+   "sourcebook": "Saga Edition Core Rulebook",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "weapon_specialization",
+    "weapon_training",
+    "damage_bonus",
+    "melee",
+    "ranged",
+    "sustained_damage"
+   ]
+  },
+  {
+   "id": "e9a5fe40ce95a053",
+   "auditKey": "TFU-010",
+   "canonicalIdentity": "Force Unleashed Campaign Guide|Specialized Droid|Hotwired Processor",
+   "name": "Hotwired Processor",
+   "sourcebook": "Force Unleashed Campaign Guide",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "droid",
+    "tech",
+    "ability_enhancement",
+    "skills",
+    "ranged",
+    "precision",
+    "swift_action",
+    "action_economy",
+    "scaling",
+    "sustained_damage"
+   ]
+  },
+  {
+   "id": "ea3bdb2a7d6b44db",
+   "auditKey": "TFU-015",
+   "canonicalIdentity": "Force Unleashed Campaign Guide|Agent of Ossus|Conceal Other",
+   "name": "Conceal Other",
+   "sourcebook": "Force Unleashed Campaign Guide",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "force",
+    "ally_support",
+    "support",
+    "concealment",
+    "stealth",
+    "evasion",
+    "scaling"
+   ]
+  },
+  {
+   "id": "eb37a8bab49f8ab7",
+   "auditKey": "UR-036",
+   "canonicalIdentity": "Saga Edition Core Rulebook|Weapon Master|Multiattack Proficiency (simple weapons)",
+   "name": "Multiattack Proficiency (simple weapons)",
+   "sourcebook": "Unknown Regions",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "full_attack",
+    "sustained_damage",
+    "precision",
+    "weapon_training"
+   ]
+  },
+  {
+   "id": "edd7a0b36b9e727b",
+   "auditKey": "GAW-013",
+   "canonicalIdentity": "Saga Edition Core Rulebook|Misfortune|Improved Sneak Attack",
+   "name": "Improved Sneak Attack",
+   "sourcebook": "Galaxy at War",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "ranged",
+    "precision_damage",
+    "precision",
+    "positioning",
+    "sustained_damage"
+   ]
+  },
+  {
+   "id": "ee184e210f8c8935",
+   "auditKey": "GAW-014",
+   "canonicalIdentity": "Galaxy at War|Advance Patrol|Mobile Combatant",
+   "name": "Mobile Combatant",
+   "sourcebook": "Galaxy at War",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "once-per-encounter",
+    "standard_action",
+    "reaction",
+    "action_economy",
+    "melee",
+    "ranged",
+    "mobility",
+    "positioning",
+    "evasion",
+    "defense",
+    "counterattack",
+    "setup",
+    "survivability"
+   ]
+  },
+  {
+   "id": "eea7ea6dc3bd0313",
+   "auditKey": "JATM-031",
+   "canonicalIdentity": "Jedi Academy Training Manual|Tyia Adept|Force Stabilize",
+   "name": "Force Stabilize",
+   "sourcebook": "Jedi Academy Training Manual",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "ally_support",
+    "support",
+    "healing",
+    "recovery",
+    "survivability",
+    "swift_action",
+    "action_economy",
+    "positioning"
+   ]
+  },
+  {
+   "id": "eeb5ebf5835734d2",
+   "auditKey": "GAW-026",
+   "canonicalIdentity": "Galaxy at War|Sharpshooter|Bullseye",
+   "name": "Bullseye",
+   "sourcebook": "Galaxy at War",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "once-per-encounter",
+    "ranged",
+    "offense_ranged",
+    "sniper",
+    "precision",
+    "targeting",
+    "target-designation",
+    "setup",
+    "control",
+    "positioning"
+   ]
+  },
+  {
+   "id": "eeecb3737aabf789",
+   "auditKey": "KOTOR-008",
+   "canonicalIdentity": "Saga Edition Core Rulebook|Sith|Sith Alchemy",
+   "name": "Sith Alchemy",
+   "sourcebook": "Knights of the Old Republic Campaign Guide",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "force",
+    "dark_side",
+    "dark_side_score",
+    "alchemy",
+    "crafting",
+    "equipment",
+    "talisman",
+    "weapon_empowerment",
+    "empowerment",
+    "modification",
+    "force_point_spend",
+    "resource_spend",
+    "damage_bonus",
+    "force_offense",
+    "force_power_synergy",
+    "lightsaber",
+    "melee",
+    "action_economy",
+    "sustained_damage"
+   ]
+  },
+  {
+   "id": "ef8a59509a45df46",
+   "auditKey": "LEG-003",
+   "canonicalIdentity": "Legacy Era Campaign Guide|Versatility|Adapt and Survive",
+   "name": "Adapt and Survive",
+   "sourcebook": "Legacy Era Campaign Guide",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "morale",
+    "empowerment"
+   ]
+  },
+  {
+   "id": "efd3308a8ccc22c6",
+   "auditKey": "CORE-026",
+   "canonicalIdentity": "Saga Edition Core Rulebook|Duelist|Severing Strike",
+   "name": "Severing Strike",
+   "sourcebook": "Saga Edition Core Rulebook",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "lightsaber",
+    "melee",
+    "damage_threshold",
+    "precision",
+    "control",
+    "battlefield_control",
+    "mobility"
+   ]
+  },
+  {
+   "id": "efd54ffa36d5a2b4",
+   "auditKey": "GOI-005",
+   "canonicalIdentity": "Galaxy of Intrigue|Skill Challenge|Leading Skill",
+   "name": "Leading Skill",
+   "sourcebook": "Galaxy of Intrigue",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "skills",
+    "support",
+    "setup"
+   ]
+  },
+  {
+   "id": "f09bb97395175598",
+   "auditKey": "CW-012",
+   "canonicalIdentity": "Clone Wars Campaign Guide|Droid Commander|Overclocked Troops",
+   "name": "Overclocked Troops",
+   "sourcebook": "Clone Wars Campaign Guide",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "droid",
+    "ally_support",
+    "support",
+    "teamwork",
+    "mobility",
+    "movement",
+    "positioning",
+    "swift_action",
+    "action_economy"
+   ]
+  },
+  {
+   "id": "f3ac8054a0c60760",
+   "auditKey": "CORE-002",
+   "canonicalIdentity": "Saga Edition Core Rulebook|Influence|Improved Weaken Resolve",
+   "name": "Improved Weaken Resolve",
+   "sourcebook": "Saga Edition Core Rulebook",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "persuasion",
+    "intimidation",
+    "social",
+    "fear",
+    "mind-affecting",
+    "control",
+    "battlefield_control",
+    "damage_threshold",
+    "will_defense",
+    "mobility"
+   ]
+  },
+  {
+   "id": "f3b8b39d4906007d",
+   "auditKey": "CORE-018",
+   "canonicalIdentity": "Saga Edition Core Rulebook|Jensaarai Defender|Force Cloak Mastery",
+   "name": "Force Cloak Mastery",
+   "sourcebook": "Saga Edition Core Rulebook",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "force",
+    "concealment",
+    "stealth",
+    "ally_support",
+    "support",
+    "teamwork",
+    "sensors",
+    "infiltration",
+    "scaling",
+    "swift_action",
+    "action_economy"
+   ]
+  },
+  {
+   "id": "f52cadb1ae252d0c",
+   "auditKey": "CORE-020",
+   "canonicalIdentity": "Saga Edition Core Rulebook|Gunner|Dogfight Gunner",
+   "name": "Dogfight Gunner",
+   "sourcebook": "Saga Edition Core Rulebook",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "vehicle",
+    "space",
+    "ranged",
+    "targeting",
+    "pursuit"
+   ]
+  },
+  {
+   "id": "f557b3331b5158c8",
+   "auditKey": "UR-017",
+   "canonicalIdentity": "Unknown Regions|Mobile Scout|Battle Mount",
+   "name": "Battle Mount",
+   "sourcebook": "Unknown Regions",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "mount",
+    "ride",
+    "rider",
+    "cover",
+    "defense",
+    "mobility",
+    "positioning",
+    "swift_action",
+    "action_economy",
+    "once-per-encounter"
+   ]
+  },
+  {
+   "id": "f5bdd03d2767793e",
+   "auditKey": "JATM-022",
+   "canonicalIdentity": "Jedi Academy Training Manual|Seyugi Dervish|Repelling Whirlwind",
+   "name": "Repelling Whirlwind",
+   "sourcebook": "Jedi Academy Training Manual",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "melee",
+    "defense",
+    "survivability"
+   ]
+  },
+  {
+   "id": "f61d70448c4cd14e",
+   "auditKey": "GOI-019",
+   "canonicalIdentity": "Saga Edition Core Rulebook|Brawler|Disarm and Engage",
+   "name": "Disarm and Engage",
+   "sourcebook": "Galaxy of Intrigue",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "control",
+    "battlefield_control",
+    "action_economy",
+    "burst_damage",
+    "equipment",
+    "melee",
+    "ranged"
+   ]
+  },
+  {
+   "id": "f7b620efd191ac6b",
+   "auditKey": "JATM-024",
+   "canonicalIdentity": "Jedi Academy Training Manual|Seyugi Dervish|Tempest Tossed",
+   "name": "Tempest Tossed",
+   "sourcebook": "Jedi Academy Training Manual",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "melee",
+    "control",
+    "battlefield_control",
+    "movement",
+    "positioning",
+    "mobility",
+    "action_economy"
+   ]
+  },
+  {
+   "id": "f8ac7fecc8d3c8ff",
+   "auditKey": "JATM-012",
+   "canonicalIdentity": "Jedi Academy Training Manual|Baran Do Sage|Precognitive Meditation",
+   "name": "Precognitive Meditation",
+   "sourcebook": "Jedi Academy Training Manual",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "force",
+    "meditation",
+    "precognition",
+    "visions",
+    "planning",
+    "setup",
+    "force_point_spend",
+    "resource_spend",
+    "defense",
+    "evasion",
+    "vehicle",
+    "pilot"
+   ]
+  },
+  {
+   "id": "f9f3530a9e88a530",
+   "auditKey": "GAW-019",
+   "canonicalIdentity": "Saga Edition Core Rulebook|Commando|Defensive Position",
+   "name": "Defensive Position",
+   "sourcebook": "Galaxy at War",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "cover",
+    "defense",
+    "ranged_defense",
+    "survivability",
+    "swift_action",
+    "action_economy",
+    "setup",
+    "positioning"
+   ]
+  },
+  {
+   "id": "fb103ac0e4501e95",
+   "auditKey": "CORE-024",
+   "canonicalIdentity": "Saga Edition Core Rulebook|Weapon Master|Exotic Weapon Mastery",
+   "name": "Exotic Weapon Mastery",
+   "sourcebook": "Saga Edition Core Rulebook",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "exotic_weapon",
+    "weapon_training"
+   ]
+  },
+  {
+   "id": "fe96e6ee2657d14e",
+   "auditKey": "GAW-032",
+   "canonicalIdentity": "Saga Edition Core Rulebook|Gunslinger|Keep Them Honest",
+   "name": "Keep Them Honest",
+   "sourcebook": "Galaxy at War",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "ranged",
+    "support",
+    "teamwork",
+    "control",
+    "battlefield_control",
+    "targeting"
+   ]
+  },
+  {
+   "id": "ff3b4c48d0a05a16",
+   "auditKey": "CW-007",
+   "canonicalIdentity": "Saga Edition Core Rulebook|Commando|Keep Them at Bay",
+   "name": "Keep Them at Bay",
+   "sourcebook": "Clone Wars Campaign Guide",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "ranged",
+    "support",
+    "teamwork",
+    "control",
+    "battlefield_control",
+    "targeting"
+   ]
+  }
+ ]
+}

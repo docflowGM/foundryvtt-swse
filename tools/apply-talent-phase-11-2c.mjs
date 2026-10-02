@@ -126,21 +126,25 @@ const renderDoc = r => { const c = r.counts, x = r.runtimeConsumers; return ['# 
 export function detect11_2cState() {
   if (!fs.existsSync(path.join(ROOT, REPORT_PATH))) return 'PRE_11_2C';
   const r = readJson(REPORT_PATH), sha = gitBlobSha(read(TALENTS));
-  return r.postState.talents === sha ? 'POST_11_2C' : r.preState.talents === sha ? 'PRE_11_2C' : 'UNKNOWN';
+  if (r.postState.talents === sha) return 'POST_11_2C';
+  if (r.preState.talents === sha) return 'PRE_11_2C';
+  const h = 'data/audits/talent-phase-12-1-dry-run-report.json'; // Phase 12-1 (later) tagged the 309 certified orphans: this report's tag sets, census and fingerprint are superseded
+  return fs.existsSync(path.join(ROOT, h)) && readJson(h).postState.talents === sha ? 'POST_LATER' : 'UNKNOWN';
 }
 
 export async function verifyApplied({ exact = false } = {}) {
   const res = [], check = (id, ok, detail = '') => res.push({ id, ok: !!ok, detail });
   const report = readJson(REPORT_PATH), manifest = readJson(MANIFEST_PATH), text = read(TALENTS), talents = parse(text), by = new Map(talents.map(t => [t._id, t])), ids = new Set(manifest.rows.map(r => r.id)), c = census(talents), A = manifest.actions;
-  check('packs/talents.db is the certified Phase 11-2C post-state', detect11_2cState() === 'POST_11_2C');
+  const later = detect11_2cState() === 'POST_LATER'; // Phase 12-1 tagged 309 previously untagged talents: the census, the "other talents" fingerprint and the blob are superseded
+  check('packs/talents.db is the certified Phase 11-2C post-state (or a later certified state)', ['POST_11_2C', 'POST_LATER'].includes(detect11_2cState()));
   check('talent count unchanged (1,187)', talents.length === 1187);
   check('no deleted or normalized-source tag remains; no tree_* tag remains', [...Object.keys(A.normalize), ...Object.keys(A.remove)].every(k => !c.byTag[k]) && Object.keys(c.byTag).every(k => !k.startsWith('tree_')));
   check('every manifest record carries exactly its certified tags', manifest.rows.every(r => JSON.stringify(by.get(r.id)?.system.tags) === JSON.stringify(r.after)));
-  check('post census equals the certified census', Object.keys(c.byTag).length === Object.keys(report.postCensus.byTag).length && Object.entries(c.byTag).every(([k, n]) => report.postCensus.byTag[k] === n));
-  check('other talents unchanged', sortedFp(talents.filter(t => !ids.has(t._id))) === report.othersFingerprint);
+  if (!later) check('post census equals the certified census', Object.keys(c.byTag).length === Object.keys(report.postCensus.byTag).length && Object.entries(c.byTag).every(([k, n]) => report.postCensus.byTag[k] === n));
+  if (!later) check('other talents unchanged', sortedFp(talents.filter(t => !ids.has(t._id))) === report.othersFingerprint);
   check('homebrew pack unchanged', gitBlobSha(read(HOMEBREW)) === report.preState.homebrew);
   const rec = reconcile(loadInput()); check('reconciler: zero blocking findings', rec.blockingFindings.length === 0, JSON.stringify(rec.findingCounts));
-  if (exact) check('packs/talents.db equals the certified blob', gitBlobSha(text) === report.postState.talents);
+  if (exact && !later) check('packs/talents.db equals the certified blob', gitBlobSha(text) === report.postState.talents);
   return res;
 }
 
@@ -156,7 +160,7 @@ export async function main(argv = process.argv.slice(2)) {
   const has = f => argv.includes(f), state = detect11_2cState();
   const pr = res => { for (const x of res) console.log(`${x.ok ? 'PASS' : 'FAIL'}  ${x.id}${x.ok || !x.detail ? '' : '  [' + x.detail + ']'}`); return res.filter(x => !x.ok).length; };
   if (has('--status')) { console.log(ERR + state); return 0; }
-  if (has('--verify') || (has('--check') && state === 'POST_11_2C')) { const bad = pr(await verifyApplied({ exact: has('--exact') })); console.log(`\n${ERR}verify ${bad ? 'FAIL' : 'PASS'}`); return bad ? 1 : 0; }
+  if (has('--verify') || (has('--check') && (state === 'POST_11_2C' || state === 'POST_LATER'))) { const bad = pr(await verifyApplied({ exact: has('--exact') })); console.log(`\n${ERR}verify ${bad ? 'FAIL' : 'PASS'}`); return bad ? 1 : 0; }
   if (has('--apply')) { const fresh = await buildReport(); invariant(read(REPORT_PATH) === JSON.stringify(fresh, null, 1) + '\n', 'REFUSED: committed dry-run report differs from a fresh projection'); applyProduction(); console.log(ERR + 'APPLIED packs/talents.db (uncommitted)'); return 0; }
   invariant(state === 'PRE_11_2C', `the pre-cleanup pack is required (found ${state})`);
   if (has('--manifest')) { fs.writeFileSync(path.join(ROOT, MANIFEST_PATH), JSON.stringify(deriveManifest(), null, 1) + '\n'); console.log(ERR + 'wrote ' + MANIFEST_PATH); return 0; }
