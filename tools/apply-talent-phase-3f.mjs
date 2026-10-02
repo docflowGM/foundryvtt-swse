@@ -118,7 +118,7 @@ export function detect3FState() {
   // Phase 3G (structured prerequisites) is a later certified state that rewrites other talent records; the tree pack and registries stay 3F's.
   const g = path.join(ROOT, 'data/audits/talent-phase-3g-dry-run-report.json');
   if (fs.existsSync(g) && r.postState.trees === n && JSON.parse(fs.readFileSync(g, 'utf8')).postState.talents === t) return 'POST_LATER';
-  for (const f of ['talent-phase-11-2a-dry-run-report.json', 'talent-phase-11-2b-dry-run-report.json', 'talent-phase-11-2c-dry-run-report.json']) { const h = path.join(ROOT, 'data/audits', f); if (fs.existsSync(h) && r.postState.trees === n && JSON.parse(fs.readFileSync(h, 'utf8')).postState.talents === t) return 'POST_LATER'; }
+  for (const f of ['talent-phase-11-2a-dry-run-report.json', 'talent-phase-11-2b-dry-run-report.json', 'talent-phase-11-2c-dry-run-report.json', 'talent-phase-12-1-dry-run-report.json', 'talent-phase-12-2-dry-run-report.json', 'talent-phase-12-final-dry-run-report.json']) { const h = path.join(ROOT, 'data/audits', f); if (fs.existsSync(h) && r.postState.trees === n && JSON.parse(fs.readFileSync(h, 'utf8')).postState.talents === t) return 'POST_LATER'; }
   return r.postState.talents === t && r.postState.trees === n ? 'POST_3F' : r.preState.talents === t && r.preState.trees === n ? 'PRE_3F' : 'UNKNOWN';
 }
 

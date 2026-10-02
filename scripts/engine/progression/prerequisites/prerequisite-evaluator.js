@@ -42,6 +42,7 @@ import {
 } from "/systems/foundryvtt-swse/scripts/engine/progression/prerequisites/legacy-prereq-registry.js";
 import { FeatChoiceResolver, normalizeFeatChoiceKey } from "/systems/foundryvtt-swse/scripts/engine/progression/feats/feat-choice-resolver.js";
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { countForceTalents } from "/systems/foundryvtt-swse/scripts/engine/progression/talents/tree-authority.js";
 import { resolveCanonicalForcePowerName } from "/systems/foundryvtt-swse/scripts/utils/force-knowledge.js";
 
 // ── Internal helpers ─────────────────────────────────────────────
@@ -298,16 +299,8 @@ function evalTalentCount(snapshot, req, opts) {
 /** Evaluate a force-talent-count requirement. */
 function evalForceTalentCount(snapshot, req, opts) {
   const required = Number(req.count) || 1;
-  // Check snapshot force section
-  const forceTalents = Array.isArray(snapshot.talents?.items)
-    ? snapshot.talents.items.filter((t) => {
-        return (
-          t?.system?.isForce === true ||
-          (Array.isArray(t?.system?.tags) && t.system.tags.includes('force'))
-        );
-      })
-    : [];
-  const actual = forceTalents.length;
+  // RAW Force talent = member of a Force talent tree (structural tree authority), never a semantic tag.
+  const actual = countForceTalents(snapshot.talents?.items);
   const passed = actual >= required;
   return {
     passed,

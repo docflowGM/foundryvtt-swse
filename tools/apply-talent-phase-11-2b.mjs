@@ -29,7 +29,7 @@ const ERR = '[talent-phase-11-2b] ';
 const invariant = (ok, m) => { if (!ok) throw new Error(ERR + m); };
 const sortedFp = arr => fingerprint(arr.slice().sort((x, y) => x._id.localeCompare(y._id)));
 const withoutTags = t => { const c = structuredClone(t); delete c.system.tags; return c; };
-const EXACT_PROBES = ['droidGate', 'resolved', 'classification', 'combatCandidate', 'combatFeature', 'forceTalentCount', 'lightsaberFormLookup'];
+const EXACT_PROBES = ['droidGate', 'resolved', 'classification', 'combatCandidate', 'combatFeature', 'forceTalent', 'lightsaberFormLookup'];
 const HOLD = { controller: 'control', defender: 'defense', leader: 'leadership' };
 
 /** The complete action table, derived from the owner artifacts. */
@@ -156,8 +156,8 @@ export function detect11_2bState() {
   const r = readJson(REPORT_PATH), sha = gitBlobSha(read(TALENTS));
   if (r.postState.talents === sha) return 'POST_11_2B';
   if (r.preState.talents === sha) return 'PRE_11_2B';
-  const h = path.join(ROOT, 'data/audits/talent-phase-11-2c-dry-run-report.json'); // Phase 11-2C (later) finished the Bespoke cleanup
-  return fs.existsSync(h) && readJson('data/audits/talent-phase-11-2c-dry-run-report.json').postState.talents === sha ? 'POST_LATER' : 'UNKNOWN';
+  // Phase 11-2C (later) finished the Bespoke cleanup; Phase 12-1 (later still) added the certified orphan tags
+  return ['talent-phase-11-2c-dry-run-report.json', 'talent-phase-12-1-dry-run-report.json', 'talent-phase-12-2-dry-run-report.json', 'talent-phase-12-final-dry-run-report.json'].some(f => fs.existsSync(path.join(ROOT, 'data/audits', f)) && readJson('data/audits/' + f).postState.talents === sha) ? 'POST_LATER' : 'UNKNOWN';
 }
 
 export async function verifyApplied({ exact = false } = {}) {

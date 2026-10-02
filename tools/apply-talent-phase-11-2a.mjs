@@ -23,7 +23,7 @@ const ERR = '[talent-phase-11-2a] ';
 const invariant = (ok, m) => { if (!ok) throw new Error(ERR + m); };
 const sortedFp = arr => fingerprint(arr.slice().sort((x, y) => x._id.localeCompare(y._id)));
 const withoutTags = t => { const c = structuredClone(t); delete c.system.tags; return c; };
-const EXACT_PROBES = ['droidGate', 'resolved', 'classification', 'combatCandidate', 'combatFeature', 'forceTalentCount', 'lightsaberFormLookup'];
+const EXACT_PROBES = ['droidGate', 'resolved', 'classification', 'combatCandidate', 'combatFeature', 'forceTalent', 'lightsaberFormLookup'];
 
 export function loadBuckets(talents) {
   const a = readJson(AUTH), by = { KEEP: new Set(), DELETE: new Set(), RECONSIDER: new Set(), BESPOKE: new Set() };
@@ -136,7 +136,7 @@ export function detect11_2aState() {
   if (r.postState.talents === sha) return 'POST_11_2A';
   if (r.preState.talents === sha) return 'PRE_11_2A';
   // Phase 11-2B / 11-2C (later) cleaned further legacy tags
-  return ['talent-phase-11-2b-dry-run-report.json', 'talent-phase-11-2c-dry-run-report.json'].some(f => fs.existsSync(path.join(ROOT, 'data/audits', f)) && readJson('data/audits/' + f).postState.talents === sha) ? 'POST_LATER' : 'UNKNOWN';
+  return ['talent-phase-11-2b-dry-run-report.json', 'talent-phase-11-2c-dry-run-report.json', 'talent-phase-12-1-dry-run-report.json', 'talent-phase-12-2-dry-run-report.json', 'talent-phase-12-final-dry-run-report.json'].some(f => fs.existsSync(path.join(ROOT, 'data/audits', f)) && readJson('data/audits/' + f).postState.talents === sha) ? 'POST_LATER' : 'UNKNOWN';
 }
 
 export async function verifyApplied({ exact = false } = {}) {

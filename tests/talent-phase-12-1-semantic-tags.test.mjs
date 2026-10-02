@@ -1,0 +1,85 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import { spawnSync } from 'node:child_process';
+import { validateAuthority, loadAuthority, AUTH, MANIFEST_PATH, REPORT_PATH, detect12_1State } from '../tools/apply-talent-phase-12-1-tags.mjs';
+import { detectPackState } from '../tools/apply-talent-phase-3c.mjs';
+
+// Phase 12-1: pins the owner-certified orphan semantic-tag contract. Every expectation is DERIVED from the final (QA3) authority file — there is no second
+// hand-maintained table of 309 arrays in this test.
+const rd = rel => JSON.parse(fs.readFileSync(new URL('../' + rel, import.meta.url), 'utf8'));
+const nd = rel => fs.readFileSync(new URL('../' + rel, import.meta.url), 'utf8').split('\n').filter(Boolean).map(l => JSON.parse(l));
+let n = 0; const test = (name, fn) => { fn(); n++; console.log('  ok  ' + name); };
+const authority = rd(AUTH), { certified, deferred, defIds } = loadAuthority(), man = rd(MANIFEST_PATH), rep = rd(REPORT_PATH);
+const talents = nd('packs/talents.db'), byId = new Map(talents.map(t => [t._id, t])), tagsOf = t => (Array.isArray(t?.system?.tags) ? t.system.tags : []);
+
+test('authority is the QA3 + global-QA-delta final payload: FINAL_FOR_EXECUTION, owner-authorized, 311 reviewed = 309 certified + exactly 2 deferred', () => {
+  assert.equal(authority.status, 'FINAL_FOR_EXECUTION'); assert.equal(authority.ownerAuthorized, true); assert.equal(authority.executionEnabled, true); assert.equal(authority.finalSemanticPayload, 'QA3+GLOBAL_QA_DELTA');
+  assert.equal(certified.length, 309); assert.equal(deferred.length, 2); assert.equal(authority.qualitySweep.revisedTalentCount, 83); assert.equal(authority.qualitySweep.unchangedCertifiedTalentCount, 226);
+  assert.deepEqual(deferred.map(d => d.auditKey).sort(), ['GOI-002', 'UR-022']); assert.deepEqual([...defIds].sort(), ['d376f165f1a47281', 'fd37b68c6fb620f6']);
+  assert.ok(deferred.every(d => d.conceptFamily === 'TEMPORARY_TALENT_ACCESS' && d.status === 'AWAITING_DESIGNER_ADJUDICATION'));
+});
+test('no duplicate canonical ids or audit keys; no certified id is a deferred id; no certified record has empty or duplicated finalTags', () => {
+  assert.equal(new Set(certified.map(x => x.canonicalId)).size, 309); assert.equal(new Set(certified.map(x => x.auditKey)).size, 309);
+  assert.ok(certified.every(x => !defIds.has(x.canonicalId)));
+  assert.ok(certified.every(x => Array.isArray(x.finalTags) && x.finalTags.length > 0 && new Set(x.finalTags).size === x.finalTags.length));
+});
+test('the validator rejects tampered authorities (wrong count, deferred id promoted, empty tags, duplicate tag, duplicate id, not final)', () => {
+  const mut = fn => { const c = structuredClone(authority); fn(c); return c; }, first = c => Object.values(c.batches)[0].assignments;
+  assert.throws(() => validateAuthority(mut(c => first(c).pop())), /309/);
+  assert.throws(() => validateAuthority(mut(c => { first(c)[0].canonicalId = 'fd37b68c6fb620f6'; })), /overlaps a deferred id|unique/);
+  assert.throws(() => validateAuthority(mut(c => { first(c)[0].finalTags = []; })), /non-empty/);
+  assert.throws(() => validateAuthority(mut(c => { first(c)[0].finalTags = ['force', 'force']; })), /duplicate tag/);
+  assert.throws(() => validateAuthority(mut(c => { first(c)[1].canonicalId = first(c)[0].canonicalId; })), /unique/);
+  assert.throws(() => validateAuthority(mut(c => { c.executionEnabled = false; })), /FINAL_FOR_EXECUTION/);
+});
+test('every certified canonicalId resolves exactly once in packs/talents.db (id only; name/source/page are guards, not a fallback)', () => {
+  assert.equal(talents.length, 1187); assert.equal(byId.size, 1187);
+  for (const x of certified) { const t = byId.get(x.canonicalId); assert.ok(t, x.auditKey); assert.equal(t.name, x.name, x.auditKey); assert.equal(t.system.source, x.sourcebook, x.auditKey); assert.equal(t.system.page, x.page, x.auditKey); }
+  for (const d of deferred) assert.equal(byId.get(d.canonicalId)?.name, d.name);
+});
+test('every certified talent carries system.tags EXACTLY equal to its authority finalTags (deep equality, authored order)', () => {
+  for (const x of certified) assert.deepEqual(byId.get(x.canonicalId).system.tags, x.finalTags, x.auditKey);
+});
+test('the manifest is derived from the authority: 309 rows, empty before-arrays, exact after-arrays, deferred ids excluded', () => {
+  assert.equal(man.rows.length, 309); assert.deepEqual(man.counts, { ...man.counts, reviewed: 311, certified: 309, deferred: 2, recordsChanged: 309 });
+  for (const r of man.rows) { const x = certified.find(y => y.canonicalId === r.id); assert.ok(x, r.id); assert.deepEqual(r.after, x.finalTags); assert.deepEqual(r.before, []); assert.equal(r.path, 'system.tags'); }
+  assert.ok(man.rows.every(r => !defIds.has(r.id))); assert.deepEqual(man.deferred.map(d => d.id).sort(), [...defIds].sort());
+});
+test('vocabulary: every certified tag belongs to the 184-string surviving vocabulary; the pack holds no string outside it (Phase 12-2 may retire strings, never add) and no tree_* tag', () => {
+  const vocab = new Set(Object.keys(rd('data/audits/talent-phase-11-2c-dry-run-report.json').postCensus.byTag)), post = new Set(talents.flatMap(tagsOf));
+  assert.equal(vocab.size, 184); assert.ok(certified.every(x => x.finalTags.every(g => vocab.has(g)))); if (detect12_1State() === 'POST_LATER') vocab.add('temporary-talent'); // the one owner-authorized later tag (final adjudication)
+  assert.ok([...post].every(g => vocab.has(g))); assert.ok(post.size <= 184); assert.ok([...post].every(g => !g.startsWith('tree_')));
+});
+test('orphan closeout: until the final owner adjudication the only zero-tag canonical talents are exactly Quick Study (UR-022) and Done It All (GOI-002), whose tags are unchanged (empty); afterwards none are untagged', () => {
+  const zero = talents.filter(t => !tagsOf(t).length), finalAdj = detect12_1State() === 'POST_LATER' && tagsOf(byId.get('fd37b68c6fb620f6')).length > 0;
+  if (finalAdj) { assert.equal(zero.length, 0); for (const d of deferred) assert.ok(tagsOf(byId.get(d.canonicalId)).includes('temporary-talent')); }
+  else { assert.deepEqual(zero.map(t => t._id).sort(), [...defIds].sort()); assert.deepEqual(zero.map(t => t.name).sort(), ['Done It All', 'Quick Study']); for (const d of deferred) assert.deepEqual(byId.get(d.canonicalId).system.tags, []); }
+  assert.ok(certified.every(x => tagsOf(byId.get(x.canonicalId)).length > 0));
+});
+test('dry-run certified: 309 records, zero-tag 311 -> 2, 184 raw tags before and after, no non-target or non-tag change, tree identity untouched', () => {
+  assert.equal(rep.status, 'DRY_RUN_CERTIFIED'); assert.ok(rep.verification.results.every(x => x.ok));
+  assert.deepEqual([rep.counts.recordsChanged, rep.counts.zeroTagBefore, rep.counts.zeroTagAfter, rep.counts.rawTagsBefore, rep.counts.rawTagsAfter], [309, 311, 2, 184, 184]);
+  assert.deepEqual([rep.counts.nonTargetRecordsChanged, rep.counts.nonTagFieldChanges, rep.counts.vocabularyViolations], [0, 0, 0]); assert.equal(rep.runtimeConsumers.treeIdentityChanged, 0);
+  assert.equal(rep.counts.tagInstancesAfter - rep.counts.tagInstancesBefore, certified.reduce((s, x) => s + x.finalTags.length, 0));
+});
+test('global-QA reconciliation: exactly 11 arrays differ from QA3, each recorded with its QA3 tags, added/removed lists and reason; final arrays equal the pack', () => {
+  const rec = authority.globalQaReconciliation; assert.equal(rec.revisedCertifiedRecords, 11); assert.equal(rec.revisions.length, 11); assert.equal(rec.newTagStringsAuthorized, 0);
+  assert.deepEqual(rec.revisions.map(r => r.auditKey).sort(), ['CORE-013', 'CORE-015', 'CORE-023', 'CORE-027', 'CORE-028', 'GAW-041', 'JATM-027', 'KOTOR-001', 'KOTOR-017', 'TFU-007', 'UR-044']);
+  for (const r of rec.revisions) {
+    const x = certified.find(y => y.canonicalId === r.canonicalId); assert.ok(x, r.auditKey); assert.deepEqual(x.finalTags, r.finalTags); assert.notDeepEqual(r.qa3FinalTags, r.finalTags);
+    assert.deepEqual(r.finalTags.filter(t => !r.qa3FinalTags.includes(t)).sort(), [...r.added].sort(), r.auditKey); assert.deepEqual(r.qa3FinalTags.filter(t => !r.finalTags.includes(t)).sort(), [...r.removed].sort(), r.auditKey);
+    assert.deepEqual(byId.get(r.canonicalId).system.tags, r.finalTags, r.auditKey);
+  }
+});
+test('global-QA integrity gates hold on the 309 applied arrays (reroll->reliability, action tags->action_economy, force_point_spend->resource_spend, condition_removal->recovery, use_the_force/force_power_synergy->force, ally_support->support)', () => {
+  const sets = certified.map(x => new Set(byId.get(x.canonicalId).system.tags)), imp = (a, b) => sets.filter(t => t.has(a) && !t.has(b)).length;
+  for (const [a, b] of [['reroll', 'reliability'], ['force_point_spend', 'resource_spend'], ['condition_removal', 'recovery'], ['use_the_force', 'force'], ['force_power_synergy', 'force'], ['ally_support', 'support']]) assert.equal(imp(a, b), 0, `${a} -> ${b}`);
+  for (const a of ['reaction', 'swift_action', 'move_action', 'standard_action']) assert.equal(imp(a, 'action_economy'), 0, `${a} -> action_economy`);
+});
+test('state-appropriate gate passes: Phase 12-1 verifies (exactly at POST_12_1, in later-state mode once Phase 12-2 is applied) and the CI detector reports a Phase 12 state', () => {
+  const st = detect12_1State(); assert.ok(['POST_12_1', 'POST_LATER'].includes(st), st);
+  const r = spawnSync(process.execPath, ['tools/apply-talent-phase-12-1-tags.mjs', '--verify', ...(st === 'POST_12_1' ? ['--exact'] : [])], { encoding: 'utf8' }); assert.equal(r.status, 0, r.stdout + r.stderr);
+  assert.ok(['POST_12_1_STATE', 'POST_12_2_STATE', 'POST_12_FINAL_STATE'].includes(detectPackState().state), detectPackState().state);
+});
+
+console.log(`\n${n} Phase 12-1 semantic-tag tests passed`);

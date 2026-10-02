@@ -64,6 +64,7 @@ import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { normalizeClassPrerequisites } from "/systems/foundryvtt-swse/scripts/engine/progression/prerequisites/class-prereq-normalizer.js";
 import { ClassesDB } from "/systems/foundryvtt-swse/scripts/data/classes-db.js";
 import { actorIsDroidLike, actorMeetsMinimumSize, getActorSpeciesNames, namesMatchLoosely, normalizeLooseLookupKey, normalizePendingSkillKeys, parseRegistryBackedLegacyPrerequisite, resolveCanonicalFeatName, resolveCanonicalSkillKey, resolveCanonicalTalentName } from "/systems/foundryvtt-swse/scripts/engine/progression/prerequisites/legacy-prereq-registry.js";
+import { countForceTalents } from "/systems/foundryvtt-swse/scripts/engine/progression/talents/tree-authority.js";
 import { actorIsCyborgLike, getOrganicDroidAcquisitionBlockReason, isForceSensitivityName } from "/systems/foundryvtt-swse/scripts/engine/progression/droids/droid-progression-guards.js";
 import { resolveClassModel } from "/systems/foundryvtt-swse/scripts/engine/progression/utils/class-resolution.js";
 import { SkillRegistry } from "/systems/foundryvtt-swse/scripts/engine/progression/skills/skill-registry.js";
@@ -3734,11 +3735,8 @@ function checkTalents(actor, talentReq) {
 
     // Check for Force talents only
     if (talentReq.forceTalentsOnly) {
-        const forceTalents = allTalents.filter(t =>
-            t.system?.isForce || t.system?.tags?.includes('force')
-        );
-
-        const actual = forceTalents.length;
+        // RAW Force talent = member of a Force talent tree (structural tree authority), never a semantic tag.
+        const actual = countForceTalents(allTalents);
         const required = talentReq.count || 0;
 
         if (actual < required) {
