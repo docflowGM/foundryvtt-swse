@@ -127,24 +127,29 @@ const renderDoc = r => { const c = r.counts, x = r.runtimeConsumers; return ['# 
 export function detect12_1State() {
   if (!fs.existsSync(path.join(ROOT, REPORT_PATH))) return 'PRE_12_1';
   const r = readJson(REPORT_PATH), sha = gitBlobSha(read(TALENTS));
-  return r.postState.talents === sha ? 'POST_12_1' : r.preState.talents === sha ? 'PRE_12_1' : 'UNKNOWN';
+  if (r.postState.talents === sha) return 'POST_12_1';
+  if (r.preState.talents === sha) return 'PRE_12_1';
+  const h = 'data/audits/talent-phase-12-2-dry-run-report.json'; // Phase 12-2 (later) re-tagged the 876 other talents: this report's census, "others" fingerprint and blob are superseded
+  return fs.existsSync(path.join(ROOT, h)) && readJson(h).postState.talents === sha ? 'POST_LATER' : 'UNKNOWN';
 }
 
 export async function verifyApplied({ exact = false } = {}) {
   const res = [], check = (id, ok, detail = '') => res.push({ id, ok: !!ok, detail });
   const report = readJson(REPORT_PATH), manifest = readJson(MANIFEST_PATH), { auth, certified, deferred, defIds } = loadAuthority(), text = read(TALENTS), talents = parse(text), by = byId(talents), ids = new Set(manifest.rows.map(r => r.id)), c = census(talents);
-  check('packs/talents.db is the certified Phase 12-1 post-state', detect12_1State() === 'POST_12_1');
+  const later = detect12_1State() === 'POST_LATER'; // the 309 Phase 12-1 arrays, the deferrals and the zero-tag census must still hold; whole-corpus census/fingerprint/blob belong to the later phase
+  check('packs/talents.db is the certified Phase 12-1 post-state (or a later certified state)', ['POST_12_1', 'POST_LATER'].includes(detect12_1State()));
   check('talent count unchanged (1,187); ids unique', talents.length === 1187 && by.size === 1187);
   check('A. 309/309 certified ids resolve and carry EXACTLY the authority finalTags (derived from the authority file, not the manifest)', certified.length === 309 && certified.every(x => same(by.get(x.canonicalId)?.system.tags, x.finalTags)));
   check('manifest rows equal the authority (ids, auditKeys, after-tags)', manifest.rows.length === 309 && manifest.rows.every(r => { const x = certified.find(y => y.canonicalId === r.id); return x && x.auditKey === r.auditKey && same(r.after, x.finalTags); }));
   check('B. deferred UR-022 / GOI-002 still carry their pre-state tags (empty)', deferred.every(d => tagsOf(by.get(d.canonicalId)).length === 0 && by.get(d.canonicalId).name === d.name));
   check('C. exactly the 2 deferred identities remain zero-tag; no other zero-tag talent exists', c.zero === 2 && talents.filter(t => !tagsOf(t).length).every(t => defIds.has(t._id)));
-  check('D. the other 878 canonical records are unchanged from the certified pre-state', sortedFp(talents.filter(t => !ids.has(t._id))) === report.othersFingerprint);
-  check('G. every tag string is within the surviving vocabulary (<= 184 strings, none new)', c.unique <= auth.baseline.survivingVocabularyCount && Object.keys(c.byTag).every(k => report.postCensus.byTag[k] !== undefined));
-  check('post census equals the certified census', Object.keys(c.byTag).length === Object.keys(report.postCensus.byTag).length && Object.entries(c.byTag).every(([k, n]) => report.postCensus.byTag[k] === n));
+  if (!later) check('D. the other 878 canonical records are unchanged from the certified pre-state', sortedFp(talents.filter(t => !ids.has(t._id))) === report.othersFingerprint);
+  const vocab = new Set(Object.keys(readJson('data/audits/talent-phase-11-2c-dry-run-report.json').postCensus.byTag));
+  check('G. every tag string is within the surviving 184-string vocabulary (none new)', c.unique <= auth.baseline.survivingVocabularyCount && Object.keys(c.byTag).every(k => vocab.has(k)));
+  if (!later) check('post census equals the certified census', Object.keys(c.byTag).length === Object.keys(report.postCensus.byTag).length && Object.entries(c.byTag).every(([k, n]) => report.postCensus.byTag[k] === n));
   check('homebrew pack unchanged', gitBlobSha(read(HOMEBREW)) === report.preState.homebrew);
   const rec = reconcile(loadInput()); check('H. reconciler: zero blocking findings', rec.blockingFindings.length === 0, JSON.stringify(rec.findingCounts));
-  if (exact) check('packs/talents.db equals the certified blob', gitBlobSha(text) === report.postState.talents);
+  if (exact && !later) check('packs/talents.db equals the certified blob', gitBlobSha(text) === report.postState.talents);
   return res;
 }
 
@@ -160,7 +165,7 @@ export async function main(argv = process.argv.slice(2)) {
   const has = f => argv.includes(f), state = detect12_1State();
   const pr = res => { for (const x of res) console.log(`${x.ok ? 'PASS' : 'FAIL'}  ${x.id}${x.ok || !x.detail ? '' : '  [' + x.detail + ']'}`); return res.filter(x => !x.ok).length; };
   if (has('--status')) { console.log(ERR + state); return 0; }
-  if (has('--verify') || (has('--check') && state === 'POST_12_1')) { const bad = pr(await verifyApplied({ exact: has('--exact') })); console.log(`\n${ERR}verify ${bad ? 'FAIL' : 'PASS'}`); return bad ? 1 : 0; }
+  if (has('--verify') || (has('--check') && (state === 'POST_12_1' || state === 'POST_LATER'))) { const bad = pr(await verifyApplied({ exact: has('--exact') })); console.log(`\n${ERR}verify ${bad ? 'FAIL' : 'PASS'}`); return bad ? 1 : 0; }
   if (has('--apply')) { const fresh = await buildReport(); invariant(read(REPORT_PATH) === JSON.stringify(fresh, null, 1) + '\n', 'REFUSED: committed dry-run report differs from a fresh projection'); applyProduction(); console.log(ERR + 'APPLIED packs/talents.db (uncommitted)'); return 0; }
   invariant(state === 'PRE_12_1', `the pre-apply pack is required (found ${state})`);
   if (has('--manifest')) { fs.writeFileSync(path.join(ROOT, MANIFEST_PATH), JSON.stringify(deriveManifest(), null, 1) + '\n'); console.log(ERR + 'wrote ' + MANIFEST_PATH); return 0; }

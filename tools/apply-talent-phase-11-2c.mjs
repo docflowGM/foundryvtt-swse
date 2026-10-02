@@ -128,8 +128,8 @@ export function detect11_2cState() {
   const r = readJson(REPORT_PATH), sha = gitBlobSha(read(TALENTS));
   if (r.postState.talents === sha) return 'POST_11_2C';
   if (r.preState.talents === sha) return 'PRE_11_2C';
-  const h = 'data/audits/talent-phase-12-1-dry-run-report.json'; // Phase 12-1 (later) tagged the 309 certified orphans: this report's tag sets, census and fingerprint are superseded
-  return fs.existsSync(path.join(ROOT, h)) && readJson(h).postState.talents === sha ? 'POST_LATER' : 'UNKNOWN';
+  // Phase 12-1 (later) tagged the 309 certified orphans and Phase 12-2 re-tagged the 876 others: this report's tag sets, census and fingerprint are superseded
+  return ['talent-phase-12-1-dry-run-report.json', 'talent-phase-12-2-dry-run-report.json'].some(f => fs.existsSync(path.join(ROOT, 'data/audits', f)) && readJson('data/audits/' + f).postState.talents === sha) ? 'POST_LATER' : 'UNKNOWN';
 }
 
 export async function verifyApplied({ exact = false } = {}) {
@@ -139,7 +139,7 @@ export async function verifyApplied({ exact = false } = {}) {
   check('packs/talents.db is the certified Phase 11-2C post-state (or a later certified state)', ['POST_11_2C', 'POST_LATER'].includes(detect11_2cState()));
   check('talent count unchanged (1,187)', talents.length === 1187);
   check('no deleted or normalized-source tag remains; no tree_* tag remains', [...Object.keys(A.normalize), ...Object.keys(A.remove)].every(k => !c.byTag[k]) && Object.keys(c.byTag).every(k => !k.startsWith('tree_')));
-  check('every manifest record carries exactly its certified tags', manifest.rows.every(r => JSON.stringify(by.get(r.id)?.system.tags) === JSON.stringify(r.after)));
+  if (!later) check('every manifest record carries exactly its certified tags', manifest.rows.every(r => JSON.stringify(by.get(r.id)?.system.tags) === JSON.stringify(r.after)));
   if (!later) check('post census equals the certified census', Object.keys(c.byTag).length === Object.keys(report.postCensus.byTag).length && Object.entries(c.byTag).every(([k, n]) => report.postCensus.byTag[k] === n));
   if (!later) check('other talents unchanged', sortedFp(talents.filter(t => !ids.has(t._id))) === report.othersFingerprint);
   check('homebrew pack unchanged', gitBlobSha(read(HOMEBREW)) === report.preState.homebrew);

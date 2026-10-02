@@ -32,6 +32,9 @@
  *     (later-state mode), registry, membership, homebrew, frozen censuses and the Phase 3E completeness gates. FINAL state.
  *   POST_12_1_STATE (packs == Phase 12-1 certified post-state: 309 owner-certified orphan talents tagged): 12-1 --verify --exact, the 11-2C/11-2B/11-2A/3G/3F/3E-5/3E-4 repairs still intact
  *     (later-state mode), tree-credit audit, registry, membership, homebrew, frozen censuses and the Phase 3E completeness gates. FINAL state.
+ *   POST_12_2_STATE (packs == Phase 12-2 certified post-state: the 876 existing-tag talents set to their owner-certified arrays): 12-2 --verify --exact (full 1,187-record QA5 corpus
+ *     contract), the 12-1/11-2C/11-2B/11-2A/3G/3F/3E-5/3E-4 repairs still intact (later-state mode), tree-credit audit, registry, membership, homebrew, frozen censuses and the Phase 3E
+ *     completeness gates. FINAL state.
  *   UNKNOWN_STATE: fail (the packs are not a certified state).
  */
 import path from 'node:path';
@@ -184,6 +187,28 @@ const battery = {
   ],
   POST_12_1_STATE: [
     ['Phase 12-1 post-state verification (exact)', 'tools/apply-talent-phase-12-1-tags.mjs', '--verify', '--exact'],
+    ['Phase 11-2C bespoke cleanup still intact', 'tools/apply-talent-phase-11-2c.mjs', '--verify'],
+    ['Phase 11-2C tree-credit authority repair audit', 'tools/audit-talent-tree-credit-repair.mjs', '--check'],
+    ['Phase 11-2B reconsider cleanup still intact', 'tools/apply-talent-phase-11-2b.mjs', '--verify'],
+    ['Phase 11-2A junk-tag deletion still intact', 'tools/apply-talent-phase-11-2a.mjs', '--verify'],
+    ['Phase 3G structured-prerequisite repair still intact', 'tools/apply-talent-phase-3g.mjs', '--verify'],
+    ['Phase 3F tree-identity repair still intact', 'tools/apply-talent-phase-3f.mjs', '--verify'],
+    ['Phase 3E-5 text repair still intact', 'tools/apply-talent-phase-3e5.mjs', '--verify'],
+    ['Phase 3E-4 seven-record repair still intact', 'tools/apply-talent-phase-3e4.mjs', '--verify'],
+    ['runtime registry freshness', 'tools/build-talent-tree-registry.mjs', '--check'],
+    ['talent/tree membership audit', 'tools/audit-talent-tree-membership.mjs'],
+    ['homebrew talent-pack integrity audit', 'tools/audit-talent-homebrew-pack.mjs'],
+    ['Phase 3E-5 text-defect manifest', 'tools/build-talent-phase-3e5-defect-manifest.mjs', '--check'],
+    // The 3G census is a FROZEN pre-3G-2 baseline (its runtime columns measured the old checker); tests pin the committed file. The dry-run is the live proof.
+    ['Phase 3F tree identity census', 'tools/census-talent-tree-identity.mjs', '--check'],
+    ['Phase 3E core Gunslinger census', 'tools/census-talent-core-gunslinger.mjs', '--check'],
+    ['Phase 3E authority addendum', 'tools/check-talent-phase-3e-additions.mjs'],
+    ['Phase 3E discovery census', 'tools/census-talent-source-discovery.mjs', '--check'],
+    ['Phase 3E publication-to-production reconciliation', 'tools/reconcile-talent-publication-corpus.mjs', '--check']
+  ],
+  POST_12_2_STATE: [
+    ['Phase 12-2 post-state verification (exact, full 1,187-record QA5 corpus)', 'tools/apply-talent-phase-12-2-tags.mjs', '--verify', '--exact'],
+    ['Phase 12-1 orphan semantic tags still intact', 'tools/apply-talent-phase-12-1-tags.mjs', '--verify'],
     ['Phase 11-2C bespoke cleanup still intact', 'tools/apply-talent-phase-11-2c.mjs', '--verify'],
     ['Phase 11-2C tree-credit authority repair audit', 'tools/audit-talent-tree-credit-repair.mjs', '--check'],
     ['Phase 11-2B reconsider cleanup still intact', 'tools/apply-talent-phase-11-2b.mjs', '--verify'],

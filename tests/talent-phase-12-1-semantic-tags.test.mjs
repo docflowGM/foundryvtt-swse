@@ -45,9 +45,9 @@ test('the manifest is derived from the authority: 309 rows, empty before-arrays,
   for (const r of man.rows) { const x = certified.find(y => y.canonicalId === r.id); assert.ok(x, r.id); assert.deepEqual(r.after, x.finalTags); assert.deepEqual(r.before, []); assert.equal(r.path, 'system.tags'); }
   assert.ok(man.rows.every(r => !defIds.has(r.id))); assert.deepEqual(man.deferred.map(d => d.id).sort(), [...defIds].sort());
 });
-test('vocabulary: every certified tag belongs to the 184-string surviving vocabulary; the pack still holds exactly 184 raw tag strings and no tree_* tag', () => {
+test('vocabulary: every certified tag belongs to the 184-string surviving vocabulary; the pack holds no string outside it (Phase 12-2 may retire strings, never add) and no tree_* tag', () => {
   const vocab = new Set(Object.keys(rd('data/audits/talent-phase-11-2c-dry-run-report.json').postCensus.byTag)), post = new Set(talents.flatMap(tagsOf));
-  assert.equal(vocab.size, 184); assert.ok(certified.every(x => x.finalTags.every(g => vocab.has(g)))); assert.ok([...post].every(g => vocab.has(g))); assert.equal(post.size, 184); assert.ok([...post].every(g => !g.startsWith('tree_')));
+  assert.equal(vocab.size, 184); assert.ok(certified.every(x => x.finalTags.every(g => vocab.has(g)))); assert.ok([...post].every(g => vocab.has(g))); assert.ok(post.size <= 184); assert.ok([...post].every(g => !g.startsWith('tree_')));
 });
 test('orphan closeout: the only zero-tag canonical talents are exactly Quick Study (UR-022) and Done It All (GOI-002), whose tags are unchanged (empty)', () => {
   const zero = talents.filter(t => !tagsOf(t).length); assert.deepEqual(zero.map(t => t._id).sort(), [...defIds].sort()); assert.deepEqual(zero.map(t => t.name).sort(), ['Done It All', 'Quick Study']);
@@ -74,11 +74,10 @@ test('global-QA integrity gates hold on the 309 applied arrays (reroll->reliabil
   for (const [a, b] of [['reroll', 'reliability'], ['force_point_spend', 'resource_spend'], ['condition_removal', 'recovery'], ['use_the_force', 'force'], ['force_power_synergy', 'force'], ['ally_support', 'support']]) assert.equal(imp(a, b), 0, `${a} -> ${b}`);
   for (const a of ['reaction', 'swift_action', 'move_action', 'standard_action']) assert.equal(imp(a, 'action_economy'), 0, `${a} -> action_economy`);
 });
-test('state-appropriate gate passes: the pack is the Phase 12-1 post-state, --verify --exact passes and the CI detector reports POST_12_1_STATE', () => {
-  // A later certified phase must add its own later-state mode here (as 11-2C/11-2B/... did) before it can change the pack.
-  assert.equal(detect12_1State(), 'POST_12_1');
-  const r = spawnSync(process.execPath, ['tools/apply-talent-phase-12-1-tags.mjs', '--verify', '--exact'], { encoding: 'utf8' }); assert.equal(r.status, 0, r.stdout + r.stderr);
-  assert.equal(detectPackState().state, 'POST_12_1_STATE');
+test('state-appropriate gate passes: Phase 12-1 verifies (exactly at POST_12_1, in later-state mode once Phase 12-2 is applied) and the CI detector reports a Phase 12 state', () => {
+  const st = detect12_1State(); assert.ok(['POST_12_1', 'POST_LATER'].includes(st), st);
+  const r = spawnSync(process.execPath, ['tools/apply-talent-phase-12-1-tags.mjs', '--verify', ...(st === 'POST_12_1' ? ['--exact'] : [])], { encoding: 'utf8' }); assert.equal(r.status, 0, r.stdout + r.stderr);
+  assert.ok(['POST_12_1_STATE', 'POST_12_2_STATE'].includes(detectPackState().state), detectPackState().state);
 });
 
 console.log(`\n${n} Phase 12-1 semantic-tag tests passed`);
