@@ -130,7 +130,13 @@ export function detect12_1State() {
   if (r.postState.talents === sha) return 'POST_12_1';
   if (r.preState.talents === sha) return 'PRE_12_1';
   const h = 'data/audits/talent-phase-12-2-dry-run-report.json'; // Phase 12-2 (later) re-tagged the 876 other talents: this report's census, "others" fingerprint and blob are superseded
-  return fs.existsSync(path.join(ROOT, h)) && readJson(h).postState.talents === sha ? 'POST_LATER' : 'UNKNOWN';
+  return fs.existsSync(path.join(ROOT, h)) && readJson(h).postState.talents === sha || finalAdjudicationApplied() ? 'POST_LATER' : 'UNKNOWN';
+}
+
+/** True when packs/talents.db is the Phase 12 final-adjudication post-state (the two former deferrals are certified; temporary-talent is approved). No import: that tool depends on this one. */
+export function finalAdjudicationApplied() {
+  const h = 'data/audits/talent-phase-12-final-dry-run-report.json';
+  return fs.existsSync(path.join(ROOT, h)) && readJson(h).postState.talents === gitBlobSha(read(TALENTS));
 }
 
 export async function verifyApplied({ exact = false } = {}) {
@@ -141,11 +147,12 @@ export async function verifyApplied({ exact = false } = {}) {
   check('talent count unchanged (1,187); ids unique', talents.length === 1187 && by.size === 1187);
   check('A. 309/309 certified ids resolve and carry EXACTLY the authority finalTags (derived from the authority file, not the manifest)', certified.length === 309 && certified.every(x => same(by.get(x.canonicalId)?.system.tags, x.finalTags)));
   check('manifest rows equal the authority (ids, auditKeys, after-tags)', manifest.rows.length === 309 && manifest.rows.every(r => { const x = certified.find(y => y.canonicalId === r.id); return x && x.auditKey === r.auditKey && same(r.after, x.finalTags); }));
-  check('B. deferred UR-022 / GOI-002 still carry their pre-state tags (empty)', deferred.every(d => tagsOf(by.get(d.canonicalId)).length === 0 && by.get(d.canonicalId).name === d.name));
-  check('C. exactly the 2 deferred identities remain zero-tag; no other zero-tag talent exists', c.zero === 2 && talents.filter(t => !tagsOf(t).length).every(t => defIds.has(t._id)));
+  const finalAdj = finalAdjudicationApplied(); // the owner later certified the two former deferrals (temporary-talent): they are no longer untagged
+  check('B. deferred UR-022 / GOI-002 still carry their pre-state tags (empty) — or, after the final adjudication, are certified and tagged', deferred.every(d => by.get(d.canonicalId).name === d.name && (finalAdj ? tagsOf(by.get(d.canonicalId)).length > 0 : tagsOf(by.get(d.canonicalId)).length === 0)));
+  check('C. exactly the 2 deferred identities remain zero-tag (0 after the final adjudication); no other zero-tag talent exists', finalAdj ? c.zero === 0 : c.zero === 2 && talents.filter(t => !tagsOf(t).length).every(t => defIds.has(t._id)));
   if (!later) check('D. the other 878 canonical records are unchanged from the certified pre-state', sortedFp(talents.filter(t => !ids.has(t._id))) === report.othersFingerprint);
-  const vocab = new Set(Object.keys(readJson('data/audits/talent-phase-11-2c-dry-run-report.json').postCensus.byTag));
-  check('G. every tag string is within the surviving 184-string vocabulary (none new)', c.unique <= auth.baseline.survivingVocabularyCount && Object.keys(c.byTag).every(k => vocab.has(k)));
+  const vocab = new Set(Object.keys(readJson('data/audits/talent-phase-11-2c-dry-run-report.json').postCensus.byTag)); if (finalAdj) vocab.add('temporary-talent'); // the single owner-authorized later tag
+  check('G. every tag string is within the surviving 184-string vocabulary (none new; only the owner-authorized temporary-talent after the final adjudication)', c.unique <= auth.baseline.survivingVocabularyCount && Object.keys(c.byTag).every(k => vocab.has(k)));
   if (!later) check('post census equals the certified census', Object.keys(c.byTag).length === Object.keys(report.postCensus.byTag).length && Object.entries(c.byTag).every(([k, n]) => report.postCensus.byTag[k] === n));
   check('homebrew pack unchanged', gitBlobSha(read(HOMEBREW)) === report.preState.homebrew);
   const rec = reconcile(loadInput()); check('H. reconciler: zero blocking findings', rec.blockingFindings.length === 0, JSON.stringify(rec.findingCounts));

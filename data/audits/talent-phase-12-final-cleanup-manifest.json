@@ -1,0 +1,44 @@
+{
+ "schemaVersion": 1,
+ "phase": "12-final",
+ "status": "CLEANUP_MANIFEST",
+ "authority": "data/audits/talent-phase-12-final-ontology-adjudication.json",
+ "boundary": "system.tags of the two former deferrals: exact finalTags only",
+ "counts": {
+  "assignments": 2,
+  "recordsChanged": 2,
+  "tagElementsAdded": 6
+ },
+ "preState": {
+  "talents": "7c0d91393da5f7563a2f060f7c7b925ffcb21d2b",
+  "homebrew": "bd4e3d4be9861f9ed0329e0f12545bf3f5dc3c72"
+ },
+ "rows": [
+  {
+   "id": "d376f165f1a47281",
+   "auditKey": "GOI-002",
+   "canonicalIdentity": "Galaxy of Intrigue|Master of Intrigue|Done It All",
+   "name": "Done It All",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "temporary-talent",
+    "force_point_spend",
+    "resource_spend",
+    "action_economy"
+   ]
+  },
+  {
+   "id": "fd37b68c6fb620f6",
+   "auditKey": "UR-022",
+   "canonicalIdentity": "Unknown Regions|Warrior|Quick Study",
+   "name": "Quick Study",
+   "path": "system.tags",
+   "before": [],
+   "after": [
+    "temporary-talent",
+    "once-per-encounter"
+   ]
+  }
+ ]
+}

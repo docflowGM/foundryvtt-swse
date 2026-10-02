@@ -27,7 +27,7 @@ test('census is read-only and every record is unadjudicated', () => {
 test('reference-impact report covers the same 92 ids', () => {
   assert.deepEqual(impact.records.map(r => r.productionId), census.records.map(r => r.productionId));
 });
-const post3d = ['POST_3D_STATE', 'POST_3E4_STATE', 'POST_3E5_STATE', 'POST_3F_STATE', 'POST_3G_STATE', 'POST_11_2A_STATE', 'POST_11_2B_STATE', 'POST_11_2C_STATE', 'POST_12_1_STATE', 'POST_12_2_STATE'].includes(detectPackState().state);
+const post3d = ['POST_3D_STATE', 'POST_3E4_STATE', 'POST_3E5_STATE', 'POST_3F_STATE', 'POST_3G_STATE', 'POST_11_2A_STATE', 'POST_11_2B_STATE', 'POST_11_2C_STATE', 'POST_12_1_STATE', 'POST_12_2_STATE', 'POST_12_FINAL_STATE'].includes(detectPackState().state);
 if (post3d) console.log('  skip census --check (the census describes the pre-3D packs; Phase 3D is applied)');
 else test('census/reference files match the generator (--check)', () => {
   const run = spawnSync(process.execPath, ['tools/build-talent-phase-3d-census.mjs', '--check'], { encoding: 'utf8' });

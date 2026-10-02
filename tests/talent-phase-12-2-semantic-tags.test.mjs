@@ -53,17 +53,17 @@ test('the 876 and the 309 (Phase 12-1) are disjoint, cover QA5 exactly, and the 
 test('FULL CORPUS (QA5): 1,187 canonical talents = 1,185 certified (309 + 876) + 2 deferred; 1,185 / 1,185 exact matches; every QA5 integrity rule and family-convergence check passes', () => {
   assert.equal(q5.corpus.canonicalTalents, 1187); assert.equal(q5.corpus.certified, 1185); assert.equal(q5.corpus.phase12_1Certified, 309); assert.equal(q5.corpus.phase12_2Certified, 876); assert.equal(deferred.length, 2);
   assert.equal(q5.revisionSummary.totalRevisedCertifiedRecords, 24); assert.equal(q5.revisionSummary.phase12_1Revisions, 11); assert.equal(q5.revisionSummary.phase12_2Revisions, 13);
-  const res = corpusChecks(talents, L); assert.ok(res.length >= 17); for (const r of res) assert.ok(r.ok, r.id + ' ' + r.detail);
+  const res = corpusChecks(talents, L).filter(r => !(detect12_2State() === 'POST_LATER' && r.id.startsWith('both deferred'))); assert.ok(res.length >= 16); // after the final owner adjudication the two former deferrals are certified, so the historical 'untouched' check no longer applies for (const r of res) assert.ok(r.ok, r.id + ' ' + r.detail);
   let exact = 0; for (const [id, a] of qa) if (JSON.stringify(tagsOf(byId.get(id))) === JSON.stringify(a.finalTags)) exact++; assert.equal(exact, 1185);
 });
 test('QA5 authority and its report are committed verbatim, and QA5 records no new vocabulary', () => {
   assert.equal(q5.vocabulary.newTagsAuthorizedByGlobalQA?.length ?? 0, 0); assert.ok(fs.existsSync(new URL('../docs/audits/talent-phase-12-global-consistency-sweep-report-qa5.md', import.meta.url)));
-  const present = new Set(talents.flatMap(tagsOf)); assert.ok([...present].every(t => L.vocab.has(t))); assert.ok(present.size <= 184);
+  const present = new Set(talents.flatMap(tagsOf)); const later = detect12_2State() === 'POST_LATER'; assert.ok([...present].every(t => L.vocab.has(t) || (later && t === 'temporary-talent'))); assert.ok(present.size <= (later ? 181 : 184));
 });
 test('state-appropriate gate passes: the pack is the Phase 12-2 post-state, --verify --exact passes and the CI detector reports POST_12_2_STATE', () => {
   // A later certified phase must add its own later-state mode here (as 12-1/11-2C/... did) before it can change the pack.
-  assert.equal(detect12_2State(), 'POST_12_2'); assert.equal(detectPackState().state, 'POST_12_2_STATE');
-  const r = spawnSync(process.execPath, ['tools/apply-talent-phase-12-2-tags.mjs', '--verify', '--exact'], { encoding: 'utf8' }); assert.equal(r.status, 0, r.stdout + r.stderr);
+  const st = detect12_2State(); assert.ok(['POST_12_2', 'POST_LATER'].includes(st), st); assert.ok(['POST_12_2_STATE', 'POST_12_FINAL_STATE'].includes(detectPackState().state), detectPackState().state);
+  const r = spawnSync(process.execPath, ['tools/apply-talent-phase-12-2-tags.mjs', '--verify', ...(st === 'POST_12_2' ? ['--exact'] : [])], { encoding: 'utf8' }); assert.equal(r.status, 0, r.stdout + r.stderr);
 });
 
 console.log(`\n${n} Phase 12-2 / full-corpus semantic-tag tests passed`);

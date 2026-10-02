@@ -157,7 +157,7 @@ export function detect11_2bState() {
   if (r.postState.talents === sha) return 'POST_11_2B';
   if (r.preState.talents === sha) return 'PRE_11_2B';
   // Phase 11-2C (later) finished the Bespoke cleanup; Phase 12-1 (later still) added the certified orphan tags
-  return ['talent-phase-11-2c-dry-run-report.json', 'talent-phase-12-1-dry-run-report.json', 'talent-phase-12-2-dry-run-report.json'].some(f => fs.existsSync(path.join(ROOT, 'data/audits', f)) && readJson('data/audits/' + f).postState.talents === sha) ? 'POST_LATER' : 'UNKNOWN';
+  return ['talent-phase-11-2c-dry-run-report.json', 'talent-phase-12-1-dry-run-report.json', 'talent-phase-12-2-dry-run-report.json', 'talent-phase-12-final-dry-run-report.json'].some(f => fs.existsSync(path.join(ROOT, 'data/audits', f)) && readJson('data/audits/' + f).postState.talents === sha) ? 'POST_LATER' : 'UNKNOWN';
 }
 
 export async function verifyApplied({ exact = false } = {}) {

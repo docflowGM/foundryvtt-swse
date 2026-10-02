@@ -119,7 +119,7 @@ await test('census: 1,187 canonical talents, 173 RAW Force talents, 0 unresolved
   assert.equal(c.canonicalTalents, 1187); assert.equal(c.rawForceTalents, 173); assert.equal(c.unresolvedTalents.length, 0); assert.equal(c.forceTalentTreeCount, 31);
   assert.deepEqual(c.buckets, { rawForce_semanticForce: 138, rawForce_noSemanticForce: 35, nonForce_semanticForce: 151, nonForce_noSemanticForce: 863 });
   assert.equal(c.oldTagCounter.total, 289); assert.equal(c.oldTagCounter.falsePositives.length, 151); assert.equal(c.oldTagCounter.falseNegatives.length, 35);
-  assert.equal(c.oldMysticRegex.total, 382); assert.equal(c.oldMysticRegex.falsePositives.length, 239); assert.equal(c.oldMysticRegex.falseNegatives.length, 30);
+  assert.equal(c.oldMysticRegex.total, 383); assert.equal(c.oldMysticRegex.falsePositives.length, 240); // 382 / 239 before the final adjudication: Done It All's force_point_spend tag matches the retired regex assert.equal(c.oldMysticRegex.falseNegatives.length, 30);
 });
 restore();
 say(`\n${n} Force-talent structural-authority tests passed`);

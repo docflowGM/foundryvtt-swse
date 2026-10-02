@@ -20,7 +20,7 @@ const { canonicalTalentUuid } = await import('/systems/foundryvtt-swse/scripts/d
 const linked = (t, tags) => ({ ...t, system: { ...t.system, tags }, flags: { ...(t.flags ?? {}), core: { sourceId: canonicalTalentUuid(t._id) } } });
 
 await test('a semantic tag never grants tree credit, even when a tree shares its name (control / leadership / dark_side)', () => {
-  const victim = talents.find(t => t.system.tags?.length === 0 || !t.system.tags?.length);
+  const victim = talents.find(t => t.system.tags?.length === 0 || !t.system.tags?.length) ?? talents[0]; // after the Phase 12 final adjudication no talent is untagged; linked() overrides the tags in both probes, so any record proves the rule
   const base = P.treeIdsOf(linked(victim, [])).join('|'), tagged = P.treeIdsOf(linked(victim, ['control', 'leadership', 'dark_side', 'striker', 'tree_6ac3416fb6aada56', 'mystic'])).join('|');
   assert.equal(tagged, base);
   const tokens = P.treeIdsOf({ treeId: 'Control' }).concat(P.treeIdsOf({ treeId: 'Leadership' }), P.treeIdsOf({ treeId: 'Dark Side' }));

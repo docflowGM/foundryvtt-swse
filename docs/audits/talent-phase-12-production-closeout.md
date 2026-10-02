@@ -52,6 +52,16 @@ They intentionally await ontology-owner adjudication of a temporary-talent-acces
 
 The Force-talent finding was resolved before merge in a fourth commit: RAW "Force talent" means membership in a Force talent tree, so the prerequisite checker, structured evaluator and Mystic Mastery now share one structural classifier in `tree-authority.js` instead of reading the semantic `force` tag (or a regex). Phase 12 semantic data is unchanged. See `docs/audits/talent-phase-12-force-talent-consumer-correction.md`.
 
+## Final owner adjudication (Phase 12 closed)
+
+After QA5 the owner ruled on the two deferrals and the unused vocabulary (post-QA5; the historical QA5 sequence above is unchanged):
+
+- The owner approved the new tag `temporary-talent` (concept Temporary-Talent); UR-022 Quick Study and GOI-002 Done It All are certified with it (`["temporary-talent","once-per-encounter"]`, `["temporary-talent","force_point_spend","resource_spend","action_economy"]`).
+- Four zero-use vocabulary strings were retired (`skill-mastery`, `balance`, `natural_weapon`, `entangle`); `skill_mastery` survives.
+- Final vocabulary = 181, and all 181 are used (0 unused, 0 unknown). Canonical corpus = 1,187, certified = 1,187, deferred = 0, untagged = 0.
+- The Force-talent consumer correction remains intact (structural tree authority; `temporary-talent` has no effect on it).
+- Details: `docs/audits/talent-phase-12-final-ontology-adjudication.md`; fifth commit "data: finalize Phase 12 talent ontology". All tests and gates passed (see the PR).
+
 ## Confirmation
 
 Only intended talent tags were mutated: `system.tags` on 309 (Phase 12-1) + 876 (Phase 12-2) canonical talents. No other talent field, no other pack and no consumer code changed. Support artifacts added or edited are the apply tooling, authority/manifest/report files, tests, state plumbing for the CI gate and earlier verifiers, and documentation.

@@ -37,7 +37,7 @@ const clone = v => structuredClone(v);
 const tree = id => projected.trees.find(t => t._id === id);
 // After Phase 3D the two review-extra twins no longer exist, so the twin-specific cases have no on-disk fixture;
 // the exemption code path stays covered whenever the packs are the Phase 3C state, and the current state is asserted instead.
-const post3d = ['POST_3D_STATE', 'POST_3E4_STATE', 'POST_3E5_STATE', 'POST_3F_STATE', 'POST_3G_STATE', 'POST_11_2A_STATE', 'POST_11_2B_STATE', 'POST_11_2C_STATE', 'POST_12_1_STATE', 'POST_12_2_STATE'].includes(detectPackState().state);
+const post3d = ['POST_3D_STATE', 'POST_3E4_STATE', 'POST_3E5_STATE', 'POST_3F_STATE', 'POST_3G_STATE', 'POST_11_2A_STATE', 'POST_11_2B_STATE', 'POST_11_2C_STATE', 'POST_12_1_STATE', 'POST_12_2_STATE', 'POST_12_FINAL_STATE'].includes(detectPackState().state);
 const testPre = (name, fn) => post3d ? console.log('  skip ' + name + ' (Phase 3D applied: the twins were merged/removed)') : test(name, fn);
 
 testPre('projected state: the two certified review-extra twins pass, visibly, with zero unapproved duplicates', () => {

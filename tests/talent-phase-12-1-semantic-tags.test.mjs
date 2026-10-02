@@ -47,12 +47,14 @@ test('the manifest is derived from the authority: 309 rows, empty before-arrays,
 });
 test('vocabulary: every certified tag belongs to the 184-string surviving vocabulary; the pack holds no string outside it (Phase 12-2 may retire strings, never add) and no tree_* tag', () => {
   const vocab = new Set(Object.keys(rd('data/audits/talent-phase-11-2c-dry-run-report.json').postCensus.byTag)), post = new Set(talents.flatMap(tagsOf));
-  assert.equal(vocab.size, 184); assert.ok(certified.every(x => x.finalTags.every(g => vocab.has(g)))); assert.ok([...post].every(g => vocab.has(g))); assert.ok(post.size <= 184); assert.ok([...post].every(g => !g.startsWith('tree_')));
+  assert.equal(vocab.size, 184); assert.ok(certified.every(x => x.finalTags.every(g => vocab.has(g)))); if (detect12_1State() === 'POST_LATER') vocab.add('temporary-talent'); // the one owner-authorized later tag (final adjudication)
+  assert.ok([...post].every(g => vocab.has(g))); assert.ok(post.size <= 184); assert.ok([...post].every(g => !g.startsWith('tree_')));
 });
-test('orphan closeout: the only zero-tag canonical talents are exactly Quick Study (UR-022) and Done It All (GOI-002), whose tags are unchanged (empty)', () => {
-  const zero = talents.filter(t => !tagsOf(t).length); assert.deepEqual(zero.map(t => t._id).sort(), [...defIds].sort()); assert.deepEqual(zero.map(t => t.name).sort(), ['Done It All', 'Quick Study']);
+test('orphan closeout: until the final owner adjudication the only zero-tag canonical talents are exactly Quick Study (UR-022) and Done It All (GOI-002), whose tags are unchanged (empty); afterwards none are untagged', () => {
+  const zero = talents.filter(t => !tagsOf(t).length), finalAdj = detect12_1State() === 'POST_LATER' && tagsOf(byId.get('fd37b68c6fb620f6')).length > 0;
+  if (finalAdj) { assert.equal(zero.length, 0); for (const d of deferred) assert.ok(tagsOf(byId.get(d.canonicalId)).includes('temporary-talent')); }
+  else { assert.deepEqual(zero.map(t => t._id).sort(), [...defIds].sort()); assert.deepEqual(zero.map(t => t.name).sort(), ['Done It All', 'Quick Study']); for (const d of deferred) assert.deepEqual(byId.get(d.canonicalId).system.tags, []); }
   assert.ok(certified.every(x => tagsOf(byId.get(x.canonicalId)).length > 0));
-  for (const d of deferred) assert.deepEqual(byId.get(d.canonicalId).system.tags, []);
 });
 test('dry-run certified: 309 records, zero-tag 311 -> 2, 184 raw tags before and after, no non-target or non-tag change, tree identity untouched', () => {
   assert.equal(rep.status, 'DRY_RUN_CERTIFIED'); assert.ok(rep.verification.results.every(x => x.ok));
@@ -77,7 +79,7 @@ test('global-QA integrity gates hold on the 309 applied arrays (reroll->reliabil
 test('state-appropriate gate passes: Phase 12-1 verifies (exactly at POST_12_1, in later-state mode once Phase 12-2 is applied) and the CI detector reports a Phase 12 state', () => {
   const st = detect12_1State(); assert.ok(['POST_12_1', 'POST_LATER'].includes(st), st);
   const r = spawnSync(process.execPath, ['tools/apply-talent-phase-12-1-tags.mjs', '--verify', ...(st === 'POST_12_1' ? ['--exact'] : [])], { encoding: 'utf8' }); assert.equal(r.status, 0, r.stdout + r.stderr);
-  assert.ok(['POST_12_1_STATE', 'POST_12_2_STATE'].includes(detectPackState().state), detectPackState().state);
+  assert.ok(['POST_12_1_STATE', 'POST_12_2_STATE', 'POST_12_FINAL_STATE'].includes(detectPackState().state), detectPackState().state);
 });
 
 console.log(`\n${n} Phase 12-1 semantic-tag tests passed`);

@@ -21,7 +21,7 @@ import { serializePack, gitBlobSha, fingerprint } from './apply-talent-phase-3c.
 import { loadIdentityOf } from './apply-talent-phase-3g.mjs';
 import { reconcile, loadInput } from './reconcile-talent-publication-corpus.mjs';
 import { createProbe } from './talent-tag-probes.mjs';
-import { detect12_1State, loadAuthority as loadAuthority12_1 } from './apply-talent-phase-12-1-tags.mjs';
+import { detect12_1State, finalAdjudicationApplied, loadAuthority as loadAuthority12_1 } from './apply-talent-phase-12-1-tags.mjs';
 
 export const AUTH = 'data/audits/talent-phase-12-2-existing-tag-authority.json', QA5 = 'data/audits/talent-phase-12-global-semantic-authority-qa5.json';
 export const MANIFEST_PATH = 'data/audits/talent-phase-12-2-cleanup-manifest.json', REPORT_PATH = 'data/audits/talent-phase-12-2-dry-run-report.json', DOC_PATH = 'docs/audits/talent-phase-12-2-dry-run.md';
@@ -162,22 +162,23 @@ const renderDoc = r => { const c = r.counts, x = r.runtimeConsumers; return ['# 
 export function detect12_2State() {
   if (!fs.existsSync(path.join(ROOT, REPORT_PATH))) return 'PRE_12_2';
   const r = readJson(REPORT_PATH), sha = gitBlobSha(read(TALENTS));
-  return r.postState.talents === sha ? 'POST_12_2' : r.preState.talents === sha ? 'PRE_12_2' : 'UNKNOWN';
+  return r.postState.talents === sha ? 'POST_12_2' : r.preState.talents === sha ? 'PRE_12_2' : finalAdjudicationApplied() ? 'POST_LATER' : 'UNKNOWN'; // POST_LATER: the final owner adjudication certified the two deferrals
 }
 
 export async function verifyApplied({ exact = false } = {}) {
   const res = [], check = (id, ok, detail = '') => res.push({ id, ok: !!ok, detail });
   const report = readJson(REPORT_PATH), manifest = readJson(MANIFEST_PATH), L = loadAuthority(), { certified, deferred } = L, text = read(TALENTS), talents = parse(text), by = byId(talents), ids = new Set(manifest.rows.map(r => r.id)), c = census(talents);
-  check('packs/talents.db is the certified Phase 12-2 post-state', detect12_2State() === 'POST_12_2');
+  const later = detect12_2State() === 'POST_LATER'; // whole-corpus census/fingerprint/blob and the deferral checks belong to the later final adjudication
+  check('packs/talents.db is the certified Phase 12-2 post-state (or the later final-adjudication state)', ['POST_12_2', 'POST_LATER'].includes(detect12_2State()));
   check('A. every Phase 12-2 target carries EXACTLY the authority finalTags (derived from the authority file, not the manifest)', certified.length === 876 && certified.every(x => same(by.get(x.canonicalId)?.system.tags, x.finalTags)));
   check('manifest rows equal the authority (ids, audit keys, after-tags)', manifest.rows.every(r => { const x = certified.find(y => y.canonicalId === r.id); return x && x.auditKey === r.auditKey && same(r.after, x.finalTags); }) && manifest.rows.length + manifest.alreadyAtFinal.length === 876);
-  check('B. deferred UR-022 / GOI-002 are untouched', deferred.every(d => tagsOf(by.get(d.canonicalId)).length === 0 && by.get(d.canonicalId).name === d.name));
-  check('D. the 311 other canonical records (309 Phase 12-1 + 2 deferred) are unchanged from the certified pre-state', sortedFp(talents.filter(t => !ids.has(t._id))) === report.othersFingerprint);
-  check('post census equals the certified census', Object.keys(c.byTag).length === Object.keys(report.postCensus.byTag).length && Object.entries(c.byTag).every(([k, n]) => report.postCensus.byTag[k] === n));
+  if (!later) check('B. deferred UR-022 / GOI-002 are untouched', deferred.every(d => tagsOf(by.get(d.canonicalId)).length === 0 && by.get(d.canonicalId).name === d.name));
+  if (!later) check('D. the 311 other canonical records (309 Phase 12-1 + 2 deferred) are unchanged from the certified pre-state', sortedFp(talents.filter(t => !ids.has(t._id))) === report.othersFingerprint);
+  if (!later) check('post census equals the certified census', Object.keys(c.byTag).length === Object.keys(report.postCensus.byTag).length && Object.entries(c.byTag).every(([k, n]) => report.postCensus.byTag[k] === n));
   check('homebrew pack unchanged', gitBlobSha(read(HOMEBREW)) === report.preState.homebrew);
-  for (const x of corpusChecks(talents, L)) check('full-corpus ' + x.id, x.ok, x.detail);
+  for (const x of corpusChecks(talents, L)) if (!(later && x.id.startsWith('both deferred'))) check('full-corpus ' + x.id, x.ok, x.detail);
   const rec = reconcile(loadInput()); check('reconciler: zero blocking findings', rec.blockingFindings.length === 0, JSON.stringify(rec.findingCounts));
-  if (exact) check('packs/talents.db equals the certified blob', gitBlobSha(text) === report.postState.talents);
+  if (exact && !later) check('packs/talents.db equals the certified blob', gitBlobSha(text) === report.postState.talents);
   return res;
 }
 

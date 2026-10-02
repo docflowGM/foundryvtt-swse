@@ -237,7 +237,7 @@
     ]
   },
   "oldMysticRegex": {
-    "total": 382,
+    "total": 383,
     "falsePositives": [
       "008b28849b74234d",
       "00deb8b4cce303b6",
@@ -431,6 +431,7 @@
       "d1561acfdeac3d78",
       "d1fd547124c1901c",
       "d350b28e72652d29",
+      "d376f165f1a47281",
       "d4a9f83d180934b5",
       "d4fe49ef1701891e",
       "d587fb91aedddd09",

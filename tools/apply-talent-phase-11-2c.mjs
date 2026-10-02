@@ -129,7 +129,7 @@ export function detect11_2cState() {
   if (r.postState.talents === sha) return 'POST_11_2C';
   if (r.preState.talents === sha) return 'PRE_11_2C';
   // Phase 12-1 (later) tagged the 309 certified orphans and Phase 12-2 re-tagged the 876 others: this report's tag sets, census and fingerprint are superseded
-  return ['talent-phase-12-1-dry-run-report.json', 'talent-phase-12-2-dry-run-report.json'].some(f => fs.existsSync(path.join(ROOT, 'data/audits', f)) && readJson('data/audits/' + f).postState.talents === sha) ? 'POST_LATER' : 'UNKNOWN';
+  return ['talent-phase-12-1-dry-run-report.json', 'talent-phase-12-2-dry-run-report.json', 'talent-phase-12-final-dry-run-report.json'].some(f => fs.existsSync(path.join(ROOT, 'data/audits', f)) && readJson('data/audits/' + f).postState.talents === sha) ? 'POST_LATER' : 'UNKNOWN';
 }
 
 export async function verifyApplied({ exact = false } = {}) {

@@ -1,0 +1,398 @@
+{
+ "schemaVersion": 1,
+ "phase": "12-final",
+ "status": "DRY_RUN_CERTIFIED",
+ "authority": "data/audits/talent-phase-12-final-ontology-adjudication.json",
+ "counts": {
+  "assignments": 2,
+  "recordsChanged": 2,
+  "tagElementsAdded": 6,
+  "zeroTagBefore": 2,
+  "zeroTagAfter": 0,
+  "rawTagsBefore": 180,
+  "rawTagsAfter": 181,
+  "tagInstancesBefore": 9328,
+  "tagInstancesAfter": 9334,
+  "approvedVocabulary": 181,
+  "nonTargetRecordsChanged": 0,
+  "nonTagFieldChanges": 0
+ },
+ "probeSignatureChanges": [],
+ "verification": {
+  "results": [
+   {
+    "id": "authority: owner-final, the two former deferrals, temporary-talent only new tag, 4 retired, 184 -> 181",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "id": "the retired tags have 0 production uses before the change (verified at current HEAD)",
+    "ok": true,
+    "detail": "[0,0,0,0]"
+   },
+   {
+    "id": "mutation set is exactly the two former deferrals",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "id": "non-target immutability: all 1,185 other canonical records are byte-identical",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "id": "field immutability: with system.tags removed, all 1,187 records are identical",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "id": "identity: same ids, names, order",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "id": "both targets carry exactly the authority finalTags",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "id": "projected corpus: 1,187 canonical talents, unique ids",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "id": "projected 1,187 / 1,187 canonical talents certified: 0 deferred, 0 untagged, 0 empty arrays",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "id": "projected 0 duplicate tags within any talent",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "id": "projected vocabulary utilization: 181 approved, 181 used, 0 unused, 0 unknown",
+    "ok": true,
+    "detail": "approved 181 used 181 unused [] unknown []"
+   },
+   {
+    "id": "projected the four retired tags have zero production uses and are not approved",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "id": "projected skill_mastery (underscore) survives: approved and used",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "id": "projected no unauthorized temporary-talent alias exists",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "id": "projected temporary-talent = 2 (Quick Study, Done It All)",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "id": "projected both former deferrals carry EXACTLY the owner-adjudicated finalTags",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "id": "projected full-corpus corpus identity: 1,187 canonical talents = 1,185 certified (309 Phase 12-1 + 876 Phase 12-2) + exactly 2 deferred",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "id": "projected full-corpus 0 missing certified ids, 0 extra certified ids, 0 duplicate canonical ids",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "id": "projected full-corpus 1,185 / 1,185 certified talents carry system.tags EXACTLY equal to the QA5 finalTags (matched by canonical id)",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "id": "projected full-corpus every certified record has a non-empty, duplicate-free tag array within the 184-tag vocabulary",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "id": "projected full-corpus every reroll talent also carries reliability",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "id": "projected full-corpus every force_point_spend talent also carries resource_spend",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "id": "projected full-corpus every condition_removal talent also carries recovery",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "id": "projected full-corpus every use_the_force talent also carries force",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "id": "projected full-corpus every force_power_synergy talent also carries force",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "id": "projected full-corpus every ally_support talent also carries support",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "id": "projected full-corpus every explicit reaction/swift_action/move_action/standard_action talent also carries action_economy",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "id": "projected full-corpus family convergence: Charm Beast (2 records) share one semantic tag set",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "id": "projected full-corpus family convergence: Notorious (2 records) share one semantic tag set",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "id": "projected full-corpus family convergence: Force Treatment (2 records) share one semantic tag set",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "id": "projected full-corpus family convergence: Multiattack Proficiency (advanced melee weapons) (2 records) share one semantic tag set",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "id": "projected full-corpus family convergence: Multiattack Proficiency (rifles) (2 records) share one semantic tag set",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "id": "projected full-corpus family convergence: Shift Defense I-III share one mechanical tag profile",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "id": "projected full-corpus family convergence: Devastating Attack / Greater Devastating Attack share one mechanical tag profile",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "id": "structural classification (Force-talent identity, tree identity) is tag-independent: unchanged for all 1,187",
+    "ok": true,
+    "detail": ""
+   },
+   {
+    "id": "reconciler: zero blocking findings",
+    "ok": true,
+    "detail": "{\"CLAIM_WITHOUT_RECORD\":0,\"RECORD_WITHOUT_CLAIM\":0,\"DUPLICATE_MAPPING\":0,\"DUPLICATE_RECORD_IN_TREE\":0,\"WRONG_TREE\":0,\"NAME_MISMATCH\":0,\"UNRESOLVED_SAME_NAME_AMBIGUITY\":0,\"CLAIM_COUNT_MISMATCH\":0,\"HOMEBREW_IN_DENOMINATOR\":0,\"TEXT_DRIFT\":0,\"WRONG_SOURCE_PAGE\":0,\"STALE_TREE_ID_SLUG\":0,\"TREE_DISPLAY_NAME_DRIFT\":0}"
+   }
+  ]
+ },
+ "preState": {
+  "talents": "7c0d91393da5f7563a2f060f7c7b925ffcb21d2b",
+  "homebrew": "bd4e3d4be9861f9ed0329e0f12545bf3f5dc3c72"
+ },
+ "postState": {
+  "talents": "17e62815f67a42d0b7dca67bca9d75328a4a7f7f"
+ },
+ "othersFingerprint": "fbf8f23fbc2a717e",
+ "postCensus": {
+  "byTag": {
+   "ability_enhancement": 36,
+   "action_economy": 560,
+   "alchemy": 6,
+   "ally_support": 265,
+   "ally-trigger": 24,
+   "ambush": 39,
+   "ambush_defense": 15,
+   "anti-force": 23,
+   "armor": 24,
+   "attack_of_opportunity": 49,
+   "awareness": 35,
+   "battlefield_control": 166,
+   "beast": 9,
+   "beast_companion": 6,
+   "biotech": 16,
+   "block": 16,
+   "burst_damage": 83,
+   "command": 11,
+   "concealment": 50,
+   "condition_removal": 27,
+   "control": 208,
+   "counterattack": 41,
+   "cover": 28,
+   "crafting": 36,
+   "critical_hit": 21,
+   "critical_success": 12,
+   "damage": 21,
+   "damage_bonus": 110,
+   "damage_reduction": 28,
+   "damage_threshold": 32,
+   "dark_side": 40,
+   "dark_side_score": 17,
+   "deception": 37,
+   "defense": 223,
+   "deflect": 17,
+   "detection": 32,
+   "double_weapon": 6,
+   "droid": 44,
+   "dual_wield": 18,
+   "durability": 43,
+   "empowerment": 37,
+   "equipment": 110,
+   "evasion": 102,
+   "exotic_weapon": 9,
+   "exploration": 24,
+   "fear": 23,
+   "feint": 7,
+   "fighting_defensively": 7,
+   "flanking": 11,
+   "followers": 23,
+   "force": 289,
+   "force_capacity": 36,
+   "force_control": 2,
+   "force_defense": 30,
+   "force_multiplier": 8,
+   "force_offense": 23,
+   "force_point_spend": 127,
+   "force_power": 2,
+   "force_power_synergy": 82,
+   "force_support": 23,
+   "force_training": 2,
+   "force-point": 3,
+   "full_attack": 25,
+   "galactic_lore": 7,
+   "grab": 7,
+   "grapple": 11,
+   "healing": 41,
+   "heavy_weapon": 4,
+   "illusion": 5,
+   "implant": 6,
+   "improvised_weapon": 6,
+   "infiltration": 33,
+   "initiative": 21,
+   "intimidation": 16,
+   "intrigue": 1,
+   "investigation": 29,
+   "jury_rig": 8,
+   "knowledge": 29,
+   "leadership": 15,
+   "light_side": 8,
+   "lightsaber": 73,
+   "lightsaber_polearm": 1,
+   "manipulation": 30,
+   "martial_arts": 26,
+   "mechanics": 30,
+   "medical": 31,
+   "medicine": 20,
+   "meditation": 2,
+   "melee": 248,
+   "melee_defense": 21,
+   "mind-affecting": 70,
+   "minion": 13,
+   "mobility": 146,
+   "modification": 23,
+   "morale": 35,
+   "mount": 5,
+   "move_action": 39,
+   "movement": 122,
+   "nature": 3,
+   "network": 10,
+   "nonlethal": 9,
+   "offense_melee": 10,
+   "offense_ranged": 16,
+   "once-per-encounter": 175,
+   "opposed_check": 25,
+   "overwatch": 5,
+   "perception": 34,
+   "persuasion": 60,
+   "pilot": 43,
+   "pistol": 15,
+   "planning": 5,
+   "poison": 9,
+   "positioning": 184,
+   "power_systems": 16,
+   "precision": 174,
+   "precision_damage": 7,
+   "precognition": 15,
+   "pursuit": 30,
+   "ranged": 214,
+   "ranged_defense": 23,
+   "reaction": 128,
+   "recon": 31,
+   "recovery": 79,
+   "reliability": 142,
+   "repair": 12,
+   "reroll": 90,
+   "resilience": 66,
+   "resource_recovery": 24,
+   "resource_spend": 139,
+   "resources": 46,
+   "restrain": 7,
+   "ride": 5,
+   "rider": 5,
+   "scaling": 161,
+   "science": 7,
+   "search_your_feelings": 5,
+   "self_repair": 3,
+   "senses": 21,
+   "sensors": 8,
+   "setup": 149,
+   "shields": 11,
+   "skill_mastery": 17,
+   "skill_substitution": 31,
+   "skills": 281,
+   "slicing": 10,
+   "sniper": 13,
+   "social": 94,
+   "social_network": 12,
+   "space": 18,
+   "spellcasting": 1,
+   "standard_action": 137,
+   "stealth": 53,
+   "stun": 11,
+   "support": 285,
+   "surprise_round": 18,
+   "survivability": 149,
+   "survival": 3,
+   "sustained_damage": 118,
+   "swift_action": 205,
+   "tactics": 14,
+   "talisman": 8,
+   "target-designation": 75,
+   "targeting": 123,
+   "teamwork": 252,
+   "tech": 55,
+   "telekinesis": 13,
+   "telepath": 2,
+   "telepathy": 10,
+   "temporary-talent": 2,
+   "tracking": 5,
+   "trap": 10,
+   "treat_injury": 21,
+   "unarmed": 33,
+   "use_computer": 17,
+   "use_the_force": 98,
+   "vehicle": 74,
+   "visions": 23,
+   "weapon_empowerment": 13,
+   "weapon_specialization": 8,
+   "weapon_training": 54,
+   "will_defense": 86
+  }
+ }
+}

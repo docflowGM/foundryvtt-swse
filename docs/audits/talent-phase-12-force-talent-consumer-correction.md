@@ -26,7 +26,9 @@ RAW Force talents by tree authority: **173** across **31** Force talent trees; u
 | Old method | Total | False positives | False negatives |
 |---|---:|---:|---:|
 | semantic-tag counter (checker / evaluator) | 289 | 151 | 35 |
-| Mystic Mastery regex | 382 | 239 | 30 |
+| Mystic Mastery regex | 383 | 240 | 30 |
+
+The Mystic regex figures were 382 total / 239 false positives when this correction was committed; the final owner adjudication then certified Done It All with `force_point_spend`, which the retired regex matches (+1 false positive), and the committed census was regenerated. The structural count (173) and the tag counter (289 / 151 / 35) are unchanged.
 
 Exact id lists: `data/audits/talent-phase-12-force-talent-census.json` (regenerate/check with `node tools/census-talent-force-classification.mjs [--check]`). The old counts are diagnostics only; the structural definition is the target. This is also the permanent explanation for why the Phase 12 tag cleanup changed apparent counts: the old tag counter was already wrong (it counted class and mechanic-only talents and missed Force-tree talents whose mechanics never name the Force).
 
