@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "authorityType": "SWSE_FEAT_CANONICALIZATION_ROLLING_AUTHORITY",
-  "status": "PHASE_0_COMPLETE_CANONICAL_CENSUS_FROZEN",
-  "version": "1.0-phase0-complete-canonical-census-frozen",
+  "status": "PHASE0_COMPLETE_CANONICAL_CENSUS_FROZEN_AUTHORITY_CORRECTED",
+  "version": "1.1-phase0-authority-corrected-after-persistence-readback",
   "updated": "2026-10-02",
   "operatingModel": {
     "planner": "ChatGPT",
@@ -1818,7 +1818,7 @@
         },
         {
           "sourcebook": "Galaxy of Intrigue",
-          "name": "FlÃ¨che",
+          "name": "Flèche",
           "prerequisite": "Base Attack Bonus +1",
           "benefit": "When Charging, turn any natural attack roll of 17+ into a Critical Hit.",
           "seedAuthority": "USER_WIKI_LIST"
@@ -2175,7 +2175,7 @@
           "Stava Training",
           "Tae-Jitsu Training",
           "Technical Experts",
-          "TerÃ¤s KÃ¤si Training",
+          "Teräs Käsi Training",
           "Tireless Squad",
           "Unhindered Approach",
           "Unified Squadron",
@@ -2782,7 +2782,7 @@
           "hasPrerequisiteLabel": true
         },
         {
-          "name": "Teras Kasi Training",
+          "name": "Teräs Käsi Training",
           "sourcebook": "Galaxy at War",
           "txtLine": 2730,
           "hasPrerequisiteLabel": true
@@ -2878,7 +2878,7 @@
           "hasPrerequisiteLabel": true
         },
         {
-          "name": "FlÃ¨che",
+          "name": "Flèche",
           "sourcebook": "Galaxy of Intrigue",
           "txtLine": 2462,
           "hasPrerequisiteLabel": true
@@ -4950,7 +4950,7 @@
             "canonicalPage": 85,
             "publicationCategory": "GENERAL",
             "sourceStatus": "SOURCE_CERTIFIED",
-            "repoId": "c01f64239af7705",
+            "repoId": "c01f64239af7705d",
             "repoSource": "Saga Edition Core Rulebook",
             "repoPage": 86,
             "repoStatus": "PAGE_MISMATCH"
@@ -5148,7 +5148,7 @@
             "canonicalPage": 87,
             "publicationCategory": "GENERAL",
             "sourceStatus": "SOURCE_CERTIFIED",
-            "repoId": "c238f3f722689a3",
+            "repoId": "c238f3f722689a3a",
             "repoSource": "Saga Edition Core Rulebook",
             "repoPage": 88,
             "repoStatus": "PAGE_MISMATCH"
@@ -7556,7 +7556,7 @@
           "printedFeatDefinitionPages": "23-24",
           "notes": [
             "PDF visual verification confirms Follow Through, Force Regimen Mastery, Long Haft Strike, and Relentless Attack on p.23 and Unswerving Resolve on p.24.",
-            "The equipment chapter later calls the feat âLong Haft Formâ in internal cross-references, but the feat heading itself is Long Haft Strike; preserve the feat-heading identity."
+            "The equipment chapter later calls the feat “Long Haft Form” in internal cross-references, but the feat heading itself is Long Haft Strike; preserve the feat-heading identity."
           ]
         },
         "counts": {
@@ -7853,7 +7853,7 @@
             "repoSource": "Star Wars Saga Edition",
             "repoPage": 0,
             "repoStatus": "SOURCE_PAGE_MISMATCH",
-            "repoIdentityLookup": "Resolve by exact name in current feat catalog; all 48 were confirmed present exactly once."
+            "repoId": "223a5c14f2ea4737"
           },
           {
             "name": "Binary Mind",
@@ -7864,7 +7864,7 @@
             "repoSource": "Star Wars Saga Edition",
             "repoPage": 0,
             "repoStatus": "SOURCE_PAGE_MISMATCH",
-            "repoIdentityLookup": "Resolve by exact name in current feat catalog; all 48 were confirmed present exactly once."
+            "repoId": "33905755bbb1ca10"
           },
           {
             "name": "Bothan Will",
@@ -7875,7 +7875,7 @@
             "repoSource": "Star Wars Saga Edition",
             "repoPage": 0,
             "repoStatus": "SOURCE_PAGE_MISMATCH",
-            "repoIdentityLookup": "Resolve by exact name in current feat catalog; all 48 were confirmed present exactly once."
+            "repoId": "d40dea327376ec90"
           },
           {
             "name": "Bowcaster Marksman",
@@ -7886,7 +7886,7 @@
             "repoSource": "Star Wars Saga Edition",
             "repoPage": 0,
             "repoStatus": "SOURCE_PAGE_MISMATCH",
-            "repoIdentityLookup": "Resolve by exact name in current feat catalog; all 48 were confirmed present exactly once."
+            "repoId": "db82e1df17c3110b"
           },
           {
             "name": "Clawed Subspecies",
@@ -7897,7 +7897,7 @@
             "repoSource": "Star Wars Saga Edition",
             "repoPage": 0,
             "repoStatus": "SOURCE_PAGE_MISMATCH",
-            "repoIdentityLookup": "Resolve by exact name in current feat catalog; all 48 were confirmed present exactly once."
+            "repoId": "edd8bb64c18d9a8a"
           },
           {
             "name": "Confident Success",
@@ -7908,7 +7908,7 @@
             "repoSource": "Star Wars Saga Edition",
             "repoPage": 0,
             "repoStatus": "SOURCE_PAGE_MISMATCH",
-            "repoIdentityLookup": "Resolve by exact name in current feat catalog; all 48 were confirmed present exactly once."
+            "repoId": "139a80972fc3b8ee"
           },
           {
             "name": "Darkness Dweller",
@@ -7919,7 +7919,7 @@
             "repoSource": "Star Wars Saga Edition",
             "repoPage": 0,
             "repoStatus": "SOURCE_PAGE_MISMATCH",
-            "repoIdentityLookup": "Resolve by exact name in current feat catalog; all 48 were confirmed present exactly once."
+            "repoId": "eaf7079b977d60b7"
           },
           {
             "name": "Deep Sight",
@@ -7930,7 +7930,7 @@
             "repoSource": "Star Wars Saga Edition",
             "repoPage": 0,
             "repoStatus": "SOURCE_PAGE_MISMATCH",
-            "repoIdentityLookup": "Resolve by exact name in current feat catalog; all 48 were confirmed present exactly once."
+            "repoId": "e4de79f4993a6690"
           },
           {
             "name": "Devastating Bellow",
@@ -7941,7 +7941,7 @@
             "repoSource": "Star Wars Saga Edition",
             "repoPage": 0,
             "repoStatus": "SOURCE_PAGE_MISMATCH",
-            "repoIdentityLookup": "Resolve by exact name in current feat catalog; all 48 were confirmed present exactly once."
+            "repoId": "9f1305cc6ada5d7a"
           },
           {
             "name": "Disarming Charm",
@@ -7952,7 +7952,7 @@
             "repoSource": "Star Wars Saga Edition",
             "repoPage": 0,
             "repoStatus": "SOURCE_PAGE_MISMATCH",
-            "repoIdentityLookup": "Resolve by exact name in current feat catalog; all 48 were confirmed present exactly once."
+            "repoId": "9567c9e2fe8416e6"
           },
           {
             "name": "Fast Swimmer",
@@ -7963,7 +7963,7 @@
             "repoSource": "Star Wars Saga Edition",
             "repoPage": 0,
             "repoStatus": "SOURCE_PAGE_MISMATCH",
-            "repoIdentityLookup": "Resolve by exact name in current feat catalog; all 48 were confirmed present exactly once."
+            "repoId": "d874a33284de77e4"
           },
           {
             "name": "Flawless Pilot",
@@ -7974,7 +7974,7 @@
             "repoSource": "Star Wars Saga Edition",
             "repoPage": 0,
             "repoStatus": "SOURCE_PAGE_MISMATCH",
-            "repoIdentityLookup": "Resolve by exact name in current feat catalog; all 48 were confirmed present exactly once."
+            "repoId": "87969fb8b12ff507"
           },
           {
             "name": "Forest Stalker",
@@ -7985,7 +7985,7 @@
             "repoSource": "Star Wars Saga Edition",
             "repoPage": 0,
             "repoStatus": "SOURCE_PAGE_MISMATCH",
-            "repoIdentityLookup": "Resolve by exact name in current feat catalog; all 48 were confirmed present exactly once."
+            "repoId": "febbb0f05c8a0883"
           },
           {
             "name": "Fringe Benefits",
@@ -7996,7 +7996,7 @@
             "repoSource": "Star Wars Saga Edition",
             "repoPage": 0,
             "repoStatus": "SOURCE_PAGE_MISMATCH",
-            "repoIdentityLookup": "Resolve by exact name in current feat catalog; all 48 were confirmed present exactly once."
+            "repoId": "b1299c242802a260"
           },
           {
             "name": "Gungan Weapon Master",
@@ -8007,7 +8007,7 @@
             "repoSource": "Star Wars Saga Edition",
             "repoPage": 0,
             "repoStatus": "SOURCE_PAGE_MISMATCH",
-            "repoIdentityLookup": "Resolve by exact name in current feat catalog; all 48 were confirmed present exactly once."
+            "repoId": "f916516eeeaae10b"
           },
           {
             "name": "Hunter's Instincts",
@@ -8018,7 +8018,7 @@
             "repoSource": "Star Wars Saga Edition",
             "repoPage": 0,
             "repoStatus": "SOURCE_PAGE_MISMATCH",
-            "repoIdentityLookup": "Resolve by exact name in current feat catalog; all 48 were confirmed present exactly once."
+            "repoId": "d2e86b15327ae544"
           },
           {
             "name": "Imperceptible Liar",
@@ -8029,7 +8029,7 @@
             "repoSource": "Star Wars Saga Edition",
             "repoPage": 0,
             "repoStatus": "SOURCE_PAGE_MISMATCH",
-            "repoIdentityLookup": "Resolve by exact name in current feat catalog; all 48 were confirmed present exactly once."
+            "repoId": "ec8b6bb889f65dea"
           },
           {
             "name": "Inborn Resilience",
@@ -8040,7 +8040,7 @@
             "repoSource": "Star Wars Saga Edition",
             "repoPage": 0,
             "repoStatus": "SOURCE_PAGE_MISMATCH",
-            "repoIdentityLookup": "Resolve by exact name in current feat catalog; all 48 were confirmed present exactly once."
+            "repoId": "9d70c309eb95da5e"
           },
           {
             "name": "Increased Resistance",
@@ -8051,7 +8051,7 @@
             "repoSource": "Star Wars Saga Edition",
             "repoPage": 0,
             "repoStatus": "SOURCE_PAGE_MISMATCH",
-            "repoIdentityLookup": "Resolve by exact name in current feat catalog; all 48 were confirmed present exactly once."
+            "repoId": "0365722a629eed1f"
           },
           {
             "name": "Instinctive Perception",
@@ -8062,7 +8062,7 @@
             "repoSource": "Star Wars Saga Edition",
             "repoPage": 0,
             "repoStatus": "SOURCE_PAGE_MISMATCH",
-            "repoIdentityLookup": "Resolve by exact name in current feat catalog; all 48 were confirmed present exactly once."
+            "repoId": "bf71e5f4171547ef"
           },
           {
             "name": "Jedi Heritage",
@@ -8073,7 +8073,7 @@
             "repoSource": "Star Wars Saga Edition",
             "repoPage": 0,
             "repoStatus": "SOURCE_PAGE_MISMATCH",
-            "repoIdentityLookup": "Resolve by exact name in current feat catalog; all 48 were confirmed present exactly once."
+            "repoId": "d3c4ae9f793b8573"
           },
           {
             "name": "Justice Seeker",
@@ -8084,7 +8084,7 @@
             "repoSource": "Star Wars Saga Edition",
             "repoPage": 0,
             "repoStatus": "SOURCE_PAGE_MISMATCH",
-            "repoIdentityLookup": "Resolve by exact name in current feat catalog; all 48 were confirmed present exactly once."
+            "repoId": "3595086bb17d4303"
           },
           {
             "name": "Keen Scent",
@@ -8095,7 +8095,7 @@
             "repoSource": "Star Wars Saga Edition",
             "repoPage": 0,
             "repoStatus": "SOURCE_PAGE_MISMATCH",
-            "repoIdentityLookup": "Resolve by exact name in current feat catalog; all 48 were confirmed present exactly once."
+            "repoId": "46d70ac7db6872f6"
           },
           {
             "name": "Lasting Influence",
@@ -8106,7 +8106,7 @@
             "repoSource": "Star Wars Saga Edition",
             "repoPage": 0,
             "repoStatus": "SOURCE_PAGE_MISMATCH",
-            "repoIdentityLookup": "Resolve by exact name in current feat catalog; all 48 were confirmed present exactly once."
+            "repoId": "ad740c563485664d"
           },
           {
             "name": "Master Tracker",
@@ -8117,7 +8117,7 @@
             "repoSource": "Star Wars Saga Edition",
             "repoPage": 0,
             "repoStatus": "SOURCE_PAGE_MISMATCH",
-            "repoIdentityLookup": "Resolve by exact name in current feat catalog; all 48 were confirmed present exactly once."
+            "repoId": "d133d3fad058c35f"
           },
           {
             "name": "Mind of Reason",
@@ -8128,7 +8128,7 @@
             "repoSource": "Star Wars Saga Edition",
             "repoPage": 0,
             "repoStatus": "SOURCE_PAGE_MISMATCH",
-            "repoIdentityLookup": "Resolve by exact name in current feat catalog; all 48 were confirmed present exactly once."
+            "repoId": "987bdca14576cf2f"
           },
           {
             "name": "Mon Calamari Shipwright",
@@ -8139,7 +8139,7 @@
             "repoSource": "Star Wars Saga Edition",
             "repoPage": 0,
             "repoStatus": "SOURCE_PAGE_MISMATCH",
-            "repoIdentityLookup": "Resolve by exact name in current feat catalog; all 48 were confirmed present exactly once."
+            "repoId": "bb16070b5fdfccf4"
           },
           {
             "name": "Nature Specialist",
@@ -8150,7 +8150,7 @@
             "repoSource": "Star Wars Saga Edition",
             "repoPage": 0,
             "repoStatus": "SOURCE_PAGE_MISMATCH",
-            "repoIdentityLookup": "Resolve by exact name in current feat catalog; all 48 were confirmed present exactly once."
+            "repoId": "f965ca153bb13aaf"
           },
           {
             "name": "Perfect Intuition",
@@ -8161,7 +8161,7 @@
             "repoSource": "Star Wars Saga Edition",
             "repoPage": 0,
             "repoStatus": "SOURCE_PAGE_MISMATCH",
-            "repoIdentityLookup": "Resolve by exact name in current feat catalog; all 48 were confirmed present exactly once."
+            "repoId": "5a2ba2f28bc5ee01"
           },
           {
             "name": "Perfect Swimmer",
@@ -8172,7 +8172,7 @@
             "repoSource": "Star Wars Saga Edition",
             "repoPage": 0,
             "repoStatus": "SOURCE_PAGE_MISMATCH",
-            "repoIdentityLookup": "Resolve by exact name in current feat catalog; all 48 were confirmed present exactly once."
+            "repoId": "70c842436bbb6330"
           },
           {
             "name": "Pitiless Warrior",
@@ -8183,7 +8183,7 @@
             "repoSource": "Star Wars Saga Edition",
             "repoPage": 0,
             "repoStatus": "SOURCE_PAGE_MISMATCH",
-            "repoIdentityLookup": "Resolve by exact name in current feat catalog; all 48 were confirmed present exactly once."
+            "repoId": "08896a9f860ebca9"
           },
           {
             "name": "Primitive Warrior",
@@ -8194,7 +8194,7 @@
             "repoSource": "Star Wars Saga Edition",
             "repoPage": 0,
             "repoStatus": "SOURCE_PAGE_MISMATCH",
-            "repoIdentityLookup": "Resolve by exact name in current feat catalog; all 48 were confirmed present exactly once."
+            "repoId": "047f06ec480d841f"
           },
           {
             "name": "Quick Comeback",
@@ -8205,7 +8205,7 @@
             "repoSource": "Star Wars Saga Edition",
             "repoPage": 0,
             "repoStatus": "SOURCE_PAGE_MISMATCH",
-            "repoIdentityLookup": "Resolve by exact name in current feat catalog; all 48 were confirmed present exactly once."
+            "repoId": "21a0af5ef58172a0"
           },
           {
             "name": "Read the Winds",
@@ -8216,7 +8216,7 @@
             "repoSource": "Star Wars Saga Edition",
             "repoPage": 0,
             "repoStatus": "SOURCE_PAGE_MISMATCH",
-            "repoIdentityLookup": "Resolve by exact name in current feat catalog; all 48 were confirmed present exactly once."
+            "repoId": "f5be1207aa6b1817"
           },
           {
             "name": "Regenerative Healing",
@@ -8227,7 +8227,7 @@
             "repoSource": "Star Wars Saga Edition",
             "repoPage": 0,
             "repoStatus": "SOURCE_PAGE_MISMATCH",
-            "repoIdentityLookup": "Resolve by exact name in current feat catalog; all 48 were confirmed present exactly once."
+            "repoId": "be1346b0cfb5ea78"
           },
           {
             "name": "Resurgent Vitality",
@@ -8238,7 +8238,7 @@
             "repoSource": "Star Wars Saga Edition",
             "repoPage": 0,
             "repoStatus": "SOURCE_PAGE_MISMATCH",
-            "repoIdentityLookup": "Resolve by exact name in current feat catalog; all 48 were confirmed present exactly once."
+            "repoId": "47f21e32233bb910"
           },
           {
             "name": "Scion of Dorin",
@@ -8249,7 +8249,7 @@
             "repoSource": "Star Wars Saga Edition",
             "repoPage": 0,
             "repoStatus": "SOURCE_PAGE_MISMATCH",
-            "repoIdentityLookup": "Resolve by exact name in current feat catalog; all 48 were confirmed present exactly once."
+            "repoId": "08a15012d82f0d16"
           },
           {
             "name": "Sharp Senses",
@@ -8260,7 +8260,7 @@
             "repoSource": "Star Wars Saga Edition",
             "repoPage": 0,
             "repoStatus": "SOURCE_PAGE_MISMATCH",
-            "repoIdentityLookup": "Resolve by exact name in current feat catalog; all 48 were confirmed present exactly once."
+            "repoId": "2357f4a68fe571fb"
           },
           {
             "name": "Shrewd Bargainer",
@@ -8271,7 +8271,7 @@
             "repoSource": "Star Wars Saga Edition",
             "repoPage": 0,
             "repoStatus": "SOURCE_PAGE_MISMATCH",
-            "repoIdentityLookup": "Resolve by exact name in current feat catalog; all 48 were confirmed present exactly once."
+            "repoId": "df58db54c4b53539"
           },
           {
             "name": "Spacer's Surge",
@@ -8282,7 +8282,7 @@
             "repoSource": "Star Wars Saga Edition",
             "repoPage": 0,
             "repoStatus": "SOURCE_PAGE_MISMATCH",
-            "repoIdentityLookup": "Resolve by exact name in current feat catalog; all 48 were confirmed present exactly once."
+            "repoId": "dd6ad0e712e9a314"
           },
           {
             "name": "Strong Bellow",
@@ -8293,7 +8293,7 @@
             "repoSource": "Star Wars Saga Edition",
             "repoPage": 0,
             "repoStatus": "SOURCE_PAGE_MISMATCH",
-            "repoIdentityLookup": "Resolve by exact name in current feat catalog; all 48 were confirmed present exactly once."
+            "repoId": "1a9091174116f6ff"
           },
           {
             "name": "Sure Climber",
@@ -8304,7 +8304,7 @@
             "repoSource": "Star Wars Saga Edition",
             "repoPage": 0,
             "repoStatus": "SOURCE_PAGE_MISMATCH",
-            "repoIdentityLookup": "Resolve by exact name in current feat catalog; all 48 were confirmed present exactly once."
+            "repoId": "f8748ba7993b6b17"
           },
           {
             "name": "Survivor of Ryloth",
@@ -8315,7 +8315,7 @@
             "repoSource": "Star Wars Saga Edition",
             "repoPage": 0,
             "repoStatus": "SOURCE_PAGE_MISMATCH",
-            "repoIdentityLookup": "Resolve by exact name in current feat catalog; all 48 were confirmed present exactly once."
+            "repoId": "90a258aae2583994"
           },
           {
             "name": "Thick Skin",
@@ -8326,7 +8326,7 @@
             "repoSource": "Star Wars Saga Edition",
             "repoPage": 0,
             "repoStatus": "SOURCE_PAGE_MISMATCH",
-            "repoIdentityLookup": "Resolve by exact name in current feat catalog; all 48 were confirmed present exactly once."
+            "repoId": "e97cc5c5128a55ce"
           },
           {
             "name": "Unwavering Focus",
@@ -8337,7 +8337,7 @@
             "repoSource": "Star Wars Saga Edition",
             "repoPage": 0,
             "repoStatus": "SOURCE_PAGE_MISMATCH",
-            "repoIdentityLookup": "Resolve by exact name in current feat catalog; all 48 were confirmed present exactly once."
+            "repoId": "0214e9586b6c8bb5"
           },
           {
             "name": "Veteran Spacer",
@@ -8348,7 +8348,7 @@
             "repoSource": "Star Wars Saga Edition",
             "repoPage": 0,
             "repoStatus": "SOURCE_PAGE_MISMATCH",
-            "repoIdentityLookup": "Resolve by exact name in current feat catalog; all 48 were confirmed present exactly once."
+            "repoId": "423c5fffe7abe449"
           },
           {
             "name": "Warrior Heritage",
@@ -8359,7 +8359,7 @@
             "repoSource": "Star Wars Saga Edition",
             "repoPage": 0,
             "repoStatus": "SOURCE_PAGE_MISMATCH",
-            "repoIdentityLookup": "Resolve by exact name in current feat catalog; all 48 were confirmed present exactly once."
+            "repoId": "a9a59c85cddbda1f"
           },
           {
             "name": "Wroshyr Rage",
@@ -8370,7 +8370,7 @@
             "repoSource": "Star Wars Saga Edition",
             "repoPage": 0,
             "repoStatus": "SOURCE_PAGE_MISMATCH",
-            "repoIdentityLookup": "Resolve by exact name in current feat catalog; all 48 were confirmed present exactly once."
+            "repoId": "2ed1a3257175feb9"
           }
         ],
         "provenancePatterns": [
@@ -8712,7 +8712,7 @@
             "repoSource": "Star Wars Saga Edition",
             "repoPage": 0,
             "repoStatus": "SOURCE_PAGE_MISMATCH",
-            "repoIdentityLookup": "Resolve by exact name; source audit confirmed one current feat record."
+            "repoId": "6dcb59b199dba6a1"
           },
           {
             "name": "K'tara Training",
@@ -8723,7 +8723,7 @@
             "repoSource": "Star Wars Saga Edition",
             "repoPage": 0,
             "repoStatus": "SOURCE_PAGE_MISMATCH",
-            "repoIdentityLookup": "Resolve by exact name; source audit confirmed one current feat record."
+            "repoId": "1dfbddf5f1aa57c3"
           },
           {
             "name": "K'thri Training",
@@ -8734,7 +8734,7 @@
             "repoSource": "Star Wars Saga Edition",
             "repoPage": 0,
             "repoStatus": "SOURCE_PAGE_MISMATCH",
-            "repoIdentityLookup": "Resolve by exact name; source audit confirmed one current feat record."
+            "repoId": "b00e0a883da4edda"
           },
           {
             "name": "Stava Training",
@@ -8745,7 +8745,7 @@
             "repoSource": "Star Wars Saga Edition",
             "repoPage": 0,
             "repoStatus": "SOURCE_PAGE_MISMATCH",
-            "repoIdentityLookup": "Resolve by exact name; source audit confirmed one current feat record."
+            "repoId": "836f80dd762cf155"
           },
           {
             "name": "Tae-Jitsu Training",
@@ -8756,10 +8756,10 @@
             "repoSource": "Star Wars Saga Edition",
             "repoPage": 0,
             "repoStatus": "SOURCE_PAGE_MISMATCH",
-            "repoIdentityLookup": "Resolve by exact name; source audit confirmed one current feat record."
+            "repoId": "6b6a0dc594ad4e3c"
           },
           {
-            "name": "Teras Kasi Training",
+            "name": "Teräs Käsi Training",
             "canonicalSourcebook": "Galaxy at War",
             "canonicalPage": 28,
             "publicationCategory": "MARTIAL_ARTS_FEAT",
@@ -8767,7 +8767,7 @@
             "repoSource": "Star Wars Saga Edition",
             "repoPage": 0,
             "repoStatus": "SOURCE_PAGE_MISMATCH",
-            "repoIdentityLookup": "Resolve by exact name; source audit confirmed one current feat record."
+            "repoId": "b0feacaeae4860e9"
           },
           {
             "name": "Wrruushi Training",
@@ -8778,7 +8778,7 @@
             "repoSource": "Star Wars Saga Edition",
             "repoPage": 0,
             "repoStatus": "SOURCE_PAGE_MISMATCH",
-            "repoIdentityLookup": "Resolve by exact name; source audit confirmed one current feat record."
+            "repoId": "1d0291d930abda15"
           },
           {
             "name": "Aquatic Specialists",
@@ -8789,7 +8789,7 @@
             "repoSource": "Star Wars Saga Edition",
             "repoPage": 0,
             "repoStatus": "SOURCE_PAGE_MISMATCH",
-            "repoIdentityLookup": "Resolve by exact name; source audit confirmed one current feat record."
+            "repoId": "55483fd350b3ba28"
           },
           {
             "name": "Ascension Specialists",
@@ -8800,7 +8800,7 @@
             "repoSource": "Star Wars Saga Edition",
             "repoPage": 0,
             "repoStatus": "SOURCE_PAGE_MISMATCH",
-            "repoIdentityLookup": "Resolve by exact name; source audit confirmed one current feat record."
+            "repoId": "125c328c4573890a"
           },
           {
             "name": "Covert Operatives",
@@ -8811,7 +8811,7 @@
             "repoSource": "Star Wars Saga Edition",
             "repoPage": 0,
             "repoStatus": "SOURCE_PAGE_MISMATCH",
-            "repoIdentityLookup": "Resolve by exact name; source audit confirmed one current feat record."
+            "repoId": "75daa55c22ffed5e"
           },
           {
             "name": "Medical Team",
@@ -8822,7 +8822,7 @@
             "repoSource": "Star Wars Saga Edition",
             "repoPage": 0,
             "repoStatus": "SOURCE_PAGE_MISMATCH",
-            "repoIdentityLookup": "Resolve by exact name; source audit confirmed one current feat record."
+            "repoId": "1d27dfb8ce491836"
           },
           {
             "name": "Mounted Regiment",
@@ -8833,7 +8833,7 @@
             "repoSource": "Star Wars Saga Edition",
             "repoPage": 0,
             "repoStatus": "SOURCE_PAGE_MISMATCH",
-            "repoIdentityLookup": "Resolve by exact name; source audit confirmed one current feat record."
+            "repoId": "0e9aa3d941f4eb80"
           },
           {
             "name": "Nimble Team",
@@ -8844,7 +8844,7 @@
             "repoSource": "Star Wars Saga Edition",
             "repoPage": 0,
             "repoStatus": "SOURCE_PAGE_MISMATCH",
-            "repoIdentityLookup": "Resolve by exact name; source audit confirmed one current feat record."
+            "repoId": "752b00692fa5376b"
           },
           {
             "name": "Slicer Team",
@@ -8855,7 +8855,7 @@
             "repoSource": "Star Wars Saga Edition",
             "repoPage": 0,
             "repoStatus": "SOURCE_PAGE_MISMATCH",
-            "repoIdentityLookup": "Resolve by exact name; source audit confirmed one current feat record."
+            "repoId": "77c897590b4000f6"
           },
           {
             "name": "Technical Experts",
@@ -8866,7 +8866,7 @@
             "repoSource": "Star Wars Saga Edition",
             "repoPage": 0,
             "repoStatus": "SOURCE_PAGE_MISMATCH",
-            "repoIdentityLookup": "Resolve by exact name; source audit confirmed one current feat record."
+            "repoId": "18779d9a72b47a12"
           },
           {
             "name": "Tireless Squad",
@@ -8877,7 +8877,7 @@
             "repoSource": "Star Wars Saga Edition",
             "repoPage": 0,
             "repoStatus": "SOURCE_PAGE_MISMATCH",
-            "repoIdentityLookup": "Resolve by exact name; source audit confirmed one current feat record."
+            "repoId": "b648515a5e8dd612"
           },
           {
             "name": "Unhindered Approach",
@@ -8888,7 +8888,7 @@
             "repoSource": "Star Wars Saga Edition",
             "repoPage": 0,
             "repoStatus": "SOURCE_PAGE_MISMATCH",
-            "repoIdentityLookup": "Resolve by exact name; source audit confirmed one current feat record."
+            "repoId": "72183c573d1cc44e"
           },
           {
             "name": "Unified Squadron",
@@ -8899,7 +8899,7 @@
             "repoSource": "Star Wars Saga Edition",
             "repoPage": 0,
             "repoStatus": "SOURCE_PAGE_MISMATCH",
-            "repoIdentityLookup": "Resolve by exact name; source audit confirmed one current feat record."
+            "repoId": "b1970c18996d44dd"
           },
           {
             "name": "Wary Sentries",
@@ -8910,7 +8910,7 @@
             "repoSource": "Star Wars Saga Edition",
             "repoPage": 0,
             "repoStatus": "SOURCE_PAGE_MISMATCH",
-            "repoIdentityLookup": "Resolve by exact name; source audit confirmed one current feat record."
+            "repoId": "0053d97632b02e4a"
           },
           {
             "name": "Wilderness Specialists",
@@ -8921,7 +8921,7 @@
             "repoSource": "Star Wars Saga Edition",
             "repoPage": 0,
             "repoStatus": "SOURCE_PAGE_MISMATCH",
-            "repoIdentityLookup": "Resolve by exact name; source audit confirmed one current feat record."
+            "repoId": "daf0594fbb48e61e"
           }
         ],
         "reprints": [
@@ -9488,7 +9488,7 @@
             "repoStatus": "PAGE_MISMATCH"
           },
           {
-            "name": "FlÃ¨che",
+            "name": "Flèche",
             "canonicalSourcebook": "Galaxy of Intrigue",
             "canonicalPage": 27,
             "publicationCategory": "GENERAL",
@@ -10833,5 +10833,60 @@
     "After the Phase 0 checkpoint is pushed, begin Phase 1A canonical identity manifest and stable-ID design.",
     "Phase 1B should turn the 390-record decomposition into an explicit retain/create/reclassify/remove plan, including domain-guard correction for Recall.",
     "Phase 1C should decide the structural representation of scoped/tiered/repeatable families and the six Weapon Proficiency-derived implementation records."
-  ]
+  ],
+  "authorityCorrections": {
+    "appliedAfterPhase0PersistenceReadback": true,
+    "doesNotChangeFrozenCensus": true,
+    "frozenCountsUnchanged": {
+      "canonicalFeatIdentities": 353,
+      "uniqueNormalizedDisplayNames": 352,
+      "fullFeatPublications": 355,
+      "confirmedFullReprints": 2,
+      "currentRepoFeatRecords": 390,
+      "canonicalIdentitiesRepresented": 351,
+      "missingCanonicalIdentities": 2,
+      "repoOutsideCanonicalCorpus": 39,
+      "implementationDerivedRecords": 6,
+      "noncanonicalWrongDomainLegacyRecords": 33
+    },
+    "corrections": [
+      {
+        "type": "REPO_ID_CORRECTION",
+        "name": "Extra Rage",
+        "old": "c01f64239af7705",
+        "new": "c01f64239af7705d"
+      },
+      {
+        "type": "REPO_ID_CORRECTION",
+        "name": "Pin",
+        "old": "c238f3f722689a3",
+        "new": "c238f3f722689a3a"
+      },
+      {
+        "type": "REPO_ID_PINNING",
+        "scope": "0J Rebellion Era Species Feats",
+        "count": 48,
+        "method": "exact normalized-name match against frozen 390-record inventory; one match each"
+      },
+      {
+        "type": "REPO_ID_PINNING",
+        "scope": "0K Galaxy at War Martial Arts/Team feats",
+        "count": 20,
+        "method": "exact normalized-name match against frozen 390-record inventory; one match each"
+      },
+      {
+        "type": "TEXT_NORMALIZATION",
+        "items": [
+          "Flèche",
+          "Teräs Käsi Training",
+          "“Long Haft Form” cross-reference note"
+        ],
+        "reason": "repair mojibake/display encoding without changing identity or rules findings"
+      },
+      {
+        "type": "MD_HEADER_CORRECTION",
+        "reason": "replace stale Phase 0K/ACTIVE header with Phase 0 complete/frozen status"
+      }
+    ]
+  }
 }

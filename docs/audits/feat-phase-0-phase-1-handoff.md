@@ -1,13 +1,13 @@
 # Feat Phase 0 → Phase 1 Handoff
 
-Checkpoint: audit persistence only. No production feat data, domain guard, validity registry, prerequisite authority, or runtime file was modified.
+Checkpoints: audit persistence (`2a9f244`) followed by an authority-metadata correction. Audit artifacts only. No production feat data, domain guard, validity registry, prerequisite authority, or runtime file was modified.
 
 ## Persisted artifacts
 
 | File | Role |
 | --- | --- |
-| `data/audits/feat-phase-0-canonical-census.json` | Machine-readable Phase 0 authority (`1.0-phase0-complete-canonical-census-frozen`). Persisted verbatim from the owner-produced file. |
-| `docs/audits/feat-phase-0-canonical-census.md` | Human-readable Phase 0 authority. Persisted verbatim from the owner-produced file. |
+| `data/audits/feat-phase-0-canonical-census.json` | Machine-readable Phase 0 authority (`1.1-phase0-authority-corrected-after-persistence-readback`; initially persisted as `1.0-phase0-complete-canonical-census-frozen`). |
+| `docs/audits/feat-phase-0-canonical-census.md` | Human-readable Phase 0 authority (v1.1 header and correction section applied). |
 | `docs/audits/feat-phase-0-phase-1-handoff.md` | This note. |
 
 Baseline: `4159f29f83b45c83a8b3c0eaecd36466614b0f8d` (`audit/feat-phase-0-enumeration` pointed here before this checkpoint).
@@ -22,12 +22,16 @@ Baseline: `4159f29f83b45c83a8b3c0eaecd36466614b0f8d` (`audit/feat-phase-0-enumer
 - Wiki seed rows: 285 (per-book counts match); TXT candidate claims: 360 (per-book counts match)
 - `repoOutsideCanonicalCorpus`: 39 entries, all 39 IDs resolve in `data/feat-catalog.json`
 
-## Observations for the owner (authority files were NOT altered)
+## Authority defects found at persistence readback — all RESOLVED (authority v1.1)
 
-1. **Two truncated repo IDs in the JSON.** In subphase `0A`, `Extra Rage` is recorded as `c01f64239af7705` and `Pin` as `c238f3f722689a3`. The catalog IDs are `c01f64239af7705d` and `c238f3f722689a3a` (final hex digit dropped in the authority). Each name resolves to exactly one catalog record, so identity is unambiguous. Phase 1A should key on the catalog ID, not the truncated string.
-2. **MD header is stale.** The MD still reads `Version: 0.12 — Phase 0K Galaxy at War Certified` / `Status: ACTIVE rolling plan`, although its body contains the 0L–0O and 0-QA sections and the JSON reports `1.0`. The JSON `version`/`status` is authoritative.
-3. **Species/Martial Arts/Team records carry no `repoId`.** Subphases `0J` (48 Species Feats) and `0K` (20 Martial Arts/Team feats plus Echani Training lookup) resolve by exact name; Phase 1A/1B should resolve and pin their IDs from the catalog.
-4. **Mojibake preserved verbatim.** `FlÃ¨che`, `TerÃ¤s KÃ¤si Training`, and the `âLong Haft Formâ` note are reproduced exactly as supplied. Phase 1A should define a normalized identity key before using these names.
+Applied in the authority-correction checkpoint (commit following `2a9f244`). The frozen census and every source ruling are unchanged.
+
+1. **RESOLVED — truncated repo IDs.** Subphase `0A` now carries Extra Rage `c01f64239af7705d` and Pin `c238f3f722689a3a` (previously one hex digit short).
+2. **RESOLVED — stale MD header.** Header now reads `Version: 1.1 — Phase 0 complete, persistence-readback corrections applied` / `Status: PHASE 0 COMPLETE — canonical census frozen; authority corrected after persistence readback`. The provisional 360-claim parser count is labelled historical, superseded by the frozen closeout.
+3. **RESOLVED — name-only records.** All 48 Rebellion Era Species Feats (`0J`) and all 20 Galaxy at War Martial Arts/Team records (`0K`) now carry their unique catalog `repoId`. Every canonical record in the authority now has a `repoId` except the two genuinely missing identities (Recall — TFU p.35; Staggering Attack — Scum and Villainy p.24).
+4. **RESOLVED — mojibake.** `Flèche`, `Teräs Käsi Training` and the “Long Haft Form” cross-reference note are normalized. Phase 1A should still define a normalized identity key before using display names for matching.
+
+JSON `version`: `1.1-phase0-authority-corrected-after-persistence-readback`; the correction ledger is stored under `authorityCorrections`.
 
 ## Next (not started here)
 

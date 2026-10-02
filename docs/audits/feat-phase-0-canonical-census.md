@@ -1,11 +1,24 @@
 SWSE Feat Canonicalization — Rolling Authority
 
-Status: ACTIVE rolling plan/audit authority
-Version: 0.12 — Phase 0K Galaxy at War Certified
+Status: PHASE 0 COMPLETE — canonical census frozen; authority corrected after persistence readback
+Version: 1.1 — Phase 0 complete, persistence-readback corrections applied
 Updated: 2026-10-02
 Repository: docflowGM/foundryvtt-swse
 Post-Talent-Phase-12 baseline: 4159f29f83b45c83a8b3c0eaecd36466614b0f8d
 Feat audit branch: audit/feat-phase-0-enumeration
+
+Persistence-readback authority corrections
+
+These corrections repair the authority representation discovered when Claude persisted Phase 0. They do not change any frozen Phase 0 census value or source ruling.
+
+• Extra Rage repo ID corrected from truncated c01f64239af7705 to c01f64239af7705d.
+• Pin repo ID corrected from truncated c238f3f722689a3 to c238f3f722689a3a.
+• All 48 Rebellion Era Species Feats now carry their unique current catalog repoId.
+• All 20 Galaxy at War Martial Arts/Team records that were previously name-only now carry their unique current catalog repoId.
+• Display encoding normalized for Flèche, Teräs Käsi Training, and the “Long Haft Form” cross-reference note.
+• The stale Phase 0K/ACTIVE header has been replaced with the Phase 0 complete/frozen status.
+
+Frozen acceptance values remain: 353 canonical identities, 352 unique normalized names, 355 publications, 2 reprints, 390 current repo records, 351 represented canonical identities, 2 missing identities, 39 outside-corpus records = 6 implementation derivatives + 33 noncanonical/wrong-domain/legacy.
 
 Operating model
 
@@ -78,12 +91,12 @@ Known source-defined feat groups omitted from the wiki main tables
 • Galaxy at War Martial Arts + Team Feats: 20 names currently captured from the source-side subgroups.
 • These 68 records are feats in the same canonical corpus; their category is metadata.
 
-Current working counts — NOT FROZEN
+Historical Phase 0 working counts — superseded by the frozen closeout below
 
 • Wiki seed: 285 claims.
 • Wiki + the 68 known subgroup feats: 353 working claims.
 • Current TXT section parser: 360 candidate publication claims / 352 unique names.
-• Do not treat 360 as final yet. The parser can mistake prerequisite tables, index rows, or cross-references for republications. Same-name candidates require manual source review.
+• Historical note: 360 was the provisional parser-claim count before source-context adjudication. The frozen result is 353 canonical identities / 355 full publications, as certified in Phase 0-QA below.
 
 TXT/OCR misses from the 285-row wiki seed
 
