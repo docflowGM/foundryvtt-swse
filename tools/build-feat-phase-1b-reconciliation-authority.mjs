@@ -45,8 +45,38 @@ const SCAN_EXCLUDE_PATTERNS = [
   /^docs\/audits\/feat-phase-[0-9a-z]+-.*\.md$/,
   /^tools\/build-feat-phase-[0-9a-z]+-.*\.mjs$/
 ];
-// Mechanical production/non-production split of reference paths (documentation, audits, tooling are non-production).
-const NONPROD_PREFIXES = ['docs/', 'data/audits/', 'tools/'];
+// Owner-defined reference classes (Phase 1B correction). Exact path rulings; no directory-based importance heuristic.
+const C_LIVE = 'LIVE_RUNTIME_AUTHORITY';
+const C_DERIVED = 'DERIVED_REBUILD_ARTIFACT';
+const C_FIX = 'FIX_OR_MIGRATION_ARTIFACT';
+const C_ORPHAN = 'ORPHAN_HISTORICAL_ARTIFACT';
+const C_AUDIT = 'AUDIT_OR_DOCUMENTATION_REFERENCE';
+const C_REVIEW = 'OTHER_REFERENCE_REQUIRES_REVIEW';
+const EXACT_PATH_CLASS = {
+  'data/feat-effects.json': C_LIVE,
+  'data/class-archetypes.json': C_LIVE,
+  'data/generated/class-feat-list-bindings.json': C_LIVE,
+  'packs/heroic.db': C_LIVE,
+  'packs/nonheroic.db': C_LIVE,
+  'packs/npc.db': C_LIVE,
+  'scripts/engine/progression/prerequisites/class-prereq-normalizer.js': C_LIVE,
+  'data/prestige-prerequisites-reference.json': C_AUDIT,
+  'data/feat_buckets_and_subbuckets.json': C_DERIVED,
+  'data/generated/feat-view-model.json': C_DERIVED,
+  'data/fixes/feat-view-model.json': C_FIX,
+  'packs/feat-catalog.db': C_ORPHAN
+};
+const LIVE_PATHS = new Set(Object.entries(EXACT_PATH_CLASS).filter(([, c]) => c === C_LIVE).map(([k]) => k));
+function classifyPath(p) {
+  if (Object.prototype.hasOwnProperty.call(EXACT_PATH_CLASS, p)) return EXACT_PATH_CLASS[p];
+  if (p.startsWith('docs/') || p.startsWith('data/audits/') || /^tools\/build-feat-phase-[0-9a-z]+-.*\.mjs$/.test(p)) return C_AUDIT;
+  return C_REVIEW;
+}
+const DS_LIVE = 'LIVE_RUNTIME_REFERENCE_PRESENT';
+const DS_NONE = 'NO_LIVE_RUNTIME_REFERENCE';
+const FM_REMEDIATE = 'REMEDIATE_LIVE_REFERENCES_BEFORE_RECORD_DELETION';
+const FM_NO_BLOCKER = 'NO_LIVE_REFERENCE_BLOCKER_REFRESH_DERIVED_ARTIFACTS_DURING_MUTATION';
+const FM_DERIV = 'PRESERVE_REFERENCES_PENDING_PHASE_1C';
 
 function fail(msg) { console.error(`PHASE 1B BUILD FAILED: ${msg}`); process.exit(1); }
 function assert(c, msg) { if (!c) fail(msg); }
@@ -152,7 +182,10 @@ function scan(id) {
 }
 const refs = new Map();
 for (const id of scanIds) refs.set(id, scan(id));
-const isProd = (p) => !NONPROD_PREFIXES.some(pre => p.startsWith(pre));
+// Fail closed on any unclassified reference path (spec: do not classify it ourselves).
+for (const [id, paths] of refs) for (const p of paths) {
+  if (classifyPath(p) === C_REVIEW) fail(`exact-ID reference path requires owner review: ${p} (references ${id} ${catById.get(id).name})`);
+}
 
 // ---------- Current record dispositions ----------
 const entry = (id, base) => {
@@ -172,20 +205,42 @@ const entry = (id, base) => {
     dependencyStatus: null,
     exactIdReferenceCount: null,
     exactIdReferencePaths: [],
-    productionReferenceCount: null,
-    productionReferencePaths: [],
+    referenceDetails: [],
+    liveRuntimeReferenceCount: null,
+    liveRuntimeReferencePaths: [],
+    derivedArtifactReferenceCount: null,
+    derivedArtifactReferencePaths: [],
+    fixArtifactReferenceCount: null,
+    fixArtifactReferencePaths: [],
+    orphanHistoricalReferenceCount: null,
+    orphanHistoricalReferencePaths: [],
+    auditDocumentationReferenceCount: null,
+    auditDocumentationReferencePaths: [],
+    futureMutationRequirement: null,
     ...base
   };
 };
-const withDeps = (id) => {
+const withDeps = (id, derivative) => {
   const p = refs.get(id);
-  const prod = p.filter(isProd);
+  const details = p.map(path_ => ({ path: path_, classification: classifyPath(path_) }));
+  const of = (cls) => details.filter(d => d.classification === cls).map(d => d.path);
+  const live = of(C_LIVE);
   return {
-    dependencyStatus: p.length ? 'EXTERNAL_ID_REFERENCES_PRESENT' : 'NO_EXTERNAL_ID_REFERENCES',
+    dependencyStatus: live.length ? DS_LIVE : DS_NONE,
     exactIdReferenceCount: p.length,
     exactIdReferencePaths: p,
-    productionReferenceCount: prod.length,
-    productionReferencePaths: prod
+    referenceDetails: details,
+    liveRuntimeReferenceCount: live.length,
+    liveRuntimeReferencePaths: live,
+    derivedArtifactReferenceCount: of(C_DERIVED).length,
+    derivedArtifactReferencePaths: of(C_DERIVED),
+    fixArtifactReferenceCount: of(C_FIX).length,
+    fixArtifactReferencePaths: of(C_FIX),
+    orphanHistoricalReferenceCount: of(C_ORPHAN).length,
+    orphanHistoricalReferencePaths: of(C_ORPHAN),
+    auditDocumentationReferenceCount: of(C_AUDIT).length,
+    auditDocumentationReferencePaths: of(C_AUDIT),
+    futureMutationRequirement: derivative ? FM_DERIV : (live.length ? FM_REMEDIATE : FM_NO_BLOCKER)
   };
 };
 const records = [];
@@ -195,30 +250,88 @@ for (const id of [...catById.keys()].sort(sortStr)) {
     records.push(entry(id, { reconciliationDisposition: D_CANON, canonicalId: id, identityKey: r.identityKey }));
   } else if (B.has(id)) {
     records.push(entry(id, {
-      reconciliationDisposition: D_DERIV, phase0Classification: B.get(id).classification, parentCanonicalId: WP_PARENT_ID, ...withDeps(id)
+      reconciliationDisposition: D_DERIV, phase0Classification: B.get(id).classification, parentCanonicalId: WP_PARENT_ID, ...withDeps(id, true)
     }));
   } else {
-    records.push(entry(id, { reconciliationDisposition: D_REMOVE, phase0Classification: C.get(id).classification, ...withDeps(id) }));
+    records.push(entry(id, { reconciliationDisposition: D_REMOVE, phase0Classification: C.get(id).classification, ...withDeps(id, false) }));
   }
 }
 for (const r of records) assert(ALLOWED_DISPOSITIONS.includes(r.reconciliationDisposition), `unauthorized disposition on ${r.repoId}`);
 const byDisp = (d) => records.filter(r => r.reconciliationDisposition === d);
 
 // ---------- Derived sections ----------
+const depFields = (r) => ({
+  dependencyStatus: r.dependencyStatus, futureMutationRequirement: r.futureMutationRequirement,
+  exactIdReferenceCount: r.exactIdReferenceCount, exactIdReferencePaths: r.exactIdReferencePaths, referenceDetails: r.referenceDetails,
+  liveRuntimeReferenceCount: r.liveRuntimeReferenceCount, liveRuntimeReferencePaths: r.liveRuntimeReferencePaths,
+  derivedArtifactReferenceCount: r.derivedArtifactReferenceCount, derivedArtifactReferencePaths: r.derivedArtifactReferencePaths,
+  fixArtifactReferenceCount: r.fixArtifactReferenceCount, fixArtifactReferencePaths: r.fixArtifactReferencePaths,
+  orphanHistoricalReferenceCount: r.orphanHistoricalReferenceCount, orphanHistoricalReferencePaths: r.orphanHistoricalReferencePaths,
+  auditDocumentationReferenceCount: r.auditDocumentationReferenceCount, auditDocumentationReferencePaths: r.auditDocumentationReferencePaths
+});
 const implementationDerivatives = DERIVATIVES.map(([id, name]) => {
   const r = records.find(x => x.repoId === id);
   return {
     repoId: id, repoName: name, canonicalIdentity: false, parentCanonicalId: WP_PARENT_ID, parentIdentityKey: WP_PARENT_KEY,
     structuralResolution: 'PENDING_PHASE_1C', reconciliationDisposition: D_DERIV,
-    dependencyStatus: r.dependencyStatus, exactIdReferenceCount: r.exactIdReferenceCount, exactIdReferencePaths: r.exactIdReferencePaths
+    ...depFields(r)
   };
 });
 const removalSet = byDisp(D_REMOVE).map(r => ({
   repoId: r.repoId, repoName: r.repoName, phase0Classification: r.phase0Classification, replacementCanonicalId: null,
-  dependencyStatus: r.dependencyStatus, exactIdReferenceCount: r.exactIdReferenceCount, exactIdReferencePaths: r.exactIdReferencePaths,
-  productionReferenceCount: r.productionReferenceCount, productionReferencePaths: r.productionReferencePaths,
-  futureMutationRequirement: r.dependencyStatus === 'EXTERNAL_ID_REFERENCES_PRESENT' ? 'REMOVE_OR_UPDATE_REFERENCES_BEFORE_RECORD_DELETION' : null
+  ...depFields(r)
 }));
+// Owner-fixed live-runtime result for the 33 removals.
+const LIVE_EXPECT = {
+  'data/class-archetypes.json': ['0c53cb8b7c29d865', '6d8ce2807c579289'],
+  'data/feat-effects.json': ['10a017a020aa4a9c', '17e317292814e13e', '37cb4455a70876ad', '465434fb7b44aee1', '5824e2360feb505a', '647d77a8f5ab9af3', '6673cd53493a9d6c',
+    '88cdedff38b610c0', '9a89576b3cc1347e', 'bee76d01da40677d', 'db564cc6f9879ec8', 'ff76bea42641ca5b', 'ffd5fecab0550bb6']
+};
+for (const [file, ids] of Object.entries(LIVE_EXPECT)) {
+  const got = removalSet.filter(r => r.liveRuntimeReferencePaths.includes(file)).map(r => r.repoId).sort();
+  assert(JSON.stringify(got) === JSON.stringify([...ids].sort()), `live-reference removals for ${file} differ from owner authority: got ${got.join(',')}`);
+}
+const liveRemovals = removalSet.filter(r => r.dependencyStatus === DS_LIVE);
+assert(liveRemovals.length === 15, `removal live-runtime references ${liveRemovals.length} != 15`);
+assert(removalSet.filter(r => r.dependencyStatus === DS_NONE).length === 18, 'removal no-live-runtime references != 18');
+assert(removalSet.every(r => r.exactIdReferenceCount > 0), 'a removal record has no exact-ID reference');
+assert(liveRemovals.every(r => r.liveRuntimeReferencePaths.length === 1), 'a removal record has live references in both live files (owner stated no overlap)');
+for (const r of records) for (const d of r.referenceDetails) {
+  if (d.path === 'packs/feat-catalog.db') assert(d.classification === C_ORPHAN, 'feat-catalog.db not classified ORPHAN_HISTORICAL_ARTIFACT');
+  if (d.classification === C_LIVE) assert(LIVE_PATHS.has(d.path), `unexpected LIVE_RUNTIME_AUTHORITY path ${d.path}`);
+}
+// Owner rulings for the six formerly unclassified paths (exact-path specific; not generalized by directory).
+const SIX_RULINGS = {
+  'data/generated/class-feat-list-bindings.json': C_LIVE,
+  'packs/heroic.db': C_LIVE,
+  'packs/nonheroic.db': C_LIVE,
+  'packs/npc.db': C_LIVE,
+  'scripts/engine/progression/prerequisites/class-prereq-normalizer.js': C_LIVE,
+  'data/prestige-prerequisites-reference.json': C_AUDIT
+};
+for (const [pth, cls] of Object.entries(SIX_RULINGS)) assert(classifyPath(pth) === cls, `owner ruling for ${pth} expected ${cls}, got ${classifyPath(pth)}`);
+assert(classifyPath('data/generated/feat-view-model.json') === C_DERIVED, 'generated feat-view-model must remain DERIVED_REBUILD_ARTIFACT');
+// The six new paths must not alter the removal split: removal live paths are limited to the two original live files.
+for (const r of removalSet) for (const lp of r.liveRuntimeReferencePaths) assert(lp === 'data/feat-effects.json' || lp === 'data/class-archetypes.json', `removal ${r.repoId} (${r.repoName}) has live path ${lp} outside the owner-fixed 15/18 basis`);
+// Derivative dependency rulings.
+const DERIV_LIVE_MIN = {
+  '2d680cc46a7972da': ['data/feat-effects.json', 'data/generated/class-feat-list-bindings.json', 'packs/heroic.db', 'packs/nonheroic.db', 'packs/npc.db'],
+  '765ff8a34e58acac': ['data/feat-effects.json', 'data/generated/class-feat-list-bindings.json', 'packs/heroic.db', 'packs/nonheroic.db', 'packs/npc.db'],
+  '8329a353aa3899be': ['data/class-archetypes.json', 'data/feat-effects.json', 'data/generated/class-feat-list-bindings.json', 'packs/heroic.db', 'packs/nonheroic.db', 'packs/npc.db'],
+  'e5d361d01d1b44e4': ['data/feat-effects.json', 'data/generated/class-feat-list-bindings.json', 'packs/heroic.db', 'packs/nonheroic.db', 'packs/npc.db', 'scripts/engine/progression/prerequisites/class-prereq-normalizer.js'],
+  'cf28ec45cabaff59': ['data/feat-effects.json', 'data/generated/class-feat-list-bindings.json', 'scripts/engine/progression/prerequisites/class-prereq-normalizer.js'],
+  '41a9ce755ecffb5b': ['data/feat-effects.json']
+};
+for (const d of implementationDerivatives) {
+  assert(d.dependencyStatus === DS_LIVE, `derivative ${d.repoId} (${d.repoName}) is not LIVE_RUNTIME_REFERENCE_PRESENT`);
+  assert(d.futureMutationRequirement === FM_DERIV, `derivative ${d.repoId} futureMutationRequirement wrong`);
+  for (const lp of DERIV_LIVE_MIN[d.repoId]) assert(d.liveRuntimeReferencePaths.includes(lp), `derivative ${d.repoId} (${d.repoName}) missing owner-verified live path ${lp}`);
+  if (d.repoId === '41a9ce755ecffb5b') assert(JSON.stringify(d.liveRuntimeReferencePaths) === '["data/feat-effects.json"]', 'Heavy Weapon Proficiency live paths differ from owner authority');
+  if (d.repoId === 'e5d361d01d1b44e4' || d.repoId === 'cf28ec45cabaff59') assert(!d.liveRuntimeReferencePaths.includes('data/prestige-prerequisites-reference.json') && d.auditDocumentationReferencePaths.includes('data/prestige-prerequisites-reference.json'), `prestige reference misclassified for ${d.repoId}`);
+}
+assert(implementationDerivatives.length === 6 && implementationDerivatives.filter(d => d.dependencyStatus === DS_LIVE).length === 6 && implementationDerivatives.filter(d => d.dependencyStatus === DS_NONE).length === 0, 'derivative live-reference counts != 6/0');
+assert(classifyPath('packs/feat-catalog.db') === C_ORPHAN && classifyPath('data/generated/feat-view-model.json') === C_DERIVED &&
+  classifyPath('data/feat_buckets_and_subbuckets.json') === C_DERIVED && classifyPath('data/fixes/feat-view-model.json') === C_FIX, 'artifact class assertions failed');
 const scanned = records.filter(r => r.dependencyStatus !== null);
 const dependencyScan = {
   method: 'Exact 16-character repo ID match over tracked files (git grep -a -F). Plain-name matches are not dependency evidence.',
@@ -226,12 +339,24 @@ const dependencyScan = {
   exactIdReferenceCount: 'distinct tracked file paths containing the ID',
   excludedPathsExact: [...SCAN_EXCLUDE_EXACT].sort(sortStr),
   excludedPathPatterns: SCAN_EXCLUDE_PATTERNS.map(re => re.source),
-  nonProductionPathPrefixes: NONPROD_PREFIXES,
-  note: 'Canonical records (351) are not scanned; their dependency fields are null. Derivative references are preserved as evidence for Phase 1C and are not rewritten.',
-  removalRecordsWithExternalReferences: removalSet.filter(r => r.dependencyStatus === 'EXTERNAL_ID_REFERENCES_PRESENT').length,
-  removalRecordsWithProductionReferences: removalSet.filter(r => r.productionReferenceCount > 0).length,
-  derivativeRecordsWithExternalReferences: implementationDerivatives.filter(r => r.dependencyStatus === 'EXTERNAL_ID_REFERENCES_PRESENT').length
+  exactPathClassification: EXACT_PATH_CLASS,
+  auditDocumentationPaths: 'anything under docs/ or data/audits/, or a Phase 0/1 audit builder under tools/',
+  unclassifiedPathPolicy: 'Any path outside the owner-defined classes is OTHER_REFERENCE_REQUIRES_REVIEW and fails the build.',
+  orphanPackRules: [
+    'packs/feat-catalog.db MUST NOT block deletion of a noncanonical feat record.',
+    'packs/feat-catalog.db MUST NOT be regenerated as the production feat pack unless separately authorized.',
+    'The live Foundry feat pack remains packs/feats.db as declared in system.json.',
+    'packs/feat-catalog.db is not declared by system.json, is not a canonical source, and is not a restoration authority.'
+  ],
+  note: 'Canonical records (351) are not scanned; their dependency fields are null. Derivative references are preserved as evidence for Phase 1C and are not rewritten. Dependency classification does not change any reconciliationDisposition or replacementCanonicalId.',
+  removalRecordsWithExactIdReferences: removalSet.filter(r => r.exactIdReferenceCount > 0).length,
+  removalRecordsWithLiveRuntimeReferences: liveRemovals.length,
+  removalRecordsWithNoLiveRuntimeReference: removalSet.filter(r => r.dependencyStatus === DS_NONE).length,
+  removalLiveReferencesByFile: Object.fromEntries(Object.keys(LIVE_EXPECT).map(f => [f, removalSet.filter(r => r.liveRuntimeReferencePaths.includes(f)).length])),
+  otherReferenceRequiresReviewPaths: 0,
+  derivativeRecordsWithLiveRuntimeReferences: implementationDerivatives.filter(r => r.dependencyStatus === DS_LIVE).length
 };
+assert(dependencyScan.removalLiveReferencesByFile['data/feat-effects.json'] === 13 && dependencyScan.removalLiveReferencesByFile['data/class-archetypes.json'] === 2, 'live reference file split != 13 / 2');
 
 // ---------- Domain guard authority (mechanical facts only) ----------
 const guardSrc = fs.readFileSync(path.join(ROOT, 'scripts/data/feat-domain-guard.js'), 'utf8');
@@ -310,11 +435,18 @@ const acceptance = {
   interimProjectedProductionDocumentCountBefore1C: interimProjection.interimProjectedProductionDocumentCountBefore1C,
   finalProductionDocumentCount: null,
   nameOnlyDomainGuardStatus: 'NAME_ONLY_DOMAIN_GUARD_REJECTED',
+  removalLiveRuntimeReferences: liveRemovals.length,
+  removalNoLiveRuntimeReferences: removalSet.filter(r => r.dependencyStatus === DS_NONE).length,
+  featEffectsLiveReferenceRemovals: dependencyScan.removalLiveReferencesByFile['data/feat-effects.json'],
+  classArchetypesLiveReferenceRemovals: dependencyScan.removalLiveReferencesByFile['data/class-archetypes.json'],
+  otherReferenceRequiresReviewPaths: 0,
+  derivativeLiveRuntimeReferences: implementationDerivatives.filter(d => d.dependencyStatus === DS_LIVE).length,
+  derivativeNoLiveRuntimeReferences: implementationDerivatives.filter(d => d.dependencyStatus === DS_NONE).length,
   recallCrossDomainCollisionRetained: p1a.certifiedCrossDomainNameCollisions.some(c => c.displayName === 'Recall'),
   autofireAssaultCrossDomainCollisionRetained: p1a.certifiedCrossDomainNameCollisions.some(c => c.displayName === 'Autofire Assault'),
   productionMutated: false
 };
-const want = { currentRecords: 390, uniqueCurrentIds: 390, preserveCanonical: 351, canonicalIdsRepresented: 351, preserveDerivativesPending1C: 6,
+const want = { derivativeLiveRuntimeReferences: 6, derivativeNoLiveRuntimeReferences: 0, removalLiveRuntimeReferences: 15, removalNoLiveRuntimeReferences: 18, featEffectsLiveReferenceRemovals: 13, classArchetypesLiveReferenceRemovals: 2, otherReferenceRequiresReviewPaths: 0, currentRecords: 390, uniqueCurrentIds: 390, preserveCanonical: 351, canonicalIdsRepresented: 351, preserveDerivativesPending1C: 6,
   removeNoncanonical: 33, replacementCanonicalIdNonNullCount: 0, requiredCanonicalAdditions: 2,
   recallCrossDomainCollisionRetained: true, autofireAssaultCrossDomainCollisionRetained: true };
 for (const [k, v] of Object.entries(want)) assert(acceptance[k] === v, `acceptance ${k} expected ${v}, got ${acceptance[k]}`);
@@ -334,7 +466,7 @@ const manifest = {
     totals: { [D_CANON]: 351, [D_DERIV]: 6, [D_REMOVE]: 33 },
     noAutomaticReplacements: true,
     replacementCanonicalId: 'null for all 33 removals; no automatic identity replacement or redirect is permitted',
-    removalWithReferences: 'REMOVE_OR_UPDATE_REFERENCES_BEFORE_RECORD_DELETION; references are not redirected to another canonical feat without future owner authority',
+    removalWithReferences: 'Live runtime references (data/feat-effects.json, data/class-archetypes.json) require REMEDIATE_LIVE_REFERENCES_BEFORE_RECORD_DELETION; derived, fix, orphan, and documentation references do not block removal. References are not redirected to another canonical feat without future owner authority.',
     phase0ClassificationPreserved: 'phase0Classification copies the Phase 0 value; reconciliationDisposition is the separate future action',
     productionMutationAuthorized: false
   },
@@ -361,14 +493,21 @@ md.push('## Exact partition', '', '```text', '390 current records', '351 preserv
 md.push('## Missing canonical identities (future additions)', '', '| Name | canonicalId | identityKey | futureAction |', '| --- | --- | --- | --- |',
   ...REQUIRED_ADDITIONS.map(r => `| ${r.displayName} | \`${r.canonicalId}\` | \`${r.identityKey}\` | \`${r.futureAction}\` |`), '');
 md.push('## Six implementation derivatives', '',
-  `Parent: Weapon Proficiency, \`${WP_PARENT_ID}\` (\`${WP_PARENT_KEY}\`). None is a canonical identity; none is counted among the 353; structural resolution is \`PENDING_PHASE_1C\`.`, '',
-  '| Repo ID | Name | Disposition | Exact-ID references |', '| --- | --- | --- | --- |',
-  ...implementationDerivatives.map(r => `| \`${r.repoId}\` | ${esc(r.repoName)} | \`${D_DERIV}\` | ${r.dependencyStatus} (${r.exactIdReferenceCount}) |`), '');
-md.push('## 33 removals', '', 'Disposition `REMOVE_NONCANONICAL_FEAT_RECORD` for all; `replacementCanonicalId` is null for all (no automatic replacements).', '',
-  '| Repo ID | Name | Phase 0 classification | Dependency status | Production reference paths |', '| --- | --- | --- | --- | --- |',
-  ...removalSet.map(r => `| \`${r.repoId}\` | ${esc(r.repoName)} | \`${r.phase0Classification}\` | ${r.dependencyStatus} | ${r.productionReferencePaths.length ? r.productionReferencePaths.map(p => `\`${p}\``).join('<br>') : '—'} |`), '');
-md.push('Removal records with external exact-ID references must have those references removed or updated before deletion (`REMOVE_OR_UPDATE_REFERENCES_BEFORE_RECORD_DELETION`). References are not redirected.', '',
-  `Scan summary: ${dependencyScan.removalRecordsWithExternalReferences} of 33 removal records have exact-ID references outside the excluded paths (${dependencyScan.removalRecordsWithProductionReferences} with production-path references); ${dependencyScan.derivativeRecordsWithExternalReferences} of 6 derivatives have references (preserved as Phase 1C evidence, not rewritten). Production paths are all reference paths outside \`${NONPROD_PREFIXES.join('`, `')}\`.`, '');
+  `Parent: Weapon Proficiency, \`${WP_PARENT_ID}\` (\`${WP_PARENT_KEY}\`). None is a canonical identity; none is counted among the 353; structural resolution is \`PENDING_PHASE_1C\`. Their references are preserved as evidence (\`${FM_DERIV}\`) and not rewritten.`, '',
+  '| Repo ID | Name | Disposition | Exact-ID reference paths | Live runtime paths |', '| --- | --- | --- | --- | --- |',
+  ...implementationDerivatives.map(r => `| \`${r.repoId}\` | ${esc(r.repoName)} | \`${D_DERIV}\` | ${r.exactIdReferenceCount} | ${r.liveRuntimeReferencePaths.length ? r.liveRuntimeReferencePaths.map(p => `\`${p}\``).join('<br>') : '—'} |`), '');
+md.push('## 33 removals', '', 'Disposition `REMOVE_NONCANONICAL_FEAT_RECORD` for all; `replacementCanonicalId` is null for all (no automatic replacements). Dependency analysis tells a later execution phase what else must be cleaned; it does not change canonicality.', '',
+  '| Repo ID | Name | Phase 0 classification | Dependency status | Exact-ID paths | Live runtime path |', '| --- | --- | --- | --- | --- | --- |',
+  ...removalSet.map(r => `| \`${r.repoId}\` | ${esc(r.repoName)} | \`${r.phase0Classification}\` | \`${r.dependencyStatus}\` | ${r.exactIdReferenceCount} | ${r.liveRuntimeReferencePaths.length ? r.liveRuntimeReferencePaths.map(p => `\`${p}\``).join('<br>') : '—'} |`), '');
+md.push('## Dependency classification', '',
+  'Reference classes are owner-defined by exact path (not by directory): `LIVE_RUNTIME_AUTHORITY` = `data/feat-effects.json`, `data/class-archetypes.json`, `data/generated/class-feat-list-bindings.json`, `packs/heroic.db`, `packs/nonheroic.db`, `packs/npc.db`, `scripts/engine/progression/prerequisites/class-prereq-normalizer.js`; `DERIVED_REBUILD_ARTIFACT` = `data/feat_buckets_and_subbuckets.json`, `data/generated/feat-view-model.json`; `FIX_OR_MIGRATION_ARTIFACT` = `data/fixes/feat-view-model.json`; `ORPHAN_HISTORICAL_ARTIFACT` = `packs/feat-catalog.db`; `AUDIT_OR_DOCUMENTATION_REFERENCE` = `data/prestige-prerequisites-reference.json` (live prestige authority is `scripts/data/prestige-prerequisites.js`), `docs/`, `data/audits/`, Phase 0/1 audit builders. Classification is exact-path specific (e.g. `data/generated/class-feat-list-bindings.json` is live, `data/generated/feat-view-model.json` is derived). Any other path fails the build as `OTHER_REFERENCE_REQUIRES_REVIEW` (0 found).', '',
+  `- All ${dependencyScan.removalRecordsWithExactIdReferences} of the 33 removal records have exact-ID references somewhere in tracked repository artifacts.`,
+  `- ${dependencyScan.removalRecordsWithLiveRuntimeReferences} have exact-ID references in live runtime authorities (${dependencyScan.removalLiveReferencesByFile['data/feat-effects.json']} in \`data/feat-effects.json\`, ${dependencyScan.removalLiveReferencesByFile['data/class-archetypes.json']} in \`data/class-archetypes.json\`): \`${FM_REMEDIATE}\`.`,
+  `- ${dependencyScan.removalRecordsWithNoLiveRuntimeReference} have no live runtime exact-ID blocker: \`${FM_NO_BLOCKER}\`.`,
+  '- All 33 also occur in stale/derived/fix/orphan artifacts that require regeneration, cleanup, or historical handling during the later mutation phase; these are not deletion blockers and create no replacement requirement.',
+  '- `packs/feat-catalog.db` is orphaned and nonblocking. It MUST NOT block deletion of a noncanonical feat record, and it MUST NOT be regenerated as the production feat pack unless separately authorized. The live Foundry feat pack remains `packs/feats.db` as declared in `system.json`.', '',
+  '### Live-reference removal records (15)', '', '| Repo ID | Name | Live path |', '| --- | --- | --- |',
+  ...liveRemovals.map(r => `| \`${r.repoId}\` | ${esc(r.repoName)} | \`${r.liveRuntimeReferencePaths[0]}\` |`), '');
 md.push('## Domain guard', '',
   '- `NAME_ONLY_DOMAIN_GUARD_REJECTED`: no canonical feat decision may reject a record solely because another domain has the same normalized name.',
   '- Recall proves the failure: `scripts/data/feat-domain-guard.js` denies the name `recall` as a talent-only contaminant, yet the feat Recall (`c352f81dde5c9dff`, The Force Unleashed Campaign Guide p.35) is a certified canonical identity distinct from the Rebellion Era Campaign Guide talent.',
@@ -388,4 +527,4 @@ fs.writeFileSync(path.join(ROOT, OUT_JSON), jsonText);
 fs.writeFileSync(path.join(ROOT, OUT_MD), md.join('\n'));
 console.log(`PHASE 1B OK: 390 = ${acceptance.preserveCanonical} + ${acceptance.preserveDerivativesPending1C} + ${acceptance.removeNoncanonical}; ` +
   `additions ${REQUIRED_ADDITIONS.length}; projection ${interimProjection.interimProjectedProductionDocumentCountBefore1C}; ` +
-  `removals with refs ${dependencyScan.removalRecordsWithExternalReferences}/33.`);
+  `removals live-referenced ${dependencyScan.removalRecordsWithLiveRuntimeReferences}/33.`);

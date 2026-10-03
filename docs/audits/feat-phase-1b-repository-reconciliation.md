@@ -30,60 +30,86 @@ Two canonical identities are missing from production and are future additions, n
 
 ## Six implementation derivatives
 
-Parent: Weapon Proficiency, `ecc2471ac96ec2d4` (`feat::saga-edition-core-rulebook::p89::weapon-proficiency`). None is a canonical identity; none is counted among the 353; structural resolution is `PENDING_PHASE_1C`.
+Parent: Weapon Proficiency, `ecc2471ac96ec2d4` (`feat::saga-edition-core-rulebook::p89::weapon-proficiency`). None is a canonical identity; none is counted among the 353; structural resolution is `PENDING_PHASE_1C`. Their references are preserved as evidence (`PRESERVE_REFERENCES_PENDING_PHASE_1C`) and not rewritten.
 
-| Repo ID | Name | Disposition | Exact-ID references |
-| --- | --- | --- | --- |
-| `2d680cc46a7972da` | Weapon Proficiency (Simple Weapons) | `PRESERVE_IMPLEMENTATION_DERIVATIVE_PENDING_1C` | EXTERNAL_ID_REFERENCES_PRESENT (17) |
-| `765ff8a34e58acac` | Weapon Proficiency (Rifles) | `PRESERVE_IMPLEMENTATION_DERIVATIVE_PENDING_1C` | EXTERNAL_ID_REFERENCES_PRESENT (17) |
-| `8329a353aa3899be` | Weapon Proficiency (Heavy Weapons) | `PRESERVE_IMPLEMENTATION_DERIVATIVE_PENDING_1C` | EXTERNAL_ID_REFERENCES_PRESENT (18) |
-| `e5d361d01d1b44e4` | Weapon Proficiency (Pistols) | `PRESERVE_IMPLEMENTATION_DERIVATIVE_PENDING_1C` | EXTERNAL_ID_REFERENCES_PRESENT (19) |
-| `cf28ec45cabaff59` | Advanced Melee Weapon Proficiency | `PRESERVE_IMPLEMENTATION_DERIVATIVE_PENDING_1C` | EXTERNAL_ID_REFERENCES_PRESENT (17) |
-| `41a9ce755ecffb5b` | Heavy Weapon Proficiency | `PRESERVE_IMPLEMENTATION_DERIVATIVE_PENDING_1C` | EXTERNAL_ID_REFERENCES_PRESENT (14) |
+| Repo ID | Name | Disposition | Exact-ID reference paths | Live runtime paths |
+| --- | --- | --- | --- | --- |
+| `2d680cc46a7972da` | Weapon Proficiency (Simple Weapons) | `PRESERVE_IMPLEMENTATION_DERIVATIVE_PENDING_1C` | 17 | `data/feat-effects.json`<br>`data/generated/class-feat-list-bindings.json`<br>`packs/heroic.db`<br>`packs/nonheroic.db`<br>`packs/npc.db` |
+| `765ff8a34e58acac` | Weapon Proficiency (Rifles) | `PRESERVE_IMPLEMENTATION_DERIVATIVE_PENDING_1C` | 17 | `data/feat-effects.json`<br>`data/generated/class-feat-list-bindings.json`<br>`packs/heroic.db`<br>`packs/nonheroic.db`<br>`packs/npc.db` |
+| `8329a353aa3899be` | Weapon Proficiency (Heavy Weapons) | `PRESERVE_IMPLEMENTATION_DERIVATIVE_PENDING_1C` | 18 | `data/class-archetypes.json`<br>`data/feat-effects.json`<br>`data/generated/class-feat-list-bindings.json`<br>`packs/heroic.db`<br>`packs/nonheroic.db`<br>`packs/npc.db` |
+| `e5d361d01d1b44e4` | Weapon Proficiency (Pistols) | `PRESERVE_IMPLEMENTATION_DERIVATIVE_PENDING_1C` | 19 | `data/feat-effects.json`<br>`data/generated/class-feat-list-bindings.json`<br>`packs/heroic.db`<br>`packs/nonheroic.db`<br>`packs/npc.db`<br>`scripts/engine/progression/prerequisites/class-prereq-normalizer.js` |
+| `cf28ec45cabaff59` | Advanced Melee Weapon Proficiency | `PRESERVE_IMPLEMENTATION_DERIVATIVE_PENDING_1C` | 17 | `data/feat-effects.json`<br>`data/generated/class-feat-list-bindings.json`<br>`scripts/engine/progression/prerequisites/class-prereq-normalizer.js` |
+| `41a9ce755ecffb5b` | Heavy Weapon Proficiency | `PRESERVE_IMPLEMENTATION_DERIVATIVE_PENDING_1C` | 14 | `data/feat-effects.json` |
 
 ## 33 removals
 
-Disposition `REMOVE_NONCANONICAL_FEAT_RECORD` for all; `replacementCanonicalId` is null for all (no automatic replacements).
+Disposition `REMOVE_NONCANONICAL_FEAT_RECORD` for all; `replacementCanonicalId` is null for all (no automatic replacements). Dependency analysis tells a later execution phase what else must be cleaned; it does not change canonicality.
 
-| Repo ID | Name | Phase 0 classification | Dependency status | Production reference paths |
-| --- | --- | --- | --- | --- |
-| `02ac414f546a539a` | Forceful Strike | `NO_CANONICAL_SWSE_FEAT_DEFINITION_FOUND` | EXTERNAL_ID_REFERENCES_PRESENT | `data/feat_buckets_and_subbuckets.json`<br>`data/fixes/feat-view-model.json`<br>`data/generated/feat-view-model.json`<br>`packs/feat-catalog.db` |
-| `058de949e909d9ae` | Low Profile | `LEGACY_D20_FEAT_NO_SAGA_EQUIVALENT` | EXTERNAL_ID_REFERENCES_PRESENT | `data/feat_buckets_and_subbuckets.json`<br>`data/fixes/feat-view-model.json`<br>`data/generated/feat-view-model.json`<br>`packs/feat-catalog.db` |
-| `08dbd76457db101f` | Saber Throw | `WRONG_DOMAIN_NONCANONICAL_FEAT` | EXTERNAL_ID_REFERENCES_PRESENT | `data/feat_buckets_and_subbuckets.json`<br>`data/fixes/feat-view-model.json`<br>`data/generated/feat-view-model.json`<br>`packs/feat-catalog.db` |
-| `0c53cb8b7c29d865` | Stealthy | `LEGACY_D20_FEAT_NO_SAGA_EQUIVALENT` | EXTERNAL_ID_REFERENCES_PRESENT | `data/class-archetypes.json`<br>`data/feat_buckets_and_subbuckets.json`<br>`data/fixes/feat-view-model.json`<br>`data/generated/feat-view-model.json`<br>`packs/feat-catalog.db` |
-| `10a017a020aa4a9c` | Forceful Throw | `NO_CANONICAL_SWSE_FEAT_DEFINITION_FOUND` | EXTERNAL_ID_REFERENCES_PRESENT | `data/feat-effects.json`<br>`data/feat_buckets_and_subbuckets.json`<br>`data/fixes/feat-view-model.json`<br>`data/generated/feat-view-model.json`<br>`packs/feat-catalog.db` |
-| `17e317292814e13e` | Forceful Will | `NO_CANONICAL_SWSE_FEAT_DEFINITION_FOUND` | EXTERNAL_ID_REFERENCES_PRESENT | `data/feat-effects.json`<br>`data/feat_buckets_and_subbuckets.json`<br>`data/fixes/feat-view-model.json`<br>`data/generated/feat-view-model.json`<br>`packs/feat-catalog.db` |
-| `17f4a0850e94dc7d` | Reactive Awareness | `NO_CANONICAL_SWSE_FEAT_DEFINITION_FOUND` | EXTERNAL_ID_REFERENCES_PRESENT | `data/feat_buckets_and_subbuckets.json`<br>`data/fixes/feat-view-model.json`<br>`data/generated/feat-view-model.json`<br>`packs/feat-catalog.db` |
-| `2f2fa438a6fb54a0` | Triple Crit Specialist | `NO_CANONICAL_SWSE_FEAT_DEFINITION_FOUND` | EXTERNAL_ID_REFERENCES_PRESENT | `data/feat_buckets_and_subbuckets.json`<br>`data/fixes/feat-view-model.json`<br>`data/generated/feat-view-model.json`<br>`packs/feat-catalog.db` |
-| `37cb4455a70876ad` | Forceful Saber Throw | `NO_CANONICAL_SWSE_FEAT_DEFINITION_FOUND` | EXTERNAL_ID_REFERENCES_PRESENT | `data/feat-effects.json`<br>`data/feat_buckets_and_subbuckets.json`<br>`data/fixes/feat-view-model.json`<br>`data/generated/feat-view-model.json`<br>`packs/feat-catalog.db` |
-| `3cd647b126f1d171` | Reactive Stealth | `WRONG_DOMAIN_TALENT` | EXTERNAL_ID_REFERENCES_PRESENT | `data/feat_buckets_and_subbuckets.json`<br>`data/fixes/feat-view-model.json`<br>`data/generated/feat-view-model.json`<br>`packs/feat-catalog.db` |
-| `465434fb7b44aee1` | Forceful Grip | `NO_CANONICAL_SWSE_FEAT_DEFINITION_FOUND` | EXTERNAL_ID_REFERENCES_PRESENT | `data/feat-effects.json`<br>`data/feat_buckets_and_subbuckets.json`<br>`data/fixes/feat-view-model.json`<br>`data/generated/feat-view-model.json`<br>`packs/feat-catalog.db` |
-| `54d6201340a6757f` | Headstrong | `LEGACY_D20_FEAT_NO_SAGA_EQUIVALENT` | EXTERNAL_ID_REFERENCES_PRESENT | `data/feat_buckets_and_subbuckets.json`<br>`data/fixes/feat-view-model.json`<br>`data/generated/feat-view-model.json`<br>`packs/feat-catalog.db` |
-| `5824e2360feb505a` | Improved Grapple | `NO_CANONICAL_SWSE_FEAT_DEFINITION_FOUND` | EXTERNAL_ID_REFERENCES_PRESENT | `data/feat-effects.json`<br>`data/feat_buckets_and_subbuckets.json`<br>`data/fixes/feat-view-model.json`<br>`data/generated/feat-view-model.json`<br>`packs/feat-catalog.db` |
-| `647d77a8f5ab9af3` | Keen Force Mind | `NO_CANONICAL_SWSE_FEAT_DEFINITION_FOUND` | EXTERNAL_ID_REFERENCES_PRESENT | `data/feat-effects.json`<br>`data/feat_buckets_and_subbuckets.json`<br>`data/fixes/feat-view-model.json`<br>`data/generated/feat-view-model.json`<br>`packs/feat-catalog.db` |
-| `6673cd53493a9d6c` | Forceful Slam | `NO_CANONICAL_SWSE_FEAT_DEFINITION_FOUND` | EXTERNAL_ID_REFERENCES_PRESENT | `data/feat-effects.json`<br>`data/feat_buckets_and_subbuckets.json`<br>`data/fixes/feat-view-model.json`<br>`data/generated/feat-view-model.json`<br>`packs/feat-catalog.db` |
-| `6d8ce2807c579289` | Trustworthy | `LEGACY_D20_FEAT_NO_SAGA_EQUIVALENT` | EXTERNAL_ID_REFERENCES_PRESENT | `data/class-archetypes.json`<br>`data/feat_buckets_and_subbuckets.json`<br>`data/fixes/feat-view-model.json`<br>`data/generated/feat-view-model.json`<br>`packs/feat-catalog.db` |
-| `83abd1c384b58c3c` | Intimidating Presence | `NO_CANONICAL_SWSE_FEAT_DEFINITION_FOUND` | EXTERNAL_ID_REFERENCES_PRESENT | `data/feat_buckets_and_subbuckets.json`<br>`data/fixes/feat-view-model.json`<br>`data/generated/feat-view-model.json`<br>`packs/feat-catalog.db` |
-| `8566edcae3a2f18c` | Forceful Telekinesis | `NO_CANONICAL_SWSE_FEAT_DEFINITION_FOUND` | EXTERNAL_ID_REFERENCES_PRESENT | `data/feat_buckets_and_subbuckets.json`<br>`data/fixes/feat-view-model.json`<br>`data/generated/feat-view-model.json`<br>`packs/feat-catalog.db` |
-| `88cdedff38b610c0` | Two-Weapon Fighting | `LEGACY_D20_FEAT_NO_SAGA_EQUIVALENT` | EXTERNAL_ID_REFERENCES_PRESENT | `data/feat-effects.json`<br>`data/feat_buckets_and_subbuckets.json`<br>`data/fixes/feat-view-model.json`<br>`data/generated/feat-view-model.json`<br>`packs/feat-catalog.db` |
-| `9768963c7a36237d` | Fast Talk | `NO_CANONICAL_SWSE_FEAT_DEFINITION_FOUND` | EXTERNAL_ID_REFERENCES_PRESENT | `data/feat_buckets_and_subbuckets.json`<br>`data/fixes/feat-view-model.json`<br>`data/generated/feat-view-model.json`<br>`packs/feat-catalog.db` |
-| `9a89576b3cc1347e` | Great Fortitude | `LEGACY_D20_FEAT_NO_SAGA_EQUIVALENT` | EXTERNAL_ID_REFERENCES_PRESENT | `data/feat-effects.json`<br>`data/feat_buckets_and_subbuckets.json`<br>`data/fixes/feat-view-model.json`<br>`data/generated/feat-view-model.json`<br>`packs/feat-catalog.db` |
-| `ae5c34d352d6dff7` | Intuitive Initiative | `WRONG_DOMAIN_SPECIES_TRAIT` | EXTERNAL_ID_REFERENCES_PRESENT | `data/feat_buckets_and_subbuckets.json`<br>`data/fixes/feat-view-model.json`<br>`data/generated/feat-view-model.json`<br>`packs/feat-catalog.db` |
-| `b2296a4d5cef8a61` | Frightful Presence | `LEGACY_D20_FEAT_NO_SAGA_EQUIVALENT` | EXTERNAL_ID_REFERENCES_PRESENT | `data/feat_buckets_and_subbuckets.json`<br>`data/fixes/feat-view-model.json`<br>`data/generated/feat-view-model.json`<br>`packs/feat-catalog.db` |
-| `bee76d01da40677d` | Lightning Reflexes | `LEGACY_D20_FEAT_NO_SAGA_EQUIVALENT` | EXTERNAL_ID_REFERENCES_PRESENT | `data/feat-effects.json`<br>`data/feat_buckets_and_subbuckets.json`<br>`data/fixes/feat-view-model.json`<br>`data/generated/feat-view-model.json`<br>`packs/feat-catalog.db` |
-| `d612e7a708edf75b` | Frightening Presence | `NO_CANONICAL_SWSE_FEAT_DEFINITION_FOUND` | EXTERNAL_ID_REFERENCES_PRESENT | `data/feat_buckets_and_subbuckets.json`<br>`data/fixes/feat-view-model.json`<br>`data/generated/feat-view-model.json`<br>`packs/feat-catalog.db` |
-| `db564cc6f9879ec8` | Forceful Weapon | `NO_CANONICAL_SWSE_FEAT_DEFINITION_FOUND` | EXTERNAL_ID_REFERENCES_PRESENT | `data/feat-effects.json`<br>`data/feat_buckets_and_subbuckets.json`<br>`data/fixes/feat-view-model.json`<br>`data/generated/feat-view-model.json`<br>`packs/feat-catalog.db` |
-| `e5ab9392378400ec` | Resilient Reflexes | `NO_CANONICAL_SWSE_FEAT_DEFINITION_FOUND` | EXTERNAL_ID_REFERENCES_PRESENT | `data/feat_buckets_and_subbuckets.json`<br>`data/fixes/feat-view-model.json`<br>`data/generated/feat-view-model.json`<br>`packs/feat-catalog.db` |
-| `e99d9284a73cf505` | Conditioned | `NO_CANONICAL_SWSE_FEAT_DEFINITION_FOUND` | EXTERNAL_ID_REFERENCES_PRESENT | `data/feat_buckets_and_subbuckets.json`<br>`data/fixes/feat-view-model.json`<br>`data/generated/feat-view-model.json`<br>`packs/feat-catalog.db` |
-| `eb33f5e4b5f6318c` | Surgical Precision | `NO_CANONICAL_SWSE_FEAT_DEFINITION_FOUND` | EXTERNAL_ID_REFERENCES_PRESENT | `data/feat_buckets_and_subbuckets.json`<br>`data/fixes/feat-view-model.json`<br>`data/generated/feat-view-model.json`<br>`packs/feat-catalog.db` |
-| `f82323ee06f59735` | Resilient Will | `NO_CANONICAL_SWSE_FEAT_DEFINITION_FOUND` | EXTERNAL_ID_REFERENCES_PRESENT | `data/feat_buckets_and_subbuckets.json`<br>`data/fixes/feat-view-model.json`<br>`data/generated/feat-view-model.json`<br>`packs/feat-catalog.db` |
-| `fda012e3b2b1e55f` | Resilient Talent | `NO_CANONICAL_SWSE_FEAT_DEFINITION_FOUND` | EXTERNAL_ID_REFERENCES_PRESENT | `data/feat_buckets_and_subbuckets.json`<br>`data/fixes/feat-view-model.json`<br>`data/generated/feat-view-model.json`<br>`packs/feat-catalog.db` |
-| `ff76bea42641ca5b` | Forceful Stun | `NO_CANONICAL_SWSE_FEAT_DEFINITION_FOUND` | EXTERNAL_ID_REFERENCES_PRESENT | `data/feat-effects.json`<br>`data/feat_buckets_and_subbuckets.json`<br>`data/fixes/feat-view-model.json`<br>`data/generated/feat-view-model.json`<br>`packs/feat-catalog.db` |
-| `ffd5fecab0550bb6` | Forceful Vitality | `NO_CANONICAL_SWSE_FEAT_DEFINITION_FOUND` | EXTERNAL_ID_REFERENCES_PRESENT | `data/feat-effects.json`<br>`data/feat_buckets_and_subbuckets.json`<br>`data/fixes/feat-view-model.json`<br>`data/generated/feat-view-model.json`<br>`packs/feat-catalog.db` |
+| Repo ID | Name | Phase 0 classification | Dependency status | Exact-ID paths | Live runtime path |
+| --- | --- | --- | --- | --- | --- |
+| `02ac414f546a539a` | Forceful Strike | `NO_CANONICAL_SWSE_FEAT_DEFINITION_FOUND` | `NO_LIVE_RUNTIME_REFERENCE` | 12 | — |
+| `058de949e909d9ae` | Low Profile | `LEGACY_D20_FEAT_NO_SAGA_EQUIVALENT` | `NO_LIVE_RUNTIME_REFERENCE` | 12 | — |
+| `08dbd76457db101f` | Saber Throw | `WRONG_DOMAIN_NONCANONICAL_FEAT` | `NO_LIVE_RUNTIME_REFERENCE` | 11 | — |
+| `0c53cb8b7c29d865` | Stealthy | `LEGACY_D20_FEAT_NO_SAGA_EQUIVALENT` | `LIVE_RUNTIME_REFERENCE_PRESENT` | 13 | `data/class-archetypes.json` |
+| `10a017a020aa4a9c` | Forceful Throw | `NO_CANONICAL_SWSE_FEAT_DEFINITION_FOUND` | `LIVE_RUNTIME_REFERENCE_PRESENT` | 13 | `data/feat-effects.json` |
+| `17e317292814e13e` | Forceful Will | `NO_CANONICAL_SWSE_FEAT_DEFINITION_FOUND` | `LIVE_RUNTIME_REFERENCE_PRESENT` | 12 | `data/feat-effects.json` |
+| `17f4a0850e94dc7d` | Reactive Awareness | `NO_CANONICAL_SWSE_FEAT_DEFINITION_FOUND` | `NO_LIVE_RUNTIME_REFERENCE` | 11 | — |
+| `2f2fa438a6fb54a0` | Triple Crit Specialist | `NO_CANONICAL_SWSE_FEAT_DEFINITION_FOUND` | `NO_LIVE_RUNTIME_REFERENCE` | 13 | — |
+| `37cb4455a70876ad` | Forceful Saber Throw | `NO_CANONICAL_SWSE_FEAT_DEFINITION_FOUND` | `LIVE_RUNTIME_REFERENCE_PRESENT` | 12 | `data/feat-effects.json` |
+| `3cd647b126f1d171` | Reactive Stealth | `WRONG_DOMAIN_TALENT` | `NO_LIVE_RUNTIME_REFERENCE` | 11 | — |
+| `465434fb7b44aee1` | Forceful Grip | `NO_CANONICAL_SWSE_FEAT_DEFINITION_FOUND` | `LIVE_RUNTIME_REFERENCE_PRESENT` | 12 | `data/feat-effects.json` |
+| `54d6201340a6757f` | Headstrong | `LEGACY_D20_FEAT_NO_SAGA_EQUIVALENT` | `NO_LIVE_RUNTIME_REFERENCE` | 12 | — |
+| `5824e2360feb505a` | Improved Grapple | `NO_CANONICAL_SWSE_FEAT_DEFINITION_FOUND` | `LIVE_RUNTIME_REFERENCE_PRESENT` | 13 | `data/feat-effects.json` |
+| `647d77a8f5ab9af3` | Keen Force Mind | `NO_CANONICAL_SWSE_FEAT_DEFINITION_FOUND` | `LIVE_RUNTIME_REFERENCE_PRESENT` | 12 | `data/feat-effects.json` |
+| `6673cd53493a9d6c` | Forceful Slam | `NO_CANONICAL_SWSE_FEAT_DEFINITION_FOUND` | `LIVE_RUNTIME_REFERENCE_PRESENT` | 12 | `data/feat-effects.json` |
+| `6d8ce2807c579289` | Trustworthy | `LEGACY_D20_FEAT_NO_SAGA_EQUIVALENT` | `LIVE_RUNTIME_REFERENCE_PRESENT` | 13 | `data/class-archetypes.json` |
+| `83abd1c384b58c3c` | Intimidating Presence | `NO_CANONICAL_SWSE_FEAT_DEFINITION_FOUND` | `NO_LIVE_RUNTIME_REFERENCE` | 12 | — |
+| `8566edcae3a2f18c` | Forceful Telekinesis | `NO_CANONICAL_SWSE_FEAT_DEFINITION_FOUND` | `NO_LIVE_RUNTIME_REFERENCE` | 11 | — |
+| `88cdedff38b610c0` | Two-Weapon Fighting | `LEGACY_D20_FEAT_NO_SAGA_EQUIVALENT` | `LIVE_RUNTIME_REFERENCE_PRESENT` | 13 | `data/feat-effects.json` |
+| `9768963c7a36237d` | Fast Talk | `NO_CANONICAL_SWSE_FEAT_DEFINITION_FOUND` | `NO_LIVE_RUNTIME_REFERENCE` | 12 | — |
+| `9a89576b3cc1347e` | Great Fortitude | `LEGACY_D20_FEAT_NO_SAGA_EQUIVALENT` | `LIVE_RUNTIME_REFERENCE_PRESENT` | 14 | `data/feat-effects.json` |
+| `ae5c34d352d6dff7` | Intuitive Initiative | `WRONG_DOMAIN_SPECIES_TRAIT` | `NO_LIVE_RUNTIME_REFERENCE` | 11 | — |
+| `b2296a4d5cef8a61` | Frightful Presence | `LEGACY_D20_FEAT_NO_SAGA_EQUIVALENT` | `NO_LIVE_RUNTIME_REFERENCE` | 12 | — |
+| `bee76d01da40677d` | Lightning Reflexes | `LEGACY_D20_FEAT_NO_SAGA_EQUIVALENT` | `LIVE_RUNTIME_REFERENCE_PRESENT` | 13 | `data/feat-effects.json` |
+| `d612e7a708edf75b` | Frightening Presence | `NO_CANONICAL_SWSE_FEAT_DEFINITION_FOUND` | `NO_LIVE_RUNTIME_REFERENCE` | 14 | — |
+| `db564cc6f9879ec8` | Forceful Weapon | `NO_CANONICAL_SWSE_FEAT_DEFINITION_FOUND` | `LIVE_RUNTIME_REFERENCE_PRESENT` | 12 | `data/feat-effects.json` |
+| `e5ab9392378400ec` | Resilient Reflexes | `NO_CANONICAL_SWSE_FEAT_DEFINITION_FOUND` | `NO_LIVE_RUNTIME_REFERENCE` | 11 | — |
+| `e99d9284a73cf505` | Conditioned | `NO_CANONICAL_SWSE_FEAT_DEFINITION_FOUND` | `NO_LIVE_RUNTIME_REFERENCE` | 12 | — |
+| `eb33f5e4b5f6318c` | Surgical Precision | `NO_CANONICAL_SWSE_FEAT_DEFINITION_FOUND` | `NO_LIVE_RUNTIME_REFERENCE` | 12 | — |
+| `f82323ee06f59735` | Resilient Will | `NO_CANONICAL_SWSE_FEAT_DEFINITION_FOUND` | `NO_LIVE_RUNTIME_REFERENCE` | 11 | — |
+| `fda012e3b2b1e55f` | Resilient Talent | `NO_CANONICAL_SWSE_FEAT_DEFINITION_FOUND` | `NO_LIVE_RUNTIME_REFERENCE` | 11 | — |
+| `ff76bea42641ca5b` | Forceful Stun | `NO_CANONICAL_SWSE_FEAT_DEFINITION_FOUND` | `LIVE_RUNTIME_REFERENCE_PRESENT` | 13 | `data/feat-effects.json` |
+| `ffd5fecab0550bb6` | Forceful Vitality | `NO_CANONICAL_SWSE_FEAT_DEFINITION_FOUND` | `LIVE_RUNTIME_REFERENCE_PRESENT` | 13 | `data/feat-effects.json` |
 
-Removal records with external exact-ID references must have those references removed or updated before deletion (`REMOVE_OR_UPDATE_REFERENCES_BEFORE_RECORD_DELETION`). References are not redirected.
+## Dependency classification
 
-Scan summary: 33 of 33 removal records have exact-ID references outside the excluded paths (33 with production-path references); 6 of 6 derivatives have references (preserved as Phase 1C evidence, not rewritten). Production paths are all reference paths outside `docs/`, `data/audits/`, `tools/`.
+Reference classes are owner-defined by exact path (not by directory): `LIVE_RUNTIME_AUTHORITY` = `data/feat-effects.json`, `data/class-archetypes.json`, `data/generated/class-feat-list-bindings.json`, `packs/heroic.db`, `packs/nonheroic.db`, `packs/npc.db`, `scripts/engine/progression/prerequisites/class-prereq-normalizer.js`; `DERIVED_REBUILD_ARTIFACT` = `data/feat_buckets_and_subbuckets.json`, `data/generated/feat-view-model.json`; `FIX_OR_MIGRATION_ARTIFACT` = `data/fixes/feat-view-model.json`; `ORPHAN_HISTORICAL_ARTIFACT` = `packs/feat-catalog.db`; `AUDIT_OR_DOCUMENTATION_REFERENCE` = `data/prestige-prerequisites-reference.json` (live prestige authority is `scripts/data/prestige-prerequisites.js`), `docs/`, `data/audits/`, Phase 0/1 audit builders. Classification is exact-path specific (e.g. `data/generated/class-feat-list-bindings.json` is live, `data/generated/feat-view-model.json` is derived). Any other path fails the build as `OTHER_REFERENCE_REQUIRES_REVIEW` (0 found).
+
+- All 33 of the 33 removal records have exact-ID references somewhere in tracked repository artifacts.
+- 15 have exact-ID references in live runtime authorities (13 in `data/feat-effects.json`, 2 in `data/class-archetypes.json`): `REMEDIATE_LIVE_REFERENCES_BEFORE_RECORD_DELETION`.
+- 18 have no live runtime exact-ID blocker: `NO_LIVE_REFERENCE_BLOCKER_REFRESH_DERIVED_ARTIFACTS_DURING_MUTATION`.
+- All 33 also occur in stale/derived/fix/orphan artifacts that require regeneration, cleanup, or historical handling during the later mutation phase; these are not deletion blockers and create no replacement requirement.
+- `packs/feat-catalog.db` is orphaned and nonblocking. It MUST NOT block deletion of a noncanonical feat record, and it MUST NOT be regenerated as the production feat pack unless separately authorized. The live Foundry feat pack remains `packs/feats.db` as declared in `system.json`.
+
+### Live-reference removal records (15)
+
+| Repo ID | Name | Live path |
+| --- | --- | --- |
+| `0c53cb8b7c29d865` | Stealthy | `data/class-archetypes.json` |
+| `10a017a020aa4a9c` | Forceful Throw | `data/feat-effects.json` |
+| `17e317292814e13e` | Forceful Will | `data/feat-effects.json` |
+| `37cb4455a70876ad` | Forceful Saber Throw | `data/feat-effects.json` |
+| `465434fb7b44aee1` | Forceful Grip | `data/feat-effects.json` |
+| `5824e2360feb505a` | Improved Grapple | `data/feat-effects.json` |
+| `647d77a8f5ab9af3` | Keen Force Mind | `data/feat-effects.json` |
+| `6673cd53493a9d6c` | Forceful Slam | `data/feat-effects.json` |
+| `6d8ce2807c579289` | Trustworthy | `data/class-archetypes.json` |
+| `88cdedff38b610c0` | Two-Weapon Fighting | `data/feat-effects.json` |
+| `9a89576b3cc1347e` | Great Fortitude | `data/feat-effects.json` |
+| `bee76d01da40677d` | Lightning Reflexes | `data/feat-effects.json` |
+| `db564cc6f9879ec8` | Forceful Weapon | `data/feat-effects.json` |
+| `ff76bea42641ca5b` | Forceful Stun | `data/feat-effects.json` |
+| `ffd5fecab0550bb6` | Forceful Vitality | `data/feat-effects.json` |
 
 ## Domain guard
 
@@ -118,6 +144,13 @@ Scan summary: 33 of 33 removal records have exact-ID references outside the excl
 | interimProjectedProductionDocumentCountBefore1C | 359 |
 | finalProductionDocumentCount | null |
 | nameOnlyDomainGuardStatus | NAME_ONLY_DOMAIN_GUARD_REJECTED |
+| removalLiveRuntimeReferences | 15 |
+| removalNoLiveRuntimeReferences | 18 |
+| featEffectsLiveReferenceRemovals | 13 |
+| classArchetypesLiveReferenceRemovals | 2 |
+| otherReferenceRequiresReviewPaths | 0 |
+| derivativeLiveRuntimeReferences | 6 |
+| derivativeNoLiveRuntimeReferences | 0 |
 | recallCrossDomainCollisionRetained | true |
 | autofireAssaultCrossDomainCollisionRetained | true |
 | productionMutated | false |
