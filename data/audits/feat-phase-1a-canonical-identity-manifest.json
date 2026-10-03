@@ -167,13 +167,14 @@
       "crossDomainCollision": null,
       "structure": {
         "familyKey": "armor-proficiency",
-        "tier": null,
+        "tier": 3,
         "selectionModel": null,
         "scopeType": null,
         "repeatable": null,
-        "structuralStatus": "PHASE0_CERTIFIED_PARTIAL",
+        "structuralStatus": "PHASE0_CERTIFIED",
         "certifiedFields": [
-          "familyKey"
+          "familyKey",
+          "tier"
         ]
       }
     },
@@ -203,13 +204,14 @@
       "crossDomainCollision": null,
       "structure": {
         "familyKey": "armor-proficiency",
-        "tier": null,
+        "tier": 1,
         "selectionModel": null,
         "scopeType": null,
         "repeatable": null,
-        "structuralStatus": "PHASE0_CERTIFIED_PARTIAL",
+        "structuralStatus": "PHASE0_CERTIFIED",
         "certifiedFields": [
-          "familyKey"
+          "familyKey",
+          "tier"
         ]
       }
     },
@@ -239,13 +241,14 @@
       "crossDomainCollision": null,
       "structure": {
         "familyKey": "armor-proficiency",
-        "tier": null,
+        "tier": 2,
         "selectionModel": null,
         "scopeType": null,
         "repeatable": null,
-        "structuralStatus": "PHASE0_CERTIFIED_PARTIAL",
+        "structuralStatus": "PHASE0_CERTIFIED",
         "certifiedFields": [
-          "familyKey"
+          "familyKey",
+          "tier"
         ]
       }
     },
@@ -717,13 +720,14 @@
       "crossDomainCollision": null,
       "structure": {
         "familyKey": "dual-weapon-mastery",
-        "tier": null,
+        "tier": 1,
         "selectionModel": null,
         "scopeType": null,
         "repeatable": null,
-        "structuralStatus": "PHASE0_CERTIFIED_PARTIAL",
+        "structuralStatus": "PHASE0_CERTIFIED",
         "certifiedFields": [
-          "familyKey"
+          "familyKey",
+          "tier"
         ]
       }
     },
@@ -753,13 +757,14 @@
       "crossDomainCollision": null,
       "structure": {
         "familyKey": "dual-weapon-mastery",
-        "tier": null,
+        "tier": 2,
         "selectionModel": null,
         "scopeType": null,
         "repeatable": null,
-        "structuralStatus": "PHASE0_CERTIFIED_PARTIAL",
+        "structuralStatus": "PHASE0_CERTIFIED",
         "certifiedFields": [
-          "familyKey"
+          "familyKey",
+          "tier"
         ]
       }
     },
@@ -789,13 +794,14 @@
       "crossDomainCollision": null,
       "structure": {
         "familyKey": "dual-weapon-mastery",
-        "tier": null,
+        "tier": 3,
         "selectionModel": null,
         "scopeType": null,
         "repeatable": null,
-        "structuralStatus": "PHASE0_CERTIFIED_PARTIAL",
+        "structuralStatus": "PHASE0_CERTIFIED",
         "certifiedFields": [
-          "familyKey"
+          "familyKey",
+          "tier"
         ]
       }
     },
@@ -1267,13 +1273,14 @@
       "crossDomainCollision": null,
       "structure": {
         "familyKey": "martial-arts",
-        "tier": null,
+        "tier": 1,
         "selectionModel": null,
         "scopeType": null,
         "repeatable": null,
-        "structuralStatus": "PHASE0_CERTIFIED_PARTIAL",
+        "structuralStatus": "PHASE0_CERTIFIED",
         "certifiedFields": [
-          "familyKey"
+          "familyKey",
+          "tier"
         ]
       }
     },
@@ -1303,13 +1310,14 @@
       "crossDomainCollision": null,
       "structure": {
         "familyKey": "martial-arts",
-        "tier": null,
+        "tier": 2,
         "selectionModel": null,
         "scopeType": null,
         "repeatable": null,
-        "structuralStatus": "PHASE0_CERTIFIED_PARTIAL",
+        "structuralStatus": "PHASE0_CERTIFIED",
         "certifiedFields": [
-          "familyKey"
+          "familyKey",
+          "tier"
         ]
       }
     },
@@ -1339,13 +1347,14 @@
       "crossDomainCollision": null,
       "structure": {
         "familyKey": "martial-arts",
-        "tier": null,
+        "tier": 3,
         "selectionModel": null,
         "scopeType": null,
         "repeatable": null,
-        "structuralStatus": "PHASE0_CERTIFIED_PARTIAL",
+        "structuralStatus": "PHASE0_CERTIFIED",
         "certifiedFields": [
-          "familyKey"
+          "familyKey",
+          "tier"
         ]
       }
     },
@@ -12172,6 +12181,9 @@
     "productionCatalogRecordCount": 390,
     "outsideCorpusRecordsUntouched": 39,
     "productionMutated": false,
+    "structuralPhase0Certified": 9,
+    "structuralPendingPhase1C": 344,
+    "unauthorizedStructuralStatuses": 0,
     "allGatesPassed": true
   }
 }

@@ -44,7 +44,7 @@ Pins the 353 frozen Phase 0 canonical feat identities to stable canonical IDs an
 
 ## Structural fields
 
-Family, tier, selection model, scope, and repeatable fields are not completed here. Only Phase 0-certified family membership is carried (9 records: Armor Proficiency, Dual Weapon Mastery, Martial Arts members; `PHASE0_CERTIFIED_PARTIAL`, `familyKey` only). All other fields are null with `PENDING_PHASE_1C`. Scope/tier/family completion remains Phase 1C.
+Family, tier, selection model, scope, and repeatable fields are not completed here. Only the 9 identities in the three Phase 0-certified tier families (Armor Proficiency, Dual Weapon Mastery, Martial Arts) carry `familyKey` and numeric `tier` (owner-authorized mapping, status `PHASE0_CERTIFIED`, `certifiedFields` = `familyKey`, `tier`). Their `selectionModel`, `scopeType`, and `repeatable` remain null. The other 344 records are `PENDING_PHASE_1C` with all structural fields null. Scope/tier/family completion remains Phase 1C.
 
 ## Acceptance
 
@@ -67,6 +67,9 @@ Family, tier, selection model, scope, and repeatable fields are not completed he
 | productionCatalogRecordCount | 390 |
 | outsideCorpusRecordsUntouched | 39 |
 | productionMutated | false |
+| structuralPhase0Certified | 9 |
+| structuralPendingPhase1C | 344 |
+| unauthorizedStructuralStatuses | 0 |
 | allGatesPassed | true |
 
 ## Production
@@ -78,9 +81,9 @@ Production was not mutated: no feat records were created, deleted, renamed, re-I
 | canonicalId | Name | Identity key | Repo mapping | Notes |
 | --- | --- | --- | --- | --- |
 | `419a502e59264382` | Acrobatic Strike | `feat::saga-edition-core-rulebook::p82::acrobatic-strike` | existing |  |
-| `859d6b9f49118499` | Armor Proficiency (Heavy) | `feat::saga-edition-core-rulebook::p82::armor-proficiency-heavy` | existing | family: armor-proficiency |
-| `773ec00effc7e96f` | Armor Proficiency (Light) | `feat::saga-edition-core-rulebook::p82::armor-proficiency-light` | existing | family: armor-proficiency |
-| `d445051370a88a7f` | Armor Proficiency (Medium) | `feat::saga-edition-core-rulebook::p82::armor-proficiency-medium` | existing | family: armor-proficiency |
+| `859d6b9f49118499` | Armor Proficiency (Heavy) | `feat::saga-edition-core-rulebook::p82::armor-proficiency-heavy` | existing | family: armor-proficiency tier 3 |
+| `773ec00effc7e96f` | Armor Proficiency (Light) | `feat::saga-edition-core-rulebook::p82::armor-proficiency-light` | existing | family: armor-proficiency tier 1 |
+| `d445051370a88a7f` | Armor Proficiency (Medium) | `feat::saga-edition-core-rulebook::p82::armor-proficiency-medium` | existing | family: armor-proficiency tier 2 |
 | `fc1e5f0a2367debb` | Bantha Rush | `feat::saga-edition-core-rulebook::p82::bantha-rush` | existing |  |
 | `0d4d7c147c48cdab` | Burst Fire | `feat::saga-edition-core-rulebook::p82::burst-fire` | existing |  |
 | `62fdf44c56b24507` | Careful Shot | `feat::saga-edition-core-rulebook::p82::careful-shot` | existing |  |
@@ -94,9 +97,9 @@ Production was not mutated: no feat records were created, deleted, renamed, re-I
 | `45366d4f3a5e443d` | Dodge | `feat::saga-edition-core-rulebook::p84::dodge` | existing |  |
 | `357807a5ceb77203` | Double Attack | `feat::saga-edition-core-rulebook::p84::double-attack` | existing |  |
 | `9244159a233a101a` | Dreadful Rage | `feat::saga-edition-core-rulebook::p84::dreadful-rage` | existing |  |
-| `84d8866a57381620` | Dual Weapon Mastery I | `feat::saga-edition-core-rulebook::p84::dual-weapon-mastery-i` | existing | family: dual-weapon-mastery |
-| `c7c99a77ebee1c0c` | Dual Weapon Mastery II | `feat::saga-edition-core-rulebook::p84::dual-weapon-mastery-ii` | existing | family: dual-weapon-mastery |
-| `ea684defcd3222ca` | Dual Weapon Mastery III | `feat::saga-edition-core-rulebook::p84::dual-weapon-mastery-iii` | existing | family: dual-weapon-mastery |
+| `84d8866a57381620` | Dual Weapon Mastery I | `feat::saga-edition-core-rulebook::p84::dual-weapon-mastery-i` | existing | family: dual-weapon-mastery tier 1 |
+| `c7c99a77ebee1c0c` | Dual Weapon Mastery II | `feat::saga-edition-core-rulebook::p84::dual-weapon-mastery-ii` | existing | family: dual-weapon-mastery tier 2 |
+| `ea684defcd3222ca` | Dual Weapon Mastery III | `feat::saga-edition-core-rulebook::p84::dual-weapon-mastery-iii` | existing | family: dual-weapon-mastery tier 3 |
 | `1ea7da65feb15b18` | Exotic Weapon Proficiency | `feat::saga-edition-core-rulebook::p84::exotic-weapon-proficiency` | existing |  |
 | `c01f64239af7705d` | Extra Rage | `feat::saga-edition-core-rulebook::p85::extra-rage` | existing |  |
 | `4e57ee834c301ad8` | Extra Second Wind | `feat::saga-edition-core-rulebook::p85::extra-second-wind` | existing |  |
@@ -110,9 +113,9 @@ Production was not mutated: no feat records were created, deleted, renamed, re-I
 | `ce473e52f90b160a` | Improved Disarm | `feat::saga-edition-core-rulebook::p85::improved-disarm` | existing |  |
 | `96666de28ba99b64` | Improved Damage Threshold | `feat::saga-edition-core-rulebook::p86::improved-damage-threshold` | existing |  |
 | `5afd91fb081e576b` | Linguist | `feat::saga-edition-core-rulebook::p86::linguist` | existing |  |
-| `92f927c92ded9fcf` | Martial Arts I | `feat::saga-edition-core-rulebook::p86::martial-arts-i` | existing | family: martial-arts |
-| `5bedd71f0eead6b9` | Martial Arts II | `feat::saga-edition-core-rulebook::p86::martial-arts-ii` | existing | family: martial-arts |
-| `97dbebe63aa6af79` | Martial Arts III | `feat::saga-edition-core-rulebook::p86::martial-arts-iii` | existing | family: martial-arts |
+| `92f927c92ded9fcf` | Martial Arts I | `feat::saga-edition-core-rulebook::p86::martial-arts-i` | existing | family: martial-arts tier 1 |
+| `5bedd71f0eead6b9` | Martial Arts II | `feat::saga-edition-core-rulebook::p86::martial-arts-ii` | existing | family: martial-arts tier 2 |
+| `97dbebe63aa6af79` | Martial Arts III | `feat::saga-edition-core-rulebook::p86::martial-arts-iii` | existing | family: martial-arts tier 3 |
 | `3a847230d573a623` | Melee Defense | `feat::saga-edition-core-rulebook::p86::melee-defense` | existing |  |
 | `dd2c0e394cdf08ba` | Mighty Swing | `feat::saga-edition-core-rulebook::p86::mighty-swing` | existing |  |
 | `ff8eaa4e2f6d1cf1` | Mobility | `feat::saga-edition-core-rulebook::p86::mobility` | existing |  |

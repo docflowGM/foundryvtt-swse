@@ -221,16 +221,35 @@ const echani = identities.find(i => i.name === 'Echani Training');
 assert(tech.book === 'Saga Edition Web Enhancement 1: The Tech Specialist' && tech.reprints[0].sourceKey === 'starships-of-the-galaxy' && tech.reprints[0].page === 21, 'Tech Specialist primary/reprint mismatch');
 assert(echani.identityKey === 'feat::knights-of-the-old-republic-campaign-guide::p33::echani-training' && echani.reprints[0].sourceKey === 'galaxy-at-war' && echani.reprints[0].page === 26, 'Echani Training primary/reprint mismatch');
 
-const familyOf = new Map();
+// Owner-authorized structural mapping (Phase 1A correction). Hard-coded; never inferred from names.
+const OWNER_TIERS = {
+  'Armor Proficiency (Light)': { familyKey: 'armor-proficiency', tier: 1 },
+  'Armor Proficiency (Medium)': { familyKey: 'armor-proficiency', tier: 2 },
+  'Armor Proficiency (Heavy)': { familyKey: 'armor-proficiency', tier: 3 },
+  'Dual Weapon Mastery I': { familyKey: 'dual-weapon-mastery', tier: 1 },
+  'Dual Weapon Mastery II': { familyKey: 'dual-weapon-mastery', tier: 2 },
+  'Dual Weapon Mastery III': { familyKey: 'dual-weapon-mastery', tier: 3 },
+  'Martial Arts I': { familyKey: 'martial-arts', tier: 1 },
+  'Martial Arts II': { familyKey: 'martial-arts', tier: 2 },
+  'Martial Arts III': { familyKey: 'martial-arts', tier: 3 }
+};
+const STRUCTURAL_STATUSES = ['PHASE0_CERTIFIED', 'PENDING_PHASE_1C'];
+// Cross-check: the Phase 0 certified tier families must contain exactly these 9 members.
+const p0Members = [];
 for (const f of sub['0A'].structuralFamilies.tieredPrintedFamilies) {
   assert(CERTIFIED_FAMILIES.includes(f.family), `unexpected certified family ${f.family}`);
   for (const m of f.members) {
-    const i = identities.find(x => x.name === m);
-    assert(i, `certified family member not an identity: ${m}`);
-    familyOf.set(i, normalizeName(f.family));
+    assert(OWNER_TIERS[m] && OWNER_TIERS[m].familyKey === normalizeName(f.family), `Phase 0 family member ${m} not in owner tier mapping`);
+    p0Members.push(m);
   }
 }
-assert(familyOf.size === 9, `certified family members ${familyOf.size} != 9`);
+assert(p0Members.length === 9 && Object.keys(OWNER_TIERS).every(k => p0Members.includes(k)), 'Phase 0 certified family members differ from owner tier mapping');
+const tierOf = new Map();
+for (const [name, v] of Object.entries(OWNER_TIERS)) {
+  const hits = identities.filter(x => x.name === name);
+  assert(hits.length === 1, `owner-tier identity ${name} matched ${hits.length} identities`);
+  tierOf.set(hits[0], v);
+}
 
 // ---------- Records ----------
 const records = identities.map(i => ({
@@ -253,8 +272,8 @@ const records = identities.map(i => ({
   sameNameCollisionGroup: i.sameNameCollisionGroup || null,
   sameNameCollisionType: i.sameNameCollisionType || null,
   crossDomainCollision: i.crossDomainCollision || null,
-  structure: familyOf.has(i)
-    ? { familyKey: familyOf.get(i), tier: null, selectionModel: null, scopeType: null, repeatable: null, structuralStatus: 'PHASE0_CERTIFIED_PARTIAL', certifiedFields: ['familyKey'] }
+  structure: tierOf.has(i)
+    ? { familyKey: tierOf.get(i).familyKey, tier: tierOf.get(i).tier, selectionModel: null, scopeType: null, repeatable: null, structuralStatus: 'PHASE0_CERTIFIED', certifiedFields: ['familyKey', 'tier'] }
     : { familyKey: null, tier: null, selectionModel: null, scopeType: null, repeatable: null, structuralStatus: 'PENDING_PHASE_1C', certifiedFields: [] }
 }));
 
@@ -281,6 +300,38 @@ const acceptance = {
 const want = { records: 353, uniqueCanonicalIds: 353, uniqueIdentityKeys: 353, uniqueNormalizedNames: 352, publications: 355,
   existingCanonicalRecords: 351, missingRepoRecords: 2, identitiesWithReprints: 2, sameNameCollisionRecords: 2, crossDomainCollisionRecords: 2 };
 for (const [k, v] of Object.entries(want)) assert(acceptance[k] === v, `acceptance ${k} expected ${v}, got ${acceptance[k]}`);
+// Structural authority gates
+for (const r of records) assert(STRUCTURAL_STATUSES.includes(r.structure.structuralStatus), `unauthorized structuralStatus ${r.structure.structuralStatus} on ${r.displayName}`);
+const certified = records.filter(r => r.structure.structuralStatus === 'PHASE0_CERTIFIED');
+const pending = records.filter(r => r.structure.structuralStatus === 'PENDING_PHASE_1C');
+assert(certified.length === 9, `PHASE0_CERTIFIED records ${certified.length} != 9`);
+assert(pending.length === 344, `PENDING_PHASE_1C records ${pending.length} != 344`);
+for (const r of certified) {
+  const st = r.structure;
+  assert(st.familyKey && Number.isInteger(st.tier), `certified record ${r.displayName} lacks familyKey/numeric tier`);
+  assert(JSON.stringify(st.certifiedFields) === '["familyKey","tier"]', `certified record ${r.displayName} certifiedFields wrong`);
+  assert(st.selectionModel === null && st.scopeType === null && st.repeatable === null, `certified record ${r.displayName} has non-null selectionModel/scopeType/repeatable`);
+  const want = OWNER_TIERS[r.displayName];
+  assert(want && want.familyKey === st.familyKey && want.tier === st.tier, `tier mapping mismatch for ${r.displayName}`);
+}
+for (const r of pending) {
+  const st = r.structure;
+  assert(st.familyKey === null && st.tier === null && st.selectionModel === null && st.scopeType === null && st.repeatable === null && st.certifiedFields.length === 0,
+    `pending record ${r.displayName} has non-null structural fields`);
+}
+// Owner-ratified Web locator keys
+const LOCATORS = {
+  'Tech Specialist': 'p3',
+  'Dreadful Countenance': 'web-article-archived-rendering-page-4-of-4',
+  'Rapid Assault': 'e2'
+};
+for (const [n, k] of Object.entries(LOCATORS)) {
+  const r = records.find(x => x.displayName === n);
+  assert(r && r.primaryPublication.locatorKey === k && r.identityKey.split('::')[2] === k, `owner-ratified locator key for ${n} is not ${k}`);
+}
+acceptance.structuralPhase0Certified = certified.length;
+acceptance.structuralPendingPhase1C = pending.length;
+acceptance.unauthorizedStructuralStatuses = 0;
 acceptance.allGatesPassed = true;
 
 const manifest = {
@@ -356,7 +407,7 @@ md.push('## Certified exceptions', '',
   '- **Same-name distinct feats:** `staggering-attack` — Scum and Villainy p.24 (`c9c4130a55761330`, missing from repo) and Galaxy at War p.26 (`192923f60db38831`, represented). Group type `DISTINCT_FEAT_IDENTITIES`.',
   '- **Cross-domain name collisions (`SAME_NAME_DIFFERENT_DOMAIN`, metadata only):** Recall (feat, TFU p.35, vs. a talent) and Autofire Assault (feat, Legacy Era Campaign Guide p.34, vs. a talent). Name-only domain guards are not valid for these.', '');
 md.push('## Structural fields', '',
-  'Family, tier, selection model, scope, and repeatable fields are not completed here. Only Phase 0-certified family membership is carried (9 records: Armor Proficiency, Dual Weapon Mastery, Martial Arts members; `PHASE0_CERTIFIED_PARTIAL`, `familyKey` only). All other fields are null with `PENDING_PHASE_1C`. Scope/tier/family completion remains Phase 1C.', '');
+  'Family, tier, selection model, scope, and repeatable fields are not completed here. Only the 9 identities in the three Phase 0-certified tier families (Armor Proficiency, Dual Weapon Mastery, Martial Arts) carry `familyKey` and numeric `tier` (owner-authorized mapping, status `PHASE0_CERTIFIED`, `certifiedFields` = `familyKey`, `tier`). Their `selectionModel`, `scopeType`, and `repeatable` remain null. The other 344 records are `PENDING_PHASE_1C` with all structural fields null. Scope/tier/family completion remains Phase 1C.', '');
 md.push('## Acceptance', '', '| Gate | Result |', '| --- | --- |',
   ...Object.entries(acceptance).map(([k, v]) => `| ${k} | ${v} |`), '');
 md.push('## Production', '', 'Production was not mutated: no feat records were created, deleted, renamed, re-IDed, or edited; `data/feat-catalog.json`, `packs/feats.db`, the validity registry, domain guard, effects, and prerequisite authority are unchanged. Phase 1B (reconciliation of the 39 outside-corpus records, domain-guard redesign) and Phase 1C are not started.', '');
@@ -366,7 +417,7 @@ for (const r of records) {
   if (r.reprints.length) notes.push(`reprint: ${r.reprints[0].sourceKey} ${r.reprints[0].locatorKey}`);
   if (r.sameNameCollisionGroup) notes.push(`same-name: ${r.sameNameCollisionGroup}`);
   if (r.crossDomainCollision) notes.push('cross-domain: talent');
-  if (r.structure.familyKey) notes.push(`family: ${r.structure.familyKey}`);
+  if (r.structure.familyKey) notes.push(`family: ${r.structure.familyKey} tier ${r.structure.tier}`);
   md.push(`| \`${r.canonicalId}\` | ${esc(r.displayName)} | \`${r.identityKey}\` | ${r.repoMapping.status === 'EXISTING_CANONICAL_RECORD' ? 'existing' : 'MISSING'} | ${notes.join('; ')} |`);
 }
 md.push('');
