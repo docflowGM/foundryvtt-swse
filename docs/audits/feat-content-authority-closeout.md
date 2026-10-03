@@ -66,7 +66,7 @@ These are future additions. Neither record is created here.
 
 ## Known conditions in the supplied authority (reported, not repaired)
 
-1. **Unknown Regions per-feat records are absent.** The authority declares 21 Unknown Regions publications (book 9 of 14) in its book order and counts, but neither the JSON `books` object nor the Markdown has an Unknown Regions section. The JSON embeds 334 of 355 publication records. The validator pins this exact gap, and cross-checks the 21 identities, IDs, and names through the merged Phase 1A manifest. A complete Unknown Regions section should be supplied before the PROVENANCE phase relies on per-feat Unknown Regions content.
+1. **Unknown Regions per-feat records are absent.** *(Resolved 2026-10-03: the later provenance authority, `data/audits/feat-provenance-canonical-authority.json`, embeds all 21 Unknown Regions records. See `feat-provenance-closeout.md`.)* The authority declares 21 Unknown Regions publications (book 9 of 14) in its book order and counts, but neither the JSON `books` object nor the Markdown has an Unknown Regions section. The JSON embeds 334 of 355 publication records. The validator pins this exact gap, and cross-checks the 21 identities, IDs, and names through the merged Phase 1A manifest. A complete Unknown Regions section should be supplied before the PROVENANCE phase relies on per-feat Unknown Regions content.
 2. **Top-level `status` is `IN_PROGRESS`** while `contentPhaseCloseout.status` is `COMPLETE_WITH_EXPLICIT_SOURCE_CONFLICTS_RETAINED`. Preserved as supplied.
 3. **Recall `canonicalId` is `null`** in the supplied JSON; the validator accepts null or `c352f81dde5c9dff` and requires Phase 1A to carry `c352f81dde5c9dff`.
 4. **Core official errata** supersedes first-printing text where recorded in the supplied authority. The validator does not re-verify errata text.
@@ -78,6 +78,8 @@ These are future additions. Neither record is created here.
 - **Core errata** — recorded in the supplied authority; no frozen-audit conflict was tested.
 
 ### Clone Wars page discrepancies (21)
+
+> **Resolved 2026-10-03** by the provenance closeout: Phase 0 `0G` and Phase 1A were corrected to the authority pages and their builders/ledgers updated (no `canonicalId` changed). The table below is the historical record of the stale values and original line locations.
 
 Authority page is the directly verified printed page. Phase 0: `data/audits/feat-phase-0-canonical-census.json`, subphase `0G`, `canonicalFeatRecords[].canonicalPage`. Phase 1A: `data/audits/feat-phase-1a-canonical-identity-manifest.json`, `records[].primaryPublication.page`, `.locatorKey`, and `.identityKey`.
 

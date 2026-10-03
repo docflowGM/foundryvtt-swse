@@ -121,7 +121,8 @@ check(echReprint?.book === 'Galaxy at War' && echReprint.f.bookPublication?.page
 check(echPrimary?.f.canonicalId === echReprint?.f.canonicalId && echPrimary?.f.canonicalId === 'f362e5a4ad0a98bd', 'Echani Training identity IDs differ');
 
 // ---- Weapon Proficiency / derivatives ----
-const DERIVATIVE_IDS = ['2d680cc46a7972da', '765ff8a34e58acac', '8329a353aa3899be', 'e5d361d01d1b44e4', 'cf28ec45cabaff59', '41a9ce755ecffb5b'];
+const DERIVATIVE_IDS = p0.phase0.subphases['0-QA'].repoOutsideCanonicalCorpus.filter(r => r.classification === 'IMPLEMENTATION_DERIVATIVE_NOT_CANONICAL_IDENTITY').map(r => r.id);
+check(DERIVATIVE_IDS.length === 6, `Phase 0 implementation derivative IDs ${DERIVATIVE_IDS.length} != 6`);
 const wp = primaries.filter(e => e.f.name === 'Weapon Proficiency');
 check(wp.length === 1 && wp[0].f.canonicalId === 'ecc2471ac96ec2d4' && wp[0].book === 'Saga Edition Core Rulebook', 'Weapon Proficiency is not exactly one Core canonical identity ecc2471ac96ec2d4');
 check(p1a.records.filter(r => r.displayName === 'Weapon Proficiency').length === 1, 'Phase 1A has != 1 Weapon Proficiency identity');
@@ -142,10 +143,10 @@ const nl = tfu.find(f => f.name === 'Natural Leader');
 check(tfu.length === 21 && nl && nl.canonicalPublication.page === 34, 'TFU must have 21 feats with Natural Leader p.34');
 check(p0.phase0.subphases['0E'].canonicalFeatRecords.length === 21, 'Phase 0 0E TFU != 21 (frozen audit contradicts correction)');
 
-// ---- Retained known discrepancy: Clone Wars page map (Phase 0 / Phase 1A stale vs authority) ----
+// ---- Clone Wars page map: Phase 0 / Phase 1A were corrected to the authority pages (provenance closeout) ----
 const cw = auth.books['Clone Wars Campaign Guide'].feats;
 const cwMismatch = cw.filter(f => byId.get(f.canonicalId).primaryPublication.page !== f.canonicalPublication.page);
-check(cw.length === 21 && cwMismatch.length === 21, `Clone Wars page-map discrepancies ${cwMismatch.length} != 21 (retained known correction)`);
+check(cw.length === 21 && cwMismatch.length === 0, `Clone Wars page-map discrepancies ${cwMismatch.length} != 0 (corrected in provenance closeout)`);
 const otherMismatch = primaries.filter(e => e.book !== 'Clone Wars Campaign Guide' && e.f.canonicalId && e.book !== 'Official Web')
   .filter(e => byId.get(e.f.canonicalId).primaryPublication.page !== e.f.canonicalPublication.page);
 check(otherMismatch.length === 0, `unexpected page discrepancies outside Clone Wars: ${otherMismatch.map(e => e.f.name).join(', ')}`);
@@ -160,4 +161,4 @@ console.log(`  publications 355 | identities 353 | unique normalized names 352 |
 console.log(`  represented 351 | missing 2 (Recall c352f81dde5c9dff, Scum Staggering Attack c9c4130a55761330)`);
 console.log(`  Core 64 | Rebellion Era 60 | Galaxy at War 42 | Official Web 3`);
 console.log(`  embedded publication records ${entries.length} of 355; Unknown Regions (21) per-feat records absent from supplied authority (retained known gap, cross-checked via Phase 1A)`);
-console.log(`  retained known discrepancy: 21 Clone Wars page values stale in Phase 0/1A (authority corrects)`);
+console.log(`  Clone Wars page map: Phase 0/1A match the authority (0 discrepancies)`);

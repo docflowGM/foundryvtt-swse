@@ -4536,7 +4536,7 @@
       "phase0GCanonicalIdentitiesPresentSomewhereInRepo": 21,
       "phase0GMissingRepoIdentities": 0,
       "phase0GRepoSourceMismatches": 1,
-      "phase0GRepoPageMismatchesAmongPresent": 1,
+      "phase0GRepoPageMismatchesAmongPresent": 21,
       "certifiedCanonicalIdentitiesAcross0AThrough0G": 161,
       "certifiedFullFeatDefinitionsAcross0AThrough0G": 162,
       "certifiedFullReprintsAcross0AThrough0G": 1,
@@ -6974,11 +6974,13 @@
           "txt": "Clone Wars Campaign Guide_djvu.txt",
           "pdf": "SAGA EDITION - Clone Wars Campaign Guide.pdf",
           "method": "TXT_FIRST_SOURCE_SECTION_CERTIFICATION_WITH_EXISTING_PAGE_MAP_CROSSCHECK",
-          "printedFeatDefinitionPages": "20-29",
+          "printedFeatDefinitionPages": "28-29, 31-32",
           "notes": [
             "The complete feat section and feat summary table independently enumerate the same 21 feat identities.",
             "No separate feat subtype is created by this chapter; all 21 are general feat identities."
-          ]
+          ],
+          "summaryTablePage": 30,
+          "pageAuthorityCorrection": "Printed feat-definition pages 28-29 and 31-32 and summary table p.30 are certified by direct primary-source PDF recheck (provenance authority); this supersedes the original TXT-derived 20-29 page map. PDF page = printed page + 1 over this range."
         },
         "counts": {
           "wikiSeedClaims": 21,
@@ -6991,226 +6993,220 @@
           "repoRecordsCurrentlyAttributedToCloneWars": 20,
           "canonicalCloneWarsIdentitiesPresentSomewhereInRepo": 21,
           "canonicalCloneWarsMissingFromRepo": 0,
-          "exactSourceAndPageMatches": 20,
+          "exactSourceAndPageMatches": 0,
           "sourceMismatches": 1,
-          "pageMismatchesAmongPresent": 1,
+          "pageMismatchesAmongPresent": 21,
           "repoOnlyRecordsAttributedToCloneWars": 0
         },
         "pageDistribution": {
-          "20": 2,
-          "21": 3,
-          "22": 2,
-          "23": 2,
-          "24": 2,
-          "25": 2,
-          "26": 2,
-          "27": 2,
-          "28": 3,
-          "29": 1
+          "28": 4,
+          "29": 5,
+          "31": 10,
+          "32": 2
         },
         "canonicalFeatRecords": [
           {
             "name": "Anointed Hunter",
             "canonicalSourcebook": "Clone Wars Campaign Guide",
-            "canonicalPage": 20,
+            "canonicalPage": 28,
             "publicationCategory": "GENERAL",
             "sourceStatus": "SOURCE_CERTIFIED_TXT_VERIFIED",
             "repoId": "4dc36deda6faf597",
             "repoSource": "Clone Wars Campaign Guide",
             "repoPage": 20,
-            "repoStatus": "EXACT_MATCH"
+            "repoStatus": "PAGE_MISMATCH"
           },
           {
             "name": "Artillery Shot",
             "canonicalSourcebook": "Clone Wars Campaign Guide",
-            "canonicalPage": 20,
+            "canonicalPage": 28,
             "publicationCategory": "GENERAL",
             "sourceStatus": "SOURCE_CERTIFIED_TXT_VERIFIED",
             "repoId": "fb64065b4a779cd8",
             "repoSource": "Clone Wars Campaign Guide",
             "repoPage": 20,
-            "repoStatus": "EXACT_MATCH"
+            "repoStatus": "PAGE_MISMATCH"
           },
           {
             "name": "Coordinated Barrage",
             "canonicalSourcebook": "Clone Wars Campaign Guide",
-            "canonicalPage": 21,
+            "canonicalPage": 28,
             "publicationCategory": "GENERAL",
             "sourceStatus": "SOURCE_CERTIFIED_TXT_VERIFIED",
             "repoId": "c51d23038e2862e6",
             "repoSource": "Clone Wars Campaign Guide",
             "repoPage": 21,
-            "repoStatus": "EXACT_MATCH"
+            "repoStatus": "PAGE_MISMATCH"
           },
           {
             "name": "Droidcraft",
             "canonicalSourcebook": "Clone Wars Campaign Guide",
-            "canonicalPage": 21,
+            "canonicalPage": 28,
             "publicationCategory": "GENERAL",
             "sourceStatus": "SOURCE_CERTIFIED_TXT_VERIFIED",
             "repoId": "ae4dece84c32c3ac",
             "repoSource": "Clone Wars Campaign Guide",
             "repoPage": 21,
-            "repoStatus": "EXACT_MATCH"
+            "repoStatus": "PAGE_MISMATCH"
           },
           {
             "name": "Droid Hunter",
             "canonicalSourcebook": "Clone Wars Campaign Guide",
-            "canonicalPage": 21,
+            "canonicalPage": 29,
             "publicationCategory": "GENERAL",
             "sourceStatus": "SOURCE_CERTIFIED_TXT_VERIFIED",
             "repoId": "5d17898fc9652370",
             "repoSource": "Clone Wars Campaign Guide",
             "repoPage": 21,
-            "repoStatus": "EXACT_MATCH"
+            "repoStatus": "PAGE_MISMATCH"
           },
           {
             "name": "Experienced Medic",
             "canonicalSourcebook": "Clone Wars Campaign Guide",
-            "canonicalPage": 22,
+            "canonicalPage": 29,
             "publicationCategory": "GENERAL",
             "sourceStatus": "SOURCE_CERTIFIED_TXT_VERIFIED",
             "repoId": "5e1e84d933295217",
             "repoSource": "Clone Wars Campaign Guide",
             "repoPage": 22,
-            "repoStatus": "EXACT_MATCH"
+            "repoStatus": "PAGE_MISMATCH"
           },
           {
             "name": "Expert Droid Repair",
             "canonicalSourcebook": "Clone Wars Campaign Guide",
-            "canonicalPage": 22,
+            "canonicalPage": 29,
             "publicationCategory": "GENERAL",
             "sourceStatus": "SOURCE_CERTIFIED_TXT_VERIFIED",
             "repoId": "029c3935e9bed6eb",
             "repoSource": "Clone Wars Campaign Guide",
             "repoPage": 22,
-            "repoStatus": "EXACT_MATCH"
+            "repoStatus": "PAGE_MISMATCH"
           },
           {
             "name": "Flash and Clear",
             "canonicalSourcebook": "Clone Wars Campaign Guide",
-            "canonicalPage": 23,
+            "canonicalPage": 29,
             "publicationCategory": "GENERAL",
             "sourceStatus": "SOURCE_CERTIFIED_TXT_VERIFIED",
             "repoId": "a16af4c63582b44a",
             "repoSource": "Clone Wars Campaign Guide",
             "repoPage": 23,
-            "repoStatus": "EXACT_MATCH"
+            "repoStatus": "PAGE_MISMATCH"
           },
           {
             "name": "Flood of Fire",
             "canonicalSourcebook": "Clone Wars Campaign Guide",
-            "canonicalPage": 23,
+            "canonicalPage": 29,
             "publicationCategory": "GENERAL",
             "sourceStatus": "SOURCE_CERTIFIED_TXT_VERIFIED",
             "repoId": "6335692284f98ec6",
             "repoSource": "Clone Wars Campaign Guide",
             "repoPage": 23,
-            "repoStatus": "EXACT_MATCH"
+            "repoStatus": "PAGE_MISMATCH"
           },
           {
             "name": "Grand Army of the Republic Training",
             "canonicalSourcebook": "Clone Wars Campaign Guide",
-            "canonicalPage": 24,
+            "canonicalPage": 31,
             "publicationCategory": "GENERAL",
             "sourceStatus": "SOURCE_CERTIFIED_TXT_VERIFIED",
             "repoId": "72146d8a36d77736",
             "repoSource": "Clone Wars Campaign Guide",
             "repoPage": 24,
-            "repoStatus": "EXACT_MATCH"
+            "repoStatus": "PAGE_MISMATCH"
           },
           {
             "name": "Gunnery Specialist",
             "canonicalSourcebook": "Clone Wars Campaign Guide",
-            "canonicalPage": 24,
+            "canonicalPage": 31,
             "publicationCategory": "GENERAL",
             "sourceStatus": "SOURCE_CERTIFIED_TXT_VERIFIED",
             "repoId": "70962165bed8e5ed",
             "repoSource": "Clone Wars Campaign Guide",
             "repoPage": 24,
-            "repoStatus": "EXACT_MATCH"
+            "repoStatus": "PAGE_MISMATCH"
           },
           {
             "name": "Jedi Familiarity",
             "canonicalSourcebook": "Clone Wars Campaign Guide",
-            "canonicalPage": 25,
+            "canonicalPage": 31,
             "publicationCategory": "GENERAL",
             "sourceStatus": "SOURCE_CERTIFIED_TXT_VERIFIED",
             "repoId": "fc56de4d0d15c95c",
             "repoSource": "Clone Wars Campaign Guide",
             "repoPage": 25,
-            "repoStatus": "EXACT_MATCH"
+            "repoStatus": "PAGE_MISMATCH"
           },
           {
             "name": "Leader of Droids",
             "canonicalSourcebook": "Clone Wars Campaign Guide",
-            "canonicalPage": 25,
+            "canonicalPage": 31,
             "publicationCategory": "GENERAL",
             "sourceStatus": "SOURCE_CERTIFIED_TXT_VERIFIED",
             "repoId": "59e495de34a23def",
             "repoSource": "Clone Wars Campaign Guide",
             "repoPage": 25,
-            "repoStatus": "EXACT_MATCH"
+            "repoStatus": "PAGE_MISMATCH"
           },
           {
             "name": "Overwhelming Attack",
             "canonicalSourcebook": "Clone Wars Campaign Guide",
-            "canonicalPage": 26,
+            "canonicalPage": 31,
             "publicationCategory": "GENERAL",
             "sourceStatus": "SOURCE_CERTIFIED_TXT_VERIFIED",
             "repoId": "7df64382f1a0a892",
             "repoSource": "Clone Wars Campaign Guide",
             "repoPage": 26,
-            "repoStatus": "EXACT_MATCH"
+            "repoStatus": "PAGE_MISMATCH"
           },
           {
             "name": "Pall of the Dark Side",
             "canonicalSourcebook": "Clone Wars Campaign Guide",
-            "canonicalPage": 26,
+            "canonicalPage": 31,
             "publicationCategory": "GENERAL",
             "sourceStatus": "SOURCE_CERTIFIED_TXT_VERIFIED",
             "repoId": "8d164553709dd068",
             "repoSource": "Clone Wars Campaign Guide",
             "repoPage": 26,
-            "repoStatus": "EXACT_MATCH"
+            "repoStatus": "PAGE_MISMATCH"
           },
           {
             "name": "Separatist Military Training",
             "canonicalSourcebook": "Clone Wars Campaign Guide",
-            "canonicalPage": 27,
+            "canonicalPage": 31,
             "publicationCategory": "GENERAL",
             "sourceStatus": "SOURCE_CERTIFIED_TXT_VERIFIED",
             "repoId": "477b62d36e012719",
             "repoSource": "Clone Wars Campaign Guide",
             "repoPage": 27,
-            "repoStatus": "EXACT_MATCH"
+            "repoStatus": "PAGE_MISMATCH"
           },
           {
             "name": "Spray Shot",
             "canonicalSourcebook": "Clone Wars Campaign Guide",
-            "canonicalPage": 27,
+            "canonicalPage": 31,
             "publicationCategory": "GENERAL",
             "sourceStatus": "SOURCE_CERTIFIED_TXT_VERIFIED",
             "repoId": "0066c394e5d636fb",
             "repoSource": "Clone Wars Campaign Guide",
             "repoPage": 27,
-            "repoStatus": "EXACT_MATCH"
+            "repoStatus": "PAGE_MISMATCH"
           },
           {
             "name": "Trench Warrior",
             "canonicalSourcebook": "Clone Wars Campaign Guide",
-            "canonicalPage": 28,
+            "canonicalPage": 31,
             "publicationCategory": "GENERAL",
             "sourceStatus": "SOURCE_CERTIFIED_TXT_VERIFIED",
             "repoId": "7d8366d0481d76e2",
             "repoSource": "Clone Wars Campaign Guide",
             "repoPage": 28,
-            "repoStatus": "EXACT_MATCH"
+            "repoStatus": "PAGE_MISMATCH"
           },
           {
             "name": "Unstoppable Force",
             "canonicalSourcebook": "Clone Wars Campaign Guide",
-            "canonicalPage": 28,
+            "canonicalPage": 31,
             "publicationCategory": "GENERAL",
             "sourceStatus": "SOURCE_CERTIFIED_TXT_VERIFIED",
             "repoId": "0a6c87a410bee1f2",
@@ -7221,24 +7217,24 @@
           {
             "name": "Unwavering Resolve",
             "canonicalSourcebook": "Clone Wars Campaign Guide",
-            "canonicalPage": 28,
+            "canonicalPage": 32,
             "publicationCategory": "GENERAL",
             "sourceStatus": "SOURCE_CERTIFIED_TXT_VERIFIED",
             "repoId": "53f600d68f3afdc3",
             "repoSource": "Clone Wars Campaign Guide",
             "repoPage": 28,
-            "repoStatus": "EXACT_MATCH"
+            "repoStatus": "PAGE_MISMATCH"
           },
           {
             "name": "Wary Defender",
             "canonicalSourcebook": "Clone Wars Campaign Guide",
-            "canonicalPage": 29,
+            "canonicalPage": 32,
             "publicationCategory": "GENERAL",
             "sourceStatus": "SOURCE_CERTIFIED_TXT_VERIFIED",
             "repoId": "d6e528de87b25b95",
             "repoSource": "Clone Wars Campaign Guide",
             "repoPage": 29,
-            "repoStatus": "EXACT_MATCH"
+            "repoStatus": "PAGE_MISMATCH"
           }
         ],
         "sourceMisattributions": [
@@ -7248,7 +7244,7 @@
             "repoSource": "The Force Unleashed Campaign Guide",
             "repoPage": 35,
             "canonicalSource": "Clone Wars Campaign Guide",
-            "canonicalPage": 28,
+            "canonicalPage": 31,
             "ruling": "SOURCE_PAGE_MISMATCH; Clone Wars contains the full feat definition and includes it in the chapter feat/bonus-feat tables, while the Force Unleashed source does not define this feat."
           }
         ],
@@ -7258,10 +7254,10 @@
           "Anointed Hunter has a species prerequisite but is still published in the ordinary feat section, not as a Species Feat subcategory."
         ],
         "rulings": [
-          "Clone Wars Campaign Guide publishes exactly 21 feat identities on printed pages 20-29.",
+          "Clone Wars Campaign Guide publishes exactly 21 feat identities; definitions are on printed pages 28-29 and 31-32 and the feat summary table is p.30 (page map corrected by direct primary-source recheck; the original 20-29 map was stale).",
           "All 21 canonical identities are present somewhere in the current repository.",
-          "Twenty records have the correct Clone Wars source and printed page.",
-          "Unstoppable Force is misattributed to The Force Unleashed Campaign Guide p.35; its canonical source is Clone Wars Campaign Guide p.28.",
+          "No current repository record carries the corrected Clone Wars printed page: twenty records have the correct Clone Wars source with a stale page, and Unstoppable Force has the wrong source and page.",
+          "Unstoppable Force is misattributed to The Force Unleashed Campaign Guide p.35; its canonical source is Clone Wars Campaign Guide p.31.",
           "No repo-only records are currently attributed to Clone Wars after source reconciliation."
         ]
       },
@@ -10580,8 +10576,8 @@
       "id": "FEAT-P0-UNSTOPPABLE-FORCE",
       "severity": "PROVENANCE_CORRECTION_REQUIRED",
       "name": "Unstoppable Force",
-      "finding": "Phase 0G source-certified Unstoppable Force as a Clone Wars Campaign Guide feat on p.28. The current repository record is incorrectly attributed to The Force Unleashed Campaign Guide p.35.",
-      "requiredAction": "Later production convergence must correct the existing record provenance to Clone Wars Campaign Guide p.28 without changing its canonical identity.",
+      "finding": "Phase 0G source-certified Unstoppable Force as a Clone Wars Campaign Guide feat on p.31. The current repository record is incorrectly attributed to The Force Unleashed Campaign Guide p.35.",
+      "requiredAction": "Later production convergence must correct the existing record provenance to Clone Wars Campaign Guide p.31 without changing its canonical identity.",
       "phase0GRuling": "SOURCE_PAGE_MISMATCH; Clone Wars is the publication authority."
     },
     {
@@ -10886,6 +10882,175 @@
       {
         "type": "MD_HEADER_CORRECTION",
         "reason": "replace stale Phase 0K/ACTIVE header with Phase 0 complete/frozen status"
+      },
+      {
+        "type": "CLONE_WARS_PAGE_MAP_CORRECTION",
+        "scope": "0G Clone Wars Campaign Guide",
+        "count": 21,
+        "reason": "Direct primary-source PDF recheck (provenance authority) supersedes the stale TXT-derived 20-29 printed page map: definitions on pp.28-29 and 31-32, summary table p.30.",
+        "derivedFieldsUpdated": [
+          "canonicalFeatRecords[].canonicalPage",
+          "canonicalFeatRecords[].repoStatus (EXACT_MATCH -> PAGE_MISMATCH where repoPage differs)",
+          "pageDistribution",
+          "counts.exactSourceAndPageMatches (20 -> 0)",
+          "counts.pageMismatchesAmongPresent (1 -> 21)",
+          "sourceAuthority.printedFeatDefinitionPages",
+          "sourceMisattributions[Unstoppable Force].canonicalPage (28 -> 31)",
+          "rulings",
+          "workingCounts.phase0GRepoPageMismatchesAmongPresent (1 -> 21)",
+          "currentHighPriorityFindings[FEAT-P0-UNSTOPPABLE-FORCE]"
+        ],
+        "canonicalIdsChanged": 0,
+        "frozenCountsChanged": false,
+        "changes": [
+          {
+            "name": "Anointed Hunter",
+            "repoId": "4dc36deda6faf597",
+            "oldPage": 20,
+            "newPage": 28,
+            "oldRepoStatus": "EXACT_MATCH"
+          },
+          {
+            "name": "Artillery Shot",
+            "repoId": "fb64065b4a779cd8",
+            "oldPage": 20,
+            "newPage": 28,
+            "oldRepoStatus": "EXACT_MATCH"
+          },
+          {
+            "name": "Coordinated Barrage",
+            "repoId": "c51d23038e2862e6",
+            "oldPage": 21,
+            "newPage": 28,
+            "oldRepoStatus": "EXACT_MATCH"
+          },
+          {
+            "name": "Droidcraft",
+            "repoId": "ae4dece84c32c3ac",
+            "oldPage": 21,
+            "newPage": 28,
+            "oldRepoStatus": "EXACT_MATCH"
+          },
+          {
+            "name": "Droid Hunter",
+            "repoId": "5d17898fc9652370",
+            "oldPage": 21,
+            "newPage": 29,
+            "oldRepoStatus": "EXACT_MATCH"
+          },
+          {
+            "name": "Experienced Medic",
+            "repoId": "5e1e84d933295217",
+            "oldPage": 22,
+            "newPage": 29,
+            "oldRepoStatus": "EXACT_MATCH"
+          },
+          {
+            "name": "Expert Droid Repair",
+            "repoId": "029c3935e9bed6eb",
+            "oldPage": 22,
+            "newPage": 29,
+            "oldRepoStatus": "EXACT_MATCH"
+          },
+          {
+            "name": "Flash and Clear",
+            "repoId": "a16af4c63582b44a",
+            "oldPage": 23,
+            "newPage": 29,
+            "oldRepoStatus": "EXACT_MATCH"
+          },
+          {
+            "name": "Flood of Fire",
+            "repoId": "6335692284f98ec6",
+            "oldPage": 23,
+            "newPage": 29,
+            "oldRepoStatus": "EXACT_MATCH"
+          },
+          {
+            "name": "Grand Army of the Republic Training",
+            "repoId": "72146d8a36d77736",
+            "oldPage": 24,
+            "newPage": 31,
+            "oldRepoStatus": "EXACT_MATCH"
+          },
+          {
+            "name": "Gunnery Specialist",
+            "repoId": "70962165bed8e5ed",
+            "oldPage": 24,
+            "newPage": 31,
+            "oldRepoStatus": "EXACT_MATCH"
+          },
+          {
+            "name": "Jedi Familiarity",
+            "repoId": "fc56de4d0d15c95c",
+            "oldPage": 25,
+            "newPage": 31,
+            "oldRepoStatus": "EXACT_MATCH"
+          },
+          {
+            "name": "Leader of Droids",
+            "repoId": "59e495de34a23def",
+            "oldPage": 25,
+            "newPage": 31,
+            "oldRepoStatus": "EXACT_MATCH"
+          },
+          {
+            "name": "Overwhelming Attack",
+            "repoId": "7df64382f1a0a892",
+            "oldPage": 26,
+            "newPage": 31,
+            "oldRepoStatus": "EXACT_MATCH"
+          },
+          {
+            "name": "Pall of the Dark Side",
+            "repoId": "8d164553709dd068",
+            "oldPage": 26,
+            "newPage": 31,
+            "oldRepoStatus": "EXACT_MATCH"
+          },
+          {
+            "name": "Separatist Military Training",
+            "repoId": "477b62d36e012719",
+            "oldPage": 27,
+            "newPage": 31,
+            "oldRepoStatus": "EXACT_MATCH"
+          },
+          {
+            "name": "Spray Shot",
+            "repoId": "0066c394e5d636fb",
+            "oldPage": 27,
+            "newPage": 31,
+            "oldRepoStatus": "EXACT_MATCH"
+          },
+          {
+            "name": "Trench Warrior",
+            "repoId": "7d8366d0481d76e2",
+            "oldPage": 28,
+            "newPage": 31,
+            "oldRepoStatus": "EXACT_MATCH"
+          },
+          {
+            "name": "Unstoppable Force",
+            "repoId": "0a6c87a410bee1f2",
+            "oldPage": 28,
+            "newPage": 31,
+            "oldRepoStatus": "SOURCE_PAGE_MISMATCH"
+          },
+          {
+            "name": "Unwavering Resolve",
+            "repoId": "53f600d68f3afdc3",
+            "oldPage": 28,
+            "newPage": 32,
+            "oldRepoStatus": "EXACT_MATCH"
+          },
+          {
+            "name": "Wary Defender",
+            "repoId": "d6e528de87b25b95",
+            "oldPage": 29,
+            "newPage": 32,
+            "oldRepoStatus": "EXACT_MATCH"
+          }
+        ]
       }
     ]
   }

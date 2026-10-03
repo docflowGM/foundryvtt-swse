@@ -60,7 +60,7 @@ Disposition `REMOVE_NONCANONICAL_FEAT_RECORD` for all; `replacementCanonicalId` 
 | `465434fb7b44aee1` | Forceful Grip | `NO_CANONICAL_SWSE_FEAT_DEFINITION_FOUND` | `LIVE_RUNTIME_REFERENCE_PRESENT` | 12 | `data/feat-effects.json` |
 | `54d6201340a6757f` | Headstrong | `LEGACY_D20_FEAT_NO_SAGA_EQUIVALENT` | `NO_LIVE_RUNTIME_REFERENCE` | 12 | — |
 | `5824e2360feb505a` | Improved Grapple | `NO_CANONICAL_SWSE_FEAT_DEFINITION_FOUND` | `LIVE_RUNTIME_REFERENCE_PRESENT` | 13 | `data/feat-effects.json` |
-| `647d77a8f5ab9af3` | Keen Force Mind | `NO_CANONICAL_SWSE_FEAT_DEFINITION_FOUND` | `LIVE_RUNTIME_REFERENCE_PRESENT` | 12 | `data/feat-effects.json` |
+| `647d77a8f5ab9af3` | Keen Force Mind | `NO_CANONICAL_SWSE_FEAT_DEFINITION_FOUND` | `LIVE_RUNTIME_REFERENCE_PRESENT` | 14 | `data/feat-effects.json` |
 | `6673cd53493a9d6c` | Forceful Slam | `NO_CANONICAL_SWSE_FEAT_DEFINITION_FOUND` | `LIVE_RUNTIME_REFERENCE_PRESENT` | 12 | `data/feat-effects.json` |
 | `6d8ce2807c579289` | Trustworthy | `LEGACY_D20_FEAT_NO_SAGA_EQUIVALENT` | `LIVE_RUNTIME_REFERENCE_PRESENT` | 13 | `data/class-archetypes.json` |
 | `83abd1c384b58c3c` | Intimidating Presence | `NO_CANONICAL_SWSE_FEAT_DEFINITION_FOUND` | `NO_LIVE_RUNTIME_REFERENCE` | 12 | — |
@@ -68,7 +68,7 @@ Disposition `REMOVE_NONCANONICAL_FEAT_RECORD` for all; `replacementCanonicalId` 
 | `88cdedff38b610c0` | Two-Weapon Fighting | `LEGACY_D20_FEAT_NO_SAGA_EQUIVALENT` | `LIVE_RUNTIME_REFERENCE_PRESENT` | 13 | `data/feat-effects.json` |
 | `9768963c7a36237d` | Fast Talk | `NO_CANONICAL_SWSE_FEAT_DEFINITION_FOUND` | `NO_LIVE_RUNTIME_REFERENCE` | 12 | — |
 | `9a89576b3cc1347e` | Great Fortitude | `LEGACY_D20_FEAT_NO_SAGA_EQUIVALENT` | `LIVE_RUNTIME_REFERENCE_PRESENT` | 14 | `data/feat-effects.json` |
-| `ae5c34d352d6dff7` | Intuitive Initiative | `WRONG_DOMAIN_SPECIES_TRAIT` | `NO_LIVE_RUNTIME_REFERENCE` | 11 | — |
+| `ae5c34d352d6dff7` | Intuitive Initiative | `WRONG_DOMAIN_SPECIES_TRAIT` | `NO_LIVE_RUNTIME_REFERENCE` | 13 | — |
 | `b2296a4d5cef8a61` | Frightful Presence | `LEGACY_D20_FEAT_NO_SAGA_EQUIVALENT` | `NO_LIVE_RUNTIME_REFERENCE` | 12 | — |
 | `bee76d01da40677d` | Lightning Reflexes | `LEGACY_D20_FEAT_NO_SAGA_EQUIVALENT` | `LIVE_RUNTIME_REFERENCE_PRESENT` | 13 | `data/feat-effects.json` |
 | `d612e7a708edf75b` | Frightening Presence | `NO_CANONICAL_SWSE_FEAT_DEFINITION_FOUND` | `NO_LIVE_RUNTIME_REFERENCE` | 14 | — |
