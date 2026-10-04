@@ -9,7 +9,7 @@
   },
   "note": "Candidate families from certified evidence. Family membership is not semantic proof; prerequisite relationships do not imply tags; same weapon family or publication category does not imply identical tags. PASS2_OWNER_REVIEW marks a difference to review, never an automatic correction.",
   "evidence": {
-    "rulesAndPrerequisiteTextSource": "data/audits/feat-content-canonical-authority.json",
+    "rulesAndPrerequisiteTextSource": "data/audits/feat-provenance-canonical-authority.json",
     "prerequisiteTextUnavailableFor": 22,
     "prerequisiteEdgeCount": 111,
     "hubChildThreshold": 12

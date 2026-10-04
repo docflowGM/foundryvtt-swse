@@ -5580,7 +5580,7 @@
       "canonicalId": "4dc36deda6faf597",
       "name": "Anointed Hunter",
       "source": "Clone Wars Campaign Guide",
-      "identityKey": "feat::clone-wars-campaign-guide::p20::anointed-hunter",
+      "identityKey": "feat::clone-wars-campaign-guide::p28::anointed-hunter",
       "productionClassification": "CANONICAL_RECORD_PRESENT",
       "repoRecord": {
         "path": "data/feat-catalog.json#_id=4dc36deda6faf597",
@@ -5629,7 +5629,7 @@
       "canonicalId": "fb64065b4a779cd8",
       "name": "Artillery Shot",
       "source": "Clone Wars Campaign Guide",
-      "identityKey": "feat::clone-wars-campaign-guide::p20::artillery-shot",
+      "identityKey": "feat::clone-wars-campaign-guide::p28::artillery-shot",
       "productionClassification": "CANONICAL_RECORD_PRESENT",
       "repoRecord": {
         "path": "data/feat-catalog.json#_id=fb64065b4a779cd8",
@@ -5693,7 +5693,7 @@
       "canonicalId": "c51d23038e2862e6",
       "name": "Coordinated Barrage",
       "source": "Clone Wars Campaign Guide",
-      "identityKey": "feat::clone-wars-campaign-guide::p21::coordinated-barrage",
+      "identityKey": "feat::clone-wars-campaign-guide::p28::coordinated-barrage",
       "productionClassification": "CANONICAL_RECORD_PRESENT",
       "repoRecord": {
         "path": "data/feat-catalog.json#_id=c51d23038e2862e6",
@@ -5761,7 +5761,7 @@
       "canonicalId": "ae4dece84c32c3ac",
       "name": "Droidcraft",
       "source": "Clone Wars Campaign Guide",
-      "identityKey": "feat::clone-wars-campaign-guide::p21::droidcraft",
+      "identityKey": "feat::clone-wars-campaign-guide::p28::droidcraft",
       "productionClassification": "CANONICAL_RECORD_PRESENT",
       "repoRecord": {
         "path": "data/feat-catalog.json#_id=ae4dece84c32c3ac",
@@ -5816,7 +5816,7 @@
       "canonicalId": "5d17898fc9652370",
       "name": "Droid Hunter",
       "source": "Clone Wars Campaign Guide",
-      "identityKey": "feat::clone-wars-campaign-guide::p21::droid-hunter",
+      "identityKey": "feat::clone-wars-campaign-guide::p29::droid-hunter",
       "productionClassification": "CANONICAL_RECORD_PRESENT",
       "repoRecord": {
         "path": "data/feat-catalog.json#_id=5d17898fc9652370",
@@ -5868,7 +5868,7 @@
       "canonicalId": "5e1e84d933295217",
       "name": "Experienced Medic",
       "source": "Clone Wars Campaign Guide",
-      "identityKey": "feat::clone-wars-campaign-guide::p22::experienced-medic",
+      "identityKey": "feat::clone-wars-campaign-guide::p29::experienced-medic",
       "productionClassification": "CANONICAL_RECORD_PRESENT",
       "repoRecord": {
         "path": "data/feat-catalog.json#_id=5e1e84d933295217",
@@ -5935,7 +5935,7 @@
       "canonicalId": "029c3935e9bed6eb",
       "name": "Expert Droid Repair",
       "source": "Clone Wars Campaign Guide",
-      "identityKey": "feat::clone-wars-campaign-guide::p22::expert-droid-repair",
+      "identityKey": "feat::clone-wars-campaign-guide::p29::expert-droid-repair",
       "productionClassification": "CANONICAL_RECORD_PRESENT",
       "repoRecord": {
         "path": "data/feat-catalog.json#_id=029c3935e9bed6eb",
@@ -5992,7 +5992,7 @@
       "canonicalId": "a16af4c63582b44a",
       "name": "Flash and Clear",
       "source": "Clone Wars Campaign Guide",
-      "identityKey": "feat::clone-wars-campaign-guide::p23::flash-and-clear",
+      "identityKey": "feat::clone-wars-campaign-guide::p29::flash-and-clear",
       "productionClassification": "CANONICAL_RECORD_PRESENT",
       "repoRecord": {
         "path": "data/feat-catalog.json#_id=a16af4c63582b44a",
@@ -6058,7 +6058,7 @@
       "canonicalId": "6335692284f98ec6",
       "name": "Flood of Fire",
       "source": "Clone Wars Campaign Guide",
-      "identityKey": "feat::clone-wars-campaign-guide::p23::flood-of-fire",
+      "identityKey": "feat::clone-wars-campaign-guide::p29::flood-of-fire",
       "productionClassification": "CANONICAL_RECORD_PRESENT",
       "repoRecord": {
         "path": "data/feat-catalog.json#_id=6335692284f98ec6",
@@ -6124,7 +6124,7 @@
       "canonicalId": "72146d8a36d77736",
       "name": "Grand Army of the Republic Training",
       "source": "Clone Wars Campaign Guide",
-      "identityKey": "feat::clone-wars-campaign-guide::p24::grand-army-of-the-republic-training",
+      "identityKey": "feat::clone-wars-campaign-guide::p31::grand-army-of-the-republic-training",
       "productionClassification": "CANONICAL_RECORD_PRESENT",
       "repoRecord": {
         "path": "data/feat-catalog.json#_id=72146d8a36d77736",
@@ -6175,7 +6175,7 @@
       "canonicalId": "70962165bed8e5ed",
       "name": "Gunnery Specialist",
       "source": "Clone Wars Campaign Guide",
-      "identityKey": "feat::clone-wars-campaign-guide::p24::gunnery-specialist",
+      "identityKey": "feat::clone-wars-campaign-guide::p31::gunnery-specialist",
       "productionClassification": "CANONICAL_RECORD_PRESENT",
       "repoRecord": {
         "path": "data/feat-catalog.json#_id=70962165bed8e5ed",
@@ -6233,7 +6233,7 @@
       "canonicalId": "fc56de4d0d15c95c",
       "name": "Jedi Familiarity",
       "source": "Clone Wars Campaign Guide",
-      "identityKey": "feat::clone-wars-campaign-guide::p25::jedi-familiarity",
+      "identityKey": "feat::clone-wars-campaign-guide::p31::jedi-familiarity",
       "productionClassification": "CANONICAL_RECORD_PRESENT",
       "repoRecord": {
         "path": "data/feat-catalog.json#_id=fc56de4d0d15c95c",
@@ -6301,7 +6301,7 @@
       "canonicalId": "59e495de34a23def",
       "name": "Leader of Droids",
       "source": "Clone Wars Campaign Guide",
-      "identityKey": "feat::clone-wars-campaign-guide::p25::leader-of-droids",
+      "identityKey": "feat::clone-wars-campaign-guide::p31::leader-of-droids",
       "productionClassification": "CANONICAL_RECORD_PRESENT",
       "repoRecord": {
         "path": "data/feat-catalog.json#_id=59e495de34a23def",
@@ -6369,7 +6369,7 @@
       "canonicalId": "7df64382f1a0a892",
       "name": "Overwhelming Attack",
       "source": "Clone Wars Campaign Guide",
-      "identityKey": "feat::clone-wars-campaign-guide::p26::overwhelming-attack",
+      "identityKey": "feat::clone-wars-campaign-guide::p31::overwhelming-attack",
       "productionClassification": "CANONICAL_RECORD_PRESENT",
       "repoRecord": {
         "path": "data/feat-catalog.json#_id=7df64382f1a0a892",
@@ -6427,7 +6427,7 @@
       "canonicalId": "8d164553709dd068",
       "name": "Pall of the Dark Side",
       "source": "Clone Wars Campaign Guide",
-      "identityKey": "feat::clone-wars-campaign-guide::p26::pall-of-the-dark-side",
+      "identityKey": "feat::clone-wars-campaign-guide::p31::pall-of-the-dark-side",
       "productionClassification": "CANONICAL_RECORD_PRESENT",
       "repoRecord": {
         "path": "data/feat-catalog.json#_id=8d164553709dd068",
@@ -6514,7 +6514,7 @@
       "canonicalId": "477b62d36e012719",
       "name": "Separatist Military Training",
       "source": "Clone Wars Campaign Guide",
-      "identityKey": "feat::clone-wars-campaign-guide::p27::separatist-military-training",
+      "identityKey": "feat::clone-wars-campaign-guide::p31::separatist-military-training",
       "productionClassification": "CANONICAL_RECORD_PRESENT",
       "repoRecord": {
         "path": "data/feat-catalog.json#_id=477b62d36e012719",
@@ -6578,7 +6578,7 @@
       "canonicalId": "0066c394e5d636fb",
       "name": "Spray Shot",
       "source": "Clone Wars Campaign Guide",
-      "identityKey": "feat::clone-wars-campaign-guide::p27::spray-shot",
+      "identityKey": "feat::clone-wars-campaign-guide::p31::spray-shot",
       "productionClassification": "CANONICAL_RECORD_PRESENT",
       "repoRecord": {
         "path": "data/feat-catalog.json#_id=0066c394e5d636fb",
@@ -6639,7 +6639,7 @@
       "canonicalId": "7d8366d0481d76e2",
       "name": "Trench Warrior",
       "source": "Clone Wars Campaign Guide",
-      "identityKey": "feat::clone-wars-campaign-guide::p28::trench-warrior",
+      "identityKey": "feat::clone-wars-campaign-guide::p31::trench-warrior",
       "productionClassification": "CANONICAL_RECORD_PRESENT",
       "repoRecord": {
         "path": "data/feat-catalog.json#_id=7d8366d0481d76e2",
@@ -6694,7 +6694,7 @@
       "canonicalId": "0a6c87a410bee1f2",
       "name": "Unstoppable Force",
       "source": "Clone Wars Campaign Guide",
-      "identityKey": "feat::clone-wars-campaign-guide::p28::unstoppable-force",
+      "identityKey": "feat::clone-wars-campaign-guide::p31::unstoppable-force",
       "productionClassification": "CANONICAL_RECORD_PRESENT",
       "repoRecord": {
         "path": "data/feat-catalog.json#_id=0a6c87a410bee1f2",
@@ -6759,7 +6759,7 @@
       "canonicalId": "53f600d68f3afdc3",
       "name": "Unwavering Resolve",
       "source": "Clone Wars Campaign Guide",
-      "identityKey": "feat::clone-wars-campaign-guide::p28::unwavering-resolve",
+      "identityKey": "feat::clone-wars-campaign-guide::p32::unwavering-resolve",
       "productionClassification": "CANONICAL_RECORD_PRESENT",
       "repoRecord": {
         "path": "data/feat-catalog.json#_id=53f600d68f3afdc3",
@@ -6829,7 +6829,7 @@
       "canonicalId": "d6e528de87b25b95",
       "name": "Wary Defender",
       "source": "Clone Wars Campaign Guide",
-      "identityKey": "feat::clone-wars-campaign-guide::p29::wary-defender",
+      "identityKey": "feat::clone-wars-campaign-guide::p32::wary-defender",
       "productionClassification": "CANONICAL_RECORD_PRESENT",
       "repoRecord": {
         "path": "data/feat-catalog.json#_id=d6e528de87b25b95",

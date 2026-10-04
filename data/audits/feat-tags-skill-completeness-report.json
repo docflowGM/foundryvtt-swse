@@ -8,7 +8,7 @@
     "status": "PASS1_COMPLETE_ALL_353_QC2_STANDARD"
   },
   "textSources": [
-    "data/audits/feat-content-canonical-authority.json"
+    "data/audits/feat-provenance-canonical-authority.json"
   ],
   "textCoverage": {
     "withRulesText": 331,

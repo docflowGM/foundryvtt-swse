@@ -2,7 +2,7 @@
 
 Authority: `data/audits/feat-tags-semantic-authority.json` — PASS1_COMPLETE / INPUT_TO_PASS2. Candidate families from certified evidence. Family membership is not semantic proof; prerequisite relationships do not imply tags; same weapon family or publication category does not imply identical tags. PASS2_OWNER_REVIEW marks a difference to review, never an automatic correction.
 
-Text evidence: `data/audits/feat-content-canonical-authority.json`; prerequisite text unavailable for 22 feats; 111 prerequisite name-reference edges.
+Text evidence: `data/audits/feat-provenance-canonical-authority.json`; prerequisite text unavailable for 22 feats; 111 prerequisite name-reference edges.
 
 ## Statistics
 
