@@ -17,7 +17,7 @@ Mechanic families scanned: 15 (106 detectors, 14 cross-domain bundles)
 Records where mechanic wording and the compared tag co-occur (count only; not adjudicated): 3965
 
 Owner-review candidates: 372
-  record-level (P1 219 / P2 127): 346
+  record-level (P1 221 / P2 125): 346
   tag-definition (P3): 12
   tag-convention questions (P3; 236 untagged matches listed, not individually flagged): 14
 
@@ -64,7 +64,7 @@ Zero violations across the combined corpus.
 
 | Family | Detectors | Feats involved | Talents involved | Detections | Convergent | Review P1 | Review P2 |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| A. Action economy | 6 | 50 | 454 | 1002 | 975 | 27 | 0 |
+| A. Action economy | 6 | 50 | 454 | 1002 | 975 | 29 | 0 |
 | B. Rerolls / reliability | 5 | 33 | 104 | 155 | 148 | 2 | 4 |
 | C. Resource mechanics | 5 | 51 | 303 | 512 | 488 | 15 | 9 |
 | D. Damage mechanics | 7 | 50 | 121 | 211 | 113 | 3 | 5 |
@@ -72,7 +72,7 @@ Zero violations across the combined corpus.
 | F. Targeting / setup | 6 | 23 | 129 | 183 | 97 | 33 | 0 |
 | G. Battlefield control | 8 | 35 | 81 | 145 | 119 | 15 | 11 |
 | H. Reactive combat | 3 | 24 | 62 | 86 | 68 | 14 | 0 |
-| I. Defense | 9 | 74 | 265 | 373 | 244 | 3 | 11 |
+| I. Defense | 9 | 74 | 265 | 373 | 244 | 3 | 9 |
 | J. Recovery / medicine | 9 | 27 | 107 | 194 | 146 | 5 | 12 |
 | K. Support / command | 7 | 39 | 280 | 388 | 289 | 0 | 71 |
 | L. Technology | 9 | 18 | 78 | 163 | 145 | 3 | 0 |
@@ -82,7 +82,7 @@ Zero violations across the combined corpus.
 
 ### A. Action economy
 
-Tags expected: `action_economy`, `move_action`, `reaction`, `standard_action`, `swift_action`. Records with evidence text: 1540; feats involved 50; talents involved 454; detections 1002; already convergent 975; owner review 27.
+Tags expected: `action_economy`, `move_action`, `reaction`, `standard_action`, `swift_action`. Records with evidence text: 1540; feats involved 50; talents involved 454; detections 1002; already convergent 975; owner review 29.
 
 | Detector | Tag | Conf | Detected (F/T) | Tagged (F/T) | Detected, not tagged (F/T) | Tagged rate |
 | --- | --- | --- | --- | --- | --- | ---: |
@@ -100,6 +100,7 @@ Owner-review groups (mechanic → candidate tag):
 - **A.cost_reaction** → `reaction` (P1): 3 record(s) [0 feat / 3 talent]; e.g. Dumb Luck (`7a024dac260bf9ec`); Outmaneuver (`95697c5a4459d7e4`); Tactical Superiority (`f259cf27c1b62c47`)
 - **A.cost_standard** → `standard_action` (P1): 4 record(s) [0 feat / 4 talent]; e.g. Deep Space Raider (`696f7eed2cc08299`); Harrying Shot (`8306c13c16ae0af8`); Scripted Routines (`8d0657e7ade688bd`)
 - **A.cost_swift** → `swift_action` (P1): 4 record(s) [1 feat / 3 talent]; e.g. Signature Device (`313095ada7504547`); Out of Harm's Way (`1946e16d1e6c831c`); Sow Confusion (`6b09fe0c6fe98367`)
+- **bundle:reaction_defensive_benefit>defense** → `defense` (P1): 2 record(s) [1 feat / 1 talent]; e.g. Dive for Cover (`2866d953b4b6245d`); Reactive Stealth (`810160a476804e61`)
 
 Representative evidence (facts only): **Ascension Specialists** (FEAT, Galaxy at War p.28, FEAT_CANONICAL_RULES_SHAPE) — "…+1 for each ally within 12 squares who also has this feat, to a maximum competence bonus of +7. Additionally, climb at half speed as a move action or normal speed as a full-round action. Team Feat: +3 Climb, scaling by nearby allies with the same feat to +7, plus a Climb-spec…". Tags: `teamwork`, `climb`, `movement`, `mobility`, `scaling`; compared tag `action_economy` absent. Comparison records carrying it: Supervising Droid (TALENT) [`droid`, `ally_support`, `support`, `teamwork`, `skills`, `standard_action`, `swift_action`, `action_economy`, `once-per-encounter`, `reliability`]; Soft to Solid (TALENT) [`force`, `reaction`, `action_economy`, `force_point_spend`, `resource_spend`, `damage_reduction`, `defense`, `resilience`, `survivability`]; Friend or Foe (TALENT) [`ally-trigger`, `reaction`, `action_economy`, `ranged`, `counterattack`, `control`, `positioning`, `evasion`].
 
@@ -118,7 +119,7 @@ Tags expected: `reliability`, `reroll`, `skill_mastery`. Records with evidence t
 Owner-review groups (mechanic → candidate tag):
 
 - **B.reroll** → `reroll` (P1): 1 record(s) [0 feat / 1 talent]; e.g. Visionary Defense (`153f4b3c6510023d`)
-- **B.roll_twice_keep** → `reliability` (P1): 1 record(s) [0 feat / 1 talent]; e.g. Visionary Defense (`153f4b3c6510023d`)
+- **bundle:reroll>reliability** → `reliability` (P1): 1 record(s) [0 feat / 1 talent]; e.g. Visionary Defense (`153f4b3c6510023d`)
 - **B.roll_twice_keep** → `reliability` (P2): 1 record(s) [1 feat / 0 talent]; e.g. Force of Personality (`baff0da30d0bc8ee`)
 - **B.take_10_20** → `reliability` (P2): 3 record(s) [2 feat / 1 talent]; e.g. Damage Conversion (`1f404db00518aeed`); Biotech Specialist (`bf6c01fa590a3f75`); Electronic Sabotage (`0290634450ab1637`)
 
@@ -247,7 +248,7 @@ Representative evidence (facts only): **Out of Harm's Way** (TALENT, Unknown Reg
 
 ### I. Defense
 
-Tags expected: `concealment`, `cover`, `damage_reduction`, `defense`, `evasion`, `melee_defense`, `ranged_defense`, `resilience`, `survivability`. Records with evidence text: 1540; feats involved 74; talents involved 265; detections 373; already convergent 244; owner review 14.
+Tags expected: `concealment`, `cover`, `damage_reduction`, `defense`, `evasion`, `melee_defense`, `ranged_defense`, `resilience`, `survivability`. Records with evidence text: 1540; feats involved 74; talents involved 265; detections 373; already convergent 244; owner review 12.
 
 | Detector | Tag | Conf | Detected (F/T) | Tagged (F/T) | Detected, not tagged (F/T) | Tagged rate |
 | --- | --- | --- | --- | --- | --- | ---: |
@@ -266,7 +267,6 @@ Owner-review groups (mechanic → candidate tag):
 - **I.concealment** → `concealment` (P1): 1 record(s) [0 feat / 1 talent]; e.g. Stealthy Withdrawal (`c483676cb3c07cb3`)
 - **I.damage_reduction** → `damage_reduction` (P1): 2 record(s) [0 feat / 2 talent]; e.g. Akk Dog Trainer's Actions (`ad7fd3e1a2b04c30`); Sith Alchemy (`eb4f3e8660bc476589d0323d4cc00845`)
 - **I.cover** → `cover` (P2): 7 record(s) [1 feat / 6 talent]; e.g. Tech Specialist (`42e2404790756700`); Lead From the Front (`a67a1a657fe5665c`); Seek and Destroy (`adacf682b6ccf21c`)
-- **I.defense_generic** → `defense` (P2): 2 record(s) [1 feat / 1 talent]; e.g. Dive for Cover (`2866d953b4b6245d`); Reactive Stealth (`810160a476804e61`)
 - **I.evasion** → `evasion` (P2): 1 record(s) [1 feat / 0 talent]; e.g. Targeted Area (`9c904590c02fb30a`)
 - **I.ranged_defense** → `ranged_defense` (P2): 1 record(s) [1 feat / 0 talent]; e.g. Sniper Shot (`94fc90a53d747f84`)
 
@@ -455,7 +455,7 @@ Reporting rule (measurable): when a detector's tagged-rate is below 50%, its unt
 | Attack of opportunity generation / modification | 22 | 59 | `attack_of_opportunity` 22/22; 45/59 | 14 |
 | Second wind | 10 | 14 | `healing` 8/10; 13/14 · `recovery` 10/10; 13/14 | 0 |
 | Condition track movement | 16 | 79 | `recovery` 4/16; 21/79 · `condition_removal` 4/16; 20/79 · `healing` 1/16; 7/79 | 0 |
-| Skill / modifier substitution | 7 | 17 | `skill_substitution` 4/7; 14/17 | 6 |
+| Skill / modifier substitution | 7 | 17 | `skill_substitution` 4/7; 14/17 | 0 |
 | Ally-triggered benefit | 1 | 15 | `ally-trigger` 1/1; 6/15 · `ally_support` 0/1; 10/15 | 0 |
 | Damage threshold manipulation | 15 | 31 | `damage_threshold` 15/15; 28/31 | 3 |
 | Prone / knock-down | 9 | 9 | `battlefield_control` 5/9; 6/9 · `control` 7/9; 6/9 | 0 |

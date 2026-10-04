@@ -26,8 +26,8 @@
     "ownerReviewCandidates": 372,
     "ownerReviewRecordItems": 346,
     "ownerReviewRecordItemsByPriority": {
-      "P1": 219,
-      "P2": 127
+      "P1": 221,
+      "P2": 125
     },
     "ownerReviewTagDefinitionItems": 12,
     "ownerReviewTagConventionQuestions": 14,
@@ -89,8 +89,8 @@
       "talentsInvolved": 454,
       "detections": 1002,
       "convergent": 975,
-      "ownerReview": 27,
-      "ownerReviewP1": 27,
+      "ownerReview": 29,
+      "ownerReviewP1": 29,
       "ownerReviewP2": 0
     },
     {
@@ -252,9 +252,9 @@
       "talentsInvolved": 265,
       "detections": 373,
       "convergent": 244,
-      "ownerReview": 14,
+      "ownerReview": 12,
       "ownerReviewP1": 3,
-      "ownerReviewP2": 11
+      "ownerReviewP2": 9
     },
     {
       "family": "J",
@@ -11219,7 +11219,7 @@
           }
         }
       },
-      "mismatchCount": 6,
+      "mismatchCount": 0,
       "memberRecords": [
         {
           "canonicalId": "0536f81eff886234",
@@ -16889,6 +16889,239 @@
       "state": "PASS3B_OWNER_REVIEW",
       "priority": 1,
       "priorityBasis": "detector confidence HIGH (or tight HIGH-only bundle) with a same-mechanic comparator in the other domain",
+      "family": "A",
+      "familyName": "Action economy",
+      "mechanic": "bundle:reaction_defensive_benefit>defense",
+      "comparedTag": "defense",
+      "detectorConfidence": "HIGH",
+      "domain": "FEAT",
+      "canonicalId": "2866d953b4b6245d",
+      "name": "Dive for Cover",
+      "source": "Galaxy at War",
+      "page": 23,
+      "evidenceTier": "FEAT_CANONICAL_RULES_SHAPE",
+      "canonicalMechanicText": "Once per turn, as a reaction to being targeted by a ranged attack, make a horizontal Jump check. If you land in a square providing cover from the attacker, gain that cover bonus against the triggering attack even though you lacked it when targeted. You always land prone. Once per turn, react to a ranged attack by jumping into cover; if you reach cover it protects against that attack, and you land prone.",
+      "matchedExcerpt": "Once per turn, as a reaction to being targeted by a ranged attack, make a horizontal Jump check. If you land in a square providing cover from the attacker, ga…",
+      "currentTags": [
+        "jump",
+        "reaction",
+        "action_economy",
+        "movement",
+        "mobility",
+        "cover",
+        "ranged_defense",
+        "evasion"
+      ],
+      "comparisonRecords": [
+        {
+          "canonicalId": "444c032c563c18a1",
+          "domain": "TALENT",
+          "name": "Beloved",
+          "source": "Scum and Villainy",
+          "page": 14,
+          "tags": [
+            "once-per-encounter",
+            "ally_support",
+            "support",
+            "teamwork",
+            "swift_action",
+            "standard_action",
+            "action_economy",
+            "defense",
+            "reaction",
+            "counterattack",
+            "mobility",
+            "movement",
+            "evasion",
+            "positioning"
+          ],
+          "excerpt": "…ds and that target attacks you before the end of your next turn, one ally within 6 squares can make an attack against that target as a reaction. To Me!: Spend a swift action. Whenever you take any damage before the beginning of your next turn, each ally within line of sigh…",
+          "evidenceTier": "TALENT_CERTIFIED_PACK_BENEFIT_TEXT",
+          "canonicalMechanicText": "Your allies hold you in such esteem that when you are threatened or injured, you can impel them to action. You can use each of the following actions once per encounter. Guardian: Choose one ally as a swift action. As long as you remain within 6 squares of the ally, you gain a +2 bonus to your Reflex Defense until the start of your next turn. Reprisal: Make a single melee or ranged attack against any target within range as a standard action. If your attack roll succeeds and that target attacks you before the end of your next turn, one ally within 6 squares can make an attack against that target as a reaction. To Me!: Spend a swift action. Whenever you take any damage before the beginning of your next turn, each ally within line of sight can move 2 squares as a reaction; this movement does not provoke attacks of opportunity."
+        },
+        {
+          "canonicalId": "7a024dac260bf9ec",
+          "domain": "TALENT",
+          "name": "Dumb Luck",
+          "source": "Scum and Villainy",
+          "page": 14,
+          "tags": [
+            "once-per-encounter",
+            "standard_action",
+            "action_economy",
+            "melee",
+            "ranged",
+            "defense",
+            "evasion",
+            "mobility",
+            "movement",
+            "positioning",
+            "precision",
+            "setup"
+          ],
+          "excerpt": "…arget within range; if the target successfully damages you before the start of your next turn, you can immediately move 2 squares as a reaction without provoking attacks of opportunity. Make your Own Luck: Make a single melee or ranged attack against any target within rang…",
+          "evidenceTier": "TALENT_CERTIFIED_PACK_BENEFIT_TEXT",
+          "canonicalMechanicText": "You can use each of the following actions once per encounter as a standard action. Elude Enemy: Make a single melee or ranged attack against any target within range; if you damage the target, you gain a +2 bonus to your Reflex Defense against that target until the beginning of your next turn. Escape: Make a single melee or ranged attack against any target within range; if the target successfully damages you before the start of your next turn, you can immediately move 2 squares as a reaction without provoking attacks of opportunity. Make your Own Luck: Make a single melee or ranged attack against any target within range; if you miss this target, you gain a +2 bonus on your next attack roll."
+        },
+        {
+          "canonicalId": "df6c20e602190daa",
+          "domain": "TALENT",
+          "name": "Ride the Current",
+          "source": "Jedi Academy Training Manual",
+          "page": 77,
+          "tags": [
+            "force",
+            "reaction",
+            "action_economy",
+            "force_point_spend",
+            "resource_spend",
+            "concealment",
+            "evasion",
+            "defense",
+            "recovery",
+            "healing",
+            "survivability"
+          ],
+          "excerpt": "As a reaction to being damaged by an attack or Force power, you can spend a Force Point to gain total concealment from all targets until the en…",
+          "evidenceTier": "TALENT_CERTIFIED_PACK_BENEFIT_TEXT",
+          "canonicalMechanicText": "As a reaction to being damaged by an attack or Force power, you can spend a Force Point to gain total concealment from all targets until the end of your next turn. Additionally, if you have not yet taken your second wind, you can do so immediately as a part of this reaction."
+        }
+      ],
+      "comparisonTags": [
+        "action_economy",
+        "ally_support",
+        "concealment",
+        "counterattack",
+        "defense",
+        "evasion",
+        "force",
+        "force_point_spend",
+        "healing",
+        "melee",
+        "mobility",
+        "movement",
+        "once-per-encounter",
+        "positioning",
+        "precision",
+        "ranged",
+        "reaction",
+        "recovery",
+        "resource_spend",
+        "setup",
+        "standard_action",
+        "support",
+        "survivability",
+        "swift_action",
+        "teamwork"
+      ],
+      "comparatorsInOtherDomain": 3,
+      "detectableCommonality": {
+        "detector": "bundle:reaction_defensive_benefit>defense",
+        "pattern": "\\bas a reaction\\b|\\bwhen you (?:take|use) a reaction\\b|\\bspend(?:s)? a reaction\\b|\\btakes? a reaction\\b",
+        "detectorNote": "bundle: Reaction + defensive benefit"
+      },
+      "exactTagDifference": {
+        "comparedTag": "defense",
+        "thisRecordCarriesTag": false,
+        "thisDomain": "FEAT",
+        "otherDomain": "TALENT",
+        "otherDomainRecordsMatchingDetector": 4,
+        "otherDomainRecordsMatchingDetectorAndCarryingTag": 3,
+        "detectorTaggedRateOverall": 0.667
+      },
+      "applicableInvariant": null,
+      "priorOwnerPrecedent": null,
+      "channels": [
+        "CHANNEL_2_CROSS_DOMAIN_BUNDLE"
+      ],
+      "bundles": [
+        "reaction_defensive_benefit"
+      ]
+    },
+    {
+      "state": "PASS3B_OWNER_REVIEW",
+      "priority": 1,
+      "priorityBasis": "detector confidence HIGH (or tight HIGH-only bundle) with a same-mechanic comparator in the other domain",
+      "family": "A",
+      "familyName": "Action economy",
+      "mechanic": "bundle:reaction_defensive_benefit>defense",
+      "comparedTag": "defense",
+      "detectorConfidence": "HIGH",
+      "domain": "TALENT",
+      "canonicalId": "810160a476804e61",
+      "name": "Reactive Stealth",
+      "source": "Galaxy of Intrigue",
+      "page": 22,
+      "evidenceTier": "TALENT_CERTIFIED_PACK_BENEFIT_TEXT",
+      "canonicalMechanicText": "When you are missed by a ranged attack and have concealment or cover from the attacker, you can move up to half your speed as a reaction and make a Stealth check to become hidden from your attacker, provided you still have concealment or cover at the end of your movement.",
+      "matchedExcerpt": "When you are missed by a ranged attack and have concealment or cover from the attacker, you can move up to half your speed as a reaction and make a Stealth check to become hidden from your attacker, provided you still have concealment or cover at the end of your mov…",
+      "currentTags": [
+        "ranged",
+        "reaction",
+        "action_economy",
+        "mobility",
+        "positioning",
+        "stealth",
+        "concealment",
+        "cover",
+        "evasion"
+      ],
+      "comparisonRecords": [
+        {
+          "canonicalId": "2bdb31b248f680e3",
+          "domain": "FEAT",
+          "name": "Republic Military Training",
+          "source": "Knights of the Old Republic Campaign Guide",
+          "page": 35,
+          "tags": [
+            "cover",
+            "damage_reduction",
+            "reaction",
+            "action_economy",
+            "once-per-encounter",
+            "defense"
+          ],
+          "excerpt": "Once per encounter as a reaction, gain DR 10 against an incoming attack if you have cover from the attacker. The cover still qualifies even if the attacker Aims t…",
+          "evidenceTier": "FEAT_CANONICAL_RULES_SHAPE",
+          "canonicalMechanicText": "Once per encounter as a reaction, gain DR 10 against an incoming attack if you have cover from the attacker. The cover still qualifies even if the attacker Aims to ignore the cover bonus to Reflex Defense. Once per encounter, react to an incoming attack while in cover to gain DR 10, even if Aim ignores the cover's Reflex bonus."
+        }
+      ],
+      "comparisonTags": [
+        "action_economy",
+        "cover",
+        "damage_reduction",
+        "defense",
+        "once-per-encounter",
+        "reaction"
+      ],
+      "comparatorsInOtherDomain": 1,
+      "detectableCommonality": {
+        "detector": "bundle:reaction_defensive_benefit>defense",
+        "pattern": "\\bas a reaction\\b|\\bwhen you (?:take|use) a reaction\\b|\\bspend(?:s)? a reaction\\b|\\btakes? a reaction\\b",
+        "detectorNote": "bundle: Reaction + defensive benefit"
+      },
+      "exactTagDifference": {
+        "comparedTag": "defense",
+        "thisRecordCarriesTag": false,
+        "thisDomain": "TALENT",
+        "otherDomain": "FEAT",
+        "otherDomainRecordsMatchingDetector": 2,
+        "otherDomainRecordsMatchingDetectorAndCarryingTag": 1,
+        "detectorTaggedRateOverall": 0.667
+      },
+      "applicableInvariant": null,
+      "priorOwnerPrecedent": null,
+      "channels": [
+        "CHANNEL_2_CROSS_DOMAIN_BUNDLE"
+      ],
+      "bundles": [
+        "reaction_defensive_benefit"
+      ]
+    },
+    {
+      "state": "PASS3B_OWNER_REVIEW",
+      "priority": 1,
+      "priorityBasis": "detector confidence HIGH (or tight HIGH-only bundle) with a same-mechanic comparator in the other domain",
       "family": "B",
       "familyName": "Rerolls / reliability",
       "mechanic": "B.reroll",
@@ -17034,9 +17267,9 @@
       "priorityBasis": "detector confidence HIGH (or tight HIGH-only bundle) with a same-mechanic comparator in the other domain",
       "family": "B",
       "familyName": "Rerolls / reliability",
-      "mechanic": "B.roll_twice_keep",
+      "mechanic": "bundle:reroll>reliability",
       "comparedTag": "reliability",
-      "detectorConfidence": "MEDIUM",
+      "detectorConfidence": "HIGH",
       "domain": "TALENT",
       "canonicalId": "153f4b3c6510023d",
       "name": "Visionary Defense",
@@ -17044,6 +17277,7 @@
       "page": 25,
       "evidenceTier": "TALENT_CERTIFIED_PACK_BENEFIT_TEXT",
       "canonicalMechanicText": "As a reaction, you can make a Use the Force check after you or an ally within 12 squares is the target of a melee or ranged attack (but before the results of the attack roll are known), removing one use of the farseeing Force power from your active suite (as though you had just activated the power). If your check result exceeds the Will Defense of the attacker, you grant the target of the attack a +5 Force bonus to Reflex Defense against that attack. This counts as using the farseeing Force power against the attacker, but this talent replaces the normal rules and effect of that power. Any attack can only be affected by this talent once (thus, multiple characters cannot use this talent on the same attack to allow multiple rerolls). You take a cumulative -5 penalty on Use the Force checks until the beginning of your next turn when you use this talent.",
+      "matchedExcerpt": "…k can only be affected by this talent once (thus, multiple characters cannot use this talent on the same attack to allow multiple rerolls). You take a cumulative -5 penalty on Use the Force checks until the beginning of your next turn when you use this talent.",
       "currentTags": [
         "force",
         "force_power_synergy",
@@ -17062,73 +17296,103 @@
       ],
       "comparisonRecords": [
         {
-          "canonicalId": "33905755bbb1ca10",
+          "canonicalId": "0ac76f1c0c1677cb",
           "domain": "FEAT",
-          "name": "Binary Mind",
-          "source": "Rebellion Era Campaign Guide",
-          "page": 31,
+          "name": "Conditioning",
+          "source": "Knights of the Old Republic Campaign Guide",
+          "page": 32,
           "tags": [
-            "mind-affecting",
+            "reroll",
+            "reliability",
+            "skills",
             "defense",
-            "reliability"
-          ],
-          "excerpt": "Whenever an enemy uses a mind-affecting effect against you, that enemy rolls twice and keeps the lower result. Enemies roll mind-affecting attempts twice against you and keep the lower result.",
-          "evidenceTier": "FEAT_CANONICAL_RULES_SHAPE",
-          "canonicalMechanicText": "Whenever an enemy uses a mind-affecting effect against you, that enemy rolls twice and keeps the lower result. Enemies roll mind-affecting attempts twice against you and keep the lower result."
-        },
-        {
-          "canonicalId": "5a2ba2f28bc5ee01",
-          "domain": "FEAT",
-          "name": "Perfect Intuition",
-          "source": "Rebellion Era Campaign Guide",
-          "page": 34,
-          "tags": [
-            "initiative",
-            "reroll",
-            "reliability"
-          ],
-          "excerpt": "Whenever you reroll an Initiative check, always keep the better result, even if multiple reroll abilities apply. Initiative rerolls always keep the better result.",
-          "evidenceTier": "FEAT_CANONICAL_RULES_SHAPE",
-          "canonicalMechanicText": "Whenever you reroll an Initiative check, always keep the better result, even if multiple reroll abilities apply. Initiative rerolls always keep the better result."
-        },
-        {
-          "canonicalId": "70c842436bbb6330",
-          "domain": "FEAT",
-          "name": "Perfect Swimmer",
-          "source": "Rebellion Era Campaign Guide",
-          "page": 34,
-          "tags": [
+            "reaction",
+            "action_economy",
+            "once-per-encounter",
+            "resilience",
+            "climb",
+            "jump",
             "swim",
+            "endurance"
+          ],
+          "excerpt": "Reroll any Strength- or Constitution-based skill check for a skill in which you are trained; accept the second result. Once per encounte…",
+          "evidenceTier": "FEAT_CANONICAL_RULES_SHAPE",
+          "canonicalMechanicText": "Reroll any Strength- or Constitution-based skill check for a skill in which you are trained; accept the second result. Once per encounter as a reaction, add your Strength bonus to Fortitude Defense until the beginning of your next turn. Reroll trained Strength/Constitution-based skills and once per encounter add Strength bonus to Fortitude as a reaction."
+        },
+        {
+          "canonicalId": "2bb34366776f0371",
+          "domain": "FEAT",
+          "name": "Cut the Red Tape",
+          "source": "Galaxy of Intrigue",
+          "page": 27,
+          "tags": [
+            "knowledge",
+            "gather_information",
+            "skill_substitution",
+            "skills",
             "reroll",
             "reliability"
           ],
-          "excerpt": "Whenever you reroll a Swim check, always keep the better result, even if multiple reroll abilities apply. Swim rerolls always keep the better result.",
+          "excerpt": "Use Knowledge (Bureaucracy) modifier in place of Gather Information. If entitled to a Gather Information reroll, reroll the substituted Knowledge check under the same restrictions. Count as trained in Gather Information for this check. Use K…",
           "evidenceTier": "FEAT_CANONICAL_RULES_SHAPE",
-          "canonicalMechanicText": "Whenever you reroll a Swim check, always keep the better result, even if multiple reroll abilities apply. Swim rerolls always keep the better result."
+          "canonicalMechanicText": "Use Knowledge (Bureaucracy) modifier in place of Gather Information. If entitled to a Gather Information reroll, reroll the substituted Knowledge check under the same restrictions. Count as trained in Gather Information for this check. Use Knowledge (Bureaucracy) for Gather Information, including eligible rerolls, and count as trained for the substituted check."
+        },
+        {
+          "canonicalId": "2e5ada2de01fff4d",
+          "domain": "FEAT",
+          "name": "Dreadful Countenance",
+          "source": "Behind the Threat: The Sith, Part 2 — The Becoming",
+          "page": "web-article-archived-rendering-page-4-of-4",
+          "tags": [
+            "persuasion",
+            "use_the_force",
+            "force",
+            "fear",
+            "reroll",
+            "reliability",
+            "social"
+          ],
+          "excerpt": "Whenever you make a Persuasion check or Use the Force check to activate a fear effect, you may reroll the check. You must accept the reroll result even if it is worse. Reroll Persuasion or Use the Force checks used to activate fear…",
+          "evidenceTier": "FEAT_CANONICAL_RULES_SHAPE",
+          "canonicalMechanicText": "Whenever you make a Persuasion check or Use the Force check to activate a fear effect, you may reroll the check. You must accept the reroll result even if it is worse. Reroll Persuasion or Use the Force checks used to activate fear effects, but keep the reroll even if worse."
         }
       ],
       "comparisonTags": [
+        "action_economy",
+        "climb",
         "defense",
-        "initiative",
-        "mind-affecting",
+        "endurance",
+        "fear",
+        "force",
+        "gather_information",
+        "jump",
+        "knowledge",
+        "once-per-encounter",
+        "persuasion",
+        "reaction",
         "reliability",
         "reroll",
-        "swim"
+        "resilience",
+        "skill_substitution",
+        "skills",
+        "social",
+        "swim",
+        "use_the_force"
       ],
-      "comparatorsInOtherDomain": 6,
+      "comparatorsInOtherDomain": 19,
       "detectableCommonality": {
-        "detector": "B.roll_twice_keep",
-        "pattern": "\\broll(?:s)? (?:twice|two dice)|(?:keep|use|take) the (?:better|higher|best)|(?:better|higher) of (?:the )?two (?:rolls|results)",
-        "detectorNote": null
+        "detector": "bundle:reroll>reliability",
+        "pattern": "\\bre-?roll",
+        "detectorNote": "bundle: Explicit reroll"
       },
       "exactTagDifference": {
         "comparedTag": "reliability",
         "thisRecordCarriesTag": false,
         "thisDomain": "TALENT",
         "otherDomain": "FEAT",
-        "otherDomainRecordsMatchingDetector": 7,
-        "otherDomainRecordsMatchingDetectorAndCarryingTag": 6,
-        "detectorTaggedRateOverall": 0.966
+        "otherDomainRecordsMatchingDetector": 19,
+        "otherDomainRecordsMatchingDetectorAndCarryingTag": 19,
+        "detectorTaggedRateOverall": 0.99
       },
       "applicableInvariant": "reroll -> reliability",
       "priorOwnerPrecedent": null,
@@ -42604,243 +42868,6 @@
       "priorityBasis": "detector confidence MEDIUM with a same-mechanic comparator in the other domain",
       "family": "I",
       "familyName": "Defense",
-      "mechanic": "I.defense_generic",
-      "comparedTag": "defense",
-      "detectorConfidence": "LOW",
-      "domain": "FEAT",
-      "canonicalId": "2866d953b4b6245d",
-      "name": "Dive for Cover",
-      "source": "Galaxy at War",
-      "page": 23,
-      "evidenceTier": "FEAT_CANONICAL_RULES_SHAPE",
-      "canonicalMechanicText": "Once per turn, as a reaction to being targeted by a ranged attack, make a horizontal Jump check. If you land in a square providing cover from the attacker, gain that cover bonus against the triggering attack even though you lacked it when targeted. You always land prone. Once per turn, react to a ranged attack by jumping into cover; if you reach cover it protects against that attack, and you land prone.",
-      "currentTags": [
-        "jump",
-        "reaction",
-        "action_economy",
-        "movement",
-        "mobility",
-        "cover",
-        "ranged_defense",
-        "evasion"
-      ],
-      "comparisonRecords": [
-        {
-          "canonicalId": "01bcee2365b82ce6",
-          "domain": "TALENT",
-          "name": "Unreadable",
-          "source": "Scum and Villainy",
-          "page": 14,
-          "tags": [
-            "will_defense",
-            "defense",
-            "resilience",
-            "social",
-            "deception",
-            "feint",
-            "ambush",
-            "setup"
-          ],
-          "excerpt": "You gain a +5 bonus to your Will Defense against skill checks made to read your emotions and influence your attitude. In addition, whenever you successfully feint a targe…",
-          "evidenceTier": "TALENT_CERTIFIED_PACK_BENEFIT_TEXT",
-          "canonicalMechanicText": "You gain a +5 bonus to your Will Defense against skill checks made to read your emotions and influence your attitude. In addition, whenever you successfully feint a target in combat, that target is flat-footed against all your attacks until the end of your next turn."
-        },
-        {
-          "canonicalId": "049820827d7ef32b",
-          "domain": "TALENT",
-          "name": "Cover Fire",
-          "source": "Saga Edition Core Rulebook",
-          "page": 52,
-          "tags": [
-            "ranged",
-            "ally_support",
-            "support",
-            "teamwork",
-            "defense",
-            "ranged_defense"
-          ],
-          "excerpt": "…n you make a ranged attack with a Pistol or Rifle, all allies within 6 squares of you when you made the attack gain a +1 bonus to Reflex Defense until the start of your next turn. Allies within range don't need to be within your line of sight to gain the bonus.",
-          "evidenceTier": "TALENT_CERTIFIED_PACK_BENEFIT_TEXT",
-          "canonicalMechanicText": "When you make a ranged attack with a Pistol or Rifle, all allies within 6 squares of you when you made the attack gain a +1 bonus to Reflex Defense until the start of your next turn. Allies within range don't need to be within your line of sight to gain the bonus."
-        },
-        {
-          "canonicalId": "06ab0e40780ea63d",
-          "domain": "TALENT",
-          "name": "Knowledge and Defense",
-          "source": "Jedi Academy Training Manual",
-          "page": 75,
-          "tags": [
-            "defense",
-            "ambush_defense",
-            "survivability",
-            "ability_enhancement"
-          ],
-          "excerpt": "You add your Wisdom bonus to your Reflex Defense whenever your Dexterity bonus would normally be denied to you.",
-          "evidenceTier": "TALENT_CERTIFIED_PACK_BENEFIT_TEXT",
-          "canonicalMechanicText": "You add your Wisdom bonus to your Reflex Defense whenever your Dexterity bonus would normally be denied to you."
-        }
-      ],
-      "comparisonTags": [
-        "ability_enhancement",
-        "ally_support",
-        "ambush",
-        "ambush_defense",
-        "deception",
-        "defense",
-        "feint",
-        "ranged",
-        "ranged_defense",
-        "resilience",
-        "setup",
-        "social",
-        "support",
-        "survivability",
-        "teamwork",
-        "will_defense"
-      ],
-      "comparatorsInOtherDomain": 90,
-      "detectableCommonality": {
-        "detector": "I.defense_generic",
-        "pattern": "\\b(?:Reflex|Fortitude|Will) Defense\\b",
-        "detectorNote": null
-      },
-      "exactTagDifference": {
-        "comparedTag": "defense",
-        "thisRecordCarriesTag": false,
-        "thisDomain": "FEAT",
-        "otherDomain": "TALENT",
-        "otherDomainRecordsMatchingDetector": 185,
-        "otherDomainRecordsMatchingDetectorAndCarryingTag": 90,
-        "detectorTaggedRateOverall": 0.544
-      },
-      "applicableInvariant": null,
-      "priorOwnerPrecedent": null,
-      "channels": [
-        "CHANNEL_2_CROSS_DOMAIN_BUNDLE"
-      ],
-      "bundles": [
-        "reaction_defensive_benefit"
-      ]
-    },
-    {
-      "state": "PASS3B_OWNER_REVIEW",
-      "priority": 2,
-      "priorityBasis": "detector confidence MEDIUM with a same-mechanic comparator in the other domain",
-      "family": "I",
-      "familyName": "Defense",
-      "mechanic": "I.defense_generic",
-      "comparedTag": "defense",
-      "detectorConfidence": "LOW",
-      "domain": "TALENT",
-      "canonicalId": "810160a476804e61",
-      "name": "Reactive Stealth",
-      "source": "Galaxy of Intrigue",
-      "page": 22,
-      "evidenceTier": "TALENT_CERTIFIED_PACK_BENEFIT_TEXT",
-      "canonicalMechanicText": "When you are missed by a ranged attack and have concealment or cover from the attacker, you can move up to half your speed as a reaction and make a Stealth check to become hidden from your attacker, provided you still have concealment or cover at the end of your movement.",
-      "currentTags": [
-        "ranged",
-        "reaction",
-        "action_economy",
-        "mobility",
-        "positioning",
-        "stealth",
-        "concealment",
-        "cover",
-        "evasion"
-      ],
-      "comparisonRecords": [
-        {
-          "canonicalId": "0214e9586b6c8bb5",
-          "domain": "FEAT",
-          "name": "Unwavering Focus",
-          "source": "Rebellion Era Campaign Guide",
-          "page": 36,
-          "tags": [
-            "mind-affecting",
-            "will_defense",
-            "defense",
-            "reaction",
-            "action_economy",
-            "skills"
-          ],
-          "excerpt": "When targeted by a mind-affecting effect requiring a skill check against Will Defense, as a reaction impose -2 on that skill check. React to a mind-affecting skill check against your Will by imposing -2 on the check…",
-          "evidenceTier": "FEAT_CANONICAL_RULES_SHAPE",
-          "canonicalMechanicText": "When targeted by a mind-affecting effect requiring a skill check against Will Defense, as a reaction impose -2 on that skill check. React to a mind-affecting skill check against your Will by imposing -2 on the check."
-        },
-        {
-          "canonicalId": "0365722a629eed1f",
-          "domain": "FEAT",
-          "name": "Increased Resistance",
-          "source": "Rebellion Era Campaign Guide",
-          "page": 34,
-          "tags": [
-            "defense",
-            "resilience",
-            "survivability"
-          ],
-          "excerpt": "Whenever an attack or skill check targets Fortitude Defense and fails to equal or exceed it, gain +2 circumstance Fortitude until the start of your next turn. After an enemy fails against y…",
-          "evidenceTier": "FEAT_CANONICAL_RULES_SHAPE",
-          "canonicalMechanicText": "Whenever an attack or skill check targets Fortitude Defense and fails to equal or exceed it, gain +2 circumstance Fortitude until the start of your next turn. After an enemy fails against your Fortitude Defense, gain +2 circumstance Fortitude until next turn."
-        },
-        {
-          "canonicalId": "0536f81eff886234",
-          "domain": "FEAT",
-          "name": "Flurry",
-          "source": "Knights of the Old Republic Campaign Guide",
-          "page": 33,
-          "tags": [
-            "melee",
-            "precision",
-            "defense"
-          ],
-          "excerpt": "While wielding only light weapons or lightsabers, take -5 Reflex Defense and gain +2 on melee attack rolls until the start of your next turn. May substitute for Point Blank Shot when qualifying for elit…",
-          "evidenceTier": "FEAT_CANONICAL_RULES_SHAPE",
-          "canonicalMechanicText": "While wielding only light weapons or lightsabers, take -5 Reflex Defense and gain +2 on melee attack rolls until the start of your next turn. May substitute for Point Blank Shot when qualifying for elite trooper. Trade -5 Reflex for +2 melee attacks while wielding only light weapons/lightsabers; also substitutes for Point Blank Shot for elite trooper qualification."
-        }
-      ],
-      "comparisonTags": [
-        "action_economy",
-        "defense",
-        "melee",
-        "mind-affecting",
-        "precision",
-        "reaction",
-        "resilience",
-        "skills",
-        "survivability",
-        "will_defense"
-      ],
-      "comparatorsInOtherDomain": 45,
-      "detectableCommonality": {
-        "detector": "I.defense_generic",
-        "pattern": "\\b(?:Reflex|Fortitude|Will) Defense\\b",
-        "detectorNote": null
-      },
-      "exactTagDifference": {
-        "comparedTag": "defense",
-        "thisRecordCarriesTag": false,
-        "thisDomain": "TALENT",
-        "otherDomain": "FEAT",
-        "otherDomainRecordsMatchingDetector": 63,
-        "otherDomainRecordsMatchingDetectorAndCarryingTag": 45,
-        "detectorTaggedRateOverall": 0.544
-      },
-      "applicableInvariant": null,
-      "priorOwnerPrecedent": null,
-      "channels": [
-        "CHANNEL_2_CROSS_DOMAIN_BUNDLE"
-      ],
-      "bundles": [
-        "reaction_defensive_benefit"
-      ]
-    },
-    {
-      "state": "PASS3B_OWNER_REVIEW",
-      "priority": 2,
-      "priorityBasis": "detector confidence MEDIUM with a same-mechanic comparator in the other domain",
-      "family": "I",
-      "familyName": "Defense",
       "mechanic": "I.evasion",
       "comparedTag": "evasion",
       "detectorConfidence": "MEDIUM",
@@ -56874,9 +56901,9 @@
       "priorityBasis": null,
       "family": "G",
       "familyName": "Battlefield control",
-      "mechanic": "G.speed_change",
+      "mechanic": "bundle:grapple_forced_movement>movement",
       "comparedTag": "movement",
-      "detectorConfidence": "MEDIUM",
+      "detectorConfidence": "HIGH",
       "domain": "FEAT",
       "canonicalId": "a8511e47656ef4dd",
       "name": "Trip",
@@ -56884,6 +56911,7 @@
       "page": 88,
       "evidenceTier": "FEAT_CANONICAL_RULES_SHAPE",
       "canonicalMechanicText": "After winning a grapple attack/opposed grapple, target falls prone in its space and is no longer grappled. Cannot use Pin and Trip during the same round. Win a grapple to knock the target prone and end the grapple.",
+      "matchedExcerpt": "After winning a grapple attack/opposed grapple, target falls prone in its space and is no longer grappled. Cannot use Pin and Trip during the same round.…",
       "currentTags": [
         "grab",
         "grapple",
@@ -56894,94 +56922,70 @@
       ],
       "comparisonRecords": [
         {
-          "canonicalId": "2cf48b8aa712d19d",
+          "canonicalId": "9d235eba6b3e5daf",
           "domain": "TALENT",
-          "name": "Melee Brute",
-          "source": "Legacy Era Campaign Guide",
-          "page": 31,
+          "name": "Knockback",
+          "source": "Force Unleashed Campaign Guide",
+          "page": 42,
           "tags": [
+            "critical_hit",
             "melee",
-            "teamwork",
-            "positioning",
+            "ranged",
             "control",
             "battlefield_control",
             "movement",
-            "defense",
-            "setup"
+            "positioning",
+            "action_economy"
           ],
-          "excerpt": "…ompare the result to the target's Fortitude Defense as well as its Reflex Defense. If the attack hits both defenses, the target's speed is reduced by 2 squares and it takes a -2 penalty to its Reflex Defense until the end of your next turn.",
+          "excerpt": "…move that opponent 1 square in any direction as a free action. You cannot use this talent on an opponent that is being grabbed or grappled, and you cannot move your target into a solid object or another creature's fighting space.",
           "evidenceTier": "TALENT_CERTIFIED_PACK_BENEFIT_TEXT",
-          "canonicalMechanicText": "When you make a melee attack against a target that has one or more of your allies adjacent to it, compare the result to the target's Fortitude Defense as well as its Reflex Defense. If the attack hits both defenses, the target's speed is reduced by 2 squares and it takes a -2 penalty to its Reflex Defense until the end of your next turn."
+          "canonicalMechanicText": "When you score a critical hit against a target no more than two size categories larger than you are, you can choose to move that opponent 1 square in any direction as a free action. You cannot use this talent on an opponent that is being grabbed or grappled, and you cannot move your target into a solid object or another creature's fighting space."
         },
         {
-          "canonicalId": "34ff9dc64050028d",
+          "canonicalId": "f7b620efd191ac6b",
           "domain": "TALENT",
-          "name": "Full Throttle",
-          "source": "Saga Edition Core Rulebook",
-          "page": 207,
+          "name": "Tempest Tossed",
+          "source": "Jedi Academy Training Manual",
+          "page": 83,
           "tags": [
-            "vehicle",
-            "pilot",
-            "skills",
-            "mobility",
+            "melee",
+            "control",
+            "battlefield_control",
             "movement",
-            "pursuit",
-            "reliability"
-          ],
-          "excerpt": "You can take 10 on Pilot checks made to increase your vehicle's speed. In addition, when you use the all-out movement action while piloting a vehicle, your vehicle moves up to five times its normal s…",
-          "evidenceTier": "TALENT_CERTIFIED_PACK_BENEFIT_TEXT",
-          "canonicalMechanicText": "You can take 10 on Pilot checks made to increase your vehicle's speed. In addition, when you use the all-out movement action while piloting a vehicle, your vehicle moves up to five times its normal speed instead of four times."
-        },
-        {
-          "canonicalId": "55f4a04087dacddc",
-          "domain": "TALENT",
-          "name": "Juggernaut",
-          "source": "Saga Edition Core Rulebook",
-          "page": 52,
-          "tags": [
-            "armor",
-            "equipment",
+            "positioning",
             "mobility",
-            "movement",
-            "pursuit"
+            "action_economy"
           ],
-          "excerpt": "Your Armor does not reduce your Speed or the distance you can move while Running. You must be proficient with the Armor you are wearing to gain this benefit.",
+          "excerpt": "…k, you can choose to move that target 1 square in any direction as a free action. You can't move a target that's being grabbed or grappled, and you can't move the opponent into a solid object or another creature's fighting space. This forced movement does not provoke…",
           "evidenceTier": "TALENT_CERTIFIED_PACK_BENEFIT_TEXT",
-          "canonicalMechanicText": "Your Armor does not reduce your Speed or the distance you can move while Running. You must be proficient with the Armor you are wearing to gain this benefit."
+          "canonicalMechanicText": "When you damage a target with a Whirlwind Attack, you can choose to move that target 1 square in any direction as a free action. You can't move a target that's being grabbed or grappled, and you can't move the opponent into a solid object or another creature's fighting space. This forced movement does not provoke attacks of opportunity."
         }
       ],
       "comparisonTags": [
-        "armor",
+        "action_economy",
         "battlefield_control",
         "control",
-        "defense",
-        "equipment",
+        "critical_hit",
         "melee",
         "mobility",
         "movement",
-        "pilot",
         "positioning",
-        "pursuit",
-        "reliability",
-        "setup",
-        "skills",
-        "teamwork",
-        "vehicle"
+        "ranged"
       ],
-      "comparatorsInOtherDomain": 14,
+      "comparatorsInOtherDomain": 2,
       "detectableCommonality": {
-        "detector": "G.speed_change",
-        "pattern": "\\b(?:increase|increases|reduce|reduces|decrease|decreases)\\b[^.]{0,25}\\bspeed\\b|\\+\\d+ squares? to (?:your )?speed|\\bspeed (?:is |becomes )?(?:reduced|increased)|\\bbonus to (?:your )?speed",
-        "detectorNote": null
+        "detector": "bundle:grapple_forced_movement>movement",
+        "pattern": "\\bgrappl(?:e|es|ed|ing)\\b",
+        "detectorNote": "bundle: Grapple attack + forced movement"
       },
       "exactTagDifference": {
         "comparedTag": "movement",
         "thisRecordCarriesTag": false,
         "thisDomain": "FEAT",
         "otherDomain": "TALENT",
-        "otherDomainRecordsMatchingDetector": 17,
-        "otherDomainRecordsMatchingDetectorAndCarryingTag": 14,
-        "detectorTaggedRateOverall": 0.864
+        "otherDomainRecordsMatchingDetector": 2,
+        "otherDomainRecordsMatchingDetectorAndCarryingTag": 2,
+        "detectorTaggedRateOverall": 0.833
       },
       "applicableInvariant": null,
       "priorOwnerPrecedent": {

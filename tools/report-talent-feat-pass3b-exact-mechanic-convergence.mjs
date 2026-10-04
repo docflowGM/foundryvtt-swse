@@ -173,10 +173,17 @@ export function buildReport(baseline) {
       const others = members.filter(o => o.domain !== r.domain), otherCarriers = others.filter(o => o.tags.includes(t));
       if (!otherCarriers.length) continue;
       if (!b.tight || otherCarriers.length / others.length < 0.5) continue; // loose bundle or other domain does not establish the convention
-      // Reuse the primary detector for item context; fall back to a synthetic bundle detector.
-      const det = DETECTORS.find(d => d.tag === t && b.all.includes(d.id)) || DETECTORS.find(d => d.tag === t) || { id: `bundle:${b.id}`, family: '-', tag: t, confidence: 'MEDIUM' };
+      // Bundle items are attributed to the bundle itself (pseudo-detector), never to a detector that did not fire on the record.
+      const lead0 = DETECTORS.find(x => x.id === b.all[0]);
+      if (!lead0) continue; // aux-only bundles are table-only
+      const pid = `bundle:${b.id}>${t}`;
+      if (!fired.has(pid)) {
+        fired.set(pid, new Map(members.map(m => [rid(m), fired.get(lead0.id).get(rid(m)) ?? null])));
+        const carrying = members.filter(m => m.tags.includes(t)).length;
+        statOf.set(pid, { id: pid, taggedRate: Number((carrying / members.length).toFixed(3)) });
+      }
+      const det = { id: pid, family: lead0.family, tag: t, confidence: lead0.confidence, re: lead0.re, note: `bundle: ${b.label}` };
       mismatches.push({ id: rid(r), tag: t, bundleId: b.id });
-      if (det.id.startsWith('bundle:') || (statOf.get(det.id)?.taggedRate ?? 1) < CONVENTION_MIN_RATE) continue; // reported in the bundle table / convention questions only
       const prio = b.all.every(x => !x.startsWith('aux:') && statOf.get(x)?.confidence === 'HIGH') ? 'P1' : 'P2';
       const it = addItem(r, det, 'CHANNEL_2_CROSS_DOMAIN_BUNDLE', { bundle: b.id });
       it.bundleHint = prio;
