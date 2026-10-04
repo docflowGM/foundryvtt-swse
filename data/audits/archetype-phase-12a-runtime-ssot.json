@@ -1,0 +1,772 @@
+{
+  "schemaVersion": 1,
+  "phase": "12A-RUNTIME-SSOT",
+  "status": "RUNTIME_SSOT_VALIDATED",
+  "input": {
+    "name": "archetypes_transport.json",
+    "sha256": "b64fad482cbd06dcaa37dab6ea2171ed436f7651f42d6c8056f43648a439968d",
+    "bytes": 2015410
+  },
+  "output": {
+    "path": "data/archetypes.json",
+    "sha256": "a8e08c6347a2126ba7647f0a671034857099d1b797e383a9417e873a048d3cae",
+    "bytes": 1940703
+  },
+  "counts": {
+    "records": 297,
+    "parents": 97,
+    "specializations": 200
+  },
+  "semanticTags": {
+    "before": {
+      "uniqueTags": 57,
+      "uniquePrimaryTags": 47,
+      "uniqueSupportingTags": 54,
+      "avgPrimaryPerArchetype": 6.31,
+      "avgSupportingPerArchetype": 6.39,
+      "archetypesWithPrimaryTag": 297
+    },
+    "after": {
+      "uniqueTags": 42,
+      "uniquePrimaryTags": 36,
+      "uniqueSupportingTags": 39,
+      "avgPrimaryPerArchetype": 3.86,
+      "avgSupportingPerArchetype": 4.15,
+      "archetypesWithPrimaryTag": 297
+    },
+    "legacyTagsRemoved": 15,
+    "removalsByTag": {
+      "ability_cha": 199,
+      "ability_con": 97,
+      "ability_dex": 164,
+      "ability_int": 215,
+      "ability_str": 51,
+      "ability_wis": 282,
+      "accuracy": 15,
+      "advanced_melee": 19,
+      "area_damage": 1,
+      "fieldcraft": 278,
+      "finesse": 13,
+      "hacking": 1,
+      "lightsaber_form": 13,
+      "rifle": 20,
+      "starship": 24
+    },
+    "archetypesLosingAllPrimary": 0
+  },
+  "formPowerIdCorrections": {
+    "replacements": 64,
+    "byId": {
+      "lightsaber-form-power-assured-strike": 8,
+      "lightsaber-form-power-barrier-of-blades": 4,
+      "lightsaber-form-power-circle-of-shelter": 2,
+      "lightsaber-form-power-deflecting-slash": 4,
+      "lightsaber-form-power-draw-closer": 6,
+      "lightsaber-form-power-falling-avalanche": 8,
+      "lightsaber-form-power-fluid-riposte": 6,
+      "lightsaber-form-power-hawk-bat-swoop": 8,
+      "lightsaber-form-power-pass-the-blade": 4,
+      "lightsaber-form-power-saber-swarm": 8,
+      "lightsaber-form-power-shien-deflection": 2,
+      "lightsaber-form-power-vornskr-s-ferocity": 4
+    },
+    "map": {
+      "lightsaber-form-power-assured-strike": "assured-strike",
+      "lightsaber-form-power-barrier-of-blades": "barrier-of-blades",
+      "lightsaber-form-power-circle-of-shelter": "circle-of-shelter",
+      "lightsaber-form-power-deflecting-slash": "deflecting-slash",
+      "lightsaber-form-power-draw-closer": "draw-closer",
+      "lightsaber-form-power-falling-avalanche": "falling-avalanche",
+      "lightsaber-form-power-fluid-riposte": "fluid-riposte",
+      "lightsaber-form-power-hawk-bat-swoop": "hawk-bat-swoop",
+      "lightsaber-form-power-pass-the-blade": "pass-the-blade",
+      "lightsaber-form-power-saber-swarm": "saber-swarm",
+      "lightsaber-form-power-shien-deflection": "shien-deflection",
+      "lightsaber-form-power-vornskr-s-ferocity": "vornskrs-ferocity"
+    }
+  },
+  "exactReferences": {
+    "foundationClasses": {
+      "baseline": 5,
+      "total": 5,
+      "resolved": 5,
+      "unresolved": []
+    },
+    "prestigeAndApexClasses": {
+      "baseline": 32,
+      "total": 32,
+      "resolved": 32,
+      "unresolved": []
+    },
+    "skills": {
+      "baseline": 25,
+      "total": 25,
+      "resolved": 25,
+      "unresolved": []
+    },
+    "talentTrees": {
+      "baseline": 126,
+      "total": 126,
+      "resolved": 126,
+      "unresolved": []
+    },
+    "talents": {
+      "baseline": 292,
+      "total": 292,
+      "resolved": 292,
+      "unresolved": []
+    },
+    "feats": {
+      "baseline": 66,
+      "total": 66,
+      "resolved": 66,
+      "unresolved": []
+    },
+    "species": {
+      "baseline": 58,
+      "total": 58,
+      "resolved": 58,
+      "unresolved": []
+    },
+    "backgrounds": {
+      "baseline": 80,
+      "total": 80,
+      "resolved": 80,
+      "unresolved": []
+    },
+    "forcePowers": {
+      "baseline": 63,
+      "total": 63,
+      "resolved": 63,
+      "unresolved": []
+    }
+  },
+  "validation": {
+    "valid": true,
+    "errors": []
+  },
+  "legacyConsumerCensus": {
+    "files": [
+      {
+        "file": "scripts/apps/progression-framework/shell/progression-finalizer.js",
+        "classification": "CURRENT_RUNTIME_DEPENDENCY",
+        "references": [
+          "attributeBias",
+          "mechanicalBias",
+          "roleBias"
+        ]
+      },
+      {
+        "file": "scripts/apps/progression-framework/steps/base-class-survey-step.js",
+        "classification": "CURRENT_RUNTIME_DEPENDENCY",
+        "references": [
+          "attributeBias",
+          "mechanicalBias",
+          "roleBias"
+        ]
+      },
+      {
+        "file": "scripts/apps/progression-framework/steps/l1-survey-step.js",
+        "classification": "CURRENT_RUNTIME_DEPENDENCY",
+        "references": [
+          "attributeBias",
+          "mechanicalBias",
+          "roleBias"
+        ]
+      },
+      {
+        "file": "scripts/apps/progression-framework/steps/prestige-survey-step.js",
+        "classification": "CURRENT_RUNTIME_DEPENDENCY",
+        "references": [
+          "attributeBias",
+          "mechanicalBias",
+          "roleBias"
+        ]
+      },
+      {
+        "file": "scripts/engine/analysis/archetype-trend-registry.js",
+        "classification": "CURRENT_RUNTIME_DEPENDENCY",
+        "references": [
+          "mechanicalBias",
+          "roleBias"
+        ]
+      },
+      {
+        "file": "scripts/engine/analysis/build-analysis-engine.js",
+        "classification": "CURRENT_RUNTIME_DEPENDENCY",
+        "references": [
+          "mechanicalBias",
+          "roleBias"
+        ]
+      },
+      {
+        "file": "scripts/engine/analysis/phase-3-demo.js",
+        "classification": "SAFE_TO_REMOVE_LATER",
+        "references": [
+          "mechanicalBias",
+          "roleBias"
+        ]
+      },
+      {
+        "file": "scripts/engine/archetype/archetype-registry-integration.js",
+        "classification": "TRANSITIONAL_COMPATIBILITY",
+        "references": [
+          "attributeBias",
+          "roleBias"
+        ]
+      },
+      {
+        "file": "scripts/engine/archetype/archetype-registry.js",
+        "classification": "TRANSITIONAL_COMPATIBILITY",
+        "references": [
+          "attributeBias",
+          "class-archetypes.json",
+          "mechanicalBias",
+          "roleBias",
+          "tagBias"
+        ]
+      },
+      {
+        "file": "scripts/engine/prestige/bias-tag-projection.js",
+        "classification": "CURRENT_RUNTIME_DEPENDENCY",
+        "references": [
+          "attributeBias",
+          "mechanicalBias",
+          "roleBias"
+        ]
+      },
+      {
+        "file": "scripts/engine/prestige/identity-engine.js",
+        "classification": "CURRENT_RUNTIME_DEPENDENCY",
+        "references": [
+          "attributeBias",
+          "mechanicalBias",
+          "roleBias"
+        ]
+      },
+      {
+        "file": "scripts/engine/prestige/prestige-layer-registry.js",
+        "classification": "CURRENT_RUNTIME_DEPENDENCY",
+        "references": [
+          "attributeBias",
+          "class-archetypes.json",
+          "mechanicalBias",
+          "roleBias"
+        ]
+      },
+      {
+        "file": "scripts/engine/progression/forecast/suggestion-context-adapter.js",
+        "classification": "CURRENT_RUNTIME_DEPENDENCY",
+        "references": [
+          "roleBias"
+        ]
+      },
+      {
+        "file": "scripts/engine/suggestion/ArchetypeAffinityEngine.js",
+        "classification": "CURRENT_RUNTIME_DEPENDENCY",
+        "references": [
+          "attributeBias",
+          "class-archetypes.json",
+          "mechanicalBias",
+          "roleBias"
+        ]
+      },
+      {
+        "file": "scripts/engine/suggestion/ArchetypeDefinitions.js",
+        "classification": "CURRENT_RUNTIME_DEPENDENCY",
+        "references": [
+          "attributeBias",
+          "class-archetypes.json",
+          "roleBias",
+          "tagBias"
+        ]
+      },
+      {
+        "file": "scripts/engine/suggestion/ArchetypeLoader.js",
+        "classification": "CURRENT_RUNTIME_DEPENDENCY",
+        "references": [
+          "class-archetypes.json"
+        ]
+      },
+      {
+        "file": "scripts/engine/suggestion/BackgroundSuggestionEngine.js",
+        "classification": "CURRENT_RUNTIME_DEPENDENCY",
+        "references": [
+          "attributeBias"
+        ]
+      },
+      {
+        "file": "scripts/engine/suggestion/ClassSuggestionEngine.js",
+        "classification": "CURRENT_RUNTIME_DEPENDENCY",
+        "references": [
+          "attributeBias",
+          "mechanicalBias",
+          "roleBias"
+        ]
+      },
+      {
+        "file": "scripts/engine/suggestion/SuggestionScorer.js",
+        "classification": "CURRENT_RUNTIME_DEPENDENCY",
+        "references": [
+          "attributeBias",
+          "mechanicalBias",
+          "roleBias"
+        ]
+      },
+      {
+        "file": "scripts/engine/suggestion/SuggestionV2Contract.js",
+        "classification": "CURRENT_RUNTIME_DEPENDENCY",
+        "references": [
+          "mechanicalBias"
+        ]
+      },
+      {
+        "file": "scripts/engine/suggestion/attribute-planner.js",
+        "classification": "CURRENT_RUNTIME_DEPENDENCY",
+        "references": [
+          "attributeBias",
+          "mechanicalBias",
+          "roleBias"
+        ]
+      },
+      {
+        "file": "scripts/engine/suggestion/character-data-analysis.js",
+        "classification": "CURRENT_RUNTIME_DEPENDENCY",
+        "references": [
+          "mechanicalBias"
+        ]
+      },
+      {
+        "file": "scripts/engine/suggestion/scoring-walkthrough.js",
+        "classification": "CURRENT_RUNTIME_DEPENDENCY",
+        "references": [
+          "mechanicalBias",
+          "roleBias"
+        ]
+      },
+      {
+        "file": "scripts/engine/suggestion/tag-signal-engine.js",
+        "classification": "CURRENT_RUNTIME_DEPENDENCY",
+        "references": [
+          "attributeBias",
+          "mechanicalBias",
+          "roleBias",
+          "tagBias"
+        ]
+      },
+      {
+        "file": "scripts/engine/suggestion/tier1-standalone-simulation.js",
+        "classification": "CURRENT_RUNTIME_DEPENDENCY",
+        "references": [
+          "mechanicalBias",
+          "roleBias"
+        ]
+      },
+      {
+        "file": "scripts/engine/suggestion/validateClassArchetypes.js",
+        "classification": "CURRENT_RUNTIME_DEPENDENCY",
+        "references": [
+          "attributeBias",
+          "class-archetypes.json",
+          "mechanicalBias",
+          "roleBias"
+        ]
+      },
+      {
+        "file": "scripts/mentor/mentor-adapter.js",
+        "classification": "CURRENT_RUNTIME_DEPENDENCY",
+        "references": [
+          "attributeBias",
+          "class-archetypes.json",
+          "mechanicalBias",
+          "roleBias"
+        ]
+      },
+      {
+        "file": "scripts/mentor/mentor-archetype-paths.js",
+        "classification": "CURRENT_RUNTIME_DEPENDENCY",
+        "references": [
+          "attributeBias",
+          "class-archetypes.json",
+          "roleBias"
+        ]
+      },
+      {
+        "file": "scripts/mentor/mentor-chat-dialog.js",
+        "classification": "CURRENT_RUNTIME_DEPENDENCY",
+        "references": [
+          "class-archetypes.json"
+        ]
+      },
+      {
+        "file": "scripts/mentor/mentor-language-mapper.js",
+        "classification": "CURRENT_RUNTIME_DEPENDENCY",
+        "references": [
+          "attributeBias",
+          "mechanicalBias",
+          "roleBias"
+        ]
+      },
+      {
+        "file": "scripts/mentor/mentor-suggestion-bias.js",
+        "classification": "CURRENT_RUNTIME_DEPENDENCY",
+        "references": [
+          "roleBias"
+        ]
+      },
+      {
+        "file": "scripts/mentor/mentor-survey/base-class-survey-definitions.js",
+        "classification": "CURRENT_RUNTIME_DEPENDENCY",
+        "references": [
+          "attributeBias",
+          "mechanicalBias",
+          "roleBias"
+        ]
+      },
+      {
+        "file": "scripts/mentor/mentor-survey/definition-builder.js",
+        "classification": "CURRENT_RUNTIME_DEPENDENCY",
+        "references": [
+          "attributeBias",
+          "mechanicalBias",
+          "roleBias"
+        ]
+      },
+      {
+        "file": "scripts/mentor/mentor-survey/definitions/L1_Jedi_Survey.js",
+        "classification": "CURRENT_RUNTIME_DEPENDENCY",
+        "references": [
+          "attributeBias",
+          "mechanicalBias",
+          "roleBias"
+        ]
+      },
+      {
+        "file": "scripts/mentor/mentor-survey/definitions/L1_Noble_Survey.js",
+        "classification": "CURRENT_RUNTIME_DEPENDENCY",
+        "references": [
+          "attributeBias",
+          "mechanicalBias",
+          "roleBias"
+        ]
+      },
+      {
+        "file": "scripts/mentor/mentor-survey/definitions/L1_Scoundrel_Survey.js",
+        "classification": "CURRENT_RUNTIME_DEPENDENCY",
+        "references": [
+          "attributeBias",
+          "mechanicalBias",
+          "roleBias"
+        ]
+      },
+      {
+        "file": "scripts/mentor/mentor-survey/definitions/L1_Scout_Survey.js",
+        "classification": "CURRENT_RUNTIME_DEPENDENCY",
+        "references": [
+          "attributeBias",
+          "mechanicalBias",
+          "roleBias"
+        ]
+      },
+      {
+        "file": "scripts/mentor/mentor-survey/definitions/L1_Soldier_Survey.js",
+        "classification": "CURRENT_RUNTIME_DEPENDENCY",
+        "references": [
+          "attributeBias",
+          "mechanicalBias",
+          "roleBias"
+        ]
+      },
+      {
+        "file": "scripts/mentor/mentor-survey/definitions/PrC_Ace_Pilot_Survey.js",
+        "classification": "CURRENT_RUNTIME_DEPENDENCY",
+        "references": [
+          "attributeBias",
+          "mechanicalBias",
+          "roleBias"
+        ]
+      },
+      {
+        "file": "scripts/mentor/mentor-survey/definitions/PrC_Assassin_Survey.js",
+        "classification": "CURRENT_RUNTIME_DEPENDENCY",
+        "references": [
+          "attributeBias",
+          "mechanicalBias",
+          "roleBias"
+        ]
+      },
+      {
+        "file": "scripts/mentor/mentor-survey/definitions/PrC_Bounty_Hunter_Survey.js",
+        "classification": "CURRENT_RUNTIME_DEPENDENCY",
+        "references": [
+          "attributeBias",
+          "mechanicalBias",
+          "roleBias"
+        ]
+      },
+      {
+        "file": "scripts/mentor/mentor-survey/definitions/PrC_Charlatan_Survey.js",
+        "classification": "CURRENT_RUNTIME_DEPENDENCY",
+        "references": [
+          "attributeBias",
+          "mechanicalBias",
+          "roleBias"
+        ]
+      },
+      {
+        "file": "scripts/mentor/mentor-survey/definitions/PrC_Crime_Lord_Survey.js",
+        "classification": "CURRENT_RUNTIME_DEPENDENCY",
+        "references": [
+          "attributeBias",
+          "mechanicalBias",
+          "roleBias"
+        ]
+      },
+      {
+        "file": "scripts/mentor/mentor-survey/definitions/PrC_Droid_Commander_Survey.js",
+        "classification": "CURRENT_RUNTIME_DEPENDENCY",
+        "references": [
+          "attributeBias",
+          "mechanicalBias",
+          "roleBias"
+        ]
+      },
+      {
+        "file": "scripts/mentor/mentor-survey/definitions/PrC_Elite_Trooper_Survey.js",
+        "classification": "CURRENT_RUNTIME_DEPENDENCY",
+        "references": [
+          "attributeBias",
+          "mechanicalBias",
+          "roleBias"
+        ]
+      },
+      {
+        "file": "scripts/mentor/mentor-survey/definitions/PrC_Force_Adept_Survey.js",
+        "classification": "CURRENT_RUNTIME_DEPENDENCY",
+        "references": [
+          "attributeBias",
+          "mechanicalBias",
+          "roleBias"
+        ]
+      },
+      {
+        "file": "scripts/mentor/mentor-survey/definitions/PrC_Force_Disciple_Survey.js",
+        "classification": "CURRENT_RUNTIME_DEPENDENCY",
+        "references": [
+          "attributeBias",
+          "mechanicalBias",
+          "roleBias"
+        ]
+      },
+      {
+        "file": "scripts/mentor/mentor-survey/definitions/PrC_Gunslinger_Survey.js",
+        "classification": "CURRENT_RUNTIME_DEPENDENCY",
+        "references": [
+          "attributeBias",
+          "mechanicalBias",
+          "roleBias"
+        ]
+      },
+      {
+        "file": "scripts/mentor/mentor-survey/definitions/PrC_Imperial_Knight_Survey.js",
+        "classification": "CURRENT_RUNTIME_DEPENDENCY",
+        "references": [
+          "attributeBias",
+          "mechanicalBias",
+          "roleBias"
+        ]
+      },
+      {
+        "file": "scripts/mentor/mentor-survey/definitions/PrC_Improviser_Survey.js",
+        "classification": "CURRENT_RUNTIME_DEPENDENCY",
+        "references": [
+          "attributeBias",
+          "mechanicalBias",
+          "roleBias"
+        ]
+      },
+      {
+        "file": "scripts/mentor/mentor-survey/definitions/PrC_Infiltrator_Survey.js",
+        "classification": "CURRENT_RUNTIME_DEPENDENCY",
+        "references": [
+          "attributeBias",
+          "mechanicalBias",
+          "roleBias"
+        ]
+      },
+      {
+        "file": "scripts/mentor/mentor-survey/definitions/PrC_Jedi_Knight_Survey.js",
+        "classification": "CURRENT_RUNTIME_DEPENDENCY",
+        "references": [
+          "attributeBias",
+          "mechanicalBias",
+          "roleBias"
+        ]
+      },
+      {
+        "file": "scripts/mentor/mentor-survey/definitions/PrC_Jedi_Master_Survey.js",
+        "classification": "CURRENT_RUNTIME_DEPENDENCY",
+        "references": [
+          "attributeBias",
+          "mechanicalBias",
+          "roleBias"
+        ]
+      },
+      {
+        "file": "scripts/mentor/mentor-survey/definitions/PrC_Martial_Arts_Master_Survey.js",
+        "classification": "CURRENT_RUNTIME_DEPENDENCY",
+        "references": [
+          "attributeBias",
+          "mechanicalBias",
+          "roleBias"
+        ]
+      },
+      {
+        "file": "scripts/mentor/mentor-survey/definitions/PrC_Master_Privateer_Survey.js",
+        "classification": "CURRENT_RUNTIME_DEPENDENCY",
+        "references": [
+          "attributeBias",
+          "mechanicalBias",
+          "roleBias"
+        ]
+      },
+      {
+        "file": "scripts/mentor/mentor-survey/definitions/PrC_Medic_Survey.js",
+        "classification": "CURRENT_RUNTIME_DEPENDENCY",
+        "references": [
+          "attributeBias",
+          "mechanicalBias",
+          "roleBias"
+        ]
+      },
+      {
+        "file": "scripts/mentor/mentor-survey/definitions/PrC_Military_Engineer_Survey.js",
+        "classification": "CURRENT_RUNTIME_DEPENDENCY",
+        "references": [
+          "attributeBias",
+          "mechanicalBias",
+          "roleBias"
+        ]
+      },
+      {
+        "file": "scripts/mentor/mentor-survey/definitions/PrC_Officer_Survey.js",
+        "classification": "CURRENT_RUNTIME_DEPENDENCY",
+        "references": [
+          "attributeBias",
+          "mechanicalBias",
+          "roleBias"
+        ]
+      },
+      {
+        "file": "scripts/mentor/mentor-survey/definitions/PrC_Outlaw_Survey.js",
+        "classification": "CURRENT_RUNTIME_DEPENDENCY",
+        "references": [
+          "attributeBias",
+          "mechanicalBias",
+          "roleBias"
+        ]
+      },
+      {
+        "file": "scripts/mentor/mentor-survey/definitions/PrC_Pathfinder_Survey.js",
+        "classification": "CURRENT_RUNTIME_DEPENDENCY",
+        "references": [
+          "attributeBias",
+          "mechanicalBias",
+          "roleBias"
+        ]
+      },
+      {
+        "file": "scripts/mentor/mentor-survey/definitions/PrC_Saboteur_Survey.js",
+        "classification": "CURRENT_RUNTIME_DEPENDENCY",
+        "references": [
+          "attributeBias",
+          "mechanicalBias",
+          "roleBias"
+        ]
+      },
+      {
+        "file": "scripts/mentor/mentor-survey/definitions/PrC_Sith_Apprentice_Survey.js",
+        "classification": "CURRENT_RUNTIME_DEPENDENCY",
+        "references": [
+          "attributeBias",
+          "mechanicalBias",
+          "roleBias"
+        ]
+      },
+      {
+        "file": "scripts/mentor/mentor-survey/definitions/PrC_Sith_Lord_Survey.js",
+        "classification": "CURRENT_RUNTIME_DEPENDENCY",
+        "references": [
+          "attributeBias",
+          "mechanicalBias",
+          "roleBias"
+        ]
+      },
+      {
+        "file": "scripts/mentor/mentor-survey/definitions/PrC_Vanguard_Survey.js",
+        "classification": "CURRENT_RUNTIME_DEPENDENCY",
+        "references": [
+          "attributeBias",
+          "mechanicalBias",
+          "roleBias"
+        ]
+      },
+      {
+        "file": "scripts/mentor/mentor-survey/engine.js",
+        "classification": "CURRENT_RUNTIME_DEPENDENCY",
+        "references": [
+          "attributeBias",
+          "mechanicalBias",
+          "roleBias"
+        ]
+      },
+      {
+        "file": "scripts/mentor/mentor-survey/prestige-survey-profiles.js",
+        "classification": "CURRENT_RUNTIME_DEPENDENCY",
+        "references": [
+          "attributeBias",
+          "mechanicalBias",
+          "roleBias"
+        ]
+      },
+      {
+        "file": "scripts/mentor/mentor-survey/registry.js",
+        "classification": "CURRENT_RUNTIME_DEPENDENCY",
+        "references": [
+          "attributeBias",
+          "mechanicalBias",
+          "roleBias"
+        ]
+      },
+      {
+        "file": "scripts/validation/archetype-validator.js",
+        "classification": "CURRENT_RUNTIME_DEPENDENCY",
+        "references": [
+          "attributeBias",
+          "mechanicalBias",
+          "roleBias"
+        ]
+      },
+      {
+        "file": "scripts/validation/validate-identity-engine.js",
+        "classification": "CURRENT_RUNTIME_DEPENDENCY",
+        "references": [
+          "attributeBias",
+          "mechanicalBias",
+          "roleBias"
+        ]
+      }
+    ],
+    "byClassification": {
+      "CURRENT_RUNTIME_DEPENDENCY": 66,
+      "SAFE_TO_REMOVE_LATER": 1,
+      "TRANSITIONAL_COMPATIBILITY": 2
+    },
+    "dataFiles": {
+      "data/class-archetypes.json": "SUPERSEDED_SEMANTIC_AUTHORITY (still read by live consumers; do not delete before Phase 12F)",
+      "data/bias-keys-canonical.json": "TRANSITIONAL_COMPATIBILITY (legacy bias key vocabulary)",
+      "schemas/archetype.schema.json": "TRANSITIONAL_COMPATIBILITY (legacy class-owned contract; not valid for data/archetypes.json)"
+    }
+  },
+  "scoringChanged": false
+}
