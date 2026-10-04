@@ -894,6 +894,20 @@
       ],
       "ownerRationale": "The talent may trigger more than once; any given target can only be affected once per encounter. A per-target immunity/restriction, not a global once-per-encounter use limit on the talent.",
       "ownerPolicyApplied": "ONCE_PER_ENCOUNTER_POLICY"
+    },
+    {
+      "decisionId": "TALENT:153f4b3c6510023d|reliability",
+      "batch": "3B.1",
+      "domain": "TALENT",
+      "canonicalId": "153f4b3c6510023d",
+      "name": "Visionary Defense",
+      "tag": "reliability",
+      "ownerAction": "NO_CHANGE",
+      "detectorEvidenceReference": [
+        "B.reroll (bundle reroll)"
+      ],
+      "ownerRationale": "Visionary Defense does not itself permit, require, cause, modify or stabilize a roll. Its sentence explaining that multiple characters cannot affect the same attack \"to allow multiple rerolls\" is contextual wording explaining the non-stacking limitation. The operative mechanic grants a Force bonus to Reflex Defense; it does not create a reroll or other affirmative reliability mechanic. Closes the last 3B.1 primitive finding; the separate reroll NO_CHANGE ruling is unchanged.",
+      "ownerPolicyApplied": "RELIABILITY_POLICY"
     }
   ]
 }

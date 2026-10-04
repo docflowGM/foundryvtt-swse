@@ -16,12 +16,12 @@ Mechanic families scanned: 15 (106 detectors, 14 cross-domain bundles)
 
 Records where mechanic wording and the compared tag co-occur (count only; not adjudicated): 3965
 
-Owner-review candidates: 316
-  record-level (P1 178 / P2 112): 290
+Owner-review candidates: 315
+  record-level (P1 177 / P2 112): 289
   tag-definition (P3): 12
   tag-convention questions (P3; 236 untagged matches listed, not individually flagged): 14
 
-Findings decided by explicit owner rulings (approved / no change): 56
+Findings decided by explicit owner rulings (approved / no change): 57
 Prior-ruling / intentional-divergence matches: 11
 Tags carried by only one domain (count only; no ruling made): 34
 
@@ -66,7 +66,7 @@ Zero violations across the combined corpus.
 | Family | Detectors | Feats involved | Talents involved | Detections | Convergent | Review P1 | Review P2 |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 | A. Action economy | 6 | 50 | 454 | 1002 | 975 | 2 | 0 |
-| B. Rerolls / reliability | 5 | 33 | 104 | 155 | 148 | 1 | 0 |
+| B. Rerolls / reliability | 5 | 33 | 104 | 155 | 148 | 0 | 0 |
 | C. Resource mechanics | 5 | 51 | 303 | 512 | 488 | 0 | 0 |
 | D. Damage mechanics | 7 | 50 | 121 | 211 | 113 | 3 | 5 |
 | E. Critical mechanics | 2 | 5 | 33 | 45 | 36 | 9 | 0 |
@@ -102,7 +102,7 @@ Representative evidence (facts only): **Dive for Cover** (FEAT, Galaxy at War p.
 
 ### B. Rerolls / reliability
 
-Tags expected: `reliability`, `reroll`, `skill_mastery`. Records with evidence text: 1540; feats involved 33; talents involved 104; detections 155; already convergent 148; owner review 1.
+Tags expected: `reliability`, `reroll`, `skill_mastery`. Records with evidence text: 1540; feats involved 33; talents involved 104; detections 155; already convergent 148; owner review 0.
 
 | Detector | Tag | Conf | Detected (F/T) | Tagged (F/T) | Detected, not tagged (F/T) | Tagged rate |
 | --- | --- | --- | --- | --- | --- | ---: |
@@ -112,11 +112,7 @@ Tags expected: `reliability`, `reroll`, `skill_mastery`. Records with evidence t
 | B.automatic_success | `reliability` | MEDIUM | 4/4 | 4/4 | 0/0 | 1 |
 | B.skill_mastery | `skill_mastery` | MEDIUM | 0/0 | 0/0 | 0/0 | — |
 
-Owner-review groups (mechanic → candidate tag):
-
-- **bundle:reroll>reliability** → `reliability` (P1): 1 record(s) [0 feat / 1 talent]; e.g. Visionary Defense (`153f4b3c6510023d`)
-
-Representative evidence (facts only): **Visionary Defense** (TALENT, Knights of the Old Republic Campaign Guide p.25, TALENT_CERTIFIED_PACK_BENEFIT_TEXT) — "…k can only be affected by this talent once (thus, multiple characters cannot use this talent on the same attack to allow multiple rerolls). You take a cumulative -5 penalty on Use the Force checks until the beginning of your next turn when you use this talent.". Tags: `force`, `force_power_synergy`, `visions`, `use_the_force`, `reaction`, `action_economy`, `ally_support`, `support`, `teamwork`, `defense`, `melee_defense`, `ranged_defense`, `will_defense`, `resource_spend`; compared tag `reliability` absent. Comparison records carrying it: Conditioning (FEAT) [`reroll`, `reliability`, `skills`, `defense`, `reaction`, `action_economy`, `once-per-encounter`, `resilience`, `climb`, `jump`, `swim`, `endurance`]; Cut the Red Tape (FEAT) [`knowledge`, `gather_information`, `skill_substitution`, `skills`, `reroll`, `reliability`]; Dreadful Countenance (FEAT) [`persuasion`, `use_the_force`, `force`, `fear`, `reroll`, `reliability`, `social`].
+No owner-review items in this family.
 
 ### C. Resource mechanics
 

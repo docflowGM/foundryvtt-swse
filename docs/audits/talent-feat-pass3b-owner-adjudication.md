@@ -80,6 +80,7 @@ Owner-directed completion beyond the detector: Scripted Routines (`8d0657e7ade68
 | NO_CHANGE | TALENT | Wrath of the Dark Side | `f5ebaf5d77257e0c` | `resource_recovery` | RESOURCE_RECOVERY_POLICY | C.resource_recovery |
 | NO_CHANGE | TALENT | Mystical Link | `45c4e72d74c44acb` | `once-per-encounter` | ONCE_PER_ENCOUNTER_POLICY | C.once_per_encounter |
 | NO_CHANGE | TALENT | Feared Warrior | `cfd5d3f677b2bf1a` | `once-per-encounter` | ONCE_PER_ENCOUNTER_POLICY | C.once_per_encounter |
+| NO_CHANGE | TALENT | Visionary Defense | `153f4b3c6510023d` | `reliability` | RELIABILITY_POLICY | B.reroll (bundle reroll) |
 
 ## Rationale
 
@@ -141,3 +142,4 @@ Owner-directed completion beyond the detector: Scripted Routines (`8d0657e7ade68
 - NO_CHANGE `resource_recovery` — Wrath of the Dark Side (TALENT `f5ebaf5d77257e0c`): The talent explicitly replaces/foregoes the normal spent-Force-power recovery triggered by the natural 20. The selected effect is extra damage, not resource recovery.
 - NO_CHANGE `once-per-encounter` — Mystical Link (TALENT `45c4e72d74c44acb`): It can grant an additional use of another Force-related ability normally restricted to once per encounter. The quoted limitation belongs to the recovered/extended ability, not to Mystical Link's own activation frequency. Its existing resource-recovery semantics already represent that interaction.
 - NO_CHANGE `once-per-encounter` — Feared Warrior (TALENT `cfd5d3f677b2bf1a`): The talent may trigger more than once; any given target can only be affected once per encounter. A per-target immunity/restriction, not a global once-per-encounter use limit on the talent.
+- NO_CHANGE `reliability` — Visionary Defense (TALENT `153f4b3c6510023d`): Visionary Defense does not itself permit, require, cause, modify or stabilize a roll. Its sentence explaining that multiple characters cannot affect the same attack "to allow multiple rerolls" is contextual wording explaining the non-stacking limitation. The operative mechanic grants a Force bonus to Reflex Defense; it does not create a reroll or other affirmative reliability mechanic. Closes the last 3B.1 primitive finding; the separate reroll NO_CHANGE ruling is unchanged.

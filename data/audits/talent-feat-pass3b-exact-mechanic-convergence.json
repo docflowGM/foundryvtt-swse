@@ -25,16 +25,16 @@
     "detectors": 106,
     "bundles": 14,
     "tagAndDetectorCoOccurrences": 3965,
-    "ownerReviewCandidates": 316,
-    "ownerReviewRecordItems": 290,
+    "ownerReviewCandidates": 315,
+    "ownerReviewRecordItems": 289,
     "ownerReviewRecordItemsByPriority": {
-      "P1": 178,
+      "P1": 177,
       "P2": 112
     },
     "ownerReviewTagDefinitionItems": 12,
     "ownerReviewTagConventionQuestions": 14,
     "recordsBehindConventionQuestions": 236,
-    "ownerDecidedItems": 56,
+    "ownerDecidedItems": 57,
     "ownerDecisionsWithoutDiscoveryItem": 2,
     "priorRulingOrIntentionalDivergence": 11,
     "tagsUsedByOneDomainOnly": 34,
@@ -42,9 +42,9 @@
     "evidenceOnlyLowConfidence": 270,
     "evidenceOnlyNoComparator": 33,
     "itemStates": {
-      "PASS3B_OWNER_REVIEW": 290,
+      "PASS3B_OWNER_REVIEW": 289,
       "PASS3B_OWNER_APPROVED": 31,
-      "PASS3B_OWNER_NO_CHANGE": 25,
+      "PASS3B_OWNER_NO_CHANGE": 26,
       "PASS3B_INTENTIONAL_DIVERGENCE": 4,
       "PASS3B_PRIOR_OWNER_RULING": 7
     }
@@ -113,8 +113,8 @@
       "talentsInvolved": 104,
       "detections": 155,
       "convergent": 148,
-      "ownerReview": 1,
-      "ownerReviewP1": 1,
+      "ownerReview": 0,
+      "ownerReviewP1": 0,
       "ownerReviewP2": 0
     },
     {
@@ -13605,148 +13605,6 @@
       ],
       "bundles": [
         "reaction_defensive_benefit"
-      ]
-    },
-    {
-      "state": "PASS3B_OWNER_REVIEW",
-      "priority": 1,
-      "priorityBasis": "detector confidence HIGH (or tight HIGH-only bundle) with a same-mechanic comparator in the other domain",
-      "family": "B",
-      "familyName": "Rerolls / reliability",
-      "mechanic": "bundle:reroll>reliability",
-      "comparedTag": "reliability",
-      "detectorConfidence": "HIGH",
-      "domain": "TALENT",
-      "canonicalId": "153f4b3c6510023d",
-      "name": "Visionary Defense",
-      "source": "Knights of the Old Republic Campaign Guide",
-      "page": 25,
-      "evidenceTier": "TALENT_CERTIFIED_PACK_BENEFIT_TEXT",
-      "canonicalMechanicText": "As a reaction, you can make a Use the Force check after you or an ally within 12 squares is the target of a melee or ranged attack (but before the results of the attack roll are known), removing one use of the farseeing Force power from your active suite (as though you had just activated the power). If your check result exceeds the Will Defense of the attacker, you grant the target of the attack a +5 Force bonus to Reflex Defense against that attack. This counts as using the farseeing Force power against the attacker, but this talent replaces the normal rules and effect of that power. Any attack can only be affected by this talent once (thus, multiple characters cannot use this talent on the same attack to allow multiple rerolls). You take a cumulative -5 penalty on Use the Force checks until the beginning of your next turn when you use this talent.",
-      "matchedExcerpt": "…k can only be affected by this talent once (thus, multiple characters cannot use this talent on the same attack to allow multiple rerolls). You take a cumulative -5 penalty on Use the Force checks until the beginning of your next turn when you use this talent.",
-      "currentTags": [
-        "force",
-        "force_power_synergy",
-        "visions",
-        "use_the_force",
-        "reaction",
-        "action_economy",
-        "ally_support",
-        "support",
-        "teamwork",
-        "defense",
-        "melee_defense",
-        "ranged_defense",
-        "will_defense",
-        "resource_spend"
-      ],
-      "comparisonRecords": [
-        {
-          "canonicalId": "0ac76f1c0c1677cb",
-          "domain": "FEAT",
-          "name": "Conditioning",
-          "source": "Knights of the Old Republic Campaign Guide",
-          "page": 32,
-          "tags": [
-            "reroll",
-            "reliability",
-            "skills",
-            "defense",
-            "reaction",
-            "action_economy",
-            "once-per-encounter",
-            "resilience",
-            "climb",
-            "jump",
-            "swim",
-            "endurance"
-          ],
-          "excerpt": "Reroll any Strength- or Constitution-based skill check for a skill in which you are trained; accept the second result. Once per encounte…",
-          "evidenceTier": "FEAT_CANONICAL_RULES_SHAPE",
-          "canonicalMechanicText": "Reroll any Strength- or Constitution-based skill check for a skill in which you are trained; accept the second result. Once per encounter as a reaction, add your Strength bonus to Fortitude Defense until the beginning of your next turn. Reroll trained Strength/Constitution-based skills and once per encounter add Strength bonus to Fortitude as a reaction."
-        },
-        {
-          "canonicalId": "2bb34366776f0371",
-          "domain": "FEAT",
-          "name": "Cut the Red Tape",
-          "source": "Galaxy of Intrigue",
-          "page": 27,
-          "tags": [
-            "knowledge",
-            "gather_information",
-            "skill_substitution",
-            "skills",
-            "reroll",
-            "reliability"
-          ],
-          "excerpt": "Use Knowledge (Bureaucracy) modifier in place of Gather Information. If entitled to a Gather Information reroll, reroll the substituted Knowledge check under the same restrictions. Count as trained in Gather Information for this check. Use K…",
-          "evidenceTier": "FEAT_CANONICAL_RULES_SHAPE",
-          "canonicalMechanicText": "Use Knowledge (Bureaucracy) modifier in place of Gather Information. If entitled to a Gather Information reroll, reroll the substituted Knowledge check under the same restrictions. Count as trained in Gather Information for this check. Use Knowledge (Bureaucracy) for Gather Information, including eligible rerolls, and count as trained for the substituted check."
-        },
-        {
-          "canonicalId": "2e5ada2de01fff4d",
-          "domain": "FEAT",
-          "name": "Dreadful Countenance",
-          "source": "Behind the Threat: The Sith, Part 2 — The Becoming",
-          "page": "web-article-archived-rendering-page-4-of-4",
-          "tags": [
-            "persuasion",
-            "use_the_force",
-            "force",
-            "fear",
-            "reroll",
-            "reliability",
-            "social"
-          ],
-          "excerpt": "Whenever you make a Persuasion check or Use the Force check to activate a fear effect, you may reroll the check. You must accept the reroll result even if it is worse. Reroll Persuasion or Use the Force checks used to activate fear…",
-          "evidenceTier": "FEAT_CANONICAL_RULES_SHAPE",
-          "canonicalMechanicText": "Whenever you make a Persuasion check or Use the Force check to activate a fear effect, you may reroll the check. You must accept the reroll result even if it is worse. Reroll Persuasion or Use the Force checks used to activate fear effects, but keep the reroll even if worse."
-        }
-      ],
-      "comparisonTags": [
-        "action_economy",
-        "climb",
-        "defense",
-        "endurance",
-        "fear",
-        "force",
-        "gather_information",
-        "jump",
-        "knowledge",
-        "once-per-encounter",
-        "persuasion",
-        "reaction",
-        "reliability",
-        "reroll",
-        "resilience",
-        "skill_substitution",
-        "skills",
-        "social",
-        "swim",
-        "use_the_force"
-      ],
-      "comparatorsInOtherDomain": 19,
-      "detectableCommonality": {
-        "detector": "bundle:reroll>reliability",
-        "pattern": "\\bre-?roll",
-        "detectorNote": "bundle: Explicit reroll"
-      },
-      "exactTagDifference": {
-        "comparedTag": "reliability",
-        "thisRecordCarriesTag": false,
-        "thisDomain": "TALENT",
-        "otherDomain": "FEAT",
-        "otherDomainRecordsMatchingDetector": 19,
-        "otherDomainRecordsMatchingDetectorAndCarryingTag": 19,
-        "detectorTaggedRateOverall": 0.99
-      },
-      "applicableInvariant": "reroll -> reliability",
-      "priorOwnerPrecedent": null,
-      "channels": [
-        "CHANNEL_2_CROSS_DOMAIN_BUNDLE"
-      ],
-      "bundles": [
-        "reroll"
       ]
     },
     {
@@ -51577,6 +51435,154 @@
       ],
       "ownerDecision": {
         "decisionId": "TALENT:0290634450ab1637|reliability",
+        "batch": "3B.1",
+        "ownerAction": "NO_CHANGE",
+        "policy": "RELIABILITY_POLICY"
+      }
+    },
+    {
+      "state": "PASS3B_OWNER_NO_CHANGE",
+      "priority": null,
+      "priorityBasis": null,
+      "family": "B",
+      "familyName": "Rerolls / reliability",
+      "mechanic": "bundle:reroll>reliability",
+      "comparedTag": "reliability",
+      "detectorConfidence": "HIGH",
+      "domain": "TALENT",
+      "canonicalId": "153f4b3c6510023d",
+      "name": "Visionary Defense",
+      "source": "Knights of the Old Republic Campaign Guide",
+      "page": 25,
+      "evidenceTier": "TALENT_CERTIFIED_PACK_BENEFIT_TEXT",
+      "canonicalMechanicText": "As a reaction, you can make a Use the Force check after you or an ally within 12 squares is the target of a melee or ranged attack (but before the results of the attack roll are known), removing one use of the farseeing Force power from your active suite (as though you had just activated the power). If your check result exceeds the Will Defense of the attacker, you grant the target of the attack a +5 Force bonus to Reflex Defense against that attack. This counts as using the farseeing Force power against the attacker, but this talent replaces the normal rules and effect of that power. Any attack can only be affected by this talent once (thus, multiple characters cannot use this talent on the same attack to allow multiple rerolls). You take a cumulative -5 penalty on Use the Force checks until the beginning of your next turn when you use this talent.",
+      "matchedExcerpt": "…k can only be affected by this talent once (thus, multiple characters cannot use this talent on the same attack to allow multiple rerolls). You take a cumulative -5 penalty on Use the Force checks until the beginning of your next turn when you use this talent.",
+      "currentTags": [
+        "force",
+        "force_power_synergy",
+        "visions",
+        "use_the_force",
+        "reaction",
+        "action_economy",
+        "ally_support",
+        "support",
+        "teamwork",
+        "defense",
+        "melee_defense",
+        "ranged_defense",
+        "will_defense",
+        "resource_spend"
+      ],
+      "comparisonRecords": [
+        {
+          "canonicalId": "0ac76f1c0c1677cb",
+          "domain": "FEAT",
+          "name": "Conditioning",
+          "source": "Knights of the Old Republic Campaign Guide",
+          "page": 32,
+          "tags": [
+            "reroll",
+            "reliability",
+            "skills",
+            "defense",
+            "reaction",
+            "action_economy",
+            "once-per-encounter",
+            "resilience",
+            "climb",
+            "jump",
+            "swim",
+            "endurance"
+          ],
+          "excerpt": "Reroll any Strength- or Constitution-based skill check for a skill in which you are trained; accept the second result. Once per encounte…",
+          "evidenceTier": "FEAT_CANONICAL_RULES_SHAPE",
+          "canonicalMechanicText": "Reroll any Strength- or Constitution-based skill check for a skill in which you are trained; accept the second result. Once per encounter as a reaction, add your Strength bonus to Fortitude Defense until the beginning of your next turn. Reroll trained Strength/Constitution-based skills and once per encounter add Strength bonus to Fortitude as a reaction."
+        },
+        {
+          "canonicalId": "2bb34366776f0371",
+          "domain": "FEAT",
+          "name": "Cut the Red Tape",
+          "source": "Galaxy of Intrigue",
+          "page": 27,
+          "tags": [
+            "knowledge",
+            "gather_information",
+            "skill_substitution",
+            "skills",
+            "reroll",
+            "reliability"
+          ],
+          "excerpt": "Use Knowledge (Bureaucracy) modifier in place of Gather Information. If entitled to a Gather Information reroll, reroll the substituted Knowledge check under the same restrictions. Count as trained in Gather Information for this check. Use K…",
+          "evidenceTier": "FEAT_CANONICAL_RULES_SHAPE",
+          "canonicalMechanicText": "Use Knowledge (Bureaucracy) modifier in place of Gather Information. If entitled to a Gather Information reroll, reroll the substituted Knowledge check under the same restrictions. Count as trained in Gather Information for this check. Use Knowledge (Bureaucracy) for Gather Information, including eligible rerolls, and count as trained for the substituted check."
+        },
+        {
+          "canonicalId": "2e5ada2de01fff4d",
+          "domain": "FEAT",
+          "name": "Dreadful Countenance",
+          "source": "Behind the Threat: The Sith, Part 2 — The Becoming",
+          "page": "web-article-archived-rendering-page-4-of-4",
+          "tags": [
+            "persuasion",
+            "use_the_force",
+            "force",
+            "fear",
+            "reroll",
+            "reliability",
+            "social"
+          ],
+          "excerpt": "Whenever you make a Persuasion check or Use the Force check to activate a fear effect, you may reroll the check. You must accept the reroll result even if it is worse. Reroll Persuasion or Use the Force checks used to activate fear…",
+          "evidenceTier": "FEAT_CANONICAL_RULES_SHAPE",
+          "canonicalMechanicText": "Whenever you make a Persuasion check or Use the Force check to activate a fear effect, you may reroll the check. You must accept the reroll result even if it is worse. Reroll Persuasion or Use the Force checks used to activate fear effects, but keep the reroll even if worse."
+        }
+      ],
+      "comparisonTags": [
+        "action_economy",
+        "climb",
+        "defense",
+        "endurance",
+        "fear",
+        "force",
+        "gather_information",
+        "jump",
+        "knowledge",
+        "once-per-encounter",
+        "persuasion",
+        "reaction",
+        "reliability",
+        "reroll",
+        "resilience",
+        "skill_substitution",
+        "skills",
+        "social",
+        "swim",
+        "use_the_force"
+      ],
+      "comparatorsInOtherDomain": 19,
+      "detectableCommonality": {
+        "detector": "bundle:reroll>reliability",
+        "pattern": "\\bre-?roll",
+        "detectorNote": "bundle: Explicit reroll"
+      },
+      "exactTagDifference": {
+        "comparedTag": "reliability",
+        "thisRecordCarriesTag": false,
+        "thisDomain": "TALENT",
+        "otherDomain": "FEAT",
+        "otherDomainRecordsMatchingDetector": 19,
+        "otherDomainRecordsMatchingDetectorAndCarryingTag": 19,
+        "detectorTaggedRateOverall": 0.99
+      },
+      "applicableInvariant": "reroll -> reliability",
+      "priorOwnerPrecedent": null,
+      "channels": [
+        "CHANNEL_2_CROSS_DOMAIN_BUNDLE"
+      ],
+      "bundles": [
+        "reroll"
+      ],
+      "ownerDecision": {
+        "decisionId": "TALENT:153f4b3c6510023d|reliability",
         "batch": "3B.1",
         "ownerAction": "NO_CHANGE",
         "policy": "RELIABILITY_POLICY"

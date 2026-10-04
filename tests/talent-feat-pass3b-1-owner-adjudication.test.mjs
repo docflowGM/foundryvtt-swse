@@ -92,15 +92,20 @@ test('derivation fails closed: wrong name, tag already present, outside vocabula
 });
 test('discovery dispositions: only decided findings change state; every other finding is unchanged', () => {
   const decided = new Set(overlay.decisions.map(d => `${d.domain}:${d.canonicalId}|${d.tag}`));
-  assert.equal(discovery.ownerDecidedItems.length, 56); assert.equal(discovery.dashboard.ownerDecisionsWithoutDiscoveryItem, 2);
+  assert.equal(discovery.ownerDecidedItems.length, 57); assert.equal(discovery.dashboard.ownerDecisionsWithoutDiscoveryItem, 2);
   for (const i of discovery.ownerDecidedItems) assert.ok(decided.has(`${i.domain}:${i.canonicalId}|${i.comparedTag}`));
   for (const i of discovery.ownerReviewItems) { assert.equal(i.state, 'PASS3B_OWNER_REVIEW'); assert.ok(!decided.has(`${i.domain}:${i.canonicalId}|${i.comparedTag}`)); }
   assert.deepEqual(discovery.ownerDecisionsWithoutDiscoveryItem.map(d => d.decisionId).sort(), ['TALENT:8d0657e7ade688bd|move_action', 'TALENT:8d0657e7ade688bd|swift_action']);
 });
-test('remaining unresolved findings are not silently adjudicated (Visionary Defense reliability stays open)', () => {
-  const open = discovery.ownerReviewItems.find(i => i.canonicalId === '153f4b3c6510023d' && i.comparedTag === 'reliability');
-  assert.ok(open && open.state === 'PASS3B_OWNER_REVIEW');
-  assert.equal(discovery.dashboard.ownerReviewRecordItems, 290); assert.equal(discovery.dashboard.ownerReviewCandidates, 316);
-  assert.ok(!overlay.decisions.some(d => d.canonicalId === '153f4b3c6510023d' && d.tag === 'reliability'));
+test('Visionary Defense reliability is closed by its own owner decision; no other finding is silently adjudicated', () => {
+  const dec = overlay.decisions.filter(d => d.canonicalId === '153f4b3c6510023d');
+  assert.deepEqual(dec.map(d => `${d.tag}:${d.ownerAction}`).sort(), ['reliability:NO_CHANGE', 'reroll:NO_CHANGE']);
+  assert.equal(overlay.decisions.filter(d => d.decisionId === 'TALENT:153f4b3c6510023d|reliability').length, 1);
+  const item = discovery.ownerDecidedItems.find(i => i.canonicalId === '153f4b3c6510023d' && i.comparedTag === 'reliability');
+  assert.equal(item.state, 'PASS3B_OWNER_NO_CHANGE'); assert.deepEqual(rec('153f4b3c6510023d').finalTags, rec('153f4b3c6510023d').baselineTags);
+  assert.equal(auth.counts.ownerDecisions, 59); assert.equal(auth.counts.noChangeDecisions, 26);
+  assert.equal(discovery.dashboard.ownerReviewRecordItems, 289); assert.equal(discovery.dashboard.ownerReviewCandidates, 315);
+  const decided = new Set(overlay.decisions.map(d => `${d.domain}:${d.canonicalId}|${d.tag}`));
+  for (const i of discovery.ownerReviewItems) assert.ok(!decided.has(`${i.domain}:${i.canonicalId}|${i.comparedTag}`));
 });
 console.log(`${n} tests passed`);
