@@ -5,10 +5,12 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { AUTHORITY_PATH, ROOT, loadContext, validateAuthority } from './validate-feat-tags-semantic-authority.mjs';
+import { AUTHORITY_PATH, PASS2_AUTHORITY_PATH, ROOT, loadContext, validateAuthority } from './validate-feat-tags-semantic-authority.mjs';
 
-export const OUT_JSON = 'data/audits/feat-tags-pass2-family-analysis.json';
-export const OUT_MD = 'docs/audits/feat-tags-pass2-family-analysis.md';
+const PASS2 = process.argv.includes('--pass2');
+export const OUT_JSON = PASS2 ? 'data/audits/feat-tags-pass2-family-analysis-post-adjudication.json' : 'data/audits/feat-tags-pass2-family-analysis.json';
+export const OUT_MD = PASS2 ? 'docs/audits/feat-tags-pass2-family-analysis-post-adjudication.md' : 'docs/audits/feat-tags-pass2-family-analysis.md';
+const OVERLAY_PATH = 'data/audits/feat-tags-pass2-owner-adjudication.json';
 const readJson = (rel) => JSON.parse(fs.readFileSync(path.join(ROOT, rel), 'utf8'));
 const exists = (rel) => fs.existsSync(path.join(ROOT, rel));
 const esc = (s) => String(s).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -56,7 +58,7 @@ function loadEvidence(auth) {
   return { source: src || null, prereq, rules };
 }
 
-function analyze(auth, ctx, talentTagCounts, recon) {
+function analyze(auth, ctx, talentTagCounts, recon, overlay = null) {
   const A = [...auth.assignments].sort((a, b) => cmp(a.canonicalId, b.canonicalId));
   const byId = new Map(A.map(a => [a.canonicalId, a]));
   const manifest = new Map(ctx.manifest.records.map(r => [r.canonicalId, r]));
@@ -144,6 +146,32 @@ function analyze(auth, ctx, talentTagCounts, recon) {
     f.pass2OwnerReview = reasons.length ? 'PASS2_OWNER_REVIEW' : null;
     f.pass2ReviewReasons = reasons;
   }
+  // Owner adjudication dispositions (Pass 2 mode). Evidence and the original flag reasons are kept; the open flag is cleared only by a recorded ruling.
+  if (overlay) {
+    const rank = (r) => ['PASS2_OWNER_CORRECTED', 'PASS2_OWNER_APPROVED'].indexOf(r);
+    for (const f of families) {
+      let disp = null, basis = null;
+      const fr = overlay.familyReviews.find(x => x.label === f.label);
+      const inv = overlay.invalidFamilyReferences.find(x => x.label === f.label);
+      const changed = overlay.tagChanges.filter(c => c.family === f.label);
+      const rej = overlay.rejectedFindings.filter(r => r.source === `${f.label.toLowerCase()} family`);
+      if (inv) { disp = inv.ruling; basis = inv.reason; }
+      else if (fr) { disp = fr.ruling; basis = fr.reason; }
+      else if (changed.length) { disp = changed.map(c => c.ruling).sort((x, y) => rank(x) - rank(y))[0]; basis = changed.map(c => `${c.name}: ${c.reason}`).join(' | '); }
+      else if (rej.length) { disp = rej[0].ruling; basis = rej.map(r => `${r.name}: ${r.reason}`).join(' | '); }
+      f.pass2Disposition = disp;
+      f.pass2DispositionBasis = basis;
+      if (disp && f.pass2OwnerReview) { f.pass2PriorFlag = 'PASS2_OWNER_REVIEW'; f.pass2OwnerReview = null; }
+    }
+    // Residual asymmetry: a family with a disposition whose post-change evidence still shows an unadjudicated difference.
+    for (const f of families) {
+      if (!f.pass2Disposition) continue;
+      const residual = [];
+      if (['CERTIFIED_TIER_FAMILY', 'OWNER_NAMED_CHAIN'].includes(f.kind) && !f.tagSetsIdentical && !['PASS2_INTENTIONAL_DIVERGENCE', 'PASS2_INVALID_FAMILY_REFERENCE'].includes(f.pass2Disposition)) residual.push(`member tag sets still differ (${f.unionTags.length - f.intersectionTags.length} non-shared tag(s))`);
+      if (f.kind === 'TEXT_KEYED_FAMILY' && f.membersWithoutAnyExpectedTag.length && f.pass2Disposition !== 'PASS2_FALSE_POSITIVE') residual.push(`${f.membersWithoutAnyExpectedTag.length} member(s) still lack every expected candidate tag (text-match evidence; not adjudicated)`);
+      f.pass2ResidualEvidence = residual;
+    }
+  }
   families.sort((a, b) => cmp(a.kind, b.kind) || cmp(a.label, b.label));
 
   // Statistics.
@@ -165,15 +193,16 @@ function analyze(auth, ctx, talentTagCounts, recon) {
     mostCommonTagPairs: Object.entries(pair).sort((x, y) => y[1] - x[1] || cmp(x[0], y[0])).slice(0, 15).map(([tags, feats]) => ({ tags, feats })),
     singletonTags: ranked.filter(([, u]) => u === 1).map(([t]) => t).sort(), zeroUseApprovedTags: vocab.filter(t => !usage[t]),
     tagsPerFeat: { min: Math.min(...A.map(a => a.finalTags.length)), max: Math.max(...A.map(a => a.finalTags.length)), mean: Number((A.reduce((n, a) => n + a.finalTags.length, 0) / A.length).toFixed(3)) },
+    ...(overlay ? { dispositions: Object.fromEntries(['PASS2_OWNER_APPROVED', 'PASS2_OWNER_CORRECTED', 'PASS2_FALSE_POSITIVE', 'PASS2_INTENTIONAL_DIVERGENCE', 'PASS2_INVALID_FAMILY_REFERENCE'].map(d => [d, families.filter(f => f.pass2Disposition === d).length + (d === 'PASS2_INVALID_FAMILY_REFERENCE' ? unresolved.filter(u => overlay.invalidFamilyReferences.some(x => x.label === u.family)).length : 0)])), residualEvidenceFamilies: families.filter(f => f.pass2ResidualEvidence?.length).map(f => ({ label: f.label, kind: f.kind, evidence: f.pass2ResidualEvidence })) } : {}),
     familyAsymmetry: { familiesTotal: families.length, byKind: Object.fromEntries([...new Set(families.map(f => f.kind))].sort().map(k => [k, { families: families.filter(f => f.kind === k).length, flaggedPass2OwnerReview: families.filter(f => f.kind === k && f.pass2OwnerReview).length, tagSetsIdentical: families.filter(f => f.kind === k && f.tagSetsIdentical).length }])), flaggedTotal: families.filter(f => f.pass2OwnerReview).length },
     productionVsAuthorityDelta: recon ? Object.fromEntries(['canonicalPresentInProduction', 'canonicalMissingFromProduction', 'recordsExactlyMatching', 'tagsToAddTotal', 'tagsToRemoveTotal', 'tagsToRemoveOutsideVocabulary', 'tagsAlreadyMatchingTotal'].map(k => [k, recon.totals[k]])) : null
   };
   return {
     schemaVersion: '1.0', kind: 'FEAT_TAGS_PASS2_FAMILY_ANALYSIS', status: 'EVIDENCE_ONLY_NO_ADJUDICATION',
-    authority: { file: AUTHORITY_PATH, status: auth.status, label: 'PASS1_COMPLETE / INPUT_TO_PASS2' },
+    authority: { file: PASS2 ? PASS2_AUTHORITY_PATH : AUTHORITY_PATH, status: auth.status, label: PASS2 ? 'Pass 2 working authority, owner adjudication Batch 1' : 'PASS1_COMPLETE / INPUT_TO_PASS2' },
     note: 'Candidate families from certified evidence. Family membership is not semantic proof; prerequisite relationships do not imply tags; same weapon family or publication category does not imply identical tags. PASS2_OWNER_REVIEW marks a difference to review, never an automatic correction.',
     evidence: { rulesAndPrerequisiteTextSource: ev.source, prerequisiteTextUnavailableFor: prereqUnavailable.length, prerequisiteEdgeCount: edges.length, hubChildThreshold: HUB_CHILD_THRESHOLD },
-    unresolvedOwnerNamedChainMembers: unresolved, statistics: stats, prerequisiteEdges: edges, families
+    unresolvedOwnerNamedChainMembers: unresolved.map(u => { const inv = overlay?.invalidFamilyReferences.find(x => x.label === u.family); return inv ? { ...u, pass2Disposition: inv.ruling, pass2DispositionBasis: inv.reason } : u; }), statistics: stats, prerequisiteEdges: edges, families
   };
 }
 
@@ -192,13 +221,17 @@ function render(rep) {
     `### Zero-use approved tags (${s.zeroUseApprovedTags.length})`, '', s.zeroUseApprovedTags.map(t => `\`${t}\``).join(', '), '',
     '### Feat-only tags', '', s.featOnlyTags.map(t => `\`${t}\``).join(', ') || '—', '',
     '### Talent-only tags (approved, used by talents, not by feats)', '', s.talentOnlyTags.map(t => `\`${t}\``).join(', ') || '—', '',
+    ...(s.dispositions ? ['## Owner dispositions', '', '| Status | Families |', '| --- | ---: |', ...Object.entries(s.dispositions).map(([k, v]) => `| ${k} | ${v} |`), '', `Residual unadjudicated evidence: ${s.residualEvidenceFamilies.length ? s.residualEvidenceFamilies.map(r => `${r.label} (${r.evidence.join('; ')})`).join(' | ') : 'none'}.`, ''] : []),
     '## Family asymmetry counts', '', '| Kind | Families | PASS2_OWNER_REVIEW | Identical tag sets |', '| --- | ---: | ---: | ---: |',
     ...Object.entries(s.familyAsymmetry.byKind).map(([k, v]) => `| ${k} | ${v.families} | ${v.flaggedPass2OwnerReview} | ${v.tagSetsIdentical} |`), '',
-    '## Owner-named chain members that are not canonical feats', '', ...(rep.unresolvedOwnerNamedChainMembers.length ? rep.unresolvedOwnerNamedChainMembers.map(u => `- ${u.family}: ${u.unresolvedNames.join(', ')}`) : ['—']), '',
+    '## Owner-named chain members that are not canonical feats', '', ...(rep.unresolvedOwnerNamedChainMembers.length ? rep.unresolvedOwnerNamedChainMembers.map(u => `- ${u.family}: ${u.unresolvedNames.join(', ')}${u.pass2Disposition ? ` — **${u.pass2Disposition}**` : ''}`) : ['—']), '',
     '## Families', ''];
   for (const f of rep.families) {
     if (f.kind === 'PREREQUISITE_PARENT_GROUP' && f.hubParent) continue;
-    L.push(`### ${f.label} — ${f.kind}${f.pass2OwnerReview ? ' — **PASS2_OWNER_REVIEW**' : ''}`, '');
+    L.push(`### ${f.label} — ${f.kind}${f.pass2OwnerReview ? ' — **PASS2_OWNER_REVIEW**' : ''}${f.pass2Disposition ? ` — **${f.pass2Disposition}**` : ''}`, '');
+    if (f.pass2Disposition) L.push(`Owner ruling basis: ${f.pass2DispositionBasis}`, '');
+    if (f.pass2PriorFlag) L.push(`Prior flag: ${f.pass2PriorFlag}; evidence retained: ${f.pass2ReviewReasons.join('; ')}.`, '');
+    if (f.pass2ResidualEvidence?.length) L.push(`Residual evidence (not adjudicated): ${f.pass2ResidualEvidence.join('; ')}.`, '');
     if (f.pass2ReviewReasons.length) L.push(`Review reasons: ${f.pass2ReviewReasons.join('; ')}.`, '');
     L.push(`Members: ${f.memberCount}; intersection: ${f.intersectionTags.map(t => `\`${t}\``).join(', ') || '—'}`, '');
     if (f.memberCount <= 14) L.push('| Member | Tags |', '| --- | --- |', ...f.members.map(m => `| ${m.name} (\`${m.canonicalId}\`) | ${m.tags.map(t => `\`${t}\``).join(', ')} |`), '');
@@ -210,14 +243,15 @@ function render(rep) {
 
 const isMain = process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url);
 if (isMain) {
-  const auth = readJson(AUTHORITY_PATH);
+  const auth = readJson(PASS2 ? PASS2_AUTHORITY_PATH : AUTHORITY_PATH);
   const ctx = loadContext();
-  const v = validateAuthority(auth, ctx);
+  const v = validateAuthority(auth, ctx, { pass: PASS2 ? 2 : 1 });
   if (v.failures.length) { console.error('authority validation failed; refusing to analyze'); process.exit(1); }
   const talentCounts = {};
   for (const l of fs.readFileSync(path.join(ROOT, 'packs/talents.db'), 'utf8').split('\n').filter(Boolean)) for (const t of (JSON.parse(l).system?.tags || [])) talentCounts[t] = (talentCounts[t] || 0) + 1;
-  const recon = exists('data/audits/feat-tags-production-reconciliation.json') ? readJson('data/audits/feat-tags-production-reconciliation.json') : null;
-  const rep = analyze(auth, ctx, talentCounts, recon);
+  const reconPath = PASS2 ? 'data/audits/feat-tags-pass2-production-reconciliation.json' : 'data/audits/feat-tags-production-reconciliation.json';
+  const recon = exists(reconPath) ? readJson(reconPath) : null;
+  const rep = analyze(auth, ctx, talentCounts, recon, PASS2 ? readJson(OVERLAY_PATH) : null);
   fs.writeFileSync(path.join(ROOT, OUT_JSON), JSON.stringify(rep, null, 2) + '\n');
   fs.writeFileSync(path.join(ROOT, OUT_MD), render(rep));
   const k = rep.statistics.familyAsymmetry;
