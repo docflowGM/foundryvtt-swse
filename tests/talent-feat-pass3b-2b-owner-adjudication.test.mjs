@@ -39,12 +39,13 @@ test('all 40 exact decisions exist once: 15 ADD and 25 NO_CHANGE, each with poli
   for (const d of b2b) { assert.ok(d.ownerRationale && d.ownerPolicyApplied && d.detectorEvidenceReference.length); assert.ok(overlay.ownerPolicies.some(p => p.id === d.ownerPolicyApplied)); }
   for (const id of ['GRAB_POLICY', 'GRAPPLE_POLICY', 'RESTRAIN_POLICY', 'BATTLEFIELD_CONTROL_POLICY', 'MOVEMENT_POLICY', 'MOBILITY_POLICY', 'ATTACK_OF_OPPORTUNITY_POLICY']) assert.equal(overlay.ownerPolicies.filter(p => p.id === id).length, 1);
 });
-test('cumulative overlay is 116 decisions (53 ADD / 63 NO_CHANGE) with unique decision identities', () => {
-  assert.equal(overlay.decisions.length, 116); assert.equal(overlay.decisions.filter(d => d.ownerAction === 'ADD').length, 53); assert.equal(overlay.decisions.filter(d => d.ownerAction === 'NO_CHANGE').length, 63);
-  assert.equal(new Set(overlay.decisions.map(d => d.decisionId)).size, 116);
+test('3B.2B decisions are unique and add 15 tags to 15 records (53 ADD / 63 NO_CHANGE cumulative through this batch)', () => {
+  const upTo = overlay.decisions.filter(d => ['3B.1', '3B.2A', '3B.2B'].includes(d.batch));
+  assert.equal(upTo.length, 116); assert.equal(upTo.filter(d => d.ownerAction === 'ADD').length, 53); assert.equal(upTo.filter(d => d.ownerAction === 'NO_CHANGE').length, 63);
+  assert.equal(new Set(overlay.decisions.map(d => d.decisionId)).size, overlay.decisions.length);
 });
 test('cumulative authority: 45 records with additions, 53 additions, 0 removals, 11,218 -> 11,271, no new tags', () => {
-  const c = auth.counts; assert.equal(c.recordsChanged, 45); assert.equal(c.tagAdditions, 53); assert.equal(c.removals, 0); assert.equal(c.ownerDecisions, 116);
+  const c = auth.counts; assert.equal(c.recordsChanged, 45); assert.equal(c.tagAdditions, 53); assert.equal(c.removals, 0);
   assert.equal(c.tagInstancesBefore, 11218); assert.equal(c.tagInstancesAfter, 11271); assert.equal(auth.sharedVocabulary.newTagsIntroduced, 0);
   const v = new Set(baseline.sharedVocabulary); assert.equal(v.size, 187); for (const r of auth.records) for (const t of r.finalTags) assert.ok(v.has(t));
   for (const r of auth.records) assert.deepEqual(r.finalTags.slice(0, r.baselineTags.length), r.baselineTags);
@@ -74,10 +75,10 @@ test('hard implications hold; authority is exactly 353 feats + 1,187 talents', (
   for (const r of auth.records) for (const [a, b] of REQUIRED_IMPLICATIONS) if (r.finalTags.includes(a)) assert.ok(r.finalTags.includes(b), `${r.name} ${a}->${b}`);
   assert.equal(auth.counts.feats, 353); assert.equal(auth.counts.talents, 1187); assert.equal(auth.counts.combined, 1540);
 });
-test('discovery dispositions: exactly the 40 findings changed; remaining review 258 total / 232 record-level; convention questions untouched', () => {
+test('discovery dispositions: exactly the 40 findings changed; no G/H record-level finding remains open; convention questions untouched', () => {
   const decided = discovery.ownerDecidedItems.filter(i => i.ownerDecision.batch === '3B.2B'); assert.equal(decided.length, 40);
   for (const d of b2b) assert.equal(decided.find(i => i.domain === d.domain && i.canonicalId === d.canonicalId && i.comparedTag === d.tag).state, d.ownerAction === 'ADD' ? 'PASS3B_OWNER_APPROVED' : 'PASS3B_OWNER_NO_CHANGE', d.decisionId);
-  const x = discovery.dashboard; assert.equal(x.ownerReviewCandidates, 258); assert.equal(x.ownerReviewRecordItems, 232); assert.equal(x.ownerReviewTagDefinitionItems, 12); assert.equal(x.ownerReviewTagConventionQuestions, 14); assert.equal(x.ownerDecidedItems, 114);
+  const x = discovery.dashboard; assert.equal(x.ownerReviewTagDefinitionItems, 12); assert.equal(x.ownerReviewTagConventionQuestions, 14);
   assert.deepEqual(discovery.tagConventionQuestions.filter(q => ['H.counterattack', 'H.overwatch'].includes(q.mechanic)).map(q => q.state), ['PASS3B_OWNER_REVIEW', 'PASS3B_OWNER_REVIEW']);
   assert.equal(discovery.ownerReviewItems.filter(i => i.family === 'G' || i.family === 'H').length, 0);
 });

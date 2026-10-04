@@ -88,6 +88,18 @@
     {
       "id": "ATTACK_OF_OPPORTUNITY_POLICY",
       "text": "attack_of_opportunity applies when the operative mechanic directly generates an attack of opportunity, grants or modifies one, prevents/suppresses one, triggers from one, modifies checks or effects specifically associated with one, or changes the timing or availability of one. Not applied merely because movement is stated to provoke attacks of opportunity as normal, attacks of opportunity are simply exempted from a broader restriction on attacks, or the phrase appears only as unchanged rules reminder/context. The Martial Arts I owner precedent remains intact and does not propagate to Martial Arts II/III."
+    },
+    {
+      "id": "FULL_ATTACK_POLICY",
+      "text": "full_attack applies when the operative mechanic directly interacts with the SWSE Full Attack mechanic: performs a Full Attack, modifies Full Attack penalties, modifies the number/type of attacks made as part of a Full Attack, or directly modifies the resolution of a Full Attack. Not added because the record makes multiple attacks, another action produces attacks similar to a Full Attack, or a normal Full Attack is mentioned only as a comparison, limitation or reference. A mechanic that intentionally replaces or bypasses the Full Attack action is not automatically a full_attack mechanic."
+    },
+    {
+      "id": "DUAL_WIELD_POLICY",
+      "text": "dual_wield represents mechanics in which one character directly fights with or mechanically manages two weapons/two weapon ends as part of the same combat style: attacking with two weapons, using both ends of a double weapon where treated as two-weapon combat, modifying two-weapon attack penalties, or directly improving/enabling two-weapon fighting. Not added because two different characters each use one weapon, two attacks are combined, two weapons happen to contribute to one resolved effect, or the mechanic simply allows multiple attacks. The semantic is the character's two-weapon combat mode, not the number of weapons involved in the event."
+    },
+    {
+      "id": "STUN_POLICY",
+      "text": "stun represents direct interaction with the SWSE stun/stunning mechanic or stun damage/mode: deals or modifies stun damage, changes use of a weapon's stun setting, applies a stated stunning effect, or improves/resists/removes/directly modifies stun mechanics. Ion damage is not stun damage. Not added because a record deals ion damage, resists ion damage, improves ion weapons, mentions stun gauntlets only as an equipment exception, or uses nonlethal/capture-oriented ion mechanics. ion and stun are mechanically distinct concepts. No new ion semantic tag is authorized; recurring ion semantics are a later ontology-gap decision."
     }
   ],
   "batches": [
@@ -131,6 +143,17 @@
         "recordsWithAdd": 15,
         "tagAdditions": 15,
         "recordsWithOnlyNoChange": 17,
+        "removals": 0,
+        "newTags": 0
+      }
+    },
+    {
+      "batch": "3B.2C",
+      "title": "Combat mode primitives",
+      "expected": {
+        "recordsWithAdd": 0,
+        "tagAdditions": 0,
+        "recordsWithOnlyNoChange": 9,
         "removals": 0,
         "newTags": 0
       }
@@ -1772,12 +1795,138 @@
       ],
       "ownerRationale": "The talent's forced movement explicitly does not provoke attacks of opportunity.",
       "ownerPolicyApplied": "ATTACK_OF_OPPORTUNITY_POLICY"
+    },
+    {
+      "decisionId": "FEAT:4be60753991eec43|full_attack",
+      "batch": "3B.2C",
+      "domain": "FEAT",
+      "canonicalId": "4be60753991eec43",
+      "name": "Rapid Assault",
+      "tag": "full_attack",
+      "ownerAction": "NO_CHANGE",
+      "detectorEvidenceReference": [
+        "O.full_attack"
+      ],
+      "ownerRationale": "Rapid Assault does not perform a Full Attack. It spends a Force Point to make exactly two attacks as a standard action, using a qualifying two-weapon or Double Attack setup. The reference to how many attacks the character's normal Full Attack could produce establishes only a ceiling/comparison. The feat deliberately provides a different action path rather than modifying or executing the Full Attack action itself. Its existing dual_wield, sustained_damage, standard_action, action_economy, force_point_spend and resource_spend semantics remain unchanged.",
+      "ownerPolicyApplied": "FULL_ATTACK_POLICY"
+    },
+    {
+      "decisionId": "TALENT:388f30468a80f221|dual_wield",
+      "batch": "3B.2C",
+      "domain": "TALENT",
+      "canonicalId": "388f30468a80f221",
+      "name": "Synchronized Fire",
+      "tag": "dual_wield",
+      "ownerAction": "NO_CHANGE",
+      "detectorEvidenceReference": [
+        "O.dual_wield"
+      ],
+      "ownerRationale": "The talent coordinates one weapon fired by the user and one weapon fired by an ally. The two damage results are combined before applying SR/DR and Damage Threshold. This is coordinated fire from two characters, not one character wielding/fighting with two weapons. No additional tags inferred.",
+      "ownerPolicyApplied": "DUAL_WIELD_POLICY"
+    },
+    {
+      "decisionId": "FEAT:43a4b873d9a9984d|stun",
+      "batch": "3B.2C",
+      "domain": "FEAT",
+      "canonicalId": "43a4b873d9a9984d",
+      "name": "Ion Shielding",
+      "tag": "stun",
+      "ownerAction": "NO_CHANGE",
+      "detectorEvidenceReference": [
+        "O.stun"
+      ],
+      "ownerRationale": "The feat directly modifies the consequences of ion damage exceeding Damage Threshold. Ion damage is not stun damage.",
+      "ownerPolicyApplied": "STUN_POLICY"
+    },
+    {
+      "decisionId": "FEAT:5d17898fc9652370|stun",
+      "batch": "3B.2C",
+      "domain": "FEAT",
+      "canonicalId": "5d17898fc9652370",
+      "name": "Droid Hunter",
+      "tag": "stun",
+      "ownerAction": "NO_CHANGE",
+      "detectorEvidenceReference": [
+        "O.stun"
+      ],
+      "ownerRationale": "The feat grants additional damage against droids, with a larger bonus when using a weapon that deals ion damage. It does not interact with stun damage or a stunning effect.",
+      "ownerPolicyApplied": "STUN_POLICY"
+    },
+    {
+      "decisionId": "TALENT:c101826c205debf2|stun",
+      "batch": "3B.2C",
+      "domain": "TALENT",
+      "canonicalId": "c101826c205debf2",
+      "name": "Sudden Storm",
+      "tag": "stun",
+      "ownerAction": "NO_CHANGE",
+      "detectorEvidenceReference": [
+        "O.stun"
+      ],
+      "ownerRationale": "Stun gauntlets appear only in the permitted-equipment exception to the otherwise unarmed requirement. The talent does not use or modify the stun function of those gauntlets.",
+      "ownerPolicyApplied": "STUN_POLICY"
+    },
+    {
+      "decisionId": "TALENT:c113b29cde344fafb6aa376a843639d3|stun",
+      "batch": "3B.2C",
+      "domain": "TALENT",
+      "canonicalId": "c113b29cde344fafb6aa376a843639d3",
+      "name": "Ion Resistance 10",
+      "tag": "stun",
+      "ownerAction": "NO_CHANGE",
+      "detectorEvidenceReference": [
+        "O.stun"
+      ],
+      "ownerRationale": "The talent grants DR specifically against ion damage. It does not resist stun damage or a stunning effect.",
+      "ownerPolicyApplied": "STUN_POLICY"
+    },
+    {
+      "decisionId": "TALENT:c2f332d1e74e3e1a|stun",
+      "batch": "3B.2C",
+      "domain": "TALENT",
+      "canonicalId": "c2f332d1e74e3e1a",
+      "name": "Ion Turret",
+      "tag": "stun",
+      "ownerAction": "NO_CHANGE",
+      "detectorEvidenceReference": [
+        "O.stun"
+      ],
+      "ownerRationale": "The turret converts its damage into ion damage. That is an ion mechanic, not a stun mechanic.",
+      "ownerPolicyApplied": "STUN_POLICY"
+    },
+    {
+      "decisionId": "TALENT:cc90a9fc255f4dc4|stun",
+      "batch": "3B.2C",
+      "domain": "TALENT",
+      "canonicalId": "cc90a9fc255f4dc4",
+      "name": "Seyugi Cyclone",
+      "tag": "stun",
+      "ownerAction": "NO_CHANGE",
+      "detectorEvidenceReference": [
+        "O.stun"
+      ],
+      "ownerRationale": "Stun gauntlets are listed only as an exception to the otherwise no-weapons requirement. The talent does not interact with their stun mechanics.",
+      "ownerPolicyApplied": "STUN_POLICY"
+    },
+    {
+      "decisionId": "TALENT:df9c25340dcb7c95|stun",
+      "batch": "3B.2C",
+      "domain": "TALENT",
+      "canonicalId": "df9c25340dcb7c95",
+      "name": "Ion Mastery",
+      "tag": "stun",
+      "ownerAction": "NO_CHANGE",
+      "detectorEvidenceReference": [
+        "O.stun"
+      ],
+      "ownerRationale": "The talent directly improves attacks made with ion weapons and increases ion damage. Its capture-oriented purpose does not make ion damage semantically equivalent to stun damage. Its existing nonlethal semantic is preserved; this ruling does not reopen that tag.",
+      "ownerPolicyApplied": "STUN_POLICY"
     }
   ],
   "cumulativeExpected": {
-    "decisions": 116,
+    "decisions": 125,
     "addDecisions": 53,
-    "noChangeDecisions": 63,
+    "noChangeDecisions": 72,
     "recordsWithAdd": 45,
     "tagAdditions": 53,
     "removals": 0,

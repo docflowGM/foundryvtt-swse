@@ -16,12 +16,12 @@ Mechanic families scanned: 15 (106 detectors, 14 cross-domain bundles)
 
 Records where mechanic wording and the compared tag co-occur (count only; not adjudicated): 3965
 
-Owner-review candidates: 258
-  record-level (P1 136 / P2 96): 232
+Owner-review candidates: 249
+  record-level (P1 128 / P2 95): 223
   tag-definition (P3): 12
   tag-convention questions (P3; 236 untagged matches listed, not individually flagged): 14
 
-Findings decided by explicit owner rulings (approved / no change): 114
+Findings decided by explicit owner rulings (approved / no change): 123
 Prior-ruling / intentional-divergence matches: 11
 Tags carried by only one domain (count only; no ruling made): 34
 
@@ -79,7 +79,7 @@ Zero violations across the combined corpus.
 | L. Technology | 9 | 18 | 78 | 163 | 145 | 3 | 0 |
 | M. Vehicle / space | 4 | 33 | 97 | 179 | 132 | 29 | 0 |
 | N. Force mechanics | 10 | 32 | 288 | 639 | 464 | 9 | 3 |
-| O. Weapon / combat mode | 16 | 92 | 312 | 582 | 501 | 52 | 1 |
+| O. Weapon / combat mode | 16 | 92 | 312 | 582 | 501 | 44 | 0 |
 
 ### A. Action economy
 
@@ -344,7 +344,7 @@ Representative evidence (facts only): **Dark Scourge** (TALENT, Saga Edition Cor
 
 ### O. Weapon / combat mode
 
-Tags expected: `double_weapon`, `dual_wield`, `exotic_weapon`, `fighting_defensively`, `flanking`, `full_attack`, `heavy_weapon`, `improvised_weapon`, `lightsaber`, `martial_arts`, `melee`, `nonlethal`, `pistol`, `ranged`, `stun`, `unarmed`. Records with evidence text: 1540; feats involved 92; talents involved 312; detections 582; already convergent 501; owner review 53.
+Tags expected: `double_weapon`, `dual_wield`, `exotic_weapon`, `fighting_defensively`, `flanking`, `full_attack`, `heavy_weapon`, `improvised_weapon`, `lightsaber`, `martial_arts`, `melee`, `nonlethal`, `pistol`, `ranged`, `stun`, `unarmed`. Records with evidence text: 1540; feats involved 92; talents involved 312; detections 582; already convergent 501; owner review 44.
 
 | Detector | Tag | Conf | Detected (F/T) | Tagged (F/T) | Detected, not tagged (F/T) | Tagged rate |
 | --- | --- | --- | --- | --- | --- | ---: |
@@ -367,16 +367,13 @@ Tags expected: `double_weapon`, `dual_wield`, `exotic_weapon`, `fighting_defensi
 
 Owner-review groups (mechanic → candidate tag):
 
-- **O.full_attack** → `full_attack` (P1): 1 record(s) [1 feat / 0 talent]; e.g. Rapid Assault (`4be60753991eec43`)
 - **O.lightsaber** → `lightsaber` (P1): 10 record(s) [3 feat / 7 talent]; e.g. Flurry (`0536f81eff886234`); Improved Rapid Strike (`cb6aea7e256e4c8c`); Weapon Proficiency (`ecc2471ac96ec2d4`)
 - **O.melee** → `melee` (P1): 15 record(s) [5 feat / 10 talent]; e.g. Knife Trick (`61c053191d05d0a2`); Charging Fire (`a945e2f5ffb5a7ed`); Precise Shot (`c180eee7d3bc29b2`)
 - **O.pistol** → `pistol` (P1): 6 record(s) [3 feat / 3 talent]; e.g. Sport Hunter (`8778b4271420f789`); Disabler (`94023012303ad257`); Weapon Proficiency (`ecc2471ac96ec2d4`)
 - **O.ranged** → `ranged` (P1): 11 record(s) [2 feat / 9 talent]; e.g. Tool Frenzy (`203f7fa521105d0b`); Dive for Cover (`2866d953b4b6245d`); Visionary Defense (`153f4b3c6510023d`)
-- **O.stun** → `stun` (P1): 7 record(s) [2 feat / 5 talent]; e.g. Ion Shielding (`43a4b873d9a9984d`); Droid Hunter (`5d17898fc9652370`); Sudden Storm (`c101826c205debf2`)
 - **O.unarmed** → `unarmed` (P1): 2 record(s) [2 feat / 0 talent]; e.g. Triple Crit (`3d4a4e93ced26712`); Weapon Focus (`c41814601364b643`)
-- **O.dual_wield** → `dual_wield` (P2): 1 record(s) [0 feat / 1 talent]; e.g. Synchronized Fire (`388f30468a80f221`)
 
-Representative evidence (facts only): **Rapid Assault** (FEAT, Saga Edition FAQ — Official Optional Rules p.e2, FEAT_CANONICAL_RULES_SHAPE) — "…Double Attack still apply. You cannot make more than two attacks through Rapid Assault regardless of how many attacks your normal Full Attack could produce. This is an official optional rule, not a mandatory Core rule. Spend a Force Point to make exactly two attacks as a…". Tags: `dual_wield`, `sustained_damage`, `standard_action`, `action_economy`, `force_point_spend`, `resource_spend`; compared tag `full_attack` absent. Comparison records carrying it: Flurry of Blows (TALENT) [`unarmed`, `martial_arts`, `melee`, `full_attack`, `sustained_damage`, `scaling`, `precision`]; Multiattack Proficiency (heavy weapons) (TALENT) [`heavy_weapon`, `full_attack`, `sustained_damage`, `precision`, `weapon_training`]; Flanking Fire (TALENT) [`pistol`, `ranged`, `dual_wield`, `flanking`, `full_attack`, `standard_action`, `action_economy`, `sustained_damage`, `positioning`].
+Representative evidence (facts only): **Flurry** (FEAT, Knights of the Old Republic Campaign Guide p.33, FEAT_CANONICAL_RULES_SHAPE) — "While wielding only light weapons or lightsabers, take -5 Reflex Defense and gain +2 on melee attack rolls until the start of your next turn. May substitute for Point Blank Shot…". Tags: `melee`, `precision`, `defense`; compared tag `lightsaber` absent. Comparison records carrying it: Oath of Duty (TALENT) [`ally-trigger`, `lightsaber`, `durability`, `survivability`, `scaling`, `positioning`]; Dual Weapon Flourish II (TALENT) [`dual_wield`, `melee`, `lightsaber`, `full_attack`, `standard_action`, `action_economy`, `sustained_damage`]; Ataru (TALENT) [`lightsaber`, `melee`, `ability_enhancement`, `damage_bonus`, `sustained_damage`].
 
 ## Tag-convention questions (detector tagged-rate below 50%)
 

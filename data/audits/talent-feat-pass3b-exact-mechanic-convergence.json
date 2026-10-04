@@ -25,16 +25,16 @@
     "detectors": 106,
     "bundles": 14,
     "tagAndDetectorCoOccurrences": 3965,
-    "ownerReviewCandidates": 258,
-    "ownerReviewRecordItems": 232,
+    "ownerReviewCandidates": 249,
+    "ownerReviewRecordItems": 223,
     "ownerReviewRecordItemsByPriority": {
-      "P1": 136,
-      "P2": 96
+      "P1": 128,
+      "P2": 95
     },
     "ownerReviewTagDefinitionItems": 12,
     "ownerReviewTagConventionQuestions": 14,
     "recordsBehindConventionQuestions": 236,
-    "ownerDecidedItems": 114,
+    "ownerDecidedItems": 123,
     "ownerDecisionsWithoutDiscoveryItem": 2,
     "priorRulingOrIntentionalDivergence": 11,
     "tagsUsedByOneDomainOnly": 34,
@@ -42,9 +42,9 @@
     "evidenceOnlyLowConfidence": 270,
     "evidenceOnlyNoComparator": 33,
     "itemStates": {
-      "PASS3B_OWNER_REVIEW": 232,
+      "PASS3B_OWNER_REVIEW": 223,
       "PASS3B_OWNER_APPROVED": 51,
-      "PASS3B_OWNER_NO_CHANGE": 63,
+      "PASS3B_OWNER_NO_CHANGE": 72,
       "PASS3B_INTENTIONAL_DIVERGENCE": 4,
       "PASS3B_PRIOR_OWNER_RULING": 7
     }
@@ -403,9 +403,9 @@
       "talentsInvolved": 312,
       "detections": 582,
       "convergent": 501,
-      "ownerReview": 53,
-      "ownerReviewP1": 52,
-      "ownerReviewP2": 1
+      "ownerReview": 44,
+      "ownerReviewP1": 44,
+      "ownerReviewP2": 0
     }
   ],
   "detectorStats": [
@@ -22739,129 +22739,6 @@
       "priorityBasis": "detector confidence HIGH (or tight HIGH-only bundle) with a same-mechanic comparator in the other domain",
       "family": "O",
       "familyName": "Weapon / combat mode",
-      "mechanic": "O.full_attack",
-      "comparedTag": "full_attack",
-      "detectorConfidence": "HIGH",
-      "domain": "FEAT",
-      "canonicalId": "4be60753991eec43",
-      "name": "Rapid Assault",
-      "source": "Saga Edition FAQ — Official Optional Rules",
-      "page": "e2",
-      "evidenceTier": "FEAT_CANONICAL_RULES_SHAPE",
-      "canonicalMechanicText": "While wielding two weapons, or a weapon with which you can use Double Attack, spend a Force Point to make exactly two attacks as a standard action. Normal penalties for two-weapon fighting or Double Attack still apply. You cannot make more than two attacks through Rapid Assault regardless of how many attacks your normal Full Attack could produce. This is an official optional rule, not a mandatory Core rule. Spend a Force Point to make exactly two attacks as a standard action using a qualifying two-weapon or Double Attack setup, with normal multiattack penalties.",
-      "matchedExcerpt": "…Double Attack still apply. You cannot make more than two attacks through Rapid Assault regardless of how many attacks your normal Full Attack could produce. This is an official optional rule, not a mandatory Core rule. Spend a Force Point to make exactly two attacks as a…",
-      "currentTags": [
-        "dual_wield",
-        "sustained_damage",
-        "standard_action",
-        "action_economy",
-        "force_point_spend",
-        "resource_spend"
-      ],
-      "comparisonRecords": [
-        {
-          "canonicalId": "11b45afc4136594c",
-          "domain": "TALENT",
-          "name": "Flurry of Blows",
-          "source": "Galaxy at War",
-          "page": 33,
-          "tags": [
-            "unarmed",
-            "martial_arts",
-            "melee",
-            "full_attack",
-            "sustained_damage",
-            "scaling",
-            "precision"
-          ],
-          "excerpt": "When you make multiple unarmed attacks as a full attack action, you reduce the penalty to your attack roll by 2. You can take this talent multiple times. Each time you take this talent…",
-          "evidenceTier": "TALENT_CERTIFIED_PACK_BENEFIT_TEXT",
-          "canonicalMechanicText": "When you make multiple unarmed attacks as a full attack action, you reduce the penalty to your attack roll by 2.\n\nYou can take this talent multiple times. Each time you take this talent, you reduce the penalty to your attack rolls by an additional 2."
-        },
-        {
-          "canonicalId": "1b3d5d3260391867",
-          "domain": "TALENT",
-          "name": "Multiattack Proficiency (heavy weapons)",
-          "source": "Saga Edition Core Rulebook",
-          "page": 212,
-          "tags": [
-            "heavy_weapon",
-            "full_attack",
-            "sustained_damage",
-            "precision",
-            "weapon_training"
-          ],
-          "excerpt": "Whenever you make multiple attacks with any type of heavy weapon as a full attack action, you reduce the penalty on your attack rolls by 2. You can take this talent multiple times; each time, reduce the penalty…",
-          "evidenceTier": "TALENT_CERTIFIED_PACK_BENEFIT_TEXT",
-          "canonicalMechanicText": "Whenever you make multiple attacks with any type of heavy weapon as a full attack action, you reduce the penalty on your attack rolls by 2. You can take this talent multiple times; each time, reduce the penalty by an additional 2."
-        },
-        {
-          "canonicalId": "1f6b9d509a07f881",
-          "domain": "TALENT",
-          "name": "Flanking Fire",
-          "source": "Scum and Villainy",
-          "page": 28,
-          "tags": [
-            "pistol",
-            "ranged",
-            "dual_wield",
-            "flanking",
-            "full_attack",
-            "standard_action",
-            "action_economy",
-            "sustained_damage",
-            "positioning"
-          ],
-          "excerpt": "Whenever you are flanked by two or more opponents and are wielding two pistols, you can make a full attack action as a standard action instead of a full-round action. This is provided that you target only opponents that flank you and at…",
-          "evidenceTier": "TALENT_CERTIFIED_PACK_BENEFIT_TEXT",
-          "canonicalMechanicText": "Whenever you are flanked by two or more opponents and are wielding two pistols, you can make a full attack action as a standard action instead of a full-round action. This is provided that you target only opponents that flank you and attack at least two targets."
-        }
-      ],
-      "comparisonTags": [
-        "action_economy",
-        "dual_wield",
-        "flanking",
-        "full_attack",
-        "heavy_weapon",
-        "martial_arts",
-        "melee",
-        "pistol",
-        "positioning",
-        "precision",
-        "ranged",
-        "scaling",
-        "standard_action",
-        "sustained_damage",
-        "unarmed",
-        "weapon_training"
-      ],
-      "comparatorsInOtherDomain": 20,
-      "detectableCommonality": {
-        "detector": "O.full_attack",
-        "pattern": "\\bfull attack\\b",
-        "detectorNote": null
-      },
-      "exactTagDifference": {
-        "comparedTag": "full_attack",
-        "thisRecordCarriesTag": false,
-        "thisDomain": "FEAT",
-        "otherDomain": "TALENT",
-        "otherDomainRecordsMatchingDetector": 20,
-        "otherDomainRecordsMatchingDetectorAndCarryingTag": 20,
-        "detectorTaggedRateOverall": 0.966
-      },
-      "applicableInvariant": null,
-      "priorOwnerPrecedent": null,
-      "channels": [
-        "CHANNEL_1_RULE_TRIGGER"
-      ]
-    },
-    {
-      "state": "PASS3B_OWNER_REVIEW",
-      "priority": 1,
-      "priorityBasis": "detector confidence HIGH (or tight HIGH-only bundle) with a same-mechanic comparator in the other domain",
-      "family": "O",
-      "familyName": "Weapon / combat mode",
       "mechanic": "O.lightsaber",
       "comparedTag": "lightsaber",
       "detectorConfidence": "HIGH",
@@ -27293,684 +27170,6 @@
         "otherDomainRecordsMatchingDetector": 28,
         "otherDomainRecordsMatchingDetectorAndCarryingTag": 26,
         "detectorTaggedRateOverall": 0.92
-      },
-      "applicableInvariant": null,
-      "priorOwnerPrecedent": null,
-      "channels": [
-        "CHANNEL_1_RULE_TRIGGER"
-      ]
-    },
-    {
-      "state": "PASS3B_OWNER_REVIEW",
-      "priority": 1,
-      "priorityBasis": "detector confidence HIGH (or tight HIGH-only bundle) with a same-mechanic comparator in the other domain",
-      "family": "O",
-      "familyName": "Weapon / combat mode",
-      "mechanic": "O.stun",
-      "comparedTag": "stun",
-      "detectorConfidence": "HIGH",
-      "domain": "FEAT",
-      "canonicalId": "43a4b873d9a9984d",
-      "name": "Ion Shielding",
-      "source": "Scavenger's Guide to Droids",
-      "page": 22,
-      "evidenceTier": "FEAT_CANONICAL_RULES_SHAPE",
-      "canonicalMechanicText": "If ion damage before being halved equals or exceeds damage threshold, move only 1 step down the condition track instead of the normal 2. Qualifying ion damage moves you only one step down the condition track instead of two.",
-      "matchedExcerpt": "If ion damage before being halved equals or exceeds damage threshold, move only 1 step down the condition track instead of the normal 2. Qualif…",
-      "currentTags": [
-        "damage_threshold",
-        "resilience",
-        "survivability"
-      ],
-      "comparisonRecords": [
-        {
-          "canonicalId": "475fef43d75f3bff",
-          "domain": "TALENT",
-          "name": "Nonlethal Tactics",
-          "source": "Force Unleashed Campaign Guide",
-          "page": 45,
-          "tags": [
-            "ranged",
-            "stun",
-            "nonlethal",
-            "precision",
-            "damage_bonus",
-            "sustained_damage"
-          ],
-          "excerpt": "When you are using a ranged weapon set to stun, stun grenades, nets, or stun batons, you gain a +1 bonus on your attack roll and deal +1 die of stun damage.",
-          "evidenceTier": "TALENT_CERTIFIED_PACK_BENEFIT_TEXT",
-          "canonicalMechanicText": "When you are using a ranged weapon set to stun, stun grenades, nets, or stun batons, you gain a +1 bonus on your attack roll and deal +1 die of stun damage."
-        },
-        {
-          "canonicalId": "8306c13c16ae0af8",
-          "domain": "TALENT",
-          "name": "Harrying Shot",
-          "source": "Galaxy at War",
-          "page": 31,
-          "tags": [
-            "ranged",
-            "offense_ranged",
-            "sniper",
-            "precision",
-            "targeting",
-            "setup",
-            "control",
-            "battlefield_control",
-            "action_economy",
-            "stun"
-          ],
-          "excerpt": "…the attack deals damage, the target cannot use a standard action to make an attack roll on his or her next turn. This counts as a stunning effect.",
-          "evidenceTier": "TALENT_CERTIFIED_PACK_BENEFIT_TEXT",
-          "canonicalMechanicText": "When you make a successful ranged attack against an enemy that you have aimed at and the attack deals damage, the target cannot use a standard action to make an attack roll on his or her next turn. This counts as a stunning effect."
-        },
-        {
-          "canonicalId": "878d89b7232413cf",
-          "domain": "TALENT",
-          "name": "Set for Stun",
-          "source": "Force Unleashed Campaign Guide",
-          "page": 49,
-          "tags": [
-            "ranged",
-            "stun",
-            "nonlethal",
-            "swift_action",
-            "action_economy",
-            "damage_threshold",
-            "control",
-            "battlefield_control",
-            "targeting",
-            "setup"
-          ],
-          "excerpt": "You are particularly adept with stun weapons. If you are using a ranged weapon that deals stun damage (including a lethal weapon set to stun), you can spend two conse…",
-          "evidenceTier": "TALENT_CERTIFIED_PACK_BENEFIT_TEXT",
-          "canonicalMechanicText": "You are particularly adept with stun weapons. If you are using a ranged weapon that deals stun damage (including a lethal weapon set to stun), you can spend two consecutive swift actions in the same round to activate this talent. If the stun damage on your next attack exceeds the target's damage threshold, you move the target -3 steps along the condition track instead of the normal -2. You lose the benefit of this talent if you lose line of sight to your target or if you take any other action before making your attack."
-        }
-      ],
-      "comparisonTags": [
-        "action_economy",
-        "battlefield_control",
-        "control",
-        "damage_bonus",
-        "damage_threshold",
-        "nonlethal",
-        "offense_ranged",
-        "precision",
-        "ranged",
-        "setup",
-        "sniper",
-        "stun",
-        "sustained_damage",
-        "swift_action",
-        "targeting"
-      ],
-      "comparatorsInOtherDomain": 10,
-      "detectableCommonality": {
-        "detector": "O.stun",
-        "pattern": "\\bstun(?:s|ned|ning)?\\b|\\bion damage\\b",
-        "detectorNote": null
-      },
-      "exactTagDifference": {
-        "comparedTag": "stun",
-        "thisRecordCarriesTag": false,
-        "thisDomain": "FEAT",
-        "otherDomain": "TALENT",
-        "otherDomainRecordsMatchingDetector": 15,
-        "otherDomainRecordsMatchingDetectorAndCarryingTag": 10,
-        "detectorTaggedRateOverall": 0.611
-      },
-      "applicableInvariant": null,
-      "priorOwnerPrecedent": null,
-      "channels": [
-        "CHANNEL_1_RULE_TRIGGER"
-      ]
-    },
-    {
-      "state": "PASS3B_OWNER_REVIEW",
-      "priority": 1,
-      "priorityBasis": "detector confidence HIGH (or tight HIGH-only bundle) with a same-mechanic comparator in the other domain",
-      "family": "O",
-      "familyName": "Weapon / combat mode",
-      "mechanic": "O.stun",
-      "comparedTag": "stun",
-      "detectorConfidence": "HIGH",
-      "domain": "FEAT",
-      "canonicalId": "5d17898fc9652370",
-      "name": "Droid Hunter",
-      "source": "Clone Wars Campaign Guide",
-      "page": 29,
-      "evidenceTier": "FEAT_CANONICAL_RULES_SHAPE",
-      "canonicalMechanicText": "Gain +2 damage against droids, or +4 damage when using a weapon that deals ion damage. With a proficient weapon, deal +2 damage to droids, or +4 with ion damage.",
-      "matchedExcerpt": "Gain +2 damage against droids, or +4 damage when using a weapon that deals ion damage. With a proficient weapon, deal +2 damage to droids, or +4 with ion damage.",
-      "currentTags": [
-        "droid",
-        "damage_bonus"
-      ],
-      "comparisonRecords": [
-        {
-          "canonicalId": "475fef43d75f3bff",
-          "domain": "TALENT",
-          "name": "Nonlethal Tactics",
-          "source": "Force Unleashed Campaign Guide",
-          "page": 45,
-          "tags": [
-            "ranged",
-            "stun",
-            "nonlethal",
-            "precision",
-            "damage_bonus",
-            "sustained_damage"
-          ],
-          "excerpt": "When you are using a ranged weapon set to stun, stun grenades, nets, or stun batons, you gain a +1 bonus on your attack roll and deal +1 die of stun damage.",
-          "evidenceTier": "TALENT_CERTIFIED_PACK_BENEFIT_TEXT",
-          "canonicalMechanicText": "When you are using a ranged weapon set to stun, stun grenades, nets, or stun batons, you gain a +1 bonus on your attack roll and deal +1 die of stun damage."
-        },
-        {
-          "canonicalId": "8306c13c16ae0af8",
-          "domain": "TALENT",
-          "name": "Harrying Shot",
-          "source": "Galaxy at War",
-          "page": 31,
-          "tags": [
-            "ranged",
-            "offense_ranged",
-            "sniper",
-            "precision",
-            "targeting",
-            "setup",
-            "control",
-            "battlefield_control",
-            "action_economy",
-            "stun"
-          ],
-          "excerpt": "…the attack deals damage, the target cannot use a standard action to make an attack roll on his or her next turn. This counts as a stunning effect.",
-          "evidenceTier": "TALENT_CERTIFIED_PACK_BENEFIT_TEXT",
-          "canonicalMechanicText": "When you make a successful ranged attack against an enemy that you have aimed at and the attack deals damage, the target cannot use a standard action to make an attack roll on his or her next turn. This counts as a stunning effect."
-        },
-        {
-          "canonicalId": "878d89b7232413cf",
-          "domain": "TALENT",
-          "name": "Set for Stun",
-          "source": "Force Unleashed Campaign Guide",
-          "page": 49,
-          "tags": [
-            "ranged",
-            "stun",
-            "nonlethal",
-            "swift_action",
-            "action_economy",
-            "damage_threshold",
-            "control",
-            "battlefield_control",
-            "targeting",
-            "setup"
-          ],
-          "excerpt": "You are particularly adept with stun weapons. If you are using a ranged weapon that deals stun damage (including a lethal weapon set to stun), you can spend two conse…",
-          "evidenceTier": "TALENT_CERTIFIED_PACK_BENEFIT_TEXT",
-          "canonicalMechanicText": "You are particularly adept with stun weapons. If you are using a ranged weapon that deals stun damage (including a lethal weapon set to stun), you can spend two consecutive swift actions in the same round to activate this talent. If the stun damage on your next attack exceeds the target's damage threshold, you move the target -3 steps along the condition track instead of the normal -2. You lose the benefit of this talent if you lose line of sight to your target or if you take any other action before making your attack."
-        }
-      ],
-      "comparisonTags": [
-        "action_economy",
-        "battlefield_control",
-        "control",
-        "damage_bonus",
-        "damage_threshold",
-        "nonlethal",
-        "offense_ranged",
-        "precision",
-        "ranged",
-        "setup",
-        "sniper",
-        "stun",
-        "sustained_damage",
-        "swift_action",
-        "targeting"
-      ],
-      "comparatorsInOtherDomain": 10,
-      "detectableCommonality": {
-        "detector": "O.stun",
-        "pattern": "\\bstun(?:s|ned|ning)?\\b|\\bion damage\\b",
-        "detectorNote": null
-      },
-      "exactTagDifference": {
-        "comparedTag": "stun",
-        "thisRecordCarriesTag": false,
-        "thisDomain": "FEAT",
-        "otherDomain": "TALENT",
-        "otherDomainRecordsMatchingDetector": 15,
-        "otherDomainRecordsMatchingDetectorAndCarryingTag": 10,
-        "detectorTaggedRateOverall": 0.611
-      },
-      "applicableInvariant": null,
-      "priorOwnerPrecedent": null,
-      "channels": [
-        "CHANNEL_1_RULE_TRIGGER"
-      ]
-    },
-    {
-      "state": "PASS3B_OWNER_REVIEW",
-      "priority": 1,
-      "priorityBasis": "detector confidence HIGH (or tight HIGH-only bundle) with a same-mechanic comparator in the other domain",
-      "family": "O",
-      "familyName": "Weapon / combat mode",
-      "mechanic": "O.stun",
-      "comparedTag": "stun",
-      "detectorConfidence": "HIGH",
-      "domain": "TALENT",
-      "canonicalId": "c101826c205debf2",
-      "name": "Sudden Storm",
-      "source": "Jedi Academy Training Manual",
-      "page": 83,
-      "evidenceTier": "TALENT_CERTIFIED_PACK_BENEFIT_TEXT",
-      "canonicalMechanicText": "Instead of a normal melee attack at the end of the charge, you can spend a Force Point to make a Whirlwind Attack (as per the feat) at the end of a charge, provided you are not wielding any weapons (except combat gloves or stun gauntlets).",
-      "matchedExcerpt": "…e a Whirlwind Attack (as per the feat) at the end of a charge, provided you are not wielding any weapons (except combat gloves or stun gauntlets).",
-      "currentTags": [
-        "force",
-        "force_point_spend",
-        "resource_spend",
-        "unarmed",
-        "melee",
-        "burst_damage",
-        "battlefield_control",
-        "mobility",
-        "positioning",
-        "action_economy"
-      ],
-      "comparisonRecords": [
-        {
-          "canonicalId": "1dfbddf5f1aa57c3",
-          "domain": "FEAT",
-          "name": "K'tara Training",
-          "source": "Galaxy at War",
-          "page": 27,
-          "tags": [
-            "martial_arts",
-            "unarmed",
-            "melee",
-            "ambush",
-            "damage_bonus",
-            "stun",
-            "control",
-            "once-per-encounter",
-            "swift_action",
-            "action_economy",
-            "setup"
-          ],
-          "excerpt": "…denied Dexterity to Reflex, make a free unarmed attack vs Fortitude; on success, target cannot speak until end of your next turn; stunning effect. Special - K'tara Expertise: spend two swift actions to make one adjacent enemy flat-footed against your first attack that…",
-          "evidenceTier": "FEAT_CANONICAL_RULES_SHAPE",
-          "canonicalMechanicText": "One unarmed attack during your turn deals +1 damage die against a flat-footed enemy. Once per encounter after unarmed damage to a target denied Dexterity to Reflex, make a free unarmed attack vs Fortitude; on success, target cannot speak until end of your next turn; stunning effect. Special - K'tara Expertise: spend two swift actions to make one adjacent enemy flat-footed against your first attack that round. Deal extra unarmed damage to flat-footed enemies and once per encounter potentially render one unable to speak."
-        }
-      ],
-      "comparisonTags": [
-        "action_economy",
-        "ambush",
-        "control",
-        "damage_bonus",
-        "martial_arts",
-        "melee",
-        "once-per-encounter",
-        "setup",
-        "stun",
-        "swift_action",
-        "unarmed"
-      ],
-      "comparatorsInOtherDomain": 1,
-      "detectableCommonality": {
-        "detector": "O.stun",
-        "pattern": "\\bstun(?:s|ned|ning)?\\b|\\bion damage\\b",
-        "detectorNote": null
-      },
-      "exactTagDifference": {
-        "comparedTag": "stun",
-        "thisRecordCarriesTag": false,
-        "thisDomain": "TALENT",
-        "otherDomain": "FEAT",
-        "otherDomainRecordsMatchingDetector": 3,
-        "otherDomainRecordsMatchingDetectorAndCarryingTag": 1,
-        "detectorTaggedRateOverall": 0.611
-      },
-      "applicableInvariant": null,
-      "priorOwnerPrecedent": null,
-      "channels": [
-        "CHANNEL_1_RULE_TRIGGER"
-      ]
-    },
-    {
-      "state": "PASS3B_OWNER_REVIEW",
-      "priority": 1,
-      "priorityBasis": "detector confidence HIGH (or tight HIGH-only bundle) with a same-mechanic comparator in the other domain",
-      "family": "O",
-      "familyName": "Weapon / combat mode",
-      "mechanic": "O.stun",
-      "comparedTag": "stun",
-      "detectorConfidence": "HIGH",
-      "domain": "TALENT",
-      "canonicalId": "c113b29cde344fafb6aa376a843639d3",
-      "name": "Ion Resistance 10",
-      "source": "Force Unleashed Campaign Guide",
-      "page": 47,
-      "evidenceTier": "TALENT_CERTIFIED_PACK_BENEFIT_TEXT",
-      "canonicalMechanicText": "You gain DR 10 against ion damage.",
-      "matchedExcerpt": "You gain DR 10 against ion damage.",
-      "currentTags": [
-        "damage_reduction",
-        "defense",
-        "resilience",
-        "survivability"
-      ],
-      "comparisonRecords": [
-        {
-          "canonicalId": "1dfbddf5f1aa57c3",
-          "domain": "FEAT",
-          "name": "K'tara Training",
-          "source": "Galaxy at War",
-          "page": 27,
-          "tags": [
-            "martial_arts",
-            "unarmed",
-            "melee",
-            "ambush",
-            "damage_bonus",
-            "stun",
-            "control",
-            "once-per-encounter",
-            "swift_action",
-            "action_economy",
-            "setup"
-          ],
-          "excerpt": "…denied Dexterity to Reflex, make a free unarmed attack vs Fortitude; on success, target cannot speak until end of your next turn; stunning effect. Special - K'tara Expertise: spend two swift actions to make one adjacent enemy flat-footed against your first attack that…",
-          "evidenceTier": "FEAT_CANONICAL_RULES_SHAPE",
-          "canonicalMechanicText": "One unarmed attack during your turn deals +1 damage die against a flat-footed enemy. Once per encounter after unarmed damage to a target denied Dexterity to Reflex, make a free unarmed attack vs Fortitude; on success, target cannot speak until end of your next turn; stunning effect. Special - K'tara Expertise: spend two swift actions to make one adjacent enemy flat-footed against your first attack that round. Deal extra unarmed damage to flat-footed enemies and once per encounter potentially render one unable to speak."
-        }
-      ],
-      "comparisonTags": [
-        "action_economy",
-        "ambush",
-        "control",
-        "damage_bonus",
-        "martial_arts",
-        "melee",
-        "once-per-encounter",
-        "setup",
-        "stun",
-        "swift_action",
-        "unarmed"
-      ],
-      "comparatorsInOtherDomain": 1,
-      "detectableCommonality": {
-        "detector": "O.stun",
-        "pattern": "\\bstun(?:s|ned|ning)?\\b|\\bion damage\\b",
-        "detectorNote": null
-      },
-      "exactTagDifference": {
-        "comparedTag": "stun",
-        "thisRecordCarriesTag": false,
-        "thisDomain": "TALENT",
-        "otherDomain": "FEAT",
-        "otherDomainRecordsMatchingDetector": 3,
-        "otherDomainRecordsMatchingDetectorAndCarryingTag": 1,
-        "detectorTaggedRateOverall": 0.611
-      },
-      "applicableInvariant": null,
-      "priorOwnerPrecedent": null,
-      "channels": [
-        "CHANNEL_1_RULE_TRIGGER"
-      ]
-    },
-    {
-      "state": "PASS3B_OWNER_REVIEW",
-      "priority": 1,
-      "priorityBasis": "detector confidence HIGH (or tight HIGH-only bundle) with a same-mechanic comparator in the other domain",
-      "family": "O",
-      "familyName": "Weapon / combat mode",
-      "mechanic": "O.stun",
-      "comparedTag": "stun",
-      "detectorConfidence": "HIGH",
-      "domain": "TALENT",
-      "canonicalId": "c2f332d1e74e3e1a",
-      "name": "Ion Turret",
-      "source": "Force Unleashed Campaign Guide",
-      "page": 57,
-      "evidenceTier": "TALENT_CERTIFIED_PACK_BENEFIT_TEXT",
-      "canonicalMechanicText": "You can construct a turret that is highly effective against droids. The turret deals ion damage instead of normal damage.",
-      "matchedExcerpt": "You can construct a turret that is highly effective against droids. The turret deals ion damage instead of normal damage.",
-      "currentTags": [
-        "crafting",
-        "tech",
-        "equipment",
-        "ranged",
-        "droid",
-        "control",
-        "modification",
-        "power_systems"
-      ],
-      "comparisonRecords": [
-        {
-          "canonicalId": "1dfbddf5f1aa57c3",
-          "domain": "FEAT",
-          "name": "K'tara Training",
-          "source": "Galaxy at War",
-          "page": 27,
-          "tags": [
-            "martial_arts",
-            "unarmed",
-            "melee",
-            "ambush",
-            "damage_bonus",
-            "stun",
-            "control",
-            "once-per-encounter",
-            "swift_action",
-            "action_economy",
-            "setup"
-          ],
-          "excerpt": "…denied Dexterity to Reflex, make a free unarmed attack vs Fortitude; on success, target cannot speak until end of your next turn; stunning effect. Special - K'tara Expertise: spend two swift actions to make one adjacent enemy flat-footed against your first attack that…",
-          "evidenceTier": "FEAT_CANONICAL_RULES_SHAPE",
-          "canonicalMechanicText": "One unarmed attack during your turn deals +1 damage die against a flat-footed enemy. Once per encounter after unarmed damage to a target denied Dexterity to Reflex, make a free unarmed attack vs Fortitude; on success, target cannot speak until end of your next turn; stunning effect. Special - K'tara Expertise: spend two swift actions to make one adjacent enemy flat-footed against your first attack that round. Deal extra unarmed damage to flat-footed enemies and once per encounter potentially render one unable to speak."
-        }
-      ],
-      "comparisonTags": [
-        "action_economy",
-        "ambush",
-        "control",
-        "damage_bonus",
-        "martial_arts",
-        "melee",
-        "once-per-encounter",
-        "setup",
-        "stun",
-        "swift_action",
-        "unarmed"
-      ],
-      "comparatorsInOtherDomain": 1,
-      "detectableCommonality": {
-        "detector": "O.stun",
-        "pattern": "\\bstun(?:s|ned|ning)?\\b|\\bion damage\\b",
-        "detectorNote": null
-      },
-      "exactTagDifference": {
-        "comparedTag": "stun",
-        "thisRecordCarriesTag": false,
-        "thisDomain": "TALENT",
-        "otherDomain": "FEAT",
-        "otherDomainRecordsMatchingDetector": 3,
-        "otherDomainRecordsMatchingDetectorAndCarryingTag": 1,
-        "detectorTaggedRateOverall": 0.611
-      },
-      "applicableInvariant": null,
-      "priorOwnerPrecedent": null,
-      "channels": [
-        "CHANNEL_1_RULE_TRIGGER"
-      ]
-    },
-    {
-      "state": "PASS3B_OWNER_REVIEW",
-      "priority": 1,
-      "priorityBasis": "detector confidence HIGH (or tight HIGH-only bundle) with a same-mechanic comparator in the other domain",
-      "family": "O",
-      "familyName": "Weapon / combat mode",
-      "mechanic": "O.stun",
-      "comparedTag": "stun",
-      "detectorConfidence": "HIGH",
-      "domain": "TALENT",
-      "canonicalId": "cc90a9fc255f4dc4",
-      "name": "Seyugi Cyclone",
-      "source": "Jedi Academy Training Manual",
-      "page": 83,
-      "evidenceTier": "TALENT_CERTIFIED_PACK_BENEFIT_TEXT",
-      "canonicalMechanicText": "If you are wielding no weapons (other than combat gloves or stun gauntlets), you can use the Whirlwind Attack feat as a standard action by spending a Force Point even if you do not possess the Whirlwind Attack feat. Additionally, this talent satisfies the prerequisites for the Whirlwind Attack feat.",
-      "matchedExcerpt": "If you are wielding no weapons (other than combat gloves or stun gauntlets), you can use the Whirlwind Attack feat as a standard action by spending a Force Point even if you do not possess the W…",
-      "currentTags": [
-        "force",
-        "force_point_spend",
-        "resource_spend",
-        "standard_action",
-        "action_economy",
-        "unarmed",
-        "martial_arts",
-        "melee",
-        "full_attack",
-        "burst_damage",
-        "battlefield_control"
-      ],
-      "comparisonRecords": [
-        {
-          "canonicalId": "1dfbddf5f1aa57c3",
-          "domain": "FEAT",
-          "name": "K'tara Training",
-          "source": "Galaxy at War",
-          "page": 27,
-          "tags": [
-            "martial_arts",
-            "unarmed",
-            "melee",
-            "ambush",
-            "damage_bonus",
-            "stun",
-            "control",
-            "once-per-encounter",
-            "swift_action",
-            "action_economy",
-            "setup"
-          ],
-          "excerpt": "…denied Dexterity to Reflex, make a free unarmed attack vs Fortitude; on success, target cannot speak until end of your next turn; stunning effect. Special - K'tara Expertise: spend two swift actions to make one adjacent enemy flat-footed against your first attack that…",
-          "evidenceTier": "FEAT_CANONICAL_RULES_SHAPE",
-          "canonicalMechanicText": "One unarmed attack during your turn deals +1 damage die against a flat-footed enemy. Once per encounter after unarmed damage to a target denied Dexterity to Reflex, make a free unarmed attack vs Fortitude; on success, target cannot speak until end of your next turn; stunning effect. Special - K'tara Expertise: spend two swift actions to make one adjacent enemy flat-footed against your first attack that round. Deal extra unarmed damage to flat-footed enemies and once per encounter potentially render one unable to speak."
-        }
-      ],
-      "comparisonTags": [
-        "action_economy",
-        "ambush",
-        "control",
-        "damage_bonus",
-        "martial_arts",
-        "melee",
-        "once-per-encounter",
-        "setup",
-        "stun",
-        "swift_action",
-        "unarmed"
-      ],
-      "comparatorsInOtherDomain": 1,
-      "detectableCommonality": {
-        "detector": "O.stun",
-        "pattern": "\\bstun(?:s|ned|ning)?\\b|\\bion damage\\b",
-        "detectorNote": null
-      },
-      "exactTagDifference": {
-        "comparedTag": "stun",
-        "thisRecordCarriesTag": false,
-        "thisDomain": "TALENT",
-        "otherDomain": "FEAT",
-        "otherDomainRecordsMatchingDetector": 3,
-        "otherDomainRecordsMatchingDetectorAndCarryingTag": 1,
-        "detectorTaggedRateOverall": 0.611
-      },
-      "applicableInvariant": null,
-      "priorOwnerPrecedent": null,
-      "channels": [
-        "CHANNEL_1_RULE_TRIGGER"
-      ]
-    },
-    {
-      "state": "PASS3B_OWNER_REVIEW",
-      "priority": 1,
-      "priorityBasis": "detector confidence HIGH (or tight HIGH-only bundle) with a same-mechanic comparator in the other domain",
-      "family": "O",
-      "familyName": "Weapon / combat mode",
-      "mechanic": "O.stun",
-      "comparedTag": "stun",
-      "detectorConfidence": "HIGH",
-      "domain": "TALENT",
-      "canonicalId": "df9c25340dcb7c95",
-      "name": "Ion Mastery",
-      "source": "Force Unleashed Campaign Guide",
-      "page": 52,
-      "evidenceTier": "TALENT_CERTIFIED_PACK_BENEFIT_TEXT",
-      "canonicalMechanicText": "You know the typical weaknesses of vehicles and droids, and you know how to preserve such targets for capture rather than destroying them. When attacking with ion weapons, you gain a +1 bonus on attack rolls and deal +1 die of ion damage.",
-      "matchedExcerpt": "…for capture rather than destroying them. When attacking with ion weapons, you gain a +1 bonus on attack rolls and deal +1 die of ion damage.",
-      "currentTags": [
-        "ranged",
-        "offense_ranged",
-        "precision",
-        "damage_bonus",
-        "nonlethal",
-        "droid",
-        "vehicle",
-        "sustained_damage"
-      ],
-      "comparisonRecords": [
-        {
-          "canonicalId": "1dfbddf5f1aa57c3",
-          "domain": "FEAT",
-          "name": "K'tara Training",
-          "source": "Galaxy at War",
-          "page": 27,
-          "tags": [
-            "martial_arts",
-            "unarmed",
-            "melee",
-            "ambush",
-            "damage_bonus",
-            "stun",
-            "control",
-            "once-per-encounter",
-            "swift_action",
-            "action_economy",
-            "setup"
-          ],
-          "excerpt": "…denied Dexterity to Reflex, make a free unarmed attack vs Fortitude; on success, target cannot speak until end of your next turn; stunning effect. Special - K'tara Expertise: spend two swift actions to make one adjacent enemy flat-footed against your first attack that…",
-          "evidenceTier": "FEAT_CANONICAL_RULES_SHAPE",
-          "canonicalMechanicText": "One unarmed attack during your turn deals +1 damage die against a flat-footed enemy. Once per encounter after unarmed damage to a target denied Dexterity to Reflex, make a free unarmed attack vs Fortitude; on success, target cannot speak until end of your next turn; stunning effect. Special - K'tara Expertise: spend two swift actions to make one adjacent enemy flat-footed against your first attack that round. Deal extra unarmed damage to flat-footed enemies and once per encounter potentially render one unable to speak."
-        }
-      ],
-      "comparisonTags": [
-        "action_economy",
-        "ambush",
-        "control",
-        "damage_bonus",
-        "martial_arts",
-        "melee",
-        "once-per-encounter",
-        "setup",
-        "stun",
-        "swift_action",
-        "unarmed"
-      ],
-      "comparatorsInOtherDomain": 1,
-      "detectableCommonality": {
-        "detector": "O.stun",
-        "pattern": "\\bstun(?:s|ned|ning)?\\b|\\bion damage\\b",
-        "detectorNote": null
-      },
-      "exactTagDifference": {
-        "comparedTag": "stun",
-        "thisRecordCarriesTag": false,
-        "thisDomain": "TALENT",
-        "otherDomain": "FEAT",
-        "otherDomainRecordsMatchingDetector": 3,
-        "otherDomainRecordsMatchingDetectorAndCarryingTag": 1,
-        "detectorTaggedRateOverall": 0.611
       },
       "applicableInvariant": null,
       "priorOwnerPrecedent": null,
@@ -40143,121 +39342,6 @@
         "otherDomainRecordsMatchingDetector": 1,
         "otherDomainRecordsMatchingDetectorAndCarryingTag": 1,
         "detectorTaggedRateOverall": 0.625
-      },
-      "applicableInvariant": null,
-      "priorOwnerPrecedent": null,
-      "channels": [
-        "CHANNEL_1_RULE_TRIGGER"
-      ]
-    },
-    {
-      "state": "PASS3B_OWNER_REVIEW",
-      "priority": 2,
-      "priorityBasis": "detector confidence MEDIUM with a same-mechanic comparator in the other domain",
-      "family": "O",
-      "familyName": "Weapon / combat mode",
-      "mechanic": "O.dual_wield",
-      "comparedTag": "dual_wield",
-      "detectorConfidence": "MEDIUM",
-      "domain": "TALENT",
-      "canonicalId": "388f30468a80f221",
-      "name": "Synchronized Fire",
-      "source": "Starships of the Galaxy",
-      "page": 17,
-      "evidenceTier": "TALENT_CERTIFIED_PACK_BENEFIT_TEXT",
-      "canonicalMechanicText": "Once per encounter, you may ready to fire a single weapon at the same target as an ally, and you coordinate with a single weapon of your ally. If both attacks hit, you add the damage of the two weapons together before applying the target's SR or DR, and treat it as a single attack for purposes of exceeding the target's damage threshold.",
-      "matchedExcerpt": "…the same target as an ally, and you coordinate with a single weapon of your ally. If both attacks hit, you add the damage of the two weapons together before applying the target's SR or DR, and treat it as a single attack for purposes of exceeding the target's damage thr…",
-      "currentTags": [
-        "once-per-encounter",
-        "ally_support",
-        "support",
-        "teamwork",
-        "ranged",
-        "damage_reduction",
-        "shields",
-        "damage_threshold",
-        "burst_damage",
-        "setup"
-      ],
-      "comparisonRecords": [
-        {
-          "canonicalId": "4be60753991eec43",
-          "domain": "FEAT",
-          "name": "Rapid Assault",
-          "source": "Saga Edition FAQ — Official Optional Rules",
-          "page": "e2",
-          "tags": [
-            "dual_wield",
-            "sustained_damage",
-            "standard_action",
-            "action_economy",
-            "force_point_spend",
-            "resource_spend"
-          ],
-          "excerpt": "While wielding two weapons, or a weapon with which you can use Double Attack, spend a Force Point to make exactly two attacks as a standard action. Normal p…",
-          "evidenceTier": "FEAT_CANONICAL_RULES_SHAPE",
-          "canonicalMechanicText": "While wielding two weapons, or a weapon with which you can use Double Attack, spend a Force Point to make exactly two attacks as a standard action. Normal penalties for two-weapon fighting or Double Attack still apply. You cannot make more than two attacks through Rapid Assault regardless of how many attacks your normal Full Attack could produce. This is an official optional rule, not a mandatory Core rule. Spend a Force Point to make exactly two attacks as a standard action using a qualifying two-weapon or Double Attack setup, with normal multiattack penalties."
-        },
-        {
-          "canonicalId": "84d8866a57381620",
-          "domain": "FEAT",
-          "name": "Dual Weapon Mastery I",
-          "source": "Saga Edition Core Rulebook",
-          "page": 84,
-          "tags": [
-            "dual_wield",
-            "double_weapon",
-            "full_attack",
-            "precision",
-            "sustained_damage"
-          ],
-          "excerpt": "When full-attacking with two weapons or both ends of a double weapon, take -5 instead of -10 on all attacks until the start of your next turn. Benefit applies only wi…",
-          "evidenceTier": "FEAT_CANONICAL_RULES_SHAPE",
-          "canonicalMechanicText": "When full-attacking with two weapons or both ends of a double weapon, take -5 instead of -10 on all attacks until the start of your next turn. Benefit applies only with weapons you are proficient with. Reduce two-weapon/double-weapon Full Attack penalty to -5."
-        },
-        {
-          "canonicalId": "c7c99a77ebee1c0c",
-          "domain": "FEAT",
-          "name": "Dual Weapon Mastery II",
-          "source": "Saga Edition Core Rulebook",
-          "page": 84,
-          "tags": [
-            "dual_wield",
-            "double_weapon",
-            "full_attack",
-            "precision",
-            "sustained_damage"
-          ],
-          "excerpt": "Reduce the two-weapon/double-weapon Full Attack penalty to -2 instead of -10, with proficient weapons. Reduce two-weapon/double-weapon Full Attack pena…",
-          "evidenceTier": "FEAT_CANONICAL_RULES_SHAPE",
-          "canonicalMechanicText": "Reduce the two-weapon/double-weapon Full Attack penalty to -2 instead of -10, with proficient weapons. Reduce two-weapon/double-weapon Full Attack penalty to -2."
-        }
-      ],
-      "comparisonTags": [
-        "action_economy",
-        "double_weapon",
-        "dual_wield",
-        "force_point_spend",
-        "full_attack",
-        "precision",
-        "resource_spend",
-        "standard_action",
-        "sustained_damage"
-      ],
-      "comparatorsInOtherDomain": 4,
-      "detectableCommonality": {
-        "detector": "O.dual_wield",
-        "pattern": "\\btwo weapons\\b|\\bdual[- ]wield|\\btwo-weapon\\b|\\bboth weapons\\b|\\b(?:second|off)[- ]hand\\b",
-        "detectorNote": null
-      },
-      "exactTagDifference": {
-        "comparedTag": "dual_wield",
-        "thisRecordCarriesTag": false,
-        "thisDomain": "TALENT",
-        "otherDomain": "FEAT",
-        "otherDomainRecordsMatchingDetector": 4,
-        "otherDomainRecordsMatchingDetectorAndCarryingTag": 4,
-        "detectorTaggedRateOverall": 0.917
       },
       "applicableInvariant": null,
       "priorOwnerPrecedent": null,
@@ -54753,6 +53837,976 @@
         "batch": "3B.2B",
         "ownerAction": "ADD",
         "policy": "ATTACK_OF_OPPORTUNITY_POLICY"
+      }
+    },
+    {
+      "state": "PASS3B_OWNER_NO_CHANGE",
+      "priority": null,
+      "priorityBasis": null,
+      "family": "O",
+      "familyName": "Weapon / combat mode",
+      "mechanic": "O.dual_wield",
+      "comparedTag": "dual_wield",
+      "detectorConfidence": "MEDIUM",
+      "domain": "TALENT",
+      "canonicalId": "388f30468a80f221",
+      "name": "Synchronized Fire",
+      "source": "Starships of the Galaxy",
+      "page": 17,
+      "evidenceTier": "TALENT_CERTIFIED_PACK_BENEFIT_TEXT",
+      "canonicalMechanicText": "Once per encounter, you may ready to fire a single weapon at the same target as an ally, and you coordinate with a single weapon of your ally. If both attacks hit, you add the damage of the two weapons together before applying the target's SR or DR, and treat it as a single attack for purposes of exceeding the target's damage threshold.",
+      "matchedExcerpt": "…the same target as an ally, and you coordinate with a single weapon of your ally. If both attacks hit, you add the damage of the two weapons together before applying the target's SR or DR, and treat it as a single attack for purposes of exceeding the target's damage thr…",
+      "currentTags": [
+        "once-per-encounter",
+        "ally_support",
+        "support",
+        "teamwork",
+        "ranged",
+        "damage_reduction",
+        "shields",
+        "damage_threshold",
+        "burst_damage",
+        "setup"
+      ],
+      "comparisonRecords": [
+        {
+          "canonicalId": "4be60753991eec43",
+          "domain": "FEAT",
+          "name": "Rapid Assault",
+          "source": "Saga Edition FAQ — Official Optional Rules",
+          "page": "e2",
+          "tags": [
+            "dual_wield",
+            "sustained_damage",
+            "standard_action",
+            "action_economy",
+            "force_point_spend",
+            "resource_spend"
+          ],
+          "excerpt": "While wielding two weapons, or a weapon with which you can use Double Attack, spend a Force Point to make exactly two attacks as a standard action. Normal p…",
+          "evidenceTier": "FEAT_CANONICAL_RULES_SHAPE",
+          "canonicalMechanicText": "While wielding two weapons, or a weapon with which you can use Double Attack, spend a Force Point to make exactly two attacks as a standard action. Normal penalties for two-weapon fighting or Double Attack still apply. You cannot make more than two attacks through Rapid Assault regardless of how many attacks your normal Full Attack could produce. This is an official optional rule, not a mandatory Core rule. Spend a Force Point to make exactly two attacks as a standard action using a qualifying two-weapon or Double Attack setup, with normal multiattack penalties."
+        },
+        {
+          "canonicalId": "84d8866a57381620",
+          "domain": "FEAT",
+          "name": "Dual Weapon Mastery I",
+          "source": "Saga Edition Core Rulebook",
+          "page": 84,
+          "tags": [
+            "dual_wield",
+            "double_weapon",
+            "full_attack",
+            "precision",
+            "sustained_damage"
+          ],
+          "excerpt": "When full-attacking with two weapons or both ends of a double weapon, take -5 instead of -10 on all attacks until the start of your next turn. Benefit applies only wi…",
+          "evidenceTier": "FEAT_CANONICAL_RULES_SHAPE",
+          "canonicalMechanicText": "When full-attacking with two weapons or both ends of a double weapon, take -5 instead of -10 on all attacks until the start of your next turn. Benefit applies only with weapons you are proficient with. Reduce two-weapon/double-weapon Full Attack penalty to -5."
+        },
+        {
+          "canonicalId": "c7c99a77ebee1c0c",
+          "domain": "FEAT",
+          "name": "Dual Weapon Mastery II",
+          "source": "Saga Edition Core Rulebook",
+          "page": 84,
+          "tags": [
+            "dual_wield",
+            "double_weapon",
+            "full_attack",
+            "precision",
+            "sustained_damage"
+          ],
+          "excerpt": "Reduce the two-weapon/double-weapon Full Attack penalty to -2 instead of -10, with proficient weapons. Reduce two-weapon/double-weapon Full Attack pena…",
+          "evidenceTier": "FEAT_CANONICAL_RULES_SHAPE",
+          "canonicalMechanicText": "Reduce the two-weapon/double-weapon Full Attack penalty to -2 instead of -10, with proficient weapons. Reduce two-weapon/double-weapon Full Attack penalty to -2."
+        }
+      ],
+      "comparisonTags": [
+        "action_economy",
+        "double_weapon",
+        "dual_wield",
+        "force_point_spend",
+        "full_attack",
+        "precision",
+        "resource_spend",
+        "standard_action",
+        "sustained_damage"
+      ],
+      "comparatorsInOtherDomain": 4,
+      "detectableCommonality": {
+        "detector": "O.dual_wield",
+        "pattern": "\\btwo weapons\\b|\\bdual[- ]wield|\\btwo-weapon\\b|\\bboth weapons\\b|\\b(?:second|off)[- ]hand\\b",
+        "detectorNote": null
+      },
+      "exactTagDifference": {
+        "comparedTag": "dual_wield",
+        "thisRecordCarriesTag": false,
+        "thisDomain": "TALENT",
+        "otherDomain": "FEAT",
+        "otherDomainRecordsMatchingDetector": 4,
+        "otherDomainRecordsMatchingDetectorAndCarryingTag": 4,
+        "detectorTaggedRateOverall": 0.917
+      },
+      "applicableInvariant": null,
+      "priorOwnerPrecedent": null,
+      "channels": [
+        "CHANNEL_1_RULE_TRIGGER"
+      ],
+      "ownerDecision": {
+        "decisionId": "TALENT:388f30468a80f221|dual_wield",
+        "batch": "3B.2C",
+        "ownerAction": "NO_CHANGE",
+        "policy": "DUAL_WIELD_POLICY"
+      }
+    },
+    {
+      "state": "PASS3B_OWNER_NO_CHANGE",
+      "priority": null,
+      "priorityBasis": null,
+      "family": "O",
+      "familyName": "Weapon / combat mode",
+      "mechanic": "O.full_attack",
+      "comparedTag": "full_attack",
+      "detectorConfidence": "HIGH",
+      "domain": "FEAT",
+      "canonicalId": "4be60753991eec43",
+      "name": "Rapid Assault",
+      "source": "Saga Edition FAQ — Official Optional Rules",
+      "page": "e2",
+      "evidenceTier": "FEAT_CANONICAL_RULES_SHAPE",
+      "canonicalMechanicText": "While wielding two weapons, or a weapon with which you can use Double Attack, spend a Force Point to make exactly two attacks as a standard action. Normal penalties for two-weapon fighting or Double Attack still apply. You cannot make more than two attacks through Rapid Assault regardless of how many attacks your normal Full Attack could produce. This is an official optional rule, not a mandatory Core rule. Spend a Force Point to make exactly two attacks as a standard action using a qualifying two-weapon or Double Attack setup, with normal multiattack penalties.",
+      "matchedExcerpt": "…Double Attack still apply. You cannot make more than two attacks through Rapid Assault regardless of how many attacks your normal Full Attack could produce. This is an official optional rule, not a mandatory Core rule. Spend a Force Point to make exactly two attacks as a…",
+      "currentTags": [
+        "dual_wield",
+        "sustained_damage",
+        "standard_action",
+        "action_economy",
+        "force_point_spend",
+        "resource_spend"
+      ],
+      "comparisonRecords": [
+        {
+          "canonicalId": "11b45afc4136594c",
+          "domain": "TALENT",
+          "name": "Flurry of Blows",
+          "source": "Galaxy at War",
+          "page": 33,
+          "tags": [
+            "unarmed",
+            "martial_arts",
+            "melee",
+            "full_attack",
+            "sustained_damage",
+            "scaling",
+            "precision"
+          ],
+          "excerpt": "When you make multiple unarmed attacks as a full attack action, you reduce the penalty to your attack roll by 2. You can take this talent multiple times. Each time you take this talent…",
+          "evidenceTier": "TALENT_CERTIFIED_PACK_BENEFIT_TEXT",
+          "canonicalMechanicText": "When you make multiple unarmed attacks as a full attack action, you reduce the penalty to your attack roll by 2.\n\nYou can take this talent multiple times. Each time you take this talent, you reduce the penalty to your attack rolls by an additional 2."
+        },
+        {
+          "canonicalId": "1b3d5d3260391867",
+          "domain": "TALENT",
+          "name": "Multiattack Proficiency (heavy weapons)",
+          "source": "Saga Edition Core Rulebook",
+          "page": 212,
+          "tags": [
+            "heavy_weapon",
+            "full_attack",
+            "sustained_damage",
+            "precision",
+            "weapon_training"
+          ],
+          "excerpt": "Whenever you make multiple attacks with any type of heavy weapon as a full attack action, you reduce the penalty on your attack rolls by 2. You can take this talent multiple times; each time, reduce the penalty…",
+          "evidenceTier": "TALENT_CERTIFIED_PACK_BENEFIT_TEXT",
+          "canonicalMechanicText": "Whenever you make multiple attacks with any type of heavy weapon as a full attack action, you reduce the penalty on your attack rolls by 2. You can take this talent multiple times; each time, reduce the penalty by an additional 2."
+        },
+        {
+          "canonicalId": "1f6b9d509a07f881",
+          "domain": "TALENT",
+          "name": "Flanking Fire",
+          "source": "Scum and Villainy",
+          "page": 28,
+          "tags": [
+            "pistol",
+            "ranged",
+            "dual_wield",
+            "flanking",
+            "full_attack",
+            "standard_action",
+            "action_economy",
+            "sustained_damage",
+            "positioning"
+          ],
+          "excerpt": "Whenever you are flanked by two or more opponents and are wielding two pistols, you can make a full attack action as a standard action instead of a full-round action. This is provided that you target only opponents that flank you and at…",
+          "evidenceTier": "TALENT_CERTIFIED_PACK_BENEFIT_TEXT",
+          "canonicalMechanicText": "Whenever you are flanked by two or more opponents and are wielding two pistols, you can make a full attack action as a standard action instead of a full-round action. This is provided that you target only opponents that flank you and attack at least two targets."
+        }
+      ],
+      "comparisonTags": [
+        "action_economy",
+        "dual_wield",
+        "flanking",
+        "full_attack",
+        "heavy_weapon",
+        "martial_arts",
+        "melee",
+        "pistol",
+        "positioning",
+        "precision",
+        "ranged",
+        "scaling",
+        "standard_action",
+        "sustained_damage",
+        "unarmed",
+        "weapon_training"
+      ],
+      "comparatorsInOtherDomain": 20,
+      "detectableCommonality": {
+        "detector": "O.full_attack",
+        "pattern": "\\bfull attack\\b",
+        "detectorNote": null
+      },
+      "exactTagDifference": {
+        "comparedTag": "full_attack",
+        "thisRecordCarriesTag": false,
+        "thisDomain": "FEAT",
+        "otherDomain": "TALENT",
+        "otherDomainRecordsMatchingDetector": 20,
+        "otherDomainRecordsMatchingDetectorAndCarryingTag": 20,
+        "detectorTaggedRateOverall": 0.966
+      },
+      "applicableInvariant": null,
+      "priorOwnerPrecedent": null,
+      "channels": [
+        "CHANNEL_1_RULE_TRIGGER"
+      ],
+      "ownerDecision": {
+        "decisionId": "FEAT:4be60753991eec43|full_attack",
+        "batch": "3B.2C",
+        "ownerAction": "NO_CHANGE",
+        "policy": "FULL_ATTACK_POLICY"
+      }
+    },
+    {
+      "state": "PASS3B_OWNER_NO_CHANGE",
+      "priority": null,
+      "priorityBasis": null,
+      "family": "O",
+      "familyName": "Weapon / combat mode",
+      "mechanic": "O.stun",
+      "comparedTag": "stun",
+      "detectorConfidence": "HIGH",
+      "domain": "FEAT",
+      "canonicalId": "43a4b873d9a9984d",
+      "name": "Ion Shielding",
+      "source": "Scavenger's Guide to Droids",
+      "page": 22,
+      "evidenceTier": "FEAT_CANONICAL_RULES_SHAPE",
+      "canonicalMechanicText": "If ion damage before being halved equals or exceeds damage threshold, move only 1 step down the condition track instead of the normal 2. Qualifying ion damage moves you only one step down the condition track instead of two.",
+      "matchedExcerpt": "If ion damage before being halved equals or exceeds damage threshold, move only 1 step down the condition track instead of the normal 2. Qualif…",
+      "currentTags": [
+        "damage_threshold",
+        "resilience",
+        "survivability"
+      ],
+      "comparisonRecords": [
+        {
+          "canonicalId": "475fef43d75f3bff",
+          "domain": "TALENT",
+          "name": "Nonlethal Tactics",
+          "source": "Force Unleashed Campaign Guide",
+          "page": 45,
+          "tags": [
+            "ranged",
+            "stun",
+            "nonlethal",
+            "precision",
+            "damage_bonus",
+            "sustained_damage"
+          ],
+          "excerpt": "When you are using a ranged weapon set to stun, stun grenades, nets, or stun batons, you gain a +1 bonus on your attack roll and deal +1 die of stun damage.",
+          "evidenceTier": "TALENT_CERTIFIED_PACK_BENEFIT_TEXT",
+          "canonicalMechanicText": "When you are using a ranged weapon set to stun, stun grenades, nets, or stun batons, you gain a +1 bonus on your attack roll and deal +1 die of stun damage."
+        },
+        {
+          "canonicalId": "8306c13c16ae0af8",
+          "domain": "TALENT",
+          "name": "Harrying Shot",
+          "source": "Galaxy at War",
+          "page": 31,
+          "tags": [
+            "ranged",
+            "offense_ranged",
+            "sniper",
+            "precision",
+            "targeting",
+            "setup",
+            "control",
+            "battlefield_control",
+            "action_economy",
+            "stun"
+          ],
+          "excerpt": "…the attack deals damage, the target cannot use a standard action to make an attack roll on his or her next turn. This counts as a stunning effect.",
+          "evidenceTier": "TALENT_CERTIFIED_PACK_BENEFIT_TEXT",
+          "canonicalMechanicText": "When you make a successful ranged attack against an enemy that you have aimed at and the attack deals damage, the target cannot use a standard action to make an attack roll on his or her next turn. This counts as a stunning effect."
+        },
+        {
+          "canonicalId": "878d89b7232413cf",
+          "domain": "TALENT",
+          "name": "Set for Stun",
+          "source": "Force Unleashed Campaign Guide",
+          "page": 49,
+          "tags": [
+            "ranged",
+            "stun",
+            "nonlethal",
+            "swift_action",
+            "action_economy",
+            "damage_threshold",
+            "control",
+            "battlefield_control",
+            "targeting",
+            "setup"
+          ],
+          "excerpt": "You are particularly adept with stun weapons. If you are using a ranged weapon that deals stun damage (including a lethal weapon set to stun), you can spend two conse…",
+          "evidenceTier": "TALENT_CERTIFIED_PACK_BENEFIT_TEXT",
+          "canonicalMechanicText": "You are particularly adept with stun weapons. If you are using a ranged weapon that deals stun damage (including a lethal weapon set to stun), you can spend two consecutive swift actions in the same round to activate this talent. If the stun damage on your next attack exceeds the target's damage threshold, you move the target -3 steps along the condition track instead of the normal -2. You lose the benefit of this talent if you lose line of sight to your target or if you take any other action before making your attack."
+        }
+      ],
+      "comparisonTags": [
+        "action_economy",
+        "battlefield_control",
+        "control",
+        "damage_bonus",
+        "damage_threshold",
+        "nonlethal",
+        "offense_ranged",
+        "precision",
+        "ranged",
+        "setup",
+        "sniper",
+        "stun",
+        "sustained_damage",
+        "swift_action",
+        "targeting"
+      ],
+      "comparatorsInOtherDomain": 10,
+      "detectableCommonality": {
+        "detector": "O.stun",
+        "pattern": "\\bstun(?:s|ned|ning)?\\b|\\bion damage\\b",
+        "detectorNote": null
+      },
+      "exactTagDifference": {
+        "comparedTag": "stun",
+        "thisRecordCarriesTag": false,
+        "thisDomain": "FEAT",
+        "otherDomain": "TALENT",
+        "otherDomainRecordsMatchingDetector": 15,
+        "otherDomainRecordsMatchingDetectorAndCarryingTag": 10,
+        "detectorTaggedRateOverall": 0.611
+      },
+      "applicableInvariant": null,
+      "priorOwnerPrecedent": null,
+      "channels": [
+        "CHANNEL_1_RULE_TRIGGER"
+      ],
+      "ownerDecision": {
+        "decisionId": "FEAT:43a4b873d9a9984d|stun",
+        "batch": "3B.2C",
+        "ownerAction": "NO_CHANGE",
+        "policy": "STUN_POLICY"
+      }
+    },
+    {
+      "state": "PASS3B_OWNER_NO_CHANGE",
+      "priority": null,
+      "priorityBasis": null,
+      "family": "O",
+      "familyName": "Weapon / combat mode",
+      "mechanic": "O.stun",
+      "comparedTag": "stun",
+      "detectorConfidence": "HIGH",
+      "domain": "FEAT",
+      "canonicalId": "5d17898fc9652370",
+      "name": "Droid Hunter",
+      "source": "Clone Wars Campaign Guide",
+      "page": 29,
+      "evidenceTier": "FEAT_CANONICAL_RULES_SHAPE",
+      "canonicalMechanicText": "Gain +2 damage against droids, or +4 damage when using a weapon that deals ion damage. With a proficient weapon, deal +2 damage to droids, or +4 with ion damage.",
+      "matchedExcerpt": "Gain +2 damage against droids, or +4 damage when using a weapon that deals ion damage. With a proficient weapon, deal +2 damage to droids, or +4 with ion damage.",
+      "currentTags": [
+        "droid",
+        "damage_bonus"
+      ],
+      "comparisonRecords": [
+        {
+          "canonicalId": "475fef43d75f3bff",
+          "domain": "TALENT",
+          "name": "Nonlethal Tactics",
+          "source": "Force Unleashed Campaign Guide",
+          "page": 45,
+          "tags": [
+            "ranged",
+            "stun",
+            "nonlethal",
+            "precision",
+            "damage_bonus",
+            "sustained_damage"
+          ],
+          "excerpt": "When you are using a ranged weapon set to stun, stun grenades, nets, or stun batons, you gain a +1 bonus on your attack roll and deal +1 die of stun damage.",
+          "evidenceTier": "TALENT_CERTIFIED_PACK_BENEFIT_TEXT",
+          "canonicalMechanicText": "When you are using a ranged weapon set to stun, stun grenades, nets, or stun batons, you gain a +1 bonus on your attack roll and deal +1 die of stun damage."
+        },
+        {
+          "canonicalId": "8306c13c16ae0af8",
+          "domain": "TALENT",
+          "name": "Harrying Shot",
+          "source": "Galaxy at War",
+          "page": 31,
+          "tags": [
+            "ranged",
+            "offense_ranged",
+            "sniper",
+            "precision",
+            "targeting",
+            "setup",
+            "control",
+            "battlefield_control",
+            "action_economy",
+            "stun"
+          ],
+          "excerpt": "…the attack deals damage, the target cannot use a standard action to make an attack roll on his or her next turn. This counts as a stunning effect.",
+          "evidenceTier": "TALENT_CERTIFIED_PACK_BENEFIT_TEXT",
+          "canonicalMechanicText": "When you make a successful ranged attack against an enemy that you have aimed at and the attack deals damage, the target cannot use a standard action to make an attack roll on his or her next turn. This counts as a stunning effect."
+        },
+        {
+          "canonicalId": "878d89b7232413cf",
+          "domain": "TALENT",
+          "name": "Set for Stun",
+          "source": "Force Unleashed Campaign Guide",
+          "page": 49,
+          "tags": [
+            "ranged",
+            "stun",
+            "nonlethal",
+            "swift_action",
+            "action_economy",
+            "damage_threshold",
+            "control",
+            "battlefield_control",
+            "targeting",
+            "setup"
+          ],
+          "excerpt": "You are particularly adept with stun weapons. If you are using a ranged weapon that deals stun damage (including a lethal weapon set to stun), you can spend two conse…",
+          "evidenceTier": "TALENT_CERTIFIED_PACK_BENEFIT_TEXT",
+          "canonicalMechanicText": "You are particularly adept with stun weapons. If you are using a ranged weapon that deals stun damage (including a lethal weapon set to stun), you can spend two consecutive swift actions in the same round to activate this talent. If the stun damage on your next attack exceeds the target's damage threshold, you move the target -3 steps along the condition track instead of the normal -2. You lose the benefit of this talent if you lose line of sight to your target or if you take any other action before making your attack."
+        }
+      ],
+      "comparisonTags": [
+        "action_economy",
+        "battlefield_control",
+        "control",
+        "damage_bonus",
+        "damage_threshold",
+        "nonlethal",
+        "offense_ranged",
+        "precision",
+        "ranged",
+        "setup",
+        "sniper",
+        "stun",
+        "sustained_damage",
+        "swift_action",
+        "targeting"
+      ],
+      "comparatorsInOtherDomain": 10,
+      "detectableCommonality": {
+        "detector": "O.stun",
+        "pattern": "\\bstun(?:s|ned|ning)?\\b|\\bion damage\\b",
+        "detectorNote": null
+      },
+      "exactTagDifference": {
+        "comparedTag": "stun",
+        "thisRecordCarriesTag": false,
+        "thisDomain": "FEAT",
+        "otherDomain": "TALENT",
+        "otherDomainRecordsMatchingDetector": 15,
+        "otherDomainRecordsMatchingDetectorAndCarryingTag": 10,
+        "detectorTaggedRateOverall": 0.611
+      },
+      "applicableInvariant": null,
+      "priorOwnerPrecedent": null,
+      "channels": [
+        "CHANNEL_1_RULE_TRIGGER"
+      ],
+      "ownerDecision": {
+        "decisionId": "FEAT:5d17898fc9652370|stun",
+        "batch": "3B.2C",
+        "ownerAction": "NO_CHANGE",
+        "policy": "STUN_POLICY"
+      }
+    },
+    {
+      "state": "PASS3B_OWNER_NO_CHANGE",
+      "priority": null,
+      "priorityBasis": null,
+      "family": "O",
+      "familyName": "Weapon / combat mode",
+      "mechanic": "O.stun",
+      "comparedTag": "stun",
+      "detectorConfidence": "HIGH",
+      "domain": "TALENT",
+      "canonicalId": "c101826c205debf2",
+      "name": "Sudden Storm",
+      "source": "Jedi Academy Training Manual",
+      "page": 83,
+      "evidenceTier": "TALENT_CERTIFIED_PACK_BENEFIT_TEXT",
+      "canonicalMechanicText": "Instead of a normal melee attack at the end of the charge, you can spend a Force Point to make a Whirlwind Attack (as per the feat) at the end of a charge, provided you are not wielding any weapons (except combat gloves or stun gauntlets).",
+      "matchedExcerpt": "…e a Whirlwind Attack (as per the feat) at the end of a charge, provided you are not wielding any weapons (except combat gloves or stun gauntlets).",
+      "currentTags": [
+        "force",
+        "force_point_spend",
+        "resource_spend",
+        "unarmed",
+        "melee",
+        "burst_damage",
+        "battlefield_control",
+        "mobility",
+        "positioning",
+        "action_economy"
+      ],
+      "comparisonRecords": [
+        {
+          "canonicalId": "1dfbddf5f1aa57c3",
+          "domain": "FEAT",
+          "name": "K'tara Training",
+          "source": "Galaxy at War",
+          "page": 27,
+          "tags": [
+            "martial_arts",
+            "unarmed",
+            "melee",
+            "ambush",
+            "damage_bonus",
+            "stun",
+            "control",
+            "once-per-encounter",
+            "swift_action",
+            "action_economy",
+            "setup"
+          ],
+          "excerpt": "…denied Dexterity to Reflex, make a free unarmed attack vs Fortitude; on success, target cannot speak until end of your next turn; stunning effect. Special - K'tara Expertise: spend two swift actions to make one adjacent enemy flat-footed against your first attack that…",
+          "evidenceTier": "FEAT_CANONICAL_RULES_SHAPE",
+          "canonicalMechanicText": "One unarmed attack during your turn deals +1 damage die against a flat-footed enemy. Once per encounter after unarmed damage to a target denied Dexterity to Reflex, make a free unarmed attack vs Fortitude; on success, target cannot speak until end of your next turn; stunning effect. Special - K'tara Expertise: spend two swift actions to make one adjacent enemy flat-footed against your first attack that round. Deal extra unarmed damage to flat-footed enemies and once per encounter potentially render one unable to speak."
+        }
+      ],
+      "comparisonTags": [
+        "action_economy",
+        "ambush",
+        "control",
+        "damage_bonus",
+        "martial_arts",
+        "melee",
+        "once-per-encounter",
+        "setup",
+        "stun",
+        "swift_action",
+        "unarmed"
+      ],
+      "comparatorsInOtherDomain": 1,
+      "detectableCommonality": {
+        "detector": "O.stun",
+        "pattern": "\\bstun(?:s|ned|ning)?\\b|\\bion damage\\b",
+        "detectorNote": null
+      },
+      "exactTagDifference": {
+        "comparedTag": "stun",
+        "thisRecordCarriesTag": false,
+        "thisDomain": "TALENT",
+        "otherDomain": "FEAT",
+        "otherDomainRecordsMatchingDetector": 3,
+        "otherDomainRecordsMatchingDetectorAndCarryingTag": 1,
+        "detectorTaggedRateOverall": 0.611
+      },
+      "applicableInvariant": null,
+      "priorOwnerPrecedent": null,
+      "channels": [
+        "CHANNEL_1_RULE_TRIGGER"
+      ],
+      "ownerDecision": {
+        "decisionId": "TALENT:c101826c205debf2|stun",
+        "batch": "3B.2C",
+        "ownerAction": "NO_CHANGE",
+        "policy": "STUN_POLICY"
+      }
+    },
+    {
+      "state": "PASS3B_OWNER_NO_CHANGE",
+      "priority": null,
+      "priorityBasis": null,
+      "family": "O",
+      "familyName": "Weapon / combat mode",
+      "mechanic": "O.stun",
+      "comparedTag": "stun",
+      "detectorConfidence": "HIGH",
+      "domain": "TALENT",
+      "canonicalId": "c113b29cde344fafb6aa376a843639d3",
+      "name": "Ion Resistance 10",
+      "source": "Force Unleashed Campaign Guide",
+      "page": 47,
+      "evidenceTier": "TALENT_CERTIFIED_PACK_BENEFIT_TEXT",
+      "canonicalMechanicText": "You gain DR 10 against ion damage.",
+      "matchedExcerpt": "You gain DR 10 against ion damage.",
+      "currentTags": [
+        "damage_reduction",
+        "defense",
+        "resilience",
+        "survivability"
+      ],
+      "comparisonRecords": [
+        {
+          "canonicalId": "1dfbddf5f1aa57c3",
+          "domain": "FEAT",
+          "name": "K'tara Training",
+          "source": "Galaxy at War",
+          "page": 27,
+          "tags": [
+            "martial_arts",
+            "unarmed",
+            "melee",
+            "ambush",
+            "damage_bonus",
+            "stun",
+            "control",
+            "once-per-encounter",
+            "swift_action",
+            "action_economy",
+            "setup"
+          ],
+          "excerpt": "…denied Dexterity to Reflex, make a free unarmed attack vs Fortitude; on success, target cannot speak until end of your next turn; stunning effect. Special - K'tara Expertise: spend two swift actions to make one adjacent enemy flat-footed against your first attack that…",
+          "evidenceTier": "FEAT_CANONICAL_RULES_SHAPE",
+          "canonicalMechanicText": "One unarmed attack during your turn deals +1 damage die against a flat-footed enemy. Once per encounter after unarmed damage to a target denied Dexterity to Reflex, make a free unarmed attack vs Fortitude; on success, target cannot speak until end of your next turn; stunning effect. Special - K'tara Expertise: spend two swift actions to make one adjacent enemy flat-footed against your first attack that round. Deal extra unarmed damage to flat-footed enemies and once per encounter potentially render one unable to speak."
+        }
+      ],
+      "comparisonTags": [
+        "action_economy",
+        "ambush",
+        "control",
+        "damage_bonus",
+        "martial_arts",
+        "melee",
+        "once-per-encounter",
+        "setup",
+        "stun",
+        "swift_action",
+        "unarmed"
+      ],
+      "comparatorsInOtherDomain": 1,
+      "detectableCommonality": {
+        "detector": "O.stun",
+        "pattern": "\\bstun(?:s|ned|ning)?\\b|\\bion damage\\b",
+        "detectorNote": null
+      },
+      "exactTagDifference": {
+        "comparedTag": "stun",
+        "thisRecordCarriesTag": false,
+        "thisDomain": "TALENT",
+        "otherDomain": "FEAT",
+        "otherDomainRecordsMatchingDetector": 3,
+        "otherDomainRecordsMatchingDetectorAndCarryingTag": 1,
+        "detectorTaggedRateOverall": 0.611
+      },
+      "applicableInvariant": null,
+      "priorOwnerPrecedent": null,
+      "channels": [
+        "CHANNEL_1_RULE_TRIGGER"
+      ],
+      "ownerDecision": {
+        "decisionId": "TALENT:c113b29cde344fafb6aa376a843639d3|stun",
+        "batch": "3B.2C",
+        "ownerAction": "NO_CHANGE",
+        "policy": "STUN_POLICY"
+      }
+    },
+    {
+      "state": "PASS3B_OWNER_NO_CHANGE",
+      "priority": null,
+      "priorityBasis": null,
+      "family": "O",
+      "familyName": "Weapon / combat mode",
+      "mechanic": "O.stun",
+      "comparedTag": "stun",
+      "detectorConfidence": "HIGH",
+      "domain": "TALENT",
+      "canonicalId": "c2f332d1e74e3e1a",
+      "name": "Ion Turret",
+      "source": "Force Unleashed Campaign Guide",
+      "page": 57,
+      "evidenceTier": "TALENT_CERTIFIED_PACK_BENEFIT_TEXT",
+      "canonicalMechanicText": "You can construct a turret that is highly effective against droids. The turret deals ion damage instead of normal damage.",
+      "matchedExcerpt": "You can construct a turret that is highly effective against droids. The turret deals ion damage instead of normal damage.",
+      "currentTags": [
+        "crafting",
+        "tech",
+        "equipment",
+        "ranged",
+        "droid",
+        "control",
+        "modification",
+        "power_systems"
+      ],
+      "comparisonRecords": [
+        {
+          "canonicalId": "1dfbddf5f1aa57c3",
+          "domain": "FEAT",
+          "name": "K'tara Training",
+          "source": "Galaxy at War",
+          "page": 27,
+          "tags": [
+            "martial_arts",
+            "unarmed",
+            "melee",
+            "ambush",
+            "damage_bonus",
+            "stun",
+            "control",
+            "once-per-encounter",
+            "swift_action",
+            "action_economy",
+            "setup"
+          ],
+          "excerpt": "…denied Dexterity to Reflex, make a free unarmed attack vs Fortitude; on success, target cannot speak until end of your next turn; stunning effect. Special - K'tara Expertise: spend two swift actions to make one adjacent enemy flat-footed against your first attack that…",
+          "evidenceTier": "FEAT_CANONICAL_RULES_SHAPE",
+          "canonicalMechanicText": "One unarmed attack during your turn deals +1 damage die against a flat-footed enemy. Once per encounter after unarmed damage to a target denied Dexterity to Reflex, make a free unarmed attack vs Fortitude; on success, target cannot speak until end of your next turn; stunning effect. Special - K'tara Expertise: spend two swift actions to make one adjacent enemy flat-footed against your first attack that round. Deal extra unarmed damage to flat-footed enemies and once per encounter potentially render one unable to speak."
+        }
+      ],
+      "comparisonTags": [
+        "action_economy",
+        "ambush",
+        "control",
+        "damage_bonus",
+        "martial_arts",
+        "melee",
+        "once-per-encounter",
+        "setup",
+        "stun",
+        "swift_action",
+        "unarmed"
+      ],
+      "comparatorsInOtherDomain": 1,
+      "detectableCommonality": {
+        "detector": "O.stun",
+        "pattern": "\\bstun(?:s|ned|ning)?\\b|\\bion damage\\b",
+        "detectorNote": null
+      },
+      "exactTagDifference": {
+        "comparedTag": "stun",
+        "thisRecordCarriesTag": false,
+        "thisDomain": "TALENT",
+        "otherDomain": "FEAT",
+        "otherDomainRecordsMatchingDetector": 3,
+        "otherDomainRecordsMatchingDetectorAndCarryingTag": 1,
+        "detectorTaggedRateOverall": 0.611
+      },
+      "applicableInvariant": null,
+      "priorOwnerPrecedent": null,
+      "channels": [
+        "CHANNEL_1_RULE_TRIGGER"
+      ],
+      "ownerDecision": {
+        "decisionId": "TALENT:c2f332d1e74e3e1a|stun",
+        "batch": "3B.2C",
+        "ownerAction": "NO_CHANGE",
+        "policy": "STUN_POLICY"
+      }
+    },
+    {
+      "state": "PASS3B_OWNER_NO_CHANGE",
+      "priority": null,
+      "priorityBasis": null,
+      "family": "O",
+      "familyName": "Weapon / combat mode",
+      "mechanic": "O.stun",
+      "comparedTag": "stun",
+      "detectorConfidence": "HIGH",
+      "domain": "TALENT",
+      "canonicalId": "cc90a9fc255f4dc4",
+      "name": "Seyugi Cyclone",
+      "source": "Jedi Academy Training Manual",
+      "page": 83,
+      "evidenceTier": "TALENT_CERTIFIED_PACK_BENEFIT_TEXT",
+      "canonicalMechanicText": "If you are wielding no weapons (other than combat gloves or stun gauntlets), you can use the Whirlwind Attack feat as a standard action by spending a Force Point even if you do not possess the Whirlwind Attack feat. Additionally, this talent satisfies the prerequisites for the Whirlwind Attack feat.",
+      "matchedExcerpt": "If you are wielding no weapons (other than combat gloves or stun gauntlets), you can use the Whirlwind Attack feat as a standard action by spending a Force Point even if you do not possess the W…",
+      "currentTags": [
+        "force",
+        "force_point_spend",
+        "resource_spend",
+        "standard_action",
+        "action_economy",
+        "unarmed",
+        "martial_arts",
+        "melee",
+        "full_attack",
+        "burst_damage",
+        "battlefield_control"
+      ],
+      "comparisonRecords": [
+        {
+          "canonicalId": "1dfbddf5f1aa57c3",
+          "domain": "FEAT",
+          "name": "K'tara Training",
+          "source": "Galaxy at War",
+          "page": 27,
+          "tags": [
+            "martial_arts",
+            "unarmed",
+            "melee",
+            "ambush",
+            "damage_bonus",
+            "stun",
+            "control",
+            "once-per-encounter",
+            "swift_action",
+            "action_economy",
+            "setup"
+          ],
+          "excerpt": "…denied Dexterity to Reflex, make a free unarmed attack vs Fortitude; on success, target cannot speak until end of your next turn; stunning effect. Special - K'tara Expertise: spend two swift actions to make one adjacent enemy flat-footed against your first attack that…",
+          "evidenceTier": "FEAT_CANONICAL_RULES_SHAPE",
+          "canonicalMechanicText": "One unarmed attack during your turn deals +1 damage die against a flat-footed enemy. Once per encounter after unarmed damage to a target denied Dexterity to Reflex, make a free unarmed attack vs Fortitude; on success, target cannot speak until end of your next turn; stunning effect. Special - K'tara Expertise: spend two swift actions to make one adjacent enemy flat-footed against your first attack that round. Deal extra unarmed damage to flat-footed enemies and once per encounter potentially render one unable to speak."
+        }
+      ],
+      "comparisonTags": [
+        "action_economy",
+        "ambush",
+        "control",
+        "damage_bonus",
+        "martial_arts",
+        "melee",
+        "once-per-encounter",
+        "setup",
+        "stun",
+        "swift_action",
+        "unarmed"
+      ],
+      "comparatorsInOtherDomain": 1,
+      "detectableCommonality": {
+        "detector": "O.stun",
+        "pattern": "\\bstun(?:s|ned|ning)?\\b|\\bion damage\\b",
+        "detectorNote": null
+      },
+      "exactTagDifference": {
+        "comparedTag": "stun",
+        "thisRecordCarriesTag": false,
+        "thisDomain": "TALENT",
+        "otherDomain": "FEAT",
+        "otherDomainRecordsMatchingDetector": 3,
+        "otherDomainRecordsMatchingDetectorAndCarryingTag": 1,
+        "detectorTaggedRateOverall": 0.611
+      },
+      "applicableInvariant": null,
+      "priorOwnerPrecedent": null,
+      "channels": [
+        "CHANNEL_1_RULE_TRIGGER"
+      ],
+      "ownerDecision": {
+        "decisionId": "TALENT:cc90a9fc255f4dc4|stun",
+        "batch": "3B.2C",
+        "ownerAction": "NO_CHANGE",
+        "policy": "STUN_POLICY"
+      }
+    },
+    {
+      "state": "PASS3B_OWNER_NO_CHANGE",
+      "priority": null,
+      "priorityBasis": null,
+      "family": "O",
+      "familyName": "Weapon / combat mode",
+      "mechanic": "O.stun",
+      "comparedTag": "stun",
+      "detectorConfidence": "HIGH",
+      "domain": "TALENT",
+      "canonicalId": "df9c25340dcb7c95",
+      "name": "Ion Mastery",
+      "source": "Force Unleashed Campaign Guide",
+      "page": 52,
+      "evidenceTier": "TALENT_CERTIFIED_PACK_BENEFIT_TEXT",
+      "canonicalMechanicText": "You know the typical weaknesses of vehicles and droids, and you know how to preserve such targets for capture rather than destroying them. When attacking with ion weapons, you gain a +1 bonus on attack rolls and deal +1 die of ion damage.",
+      "matchedExcerpt": "…for capture rather than destroying them. When attacking with ion weapons, you gain a +1 bonus on attack rolls and deal +1 die of ion damage.",
+      "currentTags": [
+        "ranged",
+        "offense_ranged",
+        "precision",
+        "damage_bonus",
+        "nonlethal",
+        "droid",
+        "vehicle",
+        "sustained_damage"
+      ],
+      "comparisonRecords": [
+        {
+          "canonicalId": "1dfbddf5f1aa57c3",
+          "domain": "FEAT",
+          "name": "K'tara Training",
+          "source": "Galaxy at War",
+          "page": 27,
+          "tags": [
+            "martial_arts",
+            "unarmed",
+            "melee",
+            "ambush",
+            "damage_bonus",
+            "stun",
+            "control",
+            "once-per-encounter",
+            "swift_action",
+            "action_economy",
+            "setup"
+          ],
+          "excerpt": "…denied Dexterity to Reflex, make a free unarmed attack vs Fortitude; on success, target cannot speak until end of your next turn; stunning effect. Special - K'tara Expertise: spend two swift actions to make one adjacent enemy flat-footed against your first attack that…",
+          "evidenceTier": "FEAT_CANONICAL_RULES_SHAPE",
+          "canonicalMechanicText": "One unarmed attack during your turn deals +1 damage die against a flat-footed enemy. Once per encounter after unarmed damage to a target denied Dexterity to Reflex, make a free unarmed attack vs Fortitude; on success, target cannot speak until end of your next turn; stunning effect. Special - K'tara Expertise: spend two swift actions to make one adjacent enemy flat-footed against your first attack that round. Deal extra unarmed damage to flat-footed enemies and once per encounter potentially render one unable to speak."
+        }
+      ],
+      "comparisonTags": [
+        "action_economy",
+        "ambush",
+        "control",
+        "damage_bonus",
+        "martial_arts",
+        "melee",
+        "once-per-encounter",
+        "setup",
+        "stun",
+        "swift_action",
+        "unarmed"
+      ],
+      "comparatorsInOtherDomain": 1,
+      "detectableCommonality": {
+        "detector": "O.stun",
+        "pattern": "\\bstun(?:s|ned|ning)?\\b|\\bion damage\\b",
+        "detectorNote": null
+      },
+      "exactTagDifference": {
+        "comparedTag": "stun",
+        "thisRecordCarriesTag": false,
+        "thisDomain": "TALENT",
+        "otherDomain": "FEAT",
+        "otherDomainRecordsMatchingDetector": 3,
+        "otherDomainRecordsMatchingDetectorAndCarryingTag": 1,
+        "detectorTaggedRateOverall": 0.611
+      },
+      "applicableInvariant": null,
+      "priorOwnerPrecedent": null,
+      "channels": [
+        "CHANNEL_1_RULE_TRIGGER"
+      ],
+      "ownerDecision": {
+        "decisionId": "TALENT:df9c25340dcb7c95|stun",
+        "batch": "3B.2C",
+        "ownerAction": "NO_CHANGE",
+        "policy": "STUN_POLICY"
       }
     }
   ],

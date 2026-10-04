@@ -3,7 +3,7 @@
 Status `PASS3B_WORKING_AUTHORITY_OWNER_RULINGS_APPLIED_NOT_PRODUCTION`. Audit only; production packs and catalogs are unchanged.
 
 - Identities: 1540 (353 feats + 1187 talents); shared vocabulary 187; new tags introduced 0
-- Owner decisions: 116 (53 ADD, 63 NO_CHANGE); records changed 45 (11 feat / 34 talent); records with NO_CHANGE only 48; removals 0
+- Owner decisions: 125 (53 ADD, 72 NO_CHANGE); records changed 45 (11 feat / 34 talent); records with NO_CHANGE only 57; removals 0
 - Tag instances 11218 -> 11271
 
 ## Changed records (before -> after)

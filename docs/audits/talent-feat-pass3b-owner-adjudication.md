@@ -24,6 +24,9 @@ Cumulative owner overlay for Pass 3B batches. Claude executes these rulings and 
 - **MOVEMENT_POLICY** — movement applies when the operative mechanic directly changes movement or speed: moving a creature/vehicle, forcing movement, increasing/reducing speed, or changing how much movement can be taken. The affected creature does not have to be the user; direct reduction of an enemy or vehicle's speed is still a movement mechanic.
 - **MOBILITY_POLICY** — mobility represents improved/facilitated movement capability, freedom, efficiency or movement access for the user or supported creature. Not added merely because the mechanic forcibly moves an enemy, creates difficult terrain for enemies, manipulates battlefield terrain generally, or references whether movement provokes an attack of opportunity; those may be represented by movement, positioning, control, battlefield_control or other specific mechanics.
 - **ATTACK_OF_OPPORTUNITY_POLICY** — attack_of_opportunity applies when the operative mechanic directly generates an attack of opportunity, grants or modifies one, prevents/suppresses one, triggers from one, modifies checks or effects specifically associated with one, or changes the timing or availability of one. Not applied merely because movement is stated to provoke attacks of opportunity as normal, attacks of opportunity are simply exempted from a broader restriction on attacks, or the phrase appears only as unchanged rules reminder/context. The Martial Arts I owner precedent remains intact and does not propagate to Martial Arts II/III.
+- **FULL_ATTACK_POLICY** — full_attack applies when the operative mechanic directly interacts with the SWSE Full Attack mechanic: performs a Full Attack, modifies Full Attack penalties, modifies the number/type of attacks made as part of a Full Attack, or directly modifies the resolution of a Full Attack. Not added because the record makes multiple attacks, another action produces attacks similar to a Full Attack, or a normal Full Attack is mentioned only as a comparison, limitation or reference. A mechanic that intentionally replaces or bypasses the Full Attack action is not automatically a full_attack mechanic.
+- **DUAL_WIELD_POLICY** — dual_wield represents mechanics in which one character directly fights with or mechanically manages two weapons/two weapon ends as part of the same combat style: attacking with two weapons, using both ends of a double weapon where treated as two-weapon combat, modifying two-weapon attack penalties, or directly improving/enabling two-weapon fighting. Not added because two different characters each use one weapon, two attacks are combined, two weapons happen to contribute to one resolved effect, or the mechanic simply allows multiple attacks. The semantic is the character's two-weapon combat mode, not the number of weapons involved in the event.
+- **STUN_POLICY** — stun represents direct interaction with the SWSE stun/stunning mechanic or stun damage/mode: deals or modifies stun damage, changes use of a weapon's stun setting, applies a stated stunning effect, or improves/resists/removes/directly modifies stun mechanics. Ion damage is not stun damage. Not added because a record deals ion damage, resists ion damage, improves ion weapons, mentions stun gauntlets only as an equipment exception, or uses nonlethal/capture-oriented ion mechanics. ion and stun are mechanically distinct concepts. No new ion semantic tag is authorized; recurring ion semantics are a later ontology-gap decision.
 
 ## Batch 3B.1 — Mechanical Primitives
 
@@ -166,6 +169,23 @@ Expected by owner: 15 records with ADD, 15 tag additions, 17 records NO_CHANGE o
 | ADD | TALENT | Mobile Combatant | `ee184e210f8c8935` | `attack_of_opportunity` | ATTACK_OF_OPPORTUNITY_POLICY | H.attack_of_opportunity |
 | ADD | TALENT | Tempest Tossed | `f7b620efd191ac6b` | `attack_of_opportunity` | ATTACK_OF_OPPORTUNITY_POLICY | H.attack_of_opportunity |
 
+## Batch 3B.2C — Combat mode primitives
+
+Expected by owner: 0 records with ADD, 0 tag additions, 9 records NO_CHANGE only, 0 removals, 0 new tags.
+
+
+| Action | Domain | Name | ID | Tag | Policy | Evidence reference |
+| --- | --- | --- | --- | --- | --- | --- |
+| NO_CHANGE | FEAT | Rapid Assault | `4be60753991eec43` | `full_attack` | FULL_ATTACK_POLICY | O.full_attack |
+| NO_CHANGE | TALENT | Synchronized Fire | `388f30468a80f221` | `dual_wield` | DUAL_WIELD_POLICY | O.dual_wield |
+| NO_CHANGE | FEAT | Ion Shielding | `43a4b873d9a9984d` | `stun` | STUN_POLICY | O.stun |
+| NO_CHANGE | FEAT | Droid Hunter | `5d17898fc9652370` | `stun` | STUN_POLICY | O.stun |
+| NO_CHANGE | TALENT | Sudden Storm | `c101826c205debf2` | `stun` | STUN_POLICY | O.stun |
+| NO_CHANGE | TALENT | Ion Resistance 10 | `c113b29cde344fafb6aa376a843639d3` | `stun` | STUN_POLICY | O.stun |
+| NO_CHANGE | TALENT | Ion Turret | `c2f332d1e74e3e1a` | `stun` | STUN_POLICY | O.stun |
+| NO_CHANGE | TALENT | Seyugi Cyclone | `cc90a9fc255f4dc4` | `stun` | STUN_POLICY | O.stun |
+| NO_CHANGE | TALENT | Ion Mastery | `df9c25340dcb7c95` | `stun` | STUN_POLICY | O.stun |
+
 ## Rationale
 
 - ADD `reaction` — Dumb Luck (TALENT `7a024dac260bf9ec`): The talent directly grants reaction movement.
@@ -284,3 +304,12 @@ Expected by owner: 15 records with ADD, 15 tag additions, 17 records NO_CHANGE o
 - ADD `attack_of_opportunity` — Treacherous (TALENT `e289618b92890003`): The talent creates reaction movement during resolution of another attack and explicitly permits a threatening creature to make an attack of opportunity before the original attack is resolved: direct AoO generation/timing interaction rather than a generic "provokes as normal" reminder.
 - ADD `attack_of_opportunity` — Mobile Combatant (TALENT `ee184e210f8c8935`): Both Expeditious Attack and Yielding Assault grant movement that explicitly does not provoke attacks of opportunity.
 - ADD `attack_of_opportunity` — Tempest Tossed (TALENT `f7b620efd191ac6b`): The talent's forced movement explicitly does not provoke attacks of opportunity.
+- NO_CHANGE `full_attack` — Rapid Assault (FEAT `4be60753991eec43`): Rapid Assault does not perform a Full Attack. It spends a Force Point to make exactly two attacks as a standard action, using a qualifying two-weapon or Double Attack setup. The reference to how many attacks the character's normal Full Attack could produce establishes only a ceiling/comparison. The feat deliberately provides a different action path rather than modifying or executing the Full Attack action itself. Its existing dual_wield, sustained_damage, standard_action, action_economy, force_point_spend and resource_spend semantics remain unchanged.
+- NO_CHANGE `dual_wield` — Synchronized Fire (TALENT `388f30468a80f221`): The talent coordinates one weapon fired by the user and one weapon fired by an ally. The two damage results are combined before applying SR/DR and Damage Threshold. This is coordinated fire from two characters, not one character wielding/fighting with two weapons. No additional tags inferred.
+- NO_CHANGE `stun` — Ion Shielding (FEAT `43a4b873d9a9984d`): The feat directly modifies the consequences of ion damage exceeding Damage Threshold. Ion damage is not stun damage.
+- NO_CHANGE `stun` — Droid Hunter (FEAT `5d17898fc9652370`): The feat grants additional damage against droids, with a larger bonus when using a weapon that deals ion damage. It does not interact with stun damage or a stunning effect.
+- NO_CHANGE `stun` — Sudden Storm (TALENT `c101826c205debf2`): Stun gauntlets appear only in the permitted-equipment exception to the otherwise unarmed requirement. The talent does not use or modify the stun function of those gauntlets.
+- NO_CHANGE `stun` — Ion Resistance 10 (TALENT `c113b29cde344fafb6aa376a843639d3`): The talent grants DR specifically against ion damage. It does not resist stun damage or a stunning effect.
+- NO_CHANGE `stun` — Ion Turret (TALENT `c2f332d1e74e3e1a`): The turret converts its damage into ion damage. That is an ion mechanic, not a stun mechanic.
+- NO_CHANGE `stun` — Seyugi Cyclone (TALENT `cc90a9fc255f4dc4`): Stun gauntlets are listed only as an exception to the otherwise no-weapons requirement. The talent does not interact with their stun mechanics.
+- NO_CHANGE `stun` — Ion Mastery (TALENT `df9c25340dcb7c95`): The talent directly improves attacks made with ion weapons and increases ion damage. Its capture-oriented purpose does not make ion damage semantically equivalent to stun damage. Its existing nonlethal semantic is preserved; this ruling does not reopen that tag.
