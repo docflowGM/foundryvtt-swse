@@ -154,6 +154,8 @@ function analyze(auth, ctx, talentTagCounts, recon, overlay = null) {
       const fr = overlay.familyReviews.find(x => x.label === f.label);
       const inv = overlay.invalidFamilyReferences.find(x => x.label === f.label);
       const changed = overlay.tagChanges.filter(c => c.family === f.label);
+      const changedRulings = overlay.tagChanges.filter(c => c.family === f.label).map(c => `${c.name}: ${c.ruling}`);
+      f.pass2MemberRulings = changedRulings;
       const rej = overlay.rejectedFindings.filter(r => r.source === `${f.label.toLowerCase()} family`);
       if (inv) { disp = inv.ruling; basis = inv.reason; }
       else if (fr) { disp = fr.ruling; basis = fr.reason; }
@@ -167,9 +169,10 @@ function analyze(auth, ctx, talentTagCounts, recon, overlay = null) {
     for (const f of families) {
       if (!f.pass2Disposition) continue;
       const residual = [];
-      if (['CERTIFIED_TIER_FAMILY', 'OWNER_NAMED_CHAIN'].includes(f.kind) && !f.tagSetsIdentical && !['PASS2_INTENTIONAL_DIVERGENCE', 'PASS2_INVALID_FAMILY_REFERENCE'].includes(f.pass2Disposition)) residual.push(`member tag sets still differ (${f.unionTags.length - f.intersectionTags.length} non-shared tag(s))`);
+      if (['CERTIFIED_TIER_FAMILY', 'OWNER_NAMED_CHAIN'].includes(f.kind) && !f.tagSetsIdentical && f.pass2Disposition !== 'PASS2_INVALID_FAMILY_REFERENCE') residual.push(`member tag sets still differ (${f.unionTags.length - f.intersectionTags.length} non-shared tag(s))`);
       if (f.kind === 'TEXT_KEYED_FAMILY' && f.membersWithoutAnyExpectedTag.length && f.pass2Disposition !== 'PASS2_FALSE_POSITIVE') residual.push(`${f.membersWithoutAnyExpectedTag.length} member(s) still lack every expected candidate tag (text-match evidence; not adjudicated)`);
       f.pass2ResidualEvidence = residual;
+      f.pass2ResidualEvidenceClosed = residual.length > 0 && f.pass2Disposition === 'PASS2_INTENTIONAL_DIVERGENCE';
     }
   }
   families.sort((a, b) => cmp(a.kind, b.kind) || cmp(a.label, b.label));
@@ -193,7 +196,7 @@ function analyze(auth, ctx, talentTagCounts, recon, overlay = null) {
     mostCommonTagPairs: Object.entries(pair).sort((x, y) => y[1] - x[1] || cmp(x[0], y[0])).slice(0, 15).map(([tags, feats]) => ({ tags, feats })),
     singletonTags: ranked.filter(([, u]) => u === 1).map(([t]) => t).sort(), zeroUseApprovedTags: vocab.filter(t => !usage[t]),
     tagsPerFeat: { min: Math.min(...A.map(a => a.finalTags.length)), max: Math.max(...A.map(a => a.finalTags.length)), mean: Number((A.reduce((n, a) => n + a.finalTags.length, 0) / A.length).toFixed(3)) },
-    ...(overlay ? { dispositions: Object.fromEntries(['PASS2_OWNER_APPROVED', 'PASS2_OWNER_CORRECTED', 'PASS2_FALSE_POSITIVE', 'PASS2_INTENTIONAL_DIVERGENCE', 'PASS2_INVALID_FAMILY_REFERENCE'].map(d => [d, families.filter(f => f.pass2Disposition === d).length + (d === 'PASS2_INVALID_FAMILY_REFERENCE' ? unresolved.filter(u => overlay.invalidFamilyReferences.some(x => x.label === u.family)).length : 0)])), residualEvidenceFamilies: families.filter(f => f.pass2ResidualEvidence?.length).map(f => ({ label: f.label, kind: f.kind, evidence: f.pass2ResidualEvidence })) } : {}),
+    ...(overlay ? { dispositions: Object.fromEntries(['PASS2_OWNER_APPROVED', 'PASS2_OWNER_CORRECTED', 'PASS2_FALSE_POSITIVE', 'PASS2_INTENTIONAL_DIVERGENCE', 'PASS2_INVALID_FAMILY_REFERENCE'].map(d => [d, families.filter(f => f.pass2Disposition === d).length + (d === 'PASS2_INVALID_FAMILY_REFERENCE' ? unresolved.filter(u => overlay.invalidFamilyReferences.some(x => x.label === u.family)).length : 0)])), residualEvidenceFamilies: families.filter(f => f.pass2ResidualEvidence?.length && !f.pass2ResidualEvidenceClosed).map(f => ({ label: f.label, kind: f.kind, evidence: f.pass2ResidualEvidence })) } : {}),
     familyAsymmetry: { familiesTotal: families.length, byKind: Object.fromEntries([...new Set(families.map(f => f.kind))].sort().map(k => [k, { families: families.filter(f => f.kind === k).length, flaggedPass2OwnerReview: families.filter(f => f.kind === k && f.pass2OwnerReview).length, tagSetsIdentical: families.filter(f => f.kind === k && f.tagSetsIdentical).length }])), flaggedTotal: families.filter(f => f.pass2OwnerReview).length },
     productionVsAuthorityDelta: recon ? Object.fromEntries(['canonicalPresentInProduction', 'canonicalMissingFromProduction', 'recordsExactlyMatching', 'tagsToAddTotal', 'tagsToRemoveTotal', 'tagsToRemoveOutsideVocabulary', 'tagsAlreadyMatchingTotal'].map(k => [k, recon.totals[k]])) : null
   };
@@ -231,7 +234,7 @@ function render(rep) {
     L.push(`### ${f.label} — ${f.kind}${f.pass2OwnerReview ? ' — **PASS2_OWNER_REVIEW**' : ''}${f.pass2Disposition ? ` — **${f.pass2Disposition}**` : ''}`, '');
     if (f.pass2Disposition) L.push(`Owner ruling basis: ${f.pass2DispositionBasis}`, '');
     if (f.pass2PriorFlag) L.push(`Prior flag: ${f.pass2PriorFlag}; evidence retained: ${f.pass2ReviewReasons.join('; ')}.`, '');
-    if (f.pass2ResidualEvidence?.length) L.push(`Residual evidence (not adjudicated): ${f.pass2ResidualEvidence.join('; ')}.`, '');
+    if (f.pass2ResidualEvidence?.length) L.push(`Residual evidence (${f.pass2ResidualEvidenceClosed ? 'closed by owner ruling, retained' : 'not adjudicated'}): ${f.pass2ResidualEvidence.join('; ')}.`, '');
     if (f.pass2ReviewReasons.length) L.push(`Review reasons: ${f.pass2ReviewReasons.join('; ')}.`, '');
     L.push(`Members: ${f.memberCount}; intersection: ${f.intersectionTags.map(t => `\`${t}\``).join(', ') || '—'}`, '');
     if (f.memberCount <= 14) L.push('| Member | Tags |', '| --- | --- |', ...f.members.map(m => `| ${m.name} (\`${m.canonicalId}\`) | ${m.tags.map(t => `\`${t}\``).join(', ')} |`), '');

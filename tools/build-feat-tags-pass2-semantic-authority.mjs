@@ -52,6 +52,14 @@ export function derive(pass1, overlay, ctx) {
     if (a.finalTags.includes(r.rejectedTag)) err(`${r.name}: rejected tag ${r.rejectedTag} is present`);
     (a.pass2Rejections ||= []).push({ batch: 1, ruling: r.ruling, rejectedTag: r.rejectedTag, source: r.source, reason: r.reason });
   }
+  for (const fr of overlay.familyReviews) {
+    if (!TERMINAL.has(fr.ruling)) err(`${fr.label}: non-terminal ruling ${fr.ruling}`);
+    for (const [id, want] of Object.entries(fr.expectedFinalTags || {})) {
+      const a = byId.get(id);
+      if (!a) err(`${fr.label}: unknown canonical ID ${id}`);
+      if (JSON.stringify([...a.finalTags].sort()) !== JSON.stringify([...want].sort())) err(`${fr.label}: ${a.name} final tags ${a.finalTags.join(',')} != owner-expected ${want.join(',')}`);
+    }
+  }
   const pc = overlay.publicationCategory;
   const publicationChanges = [];
   for (const c of pc.corrections) {

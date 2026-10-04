@@ -83,18 +83,18 @@ Text evidence: `data/audits/feat-provenance-canonical-authority.json`; prerequis
 | Status | Families |
 | --- | ---: |
 | PASS2_OWNER_APPROVED | 3 |
-| PASS2_OWNER_CORRECTED | 1 |
+| PASS2_OWNER_CORRECTED | 0 |
 | PASS2_FALSE_POSITIVE | 1 |
-| PASS2_INTENTIONAL_DIVERGENCE | 3 |
+| PASS2_INTENTIONAL_DIVERGENCE | 5 |
 | PASS2_INVALID_FAMILY_REFERENCE | 1 |
 
-Residual unadjudicated evidence: Grapple family (Pin / Crush / Throw / Trip) (member tag sets still differ (5 non-shared tag(s))).
+Residual unadjudicated evidence: none.
 
 ## Family asymmetry counts
 
 | Kind | Families | PASS2_OWNER_REVIEW | Identical tag sets |
 | --- | ---: | ---: | ---: |
-| CERTIFIED_TIER_FAMILY | 3 | 1 | 2 |
+| CERTIFIED_TIER_FAMILY | 3 | 0 | 2 |
 | NAME_PATTERN_FAMILY | 2 | 0 | 0 |
 | OWNER_NAMED_CHAIN | 7 | 0 | 3 |
 | PREREQUISITE_PARENT_GROUP | 44 | 0 | 6 |
@@ -127,7 +127,13 @@ Members: 3; intersection: `double_weapon`, `dual_wield`, `full_attack`, `precisi
 | Dual Weapon Mastery II (`c7c99a77ebee1c0c`) | `dual_wield`, `double_weapon`, `full_attack`, `precision`, `sustained_damage` |
 | Dual Weapon Mastery III (`ea684defcd3222ca`) | `dual_wield`, `double_weapon`, `full_attack`, `precision`, `sustained_damage` |
 
-### martial-arts — CERTIFIED_TIER_FAMILY — **PASS2_OWNER_REVIEW**
+### martial-arts — CERTIFIED_TIER_FAMILY — **PASS2_INTENTIONAL_DIVERGENCE**
+
+Owner ruling basis: Martial Arts I alone records the Core cross-rule interaction that lets an otherwise unarmed character threaten and make attacks of opportunity. Martial Arts II and III independently advance unarmed damage and dodge Reflex Defense only. Prerequisite inheritance is not semantic inheritance; attack_of_opportunity is not propagated to II or III.
+
+Prior flag: PASS2_OWNER_REVIEW; evidence retained: member tag sets differ (1 non-shared tag(s)).
+
+Residual evidence (closed by owner ruling, retained): member tag sets still differ (1 non-shared tag(s)).
 
 Review reasons: member tag sets differ (1 non-shared tag(s)).
 
@@ -185,13 +191,13 @@ Members: 2; intersection: `full_attack`, `precision`, `sustained_damage`
 | Double Attack (`357807a5ceb77203`) | `full_attack`, `sustained_damage`, `precision` |
 | Triple Attack (`648a4f16669056f0`) | `full_attack`, `sustained_damage`, `precision` |
 
-### Grapple family (Pin / Crush / Throw / Trip) — OWNER_NAMED_CHAIN — **PASS2_OWNER_CORRECTED**
+### Grapple family (Pin / Crush / Throw / Trip) — OWNER_NAMED_CHAIN — **PASS2_INTENTIONAL_DIVERGENCE**
 
-Owner ruling basis: Pin: A grapple attack is treated as an unarmed attack under the Core rules, and Pin prevents the target from moving or taking actions. | Crush: Crush operates on a successful Pin/grapple and deals unarmed/claw damage. The Pin interaction is explicit in the Benefit, not prerequisite inference. | Throw: Throw uses a grapple attack, forcibly relocates the target, leaves it prone, deals unarmed-equivalent damage, and ends the grapple. It does not pin or maintain restraint. | Trip: Trip is executed through a grapple attack, which Core explicitly treats as an unarmed attack.
+Owner ruling basis: Remaining tag-set differences are mechanically justified: Pin restrains and prevents actions/movement; Crush deals damage through an established Pin; Throw forcibly relocates the target, knocks it prone and ends the grapple; Trip knocks the target prone. The Batch 1 corrections already set the common grapple/unarmed/melee semantics; tag parity is not forced. Member-level Batch 1 rulings (approved/corrected) remain recorded on the feat records.
 
 Prior flag: PASS2_OWNER_REVIEW; evidence retained: member tag sets differ (5 non-shared tag(s)).
 
-Residual evidence (not adjudicated): member tag sets still differ (5 non-shared tag(s)).
+Residual evidence (closed by owner ruling, retained): member tag sets still differ (5 non-shared tag(s)).
 
 Review reasons: member tag sets differ (5 non-shared tag(s)).
 
@@ -210,6 +216,8 @@ Owner ruling basis: The common `melee` relationship is real, but the differing t
 
 Prior flag: PASS2_OWNER_REVIEW; evidence retained: member tag sets differ (8 non-shared tag(s)).
 
+Residual evidence (closed by owner ruling, retained): member tag sets still differ (8 non-shared tag(s)).
+
 Review reasons: member tag sets differ (8 non-shared tag(s)).
 
 Members: 3; intersection: `melee`
@@ -225,6 +233,8 @@ Members: 3; intersection: `melee`
 Owner ruling basis: `ranged` + `precision` is the valid common core. Aim, cover, positioning, range-band, sniper, setup, targeting, and damage tags remain mechanic-specific.
 
 Prior flag: PASS2_OWNER_REVIEW; evidence retained: member tag sets differ (6 non-shared tag(s)).
+
+Residual evidence (closed by owner ruling, retained): member tag sets still differ (6 non-shared tag(s)).
 
 Review reasons: member tag sets differ (6 non-shared tag(s)).
 
@@ -253,6 +263,8 @@ Members: 2; intersection: `burst_damage`, `damage_bonus`, `melee`, `precision`
 Owner ruling basis: The valid common core is tech + mechanics + modification + equipment. The wider object/trait tags on Tech Specialist and Superior Tech are justified by their modification tables; Signature Device's `reliability` is justified by its take-10 mechanic; Hasty Modification does not inherit the parent feat's entire semantic payload.
 
 Prior flag: PASS2_OWNER_REVIEW; evidence retained: member tag sets differ (15 non-shared tag(s)).
+
+Residual evidence (closed by owner ruling, retained): member tag sets still differ (15 non-shared tag(s)).
 
 Review reasons: member tag sets differ (15 non-shared tag(s)).
 

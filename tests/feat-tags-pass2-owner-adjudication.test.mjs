@@ -99,4 +99,25 @@ test('family analysis: Improved Rapid Shot is a closed invalid reference, and no
   assert.ok(!pass2.assignments.some(a => /improved rapid shot/i.test(a.name)));
   assert.equal(f.statistics.dispositions.PASS2_INVALID_FAMILY_REFERENCE, 1);
 });
+test('final closeout: Martial Arts and Grapple closed as intentional divergence; zero open owner reviews; residual evidence retained', () => {
+  const f = rd('data/audits/feat-tags-pass2-family-analysis-post-adjudication.json');
+  assert.equal(f.statistics.familyAsymmetry.flaggedTotal, 0);
+  assert.equal(f.families.filter(x => x.pass2OwnerReview).length, 0);
+  assert.deepEqual(f.statistics.residualEvidenceFamilies, []);
+  for (const label of ['martial-arts', 'Grapple family (Pin / Crush / Throw / Trip)']) {
+    const fam = f.families.find(x => x.label === label);
+    assert.equal(fam.pass2Disposition, 'PASS2_INTENTIONAL_DIVERGENCE', label);
+    assert.equal(fam.pass2ResidualEvidenceClosed, true, label);
+    assert.ok(fam.pass2ResidualEvidence.length > 0 && fam.pass2ReviewReasons.length + fam.pass2ResidualEvidence.length > 0, label);
+  }
+  const ma = (id) => by(pass2, id).finalTags;
+  assert.ok(ma('92f927c92ded9fcf').includes('attack_of_opportunity'));
+  assert.ok(!ma('5bedd71f0eead6b9').includes('attack_of_opportunity') && !ma('97dbebe63aa6af79').includes('attack_of_opportunity'));
+  assert.deepEqual(ma('5bedd71f0eead6b9'), ma('97dbebe63aa6af79'));
+});
+test('closeout derivation fails if a Martial Arts expected tag set is violated', () => {
+  const o = JSON.parse(JSON.stringify(overlay));
+  o.familyReviews.find(x => x.label === 'martial-arts').expectedFinalTags['5bedd71f0eead6b9'].push('attack_of_opportunity');
+  assert.throws(() => derive(pass1, o, ctx), /owner-expected/);
+});
 console.log(`${n} tests passed`);
