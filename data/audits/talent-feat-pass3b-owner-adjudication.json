@@ -1,0 +1,899 @@
+{
+  "schemaVersion": "1.0",
+  "kind": "TALENT_FEAT_PASS3B_OWNER_ADJUDICATION",
+  "status": "OWNER_ADJUDICATED_CUMULATIVE",
+  "note": "Cumulative owner overlay for Pass 3B batches. Claude executes these rulings and makes no semantic decisions. Decision identity is deterministic: domain + canonical ID + tag; duplicates across batches or evidence channels are rejected. Findings not named here stay PASS3B_OWNER_REVIEW.",
+  "basis": {
+    "feats": "data/audits/feat-tags-pass2-semantic-authority.json",
+    "talents": "data/audits/talent-feat-pass3a-semantic-authority.json",
+    "baseline": "data/audits/talent-feat-pass3b-mechanic-baseline.json"
+  },
+  "ownerPolicies": [
+    {
+      "id": "ACTION_TYPE_POLICY",
+      "text": "A named action-type tag (reaction, swift_action, move_action, standard_action) applies when the record's Benefit directly requires, allows, grants, changes into/from, imposes as an additional cost, prohibits or restricts, or changes another creature's use of that action type. The character using the feat/talent need not be the creature taking the action. Implications remain: reaction/swift_action/move_action/standard_action -> action_economy."
+    },
+    {
+      "id": "FULL_ROUND_ACTION_POLICY",
+      "text": "A direct full-round-action mechanic receives action_economy. There is no owner authorization to create a full_round_action tag; the full-round-action ontology-gap evidence is preserved for later ontology review."
+    },
+    {
+      "id": "REROLL_POLICY",
+      "text": "reroll applies only when the record actually permits, requires, causes or modifies a reroll. A textual reference to rerolls without creating or modifying a reroll mechanic does not qualify."
+    },
+    {
+      "id": "RELIABILITY_POLICY",
+      "text": "reliability represents an affirmative mechanic that improves or stabilizes outcome reliability (reroll, roll-twice/select-result, Take 10/Take 20 benefit, automatic success, equivalent positive mechanic). Not added because a rule prohibits Take 10/20, a phrase happens to contain \"take 10\", or a mechanic selects the better of two static modifiers rather than two rolls. Negative restrictions create no positive reliability tag."
+    },
+    {
+      "id": "FORCE_POINT_SPEND_POLICY",
+      "text": "force_point_spend applies when the operative mechanic actually requires, permits or consumes a Force Point expenditure; not for \"without spending\", \"does not count as spending\", a resource that expires if not later spent, another power's Force Point condition, or a mechanic that avoids/removes a Force Point cost. Implication remains: force_point_spend -> resource_spend."
+    },
+    {
+      "id": "RESOURCE_SPEND_POLICY",
+      "text": "resource_spend applies when the record directly consumes an explicitly limited/tracked resource or use as part of its operative mechanic. Avoiding a resource cost is not resource spending; mentioning that a temporary resource could later be spent is not itself resource spending."
+    },
+    {
+      "id": "RESOURCE_RECOVERY_POLICY",
+      "text": "resource_recovery applies when the mechanic directly restores, regains, refunds or returns a previously spent or expended resource. Not for creating a new temporary resource, granting an additional temporary Force Point, increasing capacity, restoring hit points, or referencing normal recovery while replacing/foregoing it. Hit-point recovery is healing/recovery semantics, not resource_recovery."
+    },
+    {
+      "id": "ONCE_PER_ENCOUNTER_POLICY",
+      "text": "once-per-encounter represents a global activation/use limitation on the record's own mechanic. Not added for a reference to another normally once-per-encounter ability, restoring an additional use of some other ability, or a per-target once-per-encounter restriction while the ability itself may trigger multiple times."
+    },
+    {
+      "id": "FORCE_CAPACITY_POLICY",
+      "text": "force_capacity applies when the mechanic directly increases the amount of Force-resource capacity available to the character, including persistent/additional Force Point allotment. It does not authorize resource_recovery; capacity and recovery are separate semantics. Resource creation, capacity, expenditure and recovery are four distinct concepts."
+    }
+  ],
+  "batches": [
+    {
+      "batch": "3B.1",
+      "title": "Mechanical Primitives",
+      "expected": {
+        "recordsWithAdd": 28,
+        "tagAdditions": 33,
+        "recordsWithOnlyNoChange": 22,
+        "removals": 0,
+        "newTags": 0
+      },
+      "ownerDirectedCompletions": [
+        {
+          "canonicalId": "8d0657e7ade688bd",
+          "name": "Scripted Routines",
+          "tags": [
+            "move_action",
+            "swift_action"
+          ],
+          "note": "Owner completion ruling beyond the one detector-tag pair that initially surfaced."
+        }
+      ]
+    }
+  ],
+  "decisions": [
+    {
+      "decisionId": "TALENT:7a024dac260bf9ec|reaction",
+      "batch": "3B.1",
+      "domain": "TALENT",
+      "canonicalId": "7a024dac260bf9ec",
+      "name": "Dumb Luck",
+      "tag": "reaction",
+      "ownerAction": "ADD",
+      "detectorEvidenceReference": [
+        "A.cost_reaction"
+      ],
+      "ownerRationale": "The talent directly grants reaction movement.",
+      "ownerPolicyApplied": "ACTION_TYPE_POLICY"
+    },
+    {
+      "decisionId": "TALENT:95697c5a4459d7e4|reaction",
+      "batch": "3B.1",
+      "domain": "TALENT",
+      "canonicalId": "95697c5a4459d7e4",
+      "name": "Outmaneuver",
+      "tag": "reaction",
+      "ownerAction": "ADD",
+      "detectorEvidenceReference": [
+        "A.cost_reaction"
+      ],
+      "ownerRationale": "The mechanic directly permits an opposing Officer to make the opposed check as a Reaction. Action-type semantics apply to directly affected participants, not only the talent user.",
+      "ownerPolicyApplied": "ACTION_TYPE_POLICY"
+    },
+    {
+      "decisionId": "TALENT:f259cf27c1b62c47|reaction",
+      "batch": "3B.1",
+      "domain": "TALENT",
+      "canonicalId": "f259cf27c1b62c47",
+      "name": "Tactical Superiority",
+      "tag": "reaction",
+      "ownerAction": "ADD",
+      "detectorEvidenceReference": [
+        "A.cost_reaction"
+      ],
+      "ownerRationale": "The talent directly grants selected allies reaction movement.",
+      "ownerPolicyApplied": "ACTION_TYPE_POLICY"
+    },
+    {
+      "decisionId": "FEAT:313095ada7504547|swift_action",
+      "batch": "3B.1",
+      "domain": "FEAT",
+      "canonicalId": "313095ada7504547",
+      "name": "Signature Device",
+      "tag": "swift_action",
+      "ownerAction": "ADD",
+      "detectorEvidenceReference": [
+        "A.cost_swift"
+      ],
+      "ownerRationale": "Switching the active Tech Specialist trait is explicitly a swift action.",
+      "ownerPolicyApplied": "ACTION_TYPE_POLICY"
+    },
+    {
+      "decisionId": "FEAT:313095ada7504547|action_economy",
+      "batch": "3B.1",
+      "domain": "FEAT",
+      "canonicalId": "313095ada7504547",
+      "name": "Signature Device",
+      "tag": "action_economy",
+      "ownerAction": "ADD",
+      "detectorEvidenceReference": [
+        "A.any_action_cost"
+      ],
+      "ownerRationale": "Switching the active Tech Specialist trait is explicitly a swift action.",
+      "ownerPolicyApplied": "ACTION_TYPE_POLICY"
+    },
+    {
+      "decisionId": "TALENT:1946e16d1e6c831c|swift_action",
+      "batch": "3B.1",
+      "domain": "TALENT",
+      "canonicalId": "1946e16d1e6c831c",
+      "name": "Out of Harm's Way",
+      "tag": "swift_action",
+      "ownerAction": "ADD",
+      "detectorEvidenceReference": [
+        "A.cost_swift"
+      ],
+      "ownerRationale": "Its operative interaction with Harm's Way explicitly preserves the required swift-action activation cost while adding the reaction behavior. action_economy already exists.",
+      "ownerPolicyApplied": "ACTION_TYPE_POLICY"
+    },
+    {
+      "decisionId": "TALENT:6b09fe0c6fe98367|swift_action",
+      "batch": "3B.1",
+      "domain": "TALENT",
+      "canonicalId": "6b09fe0c6fe98367",
+      "name": "Sow Confusion",
+      "tag": "swift_action",
+      "ownerAction": "ADD",
+      "detectorEvidenceReference": [
+        "A.cost_swift"
+      ],
+      "ownerRationale": "The talent directly imposes an additional swift-action cost on affected enemies. action_economy already exists.",
+      "ownerPolicyApplied": "ACTION_TYPE_POLICY"
+    },
+    {
+      "decisionId": "TALENT:7f4edcb8aa830972|swift_action",
+      "batch": "3B.1",
+      "domain": "TALENT",
+      "canonicalId": "7f4edcb8aa830972",
+      "name": "Hard Target",
+      "tag": "swift_action",
+      "ownerAction": "ADD",
+      "detectorEvidenceReference": [
+        "A.cost_swift"
+      ],
+      "ownerRationale": "The talent explicitly converts second wind from its swift-action timing into a reaction. It directly modifies both action types. reaction and action_economy already exist.",
+      "ownerPolicyApplied": "ACTION_TYPE_POLICY"
+    },
+    {
+      "decisionId": "FEAT:125c328c4573890a|move_action",
+      "batch": "3B.1",
+      "domain": "FEAT",
+      "canonicalId": "125c328c4573890a",
+      "name": "Ascension Specialists",
+      "tag": "move_action",
+      "ownerAction": "ADD",
+      "detectorEvidenceReference": [
+        "A.cost_move"
+      ],
+      "ownerRationale": "The feat directly allows climbing at half speed as a move action.",
+      "ownerPolicyApplied": "ACTION_TYPE_POLICY"
+    },
+    {
+      "decisionId": "FEAT:125c328c4573890a|action_economy",
+      "batch": "3B.1",
+      "domain": "FEAT",
+      "canonicalId": "125c328c4573890a",
+      "name": "Ascension Specialists",
+      "tag": "action_economy",
+      "ownerAction": "ADD",
+      "detectorEvidenceReference": [
+        "A.any_action_cost"
+      ],
+      "ownerRationale": "The feat directly allows climbing at half speed as a move action.",
+      "ownerPolicyApplied": "ACTION_TYPE_POLICY"
+    },
+    {
+      "decisionId": "FEAT:55483fd350b3ba28|move_action",
+      "batch": "3B.1",
+      "domain": "FEAT",
+      "canonicalId": "55483fd350b3ba28",
+      "name": "Aquatic Specialists",
+      "tag": "move_action",
+      "ownerAction": "ADD",
+      "detectorEvidenceReference": [
+        "A.cost_move"
+      ],
+      "ownerRationale": "The feat directly allows swimming at half speed as a move action.",
+      "ownerPolicyApplied": "ACTION_TYPE_POLICY"
+    },
+    {
+      "decisionId": "FEAT:55483fd350b3ba28|action_economy",
+      "batch": "3B.1",
+      "domain": "FEAT",
+      "canonicalId": "55483fd350b3ba28",
+      "name": "Aquatic Specialists",
+      "tag": "action_economy",
+      "ownerAction": "ADD",
+      "detectorEvidenceReference": [
+        "A.any_action_cost"
+      ],
+      "ownerRationale": "The feat directly allows swimming at half speed as a move action.",
+      "ownerPolicyApplied": "ACTION_TYPE_POLICY"
+    },
+    {
+      "decisionId": "TALENT:dfb9e58c7bcb095c|move_action",
+      "batch": "3B.1",
+      "domain": "TALENT",
+      "canonicalId": "dfb9e58c7bcb095c",
+      "name": "Jedi Quarry",
+      "tag": "move_action",
+      "ownerAction": "ADD",
+      "detectorEvidenceReference": [
+        "A.cost_move"
+      ],
+      "ownerRationale": "The talent directly modifies movement specifically when the character spends a move action to move. action_economy already exists.",
+      "ownerPolicyApplied": "ACTION_TYPE_POLICY"
+    },
+    {
+      "decisionId": "TALENT:696f7eed2cc08299|standard_action",
+      "batch": "3B.1",
+      "domain": "TALENT",
+      "canonicalId": "696f7eed2cc08299",
+      "name": "Deep Space Raider",
+      "tag": "standard_action",
+      "ownerAction": "ADD",
+      "detectorEvidenceReference": [
+        "A.cost_standard"
+      ],
+      "ownerRationale": "Clear a Path is explicitly performed as a standard action. action_economy already exists.",
+      "ownerPolicyApplied": "ACTION_TYPE_POLICY"
+    },
+    {
+      "decisionId": "TALENT:8306c13c16ae0af8|standard_action",
+      "batch": "3B.1",
+      "domain": "TALENT",
+      "canonicalId": "8306c13c16ae0af8",
+      "name": "Harrying Shot",
+      "tag": "standard_action",
+      "ownerAction": "ADD",
+      "detectorEvidenceReference": [
+        "A.cost_standard"
+      ],
+      "ownerRationale": "The talent directly prohibits the target from using a standard action to make an attack. action_economy already exists.",
+      "ownerPolicyApplied": "ACTION_TYPE_POLICY"
+    },
+    {
+      "decisionId": "TALENT:8d0657e7ade688bd|standard_action",
+      "batch": "3B.1",
+      "domain": "TALENT",
+      "canonicalId": "8d0657e7ade688bd",
+      "name": "Scripted Routines",
+      "tag": "standard_action",
+      "ownerAction": "ADD",
+      "detectorEvidenceReference": [
+        "A.cost_standard"
+      ],
+      "ownerRationale": "Explicit owner completion ruling beyond the detector's single surfaced tag: Attack Script directly changes action costs (full-round -> standard, standard -> move, move -> swift, swift -> free) and Skill Script references skills requiring a standard action or less, so the talent directly manipulates all three currently modeled specific action types. action_economy already exists. No full_round_action or free_action tag is created.",
+      "ownerPolicyApplied": "ACTION_TYPE_POLICY",
+      "ownerDirectedCompletionBeyondDetector": [
+        "move_action",
+        "swift_action"
+      ]
+    },
+    {
+      "decisionId": "TALENT:8d0657e7ade688bd|move_action",
+      "batch": "3B.1",
+      "domain": "TALENT",
+      "canonicalId": "8d0657e7ade688bd",
+      "name": "Scripted Routines",
+      "tag": "move_action",
+      "ownerAction": "ADD",
+      "detectorEvidenceReference": [
+        "OWNER_COMPLETION_RULING"
+      ],
+      "ownerRationale": "Explicit owner completion ruling beyond the detector's single surfaced tag: Attack Script directly changes action costs (full-round -> standard, standard -> move, move -> swift, swift -> free) and Skill Script references skills requiring a standard action or less, so the talent directly manipulates all three currently modeled specific action types. action_economy already exists. No full_round_action or free_action tag is created.",
+      "ownerPolicyApplied": "ACTION_TYPE_POLICY",
+      "ownerDirectedCompletionBeyondDetector": [
+        "move_action",
+        "swift_action"
+      ]
+    },
+    {
+      "decisionId": "TALENT:8d0657e7ade688bd|swift_action",
+      "batch": "3B.1",
+      "domain": "TALENT",
+      "canonicalId": "8d0657e7ade688bd",
+      "name": "Scripted Routines",
+      "tag": "swift_action",
+      "ownerAction": "ADD",
+      "detectorEvidenceReference": [
+        "OWNER_COMPLETION_RULING"
+      ],
+      "ownerRationale": "Explicit owner completion ruling beyond the detector's single surfaced tag: Attack Script directly changes action costs (full-round -> standard, standard -> move, move -> swift, swift -> free) and Skill Script references skills requiring a standard action or less, so the talent directly manipulates all three currently modeled specific action types. action_economy already exists. No full_round_action or free_action tag is created.",
+      "ownerPolicyApplied": "ACTION_TYPE_POLICY",
+      "ownerDirectedCompletionBeyondDetector": [
+        "move_action",
+        "swift_action"
+      ]
+    },
+    {
+      "decisionId": "TALENT:f557b3331b5158c8|standard_action",
+      "batch": "3B.1",
+      "domain": "TALENT",
+      "canonicalId": "f557b3331b5158c8",
+      "name": "Battle Mount",
+      "tag": "standard_action",
+      "ownerAction": "ADD",
+      "detectorEvidenceReference": [
+        "A.cost_standard"
+      ],
+      "ownerRationale": "The talent directly permits an attack as a standard action and also converts the mount's normal standard-action attack into a swift action. swift_action and action_economy already exist.",
+      "ownerPolicyApplied": "ACTION_TYPE_POLICY"
+    },
+    {
+      "decisionId": "FEAT:600f43af4edb16f7|action_economy",
+      "batch": "3B.1",
+      "domain": "FEAT",
+      "canonicalId": "600f43af4edb16f7",
+      "name": "Whirlwind Attack",
+      "tag": "action_economy",
+      "ownerAction": "ADD",
+      "detectorEvidenceReference": [
+        "A.any_action_cost"
+      ],
+      "ownerRationale": "Directly specifies a full-round-action cost or timing in its operative mechanic. No full_round_action tag is created.",
+      "ownerPolicyApplied": "FULL_ROUND_ACTION_POLICY"
+    },
+    {
+      "decisionId": "FEAT:80805c30ea6dd11e|action_economy",
+      "batch": "3B.1",
+      "domain": "FEAT",
+      "canonicalId": "80805c30ea6dd11e",
+      "name": "Aiming Accuracy",
+      "tag": "action_economy",
+      "ownerAction": "ADD",
+      "detectorEvidenceReference": [
+        "A.any_action_cost"
+      ],
+      "ownerRationale": "Directly specifies a full-round-action cost or timing in its operative mechanic. No full_round_action tag is created.",
+      "ownerPolicyApplied": "FULL_ROUND_ACTION_POLICY"
+    },
+    {
+      "decisionId": "FEAT:9af3ba38a2c671b8|action_economy",
+      "batch": "3B.1",
+      "domain": "FEAT",
+      "canonicalId": "9af3ba38a2c671b8",
+      "name": "Feat of Strength",
+      "tag": "action_economy",
+      "ownerAction": "ADD",
+      "detectorEvidenceReference": [
+        "A.any_action_cost"
+      ],
+      "ownerRationale": "Directly specifies a full-round-action cost or timing in its operative mechanic. No full_round_action tag is created.",
+      "ownerPolicyApplied": "FULL_ROUND_ACTION_POLICY"
+    },
+    {
+      "decisionId": "FEAT:d48614f7ae500a5b|action_economy",
+      "batch": "3B.1",
+      "domain": "FEAT",
+      "canonicalId": "d48614f7ae500a5b",
+      "name": "Logic Upgrade: Skill Swap",
+      "tag": "action_economy",
+      "ownerAction": "ADD",
+      "detectorEvidenceReference": [
+        "A.any_action_cost"
+      ],
+      "ownerRationale": "Directly specifies a full-round-action cost or timing in its operative mechanic. No full_round_action tag is created.",
+      "ownerPolicyApplied": "FULL_ROUND_ACTION_POLICY"
+    },
+    {
+      "decisionId": "FEAT:f59c9679c02b8896|action_economy",
+      "batch": "3B.1",
+      "domain": "FEAT",
+      "canonicalId": "f59c9679c02b8896",
+      "name": "Metamorph",
+      "tag": "action_economy",
+      "ownerAction": "ADD",
+      "detectorEvidenceReference": [
+        "A.any_action_cost"
+      ],
+      "ownerRationale": "Directly specifies a full-round-action cost or timing in its operative mechanic. No full_round_action tag is created.",
+      "ownerPolicyApplied": "FULL_ROUND_ACTION_POLICY"
+    },
+    {
+      "decisionId": "TALENT:0df15b0ea7721c50|action_economy",
+      "batch": "3B.1",
+      "domain": "TALENT",
+      "canonicalId": "0df15b0ea7721c50",
+      "name": "Infuse Weapon",
+      "tag": "action_economy",
+      "ownerAction": "ADD",
+      "detectorEvidenceReference": [
+        "A.any_action_cost"
+      ],
+      "ownerRationale": "Directly specifies a full-round-action cost or timing in its operative mechanic. No full_round_action tag is created.",
+      "ownerPolicyApplied": "FULL_ROUND_ACTION_POLICY"
+    },
+    {
+      "decisionId": "TALENT:1204459eaaff9efa|action_economy",
+      "batch": "3B.1",
+      "domain": "TALENT",
+      "canonicalId": "1204459eaaff9efa",
+      "name": "Planetary Attunement",
+      "tag": "action_economy",
+      "ownerAction": "ADD",
+      "detectorEvidenceReference": [
+        "A.any_action_cost"
+      ],
+      "ownerRationale": "Directly specifies a full-round-action cost or timing in its operative mechanic. No full_round_action tag is created.",
+      "ownerPolicyApplied": "FULL_ROUND_ACTION_POLICY"
+    },
+    {
+      "decisionId": "TALENT:4a3fdcd0f32062b2|action_economy",
+      "batch": "3B.1",
+      "domain": "TALENT",
+      "canonicalId": "4a3fdcd0f32062b2",
+      "name": "Turn the Tide",
+      "tag": "action_economy",
+      "ownerAction": "ADD",
+      "detectorEvidenceReference": [
+        "A.any_action_cost"
+      ],
+      "ownerRationale": "Directly specifies a full-round-action cost or timing in its operative mechanic. No full_round_action tag is created.",
+      "ownerPolicyApplied": "FULL_ROUND_ACTION_POLICY"
+    },
+    {
+      "decisionId": "TALENT:959f16cb707d8360|action_economy",
+      "batch": "3B.1",
+      "domain": "TALENT",
+      "canonicalId": "959f16cb707d8360",
+      "name": "Bomb Thrower",
+      "tag": "action_economy",
+      "ownerAction": "ADD",
+      "detectorEvidenceReference": [
+        "A.any_action_cost"
+      ],
+      "ownerRationale": "Directly specifies a full-round-action cost or timing in its operative mechanic. No full_round_action tag is created.",
+      "ownerPolicyApplied": "FULL_ROUND_ACTION_POLICY"
+    },
+    {
+      "decisionId": "TALENT:d32459fe16029f2a|action_economy",
+      "batch": "3B.1",
+      "domain": "TALENT",
+      "canonicalId": "d32459fe16029f2a",
+      "name": "Dull the Pain",
+      "tag": "action_economy",
+      "ownerAction": "ADD",
+      "detectorEvidenceReference": [
+        "A.any_action_cost"
+      ],
+      "ownerRationale": "Directly specifies a full-round-action cost or timing in its operative mechanic. No full_round_action tag is created.",
+      "ownerPolicyApplied": "FULL_ROUND_ACTION_POLICY"
+    },
+    {
+      "decisionId": "TALENT:ec3e6a05561ddc07|resource_spend",
+      "batch": "3B.1",
+      "domain": "TALENT",
+      "canonicalId": "ec3e6a05561ddc07",
+      "name": "Suppress Force",
+      "tag": "resource_spend",
+      "ownerAction": "ADD",
+      "detectorEvidenceReference": [
+        "C.resource_spend"
+      ],
+      "ownerRationale": "The talent directly spends one use of the mind trick Force power as part of its reaction mechanic: explicit consumption of a limited tracked resource/use.",
+      "ownerPolicyApplied": "RESOURCE_SPEND_POLICY"
+    },
+    {
+      "decisionId": "TALENT:f8ac7fecc8d3c8ff|resource_recovery",
+      "batch": "3B.1",
+      "domain": "TALENT",
+      "canonicalId": "f8ac7fecc8d3c8ff",
+      "name": "Precognitive Meditation",
+      "tag": "resource_recovery",
+      "ownerAction": "ADD",
+      "detectorEvidenceReference": [
+        "C.resource_recovery"
+      ],
+      "ownerRationale": "If the stored defensive effect is not used, the character directly regains the Force Point previously spent on the meditation: a literal refund/restoration of an expended resource.",
+      "ownerPolicyApplied": "RESOURCE_RECOVERY_POLICY"
+    },
+    {
+      "decisionId": "TALENT:98355ed4f6473028|once-per-encounter",
+      "batch": "3B.1",
+      "domain": "TALENT",
+      "canonicalId": "98355ed4f6473028",
+      "name": "Armored Augmentation I",
+      "tag": "once-per-encounter",
+      "ownerAction": "ADD",
+      "detectorEvidenceReference": [
+        "C.once_per_encounter"
+      ],
+      "ownerRationale": "The talent itself explicitly begins \"Once per encounter...\": the record's own activation limitation.",
+      "ownerPolicyApplied": "ONCE_PER_ENCOUNTER_POLICY"
+    },
+    {
+      "decisionId": "FEAT:53444cc061d81627|force_capacity",
+      "batch": "3B.1",
+      "domain": "FEAT",
+      "canonicalId": "53444cc061d81627",
+      "name": "Force Boon",
+      "tag": "force_capacity",
+      "ownerAction": "ADD",
+      "detectorEvidenceReference": [
+        "C.force_capacity"
+      ],
+      "ownerRationale": "The feat directly grants three additional Force Points at each level, increasing the character's available Force Point allotment. No change to its existing tags in this batch; capacity and recovery are separate semantics.",
+      "ownerPolicyApplied": "FORCE_CAPACITY_POLICY"
+    },
+    {
+      "decisionId": "TALENT:153f4b3c6510023d|reroll",
+      "batch": "3B.1",
+      "domain": "TALENT",
+      "canonicalId": "153f4b3c6510023d",
+      "name": "Visionary Defense",
+      "tag": "reroll",
+      "ownerAction": "NO_CHANGE",
+      "detectorEvidenceReference": [
+        "B.reroll"
+      ],
+      "ownerRationale": "The talent does not itself grant or require a reroll. The sentence about multiple characters not being able to use the talent on the same attack to allow multiple rerolls is contextual/reference wording, not the operative effect. One owner decision for this canonical ID and tag regardless of how many discovery channels preserve evidence.",
+      "ownerPolicyApplied": "REROLL_POLICY"
+    },
+    {
+      "decisionId": "FEAT:baff0da30d0bc8ee|reliability",
+      "batch": "3B.1",
+      "domain": "FEAT",
+      "canonicalId": "baff0da30d0bc8ee",
+      "name": "Force of Personality",
+      "tag": "reliability",
+      "ownerAction": "NO_CHANGE",
+      "detectorEvidenceReference": [
+        "B.roll_twice_keep"
+      ],
+      "ownerRationale": "Choosing the better applicable Wisdom or Charisma modifier for Will Defense is not rolling twice/selecting a roll result and is not the reliability mechanic represented by this tag.",
+      "ownerPolicyApplied": "RELIABILITY_POLICY"
+    },
+    {
+      "decisionId": "FEAT:1f404db00518aeed|reliability",
+      "batch": "3B.1",
+      "domain": "FEAT",
+      "canonicalId": "1f404db00518aeed",
+      "name": "Damage Conversion",
+      "tag": "reliability",
+      "ownerAction": "NO_CHANGE",
+      "detectorEvidenceReference": [
+        "B.take_10_20"
+      ],
+      "ownerRationale": "\"Take 10 additional damage\" is unrelated to the Take 10 skill mechanic.",
+      "ownerPolicyApplied": "RELIABILITY_POLICY"
+    },
+    {
+      "decisionId": "FEAT:bf6c01fa590a3f75|reliability",
+      "batch": "3B.1",
+      "domain": "FEAT",
+      "canonicalId": "bf6c01fa590a3f75",
+      "name": "Biotech Specialist",
+      "tag": "reliability",
+      "ownerAction": "NO_CHANGE",
+      "detectorEvidenceReference": [
+        "B.take_10_20"
+      ],
+      "ownerRationale": "The rule explicitly prohibits Take 10/20. A prohibition does not create the positive reliability semantic.",
+      "ownerPolicyApplied": "RELIABILITY_POLICY"
+    },
+    {
+      "decisionId": "TALENT:0290634450ab1637|reliability",
+      "batch": "3B.1",
+      "domain": "TALENT",
+      "canonicalId": "0290634450ab1637",
+      "name": "Electronic Sabotage",
+      "tag": "reliability",
+      "ownerAction": "NO_CHANGE",
+      "detectorEvidenceReference": [
+        "B.take_10_20"
+      ],
+      "ownerRationale": "The talent explicitly prohibits taking 20 on the check. This is not a positive reliability mechanic.",
+      "ownerPolicyApplied": "RELIABILITY_POLICY"
+    },
+    {
+      "decisionId": "TALENT:462df9a631ee50f4|force_point_spend",
+      "batch": "3B.1",
+      "domain": "TALENT",
+      "canonicalId": "462df9a631ee50f4",
+      "name": "Past Visions",
+      "tag": "force_point_spend",
+      "ownerAction": "NO_CHANGE",
+      "detectorEvidenceReference": [
+        "C.force_point_spend"
+      ],
+      "ownerRationale": "Match generated by avoiding a Force Point expenditure, stating something does not count as spending one, describing later optional expenditure of a resource, referencing another Force power's Force Point condition, or replacing/avoiding an otherwise normal expenditure; not an actual Force Point expenditure created by the record's operative mechanic.",
+      "ownerPolicyApplied": "FORCE_POINT_SPEND_POLICY"
+    },
+    {
+      "decisionId": "TALENT:8223d30bfce0c14d|force_point_spend",
+      "batch": "3B.1",
+      "domain": "TALENT",
+      "canonicalId": "8223d30bfce0c14d",
+      "name": "Surge of Light",
+      "tag": "force_point_spend",
+      "ownerAction": "NO_CHANGE",
+      "detectorEvidenceReference": [
+        "C.force_point_spend"
+      ],
+      "ownerRationale": "Match generated by avoiding a Force Point expenditure, stating something does not count as spending one, describing later optional expenditure of a resource, referencing another Force power's Force Point condition, or replacing/avoiding an otherwise normal expenditure; not an actual Force Point expenditure created by the record's operative mechanic.",
+      "ownerPolicyApplied": "FORCE_POINT_SPEND_POLICY"
+    },
+    {
+      "decisionId": "TALENT:8ddbbeb09758295d|force_point_spend",
+      "batch": "3B.1",
+      "domain": "TALENT",
+      "canonicalId": "8ddbbeb09758295d",
+      "name": "Telekinetic Vigilance",
+      "tag": "force_point_spend",
+      "ownerAction": "NO_CHANGE",
+      "detectorEvidenceReference": [
+        "C.force_point_spend"
+      ],
+      "ownerRationale": "Match generated by avoiding a Force Point expenditure, stating something does not count as spending one, describing later optional expenditure of a resource, referencing another Force power's Force Point condition, or replacing/avoiding an otherwise normal expenditure; not an actual Force Point expenditure created by the record's operative mechanic.",
+      "ownerPolicyApplied": "FORCE_POINT_SPEND_POLICY"
+    },
+    {
+      "decisionId": "TALENT:ab9f1497d0b2d7c2|force_point_spend",
+      "batch": "3B.1",
+      "domain": "TALENT",
+      "canonicalId": "ab9f1497d0b2d7c2",
+      "name": "WatchCircle Initiate",
+      "tag": "force_point_spend",
+      "ownerAction": "NO_CHANGE",
+      "detectorEvidenceReference": [
+        "C.force_point_spend"
+      ],
+      "ownerRationale": "Match generated by avoiding a Force Point expenditure, stating something does not count as spending one, describing later optional expenditure of a resource, referencing another Force power's Force Point condition, or replacing/avoiding an otherwise normal expenditure; not an actual Force Point expenditure created by the record's operative mechanic.",
+      "ownerPolicyApplied": "FORCE_POINT_SPEND_POLICY"
+    },
+    {
+      "decisionId": "TALENT:b0898acb0a19a3cd|force_point_spend",
+      "batch": "3B.1",
+      "domain": "TALENT",
+      "canonicalId": "b0898acb0a19a3cd",
+      "name": "Force Flow",
+      "tag": "force_point_spend",
+      "ownerAction": "NO_CHANGE",
+      "detectorEvidenceReference": [
+        "C.force_point_spend"
+      ],
+      "ownerRationale": "Match generated by avoiding a Force Point expenditure, stating something does not count as spending one, describing later optional expenditure of a resource, referencing another Force power's Force Point condition, or replacing/avoiding an otherwise normal expenditure; not an actual Force Point expenditure created by the record's operative mechanic.",
+      "ownerPolicyApplied": "FORCE_POINT_SPEND_POLICY"
+    },
+    {
+      "decisionId": "TALENT:b47beb909e6fce63|force_point_spend",
+      "batch": "3B.1",
+      "domain": "TALENT",
+      "canonicalId": "b47beb909e6fce63",
+      "name": "Dark Side Savant",
+      "tag": "force_point_spend",
+      "ownerAction": "NO_CHANGE",
+      "detectorEvidenceReference": [
+        "C.force_point_spend"
+      ],
+      "ownerRationale": "Match generated by avoiding a Force Point expenditure, stating something does not count as spending one, describing later optional expenditure of a resource, referencing another Force power's Force Point condition, or replacing/avoiding an otherwise normal expenditure; not an actual Force Point expenditure created by the record's operative mechanic.",
+      "ownerPolicyApplied": "FORCE_POINT_SPEND_POLICY"
+    },
+    {
+      "decisionId": "TALENT:ced81064716debaa|force_point_spend",
+      "batch": "3B.1",
+      "domain": "TALENT",
+      "canonicalId": "ced81064716debaa",
+      "name": "Influence Savant",
+      "tag": "force_point_spend",
+      "ownerAction": "NO_CHANGE",
+      "detectorEvidenceReference": [
+        "C.force_point_spend"
+      ],
+      "ownerRationale": "Match generated by avoiding a Force Point expenditure, stating something does not count as spending one, describing later optional expenditure of a resource, referencing another Force power's Force Point condition, or replacing/avoiding an otherwise normal expenditure; not an actual Force Point expenditure created by the record's operative mechanic.",
+      "ownerPolicyApplied": "FORCE_POINT_SPEND_POLICY"
+    },
+    {
+      "decisionId": "TALENT:d1ced133cee0a6fa|force_point_spend",
+      "batch": "3B.1",
+      "domain": "TALENT",
+      "canonicalId": "d1ced133cee0a6fa",
+      "name": "Surrender to the Current",
+      "tag": "force_point_spend",
+      "ownerAction": "NO_CHANGE",
+      "detectorEvidenceReference": [
+        "C.force_point_spend"
+      ],
+      "ownerRationale": "Match generated by avoiding a Force Point expenditure, stating something does not count as spending one, describing later optional expenditure of a resource, referencing another Force power's Force Point condition, or replacing/avoiding an otherwise normal expenditure; not an actual Force Point expenditure created by the record's operative mechanic.",
+      "ownerPolicyApplied": "FORCE_POINT_SPEND_POLICY"
+    },
+    {
+      "decisionId": "TALENT:ddacb8e4517da6b5|force_point_spend",
+      "batch": "3B.1",
+      "domain": "TALENT",
+      "canonicalId": "ddacb8e4517da6b5",
+      "name": "Telekinetic Savant",
+      "tag": "force_point_spend",
+      "ownerAction": "NO_CHANGE",
+      "detectorEvidenceReference": [
+        "C.force_point_spend"
+      ],
+      "ownerRationale": "Match generated by avoiding a Force Point expenditure, stating something does not count as spending one, describing later optional expenditure of a resource, referencing another Force power's Force Point condition, or replacing/avoiding an otherwise normal expenditure; not an actual Force Point expenditure created by the record's operative mechanic.",
+      "ownerPolicyApplied": "FORCE_POINT_SPEND_POLICY"
+    },
+    {
+      "decisionId": "TALENT:f541b5e57c5af27e|force_point_spend",
+      "batch": "3B.1",
+      "domain": "TALENT",
+      "canonicalId": "f541b5e57c5af27e",
+      "name": "Sheltering Stance",
+      "tag": "force_point_spend",
+      "ownerAction": "NO_CHANGE",
+      "detectorEvidenceReference": [
+        "C.force_point_spend"
+      ],
+      "ownerRationale": "Match generated by avoiding a Force Point expenditure, stating something does not count as spending one, describing later optional expenditure of a resource, referencing another Force power's Force Point condition, or replacing/avoiding an otherwise normal expenditure; not an actual Force Point expenditure created by the record's operative mechanic.",
+      "ownerPolicyApplied": "FORCE_POINT_SPEND_POLICY"
+    },
+    {
+      "decisionId": "TALENT:f5ebaf5d77257e0c|force_point_spend",
+      "batch": "3B.1",
+      "domain": "TALENT",
+      "canonicalId": "f5ebaf5d77257e0c",
+      "name": "Wrath of the Dark Side",
+      "tag": "force_point_spend",
+      "ownerAction": "NO_CHANGE",
+      "detectorEvidenceReference": [
+        "C.force_point_spend"
+      ],
+      "ownerRationale": "Match generated by avoiding a Force Point expenditure, stating something does not count as spending one, describing later optional expenditure of a resource, referencing another Force power's Force Point condition, or replacing/avoiding an otherwise normal expenditure; not an actual Force Point expenditure created by the record's operative mechanic.",
+      "ownerPolicyApplied": "FORCE_POINT_SPEND_POLICY"
+    },
+    {
+      "decisionId": "TALENT:fcc6357b5b33dbb7|force_point_spend",
+      "batch": "3B.1",
+      "domain": "TALENT",
+      "canonicalId": "fcc6357b5b33dbb7",
+      "name": "Lightsaber Form Savant",
+      "tag": "force_point_spend",
+      "ownerAction": "NO_CHANGE",
+      "detectorEvidenceReference": [
+        "C.force_point_spend"
+      ],
+      "ownerRationale": "Match generated by avoiding a Force Point expenditure, stating something does not count as spending one, describing later optional expenditure of a resource, referencing another Force power's Force Point condition, or replacing/avoiding an otherwise normal expenditure; not an actual Force Point expenditure created by the record's operative mechanic.",
+      "ownerPolicyApplied": "FORCE_POINT_SPEND_POLICY"
+    },
+    {
+      "decisionId": "TALENT:b0898acb0a19a3cd|resource_spend",
+      "batch": "3B.1",
+      "domain": "TALENT",
+      "canonicalId": "b0898acb0a19a3cd",
+      "name": "Force Flow",
+      "tag": "resource_spend",
+      "ownerAction": "NO_CHANGE",
+      "detectorEvidenceReference": [
+        "C.resource_spend"
+      ],
+      "ownerRationale": "The talent generates a temporary Force Point. That it may later be spent before expiration does not mean the talent itself consumes a resource.",
+      "ownerPolicyApplied": "RESOURCE_SPEND_POLICY"
+    },
+    {
+      "decisionId": "TALENT:f541b5e57c5af27e|resource_spend",
+      "batch": "3B.1",
+      "domain": "TALENT",
+      "canonicalId": "f541b5e57c5af27e",
+      "name": "Sheltering Stance",
+      "tag": "resource_spend",
+      "ownerAction": "NO_CHANGE",
+      "detectorEvidenceReference": [
+        "C.resource_spend"
+      ],
+      "ownerRationale": "The talent removes/avoids a Force Point expenditure. It does not spend a resource.",
+      "ownerPolicyApplied": "RESOURCE_SPEND_POLICY"
+    },
+    {
+      "decisionId": "TALENT:323cc243fef47675|resource_recovery",
+      "batch": "3B.1",
+      "domain": "TALENT",
+      "canonicalId": "323cc243fef47675",
+      "name": "Skillful Recovery",
+      "tag": "resource_recovery",
+      "ownerAction": "NO_CHANGE",
+      "detectorEvidenceReference": [
+        "C.resource_recovery"
+      ],
+      "ownerRationale": "The talent creates a new temporary Force Point after a failed skill check. It does not restore a previously spent resource.",
+      "ownerPolicyApplied": "RESOURCE_RECOVERY_POLICY"
+    },
+    {
+      "decisionId": "TALENT:a691cc0212b6176c|resource_recovery",
+      "batch": "3B.1",
+      "domain": "TALENT",
+      "canonicalId": "a691cc0212b6176c",
+      "name": "Force Recovery",
+      "tag": "resource_recovery",
+      "ownerAction": "NO_CHANGE",
+      "detectorEvidenceReference": [
+        "C.resource_recovery"
+      ],
+      "ownerRationale": "Despite the name, this talent increases hit points regained from second wind: healing/recovery, not recovery of a tracked expendable resource.",
+      "ownerPolicyApplied": "RESOURCE_RECOVERY_POLICY"
+    },
+    {
+      "decisionId": "TALENT:e6c4f05db6ac6c06|resource_recovery",
+      "batch": "3B.1",
+      "domain": "TALENT",
+      "canonicalId": "e6c4f05db6ac6c06",
+      "name": "Master Advisor",
+      "tag": "resource_recovery",
+      "ownerAction": "NO_CHANGE",
+      "detectorEvidenceReference": [
+        "C.resource_recovery"
+      ],
+      "ownerRationale": "It grants a new temporary Force Point to an ally. It does not restore a previously spent resource.",
+      "ownerPolicyApplied": "RESOURCE_RECOVERY_POLICY"
+    },
+    {
+      "decisionId": "TALENT:f5ebaf5d77257e0c|resource_recovery",
+      "batch": "3B.1",
+      "domain": "TALENT",
+      "canonicalId": "f5ebaf5d77257e0c",
+      "name": "Wrath of the Dark Side",
+      "tag": "resource_recovery",
+      "ownerAction": "NO_CHANGE",
+      "detectorEvidenceReference": [
+        "C.resource_recovery"
+      ],
+      "ownerRationale": "The talent explicitly replaces/foregoes the normal spent-Force-power recovery triggered by the natural 20. The selected effect is extra damage, not resource recovery.",
+      "ownerPolicyApplied": "RESOURCE_RECOVERY_POLICY"
+    },
+    {
+      "decisionId": "TALENT:45c4e72d74c44acb|once-per-encounter",
+      "batch": "3B.1",
+      "domain": "TALENT",
+      "canonicalId": "45c4e72d74c44acb",
+      "name": "Mystical Link",
+      "tag": "once-per-encounter",
+      "ownerAction": "NO_CHANGE",
+      "detectorEvidenceReference": [
+        "C.once_per_encounter"
+      ],
+      "ownerRationale": "It can grant an additional use of another Force-related ability normally restricted to once per encounter. The quoted limitation belongs to the recovered/extended ability, not to Mystical Link's own activation frequency. Its existing resource-recovery semantics already represent that interaction.",
+      "ownerPolicyApplied": "ONCE_PER_ENCOUNTER_POLICY"
+    },
+    {
+      "decisionId": "TALENT:cfd5d3f677b2bf1a|once-per-encounter",
+      "batch": "3B.1",
+      "domain": "TALENT",
+      "canonicalId": "cfd5d3f677b2bf1a",
+      "name": "Feared Warrior",
+      "tag": "once-per-encounter",
+      "ownerAction": "NO_CHANGE",
+      "detectorEvidenceReference": [
+        "C.once_per_encounter"
+      ],
+      "ownerRationale": "The talent may trigger more than once; any given target can only be affected once per encounter. A per-target immunity/restriction, not a global once-per-encounter use limit on the talent.",
+      "ownerPolicyApplied": "ONCE_PER_ENCOUNTER_POLICY"
+    }
+  ]
+}
