@@ -1,0 +1,6103 @@
+{
+  "schemaVersion": "1.0",
+  "kind": "TALENT_FEAT_PHASE3D_ONTOLOGY_AUTHORITY_CANDIDATE",
+  "status": "CANDIDATE_PENDING_OWNER_RULINGS",
+  "note": "Definitions are mechanically synthesized from existing owner policy text only. No tag created or retired.",
+  "counts": {
+    "tags": 187,
+    "ownerDefined": 25,
+    "partiallyOwnerDefined": 31,
+    "ownerDefinitionRequired": 131,
+    "ontologyGaps": 3,
+    "hardImplicationRules": 10
+  },
+  "hardImplications": [
+    {
+      "if": "reroll",
+      "requires": "reliability"
+    },
+    {
+      "if": "reaction",
+      "requires": "action_economy"
+    },
+    {
+      "if": "swift_action",
+      "requires": "action_economy"
+    },
+    {
+      "if": "move_action",
+      "requires": "action_economy"
+    },
+    {
+      "if": "standard_action",
+      "requires": "action_economy"
+    },
+    {
+      "if": "force_point_spend",
+      "requires": "resource_spend"
+    },
+    {
+      "if": "condition_removal",
+      "requires": "recovery"
+    },
+    {
+      "if": "use_the_force",
+      "requires": "force"
+    },
+    {
+      "if": "force_power_synergy",
+      "requires": "force"
+    },
+    {
+      "if": "ally_support",
+      "requires": "support"
+    }
+  ],
+  "ontologyGaps": [
+    {
+      "id": "condition_track",
+      "label": "Condition Track movement",
+      "state": "PHASE3_ONTOLOGY_GAP",
+      "feats": 16,
+      "talents": 79
+    },
+    {
+      "id": "full_round_action",
+      "label": "Full-round action",
+      "state": "PHASE3_ONTOLOGY_GAP",
+      "feats": 9,
+      "talents": 47
+    },
+    {
+      "id": "recurring_ion_mechanics",
+      "label": "Recurring ion mechanics (no ion tag; ion != stun)",
+      "state": "PHASE3_ONTOLOGY_GAP",
+      "feats": 4,
+      "talents": 3
+    }
+  ],
+  "tags": [
+    {
+      "tag": "ability_enhancement",
+      "definitionStatus": "OWNER_DEFINITION_REQUIRED",
+      "broadTag": false,
+      "synthesizedDefinition": null,
+      "partialAuthority": null,
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [],
+      "usage": {
+        "records": 49,
+        "feats": 13,
+        "talents": 36,
+        "pctOfCorpus": 3.182,
+        "domainStatus": "BOTH_DOMAINS",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [],
+        "detectorCount": 0,
+        "recordsMatchedByDetectors": 0
+      },
+      "openPolicyGap": null
+    },
+    {
+      "tag": "action_economy",
+      "definitionStatus": "PARTIALLY_OWNER_DEFINED",
+      "broadTag": false,
+      "synthesizedDefinition": null,
+      "partialAuthority": {
+        "policies": [
+          {
+            "policyId": "ACTION_TYPE_POLICY",
+            "text": "A named action-type tag (reaction, swift_action, move_action, standard_action) applies when the record's Benefit directly requires, allows, grants, changes into/from, imposes as an additional cost, prohibits or restricts, or changes another creature's use of that action type. The character using the feat/talent need not be the creature taking the action. Implications remain: reaction/swift_action/move_action/standard_action -> action_economy."
+          },
+          {
+            "policyId": "FULL_ROUND_ACTION_POLICY",
+            "text": "A direct full-round-action mechanic receives action_economy. There is no owner authorization to create a full_round_action tag; the full-round-action ontology-gap evidence is preserved for later ontology review."
+          }
+        ],
+        "ownerRulingFiles": []
+      },
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": [
+          "reaction",
+          "swift_action",
+          "move_action",
+          "standard_action"
+        ]
+      },
+      "controllingPolicyIds": [
+        "ACTION_TYPE_POLICY",
+        "FULL_ROUND_ACTION_POLICY"
+      ],
+      "usage": {
+        "records": 647,
+        "feats": 82,
+        "talents": 565,
+        "pctOfCorpus": 42.013,
+        "domainStatus": "BOTH_DOMAINS",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [
+          "A.grants_action",
+          "A.any_action_cost"
+        ],
+        "detectorCount": 2,
+        "recordsMatchedByDetectors": 508
+      },
+      "openPolicyGap": null
+    },
+    {
+      "tag": "alchemy",
+      "definitionStatus": "OWNER_DEFINITION_REQUIRED",
+      "broadTag": false,
+      "synthesizedDefinition": null,
+      "partialAuthority": null,
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [],
+      "usage": {
+        "records": 6,
+        "feats": 0,
+        "talents": 6,
+        "pctOfCorpus": 0.39,
+        "domainStatus": "TALENT_ONLY",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [],
+        "detectorCount": 0,
+        "recordsMatchedByDetectors": 0
+      },
+      "openPolicyGap": null
+    },
+    {
+      "tag": "ally-trigger",
+      "definitionStatus": "OWNER_DEFINITION_REQUIRED",
+      "broadTag": false,
+      "synthesizedDefinition": null,
+      "partialAuthority": null,
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [],
+      "usage": {
+        "records": 26,
+        "feats": 2,
+        "talents": 24,
+        "pctOfCorpus": 1.688,
+        "domainStatus": "BOTH_DOMAINS",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [],
+        "detectorCount": 0,
+        "recordsMatchedByDetectors": 0
+      },
+      "openPolicyGap": null
+    },
+    {
+      "tag": "ally_support",
+      "definitionStatus": "OWNER_DEFINITION_REQUIRED",
+      "broadTag": false,
+      "synthesizedDefinition": null,
+      "partialAuthority": null,
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "asAntecedent": [
+          "support"
+        ],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [],
+      "usage": {
+        "records": 285,
+        "feats": 20,
+        "talents": 265,
+        "pctOfCorpus": 18.506,
+        "domainStatus": "BOTH_DOMAINS",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [
+          "K.ally"
+        ],
+        "detectorCount": 1,
+        "recordsMatchedByDetectors": 233
+      },
+      "openPolicyGap": {
+        "gapId": "GAP-ally_support",
+        "unresolvedRecords": 51,
+        "hasTagDefinitionQuestion": false,
+        "hasTagConventionQuestion": false
+      }
+    },
+    {
+      "tag": "ambush",
+      "definitionStatus": "OWNER_DEFINITION_REQUIRED",
+      "broadTag": false,
+      "synthesizedDefinition": null,
+      "partialAuthority": null,
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [],
+      "usage": {
+        "records": 46,
+        "feats": 7,
+        "talents": 39,
+        "pctOfCorpus": 2.987,
+        "domainStatus": "BOTH_DOMAINS",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [
+          "F.ambush"
+        ],
+        "detectorCount": 1,
+        "recordsMatchedByDetectors": 58
+      },
+      "openPolicyGap": {
+        "gapId": "GAP-ambush",
+        "unresolvedRecords": 0,
+        "hasTagDefinitionQuestion": false,
+        "hasTagConventionQuestion": true
+      }
+    },
+    {
+      "tag": "ambush_defense",
+      "definitionStatus": "OWNER_DEFINITION_REQUIRED",
+      "broadTag": false,
+      "synthesizedDefinition": null,
+      "partialAuthority": null,
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [],
+      "usage": {
+        "records": 17,
+        "feats": 2,
+        "talents": 15,
+        "pctOfCorpus": 1.104,
+        "domainStatus": "BOTH_DOMAINS",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [
+          "F.ambush_defense"
+        ],
+        "detectorCount": 1,
+        "recordsMatchedByDetectors": 21
+      },
+      "openPolicyGap": {
+        "gapId": "GAP-ambush_defense",
+        "unresolvedRecords": 0,
+        "hasTagDefinitionQuestion": false,
+        "hasTagConventionQuestion": true
+      }
+    },
+    {
+      "tag": "anti-force",
+      "definitionStatus": "OWNER_DEFINITION_REQUIRED",
+      "broadTag": false,
+      "synthesizedDefinition": null,
+      "partialAuthority": null,
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [],
+      "usage": {
+        "records": 25,
+        "feats": 2,
+        "talents": 23,
+        "pctOfCorpus": 1.623,
+        "domainStatus": "BOTH_DOMAINS",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [
+          "N.anti_force"
+        ],
+        "detectorCount": 1,
+        "recordsMatchedByDetectors": 3
+      },
+      "openPolicyGap": null
+    },
+    {
+      "tag": "armor",
+      "definitionStatus": "OWNER_DEFINITION_REQUIRED",
+      "broadTag": false,
+      "synthesizedDefinition": null,
+      "partialAuthority": null,
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [],
+      "usage": {
+        "records": 31,
+        "feats": 7,
+        "talents": 24,
+        "pctOfCorpus": 2.013,
+        "domainStatus": "BOTH_DOMAINS",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [],
+        "detectorCount": 0,
+        "recordsMatchedByDetectors": 0
+      },
+      "openPolicyGap": null
+    },
+    {
+      "tag": "attack_of_opportunity",
+      "definitionStatus": "OWNER_DEFINED",
+      "broadTag": false,
+      "synthesizedDefinition": [
+        {
+          "policyId": "ATTACK_OF_OPPORTUNITY_POLICY",
+          "text": "attack_of_opportunity applies when the operative mechanic directly generates an attack of opportunity, grants or modifies one, prevents/suppresses one, triggers from one, modifies checks or effects specifically associated with one, or changes the timing or availability of one. Not applied merely because movement is stated to provoke attacks of opportunity as normal, attacks of opportunity are simply exempted from a broader restriction on attacks, or the phrase appears only as unchanged rules reminder/context. The Martial Arts I owner precedent remains intact and does not propagate to Martial Arts II/III."
+        }
+      ],
+      "partialAuthority": null,
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [
+        "ATTACK_OF_OPPORTUNITY_POLICY"
+      ],
+      "usage": {
+        "records": 89,
+        "feats": 29,
+        "talents": 60,
+        "pctOfCorpus": 5.779,
+        "domainStatus": "BOTH_DOMAINS",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [
+          "H.attack_of_opportunity"
+        ],
+        "detectorCount": 1,
+        "recordsMatchedByDetectors": 81
+      },
+      "openPolicyGap": null
+    },
+    {
+      "tag": "awareness",
+      "definitionStatus": "OWNER_DEFINITION_REQUIRED",
+      "broadTag": false,
+      "synthesizedDefinition": null,
+      "partialAuthority": null,
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [],
+      "usage": {
+        "records": 44,
+        "feats": 9,
+        "talents": 35,
+        "pctOfCorpus": 2.857,
+        "domainStatus": "BOTH_DOMAINS",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [],
+        "detectorCount": 0,
+        "recordsMatchedByDetectors": 0
+      },
+      "openPolicyGap": null
+    },
+    {
+      "tag": "battlefield_control",
+      "definitionStatus": "OWNER_DEFINED",
+      "broadTag": true,
+      "synthesizedDefinition": [
+        {
+          "policyId": "BATTLEFIELD_CONTROL_POLICY",
+          "text": "battlefield_control applies when the mechanic directly imposes or materially manipulates hostile battlefield state: forced enemy movement, prone/knockdown, immobilization/restraint, meaningful enemy positioning restriction, or equivalent direct hostile spatial/control effects. Not added because an ally is voluntarily repositioned, the user prevents a control effect on themself, or an unwanted control effect occurs only as the failure consequence of a supportive maneuver."
+        }
+      ],
+      "partialAuthority": null,
+      "relatedDistinctTags": [
+        "control"
+      ],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [
+        "BATTLEFIELD_CONTROL_POLICY"
+      ],
+      "usage": {
+        "records": 199,
+        "feats": 33,
+        "talents": 166,
+        "pctOfCorpus": 12.922,
+        "domainStatus": "BOTH_DOMAINS",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [
+          "G.forced_movement"
+        ],
+        "detectorCount": 1,
+        "recordsMatchedByDetectors": 21
+      },
+      "openPolicyGap": null
+    },
+    {
+      "tag": "beast",
+      "definitionStatus": "OWNER_DEFINITION_REQUIRED",
+      "broadTag": false,
+      "synthesizedDefinition": null,
+      "partialAuthority": null,
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [],
+      "usage": {
+        "records": 14,
+        "feats": 5,
+        "talents": 9,
+        "pctOfCorpus": 0.909,
+        "domainStatus": "BOTH_DOMAINS",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [],
+        "detectorCount": 0,
+        "recordsMatchedByDetectors": 0
+      },
+      "openPolicyGap": null
+    },
+    {
+      "tag": "beast_companion",
+      "definitionStatus": "OWNER_DEFINITION_REQUIRED",
+      "broadTag": false,
+      "synthesizedDefinition": null,
+      "partialAuthority": null,
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [],
+      "usage": {
+        "records": 6,
+        "feats": 0,
+        "talents": 6,
+        "pctOfCorpus": 0.39,
+        "domainStatus": "TALENT_ONLY",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [],
+        "detectorCount": 0,
+        "recordsMatchedByDetectors": 0
+      },
+      "openPolicyGap": null
+    },
+    {
+      "tag": "biotech",
+      "definitionStatus": "OWNER_DEFINITION_REQUIRED",
+      "broadTag": false,
+      "synthesizedDefinition": null,
+      "partialAuthority": null,
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [],
+      "usage": {
+        "records": 18,
+        "feats": 2,
+        "talents": 16,
+        "pctOfCorpus": 1.169,
+        "domainStatus": "BOTH_DOMAINS",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [],
+        "detectorCount": 0,
+        "recordsMatchedByDetectors": 0
+      },
+      "openPolicyGap": null
+    },
+    {
+      "tag": "block",
+      "definitionStatus": "OWNER_DEFINITION_REQUIRED",
+      "broadTag": false,
+      "synthesizedDefinition": null,
+      "partialAuthority": null,
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [],
+      "usage": {
+        "records": 16,
+        "feats": 0,
+        "talents": 16,
+        "pctOfCorpus": 1.039,
+        "domainStatus": "TALENT_ONLY",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [],
+        "detectorCount": 0,
+        "recordsMatchedByDetectors": 0
+      },
+      "openPolicyGap": null
+    },
+    {
+      "tag": "burst_damage",
+      "definitionStatus": "OWNER_DEFINITION_REQUIRED",
+      "broadTag": false,
+      "synthesizedDefinition": null,
+      "partialAuthority": null,
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [],
+      "usage": {
+        "records": 94,
+        "feats": 11,
+        "talents": 83,
+        "pctOfCorpus": 6.104,
+        "domainStatus": "BOTH_DOMAINS",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [
+          "D.burst_damage"
+        ],
+        "detectorCount": 1,
+        "recordsMatchedByDetectors": 11
+      },
+      "openPolicyGap": {
+        "gapId": "GAP-burst_damage",
+        "unresolvedRecords": 0,
+        "hasTagDefinitionQuestion": false,
+        "hasTagConventionQuestion": true
+      }
+    },
+    {
+      "tag": "command",
+      "definitionStatus": "OWNER_DEFINITION_REQUIRED",
+      "broadTag": false,
+      "synthesizedDefinition": null,
+      "partialAuthority": null,
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [],
+      "usage": {
+        "records": 11,
+        "feats": 0,
+        "talents": 11,
+        "pctOfCorpus": 0.714,
+        "domainStatus": "TALENT_ONLY",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [
+          "K.command"
+        ],
+        "detectorCount": 1,
+        "recordsMatchedByDetectors": 0
+      },
+      "openPolicyGap": null
+    },
+    {
+      "tag": "concealment",
+      "definitionStatus": "OWNER_DEFINITION_REQUIRED",
+      "broadTag": false,
+      "synthesizedDefinition": null,
+      "partialAuthority": null,
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [],
+      "usage": {
+        "records": 55,
+        "feats": 5,
+        "talents": 50,
+        "pctOfCorpus": 3.571,
+        "domainStatus": "BOTH_DOMAINS",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [
+          "I.concealment"
+        ],
+        "detectorCount": 1,
+        "recordsMatchedByDetectors": 29
+      },
+      "openPolicyGap": {
+        "gapId": "GAP-concealment",
+        "unresolvedRecords": 1,
+        "hasTagDefinitionQuestion": false,
+        "hasTagConventionQuestion": false
+      }
+    },
+    {
+      "tag": "condition_removal",
+      "definitionStatus": "OWNER_DEFINITION_REQUIRED",
+      "broadTag": false,
+      "synthesizedDefinition": null,
+      "partialAuthority": null,
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "asAntecedent": [
+          "recovery"
+        ],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [],
+      "usage": {
+        "records": 32,
+        "feats": 5,
+        "talents": 27,
+        "pctOfCorpus": 2.078,
+        "domainStatus": "BOTH_DOMAINS",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [
+          "J.condition_removal"
+        ],
+        "detectorCount": 1,
+        "recordsMatchedByDetectors": 29
+      },
+      "openPolicyGap": {
+        "gapId": "GAP-condition_removal",
+        "unresolvedRecords": 0,
+        "hasTagDefinitionQuestion": false,
+        "hasTagConventionQuestion": true
+      }
+    },
+    {
+      "tag": "control",
+      "definitionStatus": "PARTIALLY_OWNER_DEFINED",
+      "broadTag": true,
+      "synthesizedDefinition": null,
+      "partialAuthority": {
+        "policies": [
+          {
+            "policyId": "SPECIFIC_OVER_BROAD_POLICY",
+            "text": "When a certified specific mechanical tag already precisely expresses the rule, do not automatically infer every broad neighboring semantic tag. These distinctions must remain meaningful: movement != mobility; movement != positioning; control != battlefield_control; critical_hit != critical_success; ion != stun; resource creation != resource recovery; force capacity != resource recovery; access != semantic identity. Broad tags require their own direct owner-defined meaning."
+          }
+        ],
+        "ownerRulingFiles": []
+      },
+      "relatedDistinctTags": [
+        "battlefield_control"
+      ],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [
+        "SPECIFIC_OVER_BROAD_POLICY"
+      ],
+      "usage": {
+        "records": 254,
+        "feats": 46,
+        "talents": 208,
+        "pctOfCorpus": 16.494,
+        "domainStatus": "BOTH_DOMAINS",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [],
+        "detectorCount": 0,
+        "recordsMatchedByDetectors": 0
+      },
+      "openPolicyGap": {
+        "gapId": "GAP-control",
+        "unresolvedRecords": 0,
+        "hasTagDefinitionQuestion": true,
+        "hasTagConventionQuestion": false
+      }
+    },
+    {
+      "tag": "counterattack",
+      "definitionStatus": "OWNER_DEFINITION_REQUIRED",
+      "broadTag": false,
+      "synthesizedDefinition": null,
+      "partialAuthority": null,
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [],
+      "usage": {
+        "records": 46,
+        "feats": 5,
+        "talents": 41,
+        "pctOfCorpus": 2.987,
+        "domainStatus": "BOTH_DOMAINS",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [
+          "H.counterattack"
+        ],
+        "detectorCount": 1,
+        "recordsMatchedByDetectors": 3
+      },
+      "openPolicyGap": {
+        "gapId": "GAP-counterattack",
+        "unresolvedRecords": 0,
+        "hasTagDefinitionQuestion": false,
+        "hasTagConventionQuestion": true
+      }
+    },
+    {
+      "tag": "cover",
+      "definitionStatus": "OWNER_DEFINITION_REQUIRED",
+      "broadTag": false,
+      "synthesizedDefinition": null,
+      "partialAuthority": null,
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [],
+      "usage": {
+        "records": 38,
+        "feats": 10,
+        "talents": 28,
+        "pctOfCorpus": 2.468,
+        "domainStatus": "BOTH_DOMAINS",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [
+          "I.cover"
+        ],
+        "detectorCount": 1,
+        "recordsMatchedByDetectors": 44
+      },
+      "openPolicyGap": {
+        "gapId": "GAP-cover",
+        "unresolvedRecords": 7,
+        "hasTagDefinitionQuestion": false,
+        "hasTagConventionQuestion": false
+      }
+    },
+    {
+      "tag": "crafting",
+      "definitionStatus": "OWNER_DEFINITION_REQUIRED",
+      "broadTag": false,
+      "synthesizedDefinition": null,
+      "partialAuthority": null,
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [],
+      "usage": {
+        "records": 38,
+        "feats": 2,
+        "talents": 36,
+        "pctOfCorpus": 2.468,
+        "domainStatus": "BOTH_DOMAINS",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [
+          "L.crafting"
+        ],
+        "detectorCount": 1,
+        "recordsMatchedByDetectors": 9
+      },
+      "openPolicyGap": null
+    },
+    {
+      "tag": "critical_hit",
+      "definitionStatus": "PARTIALLY_OWNER_DEFINED",
+      "broadTag": false,
+      "synthesizedDefinition": null,
+      "partialAuthority": {
+        "policies": [
+          {
+            "policyId": "CRITICAL_SUCCESS_POLICY",
+            "text": "critical_success represents a mechanic in which a natural 20, or an effect treated as a natural 20/critical success, directly triggers, grants, restores, substitutes for, or materially activates the record's special mechanic. Not added merely because the record expands critical threat range, reminds the reader that only a natural 20 is an automatic hit, references a natural 20 only to explain the normal critical-hit rules, or uses a natural 20 as an exception that bypasses or prevents a defensive effect. critical_hit and critical_success remain distinct; a natural-20 trigger may justify critical_success without implying critical_hit."
+          },
+          {
+            "policyId": "SPECIFIC_OVER_BROAD_POLICY",
+            "text": "When a certified specific mechanical tag already precisely expresses the rule, do not automatically infer every broad neighboring semantic tag. These distinctions must remain meaningful: movement != mobility; movement != positioning; control != battlefield_control; critical_hit != critical_success; ion != stun; resource creation != resource recovery; force capacity != resource recovery; access != semantic identity. Broad tags require their own direct owner-defined meaning."
+          }
+        ],
+        "ownerRulingFiles": []
+      },
+      "relatedDistinctTags": [
+        "critical_success"
+      ],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [
+        "CRITICAL_SUCCESS_POLICY",
+        "SPECIFIC_OVER_BROAD_POLICY"
+      ],
+      "usage": {
+        "records": 27,
+        "feats": 6,
+        "talents": 21,
+        "pctOfCorpus": 1.753,
+        "domainStatus": "BOTH_DOMAINS",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [
+          "E.critical_hit"
+        ],
+        "detectorCount": 1,
+        "recordsMatchedByDetectors": 23
+      },
+      "openPolicyGap": null
+    },
+    {
+      "tag": "critical_success",
+      "definitionStatus": "OWNER_DEFINED",
+      "broadTag": false,
+      "synthesizedDefinition": [
+        {
+          "policyId": "CRITICAL_SUCCESS_POLICY",
+          "text": "critical_success represents a mechanic in which a natural 20, or an effect treated as a natural 20/critical success, directly triggers, grants, restores, substitutes for, or materially activates the record's special mechanic. Not added merely because the record expands critical threat range, reminds the reader that only a natural 20 is an automatic hit, references a natural 20 only to explain the normal critical-hit rules, or uses a natural 20 as an exception that bypasses or prevents a defensive effect. critical_hit and critical_success remain distinct; a natural-20 trigger may justify critical_success without implying critical_hit."
+        }
+      ],
+      "partialAuthority": null,
+      "relatedDistinctTags": [
+        "critical_hit"
+      ],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [
+        "CRITICAL_SUCCESS_POLICY"
+      ],
+      "usage": {
+        "records": 15,
+        "feats": 2,
+        "talents": 13,
+        "pctOfCorpus": 0.974,
+        "domainStatus": "BOTH_DOMAINS",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [
+          "E.natural_20"
+        ],
+        "detectorCount": 1,
+        "recordsMatchedByDetectors": 22
+      },
+      "openPolicyGap": null
+    },
+    {
+      "tag": "damage",
+      "definitionStatus": "OWNER_DEFINITION_REQUIRED",
+      "broadTag": false,
+      "synthesizedDefinition": null,
+      "partialAuthority": null,
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [],
+      "usage": {
+        "records": 42,
+        "feats": 21,
+        "talents": 21,
+        "pctOfCorpus": 2.727,
+        "domainStatus": "BOTH_DOMAINS",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [
+          "D.damage_generic"
+        ],
+        "detectorCount": 1,
+        "recordsMatchedByDetectors": 95
+      },
+      "openPolicyGap": null
+    },
+    {
+      "tag": "damage_bonus",
+      "definitionStatus": "OWNER_DEFINED",
+      "broadTag": false,
+      "synthesizedDefinition": [
+        {
+          "policyId": "DAMAGE_BONUS_POLICY",
+          "text": "damage_bonus represents a mechanic that directly increases or adds to damage dealt by an attack/effect (numeric damage, damage dice, a substituted larger damage modifier, directly increased damage output). Not used for additional damage suffered by the user, damage used as a cost or penalty, damage the mechanic gives up/forgoes, Damage Threshold, Damage Reduction, or text fragments containing the word \"damage\" that do not increase outgoing damage."
+        }
+      ],
+      "partialAuthority": null,
+      "relatedDistinctTags": [
+        "damage_reduction",
+        "damage_threshold"
+      ],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [
+        "DAMAGE_BONUS_POLICY"
+      ],
+      "usage": {
+        "records": 153,
+        "feats": 43,
+        "talents": 110,
+        "pctOfCorpus": 9.935,
+        "domainStatus": "BOTH_DOMAINS",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [
+          "D.damage_bonus"
+        ],
+        "detectorCount": 1,
+        "recordsMatchedByDetectors": 55
+      },
+      "openPolicyGap": null
+    },
+    {
+      "tag": "damage_reduction",
+      "definitionStatus": "OWNER_DEFINITION_REQUIRED",
+      "broadTag": false,
+      "synthesizedDefinition": null,
+      "partialAuthority": null,
+      "relatedDistinctTags": [
+        "damage_bonus"
+      ],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [],
+      "usage": {
+        "records": 32,
+        "feats": 4,
+        "talents": 28,
+        "pctOfCorpus": 2.078,
+        "domainStatus": "BOTH_DOMAINS",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [
+          "I.damage_reduction"
+        ],
+        "detectorCount": 1,
+        "recordsMatchedByDetectors": 17
+      },
+      "openPolicyGap": {
+        "gapId": "GAP-damage_reduction",
+        "unresolvedRecords": 2,
+        "hasTagDefinitionQuestion": false,
+        "hasTagConventionQuestion": false
+      }
+    },
+    {
+      "tag": "damage_threshold",
+      "definitionStatus": "OWNER_DEFINED",
+      "broadTag": false,
+      "synthesizedDefinition": [
+        {
+          "policyId": "DAMAGE_THRESHOLD_POLICY",
+          "text": "damage_threshold applies when the record's operative mechanic directly interacts with Damage Threshold: compares damage against it, modifies it, changes the consequences of meeting/exceeding it, uses it as a direct activation condition, or explicitly determines how damage is counted for purposes of overcoming it. Not added merely because Damage Threshold appears as unrelated explanatory text or prerequisite material. A mechanic need not numerically modify Damage Threshold to qualify."
+        }
+      ],
+      "partialAuthority": null,
+      "relatedDistinctTags": [
+        "damage_bonus"
+      ],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [
+        "DAMAGE_THRESHOLD_POLICY"
+      ],
+      "usage": {
+        "records": 50,
+        "feats": 15,
+        "talents": 35,
+        "pctOfCorpus": 3.247,
+        "domainStatus": "BOTH_DOMAINS",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [
+          "D.damage_threshold"
+        ],
+        "detectorCount": 1,
+        "recordsMatchedByDetectors": 46
+      },
+      "openPolicyGap": null
+    },
+    {
+      "tag": "dark_side",
+      "definitionStatus": "OWNER_DEFINITION_REQUIRED",
+      "broadTag": false,
+      "synthesizedDefinition": null,
+      "partialAuthority": null,
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [],
+      "usage": {
+        "records": 41,
+        "feats": 1,
+        "talents": 40,
+        "pctOfCorpus": 2.662,
+        "domainStatus": "BOTH_DOMAINS",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [
+          "N.dark_side"
+        ],
+        "detectorCount": 1,
+        "recordsMatchedByDetectors": 37
+      },
+      "openPolicyGap": {
+        "gapId": "GAP-dark_side",
+        "unresolvedRecords": 3,
+        "hasTagDefinitionQuestion": false,
+        "hasTagConventionQuestion": false
+      }
+    },
+    {
+      "tag": "dark_side_score",
+      "definitionStatus": "OWNER_DEFINITION_REQUIRED",
+      "broadTag": false,
+      "synthesizedDefinition": null,
+      "partialAuthority": null,
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [],
+      "usage": {
+        "records": 18,
+        "feats": 1,
+        "talents": 17,
+        "pctOfCorpus": 1.169,
+        "domainStatus": "BOTH_DOMAINS",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [
+          "N.dark_side_score"
+        ],
+        "detectorCount": 1,
+        "recordsMatchedByDetectors": 20
+      },
+      "openPolicyGap": {
+        "gapId": "GAP-dark_side_score",
+        "unresolvedRecords": 5,
+        "hasTagDefinitionQuestion": false,
+        "hasTagConventionQuestion": false
+      }
+    },
+    {
+      "tag": "deception",
+      "definitionStatus": "PARTIALLY_OWNER_DEFINED",
+      "broadTag": false,
+      "synthesizedDefinition": null,
+      "partialAuthority": {
+        "policies": [],
+        "ownerRulingFiles": [
+          "data/audits/talent-feat-pass3a-skill-owner-adjudication.json",
+          "data/audits/feat-tags-pass2-owner-adjudication.json"
+        ]
+      },
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [],
+      "usage": {
+        "records": 48,
+        "feats": 10,
+        "talents": 38,
+        "pctOfCorpus": 3.117,
+        "domainStatus": "BOTH_DOMAINS",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [],
+        "detectorCount": 0,
+        "recordsMatchedByDetectors": 0
+      },
+      "openPolicyGap": null
+    },
+    {
+      "tag": "defense",
+      "definitionStatus": "OWNER_DEFINITION_REQUIRED",
+      "broadTag": false,
+      "synthesizedDefinition": null,
+      "partialAuthority": null,
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [],
+      "usage": {
+        "records": 283,
+        "feats": 60,
+        "talents": 223,
+        "pctOfCorpus": 18.377,
+        "domainStatus": "BOTH_DOMAINS",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [
+          "I.defense_generic"
+        ],
+        "detectorCount": 1,
+        "recordsMatchedByDetectors": 248
+      },
+      "openPolicyGap": {
+        "gapId": "GAP-defense",
+        "unresolvedRecords": 2,
+        "hasTagDefinitionQuestion": false,
+        "hasTagConventionQuestion": false
+      }
+    },
+    {
+      "tag": "deflect",
+      "definitionStatus": "OWNER_DEFINITION_REQUIRED",
+      "broadTag": false,
+      "synthesizedDefinition": null,
+      "partialAuthority": null,
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [],
+      "usage": {
+        "records": 17,
+        "feats": 0,
+        "talents": 17,
+        "pctOfCorpus": 1.104,
+        "domainStatus": "TALENT_ONLY",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [],
+        "detectorCount": 0,
+        "recordsMatchedByDetectors": 0
+      },
+      "openPolicyGap": null
+    },
+    {
+      "tag": "detection",
+      "definitionStatus": "OWNER_DEFINITION_REQUIRED",
+      "broadTag": false,
+      "synthesizedDefinition": null,
+      "partialAuthority": null,
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [],
+      "usage": {
+        "records": 37,
+        "feats": 5,
+        "talents": 32,
+        "pctOfCorpus": 2.403,
+        "domainStatus": "BOTH_DOMAINS",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [],
+        "detectorCount": 0,
+        "recordsMatchedByDetectors": 0
+      },
+      "openPolicyGap": null
+    },
+    {
+      "tag": "double_weapon",
+      "definitionStatus": "OWNER_DEFINITION_REQUIRED",
+      "broadTag": false,
+      "synthesizedDefinition": null,
+      "partialAuthority": null,
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [],
+      "usage": {
+        "records": 10,
+        "feats": 4,
+        "talents": 6,
+        "pctOfCorpus": 0.649,
+        "domainStatus": "BOTH_DOMAINS",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [
+          "O.double_weapon"
+        ],
+        "detectorCount": 1,
+        "recordsMatchedByDetectors": 8
+      },
+      "openPolicyGap": null
+    },
+    {
+      "tag": "droid",
+      "definitionStatus": "OWNER_DEFINITION_REQUIRED",
+      "broadTag": false,
+      "synthesizedDefinition": null,
+      "partialAuthority": null,
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [],
+      "usage": {
+        "records": 52,
+        "feats": 8,
+        "talents": 44,
+        "pctOfCorpus": 3.377,
+        "domainStatus": "BOTH_DOMAINS",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [],
+        "detectorCount": 0,
+        "recordsMatchedByDetectors": 0
+      },
+      "openPolicyGap": null
+    },
+    {
+      "tag": "dual_wield",
+      "definitionStatus": "OWNER_DEFINED",
+      "broadTag": false,
+      "synthesizedDefinition": [
+        {
+          "policyId": "DUAL_WIELD_POLICY",
+          "text": "dual_wield represents mechanics in which one character directly fights with or mechanically manages two weapons/two weapon ends as part of the same combat style: attacking with two weapons, using both ends of a double weapon where treated as two-weapon combat, modifying two-weapon attack penalties, or directly improving/enabling two-weapon fighting. Not added because two different characters each use one weapon, two attacks are combined, two weapons happen to contribute to one resolved effect, or the mechanic simply allows multiple attacks. The semantic is the character's two-weapon combat mode, not the number of weapons involved in the event."
+        }
+      ],
+      "partialAuthority": null,
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [
+        "DUAL_WIELD_POLICY"
+      ],
+      "usage": {
+        "records": 22,
+        "feats": 4,
+        "talents": 18,
+        "pctOfCorpus": 1.429,
+        "domainStatus": "BOTH_DOMAINS",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [
+          "O.dual_wield"
+        ],
+        "detectorCount": 1,
+        "recordsMatchedByDetectors": 12
+      },
+      "openPolicyGap": null
+    },
+    {
+      "tag": "durability",
+      "definitionStatus": "OWNER_DEFINITION_REQUIRED",
+      "broadTag": false,
+      "synthesizedDefinition": null,
+      "partialAuthority": null,
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [],
+      "usage": {
+        "records": 49,
+        "feats": 6,
+        "talents": 43,
+        "pctOfCorpus": 3.182,
+        "domainStatus": "BOTH_DOMAINS",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [],
+        "detectorCount": 0,
+        "recordsMatchedByDetectors": 0
+      },
+      "openPolicyGap": null
+    },
+    {
+      "tag": "empowerment",
+      "definitionStatus": "OWNER_DEFINITION_REQUIRED",
+      "broadTag": true,
+      "synthesizedDefinition": null,
+      "partialAuthority": null,
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [],
+      "usage": {
+        "records": 39,
+        "feats": 2,
+        "talents": 37,
+        "pctOfCorpus": 2.532,
+        "domainStatus": "BOTH_DOMAINS",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [],
+        "detectorCount": 0,
+        "recordsMatchedByDetectors": 0
+      },
+      "openPolicyGap": {
+        "gapId": "GAP-empowerment",
+        "unresolvedRecords": 0,
+        "hasTagDefinitionQuestion": true,
+        "hasTagConventionQuestion": false
+      }
+    },
+    {
+      "tag": "equipment",
+      "definitionStatus": "OWNER_DEFINITION_REQUIRED",
+      "broadTag": false,
+      "synthesizedDefinition": null,
+      "partialAuthority": null,
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [],
+      "usage": {
+        "records": 132,
+        "feats": 22,
+        "talents": 110,
+        "pctOfCorpus": 8.571,
+        "domainStatus": "BOTH_DOMAINS",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [],
+        "detectorCount": 0,
+        "recordsMatchedByDetectors": 0
+      },
+      "openPolicyGap": null
+    },
+    {
+      "tag": "evasion",
+      "definitionStatus": "OWNER_DEFINITION_REQUIRED",
+      "broadTag": false,
+      "synthesizedDefinition": null,
+      "partialAuthority": null,
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [],
+      "usage": {
+        "records": 125,
+        "feats": 23,
+        "talents": 102,
+        "pctOfCorpus": 8.117,
+        "domainStatus": "BOTH_DOMAINS",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [
+          "I.evasion"
+        ],
+        "detectorCount": 1,
+        "recordsMatchedByDetectors": 7
+      },
+      "openPolicyGap": {
+        "gapId": "GAP-evasion",
+        "unresolvedRecords": 1,
+        "hasTagDefinitionQuestion": false,
+        "hasTagConventionQuestion": false
+      }
+    },
+    {
+      "tag": "exotic_weapon",
+      "definitionStatus": "PARTIALLY_OWNER_DEFINED",
+      "broadTag": false,
+      "synthesizedDefinition": null,
+      "partialAuthority": {
+        "policies": [
+          {
+            "policyId": "OPEN_GENERIC_SCOPE_POLICY",
+            "text": "When a record allows an open generic choice (any weapon, any weapon group, any skill, any Force power, one of many selectable categories), do not automatically add every possible specific scope tag (for example Weapon Focus allowing grapple as one possible choice does not gain grapple; a generic weapon selection does not gain pistol, heavy_weapon, lightsaber, exotic_weapon; a generic skill mechanic does not gain every skill tag). Specific semantic tags require direct operative interaction with that specific scope."
+          }
+        ],
+        "ownerRulingFiles": []
+      },
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [
+        "OPEN_GENERIC_SCOPE_POLICY"
+      ],
+      "usage": {
+        "records": 10,
+        "feats": 1,
+        "talents": 9,
+        "pctOfCorpus": 0.649,
+        "domainStatus": "BOTH_DOMAINS",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [
+          "O.exotic_weapon"
+        ],
+        "detectorCount": 1,
+        "recordsMatchedByDetectors": 25
+      },
+      "openPolicyGap": {
+        "gapId": "GAP-exotic_weapon",
+        "unresolvedRecords": 0,
+        "hasTagDefinitionQuestion": false,
+        "hasTagConventionQuestion": true
+      }
+    },
+    {
+      "tag": "exploration",
+      "definitionStatus": "OWNER_DEFINITION_REQUIRED",
+      "broadTag": false,
+      "synthesizedDefinition": null,
+      "partialAuthority": null,
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [],
+      "usage": {
+        "records": 26,
+        "feats": 2,
+        "talents": 24,
+        "pctOfCorpus": 1.688,
+        "domainStatus": "BOTH_DOMAINS",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [],
+        "detectorCount": 0,
+        "recordsMatchedByDetectors": 0
+      },
+      "openPolicyGap": null
+    },
+    {
+      "tag": "fear",
+      "definitionStatus": "OWNER_DEFINITION_REQUIRED",
+      "broadTag": false,
+      "synthesizedDefinition": null,
+      "partialAuthority": null,
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [],
+      "usage": {
+        "records": 28,
+        "feats": 5,
+        "talents": 23,
+        "pctOfCorpus": 1.818,
+        "domainStatus": "BOTH_DOMAINS",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [],
+        "detectorCount": 0,
+        "recordsMatchedByDetectors": 0
+      },
+      "openPolicyGap": null
+    },
+    {
+      "tag": "feint",
+      "definitionStatus": "OWNER_DEFINITION_REQUIRED",
+      "broadTag": false,
+      "synthesizedDefinition": null,
+      "partialAuthority": null,
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [],
+      "usage": {
+        "records": 8,
+        "feats": 1,
+        "talents": 7,
+        "pctOfCorpus": 0.519,
+        "domainStatus": "BOTH_DOMAINS",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [],
+        "detectorCount": 0,
+        "recordsMatchedByDetectors": 0
+      },
+      "openPolicyGap": null
+    },
+    {
+      "tag": "fighting_defensively",
+      "definitionStatus": "OWNER_DEFINITION_REQUIRED",
+      "broadTag": false,
+      "synthesizedDefinition": null,
+      "partialAuthority": null,
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [],
+      "usage": {
+        "records": 10,
+        "feats": 3,
+        "talents": 7,
+        "pctOfCorpus": 0.649,
+        "domainStatus": "BOTH_DOMAINS",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [
+          "O.fighting_defensively"
+        ],
+        "detectorCount": 1,
+        "recordsMatchedByDetectors": 8
+      },
+      "openPolicyGap": null
+    },
+    {
+      "tag": "flanking",
+      "definitionStatus": "OWNER_DEFINITION_REQUIRED",
+      "broadTag": false,
+      "synthesizedDefinition": null,
+      "partialAuthority": null,
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [],
+      "usage": {
+        "records": 11,
+        "feats": 0,
+        "talents": 11,
+        "pctOfCorpus": 0.714,
+        "domainStatus": "TALENT_ONLY",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [
+          "O.flanking"
+        ],
+        "detectorCount": 1,
+        "recordsMatchedByDetectors": 11
+      },
+      "openPolicyGap": null
+    },
+    {
+      "tag": "followers",
+      "definitionStatus": "OWNER_DEFINITION_REQUIRED",
+      "broadTag": false,
+      "synthesizedDefinition": null,
+      "partialAuthority": null,
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [],
+      "usage": {
+        "records": 23,
+        "feats": 0,
+        "talents": 23,
+        "pctOfCorpus": 1.494,
+        "domainStatus": "TALENT_ONLY",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [
+          "K.followers"
+        ],
+        "detectorCount": 1,
+        "recordsMatchedByDetectors": 16
+      },
+      "openPolicyGap": null
+    },
+    {
+      "tag": "force",
+      "definitionStatus": "OWNER_DEFINITION_REQUIRED",
+      "broadTag": false,
+      "synthesizedDefinition": null,
+      "partialAuthority": null,
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": [
+          "use_the_force",
+          "force_power_synergy"
+        ]
+      },
+      "controllingPolicyIds": [],
+      "usage": {
+        "records": 301,
+        "feats": 11,
+        "talents": 290,
+        "pctOfCorpus": 19.545,
+        "domainStatus": "BOTH_DOMAINS",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [
+          "N.force_generic"
+        ],
+        "detectorCount": 1,
+        "recordsMatchedByDetectors": 314
+      },
+      "openPolicyGap": null
+    },
+    {
+      "tag": "force-point",
+      "definitionStatus": "OWNER_DEFINITION_REQUIRED",
+      "broadTag": false,
+      "synthesizedDefinition": null,
+      "partialAuthority": null,
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [],
+      "usage": {
+        "records": 9,
+        "feats": 6,
+        "talents": 3,
+        "pctOfCorpus": 0.584,
+        "domainStatus": "BOTH_DOMAINS",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [],
+        "detectorCount": 0,
+        "recordsMatchedByDetectors": 0
+      },
+      "openPolicyGap": null
+    },
+    {
+      "tag": "force_capacity",
+      "definitionStatus": "OWNER_DEFINED",
+      "broadTag": false,
+      "synthesizedDefinition": [
+        {
+          "policyId": "FORCE_CAPACITY_POLICY",
+          "text": "force_capacity applies when the mechanic directly increases the amount of Force-resource capacity available to the character, including persistent/additional Force Point allotment. It does not authorize resource_recovery; capacity and recovery are separate semantics. Resource creation, capacity, expenditure and recovery are four distinct concepts."
+        }
+      ],
+      "partialAuthority": null,
+      "relatedDistinctTags": [
+        "resource_recovery"
+      ],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [
+        "FORCE_CAPACITY_POLICY"
+      ],
+      "usage": {
+        "records": 40,
+        "feats": 4,
+        "talents": 36,
+        "pctOfCorpus": 2.597,
+        "domainStatus": "BOTH_DOMAINS",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [
+          "C.force_capacity"
+        ],
+        "detectorCount": 1,
+        "recordsMatchedByDetectors": 7
+      },
+      "openPolicyGap": null
+    },
+    {
+      "tag": "force_control",
+      "definitionStatus": "OWNER_DEFINITION_REQUIRED",
+      "broadTag": false,
+      "synthesizedDefinition": null,
+      "partialAuthority": null,
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [],
+      "usage": {
+        "records": 2,
+        "feats": 0,
+        "talents": 2,
+        "pctOfCorpus": 0.13,
+        "domainStatus": "TALENT_ONLY",
+        "rareStatus": "RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [],
+        "detectorCount": 0,
+        "recordsMatchedByDetectors": 0
+      },
+      "openPolicyGap": null
+    },
+    {
+      "tag": "force_defense",
+      "definitionStatus": "OWNER_DEFINITION_REQUIRED",
+      "broadTag": false,
+      "synthesizedDefinition": null,
+      "partialAuthority": null,
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [],
+      "usage": {
+        "records": 32,
+        "feats": 2,
+        "talents": 30,
+        "pctOfCorpus": 2.078,
+        "domainStatus": "BOTH_DOMAINS",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [
+          "N.force_defense"
+        ],
+        "detectorCount": 1,
+        "recordsMatchedByDetectors": 8
+      },
+      "openPolicyGap": {
+        "gapId": "GAP-force_defense",
+        "unresolvedRecords": 3,
+        "hasTagDefinitionQuestion": false,
+        "hasTagConventionQuestion": false
+      }
+    },
+    {
+      "tag": "force_multiplier",
+      "definitionStatus": "OWNER_DEFINITION_REQUIRED",
+      "broadTag": false,
+      "synthesizedDefinition": null,
+      "partialAuthority": null,
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [],
+      "usage": {
+        "records": 14,
+        "feats": 6,
+        "talents": 8,
+        "pctOfCorpus": 0.909,
+        "domainStatus": "BOTH_DOMAINS",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [],
+        "detectorCount": 0,
+        "recordsMatchedByDetectors": 0
+      },
+      "openPolicyGap": null
+    },
+    {
+      "tag": "force_offense",
+      "definitionStatus": "OWNER_DEFINITION_REQUIRED",
+      "broadTag": false,
+      "synthesizedDefinition": null,
+      "partialAuthority": null,
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [],
+      "usage": {
+        "records": 23,
+        "feats": 0,
+        "talents": 23,
+        "pctOfCorpus": 1.494,
+        "domainStatus": "TALENT_ONLY",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [],
+        "detectorCount": 0,
+        "recordsMatchedByDetectors": 0
+      },
+      "openPolicyGap": null
+    },
+    {
+      "tag": "force_point_spend",
+      "definitionStatus": "OWNER_DEFINED",
+      "broadTag": false,
+      "synthesizedDefinition": [
+        {
+          "policyId": "FORCE_POINT_SPEND_POLICY",
+          "text": "force_point_spend applies when the operative mechanic actually requires, permits or consumes a Force Point expenditure; not for \"without spending\", \"does not count as spending\", a resource that expires if not later spent, another power's Force Point condition, or a mechanic that avoids/removes a Force Point cost. Implication remains: force_point_spend -> resource_spend."
+        }
+      ],
+      "partialAuthority": null,
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "asAntecedent": [
+          "resource_spend"
+        ],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [
+        "FORCE_POINT_SPEND_POLICY"
+      ],
+      "usage": {
+        "records": 143,
+        "feats": 16,
+        "talents": 127,
+        "pctOfCorpus": 9.286,
+        "domainStatus": "BOTH_DOMAINS",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [
+          "C.force_point_spend"
+        ],
+        "detectorCount": 1,
+        "recordsMatchedByDetectors": 149
+      },
+      "openPolicyGap": null
+    },
+    {
+      "tag": "force_power",
+      "definitionStatus": "OWNER_DEFINITION_REQUIRED",
+      "broadTag": false,
+      "synthesizedDefinition": null,
+      "partialAuthority": null,
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [],
+      "usage": {
+        "records": 5,
+        "feats": 3,
+        "talents": 2,
+        "pctOfCorpus": 0.325,
+        "domainStatus": "BOTH_DOMAINS",
+        "rareStatus": "RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [
+          "N.force_power"
+        ],
+        "detectorCount": 1,
+        "recordsMatchedByDetectors": 94
+      },
+      "openPolicyGap": {
+        "gapId": "GAP-force_power",
+        "unresolvedRecords": 0,
+        "hasTagDefinitionQuestion": false,
+        "hasTagConventionQuestion": true
+      }
+    },
+    {
+      "tag": "force_power_synergy",
+      "definitionStatus": "OWNER_DEFINITION_REQUIRED",
+      "broadTag": false,
+      "synthesizedDefinition": null,
+      "partialAuthority": null,
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "asAntecedent": [
+          "force"
+        ],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [],
+      "usage": {
+        "records": 82,
+        "feats": 0,
+        "talents": 82,
+        "pctOfCorpus": 5.325,
+        "domainStatus": "TALENT_ONLY",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [
+          "N.force_power_synergy"
+        ],
+        "detectorCount": 1,
+        "recordsMatchedByDetectors": 25
+      },
+      "openPolicyGap": null
+    },
+    {
+      "tag": "force_support",
+      "definitionStatus": "OWNER_DEFINITION_REQUIRED",
+      "broadTag": false,
+      "synthesizedDefinition": null,
+      "partialAuthority": null,
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [],
+      "usage": {
+        "records": 24,
+        "feats": 1,
+        "talents": 23,
+        "pctOfCorpus": 1.558,
+        "domainStatus": "BOTH_DOMAINS",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [],
+        "detectorCount": 0,
+        "recordsMatchedByDetectors": 0
+      },
+      "openPolicyGap": null
+    },
+    {
+      "tag": "force_training",
+      "definitionStatus": "OWNER_DEFINITION_REQUIRED",
+      "broadTag": false,
+      "synthesizedDefinition": null,
+      "partialAuthority": null,
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [],
+      "usage": {
+        "records": 6,
+        "feats": 4,
+        "talents": 2,
+        "pctOfCorpus": 0.39,
+        "domainStatus": "BOTH_DOMAINS",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [
+          "N.force_training"
+        ],
+        "detectorCount": 1,
+        "recordsMatchedByDetectors": 10
+      },
+      "openPolicyGap": {
+        "gapId": "GAP-force_training",
+        "unresolvedRecords": 0,
+        "hasTagDefinitionQuestion": false,
+        "hasTagConventionQuestion": true
+      }
+    },
+    {
+      "tag": "full_attack",
+      "definitionStatus": "OWNER_DEFINED",
+      "broadTag": false,
+      "synthesizedDefinition": [
+        {
+          "policyId": "FULL_ATTACK_POLICY",
+          "text": "full_attack applies when the operative mechanic directly interacts with the SWSE Full Attack mechanic: performs a Full Attack, modifies Full Attack penalties, modifies the number/type of attacks made as part of a Full Attack, or directly modifies the resolution of a Full Attack. Not added because the record makes multiple attacks, another action produces attacks similar to a Full Attack, or a normal Full Attack is mentioned only as a comparison, limitation or reference. A mechanic that intentionally replaces or bypasses the Full Attack action is not automatically a full_attack mechanic."
+        }
+      ],
+      "partialAuthority": null,
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [
+        "FULL_ATTACK_POLICY"
+      ],
+      "usage": {
+        "records": 33,
+        "feats": 8,
+        "talents": 25,
+        "pctOfCorpus": 2.143,
+        "domainStatus": "BOTH_DOMAINS",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [
+          "O.full_attack"
+        ],
+        "detectorCount": 1,
+        "recordsMatchedByDetectors": 29
+      },
+      "openPolicyGap": null
+    },
+    {
+      "tag": "galactic_lore",
+      "definitionStatus": "OWNER_DEFINITION_REQUIRED",
+      "broadTag": false,
+      "synthesizedDefinition": null,
+      "partialAuthority": null,
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [],
+      "usage": {
+        "records": 8,
+        "feats": 1,
+        "talents": 7,
+        "pctOfCorpus": 0.519,
+        "domainStatus": "BOTH_DOMAINS",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [],
+        "detectorCount": 0,
+        "recordsMatchedByDetectors": 0
+      },
+      "openPolicyGap": null
+    },
+    {
+      "tag": "grab",
+      "definitionStatus": "OWNER_DEFINED",
+      "broadTag": false,
+      "synthesizedDefinition": [
+        {
+          "policyId": "GRAB_POLICY",
+          "text": "grab applies when the operative mechanic directly interacts with the SWSE Grab mechanic: initiates a Grab, modifies a Grab attack, modifies the consequences of a successful Grab, modifies escape from a Grab, automatically ends/removes a Grab, or otherwise directly changes the mechanical operation of the Grab state. Not added because a currently grabbed target is excluded from another effect, \"grab\" is ordinary English, or the rule merely mentions Grab while describing another mechanic. A negative eligibility/exclusion clause does not create a positive Grab semantic."
+        }
+      ],
+      "partialAuthority": null,
+      "relatedDistinctTags": [
+        "grapple"
+      ],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [
+        "GRAB_POLICY"
+      ],
+      "usage": {
+        "records": 16,
+        "feats": 9,
+        "talents": 7,
+        "pctOfCorpus": 1.039,
+        "domainStatus": "BOTH_DOMAINS",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [
+          "G.grab"
+        ],
+        "detectorCount": 1,
+        "recordsMatchedByDetectors": 18
+      },
+      "openPolicyGap": null
+    },
+    {
+      "tag": "grapple",
+      "definitionStatus": "OWNER_DEFINED",
+      "broadTag": false,
+      "synthesizedDefinition": [
+        {
+          "policyId": "GRAPPLE_POLICY",
+          "text": "grapple applies when the operative mechanic directly initiates a grapple, modifies a grapple check or resolution, modifies escape from a grapple, automatically ends/removes a grapple, or otherwise directly changes the grapple mechanic. Not added because grappled targets are excluded from another effect, grapple is one selectable member of a broad generic category, or the word appears only as explanatory/reference text. Generic selectable scope does not automatically enumerate every possible scope tag."
+        }
+      ],
+      "partialAuthority": null,
+      "relatedDistinctTags": [
+        "grab",
+        "restrain"
+      ],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [
+        "GRAPPLE_POLICY"
+      ],
+      "usage": {
+        "records": 24,
+        "feats": 13,
+        "talents": 11,
+        "pctOfCorpus": 1.558,
+        "domainStatus": "BOTH_DOMAINS",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [
+          "G.grapple"
+        ],
+        "detectorCount": 1,
+        "recordsMatchedByDetectors": 23
+      },
+      "openPolicyGap": null
+    },
+    {
+      "tag": "healing",
+      "definitionStatus": "OWNER_DEFINITION_REQUIRED",
+      "broadTag": false,
+      "synthesizedDefinition": null,
+      "partialAuthority": null,
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [],
+      "usage": {
+        "records": 53,
+        "feats": 12,
+        "talents": 41,
+        "pctOfCorpus": 3.442,
+        "domainStatus": "BOTH_DOMAINS",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [
+          "J.healing"
+        ],
+        "detectorCount": 1,
+        "recordsMatchedByDetectors": 39
+      },
+      "openPolicyGap": {
+        "gapId": "GAP-healing",
+        "unresolvedRecords": 7,
+        "hasTagDefinitionQuestion": false,
+        "hasTagConventionQuestion": false
+      }
+    },
+    {
+      "tag": "heavy_weapon",
+      "definitionStatus": "PARTIALLY_OWNER_DEFINED",
+      "broadTag": false,
+      "synthesizedDefinition": null,
+      "partialAuthority": {
+        "policies": [
+          {
+            "policyId": "OPEN_GENERIC_SCOPE_POLICY",
+            "text": "When a record allows an open generic choice (any weapon, any weapon group, any skill, any Force power, one of many selectable categories), do not automatically add every possible specific scope tag (for example Weapon Focus allowing grapple as one possible choice does not gain grapple; a generic weapon selection does not gain pistol, heavy_weapon, lightsaber, exotic_weapon; a generic skill mechanic does not gain every skill tag). Specific semantic tags require direct operative interaction with that specific scope."
+          }
+        ],
+        "ownerRulingFiles": []
+      },
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [
+        "OPEN_GENERIC_SCOPE_POLICY"
+      ],
+      "usage": {
+        "records": 5,
+        "feats": 1,
+        "talents": 4,
+        "pctOfCorpus": 0.325,
+        "domainStatus": "BOTH_DOMAINS",
+        "rareStatus": "RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [
+          "O.heavy_weapon"
+        ],
+        "detectorCount": 1,
+        "recordsMatchedByDetectors": 9
+      },
+      "openPolicyGap": {
+        "gapId": "GAP-heavy_weapon",
+        "unresolvedRecords": 0,
+        "hasTagDefinitionQuestion": false,
+        "hasTagConventionQuestion": true
+      }
+    },
+    {
+      "tag": "illusion",
+      "definitionStatus": "OWNER_DEFINITION_REQUIRED",
+      "broadTag": false,
+      "synthesizedDefinition": null,
+      "partialAuthority": null,
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [],
+      "usage": {
+        "records": 5,
+        "feats": 0,
+        "talents": 5,
+        "pctOfCorpus": 0.325,
+        "domainStatus": "TALENT_ONLY",
+        "rareStatus": "RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [],
+        "detectorCount": 0,
+        "recordsMatchedByDetectors": 0
+      },
+      "openPolicyGap": null
+    },
+    {
+      "tag": "implant",
+      "definitionStatus": "OWNER_DEFINITION_REQUIRED",
+      "broadTag": false,
+      "synthesizedDefinition": null,
+      "partialAuthority": null,
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [],
+      "usage": {
+        "records": 9,
+        "feats": 3,
+        "talents": 6,
+        "pctOfCorpus": 0.584,
+        "domainStatus": "BOTH_DOMAINS",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [],
+        "detectorCount": 0,
+        "recordsMatchedByDetectors": 0
+      },
+      "openPolicyGap": null
+    },
+    {
+      "tag": "improvised_weapon",
+      "definitionStatus": "OWNER_DEFINITION_REQUIRED",
+      "broadTag": false,
+      "synthesizedDefinition": null,
+      "partialAuthority": null,
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [],
+      "usage": {
+        "records": 7,
+        "feats": 1,
+        "talents": 6,
+        "pctOfCorpus": 0.455,
+        "domainStatus": "BOTH_DOMAINS",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [
+          "O.improvised_weapon"
+        ],
+        "detectorCount": 1,
+        "recordsMatchedByDetectors": 3
+      },
+      "openPolicyGap": null
+    },
+    {
+      "tag": "infiltration",
+      "definitionStatus": "OWNER_DEFINITION_REQUIRED",
+      "broadTag": false,
+      "synthesizedDefinition": null,
+      "partialAuthority": null,
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [],
+      "usage": {
+        "records": 38,
+        "feats": 5,
+        "talents": 33,
+        "pctOfCorpus": 2.468,
+        "domainStatus": "BOTH_DOMAINS",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [],
+        "detectorCount": 0,
+        "recordsMatchedByDetectors": 0
+      },
+      "openPolicyGap": null
+    },
+    {
+      "tag": "initiative",
+      "definitionStatus": "PARTIALLY_OWNER_DEFINED",
+      "broadTag": false,
+      "synthesizedDefinition": null,
+      "partialAuthority": {
+        "policies": [],
+        "ownerRulingFiles": [
+          "data/audits/talent-feat-pass3a-skill-owner-adjudication.json",
+          "data/audits/feat-tags-pass2-owner-adjudication.json"
+        ]
+      },
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [],
+      "usage": {
+        "records": 27,
+        "feats": 5,
+        "talents": 22,
+        "pctOfCorpus": 1.753,
+        "domainStatus": "BOTH_DOMAINS",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [],
+        "detectorCount": 0,
+        "recordsMatchedByDetectors": 0
+      },
+      "openPolicyGap": null
+    },
+    {
+      "tag": "intimidation",
+      "definitionStatus": "OWNER_DEFINITION_REQUIRED",
+      "broadTag": false,
+      "synthesizedDefinition": null,
+      "partialAuthority": null,
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [],
+      "usage": {
+        "records": 20,
+        "feats": 4,
+        "talents": 16,
+        "pctOfCorpus": 1.299,
+        "domainStatus": "BOTH_DOMAINS",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [],
+        "detectorCount": 0,
+        "recordsMatchedByDetectors": 0
+      },
+      "openPolicyGap": null
+    },
+    {
+      "tag": "intrigue",
+      "definitionStatus": "OWNER_DEFINITION_REQUIRED",
+      "broadTag": false,
+      "synthesizedDefinition": null,
+      "partialAuthority": null,
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [],
+      "usage": {
+        "records": 3,
+        "feats": 2,
+        "talents": 1,
+        "pctOfCorpus": 0.195,
+        "domainStatus": "BOTH_DOMAINS",
+        "rareStatus": "RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [],
+        "detectorCount": 0,
+        "recordsMatchedByDetectors": 0
+      },
+      "openPolicyGap": null
+    },
+    {
+      "tag": "investigation",
+      "definitionStatus": "OWNER_DEFINITION_REQUIRED",
+      "broadTag": false,
+      "synthesizedDefinition": null,
+      "partialAuthority": null,
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [],
+      "usage": {
+        "records": 31,
+        "feats": 2,
+        "talents": 29,
+        "pctOfCorpus": 2.013,
+        "domainStatus": "BOTH_DOMAINS",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [],
+        "detectorCount": 0,
+        "recordsMatchedByDetectors": 0
+      },
+      "openPolicyGap": null
+    },
+    {
+      "tag": "jury_rig",
+      "definitionStatus": "OWNER_DEFINITION_REQUIRED",
+      "broadTag": false,
+      "synthesizedDefinition": null,
+      "partialAuthority": null,
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [],
+      "usage": {
+        "records": 8,
+        "feats": 0,
+        "talents": 8,
+        "pctOfCorpus": 0.519,
+        "domainStatus": "TALENT_ONLY",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [
+          "L.jury_rig"
+        ],
+        "detectorCount": 1,
+        "recordsMatchedByDetectors": 5
+      },
+      "openPolicyGap": null
+    },
+    {
+      "tag": "knowledge",
+      "definitionStatus": "PARTIALLY_OWNER_DEFINED",
+      "broadTag": false,
+      "synthesizedDefinition": null,
+      "partialAuthority": {
+        "policies": [],
+        "ownerRulingFiles": [
+          "data/audits/talent-feat-pass3a-skill-owner-adjudication.json",
+          "data/audits/feat-tags-pass2-owner-adjudication.json"
+        ]
+      },
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [],
+      "usage": {
+        "records": 35,
+        "feats": 6,
+        "talents": 29,
+        "pctOfCorpus": 2.273,
+        "domainStatus": "BOTH_DOMAINS",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [],
+        "detectorCount": 0,
+        "recordsMatchedByDetectors": 0
+      },
+      "openPolicyGap": null
+    },
+    {
+      "tag": "leadership",
+      "definitionStatus": "OWNER_DEFINITION_REQUIRED",
+      "broadTag": false,
+      "synthesizedDefinition": null,
+      "partialAuthority": null,
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [],
+      "usage": {
+        "records": 18,
+        "feats": 3,
+        "talents": 15,
+        "pctOfCorpus": 1.169,
+        "domainStatus": "BOTH_DOMAINS",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [
+          "K.leadership"
+        ],
+        "detectorCount": 1,
+        "recordsMatchedByDetectors": 8
+      },
+      "openPolicyGap": {
+        "gapId": "GAP-leadership",
+        "unresolvedRecords": 0,
+        "hasTagDefinitionQuestion": false,
+        "hasTagConventionQuestion": true
+      }
+    },
+    {
+      "tag": "light_side",
+      "definitionStatus": "OWNER_DEFINITION_REQUIRED",
+      "broadTag": false,
+      "synthesizedDefinition": null,
+      "partialAuthority": null,
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [],
+      "usage": {
+        "records": 8,
+        "feats": 0,
+        "talents": 8,
+        "pctOfCorpus": 0.519,
+        "domainStatus": "TALENT_ONLY",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [
+          "N.light_side"
+        ],
+        "detectorCount": 1,
+        "recordsMatchedByDetectors": 5
+      },
+      "openPolicyGap": null
+    },
+    {
+      "tag": "lightsaber",
+      "definitionStatus": "PARTIALLY_OWNER_DEFINED",
+      "broadTag": false,
+      "synthesizedDefinition": null,
+      "partialAuthority": {
+        "policies": [
+          {
+            "policyId": "CLOSED_SCOPE_POLICY",
+            "text": "When the operative mechanic explicitly and deliberately applies to a named closed scope, that scope may receive its semantic tag: \"melee attacks\" -> melee; \"ranged attacks\" -> ranged; \"melee or ranged attacks\" -> both are explicit closed scopes; \"while using a pistol\" -> pistol; \"when wielding a lightsaber\" -> lightsaber; \"unarmed attacks\" -> unarmed. This policy does not override the reference-only or generic-selection policies."
+          },
+          {
+            "policyId": "OPEN_GENERIC_SCOPE_POLICY",
+            "text": "When a record allows an open generic choice (any weapon, any weapon group, any skill, any Force power, one of many selectable categories), do not automatically add every possible specific scope tag (for example Weapon Focus allowing grapple as one possible choice does not gain grapple; a generic weapon selection does not gain pistol, heavy_weapon, lightsaber, exotic_weapon; a generic skill mechanic does not gain every skill tag). Specific semantic tags require direct operative interaction with that specific scope."
+          }
+        ],
+        "ownerRulingFiles": []
+      },
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [
+        "CLOSED_SCOPE_POLICY",
+        "OPEN_GENERIC_SCOPE_POLICY"
+      ],
+      "usage": {
+        "records": 77,
+        "feats": 3,
+        "talents": 74,
+        "pctOfCorpus": 5,
+        "domainStatus": "BOTH_DOMAINS",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [
+          "O.lightsaber"
+        ],
+        "detectorCount": 1,
+        "recordsMatchedByDetectors": 72
+      },
+      "openPolicyGap": {
+        "gapId": "GAP-lightsaber",
+        "unresolvedRecords": 3,
+        "hasTagDefinitionQuestion": false,
+        "hasTagConventionQuestion": false
+      }
+    },
+    {
+      "tag": "lightsaber_polearm",
+      "definitionStatus": "OWNER_DEFINITION_REQUIRED",
+      "broadTag": false,
+      "synthesizedDefinition": null,
+      "partialAuthority": null,
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [],
+      "usage": {
+        "records": 2,
+        "feats": 1,
+        "talents": 1,
+        "pctOfCorpus": 0.13,
+        "domainStatus": "BOTH_DOMAINS",
+        "rareStatus": "RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [],
+        "detectorCount": 0,
+        "recordsMatchedByDetectors": 0
+      },
+      "openPolicyGap": null
+    },
+    {
+      "tag": "manipulation",
+      "definitionStatus": "OWNER_DEFINITION_REQUIRED",
+      "broadTag": false,
+      "synthesizedDefinition": null,
+      "partialAuthority": null,
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [],
+      "usage": {
+        "records": 35,
+        "feats": 5,
+        "talents": 30,
+        "pctOfCorpus": 2.273,
+        "domainStatus": "BOTH_DOMAINS",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [],
+        "detectorCount": 0,
+        "recordsMatchedByDetectors": 0
+      },
+      "openPolicyGap": null
+    },
+    {
+      "tag": "martial_arts",
+      "definitionStatus": "OWNER_DEFINITION_REQUIRED",
+      "broadTag": false,
+      "synthesizedDefinition": null,
+      "partialAuthority": null,
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [],
+      "usage": {
+        "records": 38,
+        "feats": 12,
+        "talents": 26,
+        "pctOfCorpus": 2.468,
+        "domainStatus": "BOTH_DOMAINS",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [
+          "O.martial_arts"
+        ],
+        "detectorCount": 1,
+        "recordsMatchedByDetectors": 3
+      },
+      "openPolicyGap": null
+    },
+    {
+      "tag": "mechanics",
+      "definitionStatus": "PARTIALLY_OWNER_DEFINED",
+      "broadTag": false,
+      "synthesizedDefinition": null,
+      "partialAuthority": {
+        "policies": [],
+        "ownerRulingFiles": [
+          "data/audits/talent-feat-pass3a-skill-owner-adjudication.json",
+          "data/audits/feat-tags-pass2-owner-adjudication.json"
+        ]
+      },
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [],
+      "usage": {
+        "records": 51,
+        "feats": 15,
+        "talents": 36,
+        "pctOfCorpus": 3.312,
+        "domainStatus": "BOTH_DOMAINS",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [
+          "L.mechanics_skill"
+        ],
+        "detectorCount": 1,
+        "recordsMatchedByDetectors": 46
+      },
+      "openPolicyGap": null
+    },
+    {
+      "tag": "medical",
+      "definitionStatus": "OWNER_DEFINITION_REQUIRED",
+      "broadTag": false,
+      "synthesizedDefinition": null,
+      "partialAuthority": null,
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [],
+      "usage": {
+        "records": 38,
+        "feats": 7,
+        "talents": 31,
+        "pctOfCorpus": 2.468,
+        "domainStatus": "BOTH_DOMAINS",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [
+          "J.medical"
+        ],
+        "detectorCount": 1,
+        "recordsMatchedByDetectors": 9
+      },
+      "openPolicyGap": null
+    },
+    {
+      "tag": "medicine",
+      "definitionStatus": "OWNER_DEFINITION_REQUIRED",
+      "broadTag": false,
+      "synthesizedDefinition": null,
+      "partialAuthority": null,
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [],
+      "usage": {
+        "records": 25,
+        "feats": 5,
+        "talents": 20,
+        "pctOfCorpus": 1.623,
+        "domainStatus": "BOTH_DOMAINS",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [
+          "J.medicine"
+        ],
+        "detectorCount": 1,
+        "recordsMatchedByDetectors": 12
+      },
+      "openPolicyGap": {
+        "gapId": "GAP-medicine",
+        "unresolvedRecords": 0,
+        "hasTagDefinitionQuestion": false,
+        "hasTagConventionQuestion": true
+      }
+    },
+    {
+      "tag": "meditation",
+      "definitionStatus": "OWNER_DEFINITION_REQUIRED",
+      "broadTag": false,
+      "synthesizedDefinition": null,
+      "partialAuthority": null,
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [],
+      "usage": {
+        "records": 2,
+        "feats": 0,
+        "talents": 2,
+        "pctOfCorpus": 0.13,
+        "domainStatus": "TALENT_ONLY",
+        "rareStatus": "RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [],
+        "detectorCount": 0,
+        "recordsMatchedByDetectors": 0
+      },
+      "openPolicyGap": null
+    },
+    {
+      "tag": "melee",
+      "definitionStatus": "PARTIALLY_OWNER_DEFINED",
+      "broadTag": false,
+      "synthesizedDefinition": null,
+      "partialAuthority": {
+        "policies": [
+          {
+            "policyId": "CLOSED_SCOPE_POLICY",
+            "text": "When the operative mechanic explicitly and deliberately applies to a named closed scope, that scope may receive its semantic tag: \"melee attacks\" -> melee; \"ranged attacks\" -> ranged; \"melee or ranged attacks\" -> both are explicit closed scopes; \"while using a pistol\" -> pistol; \"when wielding a lightsaber\" -> lightsaber; \"unarmed attacks\" -> unarmed. This policy does not override the reference-only or generic-selection policies."
+          },
+          {
+            "policyId": "OPEN_GENERIC_SCOPE_POLICY",
+            "text": "When a record allows an open generic choice (any weapon, any weapon group, any skill, any Force power, one of many selectable categories), do not automatically add every possible specific scope tag (for example Weapon Focus allowing grapple as one possible choice does not gain grapple; a generic weapon selection does not gain pistol, heavy_weapon, lightsaber, exotic_weapon; a generic skill mechanic does not gain every skill tag). Specific semantic tags require direct operative interaction with that specific scope."
+          }
+        ],
+        "ownerRulingFiles": []
+      },
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [
+        "CLOSED_SCOPE_POLICY",
+        "OPEN_GENERIC_SCOPE_POLICY"
+      ],
+      "usage": {
+        "records": 308,
+        "feats": 57,
+        "talents": 251,
+        "pctOfCorpus": 20,
+        "domainStatus": "BOTH_DOMAINS",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [
+          "O.melee"
+        ],
+        "detectorCount": 1,
+        "recordsMatchedByDetectors": 174
+      },
+      "openPolicyGap": {
+        "gapId": "GAP-melee",
+        "unresolvedRecords": 11,
+        "hasTagDefinitionQuestion": false,
+        "hasTagConventionQuestion": false
+      }
+    },
+    {
+      "tag": "melee_defense",
+      "definitionStatus": "OWNER_DEFINITION_REQUIRED",
+      "broadTag": false,
+      "synthesizedDefinition": null,
+      "partialAuthority": null,
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [],
+      "usage": {
+        "records": 23,
+        "feats": 2,
+        "talents": 21,
+        "pctOfCorpus": 1.494,
+        "domainStatus": "BOTH_DOMAINS",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [
+          "I.melee_defense"
+        ],
+        "detectorCount": 1,
+        "recordsMatchedByDetectors": 3
+      },
+      "openPolicyGap": {
+        "gapId": "GAP-melee_defense",
+        "unresolvedRecords": 0,
+        "hasTagDefinitionQuestion": false,
+        "hasTagConventionQuestion": true
+      }
+    },
+    {
+      "tag": "mind-affecting",
+      "definitionStatus": "OWNER_DEFINITION_REQUIRED",
+      "broadTag": false,
+      "synthesizedDefinition": null,
+      "partialAuthority": null,
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [],
+      "usage": {
+        "records": 80,
+        "feats": 10,
+        "talents": 70,
+        "pctOfCorpus": 5.195,
+        "domainStatus": "BOTH_DOMAINS",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [],
+        "detectorCount": 0,
+        "recordsMatchedByDetectors": 0
+      },
+      "openPolicyGap": null
+    },
+    {
+      "tag": "minion",
+      "definitionStatus": "OWNER_DEFINITION_REQUIRED",
+      "broadTag": false,
+      "synthesizedDefinition": null,
+      "partialAuthority": null,
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [],
+      "usage": {
+        "records": 13,
+        "feats": 0,
+        "talents": 13,
+        "pctOfCorpus": 0.844,
+        "domainStatus": "TALENT_ONLY",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [
+          "K.minion"
+        ],
+        "detectorCount": 1,
+        "recordsMatchedByDetectors": 10
+      },
+      "openPolicyGap": null
+    },
+    {
+      "tag": "mobility",
+      "definitionStatus": "OWNER_DEFINED",
+      "broadTag": false,
+      "synthesizedDefinition": [
+        {
+          "policyId": "MOBILITY_POLICY",
+          "text": "mobility represents improved/facilitated movement capability, freedom, efficiency or movement access for the user or supported creature. Not added merely because the mechanic forcibly moves an enemy, creates difficult terrain for enemies, manipulates battlefield terrain generally, or references whether movement provokes an attack of opportunity; those may be represented by movement, positioning, control, battlefield_control or other specific mechanics."
+        }
+      ],
+      "partialAuthority": null,
+      "relatedDistinctTags": [
+        "movement"
+      ],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [
+        "MOBILITY_POLICY"
+      ],
+      "usage": {
+        "records": 194,
+        "feats": 48,
+        "talents": 146,
+        "pctOfCorpus": 12.597,
+        "domainStatus": "BOTH_DOMAINS",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [
+          "G.mobility"
+        ],
+        "detectorCount": 1,
+        "recordsMatchedByDetectors": 46
+      },
+      "openPolicyGap": null
+    },
+    {
+      "tag": "modification",
+      "definitionStatus": "OWNER_DEFINITION_REQUIRED",
+      "broadTag": false,
+      "synthesizedDefinition": null,
+      "partialAuthority": null,
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [],
+      "usage": {
+        "records": 29,
+        "feats": 6,
+        "talents": 23,
+        "pctOfCorpus": 1.883,
+        "domainStatus": "BOTH_DOMAINS",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [
+          "L.modification"
+        ],
+        "detectorCount": 1,
+        "recordsMatchedByDetectors": 18
+      },
+      "openPolicyGap": {
+        "gapId": "GAP-modification",
+        "unresolvedRecords": 3,
+        "hasTagDefinitionQuestion": false,
+        "hasTagConventionQuestion": false
+      }
+    },
+    {
+      "tag": "morale",
+      "definitionStatus": "OWNER_DEFINITION_REQUIRED",
+      "broadTag": false,
+      "synthesizedDefinition": null,
+      "partialAuthority": null,
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [],
+      "usage": {
+        "records": 35,
+        "feats": 0,
+        "talents": 35,
+        "pctOfCorpus": 2.273,
+        "domainStatus": "TALENT_ONLY",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [
+          "K.morale"
+        ],
+        "detectorCount": 1,
+        "recordsMatchedByDetectors": 64
+      },
+      "openPolicyGap": {
+        "gapId": "GAP-morale",
+        "unresolvedRecords": 10,
+        "hasTagDefinitionQuestion": false,
+        "hasTagConventionQuestion": false
+      }
+    },
+    {
+      "tag": "mount",
+      "definitionStatus": "OWNER_DEFINITION_REQUIRED",
+      "broadTag": false,
+      "synthesizedDefinition": null,
+      "partialAuthority": null,
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [],
+      "usage": {
+        "records": 10,
+        "feats": 5,
+        "talents": 5,
+        "pctOfCorpus": 0.649,
+        "domainStatus": "BOTH_DOMAINS",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [],
+        "detectorCount": 0,
+        "recordsMatchedByDetectors": 0
+      },
+      "openPolicyGap": null
+    },
+    {
+      "tag": "move_action",
+      "definitionStatus": "OWNER_DEFINED",
+      "broadTag": false,
+      "synthesizedDefinition": [
+        {
+          "policyId": "ACTION_TYPE_POLICY",
+          "text": "A named action-type tag (reaction, swift_action, move_action, standard_action) applies when the record's Benefit directly requires, allows, grants, changes into/from, imposes as an additional cost, prohibits or restricts, or changes another creature's use of that action type. The character using the feat/talent need not be the creature taking the action. Implications remain: reaction/swift_action/move_action/standard_action -> action_economy."
+        }
+      ],
+      "partialAuthority": null,
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "asAntecedent": [
+          "action_economy"
+        ],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [
+        "ACTION_TYPE_POLICY"
+      ],
+      "usage": {
+        "records": 46,
+        "feats": 5,
+        "talents": 41,
+        "pctOfCorpus": 2.987,
+        "domainStatus": "BOTH_DOMAINS",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [
+          "A.cost_move"
+        ],
+        "detectorCount": 1,
+        "recordsMatchedByDetectors": 27
+      },
+      "openPolicyGap": null
+    },
+    {
+      "tag": "movement",
+      "definitionStatus": "OWNER_DEFINED",
+      "broadTag": false,
+      "synthesizedDefinition": [
+        {
+          "policyId": "MOVEMENT_POLICY",
+          "text": "movement applies when the operative mechanic directly changes movement or speed: moving a creature/vehicle, forcing movement, increasing/reducing speed, or changing how much movement can be taken. The affected creature does not have to be the user; direct reduction of an enemy or vehicle's speed is still a movement mechanic."
+        }
+      ],
+      "partialAuthority": null,
+      "relatedDistinctTags": [
+        "mobility",
+        "positioning"
+      ],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [
+        "MOVEMENT_POLICY"
+      ],
+      "usage": {
+        "records": 181,
+        "feats": 56,
+        "talents": 125,
+        "pctOfCorpus": 11.753,
+        "domainStatus": "BOTH_DOMAINS",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [
+          "G.speed_change"
+        ],
+        "detectorCount": 1,
+        "recordsMatchedByDetectors": 22
+      },
+      "openPolicyGap": null
+    },
+    {
+      "tag": "nature",
+      "definitionStatus": "OWNER_DEFINITION_REQUIRED",
+      "broadTag": false,
+      "synthesizedDefinition": null,
+      "partialAuthority": null,
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [],
+      "usage": {
+        "records": 11,
+        "feats": 8,
+        "talents": 3,
+        "pctOfCorpus": 0.714,
+        "domainStatus": "BOTH_DOMAINS",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [],
+        "detectorCount": 0,
+        "recordsMatchedByDetectors": 0
+      },
+      "openPolicyGap": null
+    },
+    {
+      "tag": "network",
+      "definitionStatus": "OWNER_DEFINITION_REQUIRED",
+      "broadTag": false,
+      "synthesizedDefinition": null,
+      "partialAuthority": null,
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [],
+      "usage": {
+        "records": 11,
+        "feats": 1,
+        "talents": 10,
+        "pctOfCorpus": 0.714,
+        "domainStatus": "BOTH_DOMAINS",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [],
+        "detectorCount": 0,
+        "recordsMatchedByDetectors": 0
+      },
+      "openPolicyGap": null
+    },
+    {
+      "tag": "nonlethal",
+      "definitionStatus": "PARTIALLY_OWNER_DEFINED",
+      "broadTag": false,
+      "synthesizedDefinition": null,
+      "partialAuthority": {
+        "policies": [
+          {
+            "policyId": "STUN_POLICY",
+            "text": "stun represents direct interaction with the SWSE stun/stunning mechanic or stun damage/mode: deals or modifies stun damage, changes use of a weapon's stun setting, applies a stated stunning effect, or improves/resists/removes/directly modifies stun mechanics. Ion damage is not stun damage. Not added because a record deals ion damage, resists ion damage, improves ion weapons, mentions stun gauntlets only as an equipment exception, or uses nonlethal/capture-oriented ion mechanics. ion and stun are mechanically distinct concepts. No new ion semantic tag is authorized; recurring ion semantics are a later ontology-gap decision."
+          }
+        ],
+        "ownerRulingFiles": []
+      },
+      "relatedDistinctTags": [
+        "stun"
+      ],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [
+        "STUN_POLICY"
+      ],
+      "usage": {
+        "records": 10,
+        "feats": 1,
+        "talents": 9,
+        "pctOfCorpus": 0.649,
+        "domainStatus": "BOTH_DOMAINS",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [
+          "O.nonlethal"
+        ],
+        "detectorCount": 1,
+        "recordsMatchedByDetectors": 1
+      },
+      "openPolicyGap": null
+    },
+    {
+      "tag": "offense_melee",
+      "definitionStatus": "OWNER_DEFINITION_REQUIRED",
+      "broadTag": false,
+      "synthesizedDefinition": null,
+      "partialAuthority": null,
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [],
+      "usage": {
+        "records": 10,
+        "feats": 0,
+        "talents": 10,
+        "pctOfCorpus": 0.649,
+        "domainStatus": "TALENT_ONLY",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [],
+        "detectorCount": 0,
+        "recordsMatchedByDetectors": 0
+      },
+      "openPolicyGap": null
+    },
+    {
+      "tag": "offense_ranged",
+      "definitionStatus": "OWNER_DEFINITION_REQUIRED",
+      "broadTag": false,
+      "synthesizedDefinition": null,
+      "partialAuthority": null,
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [],
+      "usage": {
+        "records": 16,
+        "feats": 0,
+        "talents": 16,
+        "pctOfCorpus": 1.039,
+        "domainStatus": "TALENT_ONLY",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [],
+        "detectorCount": 0,
+        "recordsMatchedByDetectors": 0
+      },
+      "openPolicyGap": null
+    },
+    {
+      "tag": "once-per-encounter",
+      "definitionStatus": "OWNER_DEFINED",
+      "broadTag": false,
+      "synthesizedDefinition": [
+        {
+          "policyId": "ONCE_PER_ENCOUNTER_POLICY",
+          "text": "once-per-encounter represents a global activation/use limitation on the record's own mechanic. Not added for a reference to another normally once-per-encounter ability, restoring an additional use of some other ability, or a per-target once-per-encounter restriction while the ability itself may trigger multiple times."
+        }
+      ],
+      "partialAuthority": null,
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [
+        "ONCE_PER_ENCOUNTER_POLICY"
+      ],
+      "usage": {
+        "records": 211,
+        "feats": 35,
+        "talents": 176,
+        "pctOfCorpus": 13.701,
+        "domainStatus": "BOTH_DOMAINS",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [
+          "C.once_per_encounter"
+        ],
+        "detectorCount": 1,
+        "recordsMatchedByDetectors": 206
+      },
+      "openPolicyGap": null
+    },
+    {
+      "tag": "opposed_check",
+      "definitionStatus": "OWNER_DEFINITION_REQUIRED",
+      "broadTag": false,
+      "synthesizedDefinition": null,
+      "partialAuthority": null,
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [],
+      "usage": {
+        "records": 25,
+        "feats": 0,
+        "talents": 25,
+        "pctOfCorpus": 1.623,
+        "domainStatus": "TALENT_ONLY",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [],
+        "detectorCount": 0,
+        "recordsMatchedByDetectors": 0
+      },
+      "openPolicyGap": null
+    },
+    {
+      "tag": "overwatch",
+      "definitionStatus": "OWNER_DEFINITION_REQUIRED",
+      "broadTag": false,
+      "synthesizedDefinition": null,
+      "partialAuthority": null,
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [],
+      "usage": {
+        "records": 5,
+        "feats": 0,
+        "talents": 5,
+        "pctOfCorpus": 0.325,
+        "domainStatus": "TALENT_ONLY",
+        "rareStatus": "RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [
+          "H.overwatch"
+        ],
+        "detectorCount": 1,
+        "recordsMatchedByDetectors": 2
+      },
+      "openPolicyGap": {
+        "gapId": "GAP-overwatch",
+        "unresolvedRecords": 0,
+        "hasTagDefinitionQuestion": false,
+        "hasTagConventionQuestion": true
+      }
+    },
+    {
+      "tag": "perception",
+      "definitionStatus": "PARTIALLY_OWNER_DEFINED",
+      "broadTag": false,
+      "synthesizedDefinition": null,
+      "partialAuthority": {
+        "policies": [],
+        "ownerRulingFiles": [
+          "data/audits/talent-feat-pass3a-skill-owner-adjudication.json",
+          "data/audits/feat-tags-pass2-owner-adjudication.json"
+        ]
+      },
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [],
+      "usage": {
+        "records": 51,
+        "feats": 12,
+        "talents": 39,
+        "pctOfCorpus": 3.312,
+        "domainStatus": "BOTH_DOMAINS",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [],
+        "detectorCount": 0,
+        "recordsMatchedByDetectors": 0
+      },
+      "openPolicyGap": null
+    },
+    {
+      "tag": "persuasion",
+      "definitionStatus": "PARTIALLY_OWNER_DEFINED",
+      "broadTag": false,
+      "synthesizedDefinition": null,
+      "partialAuthority": {
+        "policies": [],
+        "ownerRulingFiles": [
+          "data/audits/talent-feat-pass3a-skill-owner-adjudication.json",
+          "data/audits/feat-tags-pass2-owner-adjudication.json"
+        ]
+      },
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [],
+      "usage": {
+        "records": 73,
+        "feats": 12,
+        "talents": 61,
+        "pctOfCorpus": 4.74,
+        "domainStatus": "BOTH_DOMAINS",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [],
+        "detectorCount": 0,
+        "recordsMatchedByDetectors": 0
+      },
+      "openPolicyGap": null
+    },
+    {
+      "tag": "pilot",
+      "definitionStatus": "PARTIALLY_OWNER_DEFINED",
+      "broadTag": false,
+      "synthesizedDefinition": null,
+      "partialAuthority": {
+        "policies": [],
+        "ownerRulingFiles": [
+          "data/audits/talent-feat-pass3a-skill-owner-adjudication.json",
+          "data/audits/feat-tags-pass2-owner-adjudication.json"
+        ]
+      },
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [],
+      "usage": {
+        "records": 51,
+        "feats": 7,
+        "talents": 44,
+        "pctOfCorpus": 3.312,
+        "domainStatus": "BOTH_DOMAINS",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [
+          "M.pilot_skill"
+        ],
+        "detectorCount": 1,
+        "recordsMatchedByDetectors": 23
+      },
+      "openPolicyGap": null
+    },
+    {
+      "tag": "pistol",
+      "definitionStatus": "PARTIALLY_OWNER_DEFINED",
+      "broadTag": false,
+      "synthesizedDefinition": null,
+      "partialAuthority": {
+        "policies": [
+          {
+            "policyId": "CLOSED_SCOPE_POLICY",
+            "text": "When the operative mechanic explicitly and deliberately applies to a named closed scope, that scope may receive its semantic tag: \"melee attacks\" -> melee; \"ranged attacks\" -> ranged; \"melee or ranged attacks\" -> both are explicit closed scopes; \"while using a pistol\" -> pistol; \"when wielding a lightsaber\" -> lightsaber; \"unarmed attacks\" -> unarmed. This policy does not override the reference-only or generic-selection policies."
+          },
+          {
+            "policyId": "OPEN_GENERIC_SCOPE_POLICY",
+            "text": "When a record allows an open generic choice (any weapon, any weapon group, any skill, any Force power, one of many selectable categories), do not automatically add every possible specific scope tag (for example Weapon Focus allowing grapple as one possible choice does not gain grapple; a generic weapon selection does not gain pistol, heavy_weapon, lightsaber, exotic_weapon; a generic skill mechanic does not gain every skill tag). Specific semantic tags require direct operative interaction with that specific scope."
+          }
+        ],
+        "ownerRulingFiles": []
+      },
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [
+        "CLOSED_SCOPE_POLICY",
+        "OPEN_GENERIC_SCOPE_POLICY"
+      ],
+      "usage": {
+        "records": 17,
+        "feats": 1,
+        "talents": 16,
+        "pctOfCorpus": 1.104,
+        "domainStatus": "BOTH_DOMAINS",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [
+          "O.pistol"
+        ],
+        "detectorCount": 1,
+        "recordsMatchedByDetectors": 21
+      },
+      "openPolicyGap": {
+        "gapId": "GAP-pistol",
+        "unresolvedRecords": 3,
+        "hasTagDefinitionQuestion": false,
+        "hasTagConventionQuestion": false
+      }
+    },
+    {
+      "tag": "planning",
+      "definitionStatus": "OWNER_DEFINITION_REQUIRED",
+      "broadTag": false,
+      "synthesizedDefinition": null,
+      "partialAuthority": null,
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [],
+      "usage": {
+        "records": 5,
+        "feats": 0,
+        "talents": 5,
+        "pctOfCorpus": 0.325,
+        "domainStatus": "TALENT_ONLY",
+        "rareStatus": "RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [],
+        "detectorCount": 0,
+        "recordsMatchedByDetectors": 0
+      },
+      "openPolicyGap": null
+    },
+    {
+      "tag": "poison",
+      "definitionStatus": "OWNER_DEFINITION_REQUIRED",
+      "broadTag": false,
+      "synthesizedDefinition": null,
+      "partialAuthority": null,
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [],
+      "usage": {
+        "records": 10,
+        "feats": 1,
+        "talents": 9,
+        "pctOfCorpus": 0.649,
+        "domainStatus": "BOTH_DOMAINS",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [
+          "J.poison"
+        ],
+        "detectorCount": 1,
+        "recordsMatchedByDetectors": 11
+      },
+      "openPolicyGap": {
+        "gapId": "GAP-poison",
+        "unresolvedRecords": 1,
+        "hasTagDefinitionQuestion": false,
+        "hasTagConventionQuestion": false
+      }
+    },
+    {
+      "tag": "positioning",
+      "definitionStatus": "PARTIALLY_OWNER_DEFINED",
+      "broadTag": false,
+      "synthesizedDefinition": null,
+      "partialAuthority": {
+        "policies": [
+          {
+            "policyId": "SPECIFIC_OVER_BROAD_POLICY",
+            "text": "When a certified specific mechanical tag already precisely expresses the rule, do not automatically infer every broad neighboring semantic tag. These distinctions must remain meaningful: movement != mobility; movement != positioning; control != battlefield_control; critical_hit != critical_success; ion != stun; resource creation != resource recovery; force capacity != resource recovery; access != semantic identity. Broad tags require their own direct owner-defined meaning."
+          }
+        ],
+        "ownerRulingFiles": []
+      },
+      "relatedDistinctTags": [
+        "movement"
+      ],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [
+        "SPECIFIC_OVER_BROAD_POLICY"
+      ],
+      "usage": {
+        "records": 217,
+        "feats": 33,
+        "talents": 184,
+        "pctOfCorpus": 14.091,
+        "domainStatus": "BOTH_DOMAINS",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [
+          "G.positioning"
+        ],
+        "detectorCount": 1,
+        "recordsMatchedByDetectors": 4
+      },
+      "openPolicyGap": null
+    },
+    {
+      "tag": "power_systems",
+      "definitionStatus": "OWNER_DEFINITION_REQUIRED",
+      "broadTag": false,
+      "synthesizedDefinition": null,
+      "partialAuthority": null,
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [],
+      "usage": {
+        "records": 19,
+        "feats": 3,
+        "talents": 16,
+        "pctOfCorpus": 1.234,
+        "domainStatus": "BOTH_DOMAINS",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [
+          "L.power_systems"
+        ],
+        "detectorCount": 1,
+        "recordsMatchedByDetectors": 7
+      },
+      "openPolicyGap": null
+    },
+    {
+      "tag": "precision",
+      "definitionStatus": "OWNER_DEFINITION_REQUIRED",
+      "broadTag": true,
+      "synthesizedDefinition": null,
+      "partialAuthority": null,
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [],
+      "usage": {
+        "records": 242,
+        "feats": 68,
+        "talents": 174,
+        "pctOfCorpus": 15.714,
+        "domainStatus": "BOTH_DOMAINS",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [
+          "D.precision"
+        ],
+        "detectorCount": 1,
+        "recordsMatchedByDetectors": 2
+      },
+      "openPolicyGap": {
+        "gapId": "GAP-precision",
+        "unresolvedRecords": 0,
+        "hasTagDefinitionQuestion": true,
+        "hasTagConventionQuestion": false
+      }
+    },
+    {
+      "tag": "precision_damage",
+      "definitionStatus": "OWNER_DEFINITION_REQUIRED",
+      "broadTag": false,
+      "synthesizedDefinition": null,
+      "partialAuthority": null,
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [],
+      "usage": {
+        "records": 7,
+        "feats": 0,
+        "talents": 7,
+        "pctOfCorpus": 0.455,
+        "domainStatus": "TALENT_ONLY",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [
+          "D.precision_damage"
+        ],
+        "detectorCount": 1,
+        "recordsMatchedByDetectors": 0
+      },
+      "openPolicyGap": null
+    },
+    {
+      "tag": "precognition",
+      "definitionStatus": "OWNER_DEFINITION_REQUIRED",
+      "broadTag": false,
+      "synthesizedDefinition": null,
+      "partialAuthority": null,
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [],
+      "usage": {
+        "records": 15,
+        "feats": 0,
+        "talents": 15,
+        "pctOfCorpus": 0.974,
+        "domainStatus": "TALENT_ONLY",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [],
+        "detectorCount": 0,
+        "recordsMatchedByDetectors": 0
+      },
+      "openPolicyGap": null
+    },
+    {
+      "tag": "pursuit",
+      "definitionStatus": "OWNER_DEFINITION_REQUIRED",
+      "broadTag": false,
+      "synthesizedDefinition": null,
+      "partialAuthority": null,
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [],
+      "usage": {
+        "records": 30,
+        "feats": 0,
+        "talents": 30,
+        "pctOfCorpus": 1.948,
+        "domainStatus": "TALENT_ONLY",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [
+          "G.pursuit"
+        ],
+        "detectorCount": 1,
+        "recordsMatchedByDetectors": 2
+      },
+      "openPolicyGap": null
+    },
+    {
+      "tag": "ranged",
+      "definitionStatus": "PARTIALLY_OWNER_DEFINED",
+      "broadTag": false,
+      "synthesizedDefinition": null,
+      "partialAuthority": {
+        "policies": [
+          {
+            "policyId": "CLOSED_SCOPE_POLICY",
+            "text": "When the operative mechanic explicitly and deliberately applies to a named closed scope, that scope may receive its semantic tag: \"melee attacks\" -> melee; \"ranged attacks\" -> ranged; \"melee or ranged attacks\" -> both are explicit closed scopes; \"while using a pistol\" -> pistol; \"when wielding a lightsaber\" -> lightsaber; \"unarmed attacks\" -> unarmed. This policy does not override the reference-only or generic-selection policies."
+          },
+          {
+            "policyId": "OPEN_GENERIC_SCOPE_POLICY",
+            "text": "When a record allows an open generic choice (any weapon, any weapon group, any skill, any Force power, one of many selectable categories), do not automatically add every possible specific scope tag (for example Weapon Focus allowing grapple as one possible choice does not gain grapple; a generic weapon selection does not gain pistol, heavy_weapon, lightsaber, exotic_weapon; a generic skill mechanic does not gain every skill tag). Specific semantic tags require direct operative interaction with that specific scope."
+          }
+        ],
+        "ownerRulingFiles": []
+      },
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [
+        "CLOSED_SCOPE_POLICY",
+        "OPEN_GENERIC_SCOPE_POLICY"
+      ],
+      "usage": {
+        "records": 272,
+        "feats": 54,
+        "talents": 218,
+        "pctOfCorpus": 17.662,
+        "domainStatus": "BOTH_DOMAINS",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [
+          "O.ranged"
+        ],
+        "detectorCount": 1,
+        "recordsMatchedByDetectors": 137
+      },
+      "openPolicyGap": {
+        "gapId": "GAP-ranged",
+        "unresolvedRecords": 7,
+        "hasTagDefinitionQuestion": false,
+        "hasTagConventionQuestion": false
+      }
+    },
+    {
+      "tag": "ranged_defense",
+      "definitionStatus": "OWNER_DEFINITION_REQUIRED",
+      "broadTag": false,
+      "synthesizedDefinition": null,
+      "partialAuthority": null,
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [],
+      "usage": {
+        "records": 25,
+        "feats": 2,
+        "talents": 23,
+        "pctOfCorpus": 1.623,
+        "domainStatus": "BOTH_DOMAINS",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [
+          "I.ranged_defense"
+        ],
+        "detectorCount": 1,
+        "recordsMatchedByDetectors": 2
+      },
+      "openPolicyGap": {
+        "gapId": "GAP-ranged_defense",
+        "unresolvedRecords": 1,
+        "hasTagDefinitionQuestion": false,
+        "hasTagConventionQuestion": false
+      }
+    },
+    {
+      "tag": "reaction",
+      "definitionStatus": "OWNER_DEFINED",
+      "broadTag": false,
+      "synthesizedDefinition": [
+        {
+          "policyId": "ACTION_TYPE_POLICY",
+          "text": "A named action-type tag (reaction, swift_action, move_action, standard_action) applies when the record's Benefit directly requires, allows, grants, changes into/from, imposes as an additional cost, prohibits or restricts, or changes another creature's use of that action type. The character using the feat/talent need not be the creature taking the action. Implications remain: reaction/swift_action/move_action/standard_action -> action_economy."
+        }
+      ],
+      "partialAuthority": null,
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "asAntecedent": [
+          "action_economy"
+        ],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [
+        "ACTION_TYPE_POLICY"
+      ],
+      "usage": {
+        "records": 154,
+        "feats": 23,
+        "talents": 131,
+        "pctOfCorpus": 10,
+        "domainStatus": "BOTH_DOMAINS",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [
+          "A.cost_reaction"
+        ],
+        "detectorCount": 1,
+        "recordsMatchedByDetectors": 139
+      },
+      "openPolicyGap": null
+    },
+    {
+      "tag": "recon",
+      "definitionStatus": "OWNER_DEFINITION_REQUIRED",
+      "broadTag": false,
+      "synthesizedDefinition": null,
+      "partialAuthority": null,
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [],
+      "usage": {
+        "records": 31,
+        "feats": 0,
+        "talents": 31,
+        "pctOfCorpus": 2.013,
+        "domainStatus": "TALENT_ONLY",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [],
+        "detectorCount": 0,
+        "recordsMatchedByDetectors": 0
+      },
+      "openPolicyGap": null
+    },
+    {
+      "tag": "recovery",
+      "definitionStatus": "OWNER_DEFINITION_REQUIRED",
+      "broadTag": false,
+      "synthesizedDefinition": null,
+      "partialAuthority": null,
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": [
+          "condition_removal"
+        ]
+      },
+      "controllingPolicyIds": [],
+      "usage": {
+        "records": 96,
+        "feats": 17,
+        "talents": 79,
+        "pctOfCorpus": 6.234,
+        "domainStatus": "BOTH_DOMAINS",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [
+          "J.recovery"
+        ],
+        "detectorCount": 1,
+        "recordsMatchedByDetectors": 39
+      },
+      "openPolicyGap": {
+        "gapId": "GAP-recovery",
+        "unresolvedRecords": 5,
+        "hasTagDefinitionQuestion": false,
+        "hasTagConventionQuestion": false
+      }
+    },
+    {
+      "tag": "reliability",
+      "definitionStatus": "OWNER_DEFINED",
+      "broadTag": true,
+      "synthesizedDefinition": [
+        {
+          "policyId": "RELIABILITY_POLICY",
+          "text": "reliability represents an affirmative mechanic that improves or stabilizes outcome reliability (reroll, roll-twice/select-result, Take 10/Take 20 benefit, automatic success, equivalent positive mechanic). Not added because a rule prohibits Take 10/20, a phrase happens to contain \"take 10\", or a mechanic selects the better of two static modifiers rather than two rolls. Negative restrictions create no positive reliability tag."
+        }
+      ],
+      "partialAuthority": null,
+      "relatedDistinctTags": [
+        "reroll"
+      ],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": [
+          "reroll"
+        ]
+      },
+      "controllingPolicyIds": [
+        "RELIABILITY_POLICY"
+      ],
+      "usage": {
+        "records": 175,
+        "feats": 33,
+        "talents": 142,
+        "pctOfCorpus": 11.364,
+        "domainStatus": "BOTH_DOMAINS",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [
+          "B.roll_twice_keep",
+          "B.take_10_20",
+          "B.automatic_success"
+        ],
+        "detectorCount": 3,
+        "recordsMatchedByDetectors": 58
+      },
+      "openPolicyGap": null
+    },
+    {
+      "tag": "repair",
+      "definitionStatus": "OWNER_DEFINITION_REQUIRED",
+      "broadTag": false,
+      "synthesizedDefinition": null,
+      "partialAuthority": null,
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [],
+      "usage": {
+        "records": 14,
+        "feats": 2,
+        "talents": 12,
+        "pctOfCorpus": 0.909,
+        "domainStatus": "BOTH_DOMAINS",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [
+          "J.repair"
+        ],
+        "detectorCount": 1,
+        "recordsMatchedByDetectors": 14
+      },
+      "openPolicyGap": {
+        "gapId": "GAP-repair",
+        "unresolvedRecords": 4,
+        "hasTagDefinitionQuestion": false,
+        "hasTagConventionQuestion": false
+      }
+    },
+    {
+      "tag": "reroll",
+      "definitionStatus": "OWNER_DEFINED",
+      "broadTag": false,
+      "synthesizedDefinition": [
+        {
+          "policyId": "REROLL_POLICY",
+          "text": "reroll applies only when the record actually permits, requires, causes or modifies a reroll. A textual reference to rerolls without creating or modifying a reroll mechanic does not qualify."
+        }
+      ],
+      "partialAuthority": null,
+      "relatedDistinctTags": [
+        "reliability"
+      ],
+      "hardImplications": {
+        "asAntecedent": [
+          "reliability"
+        ],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [
+        "REROLL_POLICY"
+      ],
+      "usage": {
+        "records": 109,
+        "feats": 19,
+        "talents": 90,
+        "pctOfCorpus": 7.078,
+        "domainStatus": "BOTH_DOMAINS",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [
+          "B.reroll"
+        ],
+        "detectorCount": 1,
+        "recordsMatchedByDetectors": 97
+      },
+      "openPolicyGap": null
+    },
+    {
+      "tag": "resilience",
+      "definitionStatus": "OWNER_DEFINITION_REQUIRED",
+      "broadTag": false,
+      "synthesizedDefinition": null,
+      "partialAuthority": null,
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [],
+      "usage": {
+        "records": 96,
+        "feats": 30,
+        "talents": 66,
+        "pctOfCorpus": 6.234,
+        "domainStatus": "BOTH_DOMAINS",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [
+          "I.resilience"
+        ],
+        "detectorCount": 1,
+        "recordsMatchedByDetectors": 1
+      },
+      "openPolicyGap": null
+    },
+    {
+      "tag": "resource_recovery",
+      "definitionStatus": "OWNER_DEFINED",
+      "broadTag": false,
+      "synthesizedDefinition": [
+        {
+          "policyId": "RESOURCE_RECOVERY_POLICY",
+          "text": "resource_recovery applies when the mechanic directly restores, regains, refunds or returns a previously spent or expended resource. Not for creating a new temporary resource, granting an additional temporary Force Point, increasing capacity, restoring hit points, or referencing normal recovery while replacing/foregoing it. Hit-point recovery is healing/recovery semantics, not resource_recovery."
+        }
+      ],
+      "partialAuthority": null,
+      "relatedDistinctTags": [
+        "force_capacity",
+        "resource_spend"
+      ],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [
+        "RESOURCE_RECOVERY_POLICY"
+      ],
+      "usage": {
+        "records": 38,
+        "feats": 13,
+        "talents": 25,
+        "pctOfCorpus": 2.468,
+        "domainStatus": "BOTH_DOMAINS",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [
+          "C.resource_recovery"
+        ],
+        "detectorCount": 1,
+        "recordsMatchedByDetectors": 15
+      },
+      "openPolicyGap": null
+    },
+    {
+      "tag": "resource_spend",
+      "definitionStatus": "OWNER_DEFINED",
+      "broadTag": false,
+      "synthesizedDefinition": [
+        {
+          "policyId": "RESOURCE_SPEND_POLICY",
+          "text": "resource_spend applies when the record directly consumes an explicitly limited/tracked resource or use as part of its operative mechanic. Avoiding a resource cost is not resource spending; mentioning that a temporary resource could later be spent is not itself resource spending."
+        }
+      ],
+      "partialAuthority": null,
+      "relatedDistinctTags": [
+        "resource_recovery"
+      ],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": [
+          "force_point_spend"
+        ]
+      },
+      "controllingPolicyIds": [
+        "RESOURCE_SPEND_POLICY"
+      ],
+      "usage": {
+        "records": 159,
+        "feats": 19,
+        "talents": 140,
+        "pctOfCorpus": 10.325,
+        "domainStatus": "BOTH_DOMAINS",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [
+          "C.resource_spend"
+        ],
+        "detectorCount": 1,
+        "recordsMatchedByDetectors": 135
+      },
+      "openPolicyGap": null
+    },
+    {
+      "tag": "resources",
+      "definitionStatus": "OWNER_DEFINITION_REQUIRED",
+      "broadTag": true,
+      "synthesizedDefinition": null,
+      "partialAuthority": null,
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [],
+      "usage": {
+        "records": 60,
+        "feats": 14,
+        "talents": 46,
+        "pctOfCorpus": 3.896,
+        "domainStatus": "BOTH_DOMAINS",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [],
+        "detectorCount": 0,
+        "recordsMatchedByDetectors": 0
+      },
+      "openPolicyGap": {
+        "gapId": "GAP-resources",
+        "unresolvedRecords": 0,
+        "hasTagDefinitionQuestion": true,
+        "hasTagConventionQuestion": false
+      }
+    },
+    {
+      "tag": "restrain",
+      "definitionStatus": "OWNER_DEFINED",
+      "broadTag": false,
+      "synthesizedDefinition": [
+        {
+          "policyId": "RESTRAIN_POLICY",
+          "text": "restrain applies when the operative mechanic directly restrains/pins/immobilizes a target, modifies a restrained/pinned/immobilized state, frees/removes that state, or directly modifies its mechanical application or escape. Not added for \"restraining bolt\" appearing only in an immunity comparison, an unrelated rule mentioning what happens while immobilized, or ordinary-language phrases such as \"pinning you down\"."
+        }
+      ],
+      "partialAuthority": null,
+      "relatedDistinctTags": [
+        "grapple"
+      ],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [
+        "RESTRAIN_POLICY"
+      ],
+      "usage": {
+        "records": 13,
+        "feats": 6,
+        "talents": 7,
+        "pctOfCorpus": 0.844,
+        "domainStatus": "BOTH_DOMAINS",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [
+          "G.restrain"
+        ],
+        "detectorCount": 1,
+        "recordsMatchedByDetectors": 9
+      },
+      "openPolicyGap": null
+    },
+    {
+      "tag": "ride",
+      "definitionStatus": "PARTIALLY_OWNER_DEFINED",
+      "broadTag": false,
+      "synthesizedDefinition": null,
+      "partialAuthority": {
+        "policies": [],
+        "ownerRulingFiles": [
+          "data/audits/talent-feat-pass3a-skill-owner-adjudication.json",
+          "data/audits/feat-tags-pass2-owner-adjudication.json"
+        ]
+      },
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [],
+      "usage": {
+        "records": 11,
+        "feats": 5,
+        "talents": 6,
+        "pctOfCorpus": 0.714,
+        "domainStatus": "BOTH_DOMAINS",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [],
+        "detectorCount": 0,
+        "recordsMatchedByDetectors": 0
+      },
+      "openPolicyGap": null
+    },
+    {
+      "tag": "rider",
+      "definitionStatus": "OWNER_DEFINITION_REQUIRED",
+      "broadTag": false,
+      "synthesizedDefinition": null,
+      "partialAuthority": null,
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [],
+      "usage": {
+        "records": 10,
+        "feats": 5,
+        "talents": 5,
+        "pctOfCorpus": 0.649,
+        "domainStatus": "BOTH_DOMAINS",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [],
+        "detectorCount": 0,
+        "recordsMatchedByDetectors": 0
+      },
+      "openPolicyGap": null
+    },
+    {
+      "tag": "scaling",
+      "definitionStatus": "OWNER_DEFINITION_REQUIRED",
+      "broadTag": false,
+      "synthesizedDefinition": null,
+      "partialAuthority": null,
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [],
+      "usage": {
+        "records": 192,
+        "feats": 31,
+        "talents": 161,
+        "pctOfCorpus": 12.468,
+        "domainStatus": "BOTH_DOMAINS",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [],
+        "detectorCount": 0,
+        "recordsMatchedByDetectors": 0
+      },
+      "openPolicyGap": null
+    },
+    {
+      "tag": "science",
+      "definitionStatus": "OWNER_DEFINITION_REQUIRED",
+      "broadTag": false,
+      "synthesizedDefinition": null,
+      "partialAuthority": null,
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [],
+      "usage": {
+        "records": 8,
+        "feats": 1,
+        "talents": 7,
+        "pctOfCorpus": 0.519,
+        "domainStatus": "BOTH_DOMAINS",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [],
+        "detectorCount": 0,
+        "recordsMatchedByDetectors": 0
+      },
+      "openPolicyGap": null
+    },
+    {
+      "tag": "search_your_feelings",
+      "definitionStatus": "OWNER_DEFINITION_REQUIRED",
+      "broadTag": false,
+      "synthesizedDefinition": null,
+      "partialAuthority": null,
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [],
+      "usage": {
+        "records": 5,
+        "feats": 0,
+        "talents": 5,
+        "pctOfCorpus": 0.325,
+        "domainStatus": "TALENT_ONLY",
+        "rareStatus": "RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [],
+        "detectorCount": 0,
+        "recordsMatchedByDetectors": 0
+      },
+      "openPolicyGap": null
+    },
+    {
+      "tag": "self_repair",
+      "definitionStatus": "OWNER_DEFINITION_REQUIRED",
+      "broadTag": false,
+      "synthesizedDefinition": null,
+      "partialAuthority": null,
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [],
+      "usage": {
+        "records": 3,
+        "feats": 0,
+        "talents": 3,
+        "pctOfCorpus": 0.195,
+        "domainStatus": "TALENT_ONLY",
+        "rareStatus": "RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [
+          "J.self_repair"
+        ],
+        "detectorCount": 1,
+        "recordsMatchedByDetectors": 2
+      },
+      "openPolicyGap": null
+    },
+    {
+      "tag": "senses",
+      "definitionStatus": "OWNER_DEFINITION_REQUIRED",
+      "broadTag": false,
+      "synthesizedDefinition": null,
+      "partialAuthority": null,
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [],
+      "usage": {
+        "records": 23,
+        "feats": 2,
+        "talents": 21,
+        "pctOfCorpus": 1.494,
+        "domainStatus": "BOTH_DOMAINS",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [],
+        "detectorCount": 0,
+        "recordsMatchedByDetectors": 0
+      },
+      "openPolicyGap": null
+    },
+    {
+      "tag": "sensors",
+      "definitionStatus": "OWNER_DEFINITION_REQUIRED",
+      "broadTag": false,
+      "synthesizedDefinition": null,
+      "partialAuthority": null,
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [],
+      "usage": {
+        "records": 10,
+        "feats": 2,
+        "talents": 8,
+        "pctOfCorpus": 0.649,
+        "domainStatus": "BOTH_DOMAINS",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [
+          "L.sensors"
+        ],
+        "detectorCount": 1,
+        "recordsMatchedByDetectors": 7
+      },
+      "openPolicyGap": null
+    },
+    {
+      "tag": "setup",
+      "definitionStatus": "OWNER_DEFINITION_REQUIRED",
+      "broadTag": true,
+      "synthesizedDefinition": null,
+      "partialAuthority": null,
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [],
+      "usage": {
+        "records": 177,
+        "feats": 28,
+        "talents": 149,
+        "pctOfCorpus": 11.494,
+        "domainStatus": "BOTH_DOMAINS",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [
+          "F.setup"
+        ],
+        "detectorCount": 1,
+        "recordsMatchedByDetectors": 3
+      },
+      "openPolicyGap": {
+        "gapId": "GAP-setup",
+        "unresolvedRecords": 0,
+        "hasTagDefinitionQuestion": true,
+        "hasTagConventionQuestion": false
+      }
+    },
+    {
+      "tag": "shields",
+      "definitionStatus": "OWNER_DEFINITION_REQUIRED",
+      "broadTag": false,
+      "synthesizedDefinition": null,
+      "partialAuthority": null,
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [],
+      "usage": {
+        "records": 17,
+        "feats": 6,
+        "talents": 11,
+        "pctOfCorpus": 1.104,
+        "domainStatus": "BOTH_DOMAINS",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [
+          "M.shields"
+        ],
+        "detectorCount": 1,
+        "recordsMatchedByDetectors": 17
+      },
+      "openPolicyGap": {
+        "gapId": "GAP-shields",
+        "unresolvedRecords": 4,
+        "hasTagDefinitionQuestion": false,
+        "hasTagConventionQuestion": false
+      }
+    },
+    {
+      "tag": "skill_mastery",
+      "definitionStatus": "OWNER_DEFINITION_REQUIRED",
+      "broadTag": false,
+      "synthesizedDefinition": null,
+      "partialAuthority": null,
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [],
+      "usage": {
+        "records": 19,
+        "feats": 2,
+        "talents": 17,
+        "pctOfCorpus": 1.234,
+        "domainStatus": "BOTH_DOMAINS",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [
+          "B.skill_mastery"
+        ],
+        "detectorCount": 1,
+        "recordsMatchedByDetectors": 0
+      },
+      "openPolicyGap": null
+    },
+    {
+      "tag": "skill_substitution",
+      "definitionStatus": "OWNER_DEFINITION_REQUIRED",
+      "broadTag": false,
+      "synthesizedDefinition": null,
+      "partialAuthority": null,
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [],
+      "usage": {
+        "records": 38,
+        "feats": 7,
+        "talents": 31,
+        "pctOfCorpus": 2.468,
+        "domainStatus": "BOTH_DOMAINS",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [],
+        "detectorCount": 0,
+        "recordsMatchedByDetectors": 0
+      },
+      "openPolicyGap": null
+    },
+    {
+      "tag": "skills",
+      "definitionStatus": "OWNER_DEFINITION_REQUIRED",
+      "broadTag": false,
+      "synthesizedDefinition": null,
+      "partialAuthority": null,
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [],
+      "usage": {
+        "records": 320,
+        "feats": 39,
+        "talents": 281,
+        "pctOfCorpus": 20.779,
+        "domainStatus": "BOTH_DOMAINS",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [],
+        "detectorCount": 0,
+        "recordsMatchedByDetectors": 0
+      },
+      "openPolicyGap": null
+    },
+    {
+      "tag": "slicing",
+      "definitionStatus": "OWNER_DEFINITION_REQUIRED",
+      "broadTag": false,
+      "synthesizedDefinition": null,
+      "partialAuthority": null,
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [],
+      "usage": {
+        "records": 11,
+        "feats": 1,
+        "talents": 10,
+        "pctOfCorpus": 0.714,
+        "domainStatus": "BOTH_DOMAINS",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [
+          "L.slicing"
+        ],
+        "detectorCount": 1,
+        "recordsMatchedByDetectors": 1
+      },
+      "openPolicyGap": null
+    },
+    {
+      "tag": "sniper",
+      "definitionStatus": "OWNER_DEFINITION_REQUIRED",
+      "broadTag": false,
+      "synthesizedDefinition": null,
+      "partialAuthority": null,
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [],
+      "usage": {
+        "records": 16,
+        "feats": 3,
+        "talents": 13,
+        "pctOfCorpus": 1.039,
+        "domainStatus": "BOTH_DOMAINS",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [],
+        "detectorCount": 0,
+        "recordsMatchedByDetectors": 0
+      },
+      "openPolicyGap": null
+    },
+    {
+      "tag": "social",
+      "definitionStatus": "OWNER_DEFINITION_REQUIRED",
+      "broadTag": false,
+      "synthesizedDefinition": null,
+      "partialAuthority": null,
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [],
+      "usage": {
+        "records": 111,
+        "feats": 17,
+        "talents": 94,
+        "pctOfCorpus": 7.208,
+        "domainStatus": "BOTH_DOMAINS",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [],
+        "detectorCount": 0,
+        "recordsMatchedByDetectors": 0
+      },
+      "openPolicyGap": null
+    },
+    {
+      "tag": "social_network",
+      "definitionStatus": "OWNER_DEFINITION_REQUIRED",
+      "broadTag": false,
+      "synthesizedDefinition": null,
+      "partialAuthority": null,
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [],
+      "usage": {
+        "records": 14,
+        "feats": 2,
+        "talents": 12,
+        "pctOfCorpus": 0.909,
+        "domainStatus": "BOTH_DOMAINS",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [],
+        "detectorCount": 0,
+        "recordsMatchedByDetectors": 0
+      },
+      "openPolicyGap": null
+    },
+    {
+      "tag": "space",
+      "definitionStatus": "OWNER_DEFINITION_REQUIRED",
+      "broadTag": false,
+      "synthesizedDefinition": null,
+      "partialAuthority": null,
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [],
+      "usage": {
+        "records": 22,
+        "feats": 4,
+        "talents": 18,
+        "pctOfCorpus": 1.429,
+        "domainStatus": "BOTH_DOMAINS",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [
+          "M.space"
+        ],
+        "detectorCount": 1,
+        "recordsMatchedByDetectors": 28
+      },
+      "openPolicyGap": {
+        "gapId": "GAP-space",
+        "unresolvedRecords": 0,
+        "hasTagDefinitionQuestion": false,
+        "hasTagConventionQuestion": true
+      }
+    },
+    {
+      "tag": "spellcasting",
+      "definitionStatus": "OWNER_DEFINITION_REQUIRED",
+      "broadTag": false,
+      "synthesizedDefinition": null,
+      "partialAuthority": null,
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [],
+      "usage": {
+        "records": 1,
+        "feats": 0,
+        "talents": 1,
+        "pctOfCorpus": 0.065,
+        "domainStatus": "TALENT_ONLY",
+        "rareStatus": "RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [],
+        "detectorCount": 0,
+        "recordsMatchedByDetectors": 0
+      },
+      "openPolicyGap": null
+    },
+    {
+      "tag": "standard_action",
+      "definitionStatus": "OWNER_DEFINED",
+      "broadTag": false,
+      "synthesizedDefinition": [
+        {
+          "policyId": "ACTION_TYPE_POLICY",
+          "text": "A named action-type tag (reaction, swift_action, move_action, standard_action) applies when the record's Benefit directly requires, allows, grants, changes into/from, imposes as an additional cost, prohibits or restricts, or changes another creature's use of that action type. The character using the feat/talent need not be the creature taking the action. Implications remain: reaction/swift_action/move_action/standard_action -> action_economy."
+        }
+      ],
+      "partialAuthority": null,
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "asAntecedent": [
+          "action_economy"
+        ],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [
+        "ACTION_TYPE_POLICY"
+      ],
+      "usage": {
+        "records": 152,
+        "feats": 11,
+        "talents": 141,
+        "pctOfCorpus": 9.87,
+        "domainStatus": "BOTH_DOMAINS",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [
+          "A.cost_standard"
+        ],
+        "detectorCount": 1,
+        "recordsMatchedByDetectors": 140
+      },
+      "openPolicyGap": null
+    },
+    {
+      "tag": "stealth",
+      "definitionStatus": "PARTIALLY_OWNER_DEFINED",
+      "broadTag": false,
+      "synthesizedDefinition": null,
+      "partialAuthority": {
+        "policies": [],
+        "ownerRulingFiles": [
+          "data/audits/talent-feat-pass3a-skill-owner-adjudication.json",
+          "data/audits/feat-tags-pass2-owner-adjudication.json"
+        ]
+      },
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [],
+      "usage": {
+        "records": 65,
+        "feats": 10,
+        "talents": 55,
+        "pctOfCorpus": 4.221,
+        "domainStatus": "BOTH_DOMAINS",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [],
+        "detectorCount": 0,
+        "recordsMatchedByDetectors": 0
+      },
+      "openPolicyGap": null
+    },
+    {
+      "tag": "stun",
+      "definitionStatus": "OWNER_DEFINED",
+      "broadTag": false,
+      "synthesizedDefinition": [
+        {
+          "policyId": "STUN_POLICY",
+          "text": "stun represents direct interaction with the SWSE stun/stunning mechanic or stun damage/mode: deals or modifies stun damage, changes use of a weapon's stun setting, applies a stated stunning effect, or improves/resists/removes/directly modifies stun mechanics. Ion damage is not stun damage. Not added because a record deals ion damage, resists ion damage, improves ion weapons, mentions stun gauntlets only as an equipment exception, or uses nonlethal/capture-oriented ion mechanics. ion and stun are mechanically distinct concepts. No new ion semantic tag is authorized; recurring ion semantics are a later ontology-gap decision."
+        }
+      ],
+      "partialAuthority": null,
+      "relatedDistinctTags": [
+        "nonlethal"
+      ],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [
+        "STUN_POLICY"
+      ],
+      "usage": {
+        "records": 12,
+        "feats": 1,
+        "talents": 11,
+        "pctOfCorpus": 0.779,
+        "domainStatus": "BOTH_DOMAINS",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [
+          "O.stun"
+        ],
+        "detectorCount": 1,
+        "recordsMatchedByDetectors": 18
+      },
+      "openPolicyGap": null
+    },
+    {
+      "tag": "support",
+      "definitionStatus": "OWNER_DEFINITION_REQUIRED",
+      "broadTag": true,
+      "synthesizedDefinition": null,
+      "partialAuthority": null,
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": [
+          "ally_support"
+        ]
+      },
+      "controllingPolicyIds": [],
+      "usage": {
+        "records": 306,
+        "feats": 21,
+        "talents": 285,
+        "pctOfCorpus": 19.87,
+        "domainStatus": "BOTH_DOMAINS",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [],
+        "detectorCount": 0,
+        "recordsMatchedByDetectors": 0
+      },
+      "openPolicyGap": {
+        "gapId": "GAP-support",
+        "unresolvedRecords": 0,
+        "hasTagDefinitionQuestion": true,
+        "hasTagConventionQuestion": false
+      }
+    },
+    {
+      "tag": "surprise_round",
+      "definitionStatus": "OWNER_DEFINITION_REQUIRED",
+      "broadTag": false,
+      "synthesizedDefinition": null,
+      "partialAuthority": null,
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [],
+      "usage": {
+        "records": 20,
+        "feats": 2,
+        "talents": 18,
+        "pctOfCorpus": 1.299,
+        "domainStatus": "BOTH_DOMAINS",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [
+          "F.surprise_round"
+        ],
+        "detectorCount": 1,
+        "recordsMatchedByDetectors": 18
+      },
+      "openPolicyGap": {
+        "gapId": "GAP-surprise_round",
+        "unresolvedRecords": 2,
+        "hasTagDefinitionQuestion": false,
+        "hasTagConventionQuestion": false
+      }
+    },
+    {
+      "tag": "survivability",
+      "definitionStatus": "OWNER_DEFINITION_REQUIRED",
+      "broadTag": true,
+      "synthesizedDefinition": null,
+      "partialAuthority": null,
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [],
+      "usage": {
+        "records": 171,
+        "feats": 22,
+        "talents": 149,
+        "pctOfCorpus": 11.104,
+        "domainStatus": "BOTH_DOMAINS",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [
+          "I.survivability_hp"
+        ],
+        "detectorCount": 1,
+        "recordsMatchedByDetectors": 22
+      },
+      "openPolicyGap": {
+        "gapId": "GAP-survivability",
+        "unresolvedRecords": 0,
+        "hasTagDefinitionQuestion": true,
+        "hasTagConventionQuestion": false
+      }
+    },
+    {
+      "tag": "survival",
+      "definitionStatus": "PARTIALLY_OWNER_DEFINED",
+      "broadTag": false,
+      "synthesizedDefinition": null,
+      "partialAuthority": {
+        "policies": [],
+        "ownerRulingFiles": [
+          "data/audits/talent-feat-pass3a-skill-owner-adjudication.json",
+          "data/audits/feat-tags-pass2-owner-adjudication.json"
+        ]
+      },
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [],
+      "usage": {
+        "records": 10,
+        "feats": 7,
+        "talents": 3,
+        "pctOfCorpus": 0.649,
+        "domainStatus": "BOTH_DOMAINS",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [],
+        "detectorCount": 0,
+        "recordsMatchedByDetectors": 0
+      },
+      "openPolicyGap": null
+    },
+    {
+      "tag": "sustained_damage",
+      "definitionStatus": "OWNER_DEFINED",
+      "broadTag": false,
+      "synthesizedDefinition": [
+        {
+          "policyId": "SUSTAINED_DAMAGE_POLICY",
+          "text": "sustained_damage represents a damage-enhancing mechanic capable of recurring across multiple attacks, rounds or turns rather than being limited to a single isolated damage event (multiattack damage support, repeated attacks, damage enhancement that can recur each turn, recurring/ongoing damaging effects). A mechanic may be conditional and still qualify if its rules explicitly allow the enhancement to recur. A single one-time enhanced attack does not qualify solely because it deals additional damage."
+        }
+      ],
+      "partialAuthority": null,
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [
+        "SUSTAINED_DAMAGE_POLICY"
+      ],
+      "usage": {
+        "records": 134,
+        "feats": 16,
+        "talents": 118,
+        "pctOfCorpus": 8.701,
+        "domainStatus": "BOTH_DOMAINS",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [
+          "D.sustained_damage"
+        ],
+        "detectorCount": 1,
+        "recordsMatchedByDetectors": 2
+      },
+      "openPolicyGap": null
+    },
+    {
+      "tag": "swift_action",
+      "definitionStatus": "OWNER_DEFINED",
+      "broadTag": false,
+      "synthesizedDefinition": [
+        {
+          "policyId": "ACTION_TYPE_POLICY",
+          "text": "A named action-type tag (reaction, swift_action, move_action, standard_action) applies when the record's Benefit directly requires, allows, grants, changes into/from, imposes as an additional cost, prohibits or restricts, or changes another creature's use of that action type. The character using the feat/talent need not be the creature taking the action. Implications remain: reaction/swift_action/move_action/standard_action -> action_economy."
+        }
+      ],
+      "partialAuthority": null,
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "asAntecedent": [
+          "action_economy"
+        ],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [
+        "ACTION_TYPE_POLICY"
+      ],
+      "usage": {
+        "records": 232,
+        "feats": 23,
+        "talents": 209,
+        "pctOfCorpus": 15.065,
+        "domainStatus": "BOTH_DOMAINS",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [
+          "A.cost_swift"
+        ],
+        "detectorCount": 1,
+        "recordsMatchedByDetectors": 188
+      },
+      "openPolicyGap": null
+    },
+    {
+      "tag": "tactics",
+      "definitionStatus": "OWNER_DEFINITION_REQUIRED",
+      "broadTag": false,
+      "synthesizedDefinition": null,
+      "partialAuthority": null,
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [],
+      "usage": {
+        "records": 16,
+        "feats": 2,
+        "talents": 14,
+        "pctOfCorpus": 1.039,
+        "domainStatus": "BOTH_DOMAINS",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [],
+        "detectorCount": 0,
+        "recordsMatchedByDetectors": 0
+      },
+      "openPolicyGap": null
+    },
+    {
+      "tag": "talisman",
+      "definitionStatus": "OWNER_DEFINITION_REQUIRED",
+      "broadTag": false,
+      "synthesizedDefinition": null,
+      "partialAuthority": null,
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [],
+      "usage": {
+        "records": 8,
+        "feats": 0,
+        "talents": 8,
+        "pctOfCorpus": 0.519,
+        "domainStatus": "TALENT_ONLY",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [],
+        "detectorCount": 0,
+        "recordsMatchedByDetectors": 0
+      },
+      "openPolicyGap": null
+    },
+    {
+      "tag": "target-designation",
+      "definitionStatus": "OWNER_DEFINITION_REQUIRED",
+      "broadTag": true,
+      "synthesizedDefinition": null,
+      "partialAuthority": null,
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [],
+      "usage": {
+        "records": 78,
+        "feats": 3,
+        "talents": 75,
+        "pctOfCorpus": 5.065,
+        "domainStatus": "BOTH_DOMAINS",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [
+          "F.designate"
+        ],
+        "detectorCount": 1,
+        "recordsMatchedByDetectors": 74
+      },
+      "openPolicyGap": {
+        "gapId": "GAP-target-designation",
+        "unresolvedRecords": 31,
+        "hasTagDefinitionQuestion": true,
+        "hasTagConventionQuestion": false
+      }
+    },
+    {
+      "tag": "targeting",
+      "definitionStatus": "OWNER_DEFINITION_REQUIRED",
+      "broadTag": true,
+      "synthesizedDefinition": null,
+      "partialAuthority": null,
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [],
+      "usage": {
+        "records": 153,
+        "feats": 30,
+        "talents": 123,
+        "pctOfCorpus": 9.935,
+        "domainStatus": "BOTH_DOMAINS",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [
+          "F.targeting"
+        ],
+        "detectorCount": 1,
+        "recordsMatchedByDetectors": 9
+      },
+      "openPolicyGap": {
+        "gapId": "GAP-targeting",
+        "unresolvedRecords": 0,
+        "hasTagDefinitionQuestion": true,
+        "hasTagConventionQuestion": false
+      }
+    },
+    {
+      "tag": "teamwork",
+      "definitionStatus": "OWNER_DEFINITION_REQUIRED",
+      "broadTag": false,
+      "synthesizedDefinition": null,
+      "partialAuthority": null,
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [],
+      "usage": {
+        "records": 276,
+        "feats": 24,
+        "talents": 252,
+        "pctOfCorpus": 17.922,
+        "domainStatus": "BOTH_DOMAINS",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [
+          "K.teamwork"
+        ],
+        "detectorCount": 1,
+        "recordsMatchedByDetectors": 57
+      },
+      "openPolicyGap": {
+        "gapId": "GAP-teamwork",
+        "unresolvedRecords": 10,
+        "hasTagDefinitionQuestion": false,
+        "hasTagConventionQuestion": false
+      }
+    },
+    {
+      "tag": "tech",
+      "definitionStatus": "OWNER_DEFINITION_REQUIRED",
+      "broadTag": true,
+      "synthesizedDefinition": null,
+      "partialAuthority": null,
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [],
+      "usage": {
+        "records": 67,
+        "feats": 12,
+        "talents": 55,
+        "pctOfCorpus": 4.351,
+        "domainStatus": "BOTH_DOMAINS",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [
+          "L.tech_generic"
+        ],
+        "detectorCount": 1,
+        "recordsMatchedByDetectors": 47
+      },
+      "openPolicyGap": {
+        "gapId": "GAP-tech",
+        "unresolvedRecords": 0,
+        "hasTagDefinitionQuestion": true,
+        "hasTagConventionQuestion": false
+      }
+    },
+    {
+      "tag": "telekinesis",
+      "definitionStatus": "OWNER_DEFINITION_REQUIRED",
+      "broadTag": false,
+      "synthesizedDefinition": null,
+      "partialAuthority": null,
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [],
+      "usage": {
+        "records": 13,
+        "feats": 0,
+        "talents": 13,
+        "pctOfCorpus": 0.844,
+        "domainStatus": "TALENT_ONLY",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [],
+        "detectorCount": 0,
+        "recordsMatchedByDetectors": 0
+      },
+      "openPolicyGap": null
+    },
+    {
+      "tag": "telepath",
+      "definitionStatus": "OWNER_DEFINITION_REQUIRED",
+      "broadTag": false,
+      "synthesizedDefinition": null,
+      "partialAuthority": null,
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [],
+      "usage": {
+        "records": 2,
+        "feats": 0,
+        "talents": 2,
+        "pctOfCorpus": 0.13,
+        "domainStatus": "TALENT_ONLY",
+        "rareStatus": "RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [],
+        "detectorCount": 0,
+        "recordsMatchedByDetectors": 0
+      },
+      "openPolicyGap": null
+    },
+    {
+      "tag": "telepathy",
+      "definitionStatus": "OWNER_DEFINITION_REQUIRED",
+      "broadTag": false,
+      "synthesizedDefinition": null,
+      "partialAuthority": null,
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [],
+      "usage": {
+        "records": 10,
+        "feats": 0,
+        "talents": 10,
+        "pctOfCorpus": 0.649,
+        "domainStatus": "TALENT_ONLY",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [],
+        "detectorCount": 0,
+        "recordsMatchedByDetectors": 0
+      },
+      "openPolicyGap": null
+    },
+    {
+      "tag": "temporary-talent",
+      "definitionStatus": "OWNER_DEFINITION_REQUIRED",
+      "broadTag": false,
+      "synthesizedDefinition": null,
+      "partialAuthority": null,
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [],
+      "usage": {
+        "records": 3,
+        "feats": 1,
+        "talents": 2,
+        "pctOfCorpus": 0.195,
+        "domainStatus": "BOTH_DOMAINS",
+        "rareStatus": "RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [],
+        "detectorCount": 0,
+        "recordsMatchedByDetectors": 0
+      },
+      "openPolicyGap": null
+    },
+    {
+      "tag": "tracking",
+      "definitionStatus": "OWNER_DEFINITION_REQUIRED",
+      "broadTag": false,
+      "synthesizedDefinition": null,
+      "partialAuthority": null,
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [],
+      "usage": {
+        "records": 6,
+        "feats": 1,
+        "talents": 5,
+        "pctOfCorpus": 0.39,
+        "domainStatus": "BOTH_DOMAINS",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [],
+        "detectorCount": 0,
+        "recordsMatchedByDetectors": 0
+      },
+      "openPolicyGap": null
+    },
+    {
+      "tag": "trap",
+      "definitionStatus": "OWNER_DEFINITION_REQUIRED",
+      "broadTag": false,
+      "synthesizedDefinition": null,
+      "partialAuthority": null,
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [],
+      "usage": {
+        "records": 10,
+        "feats": 0,
+        "talents": 10,
+        "pctOfCorpus": 0.649,
+        "domainStatus": "TALENT_ONLY",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [],
+        "detectorCount": 0,
+        "recordsMatchedByDetectors": 0
+      },
+      "openPolicyGap": null
+    },
+    {
+      "tag": "treat_injury",
+      "definitionStatus": "PARTIALLY_OWNER_DEFINED",
+      "broadTag": false,
+      "synthesizedDefinition": null,
+      "partialAuthority": {
+        "policies": [],
+        "ownerRulingFiles": [
+          "data/audits/talent-feat-pass3a-skill-owner-adjudication.json",
+          "data/audits/feat-tags-pass2-owner-adjudication.json"
+        ]
+      },
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [],
+      "usage": {
+        "records": 40,
+        "feats": 9,
+        "talents": 31,
+        "pctOfCorpus": 2.597,
+        "domainStatus": "BOTH_DOMAINS",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [
+          "J.treat_injury"
+        ],
+        "detectorCount": 1,
+        "recordsMatchedByDetectors": 39
+      },
+      "openPolicyGap": null
+    },
+    {
+      "tag": "unarmed",
+      "definitionStatus": "PARTIALLY_OWNER_DEFINED",
+      "broadTag": false,
+      "synthesizedDefinition": null,
+      "partialAuthority": {
+        "policies": [
+          {
+            "policyId": "CLOSED_SCOPE_POLICY",
+            "text": "When the operative mechanic explicitly and deliberately applies to a named closed scope, that scope may receive its semantic tag: \"melee attacks\" -> melee; \"ranged attacks\" -> ranged; \"melee or ranged attacks\" -> both are explicit closed scopes; \"while using a pistol\" -> pistol; \"when wielding a lightsaber\" -> lightsaber; \"unarmed attacks\" -> unarmed. This policy does not override the reference-only or generic-selection policies."
+          },
+          {
+            "policyId": "OPEN_GENERIC_SCOPE_POLICY",
+            "text": "When a record allows an open generic choice (any weapon, any weapon group, any skill, any Force power, one of many selectable categories), do not automatically add every possible specific scope tag (for example Weapon Focus allowing grapple as one possible choice does not gain grapple; a generic weapon selection does not gain pistol, heavy_weapon, lightsaber, exotic_weapon; a generic skill mechanic does not gain every skill tag). Specific semantic tags require direct operative interaction with that specific scope."
+          }
+        ],
+        "ownerRulingFiles": []
+      },
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [
+        "CLOSED_SCOPE_POLICY",
+        "OPEN_GENERIC_SCOPE_POLICY"
+      ],
+      "usage": {
+        "records": 56,
+        "feats": 23,
+        "talents": 33,
+        "pctOfCorpus": 3.636,
+        "domainStatus": "BOTH_DOMAINS",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [
+          "O.unarmed"
+        ],
+        "detectorCount": 1,
+        "recordsMatchedByDetectors": 51
+      },
+      "openPolicyGap": null
+    },
+    {
+      "tag": "use_computer",
+      "definitionStatus": "PARTIALLY_OWNER_DEFINED",
+      "broadTag": false,
+      "synthesizedDefinition": null,
+      "partialAuthority": {
+        "policies": [],
+        "ownerRulingFiles": [
+          "data/audits/talent-feat-pass3a-skill-owner-adjudication.json",
+          "data/audits/feat-tags-pass2-owner-adjudication.json"
+        ]
+      },
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [],
+      "usage": {
+        "records": 26,
+        "feats": 6,
+        "talents": 20,
+        "pctOfCorpus": 1.688,
+        "domainStatus": "BOTH_DOMAINS",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [
+          "L.use_computer"
+        ],
+        "detectorCount": 1,
+        "recordsMatchedByDetectors": 23
+      },
+      "openPolicyGap": null
+    },
+    {
+      "tag": "use_the_force",
+      "definitionStatus": "PARTIALLY_OWNER_DEFINED",
+      "broadTag": false,
+      "synthesizedDefinition": null,
+      "partialAuthority": {
+        "policies": [],
+        "ownerRulingFiles": [
+          "data/audits/talent-feat-pass3a-skill-owner-adjudication.json",
+          "data/audits/feat-tags-pass2-owner-adjudication.json"
+        ]
+      },
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "asAntecedent": [
+          "force"
+        ],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [],
+      "usage": {
+        "records": 122,
+        "feats": 4,
+        "talents": 118,
+        "pctOfCorpus": 7.922,
+        "domainStatus": "BOTH_DOMAINS",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [
+          "N.use_the_force_skill"
+        ],
+        "detectorCount": 1,
+        "recordsMatchedByDetectors": 123
+      },
+      "openPolicyGap": null
+    },
+    {
+      "tag": "vehicle",
+      "definitionStatus": "OWNER_DEFINITION_REQUIRED",
+      "broadTag": false,
+      "synthesizedDefinition": null,
+      "partialAuthority": null,
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [],
+      "usage": {
+        "records": 97,
+        "feats": 23,
+        "talents": 74,
+        "pctOfCorpus": 6.299,
+        "domainStatus": "BOTH_DOMAINS",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [
+          "M.vehicle"
+        ],
+        "detectorCount": 1,
+        "recordsMatchedByDetectors": 111
+      },
+      "openPolicyGap": {
+        "gapId": "GAP-vehicle",
+        "unresolvedRecords": 19,
+        "hasTagDefinitionQuestion": false,
+        "hasTagConventionQuestion": false
+      }
+    },
+    {
+      "tag": "visions",
+      "definitionStatus": "OWNER_DEFINITION_REQUIRED",
+      "broadTag": false,
+      "synthesizedDefinition": null,
+      "partialAuthority": null,
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [],
+      "usage": {
+        "records": 23,
+        "feats": 0,
+        "talents": 23,
+        "pctOfCorpus": 1.494,
+        "domainStatus": "TALENT_ONLY",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [],
+        "detectorCount": 0,
+        "recordsMatchedByDetectors": 0
+      },
+      "openPolicyGap": null
+    },
+    {
+      "tag": "weapon_empowerment",
+      "definitionStatus": "OWNER_DEFINITION_REQUIRED",
+      "broadTag": false,
+      "synthesizedDefinition": null,
+      "partialAuthority": null,
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [],
+      "usage": {
+        "records": 18,
+        "feats": 5,
+        "talents": 13,
+        "pctOfCorpus": 1.169,
+        "domainStatus": "BOTH_DOMAINS",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [],
+        "detectorCount": 0,
+        "recordsMatchedByDetectors": 0
+      },
+      "openPolicyGap": null
+    },
+    {
+      "tag": "weapon_specialization",
+      "definitionStatus": "OWNER_DEFINITION_REQUIRED",
+      "broadTag": false,
+      "synthesizedDefinition": null,
+      "partialAuthority": null,
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [],
+      "usage": {
+        "records": 10,
+        "feats": 2,
+        "talents": 8,
+        "pctOfCorpus": 0.649,
+        "domainStatus": "BOTH_DOMAINS",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [],
+        "detectorCount": 0,
+        "recordsMatchedByDetectors": 0
+      },
+      "openPolicyGap": null
+    },
+    {
+      "tag": "weapon_training",
+      "definitionStatus": "OWNER_DEFINITION_REQUIRED",
+      "broadTag": false,
+      "synthesizedDefinition": null,
+      "partialAuthority": null,
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [],
+      "usage": {
+        "records": 65,
+        "feats": 11,
+        "talents": 54,
+        "pctOfCorpus": 4.221,
+        "domainStatus": "BOTH_DOMAINS",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [],
+        "detectorCount": 0,
+        "recordsMatchedByDetectors": 0
+      },
+      "openPolicyGap": null
+    },
+    {
+      "tag": "will_defense",
+      "definitionStatus": "OWNER_DEFINITION_REQUIRED",
+      "broadTag": false,
+      "synthesizedDefinition": null,
+      "partialAuthority": null,
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [],
+      "usage": {
+        "records": 107,
+        "feats": 21,
+        "talents": 86,
+        "pctOfCorpus": 6.948,
+        "domainStatus": "BOTH_DOMAINS",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [],
+        "detectorCount": 0,
+        "recordsMatchedByDetectors": 0
+      },
+      "openPolicyGap": null
+    },
+    {
+      "tag": "acrobatics",
+      "definitionStatus": "PARTIALLY_OWNER_DEFINED",
+      "broadTag": false,
+      "synthesizedDefinition": null,
+      "partialAuthority": {
+        "policies": [],
+        "ownerRulingFiles": [
+          "data/audits/talent-feat-pass3a-skill-owner-adjudication.json",
+          "data/audits/feat-tags-pass2-owner-adjudication.json"
+        ]
+      },
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [],
+      "usage": {
+        "records": 16,
+        "feats": 10,
+        "talents": 6,
+        "pctOfCorpus": 1.039,
+        "domainStatus": "BOTH_DOMAINS",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [],
+        "detectorCount": 0,
+        "recordsMatchedByDetectors": 0
+      },
+      "openPolicyGap": null
+    },
+    {
+      "tag": "climb",
+      "definitionStatus": "PARTIALLY_OWNER_DEFINED",
+      "broadTag": false,
+      "synthesizedDefinition": null,
+      "partialAuthority": {
+        "policies": [],
+        "ownerRulingFiles": [
+          "data/audits/talent-feat-pass3a-skill-owner-adjudication.json",
+          "data/audits/feat-tags-pass2-owner-adjudication.json"
+        ]
+      },
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [],
+      "usage": {
+        "records": 12,
+        "feats": 10,
+        "talents": 2,
+        "pctOfCorpus": 0.779,
+        "domainStatus": "BOTH_DOMAINS",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [],
+        "detectorCount": 0,
+        "recordsMatchedByDetectors": 0
+      },
+      "openPolicyGap": null
+    },
+    {
+      "tag": "endurance",
+      "definitionStatus": "PARTIALLY_OWNER_DEFINED",
+      "broadTag": false,
+      "synthesizedDefinition": null,
+      "partialAuthority": {
+        "policies": [],
+        "ownerRulingFiles": [
+          "data/audits/talent-feat-pass3a-skill-owner-adjudication.json",
+          "data/audits/feat-tags-pass2-owner-adjudication.json"
+        ]
+      },
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [],
+      "usage": {
+        "records": 10,
+        "feats": 9,
+        "talents": 1,
+        "pctOfCorpus": 0.649,
+        "domainStatus": "BOTH_DOMAINS",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [],
+        "detectorCount": 0,
+        "recordsMatchedByDetectors": 0
+      },
+      "openPolicyGap": null
+    },
+    {
+      "tag": "gather_information",
+      "definitionStatus": "PARTIALLY_OWNER_DEFINED",
+      "broadTag": false,
+      "synthesizedDefinition": null,
+      "partialAuthority": {
+        "policies": [],
+        "ownerRulingFiles": [
+          "data/audits/talent-feat-pass3a-skill-owner-adjudication.json",
+          "data/audits/feat-tags-pass2-owner-adjudication.json"
+        ]
+      },
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [],
+      "usage": {
+        "records": 16,
+        "feats": 4,
+        "talents": 12,
+        "pctOfCorpus": 1.039,
+        "domainStatus": "BOTH_DOMAINS",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [],
+        "detectorCount": 0,
+        "recordsMatchedByDetectors": 0
+      },
+      "openPolicyGap": null
+    },
+    {
+      "tag": "jump",
+      "definitionStatus": "PARTIALLY_OWNER_DEFINED",
+      "broadTag": false,
+      "synthesizedDefinition": null,
+      "partialAuthority": {
+        "policies": [],
+        "ownerRulingFiles": [
+          "data/audits/talent-feat-pass3a-skill-owner-adjudication.json",
+          "data/audits/feat-tags-pass2-owner-adjudication.json"
+        ]
+      },
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [],
+      "usage": {
+        "records": 12,
+        "feats": 10,
+        "talents": 2,
+        "pctOfCorpus": 0.779,
+        "domainStatus": "BOTH_DOMAINS",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [],
+        "detectorCount": 0,
+        "recordsMatchedByDetectors": 0
+      },
+      "openPolicyGap": null
+    },
+    {
+      "tag": "swim",
+      "definitionStatus": "PARTIALLY_OWNER_DEFINED",
+      "broadTag": false,
+      "synthesizedDefinition": null,
+      "partialAuthority": {
+        "policies": [],
+        "ownerRulingFiles": [
+          "data/audits/talent-feat-pass3a-skill-owner-adjudication.json",
+          "data/audits/feat-tags-pass2-owner-adjudication.json"
+        ]
+      },
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "asAntecedent": [],
+        "asConsequent": []
+      },
+      "controllingPolicyIds": [],
+      "usage": {
+        "records": 11,
+        "feats": 10,
+        "talents": 1,
+        "pctOfCorpus": 0.714,
+        "domainStatus": "BOTH_DOMAINS",
+        "rareStatus": "NOT_RARE"
+      },
+      "detectorCoverage": {
+        "detectors": [],
+        "detectorCount": 0,
+        "recordsMatchedByDetectors": 0
+      },
+      "openPolicyGap": null
+    }
+  ]
+}
