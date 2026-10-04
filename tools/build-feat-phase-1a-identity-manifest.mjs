@@ -277,6 +277,33 @@ const records = identities.map(i => ({
     : { familyKey: null, tier: null, selectionModel: null, scopeType: null, repeatable: null, structuralStatus: 'PENDING_PHASE_1C', certifiedFields: [] }
 }));
 
+// Owner-certified Clone Wars printed feat-definition pages (provenance authority; direct primary-source recheck).
+const CLONE_WARS_PAGES = {
+  'Anointed Hunter': 28, 'Artillery Shot': 28, 'Coordinated Barrage': 28, 'Droidcraft': 28,
+  'Droid Hunter': 29, 'Experienced Medic': 29, 'Expert Droid Repair': 29, 'Flash and Clear': 29, 'Flood of Fire': 29,
+  'Grand Army of the Republic Training': 31, 'Gunnery Specialist': 31, 'Jedi Familiarity': 31, 'Leader of Droids': 31, 'Overwhelming Attack': 31,
+  'Pall of the Dark Side': 31, 'Separatist Military Training': 31, 'Spray Shot': 31, 'Trench Warrior': 31, 'Unstoppable Force': 31,
+  'Unwavering Resolve': 32, 'Wary Defender': 32
+};
+const cwRecords = records.filter(r => r.primaryPublication.sourceKey === 'clone-wars-campaign-guide');
+assert(cwRecords.length === 21, `Clone Wars identities ${cwRecords.length} != 21`);
+for (const r of cwRecords) {
+  assert(CLONE_WARS_PAGES[r.displayName] === r.primaryPublication.page, `Clone Wars page for ${r.displayName} is ${r.primaryPublication.page}, owner-certified ${CLONE_WARS_PAGES[r.displayName]}`);
+  assert(r.identityKey === `feat::clone-wars-campaign-guide::p${CLONE_WARS_PAGES[r.displayName]}::${r.normalizedName}`, `Clone Wars identityKey for ${r.displayName} does not use the certified page`);
+}
+const cwLedger = p0.authorityCorrections.corrections.find(c => c.type === 'CLONE_WARS_PAGE_MAP_CORRECTION');
+assert(cwLedger && cwLedger.changes.length === 21, 'Phase 0 Clone Wars correction ledger missing or != 21');
+const authorityCorrections = [{
+  type: 'CLONE_WARS_PAGE_MAP_CORRECTION',
+  reason: 'Stale TXT-derived printed page map (pp.20-29) superseded by direct primary-source recheck: definitions on pp.28-29 and 31-32, summary table p.30. Page is encoded in identityKey, so the 21 Clone Wars identityKeys and locatorKeys were regenerated.',
+  canonicalIdsChanged: 0,
+  identityKeys: cwLedger.changes.map(ch => {
+    const rec = records.find(r => r.canonicalId === ch.repoId);
+    assert(rec && rec.displayName === ch.name && rec.primaryPublication.page === ch.newPage, `Clone Wars ledger mismatch for ${ch.name}`);
+    return { displayName: ch.name, canonicalId: ch.repoId, oldIdentityKey: rec.identityKey.replace(`::p${ch.newPage}::`, `::p${ch.oldPage}::`), newIdentityKey: rec.identityKey };
+  })
+}];
+
 const count = (f) => records.filter(f).length;
 const acceptance = {
   records: records.length,
@@ -374,7 +401,8 @@ const manifest = {
   ],
   certifiedCrossDomainNameCollisions: CROSS.map(c => ({ displayName: c.name, feat: c.key, otherDomain: c.otherDomain, otherDomainReference: c.other, classification: 'SAME_NAME_DIFFERENT_DOMAIN' })),
   records,
-  acceptance
+  acceptance,
+  authorityCorrections
 };
 
 const jsonText = JSON.stringify(manifest, null, 2) + '\n';
@@ -410,6 +438,10 @@ md.push('## Structural fields', '',
   'Family, tier, selection model, scope, and repeatable fields are not completed here. Only the 9 identities in the three Phase 0-certified tier families (Armor Proficiency, Dual Weapon Mastery, Martial Arts) carry `familyKey` and numeric `tier` (owner-authorized mapping, status `PHASE0_CERTIFIED`, `certifiedFields` = `familyKey`, `tier`). Their `selectionModel`, `scopeType`, and `repeatable` remain null. The other 344 records are `PENDING_PHASE_1C` with all structural fields null. Scope/tier/family completion remains Phase 1C.', '');
 md.push('## Acceptance', '', '| Gate | Result |', '| --- | --- |',
   ...Object.entries(acceptance).map(([k, v]) => `| ${k} | ${v} |`), '');
+md.push('## Authority corrections', '',
+  'Clone Wars Campaign Guide page map (provenance phase): the stale printed pages 20-29 were superseded by direct primary-source recheck (definitions on pp.28-29 and 31-32, summary table p.30). All 21 Clone Wars `identityKey` and `locatorKey` values were regenerated from the corrected pages; no `canonicalId` changed (existing repo IDs).', '',
+  '| Feat | canonicalId | Old identityKey | New identityKey |', '| --- | --- | --- | --- |',
+  ...authorityCorrections[0].identityKeys.map(k => `| ${esc(k.displayName)} | \`${k.canonicalId}\` | \`${k.oldIdentityKey}\` | \`${k.newIdentityKey}\` |`), '');
 md.push('## Production', '', 'Production was not mutated: no feat records were created, deleted, renamed, re-IDed, or edited; `data/feat-catalog.json`, `packs/feats.db`, the validity registry, domain guard, effects, and prerequisite authority are unchanged. Phase 1B (reconciliation of the 39 outside-corpus records, domain-guard redesign) and Phase 1C are not started.', '');
 md.push('## Identity table', '', '| canonicalId | Name | Identity key | Repo mapping | Notes |', '| --- | --- | --- | --- | --- |');
 for (const r of records) {

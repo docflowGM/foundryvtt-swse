@@ -18,6 +18,8 @@ These corrections repair the authority representation discovered when Claude per
 • Display encoding normalized for Flèche, Teräs Käsi Training, and the “Long Haft Form” cross-reference note.
 • The stale Phase 0K/ACTIVE header has been replaced with the Phase 0 complete/frozen status.
 
+Provenance-phase correction (2026-10-03): the Clone Wars Campaign Guide printed feat-definition page map in Phase 0G was stale. Direct primary-source recheck certifies definitions on pp.28–29 and 31–32 with the summary table on p.30 (PDF page = printed page + 1). All 21 Phase 0G `canonicalPage` values, the 0G page distribution, the 0G repo page-match counts, and the Unstoppable Force page (p.28 → p.31) were corrected. No canonical ID, identity, or frozen census value changed.
+
 Frozen acceptance values remain: 353 canonical identities, 352 unique normalized names, 355 publications, 2 reprints, 390 current repo records, 351 represented canonical identities, 2 missing identities, 39 outside-corpus records = 6 implementation derivatives + 33 noncanonical/wrong-domain/legacy.
 
 Operating model
@@ -818,23 +820,17 @@ Source certification
 • Full feat definitions: 21.
 • Full reprints: 0.
 • Publication category: 21 GENERAL feats.
-• Definitions occupy printed pages 20–29.
+• Definitions occupy printed pages 28–29 and 31–32; the feat summary table is p.30 (corrected by direct primary-source recheck; the original 20–29 page map was stale).
 • The feat section and its feat summary table independently enumerate the same 21 identities.
 
 Canonical page distribution
 
 |Printed page|Canonical feats|
 |-----------:|--------------:|
-|20          |2              |
-|21          |3              |
-|22          |2              |
-|23          |2              |
-|24          |2              |
-|25          |2              |
-|26          |2              |
-|27          |2              |
-|28          |3              |
-|29          |1              |
+|28          |4              |
+|29          |5              |
+|31          |10             |
+|32          |2              |
 |**Total**   |**21**         |
 
 Repository reconciliation
@@ -842,16 +838,16 @@ Repository reconciliation
 • Canonical Clone Wars identities present somewhere in the repo: 21 / 21.
 • Missing canonical identities: 0.
 • Current records attributed to Clone Wars: 20.
-• Exact canonical source and page: 20 / 21.
+• Exact canonical source and page: 0 / 21 (current repo records carry the stale pages).
 • Source mismatches: 1.
-• Page mismatches: 1.
+• Page mismatches: 21.
 • Repo-only records currently attributed to Clone Wars: 0.
 
 Unstoppable Force — provenance correction
 
-Unstoppable Force is source-certified as a Clone Wars Campaign Guide feat on p.28. The current repository record (0a6c87a410bee1f2) is incorrectly attributed to The Force Unleashed Campaign Guide p.35.
+Unstoppable Force is source-certified as a Clone Wars Campaign Guide feat on p.31. The current repository record (0a6c87a410bee1f2) is incorrectly attributed to The Force Unleashed Campaign Guide p.35.
 
-Phase 0G ruling: SOURCE_PAGE_MISMATCH. Later production convergence should retain the existing feat identity but correct its provenance to Clone Wars Campaign Guide p.28.
+Phase 0G ruling: SOURCE_PAGE_MISMATCH. Later production convergence should retain the existing feat identity but correct its provenance to Clone Wars Campaign Guide p.31.
 
 Structural notes
 

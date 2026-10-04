@@ -72,6 +72,34 @@ Family, tier, selection model, scope, and repeatable fields are not completed he
 | unauthorizedStructuralStatuses | 0 |
 | allGatesPassed | true |
 
+## Authority corrections
+
+Clone Wars Campaign Guide page map (provenance phase): the stale printed pages 20-29 were superseded by direct primary-source recheck (definitions on pp.28-29 and 31-32, summary table p.30). All 21 Clone Wars `identityKey` and `locatorKey` values were regenerated from the corrected pages; no `canonicalId` changed (existing repo IDs).
+
+| Feat | canonicalId | Old identityKey | New identityKey |
+| --- | --- | --- | --- |
+| Anointed Hunter | `4dc36deda6faf597` | `feat::clone-wars-campaign-guide::p20::anointed-hunter` | `feat::clone-wars-campaign-guide::p28::anointed-hunter` |
+| Artillery Shot | `fb64065b4a779cd8` | `feat::clone-wars-campaign-guide::p20::artillery-shot` | `feat::clone-wars-campaign-guide::p28::artillery-shot` |
+| Coordinated Barrage | `c51d23038e2862e6` | `feat::clone-wars-campaign-guide::p21::coordinated-barrage` | `feat::clone-wars-campaign-guide::p28::coordinated-barrage` |
+| Droidcraft | `ae4dece84c32c3ac` | `feat::clone-wars-campaign-guide::p21::droidcraft` | `feat::clone-wars-campaign-guide::p28::droidcraft` |
+| Droid Hunter | `5d17898fc9652370` | `feat::clone-wars-campaign-guide::p21::droid-hunter` | `feat::clone-wars-campaign-guide::p29::droid-hunter` |
+| Experienced Medic | `5e1e84d933295217` | `feat::clone-wars-campaign-guide::p22::experienced-medic` | `feat::clone-wars-campaign-guide::p29::experienced-medic` |
+| Expert Droid Repair | `029c3935e9bed6eb` | `feat::clone-wars-campaign-guide::p22::expert-droid-repair` | `feat::clone-wars-campaign-guide::p29::expert-droid-repair` |
+| Flash and Clear | `a16af4c63582b44a` | `feat::clone-wars-campaign-guide::p23::flash-and-clear` | `feat::clone-wars-campaign-guide::p29::flash-and-clear` |
+| Flood of Fire | `6335692284f98ec6` | `feat::clone-wars-campaign-guide::p23::flood-of-fire` | `feat::clone-wars-campaign-guide::p29::flood-of-fire` |
+| Grand Army of the Republic Training | `72146d8a36d77736` | `feat::clone-wars-campaign-guide::p24::grand-army-of-the-republic-training` | `feat::clone-wars-campaign-guide::p31::grand-army-of-the-republic-training` |
+| Gunnery Specialist | `70962165bed8e5ed` | `feat::clone-wars-campaign-guide::p24::gunnery-specialist` | `feat::clone-wars-campaign-guide::p31::gunnery-specialist` |
+| Jedi Familiarity | `fc56de4d0d15c95c` | `feat::clone-wars-campaign-guide::p25::jedi-familiarity` | `feat::clone-wars-campaign-guide::p31::jedi-familiarity` |
+| Leader of Droids | `59e495de34a23def` | `feat::clone-wars-campaign-guide::p25::leader-of-droids` | `feat::clone-wars-campaign-guide::p31::leader-of-droids` |
+| Overwhelming Attack | `7df64382f1a0a892` | `feat::clone-wars-campaign-guide::p26::overwhelming-attack` | `feat::clone-wars-campaign-guide::p31::overwhelming-attack` |
+| Pall of the Dark Side | `8d164553709dd068` | `feat::clone-wars-campaign-guide::p26::pall-of-the-dark-side` | `feat::clone-wars-campaign-guide::p31::pall-of-the-dark-side` |
+| Separatist Military Training | `477b62d36e012719` | `feat::clone-wars-campaign-guide::p27::separatist-military-training` | `feat::clone-wars-campaign-guide::p31::separatist-military-training` |
+| Spray Shot | `0066c394e5d636fb` | `feat::clone-wars-campaign-guide::p27::spray-shot` | `feat::clone-wars-campaign-guide::p31::spray-shot` |
+| Trench Warrior | `7d8366d0481d76e2` | `feat::clone-wars-campaign-guide::p28::trench-warrior` | `feat::clone-wars-campaign-guide::p31::trench-warrior` |
+| Unstoppable Force | `0a6c87a410bee1f2` | `feat::clone-wars-campaign-guide::p28::unstoppable-force` | `feat::clone-wars-campaign-guide::p31::unstoppable-force` |
+| Unwavering Resolve | `53f600d68f3afdc3` | `feat::clone-wars-campaign-guide::p28::unwavering-resolve` | `feat::clone-wars-campaign-guide::p32::unwavering-resolve` |
+| Wary Defender | `d6e528de87b25b95` | `feat::clone-wars-campaign-guide::p29::wary-defender` | `feat::clone-wars-campaign-guide::p32::wary-defender` |
+
 ## Production
 
 Production was not mutated: no feat records were created, deleted, renamed, re-IDed, or edited; `data/feat-catalog.json`, `packs/feats.db`, the validity registry, domain guard, effects, and prerequisite authority are unchanged. Phase 1B (reconciliation of the 39 outside-corpus records, domain-guard redesign) and Phase 1C are not started.
@@ -220,27 +248,27 @@ Production was not mutated: no feat records were created, deleted, renamed, re-I
 | `a717435c8094e7fb` | Superior Tech | `feat::scum-and-villainy::p24::superior-tech` | existing |  |
 | `2942c0676644251b` | Tactical Advantage | `feat::scum-and-villainy::p25::tactical-advantage` | existing |  |
 | `5bef5e65e532ba7c` | Wicked Strike | `feat::scum-and-villainy::p25::wicked-strike` | existing |  |
-| `4dc36deda6faf597` | Anointed Hunter | `feat::clone-wars-campaign-guide::p20::anointed-hunter` | existing |  |
-| `fb64065b4a779cd8` | Artillery Shot | `feat::clone-wars-campaign-guide::p20::artillery-shot` | existing |  |
-| `c51d23038e2862e6` | Coordinated Barrage | `feat::clone-wars-campaign-guide::p21::coordinated-barrage` | existing |  |
-| `ae4dece84c32c3ac` | Droidcraft | `feat::clone-wars-campaign-guide::p21::droidcraft` | existing |  |
-| `5d17898fc9652370` | Droid Hunter | `feat::clone-wars-campaign-guide::p21::droid-hunter` | existing |  |
-| `5e1e84d933295217` | Experienced Medic | `feat::clone-wars-campaign-guide::p22::experienced-medic` | existing |  |
-| `029c3935e9bed6eb` | Expert Droid Repair | `feat::clone-wars-campaign-guide::p22::expert-droid-repair` | existing |  |
-| `a16af4c63582b44a` | Flash and Clear | `feat::clone-wars-campaign-guide::p23::flash-and-clear` | existing |  |
-| `6335692284f98ec6` | Flood of Fire | `feat::clone-wars-campaign-guide::p23::flood-of-fire` | existing |  |
-| `72146d8a36d77736` | Grand Army of the Republic Training | `feat::clone-wars-campaign-guide::p24::grand-army-of-the-republic-training` | existing |  |
-| `70962165bed8e5ed` | Gunnery Specialist | `feat::clone-wars-campaign-guide::p24::gunnery-specialist` | existing |  |
-| `fc56de4d0d15c95c` | Jedi Familiarity | `feat::clone-wars-campaign-guide::p25::jedi-familiarity` | existing |  |
-| `59e495de34a23def` | Leader of Droids | `feat::clone-wars-campaign-guide::p25::leader-of-droids` | existing |  |
-| `7df64382f1a0a892` | Overwhelming Attack | `feat::clone-wars-campaign-guide::p26::overwhelming-attack` | existing |  |
-| `8d164553709dd068` | Pall of the Dark Side | `feat::clone-wars-campaign-guide::p26::pall-of-the-dark-side` | existing |  |
-| `477b62d36e012719` | Separatist Military Training | `feat::clone-wars-campaign-guide::p27::separatist-military-training` | existing |  |
-| `0066c394e5d636fb` | Spray Shot | `feat::clone-wars-campaign-guide::p27::spray-shot` | existing |  |
-| `7d8366d0481d76e2` | Trench Warrior | `feat::clone-wars-campaign-guide::p28::trench-warrior` | existing |  |
-| `0a6c87a410bee1f2` | Unstoppable Force | `feat::clone-wars-campaign-guide::p28::unstoppable-force` | existing |  |
-| `53f600d68f3afdc3` | Unwavering Resolve | `feat::clone-wars-campaign-guide::p28::unwavering-resolve` | existing |  |
-| `d6e528de87b25b95` | Wary Defender | `feat::clone-wars-campaign-guide::p29::wary-defender` | existing |  |
+| `4dc36deda6faf597` | Anointed Hunter | `feat::clone-wars-campaign-guide::p28::anointed-hunter` | existing |  |
+| `fb64065b4a779cd8` | Artillery Shot | `feat::clone-wars-campaign-guide::p28::artillery-shot` | existing |  |
+| `c51d23038e2862e6` | Coordinated Barrage | `feat::clone-wars-campaign-guide::p28::coordinated-barrage` | existing |  |
+| `ae4dece84c32c3ac` | Droidcraft | `feat::clone-wars-campaign-guide::p28::droidcraft` | existing |  |
+| `5d17898fc9652370` | Droid Hunter | `feat::clone-wars-campaign-guide::p29::droid-hunter` | existing |  |
+| `5e1e84d933295217` | Experienced Medic | `feat::clone-wars-campaign-guide::p29::experienced-medic` | existing |  |
+| `029c3935e9bed6eb` | Expert Droid Repair | `feat::clone-wars-campaign-guide::p29::expert-droid-repair` | existing |  |
+| `a16af4c63582b44a` | Flash and Clear | `feat::clone-wars-campaign-guide::p29::flash-and-clear` | existing |  |
+| `6335692284f98ec6` | Flood of Fire | `feat::clone-wars-campaign-guide::p29::flood-of-fire` | existing |  |
+| `72146d8a36d77736` | Grand Army of the Republic Training | `feat::clone-wars-campaign-guide::p31::grand-army-of-the-republic-training` | existing |  |
+| `70962165bed8e5ed` | Gunnery Specialist | `feat::clone-wars-campaign-guide::p31::gunnery-specialist` | existing |  |
+| `fc56de4d0d15c95c` | Jedi Familiarity | `feat::clone-wars-campaign-guide::p31::jedi-familiarity` | existing |  |
+| `59e495de34a23def` | Leader of Droids | `feat::clone-wars-campaign-guide::p31::leader-of-droids` | existing |  |
+| `7df64382f1a0a892` | Overwhelming Attack | `feat::clone-wars-campaign-guide::p31::overwhelming-attack` | existing |  |
+| `8d164553709dd068` | Pall of the Dark Side | `feat::clone-wars-campaign-guide::p31::pall-of-the-dark-side` | existing |  |
+| `477b62d36e012719` | Separatist Military Training | `feat::clone-wars-campaign-guide::p31::separatist-military-training` | existing |  |
+| `0066c394e5d636fb` | Spray Shot | `feat::clone-wars-campaign-guide::p31::spray-shot` | existing |  |
+| `7d8366d0481d76e2` | Trench Warrior | `feat::clone-wars-campaign-guide::p31::trench-warrior` | existing |  |
+| `0a6c87a410bee1f2` | Unstoppable Force | `feat::clone-wars-campaign-guide::p31::unstoppable-force` | existing |  |
+| `53f600d68f3afdc3` | Unwavering Resolve | `feat::clone-wars-campaign-guide::p32::unwavering-resolve` | existing |  |
+| `d6e528de87b25b95` | Wary Defender | `feat::clone-wars-campaign-guide::p32::wary-defender` | existing |  |
 | `52f1a7f7eb33a1f4` | Attack Combo (Fire and Strike) | `feat::legacy-era-campaign-guide::p34::attack-combo-fire-and-strike` | existing |  |
 | `5f479944307731d1` | Attack Combo (Melee) | `feat::legacy-era-campaign-guide::p34::attack-combo-melee` | existing |  |
 | `b573d4f48af37b42` | Attack Combo (Ranged) | `feat::legacy-era-campaign-guide::p34::attack-combo-ranged` | existing |  |
