@@ -69,7 +69,7 @@ function correctFormPowerIds(node, counts) {
   }
 }
 
-function normalizeRecord(record, stats) {
+export function normalizeRecord(record, stats) {
   const r = clone(record);
   const legacy = new Set(PHASE11_ONLY_TAGS);
   const tags = r.metadata.tags;

@@ -9,16 +9,36 @@
  *
  * Phase A & B: Registry and initialization
  * Phase 1.5: Used by SuggestionEngine for alignment scoring
+ *
+ * Phase 12A: also hosts the class-independent archetype SSOT (data/archetypes.json,
+ * 297 records). Two lanes, deliberately kept apart during migration:
+ *   - legacy lane  (get/getByClass/getAll/getStats.count): class-owned records from
+ *     data/class-archetypes.json + world items, unchanged, still read by live
+ *     Suggestion/Identity/Mentor consumers.
+ *   - SSOT lane    (getArchetype/getAllArchetypes/getChildren/getByClassRoute/
+ *     getExactRefs/resolveExactRefs/getCompatibilityView): class is a route into an
+ *     archetype, never its identity. No scoring weights or biases live here.
+ * The SSOT lane never feeds the legacy lane, so live scoring is unaffected.
  */
 
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { FeatRegistry } from "/systems/foundryvtt-swse/scripts/registries/feat-registry.js";
 import { TalentRegistry } from "/systems/foundryvtt-swse/scripts/registries/talent-registry.js";
+import {
+    ARCHETYPE_SSOT_PATH,
+    collectExactRefs,
+    validateArchetypeDataset
+} from "/systems/foundryvtt-swse/scripts/engine/archetype/archetype-ssot-contract.js";
 
 export class ArchetypeRegistry {
     // Immutable cache
     static #archetypes = new Map();
     static #initialized = false;
+
+    // Phase 12A SSOT lane (class-independent). Independent of #archetypes.
+    static #ssot = new Map();
+    static #ssotMeta = null;
+    static #ssotLoaded = false;
 
     /**
      * Initialize the registry by loading all archetype items
@@ -34,6 +54,10 @@ export class ArchetypeRegistry {
         try {
             // Load archetypes from class-archetypes.json
             await this._loadFromJSON();
+
+            // Phase 12A: load the class-independent SSOT lane. Failure here must
+            // never break the legacy lane, so it is isolated and fail-closed.
+            await this._loadSSOT();
 
             // Load custom archetypes from world items
             const archetypeItems = game.items.filter(item => item.type === 'archetype');
@@ -316,7 +340,234 @@ export class ArchetypeRegistry {
         return {
             initialized: this.#initialized,
             count: this.#archetypes.size,
-            classes: Array.from(classes)
+            classes: Array.from(classes),
+            ssot: { loaded: this.#ssotLoaded, count: this.#ssot.size }
+        };
+    }
+
+    // ═══════════════════════════════════════════════════════════════
+    // Phase 12A — class-independent archetype SSOT lane
+    // ═══════════════════════════════════════════════════════════════
+
+    /**
+     * Load and validate data/archetypes.json. Fail-closed: an invalid or
+     * unreachable dataset leaves the SSOT lane empty and logs an error; the
+     * legacy lane is unaffected.
+     * @private
+     * @returns {Promise<boolean>} true if the SSOT lane is loaded
+     */
+    static async _loadSSOT() {
+        this.#ssot = new Map();
+        this.#ssotMeta = null;
+        this.#ssotLoaded = false;
+        try {
+            const response = await fetch(`/systems/foundryvtt-swse/${ARCHETYPE_SSOT_PATH}`);
+            if (!response?.ok) {
+                SWSELogger.error(`[ArchetypeRegistry] ${ARCHETYPE_SSOT_PATH} unavailable (HTTP ${response?.status})`);
+                return false;
+            }
+            const dataset = await response.json();
+            // Structural/semantic invariants only; exact-ref resolution is a tooling gate.
+            const report = validateArchetypeDataset(dataset);
+            if (!report.valid) {
+                SWSELogger.error(
+                    `[ArchetypeRegistry] ${ARCHETYPE_SSOT_PATH} failed validation (${report.errors.length}); SSOT lane disabled`,
+                    report.errors.slice(0, 10)
+                );
+                return false;
+            }
+            for (const [id, record] of Object.entries(dataset.archetypes)) {
+                this.#ssot.set(id, this._deepFreeze(record));
+            }
+            this.#ssotMeta = this._deepFreeze({
+                schemaVersion: dataset._meta.schemaVersion,
+                name: dataset._meta.name,
+                runtimePhase: dataset._meta.runtimePhase,
+                recordCount: this.#ssot.size
+            });
+            this.#ssotLoaded = true;
+            SWSELogger.log(`[ArchetypeRegistry] Loaded ${this.#ssot.size} class-independent archetypes (SSOT)`);
+            return true;
+        } catch (err) {
+            this.#ssot = new Map();
+            this.#ssotLoaded = false;
+            SWSELogger.error(`[ArchetypeRegistry] Failed to load ${ARCHETYPE_SSOT_PATH}:`, err);
+            return false;
+        }
+    }
+
+    /** @private */
+    static _deepFreeze(value) {
+        if (value && typeof value === 'object' && !Object.isFrozen(value)) {
+            Object.freeze(value);
+            for (const v of Object.values(value)) this._deepFreeze(v);
+        }
+        return value;
+    }
+
+    /** @returns {boolean} whether the class-independent SSOT lane is loaded */
+    static isSSOTLoaded() {
+        return this.#ssotLoaded;
+    }
+
+    /** @returns {Object|null} frozen SSOT descriptor {schemaVersion,name,runtimePhase,recordCount} */
+    static getSSOTMeta() {
+        return this.#ssotMeta;
+    }
+
+    /**
+     * Class-independent lookup by stable archetype id (e.g. 'jedi_shadow').
+     * @param {string} id
+     * @returns {Object|null} frozen SSOT record
+     */
+    static getArchetype(id) {
+        return this.#ssot.get(id) || null;
+    }
+
+    /** @returns {Object[]} all SSOT records in dataset order (deterministic) */
+    static getAllArchetypes() {
+        return Array.from(this.#ssot.values());
+    }
+
+    /** @returns {Object[]} SSOT parent (organizational) records */
+    static getParents() {
+        return this.getAllArchetypes().filter((r) => r.kind === 'parent');
+    }
+
+    /** @returns {Object[]} SSOT specialization records */
+    static getSpecializations() {
+        return this.getAllArchetypes().filter((r) => r.kind === 'specialization');
+    }
+
+    /**
+     * Organizational parent of a specialization. Parentage never implies
+     * mechanical inheritance.
+     * @returns {Object|null}
+     */
+    static getParent(id) {
+        const record = this.#ssot.get(id);
+        return record?.parentId ? this.#ssot.get(record.parentId) || null : null;
+    }
+
+    /** @returns {Object[]} specializations whose organizational parent is `parentId` */
+    static getChildren(parentId) {
+        return this.getAllArchetypes().filter((r) => r.parentId === parentId);
+    }
+
+    /**
+     * Archetypes reachable through a class route. Class is a route, not identity.
+     * @param {string} classId - exact class ref (e.g. 'jedi', 'jedi_knight')
+     * @param {'foundation'|'prestige'|'apex'|null} [tier] - restrict to one route tier; null = any
+     * @returns {Object[]}
+     */
+    static getByClassRoute(classId, tier = null) {
+        if (!classId) return [];
+        const tiers = tier ? [tier] : ['foundation', 'prestige', 'apex'];
+        return this.getAllArchetypes().filter((r) =>
+            tiers.some((t) => (r.mechanics?.classes?.[t] || []).includes(classId))
+        );
+    }
+
+    /**
+     * Every exact canonical reference of an archetype, by domain.
+     * @returns {Object|null} { foundationClasses, prestigeAndApexClasses, skills, talentTrees, talents, feats, species, backgrounds, forcePowers }
+     */
+    static getExactRefs(id) {
+        const record = this.#ssot.get(id);
+        return record ? collectExactRefs(record) : null;
+    }
+
+    /**
+     * Resolve an archetype's exact references through existing canonical
+     * registries. Exact matching only; no fuzzy resolution. A domain with no
+     * adapter is reported `checked: false` (never silently "resolved").
+     *
+     * Default adapters cover Force powers, species, classes, feats (exact
+     * normalized-name identity) and backgrounds. Skills, talent trees and
+     * talents are verified offline against the canonical Phase 3 manifests
+     * (tools/build-archetype-phase-12a-runtime-ssot.mjs) because the live
+     * registries do not carry canonical identity keys.
+     *
+     * @param {string} id - archetype id
+     * @param {Object} [adapters] - { [domain]: (ref) => boolean|Promise<boolean> } overrides
+     * @returns {Promise<Object|null>} { [domain]: { checked, resolved: [], unresolved: [] } }
+     */
+    static async resolveExactRefs(id, adapters = null) {
+        const refs = this.getExactRefs(id);
+        if (!refs) return null;
+        adapters ??= await this._defaultExactRefAdapters();
+        const out = {};
+        for (const [domain, list] of Object.entries(refs)) {
+            const adapter = adapters[domain];
+            if (typeof adapter !== 'function') {
+                out[domain] = { checked: false, resolved: [], unresolved: [] };
+                continue;
+            }
+            const resolved = [];
+            const unresolved = [];
+            for (const ref of list) {
+                let ok = false;
+                try { ok = !!(await adapter(ref)); } catch { ok = false; }
+                (ok ? resolved : unresolved).push(ref);
+            }
+            out[domain] = { checked: true, resolved, unresolved };
+        }
+        return out;
+    }
+
+    /**
+     * @private Default exact-ref adapters built on existing registries. Loaded
+     * lazily so the SSOT lane adds no import-time coupling to the engine layer.
+     */
+    static async _defaultExactRefAdapters() {
+        const base = '/systems/foundryvtt-swse/scripts';
+        const [{ ForceRegistry }, { SpeciesRegistry }, { ClassesRegistry }, { BackgroundRegistry }] = await Promise.all([
+            import(`${base}/engine/registries/force-registry.js`),
+            import(`${base}/engine/registries/species-registry.js`),
+            import(`${base}/engine/registries/classes-registry.js`),
+            import(`${base}/registries/background-registry.js`)
+        ]);
+        const slug = (s) => String(s || '').toLowerCase().replace(/[’']/g, '').replace(/[^a-z0-9]+/g, '_').replace(/^_+|_+$/g, '');
+        const hasClass = (ref) => !!ClassesRegistry.getById?.(String(ref).replace(/_/g, '-')) || !!ClassesRegistry.getById?.(ref);
+        let feats = null;
+        return {
+            forcePowers: (ref) => ForceRegistry.hasId?.(ref) === true,
+            species: (ref) => SpeciesRegistry.getById?.(ref)?.id === ref,
+            foundationClasses: hasClass,
+            prestigeAndApexClasses: hasClass,
+            feats: (ref) => (feats ??= new Set((FeatRegistry.getAll?.() || []).map((f) => slug(f.name)))).has(ref),
+            backgrounds: async (ref) => !!(await BackgroundRegistry.getById?.(ref))
+        };
+    }
+
+    /**
+     * Read-only legacy-shaped view of an SSOT record for callers mid-migration.
+     * Carries only typed/exact data (class routes, ability order, exact skills).
+     * Bias maps are intentionally EMPTY: no numeric bias is fabricated for SSOT
+     * records, and nothing here is a second semantic authority.
+     * @returns {Object|null}
+     */
+    static getCompatibilityView(id) {
+        const r = this.#ssot.get(id);
+        if (!r) return null;
+        const m = r.mechanics;
+        return {
+            id: r.id,
+            name: r.name,
+            baseClassId: null,
+            routeClassIds: [...m.classes.foundation],
+            roles: [],
+            prestigeTargets: [...m.classes.prestige, ...m.classes.apex],
+            attributePriority: [...m.abilities.primary, ...m.abilities.secondary, ...m.abilities.tertiary],
+            recommended: { feats: [], talents: [], skills: [...m.skills.signature, ...m.skills.supporting] },
+            weights: { feat: 1, talent: 1, prestige: 1, skill: 1 },
+            mechanicalBias: {},
+            roleBias: {},
+            attributeBias: {},
+            tagBias: {},
+            notes: '',
+            status: r.status || 'active',
+            ssot: true
         };
     }
 
