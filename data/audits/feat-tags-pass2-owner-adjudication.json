@@ -1,0 +1,121 @@
+{
+  "schemaVersion": "1.0",
+  "kind": "FEAT_TAGS_PASS2_OWNER_ADJUDICATION",
+  "batch": 1,
+  "status": "OWNER_ADJUDICATED_BATCH_1",
+  "note": "Owner rulings applied on top of the immutable Pass 1 authority. The Pass 1 file is never edited; the working Pass 2 authority is derived by tools/build-feat-tags-pass2-semantic-authority.mjs. Tag operations are asserted against the Pass 1 tag sets (an ADD of a present tag or a REMOVE of an absent tag fails the build).",
+  "basis": {
+    "pass1Authority": "data/audits/feat-tags-semantic-authority.json",
+    "pass1Status": "PASS1_COMPLETE_ALL_353_QC2_STANDARD",
+    "pass1Immutable": true
+  },
+  "terminalStatuses": [
+    "PASS2_OWNER_APPROVED",
+    "PASS2_OWNER_CORRECTED",
+    "PASS2_FALSE_POSITIVE",
+    "PASS2_INTENTIONAL_DIVERGENCE",
+    "PASS2_INVALID_FAMILY_REFERENCE"
+  ],
+  "tagChanges": [
+    {
+      "canonicalId": "8a5cb28f625d6f02", "name": "Great Cleave", "family": "Cleave -> Great Cleave", "ruling": "PASS2_OWNER_APPROVED",
+      "add": ["setup"], "remove": [],
+      "reason": "Great Cleave explicitly uses the Cleave mechanic with the per-round limit removed. Cleave's drop-an-enemy trigger/setup remains part of the mechanic."
+    },
+    {
+      "canonicalId": "c238f3f722689a3a", "name": "Pin", "family": "Grapple family (Pin / Crush / Throw / Trip)", "ruling": "PASS2_OWNER_APPROVED",
+      "add": ["unarmed", "melee", "battlefield_control"], "remove": [],
+      "reason": "A grapple attack is treated as an unarmed attack under the Core rules, and Pin prevents the target from moving or taking actions."
+    },
+    {
+      "canonicalId": "7bc21d4a74b95be5", "name": "Crush", "family": "Grapple family (Pin / Crush / Throw / Trip)", "ruling": "PASS2_OWNER_APPROVED",
+      "add": ["melee"], "remove": [], "keep": ["restrain"],
+      "reason": "Crush operates on a successful Pin/grapple and deals unarmed/claw damage. The Pin interaction is explicit in the Benefit, not prerequisite inference."
+    },
+    {
+      "canonicalId": "3eed0b4f1227cf91", "name": "Throw", "family": "Grapple family (Pin / Crush / Throw / Trip)", "ruling": "PASS2_OWNER_CORRECTED",
+      "add": ["melee", "battlefield_control"], "remove": ["restrain"],
+      "reason": "Throw uses a grapple attack, forcibly relocates the target, leaves it prone, deals unarmed-equivalent damage, and ends the grapple. It does not pin or maintain restraint."
+    },
+    {
+      "canonicalId": "a8511e47656ef4dd", "name": "Trip", "family": "Grapple family (Pin / Crush / Throw / Trip)", "ruling": "PASS2_OWNER_APPROVED",
+      "add": ["unarmed"], "remove": [], "keep": ["melee", "battlefield_control"],
+      "reason": "Trip is executed through a grapple attack, which Core explicitly treats as an unarmed attack."
+    },
+    {
+      "canonicalId": "92f927c92ded9fcf", "name": "Martial Arts I", "family": "Attack of opportunity text", "ruling": "PASS2_OWNER_APPROVED",
+      "add": ["attack_of_opportunity"], "remove": [],
+      "reason": "The certified canonical content authority explicitly records the Core combat-rule interaction that Martial Arts I allows an unarmed character to threaten and make attacks of opportunity. Not propagated to Martial Arts II or III from prerequisites; each feat is adjudicated on its own rules."
+    },
+    {
+      "canonicalId": "2bb34366776f0371", "name": "Cut the Red Tape", "family": "Reroll text", "ruling": "PASS2_OWNER_APPROVED",
+      "add": ["reroll", "reliability"], "remove": [],
+      "reason": "The feat explicitly preserves entitlement to Gather Information rerolls when making the substituted Knowledge (bureaucracy) check."
+    },
+    {
+      "canonicalId": "f313d17068d1cdea", "name": "Informer", "family": "Reroll text", "ruling": "PASS2_OWNER_APPROVED",
+      "add": ["reroll"], "remove": [], "keep": ["reliability"],
+      "reason": "Informer explicitly carries eligible Gather Information rerolls onto the substituted Perception check; aligned with the reroll-inheritance treatment used elsewhere in the shared ontology."
+    },
+    {
+      "canonicalId": "70962165bed8e5ed", "name": "Gunnery Specialist", "family": "Skill-completeness audit", "ruling": "PASS2_OWNER_APPROVED",
+      "add": ["pilot"], "remove": [],
+      "reason": "Not prerequisite leakage. The Special clause changes the Starship Tactics maneuvers available through this feat based on whether the character is trained in Pilot, so the skill mechanically participates in the feat."
+    },
+    {
+      "canonicalId": "9c9e98a70538855c", "name": "Slammer", "family": "Skill-completeness audit", "ruling": "PASS2_OWNER_APPROVED",
+      "add": ["treat_injury"], "remove": [], "doNotInfer": ["medical", "medicine", "condition_removal", "recovery"],
+      "reason": "The persistent condition caused by Slammer can be removed by a DC 20 Treat Injury check; under the owner skill-completeness rule that is a direct mechanical interaction with Treat Injury. Slammer imposes the condition; it does not itself perform medical recovery."
+    }
+  ],
+  "rejectedFindings": [
+    { "canonicalId": "5e471161ad85b040", "name": "Vehicular Surge", "rejectedTag": "pilot", "source": "skill-completeness audit", "ruling": "PASS2_FALSE_POSITIVE", "reason": "Pilot is a prerequisite. \"Vehicle you pilot\" describes character role, not use or modification of the Pilot skill." },
+    { "canonicalId": "acb7efcc70769b9f", "name": "Mounted Defense", "rejectedTag": "pilot", "source": "skill-completeness audit", "ruling": "PASS2_FALSE_POSITIVE", "reason": "The Benefit works while riding a beast or speeder bike as passenger or pilot. Pilot appears only as an alternative prerequisite." },
+    { "canonicalId": "cf278001c780f3f9", "name": "Momentum Strike", "rejectedTag": "pilot", "source": "skill-completeness audit", "ruling": "PASS2_FALSE_POSITIVE", "reason": "Same ruling as Mounted Defense." },
+    { "canonicalId": "b7f51561e60fefe6", "name": "Mission Specialist", "rejectedTag": "use_the_force", "source": "skill-completeness audit", "ruling": "PASS2_FALSE_POSITIVE", "reason": "Generic choose-one-trained-skill feat, correctly represented by `skills`. The Use the Force sentence is an eligibility exception for one possible choice, not Force-specialized semantics." },
+    { "canonicalId": "d48614f7ae500a5b", "name": "Logic Upgrade: Skill Swap", "rejectedTag": "use_the_force", "source": "skill-completeness audit", "ruling": "PASS2_FALSE_POSITIVE", "reason": "Use the Force is explicitly excluded from selectable skills. An exclusion does not create positive Use the Force semantics." },
+    { "canonicalId": "0536f81eff886234", "name": "Flurry", "rejectedTag": "skill_substitution", "source": "skill substitution text family", "ruling": "PASS2_FALSE_POSITIVE", "reason": "Flurry substitutes for a feat when qualifying for a prestige class, not one skill for another." },
+    { "canonicalId": "252b67d6e31c377e", "name": "Weapon Finesse", "rejectedTag": "skill_substitution", "source": "skill substitution text family", "ruling": "PASS2_FALSE_POSITIVE", "reason": "Weapon Finesse substitutes Dexterity for Strength on attack rolls, not a skill." },
+    { "canonicalId": "d518e8c1220af930", "name": "Droid Shield Mastery", "rejectedTag": "skill_substitution", "source": "skill substitution text family", "ruling": "PASS2_FALSE_POSITIVE", "reason": "Changes Endurance success/action timing, not skill identity; it already carries `endurance`." }
+  ],
+  "familyReviews": [
+    {
+      "label": "Power Attack / Powerful Charge / Bantha Rush", "ruling": "PASS2_INTENTIONAL_DIVERGENCE", "tagChanges": false,
+      "reason": "The common `melee` relationship is real, but the differing tags represent differing mechanics: Power Attack is an attack-for-damage trade; Powerful Charge is movement/charge plus attack/damage enhancement; Bantha Rush is forced movement/control. Tag parity is not forced."
+    },
+    {
+      "label": "Ranged precision family", "ruling": "PASS2_INTENTIONAL_DIVERGENCE", "tagChanges": false,
+      "reason": "`ranged` + `precision` is the valid common core. Aim, cover, positioning, range-band, sniper, setup, targeting, and damage tags remain mechanic-specific."
+    },
+    {
+      "label": "Tech Specialist family", "ruling": "PASS2_INTENTIONAL_DIVERGENCE", "tagChanges": false,
+      "reason": "The valid common core is tech + mechanics + modification + equipment. The wider object/trait tags on Tech Specialist and Superior Tech are justified by their modification tables; Signature Device's `reliability` is justified by its take-10 mechanic; Hasty Modification does not inherit the parent feat's entire semantic payload."
+    }
+  ],
+  "invalidFamilyReferences": [
+    {
+      "label": "Rapid Shot / Improved Rapid Shot", "unresolvedName": "Improved Rapid Shot", "ruling": "PASS2_INVALID_FAMILY_REFERENCE",
+      "reason": "There is no canonical Improved Rapid Shot identity in the 353-feat authority. The owner-named family reference was erroneous; no identity is invented. Rapid Strike / Improved Rapid Strike remains the valid canonical family."
+    }
+  ],
+  "publicationCategory": {
+    "note": "Publication category is structural metadata, not semantic evidence.",
+    "corrections": [
+      { "canonicalId": "2cc20fb67232f92f", "name": "Skill Challenge: Catastrophic Avoidance", "to": "SKILL_CHALLENGE_FEAT" },
+      { "canonicalId": "db547ac84af63b06", "name": "Skill Challenge: Last Resort", "to": "SKILL_CHALLENGE_FEAT" },
+      { "canonicalId": "ef64dc738a6afeeb", "name": "Skill Challenge: Recovery", "to": "SKILL_CHALLENGE_FEAT" }
+    ],
+    "multiClaim": [
+      {
+        "canonicalId": "f362e5a4ad0a98bd", "name": "Echani Training",
+        "primaryPublicationCategory": "GENERAL",
+        "publicationCategories": [
+          { "source": "Knights of the Old Republic Campaign Guide", "page": 33, "relation": "PRIMARY", "category": "GENERAL" },
+          { "source": "Galaxy at War", "page": 26, "relation": "FULL_REPRINT", "category": "MARTIAL_ARTS_FEAT" }
+        ],
+        "unchanged": ["canonical ID", "primary provenance", "semantic martial_arts tag", "semantic critical_hit tag"],
+        "reason": "The primary KOTOR claim is GENERAL; the Galaxy at War full reprint/extension is MARTIAL_ARTS_FEAT. Both are correct for their publication claims and neither is collapsed into the other."
+      }
+    ]
+  }
+}
