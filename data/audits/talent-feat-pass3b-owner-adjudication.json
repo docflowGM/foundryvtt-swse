@@ -1,0 +1,2774 @@
+{
+  "schemaVersion": "1.0",
+  "kind": "TALENT_FEAT_PASS3B_OWNER_ADJUDICATION",
+  "status": "OWNER_ADJUDICATED_CUMULATIVE",
+  "note": "Cumulative owner overlay for Pass 3B batches. Claude executes these rulings and makes no semantic decisions. Decision identity is deterministic: domain + canonical ID + tag; duplicates across batches or evidence channels are rejected. Findings not named here stay PASS3B_OWNER_REVIEW.",
+  "basis": {
+    "feats": "data/audits/feat-tags-pass2-semantic-authority.json",
+    "talents": "data/audits/talent-feat-pass3a-semantic-authority.json",
+    "baseline": "data/audits/talent-feat-pass3b-mechanic-baseline.json"
+  },
+  "ownerPolicies": [
+    {
+      "id": "ACTION_TYPE_POLICY",
+      "text": "A named action-type tag (reaction, swift_action, move_action, standard_action) applies when the record's Benefit directly requires, allows, grants, changes into/from, imposes as an additional cost, prohibits or restricts, or changes another creature's use of that action type. The character using the feat/talent need not be the creature taking the action. Implications remain: reaction/swift_action/move_action/standard_action -> action_economy."
+    },
+    {
+      "id": "FULL_ROUND_ACTION_POLICY",
+      "text": "A direct full-round-action mechanic receives action_economy. There is no owner authorization to create a full_round_action tag; the full-round-action ontology-gap evidence is preserved for later ontology review."
+    },
+    {
+      "id": "REROLL_POLICY",
+      "text": "reroll applies only when the record actually permits, requires, causes or modifies a reroll. A textual reference to rerolls without creating or modifying a reroll mechanic does not qualify."
+    },
+    {
+      "id": "RELIABILITY_POLICY",
+      "text": "reliability represents an affirmative mechanic that improves or stabilizes outcome reliability (reroll, roll-twice/select-result, Take 10/Take 20 benefit, automatic success, equivalent positive mechanic). Not added because a rule prohibits Take 10/20, a phrase happens to contain \"take 10\", or a mechanic selects the better of two static modifiers rather than two rolls. Negative restrictions create no positive reliability tag."
+    },
+    {
+      "id": "FORCE_POINT_SPEND_POLICY",
+      "text": "force_point_spend applies when the operative mechanic actually requires, permits or consumes a Force Point expenditure; not for \"without spending\", \"does not count as spending\", a resource that expires if not later spent, another power's Force Point condition, or a mechanic that avoids/removes a Force Point cost. Implication remains: force_point_spend -> resource_spend."
+    },
+    {
+      "id": "RESOURCE_SPEND_POLICY",
+      "text": "resource_spend applies when the record directly consumes an explicitly limited/tracked resource or use as part of its operative mechanic. Avoiding a resource cost is not resource spending; mentioning that a temporary resource could later be spent is not itself resource spending."
+    },
+    {
+      "id": "RESOURCE_RECOVERY_POLICY",
+      "text": "resource_recovery applies when the mechanic directly restores, regains, refunds or returns a previously spent or expended resource. Not for creating a new temporary resource, granting an additional temporary Force Point, increasing capacity, restoring hit points, or referencing normal recovery while replacing/foregoing it. Hit-point recovery is healing/recovery semantics, not resource_recovery."
+    },
+    {
+      "id": "ONCE_PER_ENCOUNTER_POLICY",
+      "text": "once-per-encounter represents a global activation/use limitation on the record's own mechanic. Not added for a reference to another normally once-per-encounter ability, restoring an additional use of some other ability, or a per-target once-per-encounter restriction while the ability itself may trigger multiple times."
+    },
+    {
+      "id": "FORCE_CAPACITY_POLICY",
+      "text": "force_capacity applies when the mechanic directly increases the amount of Force-resource capacity available to the character, including persistent/additional Force Point allotment. It does not authorize resource_recovery; capacity and recovery are separate semantics. Resource creation, capacity, expenditure and recovery are four distinct concepts."
+    },
+    {
+      "id": "DAMAGE_THRESHOLD_POLICY",
+      "text": "damage_threshold applies when the record's operative mechanic directly interacts with Damage Threshold: compares damage against it, modifies it, changes the consequences of meeting/exceeding it, uses it as a direct activation condition, or explicitly determines how damage is counted for purposes of overcoming it. Not added merely because Damage Threshold appears as unrelated explanatory text or prerequisite material. A mechanic need not numerically modify Damage Threshold to qualify."
+    },
+    {
+      "id": "DAMAGE_BONUS_POLICY",
+      "text": "damage_bonus represents a mechanic that directly increases or adds to damage dealt by an attack/effect (numeric damage, damage dice, a substituted larger damage modifier, directly increased damage output). Not used for additional damage suffered by the user, damage used as a cost or penalty, damage the mechanic gives up/forgoes, Damage Threshold, Damage Reduction, or text fragments containing the word \"damage\" that do not increase outgoing damage."
+    },
+    {
+      "id": "SUSTAINED_DAMAGE_POLICY",
+      "text": "sustained_damage represents a damage-enhancing mechanic capable of recurring across multiple attacks, rounds or turns rather than being limited to a single isolated damage event (multiattack damage support, repeated attacks, damage enhancement that can recur each turn, recurring/ongoing damaging effects). A mechanic may be conditional and still qualify if its rules explicitly allow the enhancement to recur. A single one-time enhanced attack does not qualify solely because it deals additional damage."
+    },
+    {
+      "id": "CRITICAL_SUCCESS_POLICY",
+      "text": "critical_success represents a mechanic in which a natural 20, or an effect treated as a natural 20/critical success, directly triggers, grants, restores, substitutes for, or materially activates the record's special mechanic. Not added merely because the record expands critical threat range, reminds the reader that only a natural 20 is an automatic hit, references a natural 20 only to explain the normal critical-hit rules, or uses a natural 20 as an exception that bypasses or prevents a defensive effect. critical_hit and critical_success remain distinct; a natural-20 trigger may justify critical_success without implying critical_hit."
+    },
+    {
+      "id": "GRAB_POLICY",
+      "text": "grab applies when the operative mechanic directly interacts with the SWSE Grab mechanic: initiates a Grab, modifies a Grab attack, modifies the consequences of a successful Grab, modifies escape from a Grab, automatically ends/removes a Grab, or otherwise directly changes the mechanical operation of the Grab state. Not added because a currently grabbed target is excluded from another effect, \"grab\" is ordinary English, or the rule merely mentions Grab while describing another mechanic. A negative eligibility/exclusion clause does not create a positive Grab semantic."
+    },
+    {
+      "id": "GRAPPLE_POLICY",
+      "text": "grapple applies when the operative mechanic directly initiates a grapple, modifies a grapple check or resolution, modifies escape from a grapple, automatically ends/removes a grapple, or otherwise directly changes the grapple mechanic. Not added because grappled targets are excluded from another effect, grapple is one selectable member of a broad generic category, or the word appears only as explanatory/reference text. Generic selectable scope does not automatically enumerate every possible scope tag."
+    },
+    {
+      "id": "RESTRAIN_POLICY",
+      "text": "restrain applies when the operative mechanic directly restrains/pins/immobilizes a target, modifies a restrained/pinned/immobilized state, frees/removes that state, or directly modifies its mechanical application or escape. Not added for \"restraining bolt\" appearing only in an immunity comparison, an unrelated rule mentioning what happens while immobilized, or ordinary-language phrases such as \"pinning you down\"."
+    },
+    {
+      "id": "BATTLEFIELD_CONTROL_POLICY",
+      "text": "battlefield_control applies when the mechanic directly imposes or materially manipulates hostile battlefield state: forced enemy movement, prone/knockdown, immobilization/restraint, meaningful enemy positioning restriction, or equivalent direct hostile spatial/control effects. Not added because an ally is voluntarily repositioned, the user prevents a control effect on themself, or an unwanted control effect occurs only as the failure consequence of a supportive maneuver."
+    },
+    {
+      "id": "MOVEMENT_POLICY",
+      "text": "movement applies when the operative mechanic directly changes movement or speed: moving a creature/vehicle, forcing movement, increasing/reducing speed, or changing how much movement can be taken. The affected creature does not have to be the user; direct reduction of an enemy or vehicle's speed is still a movement mechanic."
+    },
+    {
+      "id": "MOBILITY_POLICY",
+      "text": "mobility represents improved/facilitated movement capability, freedom, efficiency or movement access for the user or supported creature. Not added merely because the mechanic forcibly moves an enemy, creates difficult terrain for enemies, manipulates battlefield terrain generally, or references whether movement provokes an attack of opportunity; those may be represented by movement, positioning, control, battlefield_control or other specific mechanics."
+    },
+    {
+      "id": "ATTACK_OF_OPPORTUNITY_POLICY",
+      "text": "attack_of_opportunity applies when the operative mechanic directly generates an attack of opportunity, grants or modifies one, prevents/suppresses one, triggers from one, modifies checks or effects specifically associated with one, or changes the timing or availability of one. Not applied merely because movement is stated to provoke attacks of opportunity as normal, attacks of opportunity are simply exempted from a broader restriction on attacks, or the phrase appears only as unchanged rules reminder/context. The Martial Arts I owner precedent remains intact and does not propagate to Martial Arts II/III."
+    },
+    {
+      "id": "FULL_ATTACK_POLICY",
+      "text": "full_attack applies when the operative mechanic directly interacts with the SWSE Full Attack mechanic: performs a Full Attack, modifies Full Attack penalties, modifies the number/type of attacks made as part of a Full Attack, or directly modifies the resolution of a Full Attack. Not added because the record makes multiple attacks, another action produces attacks similar to a Full Attack, or a normal Full Attack is mentioned only as a comparison, limitation or reference. A mechanic that intentionally replaces or bypasses the Full Attack action is not automatically a full_attack mechanic."
+    },
+    {
+      "id": "DUAL_WIELD_POLICY",
+      "text": "dual_wield represents mechanics in which one character directly fights with or mechanically manages two weapons/two weapon ends as part of the same combat style: attacking with two weapons, using both ends of a double weapon where treated as two-weapon combat, modifying two-weapon attack penalties, or directly improving/enabling two-weapon fighting. Not added because two different characters each use one weapon, two attacks are combined, two weapons happen to contribute to one resolved effect, or the mechanic simply allows multiple attacks. The semantic is the character's two-weapon combat mode, not the number of weapons involved in the event."
+    },
+    {
+      "id": "STUN_POLICY",
+      "text": "stun represents direct interaction with the SWSE stun/stunning mechanic or stun damage/mode: deals or modifies stun damage, changes use of a weapon's stun setting, applies a stated stunning effect, or improves/resists/removes/directly modifies stun mechanics. Ion damage is not stun damage. Not added because a record deals ion damage, resists ion damage, improves ion weapons, mentions stun gauntlets only as an equipment exception, or uses nonlethal/capture-oriented ion mechanics. ion and stun are mechanically distinct concepts. No new ion semantic tag is authorized; recurring ion semantics are a later ontology-gap decision."
+    },
+    {
+      "id": "DIRECT_OPERATIVE_MECHANIC_POLICY",
+      "text": "A semantic tag applies when the record's own operative Benefit directly creates the mechanic, modifies it, improves or penalizes it, requires it, changes its resolution, grants it, prevents/suppresses it, removes/recovers it, or changes another creature's direct use of it. The user of the feat/talent does not have to be the actor receiving the effect; direct manipulation of another creature's mechanic can still qualify."
+    },
+    {
+      "id": "REFERENCE_ONLY_POLICY",
+      "text": "Do not add a positive semantic tag when the mechanic appears only as explanatory text, a basic-rules reminder, a comparison, an example, a prerequisite, an exception, an excluded target/state, an unaffected state, ordinary-English wording, or flavor text. A record must interact with the actual mechanic, not merely mention it."
+    },
+    {
+      "id": "OPEN_GENERIC_SCOPE_POLICY",
+      "text": "When a record allows an open generic choice (any weapon, any weapon group, any skill, any Force power, one of many selectable categories), do not automatically add every possible specific scope tag (for example Weapon Focus allowing grapple as one possible choice does not gain grapple; a generic weapon selection does not gain pistol, heavy_weapon, lightsaber, exotic_weapon; a generic skill mechanic does not gain every skill tag). Specific semantic tags require direct operative interaction with that specific scope."
+    },
+    {
+      "id": "CLOSED_SCOPE_POLICY",
+      "text": "When the operative mechanic explicitly and deliberately applies to a named closed scope, that scope may receive its semantic tag: \"melee attacks\" -> melee; \"ranged attacks\" -> ranged; \"melee or ranged attacks\" -> both are explicit closed scopes; \"while using a pistol\" -> pistol; \"when wielding a lightsaber\" -> lightsaber; \"unarmed attacks\" -> unarmed. This policy does not override the reference-only or generic-selection policies."
+    },
+    {
+      "id": "NEGATIVE_EXCLUSION_POLICY",
+      "text": "A mechanic does not receive a positive tag merely because that mechanic prevents the effect from working: \"cannot affect a grappled target\" does not create grapple; \"except stun gauntlets\" does not create stun; \"does not work against X\" does not positively represent X."
+    },
+    {
+      "id": "SPECIFIC_OVER_BROAD_POLICY",
+      "text": "When a certified specific mechanical tag already precisely expresses the rule, do not automatically infer every broad neighboring semantic tag. These distinctions must remain meaningful: movement != mobility; movement != positioning; control != battlefield_control; critical_hit != critical_success; ion != stun; resource creation != resource recovery; force capacity != resource recovery; access != semantic identity. Broad tags require their own direct owner-defined meaning."
+    }
+  ],
+  "batches": [
+    {
+      "batch": "3B.1",
+      "title": "Mechanical Primitives",
+      "expected": {
+        "recordsWithAdd": 28,
+        "tagAdditions": 33,
+        "recordsWithOnlyNoChange": 22,
+        "removals": 0,
+        "newTags": 0
+      },
+      "ownerDirectedCompletions": [
+        {
+          "canonicalId": "8d0657e7ade688bd",
+          "name": "Scripted Routines",
+          "tags": [
+            "move_action",
+            "swift_action"
+          ],
+          "note": "Owner completion ruling beyond the one detector-tag pair that initially surfaced."
+        }
+      ]
+    },
+    {
+      "batch": "3B.2A",
+      "title": "Damage + Critical mechanics",
+      "expected": {
+        "recordsWithAdd": 5,
+        "tagAdditions": 5,
+        "recordsWithOnlyNoChange": 12,
+        "removals": 0,
+        "newTags": 0
+      }
+    },
+    {
+      "batch": "3B.2B",
+      "title": "Battlefield control + reactive combat",
+      "expected": {
+        "recordsWithAdd": 15,
+        "tagAdditions": 15,
+        "recordsWithOnlyNoChange": 17,
+        "removals": 0,
+        "newTags": 0
+      }
+    },
+    {
+      "batch": "3B.2C",
+      "title": "Combat mode primitives",
+      "expected": {
+        "recordsWithAdd": 0,
+        "tagAdditions": 0,
+        "recordsWithOnlyNoChange": 9,
+        "removals": 0,
+        "newTags": 0
+      }
+    },
+    {
+      "batch": "3B.BULK",
+      "title": "Policy-driven bulk closure (OWNER_POLICY_DERIVED)",
+      "expected": {
+        "recordsWithAdd": 10,
+        "tagAdditions": 10,
+        "recordsWithOnlyNoChange": 14,
+        "removals": 0,
+        "newTags": 0
+      }
+    }
+  ],
+  "decisions": [
+    {
+      "decisionId": "TALENT:7a024dac260bf9ec|reaction",
+      "batch": "3B.1",
+      "domain": "TALENT",
+      "canonicalId": "7a024dac260bf9ec",
+      "name": "Dumb Luck",
+      "tag": "reaction",
+      "ownerAction": "ADD",
+      "detectorEvidenceReference": [
+        "A.cost_reaction"
+      ],
+      "ownerRationale": "The talent directly grants reaction movement.",
+      "ownerPolicyApplied": "ACTION_TYPE_POLICY"
+    },
+    {
+      "decisionId": "TALENT:95697c5a4459d7e4|reaction",
+      "batch": "3B.1",
+      "domain": "TALENT",
+      "canonicalId": "95697c5a4459d7e4",
+      "name": "Outmaneuver",
+      "tag": "reaction",
+      "ownerAction": "ADD",
+      "detectorEvidenceReference": [
+        "A.cost_reaction"
+      ],
+      "ownerRationale": "The mechanic directly permits an opposing Officer to make the opposed check as a Reaction. Action-type semantics apply to directly affected participants, not only the talent user.",
+      "ownerPolicyApplied": "ACTION_TYPE_POLICY"
+    },
+    {
+      "decisionId": "TALENT:f259cf27c1b62c47|reaction",
+      "batch": "3B.1",
+      "domain": "TALENT",
+      "canonicalId": "f259cf27c1b62c47",
+      "name": "Tactical Superiority",
+      "tag": "reaction",
+      "ownerAction": "ADD",
+      "detectorEvidenceReference": [
+        "A.cost_reaction"
+      ],
+      "ownerRationale": "The talent directly grants selected allies reaction movement.",
+      "ownerPolicyApplied": "ACTION_TYPE_POLICY"
+    },
+    {
+      "decisionId": "FEAT:313095ada7504547|swift_action",
+      "batch": "3B.1",
+      "domain": "FEAT",
+      "canonicalId": "313095ada7504547",
+      "name": "Signature Device",
+      "tag": "swift_action",
+      "ownerAction": "ADD",
+      "detectorEvidenceReference": [
+        "A.cost_swift"
+      ],
+      "ownerRationale": "Switching the active Tech Specialist trait is explicitly a swift action.",
+      "ownerPolicyApplied": "ACTION_TYPE_POLICY"
+    },
+    {
+      "decisionId": "FEAT:313095ada7504547|action_economy",
+      "batch": "3B.1",
+      "domain": "FEAT",
+      "canonicalId": "313095ada7504547",
+      "name": "Signature Device",
+      "tag": "action_economy",
+      "ownerAction": "ADD",
+      "detectorEvidenceReference": [
+        "A.any_action_cost"
+      ],
+      "ownerRationale": "Switching the active Tech Specialist trait is explicitly a swift action.",
+      "ownerPolicyApplied": "ACTION_TYPE_POLICY"
+    },
+    {
+      "decisionId": "TALENT:1946e16d1e6c831c|swift_action",
+      "batch": "3B.1",
+      "domain": "TALENT",
+      "canonicalId": "1946e16d1e6c831c",
+      "name": "Out of Harm's Way",
+      "tag": "swift_action",
+      "ownerAction": "ADD",
+      "detectorEvidenceReference": [
+        "A.cost_swift"
+      ],
+      "ownerRationale": "Its operative interaction with Harm's Way explicitly preserves the required swift-action activation cost while adding the reaction behavior. action_economy already exists.",
+      "ownerPolicyApplied": "ACTION_TYPE_POLICY"
+    },
+    {
+      "decisionId": "TALENT:6b09fe0c6fe98367|swift_action",
+      "batch": "3B.1",
+      "domain": "TALENT",
+      "canonicalId": "6b09fe0c6fe98367",
+      "name": "Sow Confusion",
+      "tag": "swift_action",
+      "ownerAction": "ADD",
+      "detectorEvidenceReference": [
+        "A.cost_swift"
+      ],
+      "ownerRationale": "The talent directly imposes an additional swift-action cost on affected enemies. action_economy already exists.",
+      "ownerPolicyApplied": "ACTION_TYPE_POLICY"
+    },
+    {
+      "decisionId": "TALENT:7f4edcb8aa830972|swift_action",
+      "batch": "3B.1",
+      "domain": "TALENT",
+      "canonicalId": "7f4edcb8aa830972",
+      "name": "Hard Target",
+      "tag": "swift_action",
+      "ownerAction": "ADD",
+      "detectorEvidenceReference": [
+        "A.cost_swift"
+      ],
+      "ownerRationale": "The talent explicitly converts second wind from its swift-action timing into a reaction. It directly modifies both action types. reaction and action_economy already exist.",
+      "ownerPolicyApplied": "ACTION_TYPE_POLICY"
+    },
+    {
+      "decisionId": "FEAT:125c328c4573890a|move_action",
+      "batch": "3B.1",
+      "domain": "FEAT",
+      "canonicalId": "125c328c4573890a",
+      "name": "Ascension Specialists",
+      "tag": "move_action",
+      "ownerAction": "ADD",
+      "detectorEvidenceReference": [
+        "A.cost_move"
+      ],
+      "ownerRationale": "The feat directly allows climbing at half speed as a move action.",
+      "ownerPolicyApplied": "ACTION_TYPE_POLICY"
+    },
+    {
+      "decisionId": "FEAT:125c328c4573890a|action_economy",
+      "batch": "3B.1",
+      "domain": "FEAT",
+      "canonicalId": "125c328c4573890a",
+      "name": "Ascension Specialists",
+      "tag": "action_economy",
+      "ownerAction": "ADD",
+      "detectorEvidenceReference": [
+        "A.any_action_cost"
+      ],
+      "ownerRationale": "The feat directly allows climbing at half speed as a move action.",
+      "ownerPolicyApplied": "ACTION_TYPE_POLICY"
+    },
+    {
+      "decisionId": "FEAT:55483fd350b3ba28|move_action",
+      "batch": "3B.1",
+      "domain": "FEAT",
+      "canonicalId": "55483fd350b3ba28",
+      "name": "Aquatic Specialists",
+      "tag": "move_action",
+      "ownerAction": "ADD",
+      "detectorEvidenceReference": [
+        "A.cost_move"
+      ],
+      "ownerRationale": "The feat directly allows swimming at half speed as a move action.",
+      "ownerPolicyApplied": "ACTION_TYPE_POLICY"
+    },
+    {
+      "decisionId": "FEAT:55483fd350b3ba28|action_economy",
+      "batch": "3B.1",
+      "domain": "FEAT",
+      "canonicalId": "55483fd350b3ba28",
+      "name": "Aquatic Specialists",
+      "tag": "action_economy",
+      "ownerAction": "ADD",
+      "detectorEvidenceReference": [
+        "A.any_action_cost"
+      ],
+      "ownerRationale": "The feat directly allows swimming at half speed as a move action.",
+      "ownerPolicyApplied": "ACTION_TYPE_POLICY"
+    },
+    {
+      "decisionId": "TALENT:dfb9e58c7bcb095c|move_action",
+      "batch": "3B.1",
+      "domain": "TALENT",
+      "canonicalId": "dfb9e58c7bcb095c",
+      "name": "Jedi Quarry",
+      "tag": "move_action",
+      "ownerAction": "ADD",
+      "detectorEvidenceReference": [
+        "A.cost_move"
+      ],
+      "ownerRationale": "The talent directly modifies movement specifically when the character spends a move action to move. action_economy already exists.",
+      "ownerPolicyApplied": "ACTION_TYPE_POLICY"
+    },
+    {
+      "decisionId": "TALENT:696f7eed2cc08299|standard_action",
+      "batch": "3B.1",
+      "domain": "TALENT",
+      "canonicalId": "696f7eed2cc08299",
+      "name": "Deep Space Raider",
+      "tag": "standard_action",
+      "ownerAction": "ADD",
+      "detectorEvidenceReference": [
+        "A.cost_standard"
+      ],
+      "ownerRationale": "Clear a Path is explicitly performed as a standard action. action_economy already exists.",
+      "ownerPolicyApplied": "ACTION_TYPE_POLICY"
+    },
+    {
+      "decisionId": "TALENT:8306c13c16ae0af8|standard_action",
+      "batch": "3B.1",
+      "domain": "TALENT",
+      "canonicalId": "8306c13c16ae0af8",
+      "name": "Harrying Shot",
+      "tag": "standard_action",
+      "ownerAction": "ADD",
+      "detectorEvidenceReference": [
+        "A.cost_standard"
+      ],
+      "ownerRationale": "The talent directly prohibits the target from using a standard action to make an attack. action_economy already exists.",
+      "ownerPolicyApplied": "ACTION_TYPE_POLICY"
+    },
+    {
+      "decisionId": "TALENT:8d0657e7ade688bd|standard_action",
+      "batch": "3B.1",
+      "domain": "TALENT",
+      "canonicalId": "8d0657e7ade688bd",
+      "name": "Scripted Routines",
+      "tag": "standard_action",
+      "ownerAction": "ADD",
+      "detectorEvidenceReference": [
+        "A.cost_standard"
+      ],
+      "ownerRationale": "Explicit owner completion ruling beyond the detector's single surfaced tag: Attack Script directly changes action costs (full-round -> standard, standard -> move, move -> swift, swift -> free) and Skill Script references skills requiring a standard action or less, so the talent directly manipulates all three currently modeled specific action types. action_economy already exists. No full_round_action or free_action tag is created.",
+      "ownerPolicyApplied": "ACTION_TYPE_POLICY",
+      "ownerDirectedCompletionBeyondDetector": [
+        "move_action",
+        "swift_action"
+      ]
+    },
+    {
+      "decisionId": "TALENT:8d0657e7ade688bd|move_action",
+      "batch": "3B.1",
+      "domain": "TALENT",
+      "canonicalId": "8d0657e7ade688bd",
+      "name": "Scripted Routines",
+      "tag": "move_action",
+      "ownerAction": "ADD",
+      "detectorEvidenceReference": [
+        "OWNER_COMPLETION_RULING"
+      ],
+      "ownerRationale": "Explicit owner completion ruling beyond the detector's single surfaced tag: Attack Script directly changes action costs (full-round -> standard, standard -> move, move -> swift, swift -> free) and Skill Script references skills requiring a standard action or less, so the talent directly manipulates all three currently modeled specific action types. action_economy already exists. No full_round_action or free_action tag is created.",
+      "ownerPolicyApplied": "ACTION_TYPE_POLICY",
+      "ownerDirectedCompletionBeyondDetector": [
+        "move_action",
+        "swift_action"
+      ]
+    },
+    {
+      "decisionId": "TALENT:8d0657e7ade688bd|swift_action",
+      "batch": "3B.1",
+      "domain": "TALENT",
+      "canonicalId": "8d0657e7ade688bd",
+      "name": "Scripted Routines",
+      "tag": "swift_action",
+      "ownerAction": "ADD",
+      "detectorEvidenceReference": [
+        "OWNER_COMPLETION_RULING"
+      ],
+      "ownerRationale": "Explicit owner completion ruling beyond the detector's single surfaced tag: Attack Script directly changes action costs (full-round -> standard, standard -> move, move -> swift, swift -> free) and Skill Script references skills requiring a standard action or less, so the talent directly manipulates all three currently modeled specific action types. action_economy already exists. No full_round_action or free_action tag is created.",
+      "ownerPolicyApplied": "ACTION_TYPE_POLICY",
+      "ownerDirectedCompletionBeyondDetector": [
+        "move_action",
+        "swift_action"
+      ]
+    },
+    {
+      "decisionId": "TALENT:f557b3331b5158c8|standard_action",
+      "batch": "3B.1",
+      "domain": "TALENT",
+      "canonicalId": "f557b3331b5158c8",
+      "name": "Battle Mount",
+      "tag": "standard_action",
+      "ownerAction": "ADD",
+      "detectorEvidenceReference": [
+        "A.cost_standard"
+      ],
+      "ownerRationale": "The talent directly permits an attack as a standard action and also converts the mount's normal standard-action attack into a swift action. swift_action and action_economy already exist.",
+      "ownerPolicyApplied": "ACTION_TYPE_POLICY"
+    },
+    {
+      "decisionId": "FEAT:600f43af4edb16f7|action_economy",
+      "batch": "3B.1",
+      "domain": "FEAT",
+      "canonicalId": "600f43af4edb16f7",
+      "name": "Whirlwind Attack",
+      "tag": "action_economy",
+      "ownerAction": "ADD",
+      "detectorEvidenceReference": [
+        "A.any_action_cost"
+      ],
+      "ownerRationale": "Directly specifies a full-round-action cost or timing in its operative mechanic. No full_round_action tag is created.",
+      "ownerPolicyApplied": "FULL_ROUND_ACTION_POLICY"
+    },
+    {
+      "decisionId": "FEAT:80805c30ea6dd11e|action_economy",
+      "batch": "3B.1",
+      "domain": "FEAT",
+      "canonicalId": "80805c30ea6dd11e",
+      "name": "Aiming Accuracy",
+      "tag": "action_economy",
+      "ownerAction": "ADD",
+      "detectorEvidenceReference": [
+        "A.any_action_cost"
+      ],
+      "ownerRationale": "Directly specifies a full-round-action cost or timing in its operative mechanic. No full_round_action tag is created.",
+      "ownerPolicyApplied": "FULL_ROUND_ACTION_POLICY"
+    },
+    {
+      "decisionId": "FEAT:9af3ba38a2c671b8|action_economy",
+      "batch": "3B.1",
+      "domain": "FEAT",
+      "canonicalId": "9af3ba38a2c671b8",
+      "name": "Feat of Strength",
+      "tag": "action_economy",
+      "ownerAction": "ADD",
+      "detectorEvidenceReference": [
+        "A.any_action_cost"
+      ],
+      "ownerRationale": "Directly specifies a full-round-action cost or timing in its operative mechanic. No full_round_action tag is created.",
+      "ownerPolicyApplied": "FULL_ROUND_ACTION_POLICY"
+    },
+    {
+      "decisionId": "FEAT:d48614f7ae500a5b|action_economy",
+      "batch": "3B.1",
+      "domain": "FEAT",
+      "canonicalId": "d48614f7ae500a5b",
+      "name": "Logic Upgrade: Skill Swap",
+      "tag": "action_economy",
+      "ownerAction": "ADD",
+      "detectorEvidenceReference": [
+        "A.any_action_cost"
+      ],
+      "ownerRationale": "Directly specifies a full-round-action cost or timing in its operative mechanic. No full_round_action tag is created.",
+      "ownerPolicyApplied": "FULL_ROUND_ACTION_POLICY"
+    },
+    {
+      "decisionId": "FEAT:f59c9679c02b8896|action_economy",
+      "batch": "3B.1",
+      "domain": "FEAT",
+      "canonicalId": "f59c9679c02b8896",
+      "name": "Metamorph",
+      "tag": "action_economy",
+      "ownerAction": "ADD",
+      "detectorEvidenceReference": [
+        "A.any_action_cost"
+      ],
+      "ownerRationale": "Directly specifies a full-round-action cost or timing in its operative mechanic. No full_round_action tag is created.",
+      "ownerPolicyApplied": "FULL_ROUND_ACTION_POLICY"
+    },
+    {
+      "decisionId": "TALENT:0df15b0ea7721c50|action_economy",
+      "batch": "3B.1",
+      "domain": "TALENT",
+      "canonicalId": "0df15b0ea7721c50",
+      "name": "Infuse Weapon",
+      "tag": "action_economy",
+      "ownerAction": "ADD",
+      "detectorEvidenceReference": [
+        "A.any_action_cost"
+      ],
+      "ownerRationale": "Directly specifies a full-round-action cost or timing in its operative mechanic. No full_round_action tag is created.",
+      "ownerPolicyApplied": "FULL_ROUND_ACTION_POLICY"
+    },
+    {
+      "decisionId": "TALENT:1204459eaaff9efa|action_economy",
+      "batch": "3B.1",
+      "domain": "TALENT",
+      "canonicalId": "1204459eaaff9efa",
+      "name": "Planetary Attunement",
+      "tag": "action_economy",
+      "ownerAction": "ADD",
+      "detectorEvidenceReference": [
+        "A.any_action_cost"
+      ],
+      "ownerRationale": "Directly specifies a full-round-action cost or timing in its operative mechanic. No full_round_action tag is created.",
+      "ownerPolicyApplied": "FULL_ROUND_ACTION_POLICY"
+    },
+    {
+      "decisionId": "TALENT:4a3fdcd0f32062b2|action_economy",
+      "batch": "3B.1",
+      "domain": "TALENT",
+      "canonicalId": "4a3fdcd0f32062b2",
+      "name": "Turn the Tide",
+      "tag": "action_economy",
+      "ownerAction": "ADD",
+      "detectorEvidenceReference": [
+        "A.any_action_cost"
+      ],
+      "ownerRationale": "Directly specifies a full-round-action cost or timing in its operative mechanic. No full_round_action tag is created.",
+      "ownerPolicyApplied": "FULL_ROUND_ACTION_POLICY"
+    },
+    {
+      "decisionId": "TALENT:959f16cb707d8360|action_economy",
+      "batch": "3B.1",
+      "domain": "TALENT",
+      "canonicalId": "959f16cb707d8360",
+      "name": "Bomb Thrower",
+      "tag": "action_economy",
+      "ownerAction": "ADD",
+      "detectorEvidenceReference": [
+        "A.any_action_cost"
+      ],
+      "ownerRationale": "Directly specifies a full-round-action cost or timing in its operative mechanic. No full_round_action tag is created.",
+      "ownerPolicyApplied": "FULL_ROUND_ACTION_POLICY"
+    },
+    {
+      "decisionId": "TALENT:d32459fe16029f2a|action_economy",
+      "batch": "3B.1",
+      "domain": "TALENT",
+      "canonicalId": "d32459fe16029f2a",
+      "name": "Dull the Pain",
+      "tag": "action_economy",
+      "ownerAction": "ADD",
+      "detectorEvidenceReference": [
+        "A.any_action_cost"
+      ],
+      "ownerRationale": "Directly specifies a full-round-action cost or timing in its operative mechanic. No full_round_action tag is created.",
+      "ownerPolicyApplied": "FULL_ROUND_ACTION_POLICY"
+    },
+    {
+      "decisionId": "TALENT:ec3e6a05561ddc07|resource_spend",
+      "batch": "3B.1",
+      "domain": "TALENT",
+      "canonicalId": "ec3e6a05561ddc07",
+      "name": "Suppress Force",
+      "tag": "resource_spend",
+      "ownerAction": "ADD",
+      "detectorEvidenceReference": [
+        "C.resource_spend"
+      ],
+      "ownerRationale": "The talent directly spends one use of the mind trick Force power as part of its reaction mechanic: explicit consumption of a limited tracked resource/use.",
+      "ownerPolicyApplied": "RESOURCE_SPEND_POLICY"
+    },
+    {
+      "decisionId": "TALENT:f8ac7fecc8d3c8ff|resource_recovery",
+      "batch": "3B.1",
+      "domain": "TALENT",
+      "canonicalId": "f8ac7fecc8d3c8ff",
+      "name": "Precognitive Meditation",
+      "tag": "resource_recovery",
+      "ownerAction": "ADD",
+      "detectorEvidenceReference": [
+        "C.resource_recovery"
+      ],
+      "ownerRationale": "If the stored defensive effect is not used, the character directly regains the Force Point previously spent on the meditation: a literal refund/restoration of an expended resource.",
+      "ownerPolicyApplied": "RESOURCE_RECOVERY_POLICY"
+    },
+    {
+      "decisionId": "TALENT:98355ed4f6473028|once-per-encounter",
+      "batch": "3B.1",
+      "domain": "TALENT",
+      "canonicalId": "98355ed4f6473028",
+      "name": "Armored Augmentation I",
+      "tag": "once-per-encounter",
+      "ownerAction": "ADD",
+      "detectorEvidenceReference": [
+        "C.once_per_encounter"
+      ],
+      "ownerRationale": "The talent itself explicitly begins \"Once per encounter...\": the record's own activation limitation.",
+      "ownerPolicyApplied": "ONCE_PER_ENCOUNTER_POLICY"
+    },
+    {
+      "decisionId": "FEAT:53444cc061d81627|force_capacity",
+      "batch": "3B.1",
+      "domain": "FEAT",
+      "canonicalId": "53444cc061d81627",
+      "name": "Force Boon",
+      "tag": "force_capacity",
+      "ownerAction": "ADD",
+      "detectorEvidenceReference": [
+        "C.force_capacity"
+      ],
+      "ownerRationale": "The feat directly grants three additional Force Points at each level, increasing the character's available Force Point allotment. No change to its existing tags in this batch; capacity and recovery are separate semantics.",
+      "ownerPolicyApplied": "FORCE_CAPACITY_POLICY"
+    },
+    {
+      "decisionId": "TALENT:153f4b3c6510023d|reroll",
+      "batch": "3B.1",
+      "domain": "TALENT",
+      "canonicalId": "153f4b3c6510023d",
+      "name": "Visionary Defense",
+      "tag": "reroll",
+      "ownerAction": "NO_CHANGE",
+      "detectorEvidenceReference": [
+        "B.reroll"
+      ],
+      "ownerRationale": "The talent does not itself grant or require a reroll. The sentence about multiple characters not being able to use the talent on the same attack to allow multiple rerolls is contextual/reference wording, not the operative effect. One owner decision for this canonical ID and tag regardless of how many discovery channels preserve evidence.",
+      "ownerPolicyApplied": "REROLL_POLICY"
+    },
+    {
+      "decisionId": "FEAT:baff0da30d0bc8ee|reliability",
+      "batch": "3B.1",
+      "domain": "FEAT",
+      "canonicalId": "baff0da30d0bc8ee",
+      "name": "Force of Personality",
+      "tag": "reliability",
+      "ownerAction": "NO_CHANGE",
+      "detectorEvidenceReference": [
+        "B.roll_twice_keep"
+      ],
+      "ownerRationale": "Choosing the better applicable Wisdom or Charisma modifier for Will Defense is not rolling twice/selecting a roll result and is not the reliability mechanic represented by this tag.",
+      "ownerPolicyApplied": "RELIABILITY_POLICY"
+    },
+    {
+      "decisionId": "FEAT:1f404db00518aeed|reliability",
+      "batch": "3B.1",
+      "domain": "FEAT",
+      "canonicalId": "1f404db00518aeed",
+      "name": "Damage Conversion",
+      "tag": "reliability",
+      "ownerAction": "NO_CHANGE",
+      "detectorEvidenceReference": [
+        "B.take_10_20"
+      ],
+      "ownerRationale": "\"Take 10 additional damage\" is unrelated to the Take 10 skill mechanic.",
+      "ownerPolicyApplied": "RELIABILITY_POLICY"
+    },
+    {
+      "decisionId": "FEAT:bf6c01fa590a3f75|reliability",
+      "batch": "3B.1",
+      "domain": "FEAT",
+      "canonicalId": "bf6c01fa590a3f75",
+      "name": "Biotech Specialist",
+      "tag": "reliability",
+      "ownerAction": "NO_CHANGE",
+      "detectorEvidenceReference": [
+        "B.take_10_20"
+      ],
+      "ownerRationale": "The rule explicitly prohibits Take 10/20. A prohibition does not create the positive reliability semantic.",
+      "ownerPolicyApplied": "RELIABILITY_POLICY"
+    },
+    {
+      "decisionId": "TALENT:0290634450ab1637|reliability",
+      "batch": "3B.1",
+      "domain": "TALENT",
+      "canonicalId": "0290634450ab1637",
+      "name": "Electronic Sabotage",
+      "tag": "reliability",
+      "ownerAction": "NO_CHANGE",
+      "detectorEvidenceReference": [
+        "B.take_10_20"
+      ],
+      "ownerRationale": "The talent explicitly prohibits taking 20 on the check. This is not a positive reliability mechanic.",
+      "ownerPolicyApplied": "RELIABILITY_POLICY"
+    },
+    {
+      "decisionId": "TALENT:462df9a631ee50f4|force_point_spend",
+      "batch": "3B.1",
+      "domain": "TALENT",
+      "canonicalId": "462df9a631ee50f4",
+      "name": "Past Visions",
+      "tag": "force_point_spend",
+      "ownerAction": "NO_CHANGE",
+      "detectorEvidenceReference": [
+        "C.force_point_spend"
+      ],
+      "ownerRationale": "Match generated by avoiding a Force Point expenditure, stating something does not count as spending one, describing later optional expenditure of a resource, referencing another Force power's Force Point condition, or replacing/avoiding an otherwise normal expenditure; not an actual Force Point expenditure created by the record's operative mechanic.",
+      "ownerPolicyApplied": "FORCE_POINT_SPEND_POLICY"
+    },
+    {
+      "decisionId": "TALENT:8223d30bfce0c14d|force_point_spend",
+      "batch": "3B.1",
+      "domain": "TALENT",
+      "canonicalId": "8223d30bfce0c14d",
+      "name": "Surge of Light",
+      "tag": "force_point_spend",
+      "ownerAction": "NO_CHANGE",
+      "detectorEvidenceReference": [
+        "C.force_point_spend"
+      ],
+      "ownerRationale": "Match generated by avoiding a Force Point expenditure, stating something does not count as spending one, describing later optional expenditure of a resource, referencing another Force power's Force Point condition, or replacing/avoiding an otherwise normal expenditure; not an actual Force Point expenditure created by the record's operative mechanic.",
+      "ownerPolicyApplied": "FORCE_POINT_SPEND_POLICY"
+    },
+    {
+      "decisionId": "TALENT:8ddbbeb09758295d|force_point_spend",
+      "batch": "3B.1",
+      "domain": "TALENT",
+      "canonicalId": "8ddbbeb09758295d",
+      "name": "Telekinetic Vigilance",
+      "tag": "force_point_spend",
+      "ownerAction": "NO_CHANGE",
+      "detectorEvidenceReference": [
+        "C.force_point_spend"
+      ],
+      "ownerRationale": "Match generated by avoiding a Force Point expenditure, stating something does not count as spending one, describing later optional expenditure of a resource, referencing another Force power's Force Point condition, or replacing/avoiding an otherwise normal expenditure; not an actual Force Point expenditure created by the record's operative mechanic.",
+      "ownerPolicyApplied": "FORCE_POINT_SPEND_POLICY"
+    },
+    {
+      "decisionId": "TALENT:ab9f1497d0b2d7c2|force_point_spend",
+      "batch": "3B.1",
+      "domain": "TALENT",
+      "canonicalId": "ab9f1497d0b2d7c2",
+      "name": "WatchCircle Initiate",
+      "tag": "force_point_spend",
+      "ownerAction": "NO_CHANGE",
+      "detectorEvidenceReference": [
+        "C.force_point_spend"
+      ],
+      "ownerRationale": "Match generated by avoiding a Force Point expenditure, stating something does not count as spending one, describing later optional expenditure of a resource, referencing another Force power's Force Point condition, or replacing/avoiding an otherwise normal expenditure; not an actual Force Point expenditure created by the record's operative mechanic.",
+      "ownerPolicyApplied": "FORCE_POINT_SPEND_POLICY"
+    },
+    {
+      "decisionId": "TALENT:b0898acb0a19a3cd|force_point_spend",
+      "batch": "3B.1",
+      "domain": "TALENT",
+      "canonicalId": "b0898acb0a19a3cd",
+      "name": "Force Flow",
+      "tag": "force_point_spend",
+      "ownerAction": "NO_CHANGE",
+      "detectorEvidenceReference": [
+        "C.force_point_spend"
+      ],
+      "ownerRationale": "Match generated by avoiding a Force Point expenditure, stating something does not count as spending one, describing later optional expenditure of a resource, referencing another Force power's Force Point condition, or replacing/avoiding an otherwise normal expenditure; not an actual Force Point expenditure created by the record's operative mechanic.",
+      "ownerPolicyApplied": "FORCE_POINT_SPEND_POLICY"
+    },
+    {
+      "decisionId": "TALENT:b47beb909e6fce63|force_point_spend",
+      "batch": "3B.1",
+      "domain": "TALENT",
+      "canonicalId": "b47beb909e6fce63",
+      "name": "Dark Side Savant",
+      "tag": "force_point_spend",
+      "ownerAction": "NO_CHANGE",
+      "detectorEvidenceReference": [
+        "C.force_point_spend"
+      ],
+      "ownerRationale": "Match generated by avoiding a Force Point expenditure, stating something does not count as spending one, describing later optional expenditure of a resource, referencing another Force power's Force Point condition, or replacing/avoiding an otherwise normal expenditure; not an actual Force Point expenditure created by the record's operative mechanic.",
+      "ownerPolicyApplied": "FORCE_POINT_SPEND_POLICY"
+    },
+    {
+      "decisionId": "TALENT:ced81064716debaa|force_point_spend",
+      "batch": "3B.1",
+      "domain": "TALENT",
+      "canonicalId": "ced81064716debaa",
+      "name": "Influence Savant",
+      "tag": "force_point_spend",
+      "ownerAction": "NO_CHANGE",
+      "detectorEvidenceReference": [
+        "C.force_point_spend"
+      ],
+      "ownerRationale": "Match generated by avoiding a Force Point expenditure, stating something does not count as spending one, describing later optional expenditure of a resource, referencing another Force power's Force Point condition, or replacing/avoiding an otherwise normal expenditure; not an actual Force Point expenditure created by the record's operative mechanic.",
+      "ownerPolicyApplied": "FORCE_POINT_SPEND_POLICY"
+    },
+    {
+      "decisionId": "TALENT:d1ced133cee0a6fa|force_point_spend",
+      "batch": "3B.1",
+      "domain": "TALENT",
+      "canonicalId": "d1ced133cee0a6fa",
+      "name": "Surrender to the Current",
+      "tag": "force_point_spend",
+      "ownerAction": "NO_CHANGE",
+      "detectorEvidenceReference": [
+        "C.force_point_spend"
+      ],
+      "ownerRationale": "Match generated by avoiding a Force Point expenditure, stating something does not count as spending one, describing later optional expenditure of a resource, referencing another Force power's Force Point condition, or replacing/avoiding an otherwise normal expenditure; not an actual Force Point expenditure created by the record's operative mechanic.",
+      "ownerPolicyApplied": "FORCE_POINT_SPEND_POLICY"
+    },
+    {
+      "decisionId": "TALENT:ddacb8e4517da6b5|force_point_spend",
+      "batch": "3B.1",
+      "domain": "TALENT",
+      "canonicalId": "ddacb8e4517da6b5",
+      "name": "Telekinetic Savant",
+      "tag": "force_point_spend",
+      "ownerAction": "NO_CHANGE",
+      "detectorEvidenceReference": [
+        "C.force_point_spend"
+      ],
+      "ownerRationale": "Match generated by avoiding a Force Point expenditure, stating something does not count as spending one, describing later optional expenditure of a resource, referencing another Force power's Force Point condition, or replacing/avoiding an otherwise normal expenditure; not an actual Force Point expenditure created by the record's operative mechanic.",
+      "ownerPolicyApplied": "FORCE_POINT_SPEND_POLICY"
+    },
+    {
+      "decisionId": "TALENT:f541b5e57c5af27e|force_point_spend",
+      "batch": "3B.1",
+      "domain": "TALENT",
+      "canonicalId": "f541b5e57c5af27e",
+      "name": "Sheltering Stance",
+      "tag": "force_point_spend",
+      "ownerAction": "NO_CHANGE",
+      "detectorEvidenceReference": [
+        "C.force_point_spend"
+      ],
+      "ownerRationale": "Match generated by avoiding a Force Point expenditure, stating something does not count as spending one, describing later optional expenditure of a resource, referencing another Force power's Force Point condition, or replacing/avoiding an otherwise normal expenditure; not an actual Force Point expenditure created by the record's operative mechanic.",
+      "ownerPolicyApplied": "FORCE_POINT_SPEND_POLICY"
+    },
+    {
+      "decisionId": "TALENT:f5ebaf5d77257e0c|force_point_spend",
+      "batch": "3B.1",
+      "domain": "TALENT",
+      "canonicalId": "f5ebaf5d77257e0c",
+      "name": "Wrath of the Dark Side",
+      "tag": "force_point_spend",
+      "ownerAction": "NO_CHANGE",
+      "detectorEvidenceReference": [
+        "C.force_point_spend"
+      ],
+      "ownerRationale": "Match generated by avoiding a Force Point expenditure, stating something does not count as spending one, describing later optional expenditure of a resource, referencing another Force power's Force Point condition, or replacing/avoiding an otherwise normal expenditure; not an actual Force Point expenditure created by the record's operative mechanic.",
+      "ownerPolicyApplied": "FORCE_POINT_SPEND_POLICY"
+    },
+    {
+      "decisionId": "TALENT:fcc6357b5b33dbb7|force_point_spend",
+      "batch": "3B.1",
+      "domain": "TALENT",
+      "canonicalId": "fcc6357b5b33dbb7",
+      "name": "Lightsaber Form Savant",
+      "tag": "force_point_spend",
+      "ownerAction": "NO_CHANGE",
+      "detectorEvidenceReference": [
+        "C.force_point_spend"
+      ],
+      "ownerRationale": "Match generated by avoiding a Force Point expenditure, stating something does not count as spending one, describing later optional expenditure of a resource, referencing another Force power's Force Point condition, or replacing/avoiding an otherwise normal expenditure; not an actual Force Point expenditure created by the record's operative mechanic.",
+      "ownerPolicyApplied": "FORCE_POINT_SPEND_POLICY"
+    },
+    {
+      "decisionId": "TALENT:b0898acb0a19a3cd|resource_spend",
+      "batch": "3B.1",
+      "domain": "TALENT",
+      "canonicalId": "b0898acb0a19a3cd",
+      "name": "Force Flow",
+      "tag": "resource_spend",
+      "ownerAction": "NO_CHANGE",
+      "detectorEvidenceReference": [
+        "C.resource_spend"
+      ],
+      "ownerRationale": "The talent generates a temporary Force Point. That it may later be spent before expiration does not mean the talent itself consumes a resource.",
+      "ownerPolicyApplied": "RESOURCE_SPEND_POLICY"
+    },
+    {
+      "decisionId": "TALENT:f541b5e57c5af27e|resource_spend",
+      "batch": "3B.1",
+      "domain": "TALENT",
+      "canonicalId": "f541b5e57c5af27e",
+      "name": "Sheltering Stance",
+      "tag": "resource_spend",
+      "ownerAction": "NO_CHANGE",
+      "detectorEvidenceReference": [
+        "C.resource_spend"
+      ],
+      "ownerRationale": "The talent removes/avoids a Force Point expenditure. It does not spend a resource.",
+      "ownerPolicyApplied": "RESOURCE_SPEND_POLICY"
+    },
+    {
+      "decisionId": "TALENT:323cc243fef47675|resource_recovery",
+      "batch": "3B.1",
+      "domain": "TALENT",
+      "canonicalId": "323cc243fef47675",
+      "name": "Skillful Recovery",
+      "tag": "resource_recovery",
+      "ownerAction": "NO_CHANGE",
+      "detectorEvidenceReference": [
+        "C.resource_recovery"
+      ],
+      "ownerRationale": "The talent creates a new temporary Force Point after a failed skill check. It does not restore a previously spent resource.",
+      "ownerPolicyApplied": "RESOURCE_RECOVERY_POLICY"
+    },
+    {
+      "decisionId": "TALENT:a691cc0212b6176c|resource_recovery",
+      "batch": "3B.1",
+      "domain": "TALENT",
+      "canonicalId": "a691cc0212b6176c",
+      "name": "Force Recovery",
+      "tag": "resource_recovery",
+      "ownerAction": "NO_CHANGE",
+      "detectorEvidenceReference": [
+        "C.resource_recovery"
+      ],
+      "ownerRationale": "Despite the name, this talent increases hit points regained from second wind: healing/recovery, not recovery of a tracked expendable resource.",
+      "ownerPolicyApplied": "RESOURCE_RECOVERY_POLICY"
+    },
+    {
+      "decisionId": "TALENT:e6c4f05db6ac6c06|resource_recovery",
+      "batch": "3B.1",
+      "domain": "TALENT",
+      "canonicalId": "e6c4f05db6ac6c06",
+      "name": "Master Advisor",
+      "tag": "resource_recovery",
+      "ownerAction": "NO_CHANGE",
+      "detectorEvidenceReference": [
+        "C.resource_recovery"
+      ],
+      "ownerRationale": "It grants a new temporary Force Point to an ally. It does not restore a previously spent resource.",
+      "ownerPolicyApplied": "RESOURCE_RECOVERY_POLICY"
+    },
+    {
+      "decisionId": "TALENT:f5ebaf5d77257e0c|resource_recovery",
+      "batch": "3B.1",
+      "domain": "TALENT",
+      "canonicalId": "f5ebaf5d77257e0c",
+      "name": "Wrath of the Dark Side",
+      "tag": "resource_recovery",
+      "ownerAction": "NO_CHANGE",
+      "detectorEvidenceReference": [
+        "C.resource_recovery"
+      ],
+      "ownerRationale": "The talent explicitly replaces/foregoes the normal spent-Force-power recovery triggered by the natural 20. The selected effect is extra damage, not resource recovery.",
+      "ownerPolicyApplied": "RESOURCE_RECOVERY_POLICY"
+    },
+    {
+      "decisionId": "TALENT:45c4e72d74c44acb|once-per-encounter",
+      "batch": "3B.1",
+      "domain": "TALENT",
+      "canonicalId": "45c4e72d74c44acb",
+      "name": "Mystical Link",
+      "tag": "once-per-encounter",
+      "ownerAction": "NO_CHANGE",
+      "detectorEvidenceReference": [
+        "C.once_per_encounter"
+      ],
+      "ownerRationale": "It can grant an additional use of another Force-related ability normally restricted to once per encounter. The quoted limitation belongs to the recovered/extended ability, not to Mystical Link's own activation frequency. Its existing resource-recovery semantics already represent that interaction.",
+      "ownerPolicyApplied": "ONCE_PER_ENCOUNTER_POLICY"
+    },
+    {
+      "decisionId": "TALENT:cfd5d3f677b2bf1a|once-per-encounter",
+      "batch": "3B.1",
+      "domain": "TALENT",
+      "canonicalId": "cfd5d3f677b2bf1a",
+      "name": "Feared Warrior",
+      "tag": "once-per-encounter",
+      "ownerAction": "NO_CHANGE",
+      "detectorEvidenceReference": [
+        "C.once_per_encounter"
+      ],
+      "ownerRationale": "The talent may trigger more than once; any given target can only be affected once per encounter. A per-target immunity/restriction, not a global once-per-encounter use limit on the talent.",
+      "ownerPolicyApplied": "ONCE_PER_ENCOUNTER_POLICY"
+    },
+    {
+      "decisionId": "TALENT:153f4b3c6510023d|reliability",
+      "batch": "3B.1",
+      "domain": "TALENT",
+      "canonicalId": "153f4b3c6510023d",
+      "name": "Visionary Defense",
+      "tag": "reliability",
+      "ownerAction": "NO_CHANGE",
+      "detectorEvidenceReference": [
+        "B.reroll (bundle reroll)"
+      ],
+      "ownerRationale": "Visionary Defense does not itself permit, require, cause, modify or stabilize a roll. Its sentence explaining that multiple characters cannot affect the same attack \"to allow multiple rerolls\" is contextual wording explaining the non-stacking limitation. The operative mechanic grants a Force bonus to Reflex Defense; it does not create a reroll or other affirmative reliability mechanic. Closes the last 3B.1 primitive finding; the separate reroll NO_CHANGE ruling is unchanged.",
+      "ownerPolicyApplied": "RELIABILITY_POLICY"
+    },
+    {
+      "decisionId": "TALENT:2739921a657a49a496885c456bcace65|damage_threshold",
+      "batch": "3B.2A",
+      "domain": "TALENT",
+      "canonicalId": "2739921a657a49a496885c456bcace65",
+      "name": "Soft Reset",
+      "tag": "damage_threshold",
+      "ownerAction": "ADD",
+      "detectorEvidenceReference": [
+        "D.damage_threshold"
+      ],
+      "ownerRationale": "The recovery mechanic explicitly distinguishes whether the droid reached the bottom of the condition track through damage exceeding its Damage Threshold. Damage Threshold directly controls whether the talent's recovery effect applies.",
+      "ownerPolicyApplied": "DAMAGE_THRESHOLD_POLICY"
+    },
+    {
+      "decisionId": "TALENT:43ac0c4b1759507a|damage_threshold",
+      "batch": "3B.2A",
+      "domain": "TALENT",
+      "canonicalId": "43ac0c4b1759507a",
+      "name": "Recruit Enemy",
+      "tag": "damage_threshold",
+      "ownerAction": "ADD",
+      "detectorEvidenceReference": [
+        "D.damage_threshold"
+      ],
+      "ownerRationale": "The talent's activation condition directly requires the triggering damage to equal or exceed both the target's remaining Hit Points and its Damage Threshold. Damage Threshold is part of the talent's operative trigger, not incidental explanatory text.",
+      "ownerPolicyApplied": "DAMAGE_THRESHOLD_POLICY"
+    },
+    {
+      "decisionId": "TALENT:ad7fd3e1a2b04c30|damage_threshold",
+      "batch": "3B.2A",
+      "domain": "TALENT",
+      "canonicalId": "ad7fd3e1a2b04c30",
+      "name": "Akk Dog Trainer's Actions",
+      "tag": "damage_threshold",
+      "ownerAction": "ADD",
+      "detectorEvidenceReference": [
+        "D.damage_threshold"
+      ],
+      "ownerRationale": "Attack in Concert explicitly states that the akk dog's additional damage becomes part of the attack for purposes of overcoming Damage Threshold. The mechanic directly determines how damage interacts with Damage Threshold.",
+      "ownerPolicyApplied": "DAMAGE_THRESHOLD_POLICY"
+    },
+    {
+      "decisionId": "FEAT:1f404db00518aeed|damage_bonus",
+      "batch": "3B.2A",
+      "domain": "FEAT",
+      "canonicalId": "1f404db00518aeed",
+      "name": "Damage Conversion",
+      "tag": "damage_bonus",
+      "ownerAction": "NO_CHANGE",
+      "detectorEvidenceReference": [
+        "D.damage_bonus"
+      ],
+      "ownerRationale": "The additional damage is damage suffered by the character as the cost/consequence of avoiding condition-track movement. The feat does not increase damage dealt by the character.",
+      "ownerPolicyApplied": "DAMAGE_BONUS_POLICY"
+    },
+    {
+      "decisionId": "FEAT:ccc7a6e191e811a4|damage_bonus",
+      "batch": "3B.2A",
+      "domain": "FEAT",
+      "canonicalId": "ccc7a6e191e811a4",
+      "name": "Hobbling Strike",
+      "tag": "damage_bonus",
+      "ownerAction": "NO_CHANGE",
+      "detectorEvidenceReference": [
+        "D.damage_bonus"
+      ],
+      "ownerRationale": "The feat does not grant additional damage. It explicitly gives up damage that would have been supplied by another ability in exchange for reducing the target's speed. Forgone damage does not create a positive damage_bonus semantic.",
+      "ownerPolicyApplied": "DAMAGE_BONUS_POLICY"
+    },
+    {
+      "decisionId": "FEAT:f59c9679c02b8896|damage_bonus",
+      "batch": "3B.2A",
+      "domain": "FEAT",
+      "canonicalId": "f59c9679c02b8896",
+      "name": "Metamorph",
+      "tag": "damage_bonus",
+      "ownerAction": "NO_CHANGE",
+      "detectorEvidenceReference": [
+        "D.damage_bonus"
+      ],
+      "ownerRationale": "The detector matched \"+5 Damage Threshold.\" This increases Damage Threshold, not damage dealt.",
+      "ownerPolicyApplied": "DAMAGE_BONUS_POLICY"
+    },
+    {
+      "decisionId": "TALENT:22674c41b3d185be|damage_bonus",
+      "batch": "3B.2A",
+      "domain": "TALENT",
+      "canonicalId": "22674c41b3d185be",
+      "name": "Strength in Numbers",
+      "tag": "damage_bonus",
+      "ownerAction": "NO_CHANGE",
+      "detectorEvidenceReference": [
+        "D.damage_bonus"
+      ],
+      "ownerRationale": "The talent increases Damage Reduction. It does not increase damage dealt.",
+      "ownerPolicyApplied": "DAMAGE_BONUS_POLICY"
+    },
+    {
+      "decisionId": "FEAT:6fb0f56dd9b9b75c|sustained_damage",
+      "batch": "3B.2A",
+      "domain": "FEAT",
+      "canonicalId": "6fb0f56dd9b9b75c",
+      "name": "Deadly Sniper",
+      "tag": "sustained_damage",
+      "ownerAction": "ADD",
+      "detectorEvidenceReference": [
+        "D.sustained_damage"
+      ],
+      "ownerRationale": "The feat's damage enhancement applies to the first qualifying ranged attack each turn. Although conditional on attacking an unaware target, the rule explicitly supports recurring enhanced damage across turns rather than a single isolated burst.",
+      "ownerPolicyApplied": "SUSTAINED_DAMAGE_POLICY"
+    },
+    {
+      "decisionId": "FEAT:d9ecf143e6a9f889|critical_success",
+      "batch": "3B.2A",
+      "domain": "FEAT",
+      "canonicalId": "d9ecf143e6a9f889",
+      "name": "Critical Strike",
+      "tag": "critical_success",
+      "ownerAction": "NO_CHANGE",
+      "detectorEvidenceReference": [
+        "E.natural_20"
+      ],
+      "ownerRationale": "The feat expands critical threat range. \"Only a natural 20 remains an automatic hit\" is a normal-rules limitation/reminder attached to the expanded critical range. The natural 20 does not independently trigger the feat's special benefit.",
+      "ownerPolicyApplied": "CRITICAL_SUCCESS_POLICY"
+    },
+    {
+      "decisionId": "TALENT:04985a42930dff2a|critical_success",
+      "batch": "3B.2A",
+      "domain": "TALENT",
+      "canonicalId": "04985a42930dff2a",
+      "name": "Extended Critical Range (heavy weapons)",
+      "tag": "critical_success",
+      "ownerAction": "NO_CHANGE",
+      "detectorEvidenceReference": [
+        "E.natural_20"
+      ],
+      "ownerRationale": "The talent expands critical threat range. The natural-20 wording only distinguishes automatic hits from expanded critical threats. critical_hit already represents the operative mechanic.",
+      "ownerPolicyApplied": "CRITICAL_SUCCESS_POLICY"
+    },
+    {
+      "decisionId": "TALENT:141e1a07b365e0fd|critical_success",
+      "batch": "3B.2A",
+      "domain": "TALENT",
+      "canonicalId": "141e1a07b365e0fd",
+      "name": "Extended Critical Range (rifles)",
+      "tag": "critical_success",
+      "ownerAction": "NO_CHANGE",
+      "detectorEvidenceReference": [
+        "E.natural_20"
+      ],
+      "ownerRationale": "Same policy and rationale as the heavy-weapons version. The talent expands critical threat range. The natural-20 wording only distinguishes automatic hits from expanded critical threats. critical_hit already represents the operative mechanic.",
+      "ownerPolicyApplied": "CRITICAL_SUCCESS_POLICY"
+    },
+    {
+      "decisionId": "TALENT:7cbd576e420a36b0|critical_success",
+      "batch": "3B.2A",
+      "domain": "TALENT",
+      "canonicalId": "7cbd576e420a36b0",
+      "name": "Extended Critical Range (simple weapons)",
+      "tag": "critical_success",
+      "ownerAction": "NO_CHANGE",
+      "detectorEvidenceReference": [
+        "E.natural_20"
+      ],
+      "ownerRationale": "Same policy and rationale as the other Extended Critical Range talents. The talent expands critical threat range. The natural-20 wording only distinguishes automatic hits from expanded critical threats. critical_hit already represents the operative mechanic.",
+      "ownerPolicyApplied": "CRITICAL_SUCCESS_POLICY"
+    },
+    {
+      "decisionId": "TALENT:88ca4add87c2a86a|critical_success",
+      "batch": "3B.2A",
+      "domain": "TALENT",
+      "canonicalId": "88ca4add87c2a86a",
+      "name": "Echani Expertise",
+      "tag": "critical_success",
+      "ownerAction": "NO_CHANGE",
+      "detectorEvidenceReference": [
+        "E.natural_20"
+      ],
+      "ownerRationale": "The talent expands unarmed critical threat range. The natural-20 wording preserves the normal automatic-hit rule for the expanded critical range. The operative semantic is critical_hit, not critical_success.",
+      "ownerPolicyApplied": "CRITICAL_SUCCESS_POLICY"
+    },
+    {
+      "decisionId": "TALENT:cdf46b8cdde49733|critical_success",
+      "batch": "3B.2A",
+      "domain": "TALENT",
+      "canonicalId": "cdf46b8cdde49733",
+      "name": "Knowledge Is Power",
+      "tag": "critical_success",
+      "ownerAction": "NO_CHANGE",
+      "detectorEvidenceReference": [
+        "E.natural_20"
+      ],
+      "ownerRationale": "The talent expands the critical threat range against the designated target. The natural-20 text only explains that expanded critical-threat results are not automatic hits. The special mechanic is already represented by critical_hit.",
+      "ownerPolicyApplied": "CRITICAL_SUCCESS_POLICY"
+    },
+    {
+      "decisionId": "TALENT:0fb750f0f0e6f767|critical_success",
+      "batch": "3B.2A",
+      "domain": "TALENT",
+      "canonicalId": "0fb750f0f0e6f767",
+      "name": "Martial Resurgence",
+      "tag": "critical_success",
+      "ownerAction": "ADD",
+      "detectorEvidenceReference": [
+        "E.natural_20"
+      ],
+      "ownerRationale": "Rolling a natural 20 on an unarmed attack directly triggers the talent's special benefit: recovering all spent Force powers. The natural 20 is an operative trigger rather than a critical-range reminder. No additional tags are inferred; its existing resource_recovery remains unchanged.",
+      "ownerPolicyApplied": "CRITICAL_SUCCESS_POLICY"
+    },
+    {
+      "decisionId": "TALENT:70a06f3be4e9c216|critical_success",
+      "batch": "3B.2A",
+      "domain": "TALENT",
+      "canonicalId": "70a06f3be4e9c216",
+      "name": "Small Target",
+      "tag": "critical_success",
+      "ownerAction": "NO_CHANGE",
+      "detectorEvidenceReference": [
+        "E.natural_20"
+      ],
+      "ownerRationale": "The talent changes whether an enemy's natural-20 attack against the vehicle actually becomes a critical hit. Its mechanic is directly about mitigating critical_hit; it does not grant or trigger a separate critical-success benefit for the character. Existing critical_hit semantic kept.",
+      "ownerPolicyApplied": "CRITICAL_SUCCESS_POLICY"
+    },
+    {
+      "decisionId": "TALENT:f8ac7fecc8d3c8ff|critical_success",
+      "batch": "3B.2A",
+      "domain": "TALENT",
+      "canonicalId": "f8ac7fecc8d3c8ff",
+      "name": "Precognitive Meditation",
+      "tag": "critical_success",
+      "ownerAction": "NO_CHANGE",
+      "detectorEvidenceReference": [
+        "E.natural_20"
+      ],
+      "ownerRationale": "The talent allows an attack to be negated except when the attack roll is a natural 20. The natural 20 is an exception that prevents the defensive effect from functioning; it does not trigger or grant the talent's special benefit. The existing 3B.1 resource_recovery ADD remains unchanged.",
+      "ownerPolicyApplied": "CRITICAL_SUCCESS_POLICY"
+    },
+    {
+      "decisionId": "FEAT:982b00394a73719e|grab",
+      "batch": "3B.2B",
+      "domain": "FEAT",
+      "canonicalId": "982b00394a73719e",
+      "name": "Bantha Herder",
+      "tag": "grab",
+      "ownerAction": "NO_CHANGE",
+      "detectorEvidenceReference": [
+        "G.grab"
+      ],
+      "ownerRationale": "Grabbed targets are merely excluded from the feat's forced-movement effect. The feat neither initiates nor modifies Grab.",
+      "ownerPolicyApplied": "GRAB_POLICY"
+    },
+    {
+      "decisionId": "FEAT:c2538c3a906700ae|grab",
+      "batch": "3B.2B",
+      "domain": "FEAT",
+      "canonicalId": "c2538c3a906700ae",
+      "name": "Forceful Blast",
+      "tag": "grab",
+      "ownerAction": "NO_CHANGE",
+      "detectorEvidenceReference": [
+        "G.grab"
+      ],
+      "ownerRationale": "Grabbed targets are merely ineligible for the forced movement.",
+      "ownerPolicyApplied": "GRAB_POLICY"
+    },
+    {
+      "decisionId": "FEAT:fc1e5f0a2367debb|grab",
+      "batch": "3B.2B",
+      "domain": "FEAT",
+      "canonicalId": "fc1e5f0a2367debb",
+      "name": "Bantha Rush",
+      "tag": "grab",
+      "ownerAction": "NO_CHANGE",
+      "detectorEvidenceReference": [
+        "G.grab"
+      ],
+      "ownerRationale": "The Grab state appears only as an exclusion from the push effect. The previously certified Bantha Rush family disposition is preserved.",
+      "ownerPolicyApplied": "GRAB_POLICY"
+    },
+    {
+      "decisionId": "TALENT:9d235eba6b3e5daf|grab",
+      "batch": "3B.2B",
+      "domain": "TALENT",
+      "canonicalId": "9d235eba6b3e5daf",
+      "name": "Knockback",
+      "tag": "grab",
+      "ownerAction": "NO_CHANGE",
+      "detectorEvidenceReference": [
+        "G.grab"
+      ],
+      "ownerRationale": "The talent cannot affect a target currently being grabbed. It does not alter Grab itself.",
+      "ownerPolicyApplied": "GRAB_POLICY"
+    },
+    {
+      "decisionId": "TALENT:e97177f243cb2b0a|grab",
+      "batch": "3B.2B",
+      "domain": "TALENT",
+      "canonicalId": "e97177f243cb2b0a",
+      "name": "Seize Object",
+      "tag": "grab",
+      "ownerAction": "NO_CHANGE",
+      "detectorEvidenceReference": [
+        "G.grab"
+      ],
+      "ownerRationale": "\"Grab the object\" is ordinary-English physical handling following a Disarm attack, not the SWSE Grab combat mechanic.",
+      "ownerPolicyApplied": "GRAB_POLICY"
+    },
+    {
+      "decisionId": "TALENT:f7b620efd191ac6b|grab",
+      "batch": "3B.2B",
+      "domain": "TALENT",
+      "canonicalId": "f7b620efd191ac6b",
+      "name": "Tempest Tossed",
+      "tag": "grab",
+      "ownerAction": "NO_CHANGE",
+      "detectorEvidenceReference": [
+        "G.grab"
+      ],
+      "ownerRationale": "Grabbed targets are excluded from the forced-movement effect.",
+      "ownerPolicyApplied": "GRAB_POLICY"
+    },
+    {
+      "decisionId": "FEAT:982b00394a73719e|grapple",
+      "batch": "3B.2B",
+      "domain": "FEAT",
+      "canonicalId": "982b00394a73719e",
+      "name": "Bantha Herder",
+      "tag": "grapple",
+      "ownerAction": "NO_CHANGE",
+      "detectorEvidenceReference": [
+        "G.grapple"
+      ],
+      "ownerRationale": "Grappled targets are only excluded from forced movement.",
+      "ownerPolicyApplied": "GRAPPLE_POLICY"
+    },
+    {
+      "decisionId": "FEAT:c2538c3a906700ae|grapple",
+      "batch": "3B.2B",
+      "domain": "FEAT",
+      "canonicalId": "c2538c3a906700ae",
+      "name": "Forceful Blast",
+      "tag": "grapple",
+      "ownerAction": "NO_CHANGE",
+      "detectorEvidenceReference": [
+        "G.grapple"
+      ],
+      "ownerRationale": "Grappled targets are only excluded from forced movement.",
+      "ownerPolicyApplied": "GRAPPLE_POLICY"
+    },
+    {
+      "decisionId": "FEAT:c41814601364b643|grapple",
+      "batch": "3B.2B",
+      "domain": "FEAT",
+      "canonicalId": "c41814601364b643",
+      "name": "Weapon Focus",
+      "tag": "grapple",
+      "ownerAction": "NO_CHANGE",
+      "detectorEvidenceReference": [
+        "G.grapple"
+      ],
+      "ownerRationale": "Weapon Focus is a generic selectable weapon/group mechanic. Grapple is one possible selectable scope alongside many others; generic selections are not enumerated as semantic tags.",
+      "ownerPolicyApplied": "GRAPPLE_POLICY"
+    },
+    {
+      "decisionId": "FEAT:fc1e5f0a2367debb|grapple",
+      "batch": "3B.2B",
+      "domain": "FEAT",
+      "canonicalId": "fc1e5f0a2367debb",
+      "name": "Bantha Rush",
+      "tag": "grapple",
+      "ownerAction": "NO_CHANGE",
+      "detectorEvidenceReference": [
+        "G.grapple"
+      ],
+      "ownerRationale": "Grappled targets are only excluded from the push effect.",
+      "ownerPolicyApplied": "GRAPPLE_POLICY"
+    },
+    {
+      "decisionId": "TALENT:9d235eba6b3e5daf|grapple",
+      "batch": "3B.2B",
+      "domain": "TALENT",
+      "canonicalId": "9d235eba6b3e5daf",
+      "name": "Knockback",
+      "tag": "grapple",
+      "ownerAction": "NO_CHANGE",
+      "detectorEvidenceReference": [
+        "G.grapple"
+      ],
+      "ownerRationale": "Grappled targets are only excluded from the forced-movement effect.",
+      "ownerPolicyApplied": "GRAPPLE_POLICY"
+    },
+    {
+      "decisionId": "TALENT:f7b620efd191ac6b|grapple",
+      "batch": "3B.2B",
+      "domain": "TALENT",
+      "canonicalId": "f7b620efd191ac6b",
+      "name": "Tempest Tossed",
+      "tag": "grapple",
+      "ownerAction": "NO_CHANGE",
+      "detectorEvidenceReference": [
+        "G.grapple"
+      ],
+      "ownerRationale": "Grappled targets are only excluded from the forced-movement effect.",
+      "ownerPolicyApplied": "GRAPPLE_POLICY"
+    },
+    {
+      "decisionId": "TALENT:80a24150fd2f3163|restrain",
+      "batch": "3B.2B",
+      "domain": "TALENT",
+      "canonicalId": "80a24150fd2f3163",
+      "name": "Droid Jammer",
+      "tag": "restrain",
+      "ownerAction": "NO_CHANGE",
+      "detectorEvidenceReference": [
+        "G.restrain"
+      ],
+      "ownerRationale": "The reference to immunity from a restraining bolt defines which droids are immune to the jammer. The talent does not mechanically apply a restraining bolt or the ontology's restraint mechanic.",
+      "ownerPolicyApplied": "RESTRAIN_POLICY"
+    },
+    {
+      "decisionId": "TALENT:df9c364e91826cbf|restrain",
+      "batch": "3B.2B",
+      "domain": "TALENT",
+      "canonicalId": "df9c364e91826cbf",
+      "name": "Uncanny Dodge I",
+      "tag": "restrain",
+      "ownerAction": "NO_CHANGE",
+      "detectorEvidenceReference": [
+        "G.restrain"
+      ],
+      "ownerRationale": "The rule merely states that the existing benefit is lost while immobilized. It does not impose, remove, or modify immobilization.",
+      "ownerPolicyApplied": "RESTRAIN_POLICY"
+    },
+    {
+      "decisionId": "TALENT:ee184e210f8c8935|restrain",
+      "batch": "3B.2B",
+      "domain": "TALENT",
+      "canonicalId": "ee184e210f8c8935",
+      "name": "Mobile Combatant",
+      "tag": "restrain",
+      "ownerAction": "NO_CHANGE",
+      "detectorEvidenceReference": [
+        "G.restrain"
+      ],
+      "ownerRationale": "\"Keeping your enemies from pinning you down\" is descriptive/flavor language, not a Pin/Restrain mechanic.",
+      "ownerPolicyApplied": "RESTRAIN_POLICY"
+    },
+    {
+      "decisionId": "FEAT:723563f70bd7f28f|battlefield_control",
+      "batch": "3B.2B",
+      "domain": "FEAT",
+      "canonicalId": "723563f70bd7f28f",
+      "name": "Acrobatic Ally",
+      "tag": "battlefield_control",
+      "ownerAction": "NO_CHANGE",
+      "detectorEvidenceReference": [
+        "G.forced_movement"
+      ],
+      "ownerRationale": "The operative benefit repositions an ally. The prone result occurs as the failure consequence of the supportive maneuver rather than as hostile battlefield control applied to an enemy. Existing support/movement/mobility/positioning semantics remain sufficient.",
+      "ownerPolicyApplied": "BATTLEFIELD_CONTROL_POLICY"
+    },
+    {
+      "decisionId": "FEAT:f362e5a4ad0a98bd|battlefield_control",
+      "batch": "3B.2B",
+      "domain": "FEAT",
+      "canonicalId": "f362e5a4ad0a98bd",
+      "name": "Echani Training",
+      "tag": "battlefield_control",
+      "ownerAction": "ADD",
+      "detectorEvidenceReference": [
+        "G.forced_movement"
+      ],
+      "ownerRationale": "The feat directly allows a successful follow-up attack to knock the opponent prone: direct hostile battlefield-state control.",
+      "ownerPolicyApplied": "BATTLEFIELD_CONTROL_POLICY"
+    },
+    {
+      "decisionId": "TALENT:5d4a63123e5a5eb4|battlefield_control",
+      "batch": "3B.2B",
+      "domain": "TALENT",
+      "canonicalId": "5d4a63123e5a5eb4",
+      "name": "Acrobatic Recovery",
+      "tag": "battlefield_control",
+      "ownerAction": "NO_CHANGE",
+      "detectorEvidenceReference": [
+        "G.forced_movement"
+      ],
+      "ownerRationale": "The talent lets the user avoid falling prone. It is defensive movement/evasion, not application of battlefield control to another creature.",
+      "ownerPolicyApplied": "BATTLEFIELD_CONTROL_POLICY"
+    },
+    {
+      "decisionId": "TALENT:696f7eed2cc08299|movement",
+      "batch": "3B.2B",
+      "domain": "TALENT",
+      "canonicalId": "696f7eed2cc08299",
+      "name": "Deep Space Raider",
+      "tag": "movement",
+      "ownerAction": "ADD",
+      "detectorEvidenceReference": [
+        "G.speed_change"
+      ],
+      "ownerRationale": "Disabling Fire directly reduces the damaged vehicle's speed to 2 squares. The previous 3B.1 standard_action ADD is preserved.",
+      "ownerPolicyApplied": "MOVEMENT_POLICY"
+    },
+    {
+      "decisionId": "TALENT:c04e66a3f2577e62|movement",
+      "batch": "3B.2B",
+      "domain": "TALENT",
+      "canonicalId": "c04e66a3f2577e62",
+      "name": "Slowing Shot",
+      "tag": "movement",
+      "ownerAction": "ADD",
+      "detectorEvidenceReference": [
+        "G.speed_change"
+      ],
+      "ownerRationale": "The talent directly reduces the target's speed by 2 squares, or by a greater amount when a Force Point is spent.",
+      "ownerPolicyApplied": "MOVEMENT_POLICY"
+    },
+    {
+      "decisionId": "TALENT:c08976a5f4ab88d8|movement",
+      "batch": "3B.2B",
+      "domain": "TALENT",
+      "canonicalId": "c08976a5f4ab88d8",
+      "name": "Piercing Hit",
+      "tag": "movement",
+      "ownerAction": "ADD",
+      "detectorEvidenceReference": [
+        "G.speed_change"
+      ],
+      "ownerRationale": "Its Slowing Shot option directly reduces the target's speed to 2 squares.",
+      "ownerPolicyApplied": "MOVEMENT_POLICY"
+    },
+    {
+      "decisionId": "FEAT:c9c4130a55761330|mobility",
+      "batch": "3B.2B",
+      "domain": "FEAT",
+      "canonicalId": "c9c4130a55761330",
+      "name": "Staggering Attack",
+      "tag": "mobility",
+      "ownerAction": "NO_CHANGE",
+      "detectorEvidenceReference": [
+        "G.mobility"
+      ],
+      "ownerRationale": "The feat forcibly moves the target. That is already represented through movement/positioning/control semantics and does not improve the user's movement capability.",
+      "ownerPolicyApplied": "MOBILITY_POLICY"
+    },
+    {
+      "decisionId": "TALENT:13cc978a8023eaa4|mobility",
+      "batch": "3B.2B",
+      "domain": "TALENT",
+      "canonicalId": "13cc978a8023eaa4",
+      "name": "Aversion",
+      "tag": "mobility",
+      "ownerAction": "NO_CHANGE",
+      "detectorEvidenceReference": [
+        "G.mobility"
+      ],
+      "ownerRationale": "The talent makes terrain around the user difficult terrain for enemies. It impairs enemy movement; it does not grant improved mobility.",
+      "ownerPolicyApplied": "MOBILITY_POLICY"
+    },
+    {
+      "decisionId": "TALENT:32029a2f0dbb7104|mobility",
+      "batch": "3B.2B",
+      "domain": "TALENT",
+      "canonicalId": "32029a2f0dbb7104",
+      "name": "Prepared Explosive",
+      "tag": "mobility",
+      "ownerAction": "NO_CHANGE",
+      "detectorEvidenceReference": [
+        "G.mobility"
+      ],
+      "ownerRationale": "The talent modifies terrain state through explosives. It does not directly grant a creature improved movement capability. Existing trap/crafting/equipment/control/battlefield_control/movement/positioning semantics kept.",
+      "ownerPolicyApplied": "MOBILITY_POLICY"
+    },
+    {
+      "decisionId": "TALENT:50273d5ce8f84c31|mobility",
+      "batch": "3B.2B",
+      "domain": "TALENT",
+      "canonicalId": "50273d5ce8f84c31",
+      "name": "Frighten",
+      "tag": "mobility",
+      "ownerAction": "NO_CHANGE",
+      "detectorEvidenceReference": [
+        "G.mobility"
+      ],
+      "ownerRationale": "The talent forcibly moves enemies away from the minion. Forced enemy movement is not a positive mobility mechanic.",
+      "ownerPolicyApplied": "MOBILITY_POLICY"
+    },
+    {
+      "decisionId": "TALENT:67186d921e94d636|mobility",
+      "batch": "3B.2B",
+      "domain": "TALENT",
+      "canonicalId": "67186d921e94d636",
+      "name": "Defensive Measures",
+      "tag": "mobility",
+      "ownerAction": "NO_CHANGE",
+      "detectorEvidenceReference": [
+        "G.mobility"
+      ],
+      "ownerRationale": "The talent makes the Safe Zone difficult terrain for enemies. It impairs enemy movement rather than improving mobility.",
+      "ownerPolicyApplied": "MOBILITY_POLICY"
+    },
+    {
+      "decisionId": "TALENT:1946e16d1e6c831c|attack_of_opportunity",
+      "batch": "3B.2B",
+      "domain": "TALENT",
+      "canonicalId": "1946e16d1e6c831c",
+      "name": "Out of Harm's Way",
+      "tag": "attack_of_opportunity",
+      "ownerAction": "ADD",
+      "detectorEvidenceReference": [
+        "H.attack_of_opportunity"
+      ],
+      "ownerRationale": "The talent's reaction movement explicitly does not provoke an attack of opportunity. Previous swift_action ADD preserved.",
+      "ownerPolicyApplied": "ATTACK_OF_OPPORTUNITY_POLICY"
+    },
+    {
+      "decisionId": "TALENT:39b5423e255e14b1|attack_of_opportunity",
+      "batch": "3B.2B",
+      "domain": "TALENT",
+      "canonicalId": "39b5423e255e14b1",
+      "name": "Transposing Strike",
+      "tag": "attack_of_opportunity",
+      "ownerAction": "ADD",
+      "detectorEvidenceReference": [
+        "H.attack_of_opportunity"
+      ],
+      "ownerRationale": "The position swap explicitly does not provoke attacks of opportunity.",
+      "ownerPolicyApplied": "ATTACK_OF_OPPORTUNITY_POLICY"
+    },
+    {
+      "decisionId": "TALENT:444c032c563c18a1|attack_of_opportunity",
+      "batch": "3B.2B",
+      "domain": "TALENT",
+      "canonicalId": "444c032c563c18a1",
+      "name": "Beloved",
+      "tag": "attack_of_opportunity",
+      "ownerAction": "ADD",
+      "detectorEvidenceReference": [
+        "H.attack_of_opportunity"
+      ],
+      "ownerRationale": "To Me! directly grants reaction movement to allies that explicitly does not provoke attacks of opportunity.",
+      "ownerPolicyApplied": "ATTACK_OF_OPPORTUNITY_POLICY"
+    },
+    {
+      "decisionId": "TALENT:50273d5ce8f84c31|attack_of_opportunity",
+      "batch": "3B.2B",
+      "domain": "TALENT",
+      "canonicalId": "50273d5ce8f84c31",
+      "name": "Frighten",
+      "tag": "attack_of_opportunity",
+      "ownerAction": "ADD",
+      "detectorEvidenceReference": [
+        "H.attack_of_opportunity"
+      ],
+      "ownerRationale": "The forced enemy movement explicitly does not provoke attacks of opportunity. This ADD is independent of the mobility NO_CHANGE ruling.",
+      "ownerPolicyApplied": "ATTACK_OF_OPPORTUNITY_POLICY"
+    },
+    {
+      "decisionId": "TALENT:5a858011286f5809|attack_of_opportunity",
+      "batch": "3B.2B",
+      "domain": "TALENT",
+      "canonicalId": "5a858011286f5809",
+      "name": "Liberate",
+      "tag": "attack_of_opportunity",
+      "ownerAction": "ADD",
+      "detectorEvidenceReference": [
+        "H.attack_of_opportunity"
+      ],
+      "ownerRationale": "The granted reaction movement after escaping the grab/grapple/immobilization explicitly does not provoke attacks of opportunity.",
+      "ownerPolicyApplied": "ATTACK_OF_OPPORTUNITY_POLICY"
+    },
+    {
+      "decisionId": "TALENT:7a024dac260bf9ec|attack_of_opportunity",
+      "batch": "3B.2B",
+      "domain": "TALENT",
+      "canonicalId": "7a024dac260bf9ec",
+      "name": "Dumb Luck",
+      "tag": "attack_of_opportunity",
+      "ownerAction": "ADD",
+      "detectorEvidenceReference": [
+        "H.attack_of_opportunity"
+      ],
+      "ownerRationale": "Escape grants reaction movement explicitly without provoking attacks of opportunity. Previous 3B.1 reaction ADD preserved.",
+      "ownerPolicyApplied": "ATTACK_OF_OPPORTUNITY_POLICY"
+    },
+    {
+      "decisionId": "TALENT:893c4fd12df55469|attack_of_opportunity",
+      "batch": "3B.2B",
+      "domain": "TALENT",
+      "canonicalId": "893c4fd12df55469",
+      "name": "Slip By",
+      "tag": "attack_of_opportunity",
+      "ownerAction": "NO_CHANGE",
+      "detectorEvidenceReference": [
+        "H.attack_of_opportunity"
+      ],
+      "ownerRationale": "The rule says that moving through the target's space might still provoke attacks of opportunity as normal. It does not alter the AoO mechanic.",
+      "ownerPolicyApplied": "ATTACK_OF_OPPORTUNITY_POLICY"
+    },
+    {
+      "decisionId": "TALENT:8eace9d86fc60711|attack_of_opportunity",
+      "batch": "3B.2B",
+      "domain": "TALENT",
+      "canonicalId": "8eace9d86fc60711",
+      "name": "Lifesaver",
+      "tag": "attack_of_opportunity",
+      "ownerAction": "NO_CHANGE",
+      "detectorEvidenceReference": [
+        "H.attack_of_opportunity"
+      ],
+      "ownerRationale": "The granted movement explicitly provokes attacks of opportunity as normal. That is a rules reminder/consequence, not a modification of the AoO mechanic.",
+      "ownerPolicyApplied": "ATTACK_OF_OPPORTUNITY_POLICY"
+    },
+    {
+      "decisionId": "TALENT:b1bfca51996bb303|attack_of_opportunity",
+      "batch": "3B.2B",
+      "domain": "TALENT",
+      "canonicalId": "b1bfca51996bb303",
+      "name": "Lose Pursuit",
+      "tag": "attack_of_opportunity",
+      "ownerAction": "ADD",
+      "detectorEvidenceReference": [
+        "H.attack_of_opportunity"
+      ],
+      "ownerRationale": "The talent directly grants a +5 bonus to Pilot checks specifically used to avoid being pulled into a Dogfight as an Attack of Opportunity. This directly modifies resolution of an AoO mechanic.",
+      "ownerPolicyApplied": "ATTACK_OF_OPPORTUNITY_POLICY"
+    },
+    {
+      "decisionId": "TALENT:c2d2d55ee60f886f|attack_of_opportunity",
+      "batch": "3B.2B",
+      "domain": "TALENT",
+      "canonicalId": "c2d2d55ee60f886f",
+      "name": "Lure Closer",
+      "tag": "attack_of_opportunity",
+      "ownerAction": "ADD",
+      "detectorEvidenceReference": [
+        "H.attack_of_opportunity"
+      ],
+      "ownerRationale": "The talent's involuntary movement explicitly does not provoke Attacks of Opportunity.",
+      "ownerPolicyApplied": "ATTACK_OF_OPPORTUNITY_POLICY"
+    },
+    {
+      "decisionId": "TALENT:cef9b7ca6a26f4a6|attack_of_opportunity",
+      "batch": "3B.2B",
+      "domain": "TALENT",
+      "canonicalId": "cef9b7ca6a26f4a6",
+      "name": "Two-Faced",
+      "tag": "attack_of_opportunity",
+      "ownerAction": "NO_CHANGE",
+      "detectorEvidenceReference": [
+        "H.attack_of_opportunity"
+      ],
+      "ownerRationale": "Nonthreatening prohibits attacks against the user while leaving attacks of opportunity as an exception. It does not generate, enhance, suppress, or otherwise modify attacks of opportunity themselves; the exception does not create a positive AoO semantic.",
+      "ownerPolicyApplied": "ATTACK_OF_OPPORTUNITY_POLICY"
+    },
+    {
+      "decisionId": "TALENT:e289618b92890003|attack_of_opportunity",
+      "batch": "3B.2B",
+      "domain": "TALENT",
+      "canonicalId": "e289618b92890003",
+      "name": "Treacherous",
+      "tag": "attack_of_opportunity",
+      "ownerAction": "ADD",
+      "detectorEvidenceReference": [
+        "H.attack_of_opportunity"
+      ],
+      "ownerRationale": "The talent creates reaction movement during resolution of another attack and explicitly permits a threatening creature to make an attack of opportunity before the original attack is resolved: direct AoO generation/timing interaction rather than a generic \"provokes as normal\" reminder.",
+      "ownerPolicyApplied": "ATTACK_OF_OPPORTUNITY_POLICY"
+    },
+    {
+      "decisionId": "TALENT:ee184e210f8c8935|attack_of_opportunity",
+      "batch": "3B.2B",
+      "domain": "TALENT",
+      "canonicalId": "ee184e210f8c8935",
+      "name": "Mobile Combatant",
+      "tag": "attack_of_opportunity",
+      "ownerAction": "ADD",
+      "detectorEvidenceReference": [
+        "H.attack_of_opportunity"
+      ],
+      "ownerRationale": "Both Expeditious Attack and Yielding Assault grant movement that explicitly does not provoke attacks of opportunity.",
+      "ownerPolicyApplied": "ATTACK_OF_OPPORTUNITY_POLICY"
+    },
+    {
+      "decisionId": "TALENT:f7b620efd191ac6b|attack_of_opportunity",
+      "batch": "3B.2B",
+      "domain": "TALENT",
+      "canonicalId": "f7b620efd191ac6b",
+      "name": "Tempest Tossed",
+      "tag": "attack_of_opportunity",
+      "ownerAction": "ADD",
+      "detectorEvidenceReference": [
+        "H.attack_of_opportunity"
+      ],
+      "ownerRationale": "The talent's forced movement explicitly does not provoke attacks of opportunity.",
+      "ownerPolicyApplied": "ATTACK_OF_OPPORTUNITY_POLICY"
+    },
+    {
+      "decisionId": "FEAT:4be60753991eec43|full_attack",
+      "batch": "3B.2C",
+      "domain": "FEAT",
+      "canonicalId": "4be60753991eec43",
+      "name": "Rapid Assault",
+      "tag": "full_attack",
+      "ownerAction": "NO_CHANGE",
+      "detectorEvidenceReference": [
+        "O.full_attack"
+      ],
+      "ownerRationale": "Rapid Assault does not perform a Full Attack. It spends a Force Point to make exactly two attacks as a standard action, using a qualifying two-weapon or Double Attack setup. The reference to how many attacks the character's normal Full Attack could produce establishes only a ceiling/comparison. The feat deliberately provides a different action path rather than modifying or executing the Full Attack action itself. Its existing dual_wield, sustained_damage, standard_action, action_economy, force_point_spend and resource_spend semantics remain unchanged.",
+      "ownerPolicyApplied": "FULL_ATTACK_POLICY"
+    },
+    {
+      "decisionId": "TALENT:388f30468a80f221|dual_wield",
+      "batch": "3B.2C",
+      "domain": "TALENT",
+      "canonicalId": "388f30468a80f221",
+      "name": "Synchronized Fire",
+      "tag": "dual_wield",
+      "ownerAction": "NO_CHANGE",
+      "detectorEvidenceReference": [
+        "O.dual_wield"
+      ],
+      "ownerRationale": "The talent coordinates one weapon fired by the user and one weapon fired by an ally. The two damage results are combined before applying SR/DR and Damage Threshold. This is coordinated fire from two characters, not one character wielding/fighting with two weapons. No additional tags inferred.",
+      "ownerPolicyApplied": "DUAL_WIELD_POLICY"
+    },
+    {
+      "decisionId": "FEAT:43a4b873d9a9984d|stun",
+      "batch": "3B.2C",
+      "domain": "FEAT",
+      "canonicalId": "43a4b873d9a9984d",
+      "name": "Ion Shielding",
+      "tag": "stun",
+      "ownerAction": "NO_CHANGE",
+      "detectorEvidenceReference": [
+        "O.stun"
+      ],
+      "ownerRationale": "The feat directly modifies the consequences of ion damage exceeding Damage Threshold. Ion damage is not stun damage.",
+      "ownerPolicyApplied": "STUN_POLICY"
+    },
+    {
+      "decisionId": "FEAT:5d17898fc9652370|stun",
+      "batch": "3B.2C",
+      "domain": "FEAT",
+      "canonicalId": "5d17898fc9652370",
+      "name": "Droid Hunter",
+      "tag": "stun",
+      "ownerAction": "NO_CHANGE",
+      "detectorEvidenceReference": [
+        "O.stun"
+      ],
+      "ownerRationale": "The feat grants additional damage against droids, with a larger bonus when using a weapon that deals ion damage. It does not interact with stun damage or a stunning effect.",
+      "ownerPolicyApplied": "STUN_POLICY"
+    },
+    {
+      "decisionId": "TALENT:c101826c205debf2|stun",
+      "batch": "3B.2C",
+      "domain": "TALENT",
+      "canonicalId": "c101826c205debf2",
+      "name": "Sudden Storm",
+      "tag": "stun",
+      "ownerAction": "NO_CHANGE",
+      "detectorEvidenceReference": [
+        "O.stun"
+      ],
+      "ownerRationale": "Stun gauntlets appear only in the permitted-equipment exception to the otherwise unarmed requirement. The talent does not use or modify the stun function of those gauntlets.",
+      "ownerPolicyApplied": "STUN_POLICY"
+    },
+    {
+      "decisionId": "TALENT:c113b29cde344fafb6aa376a843639d3|stun",
+      "batch": "3B.2C",
+      "domain": "TALENT",
+      "canonicalId": "c113b29cde344fafb6aa376a843639d3",
+      "name": "Ion Resistance 10",
+      "tag": "stun",
+      "ownerAction": "NO_CHANGE",
+      "detectorEvidenceReference": [
+        "O.stun"
+      ],
+      "ownerRationale": "The talent grants DR specifically against ion damage. It does not resist stun damage or a stunning effect.",
+      "ownerPolicyApplied": "STUN_POLICY"
+    },
+    {
+      "decisionId": "TALENT:c2f332d1e74e3e1a|stun",
+      "batch": "3B.2C",
+      "domain": "TALENT",
+      "canonicalId": "c2f332d1e74e3e1a",
+      "name": "Ion Turret",
+      "tag": "stun",
+      "ownerAction": "NO_CHANGE",
+      "detectorEvidenceReference": [
+        "O.stun"
+      ],
+      "ownerRationale": "The turret converts its damage into ion damage. That is an ion mechanic, not a stun mechanic.",
+      "ownerPolicyApplied": "STUN_POLICY"
+    },
+    {
+      "decisionId": "TALENT:cc90a9fc255f4dc4|stun",
+      "batch": "3B.2C",
+      "domain": "TALENT",
+      "canonicalId": "cc90a9fc255f4dc4",
+      "name": "Seyugi Cyclone",
+      "tag": "stun",
+      "ownerAction": "NO_CHANGE",
+      "detectorEvidenceReference": [
+        "O.stun"
+      ],
+      "ownerRationale": "Stun gauntlets are listed only as an exception to the otherwise no-weapons requirement. The talent does not interact with their stun mechanics.",
+      "ownerPolicyApplied": "STUN_POLICY"
+    },
+    {
+      "decisionId": "TALENT:df9c25340dcb7c95|stun",
+      "batch": "3B.2C",
+      "domain": "TALENT",
+      "canonicalId": "df9c25340dcb7c95",
+      "name": "Ion Mastery",
+      "tag": "stun",
+      "ownerAction": "NO_CHANGE",
+      "detectorEvidenceReference": [
+        "O.stun"
+      ],
+      "ownerRationale": "The talent directly improves attacks made with ion weapons and increases ion damage. Its capture-oriented purpose does not make ion damage semantically equivalent to stun damage. Its existing nonlethal semantic is preserved; this ruling does not reopen that tag.",
+      "ownerPolicyApplied": "STUN_POLICY"
+    },
+    {
+      "decisionId": "TALENT:5db4343762664d95|shields",
+      "batch": "3B.BULK",
+      "domain": "TALENT",
+      "canonicalId": "5db4343762664d95",
+      "name": "Device Jammer",
+      "tag": "shields",
+      "ownerAction": "NO_CHANGE",
+      "decisionSource": "OWNER_POLICY_DERIVED",
+      "derivationRule": "REFERENCE_ONLY",
+      "ownerPoliciesApplied": [
+        "REFERENCE_ONLY_POLICY"
+      ],
+      "ownerPolicyApplied": "REFERENCE_ONLY_POLICY",
+      "detectorEvidenceReference": [
+        "M.shields"
+      ],
+      "clauseEvidence": [
+        {
+          "kind": "REFERENCE_ONLY",
+          "sentence": "You can construct a short-range jammer that affects a specific type of electronic device such as a personal shield generator, comlink, computer, or datapad.",
+          "matchedPhrases": [
+            "shield"
+          ]
+        }
+      ],
+      "ownerRationale": "Policy-derived (execution of existing owner policy, not a new ruling): every matched clause falls in a structural form named by REFERENCE_ONLY_POLICY; rule REFERENCE_ONLY."
+    },
+    {
+      "decisionId": "FEAT:0dbd1d12c0b99725|vehicle",
+      "batch": "3B.BULK",
+      "domain": "FEAT",
+      "canonicalId": "0dbd1d12c0b99725",
+      "name": "Zero Range",
+      "tag": "vehicle",
+      "ownerAction": "NO_CHANGE",
+      "decisionSource": "OWNER_POLICY_DERIVED",
+      "derivationRule": "NEGATIVE_EXCLUSION",
+      "ownerPoliciesApplied": [
+        "NEGATIVE_EXCLUSION_POLICY"
+      ],
+      "ownerPolicyApplied": "NEGATIVE_EXCLUSION_POLICY",
+      "detectorEvidenceReference": [
+        "M.vehicle"
+      ],
+      "clauseEvidence": [
+        {
+          "kind": "NEGATIVE_EXCLUSION",
+          "sentence": "Does not apply to heavy weapons, vehicle weapons, or starship combat.",
+          "matchedPhrases": [
+            "vehicle",
+            "starship"
+          ]
+        },
+        {
+          "kind": "NEGATIVE_EXCLUSION",
+          "sentence": "At zero range, gain +1 attack and +1 die damage with eligible ranged weapons, excluding heavy/vehicle/starship use and Burst Fire/Rapid Shot stacking.",
+          "matchedPhrases": [
+            "vehicle",
+            "starship"
+          ]
+        }
+      ],
+      "ownerRationale": "Policy-derived (execution of existing owner policy, not a new ruling): every matched clause falls in a structural form named by NEGATIVE_EXCLUSION_POLICY; rule NEGATIVE_EXCLUSION."
+    },
+    {
+      "decisionId": "FEAT:80c52cf7838095c1|vehicle",
+      "batch": "3B.BULK",
+      "domain": "FEAT",
+      "canonicalId": "80c52cf7838095c1",
+      "name": "Return Fire",
+      "tag": "vehicle",
+      "ownerAction": "NO_CHANGE",
+      "decisionSource": "OWNER_POLICY_DERIVED",
+      "derivationRule": "NEGATIVE_EXCLUSION",
+      "ownerPoliciesApplied": [
+        "NEGATIVE_EXCLUSION_POLICY"
+      ],
+      "ownerPolicyApplied": "NEGATIVE_EXCLUSION_POLICY",
+      "detectorEvidenceReference": [
+        "M.vehicle"
+      ],
+      "clauseEvidence": [
+        {
+          "kind": "NEGATIVE_EXCLUSION",
+          "sentence": "Does not apply to vehicle weapons or heavy weapons.",
+          "matchedPhrases": [
+            "vehicle"
+          ]
+        }
+      ],
+      "ownerRationale": "Policy-derived (execution of existing owner policy, not a new ruling): every matched clause falls in a structural form named by NEGATIVE_EXCLUSION_POLICY; rule NEGATIVE_EXCLUSION."
+    },
+    {
+      "decisionId": "TALENT:111b0a9d1f8d5111|vehicle",
+      "batch": "3B.BULK",
+      "domain": "TALENT",
+      "canonicalId": "111b0a9d1f8d5111",
+      "name": "Personalized Modifications",
+      "tag": "vehicle",
+      "ownerAction": "NO_CHANGE",
+      "decisionSource": "OWNER_POLICY_DERIVED",
+      "derivationRule": "REFERENCE_ONLY",
+      "ownerPoliciesApplied": [
+        "REFERENCE_ONLY_POLICY"
+      ],
+      "ownerPolicyApplied": "REFERENCE_ONLY_POLICY",
+      "detectorEvidenceReference": [
+        "M.vehicle"
+      ],
+      "clauseEvidence": [
+        {
+          "kind": "REFERENCE_ONLY",
+          "sentence": "You can use this talent only on powered weapons (those that require a power cell to operate), including weapons connected to a larger power source (such as vehicle and starship weapons).",
+          "matchedPhrases": [
+            "vehicle",
+            "starship"
+          ]
+        }
+      ],
+      "ownerRationale": "Policy-derived (execution of existing owner policy, not a new ruling): every matched clause falls in a structural form named by REFERENCE_ONLY_POLICY; rule REFERENCE_ONLY."
+    },
+    {
+      "decisionId": "TALENT:5db4343762664d95|vehicle",
+      "batch": "3B.BULK",
+      "domain": "TALENT",
+      "canonicalId": "5db4343762664d95",
+      "name": "Device Jammer",
+      "tag": "vehicle",
+      "ownerAction": "NO_CHANGE",
+      "decisionSource": "OWNER_POLICY_DERIVED",
+      "derivationRule": "NEGATIVE_EXCLUSION",
+      "ownerPoliciesApplied": [
+        "NEGATIVE_EXCLUSION_POLICY"
+      ],
+      "ownerPolicyApplied": "NEGATIVE_EXCLUSION_POLICY",
+      "detectorEvidenceReference": [
+        "M.vehicle"
+      ],
+      "clauseEvidence": [
+        {
+          "kind": "NEGATIVE_EXCLUSION",
+          "sentence": "As a full-round action, you select a particular piece of equipment (any object except a droid, vehicle, or weapon) and make a DC 20 Mechanics check.",
+          "matchedPhrases": [
+            "vehicle"
+          ]
+        }
+      ],
+      "ownerRationale": "Policy-derived (execution of existing owner policy, not a new ruling): every matched clause falls in a structural form named by NEGATIVE_EXCLUSION_POLICY; rule NEGATIVE_EXCLUSION."
+    },
+    {
+      "decisionId": "TALENT:c59e7eba84e6d4eb|vehicle",
+      "batch": "3B.BULK",
+      "domain": "TALENT",
+      "canonicalId": "c59e7eba84e6d4eb",
+      "name": "Cover Bracing",
+      "tag": "vehicle",
+      "ownerAction": "NO_CHANGE",
+      "decisionSource": "OWNER_POLICY_DERIVED",
+      "derivationRule": "REFERENCE_ONLY",
+      "ownerPoliciesApplied": [
+        "REFERENCE_ONLY_POLICY"
+      ],
+      "ownerPolicyApplied": "REFERENCE_ONLY_POLICY",
+      "detectorEvidenceReference": [
+        "M.vehicle"
+      ],
+      "clauseEvidence": [
+        {
+          "kind": "REFERENCE_ONLY",
+          "sentence": "You can brace a weapon set on autofire as a single swift action (instead of two) if you are adjacent to an object (including walls, barriers, and vehicles) that provides you with cover from all of the target squares.",
+          "matchedPhrases": [
+            "vehicles"
+          ]
+        }
+      ],
+      "ownerRationale": "Policy-derived (execution of existing owner policy, not a new ruling): every matched clause falls in a structural form named by REFERENCE_ONLY_POLICY; rule REFERENCE_ONLY."
+    },
+    {
+      "decisionId": "TALENT:cf2d518039afd828|dark_side",
+      "batch": "3B.BULK",
+      "domain": "TALENT",
+      "canonicalId": "cf2d518039afd828",
+      "name": "Sentinel Strike",
+      "tag": "dark_side",
+      "ownerAction": "NO_CHANGE",
+      "decisionSource": "OWNER_POLICY_DERIVED",
+      "derivationRule": "NEGATIVE_EXCLUSION",
+      "ownerPoliciesApplied": [
+        "NEGATIVE_EXCLUSION_POLICY"
+      ],
+      "ownerPolicyApplied": "NEGATIVE_EXCLUSION_POLICY",
+      "detectorEvidenceReference": [
+        "N.dark_side"
+      ],
+      "clauseEvidence": [
+        {
+          "kind": "NEGATIVE_EXCLUSION",
+          "sentence": "This talent does not affect Force powers with the [dark side] descriptor.",
+          "matchedPhrases": [
+            "dark side"
+          ]
+        }
+      ],
+      "ownerRationale": "Policy-derived (execution of existing owner policy, not a new ruling): every matched clause falls in a structural form named by NEGATIVE_EXCLUSION_POLICY; rule NEGATIVE_EXCLUSION."
+    },
+    {
+      "decisionId": "FEAT:cb6aea7e256e4c8c|lightsaber",
+      "batch": "3B.BULK",
+      "domain": "FEAT",
+      "canonicalId": "cb6aea7e256e4c8c",
+      "name": "Improved Rapid Strike",
+      "tag": "lightsaber",
+      "ownerAction": "ADD",
+      "decisionSource": "OWNER_POLICY_DERIVED",
+      "derivationRule": "CLOSED_DIRECT",
+      "ownerPoliciesApplied": [
+        "CLOSED_SCOPE_POLICY",
+        "DIRECT_OPERATIVE_MECHANIC_POLICY"
+      ],
+      "ownerPolicyApplied": "CLOSED_SCOPE_POLICY",
+      "detectorEvidenceReference": [
+        "O.lightsaber"
+      ],
+      "clauseEvidence": [
+        {
+          "kind": "CLOSED_DIRECT",
+          "sentence": "With a light melee weapon or lightsaber and Rapid Strike, take -5 on the attack to gain +2 dice of damage.",
+          "matchedPhrases": [
+            "lightsaber"
+          ]
+        },
+        {
+          "kind": "CLOSED_DIRECT",
+          "sentence": "Upgrade Rapid Strike with a light melee weapon/lightsaber to +2 damage dice for -5 attack, or -10 if Dexterity is below 13.",
+          "matchedPhrases": [
+            "lightsaber"
+          ]
+        }
+      ],
+      "ownerRationale": "Policy-derived (execution of existing owner policy, not a new ruling): every matched clause falls in a structural form named by CLOSED_SCOPE_POLICY + DIRECT_OPERATIVE_MECHANIC_POLICY; rule CLOSED_DIRECT."
+    },
+    {
+      "decisionId": "FEAT:ecc2471ac96ec2d4|lightsaber",
+      "batch": "3B.BULK",
+      "domain": "FEAT",
+      "canonicalId": "ecc2471ac96ec2d4",
+      "name": "Weapon Proficiency",
+      "tag": "lightsaber",
+      "ownerAction": "NO_CHANGE",
+      "decisionSource": "OWNER_POLICY_DERIVED",
+      "derivationRule": "OPEN_GENERIC_SCOPE",
+      "ownerPoliciesApplied": [
+        "OPEN_GENERIC_SCOPE_POLICY"
+      ],
+      "ownerPolicyApplied": "OPEN_GENERIC_SCOPE_POLICY",
+      "detectorEvidenceReference": [
+        "O.lightsaber"
+      ],
+      "clauseEvidence": [
+        {
+          "kind": "OPEN_GENERIC_SCOPE",
+          "sentence": "Choose advanced melee weapons, heavy weapons, lightsabers, pistols, rifles, or simple weapons; become proficient with all weapons in that group.",
+          "matchedPhrases": [
+            "lightsabers"
+          ]
+        }
+      ],
+      "ownerRationale": "Policy-derived (execution of existing owner policy, not a new ruling): every matched clause falls in a structural form named by OPEN_GENERIC_SCOPE_POLICY; rule OPEN_GENERIC_SCOPE."
+    },
+    {
+      "decisionId": "TALENT:00c3231e4a4173fa|lightsaber",
+      "batch": "3B.BULK",
+      "domain": "TALENT",
+      "canonicalId": "00c3231e4a4173fa",
+      "name": "Noble Fencing Style",
+      "tag": "lightsaber",
+      "ownerAction": "ADD",
+      "decisionSource": "OWNER_POLICY_DERIVED",
+      "derivationRule": "CLOSED_DIRECT",
+      "ownerPoliciesApplied": [
+        "CLOSED_SCOPE_POLICY",
+        "DIRECT_OPERATIVE_MECHANIC_POLICY"
+      ],
+      "ownerPolicyApplied": "CLOSED_SCOPE_POLICY",
+      "detectorEvidenceReference": [
+        "O.lightsaber"
+      ],
+      "clauseEvidence": [
+        {
+          "kind": "CLOSED_DIRECT",
+          "sentence": "When using a light melee weapon or a lightsaber that you are proficient with, you can use your Charisma modifier instead of your Strength modifier on attack rolls.",
+          "matchedPhrases": [
+            "lightsaber"
+          ]
+        }
+      ],
+      "ownerRationale": "Policy-derived (execution of existing owner policy, not a new ruling): every matched clause falls in a structural form named by CLOSED_SCOPE_POLICY + DIRECT_OPERATIVE_MECHANIC_POLICY; rule CLOSED_DIRECT."
+    },
+    {
+      "decisionId": "TALENT:32df92c3114b5c94|lightsaber",
+      "batch": "3B.BULK",
+      "domain": "TALENT",
+      "canonicalId": "32df92c3114b5c94",
+      "name": "Accurate Blow",
+      "tag": "lightsaber",
+      "ownerAction": "NO_CHANGE",
+      "decisionSource": "OWNER_POLICY_DERIVED",
+      "derivationRule": "OPEN_GENERIC_SCOPE",
+      "ownerPoliciesApplied": [
+        "OPEN_GENERIC_SCOPE_POLICY"
+      ],
+      "ownerPolicyApplied": "OPEN_GENERIC_SCOPE_POLICY",
+      "detectorEvidenceReference": [
+        "O.lightsaber"
+      ],
+      "clauseEvidence": [
+        {
+          "kind": "OPEN_GENERIC_SCOPE",
+          "sentence": "Choose one Exotic Weapon (Melee) or one of the following Weapon Groups in which you are proficient: Advanced Melee Weapons, Lightsabers, or Simple Weapons (Melee).",
+          "matchedPhrases": [
+            "Lightsabers"
+          ]
+        }
+      ],
+      "ownerRationale": "Policy-derived (execution of existing owner policy, not a new ruling): every matched clause falls in a structural form named by OPEN_GENERIC_SCOPE_POLICY; rule OPEN_GENERIC_SCOPE."
+    },
+    {
+      "decisionId": "TALENT:5218d5971b78119b|lightsaber",
+      "batch": "3B.BULK",
+      "domain": "TALENT",
+      "canonicalId": "5218d5971b78119b",
+      "name": "Empower Weapon",
+      "tag": "lightsaber",
+      "ownerAction": "NO_CHANGE",
+      "decisionSource": "OWNER_POLICY_DERIVED",
+      "derivationRule": "REFERENCE_ONLY",
+      "ownerPoliciesApplied": [
+        "REFERENCE_ONLY_POLICY"
+      ],
+      "ownerPolicyApplied": "REFERENCE_ONLY_POLICY",
+      "detectorEvidenceReference": [
+        "O.lightsaber"
+      ],
+      "clauseEvidence": [
+        {
+          "kind": "REFERENCE_ONLY",
+          "sentence": "For example, an empowered Lightsaber deals 3d8 points of damage, instead of 2d8 points of damage.",
+          "matchedPhrases": [
+            "Lightsaber"
+          ]
+        }
+      ],
+      "ownerRationale": "Policy-derived (execution of existing owner policy, not a new ruling): every matched clause falls in a structural form named by REFERENCE_ONLY_POLICY; rule REFERENCE_ONLY."
+    },
+    {
+      "decisionId": "TALENT:a7aea0411eb4fbc0|lightsaber",
+      "batch": "3B.BULK",
+      "domain": "TALENT",
+      "canonicalId": "a7aea0411eb4fbc0",
+      "name": "Champion",
+      "tag": "lightsaber",
+      "ownerAction": "NO_CHANGE",
+      "decisionSource": "OWNER_POLICY_DERIVED",
+      "derivationRule": "NEGATIVE_EXCLUSION",
+      "ownerPoliciesApplied": [
+        "NEGATIVE_EXCLUSION_POLICY"
+      ],
+      "ownerPolicyApplied": "NEGATIVE_EXCLUSION_POLICY",
+      "detectorEvidenceReference": [
+        "O.lightsaber"
+      ],
+      "clauseEvidence": [
+        {
+          "kind": "NEGATIVE_EXCLUSION",
+          "sentence": "Masterful Strike: When making a successful unarmed or melee attack other than with a lightsaber, increase your damage by 2 for every 5 points by which your attack roll exceeds the target's Reflex Defense.",
+          "matchedPhrases": [
+            "lightsaber"
+          ]
+        }
+      ],
+      "ownerRationale": "Policy-derived (execution of existing owner policy, not a new ruling): every matched clause falls in a structural form named by NEGATIVE_EXCLUSION_POLICY; rule NEGATIVE_EXCLUSION."
+    },
+    {
+      "decisionId": "TALENT:c1be1f29c00436d5|lightsaber",
+      "batch": "3B.BULK",
+      "domain": "TALENT",
+      "canonicalId": "c1be1f29c00436d5",
+      "name": "Transfer Essence",
+      "tag": "lightsaber",
+      "ownerAction": "NO_CHANGE",
+      "decisionSource": "OWNER_POLICY_DERIVED",
+      "derivationRule": "REFERENCE_ONLY",
+      "ownerPoliciesApplied": [
+        "REFERENCE_ONLY_POLICY"
+      ],
+      "ownerPolicyApplied": "REFERENCE_ONLY_POLICY",
+      "detectorEvidenceReference": [
+        "O.lightsaber"
+      ],
+      "clauseEvidence": [
+        {
+          "kind": "REFERENCE_ONLY",
+          "sentence": "Alternately, as a standard action, you can transfer your essence into a single adjacent object, such as a holocron or a lightsaber.",
+          "matchedPhrases": [
+            "lightsaber"
+          ]
+        }
+      ],
+      "ownerRationale": "Policy-derived (execution of existing owner policy, not a new ruling): every matched clause falls in a structural form named by REFERENCE_ONLY_POLICY; rule REFERENCE_ONLY."
+    },
+    {
+      "decisionId": "FEAT:ecc2471ac96ec2d4|melee",
+      "batch": "3B.BULK",
+      "domain": "FEAT",
+      "canonicalId": "ecc2471ac96ec2d4",
+      "name": "Weapon Proficiency",
+      "tag": "melee",
+      "ownerAction": "NO_CHANGE",
+      "decisionSource": "OWNER_POLICY_DERIVED",
+      "derivationRule": "OPEN_GENERIC_SCOPE",
+      "ownerPoliciesApplied": [
+        "OPEN_GENERIC_SCOPE_POLICY"
+      ],
+      "ownerPolicyApplied": "OPEN_GENERIC_SCOPE_POLICY",
+      "detectorEvidenceReference": [
+        "O.melee"
+      ],
+      "clauseEvidence": [
+        {
+          "kind": "OPEN_GENERIC_SCOPE",
+          "sentence": "Choose advanced melee weapons, heavy weapons, lightsabers, pistols, rifles, or simple weapons; become proficient with all weapons in that group.",
+          "matchedPhrases": [
+            "melee"
+          ]
+        }
+      ],
+      "ownerRationale": "Policy-derived (execution of existing owner policy, not a new ruling): every matched clause falls in a structural form named by OPEN_GENERIC_SCOPE_POLICY; rule OPEN_GENERIC_SCOPE."
+    },
+    {
+      "decisionId": "TALENT:913a0ca43e032caa|melee",
+      "batch": "3B.BULK",
+      "domain": "TALENT",
+      "canonicalId": "913a0ca43e032caa",
+      "name": "Nimble Dodge",
+      "tag": "melee",
+      "ownerAction": "ADD",
+      "decisionSource": "OWNER_POLICY_DERIVED",
+      "derivationRule": "CLOSED_DIRECT",
+      "ownerPoliciesApplied": [
+        "CLOSED_SCOPE_POLICY",
+        "DIRECT_OPERATIVE_MECHANIC_POLICY"
+      ],
+      "ownerPolicyApplied": "CLOSED_SCOPE_POLICY",
+      "detectorEvidenceReference": [
+        "O.melee"
+      ],
+      "clauseEvidence": [
+        {
+          "kind": "CLOSED_DIRECT",
+          "sentence": "If an enemy misses you with a melee attack, as a reaction you can move up to 2 squares, but you must end your movement adjacent to your attacker.",
+          "matchedPhrases": [
+            "melee"
+          ]
+        }
+      ],
+      "ownerRationale": "Policy-derived (execution of existing owner policy, not a new ruling): every matched clause falls in a structural form named by CLOSED_SCOPE_POLICY + DIRECT_OPERATIVE_MECHANIC_POLICY; rule CLOSED_DIRECT."
+    },
+    {
+      "decisionId": "TALENT:9379daa94a228c04|melee",
+      "batch": "3B.BULK",
+      "domain": "TALENT",
+      "canonicalId": "9379daa94a228c04",
+      "name": "Block",
+      "tag": "melee",
+      "ownerAction": "ADD",
+      "decisionSource": "OWNER_POLICY_DERIVED",
+      "derivationRule": "CLOSED_DIRECT",
+      "ownerPoliciesApplied": [
+        "CLOSED_SCOPE_POLICY",
+        "DIRECT_OPERATIVE_MECHANIC_POLICY"
+      ],
+      "ownerPolicyApplied": "CLOSED_SCOPE_POLICY",
+      "detectorEvidenceReference": [
+        "O.melee"
+      ],
+      "clauseEvidence": [
+        {
+          "kind": "CLOSED_DIRECT",
+          "sentence": "As a reaction, you may negate a melee attack by making a successful Use the Force check.",
+          "matchedPhrases": [
+            "melee"
+          ]
+        }
+      ],
+      "ownerRationale": "Policy-derived (execution of existing owner policy, not a new ruling): every matched clause falls in a structural form named by CLOSED_SCOPE_POLICY + DIRECT_OPERATIVE_MECHANIC_POLICY; rule CLOSED_DIRECT."
+    },
+    {
+      "decisionId": "TALENT:fcd7c1e0bd15df71|melee",
+      "batch": "3B.BULK",
+      "domain": "TALENT",
+      "canonicalId": "fcd7c1e0bd15df71",
+      "name": "Cover Escape",
+      "tag": "melee",
+      "ownerAction": "ADD",
+      "decisionSource": "OWNER_POLICY_DERIVED",
+      "derivationRule": "CLOSED_DIRECT",
+      "ownerPoliciesApplied": [
+        "CLOSED_SCOPE_POLICY",
+        "DIRECT_OPERATIVE_MECHANIC_POLICY"
+      ],
+      "ownerPolicyApplied": "CLOSED_SCOPE_POLICY",
+      "detectorEvidenceReference": [
+        "O.melee"
+      ],
+      "clauseEvidence": [
+        {
+          "kind": "CLOSED_DIRECT",
+          "sentence": "When you successfully spend a Force Point to negate a melee attack against an adjacent ally with the Block or Deflect talents, that ally can move up to 2 squares as a free action.",
+          "matchedPhrases": [
+            "melee"
+          ]
+        }
+      ],
+      "ownerRationale": "Policy-derived (execution of existing owner policy, not a new ruling): every matched clause falls in a structural form named by CLOSED_SCOPE_POLICY + DIRECT_OPERATIVE_MECHANIC_POLICY; rule CLOSED_DIRECT."
+    },
+    {
+      "decisionId": "FEAT:ecc2471ac96ec2d4|pistol",
+      "batch": "3B.BULK",
+      "domain": "FEAT",
+      "canonicalId": "ecc2471ac96ec2d4",
+      "name": "Weapon Proficiency",
+      "tag": "pistol",
+      "ownerAction": "NO_CHANGE",
+      "decisionSource": "OWNER_POLICY_DERIVED",
+      "derivationRule": "OPEN_GENERIC_SCOPE",
+      "ownerPoliciesApplied": [
+        "OPEN_GENERIC_SCOPE_POLICY"
+      ],
+      "ownerPolicyApplied": "OPEN_GENERIC_SCOPE_POLICY",
+      "detectorEvidenceReference": [
+        "O.pistol"
+      ],
+      "clauseEvidence": [
+        {
+          "kind": "OPEN_GENERIC_SCOPE",
+          "sentence": "Choose advanced melee weapons, heavy weapons, lightsabers, pistols, rifles, or simple weapons; become proficient with all weapons in that group.",
+          "matchedPhrases": [
+            "pistols"
+          ]
+        }
+      ],
+      "ownerRationale": "Policy-derived (execution of existing owner policy, not a new ruling): every matched clause falls in a structural form named by OPEN_GENERIC_SCOPE_POLICY; rule OPEN_GENERIC_SCOPE."
+    },
+    {
+      "decisionId": "TALENT:049820827d7ef32b|pistol",
+      "batch": "3B.BULK",
+      "domain": "TALENT",
+      "canonicalId": "049820827d7ef32b",
+      "name": "Cover Fire",
+      "tag": "pistol",
+      "ownerAction": "ADD",
+      "decisionSource": "OWNER_POLICY_DERIVED",
+      "derivationRule": "CLOSED_DIRECT",
+      "ownerPoliciesApplied": [
+        "CLOSED_SCOPE_POLICY",
+        "DIRECT_OPERATIVE_MECHANIC_POLICY"
+      ],
+      "ownerPolicyApplied": "CLOSED_SCOPE_POLICY",
+      "detectorEvidenceReference": [
+        "O.pistol"
+      ],
+      "clauseEvidence": [
+        {
+          "kind": "CLOSED_DIRECT",
+          "sentence": "When you make a ranged attack with a Pistol or Rifle, all allies within 6 squares of you when you made the attack gain a +1 bonus to Reflex Defense until the start of your next turn.",
+          "matchedPhrases": [
+            "Pistol"
+          ]
+        }
+      ],
+      "ownerRationale": "Policy-derived (execution of existing owner policy, not a new ruling): every matched clause falls in a structural form named by CLOSED_SCOPE_POLICY + DIRECT_OPERATIVE_MECHANIC_POLICY; rule CLOSED_DIRECT."
+    },
+    {
+      "decisionId": "TALENT:e9820b341bf94de1|pistol",
+      "batch": "3B.BULK",
+      "domain": "TALENT",
+      "canonicalId": "e9820b341bf94de1",
+      "name": "Greater Weapon Specialization",
+      "tag": "pistol",
+      "ownerAction": "NO_CHANGE",
+      "decisionSource": "OWNER_POLICY_DERIVED",
+      "derivationRule": "OPEN_GENERIC_SCOPE",
+      "ownerPoliciesApplied": [
+        "OPEN_GENERIC_SCOPE_POLICY"
+      ],
+      "ownerPolicyApplied": "OPEN_GENERIC_SCOPE_POLICY",
+      "detectorEvidenceReference": [
+        "O.pistol"
+      ],
+      "clauseEvidence": [
+        {
+          "kind": "OPEN_GENERIC_SCOPE",
+          "sentence": "Choose one exotic weapon or one of the following weapon groups: advanced melee weapons, heavy weapons, pistols, rifles, or simple weapons.",
+          "matchedPhrases": [
+            "pistols"
+          ]
+        }
+      ],
+      "ownerRationale": "Policy-derived (execution of existing owner policy, not a new ruling): every matched clause falls in a structural form named by OPEN_GENERIC_SCOPE_POLICY; rule OPEN_GENERIC_SCOPE."
+    },
+    {
+      "decisionId": "TALENT:444c032c563c18a1|ranged",
+      "batch": "3B.BULK",
+      "domain": "TALENT",
+      "canonicalId": "444c032c563c18a1",
+      "name": "Beloved",
+      "tag": "ranged",
+      "ownerAction": "ADD",
+      "decisionSource": "OWNER_POLICY_DERIVED",
+      "derivationRule": "CLOSED_DIRECT",
+      "ownerPoliciesApplied": [
+        "CLOSED_SCOPE_POLICY",
+        "DIRECT_OPERATIVE_MECHANIC_POLICY"
+      ],
+      "ownerPolicyApplied": "CLOSED_SCOPE_POLICY",
+      "detectorEvidenceReference": [
+        "O.ranged"
+      ],
+      "clauseEvidence": [
+        {
+          "kind": "CLOSED_DIRECT",
+          "sentence": "Reprisal: Make a single melee or ranged attack against any target within range as a standard action.",
+          "matchedPhrases": [
+            "ranged"
+          ]
+        }
+      ],
+      "ownerRationale": "Policy-derived (execution of existing owner policy, not a new ruling): every matched clause falls in a structural form named by CLOSED_SCOPE_POLICY + DIRECT_OPERATIVE_MECHANIC_POLICY; rule CLOSED_DIRECT."
+    },
+    {
+      "decisionId": "TALENT:72c644f7a09b1186|ranged",
+      "batch": "3B.BULK",
+      "domain": "TALENT",
+      "canonicalId": "72c644f7a09b1186",
+      "name": "Deflect",
+      "tag": "ranged",
+      "ownerAction": "ADD",
+      "decisionSource": "OWNER_POLICY_DERIVED",
+      "derivationRule": "CLOSED_DIRECT",
+      "ownerPoliciesApplied": [
+        "CLOSED_SCOPE_POLICY",
+        "DIRECT_OPERATIVE_MECHANIC_POLICY"
+      ],
+      "ownerPolicyApplied": "CLOSED_SCOPE_POLICY",
+      "detectorEvidenceReference": [
+        "O.ranged"
+      ],
+      "clauseEvidence": [
+        {
+          "kind": "CLOSED_DIRECT",
+          "sentence": "As a reaction, you may negate a ranged attack by making a successful Use the Force check.",
+          "matchedPhrases": [
+            "ranged"
+          ]
+        }
+      ],
+      "ownerRationale": "Policy-derived (execution of existing owner policy, not a new ruling): every matched clause falls in a structural form named by CLOSED_SCOPE_POLICY + DIRECT_OPERATIVE_MECHANIC_POLICY; rule CLOSED_DIRECT."
+    },
+    {
+      "decisionId": "TALENT:852bca9332684a2b|ranged",
+      "batch": "3B.BULK",
+      "domain": "TALENT",
+      "canonicalId": "852bca9332684a2b",
+      "name": "Shield Gauntlet Defense",
+      "tag": "ranged",
+      "ownerAction": "ADD",
+      "decisionSource": "OWNER_POLICY_DERIVED",
+      "derivationRule": "CLOSED_DIRECT",
+      "ownerPoliciesApplied": [
+        "CLOSED_SCOPE_POLICY",
+        "DIRECT_OPERATIVE_MECHANIC_POLICY"
+      ],
+      "ownerPolicyApplied": "CLOSED_SCOPE_POLICY",
+      "detectorEvidenceReference": [
+        "O.ranged"
+      ],
+      "clauseEvidence": [
+        {
+          "kind": "CLOSED_DIRECT",
+          "sentence": "Once per turn as a reaction, you can gain a +2 deflection bonus to your Reflex Defense against any one ranged attack.",
+          "matchedPhrases": [
+            "ranged"
+          ]
+        }
+      ],
+      "ownerRationale": "Policy-derived (execution of existing owner policy, not a new ruling): every matched clause falls in a structural form named by CLOSED_SCOPE_POLICY + DIRECT_OPERATIVE_MECHANIC_POLICY; rule CLOSED_DIRECT."
+    },
+    {
+      "decisionId": "TALENT:de751f28fc269c85|ranged",
+      "batch": "3B.BULK",
+      "domain": "TALENT",
+      "canonicalId": "de751f28fc269c85",
+      "name": "Intimidating Defense",
+      "tag": "ranged",
+      "ownerAction": "ADD",
+      "decisionSource": "OWNER_POLICY_DERIVED",
+      "derivationRule": "CLOSED_DIRECT",
+      "ownerPoliciesApplied": [
+        "CLOSED_SCOPE_POLICY",
+        "DIRECT_OPERATIVE_MECHANIC_POLICY"
+      ],
+      "ownerPolicyApplied": "CLOSED_SCOPE_POLICY",
+      "detectorEvidenceReference": [
+        "O.ranged"
+      ],
+      "clauseEvidence": [
+        {
+          "kind": "CLOSED_DIRECT",
+          "sentence": "Once per encounter, as a reaction, you can make a Persuasion check to intimidate one creature that has made a melee or ranged attack against you if that creature is within line of sight.",
+          "matchedPhrases": [
+            "ranged"
+          ]
+        }
+      ],
+      "ownerRationale": "Policy-derived (execution of existing owner policy, not a new ruling): every matched clause falls in a structural form named by CLOSED_SCOPE_POLICY + DIRECT_OPERATIVE_MECHANIC_POLICY; rule CLOSED_DIRECT."
+    },
+    {
+      "decisionId": "FEAT:3d4a4e93ced26712|unarmed",
+      "batch": "3B.BULK",
+      "domain": "FEAT",
+      "canonicalId": "3d4a4e93ced26712",
+      "name": "Triple Crit",
+      "tag": "unarmed",
+      "ownerAction": "NO_CHANGE",
+      "decisionSource": "OWNER_POLICY_DERIVED",
+      "derivationRule": "REFERENCE_ONLY",
+      "ownerPoliciesApplied": [
+        "REFERENCE_ONLY_POLICY"
+      ],
+      "ownerPolicyApplied": "REFERENCE_ONLY_POLICY",
+      "detectorEvidenceReference": [
+        "O.unarmed"
+      ],
+      "clauseEvidence": [
+        {
+          "kind": "REFERENCE_ONLY",
+          "sentence": "Choose one weapon, including unarmed attack if desired.",
+          "matchedPhrases": [
+            "unarmed"
+          ]
+        }
+      ],
+      "ownerRationale": "Policy-derived (execution of existing owner policy, not a new ruling): every matched clause falls in a structural form named by REFERENCE_ONLY_POLICY; rule REFERENCE_ONLY."
+    },
+    {
+      "decisionId": "FEAT:c41814601364b643|unarmed",
+      "batch": "3B.BULK",
+      "domain": "FEAT",
+      "canonicalId": "c41814601364b643",
+      "name": "Weapon Focus",
+      "tag": "unarmed",
+      "ownerAction": "NO_CHANGE",
+      "decisionSource": "OWNER_POLICY_DERIVED",
+      "derivationRule": "REFERENCE_ONLY",
+      "ownerPoliciesApplied": [
+        "REFERENCE_ONLY_POLICY"
+      ],
+      "ownerPolicyApplied": "REFERENCE_ONLY_POLICY",
+      "detectorEvidenceReference": [
+        "O.unarmed"
+      ],
+      "clauseEvidence": [
+        {
+          "kind": "REFERENCE_ONLY",
+          "sentence": "Choose one exotic weapon or weapon group, including unarmed strike or grapple if desired, and gain +1 attacks with it.",
+          "matchedPhrases": [
+            "unarmed"
+          ]
+        }
+      ],
+      "ownerRationale": "Policy-derived (execution of existing owner policy, not a new ruling): every matched clause falls in a structural form named by REFERENCE_ONLY_POLICY; rule REFERENCE_ONLY."
+    }
+  ],
+  "cumulativeExpected": {
+    "decisions": 152,
+    "addDecisions": 63,
+    "noChangeDecisions": 89,
+    "recordsWithAdd": 54,
+    "tagAdditions": 63,
+    "removals": 0,
+    "tagInstancesBefore": 11218,
+    "tagInstancesAfter": 11281
+  },
+  "tagQuestionResolutions": [
+    {
+      "kind": "TAG_DEFINITION",
+      "key": "battlefield_control",
+      "state": "PASS3B_POLICY_RESOLVED",
+      "controllingPolicies": [
+        "BATTLEFIELD_CONTROL_POLICY"
+      ],
+      "source": "OWNER_POLICY_DERIVED"
+    },
+    {
+      "kind": "TAG_DEFINITION",
+      "key": "reliability",
+      "state": "PASS3B_POLICY_RESOLVED",
+      "controllingPolicies": [
+        "RELIABILITY_POLICY"
+      ],
+      "source": "OWNER_POLICY_DERIVED"
+    }
+  ]
+}

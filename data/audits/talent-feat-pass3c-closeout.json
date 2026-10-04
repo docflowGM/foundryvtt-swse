@@ -1,0 +1,168 @@
+{
+  "schemaVersion": "1.0",
+  "basis": {
+    "authority": "data/audits/talent-feat-pass3b-semantic-authority.json",
+    "overlay": "data/audits/talent-feat-pass3b-owner-adjudication.json",
+    "corpus": 1540,
+    "feats": 353,
+    "talents": 1187,
+    "vocabulary": 187
+  },
+  "note": "Facts only. No recommendation, no tag created or retired, no semantic ruling.",
+  "kind": "TALENT_FEAT_PASS3C_CLOSEOUT",
+  "status": "PASS3C_COMPLETE_ZERO_LITERAL_VIOLATIONS",
+  "counts": {
+    "vocabulary": 187,
+    "policyViolations": 0,
+    "domainOnlyTags": 34,
+    "rareTags": 14,
+    "unusedTags": 0,
+    "broadTagsReviewed": 12,
+    "broadTagsOwnerDefined": 2,
+    "broadTagsPartial": 1,
+    "broadTagsDefinitionRequired": 9
+  },
+  "violationsByRule": {},
+  "violations": [],
+  "broadTagReview": [
+    {
+      "tag": "battlefield_control",
+      "listedByOwner": true,
+      "records": 199,
+      "feats": 33,
+      "talents": 166,
+      "pctOfCorpus": 12.922,
+      "controllingPolicies": [
+        "BATTLEFIELD_CONTROL_POLICY"
+      ],
+      "partialPolicies": [],
+      "state": "OWNER_DEFINED"
+    },
+    {
+      "tag": "control",
+      "listedByOwner": true,
+      "records": 254,
+      "feats": 46,
+      "talents": 208,
+      "pctOfCorpus": 16.494,
+      "controllingPolicies": [],
+      "partialPolicies": [
+        "SPECIFIC_OVER_BROAD_POLICY"
+      ],
+      "state": "PARTIALLY_OWNER_DEFINED"
+    },
+    {
+      "tag": "empowerment",
+      "listedByOwner": true,
+      "records": 39,
+      "feats": 2,
+      "talents": 37,
+      "pctOfCorpus": 2.532,
+      "controllingPolicies": [],
+      "partialPolicies": [],
+      "state": "PHASE3D_OWNER_DEFINITION_REQUIRED"
+    },
+    {
+      "tag": "precision",
+      "listedByOwner": true,
+      "records": 242,
+      "feats": 68,
+      "talents": 174,
+      "pctOfCorpus": 15.714,
+      "controllingPolicies": [],
+      "partialPolicies": [],
+      "state": "PHASE3D_OWNER_DEFINITION_REQUIRED"
+    },
+    {
+      "tag": "reliability",
+      "listedByOwner": true,
+      "records": 175,
+      "feats": 33,
+      "talents": 142,
+      "pctOfCorpus": 11.364,
+      "controllingPolicies": [
+        "RELIABILITY_POLICY"
+      ],
+      "partialPolicies": [],
+      "state": "OWNER_DEFINED"
+    },
+    {
+      "tag": "resources",
+      "listedByOwner": true,
+      "records": 60,
+      "feats": 14,
+      "talents": 46,
+      "pctOfCorpus": 3.896,
+      "controllingPolicies": [],
+      "partialPolicies": [],
+      "state": "PHASE3D_OWNER_DEFINITION_REQUIRED"
+    },
+    {
+      "tag": "setup",
+      "listedByOwner": true,
+      "records": 177,
+      "feats": 28,
+      "talents": 149,
+      "pctOfCorpus": 11.494,
+      "controllingPolicies": [],
+      "partialPolicies": [],
+      "state": "PHASE3D_OWNER_DEFINITION_REQUIRED"
+    },
+    {
+      "tag": "support",
+      "listedByOwner": true,
+      "records": 306,
+      "feats": 21,
+      "talents": 285,
+      "pctOfCorpus": 19.87,
+      "controllingPolicies": [],
+      "partialPolicies": [],
+      "state": "PHASE3D_OWNER_DEFINITION_REQUIRED"
+    },
+    {
+      "tag": "survivability",
+      "listedByOwner": true,
+      "records": 171,
+      "feats": 22,
+      "talents": 149,
+      "pctOfCorpus": 11.104,
+      "controllingPolicies": [],
+      "partialPolicies": [],
+      "state": "PHASE3D_OWNER_DEFINITION_REQUIRED"
+    },
+    {
+      "tag": "target-designation",
+      "listedByOwner": true,
+      "records": 78,
+      "feats": 3,
+      "talents": 75,
+      "pctOfCorpus": 5.065,
+      "controllingPolicies": [],
+      "partialPolicies": [],
+      "state": "PHASE3D_OWNER_DEFINITION_REQUIRED"
+    },
+    {
+      "tag": "targeting",
+      "listedByOwner": true,
+      "records": 153,
+      "feats": 30,
+      "talents": 123,
+      "pctOfCorpus": 9.935,
+      "controllingPolicies": [],
+      "partialPolicies": [],
+      "state": "PHASE3D_OWNER_DEFINITION_REQUIRED"
+    },
+    {
+      "tag": "tech",
+      "listedByOwner": true,
+      "records": 67,
+      "feats": 12,
+      "talents": 55,
+      "pctOfCorpus": 4.351,
+      "controllingPolicies": [],
+      "partialPolicies": [],
+      "state": "PHASE3D_OWNER_DEFINITION_REQUIRED"
+    }
+  ],
+  "phase3dMayStart": true
+}
