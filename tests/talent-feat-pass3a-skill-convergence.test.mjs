@@ -33,9 +33,11 @@ test('the working authority equals a fresh deterministic derivation (twice, byte
   const a = buildOutputs(), b = buildOutputs();
   assert.equal(a.json, b.json); assert.equal(txt(AUTH_JSON), a.json); assert.equal(txt(AUTH_MD), a.md);
 });
-test('overlay derives exactly 62 records / 75 additions, zero removals', () => {
-  assert.equal(auth.counts.recordsChanged, 62); assert.equal(auth.counts.tagAdditions, 75); assert.equal(auth.counts.removals, 0);
-  assert.equal(auth.counts.tagInstancesAfter - auth.counts.tagInstancesBefore, 75);
+test('overlay derives exactly 63 records / 76 additions, zero removals', () => {
+  assert.equal(auth.counts.recordsChanged, 63); assert.equal(auth.counts.tagAdditions, 76); assert.equal(auth.counts.removals, 0);
+  assert.equal(auth.counts.tagInstancesBefore, 9334); assert.equal(auth.counts.tagInstancesAfter, 9410);
+  assert.equal(auth.sharedVocabulary.count, 187);
+  const u = auth.tagUsage.find(x => x.tag === 'use_the_force'); assert.equal(u.before, 98); assert.equal(u.after, 118);
   for (const r of auth.records) assert.deepEqual(r.finalTags.slice(0, r.baselineTags.length), r.baselineTags);
 });
 test('only records named in the overlay changed; the other Mobile Combatant is untouched', () => {
@@ -70,17 +72,23 @@ test('builder fails closed: wrong name, unknown ID, present tag, outside vocabul
   assert.throws(() => derive(baseline, mk(o => { o.additions[0].add = ['not_a_tag']; }), vocab), /outside the 187-tag/);
   assert.throws(() => derive(baseline, mk(o => { o.additions[0].remove = ['x']; }), vocab), /unauthorized removal/);
   assert.throws(() => derive(baseline, mk(o => { o.additions.pop(); }), vocab), /DISCREPANCY/);
-  assert.throws(() => derive(baseline, mk(o => { o.additions.find(a => a.name === 'Inspire Fear I').add = ['use_the_force']; o.expected = { uniqueRecords: 62, tagAdditions: 74 }; }), vocab), /use_the_force without force/);
+  assert.throws(() => derive(baseline, mk(o => { o.additions.find(a => a.name === 'Inspire Fear I').add = ['use_the_force']; o.expected = { uniqueRecords: 63, tagAdditions: 75 }; }), vocab), /use_the_force without force/);
 });
-test('sweep reproduces 117 raw hits, every hit has a terminal state, and exactly the unruled ones are PASS3A_OWNER_REVIEW', () => {
-  const rep = rd(SWEEP_JSON); assert.equal(rep.counts.rawHits, 117);
+test('sweep: 117 raw hits / 97 unique talents, every hit terminal, PASS3A_OWNER_REVIEW = 0, owner count correction recorded', () => {
+  const rep = rd(SWEEP_JSON); assert.equal(rep.counts.rawHits, 117); assert.equal(rep.counts.uniqueTalents, 97);
   assert.equal(JSON.stringify(rep, null, 2) + '\n', buildReport().json);
-  const states = new Set(['PASS3A_OWNER_APPROVED', 'PASS3A_FALSE_POSITIVE', 'PASS3A_INTENTIONAL_GENERIC_SKILL', 'PASS3A_ROLE_NOT_SKILL', 'PASS3A_TEXT_MATCH_NOT_SKILL', 'PASS3A_OWNER_REVIEW']);
-  for (const f of rep.findings) assert.ok(states.has(f.state));
-  const review = rep.findings.filter(f => f.state === 'PASS3A_OWNER_REVIEW').map(f => `${f.canonicalId}|${f.tag}`).sort();
-  assert.deepEqual(review, ['06ab0e40780ea63d|knowledge', '62d461ae3b0fcfa9|use_the_force', 'd26506bfba104470|acrobatics', 'df6c20e602190daa|ride', 'e293cb03d35c2bff|acrobatics']);
-  for (const f of rep.findings.filter(x => x.state === 'PASS3A_OWNER_REVIEW')) assert.ok(!rec(auth, f.canonicalId).finalTags.includes(f.tag));
-  assert.ok(txt(SWEEP_MD).includes('Residual owner review detail'));
+  const states = new Set(['PASS3A_OWNER_APPROVED', 'PASS3A_FALSE_POSITIVE', 'PASS3A_INTENTIONAL_GENERIC_SKILL', 'PASS3A_ROLE_NOT_SKILL', 'PASS3A_TEXT_MATCH_NOT_SKILL']);
+  for (const f of rep.findings) assert.ok(states.has(f.state), `${f.name} ${f.tag} ${f.state}`);
+  assert.deepEqual(rep.counts.byState, { PASS3A_FALSE_POSITIVE: 4, PASS3A_INTENTIONAL_GENERIC_SKILL: 9, PASS3A_OWNER_APPROVED: 75, PASS3A_ROLE_NOT_SKILL: 3, PASS3A_TEXT_MATCH_NOT_SKILL: 26 });
+  assert.equal(rep.findings.filter(f => f.state === 'PASS3A_OWNER_REVIEW').length, 0);
+  assert.equal(Object.values(rep.counts.byState).reduce((a, b) => a + b, 0), 117);
+  assert.deepEqual(overlay.sweepCountCorrection.certified, { rawHits: 117, uniqueTalents: 97 });
+  assert.deepEqual(overlay.sweepCountCorrection.earlierOwnerReported, { rawHits: 117, uniqueTalents: 98 });
+});
+test('final rulings: Move Massive Object gains use_the_force only; four residual items stay untagged', () => {
+  const m = rec(auth, '62d461ae3b0fcfa9'); assert.deepEqual(m.finalTags.filter(t => !m.baselineTags.includes(t)), ['use_the_force']); assert.ok(m.baselineTags.includes('force'));
+  for (const [id, t] of [['06ab0e40780ea63d', 'knowledge'], ['df6c20e602190daa', 'ride'], ['d26506bfba104470', 'acrobatics'], ['e293cb03d35c2bff', 'acrobatics']]) assert.ok(!rec(auth, id).finalTags.includes(t), id);
+  assert.ok(rec(auth, 'd26506bfba104470').finalTags.includes('gather_information'));
 });
 test('the working authority never claims production mutation and the pack hash matches the baseline pin', () => {
   assert.equal(auth.counts.productionMutated, false); assert.equal(auth.status, 'PASS3A_WORKING_AUTHORITY_ADD_ONLY_NOT_PRODUCTION');

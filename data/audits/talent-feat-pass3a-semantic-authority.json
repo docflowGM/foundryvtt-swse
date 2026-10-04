@@ -217,12 +217,12 @@
   },
   "counts": {
     "talents": 1187,
-    "recordsChanged": 62,
-    "tagAdditions": 75,
+    "recordsChanged": 63,
+    "tagAdditions": 76,
     "removals": 0,
     "productionMutated": false,
     "tagInstancesBefore": 9334,
-    "tagInstancesAfter": 9409,
+    "tagInstancesAfter": 9410,
     "distinctTagsBefore": 181,
     "distinctTagsAfter": 187
   },
@@ -365,7 +365,7 @@
     {
       "tag": "use_the_force",
       "before": 98,
-      "after": 117
+      "after": 118
     },
     {
       "tag": "damage_bonus",
@@ -1887,6 +1887,41 @@
         "movement",
         "evasion",
         "acrobatics"
+      ]
+    },
+    {
+      "canonicalId": "62d461ae3b0fcfa9",
+      "name": "Move Massive Object",
+      "state": "PASS3A_OWNER_APPROVED",
+      "added": [
+        "use_the_force"
+      ],
+      "sections": [
+        "Final owner rulings"
+      ],
+      "reason": "The canonical Benefit changes resolution of the Use the Force check used with move object: the character compares the Use the Force check against the Reflex Defense of each creature, droid and vehicle in the target area. Direct interaction with the Use the Force skill. The record already carries `force`; only `use_the_force` is added.",
+      "before": [
+        "force",
+        "force_power_synergy",
+        "telekinesis",
+        "force_point_spend",
+        "resource_spend",
+        "battlefield_control",
+        "burst_damage",
+        "ranged",
+        "control"
+      ],
+      "after": [
+        "force",
+        "force_power_synergy",
+        "telekinesis",
+        "force_point_spend",
+        "resource_spend",
+        "battlefield_control",
+        "burst_damage",
+        "ranged",
+        "control",
+        "use_the_force"
       ]
     },
     {
@@ -4023,6 +4058,13 @@
         "ambush_defense",
         "survivability",
         "ability_enhancement"
+      ],
+      "pass3aDispositions": [
+        {
+          "tag": "knowledge",
+          "state": "PASS3A_TEXT_MATCH_NOT_SKILL",
+          "reason": "\"Knowledge\" occurs in the talent name only. The Benefit adds Wisdom to Reflex Defense when Dexterity would be denied and contains no Knowledge skill mechanic."
+        }
       ]
     },
     {
@@ -14911,8 +14953,20 @@
         "battlefield_control",
         "burst_damage",
         "ranged",
-        "control"
-      ]
+        "control",
+        "use_the_force"
+      ],
+      "pass3a": {
+        "batch": 1,
+        "state": "PASS3A_OWNER_APPROVED",
+        "added": [
+          "use_the_force"
+        ],
+        "sections": [
+          "Final owner rulings"
+        ],
+        "reason": "The canonical Benefit changes resolution of the Use the Force check used with move object: the character compares the Use the Force check against the Reflex Defense of each creature, droid and vehicle in the target area. Direct interaction with the Use the Force skill. The record already carries `force`; only `use_the_force` is added."
+      }
     },
     {
       "canonicalId": "62d47b8982b6591e",
@@ -29939,7 +29993,14 @@
           "Original six-skill pass"
         ],
         "reason": "Owner-approved exact-skill addition (Gather Information)."
-      }
+      },
+      "pass3aDispositions": [
+        {
+          "tag": "acrobatics",
+          "state": "PASS3A_TEXT_MATCH_NOT_SKILL",
+          "reason": "The scanner matched \"balanc\" inside \"bank balances\" (ordinary English). The separately approved gather_information addition stands."
+        }
+      ]
     },
     {
       "canonicalId": "d2aabaa6848b4a09",
@@ -31845,6 +31906,13 @@
         "recovery",
         "healing",
         "survivability"
+      ],
+      "pass3aDispositions": [
+        {
+          "tag": "ride",
+          "state": "PASS3A_TEXT_MATCH_NOT_SKILL",
+          "reason": "\"Ride\" occurs only in the talent name. The mechanic is a Force Point reaction granting concealment and potentially an immediate second wind; no Ride check exists."
+        }
       ]
     },
     {
@@ -32387,6 +32455,13 @@
         "target-designation",
         "melee_defense",
         "defense"
+      ],
+      "pass3aDispositions": [
+        {
+          "tag": "acrobatics",
+          "state": "PASS3A_TEXT_MATCH_NOT_SKILL",
+          "reason": "\"Unbalance\" / \"off balance\" is ordinary combat language; the mechanic removes the designated opponent's Strength bonus on attacks against the character and invokes no Acrobatics check. Follows the Unbalancing Adaptation ruling."
+        }
       ]
     },
     {

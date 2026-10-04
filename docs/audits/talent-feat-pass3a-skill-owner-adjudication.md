@@ -2,9 +2,9 @@
 
 ADD-only owner overlay on the Pass 3A baseline (certified Phase 12 final talent state). Phase 12 authorities are immutable. Canonical ID is the mutation identity; name is a guard. Rulings not listed here and not covered by the sweep dispositions are PASS3A_OWNER_REVIEW and are never mutated.
 
-Owner-stated expectation: 62 records / 75 additions (assertion only).
+Owner-stated expectation: 63 records / 76 additions (assertion only).
 
-## Approved additions (62 records)
+## Approved additions (63 records)
 
 | Talent | ID | Add | Section |
 | --- | --- | --- | --- |
@@ -70,8 +70,9 @@ Owner-stated expectation: 62 records / 75 additions (assertion only).
 | Skilled Demolitionist | `c3a67c14c713a7a3` | `mechanics` | Mechanics |
 | Maximize Cover | `f7b8af6b2e6b50c3` | `initiative` | Initiative |
 | Folded Space Mastery | `93bb4f8c058655f9` | `use_computer` | Use Computer |
+| Move Massive Object | `62d461ae3b0fcfa9` | `use_the_force` | Final owner rulings |
 
-## Owner-ruled non-skill dispositions (38)
+## Owner-ruled non-skill dispositions (42)
 
 | Talent | ID | Tag | State | Reason |
 | --- | --- | --- | --- | --- |
@@ -113,3 +114,7 @@ Owner-stated expectation: 62 records / 75 additions (assertion only).
 | Natural Healing | `2c18d68d5e294dc8` | `knowledge` | PASS3A_TEXT_MATCH_NOT_SKILL | Prose such as "your knowledge of..." is not a Knowledge skill mechanic. |
 | Interrogator | `aab9d63888f12dba` | `knowledge` | PASS3A_TEXT_MATCH_NOT_SKILL | Prose such as "your knowledge of..." is not a Knowledge skill mechanic. |
 | Medical Analyzer | `7fb6b7d078bdb493` | `knowledge` | PASS3A_TEXT_MATCH_NOT_SKILL | Prose such as "your knowledge of..." is not a Knowledge skill mechanic. |
+| Knowledge and Defense | `06ab0e40780ea63d` | `knowledge` | PASS3A_TEXT_MATCH_NOT_SKILL | "Knowledge" occurs in the talent name only. The Benefit adds Wisdom to Reflex Defense when Dexterity would be denied and contains no Knowledge skill mechanic. |
+| Ride the Current | `df6c20e602190daa` | `ride` | PASS3A_TEXT_MATCH_NOT_SKILL | "Ride" occurs only in the talent name. The mechanic is a Force Point reaction granting concealment and potentially an immediate second wind; no Ride check exists. |
+| Electronic Trail | `d26506bfba104470` | `acrobatics` | PASS3A_TEXT_MATCH_NOT_SKILL | The scanner matched "balanc" inside "bank balances" (ordinary English). The separately approved gather_information addition stands. |
+| Unbalance Opponent | `e293cb03d35c2bff` | `acrobatics` | PASS3A_TEXT_MATCH_NOT_SKILL | "Unbalance" / "off balance" is ordinary combat language; the mechanic removes the designated opponent's Strength bonus on attacks against the character and invokes no Acrobatics check. Follows the Unbalancing Adaptation ruling. |

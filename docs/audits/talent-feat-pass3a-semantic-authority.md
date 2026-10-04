@@ -3,8 +3,8 @@
 Status `PASS3A_WORKING_AUTHORITY_ADD_ONLY_NOT_PRODUCTION`. Baseline (certified Phase 12 final state, 1,187 talents) + ADD-only owner overlay. **packs/talents.db is unchanged; nothing was applied to production.**
 
 - Shared vocabulary: 187 tags (Phase 12 final 181 + six owner-authorized skill tags).
-- Records changed: **62**; tag additions: **75**; removals: 0.
-- Tag instances 9334 -> 9409; distinct tags 181 -> 187.
+- Records changed: **63**; tag additions: **76**; removals: 0.
+- Tag instances 9334 -> 9410; distinct tags 181 -> 187.
 
 ## Changed records (before -> after)
 
@@ -31,6 +31,7 @@ Status `PASS3A_WORKING_AUTHORITY_ADD_ONLY_NOT_PRODUCTION`. Baseline (certified P
 | Fluidity | `5567797336fc8571` | `acrobatics` | `force`, `use_the_force`, `skill_substitution`, `skills`, `mobility`, `reroll`, `grapple`, `opposed_check`, `force_point_spend`, `resource_spend`, `reliability` | `force`, `use_the_force`, `skill_substitution`, `skills`, `mobility`, `reroll`, `grapple`, `opposed_check`, `force_point_spend`, `resource_spend`, `reliability`, `acrobatics` |
 | Precision Implant | `58e37d40d3aa7d4b` | `treat_injury` | `once-per-encounter`, `standard_action`, `action_economy`, `biotech`, `implant`, `equipment`, `ally_support`, `support`, `precision` | `once-per-encounter`, `standard_action`, `action_economy`, `biotech`, `implant`, `equipment`, `ally_support`, `support`, `precision`, `treat_injury` |
 | Acrobatic Recovery | `5d4a63123e5a5eb4` | `acrobatics` | `skills`, `mobility`, `movement`, `evasion` | `skills`, `mobility`, `movement`, `evasion`, `acrobatics` |
+| Move Massive Object | `62d461ae3b0fcfa9` | `use_the_force` | `force`, `force_power_synergy`, `telekinesis`, `force_point_spend`, `resource_spend`, `battlefield_control`, `burst_damage`, `ranged`, `control` | `force`, `force_power_synergy`, `telekinesis`, `force_point_spend`, `resource_spend`, `battlefield_control`, `burst_damage`, `ranged`, `control`, `use_the_force` |
 | Spynet Agent | `648d9634a3795988` | `gather_information` | `investigation`, `knowledge`, `galactic_lore`, `social`, `social_network`, `network`, `skill_substitution`, `skills`, `reroll`, `reliability` | `investigation`, `knowledge`, `galactic_lore`, `social`, `social_network`, `network`, `skill_substitution`, `skills`, `reroll`, `reliability`, `gather_information` |
 | Findsman Ceremonies | `661c2c0665e911f6` | `use_the_force` | `force`, `visions`, `precognition`, `perception`, `stealth`, `skills`, `reroll`, `reliability`, `force_point_spend`, `resource_spend`, `resource_recovery`, `recovery`, `resources`, `precision` | `force`, `visions`, `precognition`, `perception`, `stealth`, `skills`, `reroll`, `reliability`, `force_point_spend`, `resource_spend`, `resource_recovery`, `recovery`, `resources`, `precision`, `use_the_force` |
 | Ghost Assailant | `6908d612b77c6f92` | `perception` | `stealth`, `skills`, `swift_action`, `action_economy`, `cover`, `concealment`, `ambush`, `precision`, `setup`, `control`, `opposed_check`, `positioning` | `stealth`, `skills`, `swift_action`, `action_economy`, `cover`, `concealment`, `ambush`, `precision`, `setup`, `control`, `opposed_check`, `positioning`, `perception` |
@@ -78,7 +79,7 @@ Status `PASS3A_WORKING_AUTHORITY_ADD_ONLY_NOT_PRODUCTION`. Baseline (certified P
 | Tag | Before | After |
 | --- | ---: | ---: |
 | `force` | 289 | 290 |
-| `use_the_force` | 98 | 117 |
+| `use_the_force` | 98 | 118 |
 | `persuasion` | 60 | 61 |
 | `stealth` | 53 | 55 |
 | `pilot` | 43 | 44 |

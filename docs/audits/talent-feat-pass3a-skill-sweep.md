@@ -2,76 +2,16 @@
 
 19 canonical skills scanned across talent name + Benefit/description text (prerequisites excluded) against the Pass 3A baseline. Lexical evidence only; every raw hit ends in a terminal state.
 
-- Raw hits: **117** across **97** unique talents (owner-reported review set: 117 / 98).
+- Raw hits: **117** across **97** unique talents (certified count; the earlier owner checkpoint said 117 / 98, which was a non-reproducible counting error corrected in the overlay).
 - PASS3A_FALSE_POSITIVE: 4
 - PASS3A_INTENTIONAL_GENERIC_SKILL: 9
-- PASS3A_OWNER_APPROVED: 74
-- PASS3A_OWNER_REVIEW: 5
+- PASS3A_OWNER_APPROVED: 75
 - PASS3A_ROLE_NOT_SKILL: 3
-- PASS3A_TEXT_MATCH_NOT_SKILL: 22
+- PASS3A_TEXT_MATCH_NOT_SKILL: 26
 
 Overlay rulings without a scanner hit: 1 approved additions, 0 dispositions.
 
-## Residual owner review detail
-
-Tooling notes below are NOT rulings. Nothing here was mutated.
-
-### Knowledge and Defense — `knowledge`
-
-- Canonical ID: `06ab0e40780ea63d`; source: Jedi Academy Training Manual p.75
-- Existing tags: `defense`, `ambush_defense`, `survivability`, `ability_enhancement`
-- Benefit: You add your Wisdom bonus to your Reflex Defense whenever your Dexterity bonus would normally be denied to you.
-- Why flagged: The talent NAME "Knowledge and Defense" contains the word Knowledge; the Benefit text does not mention the skill.
-- Mechanical reading: Benefit adds the Wisdom bonus to Reflex Defense when Dexterity would be denied. No Knowledge check is made, modified or gated. Reads as a name-only text match.
-- Feat-side equivalent: Feat-side `knowledge` is used only where a Knowledge check or substitution is mechanically involved (for example Cut the Red Tape, Mind of Reason); no name-only precedent was tagged.
-
-### Move Massive Object — `use_the_force`
-
-- Canonical ID: `62d461ae3b0fcfa9`; source: Legacy Era Campaign Guide p.55
-- Existing tags: `force`, `force_power_synergy`, `telekinesis`, `force_point_spend`, `resource_spend`, `battlefield_control`, `burst_damage`, `ranged`, `control`
-- Benefit: When you successfully use the move object power to move an object of Large size or bigger, you can make an area attack with the object instead of throwing it at or dropping it on a single target, as normal for the power. You must spend a Force Point when you activate the power to do this, and the area you target is based on the size of the object: Large, 2x2; Huge, 3x3; Gargantuan, 4x4; Colossal and larger, 6x6. When you use move object to make an area attack with the object you are moving, you compare your Use the Force check to the Reflex Defense of each creature, droid, and vehicle in the target area. If your check equals or exceeds the target's Reflex Defense, it takes damage from the object (as determined by the move object power). Otherwise, the target takes half damage. This is an area effect.
-- Why flagged: Benefit text contains "Use the Force check".
-- Mechanical reading: Benefit changes how the Use the Force check made for move object is resolved: it is compared to the Reflex Defense of every creature in an area. This reads as a direct Use the Force interaction comparable to the approved Telekinetic Power / Wrath of the Dark Side class, so `use_the_force` (with the already-present `force`) looks like a true positive. Not applied; owner decides.
-- Feat-side equivalent: Feat-side `use_the_force` is carried by feats that directly modify or oppose a Use the Force check (for example Force Sensitivity, Unstoppable Force).
-
-### Electronic Trail — `acrobatics`
-
-- Canonical ID: `d26506bfba104470`; source: Galaxy of Intrigue p.24
-- Existing tags: `investigation`, `tracking`, `pursuit`, `network`, `tech`, `equipment`, `recon`, `target-designation`
-- Benefit: Once you have located a target using Gather Information, you can track its electronic presence. Once per day, you receive a catalog of the target's electronic trail, which includes the amount and location of credits spent, the routes of any public transportation taken, and the sites viewed on the HoloNet while the target was logged in using its primary identity. To receive this information, you must have access to a computer or datapad plus access to a network or the HoloNet. The electronic trail does not reveal bank balances or other secret information, which requires a separate Gather Information check.
-- Why flagged: The acrobatics pattern matches the substring "balanc" in "bank balances".
-- Mechanical reading: Ordinary English ("bank balances"); no Acrobatics mechanic. Reads as a text match, not a skill. (The separately approved gather_information addition on this record is unaffected.)
-- Feat-side equivalent: None.
-
-### Ride the Current — `ride`
-
-- Canonical ID: `df6c20e602190daa`; source: Jedi Academy Training Manual p.77
-- Existing tags: `force`, `reaction`, `action_economy`, `force_point_spend`, `resource_spend`, `concealment`, `evasion`, `defense`, `recovery`, `healing`, `survivability`
-- Benefit: As a reaction to being damaged by an attack or Force power, you can spend a Force Point to gain total concealment from all targets until the end of your next turn. Additionally, if you have not yet taken your second wind, you can do so immediately as a part of this reaction.
-- Why flagged: The talent NAME "Ride the Current" contains the word Ride; the Benefit text does not mention the skill.
-- Mechanical reading: Benefit is a Force Point reaction granting total concealment and an immediate second wind. No Ride check is involved. Reads as a name-only text match.
-- Feat-side equivalent: Feat-side `ride` is used only for mounted-riding mechanics (Mounted Combat, Trample).
-
-### Unbalance Opponent — `acrobatics`
-
-- Canonical ID: `e293cb03d35c2bff`; source: Saga Edition Core Rulebook p.52
-- Existing tags: `melee`, `control`, `target-designation`, `melee_defense`, `defense`
-- Benefit: You are skilled at keeping your opponents off balance in melee combat. During your action, you designate an opponent no more than one size category larger or smaller than you. That opponent doesn't get to add his Strength bonus on attack rolls when targeting you. (If the opponent has a Strength penalty, he still suffers that penalty.) The opponent's Strength modifier applies to damage, as usual. You can select a new opponent on your next turn.
-- Why flagged: The acrobatics pattern matches the substring "balanc" in "off balance" and the name "Unbalance Opponent".
-- Mechanical reading: Ordinary English ("off balance"); the Benefit removes the designated opponent's Strength bonus on attacks against the user. No Acrobatics check. Reads as a text match, the same pattern already ruled for Unbalancing Adaptation.
-- Feat-side equivalent: None.
-
-## PASS3A_OWNER_REVIEW (5)
-
-| Talent | ID | Source p. | Tag | Excerpt |
-| --- | --- | --- | --- | --- |
-| Knowledge and Defense | `06ab0e40780ea63d` | Jedi Academy Training Manual 75 | `knowledge` | Knowledge and Defense You add your Wisdom bonus to your Reflex Defense whenever your Dexterity bonu… |
-| Move Massive Object | `62d461ae3b0fcfa9` | Legacy Era Campaign Guide 55 | `use_the_force` | …u use move object to make an area attack with the object you are moving, you compare your Use the Force check to the Reflex Defense of each creature, droid, and vehicle in the target area. If y… |
-| Electronic Trail | `d26506bfba104470` | Galaxy of Intrigue 24 | `acrobatics` | …atapad plus access to a network or the HoloNet. The electronic trail does not reveal bank balances or other secret information, which requires a separate Gather Information check. Once yo… |
-| Ride the Current | `df6c20e602190daa` | Jedi Academy Training Manual 77 | `ride` | Ride the Current As a reaction to being damaged by an attack or Force power, you can spend a F… |
-| Unbalance Opponent | `e293cb03d35c2bff` | Saga Edition Core Rulebook 52 | `acrobatics` | Unbalance Opponent You are skilled at keeping your opponents off balance in melee combat. During yo… |
-
-## PASS3A_OWNER_APPROVED (74)
+## PASS3A_OWNER_APPROVED (75)
 
 | Talent | ID | Source p. | Tag | Excerpt |
 | --- | --- | --- | --- | --- |
@@ -106,6 +46,7 @@ Tooling notes below are NOT rulings. Nothing here was mutated.
 | Fluidity | `5567797336fc8571` | Jedi Academy Training Manual 85 | `acrobatics` | …your Use the Force check modifier instead of your Acro-batics check modifier when making Acrobatics checks. If you are entitled to an Acrobatics check reroll, you may reroll your Use the Fo… |
 | Precision Implant | `58e37d40d3aa7d4b` | Legacy Era Campaign Guide 47 | `treat_injury` | …after 8 hours of rest, or by performing successful surgery (as per the application of the Treat Injury skill) on the target. Once per encounter as a standard action, you can give one adjacent… |
 | Acrobatic Recovery | `5d4a63123e5a5eb4` | Saga Edition Core Rulebook 40 | `acrobatics` | Acrobatic Recovery If any effect causes you to fall Prone, you can make a DC 20 Acrobatics check to remain on your feet. If any effect causes you to fall Prone, you can make a DC 2… |
+| Move Massive Object | `62d461ae3b0fcfa9` | Legacy Era Campaign Guide 55 | `use_the_force` | …u use move object to make an area attack with the object you are moving, you compare your Use the Force check to the Reflex Defense of each creature, droid, and vehicle in the target area. If y… |
 | Spynet Agent | `648d9634a3795988` | Force Unleashed Campaign Guide 50 | `gather_information` | Spynet Agent You can use your Gather Information check modifier instead of your Knowledge (galactic lore) check modifier when making Knowl… |
 | Findsman Ceremonies | `661c2c0665e911f6` | Scum and Villainy 26 | `use_the_force` | …ng. For the remainder of the day, whenever you make a Perception or Stealth check, make a Use the Force check to use the farseeing Force power, or make an attack roll, you can choose to reroll… |
 | Ghost Assailant | `6908d612b77c6f92` | Galaxy at War 20 | `perception` | …during that turn you can make a Stealth check as a swift action, opposed by the target's Perception check. If you succeed, the target is considered flat-footed against you until the end of… |
@@ -181,13 +122,14 @@ Tooling notes below are NOT rulings. Nothing here was mutated.
 | Legendary Commander | `d1683318140f3906` | Starships of the Galaxy 18 | `pilot` | …ex Defense using your heroic level plus one-half the ship's armor bonus (round down), the pilot's heroic level, or the ship's armor bonus, whichever is more. In addition, all gunners on… |
 | Dogfight Gunner | `f52cadb1ae252d0c` | Saga Edition Core Rulebook 207 | `pilot` | …t, you take no penalty on your attack rolls with Vehicle Weapons, even if you are not the Pilot. While your Vehicle is engaged in a Dogfight, you take no penalty on your attack rolls wi… |
 
-## PASS3A_TEXT_MATCH_NOT_SKILL (22)
+## PASS3A_TEXT_MATCH_NOT_SKILL (26)
 
 | Talent | ID | Source p. | Tag | Excerpt |
 | --- | --- | --- | --- | --- |
 | Noble Fencing Style | `00c3231e4a4173fa` | Knights of the Old Republic Campaign Guide 27 | `deception` | …to increase accuracy, taunting and distracting an opponent with feints, misdirection, and deception. When using a light melee weapon or a lightsaber that you are proficient with, you can us… |
 | Unbalancing Adaptation | `02bf213d8104b017` | Legacy Era Campaign Guide 30 | `acrobatics` | Unbalancing Adaptation When you use the Adapt and Survive talent, you also deny the bonus that trigge… |
 | Knowledge of the Force | `04eca2813630e8d4` | Knights of the Old Republic Campaign Guide 58 | `knowledge` | Knowledge of the Force You can use your scholarly knowledge of the Force to help others reach their… |
+| Knowledge and Defense | `06ab0e40780ea63d` | Jedi Academy Training Manual 75 | `knowledge` | Knowledge and Defense You add your Wisdom bonus to your Reflex Defense whenever your Dexterity bonu… |
 | Natural Healing | `2c18d68d5e294dc8` | Force Unleashed Campaign Guide 54 | `knowledge` | Natural Healing Your extensive knowledge of natural healing allows you to make first aid, treat disease, and treat poison (Treat I… |
 | Shadow Armor | `4916dbbae0f18ee1` | Legacy Era Campaign Guide 58 | `use_the_force` | Shadow Armor You use the Force to bend light around yourself, wrapping you in shadows and making it difficult for enemie… |
 | Force Momentum | `4cb2cf521a4d2175` | Knights of the Old Republic Campaign Guide 58 | `use_the_force` | Force Momentum You use the Force to add to the impact of your melee weapon, increasing your damage. Whenever you spend a F… |
@@ -200,7 +142,10 @@ Tooling notes below are NOT rulings. Nothing here was mutated.
 | Preserving Shot | `a594f0b9ff786a6c` | Force Unleashed Campaign Guide 52 | `jump` | …n, you disable the ship's sublight engines and hyperdrive. The ship cannot move or make a jump to lightspeed until it has received repairs (through use of the repair object application… |
 | Interrogator | `aab9d63888f12dba` | Force Unleashed Campaign Guide 102 | `knowledge` | …at no biological creature can match, and combine it with the cruel application of medical knowledge. You can use your Treat Injury modifier on a Persuasion check to change attitude or intim… |
 | Guard's Endurance | `bffc3826d39f3946` | Legacy Era Campaign Guide 41 | `endurance` | Guard's Endurance Whenever you begin your turn adjacent to the target of your Ward talent (see below), you… |
+| Electronic Trail | `d26506bfba104470` | Galaxy of Intrigue 24 | `acrobatics` | …atapad plus access to a network or the HoloNet. The electronic trail does not reveal bank balances or other secret information, which requires a separate Gather Information check. Once yo… |
 | Force Direction | `d65ad7fb7a374762` | Knights of the Old Republic Campaign Guide 58 | `use_the_force` | Force Direction You use the Force to guide your ranged attacks to their target. Whenever you spend a Force point to add to… |
+| Ride the Current | `df6c20e602190daa` | Jedi Academy Training Manual 77 | `ride` | Ride the Current As a reaction to being damaged by an attack or Force power, you can spend a F… |
+| Unbalance Opponent | `e293cb03d35c2bff` | Saga Edition Core Rulebook 52 | `acrobatics` | Unbalance Opponent You are skilled at keeping your opponents off balance in melee combat. During yo… |
 | Sith Alchemy | `eb4f3e8660bc476589d0323d4cc00845` | Jedi Academy Training Manual 21 | `knowledge` | Sith Alchemy Your knowledge of Sith alchemy allows you to imbue certain objects with the power of the dark side. You… |
 | Power Boost | `eb503c1c3fb945a6` | Scavenger's Guide to Droids 28 | `jump` | …er surge, you can use one of the following bonuses with your installed locomotion system: Jump +4 squares (walking or wheeled locomotion), or increase hovering height by 4 squares (hov… |
 | Sith Alchemy | `eeecb3737aabf789` | Knights of the Old Republic Campaign Guide 41 | `knowledge` | Sith Alchemy Your knowledge of Sith sorcery allows you to imbue talismans and other objects with the power of the dar… |

@@ -78,7 +78,7 @@ export function sweep(pack, baseline, overlay) {
 function render(rep) {
   const L = ['# Talent/Feat Pass 3A — Skill Completeness Evidence Sweep (report-only)', '',
     `19 canonical skills scanned across talent name + Benefit/description text (prerequisites excluded) against the Pass 3A baseline. Lexical evidence only; every raw hit ends in a terminal state.`, '',
-    `- Raw hits: **${rep.counts.rawHits}** across **${rep.counts.uniqueTalents}** unique talents (owner-reported review set: 117 / 98).`,
+    `- Raw hits: **${rep.counts.rawHits}** across **${rep.counts.uniqueTalents}** unique talents (certified count; the earlier owner checkpoint said 117 / 98, which was a non-reproducible counting error corrected in the overlay).`,
     ...Object.entries(rep.counts.byState).sort().map(([k, v]) => `- ${k}: ${v}`), '',
     `Overlay rulings without a scanner hit: ${rep.approvedNoHit.length} approved additions, ${rep.dispositionNoHit.length} dispositions.`, ''];
   const rv = rep.findings.filter(f => f.state === 'PASS3A_OWNER_REVIEW');

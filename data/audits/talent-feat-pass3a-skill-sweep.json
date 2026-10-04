@@ -169,8 +169,8 @@
       "page": 75,
       "skill": "Knowledge",
       "tag": "knowledge",
-      "state": "PASS3A_OWNER_REVIEW",
-      "ownerRuling": null,
+      "state": "PASS3A_TEXT_MATCH_NOT_SKILL",
+      "ownerRuling": "\"Knowledge\" occurs in the talent name only. The Benefit adds Wisdom to Reflex Defense when Dexterity would be denied and contains no Knowledge skill mechanic.",
       "excerpt": "Knowledge and Defense You add your Wisdom bonus to your Reflex Defense whenever your Dexterity bonu…",
       "existingTags": [
         "defense",
@@ -178,13 +178,7 @@
         "survivability",
         "ability_enhancement"
       ],
-      "matchedIn": "name+text",
-      "canonicalBenefit": "You add your Wisdom bonus to your Reflex Defense whenever your Dexterity bonus would normally be denied to you.",
-      "reviewNotes": {
-        "scannerReason": "The talent NAME \"Knowledge and Defense\" contains the word Knowledge; the Benefit text does not mention the skill.",
-        "interpretation": "Benefit adds the Wisdom bonus to Reflex Defense when Dexterity would be denied. No Knowledge check is made, modified or gated. Reads as a name-only text match.",
-        "featSideEquivalent": "Feat-side `knowledge` is used only where a Knowledge check or substitution is mechanically involved (for example Cut the Red Tape, Mind of Reason); no name-only precedent was tagged."
-      }
+      "matchedIn": "name+text"
     },
     {
       "canonicalId": "11cae48e1213c407",
@@ -1113,8 +1107,8 @@
       "page": 55,
       "skill": "Use the Force",
       "tag": "use_the_force",
-      "state": "PASS3A_OWNER_REVIEW",
-      "ownerRuling": null,
+      "state": "PASS3A_OWNER_APPROVED",
+      "ownerRuling": "The canonical Benefit changes resolution of the Use the Force check used with move object: the character compares the Use the Force check against the Reflex Defense of each creature, droid and vehicle in the target area. Direct interaction with the Use the Force skill. The record already carries `force`; only `use_the_force` is added.",
       "excerpt": "…u use move object to make an area attack with the object you are moving, you compare your Use the Force check to the Reflex Defense of each creature, droid, and vehicle in the target area. If y…",
       "existingTags": [
         "force",
@@ -1127,13 +1121,7 @@
         "ranged",
         "control"
       ],
-      "matchedIn": "text",
-      "canonicalBenefit": "When you successfully use the move object power to move an object of Large size or bigger, you can make an area attack with the object instead of throwing it at or dropping it on a single target, as normal for the power. You must spend a Force Point when you activate the power to do this, and the area you target is based on the size of the object: Large, 2x2; Huge, 3x3; Gargantuan, 4x4; Colossal and larger, 6x6. When you use move object to make an area attack with the object you are moving, you compare your Use the Force check to the Reflex Defense of each creature, droid, and vehicle in the target area. If your check equals or exceeds the target's Reflex Defense, it takes damage from the object (as determined by the move object power). Otherwise, the target takes half damage. This is an area effect.",
-      "reviewNotes": {
-        "scannerReason": "Benefit text contains \"Use the Force check\".",
-        "interpretation": "Benefit changes how the Use the Force check made for move object is resolved: it is compared to the Reflex Defense of every creature in an area. This reads as a direct Use the Force interaction comparable to the approved Telekinetic Power / Wrath of the Dark Side class, so `use_the_force` (with the already-present `force`) looks like a true positive. Not applied; owner decides.",
-        "featSideEquivalent": "Feat-side `use_the_force` is carried by feats that directly modify or oppose a Use the Force check (for example Force Sensitivity, Unstoppable Force)."
-      }
+      "matchedIn": "text"
     },
     {
       "canonicalId": "648d9634a3795988",
@@ -2232,8 +2220,8 @@
       "page": 24,
       "skill": "Acrobatics",
       "tag": "acrobatics",
-      "state": "PASS3A_OWNER_REVIEW",
-      "ownerRuling": null,
+      "state": "PASS3A_TEXT_MATCH_NOT_SKILL",
+      "ownerRuling": "The scanner matched \"balanc\" inside \"bank balances\" (ordinary English). The separately approved gather_information addition stands.",
       "excerpt": "…atapad plus access to a network or the HoloNet. The electronic trail does not reveal bank balances or other secret information, which requires a separate Gather Information check. Once yo…",
       "existingTags": [
         "investigation",
@@ -2245,13 +2233,7 @@
         "recon",
         "target-designation"
       ],
-      "matchedIn": "text",
-      "canonicalBenefit": "Once you have located a target using Gather Information, you can track its electronic presence. Once per day, you receive a catalog of the target's electronic trail, which includes the amount and location of credits spent, the routes of any public transportation taken, and the sites viewed on the HoloNet while the target was logged in using its primary identity. To receive this information, you must have access to a computer or datapad plus access to a network or the HoloNet. The electronic trail does not reveal bank balances or other secret information, which requires a separate Gather Information check.",
-      "reviewNotes": {
-        "scannerReason": "The acrobatics pattern matches the substring \"balanc\" in \"bank balances\".",
-        "interpretation": "Ordinary English (\"bank balances\"); no Acrobatics mechanic. Reads as a text match, not a skill. (The separately approved gather_information addition on this record is unaffected.)",
-        "featSideEquivalent": "None."
-      }
+      "matchedIn": "text"
     },
     {
       "canonicalId": "d26506bfba104470",
@@ -2421,8 +2403,8 @@
       "page": 77,
       "skill": "Ride",
       "tag": "ride",
-      "state": "PASS3A_OWNER_REVIEW",
-      "ownerRuling": null,
+      "state": "PASS3A_TEXT_MATCH_NOT_SKILL",
+      "ownerRuling": "\"Ride\" occurs only in the talent name. The mechanic is a Force Point reaction granting concealment and potentially an immediate second wind; no Ride check exists.",
       "excerpt": "Ride the Current As a reaction to being damaged by an attack or Force power, you can spend a F…",
       "existingTags": [
         "force",
@@ -2437,13 +2419,7 @@
         "healing",
         "survivability"
       ],
-      "matchedIn": "name+text",
-      "canonicalBenefit": "As a reaction to being damaged by an attack or Force power, you can spend a Force Point to gain total concealment from all targets until the end of your next turn. Additionally, if you have not yet taken your second wind, you can do so immediately as a part of this reaction.",
-      "reviewNotes": {
-        "scannerReason": "The talent NAME \"Ride the Current\" contains the word Ride; the Benefit text does not mention the skill.",
-        "interpretation": "Benefit is a Force Point reaction granting total concealment and an immediate second wind. No Ride check is involved. Reads as a name-only text match.",
-        "featSideEquivalent": "Feat-side `ride` is used only for mounted-riding mechanics (Mounted Combat, Trample)."
-      }
+      "matchedIn": "name+text"
     },
     {
       "canonicalId": "e293cb03d35c2bff",
@@ -2452,8 +2428,8 @@
       "page": 52,
       "skill": "Acrobatics",
       "tag": "acrobatics",
-      "state": "PASS3A_OWNER_REVIEW",
-      "ownerRuling": null,
+      "state": "PASS3A_TEXT_MATCH_NOT_SKILL",
+      "ownerRuling": "\"Unbalance\" / \"off balance\" is ordinary combat language; the mechanic removes the designated opponent's Strength bonus on attacks against the character and invokes no Acrobatics check. Follows the Unbalancing Adaptation ruling.",
       "excerpt": "Unbalance Opponent You are skilled at keeping your opponents off balance in melee combat. During yo…",
       "existingTags": [
         "melee",
@@ -2462,13 +2438,7 @@
         "melee_defense",
         "defense"
       ],
-      "matchedIn": "name+text",
-      "canonicalBenefit": "You are skilled at keeping your opponents off balance in melee combat. During your action, you designate an opponent no more than one size category larger or smaller than you. That opponent doesn't get to add his Strength bonus on attack rolls when targeting you. (If the opponent has a Strength penalty, he still suffers that penalty.) The opponent's Strength modifier applies to damage, as usual. You can select a new opponent on your next turn.",
-      "reviewNotes": {
-        "scannerReason": "The acrobatics pattern matches the substring \"balanc\" in \"off balance\" and the name \"Unbalance Opponent\".",
-        "interpretation": "Ordinary English (\"off balance\"); the Benefit removes the designated opponent's Strength bonus on attacks against the user. No Acrobatics check. Reads as a text match, the same pattern already ruled for Unbalancing Adaptation.",
-        "featSideEquivalent": "None."
-      }
+      "matchedIn": "name+text"
     },
     {
       "canonicalId": "e9a5fe40ce95a053",
@@ -2829,9 +2799,8 @@
     "rawHits": 117,
     "uniqueTalents": 97,
     "byState": {
-      "PASS3A_TEXT_MATCH_NOT_SKILL": 22,
-      "PASS3A_OWNER_REVIEW": 5,
-      "PASS3A_OWNER_APPROVED": 74,
+      "PASS3A_TEXT_MATCH_NOT_SKILL": 26,
+      "PASS3A_OWNER_APPROVED": 75,
       "PASS3A_INTENTIONAL_GENERIC_SKILL": 9,
       "PASS3A_FALSE_POSITIVE": 4,
       "PASS3A_ROLE_NOT_SKILL": 3
