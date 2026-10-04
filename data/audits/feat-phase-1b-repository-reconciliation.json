@@ -242,8 +242,9 @@
       "parentCanonicalId": null,
       "replacementCanonicalId": null,
       "dependencyStatus": "NO_LIVE_RUNTIME_REFERENCE",
-      "exactIdReferenceCount": 12,
+      "exactIdReferenceCount": 13,
       "exactIdReferencePaths": [
+        "data/audits/feat-tags-production-reconciliation.json",
         "data/feat_buckets_and_subbuckets.json",
         "data/fixes/feat-view-model.json",
         "data/generated/feat-view-model.json",
@@ -258,6 +259,10 @@
         "packs/feat-catalog.db"
       ],
       "referenceDetails": [
+        {
+          "path": "data/audits/feat-tags-production-reconciliation.json",
+          "classification": "AUDIT_OR_DOCUMENTATION_REFERENCE"
+        },
         {
           "path": "data/feat_buckets_and_subbuckets.json",
           "classification": "DERIVED_REBUILD_ARTIFACT"
@@ -322,8 +327,9 @@
       "orphanHistoricalReferencePaths": [
         "packs/feat-catalog.db"
       ],
-      "auditDocumentationReferenceCount": 8,
+      "auditDocumentationReferenceCount": 9,
       "auditDocumentationReferencePaths": [
+        "data/audits/feat-tags-production-reconciliation.json",
         "docs/audits/combat-phase-0k-affected-feat-talent-inventory.json",
         "docs/audits/feat-sourcebook-metadata-verification.md",
         "docs/audits/generated/feat-inventory-report.json",
@@ -509,8 +515,9 @@
       "parentCanonicalId": null,
       "replacementCanonicalId": null,
       "dependencyStatus": "NO_LIVE_RUNTIME_REFERENCE",
-      "exactIdReferenceCount": 12,
+      "exactIdReferenceCount": 13,
       "exactIdReferencePaths": [
+        "data/audits/feat-tags-production-reconciliation.json",
         "data/feat_buckets_and_subbuckets.json",
         "data/fixes/feat-view-model.json",
         "data/generated/feat-view-model.json",
@@ -525,6 +532,10 @@
         "packs/feat-catalog.db"
       ],
       "referenceDetails": [
+        {
+          "path": "data/audits/feat-tags-production-reconciliation.json",
+          "classification": "AUDIT_OR_DOCUMENTATION_REFERENCE"
+        },
         {
           "path": "data/feat_buckets_and_subbuckets.json",
           "classification": "DERIVED_REBUILD_ARTIFACT"
@@ -589,8 +600,9 @@
       "orphanHistoricalReferencePaths": [
         "packs/feat-catalog.db"
       ],
-      "auditDocumentationReferenceCount": 8,
+      "auditDocumentationReferenceCount": 9,
       "auditDocumentationReferencePaths": [
+        "data/audits/feat-tags-production-reconciliation.json",
         "docs/audits/combat-phase-0k-affected-feat-talent-inventory.json",
         "docs/audits/feat-sourcebook-metadata-verification.md",
         "docs/audits/generated/feat-inventory-report.json",
@@ -695,8 +707,9 @@
       "parentCanonicalId": null,
       "replacementCanonicalId": null,
       "dependencyStatus": "NO_LIVE_RUNTIME_REFERENCE",
-      "exactIdReferenceCount": 11,
+      "exactIdReferenceCount": 12,
       "exactIdReferencePaths": [
+        "data/audits/feat-tags-production-reconciliation.json",
         "data/feat_buckets_and_subbuckets.json",
         "data/fixes/feat-view-model.json",
         "data/generated/feat-view-model.json",
@@ -710,6 +723,10 @@
         "packs/feat-catalog.db"
       ],
       "referenceDetails": [
+        {
+          "path": "data/audits/feat-tags-production-reconciliation.json",
+          "classification": "AUDIT_OR_DOCUMENTATION_REFERENCE"
+        },
         {
           "path": "data/feat_buckets_and_subbuckets.json",
           "classification": "DERIVED_REBUILD_ARTIFACT"
@@ -770,8 +787,9 @@
       "orphanHistoricalReferencePaths": [
         "packs/feat-catalog.db"
       ],
-      "auditDocumentationReferenceCount": 7,
+      "auditDocumentationReferenceCount": 8,
       "auditDocumentationReferencePaths": [
+        "data/audits/feat-tags-production-reconciliation.json",
         "docs/audits/feat-sourcebook-metadata-verification.md",
         "docs/audits/generated/feat-inventory-report.json",
         "docs/audits/generated/feat-prerequisite-input-report.json",
@@ -902,8 +920,9 @@
       "parentCanonicalId": null,
       "replacementCanonicalId": null,
       "dependencyStatus": "LIVE_RUNTIME_REFERENCE_PRESENT",
-      "exactIdReferenceCount": 13,
+      "exactIdReferenceCount": 14,
       "exactIdReferencePaths": [
+        "data/audits/feat-tags-production-reconciliation.json",
         "data/class-archetypes.json",
         "data/feat_buckets_and_subbuckets.json",
         "data/fixes/feat-view-model.json",
@@ -919,6 +938,10 @@
         "packs/feat-catalog.db"
       ],
       "referenceDetails": [
+        {
+          "path": "data/audits/feat-tags-production-reconciliation.json",
+          "classification": "AUDIT_OR_DOCUMENTATION_REFERENCE"
+        },
         {
           "path": "data/class-archetypes.json",
           "classification": "LIVE_RUNTIME_AUTHORITY"
@@ -989,8 +1012,9 @@
       "orphanHistoricalReferencePaths": [
         "packs/feat-catalog.db"
       ],
-      "auditDocumentationReferenceCount": 8,
+      "auditDocumentationReferenceCount": 9,
       "auditDocumentationReferencePaths": [
+        "data/audits/feat-tags-production-reconciliation.json",
         "docs/audits/feat-sourcebook-metadata-verification.md",
         "docs/audits/generated/feat-inventory-report.json",
         "docs/audits/generated/feat-prerequisite-input-report.json",
@@ -1095,8 +1119,9 @@
       "parentCanonicalId": null,
       "replacementCanonicalId": null,
       "dependencyStatus": "LIVE_RUNTIME_REFERENCE_PRESENT",
-      "exactIdReferenceCount": 13,
+      "exactIdReferenceCount": 14,
       "exactIdReferencePaths": [
+        "data/audits/feat-tags-production-reconciliation.json",
         "data/feat-effects.json",
         "data/feat_buckets_and_subbuckets.json",
         "data/fixes/feat-view-model.json",
@@ -1112,6 +1137,10 @@
         "packs/feat-catalog.db"
       ],
       "referenceDetails": [
+        {
+          "path": "data/audits/feat-tags-production-reconciliation.json",
+          "classification": "AUDIT_OR_DOCUMENTATION_REFERENCE"
+        },
         {
           "path": "data/feat-effects.json",
           "classification": "LIVE_RUNTIME_AUTHORITY"
@@ -1182,8 +1211,9 @@
       "orphanHistoricalReferencePaths": [
         "packs/feat-catalog.db"
       ],
-      "auditDocumentationReferenceCount": 8,
+      "auditDocumentationReferenceCount": 9,
       "auditDocumentationReferencePaths": [
+        "data/audits/feat-tags-production-reconciliation.json",
         "docs/audits/feat-sourcebook-metadata-verification.md",
         "docs/audits/generated/feat-inventory-report.json",
         "docs/audits/generated/feat-prerequisite-input-report.json",
@@ -1450,8 +1480,9 @@
       "parentCanonicalId": null,
       "replacementCanonicalId": null,
       "dependencyStatus": "LIVE_RUNTIME_REFERENCE_PRESENT",
-      "exactIdReferenceCount": 12,
+      "exactIdReferenceCount": 13,
       "exactIdReferencePaths": [
+        "data/audits/feat-tags-production-reconciliation.json",
         "data/feat-effects.json",
         "data/feat_buckets_and_subbuckets.json",
         "data/fixes/feat-view-model.json",
@@ -1466,6 +1497,10 @@
         "packs/feat-catalog.db"
       ],
       "referenceDetails": [
+        {
+          "path": "data/audits/feat-tags-production-reconciliation.json",
+          "classification": "AUDIT_OR_DOCUMENTATION_REFERENCE"
+        },
         {
           "path": "data/feat-effects.json",
           "classification": "LIVE_RUNTIME_AUTHORITY"
@@ -1532,8 +1567,9 @@
       "orphanHistoricalReferencePaths": [
         "packs/feat-catalog.db"
       ],
-      "auditDocumentationReferenceCount": 7,
+      "auditDocumentationReferenceCount": 8,
       "auditDocumentationReferencePaths": [
+        "data/audits/feat-tags-production-reconciliation.json",
         "docs/audits/feat-sourcebook-metadata-verification.md",
         "docs/audits/generated/feat-inventory-report.json",
         "docs/audits/generated/feat-prerequisite-input-report.json",
@@ -1556,8 +1592,9 @@
       "parentCanonicalId": null,
       "replacementCanonicalId": null,
       "dependencyStatus": "NO_LIVE_RUNTIME_REFERENCE",
-      "exactIdReferenceCount": 11,
+      "exactIdReferenceCount": 12,
       "exactIdReferencePaths": [
+        "data/audits/feat-tags-production-reconciliation.json",
         "data/feat_buckets_and_subbuckets.json",
         "data/fixes/feat-view-model.json",
         "data/generated/feat-view-model.json",
@@ -1571,6 +1608,10 @@
         "packs/feat-catalog.db"
       ],
       "referenceDetails": [
+        {
+          "path": "data/audits/feat-tags-production-reconciliation.json",
+          "classification": "AUDIT_OR_DOCUMENTATION_REFERENCE"
+        },
         {
           "path": "data/feat_buckets_and_subbuckets.json",
           "classification": "DERIVED_REBUILD_ARTIFACT"
@@ -1631,8 +1672,9 @@
       "orphanHistoricalReferencePaths": [
         "packs/feat-catalog.db"
       ],
-      "auditDocumentationReferenceCount": 7,
+      "auditDocumentationReferenceCount": 8,
       "auditDocumentationReferencePaths": [
+        "data/audits/feat-tags-production-reconciliation.json",
         "docs/audits/feat-sourcebook-metadata-verification.md",
         "docs/audits/generated/feat-inventory-report.json",
         "docs/audits/generated/feat-prerequisite-input-report.json",
@@ -2573,13 +2615,15 @@
       "parentCanonicalId": "ecc2471ac96ec2d4",
       "replacementCanonicalId": null,
       "dependencyStatus": "LIVE_RUNTIME_REFERENCE_PRESENT",
-      "exactIdReferenceCount": 17,
+      "exactIdReferenceCount": 19,
       "exactIdReferencePaths": [
+        "data/audits/feat-tags-production-reconciliation.json",
         "data/feat-effects.json",
         "data/feat_buckets_and_subbuckets.json",
         "data/fixes/feat-view-model.json",
         "data/generated/class-feat-list-bindings.json",
         "data/generated/feat-view-model.json",
+        "docs/audits/feat-tags-production-reconciliation.md",
         "docs/audits/generated/feat-inventory-report.json",
         "docs/audits/generated/feat-prerequisite-input-report.json",
         "docs/feat-choice-required-audit-phase5.json",
@@ -2594,6 +2638,10 @@
         "packs/npc.db"
       ],
       "referenceDetails": [
+        {
+          "path": "data/audits/feat-tags-production-reconciliation.json",
+          "classification": "AUDIT_OR_DOCUMENTATION_REFERENCE"
+        },
         {
           "path": "data/feat-effects.json",
           "classification": "LIVE_RUNTIME_AUTHORITY"
@@ -2613,6 +2661,10 @@
         {
           "path": "data/generated/feat-view-model.json",
           "classification": "DERIVED_REBUILD_ARTIFACT"
+        },
+        {
+          "path": "docs/audits/feat-tags-production-reconciliation.md",
+          "classification": "AUDIT_OR_DOCUMENTATION_REFERENCE"
         },
         {
           "path": "docs/audits/generated/feat-inventory-report.json",
@@ -2684,8 +2736,10 @@
       "orphanHistoricalReferencePaths": [
         "packs/feat-catalog.db"
       ],
-      "auditDocumentationReferenceCount": 8,
+      "auditDocumentationReferenceCount": 10,
       "auditDocumentationReferencePaths": [
+        "data/audits/feat-tags-production-reconciliation.json",
+        "docs/audits/feat-tags-production-reconciliation.md",
         "docs/audits/generated/feat-inventory-report.json",
         "docs/audits/generated/feat-prerequisite-input-report.json",
         "docs/feat-choice-required-audit-phase5.json",
@@ -2817,8 +2871,9 @@
       "parentCanonicalId": null,
       "replacementCanonicalId": null,
       "dependencyStatus": "NO_LIVE_RUNTIME_REFERENCE",
-      "exactIdReferenceCount": 13,
+      "exactIdReferenceCount": 14,
       "exactIdReferencePaths": [
+        "data/audits/feat-tags-production-reconciliation.json",
         "data/feat_buckets_and_subbuckets.json",
         "data/fixes/feat-view-model.json",
         "data/generated/feat-view-model.json",
@@ -2834,6 +2889,10 @@
         "packs/feat-catalog.db"
       ],
       "referenceDetails": [
+        {
+          "path": "data/audits/feat-tags-production-reconciliation.json",
+          "classification": "AUDIT_OR_DOCUMENTATION_REFERENCE"
+        },
         {
           "path": "data/feat_buckets_and_subbuckets.json",
           "classification": "DERIVED_REBUILD_ARTIFACT"
@@ -2902,8 +2961,9 @@
       "orphanHistoricalReferencePaths": [
         "packs/feat-catalog.db"
       ],
-      "auditDocumentationReferenceCount": 9,
+      "auditDocumentationReferenceCount": 10,
       "auditDocumentationReferencePaths": [
+        "data/audits/feat-tags-production-reconciliation.json",
         "docs/audits/feat-sourcebook-metadata-verification.md",
         "docs/audits/generated/feat-inventory-report.json",
         "docs/audits/generated/feat-prerequisite-input-report.json",
@@ -3225,8 +3285,9 @@
       "parentCanonicalId": null,
       "replacementCanonicalId": null,
       "dependencyStatus": "LIVE_RUNTIME_REFERENCE_PRESENT",
-      "exactIdReferenceCount": 12,
+      "exactIdReferenceCount": 13,
       "exactIdReferencePaths": [
+        "data/audits/feat-tags-production-reconciliation.json",
         "data/feat-effects.json",
         "data/feat_buckets_and_subbuckets.json",
         "data/fixes/feat-view-model.json",
@@ -3241,6 +3302,10 @@
         "packs/feat-catalog.db"
       ],
       "referenceDetails": [
+        {
+          "path": "data/audits/feat-tags-production-reconciliation.json",
+          "classification": "AUDIT_OR_DOCUMENTATION_REFERENCE"
+        },
         {
           "path": "data/feat-effects.json",
           "classification": "LIVE_RUNTIME_AUTHORITY"
@@ -3307,8 +3372,9 @@
       "orphanHistoricalReferencePaths": [
         "packs/feat-catalog.db"
       ],
-      "auditDocumentationReferenceCount": 7,
+      "auditDocumentationReferenceCount": 8,
       "auditDocumentationReferencePaths": [
+        "data/audits/feat-tags-production-reconciliation.json",
         "docs/audits/feat-sourcebook-metadata-verification.md",
         "docs/audits/generated/feat-inventory-report.json",
         "docs/audits/generated/feat-prerequisite-input-report.json",
@@ -3385,8 +3451,9 @@
       "parentCanonicalId": null,
       "replacementCanonicalId": null,
       "dependencyStatus": "NO_LIVE_RUNTIME_REFERENCE",
-      "exactIdReferenceCount": 11,
+      "exactIdReferenceCount": 12,
       "exactIdReferencePaths": [
+        "data/audits/feat-tags-production-reconciliation.json",
         "data/feat_buckets_and_subbuckets.json",
         "data/fixes/feat-view-model.json",
         "data/generated/feat-view-model.json",
@@ -3400,6 +3467,10 @@
         "packs/feat-catalog.db"
       ],
       "referenceDetails": [
+        {
+          "path": "data/audits/feat-tags-production-reconciliation.json",
+          "classification": "AUDIT_OR_DOCUMENTATION_REFERENCE"
+        },
         {
           "path": "data/feat_buckets_and_subbuckets.json",
           "classification": "DERIVED_REBUILD_ARTIFACT"
@@ -3460,8 +3531,9 @@
       "orphanHistoricalReferencePaths": [
         "packs/feat-catalog.db"
       ],
-      "auditDocumentationReferenceCount": 7,
+      "auditDocumentationReferenceCount": 8,
       "auditDocumentationReferencePaths": [
+        "data/audits/feat-tags-production-reconciliation.json",
         "docs/audits/feat-sourcebook-metadata-verification.md",
         "docs/audits/generated/feat-inventory-report.json",
         "docs/audits/generated/feat-prerequisite-input-report.json",
@@ -3619,13 +3691,15 @@
       "parentCanonicalId": "ecc2471ac96ec2d4",
       "replacementCanonicalId": null,
       "dependencyStatus": "LIVE_RUNTIME_REFERENCE_PRESENT",
-      "exactIdReferenceCount": 14,
+      "exactIdReferenceCount": 16,
       "exactIdReferencePaths": [
+        "data/audits/feat-tags-production-reconciliation.json",
         "data/feat-effects.json",
         "data/feat_buckets_and_subbuckets.json",
         "data/fixes/feat-view-model.json",
         "data/generated/feat-view-model.json",
         "docs/audits/feat-sourcebook-metadata-verification.md",
+        "docs/audits/feat-tags-production-reconciliation.md",
         "docs/audits/generated/feat-inventory-report.json",
         "docs/audits/generated/feat-prerequisite-input-report.json",
         "docs/feat-choice-required-audit-phase5.json",
@@ -3637,6 +3711,10 @@
         "packs/feat-catalog.db"
       ],
       "referenceDetails": [
+        {
+          "path": "data/audits/feat-tags-production-reconciliation.json",
+          "classification": "AUDIT_OR_DOCUMENTATION_REFERENCE"
+        },
         {
           "path": "data/feat-effects.json",
           "classification": "LIVE_RUNTIME_AUTHORITY"
@@ -3655,6 +3733,10 @@
         },
         {
           "path": "docs/audits/feat-sourcebook-metadata-verification.md",
+          "classification": "AUDIT_OR_DOCUMENTATION_REFERENCE"
+        },
+        {
+          "path": "docs/audits/feat-tags-production-reconciliation.md",
           "classification": "AUDIT_OR_DOCUMENTATION_REFERENCE"
         },
         {
@@ -3711,9 +3793,11 @@
       "orphanHistoricalReferencePaths": [
         "packs/feat-catalog.db"
       ],
-      "auditDocumentationReferenceCount": 9,
+      "auditDocumentationReferenceCount": 11,
       "auditDocumentationReferencePaths": [
+        "data/audits/feat-tags-production-reconciliation.json",
         "docs/audits/feat-sourcebook-metadata-verification.md",
+        "docs/audits/feat-tags-production-reconciliation.md",
         "docs/audits/generated/feat-inventory-report.json",
         "docs/audits/generated/feat-prerequisite-input-report.json",
         "docs/feat-choice-required-audit-phase5.json",
@@ -3980,8 +4064,9 @@
       "parentCanonicalId": null,
       "replacementCanonicalId": null,
       "dependencyStatus": "LIVE_RUNTIME_REFERENCE_PRESENT",
-      "exactIdReferenceCount": 12,
+      "exactIdReferenceCount": 13,
       "exactIdReferencePaths": [
+        "data/audits/feat-tags-production-reconciliation.json",
         "data/feat-effects.json",
         "data/feat_buckets_and_subbuckets.json",
         "data/fixes/feat-view-model.json",
@@ -3996,6 +4081,10 @@
         "packs/feat-catalog.db"
       ],
       "referenceDetails": [
+        {
+          "path": "data/audits/feat-tags-production-reconciliation.json",
+          "classification": "AUDIT_OR_DOCUMENTATION_REFERENCE"
+        },
         {
           "path": "data/feat-effects.json",
           "classification": "LIVE_RUNTIME_AUTHORITY"
@@ -4062,8 +4151,9 @@
       "orphanHistoricalReferencePaths": [
         "packs/feat-catalog.db"
       ],
-      "auditDocumentationReferenceCount": 7,
+      "auditDocumentationReferenceCount": 8,
       "auditDocumentationReferencePaths": [
+        "data/audits/feat-tags-production-reconciliation.json",
         "docs/audits/feat-sourcebook-metadata-verification.md",
         "docs/audits/generated/feat-inventory-report.json",
         "docs/audits/generated/feat-prerequisite-input-report.json",
@@ -4545,8 +4635,9 @@
       "parentCanonicalId": null,
       "replacementCanonicalId": null,
       "dependencyStatus": "NO_LIVE_RUNTIME_REFERENCE",
-      "exactIdReferenceCount": 12,
+      "exactIdReferenceCount": 13,
       "exactIdReferencePaths": [
+        "data/audits/feat-tags-production-reconciliation.json",
         "data/feat_buckets_and_subbuckets.json",
         "data/fixes/feat-view-model.json",
         "data/generated/feat-view-model.json",
@@ -4561,6 +4652,10 @@
         "packs/feat-catalog.db"
       ],
       "referenceDetails": [
+        {
+          "path": "data/audits/feat-tags-production-reconciliation.json",
+          "classification": "AUDIT_OR_DOCUMENTATION_REFERENCE"
+        },
         {
           "path": "data/feat_buckets_and_subbuckets.json",
           "classification": "DERIVED_REBUILD_ARTIFACT"
@@ -4625,8 +4720,9 @@
       "orphanHistoricalReferencePaths": [
         "packs/feat-catalog.db"
       ],
-      "auditDocumentationReferenceCount": 8,
+      "auditDocumentationReferenceCount": 9,
       "auditDocumentationReferencePaths": [
+        "data/audits/feat-tags-production-reconciliation.json",
         "docs/audits/feat-sourcebook-metadata-verification.md",
         "docs/audits/generated/feat-inventory-report.json",
         "docs/audits/generated/feat-prerequisite-input-report.json",
@@ -4731,8 +4827,9 @@
       "parentCanonicalId": null,
       "replacementCanonicalId": null,
       "dependencyStatus": "LIVE_RUNTIME_REFERENCE_PRESENT",
-      "exactIdReferenceCount": 13,
+      "exactIdReferenceCount": 14,
       "exactIdReferencePaths": [
+        "data/audits/feat-tags-production-reconciliation.json",
         "data/feat-effects.json",
         "data/feat_buckets_and_subbuckets.json",
         "data/fixes/feat-view-model.json",
@@ -4748,6 +4845,10 @@
         "packs/feat-catalog.db"
       ],
       "referenceDetails": [
+        {
+          "path": "data/audits/feat-tags-production-reconciliation.json",
+          "classification": "AUDIT_OR_DOCUMENTATION_REFERENCE"
+        },
         {
           "path": "data/feat-effects.json",
           "classification": "LIVE_RUNTIME_AUTHORITY"
@@ -4818,8 +4919,9 @@
       "orphanHistoricalReferencePaths": [
         "packs/feat-catalog.db"
       ],
-      "auditDocumentationReferenceCount": 8,
+      "auditDocumentationReferenceCount": 9,
       "auditDocumentationReferencePaths": [
+        "data/audits/feat-tags-production-reconciliation.json",
         "docs/audits/combat-phase-0k-affected-feat-talent-inventory.json",
         "docs/audits/feat-sourcebook-metadata-verification.md",
         "docs/audits/generated/feat-inventory-report.json",
@@ -5410,10 +5512,11 @@
       "parentCanonicalId": null,
       "replacementCanonicalId": null,
       "dependencyStatus": "LIVE_RUNTIME_REFERENCE_PRESENT",
-      "exactIdReferenceCount": 14,
+      "exactIdReferenceCount": 15,
       "exactIdReferencePaths": [
         "data/audits/feat-content-canonical-authority.json",
         "data/audits/feat-provenance-canonical-authority.json",
+        "data/audits/feat-tags-production-reconciliation.json",
         "data/feat-effects.json",
         "data/feat_buckets_and_subbuckets.json",
         "data/fixes/feat-view-model.json",
@@ -5434,6 +5537,10 @@
         },
         {
           "path": "data/audits/feat-provenance-canonical-authority.json",
+          "classification": "AUDIT_OR_DOCUMENTATION_REFERENCE"
+        },
+        {
+          "path": "data/audits/feat-tags-production-reconciliation.json",
           "classification": "AUDIT_OR_DOCUMENTATION_REFERENCE"
         },
         {
@@ -5502,10 +5609,11 @@
       "orphanHistoricalReferencePaths": [
         "packs/feat-catalog.db"
       ],
-      "auditDocumentationReferenceCount": 9,
+      "auditDocumentationReferenceCount": 10,
       "auditDocumentationReferencePaths": [
         "data/audits/feat-content-canonical-authority.json",
         "data/audits/feat-provenance-canonical-authority.json",
+        "data/audits/feat-tags-production-reconciliation.json",
         "docs/audits/feat-sourcebook-metadata-verification.md",
         "docs/audits/generated/feat-inventory-report.json",
         "docs/audits/generated/feat-prerequisite-input-report.json",
@@ -5582,8 +5690,9 @@
       "parentCanonicalId": null,
       "replacementCanonicalId": null,
       "dependencyStatus": "LIVE_RUNTIME_REFERENCE_PRESENT",
-      "exactIdReferenceCount": 12,
+      "exactIdReferenceCount": 13,
       "exactIdReferencePaths": [
+        "data/audits/feat-tags-production-reconciliation.json",
         "data/feat-effects.json",
         "data/feat_buckets_and_subbuckets.json",
         "data/fixes/feat-view-model.json",
@@ -5598,6 +5707,10 @@
         "packs/feat-catalog.db"
       ],
       "referenceDetails": [
+        {
+          "path": "data/audits/feat-tags-production-reconciliation.json",
+          "classification": "AUDIT_OR_DOCUMENTATION_REFERENCE"
+        },
         {
           "path": "data/feat-effects.json",
           "classification": "LIVE_RUNTIME_AUTHORITY"
@@ -5664,8 +5777,9 @@
       "orphanHistoricalReferencePaths": [
         "packs/feat-catalog.db"
       ],
-      "auditDocumentationReferenceCount": 7,
+      "auditDocumentationReferenceCount": 8,
       "auditDocumentationReferencePaths": [
+        "data/audits/feat-tags-production-reconciliation.json",
         "docs/audits/feat-sourcebook-metadata-verification.md",
         "docs/audits/generated/feat-inventory-report.json",
         "docs/audits/generated/feat-prerequisite-input-report.json",
@@ -5823,8 +5937,9 @@
       "parentCanonicalId": null,
       "replacementCanonicalId": null,
       "dependencyStatus": "LIVE_RUNTIME_REFERENCE_PRESENT",
-      "exactIdReferenceCount": 13,
+      "exactIdReferenceCount": 14,
       "exactIdReferencePaths": [
+        "data/audits/feat-tags-production-reconciliation.json",
         "data/class-archetypes.json",
         "data/feat_buckets_and_subbuckets.json",
         "data/fixes/feat-view-model.json",
@@ -5840,6 +5955,10 @@
         "packs/feat-catalog.db"
       ],
       "referenceDetails": [
+        {
+          "path": "data/audits/feat-tags-production-reconciliation.json",
+          "classification": "AUDIT_OR_DOCUMENTATION_REFERENCE"
+        },
         {
           "path": "data/class-archetypes.json",
           "classification": "LIVE_RUNTIME_AUTHORITY"
@@ -5910,8 +6029,9 @@
       "orphanHistoricalReferencePaths": [
         "packs/feat-catalog.db"
       ],
-      "auditDocumentationReferenceCount": 8,
+      "auditDocumentationReferenceCount": 9,
       "auditDocumentationReferencePaths": [
+        "data/audits/feat-tags-production-reconciliation.json",
         "docs/audits/feat-sourcebook-metadata-verification.md",
         "docs/audits/generated/feat-inventory-report.json",
         "docs/audits/generated/feat-prerequisite-input-report.json",
@@ -6394,13 +6514,15 @@
       "parentCanonicalId": "ecc2471ac96ec2d4",
       "replacementCanonicalId": null,
       "dependencyStatus": "LIVE_RUNTIME_REFERENCE_PRESENT",
-      "exactIdReferenceCount": 17,
+      "exactIdReferenceCount": 19,
       "exactIdReferencePaths": [
+        "data/audits/feat-tags-production-reconciliation.json",
         "data/feat-effects.json",
         "data/feat_buckets_and_subbuckets.json",
         "data/fixes/feat-view-model.json",
         "data/generated/class-feat-list-bindings.json",
         "data/generated/feat-view-model.json",
+        "docs/audits/feat-tags-production-reconciliation.md",
         "docs/audits/generated/feat-inventory-report.json",
         "docs/audits/generated/feat-prerequisite-input-report.json",
         "docs/feat-choice-required-audit-phase5.json",
@@ -6415,6 +6537,10 @@
         "packs/npc.db"
       ],
       "referenceDetails": [
+        {
+          "path": "data/audits/feat-tags-production-reconciliation.json",
+          "classification": "AUDIT_OR_DOCUMENTATION_REFERENCE"
+        },
         {
           "path": "data/feat-effects.json",
           "classification": "LIVE_RUNTIME_AUTHORITY"
@@ -6434,6 +6560,10 @@
         {
           "path": "data/generated/feat-view-model.json",
           "classification": "DERIVED_REBUILD_ARTIFACT"
+        },
+        {
+          "path": "docs/audits/feat-tags-production-reconciliation.md",
+          "classification": "AUDIT_OR_DOCUMENTATION_REFERENCE"
         },
         {
           "path": "docs/audits/generated/feat-inventory-report.json",
@@ -6505,8 +6635,10 @@
       "orphanHistoricalReferencePaths": [
         "packs/feat-catalog.db"
       ],
-      "auditDocumentationReferenceCount": 8,
+      "auditDocumentationReferenceCount": 10,
       "auditDocumentationReferencePaths": [
+        "data/audits/feat-tags-production-reconciliation.json",
+        "docs/audits/feat-tags-production-reconciliation.md",
         "docs/audits/generated/feat-inventory-report.json",
         "docs/audits/generated/feat-prerequisite-input-report.json",
         "docs/feat-choice-required-audit-phase5.json",
@@ -6800,14 +6932,16 @@
       "parentCanonicalId": "ecc2471ac96ec2d4",
       "replacementCanonicalId": null,
       "dependencyStatus": "LIVE_RUNTIME_REFERENCE_PRESENT",
-      "exactIdReferenceCount": 18,
+      "exactIdReferenceCount": 20,
       "exactIdReferencePaths": [
+        "data/audits/feat-tags-production-reconciliation.json",
         "data/class-archetypes.json",
         "data/feat-effects.json",
         "data/feat_buckets_and_subbuckets.json",
         "data/fixes/feat-view-model.json",
         "data/generated/class-feat-list-bindings.json",
         "data/generated/feat-view-model.json",
+        "docs/audits/feat-tags-production-reconciliation.md",
         "docs/audits/generated/feat-inventory-report.json",
         "docs/audits/generated/feat-prerequisite-input-report.json",
         "docs/feat-choice-required-audit-phase5.json",
@@ -6822,6 +6956,10 @@
         "packs/npc.db"
       ],
       "referenceDetails": [
+        {
+          "path": "data/audits/feat-tags-production-reconciliation.json",
+          "classification": "AUDIT_OR_DOCUMENTATION_REFERENCE"
+        },
         {
           "path": "data/class-archetypes.json",
           "classification": "LIVE_RUNTIME_AUTHORITY"
@@ -6845,6 +6983,10 @@
         {
           "path": "data/generated/feat-view-model.json",
           "classification": "DERIVED_REBUILD_ARTIFACT"
+        },
+        {
+          "path": "docs/audits/feat-tags-production-reconciliation.md",
+          "classification": "AUDIT_OR_DOCUMENTATION_REFERENCE"
         },
         {
           "path": "docs/audits/generated/feat-inventory-report.json",
@@ -6917,8 +7059,10 @@
       "orphanHistoricalReferencePaths": [
         "packs/feat-catalog.db"
       ],
-      "auditDocumentationReferenceCount": 8,
+      "auditDocumentationReferenceCount": 10,
       "auditDocumentationReferencePaths": [
+        "data/audits/feat-tags-production-reconciliation.json",
+        "docs/audits/feat-tags-production-reconciliation.md",
         "docs/audits/generated/feat-inventory-report.json",
         "docs/audits/generated/feat-prerequisite-input-report.json",
         "docs/feat-choice-required-audit-phase5.json",
@@ -6969,8 +7113,9 @@
       "parentCanonicalId": null,
       "replacementCanonicalId": null,
       "dependencyStatus": "NO_LIVE_RUNTIME_REFERENCE",
-      "exactIdReferenceCount": 12,
+      "exactIdReferenceCount": 13,
       "exactIdReferencePaths": [
+        "data/audits/feat-tags-production-reconciliation.json",
         "data/feat_buckets_and_subbuckets.json",
         "data/fixes/feat-view-model.json",
         "data/generated/feat-view-model.json",
@@ -6985,6 +7130,10 @@
         "packs/feat-catalog.db"
       ],
       "referenceDetails": [
+        {
+          "path": "data/audits/feat-tags-production-reconciliation.json",
+          "classification": "AUDIT_OR_DOCUMENTATION_REFERENCE"
+        },
         {
           "path": "data/feat_buckets_and_subbuckets.json",
           "classification": "DERIVED_REBUILD_ARTIFACT"
@@ -7049,8 +7198,9 @@
       "orphanHistoricalReferencePaths": [
         "packs/feat-catalog.db"
       ],
-      "auditDocumentationReferenceCount": 8,
+      "auditDocumentationReferenceCount": 9,
       "auditDocumentationReferencePaths": [
+        "data/audits/feat-tags-production-reconciliation.json",
         "docs/audits/feat-sourcebook-metadata-verification.md",
         "docs/audits/generated/feat-inventory-report.json",
         "docs/audits/generated/feat-prerequisite-input-report.json",
@@ -7101,8 +7251,9 @@
       "parentCanonicalId": null,
       "replacementCanonicalId": null,
       "dependencyStatus": "NO_LIVE_RUNTIME_REFERENCE",
-      "exactIdReferenceCount": 11,
+      "exactIdReferenceCount": 12,
       "exactIdReferencePaths": [
+        "data/audits/feat-tags-production-reconciliation.json",
         "data/feat_buckets_and_subbuckets.json",
         "data/fixes/feat-view-model.json",
         "data/generated/feat-view-model.json",
@@ -7116,6 +7267,10 @@
         "packs/feat-catalog.db"
       ],
       "referenceDetails": [
+        {
+          "path": "data/audits/feat-tags-production-reconciliation.json",
+          "classification": "AUDIT_OR_DOCUMENTATION_REFERENCE"
+        },
         {
           "path": "data/feat_buckets_and_subbuckets.json",
           "classification": "DERIVED_REBUILD_ARTIFACT"
@@ -7176,8 +7331,9 @@
       "orphanHistoricalReferencePaths": [
         "packs/feat-catalog.db"
       ],
-      "auditDocumentationReferenceCount": 7,
+      "auditDocumentationReferenceCount": 8,
       "auditDocumentationReferencePaths": [
+        "data/audits/feat-tags-production-reconciliation.json",
         "docs/audits/feat-sourcebook-metadata-verification.md",
         "docs/audits/generated/feat-inventory-report.json",
         "docs/audits/generated/feat-prerequisite-input-report.json",
@@ -7281,8 +7437,9 @@
       "parentCanonicalId": null,
       "replacementCanonicalId": null,
       "dependencyStatus": "LIVE_RUNTIME_REFERENCE_PRESENT",
-      "exactIdReferenceCount": 13,
+      "exactIdReferenceCount": 14,
       "exactIdReferencePaths": [
+        "data/audits/feat-tags-production-reconciliation.json",
         "data/feat-effects.json",
         "data/feat_buckets_and_subbuckets.json",
         "data/fixes/feat-view-model.json",
@@ -7298,6 +7455,10 @@
         "packs/feat-catalog.db"
       ],
       "referenceDetails": [
+        {
+          "path": "data/audits/feat-tags-production-reconciliation.json",
+          "classification": "AUDIT_OR_DOCUMENTATION_REFERENCE"
+        },
         {
           "path": "data/feat-effects.json",
           "classification": "LIVE_RUNTIME_AUTHORITY"
@@ -7368,8 +7529,9 @@
       "orphanHistoricalReferencePaths": [
         "packs/feat-catalog.db"
       ],
-      "auditDocumentationReferenceCount": 8,
+      "auditDocumentationReferenceCount": 9,
       "auditDocumentationReferencePaths": [
+        "data/audits/feat-tags-production-reconciliation.json",
         "docs/audits/combat-phase-0k-affected-feat-talent-inventory.json",
         "docs/audits/feat-sourcebook-metadata-verification.md",
         "docs/audits/generated/feat-inventory-report.json",
@@ -8014,8 +8176,9 @@
       "parentCanonicalId": null,
       "replacementCanonicalId": null,
       "dependencyStatus": "NO_LIVE_RUNTIME_REFERENCE",
-      "exactIdReferenceCount": 12,
+      "exactIdReferenceCount": 13,
       "exactIdReferencePaths": [
+        "data/audits/feat-tags-production-reconciliation.json",
         "data/feat_buckets_and_subbuckets.json",
         "data/fixes/feat-view-model.json",
         "data/generated/feat-view-model.json",
@@ -8030,6 +8193,10 @@
         "packs/feat-catalog.db"
       ],
       "referenceDetails": [
+        {
+          "path": "data/audits/feat-tags-production-reconciliation.json",
+          "classification": "AUDIT_OR_DOCUMENTATION_REFERENCE"
+        },
         {
           "path": "data/feat_buckets_and_subbuckets.json",
           "classification": "DERIVED_REBUILD_ARTIFACT"
@@ -8094,8 +8261,9 @@
       "orphanHistoricalReferencePaths": [
         "packs/feat-catalog.db"
       ],
-      "auditDocumentationReferenceCount": 8,
+      "auditDocumentationReferenceCount": 9,
       "auditDocumentationReferencePaths": [
+        "data/audits/feat-tags-production-reconciliation.json",
         "docs/audits/feat-sourcebook-metadata-verification.md",
         "docs/audits/generated/feat-inventory-report.json",
         "docs/audits/generated/feat-prerequisite-input-report.json",
@@ -8281,8 +8449,9 @@
       "parentCanonicalId": null,
       "replacementCanonicalId": null,
       "dependencyStatus": "LIVE_RUNTIME_REFERENCE_PRESENT",
-      "exactIdReferenceCount": 14,
+      "exactIdReferenceCount": 15,
       "exactIdReferencePaths": [
+        "data/audits/feat-tags-production-reconciliation.json",
         "data/feat-effects.json",
         "data/feat_buckets_and_subbuckets.json",
         "data/fixes/feat-view-model.json",
@@ -8299,6 +8468,10 @@
         "packs/feat-catalog.db"
       ],
       "referenceDetails": [
+        {
+          "path": "data/audits/feat-tags-production-reconciliation.json",
+          "classification": "AUDIT_OR_DOCUMENTATION_REFERENCE"
+        },
         {
           "path": "data/feat-effects.json",
           "classification": "LIVE_RUNTIME_AUTHORITY"
@@ -8373,8 +8546,9 @@
       "orphanHistoricalReferencePaths": [
         "packs/feat-catalog.db"
       ],
-      "auditDocumentationReferenceCount": 9,
+      "auditDocumentationReferenceCount": 10,
       "auditDocumentationReferencePaths": [
+        "data/audits/feat-tags-production-reconciliation.json",
         "docs/audits/feat-sourcebook-metadata-verification.md",
         "docs/audits/generated/feat-inventory-report.json",
         "docs/audits/generated/feat-prerequisite-input-report.json",
@@ -9128,10 +9302,11 @@
       "parentCanonicalId": null,
       "replacementCanonicalId": null,
       "dependencyStatus": "NO_LIVE_RUNTIME_REFERENCE",
-      "exactIdReferenceCount": 13,
+      "exactIdReferenceCount": 14,
       "exactIdReferencePaths": [
         "data/audits/feat-content-canonical-authority.json",
         "data/audits/feat-provenance-canonical-authority.json",
+        "data/audits/feat-tags-production-reconciliation.json",
         "data/feat_buckets_and_subbuckets.json",
         "data/fixes/feat-view-model.json",
         "data/generated/feat-view-model.json",
@@ -9151,6 +9326,10 @@
         },
         {
           "path": "data/audits/feat-provenance-canonical-authority.json",
+          "classification": "AUDIT_OR_DOCUMENTATION_REFERENCE"
+        },
+        {
+          "path": "data/audits/feat-tags-production-reconciliation.json",
           "classification": "AUDIT_OR_DOCUMENTATION_REFERENCE"
         },
         {
@@ -9213,10 +9392,11 @@
       "orphanHistoricalReferencePaths": [
         "packs/feat-catalog.db"
       ],
-      "auditDocumentationReferenceCount": 9,
+      "auditDocumentationReferenceCount": 10,
       "auditDocumentationReferencePaths": [
         "data/audits/feat-content-canonical-authority.json",
         "data/audits/feat-provenance-canonical-authority.json",
+        "data/audits/feat-tags-production-reconciliation.json",
         "docs/audits/feat-sourcebook-metadata-verification.md",
         "docs/audits/generated/feat-inventory-report.json",
         "docs/audits/generated/feat-prerequisite-input-report.json",
@@ -9374,8 +9554,9 @@
       "parentCanonicalId": null,
       "replacementCanonicalId": null,
       "dependencyStatus": "NO_LIVE_RUNTIME_REFERENCE",
-      "exactIdReferenceCount": 12,
+      "exactIdReferenceCount": 13,
       "exactIdReferencePaths": [
+        "data/audits/feat-tags-production-reconciliation.json",
         "data/feat_buckets_and_subbuckets.json",
         "data/fixes/feat-view-model.json",
         "data/generated/feat-view-model.json",
@@ -9390,6 +9571,10 @@
         "packs/feat-catalog.db"
       ],
       "referenceDetails": [
+        {
+          "path": "data/audits/feat-tags-production-reconciliation.json",
+          "classification": "AUDIT_OR_DOCUMENTATION_REFERENCE"
+        },
         {
           "path": "data/feat_buckets_and_subbuckets.json",
           "classification": "DERIVED_REBUILD_ARTIFACT"
@@ -9454,8 +9639,9 @@
       "orphanHistoricalReferencePaths": [
         "packs/feat-catalog.db"
       ],
-      "auditDocumentationReferenceCount": 8,
+      "auditDocumentationReferenceCount": 9,
       "auditDocumentationReferencePaths": [
+        "data/audits/feat-tags-production-reconciliation.json",
         "docs/audits/feat-sourcebook-metadata-verification.md",
         "docs/audits/generated/feat-inventory-report.json",
         "docs/audits/generated/feat-prerequisite-input-report.json",
@@ -9992,8 +10178,9 @@
       "parentCanonicalId": null,
       "replacementCanonicalId": null,
       "dependencyStatus": "LIVE_RUNTIME_REFERENCE_PRESENT",
-      "exactIdReferenceCount": 13,
+      "exactIdReferenceCount": 14,
       "exactIdReferencePaths": [
+        "data/audits/feat-tags-production-reconciliation.json",
         "data/feat-effects.json",
         "data/feat_buckets_and_subbuckets.json",
         "data/fixes/feat-view-model.json",
@@ -10009,6 +10196,10 @@
         "packs/feat-catalog.db"
       ],
       "referenceDetails": [
+        {
+          "path": "data/audits/feat-tags-production-reconciliation.json",
+          "classification": "AUDIT_OR_DOCUMENTATION_REFERENCE"
+        },
         {
           "path": "data/feat-effects.json",
           "classification": "LIVE_RUNTIME_AUTHORITY"
@@ -10079,8 +10270,9 @@
       "orphanHistoricalReferencePaths": [
         "packs/feat-catalog.db"
       ],
-      "auditDocumentationReferenceCount": 8,
+      "auditDocumentationReferenceCount": 9,
       "auditDocumentationReferencePaths": [
+        "data/audits/feat-tags-production-reconciliation.json",
         "docs/audits/generated/feat-inventory-report.json",
         "docs/audits/generated/feat-prerequisite-input-report.json",
         "docs/feat-description-and-choice-backfill-phase6.json",
@@ -10779,8 +10971,9 @@
       "parentCanonicalId": "ecc2471ac96ec2d4",
       "replacementCanonicalId": null,
       "dependencyStatus": "LIVE_RUNTIME_REFERENCE_PRESENT",
-      "exactIdReferenceCount": 17,
+      "exactIdReferenceCount": 19,
       "exactIdReferencePaths": [
+        "data/audits/feat-tags-production-reconciliation.json",
         "data/feat-effects.json",
         "data/feat_buckets_and_subbuckets.json",
         "data/fixes/feat-view-model.json",
@@ -10788,6 +10981,7 @@
         "data/generated/feat-view-model.json",
         "data/prestige-prerequisites-reference.json",
         "docs/audits/feat-sourcebook-metadata-verification.md",
+        "docs/audits/feat-tags-production-reconciliation.md",
         "docs/audits/generated/feat-inventory-report.json",
         "docs/audits/generated/feat-prerequisite-input-report.json",
         "docs/feat-choice-required-audit-phase5.json",
@@ -10800,6 +10994,10 @@
         "scripts/engine/progression/prerequisites/class-prereq-normalizer.js"
       ],
       "referenceDetails": [
+        {
+          "path": "data/audits/feat-tags-production-reconciliation.json",
+          "classification": "AUDIT_OR_DOCUMENTATION_REFERENCE"
+        },
         {
           "path": "data/feat-effects.json",
           "classification": "LIVE_RUNTIME_AUTHORITY"
@@ -10826,6 +11024,10 @@
         },
         {
           "path": "docs/audits/feat-sourcebook-metadata-verification.md",
+          "classification": "AUDIT_OR_DOCUMENTATION_REFERENCE"
+        },
+        {
+          "path": "docs/audits/feat-tags-production-reconciliation.md",
           "classification": "AUDIT_OR_DOCUMENTATION_REFERENCE"
         },
         {
@@ -10888,10 +11090,12 @@
       "orphanHistoricalReferencePaths": [
         "packs/feat-catalog.db"
       ],
-      "auditDocumentationReferenceCount": 10,
+      "auditDocumentationReferenceCount": 12,
       "auditDocumentationReferencePaths": [
+        "data/audits/feat-tags-production-reconciliation.json",
         "data/prestige-prerequisites-reference.json",
         "docs/audits/feat-sourcebook-metadata-verification.md",
+        "docs/audits/feat-tags-production-reconciliation.md",
         "docs/audits/generated/feat-inventory-report.json",
         "docs/audits/generated/feat-prerequisite-input-report.json",
         "docs/feat-choice-required-audit-phase5.json",
@@ -11131,8 +11335,9 @@
       "parentCanonicalId": null,
       "replacementCanonicalId": null,
       "dependencyStatus": "NO_LIVE_RUNTIME_REFERENCE",
-      "exactIdReferenceCount": 14,
+      "exactIdReferenceCount": 15,
       "exactIdReferencePaths": [
+        "data/audits/feat-tags-production-reconciliation.json",
         "data/feat_buckets_and_subbuckets.json",
         "data/fixes/feat-view-model.json",
         "data/generated/feat-view-model.json",
@@ -11149,6 +11354,10 @@
         "packs/feat-catalog.db"
       ],
       "referenceDetails": [
+        {
+          "path": "data/audits/feat-tags-production-reconciliation.json",
+          "classification": "AUDIT_OR_DOCUMENTATION_REFERENCE"
+        },
         {
           "path": "data/feat_buckets_and_subbuckets.json",
           "classification": "DERIVED_REBUILD_ARTIFACT"
@@ -11221,8 +11430,9 @@
       "orphanHistoricalReferencePaths": [
         "packs/feat-catalog.db"
       ],
-      "auditDocumentationReferenceCount": 10,
+      "auditDocumentationReferenceCount": 11,
       "auditDocumentationReferencePaths": [
+        "data/audits/feat-tags-production-reconciliation.json",
         "docs/audits/feat-sourcebook-metadata-verification.md",
         "docs/audits/generated/feat-inventory-report.json",
         "docs/audits/generated/feat-prerequisite-input-report.json",
@@ -11518,8 +11728,9 @@
       "parentCanonicalId": null,
       "replacementCanonicalId": null,
       "dependencyStatus": "LIVE_RUNTIME_REFERENCE_PRESENT",
-      "exactIdReferenceCount": 12,
+      "exactIdReferenceCount": 13,
       "exactIdReferencePaths": [
+        "data/audits/feat-tags-production-reconciliation.json",
         "data/feat-effects.json",
         "data/feat_buckets_and_subbuckets.json",
         "data/fixes/feat-view-model.json",
@@ -11534,6 +11745,10 @@
         "packs/feat-catalog.db"
       ],
       "referenceDetails": [
+        {
+          "path": "data/audits/feat-tags-production-reconciliation.json",
+          "classification": "AUDIT_OR_DOCUMENTATION_REFERENCE"
+        },
         {
           "path": "data/feat-effects.json",
           "classification": "LIVE_RUNTIME_AUTHORITY"
@@ -11600,8 +11815,9 @@
       "orphanHistoricalReferencePaths": [
         "packs/feat-catalog.db"
       ],
-      "auditDocumentationReferenceCount": 7,
+      "auditDocumentationReferenceCount": 8,
       "auditDocumentationReferencePaths": [
+        "data/audits/feat-tags-production-reconciliation.json",
         "docs/audits/feat-sourcebook-metadata-verification.md",
         "docs/audits/generated/feat-inventory-report.json",
         "docs/audits/generated/feat-prerequisite-input-report.json",
@@ -11975,8 +12191,9 @@
       "parentCanonicalId": null,
       "replacementCanonicalId": null,
       "dependencyStatus": "NO_LIVE_RUNTIME_REFERENCE",
-      "exactIdReferenceCount": 11,
+      "exactIdReferenceCount": 12,
       "exactIdReferencePaths": [
+        "data/audits/feat-tags-production-reconciliation.json",
         "data/feat_buckets_and_subbuckets.json",
         "data/fixes/feat-view-model.json",
         "data/generated/feat-view-model.json",
@@ -11990,6 +12207,10 @@
         "packs/feat-catalog.db"
       ],
       "referenceDetails": [
+        {
+          "path": "data/audits/feat-tags-production-reconciliation.json",
+          "classification": "AUDIT_OR_DOCUMENTATION_REFERENCE"
+        },
         {
           "path": "data/feat_buckets_and_subbuckets.json",
           "classification": "DERIVED_REBUILD_ARTIFACT"
@@ -12050,8 +12271,9 @@
       "orphanHistoricalReferencePaths": [
         "packs/feat-catalog.db"
       ],
-      "auditDocumentationReferenceCount": 7,
+      "auditDocumentationReferenceCount": 8,
       "auditDocumentationReferencePaths": [
+        "data/audits/feat-tags-production-reconciliation.json",
         "docs/audits/feat-sourcebook-metadata-verification.md",
         "docs/audits/generated/feat-inventory-report.json",
         "docs/audits/generated/feat-prerequisite-input-report.json",
@@ -12074,14 +12296,16 @@
       "parentCanonicalId": "ecc2471ac96ec2d4",
       "replacementCanonicalId": null,
       "dependencyStatus": "LIVE_RUNTIME_REFERENCE_PRESENT",
-      "exactIdReferenceCount": 19,
+      "exactIdReferenceCount": 21,
       "exactIdReferencePaths": [
+        "data/audits/feat-tags-production-reconciliation.json",
         "data/feat-effects.json",
         "data/feat_buckets_and_subbuckets.json",
         "data/fixes/feat-view-model.json",
         "data/generated/class-feat-list-bindings.json",
         "data/generated/feat-view-model.json",
         "data/prestige-prerequisites-reference.json",
+        "docs/audits/feat-tags-production-reconciliation.md",
         "docs/audits/generated/feat-inventory-report.json",
         "docs/audits/generated/feat-prerequisite-input-report.json",
         "docs/feat-choice-required-audit-phase5.json",
@@ -12097,6 +12321,10 @@
         "scripts/engine/progression/prerequisites/class-prereq-normalizer.js"
       ],
       "referenceDetails": [
+        {
+          "path": "data/audits/feat-tags-production-reconciliation.json",
+          "classification": "AUDIT_OR_DOCUMENTATION_REFERENCE"
+        },
         {
           "path": "data/feat-effects.json",
           "classification": "LIVE_RUNTIME_AUTHORITY"
@@ -12119,6 +12347,10 @@
         },
         {
           "path": "data/prestige-prerequisites-reference.json",
+          "classification": "AUDIT_OR_DOCUMENTATION_REFERENCE"
+        },
+        {
+          "path": "docs/audits/feat-tags-production-reconciliation.md",
           "classification": "AUDIT_OR_DOCUMENTATION_REFERENCE"
         },
         {
@@ -12196,9 +12428,11 @@
       "orphanHistoricalReferencePaths": [
         "packs/feat-catalog.db"
       ],
-      "auditDocumentationReferenceCount": 9,
+      "auditDocumentationReferenceCount": 11,
       "auditDocumentationReferencePaths": [
+        "data/audits/feat-tags-production-reconciliation.json",
         "data/prestige-prerequisites-reference.json",
+        "docs/audits/feat-tags-production-reconciliation.md",
         "docs/audits/generated/feat-inventory-report.json",
         "docs/audits/generated/feat-prerequisite-input-report.json",
         "docs/feat-choice-required-audit-phase5.json",
@@ -12411,8 +12645,9 @@
       "parentCanonicalId": null,
       "replacementCanonicalId": null,
       "dependencyStatus": "NO_LIVE_RUNTIME_REFERENCE",
-      "exactIdReferenceCount": 12,
+      "exactIdReferenceCount": 13,
       "exactIdReferencePaths": [
+        "data/audits/feat-tags-production-reconciliation.json",
         "data/feat_buckets_and_subbuckets.json",
         "data/fixes/feat-view-model.json",
         "data/generated/feat-view-model.json",
@@ -12427,6 +12662,10 @@
         "packs/feat-catalog.db"
       ],
       "referenceDetails": [
+        {
+          "path": "data/audits/feat-tags-production-reconciliation.json",
+          "classification": "AUDIT_OR_DOCUMENTATION_REFERENCE"
+        },
         {
           "path": "data/feat_buckets_and_subbuckets.json",
           "classification": "DERIVED_REBUILD_ARTIFACT"
@@ -12491,8 +12730,9 @@
       "orphanHistoricalReferencePaths": [
         "packs/feat-catalog.db"
       ],
-      "auditDocumentationReferenceCount": 8,
+      "auditDocumentationReferenceCount": 9,
       "auditDocumentationReferencePaths": [
+        "data/audits/feat-tags-production-reconciliation.json",
         "docs/audits/feat-sourcebook-metadata-verification.md",
         "docs/audits/generated/feat-inventory-report.json",
         "docs/audits/generated/feat-prerequisite-input-report.json",
@@ -12597,8 +12837,9 @@
       "parentCanonicalId": null,
       "replacementCanonicalId": null,
       "dependencyStatus": "NO_LIVE_RUNTIME_REFERENCE",
-      "exactIdReferenceCount": 12,
+      "exactIdReferenceCount": 13,
       "exactIdReferencePaths": [
+        "data/audits/feat-tags-production-reconciliation.json",
         "data/feat_buckets_and_subbuckets.json",
         "data/fixes/feat-view-model.json",
         "data/generated/feat-view-model.json",
@@ -12613,6 +12854,10 @@
         "packs/feat-catalog.db"
       ],
       "referenceDetails": [
+        {
+          "path": "data/audits/feat-tags-production-reconciliation.json",
+          "classification": "AUDIT_OR_DOCUMENTATION_REFERENCE"
+        },
         {
           "path": "data/feat_buckets_and_subbuckets.json",
           "classification": "DERIVED_REBUILD_ARTIFACT"
@@ -12677,8 +12922,9 @@
       "orphanHistoricalReferencePaths": [
         "packs/feat-catalog.db"
       ],
-      "auditDocumentationReferenceCount": 8,
+      "auditDocumentationReferenceCount": 9,
       "auditDocumentationReferencePaths": [
+        "data/audits/feat-tags-production-reconciliation.json",
         "docs/audits/combat-phase-0k-affected-feat-talent-inventory.json",
         "docs/audits/feat-sourcebook-metadata-verification.md",
         "docs/audits/generated/feat-inventory-report.json",
@@ -13134,8 +13380,9 @@
       "parentCanonicalId": null,
       "replacementCanonicalId": null,
       "dependencyStatus": "NO_LIVE_RUNTIME_REFERENCE",
-      "exactIdReferenceCount": 11,
+      "exactIdReferenceCount": 12,
       "exactIdReferencePaths": [
+        "data/audits/feat-tags-production-reconciliation.json",
         "data/feat_buckets_and_subbuckets.json",
         "data/fixes/feat-view-model.json",
         "data/generated/feat-view-model.json",
@@ -13149,6 +13396,10 @@
         "packs/feat-catalog.db"
       ],
       "referenceDetails": [
+        {
+          "path": "data/audits/feat-tags-production-reconciliation.json",
+          "classification": "AUDIT_OR_DOCUMENTATION_REFERENCE"
+        },
         {
           "path": "data/feat_buckets_and_subbuckets.json",
           "classification": "DERIVED_REBUILD_ARTIFACT"
@@ -13209,8 +13460,9 @@
       "orphanHistoricalReferencePaths": [
         "packs/feat-catalog.db"
       ],
-      "auditDocumentationReferenceCount": 7,
+      "auditDocumentationReferenceCount": 8,
       "auditDocumentationReferencePaths": [
+        "data/audits/feat-tags-production-reconciliation.json",
         "docs/audits/feat-sourcebook-metadata-verification.md",
         "docs/audits/generated/feat-inventory-report.json",
         "docs/audits/generated/feat-prerequisite-input-report.json",
@@ -13503,8 +13755,9 @@
       "parentCanonicalId": null,
       "replacementCanonicalId": null,
       "dependencyStatus": "NO_LIVE_RUNTIME_REFERENCE",
-      "exactIdReferenceCount": 11,
+      "exactIdReferenceCount": 12,
       "exactIdReferencePaths": [
+        "data/audits/feat-tags-production-reconciliation.json",
         "data/feat_buckets_and_subbuckets.json",
         "data/fixes/feat-view-model.json",
         "data/generated/feat-view-model.json",
@@ -13518,6 +13771,10 @@
         "packs/feat-catalog.db"
       ],
       "referenceDetails": [
+        {
+          "path": "data/audits/feat-tags-production-reconciliation.json",
+          "classification": "AUDIT_OR_DOCUMENTATION_REFERENCE"
+        },
         {
           "path": "data/feat_buckets_and_subbuckets.json",
           "classification": "DERIVED_REBUILD_ARTIFACT"
@@ -13578,8 +13835,9 @@
       "orphanHistoricalReferencePaths": [
         "packs/feat-catalog.db"
       ],
-      "auditDocumentationReferenceCount": 7,
+      "auditDocumentationReferenceCount": 8,
       "auditDocumentationReferencePaths": [
+        "data/audits/feat-tags-production-reconciliation.json",
         "docs/audits/feat-sourcebook-metadata-verification.md",
         "docs/audits/generated/feat-inventory-report.json",
         "docs/audits/generated/feat-prerequisite-input-report.json",
@@ -13629,8 +13887,9 @@
       "parentCanonicalId": null,
       "replacementCanonicalId": null,
       "dependencyStatus": "LIVE_RUNTIME_REFERENCE_PRESENT",
-      "exactIdReferenceCount": 13,
+      "exactIdReferenceCount": 14,
       "exactIdReferencePaths": [
+        "data/audits/feat-tags-production-reconciliation.json",
         "data/feat-effects.json",
         "data/feat_buckets_and_subbuckets.json",
         "data/fixes/feat-view-model.json",
@@ -13646,6 +13905,10 @@
         "packs/feat-catalog.db"
       ],
       "referenceDetails": [
+        {
+          "path": "data/audits/feat-tags-production-reconciliation.json",
+          "classification": "AUDIT_OR_DOCUMENTATION_REFERENCE"
+        },
         {
           "path": "data/feat-effects.json",
           "classification": "LIVE_RUNTIME_AUTHORITY"
@@ -13716,8 +13979,9 @@
       "orphanHistoricalReferencePaths": [
         "packs/feat-catalog.db"
       ],
-      "auditDocumentationReferenceCount": 8,
+      "auditDocumentationReferenceCount": 9,
       "auditDocumentationReferencePaths": [
+        "data/audits/feat-tags-production-reconciliation.json",
         "docs/audits/combat-phase-0k-affected-feat-talent-inventory.json",
         "docs/audits/feat-sourcebook-metadata-verification.md",
         "docs/audits/generated/feat-inventory-report.json",
@@ -13768,8 +14032,9 @@
       "parentCanonicalId": null,
       "replacementCanonicalId": null,
       "dependencyStatus": "LIVE_RUNTIME_REFERENCE_PRESENT",
-      "exactIdReferenceCount": 13,
+      "exactIdReferenceCount": 14,
       "exactIdReferencePaths": [
+        "data/audits/feat-tags-production-reconciliation.json",
         "data/feat-effects.json",
         "data/feat_buckets_and_subbuckets.json",
         "data/fixes/feat-view-model.json",
@@ -13785,6 +14050,10 @@
         "packs/feat-catalog.db"
       ],
       "referenceDetails": [
+        {
+          "path": "data/audits/feat-tags-production-reconciliation.json",
+          "classification": "AUDIT_OR_DOCUMENTATION_REFERENCE"
+        },
         {
           "path": "data/feat-effects.json",
           "classification": "LIVE_RUNTIME_AUTHORITY"
@@ -13855,8 +14124,9 @@
       "orphanHistoricalReferencePaths": [
         "packs/feat-catalog.db"
       ],
-      "auditDocumentationReferenceCount": 8,
+      "auditDocumentationReferenceCount": 9,
       "auditDocumentationReferencePaths": [
+        "data/audits/feat-tags-production-reconciliation.json",
         "docs/audits/feat-sourcebook-metadata-verification.md",
         "docs/audits/generated/feat-inventory-report.json",
         "docs/audits/generated/feat-prerequisite-input-report.json",
@@ -13894,13 +14164,15 @@
       "reconciliationDisposition": "PRESERVE_IMPLEMENTATION_DERIVATIVE_PENDING_1C",
       "dependencyStatus": "LIVE_RUNTIME_REFERENCE_PRESENT",
       "futureMutationRequirement": "PRESERVE_REFERENCES_PENDING_PHASE_1C",
-      "exactIdReferenceCount": 17,
+      "exactIdReferenceCount": 19,
       "exactIdReferencePaths": [
+        "data/audits/feat-tags-production-reconciliation.json",
         "data/feat-effects.json",
         "data/feat_buckets_and_subbuckets.json",
         "data/fixes/feat-view-model.json",
         "data/generated/class-feat-list-bindings.json",
         "data/generated/feat-view-model.json",
+        "docs/audits/feat-tags-production-reconciliation.md",
         "docs/audits/generated/feat-inventory-report.json",
         "docs/audits/generated/feat-prerequisite-input-report.json",
         "docs/feat-choice-required-audit-phase5.json",
@@ -13915,6 +14187,10 @@
         "packs/npc.db"
       ],
       "referenceDetails": [
+        {
+          "path": "data/audits/feat-tags-production-reconciliation.json",
+          "classification": "AUDIT_OR_DOCUMENTATION_REFERENCE"
+        },
         {
           "path": "data/feat-effects.json",
           "classification": "LIVE_RUNTIME_AUTHORITY"
@@ -13934,6 +14210,10 @@
         {
           "path": "data/generated/feat-view-model.json",
           "classification": "DERIVED_REBUILD_ARTIFACT"
+        },
+        {
+          "path": "docs/audits/feat-tags-production-reconciliation.md",
+          "classification": "AUDIT_OR_DOCUMENTATION_REFERENCE"
         },
         {
           "path": "docs/audits/generated/feat-inventory-report.json",
@@ -14005,8 +14285,10 @@
       "orphanHistoricalReferencePaths": [
         "packs/feat-catalog.db"
       ],
-      "auditDocumentationReferenceCount": 8,
+      "auditDocumentationReferenceCount": 10,
       "auditDocumentationReferencePaths": [
+        "data/audits/feat-tags-production-reconciliation.json",
+        "docs/audits/feat-tags-production-reconciliation.md",
         "docs/audits/generated/feat-inventory-report.json",
         "docs/audits/generated/feat-prerequisite-input-report.json",
         "docs/feat-choice-required-audit-phase5.json",
@@ -14027,13 +14309,15 @@
       "reconciliationDisposition": "PRESERVE_IMPLEMENTATION_DERIVATIVE_PENDING_1C",
       "dependencyStatus": "LIVE_RUNTIME_REFERENCE_PRESENT",
       "futureMutationRequirement": "PRESERVE_REFERENCES_PENDING_PHASE_1C",
-      "exactIdReferenceCount": 17,
+      "exactIdReferenceCount": 19,
       "exactIdReferencePaths": [
+        "data/audits/feat-tags-production-reconciliation.json",
         "data/feat-effects.json",
         "data/feat_buckets_and_subbuckets.json",
         "data/fixes/feat-view-model.json",
         "data/generated/class-feat-list-bindings.json",
         "data/generated/feat-view-model.json",
+        "docs/audits/feat-tags-production-reconciliation.md",
         "docs/audits/generated/feat-inventory-report.json",
         "docs/audits/generated/feat-prerequisite-input-report.json",
         "docs/feat-choice-required-audit-phase5.json",
@@ -14048,6 +14332,10 @@
         "packs/npc.db"
       ],
       "referenceDetails": [
+        {
+          "path": "data/audits/feat-tags-production-reconciliation.json",
+          "classification": "AUDIT_OR_DOCUMENTATION_REFERENCE"
+        },
         {
           "path": "data/feat-effects.json",
           "classification": "LIVE_RUNTIME_AUTHORITY"
@@ -14067,6 +14355,10 @@
         {
           "path": "data/generated/feat-view-model.json",
           "classification": "DERIVED_REBUILD_ARTIFACT"
+        },
+        {
+          "path": "docs/audits/feat-tags-production-reconciliation.md",
+          "classification": "AUDIT_OR_DOCUMENTATION_REFERENCE"
         },
         {
           "path": "docs/audits/generated/feat-inventory-report.json",
@@ -14138,8 +14430,10 @@
       "orphanHistoricalReferencePaths": [
         "packs/feat-catalog.db"
       ],
-      "auditDocumentationReferenceCount": 8,
+      "auditDocumentationReferenceCount": 10,
       "auditDocumentationReferencePaths": [
+        "data/audits/feat-tags-production-reconciliation.json",
+        "docs/audits/feat-tags-production-reconciliation.md",
         "docs/audits/generated/feat-inventory-report.json",
         "docs/audits/generated/feat-prerequisite-input-report.json",
         "docs/feat-choice-required-audit-phase5.json",
@@ -14160,14 +14454,16 @@
       "reconciliationDisposition": "PRESERVE_IMPLEMENTATION_DERIVATIVE_PENDING_1C",
       "dependencyStatus": "LIVE_RUNTIME_REFERENCE_PRESENT",
       "futureMutationRequirement": "PRESERVE_REFERENCES_PENDING_PHASE_1C",
-      "exactIdReferenceCount": 18,
+      "exactIdReferenceCount": 20,
       "exactIdReferencePaths": [
+        "data/audits/feat-tags-production-reconciliation.json",
         "data/class-archetypes.json",
         "data/feat-effects.json",
         "data/feat_buckets_and_subbuckets.json",
         "data/fixes/feat-view-model.json",
         "data/generated/class-feat-list-bindings.json",
         "data/generated/feat-view-model.json",
+        "docs/audits/feat-tags-production-reconciliation.md",
         "docs/audits/generated/feat-inventory-report.json",
         "docs/audits/generated/feat-prerequisite-input-report.json",
         "docs/feat-choice-required-audit-phase5.json",
@@ -14182,6 +14478,10 @@
         "packs/npc.db"
       ],
       "referenceDetails": [
+        {
+          "path": "data/audits/feat-tags-production-reconciliation.json",
+          "classification": "AUDIT_OR_DOCUMENTATION_REFERENCE"
+        },
         {
           "path": "data/class-archetypes.json",
           "classification": "LIVE_RUNTIME_AUTHORITY"
@@ -14205,6 +14505,10 @@
         {
           "path": "data/generated/feat-view-model.json",
           "classification": "DERIVED_REBUILD_ARTIFACT"
+        },
+        {
+          "path": "docs/audits/feat-tags-production-reconciliation.md",
+          "classification": "AUDIT_OR_DOCUMENTATION_REFERENCE"
         },
         {
           "path": "docs/audits/generated/feat-inventory-report.json",
@@ -14277,8 +14581,10 @@
       "orphanHistoricalReferencePaths": [
         "packs/feat-catalog.db"
       ],
-      "auditDocumentationReferenceCount": 8,
+      "auditDocumentationReferenceCount": 10,
       "auditDocumentationReferencePaths": [
+        "data/audits/feat-tags-production-reconciliation.json",
+        "docs/audits/feat-tags-production-reconciliation.md",
         "docs/audits/generated/feat-inventory-report.json",
         "docs/audits/generated/feat-prerequisite-input-report.json",
         "docs/feat-choice-required-audit-phase5.json",
@@ -14299,14 +14605,16 @@
       "reconciliationDisposition": "PRESERVE_IMPLEMENTATION_DERIVATIVE_PENDING_1C",
       "dependencyStatus": "LIVE_RUNTIME_REFERENCE_PRESENT",
       "futureMutationRequirement": "PRESERVE_REFERENCES_PENDING_PHASE_1C",
-      "exactIdReferenceCount": 19,
+      "exactIdReferenceCount": 21,
       "exactIdReferencePaths": [
+        "data/audits/feat-tags-production-reconciliation.json",
         "data/feat-effects.json",
         "data/feat_buckets_and_subbuckets.json",
         "data/fixes/feat-view-model.json",
         "data/generated/class-feat-list-bindings.json",
         "data/generated/feat-view-model.json",
         "data/prestige-prerequisites-reference.json",
+        "docs/audits/feat-tags-production-reconciliation.md",
         "docs/audits/generated/feat-inventory-report.json",
         "docs/audits/generated/feat-prerequisite-input-report.json",
         "docs/feat-choice-required-audit-phase5.json",
@@ -14322,6 +14630,10 @@
         "scripts/engine/progression/prerequisites/class-prereq-normalizer.js"
       ],
       "referenceDetails": [
+        {
+          "path": "data/audits/feat-tags-production-reconciliation.json",
+          "classification": "AUDIT_OR_DOCUMENTATION_REFERENCE"
+        },
         {
           "path": "data/feat-effects.json",
           "classification": "LIVE_RUNTIME_AUTHORITY"
@@ -14344,6 +14656,10 @@
         },
         {
           "path": "data/prestige-prerequisites-reference.json",
+          "classification": "AUDIT_OR_DOCUMENTATION_REFERENCE"
+        },
+        {
+          "path": "docs/audits/feat-tags-production-reconciliation.md",
           "classification": "AUDIT_OR_DOCUMENTATION_REFERENCE"
         },
         {
@@ -14421,9 +14737,11 @@
       "orphanHistoricalReferencePaths": [
         "packs/feat-catalog.db"
       ],
-      "auditDocumentationReferenceCount": 9,
+      "auditDocumentationReferenceCount": 11,
       "auditDocumentationReferencePaths": [
+        "data/audits/feat-tags-production-reconciliation.json",
         "data/prestige-prerequisites-reference.json",
+        "docs/audits/feat-tags-production-reconciliation.md",
         "docs/audits/generated/feat-inventory-report.json",
         "docs/audits/generated/feat-prerequisite-input-report.json",
         "docs/feat-choice-required-audit-phase5.json",
@@ -14444,8 +14762,9 @@
       "reconciliationDisposition": "PRESERVE_IMPLEMENTATION_DERIVATIVE_PENDING_1C",
       "dependencyStatus": "LIVE_RUNTIME_REFERENCE_PRESENT",
       "futureMutationRequirement": "PRESERVE_REFERENCES_PENDING_PHASE_1C",
-      "exactIdReferenceCount": 17,
+      "exactIdReferenceCount": 19,
       "exactIdReferencePaths": [
+        "data/audits/feat-tags-production-reconciliation.json",
         "data/feat-effects.json",
         "data/feat_buckets_and_subbuckets.json",
         "data/fixes/feat-view-model.json",
@@ -14453,6 +14772,7 @@
         "data/generated/feat-view-model.json",
         "data/prestige-prerequisites-reference.json",
         "docs/audits/feat-sourcebook-metadata-verification.md",
+        "docs/audits/feat-tags-production-reconciliation.md",
         "docs/audits/generated/feat-inventory-report.json",
         "docs/audits/generated/feat-prerequisite-input-report.json",
         "docs/feat-choice-required-audit-phase5.json",
@@ -14465,6 +14785,10 @@
         "scripts/engine/progression/prerequisites/class-prereq-normalizer.js"
       ],
       "referenceDetails": [
+        {
+          "path": "data/audits/feat-tags-production-reconciliation.json",
+          "classification": "AUDIT_OR_DOCUMENTATION_REFERENCE"
+        },
         {
           "path": "data/feat-effects.json",
           "classification": "LIVE_RUNTIME_AUTHORITY"
@@ -14491,6 +14815,10 @@
         },
         {
           "path": "docs/audits/feat-sourcebook-metadata-verification.md",
+          "classification": "AUDIT_OR_DOCUMENTATION_REFERENCE"
+        },
+        {
+          "path": "docs/audits/feat-tags-production-reconciliation.md",
           "classification": "AUDIT_OR_DOCUMENTATION_REFERENCE"
         },
         {
@@ -14553,10 +14881,12 @@
       "orphanHistoricalReferencePaths": [
         "packs/feat-catalog.db"
       ],
-      "auditDocumentationReferenceCount": 10,
+      "auditDocumentationReferenceCount": 12,
       "auditDocumentationReferencePaths": [
+        "data/audits/feat-tags-production-reconciliation.json",
         "data/prestige-prerequisites-reference.json",
         "docs/audits/feat-sourcebook-metadata-verification.md",
+        "docs/audits/feat-tags-production-reconciliation.md",
         "docs/audits/generated/feat-inventory-report.json",
         "docs/audits/generated/feat-prerequisite-input-report.json",
         "docs/feat-choice-required-audit-phase5.json",
@@ -14577,13 +14907,15 @@
       "reconciliationDisposition": "PRESERVE_IMPLEMENTATION_DERIVATIVE_PENDING_1C",
       "dependencyStatus": "LIVE_RUNTIME_REFERENCE_PRESENT",
       "futureMutationRequirement": "PRESERVE_REFERENCES_PENDING_PHASE_1C",
-      "exactIdReferenceCount": 14,
+      "exactIdReferenceCount": 16,
       "exactIdReferencePaths": [
+        "data/audits/feat-tags-production-reconciliation.json",
         "data/feat-effects.json",
         "data/feat_buckets_and_subbuckets.json",
         "data/fixes/feat-view-model.json",
         "data/generated/feat-view-model.json",
         "docs/audits/feat-sourcebook-metadata-verification.md",
+        "docs/audits/feat-tags-production-reconciliation.md",
         "docs/audits/generated/feat-inventory-report.json",
         "docs/audits/generated/feat-prerequisite-input-report.json",
         "docs/feat-choice-required-audit-phase5.json",
@@ -14595,6 +14927,10 @@
         "packs/feat-catalog.db"
       ],
       "referenceDetails": [
+        {
+          "path": "data/audits/feat-tags-production-reconciliation.json",
+          "classification": "AUDIT_OR_DOCUMENTATION_REFERENCE"
+        },
         {
           "path": "data/feat-effects.json",
           "classification": "LIVE_RUNTIME_AUTHORITY"
@@ -14613,6 +14949,10 @@
         },
         {
           "path": "docs/audits/feat-sourcebook-metadata-verification.md",
+          "classification": "AUDIT_OR_DOCUMENTATION_REFERENCE"
+        },
+        {
+          "path": "docs/audits/feat-tags-production-reconciliation.md",
           "classification": "AUDIT_OR_DOCUMENTATION_REFERENCE"
         },
         {
@@ -14669,9 +15009,11 @@
       "orphanHistoricalReferencePaths": [
         "packs/feat-catalog.db"
       ],
-      "auditDocumentationReferenceCount": 9,
+      "auditDocumentationReferenceCount": 11,
       "auditDocumentationReferencePaths": [
+        "data/audits/feat-tags-production-reconciliation.json",
         "docs/audits/feat-sourcebook-metadata-verification.md",
+        "docs/audits/feat-tags-production-reconciliation.md",
         "docs/audits/generated/feat-inventory-report.json",
         "docs/audits/generated/feat-prerequisite-input-report.json",
         "docs/feat-choice-required-audit-phase5.json",
@@ -14691,8 +15033,9 @@
       "replacementCanonicalId": null,
       "dependencyStatus": "NO_LIVE_RUNTIME_REFERENCE",
       "futureMutationRequirement": "NO_LIVE_REFERENCE_BLOCKER_REFRESH_DERIVED_ARTIFACTS_DURING_MUTATION",
-      "exactIdReferenceCount": 12,
+      "exactIdReferenceCount": 13,
       "exactIdReferencePaths": [
+        "data/audits/feat-tags-production-reconciliation.json",
         "data/feat_buckets_and_subbuckets.json",
         "data/fixes/feat-view-model.json",
         "data/generated/feat-view-model.json",
@@ -14707,6 +15050,10 @@
         "packs/feat-catalog.db"
       ],
       "referenceDetails": [
+        {
+          "path": "data/audits/feat-tags-production-reconciliation.json",
+          "classification": "AUDIT_OR_DOCUMENTATION_REFERENCE"
+        },
         {
           "path": "data/feat_buckets_and_subbuckets.json",
           "classification": "DERIVED_REBUILD_ARTIFACT"
@@ -14771,8 +15118,9 @@
       "orphanHistoricalReferencePaths": [
         "packs/feat-catalog.db"
       ],
-      "auditDocumentationReferenceCount": 8,
+      "auditDocumentationReferenceCount": 9,
       "auditDocumentationReferencePaths": [
+        "data/audits/feat-tags-production-reconciliation.json",
         "docs/audits/combat-phase-0k-affected-feat-talent-inventory.json",
         "docs/audits/feat-sourcebook-metadata-verification.md",
         "docs/audits/generated/feat-inventory-report.json",
@@ -14790,8 +15138,9 @@
       "replacementCanonicalId": null,
       "dependencyStatus": "NO_LIVE_RUNTIME_REFERENCE",
       "futureMutationRequirement": "NO_LIVE_REFERENCE_BLOCKER_REFRESH_DERIVED_ARTIFACTS_DURING_MUTATION",
-      "exactIdReferenceCount": 12,
+      "exactIdReferenceCount": 13,
       "exactIdReferencePaths": [
+        "data/audits/feat-tags-production-reconciliation.json",
         "data/feat_buckets_and_subbuckets.json",
         "data/fixes/feat-view-model.json",
         "data/generated/feat-view-model.json",
@@ -14806,6 +15155,10 @@
         "packs/feat-catalog.db"
       ],
       "referenceDetails": [
+        {
+          "path": "data/audits/feat-tags-production-reconciliation.json",
+          "classification": "AUDIT_OR_DOCUMENTATION_REFERENCE"
+        },
         {
           "path": "data/feat_buckets_and_subbuckets.json",
           "classification": "DERIVED_REBUILD_ARTIFACT"
@@ -14870,8 +15223,9 @@
       "orphanHistoricalReferencePaths": [
         "packs/feat-catalog.db"
       ],
-      "auditDocumentationReferenceCount": 8,
+      "auditDocumentationReferenceCount": 9,
       "auditDocumentationReferencePaths": [
+        "data/audits/feat-tags-production-reconciliation.json",
         "docs/audits/combat-phase-0k-affected-feat-talent-inventory.json",
         "docs/audits/feat-sourcebook-metadata-verification.md",
         "docs/audits/generated/feat-inventory-report.json",
@@ -14889,8 +15243,9 @@
       "replacementCanonicalId": null,
       "dependencyStatus": "NO_LIVE_RUNTIME_REFERENCE",
       "futureMutationRequirement": "NO_LIVE_REFERENCE_BLOCKER_REFRESH_DERIVED_ARTIFACTS_DURING_MUTATION",
-      "exactIdReferenceCount": 11,
+      "exactIdReferenceCount": 12,
       "exactIdReferencePaths": [
+        "data/audits/feat-tags-production-reconciliation.json",
         "data/feat_buckets_and_subbuckets.json",
         "data/fixes/feat-view-model.json",
         "data/generated/feat-view-model.json",
@@ -14904,6 +15259,10 @@
         "packs/feat-catalog.db"
       ],
       "referenceDetails": [
+        {
+          "path": "data/audits/feat-tags-production-reconciliation.json",
+          "classification": "AUDIT_OR_DOCUMENTATION_REFERENCE"
+        },
         {
           "path": "data/feat_buckets_and_subbuckets.json",
           "classification": "DERIVED_REBUILD_ARTIFACT"
@@ -14964,8 +15323,9 @@
       "orphanHistoricalReferencePaths": [
         "packs/feat-catalog.db"
       ],
-      "auditDocumentationReferenceCount": 7,
+      "auditDocumentationReferenceCount": 8,
       "auditDocumentationReferencePaths": [
+        "data/audits/feat-tags-production-reconciliation.json",
         "docs/audits/feat-sourcebook-metadata-verification.md",
         "docs/audits/generated/feat-inventory-report.json",
         "docs/audits/generated/feat-prerequisite-input-report.json",
@@ -14982,8 +15342,9 @@
       "replacementCanonicalId": null,
       "dependencyStatus": "LIVE_RUNTIME_REFERENCE_PRESENT",
       "futureMutationRequirement": "REMEDIATE_LIVE_REFERENCES_BEFORE_RECORD_DELETION",
-      "exactIdReferenceCount": 13,
+      "exactIdReferenceCount": 14,
       "exactIdReferencePaths": [
+        "data/audits/feat-tags-production-reconciliation.json",
         "data/class-archetypes.json",
         "data/feat_buckets_and_subbuckets.json",
         "data/fixes/feat-view-model.json",
@@ -14999,6 +15360,10 @@
         "packs/feat-catalog.db"
       ],
       "referenceDetails": [
+        {
+          "path": "data/audits/feat-tags-production-reconciliation.json",
+          "classification": "AUDIT_OR_DOCUMENTATION_REFERENCE"
+        },
         {
           "path": "data/class-archetypes.json",
           "classification": "LIVE_RUNTIME_AUTHORITY"
@@ -15069,8 +15434,9 @@
       "orphanHistoricalReferencePaths": [
         "packs/feat-catalog.db"
       ],
-      "auditDocumentationReferenceCount": 8,
+      "auditDocumentationReferenceCount": 9,
       "auditDocumentationReferencePaths": [
+        "data/audits/feat-tags-production-reconciliation.json",
         "docs/audits/feat-sourcebook-metadata-verification.md",
         "docs/audits/generated/feat-inventory-report.json",
         "docs/audits/generated/feat-prerequisite-input-report.json",
@@ -15088,8 +15454,9 @@
       "replacementCanonicalId": null,
       "dependencyStatus": "LIVE_RUNTIME_REFERENCE_PRESENT",
       "futureMutationRequirement": "REMEDIATE_LIVE_REFERENCES_BEFORE_RECORD_DELETION",
-      "exactIdReferenceCount": 13,
+      "exactIdReferenceCount": 14,
       "exactIdReferencePaths": [
+        "data/audits/feat-tags-production-reconciliation.json",
         "data/feat-effects.json",
         "data/feat_buckets_and_subbuckets.json",
         "data/fixes/feat-view-model.json",
@@ -15105,6 +15472,10 @@
         "packs/feat-catalog.db"
       ],
       "referenceDetails": [
+        {
+          "path": "data/audits/feat-tags-production-reconciliation.json",
+          "classification": "AUDIT_OR_DOCUMENTATION_REFERENCE"
+        },
         {
           "path": "data/feat-effects.json",
           "classification": "LIVE_RUNTIME_AUTHORITY"
@@ -15175,8 +15546,9 @@
       "orphanHistoricalReferencePaths": [
         "packs/feat-catalog.db"
       ],
-      "auditDocumentationReferenceCount": 8,
+      "auditDocumentationReferenceCount": 9,
       "auditDocumentationReferencePaths": [
+        "data/audits/feat-tags-production-reconciliation.json",
         "docs/audits/feat-sourcebook-metadata-verification.md",
         "docs/audits/generated/feat-inventory-report.json",
         "docs/audits/generated/feat-prerequisite-input-report.json",
@@ -15194,8 +15566,9 @@
       "replacementCanonicalId": null,
       "dependencyStatus": "LIVE_RUNTIME_REFERENCE_PRESENT",
       "futureMutationRequirement": "REMEDIATE_LIVE_REFERENCES_BEFORE_RECORD_DELETION",
-      "exactIdReferenceCount": 12,
+      "exactIdReferenceCount": 13,
       "exactIdReferencePaths": [
+        "data/audits/feat-tags-production-reconciliation.json",
         "data/feat-effects.json",
         "data/feat_buckets_and_subbuckets.json",
         "data/fixes/feat-view-model.json",
@@ -15210,6 +15583,10 @@
         "packs/feat-catalog.db"
       ],
       "referenceDetails": [
+        {
+          "path": "data/audits/feat-tags-production-reconciliation.json",
+          "classification": "AUDIT_OR_DOCUMENTATION_REFERENCE"
+        },
         {
           "path": "data/feat-effects.json",
           "classification": "LIVE_RUNTIME_AUTHORITY"
@@ -15276,8 +15653,9 @@
       "orphanHistoricalReferencePaths": [
         "packs/feat-catalog.db"
       ],
-      "auditDocumentationReferenceCount": 7,
+      "auditDocumentationReferenceCount": 8,
       "auditDocumentationReferencePaths": [
+        "data/audits/feat-tags-production-reconciliation.json",
         "docs/audits/feat-sourcebook-metadata-verification.md",
         "docs/audits/generated/feat-inventory-report.json",
         "docs/audits/generated/feat-prerequisite-input-report.json",
@@ -15294,8 +15672,9 @@
       "replacementCanonicalId": null,
       "dependencyStatus": "NO_LIVE_RUNTIME_REFERENCE",
       "futureMutationRequirement": "NO_LIVE_REFERENCE_BLOCKER_REFRESH_DERIVED_ARTIFACTS_DURING_MUTATION",
-      "exactIdReferenceCount": 11,
+      "exactIdReferenceCount": 12,
       "exactIdReferencePaths": [
+        "data/audits/feat-tags-production-reconciliation.json",
         "data/feat_buckets_and_subbuckets.json",
         "data/fixes/feat-view-model.json",
         "data/generated/feat-view-model.json",
@@ -15309,6 +15688,10 @@
         "packs/feat-catalog.db"
       ],
       "referenceDetails": [
+        {
+          "path": "data/audits/feat-tags-production-reconciliation.json",
+          "classification": "AUDIT_OR_DOCUMENTATION_REFERENCE"
+        },
         {
           "path": "data/feat_buckets_and_subbuckets.json",
           "classification": "DERIVED_REBUILD_ARTIFACT"
@@ -15369,8 +15752,9 @@
       "orphanHistoricalReferencePaths": [
         "packs/feat-catalog.db"
       ],
-      "auditDocumentationReferenceCount": 7,
+      "auditDocumentationReferenceCount": 8,
       "auditDocumentationReferencePaths": [
+        "data/audits/feat-tags-production-reconciliation.json",
         "docs/audits/feat-sourcebook-metadata-verification.md",
         "docs/audits/generated/feat-inventory-report.json",
         "docs/audits/generated/feat-prerequisite-input-report.json",
@@ -15387,8 +15771,9 @@
       "replacementCanonicalId": null,
       "dependencyStatus": "NO_LIVE_RUNTIME_REFERENCE",
       "futureMutationRequirement": "NO_LIVE_REFERENCE_BLOCKER_REFRESH_DERIVED_ARTIFACTS_DURING_MUTATION",
-      "exactIdReferenceCount": 13,
+      "exactIdReferenceCount": 14,
       "exactIdReferencePaths": [
+        "data/audits/feat-tags-production-reconciliation.json",
         "data/feat_buckets_and_subbuckets.json",
         "data/fixes/feat-view-model.json",
         "data/generated/feat-view-model.json",
@@ -15404,6 +15789,10 @@
         "packs/feat-catalog.db"
       ],
       "referenceDetails": [
+        {
+          "path": "data/audits/feat-tags-production-reconciliation.json",
+          "classification": "AUDIT_OR_DOCUMENTATION_REFERENCE"
+        },
         {
           "path": "data/feat_buckets_and_subbuckets.json",
           "classification": "DERIVED_REBUILD_ARTIFACT"
@@ -15472,8 +15861,9 @@
       "orphanHistoricalReferencePaths": [
         "packs/feat-catalog.db"
       ],
-      "auditDocumentationReferenceCount": 9,
+      "auditDocumentationReferenceCount": 10,
       "auditDocumentationReferencePaths": [
+        "data/audits/feat-tags-production-reconciliation.json",
         "docs/audits/feat-sourcebook-metadata-verification.md",
         "docs/audits/generated/feat-inventory-report.json",
         "docs/audits/generated/feat-prerequisite-input-report.json",
@@ -15492,8 +15882,9 @@
       "replacementCanonicalId": null,
       "dependencyStatus": "LIVE_RUNTIME_REFERENCE_PRESENT",
       "futureMutationRequirement": "REMEDIATE_LIVE_REFERENCES_BEFORE_RECORD_DELETION",
-      "exactIdReferenceCount": 12,
+      "exactIdReferenceCount": 13,
       "exactIdReferencePaths": [
+        "data/audits/feat-tags-production-reconciliation.json",
         "data/feat-effects.json",
         "data/feat_buckets_and_subbuckets.json",
         "data/fixes/feat-view-model.json",
@@ -15508,6 +15899,10 @@
         "packs/feat-catalog.db"
       ],
       "referenceDetails": [
+        {
+          "path": "data/audits/feat-tags-production-reconciliation.json",
+          "classification": "AUDIT_OR_DOCUMENTATION_REFERENCE"
+        },
         {
           "path": "data/feat-effects.json",
           "classification": "LIVE_RUNTIME_AUTHORITY"
@@ -15574,8 +15969,9 @@
       "orphanHistoricalReferencePaths": [
         "packs/feat-catalog.db"
       ],
-      "auditDocumentationReferenceCount": 7,
+      "auditDocumentationReferenceCount": 8,
       "auditDocumentationReferencePaths": [
+        "data/audits/feat-tags-production-reconciliation.json",
         "docs/audits/feat-sourcebook-metadata-verification.md",
         "docs/audits/generated/feat-inventory-report.json",
         "docs/audits/generated/feat-prerequisite-input-report.json",
@@ -15592,8 +15988,9 @@
       "replacementCanonicalId": null,
       "dependencyStatus": "NO_LIVE_RUNTIME_REFERENCE",
       "futureMutationRequirement": "NO_LIVE_REFERENCE_BLOCKER_REFRESH_DERIVED_ARTIFACTS_DURING_MUTATION",
-      "exactIdReferenceCount": 11,
+      "exactIdReferenceCount": 12,
       "exactIdReferencePaths": [
+        "data/audits/feat-tags-production-reconciliation.json",
         "data/feat_buckets_and_subbuckets.json",
         "data/fixes/feat-view-model.json",
         "data/generated/feat-view-model.json",
@@ -15607,6 +16004,10 @@
         "packs/feat-catalog.db"
       ],
       "referenceDetails": [
+        {
+          "path": "data/audits/feat-tags-production-reconciliation.json",
+          "classification": "AUDIT_OR_DOCUMENTATION_REFERENCE"
+        },
         {
           "path": "data/feat_buckets_and_subbuckets.json",
           "classification": "DERIVED_REBUILD_ARTIFACT"
@@ -15667,8 +16068,9 @@
       "orphanHistoricalReferencePaths": [
         "packs/feat-catalog.db"
       ],
-      "auditDocumentationReferenceCount": 7,
+      "auditDocumentationReferenceCount": 8,
       "auditDocumentationReferencePaths": [
+        "data/audits/feat-tags-production-reconciliation.json",
         "docs/audits/feat-sourcebook-metadata-verification.md",
         "docs/audits/generated/feat-inventory-report.json",
         "docs/audits/generated/feat-prerequisite-input-report.json",
@@ -15685,8 +16087,9 @@
       "replacementCanonicalId": null,
       "dependencyStatus": "LIVE_RUNTIME_REFERENCE_PRESENT",
       "futureMutationRequirement": "REMEDIATE_LIVE_REFERENCES_BEFORE_RECORD_DELETION",
-      "exactIdReferenceCount": 12,
+      "exactIdReferenceCount": 13,
       "exactIdReferencePaths": [
+        "data/audits/feat-tags-production-reconciliation.json",
         "data/feat-effects.json",
         "data/feat_buckets_and_subbuckets.json",
         "data/fixes/feat-view-model.json",
@@ -15701,6 +16104,10 @@
         "packs/feat-catalog.db"
       ],
       "referenceDetails": [
+        {
+          "path": "data/audits/feat-tags-production-reconciliation.json",
+          "classification": "AUDIT_OR_DOCUMENTATION_REFERENCE"
+        },
         {
           "path": "data/feat-effects.json",
           "classification": "LIVE_RUNTIME_AUTHORITY"
@@ -15767,8 +16174,9 @@
       "orphanHistoricalReferencePaths": [
         "packs/feat-catalog.db"
       ],
-      "auditDocumentationReferenceCount": 7,
+      "auditDocumentationReferenceCount": 8,
       "auditDocumentationReferencePaths": [
+        "data/audits/feat-tags-production-reconciliation.json",
         "docs/audits/feat-sourcebook-metadata-verification.md",
         "docs/audits/generated/feat-inventory-report.json",
         "docs/audits/generated/feat-prerequisite-input-report.json",
@@ -15785,8 +16193,9 @@
       "replacementCanonicalId": null,
       "dependencyStatus": "NO_LIVE_RUNTIME_REFERENCE",
       "futureMutationRequirement": "NO_LIVE_REFERENCE_BLOCKER_REFRESH_DERIVED_ARTIFACTS_DURING_MUTATION",
-      "exactIdReferenceCount": 12,
+      "exactIdReferenceCount": 13,
       "exactIdReferencePaths": [
+        "data/audits/feat-tags-production-reconciliation.json",
         "data/feat_buckets_and_subbuckets.json",
         "data/fixes/feat-view-model.json",
         "data/generated/feat-view-model.json",
@@ -15801,6 +16210,10 @@
         "packs/feat-catalog.db"
       ],
       "referenceDetails": [
+        {
+          "path": "data/audits/feat-tags-production-reconciliation.json",
+          "classification": "AUDIT_OR_DOCUMENTATION_REFERENCE"
+        },
         {
           "path": "data/feat_buckets_and_subbuckets.json",
           "classification": "DERIVED_REBUILD_ARTIFACT"
@@ -15865,8 +16278,9 @@
       "orphanHistoricalReferencePaths": [
         "packs/feat-catalog.db"
       ],
-      "auditDocumentationReferenceCount": 8,
+      "auditDocumentationReferenceCount": 9,
       "auditDocumentationReferencePaths": [
+        "data/audits/feat-tags-production-reconciliation.json",
         "docs/audits/feat-sourcebook-metadata-verification.md",
         "docs/audits/generated/feat-inventory-report.json",
         "docs/audits/generated/feat-prerequisite-input-report.json",
@@ -15884,8 +16298,9 @@
       "replacementCanonicalId": null,
       "dependencyStatus": "LIVE_RUNTIME_REFERENCE_PRESENT",
       "futureMutationRequirement": "REMEDIATE_LIVE_REFERENCES_BEFORE_RECORD_DELETION",
-      "exactIdReferenceCount": 13,
+      "exactIdReferenceCount": 14,
       "exactIdReferencePaths": [
+        "data/audits/feat-tags-production-reconciliation.json",
         "data/feat-effects.json",
         "data/feat_buckets_and_subbuckets.json",
         "data/fixes/feat-view-model.json",
@@ -15901,6 +16316,10 @@
         "packs/feat-catalog.db"
       ],
       "referenceDetails": [
+        {
+          "path": "data/audits/feat-tags-production-reconciliation.json",
+          "classification": "AUDIT_OR_DOCUMENTATION_REFERENCE"
+        },
         {
           "path": "data/feat-effects.json",
           "classification": "LIVE_RUNTIME_AUTHORITY"
@@ -15971,8 +16390,9 @@
       "orphanHistoricalReferencePaths": [
         "packs/feat-catalog.db"
       ],
-      "auditDocumentationReferenceCount": 8,
+      "auditDocumentationReferenceCount": 9,
       "auditDocumentationReferencePaths": [
+        "data/audits/feat-tags-production-reconciliation.json",
         "docs/audits/combat-phase-0k-affected-feat-talent-inventory.json",
         "docs/audits/feat-sourcebook-metadata-verification.md",
         "docs/audits/generated/feat-inventory-report.json",
@@ -15990,10 +16410,11 @@
       "replacementCanonicalId": null,
       "dependencyStatus": "LIVE_RUNTIME_REFERENCE_PRESENT",
       "futureMutationRequirement": "REMEDIATE_LIVE_REFERENCES_BEFORE_RECORD_DELETION",
-      "exactIdReferenceCount": 14,
+      "exactIdReferenceCount": 15,
       "exactIdReferencePaths": [
         "data/audits/feat-content-canonical-authority.json",
         "data/audits/feat-provenance-canonical-authority.json",
+        "data/audits/feat-tags-production-reconciliation.json",
         "data/feat-effects.json",
         "data/feat_buckets_and_subbuckets.json",
         "data/fixes/feat-view-model.json",
@@ -16017,6 +16438,10 @@
           "classification": "AUDIT_OR_DOCUMENTATION_REFERENCE"
         },
         {
+          "path": "data/audits/feat-tags-production-reconciliation.json",
+          "classification": "AUDIT_OR_DOCUMENTATION_REFERENCE"
+        },
+        {
           "path": "data/feat-effects.json",
           "classification": "LIVE_RUNTIME_AUTHORITY"
         },
@@ -16082,10 +16507,11 @@
       "orphanHistoricalReferencePaths": [
         "packs/feat-catalog.db"
       ],
-      "auditDocumentationReferenceCount": 9,
+      "auditDocumentationReferenceCount": 10,
       "auditDocumentationReferencePaths": [
         "data/audits/feat-content-canonical-authority.json",
         "data/audits/feat-provenance-canonical-authority.json",
+        "data/audits/feat-tags-production-reconciliation.json",
         "docs/audits/feat-sourcebook-metadata-verification.md",
         "docs/audits/generated/feat-inventory-report.json",
         "docs/audits/generated/feat-prerequisite-input-report.json",
@@ -16102,8 +16528,9 @@
       "replacementCanonicalId": null,
       "dependencyStatus": "LIVE_RUNTIME_REFERENCE_PRESENT",
       "futureMutationRequirement": "REMEDIATE_LIVE_REFERENCES_BEFORE_RECORD_DELETION",
-      "exactIdReferenceCount": 12,
+      "exactIdReferenceCount": 13,
       "exactIdReferencePaths": [
+        "data/audits/feat-tags-production-reconciliation.json",
         "data/feat-effects.json",
         "data/feat_buckets_and_subbuckets.json",
         "data/fixes/feat-view-model.json",
@@ -16118,6 +16545,10 @@
         "packs/feat-catalog.db"
       ],
       "referenceDetails": [
+        {
+          "path": "data/audits/feat-tags-production-reconciliation.json",
+          "classification": "AUDIT_OR_DOCUMENTATION_REFERENCE"
+        },
         {
           "path": "data/feat-effects.json",
           "classification": "LIVE_RUNTIME_AUTHORITY"
@@ -16184,8 +16615,9 @@
       "orphanHistoricalReferencePaths": [
         "packs/feat-catalog.db"
       ],
-      "auditDocumentationReferenceCount": 7,
+      "auditDocumentationReferenceCount": 8,
       "auditDocumentationReferencePaths": [
+        "data/audits/feat-tags-production-reconciliation.json",
         "docs/audits/feat-sourcebook-metadata-verification.md",
         "docs/audits/generated/feat-inventory-report.json",
         "docs/audits/generated/feat-prerequisite-input-report.json",
@@ -16202,8 +16634,9 @@
       "replacementCanonicalId": null,
       "dependencyStatus": "LIVE_RUNTIME_REFERENCE_PRESENT",
       "futureMutationRequirement": "REMEDIATE_LIVE_REFERENCES_BEFORE_RECORD_DELETION",
-      "exactIdReferenceCount": 13,
+      "exactIdReferenceCount": 14,
       "exactIdReferencePaths": [
+        "data/audits/feat-tags-production-reconciliation.json",
         "data/class-archetypes.json",
         "data/feat_buckets_and_subbuckets.json",
         "data/fixes/feat-view-model.json",
@@ -16219,6 +16652,10 @@
         "packs/feat-catalog.db"
       ],
       "referenceDetails": [
+        {
+          "path": "data/audits/feat-tags-production-reconciliation.json",
+          "classification": "AUDIT_OR_DOCUMENTATION_REFERENCE"
+        },
         {
           "path": "data/class-archetypes.json",
           "classification": "LIVE_RUNTIME_AUTHORITY"
@@ -16289,8 +16726,9 @@
       "orphanHistoricalReferencePaths": [
         "packs/feat-catalog.db"
       ],
-      "auditDocumentationReferenceCount": 8,
+      "auditDocumentationReferenceCount": 9,
       "auditDocumentationReferencePaths": [
+        "data/audits/feat-tags-production-reconciliation.json",
         "docs/audits/feat-sourcebook-metadata-verification.md",
         "docs/audits/generated/feat-inventory-report.json",
         "docs/audits/generated/feat-prerequisite-input-report.json",
@@ -16308,8 +16746,9 @@
       "replacementCanonicalId": null,
       "dependencyStatus": "NO_LIVE_RUNTIME_REFERENCE",
       "futureMutationRequirement": "NO_LIVE_REFERENCE_BLOCKER_REFRESH_DERIVED_ARTIFACTS_DURING_MUTATION",
-      "exactIdReferenceCount": 12,
+      "exactIdReferenceCount": 13,
       "exactIdReferencePaths": [
+        "data/audits/feat-tags-production-reconciliation.json",
         "data/feat_buckets_and_subbuckets.json",
         "data/fixes/feat-view-model.json",
         "data/generated/feat-view-model.json",
@@ -16324,6 +16763,10 @@
         "packs/feat-catalog.db"
       ],
       "referenceDetails": [
+        {
+          "path": "data/audits/feat-tags-production-reconciliation.json",
+          "classification": "AUDIT_OR_DOCUMENTATION_REFERENCE"
+        },
         {
           "path": "data/feat_buckets_and_subbuckets.json",
           "classification": "DERIVED_REBUILD_ARTIFACT"
@@ -16388,8 +16831,9 @@
       "orphanHistoricalReferencePaths": [
         "packs/feat-catalog.db"
       ],
-      "auditDocumentationReferenceCount": 8,
+      "auditDocumentationReferenceCount": 9,
       "auditDocumentationReferencePaths": [
+        "data/audits/feat-tags-production-reconciliation.json",
         "docs/audits/feat-sourcebook-metadata-verification.md",
         "docs/audits/generated/feat-inventory-report.json",
         "docs/audits/generated/feat-prerequisite-input-report.json",
@@ -16407,8 +16851,9 @@
       "replacementCanonicalId": null,
       "dependencyStatus": "NO_LIVE_RUNTIME_REFERENCE",
       "futureMutationRequirement": "NO_LIVE_REFERENCE_BLOCKER_REFRESH_DERIVED_ARTIFACTS_DURING_MUTATION",
-      "exactIdReferenceCount": 11,
+      "exactIdReferenceCount": 12,
       "exactIdReferencePaths": [
+        "data/audits/feat-tags-production-reconciliation.json",
         "data/feat_buckets_and_subbuckets.json",
         "data/fixes/feat-view-model.json",
         "data/generated/feat-view-model.json",
@@ -16422,6 +16867,10 @@
         "packs/feat-catalog.db"
       ],
       "referenceDetails": [
+        {
+          "path": "data/audits/feat-tags-production-reconciliation.json",
+          "classification": "AUDIT_OR_DOCUMENTATION_REFERENCE"
+        },
         {
           "path": "data/feat_buckets_and_subbuckets.json",
           "classification": "DERIVED_REBUILD_ARTIFACT"
@@ -16482,8 +16931,9 @@
       "orphanHistoricalReferencePaths": [
         "packs/feat-catalog.db"
       ],
-      "auditDocumentationReferenceCount": 7,
+      "auditDocumentationReferenceCount": 8,
       "auditDocumentationReferencePaths": [
+        "data/audits/feat-tags-production-reconciliation.json",
         "docs/audits/feat-sourcebook-metadata-verification.md",
         "docs/audits/generated/feat-inventory-report.json",
         "docs/audits/generated/feat-prerequisite-input-report.json",
@@ -16500,8 +16950,9 @@
       "replacementCanonicalId": null,
       "dependencyStatus": "LIVE_RUNTIME_REFERENCE_PRESENT",
       "futureMutationRequirement": "REMEDIATE_LIVE_REFERENCES_BEFORE_RECORD_DELETION",
-      "exactIdReferenceCount": 13,
+      "exactIdReferenceCount": 14,
       "exactIdReferencePaths": [
+        "data/audits/feat-tags-production-reconciliation.json",
         "data/feat-effects.json",
         "data/feat_buckets_and_subbuckets.json",
         "data/fixes/feat-view-model.json",
@@ -16517,6 +16968,10 @@
         "packs/feat-catalog.db"
       ],
       "referenceDetails": [
+        {
+          "path": "data/audits/feat-tags-production-reconciliation.json",
+          "classification": "AUDIT_OR_DOCUMENTATION_REFERENCE"
+        },
         {
           "path": "data/feat-effects.json",
           "classification": "LIVE_RUNTIME_AUTHORITY"
@@ -16587,8 +17042,9 @@
       "orphanHistoricalReferencePaths": [
         "packs/feat-catalog.db"
       ],
-      "auditDocumentationReferenceCount": 8,
+      "auditDocumentationReferenceCount": 9,
       "auditDocumentationReferencePaths": [
+        "data/audits/feat-tags-production-reconciliation.json",
         "docs/audits/combat-phase-0k-affected-feat-talent-inventory.json",
         "docs/audits/feat-sourcebook-metadata-verification.md",
         "docs/audits/generated/feat-inventory-report.json",
@@ -16606,8 +17062,9 @@
       "replacementCanonicalId": null,
       "dependencyStatus": "NO_LIVE_RUNTIME_REFERENCE",
       "futureMutationRequirement": "NO_LIVE_REFERENCE_BLOCKER_REFRESH_DERIVED_ARTIFACTS_DURING_MUTATION",
-      "exactIdReferenceCount": 12,
+      "exactIdReferenceCount": 13,
       "exactIdReferencePaths": [
+        "data/audits/feat-tags-production-reconciliation.json",
         "data/feat_buckets_and_subbuckets.json",
         "data/fixes/feat-view-model.json",
         "data/generated/feat-view-model.json",
@@ -16622,6 +17079,10 @@
         "packs/feat-catalog.db"
       ],
       "referenceDetails": [
+        {
+          "path": "data/audits/feat-tags-production-reconciliation.json",
+          "classification": "AUDIT_OR_DOCUMENTATION_REFERENCE"
+        },
         {
           "path": "data/feat_buckets_and_subbuckets.json",
           "classification": "DERIVED_REBUILD_ARTIFACT"
@@ -16686,8 +17147,9 @@
       "orphanHistoricalReferencePaths": [
         "packs/feat-catalog.db"
       ],
-      "auditDocumentationReferenceCount": 8,
+      "auditDocumentationReferenceCount": 9,
       "auditDocumentationReferencePaths": [
+        "data/audits/feat-tags-production-reconciliation.json",
         "docs/audits/feat-sourcebook-metadata-verification.md",
         "docs/audits/generated/feat-inventory-report.json",
         "docs/audits/generated/feat-prerequisite-input-report.json",
@@ -16705,8 +17167,9 @@
       "replacementCanonicalId": null,
       "dependencyStatus": "LIVE_RUNTIME_REFERENCE_PRESENT",
       "futureMutationRequirement": "REMEDIATE_LIVE_REFERENCES_BEFORE_RECORD_DELETION",
-      "exactIdReferenceCount": 14,
+      "exactIdReferenceCount": 15,
       "exactIdReferencePaths": [
+        "data/audits/feat-tags-production-reconciliation.json",
         "data/feat-effects.json",
         "data/feat_buckets_and_subbuckets.json",
         "data/fixes/feat-view-model.json",
@@ -16723,6 +17186,10 @@
         "packs/feat-catalog.db"
       ],
       "referenceDetails": [
+        {
+          "path": "data/audits/feat-tags-production-reconciliation.json",
+          "classification": "AUDIT_OR_DOCUMENTATION_REFERENCE"
+        },
         {
           "path": "data/feat-effects.json",
           "classification": "LIVE_RUNTIME_AUTHORITY"
@@ -16797,8 +17264,9 @@
       "orphanHistoricalReferencePaths": [
         "packs/feat-catalog.db"
       ],
-      "auditDocumentationReferenceCount": 9,
+      "auditDocumentationReferenceCount": 10,
       "auditDocumentationReferencePaths": [
+        "data/audits/feat-tags-production-reconciliation.json",
         "docs/audits/feat-sourcebook-metadata-verification.md",
         "docs/audits/generated/feat-inventory-report.json",
         "docs/audits/generated/feat-prerequisite-input-report.json",
@@ -16817,10 +17285,11 @@
       "replacementCanonicalId": null,
       "dependencyStatus": "NO_LIVE_RUNTIME_REFERENCE",
       "futureMutationRequirement": "NO_LIVE_REFERENCE_BLOCKER_REFRESH_DERIVED_ARTIFACTS_DURING_MUTATION",
-      "exactIdReferenceCount": 13,
+      "exactIdReferenceCount": 14,
       "exactIdReferencePaths": [
         "data/audits/feat-content-canonical-authority.json",
         "data/audits/feat-provenance-canonical-authority.json",
+        "data/audits/feat-tags-production-reconciliation.json",
         "data/feat_buckets_and_subbuckets.json",
         "data/fixes/feat-view-model.json",
         "data/generated/feat-view-model.json",
@@ -16843,6 +17312,10 @@
           "classification": "AUDIT_OR_DOCUMENTATION_REFERENCE"
         },
         {
+          "path": "data/audits/feat-tags-production-reconciliation.json",
+          "classification": "AUDIT_OR_DOCUMENTATION_REFERENCE"
+        },
+        {
           "path": "data/feat_buckets_and_subbuckets.json",
           "classification": "DERIVED_REBUILD_ARTIFACT"
         },
@@ -16902,10 +17375,11 @@
       "orphanHistoricalReferencePaths": [
         "packs/feat-catalog.db"
       ],
-      "auditDocumentationReferenceCount": 9,
+      "auditDocumentationReferenceCount": 10,
       "auditDocumentationReferencePaths": [
         "data/audits/feat-content-canonical-authority.json",
         "data/audits/feat-provenance-canonical-authority.json",
+        "data/audits/feat-tags-production-reconciliation.json",
         "docs/audits/feat-sourcebook-metadata-verification.md",
         "docs/audits/generated/feat-inventory-report.json",
         "docs/audits/generated/feat-prerequisite-input-report.json",
@@ -16922,8 +17396,9 @@
       "replacementCanonicalId": null,
       "dependencyStatus": "NO_LIVE_RUNTIME_REFERENCE",
       "futureMutationRequirement": "NO_LIVE_REFERENCE_BLOCKER_REFRESH_DERIVED_ARTIFACTS_DURING_MUTATION",
-      "exactIdReferenceCount": 12,
+      "exactIdReferenceCount": 13,
       "exactIdReferencePaths": [
+        "data/audits/feat-tags-production-reconciliation.json",
         "data/feat_buckets_and_subbuckets.json",
         "data/fixes/feat-view-model.json",
         "data/generated/feat-view-model.json",
@@ -16938,6 +17413,10 @@
         "packs/feat-catalog.db"
       ],
       "referenceDetails": [
+        {
+          "path": "data/audits/feat-tags-production-reconciliation.json",
+          "classification": "AUDIT_OR_DOCUMENTATION_REFERENCE"
+        },
         {
           "path": "data/feat_buckets_and_subbuckets.json",
           "classification": "DERIVED_REBUILD_ARTIFACT"
@@ -17002,8 +17481,9 @@
       "orphanHistoricalReferencePaths": [
         "packs/feat-catalog.db"
       ],
-      "auditDocumentationReferenceCount": 8,
+      "auditDocumentationReferenceCount": 9,
       "auditDocumentationReferencePaths": [
+        "data/audits/feat-tags-production-reconciliation.json",
         "docs/audits/feat-sourcebook-metadata-verification.md",
         "docs/audits/generated/feat-inventory-report.json",
         "docs/audits/generated/feat-prerequisite-input-report.json",
@@ -17021,8 +17501,9 @@
       "replacementCanonicalId": null,
       "dependencyStatus": "LIVE_RUNTIME_REFERENCE_PRESENT",
       "futureMutationRequirement": "REMEDIATE_LIVE_REFERENCES_BEFORE_RECORD_DELETION",
-      "exactIdReferenceCount": 13,
+      "exactIdReferenceCount": 14,
       "exactIdReferencePaths": [
+        "data/audits/feat-tags-production-reconciliation.json",
         "data/feat-effects.json",
         "data/feat_buckets_and_subbuckets.json",
         "data/fixes/feat-view-model.json",
@@ -17038,6 +17519,10 @@
         "packs/feat-catalog.db"
       ],
       "referenceDetails": [
+        {
+          "path": "data/audits/feat-tags-production-reconciliation.json",
+          "classification": "AUDIT_OR_DOCUMENTATION_REFERENCE"
+        },
         {
           "path": "data/feat-effects.json",
           "classification": "LIVE_RUNTIME_AUTHORITY"
@@ -17108,8 +17593,9 @@
       "orphanHistoricalReferencePaths": [
         "packs/feat-catalog.db"
       ],
-      "auditDocumentationReferenceCount": 8,
+      "auditDocumentationReferenceCount": 9,
       "auditDocumentationReferencePaths": [
+        "data/audits/feat-tags-production-reconciliation.json",
         "docs/audits/generated/feat-inventory-report.json",
         "docs/audits/generated/feat-prerequisite-input-report.json",
         "docs/feat-description-and-choice-backfill-phase6.json",
@@ -17127,8 +17613,9 @@
       "replacementCanonicalId": null,
       "dependencyStatus": "NO_LIVE_RUNTIME_REFERENCE",
       "futureMutationRequirement": "NO_LIVE_REFERENCE_BLOCKER_REFRESH_DERIVED_ARTIFACTS_DURING_MUTATION",
-      "exactIdReferenceCount": 14,
+      "exactIdReferenceCount": 15,
       "exactIdReferencePaths": [
+        "data/audits/feat-tags-production-reconciliation.json",
         "data/feat_buckets_and_subbuckets.json",
         "data/fixes/feat-view-model.json",
         "data/generated/feat-view-model.json",
@@ -17145,6 +17632,10 @@
         "packs/feat-catalog.db"
       ],
       "referenceDetails": [
+        {
+          "path": "data/audits/feat-tags-production-reconciliation.json",
+          "classification": "AUDIT_OR_DOCUMENTATION_REFERENCE"
+        },
         {
           "path": "data/feat_buckets_and_subbuckets.json",
           "classification": "DERIVED_REBUILD_ARTIFACT"
@@ -17217,8 +17708,9 @@
       "orphanHistoricalReferencePaths": [
         "packs/feat-catalog.db"
       ],
-      "auditDocumentationReferenceCount": 10,
+      "auditDocumentationReferenceCount": 11,
       "auditDocumentationReferencePaths": [
+        "data/audits/feat-tags-production-reconciliation.json",
         "docs/audits/feat-sourcebook-metadata-verification.md",
         "docs/audits/generated/feat-inventory-report.json",
         "docs/audits/generated/feat-prerequisite-input-report.json",
@@ -17238,8 +17730,9 @@
       "replacementCanonicalId": null,
       "dependencyStatus": "LIVE_RUNTIME_REFERENCE_PRESENT",
       "futureMutationRequirement": "REMEDIATE_LIVE_REFERENCES_BEFORE_RECORD_DELETION",
-      "exactIdReferenceCount": 12,
+      "exactIdReferenceCount": 13,
       "exactIdReferencePaths": [
+        "data/audits/feat-tags-production-reconciliation.json",
         "data/feat-effects.json",
         "data/feat_buckets_and_subbuckets.json",
         "data/fixes/feat-view-model.json",
@@ -17254,6 +17747,10 @@
         "packs/feat-catalog.db"
       ],
       "referenceDetails": [
+        {
+          "path": "data/audits/feat-tags-production-reconciliation.json",
+          "classification": "AUDIT_OR_DOCUMENTATION_REFERENCE"
+        },
         {
           "path": "data/feat-effects.json",
           "classification": "LIVE_RUNTIME_AUTHORITY"
@@ -17320,8 +17817,9 @@
       "orphanHistoricalReferencePaths": [
         "packs/feat-catalog.db"
       ],
-      "auditDocumentationReferenceCount": 7,
+      "auditDocumentationReferenceCount": 8,
       "auditDocumentationReferencePaths": [
+        "data/audits/feat-tags-production-reconciliation.json",
         "docs/audits/feat-sourcebook-metadata-verification.md",
         "docs/audits/generated/feat-inventory-report.json",
         "docs/audits/generated/feat-prerequisite-input-report.json",
@@ -17338,8 +17836,9 @@
       "replacementCanonicalId": null,
       "dependencyStatus": "NO_LIVE_RUNTIME_REFERENCE",
       "futureMutationRequirement": "NO_LIVE_REFERENCE_BLOCKER_REFRESH_DERIVED_ARTIFACTS_DURING_MUTATION",
-      "exactIdReferenceCount": 11,
+      "exactIdReferenceCount": 12,
       "exactIdReferencePaths": [
+        "data/audits/feat-tags-production-reconciliation.json",
         "data/feat_buckets_and_subbuckets.json",
         "data/fixes/feat-view-model.json",
         "data/generated/feat-view-model.json",
@@ -17353,6 +17852,10 @@
         "packs/feat-catalog.db"
       ],
       "referenceDetails": [
+        {
+          "path": "data/audits/feat-tags-production-reconciliation.json",
+          "classification": "AUDIT_OR_DOCUMENTATION_REFERENCE"
+        },
         {
           "path": "data/feat_buckets_and_subbuckets.json",
           "classification": "DERIVED_REBUILD_ARTIFACT"
@@ -17413,8 +17916,9 @@
       "orphanHistoricalReferencePaths": [
         "packs/feat-catalog.db"
       ],
-      "auditDocumentationReferenceCount": 7,
+      "auditDocumentationReferenceCount": 8,
       "auditDocumentationReferencePaths": [
+        "data/audits/feat-tags-production-reconciliation.json",
         "docs/audits/feat-sourcebook-metadata-verification.md",
         "docs/audits/generated/feat-inventory-report.json",
         "docs/audits/generated/feat-prerequisite-input-report.json",
@@ -17431,8 +17935,9 @@
       "replacementCanonicalId": null,
       "dependencyStatus": "NO_LIVE_RUNTIME_REFERENCE",
       "futureMutationRequirement": "NO_LIVE_REFERENCE_BLOCKER_REFRESH_DERIVED_ARTIFACTS_DURING_MUTATION",
-      "exactIdReferenceCount": 12,
+      "exactIdReferenceCount": 13,
       "exactIdReferencePaths": [
+        "data/audits/feat-tags-production-reconciliation.json",
         "data/feat_buckets_and_subbuckets.json",
         "data/fixes/feat-view-model.json",
         "data/generated/feat-view-model.json",
@@ -17447,6 +17952,10 @@
         "packs/feat-catalog.db"
       ],
       "referenceDetails": [
+        {
+          "path": "data/audits/feat-tags-production-reconciliation.json",
+          "classification": "AUDIT_OR_DOCUMENTATION_REFERENCE"
+        },
         {
           "path": "data/feat_buckets_and_subbuckets.json",
           "classification": "DERIVED_REBUILD_ARTIFACT"
@@ -17511,8 +18020,9 @@
       "orphanHistoricalReferencePaths": [
         "packs/feat-catalog.db"
       ],
-      "auditDocumentationReferenceCount": 8,
+      "auditDocumentationReferenceCount": 9,
       "auditDocumentationReferencePaths": [
+        "data/audits/feat-tags-production-reconciliation.json",
         "docs/audits/feat-sourcebook-metadata-verification.md",
         "docs/audits/generated/feat-inventory-report.json",
         "docs/audits/generated/feat-prerequisite-input-report.json",
@@ -17530,8 +18040,9 @@
       "replacementCanonicalId": null,
       "dependencyStatus": "NO_LIVE_RUNTIME_REFERENCE",
       "futureMutationRequirement": "NO_LIVE_REFERENCE_BLOCKER_REFRESH_DERIVED_ARTIFACTS_DURING_MUTATION",
-      "exactIdReferenceCount": 12,
+      "exactIdReferenceCount": 13,
       "exactIdReferencePaths": [
+        "data/audits/feat-tags-production-reconciliation.json",
         "data/feat_buckets_and_subbuckets.json",
         "data/fixes/feat-view-model.json",
         "data/generated/feat-view-model.json",
@@ -17546,6 +18057,10 @@
         "packs/feat-catalog.db"
       ],
       "referenceDetails": [
+        {
+          "path": "data/audits/feat-tags-production-reconciliation.json",
+          "classification": "AUDIT_OR_DOCUMENTATION_REFERENCE"
+        },
         {
           "path": "data/feat_buckets_and_subbuckets.json",
           "classification": "DERIVED_REBUILD_ARTIFACT"
@@ -17610,8 +18125,9 @@
       "orphanHistoricalReferencePaths": [
         "packs/feat-catalog.db"
       ],
-      "auditDocumentationReferenceCount": 8,
+      "auditDocumentationReferenceCount": 9,
       "auditDocumentationReferencePaths": [
+        "data/audits/feat-tags-production-reconciliation.json",
         "docs/audits/combat-phase-0k-affected-feat-talent-inventory.json",
         "docs/audits/feat-sourcebook-metadata-verification.md",
         "docs/audits/generated/feat-inventory-report.json",
@@ -17629,8 +18145,9 @@
       "replacementCanonicalId": null,
       "dependencyStatus": "NO_LIVE_RUNTIME_REFERENCE",
       "futureMutationRequirement": "NO_LIVE_REFERENCE_BLOCKER_REFRESH_DERIVED_ARTIFACTS_DURING_MUTATION",
-      "exactIdReferenceCount": 11,
+      "exactIdReferenceCount": 12,
       "exactIdReferencePaths": [
+        "data/audits/feat-tags-production-reconciliation.json",
         "data/feat_buckets_and_subbuckets.json",
         "data/fixes/feat-view-model.json",
         "data/generated/feat-view-model.json",
@@ -17644,6 +18161,10 @@
         "packs/feat-catalog.db"
       ],
       "referenceDetails": [
+        {
+          "path": "data/audits/feat-tags-production-reconciliation.json",
+          "classification": "AUDIT_OR_DOCUMENTATION_REFERENCE"
+        },
         {
           "path": "data/feat_buckets_and_subbuckets.json",
           "classification": "DERIVED_REBUILD_ARTIFACT"
@@ -17704,8 +18225,9 @@
       "orphanHistoricalReferencePaths": [
         "packs/feat-catalog.db"
       ],
-      "auditDocumentationReferenceCount": 7,
+      "auditDocumentationReferenceCount": 8,
       "auditDocumentationReferencePaths": [
+        "data/audits/feat-tags-production-reconciliation.json",
         "docs/audits/feat-sourcebook-metadata-verification.md",
         "docs/audits/generated/feat-inventory-report.json",
         "docs/audits/generated/feat-prerequisite-input-report.json",
@@ -17722,8 +18244,9 @@
       "replacementCanonicalId": null,
       "dependencyStatus": "NO_LIVE_RUNTIME_REFERENCE",
       "futureMutationRequirement": "NO_LIVE_REFERENCE_BLOCKER_REFRESH_DERIVED_ARTIFACTS_DURING_MUTATION",
-      "exactIdReferenceCount": 11,
+      "exactIdReferenceCount": 12,
       "exactIdReferencePaths": [
+        "data/audits/feat-tags-production-reconciliation.json",
         "data/feat_buckets_and_subbuckets.json",
         "data/fixes/feat-view-model.json",
         "data/generated/feat-view-model.json",
@@ -17737,6 +18260,10 @@
         "packs/feat-catalog.db"
       ],
       "referenceDetails": [
+        {
+          "path": "data/audits/feat-tags-production-reconciliation.json",
+          "classification": "AUDIT_OR_DOCUMENTATION_REFERENCE"
+        },
         {
           "path": "data/feat_buckets_and_subbuckets.json",
           "classification": "DERIVED_REBUILD_ARTIFACT"
@@ -17797,8 +18324,9 @@
       "orphanHistoricalReferencePaths": [
         "packs/feat-catalog.db"
       ],
-      "auditDocumentationReferenceCount": 7,
+      "auditDocumentationReferenceCount": 8,
       "auditDocumentationReferencePaths": [
+        "data/audits/feat-tags-production-reconciliation.json",
         "docs/audits/feat-sourcebook-metadata-verification.md",
         "docs/audits/generated/feat-inventory-report.json",
         "docs/audits/generated/feat-prerequisite-input-report.json",
@@ -17815,8 +18343,9 @@
       "replacementCanonicalId": null,
       "dependencyStatus": "LIVE_RUNTIME_REFERENCE_PRESENT",
       "futureMutationRequirement": "REMEDIATE_LIVE_REFERENCES_BEFORE_RECORD_DELETION",
-      "exactIdReferenceCount": 13,
+      "exactIdReferenceCount": 14,
       "exactIdReferencePaths": [
+        "data/audits/feat-tags-production-reconciliation.json",
         "data/feat-effects.json",
         "data/feat_buckets_and_subbuckets.json",
         "data/fixes/feat-view-model.json",
@@ -17832,6 +18361,10 @@
         "packs/feat-catalog.db"
       ],
       "referenceDetails": [
+        {
+          "path": "data/audits/feat-tags-production-reconciliation.json",
+          "classification": "AUDIT_OR_DOCUMENTATION_REFERENCE"
+        },
         {
           "path": "data/feat-effects.json",
           "classification": "LIVE_RUNTIME_AUTHORITY"
@@ -17902,8 +18435,9 @@
       "orphanHistoricalReferencePaths": [
         "packs/feat-catalog.db"
       ],
-      "auditDocumentationReferenceCount": 8,
+      "auditDocumentationReferenceCount": 9,
       "auditDocumentationReferencePaths": [
+        "data/audits/feat-tags-production-reconciliation.json",
         "docs/audits/combat-phase-0k-affected-feat-talent-inventory.json",
         "docs/audits/feat-sourcebook-metadata-verification.md",
         "docs/audits/generated/feat-inventory-report.json",
@@ -17921,8 +18455,9 @@
       "replacementCanonicalId": null,
       "dependencyStatus": "LIVE_RUNTIME_REFERENCE_PRESENT",
       "futureMutationRequirement": "REMEDIATE_LIVE_REFERENCES_BEFORE_RECORD_DELETION",
-      "exactIdReferenceCount": 13,
+      "exactIdReferenceCount": 14,
       "exactIdReferencePaths": [
+        "data/audits/feat-tags-production-reconciliation.json",
         "data/feat-effects.json",
         "data/feat_buckets_and_subbuckets.json",
         "data/fixes/feat-view-model.json",
@@ -17938,6 +18473,10 @@
         "packs/feat-catalog.db"
       ],
       "referenceDetails": [
+        {
+          "path": "data/audits/feat-tags-production-reconciliation.json",
+          "classification": "AUDIT_OR_DOCUMENTATION_REFERENCE"
+        },
         {
           "path": "data/feat-effects.json",
           "classification": "LIVE_RUNTIME_AUTHORITY"
@@ -18008,8 +18547,9 @@
       "orphanHistoricalReferencePaths": [
         "packs/feat-catalog.db"
       ],
-      "auditDocumentationReferenceCount": 8,
+      "auditDocumentationReferenceCount": 9,
       "auditDocumentationReferencePaths": [
+        "data/audits/feat-tags-production-reconciliation.json",
         "docs/audits/feat-sourcebook-metadata-verification.md",
         "docs/audits/generated/feat-inventory-report.json",
         "docs/audits/generated/feat-prerequisite-input-report.json",
