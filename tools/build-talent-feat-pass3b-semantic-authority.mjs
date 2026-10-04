@@ -61,6 +61,11 @@ export function derive(baseline, overlay) {
     const e = b.expected;
     if (ar.size !== e.recordsWithAdd || at !== e.tagAdditions || nr.size !== e.recordsWithOnlyNoChange || e.removals !== 0 || newTags.size !== e.newTags) err(`DISCREPANCY in batch ${b.batch}: derived ${ar.size} ADD records / ${at} additions / ${nr.size} no-change-only records / ${newTags.size} new tags; owner expected ${e.recordsWithAdd} / ${e.tagAdditions} / ${e.recordsWithOnlyNoChange} / ${e.newTags}. Not applying; report to the owner.`);
   }
+  if (overlay.cumulativeExpected) {
+    const c = overlay.cumulativeExpected, adds_ = overlay.decisions.filter(d => d.ownerAction === 'ADD'), nos_ = overlay.decisions.filter(d => d.ownerAction === 'NO_CHANGE');
+    const got = { decisions: overlay.decisions.length, addDecisions: adds_.length, noChangeDecisions: nos_.length, recordsWithAdd: addRecords.length, tagAdditions: adds, removals: 0, tagInstancesBefore: recs.reduce((n, r) => n + r.baselineTags.length, 0), tagInstancesAfter: recs.reduce((n, r) => n + r.finalTags.length, 0) };
+    for (const k of Object.keys(c)) if (got[k] !== c[k]) err(`CUMULATIVE DISCREPANCY: ${k} derived ${got[k]}, owner expected ${c[k]}. Not applying; report to the owner.`);
+  }
   const before = usageOf(recs, 'baselineTags'), after = usageOf(recs, 'finalTags');
   const tagUsage = baseline.sharedVocabulary.map(t => ({ tag: t, before: before[t] || 0, after: after[t] || 0 })).sort((x, y) => y.after - x.after || cmp(x.tag, y.tag));
   const changeList = addRecords.sort((a, b) => cmp(a.domain, b.domain) || cmp(a.canonicalId, b.canonicalId)).map(r => ({ domain: r.domain, canonicalId: r.canonicalId, name: r.name, added: changes.get(r).map(d => d.tag), before: r.baselineTags, after: r.finalTags, decisions: changes.get(r).map(d => ({ decisionId: d.decisionId, policy: d.ownerPolicyApplied, batch: d.batch })) }));

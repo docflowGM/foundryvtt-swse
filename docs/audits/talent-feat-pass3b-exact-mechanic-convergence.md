@@ -16,12 +16,12 @@ Mechanic families scanned: 15 (106 detectors, 14 cross-domain bundles)
 
 Records where mechanic wording and the compared tag co-occur (count only; not adjudicated): 3965
 
-Owner-review candidates: 315
-  record-level (P1 177 / P2 112): 289
+Owner-review candidates: 298
+  record-level (P1 165 / P2 107): 272
   tag-definition (P3): 12
   tag-convention questions (P3; 236 untagged matches listed, not individually flagged): 14
 
-Findings decided by explicit owner rulings (approved / no change): 57
+Findings decided by explicit owner rulings (approved / no change): 74
 Prior-ruling / intentional-divergence matches: 11
 Tags carried by only one domain (count only; no ruling made): 34
 
@@ -68,8 +68,8 @@ Zero violations across the combined corpus.
 | A. Action economy | 6 | 50 | 454 | 1002 | 975 | 2 | 0 |
 | B. Rerolls / reliability | 5 | 33 | 104 | 155 | 148 | 0 | 0 |
 | C. Resource mechanics | 5 | 51 | 303 | 512 | 488 | 0 | 0 |
-| D. Damage mechanics | 7 | 50 | 121 | 211 | 113 | 3 | 5 |
-| E. Critical mechanics | 2 | 5 | 33 | 45 | 36 | 9 | 0 |
+| D. Damage mechanics | 7 | 50 | 121 | 211 | 113 | 0 | 0 |
+| E. Critical mechanics | 2 | 5 | 33 | 45 | 36 | 0 | 0 |
 | F. Targeting / setup | 6 | 23 | 129 | 183 | 97 | 33 | 0 |
 | G. Battlefield control | 8 | 35 | 81 | 145 | 119 | 15 | 11 |
 | H. Reactive combat | 3 | 24 | 62 | 86 | 68 | 14 | 0 |
@@ -130,7 +130,7 @@ No owner-review items in this family.
 
 ### D. Damage mechanics
 
-Tags expected: `burst_damage`, `damage`, `damage_bonus`, `damage_threshold`, `precision`, `precision_damage`, `sustained_damage`. Records with evidence text: 1540; feats involved 50; talents involved 121; detections 211; already convergent 113; owner review 8.
+Tags expected: `burst_damage`, `damage`, `damage_bonus`, `damage_threshold`, `precision`, `precision_damage`, `sustained_damage`. Records with evidence text: 1540; feats involved 50; talents involved 121; detections 211; already convergent 113; owner review 0.
 
 | Detector | Tag | Conf | Detected (F/T) | Tagged (F/T) | Detected, not tagged (F/T) | Tagged rate |
 | --- | --- | --- | --- | --- | --- | ---: |
@@ -142,28 +142,18 @@ Tags expected: `burst_damage`, `damage`, `damage_bonus`, `damage_threshold`, `pr
 | D.damage_threshold | `damage_threshold` | HIGH | 15/31 | 15/28 | 0/3 | 0.935 |
 | D.damage_generic | `damage` | LOW | 15/80 | 7/6 | 8/74 | 0.137 |
 
-Owner-review groups (mechanic → candidate tag):
-
-- **D.damage_threshold** → `damage_threshold` (P1): 3 record(s) [0 feat / 3 talent]; e.g. Soft Reset (`2739921a657a49a496885c456bcace65`); Recruit Enemy (`43ac0c4b1759507a`); Akk Dog Trainer's Actions (`ad7fd3e1a2b04c30`)
-- **D.damage_bonus** → `damage_bonus` (P2): 4 record(s) [3 feat / 1 talent]; e.g. Damage Conversion (`1f404db00518aeed`); Hobbling Strike (`ccc7a6e191e811a4`); Metamorph (`f59c9679c02b8896`)
-- **D.sustained_damage** → `sustained_damage` (P2): 1 record(s) [1 feat / 0 talent]; e.g. Deadly Sniper (`6fb0f56dd9b9b75c`)
-
-Representative evidence (facts only): **Soft Reset** (TALENT, Force Unleashed Campaign Guide p.47, TALENT_CERTIFIED_PACK_BENEFIT_TEXT) — "…internal electronics. If you are moved to the bottom of the condition track by any means other than taking damage exceeding your damage threshold, you automatically move +1 step along the condition track after being disabled for 2 rounds.". Tags: `droid`, `self_repair`, `recovery`, `condition_removal`, `durability`, `resilience`, `survivability`; compared tag `damage_threshold` absent. Comparison records carrying it: Galactic Alliance Military Training (FEAT) [`damage_threshold`, `resilience`, `survivability`, `once-per-encounter`]; Damage Conversion (FEAT) [`damage_threshold`, `resilience`, `survivability`]; Quick Comeback (FEAT) [`damage_threshold`, `condition_removal`, `recovery`, `swift_action`, `action_economy`].
+No owner-review items in this family.
 
 ### E. Critical mechanics
 
-Tags expected: `critical_hit`, `critical_success`. Records with evidence text: 1540; feats involved 5; talents involved 33; detections 45; already convergent 36; owner review 9.
+Tags expected: `critical_hit`, `critical_success`. Records with evidence text: 1540; feats involved 5; talents involved 33; detections 45; already convergent 36; owner review 0.
 
 | Detector | Tag | Conf | Detected (F/T) | Tagged (F/T) | Detected, not tagged (F/T) | Tagged rate |
 | --- | --- | --- | --- | --- | --- | ---: |
 | E.critical_hit | `critical_hit` | HIGH | 3/20 | 3/20 | 0/0 | 1 |
 | E.natural_20 | `critical_success` | HIGH | 3/19 | 2/11 | 1/8 | 0.591 |
 
-Owner-review groups (mechanic → candidate tag):
-
-- **E.natural_20** → `critical_success` (P1): 9 record(s) [1 feat / 8 talent]; e.g. Critical Strike (`d9ecf143e6a9f889`); Extended Critical Range (heavy weapons) (`04985a42930dff2a`); Martial Resurgence (`0fb750f0f0e6f767`)
-
-Representative evidence (facts only): **Critical Strike** (FEAT, Knights of the Old Republic Campaign Guide p.32, FEAT_CANONICAL_RULES_SHAPE) — "…pend two consecutive swift actions in the same round to increase the critical threat range of your next melee attack by 1. Only a natural 20 remains an automatic hit. Lose the benefit if you lose line of sight to the target or take another action before the attack. Spen…". Tags: `critical_hit`, `melee`, `swift_action`, `action_economy`, `setup`, `precision`; compared tag `critical_success` absent. Comparison records carrying it: Skill Confidence (TALENT) [`skills`, `skill_mastery`, `critical_success`, `durability`, `scaling`, `action_economy`, `setup`]; Telekinetic Power (TALENT) [`force`, `force_power_synergy`, `telekinesis`, `critical_success`, `action_economy`, `use_the_force`]; Telepathic Influence (TALENT) [`force`, `telepathy`, `ally_support`, `support`, `teamwork`, `critical_success`, `resources`, `force_capacity`, `use_the_force`].
+No owner-review items in this family.
 
 ### F. Targeting / setup
 

@@ -7,29 +7,32 @@ import { REQUIRED_IMPLICATIONS } from '../tools/validate-feat-tags-semantic-auth
 // Pass 3B.1 owner rulings, executed deterministically (no semantic decisions by the tool).
 const rd = (rel) => JSON.parse(fs.readFileSync(new URL('../' + rel, import.meta.url), 'utf8'));
 const txt = (rel) => fs.readFileSync(new URL('../' + rel, import.meta.url), 'utf8');
-const overlay = rd(OWNER_OVERLAY_PATH), auth = rd(AUTH3B_JSON), baseline = rd('data/audits/talent-feat-pass3b-mechanic-baseline.json'), discovery = rd('data/audits/talent-feat-pass3b-exact-mechanic-convergence.json');
+const overlayAll = rd(OWNER_OVERLAY_PATH);
+const overlay = { ...overlayAll, decisions: overlayAll.decisions.filter(d => d.batch === '3B.1') };
+const auth = rd(AUTH3B_JSON), baseline = rd('data/audits/talent-feat-pass3b-mechanic-baseline.json'), discovery = rd('data/audits/talent-feat-pass3b-exact-mechanic-convergence.json');
 const vocab = new Set(baseline.sharedVocabulary);
 const rec = (id) => auth.records.find(r => r.canonicalId === id);
 const sha = (rel) => crypto.createHash('sha256').update(fs.readFileSync(new URL('../' + rel, import.meta.url))).digest('hex');
 const added = (id) => rec(id).finalTags.filter(t => !rec(id).baselineTags.includes(t));
 let n = 0; const test = (name, fn) => { fn(); n++; console.log('  ok  ' + name); };
 
-test('exactly 28 canonical records receive ADD operations and exactly 33 tags are added, with 0 removals', () => {
+test('3B.1: exactly 28 canonical records receive ADD operations and exactly 33 tags are added, with 0 removals', () => {
   const adds = overlay.decisions.filter(d => d.ownerAction === 'ADD');
   assert.equal(new Set(adds.map(d => `${d.domain}:${d.canonicalId}`)).size, 28); assert.equal(adds.length, 33);
-  assert.equal(auth.counts.recordsChanged, 28); assert.equal(auth.counts.tagAdditions, 33); assert.equal(auth.counts.removals, 0);
-  assert.equal(auth.counts.tagInstancesAfter - auth.counts.tagInstancesBefore, 33);
+  assert.equal(auth.changes.filter(c => c.decisions.some(d => d.batch === '3B.1')).length, 28);
+  assert.equal(auth.changes.flatMap(c => c.decisions).filter(d => d.batch === '3B.1').length, 33);
+  assert.equal(auth.counts.removals, 0);
   for (const r of auth.records) assert.deepEqual(r.finalTags.slice(0, r.baselineTags.length), r.baselineTags);
   assert.ok(overlay.decisions.every(d => ['ADD', 'NO_CHANGE'].includes(d.ownerAction)));
 });
 test('22 records receive only NO_CHANGE rulings', () => {
   const addRec = new Set(overlay.decisions.filter(d => d.ownerAction === 'ADD').map(d => `${d.domain}:${d.canonicalId}`));
   const onlyNo = new Set(overlay.decisions.filter(d => d.ownerAction === 'NO_CHANGE').map(d => `${d.domain}:${d.canonicalId}`).filter(k => !addRec.has(k)));
-  assert.equal(onlyNo.size, 22); assert.equal(auth.counts.recordsWithOnlyNoChange, 22);
+  assert.equal(onlyNo.size, 22);
 });
 test('no new tags: every ADD tag is in the 187-tag vocabulary and every ADD ID resolves exactly once', () => {
   assert.equal(vocab.size, 187); assert.equal(auth.sharedVocabulary.newTagsIntroduced, 0);
-  for (const d of overlay.decisions) { assert.ok(vocab.has(d.tag), d.tag); assert.equal(auth.records.filter(r => r.domain === d.domain && r.canonicalId === d.canonicalId).length, 1, d.decisionId); }
+  for (const d of overlayAll.decisions) { assert.ok(vocab.has(d.tag), d.tag); assert.equal(auth.records.filter(r => r.domain === d.domain && r.canonicalId === d.canonicalId).length, 1, d.decisionId); }
   for (const r of auth.records) for (const t of r.finalTags) assert.ok(vocab.has(t));
 });
 test('decision identity is deterministic (domain + canonical ID + tag) with no duplicates', () => {
@@ -82,7 +85,7 @@ test('rebuild is byte-stable (authority, overlay documentation)', () => {
   assert.equal(txt(AUTH3B_JSON), a.json); assert.equal(txt(AUTH3B_MD), a.md); assert.equal(txt(OWNER_OVERLAY_MD), a.overlayMd);
 });
 test('derivation fails closed: wrong name, tag already present, outside vocabulary, duplicate decision, expectation mismatch, unauthorized action', () => {
-  const mk = (patch) => { const o = JSON.parse(JSON.stringify(overlay)); patch(o); return o; };
+  const mk = (patch) => { const o = JSON.parse(JSON.stringify(overlayAll)); patch(o); return o; };
   assert.throws(() => derive(baseline, mk(o => { o.decisions[0].name = 'Nope'; })), /name guard/);
   assert.throws(() => derive(baseline, mk(o => { const d = o.decisions.find(x => x.ownerAction === 'ADD'); d.tag = baseline.records.find(r => r.domain === d.domain && r.canonicalId === d.canonicalId).tags[0]; d.decisionId = `${d.domain}:${d.canonicalId}|${d.tag}`; })), /already present/);
   assert.throws(() => derive(baseline, mk(o => { const d = o.decisions[0]; d.tag = 'full_round_action'; d.decisionId = `${d.domain}:${d.canonicalId}|${d.tag}`; })), /outside the 187-tag vocabulary/);
@@ -92,8 +95,9 @@ test('derivation fails closed: wrong name, tag already present, outside vocabula
 });
 test('discovery dispositions: only decided findings change state; every other finding is unchanged', () => {
   const decided = new Set(overlay.decisions.map(d => `${d.domain}:${d.canonicalId}|${d.tag}`));
-  assert.equal(discovery.ownerDecidedItems.length, 57); assert.equal(discovery.dashboard.ownerDecisionsWithoutDiscoveryItem, 2);
-  for (const i of discovery.ownerDecidedItems) assert.ok(decided.has(`${i.domain}:${i.canonicalId}|${i.comparedTag}`));
+  const b1 = discovery.ownerDecidedItems.filter(i => i.ownerDecision.batch === '3B.1');
+  assert.equal(b1.length, 57); assert.equal(discovery.dashboard.ownerDecisionsWithoutDiscoveryItem, 2);
+  for (const i of b1) assert.ok(decided.has(`${i.domain}:${i.canonicalId}|${i.comparedTag}`));
   for (const i of discovery.ownerReviewItems) { assert.equal(i.state, 'PASS3B_OWNER_REVIEW'); assert.ok(!decided.has(`${i.domain}:${i.canonicalId}|${i.comparedTag}`)); }
   assert.deepEqual(discovery.ownerDecisionsWithoutDiscoveryItem.map(d => d.decisionId).sort(), ['TALENT:8d0657e7ade688bd|move_action', 'TALENT:8d0657e7ade688bd|swift_action']);
 });
@@ -102,10 +106,9 @@ test('Visionary Defense reliability is closed by its own owner decision; no othe
   assert.deepEqual(dec.map(d => `${d.tag}:${d.ownerAction}`).sort(), ['reliability:NO_CHANGE', 'reroll:NO_CHANGE']);
   assert.equal(overlay.decisions.filter(d => d.decisionId === 'TALENT:153f4b3c6510023d|reliability').length, 1);
   const item = discovery.ownerDecidedItems.find(i => i.canonicalId === '153f4b3c6510023d' && i.comparedTag === 'reliability');
-  assert.equal(item.state, 'PASS3B_OWNER_NO_CHANGE'); assert.deepEqual(rec('153f4b3c6510023d').finalTags, rec('153f4b3c6510023d').baselineTags);
-  assert.equal(auth.counts.ownerDecisions, 59); assert.equal(auth.counts.noChangeDecisions, 26);
-  assert.equal(discovery.dashboard.ownerReviewRecordItems, 289); assert.equal(discovery.dashboard.ownerReviewCandidates, 315);
-  const decided = new Set(overlay.decisions.map(d => `${d.domain}:${d.canonicalId}|${d.tag}`));
+  assert.equal(item.state, 'PASS3B_OWNER_NO_CHANGE'); assert.equal(item.ownerDecision.batch, '3B.1'); assert.deepEqual(rec('153f4b3c6510023d').finalTags, rec('153f4b3c6510023d').baselineTags);
+  assert.equal(overlayAll.decisions.filter(d => d.batch === '3B.1').length, 59);
+  const decided = new Set(overlayAll.decisions.map(d => `${d.domain}:${d.canonicalId}|${d.tag}`));
   for (const i of discovery.ownerReviewItems) assert.ok(!decided.has(`${i.domain}:${i.canonicalId}|${i.comparedTag}`));
 });
 console.log(`${n} tests passed`);

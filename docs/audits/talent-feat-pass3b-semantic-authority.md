@@ -3,8 +3,8 @@
 Status `PASS3B_WORKING_AUTHORITY_OWNER_RULINGS_APPLIED_NOT_PRODUCTION`. Audit only; production packs and catalogs are unchanged.
 
 - Identities: 1540 (353 feats + 1187 talents); shared vocabulary 187; new tags introduced 0
-- Owner decisions: 59 (33 ADD, 26 NO_CHANGE); records changed 28 (9 feat / 19 talent); records with NO_CHANGE only 22; removals 0
-- Tag instances 11218 -> 11251
+- Owner decisions: 76 (38 ADD, 38 NO_CHANGE); records changed 33 (10 feat / 23 talent); records with NO_CHANGE only 31; removals 0
+- Tag instances 11218 -> 11256
 
 ## Changed records (before -> after)
 
@@ -15,13 +15,17 @@ Status `PASS3B_WORKING_AUTHORITY_OWNER_RULINGS_APPLIED_NOT_PRODUCTION`. Audit on
 | FEAT | Force Boon | `53444cc061d81627` | `force_capacity` | `force`, `force-point`, `resource_recovery`, `resources`, `scaling` | `force`, `force-point`, `resource_recovery`, `resources`, `scaling`, `force_capacity` |
 | FEAT | Aquatic Specialists | `55483fd350b3ba28` | `move_action`, `action_economy` | `teamwork`, `swim`, `movement`, `mobility`, `scaling` | `teamwork`, `swim`, `movement`, `mobility`, `scaling`, `move_action`, `action_economy` |
 | FEAT | Whirlwind Attack | `600f43af4edb16f7` | `action_economy` | `melee`, `battlefield_control`, `sustained_damage`, `targeting` | `melee`, `battlefield_control`, `sustained_damage`, `targeting`, `action_economy` |
+| FEAT | Deadly Sniper | `6fb0f56dd9b9b75c` | `sustained_damage` | `ranged`, `sniper`, `ambush`, `precision`, `damage_bonus` | `ranged`, `sniper`, `ambush`, `precision`, `damage_bonus`, `sustained_damage` |
 | FEAT | Aiming Accuracy | `80805c30ea6dd11e` | `action_economy` | `ranged`, `precision`, `targeting`, `setup` | `ranged`, `precision`, `targeting`, `setup`, `action_economy` |
 | FEAT | Feat of Strength | `9af3ba38a2c671b8` | `action_economy` | `skills`, `skill_mastery`, `reliability`, `once-per-encounter`, `climb`, `jump`, `swim`, `endurance` | `skills`, `skill_mastery`, `reliability`, `once-per-encounter`, `climb`, `jump`, `swim`, `endurance`, `action_economy` |
 | FEAT | Logic Upgrade: Skill Swap | `d48614f7ae500a5b` | `action_economy` | `skill_substitution`, `skills` | `skill_substitution`, `skills`, `action_economy` |
 | FEAT | Metamorph | `f59c9679c02b8896` | `action_economy` | `defense`, `stealth`, `damage_threshold`, `survivability`, `melee`, `positioning` | `defense`, `stealth`, `damage_threshold`, `survivability`, `melee`, `positioning`, `action_economy` |
 | TALENT | Infuse Weapon | `0df15b0ea7721c50` | `action_economy` | `force`, `force_point_spend`, `resource_spend`, `empowerment`, `weapon_empowerment`, `equipment`, `melee`, `damage_reduction`, `durability`, `damage_bonus`, `sustained_damage` | `force`, `force_point_spend`, `resource_spend`, `empowerment`, `weapon_empowerment`, `equipment`, `melee`, `damage_reduction`, `durability`, `damage_bonus`, `sustained_damage`, `action_economy` |
+| TALENT | Martial Resurgence | `0fb750f0f0e6f767` | `critical_success` | `unarmed`, `martial_arts`, `melee`, `critical_hit`, `force`, `force_power_synergy`, `force_capacity`, `resource_recovery`, `recovery` | `unarmed`, `martial_arts`, `melee`, `critical_hit`, `force`, `force_power_synergy`, `force_capacity`, `resource_recovery`, `recovery`, `critical_success` |
 | TALENT | Planetary Attunement | `1204459eaaff9efa` | `action_economy` | `force`, `force_point_spend`, `resource_spend`, `exploration`, `survival`, `nature`, `defense`, `mobility`, `senses`, `precognition`, `planning` | `force`, `force_point_spend`, `resource_spend`, `exploration`, `survival`, `nature`, `defense`, `mobility`, `senses`, `precognition`, `planning`, `action_economy` |
 | TALENT | Out of Harm's Way | `1946e16d1e6c831c` | `swift_action` | `reaction`, `ally_support`, `support`, `teamwork`, `mobility`, `positioning`, `evasion`, `survivability`, `action_economy` | `reaction`, `ally_support`, `support`, `teamwork`, `mobility`, `positioning`, `evasion`, `survivability`, `action_economy`, `swift_action` |
+| TALENT | Soft Reset | `2739921a657a49a496885c456bcace65` | `damage_threshold` | `droid`, `self_repair`, `recovery`, `condition_removal`, `durability`, `resilience`, `survivability` | `droid`, `self_repair`, `recovery`, `condition_removal`, `durability`, `resilience`, `survivability`, `damage_threshold` |
+| TALENT | Recruit Enemy | `43ac0c4b1759507a` | `damage_threshold` | `once-per-encounter`, `persuasion`, `social`, `skills`, `will_defense`, `mind-affecting`, `control`, `manipulation`, `nonlethal`, `target-designation`, `survivability` | `once-per-encounter`, `persuasion`, `social`, `skills`, `will_defense`, `mind-affecting`, `control`, `manipulation`, `nonlethal`, `target-designation`, `survivability`, `damage_threshold` |
 | TALENT | Turn the Tide | `4a3fdcd0f32062b2` | `action_economy` | `tactics`, `knowledge`, `skills`, `initiative`, `control`, `battlefield_control`, `planning`, `once-per-encounter`, `reroll`, `ally_support`, `support`, `teamwork`, `reliability` | `tactics`, `knowledge`, `skills`, `initiative`, `control`, `battlefield_control`, `planning`, `once-per-encounter`, `reroll`, `ally_support`, `support`, `teamwork`, `reliability`, `action_economy` |
 | TALENT | Deep Space Raider | `696f7eed2cc08299` | `standard_action` | `vehicle`, `pilot`, `space`, `ranged`, `mobility`, `positioning`, `control`, `battlefield_control`, `pursuit`, `shields`, `action_economy`, `once-per-encounter` | `vehicle`, `pilot`, `space`, `ranged`, `mobility`, `positioning`, `control`, `battlefield_control`, `pursuit`, `shields`, `action_economy`, `once-per-encounter`, `standard_action` |
 | TALENT | Sow Confusion | `6b09fe0c6fe98367` | `swift_action` | `once-per-encounter`, `standard_action`, `action_economy`, `deception`, `social`, `skills`, `will_defense`, `control`, `battlefield_control` | `once-per-encounter`, `standard_action`, `action_economy`, `deception`, `social`, `skills`, `will_defense`, `control`, `battlefield_control`, `swift_action` |
@@ -32,6 +36,7 @@ Status `PASS3B_WORKING_AUTHORITY_OWNER_RULINGS_APPLIED_NOT_PRODUCTION`. Audit on
 | TALENT | Outmaneuver | `95697c5a4459d7e4` | `reaction` | `knowledge`, `tactics`, `skills`, `standard_action`, `action_economy`, `control`, `battlefield_control`, `opposed_check`, `morale`, `defense`, `targeting` | `knowledge`, `tactics`, `skills`, `standard_action`, `action_economy`, `control`, `battlefield_control`, `opposed_check`, `morale`, `defense`, `targeting`, `reaction` |
 | TALENT | Bomb Thrower | `959f16cb707d8360` | `action_economy` | `mechanics`, `skills`, `crafting`, `equipment`, `tech` | `mechanics`, `skills`, `crafting`, `equipment`, `tech`, `action_economy` |
 | TALENT | Armored Augmentation I | `98355ed4f6473028` | `once-per-encounter` | `armor`, `force`, `force_point_spend`, `resource_spend`, `swift_action`, `action_economy`, `damage_threshold`, `defense`, `survivability`, `empowerment`, `equipment` | `armor`, `force`, `force_point_spend`, `resource_spend`, `swift_action`, `action_economy`, `damage_threshold`, `defense`, `survivability`, `empowerment`, `equipment`, `once-per-encounter` |
+| TALENT | Akk Dog Trainer's Actions | `ad7fd3e1a2b04c30` | `damage_threshold` | `beast_companion`, `followers`, `ally_support`, `support`, `teamwork`, `standard_action`, `action_economy`, `melee`, `ranged`, `damage_bonus`, `burst_damage`, `precision`, `sustained_damage`, `targeting` | `beast_companion`, `followers`, `ally_support`, `support`, `teamwork`, `standard_action`, `action_economy`, `melee`, `ranged`, `damage_bonus`, `burst_damage`, `precision`, `sustained_damage`, `targeting`, `damage_threshold` |
 | TALENT | Dull the Pain | `d32459fe16029f2a` | `action_economy` | `treat_injury`, `medicine`, `medical`, `recovery`, `condition_removal`, `ally_support`, `support`, `skills` | `treat_injury`, `medicine`, `medical`, `recovery`, `condition_removal`, `ally_support`, `support`, `skills`, `action_economy` |
 | TALENT | Jedi Quarry | `dfb9e58c7bcb095c` | `move_action` | `swift_action`, `action_economy`, `target-designation`, `pursuit`, `mobility`, `movement`, `positioning`, `setup` | `swift_action`, `action_economy`, `target-designation`, `pursuit`, `mobility`, `movement`, `positioning`, `setup`, `move_action` |
 | TALENT | Suppress Force | `ec3e6a05561ddc07` | `resource_spend` | `force`, `use_the_force`, `force_power_synergy`, `mind-affecting`, `reaction`, `action_economy`, `control`, `battlefield_control`, `opposed_check`, `anti-force`, `targeting` | `force`, `use_the_force`, `force_power_synergy`, `mind-affecting`, `reaction`, `action_economy`, `control`, `battlefield_control`, `opposed_check`, `anti-force`, `targeting`, `resource_spend` |
@@ -49,6 +54,9 @@ Status `PASS3B_WORKING_AUTHORITY_OWNER_RULINGS_APPLIED_NOT_PRODUCTION`. Audit on
 | `resource_spend` | 158 | 159 |
 | `reaction` | 151 | 154 |
 | `standard_action` | 148 | 152 |
+| `sustained_damage` | 133 | 134 |
+| `damage_threshold` | 47 | 50 |
 | `move_action` | 42 | 46 |
 | `force_capacity` | 39 | 40 |
 | `resource_recovery` | 37 | 38 |
+| `critical_success` | 14 | 15 |

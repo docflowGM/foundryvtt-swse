@@ -22,19 +22,19 @@
     "feats": 353,
     "talents": 1187,
     "combined": 1540,
-    "recordsChanged": 28,
+    "recordsChanged": 33,
     "recordsChangedByDomain": {
-      "FEAT": 9,
-      "TALENT": 19
+      "FEAT": 10,
+      "TALENT": 23
     },
-    "tagAdditions": 33,
+    "tagAdditions": 38,
     "removals": 0,
-    "noChangeDecisions": 26,
-    "recordsWithOnlyNoChange": 22,
-    "ownerDecisions": 59,
+    "noChangeDecisions": 38,
+    "recordsWithOnlyNoChange": 31,
+    "ownerDecisions": 76,
     "productionMutated": false,
     "tagInstancesBefore": 11218,
-    "tagInstancesAfter": 11251
+    "tagInstancesAfter": 11256
   },
   "tagUsage": [
     {
@@ -175,7 +175,7 @@
     {
       "tag": "sustained_damage",
       "before": 133,
-      "after": 133
+      "after": 134
     },
     {
       "tag": "equipment",
@@ -313,6 +313,11 @@
       "after": 51
     },
     {
+      "tag": "damage_threshold",
+      "before": 47,
+      "after": 50
+    },
+    {
       "tag": "ability_enhancement",
       "before": 49,
       "after": 49
@@ -326,11 +331,6 @@
       "tag": "deception",
       "before": 48,
       "after": 48
-    },
-    {
-      "tag": "damage_threshold",
-      "before": 47,
-      "after": 47
     },
     {
       "tag": "ambush",
@@ -668,17 +668,17 @@
       "after": 16
     },
     {
+      "tag": "critical_success",
+      "before": 14,
+      "after": 15
+    },
+    {
       "tag": "precognition",
       "before": 15,
       "after": 15
     },
     {
       "tag": "beast",
-      "before": 14,
-      "after": 14
-    },
-    {
-      "tag": "critical_success",
       "before": 14,
       "after": 14
     },
@@ -1145,6 +1145,36 @@
     },
     {
       "domain": "FEAT",
+      "canonicalId": "6fb0f56dd9b9b75c",
+      "name": "Deadly Sniper",
+      "added": [
+        "sustained_damage"
+      ],
+      "before": [
+        "ranged",
+        "sniper",
+        "ambush",
+        "precision",
+        "damage_bonus"
+      ],
+      "after": [
+        "ranged",
+        "sniper",
+        "ambush",
+        "precision",
+        "damage_bonus",
+        "sustained_damage"
+      ],
+      "decisions": [
+        {
+          "decisionId": "FEAT:6fb0f56dd9b9b75c|sustained_damage",
+          "policy": "SUSTAINED_DAMAGE_POLICY",
+          "batch": "3B.2A"
+        }
+      ]
+    },
+    {
+      "domain": "FEAT",
       "canonicalId": "80805c30ea6dd11e",
       "name": "Aiming Accuracy",
       "added": [
@@ -1307,6 +1337,44 @@
     },
     {
       "domain": "TALENT",
+      "canonicalId": "0fb750f0f0e6f767",
+      "name": "Martial Resurgence",
+      "added": [
+        "critical_success"
+      ],
+      "before": [
+        "unarmed",
+        "martial_arts",
+        "melee",
+        "critical_hit",
+        "force",
+        "force_power_synergy",
+        "force_capacity",
+        "resource_recovery",
+        "recovery"
+      ],
+      "after": [
+        "unarmed",
+        "martial_arts",
+        "melee",
+        "critical_hit",
+        "force",
+        "force_power_synergy",
+        "force_capacity",
+        "resource_recovery",
+        "recovery",
+        "critical_success"
+      ],
+      "decisions": [
+        {
+          "decisionId": "TALENT:0fb750f0f0e6f767|critical_success",
+          "policy": "CRITICAL_SUCCESS_POLICY",
+          "batch": "3B.2A"
+        }
+      ]
+    },
+    {
+      "domain": "TALENT",
       "canonicalId": "1204459eaaff9efa",
       "name": "Planetary Attunement",
       "added": [
@@ -1382,6 +1450,82 @@
           "decisionId": "TALENT:1946e16d1e6c831c|swift_action",
           "policy": "ACTION_TYPE_POLICY",
           "batch": "3B.1"
+        }
+      ]
+    },
+    {
+      "domain": "TALENT",
+      "canonicalId": "2739921a657a49a496885c456bcace65",
+      "name": "Soft Reset",
+      "added": [
+        "damage_threshold"
+      ],
+      "before": [
+        "droid",
+        "self_repair",
+        "recovery",
+        "condition_removal",
+        "durability",
+        "resilience",
+        "survivability"
+      ],
+      "after": [
+        "droid",
+        "self_repair",
+        "recovery",
+        "condition_removal",
+        "durability",
+        "resilience",
+        "survivability",
+        "damage_threshold"
+      ],
+      "decisions": [
+        {
+          "decisionId": "TALENT:2739921a657a49a496885c456bcace65|damage_threshold",
+          "policy": "DAMAGE_THRESHOLD_POLICY",
+          "batch": "3B.2A"
+        }
+      ]
+    },
+    {
+      "domain": "TALENT",
+      "canonicalId": "43ac0c4b1759507a",
+      "name": "Recruit Enemy",
+      "added": [
+        "damage_threshold"
+      ],
+      "before": [
+        "once-per-encounter",
+        "persuasion",
+        "social",
+        "skills",
+        "will_defense",
+        "mind-affecting",
+        "control",
+        "manipulation",
+        "nonlethal",
+        "target-designation",
+        "survivability"
+      ],
+      "after": [
+        "once-per-encounter",
+        "persuasion",
+        "social",
+        "skills",
+        "will_defense",
+        "mind-affecting",
+        "control",
+        "manipulation",
+        "nonlethal",
+        "target-designation",
+        "survivability",
+        "damage_threshold"
+      ],
+      "decisions": [
+        {
+          "decisionId": "TALENT:43ac0c4b1759507a|damage_threshold",
+          "policy": "DAMAGE_THRESHOLD_POLICY",
+          "batch": "3B.2A"
         }
       ]
     },
@@ -1786,6 +1930,54 @@
           "decisionId": "TALENT:98355ed4f6473028|once-per-encounter",
           "policy": "ONCE_PER_ENCOUNTER_POLICY",
           "batch": "3B.1"
+        }
+      ]
+    },
+    {
+      "domain": "TALENT",
+      "canonicalId": "ad7fd3e1a2b04c30",
+      "name": "Akk Dog Trainer's Actions",
+      "added": [
+        "damage_threshold"
+      ],
+      "before": [
+        "beast_companion",
+        "followers",
+        "ally_support",
+        "support",
+        "teamwork",
+        "standard_action",
+        "action_economy",
+        "melee",
+        "ranged",
+        "damage_bonus",
+        "burst_damage",
+        "precision",
+        "sustained_damage",
+        "targeting"
+      ],
+      "after": [
+        "beast_companion",
+        "followers",
+        "ally_support",
+        "support",
+        "teamwork",
+        "standard_action",
+        "action_economy",
+        "melee",
+        "ranged",
+        "damage_bonus",
+        "burst_damage",
+        "precision",
+        "sustained_damage",
+        "targeting",
+        "damage_threshold"
+      ],
+      "decisions": [
+        {
+          "decisionId": "TALENT:ad7fd3e1a2b04c30|damage_threshold",
+          "policy": "DAMAGE_THRESHOLD_POLICY",
+          "batch": "3B.2A"
         }
       ]
     },
@@ -5272,7 +5464,16 @@
         "sniper",
         "ambush",
         "precision",
-        "damage_bonus"
+        "damage_bonus",
+        "sustained_damage"
+      ],
+      "ownerAdditions": [
+        {
+          "tag": "sustained_damage",
+          "batch": "3B.2A",
+          "policy": "SUSTAINED_DAMAGE_POLICY",
+          "decisionId": "FEAT:6fb0f56dd9b9b75c|sustained_damage"
+        }
       ]
     },
     {
@@ -11225,7 +11426,16 @@
         "force_power_synergy",
         "force_capacity",
         "resource_recovery",
-        "recovery"
+        "recovery",
+        "critical_success"
+      ],
+      "ownerAdditions": [
+        {
+          "tag": "critical_success",
+          "batch": "3B.2A",
+          "policy": "CRITICAL_SUCCESS_POLICY",
+          "decisionId": "TALENT:0fb750f0f0e6f767|critical_success"
+        }
       ]
     },
     {
@@ -13751,7 +13961,16 @@
         "condition_removal",
         "durability",
         "resilience",
-        "survivability"
+        "survivability",
+        "damage_threshold"
+      ],
+      "ownerAdditions": [
+        {
+          "tag": "damage_threshold",
+          "batch": "3B.2A",
+          "policy": "DAMAGE_THRESHOLD_POLICY",
+          "decisionId": "TALENT:2739921a657a49a496885c456bcace65|damage_threshold"
+        }
       ]
     },
     {
@@ -16968,7 +17187,16 @@
         "manipulation",
         "nonlethal",
         "target-designation",
-        "survivability"
+        "survivability",
+        "damage_threshold"
+      ],
+      "ownerAdditions": [
+        {
+          "tag": "damage_threshold",
+          "batch": "3B.2A",
+          "policy": "DAMAGE_THRESHOLD_POLICY",
+          "decisionId": "TALENT:43ac0c4b1759507a|damage_threshold"
+        }
       ]
     },
     {
@@ -29982,7 +30210,16 @@
         "burst_damage",
         "precision",
         "sustained_damage",
-        "targeting"
+        "targeting",
+        "damage_threshold"
+      ],
+      "ownerAdditions": [
+        {
+          "tag": "damage_threshold",
+          "batch": "3B.2A",
+          "policy": "DAMAGE_THRESHOLD_POLICY",
+          "decisionId": "TALENT:ad7fd3e1a2b04c30|damage_threshold"
+        }
       ]
     },
     {

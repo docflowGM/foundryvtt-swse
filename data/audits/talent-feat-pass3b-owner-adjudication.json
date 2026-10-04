@@ -44,6 +44,22 @@
     {
       "id": "FORCE_CAPACITY_POLICY",
       "text": "force_capacity applies when the mechanic directly increases the amount of Force-resource capacity available to the character, including persistent/additional Force Point allotment. It does not authorize resource_recovery; capacity and recovery are separate semantics. Resource creation, capacity, expenditure and recovery are four distinct concepts."
+    },
+    {
+      "id": "DAMAGE_THRESHOLD_POLICY",
+      "text": "damage_threshold applies when the record's operative mechanic directly interacts with Damage Threshold: compares damage against it, modifies it, changes the consequences of meeting/exceeding it, uses it as a direct activation condition, or explicitly determines how damage is counted for purposes of overcoming it. Not added merely because Damage Threshold appears as unrelated explanatory text or prerequisite material. A mechanic need not numerically modify Damage Threshold to qualify."
+    },
+    {
+      "id": "DAMAGE_BONUS_POLICY",
+      "text": "damage_bonus represents a mechanic that directly increases or adds to damage dealt by an attack/effect (numeric damage, damage dice, a substituted larger damage modifier, directly increased damage output). Not used for additional damage suffered by the user, damage used as a cost or penalty, damage the mechanic gives up/forgoes, Damage Threshold, Damage Reduction, or text fragments containing the word \"damage\" that do not increase outgoing damage."
+    },
+    {
+      "id": "SUSTAINED_DAMAGE_POLICY",
+      "text": "sustained_damage represents a damage-enhancing mechanic capable of recurring across multiple attacks, rounds or turns rather than being limited to a single isolated damage event (multiattack damage support, repeated attacks, damage enhancement that can recur each turn, recurring/ongoing damaging effects). A mechanic may be conditional and still qualify if its rules explicitly allow the enhancement to recur. A single one-time enhanced attack does not qualify solely because it deals additional damage."
+    },
+    {
+      "id": "CRITICAL_SUCCESS_POLICY",
+      "text": "critical_success represents a mechanic in which a natural 20, or an effect treated as a natural 20/critical success, directly triggers, grants, restores, substitutes for, or materially activates the record's special mechanic. Not added merely because the record expands critical threat range, reminds the reader that only a natural 20 is an automatic hit, references a natural 20 only to explain the normal critical-hit rules, or uses a natural 20 as an exception that bypasses or prevents a defensive effect. critical_hit and critical_success remain distinct; a natural-20 trigger may justify critical_success without implying critical_hit."
     }
   ],
   "batches": [
@@ -68,6 +84,17 @@
           "note": "Owner completion ruling beyond the one detector-tag pair that initially surfaced."
         }
       ]
+    },
+    {
+      "batch": "3B.2A",
+      "title": "Damage + Critical mechanics",
+      "expected": {
+        "recordsWithAdd": 5,
+        "tagAdditions": 5,
+        "recordsWithOnlyNoChange": 12,
+        "removals": 0,
+        "newTags": 0
+      }
     }
   ],
   "decisions": [
@@ -908,6 +935,254 @@
       ],
       "ownerRationale": "Visionary Defense does not itself permit, require, cause, modify or stabilize a roll. Its sentence explaining that multiple characters cannot affect the same attack \"to allow multiple rerolls\" is contextual wording explaining the non-stacking limitation. The operative mechanic grants a Force bonus to Reflex Defense; it does not create a reroll or other affirmative reliability mechanic. Closes the last 3B.1 primitive finding; the separate reroll NO_CHANGE ruling is unchanged.",
       "ownerPolicyApplied": "RELIABILITY_POLICY"
+    },
+    {
+      "decisionId": "TALENT:2739921a657a49a496885c456bcace65|damage_threshold",
+      "batch": "3B.2A",
+      "domain": "TALENT",
+      "canonicalId": "2739921a657a49a496885c456bcace65",
+      "name": "Soft Reset",
+      "tag": "damage_threshold",
+      "ownerAction": "ADD",
+      "detectorEvidenceReference": [
+        "D.damage_threshold"
+      ],
+      "ownerRationale": "The recovery mechanic explicitly distinguishes whether the droid reached the bottom of the condition track through damage exceeding its Damage Threshold. Damage Threshold directly controls whether the talent's recovery effect applies.",
+      "ownerPolicyApplied": "DAMAGE_THRESHOLD_POLICY"
+    },
+    {
+      "decisionId": "TALENT:43ac0c4b1759507a|damage_threshold",
+      "batch": "3B.2A",
+      "domain": "TALENT",
+      "canonicalId": "43ac0c4b1759507a",
+      "name": "Recruit Enemy",
+      "tag": "damage_threshold",
+      "ownerAction": "ADD",
+      "detectorEvidenceReference": [
+        "D.damage_threshold"
+      ],
+      "ownerRationale": "The talent's activation condition directly requires the triggering damage to equal or exceed both the target's remaining Hit Points and its Damage Threshold. Damage Threshold is part of the talent's operative trigger, not incidental explanatory text.",
+      "ownerPolicyApplied": "DAMAGE_THRESHOLD_POLICY"
+    },
+    {
+      "decisionId": "TALENT:ad7fd3e1a2b04c30|damage_threshold",
+      "batch": "3B.2A",
+      "domain": "TALENT",
+      "canonicalId": "ad7fd3e1a2b04c30",
+      "name": "Akk Dog Trainer's Actions",
+      "tag": "damage_threshold",
+      "ownerAction": "ADD",
+      "detectorEvidenceReference": [
+        "D.damage_threshold"
+      ],
+      "ownerRationale": "Attack in Concert explicitly states that the akk dog's additional damage becomes part of the attack for purposes of overcoming Damage Threshold. The mechanic directly determines how damage interacts with Damage Threshold.",
+      "ownerPolicyApplied": "DAMAGE_THRESHOLD_POLICY"
+    },
+    {
+      "decisionId": "FEAT:1f404db00518aeed|damage_bonus",
+      "batch": "3B.2A",
+      "domain": "FEAT",
+      "canonicalId": "1f404db00518aeed",
+      "name": "Damage Conversion",
+      "tag": "damage_bonus",
+      "ownerAction": "NO_CHANGE",
+      "detectorEvidenceReference": [
+        "D.damage_bonus"
+      ],
+      "ownerRationale": "The additional damage is damage suffered by the character as the cost/consequence of avoiding condition-track movement. The feat does not increase damage dealt by the character.",
+      "ownerPolicyApplied": "DAMAGE_BONUS_POLICY"
+    },
+    {
+      "decisionId": "FEAT:ccc7a6e191e811a4|damage_bonus",
+      "batch": "3B.2A",
+      "domain": "FEAT",
+      "canonicalId": "ccc7a6e191e811a4",
+      "name": "Hobbling Strike",
+      "tag": "damage_bonus",
+      "ownerAction": "NO_CHANGE",
+      "detectorEvidenceReference": [
+        "D.damage_bonus"
+      ],
+      "ownerRationale": "The feat does not grant additional damage. It explicitly gives up damage that would have been supplied by another ability in exchange for reducing the target's speed. Forgone damage does not create a positive damage_bonus semantic.",
+      "ownerPolicyApplied": "DAMAGE_BONUS_POLICY"
+    },
+    {
+      "decisionId": "FEAT:f59c9679c02b8896|damage_bonus",
+      "batch": "3B.2A",
+      "domain": "FEAT",
+      "canonicalId": "f59c9679c02b8896",
+      "name": "Metamorph",
+      "tag": "damage_bonus",
+      "ownerAction": "NO_CHANGE",
+      "detectorEvidenceReference": [
+        "D.damage_bonus"
+      ],
+      "ownerRationale": "The detector matched \"+5 Damage Threshold.\" This increases Damage Threshold, not damage dealt.",
+      "ownerPolicyApplied": "DAMAGE_BONUS_POLICY"
+    },
+    {
+      "decisionId": "TALENT:22674c41b3d185be|damage_bonus",
+      "batch": "3B.2A",
+      "domain": "TALENT",
+      "canonicalId": "22674c41b3d185be",
+      "name": "Strength in Numbers",
+      "tag": "damage_bonus",
+      "ownerAction": "NO_CHANGE",
+      "detectorEvidenceReference": [
+        "D.damage_bonus"
+      ],
+      "ownerRationale": "The talent increases Damage Reduction. It does not increase damage dealt.",
+      "ownerPolicyApplied": "DAMAGE_BONUS_POLICY"
+    },
+    {
+      "decisionId": "FEAT:6fb0f56dd9b9b75c|sustained_damage",
+      "batch": "3B.2A",
+      "domain": "FEAT",
+      "canonicalId": "6fb0f56dd9b9b75c",
+      "name": "Deadly Sniper",
+      "tag": "sustained_damage",
+      "ownerAction": "ADD",
+      "detectorEvidenceReference": [
+        "D.sustained_damage"
+      ],
+      "ownerRationale": "The feat's damage enhancement applies to the first qualifying ranged attack each turn. Although conditional on attacking an unaware target, the rule explicitly supports recurring enhanced damage across turns rather than a single isolated burst.",
+      "ownerPolicyApplied": "SUSTAINED_DAMAGE_POLICY"
+    },
+    {
+      "decisionId": "FEAT:d9ecf143e6a9f889|critical_success",
+      "batch": "3B.2A",
+      "domain": "FEAT",
+      "canonicalId": "d9ecf143e6a9f889",
+      "name": "Critical Strike",
+      "tag": "critical_success",
+      "ownerAction": "NO_CHANGE",
+      "detectorEvidenceReference": [
+        "E.natural_20"
+      ],
+      "ownerRationale": "The feat expands critical threat range. \"Only a natural 20 remains an automatic hit\" is a normal-rules limitation/reminder attached to the expanded critical range. The natural 20 does not independently trigger the feat's special benefit.",
+      "ownerPolicyApplied": "CRITICAL_SUCCESS_POLICY"
+    },
+    {
+      "decisionId": "TALENT:04985a42930dff2a|critical_success",
+      "batch": "3B.2A",
+      "domain": "TALENT",
+      "canonicalId": "04985a42930dff2a",
+      "name": "Extended Critical Range (heavy weapons)",
+      "tag": "critical_success",
+      "ownerAction": "NO_CHANGE",
+      "detectorEvidenceReference": [
+        "E.natural_20"
+      ],
+      "ownerRationale": "The talent expands critical threat range. The natural-20 wording only distinguishes automatic hits from expanded critical threats. critical_hit already represents the operative mechanic.",
+      "ownerPolicyApplied": "CRITICAL_SUCCESS_POLICY"
+    },
+    {
+      "decisionId": "TALENT:141e1a07b365e0fd|critical_success",
+      "batch": "3B.2A",
+      "domain": "TALENT",
+      "canonicalId": "141e1a07b365e0fd",
+      "name": "Extended Critical Range (rifles)",
+      "tag": "critical_success",
+      "ownerAction": "NO_CHANGE",
+      "detectorEvidenceReference": [
+        "E.natural_20"
+      ],
+      "ownerRationale": "Same policy and rationale as the heavy-weapons version. The talent expands critical threat range. The natural-20 wording only distinguishes automatic hits from expanded critical threats. critical_hit already represents the operative mechanic.",
+      "ownerPolicyApplied": "CRITICAL_SUCCESS_POLICY"
+    },
+    {
+      "decisionId": "TALENT:7cbd576e420a36b0|critical_success",
+      "batch": "3B.2A",
+      "domain": "TALENT",
+      "canonicalId": "7cbd576e420a36b0",
+      "name": "Extended Critical Range (simple weapons)",
+      "tag": "critical_success",
+      "ownerAction": "NO_CHANGE",
+      "detectorEvidenceReference": [
+        "E.natural_20"
+      ],
+      "ownerRationale": "Same policy and rationale as the other Extended Critical Range talents. The talent expands critical threat range. The natural-20 wording only distinguishes automatic hits from expanded critical threats. critical_hit already represents the operative mechanic.",
+      "ownerPolicyApplied": "CRITICAL_SUCCESS_POLICY"
+    },
+    {
+      "decisionId": "TALENT:88ca4add87c2a86a|critical_success",
+      "batch": "3B.2A",
+      "domain": "TALENT",
+      "canonicalId": "88ca4add87c2a86a",
+      "name": "Echani Expertise",
+      "tag": "critical_success",
+      "ownerAction": "NO_CHANGE",
+      "detectorEvidenceReference": [
+        "E.natural_20"
+      ],
+      "ownerRationale": "The talent expands unarmed critical threat range. The natural-20 wording preserves the normal automatic-hit rule for the expanded critical range. The operative semantic is critical_hit, not critical_success.",
+      "ownerPolicyApplied": "CRITICAL_SUCCESS_POLICY"
+    },
+    {
+      "decisionId": "TALENT:cdf46b8cdde49733|critical_success",
+      "batch": "3B.2A",
+      "domain": "TALENT",
+      "canonicalId": "cdf46b8cdde49733",
+      "name": "Knowledge Is Power",
+      "tag": "critical_success",
+      "ownerAction": "NO_CHANGE",
+      "detectorEvidenceReference": [
+        "E.natural_20"
+      ],
+      "ownerRationale": "The talent expands the critical threat range against the designated target. The natural-20 text only explains that expanded critical-threat results are not automatic hits. The special mechanic is already represented by critical_hit.",
+      "ownerPolicyApplied": "CRITICAL_SUCCESS_POLICY"
+    },
+    {
+      "decisionId": "TALENT:0fb750f0f0e6f767|critical_success",
+      "batch": "3B.2A",
+      "domain": "TALENT",
+      "canonicalId": "0fb750f0f0e6f767",
+      "name": "Martial Resurgence",
+      "tag": "critical_success",
+      "ownerAction": "ADD",
+      "detectorEvidenceReference": [
+        "E.natural_20"
+      ],
+      "ownerRationale": "Rolling a natural 20 on an unarmed attack directly triggers the talent's special benefit: recovering all spent Force powers. The natural 20 is an operative trigger rather than a critical-range reminder. No additional tags are inferred; its existing resource_recovery remains unchanged.",
+      "ownerPolicyApplied": "CRITICAL_SUCCESS_POLICY"
+    },
+    {
+      "decisionId": "TALENT:70a06f3be4e9c216|critical_success",
+      "batch": "3B.2A",
+      "domain": "TALENT",
+      "canonicalId": "70a06f3be4e9c216",
+      "name": "Small Target",
+      "tag": "critical_success",
+      "ownerAction": "NO_CHANGE",
+      "detectorEvidenceReference": [
+        "E.natural_20"
+      ],
+      "ownerRationale": "The talent changes whether an enemy's natural-20 attack against the vehicle actually becomes a critical hit. Its mechanic is directly about mitigating critical_hit; it does not grant or trigger a separate critical-success benefit for the character. Existing critical_hit semantic kept.",
+      "ownerPolicyApplied": "CRITICAL_SUCCESS_POLICY"
+    },
+    {
+      "decisionId": "TALENT:f8ac7fecc8d3c8ff|critical_success",
+      "batch": "3B.2A",
+      "domain": "TALENT",
+      "canonicalId": "f8ac7fecc8d3c8ff",
+      "name": "Precognitive Meditation",
+      "tag": "critical_success",
+      "ownerAction": "NO_CHANGE",
+      "detectorEvidenceReference": [
+        "E.natural_20"
+      ],
+      "ownerRationale": "The talent allows an attack to be negated except when the attack roll is a natural 20. The natural 20 is an exception that prevents the defensive effect from functioning; it does not trigger or grant the talent's special benefit. The existing 3B.1 resource_recovery ADD remains unchanged.",
+      "ownerPolicyApplied": "CRITICAL_SUCCESS_POLICY"
     }
-  ]
+  ],
+  "cumulativeExpected": {
+    "decisions": 76,
+    "addDecisions": 38,
+    "noChangeDecisions": 38,
+    "recordsWithAdd": 33,
+    "tagAdditions": 38,
+    "removals": 0,
+    "tagInstancesBefore": 11218,
+    "tagInstancesAfter": 11256
+  }
 }
