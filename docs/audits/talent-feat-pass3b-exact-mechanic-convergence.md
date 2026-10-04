@@ -16,12 +16,12 @@ Mechanic families scanned: 15 (106 detectors, 14 cross-domain bundles)
 
 Records where mechanic wording and the compared tag co-occur (count only; not adjudicated): 3965
 
-Owner-review candidates: 298
-  record-level (P1 165 / P2 107): 272
+Owner-review candidates: 258
+  record-level (P1 136 / P2 96): 232
   tag-definition (P3): 12
   tag-convention questions (P3; 236 untagged matches listed, not individually flagged): 14
 
-Findings decided by explicit owner rulings (approved / no change): 74
+Findings decided by explicit owner rulings (approved / no change): 114
 Prior-ruling / intentional-divergence matches: 11
 Tags carried by only one domain (count only; no ruling made): 34
 
@@ -71,8 +71,8 @@ Zero violations across the combined corpus.
 | D. Damage mechanics | 7 | 50 | 121 | 211 | 113 | 0 | 0 |
 | E. Critical mechanics | 2 | 5 | 33 | 45 | 36 | 0 | 0 |
 | F. Targeting / setup | 6 | 23 | 129 | 183 | 97 | 33 | 0 |
-| G. Battlefield control | 8 | 35 | 81 | 145 | 119 | 15 | 11 |
-| H. Reactive combat | 3 | 24 | 62 | 86 | 68 | 14 | 0 |
+| G. Battlefield control | 8 | 35 | 81 | 145 | 119 | 0 | 0 |
+| H. Reactive combat | 3 | 24 | 62 | 86 | 68 | 0 | 0 |
 | I. Defense | 9 | 74 | 265 | 373 | 244 | 3 | 9 |
 | J. Recovery / medicine | 9 | 27 | 107 | 194 | 146 | 5 | 12 |
 | K. Support / command | 7 | 39 | 280 | 388 | 289 | 0 | 71 |
@@ -177,7 +177,7 @@ Representative evidence (facts only): **Signature Device** (FEAT, Scum and Villa
 
 ### G. Battlefield control
 
-Tags expected: `battlefield_control`, `grab`, `grapple`, `mobility`, `movement`, `positioning`, `pursuit`, `restrain`. Records with evidence text: 1540; feats involved 35; talents involved 81; detections 145; already convergent 119; owner review 26.
+Tags expected: `battlefield_control`, `grab`, `grapple`, `mobility`, `movement`, `positioning`, `pursuit`, `restrain`. Records with evidence text: 1540; feats involved 35; talents involved 81; detections 145; already convergent 119; owner review 0.
 
 | Detector | Tag | Conf | Detected (F/T) | Tagged (F/T) | Detected, not tagged (F/T) | Tagged rate |
 | --- | --- | --- | --- | --- | --- | ---: |
@@ -190,20 +190,11 @@ Tags expected: `battlefield_control`, `grab`, `grapple`, `mobility`, `movement`,
 | G.pursuit | `pursuit` | HIGH | 0/2 | 0/2 | 0/0 | 1 |
 | G.positioning | `positioning` | MEDIUM | 3/1 | 3/1 | 0/0 | 1 |
 
-Owner-review groups (mechanic → candidate tag):
-
-- **G.grab** → `grab` (P1): 6 record(s) [3 feat / 3 talent]; e.g. Bantha Herder (`982b00394a73719e`); Forceful Blast (`c2538c3a906700ae`); Bantha Rush (`fc1e5f0a2367debb`)
-- **G.grapple** → `grapple` (P1): 6 record(s) [4 feat / 2 talent]; e.g. Bantha Herder (`982b00394a73719e`); Forceful Blast (`c2538c3a906700ae`); Weapon Focus (`c41814601364b643`)
-- **G.restrain** → `restrain` (P1): 3 record(s) [0 feat / 3 talent]; e.g. Droid Jammer (`80a24150fd2f3163`); Uncanny Dodge I (`df9c364e91826cbf`); Mobile Combatant (`ee184e210f8c8935`)
-- **G.forced_movement** → `battlefield_control` (P2): 3 record(s) [2 feat / 1 talent]; e.g. Acrobatic Ally (`723563f70bd7f28f`); Echani Training (`f362e5a4ad0a98bd`); Acrobatic Recovery (`5d4a63123e5a5eb4`)
-- **G.mobility** → `mobility` (P2): 5 record(s) [1 feat / 4 talent]; e.g. Staggering Attack (`c9c4130a55761330`); Aversion (`13cc978a8023eaa4`); Prepared Explosive (`32029a2f0dbb7104`)
-- **G.speed_change** → `movement` (P2): 3 record(s) [0 feat / 3 talent]; e.g. Deep Space Raider (`696f7eed2cc08299`); Slowing Shot (`c04e66a3f2577e62`); Piercing Hit (`c08976a5f4ab88d8`)
-
-Representative evidence (facts only): **Bantha Herder** (FEAT, Galaxy at War p.22, FEAT_CANONICAL_RULES_SHAPE) — "…rget 1 square in any direction as a free action. Apply separately to every eligible creature damaged by the attack. Cannot move a grabbed/grappled target, into a solid object, or into another creature's fighting space. A damaging proficient ranged attack can move a L…". Tags: `ranged`, `will_defense`, `control`, `battlefield_control`, `movement`, `positioning`; compared tag `grab` absent. Comparison records carrying it: Stava Expertise (TALENT) [`martial_arts`, `melee`, `grab`, `grapple`, `restrain`, `control`, `opposed_check`, `reroll`, `reliability`]; Liberate (TALENT) [`force`, `ally_support`, `support`, `force_point_spend`, `resource_spend`, `swift_action`, `reaction`, `action_economy`, `grab`, `grapple`, `restrain`, `condition_removal`, `recovery`, `mobility`, `positioning`]; Entangler (TALENT) [`grab`, `grapple`, `restrain`, `control`, `battlefield_control`, `precision`, `melee`, `defense`].
+No owner-review items in this family.
 
 ### H. Reactive combat
 
-Tags expected: `attack_of_opportunity`, `counterattack`, `overwatch`. Records with evidence text: 1540; feats involved 24; talents involved 62; detections 86; already convergent 68; owner review 14.
+Tags expected: `attack_of_opportunity`, `counterattack`, `overwatch`. Records with evidence text: 1540; feats involved 24; talents involved 62; detections 86; already convergent 68; owner review 0.
 
 | Detector | Tag | Conf | Detected (F/T) | Tagged (F/T) | Detected, not tagged (F/T) | Tagged rate |
 | --- | --- | --- | --- | --- | --- | ---: |
@@ -211,11 +202,7 @@ Tags expected: `attack_of_opportunity`, `counterattack`, `overwatch`. Records wi
 | H.counterattack | `counterattack` | HIGH | 2/1 | 0/1 | 2/0 | 0.333 |
 | H.overwatch | `overwatch` | HIGH | 0/2 | 0/0 | 0/2 | 0 |
 
-Owner-review groups (mechanic → candidate tag):
-
-- **H.attack_of_opportunity** → `attack_of_opportunity` (P1): 14 record(s) [0 feat / 14 talent]; e.g. Out of Harm's Way (`1946e16d1e6c831c`); Transposing Strike (`39b5423e255e14b1`); Beloved (`444c032c563c18a1`)
-
-Representative evidence (facts only): **Out of Harm's Way** (TALENT, Unknown Regions p.23, TALENT_CERTIFIED_PACK_BENEFIT_TEXT) — "…he square of the ally you are protecting and move the ally to any legal square adjacent to you. This movement does not provoke an attack of opportunity.". Tags: `reaction`, `ally_support`, `support`, `teamwork`, `mobility`, `positioning`, `evasion`, `survivability`, `action_economy`; compared tag `attack_of_opportunity` absent. Comparison records carrying it: Tumble Defense (FEAT) [`melee`, `attack_of_opportunity`, `battlefield_control`, `control`, `movement`, `acrobatics`]; Tactical Advantage (FEAT) [`attack_of_opportunity`, `movement`, `mobility`, `positioning`, `evasion`]; Acrobatic Strike (FEAT) [`acrobatics`, `movement`, `mobility`, `attack_of_opportunity`, `evasion`, `precision`, `setup`].
+No owner-review items in this family.
 
 ### I. Defense
 

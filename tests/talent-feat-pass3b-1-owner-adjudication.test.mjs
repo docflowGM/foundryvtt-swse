@@ -13,7 +13,8 @@ const auth = rd(AUTH3B_JSON), baseline = rd('data/audits/talent-feat-pass3b-mech
 const vocab = new Set(baseline.sharedVocabulary);
 const rec = (id) => auth.records.find(r => r.canonicalId === id);
 const sha = (rel) => crypto.createHash('sha256').update(fs.readFileSync(new URL('../' + rel, import.meta.url))).digest('hex');
-const added = (id) => rec(id).finalTags.filter(t => !rec(id).baselineTags.includes(t));
+// additions made by THIS batch only (later batches may add more tags to the same record)
+const added = (id) => rec(id).finalTags.filter(t => !rec(id).baselineTags.includes(t) && overlay.decisions.some(d => d.canonicalId === id && d.tag === t && d.ownerAction === 'ADD'));
 let n = 0; const test = (name, fn) => { fn(); n++; console.log('  ok  ' + name); };
 
 test('3B.1: exactly 28 canonical records receive ADD operations and exactly 33 tags are added, with 0 removals', () => {

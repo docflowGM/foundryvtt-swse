@@ -17,6 +17,13 @@ Cumulative owner overlay for Pass 3B batches. Claude executes these rulings and 
 - **DAMAGE_BONUS_POLICY** — damage_bonus represents a mechanic that directly increases or adds to damage dealt by an attack/effect (numeric damage, damage dice, a substituted larger damage modifier, directly increased damage output). Not used for additional damage suffered by the user, damage used as a cost or penalty, damage the mechanic gives up/forgoes, Damage Threshold, Damage Reduction, or text fragments containing the word "damage" that do not increase outgoing damage.
 - **SUSTAINED_DAMAGE_POLICY** — sustained_damage represents a damage-enhancing mechanic capable of recurring across multiple attacks, rounds or turns rather than being limited to a single isolated damage event (multiattack damage support, repeated attacks, damage enhancement that can recur each turn, recurring/ongoing damaging effects). A mechanic may be conditional and still qualify if its rules explicitly allow the enhancement to recur. A single one-time enhanced attack does not qualify solely because it deals additional damage.
 - **CRITICAL_SUCCESS_POLICY** — critical_success represents a mechanic in which a natural 20, or an effect treated as a natural 20/critical success, directly triggers, grants, restores, substitutes for, or materially activates the record's special mechanic. Not added merely because the record expands critical threat range, reminds the reader that only a natural 20 is an automatic hit, references a natural 20 only to explain the normal critical-hit rules, or uses a natural 20 as an exception that bypasses or prevents a defensive effect. critical_hit and critical_success remain distinct; a natural-20 trigger may justify critical_success without implying critical_hit.
+- **GRAB_POLICY** — grab applies when the operative mechanic directly interacts with the SWSE Grab mechanic: initiates a Grab, modifies a Grab attack, modifies the consequences of a successful Grab, modifies escape from a Grab, automatically ends/removes a Grab, or otherwise directly changes the mechanical operation of the Grab state. Not added because a currently grabbed target is excluded from another effect, "grab" is ordinary English, or the rule merely mentions Grab while describing another mechanic. A negative eligibility/exclusion clause does not create a positive Grab semantic.
+- **GRAPPLE_POLICY** — grapple applies when the operative mechanic directly initiates a grapple, modifies a grapple check or resolution, modifies escape from a grapple, automatically ends/removes a grapple, or otherwise directly changes the grapple mechanic. Not added because grappled targets are excluded from another effect, grapple is one selectable member of a broad generic category, or the word appears only as explanatory/reference text. Generic selectable scope does not automatically enumerate every possible scope tag.
+- **RESTRAIN_POLICY** — restrain applies when the operative mechanic directly restrains/pins/immobilizes a target, modifies a restrained/pinned/immobilized state, frees/removes that state, or directly modifies its mechanical application or escape. Not added for "restraining bolt" appearing only in an immunity comparison, an unrelated rule mentioning what happens while immobilized, or ordinary-language phrases such as "pinning you down".
+- **BATTLEFIELD_CONTROL_POLICY** — battlefield_control applies when the mechanic directly imposes or materially manipulates hostile battlefield state: forced enemy movement, prone/knockdown, immobilization/restraint, meaningful enemy positioning restriction, or equivalent direct hostile spatial/control effects. Not added because an ally is voluntarily repositioned, the user prevents a control effect on themself, or an unwanted control effect occurs only as the failure consequence of a supportive maneuver.
+- **MOVEMENT_POLICY** — movement applies when the operative mechanic directly changes movement or speed: moving a creature/vehicle, forcing movement, increasing/reducing speed, or changing how much movement can be taken. The affected creature does not have to be the user; direct reduction of an enemy or vehicle's speed is still a movement mechanic.
+- **MOBILITY_POLICY** — mobility represents improved/facilitated movement capability, freedom, efficiency or movement access for the user or supported creature. Not added merely because the mechanic forcibly moves an enemy, creates difficult terrain for enemies, manipulates battlefield terrain generally, or references whether movement provokes an attack of opportunity; those may be represented by movement, positioning, control, battlefield_control or other specific mechanics.
+- **ATTACK_OF_OPPORTUNITY_POLICY** — attack_of_opportunity applies when the operative mechanic directly generates an attack of opportunity, grants or modifies one, prevents/suppresses one, triggers from one, modifies checks or effects specifically associated with one, or changes the timing or availability of one. Not applied merely because movement is stated to provoke attacks of opportunity as normal, attacks of opportunity are simply exempted from a broader restriction on attacks, or the phrase appears only as unchanged rules reminder/context. The Martial Arts I owner precedent remains intact and does not propagate to Martial Arts II/III.
 
 ## Batch 3B.1 — Mechanical Primitives
 
@@ -111,6 +118,54 @@ Expected by owner: 5 records with ADD, 5 tag additions, 12 records NO_CHANGE onl
 | NO_CHANGE | TALENT | Small Target | `70a06f3be4e9c216` | `critical_success` | CRITICAL_SUCCESS_POLICY | E.natural_20 |
 | NO_CHANGE | TALENT | Precognitive Meditation | `f8ac7fecc8d3c8ff` | `critical_success` | CRITICAL_SUCCESS_POLICY | E.natural_20 |
 
+## Batch 3B.2B — Battlefield control + reactive combat
+
+Expected by owner: 15 records with ADD, 15 tag additions, 17 records NO_CHANGE only, 0 removals, 0 new tags.
+
+
+| Action | Domain | Name | ID | Tag | Policy | Evidence reference |
+| --- | --- | --- | --- | --- | --- | --- |
+| NO_CHANGE | FEAT | Bantha Herder | `982b00394a73719e` | `grab` | GRAB_POLICY | G.grab |
+| NO_CHANGE | FEAT | Forceful Blast | `c2538c3a906700ae` | `grab` | GRAB_POLICY | G.grab |
+| NO_CHANGE | FEAT | Bantha Rush | `fc1e5f0a2367debb` | `grab` | GRAB_POLICY | G.grab |
+| NO_CHANGE | TALENT | Knockback | `9d235eba6b3e5daf` | `grab` | GRAB_POLICY | G.grab |
+| NO_CHANGE | TALENT | Seize Object | `e97177f243cb2b0a` | `grab` | GRAB_POLICY | G.grab |
+| NO_CHANGE | TALENT | Tempest Tossed | `f7b620efd191ac6b` | `grab` | GRAB_POLICY | G.grab |
+| NO_CHANGE | FEAT | Bantha Herder | `982b00394a73719e` | `grapple` | GRAPPLE_POLICY | G.grapple |
+| NO_CHANGE | FEAT | Forceful Blast | `c2538c3a906700ae` | `grapple` | GRAPPLE_POLICY | G.grapple |
+| NO_CHANGE | FEAT | Weapon Focus | `c41814601364b643` | `grapple` | GRAPPLE_POLICY | G.grapple |
+| NO_CHANGE | FEAT | Bantha Rush | `fc1e5f0a2367debb` | `grapple` | GRAPPLE_POLICY | G.grapple |
+| NO_CHANGE | TALENT | Knockback | `9d235eba6b3e5daf` | `grapple` | GRAPPLE_POLICY | G.grapple |
+| NO_CHANGE | TALENT | Tempest Tossed | `f7b620efd191ac6b` | `grapple` | GRAPPLE_POLICY | G.grapple |
+| NO_CHANGE | TALENT | Droid Jammer | `80a24150fd2f3163` | `restrain` | RESTRAIN_POLICY | G.restrain |
+| NO_CHANGE | TALENT | Uncanny Dodge I | `df9c364e91826cbf` | `restrain` | RESTRAIN_POLICY | G.restrain |
+| NO_CHANGE | TALENT | Mobile Combatant | `ee184e210f8c8935` | `restrain` | RESTRAIN_POLICY | G.restrain |
+| NO_CHANGE | FEAT | Acrobatic Ally | `723563f70bd7f28f` | `battlefield_control` | BATTLEFIELD_CONTROL_POLICY | G.forced_movement |
+| ADD | FEAT | Echani Training | `f362e5a4ad0a98bd` | `battlefield_control` | BATTLEFIELD_CONTROL_POLICY | G.forced_movement |
+| NO_CHANGE | TALENT | Acrobatic Recovery | `5d4a63123e5a5eb4` | `battlefield_control` | BATTLEFIELD_CONTROL_POLICY | G.forced_movement |
+| ADD | TALENT | Deep Space Raider | `696f7eed2cc08299` | `movement` | MOVEMENT_POLICY | G.speed_change |
+| ADD | TALENT | Slowing Shot | `c04e66a3f2577e62` | `movement` | MOVEMENT_POLICY | G.speed_change |
+| ADD | TALENT | Piercing Hit | `c08976a5f4ab88d8` | `movement` | MOVEMENT_POLICY | G.speed_change |
+| NO_CHANGE | FEAT | Staggering Attack | `c9c4130a55761330` | `mobility` | MOBILITY_POLICY | G.mobility |
+| NO_CHANGE | TALENT | Aversion | `13cc978a8023eaa4` | `mobility` | MOBILITY_POLICY | G.mobility |
+| NO_CHANGE | TALENT | Prepared Explosive | `32029a2f0dbb7104` | `mobility` | MOBILITY_POLICY | G.mobility |
+| NO_CHANGE | TALENT | Frighten | `50273d5ce8f84c31` | `mobility` | MOBILITY_POLICY | G.mobility |
+| NO_CHANGE | TALENT | Defensive Measures | `67186d921e94d636` | `mobility` | MOBILITY_POLICY | G.mobility |
+| ADD | TALENT | Out of Harm's Way | `1946e16d1e6c831c` | `attack_of_opportunity` | ATTACK_OF_OPPORTUNITY_POLICY | H.attack_of_opportunity |
+| ADD | TALENT | Transposing Strike | `39b5423e255e14b1` | `attack_of_opportunity` | ATTACK_OF_OPPORTUNITY_POLICY | H.attack_of_opportunity |
+| ADD | TALENT | Beloved | `444c032c563c18a1` | `attack_of_opportunity` | ATTACK_OF_OPPORTUNITY_POLICY | H.attack_of_opportunity |
+| ADD | TALENT | Frighten | `50273d5ce8f84c31` | `attack_of_opportunity` | ATTACK_OF_OPPORTUNITY_POLICY | H.attack_of_opportunity |
+| ADD | TALENT | Liberate | `5a858011286f5809` | `attack_of_opportunity` | ATTACK_OF_OPPORTUNITY_POLICY | H.attack_of_opportunity |
+| ADD | TALENT | Dumb Luck | `7a024dac260bf9ec` | `attack_of_opportunity` | ATTACK_OF_OPPORTUNITY_POLICY | H.attack_of_opportunity |
+| NO_CHANGE | TALENT | Slip By | `893c4fd12df55469` | `attack_of_opportunity` | ATTACK_OF_OPPORTUNITY_POLICY | H.attack_of_opportunity |
+| NO_CHANGE | TALENT | Lifesaver | `8eace9d86fc60711` | `attack_of_opportunity` | ATTACK_OF_OPPORTUNITY_POLICY | H.attack_of_opportunity |
+| ADD | TALENT | Lose Pursuit | `b1bfca51996bb303` | `attack_of_opportunity` | ATTACK_OF_OPPORTUNITY_POLICY | H.attack_of_opportunity |
+| ADD | TALENT | Lure Closer | `c2d2d55ee60f886f` | `attack_of_opportunity` | ATTACK_OF_OPPORTUNITY_POLICY | H.attack_of_opportunity |
+| NO_CHANGE | TALENT | Two-Faced | `cef9b7ca6a26f4a6` | `attack_of_opportunity` | ATTACK_OF_OPPORTUNITY_POLICY | H.attack_of_opportunity |
+| ADD | TALENT | Treacherous | `e289618b92890003` | `attack_of_opportunity` | ATTACK_OF_OPPORTUNITY_POLICY | H.attack_of_opportunity |
+| ADD | TALENT | Mobile Combatant | `ee184e210f8c8935` | `attack_of_opportunity` | ATTACK_OF_OPPORTUNITY_POLICY | H.attack_of_opportunity |
+| ADD | TALENT | Tempest Tossed | `f7b620efd191ac6b` | `attack_of_opportunity` | ATTACK_OF_OPPORTUNITY_POLICY | H.attack_of_opportunity |
+
 ## Rationale
 
 - ADD `reaction` — Dumb Luck (TALENT `7a024dac260bf9ec`): The talent directly grants reaction movement.
@@ -189,3 +244,43 @@ Expected by owner: 5 records with ADD, 5 tag additions, 12 records NO_CHANGE onl
 - ADD `critical_success` — Martial Resurgence (TALENT `0fb750f0f0e6f767`): Rolling a natural 20 on an unarmed attack directly triggers the talent's special benefit: recovering all spent Force powers. The natural 20 is an operative trigger rather than a critical-range reminder. No additional tags are inferred; its existing resource_recovery remains unchanged.
 - NO_CHANGE `critical_success` — Small Target (TALENT `70a06f3be4e9c216`): The talent changes whether an enemy's natural-20 attack against the vehicle actually becomes a critical hit. Its mechanic is directly about mitigating critical_hit; it does not grant or trigger a separate critical-success benefit for the character. Existing critical_hit semantic kept.
 - NO_CHANGE `critical_success` — Precognitive Meditation (TALENT `f8ac7fecc8d3c8ff`): The talent allows an attack to be negated except when the attack roll is a natural 20. The natural 20 is an exception that prevents the defensive effect from functioning; it does not trigger or grant the talent's special benefit. The existing 3B.1 resource_recovery ADD remains unchanged.
+- NO_CHANGE `grab` — Bantha Herder (FEAT `982b00394a73719e`): Grabbed targets are merely excluded from the feat's forced-movement effect. The feat neither initiates nor modifies Grab.
+- NO_CHANGE `grab` — Forceful Blast (FEAT `c2538c3a906700ae`): Grabbed targets are merely ineligible for the forced movement.
+- NO_CHANGE `grab` — Bantha Rush (FEAT `fc1e5f0a2367debb`): The Grab state appears only as an exclusion from the push effect. The previously certified Bantha Rush family disposition is preserved.
+- NO_CHANGE `grab` — Knockback (TALENT `9d235eba6b3e5daf`): The talent cannot affect a target currently being grabbed. It does not alter Grab itself.
+- NO_CHANGE `grab` — Seize Object (TALENT `e97177f243cb2b0a`): "Grab the object" is ordinary-English physical handling following a Disarm attack, not the SWSE Grab combat mechanic.
+- NO_CHANGE `grab` — Tempest Tossed (TALENT `f7b620efd191ac6b`): Grabbed targets are excluded from the forced-movement effect.
+- NO_CHANGE `grapple` — Bantha Herder (FEAT `982b00394a73719e`): Grappled targets are only excluded from forced movement.
+- NO_CHANGE `grapple` — Forceful Blast (FEAT `c2538c3a906700ae`): Grappled targets are only excluded from forced movement.
+- NO_CHANGE `grapple` — Weapon Focus (FEAT `c41814601364b643`): Weapon Focus is a generic selectable weapon/group mechanic. Grapple is one possible selectable scope alongside many others; generic selections are not enumerated as semantic tags.
+- NO_CHANGE `grapple` — Bantha Rush (FEAT `fc1e5f0a2367debb`): Grappled targets are only excluded from the push effect.
+- NO_CHANGE `grapple` — Knockback (TALENT `9d235eba6b3e5daf`): Grappled targets are only excluded from the forced-movement effect.
+- NO_CHANGE `grapple` — Tempest Tossed (TALENT `f7b620efd191ac6b`): Grappled targets are only excluded from the forced-movement effect.
+- NO_CHANGE `restrain` — Droid Jammer (TALENT `80a24150fd2f3163`): The reference to immunity from a restraining bolt defines which droids are immune to the jammer. The talent does not mechanically apply a restraining bolt or the ontology's restraint mechanic.
+- NO_CHANGE `restrain` — Uncanny Dodge I (TALENT `df9c364e91826cbf`): The rule merely states that the existing benefit is lost while immobilized. It does not impose, remove, or modify immobilization.
+- NO_CHANGE `restrain` — Mobile Combatant (TALENT `ee184e210f8c8935`): "Keeping your enemies from pinning you down" is descriptive/flavor language, not a Pin/Restrain mechanic.
+- NO_CHANGE `battlefield_control` — Acrobatic Ally (FEAT `723563f70bd7f28f`): The operative benefit repositions an ally. The prone result occurs as the failure consequence of the supportive maneuver rather than as hostile battlefield control applied to an enemy. Existing support/movement/mobility/positioning semantics remain sufficient.
+- ADD `battlefield_control` — Echani Training (FEAT `f362e5a4ad0a98bd`): The feat directly allows a successful follow-up attack to knock the opponent prone: direct hostile battlefield-state control.
+- NO_CHANGE `battlefield_control` — Acrobatic Recovery (TALENT `5d4a63123e5a5eb4`): The talent lets the user avoid falling prone. It is defensive movement/evasion, not application of battlefield control to another creature.
+- ADD `movement` — Deep Space Raider (TALENT `696f7eed2cc08299`): Disabling Fire directly reduces the damaged vehicle's speed to 2 squares. The previous 3B.1 standard_action ADD is preserved.
+- ADD `movement` — Slowing Shot (TALENT `c04e66a3f2577e62`): The talent directly reduces the target's speed by 2 squares, or by a greater amount when a Force Point is spent.
+- ADD `movement` — Piercing Hit (TALENT `c08976a5f4ab88d8`): Its Slowing Shot option directly reduces the target's speed to 2 squares.
+- NO_CHANGE `mobility` — Staggering Attack (FEAT `c9c4130a55761330`): The feat forcibly moves the target. That is already represented through movement/positioning/control semantics and does not improve the user's movement capability.
+- NO_CHANGE `mobility` — Aversion (TALENT `13cc978a8023eaa4`): The talent makes terrain around the user difficult terrain for enemies. It impairs enemy movement; it does not grant improved mobility.
+- NO_CHANGE `mobility` — Prepared Explosive (TALENT `32029a2f0dbb7104`): The talent modifies terrain state through explosives. It does not directly grant a creature improved movement capability. Existing trap/crafting/equipment/control/battlefield_control/movement/positioning semantics kept.
+- NO_CHANGE `mobility` — Frighten (TALENT `50273d5ce8f84c31`): The talent forcibly moves enemies away from the minion. Forced enemy movement is not a positive mobility mechanic.
+- NO_CHANGE `mobility` — Defensive Measures (TALENT `67186d921e94d636`): The talent makes the Safe Zone difficult terrain for enemies. It impairs enemy movement rather than improving mobility.
+- ADD `attack_of_opportunity` — Out of Harm's Way (TALENT `1946e16d1e6c831c`): The talent's reaction movement explicitly does not provoke an attack of opportunity. Previous swift_action ADD preserved.
+- ADD `attack_of_opportunity` — Transposing Strike (TALENT `39b5423e255e14b1`): The position swap explicitly does not provoke attacks of opportunity.
+- ADD `attack_of_opportunity` — Beloved (TALENT `444c032c563c18a1`): To Me! directly grants reaction movement to allies that explicitly does not provoke attacks of opportunity.
+- ADD `attack_of_opportunity` — Frighten (TALENT `50273d5ce8f84c31`): The forced enemy movement explicitly does not provoke attacks of opportunity. This ADD is independent of the mobility NO_CHANGE ruling.
+- ADD `attack_of_opportunity` — Liberate (TALENT `5a858011286f5809`): The granted reaction movement after escaping the grab/grapple/immobilization explicitly does not provoke attacks of opportunity.
+- ADD `attack_of_opportunity` — Dumb Luck (TALENT `7a024dac260bf9ec`): Escape grants reaction movement explicitly without provoking attacks of opportunity. Previous 3B.1 reaction ADD preserved.
+- NO_CHANGE `attack_of_opportunity` — Slip By (TALENT `893c4fd12df55469`): The rule says that moving through the target's space might still provoke attacks of opportunity as normal. It does not alter the AoO mechanic.
+- NO_CHANGE `attack_of_opportunity` — Lifesaver (TALENT `8eace9d86fc60711`): The granted movement explicitly provokes attacks of opportunity as normal. That is a rules reminder/consequence, not a modification of the AoO mechanic.
+- ADD `attack_of_opportunity` — Lose Pursuit (TALENT `b1bfca51996bb303`): The talent directly grants a +5 bonus to Pilot checks specifically used to avoid being pulled into a Dogfight as an Attack of Opportunity. This directly modifies resolution of an AoO mechanic.
+- ADD `attack_of_opportunity` — Lure Closer (TALENT `c2d2d55ee60f886f`): The talent's involuntary movement explicitly does not provoke Attacks of Opportunity.
+- NO_CHANGE `attack_of_opportunity` — Two-Faced (TALENT `cef9b7ca6a26f4a6`): Nonthreatening prohibits attacks against the user while leaving attacks of opportunity as an exception. It does not generate, enhance, suppress, or otherwise modify attacks of opportunity themselves; the exception does not create a positive AoO semantic.
+- ADD `attack_of_opportunity` — Treacherous (TALENT `e289618b92890003`): The talent creates reaction movement during resolution of another attack and explicitly permits a threatening creature to make an attack of opportunity before the original attack is resolved: direct AoO generation/timing interaction rather than a generic "provokes as normal" reminder.
+- ADD `attack_of_opportunity` — Mobile Combatant (TALENT `ee184e210f8c8935`): Both Expeditious Attack and Yielding Assault grant movement that explicitly does not provoke attacks of opportunity.
+- ADD `attack_of_opportunity` — Tempest Tossed (TALENT `f7b620efd191ac6b`): The talent's forced movement explicitly does not provoke attacks of opportunity.

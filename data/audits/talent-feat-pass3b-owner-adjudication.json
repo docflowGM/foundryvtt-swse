@@ -60,6 +60,34 @@
     {
       "id": "CRITICAL_SUCCESS_POLICY",
       "text": "critical_success represents a mechanic in which a natural 20, or an effect treated as a natural 20/critical success, directly triggers, grants, restores, substitutes for, or materially activates the record's special mechanic. Not added merely because the record expands critical threat range, reminds the reader that only a natural 20 is an automatic hit, references a natural 20 only to explain the normal critical-hit rules, or uses a natural 20 as an exception that bypasses or prevents a defensive effect. critical_hit and critical_success remain distinct; a natural-20 trigger may justify critical_success without implying critical_hit."
+    },
+    {
+      "id": "GRAB_POLICY",
+      "text": "grab applies when the operative mechanic directly interacts with the SWSE Grab mechanic: initiates a Grab, modifies a Grab attack, modifies the consequences of a successful Grab, modifies escape from a Grab, automatically ends/removes a Grab, or otherwise directly changes the mechanical operation of the Grab state. Not added because a currently grabbed target is excluded from another effect, \"grab\" is ordinary English, or the rule merely mentions Grab while describing another mechanic. A negative eligibility/exclusion clause does not create a positive Grab semantic."
+    },
+    {
+      "id": "GRAPPLE_POLICY",
+      "text": "grapple applies when the operative mechanic directly initiates a grapple, modifies a grapple check or resolution, modifies escape from a grapple, automatically ends/removes a grapple, or otherwise directly changes the grapple mechanic. Not added because grappled targets are excluded from another effect, grapple is one selectable member of a broad generic category, or the word appears only as explanatory/reference text. Generic selectable scope does not automatically enumerate every possible scope tag."
+    },
+    {
+      "id": "RESTRAIN_POLICY",
+      "text": "restrain applies when the operative mechanic directly restrains/pins/immobilizes a target, modifies a restrained/pinned/immobilized state, frees/removes that state, or directly modifies its mechanical application or escape. Not added for \"restraining bolt\" appearing only in an immunity comparison, an unrelated rule mentioning what happens while immobilized, or ordinary-language phrases such as \"pinning you down\"."
+    },
+    {
+      "id": "BATTLEFIELD_CONTROL_POLICY",
+      "text": "battlefield_control applies when the mechanic directly imposes or materially manipulates hostile battlefield state: forced enemy movement, prone/knockdown, immobilization/restraint, meaningful enemy positioning restriction, or equivalent direct hostile spatial/control effects. Not added because an ally is voluntarily repositioned, the user prevents a control effect on themself, or an unwanted control effect occurs only as the failure consequence of a supportive maneuver."
+    },
+    {
+      "id": "MOVEMENT_POLICY",
+      "text": "movement applies when the operative mechanic directly changes movement or speed: moving a creature/vehicle, forcing movement, increasing/reducing speed, or changing how much movement can be taken. The affected creature does not have to be the user; direct reduction of an enemy or vehicle's speed is still a movement mechanic."
+    },
+    {
+      "id": "MOBILITY_POLICY",
+      "text": "mobility represents improved/facilitated movement capability, freedom, efficiency or movement access for the user or supported creature. Not added merely because the mechanic forcibly moves an enemy, creates difficult terrain for enemies, manipulates battlefield terrain generally, or references whether movement provokes an attack of opportunity; those may be represented by movement, positioning, control, battlefield_control or other specific mechanics."
+    },
+    {
+      "id": "ATTACK_OF_OPPORTUNITY_POLICY",
+      "text": "attack_of_opportunity applies when the operative mechanic directly generates an attack of opportunity, grants or modifies one, prevents/suppresses one, triggers from one, modifies checks or effects specifically associated with one, or changes the timing or availability of one. Not applied merely because movement is stated to provoke attacks of opportunity as normal, attacks of opportunity are simply exempted from a broader restriction on attacks, or the phrase appears only as unchanged rules reminder/context. The Martial Arts I owner precedent remains intact and does not propagate to Martial Arts II/III."
     }
   ],
   "batches": [
@@ -92,6 +120,17 @@
         "recordsWithAdd": 5,
         "tagAdditions": 5,
         "recordsWithOnlyNoChange": 12,
+        "removals": 0,
+        "newTags": 0
+      }
+    },
+    {
+      "batch": "3B.2B",
+      "title": "Battlefield control + reactive combat",
+      "expected": {
+        "recordsWithAdd": 15,
+        "tagAdditions": 15,
+        "recordsWithOnlyNoChange": 17,
         "removals": 0,
         "newTags": 0
       }
@@ -1173,16 +1212,576 @@
       ],
       "ownerRationale": "The talent allows an attack to be negated except when the attack roll is a natural 20. The natural 20 is an exception that prevents the defensive effect from functioning; it does not trigger or grant the talent's special benefit. The existing 3B.1 resource_recovery ADD remains unchanged.",
       "ownerPolicyApplied": "CRITICAL_SUCCESS_POLICY"
+    },
+    {
+      "decisionId": "FEAT:982b00394a73719e|grab",
+      "batch": "3B.2B",
+      "domain": "FEAT",
+      "canonicalId": "982b00394a73719e",
+      "name": "Bantha Herder",
+      "tag": "grab",
+      "ownerAction": "NO_CHANGE",
+      "detectorEvidenceReference": [
+        "G.grab"
+      ],
+      "ownerRationale": "Grabbed targets are merely excluded from the feat's forced-movement effect. The feat neither initiates nor modifies Grab.",
+      "ownerPolicyApplied": "GRAB_POLICY"
+    },
+    {
+      "decisionId": "FEAT:c2538c3a906700ae|grab",
+      "batch": "3B.2B",
+      "domain": "FEAT",
+      "canonicalId": "c2538c3a906700ae",
+      "name": "Forceful Blast",
+      "tag": "grab",
+      "ownerAction": "NO_CHANGE",
+      "detectorEvidenceReference": [
+        "G.grab"
+      ],
+      "ownerRationale": "Grabbed targets are merely ineligible for the forced movement.",
+      "ownerPolicyApplied": "GRAB_POLICY"
+    },
+    {
+      "decisionId": "FEAT:fc1e5f0a2367debb|grab",
+      "batch": "3B.2B",
+      "domain": "FEAT",
+      "canonicalId": "fc1e5f0a2367debb",
+      "name": "Bantha Rush",
+      "tag": "grab",
+      "ownerAction": "NO_CHANGE",
+      "detectorEvidenceReference": [
+        "G.grab"
+      ],
+      "ownerRationale": "The Grab state appears only as an exclusion from the push effect. The previously certified Bantha Rush family disposition is preserved.",
+      "ownerPolicyApplied": "GRAB_POLICY"
+    },
+    {
+      "decisionId": "TALENT:9d235eba6b3e5daf|grab",
+      "batch": "3B.2B",
+      "domain": "TALENT",
+      "canonicalId": "9d235eba6b3e5daf",
+      "name": "Knockback",
+      "tag": "grab",
+      "ownerAction": "NO_CHANGE",
+      "detectorEvidenceReference": [
+        "G.grab"
+      ],
+      "ownerRationale": "The talent cannot affect a target currently being grabbed. It does not alter Grab itself.",
+      "ownerPolicyApplied": "GRAB_POLICY"
+    },
+    {
+      "decisionId": "TALENT:e97177f243cb2b0a|grab",
+      "batch": "3B.2B",
+      "domain": "TALENT",
+      "canonicalId": "e97177f243cb2b0a",
+      "name": "Seize Object",
+      "tag": "grab",
+      "ownerAction": "NO_CHANGE",
+      "detectorEvidenceReference": [
+        "G.grab"
+      ],
+      "ownerRationale": "\"Grab the object\" is ordinary-English physical handling following a Disarm attack, not the SWSE Grab combat mechanic.",
+      "ownerPolicyApplied": "GRAB_POLICY"
+    },
+    {
+      "decisionId": "TALENT:f7b620efd191ac6b|grab",
+      "batch": "3B.2B",
+      "domain": "TALENT",
+      "canonicalId": "f7b620efd191ac6b",
+      "name": "Tempest Tossed",
+      "tag": "grab",
+      "ownerAction": "NO_CHANGE",
+      "detectorEvidenceReference": [
+        "G.grab"
+      ],
+      "ownerRationale": "Grabbed targets are excluded from the forced-movement effect.",
+      "ownerPolicyApplied": "GRAB_POLICY"
+    },
+    {
+      "decisionId": "FEAT:982b00394a73719e|grapple",
+      "batch": "3B.2B",
+      "domain": "FEAT",
+      "canonicalId": "982b00394a73719e",
+      "name": "Bantha Herder",
+      "tag": "grapple",
+      "ownerAction": "NO_CHANGE",
+      "detectorEvidenceReference": [
+        "G.grapple"
+      ],
+      "ownerRationale": "Grappled targets are only excluded from forced movement.",
+      "ownerPolicyApplied": "GRAPPLE_POLICY"
+    },
+    {
+      "decisionId": "FEAT:c2538c3a906700ae|grapple",
+      "batch": "3B.2B",
+      "domain": "FEAT",
+      "canonicalId": "c2538c3a906700ae",
+      "name": "Forceful Blast",
+      "tag": "grapple",
+      "ownerAction": "NO_CHANGE",
+      "detectorEvidenceReference": [
+        "G.grapple"
+      ],
+      "ownerRationale": "Grappled targets are only excluded from forced movement.",
+      "ownerPolicyApplied": "GRAPPLE_POLICY"
+    },
+    {
+      "decisionId": "FEAT:c41814601364b643|grapple",
+      "batch": "3B.2B",
+      "domain": "FEAT",
+      "canonicalId": "c41814601364b643",
+      "name": "Weapon Focus",
+      "tag": "grapple",
+      "ownerAction": "NO_CHANGE",
+      "detectorEvidenceReference": [
+        "G.grapple"
+      ],
+      "ownerRationale": "Weapon Focus is a generic selectable weapon/group mechanic. Grapple is one possible selectable scope alongside many others; generic selections are not enumerated as semantic tags.",
+      "ownerPolicyApplied": "GRAPPLE_POLICY"
+    },
+    {
+      "decisionId": "FEAT:fc1e5f0a2367debb|grapple",
+      "batch": "3B.2B",
+      "domain": "FEAT",
+      "canonicalId": "fc1e5f0a2367debb",
+      "name": "Bantha Rush",
+      "tag": "grapple",
+      "ownerAction": "NO_CHANGE",
+      "detectorEvidenceReference": [
+        "G.grapple"
+      ],
+      "ownerRationale": "Grappled targets are only excluded from the push effect.",
+      "ownerPolicyApplied": "GRAPPLE_POLICY"
+    },
+    {
+      "decisionId": "TALENT:9d235eba6b3e5daf|grapple",
+      "batch": "3B.2B",
+      "domain": "TALENT",
+      "canonicalId": "9d235eba6b3e5daf",
+      "name": "Knockback",
+      "tag": "grapple",
+      "ownerAction": "NO_CHANGE",
+      "detectorEvidenceReference": [
+        "G.grapple"
+      ],
+      "ownerRationale": "Grappled targets are only excluded from the forced-movement effect.",
+      "ownerPolicyApplied": "GRAPPLE_POLICY"
+    },
+    {
+      "decisionId": "TALENT:f7b620efd191ac6b|grapple",
+      "batch": "3B.2B",
+      "domain": "TALENT",
+      "canonicalId": "f7b620efd191ac6b",
+      "name": "Tempest Tossed",
+      "tag": "grapple",
+      "ownerAction": "NO_CHANGE",
+      "detectorEvidenceReference": [
+        "G.grapple"
+      ],
+      "ownerRationale": "Grappled targets are only excluded from the forced-movement effect.",
+      "ownerPolicyApplied": "GRAPPLE_POLICY"
+    },
+    {
+      "decisionId": "TALENT:80a24150fd2f3163|restrain",
+      "batch": "3B.2B",
+      "domain": "TALENT",
+      "canonicalId": "80a24150fd2f3163",
+      "name": "Droid Jammer",
+      "tag": "restrain",
+      "ownerAction": "NO_CHANGE",
+      "detectorEvidenceReference": [
+        "G.restrain"
+      ],
+      "ownerRationale": "The reference to immunity from a restraining bolt defines which droids are immune to the jammer. The talent does not mechanically apply a restraining bolt or the ontology's restraint mechanic.",
+      "ownerPolicyApplied": "RESTRAIN_POLICY"
+    },
+    {
+      "decisionId": "TALENT:df9c364e91826cbf|restrain",
+      "batch": "3B.2B",
+      "domain": "TALENT",
+      "canonicalId": "df9c364e91826cbf",
+      "name": "Uncanny Dodge I",
+      "tag": "restrain",
+      "ownerAction": "NO_CHANGE",
+      "detectorEvidenceReference": [
+        "G.restrain"
+      ],
+      "ownerRationale": "The rule merely states that the existing benefit is lost while immobilized. It does not impose, remove, or modify immobilization.",
+      "ownerPolicyApplied": "RESTRAIN_POLICY"
+    },
+    {
+      "decisionId": "TALENT:ee184e210f8c8935|restrain",
+      "batch": "3B.2B",
+      "domain": "TALENT",
+      "canonicalId": "ee184e210f8c8935",
+      "name": "Mobile Combatant",
+      "tag": "restrain",
+      "ownerAction": "NO_CHANGE",
+      "detectorEvidenceReference": [
+        "G.restrain"
+      ],
+      "ownerRationale": "\"Keeping your enemies from pinning you down\" is descriptive/flavor language, not a Pin/Restrain mechanic.",
+      "ownerPolicyApplied": "RESTRAIN_POLICY"
+    },
+    {
+      "decisionId": "FEAT:723563f70bd7f28f|battlefield_control",
+      "batch": "3B.2B",
+      "domain": "FEAT",
+      "canonicalId": "723563f70bd7f28f",
+      "name": "Acrobatic Ally",
+      "tag": "battlefield_control",
+      "ownerAction": "NO_CHANGE",
+      "detectorEvidenceReference": [
+        "G.forced_movement"
+      ],
+      "ownerRationale": "The operative benefit repositions an ally. The prone result occurs as the failure consequence of the supportive maneuver rather than as hostile battlefield control applied to an enemy. Existing support/movement/mobility/positioning semantics remain sufficient.",
+      "ownerPolicyApplied": "BATTLEFIELD_CONTROL_POLICY"
+    },
+    {
+      "decisionId": "FEAT:f362e5a4ad0a98bd|battlefield_control",
+      "batch": "3B.2B",
+      "domain": "FEAT",
+      "canonicalId": "f362e5a4ad0a98bd",
+      "name": "Echani Training",
+      "tag": "battlefield_control",
+      "ownerAction": "ADD",
+      "detectorEvidenceReference": [
+        "G.forced_movement"
+      ],
+      "ownerRationale": "The feat directly allows a successful follow-up attack to knock the opponent prone: direct hostile battlefield-state control.",
+      "ownerPolicyApplied": "BATTLEFIELD_CONTROL_POLICY"
+    },
+    {
+      "decisionId": "TALENT:5d4a63123e5a5eb4|battlefield_control",
+      "batch": "3B.2B",
+      "domain": "TALENT",
+      "canonicalId": "5d4a63123e5a5eb4",
+      "name": "Acrobatic Recovery",
+      "tag": "battlefield_control",
+      "ownerAction": "NO_CHANGE",
+      "detectorEvidenceReference": [
+        "G.forced_movement"
+      ],
+      "ownerRationale": "The talent lets the user avoid falling prone. It is defensive movement/evasion, not application of battlefield control to another creature.",
+      "ownerPolicyApplied": "BATTLEFIELD_CONTROL_POLICY"
+    },
+    {
+      "decisionId": "TALENT:696f7eed2cc08299|movement",
+      "batch": "3B.2B",
+      "domain": "TALENT",
+      "canonicalId": "696f7eed2cc08299",
+      "name": "Deep Space Raider",
+      "tag": "movement",
+      "ownerAction": "ADD",
+      "detectorEvidenceReference": [
+        "G.speed_change"
+      ],
+      "ownerRationale": "Disabling Fire directly reduces the damaged vehicle's speed to 2 squares. The previous 3B.1 standard_action ADD is preserved.",
+      "ownerPolicyApplied": "MOVEMENT_POLICY"
+    },
+    {
+      "decisionId": "TALENT:c04e66a3f2577e62|movement",
+      "batch": "3B.2B",
+      "domain": "TALENT",
+      "canonicalId": "c04e66a3f2577e62",
+      "name": "Slowing Shot",
+      "tag": "movement",
+      "ownerAction": "ADD",
+      "detectorEvidenceReference": [
+        "G.speed_change"
+      ],
+      "ownerRationale": "The talent directly reduces the target's speed by 2 squares, or by a greater amount when a Force Point is spent.",
+      "ownerPolicyApplied": "MOVEMENT_POLICY"
+    },
+    {
+      "decisionId": "TALENT:c08976a5f4ab88d8|movement",
+      "batch": "3B.2B",
+      "domain": "TALENT",
+      "canonicalId": "c08976a5f4ab88d8",
+      "name": "Piercing Hit",
+      "tag": "movement",
+      "ownerAction": "ADD",
+      "detectorEvidenceReference": [
+        "G.speed_change"
+      ],
+      "ownerRationale": "Its Slowing Shot option directly reduces the target's speed to 2 squares.",
+      "ownerPolicyApplied": "MOVEMENT_POLICY"
+    },
+    {
+      "decisionId": "FEAT:c9c4130a55761330|mobility",
+      "batch": "3B.2B",
+      "domain": "FEAT",
+      "canonicalId": "c9c4130a55761330",
+      "name": "Staggering Attack",
+      "tag": "mobility",
+      "ownerAction": "NO_CHANGE",
+      "detectorEvidenceReference": [
+        "G.mobility"
+      ],
+      "ownerRationale": "The feat forcibly moves the target. That is already represented through movement/positioning/control semantics and does not improve the user's movement capability.",
+      "ownerPolicyApplied": "MOBILITY_POLICY"
+    },
+    {
+      "decisionId": "TALENT:13cc978a8023eaa4|mobility",
+      "batch": "3B.2B",
+      "domain": "TALENT",
+      "canonicalId": "13cc978a8023eaa4",
+      "name": "Aversion",
+      "tag": "mobility",
+      "ownerAction": "NO_CHANGE",
+      "detectorEvidenceReference": [
+        "G.mobility"
+      ],
+      "ownerRationale": "The talent makes terrain around the user difficult terrain for enemies. It impairs enemy movement; it does not grant improved mobility.",
+      "ownerPolicyApplied": "MOBILITY_POLICY"
+    },
+    {
+      "decisionId": "TALENT:32029a2f0dbb7104|mobility",
+      "batch": "3B.2B",
+      "domain": "TALENT",
+      "canonicalId": "32029a2f0dbb7104",
+      "name": "Prepared Explosive",
+      "tag": "mobility",
+      "ownerAction": "NO_CHANGE",
+      "detectorEvidenceReference": [
+        "G.mobility"
+      ],
+      "ownerRationale": "The talent modifies terrain state through explosives. It does not directly grant a creature improved movement capability. Existing trap/crafting/equipment/control/battlefield_control/movement/positioning semantics kept.",
+      "ownerPolicyApplied": "MOBILITY_POLICY"
+    },
+    {
+      "decisionId": "TALENT:50273d5ce8f84c31|mobility",
+      "batch": "3B.2B",
+      "domain": "TALENT",
+      "canonicalId": "50273d5ce8f84c31",
+      "name": "Frighten",
+      "tag": "mobility",
+      "ownerAction": "NO_CHANGE",
+      "detectorEvidenceReference": [
+        "G.mobility"
+      ],
+      "ownerRationale": "The talent forcibly moves enemies away from the minion. Forced enemy movement is not a positive mobility mechanic.",
+      "ownerPolicyApplied": "MOBILITY_POLICY"
+    },
+    {
+      "decisionId": "TALENT:67186d921e94d636|mobility",
+      "batch": "3B.2B",
+      "domain": "TALENT",
+      "canonicalId": "67186d921e94d636",
+      "name": "Defensive Measures",
+      "tag": "mobility",
+      "ownerAction": "NO_CHANGE",
+      "detectorEvidenceReference": [
+        "G.mobility"
+      ],
+      "ownerRationale": "The talent makes the Safe Zone difficult terrain for enemies. It impairs enemy movement rather than improving mobility.",
+      "ownerPolicyApplied": "MOBILITY_POLICY"
+    },
+    {
+      "decisionId": "TALENT:1946e16d1e6c831c|attack_of_opportunity",
+      "batch": "3B.2B",
+      "domain": "TALENT",
+      "canonicalId": "1946e16d1e6c831c",
+      "name": "Out of Harm's Way",
+      "tag": "attack_of_opportunity",
+      "ownerAction": "ADD",
+      "detectorEvidenceReference": [
+        "H.attack_of_opportunity"
+      ],
+      "ownerRationale": "The talent's reaction movement explicitly does not provoke an attack of opportunity. Previous swift_action ADD preserved.",
+      "ownerPolicyApplied": "ATTACK_OF_OPPORTUNITY_POLICY"
+    },
+    {
+      "decisionId": "TALENT:39b5423e255e14b1|attack_of_opportunity",
+      "batch": "3B.2B",
+      "domain": "TALENT",
+      "canonicalId": "39b5423e255e14b1",
+      "name": "Transposing Strike",
+      "tag": "attack_of_opportunity",
+      "ownerAction": "ADD",
+      "detectorEvidenceReference": [
+        "H.attack_of_opportunity"
+      ],
+      "ownerRationale": "The position swap explicitly does not provoke attacks of opportunity.",
+      "ownerPolicyApplied": "ATTACK_OF_OPPORTUNITY_POLICY"
+    },
+    {
+      "decisionId": "TALENT:444c032c563c18a1|attack_of_opportunity",
+      "batch": "3B.2B",
+      "domain": "TALENT",
+      "canonicalId": "444c032c563c18a1",
+      "name": "Beloved",
+      "tag": "attack_of_opportunity",
+      "ownerAction": "ADD",
+      "detectorEvidenceReference": [
+        "H.attack_of_opportunity"
+      ],
+      "ownerRationale": "To Me! directly grants reaction movement to allies that explicitly does not provoke attacks of opportunity.",
+      "ownerPolicyApplied": "ATTACK_OF_OPPORTUNITY_POLICY"
+    },
+    {
+      "decisionId": "TALENT:50273d5ce8f84c31|attack_of_opportunity",
+      "batch": "3B.2B",
+      "domain": "TALENT",
+      "canonicalId": "50273d5ce8f84c31",
+      "name": "Frighten",
+      "tag": "attack_of_opportunity",
+      "ownerAction": "ADD",
+      "detectorEvidenceReference": [
+        "H.attack_of_opportunity"
+      ],
+      "ownerRationale": "The forced enemy movement explicitly does not provoke attacks of opportunity. This ADD is independent of the mobility NO_CHANGE ruling.",
+      "ownerPolicyApplied": "ATTACK_OF_OPPORTUNITY_POLICY"
+    },
+    {
+      "decisionId": "TALENT:5a858011286f5809|attack_of_opportunity",
+      "batch": "3B.2B",
+      "domain": "TALENT",
+      "canonicalId": "5a858011286f5809",
+      "name": "Liberate",
+      "tag": "attack_of_opportunity",
+      "ownerAction": "ADD",
+      "detectorEvidenceReference": [
+        "H.attack_of_opportunity"
+      ],
+      "ownerRationale": "The granted reaction movement after escaping the grab/grapple/immobilization explicitly does not provoke attacks of opportunity.",
+      "ownerPolicyApplied": "ATTACK_OF_OPPORTUNITY_POLICY"
+    },
+    {
+      "decisionId": "TALENT:7a024dac260bf9ec|attack_of_opportunity",
+      "batch": "3B.2B",
+      "domain": "TALENT",
+      "canonicalId": "7a024dac260bf9ec",
+      "name": "Dumb Luck",
+      "tag": "attack_of_opportunity",
+      "ownerAction": "ADD",
+      "detectorEvidenceReference": [
+        "H.attack_of_opportunity"
+      ],
+      "ownerRationale": "Escape grants reaction movement explicitly without provoking attacks of opportunity. Previous 3B.1 reaction ADD preserved.",
+      "ownerPolicyApplied": "ATTACK_OF_OPPORTUNITY_POLICY"
+    },
+    {
+      "decisionId": "TALENT:893c4fd12df55469|attack_of_opportunity",
+      "batch": "3B.2B",
+      "domain": "TALENT",
+      "canonicalId": "893c4fd12df55469",
+      "name": "Slip By",
+      "tag": "attack_of_opportunity",
+      "ownerAction": "NO_CHANGE",
+      "detectorEvidenceReference": [
+        "H.attack_of_opportunity"
+      ],
+      "ownerRationale": "The rule says that moving through the target's space might still provoke attacks of opportunity as normal. It does not alter the AoO mechanic.",
+      "ownerPolicyApplied": "ATTACK_OF_OPPORTUNITY_POLICY"
+    },
+    {
+      "decisionId": "TALENT:8eace9d86fc60711|attack_of_opportunity",
+      "batch": "3B.2B",
+      "domain": "TALENT",
+      "canonicalId": "8eace9d86fc60711",
+      "name": "Lifesaver",
+      "tag": "attack_of_opportunity",
+      "ownerAction": "NO_CHANGE",
+      "detectorEvidenceReference": [
+        "H.attack_of_opportunity"
+      ],
+      "ownerRationale": "The granted movement explicitly provokes attacks of opportunity as normal. That is a rules reminder/consequence, not a modification of the AoO mechanic.",
+      "ownerPolicyApplied": "ATTACK_OF_OPPORTUNITY_POLICY"
+    },
+    {
+      "decisionId": "TALENT:b1bfca51996bb303|attack_of_opportunity",
+      "batch": "3B.2B",
+      "domain": "TALENT",
+      "canonicalId": "b1bfca51996bb303",
+      "name": "Lose Pursuit",
+      "tag": "attack_of_opportunity",
+      "ownerAction": "ADD",
+      "detectorEvidenceReference": [
+        "H.attack_of_opportunity"
+      ],
+      "ownerRationale": "The talent directly grants a +5 bonus to Pilot checks specifically used to avoid being pulled into a Dogfight as an Attack of Opportunity. This directly modifies resolution of an AoO mechanic.",
+      "ownerPolicyApplied": "ATTACK_OF_OPPORTUNITY_POLICY"
+    },
+    {
+      "decisionId": "TALENT:c2d2d55ee60f886f|attack_of_opportunity",
+      "batch": "3B.2B",
+      "domain": "TALENT",
+      "canonicalId": "c2d2d55ee60f886f",
+      "name": "Lure Closer",
+      "tag": "attack_of_opportunity",
+      "ownerAction": "ADD",
+      "detectorEvidenceReference": [
+        "H.attack_of_opportunity"
+      ],
+      "ownerRationale": "The talent's involuntary movement explicitly does not provoke Attacks of Opportunity.",
+      "ownerPolicyApplied": "ATTACK_OF_OPPORTUNITY_POLICY"
+    },
+    {
+      "decisionId": "TALENT:cef9b7ca6a26f4a6|attack_of_opportunity",
+      "batch": "3B.2B",
+      "domain": "TALENT",
+      "canonicalId": "cef9b7ca6a26f4a6",
+      "name": "Two-Faced",
+      "tag": "attack_of_opportunity",
+      "ownerAction": "NO_CHANGE",
+      "detectorEvidenceReference": [
+        "H.attack_of_opportunity"
+      ],
+      "ownerRationale": "Nonthreatening prohibits attacks against the user while leaving attacks of opportunity as an exception. It does not generate, enhance, suppress, or otherwise modify attacks of opportunity themselves; the exception does not create a positive AoO semantic.",
+      "ownerPolicyApplied": "ATTACK_OF_OPPORTUNITY_POLICY"
+    },
+    {
+      "decisionId": "TALENT:e289618b92890003|attack_of_opportunity",
+      "batch": "3B.2B",
+      "domain": "TALENT",
+      "canonicalId": "e289618b92890003",
+      "name": "Treacherous",
+      "tag": "attack_of_opportunity",
+      "ownerAction": "ADD",
+      "detectorEvidenceReference": [
+        "H.attack_of_opportunity"
+      ],
+      "ownerRationale": "The talent creates reaction movement during resolution of another attack and explicitly permits a threatening creature to make an attack of opportunity before the original attack is resolved: direct AoO generation/timing interaction rather than a generic \"provokes as normal\" reminder.",
+      "ownerPolicyApplied": "ATTACK_OF_OPPORTUNITY_POLICY"
+    },
+    {
+      "decisionId": "TALENT:ee184e210f8c8935|attack_of_opportunity",
+      "batch": "3B.2B",
+      "domain": "TALENT",
+      "canonicalId": "ee184e210f8c8935",
+      "name": "Mobile Combatant",
+      "tag": "attack_of_opportunity",
+      "ownerAction": "ADD",
+      "detectorEvidenceReference": [
+        "H.attack_of_opportunity"
+      ],
+      "ownerRationale": "Both Expeditious Attack and Yielding Assault grant movement that explicitly does not provoke attacks of opportunity.",
+      "ownerPolicyApplied": "ATTACK_OF_OPPORTUNITY_POLICY"
+    },
+    {
+      "decisionId": "TALENT:f7b620efd191ac6b|attack_of_opportunity",
+      "batch": "3B.2B",
+      "domain": "TALENT",
+      "canonicalId": "f7b620efd191ac6b",
+      "name": "Tempest Tossed",
+      "tag": "attack_of_opportunity",
+      "ownerAction": "ADD",
+      "detectorEvidenceReference": [
+        "H.attack_of_opportunity"
+      ],
+      "ownerRationale": "The talent's forced movement explicitly does not provoke attacks of opportunity.",
+      "ownerPolicyApplied": "ATTACK_OF_OPPORTUNITY_POLICY"
     }
   ],
   "cumulativeExpected": {
-    "decisions": 76,
-    "addDecisions": 38,
-    "noChangeDecisions": 38,
-    "recordsWithAdd": 33,
-    "tagAdditions": 38,
+    "decisions": 116,
+    "addDecisions": 53,
+    "noChangeDecisions": 63,
+    "recordsWithAdd": 45,
+    "tagAdditions": 53,
     "removals": 0,
     "tagInstancesBefore": 11218,
-    "tagInstancesAfter": 11256
+    "tagInstancesAfter": 11271
   }
 }

@@ -22,19 +22,19 @@
     "feats": 353,
     "talents": 1187,
     "combined": 1540,
-    "recordsChanged": 33,
+    "recordsChanged": 45,
     "recordsChangedByDomain": {
-      "FEAT": 10,
-      "TALENT": 23
+      "FEAT": 11,
+      "TALENT": 34
     },
-    "tagAdditions": 38,
+    "tagAdditions": 53,
     "removals": 0,
-    "noChangeDecisions": 38,
-    "recordsWithOnlyNoChange": 31,
-    "ownerDecisions": 76,
+    "noChangeDecisions": 63,
+    "recordsWithOnlyNoChange": 48,
+    "ownerDecisions": 116,
     "productionMutated": false,
     "tagInstancesBefore": 11218,
-    "tagInstancesAfter": 11256
+    "tagInstancesAfter": 11271
   },
   "tagUsage": [
     {
@@ -110,7 +110,7 @@
     {
       "tag": "battlefield_control",
       "before": 198,
-      "after": 198
+      "after": 199
     },
     {
       "tag": "mobility",
@@ -125,7 +125,7 @@
     {
       "tag": "movement",
       "before": 178,
-      "after": 178
+      "after": 181
     },
     {
       "tag": "setup",
@@ -228,6 +228,11 @@
       "after": 94
     },
     {
+      "tag": "attack_of_opportunity",
+      "before": 78,
+      "after": 89
+    },
+    {
       "tag": "force_power_synergy",
       "before": 82,
       "after": 82
@@ -236,11 +241,6 @@
       "tag": "mind-affecting",
       "before": 80,
       "after": 80
-    },
-    {
-      "tag": "attack_of_opportunity",
-      "before": 78,
-      "after": 78
     },
     {
       "tag": "target-designation",
@@ -1263,6 +1263,40 @@
     },
     {
       "domain": "FEAT",
+      "canonicalId": "f362e5a4ad0a98bd",
+      "name": "Echani Training",
+      "added": [
+        "battlefield_control"
+      ],
+      "before": [
+        "martial_arts",
+        "unarmed",
+        "melee",
+        "damage_bonus",
+        "control",
+        "once-per-encounter",
+        "critical_hit"
+      ],
+      "after": [
+        "martial_arts",
+        "unarmed",
+        "melee",
+        "damage_bonus",
+        "control",
+        "once-per-encounter",
+        "critical_hit",
+        "battlefield_control"
+      ],
+      "decisions": [
+        {
+          "decisionId": "FEAT:f362e5a4ad0a98bd|battlefield_control",
+          "policy": "BATTLEFIELD_CONTROL_POLICY",
+          "batch": "3B.2B"
+        }
+      ]
+    },
+    {
+      "domain": "FEAT",
       "canonicalId": "f59c9679c02b8896",
       "name": "Metamorph",
       "added": [
@@ -1420,7 +1454,8 @@
       "canonicalId": "1946e16d1e6c831c",
       "name": "Out of Harm's Way",
       "added": [
-        "swift_action"
+        "swift_action",
+        "attack_of_opportunity"
       ],
       "before": [
         "reaction",
@@ -1443,13 +1478,19 @@
         "evasion",
         "survivability",
         "action_economy",
-        "swift_action"
+        "swift_action",
+        "attack_of_opportunity"
       ],
       "decisions": [
         {
           "decisionId": "TALENT:1946e16d1e6c831c|swift_action",
           "policy": "ACTION_TYPE_POLICY",
           "batch": "3B.1"
+        },
+        {
+          "decisionId": "TALENT:1946e16d1e6c831c|attack_of_opportunity",
+          "policy": "ATTACK_OF_OPPORTUNITY_POLICY",
+          "batch": "3B.2B"
         }
       ]
     },
@@ -1484,6 +1525,40 @@
           "decisionId": "TALENT:2739921a657a49a496885c456bcace65|damage_threshold",
           "policy": "DAMAGE_THRESHOLD_POLICY",
           "batch": "3B.2A"
+        }
+      ]
+    },
+    {
+      "domain": "TALENT",
+      "canonicalId": "39b5423e255e14b1",
+      "name": "Transposing Strike",
+      "added": [
+        "attack_of_opportunity"
+      ],
+      "before": [
+        "melee",
+        "mobility",
+        "movement",
+        "positioning",
+        "control",
+        "battlefield_control",
+        "evasion"
+      ],
+      "after": [
+        "melee",
+        "mobility",
+        "movement",
+        "positioning",
+        "control",
+        "battlefield_control",
+        "evasion",
+        "attack_of_opportunity"
+      ],
+      "decisions": [
+        {
+          "decisionId": "TALENT:39b5423e255e14b1|attack_of_opportunity",
+          "policy": "ATTACK_OF_OPPORTUNITY_POLICY",
+          "batch": "3B.2B"
         }
       ]
     },
@@ -1526,6 +1601,54 @@
           "decisionId": "TALENT:43ac0c4b1759507a|damage_threshold",
           "policy": "DAMAGE_THRESHOLD_POLICY",
           "batch": "3B.2A"
+        }
+      ]
+    },
+    {
+      "domain": "TALENT",
+      "canonicalId": "444c032c563c18a1",
+      "name": "Beloved",
+      "added": [
+        "attack_of_opportunity"
+      ],
+      "before": [
+        "once-per-encounter",
+        "ally_support",
+        "support",
+        "teamwork",
+        "swift_action",
+        "standard_action",
+        "action_economy",
+        "defense",
+        "reaction",
+        "counterattack",
+        "mobility",
+        "movement",
+        "evasion",
+        "positioning"
+      ],
+      "after": [
+        "once-per-encounter",
+        "ally_support",
+        "support",
+        "teamwork",
+        "swift_action",
+        "standard_action",
+        "action_economy",
+        "defense",
+        "reaction",
+        "counterattack",
+        "mobility",
+        "movement",
+        "evasion",
+        "positioning",
+        "attack_of_opportunity"
+      ],
+      "decisions": [
+        {
+          "decisionId": "TALENT:444c032c563c18a1|attack_of_opportunity",
+          "policy": "ATTACK_OF_OPPORTUNITY_POLICY",
+          "batch": "3B.2B"
         }
       ]
     },
@@ -1577,10 +1700,99 @@
     },
     {
       "domain": "TALENT",
+      "canonicalId": "50273d5ce8f84c31",
+      "name": "Frighten",
+      "added": [
+        "attack_of_opportunity"
+      ],
+      "before": [
+        "once-per-encounter",
+        "minion",
+        "mind-affecting",
+        "fear",
+        "control",
+        "battlefield_control",
+        "movement",
+        "positioning",
+        "action_economy"
+      ],
+      "after": [
+        "once-per-encounter",
+        "minion",
+        "mind-affecting",
+        "fear",
+        "control",
+        "battlefield_control",
+        "movement",
+        "positioning",
+        "action_economy",
+        "attack_of_opportunity"
+      ],
+      "decisions": [
+        {
+          "decisionId": "TALENT:50273d5ce8f84c31|attack_of_opportunity",
+          "policy": "ATTACK_OF_OPPORTUNITY_POLICY",
+          "batch": "3B.2B"
+        }
+      ]
+    },
+    {
+      "domain": "TALENT",
+      "canonicalId": "5a858011286f5809",
+      "name": "Liberate",
+      "added": [
+        "attack_of_opportunity"
+      ],
+      "before": [
+        "force",
+        "ally_support",
+        "support",
+        "force_point_spend",
+        "resource_spend",
+        "swift_action",
+        "reaction",
+        "action_economy",
+        "grab",
+        "grapple",
+        "restrain",
+        "condition_removal",
+        "recovery",
+        "mobility",
+        "positioning"
+      ],
+      "after": [
+        "force",
+        "ally_support",
+        "support",
+        "force_point_spend",
+        "resource_spend",
+        "swift_action",
+        "reaction",
+        "action_economy",
+        "grab",
+        "grapple",
+        "restrain",
+        "condition_removal",
+        "recovery",
+        "mobility",
+        "positioning",
+        "attack_of_opportunity"
+      ],
+      "decisions": [
+        {
+          "decisionId": "TALENT:5a858011286f5809|attack_of_opportunity",
+          "policy": "ATTACK_OF_OPPORTUNITY_POLICY",
+          "batch": "3B.2B"
+        }
+      ]
+    },
+    {
+      "domain": "TALENT",
       "canonicalId": "696f7eed2cc08299",
       "name": "Deep Space Raider",
       "added": [
-        "standard_action"
+        "standard_action",
+        "movement"
       ],
       "before": [
         "vehicle",
@@ -1609,13 +1821,19 @@
         "shields",
         "action_economy",
         "once-per-encounter",
-        "standard_action"
+        "standard_action",
+        "movement"
       ],
       "decisions": [
         {
           "decisionId": "TALENT:696f7eed2cc08299|standard_action",
           "policy": "ACTION_TYPE_POLICY",
           "batch": "3B.1"
+        },
+        {
+          "decisionId": "TALENT:696f7eed2cc08299|movement",
+          "policy": "MOVEMENT_POLICY",
+          "batch": "3B.2B"
         }
       ]
     },
@@ -1662,7 +1880,8 @@
       "canonicalId": "7a024dac260bf9ec",
       "name": "Dumb Luck",
       "added": [
-        "reaction"
+        "reaction",
+        "attack_of_opportunity"
       ],
       "before": [
         "once-per-encounter",
@@ -1691,13 +1910,19 @@
         "positioning",
         "precision",
         "setup",
-        "reaction"
+        "reaction",
+        "attack_of_opportunity"
       ],
       "decisions": [
         {
           "decisionId": "TALENT:7a024dac260bf9ec|reaction",
           "policy": "ACTION_TYPE_POLICY",
           "batch": "3B.1"
+        },
+        {
+          "decisionId": "TALENT:7a024dac260bf9ec|attack_of_opportunity",
+          "policy": "ATTACK_OF_OPPORTUNITY_POLICY",
+          "batch": "3B.2B"
         }
       ]
     },
@@ -1983,6 +2208,164 @@
     },
     {
       "domain": "TALENT",
+      "canonicalId": "b1bfca51996bb303",
+      "name": "Lose Pursuit",
+      "added": [
+        "attack_of_opportunity"
+      ],
+      "before": [
+        "vehicle",
+        "pilot",
+        "ally_support",
+        "support",
+        "teamwork",
+        "positioning",
+        "opposed_check",
+        "evasion",
+        "pursuit"
+      ],
+      "after": [
+        "vehicle",
+        "pilot",
+        "ally_support",
+        "support",
+        "teamwork",
+        "positioning",
+        "opposed_check",
+        "evasion",
+        "pursuit",
+        "attack_of_opportunity"
+      ],
+      "decisions": [
+        {
+          "decisionId": "TALENT:b1bfca51996bb303|attack_of_opportunity",
+          "policy": "ATTACK_OF_OPPORTUNITY_POLICY",
+          "batch": "3B.2B"
+        }
+      ]
+    },
+    {
+      "domain": "TALENT",
+      "canonicalId": "c04e66a3f2577e62",
+      "name": "Slowing Shot",
+      "added": [
+        "movement"
+      ],
+      "before": [
+        "ranged",
+        "control",
+        "battlefield_control",
+        "mobility",
+        "positioning",
+        "force_point_spend",
+        "resource_spend"
+      ],
+      "after": [
+        "ranged",
+        "control",
+        "battlefield_control",
+        "mobility",
+        "positioning",
+        "force_point_spend",
+        "resource_spend",
+        "movement"
+      ],
+      "decisions": [
+        {
+          "decisionId": "TALENT:c04e66a3f2577e62|movement",
+          "policy": "MOVEMENT_POLICY",
+          "batch": "3B.2B"
+        }
+      ]
+    },
+    {
+      "domain": "TALENT",
+      "canonicalId": "c08976a5f4ab88d8",
+      "name": "Piercing Hit",
+      "added": [
+        "movement"
+      ],
+      "before": [
+        "melee",
+        "ranged",
+        "armor",
+        "control",
+        "battlefield_control",
+        "concealment",
+        "mobility",
+        "positioning",
+        "standard_action",
+        "once-per-encounter",
+        "action_economy"
+      ],
+      "after": [
+        "melee",
+        "ranged",
+        "armor",
+        "control",
+        "battlefield_control",
+        "concealment",
+        "mobility",
+        "positioning",
+        "standard_action",
+        "once-per-encounter",
+        "action_economy",
+        "movement"
+      ],
+      "decisions": [
+        {
+          "decisionId": "TALENT:c08976a5f4ab88d8|movement",
+          "policy": "MOVEMENT_POLICY",
+          "batch": "3B.2B"
+        }
+      ]
+    },
+    {
+      "domain": "TALENT",
+      "canonicalId": "c2d2d55ee60f886f",
+      "name": "Lure Closer",
+      "added": [
+        "attack_of_opportunity"
+      ],
+      "before": [
+        "move_action",
+        "action_economy",
+        "deception",
+        "social",
+        "skills",
+        "will_defense",
+        "mind-affecting",
+        "control",
+        "battlefield_control",
+        "mobility",
+        "movement",
+        "positioning"
+      ],
+      "after": [
+        "move_action",
+        "action_economy",
+        "deception",
+        "social",
+        "skills",
+        "will_defense",
+        "mind-affecting",
+        "control",
+        "battlefield_control",
+        "mobility",
+        "movement",
+        "positioning",
+        "attack_of_opportunity"
+      ],
+      "decisions": [
+        {
+          "decisionId": "TALENT:c2d2d55ee60f886f|attack_of_opportunity",
+          "policy": "ATTACK_OF_OPPORTUNITY_POLICY",
+          "batch": "3B.2B"
+        }
+      ]
+    },
+    {
+      "domain": "TALENT",
       "canonicalId": "d32459fe16029f2a",
       "name": "Dull the Pain",
       "added": [
@@ -2055,6 +2438,44 @@
     },
     {
       "domain": "TALENT",
+      "canonicalId": "e289618b92890003",
+      "name": "Treacherous",
+      "added": [
+        "attack_of_opportunity"
+      ],
+      "before": [
+        "reaction",
+        "action_economy",
+        "mobility",
+        "movement",
+        "positioning",
+        "evasion",
+        "counterattack",
+        "control",
+        "defense"
+      ],
+      "after": [
+        "reaction",
+        "action_economy",
+        "mobility",
+        "movement",
+        "positioning",
+        "evasion",
+        "counterattack",
+        "control",
+        "defense",
+        "attack_of_opportunity"
+      ],
+      "decisions": [
+        {
+          "decisionId": "TALENT:e289618b92890003|attack_of_opportunity",
+          "policy": "ATTACK_OF_OPPORTUNITY_POLICY",
+          "batch": "3B.2B"
+        }
+      ]
+    },
+    {
+      "domain": "TALENT",
       "canonicalId": "ec3e6a05561ddc07",
       "name": "Suppress Force",
       "added": [
@@ -2092,6 +2513,52 @@
           "decisionId": "TALENT:ec3e6a05561ddc07|resource_spend",
           "policy": "RESOURCE_SPEND_POLICY",
           "batch": "3B.1"
+        }
+      ]
+    },
+    {
+      "domain": "TALENT",
+      "canonicalId": "ee184e210f8c8935",
+      "name": "Mobile Combatant",
+      "added": [
+        "attack_of_opportunity"
+      ],
+      "before": [
+        "once-per-encounter",
+        "standard_action",
+        "reaction",
+        "action_economy",
+        "melee",
+        "ranged",
+        "mobility",
+        "positioning",
+        "evasion",
+        "defense",
+        "counterattack",
+        "setup",
+        "survivability"
+      ],
+      "after": [
+        "once-per-encounter",
+        "standard_action",
+        "reaction",
+        "action_economy",
+        "melee",
+        "ranged",
+        "mobility",
+        "positioning",
+        "evasion",
+        "defense",
+        "counterattack",
+        "setup",
+        "survivability",
+        "attack_of_opportunity"
+      ],
+      "decisions": [
+        {
+          "decisionId": "TALENT:ee184e210f8c8935|attack_of_opportunity",
+          "policy": "ATTACK_OF_OPPORTUNITY_POLICY",
+          "batch": "3B.2B"
         }
       ]
     },
@@ -2170,6 +2637,40 @@
           "decisionId": "TALENT:f557b3331b5158c8|standard_action",
           "policy": "ACTION_TYPE_POLICY",
           "batch": "3B.1"
+        }
+      ]
+    },
+    {
+      "domain": "TALENT",
+      "canonicalId": "f7b620efd191ac6b",
+      "name": "Tempest Tossed",
+      "added": [
+        "attack_of_opportunity"
+      ],
+      "before": [
+        "melee",
+        "control",
+        "battlefield_control",
+        "movement",
+        "positioning",
+        "mobility",
+        "action_economy"
+      ],
+      "after": [
+        "melee",
+        "control",
+        "battlefield_control",
+        "movement",
+        "positioning",
+        "mobility",
+        "action_economy",
+        "attack_of_opportunity"
+      ],
+      "decisions": [
+        {
+          "decisionId": "TALENT:f7b620efd191ac6b|attack_of_opportunity",
+          "policy": "ATTACK_OF_OPPORTUNITY_POLICY",
+          "batch": "3B.2B"
         }
       ]
     },
@@ -9455,7 +9956,16 @@
         "damage_bonus",
         "control",
         "once-per-encounter",
-        "critical_hit"
+        "critical_hit",
+        "battlefield_control"
+      ],
+      "ownerAdditions": [
+        {
+          "tag": "battlefield_control",
+          "batch": "3B.2B",
+          "policy": "BATTLEFIELD_CONTROL_POLICY",
+          "decisionId": "FEAT:f362e5a4ad0a98bd|battlefield_control"
+        }
       ]
     },
     {
@@ -12773,7 +13283,8 @@
         "evasion",
         "survivability",
         "action_economy",
-        "swift_action"
+        "swift_action",
+        "attack_of_opportunity"
       ],
       "ownerAdditions": [
         {
@@ -12781,6 +13292,12 @@
           "batch": "3B.1",
           "policy": "ACTION_TYPE_POLICY",
           "decisionId": "TALENT:1946e16d1e6c831c|swift_action"
+        },
+        {
+          "tag": "attack_of_opportunity",
+          "batch": "3B.2B",
+          "policy": "ATTACK_OF_OPPORTUNITY_POLICY",
+          "decisionId": "TALENT:1946e16d1e6c831c|attack_of_opportunity"
         }
       ]
     },
@@ -16290,7 +16807,16 @@
         "positioning",
         "control",
         "battlefield_control",
-        "evasion"
+        "evasion",
+        "attack_of_opportunity"
+      ],
+      "ownerAdditions": [
+        {
+          "tag": "attack_of_opportunity",
+          "batch": "3B.2B",
+          "policy": "ATTACK_OF_OPPORTUNITY_POLICY",
+          "decisionId": "TALENT:39b5423e255e14b1|attack_of_opportunity"
+        }
       ]
     },
     {
@@ -17314,7 +17840,16 @@
         "mobility",
         "movement",
         "evasion",
-        "positioning"
+        "positioning",
+        "attack_of_opportunity"
+      ],
+      "ownerAdditions": [
+        {
+          "tag": "attack_of_opportunity",
+          "batch": "3B.2B",
+          "policy": "ATTACK_OF_OPPORTUNITY_POLICY",
+          "decisionId": "TALENT:444c032c563c18a1|attack_of_opportunity"
+        }
       ]
     },
     {
@@ -18703,7 +19238,16 @@
         "battlefield_control",
         "movement",
         "positioning",
-        "action_economy"
+        "action_economy",
+        "attack_of_opportunity"
+      ],
+      "ownerAdditions": [
+        {
+          "tag": "attack_of_opportunity",
+          "batch": "3B.2B",
+          "policy": "ATTACK_OF_OPPORTUNITY_POLICY",
+          "decisionId": "TALENT:50273d5ce8f84c31|attack_of_opportunity"
+        }
       ]
     },
     {
@@ -20178,7 +20722,16 @@
         "condition_removal",
         "recovery",
         "mobility",
-        "positioning"
+        "positioning",
+        "attack_of_opportunity"
+      ],
+      "ownerAdditions": [
+        {
+          "tag": "attack_of_opportunity",
+          "batch": "3B.2B",
+          "policy": "ATTACK_OF_OPPORTUNITY_POLICY",
+          "decisionId": "TALENT:5a858011286f5809|attack_of_opportunity"
+        }
       ]
     },
     {
@@ -21943,7 +22496,8 @@
         "shields",
         "action_economy",
         "once-per-encounter",
-        "standard_action"
+        "standard_action",
+        "movement"
       ],
       "ownerAdditions": [
         {
@@ -21951,6 +22505,12 @@
           "batch": "3B.1",
           "policy": "ACTION_TYPE_POLICY",
           "decisionId": "TALENT:696f7eed2cc08299|standard_action"
+        },
+        {
+          "tag": "movement",
+          "batch": "3B.2B",
+          "policy": "MOVEMENT_POLICY",
+          "decisionId": "TALENT:696f7eed2cc08299|movement"
         }
       ]
     },
@@ -23640,7 +24200,8 @@
         "positioning",
         "precision",
         "setup",
-        "reaction"
+        "reaction",
+        "attack_of_opportunity"
       ],
       "ownerAdditions": [
         {
@@ -23648,6 +24209,12 @@
           "batch": "3B.1",
           "policy": "ACTION_TYPE_POLICY",
           "decisionId": "TALENT:7a024dac260bf9ec|reaction"
+        },
+        {
+          "tag": "attack_of_opportunity",
+          "batch": "3B.2B",
+          "policy": "ATTACK_OF_OPPORTUNITY_POLICY",
+          "decisionId": "TALENT:7a024dac260bf9ec|attack_of_opportunity"
         }
       ]
     },
@@ -30921,7 +31488,16 @@
         "positioning",
         "opposed_check",
         "evasion",
-        "pursuit"
+        "pursuit",
+        "attack_of_opportunity"
+      ],
+      "ownerAdditions": [
+        {
+          "tag": "attack_of_opportunity",
+          "batch": "3B.2B",
+          "policy": "ATTACK_OF_OPPORTUNITY_POLICY",
+          "decisionId": "TALENT:b1bfca51996bb303|attack_of_opportunity"
+        }
       ]
     },
     {
@@ -32911,7 +33487,16 @@
         "mobility",
         "positioning",
         "force_point_spend",
-        "resource_spend"
+        "resource_spend",
+        "movement"
+      ],
+      "ownerAdditions": [
+        {
+          "tag": "movement",
+          "batch": "3B.2B",
+          "policy": "MOVEMENT_POLICY",
+          "decisionId": "TALENT:c04e66a3f2577e62|movement"
+        }
       ]
     },
     {
@@ -32971,7 +33556,16 @@
         "positioning",
         "standard_action",
         "once-per-encounter",
-        "action_economy"
+        "action_economy",
+        "movement"
+      ],
+      "ownerAdditions": [
+        {
+          "tag": "movement",
+          "batch": "3B.2B",
+          "policy": "MOVEMENT_POLICY",
+          "decisionId": "TALENT:c08976a5f4ab88d8|movement"
+        }
       ]
     },
     {
@@ -33258,7 +33852,16 @@
         "battlefield_control",
         "mobility",
         "movement",
-        "positioning"
+        "positioning",
+        "attack_of_opportunity"
+      ],
+      "ownerAdditions": [
+        {
+          "tag": "attack_of_opportunity",
+          "batch": "3B.2B",
+          "policy": "ATTACK_OF_OPPORTUNITY_POLICY",
+          "decisionId": "TALENT:c2d2d55ee60f886f|attack_of_opportunity"
+        }
       ]
     },
     {
@@ -38269,7 +38872,16 @@
         "evasion",
         "counterattack",
         "control",
-        "defense"
+        "defense",
+        "attack_of_opportunity"
+      ],
+      "ownerAdditions": [
+        {
+          "tag": "attack_of_opportunity",
+          "batch": "3B.2B",
+          "policy": "ATTACK_OF_OPPORTUNITY_POLICY",
+          "decisionId": "TALENT:e289618b92890003|attack_of_opportunity"
+        }
       ]
     },
     {
@@ -39555,7 +40167,16 @@
         "defense",
         "counterattack",
         "setup",
-        "survivability"
+        "survivability",
+        "attack_of_opportunity"
+      ],
+      "ownerAdditions": [
+        {
+          "tag": "attack_of_opportunity",
+          "batch": "3B.2B",
+          "policy": "ATTACK_OF_OPPORTUNITY_POLICY",
+          "decisionId": "TALENT:ee184e210f8c8935|attack_of_opportunity"
+        }
       ]
     },
     {
@@ -40849,7 +41470,16 @@
         "movement",
         "positioning",
         "mobility",
-        "action_economy"
+        "action_economy",
+        "attack_of_opportunity"
+      ],
+      "ownerAdditions": [
+        {
+          "tag": "attack_of_opportunity",
+          "batch": "3B.2B",
+          "policy": "ATTACK_OF_OPPORTUNITY_POLICY",
+          "decisionId": "TALENT:f7b620efd191ac6b|attack_of_opportunity"
+        }
       ]
     },
     {
