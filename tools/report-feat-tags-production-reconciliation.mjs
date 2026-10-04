@@ -5,10 +5,13 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { AUTHORITY_PATH, ROOT, loadContext, validateAuthority } from './validate-feat-tags-semantic-authority.mjs';
+import { AUTHORITY_PATH, PASS2_AUTHORITY_PATH, ROOT, loadContext, validateAuthority } from './validate-feat-tags-semantic-authority.mjs';
 
-export const OUT_JSON = 'data/audits/feat-tags-production-reconciliation.json';
-export const OUT_MD = 'docs/audits/feat-tags-production-reconciliation.md';
+const PASS2 = process.argv.includes('--pass2');
+export const OUT_JSON = PASS2 ? 'data/audits/feat-tags-pass2-production-reconciliation.json' : 'data/audits/feat-tags-production-reconciliation.json';
+export const OUT_MD = PASS2 ? 'docs/audits/feat-tags-pass2-production-reconciliation.md' : 'docs/audits/feat-tags-production-reconciliation.md';
+const FINAL_KEY = PASS2 ? 'pass2FinalTags' : 'pass1FinalTags';
+const PARENT_KEY = PASS2 ? 'parentPass2FinalTags' : 'parentPass1FinalTags';
 const CATALOG_PATH = 'data/feat-catalog.json';
 const PACK_PATH = 'packs/feats.db';
 const WP_PARENT = 'ecc2471ac96ec2d4';
@@ -41,7 +44,7 @@ export function reconcile(auth, ctx, prod) {
       rows.push({
         canonicalId: a.canonicalId, name: a.name, source: a.primaryPublication.source, identityKey: m?.identityKey ?? null,
         productionClassification: 'CANONICAL_IDENTITY_MISSING_FROM_PRODUCTION', repoRecord: null, productionTags: null,
-        pass1FinalTags: final, tagsToAdd: [...final], tagsToRemove: [], tagsAlreadyMatching: [],
+        [FINAL_KEY]: final, tagsToAdd: [...final], tagsToRemove: [], tagsAlreadyMatching: [],
         productionTagsOutsideApprovedVocabulary: [], warnings: ['CANONICAL_IDENTITY_MISSING_FROM_PRODUCTION — report only; not created']
       });
       continue;
@@ -60,7 +63,7 @@ export function reconcile(auth, ctx, prod) {
     rows.push({
       canonicalId: a.canonicalId, name: a.name, source: a.primaryPublication.source, identityKey: m?.identityKey ?? null,
       productionClassification: 'CANONICAL_RECORD_PRESENT', repoRecord: { path: `${CATALOG_PATH}#_id=${a.canonicalId}`, pack: `${PACK_PATH}#_id=${a.canonicalId}`, name: rec.name },
-      productionTags: prodTags, pass1FinalTags: final,
+      productionTags: prodTags, [FINAL_KEY]: final,
       tagsToAdd: final.filter(t => !ps.has(t)), tagsToRemove: prodTags.filter(t => !fs_.has(t)), tagsAlreadyMatching: final.filter(t => ps.has(t)),
       productionTagsOutsideApprovedVocabulary: outside, warnings
     });
@@ -71,7 +74,7 @@ export function reconcile(auth, ctx, prod) {
     return {
       repoId: dv.repoId, name: rec?.name ?? dv.repoName, productionClassification: 'IMPLEMENTATION_DERIVATIVE_NOT_CANONICAL_IDENTITY',
       canonicalIdentity: false, parentCanonicalId: dv.parentCanonicalId, parentName: wpAuth?.name ?? null,
-      productionTags: tagsOf(rec), parentPass1FinalTags: wpAuth?.finalTags ?? null, canonicalTagTransfer: 'NOT_PERFORMED_PENDING_PHASE_1C',
+      productionTags: tagsOf(rec), [PARENT_KEY]: wpAuth?.finalTags ?? null, canonicalTagTransfer: 'NOT_PERFORMED_PENDING_PHASE_1C',
       note: 'Relationship only. The parent canonical tag set is not copied onto this derivative.'
     };
   });
@@ -97,7 +100,7 @@ export function reconcile(auth, ctx, prod) {
   };
   return {
     schemaVersion: '1.0', kind: 'FEAT_TAGS_PRODUCTION_RECONCILIATION', status: 'REPORT_ONLY_NO_PRODUCTION_MUTATION',
-    authority: { file: AUTHORITY_PATH, status: auth.status, label: 'PASS1_COMPLETE / INPUT_TO_PASS2 (not production-final)' },
+    authority: { file: PASS2 ? PASS2_AUTHORITY_PATH : AUTHORITY_PATH, status: auth.status, label: PASS2 ? 'Pass 2 working authority, owner adjudication Batch 1 (not production-final)' : 'PASS1_COMPLETE / INPUT_TO_PASS2 (not production-final)' },
     join: 'canonical ID (Phase 1A identity manifest + Phase 1B dispositions); names are diagnostic only',
     productionSources: { catalog: CATALOG_PATH, pack: PACK_PATH },
     totals, canonical: rows, implementationDerivatives: derivatives, noncanonicalRecords: removal
@@ -126,9 +129,9 @@ function render(rep) {
 
 const isMain = process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url);
 if (isMain) {
-  const auth = readJson(AUTHORITY_PATH);
+  const auth = readJson(PASS2 ? PASS2_AUTHORITY_PATH : AUTHORITY_PATH);
   const ctx = loadContext();
-  const v = validateAuthority(auth, ctx);
+  const v = validateAuthority(auth, ctx, { pass: PASS2 ? 2 : 1 });
   if (v.failures.length) { console.error('authority validation failed; refusing to reconcile'); for (const f of v.failures.slice(0, 20)) console.error(' - ' + f); process.exit(1); }
   const rep = reconcile(auth, ctx, loadProduction());
   const t = rep.totals;

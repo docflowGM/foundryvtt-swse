@@ -9,6 +9,8 @@ import { fileURLToPath } from 'node:url';
 
 export const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 export const AUTHORITY_PATH = 'data/audits/feat-tags-semantic-authority.json';
+export const PASS2_AUTHORITY_PATH = 'data/audits/feat-tags-pass2-semantic-authority.json';
+export const PASS2_STATUS = 'PASS2_OWNER_ADJUDICATION_BATCH_1_APPLIED';
 const TALENT_ONTOLOGY_PATH = 'data/audits/talent-phase-12-final-ontology-adjudication.json';
 const P1A_PATH = 'data/audits/feat-phase-1a-canonical-identity-manifest.json';
 const P1B_PATH = 'data/audits/feat-phase-1b-repository-reconciliation.json';
@@ -42,15 +44,18 @@ export function loadContext() {
 }
 
 // Returns { failures: string[], notes: string[], stats }. Pure: no writes, no mutation of inputs.
-export function validateAuthority(auth, ctx = loadContext()) {
+export function validateAuthority(auth, ctx = loadContext(), opts = {}) {
+  const pass2 = opts.pass === 2;
   const failures = [];
   const notes = [];
   const fail = (m) => failures.push(m);
   const A = auth.assignments || [];
 
   // ---- Status / declared counts ----
-  if (auth.phase !== 'TAGS_PASS_1') fail(`phase ${auth.phase} != TAGS_PASS_1`);
-  if (auth.status !== 'PASS1_COMPLETE_ALL_353_QC2_STANDARD') fail(`status ${auth.status}`);
+  const wantPhase = pass2 ? 'TAGS_PASS_2' : 'TAGS_PASS_1';
+  const wantStatus = pass2 ? PASS2_STATUS : 'PASS1_COMPLETE_ALL_353_QC2_STANDARD';
+  if (auth.phase !== wantPhase) fail(`phase ${auth.phase} != ${wantPhase}`);
+  if (auth.status !== wantStatus) fail(`status ${auth.status}`);
   const want = { canonicalFeatsReviewed: 353, certified: 353, pending: 0, ontologyGapCandidates: 0, booksCompleted: 15, approvedOntologyTags: 187 };
   for (const [k, v] of Object.entries(want)) if (auth.counts?.[k] !== v) fail(`counts.${k} expected ${v}, got ${auth.counts?.[k]}`);
   if (auth.bookCheckpoint?.productionMutated !== false) fail('bookCheckpoint.productionMutated must be false');
@@ -95,9 +100,9 @@ export function validateAuthority(auth, ctx = loadContext()) {
 
   // Publication-category differences vs identity manifest are informational (category is not semantic).
   const catDiff = A.filter(a => byId.get(a.canonicalId) && a.publicationCategory !== byId.get(a.canonicalId).publicationCategory).map(a => a.name).sort();
-  const expectedCatDiff = ['Echani Training', 'Skill Challenge: Catastrophic Avoidance', 'Skill Challenge: Last Resort', 'Skill Challenge: Recovery'];
+  const expectedCatDiff = pass2 ? [] : ['Echani Training', 'Skill Challenge: Catastrophic Avoidance', 'Skill Challenge: Last Resort', 'Skill Challenge: Recovery'];
   if (JSON.stringify(catDiff) !== JSON.stringify(expectedCatDiff)) fail(`publicationCategory differences vs identity manifest changed: ${JSON.stringify(catDiff)}`);
-  else notes.push(`INFO (owner review, non-semantic): publicationCategory differs from the identity manifest for ${catDiff.join('; ')}.`);
+  else if (!pass2) notes.push(`INFO (owner review, non-semantic): publicationCategory differs from the identity manifest for ${catDiff.join('; ')}.`);
 
   // Anomaly identities.
   const named = (n) => A.filter(a => a.name === n);
@@ -105,6 +110,13 @@ export function validateAuthority(auth, ctx = loadContext()) {
   if (tech.length !== 1 || tech[0].canonicalId !== '42e2404790756700' || !/Web Enhancement 1/.test(tech[0].primaryPublication.source) || tech[0].primaryPublication.page !== 3) fail('Tech Specialist must be exactly one Web Enhancement 1 p.3 identity (42e2404790756700)');
   const ech = named('Echani Training');
   if (ech.length !== 1 || ech[0].canonicalId !== 'f362e5a4ad0a98bd' || !/Knights of the Old Republic/.test(ech[0].primaryPublication.source) || ech[0].primaryPublication.page !== 33) fail('Echani Training must be exactly one KOTOR p.33 identity (f362e5a4ad0a98bd)');
+  if (pass2) {
+    const e = ech[0];
+    const claims = e?.publicationCategories || [];
+    if (e?.primaryPublicationCategory !== 'GENERAL' || e?.publicationCategory !== 'GENERAL') fail('Echani Training primary publication category must be GENERAL');
+    const k = claims.map(c => `${c.source}|${c.page}|${c.category}`).sort();
+    if (JSON.stringify(k) !== JSON.stringify(['Galaxy at War|26|MARTIAL_ARTS_FEAT', 'Knights of the Old Republic Campaign Guide|33|GENERAL'])) fail(`Echani Training publication claims differ: ${JSON.stringify(k)}`);
+  }
   const sa = named('Staggering Attack');
   const saKeys = sa.map(a => `${a.canonicalId}|${a.primaryPublication.source}|${a.primaryPublication.page}`).sort();
   if (JSON.stringify(saKeys) !== JSON.stringify(['192923f60db38831|Galaxy at War|26', 'c9c4130a55761330|Scum and Villainy|24'])) fail(`Staggering Attack identities differ: ${JSON.stringify(saKeys)}`);
@@ -143,14 +155,15 @@ export function validateAuthority(auth, ctx = loadContext()) {
 // ---- CLI ----
 const isMain = process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url);
 if (isMain) {
-  const auth = readJson(AUTHORITY_PATH);
-  const { failures, notes, stats } = validateAuthority(auth);
+  const p2 = process.argv.includes('--pass2');
+  const auth = readJson(p2 ? PASS2_AUTHORITY_PATH : AUTHORITY_PATH);
+  const { failures, notes, stats } = validateAuthority(auth, loadContext(), { pass: p2 ? 2 : 1 });
   if (failures.length) {
     console.error(`FEAT TAGS SEMANTIC AUTHORITY VALIDATION FAILED (${failures.length}):`);
     for (const f of failures.slice(0, 200)) console.error(` - ${f}`);
     process.exit(1);
   }
-  console.log('FEAT TAGS SEMANTIC AUTHORITY OK (PASS1_COMPLETE / INPUT_TO_PASS2; not production-final)');
+  console.log(p2 ? 'FEAT TAGS PASS 2 SEMANTIC AUTHORITY OK (OWNER ADJUDICATION BATCH 1 APPLIED; not production-final)' : 'FEAT TAGS SEMANTIC AUTHORITY OK (PASS1_COMPLETE / INPUT_TO_PASS2; not production-final)');
   console.log(`  assignments ${stats.assignments} | unique canonical IDs ${stats.uniqueIds} | vocabulary ${stats.vocabulary} (181 + 6) | tags used ${stats.tagsUsed} | zero-use ${stats.zeroUse}`);
   console.log('  unknown tags 0 | duplicate tags 0 | implication violations 0 | identity anomalies pinned');
   for (const n of notes) console.log(`  ${n}`);

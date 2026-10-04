@@ -8,10 +8,11 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { AUTHORITY_PATH, ROOT, loadContext } from './validate-feat-tags-semantic-authority.mjs';
+import { AUTHORITY_PATH, PASS2_AUTHORITY_PATH, ROOT, loadContext } from './validate-feat-tags-semantic-authority.mjs';
 
-const OUT_JSON = 'data/audits/feat-tags-skill-completeness-report.json';
-const OUT_MD = 'docs/audits/feat-tags-skill-completeness-report.md';
+const PASS2 = process.argv.includes('--pass2');
+const OUT_JSON = PASS2 ? 'data/audits/feat-tags-pass2-skill-completeness-report.json' : 'data/audits/feat-tags-skill-completeness-report.json';
+const OUT_MD = PASS2 ? 'docs/audits/feat-tags-pass2-skill-completeness-report.md' : 'docs/audits/feat-tags-skill-completeness-report.md';
 const readJson = (rel) => JSON.parse(fs.readFileSync(path.join(ROOT, rel), 'utf8'));
 const exists = (rel) => fs.existsSync(path.join(ROOT, rel));
 
@@ -71,6 +72,13 @@ export function auditSkillCompleteness(auth, textIndex) {
         finalTags: a.finalTags,
         status: 'possible skill interaction not represented — owner review required'
       });
+      // Pass 2: an owner rejection recorded on the authority closes the matching finding as a reviewed false positive (evidence kept).
+      const rej = (a.pass2Rejections || []).filter(r => missing.has(r.rejectedTag) || (r.rejectedTag === 'skills' && genericMissing));
+      if (rej.length && [...missing.keys()].every(t => rej.some(r => r.rejectedTag === t))) {
+        const f = findings[findings.length - 1];
+        f.status = 'PASS2_FALSE_POSITIVE';
+        f.ownerDisposition = rej.map(r => ({ rejectedTag: r.rejectedTag, ruling: r.ruling, reason: r.reason }));
+      }
     }
   }
   findings.sort((x, y) => x.canonicalId.localeCompare(y.canonicalId));
@@ -83,34 +91,34 @@ export function buildReport(auth) {
   return {
     schemaVersion: '1.0', kind: 'FEAT_TAGS_SKILL_COMPLETENESS_AUDIT', status: 'REPORT_ONLY_OWNER_REVIEW_REQUIRED',
     note: 'Advisory scan. No tag assignment was added, removed, or changed. Prerequisite text is never scanned. Lexicon matches are lexical and can be false positives (for example a verb sense of "pilot" or "climb").',
-    authority: { file: AUTHORITY_PATH, status: auth.status },
+    authority: { file: PASS2 ? PASS2_AUTHORITY_PATH : AUTHORITY_PATH, status: auth.status },
     textSources: ti.sources, textCoverage: coverage,
     textLimitation: 'Per-feat rules text is available from the content/provenance authority only where embedded; other feats are scanned against the Pass 1 canonicalMechanicSummary alone (PASS1_SUMMARY_ONLY).',
     lexicon: SKILL_LEXICON.map(([skill, re, tag]) => ({ skill, expectedTag: tag, pattern: re.source })),
     genericSkillPattern: GENERIC_SKILL_PATTERN.source,
-    counts: { assignments: auth.assignments.length, findings: findings.length, withGenericSkillsExpected: findings.filter(f => f.genericSkillsTagExpected).length },
+    counts: { assignments: auth.assignments.length, findings: findings.length, ...(PASS2 ? { openFindings: findings.filter(f => f.status !== 'PASS2_FALSE_POSITIVE').length, ownerClosedFalsePositives: findings.filter(f => f.status === 'PASS2_FALSE_POSITIVE').length } : {}), withGenericSkillsExpected: findings.filter(f => f.genericSkillsTagExpected).length },
     findings
   };
 }
 
 function render(rep) {
   const L = ['# Feat Tags — Skill-Tag Completeness Audit (report-only)', '',
-    `Authority: \`${rep.authority.file}\` (\`${rep.authority.status}\`; PASS1_COMPLETE / INPUT_TO_PASS2).`, '',
+    `Authority: \`${rep.authority.file}\` (\`${rep.authority.status}\`; ${PASS2 ? 'Pass 2 working authority, owner adjudication Batch 1' : 'PASS1_COMPLETE / INPUT_TO_PASS2'}).`, '',
     rep.note, '', rep.textLimitation, '',
     `- Assignments scanned: ${rep.counts.assignments}`, `- Rules-text basis: ${rep.textCoverage.withRulesText}; summary-only basis: ${rep.textCoverage.summaryOnly}`,
-    `- Findings needing owner review: **${rep.counts.findings}**`, '',
-    '| Feat | Source | Basis | Possible missing tags | Current tags |', '| --- | --- | --- | --- | --- |'];
-  for (const f of rep.findings) L.push(`| ${f.name} (\`${f.canonicalId}\`) | ${f.source} | ${f.textBasis} | ${[...f.possibleMissingTags.map(m => `\`${m.tag}\``), ...(f.genericSkillsTagExpected ? ['`skills`'] : [])].join(', ')} | ${f.finalTags.map(t => `\`${t}\``).join(', ')} |`);
-  L.push('', 'Every row: possible skill interaction not represented — owner review required. No row is an automatic correction.', '');
+    PASS2 ? `- Findings: ${rep.counts.findings}; owner-closed false positives: ${rep.counts.ownerClosedFalsePositives}; **open, needing owner review: ${rep.counts.openFindings}**` : `- Findings needing owner review: **${rep.counts.findings}**`, '',
+    ...(PASS2 ? ['| Feat | Source | Basis | Possible missing tags | Current tags | Status |', '| --- | --- | --- | --- | --- | --- |'] : ['| Feat | Source | Basis | Possible missing tags | Current tags |', '| --- | --- | --- | --- | --- |'])];
+  for (const f of rep.findings) L.push(`| ${f.name} (\`${f.canonicalId}\`) | ${f.source} | ${f.textBasis} | ${[...f.possibleMissingTags.map(m => `\`${m.tag}\``), ...(f.genericSkillsTagExpected ? ['`skills`'] : [])].join(', ')} | ${f.finalTags.map(t => `\`${t}\``).join(', ')} |${PASS2 ? ` ${f.status === 'PASS2_FALSE_POSITIVE' ? 'PASS2_FALSE_POSITIVE' : 'open'} |` : ''}`);
+  L.push('', PASS2 ? 'Open rows: possible skill interaction not represented — owner review required. No row is an automatic correction. PASS2_FALSE_POSITIVE rows keep their evidence and record the owner ruling in the JSON.' : 'Every row: possible skill interaction not represented — owner review required. No row is an automatic correction.', '');
   return L.join('\n');
 }
 
 const isMain = process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url);
 if (isMain) {
-  const auth = readJson(AUTHORITY_PATH);
+  const auth = readJson(PASS2 ? PASS2_AUTHORITY_PATH : AUTHORITY_PATH);
   loadContext();
   const rep = buildReport(auth);
   fs.writeFileSync(path.join(ROOT, OUT_JSON), JSON.stringify(rep, null, 2) + '\n');
   fs.writeFileSync(path.join(ROOT, OUT_MD), render(rep));
-  console.log(`SKILL COMPLETENESS AUDIT: ${rep.counts.findings} possible unrepresented interactions of ${rep.counts.assignments} (report-only); text basis rules=${rep.textCoverage.withRulesText} summary-only=${rep.textCoverage.summaryOnly}`);
+  console.log(`SKILL COMPLETENESS AUDIT${PASS2 ? ' (pass 2)' : ''}: ${rep.counts.findings} ${PASS2 ? `findings (${rep.counts.openFindings} open)` : 'possible unrepresented interactions'} of ${rep.counts.assignments} (report-only); text basis rules=${rep.textCoverage.withRulesText} summary-only=${rep.textCoverage.summaryOnly}`);
 }
