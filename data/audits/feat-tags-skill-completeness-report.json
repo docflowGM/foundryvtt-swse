@@ -1,0 +1,306 @@
+{
+  "schemaVersion": "1.0",
+  "kind": "FEAT_TAGS_SKILL_COMPLETENESS_AUDIT",
+  "status": "REPORT_ONLY_OWNER_REVIEW_REQUIRED",
+  "note": "Advisory scan. No tag assignment was added, removed, or changed. Prerequisite text is never scanned. Lexicon matches are lexical and can be false positives (for example a verb sense of \"pilot\" or \"climb\").",
+  "authority": {
+    "file": "data/audits/feat-tags-semantic-authority.json",
+    "status": "PASS1_COMPLETE_ALL_353_QC2_STANDARD"
+  },
+  "textSources": [
+    "data/audits/feat-content-canonical-authority.json"
+  ],
+  "textCoverage": {
+    "withRulesText": 331,
+    "summaryOnly": 22
+  },
+  "textLimitation": "Per-feat rules text is available from the content/provenance authority only where embedded; other feats are scanned against the Pass 1 canonicalMechanicSummary alone (PASS1_SUMMARY_ONLY).",
+  "lexicon": [
+    {
+      "skill": "Acrobatics",
+      "expectedTag": "acrobatics",
+      "pattern": "\\bacrobatics\\b"
+    },
+    {
+      "skill": "Climb",
+      "expectedTag": "climb",
+      "pattern": "\\bclimb(?:ing)?\\b"
+    },
+    {
+      "skill": "Deception",
+      "expectedTag": "deception",
+      "pattern": "\\bdeception\\b|\\bfeint\\b"
+    },
+    {
+      "skill": "Endurance",
+      "expectedTag": "endurance",
+      "pattern": "\\bendurance\\b"
+    },
+    {
+      "skill": "Gather Information",
+      "expectedTag": "gather_information",
+      "pattern": "\\bgather information\\b"
+    },
+    {
+      "skill": "Initiative",
+      "expectedTag": "initiative",
+      "pattern": "\\binitiative\\b"
+    },
+    {
+      "skill": "Jump",
+      "expectedTag": "jump",
+      "pattern": "\\bjump(?:ing)?\\b"
+    },
+    {
+      "skill": "Knowledge",
+      "expectedTag": "knowledge",
+      "pattern": "\\bknowledge\\b"
+    },
+    {
+      "skill": "Mechanics",
+      "expectedTag": "mechanics",
+      "pattern": "\\bmechanics\\b"
+    },
+    {
+      "skill": "Perception",
+      "expectedTag": "perception",
+      "pattern": "\\bperception\\b"
+    },
+    {
+      "skill": "Persuasion",
+      "expectedTag": "persuasion",
+      "pattern": "\\bpersuasion\\b"
+    },
+    {
+      "skill": "Intimidate (Persuasion)",
+      "expectedTag": "persuasion",
+      "pattern": "\\bintimidat\\w*\\b"
+    },
+    {
+      "skill": "Change Attitude (Persuasion)",
+      "expectedTag": "persuasion",
+      "pattern": "\\bchange attitude\\b"
+    },
+    {
+      "skill": "Pilot",
+      "expectedTag": "pilot",
+      "pattern": "\\bpilot\\b"
+    },
+    {
+      "skill": "Ride",
+      "expectedTag": "ride",
+      "pattern": "\\bride\\b"
+    },
+    {
+      "skill": "Stealth",
+      "expectedTag": "stealth",
+      "pattern": "\\bstealth\\b"
+    },
+    {
+      "skill": "Sleight of Hand (Stealth)",
+      "expectedTag": "stealth",
+      "pattern": "\\bsleight of hand\\b"
+    },
+    {
+      "skill": "Survival",
+      "expectedTag": "survival",
+      "pattern": "\\bsurvival\\b"
+    },
+    {
+      "skill": "Swim",
+      "expectedTag": "swim",
+      "pattern": "\\bswim(?:ming)?\\b"
+    },
+    {
+      "skill": "Treat Injury",
+      "expectedTag": "treat_injury",
+      "pattern": "\\btreat injury\\b"
+    },
+    {
+      "skill": "Use Computer",
+      "expectedTag": "use_computer",
+      "pattern": "\\buse computer\\b"
+    },
+    {
+      "skill": "Use the Force",
+      "expectedTag": "use_the_force",
+      "pattern": "\\buse the force\\b"
+    }
+  ],
+  "genericSkillPattern": "\\b(?:all|any|every|each) skills?\\b|\\bany skill check\\b|\\ball skill checks\\b",
+  "counts": {
+    "assignments": 353,
+    "findings": 7,
+    "withGenericSkillsExpected": 0
+  },
+  "findings": [
+    {
+      "canonicalId": "5e471161ad85b040",
+      "name": "Vehicular Surge",
+      "source": "Rebellion Era Campaign Guide",
+      "textBasis": "RULES_TEXT_AVAILABLE",
+      "possibleMissingTags": [
+        {
+          "tag": "pilot",
+          "matchedLexicon": [
+            "Pilot"
+          ]
+        }
+      ],
+      "genericSkillsTagExpected": false,
+      "finalTags": [
+        "vehicle",
+        "survivability",
+        "swift_action",
+        "action_economy",
+        "resources"
+      ],
+      "status": "possible skill interaction not represented — owner review required"
+    },
+    {
+      "canonicalId": "70962165bed8e5ed",
+      "name": "Gunnery Specialist",
+      "source": "Clone Wars Campaign Guide",
+      "textBasis": "RULES_TEXT_AVAILABLE",
+      "possibleMissingTags": [
+        {
+          "tag": "pilot",
+          "matchedLexicon": [
+            "Pilot"
+          ]
+        }
+      ],
+      "genericSkillsTagExpected": false,
+      "finalTags": [
+        "vehicle",
+        "ranged",
+        "weapon_training",
+        "reroll",
+        "reliability",
+        "once-per-encounter"
+      ],
+      "status": "possible skill interaction not represented — owner review required"
+    },
+    {
+      "canonicalId": "9c9e98a70538855c",
+      "name": "Slammer",
+      "source": "Scavenger's Guide to Droids",
+      "textBasis": "RULES_TEXT_AVAILABLE",
+      "possibleMissingTags": [
+        {
+          "tag": "treat_injury",
+          "matchedLexicon": [
+            "Treat Injury"
+          ]
+        }
+      ],
+      "genericSkillsTagExpected": false,
+      "finalTags": [
+        "unarmed",
+        "melee",
+        "damage",
+        "damage_bonus",
+        "damage_threshold",
+        "standard_action",
+        "action_economy",
+        "control"
+      ],
+      "status": "possible skill interaction not represented — owner review required"
+    },
+    {
+      "canonicalId": "acb7efcc70769b9f",
+      "name": "Mounted Defense",
+      "source": "Threats of the Galaxy",
+      "textBasis": "RULES_TEXT_AVAILABLE",
+      "possibleMissingTags": [
+        {
+          "tag": "pilot",
+          "matchedLexicon": [
+            "Pilot"
+          ]
+        }
+      ],
+      "genericSkillsTagExpected": false,
+      "finalTags": [
+        "mount",
+        "ride",
+        "rider",
+        "beast",
+        "vehicle",
+        "defense",
+        "evasion",
+        "once-per-encounter"
+      ],
+      "status": "possible skill interaction not represented — owner review required"
+    },
+    {
+      "canonicalId": "b7f51561e60fefe6",
+      "name": "Mission Specialist",
+      "source": "Galaxy at War",
+      "textBasis": "RULES_TEXT_AVAILABLE",
+      "possibleMissingTags": [
+        {
+          "tag": "use_the_force",
+          "matchedLexicon": [
+            "Use the Force"
+          ]
+        }
+      ],
+      "genericSkillsTagExpected": false,
+      "finalTags": [
+        "skills",
+        "ally_support",
+        "support",
+        "teamwork"
+      ],
+      "status": "possible skill interaction not represented — owner review required"
+    },
+    {
+      "canonicalId": "cf278001c780f3f9",
+      "name": "Momentum Strike",
+      "source": "Threats of the Galaxy",
+      "textBasis": "RULES_TEXT_AVAILABLE",
+      "possibleMissingTags": [
+        {
+          "tag": "pilot",
+          "matchedLexicon": [
+            "Pilot"
+          ]
+        }
+      ],
+      "genericSkillsTagExpected": false,
+      "finalTags": [
+        "mount",
+        "ride",
+        "rider",
+        "beast",
+        "vehicle",
+        "melee",
+        "damage_bonus",
+        "movement",
+        "mobility"
+      ],
+      "status": "possible skill interaction not represented — owner review required"
+    },
+    {
+      "canonicalId": "d48614f7ae500a5b",
+      "name": "Logic Upgrade: Skill Swap",
+      "source": "Scavenger's Guide to Droids",
+      "textBasis": "RULES_TEXT_AVAILABLE",
+      "possibleMissingTags": [
+        {
+          "tag": "use_the_force",
+          "matchedLexicon": [
+            "Use the Force"
+          ]
+        }
+      ],
+      "genericSkillsTagExpected": false,
+      "finalTags": [
+        "skill_substitution",
+        "skills"
+      ],
+      "status": "possible skill interaction not represented — owner review required"
+    }
+  ]
+}
