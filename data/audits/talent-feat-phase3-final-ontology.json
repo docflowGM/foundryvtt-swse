@@ -1,0 +1,3693 @@
+{
+  "schemaVersion": "1.0",
+  "kind": "TALENT_FEAT_PHASE3_FINAL_ONTOLOGY",
+  "status": "PHASE3_FINAL_ONTOLOGY_ALL_TAGS_OWNER_DEFINED",
+  "counts": {
+    "vocabulary": 190,
+    "ownerDefined": 190,
+    "partiallyOwnerDefined": 0,
+    "ownerDefinitionRequired": 0,
+    "ontologyGaps": 0,
+    "hardImplications": 11,
+    "tagsAdded": 4,
+    "tagsRetired": 1
+  },
+  "tagsAdded": [
+    "condition_track",
+    "full_round_action",
+    "ion",
+    "resource_gain"
+  ],
+  "tagsRetired": [
+    "force-point"
+  ],
+  "previouslyRetiredTagsStillAtZero": [
+    "skill-mastery",
+    "balance",
+    "natural_weapon",
+    "entangle"
+  ],
+  "hardImplications": [
+    {
+      "if": "reroll",
+      "requires": "reliability"
+    },
+    {
+      "if": "reaction",
+      "requires": "action_economy"
+    },
+    {
+      "if": "swift_action",
+      "requires": "action_economy"
+    },
+    {
+      "if": "move_action",
+      "requires": "action_economy"
+    },
+    {
+      "if": "standard_action",
+      "requires": "action_economy"
+    },
+    {
+      "if": "force_point_spend",
+      "requires": "resource_spend"
+    },
+    {
+      "if": "condition_removal",
+      "requires": "recovery"
+    },
+    {
+      "if": "use_the_force",
+      "requires": "force"
+    },
+    {
+      "if": "force_power_synergy",
+      "requires": "force"
+    },
+    {
+      "if": "ally_support",
+      "requires": "support"
+    },
+    {
+      "if": "full_round_action",
+      "requires": "action_economy"
+    }
+  ],
+  "ownerPolicies": {
+    "EXACT_SKILL_POLICY": "The skill tags (acrobatics, climb, deception, endurance, gather_information, initiative, intimidation, jump, mechanics, perception, persuasion, pilot, ride, stealth, survival, swim, treat_injury, use_computer, use_the_force) represent direct mechanical interaction with the named skill. Use the exact skill tag when the skill itself directly participates in the operative mechanic through making the check, modifying the check, changing what the skill can do, substituting for/from the skill, or changing success/failure or action use of the skill. Do not infer from prerequisites, examples, role nouns, ordinary English, or another mechanic merely referencing the skill's normal rules. Existing Pass 3A exact-skill rulings remain authoritative."
+  },
+  "tags": [
+    {
+      "tag": "ability_enhancement",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "The operative mechanic directly adds, replaces, increases, or substitutes an ability score/modifier in a mechanical calculation beyond its normal baseline use.",
+      "controllingPolicyIds": [],
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 49,
+        "feats": 13,
+        "talents": 36,
+        "domainStatus": "BOTH_DOMAINS"
+      }
+    },
+    {
+      "tag": "action_economy",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "Directly changes action cost, action type, action availability, action timing, or converts one action type to another. Includes direct free-action and full-round-action manipulation. A mere action mention does not qualify.",
+      "controllingPolicyIds": [],
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": [
+          "reaction",
+          "swift_action",
+          "move_action",
+          "standard_action",
+          "full_round_action"
+        ]
+      },
+      "usage": {
+        "records": 648,
+        "feats": 82,
+        "talents": 566,
+        "domainStatus": "BOTH_DOMAINS"
+      }
+    },
+    {
+      "tag": "alchemy",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "Direct published alchemical creation/modification mechanics, especially Sith alchemy.",
+      "controllingPolicyIds": [],
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 6,
+        "feats": 0,
+        "talents": 6,
+        "domainStatus": "TALENT_ONLY"
+      }
+    },
+    {
+      "tag": "ally-trigger",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "An ally's action, success, damage, position, use of an ability, or other state directly triggers the record's mechanic. The resulting benefit may affect the user or someone else. Do not infer ally_support unless an ally actually receives support.",
+      "controllingPolicyIds": [],
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 26,
+        "feats": 2,
+        "talents": 24,
+        "domainStatus": "BOTH_DOMAINS"
+      }
+    },
+    {
+      "tag": "ally_support",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "The ally/other friendly creature directly receives the benefit, action, movement, defense, resource, healing, bonus, or equivalent support. IMPLIES support. Do not use merely because an ally is mentioned as a trigger for a self-only benefit.",
+      "controllingPolicyIds": [],
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "implies": [
+          "support"
+        ],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 290,
+        "feats": 20,
+        "talents": 270,
+        "domainStatus": "BOTH_DOMAINS"
+      }
+    },
+    {
+      "tag": "ambush",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "The mechanic directly exploits an enemy being unaware, surprised, flat-footed, denied Dexterity, hidden from the attacker, or otherwise caught unprepared. Primarily offensive/exploitative.",
+      "controllingPolicyIds": [],
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 46,
+        "feats": 7,
+        "talents": 39,
+        "domainStatus": "BOTH_DOMAINS"
+      }
+    },
+    {
+      "tag": "ambush_defense",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "The mechanic directly protects against or functions while surprised, flat-footed, denied Dexterity, attacked by hidden/unseen enemies, or caught before normal readiness.",
+      "controllingPolicyIds": [],
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 17,
+        "feats": 2,
+        "talents": 15,
+        "domainStatus": "BOTH_DOMAINS"
+      }
+    },
+    {
+      "tag": "anti-force",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "Directly suppresses, resists, counters, negates, detects against, or impairs Force powers/Force users.",
+      "controllingPolicyIds": [],
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 25,
+        "feats": 2,
+        "talents": 23,
+        "domainStatus": "BOTH_DOMAINS"
+      }
+    },
+    {
+      "tag": "armor",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "Directly requires, equips, grants proficiency with, modifies, or uses armor's mechanical bonuses/penalties.",
+      "controllingPolicyIds": [],
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 31,
+        "feats": 7,
+        "talents": 24,
+        "domainStatus": "BOTH_DOMAINS"
+      }
+    },
+    {
+      "tag": "attack_of_opportunity",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "Use existing ATTACK_OF_OPPORTUNITY_POLICY.",
+      "controllingPolicyIds": [
+        "ATTACK_OF_OPPORTUNITY_POLICY"
+      ],
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 89,
+        "feats": 29,
+        "talents": 60,
+        "domainStatus": "BOTH_DOMAINS"
+      }
+    },
+    {
+      "tag": "awareness",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "Directly improves situational awareness/readiness or the ability to notice threats/events, usually through Perception, Initiative-like readiness, or sensory awareness.",
+      "controllingPolicyIds": [],
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 44,
+        "feats": 9,
+        "talents": 35,
+        "domainStatus": "BOTH_DOMAINS"
+      }
+    },
+    {
+      "tag": "battlefield_control",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "Use existing BATTLEFIELD_CONTROL_POLICY.",
+      "controllingPolicyIds": [
+        "BATTLEFIELD_CONTROL_POLICY"
+      ],
+      "relatedDistinctTags": [
+        "control"
+      ],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 199,
+        "feats": 33,
+        "talents": 166,
+        "domainStatus": "BOTH_DOMAINS"
+      }
+    },
+    {
+      "tag": "beast",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "Direct mechanical scope involving beasts/animals as creatures.",
+      "controllingPolicyIds": [],
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 14,
+        "feats": 5,
+        "talents": 9,
+        "domainStatus": "BOTH_DOMAINS"
+      }
+    },
+    {
+      "tag": "beast_companion",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "Direct mechanics involving a bonded/controlled beast companion.",
+      "controllingPolicyIds": [],
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 6,
+        "feats": 0,
+        "talents": 6,
+        "domainStatus": "TALENT_ONLY"
+      }
+    },
+    {
+      "tag": "biotech",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "Direct biological technology, bioengineering, biological augmentation, or biotech devices.",
+      "controllingPolicyIds": [],
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 18,
+        "feats": 2,
+        "talents": 16,
+        "domainStatus": "BOTH_DOMAINS"
+      }
+    },
+    {
+      "tag": "block",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "Direct interaction with the Block lightsaber/talent mechanic or mechanically equivalent explicit Block usage.",
+      "controllingPolicyIds": [],
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 16,
+        "feats": 0,
+        "talents": 16,
+        "domainStatus": "TALENT_ONLY"
+      }
+    },
+    {
+      "tag": "burst_damage",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "Directly creates a concentrated spike in damage in a limited attack, activation, short window, or restricted-use event. burst_damage = spike/limited damage output; sustained_damage = repeatable damage output across attacks/turns.",
+      "controllingPolicyIds": [],
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 94,
+        "feats": 11,
+        "talents": 83,
+        "domainStatus": "BOTH_DOMAINS"
+      }
+    },
+    {
+      "tag": "command",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "The mechanic directly issues orders, grants/directs actions, changes subordinate behavior, or performs explicit tactical command.",
+      "controllingPolicyIds": [],
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 11,
+        "feats": 0,
+        "talents": 11,
+        "domainStatus": "TALENT_ONLY"
+      }
+    },
+    {
+      "tag": "concealment",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "Direct interaction with the Concealment mechanic.",
+      "controllingPolicyIds": [],
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 56,
+        "feats": 5,
+        "talents": 51,
+        "domainStatus": "BOTH_DOMAINS"
+      }
+    },
+    {
+      "tag": "condition_removal",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "Directly removes/reduces a negative condition, persistent condition, impairment, or Condition Track penalty. If the mechanic specifically changes the Condition Track, also apply condition_track.",
+      "controllingPolicyIds": [],
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "implies": [
+          "recovery"
+        ],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 32,
+        "feats": 5,
+        "talents": 27,
+        "domainStatus": "BOTH_DOMAINS"
+      }
+    },
+    {
+      "tag": "control",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "The mechanic directly restricts, compels, denies, redirects, penalizes, or otherwise meaningfully limits another creature's choices/actions/state. control is broader than spatial battlefield manipulation. Do not use merely because an effect is harmful.",
+      "controllingPolicyIds": [],
+      "relatedDistinctTags": [
+        "battlefield_control"
+      ],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 254,
+        "feats": 46,
+        "talents": 208,
+        "domainStatus": "BOTH_DOMAINS"
+      }
+    },
+    {
+      "tag": "counterattack",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "The mechanic directly grants or modifies an attack made in response to an enemy's attack or hostile action. Do not use for every reaction. Attacks of opportunity remain their own mechanic.",
+      "controllingPolicyIds": [],
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 46,
+        "feats": 5,
+        "talents": 41,
+        "domainStatus": "BOTH_DOMAINS"
+      }
+    },
+    {
+      "tag": "cover",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "Direct interaction with the Cover mechanic.",
+      "controllingPolicyIds": [],
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 42,
+        "feats": 10,
+        "talents": 32,
+        "domainStatus": "BOTH_DOMAINS"
+      }
+    },
+    {
+      "tag": "crafting",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "Directly constructs/creates an item, device, weapon, armor, droid component, trap, or similar object.",
+      "controllingPolicyIds": [],
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 38,
+        "feats": 2,
+        "talents": 36,
+        "domainStatus": "BOTH_DOMAINS"
+      }
+    },
+    {
+      "tag": "critical_hit",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "Direct interaction with critical threat range; scoring critical hits; critical-hit damage; triggering from a critical hit; modifying critical-hit resolution. Do not equate with critical_success.",
+      "controllingPolicyIds": [],
+      "relatedDistinctTags": [
+        "critical_success"
+      ],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 27,
+        "feats": 6,
+        "talents": 21,
+        "domainStatus": "BOTH_DOMAINS"
+      }
+    },
+    {
+      "tag": "critical_success",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "Use existing CRITICAL_SUCCESS_POLICY.",
+      "controllingPolicyIds": [
+        "CRITICAL_SUCCESS_POLICY"
+      ],
+      "relatedDistinctTags": [
+        "critical_hit"
+      ],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 15,
+        "feats": 2,
+        "talents": 13,
+        "domainStatus": "BOTH_DOMAINS"
+      }
+    },
+    {
+      "tag": "damage",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "The record itself directly deals damage or creates a damaging effect. Do not use solely because the mechanic modifies damage already dealt by another attack; use more specific tags such as damage_bonus where appropriate.",
+      "controllingPolicyIds": [],
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 42,
+        "feats": 21,
+        "talents": 21,
+        "domainStatus": "BOTH_DOMAINS"
+      }
+    },
+    {
+      "tag": "damage_bonus",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "Use existing DAMAGE_BONUS_POLICY.",
+      "controllingPolicyIds": [
+        "DAMAGE_BONUS_POLICY"
+      ],
+      "relatedDistinctTags": [
+        "damage_reduction",
+        "damage_threshold"
+      ],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 153,
+        "feats": 43,
+        "talents": 110,
+        "domainStatus": "BOTH_DOMAINS"
+      }
+    },
+    {
+      "tag": "damage_reduction",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "Direct interaction with Damage Reduction.",
+      "controllingPolicyIds": [],
+      "relatedDistinctTags": [
+        "damage_bonus"
+      ],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 34,
+        "feats": 4,
+        "talents": 30,
+        "domainStatus": "BOTH_DOMAINS"
+      }
+    },
+    {
+      "tag": "damage_threshold",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "Use existing DAMAGE_THRESHOLD_POLICY.",
+      "controllingPolicyIds": [
+        "DAMAGE_THRESHOLD_POLICY"
+      ],
+      "relatedDistinctTags": [
+        "damage_bonus"
+      ],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 50,
+        "feats": 15,
+        "talents": 35,
+        "domainStatus": "BOTH_DOMAINS"
+      }
+    },
+    {
+      "tag": "dark_side",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "Direct interaction with Dark Side powers/descriptors/alignment mechanics.",
+      "controllingPolicyIds": [],
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 41,
+        "feats": 1,
+        "talents": 40,
+        "domainStatus": "BOTH_DOMAINS"
+      }
+    },
+    {
+      "tag": "dark_side_score",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "Direct use, increase, decrease, comparison, or mechanical dependence on Dark Side Score.",
+      "controllingPolicyIds": [],
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 23,
+        "feats": 1,
+        "talents": 22,
+        "domainStatus": "BOTH_DOMAINS"
+      }
+    },
+    {
+      "tag": "deception",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "Use EXACT_SKILL_POLICY: direct mechanical interaction with the Deception skill.",
+      "controllingPolicyIds": [
+        "EXACT_SKILL_POLICY"
+      ],
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 48,
+        "feats": 10,
+        "talents": 38,
+        "domainStatus": "BOTH_DOMAINS"
+      }
+    },
+    {
+      "tag": "defense",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "Directly modifies, substitutes, uses, or improves Reflex, Fortitude, or Will Defense, or directly changes whether an attack/effect hits or is avoided. Do not use for pure DR/HP effects.",
+      "controllingPolicyIds": [],
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 284,
+        "feats": 61,
+        "talents": 223,
+        "domainStatus": "BOTH_DOMAINS"
+      }
+    },
+    {
+      "tag": "deflect",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "Direct interaction with the Deflect lightsaber/talent mechanic or mechanically explicit Deflect usage.",
+      "controllingPolicyIds": [],
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 17,
+        "feats": 0,
+        "talents": 17,
+        "domainStatus": "TALENT_ONLY"
+      }
+    },
+    {
+      "tag": "detection",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "Direct ability to locate, reveal, notice, expose, or detect hidden/concealed/invisible/Force/etc. targets, objects, or effects.",
+      "controllingPolicyIds": [],
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 37,
+        "feats": 5,
+        "talents": 32,
+        "domainStatus": "BOTH_DOMAINS"
+      }
+    },
+    {
+      "tag": "double_weapon",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "Directly operates on double weapons or both ends of a double weapon.",
+      "controllingPolicyIds": [],
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 10,
+        "feats": 4,
+        "talents": 6,
+        "domainStatus": "BOTH_DOMAINS"
+      }
+    },
+    {
+      "tag": "droid",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "Direct mechanical scope involving droids, droid traits, droid systems, or droid-specific effects. Generic reference to a droid example does not qualify.",
+      "controllingPolicyIds": [],
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 52,
+        "feats": 8,
+        "talents": 44,
+        "domainStatus": "BOTH_DOMAINS"
+      }
+    },
+    {
+      "tag": "dual_wield",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "Use existing DUAL_WIELD_POLICY.",
+      "controllingPolicyIds": [
+        "DUAL_WIELD_POLICY"
+      ],
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 22,
+        "feats": 4,
+        "talents": 18,
+        "domainStatus": "BOTH_DOMAINS"
+      }
+    },
+    {
+      "tag": "durability",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "Directly increases or preserves physical staying power such as hit points, bonus/temporary hit points, structural integrity, or comparable capacity to absorb damage. Do not use solely for Defense bonuses.",
+      "controllingPolicyIds": [],
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 49,
+        "feats": 6,
+        "talents": 43,
+        "domainStatus": "BOTH_DOMAINS"
+      }
+    },
+    {
+      "tag": "empowerment",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "The mechanic directly strengthens, shares, upgrades, amplifies, or temporarily enhances another ability, power, talent, ally, or effect beyond its ordinary baseline. Do not use for every numeric attack or damage bonus when a specific mechanical tag fully describes the effect.",
+      "controllingPolicyIds": [],
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 39,
+        "feats": 2,
+        "talents": 37,
+        "domainStatus": "BOTH_DOMAINS"
+      }
+    },
+    {
+      "tag": "equipment",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "Direct interaction with equipment as an item/object: creating, modifying, equipping, choosing, transferring, maintaining, granting an equipment property. Do not apply to every weapon-scoped combat ability merely because a weapon is equipment.",
+      "controllingPolicyIds": [],
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 132,
+        "feats": 22,
+        "talents": 110,
+        "domainStatus": "BOTH_DOMAINS"
+      }
+    },
+    {
+      "tag": "evasion",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "The mechanic directly avoids, negates, redirects, escapes, or reduces exposure to an attack/effect rather than merely absorbing its damage. A static Defense bonus alone does not automatically imply evasion.",
+      "controllingPolicyIds": [],
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 125,
+        "feats": 23,
+        "talents": 102,
+        "domainStatus": "BOTH_DOMAINS"
+      }
+    },
+    {
+      "tag": "exotic_weapon",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "Directly requires, modifies, or operates on exotic weapons as a closed scope. Open generic weapon selection does not qualify.",
+      "controllingPolicyIds": [
+        "CLOSED_SCOPE_POLICY",
+        "OPEN_GENERIC_SCOPE_POLICY"
+      ],
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 9,
+        "feats": 1,
+        "talents": 8,
+        "domainStatus": "BOTH_DOMAINS"
+      }
+    },
+    {
+      "tag": "exploration",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "Direct mechanics for exploring environments, traversing unknown areas, locating environmental features, or expedition-style discovery.",
+      "controllingPolicyIds": [],
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 26,
+        "feats": 2,
+        "talents": 24,
+        "domainStatus": "BOTH_DOMAINS"
+      }
+    },
+    {
+      "tag": "fear",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "Directly applies, modifies, resists, or exploits fear.",
+      "controllingPolicyIds": [],
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 28,
+        "feats": 5,
+        "talents": 23,
+        "domainStatus": "BOTH_DOMAINS"
+      }
+    },
+    {
+      "tag": "feint",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "Direct interaction with the Feint mechanic or combat feinting.",
+      "controllingPolicyIds": [],
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 8,
+        "feats": 1,
+        "talents": 7,
+        "domainStatus": "BOTH_DOMAINS"
+      }
+    },
+    {
+      "tag": "fighting_defensively",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "Directly uses/modifies the Fighting Defensively combat option.",
+      "controllingPolicyIds": [],
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 10,
+        "feats": 3,
+        "talents": 7,
+        "domainStatus": "BOTH_DOMAINS"
+      }
+    },
+    {
+      "tag": "flanking",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "Directly creates, modifies, requires, or benefits from the flanking state.",
+      "controllingPolicyIds": [],
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 11,
+        "feats": 0,
+        "talents": 11,
+        "domainStatus": "TALENT_ONLY"
+      }
+    },
+    {
+      "tag": "followers",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "Directly uses or modifies the follower subsystem or owned/following NPC followers.",
+      "controllingPolicyIds": [],
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 23,
+        "feats": 0,
+        "talents": 23,
+        "domainStatus": "TALENT_ONLY"
+      }
+    },
+    {
+      "tag": "force",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "The operative mechanic directly involves the Force; Force powers; Force talents/techniques/secrets; Use the Force; Force sensitivity/training; Force-specific resources or effects. Ordinary English \"force\" does not qualify. use_the_force -> force remains mandatory.",
+      "controllingPolicyIds": [],
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": [
+          "use_the_force",
+          "force_power_synergy"
+        ]
+      },
+      "usage": {
+        "records": 301,
+        "feats": 11,
+        "talents": 290,
+        "domainStatus": "BOTH_DOMAINS"
+      }
+    },
+    {
+      "tag": "force_capacity",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "Use existing FORCE_CAPACITY_POLICY.",
+      "controllingPolicyIds": [
+        "FORCE_CAPACITY_POLICY"
+      ],
+      "relatedDistinctTags": [
+        "resource_recovery"
+      ],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 29,
+        "feats": 4,
+        "talents": 25,
+        "domainStatus": "BOTH_DOMAINS"
+      }
+    },
+    {
+      "tag": "force_control",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "Directly alters the mode, descriptor, damage form, alignment descriptor, or functional behavior of an activated Force power (for example changing light/dark descriptor treatment, converting Force-power damage to stun).",
+      "controllingPolicyIds": [],
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 2,
+        "feats": 0,
+        "talents": 2,
+        "domainStatus": "TALENT_ONLY"
+      }
+    },
+    {
+      "tag": "force_defense",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "Direct use of Force mechanics for defense or direct defense/resistance against Force attacks/powers.",
+      "controllingPolicyIds": [],
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 33,
+        "feats": 2,
+        "talents": 31,
+        "domainStatus": "BOTH_DOMAINS"
+      }
+    },
+    {
+      "tag": "force_multiplier",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "Directly increases the magnitude/die/effectiveness of an existing Force-based numerical benefit, especially Force Point bonus dice or similar amplification. It does not create more resource units.",
+      "controllingPolicyIds": [],
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 14,
+        "feats": 6,
+        "talents": 8,
+        "domainStatus": "BOTH_DOMAINS"
+      }
+    },
+    {
+      "tag": "force_offense",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "A direct offensive Force mechanic against enemies: damaging, attacking, or hostile Force application.",
+      "controllingPolicyIds": [],
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 23,
+        "feats": 0,
+        "talents": 23,
+        "domainStatus": "TALENT_ONLY"
+      }
+    },
+    {
+      "tag": "force_point_spend",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "Use existing FORCE_POINT_SPEND_POLICY.",
+      "controllingPolicyIds": [
+        "FORCE_POINT_SPEND_POLICY"
+      ],
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "implies": [
+          "resource_spend"
+        ],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 143,
+        "feats": 16,
+        "talents": 127,
+        "domainStatus": "BOTH_DOMAINS"
+      }
+    },
+    {
+      "tag": "force_power",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "Directly changes acquisition, availability, suite membership, recovery, selection, or possession of Force powers as discrete powers/resources. Do not use merely because a record modifies the effect of a particular Force power.",
+      "controllingPolicyIds": [],
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 5,
+        "feats": 3,
+        "talents": 2,
+        "domainStatus": "BOTH_DOMAINS"
+      }
+    },
+    {
+      "tag": "force_power_synergy",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "Directly modifies, enhances, combines with, changes, or depends on activation/effect of one or more Force powers. IMPLIES force.",
+      "controllingPolicyIds": [],
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "implies": [
+          "force"
+        ],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 82,
+        "feats": 0,
+        "talents": 82,
+        "domainStatus": "TALENT_ONLY"
+      }
+    },
+    {
+      "tag": "force_support",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "Uses a Force mechanic to directly aid another creature.",
+      "controllingPolicyIds": [],
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 24,
+        "feats": 1,
+        "talents": 23,
+        "domainStatus": "BOTH_DOMAINS"
+      }
+    },
+    {
+      "tag": "force_training",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "Directly grants or modifies Force training/sensitivity, Force Training entitlement, Force-power suite training/access, or equivalent Force-training capacity.",
+      "controllingPolicyIds": [],
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 6,
+        "feats": 4,
+        "talents": 2,
+        "domainStatus": "BOTH_DOMAINS"
+      }
+    },
+    {
+      "tag": "full_attack",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "Use existing FULL_ATTACK_POLICY.",
+      "controllingPolicyIds": [
+        "FULL_ATTACK_POLICY"
+      ],
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 33,
+        "feats": 8,
+        "talents": 25,
+        "domainStatus": "BOTH_DOMAINS"
+      }
+    },
+    {
+      "tag": "galactic_lore",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "Direct interaction specifically with Knowledge (galactic lore).",
+      "controllingPolicyIds": [],
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 8,
+        "feats": 1,
+        "talents": 7,
+        "domainStatus": "BOTH_DOMAINS"
+      }
+    },
+    {
+      "tag": "grab",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "Use existing GRAB_POLICY.",
+      "controllingPolicyIds": [
+        "GRAB_POLICY"
+      ],
+      "relatedDistinctTags": [
+        "grapple"
+      ],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 16,
+        "feats": 9,
+        "talents": 7,
+        "domainStatus": "BOTH_DOMAINS"
+      }
+    },
+    {
+      "tag": "grapple",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "Use existing GRAPPLE_POLICY.",
+      "controllingPolicyIds": [
+        "GRAPPLE_POLICY"
+      ],
+      "relatedDistinctTags": [
+        "grab",
+        "restrain"
+      ],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 24,
+        "feats": 13,
+        "talents": 11,
+        "domainStatus": "BOTH_DOMAINS"
+      }
+    },
+    {
+      "tag": "healing",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "Directly restores hit points or explicitly increases hit-point healing.",
+      "controllingPolicyIds": [],
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 53,
+        "feats": 12,
+        "talents": 41,
+        "domainStatus": "BOTH_DOMAINS"
+      }
+    },
+    {
+      "tag": "heavy_weapon",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "Directly requires, modifies, or operates on heavy weapons.",
+      "controllingPolicyIds": [
+        "CLOSED_SCOPE_POLICY",
+        "OPEN_GENERIC_SCOPE_POLICY"
+      ],
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 5,
+        "feats": 1,
+        "talents": 4,
+        "domainStatus": "BOTH_DOMAINS"
+      }
+    },
+    {
+      "tag": "illusion",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "Direct creation, manipulation, resistance, or detection of Force illusions.",
+      "controllingPolicyIds": [],
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 5,
+        "feats": 0,
+        "talents": 5,
+        "domainStatus": "TALENT_ONLY"
+      }
+    },
+    {
+      "tag": "implant",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "Direct implant/cybernetic installation, use, modification, or effects.",
+      "controllingPolicyIds": [],
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 9,
+        "feats": 3,
+        "talents": 6,
+        "domainStatus": "BOTH_DOMAINS"
+      }
+    },
+    {
+      "tag": "improvised_weapon",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "Directly uses/modifies improvised weapons.",
+      "controllingPolicyIds": [],
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 7,
+        "feats": 1,
+        "talents": 6,
+        "domainStatus": "BOTH_DOMAINS"
+      }
+    },
+    {
+      "tag": "infiltration",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "Directly enables covert entry, disguise, bypassing access/security, hidden presence, or operating inside hostile/restricted areas.",
+      "controllingPolicyIds": [],
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 38,
+        "feats": 5,
+        "talents": 33,
+        "domainStatus": "BOTH_DOMAINS"
+      }
+    },
+    {
+      "tag": "initiative",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "Use EXACT_SKILL_POLICY: direct mechanical interaction with the Initiative skill.",
+      "controllingPolicyIds": [
+        "EXACT_SKILL_POLICY"
+      ],
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 27,
+        "feats": 5,
+        "talents": 22,
+        "domainStatus": "BOTH_DOMAINS"
+      }
+    },
+    {
+      "tag": "intimidation",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "Use EXACT_SKILL_POLICY: direct mechanical interaction with the Intimidation skill.",
+      "controllingPolicyIds": [
+        "EXACT_SKILL_POLICY"
+      ],
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 20,
+        "feats": 4,
+        "talents": 16,
+        "domainStatus": "BOTH_DOMAINS"
+      }
+    },
+    {
+      "tag": "intrigue",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "Direct mechanics involving political/social schemes, secrets, plots, influence networks, or intrigue-oriented manipulation/information.",
+      "controllingPolicyIds": [],
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 3,
+        "feats": 2,
+        "talents": 1,
+        "domainStatus": "BOTH_DOMAINS"
+      }
+    },
+    {
+      "tag": "investigation",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "Direct analysis/search of clues, evidence, records, secrets, or investigative information.",
+      "controllingPolicyIds": [],
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 31,
+        "feats": 2,
+        "talents": 29,
+        "domainStatus": "BOTH_DOMAINS"
+      }
+    },
+    {
+      "tag": "jury_rig",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "Direct temporary/emergency repair or temporary improvised modification used to keep equipment functioning or improve it provisionally.",
+      "controllingPolicyIds": [],
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 8,
+        "feats": 0,
+        "talents": 8,
+        "domainStatus": "TALENT_ONLY"
+      }
+    },
+    {
+      "tag": "knowledge",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "Direct interaction with Knowledge checks generally, multiple Knowledge categories, or an unspecified Knowledge skill. Do not use merely because the character learns information.",
+      "controllingPolicyIds": [],
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 35,
+        "feats": 6,
+        "talents": 29,
+        "domainStatus": "BOTH_DOMAINS"
+      }
+    },
+    {
+      "tag": "leadership",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "The mechanic represents leadership presence, authority, inspiration, organization, or management of allies/followers as a continuing role.",
+      "controllingPolicyIds": [],
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 18,
+        "feats": 3,
+        "talents": 15,
+        "domainStatus": "BOTH_DOMAINS"
+      }
+    },
+    {
+      "tag": "light_side",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "Direct interaction with Light Side powers/descriptors/alignment mechanics.",
+      "controllingPolicyIds": [],
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 8,
+        "feats": 0,
+        "talents": 8,
+        "domainStatus": "TALENT_ONLY"
+      }
+    },
+    {
+      "tag": "lightsaber",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "Directly requires, modifies, attacks with, defends with, or otherwise operates on lightsabers as a closed scope. Prerequisite/reference/example alone does not qualify.",
+      "controllingPolicyIds": [
+        "CLOSED_SCOPE_POLICY",
+        "OPEN_GENERIC_SCOPE_POLICY"
+      ],
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 79,
+        "feats": 4,
+        "talents": 75,
+        "domainStatus": "BOTH_DOMAINS"
+      }
+    },
+    {
+      "tag": "lightsaber_polearm",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "Directly operates on lightsaber polearms as the specific scope.",
+      "controllingPolicyIds": [],
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 2,
+        "feats": 1,
+        "talents": 1,
+        "domainStatus": "BOTH_DOMAINS"
+      }
+    },
+    {
+      "tag": "manipulation",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "Directly changes another creature's behavior/attitude/choice through deception, persuasion, coercion, mind-affecting manipulation, or equivalent influence.",
+      "controllingPolicyIds": [],
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 35,
+        "feats": 5,
+        "talents": 30,
+        "domainStatus": "BOTH_DOMAINS"
+      }
+    },
+    {
+      "tag": "martial_arts",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "Direct interaction with the Martial Arts feat family, martial-arts combat techniques, or mechanically explicit martial-arts/unarmed style mechanics. Do not use for every unarmed mechanic automatically.",
+      "controllingPolicyIds": [],
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 38,
+        "feats": 12,
+        "talents": 26,
+        "domainStatus": "BOTH_DOMAINS"
+      }
+    },
+    {
+      "tag": "mechanics",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "Use EXACT_SKILL_POLICY: direct mechanical interaction with the Mechanics skill.",
+      "controllingPolicyIds": [
+        "EXACT_SKILL_POLICY"
+      ],
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 51,
+        "feats": 15,
+        "talents": 36,
+        "domainStatus": "BOTH_DOMAINS"
+      }
+    },
+    {
+      "tag": "medical",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "Direct interaction with medical equipment, procedures, surgery, implants, medpacs, or medical technology.",
+      "controllingPolicyIds": [],
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 38,
+        "feats": 7,
+        "talents": 31,
+        "domainStatus": "BOTH_DOMAINS"
+      }
+    },
+    {
+      "tag": "medicine",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "Direct therapeutic treatment of creatures, including diagnosis/treatment of injury, disease, poison, or harmful conditions. It does not require the exact Treat Injury skill.",
+      "controllingPolicyIds": [],
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 25,
+        "feats": 5,
+        "talents": 20,
+        "domainStatus": "BOTH_DOMAINS"
+      }
+    },
+    {
+      "tag": "meditation",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "A substantive mechanic requires or operates through meditation as an action/state/process.",
+      "controllingPolicyIds": [],
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 2,
+        "feats": 0,
+        "talents": 2,
+        "domainStatus": "TALENT_ONLY"
+      }
+    },
+    {
+      "tag": "melee",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "Direct operative scope is melee attacks/melee combat.",
+      "controllingPolicyIds": [
+        "CLOSED_SCOPE_POLICY",
+        "OPEN_GENERIC_SCOPE_POLICY"
+      ],
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 315,
+        "feats": 59,
+        "talents": 256,
+        "domainStatus": "BOTH_DOMAINS"
+      }
+    },
+    {
+      "tag": "melee_defense",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "Direct defensive benefit specifically against melee attacks.",
+      "controllingPolicyIds": [],
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 23,
+        "feats": 2,
+        "talents": 21,
+        "domainStatus": "BOTH_DOMAINS"
+      }
+    },
+    {
+      "tag": "mind-affecting",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "The operative mechanic is explicitly mind-affecting or directly modifies/resists a mind-affecting effect.",
+      "controllingPolicyIds": [],
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 80,
+        "feats": 10,
+        "talents": 70,
+        "domainStatus": "BOTH_DOMAINS"
+      }
+    },
+    {
+      "tag": "minion",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "Directly uses or modifies minions as a subordinate/minion mechanic.",
+      "controllingPolicyIds": [],
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 13,
+        "feats": 0,
+        "talents": 13,
+        "domainStatus": "TALENT_ONLY"
+      }
+    },
+    {
+      "tag": "mobility",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "Use existing MOBILITY_POLICY.",
+      "controllingPolicyIds": [
+        "MOBILITY_POLICY"
+      ],
+      "relatedDistinctTags": [
+        "movement"
+      ],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 194,
+        "feats": 48,
+        "talents": 146,
+        "domainStatus": "BOTH_DOMAINS"
+      }
+    },
+    {
+      "tag": "modification",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "Directly alters an existing item's/device's properties or capabilities.",
+      "controllingPolicyIds": [],
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 29,
+        "feats": 6,
+        "talents": 23,
+        "domainStatus": "BOTH_DOMAINS"
+      }
+    },
+    {
+      "tag": "morale",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "Directly modifies morale, courage, morale bonuses/penalties, or morale/fear-related group state.",
+      "controllingPolicyIds": [],
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 41,
+        "feats": 6,
+        "talents": 35,
+        "domainStatus": "BOTH_DOMAINS"
+      }
+    },
+    {
+      "tag": "mount",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "Direct mechanics of mounted combat, a mount, or mount-dependent actions.",
+      "controllingPolicyIds": [],
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 10,
+        "feats": 5,
+        "talents": 5,
+        "domainStatus": "BOTH_DOMAINS"
+      }
+    },
+    {
+      "tag": "move_action",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "Use existing ACTION_TYPE_POLICY.",
+      "controllingPolicyIds": [
+        "ACTION_TYPE_POLICY"
+      ],
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "implies": [
+          "action_economy"
+        ],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 46,
+        "feats": 5,
+        "talents": 41,
+        "domainStatus": "BOTH_DOMAINS"
+      }
+    },
+    {
+      "tag": "movement",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "Use existing MOVEMENT_POLICY.",
+      "controllingPolicyIds": [
+        "MOVEMENT_POLICY"
+      ],
+      "relatedDistinctTags": [
+        "mobility",
+        "positioning"
+      ],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 181,
+        "feats": 56,
+        "talents": 125,
+        "domainStatus": "BOTH_DOMAINS"
+      }
+    },
+    {
+      "tag": "nature",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "Direct natural-environment, ecology, weather, beast-lore, wilderness, or environmental-domain mechanics.",
+      "controllingPolicyIds": [],
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 11,
+        "feats": 8,
+        "talents": 3,
+        "domainStatus": "BOTH_DOMAINS"
+      }
+    },
+    {
+      "tag": "network",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "Direct use of an interconnected communication/information/linked network, including mechanical sharing through network links. Do not automatically equate with social_network.",
+      "controllingPolicyIds": [],
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 11,
+        "feats": 1,
+        "talents": 10,
+        "domainStatus": "BOTH_DOMAINS"
+      }
+    },
+    {
+      "tag": "nonlethal",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "The mechanic directly causes nonlethal/capture-oriented damage resolution; prevents killing when damage would otherwise do so; explicitly treats a target as stable/nonlethally defeated; or directly modifies nonlethal damage. Do not infer merely because a mechanic is useful for capture.",
+      "controllingPolicyIds": [],
+      "relatedDistinctTags": [
+        "stun"
+      ],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 10,
+        "feats": 1,
+        "talents": 9,
+        "domainStatus": "BOTH_DOMAINS"
+      }
+    },
+    {
+      "tag": "offense_melee",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "A direct melee-scoped offensive improvement whose substantive effect improves attack or damage output. Mere melee scope does not qualify.",
+      "controllingPolicyIds": [],
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 10,
+        "feats": 0,
+        "talents": 10,
+        "domainStatus": "TALENT_ONLY"
+      }
+    },
+    {
+      "tag": "offense_ranged",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "A direct ranged-scoped offensive improvement whose substantive effect improves attack or damage output. Mere ranged scope does not qualify.",
+      "controllingPolicyIds": [],
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 16,
+        "feats": 0,
+        "talents": 16,
+        "domainStatus": "TALENT_ONLY"
+      }
+    },
+    {
+      "tag": "once-per-encounter",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "Use existing ONCE_PER_ENCOUNTER_POLICY.",
+      "controllingPolicyIds": [
+        "ONCE_PER_ENCOUNTER_POLICY"
+      ],
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 211,
+        "feats": 35,
+        "talents": 176,
+        "domainStatus": "BOTH_DOMAINS"
+      }
+    },
+    {
+      "tag": "opposed_check",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "The operative mechanic directly creates, modifies, rerolls, or resolves an opposed check.",
+      "controllingPolicyIds": [],
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 25,
+        "feats": 0,
+        "talents": 25,
+        "domainStatus": "TALENT_ONLY"
+      }
+    },
+    {
+      "tag": "overwatch",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "The mechanic establishes or modifies a prepared/reactive attack posture covering an area, movement, or enemy action, where an attack can be triggered by later battlefield activity. Do not use for every reaction attack or counterattack.",
+      "controllingPolicyIds": [],
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 5,
+        "feats": 0,
+        "talents": 5,
+        "domainStatus": "TALENT_ONLY"
+      }
+    },
+    {
+      "tag": "perception",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "Use EXACT_SKILL_POLICY: direct mechanical interaction with the Perception skill.",
+      "controllingPolicyIds": [
+        "EXACT_SKILL_POLICY"
+      ],
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 51,
+        "feats": 12,
+        "talents": 39,
+        "domainStatus": "BOTH_DOMAINS"
+      }
+    },
+    {
+      "tag": "persuasion",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "Use EXACT_SKILL_POLICY: direct mechanical interaction with the Persuasion skill.",
+      "controllingPolicyIds": [
+        "EXACT_SKILL_POLICY"
+      ],
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 73,
+        "feats": 12,
+        "talents": 61,
+        "domainStatus": "BOTH_DOMAINS"
+      }
+    },
+    {
+      "tag": "pilot",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "Use EXACT_SKILL_POLICY: direct mechanical interaction with the Pilot skill.",
+      "controllingPolicyIds": [
+        "EXACT_SKILL_POLICY"
+      ],
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 51,
+        "feats": 7,
+        "talents": 44,
+        "domainStatus": "BOTH_DOMAINS"
+      }
+    },
+    {
+      "tag": "pistol",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "Directly requires, modifies, or operates on pistols.",
+      "controllingPolicyIds": [
+        "CLOSED_SCOPE_POLICY",
+        "OPEN_GENERIC_SCOPE_POLICY"
+      ],
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 19,
+        "feats": 3,
+        "talents": 16,
+        "domainStatus": "BOTH_DOMAINS"
+      }
+    },
+    {
+      "tag": "planning",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "The mechanic derives benefit from preparation/planning materially in advance of immediate resolution, usually before an encounter, mission, or later event. Do not use for ordinary combat-round setup.",
+      "controllingPolicyIds": [],
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 5,
+        "feats": 0,
+        "talents": 5,
+        "domainStatus": "TALENT_ONLY"
+      }
+    },
+    {
+      "tag": "poison",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "Directly creates, applies, modifies, resists, treats, or interacts with poison.",
+      "controllingPolicyIds": [],
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 11,
+        "feats": 1,
+        "talents": 10,
+        "domainStatus": "BOTH_DOMAINS"
+      }
+    },
+    {
+      "tag": "positioning",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "The mechanic directly depends on or changes tactically meaningful relative position: adjacency; square occupation; flanking geometry; relative placement; moving into/out of advantageous locations. Movement by itself does not automatically imply positioning.",
+      "controllingPolicyIds": [],
+      "relatedDistinctTags": [
+        "movement"
+      ],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 217,
+        "feats": 33,
+        "talents": 184,
+        "domainStatus": "BOTH_DOMAINS"
+      }
+    },
+    {
+      "tag": "power_systems",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "Direct interaction with generators, power supplies, batteries, recharge, rerouting power, or similar power-system mechanics.",
+      "controllingPolicyIds": [],
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 18,
+        "feats": 3,
+        "talents": 15,
+        "domainStatus": "BOTH_DOMAINS"
+      }
+    },
+    {
+      "tag": "precision",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "Directly improves the chance or accuracy of hitting a target: attack-roll bonuses; attack penalty reduction; accuracy-related rerouting/substitution; ignoring accuracy penalties. Do not use for pure extra damage, Damage Threshold reduction, or generic weapon scope.",
+      "controllingPolicyIds": [],
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 242,
+        "feats": 68,
+        "talents": 174,
+        "domainStatus": "BOTH_DOMAINS"
+      }
+    },
+    {
+      "tag": "precision_damage",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "Directly grants extra damage because a target is vulnerable in a precision-style way (flat-footed, denied Dexterity, unaware, otherwise specifically exposed for precision damage). Do not use for generic extra damage.",
+      "controllingPolicyIds": [],
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 7,
+        "feats": 0,
+        "talents": 7,
+        "domainStatus": "TALENT_ONLY"
+      }
+    },
+    {
+      "tag": "precognition",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "Direct future-sensing/foreknowledge that mechanically affects later outcomes.",
+      "controllingPolicyIds": [],
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 15,
+        "feats": 0,
+        "talents": 15,
+        "domainStatus": "TALENT_ONLY"
+      }
+    },
+    {
+      "tag": "pursuit",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "Direct chase, pursuit, following, disengagement prevention, dogfight pursuit, or closing/maintaining distance against a moving target.",
+      "controllingPolicyIds": [],
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 30,
+        "feats": 0,
+        "talents": 30,
+        "domainStatus": "TALENT_ONLY"
+      }
+    },
+    {
+      "tag": "ranged",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "Direct operative scope is ranged attacks/ranged combat.",
+      "controllingPolicyIds": [
+        "CLOSED_SCOPE_POLICY",
+        "OPEN_GENERIC_SCOPE_POLICY"
+      ],
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 276,
+        "feats": 55,
+        "talents": 221,
+        "domainStatus": "BOTH_DOMAINS"
+      }
+    },
+    {
+      "tag": "ranged_defense",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "Direct defensive benefit specifically against ranged attacks.",
+      "controllingPolicyIds": [],
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 25,
+        "feats": 2,
+        "talents": 23,
+        "domainStatus": "BOTH_DOMAINS"
+      }
+    },
+    {
+      "tag": "reaction",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "Use existing ACTION_TYPE_POLICY.",
+      "controllingPolicyIds": [
+        "ACTION_TYPE_POLICY"
+      ],
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "implies": [
+          "action_economy"
+        ],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 154,
+        "feats": 23,
+        "talents": 131,
+        "domainStatus": "BOTH_DOMAINS"
+      }
+    },
+    {
+      "tag": "recon",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "Direct scouting/reconnaissance gathering of battlefield/location/enemy information.",
+      "controllingPolicyIds": [],
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 31,
+        "feats": 0,
+        "talents": 31,
+        "domainStatus": "TALENT_ONLY"
+      }
+    },
+    {
+      "tag": "recovery",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "Directly restores a character from injury, impairment, or depleted combat state, including second wind, Condition Track recovery, and other non-resource combat recovery. Do not use for recovery of expendable resources; use resource_recovery.",
+      "controllingPolicyIds": [],
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": [
+          "condition_removal"
+        ]
+      },
+      "usage": {
+        "records": 95,
+        "feats": 17,
+        "talents": 78,
+        "domainStatus": "BOTH_DOMAINS"
+      }
+    },
+    {
+      "tag": "reliability",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "Use existing RELIABILITY_POLICY.",
+      "controllingPolicyIds": [
+        "RELIABILITY_POLICY"
+      ],
+      "relatedDistinctTags": [
+        "reroll"
+      ],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": [
+          "reroll"
+        ]
+      },
+      "usage": {
+        "records": 175,
+        "feats": 33,
+        "talents": 142,
+        "domainStatus": "BOTH_DOMAINS"
+      }
+    },
+    {
+      "tag": "repair",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "Directly restores functionality, HP, condition, or operation to droids, vehicles, objects, or equipment through repair.",
+      "controllingPolicyIds": [],
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 14,
+        "feats": 2,
+        "talents": 12,
+        "domainStatus": "BOTH_DOMAINS"
+      }
+    },
+    {
+      "tag": "reroll",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "Use existing REROLL_POLICY.",
+      "controllingPolicyIds": [
+        "REROLL_POLICY"
+      ],
+      "relatedDistinctTags": [
+        "reliability"
+      ],
+      "hardImplications": {
+        "implies": [
+          "reliability"
+        ],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 109,
+        "feats": 19,
+        "talents": 90,
+        "domainStatus": "BOTH_DOMAINS"
+      }
+    },
+    {
+      "tag": "resilience",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "Direct resistance to adverse effects, conditions, impairment, forced failure, or loss of function. Use for resistance/endurance against harmful states rather than simple accuracy avoidance.",
+      "controllingPolicyIds": [],
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 96,
+        "feats": 30,
+        "talents": 66,
+        "domainStatus": "BOTH_DOMAINS"
+      }
+    },
+    {
+      "tag": "resource_recovery",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "Use existing RESOURCE_RECOVERY_POLICY.",
+      "controllingPolicyIds": [
+        "RESOURCE_RECOVERY_POLICY"
+      ],
+      "relatedDistinctTags": [
+        "force_capacity",
+        "resource_spend"
+      ],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 32,
+        "feats": 7,
+        "talents": 25,
+        "domainStatus": "BOTH_DOMAINS"
+      }
+    },
+    {
+      "tag": "resource_spend",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "Use existing RESOURCE_SPEND_POLICY.",
+      "controllingPolicyIds": [
+        "RESOURCE_SPEND_POLICY"
+      ],
+      "relatedDistinctTags": [
+        "resource_recovery"
+      ],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": [
+          "force_point_spend"
+        ]
+      },
+      "usage": {
+        "records": 159,
+        "feats": 19,
+        "talents": 140,
+        "domainStatus": "BOTH_DOMAINS"
+      }
+    },
+    {
+      "tag": "resources",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "The substantive mechanic changes availability, management, amount, access, or use of a limited consumable resource or limited-use capability. Do not add merely because a resource is paid as a routine activation cost. Specific tags remain preferred.",
+      "controllingPolicyIds": [],
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 60,
+        "feats": 14,
+        "talents": 46,
+        "domainStatus": "BOTH_DOMAINS"
+      }
+    },
+    {
+      "tag": "restrain",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "Use existing RESTRAIN_POLICY.",
+      "controllingPolicyIds": [
+        "RESTRAIN_POLICY"
+      ],
+      "relatedDistinctTags": [
+        "grapple"
+      ],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 13,
+        "feats": 6,
+        "talents": 7,
+        "domainStatus": "BOTH_DOMAINS"
+      }
+    },
+    {
+      "tag": "ride",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "Use EXACT_SKILL_POLICY: direct mechanical interaction with the Ride skill.",
+      "controllingPolicyIds": [
+        "EXACT_SKILL_POLICY"
+      ],
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 11,
+        "feats": 5,
+        "talents": 6,
+        "domainStatus": "BOTH_DOMAINS"
+      }
+    },
+    {
+      "tag": "rider",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "Direct benefit/restriction applied to the rider or rider/mount relationship.",
+      "controllingPolicyIds": [],
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 10,
+        "feats": 5,
+        "talents": 5,
+        "domainStatus": "BOTH_DOMAINS"
+      }
+    },
+    {
+      "tag": "scaling",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "The magnitude, count, duration, range, uses, or similar benefit directly scales according to another value such as level, class level, BAB, ability modifier, number of allies, number of selections, or another explicitly varying mechanical quantity. Static bonuses are not scaling.",
+      "controllingPolicyIds": [],
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 192,
+        "feats": 31,
+        "talents": 161,
+        "domainStatus": "BOTH_DOMAINS"
+      }
+    },
+    {
+      "tag": "science",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "Direct scientific analysis, experimentation, technical scientific knowledge, or laboratory-style mechanics.",
+      "controllingPolicyIds": [],
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 8,
+        "feats": 1,
+        "talents": 7,
+        "domainStatus": "BOTH_DOMAINS"
+      }
+    },
+    {
+      "tag": "search_your_feelings",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "Direct interaction with the Search Your Feelings Force application.",
+      "controllingPolicyIds": [],
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 5,
+        "feats": 0,
+        "talents": 5,
+        "domainStatus": "TALENT_ONLY"
+      }
+    },
+    {
+      "tag": "self_repair",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "The subject directly repairs/restores itself, especially droid/mechanical self-maintenance.",
+      "controllingPolicyIds": [],
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 3,
+        "feats": 0,
+        "talents": 3,
+        "domainStatus": "TALENT_ONLY"
+      }
+    },
+    {
+      "tag": "senses",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "Direct modification or use of a sensory capability such as scent, vision modes, hearing, special senses.",
+      "controllingPolicyIds": [],
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 23,
+        "feats": 2,
+        "talents": 21,
+        "domainStatus": "BOTH_DOMAINS"
+      }
+    },
+    {
+      "tag": "sensors",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "Direct interaction with sensor systems/scanning technology.",
+      "controllingPolicyIds": [],
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 10,
+        "feats": 2,
+        "talents": 8,
+        "domainStatus": "BOTH_DOMAINS"
+      }
+    },
+    {
+      "tag": "setup",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "The mechanic requires or creates a deliberate preparatory state before a later payoff: aiming/preparing, maintaining an action sequence, priming a target/effect, spending actions now for a later attack/effect. Ordinary prerequisites or ordinary trigger conditions are not setup.",
+      "controllingPolicyIds": [],
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 177,
+        "feats": 28,
+        "talents": 149,
+        "domainStatus": "BOTH_DOMAINS"
+      }
+    },
+    {
+      "tag": "shields",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "Direct interaction with shields or Shield Rating.",
+      "controllingPolicyIds": [],
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 17,
+        "feats": 6,
+        "talents": 11,
+        "domainStatus": "BOTH_DOMAINS"
+      }
+    },
+    {
+      "tag": "skill_mastery",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "The mechanic directly changes advanced/reliable use of a skill: Take 10 / Take 20 permissions; automatic skill success; ignoring restrictions on routine skill use; equivalent mastery of skill resolution. Do not use solely for numeric skill bonuses.",
+      "controllingPolicyIds": [],
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 19,
+        "feats": 2,
+        "talents": 17,
+        "domainStatus": "BOTH_DOMAINS"
+      }
+    },
+    {
+      "tag": "skill_substitution",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "One skill, ability modifier, defense, or other check basis is directly substituted for another skill/check basis.",
+      "controllingPolicyIds": [],
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 38,
+        "feats": 7,
+        "talents": 31,
+        "domainStatus": "BOTH_DOMAINS"
+      }
+    },
+    {
+      "tag": "skills",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "Direct interaction with skills or skill checks generically/multiply rather than one specific named skill. A record involving only one explicitly named skill does not automatically require skills.",
+      "controllingPolicyIds": [],
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 320,
+        "feats": 39,
+        "talents": 281,
+        "domainStatus": "BOTH_DOMAINS"
+      }
+    },
+    {
+      "tag": "slicing",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "Direct computer intrusion, hacking, slicing, unauthorized system access, or counter-slicing.",
+      "controllingPolicyIds": [],
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 11,
+        "feats": 1,
+        "talents": 10,
+        "domainStatus": "BOTH_DOMAINS"
+      }
+    },
+    {
+      "tag": "sniper",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "Direct mechanical support for sniper-style combat: aimed single-target ranged attacks; long-range precision; attacks from concealment/unawareness; comparable deliberate precision-shot mechanics. Generic ranged offense does not qualify.",
+      "controllingPolicyIds": [],
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 16,
+        "feats": 3,
+        "talents": 13,
+        "domainStatus": "BOTH_DOMAINS"
+      }
+    },
+    {
+      "tag": "social",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "Directly operates through social interaction, attitudes, interpersonal influence, or social skill resolution.",
+      "controllingPolicyIds": [],
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 111,
+        "feats": 17,
+        "talents": 94,
+        "domainStatus": "BOTH_DOMAINS"
+      }
+    },
+    {
+      "tag": "social_network",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "Direct use of contacts, allies, organizations, or social networks to obtain information/resources/benefits.",
+      "controllingPolicyIds": [],
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 14,
+        "feats": 2,
+        "talents": 12,
+        "domainStatus": "BOTH_DOMAINS"
+      }
+    },
+    {
+      "tag": "space",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "Directly operates in starship/space-combat or space-environment mechanics. Generic vehicle mechanics do not automatically imply space.",
+      "controllingPolicyIds": [],
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 22,
+        "feats": 4,
+        "talents": 18,
+        "domainStatus": "BOTH_DOMAINS"
+      }
+    },
+    {
+      "tag": "spellcasting",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "Direct interaction with an explicitly published spellcasting/witchcraft/spell mechanic. Do not apply because something merely resembles a spell.",
+      "controllingPolicyIds": [],
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 1,
+        "feats": 0,
+        "talents": 1,
+        "domainStatus": "TALENT_ONLY"
+      }
+    },
+    {
+      "tag": "standard_action",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "Use existing ACTION_TYPE_POLICY.",
+      "controllingPolicyIds": [
+        "ACTION_TYPE_POLICY"
+      ],
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "implies": [
+          "action_economy"
+        ],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 152,
+        "feats": 11,
+        "talents": 141,
+        "domainStatus": "BOTH_DOMAINS"
+      }
+    },
+    {
+      "tag": "stealth",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "Use EXACT_SKILL_POLICY: direct mechanical interaction with the Stealth skill.",
+      "controllingPolicyIds": [
+        "EXACT_SKILL_POLICY"
+      ],
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 65,
+        "feats": 10,
+        "talents": 55,
+        "domainStatus": "BOTH_DOMAINS"
+      }
+    },
+    {
+      "tag": "stun",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "Use existing STUN_POLICY.",
+      "controllingPolicyIds": [
+        "STUN_POLICY"
+      ],
+      "relatedDistinctTags": [
+        "nonlethal"
+      ],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 12,
+        "feats": 1,
+        "talents": 11,
+        "domainStatus": "BOTH_DOMAINS"
+      }
+    },
+    {
+      "tag": "support",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "The operative mechanic directly provides a beneficial mechanical effect to another creature/group or enables another creature to perform better. Self-only benefit is not support.",
+      "controllingPolicyIds": [],
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": [
+          "ally_support"
+        ]
+      },
+      "usage": {
+        "records": 310,
+        "feats": 21,
+        "talents": 289,
+        "domainStatus": "BOTH_DOMAINS"
+      }
+    },
+    {
+      "tag": "surprise_round",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "Directly changes actions, participation, initiative, surprise status, or benefits during a Surprise Round. Do not use merely because a mechanic is useful early in combat.",
+      "controllingPolicyIds": [],
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 20,
+        "feats": 2,
+        "talents": 18,
+        "domainStatus": "BOTH_DOMAINS"
+      }
+    },
+    {
+      "tag": "survivability",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "A broad mechanic whose substantive purpose materially helps a character avoid defeat, incapacitation, or death through durability, defenses, mitigation, emergency recovery, or similar staying power. Do not add to every defensive record automatically; survivability must be a substantive outcome of the mechanic.",
+      "controllingPolicyIds": [],
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 171,
+        "feats": 22,
+        "talents": 149,
+        "domainStatus": "BOTH_DOMAINS"
+      }
+    },
+    {
+      "tag": "survival",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "Use EXACT_SKILL_POLICY: direct mechanical interaction with the Survival skill.",
+      "controllingPolicyIds": [
+        "EXACT_SKILL_POLICY"
+      ],
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 10,
+        "feats": 7,
+        "talents": 3,
+        "domainStatus": "BOTH_DOMAINS"
+      }
+    },
+    {
+      "tag": "sustained_damage",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "Use existing SUSTAINED_DAMAGE_POLICY.",
+      "controllingPolicyIds": [
+        "SUSTAINED_DAMAGE_POLICY"
+      ],
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 134,
+        "feats": 16,
+        "talents": 118,
+        "domainStatus": "BOTH_DOMAINS"
+      }
+    },
+    {
+      "tag": "swift_action",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "Use existing ACTION_TYPE_POLICY.",
+      "controllingPolicyIds": [
+        "ACTION_TYPE_POLICY"
+      ],
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "implies": [
+          "action_economy"
+        ],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 232,
+        "feats": 23,
+        "talents": 209,
+        "domainStatus": "BOTH_DOMAINS"
+      }
+    },
+    {
+      "tag": "tactics",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "Direct tactical planning, formation, maneuver choice, battlefield coordination, or tactical advantage as the operative mechanic.",
+      "controllingPolicyIds": [],
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 16,
+        "feats": 2,
+        "talents": 14,
+        "domainStatus": "BOTH_DOMAINS"
+      }
+    },
+    {
+      "tag": "talisman",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "Direct creation/use/modification of Force/Sith talismans.",
+      "controllingPolicyIds": [],
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 8,
+        "feats": 0,
+        "talents": 8,
+        "domainStatus": "TALENT_ONLY"
+      }
+    },
+    {
+      "tag": "target-designation",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "The mechanic explicitly marks/designates/selects a creature/object as a special ongoing target for a later or continuing mechanical effect. Do not apply when \"designate\" means choose equipment, choose a weapon, choose an option, or make a generic one-time choice. Signature Device-style equipment designation is not target designation.",
+      "controllingPolicyIds": [],
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 94,
+        "feats": 5,
+        "talents": 89,
+        "domainStatus": "BOTH_DOMAINS"
+      }
+    },
+    {
+      "tag": "targeting",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "Direct interaction with target acquisition or target-specific attack/effect resolution: aim; choosing a combat target; line-of-sight targeting; targeting software; target-specific attack modifiers; changing where an attack is considered to originate for targeting purposes. Do not use merely because every attack naturally has a target.",
+      "controllingPolicyIds": [],
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 153,
+        "feats": 30,
+        "talents": 123,
+        "domainStatus": "BOTH_DOMAINS"
+      }
+    },
+    {
+      "tag": "teamwork",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "The mechanic requires or rewards active cooperation, coordinated participation, shared positioning, Aid Another, shared feat ownership, or combined actions among allied characters. Unilateral support does not automatically imply teamwork.",
+      "controllingPolicyIds": [],
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 283,
+        "feats": 28,
+        "talents": 255,
+        "domainStatus": "BOTH_DOMAINS"
+      }
+    },
+    {
+      "tag": "tech",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "The operative mechanic directly involves technological devices, engineering, electronics, machinery, technical systems, or technical modification. A broad domain tag, not a synonym for Mechanics or Use Computer.",
+      "controllingPolicyIds": [],
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 67,
+        "feats": 12,
+        "talents": 55,
+        "domainStatus": "BOTH_DOMAINS"
+      }
+    },
+    {
+      "tag": "telekinesis",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "Direct Force-based telekinetic movement/manipulation.",
+      "controllingPolicyIds": [],
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 13,
+        "feats": 0,
+        "talents": 13,
+        "domainStatus": "TALENT_ONLY"
+      }
+    },
+    {
+      "tag": "telepath",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "Use only for specialized deep telepathic probing/intrusion/mind-reading capability where telepathy is a defining operative mechanic, not merely any generic telepathic communication. May coexist with telepathy. Must never be assigned because the talent belongs to a Telepath tree.",
+      "controllingPolicyIds": [],
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 1,
+        "feats": 0,
+        "talents": 1,
+        "domainStatus": "TALENT_ONLY"
+      }
+    },
+    {
+      "tag": "telepathy",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "Direct Force-based mental communication, mental influence, mind reading, or telepathic interaction.",
+      "controllingPolicyIds": [],
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 10,
+        "feats": 0,
+        "talents": 10,
+        "domainStatus": "TALENT_ONLY"
+      }
+    },
+    {
+      "tag": "temporary-talent",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "Direct temporary access to/use of a talent the character does not permanently possess. Do not use for ordinary talent sharing unless the recipient actually gains temporary access to the talent itself.",
+      "controllingPolicyIds": [],
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 3,
+        "feats": 1,
+        "talents": 2,
+        "domainStatus": "BOTH_DOMAINS"
+      }
+    },
+    {
+      "tag": "tracking",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "Directly follows trails, traces, signatures, targets, or pursuit information over time.",
+      "controllingPolicyIds": [],
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 6,
+        "feats": 1,
+        "talents": 5,
+        "domainStatus": "BOTH_DOMAINS"
+      }
+    },
+    {
+      "tag": "trap",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "Direct creation, deployment, triggering, detection, disabling, or modification of traps/mines/fixed hazards.",
+      "controllingPolicyIds": [],
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 10,
+        "feats": 0,
+        "talents": 10,
+        "domainStatus": "TALENT_ONLY"
+      }
+    },
+    {
+      "tag": "treat_injury",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "Use EXACT_SKILL_POLICY: direct mechanical interaction with the Treat Injury skill.",
+      "controllingPolicyIds": [
+        "EXACT_SKILL_POLICY"
+      ],
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 40,
+        "feats": 9,
+        "talents": 31,
+        "domainStatus": "BOTH_DOMAINS"
+      }
+    },
+    {
+      "tag": "unarmed",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "Direct operative scope is unarmed attacks/unarmed strikes.",
+      "controllingPolicyIds": [
+        "CLOSED_SCOPE_POLICY",
+        "OPEN_GENERIC_SCOPE_POLICY"
+      ],
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 56,
+        "feats": 23,
+        "talents": 33,
+        "domainStatus": "BOTH_DOMAINS"
+      }
+    },
+    {
+      "tag": "use_computer",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "Use EXACT_SKILL_POLICY: direct mechanical interaction with the Use Computer skill.",
+      "controllingPolicyIds": [
+        "EXACT_SKILL_POLICY"
+      ],
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 26,
+        "feats": 6,
+        "talents": 20,
+        "domainStatus": "BOTH_DOMAINS"
+      }
+    },
+    {
+      "tag": "use_the_force",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "Use EXACT_SKILL_POLICY: direct mechanical interaction with the Use the Force skill.",
+      "controllingPolicyIds": [
+        "EXACT_SKILL_POLICY"
+      ],
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "implies": [
+          "force"
+        ],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 122,
+        "feats": 4,
+        "talents": 118,
+        "domainStatus": "BOTH_DOMAINS"
+      }
+    },
+    {
+      "tag": "vehicle",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "Direct operation, piloting, attacking with, modifying, repairing, defending, or otherwise mechanically interacting with vehicles. Do not use when vehicles appear only as an exception (\"does not apply to vehicles\", \"non-vehicle weapon\", \"not against objects or vehicles\").",
+      "controllingPolicyIds": [],
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 101,
+        "feats": 23,
+        "talents": 78,
+        "domainStatus": "BOTH_DOMAINS"
+      }
+    },
+    {
+      "tag": "visions",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "Direct visions/foresight/revelatory vision mechanics.",
+      "controllingPolicyIds": [],
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 23,
+        "feats": 0,
+        "talents": 23,
+        "domainStatus": "TALENT_ONLY"
+      }
+    },
+    {
+      "tag": "weapon_empowerment",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "Directly augments or imbues a weapon as an object, changing its offensive properties, damage, attack quality, or special capabilities. Do not use merely because the character receives a weapon-scoped bonus without altering/empowering the weapon.",
+      "controllingPolicyIds": [],
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 18,
+        "feats": 5,
+        "talents": 13,
+        "domainStatus": "BOTH_DOMAINS"
+      }
+    },
+    {
+      "tag": "weapon_specialization",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "Directly grants a specialized persistent combat benefit tied to a chosen/specific weapon or weapon group beyond mere proficiency.",
+      "controllingPolicyIds": [],
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 10,
+        "feats": 2,
+        "talents": 8,
+        "domainStatus": "BOTH_DOMAINS"
+      }
+    },
+    {
+      "tag": "weapon_training",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "Directly improves proficiency, handling penalties, attack competence, or trained use of a weapon/group.",
+      "controllingPolicyIds": [],
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 65,
+        "feats": 11,
+        "talents": 54,
+        "domainStatus": "BOTH_DOMAINS"
+      }
+    },
+    {
+      "tag": "will_defense",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "Direct interaction specifically with Will Defense.",
+      "controllingPolicyIds": [],
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 107,
+        "feats": 21,
+        "talents": 86,
+        "domainStatus": "BOTH_DOMAINS"
+      }
+    },
+    {
+      "tag": "acrobatics",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "Use EXACT_SKILL_POLICY: direct mechanical interaction with the Acrobatics skill.",
+      "controllingPolicyIds": [
+        "EXACT_SKILL_POLICY"
+      ],
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 16,
+        "feats": 10,
+        "talents": 6,
+        "domainStatus": "BOTH_DOMAINS"
+      }
+    },
+    {
+      "tag": "climb",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "Use EXACT_SKILL_POLICY: direct mechanical interaction with the Climb skill.",
+      "controllingPolicyIds": [
+        "EXACT_SKILL_POLICY"
+      ],
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 12,
+        "feats": 10,
+        "talents": 2,
+        "domainStatus": "BOTH_DOMAINS"
+      }
+    },
+    {
+      "tag": "endurance",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "Use EXACT_SKILL_POLICY: direct mechanical interaction with the Endurance skill.",
+      "controllingPolicyIds": [
+        "EXACT_SKILL_POLICY"
+      ],
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 10,
+        "feats": 9,
+        "talents": 1,
+        "domainStatus": "BOTH_DOMAINS"
+      }
+    },
+    {
+      "tag": "gather_information",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "Use EXACT_SKILL_POLICY: direct mechanical interaction with the Gather Information skill.",
+      "controllingPolicyIds": [
+        "EXACT_SKILL_POLICY"
+      ],
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 16,
+        "feats": 4,
+        "talents": 12,
+        "domainStatus": "BOTH_DOMAINS"
+      }
+    },
+    {
+      "tag": "jump",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "Use EXACT_SKILL_POLICY: direct mechanical interaction with the Jump skill.",
+      "controllingPolicyIds": [
+        "EXACT_SKILL_POLICY"
+      ],
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 12,
+        "feats": 10,
+        "talents": 2,
+        "domainStatus": "BOTH_DOMAINS"
+      }
+    },
+    {
+      "tag": "swim",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": false,
+      "definition": "Use EXACT_SKILL_POLICY: direct mechanical interaction with the Swim skill.",
+      "controllingPolicyIds": [
+        "EXACT_SKILL_POLICY"
+      ],
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 11,
+        "feats": 10,
+        "talents": 1,
+        "domainStatus": "BOTH_DOMAINS"
+      }
+    },
+    {
+      "tag": "condition_track",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": true,
+      "definition": "USE WHEN the operative mechanic directly moves a creature up or down the Condition Track; changes the number of Condition Track steps moved; prevents Condition Track movement; modifies recovery from a Condition Track state; or directly changes how a Condition Track result is applied. DO NOT USE for merely mentioning the Condition Track, Damage Threshold mechanics that do not alter Condition Track movement, or conditions unrelated to the SWSE Condition Track. No automatic implication of condition_removal, recovery, control or battlefield_control.",
+      "controllingPolicyIds": [],
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 81,
+        "feats": 15,
+        "talents": 66,
+        "domainStatus": "BOTH_DOMAINS"
+      }
+    },
+    {
+      "tag": "full_round_action",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": true,
+      "definition": "USE WHEN the operative mechanic directly costs a full-round action; grants a full-round action; changes another action into/from a full-round action; modifies what can be done during a full-round action; or restricts or changes full-round-action timing. IMPLIES action_economy. DO NOT USE merely because a normal Full Attack is mentioned; full_attack and full_round_action remain distinct.",
+      "controllingPolicyIds": [],
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "implies": [
+          "action_economy"
+        ],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 60,
+        "feats": 11,
+        "talents": 49,
+        "domainStatus": "BOTH_DOMAINS"
+      }
+    },
+    {
+      "tag": "ion",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": true,
+      "definition": "USE WHEN the operative mechanic directly interacts with ion damage; ion weapons; resistance to ion damage; enhancement of ion attacks; conversion to/from ion damage; or special consequences of ion damage. DO NOT equate ion with stun or nonlethal; those apply only when their own mechanics are present. Not for prerequisite, example, exclusion or reference.",
+      "controllingPolicyIds": [],
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 6,
+        "feats": 3,
+        "talents": 3,
+        "domainStatus": "BOTH_DOMAINS"
+      }
+    },
+    {
+      "tag": "resource_gain",
+      "definitionStatus": "OWNER_DEFINED",
+      "newInPhase3": true,
+      "definition": "Applies when a mechanic creates or grants a new spendable resource now without restoring a previously spent unit and without merely changing persistent maximum capacity (for example gaining a temporary Force Point, receiving a new expendable use, generating a temporary spendable resource). Not for recovering a spent resource, increasing permanent capacity/allotment, or merely spending a resource.",
+      "controllingPolicyIds": [],
+      "relatedDistinctTags": [],
+      "hardImplications": {
+        "implies": [],
+        "impliedBy": []
+      },
+      "usage": {
+        "records": 18,
+        "feats": 5,
+        "talents": 13,
+        "domainStatus": "BOTH_DOMAINS"
+      }
+    }
+  ]
+}

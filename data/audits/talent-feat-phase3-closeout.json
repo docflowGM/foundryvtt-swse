@@ -1,0 +1,68 @@
+{
+  "schemaVersion": "1.0",
+  "kind": "TALENT_FEAT_PHASE3_CLOSEOUT",
+  "status": "PHASE3_EXIT_GATE_PASSED",
+  "productionMutated": false,
+  "exitGate": {
+    "feats certified (353/353)": true,
+    "talents certified (1,187/1,187)": true,
+    "identities certified (1,540/1,540)": true,
+    "final vocabulary = 190": true,
+    "PASS3B_OWNER_REVIEW = 0": true,
+    "PASS3C_POLICY_VIOLATION = 0": true,
+    "PHASE3D_OWNER_DEFINITION_REQUIRED = 0": true,
+    "PARTIALLY_OWNER_DEFINED = 0": true,
+    "SOURCE_EVIDENCE_BLOCKER = 0": true,
+    "unknown tags = 0": true,
+    "active retired tags = 0": true,
+    "hard implication violations = 0": true,
+    "ontology gaps = 0": true,
+    "hard implications include the prior 10 plus full_round_action -> action_economy": true
+  },
+  "exitGatePassed": true,
+  "counts": {
+    "feats": 353,
+    "talents": 1187,
+    "identities": 1540,
+    "vocabulary": 190,
+    "tagInstancesBaseline3B": 11218,
+    "tagInstancesBeforePhase3Final": 11281,
+    "tagInstancesFinal": 11489,
+    "addsFromBaseline": 303,
+    "removesFromBaseline": 32,
+    "recordsChangedFromBaseline": 257,
+    "recordsChangedByPhase3Final": 225,
+    "phase3FinalAdds": 240,
+    "phase3FinalRemoves": 32,
+    "findingAdds": 70,
+    "findingNoChange": 126,
+    "findingRemove": 0,
+    "sourceEvidenceBlocker": 0,
+    "complianceRemovals": 6,
+    "policyConsequenceRemovals": 17,
+    "forcePointRecords": 9,
+    "forcePointFinalUse": 0,
+    "implicationAdds": 5,
+    "newTagAddsFromSweeps": 165
+  },
+  "retiredTagUse": {
+    "force-point": 0,
+    "skill-mastery": 0,
+    "balance": 0,
+    "natural_weapon": 0,
+    "entangle": 0
+  },
+  "policyViolations": [],
+  "newTagPopulations": {
+    "condition_track": 81,
+    "full_round_action": 60,
+    "ion": 6,
+    "resource_gain": 18
+  },
+  "productionFilesSha256": {
+    "packs/talents.db": "832937d451c2353da9afbd6b1f34366b293b659f24b3d09808d44ad767ee8288",
+    "packs/feats.db": "9c67242a67b209a2c3d359201beb03e512962998e6bacee6d8c3eedd4787d3e8",
+    "data/feat-catalog.json": "e7907810f492e036517822a19f45ac1242fe2ec0044e7b2ad241f858f9925eef"
+  },
+  "productionBoundaryNote": "No production file is modified by this pass; the test suite compares these files with main."
+}
