@@ -1,0 +1,2588 @@
+{
+  "schemaVersion": 2,
+  "phase": "12B",
+  "workstream": "ARCHETYPE_SEMANTIC_CURATION",
+  "status": "ROLLING_AUTHORITY_ACTIVE",
+  "authorityName": "SWSE Archetype Semantic Curation Authority",
+  "tranche": {
+    "key": "12B-SCOUT-02",
+    "label": "Finish Scout-first parents + first 5 Scout-first specializations",
+    "recordCount": 20,
+    "status": "CERTIFIED_FOR_APPLICATION",
+    "selectionRule": "Remaining 15 parent archetypes whose first foundation route is Scout, followed by the first 5 Scout-first specializations in dataset order."
+  },
+  "target": {
+    "repository": "docflowGM/foundryvtt-swse",
+    "requiredBaseHead": "e1def6aad1085b966cdd2382626fa6fbefbff9a3",
+    "runtimeFile": "data/archetypes.json",
+    "ontologyFile": "data/audits/talent-feat-phase3-final-ontology.json",
+    "frozenOntologyTagCount": 190
+  },
+  "executionContract": {
+    "mode": "EXACT_APPLICATION_ONLY",
+    "claudeMayInfer": false,
+    "instructions": [
+      "records[] is the cumulative semantic authority. For the current run, apply only IDs in currentExecution.applyOnlyTheseIds.",
+      "For each current execution ID, replace exactly the four fields under that record replace block.",
+      "Do not add, remove, rename, reorder, or reinterpret tags outside the supplied replacement arrays.",
+      "Do not propagate parent tags to specializations.",
+      "Do not curate any unlisted or non-current-execution archetype.",
+      "Do not modify mechanics, exactRefs, routes, classes, abilities, skills, talent trees, talents, feats, Force data, species data, backgrounds, narrative identity, scoring, BuildIntent, SuggestionScorer, Mentor, or UI ranking.",
+      "Do not modify the frozen 190-tag ontology.",
+      "Perform maintenanceRulings exactly as written; they are code/audit maintenance, not semantic discretion.",
+      "Run the existing Phase 12A validator and relevant tests after application.",
+      "Fail closed if currentExecution.requiredBaseHead is not an ancestor of the working branch or if any supplied tag is absent from the frozen ontology."
+    ],
+    "allowedFields": [
+      "metadata.tags.primary",
+      "metadata.tags.supporting",
+      "metadata.tags.all",
+      "metadata.tagProvenance"
+    ]
+  },
+  "curationPolicy": {
+    "primary": "Identity-defining semantic signals. A matching character should receive strong archetype evidence from these tags.",
+    "supporting": "Strongly characteristic expressions that reinforce the identity but are not required for the archetype to remain recognizable.",
+    "evidenceOrder": [
+      "narrative identity authority",
+      "signature exact mechanics",
+      "supporting exact mechanics",
+      "frozen semantic ontology"
+    ],
+    "rules": [
+      "Exact identity evidence outranks broad class access.",
+      "A foundation class route does not automatically grant that class's common tags.",
+      "Recommended feat/talent tags are evidence, not a bag of tags to copy wholesale.",
+      "Optional routes remain supporting unless the archetype identity itself requires them.",
+      "No tag may be invented outside the frozen 190-tag ontology."
+    ]
+  },
+  "records": [
+    {
+      "archetypeId": "fringer",
+      "name": "Fringer",
+      "kind": "parent",
+      "parentId": null,
+      "status": "CERTIFIED_FOR_APPLICATION",
+      "replace": {
+        "metadata.tags.primary": [
+          "exploration",
+          "perception",
+          "survivability",
+          "survival"
+        ],
+        "metadata.tags.supporting": [
+          "endurance",
+          "mechanics",
+          "mobility",
+          "pilot",
+          "repair",
+          "resilience",
+          "tech"
+        ],
+        "metadata.tags.all": [
+          "endurance",
+          "exploration",
+          "mechanics",
+          "mobility",
+          "perception",
+          "pilot",
+          "repair",
+          "resilience",
+          "survivability",
+          "survival",
+          "tech"
+        ],
+        "metadata.tagProvenance": {
+          "phase12b.curated.primary": [
+            "exploration",
+            "perception",
+            "survivability",
+            "survival"
+          ],
+          "phase12b.curated.supporting": [
+            "endurance",
+            "mechanics",
+            "mobility",
+            "pilot",
+            "repair",
+            "resilience",
+            "tech"
+          ]
+        }
+      },
+      "evidence": {
+        "identitySummary": "Frontier survivor who improvises, repairs, navigates danger, and remains functional when institutions and support are absent.",
+        "foundationClasses": [
+          "scout",
+          "scoundrel"
+        ],
+        "signatureSkills": [
+          "survival",
+          "perception"
+        ],
+        "supportingSkills": [
+          "mechanics",
+          "pilot",
+          "endurance"
+        ],
+        "signatureTalentTrees": [
+          "Saga Edition Core Rulebook|Fringer",
+          "Saga Edition Core Rulebook|Survivor"
+        ],
+        "signatureTalents": [
+          "Saga Edition Core Rulebook|Fringer|Fringe Savant",
+          "Saga Edition Core Rulebook|Survivor|Surefooted"
+        ],
+        "signatureFeats": [
+          "skill_focus"
+        ],
+        "forceAccessMode": "none"
+      },
+      "notes": []
+    },
+    {
+      "archetypeId": "scavenger",
+      "name": "Scavenger",
+      "kind": "parent",
+      "parentId": null,
+      "status": "CERTIFIED_REVISION_FOR_APPLICATION",
+      "replace": {
+        "metadata.tags.primary": [
+          "equipment",
+          "mechanics",
+          "tech"
+        ],
+        "metadata.tags.supporting": [
+          "crafting",
+          "modification",
+          "perception",
+          "repair",
+          "survivability",
+          "survival",
+          "use_computer"
+        ],
+        "metadata.tags.all": [
+          "crafting",
+          "equipment",
+          "mechanics",
+          "modification",
+          "perception",
+          "repair",
+          "survivability",
+          "survival",
+          "tech",
+          "use_computer"
+        ],
+        "metadata.tagProvenance": {
+          "phase12b.curated.primary": [
+            "equipment",
+            "mechanics",
+            "tech"
+          ],
+          "phase12b.curated.supporting": [
+            "crafting",
+            "modification",
+            "perception",
+            "repair",
+            "survivability",
+            "survival",
+            "use_computer"
+          ]
+        }
+      },
+      "evidence": {
+        "identitySummary": "Resourceful technical survivor who turns discarded material into useful equipment, machinery, shelter, or value.",
+        "foundationClasses": [
+          "scout",
+          "scoundrel"
+        ],
+        "signatureSkills": [
+          "mechanics",
+          "perception"
+        ],
+        "supportingSkills": [
+          "survival",
+          "useComputer",
+          "knowledgeTechnology"
+        ],
+        "signatureTalentTrees": [
+          "Rebellion Era Campaign Guide|Improviser",
+          "Saga Edition Core Rulebook|Fringer"
+        ],
+        "signatureTalents": [
+          "Rebellion Era Campaign Guide|Improviser|Improvised Device",
+          "Saga Edition Core Rulebook|Fringer|Fringe Savant"
+        ],
+        "signatureFeats": [
+          "skill_focus"
+        ],
+        "forceAccessMode": "none"
+      },
+      "notes": [
+        "REV-001: remove `resources`; frozen ontology meaning is spendable game resources, not salvage/material resources."
+      ]
+    },
+    {
+      "archetypeId": "bounty_hunter",
+      "name": "Bounty Hunter",
+      "kind": "parent",
+      "parentId": null,
+      "status": "CERTIFIED_FOR_APPLICATION",
+      "replace": {
+        "metadata.tags.primary": [
+          "investigation",
+          "perception",
+          "pursuit",
+          "survival",
+          "tracking"
+        ],
+        "metadata.tags.supporting": [
+          "gather_information",
+          "initiative",
+          "precision",
+          "ranged",
+          "social",
+          "stealth",
+          "targeting"
+        ],
+        "metadata.tags.all": [
+          "gather_information",
+          "initiative",
+          "investigation",
+          "perception",
+          "precision",
+          "pursuit",
+          "ranged",
+          "social",
+          "stealth",
+          "survival",
+          "targeting",
+          "tracking"
+        ],
+        "metadata.tagProvenance": {
+          "phase12b.curated.primary": [
+            "investigation",
+            "perception",
+            "pursuit",
+            "survival",
+            "tracking"
+          ],
+          "phase12b.curated.supporting": [
+            "gather_information",
+            "initiative",
+            "precision",
+            "ranged",
+            "social",
+            "stealth",
+            "targeting"
+          ]
+        }
+      },
+      "evidence": {
+        "identitySummary": "Professional quarry hunter defined by finding, following, preparing for, and ultimately confronting difficult targets.",
+        "foundationClasses": [
+          "scout",
+          "scoundrel",
+          "soldier"
+        ],
+        "signatureSkills": [
+          "perception",
+          "survival"
+        ],
+        "supportingSkills": [
+          "gatherInformation",
+          "stealth",
+          "initiative",
+          "useComputer"
+        ],
+        "signatureTalentTrees": [
+          "Saga Edition Core Rulebook|Bounty Hunter",
+          "Saga Edition Core Rulebook|Awareness"
+        ],
+        "signatureTalents": [
+          "Saga Edition Core Rulebook|Bounty Hunter|Notorious",
+          "Saga Edition Core Rulebook|Awareness|Acute Senses"
+        ],
+        "signatureFeats": [
+          "point_blank_shot",
+          "skill_focus",
+          "unwavering_resolve"
+        ],
+        "forceAccessMode": "none"
+      },
+      "notes": [
+        "Do not make a specific weapon family identity-defining; hunting/tracking/pursuit is primary and ranged combat is supporting."
+      ]
+    },
+    {
+      "archetypeId": "sector_ranger",
+      "name": "Sector Ranger",
+      "kind": "parent",
+      "parentId": null,
+      "status": "CERTIFIED_FOR_APPLICATION",
+      "replace": {
+        "metadata.tags.primary": [
+          "investigation",
+          "perception",
+          "pursuit",
+          "survival",
+          "tracking"
+        ],
+        "metadata.tags.supporting": [
+          "control",
+          "initiative",
+          "knowledge",
+          "pilot",
+          "ranged"
+        ],
+        "metadata.tags.all": [
+          "control",
+          "initiative",
+          "investigation",
+          "knowledge",
+          "perception",
+          "pilot",
+          "pursuit",
+          "ranged",
+          "survival",
+          "tracking"
+        ],
+        "metadata.tagProvenance": {
+          "phase12b.curated.primary": [
+            "investigation",
+            "perception",
+            "pursuit",
+            "survival",
+            "tracking"
+          ],
+          "phase12b.curated.supporting": [
+            "control",
+            "initiative",
+            "knowledge",
+            "pilot",
+            "ranged"
+          ]
+        }
+      },
+      "evidence": {
+        "identitySummary": "Mobile interjurisdictional lawman who investigates fugitives, follows them across worlds, and brings them under control.",
+        "foundationClasses": [
+          "scout",
+          "soldier"
+        ],
+        "signatureSkills": [
+          "perception",
+          "survival"
+        ],
+        "supportingSkills": [
+          "pilot",
+          "initiative",
+          "knowledgeBureaucracy"
+        ],
+        "signatureTalentTrees": [
+          "Force Unleashed Campaign Guide|Enforcement",
+          "Saga Edition Core Rulebook|Awareness"
+        ],
+        "signatureTalents": [
+          "Force Unleashed Campaign Guide|Enforcement|Slowing Stun",
+          "Saga Edition Core Rulebook|Awareness|Acute Senses"
+        ],
+        "signatureFeats": [
+          "skill_focus"
+        ],
+        "forceAccessMode": "none"
+      },
+      "notes": []
+    },
+    {
+      "archetypeId": "frontier_marshal",
+      "name": "Frontier Marshal",
+      "kind": "parent",
+      "parentId": null,
+      "status": "CERTIFIED_FOR_APPLICATION",
+      "replace": {
+        "metadata.tags.primary": [
+          "ally_support",
+          "leadership",
+          "perception",
+          "persuasion",
+          "support"
+        ],
+        "metadata.tags.supporting": [
+          "control",
+          "gather_information",
+          "initiative",
+          "social",
+          "survival",
+          "tactics",
+          "teamwork"
+        ],
+        "metadata.tags.all": [
+          "ally_support",
+          "control",
+          "gather_information",
+          "initiative",
+          "leadership",
+          "perception",
+          "persuasion",
+          "social",
+          "support",
+          "survival",
+          "tactics",
+          "teamwork"
+        ],
+        "metadata.tagProvenance": {
+          "phase12b.curated.primary": [
+            "ally_support",
+            "leadership",
+            "perception",
+            "persuasion",
+            "support"
+          ],
+          "phase12b.curated.supporting": [
+            "control",
+            "gather_information",
+            "initiative",
+            "social",
+            "survival",
+            "tactics",
+            "teamwork"
+          ]
+        }
+      },
+      "evidence": {
+        "identitySummary": "Local frontier authority who protects a community through presence, leadership, persuasion, coordination, and practical vigilance.",
+        "foundationClasses": [
+          "scout",
+          "soldier",
+          "noble"
+        ],
+        "signatureSkills": [
+          "perception",
+          "persuasion"
+        ],
+        "supportingSkills": [
+          "survival",
+          "initiative",
+          "gatherInformation"
+        ],
+        "signatureTalentTrees": [
+          "Force Unleashed Campaign Guide|Enforcement",
+          "Saga Edition Core Rulebook|Leadership"
+        ],
+        "signatureTalents": [
+          "Force Unleashed Campaign Guide|Enforcement|Takedown",
+          "Saga Edition Core Rulebook|Leadership|Unwavering Ally"
+        ],
+        "signatureFeats": [
+          "skill_focus",
+          "coordinated_attack"
+        ],
+        "forceAccessMode": "none"
+      },
+      "notes": [
+        "ally_support implies support under the frozen ontology; both are intentionally retained."
+      ]
+    },
+    {
+      "archetypeId": "force_hunter",
+      "name": "Force Hunter",
+      "kind": "parent",
+      "parentId": null,
+      "status": "CERTIFIED_FOR_APPLICATION",
+      "replace": {
+        "metadata.tags.primary": [
+          "anti-force",
+          "perception",
+          "pursuit",
+          "survival",
+          "tracking"
+        ],
+        "metadata.tags.supporting": [
+          "force",
+          "force_power",
+          "precision",
+          "ranged",
+          "resilience",
+          "stealth",
+          "targeting"
+        ],
+        "metadata.tags.all": [
+          "anti-force",
+          "force",
+          "force_power",
+          "perception",
+          "precision",
+          "pursuit",
+          "ranged",
+          "resilience",
+          "stealth",
+          "survival",
+          "targeting",
+          "tracking"
+        ],
+        "metadata.tagProvenance": {
+          "phase12b.curated.primary": [
+            "anti-force",
+            "perception",
+            "pursuit",
+            "survival",
+            "tracking"
+          ],
+          "phase12b.curated.supporting": [
+            "force",
+            "force_power",
+            "precision",
+            "ranged",
+            "resilience",
+            "stealth",
+            "targeting"
+          ]
+        }
+      },
+      "evidence": {
+        "identitySummary": "Specialist who treats Force-users as quarry and builds tactics around detecting, surviving, pursuing, and countering Force advantages.",
+        "foundationClasses": [
+          "scout",
+          "soldier",
+          "jedi"
+        ],
+        "signatureSkills": [
+          "perception",
+          "survival"
+        ],
+        "supportingSkills": [
+          "stealth",
+          "knowledgeGalacticLore"
+        ],
+        "signatureTalentTrees": [
+          "Legacy Era Campaign Guide|Force Hunter",
+          "Saga Edition Core Rulebook|Bounty Hunter"
+        ],
+        "signatureTalents": [
+          "Legacy Era Campaign Guide|Force Hunter|Telekinetic Resistance",
+          "Saga Edition Core Rulebook|Bounty Hunter|Hunter's Mark"
+        ],
+        "signatureFeats": [
+          "force_training",
+          "skill_focus",
+          "point_blank_shot"
+        ],
+        "forceAccessMode": "optional"
+      },
+      "notes": [
+        "Force access is OPTIONAL. 'force' and 'force_power' are supporting only; do not treat Force sensitivity as required for the archetype."
+      ]
+    },
+    {
+      "archetypeId": "sniper",
+      "name": "Sniper",
+      "kind": "parent",
+      "parentId": null,
+      "status": "CERTIFIED_FOR_APPLICATION",
+      "replace": {
+        "metadata.tags.primary": [
+          "precision",
+          "ranged",
+          "setup",
+          "sniper",
+          "targeting"
+        ],
+        "metadata.tags.supporting": [
+          "ambush",
+          "concealment",
+          "control",
+          "initiative",
+          "perception",
+          "stealth"
+        ],
+        "metadata.tags.all": [
+          "ambush",
+          "concealment",
+          "control",
+          "initiative",
+          "perception",
+          "precision",
+          "ranged",
+          "setup",
+          "sniper",
+          "stealth",
+          "targeting"
+        ],
+        "metadata.tagProvenance": {
+          "phase12b.curated.primary": [
+            "precision",
+            "ranged",
+            "setup",
+            "sniper",
+            "targeting"
+          ],
+          "phase12b.curated.supporting": [
+            "ambush",
+            "concealment",
+            "control",
+            "initiative",
+            "perception",
+            "stealth"
+          ]
+        }
+      },
+      "evidence": {
+        "identitySummary": "Deliberate long-range combatant who converts preparation, concealment, target selection, and precision into decisive shots.",
+        "foundationClasses": [
+          "scout",
+          "soldier"
+        ],
+        "signatureSkills": [
+          "perception",
+          "stealth"
+        ],
+        "supportingSkills": [
+          "initiative",
+          "survival"
+        ],
+        "signatureTalentTrees": [
+          "Saga Edition Core Rulebook|Awareness",
+          "Saga Edition Core Rulebook|Camouflage"
+        ],
+        "signatureTalents": [
+          "Saga Edition Core Rulebook|Awareness|Acute Senses",
+          "Saga Edition Core Rulebook|Camouflage|Slip By"
+        ],
+        "signatureFeats": [
+          "point_blank_shot",
+          "careful_shot",
+          "skill_focus"
+        ],
+        "forceAccessMode": "none"
+      },
+      "notes": []
+    },
+    {
+      "archetypeId": "saboteur",
+      "name": "Saboteur",
+      "kind": "parent",
+      "parentId": null,
+      "status": "CERTIFIED_FOR_APPLICATION",
+      "replace": {
+        "metadata.tags.primary": [
+          "infiltration",
+          "mechanics",
+          "stealth",
+          "tech",
+          "trap"
+        ],
+        "metadata.tags.supporting": [
+          "burst_damage",
+          "cover",
+          "crafting",
+          "equipment",
+          "setup",
+          "use_computer"
+        ],
+        "metadata.tags.all": [
+          "burst_damage",
+          "cover",
+          "crafting",
+          "equipment",
+          "infiltration",
+          "mechanics",
+          "setup",
+          "stealth",
+          "tech",
+          "trap",
+          "use_computer"
+        ],
+        "metadata.tagProvenance": {
+          "phase12b.curated.primary": [
+            "infiltration",
+            "mechanics",
+            "stealth",
+            "tech",
+            "trap"
+          ],
+          "phase12b.curated.supporting": [
+            "burst_damage",
+            "cover",
+            "crafting",
+            "equipment",
+            "setup",
+            "use_computer"
+          ]
+        }
+      },
+      "evidence": {
+        "identitySummary": "Covert technical operator who infiltrates protected spaces and disables, rigs, or destroys systems through engineering and prepared sabotage.",
+        "foundationClasses": [
+          "scout",
+          "scoundrel"
+        ],
+        "signatureSkills": [
+          "mechanics",
+          "stealth"
+        ],
+        "supportingSkills": [
+          "useComputer",
+          "perception",
+          "knowledgeTechnology"
+        ],
+        "signatureTalentTrees": [
+          "Force Unleashed Campaign Guide|Sabotage",
+          "Saga Edition Core Rulebook|Slicer"
+        ],
+        "signatureTalents": [
+          "Force Unleashed Campaign Guide|Sabotage|Skilled Demolitionist",
+          "Saga Edition Core Rulebook|Slicer|Gimmick"
+        ],
+        "signatureFeats": [
+          "advantageous_cover"
+        ],
+        "forceAccessMode": "none"
+      },
+      "notes": []
+    },
+    {
+      "archetypeId": "partisan",
+      "name": "Partisan",
+      "kind": "parent",
+      "parentId": null,
+      "status": "CERTIFIED_FOR_APPLICATION",
+      "replace": {
+        "metadata.tags.primary": [
+          "ambush",
+          "infiltration",
+          "stealth",
+          "survival",
+          "tactics"
+        ],
+        "metadata.tags.supporting": [
+          "deception",
+          "evasion",
+          "initiative",
+          "perception",
+          "social"
+        ],
+        "metadata.tags.all": [
+          "ambush",
+          "deception",
+          "evasion",
+          "infiltration",
+          "initiative",
+          "perception",
+          "social",
+          "stealth",
+          "survival",
+          "tactics"
+        ],
+        "metadata.tagProvenance": {
+          "phase12b.curated.primary": [
+            "ambush",
+            "infiltration",
+            "stealth",
+            "survival",
+            "tactics"
+          ],
+          "phase12b.curated.supporting": [
+            "deception",
+            "evasion",
+            "initiative",
+            "perception",
+            "social"
+          ]
+        }
+      },
+      "evidence": {
+        "identitySummary": "Irregular fighter in occupied territory who survives through concealment, ambush, local knowledge, infiltration, and guerrilla tactics.",
+        "foundationClasses": [
+          "scout",
+          "soldier",
+          "scoundrel"
+        ],
+        "signatureSkills": [
+          "stealth",
+          "survival"
+        ],
+        "supportingSkills": [
+          "perception",
+          "deception",
+          "initiative"
+        ],
+        "signatureTalentTrees": [
+          "Galaxy of Intrigue|Revolutionary",
+          "Scum and Villainy|Outlaw"
+        ],
+        "signatureTalents": [
+          "Galaxy of Intrigue|Revolutionary|Revolutionary Rhetoric",
+          "Scum and Villainy|Outlaw|Preternatural Senses"
+        ],
+        "signatureFeats": [
+          "skill_focus"
+        ],
+        "forceAccessMode": "none"
+      },
+      "notes": []
+    },
+    {
+      "archetypeId": "pilot",
+      "name": "Pilot",
+      "kind": "parent",
+      "parentId": null,
+      "status": "CERTIFIED_FOR_APPLICATION",
+      "replace": {
+        "metadata.tags.primary": [
+          "pilot",
+          "pursuit",
+          "space",
+          "vehicle"
+        ],
+        "metadata.tags.supporting": [
+          "initiative",
+          "mechanics",
+          "mobility",
+          "perception",
+          "tactics",
+          "teamwork"
+        ],
+        "metadata.tags.all": [
+          "initiative",
+          "mechanics",
+          "mobility",
+          "perception",
+          "pilot",
+          "pursuit",
+          "space",
+          "tactics",
+          "teamwork",
+          "vehicle"
+        ],
+        "metadata.tagProvenance": {
+          "phase12b.curated.primary": [
+            "pilot",
+            "pursuit",
+            "space",
+            "vehicle"
+          ],
+          "phase12b.curated.supporting": [
+            "initiative",
+            "mechanics",
+            "mobility",
+            "perception",
+            "tactics",
+            "teamwork"
+          ]
+        }
+      },
+      "evidence": {
+        "identitySummary": "Vehicle and starship operator whose identity centers on control of the craft, maneuver, pursuit, awareness, and coordinated flight.",
+        "foundationClasses": [
+          "scout",
+          "scoundrel"
+        ],
+        "signatureSkills": [
+          "pilot"
+        ],
+        "supportingSkills": [
+          "perception",
+          "initiative",
+          "mechanics"
+        ],
+        "signatureTalentTrees": [
+          "Saga Edition Core Rulebook|Expert Pilot",
+          "Saga Edition Core Rulebook|Spacer"
+        ],
+        "signatureTalents": [
+          "Saga Edition Core Rulebook|Expert Pilot|Relentless Pursuit",
+          "Saga Edition Core Rulebook|Spacer|Spacehound"
+        ],
+        "signatureFeats": [
+          "vehicular_combat",
+          "skill_focus"
+        ],
+        "forceAccessMode": "none"
+      },
+      "notes": [
+        "Pilot is broader than Ace Pilot; keep vehicle/pilot/pursuit/space primary without importing dogfighter-only tags."
+      ]
+    },
+    {
+      "archetypeId": "astrogator",
+      "name": "Astrogator",
+      "kind": "parent",
+      "parentId": null,
+      "status": "CERTIFIED_FOR_APPLICATION",
+      "replace": {
+        "metadata.tags.primary": [
+          "exploration",
+          "pilot",
+          "space",
+          "use_computer"
+        ],
+        "metadata.tags.supporting": [
+          "knowledge",
+          "perception",
+          "vehicle"
+        ],
+        "metadata.tags.all": [
+          "exploration",
+          "knowledge",
+          "perception",
+          "pilot",
+          "space",
+          "use_computer",
+          "vehicle"
+        ],
+        "metadata.tagProvenance": {
+          "phase12b.curated.primary": [
+            "exploration",
+            "pilot",
+            "space",
+            "use_computer"
+          ],
+          "phase12b.curated.supporting": [
+            "knowledge",
+            "perception",
+            "vehicle"
+          ]
+        }
+      },
+      "evidence": {
+        "identitySummary": "Hyperspace navigation specialist defined by plotting routes, operating in space, piloting, and computer-assisted astrogation.",
+        "foundationClasses": [
+          "scout",
+          "scoundrel",
+          "noble"
+        ],
+        "signatureSkills": [
+          "useComputer",
+          "pilot"
+        ],
+        "supportingSkills": [
+          "knowledgeGalacticLore",
+          "perception"
+        ],
+        "signatureTalentTrees": [
+          "Knights of the Old Republic Campaign Guide|Hyperspace Explorer",
+          "Saga Edition Core Rulebook|Spacer"
+        ],
+        "signatureTalents": [
+          "Knights of the Old Republic Campaign Guide|Hyperspace Explorer|Deep-Space Gambit",
+          "Saga Edition Core Rulebook|Spacer|Spacehound"
+        ],
+        "signatureFeats": [
+          "skill_focus",
+          "vehicular_combat"
+        ],
+        "forceAccessMode": "none"
+      },
+      "notes": []
+    },
+    {
+      "archetypeId": "racer",
+      "name": "Racer",
+      "kind": "parent",
+      "parentId": null,
+      "status": "CERTIFIED_FOR_APPLICATION",
+      "replace": {
+        "metadata.tags.primary": [
+          "initiative",
+          "pilot",
+          "pursuit",
+          "vehicle"
+        ],
+        "metadata.tags.supporting": [
+          "mobility",
+          "movement",
+          "perception",
+          "space"
+        ],
+        "metadata.tags.all": [
+          "initiative",
+          "mobility",
+          "movement",
+          "perception",
+          "pilot",
+          "pursuit",
+          "space",
+          "vehicle"
+        ],
+        "metadata.tagProvenance": {
+          "phase12b.curated.primary": [
+            "initiative",
+            "pilot",
+            "pursuit",
+            "vehicle"
+          ],
+          "phase12b.curated.supporting": [
+            "mobility",
+            "movement",
+            "perception",
+            "space"
+          ]
+        }
+      },
+      "evidence": {
+        "identitySummary": "Competitive vehicle pilot whose identity is speed, fast reactions, pursuit, maneuver, and winning dangerous races.",
+        "foundationClasses": [
+          "scout",
+          "scoundrel"
+        ],
+        "signatureSkills": [
+          "pilot",
+          "initiative"
+        ],
+        "supportingSkills": [
+          "perception",
+          "stealth"
+        ],
+        "signatureTalentTrees": [
+          "Saga Edition Core Rulebook|Expert Pilot",
+          "Knights of the Old Republic Campaign Guide|Run and Gun"
+        ],
+        "signatureTalents": [
+          "Saga Edition Core Rulebook|Expert Pilot|Relentless Pursuit",
+          "Knights of the Old Republic Campaign Guide|Run and Gun|Slippery Strike"
+        ],
+        "signatureFeats": [
+          "vehicular_combat",
+          "a_few_maneuvers"
+        ],
+        "forceAccessMode": "none"
+      },
+      "notes": []
+    },
+    {
+      "archetypeId": "disaster_responder",
+      "name": "Disaster Responder",
+      "kind": "parent",
+      "parentId": null,
+      "status": "CERTIFIED_FOR_APPLICATION",
+      "replace": {
+        "metadata.tags.primary": [
+          "ally_support",
+          "recovery",
+          "support",
+          "survivability",
+          "treat_injury"
+        ],
+        "metadata.tags.supporting": [
+          "endurance",
+          "healing",
+          "mechanics",
+          "medical",
+          "perception",
+          "repair",
+          "survival"
+        ],
+        "metadata.tags.all": [
+          "ally_support",
+          "endurance",
+          "healing",
+          "mechanics",
+          "medical",
+          "perception",
+          "recovery",
+          "repair",
+          "support",
+          "survivability",
+          "survival",
+          "treat_injury"
+        ],
+        "metadata.tagProvenance": {
+          "phase12b.curated.primary": [
+            "ally_support",
+            "recovery",
+            "support",
+            "survivability",
+            "treat_injury"
+          ],
+          "phase12b.curated.supporting": [
+            "endurance",
+            "healing",
+            "mechanics",
+            "medical",
+            "perception",
+            "repair",
+            "survival"
+          ]
+        }
+      },
+      "evidence": {
+        "identitySummary": "Emergency specialist who enters catastrophic environments to stabilize people, systems, and situations under extreme pressure.",
+        "foundationClasses": [
+          "scout",
+          "soldier",
+          "noble"
+        ],
+        "signatureSkills": [
+          "perception",
+          "treatInjury"
+        ],
+        "supportingSkills": [
+          "survival",
+          "endurance",
+          "mechanics"
+        ],
+        "signatureTalentTrees": [
+          "Saga Edition Core Rulebook|Survivor",
+          "Force Unleashed Campaign Guide|Advanced Medicine"
+        ],
+        "signatureTalents": [
+          "Saga Edition Core Rulebook|Survivor|Extreme Effort",
+          "Force Unleashed Campaign Guide|Advanced Medicine|Bring Them Back"
+        ],
+        "signatureFeats": [
+          "surgical_expertise"
+        ],
+        "forceAccessMode": "none"
+      },
+      "notes": []
+    },
+    {
+      "archetypeId": "explorer",
+      "name": "Explorer",
+      "kind": "parent",
+      "parentId": null,
+      "status": "CERTIFIED_FOR_APPLICATION",
+      "replace": {
+        "metadata.tags.primary": [
+          "exploration",
+          "perception",
+          "survival"
+        ],
+        "metadata.tags.supporting": [
+          "endurance",
+          "knowledge",
+          "mobility",
+          "pilot",
+          "space",
+          "vehicle"
+        ],
+        "metadata.tags.all": [
+          "endurance",
+          "exploration",
+          "knowledge",
+          "mobility",
+          "perception",
+          "pilot",
+          "space",
+          "survival",
+          "vehicle"
+        ],
+        "metadata.tagProvenance": {
+          "phase12b.curated.primary": [
+            "exploration",
+            "perception",
+            "survival"
+          ],
+          "phase12b.curated.supporting": [
+            "endurance",
+            "knowledge",
+            "mobility",
+            "pilot",
+            "space",
+            "vehicle"
+          ]
+        }
+      },
+      "evidence": {
+        "identitySummary": "Unknown-region and expedition specialist whose identity is discovery, navigation through dangerous environments, awareness, and survival.",
+        "foundationClasses": [
+          "scout",
+          "noble"
+        ],
+        "signatureSkills": [
+          "survival",
+          "perception"
+        ],
+        "supportingSkills": [
+          "knowledgeGalacticLore",
+          "pilot",
+          "endurance"
+        ],
+        "signatureTalentTrees": [
+          "Knights of the Old Republic Campaign Guide|Hyperspace Explorer",
+          "Unknown Regions|Master Scout"
+        ],
+        "signatureTalents": [
+          "Knights of the Old Republic Campaign Guide|Hyperspace Explorer|Deep-Space Gambit"
+        ],
+        "signatureFeats": [
+          "skill_focus",
+          "wilderness_first_aid"
+        ],
+        "forceAccessMode": "none"
+      },
+      "notes": []
+    },
+    {
+      "archetypeId": "pathfinder",
+      "name": "Pathfinder",
+      "kind": "parent",
+      "parentId": null,
+      "status": "CERTIFIED_FOR_APPLICATION",
+      "replace": {
+        "metadata.tags.primary": [
+          "exploration",
+          "mobility",
+          "perception",
+          "survival"
+        ],
+        "metadata.tags.supporting": [
+          "endurance",
+          "evasion",
+          "stealth",
+          "support",
+          "survivability"
+        ],
+        "metadata.tags.all": [
+          "endurance",
+          "evasion",
+          "exploration",
+          "mobility",
+          "perception",
+          "stealth",
+          "support",
+          "survivability",
+          "survival"
+        ],
+        "metadata.tagProvenance": {
+          "phase12b.curated.primary": [
+            "exploration",
+            "mobility",
+            "perception",
+            "survival"
+          ],
+          "phase12b.curated.supporting": [
+            "endurance",
+            "evasion",
+            "stealth",
+            "support",
+            "survivability"
+          ]
+        }
+      },
+      "evidence": {
+        "identitySummary": "Route-finding specialist who gets a group through hostile terrain by identifying hazards, choosing paths, and surviving ahead of the main body.",
+        "foundationClasses": [
+          "scout"
+        ],
+        "signatureSkills": [
+          "survival",
+          "perception"
+        ],
+        "supportingSkills": [
+          "stealth",
+          "pilot",
+          "endurance"
+        ],
+        "signatureTalentTrees": [
+          "Rebellion Era Campaign Guide|Pathfinder",
+          "Saga Edition Core Rulebook|Awareness"
+        ],
+        "signatureTalents": [
+          "Rebellion Era Campaign Guide|Pathfinder|Safe Zone",
+          "Saga Edition Core Rulebook|Awareness|Acute Senses"
+        ],
+        "signatureFeats": [
+          "skill_focus",
+          "wilderness_first_aid"
+        ],
+        "forceAccessMode": "none"
+      },
+      "notes": []
+    },
+    {
+      "archetypeId": "survivalist",
+      "name": "Survivalist",
+      "kind": "parent",
+      "parentId": null,
+      "status": "CERTIFIED_FOR_APPLICATION",
+      "replace": {
+        "metadata.tags.primary": [
+          "endurance",
+          "resilience",
+          "survivability",
+          "survival"
+        ],
+        "metadata.tags.supporting": [
+          "climb",
+          "mobility",
+          "perception",
+          "recovery",
+          "swim"
+        ],
+        "metadata.tags.all": [
+          "climb",
+          "endurance",
+          "mobility",
+          "perception",
+          "recovery",
+          "resilience",
+          "survivability",
+          "survival",
+          "swim"
+        ],
+        "metadata.tagProvenance": {
+          "phase12b.curated.primary": [
+            "endurance",
+            "resilience",
+            "survivability",
+            "survival"
+          ],
+          "phase12b.curated.supporting": [
+            "climb",
+            "mobility",
+            "perception",
+            "recovery",
+            "swim"
+          ]
+        }
+      },
+      "evidence": {
+        "identitySummary": "Self-reliant wilderness survivor defined by endurance, resistance to hardship, environmental competence, and staying alive without infrastructure.",
+        "foundationClasses": [
+          "scout"
+        ],
+        "signatureSkills": [
+          "survival",
+          "endurance"
+        ],
+        "supportingSkills": [
+          "perception",
+          "climb",
+          "swim"
+        ],
+        "signatureTalentTrees": [
+          "Saga Edition Core Rulebook|Survivor",
+          "Unknown Regions|Master Scout"
+        ],
+        "signatureTalents": [
+          "Saga Edition Core Rulebook|Survivor|Surefooted"
+        ],
+        "signatureFeats": [
+          "skill_focus"
+        ],
+        "forceAccessMode": "none"
+      },
+      "notes": []
+    },
+    {
+      "archetypeId": "search_and_rescue_specialist",
+      "name": "Search-and-Rescue Specialist",
+      "kind": "parent",
+      "parentId": null,
+      "status": "CERTIFIED_FOR_APPLICATION",
+      "replace": {
+        "metadata.tags.primary": [
+          "ally_support",
+          "perception",
+          "recovery",
+          "support",
+          "survival",
+          "tracking"
+        ],
+        "metadata.tags.supporting": [
+          "endurance",
+          "healing",
+          "medical",
+          "pilot",
+          "survivability",
+          "treat_injury"
+        ],
+        "metadata.tags.all": [
+          "ally_support",
+          "endurance",
+          "healing",
+          "medical",
+          "perception",
+          "pilot",
+          "recovery",
+          "support",
+          "survivability",
+          "survival",
+          "tracking",
+          "treat_injury"
+        ],
+        "metadata.tagProvenance": {
+          "phase12b.curated.primary": [
+            "ally_support",
+            "perception",
+            "recovery",
+            "support",
+            "survival",
+            "tracking"
+          ],
+          "phase12b.curated.supporting": [
+            "endurance",
+            "healing",
+            "medical",
+            "pilot",
+            "survivability",
+            "treat_injury"
+          ]
+        }
+      },
+      "evidence": {
+        "identitySummary": "Search-and-rescue specialist who locates missing people in dangerous environments and gets them back alive.",
+        "foundationClasses": [
+          "scout",
+          "soldier"
+        ],
+        "signatureSkills": [
+          "survival",
+          "perception"
+        ],
+        "supportingSkills": [
+          "treatInjury",
+          "pilot",
+          "endurance"
+        ],
+        "signatureTalentTrees": [
+          "Rebellion Era Campaign Guide|Pathfinder",
+          "Force Unleashed Campaign Guide|Advanced Medicine"
+        ],
+        "signatureTalents": [
+          "Rebellion Era Campaign Guide|Pathfinder|Bunker Blaster",
+          "Force Unleashed Campaign Guide|Advanced Medicine|Steady Under Pressure"
+        ],
+        "signatureFeats": [
+          "skill_focus"
+        ],
+        "forceAccessMode": "none"
+      },
+      "notes": []
+    },
+    {
+      "archetypeId": "first_contact_specialist",
+      "name": "First-Contact Specialist",
+      "kind": "parent",
+      "parentId": null,
+      "status": "CERTIFIED_FOR_APPLICATION",
+      "replace": {
+        "metadata.tags.primary": [
+          "exploration",
+          "knowledge",
+          "persuasion",
+          "social"
+        ],
+        "metadata.tags.supporting": [
+          "gather_information",
+          "perception",
+          "support"
+        ],
+        "metadata.tags.all": [
+          "exploration",
+          "gather_information",
+          "knowledge",
+          "perception",
+          "persuasion",
+          "social",
+          "support"
+        ],
+        "metadata.tagProvenance": {
+          "phase12b.curated.primary": [
+            "exploration",
+            "knowledge",
+            "persuasion",
+            "social"
+          ],
+          "phase12b.curated.supporting": [
+            "gather_information",
+            "perception",
+            "support"
+          ]
+        }
+      },
+      "evidence": {
+        "identitySummary": "Exploration-facing cultural and diplomatic specialist who handles encounters with unfamiliar peoples through knowledge, observation, and social competence.",
+        "foundationClasses": [
+          "scout",
+          "noble"
+        ],
+        "signatureSkills": [
+          "persuasion",
+          "knowledgeSocialSciences"
+        ],
+        "supportingSkills": [
+          "perception",
+          "knowledgeGalacticLore",
+          "gatherInformation"
+        ],
+        "signatureTalentTrees": [
+          "Unknown Regions|Master Scout",
+          "Galaxy of Intrigue|Skill Challenge"
+        ],
+        "signatureTalents": [
+          "Galaxy of Intrigue|Skill Challenge|Learn from Mistakes"
+        ],
+        "signatureFeats": [
+          "skill_focus"
+        ],
+        "forceAccessMode": "none"
+      },
+      "notes": []
+    },
+    {
+      "archetypeId": "galactic_archaeologist",
+      "name": "Galactic Archaeologist",
+      "kind": "parent",
+      "parentId": null,
+      "status": "CERTIFIED_FOR_APPLICATION",
+      "replace": {
+        "metadata.tags.primary": [
+          "exploration",
+          "investigation",
+          "knowledge",
+          "perception"
+        ],
+        "metadata.tags.supporting": [
+          "survival",
+          "use_computer"
+        ],
+        "metadata.tags.all": [
+          "exploration",
+          "investigation",
+          "knowledge",
+          "perception",
+          "survival",
+          "use_computer"
+        ],
+        "metadata.tagProvenance": {
+          "phase12b.curated.primary": [
+            "exploration",
+            "investigation",
+            "knowledge",
+            "perception"
+          ],
+          "phase12b.curated.supporting": [
+            "survival",
+            "use_computer"
+          ]
+        }
+      },
+      "evidence": {
+        "identitySummary": "Scholar-adventurer who investigates ruins, lost civilizations, artifacts, and forgotten history in hazardous field conditions.",
+        "foundationClasses": [
+          "scout",
+          "noble"
+        ],
+        "signatureSkills": [
+          "knowledgeGalacticLore",
+          "perception"
+        ],
+        "supportingSkills": [
+          "knowledgeSocialSciences",
+          "survival",
+          "useComputer"
+        ],
+        "signatureTalentTrees": [
+          "Knights of the Old Republic Campaign Guide|Hyperspace Explorer",
+          "Galaxy of Intrigue|Superior Skills"
+        ],
+        "signatureTalents": [
+          "Knights of the Old Republic Campaign Guide|Hyperspace Explorer|Deep-Space Gambit",
+          "Galaxy of Intrigue|Superior Skills|Reliable Boon"
+        ],
+        "signatureFeats": [
+          "skill_focus"
+        ],
+        "forceAccessMode": "none"
+      },
+      "notes": []
+    },
+    {
+      "archetypeId": "prospector",
+      "name": "Prospector",
+      "kind": "parent",
+      "parentId": null,
+      "status": "CERTIFIED_FOR_APPLICATION",
+      "replace": {
+        "metadata.tags.primary": [
+          "exploration",
+          "perception",
+          "survival"
+        ],
+        "metadata.tags.supporting": [
+          "endurance",
+          "knowledge",
+          "mechanics",
+          "mobility"
+        ],
+        "metadata.tags.all": [
+          "endurance",
+          "exploration",
+          "knowledge",
+          "mechanics",
+          "mobility",
+          "perception",
+          "survival"
+        ],
+        "metadata.tagProvenance": {
+          "phase12b.curated.primary": [
+            "exploration",
+            "perception",
+            "survival"
+          ],
+          "phase12b.curated.supporting": [
+            "endurance",
+            "knowledge",
+            "mechanics",
+            "mobility"
+          ]
+        }
+      },
+      "evidence": {
+        "identitySummary": "Frontier seeker who locates valuable deposits and claims in dangerous places through fieldcraft, observation, and technical competence.",
+        "foundationClasses": [
+          "scout",
+          "scoundrel"
+        ],
+        "signatureSkills": [
+          "survival",
+          "perception"
+        ],
+        "supportingSkills": [
+          "mechanics",
+          "knowledgePhysicalSciences",
+          "endurance"
+        ],
+        "signatureTalentTrees": [
+          "Saga Edition Core Rulebook|Fringer",
+          "Rebellion Era Campaign Guide|Improviser"
+        ],
+        "signatureTalents": [
+          "Saga Edition Core Rulebook|Fringer|Long Stride",
+          "Rebellion Era Campaign Guide|Improviser|Improvised Device"
+        ],
+        "signatureFeats": [
+          "skill_focus"
+        ],
+        "forceAccessMode": "none"
+      },
+      "notes": [
+        "Do not use `resources`: in the frozen ontology that tag means spendable game resources, not mineral deposits or salvage claims."
+      ]
+    },
+    {
+      "archetypeId": "naturalist",
+      "name": "Naturalist",
+      "kind": "parent",
+      "parentId": null,
+      "status": "CERTIFIED_FOR_APPLICATION",
+      "replace": {
+        "metadata.tags.primary": [
+          "exploration",
+          "knowledge",
+          "perception",
+          "survival"
+        ],
+        "metadata.tags.supporting": [
+          "beast",
+          "treat_injury"
+        ],
+        "metadata.tags.all": [
+          "beast",
+          "exploration",
+          "knowledge",
+          "perception",
+          "survival",
+          "treat_injury"
+        ],
+        "metadata.tagProvenance": {
+          "phase12b.curated.primary": [
+            "exploration",
+            "knowledge",
+            "perception",
+            "survival"
+          ],
+          "phase12b.curated.supporting": [
+            "beast",
+            "treat_injury"
+          ]
+        }
+      },
+      "evidence": {
+        "identitySummary": "Field observer who studies living environments, species, habitats, and ecological conditions through exploration and practical wilderness expertise.",
+        "foundationClasses": [
+          "scout",
+          "noble"
+        ],
+        "signatureSkills": [
+          "knowledgeLifeSciences",
+          "survival"
+        ],
+        "supportingSkills": [
+          "perception",
+          "treatInjury"
+        ],
+        "signatureTalentTrees": [
+          "Unknown Regions|Master Scout",
+          "Galaxy of Intrigue|Superior Skills"
+        ],
+        "signatureTalents": [
+          "Galaxy of Intrigue|Superior Skills|Assured Skill"
+        ],
+        "signatureFeats": [
+          "skill_focus"
+        ],
+        "forceAccessMode": "none"
+      },
+      "notes": []
+    },
+    {
+      "archetypeId": "colony_pioneer",
+      "name": "Colony Pioneer",
+      "kind": "parent",
+      "parentId": null,
+      "status": "CERTIFIED_FOR_APPLICATION",
+      "replace": {
+        "metadata.tags.primary": [
+          "crafting",
+          "mechanics",
+          "support",
+          "survival"
+        ],
+        "metadata.tags.supporting": [
+          "ally_support",
+          "endurance",
+          "leadership",
+          "repair",
+          "survivability",
+          "tech"
+        ],
+        "metadata.tags.all": [
+          "ally_support",
+          "crafting",
+          "endurance",
+          "leadership",
+          "mechanics",
+          "repair",
+          "support",
+          "survivability",
+          "survival",
+          "tech"
+        ],
+        "metadata.tagProvenance": {
+          "phase12b.curated.primary": [
+            "crafting",
+            "mechanics",
+            "support",
+            "survival"
+          ],
+          "phase12b.curated.supporting": [
+            "ally_support",
+            "endurance",
+            "leadership",
+            "repair",
+            "survivability",
+            "tech"
+          ]
+        }
+      },
+      "evidence": {
+        "identitySummary": "Settlement builder who creates a functioning community where infrastructure is weak or absent, combining survival, construction, repair, and mutual support.",
+        "foundationClasses": [
+          "scout",
+          "noble",
+          "soldier"
+        ],
+        "signatureSkills": [
+          "survival",
+          "mechanics"
+        ],
+        "supportingSkills": [
+          "perception",
+          "endurance",
+          "knowledgeLifeSciences"
+        ],
+        "signatureTalentTrees": [
+          "Saga Edition Core Rulebook|Survivor",
+          "Rebellion Era Campaign Guide|Pathfinder"
+        ],
+        "signatureTalents": [
+          "Saga Edition Core Rulebook|Survivor|Surefooted",
+          "Rebellion Era Campaign Guide|Pathfinder|Escort Fighter"
+        ],
+        "signatureFeats": [
+          "skill_focus"
+        ],
+        "forceAccessMode": "none"
+      },
+      "notes": []
+    },
+    {
+      "archetypeId": "beast_hunter",
+      "name": "Beast Hunter",
+      "kind": "parent",
+      "parentId": null,
+      "status": "CERTIFIED_FOR_APPLICATION",
+      "replace": {
+        "metadata.tags.primary": [
+          "beast",
+          "perception",
+          "pursuit",
+          "survival",
+          "tracking"
+        ],
+        "metadata.tags.supporting": [
+          "endurance",
+          "initiative",
+          "precision",
+          "ranged",
+          "stealth",
+          "targeting"
+        ],
+        "metadata.tags.all": [
+          "beast",
+          "endurance",
+          "initiative",
+          "perception",
+          "precision",
+          "pursuit",
+          "ranged",
+          "stealth",
+          "survival",
+          "targeting",
+          "tracking"
+        ],
+        "metadata.tagProvenance": {
+          "phase12b.curated.primary": [
+            "beast",
+            "perception",
+            "pursuit",
+            "survival",
+            "tracking"
+          ],
+          "phase12b.curated.supporting": [
+            "endurance",
+            "initiative",
+            "precision",
+            "ranged",
+            "stealth",
+            "targeting"
+          ]
+        }
+      },
+      "evidence": {
+        "identitySummary": "Hunter specialized in locating, pursuing, and confronting dangerous creatures in their own environments.",
+        "foundationClasses": [
+          "scout",
+          "soldier"
+        ],
+        "signatureSkills": [
+          "survival",
+          "perception"
+        ],
+        "supportingSkills": [
+          "stealth",
+          "initiative",
+          "endurance"
+        ],
+        "signatureTalentTrees": [
+          "Saga Edition Core Rulebook|Bounty Hunter",
+          "Saga Edition Core Rulebook|Awareness"
+        ],
+        "signatureTalents": [
+          "Saga Edition Core Rulebook|Bounty Hunter|Hunter's Mark",
+          "Saga Edition Core Rulebook|Awareness|Acute Senses"
+        ],
+        "signatureFeats": [
+          "skill_focus",
+          "point_blank_shot"
+        ],
+        "forceAccessMode": "none"
+      },
+      "notes": []
+    },
+    {
+      "archetypeId": "beast_handler",
+      "name": "Beast Handler",
+      "kind": "parent",
+      "parentId": null,
+      "status": "CERTIFIED_FOR_APPLICATION",
+      "replace": {
+        "metadata.tags.primary": [
+          "beast",
+          "perception",
+          "survival"
+        ],
+        "metadata.tags.supporting": [
+          "beast_companion",
+          "persuasion",
+          "ride",
+          "support"
+        ],
+        "metadata.tags.all": [
+          "beast",
+          "beast_companion",
+          "perception",
+          "persuasion",
+          "ride",
+          "support",
+          "survival"
+        ],
+        "metadata.tagProvenance": {
+          "phase12b.curated.primary": [
+            "beast",
+            "perception",
+            "survival"
+          ],
+          "phase12b.curated.supporting": [
+            "beast_companion",
+            "persuasion",
+            "ride",
+            "support"
+          ]
+        }
+      },
+      "evidence": {
+        "identitySummary": "Animal specialist who works with dangerous creatures through familiarity, training, control, care, transport, or partnership.",
+        "foundationClasses": [
+          "scout",
+          "noble"
+        ],
+        "signatureSkills": [
+          "survival",
+          "perception"
+        ],
+        "supportingSkills": [
+          "ride",
+          "persuasion"
+        ],
+        "signatureTalentTrees": [
+          "Unknown Regions|Master Scout",
+          "Saga Edition Core Rulebook|Survivor"
+        ],
+        "signatureTalents": [
+          "Saga Edition Core Rulebook|Survivor|Surefooted"
+        ],
+        "signatureFeats": [
+          "skill_focus"
+        ],
+        "forceAccessMode": "none"
+      },
+      "notes": [
+        "`beast_companion` is supporting, not primary: handling can involve training/transport/control without a single bonded companion."
+      ]
+    },
+    {
+      "archetypeId": "beast_rider",
+      "name": "Beast Rider",
+      "kind": "parent",
+      "parentId": null,
+      "status": "CERTIFIED_FOR_APPLICATION",
+      "replace": {
+        "metadata.tags.primary": [
+          "beast",
+          "mount",
+          "ride",
+          "rider",
+          "survival"
+        ],
+        "metadata.tags.supporting": [
+          "endurance",
+          "initiative",
+          "mobility",
+          "movement",
+          "perception"
+        ],
+        "metadata.tags.all": [
+          "beast",
+          "endurance",
+          "initiative",
+          "mobility",
+          "mount",
+          "movement",
+          "perception",
+          "ride",
+          "rider",
+          "survival"
+        ],
+        "metadata.tagProvenance": {
+          "phase12b.curated.primary": [
+            "beast",
+            "mount",
+            "ride",
+            "rider",
+            "survival"
+          ],
+          "phase12b.curated.supporting": [
+            "endurance",
+            "initiative",
+            "mobility",
+            "movement",
+            "perception"
+          ]
+        }
+      },
+      "evidence": {
+        "identitySummary": "Mounted wilderness combatant and traveler whose identity centers on a living mount and coordinated rider-mount action.",
+        "foundationClasses": [
+          "scout",
+          "soldier"
+        ],
+        "signatureSkills": [
+          "ride",
+          "survival"
+        ],
+        "supportingSkills": [
+          "perception",
+          "initiative",
+          "endurance"
+        ],
+        "signatureTalentTrees": [
+          "Unknown Regions|Mobile Scout",
+          "Saga Edition Core Rulebook|Survivor"
+        ],
+        "signatureTalents": [
+          "Saga Edition Core Rulebook|Survivor|Extreme Effort"
+        ],
+        "signatureFeats": [
+          "mounted_combat",
+          "skill_focus"
+        ],
+        "forceAccessMode": "none"
+      },
+      "notes": []
+    },
+    {
+      "archetypeId": "devaronian_wanderer",
+      "name": "Devaronian Wanderer",
+      "kind": "specialization",
+      "parentId": "fringer",
+      "status": "CERTIFIED_FOR_APPLICATION",
+      "replace": {
+        "metadata.tags.primary": [
+          "exploration",
+          "mobility",
+          "perception",
+          "survival"
+        ],
+        "metadata.tags.supporting": [
+          "endurance",
+          "mechanics",
+          "pilot",
+          "survivability",
+          "tech"
+        ],
+        "metadata.tags.all": [
+          "endurance",
+          "exploration",
+          "mechanics",
+          "mobility",
+          "perception",
+          "pilot",
+          "survivability",
+          "survival",
+          "tech"
+        ],
+        "metadata.tagProvenance": {
+          "phase12b.curated.primary": [
+            "exploration",
+            "mobility",
+            "perception",
+            "survival"
+          ],
+          "phase12b.curated.supporting": [
+            "endurance",
+            "mechanics",
+            "pilot",
+            "survivability",
+            "tech"
+          ]
+        }
+      },
+      "evidence": {
+        "identitySummary": "Species-specific Fringer expression built around Devaronian wanderlust, self-reliant travel, mobility, perception, and survival.",
+        "foundationClasses": [
+          "scout",
+          "scoundrel"
+        ],
+        "signatureSkills": [
+          "survival",
+          "perception"
+        ],
+        "supportingSkills": [
+          "mechanics",
+          "pilot",
+          "endurance"
+        ],
+        "signatureTalentTrees": [
+          "Saga Edition Core Rulebook|Fringer",
+          "Saga Edition Core Rulebook|Survivor"
+        ],
+        "signatureTalents": [
+          "Saga Edition Core Rulebook|Fringer|Fringe Savant",
+          "Saga Edition Core Rulebook|Survivor|Sprint"
+        ],
+        "signatureFeats": [
+          "skill_focus"
+        ],
+        "forceAccessMode": "none"
+      },
+      "notes": []
+    },
+    {
+      "archetypeId": "blazing_chain_raider",
+      "name": "Blazing Chain Raider",
+      "kind": "specialization",
+      "parentId": "pirate",
+      "status": "CERTIFIED_FOR_APPLICATION",
+      "replace": {
+        "metadata.tags.primary": [
+          "force",
+          "force_power",
+          "force_training",
+          "pilot",
+          "space"
+        ],
+        "metadata.tags.supporting": [
+          "damage",
+          "fear",
+          "intimidation",
+          "social",
+          "vehicle"
+        ],
+        "metadata.tags.all": [
+          "damage",
+          "fear",
+          "force",
+          "force_power",
+          "force_training",
+          "intimidation",
+          "pilot",
+          "social",
+          "space",
+          "vehicle"
+        ],
+        "metadata.tagProvenance": {
+          "phase12b.curated.primary": [
+            "force",
+            "force_power",
+            "force_training",
+            "pilot",
+            "space"
+          ],
+          "phase12b.curated.supporting": [
+            "damage",
+            "fear",
+            "intimidation",
+            "social",
+            "vehicle"
+          ]
+        }
+      },
+      "evidence": {
+        "identitySummary": "Intrinsic Force-sensitive pirate-raider whose identity combines fleet life, piloting, raiding, intimidation, and a practical Force tradition.",
+        "foundationClasses": [
+          "scout",
+          "scoundrel"
+        ],
+        "signatureSkills": [
+          "pilot",
+          "persuasion"
+        ],
+        "supportingSkills": [
+          "deception",
+          "initiative",
+          "perception",
+          "endurance"
+        ],
+        "signatureTalentTrees": [
+          "Scum and Villainy|Piracy",
+          "Force Unleashed Campaign Guide|Privateer"
+        ],
+        "signatureTalents": [
+          "Scum and Villainy|Piracy|Bloodthirsty",
+          "Force Unleashed Campaign Guide|Privateer|Boarder"
+        ],
+        "signatureFeats": [
+          "force_training"
+        ],
+        "forceAccessMode": "intrinsic"
+      },
+      "notes": [
+        "Force access is intrinsic; force/force_power/force_training are identity-defining here, unlike optional Force routes."
+      ]
+    },
+    {
+      "archetypeId": "salvager",
+      "name": "Salvager",
+      "kind": "specialization",
+      "parentId": "scavenger",
+      "status": "CERTIFIED_FOR_APPLICATION",
+      "replace": {
+        "metadata.tags.primary": [
+          "equipment",
+          "exploration",
+          "mechanics",
+          "repair",
+          "tech"
+        ],
+        "metadata.tags.supporting": [
+          "crafting",
+          "droid",
+          "modification",
+          "perception",
+          "survival",
+          "use_computer"
+        ],
+        "metadata.tags.all": [
+          "crafting",
+          "droid",
+          "equipment",
+          "exploration",
+          "mechanics",
+          "modification",
+          "perception",
+          "repair",
+          "survival",
+          "tech",
+          "use_computer"
+        ],
+        "metadata.tagProvenance": {
+          "phase12b.curated.primary": [
+            "equipment",
+            "exploration",
+            "mechanics",
+            "repair",
+            "tech"
+          ],
+          "phase12b.curated.supporting": [
+            "crafting",
+            "droid",
+            "modification",
+            "perception",
+            "survival",
+            "use_computer"
+          ]
+        }
+      },
+      "evidence": {
+        "identitySummary": "Professional wreck and derelict recovery specialist who extracts value from abandoned ships, battlefields, and machinery through technical expertise.",
+        "foundationClasses": [
+          "scout",
+          "scoundrel"
+        ],
+        "signatureSkills": [
+          "mechanics",
+          "perception"
+        ],
+        "supportingSkills": [
+          "survival",
+          "knowledgeTechnology",
+          "useComputer"
+        ],
+        "signatureTalentTrees": [
+          "Rebellion Era Campaign Guide|Improviser",
+          "Saga Edition Core Rulebook|Fringer"
+        ],
+        "signatureTalents": [
+          "Rebellion Era Campaign Guide|Improviser|Capture Droid",
+          "Saga Edition Core Rulebook|Fringer|Fringe Savant"
+        ],
+        "signatureFeats": [
+          "skill_focus"
+        ],
+        "forceAccessMode": "none"
+      },
+      "notes": []
+    },
+    {
+      "archetypeId": "scavenger_droid",
+      "name": "Scavenger Droid",
+      "kind": "specialization",
+      "parentId": "scavenger",
+      "status": "CERTIFIED_FOR_APPLICATION",
+      "replace": {
+        "metadata.tags.primary": [
+          "droid",
+          "jury_rig",
+          "mechanics",
+          "repair",
+          "survivability",
+          "tech"
+        ],
+        "metadata.tags.supporting": [
+          "crafting",
+          "equipment",
+          "modification",
+          "perception",
+          "survival",
+          "use_computer"
+        ],
+        "metadata.tags.all": [
+          "crafting",
+          "droid",
+          "equipment",
+          "jury_rig",
+          "mechanics",
+          "modification",
+          "perception",
+          "repair",
+          "survivability",
+          "survival",
+          "tech",
+          "use_computer"
+        ],
+        "metadata.tagProvenance": {
+          "phase12b.curated.primary": [
+            "droid",
+            "jury_rig",
+            "mechanics",
+            "repair",
+            "survivability",
+            "tech"
+          ],
+          "phase12b.curated.supporting": [
+            "crafting",
+            "equipment",
+            "modification",
+            "perception",
+            "survival",
+            "use_computer"
+          ]
+        }
+      },
+      "evidence": {
+        "identitySummary": "Self-maintaining droid survivor that keeps itself functioning by scavenging, jury-rigging, repairing, and repurposing discarded technology.",
+        "foundationClasses": [
+          "scout",
+          "scoundrel"
+        ],
+        "signatureSkills": [
+          "mechanics",
+          "perception"
+        ],
+        "supportingSkills": [
+          "survival",
+          "useComputer",
+          "knowledgeTechnology"
+        ],
+        "signatureTalentTrees": [
+          "Rebellion Era Campaign Guide|Improviser",
+          "Saga Edition Core Rulebook|Fringer"
+        ],
+        "signatureTalents": [
+          "Rebellion Era Campaign Guide|Improviser|Improved Jury-Rig",
+          "Saga Edition Core Rulebook|Fringer|Fringe Savant"
+        ],
+        "signatureFeats": [
+          "skill_focus"
+        ],
+        "forceAccessMode": "none"
+      },
+      "notes": []
+    },
+    {
+      "archetypeId": "jawa_sandcrawler_salvager",
+      "name": "Jawa Sandcrawler Salvager",
+      "kind": "specialization",
+      "parentId": "scavenger",
+      "status": "CERTIFIED_FOR_APPLICATION",
+      "replace": {
+        "metadata.tags.primary": [
+          "equipment",
+          "jury_rig",
+          "mechanics",
+          "repair",
+          "tech"
+        ],
+        "metadata.tags.supporting": [
+          "crafting",
+          "modification",
+          "perception",
+          "survival",
+          "use_computer",
+          "vehicle"
+        ],
+        "metadata.tags.all": [
+          "crafting",
+          "equipment",
+          "jury_rig",
+          "mechanics",
+          "modification",
+          "perception",
+          "repair",
+          "survival",
+          "tech",
+          "use_computer",
+          "vehicle"
+        ],
+        "metadata.tagProvenance": {
+          "phase12b.curated.primary": [
+            "equipment",
+            "jury_rig",
+            "mechanics",
+            "repair",
+            "tech"
+          ],
+          "phase12b.curated.supporting": [
+            "crafting",
+            "modification",
+            "perception",
+            "survival",
+            "use_computer",
+            "vehicle"
+          ]
+        }
+      },
+      "evidence": {
+        "identitySummary": "Jawa scavenger-specialist centered on salvage, improvised repair, technical reuse, and operating from a Sandcrawler-based salvage culture.",
+        "foundationClasses": [
+          "scout",
+          "scoundrel"
+        ],
+        "signatureSkills": [
+          "mechanics",
+          "perception"
+        ],
+        "supportingSkills": [
+          "survival",
+          "useComputer",
+          "knowledgeTechnology"
+        ],
+        "signatureTalentTrees": [
+          "Rebellion Era Campaign Guide|Improviser",
+          "Saga Edition Core Rulebook|Fringer"
+        ],
+        "signatureTalents": [
+          "Rebellion Era Campaign Guide|Improviser|Improved Jury-Rig",
+          "Saga Edition Core Rulebook|Fringer|Long Stride"
+        ],
+        "signatureFeats": [
+          "skill_focus"
+        ],
+        "forceAccessMode": "none"
+      },
+      "notes": []
+    }
+  ],
+  "rolling": {
+    "certifiedRecordCount": 30,
+    "totalArchetypeCount": 297,
+    "remainingUncurated": 267,
+    "appliedThroughCommit": "e1def6aad1085b966cdd2382626fa6fbefbff9a3",
+    "currentTranche": "12B-SCOUT-02",
+    "nextSuggestedTranche": "Continue Scout-first specializations in dataset order.",
+    "shadowScoring": "DEFERRED_UNTIL_SEMANTIC_CURATION_COVERAGE_IS_INTENTIONALLY_SUFFICIENT"
+  },
+  "tranches": [
+    {
+      "key": "12B-SCOUT-PARENTS-01",
+      "label": "Scout-first parent archetypes — tranche 1",
+      "recordCount": 10,
+      "status": "APPLIED",
+      "appliedCommit": "e1def6aad1085b966cdd2382626fa6fbefbff9a3"
+    },
+    {
+      "key": "12B-SCOUT-02",
+      "label": "Finish Scout-first parents + first 5 Scout-first specializations",
+      "recordCount": 20,
+      "status": "CERTIFIED_FOR_APPLICATION",
+      "selectionRule": "Remaining 15 parent archetypes whose first foundation route is Scout, followed by the first 5 Scout-first specializations in dataset order."
+    }
+  ],
+  "currentExecution": {
+    "key": "12B-SCOUT-02",
+    "requiredBaseHead": "e1def6aad1085b966cdd2382626fa6fbefbff9a3",
+    "newRecordIds": [
+      "astrogator",
+      "racer",
+      "disaster_responder",
+      "explorer",
+      "pathfinder",
+      "survivalist",
+      "search_and_rescue_specialist",
+      "first_contact_specialist",
+      "galactic_archaeologist",
+      "prospector",
+      "naturalist",
+      "colony_pioneer",
+      "beast_hunter",
+      "beast_handler",
+      "beast_rider",
+      "devaronian_wanderer",
+      "blazing_chain_raider",
+      "salvager",
+      "scavenger_droid",
+      "jawa_sandcrawler_salvager"
+    ],
+    "revisionIds": [
+      "scavenger"
+    ],
+    "newRecordCount": 20,
+    "revisionCount": 1,
+    "applyOnlyTheseIds": [
+      "astrogator",
+      "racer",
+      "disaster_responder",
+      "explorer",
+      "pathfinder",
+      "survivalist",
+      "search_and_rescue_specialist",
+      "first_contact_specialist",
+      "galactic_archaeologist",
+      "prospector",
+      "naturalist",
+      "colony_pioneer",
+      "beast_hunter",
+      "beast_handler",
+      "beast_rider",
+      "devaronian_wanderer",
+      "blazing_chain_raider",
+      "salvager",
+      "scavenger_droid",
+      "jawa_sandcrawler_salvager",
+      "scavenger"
+    ],
+    "rules": [
+      "records[] is cumulative authority; for this execution apply only applyOnlyTheseIds.",
+      "For each execution id, replace exactly the four fields in that record replace block.",
+      "Do not reapply or touch the other nine tranche-1 records."
+    ]
+  },
+  "revisionLog": [
+    {
+      "revisionId": "REV-001",
+      "archetypeId": "scavenger",
+      "afterCommit": "e1def6aad1085b966cdd2382626fa6fbefbff9a3",
+      "action": "REMOVE_TAG",
+      "tag": "resources",
+      "lanes": [
+        "metadata.tags.primary",
+        "metadata.tags.all",
+        "metadata.tagProvenance.phase12b.curated.primary"
+      ],
+      "reason": "Frozen ontology `resources` denotes spendable game resources; scavenged materials/value do not satisfy that semantic concept.",
+      "status": "CERTIFIED_FOR_APPLICATION"
+    }
+  ],
+  "maintenanceRulings": {
+    "phase12aFingerprint": {
+      "decision": "HISTORICAL_BASELINE_DO_NOT_REWRITE",
+      "certifiedSha256": "a8e08c6347a2126ba7647f0a671034857099d1b797e383a9417e873a048d3cae",
+      "testChange": {
+        "path": "tests/archetype-phase-12a-runtime-ssot.test.mjs",
+        "replaceAssertion": "Replace the assertion comparing audit.output.sha256 to the CURRENT dataText hash with an assertion that audit.output.sha256 equals the certified Phase 12A SHA-256 above. Leave all other Phase 12A audit assertions intact. Rename the test so it states that the Phase 12A fingerprint is a historical certified baseline."
+      }
+    },
+    "phase12bOverlay": {
+      "decision": "ADD_SEPARATE_DETERMINISTIC_OVERLAY_DO_NOT_FOLD_INTO_12A_BUILDER",
+      "authorityRepoPaths": {
+        "json": "data/audits/archetype-phase-12b-semantic-curation.json",
+        "markdown": "docs/audits/archetype-phase-12b-semantic-curation.md"
+      },
+      "toolPath": "tools/apply-archetype-phase-12b-semantic-curation.mjs",
+      "contract": [
+        "Read data/archetypes.json and the repo JSON authority.",
+        "Apply the cumulative certified records exactly by replacing only metadata.tags.primary/supporting/all and metadata.tagProvenance.",
+        "Validate every supplied tag against the frozen ontology and validate the resulting 297-record dataset with validateArchetypeDataset.",
+        "Support --check: applying the cumulative authority to the current file must produce zero diff.",
+        "No semantic inference, no parent inheritance, no scoring changes.",
+        "Reconstruction order is Phase 12A builder first, then this Phase 12B overlay."
+      ]
+    }
+  }
+}

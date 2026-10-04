@@ -155,9 +155,14 @@ test('serialization is deterministic: re-serializing the shipped file is byte-id
   assert.equal(serializeDataset(dataset), dataText);
 });
 
-test('audit artifact fingerprints match the shipped dataset and report no regression', () => {
+// Phase 12A fingerprint is a HISTORICAL certified baseline (owner ruling M-001): data/archetypes.json
+// is now further curated by the Phase 12B overlay, so the audit's output hash is NOT compared to the
+// current file bytes. The 12A audit artifact itself is never rewritten.
+const CERTIFIED_PHASE_12A_OUTPUT_SHA256 = 'a8e08c6347a2126ba7647f0a671034857099d1b797e383a9417e873a048d3cae';
+
+test('phase 12A audit artifact is a historical certified baseline and reports no regression', () => {
   const audit = JSON.parse(read('data/audits/archetype-phase-12a-runtime-ssot.json'));
-  assert.equal(audit.output.sha256, crypto.createHash('sha256').update(dataText).digest('hex'));
+  assert.equal(audit.output.sha256, CERTIFIED_PHASE_12A_OUTPUT_SHA256);
   assert.equal(audit.status, 'RUNTIME_SSOT_VALIDATED');
   assert.equal(audit.scoringChanged, false);
   assert.equal(audit.semanticTags.after.uniqueTags, 42);
