@@ -1,0 +1,432 @@
+{
+  "schemaVersion": 1,
+  "phase": "12B-ARCHETYPE-SEMANTIC-CURATION",
+  "status": "PARTIAL_CURATED_SCOUT_TRANCHE_1",
+  "base": {
+    "phase12aHead": "ef7c9685ace3f53c8288909cfa24022a96ae351a",
+    "ontology": "data/audits/talent-feat-phase3-final-ontology.json",
+    "ontologyTagCount": 190
+  },
+  "scope": {
+    "tranche": "scout-primary-parents-1",
+    "rule": "Curate parent archetypes whose first foundation route is Scout; class route is batching context only and never owns identity.",
+    "records": 10,
+    "ids": [
+      "fringer",
+      "scavenger",
+      "bounty_hunter",
+      "sector_ranger",
+      "frontier_marshal",
+      "force_hunter",
+      "sniper",
+      "saboteur",
+      "partisan",
+      "pilot"
+    ]
+  },
+  "policy": {
+    "primary": "Defining identity signals: a character strongly matching the archetype should normally express several of these.",
+    "supporting": "Strongly characteristic secondary signals; helpful evidence but not required.",
+    "exactIdentityOutranksTags": true,
+    "noClassRouteTagInheritance": true,
+    "noNumericWeightsAuthored": true,
+    "frozenOntologyOnly": true,
+    "narrativeAndMechanicsRequired": "Tags must be supported by narrative identity, curated Phase 0-11 mechanics, exact recommendations, or a combination; do not union every referenced rules tag.",
+    "forceRule": "Optional Force access does not make force/force_power/force_training defining archetype tags."
+  },
+  "archetypes": {
+    "fringer": {
+      "name": "Fringer",
+      "primary": [
+        "exploration",
+        "perception",
+        "survival",
+        "survivability",
+        "resilience"
+      ],
+      "supporting": [
+        "endurance",
+        "mechanics",
+        "repair",
+        "jury_rig",
+        "mobility",
+        "pilot",
+        "tech",
+        "vehicle"
+      ],
+      "rationale": "The galactic-edge survivor fantasy centers on exploration, perception, survival and self-reliance. Repair/improvisation, endurance, mobility and piloting are characteristic tools, not universal requirements.",
+      "evidence": {
+        "narrative": "Survivor of the galactic edge; improvises, repairs, navigates local dangers and gets by without reliable institutions.",
+        "skills": [
+          "survival",
+          "perception",
+          "mechanics",
+          "pilot",
+          "endurance"
+        ],
+        "talentTrees": [
+          "Saga Edition Core Rulebook|Fringer",
+          "Saga Edition Core Rulebook|Survivor",
+          "Unknown Regions|Master Scout",
+          "Unknown Regions|Outsider"
+        ]
+      }
+    },
+    "scavenger": {
+      "name": "Scavenger",
+      "primary": [
+        "mechanics",
+        "equipment",
+        "crafting",
+        "modification",
+        "tech"
+      ],
+      "supporting": [
+        "jury_rig",
+        "perception",
+        "repair",
+        "survival",
+        "use_computer",
+        "knowledge",
+        "survivability"
+      ],
+      "rationale": "Scavenger identity is about turning discarded material into useful machinery and resources. Mechanics, equipment, crafting/modification and tech are defining; perception, repair and survival enable the work.",
+      "evidence": {
+        "narrative": "Makes a living turning refuse into food, shelter, credits or machinery; sees value where others see trash.",
+        "skills": [
+          "mechanics",
+          "perception",
+          "survival",
+          "useComputer",
+          "knowledgeTechnology"
+        ],
+        "talents": [
+          "Rebellion Era Campaign Guide|Improviser|Improvised Device",
+          "Starships of the Galaxy|Outlaw Tech|Personalized Modifications"
+        ]
+      }
+    },
+    "bounty_hunter": {
+      "name": "Bounty Hunter",
+      "primary": [
+        "tracking",
+        "pursuit",
+        "investigation",
+        "perception",
+        "survival"
+      ],
+      "supporting": [
+        "gather_information",
+        "use_computer",
+        "ranged",
+        "precision",
+        "targeting",
+        "stealth",
+        "initiative"
+      ],
+      "rationale": "The parent identity is a professional quarry-finder first, not a specific weapon build. Tracking, pursuit, investigation, perception and survival define the hunt; ranged precision, target acquisition and information work support it.",
+      "evidence": {
+        "narrative": "Professional predator who turns wanted beings into contracts; hunting combines investigation, preparation, travel, patience and confrontation.",
+        "skills": [
+          "perception",
+          "survival",
+          "gatherInformation",
+          "stealth",
+          "initiative",
+          "useComputer"
+        ],
+        "talentTrees": [
+          "Saga Edition Core Rulebook|Bounty Hunter",
+          "Saga Edition Core Rulebook|Awareness"
+        ]
+      }
+    },
+    "sector_ranger": {
+      "name": "Sector Ranger",
+      "primary": [
+        "investigation",
+        "pursuit",
+        "perception",
+        "survival"
+      ],
+      "supporting": [
+        "tracking",
+        "pilot",
+        "vehicle",
+        "initiative",
+        "knowledge",
+        "control",
+        "targeting"
+      ],
+      "rationale": "Sector Ranger is a roaming interjurisdictional lawman/detective. Investigation and pursuit are the core identity; wilderness competence, piloting and nonlethal/control-oriented enforcement support the roaming-lawman fantasy.",
+      "evidence": {
+        "narrative": "Roaming galactic lawman pursuing criminals across planetary jurisdictions; part frontier marshal, federal investigator, pilot and lone-traveler detective.",
+        "skills": [
+          "perception",
+          "survival",
+          "pilot",
+          "initiative",
+          "knowledgeBureaucracy"
+        ],
+        "talents": [
+          "Force Unleashed Campaign Guide|Enforcement|Slowing Stun",
+          "Clone Wars Campaign Guide|Vanguard|Soften the Target"
+        ]
+      }
+    },
+    "frontier_marshal": {
+      "name": "Frontier Marshal",
+      "primary": [
+        "leadership",
+        "persuasion",
+        "perception",
+        "support",
+        "ally_support"
+      ],
+      "supporting": [
+        "investigation",
+        "gather_information",
+        "survival",
+        "initiative",
+        "tactics",
+        "teamwork",
+        "control",
+        "social"
+      ],
+      "rationale": "The marshal is local authority and protector. Leadership, persuasion, awareness and enabling allies define the role; investigation, frontier competence and tactical coordination are secondary expressions.",
+      "evidence": {
+        "narrative": "The law in one bad place; protects a settlement or frontier community where authority may be one office and whoever is brave enough to help.",
+        "skills": [
+          "perception",
+          "persuasion",
+          "survival",
+          "initiative",
+          "gatherInformation"
+        ],
+        "talents": [
+          "Force Unleashed Campaign Guide|Enforcement|Takedown",
+          "Saga Edition Core Rulebook|Leadership|Unwavering Ally",
+          "Saga Edition Core Rulebook|Military Tactics|Assault Tactics"
+        ]
+      }
+    },
+    "force_hunter": {
+      "name": "Force Hunter",
+      "primary": [
+        "anti-force",
+        "tracking",
+        "perception",
+        "survival",
+        "targeting"
+      ],
+      "supporting": [
+        "pursuit",
+        "investigation",
+        "stealth",
+        "ranged",
+        "precision",
+        "knowledge",
+        "resilience",
+        "force_defense"
+      ],
+      "rationale": "Force Hunter studies Force-users as prey. Anti-Force counterplay is defining, but Force sensitivity is optional, so generic force/force_power/force_training tags are intentionally excluded from the identity profile.",
+      "evidence": {
+        "narrative": "Specialist who studies Force-users as prey; may be Imperial, mercenary, Sith-aligned, traumatized survivor or former Jedi.",
+        "forceAccess": "optional",
+        "skills": [
+          "perception",
+          "survival",
+          "stealth",
+          "knowledgeGalacticLore"
+        ],
+        "talents": [
+          "Legacy Era Campaign Guide|Force Hunter|Telekinetic Resistance",
+          "Saga Edition Core Rulebook|Bounty Hunter|Hunter's Mark"
+        ],
+        "semanticAuthority": [
+          "anti-force",
+          "force_defense",
+          "resilience",
+          "pursuit"
+        ]
+      }
+    },
+    "sniper": {
+      "name": "Sniper",
+      "primary": [
+        "sniper",
+        "precision",
+        "ranged",
+        "perception",
+        "stealth"
+      ],
+      "supporting": [
+        "targeting",
+        "setup",
+        "ambush",
+        "initiative",
+        "survival",
+        "concealment",
+        "critical_hit"
+      ],
+      "rationale": "Sniper identity is deliberate ranged precision from advantageous/hidden positions. Perception and stealth support target selection; setup, ambush, concealment and critical-hit specialization describe the method without locking the archetype to a specific firearm category.",
+      "evidence": {
+        "skills": [
+          "perception",
+          "stealth",
+          "initiative",
+          "survival"
+        ],
+        "feats": [
+          "point_blank_shot",
+          "careful_shot",
+          "precise_shot",
+          "sniper",
+          "far_shot",
+          "deadly_sniper"
+        ],
+        "talentTrees": [
+          "Saga Edition Core Rulebook|Awareness",
+          "Saga Edition Core Rulebook|Camouflage",
+          "Force Unleashed Campaign Guide|Critical Master"
+        ]
+      }
+    },
+    "saboteur": {
+      "name": "Saboteur",
+      "primary": [
+        "mechanics",
+        "stealth",
+        "tech",
+        "infiltration",
+        "trap",
+        "crafting"
+      ],
+      "supporting": [
+        "use_computer",
+        "equipment",
+        "control",
+        "burst_damage",
+        "setup",
+        "reliability",
+        "perception",
+        "defense"
+      ],
+      "rationale": "Saboteur is covert technical disruption. Mechanics, stealth, tech, infiltration and engineered hazards are defining. Demolition, equipment, setup and reliability come directly from the curated Sabotage/Skilled Demolitionist material.",
+      "evidence": {
+        "skills": [
+          "mechanics",
+          "stealth",
+          "useComputer",
+          "perception",
+          "knowledgeTechnology"
+        ],
+        "talents": [
+          "Force Unleashed Campaign Guide|Sabotage|Skilled Demolitionist",
+          "Saga Edition Core Rulebook|Slicer|Gimmick",
+          "Force Unleashed Campaign Guide|Infiltration|Concealed Weapon Expert"
+        ],
+        "certifiedTalentTags": [
+          "trap",
+          "burst_damage",
+          "reliability",
+          "equipment",
+          "crafting",
+          "setup",
+          "mechanics"
+        ]
+      }
+    },
+    "partisan": {
+      "name": "Partisan",
+      "primary": [
+        "stealth",
+        "survival",
+        "ambush",
+        "infiltration",
+        "control"
+      ],
+      "supporting": [
+        "deception",
+        "perception",
+        "initiative",
+        "social",
+        "persuasion",
+        "support",
+        "teamwork",
+        "evasion",
+        "battlefield_control"
+      ],
+      "rationale": "Partisan identity is irregular warfare under occupation: concealment, survival, ambushes, covert movement and coercive disruption. Revolutionary rhetoric and reconnaissance add social/control and teamwork dimensions without making the archetype a formal commander.",
+      "evidence": {
+        "narrative": "Irregular fighter in occupied territory using ambushes, sabotage, safehouses, local support, homemade weapons and fear of collaborators.",
+        "skills": [
+          "stealth",
+          "survival",
+          "perception",
+          "deception",
+          "initiative"
+        ],
+        "talents": [
+          "Galaxy of Intrigue|Revolutionary|Revolutionary Rhetoric",
+          "Clone Wars Campaign Guide|Reconnaissance|Reconnaissance Team Leader",
+          "Saga Edition Core Rulebook|Survivor|Evasion"
+        ],
+        "certifiedTalentTags": [
+          "persuasion",
+          "social",
+          "control",
+          "battlefield_control"
+        ]
+      }
+    },
+    "pilot": {
+      "name": "Pilot",
+      "primary": [
+        "pilot",
+        "vehicle",
+        "space",
+        "pursuit",
+        "mobility"
+      ],
+      "supporting": [
+        "evasion",
+        "initiative",
+        "mechanics",
+        "perception",
+        "tactics",
+        "teamwork",
+        "movement",
+        "support"
+      ],
+      "rationale": "Pilot identity is vehicle/space operation and maneuver. Pursuit and mobility distinguish piloting from generic vehicle familiarity; Wingman/Squadron material supports tactics, teamwork and support without making combat mandatory.",
+      "evidence": {
+        "skills": [
+          "pilot",
+          "perception",
+          "initiative",
+          "mechanics"
+        ],
+        "talents": [
+          "Saga Edition Core Rulebook|Expert Pilot|Relentless Pursuit",
+          "Saga Edition Core Rulebook|Spacer|Spacehound",
+          "Rebellion Era Campaign Guide|Wingman|Lose Pursuit",
+          "Starships of the Galaxy|Squadron Leader|Squadron Maneuvers"
+        ],
+        "feats": [
+          "vehicular_combat",
+          "starship_tactics",
+          "a_few_maneuvers",
+          "vehicular_surge"
+        ]
+      }
+    }
+  },
+  "acceptance": {
+    "curatedRecords": 10,
+    "allTagsInFrozenOntology": true,
+    "primarySupportingCollisions": 0,
+    "productionSsotMutated": false,
+    "scorerMutated": false
+  }
+}
