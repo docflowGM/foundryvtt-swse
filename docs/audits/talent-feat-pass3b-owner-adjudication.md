@@ -27,6 +27,12 @@ Cumulative owner overlay for Pass 3B batches. Claude executes these rulings and 
 - **FULL_ATTACK_POLICY** — full_attack applies when the operative mechanic directly interacts with the SWSE Full Attack mechanic: performs a Full Attack, modifies Full Attack penalties, modifies the number/type of attacks made as part of a Full Attack, or directly modifies the resolution of a Full Attack. Not added because the record makes multiple attacks, another action produces attacks similar to a Full Attack, or a normal Full Attack is mentioned only as a comparison, limitation or reference. A mechanic that intentionally replaces or bypasses the Full Attack action is not automatically a full_attack mechanic.
 - **DUAL_WIELD_POLICY** — dual_wield represents mechanics in which one character directly fights with or mechanically manages two weapons/two weapon ends as part of the same combat style: attacking with two weapons, using both ends of a double weapon where treated as two-weapon combat, modifying two-weapon attack penalties, or directly improving/enabling two-weapon fighting. Not added because two different characters each use one weapon, two attacks are combined, two weapons happen to contribute to one resolved effect, or the mechanic simply allows multiple attacks. The semantic is the character's two-weapon combat mode, not the number of weapons involved in the event.
 - **STUN_POLICY** — stun represents direct interaction with the SWSE stun/stunning mechanic or stun damage/mode: deals or modifies stun damage, changes use of a weapon's stun setting, applies a stated stunning effect, or improves/resists/removes/directly modifies stun mechanics. Ion damage is not stun damage. Not added because a record deals ion damage, resists ion damage, improves ion weapons, mentions stun gauntlets only as an equipment exception, or uses nonlethal/capture-oriented ion mechanics. ion and stun are mechanically distinct concepts. No new ion semantic tag is authorized; recurring ion semantics are a later ontology-gap decision.
+- **DIRECT_OPERATIVE_MECHANIC_POLICY** — A semantic tag applies when the record's own operative Benefit directly creates the mechanic, modifies it, improves or penalizes it, requires it, changes its resolution, grants it, prevents/suppresses it, removes/recovers it, or changes another creature's direct use of it. The user of the feat/talent does not have to be the actor receiving the effect; direct manipulation of another creature's mechanic can still qualify.
+- **REFERENCE_ONLY_POLICY** — Do not add a positive semantic tag when the mechanic appears only as explanatory text, a basic-rules reminder, a comparison, an example, a prerequisite, an exception, an excluded target/state, an unaffected state, ordinary-English wording, or flavor text. A record must interact with the actual mechanic, not merely mention it.
+- **OPEN_GENERIC_SCOPE_POLICY** — When a record allows an open generic choice (any weapon, any weapon group, any skill, any Force power, one of many selectable categories), do not automatically add every possible specific scope tag (for example Weapon Focus allowing grapple as one possible choice does not gain grapple; a generic weapon selection does not gain pistol, heavy_weapon, lightsaber, exotic_weapon; a generic skill mechanic does not gain every skill tag). Specific semantic tags require direct operative interaction with that specific scope.
+- **CLOSED_SCOPE_POLICY** — When the operative mechanic explicitly and deliberately applies to a named closed scope, that scope may receive its semantic tag: "melee attacks" -> melee; "ranged attacks" -> ranged; "melee or ranged attacks" -> both are explicit closed scopes; "while using a pistol" -> pistol; "when wielding a lightsaber" -> lightsaber; "unarmed attacks" -> unarmed. This policy does not override the reference-only or generic-selection policies.
+- **NEGATIVE_EXCLUSION_POLICY** — A mechanic does not receive a positive tag merely because that mechanic prevents the effect from working: "cannot affect a grappled target" does not create grapple; "except stun gauntlets" does not create stun; "does not work against X" does not positively represent X.
+- **SPECIFIC_OVER_BROAD_POLICY** — When a certified specific mechanical tag already precisely expresses the rule, do not automatically infer every broad neighboring semantic tag. These distinctions must remain meaningful: movement != mobility; movement != positioning; control != battlefield_control; critical_hit != critical_success; ion != stun; resource creation != resource recovery; force capacity != resource recovery; access != semantic identity. Broad tags require their own direct owner-defined meaning.
 
 ## Batch 3B.1 — Mechanical Primitives
 
@@ -186,6 +192,41 @@ Expected by owner: 0 records with ADD, 0 tag additions, 9 records NO_CHANGE only
 | NO_CHANGE | TALENT | Seyugi Cyclone | `cc90a9fc255f4dc4` | `stun` | STUN_POLICY | O.stun |
 | NO_CHANGE | TALENT | Ion Mastery | `df9c25340dcb7c95` | `stun` | STUN_POLICY | O.stun |
 
+## Batch 3B.BULK — Policy-driven bulk closure (OWNER_POLICY_DERIVED)
+
+Expected by owner: 10 records with ADD, 10 tag additions, 14 records NO_CHANGE only, 0 removals, 0 new tags.
+
+
+| Action | Domain | Name | ID | Tag | Policy | Evidence reference |
+| --- | --- | --- | --- | --- | --- | --- |
+| NO_CHANGE | TALENT | Device Jammer | `5db4343762664d95` | `shields` | REFERENCE_ONLY_POLICY | M.shields |
+| NO_CHANGE | FEAT | Zero Range | `0dbd1d12c0b99725` | `vehicle` | NEGATIVE_EXCLUSION_POLICY | M.vehicle |
+| NO_CHANGE | FEAT | Return Fire | `80c52cf7838095c1` | `vehicle` | NEGATIVE_EXCLUSION_POLICY | M.vehicle |
+| NO_CHANGE | TALENT | Personalized Modifications | `111b0a9d1f8d5111` | `vehicle` | REFERENCE_ONLY_POLICY | M.vehicle |
+| NO_CHANGE | TALENT | Device Jammer | `5db4343762664d95` | `vehicle` | NEGATIVE_EXCLUSION_POLICY | M.vehicle |
+| NO_CHANGE | TALENT | Cover Bracing | `c59e7eba84e6d4eb` | `vehicle` | REFERENCE_ONLY_POLICY | M.vehicle |
+| NO_CHANGE | TALENT | Sentinel Strike | `cf2d518039afd828` | `dark_side` | NEGATIVE_EXCLUSION_POLICY | N.dark_side |
+| ADD | FEAT | Improved Rapid Strike | `cb6aea7e256e4c8c` | `lightsaber` | CLOSED_SCOPE_POLICY | O.lightsaber |
+| NO_CHANGE | FEAT | Weapon Proficiency | `ecc2471ac96ec2d4` | `lightsaber` | OPEN_GENERIC_SCOPE_POLICY | O.lightsaber |
+| ADD | TALENT | Noble Fencing Style | `00c3231e4a4173fa` | `lightsaber` | CLOSED_SCOPE_POLICY | O.lightsaber |
+| NO_CHANGE | TALENT | Accurate Blow | `32df92c3114b5c94` | `lightsaber` | OPEN_GENERIC_SCOPE_POLICY | O.lightsaber |
+| NO_CHANGE | TALENT | Empower Weapon | `5218d5971b78119b` | `lightsaber` | REFERENCE_ONLY_POLICY | O.lightsaber |
+| NO_CHANGE | TALENT | Champion | `a7aea0411eb4fbc0` | `lightsaber` | NEGATIVE_EXCLUSION_POLICY | O.lightsaber |
+| NO_CHANGE | TALENT | Transfer Essence | `c1be1f29c00436d5` | `lightsaber` | REFERENCE_ONLY_POLICY | O.lightsaber |
+| NO_CHANGE | FEAT | Weapon Proficiency | `ecc2471ac96ec2d4` | `melee` | OPEN_GENERIC_SCOPE_POLICY | O.melee |
+| ADD | TALENT | Nimble Dodge | `913a0ca43e032caa` | `melee` | CLOSED_SCOPE_POLICY | O.melee |
+| ADD | TALENT | Block | `9379daa94a228c04` | `melee` | CLOSED_SCOPE_POLICY | O.melee |
+| ADD | TALENT | Cover Escape | `fcd7c1e0bd15df71` | `melee` | CLOSED_SCOPE_POLICY | O.melee |
+| NO_CHANGE | FEAT | Weapon Proficiency | `ecc2471ac96ec2d4` | `pistol` | OPEN_GENERIC_SCOPE_POLICY | O.pistol |
+| ADD | TALENT | Cover Fire | `049820827d7ef32b` | `pistol` | CLOSED_SCOPE_POLICY | O.pistol |
+| NO_CHANGE | TALENT | Greater Weapon Specialization | `e9820b341bf94de1` | `pistol` | OPEN_GENERIC_SCOPE_POLICY | O.pistol |
+| ADD | TALENT | Beloved | `444c032c563c18a1` | `ranged` | CLOSED_SCOPE_POLICY | O.ranged |
+| ADD | TALENT | Deflect | `72c644f7a09b1186` | `ranged` | CLOSED_SCOPE_POLICY | O.ranged |
+| ADD | TALENT | Shield Gauntlet Defense | `852bca9332684a2b` | `ranged` | CLOSED_SCOPE_POLICY | O.ranged |
+| ADD | TALENT | Intimidating Defense | `de751f28fc269c85` | `ranged` | CLOSED_SCOPE_POLICY | O.ranged |
+| NO_CHANGE | FEAT | Triple Crit | `3d4a4e93ced26712` | `unarmed` | REFERENCE_ONLY_POLICY | O.unarmed |
+| NO_CHANGE | FEAT | Weapon Focus | `c41814601364b643` | `unarmed` | REFERENCE_ONLY_POLICY | O.unarmed |
+
 ## Rationale
 
 - ADD `reaction` — Dumb Luck (TALENT `7a024dac260bf9ec`): The talent directly grants reaction movement.
@@ -313,3 +354,30 @@ Expected by owner: 0 records with ADD, 0 tag additions, 9 records NO_CHANGE only
 - NO_CHANGE `stun` — Ion Turret (TALENT `c2f332d1e74e3e1a`): The turret converts its damage into ion damage. That is an ion mechanic, not a stun mechanic.
 - NO_CHANGE `stun` — Seyugi Cyclone (TALENT `cc90a9fc255f4dc4`): Stun gauntlets are listed only as an exception to the otherwise no-weapons requirement. The talent does not interact with their stun mechanics.
 - NO_CHANGE `stun` — Ion Mastery (TALENT `df9c25340dcb7c95`): The talent directly improves attacks made with ion weapons and increases ion damage. Its capture-oriented purpose does not make ion damage semantically equivalent to stun damage. Its existing nonlethal semantic is preserved; this ruling does not reopen that tag.
+- NO_CHANGE `shields` — Device Jammer (TALENT `5db4343762664d95`): Policy-derived (execution of existing owner policy, not a new ruling): every matched clause falls in a structural form named by REFERENCE_ONLY_POLICY; rule REFERENCE_ONLY.
+- NO_CHANGE `vehicle` — Zero Range (FEAT `0dbd1d12c0b99725`): Policy-derived (execution of existing owner policy, not a new ruling): every matched clause falls in a structural form named by NEGATIVE_EXCLUSION_POLICY; rule NEGATIVE_EXCLUSION.
+- NO_CHANGE `vehicle` — Return Fire (FEAT `80c52cf7838095c1`): Policy-derived (execution of existing owner policy, not a new ruling): every matched clause falls in a structural form named by NEGATIVE_EXCLUSION_POLICY; rule NEGATIVE_EXCLUSION.
+- NO_CHANGE `vehicle` — Personalized Modifications (TALENT `111b0a9d1f8d5111`): Policy-derived (execution of existing owner policy, not a new ruling): every matched clause falls in a structural form named by REFERENCE_ONLY_POLICY; rule REFERENCE_ONLY.
+- NO_CHANGE `vehicle` — Device Jammer (TALENT `5db4343762664d95`): Policy-derived (execution of existing owner policy, not a new ruling): every matched clause falls in a structural form named by NEGATIVE_EXCLUSION_POLICY; rule NEGATIVE_EXCLUSION.
+- NO_CHANGE `vehicle` — Cover Bracing (TALENT `c59e7eba84e6d4eb`): Policy-derived (execution of existing owner policy, not a new ruling): every matched clause falls in a structural form named by REFERENCE_ONLY_POLICY; rule REFERENCE_ONLY.
+- NO_CHANGE `dark_side` — Sentinel Strike (TALENT `cf2d518039afd828`): Policy-derived (execution of existing owner policy, not a new ruling): every matched clause falls in a structural form named by NEGATIVE_EXCLUSION_POLICY; rule NEGATIVE_EXCLUSION.
+- ADD `lightsaber` — Improved Rapid Strike (FEAT `cb6aea7e256e4c8c`): Policy-derived (execution of existing owner policy, not a new ruling): every matched clause falls in a structural form named by CLOSED_SCOPE_POLICY + DIRECT_OPERATIVE_MECHANIC_POLICY; rule CLOSED_DIRECT.
+- NO_CHANGE `lightsaber` — Weapon Proficiency (FEAT `ecc2471ac96ec2d4`): Policy-derived (execution of existing owner policy, not a new ruling): every matched clause falls in a structural form named by OPEN_GENERIC_SCOPE_POLICY; rule OPEN_GENERIC_SCOPE.
+- ADD `lightsaber` — Noble Fencing Style (TALENT `00c3231e4a4173fa`): Policy-derived (execution of existing owner policy, not a new ruling): every matched clause falls in a structural form named by CLOSED_SCOPE_POLICY + DIRECT_OPERATIVE_MECHANIC_POLICY; rule CLOSED_DIRECT.
+- NO_CHANGE `lightsaber` — Accurate Blow (TALENT `32df92c3114b5c94`): Policy-derived (execution of existing owner policy, not a new ruling): every matched clause falls in a structural form named by OPEN_GENERIC_SCOPE_POLICY; rule OPEN_GENERIC_SCOPE.
+- NO_CHANGE `lightsaber` — Empower Weapon (TALENT `5218d5971b78119b`): Policy-derived (execution of existing owner policy, not a new ruling): every matched clause falls in a structural form named by REFERENCE_ONLY_POLICY; rule REFERENCE_ONLY.
+- NO_CHANGE `lightsaber` — Champion (TALENT `a7aea0411eb4fbc0`): Policy-derived (execution of existing owner policy, not a new ruling): every matched clause falls in a structural form named by NEGATIVE_EXCLUSION_POLICY; rule NEGATIVE_EXCLUSION.
+- NO_CHANGE `lightsaber` — Transfer Essence (TALENT `c1be1f29c00436d5`): Policy-derived (execution of existing owner policy, not a new ruling): every matched clause falls in a structural form named by REFERENCE_ONLY_POLICY; rule REFERENCE_ONLY.
+- NO_CHANGE `melee` — Weapon Proficiency (FEAT `ecc2471ac96ec2d4`): Policy-derived (execution of existing owner policy, not a new ruling): every matched clause falls in a structural form named by OPEN_GENERIC_SCOPE_POLICY; rule OPEN_GENERIC_SCOPE.
+- ADD `melee` — Nimble Dodge (TALENT `913a0ca43e032caa`): Policy-derived (execution of existing owner policy, not a new ruling): every matched clause falls in a structural form named by CLOSED_SCOPE_POLICY + DIRECT_OPERATIVE_MECHANIC_POLICY; rule CLOSED_DIRECT.
+- ADD `melee` — Block (TALENT `9379daa94a228c04`): Policy-derived (execution of existing owner policy, not a new ruling): every matched clause falls in a structural form named by CLOSED_SCOPE_POLICY + DIRECT_OPERATIVE_MECHANIC_POLICY; rule CLOSED_DIRECT.
+- ADD `melee` — Cover Escape (TALENT `fcd7c1e0bd15df71`): Policy-derived (execution of existing owner policy, not a new ruling): every matched clause falls in a structural form named by CLOSED_SCOPE_POLICY + DIRECT_OPERATIVE_MECHANIC_POLICY; rule CLOSED_DIRECT.
+- NO_CHANGE `pistol` — Weapon Proficiency (FEAT `ecc2471ac96ec2d4`): Policy-derived (execution of existing owner policy, not a new ruling): every matched clause falls in a structural form named by OPEN_GENERIC_SCOPE_POLICY; rule OPEN_GENERIC_SCOPE.
+- ADD `pistol` — Cover Fire (TALENT `049820827d7ef32b`): Policy-derived (execution of existing owner policy, not a new ruling): every matched clause falls in a structural form named by CLOSED_SCOPE_POLICY + DIRECT_OPERATIVE_MECHANIC_POLICY; rule CLOSED_DIRECT.
+- NO_CHANGE `pistol` — Greater Weapon Specialization (TALENT `e9820b341bf94de1`): Policy-derived (execution of existing owner policy, not a new ruling): every matched clause falls in a structural form named by OPEN_GENERIC_SCOPE_POLICY; rule OPEN_GENERIC_SCOPE.
+- ADD `ranged` — Beloved (TALENT `444c032c563c18a1`): Policy-derived (execution of existing owner policy, not a new ruling): every matched clause falls in a structural form named by CLOSED_SCOPE_POLICY + DIRECT_OPERATIVE_MECHANIC_POLICY; rule CLOSED_DIRECT.
+- ADD `ranged` — Deflect (TALENT `72c644f7a09b1186`): Policy-derived (execution of existing owner policy, not a new ruling): every matched clause falls in a structural form named by CLOSED_SCOPE_POLICY + DIRECT_OPERATIVE_MECHANIC_POLICY; rule CLOSED_DIRECT.
+- ADD `ranged` — Shield Gauntlet Defense (TALENT `852bca9332684a2b`): Policy-derived (execution of existing owner policy, not a new ruling): every matched clause falls in a structural form named by CLOSED_SCOPE_POLICY + DIRECT_OPERATIVE_MECHANIC_POLICY; rule CLOSED_DIRECT.
+- ADD `ranged` — Intimidating Defense (TALENT `de751f28fc269c85`): Policy-derived (execution of existing owner policy, not a new ruling): every matched clause falls in a structural form named by CLOSED_SCOPE_POLICY + DIRECT_OPERATIVE_MECHANIC_POLICY; rule CLOSED_DIRECT.
+- NO_CHANGE `unarmed` — Triple Crit (FEAT `3d4a4e93ced26712`): Policy-derived (execution of existing owner policy, not a new ruling): every matched clause falls in a structural form named by REFERENCE_ONLY_POLICY; rule REFERENCE_ONLY.
+- NO_CHANGE `unarmed` — Weapon Focus (FEAT `c41814601364b643`): Policy-derived (execution of existing owner policy, not a new ruling): every matched clause falls in a structural form named by REFERENCE_ONLY_POLICY; rule REFERENCE_ONLY.

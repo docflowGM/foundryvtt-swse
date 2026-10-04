@@ -25,13 +25,15 @@ test('all 9 exact decisions exist once; batch is 0 ADD / 9 NO_CHANGE with policy
   for (const id of ['FULL_ATTACK_POLICY', 'DUAL_WIELD_POLICY', 'STUN_POLICY']) assert.equal(overlay.ownerPolicies.filter(p => p.id === id).length, 1);
   assert.equal(b2c.filter(d => d.ownerPolicyApplied === 'STUN_POLICY').length, 7);
 });
-test('cumulative overlay is 125 decisions: 53 ADD and 72 NO_CHANGE, unique identities', () => {
-  assert.equal(overlay.decisions.length, 125); assert.equal(overlay.decisions.filter(d => d.ownerAction === 'ADD').length, 53); assert.equal(overlay.decisions.filter(d => d.ownerAction === 'NO_CHANGE').length, 72);
-  assert.equal(new Set(overlay.decisions.map(d => d.decisionId)).size, 125);
+test('owner-batch overlay through 3B.2C is 125 decisions: 53 ADD and 72 NO_CHANGE, unique identities', () => {
+  const own = overlay.decisions.filter(d => d.batch !== '3B.BULK' && d.batch !== '3B.2D');
+  assert.equal(own.length, 125); assert.equal(own.filter(d => d.ownerAction === 'ADD').length, 53); assert.equal(own.filter(d => d.ownerAction === 'NO_CHANGE').length, 72);
+  assert.equal(new Set(overlay.decisions.map(d => d.decisionId)).size, overlay.decisions.length);
 });
-test('cumulative authority is unchanged by this batch: 45 changed records, 53 additions, 0 removals, 11,271 tag instances, no new tags', () => {
-  const c = auth.counts; assert.equal(c.recordsChanged, 45); assert.equal(c.tagAdditions, 53); assert.equal(c.removals, 0); assert.equal(c.ownerDecisions, 125);
-  assert.equal(c.tagInstancesBefore, 11218); assert.equal(c.tagInstancesAfter, 11271); assert.equal(auth.sharedVocabulary.newTagsIntroduced, 0);
+test('this batch adds no tags: owner-batch additions stay 53 (plus bulk policy additions), 0 removals, no new tags', () => {
+  const bulkAdd = overlay.decisions.filter(d => d.batch === '3B.BULK' && d.ownerAction === 'ADD').length;
+  const c = auth.counts; assert.equal(c.tagAdditions, 53 + bulkAdd); assert.equal(c.removals, 0); assert.equal(c.ownerDecisions, overlay.decisions.length);
+  assert.equal(c.tagInstancesBefore, 11218); assert.equal(c.tagInstancesAfter, 11218 + 53 + bulkAdd); assert.equal(auth.sharedVocabulary.newTagsIntroduced, 0);
   const v = new Set(baseline.sharedVocabulary); assert.equal(v.size, 187); for (const r of auth.records) for (const t of r.finalTags) assert.ok(v.has(t));
   for (const r of auth.records) assert.deepEqual(r.finalTags.slice(0, r.baselineTags.length), r.baselineTags);
 });
@@ -58,11 +60,10 @@ test('hard implications hold; authority is exactly 353 feats + 1,187 talents', (
   for (const r of auth.records) for (const [a, b] of REQUIRED_IMPLICATIONS) if (r.finalTags.includes(a)) assert.ok(r.finalTags.includes(b), `${r.name} ${a}->${b}`);
   assert.equal(auth.counts.feats, 353); assert.equal(auth.counts.talents, 1187); assert.equal(auth.counts.combined, 1540);
 });
-test('discovery dispositions: exactly the 9 findings are PASS3B_OWNER_NO_CHANGE; remaining review 249 total / 223 record-level; other O findings untouched', () => {
+test('discovery dispositions: exactly the 9 findings are PASS3B_OWNER_NO_CHANGE; closed findings are no longer open', () => {
   const decided = discovery.ownerDecidedItems.filter(i => i.ownerDecision.batch === '3B.2C'); assert.equal(decided.length, 9); for (const i of decided) assert.equal(i.state, 'PASS3B_OWNER_NO_CHANGE');
-  const x = discovery.dashboard; assert.equal(x.ownerReviewCandidates, 249); assert.equal(x.ownerReviewRecordItems, 223); assert.equal(x.ownerReviewTagDefinitionItems, 12); assert.equal(x.ownerReviewTagConventionQuestions, 14); assert.equal(x.ownerDecidedItems, 123);
-  const open = new Set(discovery.ownerReviewItems.map(i => i.mechanic)); for (const m of ['O.full_attack', 'O.dual_wield', 'O.stun']) assert.ok(!open.has(m), m);
-  for (const m of ['O.melee', 'O.ranged', 'O.lightsaber', 'O.pistol', 'O.unarmed']) assert.ok(open.has(m), m);
+    const open = new Set(discovery.ownerReviewItems.map(i => i.mechanic)); for (const m of ['O.full_attack', 'O.dual_wield', 'O.stun']) assert.ok(!open.has(m), m);
+  for (const m of ['O.melee', 'O.ranged', 'O.lightsaber', 'O.pistol', 'O.unarmed']) assert.ok(open.has(m) || discovery.ownerDecidedItems.some(i => i.mechanic === m), m);
   assert.deepEqual(discovery.tagConventionQuestions.filter(q => ['O.heavy_weapon', 'O.exotic_weapon'].includes(q.mechanic)).map(q => q.state), ['PASS3B_OWNER_REVIEW', 'PASS3B_OWNER_REVIEW']);
 });
 test('derivation fails closed for 3B.2C: name guard, cumulative discrepancy, an unauthorized ADD of full_attack', () => {

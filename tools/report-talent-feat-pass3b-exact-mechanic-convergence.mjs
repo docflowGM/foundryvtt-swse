@@ -218,7 +218,7 @@ export function buildReport(baseline, ownerOverlay = null) {
     matchedDecisions.add(d.decisionId);
     it.state = d.ownerAction === 'ADD' ? 'PASS3B_OWNER_APPROVED' : 'PASS3B_OWNER_NO_CHANGE';
     it.priority = null; it.priorityBasis = null;
-    it.ownerDecision = { decisionId: d.decisionId, batch: d.batch, ownerAction: d.ownerAction, policy: d.ownerPolicyApplied };
+    it.ownerDecision = { decisionId: d.decisionId, batch: d.batch, ownerAction: d.ownerAction, policy: d.ownerPolicyApplied, decisionSource: d.decisionSource ?? 'OWNER_RULING' };
   }
   const decisionsWithoutDiscoveryItem = [...decisionByKey.values()].filter(d => !matchedDecisions.has(d.decisionId)).map(d => ({ decisionId: d.decisionId, ownerAction: d.ownerAction, batch: d.batch, evidenceReference: d.detectorEvidenceReference }));
 
@@ -270,6 +270,12 @@ export function buildReport(baseline, ownerOverlay = null) {
       untaggedRecordIds: g.records.map(r => `${r.domain}:${r.canonicalId}`).sort(), implicationRuleApplies: implicationNote(g.tag) };
   }).sort((a, b) => cmp(a.family, b.family) || cmp(a.mechanic, b.mechanic));
 
+  // ---- Tag questions already defined by an existing FULL owner policy (cumulative overlay: tagQuestionResolutions) ----
+  for (const r of ownerOverlay?.tagQuestionResolutions || []) {
+    if (r.kind === 'TAG_DEFINITION') { const a = tagAudit.find(x => x.tag === r.key); if (a && a.state === 'PASS3B_OWNER_REVIEW') { a.state = 'PASS3B_POLICY_RESOLVED'; a.priority = null; a.controllingPolicies = r.controllingPolicies; a.resolutionSource = r.source; } }
+    else { const q = conventionQuestions.find(x => x.mechanic === r.key); if (q && q.state === 'PASS3B_OWNER_REVIEW') { q.state = 'PASS3B_POLICY_RESOLVED'; q.priority = null; q.controllingPolicies = r.controllingPolicies; q.resolutionSource = r.source; } }
+  }
+
   // ---- Assemble ----
   const itemList = [...items.values()].sort((a, b) => (a.priority ?? 9) - (b.priority ?? 9) || cmp(a.family, b.family) || cmp(a.mechanic, b.mechanic) || cmp(a.comparedTag, b.comparedTag) || cmp(a.domain, b.domain) || cmp(a.canonicalId, b.canonicalId));
   const byState = {};
@@ -289,7 +295,7 @@ export function buildReport(baseline, ownerOverlay = null) {
   const dashboard = {
     combinedCorpus: records.length, feats: records.filter(r => r.domain === 'FEAT').length, talents: records.filter(r => r.domain === 'TALENT').length, sharedVocabulary: vocab.size,
     hardImplicationViolations: invariantViolations.length, unknownOrRetiredTagRecords: unknownOrRetired.length, mechanicFamiliesScanned: Object.keys(FAMILIES).length, detectors: DETECTORS.length, bundles: BUNDLES.length,
-    tagAndDetectorCoOccurrences: exactConvergence, ownerReviewCandidates: reviewItems.length + tagReview.length + conventionQuestions.length, ownerReviewRecordItems: reviewItems.length, ownerReviewRecordItemsByPriority: { P1: reviewItems.filter(i => i.priority === 1).length, P2: reviewItems.filter(i => i.priority === 2).length }, ownerReviewTagDefinitionItems: tagReview.length, ownerReviewTagConventionQuestions: conventionQuestions.length, recordsBehindConventionQuestions: conventionQuestions.reduce((n, q) => n + q.untagged, 0),
+    tagAndDetectorCoOccurrences: exactConvergence, ownerReviewCandidates: reviewItems.length + tagReview.length + conventionQuestions.filter(q => q.state === 'PASS3B_OWNER_REVIEW').length, ownerReviewRecordItems: reviewItems.length, ownerReviewRecordItemsByPriority: { P1: reviewItems.filter(i => i.priority === 1).length, P2: reviewItems.filter(i => i.priority === 2).length }, ownerReviewTagDefinitionItems: tagReview.length, ownerReviewTagConventionQuestions: conventionQuestions.filter(q => q.state === 'PASS3B_OWNER_REVIEW').length, policyResolvedTagQuestions: tagAudit.filter(a => a.state === 'PASS3B_POLICY_RESOLVED').length + conventionQuestions.filter(q => q.state === 'PASS3B_POLICY_RESOLVED').length, recordsBehindConventionQuestions: conventionQuestions.filter(q => q.state === 'PASS3B_OWNER_REVIEW').reduce((n, q) => n + q.untagged, 0),
     ownerDecidedItems: ownerDecided.length, ownerDecisionsWithoutDiscoveryItem: decisionsWithoutDiscoveryItem.length, priorRulingOrIntentionalDivergence: itemList.filter(i => ['PASS3B_PRIOR_OWNER_RULING', 'PASS3B_INTENTIONAL_DIVERGENCE'].includes(i.state)).length, tagsUsedByOneDomainOnly: tagAudit.filter(a => a.state === 'USED_BY_ONE_DOMAIN_ONLY').length,
     ontologyGapCandidates: gaps.filter(g => g.state === 'PASS3B_ONTOLOGY_GAP_CANDIDATE').length, evidenceOnlyLowConfidence: evidenceOnly.filter(e => e.class === 'LOW_CONFIDENCE_LEXICAL').length, evidenceOnlyNoComparator: evidenceOnly.filter(e => e.class === 'NO_CROSS_DOMAIN_COMPARATOR').length, itemStates: byState
   };

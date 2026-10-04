@@ -22,19 +22,19 @@
     "feats": 353,
     "talents": 1187,
     "combined": 1540,
-    "recordsChanged": 45,
+    "recordsChanged": 54,
     "recordsChangedByDomain": {
-      "FEAT": 11,
-      "TALENT": 34
+      "FEAT": 12,
+      "TALENT": 42
     },
-    "tagAdditions": 53,
+    "tagAdditions": 63,
     "removals": 0,
-    "noChangeDecisions": 72,
-    "recordsWithOnlyNoChange": 57,
-    "ownerDecisions": 125,
+    "noChangeDecisions": 89,
+    "recordsWithOnlyNoChange": 70,
+    "ownerDecisions": 152,
     "productionMutated": false,
     "tagInstancesBefore": 11218,
-    "tagInstancesAfter": 11271
+    "tagInstancesAfter": 11281
   },
   "tagUsage": [
     {
@@ -48,14 +48,14 @@
       "after": 320
     },
     {
+      "tag": "melee",
+      "before": 305,
+      "after": 308
+    },
+    {
       "tag": "support",
       "before": 306,
       "after": 306
-    },
-    {
-      "tag": "melee",
-      "before": 305,
-      "after": 305
     },
     {
       "tag": "force",
@@ -80,7 +80,7 @@
     {
       "tag": "ranged",
       "before": 268,
-      "after": 268
+      "after": 272
     },
     {
       "tag": "control",
@@ -250,7 +250,7 @@
     {
       "tag": "lightsaber",
       "before": 75,
-      "after": 75
+      "after": 77
     },
     {
       "tag": "persuasion",
@@ -623,6 +623,11 @@
       "after": 17
     },
     {
+      "tag": "pistol",
+      "before": 16,
+      "after": 17
+    },
+    {
       "tag": "shields",
       "before": 17,
       "after": 17
@@ -649,11 +654,6 @@
     },
     {
       "tag": "offense_ranged",
-      "before": 16,
-      "after": 16
-    },
-    {
-      "tag": "pistol",
       "before": 16,
       "after": 16
     },
@@ -1239,6 +1239,34 @@
     },
     {
       "domain": "FEAT",
+      "canonicalId": "cb6aea7e256e4c8c",
+      "name": "Improved Rapid Strike",
+      "added": [
+        "lightsaber"
+      ],
+      "before": [
+        "melee",
+        "damage_bonus",
+        "precision",
+        "burst_damage"
+      ],
+      "after": [
+        "melee",
+        "damage_bonus",
+        "precision",
+        "burst_damage",
+        "lightsaber"
+      ],
+      "decisions": [
+        {
+          "decisionId": "FEAT:cb6aea7e256e4c8c|lightsaber",
+          "policy": "CLOSED_SCOPE_POLICY",
+          "batch": "3B.BULK"
+        }
+      ]
+    },
+    {
+      "domain": "FEAT",
       "canonicalId": "d48614f7ae500a5b",
       "name": "Logic Upgrade: Skill Swap",
       "added": [
@@ -1324,6 +1352,64 @@
           "decisionId": "FEAT:f59c9679c02b8896|action_economy",
           "policy": "FULL_ROUND_ACTION_POLICY",
           "batch": "3B.1"
+        }
+      ]
+    },
+    {
+      "domain": "TALENT",
+      "canonicalId": "00c3231e4a4173fa",
+      "name": "Noble Fencing Style",
+      "added": [
+        "lightsaber"
+      ],
+      "before": [
+        "melee",
+        "precision",
+        "ability_enhancement"
+      ],
+      "after": [
+        "melee",
+        "precision",
+        "ability_enhancement",
+        "lightsaber"
+      ],
+      "decisions": [
+        {
+          "decisionId": "TALENT:00c3231e4a4173fa|lightsaber",
+          "policy": "CLOSED_SCOPE_POLICY",
+          "batch": "3B.BULK"
+        }
+      ]
+    },
+    {
+      "domain": "TALENT",
+      "canonicalId": "049820827d7ef32b",
+      "name": "Cover Fire",
+      "added": [
+        "pistol"
+      ],
+      "before": [
+        "ranged",
+        "ally_support",
+        "support",
+        "teamwork",
+        "defense",
+        "ranged_defense"
+      ],
+      "after": [
+        "ranged",
+        "ally_support",
+        "support",
+        "teamwork",
+        "defense",
+        "ranged_defense",
+        "pistol"
+      ],
+      "decisions": [
+        {
+          "decisionId": "TALENT:049820827d7ef32b|pistol",
+          "policy": "CLOSED_SCOPE_POLICY",
+          "batch": "3B.BULK"
         }
       ]
     },
@@ -1609,7 +1695,8 @@
       "canonicalId": "444c032c563c18a1",
       "name": "Beloved",
       "added": [
-        "attack_of_opportunity"
+        "attack_of_opportunity",
+        "ranged"
       ],
       "before": [
         "once-per-encounter",
@@ -1642,13 +1729,19 @@
         "movement",
         "evasion",
         "positioning",
-        "attack_of_opportunity"
+        "attack_of_opportunity",
+        "ranged"
       ],
       "decisions": [
         {
           "decisionId": "TALENT:444c032c563c18a1|attack_of_opportunity",
           "policy": "ATTACK_OF_OPPORTUNITY_POLICY",
           "batch": "3B.2B"
+        },
+        {
+          "decisionId": "TALENT:444c032c563c18a1|ranged",
+          "policy": "CLOSED_SCOPE_POLICY",
+          "batch": "3B.BULK"
         }
       ]
     },
@@ -1877,6 +1970,44 @@
     },
     {
       "domain": "TALENT",
+      "canonicalId": "72c644f7a09b1186",
+      "name": "Deflect",
+      "added": [
+        "ranged"
+      ],
+      "before": [
+        "force",
+        "use_the_force",
+        "lightsaber",
+        "deflect",
+        "ranged_defense",
+        "defense",
+        "reaction",
+        "action_economy",
+        "evasion"
+      ],
+      "after": [
+        "force",
+        "use_the_force",
+        "lightsaber",
+        "deflect",
+        "ranged_defense",
+        "defense",
+        "reaction",
+        "action_economy",
+        "evasion",
+        "ranged"
+      ],
+      "decisions": [
+        {
+          "decisionId": "TALENT:72c644f7a09b1186|ranged",
+          "policy": "CLOSED_SCOPE_POLICY",
+          "batch": "3B.BULK"
+        }
+      ]
+    },
+    {
+      "domain": "TALENT",
       "canonicalId": "7a024dac260bf9ec",
       "name": "Dumb Luck",
       "added": [
@@ -1998,6 +2129,40 @@
     },
     {
       "domain": "TALENT",
+      "canonicalId": "852bca9332684a2b",
+      "name": "Shield Gauntlet Defense",
+      "added": [
+        "ranged"
+      ],
+      "before": [
+        "shields",
+        "equipment",
+        "reaction",
+        "action_economy",
+        "ranged_defense",
+        "defense",
+        "evasion"
+      ],
+      "after": [
+        "shields",
+        "equipment",
+        "reaction",
+        "action_economy",
+        "ranged_defense",
+        "defense",
+        "evasion",
+        "ranged"
+      ],
+      "decisions": [
+        {
+          "decisionId": "TALENT:852bca9332684a2b|ranged",
+          "policy": "CLOSED_SCOPE_POLICY",
+          "batch": "3B.BULK"
+        }
+      ]
+    },
+    {
+      "domain": "TALENT",
       "canonicalId": "8d0657e7ade688bd",
       "name": "Scripted Routines",
       "added": [
@@ -2041,6 +2206,80 @@
           "decisionId": "TALENT:8d0657e7ade688bd|swift_action",
           "policy": "ACTION_TYPE_POLICY",
           "batch": "3B.1"
+        }
+      ]
+    },
+    {
+      "domain": "TALENT",
+      "canonicalId": "913a0ca43e032caa",
+      "name": "Nimble Dodge",
+      "added": [
+        "melee"
+      ],
+      "before": [
+        "reaction",
+        "evasion",
+        "mobility",
+        "positioning",
+        "melee_defense",
+        "defense",
+        "survivability",
+        "action_economy"
+      ],
+      "after": [
+        "reaction",
+        "evasion",
+        "mobility",
+        "positioning",
+        "melee_defense",
+        "defense",
+        "survivability",
+        "action_economy",
+        "melee"
+      ],
+      "decisions": [
+        {
+          "decisionId": "TALENT:913a0ca43e032caa|melee",
+          "policy": "CLOSED_SCOPE_POLICY",
+          "batch": "3B.BULK"
+        }
+      ]
+    },
+    {
+      "domain": "TALENT",
+      "canonicalId": "9379daa94a228c04",
+      "name": "Block",
+      "added": [
+        "melee"
+      ],
+      "before": [
+        "force",
+        "use_the_force",
+        "lightsaber",
+        "block",
+        "melee_defense",
+        "defense",
+        "reaction",
+        "action_economy",
+        "evasion"
+      ],
+      "after": [
+        "force",
+        "use_the_force",
+        "lightsaber",
+        "block",
+        "melee_defense",
+        "defense",
+        "reaction",
+        "action_economy",
+        "evasion",
+        "melee"
+      ],
+      "decisions": [
+        {
+          "decisionId": "TALENT:9379daa94a228c04|melee",
+          "policy": "CLOSED_SCOPE_POLICY",
+          "batch": "3B.BULK"
         }
       ]
     },
@@ -2402,6 +2641,52 @@
     },
     {
       "domain": "TALENT",
+      "canonicalId": "de751f28fc269c85",
+      "name": "Intimidating Defense",
+      "added": [
+        "ranged"
+      ],
+      "before": [
+        "once-per-encounter",
+        "reaction",
+        "action_economy",
+        "persuasion",
+        "intimidation",
+        "social",
+        "skills",
+        "will_defense",
+        "mind-affecting",
+        "defense",
+        "melee_defense",
+        "ranged_defense",
+        "control"
+      ],
+      "after": [
+        "once-per-encounter",
+        "reaction",
+        "action_economy",
+        "persuasion",
+        "intimidation",
+        "social",
+        "skills",
+        "will_defense",
+        "mind-affecting",
+        "defense",
+        "melee_defense",
+        "ranged_defense",
+        "control",
+        "ranged"
+      ],
+      "decisions": [
+        {
+          "decisionId": "TALENT:de751f28fc269c85|ranged",
+          "policy": "CLOSED_SCOPE_POLICY",
+          "batch": "3B.BULK"
+        }
+      ]
+    },
+    {
+      "domain": "TALENT",
       "canonicalId": "dfb9e58c7bcb095c",
       "name": "Jedi Quarry",
       "added": [
@@ -2715,6 +3000,56 @@
           "decisionId": "TALENT:f8ac7fecc8d3c8ff|resource_recovery",
           "policy": "RESOURCE_RECOVERY_POLICY",
           "batch": "3B.1"
+        }
+      ]
+    },
+    {
+      "domain": "TALENT",
+      "canonicalId": "fcd7c1e0bd15df71",
+      "name": "Cover Escape",
+      "added": [
+        "melee"
+      ],
+      "before": [
+        "force",
+        "force_defense",
+        "block",
+        "deflect",
+        "force_point_spend",
+        "resource_spend",
+        "ally_support",
+        "support",
+        "teamwork",
+        "mobility",
+        "movement",
+        "positioning",
+        "evasion",
+        "attack_of_opportunity",
+        "action_economy"
+      ],
+      "after": [
+        "force",
+        "force_defense",
+        "block",
+        "deflect",
+        "force_point_spend",
+        "resource_spend",
+        "ally_support",
+        "support",
+        "teamwork",
+        "mobility",
+        "movement",
+        "positioning",
+        "evasion",
+        "attack_of_opportunity",
+        "action_economy",
+        "melee"
+      ],
+      "decisions": [
+        {
+          "decisionId": "TALENT:fcd7c1e0bd15df71|melee",
+          "policy": "CLOSED_SCOPE_POLICY",
+          "batch": "3B.BULK"
         }
       ]
     }
@@ -8700,7 +9035,16 @@
         "melee",
         "damage_bonus",
         "precision",
-        "burst_damage"
+        "burst_damage",
+        "lightsaber"
+      ],
+      "ownerAdditions": [
+        {
+          "tag": "lightsaber",
+          "batch": "3B.BULK",
+          "policy": "CLOSED_SCOPE_POLICY",
+          "decisionId": "FEAT:cb6aea7e256e4c8c|lightsaber"
+        }
       ]
     },
     {
@@ -10494,7 +10838,16 @@
       "finalTags": [
         "melee",
         "precision",
-        "ability_enhancement"
+        "ability_enhancement",
+        "lightsaber"
+      ],
+      "ownerAdditions": [
+        {
+          "tag": "lightsaber",
+          "batch": "3B.BULK",
+          "policy": "CLOSED_SCOPE_POLICY",
+          "decisionId": "TALENT:00c3231e4a4173fa|lightsaber"
+        }
       ]
     },
     {
@@ -10843,7 +11196,16 @@
         "support",
         "teamwork",
         "defense",
-        "ranged_defense"
+        "ranged_defense",
+        "pistol"
+      ],
+      "ownerAdditions": [
+        {
+          "tag": "pistol",
+          "batch": "3B.BULK",
+          "policy": "CLOSED_SCOPE_POLICY",
+          "decisionId": "TALENT:049820827d7ef32b|pistol"
+        }
       ]
     },
     {
@@ -17841,7 +18203,8 @@
         "movement",
         "evasion",
         "positioning",
-        "attack_of_opportunity"
+        "attack_of_opportunity",
+        "ranged"
       ],
       "ownerAdditions": [
         {
@@ -17849,6 +18212,12 @@
           "batch": "3B.2B",
           "policy": "ATTACK_OF_OPPORTUNITY_POLICY",
           "decisionId": "TALENT:444c032c563c18a1|attack_of_opportunity"
+        },
+        {
+          "tag": "ranged",
+          "batch": "3B.BULK",
+          "policy": "CLOSED_SCOPE_POLICY",
+          "decisionId": "TALENT:444c032c563c18a1|ranged"
         }
       ]
     },
@@ -23591,7 +23960,16 @@
         "defense",
         "reaction",
         "action_economy",
-        "evasion"
+        "evasion",
+        "ranged"
+      ],
+      "ownerAdditions": [
+        {
+          "tag": "ranged",
+          "batch": "3B.BULK",
+          "policy": "CLOSED_SCOPE_POLICY",
+          "decisionId": "TALENT:72c644f7a09b1186|ranged"
+        }
       ]
     },
     {
@@ -25473,7 +25851,16 @@
         "action_economy",
         "ranged_defense",
         "defense",
-        "evasion"
+        "evasion",
+        "ranged"
+      ],
+      "ownerAdditions": [
+        {
+          "tag": "ranged",
+          "batch": "3B.BULK",
+          "policy": "CLOSED_SCOPE_POLICY",
+          "decisionId": "TALENT:852bca9332684a2b|ranged"
+        }
       ]
     },
     {
@@ -27077,7 +27464,16 @@
         "melee_defense",
         "defense",
         "survivability",
-        "action_economy"
+        "action_economy",
+        "melee"
+      ],
+      "ownerAdditions": [
+        {
+          "tag": "melee",
+          "batch": "3B.BULK",
+          "policy": "CLOSED_SCOPE_POLICY",
+          "decisionId": "TALENT:913a0ca43e032caa|melee"
+        }
       ]
     },
     {
@@ -27342,7 +27738,16 @@
         "defense",
         "reaction",
         "action_economy",
-        "evasion"
+        "evasion",
+        "melee"
+      ],
+      "ownerAdditions": [
+        {
+          "tag": "melee",
+          "batch": "3B.BULK",
+          "policy": "CLOSED_SCOPE_POLICY",
+          "decisionId": "TALENT:9379daa94a228c04|melee"
+        }
       ]
     },
     {
@@ -38183,7 +38588,16 @@
         "defense",
         "melee_defense",
         "ranged_defense",
-        "control"
+        "control",
+        "ranged"
+      ],
+      "ownerAdditions": [
+        {
+          "tag": "ranged",
+          "batch": "3B.BULK",
+          "policy": "CLOSED_SCOPE_POLICY",
+          "decisionId": "TALENT:de751f28fc269c85|ranged"
+        }
       ]
     },
     {
@@ -42230,7 +42644,16 @@
         "positioning",
         "evasion",
         "attack_of_opportunity",
-        "action_economy"
+        "action_economy",
+        "melee"
+      ],
+      "ownerAdditions": [
+        {
+          "tag": "melee",
+          "batch": "3B.BULK",
+          "policy": "CLOSED_SCOPE_POLICY",
+          "decisionId": "TALENT:fcd7c1e0bd15df71|melee"
+        }
       ]
     },
     {

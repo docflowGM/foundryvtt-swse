@@ -16,12 +16,12 @@ Mechanic families scanned: 15 (106 detectors, 14 cross-domain bundles)
 
 Records where mechanic wording and the compared tag co-occur (count only; not adjudicated): 3965
 
-Owner-review candidates: 249
-  record-level (P1 128 / P2 95): 223
-  tag-definition (P3): 12
+Owner-review candidates: 220
+  record-level (P1 101 / P2 95): 196
+  tag-definition (P3): 10
   tag-convention questions (P3; 236 untagged matches listed, not individually flagged): 14
 
-Findings decided by explicit owner rulings (approved / no change): 123
+Findings decided by explicit owner rulings (approved / no change): 150
 Prior-ruling / intentional-divergence matches: 11
 Tags carried by only one domain (count only; no ruling made): 34
 
@@ -77,9 +77,9 @@ Zero violations across the combined corpus.
 | J. Recovery / medicine | 9 | 27 | 107 | 194 | 146 | 5 | 12 |
 | K. Support / command | 7 | 39 | 280 | 388 | 289 | 0 | 71 |
 | L. Technology | 9 | 18 | 78 | 163 | 145 | 3 | 0 |
-| M. Vehicle / space | 4 | 33 | 97 | 179 | 132 | 29 | 0 |
-| N. Force mechanics | 10 | 32 | 288 | 639 | 464 | 9 | 3 |
-| O. Weapon / combat mode | 16 | 92 | 312 | 582 | 501 | 44 | 0 |
+| M. Vehicle / space | 4 | 33 | 97 | 179 | 132 | 23 | 0 |
+| N. Force mechanics | 10 | 32 | 288 | 639 | 464 | 8 | 3 |
+| O. Weapon / combat mode | 16 | 92 | 312 | 582 | 501 | 24 | 0 |
 
 ### A. Action economy
 
@@ -301,7 +301,7 @@ Representative evidence (facts only): **Infuse Weapon** (TALENT, Force Unleashed
 
 ### M. Vehicle / space
 
-Tags expected: `pilot`, `shields`, `space`, `vehicle`. Records with evidence text: 1540; feats involved 33; talents involved 97; detections 179; already convergent 132; owner review 29.
+Tags expected: `pilot`, `shields`, `space`, `vehicle`. Records with evidence text: 1540; feats involved 33; talents involved 97; detections 179; already convergent 132; owner review 23.
 
 | Detector | Tag | Conf | Detected (F/T) | Tagged (F/T) | Detected, not tagged (F/T) | Tagged rate |
 | --- | --- | --- | --- | --- | --- | ---: |
@@ -312,14 +312,14 @@ Tags expected: `pilot`, `shields`, `space`, `vehicle`. Records with evidence tex
 
 Owner-review groups (mechanic → candidate tag):
 
-- **M.shields** → `shields` (P1): 5 record(s) [0 feat / 5 talent]; e.g. Force Cloak (`2c18952e0c014127`); Dedicated Guardian (`562148487d7aa43c`); Device Jammer (`5db4343762664d95`)
-- **M.vehicle** → `vehicle` (P1): 24 record(s) [8 feat / 16 talent]; e.g. Burst Fire (`0d4d7c147c48cdab`); Zero Range (`0dbd1d12c0b99725`); Power Attack (`3f76464c43c73f84`)
+- **M.shields** → `shields` (P1): 4 record(s) [0 feat / 4 talent]; e.g. Force Cloak (`2c18952e0c014127`); Dedicated Guardian (`562148487d7aa43c`); Fortified Body (`6714ab8e28708f50`)
+- **M.vehicle** → `vehicle` (P1): 19 record(s) [6 feat / 13 talent]; e.g. Burst Fire (`0d4d7c147c48cdab`); Power Attack (`3f76464c43c73f84`); Scavenger (`6cf1898b8c3c837c`)
 
 Representative evidence (facts only): **Force Cloak** (TALENT, Saga Edition Core Rulebook p.107, TALENT_CERTIFIED_PACK_BENEFIT_TEXT) — "As a swift action, you can surround yourself with an invisible bubble of Force power that shields you and anything you're carrying from electronic surveillance. The bubble also blocks all electronic sensors and communications.…". Tags: `force`, `swift_action`, `action_economy`, `concealment`, `stealth`, `infiltration`, `tech`, `sensors`, `network`; compared tag `shields` absent. Comparison records carrying it: Droid Shield Mastery (FEAT) [`shields`, `resource_recovery`, `reliability`, `swift_action`, `action_economy`, `endurance`]; Vehicle Systems Expertise (FEAT) [`vehicle`, `mechanics`, `shields`, `power_systems`, `swift_action`, `action_economy`, `once-per-encounter`, `resource_recovery`]; Shield Surge (FEAT) [`vehicle`, `shields`, `damage_reduction`, `durability`, `reaction`, `action_economy`, `resource_spend`, `power_systems`].
 
 ### N. Force mechanics
 
-Tags expected: `anti-force`, `dark_side`, `dark_side_score`, `force`, `force_defense`, `force_power`, `force_power_synergy`, `force_training`, `light_side`, `use_the_force`. Records with evidence text: 1540; feats involved 32; talents involved 288; detections 639; already convergent 464; owner review 12.
+Tags expected: `anti-force`, `dark_side`, `dark_side_score`, `force`, `force_defense`, `force_power`, `force_power_synergy`, `force_training`, `light_side`, `use_the_force`. Records with evidence text: 1540; feats involved 32; talents involved 288; detections 639; already convergent 464; owner review 11.
 
 | Detector | Tag | Conf | Detected (F/T) | Tagged (F/T) | Detected, not tagged (F/T) | Tagged rate |
 | --- | --- | --- | --- | --- | --- | ---: |
@@ -336,7 +336,7 @@ Tags expected: `anti-force`, `dark_side`, `dark_side_score`, `force`, `force_def
 
 Owner-review groups (mechanic → candidate tag):
 
-- **N.dark_side** → `dark_side` (P1): 4 record(s) [0 feat / 4 talent]; e.g. Dark Scourge (`08fc3247755c5ebe`); Force Harmony (`5b949c8cd8e78ee8`); Attuned (`bd797d3f83d0f61f`)
+- **N.dark_side** → `dark_side` (P1): 3 record(s) [0 feat / 3 talent]; e.g. Dark Scourge (`08fc3247755c5ebe`); Force Harmony (`5b949c8cd8e78ee8`); Attuned (`bd797d3f83d0f61f`)
 - **N.dark_side_score** → `dark_side_score` (P1): 5 record(s) [0 feat / 5 talent]; e.g. Focused Attack (`2fc019fa8c4108a7`); Resist the Dark Side (`3331d4b2b88e446f`); Sith Reverence (`81b2b88df9600ca7`)
 - **N.force_defense** → `force_defense` (P2): 3 record(s) [0 feat / 3 talent]; e.g. Reap Retribution (`902c2cef66cf4df6`); Akk Dog Master (`b265aa9dd35c4c5b`); Inspire Fear I (`cf4b1e5b126a2a7e`)
 
@@ -344,7 +344,7 @@ Representative evidence (facts only): **Dark Scourge** (TALENT, Saga Edition Cor
 
 ### O. Weapon / combat mode
 
-Tags expected: `double_weapon`, `dual_wield`, `exotic_weapon`, `fighting_defensively`, `flanking`, `full_attack`, `heavy_weapon`, `improvised_weapon`, `lightsaber`, `martial_arts`, `melee`, `nonlethal`, `pistol`, `ranged`, `stun`, `unarmed`. Records with evidence text: 1540; feats involved 92; talents involved 312; detections 582; already convergent 501; owner review 44.
+Tags expected: `double_weapon`, `dual_wield`, `exotic_weapon`, `fighting_defensively`, `flanking`, `full_attack`, `heavy_weapon`, `improvised_weapon`, `lightsaber`, `martial_arts`, `melee`, `nonlethal`, `pistol`, `ranged`, `stun`, `unarmed`. Records with evidence text: 1540; feats involved 92; talents involved 312; detections 582; already convergent 501; owner review 24.
 
 | Detector | Tag | Conf | Detected (F/T) | Tagged (F/T) | Detected, not tagged (F/T) | Tagged rate |
 | --- | --- | --- | --- | --- | --- | ---: |
@@ -367,11 +367,10 @@ Tags expected: `double_weapon`, `dual_wield`, `exotic_weapon`, `fighting_defensi
 
 Owner-review groups (mechanic → candidate tag):
 
-- **O.lightsaber** → `lightsaber` (P1): 10 record(s) [3 feat / 7 talent]; e.g. Flurry (`0536f81eff886234`); Improved Rapid Strike (`cb6aea7e256e4c8c`); Weapon Proficiency (`ecc2471ac96ec2d4`)
-- **O.melee** → `melee` (P1): 15 record(s) [5 feat / 10 talent]; e.g. Knife Trick (`61c053191d05d0a2`); Charging Fire (`a945e2f5ffb5a7ed`); Precise Shot (`c180eee7d3bc29b2`)
-- **O.pistol** → `pistol` (P1): 6 record(s) [3 feat / 3 talent]; e.g. Sport Hunter (`8778b4271420f789`); Disabler (`94023012303ad257`); Weapon Proficiency (`ecc2471ac96ec2d4`)
-- **O.ranged** → `ranged` (P1): 11 record(s) [2 feat / 9 talent]; e.g. Tool Frenzy (`203f7fa521105d0b`); Dive for Cover (`2866d953b4b6245d`); Visionary Defense (`153f4b3c6510023d`)
-- **O.unarmed** → `unarmed` (P1): 2 record(s) [2 feat / 0 talent]; e.g. Triple Crit (`3d4a4e93ced26712`); Weapon Focus (`c41814601364b643`)
+- **O.lightsaber** → `lightsaber` (P1): 3 record(s) [1 feat / 2 talent]; e.g. Flurry (`0536f81eff886234`); Infuse Weapon (`0df15b0ea7721c50`); Precision Fire (`bef731c3743c2c7f`)
+- **O.melee** → `melee` (P1): 11 record(s) [4 feat / 7 talent]; e.g. Knife Trick (`61c053191d05d0a2`); Charging Fire (`a945e2f5ffb5a7ed`); Precise Shot (`c180eee7d3bc29b2`)
+- **O.pistol** → `pistol` (P1): 3 record(s) [2 feat / 1 talent]; e.g. Sport Hunter (`8778b4271420f789`); Disabler (`94023012303ad257`); Blaster Turret I (`7b56d0b92582ae88`)
+- **O.ranged** → `ranged` (P1): 7 record(s) [2 feat / 5 talent]; e.g. Tool Frenzy (`203f7fa521105d0b`); Dive for Cover (`2866d953b4b6245d`); Visionary Defense (`153f4b3c6510023d`)
 
 Representative evidence (facts only): **Flurry** (FEAT, Knights of the Old Republic Campaign Guide p.33, FEAT_CANONICAL_RULES_SHAPE) — "While wielding only light weapons or lightsabers, take -5 Reflex Defense and gain +2 on melee attack rolls until the start of your next turn. May substitute for Point Blank Shot…". Tags: `melee`, `precision`, `defense`; compared tag `lightsaber` absent. Comparison records carrying it: Oath of Duty (TALENT) [`ally-trigger`, `lightsaber`, `durability`, `survivability`, `scaling`, `positioning`]; Dual Weapon Flourish II (TALENT) [`dual_wield`, `melee`, `lightsaber`, `full_attack`, `standard_action`, `action_economy`, `sustained_damage`]; Ataru (TALENT) [`lightsaber`, `melee`, `ability_enhancement`, `damage_bonus`, `sustained_damage`].
 
@@ -422,7 +421,7 @@ P3 owner-review items are broad tags or tags whose co-tag profile differs strong
 | Tag | State | Feats | Talents | Co-tag cosine | Note |
 | --- | --- | ---: | ---: | ---: | --- |
 | `alchemy` | USED_BY_ONE_DOMAIN_ONLY | 0 | 6 | — | Carried only by talents; 0 feat record(s) match a non-LOW detector for this tag (see Channel 1). No domain-specificity ruling is made. |
-| `battlefield_control` | PASS3B_OWNER_REVIEW | 32 | 166 | 0.895 | Owner-named broad tag; cross-domain usage evidence supplied for the owner. |
+| `battlefield_control` | PASS3B_POLICY_RESOLVED | 32 | 166 | 0.895 | Owner-named broad tag; cross-domain usage evidence supplied for the owner. |
 | `beast_companion` | USED_BY_ONE_DOMAIN_ONLY | 0 | 6 | — | Carried only by talents; 0 feat record(s) match a non-LOW detector for this tag (see Channel 1). No domain-specificity ruling is made. |
 | `block` | USED_BY_ONE_DOMAIN_ONLY | 0 | 16 | — | Carried only by talents; 0 feat record(s) match a non-LOW detector for this tag (see Channel 1). No domain-specificity ruling is made. |
 | `command` | USED_BY_ONE_DOMAIN_ONLY | 0 | 11 | — | Carried only by talents; 0 feat record(s) match a non-LOW detector for this tag (see Channel 1). No domain-specificity ruling is made. |
@@ -450,7 +449,7 @@ P3 owner-review items are broad tags or tags whose co-tag profile differs strong
 | `precognition` | USED_BY_ONE_DOMAIN_ONLY | 0 | 15 | — | Carried only by talents; 0 feat record(s) match a non-LOW detector for this tag (see Channel 1). No domain-specificity ruling is made. |
 | `pursuit` | USED_BY_ONE_DOMAIN_ONLY | 0 | 30 | — | Carried only by talents; 0 feat record(s) match a non-LOW detector for this tag (see Channel 1). No domain-specificity ruling is made. |
 | `recon` | USED_BY_ONE_DOMAIN_ONLY | 0 | 31 | — | Carried only by talents; 0 feat record(s) match a non-LOW detector for this tag (see Channel 1). No domain-specificity ruling is made. |
-| `reliability` | PASS3B_OWNER_REVIEW | 33 | 142 | 0.897 | Owner-named broad tag; cross-domain usage evidence supplied for the owner. |
+| `reliability` | PASS3B_POLICY_RESOLVED | 33 | 142 | 0.897 | Owner-named broad tag; cross-domain usage evidence supplied for the owner. |
 | `resources` | PASS3B_OWNER_REVIEW | 14 | 46 | 0.739 | Owner-named broad tag; cross-domain usage evidence supplied for the owner. |
 | `search_your_feelings` | USED_BY_ONE_DOMAIN_ONLY | 0 | 5 | — | Carried only by talents; 0 feat record(s) match a non-LOW detector for this tag (see Channel 1). No domain-specificity ruling is made. |
 | `self_repair` | USED_BY_ONE_DOMAIN_ONLY | 0 | 3 | — | Carried only by talents; 0 feat record(s) match a non-LOW detector for this tag (see Channel 1). No domain-specificity ruling is made. |

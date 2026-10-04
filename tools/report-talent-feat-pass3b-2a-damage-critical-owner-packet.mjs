@@ -78,7 +78,7 @@ export function buildPacket(discovery, baseline, overlay) {
     return d && scopeTags.has(i.comparedTag) ? { bundle: b.id, detectorId: d } : null;
   };
   // Open findings, plus findings that later receive a 3B.2A owner decision (keeps this historical packet stable; no decision data is written).
-  const pool = [...discovery.ownerReviewItems, ...(discovery.ownerDecidedItems || []).filter(i => i.ownerDecision?.batch === '3B.2A')];
+  const pool = [...discovery.ownerReviewItems, ...(discovery.ownerDecidedItems || []).filter(i => ['3B.2A', '3B.BULK'].includes(i.ownerDecision?.batch))];
   const inScope = pool.filter(i => SCOPE.includes(i.mechanic) || bundleScope(i));
   const precedents = discovery.precedentRules;
   const natural20Precedent = precedents.find(p => /natural-20/i.test(p));
@@ -94,7 +94,7 @@ export function buildPacket(discovery, baseline, overlay) {
       .sort((a, b) => b.overlap - a.overlap || cmp(a.r.canonicalId, b.r.canonicalId)).slice(0, 2);
     const priorOnRecord = [
       ...discovery.resolvedByPriorRuling.filter(x => x.domain === i.domain && x.canonicalId === i.canonicalId).map(x => ({ source: x.priorOwnerPrecedent?.source, comparedTag: x.comparedTag, ruling: x.priorOwnerPrecedent?.ruling })),
-      ...overlay.decisions.filter(x => x.domain === i.domain && x.canonicalId === i.canonicalId && x.batch !== '3B.2A').map(x => ({ source: `Pass 3B ${x.batch} owner decision`, comparedTag: x.tag, ruling: x.ownerAction, policy: x.ownerPolicyApplied }))
+      ...overlay.decisions.filter(x => x.domain === i.domain && x.canonicalId === i.canonicalId && x.batch !== '3B.2A' && x.batch !== '3B.BULK').map(x => ({ source: `Pass 3B ${x.batch} owner decision`, comparedTag: x.tag, ruling: x.ownerAction, policy: x.ownerPolicyApplied }))
     ];
     return {
       family: d.family, familyName: detectorId.startsWith('D.') ? 'Damage mechanics' : 'Critical mechanics', detectorId, reportedViaBundle: via ? via.bundle : null, comparedTag: i.comparedTag, detectorConfidence: d.confidence,

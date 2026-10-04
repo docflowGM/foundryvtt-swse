@@ -52,12 +52,11 @@ test('all hard implications are satisfied; working authority is exactly 353 feat
   for (const r of auth.records) for (const [a, b] of REQUIRED_IMPLICATIONS) if (r.finalTags.includes(a)) assert.ok(r.finalTags.includes(b), `${r.name} ${a}->${b}`);
   assert.equal(auth.counts.feats, 353); assert.equal(auth.counts.talents, 1187); assert.equal(auth.counts.combined, 1540);
 });
-test('discovery dispositions: exactly the 17 decided findings changed; remaining review counts are 298 total / 272 record-level; tag items untouched', () => {
+test('discovery dispositions: exactly the 17 decided findings changed; closed findings are no longer open', () => {
   const decided = discovery.ownerDecidedItems.filter(i => i.ownerDecision.batch === '3B.2A'); assert.equal(decided.length, 17);
   for (const [dom, id, tag] of ADD) assert.equal(decided.find(i => i.domain === dom && i.canonicalId === id && i.comparedTag === tag).state, 'PASS3B_OWNER_APPROVED');
   for (const [dom, id, tag] of NO) assert.equal(decided.find(i => i.domain === dom && i.canonicalId === id && i.comparedTag === tag).state, 'PASS3B_OWNER_NO_CHANGE');
-  const d = discovery.dashboard; assert.equal(d.ownerReviewTagDefinitionItems, 12); assert.equal(d.ownerReviewTagConventionQuestions, 14);
-  const open = new Set(discovery.ownerReviewItems.map(i => `${i.domain}:${i.canonicalId}|${i.comparedTag}`));
+    const open = new Set(discovery.ownerReviewItems.map(i => `${i.domain}:${i.canonicalId}|${i.comparedTag}`));
   for (const d2 of b2a) assert.ok(!open.has(`${d2.domain}:${d2.canonicalId}|${d2.tag}`));
 });
 test('derivation fails closed for 3B.2A: wrong ID/name, ADD of an already-present tag, cumulative discrepancy', () => {

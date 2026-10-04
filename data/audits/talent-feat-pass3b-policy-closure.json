@@ -1,0 +1,874 @@
+{
+  "schemaVersion": "1.0",
+  "kind": "TALENT_FEAT_PASS3B_POLICY_CLOSURE",
+  "status": "POLICY_DERIVED_CLOSURE_APPLIED_TO_OVERLAY",
+  "counts": {
+    "startingUnresolvedRecordLevel": 223,
+    "resolvedByPolicy": 27,
+    "policyDerivedAdd": 10,
+    "policyDerivedNoChange": 17,
+    "unresolvedRecordLevel": 196,
+    "policyGaps": 48,
+    "tagDefinitionQuestionsStarting": 12,
+    "tagDefinitionPolicyResolved": 2,
+    "tagDefinitionRemaining": 10,
+    "tagConventionStarting": 14,
+    "tagConventionPolicyResolved": 0,
+    "tagConventionRemaining": 14,
+    "ontologyGaps": 3,
+    "overlayDecisions": 152,
+    "overlayAdd": 63,
+    "overlayNoChange": 89,
+    "recordsWithAdditions": 54,
+    "tagAdditions": 63,
+    "removals": 0,
+    "tagInstances": 11281
+  },
+  "decisions": [
+    {
+      "decisionId": "TALENT:5db4343762664d95|shields",
+      "batch": "3B.BULK",
+      "domain": "TALENT",
+      "canonicalId": "5db4343762664d95",
+      "name": "Device Jammer",
+      "tag": "shields",
+      "ownerAction": "NO_CHANGE",
+      "decisionSource": "OWNER_POLICY_DERIVED",
+      "derivationRule": "REFERENCE_ONLY",
+      "ownerPoliciesApplied": [
+        "REFERENCE_ONLY_POLICY"
+      ],
+      "ownerPolicyApplied": "REFERENCE_ONLY_POLICY",
+      "detectorEvidenceReference": [
+        "M.shields"
+      ],
+      "clauseEvidence": [
+        {
+          "kind": "REFERENCE_ONLY",
+          "sentence": "You can construct a short-range jammer that affects a specific type of electronic device such as a personal shield generator, comlink, computer, or datapad.",
+          "matchedPhrases": [
+            "shield"
+          ]
+        }
+      ],
+      "ownerRationale": "Policy-derived (execution of existing owner policy, not a new ruling): every matched clause falls in a structural form named by REFERENCE_ONLY_POLICY; rule REFERENCE_ONLY."
+    },
+    {
+      "decisionId": "FEAT:0dbd1d12c0b99725|vehicle",
+      "batch": "3B.BULK",
+      "domain": "FEAT",
+      "canonicalId": "0dbd1d12c0b99725",
+      "name": "Zero Range",
+      "tag": "vehicle",
+      "ownerAction": "NO_CHANGE",
+      "decisionSource": "OWNER_POLICY_DERIVED",
+      "derivationRule": "NEGATIVE_EXCLUSION",
+      "ownerPoliciesApplied": [
+        "NEGATIVE_EXCLUSION_POLICY"
+      ],
+      "ownerPolicyApplied": "NEGATIVE_EXCLUSION_POLICY",
+      "detectorEvidenceReference": [
+        "M.vehicle"
+      ],
+      "clauseEvidence": [
+        {
+          "kind": "NEGATIVE_EXCLUSION",
+          "sentence": "Does not apply to heavy weapons, vehicle weapons, or starship combat.",
+          "matchedPhrases": [
+            "vehicle",
+            "starship"
+          ]
+        },
+        {
+          "kind": "NEGATIVE_EXCLUSION",
+          "sentence": "At zero range, gain +1 attack and +1 die damage with eligible ranged weapons, excluding heavy/vehicle/starship use and Burst Fire/Rapid Shot stacking.",
+          "matchedPhrases": [
+            "vehicle",
+            "starship"
+          ]
+        }
+      ],
+      "ownerRationale": "Policy-derived (execution of existing owner policy, not a new ruling): every matched clause falls in a structural form named by NEGATIVE_EXCLUSION_POLICY; rule NEGATIVE_EXCLUSION."
+    },
+    {
+      "decisionId": "FEAT:80c52cf7838095c1|vehicle",
+      "batch": "3B.BULK",
+      "domain": "FEAT",
+      "canonicalId": "80c52cf7838095c1",
+      "name": "Return Fire",
+      "tag": "vehicle",
+      "ownerAction": "NO_CHANGE",
+      "decisionSource": "OWNER_POLICY_DERIVED",
+      "derivationRule": "NEGATIVE_EXCLUSION",
+      "ownerPoliciesApplied": [
+        "NEGATIVE_EXCLUSION_POLICY"
+      ],
+      "ownerPolicyApplied": "NEGATIVE_EXCLUSION_POLICY",
+      "detectorEvidenceReference": [
+        "M.vehicle"
+      ],
+      "clauseEvidence": [
+        {
+          "kind": "NEGATIVE_EXCLUSION",
+          "sentence": "Does not apply to vehicle weapons or heavy weapons.",
+          "matchedPhrases": [
+            "vehicle"
+          ]
+        }
+      ],
+      "ownerRationale": "Policy-derived (execution of existing owner policy, not a new ruling): every matched clause falls in a structural form named by NEGATIVE_EXCLUSION_POLICY; rule NEGATIVE_EXCLUSION."
+    },
+    {
+      "decisionId": "TALENT:111b0a9d1f8d5111|vehicle",
+      "batch": "3B.BULK",
+      "domain": "TALENT",
+      "canonicalId": "111b0a9d1f8d5111",
+      "name": "Personalized Modifications",
+      "tag": "vehicle",
+      "ownerAction": "NO_CHANGE",
+      "decisionSource": "OWNER_POLICY_DERIVED",
+      "derivationRule": "REFERENCE_ONLY",
+      "ownerPoliciesApplied": [
+        "REFERENCE_ONLY_POLICY"
+      ],
+      "ownerPolicyApplied": "REFERENCE_ONLY_POLICY",
+      "detectorEvidenceReference": [
+        "M.vehicle"
+      ],
+      "clauseEvidence": [
+        {
+          "kind": "REFERENCE_ONLY",
+          "sentence": "You can use this talent only on powered weapons (those that require a power cell to operate), including weapons connected to a larger power source (such as vehicle and starship weapons).",
+          "matchedPhrases": [
+            "vehicle",
+            "starship"
+          ]
+        }
+      ],
+      "ownerRationale": "Policy-derived (execution of existing owner policy, not a new ruling): every matched clause falls in a structural form named by REFERENCE_ONLY_POLICY; rule REFERENCE_ONLY."
+    },
+    {
+      "decisionId": "TALENT:5db4343762664d95|vehicle",
+      "batch": "3B.BULK",
+      "domain": "TALENT",
+      "canonicalId": "5db4343762664d95",
+      "name": "Device Jammer",
+      "tag": "vehicle",
+      "ownerAction": "NO_CHANGE",
+      "decisionSource": "OWNER_POLICY_DERIVED",
+      "derivationRule": "NEGATIVE_EXCLUSION",
+      "ownerPoliciesApplied": [
+        "NEGATIVE_EXCLUSION_POLICY"
+      ],
+      "ownerPolicyApplied": "NEGATIVE_EXCLUSION_POLICY",
+      "detectorEvidenceReference": [
+        "M.vehicle"
+      ],
+      "clauseEvidence": [
+        {
+          "kind": "NEGATIVE_EXCLUSION",
+          "sentence": "As a full-round action, you select a particular piece of equipment (any object except a droid, vehicle, or weapon) and make a DC 20 Mechanics check.",
+          "matchedPhrases": [
+            "vehicle"
+          ]
+        }
+      ],
+      "ownerRationale": "Policy-derived (execution of existing owner policy, not a new ruling): every matched clause falls in a structural form named by NEGATIVE_EXCLUSION_POLICY; rule NEGATIVE_EXCLUSION."
+    },
+    {
+      "decisionId": "TALENT:c59e7eba84e6d4eb|vehicle",
+      "batch": "3B.BULK",
+      "domain": "TALENT",
+      "canonicalId": "c59e7eba84e6d4eb",
+      "name": "Cover Bracing",
+      "tag": "vehicle",
+      "ownerAction": "NO_CHANGE",
+      "decisionSource": "OWNER_POLICY_DERIVED",
+      "derivationRule": "REFERENCE_ONLY",
+      "ownerPoliciesApplied": [
+        "REFERENCE_ONLY_POLICY"
+      ],
+      "ownerPolicyApplied": "REFERENCE_ONLY_POLICY",
+      "detectorEvidenceReference": [
+        "M.vehicle"
+      ],
+      "clauseEvidence": [
+        {
+          "kind": "REFERENCE_ONLY",
+          "sentence": "You can brace a weapon set on autofire as a single swift action (instead of two) if you are adjacent to an object (including walls, barriers, and vehicles) that provides you with cover from all of the target squares.",
+          "matchedPhrases": [
+            "vehicles"
+          ]
+        }
+      ],
+      "ownerRationale": "Policy-derived (execution of existing owner policy, not a new ruling): every matched clause falls in a structural form named by REFERENCE_ONLY_POLICY; rule REFERENCE_ONLY."
+    },
+    {
+      "decisionId": "TALENT:cf2d518039afd828|dark_side",
+      "batch": "3B.BULK",
+      "domain": "TALENT",
+      "canonicalId": "cf2d518039afd828",
+      "name": "Sentinel Strike",
+      "tag": "dark_side",
+      "ownerAction": "NO_CHANGE",
+      "decisionSource": "OWNER_POLICY_DERIVED",
+      "derivationRule": "NEGATIVE_EXCLUSION",
+      "ownerPoliciesApplied": [
+        "NEGATIVE_EXCLUSION_POLICY"
+      ],
+      "ownerPolicyApplied": "NEGATIVE_EXCLUSION_POLICY",
+      "detectorEvidenceReference": [
+        "N.dark_side"
+      ],
+      "clauseEvidence": [
+        {
+          "kind": "NEGATIVE_EXCLUSION",
+          "sentence": "This talent does not affect Force powers with the [dark side] descriptor.",
+          "matchedPhrases": [
+            "dark side"
+          ]
+        }
+      ],
+      "ownerRationale": "Policy-derived (execution of existing owner policy, not a new ruling): every matched clause falls in a structural form named by NEGATIVE_EXCLUSION_POLICY; rule NEGATIVE_EXCLUSION."
+    },
+    {
+      "decisionId": "FEAT:cb6aea7e256e4c8c|lightsaber",
+      "batch": "3B.BULK",
+      "domain": "FEAT",
+      "canonicalId": "cb6aea7e256e4c8c",
+      "name": "Improved Rapid Strike",
+      "tag": "lightsaber",
+      "ownerAction": "ADD",
+      "decisionSource": "OWNER_POLICY_DERIVED",
+      "derivationRule": "CLOSED_DIRECT",
+      "ownerPoliciesApplied": [
+        "CLOSED_SCOPE_POLICY",
+        "DIRECT_OPERATIVE_MECHANIC_POLICY"
+      ],
+      "ownerPolicyApplied": "CLOSED_SCOPE_POLICY",
+      "detectorEvidenceReference": [
+        "O.lightsaber"
+      ],
+      "clauseEvidence": [
+        {
+          "kind": "CLOSED_DIRECT",
+          "sentence": "With a light melee weapon or lightsaber and Rapid Strike, take -5 on the attack to gain +2 dice of damage.",
+          "matchedPhrases": [
+            "lightsaber"
+          ]
+        },
+        {
+          "kind": "CLOSED_DIRECT",
+          "sentence": "Upgrade Rapid Strike with a light melee weapon/lightsaber to +2 damage dice for -5 attack, or -10 if Dexterity is below 13.",
+          "matchedPhrases": [
+            "lightsaber"
+          ]
+        }
+      ],
+      "ownerRationale": "Policy-derived (execution of existing owner policy, not a new ruling): every matched clause falls in a structural form named by CLOSED_SCOPE_POLICY + DIRECT_OPERATIVE_MECHANIC_POLICY; rule CLOSED_DIRECT."
+    },
+    {
+      "decisionId": "FEAT:ecc2471ac96ec2d4|lightsaber",
+      "batch": "3B.BULK",
+      "domain": "FEAT",
+      "canonicalId": "ecc2471ac96ec2d4",
+      "name": "Weapon Proficiency",
+      "tag": "lightsaber",
+      "ownerAction": "NO_CHANGE",
+      "decisionSource": "OWNER_POLICY_DERIVED",
+      "derivationRule": "OPEN_GENERIC_SCOPE",
+      "ownerPoliciesApplied": [
+        "OPEN_GENERIC_SCOPE_POLICY"
+      ],
+      "ownerPolicyApplied": "OPEN_GENERIC_SCOPE_POLICY",
+      "detectorEvidenceReference": [
+        "O.lightsaber"
+      ],
+      "clauseEvidence": [
+        {
+          "kind": "OPEN_GENERIC_SCOPE",
+          "sentence": "Choose advanced melee weapons, heavy weapons, lightsabers, pistols, rifles, or simple weapons; become proficient with all weapons in that group.",
+          "matchedPhrases": [
+            "lightsabers"
+          ]
+        }
+      ],
+      "ownerRationale": "Policy-derived (execution of existing owner policy, not a new ruling): every matched clause falls in a structural form named by OPEN_GENERIC_SCOPE_POLICY; rule OPEN_GENERIC_SCOPE."
+    },
+    {
+      "decisionId": "TALENT:00c3231e4a4173fa|lightsaber",
+      "batch": "3B.BULK",
+      "domain": "TALENT",
+      "canonicalId": "00c3231e4a4173fa",
+      "name": "Noble Fencing Style",
+      "tag": "lightsaber",
+      "ownerAction": "ADD",
+      "decisionSource": "OWNER_POLICY_DERIVED",
+      "derivationRule": "CLOSED_DIRECT",
+      "ownerPoliciesApplied": [
+        "CLOSED_SCOPE_POLICY",
+        "DIRECT_OPERATIVE_MECHANIC_POLICY"
+      ],
+      "ownerPolicyApplied": "CLOSED_SCOPE_POLICY",
+      "detectorEvidenceReference": [
+        "O.lightsaber"
+      ],
+      "clauseEvidence": [
+        {
+          "kind": "CLOSED_DIRECT",
+          "sentence": "When using a light melee weapon or a lightsaber that you are proficient with, you can use your Charisma modifier instead of your Strength modifier on attack rolls.",
+          "matchedPhrases": [
+            "lightsaber"
+          ]
+        }
+      ],
+      "ownerRationale": "Policy-derived (execution of existing owner policy, not a new ruling): every matched clause falls in a structural form named by CLOSED_SCOPE_POLICY + DIRECT_OPERATIVE_MECHANIC_POLICY; rule CLOSED_DIRECT."
+    },
+    {
+      "decisionId": "TALENT:32df92c3114b5c94|lightsaber",
+      "batch": "3B.BULK",
+      "domain": "TALENT",
+      "canonicalId": "32df92c3114b5c94",
+      "name": "Accurate Blow",
+      "tag": "lightsaber",
+      "ownerAction": "NO_CHANGE",
+      "decisionSource": "OWNER_POLICY_DERIVED",
+      "derivationRule": "OPEN_GENERIC_SCOPE",
+      "ownerPoliciesApplied": [
+        "OPEN_GENERIC_SCOPE_POLICY"
+      ],
+      "ownerPolicyApplied": "OPEN_GENERIC_SCOPE_POLICY",
+      "detectorEvidenceReference": [
+        "O.lightsaber"
+      ],
+      "clauseEvidence": [
+        {
+          "kind": "OPEN_GENERIC_SCOPE",
+          "sentence": "Choose one Exotic Weapon (Melee) or one of the following Weapon Groups in which you are proficient: Advanced Melee Weapons, Lightsabers, or Simple Weapons (Melee).",
+          "matchedPhrases": [
+            "Lightsabers"
+          ]
+        }
+      ],
+      "ownerRationale": "Policy-derived (execution of existing owner policy, not a new ruling): every matched clause falls in a structural form named by OPEN_GENERIC_SCOPE_POLICY; rule OPEN_GENERIC_SCOPE."
+    },
+    {
+      "decisionId": "TALENT:5218d5971b78119b|lightsaber",
+      "batch": "3B.BULK",
+      "domain": "TALENT",
+      "canonicalId": "5218d5971b78119b",
+      "name": "Empower Weapon",
+      "tag": "lightsaber",
+      "ownerAction": "NO_CHANGE",
+      "decisionSource": "OWNER_POLICY_DERIVED",
+      "derivationRule": "REFERENCE_ONLY",
+      "ownerPoliciesApplied": [
+        "REFERENCE_ONLY_POLICY"
+      ],
+      "ownerPolicyApplied": "REFERENCE_ONLY_POLICY",
+      "detectorEvidenceReference": [
+        "O.lightsaber"
+      ],
+      "clauseEvidence": [
+        {
+          "kind": "REFERENCE_ONLY",
+          "sentence": "For example, an empowered Lightsaber deals 3d8 points of damage, instead of 2d8 points of damage.",
+          "matchedPhrases": [
+            "Lightsaber"
+          ]
+        }
+      ],
+      "ownerRationale": "Policy-derived (execution of existing owner policy, not a new ruling): every matched clause falls in a structural form named by REFERENCE_ONLY_POLICY; rule REFERENCE_ONLY."
+    },
+    {
+      "decisionId": "TALENT:a7aea0411eb4fbc0|lightsaber",
+      "batch": "3B.BULK",
+      "domain": "TALENT",
+      "canonicalId": "a7aea0411eb4fbc0",
+      "name": "Champion",
+      "tag": "lightsaber",
+      "ownerAction": "NO_CHANGE",
+      "decisionSource": "OWNER_POLICY_DERIVED",
+      "derivationRule": "NEGATIVE_EXCLUSION",
+      "ownerPoliciesApplied": [
+        "NEGATIVE_EXCLUSION_POLICY"
+      ],
+      "ownerPolicyApplied": "NEGATIVE_EXCLUSION_POLICY",
+      "detectorEvidenceReference": [
+        "O.lightsaber"
+      ],
+      "clauseEvidence": [
+        {
+          "kind": "NEGATIVE_EXCLUSION",
+          "sentence": "Masterful Strike: When making a successful unarmed or melee attack other than with a lightsaber, increase your damage by 2 for every 5 points by which your attack roll exceeds the target's Reflex Defense.",
+          "matchedPhrases": [
+            "lightsaber"
+          ]
+        }
+      ],
+      "ownerRationale": "Policy-derived (execution of existing owner policy, not a new ruling): every matched clause falls in a structural form named by NEGATIVE_EXCLUSION_POLICY; rule NEGATIVE_EXCLUSION."
+    },
+    {
+      "decisionId": "TALENT:c1be1f29c00436d5|lightsaber",
+      "batch": "3B.BULK",
+      "domain": "TALENT",
+      "canonicalId": "c1be1f29c00436d5",
+      "name": "Transfer Essence",
+      "tag": "lightsaber",
+      "ownerAction": "NO_CHANGE",
+      "decisionSource": "OWNER_POLICY_DERIVED",
+      "derivationRule": "REFERENCE_ONLY",
+      "ownerPoliciesApplied": [
+        "REFERENCE_ONLY_POLICY"
+      ],
+      "ownerPolicyApplied": "REFERENCE_ONLY_POLICY",
+      "detectorEvidenceReference": [
+        "O.lightsaber"
+      ],
+      "clauseEvidence": [
+        {
+          "kind": "REFERENCE_ONLY",
+          "sentence": "Alternately, as a standard action, you can transfer your essence into a single adjacent object, such as a holocron or a lightsaber.",
+          "matchedPhrases": [
+            "lightsaber"
+          ]
+        }
+      ],
+      "ownerRationale": "Policy-derived (execution of existing owner policy, not a new ruling): every matched clause falls in a structural form named by REFERENCE_ONLY_POLICY; rule REFERENCE_ONLY."
+    },
+    {
+      "decisionId": "FEAT:ecc2471ac96ec2d4|melee",
+      "batch": "3B.BULK",
+      "domain": "FEAT",
+      "canonicalId": "ecc2471ac96ec2d4",
+      "name": "Weapon Proficiency",
+      "tag": "melee",
+      "ownerAction": "NO_CHANGE",
+      "decisionSource": "OWNER_POLICY_DERIVED",
+      "derivationRule": "OPEN_GENERIC_SCOPE",
+      "ownerPoliciesApplied": [
+        "OPEN_GENERIC_SCOPE_POLICY"
+      ],
+      "ownerPolicyApplied": "OPEN_GENERIC_SCOPE_POLICY",
+      "detectorEvidenceReference": [
+        "O.melee"
+      ],
+      "clauseEvidence": [
+        {
+          "kind": "OPEN_GENERIC_SCOPE",
+          "sentence": "Choose advanced melee weapons, heavy weapons, lightsabers, pistols, rifles, or simple weapons; become proficient with all weapons in that group.",
+          "matchedPhrases": [
+            "melee"
+          ]
+        }
+      ],
+      "ownerRationale": "Policy-derived (execution of existing owner policy, not a new ruling): every matched clause falls in a structural form named by OPEN_GENERIC_SCOPE_POLICY; rule OPEN_GENERIC_SCOPE."
+    },
+    {
+      "decisionId": "TALENT:913a0ca43e032caa|melee",
+      "batch": "3B.BULK",
+      "domain": "TALENT",
+      "canonicalId": "913a0ca43e032caa",
+      "name": "Nimble Dodge",
+      "tag": "melee",
+      "ownerAction": "ADD",
+      "decisionSource": "OWNER_POLICY_DERIVED",
+      "derivationRule": "CLOSED_DIRECT",
+      "ownerPoliciesApplied": [
+        "CLOSED_SCOPE_POLICY",
+        "DIRECT_OPERATIVE_MECHANIC_POLICY"
+      ],
+      "ownerPolicyApplied": "CLOSED_SCOPE_POLICY",
+      "detectorEvidenceReference": [
+        "O.melee"
+      ],
+      "clauseEvidence": [
+        {
+          "kind": "CLOSED_DIRECT",
+          "sentence": "If an enemy misses you with a melee attack, as a reaction you can move up to 2 squares, but you must end your movement adjacent to your attacker.",
+          "matchedPhrases": [
+            "melee"
+          ]
+        }
+      ],
+      "ownerRationale": "Policy-derived (execution of existing owner policy, not a new ruling): every matched clause falls in a structural form named by CLOSED_SCOPE_POLICY + DIRECT_OPERATIVE_MECHANIC_POLICY; rule CLOSED_DIRECT."
+    },
+    {
+      "decisionId": "TALENT:9379daa94a228c04|melee",
+      "batch": "3B.BULK",
+      "domain": "TALENT",
+      "canonicalId": "9379daa94a228c04",
+      "name": "Block",
+      "tag": "melee",
+      "ownerAction": "ADD",
+      "decisionSource": "OWNER_POLICY_DERIVED",
+      "derivationRule": "CLOSED_DIRECT",
+      "ownerPoliciesApplied": [
+        "CLOSED_SCOPE_POLICY",
+        "DIRECT_OPERATIVE_MECHANIC_POLICY"
+      ],
+      "ownerPolicyApplied": "CLOSED_SCOPE_POLICY",
+      "detectorEvidenceReference": [
+        "O.melee"
+      ],
+      "clauseEvidence": [
+        {
+          "kind": "CLOSED_DIRECT",
+          "sentence": "As a reaction, you may negate a melee attack by making a successful Use the Force check.",
+          "matchedPhrases": [
+            "melee"
+          ]
+        }
+      ],
+      "ownerRationale": "Policy-derived (execution of existing owner policy, not a new ruling): every matched clause falls in a structural form named by CLOSED_SCOPE_POLICY + DIRECT_OPERATIVE_MECHANIC_POLICY; rule CLOSED_DIRECT."
+    },
+    {
+      "decisionId": "TALENT:fcd7c1e0bd15df71|melee",
+      "batch": "3B.BULK",
+      "domain": "TALENT",
+      "canonicalId": "fcd7c1e0bd15df71",
+      "name": "Cover Escape",
+      "tag": "melee",
+      "ownerAction": "ADD",
+      "decisionSource": "OWNER_POLICY_DERIVED",
+      "derivationRule": "CLOSED_DIRECT",
+      "ownerPoliciesApplied": [
+        "CLOSED_SCOPE_POLICY",
+        "DIRECT_OPERATIVE_MECHANIC_POLICY"
+      ],
+      "ownerPolicyApplied": "CLOSED_SCOPE_POLICY",
+      "detectorEvidenceReference": [
+        "O.melee"
+      ],
+      "clauseEvidence": [
+        {
+          "kind": "CLOSED_DIRECT",
+          "sentence": "When you successfully spend a Force Point to negate a melee attack against an adjacent ally with the Block or Deflect talents, that ally can move up to 2 squares as a free action.",
+          "matchedPhrases": [
+            "melee"
+          ]
+        }
+      ],
+      "ownerRationale": "Policy-derived (execution of existing owner policy, not a new ruling): every matched clause falls in a structural form named by CLOSED_SCOPE_POLICY + DIRECT_OPERATIVE_MECHANIC_POLICY; rule CLOSED_DIRECT."
+    },
+    {
+      "decisionId": "FEAT:ecc2471ac96ec2d4|pistol",
+      "batch": "3B.BULK",
+      "domain": "FEAT",
+      "canonicalId": "ecc2471ac96ec2d4",
+      "name": "Weapon Proficiency",
+      "tag": "pistol",
+      "ownerAction": "NO_CHANGE",
+      "decisionSource": "OWNER_POLICY_DERIVED",
+      "derivationRule": "OPEN_GENERIC_SCOPE",
+      "ownerPoliciesApplied": [
+        "OPEN_GENERIC_SCOPE_POLICY"
+      ],
+      "ownerPolicyApplied": "OPEN_GENERIC_SCOPE_POLICY",
+      "detectorEvidenceReference": [
+        "O.pistol"
+      ],
+      "clauseEvidence": [
+        {
+          "kind": "OPEN_GENERIC_SCOPE",
+          "sentence": "Choose advanced melee weapons, heavy weapons, lightsabers, pistols, rifles, or simple weapons; become proficient with all weapons in that group.",
+          "matchedPhrases": [
+            "pistols"
+          ]
+        }
+      ],
+      "ownerRationale": "Policy-derived (execution of existing owner policy, not a new ruling): every matched clause falls in a structural form named by OPEN_GENERIC_SCOPE_POLICY; rule OPEN_GENERIC_SCOPE."
+    },
+    {
+      "decisionId": "TALENT:049820827d7ef32b|pistol",
+      "batch": "3B.BULK",
+      "domain": "TALENT",
+      "canonicalId": "049820827d7ef32b",
+      "name": "Cover Fire",
+      "tag": "pistol",
+      "ownerAction": "ADD",
+      "decisionSource": "OWNER_POLICY_DERIVED",
+      "derivationRule": "CLOSED_DIRECT",
+      "ownerPoliciesApplied": [
+        "CLOSED_SCOPE_POLICY",
+        "DIRECT_OPERATIVE_MECHANIC_POLICY"
+      ],
+      "ownerPolicyApplied": "CLOSED_SCOPE_POLICY",
+      "detectorEvidenceReference": [
+        "O.pistol"
+      ],
+      "clauseEvidence": [
+        {
+          "kind": "CLOSED_DIRECT",
+          "sentence": "When you make a ranged attack with a Pistol or Rifle, all allies within 6 squares of you when you made the attack gain a +1 bonus to Reflex Defense until the start of your next turn.",
+          "matchedPhrases": [
+            "Pistol"
+          ]
+        }
+      ],
+      "ownerRationale": "Policy-derived (execution of existing owner policy, not a new ruling): every matched clause falls in a structural form named by CLOSED_SCOPE_POLICY + DIRECT_OPERATIVE_MECHANIC_POLICY; rule CLOSED_DIRECT."
+    },
+    {
+      "decisionId": "TALENT:e9820b341bf94de1|pistol",
+      "batch": "3B.BULK",
+      "domain": "TALENT",
+      "canonicalId": "e9820b341bf94de1",
+      "name": "Greater Weapon Specialization",
+      "tag": "pistol",
+      "ownerAction": "NO_CHANGE",
+      "decisionSource": "OWNER_POLICY_DERIVED",
+      "derivationRule": "OPEN_GENERIC_SCOPE",
+      "ownerPoliciesApplied": [
+        "OPEN_GENERIC_SCOPE_POLICY"
+      ],
+      "ownerPolicyApplied": "OPEN_GENERIC_SCOPE_POLICY",
+      "detectorEvidenceReference": [
+        "O.pistol"
+      ],
+      "clauseEvidence": [
+        {
+          "kind": "OPEN_GENERIC_SCOPE",
+          "sentence": "Choose one exotic weapon or one of the following weapon groups: advanced melee weapons, heavy weapons, pistols, rifles, or simple weapons.",
+          "matchedPhrases": [
+            "pistols"
+          ]
+        }
+      ],
+      "ownerRationale": "Policy-derived (execution of existing owner policy, not a new ruling): every matched clause falls in a structural form named by OPEN_GENERIC_SCOPE_POLICY; rule OPEN_GENERIC_SCOPE."
+    },
+    {
+      "decisionId": "TALENT:444c032c563c18a1|ranged",
+      "batch": "3B.BULK",
+      "domain": "TALENT",
+      "canonicalId": "444c032c563c18a1",
+      "name": "Beloved",
+      "tag": "ranged",
+      "ownerAction": "ADD",
+      "decisionSource": "OWNER_POLICY_DERIVED",
+      "derivationRule": "CLOSED_DIRECT",
+      "ownerPoliciesApplied": [
+        "CLOSED_SCOPE_POLICY",
+        "DIRECT_OPERATIVE_MECHANIC_POLICY"
+      ],
+      "ownerPolicyApplied": "CLOSED_SCOPE_POLICY",
+      "detectorEvidenceReference": [
+        "O.ranged"
+      ],
+      "clauseEvidence": [
+        {
+          "kind": "CLOSED_DIRECT",
+          "sentence": "Reprisal: Make a single melee or ranged attack against any target within range as a standard action.",
+          "matchedPhrases": [
+            "ranged"
+          ]
+        }
+      ],
+      "ownerRationale": "Policy-derived (execution of existing owner policy, not a new ruling): every matched clause falls in a structural form named by CLOSED_SCOPE_POLICY + DIRECT_OPERATIVE_MECHANIC_POLICY; rule CLOSED_DIRECT."
+    },
+    {
+      "decisionId": "TALENT:72c644f7a09b1186|ranged",
+      "batch": "3B.BULK",
+      "domain": "TALENT",
+      "canonicalId": "72c644f7a09b1186",
+      "name": "Deflect",
+      "tag": "ranged",
+      "ownerAction": "ADD",
+      "decisionSource": "OWNER_POLICY_DERIVED",
+      "derivationRule": "CLOSED_DIRECT",
+      "ownerPoliciesApplied": [
+        "CLOSED_SCOPE_POLICY",
+        "DIRECT_OPERATIVE_MECHANIC_POLICY"
+      ],
+      "ownerPolicyApplied": "CLOSED_SCOPE_POLICY",
+      "detectorEvidenceReference": [
+        "O.ranged"
+      ],
+      "clauseEvidence": [
+        {
+          "kind": "CLOSED_DIRECT",
+          "sentence": "As a reaction, you may negate a ranged attack by making a successful Use the Force check.",
+          "matchedPhrases": [
+            "ranged"
+          ]
+        }
+      ],
+      "ownerRationale": "Policy-derived (execution of existing owner policy, not a new ruling): every matched clause falls in a structural form named by CLOSED_SCOPE_POLICY + DIRECT_OPERATIVE_MECHANIC_POLICY; rule CLOSED_DIRECT."
+    },
+    {
+      "decisionId": "TALENT:852bca9332684a2b|ranged",
+      "batch": "3B.BULK",
+      "domain": "TALENT",
+      "canonicalId": "852bca9332684a2b",
+      "name": "Shield Gauntlet Defense",
+      "tag": "ranged",
+      "ownerAction": "ADD",
+      "decisionSource": "OWNER_POLICY_DERIVED",
+      "derivationRule": "CLOSED_DIRECT",
+      "ownerPoliciesApplied": [
+        "CLOSED_SCOPE_POLICY",
+        "DIRECT_OPERATIVE_MECHANIC_POLICY"
+      ],
+      "ownerPolicyApplied": "CLOSED_SCOPE_POLICY",
+      "detectorEvidenceReference": [
+        "O.ranged"
+      ],
+      "clauseEvidence": [
+        {
+          "kind": "CLOSED_DIRECT",
+          "sentence": "Once per turn as a reaction, you can gain a +2 deflection bonus to your Reflex Defense against any one ranged attack.",
+          "matchedPhrases": [
+            "ranged"
+          ]
+        }
+      ],
+      "ownerRationale": "Policy-derived (execution of existing owner policy, not a new ruling): every matched clause falls in a structural form named by CLOSED_SCOPE_POLICY + DIRECT_OPERATIVE_MECHANIC_POLICY; rule CLOSED_DIRECT."
+    },
+    {
+      "decisionId": "TALENT:de751f28fc269c85|ranged",
+      "batch": "3B.BULK",
+      "domain": "TALENT",
+      "canonicalId": "de751f28fc269c85",
+      "name": "Intimidating Defense",
+      "tag": "ranged",
+      "ownerAction": "ADD",
+      "decisionSource": "OWNER_POLICY_DERIVED",
+      "derivationRule": "CLOSED_DIRECT",
+      "ownerPoliciesApplied": [
+        "CLOSED_SCOPE_POLICY",
+        "DIRECT_OPERATIVE_MECHANIC_POLICY"
+      ],
+      "ownerPolicyApplied": "CLOSED_SCOPE_POLICY",
+      "detectorEvidenceReference": [
+        "O.ranged"
+      ],
+      "clauseEvidence": [
+        {
+          "kind": "CLOSED_DIRECT",
+          "sentence": "Once per encounter, as a reaction, you can make a Persuasion check to intimidate one creature that has made a melee or ranged attack against you if that creature is within line of sight.",
+          "matchedPhrases": [
+            "ranged"
+          ]
+        }
+      ],
+      "ownerRationale": "Policy-derived (execution of existing owner policy, not a new ruling): every matched clause falls in a structural form named by CLOSED_SCOPE_POLICY + DIRECT_OPERATIVE_MECHANIC_POLICY; rule CLOSED_DIRECT."
+    },
+    {
+      "decisionId": "FEAT:3d4a4e93ced26712|unarmed",
+      "batch": "3B.BULK",
+      "domain": "FEAT",
+      "canonicalId": "3d4a4e93ced26712",
+      "name": "Triple Crit",
+      "tag": "unarmed",
+      "ownerAction": "NO_CHANGE",
+      "decisionSource": "OWNER_POLICY_DERIVED",
+      "derivationRule": "REFERENCE_ONLY",
+      "ownerPoliciesApplied": [
+        "REFERENCE_ONLY_POLICY"
+      ],
+      "ownerPolicyApplied": "REFERENCE_ONLY_POLICY",
+      "detectorEvidenceReference": [
+        "O.unarmed"
+      ],
+      "clauseEvidence": [
+        {
+          "kind": "REFERENCE_ONLY",
+          "sentence": "Choose one weapon, including unarmed attack if desired.",
+          "matchedPhrases": [
+            "unarmed"
+          ]
+        }
+      ],
+      "ownerRationale": "Policy-derived (execution of existing owner policy, not a new ruling): every matched clause falls in a structural form named by REFERENCE_ONLY_POLICY; rule REFERENCE_ONLY."
+    },
+    {
+      "decisionId": "FEAT:c41814601364b643|unarmed",
+      "batch": "3B.BULK",
+      "domain": "FEAT",
+      "canonicalId": "c41814601364b643",
+      "name": "Weapon Focus",
+      "tag": "unarmed",
+      "ownerAction": "NO_CHANGE",
+      "decisionSource": "OWNER_POLICY_DERIVED",
+      "derivationRule": "REFERENCE_ONLY",
+      "ownerPoliciesApplied": [
+        "REFERENCE_ONLY_POLICY"
+      ],
+      "ownerPolicyApplied": "REFERENCE_ONLY_POLICY",
+      "detectorEvidenceReference": [
+        "O.unarmed"
+      ],
+      "clauseEvidence": [
+        {
+          "kind": "REFERENCE_ONLY",
+          "sentence": "Choose one exotic weapon or weapon group, including unarmed strike or grapple if desired, and gain +1 attacks with it.",
+          "matchedPhrases": [
+            "unarmed"
+          ]
+        }
+      ],
+      "ownerRationale": "Policy-derived (execution of existing owner policy, not a new ruling): every matched clause falls in a structural form named by REFERENCE_ONLY_POLICY; rule REFERENCE_ONLY."
+    }
+  ],
+  "tagQuestionResolutions": [
+    {
+      "kind": "TAG_DEFINITION",
+      "key": "battlefield_control",
+      "state": "PASS3B_POLICY_RESOLVED",
+      "controllingPolicies": [
+        "BATTLEFIELD_CONTROL_POLICY"
+      ],
+      "source": "OWNER_POLICY_DERIVED"
+    },
+    {
+      "kind": "TAG_DEFINITION",
+      "key": "reliability",
+      "state": "PASS3B_POLICY_RESOLVED",
+      "controllingPolicies": [
+        "RELIABILITY_POLICY"
+      ],
+      "source": "OWNER_POLICY_DERIVED"
+    }
+  ],
+  "ontologyGaps": [
+    {
+      "id": "condition_track",
+      "label": "Condition Track movement",
+      "state": "PHASE3_ONTOLOGY_GAP",
+      "feats": 16,
+      "talents": 79
+    },
+    {
+      "id": "full_round_action",
+      "label": "Full-round action",
+      "state": "PHASE3_ONTOLOGY_GAP",
+      "feats": 9,
+      "talents": 47
+    },
+    {
+      "id": "recurring_ion_mechanics",
+      "label": "Recurring ion mechanics (no ion tag; ion != stun)",
+      "state": "PHASE3_ONTOLOGY_GAP",
+      "feats": 4,
+      "talents": 3
+    }
+  ],
+  "derivationRules": {
+    "NO_CHANGE": [
+      "NEGATIVE_EXCLUSION",
+      "REFERENCE_ONLY",
+      "OPEN_GENERIC_SCOPE"
+    ],
+    "ADD": [
+      "CLOSED_DIRECT (weapon scopes melee, ranged, unarmed, lightsaber, pistol only)"
+    ],
+    "gapRule": "any other form, or a mix of closed and open/other forms, stays unresolved"
+  },
+  "generalPolicies": [
+    "DIRECT_OPERATIVE_MECHANIC_POLICY",
+    "REFERENCE_ONLY_POLICY",
+    "OPEN_GENERIC_SCOPE_POLICY",
+    "CLOSED_SCOPE_POLICY",
+    "NEGATIVE_EXCLUSION_POLICY",
+    "SPECIFIC_OVER_BROAD_POLICY"
+  ]
+}

@@ -27,7 +27,7 @@ test('packet size is the live deterministic result: 44 entries (15/11/10/6/2) ov
   const T = packet.totals; assert.equal(T.entries, 44); assert.equal(T.uniqueRecords, 37); assert.deepEqual(T.byFamily, { O: 44 });
   assert.deepEqual(T.byDetector, { 'O.melee': 15, 'O.ranged': 11, 'O.lightsaber': 10, 'O.pistol': 6, 'O.unarmed': 2 });
   assert.equal(Object.values(T.byDomain).reduce((a, b) => a + b, 0), 44);
-  assert.equal(T.entries, [...discovery.ownerReviewItems, ...discovery.ownerDecidedItems.filter(i => i.ownerDecision.batch === '3B.2D')].filter(i => SCOPE.includes(i.mechanic)).length);
+  assert.equal(T.entries, [...discovery.ownerReviewItems, ...discovery.ownerDecidedItems.filter(i => ['3B.2D', '3B.BULK'].includes(i.ownerDecision.batch))].filter(i => SCOPE.includes(i.mechanic)).length);
 });
 test('every clause carries a structural scope label; scope tallies are consistent with the entries', () => {
   const ok = new Set(['CLOSED_SCOPE', 'OPEN_GENERIC_SCOPE', 'SCOPE_NOT_DETERMINABLE_FROM_WORDING']);
@@ -38,8 +38,8 @@ test('every clause carries a structural scope label; scope tallies are consisten
   assert.equal(packet.totals.entriesWithAClosedScopeClause, packet.entries.filter(e => e.entryScopeSummary.CLOSED_SCOPE > 0).length);
 });
 test('every entry was an open record-level finding when issued (open now, or decided in 3B.2D); nothing convergent, prior-ruled or decided earlier', () => {
-  const open = new Set([...discovery.ownerReviewItems, ...discovery.ownerDecidedItems.filter(i => i.ownerDecision.batch === '3B.2D')].map(i => `${i.domain}:${i.canonicalId}|${i.comparedTag}`));
-  const closed = new Set([...discovery.resolvedByPriorRuling, ...discovery.ownerDecidedItems.filter(i => i.ownerDecision.batch !== '3B.2D')].map(i => `${i.domain}:${i.canonicalId}|${i.comparedTag}`));
+  const open = new Set([...discovery.ownerReviewItems, ...discovery.ownerDecidedItems.filter(i => ['3B.2D', '3B.BULK'].includes(i.ownerDecision.batch))].map(i => `${i.domain}:${i.canonicalId}|${i.comparedTag}`));
+  const closed = new Set([...discovery.resolvedByPriorRuling, ...discovery.ownerDecidedItems.filter(i => !['3B.2D', '3B.BULK'].includes(i.ownerDecision.batch))].map(i => `${i.domain}:${i.canonicalId}|${i.comparedTag}`));
   for (const e of packet.entries) { const k = `${e.domain}:${e.canonicalId}|${e.comparedTag}`; assert.ok(open.has(k), k); assert.ok(!closed.has(k), k); assert.equal(e.comparedTagCurrentlyPresent, false); assert.ok(!e.currentTags.includes(e.comparedTag)); }
 });
 test('complete canonical text, tags, tier and identity match the baseline; every entry has matching clauses with exact phrases', () => {
