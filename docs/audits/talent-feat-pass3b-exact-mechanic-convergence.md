@@ -16,11 +16,12 @@ Mechanic families scanned: 15 (106 detectors, 14 cross-domain bundles)
 
 Records where mechanic wording and the compared tag co-occur (count only; not adjudicated): 3965
 
-Owner-review candidates: 372
-  record-level (P1 221 / P2 125): 346
+Owner-review candidates: 316
+  record-level (P1 178 / P2 112): 290
   tag-definition (P3): 12
   tag-convention questions (P3; 236 untagged matches listed, not individually flagged): 14
 
+Findings decided by explicit owner rulings (approved / no change): 56
 Prior-ruling / intentional-divergence matches: 11
 Tags carried by only one domain (count only; no ruling made): 34
 
@@ -64,9 +65,9 @@ Zero violations across the combined corpus.
 
 | Family | Detectors | Feats involved | Talents involved | Detections | Convergent | Review P1 | Review P2 |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| A. Action economy | 6 | 50 | 454 | 1002 | 975 | 29 | 0 |
-| B. Rerolls / reliability | 5 | 33 | 104 | 155 | 148 | 2 | 4 |
-| C. Resource mechanics | 5 | 51 | 303 | 512 | 488 | 15 | 9 |
+| A. Action economy | 6 | 50 | 454 | 1002 | 975 | 2 | 0 |
+| B. Rerolls / reliability | 5 | 33 | 104 | 155 | 148 | 1 | 0 |
+| C. Resource mechanics | 5 | 51 | 303 | 512 | 488 | 0 | 0 |
 | D. Damage mechanics | 7 | 50 | 121 | 211 | 113 | 3 | 5 |
 | E. Critical mechanics | 2 | 5 | 33 | 45 | 36 | 9 | 0 |
 | F. Targeting / setup | 6 | 23 | 129 | 183 | 97 | 33 | 0 |
@@ -82,7 +83,7 @@ Zero violations across the combined corpus.
 
 ### A. Action economy
 
-Tags expected: `action_economy`, `move_action`, `reaction`, `standard_action`, `swift_action`. Records with evidence text: 1540; feats involved 50; talents involved 454; detections 1002; already convergent 975; owner review 29.
+Tags expected: `action_economy`, `move_action`, `reaction`, `standard_action`, `swift_action`. Records with evidence text: 1540; feats involved 50; talents involved 454; detections 1002; already convergent 975; owner review 2.
 
 | Detector | Tag | Conf | Detected (F/T) | Tagged (F/T) | Detected, not tagged (F/T) | Tagged rate |
 | --- | --- | --- | --- | --- | --- | ---: |
@@ -95,18 +96,13 @@ Tags expected: `action_economy`, `move_action`, `reaction`, `standard_action`, `
 
 Owner-review groups (mechanic → candidate tag):
 
-- **A.any_action_cost** → `action_economy` (P1): 13 record(s) [8 feat / 5 talent]; e.g. Ascension Specialists (`125c328c4573890a`); Signature Device (`313095ada7504547`); Aquatic Specialists (`55483fd350b3ba28`)
-- **A.cost_move** → `move_action` (P1): 3 record(s) [2 feat / 1 talent]; e.g. Ascension Specialists (`125c328c4573890a`); Aquatic Specialists (`55483fd350b3ba28`); Jedi Quarry (`dfb9e58c7bcb095c`)
-- **A.cost_reaction** → `reaction` (P1): 3 record(s) [0 feat / 3 talent]; e.g. Dumb Luck (`7a024dac260bf9ec`); Outmaneuver (`95697c5a4459d7e4`); Tactical Superiority (`f259cf27c1b62c47`)
-- **A.cost_standard** → `standard_action` (P1): 4 record(s) [0 feat / 4 talent]; e.g. Deep Space Raider (`696f7eed2cc08299`); Harrying Shot (`8306c13c16ae0af8`); Scripted Routines (`8d0657e7ade688bd`)
-- **A.cost_swift** → `swift_action` (P1): 4 record(s) [1 feat / 3 talent]; e.g. Signature Device (`313095ada7504547`); Out of Harm's Way (`1946e16d1e6c831c`); Sow Confusion (`6b09fe0c6fe98367`)
 - **bundle:reaction_defensive_benefit>defense** → `defense` (P1): 2 record(s) [1 feat / 1 talent]; e.g. Dive for Cover (`2866d953b4b6245d`); Reactive Stealth (`810160a476804e61`)
 
-Representative evidence (facts only): **Ascension Specialists** (FEAT, Galaxy at War p.28, FEAT_CANONICAL_RULES_SHAPE) — "…+1 for each ally within 12 squares who also has this feat, to a maximum competence bonus of +7. Additionally, climb at half speed as a move action or normal speed as a full-round action. Team Feat: +3 Climb, scaling by nearby allies with the same feat to +7, plus a Climb-spec…". Tags: `teamwork`, `climb`, `movement`, `mobility`, `scaling`; compared tag `action_economy` absent. Comparison records carrying it: Supervising Droid (TALENT) [`droid`, `ally_support`, `support`, `teamwork`, `skills`, `standard_action`, `swift_action`, `action_economy`, `once-per-encounter`, `reliability`]; Soft to Solid (TALENT) [`force`, `reaction`, `action_economy`, `force_point_spend`, `resource_spend`, `damage_reduction`, `defense`, `resilience`, `survivability`]; Friend or Foe (TALENT) [`ally-trigger`, `reaction`, `action_economy`, `ranged`, `counterattack`, `control`, `positioning`, `evasion`].
+Representative evidence (facts only): **Dive for Cover** (FEAT, Galaxy at War p.23, FEAT_CANONICAL_RULES_SHAPE) — "Once per turn, as a reaction to being targeted by a ranged attack, make a horizontal Jump check. If you land in a square providing cover from the attacker, ga…". Tags: `jump`, `reaction`, `action_economy`, `movement`, `mobility`, `cover`, `ranged_defense`, `evasion`; compared tag `defense` absent. Comparison records carrying it: Beloved (TALENT) [`once-per-encounter`, `ally_support`, `support`, `teamwork`, `swift_action`, `standard_action`, `action_economy`, `defense`, `reaction`, `counterattack`, `mobility`, `movement`, `evasion`, `positioning`]; Dumb Luck (TALENT) [`once-per-encounter`, `standard_action`, `action_economy`, `melee`, `ranged`, `defense`, `evasion`, `mobility`, `movement`, `positioning`, `precision`, `setup`]; Ride the Current (TALENT) [`force`, `reaction`, `action_economy`, `force_point_spend`, `resource_spend`, `concealment`, `evasion`, `defense`, `recovery`, `healing`, `survivability`].
 
 ### B. Rerolls / reliability
 
-Tags expected: `reliability`, `reroll`, `skill_mastery`. Records with evidence text: 1540; feats involved 33; talents involved 104; detections 155; already convergent 148; owner review 6.
+Tags expected: `reliability`, `reroll`, `skill_mastery`. Records with evidence text: 1540; feats involved 33; talents involved 104; detections 155; already convergent 148; owner review 1.
 
 | Detector | Tag | Conf | Detected (F/T) | Tagged (F/T) | Detected, not tagged (F/T) | Tagged rate |
 | --- | --- | --- | --- | --- | --- | ---: |
@@ -118,16 +114,13 @@ Tags expected: `reliability`, `reroll`, `skill_mastery`. Records with evidence t
 
 Owner-review groups (mechanic → candidate tag):
 
-- **B.reroll** → `reroll` (P1): 1 record(s) [0 feat / 1 talent]; e.g. Visionary Defense (`153f4b3c6510023d`)
 - **bundle:reroll>reliability** → `reliability` (P1): 1 record(s) [0 feat / 1 talent]; e.g. Visionary Defense (`153f4b3c6510023d`)
-- **B.roll_twice_keep** → `reliability` (P2): 1 record(s) [1 feat / 0 talent]; e.g. Force of Personality (`baff0da30d0bc8ee`)
-- **B.take_10_20** → `reliability` (P2): 3 record(s) [2 feat / 1 talent]; e.g. Damage Conversion (`1f404db00518aeed`); Biotech Specialist (`bf6c01fa590a3f75`); Electronic Sabotage (`0290634450ab1637`)
 
-Representative evidence (facts only): **Visionary Defense** (TALENT, Knights of the Old Republic Campaign Guide p.25, TALENT_CERTIFIED_PACK_BENEFIT_TEXT) — "…k can only be affected by this talent once (thus, multiple characters cannot use this talent on the same attack to allow multiple rerolls). You take a cumulative -5 penalty on Use the Force checks until the beginning of your next turn when you use this talent.". Tags: `force`, `force_power_synergy`, `visions`, `use_the_force`, `reaction`, `action_economy`, `ally_support`, `support`, `teamwork`, `defense`, `melee_defense`, `ranged_defense`, `will_defense`, `resource_spend`; compared tag `reroll` absent. Comparison records carrying it: Conditioning (FEAT) [`reroll`, `reliability`, `skills`, `defense`, `reaction`, `action_economy`, `once-per-encounter`, `resilience`, `climb`, `jump`, `swim`, `endurance`]; Cut the Red Tape (FEAT) [`knowledge`, `gather_information`, `skill_substitution`, `skills`, `reroll`, `reliability`]; Dreadful Countenance (FEAT) [`persuasion`, `use_the_force`, `force`, `fear`, `reroll`, `reliability`, `social`].
+Representative evidence (facts only): **Visionary Defense** (TALENT, Knights of the Old Republic Campaign Guide p.25, TALENT_CERTIFIED_PACK_BENEFIT_TEXT) — "…k can only be affected by this talent once (thus, multiple characters cannot use this talent on the same attack to allow multiple rerolls). You take a cumulative -5 penalty on Use the Force checks until the beginning of your next turn when you use this talent.". Tags: `force`, `force_power_synergy`, `visions`, `use_the_force`, `reaction`, `action_economy`, `ally_support`, `support`, `teamwork`, `defense`, `melee_defense`, `ranged_defense`, `will_defense`, `resource_spend`; compared tag `reliability` absent. Comparison records carrying it: Conditioning (FEAT) [`reroll`, `reliability`, `skills`, `defense`, `reaction`, `action_economy`, `once-per-encounter`, `resilience`, `climb`, `jump`, `swim`, `endurance`]; Cut the Red Tape (FEAT) [`knowledge`, `gather_information`, `skill_substitution`, `skills`, `reroll`, `reliability`]; Dreadful Countenance (FEAT) [`persuasion`, `use_the_force`, `force`, `fear`, `reroll`, `reliability`, `social`].
 
 ### C. Resource mechanics
 
-Tags expected: `force_capacity`, `force_point_spend`, `once-per-encounter`, `resource_recovery`, `resource_spend`. Records with evidence text: 1540; feats involved 51; talents involved 303; detections 512; already convergent 488; owner review 24.
+Tags expected: `force_capacity`, `force_point_spend`, `once-per-encounter`, `resource_recovery`, `resource_spend`. Records with evidence text: 1540; feats involved 51; talents involved 303; detections 512; already convergent 488; owner review 0.
 
 | Detector | Tag | Conf | Detected (F/T) | Tagged (F/T) | Detected, not tagged (F/T) | Tagged rate |
 | --- | --- | --- | --- | --- | --- | ---: |
@@ -137,15 +130,7 @@ Tags expected: `force_capacity`, `force_point_spend`, `once-per-encounter`, `res
 | C.once_per_encounter | `once-per-encounter` | HIGH | 33/173 | 33/170 | 0/3 | 0.985 |
 | C.force_capacity | `force_capacity` | MEDIUM | 2/5 | 1/5 | 1/0 | 0.857 |
 
-Owner-review groups (mechanic → candidate tag):
-
-- **C.force_point_spend** → `force_point_spend` (P1): 12 record(s) [0 feat / 12 talent]; e.g. Past Visions (`462df9a631ee50f4`); Surge of Light (`8223d30bfce0c14d`); Telekinetic Vigilance (`8ddbbeb09758295d`)
-- **C.once_per_encounter** → `once-per-encounter` (P1): 3 record(s) [0 feat / 3 talent]; e.g. Mystical Link (`45c4e72d74c44acb`); Armored Augmentation I (`98355ed4f6473028`); Feared Warrior (`cfd5d3f677b2bf1a`)
-- **C.force_capacity** → `force_capacity` (P2): 1 record(s) [1 feat / 0 talent]; e.g. Force Boon (`53444cc061d81627`)
-- **C.resource_recovery** → `resource_recovery` (P2): 5 record(s) [0 feat / 5 talent]; e.g. Skillful Recovery (`323cc243fef47675`); Force Recovery (`a691cc0212b6176c`); Master Advisor (`e6c4f05db6ac6c06`)
-- **C.resource_spend** → `resource_spend` (P2): 3 record(s) [0 feat / 3 talent]; e.g. Force Flow (`b0898acb0a19a3cd`); Suppress Force (`ec3e6a05561ddc07`); Sheltering Stance (`f541b5e57c5af27e`)
-
-Representative evidence (facts only): **Past Visions** (TALENT, Knights of the Old Republic Campaign Guide p.58, TALENT_CERTIFIED_PACK_BENEFIT_TEXT) — "…to the past, reduce your DC numbers by half. Also, you are able to see everything within 6 squares of your target clearly without spending a Force Point.". Tags: `force`, `force_power_synergy`, `use_the_force`, `visions`, `senses`, `investigation`, `recon`, `exploration`; compared tag `force_point_spend` absent. Comparison records carrying it: Sharp Senses (FEAT) [`perception`, `awareness`, `force_point_spend`, `resource_spend`, `force_multiplier`]; Hold Together (FEAT) [`vehicle`, `reaction`, `action_economy`, `force_point_spend`, `resource_spend`, `durability`, `damage`]; Rapid Assault (FEAT) [`dual_wield`, `sustained_damage`, `standard_action`, `action_economy`, `force_point_spend`, `resource_spend`].
+No owner-review items in this family.
 
 ### D. Damage mechanics
 

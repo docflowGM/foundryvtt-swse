@@ -23,7 +23,8 @@ const cmp = (a, b) => (a < b ? -1 : a > b ? 1 : 0);
 export const CONVENTION_MIN_RATE = 0.5;
 // Statuses this tool may ASSIGN. PASS3B_EXACT_CONVERGENCE / PASS3B_DOMAIN_SPECIFIC / PASS3B_TEXT_MATCH_NOT_MECHANIC are owner rulings and are never assigned to new findings;
 // PASS3B_INTENTIONAL_DIVERGENCE is assigned only where an already-issued owner ruling names the record.
-const ASSIGNABLE_STATES = ['PASS3B_OWNER_REVIEW', 'PASS3B_PRIOR_OWNER_RULING', 'PASS3B_INTENTIONAL_DIVERGENCE', 'PASS3B_INVARIANT_VIOLATION', 'PASS3B_ONTOLOGY_GAP_CANDIDATE'];
+// PASS3B_OWNER_APPROVED / PASS3B_OWNER_NO_CHANGE are derived only from explicit owner decisions in the cumulative owner overlay.
+const ASSIGNABLE_STATES = ['PASS3B_OWNER_REVIEW', 'PASS3B_OWNER_APPROVED', 'PASS3B_OWNER_NO_CHANGE', 'PASS3B_PRIOR_OWNER_RULING', 'PASS3B_INTENTIONAL_DIVERGENCE', 'PASS3B_INVARIANT_VIOLATION', 'PASS3B_ONTOLOGY_GAP_CANDIDATE'];
 const PRECEDENTS = [
   'Prerequisite inheritance is not semantic inheritance.',
   'Martial Arts I `attack_of_opportunity` does not propagate to Martial Arts II / III.',
@@ -71,7 +72,7 @@ function priorRulings(baseline) {
   return { tagRulings, familyRulings };
 }
 
-export function buildReport(baseline) {
+export function buildReport(baseline, ownerOverlay = null) {
   const records = baseline.records;
   const vocab = new Set(baseline.sharedVocabulary);
   for (const d of DETECTORS) if (!vocab.has(d.tag)) throw new Error(`detector ${d.id} targets tag ${d.tag} outside the shared vocabulary`);
@@ -208,6 +209,19 @@ export function buildReport(baseline) {
     delete it.bundleHint;
   }
 
+  // ---- Explicit owner decisions (cumulative overlay): the only source of PASS3B_OWNER_APPROVED / PASS3B_OWNER_NO_CHANGE ----
+  const decisionByKey = new Map((ownerOverlay?.decisions || []).map(d => [`${d.domain}:${d.canonicalId}|${d.tag}`, d]));
+  const matchedDecisions = new Set();
+  for (const it of items.values()) {
+    const d = decisionByKey.get(`${it.domain}:${it.canonicalId}|${it.comparedTag}`);
+    if (!d) continue;
+    matchedDecisions.add(d.decisionId);
+    it.state = d.ownerAction === 'ADD' ? 'PASS3B_OWNER_APPROVED' : 'PASS3B_OWNER_NO_CHANGE';
+    it.priority = null; it.priorityBasis = null;
+    it.ownerDecision = { decisionId: d.decisionId, batch: d.batch, ownerAction: d.ownerAction, policy: d.ownerPolicyApplied };
+  }
+  const decisionsWithoutDiscoveryItem = [...decisionByKey.values()].filter(d => !matchedDecisions.has(d.decisionId)).map(d => ({ decisionId: d.decisionId, ownerAction: d.ownerAction, batch: d.batch, evidenceReference: d.detectorEvidenceReference }));
+
   // ---- Channel 3: tag-definition reverse audit ----
   const tagAudit = [];
   const usage = (tag, dom) => records.filter(r => r.domain === dom && r.tags.includes(tag));
@@ -261,6 +275,7 @@ export function buildReport(baseline) {
   const byState = {};
   for (const it of itemList) byState[it.state] = (byState[it.state] || 0) + 1;
   const reviewItems = itemList.filter(i => i.state === 'PASS3B_OWNER_REVIEW');
+  const ownerDecided = itemList.filter(i => ['PASS3B_OWNER_APPROVED', 'PASS3B_OWNER_NO_CHANGE'].includes(i.state));
   const exactConvergence = detStats.reduce((n, s) => n + s.convergent, 0);
   const familyRollup = Object.keys(FAMILIES).map(fk => {
     const ds = detStats.filter(s => s.family === fk);
@@ -275,14 +290,14 @@ export function buildReport(baseline) {
     combinedCorpus: records.length, feats: records.filter(r => r.domain === 'FEAT').length, talents: records.filter(r => r.domain === 'TALENT').length, sharedVocabulary: vocab.size,
     hardImplicationViolations: invariantViolations.length, unknownOrRetiredTagRecords: unknownOrRetired.length, mechanicFamiliesScanned: Object.keys(FAMILIES).length, detectors: DETECTORS.length, bundles: BUNDLES.length,
     tagAndDetectorCoOccurrences: exactConvergence, ownerReviewCandidates: reviewItems.length + tagReview.length + conventionQuestions.length, ownerReviewRecordItems: reviewItems.length, ownerReviewRecordItemsByPriority: { P1: reviewItems.filter(i => i.priority === 1).length, P2: reviewItems.filter(i => i.priority === 2).length }, ownerReviewTagDefinitionItems: tagReview.length, ownerReviewTagConventionQuestions: conventionQuestions.length, recordsBehindConventionQuestions: conventionQuestions.reduce((n, q) => n + q.untagged, 0),
-    priorRulingOrIntentionalDivergence: itemList.filter(i => ['PASS3B_PRIOR_OWNER_RULING', 'PASS3B_INTENTIONAL_DIVERGENCE'].includes(i.state)).length, tagsUsedByOneDomainOnly: tagAudit.filter(a => a.state === 'USED_BY_ONE_DOMAIN_ONLY').length,
+    ownerDecidedItems: ownerDecided.length, ownerDecisionsWithoutDiscoveryItem: decisionsWithoutDiscoveryItem.length, priorRulingOrIntentionalDivergence: itemList.filter(i => ['PASS3B_PRIOR_OWNER_RULING', 'PASS3B_INTENTIONAL_DIVERGENCE'].includes(i.state)).length, tagsUsedByOneDomainOnly: tagAudit.filter(a => a.state === 'USED_BY_ONE_DOMAIN_ONLY').length,
     ontologyGapCandidates: gaps.filter(g => g.state === 'PASS3B_ONTOLOGY_GAP_CANDIDATE').length, evidenceOnlyLowConfidence: evidenceOnly.filter(e => e.class === 'LOW_CONFIDENCE_LEXICAL').length, evidenceOnlyNoComparator: evidenceOnly.filter(e => e.class === 'NO_CROSS_DOMAIN_COMPARATOR').length, itemStates: byState
   };
   return {
     schemaVersion: '1.0', kind: 'TALENT_FEAT_PASS3B_EXACT_MECHANIC_CONVERGENCE', status: 'DISCOVERY_REPORT_ONLY_NO_MUTATION',
     note: 'Evidence only. Detectors identify records that match explicit wording; they never assign tags. Only already-issued owner rulings produce automatic states. Feat evidence is a certified rules-shape paraphrase (or Pass 1 summary) and talent evidence is the certified Benefit text, so detector recall differs by domain; evidence tier is recorded on every item.',
     baseline: BASELINE3B_PATH, assignableStates: ASSIGNABLE_STATES, authorityBoundary: 'Claude executes deterministic analysis and applies explicit owner rulings; it does not make semantic decisions. Grouping is evidence organization only and does not imply that records must converge.', dashboard, hardInvariants: { rules: REQUIRED_IMPLICATIONS.map(([a, b]) => `${a} -> ${b}`), violations: invariantViolations, unknownOrRetiredTagRecords: unknownOrRetired },
-    precedentRules: PRECEDENTS, familyRollup, detectorStats: detStats, bundles: bundleReports, ownerReviewItems: reviewItems, tagConventionQuestions: conventionQuestions, resolvedByPriorRuling: itemList.filter(i => i.state !== 'PASS3B_OWNER_REVIEW'),
+    precedentRules: PRECEDENTS, familyRollup, detectorStats: detStats, bundles: bundleReports, ownerReviewItems: reviewItems, ownerDecidedItems: ownerDecided, ownerDecisionsWithoutDiscoveryItem: decisionsWithoutDiscoveryItem, tagConventionQuestions: conventionQuestions, resolvedByPriorRuling: itemList.filter(i => ['PASS3B_PRIOR_OWNER_RULING', 'PASS3B_INTENTIONAL_DIVERGENCE'].includes(i.state)),
     tagDefinitionAudit: tagAudit, ontologyGapScreen: gaps, evidenceOnly
   };
 }
@@ -296,7 +311,7 @@ function renderMd(rep) {
     `Mechanic families scanned: ${d.mechanicFamiliesScanned} (${d.detectors} detectors, ${d.bundles} cross-domain bundles)`, '',
     `Records where mechanic wording and the compared tag co-occur (count only; not adjudicated): ${d.tagAndDetectorCoOccurrences}`, '',
     `Owner-review candidates: ${d.ownerReviewCandidates}`, `  record-level (P1 ${d.ownerReviewRecordItemsByPriority.P1} / P2 ${d.ownerReviewRecordItemsByPriority.P2}): ${d.ownerReviewRecordItems}`, `  tag-definition (P3): ${d.ownerReviewTagDefinitionItems}`, `  tag-convention questions (P3; ${d.recordsBehindConventionQuestions} untagged matches listed, not individually flagged): ${d.ownerReviewTagConventionQuestions}`, '',
-    `Prior-ruling / intentional-divergence matches: ${d.priorRulingOrIntentionalDivergence}`, `Tags carried by only one domain (count only; no ruling made): ${d.tagsUsedByOneDomainOnly}`, '',
+    `Findings decided by explicit owner rulings (approved / no change): ${d.ownerDecidedItems}`, `Prior-ruling / intentional-divergence matches: ${d.priorRulingOrIntentionalDivergence}`, `Tags carried by only one domain (count only; no ruling made): ${d.tagsUsedByOneDomainOnly}`, '',
     `Ontology-gap candidates: ${d.ontologyGapCandidates}`, `Evidence-only (not owner review): low-confidence ${d.evidenceOnlyLowConfidence}; no cross-domain comparator ${d.evidenceOnlyNoComparator}`, '```', '',
     '**Authority boundary:** this report contains evidence only. It makes no equivalence, intentional-divergence, domain-specificity, tag-meaning or ontology decision, proposes no tag change, and applies nothing to production. Groups organize evidence and do not imply that records must converge. Every new discrepancy is `PASS3B_OWNER_REVIEW`.', '',
     '## Hard shared invariants (literal checks of owner-certified implication rules)', '', rep.hardInvariants.violations.length ? `**${rep.hardInvariants.violations.length} violation(s)** — reported before any softer analysis:` : 'Zero violations across the combined corpus.', '', ...rep.hardInvariants.rules.map(r => `- \`${r}\``), '',
@@ -341,7 +356,8 @@ export function buildOutputs() {
   const baseline = readJson(BASELINE3B_PATH);
   // Fail if any source authority changed underneath the committed baseline.
   for (const [f, h] of Object.entries(baseline.sourceSha256)) if (sha(f) !== h) throw new Error(`PASS3B REPORT FAILED: source authority changed since the baseline was built: ${f}`);
-  const rep = buildReport(baseline);
+  const ov = 'data/audits/talent-feat-pass3b-owner-adjudication.json';
+  const rep = buildReport(baseline, fs.existsSync(path.join(ROOT, ov)) ? readJson(ov) : null);
   return { rep, json: JSON.stringify(rep, null, 2) + '\n', md: renderMd(rep) };
 }
 

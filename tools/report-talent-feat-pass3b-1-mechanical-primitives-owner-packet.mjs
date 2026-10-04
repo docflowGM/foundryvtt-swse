@@ -68,7 +68,9 @@ export function buildPacket(discovery, baseline) {
     const d = b && [...b.all, ...(b.any || [])].find(x => SCOPE.includes(x));
     return d && scopeTags.has(i.comparedTag) ? { bundle: b.id, detectorId: d } : null;
   };
-  const inScope = discovery.ownerReviewItems.filter(i => i.state === 'PASS3B_OWNER_REVIEW' && (SCOPE.includes(i.mechanic) || bundleScope(i)));
+  // The packet is a historical evidence artifact: it lists findings that were unresolved when it was issued, so it keeps items that later received an owner decision
+  // (and writes nothing about that decision). Items closed by a prior owner ruling are excluded.
+  const inScope = [...discovery.ownerReviewItems, ...(discovery.ownerDecidedItems || [])].filter(i => SCOPE.includes(i.mechanic) || bundleScope(i));
   const matchesOf = (detId) => baseline.records.filter(r => r.evidence && det.get(detId).re.test(r.evidence));
   const entries = inScope.map(i => {
     const via = bundleScope(i), detectorId = via ? via.detectorId : i.mechanic;

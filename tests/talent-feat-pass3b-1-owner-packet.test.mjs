@@ -19,8 +19,8 @@ test('scope is exactly the 15 named detectors and every entry belongs to one of 
   for (const e of packet.entries) assert.ok(SCOPE.includes(e.detectorId), e.detectorId);
   assert.deepEqual(packet.scope, SCOPE);
 });
-test('every entry is a currently unresolved PASS3B_OWNER_REVIEW discovery item (nothing prior-ruled, nothing already convergent)', () => {
-  const open = new Set(discovery.ownerReviewItems.filter(i => i.state === 'PASS3B_OWNER_REVIEW').map(i => `${i.domain}:${i.canonicalId}|${i.comparedTag}`));
+test('every entry was an unresolved discovery item when issued (open now, or since decided by the owner); nothing prior-ruled, nothing already convergent', () => {
+  const open = new Set([...discovery.ownerReviewItems, ...discovery.ownerDecidedItems].map(i => `${i.domain}:${i.canonicalId}|${i.comparedTag}`));
   const closed = new Set(discovery.resolvedByPriorRuling.map(i => `${i.domain}:${i.canonicalId}|${i.comparedTag}`));
   for (const e of packet.entries) {
     const k = `${e.domain}:${e.canonicalId}|${e.comparedTag}`;

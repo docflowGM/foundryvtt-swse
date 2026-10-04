@@ -49,6 +49,7 @@ test('authority boundary: only owner-ruling-derived states are assigned besides 
   const allowed = new Set(['PASS3B_OWNER_REVIEW', 'PASS3B_PRIOR_OWNER_RULING', 'PASS3B_INTENTIONAL_DIVERGENCE']);
   for (const i of [...report.ownerReviewItems, ...report.resolvedByPriorRuling]) assert.ok(allowed.has(i.state), i.state);
   for (const i of report.resolvedByPriorRuling) { assert.ok(i.priorOwnerPrecedent && i.priorOwnerPrecedent.ruling, `${i.name} ${i.comparedTag}`); assert.equal(i.priority, null); }
+  for (const i of report.ownerDecidedItems) { assert.ok(['PASS3B_OWNER_APPROVED', 'PASS3B_OWNER_NO_CHANGE'].includes(i.state)); assert.ok(i.ownerDecision && i.ownerDecision.decisionId); assert.equal(i.priority, null); }
   for (const bad of ['PASS3B_EXACT_CONVERGENCE', 'PASS3B_DOMAIN_SPECIFIC', 'PASS3B_TEXT_MATCH_NOT_MECHANIC']) assert.ok(!JSON.stringify(report).includes(`"state": "${bad}"`), bad);
   for (const a of report.tagDefinitionAudit) assert.ok(['PASS3B_OWNER_REVIEW', 'USED_BY_ONE_DOMAIN_ONLY', 'NO_FLAG', 'UNUSED'].includes(a.state), a.state);
   for (const g of report.ontologyGapScreen) assert.ok(['PASS3B_ONTOLOGY_GAP_CANDIDATE', 'NOT_FLAGGED'].includes(g.state));
