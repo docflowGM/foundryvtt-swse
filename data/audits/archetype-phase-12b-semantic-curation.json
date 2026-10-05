@@ -2,42 +2,42 @@
   "schemaVersion": "1.0",
   "kind": "SWSE_ARCHETYPE_PHASE_12B_SEMANTIC_CURATION",
   "phase": "12B",
-  "status": "ROLLING_AUTHORITY_NEXT_TRANCHE_READY_BASELINE_PENDING",
+  "status": "ROLLING_AUTHORITY_NEXT_TRANCHE_READY_BASELINE_VERIFIED",
   "runtimeTarget": "data/archetypes.json",
   "frozenOntology": {
     "path": "data/audits/talent-feat-phase3-final-ontology.json",
     "tagCount": 190
   },
-  "certifiedCount": 170,
+  "certifiedCount": 190,
   "totalArchetypes": 297,
-  "remainingUncuratedAfterApplication": 127,
+  "remainingUncuratedAfterApplication": 107,
   "selectionRule": "Continue Noble-first records in dataset order. Class is a route, not ownership.",
   "currentExecution": {
-    "id": "12B-NOBLE-09",
-    "status": "AUTHORITY_READY_BASELINE_PENDING",
-    "requiredBaseline": "723220ed9d5d6a1d4ffa40f47f4fe64181f60f08",
-    "baselineInstruction": "Replace this placeholder with the successful commit returned after 12B-NOBLE-08 execution before applying this tranche. Do not infer a SHA.",
+    "id": "12B-NOBLE-10",
+    "status": "AUTHORITY_READY_BASELINE_VERIFIED",
+    "requiredBaseline": "b65bb4091a980b64a7cd3ac3d19c6fdb62b505c7",
+    "baselineInstruction": "Verify b65bb4091a980b64a7cd3ac3d19c6fdb62b505c7 is an ancestor of the working branch before applying this tranche. Do not substitute another SHA.",
     "newRecordIds": [
-      "war_correspondent",
-      "chiss_expansionary_fleet_officer",
-      "hapan_battle_dragon_officer",
-      "mon_calamari_rebel_admiral",
-      "logistics_officer",
-      "rebel_cell_leader",
-      "underground_organizer",
-      "droid_revolutionary",
-      "gree_technology_keeper",
-      "rakatan_force_tech_scion",
-      "mon_calamari_fleet_architect",
-      "xenobiologist",
-      "droid_behavioral_specialist",
-      "yuuzhan_vong_shaper",
-      "kaminoan_cloner",
-      "kaminoan_geneticist",
-      "arkanian_geneticist",
-      "ssi_ruuk_entechment_technologist",
-      "celegian_philosopher_scientist",
-      "surgeon"
+      "medical_droid",
+      "selkath_kolto_steward",
+      "academic_archaeologist",
+      "xenoarchaeologist",
+      "archaeological_expedition_leader",
+      "droid_rights_activist",
+      "zygerrian_abolitionist",
+      "hutt_kajidic_heir",
+      "royal_heir",
+      "hapan_court_noble",
+      "sith_pureblood_scion",
+      "yuuzhan_vong_intendant",
+      "holostar",
+      "mandalorian_clan_leader",
+      "ithorian_herdship_steward",
+      "corporate_agent",
+      "corporate_troubleshooter",
+      "quarren_deep_sea_industrialist",
+      "geonosian_foundry_master",
+      "neimoidian_trade_viceroy"
     ],
     "revisionIds": []
   },
@@ -8571,59 +8571,1052 @@
           "authority": "OWNER_CERTIFIED"
         }
       }
+    },
+    {
+      "id": "medical_droid",
+      "name": "Medical Droid",
+      "tranche": "10",
+      "primary": [
+        "droid",
+        "medical",
+        "medicine",
+        "treat_injury"
+      ],
+      "supporting": [
+        "ally_support",
+        "healing",
+        "mechanics",
+        "perception",
+        "support",
+        "use_computer"
+      ],
+      "all": [
+        "ally_support",
+        "droid",
+        "healing",
+        "mechanics",
+        "medical",
+        "medicine",
+        "perception",
+        "support",
+        "treat_injury",
+        "use_computer"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "droid",
+              "medical",
+              "medicine",
+              "treat_injury"
+            ],
+            "supporting": [
+              "ally_support",
+              "healing",
+              "mechanics",
+              "perception",
+              "support",
+              "use_computer"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "selkath_kolto_steward",
+      "name": "Selkath Kolto Steward",
+      "tranche": "10",
+      "primary": [
+        "healing",
+        "medicine",
+        "persuasion",
+        "social"
+      ],
+      "supporting": [
+        "ally_support",
+        "knowledge",
+        "medical",
+        "perception",
+        "support",
+        "treat_injury"
+      ],
+      "all": [
+        "ally_support",
+        "healing",
+        "knowledge",
+        "medical",
+        "medicine",
+        "perception",
+        "persuasion",
+        "social",
+        "support",
+        "treat_injury"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "healing",
+              "medicine",
+              "persuasion",
+              "social"
+            ],
+            "supporting": [
+              "ally_support",
+              "knowledge",
+              "medical",
+              "perception",
+              "support",
+              "treat_injury"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "academic_archaeologist",
+      "name": "Academic Archaeologist",
+      "tranche": "10",
+      "primary": [
+        "exploration",
+        "galactic_lore",
+        "investigation",
+        "knowledge"
+      ],
+      "supporting": [
+        "perception",
+        "use_computer"
+      ],
+      "all": [
+        "exploration",
+        "galactic_lore",
+        "investigation",
+        "knowledge",
+        "perception",
+        "use_computer"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "exploration",
+              "galactic_lore",
+              "investigation",
+              "knowledge"
+            ],
+            "supporting": [
+              "perception",
+              "use_computer"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "xenoarchaeologist",
+      "name": "Xenoarchaeologist",
+      "tranche": "10",
+      "primary": [
+        "exploration",
+        "galactic_lore",
+        "investigation",
+        "knowledge",
+        "science"
+      ],
+      "supporting": [
+        "nature",
+        "perception",
+        "survival"
+      ],
+      "all": [
+        "exploration",
+        "galactic_lore",
+        "investigation",
+        "knowledge",
+        "nature",
+        "perception",
+        "science",
+        "survival"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "exploration",
+              "galactic_lore",
+              "investigation",
+              "knowledge",
+              "science"
+            ],
+            "supporting": [
+              "nature",
+              "perception",
+              "survival"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "archaeological_expedition_leader",
+      "name": "Archaeological Expedition Leader",
+      "tranche": "10",
+      "primary": [
+        "exploration",
+        "investigation",
+        "knowledge",
+        "leadership"
+      ],
+      "supporting": [
+        "ally_support",
+        "galactic_lore",
+        "perception",
+        "persuasion",
+        "support",
+        "survival"
+      ],
+      "all": [
+        "ally_support",
+        "exploration",
+        "galactic_lore",
+        "investigation",
+        "knowledge",
+        "leadership",
+        "perception",
+        "persuasion",
+        "support",
+        "survival"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "exploration",
+              "investigation",
+              "knowledge",
+              "leadership"
+            ],
+            "supporting": [
+              "ally_support",
+              "galactic_lore",
+              "perception",
+              "persuasion",
+              "support",
+              "survival"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "droid_rights_activist",
+      "name": "Droid Rights Activist",
+      "tranche": "10",
+      "primary": [
+        "droid",
+        "persuasion",
+        "social"
+      ],
+      "supporting": [
+        "gather_information",
+        "knowledge",
+        "manipulation",
+        "use_computer"
+      ],
+      "all": [
+        "droid",
+        "gather_information",
+        "knowledge",
+        "manipulation",
+        "persuasion",
+        "social",
+        "use_computer"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "droid",
+              "persuasion",
+              "social"
+            ],
+            "supporting": [
+              "gather_information",
+              "knowledge",
+              "manipulation",
+              "use_computer"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "zygerrian_abolitionist",
+      "name": "Zygerrian Abolitionist",
+      "tranche": "10",
+      "primary": [
+        "gather_information",
+        "persuasion",
+        "social"
+      ],
+      "supporting": [
+        "deception",
+        "knowledge",
+        "manipulation",
+        "perception"
+      ],
+      "all": [
+        "deception",
+        "gather_information",
+        "knowledge",
+        "manipulation",
+        "perception",
+        "persuasion",
+        "social"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "gather_information",
+              "persuasion",
+              "social"
+            ],
+            "supporting": [
+              "deception",
+              "knowledge",
+              "manipulation",
+              "perception"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "hutt_kajidic_heir",
+      "name": "Hutt Kajidic Heir",
+      "tranche": "10",
+      "primary": [
+        "intrigue",
+        "leadership",
+        "social",
+        "social_network"
+      ],
+      "supporting": [
+        "deception",
+        "gather_information",
+        "persuasion"
+      ],
+      "all": [
+        "deception",
+        "gather_information",
+        "intrigue",
+        "leadership",
+        "persuasion",
+        "social",
+        "social_network"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "intrigue",
+              "leadership",
+              "social",
+              "social_network"
+            ],
+            "supporting": [
+              "deception",
+              "gather_information",
+              "persuasion"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "royal_heir",
+      "name": "Royal Heir",
+      "tranche": "10",
+      "primary": [
+        "leadership",
+        "persuasion",
+        "social"
+      ],
+      "supporting": [
+        "intrigue",
+        "knowledge",
+        "perception",
+        "social_network"
+      ],
+      "all": [
+        "intrigue",
+        "knowledge",
+        "leadership",
+        "perception",
+        "persuasion",
+        "social",
+        "social_network"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "leadership",
+              "persuasion",
+              "social"
+            ],
+            "supporting": [
+              "intrigue",
+              "knowledge",
+              "perception",
+              "social_network"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "hapan_court_noble",
+      "name": "Hapan Court Noble",
+      "tranche": "10",
+      "primary": [
+        "intrigue",
+        "persuasion",
+        "social"
+      ],
+      "supporting": [
+        "deception",
+        "leadership",
+        "perception",
+        "social_network"
+      ],
+      "all": [
+        "deception",
+        "intrigue",
+        "leadership",
+        "perception",
+        "persuasion",
+        "social",
+        "social_network"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "intrigue",
+              "persuasion",
+              "social"
+            ],
+            "supporting": [
+              "deception",
+              "leadership",
+              "perception",
+              "social_network"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "sith_pureblood_scion",
+      "name": "Sith Pureblood Scion",
+      "tranche": "10",
+      "primary": [
+        "leadership",
+        "persuasion",
+        "social"
+      ],
+      "supporting": [
+        "dark_side",
+        "force",
+        "force_power",
+        "force_training",
+        "galactic_lore",
+        "intrigue",
+        "perception",
+        "use_the_force"
+      ],
+      "all": [
+        "dark_side",
+        "force",
+        "force_power",
+        "force_training",
+        "galactic_lore",
+        "intrigue",
+        "leadership",
+        "perception",
+        "persuasion",
+        "social",
+        "use_the_force"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "leadership",
+              "persuasion",
+              "social"
+            ],
+            "supporting": [
+              "dark_side",
+              "force",
+              "force_power",
+              "force_training",
+              "galactic_lore",
+              "intrigue",
+              "perception",
+              "use_the_force"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "yuuzhan_vong_intendant",
+      "name": "Yuuzhan Vong Intendant",
+      "tranche": "10",
+      "primary": [
+        "deception",
+        "intrigue",
+        "persuasion",
+        "social"
+      ],
+      "supporting": [
+        "gather_information",
+        "leadership",
+        "resources",
+        "social_network"
+      ],
+      "all": [
+        "deception",
+        "gather_information",
+        "intrigue",
+        "leadership",
+        "persuasion",
+        "resources",
+        "social",
+        "social_network"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "deception",
+              "intrigue",
+              "persuasion",
+              "social"
+            ],
+            "supporting": [
+              "gather_information",
+              "leadership",
+              "resources",
+              "social_network"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "holostar",
+      "name": "Holostar",
+      "tranche": "10",
+      "primary": [
+        "deception",
+        "persuasion",
+        "social"
+      ],
+      "supporting": [
+        "gather_information",
+        "manipulation",
+        "perception"
+      ],
+      "all": [
+        "deception",
+        "gather_information",
+        "manipulation",
+        "perception",
+        "persuasion",
+        "social"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "deception",
+              "persuasion",
+              "social"
+            ],
+            "supporting": [
+              "gather_information",
+              "manipulation",
+              "perception"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "mandalorian_clan_leader",
+      "name": "Mandalorian Clan Leader",
+      "tranche": "10",
+      "primary": [
+        "command",
+        "leadership",
+        "tactics",
+        "teamwork"
+      ],
+      "supporting": [
+        "ally_support",
+        "endurance",
+        "persuasion",
+        "support"
+      ],
+      "all": [
+        "ally_support",
+        "command",
+        "endurance",
+        "leadership",
+        "persuasion",
+        "support",
+        "tactics",
+        "teamwork"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "command",
+              "leadership",
+              "tactics",
+              "teamwork"
+            ],
+            "supporting": [
+              "ally_support",
+              "endurance",
+              "persuasion",
+              "support"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "ithorian_herdship_steward",
+      "name": "Ithorian Herdship Steward",
+      "tranche": "10",
+      "primary": [
+        "leadership",
+        "nature",
+        "persuasion",
+        "support"
+      ],
+      "supporting": [
+        "ally_support",
+        "knowledge",
+        "perception",
+        "survival",
+        "teamwork"
+      ],
+      "all": [
+        "ally_support",
+        "knowledge",
+        "leadership",
+        "nature",
+        "perception",
+        "persuasion",
+        "support",
+        "survival",
+        "teamwork"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "leadership",
+              "nature",
+              "persuasion",
+              "support"
+            ],
+            "supporting": [
+              "ally_support",
+              "knowledge",
+              "perception",
+              "survival",
+              "teamwork"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "corporate_agent",
+      "name": "Corporate Agent",
+      "tranche": "10",
+      "primary": [
+        "intrigue",
+        "leadership",
+        "persuasion",
+        "social_network"
+      ],
+      "supporting": [
+        "deception",
+        "gather_information",
+        "knowledge",
+        "social",
+        "use_computer"
+      ],
+      "all": [
+        "deception",
+        "gather_information",
+        "intrigue",
+        "knowledge",
+        "leadership",
+        "persuasion",
+        "social",
+        "social_network",
+        "use_computer"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "intrigue",
+              "leadership",
+              "persuasion",
+              "social_network"
+            ],
+            "supporting": [
+              "deception",
+              "gather_information",
+              "knowledge",
+              "social",
+              "use_computer"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "corporate_troubleshooter",
+      "name": "Corporate Troubleshooter",
+      "tranche": "10",
+      "primary": [
+        "control",
+        "gather_information",
+        "investigation"
+      ],
+      "supporting": [
+        "knowledge",
+        "leadership",
+        "perception",
+        "persuasion",
+        "use_computer"
+      ],
+      "all": [
+        "control",
+        "gather_information",
+        "investigation",
+        "knowledge",
+        "leadership",
+        "perception",
+        "persuasion",
+        "use_computer"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "control",
+              "gather_information",
+              "investigation"
+            ],
+            "supporting": [
+              "knowledge",
+              "leadership",
+              "perception",
+              "persuasion",
+              "use_computer"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "quarren_deep_sea_industrialist",
+      "name": "Quarren Deep Sea Industrialist",
+      "tranche": "10",
+      "primary": [
+        "leadership",
+        "social",
+        "tech"
+      ],
+      "supporting": [
+        "knowledge",
+        "persuasion",
+        "social_network",
+        "use_computer"
+      ],
+      "all": [
+        "knowledge",
+        "leadership",
+        "persuasion",
+        "social",
+        "social_network",
+        "tech",
+        "use_computer"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "leadership",
+              "social",
+              "tech"
+            ],
+            "supporting": [
+              "knowledge",
+              "persuasion",
+              "social_network",
+              "use_computer"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "geonosian_foundry_master",
+      "name": "Geonosian Foundry Master",
+      "tranche": "10",
+      "primary": [
+        "crafting",
+        "droid",
+        "leadership",
+        "mechanics",
+        "tech"
+      ],
+      "supporting": [
+        "equipment",
+        "knowledge",
+        "use_computer"
+      ],
+      "all": [
+        "crafting",
+        "droid",
+        "equipment",
+        "knowledge",
+        "leadership",
+        "mechanics",
+        "tech",
+        "use_computer"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "crafting",
+              "droid",
+              "leadership",
+              "mechanics",
+              "tech"
+            ],
+            "supporting": [
+              "equipment",
+              "knowledge",
+              "use_computer"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "neimoidian_trade_viceroy",
+      "name": "Neimoidian Trade Viceroy",
+      "tranche": "10",
+      "primary": [
+        "intrigue",
+        "leadership",
+        "persuasion",
+        "social"
+      ],
+      "supporting": [
+        "deception",
+        "gather_information",
+        "knowledge",
+        "social_network"
+      ],
+      "all": [
+        "deception",
+        "gather_information",
+        "intrigue",
+        "knowledge",
+        "leadership",
+        "persuasion",
+        "social",
+        "social_network"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "intrigue",
+              "leadership",
+              "persuasion",
+              "social"
+            ],
+            "supporting": [
+              "deception",
+              "gather_information",
+              "knowledge",
+              "social_network"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
     }
   ],
   "qaReview": {
-    "scope": "All 170 certified archetypes after tranche 09",
+    "scope": "All 190 certified archetypes after tranche 10",
     "result": "PASS",
-    "reviewedRecordCount": 170,
+    "reviewedRecordCount": 190,
     "newRecordCount": 20,
-    "carriedForwardExplicitRevisionCount": 7,
+    "carriedForwardRevisionLogCount": 8,
     "checks": [
-      "Frozen ontology membership",
-      "Primary/supporting disjointness",
-      "metadata.tags.all union consistency",
-      "hard implication closure",
-      "semantic differentiation review",
-      "narrow ontology-label review"
+      "Frozen ontology membership for all new tranche tags; prior 170 were revalidated by Claude during 12B-NOBLE-09 execution",
+      "Primary/supporting disjointness across all 190 records",
+      "metadata.tags.all union consistency across all 190 records",
+      "Known hard implication closure across all 190 records",
+      "Semantic differentiation review",
+      "Narrow ontology-label review",
+      "Optional Force-route containment review"
     ],
     "newTrancheHighOverlapPairsReviewed": [
       {
-        "a": "kaminoan_geneticist",
-        "b": "arkanian_geneticist",
+        "a": "royal_heir",
+        "b": "sith_pureblood_scion",
         "primaryJaccard": 1.0,
-        "allJaccard": 0.75
+        "allJaccard": 0.385
       },
       {
-        "a": "chiss_expansionary_fleet_officer",
-        "b": "mon_calamari_rebel_admiral",
-        "primaryJaccard": 0.833,
+        "a": "academic_archaeologist",
+        "b": "xenoarchaeologist",
+        "primaryJaccard": 0.8,
+        "allJaccard": 0.556
+      },
+      {
+        "a": "hapan_court_noble",
+        "b": "neimoidian_trade_viceroy",
+        "primaryJaccard": 0.75,
         "allJaccard": 0.667
       },
       {
-        "a": "droid_behavioral_specialist",
-        "b": "ssi_ruuk_entechment_technologist",
+        "a": "hapan_court_noble",
+        "b": "yuuzhan_vong_intendant",
         "primaryJaccard": 0.75,
+        "allJaccard": 0.667
+      },
+      {
+        "a": "royal_heir",
+        "b": "neimoidian_trade_viceroy",
+        "primaryJaccard": 0.75,
+        "allJaccard": 0.667
+      },
+      {
+        "a": "yuuzhan_vong_intendant",
+        "b": "holostar",
+        "primaryJaccard": 0.75,
+        "allJaccard": 0.4
+      },
+      {
+        "a": "sith_pureblood_scion",
+        "b": "neimoidian_trade_viceroy",
+        "primaryJaccard": 0.75,
+        "allJaccard": 0.267
+      },
+      {
+        "a": "corporate_agent",
+        "b": "neimoidian_trade_viceroy",
+        "primaryJaccard": 0.6,
+        "allJaccard": 0.889
+      },
+      {
+        "a": "hutt_kajidic_heir",
+        "b": "neimoidian_trade_viceroy",
+        "primaryJaccard": 0.6,
+        "allJaccard": 0.875
+      },
+      {
+        "a": "hutt_kajidic_heir",
+        "b": "corporate_agent",
+        "primaryJaccard": 0.6,
         "allJaccard": 0.778
       },
       {
-        "a": "chiss_expansionary_fleet_officer",
-        "b": "hapan_battle_dragon_officer",
-        "primaryJaccard": 0.571,
-        "allJaccard": 0.818
+        "a": "yuuzhan_vong_intendant",
+        "b": "neimoidian_trade_viceroy",
+        "primaryJaccard": 0.6,
+        "allJaccard": 0.778
       },
       {
-        "a": "kaminoan_cloner",
-        "b": "kaminoan_geneticist",
+        "a": "zygerrian_abolitionist",
+        "b": "holostar",
         "primaryJaccard": 0.5,
-        "allJaccard": 1.0
+        "allJaccard": 0.857
       },
       {
-        "a": "kaminoan_cloner",
-        "b": "arkanian_geneticist",
+        "a": "royal_heir",
+        "b": "hapan_court_noble",
         "primaryJaccard": 0.5,
         "allJaccard": 0.75
+      },
+      {
+        "a": "hutt_kajidic_heir",
+        "b": "hapan_court_noble",
+        "primaryJaccard": 0.4,
+        "allJaccard": 0.75
+      },
+      {
+        "a": "hutt_kajidic_heir",
+        "b": "yuuzhan_vong_intendant",
+        "primaryJaccard": 0.333,
+        "allJaccard": 0.875
+      },
+      {
+        "a": "yuuzhan_vong_intendant",
+        "b": "corporate_agent",
+        "primaryJaccard": 0.333,
+        "allJaccard": 0.7
       }
+    ],
+    "semanticQaRulings": [
+      "Academic Archaeologist does not receive science merely because archaeology is academic; Xenoarchaeologist receives science because life-sciences evidence is signature.",
+      "Archaeological Expedition Leader does not receive teamwork from generic team leadership; ally_support/support capture Coordinate-style unilateral aid.",
+      "Yuuzhan Vong Intendant does not receive planning from the talent name Contingency Plan; the operative talent effect is reactive movement after failure, not advance planning.",
+      "Mandalorian Clan Leader does not receive morale from Unwavering Ally; that talent protects an ally from flat-footed/Dexterity-denial effects, not morale/fear mechanics.",
+      "Corporate Troubleshooter does not receive stun from Slowing Stun; the talent keys from condition-track movement and does not itself require or modify SWSE stun damage/mode.",
+      "Geonosian Foundry Master keeps crafting but not modification; foundry manufacture is creation, not automatically alteration of an existing item.",
+      "Sith Pureblood Scion keeps Force/dark-side material supporting because Phase 7 established its Force route as optional, not intrinsic."
     ]
   }
 }
