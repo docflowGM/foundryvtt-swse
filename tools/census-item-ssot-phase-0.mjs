@@ -167,8 +167,9 @@ const codeFiles = ['scripts', 'tools', 'helpers', 'templates', 'index.js'].flatM
   const p = path.join(ROOT, d); if (!fs.existsSync(p)) return [];
   return fs.statSync(p).isDirectory() ? walk(p) : [p];
 });
-const SELF = 'tools/census-item-ssot-phase-0.mjs';
-const sources = new Map(codeFiles.filter((f) => rel(f) !== SELF).map((f) => [rel(f), fs.readFileSync(f, 'utf8')]));
+// Audit tooling is not a runtime consumer; exclude the census and the authority verifier from the scan.
+const AUDIT_TOOLS = new Set(['tools/census-item-ssot-phase-0.mjs', 'tools/verify-item-weapons-authority.mjs']);
+const sources = new Map(codeFiles.filter((f) => !AUDIT_TOOLS.has(rel(f))).map((f) => [rel(f), fs.readFileSync(f, 'utf8')]));
 const grepFiles = (re) => [...sources].filter(([, s]) => re.test(s)).map(([f]) => f).sort();
 
 const packRefRe = (names) => new RegExp(`foundryvtt-swse\\.(${names.join('|')})\\b(?![-\\w])`);

@@ -1,9 +1,9 @@
 # SWSE Item Canonicalization — Rolling Authority
 
-Status: ACTIVE — Phase 0 complete; Phase 0-1 Weapons and Phase 0-2 Armor and Phase 0-3A General Equipment, Phase 0-3B Medical, Phase 0-3C Explosives/Demolitions and Phase 0-3D Cybernetics/Implants certified by owner (armor, equipment and medical renames executed)
+Status: ACTIVE — Phase 0 complete; Phase 0-1 Weapons and Phase 0-2 Armor and Phase 0-3A General Equipment, Phase 0-3B Medical, Phase 0-3C Explosives/Demolitions and Phase 0-3D Cybernetics/Implants and Phase 0-3E Upgrades/Modifications certified by owner (armor, equipment and medical renames executed)
 Updated: 2026-10-05
 Machine-readable companion: `data/audits/item-canonicalization-rolling-authority.json`
-Verify against the packs: `node tools/verify-item-weapons-authority.mjs` (weapons, armor, equipment, medical, explosives and cybernetics)
+Verify against the packs: `node tools/verify-item-weapons-authority.mjs` (weapons, armor, equipment, medical, explosives, cybernetics and upgrades)
 
 This is the single cumulative authority for item rehabilitation. Per-book/phase files are temporary evidence and must not become competing authorities. Architecture evidence: `docs/audits/item-phase-0-ssot-census.md` (owner rulings in §7a).
 
@@ -904,6 +904,145 @@ Standard cybernetic prostheses, KOTOR mechanical implants, named cybernetic enha
 - The verifier fails if a gated record disappears before its cleanup is marked executed.
 - After this phase the only unclaimed equipment records are the 16 `upgrade-*` records (Phase 0-3E).
 
+## Phase 0-3E — Upgrades and modifications: census and repo reconciliation
+
+Character-scale universal, weapon and armor equipment upgrades. Excluded: lightsaber crystals/accessories, gear templates, Tech Specialist feat-granted traits, droid-only systems, vehicle/starship upgrades. Identity and presence only. **Authority-only: no repo change.**
+
+"Exists in the repo" and "exists in the Foundry equipment compendium" are different here: the legacy `data/upgrades/*.json` catalogs (29 + 19 + 23 = 71 definitions) cover essentially the whole canonical corpus, but `packs/equipment.db` exposes only 15 of the 66 owned identities.
+
+| Result | Count |
+|---|---:|
+| Canonical modification entries | 70 |
+| Owned by 0-3E | 66 |
+| Cross-references owned by 0-3A | 4 |
+| EDIT (in compendium, suffixed display name) | 15 |
+| ADD (absent from compendium, recorded not created) | 51 |
+| Current `upgrade-*` compendium records | 16 (15 mapped + 1 duplicate) |
+
+| # | Category | Canonical identity | Source | Compendium record | Disposition |
+|---:|---|---|---|---|---|
+| 1 | universal | Cheater | Scum and Villainy p. 40 | `upgrade-universal-cheater` - Cheater (Universal Upgrade) | EDIT |
+| 2 | universal | Cloaked | Scum and Villainy p. 40 | `upgrade-universal-cloaked` - Cloaked (Universal Upgrade) | EDIT |
+| 3 | universal | Droidification | Scum and Villainy p. 40 | — | ADD |
+| 4 | universal | Dual Gear | Scum and Villainy p. 40 | — | ADD |
+| 5 | universal | Electrograpple Handle | Scum and Villainy p. 40 | — | ADD |
+| 6 | universal | Environmental Sealing | Scum and Villainy p. 40 | — | ADD |
+| 7 | universal | Extra Power Source | Scum and Villainy p. 40 | — | ADD |
+| 8 | universal | Memory Upgrade | Scum and Villainy p. 40 | — | ADD |
+| 9 | universal | Memory Upgrade, Advanced | Scum and Villainy p. 40 | — | ADD |
+| 10 | universal | Miniaturized | Scum and Villainy p. 40 | `upgrade-universal-miniaturized` - Miniaturized (Universal Upgrade) | EDIT |
+| 11 | universal | Recognition System | Scum and Villainy p. 40 | — | ADD |
+| 12 | universal | Remote Activation | Scum and Villainy p. 40 | `upgrade-universal-remote-activation` - Remote Activation (Universal Upgrade) | EDIT |
+| 13 | universal | Secret Compartment | Scum and Villainy p. 40 | `upgrade-universal-secret-compartment` - Secret Compartment (Universal Upgrade) | EDIT |
+| 14 | universal | Silverplate | Scum and Villainy p. 40 | — | ADD |
+| 15 | universal | Spring Loaded | Scum and Villainy p. 40 | — | ADD |
+| 16 | universal | Storage Capacity | Scum and Villainy p. 40 | — | ADD |
+| 17 | universal | Ion Shielding | Galaxy at War p. 50 | — | ADD |
+| 18 | universal | Componentization | Galaxy of Intrigue p. 68 | — | ADD |
+| 19 | weapon | Bayonet Ring | Scum and Villainy p. 42 | `upgrade-weapon-bayonet-ring` - Bayonet Ring (Weapon Upgrade) | EDIT |
+| 20 | weapon | Bipod | Scum and Villainy p. 42 | — | ADD |
+| 21 | weapon | Double Trigger | Scum and Villainy p. 42 | — | ADD |
+| 22 | weapon | Ion Charger | Scum and Villainy p. 42 | `upgrade-weapon-ion-charger` - Ion Charger (Weapon Upgrade) | EDIT |
+| 23 | weapon | Missile Load | Scum and Villainy p. 42 | — | ADD |
+| 24 | weapon | Neutronium Reinforcement | Scum and Villainy p. 42 | — | ADD |
+| 25 | weapon | Overload Switch | Scum and Villainy p. 42 | — | ADD |
+| 26 | weapon | Pulse Charger | Scum and Villainy p. 42 | — | ADD |
+| 27 | weapon | Rangefinder | Scum and Villainy p. 42 | `upgrade-weapon-rangefinder` - Rangefinder (Weapon Upgrade) | EDIT |
+| 28 | weapon | Rapid Recycler | Scum and Villainy p. 42 | `upgrade-weapon-rapid-recycler` - Rapid Recycler (Weapon Upgrade) | EDIT |
+| 29 | weapon | Retractable Stock | Scum and Villainy p. 42 | — | ADD |
+| 30 | weapon | Slinker | Scum and Villainy p. 42 | — | ADD |
+| 31 | weapon | Sniper Switch | Scum and Villainy p. 42 | — | ADD |
+| 32 | weapon | Targeting Scope, Standard | Core Rulebook p. 140 | 0-3A: `accessory-targeting-scope-standard` | CROSS_REFERENCE |
+| 33 | weapon | Targeting Scope, Enhanced Low-Light | Core Rulebook p. 140 | 0-3A: `accessory-targeting-scope-enhanced-low-light` | CROSS_REFERENCE |
+| 34 | weapon | Beam Splitter | Knights of the Old Republic Campaign Guide p. 75 | — | ADD |
+| 35 | weapon | Durasteel Bonding | Knights of the Old Republic Campaign Guide p. 75 | — | ADD |
+| 36 | weapon | Enhanced Energy Projector | Knights of the Old Republic Campaign Guide p. 75 | — | ADD |
+| 37 | weapon | Hair Trigger | Knights of the Old Republic Campaign Guide p. 75 | — | ADD |
+| 38 | weapon | Improved Energy Cell | Knights of the Old Republic Campaign Guide p. 75 | — | ADD |
+| 39 | weapon | Tremor Cell | Knights of the Old Republic Campaign Guide p. 75 | — | ADD |
+| 40 | weapon | Flash Suppressor/Silencer | Galaxy of Intrigue p. 66 | — | ADD |
+| 41 | weapon | Computerized Interface Scope | Rebellion Era Campaign Guide | 0-3A: ADD | CROSS_REFERENCE |
+| 42 | armor | Aquatic Adaptation | Scum and Villainy p. 45 | `upgrade-armor-aquatic-adaptation` - Aquatic Adaptation (Armor Upgrade) | EDIT |
+| 43 | armor | Armorplast | Scum and Villainy p. 45 | `upgrade-armor-armorplast` - Armorplast (Armor Upgrade) | EDIT |
+| 44 | armor | Climbing Claws | Scum and Villainy p. 45 | — | ADD |
+| 45 | armor | Diagnostics System | Scum and Villainy p. 45 | — | ADD |
+| 46 | armor | Environmental Systems | Scum and Villainy p. 45 | `upgrade-armor-environmental-systems` - Environmental Systems (Armor Upgrade) | EDIT |
+| 47 | armor | Gyro | Scum and Villainy p. 45 | — | ADD |
+| 48 | armor | Helmet Package | Core Rulebook p. 140 | 0-3A: `accessory-helmet-package` | CROSS_REFERENCE |
+| 49 | armor | Holoshroud | Scum and Villainy p. 45 | — | ADD |
+| 50 | armor | Integrated Equipment, 1 Slot | Scum and Villainy p. 45 | — | ADD |
+| 51 | armor | Integrated Equipment, 2 Slots | Scum and Villainy p. 45 | — | ADD |
+| 52 | armor | Integrated Equipment, 5 Slots | Scum and Villainy p. 45 | — | ADD |
+| 53 | armor | Integrated Equipment, 10 Slots | Scum and Villainy p. 45 | — | ADD |
+| 54 | armor | Internal Generator | Scum and Villainy p. 45 | — | ADD |
+| 55 | armor | Jump Servos | Scum and Villainy p. 45 | `upgrade-armor-jump-servos` - Jump Servos (Armor Upgrade) | EDIT |
+| 56 | armor | Powered Exoskeleton | Scum and Villainy p. 45 | — | ADD |
+| 57 | armor | Radiation Shielding | Scum and Villainy p. 45 | — | ADD |
+| 58 | armor | Rangefinder | Scum and Villainy p. 45 | — | ADD |
+| 59 | armor | Ready Harness | Scum and Villainy p. 45 | — | ADD |
+| 60 | armor | Repulsorlift | Scum and Villainy p. 45 | — | ADD |
+| 61 | armor | Shadowskin | Scum and Villainy p. 45 | `upgrade-armor-shadowskin` - Shadowskin (Armor Upgrade) | EDIT |
+| 62 | armor | Shadowskin, Reflec | Scum and Villainy p. 45 | — | ADD |
+| 63 | armor | Shield Generator, SR 5 | Scum and Villainy p. 45 | `upgrade-armor-shield-generator-sr5` - Shield Generator SR 5 (Armor Upgrade) | EDIT |
+| 64 | armor | Shield Generator, SR 10 | Scum and Villainy p. 45 | — | ADD |
+| 65 | armor | Shockweb | Scum and Villainy p. 45 | — | ADD |
+| 66 | armor | Vacuum Seals | Scum and Villainy p. 45 | — | ADD |
+| 67 | armor | Vacuum Seals, Improved | Scum and Villainy p. 45 | — | ADD |
+| 68 | armor | Weapon Mount | Scum and Villainy p. 45 | — | ADD |
+| 69 | armor | Armor Reinforcement | Knights of the Old Republic Campaign Guide p. 75 | — | ADD |
+| 70 | armor | Mesh Underlay | Knights of the Old Republic Campaign Guide p. 75 | — | ADD |
+
+Identity keys are category-qualified (`weapon:rangefinder` vs `armor:rangefinder`): Rangefinder is published as two distinct upgrades.
+
+### Compendium reverse pass
+
+- `upgrade-armor-helmet-package` (Helmet Package (Armor Upgrade)): REMOVE_DUPLICATE → survivor `accessory-helmet-package`. Scum and Villainy reprints/references the Core Helmet Package for upgrade-system use; it is not a second canonical item identity.
+
+### JSON and runtime catalog drift (recorded, not reconciled)
+
+- `data/upgrades/armor-upgrades.json`: 29 records, 29 canonical. Aliases: Repulsorlift Unit → Repulsorlift; Reflec Shadowskin → Shadowskin, Reflec; Vacuum Seals, Standard → Vacuum Seals; Weapon Mount, Standard → Weapon Mount.
+- `data/upgrades/universal-upgrades.json`: 19 records, 18 canonical. Aliases: Advanced Memory Upgrade → Memory Upgrade, Advanced; Spring-Loaded → Spring Loaded; Ion-Shielding → Ion Shielding; Componentization (Basic) + Componentization (Deluxe) → Componentization.
+- `data/upgrades/weapon-upgrades.json`: 23 records, 23 canonical. Aliases: Targeting Scope, Low-Light → Targeting Scope, Enhanced Low-Light.
+- `scripts/engine/customization/upgrade-catalog.js`: 71 defs (8 are Tech Specialist rule modifications); covers 61 of 70 canonical concepts. Missing: Droidification, Electrograpple Handle, Memory Upgrade, Memory Upgrade, Advanced, Miniaturized, Recognition System, Silverplate, Spring Loaded, Missile Load. Repo-only: Night Vision Device (armor) — no published upgrade identity (REMOVE later).
+
+### Special findings
+
+- **Targeting Scope cross-references:** Scum and Villainy lists the Core targeting scopes in its weapon-upgrade table. Preserve the existing 0-3A item identities; do not create duplicate upgrade items.
+- **Computerized Interface Scope:** Already certified as a 0-3A ADD. Its presence in weapon-upgrade data/runtime does not create a second identity.
+- **Componentization tiers:** Galaxy of Intrigue publishes one Componentization upgrade with basic and deluxe implementations. The repo JSON/runtime split into Basic and Deluxe is an implementation split, not two canonical identities.
+- **Tech Specialist modifications:** Agile Armor, Fortifying Armor, Protective Armor, Improved Accuracy, Improved Damage, Selective Fire, Improved Durability, Mastercraft Device and other Tech Specialist traits are feat-granted modification mechanics, not purchasable equipment identities. Do not add them to the equipment compendium as items.
+- **Gear Templates:** KOTOR gear templates are a separate template overlay system and are not included in 0-3E item identity counts.
+- **Lightsaber components:** Lightsaber crystals and hilt/accessory systems remain outside 0-3E and require their own later batch.
+- **Improved Energy Cell errata:** KOTOR errata changes Improved Energy Cell upgrade slot cost to 1. Record for later stat/mechanics certification; Phase 0-3E certifies identity only.
+
+### Execution guardrails
+
+1. Fold this authority into the single cumulative rolling MD/JSON; do not create a competing permanent authority.
+2. Do not create the 51 missing compendium modification records until canonical description/stat/schema certification authorizes complete records.
+3. Do not rename the 15 existing compendium upgrade records yet unless the owner separately authorizes an execution tranche.
+4. Do not delete upgrade-armor-helmet-package until dependency/search verification proves the existing accessory-helmet-package can be the sole Helmet Package item identity.
+5. Do not create duplicate item records for the two targeting scopes or Computerized Interface Scope; those identities are owned by 0-3A.
+6. Treat Componentization as one canonical identity with basic/deluxe tiers, not two canonical items.
+7. Do not delete or rewrite data/upgrades catalogs/runtime upgrade-catalog in Phase 0-3E; record their drift for later production reconciliation.
+8. Do not convert Tech Specialist modification traits into equipment items.
+9. Do not include lightsaber, droid, vehicle, starship, or gear-template systems in this tranche.
+
+### Same-name finding raised at integration — needs owner adjudication
+
+**Holoshroud.** Scum and Villainy p. 45 publishes a Holoshroud *armor upgrade* (legacy catalog: 5,000 cr, 1 slot). Phase 0-3A already certified the Force Unleashed Campaign Guide *Holoshroud* equipment item (`detect-holoshroud`, 25,000 cr, 0.5 kg, +10 Deception). These are different items under one display name, like Camouflage Netting. The 0-3E ADD (`armor:holoshroud`) stands as a separate category-qualified identity; when it is eventually created the compendium will hold two records named "Holoshroud". Recorded in `nameCollisions`; the verifier accepts this one collision and fails on any other.
+
+### Deferred to the cleanup tranche
+
+- 15 canonical display-name edits (drop "(Armor/Universal/Weapon Upgrade)" suffixes) in packs/equipment.db and the equipment-tech mirror, with store/name consumers
+- Helmet Package duplicate merge
+- data/upgrades/*.json alias normalization and Componentization Basic/Deluxe merge
+- runtime upgrade-catalog.js: 9 missing concepts, Night Vision Device removal
+- Improved Energy Cell upgrade-slot errata (Phase 4)
+
+### QA gate
+
+- 70 entries = 66 owned + 4 cross-references; 15 EDIT + 51 ADD = 66; all 16 `upgrade-*` records covered once; cross-references resolve to 0-3A records; JSON catalog counts (29/19/23) and runtime def count (71) re-measured and match.
+
 ## Pending phases
 
-0-3E Upgrades / Modifications · 1 Provenance (pages) · 2 Descriptions · 3 Schema · 4 Stats · 5 Reconciliation · 6 Legacy tags · 7 Semantic tags · 8 Migration
+0-3F Gear Templates · Lightsaber crystals / accessories / components (batch TBD) · Gated cleanup tranche (0-3D migrations, 0-3E renames/merge, REMOVE dependents) · 1 Provenance (pages) · 2 Descriptions · 3 Schema · 4 Stats · 5 Reconciliation · 6 Legacy tags · 7 Semantic tags · 8 Migration

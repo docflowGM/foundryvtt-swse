@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
  * Verifies data/audits/item-canonicalization-rolling-authority.json (Phase 0-1 weapons,
- * Phase 0-2 armor, Phase 0-3A equipment, Phase 0-3B medical, Phase 0-3C explosives, Phase 0-3D cybernetics) against the weapons, armor and equipment packs. Read-only. Fails on any drift between the certified authority
+ * Phase 0-2 armor, Phase 0-3A equipment, Phase 0-3B medical, Phase 0-3C explosives, Phase 0-3D cybernetics, Phase 0-3E upgrades) against the weapons, armor and equipment packs. Read-only. Fails on any drift between the certified authority
  * and the pack so that execution phases cannot silently run against a changed repo.
  */
 import fs from 'node:fs';
@@ -187,6 +187,51 @@ if (cy) {
   const cd = count(cy.records, (r) => r.disposition);
   if (cd.KEEP !== cy.counts.KEEP || cd.EDIT !== cy.counts.EDIT || cd.ADD !== cy.counts.ADD || cy.records.length !== cy.counts.canonicalIdentities) fail(`cybernetics counts ${JSON.stringify(cd)}`);
   if (!errors.length) console.log(`cybernetics authority OK: ${cy.records.length} canonical (${cd.KEEP} KEEP, ${cd.EDIT} EDIT, ${cd.ADD} ADD pending), ${prefixed.length} cyber-/implant- repo records covered, 2 dependency-gated cleanups pending`);
+}
+
+// ---- Phase 0-3E upgrades / modifications (authority-only) ----
+const up = auth.phases['0-3e-upgrades-modifications'];
+if (up) {
+  const lines = (n) => fs.readFileSync(path.join(ROOT, `packs/${n}.db`), 'utf8').split('\n').filter(Boolean).map((l) => JSON.parse(l));
+  const upPack = new Map(lines('equipment').map((r) => [r._id, r.name]));
+  const upSub = new Map(['equipment-comlinks', 'equipment-medical', 'equipment-other', 'equipment-security', 'equipment-survival', 'equipment-tech', 'equipment-tools'].flatMap((n) => lines(n)).map((r) => [r._id, r.name]));
+  const knownCollisions = new Set((up.nameCollisions || []).map((c) => c.canonicalIdentityKey));
+  const upKeys = new Set();
+  const upIds = new Set();
+  const eq3a = new Map((auth.phases['0-3a-general-equipment']?.canonicalRecords || []).map((c) => [c.canonicalName + '|' + c.phase0Disposition, c]));
+  for (const r of up.records) {
+    if (upKeys.has(r.canonicalIdentityKey)) fail(`upgrades duplicate identity key ${r.canonicalIdentityKey}`);
+    upKeys.add(r.canonicalIdentityKey);
+    if (r.ownership === '0-3A') {
+      const e = r.repo.existingCanonicalId;
+      if (e) { if (!upPack.has(e)) fail(`upgrades cross-reference ${e} not in pack`); } else if (!eq3a.has(r.canonicalName + '|ADD')) fail(`upgrades cross-reference ${r.canonicalName} is not a 0-3A ADD`);
+      continue;
+    }
+    if (r.phase0Disposition === 'EDIT') {
+      const id = r.repo.id;
+      upIds.add(id);
+      if (upPack.get(id) !== r.repo.name) fail(`upgrades ${id}: pack "${upPack.get(id)}" vs "${r.repo.name}"`);
+    } else if (r.phase0Disposition === 'ADD') {
+      if (r.repo.presentInEquipmentCompendium) fail(`upgrades ADD ${r.canonicalName} claims a compendium match`);
+      else if ([...upPack.values()].includes(r.canonicalName) && !knownCollisions.has(r.canonicalIdentityKey)) fail(`upgrades ADD ${r.canonicalName} collides with an existing record name and is not a recorded nameCollision`);
+    } else fail(`upgrades ${r.canonicalName}: unexpected disposition ${r.phase0Disposition}`);
+  }
+  for (const d of up.repoReversePass.equipmentCompendium) {
+    upIds.add(d.id);
+    const g = up.execution?.gatedCleanup?.[d.id];
+    if (g && !g.executed && !upPack.has(d.id)) fail(`upgrades gated record ${d.id} missing but cleanup not marked executed`);
+    if (!upPack.has(d.survivor)) fail(`upgrades survivor ${d.survivor} missing`);
+  }
+  const upgradeRecords = [...upPack.keys()].filter((id) => id.startsWith('upgrade-'));
+  for (const id of upgradeRecords) if (!upIds.has(id)) fail(`upgrade-* record ${id} not covered by Phase 0-3E`);
+  for (const id of upgradeRecords) if (upSub.get(id) !== upPack.get(id)) fail(`upgrade record ${id} subpack/aggregate mismatch`);
+  const ud = count(up.records, (r) => r.phase0Disposition);
+  if (ud.EDIT !== up.counts.ownedByDisposition.EDIT || ud.ADD !== up.counts.ownedByDisposition.ADD || up.records.length !== up.counts.canonicalModificationEntries) fail(`upgrades counts ${JSON.stringify(ud)}`);
+  for (const [k, n] of [['armor', 29], ['universal', 19], ['weapon', 23]]) {
+    const have = JSON.parse(fs.readFileSync(path.join(ROOT, `data/upgrades/${k}-upgrades.json`), 'utf8')).length;
+    if (have !== up.repoReversePass.upgradeJsonCatalogs[k].records || have !== n) fail(`data/upgrades/${k}-upgrades.json has ${have} records, authority expects ${up.repoReversePass.upgradeJsonCatalogs[k].records}`);
+  }
+  if (!errors.length) console.log(`upgrades authority OK: ${up.records.length} entries (${ud.EDIT} EDIT, ${ud.ADD} ADD pending, ${ud.CROSS_REFERENCE} cross-refs), ${upgradeRecords.length} upgrade-* records covered, JSON catalog counts match`);
 }
 
 if (errors.length) { console.error(`FAIL (${errors.length})\n- ${errors.join('\n- ')}`); process.exit(1); }

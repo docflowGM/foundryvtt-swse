@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "authorityType": "item-canonicalization-rolling-authority",
-  "status": "ACTIVE — Phase 0 and Phases 0-1, 0-2, 0-3A, 0-3B, 0-3C, 0-3D certified by owner",
+  "status": "ACTIVE — Phase 0 and Phases 0-1, 0-2, 0-3A, 0-3B, 0-3C, 0-3D, 0-3E certified by owner",
   "sourcePolicy": "User-provided SWSE TXT/PDF sourcebooks are the canonical SSOT. Repository compendiums are implementation targets only.",
   "ownerRulings": "docs/audits/item-phase-0-ssot-census.md §7a",
   "architecture": {
@@ -13406,10 +13406,1506 @@
           }
         }
       }
+    },
+    "0-3e-upgrades-modifications": {
+      "phase": "0-3E",
+      "status": "CERTIFIED_PHASE_0_3E_IDENTITY_AUTHORITY",
+      "canonicalSourcePolicy": "User-supplied SWSE TXT/PDF sourcebooks are SSOT; repository compendiums/catalogs are implementation targets only.",
+      "repoSnapshot": {
+        "repository": "docflowGM/foundryvtt-swse",
+        "ref": "claude/dazzling-meitner-czyh1x",
+        "verifiedHead": "520a22da3fbe6c7ceaea0b5a98644cfb85254c58",
+        "equipmentPack": "packs/equipment.db"
+      },
+      "scope": {
+        "included": [
+          "character-scale universal equipment upgrades",
+          "weapon upgrades/accessories that participate in the equipment-upgrade domain",
+          "armor upgrades/accessories that participate in the equipment-upgrade domain"
+        ],
+        "excluded": [
+          "lightsaber crystals/accessories",
+          "gear templates",
+          "Tech Specialist feat-granted traits as item identities",
+          "droid-only modification systems",
+          "vehicle/starship upgrades"
+        ]
+      },
+      "counts": {
+        "canonicalModificationEntries": 70,
+        "ownedCanonicalIdentities": 66,
+        "crossReferencesTo0_3A": 4,
+        "ownedByDisposition": {
+          "KEEP": 0,
+          "EDIT": 15,
+          "ADD": 51,
+          "REMOVE": 0,
+          "REVIEW": 0
+        },
+        "equipmentCompendiumUpgradePrefixedRecords": 16,
+        "compendiumOwnedIdentitiesRepresented": 15,
+        "compendiumReverseRemoveMerge": 1,
+        "upgradeJsonRecords": 71,
+        "runtimeUpgradeCatalogDefs": 71
+      },
+      "records": [
+        {
+          "canonicalName": "Cheater",
+          "category": "universal",
+          "source": {
+            "book": "Scum and Villainy",
+            "page": 40
+          },
+          "ownership": "0-3E",
+          "phase0Disposition": "EDIT",
+          "repo": {
+            "presentInEquipmentCompendium": true,
+            "id": "upgrade-universal-cheater",
+            "name": "Cheater (Universal Upgrade)",
+            "matchType": "identity-present-noncanonical-display-name"
+          },
+          "reason": "Canonical modification identity is present in packs/equipment.db, but the display name adds a repo-only upgrade suffix or otherwise differs from the printed canonical identity.",
+          "canonicalIdentityKey": "universal:cheater"
+        },
+        {
+          "canonicalName": "Cloaked",
+          "category": "universal",
+          "source": {
+            "book": "Scum and Villainy",
+            "page": 40
+          },
+          "ownership": "0-3E",
+          "phase0Disposition": "EDIT",
+          "repo": {
+            "presentInEquipmentCompendium": true,
+            "id": "upgrade-universal-cloaked",
+            "name": "Cloaked (Universal Upgrade)",
+            "matchType": "identity-present-noncanonical-display-name"
+          },
+          "reason": "Canonical modification identity is present in packs/equipment.db, but the display name adds a repo-only upgrade suffix or otherwise differs from the printed canonical identity.",
+          "canonicalIdentityKey": "universal:cloaked"
+        },
+        {
+          "canonicalName": "Droidification",
+          "category": "universal",
+          "source": {
+            "book": "Scum and Villainy",
+            "page": 40
+          },
+          "ownership": "0-3E",
+          "phase0Disposition": "ADD",
+          "repo": {
+            "presentInEquipmentCompendium": false,
+            "id": null,
+            "name": null,
+            "matchType": "absent"
+          },
+          "reason": "Canonical modification identity is absent from packs/equipment.db.",
+          "canonicalIdentityKey": "universal:droidification"
+        },
+        {
+          "canonicalName": "Dual Gear",
+          "category": "universal",
+          "source": {
+            "book": "Scum and Villainy",
+            "page": 40
+          },
+          "ownership": "0-3E",
+          "phase0Disposition": "ADD",
+          "repo": {
+            "presentInEquipmentCompendium": false,
+            "id": null,
+            "name": null,
+            "matchType": "absent"
+          },
+          "reason": "Canonical modification identity is absent from packs/equipment.db.",
+          "canonicalIdentityKey": "universal:dual-gear"
+        },
+        {
+          "canonicalName": "Electrograpple Handle",
+          "category": "universal",
+          "source": {
+            "book": "Scum and Villainy",
+            "page": 40
+          },
+          "ownership": "0-3E",
+          "phase0Disposition": "ADD",
+          "repo": {
+            "presentInEquipmentCompendium": false,
+            "id": null,
+            "name": null,
+            "matchType": "absent"
+          },
+          "reason": "Canonical modification identity is absent from packs/equipment.db.",
+          "canonicalIdentityKey": "universal:electrograpple-handle"
+        },
+        {
+          "canonicalName": "Environmental Sealing",
+          "category": "universal",
+          "source": {
+            "book": "Scum and Villainy",
+            "page": 40
+          },
+          "ownership": "0-3E",
+          "phase0Disposition": "ADD",
+          "repo": {
+            "presentInEquipmentCompendium": false,
+            "id": null,
+            "name": null,
+            "matchType": "absent"
+          },
+          "reason": "Canonical modification identity is absent from packs/equipment.db.",
+          "canonicalIdentityKey": "universal:environmental-sealing"
+        },
+        {
+          "canonicalName": "Extra Power Source",
+          "category": "universal",
+          "source": {
+            "book": "Scum and Villainy",
+            "page": 40
+          },
+          "ownership": "0-3E",
+          "phase0Disposition": "ADD",
+          "repo": {
+            "presentInEquipmentCompendium": false,
+            "id": null,
+            "name": null,
+            "matchType": "absent"
+          },
+          "reason": "Canonical modification identity is absent from packs/equipment.db.",
+          "canonicalIdentityKey": "universal:extra-power-source"
+        },
+        {
+          "canonicalName": "Memory Upgrade",
+          "category": "universal",
+          "source": {
+            "book": "Scum and Villainy",
+            "page": 40
+          },
+          "ownership": "0-3E",
+          "phase0Disposition": "ADD",
+          "repo": {
+            "presentInEquipmentCompendium": false,
+            "id": null,
+            "name": null,
+            "matchType": "absent"
+          },
+          "reason": "Canonical modification identity is absent from packs/equipment.db.",
+          "canonicalIdentityKey": "universal:memory-upgrade"
+        },
+        {
+          "canonicalName": "Memory Upgrade, Advanced",
+          "category": "universal",
+          "source": {
+            "book": "Scum and Villainy",
+            "page": 40
+          },
+          "ownership": "0-3E",
+          "phase0Disposition": "ADD",
+          "repo": {
+            "presentInEquipmentCompendium": false,
+            "id": null,
+            "name": null,
+            "matchType": "absent"
+          },
+          "reason": "Canonical modification identity is absent from packs/equipment.db.",
+          "canonicalIdentityKey": "universal:memory-upgrade-advanced"
+        },
+        {
+          "canonicalName": "Miniaturized",
+          "category": "universal",
+          "source": {
+            "book": "Scum and Villainy",
+            "page": 40
+          },
+          "ownership": "0-3E",
+          "phase0Disposition": "EDIT",
+          "repo": {
+            "presentInEquipmentCompendium": true,
+            "id": "upgrade-universal-miniaturized",
+            "name": "Miniaturized (Universal Upgrade)",
+            "matchType": "identity-present-noncanonical-display-name"
+          },
+          "reason": "Canonical modification identity is present in packs/equipment.db, but the display name adds a repo-only upgrade suffix or otherwise differs from the printed canonical identity.",
+          "canonicalIdentityKey": "universal:miniaturized"
+        },
+        {
+          "canonicalName": "Recognition System",
+          "category": "universal",
+          "source": {
+            "book": "Scum and Villainy",
+            "page": 40
+          },
+          "ownership": "0-3E",
+          "phase0Disposition": "ADD",
+          "repo": {
+            "presentInEquipmentCompendium": false,
+            "id": null,
+            "name": null,
+            "matchType": "absent"
+          },
+          "reason": "Canonical modification identity is absent from packs/equipment.db.",
+          "canonicalIdentityKey": "universal:recognition-system"
+        },
+        {
+          "canonicalName": "Remote Activation",
+          "category": "universal",
+          "source": {
+            "book": "Scum and Villainy",
+            "page": 40
+          },
+          "ownership": "0-3E",
+          "phase0Disposition": "EDIT",
+          "repo": {
+            "presentInEquipmentCompendium": true,
+            "id": "upgrade-universal-remote-activation",
+            "name": "Remote Activation (Universal Upgrade)",
+            "matchType": "identity-present-noncanonical-display-name"
+          },
+          "reason": "Canonical modification identity is present in packs/equipment.db, but the display name adds a repo-only upgrade suffix or otherwise differs from the printed canonical identity.",
+          "canonicalIdentityKey": "universal:remote-activation"
+        },
+        {
+          "canonicalName": "Secret Compartment",
+          "category": "universal",
+          "source": {
+            "book": "Scum and Villainy",
+            "page": 40
+          },
+          "ownership": "0-3E",
+          "phase0Disposition": "EDIT",
+          "repo": {
+            "presentInEquipmentCompendium": true,
+            "id": "upgrade-universal-secret-compartment",
+            "name": "Secret Compartment (Universal Upgrade)",
+            "matchType": "identity-present-noncanonical-display-name"
+          },
+          "reason": "Canonical modification identity is present in packs/equipment.db, but the display name adds a repo-only upgrade suffix or otherwise differs from the printed canonical identity.",
+          "canonicalIdentityKey": "universal:secret-compartment"
+        },
+        {
+          "canonicalName": "Silverplate",
+          "category": "universal",
+          "source": {
+            "book": "Scum and Villainy",
+            "page": 40
+          },
+          "ownership": "0-3E",
+          "phase0Disposition": "ADD",
+          "repo": {
+            "presentInEquipmentCompendium": false,
+            "id": null,
+            "name": null,
+            "matchType": "absent"
+          },
+          "reason": "Canonical modification identity is absent from packs/equipment.db.",
+          "canonicalIdentityKey": "universal:silverplate"
+        },
+        {
+          "canonicalName": "Spring Loaded",
+          "category": "universal",
+          "source": {
+            "book": "Scum and Villainy",
+            "page": 40
+          },
+          "ownership": "0-3E",
+          "phase0Disposition": "ADD",
+          "repo": {
+            "presentInEquipmentCompendium": false,
+            "id": null,
+            "name": null,
+            "matchType": "absent"
+          },
+          "reason": "Canonical modification identity is absent from packs/equipment.db.",
+          "canonicalIdentityKey": "universal:spring-loaded"
+        },
+        {
+          "canonicalName": "Storage Capacity",
+          "category": "universal",
+          "source": {
+            "book": "Scum and Villainy",
+            "page": 40
+          },
+          "ownership": "0-3E",
+          "phase0Disposition": "ADD",
+          "repo": {
+            "presentInEquipmentCompendium": false,
+            "id": null,
+            "name": null,
+            "matchType": "absent"
+          },
+          "reason": "Canonical modification identity is absent from packs/equipment.db.",
+          "canonicalIdentityKey": "universal:storage-capacity"
+        },
+        {
+          "canonicalName": "Ion Shielding",
+          "category": "universal",
+          "source": {
+            "book": "Galaxy at War",
+            "page": 50
+          },
+          "ownership": "0-3E",
+          "phase0Disposition": "ADD",
+          "repo": {
+            "presentInEquipmentCompendium": false,
+            "id": null,
+            "name": null,
+            "matchType": "absent"
+          },
+          "reason": "Canonical modification identity is absent from packs/equipment.db.",
+          "canonicalIdentityKey": "universal:ion-shielding"
+        },
+        {
+          "canonicalName": "Componentization",
+          "category": "universal",
+          "source": {
+            "book": "Galaxy of Intrigue",
+            "page": 68
+          },
+          "ownership": "0-3E",
+          "phase0Disposition": "ADD",
+          "repo": {
+            "presentInEquipmentCompendium": false,
+            "id": null,
+            "name": null,
+            "matchType": "absent"
+          },
+          "reason": "Canonical modification identity is absent from packs/equipment.db.",
+          "canonicalIdentityKey": "universal:componentization"
+        },
+        {
+          "canonicalName": "Bayonet Ring",
+          "category": "weapon",
+          "source": {
+            "book": "Scum and Villainy",
+            "page": 42
+          },
+          "ownership": "0-3E",
+          "phase0Disposition": "EDIT",
+          "repo": {
+            "presentInEquipmentCompendium": true,
+            "id": "upgrade-weapon-bayonet-ring",
+            "name": "Bayonet Ring (Weapon Upgrade)",
+            "matchType": "identity-present-noncanonical-display-name"
+          },
+          "reason": "Canonical modification identity is present in packs/equipment.db, but the display name adds a repo-only upgrade suffix or otherwise differs from the printed canonical identity.",
+          "canonicalIdentityKey": "weapon:bayonet-ring"
+        },
+        {
+          "canonicalName": "Bipod",
+          "category": "weapon",
+          "source": {
+            "book": "Scum and Villainy",
+            "page": 42
+          },
+          "ownership": "0-3E",
+          "phase0Disposition": "ADD",
+          "repo": {
+            "presentInEquipmentCompendium": false,
+            "id": null,
+            "name": null,
+            "matchType": "absent"
+          },
+          "reason": "Canonical modification identity is absent from packs/equipment.db.",
+          "canonicalIdentityKey": "weapon:bipod"
+        },
+        {
+          "canonicalName": "Double Trigger",
+          "category": "weapon",
+          "source": {
+            "book": "Scum and Villainy",
+            "page": 42
+          },
+          "ownership": "0-3E",
+          "phase0Disposition": "ADD",
+          "repo": {
+            "presentInEquipmentCompendium": false,
+            "id": null,
+            "name": null,
+            "matchType": "absent"
+          },
+          "reason": "Canonical modification identity is absent from packs/equipment.db.",
+          "canonicalIdentityKey": "weapon:double-trigger"
+        },
+        {
+          "canonicalName": "Ion Charger",
+          "category": "weapon",
+          "source": {
+            "book": "Scum and Villainy",
+            "page": 42
+          },
+          "ownership": "0-3E",
+          "phase0Disposition": "EDIT",
+          "repo": {
+            "presentInEquipmentCompendium": true,
+            "id": "upgrade-weapon-ion-charger",
+            "name": "Ion Charger (Weapon Upgrade)",
+            "matchType": "identity-present-noncanonical-display-name"
+          },
+          "reason": "Canonical modification identity is present in packs/equipment.db, but the display name adds a repo-only upgrade suffix or otherwise differs from the printed canonical identity.",
+          "canonicalIdentityKey": "weapon:ion-charger"
+        },
+        {
+          "canonicalName": "Missile Load",
+          "category": "weapon",
+          "source": {
+            "book": "Scum and Villainy",
+            "page": 42
+          },
+          "ownership": "0-3E",
+          "phase0Disposition": "ADD",
+          "repo": {
+            "presentInEquipmentCompendium": false,
+            "id": null,
+            "name": null,
+            "matchType": "absent"
+          },
+          "reason": "Canonical modification identity is absent from packs/equipment.db.",
+          "canonicalIdentityKey": "weapon:missile-load"
+        },
+        {
+          "canonicalName": "Neutronium Reinforcement",
+          "category": "weapon",
+          "source": {
+            "book": "Scum and Villainy",
+            "page": 42
+          },
+          "ownership": "0-3E",
+          "phase0Disposition": "ADD",
+          "repo": {
+            "presentInEquipmentCompendium": false,
+            "id": null,
+            "name": null,
+            "matchType": "absent"
+          },
+          "reason": "Canonical modification identity is absent from packs/equipment.db.",
+          "canonicalIdentityKey": "weapon:neutronium-reinforcement"
+        },
+        {
+          "canonicalName": "Overload Switch",
+          "category": "weapon",
+          "source": {
+            "book": "Scum and Villainy",
+            "page": 42
+          },
+          "ownership": "0-3E",
+          "phase0Disposition": "ADD",
+          "repo": {
+            "presentInEquipmentCompendium": false,
+            "id": null,
+            "name": null,
+            "matchType": "absent"
+          },
+          "reason": "Canonical modification identity is absent from packs/equipment.db.",
+          "canonicalIdentityKey": "weapon:overload-switch"
+        },
+        {
+          "canonicalName": "Pulse Charger",
+          "category": "weapon",
+          "source": {
+            "book": "Scum and Villainy",
+            "page": 42
+          },
+          "ownership": "0-3E",
+          "phase0Disposition": "ADD",
+          "repo": {
+            "presentInEquipmentCompendium": false,
+            "id": null,
+            "name": null,
+            "matchType": "absent"
+          },
+          "reason": "Canonical modification identity is absent from packs/equipment.db.",
+          "canonicalIdentityKey": "weapon:pulse-charger"
+        },
+        {
+          "canonicalName": "Rangefinder",
+          "category": "weapon",
+          "source": {
+            "book": "Scum and Villainy",
+            "page": 42
+          },
+          "ownership": "0-3E",
+          "phase0Disposition": "EDIT",
+          "repo": {
+            "presentInEquipmentCompendium": true,
+            "id": "upgrade-weapon-rangefinder",
+            "name": "Rangefinder (Weapon Upgrade)",
+            "matchType": "identity-present-noncanonical-display-name"
+          },
+          "reason": "Canonical modification identity is present in packs/equipment.db, but the display name adds a repo-only upgrade suffix or otherwise differs from the printed canonical identity.",
+          "canonicalIdentityKey": "weapon:rangefinder"
+        },
+        {
+          "canonicalName": "Rapid Recycler",
+          "category": "weapon",
+          "source": {
+            "book": "Scum and Villainy",
+            "page": 42
+          },
+          "ownership": "0-3E",
+          "phase0Disposition": "EDIT",
+          "repo": {
+            "presentInEquipmentCompendium": true,
+            "id": "upgrade-weapon-rapid-recycler",
+            "name": "Rapid Recycler (Weapon Upgrade)",
+            "matchType": "identity-present-noncanonical-display-name"
+          },
+          "reason": "Canonical modification identity is present in packs/equipment.db, but the display name adds a repo-only upgrade suffix or otherwise differs from the printed canonical identity.",
+          "canonicalIdentityKey": "weapon:rapid-recycler"
+        },
+        {
+          "canonicalName": "Retractable Stock",
+          "category": "weapon",
+          "source": {
+            "book": "Scum and Villainy",
+            "page": 42
+          },
+          "ownership": "0-3E",
+          "phase0Disposition": "ADD",
+          "repo": {
+            "presentInEquipmentCompendium": false,
+            "id": null,
+            "name": null,
+            "matchType": "absent"
+          },
+          "reason": "Canonical modification identity is absent from packs/equipment.db.",
+          "canonicalIdentityKey": "weapon:retractable-stock"
+        },
+        {
+          "canonicalName": "Slinker",
+          "category": "weapon",
+          "source": {
+            "book": "Scum and Villainy",
+            "page": 42
+          },
+          "ownership": "0-3E",
+          "phase0Disposition": "ADD",
+          "repo": {
+            "presentInEquipmentCompendium": false,
+            "id": null,
+            "name": null,
+            "matchType": "absent"
+          },
+          "reason": "Canonical modification identity is absent from packs/equipment.db.",
+          "canonicalIdentityKey": "weapon:slinker"
+        },
+        {
+          "canonicalName": "Sniper Switch",
+          "category": "weapon",
+          "source": {
+            "book": "Scum and Villainy",
+            "page": 42
+          },
+          "ownership": "0-3E",
+          "phase0Disposition": "ADD",
+          "repo": {
+            "presentInEquipmentCompendium": false,
+            "id": null,
+            "name": null,
+            "matchType": "absent"
+          },
+          "reason": "Canonical modification identity is absent from packs/equipment.db.",
+          "canonicalIdentityKey": "weapon:sniper-switch"
+        },
+        {
+          "canonicalName": "Targeting Scope, Standard",
+          "category": "weapon",
+          "source": {
+            "book": "Core Rulebook",
+            "page": 140
+          },
+          "ownership": "0-3A",
+          "phase0Disposition": "CROSS_REFERENCE",
+          "repo": {
+            "existingCanonicalId": "accessory-targeting-scope-standard",
+            "existingPhase": "0-3A",
+            "existingDisposition": "KEEP"
+          },
+          "reason": "Canonical modification/accessory identity is already owned by Phase 0-3A; do not create a second item identity in 0-3E.",
+          "canonicalIdentityKey": "weapon:targeting-scope-standard"
+        },
+        {
+          "canonicalName": "Targeting Scope, Enhanced Low-Light",
+          "category": "weapon",
+          "source": {
+            "book": "Core Rulebook",
+            "page": 140
+          },
+          "ownership": "0-3A",
+          "phase0Disposition": "CROSS_REFERENCE",
+          "repo": {
+            "existingCanonicalId": "accessory-targeting-scope-enhanced-low-light",
+            "existingPhase": "0-3A",
+            "existingDisposition": "KEEP"
+          },
+          "reason": "Canonical modification/accessory identity is already owned by Phase 0-3A; do not create a second item identity in 0-3E.",
+          "canonicalIdentityKey": "weapon:targeting-scope-enhanced-low-light"
+        },
+        {
+          "canonicalName": "Beam Splitter",
+          "category": "weapon",
+          "source": {
+            "book": "Knights of the Old Republic Campaign Guide",
+            "page": 75
+          },
+          "ownership": "0-3E",
+          "phase0Disposition": "ADD",
+          "repo": {
+            "presentInEquipmentCompendium": false,
+            "id": null,
+            "name": null,
+            "matchType": "absent"
+          },
+          "reason": "Canonical modification identity is absent from packs/equipment.db.",
+          "canonicalIdentityKey": "weapon:beam-splitter"
+        },
+        {
+          "canonicalName": "Durasteel Bonding",
+          "category": "weapon",
+          "source": {
+            "book": "Knights of the Old Republic Campaign Guide",
+            "page": 75
+          },
+          "ownership": "0-3E",
+          "phase0Disposition": "ADD",
+          "repo": {
+            "presentInEquipmentCompendium": false,
+            "id": null,
+            "name": null,
+            "matchType": "absent"
+          },
+          "reason": "Canonical modification identity is absent from packs/equipment.db.",
+          "canonicalIdentityKey": "weapon:durasteel-bonding"
+        },
+        {
+          "canonicalName": "Enhanced Energy Projector",
+          "category": "weapon",
+          "source": {
+            "book": "Knights of the Old Republic Campaign Guide",
+            "page": 75
+          },
+          "ownership": "0-3E",
+          "phase0Disposition": "ADD",
+          "repo": {
+            "presentInEquipmentCompendium": false,
+            "id": null,
+            "name": null,
+            "matchType": "absent"
+          },
+          "reason": "Canonical modification identity is absent from packs/equipment.db.",
+          "canonicalIdentityKey": "weapon:enhanced-energy-projector"
+        },
+        {
+          "canonicalName": "Hair Trigger",
+          "category": "weapon",
+          "source": {
+            "book": "Knights of the Old Republic Campaign Guide",
+            "page": 75
+          },
+          "ownership": "0-3E",
+          "phase0Disposition": "ADD",
+          "repo": {
+            "presentInEquipmentCompendium": false,
+            "id": null,
+            "name": null,
+            "matchType": "absent"
+          },
+          "reason": "Canonical modification identity is absent from packs/equipment.db.",
+          "canonicalIdentityKey": "weapon:hair-trigger"
+        },
+        {
+          "canonicalName": "Improved Energy Cell",
+          "category": "weapon",
+          "source": {
+            "book": "Knights of the Old Republic Campaign Guide",
+            "page": 75
+          },
+          "ownership": "0-3E",
+          "phase0Disposition": "ADD",
+          "repo": {
+            "presentInEquipmentCompendium": false,
+            "id": null,
+            "name": null,
+            "matchType": "absent"
+          },
+          "reason": "Canonical modification identity is absent from packs/equipment.db.",
+          "canonicalIdentityKey": "weapon:improved-energy-cell"
+        },
+        {
+          "canonicalName": "Tremor Cell",
+          "category": "weapon",
+          "source": {
+            "book": "Knights of the Old Republic Campaign Guide",
+            "page": 75
+          },
+          "ownership": "0-3E",
+          "phase0Disposition": "ADD",
+          "repo": {
+            "presentInEquipmentCompendium": false,
+            "id": null,
+            "name": null,
+            "matchType": "absent"
+          },
+          "reason": "Canonical modification identity is absent from packs/equipment.db.",
+          "canonicalIdentityKey": "weapon:tremor-cell"
+        },
+        {
+          "canonicalName": "Flash Suppressor/Silencer",
+          "category": "weapon",
+          "source": {
+            "book": "Galaxy of Intrigue",
+            "page": 66
+          },
+          "ownership": "0-3E",
+          "phase0Disposition": "ADD",
+          "repo": {
+            "presentInEquipmentCompendium": false,
+            "id": null,
+            "name": null,
+            "matchType": "absent"
+          },
+          "reason": "Canonical modification identity is absent from packs/equipment.db.",
+          "canonicalIdentityKey": "weapon:flash-suppressor-silencer"
+        },
+        {
+          "canonicalName": "Computerized Interface Scope",
+          "category": "weapon",
+          "source": {
+            "book": "Rebellion Era Campaign Guide",
+            "page": null
+          },
+          "ownership": "0-3A",
+          "phase0Disposition": "CROSS_REFERENCE",
+          "repo": {
+            "existingCanonicalId": null,
+            "existingPhase": "0-3A",
+            "existingDisposition": "ADD"
+          },
+          "reason": "Canonical modification/accessory identity is already owned by Phase 0-3A; do not create a second item identity in 0-3E.",
+          "canonicalIdentityKey": "weapon:computerized-interface-scope"
+        },
+        {
+          "canonicalName": "Aquatic Adaptation",
+          "category": "armor",
+          "source": {
+            "book": "Scum and Villainy",
+            "page": 45
+          },
+          "ownership": "0-3E",
+          "phase0Disposition": "EDIT",
+          "repo": {
+            "presentInEquipmentCompendium": true,
+            "id": "upgrade-armor-aquatic-adaptation",
+            "name": "Aquatic Adaptation (Armor Upgrade)",
+            "matchType": "identity-present-noncanonical-display-name"
+          },
+          "reason": "Canonical modification identity is present in packs/equipment.db, but the display name adds a repo-only upgrade suffix or otherwise differs from the printed canonical identity.",
+          "canonicalIdentityKey": "armor:aquatic-adaptation"
+        },
+        {
+          "canonicalName": "Armorplast",
+          "category": "armor",
+          "source": {
+            "book": "Scum and Villainy",
+            "page": 45
+          },
+          "ownership": "0-3E",
+          "phase0Disposition": "EDIT",
+          "repo": {
+            "presentInEquipmentCompendium": true,
+            "id": "upgrade-armor-armorplast",
+            "name": "Armorplast (Armor Upgrade)",
+            "matchType": "identity-present-noncanonical-display-name"
+          },
+          "reason": "Canonical modification identity is present in packs/equipment.db, but the display name adds a repo-only upgrade suffix or otherwise differs from the printed canonical identity.",
+          "canonicalIdentityKey": "armor:armorplast"
+        },
+        {
+          "canonicalName": "Climbing Claws",
+          "category": "armor",
+          "source": {
+            "book": "Scum and Villainy",
+            "page": 45
+          },
+          "ownership": "0-3E",
+          "phase0Disposition": "ADD",
+          "repo": {
+            "presentInEquipmentCompendium": false,
+            "id": null,
+            "name": null,
+            "matchType": "absent"
+          },
+          "reason": "Canonical modification identity is absent from packs/equipment.db.",
+          "canonicalIdentityKey": "armor:climbing-claws"
+        },
+        {
+          "canonicalName": "Diagnostics System",
+          "category": "armor",
+          "source": {
+            "book": "Scum and Villainy",
+            "page": 45
+          },
+          "ownership": "0-3E",
+          "phase0Disposition": "ADD",
+          "repo": {
+            "presentInEquipmentCompendium": false,
+            "id": null,
+            "name": null,
+            "matchType": "absent"
+          },
+          "reason": "Canonical modification identity is absent from packs/equipment.db.",
+          "canonicalIdentityKey": "armor:diagnostics-system"
+        },
+        {
+          "canonicalName": "Environmental Systems",
+          "category": "armor",
+          "source": {
+            "book": "Scum and Villainy",
+            "page": 45
+          },
+          "ownership": "0-3E",
+          "phase0Disposition": "EDIT",
+          "repo": {
+            "presentInEquipmentCompendium": true,
+            "id": "upgrade-armor-environmental-systems",
+            "name": "Environmental Systems (Armor Upgrade)",
+            "matchType": "identity-present-noncanonical-display-name"
+          },
+          "reason": "Canonical modification identity is present in packs/equipment.db, but the display name adds a repo-only upgrade suffix or otherwise differs from the printed canonical identity.",
+          "canonicalIdentityKey": "armor:environmental-systems"
+        },
+        {
+          "canonicalName": "Gyro",
+          "category": "armor",
+          "source": {
+            "book": "Scum and Villainy",
+            "page": 45
+          },
+          "ownership": "0-3E",
+          "phase0Disposition": "ADD",
+          "repo": {
+            "presentInEquipmentCompendium": false,
+            "id": null,
+            "name": null,
+            "matchType": "absent"
+          },
+          "reason": "Canonical modification identity is absent from packs/equipment.db.",
+          "canonicalIdentityKey": "armor:gyro"
+        },
+        {
+          "canonicalName": "Helmet Package",
+          "category": "armor",
+          "source": {
+            "book": "Core Rulebook",
+            "page": 140
+          },
+          "ownership": "0-3A",
+          "phase0Disposition": "CROSS_REFERENCE",
+          "repo": {
+            "existingCanonicalId": "accessory-helmet-package",
+            "existingPhase": "0-3A",
+            "existingDisposition": "KEEP"
+          },
+          "reason": "Canonical modification/accessory identity is already owned by Phase 0-3A; do not create a second item identity in 0-3E.",
+          "canonicalIdentityKey": "armor:helmet-package"
+        },
+        {
+          "canonicalName": "Holoshroud",
+          "category": "armor",
+          "source": {
+            "book": "Scum and Villainy",
+            "page": 45
+          },
+          "ownership": "0-3E",
+          "phase0Disposition": "ADD",
+          "repo": {
+            "presentInEquipmentCompendium": false,
+            "id": null,
+            "name": null,
+            "matchType": "absent"
+          },
+          "reason": "Canonical modification identity is absent from packs/equipment.db.",
+          "canonicalIdentityKey": "armor:holoshroud"
+        },
+        {
+          "canonicalName": "Integrated Equipment, 1 Slot",
+          "category": "armor",
+          "source": {
+            "book": "Scum and Villainy",
+            "page": 45
+          },
+          "ownership": "0-3E",
+          "phase0Disposition": "ADD",
+          "repo": {
+            "presentInEquipmentCompendium": false,
+            "id": null,
+            "name": null,
+            "matchType": "absent"
+          },
+          "reason": "Canonical modification identity is absent from packs/equipment.db.",
+          "canonicalIdentityKey": "armor:integrated-equipment-1-slot"
+        },
+        {
+          "canonicalName": "Integrated Equipment, 2 Slots",
+          "category": "armor",
+          "source": {
+            "book": "Scum and Villainy",
+            "page": 45
+          },
+          "ownership": "0-3E",
+          "phase0Disposition": "ADD",
+          "repo": {
+            "presentInEquipmentCompendium": false,
+            "id": null,
+            "name": null,
+            "matchType": "absent"
+          },
+          "reason": "Canonical modification identity is absent from packs/equipment.db.",
+          "canonicalIdentityKey": "armor:integrated-equipment-2-slots"
+        },
+        {
+          "canonicalName": "Integrated Equipment, 5 Slots",
+          "category": "armor",
+          "source": {
+            "book": "Scum and Villainy",
+            "page": 45
+          },
+          "ownership": "0-3E",
+          "phase0Disposition": "ADD",
+          "repo": {
+            "presentInEquipmentCompendium": false,
+            "id": null,
+            "name": null,
+            "matchType": "absent"
+          },
+          "reason": "Canonical modification identity is absent from packs/equipment.db.",
+          "canonicalIdentityKey": "armor:integrated-equipment-5-slots"
+        },
+        {
+          "canonicalName": "Integrated Equipment, 10 Slots",
+          "category": "armor",
+          "source": {
+            "book": "Scum and Villainy",
+            "page": 45
+          },
+          "ownership": "0-3E",
+          "phase0Disposition": "ADD",
+          "repo": {
+            "presentInEquipmentCompendium": false,
+            "id": null,
+            "name": null,
+            "matchType": "absent"
+          },
+          "reason": "Canonical modification identity is absent from packs/equipment.db.",
+          "canonicalIdentityKey": "armor:integrated-equipment-10-slots"
+        },
+        {
+          "canonicalName": "Internal Generator",
+          "category": "armor",
+          "source": {
+            "book": "Scum and Villainy",
+            "page": 45
+          },
+          "ownership": "0-3E",
+          "phase0Disposition": "ADD",
+          "repo": {
+            "presentInEquipmentCompendium": false,
+            "id": null,
+            "name": null,
+            "matchType": "absent"
+          },
+          "reason": "Canonical modification identity is absent from packs/equipment.db.",
+          "canonicalIdentityKey": "armor:internal-generator"
+        },
+        {
+          "canonicalName": "Jump Servos",
+          "category": "armor",
+          "source": {
+            "book": "Scum and Villainy",
+            "page": 45
+          },
+          "ownership": "0-3E",
+          "phase0Disposition": "EDIT",
+          "repo": {
+            "presentInEquipmentCompendium": true,
+            "id": "upgrade-armor-jump-servos",
+            "name": "Jump Servos (Armor Upgrade)",
+            "matchType": "identity-present-noncanonical-display-name"
+          },
+          "reason": "Canonical modification identity is present in packs/equipment.db, but the display name adds a repo-only upgrade suffix or otherwise differs from the printed canonical identity.",
+          "canonicalIdentityKey": "armor:jump-servos"
+        },
+        {
+          "canonicalName": "Powered Exoskeleton",
+          "category": "armor",
+          "source": {
+            "book": "Scum and Villainy",
+            "page": 45
+          },
+          "ownership": "0-3E",
+          "phase0Disposition": "ADD",
+          "repo": {
+            "presentInEquipmentCompendium": false,
+            "id": null,
+            "name": null,
+            "matchType": "absent"
+          },
+          "reason": "Canonical modification identity is absent from packs/equipment.db.",
+          "canonicalIdentityKey": "armor:powered-exoskeleton"
+        },
+        {
+          "canonicalName": "Radiation Shielding",
+          "category": "armor",
+          "source": {
+            "book": "Scum and Villainy",
+            "page": 45
+          },
+          "ownership": "0-3E",
+          "phase0Disposition": "ADD",
+          "repo": {
+            "presentInEquipmentCompendium": false,
+            "id": null,
+            "name": null,
+            "matchType": "absent"
+          },
+          "reason": "Canonical modification identity is absent from packs/equipment.db.",
+          "canonicalIdentityKey": "armor:radiation-shielding"
+        },
+        {
+          "canonicalName": "Rangefinder",
+          "category": "armor",
+          "source": {
+            "book": "Scum and Villainy",
+            "page": 45
+          },
+          "ownership": "0-3E",
+          "phase0Disposition": "ADD",
+          "repo": {
+            "presentInEquipmentCompendium": false,
+            "id": null,
+            "name": null,
+            "matchType": "absent"
+          },
+          "reason": "Canonical modification identity is absent from packs/equipment.db.",
+          "canonicalIdentityKey": "armor:rangefinder"
+        },
+        {
+          "canonicalName": "Ready Harness",
+          "category": "armor",
+          "source": {
+            "book": "Scum and Villainy",
+            "page": 45
+          },
+          "ownership": "0-3E",
+          "phase0Disposition": "ADD",
+          "repo": {
+            "presentInEquipmentCompendium": false,
+            "id": null,
+            "name": null,
+            "matchType": "absent"
+          },
+          "reason": "Canonical modification identity is absent from packs/equipment.db.",
+          "canonicalIdentityKey": "armor:ready-harness"
+        },
+        {
+          "canonicalName": "Repulsorlift",
+          "category": "armor",
+          "source": {
+            "book": "Scum and Villainy",
+            "page": 45
+          },
+          "ownership": "0-3E",
+          "phase0Disposition": "ADD",
+          "repo": {
+            "presentInEquipmentCompendium": false,
+            "id": null,
+            "name": null,
+            "matchType": "absent"
+          },
+          "reason": "Canonical modification identity is absent from packs/equipment.db.",
+          "canonicalIdentityKey": "armor:repulsorlift"
+        },
+        {
+          "canonicalName": "Shadowskin",
+          "category": "armor",
+          "source": {
+            "book": "Scum and Villainy",
+            "page": 45
+          },
+          "ownership": "0-3E",
+          "phase0Disposition": "EDIT",
+          "repo": {
+            "presentInEquipmentCompendium": true,
+            "id": "upgrade-armor-shadowskin",
+            "name": "Shadowskin (Armor Upgrade)",
+            "matchType": "identity-present-noncanonical-display-name"
+          },
+          "reason": "Canonical modification identity is present in packs/equipment.db, but the display name adds a repo-only upgrade suffix or otherwise differs from the printed canonical identity.",
+          "canonicalIdentityKey": "armor:shadowskin"
+        },
+        {
+          "canonicalName": "Shadowskin, Reflec",
+          "category": "armor",
+          "source": {
+            "book": "Scum and Villainy",
+            "page": 45
+          },
+          "ownership": "0-3E",
+          "phase0Disposition": "ADD",
+          "repo": {
+            "presentInEquipmentCompendium": false,
+            "id": null,
+            "name": null,
+            "matchType": "absent"
+          },
+          "reason": "Canonical modification identity is absent from packs/equipment.db.",
+          "canonicalIdentityKey": "armor:shadowskin-reflec"
+        },
+        {
+          "canonicalName": "Shield Generator, SR 5",
+          "category": "armor",
+          "source": {
+            "book": "Scum and Villainy",
+            "page": 45
+          },
+          "ownership": "0-3E",
+          "phase0Disposition": "EDIT",
+          "repo": {
+            "presentInEquipmentCompendium": true,
+            "id": "upgrade-armor-shield-generator-sr5",
+            "name": "Shield Generator SR 5 (Armor Upgrade)",
+            "matchType": "identity-present-noncanonical-display-name"
+          },
+          "reason": "Canonical modification identity is present in packs/equipment.db, but the display name adds a repo-only upgrade suffix or otherwise differs from the printed canonical identity.",
+          "canonicalIdentityKey": "armor:shield-generator-sr-5"
+        },
+        {
+          "canonicalName": "Shield Generator, SR 10",
+          "category": "armor",
+          "source": {
+            "book": "Scum and Villainy",
+            "page": 45
+          },
+          "ownership": "0-3E",
+          "phase0Disposition": "ADD",
+          "repo": {
+            "presentInEquipmentCompendium": false,
+            "id": null,
+            "name": null,
+            "matchType": "absent"
+          },
+          "reason": "Canonical modification identity is absent from packs/equipment.db.",
+          "canonicalIdentityKey": "armor:shield-generator-sr-10"
+        },
+        {
+          "canonicalName": "Shockweb",
+          "category": "armor",
+          "source": {
+            "book": "Scum and Villainy",
+            "page": 45
+          },
+          "ownership": "0-3E",
+          "phase0Disposition": "ADD",
+          "repo": {
+            "presentInEquipmentCompendium": false,
+            "id": null,
+            "name": null,
+            "matchType": "absent"
+          },
+          "reason": "Canonical modification identity is absent from packs/equipment.db.",
+          "canonicalIdentityKey": "armor:shockweb"
+        },
+        {
+          "canonicalName": "Vacuum Seals",
+          "category": "armor",
+          "source": {
+            "book": "Scum and Villainy",
+            "page": 45
+          },
+          "ownership": "0-3E",
+          "phase0Disposition": "ADD",
+          "repo": {
+            "presentInEquipmentCompendium": false,
+            "id": null,
+            "name": null,
+            "matchType": "absent"
+          },
+          "reason": "Canonical modification identity is absent from packs/equipment.db.",
+          "canonicalIdentityKey": "armor:vacuum-seals"
+        },
+        {
+          "canonicalName": "Vacuum Seals, Improved",
+          "category": "armor",
+          "source": {
+            "book": "Scum and Villainy",
+            "page": 45
+          },
+          "ownership": "0-3E",
+          "phase0Disposition": "ADD",
+          "repo": {
+            "presentInEquipmentCompendium": false,
+            "id": null,
+            "name": null,
+            "matchType": "absent"
+          },
+          "reason": "Canonical modification identity is absent from packs/equipment.db.",
+          "canonicalIdentityKey": "armor:vacuum-seals-improved"
+        },
+        {
+          "canonicalName": "Weapon Mount",
+          "category": "armor",
+          "source": {
+            "book": "Scum and Villainy",
+            "page": 45
+          },
+          "ownership": "0-3E",
+          "phase0Disposition": "ADD",
+          "repo": {
+            "presentInEquipmentCompendium": false,
+            "id": null,
+            "name": null,
+            "matchType": "absent"
+          },
+          "reason": "Canonical modification identity is absent from packs/equipment.db.",
+          "canonicalIdentityKey": "armor:weapon-mount"
+        },
+        {
+          "canonicalName": "Armor Reinforcement",
+          "category": "armor",
+          "source": {
+            "book": "Knights of the Old Republic Campaign Guide",
+            "page": 75
+          },
+          "ownership": "0-3E",
+          "phase0Disposition": "ADD",
+          "repo": {
+            "presentInEquipmentCompendium": false,
+            "id": null,
+            "name": null,
+            "matchType": "absent"
+          },
+          "reason": "Canonical modification identity is absent from packs/equipment.db.",
+          "canonicalIdentityKey": "armor:armor-reinforcement"
+        },
+        {
+          "canonicalName": "Mesh Underlay",
+          "category": "armor",
+          "source": {
+            "book": "Knights of the Old Republic Campaign Guide",
+            "page": 75
+          },
+          "ownership": "0-3E",
+          "phase0Disposition": "ADD",
+          "repo": {
+            "presentInEquipmentCompendium": false,
+            "id": null,
+            "name": null,
+            "matchType": "absent"
+          },
+          "reason": "Canonical modification identity is absent from packs/equipment.db.",
+          "canonicalIdentityKey": "armor:mesh-underlay"
+        }
+      ],
+      "repoReversePass": {
+        "equipmentCompendium": [
+          {
+            "id": "upgrade-armor-helmet-package",
+            "name": "Helmet Package (Armor Upgrade)",
+            "disposition": "REMOVE_DUPLICATE",
+            "survivor": "accessory-helmet-package",
+            "reason": "Scum and Villainy reprints/references the Core Helmet Package for upgrade-system use; it is not a second canonical item identity."
+          }
+        ],
+        "upgradeJsonCatalogs": {
+          "armor": {
+            "path": "data/upgrades/armor-upgrades.json",
+            "records": 29,
+            "canonicalCoverage": 29,
+            "extraRepresentations": 0,
+            "identityEdits": [
+              {
+                "repoName": "Repulsorlift Unit",
+                "canonicalName": "Repulsorlift"
+              },
+              {
+                "repoName": "Reflec Shadowskin",
+                "canonicalName": "Shadowskin, Reflec"
+              },
+              {
+                "repoName": "Vacuum Seals, Standard",
+                "canonicalName": "Vacuum Seals"
+              },
+              {
+                "repoName": "Weapon Mount, Standard",
+                "canonicalName": "Weapon Mount"
+              }
+            ]
+          },
+          "universal": {
+            "path": "data/upgrades/universal-upgrades.json",
+            "records": 19,
+            "canonicalCoverage": 18,
+            "extraRepresentations": 1,
+            "identityEdits": [
+              {
+                "repoName": "Advanced Memory Upgrade",
+                "canonicalName": "Memory Upgrade, Advanced"
+              },
+              {
+                "repoName": "Spring-Loaded",
+                "canonicalName": "Spring Loaded"
+              },
+              {
+                "repoName": "Ion-Shielding",
+                "canonicalName": "Ion Shielding"
+              },
+              {
+                "repoNames": [
+                  "Componentization (Basic)",
+                  "Componentization (Deluxe)"
+                ],
+                "canonicalName": "Componentization",
+                "action": "MERGE_AS_ONE_IDENTITY_WITH_TWO_TIERS"
+              }
+            ]
+          },
+          "weapon": {
+            "path": "data/upgrades/weapon-upgrades.json",
+            "records": 23,
+            "canonicalCoverage": 23,
+            "extraRepresentations": 0,
+            "identityEdits": [
+              {
+                "repoName": "Targeting Scope, Low-Light",
+                "canonicalName": "Targeting Scope, Enhanced Low-Light",
+                "action": "REFERENCE_EXISTING_0_3A_IDENTITY"
+              }
+            ]
+          }
+        },
+        "runtimeCatalog": {
+          "path": "scripts/engine/customization/upgrade-catalog.js",
+          "currentDefCount": 71,
+          "publishedEquipmentUpgradeDefinitions": {
+            "universal": 11,
+            "weapon": 22,
+            "armor": 30
+          },
+          "nonItemTechSpecialistDefinitions": 8,
+          "canonicalUpgradeConceptCoverage": 61,
+          "canonicalUpgradeConceptTotal": 70,
+          "missingCanonicalConcepts": [
+            "Droidification",
+            "Electrograpple Handle",
+            "Memory Upgrade",
+            "Memory Upgrade, Advanced",
+            "Miniaturized",
+            "Recognition System",
+            "Silverplate",
+            "Spring Loaded",
+            "Missile Load"
+          ],
+          "unsupportedRepoOnlyDefinitions": [
+            {
+              "name": "Night Vision Device",
+              "category": "armor",
+              "disposition": "REMOVE",
+              "reason": "No standalone published upgrade identity found in the supplied SWSE TXT/PDF SSOT."
+            }
+          ],
+          "structuralFinding": "The current runtime catalog is not a complete mirror of data/upgrades/*.json. It omits eight canonical universal upgrades and Missile Load, while adding Night Vision Device and eight Tech Specialist rule modifications."
+        }
+      },
+      "specialFindings": [
+        {
+          "finding": "Targeting Scope cross-references",
+          "details": "Scum and Villainy lists the Core targeting scopes in its weapon-upgrade table. Preserve the existing 0-3A item identities; do not create duplicate upgrade items."
+        },
+        {
+          "finding": "Computerized Interface Scope",
+          "details": "Already certified as a 0-3A ADD. Its presence in weapon-upgrade data/runtime does not create a second identity."
+        },
+        {
+          "finding": "Componentization tiers",
+          "details": "Galaxy of Intrigue publishes one Componentization upgrade with basic and deluxe implementations. The repo JSON/runtime split into Basic and Deluxe is an implementation split, not two canonical identities."
+        },
+        {
+          "finding": "Tech Specialist modifications",
+          "details": "Agile Armor, Fortifying Armor, Protective Armor, Improved Accuracy, Improved Damage, Selective Fire, Improved Durability, Mastercraft Device and other Tech Specialist traits are feat-granted modification mechanics, not purchasable equipment identities. Do not add them to the equipment compendium as items."
+        },
+        {
+          "finding": "Gear Templates",
+          "details": "KOTOR gear templates are a separate template overlay system and are not included in 0-3E item identity counts."
+        },
+        {
+          "finding": "Lightsaber components",
+          "details": "Lightsaber crystals and hilt/accessory systems remain outside 0-3E and require their own later batch."
+        },
+        {
+          "finding": "Improved Energy Cell errata",
+          "details": "KOTOR errata changes Improved Energy Cell upgrade slot cost to 1. Record for later stat/mechanics certification; Phase 0-3E certifies identity only."
+        }
+      ],
+      "executionPolicy": {
+        "phase0Meaning": "Identity/presence/reconciliation only.",
+        "productionAddAuthorized": false,
+        "productionRenameAuthorized": false,
+        "productionRemoveAuthorized": false,
+        "authorityIntegrationAuthorized": true
+      },
+      "executorGuardrails": [
+        "Fold this authority into the single cumulative rolling MD/JSON; do not create a competing permanent authority.",
+        "Do not create the 51 missing compendium modification records until canonical description/stat/schema certification authorizes complete records.",
+        "Do not rename the 15 existing compendium upgrade records yet unless the owner separately authorizes an execution tranche.",
+        "Do not delete upgrade-armor-helmet-package until dependency/search verification proves the existing accessory-helmet-package can be the sole Helmet Package item identity.",
+        "Do not create duplicate item records for the two targeting scopes or Computerized Interface Scope; those identities are owned by 0-3A.",
+        "Treat Componentization as one canonical identity with basic/deluxe tiers, not two canonical items.",
+        "Do not delete or rewrite data/upgrades catalogs/runtime upgrade-catalog in Phase 0-3E; record their drift for later production reconciliation.",
+        "Do not convert Tech Specialist modification traits into equipment items.",
+        "Do not include lightsaber, droid, vehicle, starship, or gear-template systems in this tranche."
+      ],
+      "identityKeyNote": "canonicalIdentityKey is category-qualified (Claude-added at integration): \"Rangefinder\" is published as both a weapon upgrade and an armor upgrade and must not be merged.",
+      "execution": {
+        "status": "AUTHORITY_ONLY",
+        "date": "2026-10-05",
+        "note": "No pack, store, template, JSON-catalog or runtime change. The 51 ADD identities are recorded and NOT created; the 15 display-name edits and the Helmet Package duplicate merge are NOT executed.",
+        "gatedCleanup": {
+          "upgrade-armor-helmet-package": {
+            "action": "REMOVE_DUPLICATE_AFTER_DEPENDENCY_CHECK",
+            "executed": false,
+            "survivor": "accessory-helmet-package"
+          }
+        },
+        "deferredToCleanupTranche": [
+          "15 canonical display-name edits (drop \"(Armor/Universal/Weapon Upgrade)\" suffixes) in packs/equipment.db and the equipment-tech mirror, with store/name consumers",
+          "Helmet Package duplicate merge",
+          "data/upgrades/*.json alias normalization and Componentization Basic/Deluxe merge",
+          "runtime upgrade-catalog.js: 9 missing concepts, Night Vision Device removal",
+          "Improved Energy Cell upgrade-slot errata (Phase 4)"
+        ]
+      },
+      "nameCollisions": [
+        {
+          "canonicalIdentityKey": "armor:holoshroud",
+          "canonicalName": "Holoshroud",
+          "source": "Scum and Villainy p. 45 (armor upgrade; legacy data/upgrades/armor-upgrades.json: 5,000 cr, 1 slot)",
+          "collidesWith": {
+            "repoId": "detect-holoshroud",
+            "phase": "0-3A",
+            "identity": "Force Unleashed Campaign Guide equipment item (25,000 cr, 0.5 kg, +10 Deception)",
+            "canonicalIdentityKey": "core-rulebook-style key of 0-3A record \"Holoshroud\""
+          },
+          "finding": "Same display name, different published item and mechanics (an armor upgrade vs a standalone holoshroud device). The 0-3E ADD stands as a distinct category-qualified identity, but creating it later will put two records named \"Holoshroud\" in the compendium. Same-name-different-mechanic policy applies, as with Camouflage Netting.",
+          "status": "FLAGGED_FOR_OWNER_ADJUDICATION",
+          "detectedBy": "Claude verifier at integration, 2026-10-05"
+        }
+      ]
     }
   },
   "pendingPhases": [
-    "0-3E Upgrades / Modifications",
+    "0-3F Gear Templates",
+    "Lightsaber crystals / accessories / components (batch TBD)",
+    "Gated cleanup tranche (0-3D migrations, 0-3E renames/merge, REMOVE dependents)",
     "1 Provenance (pages)",
     "2 Descriptions",
     "3 Schema",
