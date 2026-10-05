@@ -13396,7 +13396,15 @@
         "followUps": [
           "Remaining unclaimed equipment records after Phases 0-3A/B/C/D: 16 `upgrade-*` records (armor, universal, weapon upgrades), owned by Phase 0-3E.",
           "Dedicated implant data layers (data/implants/*, data/store/implant-store-descriptions.json) are a parallel implant catalog of 8 entries; reconciling them with the pack is part of the cleanup migration."
-        ]
+        ],
+        "cleanupTranchePolicy": {
+          "ownerDirection": "2026-10-05: do not execute either gated migration yet; keep them as a separate cleanup tranche after the Phase 0 identity census finishes. Final decisions to be locked by the owner after Phase 0-3E.",
+          "status": "DEFERRED_NOT_LOCKED",
+          "ownerLeanings": {
+            "cyber-energy-binding-prosthesis": "Bao-Dur's Cybernetic Arm as an NPC-specific flag/feature, not a purchasable equipment record.",
+            "implant-subelectronic-converter": "Subelectronic Converter keeps exactly one store entry, attached to the surviving cyber-subelectronic-converter record."
+          }
+        }
       }
     }
   },

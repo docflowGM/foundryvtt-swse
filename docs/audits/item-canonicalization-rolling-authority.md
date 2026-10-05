@@ -879,6 +879,8 @@ Standard cybernetic prostheses, KOTOR mechanical implants, named cybernetic enha
 
 **`cyber-energy-binding-prosthesis`** — a misclassification of Bao-Dur's Cybernetic Arm (KOTOR p. 176); relocate to Bao-Dur-specific data, do not erase the concept. Dependents: data/store/equipment-store-descriptions.json ×1. scripts/engine/feats/skill-feat-normalization-hooks.js:86 lists 'energy-binding-prosthesis' in selfInstallAllowedDevices. Bao-Dur appears in data/heroic.json and nonheroic damage-profile data; the unique arm concept must be preserved in Bao-Dur-specific data.
 
+**Owner direction (2026-10-05):** neither migration is executed now; both form a separate cleanup tranche after the Phase 0 identity census finishes, to be locked after Phase 0-3E. Current leanings, not yet locked: Bao-Dur's arm becomes an NPC-specific flag/feature rather than a purchasable equipment record, and the Subelectronic Converter keeps one store entry attached to the surviving `cyber-subelectronic-converter` record.
+
 ### Noncatalog findings
 
 - **Legacy Era Shaper implant talents:** NOT_EQUIPMENT_IDENTITIES — These are temporary effects created by talents, not priced equipment records.
