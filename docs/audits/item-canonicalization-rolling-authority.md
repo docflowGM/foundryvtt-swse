@@ -1,9 +1,9 @@
 # SWSE Item Canonicalization — Rolling Authority
 
-Status: ACTIVE — Phase 0 complete; Phase 0-1 Weapons and Phase 0-2 Armor and Phase 0-3A General Equipment certified by owner (armor and equipment renames executed)
+Status: ACTIVE — Phase 0 complete; Phase 0-1 Weapons and Phase 0-2 Armor and Phase 0-3A General Equipment and Phase 0-3C Explosives/Demolitions certified by owner (armor and equipment renames executed)
 Updated: 2026-10-05
 Machine-readable companion: `data/audits/item-canonicalization-rolling-authority.json`
-Verify against the packs: `node tools/verify-item-weapons-authority.mjs` (weapons, armor and equipment)
+Verify against the packs: `node tools/verify-item-weapons-authority.mjs` (weapons, armor, equipment and explosives)
 
 This is the single cumulative authority for item rehabilitation. Per-book/phase files are temporary evidence and must not become competing authorities. Architecture evidence: `docs/audits/item-phase-0-ssot-census.md` (owner rulings in §7a).
 
@@ -711,6 +711,59 @@ Follow-ups:
 
 Name matches in `data/species-*.json`, `data/heroic.json`, `data/nonheroic*.json` are mostly species-trait or NPC prose and must be reviewed individually before any removal.
 
+## Phase 0-3C — Explosives / demolitions: census and repo reconciliation
+
+Non-grenade explosives, mines, detonation hardware, demolition materials and named improvised explosive constructs. Excluded: grenades and thermal detonators (weapons batch), Demolitions Sensor (0-3A), droid self-destruct systems, facility traps, and upgrades. Identity and presence only. **Authority-only: no repo change.**
+
+| Result | Count |
+|---|---:|
+| Canonical identities | 14 |
+| Repo records in scope (`packs/equipment.db`, all in `equipment-security`) | 6 |
+| KEEP | 6 |
+| ADD (recorded, not created) | 8 |
+| EDIT / REMOVE / REVIEW | 0 / 0 / 0 |
+
+| # | Canonical identity | Source | Repo record | Disposition |
+|---:|---|---|---|---|
+| 1 | Explosive Charge | Core Rulebook p. 130 | `explosive-charge` - Explosive Charge | KEEP |
+| 2 | Detonite | Core Rulebook p. 130 | `explosive-detonite` - Detonite | KEEP |
+| 3 | Timer | Core Rulebook p. 130 | `explosive-timer` - Timer | KEEP |
+| 4 | Antivehicle Mine | Force Unleashed Campaign Guide p. 100 | — (suggested `explosive-antivehicle-mine`) | ADD |
+| 5 | Flechette Mine | Force Unleashed Campaign Guide p. 100 | — (suggested `explosive-flechette-mine`) | ADD |
+| 6 | Land Mine | Force Unleashed Campaign Guide p. 100 | — (suggested `explosive-land-mine`) | ADD |
+| 7 | Laser Trip Mine | Force Unleashed Campaign Guide p. 101 | — (suggested `explosive-laser-trip-mine`) | ADD |
+| 8 | Manual Trigger | Force Unleashed Campaign Guide p. 101 | `explosive-manual-trigger` - Manual Trigger | KEEP |
+| 9 | Proximity Mine | Force Unleashed Campaign Guide p. 101 | — (suggested `explosive-proximity-mine`) | ADD |
+| 10 | Antipersonnel Mine | Galaxy at War p. 42 | — (suggested `explosive-antipersonnel-mine`) | ADD |
+| 11 | Detonite Cord | Galaxy at War p. 43 | `explosive-detonite-cord` - Detonite Cord | KEEP |
+| 12 | Ion Mine | Galaxy at War p. 43 | — (suggested `explosive-ion-mine`) | ADD |
+| 13 | Limpet Mine | Galaxy at War p. 43 | — (suggested `explosive-limpet-mine`) | ADD |
+| 14 | Power-Pack Bomb | Rebellion Era Campaign Guide p. 108 | `explosive-power-pack-bomb` - Power Pack Bomb | KEEP |
+
+### Special findings
+
+- **Smart Mines** (Galaxy at War p. 99): DEFER_NONCATALOG_SYSTEM — Published under Active and Static Defenses as a programmable battlefield-defense system with no normal equipment purchase/stat row. Do not create a standard equipment record in Phase 0-3C.
+- **Remote-controlled detonator** (Rebellion Era Campaign Guide p. 108): NOT_SEPARATE_IDENTITY — Mentioned as an optional component of the Power-Pack Bomb recipe; no distinct priced/stat-block equipment identity is established here. Manual Trigger remains the explicit published detonator equipment identity.
+
+- **Power-Pack Bomb:** Canonical name is "Power-Pack Bomb"; repo display name "Power Pack Bomb" is preserved for Phase 0 per the authority (recipe-generated construct; punctuation normalization deferred to content/schema review).
+
+### Execution record
+
+No pack, store-description, template or runtime change. The 8 ADD identities (Antivehicle, Flechette, Land, Laser Trip, Proximity, Antipersonnel, Ion and Limpet Mines) are queued for creation only after canonical description/stat/schema certification.
+
+### Execution guardrails
+
+1. Do not create the 8 ADD records until canonical description/stat/schema certification authorizes production creation.
+2. Do not remove or rename any existing explosive record from this authority.
+3. Do not convert Smart Mines (Galaxy at War p. 99) into a normal equipment record.
+4. Do not create a second detonator record from the Rebellion Era remote-controlled detonator mention.
+5. Do not modify weapon grenade records, the Demolitions Sensor (0-3A), droid self-destruct systems, or upgrade catalogs.
+
+### QA gate
+
+- 14 unique canonical ids; 6/6 repo explosive records exist exactly once with matching names; 8 absent and none already present under the suggested ids.
+- No overlap with Phase 0-3A scope; verified by `tools/verify-item-weapons-authority.mjs`.
+
 ## Pending phases
 
-0-3B Medical / Treatment Equipment · 0-3C Explosives / Demolitions · 0-3D Cybernetics / Implants · 0-3E Upgrades / Modifications · 1 Provenance (pages) · 2 Descriptions · 3 Schema · 4 Stats · 5 Reconciliation · 6 Legacy tags · 7 Semantic tags · 8 Migration
+0-3B Medical / Treatment Equipment · 0-3D Cybernetics / Implants · 0-3E Upgrades / Modifications · 1 Provenance (pages) · 2 Descriptions · 3 Schema · 4 Stats · 5 Reconciliation · 6 Legacy tags · 7 Semantic tags · 8 Migration

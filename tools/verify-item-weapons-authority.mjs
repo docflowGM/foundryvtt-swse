@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
  * Verifies data/audits/item-canonicalization-rolling-authority.json (Phase 0-1 weapons,
- * Phase 0-2 armor, Phase 0-3A equipment) against the weapons, armor and equipment packs. Read-only. Fails on any drift between the certified authority
+ * Phase 0-2 armor, Phase 0-3A equipment, Phase 0-3C explosives) against the weapons, armor and equipment packs. Read-only. Fails on any drift between the certified authority
  * and the pack so that execution phases cannot silently run against a changed repo.
  */
 import fs from 'node:fs';
@@ -103,6 +103,29 @@ if (eq) {
   const dispo = count(eq.canonicalRecords, (r) => r.phase0Disposition);
   if (JSON.stringify(Object.entries(dispo).sort()) !== JSON.stringify(Object.entries(eq.canonicalCounts.byDisposition).sort())) fail(`equipment disposition counts ${JSON.stringify(dispo)}`);
   if (!errors.length) console.log(`equipment authority OK: ${eq.canonicalRecords.length} canonical, ${eq.repoReconciliation.length}+${eq.deferredRepoRecords.length} in-scope/deferred of ${eqPack.size} repo records`);
+}
+
+// ---- Phase 0-3C explosives / demolitions (authority-only) ----
+const ex = auth.phases['0-3c-explosives-demolitions'];
+if (ex) {
+  const exPack = new Map(fs.readFileSync(path.join(ROOT, 'packs/equipment.db'), 'utf8').split('\n').filter(Boolean)
+    .map((l) => JSON.parse(l)).map((r) => [r._id, r.name]));
+  const eqScope = new Set([...(auth.phases['0-3a-general-equipment']?.repoReconciliation || []).map((r) => r.id),
+    ...(auth.phases['0-3a-general-equipment']?.deferredRepoRecords || []).map((r) => r.id)]);
+  const exKeys = new Set();
+  for (const r of ex.records) {
+    if (exKeys.has(r.canonicalId)) fail(`duplicate explosives canonical id ${r.canonicalId}`);
+    exKeys.add(r.canonicalId);
+    if (r.disposition === 'KEEP') {
+      if (exPack.get(r.repo.id) !== r.repo.name) fail(`explosives KEEP ${r.repo.id}: pack "${exPack.get(r.repo.id)}" vs "${r.repo.name}"`);
+      if (eqScope.has(r.repo.id)) fail(`explosives ${r.repo.id} is also claimed by Phase 0-3A`);
+    } else if (r.disposition === 'ADD') {
+      if (r.repo.present || exPack.has(r.repo.suggestedId)) fail(`explosives ADD ${r.canonicalName} already exists in the pack`);
+    } else fail(`explosives ${r.canonicalId}: unexpected disposition ${r.disposition}`);
+  }
+  const exDispo = count(ex.records, (r) => r.disposition);
+  if (exDispo.KEEP !== ex.counts.KEEP || exDispo.ADD !== ex.counts.ADD || ex.records.length !== ex.counts.canonicalIdentities) fail(`explosives counts ${JSON.stringify(exDispo)}`);
+  if (!errors.length) console.log(`explosives authority OK: ${ex.records.length} canonical (${exDispo.KEEP} KEEP, ${exDispo.ADD} ADD pending), ${exPack.size} equipment records untouched`);
 }
 
 if (errors.length) { console.error(`FAIL (${errors.length})\n- ${errors.join('\n- ')}`); process.exit(1); }

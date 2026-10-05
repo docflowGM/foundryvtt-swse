@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "authorityType": "item-canonicalization-rolling-authority",
-  "status": "ACTIVE — Phase 0, Phase 0-1 Weapons, Phase 0-2 Armor, Phase 0-3A General Equipment certified by owner",
+  "status": "ACTIVE — Phase 0, Phase 0-1 Weapons, Phase 0-2 Armor, Phase 0-3A General Equipment and Phase 0-3C Explosives/Demolitions certified by owner",
   "sourcePolicy": "User-provided SWSE TXT/PDF sourcebooks are the canonical SSOT. Repository compendiums are implementation targets only.",
   "ownerRulings": "docs/audits/item-phase-0-ssot-census.md §7a",
   "architecture": {
@@ -11916,11 +11916,348 @@
           }
         }
       }
+    },
+    "0-3c-explosives-demolitions": {
+      "phase": "0-3C",
+      "title": "Explosives / Demolitions Equipment Census and Repo Reconciliation",
+      "canonicalSourcePolicy": "User-supplied SWSE TXT/PDF sourcebooks are SSOT; repo is implementation target only.",
+      "repoTarget": {
+        "repository": "docflowGM/foundryvtt-swse",
+        "ref": "main",
+        "pack": "packs/equipment.db"
+      },
+      "scope": {
+        "included": [
+          "fixed/set explosives",
+          "mines",
+          "detonation hardware",
+          "demolition explosive materials",
+          "named improvised explosive constructs"
+        ],
+        "excluded": [
+          "grenades and thermal detonators already handled as weapons",
+          "demolitions sensor already handled in Phase 0-3A general equipment",
+          "droid self-destruct systems",
+          "facility traps/security systems without normal equipment identities",
+          "weapon/armor/universal upgrades"
+        ]
+      },
+      "counts": {
+        "canonicalIdentities": 14,
+        "repoRecordsInScope": 6,
+        "KEEP": 6,
+        "EDIT": 0,
+        "ADD": 8,
+        "REMOVE": 0,
+        "REVIEW": 0
+      },
+      "executionPolicy": {
+        "phase0Meaning": "Identity/presence reconciliation only.",
+        "addExecutionAuthorized": false,
+        "note": "ADD records are identity-certified but must not be created with invented/incomplete mechanics. Later canonical description/stat/schema phases must authorize production creation. KEEP records require no Phase 0 mutation."
+      },
+      "specialFindings": [
+        {
+          "name": "Smart Mines",
+          "source": {
+            "book": "Galaxy at War",
+            "page": 99,
+            "txtFile": "Galaxy At War_djvu.txt",
+            "txtLines": "9962-10144"
+          },
+          "classification": "DEFER_NONCATALOG_SYSTEM",
+          "reason": "Published under Active and Static Defenses as a programmable battlefield-defense system with no normal equipment purchase/stat row. Do not create a standard equipment record in Phase 0-3C."
+        },
+        {
+          "name": "Remote-controlled detonator",
+          "source": {
+            "book": "Rebellion Era Campaign Guide",
+            "page": 108,
+            "txtFile": "Rebellion Era Campaign Guide_djvu.txt",
+            "txtLines": "9933-9975"
+          },
+          "classification": "NOT_SEPARATE_IDENTITY",
+          "reason": "Mentioned as an optional component of the Power-Pack Bomb recipe; no distinct priced/stat-block equipment identity is established here. Manual Trigger remains the explicit published detonator equipment identity."
+        }
+      ],
+      "records": [
+        {
+          "canonicalId": "explosive-charge",
+          "canonicalName": "Explosive Charge",
+          "family": "explosives-demolitions",
+          "source": {
+            "book": "Core Rulebook",
+            "page": 130,
+            "txtFile": "Core Rulebook_djvu.txt",
+            "txtLines": "12488-12535"
+          },
+          "repo": {
+            "present": true,
+            "id": "explosive-charge",
+            "name": "Explosive Charge"
+          },
+          "disposition": "KEEP",
+          "reason": "Canonical identity is present in packs/equipment.db. Phase 0-3C certifies identity only; mechanics/stats remain for later audit."
+        },
+        {
+          "canonicalId": "explosive-detonite",
+          "canonicalName": "Detonite",
+          "family": "explosives-demolitions",
+          "source": {
+            "book": "Core Rulebook",
+            "page": 130,
+            "txtFile": "Core Rulebook_djvu.txt",
+            "txtLines": "12488-12542"
+          },
+          "repo": {
+            "present": true,
+            "id": "explosive-detonite",
+            "name": "Detonite"
+          },
+          "disposition": "KEEP",
+          "reason": "Canonical identity is present in packs/equipment.db."
+        },
+        {
+          "canonicalId": "explosive-timer",
+          "canonicalName": "Timer",
+          "family": "explosives-demolitions",
+          "source": {
+            "book": "Core Rulebook",
+            "page": 130,
+            "txtFile": "Core Rulebook_djvu.txt",
+            "txtLines": "12488-12508"
+          },
+          "repo": {
+            "present": true,
+            "id": "explosive-timer",
+            "name": "Timer"
+          },
+          "disposition": "KEEP",
+          "reason": "Canonical detonator/timer identity is present in packs/equipment.db."
+        },
+        {
+          "canonicalId": "explosive-antivehicle-mine",
+          "canonicalName": "Antivehicle Mine",
+          "family": "explosives-demolitions",
+          "source": {
+            "book": "Force Unleashed Campaign Guide",
+            "page": 100,
+            "txtFile": "Force Unleashed Campaign Guide_djvu.txt",
+            "txtLines": "9452-9492"
+          },
+          "repo": {
+            "present": false,
+            "suggestedId": "explosive-antivehicle-mine"
+          },
+          "disposition": "ADD",
+          "reason": "Published mine is absent from packs/equipment.db."
+        },
+        {
+          "canonicalId": "explosive-flechette-mine",
+          "canonicalName": "Flechette Mine",
+          "family": "explosives-demolitions",
+          "source": {
+            "book": "Force Unleashed Campaign Guide",
+            "page": 100,
+            "txtFile": "Force Unleashed Campaign Guide_djvu.txt",
+            "txtLines": "9462-9510"
+          },
+          "repo": {
+            "present": false,
+            "suggestedId": "explosive-flechette-mine"
+          },
+          "disposition": "ADD",
+          "reason": "Published mine is absent from packs/equipment.db."
+        },
+        {
+          "canonicalId": "explosive-land-mine",
+          "canonicalName": "Land Mine",
+          "family": "explosives-demolitions",
+          "source": {
+            "book": "Force Unleashed Campaign Guide",
+            "page": 100,
+            "txtFile": "Force Unleashed Campaign Guide_djvu.txt",
+            "txtLines": "9462-9530"
+          },
+          "repo": {
+            "present": false,
+            "suggestedId": "explosive-land-mine"
+          },
+          "disposition": "ADD",
+          "reason": "Published mine is absent from packs/equipment.db."
+        },
+        {
+          "canonicalId": "explosive-laser-trip-mine",
+          "canonicalName": "Laser Trip Mine",
+          "family": "explosives-demolitions",
+          "source": {
+            "book": "Force Unleashed Campaign Guide",
+            "page": 101,
+            "txtFile": "Force Unleashed Campaign Guide_djvu.txt",
+            "txtLines": "9530-9543"
+          },
+          "repo": {
+            "present": false,
+            "suggestedId": "explosive-laser-trip-mine"
+          },
+          "disposition": "ADD",
+          "reason": "Published mine is absent from packs/equipment.db."
+        },
+        {
+          "canonicalId": "explosive-manual-trigger",
+          "canonicalName": "Manual Trigger",
+          "family": "explosives-demolitions",
+          "source": {
+            "book": "Force Unleashed Campaign Guide",
+            "page": 101,
+            "txtFile": "Force Unleashed Campaign Guide_djvu.txt",
+            "txtLines": "9543-9551"
+          },
+          "repo": {
+            "present": true,
+            "id": "explosive-manual-trigger",
+            "name": "Manual Trigger"
+          },
+          "disposition": "KEEP",
+          "reason": "Canonical manual detonator identity is present in packs/equipment.db."
+        },
+        {
+          "canonicalId": "explosive-proximity-mine",
+          "canonicalName": "Proximity Mine",
+          "family": "explosives-demolitions",
+          "source": {
+            "book": "Force Unleashed Campaign Guide",
+            "page": 101,
+            "txtFile": "Force Unleashed Campaign Guide_djvu.txt",
+            "txtLines": "9551-9560"
+          },
+          "repo": {
+            "present": false,
+            "suggestedId": "explosive-proximity-mine"
+          },
+          "disposition": "ADD",
+          "reason": "Published mine is absent from packs/equipment.db."
+        },
+        {
+          "canonicalId": "explosive-antipersonnel-mine",
+          "canonicalName": "Antipersonnel Mine",
+          "family": "explosives-demolitions",
+          "source": {
+            "book": "Galaxy at War",
+            "page": 42,
+            "txtFile": "Galaxy At War_djvu.txt",
+            "txtLines": "4108-4146"
+          },
+          "repo": {
+            "present": false,
+            "suggestedId": "explosive-antipersonnel-mine"
+          },
+          "disposition": "ADD",
+          "reason": "Published mine is absent from packs/equipment.db."
+        },
+        {
+          "canonicalId": "explosive-detonite-cord",
+          "canonicalName": "Detonite Cord",
+          "family": "explosives-demolitions",
+          "source": {
+            "book": "Galaxy at War",
+            "page": 43,
+            "txtFile": "Galaxy At War_djvu.txt",
+            "txtLines": "4146-4166"
+          },
+          "repo": {
+            "present": true,
+            "id": "explosive-detonite-cord",
+            "name": "Detonite Cord"
+          },
+          "disposition": "KEEP",
+          "reason": "Canonical identity is present in packs/equipment.db."
+        },
+        {
+          "canonicalId": "explosive-ion-mine",
+          "canonicalName": "Ion Mine",
+          "family": "explosives-demolitions",
+          "source": {
+            "book": "Galaxy at War",
+            "page": 43,
+            "txtFile": "Galaxy At War_djvu.txt",
+            "txtLines": "4163-4178"
+          },
+          "repo": {
+            "present": false,
+            "suggestedId": "explosive-ion-mine"
+          },
+          "disposition": "ADD",
+          "reason": "Published ion mine is absent from packs/equipment.db."
+        },
+        {
+          "canonicalId": "explosive-limpet-mine",
+          "canonicalName": "Limpet Mine",
+          "family": "explosives-demolitions",
+          "source": {
+            "book": "Galaxy at War",
+            "page": 43,
+            "txtFile": "Galaxy At War_djvu.txt",
+            "txtLines": "4163-4191"
+          },
+          "repo": {
+            "present": false,
+            "suggestedId": "explosive-limpet-mine"
+          },
+          "disposition": "ADD",
+          "reason": "Published limpet mine is absent from packs/equipment.db."
+        },
+        {
+          "canonicalId": "explosive-power-pack-bomb",
+          "canonicalName": "Power-Pack Bomb",
+          "family": "explosives-demolitions",
+          "identityType": "improvised-construct",
+          "source": {
+            "book": "Rebellion Era Campaign Guide",
+            "page": 108,
+            "txtFile": "Rebellion Era Campaign Guide_djvu.txt",
+            "txtLines": "9933-9975",
+            "visualVerification": "PDF printed page 108, 'Jury-Rigging a Power-Pack Bomb'"
+          },
+          "repo": {
+            "present": true,
+            "id": "explosive-power-pack-bomb",
+            "name": "Power Pack Bomb"
+          },
+          "disposition": "KEEP",
+          "reason": "Published named improvised construct is represented in the repo. Preserve the current repo display name for Phase 0; canonical punctuation/name normalization can be handled with content/schema review because this is a recipe-generated construct rather than a normal purchase row."
+        }
+      ],
+      "repoReversePass": {
+        "coveredRepoIds": [
+          "explosive-charge",
+          "explosive-detonite",
+          "explosive-detonite-cord",
+          "explosive-manual-trigger",
+          "explosive-power-pack-bomb",
+          "explosive-timer"
+        ],
+        "unmatchedRepoRecords": [],
+        "coverage": "6/6 in-scope repo explosive records accounted for exactly once"
+      },
+      "status": "CERTIFIED_PHASE_0_3C_IDENTITY_AUTHORITY",
+      "execution": {
+        "status": "AUTHORITY_ONLY",
+        "date": "2026-10-05",
+        "note": "No pack, store, template or runtime change. 0 EDIT, 0 REMOVE. The 8 ADD identities are recorded as pending future creation and are NOT created.",
+        "namingNote": "Canonical name is \"Power-Pack Bomb\"; repo display name \"Power Pack Bomb\" is preserved for Phase 0 per the authority (recipe-generated construct; punctuation normalization deferred to content/schema review)."
+      },
+      "executorGuardrails": [
+        "Do not create the 8 ADD records until canonical description/stat/schema certification authorizes production creation.",
+        "Do not remove or rename any existing explosive record from this authority.",
+        "Do not convert Smart Mines (Galaxy at War p. 99) into a normal equipment record.",
+        "Do not create a second detonator record from the Rebellion Era remote-controlled detonator mention.",
+        "Do not modify weapon grenade records, the Demolitions Sensor (0-3A), droid self-destruct systems, or upgrade catalogs."
+      ]
     }
   },
   "pendingPhases": [
     "0-3B Medical / Treatment Equipment",
-    "0-3C Explosives / Demolitions",
     "0-3D Cybernetics / Implants",
     "0-3E Upgrades / Modifications",
     "1 Provenance (pages)",
