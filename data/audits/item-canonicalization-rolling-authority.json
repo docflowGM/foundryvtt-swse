@@ -14895,9 +14895,32 @@
             "identity": "Force Unleashed Campaign Guide equipment item (25,000 cr, 0.5 kg, +10 Deception)",
             "canonicalIdentityKey": "core-rulebook-style key of 0-3A record \"Holoshroud\""
           },
-          "finding": "Same display name, different published item and mechanics (an armor upgrade vs a standalone holoshroud device). The 0-3E ADD stands as a distinct category-qualified identity, but creating it later will put two records named \"Holoshroud\" in the compendium. Same-name-different-mechanic policy applies, as with Camouflage Netting.",
-          "status": "FLAGGED_FOR_OWNER_ADJUDICATION",
-          "detectedBy": "Claude verifier at integration, 2026-10-05"
+          "status": "RULED_DISTINCT_SOURCE_QUALIFIED_IDENTITIES",
+          "detectedBy": "Claude verifier at integration, 2026-10-05",
+          "ownerRuling": {
+            "date": "2026-10-05",
+            "ruling": "Keep as two distinct canonical identities; do not merge and do not rename either to avoid the duplicate display name. Same name does not equal same identity when source, item category and mechanics differ.",
+            "identities": [
+              {
+                "label": "Holoshroud [FUCG equipment]",
+                "canonicalIdentityKey": "equipment:holoshroud",
+                "source": "Force Unleashed Campaign Guide",
+                "category": "standalone equipment",
+                "repoId": "detect-holoshroud",
+                "notes": "25,000 cr, 0.5 kg; stores a holographic disguise; image replacement DC 15 Use Computer; +10 equipment bonus to Deception for the matching appearance; activation/removal is a swift action"
+              },
+              {
+                "label": "Holoshroud [S&V armor upgrade]",
+                "canonicalIdentityKey": "armor:holoshroud",
+                "source": "Scum and Villainy p. 45",
+                "category": "armor upgrade (consumes an upgrade slot)",
+                "repoId": "upgrade-holoshroud (data/upgrades/armor-upgrades.json); runtime key holoshroud in upgrade-catalog.js",
+                "notes": "physically integrated into armor via multiple holographic projectors; different image-storage/change procedure; armor-mounted concealment/disguise interaction; runtime already applies its own separate effect"
+              }
+            ],
+            "playerFacingNames": "Both remain \"Holoshroud\", as the books call them; canonical ids and source provenance distinguish them."
+          },
+          "finding": "Same display name, different published item, category and mechanics (resolved by owner ruling below)."
         }
       ]
     },
@@ -18979,6 +19002,29 @@
       "note": "Certify source/page, full canonical rules text, summary, and repo discrepancy before broad creation of Phase 0 ADD records."
     },
     "foldedAt": "2026-10-05",
-    "sourceStatus": "PHASE_0_CHARACTER_ITEM_CENSUS_COMPLETE_PENDING_CLAUDE_FOLD_IN"
+    "sourceStatus": "PHASE_0_CHARACTER_ITEM_CENSUS_COMPLETE_PENDING_CLAUDE_FOLD_IN",
+    "ownerRulings": [
+      {
+        "date": "2026-10-05",
+        "subject": "Holoshroud",
+        "ruling": "Two distinct source-qualified identities (equipment:holoshroud, armor:holoshroud); no merge, no rename."
+      },
+      {
+        "date": "2026-10-05",
+        "subject": "Miniaturized Self-Destruct System",
+        "ruling": "No automatic removal in Phase 0. It carries live runtime behavior (overlay entry read by self-destruct damage logic); whether it is a standalone published identity becomes a migration/architecture question for the droid cleanup tranche."
+      },
+      {
+        "date": "2026-10-05",
+        "subject": "weaponUpgrade stragglers in packs/weapons.db",
+        "ruling": "Stay queued for the cleanup tranche; their canonical identities already live in the dedicated lightsaber packs, which is the eventual destination."
+      },
+      {
+        "date": "2026-10-05",
+        "subject": "Phase 0 closure",
+        "ruling": "Phase 0 is fully settled for the character-item domain except the three pressure suits awaiting their Web Enhancements source. Next: Phase 1 — Weapons provenance and canonical content."
+      }
+    ],
+    "verifiedClosureCommit": "59a3a1cbdfb4a3addc1fc5c22115b7e381fbeb25 (owner-verified)"
   }
 }

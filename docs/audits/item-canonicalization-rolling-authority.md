@@ -1027,9 +1027,14 @@ Identity keys are category-qualified (`weapon:rangefinder` vs `armor:rangefinder
 8. Do not convert Tech Specialist modification traits into equipment items.
 9. Do not include lightsaber, droid, vehicle, starship, or gear-template systems in this tranche.
 
-### Same-name finding raised at integration — needs owner adjudication
+### Same-name finding — RULED (owner, 2026-10-05): two distinct source-qualified identities
 
-**Holoshroud.** Scum and Villainy p. 45 publishes a Holoshroud *armor upgrade* (legacy catalog: 5,000 cr, 1 slot). Phase 0-3A already certified the Force Unleashed Campaign Guide *Holoshroud* equipment item (`detect-holoshroud`, 25,000 cr, 0.5 kg, +10 Deception). These are different items under one display name, like Camouflage Netting. The 0-3E ADD (`armor:holoshroud`) stands as a separate category-qualified identity; when it is eventually created the compendium will hold two records named "Holoshroud". Recorded in `nameCollisions`; the verifier accepts this one collision and fails on any other.
+**Holoshroud.** Keep both; do not merge, and do not rename either to avoid the duplicate display name. Same name does not equal same identity when source, item category and mechanics differ.
+
+- **Holoshroud [FUCG equipment]** — `equipment:holoshroud`, repo id `detect-holoshroud`. Standalone equipment, 25,000 cr, 0.5 kg; stores a holographic disguise; image replacement DC 15 Use Computer; +10 equipment bonus to Deception for the matching appearance; activation/removal is a swift action.
+- **Holoshroud [S&V armor upgrade]** — `armor:holoshroud`, Scum and Villainy p. 45; legacy catalog id `upgrade-holoshroud`, runtime key `holoshroud`. Consumes an armor upgrade slot; physically integrated into armor through multiple holographic projectors; different image-storage/change procedure; armor-mounted concealment/disguise interaction; the runtime already applies its own separate effect.
+
+Both keep the player-facing name "Holoshroud" because that is what the books call them. Canonical ids and source provenance distinguish them. The verifier accepts exactly this recorded collision and fails on any other.
 
 ### Deferred to the cleanup tranche
 
@@ -1281,6 +1286,8 @@ Already owned by Phase 0-3A (all KEEP): Energy Cell (`tool-energy-cell`), Power 
 Phase 4 weapon-stat certification must audit, per weapon: ammunition/power type, shots/capacity, reload or replacement rule, per-unit cost, special-ammunition restrictions, and interactions with power packs, energy cells, launchers and external generators.
 
 ## Phase 0 — character-item census completion
+
+**Owner-verified closure commit:** `59a3a1cbdfb4a3addc1fc5c22115b7e381fbeb25`. Phase 0 is fully settled except the three pressure suits awaiting their Web Enhancements source. Owner rulings recorded in `phase0Completion.ownerRulings`: Holoshroud (two identities), Miniaturized Self-Destruct System (no Phase 0 removal; live runtime behavior, a migration question), weaponUpgrade stragglers (cleanup tranche; destination is the dedicated lightsaber packs).
 
 **Status: PHASE_0_CHARACTER_ITEM_CENSUS_COMPLETE** (folded 2026-10-05). Phase 0 separates canonical identity truth from production mutation: the census is complete, but Phase 0 canonical identity/presence authority is complete for the character item domain; many certified ADD/EDIT/REMOVE actions remain intentionally unexecuted until later content/schema/migration phases.
 
