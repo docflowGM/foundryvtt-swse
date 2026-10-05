@@ -60,9 +60,9 @@
     "description": "Aural Amplifier, Detection/Surveillance, 0.5 kg weight, 2000 credits. a headset that amplifies sound, allowing the wearer to hear conversations and sounds at great distances. A smart little purchase for buyers who like to call being overprepared a lifestyle."
   },
   {
-    "slug": "bacta-per-liter",
+    "slug": "bacta-1-liter",
     "id": "medical-bacta-per-liter",
-    "name": "Bacta (Per Liter)",
+    "name": "Bacta, 1 Liter",
     "description": "Bacta (Per Liter), Medical, 2 kg weight, 100 credits. a liter of bacta, the galaxy's most effective healing fluid. Field-ready support gear for customers who plan to keep everybody ambulatory, or at least negotiable."
   },
   {
@@ -420,9 +420,9 @@
     "description": "Manual Trigger, Explosive, 0.1 kg weight, 100 credits. a handheld detonator switch for remotely triggering explosives. Built for technical people who would rather delegate the annoying part to a machine."
   },
   {
-    "slug": "medical-bundle",
+    "slug": "8-2a-medical-bundle",
     "id": "medical-bundle",
-    "name": "Medical Bundle",
+    "name": "8-2A Medical Bundle",
     "description": "Medical Bundle, Medical, 1 kg weight, 200 credits. a basic medical supply pack with bandages, antiseptics, and emergency medications. Field-ready support gear for customers who plan to keep everybody ambulatory, or at least negotiable."
   },
   {
@@ -438,9 +438,9 @@
     "description": "Medical Kit, Medical, 20 kg weight, 600 credits. a comprehensive medical kit with diagnostic equipment, surgical tools, and medical supplies for field treatment. Field-ready support gear for customers who plan to keep everybody ambulatory, or at least negotiable."
   },
   {
-    "slug": "medisensor",
+    "slug": "mds-50-medisensor",
     "id": "medical-medisensor",
-    "name": "Medisensor",
+    "name": "MDS-50 Medisensor",
     "description": "Medisensor, Medical, 0.1 kg weight, 75 credits. a handheld diagnostic device that scans vital signs and identifies injuries and diseases. Field-ready support gear for customers who plan to keep everybody ambulatory, or at least negotiable."
   },
   {

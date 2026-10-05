@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
  * Verifies data/audits/item-canonicalization-rolling-authority.json (Phase 0-1 weapons,
- * Phase 0-2 armor, Phase 0-3A equipment, Phase 0-3C explosives) against the weapons, armor and equipment packs. Read-only. Fails on any drift between the certified authority
+ * Phase 0-2 armor, Phase 0-3A equipment, Phase 0-3B medical, Phase 0-3C explosives) against the weapons, armor and equipment packs. Read-only. Fails on any drift between the certified authority
  * and the pack so that execution phases cannot silently run against a changed repo.
  */
 import fs from 'node:fs';
@@ -126,6 +126,34 @@ if (ex) {
   const exDispo = count(ex.records, (r) => r.disposition);
   if (exDispo.KEEP !== ex.counts.KEEP || exDispo.ADD !== ex.counts.ADD || ex.records.length !== ex.counts.canonicalIdentities) fail(`explosives counts ${JSON.stringify(exDispo)}`);
   if (!errors.length) console.log(`explosives authority OK: ${ex.records.length} canonical (${exDispo.KEEP} KEEP, ${exDispo.ADD} ADD pending), ${exPack.size} equipment records untouched`);
+}
+
+// ---- Phase 0-3B medical / treatment equipment ----
+const med = auth.phases['0-3b-medical-treatment'];
+if (med) {
+  const readMed = (n) => fs.readFileSync(path.join(ROOT, `packs/${n}.db`), 'utf8').split('\n').filter(Boolean).map((l) => JSON.parse(l));
+  const medPack = new Map(readMed('equipment').map((r) => [r._id, r.name]));
+  const medSub = new Map(readMed('equipment-medical').map((r) => [r._id, r.name]));
+  const medExecuted = med.execution?.status === 'EXECUTED_RENAMES';
+  const scoped = new Set([
+    ...(auth.phases['0-3a-general-equipment']?.repoReconciliation || []).map((r) => r.id),
+    ...(auth.phases['0-3a-general-equipment']?.deferredRepoRecords || []).map((r) => r.id),
+    ...((auth.phases['0-3c-explosives-demolitions']?.records || []).filter((r) => r.repo.present).map((r) => r.repo.id))]);
+  const medIds = new Set();
+  for (const r of med.records) {
+    const id = r.repo.id;
+    if (medIds.has(id)) fail(`medical duplicate id ${id}`);
+    medIds.add(id);
+    if (scoped.has(id)) fail(`medical ${id} also claimed by another equipment phase`);
+    const expected = medExecuted && r.disposition === 'EDIT' ? r.canonicalName : r.repo.name;
+    if (medPack.get(id) !== expected) fail(`medical name drift ${id}: expected "${expected}" vs pack "${medPack.get(id)}"`);
+    if (medSub.get(id) !== medPack.get(id)) fail(`medical subpack/aggregate mismatch ${id}`);
+    if (r.disposition === 'KEEP' && medPack.get(id) !== r.canonicalName) fail(`medical KEEP ${r.canonicalName} != repo name`);
+  }
+  for (const id of medSub.keys()) if (!medIds.has(id)) fail(`equipment-medical record ${id} not covered by Phase 0-3B`);
+  const md = count(med.records, (r) => r.disposition);
+  if (md.KEEP !== med.counts.KEEP || md.EDIT !== med.counts.EDIT || med.records.length !== med.counts.canonicalIdentities) fail(`medical counts ${JSON.stringify(md)}`);
+  if (!errors.length) console.log(`medical authority OK: ${med.records.length} canonical (${md.KEEP} KEEP, ${md.EDIT} EDIT) cover all ${medSub.size} equipment-medical records`);
 }
 
 if (errors.length) { console.error(`FAIL (${errors.length})\n- ${errors.join('\n- ')}`); process.exit(1); }

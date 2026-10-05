@@ -1,9 +1,9 @@
 # SWSE Item Canonicalization — Rolling Authority
 
-Status: ACTIVE — Phase 0 complete; Phase 0-1 Weapons and Phase 0-2 Armor and Phase 0-3A General Equipment and Phase 0-3C Explosives/Demolitions certified by owner (armor and equipment renames executed)
+Status: ACTIVE — Phase 0 complete; Phase 0-1 Weapons and Phase 0-2 Armor and Phase 0-3A General Equipment, Phase 0-3B Medical and Phase 0-3C Explosives/Demolitions certified by owner (armor, equipment and medical renames executed)
 Updated: 2026-10-05
 Machine-readable companion: `data/audits/item-canonicalization-rolling-authority.json`
-Verify against the packs: `node tools/verify-item-weapons-authority.mjs` (weapons, armor, equipment and explosives)
+Verify against the packs: `node tools/verify-item-weapons-authority.mjs` (weapons, armor, equipment, medical and explosives)
 
 This is the single cumulative authority for item rehabilitation. Per-book/phase files are temporary evidence and must not become competing authorities. Architecture evidence: `docs/audits/item-phase-0-ssot-census.md` (owner rulings in §7a).
 
@@ -711,6 +711,74 @@ Follow-ups:
 
 Name matches in `data/species-*.json`, `data/heroic.json`, `data/nonheroic*.json` are mostly species-trait or NPC prose and must be reviewed individually before any removal.
 
+## Phase 0-3B — Medical / treatment equipment: census and repo reconciliation
+
+Character-scale medical and treatment equipment: kits, medpacs, bacta, diagnostic and treatment devices, poison/radiation treatment and detection devices. Excluded: cybernetic prostheses and implants (0-3D), general scientific gear (0-3A), medical droids, vehicle/starship medical installations. Identity and presence only.
+
+| Result | Count |
+|---|---:|
+| Canonical identities | 16 |
+| Repo records in scope (all of `equipment-medical`) | 16 |
+| KEEP | 13 |
+| EDIT | 3 |
+| ADD / REMOVE / REVIEW | 0 / 0 / 0 |
+
+| # | Canonical identity | Source | Repo record | Disposition |
+|---:|---|---|---|---|
+| 1 | Bacta Tank (Empty) | Core Rulebook p. 137 | `medical-bacta-tank-empty` - Bacta Tank (Empty) | KEEP |
+| 2 | Bacta, 1 Liter | Core Rulebook p. 137 | `medical-bacta-per-liter` - Bacta (Per Liter) | EDIT |
+| 3 | Medical Kit | Core Rulebook p. 137 | `medical-kit` - Medical Kit | KEEP |
+| 4 | Medpac | Core Rulebook p. 137 | `medical-medpac` - Medpac | KEEP |
+| 5 | Surgery Kit | Core Rulebook p. 137 | `medical-surgery-kit` - Surgery Kit | KEEP |
+| 6 | Bioscanner | Clone Wars Campaign Guide (page: Phase 1) | `medical-bioscanner` - Bioscanner | KEEP |
+| 7 | Anti-Rad Dose | Galaxy at War p. 45 | `medical-anti-rad-dose` - Anti-Rad Dose | KEEP |
+| 8 | Cryogenic Pouch | Galaxy at War p. 46 | `medical-cryogenic-pouch` - Cryogenic Pouch | KEEP |
+| 9 | Antitoxin Patch | Galaxy of Intrigue p. 66 | `medical-antitoxin-patch` - Antitoxin Patch | KEEP |
+| 10 | Toxin Detector | Galaxy of Intrigue p. 67 | `medical-toxin-detector` - Toxin Detector | KEEP |
+| 11 | 8-2A Medical Bundle | Jedi Academy Training Manual (page: Phase 1) | `medical-bundle` - Medical Bundle | EDIT |
+| 12 | Medical Interface Visor | Knights of the Old Republic Campaign Guide (page: Phase 1) | `medical-interface-visor` - Medical Interface Visor | KEEP |
+| 13 | MDS-50 Medisensor | Threats of the Galaxy (page: Phase 1) | `medical-medisensor` - Medisensor | EDIT |
+| 14 | FastFlesh Medpac | Threats of the Galaxy (page: Phase 1) | `medical-fastflesh-medpac` - FastFlesh Medpac | KEEP |
+| 15 | Antidote Synthesizer | Unknown Regions p. 40 | `medical-antidote-synthesizer` - Antidote Synthesizer | KEEP |
+| 16 | Hypoinjector Wristband | Unknown Regions p. 40 | `medical-hypoinjector-wristband` - Hypoinjector Wristband | KEEP |
+
+### Boundary findings
+
+- **Cybernetic Prosthesis** (Core Rulebook p. 137 Medical Gear table): DEFER_TO_0_3D_CYBERNETICS — Although printed in the Medical Gear table, its operative identity is a cybernetic prosthesis and it belongs in the cybernetics/implants census.
+- **Subelectronic Converter** (Jedi Academy Training Manual Medical Gear table): DEFER_TO_0_3D_CYBERNETICS — Its own rules explicitly call it a cybernetic enhancement implanted into the subject's head and requiring Cybernetic Surgery. Do not double-count it as ordinary medical gear.
+- **Microlab** (Unknown Regions p. 40): ALREADY_0_3A_GENERAL_EQUIPMENT — Scientific analysis equipment, not a medical-treatment identity despite being referenced by Antidote Synthesizer.
+- **Medical Suite / Medical Bed** (Starships of the Galaxy): DEFER_VEHICLE_STARSHIP_SYSTEM — Starship installation/system, not a character-scale equipment identity.
+- **Bacta patches / synthetic flesh** (Jedi Academy Training Manual 8-2A Medical Bundle description): NOT_SEPARATE_IDENTITY — Mentioned as ordinary contents/materials absent from the bundle; no separate catalog identity is established in this source passage.
+
+### Execution record — 3 identity renames (2026-10-05)
+
+| Repo ID | Old name | Canonical name |
+|---|---|---|
+| `medical-bacta-per-liter` | Bacta (Per Liter) | Bacta, 1 Liter |
+| `medical-bundle` | Medical Bundle | 8-2A Medical Bundle |
+| `medical-medisensor` | Medisensor | MDS-50 Medisensor |
+
+- **Packs:** renamed in `packs/equipment.db` and the mirror in `packs/equipment-medical.db`; compared with the previous commit `name` is the only field that changed.
+- **Store descriptions:** name and slug updated for the 3 rows (description text unchanged).
+- **Consumers:** no character template references these IDs; `equipment-normalizer.js` matches the unchanged record id, so no runtime string needed to change.
+
+Follow-ups:
+
+- Store description text and slugs: description text still opens with the old display name.
+- data/nonheroic.json and data/nonheroic/nonheroic_units.json mention "Medisensor" in NPC possessions prose; left unchanged (not a record reference).
+- Page provenance for Bioscanner, 8-2A Medical Bundle, Medical Interface Visor, MDS-50 Medisensor and FastFlesh Medpac is deferred to Phase 1.
+- tools/fix-equipment-data.js would regenerate the old names if re-run; do not run it.
+
+### Execution guardrails
+
+1. Only the three EDIT display-name normalizations are Phase 0 execution-authorized: Bacta (Per Liter) -> Bacta, 1 Liter; Medical Bundle -> 8-2A Medical Bundle; Medisensor -> MDS-50 Medisensor.
+2. Preserve record IDs and all mechanics/stats/descriptions/tags/schema in this phase.
+3. Update derived mirrors, store-description keys, tests, templates, or runtime name literals only when required to preserve parity after an authorized rename.
+4. Do not create/delete medical records in Phase 0-3B; ADD=0 and REMOVE=0.
+5. Do not claim Cybernetic Prosthesis or Subelectronic Converter here; they belong to Phase 0-3D.
+6. Do not create Medical Suite/Medical Bed as character equipment; defer to vehicle/starship systems.
+7. Do not convert Microlab into a medical record.
+
 ## Phase 0-3C — Explosives / demolitions: census and repo reconciliation
 
 Non-grenade explosives, mines, detonation hardware, demolition materials and named improvised explosive constructs. Excluded: grenades and thermal detonators (weapons batch), Demolitions Sensor (0-3A), droid self-destruct systems, facility traps, and upgrades. Identity and presence only. **Authority-only: no repo change.**
@@ -766,4 +834,4 @@ No pack, store-description, template or runtime change. The 8 ADD identities (An
 
 ## Pending phases
 
-0-3B Medical / Treatment Equipment · 0-3D Cybernetics / Implants · 0-3E Upgrades / Modifications · 1 Provenance (pages) · 2 Descriptions · 3 Schema · 4 Stats · 5 Reconciliation · 6 Legacy tags · 7 Semantic tags · 8 Migration
+0-3D Cybernetics / Implants · 0-3E Upgrades / Modifications · 1 Provenance (pages) · 2 Descriptions · 3 Schema · 4 Stats · 5 Reconciliation · 6 Legacy tags · 7 Semantic tags · 8 Migration

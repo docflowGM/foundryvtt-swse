@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "authorityType": "item-canonicalization-rolling-authority",
-  "status": "ACTIVE — Phase 0, Phase 0-1 Weapons, Phase 0-2 Armor, Phase 0-3A General Equipment and Phase 0-3C Explosives/Demolitions certified by owner",
+  "status": "ACTIVE — Phase 0, Phase 0-1 Weapons, Phase 0-2 Armor, Phase 0-3A General Equipment, Phase 0-3B Medical and Phase 0-3C Explosives/Demolitions certified by owner",
   "sourcePolicy": "User-provided SWSE TXT/PDF sourcebooks are the canonical SSOT. Repository compendiums are implementation targets only.",
   "ownerRulings": "docs/audits/item-phase-0-ssot-census.md §7a",
   "architecture": {
@@ -12254,10 +12254,455 @@
         "Do not create a second detonator record from the Rebellion Era remote-controlled detonator mention.",
         "Do not modify weapon grenade records, the Demolitions Sensor (0-3A), droid self-destruct systems, or upgrade catalogs."
       ]
+    },
+    "0-3b-medical-treatment": {
+      "phase": "0-3B",
+      "title": "Medical / Treatment Equipment Census and Repo Reconciliation",
+      "status": "CERTIFIED_PHASE_0_3B_IDENTITY_AUTHORITY",
+      "canonicalSourcePolicy": "User-supplied SWSE TXT/PDF sourcebooks are the SSOT. Repository compendiums are implementation targets only.",
+      "repoBaseline": {
+        "repository": "docflowGM/foundryvtt-swse",
+        "pullRequest": 1005,
+        "ref": "claude/dazzling-meitner-czyh1x",
+        "verifiedHeadSha": "5fd60aeb4fa6642121f2d19072cfc29977c4c1ad",
+        "pack": "packs/equipment.db"
+      },
+      "scope": {
+        "included": [
+          "medical kits and surgery kits",
+          "medpacs and named medical consumables",
+          "bacta treatment equipment and bacta supply",
+          "diagnostic/treatment devices whose published identity is medical",
+          "poison/radiation treatment and detection devices",
+          "medical stasis/stabilization equipment"
+        ],
+        "excluded": [
+          "cybernetic prostheses and implanted cybernetic enhancements (Phase 0-3D)",
+          "Subelectronic Converter (Phase 0-3D; published in a Medical Gear table but explicitly a cybernetic enhancement)",
+          "general scientific equipment such as Microlab already handled in Phase 0-3A",
+          "medical droids",
+          "vehicle/starship medical suites and medical beds",
+          "medical services/prices that are not equipment identities"
+        ]
+      },
+      "counts": {
+        "canonicalIdentities": 16,
+        "repoRecordsInScope": 16,
+        "KEEP": 13,
+        "EDIT": 3,
+        "ADD": 0,
+        "REMOVE": 0,
+        "REVIEW": 0
+      },
+      "executionPolicy": {
+        "phase0Meaning": "Identity/presence reconciliation only.",
+        "renameExecutionAuthorized": true,
+        "authorizedEdits": "Only the three explicit canonical display-name normalizations below. Preserve IDs, mechanics, descriptions, stats, tags, schema, and skill hooks except name-keyed mirrors/consumers required to keep parity.",
+        "addExecutionAuthorized": false,
+        "removeExecutionAuthorized": false
+      },
+      "records": [
+        {
+          "canonicalId": "medical-bacta-tank-empty",
+          "canonicalName": "Bacta Tank (Empty)",
+          "source": {
+            "book": "Core Rulebook",
+            "page": 137,
+            "txtFile": "Core Rulebook_djvu.txt",
+            "txtLines": "12937-13164"
+          },
+          "repo": {
+            "present": true,
+            "id": "medical-bacta-tank-empty",
+            "name": "Bacta Tank (Empty)"
+          },
+          "disposition": "KEEP",
+          "reason": "Canonical purchase identity is present."
+        },
+        {
+          "canonicalId": "medical-bacta-per-liter",
+          "canonicalName": "Bacta, 1 Liter",
+          "source": {
+            "book": "Core Rulebook",
+            "page": 137,
+            "txtFile": "Core Rulebook_djvu.txt",
+            "txtLines": "12937-12942"
+          },
+          "repo": {
+            "present": true,
+            "id": "medical-bacta-per-liter",
+            "name": "Bacta (Per Liter)"
+          },
+          "disposition": "EDIT",
+          "reason": "Same canonical item is present, but the published table identifies the purchase unit as 'Bacta, 1 liter'. Normalize the display identity; preserve the existing ID."
+        },
+        {
+          "canonicalId": "medical-kit",
+          "canonicalName": "Medical Kit",
+          "source": {
+            "book": "Core Rulebook",
+            "page": 137,
+            "txtFile": "Core Rulebook_djvu.txt",
+            "txtLines": "12937-13209"
+          },
+          "repo": {
+            "present": true,
+            "id": "medical-kit",
+            "name": "Medical Kit"
+          },
+          "disposition": "KEEP",
+          "reason": "Canonical identity is present."
+        },
+        {
+          "canonicalId": "medical-medpac",
+          "canonicalName": "Medpac",
+          "source": {
+            "book": "Core Rulebook",
+            "page": 137,
+            "txtFile": "Core Rulebook_djvu.txt",
+            "txtLines": "12937-13222"
+          },
+          "repo": {
+            "present": true,
+            "id": "medical-medpac",
+            "name": "Medpac"
+          },
+          "disposition": "KEEP",
+          "reason": "Canonical identity is present."
+        },
+        {
+          "canonicalId": "medical-surgery-kit",
+          "canonicalName": "Surgery Kit",
+          "source": {
+            "book": "Core Rulebook",
+            "page": 137,
+            "txtFile": "Core Rulebook_djvu.txt",
+            "txtLines": "12937-13230"
+          },
+          "repo": {
+            "present": true,
+            "id": "medical-surgery-kit",
+            "name": "Surgery Kit"
+          },
+          "disposition": "KEEP",
+          "reason": "Canonical identity is present."
+        },
+        {
+          "canonicalId": "medical-bioscanner",
+          "canonicalName": "Bioscanner",
+          "source": {
+            "book": "Clone Wars Campaign Guide",
+            "page": null,
+            "pageStatus": "DEFER_TO_PHASE_1",
+            "txtFile": "Clone Wars Campaign Guide_djvu.txt",
+            "txtLines": "5542-5555"
+          },
+          "repo": {
+            "present": true,
+            "id": "medical-bioscanner",
+            "name": "Bioscanner"
+          },
+          "disposition": "KEEP",
+          "reason": "Canonical identity is present."
+        },
+        {
+          "canonicalId": "medical-anti-rad-dose",
+          "canonicalName": "Anti-Rad Dose",
+          "source": {
+            "book": "Galaxy at War",
+            "page": 45,
+            "txtFile": "Galaxy At War_djvu.txt",
+            "txtLines": "4372-4396"
+          },
+          "repo": {
+            "present": true,
+            "id": "medical-anti-rad-dose",
+            "name": "Anti-Rad Dose"
+          },
+          "disposition": "KEEP",
+          "reason": "Canonical identity is present."
+        },
+        {
+          "canonicalId": "medical-cryogenic-pouch",
+          "canonicalName": "Cryogenic Pouch",
+          "source": {
+            "book": "Galaxy at War",
+            "page": 46,
+            "txtFile": "Galaxy At War_djvu.txt",
+            "txtLines": "4463-4495"
+          },
+          "repo": {
+            "present": true,
+            "id": "medical-cryogenic-pouch",
+            "name": "Cryogenic Pouch"
+          },
+          "disposition": "KEEP",
+          "reason": "Canonical identity is present."
+        },
+        {
+          "canonicalId": "medical-antitoxin-patch",
+          "canonicalName": "Antitoxin Patch",
+          "source": {
+            "book": "Galaxy of Intrigue",
+            "page": 66,
+            "txtFile": "Galaxy of Intrigue_djvu.txt",
+            "txtLines": "6138-6154"
+          },
+          "repo": {
+            "present": true,
+            "id": "medical-antitoxin-patch",
+            "name": "Antitoxin Patch"
+          },
+          "disposition": "KEEP",
+          "reason": "Canonical identity is present."
+        },
+        {
+          "canonicalId": "medical-toxin-detector",
+          "canonicalName": "Toxin Detector",
+          "source": {
+            "book": "Galaxy of Intrigue",
+            "page": 67,
+            "txtFile": "Galaxy of Intrigue_djvu.txt",
+            "txtLines": "6212-6302"
+          },
+          "repo": {
+            "present": true,
+            "id": "medical-toxin-detector",
+            "name": "Toxin Detector"
+          },
+          "disposition": "KEEP",
+          "reason": "Canonical identity is present."
+        },
+        {
+          "canonicalId": "medical-bundle",
+          "canonicalName": "8-2A Medical Bundle",
+          "source": {
+            "book": "Jedi Academy Training Manual",
+            "page": null,
+            "pageStatus": "DEFER_TO_PHASE_1",
+            "txtFile": "Jedi Academy Training Manual_djvu.txt",
+            "txtLines": "5736-5758"
+          },
+          "repo": {
+            "present": true,
+            "id": "medical-bundle",
+            "name": "Medical Bundle"
+          },
+          "disposition": "EDIT",
+          "reason": "Published identity includes the 8-2A designation. Preserve the existing ID and normalize only the display identity."
+        },
+        {
+          "canonicalId": "medical-interface-visor",
+          "canonicalName": "Medical Interface Visor",
+          "source": {
+            "book": "Knights of the Old Republic Campaign Guide",
+            "page": null,
+            "pageStatus": "DEFER_TO_PHASE_1",
+            "txtFile": "Knights of the Old Republic Campaign Guide_djvu.txt",
+            "txtLines": "6748-6814"
+          },
+          "repo": {
+            "present": true,
+            "id": "medical-interface-visor",
+            "name": "Medical Interface Visor"
+          },
+          "disposition": "KEEP",
+          "reason": "Canonical identity is present."
+        },
+        {
+          "canonicalId": "medical-medisensor",
+          "canonicalName": "MDS-50 Medisensor",
+          "source": {
+            "book": "Threats of the Galaxy",
+            "page": null,
+            "pageStatus": "DEFER_TO_PHASE_1",
+            "txtFile": "Threats of the Galaxy_djvu.txt",
+            "txtLines": "3569-3624"
+          },
+          "repo": {
+            "present": true,
+            "id": "medical-medisensor",
+            "name": "Medisensor"
+          },
+          "disposition": "EDIT",
+          "reason": "Published heading/possession identity is MDS-50 Medisensor. Preserve the existing ID and normalize the display identity."
+        },
+        {
+          "canonicalId": "medical-fastflesh-medpac",
+          "canonicalName": "FastFlesh Medpac",
+          "source": {
+            "book": "Threats of the Galaxy",
+            "page": null,
+            "pageStatus": "DEFER_TO_PHASE_1",
+            "txtFile": "Threats of the Galaxy_djvu.txt",
+            "txtLines": "5415-5433"
+          },
+          "repo": {
+            "present": true,
+            "id": "medical-fastflesh-medpac",
+            "name": "FastFlesh Medpac"
+          },
+          "disposition": "KEEP",
+          "reason": "Canonical identity is present."
+        },
+        {
+          "canonicalId": "medical-antidote-synthesizer",
+          "canonicalName": "Antidote Synthesizer",
+          "source": {
+            "book": "Unknown Regions",
+            "page": 40,
+            "txtFile": "Unknown Regions_djvu.txt",
+            "txtLines": "3857-3892",
+            "visualVerification": "PDF printed page 40"
+          },
+          "repo": {
+            "present": true,
+            "id": "medical-antidote-synthesizer",
+            "name": "Antidote Synthesizer"
+          },
+          "disposition": "KEEP",
+          "reason": "Canonical identity is present."
+        },
+        {
+          "canonicalId": "medical-hypoinjector-wristband",
+          "canonicalName": "Hypoinjector Wristband",
+          "source": {
+            "book": "Unknown Regions",
+            "page": 40,
+            "txtFile": "Unknown Regions_djvu.txt",
+            "txtLines": "3862-3951",
+            "visualVerification": "PDF printed page 40"
+          },
+          "repo": {
+            "present": true,
+            "id": "medical-hypoinjector-wristband",
+            "name": "Hypoinjector Wristband"
+          },
+          "disposition": "KEEP",
+          "reason": "Canonical identity is present."
+        }
+      ],
+      "specialFindings": [
+        {
+          "name": "Cybernetic Prosthesis",
+          "source": "Core Rulebook p. 137 Medical Gear table",
+          "classification": "DEFER_TO_0_3D_CYBERNETICS",
+          "reason": "Although printed in the Medical Gear table, its operative identity is a cybernetic prosthesis and it belongs in the cybernetics/implants census."
+        },
+        {
+          "name": "Subelectronic Converter",
+          "source": "Jedi Academy Training Manual Medical Gear table",
+          "classification": "DEFER_TO_0_3D_CYBERNETICS",
+          "reason": "Its own rules explicitly call it a cybernetic enhancement implanted into the subject's head and requiring Cybernetic Surgery. Do not double-count it as ordinary medical gear."
+        },
+        {
+          "name": "Microlab",
+          "source": "Unknown Regions p. 40",
+          "classification": "ALREADY_0_3A_GENERAL_EQUIPMENT",
+          "reason": "Scientific analysis equipment, not a medical-treatment identity despite being referenced by Antidote Synthesizer."
+        },
+        {
+          "name": "Medical Suite / Medical Bed",
+          "source": "Starships of the Galaxy",
+          "classification": "DEFER_VEHICLE_STARSHIP_SYSTEM",
+          "reason": "Starship installation/system, not a character-scale equipment identity."
+        },
+        {
+          "name": "Bacta patches / synthetic flesh",
+          "source": "Jedi Academy Training Manual 8-2A Medical Bundle description",
+          "classification": "NOT_SEPARATE_IDENTITY",
+          "reason": "Mentioned as ordinary contents/materials absent from the bundle; no separate catalog identity is established in this source passage."
+        }
+      ],
+      "repoReversePass": {
+        "coveredRepoIds": [
+          "medical-anti-rad-dose",
+          "medical-antidote-synthesizer",
+          "medical-antitoxin-patch",
+          "medical-bacta-per-liter",
+          "medical-bacta-tank-empty",
+          "medical-bioscanner",
+          "medical-bundle",
+          "medical-cryogenic-pouch",
+          "medical-fastflesh-medpac",
+          "medical-hypoinjector-wristband",
+          "medical-interface-visor",
+          "medical-kit",
+          "medical-medisensor",
+          "medical-medpac",
+          "medical-surgery-kit",
+          "medical-toxin-detector"
+        ],
+        "unmatchedRepoRecords": [],
+        "coverage": "16/16 repo medical records accounted for exactly once"
+      },
+      "executorGuardrails": [
+        "Only the three EDIT display-name normalizations are Phase 0 execution-authorized: Bacta (Per Liter) -> Bacta, 1 Liter; Medical Bundle -> 8-2A Medical Bundle; Medisensor -> MDS-50 Medisensor.",
+        "Preserve record IDs and all mechanics/stats/descriptions/tags/schema in this phase.",
+        "Update derived mirrors, store-description keys, tests, templates, or runtime name literals only when required to preserve parity after an authorized rename.",
+        "Do not create/delete medical records in Phase 0-3B; ADD=0 and REMOVE=0.",
+        "Do not claim Cybernetic Prosthesis or Subelectronic Converter here; they belong to Phase 0-3D.",
+        "Do not create Medical Suite/Medical Bed as character equipment; defer to vehicle/starship systems.",
+        "Do not convert Microlab into a medical record."
+      ],
+      "execution": {
+        "status": "EXECUTED_RENAMES",
+        "date": "2026-10-05",
+        "authorizedBy": "Phase 0-3B authority (executionPolicy.renameExecutionAuthorized = true): the three explicit display-name normalizations only",
+        "applied": {
+          "renamedRecords": 3,
+          "aggregatePack": "packs/equipment.db",
+          "derivedSubpacks": [
+            "packs/equipment-medical.db (3)"
+          ],
+          "storeDescriptions": "data/store/equipment-store-descriptions.json (name + slug for 3 rows; description text unchanged)",
+          "characterTemplates": "none reference these IDs",
+          "runtimeStrings": "none required (equipment-normalizer.js matches the unchanged record id \"medical-bacta-per-liter\")"
+        },
+        "followUps": [
+          "Store description text and slugs: description text still opens with the old display name.",
+          "data/nonheroic.json and data/nonheroic/nonheroic_units.json mention \"Medisensor\" in NPC possessions prose; left unchanged (not a record reference).",
+          "Page provenance for Bioscanner, 8-2A Medical Bundle, Medical Interface Visor, MDS-50 Medisensor and FastFlesh Medpac is deferred to Phase 1.",
+          "tools/fix-equipment-data.js would regenerate the old names if re-run; do not run it."
+        ]
+      },
+      "impact": {
+        "medical-bacta-per-liter": {
+          "oldName": "Bacta (Per Liter)",
+          "newName": "Bacta, 1 Liter",
+          "idReferences": {
+            "data/store/equipment-store-descriptions.json": 1
+          },
+          "nameReferences": {
+            "data/store/equipment-store-descriptions.json": 2
+          }
+        },
+        "medical-bundle": {
+          "oldName": "Medical Bundle",
+          "newName": "8-2A Medical Bundle",
+          "idReferences": {
+            "data/store/equipment-store-descriptions.json": 2
+          },
+          "nameReferences": {
+            "data/store/equipment-store-descriptions.json": 2
+          }
+        },
+        "medical-medisensor": {
+          "oldName": "Medisensor",
+          "newName": "MDS-50 Medisensor",
+          "idReferences": {
+            "data/store/equipment-store-descriptions.json": 1
+          },
+          "nameReferences": {
+            "data/nonheroic.json": 1,
+            "data/nonheroic/nonheroic_units.json": 1,
+            "data/store/equipment-store-descriptions.json": 4
+          }
+        }
+      }
     }
   },
   "pendingPhases": [
-    "0-3B Medical / Treatment Equipment",
     "0-3D Cybernetics / Implants",
     "0-3E Upgrades / Modifications",
     "1 Provenance (pages)",
