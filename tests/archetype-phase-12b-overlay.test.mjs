@@ -48,9 +48,24 @@ test('12B provenance: nested owner form maps to the flat dotted keys; owner "aut
   for (const r of Object.values(dataset.archetypes)) assert.ok(!JSON.stringify(r.metadata.tagProvenance).includes('OWNER_CERTIFIED'));
 });
 
-test('12B execution baseline is recorded as a full commit SHA and the current tranche lists 20 new records', () => {
+test('12B execution baseline is a full commit SHA; execution ids are all certified records', () => {
   assert.match(authority.currentExecution.requiredBaseline, /^[0-9a-f]{40}$/);
-  assert.equal(authority.currentExecution.newRecordIds.length, 20);
+  const certified = new Set(normalized.records.map((r) => r.archetypeId));
+  const { newRecordIds, revisionIds } = authority.currentExecution;
+  assert.ok(Array.isArray(newRecordIds) && Array.isArray(revisionIds));
+  for (const id of [...newRecordIds, ...revisionIds]) assert.ok(certified.has(id), id);
+});
+
+test('12B QA revisions (REV-002+): applied data equals each logged "after" and differs from "before"', () => {
+  const revs = authority.revisionLog.filter((e) => e.before && e.after);
+  assert.equal(revs.length, authority.currentExecution.revisionIds.filter((id) => revs.some((e) => e.recordId === id)).length);
+  for (const e of revs) {
+    const t = dataset.archetypes[e.recordId].metadata.tags;
+    assert.deepEqual(t.primary, e.after.primary, e.id);
+    assert.deepEqual(t.supporting, e.after.supporting, e.id);
+    assert.notDeepEqual([t.primary, t.supporting], [e.before.primary, e.before.supporting], e.id);
+    assert.deepEqual(t.all, [...new Set([...t.primary, ...t.supporting])].sort(), e.id);
+  }
 });
 
 test('12B revision REV-001: scavenger no longer carries resources anywhere', () => {

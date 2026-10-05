@@ -2,7 +2,7 @@
   "schemaVersion": "1.0",
   "kind": "SWSE_ARCHETYPE_PHASE_12B_SEMANTIC_CURATION",
   "phase": "12B",
-  "status": "ROLLING_AUTHORITY_NEXT_TRANCHE_READY_BASELINE_PENDING",
+  "status": "ROLLING_AUTHORITY_QA_PATCH_READY_BASELINE_PENDING",
   "runtimeTarget": "data/archetypes.json",
   "frozenOntology": {
     "path": "data/audits/talent-feat-phase3-final-ontology.json",
@@ -13,33 +13,20 @@
   "remainingUncuratedAfterApplication": 187,
   "selectionRule": "Continue Scoundrel-first records in dataset order. Class is a route, not ownership.",
   "currentExecution": {
-    "id": "12B-SCOUNDREL-06",
+    "id": "12B-QA-110-01",
     "status": "AUTHORITY_READY_BASELINE_PENDING",
-    "requiredBaseline": "db1582c8ea55b7b6919c7e753ff97be22b6fb6e0",
-    "baselineInstruction": "Replace this placeholder with the successful commit returned after 12B-SCOUT-SCOUNDREL-05 execution before applying this tranche.",
-    "newRecordIds": [
-      "shipwright",
-      "entertainer",
-      "blockade_runner",
-      "jawa_droid_peddler",
-      "herglic_free_trader",
-      "toydarian_junk_merchant",
-      "privateer",
-      "weequay_pirate_captain",
-      "zygerrian_corsair",
-      "squib_salvage_broker",
-      "fence",
-      "ryn_network_gatherer",
-      "undercover_lawman",
-      "imperial_agent",
-      "rebel_operative",
-      "emperors_hand",
-      "bothan_spynet_operative",
-      "clawdite_facechanger_operative",
+    "requiredBaseline": "90b78ee619fb24b21d9d56b40778920ec695e45b",
+    "baselineInstruction": "Replace this placeholder with the latest successful Phase 12B commit containing all records intended to be applied before this QA patch. If all 110 certified records are not yet present in the working branch, finish those executions first or use the cumulative Phase 12B overlay; do not infer a SHA.",
+    "newRecordIds": [],
+    "revisionIds": [
+      "kiffu_guardian",
+      "ace_pilot",
       "slicer_droid",
-      "freighter_captain"
-    ],
-    "revisionIds": []
+      "electronic_warfare_specialist",
+      "clawdite_facechanger_operative",
+      "herglic_free_trader",
+      "zygerrian_corsair"
+    ]
   },
   "revisionLog": [
     {
@@ -47,6 +34,254 @@
       "recordId": "scavenger",
       "title": "Scavenger resources removal",
       "ruling": "Remove resources from primary, all, and phase12b curated primary; make no other Scavenger semantic change."
+    },
+    {
+      "id": "REV-002",
+      "recordId": "kiffu_guardian",
+      "title": "Kiffu Guardian semantic QA correction",
+      "ruling": "The prior profile over-weighted command/leadership from Respected Officer. The Enforcement identity is fundamentally investigator/quarry-apprehension oriented; command is not identity-defining.",
+      "before": {
+        "primary": [
+          "command",
+          "defense",
+          "leadership",
+          "perception"
+        ],
+        "supporting": [
+          "initiative",
+          "resilience",
+          "survival",
+          "will_defense"
+        ]
+      },
+      "after": {
+        "primary": [
+          "investigation",
+          "perception",
+          "pursuit"
+        ],
+        "supporting": [
+          "defense",
+          "initiative",
+          "leadership",
+          "persuasion",
+          "resilience",
+          "social",
+          "survival",
+          "will_defense"
+        ]
+      }
+    },
+    {
+      "id": "REV-003",
+      "recordId": "ace_pilot",
+      "title": "Ace Pilot semantic QA correction",
+      "ruling": "Promotes evasion to identity-defining. Ace Pilot should not be semantically identical to generic Pilot at the primary layer; its defining published expression is outmaneuvering and surviving dogfights.",
+      "before": {
+        "primary": [
+          "pilot",
+          "pursuit",
+          "space",
+          "vehicle"
+        ],
+        "supporting": [
+          "evasion",
+          "initiative",
+          "mobility",
+          "tactics"
+        ]
+      },
+      "after": {
+        "primary": [
+          "evasion",
+          "pilot",
+          "pursuit",
+          "space",
+          "vehicle"
+        ],
+        "supporting": [
+          "initiative",
+          "mobility",
+          "tactics"
+        ]
+      }
+    },
+    {
+      "id": "REV-004",
+      "recordId": "slicer_droid",
+      "title": "Slicer Droid semantic QA correction",
+      "ruling": "Removes self_repair, which was not supported by the selected mechanics. Ion Resistance directly supports ion instead.",
+      "before": {
+        "primary": [
+          "droid",
+          "slicing",
+          "tech",
+          "use_computer"
+        ],
+        "supporting": [
+          "mechanics",
+          "modification",
+          "perception",
+          "self_repair"
+        ]
+      },
+      "after": {
+        "primary": [
+          "droid",
+          "slicing",
+          "tech",
+          "use_computer"
+        ],
+        "supporting": [
+          "ion",
+          "mechanics",
+          "modification",
+          "perception"
+        ]
+      }
+    },
+    {
+      "id": "REV-005",
+      "recordId": "electronic_warfare_specialist",
+      "title": "Electronic Warfare Specialist semantic QA correction",
+      "ruling": "Sensors remains characteristic but was too specific to be primary from the selected evidence. Removes generic support, which was not directly established by the signature package.",
+      "before": {
+        "primary": [
+          "control",
+          "sensors",
+          "slicing",
+          "tech",
+          "use_computer"
+        ],
+        "supporting": [
+          "initiative",
+          "mechanics",
+          "perception",
+          "support"
+        ]
+      },
+      "after": {
+        "primary": [
+          "control",
+          "slicing",
+          "tech",
+          "use_computer"
+        ],
+        "supporting": [
+          "initiative",
+          "mechanics",
+          "perception",
+          "sensors"
+        ]
+      }
+    },
+    {
+      "id": "REV-006",
+      "recordId": "clawdite_facechanger_operative",
+      "title": "Clawdite Facechanger Operative semantic QA correction",
+      "ruling": "Shapeshifting/disguise is already captured by infiltration. manipulation is valid as a secondary social-influence signal but was too broad as a primary identity tag.",
+      "before": {
+        "primary": [
+          "deception",
+          "infiltration",
+          "manipulation",
+          "stealth"
+        ],
+        "supporting": [
+          "gather_information",
+          "perception",
+          "persuasion",
+          "social"
+        ]
+      },
+      "after": {
+        "primary": [
+          "deception",
+          "infiltration",
+          "stealth"
+        ],
+        "supporting": [
+          "gather_information",
+          "manipulation",
+          "perception",
+          "persuasion",
+          "social"
+        ]
+      }
+    },
+    {
+      "id": "REV-007",
+      "recordId": "herglic_free_trader",
+      "title": "Herglic Free Trader semantic QA correction",
+      "ruling": "The prior profile was an exact duplicate of Free Trader. Herglic free-trader identity has source-backed exploration, mercantile-network, social-contact, and sturdy/risk-taking differentiation; this is not arbitrary uniqueness.",
+      "before": {
+        "primary": [
+          "knowledge",
+          "persuasion",
+          "social"
+        ],
+        "supporting": [
+          "deception",
+          "gather_information",
+          "pilot",
+          "use_computer",
+          "vehicle"
+        ]
+      },
+      "after": {
+        "primary": [
+          "exploration",
+          "gather_information",
+          "persuasion",
+          "social"
+        ],
+        "supporting": [
+          "knowledge",
+          "pilot",
+          "resilience",
+          "social_network",
+          "vehicle"
+        ]
+      }
+    },
+    {
+      "id": "REV-008",
+      "recordId": "zygerrian_corsair",
+      "title": "Zygerrian Corsair semantic QA correction",
+      "ruling": "Adds control as a supporting identity signal for the coercive/slaving corsair expression; preserves the pirate-captain overlap without leaving the Zygerrian expression nearly indistinguishable.",
+      "before": {
+        "primary": [
+          "intimidation",
+          "leadership",
+          "pilot",
+          "space"
+        ],
+        "supporting": [
+          "deception",
+          "fear",
+          "initiative",
+          "persuasion",
+          "teamwork",
+          "vehicle"
+        ]
+      },
+      "after": {
+        "primary": [
+          "intimidation",
+          "leadership",
+          "pilot",
+          "space"
+        ],
+        "supporting": [
+          "control",
+          "deception",
+          "fear",
+          "initiative",
+          "persuasion",
+          "teamwork",
+          "vehicle"
+        ]
+      }
     }
   ],
   "curationRules": [
@@ -1846,24 +2081,30 @@
       "name": "Kiffu Guardian",
       "tranche": "03",
       "primary": [
-        "command",
-        "defense",
-        "leadership",
-        "perception"
+        "investigation",
+        "perception",
+        "pursuit"
       ],
       "supporting": [
+        "defense",
         "initiative",
+        "leadership",
+        "persuasion",
         "resilience",
+        "social",
         "survival",
         "will_defense"
       ],
       "all": [
-        "command",
         "defense",
         "initiative",
+        "investigation",
         "leadership",
         "perception",
+        "persuasion",
+        "pursuit",
         "resilience",
+        "social",
         "survival",
         "will_defense"
       ],
@@ -1871,14 +2112,17 @@
         "phase12b": {
           "curated": {
             "primary": [
-              "command",
-              "defense",
-              "leadership",
-              "perception"
+              "investigation",
+              "perception",
+              "pursuit"
             ],
             "supporting": [
+              "defense",
               "initiative",
+              "leadership",
+              "persuasion",
               "resilience",
+              "social",
               "survival",
               "will_defense"
             ]
@@ -2204,13 +2448,13 @@
       "name": "Ace Pilot",
       "tranche": "03",
       "primary": [
+        "evasion",
         "pilot",
         "pursuit",
         "space",
         "vehicle"
       ],
       "supporting": [
-        "evasion",
         "initiative",
         "mobility",
         "tactics"
@@ -2229,13 +2473,13 @@
         "phase12b": {
           "curated": {
             "primary": [
+              "evasion",
               "pilot",
               "pursuit",
               "space",
               "vehicle"
             ],
             "supporting": [
-              "evasion",
               "initiative",
               "mobility",
               "tactics"
@@ -4502,7 +4746,6 @@
       "tranche": "05",
       "primary": [
         "control",
-        "sensors",
         "slicing",
         "tech",
         "use_computer"
@@ -4511,7 +4754,7 @@
         "initiative",
         "mechanics",
         "perception",
-        "support"
+        "sensors"
       ],
       "all": [
         "control",
@@ -4520,7 +4763,6 @@
         "perception",
         "sensors",
         "slicing",
-        "support",
         "tech",
         "use_computer"
       ],
@@ -4529,7 +4771,6 @@
           "curated": {
             "primary": [
               "control",
-              "sensors",
               "slicing",
               "tech",
               "use_computer"
@@ -4538,7 +4779,7 @@
               "initiative",
               "mechanics",
               "perception",
-              "support"
+              "sensors"
             ]
           },
           "authority": "OWNER_CERTIFIED"
@@ -4740,40 +4981,43 @@
       "name": "Herglic Free Trader",
       "tranche": "06",
       "primary": [
-        "knowledge",
+        "exploration",
+        "gather_information",
         "persuasion",
         "social"
       ],
       "supporting": [
-        "deception",
-        "gather_information",
+        "knowledge",
         "pilot",
-        "use_computer",
+        "resilience",
+        "social_network",
         "vehicle"
       ],
       "all": [
-        "deception",
+        "exploration",
         "gather_information",
         "knowledge",
         "persuasion",
         "pilot",
+        "resilience",
         "social",
-        "use_computer",
+        "social_network",
         "vehicle"
       ],
       "tagProvenance": {
         "phase12b": {
           "curated": {
             "primary": [
-              "knowledge",
+              "exploration",
+              "gather_information",
               "persuasion",
               "social"
             ],
             "supporting": [
-              "deception",
-              "gather_information",
+              "knowledge",
               "pilot",
-              "use_computer",
+              "resilience",
+              "social_network",
               "vehicle"
             ]
           },
@@ -4933,6 +5177,7 @@
         "space"
       ],
       "supporting": [
+        "control",
         "deception",
         "fear",
         "initiative",
@@ -4941,6 +5186,7 @@
         "vehicle"
       ],
       "all": [
+        "control",
         "deception",
         "fear",
         "initiative",
@@ -4962,6 +5208,7 @@
               "space"
             ],
             "supporting": [
+              "control",
               "deception",
               "fear",
               "initiative",
@@ -5361,11 +5608,11 @@
       "primary": [
         "deception",
         "infiltration",
-        "manipulation",
         "stealth"
       ],
       "supporting": [
         "gather_information",
+        "manipulation",
         "perception",
         "persuasion",
         "social"
@@ -5386,11 +5633,11 @@
             "primary": [
               "deception",
               "infiltration",
-              "manipulation",
               "stealth"
             ],
             "supporting": [
               "gather_information",
+              "manipulation",
               "perception",
               "persuasion",
               "social"
@@ -5411,17 +5658,17 @@
         "use_computer"
       ],
       "supporting": [
+        "ion",
         "mechanics",
         "modification",
-        "perception",
-        "self_repair"
+        "perception"
       ],
       "all": [
         "droid",
+        "ion",
         "mechanics",
         "modification",
         "perception",
-        "self_repair",
         "slicing",
         "tech",
         "use_computer"
@@ -5436,10 +5683,10 @@
               "use_computer"
             ],
             "supporting": [
+              "ion",
               "mechanics",
               "modification",
-              "perception",
-              "self_repair"
+              "perception"
             ]
           },
           "authority": "OWNER_CERTIFIED"
@@ -5492,5 +5739,22 @@
         }
       }
     }
-  ]
+  ],
+  "qaReview": {
+    "scope": "All 110 certified archetypes",
+    "result": "PASS_WITH_7_EXPLICIT_REVISIONS",
+    "reviewedRecordCount": 110,
+    "revisionCount": 7,
+    "checks": [
+      "Frozen ontology membership",
+      "Primary/supporting disjointness",
+      "metadata.tags.all union consistency",
+      "hard implication closure",
+      "primary/supporting balance",
+      "duplicate and near-duplicate semantic profiles",
+      "parent/specialization inheritance leakage",
+      "mechanics-versus-identity overreach",
+      "narrow ontology-label misuse"
+    ]
+  }
 }
