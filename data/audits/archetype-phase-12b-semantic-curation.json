@@ -8,36 +8,36 @@
     "path": "data/audits/talent-feat-phase3-final-ontology.json",
     "tagCount": 190
   },
-  "certifiedCount": 50,
+  "certifiedCount": 70,
   "totalArchetypes": 297,
-  "remainingUncuratedAfterApplication": 247,
+  "remainingUncuratedAfterApplication": 227,
   "selectionRule": "Continue Scout-first specializations in dataset order. Class is a route, not ownership.",
   "currentExecution": {
-    "id": "12B-SCOUT-03",
+    "id": "12B-SCOUT-04",
     "status": "AUTHORITY_READY_BASELINE_PENDING",
-    "requiredBaseline": "25395ae96f8341d0b6df8acb341181f09eb4e436",
-    "baselineInstruction": "Replace this placeholder with the commit returned after successful 12B-SCOUT-02 execution before applying this tranche.",
+    "requiredBaseline": "cb973c9a1b6f2955eb56651f878e61d46aed6cd5",
+    "baselineInstruction": "Replace this placeholder with the successful commit returned after 12B-SCOUT-03 execution before applying this tranche.",
     "newRecordIds": [
-      "skip_tracer",
-      "gand_findsman",
-      "ubese_masked_hunter",
-      "shistavanen_tracker",
-      "trianii_ranger",
-      "kiffu_guardian",
-      "defel_shadow_operative",
-      "seyugi_dervish",
-      "recon_scout",
-      "polis_massan_field_medic",
-      "demolitions_specialist",
-      "guerrilla",
-      "ace_pilot",
-      "squadron_leader",
-      "test_pilot",
-      "gunship_pilot",
-      "bush_pilot",
-      "pilot_droid",
-      "iktotchi_precognitive_pilot",
-      "unknown_regions_navigator"
+      "chiss_sky_walker",
+      "givin_astrogator",
+      "duros_hyperspace_trailblazer",
+      "sullustan_rebel_navigator",
+      "hotshot_racer",
+      "swoop_racer",
+      "verpine_hive_engineer",
+      "sluissi_shipwright",
+      "deep_space_surveyor",
+      "wilderness_guide",
+      "antarian_ranger",
+      "relic_hunter",
+      "trandoshan_jagannath_hunter",
+      "togruta_pack_hunter",
+      "rodian_great_hunter",
+      "barabel_great_hunter",
+      "tusken_bantha_rider",
+      "gungan_kaadu_cavalier",
+      "aing_tii_monk",
+      "force_pilgrim"
     ],
     "revisionIds": []
   },
@@ -2591,6 +2591,986 @@
               "knowledge",
               "perception",
               "vehicle"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "chiss_sky_walker",
+      "name": "Chiss Sky-walker",
+      "tranche": "04",
+      "primary": [
+        "force",
+        "force_power",
+        "precognition",
+        "space",
+        "use_the_force",
+        "visions"
+      ],
+      "supporting": [
+        "exploration",
+        "force_training",
+        "galactic_lore",
+        "perception",
+        "pilot"
+      ],
+      "all": [
+        "exploration",
+        "force",
+        "force_power",
+        "force_training",
+        "galactic_lore",
+        "perception",
+        "pilot",
+        "precognition",
+        "space",
+        "use_the_force",
+        "visions"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "force",
+              "force_power",
+              "precognition",
+              "space",
+              "use_the_force",
+              "visions"
+            ],
+            "supporting": [
+              "exploration",
+              "force_training",
+              "galactic_lore",
+              "perception",
+              "pilot"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "givin_astrogator",
+      "name": "Givin Astrogator",
+      "tranche": "04",
+      "primary": [
+        "knowledge",
+        "science",
+        "space",
+        "use_computer"
+      ],
+      "supporting": [
+        "exploration",
+        "galactic_lore",
+        "perception",
+        "pilot"
+      ],
+      "all": [
+        "exploration",
+        "galactic_lore",
+        "knowledge",
+        "perception",
+        "pilot",
+        "science",
+        "space",
+        "use_computer"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "knowledge",
+              "science",
+              "space",
+              "use_computer"
+            ],
+            "supporting": [
+              "exploration",
+              "galactic_lore",
+              "perception",
+              "pilot"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "duros_hyperspace_trailblazer",
+      "name": "Duros Hyperspace Trailblazer",
+      "tranche": "04",
+      "primary": [
+        "exploration",
+        "pilot",
+        "space",
+        "use_computer"
+      ],
+      "supporting": [
+        "galactic_lore",
+        "perception",
+        "pursuit",
+        "survival",
+        "vehicle"
+      ],
+      "all": [
+        "exploration",
+        "galactic_lore",
+        "perception",
+        "pilot",
+        "pursuit",
+        "space",
+        "survival",
+        "use_computer",
+        "vehicle"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "exploration",
+              "pilot",
+              "space",
+              "use_computer"
+            ],
+            "supporting": [
+              "galactic_lore",
+              "perception",
+              "pursuit",
+              "survival",
+              "vehicle"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "sullustan_rebel_navigator",
+      "name": "Sullustan Rebel Navigator",
+      "tranche": "04",
+      "primary": [
+        "pilot",
+        "space",
+        "tactics",
+        "use_computer"
+      ],
+      "supporting": [
+        "galactic_lore",
+        "perception",
+        "teamwork",
+        "vehicle"
+      ],
+      "all": [
+        "galactic_lore",
+        "perception",
+        "pilot",
+        "space",
+        "tactics",
+        "teamwork",
+        "use_computer",
+        "vehicle"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "pilot",
+              "space",
+              "tactics",
+              "use_computer"
+            ],
+            "supporting": [
+              "galactic_lore",
+              "perception",
+              "teamwork",
+              "vehicle"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "hotshot_racer",
+      "name": "Hotshot Racer",
+      "tranche": "04",
+      "primary": [
+        "initiative",
+        "pilot",
+        "pursuit",
+        "vehicle"
+      ],
+      "supporting": [
+        "deception",
+        "mobility",
+        "movement",
+        "perception"
+      ],
+      "all": [
+        "deception",
+        "initiative",
+        "mobility",
+        "movement",
+        "perception",
+        "pilot",
+        "pursuit",
+        "vehicle"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "initiative",
+              "pilot",
+              "pursuit",
+              "vehicle"
+            ],
+            "supporting": [
+              "deception",
+              "mobility",
+              "movement",
+              "perception"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "swoop_racer",
+      "name": "Swoop Racer",
+      "tranche": "04",
+      "primary": [
+        "initiative",
+        "movement",
+        "pilot",
+        "pursuit",
+        "vehicle"
+      ],
+      "supporting": [
+        "endurance",
+        "mobility",
+        "perception"
+      ],
+      "all": [
+        "endurance",
+        "initiative",
+        "mobility",
+        "movement",
+        "perception",
+        "pilot",
+        "pursuit",
+        "vehicle"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "initiative",
+              "movement",
+              "pilot",
+              "pursuit",
+              "vehicle"
+            ],
+            "supporting": [
+              "endurance",
+              "mobility",
+              "perception"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "verpine_hive_engineer",
+      "name": "Verpine Hive Engineer",
+      "tranche": "04",
+      "primary": [
+        "crafting",
+        "mechanics",
+        "modification",
+        "repair",
+        "tech"
+      ],
+      "supporting": [
+        "knowledge",
+        "science",
+        "teamwork",
+        "use_computer"
+      ],
+      "all": [
+        "crafting",
+        "knowledge",
+        "mechanics",
+        "modification",
+        "repair",
+        "science",
+        "teamwork",
+        "tech",
+        "use_computer"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "crafting",
+              "mechanics",
+              "modification",
+              "repair",
+              "tech"
+            ],
+            "supporting": [
+              "knowledge",
+              "science",
+              "teamwork",
+              "use_computer"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "sluissi_shipwright",
+      "name": "Sluissi Shipwright",
+      "tranche": "04",
+      "primary": [
+        "crafting",
+        "mechanics",
+        "modification",
+        "repair",
+        "space",
+        "tech"
+      ],
+      "supporting": [
+        "knowledge",
+        "pilot",
+        "use_computer",
+        "vehicle"
+      ],
+      "all": [
+        "crafting",
+        "knowledge",
+        "mechanics",
+        "modification",
+        "pilot",
+        "repair",
+        "space",
+        "tech",
+        "use_computer",
+        "vehicle"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "crafting",
+              "mechanics",
+              "modification",
+              "repair",
+              "space",
+              "tech"
+            ],
+            "supporting": [
+              "knowledge",
+              "pilot",
+              "use_computer",
+              "vehicle"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "deep_space_surveyor",
+      "name": "Deep Space Surveyor",
+      "tranche": "04",
+      "primary": [
+        "exploration",
+        "perception",
+        "science",
+        "space"
+      ],
+      "supporting": [
+        "knowledge",
+        "pilot",
+        "survival",
+        "vehicle"
+      ],
+      "all": [
+        "exploration",
+        "knowledge",
+        "perception",
+        "pilot",
+        "science",
+        "space",
+        "survival",
+        "vehicle"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "exploration",
+              "perception",
+              "science",
+              "space"
+            ],
+            "supporting": [
+              "knowledge",
+              "pilot",
+              "survival",
+              "vehicle"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "wilderness_guide",
+      "name": "Wilderness Guide",
+      "tranche": "04",
+      "primary": [
+        "exploration",
+        "perception",
+        "support",
+        "survival"
+      ],
+      "supporting": [
+        "endurance",
+        "knowledge",
+        "ride",
+        "survivability",
+        "tracking"
+      ],
+      "all": [
+        "endurance",
+        "exploration",
+        "knowledge",
+        "perception",
+        "ride",
+        "support",
+        "survivability",
+        "survival",
+        "tracking"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "exploration",
+              "perception",
+              "support",
+              "survival"
+            ],
+            "supporting": [
+              "endurance",
+              "knowledge",
+              "ride",
+              "survivability",
+              "tracking"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "antarian_ranger",
+      "name": "Antarian Ranger",
+      "tranche": "04",
+      "primary": [
+        "ally_support",
+        "recon",
+        "support",
+        "survival",
+        "teamwork"
+      ],
+      "supporting": [
+        "initiative",
+        "perception",
+        "stealth",
+        "tactics",
+        "tracking"
+      ],
+      "all": [
+        "ally_support",
+        "initiative",
+        "perception",
+        "recon",
+        "stealth",
+        "support",
+        "survival",
+        "tactics",
+        "teamwork",
+        "tracking"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "ally_support",
+              "recon",
+              "support",
+              "survival",
+              "teamwork"
+            ],
+            "supporting": [
+              "initiative",
+              "perception",
+              "stealth",
+              "tactics",
+              "tracking"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "relic_hunter",
+      "name": "Relic Hunter",
+      "tranche": "04",
+      "primary": [
+        "exploration",
+        "investigation",
+        "perception",
+        "pursuit"
+      ],
+      "supporting": [
+        "galactic_lore",
+        "stealth",
+        "survival",
+        "use_computer"
+      ],
+      "all": [
+        "exploration",
+        "galactic_lore",
+        "investigation",
+        "perception",
+        "pursuit",
+        "stealth",
+        "survival",
+        "use_computer"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "exploration",
+              "investigation",
+              "perception",
+              "pursuit"
+            ],
+            "supporting": [
+              "galactic_lore",
+              "stealth",
+              "survival",
+              "use_computer"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "trandoshan_jagannath_hunter",
+      "name": "Trandoshan Jagannath Hunter",
+      "tranche": "04",
+      "primary": [
+        "perception",
+        "pursuit",
+        "survival",
+        "tracking"
+      ],
+      "supporting": [
+        "climb",
+        "endurance",
+        "initiative",
+        "ranged",
+        "resilience",
+        "targeting"
+      ],
+      "all": [
+        "climb",
+        "endurance",
+        "initiative",
+        "perception",
+        "pursuit",
+        "ranged",
+        "resilience",
+        "survival",
+        "targeting",
+        "tracking"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "perception",
+              "pursuit",
+              "survival",
+              "tracking"
+            ],
+            "supporting": [
+              "climb",
+              "endurance",
+              "initiative",
+              "ranged",
+              "resilience",
+              "targeting"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "togruta_pack_hunter",
+      "name": "Togruta Pack Hunter",
+      "tranche": "04",
+      "primary": [
+        "flanking",
+        "perception",
+        "survival",
+        "teamwork",
+        "tracking"
+      ],
+      "supporting": [
+        "initiative",
+        "pursuit",
+        "ranged",
+        "stealth"
+      ],
+      "all": [
+        "flanking",
+        "initiative",
+        "perception",
+        "pursuit",
+        "ranged",
+        "stealth",
+        "survival",
+        "teamwork",
+        "tracking"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "flanking",
+              "perception",
+              "survival",
+              "teamwork",
+              "tracking"
+            ],
+            "supporting": [
+              "initiative",
+              "pursuit",
+              "ranged",
+              "stealth"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "rodian_great_hunter",
+      "name": "Rodian Great Hunter",
+      "tranche": "04",
+      "primary": [
+        "perception",
+        "pursuit",
+        "survival",
+        "tracking"
+      ],
+      "supporting": [
+        "initiative",
+        "ranged",
+        "stealth",
+        "targeting"
+      ],
+      "all": [
+        "initiative",
+        "perception",
+        "pursuit",
+        "ranged",
+        "stealth",
+        "survival",
+        "targeting",
+        "tracking"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "perception",
+              "pursuit",
+              "survival",
+              "tracking"
+            ],
+            "supporting": [
+              "initiative",
+              "ranged",
+              "stealth",
+              "targeting"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "barabel_great_hunter",
+      "name": "Barabel Great Hunter",
+      "tranche": "04",
+      "primary": [
+        "perception",
+        "pursuit",
+        "resilience",
+        "survival",
+        "tracking"
+      ],
+      "supporting": [
+        "climb",
+        "endurance",
+        "initiative",
+        "ranged"
+      ],
+      "all": [
+        "climb",
+        "endurance",
+        "initiative",
+        "perception",
+        "pursuit",
+        "ranged",
+        "resilience",
+        "survival",
+        "tracking"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "perception",
+              "pursuit",
+              "resilience",
+              "survival",
+              "tracking"
+            ],
+            "supporting": [
+              "climb",
+              "endurance",
+              "initiative",
+              "ranged"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "tusken_bantha_rider",
+      "name": "Tusken Bantha Rider",
+      "tranche": "04",
+      "primary": [
+        "beast",
+        "mount",
+        "ride",
+        "rider",
+        "survival"
+      ],
+      "supporting": [
+        "endurance",
+        "initiative",
+        "perception",
+        "resilience"
+      ],
+      "all": [
+        "beast",
+        "endurance",
+        "initiative",
+        "mount",
+        "perception",
+        "resilience",
+        "ride",
+        "rider",
+        "survival"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "beast",
+              "mount",
+              "ride",
+              "rider",
+              "survival"
+            ],
+            "supporting": [
+              "endurance",
+              "initiative",
+              "perception",
+              "resilience"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "gungan_kaadu_cavalier",
+      "name": "Gungan Kaadu Cavalier",
+      "tranche": "04",
+      "primary": [
+        "beast",
+        "mount",
+        "ride",
+        "rider"
+      ],
+      "supporting": [
+        "initiative",
+        "mobility",
+        "movement",
+        "perception",
+        "survival"
+      ],
+      "all": [
+        "beast",
+        "initiative",
+        "mobility",
+        "mount",
+        "movement",
+        "perception",
+        "ride",
+        "rider",
+        "survival"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "beast",
+              "mount",
+              "ride",
+              "rider"
+            ],
+            "supporting": [
+              "initiative",
+              "mobility",
+              "movement",
+              "perception",
+              "survival"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "aing_tii_monk",
+      "name": "Aing-Tii Monk",
+      "tranche": "04",
+      "primary": [
+        "force",
+        "force_power",
+        "mobility",
+        "space",
+        "use_the_force"
+      ],
+      "supporting": [
+        "exploration",
+        "force_training",
+        "telekinesis",
+        "visions",
+        "will_defense"
+      ],
+      "all": [
+        "exploration",
+        "force",
+        "force_power",
+        "force_training",
+        "mobility",
+        "space",
+        "telekinesis",
+        "use_the_force",
+        "visions",
+        "will_defense"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "force",
+              "force_power",
+              "mobility",
+              "space",
+              "use_the_force"
+            ],
+            "supporting": [
+              "exploration",
+              "force_training",
+              "telekinesis",
+              "visions",
+              "will_defense"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "force_pilgrim",
+      "name": "Force Pilgrim",
+      "tranche": "04",
+      "primary": [
+        "exploration",
+        "force",
+        "force_power",
+        "survival",
+        "use_the_force"
+      ],
+      "supporting": [
+        "force_training",
+        "galactic_lore",
+        "perception",
+        "resilience",
+        "visions"
+      ],
+      "all": [
+        "exploration",
+        "force",
+        "force_power",
+        "force_training",
+        "galactic_lore",
+        "perception",
+        "resilience",
+        "survival",
+        "use_the_force",
+        "visions"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "exploration",
+              "force",
+              "force_power",
+              "survival",
+              "use_the_force"
+            ],
+            "supporting": [
+              "force_training",
+              "galactic_lore",
+              "perception",
+              "resilience",
+              "visions"
             ]
           },
           "authority": "OWNER_CERTIFIED"

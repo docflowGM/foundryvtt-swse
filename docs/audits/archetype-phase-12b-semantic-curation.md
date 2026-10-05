@@ -2,19 +2,13 @@ SWSE Archetype Semantic Curation Authority
 
 Phase: 12B — Archetype Semantic Curation
 Status: ROLLING AUTHORITY — NEXT TRANCHE READY / BASELINE PENDING
-Certified: 50 / 297 archetypes
-Current execution: 12B-SCOUT-03 — 20 new records
-Required baseline for current execution: 25395ae96f8341d0b6df8acb341181f09eb4e436
+Certified: 70 / 297 archetypes
+Current execution: 12B-SCOUT-04 — 20 new records
+Required baseline: cb973c9a1b6f2955eb56651f878e61d46aed6cd5
 Runtime target: data/archetypes.json
 Frozen ontology: data/audits/talent-feat-phase3-final-ontology.json — 190 tags
 
-> Replace the pending baseline with the successful commit returned by Claude for 12B-SCOUT-02 before executing this tranche. Do not infer or substitute a SHA.
-
-Purpose
-
-This is the rolling human owner authority for archetype semantic curation. The companion JSON is the machine authority. Claude is an executor: it applies certified arrays exactly and does not decide semantic meaning.
-
-Companion: archetype-phase-12b-semantic-curation-next20.json
+> Replace the pending baseline with the successful 12B-SCOUT-03 commit before execution. Do not infer a SHA.
 
 Curation rules
 
@@ -26,16 +20,6 @@ Curation rules
 6. Parent tags do not automatically inherit to specializations.
 7. Recommended feat/talent tags are evidence, not a bag of tags to copy wholesale.
 8. Optional routes stay supporting unless the archetype itself requires them.
-
-Primary tags
-
-Identity-defining evidence. A strong match should meaningfully support recognition of the archetype.
-
-Supporting tags
-
-Strongly characteristic but nonessential evidence. They reinforce the archetype without becoming requirements.
-
-────────
 
 Rolling Certified Census
 
@@ -91,283 +75,176 @@ Rolling Certified Census
 |`pilot_droid`                 |Pilot Droid                 |03     |`droid`, `pilot`, `tech`, `use_computer`, `vehicle`                        |`initiative`, `mechanics`, `modification`, `perception`                                        |
 |`iktotchi_precognitive_pilot` |Iktotchi Precognitive Pilot |03     |`force`, `force_power`, `pilot`, `precognition`, `vehicle`                 |`force_training`, `initiative`, `perception`, `space`, `use_the_force`, `visions`              |
 |`unknown_regions_navigator`   |Unknown Regions Navigator   |03     |`exploration`, `galactic_lore`, `pilot`, `space`, `survival`               |`knowledge`, `perception`, `vehicle`                                                           |
-
-────────
+|`chiss_sky_walker`            |Chiss Sky-walker            |04     |`force`, `force_power`, `precognition`, `space`, `use_the_force`, `visions`|`exploration`, `force_training`, `galactic_lore`, `perception`, `pilot`                        |
+|`givin_astrogator`            |Givin Astrogator            |04     |`knowledge`, `science`, `space`, `use_computer`                            |`exploration`, `galactic_lore`, `perception`, `pilot`                                          |
+|`duros_hyperspace_trailblazer`|Duros Hyperspace Trailblazer|04     |`exploration`, `pilot`, `space`, `use_computer`                            |`galactic_lore`, `perception`, `pursuit`, `survival`, `vehicle`                                |
+|`sullustan_rebel_navigator`   |Sullustan Rebel Navigator   |04     |`pilot`, `space`, `tactics`, `use_computer`                                |`galactic_lore`, `perception`, `teamwork`, `vehicle`                                           |
+|`hotshot_racer`               |Hotshot Racer               |04     |`initiative`, `pilot`, `pursuit`, `vehicle`                                |`deception`, `mobility`, `movement`, `perception`                                              |
+|`swoop_racer`                 |Swoop Racer                 |04     |`initiative`, `movement`, `pilot`, `pursuit`, `vehicle`                    |`endurance`, `mobility`, `perception`                                                          |
+|`verpine_hive_engineer`       |Verpine Hive Engineer       |04     |`crafting`, `mechanics`, `modification`, `repair`, `tech`                  |`knowledge`, `science`, `teamwork`, `use_computer`                                             |
+|`sluissi_shipwright`          |Sluissi Shipwright          |04     |`crafting`, `mechanics`, `modification`, `repair`, `space`, `tech`         |`knowledge`, `pilot`, `use_computer`, `vehicle`                                                |
+|`deep_space_surveyor`         |Deep Space Surveyor         |04     |`exploration`, `perception`, `science`, `space`                            |`knowledge`, `pilot`, `survival`, `vehicle`                                                    |
+|`wilderness_guide`            |Wilderness Guide            |04     |`exploration`, `perception`, `support`, `survival`                         |`endurance`, `knowledge`, `ride`, `survivability`, `tracking`                                  |
+|`antarian_ranger`             |Antarian Ranger             |04     |`ally_support`, `recon`, `support`, `survival`, `teamwork`                 |`initiative`, `perception`, `stealth`, `tactics`, `tracking`                                   |
+|`relic_hunter`                |Relic Hunter                |04     |`exploration`, `investigation`, `perception`, `pursuit`                    |`galactic_lore`, `stealth`, `survival`, `use_computer`                                         |
+|`trandoshan_jagannath_hunter` |Trandoshan Jagannath Hunter |04     |`perception`, `pursuit`, `survival`, `tracking`                            |`climb`, `endurance`, `initiative`, `ranged`, `resilience`, `targeting`                        |
+|`togruta_pack_hunter`         |Togruta Pack Hunter         |04     |`flanking`, `perception`, `survival`, `teamwork`, `tracking`               |`initiative`, `pursuit`, `ranged`, `stealth`                                                   |
+|`rodian_great_hunter`         |Rodian Great Hunter         |04     |`perception`, `pursuit`, `survival`, `tracking`                            |`initiative`, `ranged`, `stealth`, `targeting`                                                 |
+|`barabel_great_hunter`        |Barabel Great Hunter        |04     |`perception`, `pursuit`, `resilience`, `survival`, `tracking`              |`climb`, `endurance`, `initiative`, `ranged`                                                   |
+|`tusken_bantha_rider`         |Tusken Bantha Rider         |04     |`beast`, `mount`, `ride`, `rider`, `survival`                              |`endurance`, `initiative`, `perception`, `resilience`                                          |
+|`gungan_kaadu_cavalier`       |Gungan Kaadu Cavalier       |04     |`beast`, `mount`, `ride`, `rider`                                          |`initiative`, `mobility`, `movement`, `perception`, `survival`                                 |
+|`aing_tii_monk`               |Aing-Tii Monk               |04     |`force`, `force_power`, `mobility`, `space`, `use_the_force`               |`exploration`, `force_training`, `telekinesis`, `visions`, `will_defense`                      |
+|`force_pilgrim`               |Force Pilgrim               |04     |`exploration`, `force`, `force_power`, `survival`, `use_the_force`         |`force_training`, `galactic_lore`, `perception`, `resilience`, `visions`                       |
 
 Revision Log
 
 REV-001 — Scavenger resources removal
 
-The tranche-1 Scavenger record used resources as a primary tag. This is incorrect under the frozen ontology: resources means spendable game resources, not salvage, material resources, or valuable junk.
+Retained exactly from the prior rolling authority: resources is removed from Scavenger because the ontology means spendable game resources, not salvage/material resources.
 
-Certified correction:
+Current Tranche — 12B-SCOUT-04
 
-• remove resources from scavenger.metadata.tags.primary;
-• remove it from metadata.tags.all;
-• remove it from metadata.tagProvenance.phase12b.curated.primary;
-• make no other Scavenger semantic change in this revision.
+Selection: the next 20 Scout-first specializations in dataset order after unknown_regions_navigator. This does not imply Scout ownership.
 
-This remains an explicit owner revision and is retained in the rolling history.
-
-────────
-
-Current Tranche — 12B-SCOUT-03
-
-Selection is deterministic: continue Scout-first specializations in dataset order immediately after jawa_sandcrawler_salvager. This does not imply Scout ownership.
-
-Current 20 new records:
-
-skip_tracer, gand_findsman, ubese_masked_hunter, shistavanen_tracker, trianii_ranger, kiffu_guardian, defel_shadow_operative, seyugi_dervish, recon_scout, polis_massan_field_medic, demolitions_specialist, guerrilla, ace_pilot, squadron_leader, test_pilot, gunship_pilot, bush_pilot, pilot_droid, iktotchi_precognitive_pilot, unknown_regions_navigator
+chiss_sky_walker, givin_astrogator, duros_hyperspace_trailblazer, sullustan_rebel_navigator, hotshot_racer, swoop_racer, verpine_hive_engineer, sluissi_shipwright, deep_space_surveyor, wilderness_guide, antarian_ranger, relic_hunter, trandoshan_jagannath_hunter, togruta_pack_hunter, rodian_great_hunter, barabel_great_hunter, tusken_bantha_rider, gungan_kaadu_cavalier, aing_tii_monk, force_pilgrim
 
 Certified Record Notes
 
-Skip Tracer (skip_tracer)
+Chiss Sky-walker (chiss_sky_walker)
 
-• Identity: Information-and-records hunter who locates fugitives, debtors, missing people, or hidden targets by following social, bureaucratic, and electronic trails.
-• Primary: gather_information, investigation, perception, pursuit, tracking
-• Supporting: deception, knowledge, social, use_computer
-• Foundation routes: scout, scoundrel
-• Signature skills: gatherInformation, perception
-• Signature talent trees: Bounty Hunter; Awareness
-• Signature talents: Detective; Acute Senses
-• Signature feats: skill_focus
+• Identity: Force-guided Chiss navigation tradition expression that uses precognitive perception and the Force to cross dangerous space rather than relying only on conventional astrogation.
+• Primary: force, force_power, precognition, space, use_the_force, visions
+• Supporting: exploration, force_training, galactic_lore, perception, pilot
 
-Gand Findsman (gand_findsman)
+Givin Astrogator (givin_astrogator)
 
-• Identity: Gand tradition specialist who combines supernatural foresight with tracking and fieldcraft to locate a chosen quarry.
-• Primary: force, force_power, perception, precognition, tracking
-• Supporting: force_training, pursuit, survival, use_the_force, visions
-• Foundation routes: scout
-• Signature skills: perception, survival
-• Signature talent trees: Gand Findsman; Bounty Hunter; Awareness
-• Signature talents: Findsman Ceremonies; Hunter’s Mark; Acute Senses
-• Signature feats: force_training, skill_focus
+• Identity: Species-specific mathematical astrogator whose identity is precise scientific calculation, stellar knowledge, and computer-assisted hyperspace navigation.
+• Primary: knowledge, science, space, use_computer
+• Supporting: exploration, galactic_lore, perception, pilot
 
-Ubese Masked Hunter (ubese_masked_hunter)
+Duros Hyperspace Trailblazer (duros_hyperspace_trailblazer)
 
-• Identity: Species-specific bounty-hunter expression built around patient pursuit, ranged lethality, survival, and masked/stealthy field operations.
-• Primary: perception, pursuit, ranged, survival, tracking
-• Supporting: initiative, precision, stealth, targeting, use_computer
-• Foundation routes: scout, soldier
-• Signature skills: perception, survival
-• Signature talent trees: Bounty Hunter; Awareness
-• Signature talents: Nowhere to Hide; Acute Senses
-• Signature feats: skill_focus, point_blank_shot
+• Identity: Duros explorer-pilot who opens and tests new hyperspace routes through expert astrogation, piloting, and frontier navigation.
+• Primary: exploration, pilot, space, use_computer
+• Supporting: galactic_lore, perception, pursuit, survival, vehicle
 
-Shistavanen Tracker (shistavanen_tracker)
+Sullustan Rebel Navigator (sullustan_rebel_navigator)
 
-• Identity: Species-specific tracker whose identity is relentless wilderness pursuit supported by exceptional senses, stealth, and endurance.
+• Identity: Sullustan military/rebel navigator who combines astrogation and piloting with tactical route planning and coordinated fleet movement.
+• Primary: pilot, space, tactics, use_computer
+• Supporting: galactic_lore, perception, teamwork, vehicle
+
+Hotshot Racer (hotshot_racer)
+
+• Identity: Showy competitive pilot who wins through fast reactions, aggressive maneuver, pursuit, and calculated risk.
+• Primary: initiative, pilot, pursuit, vehicle
+• Supporting: deception, mobility, movement, perception
+
+Swoop Racer (swoop_racer)
+
+• Identity: High-speed repulsorlift racer whose identity is acceleration, reaction time, dangerous movement, and endurance under extreme racing conditions.
+• Primary: initiative, movement, pilot, pursuit, vehicle
+• Supporting: endurance, mobility, perception
+
+Verpine Hive Engineer (verpine_hive_engineer)
+
+• Identity: Verpine technical specialist whose identity is collaborative engineering, fabrication, modification, repair, and precise systems work.
+• Primary: crafting, mechanics, modification, repair, tech
+• Supporting: knowledge, science, teamwork, use_computer
+
+Sluissi Shipwright (sluissi_shipwright)
+
+• Identity: Species-specific starship builder and maintainer centered on construction, modification, repair, and technical mastery of spacecraft.
+• Primary: crafting, mechanics, modification, repair, space, tech
+• Supporting: knowledge, pilot, use_computer, vehicle
+
+Deep Space Surveyor (deep_space_surveyor)
+
+• Identity: Scientific explorer who maps and evaluates remote space through observation, physical science, piloting, and survival beyond established routes.
+• Primary: exploration, perception, science, space
+• Supporting: knowledge, pilot, survival, vehicle
+
+Wilderness Guide (wilderness_guide)
+
+• Identity: Field guide who gets other people safely through wild terrain by reading the environment, finding routes, tracking hazards, and supporting less-capable travelers.
+• Primary: exploration, perception, support, survival
+• Supporting: endurance, knowledge, ride, survivability, tracking
+
+Antarian Ranger (antarian_ranger)
+
+• Identity: Antarian Ranger expression centered on supporting Force-users and allies through reconnaissance, fieldcraft, teamwork, and practical protective service.
+• Primary: ally_support, recon, support, survival, teamwork
+• Supporting: initiative, perception, stealth, tactics, tracking
+
+Relic Hunter (relic_hunter)
+
+• Identity: Adventure-oriented seeker of lost artifacts who locates, investigates, and physically pursues relics through ruins and hazardous frontier sites.
+• Primary: exploration, investigation, perception, pursuit
+• Supporting: galactic_lore, stealth, survival, use_computer
+
+Trandoshan Jagannath Hunter (trandoshan_jagannath_hunter)
+
+• Identity: Trandoshan hunter pursuing worthy prey as a culturally significant hunt, emphasizing relentless tracking, field endurance, resilience, and ranged pursuit.
 • Primary: perception, pursuit, survival, tracking
-• Supporting: endurance, initiative, mobility, stealth
-• Foundation routes: scout
-• Signature skills: survival, perception
-• Signature talent trees: Bounty Hunter; Awareness
-• Signature talents: Nowhere to Hide; Acute Senses
-• Signature feats: skill_focus
+• Supporting: climb, endurance, initiative, ranged, resilience, targeting
 
-Trianii Ranger (trianii_ranger)
+Togruta Pack Hunter (togruta_pack_hunter)
 
-• Identity: Trianii patrol-warrior expression centered on protecting Trianii space through piloting, pursuit, small-unit tactics, and hard field competence.
-• Primary: pilot, pursuit, tactics, vehicle
-• Supporting: initiative, perception, ranged, survival
-• Foundation routes: scout, soldier
-• Signature skills: perception, survival
-• Signature talent trees: Enforcement; Awareness
-• Signature talents: Cover Bracing; Acute Senses
-• Signature feats: skill_focus
+• Identity: Togruta hunter whose identity is coordinated group hunting, spatial awareness, flanking, perception, and survival rather than solitary pursuit.
+• Primary: flanking, perception, survival, teamwork, tracking
+• Supporting: initiative, pursuit, ranged, stealth
 
-Kiffu Guardian (kiffu_guardian)
+Rodian Great Hunter (rodian_great_hunter)
 
-• Identity: Kiffar/Kiffu guardian tradition expression centered on respected protective authority, vigilance, command presence, and personal resilience.
-• Primary: command, defense, leadership, perception
-• Supporting: initiative, resilience, survival, will_defense
-• Foundation routes: scout, soldier
-• Signature skills: perception
-• Signature talent trees: Enforcement
-• Signature talents: Respected Officer
-• Signature feats: skill_focus, unwavering_resolve
+• Identity: Rodian expression of the celebrated hunter ideal, centered on finding quarry, tracking it through the field, and bringing it down through practiced hunting skill.
+• Primary: perception, pursuit, survival, tracking
+• Supporting: initiative, ranged, stealth, targeting
 
-Defel Shadow Operative (defel_shadow_operative)
+Barabel Great Hunter (barabel_great_hunter)
 
-• Identity: Defel covert operative who weaponizes natural concealment for infiltration, stealth, observation, and precise attacks from obscurity.
-• Primary: concealment, infiltration, stealth
-• Supporting: deception, perception, precision, ranged, use_computer
-• Foundation routes: scout, scoundrel
-• Signature skills: stealth
-• Signature talent trees: Spy; Infiltration
-• Signature talents: Blend In; Concealed Weapon Expert
-• Signature feats: advantageous_cover, point_blank_shot
+• Identity: Barabel hunter expression defined by relentless pursuit, physical toughness, wilderness competence, and the ability to continue the hunt through hardship.
+• Primary: perception, pursuit, resilience, survival, tracking
+• Supporting: climb, endurance, initiative, ranged
 
-Seyugi Dervish (seyugi_dervish)
+Tusken Bantha Rider (tusken_bantha_rider)
 
-• Identity: Force-sensitive assassin trained for quiet, rapid kills through stealth, unarmed/martial combat, dark-side Force use, mobility, and fear.
-• Primary: dark_side, force, force_power, martial_arts, stealth, unarmed
-• Supporting: fear, force_training, mobility, precision, use_the_force
-• Foundation routes: scout, scoundrel
-• Signature skills: stealth, useTheForce
-• Signature talent trees: Seyugi Dervish; Assassin
-• Signature talents: Seyugi Cyclone
-• Signature feats: force_training, skill_focus, advantageous_cover
+• Identity: Tusken mounted wilderness expression centered on the bantha bond, riding, desert survival, endurance, and mounted travel.
+• Primary: beast, mount, ride, rider, survival
+• Supporting: endurance, initiative, perception, resilience
 
-Recon Scout (recon_scout)
+Gungan Kaadu Cavalier (gungan_kaadu_cavalier)
 
-• Identity: Military reconnaissance specialist who moves ahead of the main body to observe, infiltrate, report, and guide small-unit tactical action.
-• Primary: perception, recon, stealth, tactics
-• Supporting: initiative, leadership, survival, teamwork
-• Foundation routes: scout, soldier
-• Signature skills: stealth, perception
-• Signature talent trees: Reconnaissance; Camouflage; Commando
-• Signature talents: Reconnaissance Team Leader; Ghost Assailant; Tough as Nails
-• Signature feats: skill_focus
+• Identity: Gungan mounted warrior/traveler centered on kaadu riding, mobile action, maneuver, and coordinated rider-mount movement.
+• Primary: beast, mount, ride, rider
+• Supporting: initiative, mobility, movement, perception, survival
 
-Polis Massan Field Medic (polis_massan_field_medic)
+Aing-Tii Monk (aing_tii_monk)
 
-• Identity: Species-specific battlefield medic focused on keeping allies alive under field conditions through treatment, recovery, and calm support.
-• Primary: ally_support, healing, medical, support, treat_injury
-• Supporting: endurance, knowledge, medicine, perception, recovery, survivability
-• Foundation routes: scout, noble
-• Signature skills: treatInjury, perception
-• Signature talent trees: Advanced Medicine; Survivor
-• Signature talents: Extra First Aid; Sprint
-• Signature feats: surgical_expertise
+• Identity: Aing-Tii Force-tradition practitioner whose identity is freedom of travel and unusual manipulation of time and space through powers such as Fold Space and Phase.
+• Primary: force, force_power, mobility, space, use_the_force
+• Supporting: exploration, force_training, telekinesis, visions, will_defense
 
-Demolitions Specialist (demolitions_specialist)
+Force Pilgrim (force_pilgrim)
 
-• Identity: Sabotage specialist who prepares, places, bypasses, or defeats explosive and technical hazards through Mechanics and deliberate setup.
-• Primary: burst_damage, mechanics, setup, tech, trap
-• Supporting: cover, crafting, equipment, infiltration, stealth, use_computer
-• Foundation routes: scout, soldier
-• Signature skills: mechanics, stealth
-• Signature talent trees: Sabotage; Military Engineer; Slicer
-• Signature talents: Device Jammer; Tech Savant; Trace
-• Signature feats: skill_focus, flash_and_clear
-
-Guerrilla (guerrilla)
-
-• Identity: Irregular fighter who relies on concealment, ambush, infiltration, local survival knowledge, planning, and hit-and-fade tactics against stronger forces.
-• Primary: ambush, infiltration, stealth, survival, tactics
-• Supporting: deception, evasion, initiative, planning, recon, teamwork
-• Foundation routes: scout, soldier, scoundrel
-• Signature skills: stealth, survival
-• Signature talent trees: Revolutionary; Reconnaissance; Outlaw
-• Signature talents: Revolutionary Rhetoric; Reconnaissance Team Leader; Preternatural Senses
-• Signature feats: skill_focus
-
-Ace Pilot (ace_pilot)
-
-• Identity: Elite vehicle/starfighter operator defined by superior pursuit, evasion, maneuver, and combat piloting in space.
-• Primary: pilot, pursuit, space, vehicle
-• Supporting: evasion, initiative, mobility, tactics
-• Foundation routes: scout, scoundrel
-• Signature skills: pilot
-• Signature talent trees: Expert Pilot; Wingman; Spacer
-• Signature talents: Relentless Pursuit; Lose Pursuit; Starship Raider
-• Signature feats: vehicular_combat
-
-Squadron Leader (squadron_leader)
-
-• Identity: Pilot-commander who coordinates multiple craft as a fighting unit through leadership, tactics, communication, and team maneuver.
-• Primary: command, leadership, pilot, tactics, teamwork
-• Supporting: ally_support, initiative, persuasion, space, support, vehicle
-• Foundation routes: scout, noble, soldier
-• Signature skills: pilot, persuasion
-• Signature talent trees: Squadron Leader; Wingman; Expert Pilot
-• Signature talents: Begin Attack Run; Escort Pilot; Vehicular Evasion
-• Signature feats: vehicular_combat
-
-Test Pilot (test_pilot)
-
-• Identity: Technical pilot who evaluates unfamiliar, experimental, modified, or stressed vehicles by combining expert piloting with Mechanics and systems knowledge.
-• Primary: mechanics, pilot, tech, vehicle
-• Supporting: equipment, initiative, perception, use_computer
-• Foundation routes: scout, scoundrel
-• Signature skills: pilot, mechanics
-• Signature talent trees: Expert Pilot; Spacer
-• Signature talents: Relentless Pursuit; Starship Raider
-• Signature feats: vehicular_combat
-
-Gunship Pilot (gunship_pilot)
-
-• Identity: Combat pilot specialized in heavily armed vehicles where piloting, gunnery, ranged fire, target selection, and tactical vehicle employment converge.
-• Primary: heavy_weapon, pilot, ranged, tactics, vehicle
-• Supporting: initiative, offense_ranged, perception, space, targeting
-• Foundation routes: scout, soldier
-• Signature skills: pilot, initiative
-• Signature talent trees: Expert Pilot; Gunner; Spacer
-• Signature talents: Elusive Dogfighter; Expert Gunner; Starship Raider
-• Signature feats: vehicular_combat, gunnery_specialist
-
-Bush Pilot (bush_pilot)
-
-• Identity: Frontier pilot who reaches isolated or hazardous locations and keeps a craft functioning where navigation, terrain, survival, and repair matter as much as raw flying skill.
-• Primary: exploration, pilot, survival, vehicle
-• Supporting: mechanics, mobility, perception, repair, space
-• Foundation routes: scout, scoundrel
-• Signature skills: pilot, survival
-• Signature talent trees: Expert Pilot; Survivor; Spacer
-• Signature talents: Keep It Together; Evasion; Spacehound
-• Signature feats: vehicular_combat
-
-Pilot Droid (pilot_droid)
-
-• Identity: Droid pilot identity combining vehicle operation with computer integration, technical competence, autonomous modification, and machine precision.
-• Primary: droid, pilot, tech, use_computer, vehicle
-• Supporting: initiative, mechanics, modification, perception
-• Foundation routes: scout, scoundrel
-• Signature skills: pilot, useComputer
-• Signature talent trees: Expert Pilot; Autonomy; Spacer
-• Signature talents: Vehicular Evasion; Modification Specialist; Starship Raider
-• Signature feats: vehicular_combat
-
-Iktotchi Precognitive Pilot (iktotchi_precognitive_pilot)
-
-• Identity: Iktotchi pilot whose Force sensitivity and precognition directly shape vehicle handling, anticipation, perception, and spaceflight.
-• Primary: force, force_power, pilot, precognition, vehicle
-• Supporting: force_training, initiative, perception, space, use_the_force, visions
-• Foundation routes: scout
-• Signature skills: pilot, perception
-• Signature talent trees: Expert Pilot; Awareness; Spacer
-• Signature talents: Vehicular Evasion; Acute Senses; Spacehound
-• Signature feats: force_training, skill_focus, vehicular_combat
-
-Unknown Regions Navigator (unknown_regions_navigator)
-
-• Identity: Deep-space navigator specialized in charting dangerous, poorly mapped regions where survival, galactic lore, piloting, and exploration overlap.
-• Primary: exploration, galactic_lore, pilot, space, survival
-• Supporting: knowledge, perception, vehicle
-• Foundation routes: scout
-• Signature skills: survival
-• Signature talent trees: Hyperspace Explorer; Master Scout; Spacer
-• Signature talents: Deep-Space Gambit; Starship Raider
-• Signature feats: vehicular_combat
-
-────────
+• Identity: Wandering Force mystic who travels through difficult places in pursuit of spiritual experience, lore, visions, and self-reliant understanding of the Force.
+• Primary: exploration, force, force_power, survival, use_the_force
+• Supporting: force_training, galactic_lore, perception, resilience, visions
 
 Claude Execution Contract — Next Run
 
-The companion JSON is authoritative. For this run Claude must:
-
-1. Replace PENDING_12B_SCOUT_02_COMMIT with the successful commit returned by 12B-SCOUT-02, then verify that commit is an ancestor of the working branch.
-2. Apply only the 20 IDs in currentExecution.newRecordIds.
-3. For each execution record replace exactly:
-  • metadata.tags.primary
-  • metadata.tags.supporting
-  • metadata.tags.all
-  • metadata.tagProvenance
-4. Do not change any of the 30 already-certified records unless a future explicit revision is added.
-5. Do not change mechanics, exactRefs, routes, classes, abilities, skills, talents, feats, Force data, species, backgrounds, narrative data, scoring, BuildIntent, SuggestionScorer, Mentor, UI ranking, or the ontology.
-6. Validate every supplied tag against the frozen 190-tag ontology.
-7. Run the Phase 12A SSOT validator/tests and the Phase 12B overlay --check contract established in 12B-SCOUT-02.
-8. Stop rather than infer if any authority mismatch occurs.
-
-────────
+1. Replace the pending baseline with the successful 12B-SCOUT-03 commit and verify ancestry.
+2. Apply only currentExecution.newRecordIds.
+3. Replace exactly the four semantic fields: metadata.tags.primary, metadata.tags.supporting, metadata.tags.all, metadata.tagProvenance.
+4. Do not change the 50 previously certified records without an explicit revision.
+5. Do not change mechanics, exactRefs, routes, classes, abilities, skills, talents, feats, Force data, species, backgrounds, narrative data, scoring, BuildIntent, SuggestionScorer, Mentor, UI ranking, or ontology.
+6. Validate every tag against the frozen ontology.
+7. Run Phase 12A validation/tests and Phase 12B overlay --check.
+8. Stop rather than infer on any mismatch.
 
 Progress
 
-• Certified in this rolling authority: 50 / 297
-• Applied before 12B-SCOUT-02: 10 / 297
-• Expected applied after successful 12B-SCOUT-02: 30 / 297
-• New in 12B-SCOUT-03: 20
-• Remaining uncurated after 12B-SCOUT-03 application: 247
-• Next selection rule: continue Scout-first specializations in dataset order.
+• Certified: 70 / 297
+• New this tranche: 20
+• Remaining after application: 227
+• Next: continue Scout-first specializations in dataset order.
 • Shadow scoring: still deferred.
