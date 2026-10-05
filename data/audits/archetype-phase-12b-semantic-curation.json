@@ -8,36 +8,36 @@
     "path": "data/audits/talent-feat-phase3-final-ontology.json",
     "tagCount": 190
   },
-  "certifiedCount": 130,
+  "certifiedCount": 150,
   "totalArchetypes": 297,
-  "remainingUncuratedAfterApplication": 167,
-  "selectionRule": "Finish Scoundrel-first records, skip already-complete Scout-first, then continue Noble-first records in dataset order. Class is a route, not ownership.",
+  "remainingUncuratedAfterApplication": 147,
+  "selectionRule": "Continue Noble-first records in dataset order. Class is a route, not ownership.",
   "currentExecution": {
-    "id": "12B-SCOUNDREL-NOBLE-07",
+    "id": "12B-NOBLE-08",
     "status": "AUTHORITY_READY_BASELINE_PENDING",
-    "requiredBaseline": "d7e8938082f9a0b35491414e79820841f86ef375",
-    "baselineInstruction": "Replace this placeholder with the successful commit returned after the 12B-QA-110-01 semantic QA patch before applying this tranche. Do not infer a SHA.",
+    "requiredBaseline": "e8a2c7b7375e089cf0382fce62f1bd11433a74fd",
+    "baselineInstruction": "Replace this placeholder with the successful commit returned after 12B-SCOUNDREL-NOBLE-07 execution before applying this tranche. Do not infer a SHA.",
     "newRecordIds": [
-      "salvage_engineer",
-      "repair_droid",
-      "crime_boss",
-      "cantina_proprietor",
-      "investigator",
-      "spymaster",
-      "journalist",
-      "naval_officer",
-      "fleet_strategist",
-      "quartermaster",
-      "resistance_leader",
-      "ship_captain",
-      "cyberneticist",
-      "scientist",
-      "doctor",
-      "activist",
-      "aristocrat",
-      "bureaucrat",
-      "celebrity",
-      "community_leader"
+      "corporate_operator",
+      "courtier",
+      "diplomat",
+      "educator",
+      "merchant_prince",
+      "planetary_governor",
+      "propagandist",
+      "revolutionary_statesman",
+      "spiritual_leader",
+      "dark_side_cultist",
+      "force_mystic",
+      "force_seer",
+      "force_witch",
+      "falleen_black_sun_noble",
+      "hutt_kajidic_lorda",
+      "forensic_specialist",
+      "counterintelligence_officer",
+      "handler",
+      "investigative_journalist",
+      "holonet_reporter"
     ],
     "revisionIds": []
   },
@@ -6692,12 +6692,950 @@
           "authority": "OWNER_CERTIFIED"
         }
       }
+    },
+    {
+      "id": "corporate_operator",
+      "name": "Corporate Operator",
+      "tranche": "08",
+      "primary": [
+        "intrigue",
+        "leadership",
+        "persuasion",
+        "social"
+      ],
+      "supporting": [
+        "deception",
+        "gather_information",
+        "knowledge",
+        "social_network",
+        "use_computer"
+      ],
+      "all": [
+        "deception",
+        "gather_information",
+        "intrigue",
+        "knowledge",
+        "leadership",
+        "persuasion",
+        "social",
+        "social_network",
+        "use_computer"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "intrigue",
+              "leadership",
+              "persuasion",
+              "social"
+            ],
+            "supporting": [
+              "deception",
+              "gather_information",
+              "knowledge",
+              "social_network",
+              "use_computer"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "courtier",
+      "name": "Courtier",
+      "tranche": "08",
+      "primary": [
+        "deception",
+        "intrigue",
+        "persuasion",
+        "social"
+      ],
+      "supporting": [
+        "gather_information",
+        "manipulation",
+        "perception"
+      ],
+      "all": [
+        "deception",
+        "gather_information",
+        "intrigue",
+        "manipulation",
+        "perception",
+        "persuasion",
+        "social"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "deception",
+              "intrigue",
+              "persuasion",
+              "social"
+            ],
+            "supporting": [
+              "gather_information",
+              "manipulation",
+              "perception"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "diplomat",
+      "name": "Diplomat",
+      "tranche": "08",
+      "primary": [
+        "knowledge",
+        "persuasion",
+        "social"
+      ],
+      "supporting": [
+        "gather_information",
+        "leadership",
+        "perception",
+        "reliability"
+      ],
+      "all": [
+        "gather_information",
+        "knowledge",
+        "leadership",
+        "perception",
+        "persuasion",
+        "reliability",
+        "social"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "knowledge",
+              "persuasion",
+              "social"
+            ],
+            "supporting": [
+              "gather_information",
+              "leadership",
+              "perception",
+              "reliability"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "educator",
+      "name": "Educator",
+      "tranche": "08",
+      "primary": [
+        "ally_support",
+        "knowledge",
+        "support"
+      ],
+      "supporting": [
+        "persuasion",
+        "skill_mastery"
+      ],
+      "all": [
+        "ally_support",
+        "knowledge",
+        "persuasion",
+        "skill_mastery",
+        "support"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "ally_support",
+              "knowledge",
+              "support"
+            ],
+            "supporting": [
+              "persuasion",
+              "skill_mastery"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "merchant_prince",
+      "name": "Merchant Prince",
+      "tranche": "08",
+      "primary": [
+        "leadership",
+        "minion",
+        "persuasion",
+        "social"
+      ],
+      "supporting": [
+        "deception",
+        "gather_information",
+        "intrigue",
+        "social_network"
+      ],
+      "all": [
+        "deception",
+        "gather_information",
+        "intrigue",
+        "leadership",
+        "minion",
+        "persuasion",
+        "social",
+        "social_network"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "leadership",
+              "minion",
+              "persuasion",
+              "social"
+            ],
+            "supporting": [
+              "deception",
+              "gather_information",
+              "intrigue",
+              "social_network"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "planetary_governor",
+      "name": "Planetary Governor",
+      "tranche": "08",
+      "primary": [
+        "leadership",
+        "persuasion",
+        "social"
+      ],
+      "supporting": [
+        "intrigue",
+        "knowledge",
+        "perception",
+        "social_network"
+      ],
+      "all": [
+        "intrigue",
+        "knowledge",
+        "leadership",
+        "perception",
+        "persuasion",
+        "social",
+        "social_network"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "leadership",
+              "persuasion",
+              "social"
+            ],
+            "supporting": [
+              "intrigue",
+              "knowledge",
+              "perception",
+              "social_network"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "propagandist",
+      "name": "Propagandist",
+      "tranche": "08",
+      "primary": [
+        "deception",
+        "manipulation",
+        "persuasion",
+        "social"
+      ],
+      "supporting": [
+        "gather_information",
+        "intrigue",
+        "planning",
+        "use_computer"
+      ],
+      "all": [
+        "deception",
+        "gather_information",
+        "intrigue",
+        "manipulation",
+        "persuasion",
+        "planning",
+        "social",
+        "use_computer"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "deception",
+              "manipulation",
+              "persuasion",
+              "social"
+            ],
+            "supporting": [
+              "gather_information",
+              "intrigue",
+              "planning",
+              "use_computer"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "revolutionary_statesman",
+      "name": "Revolutionary Statesman",
+      "tranche": "08",
+      "primary": [
+        "leadership",
+        "persuasion",
+        "social",
+        "support"
+      ],
+      "supporting": [
+        "ally_support",
+        "gather_information",
+        "intrigue",
+        "morale"
+      ],
+      "all": [
+        "ally_support",
+        "gather_information",
+        "intrigue",
+        "leadership",
+        "morale",
+        "persuasion",
+        "social",
+        "support"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "leadership",
+              "persuasion",
+              "social",
+              "support"
+            ],
+            "supporting": [
+              "ally_support",
+              "gather_information",
+              "intrigue",
+              "morale"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "spiritual_leader",
+      "name": "Spiritual Leader",
+      "tranche": "08",
+      "primary": [
+        "ally_support",
+        "leadership",
+        "persuasion",
+        "social",
+        "support"
+      ],
+      "supporting": [
+        "knowledge",
+        "morale",
+        "perception"
+      ],
+      "all": [
+        "ally_support",
+        "knowledge",
+        "leadership",
+        "morale",
+        "perception",
+        "persuasion",
+        "social",
+        "support"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "ally_support",
+              "leadership",
+              "persuasion",
+              "social",
+              "support"
+            ],
+            "supporting": [
+              "knowledge",
+              "morale",
+              "perception"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "dark_side_cultist",
+      "name": "Dark-Side Cultist",
+      "tranche": "08",
+      "primary": [
+        "dark_side",
+        "force",
+        "force_power",
+        "force_training",
+        "talisman",
+        "use_the_force"
+      ],
+      "supporting": [
+        "deception",
+        "fear",
+        "manipulation",
+        "persuasion",
+        "social"
+      ],
+      "all": [
+        "dark_side",
+        "deception",
+        "fear",
+        "force",
+        "force_power",
+        "force_training",
+        "manipulation",
+        "persuasion",
+        "social",
+        "talisman",
+        "use_the_force"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "dark_side",
+              "force",
+              "force_power",
+              "force_training",
+              "talisman",
+              "use_the_force"
+            ],
+            "supporting": [
+              "deception",
+              "fear",
+              "manipulation",
+              "persuasion",
+              "social"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "force_mystic",
+      "name": "Force Mystic",
+      "tranche": "08",
+      "primary": [
+        "force",
+        "force_power",
+        "force_training",
+        "meditation",
+        "use_the_force"
+      ],
+      "supporting": [
+        "force_support",
+        "galactic_lore",
+        "perception",
+        "precognition",
+        "telepathy",
+        "visions"
+      ],
+      "all": [
+        "force",
+        "force_power",
+        "force_support",
+        "force_training",
+        "galactic_lore",
+        "meditation",
+        "perception",
+        "precognition",
+        "telepathy",
+        "use_the_force",
+        "visions"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "force",
+              "force_power",
+              "force_training",
+              "meditation",
+              "use_the_force"
+            ],
+            "supporting": [
+              "force_support",
+              "galactic_lore",
+              "perception",
+              "precognition",
+              "telepathy",
+              "visions"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "force_seer",
+      "name": "Force Seer",
+      "tranche": "08",
+      "primary": [
+        "force",
+        "force_power",
+        "force_training",
+        "perception",
+        "precognition",
+        "use_the_force",
+        "visions"
+      ],
+      "supporting": [
+        "force_support",
+        "galactic_lore",
+        "telepathy",
+        "tracking"
+      ],
+      "all": [
+        "force",
+        "force_power",
+        "force_support",
+        "force_training",
+        "galactic_lore",
+        "perception",
+        "precognition",
+        "telepathy",
+        "tracking",
+        "use_the_force",
+        "visions"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "force",
+              "force_power",
+              "force_training",
+              "perception",
+              "precognition",
+              "use_the_force",
+              "visions"
+            ],
+            "supporting": [
+              "force_support",
+              "galactic_lore",
+              "telepathy",
+              "tracking"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "force_witch",
+      "name": "Force Witch",
+      "tranche": "08",
+      "primary": [
+        "force",
+        "force_power",
+        "force_training",
+        "nature",
+        "survival",
+        "use_the_force"
+      ],
+      "supporting": [
+        "deception",
+        "healing",
+        "perception",
+        "telepathy",
+        "tracking"
+      ],
+      "all": [
+        "deception",
+        "force",
+        "force_power",
+        "force_training",
+        "healing",
+        "nature",
+        "perception",
+        "survival",
+        "telepathy",
+        "tracking",
+        "use_the_force"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "force",
+              "force_power",
+              "force_training",
+              "nature",
+              "survival",
+              "use_the_force"
+            ],
+            "supporting": [
+              "deception",
+              "healing",
+              "perception",
+              "telepathy",
+              "tracking"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "falleen_black_sun_noble",
+      "name": "Falleen Black Sun Noble",
+      "tranche": "08",
+      "primary": [
+        "intrigue",
+        "leadership",
+        "social",
+        "social_network"
+      ],
+      "supporting": [
+        "deception",
+        "fear",
+        "gather_information",
+        "persuasion",
+        "tactics"
+      ],
+      "all": [
+        "deception",
+        "fear",
+        "gather_information",
+        "intrigue",
+        "leadership",
+        "persuasion",
+        "social",
+        "social_network",
+        "tactics"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "intrigue",
+              "leadership",
+              "social",
+              "social_network"
+            ],
+            "supporting": [
+              "deception",
+              "fear",
+              "gather_information",
+              "persuasion",
+              "tactics"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "hutt_kajidic_lorda",
+      "name": "Hutt Kajidic Lorda",
+      "tranche": "08",
+      "primary": [
+        "intrigue",
+        "leadership",
+        "social",
+        "social_network"
+      ],
+      "supporting": [
+        "deception",
+        "fear",
+        "gather_information",
+        "persuasion",
+        "planning"
+      ],
+      "all": [
+        "deception",
+        "fear",
+        "gather_information",
+        "intrigue",
+        "leadership",
+        "persuasion",
+        "planning",
+        "social",
+        "social_network"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "intrigue",
+              "leadership",
+              "social",
+              "social_network"
+            ],
+            "supporting": [
+              "deception",
+              "fear",
+              "gather_information",
+              "persuasion",
+              "planning"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "forensic_specialist",
+      "name": "Forensic Specialist",
+      "tranche": "08",
+      "primary": [
+        "investigation",
+        "perception",
+        "science"
+      ],
+      "supporting": [
+        "gather_information",
+        "knowledge",
+        "planning",
+        "use_computer"
+      ],
+      "all": [
+        "gather_information",
+        "investigation",
+        "knowledge",
+        "perception",
+        "planning",
+        "science",
+        "use_computer"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "investigation",
+              "perception",
+              "science"
+            ],
+            "supporting": [
+              "gather_information",
+              "knowledge",
+              "planning",
+              "use_computer"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "counterintelligence_officer",
+      "name": "Counterintelligence Officer",
+      "tranche": "08",
+      "primary": [
+        "deception",
+        "infiltration",
+        "investigation"
+      ],
+      "supporting": [
+        "gather_information",
+        "perception",
+        "stealth",
+        "use_computer"
+      ],
+      "all": [
+        "deception",
+        "gather_information",
+        "infiltration",
+        "investigation",
+        "perception",
+        "stealth",
+        "use_computer"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "deception",
+              "infiltration",
+              "investigation"
+            ],
+            "supporting": [
+              "gather_information",
+              "perception",
+              "stealth",
+              "use_computer"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "handler",
+      "name": "Handler",
+      "tranche": "08",
+      "primary": [
+        "leadership",
+        "planning",
+        "social_network",
+        "support"
+      ],
+      "supporting": [
+        "ally_support",
+        "deception",
+        "gather_information",
+        "persuasion",
+        "tactics"
+      ],
+      "all": [
+        "ally_support",
+        "deception",
+        "gather_information",
+        "leadership",
+        "persuasion",
+        "planning",
+        "social_network",
+        "support",
+        "tactics"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "leadership",
+              "planning",
+              "social_network",
+              "support"
+            ],
+            "supporting": [
+              "ally_support",
+              "deception",
+              "gather_information",
+              "persuasion",
+              "tactics"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "investigative_journalist",
+      "name": "Investigative Journalist",
+      "tranche": "08",
+      "primary": [
+        "gather_information",
+        "investigation",
+        "perception",
+        "social"
+      ],
+      "supporting": [
+        "knowledge",
+        "persuasion",
+        "planning",
+        "use_computer"
+      ],
+      "all": [
+        "gather_information",
+        "investigation",
+        "knowledge",
+        "perception",
+        "persuasion",
+        "planning",
+        "social",
+        "use_computer"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "gather_information",
+              "investigation",
+              "perception",
+              "social"
+            ],
+            "supporting": [
+              "knowledge",
+              "persuasion",
+              "planning",
+              "use_computer"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "holonet_reporter",
+      "name": "HoloNet Reporter",
+      "tranche": "08",
+      "primary": [
+        "gather_information",
+        "persuasion",
+        "social"
+      ],
+      "supporting": [
+        "knowledge",
+        "perception",
+        "use_computer"
+      ],
+      "all": [
+        "gather_information",
+        "knowledge",
+        "perception",
+        "persuasion",
+        "social",
+        "use_computer"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "gather_information",
+              "persuasion",
+              "social"
+            ],
+            "supporting": [
+              "knowledge",
+              "perception",
+              "use_computer"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
     }
   ],
   "qaReview": {
-    "scope": "All 130 certified archetypes after tranche 07",
+    "scope": "All 150 certified archetypes after tranche 08",
     "result": "PASS",
-    "reviewedRecordCount": 130,
+    "reviewedRecordCount": 150,
     "newRecordCount": 20,
     "carriedForwardExplicitRevisionCount": 7,
     "checks": [
@@ -6707,6 +7645,50 @@
       "hard implication closure",
       "semantic differentiation review",
       "narrow ontology-label review"
+    ],
+    "newTrancheHighOverlapPairsReviewed": [
+      {
+        "a": "falleen_black_sun_noble",
+        "b": "hutt_kajidic_lorda",
+        "primaryJaccard": 1.0,
+        "allJaccard": 0.8
+      },
+      {
+        "a": "revolutionary_statesman",
+        "b": "spiritual_leader",
+        "primaryJaccard": 0.8,
+        "allJaccard": 0.6
+      },
+      {
+        "a": "corporate_operator",
+        "b": "planetary_governor",
+        "primaryJaccard": 0.75,
+        "allJaccard": 0.6
+      },
+      {
+        "a": "merchant_prince",
+        "b": "planetary_governor",
+        "primaryJaccard": 0.75,
+        "allJaccard": 0.5
+      },
+      {
+        "a": "planetary_governor",
+        "b": "revolutionary_statesman",
+        "primaryJaccard": 0.75,
+        "allJaccard": 0.364
+      },
+      {
+        "a": "force_mystic",
+        "b": "force_seer",
+        "primaryJaccard": 0.5,
+        "allJaccard": 0.833
+      },
+      {
+        "a": "investigative_journalist",
+        "b": "holonet_reporter",
+        "primaryJaccard": 0.4,
+        "allJaccard": 0.75
+      }
     ]
   }
 }
