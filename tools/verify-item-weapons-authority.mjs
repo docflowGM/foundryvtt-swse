@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
- * Verifies data/audits/item-canonicalization-rolling-authority.json (Phase 0-1 weapons)
- * against packs/weapons.db. Read-only. Fails on any drift between the certified authority
+ * Verifies data/audits/item-canonicalization-rolling-authority.json (Phase 0-1 weapons,
+ * Phase 0-2 armor) against packs/weapons.db and packs/armor.db. Read-only. Fails on any drift between the certified authority
  * and the pack so that execution phases cannot silently run against a changed repo.
  */
 import fs from 'node:fs';
@@ -37,6 +37,31 @@ for (const c of p.canonicalWeapons) {
 }
 const names = p.canonicalWeapons.map((c) => c.canonicalName);
 if (new Set(names).size !== names.length) fail('duplicate canonical names');
+
+// ---- Phase 0-2 armor ----
+const arm = auth.phases['0-2-armor'];
+if (arm) {
+  const armorPack = new Map(fs.readFileSync(path.join(ROOT, 'packs/armor.db'), 'utf8').split('\n').filter(Boolean)
+    .map((l) => JSON.parse(l)).map((r) => [r._id, r.name]));
+  if (armorPack.size !== arm.repoSnapshot.repoArmorRecords) fail(`armor pack has ${armorPack.size} records, authority expects ${arm.repoSnapshot.repoArmorRecords}`);
+  const seen = new Map();
+  for (const c of arm.canonicalArmor) {
+    const id = c.repo.matchedId;
+    seen.set(id, (seen.get(id) || 0) + 1);
+    if (!armorPack.has(id)) { fail(`armor ${c.canonicalName}: ${id} not in pack`); continue; }
+    if (armorPack.get(id) !== c.repo.matchedName) fail(`armor name drift ${id}: "${c.repo.matchedName}" vs pack "${armorPack.get(id)}"`);
+    if (c.phase0Disposition === 'KEEP' && armorPack.get(id) !== c.canonicalName) fail(`armor KEEP ${c.canonicalName} != repo name`);
+    if (c.phase0Disposition === 'EDIT' && armorPack.get(id) === c.canonicalName) fail(`armor EDIT ${c.canonicalName} already matches repo name`);
+  }
+  for (const r of arm.repoOnlyArmor) {
+    seen.set(r.repoId, (seen.get(r.repoId) || 0) + 1);
+    if (armorPack.get(r.repoId) !== r.repoName) fail(`armor REVIEW record ${r.repoId} missing or renamed`);
+  }
+  for (const id of armorPack.keys()) if (seen.get(id) !== 1) fail(`armor pack record ${id} covered ${seen.get(id) || 0} times`);
+  const dispo = count(arm.canonicalArmor, (r) => r.phase0Disposition);
+  if (JSON.stringify(dispo) !== JSON.stringify(arm.canonicalCounts.byDisposition)) fail(`armor disposition counts ${JSON.stringify(dispo)} != ${JSON.stringify(arm.canonicalCounts.byDisposition)}`);
+  if (!errors.length) console.log(`armor authority OK: ${arm.canonicalArmor.length} canonical + ${arm.repoOnlyArmor.length} REVIEW cover ${armorPack.size} repo records`);
+}
 
 if (errors.length) { console.error(`FAIL (${errors.length})\n- ${errors.join('\n- ')}`); process.exit(1); }
 console.log(`weapons authority OK: ${p.canonicalWeapons.length} canonical, ${pack.size} repo records, all covered once`);

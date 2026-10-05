@@ -1,9 +1,9 @@
 # SWSE Item Canonicalization — Rolling Authority
 
-Status: ACTIVE — Phase 0 complete; Phase 0-1 Weapons certified by owner
+Status: ACTIVE — Phase 0 complete; Phase 0-1 Weapons and Phase 0-2 Armor certified by owner
 Updated: 2026-10-05
 Machine-readable companion: `data/audits/item-canonicalization-rolling-authority.json`
-Verify against the pack: `node tools/verify-item-weapons-authority.mjs`
+Verify against the packs: `node tools/verify-item-weapons-authority.mjs` (weapons and armor)
 
 This is the single cumulative authority for item rehabilitation. Per-book/phase files are temporary evidence and must not become competing authorities. Architecture evidence: `docs/audits/item-phase-0-ssot-census.md` (owner rulings in §7a).
 
@@ -311,6 +311,175 @@ None.
 - Many REMOVE records are referenced by actor packs (`heroic`, `nonheroic`, `npc`), `data/character-templates.json`, nonheroic damage profiles, and `data/store/weapon-store-descriptions.json`; the per-record list is in the table above and the JSON (`referencedOutsideWeaponPacks`). `tools/fix-weapons-data.js` references are historical generator data and excluded.
 - `lightsaber-chassis-standard` is referenced by `item-customization-workbench.js` and `progression-finalizer.js`; both lightsaber chassis duplicates are also in `data/lightsaber-components.json` and `data/lightsaber-items-import.ndjson`.
 
+## Phase 0-2 — Character armor and personal energy shields: census and repo reconciliation
+
+Scope: character-scale wearable armor and personal energy shields. Excluded: armor upgrades, droid armor/plating, natural armor, vehicle/starship armor, NPC-only/custom variants. Identity and presence only.
+
+| Result | Count |
+|---|---:|
+| Canonical armor identities | 67 |
+| Repo armor records (`packs/armor.db`) | 70 |
+| KEEP | 43 |
+| EDIT | 24 |
+| ADD | 0 |
+| REMOVE | 0 |
+| REVIEW | 3 |
+
+All 67 canonical identities map one-to-one to repo records; 0 are missing.
+
+### Adjudications
+
+- **KOTOR energy shields:** Treat SR 5, 10, 15, 20, 25, and 30 as six canonical purchasable armor/shield variants. Table 5-3 establishes light/medium/heavy armor classes; Table 5-4 explicitly gives six SR price points.
+- **Mandalorian battle armor name:** Canonical identity is Mandalorian Battle Armor. Earlier draft wording "Mandalorian Neo-Crusader Battle Armor" was rejected; KOTOR Table 12-1 prints Mandalorian battle armor.
+- **Pressure suits:** Light/Medium/Heavy Pressure Suit are REVIEW, not REMOVE. Repo claims Web Enhancements, but the supplied SSOT files do not contain the defining source. Destructive mutation is blocked.
+- **Armor upgrades and droid armor:** Excluded from Phase 0-2 and reserved for their dedicated later batches.
+
+### Source claims by book
+
+| Book | Claims |
+|---|---:|
+| Clone Wars Campaign Guide | 5 |
+| Core Rulebook | 11 |
+| Galaxy at War | 7 |
+| Jedi Academy Training Manual | 7 |
+| Knights of the Old Republic Campaign Guide | 21 |
+| Legacy Era Campaign Guide | 5 |
+| Rebellion Era Campaign Guide | 4 |
+| Scum and Villainy | 8 |
+
+### Canonical armor census
+
+| # | Canonical armor | Sourcebook(s) | Repo record | Disposition |
+|---:|---|---|---|---|
+| 1 | Armored Spacesuit | Core Rulebook | `armor-armored-space-suit` - Armored Space Suit | EDIT |
+| 2 | Battle Armor | Core Rulebook | `armor-battle-armor` - Battle Armor | KEEP |
+| 3 | Battle Armor, Heavy | Core Rulebook | `armor-heavy-battle-armor` - Heavy Battle Armor | EDIT |
+| 4 | Blast Helmet and Vest | Core Rulebook | `armor-blast-helmet-and-vest` - Blast Helmet and Vest | KEEP |
+| 5 | Ceremonial Armor | Core Rulebook | `armor-ceremonial-armor` - Ceremonial Armor | KEEP |
+| 6 | Combat Jumpsuit | Core Rulebook | `armor-combat-jumpsuit` - Combat Jumpsuit | KEEP |
+| 7 | Corellian Powersuit | Core Rulebook | `armor-corellian-powersuit` - Corellian Powersuit | KEEP |
+| 8 | Flight Suit, Armored | Core Rulebook | `armor-armored-flight-suit` - Armored Flight Suit | EDIT |
+| 9 | Flight Suit, Padded | Core Rulebook | `armor-padded-flight-suit` - Padded Flight Suit | EDIT |
+| 10 | Stormtrooper Armor | Core Rulebook | `armor-stormtrooper-armor` - Stormtrooper Armor | KEEP |
+| 11 | Vonduun Crabshell Armor | Core Rulebook | `armor-vonduun-crabshell` - Vonduun Crabshell | EDIT |
+| 12 | Camo Armor | Clone Wars Campaign Guide | `armor-camo-armor` - Camo Armor | KEEP |
+| 13 | Shadowsuit | Clone Wars Campaign Guide, Scum and Villainy | `armor-shadowsuit` - Shadowsuit | KEEP |
+| 14 | Thinsuit | Clone Wars Campaign Guide | `armor-thinsuit` - Thinsuit | KEEP |
+| 15 | Tracker Utility Vest | Clone Wars Campaign Guide | `armor-tracker-utility-vest` - Tracker Utility Vest | KEEP |
+| 16 | Vacuum Pod | Clone Wars Campaign Guide | `armor-vacuum-pod` - Vacuum Pod | KEEP |
+| 17 | Barabel Microbe Armor | Galaxy at War | `armor-microbe-armor` - Microbe Armor | EDIT |
+| 18 | Biohazard Suit | Galaxy at War | `armor-biohazard-suit` - Biohazard Suit | KEEP |
+| 19 | Camo Scout Armor | Galaxy at War | `armor-camo-scout-armor` - Camo Scout Armor | KEEP |
+| 20 | Katarn-Class Commando Armor | Galaxy at War | `armor-katarn-class-commando-armor` - Katarn-Class Commando Armor | KEEP |
+| 21 | Marine Armor | Galaxy at War | `armor-marine-armor` - Marine Armor | KEEP |
+| 22 | Stalker Armor | Galaxy at War | `armor-m110-stalker-armor` - M1-10 Stalker Armor | EDIT |
+| 23 | Stun Cloak | Galaxy at War | `armor-stun-cloak` - Stun Cloak | KEEP |
+| 24 | Dark Armor, Light | Jedi Academy Training Manual | `armor-light-dark-armor` - Light Dark Armor | EDIT |
+| 25 | Jedi Battle Armor, Light | Jedi Academy Training Manual | `armor-light-jedi-battle-armor` - Light Jedi Battle Armor | EDIT |
+| 26 | WJ-880 Blinding Helmet | Jedi Academy Training Manual | `armor-blinding-helmet` - Blinding Helmet | EDIT |
+| 27 | Dark Armor, Medium | Jedi Academy Training Manual | `armor-dark-armor` - Dark Armor | EDIT |
+| 28 | Jedi Battle Armor, Medium | Jedi Academy Training Manual | `armor-jedi-battle-armor` - Jedi Battle Armor | EDIT |
+| 29 | Dark Armor, Heavy | Jedi Academy Training Manual | `armor-heavy-dark-armor` - Heavy Dark Armor | EDIT |
+| 30 | Orbalisk Armor | Jedi Academy Training Manual | `armor-orbalisk-armor` - Orbalisk Armor | KEEP |
+| 31 | Energy Shield (SR 5) | Knights of the Old Republic Campaign Guide | `armor-energy-shield-sr5` - Energy Shield (SR 5) | KEEP |
+| 32 | Energy Shield (SR 10) | Knights of the Old Republic Campaign Guide | `armor-energy-shield-sr10` - Energy Shield (SR 10) | KEEP |
+| 33 | Energy Shield (SR 15) | Knights of the Old Republic Campaign Guide | `armor-energy-shield-sr15` - Energy Shield (SR 15) | KEEP |
+| 34 | Energy Shield (SR 20) | Knights of the Old Republic Campaign Guide | `armor-energy-shield-sr20` - Energy Shield (SR 20) | KEEP |
+| 35 | Energy Shield (SR 25) | Knights of the Old Republic Campaign Guide | `armor-energy-shield-sr25` - Energy Shield (SR 25) | KEEP |
+| 36 | Energy Shield (SR 30) | Knights of the Old Republic Campaign Guide | `armor-energy-shield-sr30` - Energy Shield (SR 30) | KEEP |
+| 37 | Fiber Armor | Knights of the Old Republic Campaign Guide | `armor-fiber-armor` - Fiber Armor | KEEP |
+| 38 | Battle Armor, Light Powered | Knights of the Old Republic Campaign Guide | `armor-light-powered-battle-armor` - Light Powered Battle Armor | EDIT |
+| 39 | Battle Armor, Light | Knights of the Old Republic Campaign Guide | `armor-light-battle-armor` - Light Battle Armor | EDIT |
+| 40 | Mesh Armor | Knights of the Old Republic Campaign Guide | `armor-mesh-armor` - Mesh Armor | KEEP |
+| 41 | Weave Armor | Knights of the Old Republic Campaign Guide | `armor-weave-armor` - Weave Armor | KEEP |
+| 42 | Battle Armor, Powered | Knights of the Old Republic Campaign Guide | `armor-powered-battle-armor` - Powered Battle Armor | EDIT |
+| 43 | Matrix Armor | Knights of the Old Republic Campaign Guide | `armor-matrix-armor` - Matrix Armor | KEEP |
+| 44 | Battle Armor, Heavy Powered | Knights of the Old Republic Campaign Guide | `armor-heavy-powered-battle-armor` - Heavy Powered Battle Armor | EDIT |
+| 45 | Republic Light Armor | Knights of the Old Republic Campaign Guide | `armor-republic-light-armor` - Republic Light Armor | KEEP |
+| 46 | Republic Combat Armor | Knights of the Old Republic Campaign Guide | `armor-republic-combat-armor` - Republic Combat Armor | KEEP |
+| 47 | Republic Heavy Armor | Knights of the Old Republic Campaign Guide | `armor-republic-heavy-armor` - Republic Heavy Armor | KEEP |
+| 48 | Neo-Crusader Light Armor | Knights of the Old Republic Campaign Guide | `armor-neo-crusader-light-armor` - Neo-Crusader Light Armor | KEEP |
+| 49 | Mandalorian Combat Suit | Knights of the Old Republic Campaign Guide | `armor-mandalorian-combat-suit` - Mandalorian Combat Suit | KEEP |
+| 50 | Mandalorian Battle Armor | Knights of the Old Republic Campaign Guide | `armor-mandalorian-battle-armor` - Mandalorian Battle Armor | KEEP |
+| 51 | Neo-Crusader Assault Armor | Knights of the Old Republic Campaign Guide | `armor-neo-crusader-assault-armor` - Neo-Crusader Assault Armor | KEEP |
+| 52 | Galactic Alliance Armor | Legacy Era Campaign Guide | `armor-galactic-alliance-armor` - Galactic Alliance Armor | KEEP |
+| 53 | Venom Assault Armor | Legacy Era Campaign Guide | `armor-venom-assault-armor` - Venom Assault Armor | KEEP |
+| 54 | Cortosis Gauntlet | Legacy Era Campaign Guide | `armor-cortosis-gauntlet` - Cortosis Gauntlet | KEEP |
+| 55 | Imperial Knight Armor | Legacy Era Campaign Guide | `armor-imperial-knight-armor` - Imperial Knight Armor | KEEP |
+| 56 | Knighthunter Armor | Legacy Era Campaign Guide | `armor-knighthunter-armor` - Knighthunter Armor | KEEP |
+| 57 | Merr-Sonn KZZ Riot Armor | Rebellion Era Campaign Guide | `armor-kzz-riot-armor` - KZZ Riot Armor | EDIT |
+| 58 | Shield Gauntlet | Rebellion Era Campaign Guide | `armor-shield-gauntlet` - Shield Gauntlet | KEEP |
+| 59 | Seatrooper Armor | Rebellion Era Campaign Guide | `armor-seatrooper-armor` - Seatrooper Armor | KEEP |
+| 60 | Zero-Gravity Stormtrooper Armor | Rebellion Era Campaign Guide | `armor-zero-gravity-stormtrooper-armor` - Zero-Gravity Stormtrooper Armor | KEEP |
+| 61 | Beskar'gam, Light | Scum and Villainy | `armor-light-beskargam` - Light Beskar'gam | EDIT |
+| 62 | Half-Vest | Scum and Villainy | `armor-half-vest` - Half-Vest | KEEP |
+| 63 | Beskar'gam, Medium | Scum and Villainy | `armor-medium-beskargam` - Medium Beskar'gam | EDIT |
+| 64 | GTU AV-1S Scout Armor | Scum and Villainy | `armor-av1s-scout-armor` - AV-1S Scout Armor | EDIT |
+| 65 | Krall 210 Personal Armor | Scum and Villainy | `armor-model-210-personal-armor` - Model 210 Personal Armor | EDIT |
+| 66 | Beskar'gam, Heavy | Scum and Villainy | `armor-heavy-beskargam` - Heavy Beskar'gam | EDIT |
+| 67 | GTU AV-1C Combat Armor | Scum and Villainy | `armor-av1c-combat-armor` - AV-1C Combat Armor | EDIT |
+
+### Repo-only / unresolved (REVIEW)
+
+| Repo ID | Repo name | Source claim | Disposition | Action |
+|---|---|---|---|---|
+| `armor-heavy-pressure-suit` | Heavy Pressure Suit | Web Enhancements | REVIEW | NO_AUTOMATIC_MUTATION_SOURCE_NOT_IN_SSOT |
+| `armor-light-pressure-suit` | Light Pressure Suit | Web Enhancements | REVIEW | NO_AUTOMATIC_MUTATION_SOURCE_NOT_IN_SSOT |
+| `armor-medium-pressure-suit` | Medium Pressure Suit | Web Enhancements | REVIEW | NO_AUTOMATIC_MUTATION_SOURCE_NOT_IN_SSOT |
+
+The pressure suits claim Web Enhancements, which is outside the supplied source set. Not removed, not renamed, not modified until the defining source is supplied.
+
+### EDIT rename ledger and measured name-based consumers
+
+| Repo ID | Current name | Canonical name | Name-based consumers (scripts / tests / store) |
+|---|---|---|---|
+| `armor-armored-space-suit` | Armored Space Suit | Armored Spacesuit | data/store/armor-store-descriptions.json ×1 |
+| `armor-heavy-battle-armor` | Heavy Battle Armor | Battle Armor, Heavy | data/store/armor-store-descriptions.json ×1 |
+| `armor-armored-flight-suit` | Armored Flight Suit | Flight Suit, Armored | data/store/armor-store-descriptions.json ×1 |
+| `armor-padded-flight-suit` | Padded Flight Suit | Flight Suit, Padded | data/store/armor-store-descriptions.json ×1 |
+| `armor-vonduun-crabshell` | Vonduun Crabshell | Vonduun Crabshell Armor | data/store/armor-store-descriptions.json ×1 |
+| `armor-microbe-armor` | Microbe Armor | Barabel Microbe Armor | data/store/armor-store-descriptions.json ×1 |
+| `armor-m110-stalker-armor` | M1-10 Stalker Armor | Stalker Armor | data/store/armor-store-descriptions.json ×1; tests/energy-shield-defense-and-activation-authority.test.mjs ×2; tests/garee-full-skill-derivation-parity.test.mjs ×1; tests/legacy-equip-state-single-pass-authority.test.mjs ×1 |
+| `armor-light-dark-armor` | Light Dark Armor | Dark Armor, Light | data/store/armor-store-descriptions.json ×1; scripts/apps/force-alchemy/force-alchemy-mechanics-service.js ×1; scripts/talents/DarkSidePowers.js ×1 |
+| `armor-light-jedi-battle-armor` | Light Jedi Battle Armor | Jedi Battle Armor, Light | data/store/armor-store-descriptions.json ×1 |
+| `armor-blinding-helmet` | Blinding Helmet | WJ-880 Blinding Helmet | data/store/armor-store-descriptions.json ×1 |
+| `armor-dark-armor` | Dark Armor | Dark Armor, Medium | data/store/armor-store-descriptions.json ×1; scripts/apps/force-alchemy/force-alchemy-context-resolver.js ×1; scripts/apps/force-alchemy/force-alchemy-mechanics-service.js ×1; scripts/talents/DarkSidePowers.js ×1 |
+| `armor-jedi-battle-armor` | Jedi Battle Armor | Jedi Battle Armor, Medium | data/store/armor-store-descriptions.json ×1 |
+| `armor-heavy-dark-armor` | Heavy Dark Armor | Dark Armor, Heavy | data/store/armor-store-descriptions.json ×1; scripts/apps/force-alchemy/force-alchemy-mechanics-service.js ×1; scripts/talents/DarkSidePowers.js ×1 |
+| `armor-light-powered-battle-armor` | Light Powered Battle Armor | Battle Armor, Light Powered | data/store/armor-store-descriptions.json ×1 |
+| `armor-light-battle-armor` | Light Battle Armor | Battle Armor, Light | data/store/armor-store-descriptions.json ×1 |
+| `armor-powered-battle-armor` | Powered Battle Armor | Battle Armor, Powered | data/store/armor-store-descriptions.json ×1 |
+| `armor-heavy-powered-battle-armor` | Heavy Powered Battle Armor | Battle Armor, Heavy Powered | data/store/armor-store-descriptions.json ×1 |
+| `armor-kzz-riot-armor` | KZZ Riot Armor | Merr-Sonn KZZ Riot Armor | data/store/armor-store-descriptions.json ×1 |
+| `armor-light-beskargam` | Light Beskar'gam | Beskar'gam, Light | data/store/armor-store-descriptions.json ×1 |
+| `armor-medium-beskargam` | Medium Beskar'gam | Beskar'gam, Medium | data/store/armor-store-descriptions.json ×1 |
+| `armor-av1s-scout-armor` | AV-1S Scout Armor | GTU AV-1S Scout Armor | data/store/armor-store-descriptions.json ×1 |
+| `armor-model-210-personal-armor` | Model 210 Personal Armor | Krall 210 Personal Armor | data/store/armor-store-descriptions.json ×1 |
+| `armor-heavy-beskargam` | Heavy Beskar'gam | Beskar'gam, Heavy | data/store/armor-store-descriptions.json ×1 |
+| `armor-av1c-combat-armor` | AV-1C Combat Armor | GTU AV-1C Combat Armor | data/store/armor-store-descriptions.json ×1 |
+
+Notes:
+
+- Measured at readback 2026-10-05 from quoted exact old-name strings; ID references are limited to data/store/armor-store-descriptions.json and tools/fix-armor-data.js (generator history).
+- Force Alchemy (scripts/apps/force-alchemy/force-alchemy-mechanics-service.js, force-alchemy-context-resolver.js) and scripts/talents/DarkSidePowers.js hard-code result names 'Light Dark Armor', 'Dark Armor', 'Heavy Dark Armor' and their own stat profiles; they do not look up the pack record by name, so a record rename will not break them but newly crafted items will keep the old display names until those strings are updated.
+- data/armor/{light,medium,heavy}.json are unconsumed evidence files (see Phase 0 census) and are not rename targets.
+
+### Execution guardrails
+
+1. Apply only explicit EDIT identity renames if executing Phase 0-2 now.
+2. Do not alter descriptions, stats, schema, tags, source/page fields, or mechanics in this phase.
+3. Do not delete the three pressure-suit records; they are REVIEW pending source verification.
+4. Do not fold energy-shield SR records into three generic light/medium/heavy records; the supplied KOTOR source explicitly distinguishes six SR price variants.
+5. Do not touch armor upgrades, droid armor/plating, vehicle/starship armor, or natural armor.
+6. Renames keep the record _id. Before any rename executes, update name-based consumers listed in renameImpact (Force Alchemy result names, tests, data/store/armor-store-descriptions.json) and apply to the aggregate and all derived subpacks together.
+7. No production mutation is authorized by Phase 0-2 until the owner explicitly directs execution (see ownerRulings).
+
+### QA gate
+
+- 67/67 canonical identities map to exactly one repo record; 70/70 repo records covered exactly once (67 mapped + 3 REVIEW).
+- 24 EDIT (name differs), 43 KEEP (name equals), 0 duplicates.
+- Verified against `packs/armor.db` by `tools/verify-item-weapons-authority.mjs`; aggregate and armor subpack names currently agree for all 70 records.
+
 ## Pending phases
 
-0-2 Armor · 0-3 Equipment · 1 Provenance (pages) · 2 Descriptions · 3 Schema · 4 Stats · 5 Reconciliation · 6 Legacy tags · 7 Semantic tags · 8 Migration
+0-3 Equipment · 1 Provenance (pages) · 2 Descriptions · 3 Schema · 4 Stats · 5 Reconciliation · 6 Legacy tags · 7 Semantic tags · 8 Migration

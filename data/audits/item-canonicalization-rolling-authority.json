@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "authorityType": "item-canonicalization-rolling-authority",
-  "status": "ACTIVE — Phase 0 complete; Phase 0-1 Weapons certified by owner",
+  "status": "ACTIVE — Phase 0 complete; Phase 0-1 Weapons and Phase 0-2 Armor certified by owner",
   "sourcePolicy": "User-provided SWSE TXT/PDF sourcebooks are the canonical SSOT. Repository compendiums are implementation targets only.",
   "ownerRulings": "docs/audits/item-phase-0-ssot-census.md §7a",
   "architecture": {
@@ -6058,10 +6058,1888 @@
         "ADD records are blocked from production creation until later content/stat/schema phases certify the fields needed for a complete item.",
         "Before any REMOVE is executed, reroute or migrate every entry in referencedOutsideWeaponPacks (actor packs, templates, nonheroic profiles, store descriptions)."
       ]
+    },
+    "0-2-armor": {
+      "status": "CERTIFIED_PHASE_0_2_IDENTITY_AUTHORITY",
+      "sourcePolicy": "User-provided SWSE TXT/PDF sourcebooks are the canonical SSOT. Repository compendiums are implementation targets only.",
+      "scope": "Character-scale wearable armor and personal energy shields. Excludes armor upgrades, droid armor/plating, natural armor, vehicle/starship armor, and NPC-only/custom armor variants without standalone published item identities.",
+      "phaseBoundary": "Phase 0-2 certifies armor identity and repo presence/disposition only. It does not certify descriptions, statistics, schema fields, mechanics, semantic tags, or page provenance.",
+      "repoSnapshot": {
+        "repository": "docflowGM/foundryvtt-swse",
+        "ref": "main",
+        "pack": "packs/armor.db",
+        "repoArmorRecords": 70
+      },
+      "canonicalCounts": {
+        "armorIdentities": 67,
+        "byDisposition": {
+          "EDIT": 24,
+          "KEEP": 43
+        },
+        "sourceClaimsByBook": {
+          "Clone Wars Campaign Guide": 5,
+          "Core Rulebook": 11,
+          "Galaxy at War": 7,
+          "Jedi Academy Training Manual": 7,
+          "Knights of the Old Republic Campaign Guide": 21,
+          "Legacy Era Campaign Guide": 5,
+          "Rebellion Era Campaign Guide": 4,
+          "Scum and Villainy": 8
+        }
+      },
+      "repoCounts": {
+        "armorRecords": 70,
+        "byDisposition": {
+          "EDIT": 24,
+          "KEEP": 43,
+          "REVIEW": 3
+        }
+      },
+      "allowedDispositions": [
+        "KEEP",
+        "ADD",
+        "EDIT",
+        "REMOVE",
+        "REVIEW"
+      ],
+      "canonicalArmor": [
+        {
+          "canonicalName": "Armored Spacesuit",
+          "family": "armor",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Core Rulebook",
+              "ssot": "user-provided TXT/PDF",
+              "evidence": "Core Rulebook Table 8-7 / armor description heading; PDF visually verified for table/heading identity."
+            }
+          ],
+          "phase0Disposition": "EDIT",
+          "repo": {
+            "present": true,
+            "pack": "packs/armor.db",
+            "matchedName": "Armored Space Suit",
+            "matchedId": "armor-armored-space-suit",
+            "matchType": "alias"
+          },
+          "reason": "Repo identity is the canonical armor but display name differs from the published armor identity: 'Armored Space Suit' -> 'Armored Spacesuit'.",
+          "executionAction": "RENAME_RECORD_TO_CANONICAL_IDENTITY"
+        },
+        {
+          "canonicalName": "Battle Armor",
+          "family": "armor",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Core Rulebook",
+              "ssot": "user-provided TXT/PDF",
+              "evidence": "Core Rulebook Table 8-7 / armor description heading; PDF visually verified for table/heading identity."
+            }
+          ],
+          "phase0Disposition": "KEEP",
+          "repo": {
+            "present": true,
+            "pack": "packs/armor.db",
+            "matchedName": "Battle Armor",
+            "matchedId": "armor-battle-armor",
+            "matchType": "exact"
+          },
+          "reason": "Exact canonical identity present.",
+          "executionAction": "NO_IDENTITY_CHANGE"
+        },
+        {
+          "canonicalName": "Battle Armor, Heavy",
+          "family": "armor",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Core Rulebook",
+              "ssot": "user-provided TXT/PDF",
+              "evidence": "Core Rulebook Table 8-7 / armor description heading; PDF visually verified for table/heading identity."
+            }
+          ],
+          "phase0Disposition": "EDIT",
+          "repo": {
+            "present": true,
+            "pack": "packs/armor.db",
+            "matchedName": "Heavy Battle Armor",
+            "matchedId": "armor-heavy-battle-armor",
+            "matchType": "alias"
+          },
+          "reason": "Repo identity is the canonical armor but display name differs from the published armor identity: 'Heavy Battle Armor' -> 'Battle Armor, Heavy'.",
+          "executionAction": "RENAME_RECORD_TO_CANONICAL_IDENTITY"
+        },
+        {
+          "canonicalName": "Blast Helmet and Vest",
+          "family": "armor",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Core Rulebook",
+              "ssot": "user-provided TXT/PDF",
+              "evidence": "Core Rulebook Table 8-7 / armor description heading; PDF visually verified for table/heading identity."
+            }
+          ],
+          "phase0Disposition": "KEEP",
+          "repo": {
+            "present": true,
+            "pack": "packs/armor.db",
+            "matchedName": "Blast Helmet and Vest",
+            "matchedId": "armor-blast-helmet-and-vest",
+            "matchType": "exact"
+          },
+          "reason": "Exact canonical identity present.",
+          "executionAction": "NO_IDENTITY_CHANGE"
+        },
+        {
+          "canonicalName": "Ceremonial Armor",
+          "family": "armor",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Core Rulebook",
+              "ssot": "user-provided TXT/PDF",
+              "evidence": "Core Rulebook Table 8-7 / armor description heading; PDF visually verified for table/heading identity."
+            }
+          ],
+          "phase0Disposition": "KEEP",
+          "repo": {
+            "present": true,
+            "pack": "packs/armor.db",
+            "matchedName": "Ceremonial Armor",
+            "matchedId": "armor-ceremonial-armor",
+            "matchType": "exact"
+          },
+          "reason": "Exact canonical identity present.",
+          "executionAction": "NO_IDENTITY_CHANGE"
+        },
+        {
+          "canonicalName": "Combat Jumpsuit",
+          "family": "armor",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Core Rulebook",
+              "ssot": "user-provided TXT/PDF",
+              "evidence": "Core Rulebook Table 8-7 / armor description heading; PDF visually verified for table/heading identity."
+            }
+          ],
+          "phase0Disposition": "KEEP",
+          "repo": {
+            "present": true,
+            "pack": "packs/armor.db",
+            "matchedName": "Combat Jumpsuit",
+            "matchedId": "armor-combat-jumpsuit",
+            "matchType": "exact"
+          },
+          "reason": "Exact canonical identity present.",
+          "executionAction": "NO_IDENTITY_CHANGE"
+        },
+        {
+          "canonicalName": "Corellian Powersuit",
+          "family": "armor",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Core Rulebook",
+              "ssot": "user-provided TXT/PDF",
+              "evidence": "Core Rulebook Table 8-7 / armor description heading; PDF visually verified for table/heading identity."
+            }
+          ],
+          "phase0Disposition": "KEEP",
+          "repo": {
+            "present": true,
+            "pack": "packs/armor.db",
+            "matchedName": "Corellian Powersuit",
+            "matchedId": "armor-corellian-powersuit",
+            "matchType": "exact"
+          },
+          "reason": "Exact canonical identity present.",
+          "executionAction": "NO_IDENTITY_CHANGE"
+        },
+        {
+          "canonicalName": "Flight Suit, Armored",
+          "family": "armor",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Core Rulebook",
+              "ssot": "user-provided TXT/PDF",
+              "evidence": "Core Rulebook Table 8-7 / armor description heading; PDF visually verified for table/heading identity."
+            }
+          ],
+          "phase0Disposition": "EDIT",
+          "repo": {
+            "present": true,
+            "pack": "packs/armor.db",
+            "matchedName": "Armored Flight Suit",
+            "matchedId": "armor-armored-flight-suit",
+            "matchType": "alias"
+          },
+          "reason": "Repo identity is the canonical armor but display name differs from the published armor identity: 'Armored Flight Suit' -> 'Flight Suit, Armored'.",
+          "executionAction": "RENAME_RECORD_TO_CANONICAL_IDENTITY"
+        },
+        {
+          "canonicalName": "Flight Suit, Padded",
+          "family": "armor",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Core Rulebook",
+              "ssot": "user-provided TXT/PDF",
+              "evidence": "Core Rulebook Table 8-7 / armor description heading; PDF visually verified for table/heading identity."
+            }
+          ],
+          "phase0Disposition": "EDIT",
+          "repo": {
+            "present": true,
+            "pack": "packs/armor.db",
+            "matchedName": "Padded Flight Suit",
+            "matchedId": "armor-padded-flight-suit",
+            "matchType": "alias"
+          },
+          "reason": "Repo identity is the canonical armor but display name differs from the published armor identity: 'Padded Flight Suit' -> 'Flight Suit, Padded'.",
+          "executionAction": "RENAME_RECORD_TO_CANONICAL_IDENTITY"
+        },
+        {
+          "canonicalName": "Stormtrooper Armor",
+          "family": "armor",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Core Rulebook",
+              "ssot": "user-provided TXT/PDF",
+              "evidence": "Core Rulebook Table 8-7 / armor description heading; PDF visually verified for table/heading identity."
+            }
+          ],
+          "phase0Disposition": "KEEP",
+          "repo": {
+            "present": true,
+            "pack": "packs/armor.db",
+            "matchedName": "Stormtrooper Armor",
+            "matchedId": "armor-stormtrooper-armor",
+            "matchType": "exact"
+          },
+          "reason": "Exact canonical identity present.",
+          "executionAction": "NO_IDENTITY_CHANGE"
+        },
+        {
+          "canonicalName": "Vonduun Crabshell Armor",
+          "family": "armor",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Core Rulebook",
+              "ssot": "user-provided TXT/PDF",
+              "evidence": "Core Rulebook Table 8-7 / armor description heading; PDF visually verified for table/heading identity."
+            }
+          ],
+          "phase0Disposition": "EDIT",
+          "repo": {
+            "present": true,
+            "pack": "packs/armor.db",
+            "matchedName": "Vonduun Crabshell",
+            "matchedId": "armor-vonduun-crabshell",
+            "matchType": "alias"
+          },
+          "reason": "Repo identity is the canonical armor but display name differs from the published armor identity: 'Vonduun Crabshell' -> 'Vonduun Crabshell Armor'.",
+          "executionAction": "RENAME_RECORD_TO_CANONICAL_IDENTITY"
+        },
+        {
+          "canonicalName": "Camo Armor",
+          "family": "armor",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Clone Wars Campaign Guide",
+              "ssot": "user-provided TXT/PDF",
+              "evidence": "Published armor table and/or armor entry heading in supplied source text."
+            }
+          ],
+          "phase0Disposition": "KEEP",
+          "repo": {
+            "present": true,
+            "pack": "packs/armor.db",
+            "matchedName": "Camo Armor",
+            "matchedId": "armor-camo-armor",
+            "matchType": "exact"
+          },
+          "reason": "Exact canonical identity present.",
+          "executionAction": "NO_IDENTITY_CHANGE"
+        },
+        {
+          "canonicalName": "Shadowsuit",
+          "family": "armor",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Clone Wars Campaign Guide",
+              "ssot": "user-provided TXT/PDF",
+              "evidence": "Published armor table and/or armor entry heading in supplied source text."
+            },
+            {
+              "book": "Scum and Villainy",
+              "ssot": "user-provided TXT/PDF",
+              "evidence": "Scum and Villainy Table 2-6 Armor; PDF visually verified."
+            }
+          ],
+          "phase0Disposition": "KEEP",
+          "repo": {
+            "present": true,
+            "pack": "packs/armor.db",
+            "matchedName": "Shadowsuit",
+            "matchedId": "armor-shadowsuit",
+            "matchType": "exact"
+          },
+          "reason": "Exact canonical identity present.",
+          "executionAction": "NO_IDENTITY_CHANGE"
+        },
+        {
+          "canonicalName": "Thinsuit",
+          "family": "armor",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Clone Wars Campaign Guide",
+              "ssot": "user-provided TXT/PDF",
+              "evidence": "Published armor table and/or armor entry heading in supplied source text."
+            }
+          ],
+          "phase0Disposition": "KEEP",
+          "repo": {
+            "present": true,
+            "pack": "packs/armor.db",
+            "matchedName": "Thinsuit",
+            "matchedId": "armor-thinsuit",
+            "matchType": "exact"
+          },
+          "reason": "Exact canonical identity present.",
+          "executionAction": "NO_IDENTITY_CHANGE"
+        },
+        {
+          "canonicalName": "Tracker Utility Vest",
+          "family": "armor",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Clone Wars Campaign Guide",
+              "ssot": "user-provided TXT/PDF",
+              "evidence": "Published armor table and/or armor entry heading in supplied source text."
+            }
+          ],
+          "phase0Disposition": "KEEP",
+          "repo": {
+            "present": true,
+            "pack": "packs/armor.db",
+            "matchedName": "Tracker Utility Vest",
+            "matchedId": "armor-tracker-utility-vest",
+            "matchType": "exact"
+          },
+          "reason": "Exact canonical identity present.",
+          "executionAction": "NO_IDENTITY_CHANGE"
+        },
+        {
+          "canonicalName": "Vacuum Pod",
+          "family": "armor",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Clone Wars Campaign Guide",
+              "ssot": "user-provided TXT/PDF",
+              "evidence": "Published armor table and/or armor entry heading in supplied source text."
+            }
+          ],
+          "phase0Disposition": "KEEP",
+          "repo": {
+            "present": true,
+            "pack": "packs/armor.db",
+            "matchedName": "Vacuum Pod",
+            "matchedId": "armor-vacuum-pod",
+            "matchType": "exact"
+          },
+          "reason": "Exact canonical identity present.",
+          "executionAction": "NO_IDENTITY_CHANGE"
+        },
+        {
+          "canonicalName": "Barabel Microbe Armor",
+          "family": "armor",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Galaxy at War",
+              "ssot": "user-provided TXT/PDF",
+              "evidence": "Published armor table and/or armor entry heading in supplied source text."
+            }
+          ],
+          "phase0Disposition": "EDIT",
+          "repo": {
+            "present": true,
+            "pack": "packs/armor.db",
+            "matchedName": "Microbe Armor",
+            "matchedId": "armor-microbe-armor",
+            "matchType": "alias"
+          },
+          "reason": "Repo identity is the canonical armor but display name differs from the published armor identity: 'Microbe Armor' -> 'Barabel Microbe Armor'.",
+          "executionAction": "RENAME_RECORD_TO_CANONICAL_IDENTITY"
+        },
+        {
+          "canonicalName": "Biohazard Suit",
+          "family": "armor",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Galaxy at War",
+              "ssot": "user-provided TXT/PDF",
+              "evidence": "Published armor table and/or armor entry heading in supplied source text."
+            }
+          ],
+          "phase0Disposition": "KEEP",
+          "repo": {
+            "present": true,
+            "pack": "packs/armor.db",
+            "matchedName": "Biohazard Suit",
+            "matchedId": "armor-biohazard-suit",
+            "matchType": "exact"
+          },
+          "reason": "Exact canonical identity present.",
+          "executionAction": "NO_IDENTITY_CHANGE"
+        },
+        {
+          "canonicalName": "Camo Scout Armor",
+          "family": "armor",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Galaxy at War",
+              "ssot": "user-provided TXT/PDF",
+              "evidence": "Published armor table and/or armor entry heading in supplied source text."
+            }
+          ],
+          "phase0Disposition": "KEEP",
+          "repo": {
+            "present": true,
+            "pack": "packs/armor.db",
+            "matchedName": "Camo Scout Armor",
+            "matchedId": "armor-camo-scout-armor",
+            "matchType": "exact"
+          },
+          "reason": "Exact canonical identity present.",
+          "executionAction": "NO_IDENTITY_CHANGE"
+        },
+        {
+          "canonicalName": "Katarn-Class Commando Armor",
+          "family": "armor",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Galaxy at War",
+              "ssot": "user-provided TXT/PDF",
+              "evidence": "Published armor table and/or armor entry heading in supplied source text."
+            }
+          ],
+          "phase0Disposition": "KEEP",
+          "repo": {
+            "present": true,
+            "pack": "packs/armor.db",
+            "matchedName": "Katarn-Class Commando Armor",
+            "matchedId": "armor-katarn-class-commando-armor",
+            "matchType": "exact"
+          },
+          "reason": "Exact canonical identity present.",
+          "executionAction": "NO_IDENTITY_CHANGE"
+        },
+        {
+          "canonicalName": "Marine Armor",
+          "family": "armor",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Galaxy at War",
+              "ssot": "user-provided TXT/PDF",
+              "evidence": "Published armor table and/or armor entry heading in supplied source text."
+            }
+          ],
+          "phase0Disposition": "KEEP",
+          "repo": {
+            "present": true,
+            "pack": "packs/armor.db",
+            "matchedName": "Marine Armor",
+            "matchedId": "armor-marine-armor",
+            "matchType": "exact"
+          },
+          "reason": "Exact canonical identity present.",
+          "executionAction": "NO_IDENTITY_CHANGE"
+        },
+        {
+          "canonicalName": "Stalker Armor",
+          "family": "armor",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Galaxy at War",
+              "ssot": "user-provided TXT/PDF",
+              "evidence": "Published armor table and/or armor entry heading in supplied source text."
+            }
+          ],
+          "phase0Disposition": "EDIT",
+          "repo": {
+            "present": true,
+            "pack": "packs/armor.db",
+            "matchedName": "M1-10 Stalker Armor",
+            "matchedId": "armor-m110-stalker-armor",
+            "matchType": "alias"
+          },
+          "reason": "Repo identity is the canonical armor but display name differs from the published armor identity: 'M1-10 Stalker Armor' -> 'Stalker Armor'.",
+          "executionAction": "RENAME_RECORD_TO_CANONICAL_IDENTITY"
+        },
+        {
+          "canonicalName": "Stun Cloak",
+          "family": "armor",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Galaxy at War",
+              "ssot": "user-provided TXT/PDF",
+              "evidence": "Published armor table and/or armor entry heading in supplied source text."
+            }
+          ],
+          "phase0Disposition": "KEEP",
+          "repo": {
+            "present": true,
+            "pack": "packs/armor.db",
+            "matchedName": "Stun Cloak",
+            "matchedId": "armor-stun-cloak",
+            "matchType": "exact"
+          },
+          "reason": "Exact canonical identity present.",
+          "executionAction": "NO_IDENTITY_CHANGE"
+        },
+        {
+          "canonicalName": "Dark Armor, Light",
+          "family": "armor",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Jedi Academy Training Manual",
+              "ssot": "user-provided TXT/PDF",
+              "evidence": "Published armor table and/or armor entry heading in supplied source text."
+            }
+          ],
+          "phase0Disposition": "EDIT",
+          "repo": {
+            "present": true,
+            "pack": "packs/armor.db",
+            "matchedName": "Light Dark Armor",
+            "matchedId": "armor-light-dark-armor",
+            "matchType": "alias"
+          },
+          "reason": "Repo identity is the canonical armor but display name differs from the published armor identity: 'Light Dark Armor' -> 'Dark Armor, Light'.",
+          "executionAction": "RENAME_RECORD_TO_CANONICAL_IDENTITY"
+        },
+        {
+          "canonicalName": "Jedi Battle Armor, Light",
+          "family": "armor",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Jedi Academy Training Manual",
+              "ssot": "user-provided TXT/PDF",
+              "evidence": "Published armor table and/or armor entry heading in supplied source text."
+            }
+          ],
+          "phase0Disposition": "EDIT",
+          "repo": {
+            "present": true,
+            "pack": "packs/armor.db",
+            "matchedName": "Light Jedi Battle Armor",
+            "matchedId": "armor-light-jedi-battle-armor",
+            "matchType": "alias"
+          },
+          "reason": "Repo identity is the canonical armor but display name differs from the published armor identity: 'Light Jedi Battle Armor' -> 'Jedi Battle Armor, Light'.",
+          "executionAction": "RENAME_RECORD_TO_CANONICAL_IDENTITY"
+        },
+        {
+          "canonicalName": "WJ-880 Blinding Helmet",
+          "family": "armor",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Jedi Academy Training Manual",
+              "ssot": "user-provided TXT/PDF",
+              "evidence": "Published armor table and/or armor entry heading in supplied source text."
+            }
+          ],
+          "phase0Disposition": "EDIT",
+          "repo": {
+            "present": true,
+            "pack": "packs/armor.db",
+            "matchedName": "Blinding Helmet",
+            "matchedId": "armor-blinding-helmet",
+            "matchType": "alias"
+          },
+          "reason": "Repo identity is the canonical armor but display name differs from the published armor identity: 'Blinding Helmet' -> 'WJ-880 Blinding Helmet'.",
+          "executionAction": "RENAME_RECORD_TO_CANONICAL_IDENTITY"
+        },
+        {
+          "canonicalName": "Dark Armor, Medium",
+          "family": "armor",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Jedi Academy Training Manual",
+              "ssot": "user-provided TXT/PDF",
+              "evidence": "Published armor table and/or armor entry heading in supplied source text."
+            }
+          ],
+          "phase0Disposition": "EDIT",
+          "repo": {
+            "present": true,
+            "pack": "packs/armor.db",
+            "matchedName": "Dark Armor",
+            "matchedId": "armor-dark-armor",
+            "matchType": "alias"
+          },
+          "reason": "Repo identity is the canonical armor but display name differs from the published armor identity: 'Dark Armor' -> 'Dark Armor, Medium'.",
+          "executionAction": "RENAME_RECORD_TO_CANONICAL_IDENTITY"
+        },
+        {
+          "canonicalName": "Jedi Battle Armor, Medium",
+          "family": "armor",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Jedi Academy Training Manual",
+              "ssot": "user-provided TXT/PDF",
+              "evidence": "Published armor table and/or armor entry heading in supplied source text."
+            }
+          ],
+          "phase0Disposition": "EDIT",
+          "repo": {
+            "present": true,
+            "pack": "packs/armor.db",
+            "matchedName": "Jedi Battle Armor",
+            "matchedId": "armor-jedi-battle-armor",
+            "matchType": "alias"
+          },
+          "reason": "Repo identity is the canonical armor but display name differs from the published armor identity: 'Jedi Battle Armor' -> 'Jedi Battle Armor, Medium'.",
+          "executionAction": "RENAME_RECORD_TO_CANONICAL_IDENTITY"
+        },
+        {
+          "canonicalName": "Dark Armor, Heavy",
+          "family": "armor",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Jedi Academy Training Manual",
+              "ssot": "user-provided TXT/PDF",
+              "evidence": "Published armor table and/or armor entry heading in supplied source text."
+            }
+          ],
+          "phase0Disposition": "EDIT",
+          "repo": {
+            "present": true,
+            "pack": "packs/armor.db",
+            "matchedName": "Heavy Dark Armor",
+            "matchedId": "armor-heavy-dark-armor",
+            "matchType": "alias"
+          },
+          "reason": "Repo identity is the canonical armor but display name differs from the published armor identity: 'Heavy Dark Armor' -> 'Dark Armor, Heavy'.",
+          "executionAction": "RENAME_RECORD_TO_CANONICAL_IDENTITY"
+        },
+        {
+          "canonicalName": "Orbalisk Armor",
+          "family": "armor",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Jedi Academy Training Manual",
+              "ssot": "user-provided TXT/PDF",
+              "evidence": "Published armor table and/or armor entry heading in supplied source text."
+            }
+          ],
+          "phase0Disposition": "KEEP",
+          "repo": {
+            "present": true,
+            "pack": "packs/armor.db",
+            "matchedName": "Orbalisk Armor",
+            "matchedId": "armor-orbalisk-armor",
+            "matchType": "exact"
+          },
+          "reason": "Exact canonical identity present.",
+          "executionAction": "NO_IDENTITY_CHANGE"
+        },
+        {
+          "canonicalName": "Energy Shield (SR 5)",
+          "family": "armor",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Knights of the Old Republic Campaign Guide",
+              "ssot": "user-provided TXT/PDF",
+              "evidence": "KOTOR Table 5-3 establishes energy shields as armor; Table 5-4 visually verifies priced SR 5/10/15/20/25/30 variants."
+            }
+          ],
+          "phase0Disposition": "KEEP",
+          "repo": {
+            "present": true,
+            "pack": "packs/armor.db",
+            "matchedName": "Energy Shield (SR 5)",
+            "matchedId": "armor-energy-shield-sr5",
+            "matchType": "exact"
+          },
+          "reason": "Exact canonical identity present.",
+          "executionAction": "NO_IDENTITY_CHANGE"
+        },
+        {
+          "canonicalName": "Energy Shield (SR 10)",
+          "family": "armor",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Knights of the Old Republic Campaign Guide",
+              "ssot": "user-provided TXT/PDF",
+              "evidence": "KOTOR Table 5-3 establishes energy shields as armor; Table 5-4 visually verifies priced SR 5/10/15/20/25/30 variants."
+            }
+          ],
+          "phase0Disposition": "KEEP",
+          "repo": {
+            "present": true,
+            "pack": "packs/armor.db",
+            "matchedName": "Energy Shield (SR 10)",
+            "matchedId": "armor-energy-shield-sr10",
+            "matchType": "exact"
+          },
+          "reason": "Exact canonical identity present.",
+          "executionAction": "NO_IDENTITY_CHANGE"
+        },
+        {
+          "canonicalName": "Energy Shield (SR 15)",
+          "family": "armor",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Knights of the Old Republic Campaign Guide",
+              "ssot": "user-provided TXT/PDF",
+              "evidence": "KOTOR Table 5-3 establishes energy shields as armor; Table 5-4 visually verifies priced SR 5/10/15/20/25/30 variants."
+            }
+          ],
+          "phase0Disposition": "KEEP",
+          "repo": {
+            "present": true,
+            "pack": "packs/armor.db",
+            "matchedName": "Energy Shield (SR 15)",
+            "matchedId": "armor-energy-shield-sr15",
+            "matchType": "exact"
+          },
+          "reason": "Exact canonical identity present.",
+          "executionAction": "NO_IDENTITY_CHANGE"
+        },
+        {
+          "canonicalName": "Energy Shield (SR 20)",
+          "family": "armor",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Knights of the Old Republic Campaign Guide",
+              "ssot": "user-provided TXT/PDF",
+              "evidence": "KOTOR Table 5-3 establishes energy shields as armor; Table 5-4 visually verifies priced SR 5/10/15/20/25/30 variants."
+            }
+          ],
+          "phase0Disposition": "KEEP",
+          "repo": {
+            "present": true,
+            "pack": "packs/armor.db",
+            "matchedName": "Energy Shield (SR 20)",
+            "matchedId": "armor-energy-shield-sr20",
+            "matchType": "exact"
+          },
+          "reason": "Exact canonical identity present.",
+          "executionAction": "NO_IDENTITY_CHANGE"
+        },
+        {
+          "canonicalName": "Energy Shield (SR 25)",
+          "family": "armor",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Knights of the Old Republic Campaign Guide",
+              "ssot": "user-provided TXT/PDF",
+              "evidence": "KOTOR Table 5-3 establishes energy shields as armor; Table 5-4 visually verifies priced SR 5/10/15/20/25/30 variants."
+            }
+          ],
+          "phase0Disposition": "KEEP",
+          "repo": {
+            "present": true,
+            "pack": "packs/armor.db",
+            "matchedName": "Energy Shield (SR 25)",
+            "matchedId": "armor-energy-shield-sr25",
+            "matchType": "exact"
+          },
+          "reason": "Exact canonical identity present.",
+          "executionAction": "NO_IDENTITY_CHANGE"
+        },
+        {
+          "canonicalName": "Energy Shield (SR 30)",
+          "family": "armor",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Knights of the Old Republic Campaign Guide",
+              "ssot": "user-provided TXT/PDF",
+              "evidence": "KOTOR Table 5-3 establishes energy shields as armor; Table 5-4 visually verifies priced SR 5/10/15/20/25/30 variants."
+            }
+          ],
+          "phase0Disposition": "KEEP",
+          "repo": {
+            "present": true,
+            "pack": "packs/armor.db",
+            "matchedName": "Energy Shield (SR 30)",
+            "matchedId": "armor-energy-shield-sr30",
+            "matchType": "exact"
+          },
+          "reason": "Exact canonical identity present.",
+          "executionAction": "NO_IDENTITY_CHANGE"
+        },
+        {
+          "canonicalName": "Fiber Armor",
+          "family": "armor",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Knights of the Old Republic Campaign Guide",
+              "ssot": "user-provided TXT/PDF",
+              "evidence": "Published armor table and/or armor entry heading in supplied source text."
+            }
+          ],
+          "phase0Disposition": "KEEP",
+          "repo": {
+            "present": true,
+            "pack": "packs/armor.db",
+            "matchedName": "Fiber Armor",
+            "matchedId": "armor-fiber-armor",
+            "matchType": "exact"
+          },
+          "reason": "Exact canonical identity present.",
+          "executionAction": "NO_IDENTITY_CHANGE"
+        },
+        {
+          "canonicalName": "Battle Armor, Light Powered",
+          "family": "armor",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Knights of the Old Republic Campaign Guide",
+              "ssot": "user-provided TXT/PDF",
+              "evidence": "Published armor table and/or armor entry heading in supplied source text."
+            }
+          ],
+          "phase0Disposition": "EDIT",
+          "repo": {
+            "present": true,
+            "pack": "packs/armor.db",
+            "matchedName": "Light Powered Battle Armor",
+            "matchedId": "armor-light-powered-battle-armor",
+            "matchType": "alias"
+          },
+          "reason": "Repo identity is the canonical armor but display name differs from the published armor identity: 'Light Powered Battle Armor' -> 'Battle Armor, Light Powered'.",
+          "executionAction": "RENAME_RECORD_TO_CANONICAL_IDENTITY"
+        },
+        {
+          "canonicalName": "Battle Armor, Light",
+          "family": "armor",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Knights of the Old Republic Campaign Guide",
+              "ssot": "user-provided TXT/PDF",
+              "evidence": "Published armor table and/or armor entry heading in supplied source text."
+            }
+          ],
+          "phase0Disposition": "EDIT",
+          "repo": {
+            "present": true,
+            "pack": "packs/armor.db",
+            "matchedName": "Light Battle Armor",
+            "matchedId": "armor-light-battle-armor",
+            "matchType": "alias"
+          },
+          "reason": "Repo identity is the canonical armor but display name differs from the published armor identity: 'Light Battle Armor' -> 'Battle Armor, Light'.",
+          "executionAction": "RENAME_RECORD_TO_CANONICAL_IDENTITY"
+        },
+        {
+          "canonicalName": "Mesh Armor",
+          "family": "armor",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Knights of the Old Republic Campaign Guide",
+              "ssot": "user-provided TXT/PDF",
+              "evidence": "Published armor table and/or armor entry heading in supplied source text."
+            }
+          ],
+          "phase0Disposition": "KEEP",
+          "repo": {
+            "present": true,
+            "pack": "packs/armor.db",
+            "matchedName": "Mesh Armor",
+            "matchedId": "armor-mesh-armor",
+            "matchType": "exact"
+          },
+          "reason": "Exact canonical identity present.",
+          "executionAction": "NO_IDENTITY_CHANGE"
+        },
+        {
+          "canonicalName": "Weave Armor",
+          "family": "armor",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Knights of the Old Republic Campaign Guide",
+              "ssot": "user-provided TXT/PDF",
+              "evidence": "Published armor table and/or armor entry heading in supplied source text."
+            }
+          ],
+          "phase0Disposition": "KEEP",
+          "repo": {
+            "present": true,
+            "pack": "packs/armor.db",
+            "matchedName": "Weave Armor",
+            "matchedId": "armor-weave-armor",
+            "matchType": "exact"
+          },
+          "reason": "Exact canonical identity present.",
+          "executionAction": "NO_IDENTITY_CHANGE"
+        },
+        {
+          "canonicalName": "Battle Armor, Powered",
+          "family": "armor",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Knights of the Old Republic Campaign Guide",
+              "ssot": "user-provided TXT/PDF",
+              "evidence": "Published armor table and/or armor entry heading in supplied source text."
+            }
+          ],
+          "phase0Disposition": "EDIT",
+          "repo": {
+            "present": true,
+            "pack": "packs/armor.db",
+            "matchedName": "Powered Battle Armor",
+            "matchedId": "armor-powered-battle-armor",
+            "matchType": "alias"
+          },
+          "reason": "Repo identity is the canonical armor but display name differs from the published armor identity: 'Powered Battle Armor' -> 'Battle Armor, Powered'.",
+          "executionAction": "RENAME_RECORD_TO_CANONICAL_IDENTITY"
+        },
+        {
+          "canonicalName": "Matrix Armor",
+          "family": "armor",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Knights of the Old Republic Campaign Guide",
+              "ssot": "user-provided TXT/PDF",
+              "evidence": "Published armor table and/or armor entry heading in supplied source text."
+            }
+          ],
+          "phase0Disposition": "KEEP",
+          "repo": {
+            "present": true,
+            "pack": "packs/armor.db",
+            "matchedName": "Matrix Armor",
+            "matchedId": "armor-matrix-armor",
+            "matchType": "exact"
+          },
+          "reason": "Exact canonical identity present.",
+          "executionAction": "NO_IDENTITY_CHANGE"
+        },
+        {
+          "canonicalName": "Battle Armor, Heavy Powered",
+          "family": "armor",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Knights of the Old Republic Campaign Guide",
+              "ssot": "user-provided TXT/PDF",
+              "evidence": "Published armor table and/or armor entry heading in supplied source text."
+            }
+          ],
+          "phase0Disposition": "EDIT",
+          "repo": {
+            "present": true,
+            "pack": "packs/armor.db",
+            "matchedName": "Heavy Powered Battle Armor",
+            "matchedId": "armor-heavy-powered-battle-armor",
+            "matchType": "alias"
+          },
+          "reason": "Repo identity is the canonical armor but display name differs from the published armor identity: 'Heavy Powered Battle Armor' -> 'Battle Armor, Heavy Powered'.",
+          "executionAction": "RENAME_RECORD_TO_CANONICAL_IDENTITY"
+        },
+        {
+          "canonicalName": "Republic Light Armor",
+          "family": "armor",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Knights of the Old Republic Campaign Guide",
+              "ssot": "user-provided TXT/PDF",
+              "evidence": "Published armor table and/or armor entry heading in supplied source text."
+            }
+          ],
+          "phase0Disposition": "KEEP",
+          "repo": {
+            "present": true,
+            "pack": "packs/armor.db",
+            "matchedName": "Republic Light Armor",
+            "matchedId": "armor-republic-light-armor",
+            "matchType": "exact"
+          },
+          "reason": "Exact canonical identity present.",
+          "executionAction": "NO_IDENTITY_CHANGE"
+        },
+        {
+          "canonicalName": "Republic Combat Armor",
+          "family": "armor",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Knights of the Old Republic Campaign Guide",
+              "ssot": "user-provided TXT/PDF",
+              "evidence": "Published armor table and/or armor entry heading in supplied source text."
+            }
+          ],
+          "phase0Disposition": "KEEP",
+          "repo": {
+            "present": true,
+            "pack": "packs/armor.db",
+            "matchedName": "Republic Combat Armor",
+            "matchedId": "armor-republic-combat-armor",
+            "matchType": "exact"
+          },
+          "reason": "Exact canonical identity present.",
+          "executionAction": "NO_IDENTITY_CHANGE"
+        },
+        {
+          "canonicalName": "Republic Heavy Armor",
+          "family": "armor",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Knights of the Old Republic Campaign Guide",
+              "ssot": "user-provided TXT/PDF",
+              "evidence": "Published armor table and/or armor entry heading in supplied source text."
+            }
+          ],
+          "phase0Disposition": "KEEP",
+          "repo": {
+            "present": true,
+            "pack": "packs/armor.db",
+            "matchedName": "Republic Heavy Armor",
+            "matchedId": "armor-republic-heavy-armor",
+            "matchType": "exact"
+          },
+          "reason": "Exact canonical identity present.",
+          "executionAction": "NO_IDENTITY_CHANGE"
+        },
+        {
+          "canonicalName": "Neo-Crusader Light Armor",
+          "family": "armor",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Knights of the Old Republic Campaign Guide",
+              "ssot": "user-provided TXT/PDF",
+              "evidence": "Published armor table and/or armor entry heading in supplied source text."
+            }
+          ],
+          "phase0Disposition": "KEEP",
+          "repo": {
+            "present": true,
+            "pack": "packs/armor.db",
+            "matchedName": "Neo-Crusader Light Armor",
+            "matchedId": "armor-neo-crusader-light-armor",
+            "matchType": "exact"
+          },
+          "reason": "Exact canonical identity present.",
+          "executionAction": "NO_IDENTITY_CHANGE"
+        },
+        {
+          "canonicalName": "Mandalorian Combat Suit",
+          "family": "armor",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Knights of the Old Republic Campaign Guide",
+              "ssot": "user-provided TXT/PDF",
+              "evidence": "Published armor table and/or armor entry heading in supplied source text."
+            }
+          ],
+          "phase0Disposition": "KEEP",
+          "repo": {
+            "present": true,
+            "pack": "packs/armor.db",
+            "matchedName": "Mandalorian Combat Suit",
+            "matchedId": "armor-mandalorian-combat-suit",
+            "matchType": "exact"
+          },
+          "reason": "Exact canonical identity present.",
+          "executionAction": "NO_IDENTITY_CHANGE"
+        },
+        {
+          "canonicalName": "Mandalorian Battle Armor",
+          "family": "armor",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Knights of the Old Republic Campaign Guide",
+              "ssot": "user-provided TXT/PDF",
+              "evidence": "Published armor table and/or armor entry heading in supplied source text."
+            }
+          ],
+          "phase0Disposition": "KEEP",
+          "repo": {
+            "present": true,
+            "pack": "packs/armor.db",
+            "matchedName": "Mandalorian Battle Armor",
+            "matchedId": "armor-mandalorian-battle-armor",
+            "matchType": "exact"
+          },
+          "reason": "Exact canonical identity present.",
+          "executionAction": "NO_IDENTITY_CHANGE"
+        },
+        {
+          "canonicalName": "Neo-Crusader Assault Armor",
+          "family": "armor",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Knights of the Old Republic Campaign Guide",
+              "ssot": "user-provided TXT/PDF",
+              "evidence": "Published armor table and/or armor entry heading in supplied source text."
+            }
+          ],
+          "phase0Disposition": "KEEP",
+          "repo": {
+            "present": true,
+            "pack": "packs/armor.db",
+            "matchedName": "Neo-Crusader Assault Armor",
+            "matchedId": "armor-neo-crusader-assault-armor",
+            "matchType": "exact"
+          },
+          "reason": "Exact canonical identity present.",
+          "executionAction": "NO_IDENTITY_CHANGE"
+        },
+        {
+          "canonicalName": "Galactic Alliance Armor",
+          "family": "armor",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Legacy Era Campaign Guide",
+              "ssot": "user-provided TXT/PDF",
+              "evidence": "Published armor table and/or armor entry heading in supplied source text."
+            }
+          ],
+          "phase0Disposition": "KEEP",
+          "repo": {
+            "present": true,
+            "pack": "packs/armor.db",
+            "matchedName": "Galactic Alliance Armor",
+            "matchedId": "armor-galactic-alliance-armor",
+            "matchType": "exact"
+          },
+          "reason": "Exact canonical identity present.",
+          "executionAction": "NO_IDENTITY_CHANGE"
+        },
+        {
+          "canonicalName": "Venom Assault Armor",
+          "family": "armor",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Legacy Era Campaign Guide",
+              "ssot": "user-provided TXT/PDF",
+              "evidence": "Published armor table and/or armor entry heading in supplied source text."
+            }
+          ],
+          "phase0Disposition": "KEEP",
+          "repo": {
+            "present": true,
+            "pack": "packs/armor.db",
+            "matchedName": "Venom Assault Armor",
+            "matchedId": "armor-venom-assault-armor",
+            "matchType": "exact"
+          },
+          "reason": "Exact canonical identity present.",
+          "executionAction": "NO_IDENTITY_CHANGE"
+        },
+        {
+          "canonicalName": "Cortosis Gauntlet",
+          "family": "armor",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Legacy Era Campaign Guide",
+              "ssot": "user-provided TXT/PDF",
+              "evidence": "Published armor table and/or armor entry heading in supplied source text."
+            }
+          ],
+          "phase0Disposition": "KEEP",
+          "repo": {
+            "present": true,
+            "pack": "packs/armor.db",
+            "matchedName": "Cortosis Gauntlet",
+            "matchedId": "armor-cortosis-gauntlet",
+            "matchType": "exact"
+          },
+          "reason": "Exact canonical identity present.",
+          "executionAction": "NO_IDENTITY_CHANGE"
+        },
+        {
+          "canonicalName": "Imperial Knight Armor",
+          "family": "armor",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Legacy Era Campaign Guide",
+              "ssot": "user-provided TXT/PDF",
+              "evidence": "Published armor table and/or armor entry heading in supplied source text."
+            }
+          ],
+          "phase0Disposition": "KEEP",
+          "repo": {
+            "present": true,
+            "pack": "packs/armor.db",
+            "matchedName": "Imperial Knight Armor",
+            "matchedId": "armor-imperial-knight-armor",
+            "matchType": "exact"
+          },
+          "reason": "Exact canonical identity present.",
+          "executionAction": "NO_IDENTITY_CHANGE"
+        },
+        {
+          "canonicalName": "Knighthunter Armor",
+          "family": "armor",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Legacy Era Campaign Guide",
+              "ssot": "user-provided TXT/PDF",
+              "evidence": "Published armor table and/or armor entry heading in supplied source text."
+            }
+          ],
+          "phase0Disposition": "KEEP",
+          "repo": {
+            "present": true,
+            "pack": "packs/armor.db",
+            "matchedName": "Knighthunter Armor",
+            "matchedId": "armor-knighthunter-armor",
+            "matchType": "exact"
+          },
+          "reason": "Exact canonical identity present.",
+          "executionAction": "NO_IDENTITY_CHANGE"
+        },
+        {
+          "canonicalName": "Merr-Sonn KZZ Riot Armor",
+          "family": "armor",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Rebellion Era Campaign Guide",
+              "ssot": "user-provided TXT/PDF",
+              "evidence": "Published armor table and/or armor entry heading in supplied source text."
+            }
+          ],
+          "phase0Disposition": "EDIT",
+          "repo": {
+            "present": true,
+            "pack": "packs/armor.db",
+            "matchedName": "KZZ Riot Armor",
+            "matchedId": "armor-kzz-riot-armor",
+            "matchType": "alias"
+          },
+          "reason": "Repo identity is the canonical armor but display name differs from the published armor identity: 'KZZ Riot Armor' -> 'Merr-Sonn KZZ Riot Armor'.",
+          "executionAction": "RENAME_RECORD_TO_CANONICAL_IDENTITY"
+        },
+        {
+          "canonicalName": "Shield Gauntlet",
+          "family": "armor",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Rebellion Era Campaign Guide",
+              "ssot": "user-provided TXT/PDF",
+              "evidence": "Published armor table and/or armor entry heading in supplied source text."
+            }
+          ],
+          "phase0Disposition": "KEEP",
+          "repo": {
+            "present": true,
+            "pack": "packs/armor.db",
+            "matchedName": "Shield Gauntlet",
+            "matchedId": "armor-shield-gauntlet",
+            "matchType": "exact"
+          },
+          "reason": "Exact canonical identity present.",
+          "executionAction": "NO_IDENTITY_CHANGE"
+        },
+        {
+          "canonicalName": "Seatrooper Armor",
+          "family": "armor",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Rebellion Era Campaign Guide",
+              "ssot": "user-provided TXT/PDF",
+              "evidence": "Published armor table and/or armor entry heading in supplied source text."
+            }
+          ],
+          "phase0Disposition": "KEEP",
+          "repo": {
+            "present": true,
+            "pack": "packs/armor.db",
+            "matchedName": "Seatrooper Armor",
+            "matchedId": "armor-seatrooper-armor",
+            "matchType": "exact"
+          },
+          "reason": "Exact canonical identity present.",
+          "executionAction": "NO_IDENTITY_CHANGE"
+        },
+        {
+          "canonicalName": "Zero-Gravity Stormtrooper Armor",
+          "family": "armor",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Rebellion Era Campaign Guide",
+              "ssot": "user-provided TXT/PDF",
+              "evidence": "Published armor table and/or armor entry heading in supplied source text."
+            }
+          ],
+          "phase0Disposition": "KEEP",
+          "repo": {
+            "present": true,
+            "pack": "packs/armor.db",
+            "matchedName": "Zero-Gravity Stormtrooper Armor",
+            "matchedId": "armor-zero-gravity-stormtrooper-armor",
+            "matchType": "exact"
+          },
+          "reason": "Exact canonical identity present.",
+          "executionAction": "NO_IDENTITY_CHANGE"
+        },
+        {
+          "canonicalName": "Beskar'gam, Light",
+          "family": "armor",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Scum and Villainy",
+              "ssot": "user-provided TXT/PDF",
+              "evidence": "Scum and Villainy Table 2-6 Armor; PDF visually verified."
+            }
+          ],
+          "phase0Disposition": "EDIT",
+          "repo": {
+            "present": true,
+            "pack": "packs/armor.db",
+            "matchedName": "Light Beskar'gam",
+            "matchedId": "armor-light-beskargam",
+            "matchType": "alias"
+          },
+          "reason": "Repo identity is the canonical armor but display name differs from the published armor identity: \"Light Beskar'gam\" -> \"Beskar'gam, Light\".",
+          "executionAction": "RENAME_RECORD_TO_CANONICAL_IDENTITY"
+        },
+        {
+          "canonicalName": "Half-Vest",
+          "family": "armor",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Scum and Villainy",
+              "ssot": "user-provided TXT/PDF",
+              "evidence": "Scum and Villainy Table 2-6 Armor; PDF visually verified."
+            }
+          ],
+          "phase0Disposition": "KEEP",
+          "repo": {
+            "present": true,
+            "pack": "packs/armor.db",
+            "matchedName": "Half-Vest",
+            "matchedId": "armor-half-vest",
+            "matchType": "exact"
+          },
+          "reason": "Exact canonical identity present.",
+          "executionAction": "NO_IDENTITY_CHANGE"
+        },
+        {
+          "canonicalName": "Beskar'gam, Medium",
+          "family": "armor",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Scum and Villainy",
+              "ssot": "user-provided TXT/PDF",
+              "evidence": "Scum and Villainy Table 2-6 Armor; PDF visually verified."
+            }
+          ],
+          "phase0Disposition": "EDIT",
+          "repo": {
+            "present": true,
+            "pack": "packs/armor.db",
+            "matchedName": "Medium Beskar'gam",
+            "matchedId": "armor-medium-beskargam",
+            "matchType": "alias"
+          },
+          "reason": "Repo identity is the canonical armor but display name differs from the published armor identity: \"Medium Beskar'gam\" -> \"Beskar'gam, Medium\".",
+          "executionAction": "RENAME_RECORD_TO_CANONICAL_IDENTITY"
+        },
+        {
+          "canonicalName": "GTU AV-1S Scout Armor",
+          "family": "armor",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Scum and Villainy",
+              "ssot": "user-provided TXT/PDF",
+              "evidence": "Scum and Villainy Table 2-6 Armor; PDF visually verified."
+            }
+          ],
+          "phase0Disposition": "EDIT",
+          "repo": {
+            "present": true,
+            "pack": "packs/armor.db",
+            "matchedName": "AV-1S Scout Armor",
+            "matchedId": "armor-av1s-scout-armor",
+            "matchType": "alias"
+          },
+          "reason": "Repo identity is the canonical armor but display name differs from the published armor identity: 'AV-1S Scout Armor' -> 'GTU AV-1S Scout Armor'.",
+          "executionAction": "RENAME_RECORD_TO_CANONICAL_IDENTITY"
+        },
+        {
+          "canonicalName": "Krall 210 Personal Armor",
+          "family": "armor",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Scum and Villainy",
+              "ssot": "user-provided TXT/PDF",
+              "evidence": "Scum and Villainy Table 2-6 Armor; PDF visually verified."
+            }
+          ],
+          "phase0Disposition": "EDIT",
+          "repo": {
+            "present": true,
+            "pack": "packs/armor.db",
+            "matchedName": "Model 210 Personal Armor",
+            "matchedId": "armor-model-210-personal-armor",
+            "matchType": "alias"
+          },
+          "reason": "Repo identity is the canonical armor but display name differs from the published armor identity: 'Model 210 Personal Armor' -> 'Krall 210 Personal Armor'.",
+          "executionAction": "RENAME_RECORD_TO_CANONICAL_IDENTITY"
+        },
+        {
+          "canonicalName": "Beskar'gam, Heavy",
+          "family": "armor",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Scum and Villainy",
+              "ssot": "user-provided TXT/PDF",
+              "evidence": "Scum and Villainy Table 2-6 Armor; PDF visually verified."
+            }
+          ],
+          "phase0Disposition": "EDIT",
+          "repo": {
+            "present": true,
+            "pack": "packs/armor.db",
+            "matchedName": "Heavy Beskar'gam",
+            "matchedId": "armor-heavy-beskargam",
+            "matchType": "alias"
+          },
+          "reason": "Repo identity is the canonical armor but display name differs from the published armor identity: \"Heavy Beskar'gam\" -> \"Beskar'gam, Heavy\".",
+          "executionAction": "RENAME_RECORD_TO_CANONICAL_IDENTITY"
+        },
+        {
+          "canonicalName": "GTU AV-1C Combat Armor",
+          "family": "armor",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Scum and Villainy",
+              "ssot": "user-provided TXT/PDF",
+              "evidence": "Scum and Villainy Table 2-6 Armor; PDF visually verified."
+            }
+          ],
+          "phase0Disposition": "EDIT",
+          "repo": {
+            "present": true,
+            "pack": "packs/armor.db",
+            "matchedName": "AV-1C Combat Armor",
+            "matchedId": "armor-av1c-combat-armor",
+            "matchType": "alias"
+          },
+          "reason": "Repo identity is the canonical armor but display name differs from the published armor identity: 'AV-1C Combat Armor' -> 'GTU AV-1C Combat Armor'.",
+          "executionAction": "RENAME_RECORD_TO_CANONICAL_IDENTITY"
+        }
+      ],
+      "repoOnlyArmor": [
+        {
+          "repoId": "armor-heavy-pressure-suit",
+          "repoName": "Heavy Pressure Suit",
+          "repoSourceClaim": "Web Enhancements",
+          "phase0Disposition": "REVIEW",
+          "reason": "Repo claims Web Enhancements provenance, but no supplied TXT/PDF source in the current SSOT corpus verifies this pressure-suit identity. Do not delete or normalize without the defining source.",
+          "executionAction": "NO_AUTOMATIC_MUTATION_SOURCE_NOT_IN_SSOT"
+        },
+        {
+          "repoId": "armor-light-pressure-suit",
+          "repoName": "Light Pressure Suit",
+          "repoSourceClaim": "Web Enhancements",
+          "phase0Disposition": "REVIEW",
+          "reason": "Repo claims Web Enhancements provenance, but no supplied TXT/PDF source in the current SSOT corpus verifies this pressure-suit identity. Do not delete or normalize without the defining source.",
+          "executionAction": "NO_AUTOMATIC_MUTATION_SOURCE_NOT_IN_SSOT"
+        },
+        {
+          "repoId": "armor-medium-pressure-suit",
+          "repoName": "Medium Pressure Suit",
+          "repoSourceClaim": "Web Enhancements",
+          "phase0Disposition": "REVIEW",
+          "reason": "Repo claims Web Enhancements provenance, but no supplied TXT/PDF source in the current SSOT corpus verifies this pressure-suit identity. Do not delete or normalize without the defining source.",
+          "executionAction": "NO_AUTOMATIC_MUTATION_SOURCE_NOT_IN_SSOT"
+        }
+      ],
+      "adjudications": [
+        {
+          "issue": "KOTOR energy shields",
+          "decision": "Treat SR 5, 10, 15, 20, 25, and 30 as six canonical purchasable armor/shield variants. Table 5-3 establishes light/medium/heavy armor classes; Table 5-4 explicitly gives six SR price points."
+        },
+        {
+          "issue": "Mandalorian battle armor name",
+          "decision": "Canonical identity is Mandalorian Battle Armor. Earlier draft wording \"Mandalorian Neo-Crusader Battle Armor\" was rejected; KOTOR Table 12-1 prints Mandalorian battle armor."
+        },
+        {
+          "issue": "Pressure suits",
+          "decision": "Light/Medium/Heavy Pressure Suit are REVIEW, not REMOVE. Repo claims Web Enhancements, but the supplied SSOT files do not contain the defining source. Destructive mutation is blocked."
+        },
+        {
+          "issue": "Armor upgrades and droid armor",
+          "decision": "Excluded from Phase 0-2 and reserved for their dedicated later batches."
+        }
+      ],
+      "executorGuardrails": [
+        "Apply only explicit EDIT identity renames if executing Phase 0-2 now.",
+        "Do not alter descriptions, stats, schema, tags, source/page fields, or mechanics in this phase.",
+        "Do not delete the three pressure-suit records; they are REVIEW pending source verification.",
+        "Do not fold energy-shield SR records into three generic light/medium/heavy records; the supplied KOTOR source explicitly distinguishes six SR price variants.",
+        "Do not touch armor upgrades, droid armor/plating, vehicle/starship armor, or natural armor.",
+        "Renames keep the record _id. Before any rename executes, update name-based consumers listed in renameImpact (Force Alchemy result names, tests, data/store/armor-store-descriptions.json) and apply to the aggregate and all derived subpacks together.",
+        "No production mutation is authorized by Phase 0-2 until the owner explicitly directs execution (see ownerRulings)."
+      ],
+      "qa": {
+        "canonicalIdentityCount": 67,
+        "repoArmorRecordCount": 70,
+        "canonicalMappedOneToOne": 67,
+        "canonicalAdds": 0,
+        "canonicalEdits": 24,
+        "canonicalKeeps": 43,
+        "repoRemoves": 0,
+        "repoReviews": 3,
+        "duplicateCanonicalNames": 0,
+        "repoRecordsMappedMoreThanOnce": 0,
+        "unresolvedCanonicalRecords": 0
+      },
+      "renameImpact": {
+        "armor-armored-space-suit": {
+          "oldName": "Armored Space Suit",
+          "newName": "Armored Spacesuit",
+          "nameBasedConsumers": {
+            "data/store/armor-store-descriptions.json": 1
+          },
+          "historicalOnly": [
+            "data/armor/heavy.json",
+            "tools/fix-armor-data.js"
+          ]
+        },
+        "armor-heavy-battle-armor": {
+          "oldName": "Heavy Battle Armor",
+          "newName": "Battle Armor, Heavy",
+          "nameBasedConsumers": {
+            "data/store/armor-store-descriptions.json": 1
+          },
+          "historicalOnly": [
+            "data/armor/heavy.json",
+            "tools/fix-armor-data.js"
+          ]
+        },
+        "armor-armored-flight-suit": {
+          "oldName": "Armored Flight Suit",
+          "newName": "Flight Suit, Armored",
+          "nameBasedConsumers": {
+            "data/store/armor-store-descriptions.json": 1
+          },
+          "historicalOnly": [
+            "data/armor/light.json",
+            "tools/calculate-template-credits.js",
+            "tools/fix-armor-data.js",
+            "tools/fix-template-equipment.js",
+            "tools/reduce-template-equipment.js",
+            "tools/remove-armor.js"
+          ]
+        },
+        "armor-padded-flight-suit": {
+          "oldName": "Padded Flight Suit",
+          "newName": "Flight Suit, Padded",
+          "nameBasedConsumers": {
+            "data/store/armor-store-descriptions.json": 1
+          },
+          "historicalOnly": [
+            "tools/aggressive-equipment-reduction.js",
+            "tools/calculate-template-credits.js",
+            "tools/final-budget-cuts.js",
+            "tools/fix-armor-data.js",
+            "tools/fix-template-equipment.js",
+            "tools/reduce-template-equipment.js",
+            "tools/remove-armor.js"
+          ]
+        },
+        "armor-vonduun-crabshell": {
+          "oldName": "Vonduun Crabshell",
+          "newName": "Vonduun Crabshell Armor",
+          "nameBasedConsumers": {
+            "data/store/armor-store-descriptions.json": 1
+          },
+          "historicalOnly": [
+            "tools/fix-armor-data.js"
+          ]
+        },
+        "armor-microbe-armor": {
+          "oldName": "Microbe Armor",
+          "newName": "Barabel Microbe Armor",
+          "nameBasedConsumers": {
+            "data/store/armor-store-descriptions.json": 1
+          },
+          "historicalOnly": [
+            "data/armor/light.json",
+            "tools/fix-armor-data.js"
+          ]
+        },
+        "armor-m110-stalker-armor": {
+          "oldName": "M1-10 Stalker Armor",
+          "newName": "Stalker Armor",
+          "nameBasedConsumers": {
+            "data/store/armor-store-descriptions.json": 1,
+            "tests/energy-shield-defense-and-activation-authority.test.mjs": 2,
+            "tests/garee-full-skill-derivation-parity.test.mjs": 1,
+            "tests/legacy-equip-state-single-pass-authority.test.mjs": 1
+          },
+          "historicalOnly": [
+            "data/armor/medium.json",
+            "tools/fix-armor-data.js"
+          ]
+        },
+        "armor-light-dark-armor": {
+          "oldName": "Light Dark Armor",
+          "newName": "Dark Armor, Light",
+          "nameBasedConsumers": {
+            "data/store/armor-store-descriptions.json": 1,
+            "scripts/apps/force-alchemy/force-alchemy-mechanics-service.js": 1,
+            "scripts/talents/DarkSidePowers.js": 1
+          },
+          "historicalOnly": [
+            "data/armor/light.json",
+            "tools/fix-armor-data.js"
+          ]
+        },
+        "armor-light-jedi-battle-armor": {
+          "oldName": "Light Jedi Battle Armor",
+          "newName": "Jedi Battle Armor, Light",
+          "nameBasedConsumers": {
+            "data/store/armor-store-descriptions.json": 1
+          },
+          "historicalOnly": [
+            "data/armor/light.json",
+            "tools/fix-armor-data.js"
+          ]
+        },
+        "armor-blinding-helmet": {
+          "oldName": "Blinding Helmet",
+          "newName": "WJ-880 Blinding Helmet",
+          "nameBasedConsumers": {
+            "data/store/armor-store-descriptions.json": 1
+          },
+          "historicalOnly": [
+            "data/armor/light.json",
+            "tools/fix-armor-data.js"
+          ]
+        },
+        "armor-dark-armor": {
+          "oldName": "Dark Armor",
+          "newName": "Dark Armor, Medium",
+          "nameBasedConsumers": {
+            "data/store/armor-store-descriptions.json": 1,
+            "scripts/apps/force-alchemy/force-alchemy-context-resolver.js": 1,
+            "scripts/apps/force-alchemy/force-alchemy-mechanics-service.js": 1,
+            "scripts/talents/DarkSidePowers.js": 1
+          },
+          "historicalOnly": [
+            "data/armor/medium.json",
+            "tools/fix-armor-data.js"
+          ]
+        },
+        "armor-jedi-battle-armor": {
+          "oldName": "Jedi Battle Armor",
+          "newName": "Jedi Battle Armor, Medium",
+          "nameBasedConsumers": {
+            "data/store/armor-store-descriptions.json": 1
+          },
+          "historicalOnly": [
+            "data/armor/medium.json",
+            "tools/fix-armor-data.js"
+          ]
+        },
+        "armor-heavy-dark-armor": {
+          "oldName": "Heavy Dark Armor",
+          "newName": "Dark Armor, Heavy",
+          "nameBasedConsumers": {
+            "data/store/armor-store-descriptions.json": 1,
+            "scripts/apps/force-alchemy/force-alchemy-mechanics-service.js": 1,
+            "scripts/talents/DarkSidePowers.js": 1
+          },
+          "historicalOnly": [
+            "data/armor/heavy.json",
+            "tools/fix-armor-data.js"
+          ]
+        },
+        "armor-light-powered-battle-armor": {
+          "oldName": "Light Powered Battle Armor",
+          "newName": "Battle Armor, Light Powered",
+          "nameBasedConsumers": {
+            "data/store/armor-store-descriptions.json": 1
+          },
+          "historicalOnly": [
+            "data/armor/light.json",
+            "tools/fix-armor-data.js"
+          ]
+        },
+        "armor-light-battle-armor": {
+          "oldName": "Light Battle Armor",
+          "newName": "Battle Armor, Light",
+          "nameBasedConsumers": {
+            "data/store/armor-store-descriptions.json": 1
+          },
+          "historicalOnly": [
+            "data/armor/light.json",
+            "tools/fix-armor-data.js"
+          ]
+        },
+        "armor-powered-battle-armor": {
+          "oldName": "Powered Battle Armor",
+          "newName": "Battle Armor, Powered",
+          "nameBasedConsumers": {
+            "data/store/armor-store-descriptions.json": 1
+          },
+          "historicalOnly": [
+            "data/armor/medium.json",
+            "tools/fix-armor-data.js"
+          ]
+        },
+        "armor-heavy-powered-battle-armor": {
+          "oldName": "Heavy Powered Battle Armor",
+          "newName": "Battle Armor, Heavy Powered",
+          "nameBasedConsumers": {
+            "data/store/armor-store-descriptions.json": 1
+          },
+          "historicalOnly": [
+            "data/armor/heavy.json",
+            "tools/fix-armor-data.js"
+          ]
+        },
+        "armor-kzz-riot-armor": {
+          "oldName": "KZZ Riot Armor",
+          "newName": "Merr-Sonn KZZ Riot Armor",
+          "nameBasedConsumers": {
+            "data/store/armor-store-descriptions.json": 1
+          },
+          "historicalOnly": [
+            "data/armor/light.json",
+            "tools/fix-armor-data.js"
+          ]
+        },
+        "armor-light-beskargam": {
+          "oldName": "Light Beskar'gam",
+          "newName": "Beskar'gam, Light",
+          "nameBasedConsumers": {
+            "data/store/armor-store-descriptions.json": 1
+          },
+          "historicalOnly": [
+            "data/armor/light.json",
+            "tools/fix-armor-data.js"
+          ]
+        },
+        "armor-medium-beskargam": {
+          "oldName": "Medium Beskar'gam",
+          "newName": "Beskar'gam, Medium",
+          "nameBasedConsumers": {
+            "data/store/armor-store-descriptions.json": 1
+          },
+          "historicalOnly": [
+            "data/armor/medium.json",
+            "tools/fix-armor-data.js"
+          ]
+        },
+        "armor-av1s-scout-armor": {
+          "oldName": "AV-1S Scout Armor",
+          "newName": "GTU AV-1S Scout Armor",
+          "nameBasedConsumers": {
+            "data/store/armor-store-descriptions.json": 1
+          },
+          "historicalOnly": [
+            "data/armor/medium.json",
+            "tools/fix-armor-data.js"
+          ]
+        },
+        "armor-model-210-personal-armor": {
+          "oldName": "Model 210 Personal Armor",
+          "newName": "Krall 210 Personal Armor",
+          "nameBasedConsumers": {
+            "data/store/armor-store-descriptions.json": 1
+          },
+          "historicalOnly": [
+            "tools/fix-armor-data.js"
+          ]
+        },
+        "armor-heavy-beskargam": {
+          "oldName": "Heavy Beskar'gam",
+          "newName": "Beskar'gam, Heavy",
+          "nameBasedConsumers": {
+            "data/store/armor-store-descriptions.json": 1
+          },
+          "historicalOnly": [
+            "data/armor/heavy.json",
+            "tools/fix-armor-data.js"
+          ]
+        },
+        "armor-av1c-combat-armor": {
+          "oldName": "AV-1C Combat Armor",
+          "newName": "GTU AV-1C Combat Armor",
+          "nameBasedConsumers": {
+            "data/store/armor-store-descriptions.json": 1
+          },
+          "historicalOnly": [
+            "data/armor/heavy.json",
+            "tools/fix-armor-data.js"
+          ]
+        }
+      },
+      "renameImpactNotes": [
+        "Measured at readback 2026-10-05 from quoted exact old-name strings; ID references are limited to data/store/armor-store-descriptions.json and tools/fix-armor-data.js (generator history).",
+        "Force Alchemy (scripts/apps/force-alchemy/force-alchemy-mechanics-service.js, force-alchemy-context-resolver.js) and scripts/talents/DarkSidePowers.js hard-code result names 'Light Dark Armor', 'Dark Armor', 'Heavy Dark Armor' and their own stat profiles; they do not look up the pack record by name, so a record rename will not break them but newly crafted items will keep the old display names until those strings are updated.",
+        "data/armor/{light,medium,heavy}.json are unconsumed evidence files (see Phase 0 census) and are not rename targets."
+      ]
     }
   },
   "pendingPhases": [
-    "0-2 Armor",
     "0-3 Equipment",
     "1 Provenance (pages)",
     "2 Descriptions",
