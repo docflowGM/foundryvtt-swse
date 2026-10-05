@@ -8,36 +8,56 @@
     "path": "data/audits/talent-feat-phase3-final-ontology.json",
     "tagCount": 190
   },
-  "certifiedCount": 210,
+  "certifiedCount": 250,
   "totalArchetypes": 297,
-  "remainingUncuratedAfterApplication": 87,
-  "selectionRule": "Finish Noble-first records in dataset order. Class is a route, not ownership. After this tranche Noble-first is complete.",
+  "remainingUncuratedAfterApplication": 47,
+  "selectionRule": "Continue Soldier-first deterministically in dataset order. This 40-record tranche covers enforcer through gungan_organic_tech_defender. After application Soldier-first is 40 / 53 complete.",
   "currentExecution": {
-    "id": "12B-NOBLE-11",
+    "id": "12B-SOLDIER-01",
     "status": "AUTHORITY_READY_BASELINE_PENDING",
-    "requiredBaseline": "91aa158f718811e3b42c8afb3c77b08c45432264",
-    "baselineInstruction": "Replace this placeholder with the successful commit returned after 12B-NOBLE-10 execution before applying this tranche. Do not infer or substitute a SHA.",
+    "requiredBaseline": "8390b5352b9c4a3805091e2cb1254b62a816e9bc",
+    "baselineInstruction": "Replace this placeholder with the successful commit returned after 12B-NOBLE-11 execution before applying this tranche. Do not infer or substitute a SHA.",
     "newRecordIds": [
-      "skakoan_techno_union_technocrat",
-      "koorivar_corporate_magnate",
-      "political_fixer",
-      "hutt_majordomo",
-      "chiss_house_agent",
-      "zeltron_empathic_courtier",
-      "negotiator",
-      "mediator",
-      "protocol_droid",
-      "senator",
-      "caamasi_memory_keeper",
-      "anomid_technical_diplomat",
-      "bith_virtuoso",
-      "muun_banking_magnate",
-      "yuuzhan_vong_priest",
-      "kissai_dark_priest",
-      "tyia_adept",
-      "fallanassi_adept",
-      "baran_do_sage",
-      "miraluka_force_seer"
+      "enforcer",
+      "security_specialist",
+      "bodyguard",
+      "mercenary",
+      "commando",
+      "veteran",
+      "warrior",
+      "combat_medic",
+      "combat_engineer",
+      "field_commander",
+      "starship_gunner",
+      "armorer",
+      "warrior_priest",
+      "force_warrior",
+      "syndicate_enforcer",
+      "koorivar_fusilier",
+      "diplomatic_security_agent",
+      "imperial_royal_guard",
+      "hapan_royal_guard",
+      "wookiee_life_debt_protector",
+      "gamorrean_clan_guard",
+      "noghri_honor_bodyguard",
+      "assassin_droid",
+      "morgukai_warrior",
+      "breacher",
+      "boarding_marine",
+      "shock_trooper",
+      "noghri_death_commando",
+      "battle_droid_veteran",
+      "clone_veteran",
+      "mandalorian_warrior",
+      "clan_champion",
+      "yuuzhan_vong_warrior",
+      "tusken_tribal_warrior",
+      "wookiee_clan_champion",
+      "cathar_clan_warrior",
+      "nagai_duelist",
+      "massassi_temple_warrior",
+      "nightbrother",
+      "gungan_organic_tech_defender"
     ],
     "revisionIds": []
   },
@@ -10459,286 +10479,2192 @@
           "authority": "OWNER_CERTIFIED"
         }
       }
+    },
+    {
+      "id": "enforcer",
+      "name": "Enforcer",
+      "tranche": "12",
+      "primary": [
+        "investigation",
+        "persuasion",
+        "pursuit",
+        "social"
+      ],
+      "supporting": [
+        "endurance",
+        "evasion",
+        "perception",
+        "ranged",
+        "survivability"
+      ],
+      "all": [
+        "endurance",
+        "evasion",
+        "investigation",
+        "perception",
+        "persuasion",
+        "pursuit",
+        "ranged",
+        "social",
+        "survivability"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "investigation",
+              "persuasion",
+              "pursuit",
+              "social"
+            ],
+            "supporting": [
+              "endurance",
+              "evasion",
+              "perception",
+              "ranged",
+              "survivability"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "security_specialist",
+      "name": "Security Specialist",
+      "tranche": "12",
+      "primary": [
+        "ally_support",
+        "perception",
+        "support",
+        "tech",
+        "use_computer"
+      ],
+      "supporting": [
+        "control",
+        "mechanics",
+        "nonlethal",
+        "stun",
+        "survivability"
+      ],
+      "all": [
+        "ally_support",
+        "control",
+        "mechanics",
+        "nonlethal",
+        "perception",
+        "stun",
+        "support",
+        "survivability",
+        "tech",
+        "use_computer"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "ally_support",
+              "perception",
+              "support",
+              "tech",
+              "use_computer"
+            ],
+            "supporting": [
+              "control",
+              "mechanics",
+              "nonlethal",
+              "stun",
+              "survivability"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "bodyguard",
+      "name": "Bodyguard",
+      "tranche": "12",
+      "primary": [
+        "ally_support",
+        "perception",
+        "support",
+        "survivability"
+      ],
+      "supporting": [
+        "endurance",
+        "melee",
+        "mobility",
+        "positioning",
+        "weapon_training"
+      ],
+      "all": [
+        "ally_support",
+        "endurance",
+        "melee",
+        "mobility",
+        "perception",
+        "positioning",
+        "support",
+        "survivability",
+        "weapon_training"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "ally_support",
+              "perception",
+              "support",
+              "survivability"
+            ],
+            "supporting": [
+              "endurance",
+              "melee",
+              "mobility",
+              "positioning",
+              "weapon_training"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "mercenary",
+      "name": "Mercenary",
+      "tranche": "12",
+      "primary": [
+        "endurance",
+        "initiative",
+        "melee",
+        "survivability"
+      ],
+      "supporting": [
+        "ally_support",
+        "damage_threshold",
+        "perception",
+        "support",
+        "survival",
+        "weapon_specialization"
+      ],
+      "all": [
+        "ally_support",
+        "damage_threshold",
+        "endurance",
+        "initiative",
+        "melee",
+        "perception",
+        "support",
+        "survivability",
+        "survival",
+        "weapon_specialization"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "endurance",
+              "initiative",
+              "melee",
+              "survivability"
+            ],
+            "supporting": [
+              "ally_support",
+              "damage_threshold",
+              "perception",
+              "support",
+              "survival",
+              "weapon_specialization"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "commando",
+      "name": "Commando",
+      "tranche": "12",
+      "primary": [
+        "infiltration",
+        "perception",
+        "recon",
+        "stealth"
+      ],
+      "supporting": [
+        "initiative",
+        "mechanics",
+        "survival",
+        "teamwork",
+        "trap"
+      ],
+      "all": [
+        "infiltration",
+        "initiative",
+        "mechanics",
+        "perception",
+        "recon",
+        "stealth",
+        "survival",
+        "teamwork",
+        "trap"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "infiltration",
+              "perception",
+              "recon",
+              "stealth"
+            ],
+            "supporting": [
+              "initiative",
+              "mechanics",
+              "survival",
+              "teamwork",
+              "trap"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "veteran",
+      "name": "Veteran",
+      "tranche": "12",
+      "primary": [
+        "endurance",
+        "perception",
+        "resilience",
+        "survivability"
+      ],
+      "supporting": [
+        "ally_support",
+        "initiative",
+        "mobility",
+        "support",
+        "teamwork"
+      ],
+      "all": [
+        "ally_support",
+        "endurance",
+        "initiative",
+        "mobility",
+        "perception",
+        "resilience",
+        "support",
+        "survivability",
+        "teamwork"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "endurance",
+              "perception",
+              "resilience",
+              "survivability"
+            ],
+            "supporting": [
+              "ally_support",
+              "initiative",
+              "mobility",
+              "support",
+              "teamwork"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "warrior",
+      "name": "Warrior",
+      "tranche": "12",
+      "primary": [
+        "endurance",
+        "melee",
+        "resilience",
+        "survivability"
+      ],
+      "supporting": [
+        "control",
+        "initiative",
+        "perception",
+        "ranged",
+        "weapon_specialization"
+      ],
+      "all": [
+        "control",
+        "endurance",
+        "initiative",
+        "melee",
+        "perception",
+        "ranged",
+        "resilience",
+        "survivability",
+        "weapon_specialization"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "endurance",
+              "melee",
+              "resilience",
+              "survivability"
+            ],
+            "supporting": [
+              "control",
+              "initiative",
+              "perception",
+              "ranged",
+              "weapon_specialization"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "combat_medic",
+      "name": "Combat Medic",
+      "tranche": "12",
+      "primary": [
+        "ally_support",
+        "healing",
+        "medical",
+        "medicine",
+        "support",
+        "treat_injury"
+      ],
+      "supporting": [
+        "endurance",
+        "knowledge",
+        "perception",
+        "recovery",
+        "survivability"
+      ],
+      "all": [
+        "ally_support",
+        "endurance",
+        "healing",
+        "knowledge",
+        "medical",
+        "medicine",
+        "perception",
+        "recovery",
+        "support",
+        "survivability",
+        "treat_injury"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "ally_support",
+              "healing",
+              "medical",
+              "medicine",
+              "support",
+              "treat_injury"
+            ],
+            "supporting": [
+              "endurance",
+              "knowledge",
+              "perception",
+              "recovery",
+              "survivability"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "combat_engineer",
+      "name": "Combat Engineer",
+      "tranche": "12",
+      "primary": [
+        "mechanics",
+        "modification",
+        "repair",
+        "tech"
+      ],
+      "supporting": [
+        "ally_support",
+        "crafting",
+        "equipment",
+        "knowledge",
+        "support",
+        "use_computer",
+        "vehicle"
+      ],
+      "all": [
+        "ally_support",
+        "crafting",
+        "equipment",
+        "knowledge",
+        "mechanics",
+        "modification",
+        "repair",
+        "support",
+        "tech",
+        "use_computer",
+        "vehicle"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "mechanics",
+              "modification",
+              "repair",
+              "tech"
+            ],
+            "supporting": [
+              "ally_support",
+              "crafting",
+              "equipment",
+              "knowledge",
+              "support",
+              "use_computer",
+              "vehicle"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "field_commander",
+      "name": "Field Commander",
+      "tranche": "12",
+      "primary": [
+        "ally_support",
+        "command",
+        "leadership",
+        "support",
+        "tactics",
+        "teamwork"
+      ],
+      "supporting": [
+        "knowledge",
+        "morale",
+        "perception",
+        "persuasion",
+        "social"
+      ],
+      "all": [
+        "ally_support",
+        "command",
+        "knowledge",
+        "leadership",
+        "morale",
+        "perception",
+        "persuasion",
+        "social",
+        "support",
+        "tactics",
+        "teamwork"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "ally_support",
+              "command",
+              "leadership",
+              "support",
+              "tactics",
+              "teamwork"
+            ],
+            "supporting": [
+              "knowledge",
+              "morale",
+              "perception",
+              "persuasion",
+              "social"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "starship_gunner",
+      "name": "Starship Gunner",
+      "tranche": "12",
+      "primary": [
+        "ranged",
+        "space",
+        "targeting",
+        "vehicle"
+      ],
+      "supporting": [
+        "initiative",
+        "perception",
+        "precision",
+        "teamwork"
+      ],
+      "all": [
+        "initiative",
+        "perception",
+        "precision",
+        "ranged",
+        "space",
+        "targeting",
+        "teamwork",
+        "vehicle"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "ranged",
+              "space",
+              "targeting",
+              "vehicle"
+            ],
+            "supporting": [
+              "initiative",
+              "perception",
+              "precision",
+              "teamwork"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "armorer",
+      "name": "Armorer",
+      "tranche": "12",
+      "primary": [
+        "armor",
+        "equipment",
+        "mechanics",
+        "modification",
+        "tech"
+      ],
+      "supporting": [
+        "crafting",
+        "defense",
+        "knowledge",
+        "repair",
+        "use_computer"
+      ],
+      "all": [
+        "armor",
+        "crafting",
+        "defense",
+        "equipment",
+        "knowledge",
+        "mechanics",
+        "modification",
+        "repair",
+        "tech",
+        "use_computer"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "armor",
+              "equipment",
+              "mechanics",
+              "modification",
+              "tech"
+            ],
+            "supporting": [
+              "crafting",
+              "defense",
+              "knowledge",
+              "repair",
+              "use_computer"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "warrior_priest",
+      "name": "Warrior-Priest",
+      "tranche": "12",
+      "primary": [
+        "melee",
+        "perception",
+        "persuasion",
+        "social"
+      ],
+      "supporting": [
+        "force",
+        "force_defense",
+        "force_power",
+        "force_support",
+        "force_training",
+        "knowledge"
+      ],
+      "all": [
+        "force",
+        "force_defense",
+        "force_power",
+        "force_support",
+        "force_training",
+        "knowledge",
+        "melee",
+        "perception",
+        "persuasion",
+        "social"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "melee",
+              "perception",
+              "persuasion",
+              "social"
+            ],
+            "supporting": [
+              "force",
+              "force_defense",
+              "force_power",
+              "force_support",
+              "force_training",
+              "knowledge"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "force_warrior",
+      "name": "Force Warrior",
+      "tranche": "12",
+      "primary": [
+        "force",
+        "force_offense",
+        "force_power",
+        "force_training",
+        "melee",
+        "use_the_force"
+      ],
+      "supporting": [
+        "force_defense",
+        "initiative",
+        "martial_arts",
+        "mobility",
+        "resilience",
+        "telekinesis"
+      ],
+      "all": [
+        "force",
+        "force_defense",
+        "force_offense",
+        "force_power",
+        "force_training",
+        "initiative",
+        "martial_arts",
+        "melee",
+        "mobility",
+        "resilience",
+        "telekinesis",
+        "use_the_force"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "force",
+              "force_offense",
+              "force_power",
+              "force_training",
+              "melee",
+              "use_the_force"
+            ],
+            "supporting": [
+              "force_defense",
+              "initiative",
+              "martial_arts",
+              "mobility",
+              "resilience",
+              "telekinesis"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "syndicate_enforcer",
+      "name": "Syndicate Enforcer",
+      "tranche": "12",
+      "primary": [
+        "nonlethal",
+        "persuasion",
+        "social",
+        "stun"
+      ],
+      "supporting": [
+        "control",
+        "endurance",
+        "fear",
+        "intimidation",
+        "survivability"
+      ],
+      "all": [
+        "control",
+        "endurance",
+        "fear",
+        "intimidation",
+        "nonlethal",
+        "persuasion",
+        "social",
+        "stun",
+        "survivability"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "nonlethal",
+              "persuasion",
+              "social",
+              "stun"
+            ],
+            "supporting": [
+              "control",
+              "endurance",
+              "fear",
+              "intimidation",
+              "survivability"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "koorivar_fusilier",
+      "name": "Koorivar Fusilier",
+      "tranche": "12",
+      "primary": [
+        "ally_support",
+        "cover",
+        "ranged",
+        "support"
+      ],
+      "supporting": [
+        "evasion",
+        "mechanics",
+        "perception",
+        "survivability",
+        "tech"
+      ],
+      "all": [
+        "ally_support",
+        "cover",
+        "evasion",
+        "mechanics",
+        "perception",
+        "ranged",
+        "support",
+        "survivability",
+        "tech"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "ally_support",
+              "cover",
+              "ranged",
+              "support"
+            ],
+            "supporting": [
+              "evasion",
+              "mechanics",
+              "perception",
+              "survivability",
+              "tech"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "diplomatic_security_agent",
+      "name": "Diplomatic Security Agent",
+      "tranche": "12",
+      "primary": [
+        "ally_support",
+        "perception",
+        "persuasion",
+        "support"
+      ],
+      "supporting": [
+        "gather_information",
+        "knowledge",
+        "nonlethal",
+        "positioning",
+        "social",
+        "stun"
+      ],
+      "all": [
+        "ally_support",
+        "gather_information",
+        "knowledge",
+        "nonlethal",
+        "perception",
+        "persuasion",
+        "positioning",
+        "social",
+        "stun",
+        "support"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "ally_support",
+              "perception",
+              "persuasion",
+              "support"
+            ],
+            "supporting": [
+              "gather_information",
+              "knowledge",
+              "nonlethal",
+              "positioning",
+              "social",
+              "stun"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "imperial_royal_guard",
+      "name": "Imperial Royal Guard",
+      "tranche": "12",
+      "primary": [
+        "ally_support",
+        "melee",
+        "support",
+        "survivability"
+      ],
+      "supporting": [
+        "damage_threshold",
+        "endurance",
+        "mobility",
+        "perception",
+        "positioning",
+        "weapon_training"
+      ],
+      "all": [
+        "ally_support",
+        "damage_threshold",
+        "endurance",
+        "melee",
+        "mobility",
+        "perception",
+        "positioning",
+        "support",
+        "survivability",
+        "weapon_training"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "ally_support",
+              "melee",
+              "support",
+              "survivability"
+            ],
+            "supporting": [
+              "damage_threshold",
+              "endurance",
+              "mobility",
+              "perception",
+              "positioning",
+              "weapon_training"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "hapan_royal_guard",
+      "name": "Hapan Royal Guard",
+      "tranche": "12",
+      "primary": [
+        "ally_support",
+        "leadership",
+        "melee",
+        "support"
+      ],
+      "supporting": [
+        "endurance",
+        "full_attack",
+        "perception",
+        "persuasion",
+        "social",
+        "survivability"
+      ],
+      "all": [
+        "ally_support",
+        "endurance",
+        "full_attack",
+        "leadership",
+        "melee",
+        "perception",
+        "persuasion",
+        "social",
+        "support",
+        "survivability"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "ally_support",
+              "leadership",
+              "melee",
+              "support"
+            ],
+            "supporting": [
+              "endurance",
+              "full_attack",
+              "perception",
+              "persuasion",
+              "social",
+              "survivability"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "wookiee_life_debt_protector",
+      "name": "Wookiee Life-Debt Protector",
+      "tranche": "12",
+      "primary": [
+        "ally_support",
+        "endurance",
+        "support",
+        "survivability"
+      ],
+      "supporting": [
+        "melee",
+        "mobility",
+        "perception",
+        "positioning",
+        "survival",
+        "weapon_training"
+      ],
+      "all": [
+        "ally_support",
+        "endurance",
+        "melee",
+        "mobility",
+        "perception",
+        "positioning",
+        "support",
+        "survivability",
+        "survival",
+        "weapon_training"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "ally_support",
+              "endurance",
+              "support",
+              "survivability"
+            ],
+            "supporting": [
+              "melee",
+              "mobility",
+              "perception",
+              "positioning",
+              "survival",
+              "weapon_training"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "gamorrean_clan_guard",
+      "name": "Gamorrean Clan Guard",
+      "tranche": "12",
+      "primary": [
+        "ally_support",
+        "endurance",
+        "melee",
+        "support"
+      ],
+      "supporting": [
+        "cover",
+        "perception",
+        "survivability",
+        "weapon_training"
+      ],
+      "all": [
+        "ally_support",
+        "cover",
+        "endurance",
+        "melee",
+        "perception",
+        "support",
+        "survivability",
+        "weapon_training"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "ally_support",
+              "endurance",
+              "melee",
+              "support"
+            ],
+            "supporting": [
+              "cover",
+              "perception",
+              "survivability",
+              "weapon_training"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "noghri_honor_bodyguard",
+      "name": "Noghri Honor Bodyguard",
+      "tranche": "12",
+      "primary": [
+        "ally_support",
+        "melee",
+        "perception",
+        "support"
+      ],
+      "supporting": [
+        "control",
+        "endurance",
+        "full_attack",
+        "heavy_weapon",
+        "survivability",
+        "survival"
+      ],
+      "all": [
+        "ally_support",
+        "control",
+        "endurance",
+        "full_attack",
+        "heavy_weapon",
+        "melee",
+        "perception",
+        "support",
+        "survivability",
+        "survival"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "ally_support",
+              "melee",
+              "perception",
+              "support"
+            ],
+            "supporting": [
+              "control",
+              "endurance",
+              "full_attack",
+              "heavy_weapon",
+              "survivability",
+              "survival"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "assassin_droid",
+      "name": "Assassin Droid",
+      "tranche": "12",
+      "primary": [
+        "ambush",
+        "droid",
+        "precision_damage",
+        "stealth"
+      ],
+      "supporting": [
+        "defense",
+        "infiltration",
+        "perception",
+        "tech",
+        "use_computer"
+      ],
+      "all": [
+        "ambush",
+        "defense",
+        "droid",
+        "infiltration",
+        "perception",
+        "precision_damage",
+        "stealth",
+        "tech",
+        "use_computer"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "ambush",
+              "droid",
+              "precision_damage",
+              "stealth"
+            ],
+            "supporting": [
+              "defense",
+              "infiltration",
+              "perception",
+              "tech",
+              "use_computer"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "morgukai_warrior",
+      "name": "Morgukai Warrior",
+      "tranche": "12",
+      "primary": [
+        "anti-force",
+        "endurance",
+        "martial_arts",
+        "melee",
+        "perception"
+      ],
+      "supporting": [
+        "concealment",
+        "detection",
+        "evasion",
+        "senses",
+        "stealth",
+        "survival",
+        "weapon_specialization"
+      ],
+      "all": [
+        "anti-force",
+        "concealment",
+        "detection",
+        "endurance",
+        "evasion",
+        "martial_arts",
+        "melee",
+        "perception",
+        "senses",
+        "stealth",
+        "survival",
+        "weapon_specialization"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "anti-force",
+              "endurance",
+              "martial_arts",
+              "melee",
+              "perception"
+            ],
+            "supporting": [
+              "concealment",
+              "detection",
+              "evasion",
+              "senses",
+              "stealth",
+              "survival",
+              "weapon_specialization"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "breacher",
+      "name": "Breacher",
+      "tranche": "12",
+      "primary": [
+        "infiltration",
+        "mechanics",
+        "melee",
+        "tech"
+      ],
+      "supporting": [
+        "ally_support",
+        "endurance",
+        "mobility",
+        "positioning",
+        "ranged",
+        "support",
+        "vehicle"
+      ],
+      "all": [
+        "ally_support",
+        "endurance",
+        "infiltration",
+        "mechanics",
+        "melee",
+        "mobility",
+        "positioning",
+        "ranged",
+        "support",
+        "tech",
+        "vehicle"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "infiltration",
+              "mechanics",
+              "melee",
+              "tech"
+            ],
+            "supporting": [
+              "ally_support",
+              "endurance",
+              "mobility",
+              "positioning",
+              "ranged",
+              "support",
+              "vehicle"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "boarding_marine",
+      "name": "Boarding Marine",
+      "tranche": "12",
+      "primary": [
+        "endurance",
+        "initiative",
+        "melee",
+        "space",
+        "teamwork"
+      ],
+      "supporting": [
+        "ally_support",
+        "defense",
+        "perception",
+        "support",
+        "survivability"
+      ],
+      "all": [
+        "ally_support",
+        "defense",
+        "endurance",
+        "initiative",
+        "melee",
+        "perception",
+        "space",
+        "support",
+        "survivability",
+        "teamwork"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "endurance",
+              "initiative",
+              "melee",
+              "space",
+              "teamwork"
+            ],
+            "supporting": [
+              "ally_support",
+              "defense",
+              "perception",
+              "support",
+              "survivability"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "shock_trooper",
+      "name": "Shock Trooper",
+      "tranche": "12",
+      "primary": [
+        "ally_support",
+        "ranged",
+        "support",
+        "teamwork"
+      ],
+      "supporting": [
+        "cover",
+        "damage_threshold",
+        "defense",
+        "offense_ranged",
+        "perception",
+        "survivability"
+      ],
+      "all": [
+        "ally_support",
+        "cover",
+        "damage_threshold",
+        "defense",
+        "offense_ranged",
+        "perception",
+        "ranged",
+        "support",
+        "survivability",
+        "teamwork"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "ally_support",
+              "ranged",
+              "support",
+              "teamwork"
+            ],
+            "supporting": [
+              "cover",
+              "damage_threshold",
+              "defense",
+              "offense_ranged",
+              "perception",
+              "survivability"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "noghri_death_commando",
+      "name": "Noghri Death Commando",
+      "tranche": "12",
+      "primary": [
+        "ambush",
+        "infiltration",
+        "perception",
+        "recon",
+        "stealth"
+      ],
+      "supporting": [
+        "mechanics",
+        "ranged",
+        "survival",
+        "teamwork",
+        "trap"
+      ],
+      "all": [
+        "ambush",
+        "infiltration",
+        "mechanics",
+        "perception",
+        "ranged",
+        "recon",
+        "stealth",
+        "survival",
+        "teamwork",
+        "trap"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "ambush",
+              "infiltration",
+              "perception",
+              "recon",
+              "stealth"
+            ],
+            "supporting": [
+              "mechanics",
+              "ranged",
+              "survival",
+              "teamwork",
+              "trap"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "battle_droid_veteran",
+      "name": "Battle Droid Veteran",
+      "tranche": "12",
+      "primary": [
+        "droid",
+        "endurance",
+        "perception",
+        "self_repair",
+        "survivability"
+      ],
+      "supporting": [
+        "initiative",
+        "recovery",
+        "repair",
+        "tactics",
+        "trap"
+      ],
+      "all": [
+        "droid",
+        "endurance",
+        "initiative",
+        "perception",
+        "recovery",
+        "repair",
+        "self_repair",
+        "survivability",
+        "tactics",
+        "trap"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "droid",
+              "endurance",
+              "perception",
+              "self_repair",
+              "survivability"
+            ],
+            "supporting": [
+              "initiative",
+              "recovery",
+              "repair",
+              "tactics",
+              "trap"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "clone_veteran",
+      "name": "Clone Veteran",
+      "tranche": "12",
+      "primary": [
+        "endurance",
+        "perception",
+        "survivability",
+        "tactics"
+      ],
+      "supporting": [
+        "ally_support",
+        "evasion",
+        "initiative",
+        "support",
+        "teamwork",
+        "treat_injury"
+      ],
+      "all": [
+        "ally_support",
+        "endurance",
+        "evasion",
+        "initiative",
+        "perception",
+        "support",
+        "survivability",
+        "tactics",
+        "teamwork",
+        "treat_injury"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "endurance",
+              "perception",
+              "survivability",
+              "tactics"
+            ],
+            "supporting": [
+              "ally_support",
+              "evasion",
+              "initiative",
+              "support",
+              "teamwork",
+              "treat_injury"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "mandalorian_warrior",
+      "name": "Mandalorian Warrior",
+      "tranche": "12",
+      "primary": [
+        "endurance",
+        "initiative",
+        "melee",
+        "mobility"
+      ],
+      "supporting": [
+        "damage_threshold",
+        "defense",
+        "perception",
+        "tactics",
+        "weapon_specialization"
+      ],
+      "all": [
+        "damage_threshold",
+        "defense",
+        "endurance",
+        "initiative",
+        "melee",
+        "mobility",
+        "perception",
+        "tactics",
+        "weapon_specialization"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "endurance",
+              "initiative",
+              "melee",
+              "mobility"
+            ],
+            "supporting": [
+              "damage_threshold",
+              "defense",
+              "perception",
+              "tactics",
+              "weapon_specialization"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "clan_champion",
+      "name": "Clan Champion",
+      "tranche": "12",
+      "primary": [
+        "control",
+        "endurance",
+        "initiative",
+        "melee"
+      ],
+      "supporting": [
+        "full_attack",
+        "mind-affecting",
+        "perception",
+        "weapon_training"
+      ],
+      "all": [
+        "control",
+        "endurance",
+        "full_attack",
+        "initiative",
+        "melee",
+        "mind-affecting",
+        "perception",
+        "weapon_training"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "control",
+              "endurance",
+              "initiative",
+              "melee"
+            ],
+            "supporting": [
+              "full_attack",
+              "mind-affecting",
+              "perception",
+              "weapon_training"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "yuuzhan_vong_warrior",
+      "name": "Yuuzhan Vong Warrior",
+      "tranche": "12",
+      "primary": [
+        "anti-force",
+        "endurance",
+        "initiative",
+        "melee",
+        "resilience"
+      ],
+      "supporting": [
+        "biotech",
+        "control",
+        "perception",
+        "weapon_training"
+      ],
+      "all": [
+        "anti-force",
+        "biotech",
+        "control",
+        "endurance",
+        "initiative",
+        "melee",
+        "perception",
+        "resilience",
+        "weapon_training"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "anti-force",
+              "endurance",
+              "initiative",
+              "melee",
+              "resilience"
+            ],
+            "supporting": [
+              "biotech",
+              "control",
+              "perception",
+              "weapon_training"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "tusken_tribal_warrior",
+      "name": "Tusken Tribal Warrior",
+      "tranche": "12",
+      "primary": [
+        "endurance",
+        "initiative",
+        "melee"
+      ],
+      "supporting": [
+        "control",
+        "mobility",
+        "perception",
+        "ranged",
+        "weapon_training"
+      ],
+      "all": [
+        "control",
+        "endurance",
+        "initiative",
+        "melee",
+        "mobility",
+        "perception",
+        "ranged",
+        "weapon_training"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "endurance",
+              "initiative",
+              "melee"
+            ],
+            "supporting": [
+              "control",
+              "mobility",
+              "perception",
+              "ranged",
+              "weapon_training"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "wookiee_clan_champion",
+      "name": "Wookiee Clan Champion",
+      "tranche": "12",
+      "primary": [
+        "control",
+        "endurance",
+        "grapple",
+        "melee"
+      ],
+      "supporting": [
+        "damage_threshold",
+        "initiative",
+        "mobility",
+        "perception",
+        "survivability"
+      ],
+      "all": [
+        "control",
+        "damage_threshold",
+        "endurance",
+        "grapple",
+        "initiative",
+        "melee",
+        "mobility",
+        "perception",
+        "survivability"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "control",
+              "endurance",
+              "grapple",
+              "melee"
+            ],
+            "supporting": [
+              "damage_threshold",
+              "initiative",
+              "mobility",
+              "perception",
+              "survivability"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "cathar_clan_warrior",
+      "name": "Cathar Clan Warrior",
+      "tranche": "12",
+      "primary": [
+        "endurance",
+        "initiative",
+        "melee",
+        "offense_melee"
+      ],
+      "supporting": [
+        "damage_threshold",
+        "mobility",
+        "perception",
+        "weapon_specialization"
+      ],
+      "all": [
+        "damage_threshold",
+        "endurance",
+        "initiative",
+        "melee",
+        "mobility",
+        "offense_melee",
+        "perception",
+        "weapon_specialization"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "endurance",
+              "initiative",
+              "melee",
+              "offense_melee"
+            ],
+            "supporting": [
+              "damage_threshold",
+              "mobility",
+              "perception",
+              "weapon_specialization"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "nagai_duelist",
+      "name": "Nagai Duelist",
+      "tranche": "12",
+      "primary": [
+        "full_attack",
+        "initiative",
+        "melee",
+        "weapon_specialization"
+      ],
+      "supporting": [
+        "control",
+        "perception",
+        "ranged",
+        "weapon_training"
+      ],
+      "all": [
+        "control",
+        "full_attack",
+        "initiative",
+        "melee",
+        "perception",
+        "ranged",
+        "weapon_specialization",
+        "weapon_training"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "full_attack",
+              "initiative",
+              "melee",
+              "weapon_specialization"
+            ],
+            "supporting": [
+              "control",
+              "perception",
+              "ranged",
+              "weapon_training"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "massassi_temple_warrior",
+      "name": "Massassi Temple Warrior",
+      "tranche": "12",
+      "primary": [
+        "endurance",
+        "grapple",
+        "melee",
+        "resilience"
+      ],
+      "supporting": [
+        "control",
+        "dark_side",
+        "force",
+        "force_offense",
+        "force_power",
+        "force_training",
+        "perception",
+        "survivability"
+      ],
+      "all": [
+        "control",
+        "dark_side",
+        "endurance",
+        "force",
+        "force_offense",
+        "force_power",
+        "force_training",
+        "grapple",
+        "melee",
+        "perception",
+        "resilience",
+        "survivability"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "endurance",
+              "grapple",
+              "melee",
+              "resilience"
+            ],
+            "supporting": [
+              "control",
+              "dark_side",
+              "force",
+              "force_offense",
+              "force_power",
+              "force_training",
+              "perception",
+              "survivability"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "nightbrother",
+      "name": "Nightbrother",
+      "tranche": "12",
+      "primary": [
+        "endurance",
+        "grapple",
+        "initiative",
+        "melee"
+      ],
+      "supporting": [
+        "control",
+        "mobility",
+        "perception",
+        "ranged",
+        "resilience",
+        "weapon_specialization"
+      ],
+      "all": [
+        "control",
+        "endurance",
+        "grapple",
+        "initiative",
+        "melee",
+        "mobility",
+        "perception",
+        "ranged",
+        "resilience",
+        "weapon_specialization"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "endurance",
+              "grapple",
+              "initiative",
+              "melee"
+            ],
+            "supporting": [
+              "control",
+              "mobility",
+              "perception",
+              "ranged",
+              "resilience",
+              "weapon_specialization"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "gungan_organic_tech_defender",
+      "name": "Gungan Organic-Tech Defender",
+      "tranche": "12",
+      "primary": [
+        "ally_support",
+        "mechanics",
+        "modification",
+        "support",
+        "tech"
+      ],
+      "supporting": [
+        "cover",
+        "crafting",
+        "damage_threshold",
+        "defense",
+        "equipment",
+        "trap",
+        "use_computer"
+      ],
+      "all": [
+        "ally_support",
+        "cover",
+        "crafting",
+        "damage_threshold",
+        "defense",
+        "equipment",
+        "mechanics",
+        "modification",
+        "support",
+        "tech",
+        "trap",
+        "use_computer"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "ally_support",
+              "mechanics",
+              "modification",
+              "support",
+              "tech"
+            ],
+            "supporting": [
+              "cover",
+              "crafting",
+              "damage_threshold",
+              "defense",
+              "equipment",
+              "trap",
+              "use_computer"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
     }
   ],
   "qaReview": {
-    "scope": "All 210 certified archetypes after tranche 11",
+    "scope": "All 250 certified archetypes after tranche 12",
     "result": "PASS",
-    "reviewedRecordCount": 210,
-    "newRecordCount": 20,
+    "reviewedRecordCount": 250,
+    "newRecordCount": 40,
     "carriedForwardRevisionLogCount": 8,
     "checks": [
-      "Frozen ontology membership for all new tranche tags; prior 190 retained from certified rolling authority",
-      "Primary/supporting disjointness across all 210 records",
-      "metadata.tags.all union consistency across all 210 records",
-      "Known hard implication closure across all 210 records",
-      "Semantic differentiation review",
-      "Narrow ontology-label review",
-      "Intrinsic/forbidden Force identity review"
+      "Frozen ontology membership across all 250 records",
+      "Primary/supporting disjointness across all 250 records",
+      "metadata.tags.all union consistency across all 250 records",
+      "Known hard implication closure across all 250 records",
+      "Semantic differentiation review across bodyguard, commando, veteran, warrior, and technical clusters",
+      "Narrow ontology-label review against certified Talent/Feat semantics",
+      "Intrinsic/optional/forbidden Force identity review",
+      "Species/cultural identity review without ordinary-English overtagging"
     ],
     "newTrancheHighOverlapPairsReviewed": [
       {
-        "a": "neimoidian_trade_viceroy",
-        "b": "senator",
-        "primaryJaccard": 1.0,
-        "allJaccard": 0.7
+        "a": "polis_massan_field_medic",
+        "b": "combat_medic",
+        "primaryJaccard": 0.833,
+        "allJaccard": 1.0
       },
       {
-        "a": "corporate_agent",
-        "b": "koorivar_corporate_magnate",
-        "primaryJaccard": 1.0,
-        "allJaccard": 0.667
+        "a": "doctor",
+        "b": "combat_medic",
+        "primaryJaccard": 0.833,
+        "allJaccard": 0.727
       },
       {
-        "a": "corporate_operator",
-        "b": "senator",
-        "primaryJaccard": 1.0,
+        "a": "commando",
+        "b": "noghri_death_commando",
+        "primaryJaccard": 0.8,
+        "allJaccard": 0.727
+      },
+      {
+        "a": "verpine_hive_engineer",
+        "b": "combat_engineer",
+        "primaryJaccard": 0.8,
+        "allJaccard": 0.538
+      },
+      {
+        "a": "frontier_marshal",
+        "b": "diplomatic_security_agent",
+        "primaryJaccard": 0.8,
+        "allJaccard": 0.375
+      },
+      {
+        "a": "tusken_tribal_warrior",
+        "b": "nightbrother",
+        "primaryJaccard": 0.75,
         "allJaccard": 0.636
       },
       {
-        "a": "spiritual_leader",
-        "b": "yuuzhan_vong_priest",
-        "primaryJaccard": 1.0,
-        "allJaccard": 0.545
-      },
-      {
-        "a": "community_leader",
-        "b": "yuuzhan_vong_priest",
-        "primaryJaccard": 1.0,
-        "allJaccard": 0.5
-      },
-      {
-        "a": "fixer",
-        "b": "political_fixer",
-        "primaryJaccard": 0.8,
-        "allJaccard": 0.6
-      },
-      {
-        "a": "spiritual_leader",
-        "b": "mediator",
-        "primaryJaccard": 0.8,
-        "allJaccard": 0.6
-      },
-      {
-        "a": "community_leader",
-        "b": "mediator",
-        "primaryJaccard": 0.8,
-        "allJaccard": 0.545
-      },
-      {
-        "a": "mediator",
-        "b": "yuuzhan_vong_priest",
-        "primaryJaccard": 0.8,
-        "allJaccard": 0.545
-      },
-      {
-        "a": "resistance_leader",
-        "b": "yuuzhan_vong_priest",
-        "primaryJaccard": 0.8,
-        "allJaccard": 0.5
-      },
-      {
-        "a": "revolutionary_statesman",
-        "b": "yuuzhan_vong_priest",
-        "primaryJaccard": 0.8,
-        "allJaccard": 0.417
-      },
-      {
-        "a": "droid_rights_activist",
-        "b": "protocol_droid",
-        "primaryJaccard": 0.75,
-        "allJaccard": 0.667
-      },
-      {
-        "a": "con_artist",
-        "b": "negotiator",
-        "primaryJaccard": 0.75,
-        "allJaccard": 0.625
-      },
-      {
-        "a": "planetary_governor",
-        "b": "senator",
+        "a": "clan_champion",
+        "b": "tusken_tribal_warrior",
         "primaryJaccard": 0.75,
         "allJaccard": 0.6
       },
       {
-        "a": "royal_heir",
-        "b": "senator",
+        "a": "mechanic",
+        "b": "combat_engineer",
         "primaryJaccard": 0.75,
-        "allJaccard": 0.6
+        "allJaccard": 0.538
       },
       {
-        "a": "zeltron_empathic_courtier",
-        "b": "negotiator",
-        "primaryJaccard": 0.75,
-        "allJaccard": 0.571
-      },
-      {
-        "a": "hapan_court_noble",
-        "b": "hutt_majordomo",
-        "primaryJaccard": 0.75,
-        "allJaccard": 0.5
-      },
-      {
-        "a": "diplomat",
-        "b": "muun_banking_magnate",
+        "a": "tusken_tribal_warrior",
+        "b": "cathar_clan_warrior",
         "primaryJaccard": 0.75,
         "allJaccard": 0.455
       },
       {
-        "a": "free_trader",
-        "b": "protocol_droid",
-        "primaryJaccard": 0.75,
-        "allJaccard": 0.455
-      },
-      {
-        "a": "hapan_court_noble",
-        "b": "senator",
-        "primaryJaccard": 0.75,
-        "allJaccard": 0.455
-      },
-      {
-        "a": "hutt_majordomo",
-        "b": "negotiator",
-        "primaryJaccard": 0.75,
-        "allJaccard": 0.444
-      },
-      {
-        "a": "zeltron_empathic_courtier",
-        "b": "bith_virtuoso",
-        "primaryJaccard": 0.75,
-        "allJaccard": 0.444
-      },
-      {
-        "a": "free_trader",
-        "b": "muun_banking_magnate",
+        "a": "mandalorian_warrior",
+        "b": "tusken_tribal_warrior",
         "primaryJaccard": 0.75,
         "allJaccard": 0.417
       },
       {
-        "a": "diplomat",
-        "b": "protocol_droid",
+        "a": "rebel_operative",
+        "b": "commando",
         "primaryJaccard": 0.75,
-        "allJaccard": 0.364
+        "allJaccard": 0.417
       },
       {
-        "a": "diplomat",
-        "b": "anomid_technical_diplomat",
-        "primaryJaccard": 0.75,
-        "allJaccard": 0.333
-      },
-      {
-        "a": "free_trader",
-        "b": "anomid_technical_diplomat",
+        "a": "bith_virtuoso",
+        "b": "warrior_priest",
         "primaryJaccard": 0.75,
         "allJaccard": 0.308
       },
       {
-        "a": "propagandist",
-        "b": "negotiator",
+        "a": "mercenary",
+        "b": "tusken_tribal_warrior",
         "primaryJaccard": 0.75,
-        "allJaccard": 0.3
+        "allJaccard": 0.286
       },
       {
-        "a": "sith_pureblood_scion",
-        "b": "senator",
-        "primaryJaccard": 0.75,
-        "allJaccard": 0.25
+        "a": "bodyguard",
+        "b": "imperial_royal_guard",
+        "primaryJaccard": 0.6,
+        "allJaccard": 0.9
       },
       {
-        "a": "koorivar_corporate_magnate",
-        "b": "senator",
+        "a": "bodyguard",
+        "b": "wookiee_life_debt_protector",
+        "primaryJaccard": 0.6,
+        "allJaccard": 0.9
+      },
+      {
+        "a": "imperial_royal_guard",
+        "b": "wookiee_life_debt_protector",
         "primaryJaccard": 0.6,
         "allJaccard": 0.818
-      },
-      {
-        "a": "con_artist",
-        "b": "hutt_majordomo",
-        "primaryJaccard": 0.6,
-        "allJaccard": 0.778
-      },
-      {
-        "a": "fence",
-        "b": "chiss_house_agent",
-        "primaryJaccard": 0.6,
-        "allJaccard": 0.778
-      },
-      {
-        "a": "neimoidian_trade_viceroy",
-        "b": "hutt_majordomo",
-        "primaryJaccard": 0.6,
-        "allJaccard": 0.778
-      },
-      {
-        "a": "con_artist",
-        "b": "zeltron_empathic_courtier",
-        "primaryJaccard": 0.6,
-        "allJaccard": 0.75
-      },
-      {
-        "a": "fence",
-        "b": "political_fixer",
-        "primaryJaccard": 0.5,
-        "allJaccard": 0.778
-      },
-      {
-        "a": "political_fixer",
-        "b": "hutt_majordomo",
-        "primaryJaccard": 0.5,
-        "allJaccard": 0.778
-      },
-      {
-        "a": "gambler",
-        "b": "bith_virtuoso",
-        "primaryJaccard": 0.5,
-        "allJaccard": 0.75
-      },
-      {
-        "a": "cantina_proprietor",
-        "b": "political_fixer",
-        "primaryJaccard": 0.429,
-        "allJaccard": 0.778
-      },
-      {
-        "a": "celebrity",
-        "b": "zeltron_empathic_courtier",
-        "primaryJaccard": 0.4,
-        "allJaccard": 1.0
-      },
-      {
-        "a": "holostar",
-        "b": "zeltron_empathic_courtier",
-        "primaryJaccard": 0.4,
-        "allJaccard": 1.0
-      },
-      {
-        "a": "zygerrian_abolitionist",
-        "b": "zeltron_empathic_courtier",
-        "primaryJaccard": 0.4,
-        "allJaccard": 0.857
       }
     ],
     "semanticQaRulings": [
-      "Advanced Planning is not tagged planning: its operative effect swaps Initiative results when combat begins rather than rewarding materially advance preparation.",
-      "Hutt Majordomo likewise does not receive planning from Contingency Plan; that talent is reactive movement after a failed roll/check.",
-      "Skakoan Techno Union Technocrat receives resources only as supporting evidence because the selected Wealth talent directly grants spendable credits; ordinary corporate assets alone would not qualify.",
-      "Protocol Droid does not receive skill_substitution from Skill Conversion; the talent exchanges a trained skill for Skill Focus rather than substituting one check basis for another.",
-      "Bith Virtuoso does not invent a music/performance tag outside the frozen ontology. Its virtuoso identity is represented conservatively through social/persuasion plus the selected Knack reroll evidence.",
-      "Caamasi Memory Keeper receives telepathy without force: memnii are species-backed inborn telepathic memory sharing, not evidence of Force identity.",
-      "Yuuzhan Vong Priest receives no Force tags. Yuuzhan Vong species rules explicitly bar Force Sensitivity and Use the Force.",
-      "Kissai Dark Priest promotes alchemy and dark_side because Sith alchemy is direct published creation/modification mechanics and intrinsic to the selected archetype package.",
-      "Tyia Adept centers ally support, healing, and force_support; medical is intentionally excluded because its defining healing is Force-based rather than medical equipment/procedure identity.",
-      "Fallanassi Adept promotes illusion and stealth from White Current tradition evidence. Concealment remains supporting and refers to the actual concealment mechanic, not ordinary secrecy.",
-      "Baran Do Sage promotes precognition and investigation from source-backed seer/investigator identity; planning is excluded because careful deliberation is not the ontology planning mechanic.",
-      "Miraluka Force Seer promotes senses because Force Sight is a direct species-backed special sense. telepath/telepathy remain supporting through Mind Probe rather than defining every Miraluka as a telepath."
+      "Enforcer follows the prior Kiffu Guardian correction: Enforcement is investigator/quarry-apprehension oriented. Respected Officer supports persuasion/social but does not turn the archetype into command/leadership.",
+      "Security Specialist and Bodyguard receive ally_support only where selected Protection mechanics directly benefit another creature; generic protective flavor alone is not enough.",
+      "Combat Medic promotes healing/medical/medicine/treat_injury because the selected Advanced Medicine package directly performs therapeutic treatment and recovery under fire.",
+      "Combat Engineer does not inherit every explosive semantic from the Military Engineer tree. Its selected package centers mechanics, repair, modification, tech, vehicle problem-solving, and equipment work.",
+      "Warrior-Priest keeps all Force semantics supporting because Phase 7 explicitly classifies its Force route as optional rather than intrinsic.",
+      "Morgukai Warrior promotes anti-force because Force Blank directly impairs Force-based detection while the archetype itself has no Force access.",
+      "Breacher is not automatically tagged trap or burst_damage: this specific selected package does not include Breaching Explosive or Demolitionist, despite the ordinary-language breacher concept.",
+      "Assassin Droid promotes droid because machine identity is structural and required, while ambush/precision_damage/stealth describe the selected killer package.",
+      "Yuuzhan Vong Warrior receives no Force tags. Species Force Immunity supports anti-force, while living-weapon culture supports biotech only as a secondary identity signal.",
+      "Massassi Temple Warrior keeps Force, Force-power, and dark-side semantics supporting because its Sith-taught Force route is one of the project's explicitly optional Force identities.",
+      "Nightbrother receives no dark_side tag. Project narrative authority treats Nightbrothers as a distinct Dathomirian cultural-warrior fantasy, and this record has no direct Force/dark-side mechanics.",
+      "Gungan Organic-Tech Defender does not receive biotech from the name alone. The certified package proves engineering, protection, explosives, equipment, and modification; no direct biological-technology mechanic was established in this pass.",
+      "Mandalorian Warrior does not receive armor merely because Mandalorian culture is visually armor-centric; this record's selected mechanics do not directly operate on armor.",
+      "Bodyguard-family overlap is retained where it is real, but each specialization promotes a different evidence-backed axis: ranged cover (Koorivar), diplomacy/nonlethal intervention, sovereign melee protection, loyalty leadership, endurance/life-debt, clan melee protection, or Noghri close-control capability."
     ],
     "validationSummary": {
       "unknownOntologyTags": 0,
       "primarySupportingCollisions": 0,
       "brokenAllUnions": 0,
       "knownHardImplicationViolations": 0,
-      "newTrancheRecordCount": 20,
-      "cumulativeCertifiedRecordCount": 210
+      "newTrancheRecordCount": 40,
+      "cumulativeCertifiedRecordCount": 250
     }
   }
 }
