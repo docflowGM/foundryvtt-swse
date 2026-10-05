@@ -8,36 +8,36 @@
     "path": "data/audits/talent-feat-phase3-final-ontology.json",
     "tagCount": 190
   },
-  "certifiedCount": 150,
+  "certifiedCount": 170,
   "totalArchetypes": 297,
-  "remainingUncuratedAfterApplication": 147,
+  "remainingUncuratedAfterApplication": 127,
   "selectionRule": "Continue Noble-first records in dataset order. Class is a route, not ownership.",
   "currentExecution": {
-    "id": "12B-NOBLE-08",
+    "id": "12B-NOBLE-09",
     "status": "AUTHORITY_READY_BASELINE_PENDING",
-    "requiredBaseline": "e8a2c7b7375e089cf0382fce62f1bd11433a74fd",
-    "baselineInstruction": "Replace this placeholder with the successful commit returned after 12B-SCOUNDREL-NOBLE-07 execution before applying this tranche. Do not infer a SHA.",
+    "requiredBaseline": "723220ed9d5d6a1d4ffa40f47f4fe64181f60f08",
+    "baselineInstruction": "Replace this placeholder with the successful commit returned after 12B-NOBLE-08 execution before applying this tranche. Do not infer a SHA.",
     "newRecordIds": [
-      "corporate_operator",
-      "courtier",
-      "diplomat",
-      "educator",
-      "merchant_prince",
-      "planetary_governor",
-      "propagandist",
-      "revolutionary_statesman",
-      "spiritual_leader",
-      "dark_side_cultist",
-      "force_mystic",
-      "force_seer",
-      "force_witch",
-      "falleen_black_sun_noble",
-      "hutt_kajidic_lorda",
-      "forensic_specialist",
-      "counterintelligence_officer",
-      "handler",
-      "investigative_journalist",
-      "holonet_reporter"
+      "war_correspondent",
+      "chiss_expansionary_fleet_officer",
+      "hapan_battle_dragon_officer",
+      "mon_calamari_rebel_admiral",
+      "logistics_officer",
+      "rebel_cell_leader",
+      "underground_organizer",
+      "droid_revolutionary",
+      "gree_technology_keeper",
+      "rakatan_force_tech_scion",
+      "mon_calamari_fleet_architect",
+      "xenobiologist",
+      "droid_behavioral_specialist",
+      "yuuzhan_vong_shaper",
+      "kaminoan_cloner",
+      "kaminoan_geneticist",
+      "arkanian_geneticist",
+      "ssi_ruuk_entechment_technologist",
+      "celegian_philosopher_scientist",
+      "surgeon"
     ],
     "revisionIds": []
   },
@@ -7630,12 +7630,953 @@
           "authority": "OWNER_CERTIFIED"
         }
       }
+    },
+    {
+      "id": "war_correspondent",
+      "name": "War Correspondent",
+      "tranche": "09",
+      "primary": [
+        "gather_information",
+        "perception",
+        "survival"
+      ],
+      "supporting": [
+        "endurance",
+        "persuasion",
+        "social"
+      ],
+      "all": [
+        "endurance",
+        "gather_information",
+        "perception",
+        "persuasion",
+        "social",
+        "survival"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "gather_information",
+              "perception",
+              "survival"
+            ],
+            "supporting": [
+              "endurance",
+              "persuasion",
+              "social"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "chiss_expansionary_fleet_officer",
+      "name": "Chiss Expansionary Fleet Officer",
+      "tranche": "09",
+      "primary": [
+        "command",
+        "leadership",
+        "space",
+        "tactics",
+        "teamwork"
+      ],
+      "supporting": [
+        "ally_support",
+        "defense",
+        "perception",
+        "pilot",
+        "support"
+      ],
+      "all": [
+        "ally_support",
+        "command",
+        "defense",
+        "leadership",
+        "perception",
+        "pilot",
+        "space",
+        "support",
+        "tactics",
+        "teamwork"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "command",
+              "leadership",
+              "space",
+              "tactics",
+              "teamwork"
+            ],
+            "supporting": [
+              "ally_support",
+              "defense",
+              "perception",
+              "pilot",
+              "support"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "hapan_battle_dragon_officer",
+      "name": "Hapan Battle Dragon Officer",
+      "tranche": "09",
+      "primary": [
+        "command",
+        "leadership",
+        "pilot",
+        "space",
+        "tactics",
+        "vehicle"
+      ],
+      "supporting": [
+        "ally_support",
+        "perception",
+        "support",
+        "teamwork"
+      ],
+      "all": [
+        "ally_support",
+        "command",
+        "leadership",
+        "perception",
+        "pilot",
+        "space",
+        "support",
+        "tactics",
+        "teamwork",
+        "vehicle"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "command",
+              "leadership",
+              "pilot",
+              "space",
+              "tactics",
+              "vehicle"
+            ],
+            "supporting": [
+              "ally_support",
+              "perception",
+              "support",
+              "teamwork"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "mon_calamari_rebel_admiral",
+      "name": "Mon Calamari Rebel Admiral",
+      "tranche": "09",
+      "primary": [
+        "command",
+        "leadership",
+        "planning",
+        "space",
+        "tactics",
+        "teamwork"
+      ],
+      "supporting": [
+        "ally_support",
+        "perception",
+        "support",
+        "use_computer"
+      ],
+      "all": [
+        "ally_support",
+        "command",
+        "leadership",
+        "perception",
+        "planning",
+        "space",
+        "support",
+        "tactics",
+        "teamwork",
+        "use_computer"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "command",
+              "leadership",
+              "planning",
+              "space",
+              "tactics",
+              "teamwork"
+            ],
+            "supporting": [
+              "ally_support",
+              "perception",
+              "support",
+              "use_computer"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "logistics_officer",
+      "name": "Logistics Officer",
+      "tranche": "09",
+      "primary": [
+        "equipment",
+        "knowledge",
+        "support",
+        "use_computer"
+      ],
+      "supporting": [
+        "ally_support",
+        "mechanics",
+        "persuasion",
+        "tech"
+      ],
+      "all": [
+        "ally_support",
+        "equipment",
+        "knowledge",
+        "mechanics",
+        "persuasion",
+        "support",
+        "tech",
+        "use_computer"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "equipment",
+              "knowledge",
+              "support",
+              "use_computer"
+            ],
+            "supporting": [
+              "ally_support",
+              "mechanics",
+              "persuasion",
+              "tech"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "rebel_cell_leader",
+      "name": "Rebel Cell Leader",
+      "tranche": "09",
+      "primary": [
+        "leadership",
+        "persuasion",
+        "social_network",
+        "support"
+      ],
+      "supporting": [
+        "ally_support",
+        "deception",
+        "gather_information",
+        "manipulation",
+        "teamwork"
+      ],
+      "all": [
+        "ally_support",
+        "deception",
+        "gather_information",
+        "leadership",
+        "manipulation",
+        "persuasion",
+        "social_network",
+        "support",
+        "teamwork"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "leadership",
+              "persuasion",
+              "social_network",
+              "support"
+            ],
+            "supporting": [
+              "ally_support",
+              "deception",
+              "gather_information",
+              "manipulation",
+              "teamwork"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "underground_organizer",
+      "name": "Underground Organizer",
+      "tranche": "09",
+      "primary": [
+        "intrigue",
+        "leadership",
+        "planning",
+        "social_network"
+      ],
+      "supporting": [
+        "deception",
+        "gather_information",
+        "persuasion",
+        "stealth"
+      ],
+      "all": [
+        "deception",
+        "gather_information",
+        "intrigue",
+        "leadership",
+        "persuasion",
+        "planning",
+        "social_network",
+        "stealth"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "intrigue",
+              "leadership",
+              "planning",
+              "social_network"
+            ],
+            "supporting": [
+              "deception",
+              "gather_information",
+              "persuasion",
+              "stealth"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "droid_revolutionary",
+      "name": "Droid Revolutionary",
+      "tranche": "09",
+      "primary": [
+        "droid",
+        "leadership",
+        "persuasion",
+        "social",
+        "support"
+      ],
+      "supporting": [
+        "ally_support",
+        "deception",
+        "gather_information",
+        "use_computer"
+      ],
+      "all": [
+        "ally_support",
+        "deception",
+        "droid",
+        "gather_information",
+        "leadership",
+        "persuasion",
+        "social",
+        "support",
+        "use_computer"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "droid",
+              "leadership",
+              "persuasion",
+              "social",
+              "support"
+            ],
+            "supporting": [
+              "ally_support",
+              "deception",
+              "gather_information",
+              "use_computer"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "gree_technology_keeper",
+      "name": "Gree Technology Keeper",
+      "tranche": "09",
+      "primary": [
+        "knowledge",
+        "mechanics",
+        "tech"
+      ],
+      "supporting": [
+        "jury_rig",
+        "modification",
+        "perception",
+        "skill_mastery",
+        "use_computer"
+      ],
+      "all": [
+        "jury_rig",
+        "knowledge",
+        "mechanics",
+        "modification",
+        "perception",
+        "skill_mastery",
+        "tech",
+        "use_computer"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "knowledge",
+              "mechanics",
+              "tech"
+            ],
+            "supporting": [
+              "jury_rig",
+              "modification",
+              "perception",
+              "skill_mastery",
+              "use_computer"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "rakatan_force_tech_scion",
+      "name": "Rakatan Force-Tech Scion",
+      "tranche": "09",
+      "primary": [
+        "force",
+        "force_power",
+        "mechanics",
+        "tech",
+        "use_the_force"
+      ],
+      "supporting": [
+        "force_training",
+        "ion",
+        "jury_rig",
+        "telekinesis",
+        "use_computer",
+        "weapon_empowerment"
+      ],
+      "all": [
+        "force",
+        "force_power",
+        "force_training",
+        "ion",
+        "jury_rig",
+        "mechanics",
+        "tech",
+        "telekinesis",
+        "use_computer",
+        "use_the_force",
+        "weapon_empowerment"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "force",
+              "force_power",
+              "mechanics",
+              "tech",
+              "use_the_force"
+            ],
+            "supporting": [
+              "force_training",
+              "ion",
+              "jury_rig",
+              "telekinesis",
+              "use_computer",
+              "weapon_empowerment"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "mon_calamari_fleet_architect",
+      "name": "Mon Calamari Fleet Architect",
+      "tranche": "09",
+      "primary": [
+        "crafting",
+        "mechanics",
+        "space",
+        "tech",
+        "vehicle"
+      ],
+      "supporting": [
+        "knowledge",
+        "modification",
+        "perception",
+        "use_computer"
+      ],
+      "all": [
+        "crafting",
+        "knowledge",
+        "mechanics",
+        "modification",
+        "perception",
+        "space",
+        "tech",
+        "use_computer",
+        "vehicle"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "crafting",
+              "mechanics",
+              "space",
+              "tech",
+              "vehicle"
+            ],
+            "supporting": [
+              "knowledge",
+              "modification",
+              "perception",
+              "use_computer"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "xenobiologist",
+      "name": "Xenobiologist",
+      "tranche": "09",
+      "primary": [
+        "knowledge",
+        "nature",
+        "science"
+      ],
+      "supporting": [
+        "medicine",
+        "perception",
+        "survival",
+        "treat_injury"
+      ],
+      "all": [
+        "knowledge",
+        "medicine",
+        "nature",
+        "perception",
+        "science",
+        "survival",
+        "treat_injury"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "knowledge",
+              "nature",
+              "science"
+            ],
+            "supporting": [
+              "medicine",
+              "perception",
+              "survival",
+              "treat_injury"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "droid_behavioral_specialist",
+      "name": "Droid Behavioral Specialist",
+      "tranche": "09",
+      "primary": [
+        "droid",
+        "science",
+        "tech"
+      ],
+      "supporting": [
+        "knowledge",
+        "mechanics",
+        "perception",
+        "social",
+        "use_computer"
+      ],
+      "all": [
+        "droid",
+        "knowledge",
+        "mechanics",
+        "perception",
+        "science",
+        "social",
+        "tech",
+        "use_computer"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "droid",
+              "science",
+              "tech"
+            ],
+            "supporting": [
+              "knowledge",
+              "mechanics",
+              "perception",
+              "social",
+              "use_computer"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "yuuzhan_vong_shaper",
+      "name": "Yuuzhan Vong Shaper",
+      "tranche": "09",
+      "primary": [
+        "biotech",
+        "crafting",
+        "implant",
+        "modification",
+        "repair"
+      ],
+      "supporting": [
+        "knowledge",
+        "medical",
+        "medicine",
+        "science",
+        "treat_injury"
+      ],
+      "all": [
+        "biotech",
+        "crafting",
+        "implant",
+        "knowledge",
+        "medical",
+        "medicine",
+        "modification",
+        "repair",
+        "science",
+        "treat_injury"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "biotech",
+              "crafting",
+              "implant",
+              "modification",
+              "repair"
+            ],
+            "supporting": [
+              "knowledge",
+              "medical",
+              "medicine",
+              "science",
+              "treat_injury"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "kaminoan_cloner",
+      "name": "Kaminoan Cloner",
+      "tranche": "09",
+      "primary": [
+        "biotech",
+        "medical",
+        "science"
+      ],
+      "supporting": [
+        "knowledge",
+        "perception",
+        "treat_injury",
+        "use_computer"
+      ],
+      "all": [
+        "biotech",
+        "knowledge",
+        "medical",
+        "perception",
+        "science",
+        "treat_injury",
+        "use_computer"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "biotech",
+              "medical",
+              "science"
+            ],
+            "supporting": [
+              "knowledge",
+              "perception",
+              "treat_injury",
+              "use_computer"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "kaminoan_geneticist",
+      "name": "Kaminoan Geneticist",
+      "tranche": "09",
+      "primary": [
+        "biotech",
+        "knowledge",
+        "science"
+      ],
+      "supporting": [
+        "medical",
+        "perception",
+        "treat_injury",
+        "use_computer"
+      ],
+      "all": [
+        "biotech",
+        "knowledge",
+        "medical",
+        "perception",
+        "science",
+        "treat_injury",
+        "use_computer"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "biotech",
+              "knowledge",
+              "science"
+            ],
+            "supporting": [
+              "medical",
+              "perception",
+              "treat_injury",
+              "use_computer"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "arkanian_geneticist",
+      "name": "Arkanian Geneticist",
+      "tranche": "09",
+      "primary": [
+        "biotech",
+        "knowledge",
+        "science"
+      ],
+      "supporting": [
+        "medical",
+        "perception",
+        "tech",
+        "treat_injury"
+      ],
+      "all": [
+        "biotech",
+        "knowledge",
+        "medical",
+        "perception",
+        "science",
+        "tech",
+        "treat_injury"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "biotech",
+              "knowledge",
+              "science"
+            ],
+            "supporting": [
+              "medical",
+              "perception",
+              "tech",
+              "treat_injury"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "ssi_ruuk_entechment_technologist",
+      "name": "Ssi-Ruuk Entechment Technologist",
+      "tranche": "09",
+      "primary": [
+        "droid",
+        "power_systems",
+        "science",
+        "tech"
+      ],
+      "supporting": [
+        "knowledge",
+        "mechanics",
+        "perception",
+        "use_computer"
+      ],
+      "all": [
+        "droid",
+        "knowledge",
+        "mechanics",
+        "perception",
+        "power_systems",
+        "science",
+        "tech",
+        "use_computer"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "droid",
+              "power_systems",
+              "science",
+              "tech"
+            ],
+            "supporting": [
+              "knowledge",
+              "mechanics",
+              "perception",
+              "use_computer"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "celegian_philosopher_scientist",
+      "name": "Celegian Philosopher-Scientist",
+      "tranche": "09",
+      "primary": [
+        "knowledge",
+        "science",
+        "telepathy"
+      ],
+      "supporting": [
+        "perception",
+        "skill_mastery",
+        "social"
+      ],
+      "all": [
+        "knowledge",
+        "perception",
+        "science",
+        "skill_mastery",
+        "social",
+        "telepathy"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "knowledge",
+              "science",
+              "telepathy"
+            ],
+            "supporting": [
+              "perception",
+              "skill_mastery",
+              "social"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "surgeon",
+      "name": "Surgeon",
+      "tranche": "09",
+      "primary": [
+        "medical",
+        "medicine",
+        "treat_injury"
+      ],
+      "supporting": [
+        "ally_support",
+        "healing",
+        "knowledge",
+        "perception",
+        "skill_mastery",
+        "support"
+      ],
+      "all": [
+        "ally_support",
+        "healing",
+        "knowledge",
+        "medical",
+        "medicine",
+        "perception",
+        "skill_mastery",
+        "support",
+        "treat_injury"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "medical",
+              "medicine",
+              "treat_injury"
+            ],
+            "supporting": [
+              "ally_support",
+              "healing",
+              "knowledge",
+              "perception",
+              "skill_mastery",
+              "support"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
     }
   ],
   "qaReview": {
-    "scope": "All 150 certified archetypes after tranche 08",
+    "scope": "All 170 certified archetypes after tranche 09",
     "result": "PASS",
-    "reviewedRecordCount": 150,
+    "reviewedRecordCount": 170,
     "newRecordCount": 20,
     "carriedForwardExplicitRevisionCount": 7,
     "checks": [
@@ -7648,45 +8589,39 @@
     ],
     "newTrancheHighOverlapPairsReviewed": [
       {
-        "a": "falleen_black_sun_noble",
-        "b": "hutt_kajidic_lorda",
+        "a": "kaminoan_geneticist",
+        "b": "arkanian_geneticist",
         "primaryJaccard": 1.0,
-        "allJaccard": 0.8
+        "allJaccard": 0.75
       },
       {
-        "a": "revolutionary_statesman",
-        "b": "spiritual_leader",
-        "primaryJaccard": 0.8,
-        "allJaccard": 0.6
+        "a": "chiss_expansionary_fleet_officer",
+        "b": "mon_calamari_rebel_admiral",
+        "primaryJaccard": 0.833,
+        "allJaccard": 0.667
       },
       {
-        "a": "corporate_operator",
-        "b": "planetary_governor",
+        "a": "droid_behavioral_specialist",
+        "b": "ssi_ruuk_entechment_technologist",
         "primaryJaccard": 0.75,
-        "allJaccard": 0.6
+        "allJaccard": 0.778
       },
       {
-        "a": "merchant_prince",
-        "b": "planetary_governor",
-        "primaryJaccard": 0.75,
-        "allJaccard": 0.5
+        "a": "chiss_expansionary_fleet_officer",
+        "b": "hapan_battle_dragon_officer",
+        "primaryJaccard": 0.571,
+        "allJaccard": 0.818
       },
       {
-        "a": "planetary_governor",
-        "b": "revolutionary_statesman",
-        "primaryJaccard": 0.75,
-        "allJaccard": 0.364
-      },
-      {
-        "a": "force_mystic",
-        "b": "force_seer",
+        "a": "kaminoan_cloner",
+        "b": "kaminoan_geneticist",
         "primaryJaccard": 0.5,
-        "allJaccard": 0.833
+        "allJaccard": 1.0
       },
       {
-        "a": "investigative_journalist",
-        "b": "holonet_reporter",
-        "primaryJaccard": 0.4,
+        "a": "kaminoan_cloner",
+        "b": "arkanian_geneticist",
+        "primaryJaccard": 0.5,
         "allJaccard": 0.75
       }
     ]
