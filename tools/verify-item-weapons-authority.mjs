@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
  * Verifies data/audits/item-canonicalization-rolling-authority.json (Phase 0-1 weapons,
- * Phase 0-2 armor, Phase 0-3A equipment, Phase 0-3B medical, Phase 0-3C explosives, Phase 0-3D cybernetics, Phase 0-3E upgrades) against the weapons, armor and equipment packs. Read-only. Fails on any drift between the certified authority
+ * Phase 0-2 armor, Phase 0-3A equipment, Phase 0-3B medical, Phase 0-3C explosives, Phase 0-3D cybernetics, Phase 0-3E upgrades, Phase 0-3F gear templates) against the weapons, armor and equipment packs. Read-only. Fails on any drift between the certified authority
  * and the pack so that execution phases cannot silently run against a changed repo.
  */
 import fs from 'node:fs';
@@ -232,6 +232,45 @@ if (up) {
     if (have !== up.repoReversePass.upgradeJsonCatalogs[k].records || have !== n) fail(`data/upgrades/${k}-upgrades.json has ${have} records, authority expects ${up.repoReversePass.upgradeJsonCatalogs[k].records}`);
   }
   if (!errors.length) console.log(`upgrades authority OK: ${up.records.length} entries (${ud.EDIT} EDIT, ${ud.ADD} ADD pending, ${ud.CROSS_REFERENCE} cross-refs), ${upgradeRecords.length} upgrade-* records covered, JSON catalog counts match`);
+}
+
+// ---- Phase 0-3F gear templates (authority-only) ----
+const gt = auth.phases['0-3f-gear-templates'];
+if (gt) {
+  const legacy = JSON.parse(fs.readFileSync(path.join(ROOT, 'data/gear-templates.json'), 'utf8'));
+  const container = { general: 'generalTemplates', weapon: 'weaponTemplates', armor: 'armorTemplates' };
+  const ids = new Set();
+  for (const r of gt.records) {
+    if (ids.has(r.canonicalId)) fail(`gear template duplicate id ${r.canonicalId}`);
+    ids.add(r.canonicalId);
+    const l = r.legacyJson;
+    if (l.present) {
+      const entry = legacy[container[r.templateType]]?.[l.key];
+      if (!entry) { fail(`gear template ${r.canonicalName}: ${container[r.templateType]}.${l.key} missing from data/gear-templates.json`); continue; }
+      if (entry.name !== l.name) fail(`gear template ${l.key} name drift: "${entry.name}" vs "${l.name}"`);
+      if (l.disposition === 'KEEP' && entry.name !== r.canonicalName) fail(`gear template KEEP ${r.canonicalName} != legacy name`);
+      if (l.disposition === 'EDIT' && entry.name === r.canonicalName) fail(`gear template EDIT ${r.canonicalName} already canonical in legacy JSON`);
+    } else if (r.phase0Disposition !== 'ADD') fail(`gear template ${r.canonicalName} not in legacy JSON but not ADD`);
+  }
+  for (const ro of gt.repoOnlyRecords) {
+    if (legacy[ro.container]?.[ro.key]?.name !== ro.name) fail(`gear template repo-only ${ro.container}.${ro.key} missing or renamed`);
+  }
+  const legacyTotal = Object.values(legacy).reduce((n, v) => n + Object.keys(v).length, 0);
+  const accounted = gt.records.filter((r) => r.legacyJson.present).length + gt.repoOnlyRecords.length;
+  if (legacyTotal !== gt.counts.legacyJsonRecords || accounted !== legacyTotal) fail(`gear template legacy JSON has ${legacyTotal} records, ${accounted} accounted, authority expects ${gt.counts.legacyJsonRecords}`);
+  // Runtime catalog keys (read by source text; the module uses Foundry-absolute imports).
+  const rtSrc = fs.readFileSync(path.join(ROOT, 'scripts/data/gear-templates.js'), 'utf8');
+  const rtBlock = rtSrc.match(/export const ITEM_TEMPLATE_CATALOG = \{([\s\S]*?)\n\};/)?.[1] || '';
+  const rtKeys = [...rtBlock.matchAll(/^  ([a-z_0-9]+):\s*\{/gm)].map((m) => m[1]).sort();
+  const authKeys = gt.records.flatMap((r) => r.runtime.keys).sort();
+  if (JSON.stringify(rtKeys) !== JSON.stringify(authKeys)) fail(`gear template runtime keys ${JSON.stringify(rtKeys)} != authority ${JSON.stringify(authKeys)}`);
+  const ucSrc = fs.readFileSync(path.join(ROOT, 'scripts/engine/customization/upgrade-catalog.js'), 'utf8');
+  const ucBlock = ucSrc.match(/export const TEMPLATE_CATALOG = \{([\s\S]*?)\n\};/)?.[1] || '';
+  const ucKeys = [...ucBlock.matchAll(/^  ([a-z_0-9]+):\s*\{/gm)].map((m) => m[1]).sort();
+  if (JSON.stringify(ucKeys) !== JSON.stringify(rtKeys)) fail(`TEMPLATE_CATALOG keys ${JSON.stringify(ucKeys)} differ from ITEM_TEMPLATE_CATALOG`);
+  const gd = count(gt.records, (r) => r.phase0Disposition);
+  if (gd.KEEP !== gt.counts.legacyJsonKEEP || gd.EDIT !== gt.counts.legacyJsonEDIT || gd.ADD !== gt.counts.legacyJsonADD || gt.records.length !== gt.counts.canonicalTemplates) fail(`gear template counts ${JSON.stringify(gd)}`);
+  if (!errors.length) console.log(`gear template authority OK: ${gt.records.length} canonical (${gd.KEEP} KEEP, ${gd.EDIT} EDIT, ${gd.ADD} ADD pending), ${legacyTotal} legacy JSON records accounted for, ${rtKeys.length} runtime keys in both runtime catalogs`);
 }
 
 if (errors.length) { console.error(`FAIL (${errors.length})\n- ${errors.join('\n- ')}`); process.exit(1); }

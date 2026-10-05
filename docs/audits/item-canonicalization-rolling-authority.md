@@ -1,9 +1,9 @@
 # SWSE Item Canonicalization — Rolling Authority
 
-Status: ACTIVE — Phase 0 complete; Phase 0-1 Weapons and Phase 0-2 Armor and Phase 0-3A General Equipment, Phase 0-3B Medical, Phase 0-3C Explosives/Demolitions and Phase 0-3D Cybernetics/Implants and Phase 0-3E Upgrades/Modifications certified by owner (armor, equipment and medical renames executed)
+Status: ACTIVE — Phase 0 complete; Phase 0-1 Weapons and Phase 0-2 Armor and Phase 0-3A General Equipment, Phase 0-3B Medical, Phase 0-3C Explosives/Demolitions and Phase 0-3D Cybernetics/Implants Phase 0-3E Upgrades/Modifications and Phase 0-3F Gear Templates certified by owner (armor, equipment and medical renames executed)
 Updated: 2026-10-05
 Machine-readable companion: `data/audits/item-canonicalization-rolling-authority.json`
-Verify against the packs: `node tools/verify-item-weapons-authority.mjs` (weapons, armor, equipment, medical, explosives, cybernetics and upgrades)
+Verify against the packs: `node tools/verify-item-weapons-authority.mjs` (weapons, armor, equipment, medical, explosives, cybernetics, upgrades and gear templates)
 
 This is the single cumulative authority for item rehabilitation. Per-book/phase files are temporary evidence and must not become competing authorities. Architecture evidence: `docs/audits/item-phase-0-ssot-census.md` (owner rulings in §7a).
 
@@ -1043,6 +1043,92 @@ Identity keys are category-qualified (`weapon:rangefinder` vs `armor:rangefinder
 
 - 70 entries = 66 owned + 4 cross-references; 15 EDIT + 51 ADD = 66; all 16 `upgrade-*` records covered once; cross-references resolve to 0-3A records; JSON catalog counts (29/19/23) and runtime def count (71) re-measured and match.
 
+## Phase 0-3F — Gear templates: census and repo reconciliation
+
+Character-scale weapon, armor and general gear templates (customization overlays applied to existing weapons and armor). Excluded: upgrade-slot modifications (0-3E), Tech Specialist feat modifications, lightsaber components, droid manufacturer templates, vehicle/starship templates, creature/NPC templates. Identity and presence only. **Authority-only: no repo change.** Gear templates are customization rules and must never become ordinary `packs/equipment.db` records.
+
+| Result | Count |
+|---|---:|
+| Canonical templates | 27 (KOTOR 23, Legacy 2, Rebellion 2) |
+| `data/gear-templates.json` records | 30 (26 canonical identities + 4 repo-only) |
+| KEEP | 13 |
+| EDIT (label normalization) | 13 |
+| ADD (Rebellion Phrik Alloy) | 1 |
+| Repo-only, to remove from template authority | 4 |
+| Live runtime entries | 7 (represent 6 canonical identities; 21 missing) |
+
+| # | Canonical template | Type | Source | Legacy JSON (container:key) | Runtime keys | Disposition |
+|---:|---|---|---|---|---|---|
+| 1 | Arkanian Manufacture | general | Knights of the Old Republic Campaign Guide (76-80) | `generalTemplates:arkanian` — Arkanian | — | EDIT |
+| 2 | Cinnagaran Manufacture | general | Knights of the Old Republic Campaign Guide (76-80) | `generalTemplates:cinnagaran` — Cinnagaran | — | EDIT |
+| 3 | Cortosis Weave/Phrik Alloy | general | Knights of the Old Republic Campaign Guide (76-80) | `generalTemplates:cortosisWeave` — Cortosis Weave / Phrik Alloy | `cortosis_weave_general`, `phrik_alloy_general` | EDIT |
+| 4 | Echani Manufacture | general | Knights of the Old Republic Campaign Guide (76-80) | `generalTemplates:echani` — Echani | — | EDIT |
+| 5 | GenoHaradan Manufacture | general | Knights of the Old Republic Campaign Guide (76-80) | `generalTemplates:genoharadan` — GenoHaradan | — | EDIT |
+| 6 | Iridonian Manufacture | general | Knights of the Old Republic Campaign Guide (76-80) | `generalTemplates:iridonian` — Iridonian | — | EDIT |
+| 7 | Krath Manufacture | general | Knights of the Old Republic Campaign Guide (76-80) | `generalTemplates:krath` — Krath | — | EDIT |
+| 8 | Mandalorian Manufacture | general | Knights of the Old Republic Campaign Guide (76-80) | `generalTemplates:mandalorian` — Mandalorian | `mandalorian_general` | EDIT |
+| 9 | Massassi Manufacture | general | Knights of the Old Republic Campaign Guide (76-80) | `generalTemplates:massassi` — Massassi | — | EDIT |
+| 10 | Prototype | general | Knights of the Old Republic Campaign Guide (76-80) | `generalTemplates:prototype` — Prototype | `prototype_general` | KEEP |
+| 11 | Verpine Manufacture | general | Knights of the Old Republic Campaign Guide (76-80) | `generalTemplates:verpine` — Verpine | `verpine_general` | EDIT |
+| 12 | Baragwin Weapon | weapon | Knights of the Old Republic Campaign Guide (78-79) | `weaponTemplates:baragwin` — Baragwin Weapon | — | KEEP |
+| 13 | Bothan Weapon | weapon | Knights of the Old Republic Campaign Guide (78-79) | `weaponTemplates:bothan` — Bothan Weapon | — | KEEP |
+| 14 | Dashade Weapon | weapon | Knights of the Old Republic Campaign Guide (78-79) | `weaponTemplates:dashade` — Dashade Weapon | — | KEEP |
+| 15 | Gand Weapon | weapon | Knights of the Old Republic Campaign Guide (78-79) | `weaponTemplates:gand` — Gand Weapon | — | KEEP |
+| 16 | Quick Draw Weapon | weapon | Knights of the Old Republic Campaign Guide (78-79) | `weaponTemplates:quickDraw` — Quick Draw Weapon | `quick_draw_weapon` | KEEP |
+| 17 | Rakatan Weapon | weapon | Knights of the Old Republic Campaign Guide (78-79) | `weaponTemplates:rakatan` — Rakatan Weapon | — | KEEP |
+| 18 | Sith Alchemical Weapon | weapon | Knights of the Old Republic Campaign Guide (79) | `weaponTemplates:sithAlchemical` — Sith Alchemical Weapon | — | KEEP |
+| 19 | Bonadan-Alloy Armor | armor | Knights of the Old Republic Campaign Guide (80) | `armorTemplates:bonadanAlloy` — Bonadan-Alloy Armor | — | KEEP |
+| 20 | Bronzium Cast Armor | armor | Knights of the Old Republic Campaign Guide (80) | `armorTemplates:bronziumCast` — Bronzium Cast Armor | — | KEEP |
+| 21 | Durasteel Cast Armor | armor | Knights of the Old Republic Campaign Guide (80) | `armorTemplates:durasteelCast` — Durasteel Cast Armor | — | KEEP |
+| 22 | Environmental Bastion Armor | armor | Knights of the Old Republic Campaign Guide (80) | `armorTemplates:environmentalBastion` — Environmental Bastion Armor | — | KEEP |
+| 23 | Eriadun Armor | armor | Knights of the Old Republic Campaign Guide (80) | `armorTemplates:eriadun` — Eriadun Armor | `eriadun_armor` | KEEP |
+| 24 | Antiquated | weapon | Legacy Era Campaign Guide (page: Phase 1) | `weaponTemplates:antiquated` — Antiquated Weapon | — | EDIT |
+| 25 | Refitted | weapon | Legacy Era Campaign Guide (page: Phase 1) | `weaponTemplates:refitted` — Refitted Weapon | — | EDIT |
+| 26 | Phrik Alloy | armor | Rebellion Era Campaign Guide (page: Phase 1) | — | — | ADD |
+| 27 | Stygian-Triprismatic Polymer | armor | Rebellion Era Campaign Guide (page: Phase 1) | `armorTemplates:stygianTriprismatic` — Stygian-Triprismatic Polymer Armor | — | EDIT |
+
+### Repo-only records (not published gear-template identities)
+
+| Container:key | Name | Reason |
+|---|---|---|
+| `weaponTemplates:disruptor` | Disruptor Weapon | No standalone Disruptor Weapon template is published in the supplied source corpus. Disruptor is a weapon property/rules concept, not a gear-template identity. |
+| `weaponTemplates:jawa` | Jawa Weapon | No Jawa Weapon gear-template entry exists in the supplied source corpus. |
+| `weaponTemplates:jedaii` | Je'daii Weapon | No Je'daii Weapon gear-template entry exists in the supplied source corpus. |
+| `armorTemplates:mandalorian` | Mandalorian Armor | No standalone Mandalorian Armor template is published in the supplied source corpus. KOTOR instead publishes the general Mandalorian Manufacture template; actual Mandalorian armor items remain separate canonical equipment. |
+
+These are removals from gear-template authority only, not statements that disruptors, Jawas, Je'daii or Mandalorian armor are noncanonical.
+
+### Critical adjudications
+
+- **Cortosis Weave/Phrik Alloy** (ONE_KOTOR_TEMPLATE): KOTOR publishes a single general template named Cortosis Weave/Phrik Alloy. The runtime split into cortosis_weave_general and phrik_alloy_general is not canonical.
+- **Phrik Alloy** (DISTINCT_REBELLION_ARMOR_TEMPLATE): Rebellion Era Campaign Guide separately publishes Phrik Alloy as an armor template. Do not confuse this with or silently merge it into KOTOR's combined general template.
+- **Mandalorian Armor** (NOT_A_GEAR_TEMPLATE_IDENTITY): The supplied corpus supports KOTOR's Mandalorian Manufacture template and multiple actual Mandalorian armor items, but no standalone Mandalorian Armor gear template matching the repo-only JSON record.
+- **Disruptor Weapon** (PROPERTY_NOT_TEMPLATE): Disruptor rules exist for weapons, but the supplied corpus does not publish Disruptor Weapon as a gear template.
+
+### Runtime findings (measured at integration, 2026-10-05)
+
+- **Two parallel runtime catalogs.** The same 7 template keys live in TWO runtime catalogs: ITEM_TEMPLATE_CATALOG (+ TEMPLATE_COST_RULES) in scripts/data/gear-templates.js, consumed by scripts/apps/gear-templates-engine.js and the workbench, and TEMPLATE_CATALOG in scripts/engine/customization/upgrade-catalog.js, consumed by upgrade-eligibility-engine.js, template-engine.js, restriction-propagation-engine.js and effect-resolver.js. Any template migration must change both together or reroute one to the other.
+- **Stored references.** Customization code reads templateInstance.templateKey (template-engine.js, restriction-propagation-engine.js), so item flags may persist the current runtime keys; a stored-data audit is required before renaming or merging cortosis_weave_general / phrik_alloy_general.
+- **Rule dependency.** upgrade-eligibility-engine.js:94 hard-codes the prototype + (cortosis_weave_general | phrik_alloy_general) pairing rule, so merging the split keys is a rules change, not a rename.
+- **Legacy JSON quirk.** data/gear-templates.json uses key "mandalorian" in both generalTemplates (Mandalorian, canonical Mandalorian Manufacture) and armorTemplates (Mandalorian Armor, repo-only REMOVE); records must be addressed as container:key.
+- **Legacy JSON consumers:** none (data/gear-templates.json has no code consumer; it is reference data).
+
+### Execution guardrails
+
+1. Do not create gear templates as ordinary equipment-compendium items; they are customization/template rules.
+2. Do not delete or rename runtime keys before auditing stored item/template references and migration needs.
+3. Do not split KOTOR's Cortosis Weave/Phrik Alloy template into two canonical identities.
+4. Do not merge Rebellion's armor-only Phrik Alloy template into the KOTOR combined template; source-qualified mechanics/era behavior differ.
+5. Do not preserve Jawa Weapon, Je'daii Weapon, Disruptor Weapon, or Mandalorian Armor merely because they exist in data/gear-templates.json; current SSOT does not support them as template identities.
+6. Do not touch vehicle/starship templates in this phase.
+7. Do not touch Tech Specialist modifications in this phase.
+8. Do not rewrite template mechanics, prices, restrictions, descriptions, or semantic tags yet; this is identity/presence reconciliation.
+
+### QA gate
+
+- 27 unique canonical ids (23 + 2 + 2); 30 legacy JSON records = 26 represented + 4 repo-only; every legacy record re-resolved by container:key and name.
+- Runtime: 7 keys match the authority in both `ITEM_TEMPLATE_CATALOG` and `TEMPLATE_CATALOG`; 21 canonical identities absent from runtime.
+
 ## Pending phases
 
-0-3F Gear Templates · Lightsaber crystals / accessories / components (batch TBD) · Gated cleanup tranche (0-3D migrations, 0-3E renames/merge, REMOVE dependents) · 1 Provenance (pages) · 2 Descriptions · 3 Schema · 4 Stats · 5 Reconciliation · 6 Legacy tags · 7 Semantic tags · 8 Migration
+Lightsaber crystals / accessories / components (batch TBD) · Droid equipment / modifications (batch TBD) · Ammunition / consumable weapon supplies (close explicitly) · Gated cleanup tranche (0-3D migrations, 0-3E renames/merge, 0-3F template migration, REMOVE dependents) · 1 Provenance (pages) · 2 Descriptions · 3 Schema · 4 Stats · 5 Reconciliation · 6 Legacy tags · 7 Semantic tags · 8 Migration
