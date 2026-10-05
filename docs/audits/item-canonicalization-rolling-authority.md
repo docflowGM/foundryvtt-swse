@@ -1,9 +1,9 @@
 # SWSE Item Canonicalization — Rolling Authority
 
-Status: ACTIVE — Phase 0 complete; Phase 0-1 Weapons and Phase 0-2 Armor and Phase 0-3A General Equipment, Phase 0-3B Medical and Phase 0-3C Explosives/Demolitions certified by owner (armor, equipment and medical renames executed)
+Status: ACTIVE — Phase 0 complete; Phase 0-1 Weapons and Phase 0-2 Armor and Phase 0-3A General Equipment, Phase 0-3B Medical, Phase 0-3C Explosives/Demolitions and Phase 0-3D Cybernetics/Implants certified by owner (armor, equipment and medical renames executed)
 Updated: 2026-10-05
 Machine-readable companion: `data/audits/item-canonicalization-rolling-authority.json`
-Verify against the packs: `node tools/verify-item-weapons-authority.mjs` (weapons, armor, equipment, medical and explosives)
+Verify against the packs: `node tools/verify-item-weapons-authority.mjs` (weapons, armor, equipment, medical, explosives and cybernetics)
 
 This is the single cumulative authority for item rehabilitation. Per-book/phase files are temporary evidence and must not become competing authorities. Architecture evidence: `docs/audits/item-phase-0-ssot-census.md` (owner rulings in §7a).
 
@@ -832,6 +832,76 @@ No pack, store-description, template or runtime change. The 8 ADD identities (An
 - 14 unique canonical ids; 6/6 repo explosive records exist exactly once with matching names; 8 absent and none already present under the suggested ids.
 - No overlap with Phase 0-3A scope; verified by `tools/verify-item-weapons-authority.mjs`.
 
+## Phase 0-3D — Cybernetics and implants: census and repo reconciliation
+
+Standard cybernetic prostheses, KOTOR mechanical implants, named cybernetic enhancements, Galaxy at War unique cybernetics, and Legacy Era Yuuzhan Vong bio-implants. Excluded: talent-generated temporary implants, droid-only modifications, vehicle/starship systems, bespoke NPC augmentations, and the Total Replacement Cyborg procedure. Identity and presence only. **Authority-only: no repo change.**
+
+| Result | Count |
+|---|---:|
+| Canonical identities | 25 |
+| Repo `cyber-*` / `implant-*` records (all in `equipment-tech`) | 12 |
+| KEEP | 9 |
+| EDIT (Subelectronic Converter consolidation) | 1 |
+| ADD (recorded, not created) | 15 |
+| Repo records to remove/relocate after dependency migration | 2 |
+
+| # | Canonical identity | Source | Repo representation | Disposition |
+|---:|---|---|---|---|
+| 1 | Cybernetic Prosthesis | Core Rulebook p. 137 | `cyber-prosthesis` - Cybernetic Prosthesis | KEEP |
+| 2 | Bio-Stabilizer Implant | Knights of the Old Republic Campaign Guide p. 74-75 | `implant-bio-stabilizer` - Bio-Stabilizer Implant | KEEP |
+| 3 | Cardio Implant | Knights of the Old Republic Campaign Guide p. 74-75 | `implant-cardio` - Cardio Implant | KEEP |
+| 4 | Combat Implant | Knights of the Old Republic Campaign Guide p. 74-75 | `implant-combat` - Combat Implant | KEEP |
+| 5 | Memory Implant | Knights of the Old Republic Campaign Guide p. 74-75 | `implant-memory` - Memory Implant | KEEP |
+| 6 | Nerve Reinforcement Implant | Knights of the Old Republic Campaign Guide p. 74-75 | `implant-nerve-reinforcement` - Nerve Reinforcement Implant | KEEP |
+| 7 | Regenerative Implant | Knights of the Old Republic Campaign Guide p. 74-75 | `implant-regenerative` - Regenerative Implant | KEEP |
+| 8 | Sensory Implant | Knights of the Old Republic Campaign Guide p. 74-75 | `implant-sensory` - Sensory Implant | KEEP |
+| 9 | Subelectronic Converter | Jedi Academy Training Manual p. 64 | `cyber-subelectronic-converter` (PRESERVE_CANONICAL_RECORD)<br>`implant-subelectronic-converter` (DUPLICATE_WRONG_FAMILY) | EDIT |
+| 10 | Rhen-Orm Biocomputer | Threats of the Galaxy p. 36 | `cyber-rhen-orm-biocomputer` - Rhen-Orm Biocomputer | KEEP |
+| 11 | Borg Construct | Galaxy at War p. 49 | — (suggested `cyber-borg-construct`) | ADD |
+| 12 | Comlink, Subcutaneous | Galaxy at War p. 49 | — (suggested `cyber-comlink-subcutaneous`) | ADD |
+| 13 | Eye, Infrared Sensor | Galaxy at War p. 49 | — (suggested `cyber-eye-infrared-sensor`) | ADD |
+| 14 | Eye, Targeting | Galaxy at War p. 49 | — (suggested `cyber-eye-targeting`) | ADD |
+| 15 | Eye, Telescopic | Galaxy at War p. 49 | — (suggested `cyber-eye-telescopic`) | ADD |
+| 16 | Skeletal Reinforcement | Galaxy at War p. 50 | — (suggested `cyber-skeletal-reinforcement`) | ADD |
+| 17 | Sensory Enhancement | Galaxy at War p. 50 | — (suggested `cyber-sensory-enhancement`) | ADD |
+| 18 | Tremor Sensor | Galaxy at War p. 50 | — (suggested `cyber-tremor-sensor`) | ADD |
+| 19 | Body Spikes | Legacy Era Campaign Guide p. 68 | — (suggested `bioimplant-body-spikes`) | ADD |
+| 20 | Cosmetic Enhancements | Legacy Era Campaign Guide p. 68 | — (suggested `bioimplant-cosmetic-enhancements`) | ADD |
+| 21 | Enhanced Vision | Legacy Era Campaign Guide p. 68 | — (suggested `bioimplant-enhanced-vision`) | ADD |
+| 22 | Natural Armor | Legacy Era Campaign Guide p. 68 | — (suggested `bioimplant-natural-armor`) | ADD |
+| 23 | Natural Weapon | Legacy Era Campaign Guide p. 68 | — (suggested `bioimplant-natural-weapon`) | ADD |
+| 24 | Poison Filter | Legacy Era Campaign Guide p. 68 | — (suggested `bioimplant-poison-filter`) | ADD |
+| 25 | Replacement Body Part | Legacy Era Campaign Guide p. 68 | — (suggested `bioimplant-replacement-body-part`) | ADD |
+
+### Dependency-gated cleanups (NOT executed)
+
+**`implant-subelectronic-converter`** — duplicate of the Jedi Academy Subelectronic Converter; survivor is `cyber-subelectronic-converter`. Dependents measured 2026-10-05: data/implants/implant-effects.json ×1; data/implants/implant-reference-catalog.json ×2; data/implants/sample-implant-items.json ×5; data/store/implant-store-descriptions.json ×2; scripts/dev/audit-implant-effects.mjs ×2; scripts/dev/audit-implant-store-catalog.mjs ×1; scripts/engine/implants/ImplantEffectRules.js ×2. scripts/engine/implants/ImplantEffectRules.js keys its Subelectronic Converter rule (subelectronicConverter flag) on the id "implant-subelectronic-converter". data/implants/{implant-effects,implant-reference-catalog,sample-implant-items}.json and data/store/implant-store-descriptions.json (a dedicated implant store entry, 23,000 cr, Jedi Academy Training Manual) carry the implant id. The survivor cyber-subelectronic-converter must not inherit KOTOR Implant Training mechanics.
+
+**`cyber-energy-binding-prosthesis`** — a misclassification of Bao-Dur's Cybernetic Arm (KOTOR p. 176); relocate to Bao-Dur-specific data, do not erase the concept. Dependents: data/store/equipment-store-descriptions.json ×1. scripts/engine/feats/skill-feat-normalization-hooks.js:86 lists 'energy-binding-prosthesis' in selfInstallAllowedDevices. Bao-Dur appears in data/heroic.json and nonheroic damage-profile data; the unique arm concept must be preserved in Bao-Dur-specific data.
+
+### Noncatalog findings
+
+- **Legacy Era Shaper implant talents:** NOT_EQUIPMENT_IDENTITIES — These are temporary effects created by talents, not priced equipment records.
+- **Total Replacement Cyborg:** NONCATALOG_PROCEDURE — A character transformation procedure/rules package, not a standalone equipment identity.
+- **Augmented Neurosystem:** NPC_SPECIFIC_NONCATALOG — Appears as Dengar's bespoke cybernetic enhancement in an NPC stat block; no standalone equipment entry in the supplied source corpus.
+
+### Execution guardrails
+
+1. Do not create the 15 ADD records until canonical description/stat/schema certification authorizes production creation.
+2. Do not apply KOTOR Implant Training penalties to the Jedi Academy Subelectronic Converter merely because it is implanted; the source calls it a cybernetic enhancement, not a KOTOR implant.
+3. Preserve cyber-subelectronic-converter as the canonical Subelectronic Converter identity; remove implant-subelectronic-converter only after dependency migration and verification.
+4. Remove cyber-energy-binding-prosthesis from the general equipment catalog only after Bao-Dur-specific references and any runtime/store dependents are rerouted; do not erase Bao-Dur's canonical unique arm concept.
+5. Do not create equipment records for Legacy Era Shaper talent-generated temporary implants.
+6. Do not create a normal equipment record for Total Replacement Cyborg.
+7. Do not promote bespoke NPC augmentations such as Dengar's augmented neurosystem into catalog equipment without a standalone published item entry.
+8. Do not alter descriptions, stats, tags, runtime effects, prices, or schema in Phase 0-3D except as strictly necessary to consolidate/remove catalog identity duplicates after dependency migration.
+
+### QA gate
+
+- 25 unique canonical ids; all 12 `cyber-`/`implant-` repo records covered; none of the 15 suggested ADD ids exists; no overlap with 0-3A/0-3B/0-3C.
+- The verifier fails if a gated record disappears before its cleanup is marked executed.
+- After this phase the only unclaimed equipment records are the 16 `upgrade-*` records (Phase 0-3E).
+
 ## Pending phases
 
-0-3D Cybernetics / Implants · 0-3E Upgrades / Modifications · 1 Provenance (pages) · 2 Descriptions · 3 Schema · 4 Stats · 5 Reconciliation · 6 Legacy tags · 7 Semantic tags · 8 Migration
+0-3E Upgrades / Modifications · 1 Provenance (pages) · 2 Descriptions · 3 Schema · 4 Stats · 5 Reconciliation · 6 Legacy tags · 7 Semantic tags · 8 Migration

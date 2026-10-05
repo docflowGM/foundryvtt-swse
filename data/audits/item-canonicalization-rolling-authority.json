@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "authorityType": "item-canonicalization-rolling-authority",
-  "status": "ACTIVE — Phase 0, Phase 0-1 Weapons, Phase 0-2 Armor, Phase 0-3A General Equipment, Phase 0-3B Medical and Phase 0-3C Explosives/Demolitions certified by owner",
+  "status": "ACTIVE — Phase 0 and Phases 0-1, 0-2, 0-3A, 0-3B, 0-3C, 0-3D certified by owner",
   "sourcePolicy": "User-provided SWSE TXT/PDF sourcebooks are the canonical SSOT. Repository compendiums are implementation targets only.",
   "ownerRulings": "docs/audits/item-phase-0-ssot-census.md §7a",
   "architecture": {
@@ -12700,10 +12700,707 @@
           }
         }
       }
+    },
+    "0-3d-cybernetics-implants": {
+      "phase": "0-3D",
+      "title": "Cybernetics / Implants Census and Repo Reconciliation",
+      "canonicalSourcePolicy": "User-supplied SWSE TXT/PDF sourcebooks are SSOT; repository compendiums are implementation targets only.",
+      "repoTarget": {
+        "repository": "docflowGM/foundryvtt-swse",
+        "ref": "claude/dazzling-meitner-czyh1x",
+        "verifiedHead": "5fd60aeb4fa6642121f2d19072cfc29977c4c1ad",
+        "pack": "packs/equipment.db"
+      },
+      "scope": {
+        "included": [
+          "standard cybernetic prostheses",
+          "KOTOR mechanical implants",
+          "named cybernetic enhancements",
+          "Galaxy at War unique cybernetics",
+          "Yuuzhan Vong bio-implants"
+        ],
+        "excluded": [
+          "medical gear that is not an implanted augmentation",
+          "temporary implant effects granted by Legacy Era Shaper talents",
+          "droid-only modifications",
+          "vehicle/starship systems",
+          "bespoke NPC-only augmentations without standalone equipment entries",
+          "Total Replacement Cyborg procedure/rules package"
+        ]
+      },
+      "counts": {
+        "canonicalIdentities": 25,
+        "repoRecordsInScope": 12,
+        "KEEP": 9,
+        "EDIT": 1,
+        "ADD": 15,
+        "REMOVE_CANONICAL": 0,
+        "REVIEW": 0,
+        "repoRecordsToRemoveOrRelocate": 2
+      },
+      "records": [
+        {
+          "canonicalId": "cyber-prosthesis",
+          "canonicalName": "Cybernetic Prosthesis",
+          "family": "cybernetics-implants",
+          "subfamily": "standard-cybernetic",
+          "source": {
+            "book": "Core Rulebook",
+            "page": 137,
+            "txtFile": "Core Rulebook_djvu.txt",
+            "txtLines": "12939-13196"
+          },
+          "repo": {
+            "present": true,
+            "id": "cyber-prosthesis",
+            "name": "Cybernetic Prosthesis"
+          },
+          "disposition": "KEEP",
+          "reason": "Canonical standard cybernetic prosthesis is represented once in packs/equipment.db."
+        },
+        {
+          "canonicalId": "implant-bio-stabilizer",
+          "canonicalName": "Bio-Stabilizer Implant",
+          "family": "cybernetics-implants",
+          "subfamily": "kotor-implant",
+          "source": {
+            "book": "Knights of the Old Republic Campaign Guide",
+            "page": "74-75",
+            "txtFile": "Knights of the Old Republic Campaign Guide_djvu.txt",
+            "txtLines": "6728-6911",
+            "pdfVerified": true
+          },
+          "repo": {
+            "present": true,
+            "id": "implant-bio-stabilizer",
+            "name": "Bio-Stabilizer Implant"
+          },
+          "disposition": "KEEP",
+          "reason": "Canonical KOTOR implant is represented once."
+        },
+        {
+          "canonicalId": "implant-cardio",
+          "canonicalName": "Cardio Implant",
+          "family": "cybernetics-implants",
+          "subfamily": "kotor-implant",
+          "source": {
+            "book": "Knights of the Old Republic Campaign Guide",
+            "page": "74-75",
+            "txtFile": "Knights of the Old Republic Campaign Guide_djvu.txt",
+            "txtLines": "6728-6918",
+            "pdfVerified": true
+          },
+          "repo": {
+            "present": true,
+            "id": "implant-cardio",
+            "name": "Cardio Implant"
+          },
+          "disposition": "KEEP",
+          "reason": "Canonical KOTOR implant is represented once."
+        },
+        {
+          "canonicalId": "implant-combat",
+          "canonicalName": "Combat Implant",
+          "family": "cybernetics-implants",
+          "subfamily": "kotor-implant",
+          "source": {
+            "book": "Knights of the Old Republic Campaign Guide",
+            "page": "74-75",
+            "txtFile": "Knights of the Old Republic Campaign Guide_djvu.txt",
+            "txtLines": "6728-6924",
+            "pdfVerified": true
+          },
+          "repo": {
+            "present": true,
+            "id": "implant-combat",
+            "name": "Combat Implant"
+          },
+          "disposition": "KEEP",
+          "reason": "Canonical KOTOR implant is represented once."
+        },
+        {
+          "canonicalId": "implant-memory",
+          "canonicalName": "Memory Implant",
+          "family": "cybernetics-implants",
+          "subfamily": "kotor-implant",
+          "source": {
+            "book": "Knights of the Old Republic Campaign Guide",
+            "page": "74-75",
+            "txtFile": "Knights of the Old Republic Campaign Guide_djvu.txt",
+            "txtLines": "6728-6936",
+            "pdfVerified": true
+          },
+          "repo": {
+            "present": true,
+            "id": "implant-memory",
+            "name": "Memory Implant"
+          },
+          "disposition": "KEEP",
+          "reason": "Canonical KOTOR implant is represented once."
+        },
+        {
+          "canonicalId": "implant-nerve-reinforcement",
+          "canonicalName": "Nerve Reinforcement Implant",
+          "family": "cybernetics-implants",
+          "subfamily": "kotor-implant",
+          "source": {
+            "book": "Knights of the Old Republic Campaign Guide",
+            "page": "74-75",
+            "txtFile": "Knights of the Old Republic Campaign Guide_djvu.txt",
+            "txtLines": "6728-6945",
+            "pdfVerified": true
+          },
+          "repo": {
+            "present": true,
+            "id": "implant-nerve-reinforcement",
+            "name": "Nerve Reinforcement Implant"
+          },
+          "disposition": "KEEP",
+          "reason": "Canonical KOTOR implant is represented once."
+        },
+        {
+          "canonicalId": "implant-regenerative",
+          "canonicalName": "Regenerative Implant",
+          "family": "cybernetics-implants",
+          "subfamily": "kotor-implant",
+          "source": {
+            "book": "Knights of the Old Republic Campaign Guide",
+            "page": "74-75",
+            "txtFile": "Knights of the Old Republic Campaign Guide_djvu.txt",
+            "txtLines": "6728-6952",
+            "pdfVerified": true
+          },
+          "repo": {
+            "present": true,
+            "id": "implant-regenerative",
+            "name": "Regenerative Implant"
+          },
+          "disposition": "KEEP",
+          "reason": "Canonical KOTOR implant is represented once."
+        },
+        {
+          "canonicalId": "implant-sensory",
+          "canonicalName": "Sensory Implant",
+          "family": "cybernetics-implants",
+          "subfamily": "kotor-implant",
+          "source": {
+            "book": "Knights of the Old Republic Campaign Guide",
+            "page": "74-75",
+            "txtFile": "Knights of the Old Republic Campaign Guide_djvu.txt",
+            "txtLines": "6728-6959",
+            "pdfVerified": true
+          },
+          "repo": {
+            "present": true,
+            "id": "implant-sensory",
+            "name": "Sensory Implant"
+          },
+          "disposition": "KEEP",
+          "reason": "Canonical KOTOR implant is represented once."
+        },
+        {
+          "canonicalId": "cyber-subelectronic-converter",
+          "canonicalName": "Subelectronic Converter",
+          "family": "cybernetics-implants",
+          "subfamily": "named-cybernetic-enhancement",
+          "source": {
+            "book": "Jedi Academy Training Manual",
+            "page": 64,
+            "txtFile": "Jedi Academy Training Manual_djvu.txt",
+            "txtLines": "5824-5841"
+          },
+          "repo": {
+            "present": true,
+            "matches": [
+              {
+                "id": "cyber-subelectronic-converter",
+                "name": "Subelectronic Converter",
+                "classification": "PRESERVE_CANONICAL_RECORD"
+              },
+              {
+                "id": "implant-subelectronic-converter",
+                "name": "Subelectronic Converter",
+                "classification": "DUPLICATE_WRONG_FAMILY"
+              }
+            ]
+          },
+          "disposition": "EDIT",
+          "reason": "One canonical enhancement is represented twice. JATM explicitly calls it a cybernetic enhancement installed with Cybernetic Surgery; it is not a KOTOR-style implant subject to the KOTOR Implant Training rules.",
+          "executionAction": "CONSOLIDATE_TO_CYBER_RECORD_AFTER_DEPENDENCY_MIGRATION"
+        },
+        {
+          "canonicalId": "cyber-rhen-orm-biocomputer",
+          "canonicalName": "Rhen-Orm Biocomputer",
+          "family": "cybernetics-implants",
+          "subfamily": "named-cybernetic-enhancement",
+          "source": {
+            "book": "Threats of the Galaxy",
+            "page": 36,
+            "txtFile": "Threats of the Galaxy_djvu.txt",
+            "txtLines": "1545-1564"
+          },
+          "repo": {
+            "present": true,
+            "id": "cyber-rhen-orm-biocomputer",
+            "name": "Rhen-Orm Biocomputer"
+          },
+          "disposition": "KEEP",
+          "reason": "Published named implanted biocomputer is represented once."
+        },
+        {
+          "canonicalId": "cyber-borg-construct",
+          "canonicalName": "Borg Construct",
+          "family": "cybernetics-implants",
+          "subfamily": "unique-cybernetic",
+          "source": {
+            "book": "Galaxy at War",
+            "page": 49,
+            "txtFile": "Galaxy At War_djvu.txt",
+            "txtLines": "4716-4778"
+          },
+          "repo": {
+            "present": false,
+            "suggestedId": "cyber-borg-construct"
+          },
+          "disposition": "ADD",
+          "reason": "Published unique cybernetic enhancement is absent from packs/equipment.db."
+        },
+        {
+          "canonicalId": "cyber-comlink-subcutaneous",
+          "canonicalName": "Comlink, Subcutaneous",
+          "family": "cybernetics-implants",
+          "subfamily": "unique-cybernetic",
+          "source": {
+            "book": "Galaxy at War",
+            "page": 49,
+            "txtFile": "Galaxy At War_djvu.txt",
+            "txtLines": "4716-4791"
+          },
+          "repo": {
+            "present": false,
+            "suggestedId": "cyber-comlink-subcutaneous"
+          },
+          "disposition": "ADD",
+          "reason": "Published unique cybernetic enhancement is absent from packs/equipment.db."
+        },
+        {
+          "canonicalId": "cyber-eye-infrared-sensor",
+          "canonicalName": "Eye, Infrared Sensor",
+          "family": "cybernetics-implants",
+          "subfamily": "unique-cybernetic",
+          "source": {
+            "book": "Galaxy at War",
+            "page": 49,
+            "txtFile": "Galaxy At War_djvu.txt",
+            "txtLines": "4716-4796"
+          },
+          "repo": {
+            "present": false,
+            "suggestedId": "cyber-eye-infrared-sensor"
+          },
+          "disposition": "ADD",
+          "reason": "Published unique cybernetic enhancement is absent from packs/equipment.db."
+        },
+        {
+          "canonicalId": "cyber-eye-targeting",
+          "canonicalName": "Eye, Targeting",
+          "family": "cybernetics-implants",
+          "subfamily": "unique-cybernetic",
+          "source": {
+            "book": "Galaxy at War",
+            "page": 49,
+            "txtFile": "Galaxy At War_djvu.txt",
+            "txtLines": "4716-4810"
+          },
+          "repo": {
+            "present": false,
+            "suggestedId": "cyber-eye-targeting"
+          },
+          "disposition": "ADD",
+          "reason": "Published unique cybernetic enhancement is absent from packs/equipment.db."
+        },
+        {
+          "canonicalId": "cyber-eye-telescopic",
+          "canonicalName": "Eye, Telescopic",
+          "family": "cybernetics-implants",
+          "subfamily": "unique-cybernetic",
+          "source": {
+            "book": "Galaxy at War",
+            "page": 49,
+            "txtFile": "Galaxy At War_djvu.txt",
+            "txtLines": "4716-4815"
+          },
+          "repo": {
+            "present": false,
+            "suggestedId": "cyber-eye-telescopic"
+          },
+          "disposition": "ADD",
+          "reason": "Published unique cybernetic enhancement is absent from packs/equipment.db."
+        },
+        {
+          "canonicalId": "cyber-skeletal-reinforcement",
+          "canonicalName": "Skeletal Reinforcement",
+          "family": "cybernetics-implants",
+          "subfamily": "unique-cybernetic",
+          "source": {
+            "book": "Galaxy at War",
+            "page": 50,
+            "txtFile": "Galaxy At War_djvu.txt",
+            "txtLines": "4724-4841"
+          },
+          "repo": {
+            "present": false,
+            "suggestedId": "cyber-skeletal-reinforcement"
+          },
+          "disposition": "ADD",
+          "reason": "Published unique cybernetic enhancement is absent from packs/equipment.db."
+        },
+        {
+          "canonicalId": "cyber-sensory-enhancement",
+          "canonicalName": "Sensory Enhancement",
+          "family": "cybernetics-implants",
+          "subfamily": "unique-cybernetic",
+          "source": {
+            "book": "Galaxy at War",
+            "page": 50,
+            "txtFile": "Galaxy At War_djvu.txt",
+            "txtLines": "4724-4851"
+          },
+          "repo": {
+            "present": false,
+            "suggestedId": "cyber-sensory-enhancement"
+          },
+          "disposition": "ADD",
+          "reason": "Published unique cybernetic enhancement is absent from packs/equipment.db."
+        },
+        {
+          "canonicalId": "cyber-tremor-sensor",
+          "canonicalName": "Tremor Sensor",
+          "family": "cybernetics-implants",
+          "subfamily": "unique-cybernetic",
+          "source": {
+            "book": "Galaxy at War",
+            "page": 50,
+            "txtFile": "Galaxy At War_djvu.txt",
+            "txtLines": "4724-4858"
+          },
+          "repo": {
+            "present": false,
+            "suggestedId": "cyber-tremor-sensor"
+          },
+          "disposition": "ADD",
+          "reason": "Published unique cybernetic enhancement is absent from packs/equipment.db."
+        },
+        {
+          "canonicalId": "bioimplant-body-spikes",
+          "canonicalName": "Body Spikes",
+          "family": "cybernetics-implants",
+          "subfamily": "yuuzhan-vong-bio-implant",
+          "source": {
+            "book": "Legacy Era Campaign Guide",
+            "page": 68,
+            "txtFile": "Legacy Era Campaign Guide_djvu.txt",
+            "txtLines": "5759-5951",
+            "pdfVerified": true
+          },
+          "repo": {
+            "present": false,
+            "suggestedId": "bioimplant-body-spikes"
+          },
+          "disposition": "ADD",
+          "reason": "Published Yuuzhan Vong bio-implant is absent from packs/equipment.db."
+        },
+        {
+          "canonicalId": "bioimplant-cosmetic-enhancements",
+          "canonicalName": "Cosmetic Enhancements",
+          "family": "cybernetics-implants",
+          "subfamily": "yuuzhan-vong-bio-implant",
+          "source": {
+            "book": "Legacy Era Campaign Guide",
+            "page": 68,
+            "txtFile": "Legacy Era Campaign Guide_djvu.txt",
+            "txtLines": "5759-5942",
+            "pdfVerified": true
+          },
+          "repo": {
+            "present": false,
+            "suggestedId": "bioimplant-cosmetic-enhancements"
+          },
+          "disposition": "ADD",
+          "reason": "Published Yuuzhan Vong bio-implant is absent from packs/equipment.db."
+        },
+        {
+          "canonicalId": "bioimplant-enhanced-vision",
+          "canonicalName": "Enhanced Vision",
+          "family": "cybernetics-implants",
+          "subfamily": "yuuzhan-vong-bio-implant",
+          "source": {
+            "book": "Legacy Era Campaign Guide",
+            "page": 68,
+            "txtFile": "Legacy Era Campaign Guide_djvu.txt",
+            "txtLines": "5759-5958",
+            "pdfVerified": true
+          },
+          "repo": {
+            "present": false,
+            "suggestedId": "bioimplant-enhanced-vision"
+          },
+          "disposition": "ADD",
+          "reason": "Published Yuuzhan Vong bio-implant is absent from packs/equipment.db."
+        },
+        {
+          "canonicalId": "bioimplant-natural-armor",
+          "canonicalName": "Natural Armor",
+          "family": "cybernetics-implants",
+          "subfamily": "yuuzhan-vong-bio-implant",
+          "source": {
+            "book": "Legacy Era Campaign Guide",
+            "page": 68,
+            "txtFile": "Legacy Era Campaign Guide_djvu.txt",
+            "txtLines": "5759-5968",
+            "pdfVerified": true
+          },
+          "repo": {
+            "present": false,
+            "suggestedId": "bioimplant-natural-armor"
+          },
+          "disposition": "ADD",
+          "reason": "Published Yuuzhan Vong bio-implant is absent from packs/equipment.db."
+        },
+        {
+          "canonicalId": "bioimplant-natural-weapon",
+          "canonicalName": "Natural Weapon",
+          "family": "cybernetics-implants",
+          "subfamily": "yuuzhan-vong-bio-implant",
+          "source": {
+            "book": "Legacy Era Campaign Guide",
+            "page": 68,
+            "txtFile": "Legacy Era Campaign Guide_djvu.txt",
+            "txtLines": "5759-5980",
+            "pdfVerified": true
+          },
+          "repo": {
+            "present": false,
+            "suggestedId": "bioimplant-natural-weapon"
+          },
+          "disposition": "ADD",
+          "reason": "Published Yuuzhan Vong bio-implant is absent from packs/equipment.db."
+        },
+        {
+          "canonicalId": "bioimplant-poison-filter",
+          "canonicalName": "Poison Filter",
+          "family": "cybernetics-implants",
+          "subfamily": "yuuzhan-vong-bio-implant",
+          "source": {
+            "book": "Legacy Era Campaign Guide",
+            "page": 68,
+            "txtFile": "Legacy Era Campaign Guide_djvu.txt",
+            "txtLines": "5759-5987",
+            "pdfVerified": true
+          },
+          "repo": {
+            "present": false,
+            "suggestedId": "bioimplant-poison-filter"
+          },
+          "disposition": "ADD",
+          "reason": "Published Yuuzhan Vong bio-implant is absent from packs/equipment.db."
+        },
+        {
+          "canonicalId": "bioimplant-replacement-body-part",
+          "canonicalName": "Replacement Body Part",
+          "family": "cybernetics-implants",
+          "subfamily": "yuuzhan-vong-bio-implant",
+          "source": {
+            "book": "Legacy Era Campaign Guide",
+            "page": 68,
+            "txtFile": "Legacy Era Campaign Guide_djvu.txt",
+            "txtLines": "5759-5992",
+            "pdfVerified": true
+          },
+          "repo": {
+            "present": false,
+            "suggestedId": "bioimplant-replacement-body-part"
+          },
+          "disposition": "ADD",
+          "reason": "Published Yuuzhan Vong bio-implant is absent from packs/equipment.db."
+        }
+      ],
+      "repoReversePass": {
+        "coveredCanonicalRepoRecords": [
+          "cyber-prosthesis",
+          "implant-bio-stabilizer",
+          "implant-cardio",
+          "implant-combat",
+          "implant-memory",
+          "implant-nerve-reinforcement",
+          "implant-regenerative",
+          "implant-sensory",
+          "cyber-subelectronic-converter",
+          "implant-subelectronic-converter",
+          "cyber-rhen-orm-biocomputer"
+        ],
+        "removeOrRelocate": [
+          {
+            "id": "implant-subelectronic-converter",
+            "name": "Subelectronic Converter",
+            "action": "REMOVE_DUPLICATE_AFTER_DEPENDENCY_MIGRATION",
+            "reason": "Duplicates the JATM Subelectronic Converter as a KOTOR-style implant. Preserve cyber-subelectronic-converter as the canonical catalog identity.",
+            "knownDependencyEvidence": [
+              "scripts/dev/audit-implant-effects.mjs",
+              "packs/equipment-tech.db / implant runtime metadata on the current implementation"
+            ]
+          },
+          {
+            "id": "cyber-energy-binding-prosthesis",
+            "name": "Energy-Binding Prosthesis",
+            "action": "REMOVE_FROM_GENERAL_CATALOG_RELOCATE_NPC_SPECIFIC",
+            "reason": "KOTOR does not publish a general equipment item by this name. It publishes Bao-Dur's unique cybernetic arm with an energy binding and Shield Breaker rules.",
+            "canonicalConcept": {
+              "name": "Bao-Dur's Cybernetic Arm",
+              "book": "Knights of the Old Republic Campaign Guide",
+              "page": 176,
+              "txtFile": "Knights of the Old Republic Campaign Guide_djvu.txt",
+              "txtLines": "17773-17845"
+            },
+            "knownDependencyEvidence": [
+              "Bao-Dur NPC/nonheroic attack data",
+              "scripts/engine/feats/skill-feat-normalization-hooks.js",
+              "data/store/equipment-store-descriptions.json",
+              "tools/fix-equipment-data.js"
+            ]
+          }
+        ],
+        "coverage": "12/12 current cyber-/implant- prefixed repo records are accounted for: 11 map to 10 canonical identities and 1 is an NPC-specific catalog misclassification."
+      },
+      "specialFindings": [
+        {
+          "name": "Legacy Era Shaper implant talents",
+          "classification": "NOT_EQUIPMENT_IDENTITIES",
+          "examples": [
+            "Adrenaline Implant",
+            "Precision Implant",
+            "Resilience Implant",
+            "Speed Implant",
+            "Strength Implant"
+          ],
+          "reason": "These are temporary effects created by talents, not priced equipment records."
+        },
+        {
+          "name": "Total Replacement Cyborg",
+          "source": {
+            "book": "Galaxy at War",
+            "page": 50,
+            "txtFile": "Galaxy At War_djvu.txt",
+            "txtLines": "4854-4898"
+          },
+          "classification": "NONCATALOG_PROCEDURE",
+          "reason": "A character transformation procedure/rules package, not a standalone equipment identity."
+        },
+        {
+          "name": "Augmented Neurosystem",
+          "classification": "NPC_SPECIFIC_NONCATALOG",
+          "reason": "Appears as Dengar's bespoke cybernetic enhancement in an NPC stat block; no standalone equipment entry in the supplied source corpus."
+        }
+      ],
+      "executionPolicy": {
+        "phase0Meaning": "Identity/presence reconciliation only.",
+        "addExecutionAuthorized": false,
+        "removeExecutionAuthorized": "Only after all current-branch dependents are migrated and verified.",
+        "contentStatsSchemaAuthorized": false
+      },
+      "executorGuardrails": [
+        "Do not create the 15 ADD records until canonical description/stat/schema certification authorizes production creation.",
+        "Do not apply KOTOR Implant Training penalties to the Jedi Academy Subelectronic Converter merely because it is implanted; the source calls it a cybernetic enhancement, not a KOTOR implant.",
+        "Preserve cyber-subelectronic-converter as the canonical Subelectronic Converter identity; remove implant-subelectronic-converter only after dependency migration and verification.",
+        "Remove cyber-energy-binding-prosthesis from the general equipment catalog only after Bao-Dur-specific references and any runtime/store dependents are rerouted; do not erase Bao-Dur's canonical unique arm concept.",
+        "Do not create equipment records for Legacy Era Shaper talent-generated temporary implants.",
+        "Do not create a normal equipment record for Total Replacement Cyborg.",
+        "Do not promote bespoke NPC augmentations such as Dengar's augmented neurosystem into catalog equipment without a standalone published item entry.",
+        "Do not alter descriptions, stats, tags, runtime effects, prices, or schema in Phase 0-3D except as strictly necessary to consolidate/remove catalog identity duplicates after dependency migration."
+      ],
+      "status": "CERTIFIED_PHASE_0_3D_IDENTITY_AUTHORITY",
+      "execution": {
+        "status": "AUTHORITY_ONLY",
+        "date": "2026-10-05",
+        "note": "No pack, store, template or runtime change. The 15 ADD identities are recorded and NOT created. Both cleanup actions are dependency-gated and NOT executed.",
+        "gatedCleanup": {
+          "implant-subelectronic-converter": {
+            "action": "REMOVE_DUPLICATE_AFTER_DEPENDENCY_MIGRATION",
+            "executed": false,
+            "survivor": "cyber-subelectronic-converter",
+            "dependents": {
+              "idReferences": {
+                "data/implants/implant-effects.json": 1,
+                "data/implants/implant-reference-catalog.json": 2,
+                "data/implants/sample-implant-items.json": 5,
+                "data/store/implant-store-descriptions.json": 2,
+                "scripts/dev/audit-implant-effects.mjs": 2,
+                "scripts/dev/audit-implant-store-catalog.mjs": 1,
+                "scripts/engine/implants/ImplantEffectRules.js": 2
+              },
+              "nameReferences": {
+                "data/feat-catalog.json": 2,
+                "data/heroic.json": 1,
+                "data/implants/implant-effects.json": 1,
+                "data/implants/implant-reference-catalog.json": 2,
+                "data/implants/sample-implant-items.json": 3,
+                "data/store/equipment-store-descriptions.json": 2,
+                "data/store/implant-store-descriptions.json": 1,
+                "docs/design/implant-effects-phase4f.md": 2,
+                "docs/design/implant-store-catalog-phase4e.md": 1,
+                "packs/feat-catalog.db": 2,
+                "packs/feats.db": 2,
+                "packs/heroic.db": 2,
+                "packs/npc.db": 2,
+                "reference/sourcebooks/Jedi Academy Training Manual_djvu.txt": 9,
+                "scripts/dev/audit-implant-store-catalog.mjs": 1,
+                "scripts/engine/implants/ImplantEffectRules.js": 1
+              }
+            },
+            "migrationNotes": [
+              "scripts/engine/implants/ImplantEffectRules.js keys its Subelectronic Converter rule (subelectronicConverter flag) on the id \"implant-subelectronic-converter\".",
+              "data/implants/{implant-effects,implant-reference-catalog,sample-implant-items}.json and data/store/implant-store-descriptions.json (a dedicated implant store entry, 23,000 cr, Jedi Academy Training Manual) carry the implant id.",
+              "The survivor cyber-subelectronic-converter must not inherit KOTOR Implant Training mechanics."
+            ]
+          },
+          "cyber-energy-binding-prosthesis": {
+            "action": "REMOVE_FROM_GENERAL_CATALOG_RELOCATE_NPC_SPECIFIC",
+            "executed": false,
+            "canonicalConcept": "Bao-Dur's Cybernetic Arm (Knights of the Old Republic Campaign Guide p. 176)",
+            "dependents": {
+              "idReferences": {
+                "data/store/equipment-store-descriptions.json": 1
+              },
+              "nameOrConceptReferences": {
+                "data/feat-catalog.json": 2,
+                "data/heroic.json": 3,
+                "data/nonheroic/generated/nonheroic-profile-promotion-allowlist.pass-5.json": 2,
+                "data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json": 10,
+                "data/store/equipment-store-descriptions.json": 2,
+                "packs/feat-catalog.db": 2,
+                "packs/feats.db": 2,
+                "packs/heroic.db": 5,
+                "packs/npc.db": 5,
+                "reference/sourcebooks/Clone Wars Campaign Guide_djvu.txt": 1,
+                "reference/sourcebooks/Galaxy At War_djvu.txt": 1,
+                "reference/sourcebooks/Jedi Academy Training Manual_djvu.txt": 1,
+                "reference/sourcebooks/Knights of the Old Republic Campaign Guide_djvu.txt": 16
+              }
+            },
+            "migrationNotes": [
+              "scripts/engine/feats/skill-feat-normalization-hooks.js:86 lists 'energy-binding-prosthesis' in selfInstallAllowedDevices.",
+              "Bao-Dur appears in data/heroic.json and nonheroic damage-profile data; the unique arm concept must be preserved in Bao-Dur-specific data."
+            ]
+          }
+        },
+        "followUps": [
+          "Remaining unclaimed equipment records after Phases 0-3A/B/C/D: 16 `upgrade-*` records (armor, universal, weapon upgrades), owned by Phase 0-3E.",
+          "Dedicated implant data layers (data/implants/*, data/store/implant-store-descriptions.json) are a parallel implant catalog of 8 entries; reconciling them with the pack is part of the cleanup migration."
+        ]
+      }
     }
   },
   "pendingPhases": [
-    "0-3D Cybernetics / Implants",
     "0-3E Upgrades / Modifications",
     "1 Provenance (pages)",
     "2 Descriptions",

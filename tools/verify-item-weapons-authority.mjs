@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
  * Verifies data/audits/item-canonicalization-rolling-authority.json (Phase 0-1 weapons,
- * Phase 0-2 armor, Phase 0-3A equipment, Phase 0-3B medical, Phase 0-3C explosives) against the weapons, armor and equipment packs. Read-only. Fails on any drift between the certified authority
+ * Phase 0-2 armor, Phase 0-3A equipment, Phase 0-3B medical, Phase 0-3C explosives, Phase 0-3D cybernetics) against the weapons, armor and equipment packs. Read-only. Fails on any drift between the certified authority
  * and the pack so that execution phases cannot silently run against a changed repo.
  */
 import fs from 'node:fs';
@@ -154,6 +154,39 @@ if (med) {
   const md = count(med.records, (r) => r.disposition);
   if (md.KEEP !== med.counts.KEEP || md.EDIT !== med.counts.EDIT || med.records.length !== med.counts.canonicalIdentities) fail(`medical counts ${JSON.stringify(md)}`);
   if (!errors.length) console.log(`medical authority OK: ${med.records.length} canonical (${md.KEEP} KEEP, ${md.EDIT} EDIT) cover all ${medSub.size} equipment-medical records`);
+}
+
+// ---- Phase 0-3D cybernetics / implants (authority-only; cleanups dependency-gated) ----
+const cy = auth.phases['0-3d-cybernetics-implants'];
+if (cy) {
+  const cyPack = new Map(fs.readFileSync(path.join(ROOT, 'packs/equipment.db'), 'utf8').split('\n').filter(Boolean)
+    .map((l) => JSON.parse(l)).map((r) => [r._id, r.name]));
+  const cyIds = new Set();
+  const cyKeys = new Set();
+  for (const r of cy.records) {
+    if (cyKeys.has(r.canonicalId)) fail(`cybernetics duplicate canonical id ${r.canonicalId}`);
+    cyKeys.add(r.canonicalId);
+    if (r.disposition === 'ADD') {
+      if (r.repo.present || cyPack.has(r.repo.suggestedId)) fail(`cybernetics ADD ${r.canonicalName} already exists in the pack`);
+      continue;
+    }
+    for (const m of (r.repo.matches || [r.repo])) {
+      cyIds.add(m.id);
+      if (cyPack.get(m.id) !== m.name) fail(`cybernetics ${m.id}: pack "${cyPack.get(m.id)}" vs "${m.name}"`);
+    }
+  }
+  const gated = cy.execution?.gatedCleanup || {};
+  for (const [id, g] of Object.entries(gated)) {
+    cyIds.add(id);
+    // Until a cleanup is marked executed, the gated record must still exist (no blind deletion).
+    if (!g.executed && !cyPack.has(id)) fail(`cybernetics gated record ${id} missing but cleanup not marked executed`);
+    if (g.executed && cyPack.has(id)) fail(`cybernetics cleanup of ${id} marked executed but record still in pack`);
+  }
+  const prefixed = [...cyPack.keys()].filter((id) => /^(cyber-|implant-)/.test(id));
+  for (const id of prefixed) if (!cyIds.has(id)) fail(`repo record ${id} not covered by Phase 0-3D`);
+  const cd = count(cy.records, (r) => r.disposition);
+  if (cd.KEEP !== cy.counts.KEEP || cd.EDIT !== cy.counts.EDIT || cd.ADD !== cy.counts.ADD || cy.records.length !== cy.counts.canonicalIdentities) fail(`cybernetics counts ${JSON.stringify(cd)}`);
+  if (!errors.length) console.log(`cybernetics authority OK: ${cy.records.length} canonical (${cd.KEEP} KEEP, ${cd.EDIT} EDIT, ${cd.ADD} ADD pending), ${prefixed.length} cyber-/implant- repo records covered, 2 dependency-gated cleanups pending`);
 }
 
 if (errors.length) { console.error(`FAIL (${errors.length})\n- ${errors.join('\n- ')}`); process.exit(1); }
