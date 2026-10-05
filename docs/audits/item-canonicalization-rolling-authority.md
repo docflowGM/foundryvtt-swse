@@ -1333,9 +1333,26 @@ Phase 1 — Canonical provenance and descriptions. Order: Weapons; Armor; Genera
 Phase 1 steps per family: (1) exact sourcebook and page; (2) canonical full player-readable rules text; (3) short derived summary; (4) printed prerequisites and restrictions; (5) repo discrepancy classification; (6) only after certification, authorize production creation/update of Phase 0 ADD/EDIT records.
 
 
-## Phase 1A — Core Rulebook weapons: provenance and canonical content
+## Phase 1 — Weapons provenance and canonical content (1A–1F)
 
-Status: **CERTIFIED_PHASE_1A_CONTENT_AUTHORITY** (authority-only; no pack, stat or runtime change). Source: The user-supplied Core Rulebook TXT/PDF is SSOT. TXT is the searchable layer; rendered PDF pages are final authority for page/table/layout ambiguity.
+Rolling weapons content authority; later book tranches append here. Status: **ROLLING_PHASE_1_WEAPONS_AUTHORITY_THROUGH_1F** (authority-only; no pack, stat or runtime change). 123 source-book claims map to 121 unique production identities (Guard Shoto and Lightsaber Pike are cross-published Force Unleashed p. 96/199 and Jedi Academy p. 50/53 → one production identity each). 93 claims have a repo record, 30 are missing; 24 descriptions materially incorrect, 69 incomplete. Full text/summaries: JSON `phases["1-weapons-content"].books[].records`; per-identity roll-up: `.uniqueIdentityIndex`.
+
+| Phase | Book | Claims | Present | Missing | Incorrect | Incomplete |
+|---|---|--:|--:|--:|--:|--:|
+| 1A | Core Rulebook | 48 | 35 | 13 | 14 | 21 |
+| 1B | Clone Wars Campaign Guide | 16 | 12 | 4 | 0 | 12 |
+| 1C | Force Unleashed Campaign Guide | 18 | 14 | 4 | 4 | 10 |
+| 1D | Galaxy at War | 21 | 14 | 7 | 1 | 13 |
+| 1E | Galaxy of Intrigue | 4 | 4 | 0 | 0 | 4 |
+| 1F | Jedi Academy Training Manual | 16 | 14 | 2 | 5 | 9 |
+
+Remaining weapon books: KOTOR, Legacy, Rebellion, Scum and Villainy, Threats of the Galaxy, Unknown Regions.
+
+### 1A — Core Rulebook
+
+(Source-book guardrails below.)
+
+Source: The user-supplied Core Rulebook TXT/PDF is SSOT. TXT is the searchable layer; rendered PDF pages are final authority for page/table/layout ambiguity.
 
 Counts: 48 canonical Core weapons; 35 present in `packs/weapons.db`, 13 missing; 14 DESCRIPTION_INCORRECT, 21 DESCRIPTION_INCOMPLETE, 0 correct.
 
@@ -1405,11 +1422,122 @@ Certified fields: source book/description page/stat-table page, `canonicalPlayer
 | Slugthrower Rifle | Rifle | 129 | 127 | Table 8-4: Ranged Weapons | `weapon-slugthrower-rifle` | DESCRIPTION_INCORRECT |  |
 | Thermal Detonator | Simple Weapon | 129 | 127 | Table 8-4: Ranged Weapons | `weapon-thermal-detonator` | DESCRIPTION_INCORRECT |  |
 
-Canonical player text and summaries for all 48 records are in `data/audits/item-canonicalization-rolling-authority.json` → `phases["1a-core-weapons-content"].records`.
+Retrosaber (1F, p. 50) has no stat-table page: the Jedi Academy Training Manual defines it in prose only (base DC 25, 28 damage, swift-action 2d10 power dial-up), so its stat values need prose-sourced handling in the stats phase.
+
+### 1B — Clone Wars Campaign Guide
+
+| Weapon | Group | Desc p. | Table p. | Repo | Discrepancy | Rename pending |
+|---|---|---|---|---|---|---|
+| Garrote | Exotic Weapon | 59 | 60 | — | MISSING_RECORD |  |
+| Snap Baton | Simple Weapon | 59 | 60 | `weapon-snap-baton` | DESCRIPTION_INCOMPLETE |  |
+| Stunning Gauntlet | Simple Weapon | 60 | 60 | — | MISSING_RECORD |  |
+| Vibroknucklers | Advanced Melee Weapon | 60 | 60 | — | MISSING_RECORD |  |
+| Vibrorapier | Advanced Melee Weapon | 60 | 60 | — | MISSING_RECORD |  |
+| BlasTech 500 Riot Gun | Rifle | 61 | 61 | `weapon-espo-500-riot-gun` | DESCRIPTION_INCOMPLETE | yes (ESPO 500 Riot Gun) |
+| BlasTech DH-23 Outback Blaster Pistol | Pistol | 61 | 61 | `weapon-dh-23-blaster-pistol` | DESCRIPTION_INCOMPLETE | yes (DH-23 Blaster Pistol) |
+| BlasTech DLT-20A "Longbarrel" Blaster Rifle | Rifle | 62 | 61 | `weapon-dlt-20a-longblaster` | DESCRIPTION_INCOMPLETE | yes (DLT-20A Longblaster) |
+| BlasTech DT-12 Heavy Blaster Pistol | Pistol | 62 | 61 | `weapon-dt-12-heavy-blaster` | DESCRIPTION_INCOMPLETE | yes (DT-12 Heavy Blaster) |
+| Czerka Adjudicator | Pistol | 62 | 61 | `weapon-adjudicator-slugthrower` | DESCRIPTION_INCOMPLETE | yes (Adjudicator Slugthrower) |
+| Czerka Adventurer | Rifle | 62 | 61 | `weapon-adventurer-slugthrower` | DESCRIPTION_INCOMPLETE | yes (Adventurer Slugthrower) |
+| EMP Grenade | Simple Weapon | 62 | 61 | `weapon-emp-grenade` | DESCRIPTION_INCOMPLETE |  |
+| Gee-Tech 12 Defender Microblaster | Pistol | 62 | 61 | `weapon-defender-microblaster` | DESCRIPTION_INCOMPLETE | yes (Defender MicroBlaster) |
+| Merr-Sonn Model 434 DeathHammer | Pistol | 63 | 61 | `weapon-model-434-deathhammer` | DESCRIPTION_INCOMPLETE | yes (Model 434 DeathHammer) |
+| SoroSuub Firelance Blaster Rifle | Rifle | 63 | 61 | `weapon-firelance-blaster-rifle` | DESCRIPTION_INCOMPLETE | yes (Firelance Blaster Rifle) |
+| Wrist Rocket Launcher | Exotic Weapon | 63 | 61 | `weapon-wrist-rocket-launcher` | DESCRIPTION_INCOMPLETE |  |
+
+### 1C — Force Unleashed Campaign Guide
+
+| Weapon | Group | Desc p. | Table p. | Repo | Discrepancy | Rename pending |
+|---|---|---|---|---|---|---|
+| Felucian Skullblade | Exotic Weapon | 96 | 96 | — | MISSING_RECORD |  |
+| Guard Shoto | Lightsaber | 96 | 96 | `lightsaber-chassis-guard-shoto` | DESCRIPTION_INCOMPLETE |  |
+| Power Hammer | Advanced Melee Weapon | 97 | 96 | — | MISSING_RECORD |  |
+| Ryyk Blade | Exotic Weapon | 97 | 96 | `weapon-wookiee-ryyk-blade` | DESCRIPTION_INCORRECT | yes (Wookiee Ryyk Blade) |
+| Vibroblade, Double | Advanced Melee Weapon | 98 | 96 | — | MISSING_RECORD |  |
+| Vibrosword | Advanced Melee Weapon | 98 | 96 | `weapon-vibrosword` | DESCRIPTION_INCORRECT |  |
+| Bryar Pistol | Pistol | 98 | 99 | `weapon-bryar-pistol` | DESCRIPTION_INCOMPLETE |  |
+| Bryar Rifle | Rifle | 98 | 99 | `weapon-bryar-rifle` | DESCRIPTION_INCOMPLETE |  |
+| DX-2 Disruptor Pistol | Pistol | 99 | 99 | `weapon-disruptor-pistol` | DESCRIPTION_INCORRECT | yes (Disruptor Pistol) |
+| DXR-6 Disruptor Rifle | Rifle | 99 | 99 | `weapon-disruptor-rifle` | DESCRIPTION_INCORRECT | yes (Disruptor Rifle) |
+| Incinerator Rifle | Rifle | 99 | 99 | `weapon-incinerator-rifle` | DESCRIPTION_INCOMPLETE |  |
+| Stokhli Spray Stick | Rifle | 100 | 99 | `weapon-stokhli-spray-stick` | DESCRIPTION_INCOMPLETE |  |
+| CR-1 Blast Cannon | Exotic Weapon | 198 | 199 | `weapon-cr-1-blast-cannon` | DESCRIPTION_INCOMPLETE |  |
+| E-Web Missile Launcher | Heavy Weapon | 198 | 199 | `weapon-e-web-missile-launcher` | DESCRIPTION_INCOMPLETE |  |
+| Flechette Launcher | Rifle | 199 | 199 | `weapon-flechette-launcher` | DESCRIPTION_INCOMPLETE |  |
+| Lightsaber Pike | Lightsaber | 199 | 199 | `lightsaber-chassis-pike` | DESCRIPTION_INCOMPLETE |  |
+| Neuronic Whip | Exotic Weapon | 200 | 199 | — | MISSING_RECORD |  |
+| Rail Detonator Gun | Rifle | 200 | 199 | `weapon-rail-detonator-gun` | DESCRIPTION_INCOMPLETE |  |
+
+### 1D — Galaxy at War
+
+| Weapon | Group | Desc p. | Table p. | Repo | Discrepancy | Rename pending |
+|---|---|---|---|---|---|---|
+| Darkstick | Exotic Weapon | 36 | 36 | — | MISSING_RECORD |  |
+| Entrenching Tool | Simple Weapon | 36 | 36 | — | MISSING_RECORD |  |
+| Fire Blade | Simple Weapon | 37 | 36 | — | MISSING_RECORD |  |
+| Shockboxing Gloves | Simple Weapon | 37 | 36 | — | MISSING_RECORD |  |
+| Shock Stick | Advanced Melee Weapon | 37 | 36 | — | MISSING_RECORD |  |
+| Static Pike | Advanced Melee Weapon | 37 | 36 | — | MISSING_RECORD |  |
+| Vibrolance | Advanced Melee Weapon | 37 | 36 | — | MISSING_RECORD |  |
+| Ascension Gun | Pistol | 37 | 41 | `weapon-ascension-gun` | DESCRIPTION_INCOMPLETE |  |
+| Blaster Pistol, Sidearm | Pistol | 38 | 41 | `weapon-sidearm-blaster-pistol` | DESCRIPTION_INCOMPLETE | yes (Sidearm Blaster Pistol) |
+| Blaster Rifle, Variable | Rifle | 38 | 41 | `weapon-variable-blaster` | DESCRIPTION_INCOMPLETE | yes (Variable Blaster) |
+| Blaster Rifle, Heavy Variable | Rifle | 38 | 41 | `weapon-heavy-variable-blaster` | DESCRIPTION_INCOMPLETE | yes (Heavy Variable Blaster) |
+| Crossbow, Repeating | Simple Weapon | 39 | 41 | `weapon-repeating-crossbow` | DESCRIPTION_INCOMPLETE | yes (Repeating Crossbow) |
+| Flame Cannon | Heavy Weapon | 39 | 41 | `weapon-flame-cannon` | DESCRIPTION_INCOMPLETE |  |
+| Grenade, Radiation | Simple Weapon | 39 | 41 | `weapon-radiation-grenade` | DESCRIPTION_INCOMPLETE | yes (Radiation Grenade) |
+| Grenade, Smoke | Simple Weapon | 39 | 41 | `weapon-smoke-grenade` | DESCRIPTION_INCOMPLETE | yes (Smoke Grenade) |
+| Interchangeable Weapon System | Rifle (Special) | 39 | 41 | `weapon-interchangeable-weapon-system` | DESCRIPTION_INCOMPLETE |  |
+| Mortar Launcher | Heavy Weapon | 40 | 41 | `weapon-mortar-launcher` | DESCRIPTION_INCOMPLETE |  |
+| Rotary Blaster Cannon | Heavy Weapon | 40 | 41 | `weapon-rotary-blaster-cannon` | DESCRIPTION_INCOMPLETE |  |
+| Scatter Gun | Rifle | 40 | 41 | `weapon-scattergun` | DESCRIPTION_INCOMPLETE | yes (Scattergun) |
+| Tactical Tractor Beam | Heavy Weapon | 42 | 41 | `weapon-tactical-tractor-beam` | DESCRIPTION_INCOMPLETE |  |
+| Targeting Laser | Simple Weapon | 42 | 41 | `weapon-targeting-laser` | DESCRIPTION_INCORRECT |  |
+
+### 1E — Galaxy of Intrigue
+
+| Weapon | Group | Desc p. | Table p. | Repo | Discrepancy | Rename pending |
+|---|---|---|---|---|---|---|
+| Blaster, Wrist | Pistol | 64 | 65 | `weapon-wrist-blaster` | DESCRIPTION_INCOMPLETE | yes (Wrist Blaster) |
+| Darter | Simple Weapon | 64 | 65 | `weapon-darter` | DESCRIPTION_INCOMPLETE |  |
+| Snare Pistol | Pistol | 64 | 65 | `weapon-snare-pistol` | DESCRIPTION_INCOMPLETE |  |
+| Xerrol Nightstinger | Rifle | 64 | 65 | `weapon-xerrol-nightstinger` | DESCRIPTION_INCOMPLETE |  |
+
+### 1F — Jedi Academy Training Manual
+
+| Weapon | Group | Desc p. | Table p. | Repo | Discrepancy | Rename pending |
+|---|---|---|---|---|---|---|
+| Guard Shoto | Lightsaber | 50 | 52 | `lightsaber-chassis-guard-shoto` | DESCRIPTION_INCOMPLETE |  |
+| Lightfoil, Archaic | Lightsaber | 50 | 52 | `lightsaber-chassis-archaic-lightfoil` | DESCRIPTION_INCOMPLETE | yes (Archaic Lightfoil) |
+| Lightfoil, Modern | Lightsaber | 50 | 52 | `lightsaber-chassis-modern-lightfoil` | DESCRIPTION_INCORRECT | yes (Modern Lightfoil) |
+| Retrosaber | Lightsaber | 50 | None | `lightsaber-chassis-retrosaber` | DESCRIPTION_INCOMPLETE |  |
+| Lightsaber, Archaic | Lightsaber | 51 | 52 | `lightsaber-chassis-archaic-lightsaber` | DESCRIPTION_INCOMPLETE | yes (Archaic Lightsaber) |
+| Lightsaber, Dual-Phase | Lightsaber | 51 | 52 | `lightsaber-chassis-dual-phase` | DESCRIPTION_INCOMPLETE | yes (Dual-Phase Lightsaber) |
+| Dueling Lightsaber | Lightsaber | 52 | 52 | `lightsaber-chassis-dueling` | DESCRIPTION_INCOMPLETE |  |
+| Crossguard Lightsaber | Lightsaber | 52 | 52 | `lightsaber-chassis-crossguard` | DESCRIPTION_INCORRECT |  |
+| Lightsaber, Great | Lightsaber | 53 | 52 | `lightsaber-chassis-great` | DESCRIPTION_INCORRECT | yes (Great Lightsaber) |
+| Long-Handle Lightsaber | Lightsaber | 53 | 52 | `lightsaber-chassis-longhandle` | DESCRIPTION_INCOMPLETE |  |
+| Lightsaber Pike | Lightsaber | 53 | 52 | `lightsaber-chassis-pike` | DESCRIPTION_INCOMPLETE |  |
+| Lightwhip | Lightsaber | 53 | 52 | `lightsaber-chassis-lightwhip` | DESCRIPTION_INCOMPLETE |  |
+| San-Ni Staff | Advanced Melee Weapon | 53 | 52 | — | MISSING_RECORD |  |
+| Wan-Shen | Simple Weapon | 54 | 52 | — | MISSING_RECORD |  |
+| Discblade | Exotic Weapon | 61 | 61 | `weapon-discblade` | DESCRIPTION_INCORRECT |  |
+| R-9 Flash Canister | Simple Weapon | 61 | 61 | `weapon-flash-canister` | DESCRIPTION_INCORRECT | yes (Flash Canister) |
+
+### Rolling guardrails
+
+- Append later book tranches without deleting earlier certified source claims.
+- Do not create missing weapons until numeric production stats/schema are separately certified.
+- Retain each source claim while mapping cross-published claims to one production identity.
+- Derived summary text is not canonical rules text.
+- Do not preserve repo mechanics that conflict with source-certified canonicalPlayerText.
+- Do not convert area-attack mechanics into invented saving throws.
+- Keep stun and ion mechanics distinct.
+- Preserve Phase 0 identity/name-normalization rulings.
 
 ## Pending phases
 
-- 1 Provenance and canonical content certification — 1A Core weapons DONE (authority-only); next 1B Clone Wars Campaign Guide weapons, then remaining weapon sources; then armor, general equipment families, cybernetics/upgrades/templates, lightsaber components, droid systems
+- 1 Provenance and canonical content certification — weapons 1A-1F DONE (authority-only); next weapon books: KOTOR, Legacy, Rebellion, Scum and Villainy, Threats of the Galaxy, Unknown Regions; then armor, general equipment families, cybernetics/upgrades/templates, lightsaber components, droid systems
 
 - Gated cleanup tranche (0-3D migrations, 0-3E renames/merge, 0-3F template migration, 0-3G weapons.db stragglers, 0-3H droid migration, weapon/equipment REMOVE dependents)
 

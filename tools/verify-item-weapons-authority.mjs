@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
  * Verifies data/audits/item-canonicalization-rolling-authority.json (Phase 0-1 weapons,
- * Phase 0-2 armor, Phase 0-3A equipment, Phase 0-3B medical, Phase 0-3C explosives, Phase 0-3D cybernetics, Phase 0-3E upgrades, Phase 0-3F gear templates, Phase 0-3G lightsaber components, Phase 0-3H droid systems, Phase 0-3I ammunition boundary, Phase 0 completion manifest, Phase 1A Core weapons content) against the weapons, armor and equipment packs. Read-only. Fails on any drift between the certified authority
+ * Phase 0-2 armor, Phase 0-3A equipment, Phase 0-3B medical, Phase 0-3C explosives, Phase 0-3D cybernetics, Phase 0-3E upgrades, Phase 0-3F gear templates, Phase 0-3G lightsaber components, Phase 0-3H droid systems, Phase 0-3I ammunition boundary, Phase 0 completion manifest, Phase 1 weapons content 1A-1F) against the weapons, armor and equipment packs. Read-only. Fails on any drift between the certified authority
  * and the pack so that execution phases cannot silently run against a changed repo.
  */
 import fs from 'node:fs';
@@ -388,34 +388,57 @@ if (pc) {
   if (!errors.length) console.log(`Phase 0 completion OK: ${pc.tranches.length} tranches reconcile with the folded authorities; ${review.length} open identity reviews (${review.join(', ')})`);
 }
 
-// ---- Phase 1A Core weapons content authority ----
-const c1a = auth.phases['1a-core-weapons-content'];
-if (c1a) {
-  const core = p.canonicalWeapons.filter((w) => w.sources.some((s) => s.book === 'Core Rulebook'));
-  const byName = new Map(core.map((w) => [w.canonicalName, w]));
-  const seen = new Set();
-  const disc = {};
-  for (const r of c1a.records) {
-    if (seen.has(r.canonicalName)) fail(`1A duplicate ${r.canonicalName}`);
-    seen.add(r.canonicalName);
-    const w = byName.get(r.canonicalName);
-    if (!w) { fail(`1A ${r.canonicalName} is not a Core Phase 0-1 weapon`); continue; }
-    disc[r.phase1Discrepancy] = (disc[r.phase1Discrepancy] || 0) + 1;
-    if (r.source.book !== 'Core Rulebook' || !r.source.descriptionPage || !r.source.statTablePage || !r.source.table) fail(`1A ${r.canonicalName} missing provenance`);
-    if (!r.canonicalPlayerText?.trim() || !r.summary?.trim() || r.canonicalPlayerText === r.summary) fail(`1A ${r.canonicalName} text/summary invalid`);
-    const absent = w.phase0Disposition === 'ADD';
-    if (r.repo.present === absent) fail(`1A ${r.canonicalName} repo.present disagrees with Phase 0 ${w.phase0Disposition}`);
-    if (r.repo.present) {
-      if (r.repo.id !== w.repo.matchedId || !pack.has(r.repo.id)) fail(`1A ${r.canonicalName} repo id ${r.repo.id} != Phase 0 ${w.repo.matchedId} or not in pack`);
-      if (pack.get(r.repo.id) !== r.repo.currentName) fail(`1A ${r.canonicalName} currentName ${r.repo.currentName} != pack ${pack.get(r.repo.id)}`);
-    } else if (r.phase1Discrepancy !== 'MISSING_RECORD') fail(`1A ${r.canonicalName} absent but not MISSING_RECORD`);
-    if (r.repo.phase0NameNormalizationPending !== (w.phase0Disposition === 'EDIT')) fail(`1A ${r.canonicalName} rename-pending flag disagrees with Phase 0`);
+// ---- Phase 1 weapons content authority (1A-1F, rolling) ----
+const c1 = auth.phases['1-weapons-content'];
+// Retrosaber (Jedi Academy p. 50) is defined in prose only; the sourcebook prints no stat-table row for it.
+const NO_STAT_TABLE = new Set(['Retrosaber']);
+if (c1) {
+  const byName = new Map(p.canonicalWeapons.map((w) => [w.canonicalName, w]));
+  const claimsByName = new Map();
+  const tot = { claims: 0, present: 0, missing: 0, INCORRECT: 0, INCOMPLETE: 0 };
+  for (const b of c1.books) {
+    const disc = {};
+    let present = 0;
+    for (const r of b.records) {
+      const w = byName.get(r.canonicalName);
+      if (!w) { fail(`${b.phase} ${r.canonicalName} is not a Phase 0-1 canonical weapon`); continue; }
+      if (!w.sources.some((s) => s.book === b.book)) fail(`${b.phase} ${r.canonicalName} not sourced from ${b.book} in Phase 0-1`);
+      if (!claimsByName.has(r.canonicalName)) claimsByName.set(r.canonicalName, []);
+      claimsByName.get(r.canonicalName).push(b.phase);
+      disc[r.phase1Discrepancy] = (disc[r.phase1Discrepancy] || 0) + 1;
+      if (r.source.book !== b.book || !r.source.descriptionPage || (!r.source.statTablePage && !NO_STAT_TABLE.has(r.canonicalName))) fail(`${b.phase} ${r.canonicalName} missing provenance`);
+      if (!r.canonicalPlayerText?.trim() || !r.summary?.trim() || r.canonicalPlayerText === r.summary) fail(`${b.phase} ${r.canonicalName} text/summary invalid`);
+      const absent = w.phase0Disposition === 'ADD';
+      if (r.repo.present === absent) fail(`${b.phase} ${r.canonicalName} repo.present disagrees with Phase 0 ${w.phase0Disposition}`);
+      if (r.repo.present) {
+        present++;
+        if (r.repo.id !== w.repo.matchedId || !pack.has(r.repo.id)) fail(`${b.phase} ${r.canonicalName} repo id ${r.repo.id} != Phase 0 ${w.repo.matchedId} or not in pack`);
+        if (pack.get(r.repo.id) !== r.repo.currentName) fail(`${b.phase} ${r.canonicalName} currentName ${r.repo.currentName} != pack ${pack.get(r.repo.id)}`);
+        if (r.phase1Discrepancy === 'MISSING_RECORD') fail(`${b.phase} ${r.canonicalName} present but MISSING_RECORD`);
+      } else if (r.phase1Discrepancy !== 'MISSING_RECORD') fail(`${b.phase} ${r.canonicalName} absent but not MISSING_RECORD`);
+      if (r.repo.phase0NameNormalizationPending !== (w.phase0Disposition === 'EDIT')) fail(`${b.phase} ${r.canonicalName} rename-pending flag disagrees with Phase 0`);
+    }
+    const c = b.counts;
+    const claims = c.canonicalWeapons ?? c.canonicalWeaponClaims;
+    const exp = { MISSING_RECORD: c.repoMissing, DESCRIPTION_INCORRECT: c.descriptionIncorrect, DESCRIPTION_INCOMPLETE: c.descriptionIncomplete };
+    for (const [k, v] of Object.entries(exp)) if ((disc[k] || 0) !== v) fail(`${b.phase} ${k} count ${disc[k] || 0} != ${v}`);
+    if (b.records.length !== claims || present !== c.repoPresent || c.repoPresent + c.repoMissing !== claims) fail(`${b.phase} count mismatch`);
+    tot.claims += b.records.length; tot.present += present; tot.missing += exp.MISSING_RECORD;
+    tot.INCORRECT += exp.DESCRIPTION_INCORRECT; tot.INCOMPLETE += exp.DESCRIPTION_INCOMPLETE;
   }
-  for (const n of byName.keys()) if (!seen.has(n)) fail(`1A missing Core weapon ${n}`);
-  const exp = { MISSING_RECORD: c1a.counts.repoMissing, DESCRIPTION_INCORRECT: c1a.counts.descriptionIncorrect, DESCRIPTION_INCOMPLETE: c1a.counts.descriptionIncomplete };
-  for (const [k, v] of Object.entries(exp)) if ((disc[k] || 0) !== v) fail(`1A ${k} count ${disc[k] || 0} != ${v}`);
-  if (c1a.records.length !== c1a.counts.canonicalWeapons || c1a.counts.repoPresent + c1a.counts.repoMissing !== c1a.records.length) fail('1A count mismatch');
-  if (!errors.length) console.log(`Phase 1A OK: ${c1a.records.length} Core weapons (${c1a.counts.repoPresent} present, ${c1a.counts.repoMissing} missing; ${exp.DESCRIPTION_INCORRECT} incorrect, ${exp.DESCRIPTION_INCOMPLETE} incomplete)`);
+  const ac = c1.aggregateCounts;
+  if (tot.claims !== ac.sourceBookClaims || tot.present !== ac.repoPresentClaims || tot.missing !== ac.repoMissingClaims
+    || tot.INCORRECT !== ac.descriptionIncorrectClaims || tot.INCOMPLETE !== ac.descriptionIncompleteClaims) fail(`1 aggregate counts mismatch ${JSON.stringify(tot)} vs ${JSON.stringify(ac)}`);
+  if (claimsByName.size !== ac.uniqueProductionIdentities || tot.claims - claimsByName.size !== ac.crossPublishedDuplicateClaims) fail('1 unique identity / duplicate count mismatch');
+  if (c1.uniqueIdentityIndex.length !== claimsByName.size) fail('1 uniqueIdentityIndex size mismatch');
+  for (const u of c1.uniqueIdentityIndex) {
+    const n = claimsByName.get(u.canonicalName);
+    if (!n || n.length !== u.claimCount || u.sourceClaims.length !== u.claimCount) fail(`1 uniqueIdentityIndex claim count wrong for ${u.canonicalName}`);
+  }
+  const dupes = [...claimsByName].filter(([, v]) => v.length > 1).map(([k]) => k).sort();
+  const ruled = c1.crossPublishedIdentityRulings.map((r) => r.canonicalIdentity).sort();
+  if (JSON.stringify(dupes) !== JSON.stringify(ruled)) fail(`1 cross-published claims ${JSON.stringify(dupes)} != rulings ${JSON.stringify(ruled)}`);
+  if (!errors.length) console.log(`Phase 1 weapons content OK: ${c1.books.length} books (${c1.books.map((b) => b.phase).join(',')}), ${tot.claims} claims / ${claimsByName.size} identities (${tot.present} present, ${tot.missing} missing; ${tot.INCORRECT} incorrect, ${tot.INCOMPLETE} incomplete)`);
 }
 
 if (errors.length) { console.error(`FAIL (${errors.length})\n- ${errors.join('\n- ')}`); process.exit(1); }
