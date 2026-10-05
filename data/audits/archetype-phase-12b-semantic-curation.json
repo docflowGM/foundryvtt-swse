@@ -2,42 +2,42 @@
   "schemaVersion": "1.0",
   "kind": "SWSE_ARCHETYPE_PHASE_12B_SEMANTIC_CURATION",
   "phase": "12B",
-  "status": "ROLLING_AUTHORITY_NEXT_TRANCHE_READY_BASELINE_VERIFIED",
+  "status": "ROLLING_AUTHORITY_NEXT_TRANCHE_READY_BASELINE_PENDING",
   "runtimeTarget": "data/archetypes.json",
   "frozenOntology": {
     "path": "data/audits/talent-feat-phase3-final-ontology.json",
     "tagCount": 190
   },
-  "certifiedCount": 190,
+  "certifiedCount": 210,
   "totalArchetypes": 297,
-  "remainingUncuratedAfterApplication": 107,
-  "selectionRule": "Continue Noble-first records in dataset order. Class is a route, not ownership.",
+  "remainingUncuratedAfterApplication": 87,
+  "selectionRule": "Finish Noble-first records in dataset order. Class is a route, not ownership. After this tranche Noble-first is complete.",
   "currentExecution": {
-    "id": "12B-NOBLE-10",
-    "status": "AUTHORITY_READY_BASELINE_VERIFIED",
-    "requiredBaseline": "b65bb4091a980b64a7cd3ac3d19c6fdb62b505c7",
-    "baselineInstruction": "Verify b65bb4091a980b64a7cd3ac3d19c6fdb62b505c7 is an ancestor of the working branch before applying this tranche. Do not substitute another SHA.",
+    "id": "12B-NOBLE-11",
+    "status": "AUTHORITY_READY_BASELINE_PENDING",
+    "requiredBaseline": "91aa158f718811e3b42c8afb3c77b08c45432264",
+    "baselineInstruction": "Replace this placeholder with the successful commit returned after 12B-NOBLE-10 execution before applying this tranche. Do not infer or substitute a SHA.",
     "newRecordIds": [
-      "medical_droid",
-      "selkath_kolto_steward",
-      "academic_archaeologist",
-      "xenoarchaeologist",
-      "archaeological_expedition_leader",
-      "droid_rights_activist",
-      "zygerrian_abolitionist",
-      "hutt_kajidic_heir",
-      "royal_heir",
-      "hapan_court_noble",
-      "sith_pureblood_scion",
-      "yuuzhan_vong_intendant",
-      "holostar",
-      "mandalorian_clan_leader",
-      "ithorian_herdship_steward",
-      "corporate_agent",
-      "corporate_troubleshooter",
-      "quarren_deep_sea_industrialist",
-      "geonosian_foundry_master",
-      "neimoidian_trade_viceroy"
+      "skakoan_techno_union_technocrat",
+      "koorivar_corporate_magnate",
+      "political_fixer",
+      "hutt_majordomo",
+      "chiss_house_agent",
+      "zeltron_empathic_courtier",
+      "negotiator",
+      "mediator",
+      "protocol_droid",
+      "senator",
+      "caamasi_memory_keeper",
+      "anomid_technical_diplomat",
+      "bith_virtuoso",
+      "muun_banking_magnate",
+      "yuuzhan_vong_priest",
+      "kissai_dark_priest",
+      "tyia_adept",
+      "fallanassi_adept",
+      "baran_do_sage",
+      "miraluka_force_seer"
     ],
     "revisionIds": []
   },
@@ -9494,129 +9494,1251 @@
           "authority": "OWNER_CERTIFIED"
         }
       }
+    },
+    {
+      "id": "skakoan_techno_union_technocrat",
+      "name": "Skakoan Techno Union Technocrat",
+      "tranche": "11",
+      "primary": [
+        "knowledge",
+        "leadership",
+        "tech"
+      ],
+      "supporting": [
+        "ally_support",
+        "control",
+        "intrigue",
+        "persuasion",
+        "resources",
+        "skill_mastery",
+        "social",
+        "support",
+        "use_computer"
+      ],
+      "all": [
+        "ally_support",
+        "control",
+        "intrigue",
+        "knowledge",
+        "leadership",
+        "persuasion",
+        "resources",
+        "skill_mastery",
+        "social",
+        "support",
+        "tech",
+        "use_computer"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "knowledge",
+              "leadership",
+              "tech"
+            ],
+            "supporting": [
+              "ally_support",
+              "control",
+              "intrigue",
+              "persuasion",
+              "resources",
+              "skill_mastery",
+              "social",
+              "support",
+              "use_computer"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "koorivar_corporate_magnate",
+      "name": "Koorivar Corporate Magnate",
+      "tranche": "11",
+      "primary": [
+        "intrigue",
+        "leadership",
+        "persuasion",
+        "social_network"
+      ],
+      "supporting": [
+        "ally_support",
+        "control",
+        "deception",
+        "gather_information",
+        "knowledge",
+        "social",
+        "support"
+      ],
+      "all": [
+        "ally_support",
+        "control",
+        "deception",
+        "gather_information",
+        "intrigue",
+        "knowledge",
+        "leadership",
+        "persuasion",
+        "social",
+        "social_network",
+        "support"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "intrigue",
+              "leadership",
+              "persuasion",
+              "social_network"
+            ],
+            "supporting": [
+              "ally_support",
+              "control",
+              "deception",
+              "gather_information",
+              "knowledge",
+              "social",
+              "support"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "political_fixer",
+      "name": "Political Fixer",
+      "tranche": "11",
+      "primary": [
+        "gather_information",
+        "intrigue",
+        "manipulation",
+        "persuasion",
+        "social_network"
+      ],
+      "supporting": [
+        "deception",
+        "perception",
+        "social"
+      ],
+      "all": [
+        "deception",
+        "gather_information",
+        "intrigue",
+        "manipulation",
+        "perception",
+        "persuasion",
+        "social",
+        "social_network"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "gather_information",
+              "intrigue",
+              "manipulation",
+              "persuasion",
+              "social_network"
+            ],
+            "supporting": [
+              "deception",
+              "perception",
+              "social"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "hutt_majordomo",
+      "name": "Hutt Majordomo",
+      "tranche": "11",
+      "primary": [
+        "intrigue",
+        "manipulation",
+        "persuasion",
+        "social"
+      ],
+      "supporting": [
+        "deception",
+        "gather_information",
+        "knowledge",
+        "social_network"
+      ],
+      "all": [
+        "deception",
+        "gather_information",
+        "intrigue",
+        "knowledge",
+        "manipulation",
+        "persuasion",
+        "social",
+        "social_network"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "intrigue",
+              "manipulation",
+              "persuasion",
+              "social"
+            ],
+            "supporting": [
+              "deception",
+              "gather_information",
+              "knowledge",
+              "social_network"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "chiss_house_agent",
+      "name": "Chiss House Agent",
+      "tranche": "11",
+      "primary": [
+        "deception",
+        "gather_information",
+        "intrigue",
+        "social"
+      ],
+      "supporting": [
+        "knowledge",
+        "manipulation",
+        "persuasion",
+        "social_network"
+      ],
+      "all": [
+        "deception",
+        "gather_information",
+        "intrigue",
+        "knowledge",
+        "manipulation",
+        "persuasion",
+        "social",
+        "social_network"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "deception",
+              "gather_information",
+              "intrigue",
+              "social"
+            ],
+            "supporting": [
+              "knowledge",
+              "manipulation",
+              "persuasion",
+              "social_network"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "zeltron_empathic_courtier",
+      "name": "Zeltron Empathic Courtier",
+      "tranche": "11",
+      "primary": [
+        "manipulation",
+        "perception",
+        "persuasion",
+        "social"
+      ],
+      "supporting": [
+        "deception",
+        "gather_information"
+      ],
+      "all": [
+        "deception",
+        "gather_information",
+        "manipulation",
+        "perception",
+        "persuasion",
+        "social"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "manipulation",
+              "perception",
+              "persuasion",
+              "social"
+            ],
+            "supporting": [
+              "deception",
+              "gather_information"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "negotiator",
+      "name": "Negotiator",
+      "tranche": "11",
+      "primary": [
+        "manipulation",
+        "persuasion",
+        "social"
+      ],
+      "supporting": [
+        "knowledge",
+        "perception"
+      ],
+      "all": [
+        "knowledge",
+        "manipulation",
+        "perception",
+        "persuasion",
+        "social"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "manipulation",
+              "persuasion",
+              "social"
+            ],
+            "supporting": [
+              "knowledge",
+              "perception"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "mediator",
+      "name": "Mediator",
+      "tranche": "11",
+      "primary": [
+        "ally_support",
+        "persuasion",
+        "social",
+        "support"
+      ],
+      "supporting": [
+        "gather_information",
+        "knowledge",
+        "manipulation",
+        "perception"
+      ],
+      "all": [
+        "ally_support",
+        "gather_information",
+        "knowledge",
+        "manipulation",
+        "perception",
+        "persuasion",
+        "social",
+        "support"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "ally_support",
+              "persuasion",
+              "social",
+              "support"
+            ],
+            "supporting": [
+              "gather_information",
+              "knowledge",
+              "manipulation",
+              "perception"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "protocol_droid",
+      "name": "Protocol Droid",
+      "tranche": "11",
+      "primary": [
+        "droid",
+        "knowledge",
+        "persuasion",
+        "social"
+      ],
+      "supporting": [
+        "ally_support",
+        "gather_information",
+        "support",
+        "use_computer"
+      ],
+      "all": [
+        "ally_support",
+        "droid",
+        "gather_information",
+        "knowledge",
+        "persuasion",
+        "social",
+        "support",
+        "use_computer"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "droid",
+              "knowledge",
+              "persuasion",
+              "social"
+            ],
+            "supporting": [
+              "ally_support",
+              "gather_information",
+              "support",
+              "use_computer"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "senator",
+      "name": "Senator",
+      "tranche": "11",
+      "primary": [
+        "intrigue",
+        "leadership",
+        "persuasion",
+        "social"
+      ],
+      "supporting": [
+        "ally_support",
+        "gather_information",
+        "knowledge",
+        "social_network",
+        "support"
+      ],
+      "all": [
+        "ally_support",
+        "gather_information",
+        "intrigue",
+        "knowledge",
+        "leadership",
+        "persuasion",
+        "social",
+        "social_network",
+        "support"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "intrigue",
+              "leadership",
+              "persuasion",
+              "social"
+            ],
+            "supporting": [
+              "ally_support",
+              "gather_information",
+              "knowledge",
+              "social_network",
+              "support"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "caamasi_memory_keeper",
+      "name": "Caamasi Memory Keeper",
+      "tranche": "11",
+      "primary": [
+        "knowledge",
+        "telepathy"
+      ],
+      "supporting": [
+        "ally_support",
+        "galactic_lore",
+        "perception",
+        "persuasion",
+        "support"
+      ],
+      "all": [
+        "ally_support",
+        "galactic_lore",
+        "knowledge",
+        "perception",
+        "persuasion",
+        "support",
+        "telepathy"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "knowledge",
+              "telepathy"
+            ],
+            "supporting": [
+              "ally_support",
+              "galactic_lore",
+              "perception",
+              "persuasion",
+              "support"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "anomid_technical_diplomat",
+      "name": "Anomid Technical Diplomat",
+      "tranche": "11",
+      "primary": [
+        "knowledge",
+        "persuasion",
+        "social",
+        "tech"
+      ],
+      "supporting": [
+        "ally_support",
+        "perception",
+        "skill_mastery",
+        "support",
+        "use_computer"
+      ],
+      "all": [
+        "ally_support",
+        "knowledge",
+        "perception",
+        "persuasion",
+        "skill_mastery",
+        "social",
+        "support",
+        "tech",
+        "use_computer"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "knowledge",
+              "persuasion",
+              "social",
+              "tech"
+            ],
+            "supporting": [
+              "ally_support",
+              "perception",
+              "skill_mastery",
+              "support",
+              "use_computer"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "bith_virtuoso",
+      "name": "Bith Virtuoso",
+      "tranche": "11",
+      "primary": [
+        "perception",
+        "persuasion",
+        "social"
+      ],
+      "supporting": [
+        "deception",
+        "knowledge",
+        "reliability",
+        "reroll"
+      ],
+      "all": [
+        "deception",
+        "knowledge",
+        "perception",
+        "persuasion",
+        "reliability",
+        "reroll",
+        "social"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "perception",
+              "persuasion",
+              "social"
+            ],
+            "supporting": [
+              "deception",
+              "knowledge",
+              "reliability",
+              "reroll"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "muun_banking_magnate",
+      "name": "Muun Banking Magnate",
+      "tranche": "11",
+      "primary": [
+        "knowledge",
+        "persuasion",
+        "resources",
+        "social"
+      ],
+      "supporting": [
+        "gather_information",
+        "reliability",
+        "reroll",
+        "social_network",
+        "use_computer"
+      ],
+      "all": [
+        "gather_information",
+        "knowledge",
+        "persuasion",
+        "reliability",
+        "reroll",
+        "resources",
+        "social",
+        "social_network",
+        "use_computer"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "knowledge",
+              "persuasion",
+              "resources",
+              "social"
+            ],
+            "supporting": [
+              "gather_information",
+              "reliability",
+              "reroll",
+              "social_network",
+              "use_computer"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "yuuzhan_vong_priest",
+      "name": "Yuuzhan Vong Priest",
+      "tranche": "11",
+      "primary": [
+        "ally_support",
+        "leadership",
+        "persuasion",
+        "social",
+        "support"
+      ],
+      "supporting": [
+        "deception",
+        "galactic_lore",
+        "manipulation",
+        "perception"
+      ],
+      "all": [
+        "ally_support",
+        "deception",
+        "galactic_lore",
+        "leadership",
+        "manipulation",
+        "perception",
+        "persuasion",
+        "social",
+        "support"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "ally_support",
+              "leadership",
+              "persuasion",
+              "social",
+              "support"
+            ],
+            "supporting": [
+              "deception",
+              "galactic_lore",
+              "manipulation",
+              "perception"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "kissai_dark_priest",
+      "name": "Kissai Dark Priest",
+      "tranche": "11",
+      "primary": [
+        "alchemy",
+        "dark_side",
+        "force",
+        "force_power",
+        "use_the_force"
+      ],
+      "supporting": [
+        "fear",
+        "force_training",
+        "galactic_lore",
+        "persuasion",
+        "social"
+      ],
+      "all": [
+        "alchemy",
+        "dark_side",
+        "fear",
+        "force",
+        "force_power",
+        "force_training",
+        "galactic_lore",
+        "persuasion",
+        "social",
+        "use_the_force"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "alchemy",
+              "dark_side",
+              "force",
+              "force_power",
+              "use_the_force"
+            ],
+            "supporting": [
+              "fear",
+              "force_training",
+              "galactic_lore",
+              "persuasion",
+              "social"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "tyia_adept",
+      "name": "Tyia Adept",
+      "tranche": "11",
+      "primary": [
+        "ally_support",
+        "force",
+        "force_support",
+        "healing",
+        "support",
+        "use_the_force"
+      ],
+      "supporting": [
+        "force_defense",
+        "force_power",
+        "force_training",
+        "perception",
+        "treat_injury"
+      ],
+      "all": [
+        "ally_support",
+        "force",
+        "force_defense",
+        "force_power",
+        "force_support",
+        "force_training",
+        "healing",
+        "perception",
+        "support",
+        "treat_injury",
+        "use_the_force"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "ally_support",
+              "force",
+              "force_support",
+              "healing",
+              "support",
+              "use_the_force"
+            ],
+            "supporting": [
+              "force_defense",
+              "force_power",
+              "force_training",
+              "perception",
+              "treat_injury"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "fallanassi_adept",
+      "name": "Fallanassi Adept",
+      "tranche": "11",
+      "primary": [
+        "force",
+        "illusion",
+        "stealth",
+        "use_the_force"
+      ],
+      "supporting": [
+        "concealment",
+        "deception",
+        "force_power",
+        "force_training",
+        "perception"
+      ],
+      "all": [
+        "concealment",
+        "deception",
+        "force",
+        "force_power",
+        "force_training",
+        "illusion",
+        "perception",
+        "stealth",
+        "use_the_force"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "force",
+              "illusion",
+              "stealth",
+              "use_the_force"
+            ],
+            "supporting": [
+              "concealment",
+              "deception",
+              "force_power",
+              "force_training",
+              "perception"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "baran_do_sage",
+      "name": "Baran Do Sage",
+      "tranche": "11",
+      "primary": [
+        "force",
+        "investigation",
+        "perception",
+        "precognition",
+        "use_the_force",
+        "visions"
+      ],
+      "supporting": [
+        "force_power",
+        "force_training",
+        "knowledge",
+        "telepathy"
+      ],
+      "all": [
+        "force",
+        "force_power",
+        "force_training",
+        "investigation",
+        "knowledge",
+        "perception",
+        "precognition",
+        "telepathy",
+        "use_the_force",
+        "visions"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "force",
+              "investigation",
+              "perception",
+              "precognition",
+              "use_the_force",
+              "visions"
+            ],
+            "supporting": [
+              "force_power",
+              "force_training",
+              "knowledge",
+              "telepathy"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "miraluka_force_seer",
+      "name": "Miraluka Force Seer",
+      "tranche": "11",
+      "primary": [
+        "force",
+        "perception",
+        "precognition",
+        "senses",
+        "use_the_force",
+        "visions"
+      ],
+      "supporting": [
+        "force_power",
+        "force_training",
+        "galactic_lore",
+        "telepath",
+        "telepathy"
+      ],
+      "all": [
+        "force",
+        "force_power",
+        "force_training",
+        "galactic_lore",
+        "perception",
+        "precognition",
+        "senses",
+        "telepath",
+        "telepathy",
+        "use_the_force",
+        "visions"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "force",
+              "perception",
+              "precognition",
+              "senses",
+              "use_the_force",
+              "visions"
+            ],
+            "supporting": [
+              "force_power",
+              "force_training",
+              "galactic_lore",
+              "telepath",
+              "telepathy"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
     }
   ],
   "qaReview": {
-    "scope": "All 190 certified archetypes after tranche 10",
+    "scope": "All 210 certified archetypes after tranche 11",
     "result": "PASS",
-    "reviewedRecordCount": 190,
+    "reviewedRecordCount": 210,
     "newRecordCount": 20,
     "carriedForwardRevisionLogCount": 8,
     "checks": [
-      "Frozen ontology membership for all new tranche tags; prior 170 were revalidated by Claude during 12B-NOBLE-09 execution",
-      "Primary/supporting disjointness across all 190 records",
-      "metadata.tags.all union consistency across all 190 records",
-      "Known hard implication closure across all 190 records",
+      "Frozen ontology membership for all new tranche tags; prior 190 retained from certified rolling authority",
+      "Primary/supporting disjointness across all 210 records",
+      "metadata.tags.all union consistency across all 210 records",
+      "Known hard implication closure across all 210 records",
       "Semantic differentiation review",
       "Narrow ontology-label review",
-      "Optional Force-route containment review"
+      "Intrinsic/forbidden Force identity review"
     ],
     "newTrancheHighOverlapPairsReviewed": [
       {
-        "a": "royal_heir",
-        "b": "sith_pureblood_scion",
+        "a": "neimoidian_trade_viceroy",
+        "b": "senator",
         "primaryJaccard": 1.0,
-        "allJaccard": 0.385
-      },
-      {
-        "a": "academic_archaeologist",
-        "b": "xenoarchaeologist",
-        "primaryJaccard": 0.8,
-        "allJaccard": 0.556
-      },
-      {
-        "a": "hapan_court_noble",
-        "b": "neimoidian_trade_viceroy",
-        "primaryJaccard": 0.75,
-        "allJaccard": 0.667
-      },
-      {
-        "a": "hapan_court_noble",
-        "b": "yuuzhan_vong_intendant",
-        "primaryJaccard": 0.75,
-        "allJaccard": 0.667
-      },
-      {
-        "a": "royal_heir",
-        "b": "neimoidian_trade_viceroy",
-        "primaryJaccard": 0.75,
-        "allJaccard": 0.667
-      },
-      {
-        "a": "yuuzhan_vong_intendant",
-        "b": "holostar",
-        "primaryJaccard": 0.75,
-        "allJaccard": 0.4
-      },
-      {
-        "a": "sith_pureblood_scion",
-        "b": "neimoidian_trade_viceroy",
-        "primaryJaccard": 0.75,
-        "allJaccard": 0.267
+        "allJaccard": 0.7
       },
       {
         "a": "corporate_agent",
-        "b": "neimoidian_trade_viceroy",
-        "primaryJaccard": 0.6,
-        "allJaccard": 0.889
+        "b": "koorivar_corporate_magnate",
+        "primaryJaccard": 1.0,
+        "allJaccard": 0.667
       },
       {
-        "a": "hutt_kajidic_heir",
-        "b": "neimoidian_trade_viceroy",
-        "primaryJaccard": 0.6,
-        "allJaccard": 0.875
+        "a": "corporate_operator",
+        "b": "senator",
+        "primaryJaccard": 1.0,
+        "allJaccard": 0.636
       },
       {
-        "a": "hutt_kajidic_heir",
-        "b": "corporate_agent",
-        "primaryJaccard": 0.6,
-        "allJaccard": 0.778
+        "a": "spiritual_leader",
+        "b": "yuuzhan_vong_priest",
+        "primaryJaccard": 1.0,
+        "allJaccard": 0.545
       },
       {
-        "a": "yuuzhan_vong_intendant",
-        "b": "neimoidian_trade_viceroy",
-        "primaryJaccard": 0.6,
-        "allJaccard": 0.778
+        "a": "community_leader",
+        "b": "yuuzhan_vong_priest",
+        "primaryJaccard": 1.0,
+        "allJaccard": 0.5
       },
       {
-        "a": "zygerrian_abolitionist",
-        "b": "holostar",
-        "primaryJaccard": 0.5,
-        "allJaccard": 0.857
+        "a": "fixer",
+        "b": "political_fixer",
+        "primaryJaccard": 0.8,
+        "allJaccard": 0.6
+      },
+      {
+        "a": "spiritual_leader",
+        "b": "mediator",
+        "primaryJaccard": 0.8,
+        "allJaccard": 0.6
+      },
+      {
+        "a": "community_leader",
+        "b": "mediator",
+        "primaryJaccard": 0.8,
+        "allJaccard": 0.545
+      },
+      {
+        "a": "mediator",
+        "b": "yuuzhan_vong_priest",
+        "primaryJaccard": 0.8,
+        "allJaccard": 0.545
+      },
+      {
+        "a": "resistance_leader",
+        "b": "yuuzhan_vong_priest",
+        "primaryJaccard": 0.8,
+        "allJaccard": 0.5
+      },
+      {
+        "a": "revolutionary_statesman",
+        "b": "yuuzhan_vong_priest",
+        "primaryJaccard": 0.8,
+        "allJaccard": 0.417
+      },
+      {
+        "a": "droid_rights_activist",
+        "b": "protocol_droid",
+        "primaryJaccard": 0.75,
+        "allJaccard": 0.667
+      },
+      {
+        "a": "con_artist",
+        "b": "negotiator",
+        "primaryJaccard": 0.75,
+        "allJaccard": 0.625
+      },
+      {
+        "a": "planetary_governor",
+        "b": "senator",
+        "primaryJaccard": 0.75,
+        "allJaccard": 0.6
       },
       {
         "a": "royal_heir",
-        "b": "hapan_court_noble",
+        "b": "senator",
+        "primaryJaccard": 0.75,
+        "allJaccard": 0.6
+      },
+      {
+        "a": "zeltron_empathic_courtier",
+        "b": "negotiator",
+        "primaryJaccard": 0.75,
+        "allJaccard": 0.571
+      },
+      {
+        "a": "hapan_court_noble",
+        "b": "hutt_majordomo",
+        "primaryJaccard": 0.75,
+        "allJaccard": 0.5
+      },
+      {
+        "a": "diplomat",
+        "b": "muun_banking_magnate",
+        "primaryJaccard": 0.75,
+        "allJaccard": 0.455
+      },
+      {
+        "a": "free_trader",
+        "b": "protocol_droid",
+        "primaryJaccard": 0.75,
+        "allJaccard": 0.455
+      },
+      {
+        "a": "hapan_court_noble",
+        "b": "senator",
+        "primaryJaccard": 0.75,
+        "allJaccard": 0.455
+      },
+      {
+        "a": "hutt_majordomo",
+        "b": "negotiator",
+        "primaryJaccard": 0.75,
+        "allJaccard": 0.444
+      },
+      {
+        "a": "zeltron_empathic_courtier",
+        "b": "bith_virtuoso",
+        "primaryJaccard": 0.75,
+        "allJaccard": 0.444
+      },
+      {
+        "a": "free_trader",
+        "b": "muun_banking_magnate",
+        "primaryJaccard": 0.75,
+        "allJaccard": 0.417
+      },
+      {
+        "a": "diplomat",
+        "b": "protocol_droid",
+        "primaryJaccard": 0.75,
+        "allJaccard": 0.364
+      },
+      {
+        "a": "diplomat",
+        "b": "anomid_technical_diplomat",
+        "primaryJaccard": 0.75,
+        "allJaccard": 0.333
+      },
+      {
+        "a": "free_trader",
+        "b": "anomid_technical_diplomat",
+        "primaryJaccard": 0.75,
+        "allJaccard": 0.308
+      },
+      {
+        "a": "propagandist",
+        "b": "negotiator",
+        "primaryJaccard": 0.75,
+        "allJaccard": 0.3
+      },
+      {
+        "a": "sith_pureblood_scion",
+        "b": "senator",
+        "primaryJaccard": 0.75,
+        "allJaccard": 0.25
+      },
+      {
+        "a": "koorivar_corporate_magnate",
+        "b": "senator",
+        "primaryJaccard": 0.6,
+        "allJaccard": 0.818
+      },
+      {
+        "a": "con_artist",
+        "b": "hutt_majordomo",
+        "primaryJaccard": 0.6,
+        "allJaccard": 0.778
+      },
+      {
+        "a": "fence",
+        "b": "chiss_house_agent",
+        "primaryJaccard": 0.6,
+        "allJaccard": 0.778
+      },
+      {
+        "a": "neimoidian_trade_viceroy",
+        "b": "hutt_majordomo",
+        "primaryJaccard": 0.6,
+        "allJaccard": 0.778
+      },
+      {
+        "a": "con_artist",
+        "b": "zeltron_empathic_courtier",
+        "primaryJaccard": 0.6,
+        "allJaccard": 0.75
+      },
+      {
+        "a": "fence",
+        "b": "political_fixer",
+        "primaryJaccard": 0.5,
+        "allJaccard": 0.778
+      },
+      {
+        "a": "political_fixer",
+        "b": "hutt_majordomo",
+        "primaryJaccard": 0.5,
+        "allJaccard": 0.778
+      },
+      {
+        "a": "gambler",
+        "b": "bith_virtuoso",
         "primaryJaccard": 0.5,
         "allJaccard": 0.75
       },
       {
-        "a": "hutt_kajidic_heir",
-        "b": "hapan_court_noble",
+        "a": "cantina_proprietor",
+        "b": "political_fixer",
+        "primaryJaccard": 0.429,
+        "allJaccard": 0.778
+      },
+      {
+        "a": "celebrity",
+        "b": "zeltron_empathic_courtier",
         "primaryJaccard": 0.4,
-        "allJaccard": 0.75
+        "allJaccard": 1.0
       },
       {
-        "a": "hutt_kajidic_heir",
-        "b": "yuuzhan_vong_intendant",
-        "primaryJaccard": 0.333,
-        "allJaccard": 0.875
+        "a": "holostar",
+        "b": "zeltron_empathic_courtier",
+        "primaryJaccard": 0.4,
+        "allJaccard": 1.0
       },
       {
-        "a": "yuuzhan_vong_intendant",
-        "b": "corporate_agent",
-        "primaryJaccard": 0.333,
-        "allJaccard": 0.7
+        "a": "zygerrian_abolitionist",
+        "b": "zeltron_empathic_courtier",
+        "primaryJaccard": 0.4,
+        "allJaccard": 0.857
       }
     ],
     "semanticQaRulings": [
-      "Academic Archaeologist does not receive science merely because archaeology is academic; Xenoarchaeologist receives science because life-sciences evidence is signature.",
-      "Archaeological Expedition Leader does not receive teamwork from generic team leadership; ally_support/support capture Coordinate-style unilateral aid.",
-      "Yuuzhan Vong Intendant does not receive planning from the talent name Contingency Plan; the operative talent effect is reactive movement after failure, not advance planning.",
-      "Mandalorian Clan Leader does not receive morale from Unwavering Ally; that talent protects an ally from flat-footed/Dexterity-denial effects, not morale/fear mechanics.",
-      "Corporate Troubleshooter does not receive stun from Slowing Stun; the talent keys from condition-track movement and does not itself require or modify SWSE stun damage/mode.",
-      "Geonosian Foundry Master keeps crafting but not modification; foundry manufacture is creation, not automatically alteration of an existing item.",
-      "Sith Pureblood Scion keeps Force/dark-side material supporting because Phase 7 established its Force route as optional, not intrinsic."
-    ]
+      "Advanced Planning is not tagged planning: its operative effect swaps Initiative results when combat begins rather than rewarding materially advance preparation.",
+      "Hutt Majordomo likewise does not receive planning from Contingency Plan; that talent is reactive movement after a failed roll/check.",
+      "Skakoan Techno Union Technocrat receives resources only as supporting evidence because the selected Wealth talent directly grants spendable credits; ordinary corporate assets alone would not qualify.",
+      "Protocol Droid does not receive skill_substitution from Skill Conversion; the talent exchanges a trained skill for Skill Focus rather than substituting one check basis for another.",
+      "Bith Virtuoso does not invent a music/performance tag outside the frozen ontology. Its virtuoso identity is represented conservatively through social/persuasion plus the selected Knack reroll evidence.",
+      "Caamasi Memory Keeper receives telepathy without force: memnii are species-backed inborn telepathic memory sharing, not evidence of Force identity.",
+      "Yuuzhan Vong Priest receives no Force tags. Yuuzhan Vong species rules explicitly bar Force Sensitivity and Use the Force.",
+      "Kissai Dark Priest promotes alchemy and dark_side because Sith alchemy is direct published creation/modification mechanics and intrinsic to the selected archetype package.",
+      "Tyia Adept centers ally support, healing, and force_support; medical is intentionally excluded because its defining healing is Force-based rather than medical equipment/procedure identity.",
+      "Fallanassi Adept promotes illusion and stealth from White Current tradition evidence. Concealment remains supporting and refers to the actual concealment mechanic, not ordinary secrecy.",
+      "Baran Do Sage promotes precognition and investigation from source-backed seer/investigator identity; planning is excluded because careful deliberation is not the ontology planning mechanic.",
+      "Miraluka Force Seer promotes senses because Force Sight is a direct species-backed special sense. telepath/telepathy remain supporting through Mind Probe rather than defining every Miraluka as a telepath."
+    ],
+    "validationSummary": {
+      "unknownOntologyTags": 0,
+      "primarySupportingCollisions": 0,
+      "brokenAllUnions": 0,
+      "knownHardImplicationViolations": 0,
+      "newTrancheRecordCount": 20,
+      "cumulativeCertifiedRecordCount": 210
+    }
   }
 }
