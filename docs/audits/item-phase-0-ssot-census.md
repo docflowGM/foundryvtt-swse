@@ -82,9 +82,18 @@ None of the 70 `data/upgrades/*.json` names matches a `weaponUpgrade` pack recor
 - **O-3 Dead layers.** `WorldDataLoader` weapon/armor/equipment loaders, `data/upgrades/*.json`, `data/armor/*.json`, `data/gear-templates.json` have no consumers. Keep as evidence through Phase 5, then classify (category C/D) for removal — not now.
 - **O-4 PDFs.** Phase 1 can begin on TXT, but page certification and Phase 4 tables need the Core Rulebook PDF (and later books) supplied.
 
+### 7a. Owner rulings (PR #1005 comment, 2026-10-05) — resolves O-1 to O-4
+
+- **O-1 Edit target:** the aggregate v2 packs (`weapons`, `armor`, `equipment`) are the future item SSOT for character-scale items. Subpacks become derived/generated mirrors. Store behaviour is **not** changed yet; first build a deterministic generation + parity path so the store can move without data loss.
+- **O-2 Scope:** one umbrella item-rehabilitation project with separate mechanical tracks. Primary track: character-scale weapons/armor/equipment. Distinct subfamilies: implants (equipment), lightsaber crystals/accessories (upgrades). Separate subtrack: general upgrades/modifications (runtime authority is JS catalogs). Vehicle weapons and droid/vehicle modifications are later, separate tracks and must not enter the character-item census.
+- **O-3 Dead layers:** keep the inert loader and unused data layers as evidence through identity/schema reconciliation. No deletion or repurposing. Classify for retirement only after canonical authority and migration path exist.
+- **O-4 PDFs:** held by the research owner outside the repo and not committed. Claude executes from the certified rolling MD/JSON authority and does not independently reconstruct canonical rules.
+- **Process:** Phase 1+ maintains single cumulative rolling authorities (Markdown + JSON). Per-book/phase files are temporary checkpoints and must not become competing permanent authorities.
+- **No production content mutation is authorized by these rulings.**
+
 ## 8. Phase 1 entry gates (Core Rulebook first)
 
-1. O-1 and O-2 ruled.
+1. O-1 to O-4 ruled (see 7a). Remaining gate: the certified rolling Phase 1 authority (MD + JSON) supplied by the research owner.
 2. Canonical enumeration seed for Core weapons/armor/equipment (from TXT; PDF where OCR is ambiguous), keyed independently of the repo.
 3. Join key defined: repo `_id` ↔ canonical identity, with `Subelectronic Converter` and the 4 straggler upgrade records handled explicitly (including the 3 `_id`-duplicate upgrade stragglers).
 4. Per-book checkpoint commit, as in the feat/talent work.
