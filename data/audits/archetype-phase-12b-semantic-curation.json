@@ -8,36 +8,36 @@
     "path": "data/audits/talent-feat-phase3-final-ontology.json",
     "tagCount": 190
   },
-  "certifiedCount": 70,
+  "certifiedCount": 90,
   "totalArchetypes": 297,
-  "remainingUncuratedAfterApplication": 227,
-  "selectionRule": "Continue Scout-first specializations in dataset order. Class is a route, not ownership.",
+  "remainingUncuratedAfterApplication": 207,
+  "selectionRule": "Finish remaining Scout-first specializations in dataset order, then continue with Scoundrel-first records in dataset order. Class is a route, not ownership.",
   "currentExecution": {
-    "id": "12B-SCOUT-04",
+    "id": "12B-SCOUT-SCOUNDREL-05",
     "status": "AUTHORITY_READY_BASELINE_PENDING",
-    "requiredBaseline": "cb973c9a1b6f2955eb56651f878e61d46aed6cd5",
-    "baselineInstruction": "Replace this placeholder with the successful commit returned after 12B-SCOUT-03 execution before applying this tranche.",
+    "requiredBaseline": "1a2cc8e65bad691ebe04db22389ca9593c8877bd",
+    "baselineInstruction": "Replace this placeholder with the successful commit returned after 12B-SCOUT-04 execution before applying this tranche.",
     "newRecordIds": [
-      "chiss_sky_walker",
-      "givin_astrogator",
-      "duros_hyperspace_trailblazer",
-      "sullustan_rebel_navigator",
-      "hotshot_racer",
-      "swoop_racer",
-      "verpine_hive_engineer",
-      "sluissi_shipwright",
-      "deep_space_surveyor",
-      "wilderness_guide",
-      "antarian_ranger",
-      "relic_hunter",
-      "trandoshan_jagannath_hunter",
-      "togruta_pack_hunter",
-      "rodian_great_hunter",
-      "barabel_great_hunter",
-      "tusken_bantha_rider",
-      "gungan_kaadu_cavalier",
-      "aing_tii_monk",
-      "force_pilgrim"
+      "force_hermit",
+      "warden_of_the_sky",
+      "nightsister",
+      "smuggler",
+      "free_trader",
+      "pirate",
+      "gambler",
+      "con_artist",
+      "fixer",
+      "information_broker",
+      "gunslinger",
+      "courier",
+      "spy",
+      "slicer",
+      "assassin",
+      "mechanic",
+      "outlaw_tech",
+      "droidsmith",
+      "inventor",
+      "electronic_warfare_specialist"
     ],
     "revisionIds": []
   },
@@ -3571,6 +3571,974 @@
               "perception",
               "resilience",
               "visions"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "force_hermit",
+      "name": "Force Hermit",
+      "tranche": "05",
+      "primary": [
+        "force",
+        "force_power",
+        "resilience",
+        "survival",
+        "use_the_force"
+      ],
+      "supporting": [
+        "endurance",
+        "force_training",
+        "galactic_lore",
+        "meditation",
+        "perception"
+      ],
+      "all": [
+        "endurance",
+        "force",
+        "force_power",
+        "force_training",
+        "galactic_lore",
+        "meditation",
+        "perception",
+        "resilience",
+        "survival",
+        "use_the_force"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "force",
+              "force_power",
+              "resilience",
+              "survival",
+              "use_the_force"
+            ],
+            "supporting": [
+              "endurance",
+              "force_training",
+              "galactic_lore",
+              "meditation",
+              "perception"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "warden_of_the_sky",
+      "name": "Warden of the Sky",
+      "tranche": "05",
+      "primary": [
+        "force",
+        "force_power",
+        "pilot",
+        "space",
+        "unarmed"
+      ],
+      "supporting": [
+        "force_training",
+        "martial_arts",
+        "mobility",
+        "stealth",
+        "survival",
+        "use_the_force"
+      ],
+      "all": [
+        "force",
+        "force_power",
+        "force_training",
+        "martial_arts",
+        "mobility",
+        "pilot",
+        "space",
+        "stealth",
+        "survival",
+        "unarmed",
+        "use_the_force"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "force",
+              "force_power",
+              "pilot",
+              "space",
+              "unarmed"
+            ],
+            "supporting": [
+              "force_training",
+              "martial_arts",
+              "mobility",
+              "stealth",
+              "survival",
+              "use_the_force"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "nightsister",
+      "name": "Nightsister",
+      "tranche": "05",
+      "primary": [
+        "dark_side",
+        "force",
+        "force_power",
+        "spellcasting",
+        "use_the_force"
+      ],
+      "supporting": [
+        "beast",
+        "fear",
+        "force_training",
+        "stealth",
+        "survival"
+      ],
+      "all": [
+        "beast",
+        "dark_side",
+        "fear",
+        "force",
+        "force_power",
+        "force_training",
+        "spellcasting",
+        "stealth",
+        "survival",
+        "use_the_force"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "dark_side",
+              "force",
+              "force_power",
+              "spellcasting",
+              "use_the_force"
+            ],
+            "supporting": [
+              "beast",
+              "fear",
+              "force_training",
+              "stealth",
+              "survival"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "smuggler",
+      "name": "Smuggler",
+      "tranche": "05",
+      "primary": [
+        "deception",
+        "pilot",
+        "social",
+        "space"
+      ],
+      "supporting": [
+        "gather_information",
+        "mechanics",
+        "persuasion",
+        "use_computer",
+        "vehicle"
+      ],
+      "all": [
+        "deception",
+        "gather_information",
+        "mechanics",
+        "persuasion",
+        "pilot",
+        "social",
+        "space",
+        "use_computer",
+        "vehicle"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "deception",
+              "pilot",
+              "social",
+              "space"
+            ],
+            "supporting": [
+              "gather_information",
+              "mechanics",
+              "persuasion",
+              "use_computer",
+              "vehicle"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "free_trader",
+      "name": "Free Trader",
+      "tranche": "05",
+      "primary": [
+        "knowledge",
+        "persuasion",
+        "social"
+      ],
+      "supporting": [
+        "deception",
+        "gather_information",
+        "pilot",
+        "use_computer",
+        "vehicle"
+      ],
+      "all": [
+        "deception",
+        "gather_information",
+        "knowledge",
+        "persuasion",
+        "pilot",
+        "social",
+        "use_computer",
+        "vehicle"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "knowledge",
+              "persuasion",
+              "social"
+            ],
+            "supporting": [
+              "deception",
+              "gather_information",
+              "pilot",
+              "use_computer",
+              "vehicle"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "pirate",
+      "name": "Pirate",
+      "tranche": "05",
+      "primary": [
+        "intimidation",
+        "pilot",
+        "pursuit",
+        "space"
+      ],
+      "supporting": [
+        "deception",
+        "fear",
+        "initiative",
+        "ranged",
+        "social",
+        "vehicle"
+      ],
+      "all": [
+        "deception",
+        "fear",
+        "initiative",
+        "intimidation",
+        "pilot",
+        "pursuit",
+        "ranged",
+        "social",
+        "space",
+        "vehicle"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "intimidation",
+              "pilot",
+              "pursuit",
+              "space"
+            ],
+            "supporting": [
+              "deception",
+              "fear",
+              "initiative",
+              "ranged",
+              "social",
+              "vehicle"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "gambler",
+      "name": "Gambler",
+      "tranche": "05",
+      "primary": [
+        "deception",
+        "perception",
+        "social"
+      ],
+      "supporting": [
+        "gather_information",
+        "persuasion",
+        "reliability",
+        "reroll"
+      ],
+      "all": [
+        "deception",
+        "gather_information",
+        "perception",
+        "persuasion",
+        "reliability",
+        "reroll",
+        "social"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "deception",
+              "perception",
+              "social"
+            ],
+            "supporting": [
+              "gather_information",
+              "persuasion",
+              "reliability",
+              "reroll"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "con_artist",
+      "name": "Con Artist",
+      "tranche": "05",
+      "primary": [
+        "deception",
+        "manipulation",
+        "persuasion",
+        "social"
+      ],
+      "supporting": [
+        "gather_information",
+        "intrigue",
+        "knowledge",
+        "perception"
+      ],
+      "all": [
+        "deception",
+        "gather_information",
+        "intrigue",
+        "knowledge",
+        "manipulation",
+        "perception",
+        "persuasion",
+        "social"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "deception",
+              "manipulation",
+              "persuasion",
+              "social"
+            ],
+            "supporting": [
+              "gather_information",
+              "intrigue",
+              "knowledge",
+              "perception"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "fixer",
+      "name": "Fixer",
+      "tranche": "05",
+      "primary": [
+        "gather_information",
+        "intrigue",
+        "persuasion",
+        "social_network"
+      ],
+      "supporting": [
+        "deception",
+        "knowledge",
+        "social",
+        "use_computer"
+      ],
+      "all": [
+        "deception",
+        "gather_information",
+        "intrigue",
+        "knowledge",
+        "persuasion",
+        "social",
+        "social_network",
+        "use_computer"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "gather_information",
+              "intrigue",
+              "persuasion",
+              "social_network"
+            ],
+            "supporting": [
+              "deception",
+              "knowledge",
+              "social",
+              "use_computer"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "information_broker",
+      "name": "Information Broker",
+      "tranche": "05",
+      "primary": [
+        "gather_information",
+        "intrigue",
+        "social_network",
+        "use_computer"
+      ],
+      "supporting": [
+        "deception",
+        "knowledge",
+        "perception",
+        "social",
+        "tech"
+      ],
+      "all": [
+        "deception",
+        "gather_information",
+        "intrigue",
+        "knowledge",
+        "perception",
+        "social",
+        "social_network",
+        "tech",
+        "use_computer"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "gather_information",
+              "intrigue",
+              "social_network",
+              "use_computer"
+            ],
+            "supporting": [
+              "deception",
+              "knowledge",
+              "perception",
+              "social",
+              "tech"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "gunslinger",
+      "name": "Gunslinger",
+      "tranche": "05",
+      "primary": [
+        "initiative",
+        "pistol",
+        "precision",
+        "ranged"
+      ],
+      "supporting": [
+        "damage",
+        "mobility",
+        "perception",
+        "targeting"
+      ],
+      "all": [
+        "damage",
+        "initiative",
+        "mobility",
+        "perception",
+        "pistol",
+        "precision",
+        "ranged",
+        "targeting"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "initiative",
+              "pistol",
+              "precision",
+              "ranged"
+            ],
+            "supporting": [
+              "damage",
+              "mobility",
+              "perception",
+              "targeting"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "courier",
+      "name": "Courier",
+      "tranche": "05",
+      "primary": [
+        "mobility",
+        "movement",
+        "pilot",
+        "vehicle"
+      ],
+      "supporting": [
+        "initiative",
+        "perception",
+        "space",
+        "survival",
+        "use_computer"
+      ],
+      "all": [
+        "initiative",
+        "mobility",
+        "movement",
+        "perception",
+        "pilot",
+        "space",
+        "survival",
+        "use_computer",
+        "vehicle"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "mobility",
+              "movement",
+              "pilot",
+              "vehicle"
+            ],
+            "supporting": [
+              "initiative",
+              "perception",
+              "space",
+              "survival",
+              "use_computer"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "spy",
+      "name": "Spy",
+      "tranche": "05",
+      "primary": [
+        "deception",
+        "infiltration",
+        "stealth"
+      ],
+      "supporting": [
+        "concealment",
+        "gather_information",
+        "perception",
+        "persuasion",
+        "social",
+        "use_computer"
+      ],
+      "all": [
+        "concealment",
+        "deception",
+        "gather_information",
+        "infiltration",
+        "perception",
+        "persuasion",
+        "social",
+        "stealth",
+        "use_computer"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "deception",
+              "infiltration",
+              "stealth"
+            ],
+            "supporting": [
+              "concealment",
+              "gather_information",
+              "perception",
+              "persuasion",
+              "social",
+              "use_computer"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "slicer",
+      "name": "Slicer",
+      "tranche": "05",
+      "primary": [
+        "slicing",
+        "tech",
+        "use_computer"
+      ],
+      "supporting": [
+        "knowledge",
+        "mechanics",
+        "perception"
+      ],
+      "all": [
+        "knowledge",
+        "mechanics",
+        "perception",
+        "slicing",
+        "tech",
+        "use_computer"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "slicing",
+              "tech",
+              "use_computer"
+            ],
+            "supporting": [
+              "knowledge",
+              "mechanics",
+              "perception"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "assassin",
+      "name": "Assassin",
+      "tranche": "05",
+      "primary": [
+        "ambush",
+        "infiltration",
+        "precision",
+        "stealth",
+        "targeting"
+      ],
+      "supporting": [
+        "concealment",
+        "deception",
+        "initiative",
+        "perception",
+        "ranged"
+      ],
+      "all": [
+        "ambush",
+        "concealment",
+        "deception",
+        "infiltration",
+        "initiative",
+        "perception",
+        "precision",
+        "ranged",
+        "stealth",
+        "targeting"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "ambush",
+              "infiltration",
+              "precision",
+              "stealth",
+              "targeting"
+            ],
+            "supporting": [
+              "concealment",
+              "deception",
+              "initiative",
+              "perception",
+              "ranged"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "mechanic",
+      "name": "Mechanic",
+      "tranche": "05",
+      "primary": [
+        "mechanics",
+        "repair",
+        "tech"
+      ],
+      "supporting": [
+        "crafting",
+        "droid",
+        "equipment",
+        "jury_rig",
+        "modification",
+        "use_computer"
+      ],
+      "all": [
+        "crafting",
+        "droid",
+        "equipment",
+        "jury_rig",
+        "mechanics",
+        "modification",
+        "repair",
+        "tech",
+        "use_computer"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "mechanics",
+              "repair",
+              "tech"
+            ],
+            "supporting": [
+              "crafting",
+              "droid",
+              "equipment",
+              "jury_rig",
+              "modification",
+              "use_computer"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "outlaw_tech",
+      "name": "Outlaw Tech",
+      "tranche": "05",
+      "primary": [
+        "jury_rig",
+        "mechanics",
+        "modification",
+        "tech",
+        "use_computer"
+      ],
+      "supporting": [
+        "crafting",
+        "deception",
+        "equipment",
+        "repair",
+        "slicing"
+      ],
+      "all": [
+        "crafting",
+        "deception",
+        "equipment",
+        "jury_rig",
+        "mechanics",
+        "modification",
+        "repair",
+        "slicing",
+        "tech",
+        "use_computer"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "jury_rig",
+              "mechanics",
+              "modification",
+              "tech",
+              "use_computer"
+            ],
+            "supporting": [
+              "crafting",
+              "deception",
+              "equipment",
+              "repair",
+              "slicing"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "droidsmith",
+      "name": "Droidsmith",
+      "tranche": "05",
+      "primary": [
+        "crafting",
+        "droid",
+        "mechanics",
+        "modification",
+        "repair",
+        "tech"
+      ],
+      "supporting": [
+        "equipment",
+        "use_computer"
+      ],
+      "all": [
+        "crafting",
+        "droid",
+        "equipment",
+        "mechanics",
+        "modification",
+        "repair",
+        "tech",
+        "use_computer"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "crafting",
+              "droid",
+              "mechanics",
+              "modification",
+              "repair",
+              "tech"
+            ],
+            "supporting": [
+              "equipment",
+              "use_computer"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "inventor",
+      "name": "Inventor",
+      "tranche": "05",
+      "primary": [
+        "crafting",
+        "equipment",
+        "mechanics",
+        "modification",
+        "tech"
+      ],
+      "supporting": [
+        "knowledge",
+        "science",
+        "use_computer"
+      ],
+      "all": [
+        "crafting",
+        "equipment",
+        "knowledge",
+        "mechanics",
+        "modification",
+        "science",
+        "tech",
+        "use_computer"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "crafting",
+              "equipment",
+              "mechanics",
+              "modification",
+              "tech"
+            ],
+            "supporting": [
+              "knowledge",
+              "science",
+              "use_computer"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "electronic_warfare_specialist",
+      "name": "Electronic Warfare Specialist",
+      "tranche": "05",
+      "primary": [
+        "control",
+        "sensors",
+        "slicing",
+        "tech",
+        "use_computer"
+      ],
+      "supporting": [
+        "initiative",
+        "mechanics",
+        "perception",
+        "support"
+      ],
+      "all": [
+        "control",
+        "initiative",
+        "mechanics",
+        "perception",
+        "sensors",
+        "slicing",
+        "support",
+        "tech",
+        "use_computer"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "control",
+              "sensors",
+              "slicing",
+              "tech",
+              "use_computer"
+            ],
+            "supporting": [
+              "initiative",
+              "mechanics",
+              "perception",
+              "support"
             ]
           },
           "authority": "OWNER_CERTIFIED"
