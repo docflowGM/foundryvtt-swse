@@ -1,14 +1,18 @@
 SWSE Archetype Semantic Curation Authority
 
 Phase: 12B — Archetype Semantic Curation
-Status: ROLLING AUTHORITY — QA PATCH READY / BASELINE PENDING
-Certified: 110 / 297 archetypes
-Current execution: 12B-QA-110-01 — 0 new records + 7 explicit revisions
-Required baseline: 90b78ee619fb24b21d9d56b40778920ec695e45b
+Status: ROLLING AUTHORITY — NEXT TRANCHE READY / BASELINE PENDING
+Certified: 130 / 297 archetypes
+Current execution: 12B-SCOUNDREL-NOBLE-07 — 20 new records
+Required baseline: d7e8938082f9a0b35491414e79820841f86ef375
 Runtime target: data/archetypes.json
 Frozen ontology: data/audits/talent-feat-phase3-final-ontology.json — 190 tags
 
-> Replace the pending baseline with the latest successful Phase 12B commit before applying the QA patch. If the working branch has not yet applied all 110 certified records, finish those executions first or use the cumulative Phase 12B overlay. Do not infer a SHA.
+> Apply the 110-record QA patch first. Replace the pending baseline with that successful commit before executing this tranche. Do not infer a SHA.
+
+Selection transition
+
+This tranche closes Scoundrel-first with salvage_engineer and repair_droid. Scout-first is already complete, so selection then advances to the next uncurated first-foundation bucket: Noble-first. The first 18 Noble-first records in dataset order complete the 20-record tranche.
 
 Curation rules
 
@@ -20,15 +24,7 @@ Curation rules
 6. Parent tags do not automatically inherit to specializations.
 7. Recommended feat/talent tags are evidence, not a bag of tags to copy wholesale.
 8. Optional routes stay supporting unless the archetype itself requires them.
-
-QA status
-
-• All 110 certified records reviewed.
-• Unknown ontology tags: 0.
-• Primary/supporting collisions: 0.
-• Broken all unions: 0.
-• Hard implication violations: 0.
-• Explicit QA revisions: 7.
+9. Narrow ontology tags retain their mechanical meaning; ordinary-English similarity is not enough.
 
 Rolling Certified Census
 
@@ -144,6 +140,26 @@ Rolling Certified Census
 |`clawdite_facechanger_operative`|Clawdite Facechanger Operative|06     |`deception`, `infiltration`, `stealth`                                         |`gather_information`, `manipulation`, `perception`, `persuasion`, `social`                             |
 |`slicer_droid`                  |Slicer Droid                  |06     |`droid`, `slicing`, `tech`, `use_computer`                                     |`ion`, `mechanics`, `modification`, `perception`                                                       |
 |`freighter_captain`             |Freighter Captain             |06     |`leadership`, `pilot`, `space`, `teamwork`, `vehicle`                          |`persuasion`, `support`, `use_computer`                                                                |
+|`salvage_engineer`              |Salvage Engineer              |07     |`equipment`, `jury_rig`, `mechanics`, `repair`, `tech`                         |`crafting`, `modification`, `perception`, `survival`, `use_computer`                                   |
+|`repair_droid`                  |Repair Droid                  |07     |`droid`, `mechanics`, `repair`, `tech`, `use_computer`                         |`equipment`, `ion`, `jury_rig`, `modification`, `perception`                                           |
+|`crime_boss`                    |Crime Boss                    |07     |`intrigue`, `leadership`, `minion`, `social`                                   |`deception`, `fear`, `gather_information`, `persuasion`, `social_network`                              |
+|`cantina_proprietor`            |Cantina Proprietor            |07     |`gather_information`, `perception`, `persuasion`, `social`, `social_network`   |`deception`, `intrigue`, `knowledge`                                                                   |
+|`investigator`                  |Investigator                  |07     |`gather_information`, `investigation`, `perception`                            |`knowledge`, `planning`, `persuasion`, `use_computer`                                                  |
+|`spymaster`                     |Spymaster                     |07     |`intrigue`, `leadership`, `planning`, `social_network`                         |`deception`, `gather_information`, `infiltration`, `persuasion`, `tactics`, `use_computer`             |
+|`journalist`                    |Journalist                    |07     |`gather_information`, `investigation`, `persuasion`, `social`                  |`knowledge`, `perception`, `use_computer`                                                              |
+|`naval_officer`                 |Naval Officer                 |07     |`command`, `leadership`, `space`, `tactics`, `teamwork`                        |`ally_support`, `knowledge`, `persuasion`, `pilot`, `support`, `vehicle`                               |
+|`fleet_strategist`              |Fleet Strategist              |07     |`command`, `planning`, `space`, `tactics`                                      |`ally_support`, `knowledge`, `leadership`, `perception`, `support`, `teamwork`, `use_computer`         |
+|`quartermaster`                 |Quartermaster                 |07     |`equipment`, `knowledge`, `support`                                            |`ally_support`, `mechanics`, `perception`, `persuasion`, `tech`, `use_computer`                        |
+|`resistance_leader`             |Resistance Leader             |07     |`leadership`, `persuasion`, `social`, `support`                                |`ally_support`, `deception`, `gather_information`, `tactics`, `teamwork`                               |
+|`ship_captain`                  |Ship Captain                  |07     |`command`, `leadership`, `pilot`, `space`, `vehicle`                           |`ally_support`, `persuasion`, `support`, `teamwork`, `use_computer`                                    |
+|`cyberneticist`                 |Cyberneticist                 |07     |`implant`, `mechanics`, `medical`, `tech`                                      |`knowledge`, `medicine`, `modification`, `perception`, `treat_injury`                                  |
+|`scientist`                     |Scientist                     |07     |`knowledge`, `science`                                                         |`perception`, `tech`, `use_computer`                                                                   |
+|`doctor`                        |Doctor                        |07     |`ally_support`, `healing`, `medicine`, `support`, `treat_injury`               |`knowledge`, `medical`, `perception`                                                                   |
+|`activist`                      |Activist                      |07     |`gather_information`, `persuasion`, `social`                                   |`deception`, `leadership`, `manipulation`                                                              |
+|`aristocrat`                    |Aristocrat                    |07     |`leadership`, `persuasion`, `resources`, `social`                              |`deception`, `intrigue`, `knowledge`, `social_network`                                                 |
+|`bureaucrat`                    |Bureaucrat                    |07     |`knowledge`, `social`                                                          |`intrigue`, `persuasion`, `use_computer`                                                               |
+|`celebrity`                     |Celebrity                     |07     |`deception`, `persuasion`, `social`                                            |`gather_information`, `manipulation`, `perception`                                                     |
+|`community_leader`              |Community Leader              |07     |`ally_support`, `leadership`, `persuasion`, `social`, `support`                |`gather_information`, `morale`, `perception`, `teamwork`                                               |
 
 Revision Log
 
@@ -156,89 +172,211 @@ REV-002 — Kiffu Guardian semantic QA correction
 
 • Record: kiffu_guardian
 • Ruling: The prior profile over-weighted command/leadership from Respected Officer. The Enforcement identity is fundamentally investigator/quarry-apprehension oriented; command is not identity-defining.
-• Before primary: command, defense, leadership, perception
-• Before supporting: initiative, resilience, survival, will_defense
-• After primary: investigation, perception, pursuit
-• After supporting: defense, initiative, leadership, persuasion, resilience, social, survival, will_defense
+• Certified primary: investigation, perception, pursuit
+• Certified supporting: defense, initiative, leadership, persuasion, resilience, social, survival, will_defense
 
 REV-003 — Ace Pilot semantic QA correction
 
 • Record: ace_pilot
 • Ruling: Promotes evasion to identity-defining. Ace Pilot should not be semantically identical to generic Pilot at the primary layer; its defining published expression is outmaneuvering and surviving dogfights.
-• Before primary: pilot, pursuit, space, vehicle
-• Before supporting: evasion, initiative, mobility, tactics
-• After primary: evasion, pilot, pursuit, space, vehicle
-• After supporting: initiative, mobility, tactics
+• Certified primary: evasion, pilot, pursuit, space, vehicle
+• Certified supporting: initiative, mobility, tactics
 
 REV-004 — Slicer Droid semantic QA correction
 
 • Record: slicer_droid
 • Ruling: Removes self_repair, which was not supported by the selected mechanics. Ion Resistance directly supports ion instead.
-• Before primary: droid, slicing, tech, use_computer
-• Before supporting: mechanics, modification, perception, self_repair
-• After primary: droid, slicing, tech, use_computer
-• After supporting: ion, mechanics, modification, perception
+• Certified primary: droid, slicing, tech, use_computer
+• Certified supporting: ion, mechanics, modification, perception
 
 REV-005 — Electronic Warfare Specialist semantic QA correction
 
 • Record: electronic_warfare_specialist
 • Ruling: Sensors remains characteristic but was too specific to be primary from the selected evidence. Removes generic support, which was not directly established by the signature package.
-• Before primary: control, sensors, slicing, tech, use_computer
-• Before supporting: initiative, mechanics, perception, support
-• After primary: control, slicing, tech, use_computer
-• After supporting: initiative, mechanics, perception, sensors
+• Certified primary: control, slicing, tech, use_computer
+• Certified supporting: initiative, mechanics, perception, sensors
 
 REV-006 — Clawdite Facechanger Operative semantic QA correction
 
 • Record: clawdite_facechanger_operative
 • Ruling: Shapeshifting/disguise is already captured by infiltration. manipulation is valid as a secondary social-influence signal but was too broad as a primary identity tag.
-• Before primary: deception, infiltration, manipulation, stealth
-• Before supporting: gather_information, perception, persuasion, social
-• After primary: deception, infiltration, stealth
-• After supporting: gather_information, manipulation, perception, persuasion, social
+• Certified primary: deception, infiltration, stealth
+• Certified supporting: gather_information, manipulation, perception, persuasion, social
 
 REV-007 — Herglic Free Trader semantic QA correction
 
 • Record: herglic_free_trader
 • Ruling: The prior profile was an exact duplicate of Free Trader. Herglic free-trader identity has source-backed exploration, mercantile-network, social-contact, and sturdy/risk-taking differentiation; this is not arbitrary uniqueness.
-• Before primary: knowledge, persuasion, social
-• Before supporting: deception, gather_information, pilot, use_computer, vehicle
-• After primary: exploration, gather_information, persuasion, social
-• After supporting: knowledge, pilot, resilience, social_network, vehicle
+• Certified primary: exploration, gather_information, persuasion, social
+• Certified supporting: knowledge, pilot, resilience, social_network, vehicle
 
 REV-008 — Zygerrian Corsair semantic QA correction
 
 • Record: zygerrian_corsair
 • Ruling: Adds control as a supporting identity signal for the coercive/slaving corsair expression; preserves the pirate-captain overlap without leaving the Zygerrian expression nearly indistinguishable.
-• Before primary: intimidation, leadership, pilot, space
-• Before supporting: deception, fear, initiative, persuasion, teamwork, vehicle
-• After primary: intimidation, leadership, pilot, space
-• After supporting: control, deception, fear, initiative, persuasion, teamwork, vehicle
+• Certified primary: intimidation, leadership, pilot, space
+• Certified supporting: control, deception, fear, initiative, persuasion, teamwork, vehicle
 
-Claude Execution Contract — QA Patch
+Current Tranche — 12B-SCOUNDREL-NOBLE-07
 
-The companion JSON is authoritative. For this QA run Claude must:
+Current 20 new records:
 
-1. Replace PENDING_LATEST_PHASE12B_COMMIT with the latest successful Phase 12B commit and verify ancestry.
-2. Apply no new archetype records.
-3. Apply exactly the seven IDs in currentExecution.revisionIds.
-4. For each revision record replace exactly:
-  • metadata.tags.primary
-  • metadata.tags.supporting
-  • metadata.tags.all
-  • metadata.tagProvenance
-5. Do not change any other certified record.
-6. Do not change mechanics, exactRefs, routes, classes, abilities, skills, talents, feats, Force data, species, backgrounds, narrative data, scoring, BuildIntent, SuggestionScorer, Mentor, UI ranking, or the ontology.
-7. Validate all tags against the frozen 190-tag ontology.
-8. Run Phase 12A validation/tests and the Phase 12B overlay --check.
-9. Stop rather than infer if the branch does not contain the expected prior Phase 12B state.
+salvage_engineer, repair_droid, crime_boss, cantina_proprietor, investigator, spymaster, journalist, naval_officer, fleet_strategist, quartermaster, resistance_leader, ship_captain, cyberneticist, scientist, doctor, activist, aristocrat, bureaucrat, celebrity, community_leader
+
+Certified Record Notes
+
+Salvage Engineer (salvage_engineer)
+
+• Identity: Technical recovery specialist who turns wreckage and damaged equipment back into useful systems through repair, jury-rigging, modification, and practical engineering.
+• Primary: equipment, jury_rig, mechanics, repair, tech
+• Supporting: crafting, modification, perception, survival, use_computer
+
+Repair Droid (repair_droid)
+
+• Identity: Droid technical specialist whose central function is diagnosing and repairing machinery, droids, equipment, and technical systems.
+• Primary: droid, mechanics, repair, tech, use_computer
+• Supporting: equipment, ion, jury_rig, modification, perception
+
+Crime Boss (crime_boss)
+
+• Identity: Organizer of a criminal enterprise whose identity is authority over subordinates, schemes, contacts, and coercive social power rather than direct street-level crime.
+• Primary: intrigue, leadership, minion, social
+• Supporting: deception, fear, gather_information, persuasion, social_network
+
+Cantina Proprietor (cantina_proprietor)
+
+• Identity: Social-hub operator who reads patrons, gathers information, manages relationships, and turns a public establishment into a dependable contact network.
+• Primary: gather_information, perception, persuasion, social, social_network
+• Supporting: deception, intrigue, knowledge
+
+Investigator (investigator)
+
+• Identity: Evidence-driven seeker of facts who finds people and answers by gathering information, noticing clues, analyzing records, and following investigative leads.
+• Primary: gather_information, investigation, perception
+• Supporting: knowledge, planning, persuasion, use_computer
+
+Spymaster (spymaster)
+
+• Identity: Director of intelligence operations who builds networks, plans covert activity, coordinates agents, and turns gathered information into strategic advantage.
+• Primary: intrigue, leadership, planning, social_network
+• Supporting: deception, gather_information, infiltration, persuasion, tactics, use_computer
+
+Journalist (journalist)
+
+• Identity: Information-seeking public communicator who investigates events, interviews sources, gathers facts, and persuades through reporting and social access.
+• Primary: gather_information, investigation, persuasion, social
+• Supporting: knowledge, perception, use_computer
+
+Naval Officer (naval_officer)
+
+• Identity: Starship or fleet officer whose identity is command, leadership, tactical coordination, and directing crews in space operations.
+• Primary: command, leadership, space, tactics, teamwork
+• Supporting: ally_support, knowledge, persuasion, pilot, support, vehicle
+
+Fleet Strategist (fleet_strategist)
+
+• Identity: High-level planner of fleet engagements whose identity is advance preparation, tactical analysis, command decisions, and coordinated space warfare.
+• Primary: command, planning, space, tactics
+• Supporting: ally_support, knowledge, leadership, perception, support, teamwork, use_computer
+
+Quartermaster (quartermaster)
+
+• Identity: Logistics specialist who keeps an organization equipped and functioning by understanding procurement, inventories, technical needs, and support requirements.
+• Primary: equipment, knowledge, support
+• Supporting: ally_support, mechanics, perception, persuasion, tech, use_computer
+
+Resistance Leader (resistance_leader)
+
+• Identity: Political and operational leader who keeps an underground movement organized through persuasion, social legitimacy, coordination, and support of allies.
+• Primary: leadership, persuasion, social, support
+• Supporting: ally_support, deception, gather_information, tactics, teamwork
+
+Ship Captain (ship_captain)
+
+• Identity: Commander of a starship who combines authority over a crew with piloting competence, shipboard leadership, and responsibility for vessel operations.
+• Primary: command, leadership, pilot, space, vehicle
+• Supporting: ally_support, persuasion, support, teamwork, use_computer
+
+Cyberneticist (cyberneticist)
+
+• Identity: Medical-technical specialist in cybernetic installation and augmentation, bridging surgery, machinery, implants, and technological modification.
+• Primary: implant, mechanics, medical, tech
+• Supporting: knowledge, medicine, modification, perception, treat_injury
+
+Scientist (scientist)
+
+• Identity: Research-focused expert whose identity is systematic scientific knowledge, analysis, and technical inquiry rather than fieldcraft or engineering alone.
+• Primary: knowledge, science
+• Supporting: perception, tech, use_computer
+
+Doctor (doctor)
+
+• Identity: Medical professional defined by diagnosing and treating injury, restoring patients, and directly supporting the health of other characters.
+• Primary: ally_support, healing, medicine, support, treat_injury
+• Supporting: knowledge, medical, perception
+
+Activist (activist)
+
+• Identity: Advocate and organizer who advances a cause through persuasion, information gathering, public social pressure, and the ability to mobilize or influence others.
+• Primary: gather_information, persuasion, social
+• Supporting: deception, leadership, manipulation
+
+Aristocrat (aristocrat)
+
+• Identity: Member of an elite social class whose identity is status, wealth, influence, leadership, and access to social and institutional networks.
+• Primary: leadership, persuasion, resources, social
+• Supporting: deception, intrigue, knowledge, social_network
+
+Bureaucrat (bureaucrat)
+
+• Identity: Institutional specialist who understands rules, procedures, agencies, records, and administrative systems and works through those systems to accomplish goals.
+• Primary: knowledge, social
+• Supporting: intrigue, persuasion, use_computer
+
+Celebrity (celebrity)
+
+• Identity: Public figure whose identity is social visibility, personal influence, persuasion, and management of appearances and reputation.
+• Primary: deception, persuasion, social
+• Supporting: gather_information, manipulation, perception
+
+Community Leader (community_leader)
+
+• Identity: Local or civic leader who organizes people, inspires confidence, builds cooperation, and directly supports a community through continuing leadership.
+• Primary: ally_support, leadership, persuasion, social, support
+• Supporting: gather_information, morale, perception, teamwork
+
+Tranche QA
+
+• New records checked: 20 / 20
+• Cumulative certified records structurally checked: 130 / 130
+• Unknown ontology tags: 0
+• Primary/supporting collisions: 0
+• Broken all unions: 0
+• Hard implication violations: 0
+• resources was deliberately not assigned to Quartermaster; logistical supplies are not the ontology’s spendable-resource mechanic.
+• resources is retained for Aristocrat because the signature Wealth expression represents actual spendable wealth rather than merely material goods.
+• Naval Officer and Fleet Strategist are differentiated by command/coordination versus strategic planning rather than arbitrary mechanical inheritance.
+
+Claude Execution Contract — Next Run
+
+1. Apply and commit 12B-QA-110-01 first.
+2. Replace PENDING_12B_QA_110_01_COMMIT with that successful commit and verify ancestry.
+3. Apply only the 20 IDs in currentExecution.newRecordIds.
+4. For each execution record replace exactly metadata.tags.primary, metadata.tags.supporting, metadata.tags.all, and metadata.tagProvenance.
+5. Do not change any of the 110 previously certified records or the seven QA revisions.
+6. Do not change mechanics, exactRefs, routes, classes, abilities, skills, talents, feats, Force data, species, backgrounds, narrative data, scoring, BuildIntent, SuggestionScorer, Mentor, UI ranking, or ontology.
+7. Validate all supplied tags against the frozen 190-tag ontology.
+8. Run Phase 12A validation/tests and Phase 12B overlay --check.
+9. Stop rather than infer if the baseline authority does not match.
 
 Progress
 
-• Certified: 110 / 297
-• QA reviewed: 110 / 110 certified records
-• Explicit QA revisions: 7
-• New records in QA patch: 0
-• Remaining uncurated: 187
-• After QA patch: resume with the final 2 Scoundrel-first records, then transition deterministically to the next first-foundation bucket.
+• Certified: 130 / 297
+• Scout-first: 73 / 73 complete
+• Scoundrel-first: 39 / 39 complete
+• Noble-first: 18 / 98
+• New this tranche: 20
+• Carried-forward QA revisions: 7
+• Remaining uncurated after application: 167
+• Next: continue Noble-first records in dataset order.
 • Shadow scoring: still deferred.

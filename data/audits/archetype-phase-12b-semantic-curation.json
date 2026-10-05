@@ -2,31 +2,44 @@
   "schemaVersion": "1.0",
   "kind": "SWSE_ARCHETYPE_PHASE_12B_SEMANTIC_CURATION",
   "phase": "12B",
-  "status": "ROLLING_AUTHORITY_QA_PATCH_READY_BASELINE_PENDING",
+  "status": "ROLLING_AUTHORITY_NEXT_TRANCHE_READY_BASELINE_PENDING",
   "runtimeTarget": "data/archetypes.json",
   "frozenOntology": {
     "path": "data/audits/talent-feat-phase3-final-ontology.json",
     "tagCount": 190
   },
-  "certifiedCount": 110,
+  "certifiedCount": 130,
   "totalArchetypes": 297,
-  "remainingUncuratedAfterApplication": 187,
-  "selectionRule": "Continue Scoundrel-first records in dataset order. Class is a route, not ownership.",
+  "remainingUncuratedAfterApplication": 167,
+  "selectionRule": "Finish Scoundrel-first records, skip already-complete Scout-first, then continue Noble-first records in dataset order. Class is a route, not ownership.",
   "currentExecution": {
-    "id": "12B-QA-110-01",
+    "id": "12B-SCOUNDREL-NOBLE-07",
     "status": "AUTHORITY_READY_BASELINE_PENDING",
-    "requiredBaseline": "90b78ee619fb24b21d9d56b40778920ec695e45b",
-    "baselineInstruction": "Replace this placeholder with the latest successful Phase 12B commit containing all records intended to be applied before this QA patch. If all 110 certified records are not yet present in the working branch, finish those executions first or use the cumulative Phase 12B overlay; do not infer a SHA.",
-    "newRecordIds": [],
-    "revisionIds": [
-      "kiffu_guardian",
-      "ace_pilot",
-      "slicer_droid",
-      "electronic_warfare_specialist",
-      "clawdite_facechanger_operative",
-      "herglic_free_trader",
-      "zygerrian_corsair"
-    ]
+    "requiredBaseline": "d7e8938082f9a0b35491414e79820841f86ef375",
+    "baselineInstruction": "Replace this placeholder with the successful commit returned after the 12B-QA-110-01 semantic QA patch before applying this tranche. Do not infer a SHA.",
+    "newRecordIds": [
+      "salvage_engineer",
+      "repair_droid",
+      "crime_boss",
+      "cantina_proprietor",
+      "investigator",
+      "spymaster",
+      "journalist",
+      "naval_officer",
+      "fleet_strategist",
+      "quartermaster",
+      "resistance_leader",
+      "ship_captain",
+      "cyberneticist",
+      "scientist",
+      "doctor",
+      "activist",
+      "aristocrat",
+      "bureaucrat",
+      "celebrity",
+      "community_leader"
+    ],
+    "revisionIds": []
   },
   "revisionLog": [
     {
@@ -5738,23 +5751,962 @@
           "authority": "OWNER_CERTIFIED"
         }
       }
+    },
+    {
+      "id": "salvage_engineer",
+      "name": "Salvage Engineer",
+      "tranche": "07",
+      "primary": [
+        "equipment",
+        "jury_rig",
+        "mechanics",
+        "repair",
+        "tech"
+      ],
+      "supporting": [
+        "crafting",
+        "modification",
+        "perception",
+        "survival",
+        "use_computer"
+      ],
+      "all": [
+        "crafting",
+        "equipment",
+        "jury_rig",
+        "mechanics",
+        "modification",
+        "perception",
+        "repair",
+        "survival",
+        "tech",
+        "use_computer"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "equipment",
+              "jury_rig",
+              "mechanics",
+              "repair",
+              "tech"
+            ],
+            "supporting": [
+              "crafting",
+              "modification",
+              "perception",
+              "survival",
+              "use_computer"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "repair_droid",
+      "name": "Repair Droid",
+      "tranche": "07",
+      "primary": [
+        "droid",
+        "mechanics",
+        "repair",
+        "tech",
+        "use_computer"
+      ],
+      "supporting": [
+        "equipment",
+        "ion",
+        "jury_rig",
+        "modification",
+        "perception"
+      ],
+      "all": [
+        "droid",
+        "equipment",
+        "ion",
+        "jury_rig",
+        "mechanics",
+        "modification",
+        "perception",
+        "repair",
+        "tech",
+        "use_computer"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "droid",
+              "mechanics",
+              "repair",
+              "tech",
+              "use_computer"
+            ],
+            "supporting": [
+              "equipment",
+              "ion",
+              "jury_rig",
+              "modification",
+              "perception"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "crime_boss",
+      "name": "Crime Boss",
+      "tranche": "07",
+      "primary": [
+        "intrigue",
+        "leadership",
+        "minion",
+        "social"
+      ],
+      "supporting": [
+        "deception",
+        "fear",
+        "gather_information",
+        "persuasion",
+        "social_network"
+      ],
+      "all": [
+        "deception",
+        "fear",
+        "gather_information",
+        "intrigue",
+        "leadership",
+        "minion",
+        "persuasion",
+        "social",
+        "social_network"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "intrigue",
+              "leadership",
+              "minion",
+              "social"
+            ],
+            "supporting": [
+              "deception",
+              "fear",
+              "gather_information",
+              "persuasion",
+              "social_network"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "cantina_proprietor",
+      "name": "Cantina Proprietor",
+      "tranche": "07",
+      "primary": [
+        "gather_information",
+        "perception",
+        "persuasion",
+        "social",
+        "social_network"
+      ],
+      "supporting": [
+        "deception",
+        "intrigue",
+        "knowledge"
+      ],
+      "all": [
+        "deception",
+        "gather_information",
+        "intrigue",
+        "knowledge",
+        "perception",
+        "persuasion",
+        "social",
+        "social_network"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "gather_information",
+              "perception",
+              "persuasion",
+              "social",
+              "social_network"
+            ],
+            "supporting": [
+              "deception",
+              "intrigue",
+              "knowledge"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "investigator",
+      "name": "Investigator",
+      "tranche": "07",
+      "primary": [
+        "gather_information",
+        "investigation",
+        "perception"
+      ],
+      "supporting": [
+        "knowledge",
+        "planning",
+        "persuasion",
+        "use_computer"
+      ],
+      "all": [
+        "gather_information",
+        "investigation",
+        "knowledge",
+        "perception",
+        "persuasion",
+        "planning",
+        "use_computer"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "gather_information",
+              "investigation",
+              "perception"
+            ],
+            "supporting": [
+              "knowledge",
+              "planning",
+              "persuasion",
+              "use_computer"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "spymaster",
+      "name": "Spymaster",
+      "tranche": "07",
+      "primary": [
+        "intrigue",
+        "leadership",
+        "planning",
+        "social_network"
+      ],
+      "supporting": [
+        "deception",
+        "gather_information",
+        "infiltration",
+        "persuasion",
+        "tactics",
+        "use_computer"
+      ],
+      "all": [
+        "deception",
+        "gather_information",
+        "infiltration",
+        "intrigue",
+        "leadership",
+        "persuasion",
+        "planning",
+        "social_network",
+        "tactics",
+        "use_computer"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "intrigue",
+              "leadership",
+              "planning",
+              "social_network"
+            ],
+            "supporting": [
+              "deception",
+              "gather_information",
+              "infiltration",
+              "persuasion",
+              "tactics",
+              "use_computer"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "journalist",
+      "name": "Journalist",
+      "tranche": "07",
+      "primary": [
+        "gather_information",
+        "investigation",
+        "persuasion",
+        "social"
+      ],
+      "supporting": [
+        "knowledge",
+        "perception",
+        "use_computer"
+      ],
+      "all": [
+        "gather_information",
+        "investigation",
+        "knowledge",
+        "perception",
+        "persuasion",
+        "social",
+        "use_computer"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "gather_information",
+              "investigation",
+              "persuasion",
+              "social"
+            ],
+            "supporting": [
+              "knowledge",
+              "perception",
+              "use_computer"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "naval_officer",
+      "name": "Naval Officer",
+      "tranche": "07",
+      "primary": [
+        "command",
+        "leadership",
+        "space",
+        "tactics",
+        "teamwork"
+      ],
+      "supporting": [
+        "ally_support",
+        "knowledge",
+        "persuasion",
+        "pilot",
+        "support",
+        "vehicle"
+      ],
+      "all": [
+        "ally_support",
+        "command",
+        "knowledge",
+        "leadership",
+        "persuasion",
+        "pilot",
+        "space",
+        "support",
+        "tactics",
+        "teamwork",
+        "vehicle"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "command",
+              "leadership",
+              "space",
+              "tactics",
+              "teamwork"
+            ],
+            "supporting": [
+              "ally_support",
+              "knowledge",
+              "persuasion",
+              "pilot",
+              "support",
+              "vehicle"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "fleet_strategist",
+      "name": "Fleet Strategist",
+      "tranche": "07",
+      "primary": [
+        "command",
+        "planning",
+        "space",
+        "tactics"
+      ],
+      "supporting": [
+        "ally_support",
+        "knowledge",
+        "leadership",
+        "perception",
+        "support",
+        "teamwork",
+        "use_computer"
+      ],
+      "all": [
+        "ally_support",
+        "command",
+        "knowledge",
+        "leadership",
+        "perception",
+        "planning",
+        "space",
+        "support",
+        "tactics",
+        "teamwork",
+        "use_computer"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "command",
+              "planning",
+              "space",
+              "tactics"
+            ],
+            "supporting": [
+              "ally_support",
+              "knowledge",
+              "leadership",
+              "perception",
+              "support",
+              "teamwork",
+              "use_computer"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "quartermaster",
+      "name": "Quartermaster",
+      "tranche": "07",
+      "primary": [
+        "equipment",
+        "knowledge",
+        "support"
+      ],
+      "supporting": [
+        "ally_support",
+        "mechanics",
+        "perception",
+        "persuasion",
+        "tech",
+        "use_computer"
+      ],
+      "all": [
+        "ally_support",
+        "equipment",
+        "knowledge",
+        "mechanics",
+        "perception",
+        "persuasion",
+        "support",
+        "tech",
+        "use_computer"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "equipment",
+              "knowledge",
+              "support"
+            ],
+            "supporting": [
+              "ally_support",
+              "mechanics",
+              "perception",
+              "persuasion",
+              "tech",
+              "use_computer"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "resistance_leader",
+      "name": "Resistance Leader",
+      "tranche": "07",
+      "primary": [
+        "leadership",
+        "persuasion",
+        "social",
+        "support"
+      ],
+      "supporting": [
+        "ally_support",
+        "deception",
+        "gather_information",
+        "tactics",
+        "teamwork"
+      ],
+      "all": [
+        "ally_support",
+        "deception",
+        "gather_information",
+        "leadership",
+        "persuasion",
+        "social",
+        "support",
+        "tactics",
+        "teamwork"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "leadership",
+              "persuasion",
+              "social",
+              "support"
+            ],
+            "supporting": [
+              "ally_support",
+              "deception",
+              "gather_information",
+              "tactics",
+              "teamwork"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "ship_captain",
+      "name": "Ship Captain",
+      "tranche": "07",
+      "primary": [
+        "command",
+        "leadership",
+        "pilot",
+        "space",
+        "vehicle"
+      ],
+      "supporting": [
+        "ally_support",
+        "persuasion",
+        "support",
+        "teamwork",
+        "use_computer"
+      ],
+      "all": [
+        "ally_support",
+        "command",
+        "leadership",
+        "persuasion",
+        "pilot",
+        "space",
+        "support",
+        "teamwork",
+        "use_computer",
+        "vehicle"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "command",
+              "leadership",
+              "pilot",
+              "space",
+              "vehicle"
+            ],
+            "supporting": [
+              "ally_support",
+              "persuasion",
+              "support",
+              "teamwork",
+              "use_computer"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "cyberneticist",
+      "name": "Cyberneticist",
+      "tranche": "07",
+      "primary": [
+        "implant",
+        "mechanics",
+        "medical",
+        "tech"
+      ],
+      "supporting": [
+        "knowledge",
+        "medicine",
+        "modification",
+        "perception",
+        "treat_injury"
+      ],
+      "all": [
+        "implant",
+        "knowledge",
+        "mechanics",
+        "medical",
+        "medicine",
+        "modification",
+        "perception",
+        "tech",
+        "treat_injury"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "implant",
+              "mechanics",
+              "medical",
+              "tech"
+            ],
+            "supporting": [
+              "knowledge",
+              "medicine",
+              "modification",
+              "perception",
+              "treat_injury"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "scientist",
+      "name": "Scientist",
+      "tranche": "07",
+      "primary": [
+        "knowledge",
+        "science"
+      ],
+      "supporting": [
+        "perception",
+        "tech",
+        "use_computer"
+      ],
+      "all": [
+        "knowledge",
+        "perception",
+        "science",
+        "tech",
+        "use_computer"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "knowledge",
+              "science"
+            ],
+            "supporting": [
+              "perception",
+              "tech",
+              "use_computer"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "doctor",
+      "name": "Doctor",
+      "tranche": "07",
+      "primary": [
+        "ally_support",
+        "healing",
+        "medicine",
+        "support",
+        "treat_injury"
+      ],
+      "supporting": [
+        "knowledge",
+        "medical",
+        "perception"
+      ],
+      "all": [
+        "ally_support",
+        "healing",
+        "knowledge",
+        "medical",
+        "medicine",
+        "perception",
+        "support",
+        "treat_injury"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "ally_support",
+              "healing",
+              "medicine",
+              "support",
+              "treat_injury"
+            ],
+            "supporting": [
+              "knowledge",
+              "medical",
+              "perception"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "activist",
+      "name": "Activist",
+      "tranche": "07",
+      "primary": [
+        "gather_information",
+        "persuasion",
+        "social"
+      ],
+      "supporting": [
+        "deception",
+        "leadership",
+        "manipulation"
+      ],
+      "all": [
+        "deception",
+        "gather_information",
+        "leadership",
+        "manipulation",
+        "persuasion",
+        "social"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "gather_information",
+              "persuasion",
+              "social"
+            ],
+            "supporting": [
+              "deception",
+              "leadership",
+              "manipulation"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "aristocrat",
+      "name": "Aristocrat",
+      "tranche": "07",
+      "primary": [
+        "leadership",
+        "persuasion",
+        "resources",
+        "social"
+      ],
+      "supporting": [
+        "deception",
+        "intrigue",
+        "knowledge",
+        "social_network"
+      ],
+      "all": [
+        "deception",
+        "intrigue",
+        "knowledge",
+        "leadership",
+        "persuasion",
+        "resources",
+        "social",
+        "social_network"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "leadership",
+              "persuasion",
+              "resources",
+              "social"
+            ],
+            "supporting": [
+              "deception",
+              "intrigue",
+              "knowledge",
+              "social_network"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "bureaucrat",
+      "name": "Bureaucrat",
+      "tranche": "07",
+      "primary": [
+        "knowledge",
+        "social"
+      ],
+      "supporting": [
+        "intrigue",
+        "persuasion",
+        "use_computer"
+      ],
+      "all": [
+        "intrigue",
+        "knowledge",
+        "persuasion",
+        "social",
+        "use_computer"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "knowledge",
+              "social"
+            ],
+            "supporting": [
+              "intrigue",
+              "persuasion",
+              "use_computer"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "celebrity",
+      "name": "Celebrity",
+      "tranche": "07",
+      "primary": [
+        "deception",
+        "persuasion",
+        "social"
+      ],
+      "supporting": [
+        "gather_information",
+        "manipulation",
+        "perception"
+      ],
+      "all": [
+        "deception",
+        "gather_information",
+        "manipulation",
+        "perception",
+        "persuasion",
+        "social"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "deception",
+              "persuasion",
+              "social"
+            ],
+            "supporting": [
+              "gather_information",
+              "manipulation",
+              "perception"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "community_leader",
+      "name": "Community Leader",
+      "tranche": "07",
+      "primary": [
+        "ally_support",
+        "leadership",
+        "persuasion",
+        "social",
+        "support"
+      ],
+      "supporting": [
+        "gather_information",
+        "morale",
+        "perception",
+        "teamwork"
+      ],
+      "all": [
+        "ally_support",
+        "gather_information",
+        "leadership",
+        "morale",
+        "perception",
+        "persuasion",
+        "social",
+        "support",
+        "teamwork"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "ally_support",
+              "leadership",
+              "persuasion",
+              "social",
+              "support"
+            ],
+            "supporting": [
+              "gather_information",
+              "morale",
+              "perception",
+              "teamwork"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
     }
   ],
   "qaReview": {
-    "scope": "All 110 certified archetypes",
-    "result": "PASS_WITH_7_EXPLICIT_REVISIONS",
-    "reviewedRecordCount": 110,
-    "revisionCount": 7,
+    "scope": "All 130 certified archetypes after tranche 07",
+    "result": "PASS",
+    "reviewedRecordCount": 130,
+    "newRecordCount": 20,
+    "carriedForwardExplicitRevisionCount": 7,
     "checks": [
       "Frozen ontology membership",
       "Primary/supporting disjointness",
       "metadata.tags.all union consistency",
       "hard implication closure",
-      "primary/supporting balance",
-      "duplicate and near-duplicate semantic profiles",
-      "parent/specialization inheritance leakage",
-      "mechanics-versus-identity overreach",
-      "narrow ontology-label misuse"
+      "semantic differentiation review",
+      "narrow ontology-label review"
     ]
   }
 }
