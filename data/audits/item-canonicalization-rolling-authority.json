@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "authorityType": "item-canonicalization-rolling-authority",
-  "status": "ACTIVE — Phase 0 complete; Phase 0-1 Weapons and Phase 0-2 Armor certified by owner",
+  "status": "ACTIVE — Phase 0, Phase 0-1 Weapons, Phase 0-2 Armor, Phase 0-3A General Equipment certified by owner",
   "sourcePolicy": "User-provided SWSE TXT/PDF sourcebooks are the canonical SSOT. Repository compendiums are implementation targets only.",
   "ownerRulings": "docs/audits/item-phase-0-ssot-census.md §7a",
   "architecture": {
@@ -7971,10 +7971,3958 @@
           "Force Alchemy hard-codes its own Sith armor stat profiles; stat certification is a Phase 4 concern."
         ]
       }
+    },
+    "0-3a-general-equipment": {
+      "status": "CERTIFIED_PHASE_0_3A_IDENTITY_AUTHORITY",
+      "sourcePolicy": "User-provided SWSE TXT/PDF sourcebooks are the canonical SSOT. Repository compendiums are implementation targets only.",
+      "scope": "Character-scale general equipment: communications, computers/storage, detection/surveillance, life support, survival/field gear, ordinary tools/restraints/carrying gear, accessories, and specialty nonmedical equipment. Excludes medical/consumable care gear, demolitions-specific gear, cybernetics/implants, weapon/armor/universal upgrades, lightsaber components, droid equipment, and vehicle/starship systems.",
+      "phaseBoundary": "Phase 0-3A certifies general-equipment identity and repo presence/disposition only. It does not certify descriptions, statistics, schema fields, mechanics, semantic tags, or pages.",
+      "repoSnapshot": {
+        "repository": "docflowGM/foundryvtt-swse",
+        "ref": "main",
+        "pack": "packs/equipment.db",
+        "inScopeRepoRecords": 91,
+        "totalEquipmentPackRecords": 142
+      },
+      "canonicalCounts": {
+        "generalEquipmentIdentities": 121,
+        "byDisposition": {
+          "KEEP": 77,
+          "EDIT": 9,
+          "ADD": 35
+        },
+        "sourceClaimsByBook": {
+          "Core Rulebook": 47,
+          "Clone Wars Campaign Guide": 4,
+          "Force Unleashed Campaign Guide": 5,
+          "Galaxy at War": 13,
+          "Galaxy of Intrigue": 8,
+          "Jedi Academy Training Manual": 4,
+          "Knights of the Old Republic Campaign Guide": 7,
+          "Legacy Era Campaign Guide": 4,
+          "Rebellion Era Campaign Guide": 3,
+          "Scum and Villainy": 6,
+          "Threats of the Galaxy": 3,
+          "Unknown Regions": 17
+        }
+      },
+      "repoCounts": {
+        "inScopeRecords": 91,
+        "byDisposition": {
+          "KEEP": 77,
+          "EDIT": 9,
+          "REMOVE": 4,
+          "REVIEW": 1
+        }
+      },
+      "sameNameDifferentMechanicPolicy": "Source-qualified identities remain distinct. Clone Wars Campaign Guide and Galaxy at War Camouflage Netting are not merged.",
+      "canonicalRecords": [
+        {
+          "canonicalName": "Comlink, Short-Range",
+          "family": "equipment",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Core Rulebook",
+              "ssot": "user-provided TXT/PDF"
+            }
+          ],
+          "phase0Disposition": "KEEP",
+          "repo": {
+            "present": true,
+            "pack": "packs/equipment.db",
+            "matchedName": "Comlink, Short-Range",
+            "matchedId": "comms-comlink-short-range",
+            "matchType": "exact"
+          },
+          "reason": "Exact canonical identity present.",
+          "canonicalIdentityKey": "core-rulebook:comlink-short-range",
+          "executionAction": "NO_IDENTITY_CHANGE",
+          "sourceVerification": "TXT_VERIFIED"
+        },
+        {
+          "canonicalName": "Comlink, Long-Range",
+          "family": "equipment",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Core Rulebook",
+              "ssot": "user-provided TXT/PDF"
+            }
+          ],
+          "phase0Disposition": "KEEP",
+          "repo": {
+            "present": true,
+            "pack": "packs/equipment.db",
+            "matchedName": "Comlink, Long-Range",
+            "matchedId": "comms-comlink-long-range",
+            "matchType": "exact"
+          },
+          "reason": "Exact canonical identity present.",
+          "canonicalIdentityKey": "core-rulebook:comlink-long-range",
+          "executionAction": "NO_IDENTITY_CHANGE",
+          "sourceVerification": "TXT_VERIFIED"
+        },
+        {
+          "canonicalName": "Pocket Scrambler",
+          "family": "equipment",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Core Rulebook",
+              "ssot": "user-provided TXT/PDF"
+            }
+          ],
+          "phase0Disposition": "KEEP",
+          "repo": {
+            "present": true,
+            "pack": "packs/equipment.db",
+            "matchedName": "Pocket Scrambler",
+            "matchedId": "comms-pocket-scrambler",
+            "matchType": "exact"
+          },
+          "reason": "Exact canonical identity present.",
+          "canonicalIdentityKey": "core-rulebook:pocket-scrambler",
+          "executionAction": "NO_IDENTITY_CHANGE",
+          "sourceVerification": "TXT_VERIFIED"
+        },
+        {
+          "canonicalName": "Code Cylinder",
+          "family": "equipment",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Core Rulebook",
+              "ssot": "user-provided TXT/PDF"
+            }
+          ],
+          "phase0Disposition": "KEEP",
+          "repo": {
+            "present": true,
+            "pack": "packs/equipment.db",
+            "matchedName": "Code Cylinder",
+            "matchedId": "computer-code-cylinder",
+            "matchType": "exact"
+          },
+          "reason": "Exact canonical identity present.",
+          "canonicalIdentityKey": "core-rulebook:code-cylinder",
+          "executionAction": "NO_IDENTITY_CHANGE",
+          "sourceVerification": "TXT_VERIFIED"
+        },
+        {
+          "canonicalName": "Credit Chip",
+          "family": "equipment",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Core Rulebook",
+              "ssot": "user-provided TXT/PDF"
+            }
+          ],
+          "phase0Disposition": "KEEP",
+          "repo": {
+            "present": true,
+            "pack": "packs/equipment.db",
+            "matchedName": "Credit Chip",
+            "matchedId": "computer-credit-chip",
+            "matchType": "exact"
+          },
+          "reason": "Exact canonical identity present.",
+          "canonicalIdentityKey": "core-rulebook:credit-chip",
+          "executionAction": "NO_IDENTITY_CHANGE",
+          "sourceVerification": "TXT_VERIFIED"
+        },
+        {
+          "canonicalName": "Datacards, Blank (10)",
+          "family": "equipment",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Core Rulebook",
+              "ssot": "user-provided TXT/PDF"
+            }
+          ],
+          "phase0Disposition": "EDIT",
+          "repo": {
+            "present": true,
+            "pack": "packs/equipment.db",
+            "matchedName": "Blank Datacards (10)",
+            "matchedId": "computer-datacards-blank-10",
+            "matchType": "alias"
+          },
+          "reason": "Canonical identity present under repo name Blank Datacards (10); normalize display identity.",
+          "canonicalIdentityKey": "core-rulebook:datacards-blank-10",
+          "executionAction": "NORMALIZE_CANONICAL_IDENTITY",
+          "sourceVerification": "TXT_VERIFIED"
+        },
+        {
+          "canonicalName": "Datapad",
+          "family": "equipment",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Core Rulebook",
+              "ssot": "user-provided TXT/PDF"
+            }
+          ],
+          "phase0Disposition": "EDIT",
+          "repo": {
+            "present": true,
+            "pack": "packs/equipment.db",
+            "matchedName": "Datapad, Standard",
+            "matchedId": "computer-datapad-standard",
+            "matchType": "alias"
+          },
+          "reason": "Canonical identity present under repo name Datapad, Standard; normalize display identity.",
+          "canonicalIdentityKey": "core-rulebook:datapad",
+          "executionAction": "NORMALIZE_CANONICAL_IDENTITY",
+          "sourceVerification": "TXT_VERIFIED"
+        },
+        {
+          "canonicalName": "Datapad, Basic",
+          "family": "equipment",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Core Rulebook",
+              "ssot": "user-provided TXT/PDF"
+            }
+          ],
+          "phase0Disposition": "KEEP",
+          "repo": {
+            "present": true,
+            "pack": "packs/equipment.db",
+            "matchedName": "Datapad, Basic",
+            "matchedId": "computer-datapad-basic",
+            "matchType": "exact"
+          },
+          "reason": "Exact canonical identity present.",
+          "canonicalIdentityKey": "core-rulebook:datapad-basic",
+          "executionAction": "NO_IDENTITY_CHANGE",
+          "sourceVerification": "TXT_VERIFIED"
+        },
+        {
+          "canonicalName": "Holoprojector, Personal",
+          "family": "equipment",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Core Rulebook",
+              "ssot": "user-provided TXT/PDF"
+            }
+          ],
+          "phase0Disposition": "EDIT",
+          "repo": {
+            "present": true,
+            "pack": "packs/equipment.db",
+            "matchedName": "Personal Holoprojector",
+            "matchedId": "computer-personal-holoprojector",
+            "matchType": "alias"
+          },
+          "reason": "Canonical identity present under repo name Personal Holoprojector; normalize display identity.",
+          "canonicalIdentityKey": "core-rulebook:holoprojector-personal",
+          "executionAction": "NORMALIZE_CANONICAL_IDENTITY",
+          "sourceVerification": "TXT_VERIFIED"
+        },
+        {
+          "canonicalName": "Portable Computer",
+          "family": "equipment",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Core Rulebook",
+              "ssot": "user-provided TXT/PDF"
+            }
+          ],
+          "phase0Disposition": "KEEP",
+          "repo": {
+            "present": true,
+            "pack": "packs/equipment.db",
+            "matchedName": "Portable Computer",
+            "matchedId": "computer-portable-computer",
+            "matchType": "exact"
+          },
+          "reason": "Exact canonical identity present.",
+          "canonicalIdentityKey": "core-rulebook:portable-computer",
+          "executionAction": "NO_IDENTITY_CHANGE",
+          "sourceVerification": "TXT_VERIFIED"
+        },
+        {
+          "canonicalName": "Electrobinoculars",
+          "family": "equipment",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Core Rulebook",
+              "ssot": "user-provided TXT/PDF"
+            }
+          ],
+          "phase0Disposition": "KEEP",
+          "repo": {
+            "present": true,
+            "pack": "packs/equipment.db",
+            "matchedName": "Electrobinoculars",
+            "matchedId": "detect-electrobinoculars",
+            "matchType": "exact"
+          },
+          "reason": "Exact canonical identity present.",
+          "canonicalIdentityKey": "core-rulebook:electrobinoculars",
+          "executionAction": "NO_IDENTITY_CHANGE",
+          "sourceVerification": "TXT_VERIFIED"
+        },
+        {
+          "canonicalName": "Glow Rod",
+          "family": "equipment",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Core Rulebook",
+              "ssot": "user-provided TXT/PDF"
+            }
+          ],
+          "phase0Disposition": "KEEP",
+          "repo": {
+            "present": true,
+            "pack": "packs/equipment.db",
+            "matchedName": "Glow Rod",
+            "matchedId": "detect-glow-rod",
+            "matchType": "exact"
+          },
+          "reason": "Exact canonical identity present.",
+          "canonicalIdentityKey": "core-rulebook:glow-rod",
+          "executionAction": "NO_IDENTITY_CHANGE",
+          "sourceVerification": "TXT_VERIFIED"
+        },
+        {
+          "canonicalName": "Fusion Lantern",
+          "family": "equipment",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Core Rulebook",
+              "ssot": "user-provided TXT/PDF"
+            }
+          ],
+          "phase0Disposition": "KEEP",
+          "repo": {
+            "present": true,
+            "pack": "packs/equipment.db",
+            "matchedName": "Fusion Lantern",
+            "matchedId": "detect-fusion-lantern",
+            "matchType": "exact"
+          },
+          "reason": "Exact canonical identity present.",
+          "canonicalIdentityKey": "core-rulebook:fusion-lantern",
+          "executionAction": "NO_IDENTITY_CHANGE",
+          "sourceVerification": "TXT_VERIFIED"
+        },
+        {
+          "canonicalName": "Audiorecorder",
+          "family": "equipment",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Core Rulebook",
+              "ssot": "user-provided TXT/PDF"
+            }
+          ],
+          "phase0Disposition": "KEEP",
+          "repo": {
+            "present": true,
+            "pack": "packs/equipment.db",
+            "matchedName": "Audiorecorder",
+            "matchedId": "detect-audiorecorder",
+            "matchType": "exact"
+          },
+          "reason": "Exact canonical identity present.",
+          "canonicalIdentityKey": "core-rulebook:audiorecorder",
+          "executionAction": "NO_IDENTITY_CHANGE",
+          "sourceVerification": "TXT_VERIFIED"
+        },
+        {
+          "canonicalName": "Holorecorder",
+          "family": "equipment",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Core Rulebook",
+              "ssot": "user-provided TXT/PDF"
+            }
+          ],
+          "phase0Disposition": "KEEP",
+          "repo": {
+            "present": true,
+            "pack": "packs/equipment.db",
+            "matchedName": "Holorecorder",
+            "matchedId": "detect-holorecorder",
+            "matchType": "exact"
+          },
+          "reason": "Exact canonical identity present.",
+          "canonicalIdentityKey": "core-rulebook:holorecorder",
+          "executionAction": "NO_IDENTITY_CHANGE",
+          "sourceVerification": "TXT_VERIFIED"
+        },
+        {
+          "canonicalName": "Videorecorder",
+          "family": "equipment",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Core Rulebook",
+              "ssot": "user-provided TXT/PDF"
+            }
+          ],
+          "phase0Disposition": "KEEP",
+          "repo": {
+            "present": true,
+            "pack": "packs/equipment.db",
+            "matchedName": "Videorecorder",
+            "matchedId": "detect-videorecorder",
+            "matchType": "exact"
+          },
+          "reason": "Exact canonical identity present.",
+          "canonicalIdentityKey": "core-rulebook:videorecorder",
+          "executionAction": "NO_IDENTITY_CHANGE",
+          "sourceVerification": "TXT_VERIFIED"
+        },
+        {
+          "canonicalName": "Sensor Pack",
+          "family": "equipment",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Core Rulebook",
+              "ssot": "user-provided TXT/PDF"
+            }
+          ],
+          "phase0Disposition": "KEEP",
+          "repo": {
+            "present": true,
+            "pack": "packs/equipment.db",
+            "matchedName": "Sensor Pack",
+            "matchedId": "detect-sensor-pack",
+            "matchType": "exact"
+          },
+          "reason": "Exact canonical identity present.",
+          "canonicalIdentityKey": "core-rulebook:sensor-pack",
+          "executionAction": "NO_IDENTITY_CHANGE",
+          "sourceVerification": "TXT_VERIFIED"
+        },
+        {
+          "canonicalName": "Aquata Breather",
+          "family": "equipment",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Core Rulebook",
+              "ssot": "user-provided TXT/PDF"
+            }
+          ],
+          "phase0Disposition": "KEEP",
+          "repo": {
+            "present": true,
+            "pack": "packs/equipment.db",
+            "matchedName": "Aquata Breather",
+            "matchedId": "life-aquata-breather",
+            "matchType": "exact"
+          },
+          "reason": "Exact canonical identity present.",
+          "canonicalIdentityKey": "core-rulebook:aquata-breather",
+          "executionAction": "NO_IDENTITY_CHANGE",
+          "sourceVerification": "TXT_VERIFIED"
+        },
+        {
+          "canonicalName": "Breath Mask",
+          "family": "equipment",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Core Rulebook",
+              "ssot": "user-provided TXT/PDF"
+            }
+          ],
+          "phase0Disposition": "KEEP",
+          "repo": {
+            "present": true,
+            "pack": "packs/equipment.db",
+            "matchedName": "Breath Mask",
+            "matchedId": "life-breath-mask",
+            "matchType": "exact"
+          },
+          "reason": "Exact canonical identity present.",
+          "canonicalIdentityKey": "core-rulebook:breath-mask",
+          "executionAction": "NO_IDENTITY_CHANGE",
+          "sourceVerification": "TXT_VERIFIED"
+        },
+        {
+          "canonicalName": "Atmosphere Canister/Filter",
+          "family": "equipment",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Core Rulebook",
+              "ssot": "user-provided TXT/PDF"
+            }
+          ],
+          "phase0Disposition": "ADD",
+          "repo": {
+            "present": false,
+            "pack": "packs/equipment.db",
+            "matchedName": null,
+            "matchedId": null,
+            "matchType": "absent"
+          },
+          "reason": "Canonical general-equipment identity is present in the supplied source corpus but absent from the repo equipment compendium.",
+          "canonicalIdentityKey": "core-rulebook:atmosphere-canister-filter",
+          "executionAction": "ADD_CANONICAL_IDENTITY_WHEN_PRODUCTION_FIELDS_ARE_CERTIFIED",
+          "executionBlockedBy": "Later description/stat/schema certification required before creating a production-complete record.",
+          "sourceVerification": "TXT_VERIFIED"
+        },
+        {
+          "canonicalName": "Flight Suit",
+          "family": "equipment",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Core Rulebook",
+              "ssot": "user-provided TXT/PDF"
+            }
+          ],
+          "phase0Disposition": "KEEP",
+          "repo": {
+            "present": true,
+            "pack": "packs/equipment.db",
+            "matchedName": "Flight Suit",
+            "matchedId": "life-flight-suit",
+            "matchType": "exact"
+          },
+          "reason": "Exact canonical identity present.",
+          "canonicalIdentityKey": "core-rulebook:flight-suit",
+          "executionAction": "NO_IDENTITY_CHANGE",
+          "sourceVerification": "TXT_VERIFIED"
+        },
+        {
+          "canonicalName": "Space Suit",
+          "family": "equipment",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Core Rulebook",
+              "ssot": "user-provided TXT/PDF"
+            }
+          ],
+          "phase0Disposition": "KEEP",
+          "repo": {
+            "present": true,
+            "pack": "packs/equipment.db",
+            "matchedName": "Space Suit",
+            "matchedId": "life-space-suit",
+            "matchType": "exact"
+          },
+          "reason": "Exact canonical identity present.",
+          "canonicalIdentityKey": "core-rulebook:space-suit",
+          "executionAction": "NO_IDENTITY_CHANGE",
+          "sourceVerification": "TXT_VERIFIED"
+        },
+        {
+          "canonicalName": "All-Temperature Cloak",
+          "family": "equipment",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Core Rulebook",
+              "ssot": "user-provided TXT/PDF"
+            }
+          ],
+          "phase0Disposition": "KEEP",
+          "repo": {
+            "present": true,
+            "pack": "packs/equipment.db",
+            "matchedName": "All-Temperature Cloak",
+            "matchedId": "survival-all-temperature-cloak",
+            "matchType": "exact"
+          },
+          "reason": "Exact canonical identity present.",
+          "canonicalIdentityKey": "core-rulebook:all-temperature-cloak",
+          "executionAction": "NO_IDENTITY_CHANGE",
+          "sourceVerification": "TXT_VERIFIED"
+        },
+        {
+          "canonicalName": "Chain (3 meters)",
+          "family": "equipment",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Core Rulebook",
+              "ssot": "user-provided TXT/PDF"
+            }
+          ],
+          "phase0Disposition": "KEEP",
+          "repo": {
+            "present": true,
+            "pack": "packs/equipment.db",
+            "matchedName": "Chain (3 meters)",
+            "matchedId": "survival-chain-3m",
+            "matchType": "exact"
+          },
+          "reason": "Exact canonical identity present.",
+          "canonicalIdentityKey": "core-rulebook:chain-3-meters",
+          "executionAction": "NO_IDENTITY_CHANGE",
+          "sourceVerification": "TXT_VERIFIED"
+        },
+        {
+          "canonicalName": "Field Kit",
+          "family": "equipment",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Core Rulebook",
+              "ssot": "user-provided TXT/PDF"
+            }
+          ],
+          "phase0Disposition": "KEEP",
+          "repo": {
+            "present": true,
+            "pack": "packs/equipment.db",
+            "matchedName": "Field Kit",
+            "matchedId": "survival-field-kit",
+            "matchType": "exact"
+          },
+          "reason": "Exact canonical identity present.",
+          "canonicalIdentityKey": "core-rulebook:field-kit",
+          "executionAction": "NO_IDENTITY_CHANGE",
+          "sourceVerification": "TXT_VERIFIED"
+        },
+        {
+          "canonicalName": "Liquid Cable Dispenser (15 meters)",
+          "family": "equipment",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Core Rulebook",
+              "ssot": "user-provided TXT/PDF"
+            }
+          ],
+          "phase0Disposition": "KEEP",
+          "repo": {
+            "present": true,
+            "pack": "packs/equipment.db",
+            "matchedName": "Liquid Cable Dispenser (15 meters)",
+            "matchedId": "survival-liquid-cable-dispenser",
+            "matchType": "exact"
+          },
+          "reason": "Exact canonical identity present.",
+          "canonicalIdentityKey": "core-rulebook:liquid-cable-dispenser-15-meters",
+          "executionAction": "NO_IDENTITY_CHANGE",
+          "sourceVerification": "TXT_VERIFIED"
+        },
+        {
+          "canonicalName": "Ration Pack",
+          "family": "equipment",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Core Rulebook",
+              "ssot": "user-provided TXT/PDF"
+            }
+          ],
+          "phase0Disposition": "KEEP",
+          "repo": {
+            "present": true,
+            "pack": "packs/equipment.db",
+            "matchedName": "Ration Pack",
+            "matchedId": "survival-ration-pack",
+            "matchType": "exact"
+          },
+          "reason": "Exact canonical identity present.",
+          "canonicalIdentityKey": "core-rulebook:ration-pack",
+          "executionAction": "NO_IDENTITY_CHANGE",
+          "sourceVerification": "TXT_VERIFIED"
+        },
+        {
+          "canonicalName": "Syntherope (45 meters)",
+          "family": "equipment",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Core Rulebook",
+              "ssot": "user-provided TXT/PDF"
+            }
+          ],
+          "phase0Disposition": "KEEP",
+          "repo": {
+            "present": true,
+            "pack": "packs/equipment.db",
+            "matchedName": "Syntherope (45 meters)",
+            "matchedId": "survival-syntherope-45m",
+            "matchType": "exact"
+          },
+          "reason": "Exact canonical identity present.",
+          "canonicalIdentityKey": "core-rulebook:syntherope-45-meters",
+          "executionAction": "NO_IDENTITY_CHANGE",
+          "sourceVerification": "TXT_VERIFIED"
+        },
+        {
+          "canonicalName": "Binder Cuffs",
+          "family": "equipment",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Core Rulebook",
+              "ssot": "user-provided TXT/PDF"
+            }
+          ],
+          "phase0Disposition": "KEEP",
+          "repo": {
+            "present": true,
+            "pack": "packs/equipment.db",
+            "matchedName": "Binder Cuffs",
+            "matchedId": "tool-binder-cuffs",
+            "matchType": "exact"
+          },
+          "reason": "Exact canonical identity present.",
+          "canonicalIdentityKey": "core-rulebook:binder-cuffs",
+          "executionAction": "NO_IDENTITY_CHANGE",
+          "sourceVerification": "TXT_VERIFIED"
+        },
+        {
+          "canonicalName": "Energy Cell",
+          "family": "equipment",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Core Rulebook",
+              "ssot": "user-provided TXT/PDF"
+            }
+          ],
+          "phase0Disposition": "KEEP",
+          "repo": {
+            "present": true,
+            "pack": "packs/equipment.db",
+            "matchedName": "Energy Cell",
+            "matchedId": "tool-energy-cell",
+            "matchType": "exact"
+          },
+          "reason": "Exact canonical identity present.",
+          "canonicalIdentityKey": "core-rulebook:energy-cell",
+          "executionAction": "NO_IDENTITY_CHANGE",
+          "sourceVerification": "TXT_VERIFIED"
+        },
+        {
+          "canonicalName": "Fire Extinguisher",
+          "family": "equipment",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Core Rulebook",
+              "ssot": "user-provided TXT/PDF"
+            }
+          ],
+          "phase0Disposition": "ADD",
+          "repo": {
+            "present": false,
+            "pack": "packs/equipment.db",
+            "matchedName": null,
+            "matchedId": null,
+            "matchType": "absent"
+          },
+          "reason": "Canonical general-equipment identity is present in the supplied source corpus but absent from the repo equipment compendium.",
+          "canonicalIdentityKey": "core-rulebook:fire-extinguisher",
+          "executionAction": "ADD_CANONICAL_IDENTITY_WHEN_PRODUCTION_FIELDS_ARE_CERTIFIED",
+          "executionBlockedBy": "Later description/stat/schema certification required before creating a production-complete record.",
+          "sourceVerification": "TXT_VERIFIED"
+        },
+        {
+          "canonicalName": "Mesh Tape",
+          "family": "equipment",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Core Rulebook",
+              "ssot": "user-provided TXT/PDF"
+            }
+          ],
+          "phase0Disposition": "ADD",
+          "repo": {
+            "present": false,
+            "pack": "packs/equipment.db",
+            "matchedName": null,
+            "matchedId": null,
+            "matchType": "absent"
+          },
+          "reason": "Canonical general-equipment identity is present in the supplied source corpus but absent from the repo equipment compendium.",
+          "canonicalIdentityKey": "core-rulebook:mesh-tape",
+          "executionAction": "ADD_CANONICAL_IDENTITY_WHEN_PRODUCTION_FIELDS_ARE_CERTIFIED",
+          "executionBlockedBy": "Later description/stat/schema certification required before creating a production-complete record.",
+          "sourceVerification": "TXT_VERIFIED"
+        },
+        {
+          "canonicalName": "Power Generator",
+          "family": "equipment",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Core Rulebook",
+              "ssot": "user-provided TXT/PDF"
+            }
+          ],
+          "phase0Disposition": "ADD",
+          "repo": {
+            "present": false,
+            "pack": "packs/equipment.db",
+            "matchedName": null,
+            "matchedId": null,
+            "matchType": "absent"
+          },
+          "reason": "Canonical general-equipment identity is present in the supplied source corpus but absent from the repo equipment compendium.",
+          "canonicalIdentityKey": "core-rulebook:power-generator",
+          "executionAction": "ADD_CANONICAL_IDENTITY_WHEN_PRODUCTION_FIELDS_ARE_CERTIFIED",
+          "executionBlockedBy": "Later description/stat/schema certification required before creating a production-complete record.",
+          "sourceVerification": "TXT_VERIFIED"
+        },
+        {
+          "canonicalName": "Power Pack",
+          "family": "equipment",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Core Rulebook",
+              "ssot": "user-provided TXT/PDF"
+            }
+          ],
+          "phase0Disposition": "KEEP",
+          "repo": {
+            "present": true,
+            "pack": "packs/equipment.db",
+            "matchedName": "Power Pack",
+            "matchedId": "tool-power-pack",
+            "matchType": "exact"
+          },
+          "reason": "Exact canonical identity present.",
+          "canonicalIdentityKey": "core-rulebook:power-pack",
+          "executionAction": "NO_IDENTITY_CHANGE",
+          "sourceVerification": "TXT_VERIFIED"
+        },
+        {
+          "canonicalName": "Power Recharger",
+          "family": "equipment",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Core Rulebook",
+              "ssot": "user-provided TXT/PDF"
+            }
+          ],
+          "phase0Disposition": "KEEP",
+          "repo": {
+            "present": true,
+            "pack": "packs/equipment.db",
+            "matchedName": "Power Recharger",
+            "matchedId": "tool-power-recharger",
+            "matchType": "exact"
+          },
+          "reason": "Exact canonical identity present.",
+          "canonicalIdentityKey": "core-rulebook:power-recharger",
+          "executionAction": "NO_IDENTITY_CHANGE",
+          "sourceVerification": "TXT_VERIFIED"
+        },
+        {
+          "canonicalName": "Security Kit",
+          "family": "equipment",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Core Rulebook",
+              "ssot": "user-provided TXT/PDF"
+            }
+          ],
+          "phase0Disposition": "KEEP",
+          "repo": {
+            "present": true,
+            "pack": "packs/equipment.db",
+            "matchedName": "Security Kit",
+            "matchedId": "tool-security-kit",
+            "matchType": "exact"
+          },
+          "reason": "Exact canonical identity present.",
+          "canonicalIdentityKey": "core-rulebook:security-kit",
+          "executionAction": "NO_IDENTITY_CHANGE",
+          "sourceVerification": "TXT_VERIFIED"
+        },
+        {
+          "canonicalName": "Tool Kit",
+          "family": "equipment",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Core Rulebook",
+              "ssot": "user-provided TXT/PDF"
+            }
+          ],
+          "phase0Disposition": "KEEP",
+          "repo": {
+            "present": true,
+            "pack": "packs/equipment.db",
+            "matchedName": "Tool Kit",
+            "matchedId": "tool-kit",
+            "matchType": "exact"
+          },
+          "reason": "Exact canonical identity present.",
+          "canonicalIdentityKey": "core-rulebook:tool-kit",
+          "executionAction": "NO_IDENTITY_CHANGE",
+          "sourceVerification": "TXT_VERIFIED"
+        },
+        {
+          "canonicalName": "Utility Belt",
+          "family": "equipment",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Core Rulebook",
+              "ssot": "user-provided TXT/PDF"
+            }
+          ],
+          "phase0Disposition": "EDIT",
+          "repo": {
+            "present": true,
+            "pack": "packs/equipment.db",
+            "matchedName": "Utility Belt (Standard)",
+            "matchedId": "tool-utility-belt-standard",
+            "matchType": "alias"
+          },
+          "reason": "Canonical identity present under repo name Utility Belt (Standard); normalize display identity.",
+          "canonicalIdentityKey": "core-rulebook:utility-belt",
+          "executionAction": "NORMALIZE_CANONICAL_IDENTITY",
+          "sourceVerification": "TXT_VERIFIED"
+        },
+        {
+          "canonicalName": "Bandolier",
+          "family": "equipment",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Core Rulebook",
+              "ssot": "user-provided TXT/PDF"
+            }
+          ],
+          "phase0Disposition": "KEEP",
+          "repo": {
+            "present": true,
+            "pack": "packs/equipment.db",
+            "matchedName": "Bandolier",
+            "matchedId": "accessory-bandolier",
+            "matchType": "exact"
+          },
+          "reason": "Exact canonical identity present.",
+          "canonicalIdentityKey": "core-rulebook:bandolier",
+          "executionAction": "NO_IDENTITY_CHANGE",
+          "sourceVerification": "TXT_VERIFIED"
+        },
+        {
+          "canonicalName": "Helmet Package",
+          "family": "equipment",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Core Rulebook",
+              "ssot": "user-provided TXT/PDF"
+            }
+          ],
+          "phase0Disposition": "KEEP",
+          "repo": {
+            "present": true,
+            "pack": "packs/equipment.db",
+            "matchedName": "Helmet Package",
+            "matchedId": "accessory-helmet-package",
+            "matchType": "exact"
+          },
+          "reason": "Exact canonical identity present.",
+          "canonicalIdentityKey": "core-rulebook:helmet-package",
+          "executionAction": "NO_IDENTITY_CHANGE",
+          "sourceVerification": "TXT_VERIFIED"
+        },
+        {
+          "canonicalName": "Holster, Concealed",
+          "family": "equipment",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Core Rulebook",
+              "ssot": "user-provided TXT/PDF"
+            }
+          ],
+          "phase0Disposition": "KEEP",
+          "repo": {
+            "present": true,
+            "pack": "packs/equipment.db",
+            "matchedName": "Holster, Concealed",
+            "matchedId": "accessory-holster-concealed",
+            "matchType": "exact"
+          },
+          "reason": "Exact canonical identity present.",
+          "canonicalIdentityKey": "core-rulebook:holster-concealed",
+          "executionAction": "NO_IDENTITY_CHANGE",
+          "sourceVerification": "TXT_VERIFIED"
+        },
+        {
+          "canonicalName": "Holster, Hip",
+          "family": "equipment",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Core Rulebook",
+              "ssot": "user-provided TXT/PDF"
+            }
+          ],
+          "phase0Disposition": "KEEP",
+          "repo": {
+            "present": true,
+            "pack": "packs/equipment.db",
+            "matchedName": "Holster, Hip",
+            "matchedId": "accessory-holster-hip",
+            "matchType": "exact"
+          },
+          "reason": "Exact canonical identity present.",
+          "canonicalIdentityKey": "core-rulebook:holster-hip",
+          "executionAction": "NO_IDENTITY_CHANGE",
+          "sourceVerification": "TXT_VERIFIED"
+        },
+        {
+          "canonicalName": "Vox-Box",
+          "family": "equipment",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Core Rulebook",
+              "ssot": "user-provided TXT/PDF"
+            }
+          ],
+          "phase0Disposition": "KEEP",
+          "repo": {
+            "present": true,
+            "pack": "packs/equipment.db",
+            "matchedName": "Vox-Box",
+            "matchedId": "comms-vox-box",
+            "matchType": "exact"
+          },
+          "reason": "Exact canonical identity present.",
+          "canonicalIdentityKey": "core-rulebook:vox-box",
+          "executionAction": "NO_IDENTITY_CHANGE",
+          "sourceVerification": "TXT_VERIFIED"
+        },
+        {
+          "canonicalName": "Bracer Computer",
+          "family": "equipment",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Clone Wars Campaign Guide",
+              "ssot": "user-provided TXT/PDF"
+            }
+          ],
+          "phase0Disposition": "KEEP",
+          "repo": {
+            "present": true,
+            "pack": "packs/equipment.db",
+            "matchedName": "Bracer Computer",
+            "matchedId": "computer-bracer-computer",
+            "matchType": "exact"
+          },
+          "reason": "Exact canonical identity present.",
+          "canonicalIdentityKey": "clone-wars-campaign-guide:bracer-computer",
+          "executionAction": "NO_IDENTITY_CHANGE",
+          "sourceVerification": "TXT_VERIFIED"
+        },
+        {
+          "canonicalName": "Halo Lamp",
+          "family": "equipment",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Clone Wars Campaign Guide",
+              "ssot": "user-provided TXT/PDF"
+            }
+          ],
+          "phase0Disposition": "KEEP",
+          "repo": {
+            "present": true,
+            "pack": "packs/equipment.db",
+            "matchedName": "Halo Lamp",
+            "matchedId": "detect-halo-lamp",
+            "matchType": "exact"
+          },
+          "reason": "Exact canonical identity present.",
+          "canonicalIdentityKey": "clone-wars-campaign-guide:halo-lamp",
+          "executionAction": "NO_IDENTITY_CHANGE",
+          "sourceVerification": "TXT_VERIFIED"
+        },
+        {
+          "canonicalName": "Visual Wrist Comm",
+          "family": "equipment",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Clone Wars Campaign Guide",
+              "ssot": "user-provided TXT/PDF"
+            }
+          ],
+          "phase0Disposition": "KEEP",
+          "repo": {
+            "present": true,
+            "pack": "packs/equipment.db",
+            "matchedName": "Visual Wrist Comm",
+            "matchedId": "comms-visual-wrist-comm",
+            "matchType": "exact"
+          },
+          "reason": "Exact canonical identity present.",
+          "canonicalIdentityKey": "clone-wars-campaign-guide:visual-wrist-comm",
+          "executionAction": "NO_IDENTITY_CHANGE",
+          "sourceVerification": "TXT_VERIFIED"
+        },
+        {
+          "canonicalName": "Decoy Glowrod",
+          "family": "equipment",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Force Unleashed Campaign Guide",
+              "ssot": "user-provided TXT/PDF"
+            }
+          ],
+          "phase0Disposition": "EDIT",
+          "repo": {
+            "present": true,
+            "pack": "packs/equipment.db",
+            "matchedName": "Decoy Glow Rod",
+            "matchedId": "detect-decoy-glow-rod",
+            "matchType": "alias"
+          },
+          "reason": "Canonical identity present under repo name Decoy Glow Rod; normalize display identity.",
+          "canonicalIdentityKey": "force-unleashed-campaign-guide:decoy-glowrod",
+          "executionAction": "NORMALIZE_CANONICAL_IDENTITY",
+          "sourceVerification": "TXT_VERIFIED"
+        },
+        {
+          "canonicalName": "Holoshroud",
+          "family": "equipment",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Force Unleashed Campaign Guide",
+              "ssot": "user-provided TXT/PDF"
+            }
+          ],
+          "phase0Disposition": "KEEP",
+          "repo": {
+            "present": true,
+            "pack": "packs/equipment.db",
+            "matchedName": "Holoshroud",
+            "matchedId": "detect-holoshroud",
+            "matchType": "exact"
+          },
+          "reason": "Exact canonical identity present.",
+          "canonicalIdentityKey": "force-unleashed-campaign-guide:holoshroud",
+          "executionAction": "NO_IDENTITY_CHANGE",
+          "sourceVerification": "TXT_VERIFIED"
+        },
+        {
+          "canonicalName": "Arakyd Hush-About Personal Jetpack",
+          "family": "equipment",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Force Unleashed Campaign Guide",
+              "ssot": "user-provided TXT/PDF"
+            }
+          ],
+          "phase0Disposition": "ADD",
+          "repo": {
+            "present": false,
+            "pack": "packs/equipment.db",
+            "matchedName": null,
+            "matchedId": null,
+            "matchType": "absent"
+          },
+          "reason": "Canonical general-equipment identity is present in the supplied source corpus but absent from the repo equipment compendium.",
+          "canonicalIdentityKey": "force-unleashed-campaign-guide:arakyd-hush-about-personal-jetpack",
+          "executionAction": "ADD_CANONICAL_IDENTITY_WHEN_PRODUCTION_FIELDS_ARE_CERTIFIED",
+          "executionBlockedBy": "Later description/stat/schema certification required before creating a production-complete record.",
+          "sourceVerification": "TXT_VERIFIED"
+        },
+        {
+          "canonicalName": "Repulsor Pad",
+          "family": "equipment",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Force Unleashed Campaign Guide",
+              "ssot": "user-provided TXT/PDF"
+            }
+          ],
+          "phase0Disposition": "ADD",
+          "repo": {
+            "present": false,
+            "pack": "packs/equipment.db",
+            "matchedName": null,
+            "matchedId": null,
+            "matchType": "absent"
+          },
+          "reason": "Canonical general-equipment identity is present in the supplied source corpus but absent from the repo equipment compendium.",
+          "canonicalIdentityKey": "force-unleashed-campaign-guide:repulsor-pad",
+          "executionAction": "ADD_CANONICAL_IDENTITY_WHEN_PRODUCTION_FIELDS_ARE_CERTIFIED",
+          "executionBlockedBy": "Later description/stat/schema certification required before creating a production-complete record.",
+          "sourceVerification": "TXT_VERIFIED"
+        },
+        {
+          "canonicalName": "Sound Sponge",
+          "family": "equipment",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Force Unleashed Campaign Guide",
+              "ssot": "user-provided TXT/PDF"
+            }
+          ],
+          "phase0Disposition": "KEEP",
+          "repo": {
+            "present": true,
+            "pack": "packs/equipment.db",
+            "matchedName": "Sound Sponge",
+            "matchedId": "detect-sound-sponge",
+            "matchType": "exact"
+          },
+          "reason": "Exact canonical identity present.",
+          "canonicalIdentityKey": "force-unleashed-campaign-guide:sound-sponge",
+          "executionAction": "NO_IDENTITY_CHANGE",
+          "sourceVerification": "TXT_VERIFIED"
+        },
+        {
+          "canonicalName": "Com Scrambler",
+          "family": "equipment",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Galaxy at War",
+              "ssot": "user-provided TXT/PDF"
+            }
+          ],
+          "phase0Disposition": "KEEP",
+          "repo": {
+            "present": true,
+            "pack": "packs/equipment.db",
+            "matchedName": "Com Scrambler",
+            "matchedId": "comms-com-scrambler",
+            "matchType": "exact"
+          },
+          "reason": "Exact canonical identity present.",
+          "canonicalIdentityKey": "galaxy-at-war:com-scrambler",
+          "executionAction": "NO_IDENTITY_CHANGE",
+          "sourceVerification": "TXT_VERIFIED"
+        },
+        {
+          "canonicalName": "Comlink, Tightbeam",
+          "family": "equipment",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Galaxy at War",
+              "ssot": "user-provided TXT/PDF"
+            }
+          ],
+          "phase0Disposition": "EDIT",
+          "repo": {
+            "present": true,
+            "pack": "packs/equipment.db",
+            "matchedName": "Tightbeam Comlink",
+            "matchedId": "comms-tightbeam-comlink",
+            "matchType": "alias"
+          },
+          "reason": "Canonical identity present under repo name Tightbeam Comlink; normalize display identity.",
+          "canonicalIdentityKey": "galaxy-at-war:comlink-tightbeam",
+          "executionAction": "NORMALIZE_CANONICAL_IDENTITY",
+          "sourceVerification": "TXT_VERIFIED"
+        },
+        {
+          "canonicalName": "Targeting Beacon",
+          "family": "equipment",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Galaxy at War",
+              "ssot": "user-provided TXT/PDF"
+            }
+          ],
+          "phase0Disposition": "KEEP",
+          "repo": {
+            "present": true,
+            "pack": "packs/equipment.db",
+            "matchedName": "Targeting Beacon",
+            "matchedId": "comms-targeting-beacon",
+            "matchType": "exact"
+          },
+          "reason": "Exact canonical identity present.",
+          "canonicalIdentityKey": "galaxy-at-war:targeting-beacon",
+          "executionAction": "NO_IDENTITY_CHANGE",
+          "sourceVerification": "TXT_VERIFIED"
+        },
+        {
+          "canonicalName": "Triangulation Visor",
+          "family": "equipment",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Galaxy at War",
+              "ssot": "user-provided TXT/PDF"
+            }
+          ],
+          "phase0Disposition": "KEEP",
+          "repo": {
+            "present": true,
+            "pack": "packs/equipment.db",
+            "matchedName": "Triangulation Visor",
+            "matchedId": "computer-triangulation-visor",
+            "matchType": "exact"
+          },
+          "reason": "Exact canonical identity present.",
+          "canonicalIdentityKey": "galaxy-at-war:triangulation-visor",
+          "executionAction": "NO_IDENTITY_CHANGE",
+          "sourceVerification": "TXT_VERIFIED"
+        },
+        {
+          "canonicalName": "Communication Scanner",
+          "family": "equipment",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Galaxy at War",
+              "ssot": "user-provided TXT/PDF"
+            }
+          ],
+          "phase0Disposition": "KEEP",
+          "repo": {
+            "present": true,
+            "pack": "packs/equipment.db",
+            "matchedName": "Communication Scanner",
+            "matchedId": "detect-communication-scanner",
+            "matchType": "exact"
+          },
+          "reason": "Exact canonical identity present.",
+          "canonicalIdentityKey": "galaxy-at-war:communication-scanner",
+          "executionAction": "NO_IDENTITY_CHANGE",
+          "sourceVerification": "TXT_VERIFIED"
+        },
+        {
+          "canonicalName": "Proximity Flare",
+          "family": "equipment",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Galaxy at War",
+              "ssot": "user-provided TXT/PDF"
+            }
+          ],
+          "phase0Disposition": "KEEP",
+          "repo": {
+            "present": true,
+            "pack": "packs/equipment.db",
+            "matchedName": "Proximity Flare",
+            "matchedId": "detect-proximity-flare",
+            "matchType": "exact"
+          },
+          "reason": "Exact canonical identity present.",
+          "canonicalIdentityKey": "galaxy-at-war:proximity-flare",
+          "executionAction": "NO_IDENTITY_CHANGE",
+          "sourceVerification": "TXT_VERIFIED"
+        },
+        {
+          "canonicalName": "Radiation Detector",
+          "family": "equipment",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Galaxy at War",
+              "ssot": "user-provided TXT/PDF"
+            }
+          ],
+          "phase0Disposition": "KEEP",
+          "repo": {
+            "present": true,
+            "pack": "packs/equipment.db",
+            "matchedName": "Radiation Detector",
+            "matchedId": "detect-radiation-detector",
+            "matchType": "exact"
+          },
+          "reason": "Exact canonical identity present.",
+          "canonicalIdentityKey": "galaxy-at-war:radiation-detector",
+          "executionAction": "NO_IDENTITY_CHANGE",
+          "sourceVerification": "TXT_VERIFIED"
+        },
+        {
+          "canonicalName": "Camouflage Poncho",
+          "family": "equipment",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Galaxy at War",
+              "ssot": "user-provided TXT/PDF"
+            }
+          ],
+          "phase0Disposition": "KEEP",
+          "repo": {
+            "present": true,
+            "pack": "packs/equipment.db",
+            "matchedName": "Camouflage Poncho",
+            "matchedId": "survival-camouflage-poncho",
+            "matchType": "exact"
+          },
+          "reason": "Exact canonical identity present.",
+          "canonicalIdentityKey": "galaxy-at-war:camouflage-poncho",
+          "executionAction": "NO_IDENTITY_CHANGE",
+          "sourceVerification": "TXT_VERIFIED"
+        },
+        {
+          "canonicalName": "Field Food Processor",
+          "family": "equipment",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Galaxy at War",
+              "ssot": "user-provided TXT/PDF"
+            }
+          ],
+          "phase0Disposition": "ADD",
+          "repo": {
+            "present": false,
+            "pack": "packs/equipment.db",
+            "matchedName": null,
+            "matchedId": null,
+            "matchType": "absent"
+          },
+          "reason": "Canonical general-equipment identity is present in the supplied source corpus but absent from the repo equipment compendium.",
+          "canonicalIdentityKey": "galaxy-at-war:field-food-processor",
+          "executionAction": "ADD_CANONICAL_IDENTITY_WHEN_PRODUCTION_FIELDS_ARE_CERTIFIED",
+          "executionBlockedBy": "Later description/stat/schema certification required before creating a production-complete record.",
+          "sourceVerification": "TXT_VERIFIED"
+        },
+        {
+          "canonicalName": "Personal Field Shelter",
+          "family": "equipment",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Galaxy at War",
+              "ssot": "user-provided TXT/PDF"
+            }
+          ],
+          "phase0Disposition": "ADD",
+          "repo": {
+            "present": false,
+            "pack": "packs/equipment.db",
+            "matchedName": null,
+            "matchedId": null,
+            "matchType": "absent"
+          },
+          "reason": "Canonical general-equipment identity is present in the supplied source corpus but absent from the repo equipment compendium.",
+          "canonicalIdentityKey": "galaxy-at-war:personal-field-shelter",
+          "executionAction": "ADD_CANONICAL_IDENTITY_WHEN_PRODUCTION_FIELDS_ARE_CERTIFIED",
+          "executionBlockedBy": "Later description/stat/schema certification required before creating a production-complete record.",
+          "sourceVerification": "TXT_VERIFIED"
+        },
+        {
+          "canonicalName": "Plasma Bridge",
+          "family": "equipment",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Galaxy at War",
+              "ssot": "user-provided TXT/PDF"
+            }
+          ],
+          "phase0Disposition": "ADD",
+          "repo": {
+            "present": false,
+            "pack": "packs/equipment.db",
+            "matchedName": null,
+            "matchedId": null,
+            "matchType": "absent"
+          },
+          "reason": "Canonical general-equipment identity is present in the supplied source corpus but absent from the repo equipment compendium.",
+          "canonicalIdentityKey": "galaxy-at-war:plasma-bridge",
+          "executionAction": "ADD_CANONICAL_IDENTITY_WHEN_PRODUCTION_FIELDS_ARE_CERTIFIED",
+          "executionBlockedBy": "Later description/stat/schema certification required before creating a production-complete record.",
+          "sourceVerification": "TXT_VERIFIED"
+        },
+        {
+          "canonicalName": "Vacuum Survival Pouch",
+          "family": "equipment",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Galaxy at War",
+              "ssot": "user-provided TXT/PDF"
+            }
+          ],
+          "phase0Disposition": "ADD",
+          "repo": {
+            "present": false,
+            "pack": "packs/equipment.db",
+            "matchedName": null,
+            "matchedId": null,
+            "matchType": "absent"
+          },
+          "reason": "Canonical general-equipment identity is present in the supplied source corpus but absent from the repo equipment compendium.",
+          "canonicalIdentityKey": "galaxy-at-war:vacuum-survival-pouch",
+          "executionAction": "ADD_CANONICAL_IDENTITY_WHEN_PRODUCTION_FIELDS_ARE_CERTIFIED",
+          "executionBlockedBy": "Later description/stat/schema certification required before creating a production-complete record.",
+          "sourceVerification": "TXT_VERIFIED"
+        },
+        {
+          "canonicalName": "Comlink, Earbud",
+          "family": "equipment",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Galaxy of Intrigue",
+              "ssot": "user-provided TXT/PDF"
+            }
+          ],
+          "phase0Disposition": "EDIT",
+          "repo": {
+            "present": true,
+            "pack": "packs/equipment.db",
+            "matchedName": "Earbud Comlink",
+            "matchedId": "comms-earbud-comlink",
+            "matchType": "alias"
+          },
+          "reason": "Canonical identity present under repo name Earbud Comlink; normalize display identity.",
+          "canonicalIdentityKey": "galaxy-of-intrigue:comlink-earbud",
+          "executionAction": "NORMALIZE_CANONICAL_IDENTITY",
+          "sourceVerification": "TXT_VERIFIED"
+        },
+        {
+          "canonicalName": "Panic Ring",
+          "family": "equipment",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Galaxy of Intrigue",
+              "ssot": "user-provided TXT/PDF"
+            }
+          ],
+          "phase0Disposition": "KEEP",
+          "repo": {
+            "present": true,
+            "pack": "packs/equipment.db",
+            "matchedName": "Panic Ring",
+            "matchedId": "comms-panic-ring",
+            "matchType": "exact"
+          },
+          "reason": "Exact canonical identity present.",
+          "canonicalIdentityKey": "galaxy-of-intrigue:panic-ring",
+          "executionAction": "NO_IDENTITY_CHANGE",
+          "sourceVerification": "TXT_VERIFIED"
+        },
+        {
+          "canonicalName": "Holo Converter",
+          "family": "equipment",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Galaxy of Intrigue",
+              "ssot": "user-provided TXT/PDF"
+            }
+          ],
+          "phase0Disposition": "KEEP",
+          "repo": {
+            "present": true,
+            "pack": "packs/equipment.db",
+            "matchedName": "Holo Converter",
+            "matchedId": "comms-holo-converter",
+            "matchType": "exact"
+          },
+          "reason": "Exact canonical identity present.",
+          "canonicalIdentityKey": "galaxy-of-intrigue:holo-converter",
+          "executionAction": "NO_IDENTITY_CHANGE",
+          "sourceVerification": "TXT_VERIFIED"
+        },
+        {
+          "canonicalName": "Surveillance Detector",
+          "family": "equipment",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Galaxy of Intrigue",
+              "ssot": "user-provided TXT/PDF"
+            }
+          ],
+          "phase0Disposition": "KEEP",
+          "repo": {
+            "present": true,
+            "pack": "packs/equipment.db",
+            "matchedName": "Surveillance Detector",
+            "matchedId": "detect-surveillance-detector",
+            "matchType": "exact"
+          },
+          "reason": "Exact canonical identity present.",
+          "canonicalIdentityKey": "galaxy-of-intrigue:surveillance-detector",
+          "executionAction": "NO_IDENTITY_CHANGE",
+          "sourceVerification": "TXT_VERIFIED"
+        },
+        {
+          "canonicalName": "Surveillance Tagger",
+          "family": "equipment",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Galaxy of Intrigue",
+              "ssot": "user-provided TXT/PDF"
+            }
+          ],
+          "phase0Disposition": "KEEP",
+          "repo": {
+            "present": true,
+            "pack": "packs/equipment.db",
+            "matchedName": "Surveillance Tagger",
+            "matchedId": "detect-surveillance-tagger",
+            "matchType": "exact"
+          },
+          "reason": "Exact canonical identity present.",
+          "canonicalIdentityKey": "galaxy-of-intrigue:surveillance-tagger",
+          "executionAction": "NO_IDENTITY_CHANGE",
+          "sourceVerification": "TXT_VERIFIED"
+        },
+        {
+          "canonicalName": "Veridicator",
+          "family": "equipment",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Galaxy of Intrigue",
+              "ssot": "user-provided TXT/PDF"
+            }
+          ],
+          "phase0Disposition": "KEEP",
+          "repo": {
+            "present": true,
+            "pack": "packs/equipment.db",
+            "matchedName": "Veridicator",
+            "matchedId": "detect-veridicator",
+            "matchType": "exact"
+          },
+          "reason": "Exact canonical identity present.",
+          "canonicalIdentityKey": "galaxy-of-intrigue:veridicator",
+          "executionAction": "NO_IDENTITY_CHANGE",
+          "sourceVerification": "TXT_VERIFIED"
+        },
+        {
+          "canonicalName": "Vid-Vox Scrambler",
+          "family": "equipment",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Galaxy of Intrigue",
+              "ssot": "user-provided TXT/PDF"
+            }
+          ],
+          "phase0Disposition": "KEEP",
+          "repo": {
+            "present": true,
+            "pack": "packs/equipment.db",
+            "matchedName": "Vid-Vox Scrambler",
+            "matchedId": "detect-vid-vox-scrambler",
+            "matchType": "exact"
+          },
+          "reason": "Exact canonical identity present.",
+          "canonicalIdentityKey": "galaxy-of-intrigue:vid-vox-scrambler",
+          "executionAction": "NO_IDENTITY_CHANGE",
+          "sourceVerification": "TXT_VERIFIED"
+        },
+        {
+          "canonicalName": "Sith Battle Harness",
+          "family": "equipment",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Jedi Academy Training Manual",
+              "ssot": "user-provided TXT/PDF"
+            }
+          ],
+          "phase0Disposition": "ADD",
+          "repo": {
+            "present": false,
+            "pack": "packs/equipment.db",
+            "matchedName": null,
+            "matchedId": null,
+            "matchType": "absent"
+          },
+          "reason": "Canonical general-equipment identity is present in the supplied source corpus but absent from the repo equipment compendium.",
+          "canonicalIdentityKey": "jedi-academy-training-manual:sith-battle-harness",
+          "executionAction": "ADD_CANONICAL_IDENTITY_WHEN_PRODUCTION_FIELDS_ARE_CERTIFIED",
+          "executionBlockedBy": "Later description/stat/schema certification required before creating a production-complete record.",
+          "sourceVerification": "TXT_VERIFIED"
+        },
+        {
+          "canonicalName": "Force Detector",
+          "family": "equipment",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Jedi Academy Training Manual",
+              "ssot": "user-provided TXT/PDF"
+            }
+          ],
+          "phase0Disposition": "ADD",
+          "repo": {
+            "present": false,
+            "pack": "packs/equipment.db",
+            "matchedName": null,
+            "matchedId": null,
+            "matchType": "absent"
+          },
+          "reason": "Canonical general-equipment identity is present in the supplied source corpus but absent from the repo equipment compendium.",
+          "canonicalIdentityKey": "jedi-academy-training-manual:force-detector",
+          "executionAction": "ADD_CANONICAL_IDENTITY_WHEN_PRODUCTION_FIELDS_ARE_CERTIFIED",
+          "executionBlockedBy": "Later description/stat/schema certification required before creating a production-complete record.",
+          "sourceVerification": "TXT_VERIFIED"
+        },
+        {
+          "canonicalName": "Force Training Aid",
+          "family": "equipment",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Jedi Academy Training Manual",
+              "ssot": "user-provided TXT/PDF"
+            }
+          ],
+          "phase0Disposition": "ADD",
+          "repo": {
+            "present": false,
+            "pack": "packs/equipment.db",
+            "matchedName": null,
+            "matchedId": null,
+            "matchType": "absent"
+          },
+          "reason": "Canonical general-equipment identity is present in the supplied source corpus but absent from the repo equipment compendium.",
+          "canonicalIdentityKey": "jedi-academy-training-manual:force-training-aid",
+          "executionAction": "ADD_CANONICAL_IDENTITY_WHEN_PRODUCTION_FIELDS_ARE_CERTIFIED",
+          "executionBlockedBy": "Later description/stat/schema certification required before creating a production-complete record.",
+          "sourceVerification": "TXT_VERIFIED"
+        },
+        {
+          "canonicalName": "Universal Energy Cage",
+          "family": "equipment",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Jedi Academy Training Manual",
+              "ssot": "user-provided TXT/PDF"
+            }
+          ],
+          "phase0Disposition": "ADD",
+          "repo": {
+            "present": false,
+            "pack": "packs/equipment.db",
+            "matchedName": null,
+            "matchedId": null,
+            "matchType": "absent"
+          },
+          "reason": "Canonical general-equipment identity is present in the supplied source corpus but absent from the repo equipment compendium.",
+          "canonicalIdentityKey": "jedi-academy-training-manual:universal-energy-cage",
+          "executionAction": "ADD_CANONICAL_IDENTITY_WHEN_PRODUCTION_FIELDS_ARE_CERTIFIED",
+          "executionBlockedBy": "Later description/stat/schema certification required before creating a production-complete record.",
+          "sourceVerification": "TXT_VERIFIED"
+        },
+        {
+          "canonicalName": "Computer Interface Visor",
+          "family": "equipment",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Knights of the Old Republic Campaign Guide",
+              "ssot": "user-provided TXT/PDF"
+            }
+          ],
+          "phase0Disposition": "KEEP",
+          "repo": {
+            "present": true,
+            "pack": "packs/equipment.db",
+            "matchedName": "Computer Interface Visor",
+            "matchedId": "computer-interface-visor",
+            "matchType": "exact"
+          },
+          "reason": "Exact canonical identity present.",
+          "canonicalIdentityKey": "knights-of-the-old-republic-campaign-guide:computer-interface-visor",
+          "executionAction": "NO_IDENTITY_CHANGE",
+          "sourceVerification": "TXT_VERIFIED"
+        },
+        {
+          "canonicalName": "Aural Amplifier",
+          "family": "equipment",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Knights of the Old Republic Campaign Guide",
+              "ssot": "user-provided TXT/PDF"
+            }
+          ],
+          "phase0Disposition": "KEEP",
+          "repo": {
+            "present": true,
+            "pack": "packs/equipment.db",
+            "matchedName": "Aural Amplifier",
+            "matchedId": "detect-aural-amplifier",
+            "matchType": "exact"
+          },
+          "reason": "Exact canonical identity present.",
+          "canonicalIdentityKey": "knights-of-the-old-republic-campaign-guide:aural-amplifier",
+          "executionAction": "NO_IDENTITY_CHANGE",
+          "sourceVerification": "TXT_VERIFIED"
+        },
+        {
+          "canonicalName": "Motion Sensing Visor",
+          "family": "equipment",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Knights of the Old Republic Campaign Guide",
+              "ssot": "user-provided TXT/PDF"
+            }
+          ],
+          "phase0Disposition": "KEEP",
+          "repo": {
+            "present": true,
+            "pack": "packs/equipment.db",
+            "matchedName": "Motion Sensing Visor",
+            "matchedId": "detect-motion-sensing-visor",
+            "matchType": "exact"
+          },
+          "reason": "Exact canonical identity present.",
+          "canonicalIdentityKey": "knights-of-the-old-republic-campaign-guide:motion-sensing-visor",
+          "executionAction": "NO_IDENTITY_CHANGE",
+          "sourceVerification": "TXT_VERIFIED"
+        },
+        {
+          "canonicalName": "Neural Band",
+          "family": "equipment",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Knights of the Old Republic Campaign Guide",
+              "ssot": "user-provided TXT/PDF"
+            }
+          ],
+          "phase0Disposition": "KEEP",
+          "repo": {
+            "present": true,
+            "pack": "packs/equipment.db",
+            "matchedName": "Neural Band",
+            "matchedId": "detect-neural-band",
+            "matchType": "exact"
+          },
+          "reason": "Exact canonical identity present.",
+          "canonicalIdentityKey": "knights-of-the-old-republic-campaign-guide:neural-band",
+          "executionAction": "NO_IDENTITY_CHANGE",
+          "sourceVerification": "TXT_VERIFIED"
+        },
+        {
+          "canonicalName": "Stealth Field Generator",
+          "family": "equipment",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Knights of the Old Republic Campaign Guide",
+              "ssot": "user-provided TXT/PDF"
+            }
+          ],
+          "phase0Disposition": "KEEP",
+          "repo": {
+            "present": true,
+            "pack": "packs/equipment.db",
+            "matchedName": "Stealth Field Generator",
+            "matchedId": "detect-stealth-field-generator",
+            "matchType": "exact"
+          },
+          "reason": "Exact canonical identity present.",
+          "canonicalIdentityKey": "knights-of-the-old-republic-campaign-guide:stealth-field-generator",
+          "executionAction": "NO_IDENTITY_CHANGE",
+          "sourceVerification": "TXT_VERIFIED"
+        },
+        {
+          "canonicalName": "Vacuum Mask",
+          "family": "equipment",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Knights of the Old Republic Campaign Guide",
+              "ssot": "user-provided TXT/PDF"
+            }
+          ],
+          "phase0Disposition": "KEEP",
+          "repo": {
+            "present": true,
+            "pack": "packs/equipment.db",
+            "matchedName": "Vacuum Mask",
+            "matchedId": "life-vacuum-mask",
+            "matchType": "exact"
+          },
+          "reason": "Exact canonical identity present.",
+          "canonicalIdentityKey": "knights-of-the-old-republic-campaign-guide:vacuum-mask",
+          "executionAction": "NO_IDENTITY_CHANGE",
+          "sourceVerification": "TXT_VERIFIED"
+        },
+        {
+          "canonicalName": "Mechanical Interface Visor",
+          "family": "equipment",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Knights of the Old Republic Campaign Guide",
+              "ssot": "user-provided TXT/PDF"
+            }
+          ],
+          "phase0Disposition": "ADD",
+          "repo": {
+            "present": false,
+            "pack": "packs/equipment.db",
+            "matchedName": null,
+            "matchedId": null,
+            "matchType": "absent"
+          },
+          "reason": "Canonical general-equipment identity is present in the supplied source corpus but absent from the repo equipment compendium.",
+          "canonicalIdentityKey": "knights-of-the-old-republic-campaign-guide:mechanical-interface-visor",
+          "executionAction": "ADD_CANONICAL_IDENTITY_WHEN_PRODUCTION_FIELDS_ARE_CERTIFIED",
+          "executionBlockedBy": "Later description/stat/schema certification required before creating a production-complete record.",
+          "sourceVerification": "TXT_VERIFIED"
+        },
+        {
+          "canonicalName": "Comlink, Hands-Free",
+          "family": "equipment",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Legacy Era Campaign Guide",
+              "ssot": "user-provided TXT/PDF"
+            }
+          ],
+          "phase0Disposition": "EDIT",
+          "repo": {
+            "present": true,
+            "pack": "packs/equipment.db",
+            "matchedName": "Hands-Free Comlink",
+            "matchedId": "comms-hands-free-comlink",
+            "matchType": "alias"
+          },
+          "reason": "Canonical identity present under repo name Hands-Free Comlink; normalize display identity.",
+          "canonicalIdentityKey": "legacy-era-campaign-guide:comlink-hands-free",
+          "executionAction": "NORMALIZE_CANONICAL_IDENTITY",
+          "sourceVerification": "TXT_VERIFIED"
+        },
+        {
+          "canonicalName": "Spy Bug",
+          "family": "equipment",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Legacy Era Campaign Guide",
+              "ssot": "user-provided TXT/PDF"
+            }
+          ],
+          "phase0Disposition": "KEEP",
+          "repo": {
+            "present": true,
+            "pack": "packs/equipment.db",
+            "matchedName": "Spy Bug",
+            "matchedId": "detect-spy-bug",
+            "matchType": "exact"
+          },
+          "reason": "Exact canonical identity present.",
+          "canonicalIdentityKey": "legacy-era-campaign-guide:spy-bug",
+          "executionAction": "NO_IDENTITY_CHANGE",
+          "sourceVerification": "TXT_VERIFIED"
+        },
+        {
+          "canonicalName": "Xcalq-3GA \"Slicer Special\" Portable Computer",
+          "family": "equipment",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Legacy Era Campaign Guide",
+              "ssot": "user-provided TXT/PDF"
+            }
+          ],
+          "phase0Disposition": "KEEP",
+          "repo": {
+            "present": true,
+            "pack": "packs/equipment.db",
+            "matchedName": "Xcalq-3GA \"Slicer Special\" Portable Computer",
+            "matchedId": "computer-xcalq-3ga-slicer-special",
+            "matchType": "exact"
+          },
+          "reason": "Exact canonical identity present.",
+          "canonicalIdentityKey": "legacy-era-campaign-guide:xcalq-3ga-slicer-special-portable-computer",
+          "executionAction": "NO_IDENTITY_CHANGE",
+          "sourceVerification": "TXT_VERIFIED"
+        },
+        {
+          "canonicalName": "Xcalq Stealth Pack",
+          "family": "equipment",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Legacy Era Campaign Guide",
+              "ssot": "user-provided TXT/PDF"
+            }
+          ],
+          "phase0Disposition": "KEEP",
+          "repo": {
+            "present": true,
+            "pack": "packs/equipment.db",
+            "matchedName": "Xcalq Stealth Pack",
+            "matchedId": "computer-xcalq-stealth-pack",
+            "matchType": "exact"
+          },
+          "reason": "Exact canonical identity present.",
+          "canonicalIdentityKey": "legacy-era-campaign-guide:xcalq-stealth-pack",
+          "executionAction": "NO_IDENTITY_CHANGE",
+          "sourceVerification": "TXT_VERIFIED"
+        },
+        {
+          "canonicalName": "Ambient Aural Amplifier",
+          "family": "equipment",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Rebellion Era Campaign Guide",
+              "ssot": "user-provided TXT/PDF"
+            }
+          ],
+          "phase0Disposition": "KEEP",
+          "repo": {
+            "present": true,
+            "pack": "packs/equipment.db",
+            "matchedName": "Ambient Aural Amplifier",
+            "matchedId": "detect-ambient-aural-amplifier",
+            "matchType": "exact"
+          },
+          "reason": "Exact canonical identity present.",
+          "canonicalIdentityKey": "rebellion-era-campaign-guide:ambient-aural-amplifier",
+          "executionAction": "NO_IDENTITY_CHANGE",
+          "sourceVerification": "TXT_VERIFIED"
+        },
+        {
+          "canonicalName": "Computerized Interface Scope",
+          "family": "equipment",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Rebellion Era Campaign Guide",
+              "ssot": "user-provided TXT/PDF"
+            }
+          ],
+          "phase0Disposition": "ADD",
+          "repo": {
+            "present": false,
+            "pack": "packs/equipment.db",
+            "matchedName": null,
+            "matchedId": null,
+            "matchType": "absent"
+          },
+          "reason": "Canonical general-equipment identity is present in the supplied source corpus but absent from the repo equipment compendium.",
+          "canonicalIdentityKey": "rebellion-era-campaign-guide:computerized-interface-scope",
+          "executionAction": "ADD_CANONICAL_IDENTITY_WHEN_PRODUCTION_FIELDS_ARE_CERTIFIED",
+          "executionBlockedBy": "Later description/stat/schema certification required before creating a production-complete record.",
+          "sourceVerification": "TXT_VERIFIED"
+        },
+        {
+          "canonicalName": "Propulsion Pack",
+          "family": "equipment",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Rebellion Era Campaign Guide",
+              "ssot": "user-provided TXT/PDF"
+            }
+          ],
+          "phase0Disposition": "KEEP",
+          "repo": {
+            "present": true,
+            "pack": "packs/equipment.db",
+            "matchedName": "Propulsion Pack",
+            "matchedId": "life-propulsion-pack",
+            "matchType": "exact"
+          },
+          "reason": "Exact canonical identity present.",
+          "canonicalIdentityKey": "rebellion-era-campaign-guide:propulsion-pack",
+          "executionAction": "NO_IDENTITY_CHANGE",
+          "sourceVerification": "TXT_VERIFIED"
+        },
+        {
+          "canonicalName": "ABC Scrambler",
+          "family": "equipment",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Scum and Villainy",
+              "ssot": "user-provided TXT/PDF"
+            }
+          ],
+          "phase0Disposition": "ADD",
+          "repo": {
+            "present": false,
+            "pack": "packs/equipment.db",
+            "matchedName": null,
+            "matchedId": null,
+            "matchType": "absent"
+          },
+          "reason": "Canonical general-equipment identity is present in the supplied source corpus but absent from the repo equipment compendium.",
+          "canonicalIdentityKey": "scum-and-villainy:abc-scrambler",
+          "executionAction": "ADD_CANONICAL_IDENTITY_WHEN_PRODUCTION_FIELDS_ARE_CERTIFIED",
+          "executionBlockedBy": "Later description/stat/schema certification required before creating a production-complete record.",
+          "sourceVerification": "TXT_VERIFIED"
+        },
+        {
+          "canonicalName": "Force Cage",
+          "family": "equipment",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Scum and Villainy",
+              "ssot": "user-provided TXT/PDF"
+            }
+          ],
+          "phase0Disposition": "ADD",
+          "repo": {
+            "present": false,
+            "pack": "packs/equipment.db",
+            "matchedName": null,
+            "matchedId": null,
+            "matchType": "absent"
+          },
+          "reason": "Canonical general-equipment identity is present in the supplied source corpus but absent from the repo equipment compendium.",
+          "canonicalIdentityKey": "scum-and-villainy:force-cage",
+          "executionAction": "ADD_CANONICAL_IDENTITY_WHEN_PRODUCTION_FIELDS_ARE_CERTIFIED",
+          "executionBlockedBy": "Later description/stat/schema certification required before creating a production-complete record.",
+          "sourceVerification": "TXT_VERIFIED"
+        },
+        {
+          "canonicalName": "Lock Breaking Kit",
+          "family": "equipment",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Scum and Villainy",
+              "ssot": "user-provided TXT/PDF"
+            }
+          ],
+          "phase0Disposition": "ADD",
+          "repo": {
+            "present": false,
+            "pack": "packs/equipment.db",
+            "matchedName": null,
+            "matchedId": null,
+            "matchType": "absent"
+          },
+          "reason": "Canonical general-equipment identity is present in the supplied source corpus but absent from the repo equipment compendium.",
+          "canonicalIdentityKey": "scum-and-villainy:lock-breaking-kit",
+          "executionAction": "ADD_CANONICAL_IDENTITY_WHEN_PRODUCTION_FIELDS_ARE_CERTIFIED",
+          "executionBlockedBy": "Later description/stat/schema certification required before creating a production-complete record.",
+          "sourceVerification": "TXT_VERIFIED"
+        },
+        {
+          "canonicalName": "Man Trap",
+          "family": "equipment",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Scum and Villainy",
+              "ssot": "user-provided TXT/PDF"
+            }
+          ],
+          "phase0Disposition": "ADD",
+          "repo": {
+            "present": false,
+            "pack": "packs/equipment.db",
+            "matchedName": null,
+            "matchedId": null,
+            "matchType": "absent"
+          },
+          "reason": "Canonical general-equipment identity is present in the supplied source corpus but absent from the repo equipment compendium.",
+          "canonicalIdentityKey": "scum-and-villainy:man-trap",
+          "executionAction": "ADD_CANONICAL_IDENTITY_WHEN_PRODUCTION_FIELDS_ARE_CERTIFIED",
+          "executionBlockedBy": "Later description/stat/schema certification required before creating a production-complete record.",
+          "sourceVerification": "TXT_VERIFIED"
+        },
+        {
+          "canonicalName": "Spacer's Chest",
+          "family": "equipment",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Scum and Villainy",
+              "ssot": "user-provided TXT/PDF"
+            }
+          ],
+          "phase0Disposition": "ADD",
+          "repo": {
+            "present": false,
+            "pack": "packs/equipment.db",
+            "matchedName": null,
+            "matchedId": null,
+            "matchType": "absent"
+          },
+          "reason": "Canonical general-equipment identity is present in the supplied source corpus but absent from the repo equipment compendium.",
+          "canonicalIdentityKey": "scum-and-villainy:spacer-s-chest",
+          "executionAction": "ADD_CANONICAL_IDENTITY_WHEN_PRODUCTION_FIELDS_ARE_CERTIFIED",
+          "executionBlockedBy": "Later description/stat/schema certification required before creating a production-complete record.",
+          "sourceVerification": "PDF_VISUALLY_VERIFIED"
+        },
+        {
+          "canonicalName": "Computer Spike",
+          "family": "equipment",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Threats of the Galaxy",
+              "ssot": "user-provided TXT/PDF"
+            }
+          ],
+          "phase0Disposition": "KEEP",
+          "repo": {
+            "present": true,
+            "pack": "packs/equipment.db",
+            "matchedName": "Computer Spike",
+            "matchedId": "computer-spike",
+            "matchType": "exact"
+          },
+          "reason": "Exact canonical identity present.",
+          "canonicalIdentityKey": "threats-of-the-galaxy:computer-spike",
+          "executionAction": "NO_IDENTITY_CHANGE",
+          "sourceVerification": "TXT_VERIFIED"
+        },
+        {
+          "canonicalName": "HiBaka 2000 Mem-Stik",
+          "family": "equipment",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Threats of the Galaxy",
+              "ssot": "user-provided TXT/PDF"
+            }
+          ],
+          "phase0Disposition": "KEEP",
+          "repo": {
+            "present": true,
+            "pack": "packs/equipment.db",
+            "matchedName": "HiBaka 2000 Mem-Stik",
+            "matchedId": "computer-hibaka-2000-mem-stik",
+            "matchType": "exact"
+          },
+          "reason": "Exact canonical identity present.",
+          "canonicalIdentityKey": "threats-of-the-galaxy:hibaka-2000-mem-stik",
+          "executionAction": "NO_IDENTITY_CHANGE",
+          "sourceVerification": "TXT_VERIFIED"
+        },
+        {
+          "canonicalName": "Lectroticker",
+          "family": "equipment",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Threats of the Galaxy",
+              "ssot": "user-provided TXT/PDF"
+            }
+          ],
+          "phase0Disposition": "KEEP",
+          "repo": {
+            "present": true,
+            "pack": "packs/equipment.db",
+            "matchedName": "Lectroticker",
+            "matchedId": "computer-lectroticker",
+            "matchType": "exact"
+          },
+          "reason": "Exact canonical identity present.",
+          "canonicalIdentityKey": "threats-of-the-galaxy:lectroticker",
+          "executionAction": "NO_IDENTITY_CHANGE",
+          "sourceVerification": "TXT_VERIFIED"
+        },
+        {
+          "canonicalName": "Climbing Harness",
+          "family": "equipment",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Unknown Regions",
+              "ssot": "user-provided TXT/PDF"
+            }
+          ],
+          "phase0Disposition": "ADD",
+          "repo": {
+            "present": false,
+            "pack": "packs/equipment.db",
+            "matchedName": null,
+            "matchedId": null,
+            "matchType": "absent"
+          },
+          "reason": "Canonical general-equipment identity is present in the supplied source corpus but absent from the repo equipment compendium.",
+          "canonicalIdentityKey": "unknown-regions:climbing-harness",
+          "executionAction": "ADD_CANONICAL_IDENTITY_WHEN_PRODUCTION_FIELDS_ARE_CERTIFIED",
+          "executionBlockedBy": "Later description/stat/schema certification required before creating a production-complete record.",
+          "sourceVerification": "TXT_VERIFIED"
+        },
+        {
+          "canonicalName": "Emergency Vacuum Seal",
+          "family": "equipment",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Unknown Regions",
+              "ssot": "user-provided TXT/PDF"
+            }
+          ],
+          "phase0Disposition": "KEEP",
+          "repo": {
+            "present": true,
+            "pack": "packs/equipment.db",
+            "matchedName": "Emergency Vacuum Seal",
+            "matchedId": "life-emergency-vacuum-seal",
+            "matchType": "exact"
+          },
+          "reason": "Exact canonical identity present.",
+          "canonicalIdentityKey": "unknown-regions:emergency-vacuum-seal",
+          "executionAction": "NO_IDENTITY_CHANGE",
+          "sourceVerification": "TXT_VERIFIED"
+        },
+        {
+          "canonicalName": "Fire Paste",
+          "family": "equipment",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Unknown Regions",
+              "ssot": "user-provided TXT/PDF"
+            }
+          ],
+          "phase0Disposition": "ADD",
+          "repo": {
+            "present": false,
+            "pack": "packs/equipment.db",
+            "matchedName": null,
+            "matchedId": null,
+            "matchType": "absent"
+          },
+          "reason": "Canonical general-equipment identity is present in the supplied source corpus but absent from the repo equipment compendium.",
+          "canonicalIdentityKey": "unknown-regions:fire-paste",
+          "executionAction": "ADD_CANONICAL_IDENTITY_WHEN_PRODUCTION_FIELDS_ARE_CERTIFIED",
+          "executionBlockedBy": "Later description/stat/schema certification required before creating a production-complete record.",
+          "sourceVerification": "TXT_VERIFIED"
+        },
+        {
+          "canonicalName": "Fire Rod",
+          "family": "equipment",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Unknown Regions",
+              "ssot": "user-provided TXT/PDF"
+            }
+          ],
+          "phase0Disposition": "ADD",
+          "repo": {
+            "present": false,
+            "pack": "packs/equipment.db",
+            "matchedName": null,
+            "matchedId": null,
+            "matchType": "absent"
+          },
+          "reason": "Canonical general-equipment identity is present in the supplied source corpus but absent from the repo equipment compendium.",
+          "canonicalIdentityKey": "unknown-regions:fire-rod",
+          "executionAction": "ADD_CANONICAL_IDENTITY_WHEN_PRODUCTION_FIELDS_ARE_CERTIFIED",
+          "executionBlockedBy": "Later description/stat/schema certification required before creating a production-complete record.",
+          "sourceVerification": "TXT_VERIFIED"
+        },
+        {
+          "canonicalName": "Personal Multitool",
+          "family": "equipment",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Unknown Regions",
+              "ssot": "user-provided TXT/PDF"
+            }
+          ],
+          "phase0Disposition": "ADD",
+          "repo": {
+            "present": false,
+            "pack": "packs/equipment.db",
+            "matchedName": null,
+            "matchedId": null,
+            "matchType": "absent"
+          },
+          "reason": "Canonical general-equipment identity is present in the supplied source corpus but absent from the repo equipment compendium.",
+          "canonicalIdentityKey": "unknown-regions:personal-multitool",
+          "executionAction": "ADD_CANONICAL_IDENTITY_WHEN_PRODUCTION_FIELDS_ARE_CERTIFIED",
+          "executionBlockedBy": "Later description/stat/schema certification required before creating a production-complete record.",
+          "sourceVerification": "TXT_VERIFIED"
+        },
+        {
+          "canonicalName": "Personal Translator",
+          "family": "equipment",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Unknown Regions",
+              "ssot": "user-provided TXT/PDF"
+            }
+          ],
+          "phase0Disposition": "ADD",
+          "repo": {
+            "present": false,
+            "pack": "packs/equipment.db",
+            "matchedName": null,
+            "matchedId": null,
+            "matchType": "absent"
+          },
+          "reason": "Canonical general-equipment identity is present in the supplied source corpus but absent from the repo equipment compendium.",
+          "canonicalIdentityKey": "unknown-regions:personal-translator",
+          "executionAction": "ADD_CANONICAL_IDENTITY_WHEN_PRODUCTION_FIELDS_ARE_CERTIFIED",
+          "executionBlockedBy": "Later description/stat/schema certification required before creating a production-complete record.",
+          "sourceVerification": "TXT_VERIFIED"
+        },
+        {
+          "canonicalName": "Plastent",
+          "family": "equipment",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Unknown Regions",
+              "ssot": "user-provided TXT/PDF"
+            }
+          ],
+          "phase0Disposition": "ADD",
+          "repo": {
+            "present": false,
+            "pack": "packs/equipment.db",
+            "matchedName": null,
+            "matchedId": null,
+            "matchType": "absent"
+          },
+          "reason": "Canonical general-equipment identity is present in the supplied source corpus but absent from the repo equipment compendium.",
+          "canonicalIdentityKey": "unknown-regions:plastent",
+          "executionAction": "ADD_CANONICAL_IDENTITY_WHEN_PRODUCTION_FIELDS_ARE_CERTIFIED",
+          "executionBlockedBy": "Later description/stat/schema certification required before creating a production-complete record.",
+          "sourceVerification": "TXT_VERIFIED"
+        },
+        {
+          "canonicalName": "Portable Beacon",
+          "family": "equipment",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Unknown Regions",
+              "ssot": "user-provided TXT/PDF"
+            }
+          ],
+          "phase0Disposition": "ADD",
+          "repo": {
+            "present": false,
+            "pack": "packs/equipment.db",
+            "matchedName": null,
+            "matchedId": null,
+            "matchType": "absent"
+          },
+          "reason": "Canonical general-equipment identity is present in the supplied source corpus but absent from the repo equipment compendium.",
+          "canonicalIdentityKey": "unknown-regions:portable-beacon",
+          "executionAction": "ADD_CANONICAL_IDENTITY_WHEN_PRODUCTION_FIELDS_ARE_CERTIFIED",
+          "executionBlockedBy": "Later description/stat/schema certification required before creating a production-complete record.",
+          "sourceVerification": "TXT_VERIFIED"
+        },
+        {
+          "canonicalName": "Repulsor Boots",
+          "family": "equipment",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Unknown Regions",
+              "ssot": "user-provided TXT/PDF"
+            }
+          ],
+          "phase0Disposition": "ADD",
+          "repo": {
+            "present": false,
+            "pack": "packs/equipment.db",
+            "matchedName": null,
+            "matchedId": null,
+            "matchType": "absent"
+          },
+          "reason": "Canonical general-equipment identity is present in the supplied source corpus but absent from the repo equipment compendium.",
+          "canonicalIdentityKey": "unknown-regions:repulsor-boots",
+          "executionAction": "ADD_CANONICAL_IDENTITY_WHEN_PRODUCTION_FIELDS_ARE_CERTIFIED",
+          "executionBlockedBy": "Later description/stat/schema certification required before creating a production-complete record.",
+          "sourceVerification": "TXT_VERIFIED"
+        },
+        {
+          "canonicalName": "Repulsor Hitch",
+          "family": "equipment",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Unknown Regions",
+              "ssot": "user-provided TXT/PDF"
+            }
+          ],
+          "phase0Disposition": "ADD",
+          "repo": {
+            "present": false,
+            "pack": "packs/equipment.db",
+            "matchedName": null,
+            "matchedId": null,
+            "matchType": "absent"
+          },
+          "reason": "Canonical general-equipment identity is present in the supplied source corpus but absent from the repo equipment compendium.",
+          "canonicalIdentityKey": "unknown-regions:repulsor-hitch",
+          "executionAction": "ADD_CANONICAL_IDENTITY_WHEN_PRODUCTION_FIELDS_ARE_CERTIFIED",
+          "executionBlockedBy": "Later description/stat/schema certification required before creating a production-complete record.",
+          "sourceVerification": "TXT_VERIFIED"
+        },
+        {
+          "canonicalName": "Saddle, Riding",
+          "family": "equipment",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Unknown Regions",
+              "ssot": "user-provided TXT/PDF"
+            }
+          ],
+          "phase0Disposition": "ADD",
+          "repo": {
+            "present": false,
+            "pack": "packs/equipment.db",
+            "matchedName": null,
+            "matchedId": null,
+            "matchType": "absent"
+          },
+          "reason": "Canonical general-equipment identity is present in the supplied source corpus but absent from the repo equipment compendium.",
+          "canonicalIdentityKey": "unknown-regions:saddle-riding",
+          "executionAction": "ADD_CANONICAL_IDENTITY_WHEN_PRODUCTION_FIELDS_ARE_CERTIFIED",
+          "executionBlockedBy": "Later description/stat/schema certification required before creating a production-complete record.",
+          "sourceVerification": "TXT_VERIFIED"
+        },
+        {
+          "canonicalName": "Saddle, War",
+          "family": "equipment",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Unknown Regions",
+              "ssot": "user-provided TXT/PDF"
+            }
+          ],
+          "phase0Disposition": "ADD",
+          "repo": {
+            "present": false,
+            "pack": "packs/equipment.db",
+            "matchedName": null,
+            "matchedId": null,
+            "matchType": "absent"
+          },
+          "reason": "Canonical general-equipment identity is present in the supplied source corpus but absent from the repo equipment compendium.",
+          "canonicalIdentityKey": "unknown-regions:saddle-war",
+          "executionAction": "ADD_CANONICAL_IDENTITY_WHEN_PRODUCTION_FIELDS_ARE_CERTIFIED",
+          "executionBlockedBy": "Later description/stat/schema certification required before creating a production-complete record.",
+          "sourceVerification": "TXT_VERIFIED"
+        },
+        {
+          "canonicalName": "Shipsuit",
+          "family": "equipment",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Unknown Regions",
+              "ssot": "user-provided TXT/PDF"
+            }
+          ],
+          "phase0Disposition": "KEEP",
+          "repo": {
+            "present": true,
+            "pack": "packs/equipment.db",
+            "matchedName": "Shipsuit",
+            "matchedId": "life-shipsuit",
+            "matchType": "exact"
+          },
+          "reason": "Exact canonical identity present.",
+          "canonicalIdentityKey": "unknown-regions:shipsuit",
+          "executionAction": "NO_IDENTITY_CHANGE",
+          "sourceVerification": "TXT_VERIFIED"
+        },
+        {
+          "canonicalName": "Signal Wand",
+          "family": "equipment",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Unknown Regions",
+              "ssot": "user-provided TXT/PDF"
+            }
+          ],
+          "phase0Disposition": "KEEP",
+          "repo": {
+            "present": true,
+            "pack": "packs/equipment.db",
+            "matchedName": "Signal Wand",
+            "matchedId": "comms-signal-wand",
+            "matchType": "exact"
+          },
+          "reason": "Exact canonical identity present.",
+          "canonicalIdentityKey": "unknown-regions:signal-wand",
+          "executionAction": "NO_IDENTITY_CHANGE",
+          "sourceVerification": "TXT_VERIFIED"
+        },
+        {
+          "canonicalName": "Sonar Mapper",
+          "family": "equipment",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Unknown Regions",
+              "ssot": "user-provided TXT/PDF"
+            }
+          ],
+          "phase0Disposition": "KEEP",
+          "repo": {
+            "present": true,
+            "pack": "packs/equipment.db",
+            "matchedName": "Sonar Mapper",
+            "matchedId": "detect-sonar-mapper",
+            "matchType": "exact"
+          },
+          "reason": "Exact canonical identity present.",
+          "canonicalIdentityKey": "unknown-regions:sonar-mapper",
+          "executionAction": "NO_IDENTITY_CHANGE",
+          "sourceVerification": "TXT_VERIFIED"
+        },
+        {
+          "canonicalName": "Subsonic Field Emitter",
+          "family": "equipment",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Unknown Regions",
+              "ssot": "user-provided TXT/PDF"
+            }
+          ],
+          "phase0Disposition": "ADD",
+          "repo": {
+            "present": false,
+            "pack": "packs/equipment.db",
+            "matchedName": null,
+            "matchedId": null,
+            "matchType": "absent"
+          },
+          "reason": "Canonical general-equipment identity is present in the supplied source corpus but absent from the repo equipment compendium.",
+          "canonicalIdentityKey": "unknown-regions:subsonic-field-emitter",
+          "executionAction": "ADD_CANONICAL_IDENTITY_WHEN_PRODUCTION_FIELDS_ARE_CERTIFIED",
+          "executionBlockedBy": "Later description/stat/schema certification required before creating a production-complete record.",
+          "sourceVerification": "TXT_VERIFIED"
+        },
+        {
+          "canonicalName": "Water Extractor",
+          "family": "equipment",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Unknown Regions",
+              "ssot": "user-provided TXT/PDF"
+            }
+          ],
+          "phase0Disposition": "ADD",
+          "repo": {
+            "present": false,
+            "pack": "packs/equipment.db",
+            "matchedName": null,
+            "matchedId": null,
+            "matchType": "absent"
+          },
+          "reason": "Canonical general-equipment identity is present in the supplied source corpus but absent from the repo equipment compendium.",
+          "canonicalIdentityKey": "unknown-regions:water-extractor",
+          "executionAction": "ADD_CANONICAL_IDENTITY_WHEN_PRODUCTION_FIELDS_ARE_CERTIFIED",
+          "executionBlockedBy": "Later description/stat/schema certification required before creating a production-complete record.",
+          "sourceVerification": "TXT_VERIFIED"
+        },
+        {
+          "canonicalName": "Camouflage Netting",
+          "canonicalIdentityKey": "clone-wars-camouflage-netting",
+          "family": "equipment",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Clone Wars Campaign Guide",
+              "ssot": "user-provided TXT/PDF",
+              "evidence": "Table in equipment chapter: cost 6,000 credits, weight 40 kg; powered/unpowered rules."
+            }
+          ],
+          "phase0Disposition": "ADD",
+          "repo": {
+            "present": false,
+            "pack": "packs/equipment.db",
+            "matchedName": null,
+            "matchedId": null,
+            "matchType": "absent"
+          },
+          "reason": "Canonical general-equipment identity is present in the supplied source corpus but absent from the repo equipment compendium.",
+          "executionAction": "ADD_CANONICAL_IDENTITY_WHEN_PRODUCTION_FIELDS_ARE_CERTIFIED",
+          "executionBlockedBy": "Later description/stat/schema certification required before creating a production-complete record.",
+          "sourceVerification": "TXT_TABLE_AND_RULES_VERIFIED"
+        },
+        {
+          "canonicalName": "Camouflage Netting",
+          "canonicalIdentityKey": "galaxy-at-war-camouflage-netting",
+          "family": "equipment",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Galaxy at War",
+              "ssot": "user-provided TXT/PDF",
+              "evidence": "Table 2-5 equipment: cost 2,000 credits, weight 5 kg; compact powered netting rules."
+            }
+          ],
+          "phase0Disposition": "EDIT",
+          "repo": {
+            "present": true,
+            "pack": "packs/equipment.db",
+            "matchedName": "Field Camouflage Netting",
+            "matchedId": "survival-field-camouflage-netting",
+            "matchType": "alias"
+          },
+          "reason": "Canonical identity present under repo name Field Camouflage Netting; normalize display identity.",
+          "executionAction": "NORMALIZE_CANONICAL_IDENTITY",
+          "sourceVerification": "TXT_TABLE_AND_RULES_VERIFIED"
+        },
+        {
+          "canonicalName": "Jet Pack",
+          "canonicalIdentityKey": "core-jet-pack",
+          "family": "equipment",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Core Rulebook",
+              "ssot": "user-provided TXT/PDF",
+              "evidence": "Core equipment table/description: Jet Pack, 300 credits, 30 kg."
+            }
+          ],
+          "phase0Disposition": "KEEP",
+          "repo": {
+            "present": true,
+            "pack": "packs/equipment.db",
+            "matchedName": "Jet Pack",
+            "matchedId": "survival-jetpack",
+            "matchType": "exact"
+          },
+          "reason": "Exact canonical identity present.",
+          "executionAction": "NO_IDENTITY_CHANGE",
+          "sourceVerification": "TXT_VERIFIED"
+        },
+        {
+          "canonicalName": "Targeting Scope, Standard",
+          "canonicalIdentityKey": "core-targeting-scope-standard",
+          "family": "equipment",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Core Rulebook",
+              "ssot": "user-provided TXT/PDF",
+              "evidence": "Core weapon/armor accessory table and Targeting Scope description."
+            }
+          ],
+          "phase0Disposition": "KEEP",
+          "repo": {
+            "present": true,
+            "pack": "packs/equipment.db",
+            "matchedName": "Targeting Scope, Standard",
+            "matchedId": "accessory-targeting-scope-standard",
+            "matchType": "exact"
+          },
+          "reason": "Exact canonical identity present.",
+          "executionAction": "NO_IDENTITY_CHANGE",
+          "sourceVerification": "PDF_VISUALLY_VERIFIED"
+        },
+        {
+          "canonicalName": "Targeting Scope, Enhanced Low-Light",
+          "canonicalIdentityKey": "core-targeting-scope-enhanced-low-light",
+          "family": "equipment",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Core Rulebook",
+              "ssot": "user-provided TXT/PDF",
+              "evidence": "Core weapon/armor accessory table and Targeting Scope description."
+            }
+          ],
+          "phase0Disposition": "KEEP",
+          "repo": {
+            "present": true,
+            "pack": "packs/equipment.db",
+            "matchedName": "Targeting Scope, Enhanced Low-Light",
+            "matchedId": "accessory-targeting-scope-enhanced-low-light",
+            "matchType": "exact"
+          },
+          "reason": "Exact canonical identity present.",
+          "executionAction": "NO_IDENTITY_CHANGE",
+          "sourceVerification": "PDF_VISUALLY_VERIFIED"
+        },
+        {
+          "canonicalName": "Antiox Breath Mask",
+          "canonicalIdentityKey": "core-antiox-breath-mask",
+          "family": "equipment",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Core Rulebook",
+              "ssot": "user-provided TXT/PDF",
+              "evidence": "Kel Dor Special Equipment: replacement mask has explicit cost and operative species-support rule."
+            }
+          ],
+          "phase0Disposition": "KEEP",
+          "repo": {
+            "present": true,
+            "pack": "packs/equipment.db",
+            "matchedName": "Antiox Breath Mask",
+            "matchedId": "life-antiox-breath-mask",
+            "matchType": "exact"
+          },
+          "reason": "Exact canonical identity present.",
+          "executionAction": "NO_IDENTITY_CHANGE",
+          "sourceVerification": "TXT_VERIFIED"
+        },
+        {
+          "canonicalName": "Ultraviolet Visor",
+          "canonicalIdentityKey": "goi-ultraviolet-visor",
+          "family": "equipment",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Galaxy of Intrigue",
+              "ssot": "user-provided TXT/PDF",
+              "evidence": "Defel Special Equipment: explicit named visor, cost, and operative species-support rule."
+            }
+          ],
+          "phase0Disposition": "KEEP",
+          "repo": {
+            "present": true,
+            "pack": "packs/equipment.db",
+            "matchedName": "Ultraviolet Visor",
+            "matchedId": "life-ultraviolet-visor",
+            "matchType": "exact"
+          },
+          "reason": "Exact canonical identity present.",
+          "executionAction": "NO_IDENTITY_CHANGE",
+          "sourceVerification": "TXT_VERIFIED"
+        },
+        {
+          "canonicalName": "Ubese Environmental Suit",
+          "canonicalIdentityKey": "sav-ubese-environmental-suit",
+          "family": "equipment",
+          "track": "character",
+          "sources": [
+            {
+              "book": "Scum and Villainy",
+              "ssot": "user-provided TXT/PDF",
+              "evidence": "Ubese Special Equipment: environmental suit with breath mask/voice modulator and explicit cost."
+            }
+          ],
+          "phase0Disposition": "KEEP",
+          "repo": {
+            "present": true,
+            "pack": "packs/equipment.db",
+            "matchedName": "Ubese Environmental Suit",
+            "matchedId": "life-ubese-environmental-suit",
+            "matchType": "exact"
+          },
+          "reason": "Exact canonical identity present.",
+          "executionAction": "NO_IDENTITY_CHANGE",
+          "sourceVerification": "TXT_VERIFIED"
+        }
+      ],
+      "repoReconciliation": [
+        {
+          "id": "accessory-bandolier",
+          "name": "Bandolier",
+          "phase0Disposition": "KEEP",
+          "canonicalIdentityKey": "core-rulebook:bandolier",
+          "canonicalMatch": "Bandolier",
+          "reason": "Repo name matches canonical identity.",
+          "executionAction": "NO_IDENTITY_CHANGE"
+        },
+        {
+          "id": "accessory-helmet-package",
+          "name": "Helmet Package",
+          "phase0Disposition": "KEEP",
+          "canonicalIdentityKey": "core-rulebook:helmet-package",
+          "canonicalMatch": "Helmet Package",
+          "reason": "Repo name matches canonical identity.",
+          "executionAction": "NO_IDENTITY_CHANGE"
+        },
+        {
+          "id": "accessory-holster-concealed",
+          "name": "Holster, Concealed",
+          "phase0Disposition": "KEEP",
+          "canonicalIdentityKey": "core-rulebook:holster-concealed",
+          "canonicalMatch": "Holster, Concealed",
+          "reason": "Repo name matches canonical identity.",
+          "executionAction": "NO_IDENTITY_CHANGE"
+        },
+        {
+          "id": "accessory-holster-hip",
+          "name": "Holster, Hip",
+          "phase0Disposition": "KEEP",
+          "canonicalIdentityKey": "core-rulebook:holster-hip",
+          "canonicalMatch": "Holster, Hip",
+          "reason": "Repo name matches canonical identity.",
+          "executionAction": "NO_IDENTITY_CHANGE"
+        },
+        {
+          "id": "accessory-targeting-scope-enhanced-low-light",
+          "name": "Targeting Scope, Enhanced Low-Light",
+          "phase0Disposition": "KEEP",
+          "canonicalIdentityKey": "core-targeting-scope-enhanced-low-light",
+          "canonicalMatch": "Targeting Scope, Enhanced Low-Light",
+          "reason": "Repo name matches canonical identity.",
+          "executionAction": "NO_IDENTITY_CHANGE"
+        },
+        {
+          "id": "accessory-targeting-scope-standard",
+          "name": "Targeting Scope, Standard",
+          "phase0Disposition": "KEEP",
+          "canonicalIdentityKey": "core-targeting-scope-standard",
+          "canonicalMatch": "Targeting Scope, Standard",
+          "reason": "Repo name matches canonical identity.",
+          "executionAction": "NO_IDENTITY_CHANGE"
+        },
+        {
+          "id": "comms-com-scrambler",
+          "name": "Com Scrambler",
+          "phase0Disposition": "KEEP",
+          "canonicalIdentityKey": "galaxy-at-war:com-scrambler",
+          "canonicalMatch": "Com Scrambler",
+          "reason": "Repo name matches canonical identity.",
+          "executionAction": "NO_IDENTITY_CHANGE"
+        },
+        {
+          "id": "comms-comlink-long-range",
+          "name": "Comlink, Long-Range",
+          "phase0Disposition": "KEEP",
+          "canonicalIdentityKey": "core-rulebook:comlink-long-range",
+          "canonicalMatch": "Comlink, Long-Range",
+          "reason": "Repo name matches canonical identity.",
+          "executionAction": "NO_IDENTITY_CHANGE"
+        },
+        {
+          "id": "comms-comlink-short-range",
+          "name": "Comlink, Short-Range",
+          "phase0Disposition": "KEEP",
+          "canonicalIdentityKey": "core-rulebook:comlink-short-range",
+          "canonicalMatch": "Comlink, Short-Range",
+          "reason": "Repo name matches canonical identity.",
+          "executionAction": "NO_IDENTITY_CHANGE"
+        },
+        {
+          "id": "comms-earbud-comlink",
+          "name": "Earbud Comlink",
+          "phase0Disposition": "EDIT",
+          "canonicalIdentityKey": "galaxy-of-intrigue:comlink-earbud",
+          "canonicalMatch": "Comlink, Earbud",
+          "reason": "Repo identity maps to canonical display name Comlink, Earbud.",
+          "executionAction": "NORMALIZE_CANONICAL_IDENTITY"
+        },
+        {
+          "id": "comms-hands-free-comlink",
+          "name": "Hands-Free Comlink",
+          "phase0Disposition": "EDIT",
+          "canonicalIdentityKey": "legacy-era-campaign-guide:comlink-hands-free",
+          "canonicalMatch": "Comlink, Hands-Free",
+          "reason": "Repo identity maps to canonical display name Comlink, Hands-Free.",
+          "executionAction": "NORMALIZE_CANONICAL_IDENTITY"
+        },
+        {
+          "id": "comms-holo-converter",
+          "name": "Holo Converter",
+          "phase0Disposition": "KEEP",
+          "canonicalIdentityKey": "galaxy-of-intrigue:holo-converter",
+          "canonicalMatch": "Holo Converter",
+          "reason": "Repo name matches canonical identity.",
+          "executionAction": "NO_IDENTITY_CHANGE"
+        },
+        {
+          "id": "comms-panic-ring",
+          "name": "Panic Ring",
+          "phase0Disposition": "KEEP",
+          "canonicalIdentityKey": "galaxy-of-intrigue:panic-ring",
+          "canonicalMatch": "Panic Ring",
+          "reason": "Repo name matches canonical identity.",
+          "executionAction": "NO_IDENTITY_CHANGE"
+        },
+        {
+          "id": "comms-pocket-scrambler",
+          "name": "Pocket Scrambler",
+          "phase0Disposition": "KEEP",
+          "canonicalIdentityKey": "core-rulebook:pocket-scrambler",
+          "canonicalMatch": "Pocket Scrambler",
+          "reason": "Repo name matches canonical identity.",
+          "executionAction": "NO_IDENTITY_CHANGE"
+        },
+        {
+          "id": "comms-signal-wand",
+          "name": "Signal Wand",
+          "phase0Disposition": "KEEP",
+          "canonicalIdentityKey": "unknown-regions:signal-wand",
+          "canonicalMatch": "Signal Wand",
+          "reason": "Repo name matches canonical identity.",
+          "executionAction": "NO_IDENTITY_CHANGE"
+        },
+        {
+          "id": "comms-targeting-beacon",
+          "name": "Targeting Beacon",
+          "phase0Disposition": "KEEP",
+          "canonicalIdentityKey": "galaxy-at-war:targeting-beacon",
+          "canonicalMatch": "Targeting Beacon",
+          "reason": "Repo name matches canonical identity.",
+          "executionAction": "NO_IDENTITY_CHANGE"
+        },
+        {
+          "id": "comms-tightbeam-comlink",
+          "name": "Tightbeam Comlink",
+          "phase0Disposition": "EDIT",
+          "canonicalIdentityKey": "galaxy-at-war:comlink-tightbeam",
+          "canonicalMatch": "Comlink, Tightbeam",
+          "reason": "Repo identity maps to canonical display name Comlink, Tightbeam.",
+          "executionAction": "NORMALIZE_CANONICAL_IDENTITY"
+        },
+        {
+          "id": "comms-visual-wrist-comm",
+          "name": "Visual Wrist Comm",
+          "phase0Disposition": "KEEP",
+          "canonicalIdentityKey": "clone-wars-campaign-guide:visual-wrist-comm",
+          "canonicalMatch": "Visual Wrist Comm",
+          "reason": "Repo name matches canonical identity.",
+          "executionAction": "NO_IDENTITY_CHANGE"
+        },
+        {
+          "id": "comms-vox-box",
+          "name": "Vox-Box",
+          "phase0Disposition": "KEEP",
+          "canonicalIdentityKey": "core-rulebook:vox-box",
+          "canonicalMatch": "Vox-Box",
+          "reason": "Repo name matches canonical identity.",
+          "executionAction": "NO_IDENTITY_CHANGE"
+        },
+        {
+          "id": "computer-bracer-computer",
+          "name": "Bracer Computer",
+          "phase0Disposition": "KEEP",
+          "canonicalIdentityKey": "clone-wars-campaign-guide:bracer-computer",
+          "canonicalMatch": "Bracer Computer",
+          "reason": "Repo name matches canonical identity.",
+          "executionAction": "NO_IDENTITY_CHANGE"
+        },
+        {
+          "id": "computer-code-cylinder",
+          "name": "Code Cylinder",
+          "phase0Disposition": "KEEP",
+          "canonicalIdentityKey": "core-rulebook:code-cylinder",
+          "canonicalMatch": "Code Cylinder",
+          "reason": "Repo name matches canonical identity.",
+          "executionAction": "NO_IDENTITY_CHANGE"
+        },
+        {
+          "id": "computer-credit-chip",
+          "name": "Credit Chip",
+          "phase0Disposition": "KEEP",
+          "canonicalIdentityKey": "core-rulebook:credit-chip",
+          "canonicalMatch": "Credit Chip",
+          "reason": "Repo name matches canonical identity.",
+          "executionAction": "NO_IDENTITY_CHANGE"
+        },
+        {
+          "id": "computer-datacards-blank-10",
+          "name": "Blank Datacards (10)",
+          "phase0Disposition": "EDIT",
+          "canonicalIdentityKey": "core-rulebook:datacards-blank-10",
+          "canonicalMatch": "Datacards, Blank (10)",
+          "reason": "Repo identity maps to canonical display name Datacards, Blank (10).",
+          "executionAction": "NORMALIZE_CANONICAL_IDENTITY"
+        },
+        {
+          "id": "computer-datapad-basic",
+          "name": "Datapad, Basic",
+          "phase0Disposition": "KEEP",
+          "canonicalIdentityKey": "core-rulebook:datapad-basic",
+          "canonicalMatch": "Datapad, Basic",
+          "reason": "Repo name matches canonical identity.",
+          "executionAction": "NO_IDENTITY_CHANGE"
+        },
+        {
+          "id": "computer-datapad-standard",
+          "name": "Datapad, Standard",
+          "phase0Disposition": "EDIT",
+          "canonicalIdentityKey": "core-rulebook:datapad",
+          "canonicalMatch": "Datapad",
+          "reason": "Repo identity maps to canonical display name Datapad.",
+          "executionAction": "NORMALIZE_CANONICAL_IDENTITY"
+        },
+        {
+          "id": "computer-hibaka-2000-mem-stik",
+          "name": "HiBaka 2000 Mem-Stik",
+          "phase0Disposition": "KEEP",
+          "canonicalIdentityKey": "threats-of-the-galaxy:hibaka-2000-mem-stik",
+          "canonicalMatch": "HiBaka 2000 Mem-Stik",
+          "reason": "Repo name matches canonical identity.",
+          "executionAction": "NO_IDENTITY_CHANGE"
+        },
+        {
+          "id": "computer-interface-visor",
+          "name": "Computer Interface Visor",
+          "phase0Disposition": "KEEP",
+          "canonicalIdentityKey": "knights-of-the-old-republic-campaign-guide:computer-interface-visor",
+          "canonicalMatch": "Computer Interface Visor",
+          "reason": "Repo name matches canonical identity.",
+          "executionAction": "NO_IDENTITY_CHANGE"
+        },
+        {
+          "id": "computer-lectroticker",
+          "name": "Lectroticker",
+          "phase0Disposition": "KEEP",
+          "canonicalIdentityKey": "threats-of-the-galaxy:lectroticker",
+          "canonicalMatch": "Lectroticker",
+          "reason": "Repo name matches canonical identity.",
+          "executionAction": "NO_IDENTITY_CHANGE"
+        },
+        {
+          "id": "computer-personal-holoprojector",
+          "name": "Personal Holoprojector",
+          "phase0Disposition": "EDIT",
+          "canonicalIdentityKey": "core-rulebook:holoprojector-personal",
+          "canonicalMatch": "Holoprojector, Personal",
+          "reason": "Repo identity maps to canonical display name Holoprojector, Personal.",
+          "executionAction": "NORMALIZE_CANONICAL_IDENTITY"
+        },
+        {
+          "id": "computer-portable-computer",
+          "name": "Portable Computer",
+          "phase0Disposition": "KEEP",
+          "canonicalIdentityKey": "core-rulebook:portable-computer",
+          "canonicalMatch": "Portable Computer",
+          "reason": "Repo name matches canonical identity.",
+          "executionAction": "NO_IDENTITY_CHANGE"
+        },
+        {
+          "id": "computer-spike",
+          "name": "Computer Spike",
+          "phase0Disposition": "KEEP",
+          "canonicalIdentityKey": "threats-of-the-galaxy:computer-spike",
+          "canonicalMatch": "Computer Spike",
+          "reason": "Repo name matches canonical identity.",
+          "executionAction": "NO_IDENTITY_CHANGE"
+        },
+        {
+          "id": "computer-triangulation-visor",
+          "name": "Triangulation Visor",
+          "phase0Disposition": "KEEP",
+          "canonicalIdentityKey": "galaxy-at-war:triangulation-visor",
+          "canonicalMatch": "Triangulation Visor",
+          "reason": "Repo name matches canonical identity.",
+          "executionAction": "NO_IDENTITY_CHANGE"
+        },
+        {
+          "id": "computer-xcalq-3ga-slicer-special",
+          "name": "Xcalq-3GA \"Slicer Special\" Portable Computer",
+          "phase0Disposition": "KEEP",
+          "canonicalIdentityKey": "legacy-era-campaign-guide:xcalq-3ga-slicer-special-portable-computer",
+          "canonicalMatch": "Xcalq-3GA \"Slicer Special\" Portable Computer",
+          "reason": "Repo name matches canonical identity.",
+          "executionAction": "NO_IDENTITY_CHANGE"
+        },
+        {
+          "id": "computer-xcalq-stealth-pack",
+          "name": "Xcalq Stealth Pack",
+          "phase0Disposition": "KEEP",
+          "canonicalIdentityKey": "legacy-era-campaign-guide:xcalq-stealth-pack",
+          "canonicalMatch": "Xcalq Stealth Pack",
+          "reason": "Repo name matches canonical identity.",
+          "executionAction": "NO_IDENTITY_CHANGE"
+        },
+        {
+          "id": "detect-ambient-aural-amplifier",
+          "name": "Ambient Aural Amplifier",
+          "phase0Disposition": "KEEP",
+          "canonicalIdentityKey": "rebellion-era-campaign-guide:ambient-aural-amplifier",
+          "canonicalMatch": "Ambient Aural Amplifier",
+          "reason": "Repo name matches canonical identity.",
+          "executionAction": "NO_IDENTITY_CHANGE"
+        },
+        {
+          "id": "detect-audiorecorder",
+          "name": "Audiorecorder",
+          "phase0Disposition": "KEEP",
+          "canonicalIdentityKey": "core-rulebook:audiorecorder",
+          "canonicalMatch": "Audiorecorder",
+          "reason": "Repo name matches canonical identity.",
+          "executionAction": "NO_IDENTITY_CHANGE"
+        },
+        {
+          "id": "detect-aural-amplifier",
+          "name": "Aural Amplifier",
+          "phase0Disposition": "KEEP",
+          "canonicalIdentityKey": "knights-of-the-old-republic-campaign-guide:aural-amplifier",
+          "canonicalMatch": "Aural Amplifier",
+          "reason": "Repo name matches canonical identity.",
+          "executionAction": "NO_IDENTITY_CHANGE"
+        },
+        {
+          "id": "detect-communication-scanner",
+          "name": "Communication Scanner",
+          "phase0Disposition": "KEEP",
+          "canonicalIdentityKey": "galaxy-at-war:communication-scanner",
+          "canonicalMatch": "Communication Scanner",
+          "reason": "Repo name matches canonical identity.",
+          "executionAction": "NO_IDENTITY_CHANGE"
+        },
+        {
+          "id": "detect-decoy-glow-rod",
+          "name": "Decoy Glow Rod",
+          "phase0Disposition": "EDIT",
+          "canonicalIdentityKey": "force-unleashed-campaign-guide:decoy-glowrod",
+          "canonicalMatch": "Decoy Glowrod",
+          "reason": "Repo identity maps to canonical display name Decoy Glowrod.",
+          "executionAction": "NORMALIZE_CANONICAL_IDENTITY"
+        },
+        {
+          "id": "detect-electrobinoculars",
+          "name": "Electrobinoculars",
+          "phase0Disposition": "KEEP",
+          "canonicalIdentityKey": "core-rulebook:electrobinoculars",
+          "canonicalMatch": "Electrobinoculars",
+          "reason": "Repo name matches canonical identity.",
+          "executionAction": "NO_IDENTITY_CHANGE"
+        },
+        {
+          "id": "detect-fusion-lantern",
+          "name": "Fusion Lantern",
+          "phase0Disposition": "KEEP",
+          "canonicalIdentityKey": "core-rulebook:fusion-lantern",
+          "canonicalMatch": "Fusion Lantern",
+          "reason": "Repo name matches canonical identity.",
+          "executionAction": "NO_IDENTITY_CHANGE"
+        },
+        {
+          "id": "detect-glow-rod",
+          "name": "Glow Rod",
+          "phase0Disposition": "KEEP",
+          "canonicalIdentityKey": "core-rulebook:glow-rod",
+          "canonicalMatch": "Glow Rod",
+          "reason": "Repo name matches canonical identity.",
+          "executionAction": "NO_IDENTITY_CHANGE"
+        },
+        {
+          "id": "detect-halo-lamp",
+          "name": "Halo Lamp",
+          "phase0Disposition": "KEEP",
+          "canonicalIdentityKey": "clone-wars-campaign-guide:halo-lamp",
+          "canonicalMatch": "Halo Lamp",
+          "reason": "Repo name matches canonical identity.",
+          "executionAction": "NO_IDENTITY_CHANGE"
+        },
+        {
+          "id": "detect-heat-sensor",
+          "name": "Heat Sensor",
+          "phase0Disposition": "REMOVE",
+          "canonicalIdentityKey": null,
+          "canonicalMatch": null,
+          "reason": "Published as a battlestation/facility security sensor rather than a character general-equipment item; preserve for later facility/security-system track if desired.",
+          "executionAction": "REMOVE_FROM_GENERAL_EQUIPMENT_CORPUS_ONLY",
+          "executionBlockedBy": "Do not destroy facility-system concept; later facility/security-system track owns any relocation."
+        },
+        {
+          "id": "detect-holorecorder",
+          "name": "Holorecorder",
+          "phase0Disposition": "KEEP",
+          "canonicalIdentityKey": "core-rulebook:holorecorder",
+          "canonicalMatch": "Holorecorder",
+          "reason": "Repo name matches canonical identity.",
+          "executionAction": "NO_IDENTITY_CHANGE"
+        },
+        {
+          "id": "detect-holoshroud",
+          "name": "Holoshroud",
+          "phase0Disposition": "KEEP",
+          "canonicalIdentityKey": "force-unleashed-campaign-guide:holoshroud",
+          "canonicalMatch": "Holoshroud",
+          "reason": "Repo name matches canonical identity.",
+          "executionAction": "NO_IDENTITY_CHANGE"
+        },
+        {
+          "id": "detect-motion-sensing-visor",
+          "name": "Motion Sensing Visor",
+          "phase0Disposition": "KEEP",
+          "canonicalIdentityKey": "knights-of-the-old-republic-campaign-guide:motion-sensing-visor",
+          "canonicalMatch": "Motion Sensing Visor",
+          "reason": "Repo name matches canonical identity.",
+          "executionAction": "NO_IDENTITY_CHANGE"
+        },
+        {
+          "id": "detect-neural-band",
+          "name": "Neural Band",
+          "phase0Disposition": "KEEP",
+          "canonicalIdentityKey": "knights-of-the-old-republic-campaign-guide:neural-band",
+          "canonicalMatch": "Neural Band",
+          "reason": "Repo name matches canonical identity.",
+          "executionAction": "NO_IDENTITY_CHANGE"
+        },
+        {
+          "id": "detect-proximity-flare",
+          "name": "Proximity Flare",
+          "phase0Disposition": "KEEP",
+          "canonicalIdentityKey": "galaxy-at-war:proximity-flare",
+          "canonicalMatch": "Proximity Flare",
+          "reason": "Repo name matches canonical identity.",
+          "executionAction": "NO_IDENTITY_CHANGE"
+        },
+        {
+          "id": "detect-radiation-detector",
+          "name": "Radiation Detector",
+          "phase0Disposition": "KEEP",
+          "canonicalIdentityKey": "galaxy-at-war:radiation-detector",
+          "canonicalMatch": "Radiation Detector",
+          "reason": "Repo name matches canonical identity.",
+          "executionAction": "NO_IDENTITY_CHANGE"
+        },
+        {
+          "id": "detect-sensor-pack",
+          "name": "Sensor Pack",
+          "phase0Disposition": "KEEP",
+          "canonicalIdentityKey": "core-rulebook:sensor-pack",
+          "canonicalMatch": "Sensor Pack",
+          "reason": "Repo name matches canonical identity.",
+          "executionAction": "NO_IDENTITY_CHANGE"
+        },
+        {
+          "id": "detect-sonar-mapper",
+          "name": "Sonar Mapper",
+          "phase0Disposition": "KEEP",
+          "canonicalIdentityKey": "unknown-regions:sonar-mapper",
+          "canonicalMatch": "Sonar Mapper",
+          "reason": "Repo name matches canonical identity.",
+          "executionAction": "NO_IDENTITY_CHANGE"
+        },
+        {
+          "id": "detect-sound-sponge",
+          "name": "Sound Sponge",
+          "phase0Disposition": "KEEP",
+          "canonicalIdentityKey": "force-unleashed-campaign-guide:sound-sponge",
+          "canonicalMatch": "Sound Sponge",
+          "reason": "Repo name matches canonical identity.",
+          "executionAction": "NO_IDENTITY_CHANGE"
+        },
+        {
+          "id": "detect-spy-bug",
+          "name": "Spy Bug",
+          "phase0Disposition": "KEEP",
+          "canonicalIdentityKey": "legacy-era-campaign-guide:spy-bug",
+          "canonicalMatch": "Spy Bug",
+          "reason": "Repo name matches canonical identity.",
+          "executionAction": "NO_IDENTITY_CHANGE"
+        },
+        {
+          "id": "detect-stealth-field-generator",
+          "name": "Stealth Field Generator",
+          "phase0Disposition": "KEEP",
+          "canonicalIdentityKey": "knights-of-the-old-republic-campaign-guide:stealth-field-generator",
+          "canonicalMatch": "Stealth Field Generator",
+          "reason": "Repo name matches canonical identity.",
+          "executionAction": "NO_IDENTITY_CHANGE"
+        },
+        {
+          "id": "detect-surveillance-detector",
+          "name": "Surveillance Detector",
+          "phase0Disposition": "KEEP",
+          "canonicalIdentityKey": "galaxy-of-intrigue:surveillance-detector",
+          "canonicalMatch": "Surveillance Detector",
+          "reason": "Repo name matches canonical identity.",
+          "executionAction": "NO_IDENTITY_CHANGE"
+        },
+        {
+          "id": "detect-surveillance-tagger",
+          "name": "Surveillance Tagger",
+          "phase0Disposition": "KEEP",
+          "canonicalIdentityKey": "galaxy-of-intrigue:surveillance-tagger",
+          "canonicalMatch": "Surveillance Tagger",
+          "reason": "Repo name matches canonical identity.",
+          "executionAction": "NO_IDENTITY_CHANGE"
+        },
+        {
+          "id": "detect-veridicator",
+          "name": "Veridicator",
+          "phase0Disposition": "KEEP",
+          "canonicalIdentityKey": "galaxy-of-intrigue:veridicator",
+          "canonicalMatch": "Veridicator",
+          "reason": "Repo name matches canonical identity.",
+          "executionAction": "NO_IDENTITY_CHANGE"
+        },
+        {
+          "id": "detect-vid-vox-scrambler",
+          "name": "Vid-Vox Scrambler",
+          "phase0Disposition": "KEEP",
+          "canonicalIdentityKey": "galaxy-of-intrigue:vid-vox-scrambler",
+          "canonicalMatch": "Vid-Vox Scrambler",
+          "reason": "Repo name matches canonical identity.",
+          "executionAction": "NO_IDENTITY_CHANGE"
+        },
+        {
+          "id": "detect-videorecorder",
+          "name": "Videorecorder",
+          "phase0Disposition": "KEEP",
+          "canonicalIdentityKey": "core-rulebook:videorecorder",
+          "canonicalMatch": "Videorecorder",
+          "reason": "Repo name matches canonical identity.",
+          "executionAction": "NO_IDENTITY_CHANGE"
+        },
+        {
+          "id": "life-antiox-breath-mask",
+          "name": "Antiox Breath Mask",
+          "phase0Disposition": "KEEP",
+          "canonicalIdentityKey": "core-antiox-breath-mask",
+          "canonicalMatch": "Antiox Breath Mask",
+          "reason": "Repo name matches canonical identity.",
+          "executionAction": "NO_IDENTITY_CHANGE"
+        },
+        {
+          "id": "life-aquata-breather",
+          "name": "Aquata Breather",
+          "phase0Disposition": "KEEP",
+          "canonicalIdentityKey": "core-rulebook:aquata-breather",
+          "canonicalMatch": "Aquata Breather",
+          "reason": "Repo name matches canonical identity.",
+          "executionAction": "NO_IDENTITY_CHANGE"
+        },
+        {
+          "id": "life-breath-mask",
+          "name": "Breath Mask",
+          "phase0Disposition": "KEEP",
+          "canonicalIdentityKey": "core-rulebook:breath-mask",
+          "canonicalMatch": "Breath Mask",
+          "reason": "Repo name matches canonical identity.",
+          "executionAction": "NO_IDENTITY_CHANGE"
+        },
+        {
+          "id": "life-breathing-apparatus",
+          "name": "Breathing Apparatus",
+          "phase0Disposition": "REMOVE",
+          "canonicalIdentityKey": null,
+          "canonicalMatch": null,
+          "reason": "No standalone published equipment identity found in supplied TXT/PDF sources; phrase appears generically, not as a priced/rules item.",
+          "executionAction": "REMOVE_UNSUPPORTED_GENERAL_EQUIPMENT_RECORD"
+        },
+        {
+          "id": "life-celegian-support-chamber",
+          "name": "Celegian Life-Support Chamber",
+          "phase0Disposition": "REVIEW",
+          "canonicalIdentityKey": null,
+          "canonicalMatch": "Life-Support Chamber (Celegian special equipment)",
+          "reason": "Published as Ooroo/Celegian life-support equipment with explicit mechanics, but not as a normal priced general-equipment entry. Retain pending a later special-equipment scope decision.",
+          "executionAction": "NO_ACTION"
+        },
+        {
+          "id": "life-emergency-vacuum-seal",
+          "name": "Emergency Vacuum Seal",
+          "phase0Disposition": "KEEP",
+          "canonicalIdentityKey": "unknown-regions:emergency-vacuum-seal",
+          "canonicalMatch": "Emergency Vacuum Seal",
+          "reason": "Repo name matches canonical identity.",
+          "executionAction": "NO_IDENTITY_CHANGE"
+        },
+        {
+          "id": "life-flight-suit",
+          "name": "Flight Suit",
+          "phase0Disposition": "KEEP",
+          "canonicalIdentityKey": "core-rulebook:flight-suit",
+          "canonicalMatch": "Flight Suit",
+          "reason": "Repo name matches canonical identity.",
+          "executionAction": "NO_IDENTITY_CHANGE"
+        },
+        {
+          "id": "life-propulsion-pack",
+          "name": "Propulsion Pack",
+          "phase0Disposition": "KEEP",
+          "canonicalIdentityKey": "rebellion-era-campaign-guide:propulsion-pack",
+          "canonicalMatch": "Propulsion Pack",
+          "reason": "Repo name matches canonical identity.",
+          "executionAction": "NO_IDENTITY_CHANGE"
+        },
+        {
+          "id": "life-shipsuit",
+          "name": "Shipsuit",
+          "phase0Disposition": "KEEP",
+          "canonicalIdentityKey": "unknown-regions:shipsuit",
+          "canonicalMatch": "Shipsuit",
+          "reason": "Repo name matches canonical identity.",
+          "executionAction": "NO_IDENTITY_CHANGE"
+        },
+        {
+          "id": "life-space-suit",
+          "name": "Space Suit",
+          "phase0Disposition": "KEEP",
+          "canonicalIdentityKey": "core-rulebook:space-suit",
+          "canonicalMatch": "Space Suit",
+          "reason": "Repo name matches canonical identity.",
+          "executionAction": "NO_IDENTITY_CHANGE"
+        },
+        {
+          "id": "life-transliterator",
+          "name": "Transliterator",
+          "phase0Disposition": "REMOVE",
+          "canonicalIdentityKey": null,
+          "canonicalMatch": null,
+          "reason": "No published equipment identity found in the supplied TXT/PDF source corpus.",
+          "executionAction": "REMOVE_UNSUPPORTED_GENERAL_EQUIPMENT_RECORD"
+        },
+        {
+          "id": "life-ubese-environmental-suit",
+          "name": "Ubese Environmental Suit",
+          "phase0Disposition": "KEEP",
+          "canonicalIdentityKey": "sav-ubese-environmental-suit",
+          "canonicalMatch": "Ubese Environmental Suit",
+          "reason": "Repo name matches canonical identity.",
+          "executionAction": "NO_IDENTITY_CHANGE"
+        },
+        {
+          "id": "life-ultraviolet-visor",
+          "name": "Ultraviolet Visor",
+          "phase0Disposition": "KEEP",
+          "canonicalIdentityKey": "goi-ultraviolet-visor",
+          "canonicalMatch": "Ultraviolet Visor",
+          "reason": "Repo name matches canonical identity.",
+          "executionAction": "NO_IDENTITY_CHANGE"
+        },
+        {
+          "id": "life-vacuum-mask",
+          "name": "Vacuum Mask",
+          "phase0Disposition": "KEEP",
+          "canonicalIdentityKey": "knights-of-the-old-republic-campaign-guide:vacuum-mask",
+          "canonicalMatch": "Vacuum Mask",
+          "reason": "Repo name matches canonical identity.",
+          "executionAction": "NO_IDENTITY_CHANGE"
+        },
+        {
+          "id": "survival-all-temperature-cloak",
+          "name": "All-Temperature Cloak",
+          "phase0Disposition": "KEEP",
+          "canonicalIdentityKey": "core-rulebook:all-temperature-cloak",
+          "canonicalMatch": "All-Temperature Cloak",
+          "reason": "Repo name matches canonical identity.",
+          "executionAction": "NO_IDENTITY_CHANGE"
+        },
+        {
+          "id": "survival-camouflage-poncho",
+          "name": "Camouflage Poncho",
+          "phase0Disposition": "KEEP",
+          "canonicalIdentityKey": "galaxy-at-war:camouflage-poncho",
+          "canonicalMatch": "Camouflage Poncho",
+          "reason": "Repo name matches canonical identity.",
+          "executionAction": "NO_IDENTITY_CHANGE"
+        },
+        {
+          "id": "survival-chain-3m",
+          "name": "Chain (3 meters)",
+          "phase0Disposition": "KEEP",
+          "canonicalIdentityKey": "core-rulebook:chain-3-meters",
+          "canonicalMatch": "Chain (3 meters)",
+          "reason": "Repo name matches canonical identity.",
+          "executionAction": "NO_IDENTITY_CHANGE"
+        },
+        {
+          "id": "survival-field-camouflage-netting",
+          "name": "Field Camouflage Netting",
+          "phase0Disposition": "EDIT",
+          "canonicalIdentityKey": "galaxy-at-war-camouflage-netting",
+          "canonicalMatch": "Camouflage Netting",
+          "reason": "Repo identity maps to canonical display name Camouflage Netting.",
+          "executionAction": "NORMALIZE_CANONICAL_IDENTITY"
+        },
+        {
+          "id": "survival-field-kit",
+          "name": "Field Kit",
+          "phase0Disposition": "KEEP",
+          "canonicalIdentityKey": "core-rulebook:field-kit",
+          "canonicalMatch": "Field Kit",
+          "reason": "Repo name matches canonical identity.",
+          "executionAction": "NO_IDENTITY_CHANGE"
+        },
+        {
+          "id": "survival-jetpack",
+          "name": "Jet Pack",
+          "phase0Disposition": "KEEP",
+          "canonicalIdentityKey": "core-jet-pack",
+          "canonicalMatch": "Jet Pack",
+          "reason": "Repo name matches canonical identity.",
+          "executionAction": "NO_IDENTITY_CHANGE"
+        },
+        {
+          "id": "survival-liquid-cable-dispenser",
+          "name": "Liquid Cable Dispenser (15 meters)",
+          "phase0Disposition": "KEEP",
+          "canonicalIdentityKey": "core-rulebook:liquid-cable-dispenser-15-meters",
+          "canonicalMatch": "Liquid Cable Dispenser (15 meters)",
+          "reason": "Repo name matches canonical identity.",
+          "executionAction": "NO_IDENTITY_CHANGE"
+        },
+        {
+          "id": "survival-ration-pack",
+          "name": "Ration Pack",
+          "phase0Disposition": "KEEP",
+          "canonicalIdentityKey": "core-rulebook:ration-pack",
+          "canonicalMatch": "Ration Pack",
+          "reason": "Repo name matches canonical identity.",
+          "executionAction": "NO_IDENTITY_CHANGE"
+        },
+        {
+          "id": "survival-syntherope-45m",
+          "name": "Syntherope (45 meters)",
+          "phase0Disposition": "KEEP",
+          "canonicalIdentityKey": "core-rulebook:syntherope-45-meters",
+          "canonicalMatch": "Syntherope (45 meters)",
+          "reason": "Repo name matches canonical identity.",
+          "executionAction": "NO_IDENTITY_CHANGE"
+        },
+        {
+          "id": "tool-binder-cuffs",
+          "name": "Binder Cuffs",
+          "phase0Disposition": "KEEP",
+          "canonicalIdentityKey": "core-rulebook:binder-cuffs",
+          "canonicalMatch": "Binder Cuffs",
+          "reason": "Repo name matches canonical identity.",
+          "executionAction": "NO_IDENTITY_CHANGE"
+        },
+        {
+          "id": "tool-energy-cell",
+          "name": "Energy Cell",
+          "phase0Disposition": "KEEP",
+          "canonicalIdentityKey": "core-rulebook:energy-cell",
+          "canonicalMatch": "Energy Cell",
+          "reason": "Repo name matches canonical identity.",
+          "executionAction": "NO_IDENTITY_CHANGE"
+        },
+        {
+          "id": "tool-kit",
+          "name": "Tool Kit",
+          "phase0Disposition": "KEEP",
+          "canonicalIdentityKey": "core-rulebook:tool-kit",
+          "canonicalMatch": "Tool Kit",
+          "reason": "Repo name matches canonical identity.",
+          "executionAction": "NO_IDENTITY_CHANGE"
+        },
+        {
+          "id": "tool-power-pack",
+          "name": "Power Pack",
+          "phase0Disposition": "KEEP",
+          "canonicalIdentityKey": "core-rulebook:power-pack",
+          "canonicalMatch": "Power Pack",
+          "reason": "Repo name matches canonical identity.",
+          "executionAction": "NO_IDENTITY_CHANGE"
+        },
+        {
+          "id": "tool-power-recharger",
+          "name": "Power Recharger",
+          "phase0Disposition": "KEEP",
+          "canonicalIdentityKey": "core-rulebook:power-recharger",
+          "canonicalMatch": "Power Recharger",
+          "reason": "Repo name matches canonical identity.",
+          "executionAction": "NO_IDENTITY_CHANGE"
+        },
+        {
+          "id": "tool-security-kit",
+          "name": "Security Kit",
+          "phase0Disposition": "KEEP",
+          "canonicalIdentityKey": "core-rulebook:security-kit",
+          "canonicalMatch": "Security Kit",
+          "reason": "Repo name matches canonical identity.",
+          "executionAction": "NO_IDENTITY_CHANGE"
+        },
+        {
+          "id": "tool-utility-belt-empty",
+          "name": "Utility Belt (Empty)",
+          "phase0Disposition": "REMOVE",
+          "canonicalIdentityKey": null,
+          "canonicalMatch": null,
+          "reason": "Repo convenience/container variant; Core publishes a single Utility Belt identity with standard contents, not a separate empty item.",
+          "executionAction": "REMOVE_UNSUPPORTED_GENERAL_EQUIPMENT_RECORD"
+        },
+        {
+          "id": "tool-utility-belt-standard",
+          "name": "Utility Belt (Standard)",
+          "phase0Disposition": "EDIT",
+          "canonicalIdentityKey": "core-rulebook:utility-belt",
+          "canonicalMatch": "Utility Belt",
+          "reason": "Repo identity maps to canonical display name Utility Belt.",
+          "executionAction": "NORMALIZE_CANONICAL_IDENTITY"
+        }
+      ],
+      "repoMetadataFindings": [
+        {
+          "id": "life-ubese-environmental-suit",
+          "finding": "Repo claims Unknown Regions; supplied source supports the Ubese environmental suit in Scum and Villainy. Provenance correction is deferred beyond Phase 0-3A identity execution."
+        },
+        {
+          "id": "life-ultraviolet-visor",
+          "finding": "Repo claims Unknown Regions; supplied source explicitly presents Ultraviolet Visor as Defel Special Equipment in Galaxy of Intrigue. Provenance correction is deferred beyond Phase 0-3A identity execution."
+        },
+        {
+          "id": "life-celegian-support-chamber",
+          "finding": "Repo claims Unknown Regions; supplied source evidence located in Jedi Academy Training Manual for Ooroo/Celegian life-support chamber. Record remains REVIEW because it is not a normal priced equipment entry."
+        },
+        {
+          "id": "detect-heat-sensor",
+          "finding": "Repo claims Threats of the Galaxy; portable handheld description is not supported. Galaxy at War publishes Heat Sensors as battlestation/facility systems."
+        }
+      ],
+      "deferredRepoRecords": [
+        {
+          "id": "detect-demolitions-sensor",
+          "name": "Demolitions Sensor",
+          "deferredTo": "Phase 0-3C — Explosives / Demolitions"
+        }
+      ],
+      "executorGuardrails": [
+        "Do not invent missing descriptions, statistics, costs, weights, mechanics, schema fields, or tags in Phase 0-3A.",
+        "Do not merge same-name Camouflage Netting records across sourcebooks; they have materially different published implementations.",
+        "Do not mutate items deferred to medical, demolitions, cybernetics/implants, upgrade, lightsaber, droid, vehicle, or starship batches.",
+        "Celegian Life-Support Chamber is not authorized for automatic deletion in this batch despite lacking a standalone general-equipment entry.",
+        "Preserve record IDs unless a later explicit migration authority says otherwise."
+      ],
+      "execution": {
+        "status": "EXECUTED_RENAMES",
+        "date": "2026-10-05",
+        "authorizedBy": "Phase 0-3A authority execution contract (owner): explicitly authorized identity normalizations only, after name/ID consumer check",
+        "scope": "9 EDIT identity renames; IDs, stats, descriptions, skillHooks, tags, schema untouched; REMOVE/REVIEW/ADD/deferred records untouched",
+        "applied": {
+          "renamedRecords": 9,
+          "aggregatePack": "packs/equipment.db",
+          "derivedSubpacks": [
+            "equipment-comlinks (3)",
+            "equipment-security (1)",
+            "equipment-survival (1)",
+            "equipment-tech (3)",
+            "equipment-tools (1)"
+          ],
+          "storeDescriptions": "data/store/equipment-store-descriptions.json (name + slug for 9 rows; description text unchanged)",
+          "characterTemplates": "data/character-templates.json (name field for 7 template entries; ids and displayName unchanged)",
+          "runtimeStrings": [
+            "scripts/engine/equipment/equipment-skill-hook-resolver.js (hide-comlink hook also matches \"comlink, earbud\")"
+          ]
+        },
+        "followUps": [
+          "Record-internal strings still carry old names and were left alone (mechanics data): skillHooks source/label/note on Earbud, Tightbeam, Field Camouflage Netting; Tightbeam description. Candidates for the stats/hooks pass.",
+          "Store description text still opens with the old display name.",
+          "tools/fix-equipment-data.js would regenerate equipment.db with the OLD names if re-run; do not run it.",
+          "Camouflage Netting: the repo record (renamed) is the Galaxy at War identity; the Clone Wars identity is an ADD and will share the display name, so source-qualified keys (canonicalIdentityKey) must be used to disambiguate.",
+          "Out-of-scope packs: 51 equipment records belong to later batches (16 medical, 17 tech incl. implants/cybernetics/demolitions, 11 tools, 6 security, plus Demolitions Sensor deferred to 0-3C). Duplicate name \"Subelectronic Converter\" is cyber-subelectronic-converter + implant-subelectronic-converter."
+        ]
+      },
+      "impact": {
+        "comms-earbud-comlink": {
+          "disposition": "EDIT",
+          "oldName": "Earbud Comlink",
+          "newName": "Comlink, Earbud",
+          "idReferences": {
+            "data/store/equipment-store-descriptions.json": 1
+          },
+          "nameReferences": {
+            "data/extraskilluses.json": 1,
+            "data/nonheroic/nonheroic_templates.json": 1,
+            "data/store/equipment-store-descriptions.json": 2,
+            "scripts/engine/equipment/equipment-skill-hook-resolver.js": 1
+          }
+        },
+        "comms-hands-free-comlink": {
+          "disposition": "EDIT",
+          "oldName": "Hands-Free Comlink",
+          "newName": "Comlink, Hands-Free",
+          "idReferences": {
+            "data/character-templates.json": 2,
+            "data/store/equipment-store-descriptions.json": 1
+          },
+          "nameReferences": {
+            "data/character-templates.json": 2,
+            "data/store/equipment-store-descriptions.json": 2
+          }
+        },
+        "comms-tightbeam-comlink": {
+          "disposition": "EDIT",
+          "oldName": "Tightbeam Comlink",
+          "newName": "Comlink, Tightbeam",
+          "idReferences": {
+            "data/store/equipment-store-descriptions.json": 1
+          },
+          "nameReferences": {
+            "data/heroic.json": 1,
+            "data/store/equipment-store-descriptions.json": 2
+          }
+        },
+        "computer-datacards-blank-10": {
+          "disposition": "EDIT",
+          "oldName": "Blank Datacards (10)",
+          "newName": "Datacards, Blank (10)",
+          "idReferences": {
+            "data/character-templates.json": 2,
+            "data/store/equipment-store-descriptions.json": 1
+          },
+          "nameReferences": {
+            "data/character-templates.json": 4,
+            "data/store/equipment-store-descriptions.json": 2
+          }
+        },
+        "computer-datapad-standard": {
+          "disposition": "EDIT",
+          "oldName": "Datapad, Standard",
+          "newName": "Datapad",
+          "idReferences": {
+            "data/character-templates.json": 2,
+            "data/store/equipment-store-descriptions.json": 1
+          },
+          "nameReferences": {
+            "data/character-templates.json": 4,
+            "data/store/equipment-store-descriptions.json": 2
+          }
+        },
+        "computer-personal-holoprojector": {
+          "disposition": "EDIT",
+          "oldName": "Personal Holoprojector",
+          "newName": "Holoprojector, Personal",
+          "idReferences": {
+            "data/store/equipment-store-descriptions.json": 1
+          },
+          "nameReferences": {
+            "data/heroic.json": 2,
+            "data/nonheroic.json": 2,
+            "data/nonheroic/nonheroic_templates.json": 1,
+            "data/nonheroic/nonheroic_units.json": 6,
+            "data/store/equipment-store-descriptions.json": 2
+          }
+        },
+        "detect-decoy-glow-rod": {
+          "disposition": "EDIT",
+          "oldName": "Decoy Glow Rod",
+          "newName": "Decoy Glowrod",
+          "idReferences": {
+            "data/store/equipment-store-descriptions.json": 1
+          },
+          "nameReferences": {
+            "data/store/equipment-store-descriptions.json": 2
+          }
+        },
+        "detect-heat-sensor": {
+          "disposition": "REMOVE",
+          "oldName": "Heat Sensor",
+          "newName": null,
+          "idReferences": {
+            "data/store/equipment-store-descriptions.json": 1
+          },
+          "nameReferences": {
+            "data/heroic.json": 2,
+            "data/nonheroic.json": 1,
+            "data/nonheroic/nonheroic_units.json": 1,
+            "data/store/equipment-store-descriptions.json": 2
+          }
+        },
+        "life-breathing-apparatus": {
+          "disposition": "REMOVE",
+          "oldName": "Breathing Apparatus",
+          "newName": null,
+          "idReferences": {
+            "data/store/equipment-store-descriptions.json": 1
+          },
+          "nameReferences": {
+            "data/heroic.json": 1,
+            "data/species-canonical-stats.json": 2,
+            "data/species-traits-migrated.json": 4,
+            "data/species-traits.json": 4,
+            "data/store/equipment-store-descriptions.json": 3,
+            "scripts/engine/poison/poison-engine.js": 1
+          }
+        },
+        "life-celegian-support-chamber": {
+          "disposition": "REVIEW",
+          "oldName": "Celegian Life-Support Chamber",
+          "newName": null,
+          "idReferences": {
+            "data/store/equipment-store-descriptions.json": 1
+          },
+          "nameReferences": {
+            "data/heroic.json": 1,
+            "data/species-canonical-stats.json": 1,
+            "data/species-traits-migrated.json": 1,
+            "data/species-traits.json": 1,
+            "data/store/equipment-store-descriptions.json": 2
+          }
+        },
+        "life-transliterator": {
+          "disposition": "REMOVE",
+          "oldName": "Transliterator",
+          "newName": null,
+          "idReferences": {
+            "data/store/equipment-store-descriptions.json": 1
+          },
+          "nameReferences": {
+            "data/heroic.json": 2,
+            "data/species-canonical-stats.json": 2,
+            "data/species-languages.json": 2,
+            "data/species-traits-migrated.json": 4,
+            "data/species-traits.json": 4,
+            "data/store/equipment-store-descriptions.json": 5
+          }
+        },
+        "survival-field-camouflage-netting": {
+          "disposition": "EDIT",
+          "oldName": "Field Camouflage Netting",
+          "newName": "Camouflage Netting",
+          "idReferences": {
+            "data/store/equipment-store-descriptions.json": 1
+          },
+          "nameReferences": {
+            "data/store/equipment-store-descriptions.json": 2
+          }
+        },
+        "tool-utility-belt-empty": {
+          "disposition": "REMOVE",
+          "oldName": "Utility Belt (Empty)",
+          "newName": null,
+          "idReferences": {
+            "data/store/equipment-store-descriptions.json": 1
+          },
+          "nameReferences": {
+            "data/store/equipment-store-descriptions.json": 2
+          }
+        },
+        "tool-utility-belt-standard": {
+          "disposition": "EDIT",
+          "oldName": "Utility Belt (Standard)",
+          "newName": "Utility Belt",
+          "idReferences": {
+            "data/character-templates.json": 1,
+            "data/store/equipment-store-descriptions.json": 1
+          },
+          "nameReferences": {
+            "data/character-templates.json": 2,
+            "data/store/equipment-store-descriptions.json": 2
+          }
+        }
+      }
     }
   },
   "pendingPhases": [
-    "0-3 Equipment",
+    "0-3B Medical / Treatment Equipment",
+    "0-3C Explosives / Demolitions",
+    "0-3D Cybernetics / Implants",
+    "0-3E Upgrades / Modifications",
     "1 Provenance (pages)",
     "2 Descriptions",
     "3 Schema",

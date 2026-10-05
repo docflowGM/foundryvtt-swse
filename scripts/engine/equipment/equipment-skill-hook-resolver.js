@@ -185,7 +185,7 @@ function useAliases(skillUse = {}) {
   if (text.includes('intercept communications') || text.includes('intercept transmission') || text.includes('intercepted transmission')) values.push('intercept-communications', 'intercept-transmission');
   if (text.includes('decrypt') && (text.includes('transmission') || text.includes('scrambled') || text.includes('communications'))) values.push('decrypt-transmission', 'decrypt-scrambled-transmission');
   if ((text.includes('communication') || text.includes('comlink') || text.includes('signal')) && (text.includes('jamming') || text.includes('jammed') || text.includes('scrambler'))) values.push('overcome-communication-jamming', 'overcome-com-scrambler');
-  if (text.includes('hide communication device') || text.includes('hide comlink') || text.includes('earbud comlink')) values.push('hide-communication-device', 'hide-comlink');
+  if (text.includes('hide communication device') || text.includes('hide comlink') || text.includes('earbud comlink') || text.includes('comlink, earbud')) values.push('hide-communication-device', 'hide-comlink');
 
   // Survival / life-support aliases. These connect survival gear to the
   // canonical skill-use cards without inventing a parallel gear action model.

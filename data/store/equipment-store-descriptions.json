@@ -96,9 +96,9 @@
     "description": "Bioscanner, Medical, 0.5 kg weight, 3500 credits. an advanced medical scanner that provides detailed biological analysis and life sign detection. Field-ready support gear for customers who plan to keep everybody ambulatory, or at least negotiable."
   },
   {
-    "slug": "blank-datacards-10",
+    "slug": "datacards-blank-10",
     "id": "computer-datacards-blank-10",
-    "name": "Blank Datacards (10)",
+    "name": "Datacards, Blank (10)",
     "description": "Blank Datacards (10), Computer, 0.1 kg weight, 10 credits. a pack of 10 blank datacards for storing information. Popular with professionals, hobbyists, and people who keep finding themselves in very specific situations."
   },
   {
@@ -204,15 +204,15 @@
     "description": "Datapad, Basic, Computer, 0.3 kg weight, 100 credits. a basic handheld computer for reading datacards, taking notes, and performing simple calculations. For buyers who like having more information than the other side and fewer questions than the paperwork."
   },
   {
-    "slug": "datapad-standard",
+    "slug": "datapad",
     "id": "computer-datapad-standard",
-    "name": "Datapad, Standard",
+    "name": "Datapad",
     "description": "Datapad, Standard, Computer, 0.5 kg weight, 1000 credits. a full-featured datapad with substantial processing power, networking capabilities, and extensive data storage. For buyers who like having more information than the other side and fewer questions than the paperwork."
   },
   {
-    "slug": "decoy-glow-rod",
+    "slug": "decoy-glowrod",
     "id": "detect-decoy-glow-rod",
-    "name": "Decoy Glow Rod",
+    "name": "Decoy Glowrod",
     "description": "Decoy Glow Rod, Detection/Surveillance, 4 kg weight, 100 credits. a glow rod that can be thrown to create a distraction. A sensible buy for anyone who keeps ending up somewhere the brochure did not recommend."
   },
   {
@@ -234,9 +234,9 @@
     "description": "Detonite Cord, Explosive, 1 kg weight, 1000 credits. a flexible cord of detonite explosive, useful for cutting through doors, walls, and other obstacles. Factory-fresh utility for customers who insist this is for legitimate work."
   },
   {
-    "slug": "earbud-comlink",
+    "slug": "comlink-earbud",
     "id": "comms-earbud-comlink",
-    "name": "Earbud Comlink",
+    "name": "Comlink, Earbud",
     "description": "Earbud Comlink, Communications, 0 kg weight, 200 credits. an extremely small comlink that fits inside the ear canal, virtually invisible to casual observation. For buyers who like having more information than the other side and fewer questions than the paperwork."
   },
   {
@@ -282,9 +282,9 @@
     "description": "FastFlesh Medpac, Medical, 0.5 kg weight, 600 credits. an advanced medpac with fast-acting tissue regeneration compounds. Field-ready support gear for customers who plan to keep everybody ambulatory, or at least negotiable."
   },
   {
-    "slug": "field-camouflage-netting",
+    "slug": "camouflage-netting",
     "id": "survival-field-camouflage-netting",
-    "name": "Field Camouflage Netting",
+    "name": "Camouflage Netting",
     "description": "Field Camouflage Netting, Survival, 5 kg weight, 2000 credits. lightweight camouflage netting for concealing equipment or positions. A sensible buy for anyone who keeps ending up somewhere the brochure did not recommend."
   },
   {
@@ -318,9 +318,9 @@
     "description": "Halo Lamp, Detection/Surveillance, 1 kg weight, 30 credits. a portable light source that creates a broad, diffuse illumination. A smart little purchase for buyers who like to call being overprepared a lifestyle."
   },
   {
-    "slug": "hands-free-comlink",
+    "slug": "comlink-hands-free",
     "id": "comms-hands-free-comlink",
-    "name": "Hands-Free Comlink",
+    "name": "Comlink, Hands-Free",
     "description": "Hands-Free Comlink, Communications, 0.1 kg weight, 150 credits. a miniature comlink that clips to clothing or fits in the ear, allowing hands-free communication. For buyers who like having more information than the other side and fewer questions than the paperwork."
   },
   {
@@ -474,9 +474,9 @@
     "description": "Panic Ring, Communications, 0 kg weight, 300 credits. a ring with an embedded distress beacon that can be activated by squeezing. Popular with professionals, hobbyists, and people who keep finding themselves in very specific situations."
   },
   {
-    "slug": "personal-holoprojector",
+    "slug": "holoprojector-personal",
     "id": "computer-personal-holoprojector",
-    "name": "Personal Holoprojector",
+    "name": "Holoprojector, Personal",
     "description": "Personal Holoprojector, Computer, 0.5 kg weight, 1000 credits. a handheld device that projects three-dimensional holographic images for viewing recorded holos or conducting holoconferences. For buyers who like having more information than the other side and fewer questions than the paperwork."
   },
   {
@@ -678,9 +678,9 @@
     "description": "Targeting Scope, Standard, Weapon/Armor Accessory, 0.2 kg weight, 100 credits. a basic optical scope that aids with ranged attacks. A tasteful accessory for clients who believe equipment should keep up with their worst decisions."
   },
   {
-    "slug": "tightbeam-comlink",
+    "slug": "comlink-tightbeam",
     "id": "comms-tightbeam-comlink",
-    "name": "Tightbeam Comlink",
+    "name": "Comlink, Tightbeam",
     "description": "Tightbeam Comlink, Communications, 0.5 kg weight, 300 credits. a highly directional comlink that transmits in a narrow beam, making interception extremely difficult. For buyers who like having more information than the other side and fewer questions than the paperwork."
   },
   {
@@ -714,9 +714,9 @@
     "description": "Utility Belt (Empty), Tool, 0.3 kg weight, 55 credits. an empty utility belt with pouches for carrying small items. A workbench in portable form for people who trust tools more than technicians."
   },
   {
-    "slug": "utility-belt-standard",
+    "slug": "utility-belt",
     "id": "tool-utility-belt-standard",
-    "name": "Utility Belt (Standard)",
+    "name": "Utility Belt",
     "description": "Utility Belt (Standard), Tool, 4 kg weight, 500 credits. a belt with pouches and tools. Field-ready support gear for customers who plan to keep everybody ambulatory, or at least negotiable."
   },
   {

@@ -1,9 +1,9 @@
 # SWSE Item Canonicalization — Rolling Authority
 
-Status: ACTIVE — Phase 0 complete; Phase 0-1 Weapons and Phase 0-2 Armor certified by owner (armor renames executed)
+Status: ACTIVE — Phase 0 complete; Phase 0-1 Weapons and Phase 0-2 Armor and Phase 0-3A General Equipment certified by owner (armor and equipment renames executed)
 Updated: 2026-10-05
 Machine-readable companion: `data/audits/item-canonicalization-rolling-authority.json`
-Verify against the packs: `node tools/verify-item-weapons-authority.mjs` (weapons and armor)
+Verify against the packs: `node tools/verify-item-weapons-authority.mjs` (weapons, armor and equipment)
 
 This is the single cumulative authority for item rehabilitation. Per-book/phase files are temporary evidence and must not become competing authorities. Architecture evidence: `docs/audits/item-phase-0-ssot-census.md` (owner rulings in §7a).
 
@@ -492,6 +492,225 @@ Follow-ups: store description text still opens with the old display name; `tools
 - 24 EDIT (name differs), 43 KEEP (name equals), 0 duplicates.
 - Verified against `packs/armor.db` by `tools/verify-item-weapons-authority.mjs`; aggregate and armor subpack names currently agree for all 70 records.
 
+## Phase 0-3A — General equipment: census and repo reconciliation
+
+Character-scale general equipment: communications, computers/storage, detection/surveillance, life support, survival/field gear, ordinary tools/restraints/carrying gear, accessories, and specialty nonmedical equipment. Excludes medical/consumable care gear, demolitions-specific gear, cybernetics/implants, weapon/armor/universal upgrades, lightsaber components, droid equipment, and vehicle/starship systems.
+
+Excluded and deferred to later sub-batches: medical/treatment gear (0-3B), demolitions (0-3C), cybernetics/implants (0-3D), weapon/armor/universal upgrades (0-3E), lightsaber components, droid equipment, vehicle/starship systems. Identity and presence only.
+
+| Result | Count |
+|---|---:|
+| Canonical general-equipment identities | 121 |
+| Records in `packs/equipment.db` (all families) | 142 |
+| Repo records in 0-3A scope | 91 |
+| KEEP | 77 |
+| EDIT | 9 |
+| ADD | 35 |
+| REMOVE (repo, from this corpus) | 4 |
+| REVIEW | 1 |
+| Deferred (Demolitions Sensor → 0-3C) | 1 |
+
+### Adjudications
+
+- **Camouflage Netting is two canonical identities.** Clone Wars (6,000 cr, 40 kg) and Galaxy at War (2,000 cr, 5 kg) publish different items under one name. They are kept distinct by source-qualified `canonicalIdentityKey`. The existing repo record is the Galaxy at War identity; the Clone Wars one is an ADD.
+- **No canonical `Holster, Standard`.** Core has Holster (Concealed/Hip) and Targeting Scope (Standard/Enhanced Low-Light).
+- **One Utility Belt.** `Utility Belt (Empty)` is a repo convenience variant.
+- **Species special equipment** is included when the source gives a concrete named, costed item (Antiox Breath Mask, Ultraviolet Visor, Ubese Environmental Suit). The Celegian Life-Support Chamber is REVIEW.
+- **Heat Sensor** is a battlestation/facility security system; the concept is preserved for a later facility track.
+
+### Canonical census
+
+| # | Canonical identity | Source | Repo record | Disposition |
+|---:|---|---|---|---|
+| 1 | Comlink, Short-Range | Core Rulebook | `comms-comlink-short-range` - Comlink, Short-Range | KEEP |
+| 2 | Comlink, Long-Range | Core Rulebook | `comms-comlink-long-range` - Comlink, Long-Range | KEEP |
+| 3 | Pocket Scrambler | Core Rulebook | `comms-pocket-scrambler` - Pocket Scrambler | KEEP |
+| 4 | Code Cylinder | Core Rulebook | `computer-code-cylinder` - Code Cylinder | KEEP |
+| 5 | Credit Chip | Core Rulebook | `computer-credit-chip` - Credit Chip | KEEP |
+| 6 | Datacards, Blank (10) | Core Rulebook | `computer-datacards-blank-10` - Blank Datacards (10) | EDIT |
+| 7 | Datapad | Core Rulebook | `computer-datapad-standard` - Datapad, Standard | EDIT |
+| 8 | Datapad, Basic | Core Rulebook | `computer-datapad-basic` - Datapad, Basic | KEEP |
+| 9 | Holoprojector, Personal | Core Rulebook | `computer-personal-holoprojector` - Personal Holoprojector | EDIT |
+| 10 | Portable Computer | Core Rulebook | `computer-portable-computer` - Portable Computer | KEEP |
+| 11 | Electrobinoculars | Core Rulebook | `detect-electrobinoculars` - Electrobinoculars | KEEP |
+| 12 | Glow Rod | Core Rulebook | `detect-glow-rod` - Glow Rod | KEEP |
+| 13 | Fusion Lantern | Core Rulebook | `detect-fusion-lantern` - Fusion Lantern | KEEP |
+| 14 | Audiorecorder | Core Rulebook | `detect-audiorecorder` - Audiorecorder | KEEP |
+| 15 | Holorecorder | Core Rulebook | `detect-holorecorder` - Holorecorder | KEEP |
+| 16 | Videorecorder | Core Rulebook | `detect-videorecorder` - Videorecorder | KEEP |
+| 17 | Sensor Pack | Core Rulebook | `detect-sensor-pack` - Sensor Pack | KEEP |
+| 18 | Aquata Breather | Core Rulebook | `life-aquata-breather` - Aquata Breather | KEEP |
+| 19 | Breath Mask | Core Rulebook | `life-breath-mask` - Breath Mask | KEEP |
+| 20 | Atmosphere Canister/Filter | Core Rulebook | — | ADD |
+| 21 | Flight Suit | Core Rulebook | `life-flight-suit` - Flight Suit | KEEP |
+| 22 | Space Suit | Core Rulebook | `life-space-suit` - Space Suit | KEEP |
+| 23 | All-Temperature Cloak | Core Rulebook | `survival-all-temperature-cloak` - All-Temperature Cloak | KEEP |
+| 24 | Chain (3 meters) | Core Rulebook | `survival-chain-3m` - Chain (3 meters) | KEEP |
+| 25 | Field Kit | Core Rulebook | `survival-field-kit` - Field Kit | KEEP |
+| 26 | Liquid Cable Dispenser (15 meters) | Core Rulebook | `survival-liquid-cable-dispenser` - Liquid Cable Dispenser (15 meters) | KEEP |
+| 27 | Ration Pack | Core Rulebook | `survival-ration-pack` - Ration Pack | KEEP |
+| 28 | Syntherope (45 meters) | Core Rulebook | `survival-syntherope-45m` - Syntherope (45 meters) | KEEP |
+| 29 | Binder Cuffs | Core Rulebook | `tool-binder-cuffs` - Binder Cuffs | KEEP |
+| 30 | Energy Cell | Core Rulebook | `tool-energy-cell` - Energy Cell | KEEP |
+| 31 | Fire Extinguisher | Core Rulebook | — | ADD |
+| 32 | Mesh Tape | Core Rulebook | — | ADD |
+| 33 | Power Generator | Core Rulebook | — | ADD |
+| 34 | Power Pack | Core Rulebook | `tool-power-pack` - Power Pack | KEEP |
+| 35 | Power Recharger | Core Rulebook | `tool-power-recharger` - Power Recharger | KEEP |
+| 36 | Security Kit | Core Rulebook | `tool-security-kit` - Security Kit | KEEP |
+| 37 | Tool Kit | Core Rulebook | `tool-kit` - Tool Kit | KEEP |
+| 38 | Utility Belt | Core Rulebook | `tool-utility-belt-standard` - Utility Belt (Standard) | EDIT |
+| 39 | Bandolier | Core Rulebook | `accessory-bandolier` - Bandolier | KEEP |
+| 40 | Helmet Package | Core Rulebook | `accessory-helmet-package` - Helmet Package | KEEP |
+| 41 | Holster, Concealed | Core Rulebook | `accessory-holster-concealed` - Holster, Concealed | KEEP |
+| 42 | Holster, Hip | Core Rulebook | `accessory-holster-hip` - Holster, Hip | KEEP |
+| 43 | Vox-Box | Core Rulebook | `comms-vox-box` - Vox-Box | KEEP |
+| 44 | Bracer Computer | Clone Wars Campaign Guide | `computer-bracer-computer` - Bracer Computer | KEEP |
+| 45 | Halo Lamp | Clone Wars Campaign Guide | `detect-halo-lamp` - Halo Lamp | KEEP |
+| 46 | Visual Wrist Comm | Clone Wars Campaign Guide | `comms-visual-wrist-comm` - Visual Wrist Comm | KEEP |
+| 47 | Decoy Glowrod | Force Unleashed Campaign Guide | `detect-decoy-glow-rod` - Decoy Glow Rod | EDIT |
+| 48 | Holoshroud | Force Unleashed Campaign Guide | `detect-holoshroud` - Holoshroud | KEEP |
+| 49 | Arakyd Hush-About Personal Jetpack | Force Unleashed Campaign Guide | — | ADD |
+| 50 | Repulsor Pad | Force Unleashed Campaign Guide | — | ADD |
+| 51 | Sound Sponge | Force Unleashed Campaign Guide | `detect-sound-sponge` - Sound Sponge | KEEP |
+| 52 | Com Scrambler | Galaxy at War | `comms-com-scrambler` - Com Scrambler | KEEP |
+| 53 | Comlink, Tightbeam | Galaxy at War | `comms-tightbeam-comlink` - Tightbeam Comlink | EDIT |
+| 54 | Targeting Beacon | Galaxy at War | `comms-targeting-beacon` - Targeting Beacon | KEEP |
+| 55 | Triangulation Visor | Galaxy at War | `computer-triangulation-visor` - Triangulation Visor | KEEP |
+| 56 | Communication Scanner | Galaxy at War | `detect-communication-scanner` - Communication Scanner | KEEP |
+| 57 | Proximity Flare | Galaxy at War | `detect-proximity-flare` - Proximity Flare | KEEP |
+| 58 | Radiation Detector | Galaxy at War | `detect-radiation-detector` - Radiation Detector | KEEP |
+| 59 | Camouflage Poncho | Galaxy at War | `survival-camouflage-poncho` - Camouflage Poncho | KEEP |
+| 60 | Field Food Processor | Galaxy at War | — | ADD |
+| 61 | Personal Field Shelter | Galaxy at War | — | ADD |
+| 62 | Plasma Bridge | Galaxy at War | — | ADD |
+| 63 | Vacuum Survival Pouch | Galaxy at War | — | ADD |
+| 64 | Comlink, Earbud | Galaxy of Intrigue | `comms-earbud-comlink` - Earbud Comlink | EDIT |
+| 65 | Panic Ring | Galaxy of Intrigue | `comms-panic-ring` - Panic Ring | KEEP |
+| 66 | Holo Converter | Galaxy of Intrigue | `comms-holo-converter` - Holo Converter | KEEP |
+| 67 | Surveillance Detector | Galaxy of Intrigue | `detect-surveillance-detector` - Surveillance Detector | KEEP |
+| 68 | Surveillance Tagger | Galaxy of Intrigue | `detect-surveillance-tagger` - Surveillance Tagger | KEEP |
+| 69 | Veridicator | Galaxy of Intrigue | `detect-veridicator` - Veridicator | KEEP |
+| 70 | Vid-Vox Scrambler | Galaxy of Intrigue | `detect-vid-vox-scrambler` - Vid-Vox Scrambler | KEEP |
+| 71 | Sith Battle Harness | Jedi Academy Training Manual | — | ADD |
+| 72 | Force Detector | Jedi Academy Training Manual | — | ADD |
+| 73 | Force Training Aid | Jedi Academy Training Manual | — | ADD |
+| 74 | Universal Energy Cage | Jedi Academy Training Manual | — | ADD |
+| 75 | Computer Interface Visor | Knights of the Old Republic Campaign Guide | `computer-interface-visor` - Computer Interface Visor | KEEP |
+| 76 | Aural Amplifier | Knights of the Old Republic Campaign Guide | `detect-aural-amplifier` - Aural Amplifier | KEEP |
+| 77 | Motion Sensing Visor | Knights of the Old Republic Campaign Guide | `detect-motion-sensing-visor` - Motion Sensing Visor | KEEP |
+| 78 | Neural Band | Knights of the Old Republic Campaign Guide | `detect-neural-band` - Neural Band | KEEP |
+| 79 | Stealth Field Generator | Knights of the Old Republic Campaign Guide | `detect-stealth-field-generator` - Stealth Field Generator | KEEP |
+| 80 | Vacuum Mask | Knights of the Old Republic Campaign Guide | `life-vacuum-mask` - Vacuum Mask | KEEP |
+| 81 | Mechanical Interface Visor | Knights of the Old Republic Campaign Guide | — | ADD |
+| 82 | Comlink, Hands-Free | Legacy Era Campaign Guide | `comms-hands-free-comlink` - Hands-Free Comlink | EDIT |
+| 83 | Spy Bug | Legacy Era Campaign Guide | `detect-spy-bug` - Spy Bug | KEEP |
+| 84 | Xcalq-3GA "Slicer Special" Portable Computer | Legacy Era Campaign Guide | `computer-xcalq-3ga-slicer-special` - Xcalq-3GA "Slicer Special" Portable Computer | KEEP |
+| 85 | Xcalq Stealth Pack | Legacy Era Campaign Guide | `computer-xcalq-stealth-pack` - Xcalq Stealth Pack | KEEP |
+| 86 | Ambient Aural Amplifier | Rebellion Era Campaign Guide | `detect-ambient-aural-amplifier` - Ambient Aural Amplifier | KEEP |
+| 87 | Computerized Interface Scope | Rebellion Era Campaign Guide | — | ADD |
+| 88 | Propulsion Pack | Rebellion Era Campaign Guide | `life-propulsion-pack` - Propulsion Pack | KEEP |
+| 89 | ABC Scrambler | Scum and Villainy | — | ADD |
+| 90 | Force Cage | Scum and Villainy | — | ADD |
+| 91 | Lock Breaking Kit | Scum and Villainy | — | ADD |
+| 92 | Man Trap | Scum and Villainy | — | ADD |
+| 93 | Spacer's Chest | Scum and Villainy | — | ADD |
+| 94 | Computer Spike | Threats of the Galaxy | `computer-spike` - Computer Spike | KEEP |
+| 95 | HiBaka 2000 Mem-Stik | Threats of the Galaxy | `computer-hibaka-2000-mem-stik` - HiBaka 2000 Mem-Stik | KEEP |
+| 96 | Lectroticker | Threats of the Galaxy | `computer-lectroticker` - Lectroticker | KEEP |
+| 97 | Climbing Harness | Unknown Regions | — | ADD |
+| 98 | Emergency Vacuum Seal | Unknown Regions | `life-emergency-vacuum-seal` - Emergency Vacuum Seal | KEEP |
+| 99 | Fire Paste | Unknown Regions | — | ADD |
+| 100 | Fire Rod | Unknown Regions | — | ADD |
+| 101 | Personal Multitool | Unknown Regions | — | ADD |
+| 102 | Personal Translator | Unknown Regions | — | ADD |
+| 103 | Plastent | Unknown Regions | — | ADD |
+| 104 | Portable Beacon | Unknown Regions | — | ADD |
+| 105 | Repulsor Boots | Unknown Regions | — | ADD |
+| 106 | Repulsor Hitch | Unknown Regions | — | ADD |
+| 107 | Saddle, Riding | Unknown Regions | — | ADD |
+| 108 | Saddle, War | Unknown Regions | — | ADD |
+| 109 | Shipsuit | Unknown Regions | `life-shipsuit` - Shipsuit | KEEP |
+| 110 | Signal Wand | Unknown Regions | `comms-signal-wand` - Signal Wand | KEEP |
+| 111 | Sonar Mapper | Unknown Regions | `detect-sonar-mapper` - Sonar Mapper | KEEP |
+| 112 | Subsonic Field Emitter | Unknown Regions | — | ADD |
+| 113 | Water Extractor | Unknown Regions | — | ADD |
+| 114 | Camouflage Netting | Clone Wars Campaign Guide | — | ADD |
+| 115 | Camouflage Netting | Galaxy at War | `survival-field-camouflage-netting` - Field Camouflage Netting | EDIT |
+| 116 | Jet Pack | Core Rulebook | `survival-jetpack` - Jet Pack | KEEP |
+| 117 | Targeting Scope, Standard | Core Rulebook | `accessory-targeting-scope-standard` - Targeting Scope, Standard | KEEP |
+| 118 | Targeting Scope, Enhanced Low-Light | Core Rulebook | `accessory-targeting-scope-enhanced-low-light` - Targeting Scope, Enhanced Low-Light | KEEP |
+| 119 | Antiox Breath Mask | Core Rulebook | `life-antiox-breath-mask` - Antiox Breath Mask | KEEP |
+| 120 | Ultraviolet Visor | Galaxy of Intrigue | `life-ultraviolet-visor` - Ultraviolet Visor | KEEP |
+| 121 | Ubese Environmental Suit | Scum and Villainy | `life-ubese-environmental-suit` - Ubese Environmental Suit | KEEP |
+
+### Repo records outside the canonical corpus
+
+| Repo ID | Repo name | Disposition | Reason |
+|---|---|---|---|
+| `detect-heat-sensor` | Heat Sensor | REMOVE | Published as a battlestation/facility security sensor rather than a character general-equipment item; preserve for later facility/security-system track if desired. |
+| `life-breathing-apparatus` | Breathing Apparatus | REMOVE | No standalone published equipment identity found in supplied TXT/PDF sources; phrase appears generically, not as a priced/rules item. |
+| `life-celegian-support-chamber` | Celegian Life-Support Chamber | REVIEW | Published as Ooroo/Celegian life-support equipment with explicit mechanics, but not as a normal priced general-equipment entry. Retain pending a later special-equipment scope decision. |
+| `life-transliterator` | Transliterator | REMOVE | No published equipment identity found in the supplied TXT/PDF source corpus. |
+| `tool-utility-belt-empty` | Utility Belt (Empty) | REMOVE | Repo convenience/container variant; Core publishes a single Utility Belt identity with standard contents, not a separate empty item. |
+
+Provenance findings deferred beyond 0-3A (source-book corrections for later phases):
+
+- `life-ubese-environmental-suit` — Repo claims Unknown Regions; supplied source supports the Ubese environmental suit in Scum and Villainy. Provenance correction is deferred beyond Phase 0-3A identity execution.
+- `life-ultraviolet-visor` — Repo claims Unknown Regions; supplied source explicitly presents Ultraviolet Visor as Defel Special Equipment in Galaxy of Intrigue. Provenance correction is deferred beyond Phase 0-3A identity execution.
+- `life-celegian-support-chamber` — Repo claims Unknown Regions; supplied source evidence located in Jedi Academy Training Manual for Ooroo/Celegian life-support chamber. Record remains REVIEW because it is not a normal priced equipment entry.
+- `detect-heat-sensor` — Repo claims Threats of the Galaxy; portable handheld description is not supported. Galaxy at War publishes Heat Sensors as battlestation/facility systems.
+
+### Execution record — 9 identity renames (2026-10-05)
+
+Applied under the 0-3A execution contract (authorized identity normalizations only, after a name/ID consumer check). IDs, stats, descriptions, `skillHooks`, tags and schema are untouched.
+
+| Repo ID | Old name | Canonical name |
+|---|---|---|
+| `computer-datacards-blank-10` | Blank Datacards (10) | Datacards, Blank (10) |
+| `computer-datapad-standard` | Datapad, Standard | Datapad |
+| `computer-personal-holoprojector` | Personal Holoprojector | Holoprojector, Personal |
+| `tool-utility-belt-standard` | Utility Belt (Standard) | Utility Belt |
+| `detect-decoy-glow-rod` | Decoy Glow Rod | Decoy Glowrod |
+| `comms-tightbeam-comlink` | Tightbeam Comlink | Comlink, Tightbeam |
+| `comms-earbud-comlink` | Earbud Comlink | Comlink, Earbud |
+| `comms-hands-free-comlink` | Hands-Free Comlink | Comlink, Hands-Free |
+| `survival-field-camouflage-netting` | Field Camouflage Netting | Camouflage Netting |
+
+- **Packs:** 9 records in `packs/equipment.db` plus the same 9 in the derived subpacks (comlinks 3, security 1, survival 1, tech 3, tools 1). Compared with the previous commit, `name` is the only field that changed.
+- **Store descriptions:** data/store/equipment-store-descriptions.json (name + slug for 9 rows; description text unchanged).
+- **Character templates:** data/character-templates.json (name field for 7 template entries; ids and displayName unchanged).
+- **Runtime:** `equipment-skill-hook-resolver.js` matched the earbud comlink by name; it now also matches "comlink, earbud".
+- **Parity gate:** the verifier asserts canonical names in the pack after execution and aggregate/subpack name parity for all 142 records.
+
+Follow-ups:
+
+- Record-internal strings still carry old names and were left alone (mechanics data): skillHooks source/label/note on Earbud, Tightbeam, Field Camouflage Netting; Tightbeam description. Candidates for the stats/hooks pass.
+- Store description text still opens with the old display name.
+- tools/fix-equipment-data.js would regenerate equipment.db with the OLD names if re-run; do not run it.
+- Camouflage Netting: the repo record (renamed) is the Galaxy at War identity; the Clone Wars identity is an ADD and will share the display name, so source-qualified keys (canonicalIdentityKey) must be used to disambiguate.
+- Out-of-scope packs: 51 equipment records belong to later batches (16 medical, 17 tech incl. implants/cybernetics/demolitions, 11 tools, 6 security, plus Demolitions Sensor deferred to 0-3C). Duplicate name "Subelectronic Converter" is cyber-subelectronic-converter + implant-subelectronic-converter.
+
+### Execution guardrails
+
+1. Do not invent missing descriptions, statistics, costs, weights, mechanics, schema fields, or tags in Phase 0-3A.
+2. Do not merge same-name Camouflage Netting records across sourcebooks; they have materially different published implementations.
+3. Do not mutate items deferred to medical, demolitions, cybernetics/implants, upgrade, lightsaber, droid, vehicle, or starship batches.
+4. Celegian Life-Support Chamber is not authorized for automatic deletion in this batch despite lacking a standalone general-equipment entry.
+5. Preserve record IDs unless a later explicit migration authority says otherwise.
+
+### Reference-impact note for REMOVE/REVIEW records (measured 2026-10-05)
+
+| Repo ID | Disposition | Referenced by id | Referenced by name |
+|---|---|---|---|
+| `detect-heat-sensor` | REMOVE | data/store/equipment-store-descriptions.json ×1 | data/heroic.json ×2; data/nonheroic.json ×1; data/nonheroic/nonheroic_units.json ×1 |
+| `life-breathing-apparatus` | REMOVE | data/store/equipment-store-descriptions.json ×1 | data/heroic.json ×1; data/species-canonical-stats.json ×2; data/species-traits-migrated.json ×4; data/species-traits.json ×4; scripts/engine/poison/poison-engine.js ×1 |
+| `life-celegian-support-chamber` | REVIEW | data/store/equipment-store-descriptions.json ×1 | data/heroic.json ×1; data/species-canonical-stats.json ×1; data/species-traits-migrated.json ×1; data/species-traits.json ×1 |
+| `life-transliterator` | REMOVE | data/store/equipment-store-descriptions.json ×1 | data/heroic.json ×2; data/species-canonical-stats.json ×2; data/species-languages.json ×2; data/species-traits-migrated.json ×4; data/species-traits.json ×4 |
+| `tool-utility-belt-empty` | REMOVE | data/store/equipment-store-descriptions.json ×1 | — |
+
+Name matches in `data/species-*.json`, `data/heroic.json`, `data/nonheroic*.json` are mostly species-trait or NPC prose and must be reviewed individually before any removal.
+
 ## Pending phases
 
-0-3 Equipment · 1 Provenance (pages) · 2 Descriptions · 3 Schema · 4 Stats · 5 Reconciliation · 6 Legacy tags · 7 Semantic tags · 8 Migration
+0-3B Medical / Treatment Equipment · 0-3C Explosives / Demolitions · 0-3D Cybernetics / Implants · 0-3E Upgrades / Modifications · 1 Provenance (pages) · 2 Descriptions · 3 Schema · 4 Stats · 5 Reconciliation · 6 Legacy tags · 7 Semantic tags · 8 Migration
