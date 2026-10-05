@@ -49,15 +49,24 @@ if (arm) {
     const id = c.repo.matchedId;
     seen.set(id, (seen.get(id) || 0) + 1);
     if (!armorPack.has(id)) { fail(`armor ${c.canonicalName}: ${id} not in pack`); continue; }
-    if (armorPack.get(id) !== c.repo.matchedName) fail(`armor name drift ${id}: "${c.repo.matchedName}" vs pack "${armorPack.get(id)}"`);
+    const executed = arm.execution?.status === 'EXECUTED_RENAMES';
+    // matchedName is the pre-rename repo name; once renames are executed the pack must carry the canonical name.
+    const expected = executed && c.phase0Disposition === 'EDIT' ? c.canonicalName : c.repo.matchedName;
+    if (armorPack.get(id) !== expected) fail(`armor name drift ${id}: expected "${expected}" vs pack "${armorPack.get(id)}"`);
     if (c.phase0Disposition === 'KEEP' && armorPack.get(id) !== c.canonicalName) fail(`armor KEEP ${c.canonicalName} != repo name`);
-    if (c.phase0Disposition === 'EDIT' && armorPack.get(id) === c.canonicalName) fail(`armor EDIT ${c.canonicalName} already matches repo name`);
+    if (executed && armorPack.get(id) !== c.canonicalName) fail(`armor ${c.canonicalName} not canonical after executed renames`);
   }
   for (const r of arm.repoOnlyArmor) {
     seen.set(r.repoId, (seen.get(r.repoId) || 0) + 1);
     if (armorPack.get(r.repoId) !== r.repoName) fail(`armor REVIEW record ${r.repoId} missing or renamed`);
   }
   for (const id of armorPack.keys()) if (seen.get(id) !== 1) fail(`armor pack record ${id} covered ${seen.get(id) || 0} times`);
+  // Aggregate/subpack name parity (subpacks are derived mirrors of the aggregate).
+  for (const sp of ['armor-light', 'armor-medium', 'armor-heavy', 'armor-shields']) {
+    for (const r of fs.readFileSync(path.join(ROOT, `packs/${sp}.db`), 'utf8').split('\n').filter(Boolean).map((l) => JSON.parse(l))) {
+      if (armorPack.get(r._id) !== r.name) fail(`armor subpack ${sp} ${r._id}: "${r.name}" vs aggregate "${armorPack.get(r._id)}"`);
+    }
+  }
   const dispo = count(arm.canonicalArmor, (r) => r.phase0Disposition);
   if (JSON.stringify(dispo) !== JSON.stringify(arm.canonicalCounts.byDisposition)) fail(`armor disposition counts ${JSON.stringify(dispo)} != ${JSON.stringify(arm.canonicalCounts.byDisposition)}`);
   if (!errors.length) console.log(`armor authority OK: ${arm.canonicalArmor.length} canonical + ${arm.repoOnlyArmor.length} REVIEW cover ${armorPack.size} repo records`);

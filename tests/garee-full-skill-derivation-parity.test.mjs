@@ -77,7 +77,7 @@ function gareeShield(active) {
 }
 function gareeArmor() {
   return {
-    id: '8ebDcuzqZNUfWCzD', name: 'M1-10 Stalker Armor', type: 'armor',
+    id: '8ebDcuzqZNUfWCzD', name: 'Stalker Armor', type: 'armor',
     system: {
       armorType: 'medium', reflexBonus: 8, fortitudeBonus: 3, maxDex: 4, shieldRating: 0,
       armorProficiencyRequired: '', charges: { current: 5, max: 5 }, activated: true,

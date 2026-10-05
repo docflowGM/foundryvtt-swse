@@ -258,11 +258,11 @@ export const FORCE_ALCHEMY_RITES = [
     fpCost: 1,
     dspCost: 1,
     creditCost: 0,
-    summary: 'Transform a suit of Battle Armor into Light Dark Armor, Dark Armor, or Heavy Dark Armor.',
+    summary: 'Transform a suit of Battle Armor into Dark Armor, Light, Dark Armor, Medium, or Dark Armor, Heavy.',
     rules: [
-      'Light Battle Armor becomes Light Dark Armor in 1 day.',
-      'Battle Armor becomes Dark Armor in 2 days.',
-      'Heavy Battle Armor becomes Heavy Dark Armor in 3 days.',
+      'Battle Armor, Light becomes Dark Armor, Light in 1 day.',
+      'Battle Armor becomes Dark Armor, Medium in 2 days.',
+      'Battle Armor, Heavy becomes Dark Armor, Heavy in 3 days.',
       'Spend 1 Force Point at completion and increase Dark Side Score by 1.'
     ],
     resultLabel: 'Pending Sith Armor transformation project',

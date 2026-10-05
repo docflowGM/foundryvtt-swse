@@ -176,7 +176,7 @@ export function extractStoreItemTags(item) {
   if (/armor|vest|suit|battle armor|combat jumpsuit/.test(text)) tags.push('armor', 'defense');
   if (/heavy armor|battle armor|powered armor/.test(text) || /heavy/i.test(String(sys.armorType || sys.armor_type || sys.category || ''))) tags.push('heavy_armor', 'armor', 'defense');
   if (/medium armor/.test(text) || /medium/i.test(String(sys.armorType || sys.armor_type || sys.category || ''))) tags.push('medium_armor', 'armor', 'defense');
-  if (/light armor|combat jumpsuit|armored flight suit/.test(text) || /light/i.test(String(sys.armorType || sys.armor_type || sys.category || ''))) tags.push('light_armor', 'armor', 'defense');
+  if (/light armor|combat jumpsuit|armored flight suit|flight suit, armored/.test(text) || /light/i.test(String(sys.armorType || sys.armor_type || sys.category || ''))) tags.push('light_armor', 'armor', 'defense');
   if (/medical|medpac|medkit|surgery|first aid/.test(text)) tags.push('medical', 'support');
   if (/toolkit|tool kit|mechanic|repair/.test(text)) tags.push('toolkit', 'tech');
   if (/security kit|slicer|computer|interface|spike/.test(text)) tags.push('security', 'tech');

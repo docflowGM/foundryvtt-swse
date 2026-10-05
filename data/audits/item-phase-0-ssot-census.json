@@ -1592,27 +1592,48 @@
     "legacyArmorJson": {
       "data/armor/light.json": {
         "records": 21,
-        "namesPresentInArmorSubpacks": 16,
+        "namesPresentInArmorSubpacks": 7,
         "namesAbsentFromArmorSubpacks": [
+          "Armored Flight Suit",
           "Blast Vest",
+          "Blinding Helmet",
           "Clone Trooper Armor",
           "Energy Shields, Light",
           "Jedi Robes",
-          "Mandalorian Light Armor"
+          "KZZ Riot Armor",
+          "Light Battle Armor",
+          "Light Beskar'gam",
+          "Light Dark Armor",
+          "Light Jedi Battle Armor",
+          "Light Powered Battle Armor",
+          "Mandalorian Light Armor",
+          "Microbe Armor"
         ]
       },
       "data/armor/medium.json": {
         "records": 17,
-        "namesPresentInArmorSubpacks": 16,
+        "namesPresentInArmorSubpacks": 10,
         "namesAbsentFromArmorSubpacks": [
-          "Energy Shields, Medium"
+          "AV-1S Scout Armor",
+          "Dark Armor",
+          "Energy Shields, Medium",
+          "Jedi Battle Armor",
+          "M1-10 Stalker Armor",
+          "Medium Beskar'gam",
+          "Powered Battle Armor"
         ]
       },
       "data/armor/heavy.json": {
         "records": 15,
-        "namesPresentInArmorSubpacks": 14,
+        "namesPresentInArmorSubpacks": 8,
         "namesAbsentFromArmorSubpacks": [
-          "Energy Shields, Heavy"
+          "AV-1C Combat Armor",
+          "Armored Space Suit",
+          "Energy Shields, Heavy",
+          "Heavy Battle Armor",
+          "Heavy Beskar'gam",
+          "Heavy Dark Armor",
+          "Heavy Powered Battle Armor"
         ]
       }
     },
@@ -1862,7 +1883,8 @@
     "tools/fix-weapons-data.js",
     "tools/normalize-compendiums.js",
     "tools/organize-compendiums.js",
-    "tools/update-shield-proficiencies.js"
+    "tools/update-shield-proficiencies.js",
+    "tools/verify-item-weapons-authority.mjs"
   ],
   "packageJsonPresent": false
 }

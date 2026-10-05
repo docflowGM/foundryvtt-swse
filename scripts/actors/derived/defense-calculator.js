@@ -139,7 +139,7 @@ function isArmoredSpaceSuitArmor(armor) {
     system.description,
     Array.isArray(system.traits) ? system.traits.join(' ') : ''
   ].filter(Boolean).join(' ').toLowerCase();
-  return text.includes('armored space suit') || text.includes('armoured space suit');
+  return text.includes('armored space suit') || text.includes('armoured space suit') || text.includes('armored spacesuit');
 }
 
 function actorHasArmorProficiency(actor, armor) {

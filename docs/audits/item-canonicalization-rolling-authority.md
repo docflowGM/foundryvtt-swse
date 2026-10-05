@@ -1,6 +1,6 @@
 # SWSE Item Canonicalization — Rolling Authority
 
-Status: ACTIVE — Phase 0 complete; Phase 0-1 Weapons and Phase 0-2 Armor certified by owner
+Status: ACTIVE — Phase 0 complete; Phase 0-1 Weapons and Phase 0-2 Armor certified by owner (armor renames executed)
 Updated: 2026-10-05
 Machine-readable companion: `data/audits/item-canonicalization-rolling-authority.json`
 Verify against the packs: `node tools/verify-item-weapons-authority.mjs` (weapons and armor)
@@ -473,6 +473,18 @@ Notes:
 5. Do not touch armor upgrades, droid armor/plating, vehicle/starship armor, or natural armor.
 6. Renames keep the record _id. Before any rename executes, update name-based consumers listed in renameImpact (Force Alchemy result names, tests, data/store/armor-store-descriptions.json) and apply to the aggregate and all derived subpacks together.
 7. No production mutation is authorized by Phase 0-2 until the owner explicitly directs execution (see ownerRulings).
+
+### Execution record — 24 identity renames (2026-10-05)
+
+Authorized by the owner as the exact Phase 0-2 execution package. Executed in this PR:
+
+- **Packs:** 24 records renamed in `packs/armor.db` and the matching 24 mirrors in `armor-light` (11), `armor-medium` (7), `armor-heavy` (6). Verified against `HEAD`: the only field that changed on any record is `name`; `_id`, stats, descriptions, tags, and schema are untouched. `armor-shields` and the three pressure suits were not modified.
+- **Store descriptions:** `name` and `slug` updated for the 24 rows in `data/store/armor-store-descriptions.json` (description text unchanged).
+- **Tests:** three tests now use "Stalker Armor".
+- **Runtime name consumers:** `DarkSidePowers.js` tier detection accepts the canonical "Battle Armor, Light/Heavy" names (anchored so "Jedi Battle Armor, Light" stays standard tier; a before/after comparison over all 67 armor names shows identical tiers), Force Alchemy result names and UI copy use "Dark Armor, Light/Medium/Heavy", `defense-calculator.js` also recognizes "Armored Spacesuit", `store-suggestion-context.js` also recognizes "Flight Suit, Armored".
+- **Parity gate:** `tools/verify-item-weapons-authority.mjs` now asserts the pack carries the canonical name for every EDIT record and that each armor subpack name equals the aggregate.
+
+Follow-ups: store description text still opens with the old display name; `tools/fix-armor-data.js` would regenerate the old names if re-run and must not be used; `data/armor/*.json` remain unconsumed evidence with old names; Force Alchemy's hard-coded Sith armor stats belong to the Phase 4 stat pass.
 
 ### QA gate
 

@@ -212,7 +212,7 @@ console.log('  [5/8] InventoryEngine.toggleActivated(): inactive->activate->deac
 
 // ─── 6. Gar'ee real actor golden case ───────────────────────────────────────
 //        Real exported item data (armor-energy-shield "Energy Shield (SR
-//        10)" and "M1-10 Stalker Armor") and real "Armor Proficiency
+//        10)" and "Stalker Armor") and real "Armor Proficiency
 //        (light)"/"Armor Proficiency (medium)" feats -- Gar'ee is proficient
 //        with both. His shield's own listed fields: maxDexBonus 4,
 //        armorCheckPenalty -2, armorProficiencyRequired "light". His body
@@ -231,7 +231,7 @@ console.log('  [5/8] InventoryEngine.toggleActivated(): inactive->activate->deac
     }
   };
   const gareeArmor = {
-    id: '8ebDcuzqZNUfWCzD', name: 'M1-10 Stalker Armor', type: 'armor',
+    id: '8ebDcuzqZNUfWCzD', name: 'Stalker Armor', type: 'armor',
     system: {
       armorType: 'medium', reflexBonus: 8, fortitudeBonus: 3, maxDex: 4, shieldRating: 0,
       armorProficiencyRequired: '', charges: { current: 5, max: 5 }, activated: true,

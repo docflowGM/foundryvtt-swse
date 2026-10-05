@@ -71,7 +71,7 @@ const { buildRollConfigModel, getSkillTotal } = await import(
   '/systems/foundryvtt-swse/scripts/rolls/roll-config.js'
 );
 
-// Gar'ee's real Energy Shield (SR 10) and M1-10 Stalker Armor records, but
+// Gar'ee's real Energy Shield (SR 10) and Stalker Armor records, but
 // equipped via LEGACY/ALTERNATE flag shapes instead of the canonical
 // system.equipped -- the adversarial case: system.equipped explicitly
 // false (not merely absent) with system.isEquipped true for the shield, and
@@ -92,7 +92,7 @@ function gareeShieldLegacyEquip() {
 }
 function gareeArmorLegacyEquip() {
   return {
-    id: '8ebDcuzqZNUfWCzD', name: 'M1-10 Stalker Armor', type: 'armor',
+    id: '8ebDcuzqZNUfWCzD', name: 'Stalker Armor', type: 'armor',
     system: {
       armorType: 'medium', reflexBonus: 8, fortitudeBonus: 3, maxDex: 4, shieldRating: 0,
       armorProficiencyRequired: '', charges: { current: 5, max: 5 }, activated: true,
@@ -173,7 +173,7 @@ console.log('  [2/4] derived Initiative is correct and matches system.derived.in
 
 const defenses = updates['system.derived.defenses'];
 assert.ok(defenses?.reflex?.total > 10, '[single pass] Reflex must reflect the legacy-equipped body armor\'s bonuses, not the unarmored default');
-assert.equal(defenses.reflex.armorBonus, 8, '[single pass] the legacy-equipped M1-10 Stalker Armor\'s +8 Reflex bonus must apply');
+assert.equal(defenses.reflex.armorBonus, 8, '[single pass] the legacy-equipped Stalker Armor\'s +8 Reflex bonus must apply');
 
 console.log('  [3/4] defenses are correct on the same single pass (Reflex reflects the legacy-equipped body armor) OK');
 

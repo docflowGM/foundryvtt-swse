@@ -2092,9 +2092,11 @@ export async function completeSithAmuletCraft(actor) {
  */
 export function _classifyBattleArmor(armorItem) {
   const name = (armorItem?.name || '').toLowerCase();
-  if (name.includes('light battle armor')) { return { tier: 'light', days: 1, resultName: 'Light Dark Armor' }; }
-  if (name.includes('heavy battle armor')) { return { tier: 'heavy', days: 3, resultName: 'Heavy Dark Armor' }; }
-  if (name.includes('battle armor')) { return { tier: 'standard', days: 2, resultName: 'Dark Armor' }; }
+  // Canonical names are "Battle Armor, Light" / "Battle Armor, Heavy" (anchored so "Jedi Battle Armor, Light" stays standard tier; legacy "Light Battle Armor" still matches).
+  // Powered variants ("Battle Armor, Light Powered") remain standard tier, as before.
+  if (/(light battle armor|^battle armor, light)(?!\s*powered)/.test(name)) { return { tier: 'light', days: 1, resultName: 'Dark Armor, Light' }; }
+  if (/(heavy battle armor|^battle armor, heavy)(?!\s*powered)/.test(name)) { return { tier: 'heavy', days: 3, resultName: 'Dark Armor, Heavy' }; }
+  if (name.includes('battle armor')) { return { tier: 'standard', days: 2, resultName: 'Dark Armor, Medium' }; }
   return null;
 }
 

@@ -7936,7 +7936,41 @@
         "Measured at readback 2026-10-05 from quoted exact old-name strings; ID references are limited to data/store/armor-store-descriptions.json and tools/fix-armor-data.js (generator history).",
         "Force Alchemy (scripts/apps/force-alchemy/force-alchemy-mechanics-service.js, force-alchemy-context-resolver.js) and scripts/talents/DarkSidePowers.js hard-code result names 'Light Dark Armor', 'Dark Armor', 'Heavy Dark Armor' and their own stat profiles; they do not look up the pack record by name, so a record rename will not break them but newly crafted items will keep the old display names until those strings are updated.",
         "data/armor/{light,medium,heavy}.json are unconsumed evidence files (see Phase 0 census) and are not rename targets."
-      ]
+      ],
+      "execution": {
+        "status": "EXECUTED_RENAMES",
+        "date": "2026-10-05",
+        "authorizedBy": "owner (PR #1005 session instruction): exact Phase 0-2 execution package",
+        "scope": "24 EDIT identity renames; IDs, stats, descriptions, tags, schema untouched; 3 pressure-suit REVIEW records untouched",
+        "applied": {
+          "renamedRecords": 24,
+          "aggregatePack": "packs/armor.db",
+          "derivedSubpacks": [
+            "packs/armor-light.db (11)",
+            "packs/armor-medium.db (7)",
+            "packs/armor-heavy.db (6)"
+          ],
+          "storeDescriptions": "data/store/armor-store-descriptions.json (name + slug for 24 rows; description text intentionally unchanged)",
+          "tests": [
+            "tests/energy-shield-defense-and-activation-authority.test.mjs",
+            "tests/garee-full-skill-derivation-parity.test.mjs",
+            "tests/legacy-equip-state-single-pass-authority.test.mjs"
+          ],
+          "runtimeStrings": [
+            "scripts/talents/DarkSidePowers.js (tier detection accepts canonical names; result names)",
+            "scripts/apps/force-alchemy/force-alchemy-mechanics-service.js (result names)",
+            "scripts/apps/force-alchemy/force-alchemy-data.js (UI copy)",
+            "scripts/actors/derived/defense-calculator.js (accept \"armored spacesuit\")",
+            "scripts/engine/suggestion/equipment/store-suggestion-context.js (accept \"flight suit, armored\")"
+          ]
+        },
+        "followUps": [
+          "Store description text still opens with the old display name (e.g. \"Armored Flight Suit, light, +5 Reflex...\"); left unchanged per package scope.",
+          "tools/fix-armor-data.js is a historical one-shot rebuilder that would regenerate armor.db with the OLD names if re-run; do not run it. Candidate for retirement after the migration path is established.",
+          "data/armor/{light,medium,heavy}.json remain unconsumed evidence with old names.",
+          "Force Alchemy hard-codes its own Sith armor stat profiles; stat certification is a Phase 4 concern."
+        ]
+      }
     }
   },
   "pendingPhases": [
