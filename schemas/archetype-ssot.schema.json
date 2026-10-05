@@ -1,0 +1,96 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "swse-archetype-ssot",
+  "title": "SWSE Archetype Production SSOT (data/archetypes.json)",
+  "description": "Structural contract for the class-independent 297-record archetype dataset. Class is a route into an archetype, never its identity; parentage is organizational only. Cross-record and exact-reference invariants (counts, parent graph, ontology membership, reference resolution) are enforced by scripts/engine/archetype/archetype-ssot-contract.js, not by JSON Schema. The legacy class-owned contract is schemas/archetype.schema.json and does NOT apply to this file.",
+  "type": "object",
+  "required": ["_meta", "archetypes"],
+  "properties": {
+    "_meta": {
+      "type": "object",
+      "required": ["schemaVersion", "name", "authority", "runtimePath", "replacesRuntimeAuthority", "recordCount", "runtimePhase", "phase12a"],
+      "properties": {
+        "schemaVersion": { "const": 2 },
+        "name": { "const": "SWSE Archetype Production SSOT" },
+        "authority": { "const": "production-single-source-of-truth" },
+        "runtimePath": { "const": "data/archetypes.json" },
+        "replacesRuntimeAuthority": { "const": "data/class-archetypes.json" },
+        "recordCount": { "const": 297 },
+        "runtimePhase": { "const": "12A-runtime-ssot" }
+      }
+    },
+    "archetypes": {
+      "type": "object",
+      "minProperties": 297,
+      "maxProperties": 297,
+      "additionalProperties": { "$ref": "#/definitions/archetype" }
+    }
+  },
+  "definitions": {
+    "idList": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+    "tiered": {
+      "type": "object",
+      "properties": { "signature": { "$ref": "#/definitions/idList" }, "supporting": { "$ref": "#/definitions/idList" } }
+    },
+    "archetype": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "name", "kind", "parentId", "status", "narrative", "mechanics", "metadata", "audit"],
+      "properties": {
+        "id": { "type": "string", "pattern": "^[a-z0-9]+(?:_[a-z0-9]+)*$" },
+        "name": { "type": "string", "minLength": 1 },
+        "kind": { "enum": ["parent", "specialization"] },
+        "parentId": { "type": ["string", "null"] },
+        "status": { "type": "string" },
+        "narrative": { "type": "object" },
+        "mechanics": {
+          "type": "object",
+          "required": ["classes", "abilities", "skills", "talentTrees", "talents", "feats", "force", "species", "backgrounds"],
+          "properties": {
+            "classes": {
+              "type": "object",
+              "required": ["foundation", "prestige", "apex"],
+              "properties": {
+                "foundation": { "$ref": "#/definitions/idList" },
+                "prestige": { "$ref": "#/definitions/idList" },
+                "apex": { "$ref": "#/definitions/idList" }
+              }
+            },
+            "abilities": {
+              "type": "object",
+              "required": ["primary", "secondary", "tertiary"],
+              "properties": {
+                "primary": { "$ref": "#/definitions/idList" },
+                "secondary": { "$ref": "#/definitions/idList" },
+                "tertiary": { "$ref": "#/definitions/idList" }
+              }
+            },
+            "skills": { "$ref": "#/definitions/tiered" },
+            "talentTrees": { "$ref": "#/definitions/tiered" },
+            "talents": { "$ref": "#/definitions/tiered" },
+            "feats": { "$ref": "#/definitions/tiered" },
+            "force": { "type": "object" },
+            "species": { "type": "object" },
+            "backgrounds": { "type": "object" }
+          }
+        },
+        "metadata": {
+          "type": "object",
+          "required": ["tags", "tagProvenance", "exactRefs", "routes"],
+          "properties": {
+            "tags": {
+              "type": "object",
+              "required": ["primary", "supporting", "all"],
+              "properties": {
+                "primary": { "$ref": "#/definitions/idList" },
+                "supporting": { "$ref": "#/definitions/idList" },
+                "all": { "$ref": "#/definitions/idList" }
+              }
+            }
+          }
+        },
+        "audit": { "type": "object" }
+      }
+    }
+  }
+}

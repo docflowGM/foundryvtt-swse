@@ -1,0 +1,83 @@
+{
+  "schemaVersion": 1,
+  "phase": "12A-CONVERGENCE-AUDIT",
+  "status": "CONVERGENCE_AUDIT_COMPLETE_WITH_REQUIRED_NORMALIZATION",
+  "repository": {
+    "fullName": "docflowGM/foundryvtt-swse",
+    "mainSha": "a58f8c4fca20ba693804b61b0c9efc56800d1091"
+  },
+  "authorities": {
+    "archetypeArtifact": "archetypes_transport.json",
+    "archetypeRecords": 297,
+    "parents": 97,
+    "specializations": 200,
+    "phase3Ontology": "data/audits/talent-feat-phase3-final-ontology.json",
+    "phase3OntologyTags": 190
+  },
+  "vocabulary": {
+    "phase11Tags": 57,
+    "sharedWithFinalOntology": 42,
+    "phase11Only": 15,
+    "phase11OnlyActions": {
+      "ability_cha": {"primaryRecords":149,"supportingRecords":50,"uniqueRecords":199,"action":"DROP_SEMANTIC_KEEP_TYPED_ABILITY"},
+      "ability_con": {"primaryRecords":24,"supportingRecords":73,"uniqueRecords":97,"action":"DROP_SEMANTIC_KEEP_TYPED_ABILITY"},
+      "ability_dex": {"primaryRecords":71,"supportingRecords":93,"uniqueRecords":164,"action":"DROP_SEMANTIC_KEEP_TYPED_ABILITY"},
+      "ability_int": {"primaryRecords":133,"supportingRecords":82,"uniqueRecords":215,"action":"DROP_SEMANTIC_KEEP_TYPED_ABILITY"},
+      "ability_str": {"primaryRecords":32,"supportingRecords":19,"uniqueRecords":51,"action":"DROP_SEMANTIC_KEEP_TYPED_ABILITY"},
+      "ability_wis": {"primaryRecords":154,"supportingRecords":128,"uniqueRecords":282,"action":"DROP_SEMANTIC_KEEP_TYPED_ABILITY"},
+      "accuracy": {"primaryRecords":1,"supportingRecords":14,"uniqueRecords":15,"action":"DROP_NO_BLIND_ALIAS"},
+      "advanced_melee": {"primaryRecords":0,"supportingRecords":19,"uniqueRecords":19,"action":"DROP_KEEP_EXACT_SCOPED_EVIDENCE"},
+      "area_damage": {"primaryRecords":0,"supportingRecords":1,"uniqueRecords":1,"action":"DROP_NO_BLIND_ALIAS"},
+      "fieldcraft": {"primaryRecords":134,"supportingRecords":144,"uniqueRecords":278,"action":"DROP_KEEP_EXACT_SKILL_EVIDENCE"},
+      "finesse": {"primaryRecords":0,"supportingRecords":13,"uniqueRecords":13,"action":"DROP_NO_BLIND_ALIAS"},
+      "hacking": {"primaryRecords":0,"supportingRecords":1,"uniqueRecords":1,"action":"DROP_NO_BLIND_ALIAS"},
+      "lightsaber_form": {"primaryRecords":6,"supportingRecords":7,"uniqueRecords":13,"action":"DROP_KEEP_EXACT_FORM_REFS"},
+      "rifle": {"primaryRecords":18,"supportingRecords":2,"uniqueRecords":20,"action":"DROP_KEEP_EXACT_SCOPED_EVIDENCE"},
+      "starship": {"primaryRecords":5,"supportingRecords":19,"uniqueRecords":24,"action":"DROP_KEEP_ROUTE_EQUIPMENT_EVIDENCE"}
+    },
+    "policy": "No blind broad-to-narrow aliases; typed and exact evidence remains authoritative."
+  },
+  "exactReferenceValidation": {
+    "foundationClasses": {"artifact":5,"resolved":5,"unresolved":0},
+    "prestigeAndApexClasses": {"artifact":32,"resolved":32,"unresolved":0},
+    "skills": {"artifact":25,"resolved":25,"unresolved":0},
+    "talentTrees": {"artifact":126,"resolved":126,"unresolved":0},
+    "talents": {"artifact":292,"resolved":292,"unresolved":0},
+    "feats": {"artifact":66,"resolved":66,"unresolved":0},
+    "species": {"artifact":58,"resolved":58,"unresolved":0},
+    "backgroundRouteRefs": {"artifact":80,"resolved":80,"unresolved":0},
+    "forcePowers": {
+      "artifact":63,
+      "directlyResolved":51,
+      "formPowerIdCorrections":12,
+      "unresolvedAfterCorrection":0,
+      "corrections": {
+        "lightsaber-form-power-assured-strike":"assured-strike",
+        "lightsaber-form-power-barrier-of-blades":"barrier-of-blades",
+        "lightsaber-form-power-circle-of-shelter":"circle-of-shelter",
+        "lightsaber-form-power-deflecting-slash":"deflecting-slash",
+        "lightsaber-form-power-draw-closer":"draw-closer",
+        "lightsaber-form-power-falling-avalanche":"falling-avalanche",
+        "lightsaber-form-power-fluid-riposte":"fluid-riposte",
+        "lightsaber-form-power-hawk-bat-swoop":"hawk-bat-swoop",
+        "lightsaber-form-power-pass-the-blade":"pass-the-blade",
+        "lightsaber-form-power-saber-swarm":"saber-swarm",
+        "lightsaber-form-power-shien-deflection":"shien-deflection",
+        "lightsaber-form-power-vornskr-s-ferocity":"vornskrs-ferocity"
+      }
+    }
+  },
+  "legacyRuntime": {
+    "classArchetypes":"TRANSITIONAL_RUNTIME_DEPENDENCY",
+    "numericBiases":["mechanicalBias","roleBias","attributeBias","tagBias"],
+    "metadataAssignmentsJson":"ABSENT_ON_CURRENT_MAIN"
+  },
+  "knownAuthorityDefects": [
+    {
+      "path":"scripts/engine/progression/data/progression-data.js",
+      "issue":"Jedi classSkills includes stale noncanonical entries including Stealth; must not drive Phase 12 route-cost scoring."
+    }
+  ],
+  "phase12aDecision":"PROCEED_AFTER_DETERMINISTIC_NORMALIZATION",
+  "productionMutationAuthorizedByThisAudit":false
+}

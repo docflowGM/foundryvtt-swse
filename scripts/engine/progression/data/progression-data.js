@@ -155,10 +155,15 @@ export const PROGRESSION_RULES = {
       hitDie: 10,
       skillPoints: 2,
       baseAttackBonus: 'high',
+      // Phase 12A: aligned to the canonical Jedi class skills (packs/classes.db).
+      // Previously listed Climb, Persuasion, Stealth and Swim (not Jedi class skills)
+      // and omitted Mechanics; Stealth in particular made a Jedi Shadow's Stealth route
+      // look free in archetype route-cost analysis. Knowledge is "all, taken individually".
       classSkills: [
-        'Acrobatics', 'Climb', 'Endurance', 'Initiative', 'Jump',
-        'Knowledge (Galactic Lore)', 'Perception', 'Persuasion', 'Pilot',
-        'Stealth', 'Swim', 'Use the Force'
+        'Acrobatics', 'Endurance', 'Initiative', 'Jump',
+        'Knowledge (Bureaucracy)', 'Knowledge (Galactic Lore)', 'Knowledge (Life Sciences)',
+        'Knowledge (Physical Sciences)', 'Knowledge (Social Sciences)', 'Knowledge (Tactics)',
+        'Knowledge (Technology)', 'Mechanics', 'Perception', 'Pilot', 'Use the Force'
       ],
       startingFeats: [
         'Force Sensitivity',
