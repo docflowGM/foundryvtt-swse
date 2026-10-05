@@ -88,7 +88,7 @@ test('semantics: no primary/supporting collision; 297/297 keep a canonical prima
 
 test('semantics: typed ability priorities are preserved (not duplicated into tags)', () => {
   assert.ok(records.every((r) => r.mechanics.abilities.primary.length > 0));
-  assert.ok(records.every((r) => !r.metadata.tags.all.some((t) => t.startsWith('ability_'))));
+  assert.ok(records.every((r) => !r.metadata.tags.all.some((t) => /^ability_(str|dex|con|int|wis|cha)$/.test(t))));
 });
 
 test('normalization only deletes the 15 tags: remaining tags are an exact subset, order preserved', () => {

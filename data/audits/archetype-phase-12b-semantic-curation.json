@@ -2,62 +2,69 @@
   "schemaVersion": "1.0",
   "kind": "SWSE_ARCHETYPE_PHASE_12B_SEMANTIC_CURATION",
   "phase": "12B",
-  "status": "ROLLING_AUTHORITY_NEXT_TRANCHE_READY_BASELINE_PENDING",
+  "status": "ROLLING_AUTHORITY_PHASE_COMPLETE_BASELINE_PENDING",
   "runtimeTarget": "data/archetypes.json",
   "frozenOntology": {
     "path": "data/audits/talent-feat-phase3-final-ontology.json",
     "tagCount": 190
   },
-  "certifiedCount": 250,
+  "certifiedCount": 297,
   "totalArchetypes": 297,
-  "remainingUncuratedAfterApplication": 47,
-  "selectionRule": "Continue Soldier-first deterministically in dataset order. This 40-record tranche covers enforcer through gungan_organic_tech_defender. After application Soldier-first is 40 / 53 complete.",
+  "remainingUncuratedAfterApplication": 0,
+  "selectionRule": "Final closeout: remaining 13 Soldier-first records in dataset order, then all 34 Jedi-first records in dataset order.",
   "currentExecution": {
-    "id": "12B-SOLDIER-01",
+    "id": "12B-FINAL-01",
     "status": "AUTHORITY_READY_BASELINE_PENDING",
-    "requiredBaseline": "8390b5352b9c4a3805091e2cb1254b62a816e9bc",
-    "baselineInstruction": "Replace this placeholder with the successful commit returned after 12B-NOBLE-11 execution before applying this tranche. Do not infer or substitute a SHA.",
+    "requiredBaseline": "b48cae56fa5228bad7158edf15637768d204ced8",
+    "baselineInstruction": "Replace this placeholder only with the successful commit returned after 12B-SOLDIER-01 execution before applying this final closeout. Do not infer or substitute a SHA.",
     "newRecordIds": [
-      "enforcer",
-      "security_specialist",
-      "bodyguard",
-      "mercenary",
-      "commando",
-      "veteran",
-      "warrior",
-      "combat_medic",
-      "combat_engineer",
-      "field_commander",
-      "starship_gunner",
-      "armorer",
-      "warrior_priest",
-      "force_warrior",
-      "syndicate_enforcer",
-      "koorivar_fusilier",
-      "diplomatic_security_agent",
-      "imperial_royal_guard",
-      "hapan_royal_guard",
-      "wookiee_life_debt_protector",
-      "gamorrean_clan_guard",
-      "noghri_honor_bodyguard",
-      "assassin_droid",
-      "morgukai_warrior",
-      "breacher",
-      "boarding_marine",
-      "shock_trooper",
-      "noghri_death_commando",
-      "battle_droid_veteran",
-      "clone_veteran",
-      "mandalorian_warrior",
-      "clan_champion",
-      "yuuzhan_vong_warrior",
-      "tusken_tribal_warrior",
-      "wookiee_clan_champion",
-      "cathar_clan_warrior",
-      "nagai_duelist",
-      "massassi_temple_warrior",
-      "nightbrother",
-      "gungan_organic_tech_defender"
+      "squad_leader",
+      "tactical_droid",
+      "droid_commander",
+      "gamorrean_warlord",
+      "weaponsmith",
+      "mandalorian_armorer",
+      "geonosian_arena_champion",
+      "zeison_sha_warrior",
+      "matukai_adept",
+      "shaper_of_kro_var",
+      "jensaarai_defender",
+      "iron_knight",
+      "kilian_ranger",
+      "jedi_guardian",
+      "jedi_consular",
+      "jedi_sentinel",
+      "sith_warrior",
+      "sith_assassin",
+      "sith_sorcerer",
+      "sith_manipulator",
+      "force_exile",
+      "imperial_inquisitor",
+      "medcorps_healer",
+      "explorcorps_seeker",
+      "agricorps_steward",
+      "educorps_scholar",
+      "jedi_battlemaster",
+      "jedi_temple_guard",
+      "jedi_peacekeeper",
+      "jedi_healer",
+      "jedi_artisan",
+      "jedi_lore_keeper",
+      "jedi_instructor",
+      "jedi_diplomat",
+      "jedi_seer",
+      "jedi_archaeologist",
+      "jedi_researcher",
+      "jedi_shadow",
+      "jedi_watchman",
+      "jedi_investigator",
+      "jedi_explorer",
+      "sith_marauder",
+      "sith_alchemist",
+      "sith_inquisitor",
+      "sith_scholar",
+      "dark_prophet",
+      "imperial_knight"
     ],
     "revisionIds": []
   },
@@ -12526,145 +12533,2981 @@
           "authority": "OWNER_CERTIFIED"
         }
       }
+    },
+    {
+      "id": "squad_leader",
+      "name": "Squad Leader",
+      "tranche": "13",
+      "primary": [
+        "ally_support",
+        "command",
+        "leadership",
+        "support",
+        "teamwork"
+      ],
+      "supporting": [
+        "followers",
+        "knowledge",
+        "persuasion",
+        "social",
+        "tactics"
+      ],
+      "all": [
+        "ally_support",
+        "command",
+        "followers",
+        "knowledge",
+        "leadership",
+        "persuasion",
+        "social",
+        "support",
+        "tactics",
+        "teamwork"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "ally_support",
+              "command",
+              "leadership",
+              "support",
+              "teamwork"
+            ],
+            "supporting": [
+              "followers",
+              "knowledge",
+              "persuasion",
+              "social",
+              "tactics"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "tactical_droid",
+      "name": "Tactical Droid",
+      "tranche": "13",
+      "primary": [
+        "ally_support",
+        "command",
+        "droid",
+        "support",
+        "tactics",
+        "teamwork"
+      ],
+      "supporting": [
+        "defense",
+        "knowledge",
+        "leadership",
+        "perception",
+        "recovery",
+        "resilience",
+        "use_computer"
+      ],
+      "all": [
+        "ally_support",
+        "command",
+        "defense",
+        "droid",
+        "knowledge",
+        "leadership",
+        "perception",
+        "recovery",
+        "resilience",
+        "support",
+        "tactics",
+        "teamwork",
+        "use_computer"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "ally_support",
+              "command",
+              "droid",
+              "support",
+              "tactics",
+              "teamwork"
+            ],
+            "supporting": [
+              "defense",
+              "knowledge",
+              "leadership",
+              "perception",
+              "recovery",
+              "resilience",
+              "use_computer"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "droid_commander",
+      "name": "Droid Commander",
+      "tranche": "13",
+      "primary": [
+        "ally_support",
+        "command",
+        "droid",
+        "leadership",
+        "support",
+        "teamwork"
+      ],
+      "supporting": [
+        "detection",
+        "followers",
+        "network",
+        "perception",
+        "sensors",
+        "tactics",
+        "tech",
+        "use_computer"
+      ],
+      "all": [
+        "ally_support",
+        "command",
+        "detection",
+        "droid",
+        "followers",
+        "leadership",
+        "network",
+        "perception",
+        "sensors",
+        "support",
+        "tactics",
+        "teamwork",
+        "tech",
+        "use_computer"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "ally_support",
+              "command",
+              "droid",
+              "leadership",
+              "support",
+              "teamwork"
+            ],
+            "supporting": [
+              "detection",
+              "followers",
+              "network",
+              "perception",
+              "sensors",
+              "tactics",
+              "tech",
+              "use_computer"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "gamorrean_warlord",
+      "name": "Gamorrean Warlord",
+      "tranche": "13",
+      "primary": [
+        "command",
+        "leadership",
+        "melee",
+        "tactics"
+      ],
+      "supporting": [
+        "ally_support",
+        "defense",
+        "persuasion",
+        "resilience",
+        "social",
+        "support",
+        "teamwork"
+      ],
+      "all": [
+        "ally_support",
+        "command",
+        "defense",
+        "leadership",
+        "melee",
+        "persuasion",
+        "resilience",
+        "social",
+        "support",
+        "tactics",
+        "teamwork"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "command",
+              "leadership",
+              "melee",
+              "tactics"
+            ],
+            "supporting": [
+              "ally_support",
+              "defense",
+              "persuasion",
+              "resilience",
+              "social",
+              "support",
+              "teamwork"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "weaponsmith",
+      "name": "Weaponsmith",
+      "tranche": "13",
+      "primary": [
+        "crafting",
+        "mechanics",
+        "modification",
+        "tech",
+        "weapon_empowerment"
+      ],
+      "supporting": [
+        "equipment",
+        "knowledge"
+      ],
+      "all": [
+        "crafting",
+        "equipment",
+        "knowledge",
+        "mechanics",
+        "modification",
+        "tech",
+        "weapon_empowerment"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "crafting",
+              "mechanics",
+              "modification",
+              "tech",
+              "weapon_empowerment"
+            ],
+            "supporting": [
+              "equipment",
+              "knowledge"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "mandalorian_armorer",
+      "name": "Mandalorian Armorer",
+      "tranche": "13",
+      "primary": [
+        "armor",
+        "crafting",
+        "equipment",
+        "mechanics",
+        "modification",
+        "tech"
+      ],
+      "supporting": [
+        "defense",
+        "knowledge",
+        "perception"
+      ],
+      "all": [
+        "armor",
+        "crafting",
+        "defense",
+        "equipment",
+        "knowledge",
+        "mechanics",
+        "modification",
+        "perception",
+        "tech"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "armor",
+              "crafting",
+              "equipment",
+              "mechanics",
+              "modification",
+              "tech"
+            ],
+            "supporting": [
+              "defense",
+              "knowledge",
+              "perception"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "geonosian_arena_champion",
+      "name": "Geonosian Arena Champion",
+      "tranche": "13",
+      "primary": [
+        "control",
+        "melee",
+        "persuasion",
+        "social"
+      ],
+      "supporting": [
+        "ally_support",
+        "battlefield_control",
+        "endurance",
+        "improvised_weapon",
+        "mind-affecting",
+        "support"
+      ],
+      "all": [
+        "ally_support",
+        "battlefield_control",
+        "control",
+        "endurance",
+        "improvised_weapon",
+        "melee",
+        "mind-affecting",
+        "persuasion",
+        "social",
+        "support"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "control",
+              "melee",
+              "persuasion",
+              "social"
+            ],
+            "supporting": [
+              "ally_support",
+              "battlefield_control",
+              "endurance",
+              "improvised_weapon",
+              "mind-affecting",
+              "support"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "zeison_sha_warrior",
+      "name": "Zeison Sha Warrior",
+      "tranche": "13",
+      "primary": [
+        "force",
+        "force_power",
+        "ranged",
+        "telekinesis",
+        "use_the_force"
+      ],
+      "supporting": [
+        "burst_damage",
+        "exotic_weapon",
+        "force_training",
+        "initiative",
+        "survival",
+        "targeting"
+      ],
+      "all": [
+        "burst_damage",
+        "exotic_weapon",
+        "force",
+        "force_power",
+        "force_training",
+        "initiative",
+        "ranged",
+        "survival",
+        "targeting",
+        "telekinesis",
+        "use_the_force"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "force",
+              "force_power",
+              "ranged",
+              "telekinesis",
+              "use_the_force"
+            ],
+            "supporting": [
+              "burst_damage",
+              "exotic_weapon",
+              "force_training",
+              "initiative",
+              "survival",
+              "targeting"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "matukai_adept",
+      "name": "Matukai Adept",
+      "tranche": "13",
+      "primary": [
+        "endurance",
+        "force",
+        "martial_arts",
+        "resilience",
+        "use_the_force"
+      ],
+      "supporting": [
+        "ability_enhancement",
+        "ambush_defense",
+        "defense",
+        "force_power",
+        "force_training",
+        "mobility",
+        "survivability"
+      ],
+      "all": [
+        "ability_enhancement",
+        "ambush_defense",
+        "defense",
+        "endurance",
+        "force",
+        "force_power",
+        "force_training",
+        "martial_arts",
+        "mobility",
+        "resilience",
+        "survivability",
+        "use_the_force"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "endurance",
+              "force",
+              "martial_arts",
+              "resilience",
+              "use_the_force"
+            ],
+            "supporting": [
+              "ability_enhancement",
+              "ambush_defense",
+              "defense",
+              "force_power",
+              "force_training",
+              "mobility",
+              "survivability"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "shaper_of_kro_var",
+      "name": "Shaper of Kro Var",
+      "tranche": "13",
+      "primary": [
+        "force",
+        "force_offense",
+        "force_power",
+        "nature",
+        "use_the_force"
+      ],
+      "supporting": [
+        "concealment",
+        "defense",
+        "force_training",
+        "mobility",
+        "survival",
+        "telekinesis"
+      ],
+      "all": [
+        "concealment",
+        "defense",
+        "force",
+        "force_offense",
+        "force_power",
+        "force_training",
+        "mobility",
+        "nature",
+        "survival",
+        "telekinesis",
+        "use_the_force"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "force",
+              "force_offense",
+              "force_power",
+              "nature",
+              "use_the_force"
+            ],
+            "supporting": [
+              "concealment",
+              "defense",
+              "force_training",
+              "mobility",
+              "survival",
+              "telekinesis"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "jensaarai_defender",
+      "name": "Jensaarai Defender",
+      "tranche": "13",
+      "primary": [
+        "armor",
+        "defense",
+        "force",
+        "force_defense",
+        "use_the_force"
+      ],
+      "supporting": [
+        "concealment",
+        "equipment",
+        "force_power",
+        "force_training",
+        "infiltration",
+        "lightsaber",
+        "melee",
+        "modification",
+        "perception",
+        "stealth",
+        "survivability"
+      ],
+      "all": [
+        "armor",
+        "concealment",
+        "defense",
+        "equipment",
+        "force",
+        "force_defense",
+        "force_power",
+        "force_training",
+        "infiltration",
+        "lightsaber",
+        "melee",
+        "modification",
+        "perception",
+        "stealth",
+        "survivability",
+        "use_the_force"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "armor",
+              "defense",
+              "force",
+              "force_defense",
+              "use_the_force"
+            ],
+            "supporting": [
+              "concealment",
+              "equipment",
+              "force_power",
+              "force_training",
+              "infiltration",
+              "lightsaber",
+              "melee",
+              "modification",
+              "perception",
+              "stealth",
+              "survivability"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "iron_knight",
+      "name": "Iron Knight",
+      "tranche": "13",
+      "primary": [
+        "droid",
+        "force",
+        "recovery",
+        "tech",
+        "use_the_force"
+      ],
+      "supporting": [
+        "anti-force",
+        "defense",
+        "force_defense",
+        "force_power",
+        "force_training",
+        "healing",
+        "knowledge",
+        "resilience",
+        "survivability"
+      ],
+      "all": [
+        "anti-force",
+        "defense",
+        "droid",
+        "force",
+        "force_defense",
+        "force_power",
+        "force_training",
+        "healing",
+        "knowledge",
+        "recovery",
+        "resilience",
+        "survivability",
+        "tech",
+        "use_the_force"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "droid",
+              "force",
+              "recovery",
+              "tech",
+              "use_the_force"
+            ],
+            "supporting": [
+              "anti-force",
+              "defense",
+              "force_defense",
+              "force_power",
+              "force_training",
+              "healing",
+              "knowledge",
+              "resilience",
+              "survivability"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "kilian_ranger",
+      "name": "Kilian Ranger",
+      "tranche": "13",
+      "primary": [
+        "defense",
+        "force",
+        "lightsaber_polearm",
+        "shields",
+        "survival",
+        "use_the_force"
+      ],
+      "supporting": [
+        "ally_support",
+        "equipment",
+        "force_power",
+        "force_training",
+        "precision",
+        "ranged",
+        "ranged_defense",
+        "support",
+        "tracking"
+      ],
+      "all": [
+        "ally_support",
+        "defense",
+        "equipment",
+        "force",
+        "force_power",
+        "force_training",
+        "lightsaber_polearm",
+        "precision",
+        "ranged",
+        "ranged_defense",
+        "shields",
+        "support",
+        "survival",
+        "tracking",
+        "use_the_force"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "defense",
+              "force",
+              "lightsaber_polearm",
+              "shields",
+              "survival",
+              "use_the_force"
+            ],
+            "supporting": [
+              "ally_support",
+              "equipment",
+              "force_power",
+              "force_training",
+              "precision",
+              "ranged",
+              "ranged_defense",
+              "support",
+              "tracking"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "jedi_guardian",
+      "name": "Jedi Guardian",
+      "tranche": "13",
+      "primary": [
+        "defense",
+        "force",
+        "force_defense",
+        "lightsaber",
+        "melee",
+        "use_the_force"
+      ],
+      "supporting": [
+        "force_offense",
+        "force_power",
+        "force_training",
+        "initiative",
+        "mobility",
+        "resilience",
+        "survivability"
+      ],
+      "all": [
+        "defense",
+        "force",
+        "force_defense",
+        "force_offense",
+        "force_power",
+        "force_training",
+        "initiative",
+        "lightsaber",
+        "melee",
+        "mobility",
+        "resilience",
+        "survivability",
+        "use_the_force"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "defense",
+              "force",
+              "force_defense",
+              "lightsaber",
+              "melee",
+              "use_the_force"
+            ],
+            "supporting": [
+              "force_offense",
+              "force_power",
+              "force_training",
+              "initiative",
+              "mobility",
+              "resilience",
+              "survivability"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "jedi_consular",
+      "name": "Jedi Consular",
+      "tranche": "13",
+      "primary": [
+        "ally_support",
+        "force",
+        "force_support",
+        "knowledge",
+        "support",
+        "use_the_force"
+      ],
+      "supporting": [
+        "force_power",
+        "force_training",
+        "healing",
+        "perception",
+        "social"
+      ],
+      "all": [
+        "ally_support",
+        "force",
+        "force_power",
+        "force_support",
+        "force_training",
+        "healing",
+        "knowledge",
+        "perception",
+        "social",
+        "support",
+        "use_the_force"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "ally_support",
+              "force",
+              "force_support",
+              "knowledge",
+              "support",
+              "use_the_force"
+            ],
+            "supporting": [
+              "force_power",
+              "force_training",
+              "healing",
+              "perception",
+              "social"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "jedi_sentinel",
+      "name": "Jedi Sentinel",
+      "tranche": "13",
+      "primary": [
+        "force",
+        "investigation",
+        "mechanics",
+        "perception",
+        "tech",
+        "use_the_force"
+      ],
+      "supporting": [
+        "detection",
+        "force_power",
+        "force_training",
+        "infiltration",
+        "precognition",
+        "stealth"
+      ],
+      "all": [
+        "detection",
+        "force",
+        "force_power",
+        "force_training",
+        "infiltration",
+        "investigation",
+        "mechanics",
+        "perception",
+        "precognition",
+        "stealth",
+        "tech",
+        "use_the_force"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "force",
+              "investigation",
+              "mechanics",
+              "perception",
+              "tech",
+              "use_the_force"
+            ],
+            "supporting": [
+              "detection",
+              "force_power",
+              "force_training",
+              "infiltration",
+              "precognition",
+              "stealth"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "sith_warrior",
+      "name": "Sith Warrior",
+      "tranche": "13",
+      "primary": [
+        "dark_side",
+        "force",
+        "force_offense",
+        "lightsaber",
+        "melee",
+        "use_the_force"
+      ],
+      "supporting": [
+        "armor",
+        "control",
+        "force_defense",
+        "force_power",
+        "force_training",
+        "resilience",
+        "survivability"
+      ],
+      "all": [
+        "armor",
+        "control",
+        "dark_side",
+        "force",
+        "force_defense",
+        "force_offense",
+        "force_power",
+        "force_training",
+        "lightsaber",
+        "melee",
+        "resilience",
+        "survivability",
+        "use_the_force"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "dark_side",
+              "force",
+              "force_offense",
+              "lightsaber",
+              "melee",
+              "use_the_force"
+            ],
+            "supporting": [
+              "armor",
+              "control",
+              "force_defense",
+              "force_power",
+              "force_training",
+              "resilience",
+              "survivability"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "sith_assassin",
+      "name": "Sith Assassin",
+      "tranche": "13",
+      "primary": [
+        "dark_side",
+        "force",
+        "infiltration",
+        "stealth",
+        "use_the_force"
+      ],
+      "supporting": [
+        "ambush",
+        "concealment",
+        "deception",
+        "defense",
+        "fear",
+        "force_offense",
+        "force_power",
+        "force_training",
+        "precision"
+      ],
+      "all": [
+        "ambush",
+        "concealment",
+        "dark_side",
+        "deception",
+        "defense",
+        "fear",
+        "force",
+        "force_offense",
+        "force_power",
+        "force_training",
+        "infiltration",
+        "precision",
+        "stealth",
+        "use_the_force"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "dark_side",
+              "force",
+              "infiltration",
+              "stealth",
+              "use_the_force"
+            ],
+            "supporting": [
+              "ambush",
+              "concealment",
+              "deception",
+              "defense",
+              "fear",
+              "force_offense",
+              "force_power",
+              "force_training",
+              "precision"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "sith_sorcerer",
+      "name": "Sith Sorcerer",
+      "tranche": "13",
+      "primary": [
+        "alchemy",
+        "dark_side",
+        "force",
+        "force_offense",
+        "force_power",
+        "knowledge",
+        "use_the_force"
+      ],
+      "supporting": [
+        "control",
+        "fear",
+        "force_training",
+        "galactic_lore"
+      ],
+      "all": [
+        "alchemy",
+        "control",
+        "dark_side",
+        "fear",
+        "force",
+        "force_offense",
+        "force_power",
+        "force_training",
+        "galactic_lore",
+        "knowledge",
+        "use_the_force"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "alchemy",
+              "dark_side",
+              "force",
+              "force_offense",
+              "force_power",
+              "knowledge",
+              "use_the_force"
+            ],
+            "supporting": [
+              "control",
+              "fear",
+              "force_training",
+              "galactic_lore"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "sith_manipulator",
+      "name": "Sith Manipulator",
+      "tranche": "13",
+      "primary": [
+        "control",
+        "dark_side",
+        "deception",
+        "force",
+        "manipulation",
+        "social",
+        "use_the_force"
+      ],
+      "supporting": [
+        "fear",
+        "force_power",
+        "force_training",
+        "intrigue",
+        "persuasion"
+      ],
+      "all": [
+        "control",
+        "dark_side",
+        "deception",
+        "fear",
+        "force",
+        "force_power",
+        "force_training",
+        "intrigue",
+        "manipulation",
+        "persuasion",
+        "social",
+        "use_the_force"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "control",
+              "dark_side",
+              "deception",
+              "force",
+              "manipulation",
+              "social",
+              "use_the_force"
+            ],
+            "supporting": [
+              "fear",
+              "force_power",
+              "force_training",
+              "intrigue",
+              "persuasion"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "force_exile",
+      "name": "Force Exile",
+      "tranche": "13",
+      "primary": [
+        "force",
+        "survival",
+        "use_the_force"
+      ],
+      "supporting": [
+        "evasion",
+        "force_defense",
+        "force_power",
+        "force_training",
+        "perception",
+        "resilience",
+        "stealth"
+      ],
+      "all": [
+        "evasion",
+        "force",
+        "force_defense",
+        "force_power",
+        "force_training",
+        "perception",
+        "resilience",
+        "stealth",
+        "survival",
+        "use_the_force"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "force",
+              "survival",
+              "use_the_force"
+            ],
+            "supporting": [
+              "evasion",
+              "force_defense",
+              "force_power",
+              "force_training",
+              "perception",
+              "resilience",
+              "stealth"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "imperial_inquisitor",
+      "name": "Imperial Inquisitor",
+      "tranche": "13",
+      "primary": [
+        "control",
+        "dark_side",
+        "fear",
+        "force",
+        "investigation",
+        "manipulation",
+        "use_the_force"
+      ],
+      "supporting": [
+        "force_offense",
+        "force_power",
+        "force_training",
+        "gather_information",
+        "infiltration",
+        "perception",
+        "persuasion",
+        "social"
+      ],
+      "all": [
+        "control",
+        "dark_side",
+        "fear",
+        "force",
+        "force_offense",
+        "force_power",
+        "force_training",
+        "gather_information",
+        "infiltration",
+        "investigation",
+        "manipulation",
+        "perception",
+        "persuasion",
+        "social",
+        "use_the_force"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "control",
+              "dark_side",
+              "fear",
+              "force",
+              "investigation",
+              "manipulation",
+              "use_the_force"
+            ],
+            "supporting": [
+              "force_offense",
+              "force_power",
+              "force_training",
+              "gather_information",
+              "infiltration",
+              "perception",
+              "persuasion",
+              "social"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "medcorps_healer",
+      "name": "MedCorps Healer",
+      "tranche": "13",
+      "primary": [
+        "ally_support",
+        "force",
+        "force_support",
+        "healing",
+        "medical",
+        "medicine",
+        "support",
+        "treat_injury",
+        "use_the_force"
+      ],
+      "supporting": [
+        "force_power",
+        "force_training",
+        "knowledge",
+        "perception",
+        "recovery",
+        "survivability"
+      ],
+      "all": [
+        "ally_support",
+        "force",
+        "force_power",
+        "force_support",
+        "force_training",
+        "healing",
+        "knowledge",
+        "medical",
+        "medicine",
+        "perception",
+        "recovery",
+        "support",
+        "survivability",
+        "treat_injury",
+        "use_the_force"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "ally_support",
+              "force",
+              "force_support",
+              "healing",
+              "medical",
+              "medicine",
+              "support",
+              "treat_injury",
+              "use_the_force"
+            ],
+            "supporting": [
+              "force_power",
+              "force_training",
+              "knowledge",
+              "perception",
+              "recovery",
+              "survivability"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "explorcorps_seeker",
+      "name": "ExplorCorps Seeker",
+      "tranche": "13",
+      "primary": [
+        "exploration",
+        "force",
+        "galactic_lore",
+        "pilot",
+        "space",
+        "survival",
+        "use_the_force"
+      ],
+      "supporting": [
+        "force_power",
+        "force_training",
+        "perception",
+        "precognition",
+        "recon",
+        "tracking",
+        "vehicle"
+      ],
+      "all": [
+        "exploration",
+        "force",
+        "force_power",
+        "force_training",
+        "galactic_lore",
+        "perception",
+        "pilot",
+        "precognition",
+        "recon",
+        "space",
+        "survival",
+        "tracking",
+        "use_the_force",
+        "vehicle"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "exploration",
+              "force",
+              "galactic_lore",
+              "pilot",
+              "space",
+              "survival",
+              "use_the_force"
+            ],
+            "supporting": [
+              "force_power",
+              "force_training",
+              "perception",
+              "precognition",
+              "recon",
+              "tracking",
+              "vehicle"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "agricorps_steward",
+      "name": "AgriCorps Steward",
+      "tranche": "13",
+      "primary": [
+        "force",
+        "nature",
+        "survival",
+        "use_the_force"
+      ],
+      "supporting": [
+        "force_power",
+        "force_support",
+        "force_training",
+        "healing",
+        "knowledge",
+        "perception",
+        "support"
+      ],
+      "all": [
+        "force",
+        "force_power",
+        "force_support",
+        "force_training",
+        "healing",
+        "knowledge",
+        "nature",
+        "perception",
+        "support",
+        "survival",
+        "use_the_force"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "force",
+              "nature",
+              "survival",
+              "use_the_force"
+            ],
+            "supporting": [
+              "force_power",
+              "force_support",
+              "force_training",
+              "healing",
+              "knowledge",
+              "perception",
+              "support"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "educorps_scholar",
+      "name": "EduCorps Scholar",
+      "tranche": "13",
+      "primary": [
+        "ally_support",
+        "force",
+        "knowledge",
+        "support",
+        "use_the_force"
+      ],
+      "supporting": [
+        "force_power",
+        "force_training",
+        "leadership",
+        "perception",
+        "reliability",
+        "skill_mastery",
+        "social"
+      ],
+      "all": [
+        "ally_support",
+        "force",
+        "force_power",
+        "force_training",
+        "knowledge",
+        "leadership",
+        "perception",
+        "reliability",
+        "skill_mastery",
+        "social",
+        "support",
+        "use_the_force"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "ally_support",
+              "force",
+              "knowledge",
+              "support",
+              "use_the_force"
+            ],
+            "supporting": [
+              "force_power",
+              "force_training",
+              "leadership",
+              "perception",
+              "reliability",
+              "skill_mastery",
+              "social"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "jedi_battlemaster",
+      "name": "Jedi Battlemaster",
+      "tranche": "13",
+      "primary": [
+        "force",
+        "leadership",
+        "lightsaber",
+        "melee",
+        "teamwork",
+        "use_the_force"
+      ],
+      "supporting": [
+        "ally_support",
+        "defense",
+        "dual_wield",
+        "force_power",
+        "force_training",
+        "resilience",
+        "support"
+      ],
+      "all": [
+        "ally_support",
+        "defense",
+        "dual_wield",
+        "force",
+        "force_power",
+        "force_training",
+        "leadership",
+        "lightsaber",
+        "melee",
+        "resilience",
+        "support",
+        "teamwork",
+        "use_the_force"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "force",
+              "leadership",
+              "lightsaber",
+              "melee",
+              "teamwork",
+              "use_the_force"
+            ],
+            "supporting": [
+              "ally_support",
+              "defense",
+              "dual_wield",
+              "force_power",
+              "force_training",
+              "resilience",
+              "support"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "jedi_temple_guard",
+      "name": "Jedi Temple Guard",
+      "tranche": "13",
+      "primary": [
+        "defense",
+        "force",
+        "lightsaber",
+        "melee",
+        "perception",
+        "use_the_force"
+      ],
+      "supporting": [
+        "force_defense",
+        "force_power",
+        "force_training",
+        "initiative",
+        "resilience",
+        "survivability"
+      ],
+      "all": [
+        "defense",
+        "force",
+        "force_defense",
+        "force_power",
+        "force_training",
+        "initiative",
+        "lightsaber",
+        "melee",
+        "perception",
+        "resilience",
+        "survivability",
+        "use_the_force"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "defense",
+              "force",
+              "lightsaber",
+              "melee",
+              "perception",
+              "use_the_force"
+            ],
+            "supporting": [
+              "force_defense",
+              "force_power",
+              "force_training",
+              "initiative",
+              "resilience",
+              "survivability"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "jedi_peacekeeper",
+      "name": "Jedi Peacekeeper",
+      "tranche": "13",
+      "primary": [
+        "control",
+        "force",
+        "social",
+        "use_the_force"
+      ],
+      "supporting": [
+        "ally_support",
+        "force_power",
+        "force_support",
+        "force_training",
+        "lightsaber",
+        "manipulation",
+        "melee",
+        "perception",
+        "support"
+      ],
+      "all": [
+        "ally_support",
+        "control",
+        "force",
+        "force_power",
+        "force_support",
+        "force_training",
+        "lightsaber",
+        "manipulation",
+        "melee",
+        "perception",
+        "social",
+        "support",
+        "use_the_force"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "control",
+              "force",
+              "social",
+              "use_the_force"
+            ],
+            "supporting": [
+              "ally_support",
+              "force_power",
+              "force_support",
+              "force_training",
+              "lightsaber",
+              "manipulation",
+              "melee",
+              "perception",
+              "support"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "jedi_healer",
+      "name": "Jedi Healer",
+      "tranche": "13",
+      "primary": [
+        "ally_support",
+        "force",
+        "force_support",
+        "healing",
+        "medicine",
+        "support",
+        "use_the_force"
+      ],
+      "supporting": [
+        "force_power",
+        "force_training",
+        "knowledge",
+        "medical",
+        "perception",
+        "recovery",
+        "treat_injury"
+      ],
+      "all": [
+        "ally_support",
+        "force",
+        "force_power",
+        "force_support",
+        "force_training",
+        "healing",
+        "knowledge",
+        "medical",
+        "medicine",
+        "perception",
+        "recovery",
+        "support",
+        "treat_injury",
+        "use_the_force"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "ally_support",
+              "force",
+              "force_support",
+              "healing",
+              "medicine",
+              "support",
+              "use_the_force"
+            ],
+            "supporting": [
+              "force_power",
+              "force_training",
+              "knowledge",
+              "medical",
+              "perception",
+              "recovery",
+              "treat_injury"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "jedi_artisan",
+      "name": "Jedi Artisan",
+      "tranche": "13",
+      "primary": [
+        "crafting",
+        "force",
+        "lightsaber",
+        "mechanics",
+        "tech",
+        "use_the_force"
+      ],
+      "supporting": [
+        "equipment",
+        "force_power",
+        "force_training",
+        "knowledge",
+        "telekinesis"
+      ],
+      "all": [
+        "crafting",
+        "equipment",
+        "force",
+        "force_power",
+        "force_training",
+        "knowledge",
+        "lightsaber",
+        "mechanics",
+        "tech",
+        "telekinesis",
+        "use_the_force"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "crafting",
+              "force",
+              "lightsaber",
+              "mechanics",
+              "tech",
+              "use_the_force"
+            ],
+            "supporting": [
+              "equipment",
+              "force_power",
+              "force_training",
+              "knowledge",
+              "telekinesis"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "jedi_lore_keeper",
+      "name": "Jedi Lore Keeper",
+      "tranche": "13",
+      "primary": [
+        "force",
+        "galactic_lore",
+        "knowledge",
+        "use_the_force"
+      ],
+      "supporting": [
+        "force_power",
+        "force_training",
+        "perception",
+        "precognition",
+        "skill_mastery",
+        "visions"
+      ],
+      "all": [
+        "force",
+        "force_power",
+        "force_training",
+        "galactic_lore",
+        "knowledge",
+        "perception",
+        "precognition",
+        "skill_mastery",
+        "use_the_force",
+        "visions"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "force",
+              "galactic_lore",
+              "knowledge",
+              "use_the_force"
+            ],
+            "supporting": [
+              "force_power",
+              "force_training",
+              "perception",
+              "precognition",
+              "skill_mastery",
+              "visions"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "jedi_instructor",
+      "name": "Jedi Instructor",
+      "tranche": "13",
+      "primary": [
+        "ally_support",
+        "force",
+        "force_support",
+        "leadership",
+        "support",
+        "use_the_force"
+      ],
+      "supporting": [
+        "force_power",
+        "force_training",
+        "knowledge",
+        "persuasion",
+        "social",
+        "teamwork"
+      ],
+      "all": [
+        "ally_support",
+        "force",
+        "force_power",
+        "force_support",
+        "force_training",
+        "knowledge",
+        "leadership",
+        "persuasion",
+        "social",
+        "support",
+        "teamwork",
+        "use_the_force"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "ally_support",
+              "force",
+              "force_support",
+              "leadership",
+              "support",
+              "use_the_force"
+            ],
+            "supporting": [
+              "force_power",
+              "force_training",
+              "knowledge",
+              "persuasion",
+              "social",
+              "teamwork"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "jedi_diplomat",
+      "name": "Jedi Diplomat",
+      "tranche": "13",
+      "primary": [
+        "force",
+        "leadership",
+        "persuasion",
+        "social",
+        "use_the_force"
+      ],
+      "supporting": [
+        "ally_support",
+        "force_power",
+        "force_support",
+        "force_training",
+        "knowledge",
+        "manipulation",
+        "support"
+      ],
+      "all": [
+        "ally_support",
+        "force",
+        "force_power",
+        "force_support",
+        "force_training",
+        "knowledge",
+        "leadership",
+        "manipulation",
+        "persuasion",
+        "social",
+        "support",
+        "use_the_force"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "force",
+              "leadership",
+              "persuasion",
+              "social",
+              "use_the_force"
+            ],
+            "supporting": [
+              "ally_support",
+              "force_power",
+              "force_support",
+              "force_training",
+              "knowledge",
+              "manipulation",
+              "support"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "jedi_seer",
+      "name": "Jedi Seer",
+      "tranche": "13",
+      "primary": [
+        "force",
+        "perception",
+        "precognition",
+        "use_the_force",
+        "visions"
+      ],
+      "supporting": [
+        "force_power",
+        "force_support",
+        "force_training",
+        "galactic_lore"
+      ],
+      "all": [
+        "force",
+        "force_power",
+        "force_support",
+        "force_training",
+        "galactic_lore",
+        "perception",
+        "precognition",
+        "use_the_force",
+        "visions"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "force",
+              "perception",
+              "precognition",
+              "use_the_force",
+              "visions"
+            ],
+            "supporting": [
+              "force_power",
+              "force_support",
+              "force_training",
+              "galactic_lore"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "jedi_archaeologist",
+      "name": "Jedi Archaeologist",
+      "tranche": "13",
+      "primary": [
+        "exploration",
+        "force",
+        "galactic_lore",
+        "investigation",
+        "knowledge",
+        "use_the_force"
+      ],
+      "supporting": [
+        "detection",
+        "force_power",
+        "force_training",
+        "perception",
+        "survival",
+        "tech"
+      ],
+      "all": [
+        "detection",
+        "exploration",
+        "force",
+        "force_power",
+        "force_training",
+        "galactic_lore",
+        "investigation",
+        "knowledge",
+        "perception",
+        "survival",
+        "tech",
+        "use_the_force"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "exploration",
+              "force",
+              "galactic_lore",
+              "investigation",
+              "knowledge",
+              "use_the_force"
+            ],
+            "supporting": [
+              "detection",
+              "force_power",
+              "force_training",
+              "perception",
+              "survival",
+              "tech"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "jedi_researcher",
+      "name": "Jedi Researcher",
+      "tranche": "13",
+      "primary": [
+        "force",
+        "investigation",
+        "knowledge",
+        "science",
+        "use_the_force"
+      ],
+      "supporting": [
+        "force_power",
+        "force_training",
+        "galactic_lore",
+        "perception",
+        "tech"
+      ],
+      "all": [
+        "force",
+        "force_power",
+        "force_training",
+        "galactic_lore",
+        "investigation",
+        "knowledge",
+        "perception",
+        "science",
+        "tech",
+        "use_the_force"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "force",
+              "investigation",
+              "knowledge",
+              "science",
+              "use_the_force"
+            ],
+            "supporting": [
+              "force_power",
+              "force_training",
+              "galactic_lore",
+              "perception",
+              "tech"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "jedi_shadow",
+      "name": "Jedi Shadow",
+      "tranche": "13",
+      "primary": [
+        "detection",
+        "force",
+        "infiltration",
+        "investigation",
+        "stealth",
+        "use_the_force"
+      ],
+      "supporting": [
+        "concealment",
+        "deception",
+        "force_power",
+        "force_training",
+        "perception"
+      ],
+      "all": [
+        "concealment",
+        "deception",
+        "detection",
+        "force",
+        "force_power",
+        "force_training",
+        "infiltration",
+        "investigation",
+        "perception",
+        "stealth",
+        "use_the_force"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "detection",
+              "force",
+              "infiltration",
+              "investigation",
+              "stealth",
+              "use_the_force"
+            ],
+            "supporting": [
+              "concealment",
+              "deception",
+              "force_power",
+              "force_training",
+              "perception"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "jedi_watchman",
+      "name": "Jedi Watchman",
+      "tranche": "13",
+      "primary": [
+        "force",
+        "investigation",
+        "perception",
+        "tracking",
+        "use_the_force"
+      ],
+      "supporting": [
+        "detection",
+        "force_power",
+        "force_training",
+        "precognition",
+        "pursuit",
+        "recon",
+        "survival"
+      ],
+      "all": [
+        "detection",
+        "force",
+        "force_power",
+        "force_training",
+        "investigation",
+        "perception",
+        "precognition",
+        "pursuit",
+        "recon",
+        "survival",
+        "tracking",
+        "use_the_force"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "force",
+              "investigation",
+              "perception",
+              "tracking",
+              "use_the_force"
+            ],
+            "supporting": [
+              "detection",
+              "force_power",
+              "force_training",
+              "precognition",
+              "pursuit",
+              "recon",
+              "survival"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "jedi_investigator",
+      "name": "Jedi Investigator",
+      "tranche": "13",
+      "primary": [
+        "detection",
+        "force",
+        "investigation",
+        "perception",
+        "use_the_force"
+      ],
+      "supporting": [
+        "force_power",
+        "force_training",
+        "gather_information",
+        "knowledge",
+        "social",
+        "tech",
+        "use_computer"
+      ],
+      "all": [
+        "detection",
+        "force",
+        "force_power",
+        "force_training",
+        "gather_information",
+        "investigation",
+        "knowledge",
+        "perception",
+        "social",
+        "tech",
+        "use_computer",
+        "use_the_force"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "detection",
+              "force",
+              "investigation",
+              "perception",
+              "use_the_force"
+            ],
+            "supporting": [
+              "force_power",
+              "force_training",
+              "gather_information",
+              "knowledge",
+              "social",
+              "tech",
+              "use_computer"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "jedi_explorer",
+      "name": "Jedi Explorer",
+      "tranche": "13",
+      "primary": [
+        "exploration",
+        "force",
+        "survival",
+        "use_the_force"
+      ],
+      "supporting": [
+        "force_power",
+        "force_training",
+        "galactic_lore",
+        "mobility",
+        "perception",
+        "pilot",
+        "recon",
+        "space",
+        "tracking",
+        "vehicle"
+      ],
+      "all": [
+        "exploration",
+        "force",
+        "force_power",
+        "force_training",
+        "galactic_lore",
+        "mobility",
+        "perception",
+        "pilot",
+        "recon",
+        "space",
+        "survival",
+        "tracking",
+        "use_the_force",
+        "vehicle"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "exploration",
+              "force",
+              "survival",
+              "use_the_force"
+            ],
+            "supporting": [
+              "force_power",
+              "force_training",
+              "galactic_lore",
+              "mobility",
+              "perception",
+              "pilot",
+              "recon",
+              "space",
+              "tracking",
+              "vehicle"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "sith_marauder",
+      "name": "Sith Marauder",
+      "tranche": "13",
+      "primary": [
+        "damage",
+        "dark_side",
+        "force",
+        "force_offense",
+        "lightsaber",
+        "melee",
+        "sustained_damage",
+        "use_the_force"
+      ],
+      "supporting": [
+        "force_power",
+        "force_training",
+        "full_attack",
+        "recovery",
+        "resilience"
+      ],
+      "all": [
+        "damage",
+        "dark_side",
+        "force",
+        "force_offense",
+        "force_power",
+        "force_training",
+        "full_attack",
+        "lightsaber",
+        "melee",
+        "recovery",
+        "resilience",
+        "sustained_damage",
+        "use_the_force"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "damage",
+              "dark_side",
+              "force",
+              "force_offense",
+              "lightsaber",
+              "melee",
+              "sustained_damage",
+              "use_the_force"
+            ],
+            "supporting": [
+              "force_power",
+              "force_training",
+              "full_attack",
+              "recovery",
+              "resilience"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "sith_alchemist",
+      "name": "Sith Alchemist",
+      "tranche": "13",
+      "primary": [
+        "alchemy",
+        "crafting",
+        "dark_side",
+        "force",
+        "modification",
+        "use_the_force"
+      ],
+      "supporting": [
+        "equipment",
+        "force_power",
+        "force_training",
+        "knowledge",
+        "melee",
+        "tech",
+        "weapon_empowerment"
+      ],
+      "all": [
+        "alchemy",
+        "crafting",
+        "dark_side",
+        "equipment",
+        "force",
+        "force_power",
+        "force_training",
+        "knowledge",
+        "melee",
+        "modification",
+        "tech",
+        "use_the_force",
+        "weapon_empowerment"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "alchemy",
+              "crafting",
+              "dark_side",
+              "force",
+              "modification",
+              "use_the_force"
+            ],
+            "supporting": [
+              "equipment",
+              "force_power",
+              "force_training",
+              "knowledge",
+              "melee",
+              "tech",
+              "weapon_empowerment"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "sith_inquisitor",
+      "name": "Sith Inquisitor",
+      "tranche": "13",
+      "primary": [
+        "dark_side",
+        "fear",
+        "force",
+        "infiltration",
+        "investigation",
+        "use_the_force"
+      ],
+      "supporting": [
+        "alchemy",
+        "control",
+        "deception",
+        "force_offense",
+        "force_power",
+        "force_training",
+        "gather_information",
+        "manipulation",
+        "talisman"
+      ],
+      "all": [
+        "alchemy",
+        "control",
+        "dark_side",
+        "deception",
+        "fear",
+        "force",
+        "force_offense",
+        "force_power",
+        "force_training",
+        "gather_information",
+        "infiltration",
+        "investigation",
+        "manipulation",
+        "talisman",
+        "use_the_force"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "dark_side",
+              "fear",
+              "force",
+              "infiltration",
+              "investigation",
+              "use_the_force"
+            ],
+            "supporting": [
+              "alchemy",
+              "control",
+              "deception",
+              "force_offense",
+              "force_power",
+              "force_training",
+              "gather_information",
+              "manipulation",
+              "talisman"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "sith_scholar",
+      "name": "Sith Scholar",
+      "tranche": "13",
+      "primary": [
+        "dark_side",
+        "force",
+        "galactic_lore",
+        "knowledge",
+        "use_the_force"
+      ],
+      "supporting": [
+        "alchemy",
+        "force_power",
+        "force_training",
+        "perception",
+        "precognition",
+        "social"
+      ],
+      "all": [
+        "alchemy",
+        "dark_side",
+        "force",
+        "force_power",
+        "force_training",
+        "galactic_lore",
+        "knowledge",
+        "perception",
+        "precognition",
+        "social",
+        "use_the_force"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "dark_side",
+              "force",
+              "galactic_lore",
+              "knowledge",
+              "use_the_force"
+            ],
+            "supporting": [
+              "alchemy",
+              "force_power",
+              "force_training",
+              "perception",
+              "precognition",
+              "social"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "dark_prophet",
+      "name": "Dark Prophet",
+      "tranche": "13",
+      "primary": [
+        "dark_side",
+        "force",
+        "precognition",
+        "use_the_force",
+        "visions"
+      ],
+      "supporting": [
+        "control",
+        "fear",
+        "force_power",
+        "force_training",
+        "manipulation",
+        "perception",
+        "persuasion",
+        "social"
+      ],
+      "all": [
+        "control",
+        "dark_side",
+        "fear",
+        "force",
+        "force_power",
+        "force_training",
+        "manipulation",
+        "perception",
+        "persuasion",
+        "precognition",
+        "social",
+        "use_the_force",
+        "visions"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "dark_side",
+              "force",
+              "precognition",
+              "use_the_force",
+              "visions"
+            ],
+            "supporting": [
+              "control",
+              "fear",
+              "force_power",
+              "force_training",
+              "manipulation",
+              "perception",
+              "persuasion",
+              "social"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
+    },
+    {
+      "id": "imperial_knight",
+      "name": "Imperial Knight",
+      "tranche": "13",
+      "primary": [
+        "armor",
+        "defense",
+        "force",
+        "lightsaber",
+        "melee",
+        "resilience",
+        "use_the_force"
+      ],
+      "supporting": [
+        "equipment",
+        "force_defense",
+        "force_power",
+        "force_training",
+        "morale",
+        "ranged_defense",
+        "survivability"
+      ],
+      "all": [
+        "armor",
+        "defense",
+        "equipment",
+        "force",
+        "force_defense",
+        "force_power",
+        "force_training",
+        "lightsaber",
+        "melee",
+        "morale",
+        "ranged_defense",
+        "resilience",
+        "survivability",
+        "use_the_force"
+      ],
+      "tagProvenance": {
+        "phase12b": {
+          "curated": {
+            "primary": [
+              "armor",
+              "defense",
+              "force",
+              "lightsaber",
+              "melee",
+              "resilience",
+              "use_the_force"
+            ],
+            "supporting": [
+              "equipment",
+              "force_defense",
+              "force_power",
+              "force_training",
+              "morale",
+              "ranged_defense",
+              "survivability"
+            ]
+          },
+          "authority": "OWNER_CERTIFIED"
+        }
+      }
     }
   ],
   "qaReview": {
-    "scope": "All 250 certified archetypes after tranche 12",
+    "scope": "All 297 certified archetypes after final closeout tranche 13",
     "result": "PASS",
-    "reviewedRecordCount": 250,
-    "newRecordCount": 40,
+    "reviewedRecordCount": 297,
+    "newRecordCount": 47,
     "carriedForwardRevisionLogCount": 8,
     "checks": [
-      "Frozen ontology membership across all 250 records",
-      "Primary/supporting disjointness across all 250 records",
-      "metadata.tags.all union consistency across all 250 records",
-      "Known hard implication closure across all 250 records",
-      "Semantic differentiation review across bodyguard, commando, veteran, warrior, and technical clusters",
-      "Narrow ontology-label review against certified Talent/Feat semantics",
-      "Intrinsic/optional/forbidden Force identity review",
-      "Species/cultural identity review without ordinary-English overtagging"
+      "Primary/supporting disjointness across all 297 records",
+      "metadata.tags.all union consistency and sorting across all 297 records",
+      "Phase 12B provenance equality across all 297 records",
+      "Known hard implication closure across all 297 records",
+      "Final Soldier commander/crafter/Force-tradition differentiation review",
+      "Jedi/Sith parent and specialization differentiation review",
+      "Intrinsic Force identity review without generic light-side/dark-side inference",
+      "Narrow ontology-label review for alchemy, crafting, droid, shields, lightsaber-polearm, science, and biotech",
+      "High-overlap pair review involving every final-tranche record",
+      "Frozen 190-tag ontology membership checked against live authority SHA a4f6ce8df4c51a946f3bb70f74fdfcc410a9164f",
+      "Prior 250 certified record objects verified unchanged against through250 source authority"
     ],
     "newTrancheHighOverlapPairsReviewed": [
       {
-        "a": "polis_massan_field_medic",
-        "b": "combat_medic",
-        "primaryJaccard": 0.833,
-        "allJaccard": 1.0
+        "a": "medcorps_healer",
+        "b": "jedi_healer",
+        "primaryJaccard": 0.778,
+        "allJaccard": 0.933
       },
       {
-        "a": "doctor",
-        "b": "combat_medic",
+        "a": "explorcorps_seeker",
+        "b": "jedi_explorer",
+        "primaryJaccard": 0.571,
+        "allJaccard": 0.867
+      },
+      {
+        "a": "tyia_adept",
+        "b": "jedi_healer",
+        "primaryJaccard": 0.857,
+        "allJaccard": 0.667
+      },
+      {
+        "a": "jedi_instructor",
+        "b": "jedi_diplomat",
+        "primaryJaccard": 0.375,
+        "allJaccard": 0.846
+      },
+      {
+        "a": "field_commander",
+        "b": "squad_leader",
+        "primaryJaccard": 0.833,
+        "allJaccard": 0.75
+      },
+      {
+        "a": "armorer",
+        "b": "mandalorian_armorer",
         "primaryJaccard": 0.833,
         "allJaccard": 0.727
       },
       {
-        "a": "commando",
-        "b": "noghri_death_commando",
-        "primaryJaccard": 0.8,
-        "allJaccard": 0.727
+        "a": "miraluka_force_seer",
+        "b": "jedi_seer",
+        "primaryJaccard": 0.833,
+        "allJaccard": 0.667
       },
       {
-        "a": "verpine_hive_engineer",
-        "b": "combat_engineer",
-        "primaryJaccard": 0.8,
-        "allJaccard": 0.538
+        "a": "jedi_consular",
+        "b": "educorps_scholar",
+        "primaryJaccard": 0.833,
+        "allJaccard": 0.643
       },
       {
-        "a": "frontier_marshal",
-        "b": "diplomatic_security_agent",
-        "primaryJaccard": 0.8,
-        "allJaccard": 0.375
+        "a": "baran_do_sage",
+        "b": "jedi_seer",
+        "primaryJaccard": 0.833,
+        "allJaccard": 0.583
       },
       {
-        "a": "tusken_tribal_warrior",
-        "b": "nightbrother",
-        "primaryJaccard": 0.75,
-        "allJaccard": 0.636
+        "a": "emperors_hand",
+        "b": "sith_assassin",
+        "primaryJaccard": 0.833,
+        "allJaccard": 0.562
       },
       {
-        "a": "clan_champion",
-        "b": "tusken_tribal_warrior",
-        "primaryJaccard": 0.75,
-        "allJaccard": 0.6
+        "a": "inventor",
+        "b": "mandalorian_armorer",
+        "primaryJaccard": 0.833,
+        "allJaccard": 0.545
       },
       {
-        "a": "mechanic",
-        "b": "combat_engineer",
-        "primaryJaccard": 0.75,
-        "allJaccard": 0.538
+        "a": "squad_leader",
+        "b": "droid_commander",
+        "primaryJaccard": 0.833,
+        "allJaccard": 0.412
       },
       {
-        "a": "tusken_tribal_warrior",
-        "b": "cathar_clan_warrior",
-        "primaryJaccard": 0.75,
-        "allJaccard": 0.455
-      },
-      {
-        "a": "mandalorian_warrior",
-        "b": "tusken_tribal_warrior",
-        "primaryJaccard": 0.75,
-        "allJaccard": 0.417
-      },
-      {
-        "a": "rebel_operative",
-        "b": "commando",
-        "primaryJaccard": 0.75,
-        "allJaccard": 0.417
-      },
-      {
-        "a": "bith_virtuoso",
-        "b": "warrior_priest",
-        "primaryJaccard": 0.75,
-        "allJaccard": 0.308
-      },
-      {
-        "a": "mercenary",
-        "b": "tusken_tribal_warrior",
-        "primaryJaccard": 0.75,
-        "allJaccard": 0.286
-      },
-      {
-        "a": "bodyguard",
-        "b": "imperial_royal_guard",
-        "primaryJaccard": 0.6,
-        "allJaccard": 0.9
-      },
-      {
-        "a": "bodyguard",
-        "b": "wookiee_life_debt_protector",
-        "primaryJaccard": 0.6,
-        "allJaccard": 0.9
-      },
-      {
-        "a": "imperial_royal_guard",
-        "b": "wookiee_life_debt_protector",
-        "primaryJaccard": 0.6,
+        "a": "force_seer",
+        "b": "jedi_seer",
+        "primaryJaccard": 0.714,
         "allJaccard": 0.818
+      },
+      {
+        "a": "force_mystic",
+        "b": "jedi_seer",
+        "primaryJaccard": 0.25,
+        "allJaccard": 0.818
+      },
+      {
+        "a": "jedi_lore_keeper",
+        "b": "sith_scholar",
+        "primaryJaccard": 0.8,
+        "allJaccard": 0.615
+      },
+      {
+        "a": "force_pilgrim",
+        "b": "jedi_explorer",
+        "primaryJaccard": 0.8,
+        "allJaccard": 0.5
+      },
+      {
+        "a": "jedi_guardian",
+        "b": "jedi_temple_guard",
+        "primaryJaccard": 0.714,
+        "allJaccard": 0.786
+      },
+      {
+        "a": "sith_warrior",
+        "b": "sith_marauder",
+        "primaryJaccard": 0.75,
+        "allJaccard": 0.529
+      },
+      {
+        "a": "force_exile",
+        "b": "agricorps_steward",
+        "primaryJaccard": 0.75,
+        "allJaccard": 0.4
+      },
+      {
+        "a": "force_exile",
+        "b": "jedi_explorer",
+        "primaryJaccard": 0.75,
+        "allJaccard": 0.333
+      },
+      {
+        "a": "tyia_adept",
+        "b": "jedi_consular",
+        "primaryJaccard": 0.714,
+        "allJaccard": 0.692
+      },
+      {
+        "a": "jedi_consular",
+        "b": "jedi_instructor",
+        "primaryJaccard": 0.714,
+        "allJaccard": 0.643
+      },
+      {
+        "a": "kissai_dark_priest",
+        "b": "sith_sorcerer",
+        "primaryJaccard": 0.714,
+        "allJaccard": 0.615
+      },
+      {
+        "a": "field_commander",
+        "b": "tactical_droid",
+        "primaryJaccard": 0.714,
+        "allJaccard": 0.5
+      },
+      {
+        "a": "tactical_droid",
+        "b": "droid_commander",
+        "primaryJaccard": 0.714,
+        "allJaccard": 0.5
+      },
+      {
+        "a": "unknown_regions_navigator",
+        "b": "explorcorps_seeker",
+        "primaryJaccard": 0.714,
+        "allJaccard": 0.467
+      },
+      {
+        "a": "tyia_adept",
+        "b": "jedi_instructor",
+        "primaryJaccard": 0.714,
+        "allJaccard": 0.438
+      },
+      {
+        "a": "field_commander",
+        "b": "droid_commander",
+        "primaryJaccard": 0.714,
+        "allJaccard": 0.389
       }
     ],
     "semanticQaRulings": [
-      "Enforcer follows the prior Kiffu Guardian correction: Enforcement is investigator/quarry-apprehension oriented. Respected Officer supports persuasion/social but does not turn the archetype into command/leadership.",
-      "Security Specialist and Bodyguard receive ally_support only where selected Protection mechanics directly benefit another creature; generic protective flavor alone is not enough.",
-      "Combat Medic promotes healing/medical/medicine/treat_injury because the selected Advanced Medicine package directly performs therapeutic treatment and recovery under fire.",
-      "Combat Engineer does not inherit every explosive semantic from the Military Engineer tree. Its selected package centers mechanics, repair, modification, tech, vehicle problem-solving, and equipment work.",
-      "Warrior-Priest keeps all Force semantics supporting because Phase 7 explicitly classifies its Force route as optional rather than intrinsic.",
-      "Morgukai Warrior promotes anti-force because Force Blank directly impairs Force-based detection while the archetype itself has no Force access.",
-      "Breacher is not automatically tagged trap or burst_damage: this specific selected package does not include Breaching Explosive or Demolitionist, despite the ordinary-language breacher concept.",
-      "Assassin Droid promotes droid because machine identity is structural and required, while ambush/precision_damage/stealth describe the selected killer package.",
-      "Yuuzhan Vong Warrior receives no Force tags. Species Force Immunity supports anti-force, while living-weapon culture supports biotech only as a secondary identity signal.",
-      "Massassi Temple Warrior keeps Force, Force-power, and dark-side semantics supporting because its Sith-taught Force route is one of the project's explicitly optional Force identities.",
-      "Nightbrother receives no dark_side tag. Project narrative authority treats Nightbrothers as a distinct Dathomirian cultural-warrior fantasy, and this record has no direct Force/dark-side mechanics.",
-      "Gungan Organic-Tech Defender does not receive biotech from the name alone. The certified package proves engineering, protection, explosives, equipment, and modification; no direct biological-technology mechanic was established in this pass.",
-      "Mandalorian Warrior does not receive armor merely because Mandalorian culture is visually armor-centric; this record's selected mechanics do not directly operate on armor.",
-      "Bodyguard-family overlap is retained where it is real, but each specialization promotes a different evidence-backed axis: ranged cover (Koorivar), diplomacy/nonlethal intervention, sovereign melee protection, loyalty leadership, endurance/life-debt, clan melee protection, or Noghri close-control capability."
+      "Squad Leader narrows Field Commander into small-unit coordination: direct ally support and teamwork stay primary, while broad tactics is supporting.",
+      "Tactical Droid is not merely a generic commander with a droid label: machine identity and tactical coordination are primary; recovery/resilience from Maintain Focus are reinforcing rather than defining.",
+      "Droid Commander promotes droid, command, leadership, and ally support; Expanded Sensors supports sensors/detection/network without turning the archetype into a generic slicer.",
+      "Mandalorian Armorer promotes armor/crafting/equipment and technical modification because the narrative authority explicitly defines a forge-keeper identity; this is stronger evidence than ordinary Mandalorian visual association.",
+      "Geonosian Arena Champion uses Personal Vendetta as social battlefield control and protection-by-taunt; species identity alone does not generate unrelated insectoid tags.",
+      "Zeison Sha Warrior promotes telekinesis and ranged discblade fighting; Force identity is intrinsic, but Jedi/lightsaber assumptions are not imported.",
+      "Matukai Adept promotes martial arts, endurance, and resilience because its tradition is bodily Force discipline; generic lightsaber identity is excluded.",
+      "Shaper of Kro Var promotes nature and Force offense for elemental shaping; no spellcasting tag is used because the published mechanics are Force powers, not a separate spell system.",
+      "Jensaarai Defender promotes armor/defense/Force defense and keeps stealth/infiltration supporting from Force Cloak; dark_side is not inferred from mixed Jedi/Sith historical origins.",
+      "Iron Knight promotes droid identity from the Shard-in-droid-body authority and recovery from Force Repair; Silicon Mind supports anti-Force/Force-defense semantics without making anti-Force the archetype core.",
+      "Kilian Ranger promotes shields, defense, and lightsaber-polearm identity from Shield Gauntlet Defense and Siang Lance Mastery; generic vehicle/ride tags are not promoted merely from ranger flavor.",
+      "Jedi Guardian, Consular, and Sentinel are differentiated by martial protection, advisory/support knowledge, and practical investigation/technical problem solving rather than receiving identical generic Jedi tag sets.",
+      "Jedi Peacekeeper is tagged for control/social de-escalation rather than generic melee dominance; lightsaber combat remains supporting.",
+      "Jedi Artisan receives crafting from explicit narrative and Jedi Artisan talent-tree authority concerning lightsaber construction, not from the name alone.",
+      "Jedi Seer and Dark Prophet both use precognition/visions, but Dark Prophet adds dark-side fear/manipulation while Jedi Seer stays an information/foresight identity.",
+      "Jedi Shadow, Watchman, Investigator, Archaeologist, Researcher, and Explorer are kept distinct through infiltration, tracking, investigation, exploration, and science/knowledge evidence rather than generic Sentinel inheritance.",
+      "Sith Sorcerer, Alchemist, Inquisitor, Scholar, Manipulator, Warrior, Assassin, and Marauder retain distinct semantic centers; Sith Alchemy does not automatically make every Sith record an alchemist.",
+      "Imperial Inquisitor and Sith Inquisitor are deliberately separated: Imperial Inquisitor centers control/fear/manipulation as an institutional hunter-interrogator, while Sith Inquisitor promotes infiltration and investigation with alchemy/talisman as reinforcing Sith tools.",
+      "Sith Marauder promotes damage and sustained offensive pressure beyond the broader Sith Warrior martial identity; this distinction is supported by its battle-first narrative and Multiattack package rather than invented solely for uniqueness.",
+      "ExplorCorps Seeker promotes galactic lore, piloting, and space exploration because its authority is explicitly survey-ship and hyperspace-route oriented; Jedi Explorer remains the broader field-discovery identity.",
+      "Weaponsmith promotes weapon empowerment because tuning and improving weapons is the archetype core; this narrows the broader crafter/inventor overlap without importing generic combat tags.",
+      "MedCorps Healer and Jedi Healer retain substantial legitimate overlap, but MedCorps keeps medical/medicine/Treat Injury as core clinical-service semantics while Jedi Healer centers Force healing and Force support.",
+      "Imperial Knight promotes armor, defense, lightsaber melee, and resilience from Knight armor/resolve mechanics; dark_side is not inferred from Imperial allegiance."
     ],
     "validationSummary": {
       "unknownOntologyTags": 0,
       "primarySupportingCollisions": 0,
       "brokenAllUnions": 0,
+      "provenanceMismatches": 0,
       "knownHardImplicationViolations": 0,
-      "newTrancheRecordCount": 40,
-      "cumulativeCertifiedRecordCount": 250
+      "newTrancheRecordCount": 47,
+      "cumulativeCertifiedRecordCount": 297,
+      "remainingUncuratedAfterApplication": 0
     }
   }
 }
