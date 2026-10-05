@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
  * Verifies data/audits/item-canonicalization-rolling-authority.json (Phase 0-1 weapons,
- * Phase 0-2 armor, Phase 0-3A equipment, Phase 0-3B medical, Phase 0-3C explosives, Phase 0-3D cybernetics, Phase 0-3E upgrades, Phase 0-3F gear templates, Phase 0-3G lightsaber components, Phase 0-3H droid systems, Phase 0-3I ammunition boundary, Phase 0 completion manifest) against the weapons, armor and equipment packs. Read-only. Fails on any drift between the certified authority
+ * Phase 0-2 armor, Phase 0-3A equipment, Phase 0-3B medical, Phase 0-3C explosives, Phase 0-3D cybernetics, Phase 0-3E upgrades, Phase 0-3F gear templates, Phase 0-3G lightsaber components, Phase 0-3H droid systems, Phase 0-3I ammunition boundary, Phase 0 completion manifest, Phase 1A Core weapons content) against the weapons, armor and equipment packs. Read-only. Fails on any drift between the certified authority
  * and the pack so that execution phases cannot silently run against a changed repo.
  */
 import fs from 'node:fs';
@@ -386,6 +386,36 @@ if (pc) {
   const listed = [...pc.phase0Closure.unresolvedItems].sort();
   if (JSON.stringify(review) !== JSON.stringify(listed) || pc.phase0Closure.unresolvedIdentityReviews !== review.length) fail(`completion manifest unresolved reviews ${JSON.stringify(listed)} != armor REVIEW ${JSON.stringify(review)}`);
   if (!errors.length) console.log(`Phase 0 completion OK: ${pc.tranches.length} tranches reconcile with the folded authorities; ${review.length} open identity reviews (${review.join(', ')})`);
+}
+
+// ---- Phase 1A Core weapons content authority ----
+const c1a = auth.phases['1a-core-weapons-content'];
+if (c1a) {
+  const core = p.canonicalWeapons.filter((w) => w.sources.some((s) => s.book === 'Core Rulebook'));
+  const byName = new Map(core.map((w) => [w.canonicalName, w]));
+  const seen = new Set();
+  const disc = {};
+  for (const r of c1a.records) {
+    if (seen.has(r.canonicalName)) fail(`1A duplicate ${r.canonicalName}`);
+    seen.add(r.canonicalName);
+    const w = byName.get(r.canonicalName);
+    if (!w) { fail(`1A ${r.canonicalName} is not a Core Phase 0-1 weapon`); continue; }
+    disc[r.phase1Discrepancy] = (disc[r.phase1Discrepancy] || 0) + 1;
+    if (r.source.book !== 'Core Rulebook' || !r.source.descriptionPage || !r.source.statTablePage || !r.source.table) fail(`1A ${r.canonicalName} missing provenance`);
+    if (!r.canonicalPlayerText?.trim() || !r.summary?.trim() || r.canonicalPlayerText === r.summary) fail(`1A ${r.canonicalName} text/summary invalid`);
+    const absent = w.phase0Disposition === 'ADD';
+    if (r.repo.present === absent) fail(`1A ${r.canonicalName} repo.present disagrees with Phase 0 ${w.phase0Disposition}`);
+    if (r.repo.present) {
+      if (r.repo.id !== w.repo.matchedId || !pack.has(r.repo.id)) fail(`1A ${r.canonicalName} repo id ${r.repo.id} != Phase 0 ${w.repo.matchedId} or not in pack`);
+      if (pack.get(r.repo.id) !== r.repo.currentName) fail(`1A ${r.canonicalName} currentName ${r.repo.currentName} != pack ${pack.get(r.repo.id)}`);
+    } else if (r.phase1Discrepancy !== 'MISSING_RECORD') fail(`1A ${r.canonicalName} absent but not MISSING_RECORD`);
+    if (r.repo.phase0NameNormalizationPending !== (w.phase0Disposition === 'EDIT')) fail(`1A ${r.canonicalName} rename-pending flag disagrees with Phase 0`);
+  }
+  for (const n of byName.keys()) if (!seen.has(n)) fail(`1A missing Core weapon ${n}`);
+  const exp = { MISSING_RECORD: c1a.counts.repoMissing, DESCRIPTION_INCORRECT: c1a.counts.descriptionIncorrect, DESCRIPTION_INCOMPLETE: c1a.counts.descriptionIncomplete };
+  for (const [k, v] of Object.entries(exp)) if ((disc[k] || 0) !== v) fail(`1A ${k} count ${disc[k] || 0} != ${v}`);
+  if (c1a.records.length !== c1a.counts.canonicalWeapons || c1a.counts.repoPresent + c1a.counts.repoMissing !== c1a.records.length) fail('1A count mismatch');
+  if (!errors.length) console.log(`Phase 1A OK: ${c1a.records.length} Core weapons (${c1a.counts.repoPresent} present, ${c1a.counts.repoMissing} missing; ${exp.DESCRIPTION_INCORRECT} incorrect, ${exp.DESCRIPTION_INCOMPLETE} incomplete)`);
 }
 
 if (errors.length) { console.error(`FAIL (${errors.length})\n- ${errors.join('\n- ')}`); process.exit(1); }

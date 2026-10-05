@@ -1332,9 +1332,84 @@ Phase 1 — Canonical provenance and descriptions. Order: Weapons; Armor; Genera
 
 Phase 1 steps per family: (1) exact sourcebook and page; (2) canonical full player-readable rules text; (3) short derived summary; (4) printed prerequisites and restrictions; (5) repo discrepancy classification; (6) only after certification, authorize production creation/update of Phase 0 ADD/EDIT records.
 
+
+## Phase 1A — Core Rulebook weapons: provenance and canonical content
+
+Status: **CERTIFIED_PHASE_1A_CONTENT_AUTHORITY** (authority-only; no pack, stat or runtime change). Source: The user-supplied Core Rulebook TXT/PDF is SSOT. TXT is the searchable layer; rendered PDF pages are final authority for page/table/layout ambiguity.
+
+Counts: 48 canonical Core weapons; 35 present in `packs/weapons.db`, 13 missing; 14 DESCRIPTION_INCORRECT, 21 DESCRIPTION_INCOMPLETE, 0 correct.
+
+Certified fields: source book/description page/stat-table page, `canonicalPlayerText`, derived `summary`, repo discrepancy class. Not certified: numeric weapon statistics, schema, semantic tags, automation, ammo schema. `canonicalPlayerText` incidentally contains printed numbers; those do not certify stat fields.
+
+### Guardrails
+
+- Fold this authority into the rolling item authority before mutating production.
+- Do not alter numerical stats from Phase 1A; those are reserved for the stat-certification phase.
+- Do not invent critical threat ranges, saving throws, damage-over-time effects, armor-bypass rules, or proficiency requirements that the Core weapon entry does not state.
+- Area attacks use the published attack-roll-versus-Reflex model, not invented Reflex/Fortitude saving throws.
+- Ion and stun rules remain distinct.
+- The 13 missing records are content/provenance certified, but production creation still requires the agreed weapon schema/stat fields to be certified.
+- Preserve Phase 0 identity decisions; where phase0NameNormalizationPending is true, use the canonical published display name when that rename tranche is authorized.
+- Do not treat derived summary text as canonical rules text.
+
+### Records
+
+| Weapon | Group | Desc p. | Table p. | Table | Repo | Discrepancy | Rename pending |
+|---|---|---|---|---|---|---|---|
+| Amphistaff | Exotic Weapon | 121 | 122 | Table 8-3: Melee Weapons | — | MISSING_RECORD |  |
+| Atlatl | Exotic Weapon | 121 | 122 | Table 8-3: Melee Weapons | — | MISSING_RECORD |  |
+| Bayonet | Simple Weapon | 121 | 123 | Table 8-3: Melee Weapons | — | MISSING_RECORD |  |
+| Cesta | Exotic Weapon | 121 | 122 | Table 8-3: Melee Weapons | — | MISSING_RECORD |  |
+| Club/Baton | Simple Weapon | 121 | 123 | Table 8-3: Melee Weapons | — | MISSING_RECORD |  |
+| Combat Gloves | Simple Weapon | 121 | 123 | Table 8-3: Melee Weapons | — | MISSING_RECORD |  |
+| Electrostaff | Advanced Melee Weapon | 121 | 122 | Table 8-3: Melee Weapons | `weapon-electrostaff` | DESCRIPTION_INCORRECT |  |
+| Force Pike | Advanced Melee Weapon | 121 | 122 | Table 8-3: Melee Weapons | — | MISSING_RECORD |  |
+| Knife | Simple Weapon | 122 | 123 | Table 8-3: Melee Weapons | — | MISSING_RECORD |  |
+| Lightsaber | Lightsaber | 122 | 122 | Table 8-3: Melee Weapons | `weapon-lightsaber` | DESCRIPTION_INCORRECT |  |
+| Lightsaber, Double | Lightsaber | 123 | 122 | Table 8-3: Melee Weapons | `weapon-double-bladed-lightsaber` | DESCRIPTION_INCORRECT | yes (Double-Bladed Lightsaber) |
+| Lightsaber, Short | Lightsaber | 123 | 122 | Table 8-3: Melee Weapons | `lightsaber-chassis-short` | DESCRIPTION_INCORRECT | yes (Short Lightsaber) |
+| Mace | Simple Weapon | 123 | 123 | Table 8-3: Melee Weapons | — | MISSING_RECORD |  |
+| Quarterstaff | Simple Weapon | 124 | 123 | Table 8-3: Melee Weapons | — | MISSING_RECORD |  |
+| Spear | Simple Weapon | 124 | 123 | Table 8-3: Melee Weapons | — | MISSING_RECORD |  |
+| Stun Baton | Simple Weapon | 124 | 123 | Table 8-3: Melee Weapons | `weapon-stun-baton` | DESCRIPTION_INCORRECT |  |
+| Vibro-Ax | Advanced Melee Weapon | 124 | 122 | Table 8-3: Melee Weapons | — | MISSING_RECORD |  |
+| Vibrobayonet | Advanced Melee Weapon | 124 | 122 | Table 8-3: Melee Weapons | — | MISSING_RECORD |  |
+| Vibroblade | Advanced Melee Weapon | 124 | 122 | Table 8-3: Melee Weapons | `weapon-vibroblade` | DESCRIPTION_INCORRECT |  |
+| Vibrodagger | Advanced Melee Weapon | 124 | 122 | Table 8-3: Melee Weapons | `weapon-vibrodagger` | DESCRIPTION_INCORRECT |  |
+| Blaster Cannon | Heavy Weapon | 125 | 126 | Table 8-4: Ranged Weapons | `weapon-blaster-cannon` | DESCRIPTION_INCOMPLETE |  |
+| Blaster Carbine | Rifle | 125 | 126 | Table 8-4: Ranged Weapons | `weapon-blaster-carbine` | DESCRIPTION_INCOMPLETE |  |
+| E-Web Repeating Blaster | Heavy Weapon | 125 | 126 | Table 8-4: Ranged Weapons | `weapon-e-web-repeating-blaster` | DESCRIPTION_INCOMPLETE |  |
+| Heavy Repeating Blaster | Heavy Weapon | 125 | 126 | Table 8-4: Ranged Weapons | `weapon-heavy-repeating-blaster` | DESCRIPTION_INCOMPLETE |  |
+| Blaster Pistol | Pistol | 125 | 126 | Table 8-4: Ranged Weapons | `weapon-blaster-pistol` | DESCRIPTION_INCOMPLETE |  |
+| Blaster Pistol, Heavy | Pistol | 126 | 126 | Table 8-4: Ranged Weapons | `weapon-heavy-blaster-pistol` | DESCRIPTION_INCOMPLETE | yes (Heavy Blaster Pistol) |
+| Blaster Pistol, Hold-Out | Pistol | 126 | 126 | Table 8-4: Ranged Weapons | `weapon-hold-out-blaster-pistol` | DESCRIPTION_INCOMPLETE | yes (Hold-Out Blaster Pistol) |
+| Blaster Pistol, Sporting | Pistol | 126 | 126 | Table 8-4: Ranged Weapons | `weapon-sporting-blaster-pistol` | DESCRIPTION_INCOMPLETE | yes (Sporting Blaster Pistol) |
+| Blaster Rifle | Rifle | 126 | 127 | Table 8-4: Ranged Weapons | `weapon-blaster-rifle` | DESCRIPTION_INCOMPLETE |  |
+| Blaster Rifle, Heavy | Rifle | 127 | 127 | Table 8-4: Ranged Weapons | `weapon-heavy-blaster-rifle` | DESCRIPTION_INCOMPLETE | yes (Heavy Blaster Rifle) |
+| Blaster Rifle, Light Repeating | Rifle | 127 | 127 | Table 8-4: Ranged Weapons | `weapon-light-repeating-blaster` | DESCRIPTION_INCOMPLETE | yes (Light Repeating Blaster) |
+| Blaster Rifle, Sporting | Rifle | 127 | 127 | Table 8-4: Ranged Weapons | `weapon-sporting-blaster-rifle` | DESCRIPTION_INCOMPLETE | yes (Sporting Blaster Rifle) |
+| Bow | Simple Weapon | 127 | 127 | Table 8-4: Ranged Weapons | `weapon-bow` | DESCRIPTION_INCOMPLETE |  |
+| Bowcaster | Exotic Weapon | 127 | 126 | Table 8-4: Ranged Weapons | `weapon-bowcaster` | DESCRIPTION_INCORRECT |  |
+| Flamethrower | Exotic Weapon | 127 | 126 | Table 8-4: Ranged Weapons | `weapon-flamethrower` | DESCRIPTION_INCORRECT |  |
+| Energy Ball | Simple Weapon | 127 | 127 | Table 8-4: Ranged Weapons | `weapon-energy-ball` | DESCRIPTION_INCOMPLETE |  |
+| Grenade, Frag | Simple Weapon | 128 | 127 | Table 8-4: Ranged Weapons | `weapon-frag-grenade` | DESCRIPTION_INCORRECT | yes (Frag Grenade) |
+| Grenade, Ion | Simple Weapon | 128 | 127 | Table 8-4: Ranged Weapons | `weapon-ion-grenade` | DESCRIPTION_INCOMPLETE | yes (Ion Grenade) |
+| Grenade, Stun | Simple Weapon | 128 | 127 | Table 8-4: Ranged Weapons | `weapon-stun-grenade` | DESCRIPTION_INCORRECT | yes (Stun Grenade) |
+| Grenade Launcher | Heavy Weapon | 128 | 126 | Table 8-4: Ranged Weapons | `weapon-grenade-launcher` | DESCRIPTION_INCOMPLETE |  |
+| Ion Pistol | Pistol | 128 | 126 | Table 8-4: Ranged Weapons | `weapon-ion-pistol` | DESCRIPTION_INCOMPLETE |  |
+| Ion Rifle | Rifle | 129 | 127 | Table 8-4: Ranged Weapons | `weapon-ion-rifle` | DESCRIPTION_INCOMPLETE |  |
+| Missile Launcher | Heavy Weapon | 129 | 126 | Table 8-4: Ranged Weapons | `weapon-missile-launcher` | DESCRIPTION_INCOMPLETE |  |
+| Net | Simple Weapon | 129 | 127 | Table 8-4: Ranged Weapons | `weapon-net` | DESCRIPTION_INCOMPLETE |  |
+| Sling | Simple Weapon | 129 | 127 | Table 8-4: Ranged Weapons | `weapon-sling` | DESCRIPTION_INCOMPLETE |  |
+| Slugthrower Pistol | Pistol | 129 | 126 | Table 8-4: Ranged Weapons | `weapon-slugthrower-pistol` | DESCRIPTION_INCORRECT |  |
+| Slugthrower Rifle | Rifle | 129 | 127 | Table 8-4: Ranged Weapons | `weapon-slugthrower-rifle` | DESCRIPTION_INCORRECT |  |
+| Thermal Detonator | Simple Weapon | 129 | 127 | Table 8-4: Ranged Weapons | `weapon-thermal-detonator` | DESCRIPTION_INCORRECT |  |
+
+Canonical player text and summaries for all 48 records are in `data/audits/item-canonicalization-rolling-authority.json` → `phases["1a-core-weapons-content"].records`.
+
 ## Pending phases
 
-- 1 Provenance and canonical content certification (order: weapons, armor, general equipment families, cybernetics/upgrades/templates, lightsaber components, droid systems)
+- 1 Provenance and canonical content certification — 1A Core weapons DONE (authority-only); next 1B Clone Wars Campaign Guide weapons, then remaining weapon sources; then armor, general equipment families, cybernetics/upgrades/templates, lightsaber components, droid systems
 
 - Gated cleanup tranche (0-3D migrations, 0-3E renames/merge, 0-3F template migration, 0-3G weapons.db stragglers, 0-3H droid migration, weapon/equipment REMOVE dependents)
 

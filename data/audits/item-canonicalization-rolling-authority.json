@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "authorityType": "item-canonicalization-rolling-authority",
-  "status": "PHASE 0 CHARACTER-ITEM CENSUS COMPLETE — identity/presence authority certified for 0-1, 0-2, 0-3A through 0-3I; certified ADD/EDIT/REMOVE actions remain intentionally unexecuted except the armor, equipment and medical identity renames",
+  "status": "PHASE 0 CHARACTER-ITEM CENSUS COMPLETE; PHASE 1A CORE WEAPONS CONTENT CERTIFIED (authority-only) — certified ADD/EDIT/REMOVE actions remain intentionally unexecuted except the armor, equipment and medical identity renames",
   "sourcePolicy": "User-provided SWSE TXT/PDF sourcebooks are the canonical SSOT. Repository compendiums are implementation targets only.",
   "ownerRulings": "docs/audits/item-phase-0-ssot-census.md §7a",
   "architecture": {
@@ -18878,10 +18878,1227 @@
         "date": "2026-10-05",
         "note": "Boundary ruling only; no records, no mutation."
       }
+    },
+    "1a-core-weapons-content": {
+      "phase": "1A",
+      "title": "Core Rulebook Weapons - Provenance and Canonical Content",
+      "status": "CERTIFIED_PHASE_1A_CONTENT_AUTHORITY",
+      "canonicalSourcePolicy": "The user-supplied Core Rulebook TXT/PDF is SSOT. TXT is the searchable layer; rendered PDF pages are final authority for page/table/layout ambiguity.",
+      "scope": {
+        "included": "All 48 Phase 0 canonical Core Rulebook character weapons.",
+        "certifiedFields": [
+          "source.book",
+          "source.descriptionPage",
+          "source.statTablePage",
+          "canonicalPlayerText",
+          "summary",
+          "phase1Discrepancy"
+        ],
+        "notCertifiedYet": [
+          "numeric weapon statistics",
+          "schema implementation",
+          "semantic tags",
+          "runtime automation",
+          "ammo schema representation"
+        ]
+      },
+      "counts": {
+        "canonicalWeapons": 48,
+        "repoPresent": 35,
+        "repoMissing": 13,
+        "descriptionIncorrect": 14,
+        "descriptionIncomplete": 21,
+        "contentCorrect": 0
+      },
+      "contentPolicy": {
+        "canonicalPlayerText": "Faithful player-readable transcription/normalization of the operative published Core weapon description and special rules. OCR artifacts were normalized against rendered PDF pages.",
+        "summary": "Derived short player-facing summary; not canonical quotation.",
+        "discrepancyDefinitions": {
+          "MISSING_RECORD": "Canonical Phase 0 weapon is absent from packs/weapons.db.",
+          "DESCRIPTION_INCORRECT": "Repo description contains one or more mechanical claims not supported by the Core weapon rule or materially misstates the rule.",
+          "DESCRIPTION_INCOMPLETE": "Repo description is only a summary and omits one or more operative published rules but does not contain a material contradiction."
+        }
+      },
+      "executorGuardrails": [
+        "Fold this authority into the rolling item authority before mutating production.",
+        "Do not alter numerical stats from Phase 1A; those are reserved for the stat-certification phase.",
+        "Do not invent critical threat ranges, saving throws, damage-over-time effects, armor-bypass rules, or proficiency requirements that the Core weapon entry does not state.",
+        "Area attacks use the published attack-roll-versus-Reflex model, not invented Reflex/Fortitude saving throws.",
+        "Ion and stun rules remain distinct.",
+        "The 13 missing records are content/provenance certified, but production creation still requires the agreed weapon schema/stat fields to be certified.",
+        "Preserve Phase 0 identity decisions; where phase0NameNormalizationPending is true, use the canonical published display name when that rename tranche is authorized.",
+        "Do not treat derived summary text as canonical rules text."
+      ],
+      "records": [
+        {
+          "canonicalName": "Amphistaff",
+          "weaponGroup": "Exotic Weapon",
+          "source": {
+            "book": "Core Rulebook",
+            "descriptionPage": 121,
+            "statTablePage": 122,
+            "table": "Table 8-3: Melee Weapons",
+            "verifiedBy": [
+              "Core Rulebook_djvu.txt",
+              "Star Wars Saga Edition.pdf visual render"
+            ]
+          },
+          "canonicalPlayerText": "An amphistaff is a serpentine creature genetically engineered by the Yuuzhan Vong to serve as a weapon. It has three weapon forms: quarterstaff, spear, or whip; switching forms is a swift action. In quarterstaff form it has all the qualities of a quarterstaff. In spear form it can be wielded or thrown as a spear; if the target takes damage and the attack roll equals or exceeds its Fortitude Defense, the target moves -1 persistent step on the condition track. In whip form it has reach 2 squares; its tail deals 1d4 piercing damage plus the wielder's Strength modifier and uses the same poison condition-track effect. Instead of dealing whip damage, a proficient wielder can use it to pin or trip as though using the Pin or Trip feat without needing that feat. In any form, the wielder can coax it to spit venom up to 10 squares as a standard action; if the attack hits both Reflex and Fortitude Defense, the target moves -1 persistent step on the condition track. It can spit venom only once every 24 standard hours.",
+          "summary": "Living Yuuzhan Vong weapon with quarterstaff, poisoned spear, reach/Pin/Trip whip, and once-per-day venom-spit forms.",
+          "repo": {
+            "present": false,
+            "id": null,
+            "currentName": null,
+            "phase0NameNormalizationPending": false
+          },
+          "phase1Discrepancy": "MISSING_RECORD",
+          "phase1ContentAction": "CREATE_WHEN_SCHEMA_STATS_PHASES_ARE_READY"
+        },
+        {
+          "canonicalName": "Atlatl",
+          "weaponGroup": "Exotic Weapon",
+          "source": {
+            "book": "Core Rulebook",
+            "descriptionPage": 121,
+            "statTablePage": 122,
+            "table": "Table 8-3: Melee Weapons",
+            "verifiedBy": [
+              "Core Rulebook_djvu.txt",
+              "Star Wars Saga Edition.pdf visual render"
+            ]
+          },
+          "canonicalPlayerText": "A Gungan weapon, the atlatl adds speed and power as an extension of a throwing arm, allowing the user to hurl energy balls farther than with an unaided toss. If forced into close combat, the wielder can use the atlatl as a club-like melee weapon. Although the atlatl is an exotic weapon, Gungans are treated as proficient if they have the Weapon Proficiency (simple weapons) feat.",
+          "summary": "Gungan energy-ball launcher that can also serve as a club; Gungans with simple-weapon proficiency are treated as proficient.",
+          "repo": {
+            "present": false,
+            "id": null,
+            "currentName": null,
+            "phase0NameNormalizationPending": false
+          },
+          "phase1Discrepancy": "MISSING_RECORD",
+          "phase1ContentAction": "CREATE_WHEN_SCHEMA_STATS_PHASES_ARE_READY"
+        },
+        {
+          "canonicalName": "Bayonet",
+          "weaponGroup": "Simple Weapon",
+          "source": {
+            "book": "Core Rulebook",
+            "descriptionPage": 121,
+            "statTablePage": 123,
+            "table": "Table 8-3: Melee Weapons",
+            "verifiedBy": [
+              "Core Rulebook_djvu.txt",
+              "Star Wars Saga Edition.pdf visual render"
+            ]
+          },
+          "canonicalPlayerText": "When mounted on a rifle, a bayonet allows the rifle to be used as a melee weapon much like a spear. While wielding a rifle with a mounted bayonet, you threaten squares within your reach even if you used the rifle to make a ranged attack on your last turn, and you can use it to make attacks of opportunity. A bayonet requires two hands to use when mounted on a rifle. It cannot be used on a rifle with a folded stock. Detached from a rifle, it is treated as a knife; mounted, it deals more damage because of the added leverage and bulk.",
+          "summary": "Rifle-mounted spear-like blade that preserves melee threat/AoO after ranged fire; detached it functions as a knife.",
+          "repo": {
+            "present": false,
+            "id": null,
+            "currentName": null,
+            "phase0NameNormalizationPending": false
+          },
+          "phase1Discrepancy": "MISSING_RECORD",
+          "phase1ContentAction": "CREATE_WHEN_SCHEMA_STATS_PHASES_ARE_READY"
+        },
+        {
+          "canonicalName": "Cesta",
+          "weaponGroup": "Exotic Weapon",
+          "source": {
+            "book": "Core Rulebook",
+            "descriptionPage": 121,
+            "statTablePage": 122,
+            "table": "Table 8-3: Melee Weapons",
+            "verifiedBy": [
+              "Core Rulebook_djvu.txt",
+              "Star Wars Saga Edition.pdf visual render"
+            ]
+          },
+          "canonicalPlayerText": "Another Gungan weapon, the cesta is a flexible pole used to hurl small energy balls. It can also be used as a stafflike melee weapon. Although the cesta is considered an exotic weapon, Gungans are treated as proficient if they have the Weapon Proficiency (simple weapons) feat.",
+          "summary": "Gungan stafflike launcher for energy balls; Gungans with simple-weapon proficiency are treated as proficient.",
+          "repo": {
+            "present": false,
+            "id": null,
+            "currentName": null,
+            "phase0NameNormalizationPending": false
+          },
+          "phase1Discrepancy": "MISSING_RECORD",
+          "phase1ContentAction": "CREATE_WHEN_SCHEMA_STATS_PHASES_ARE_READY"
+        },
+        {
+          "canonicalName": "Club/Baton",
+          "weaponGroup": "Simple Weapon",
+          "source": {
+            "book": "Core Rulebook",
+            "descriptionPage": 121,
+            "statTablePage": 123,
+            "table": "Table 8-3: Melee Weapons",
+            "verifiedBy": [
+              "Core Rulebook_djvu.txt",
+              "Star Wars Saga Edition.pdf visual render"
+            ]
+          },
+          "canonicalPlayerText": "Powered by the wielder's brute strength, clubs break an opponent's bones, or worse. Batons, a variety of the club, are used by police forces on relatively peaceful worlds in crowd-control situations.",
+          "summary": "Basic bludgeoning club or police baton with no special weapon rule beyond its listed statistics.",
+          "repo": {
+            "present": false,
+            "id": null,
+            "currentName": null,
+            "phase0NameNormalizationPending": false
+          },
+          "phase1Discrepancy": "MISSING_RECORD",
+          "phase1ContentAction": "CREATE_WHEN_SCHEMA_STATS_PHASES_ARE_READY"
+        },
+        {
+          "canonicalName": "Combat Gloves",
+          "weaponGroup": "Simple Weapon",
+          "source": {
+            "book": "Core Rulebook",
+            "descriptionPage": 121,
+            "statTablePage": 123,
+            "table": "Table 8-3: Melee Weapons",
+            "verifiedBy": [
+              "Core Rulebook_djvu.txt",
+              "Star Wars Saga Edition.pdf visual render"
+            ]
+          },
+          "canonicalPlayerText": "A pair of padded gloves provides extra hitting power thanks to their weight and construction. They provide a +1 bonus to damage on a successful unarmed attack. Combat gloves are two sizes smaller than their wearer. Because of how they are worn, combat gloves can't be disarmed or dropped.",
+          "summary": "Worn gloves add +1 unarmed damage and cannot be disarmed or dropped.",
+          "repo": {
+            "present": false,
+            "id": null,
+            "currentName": null,
+            "phase0NameNormalizationPending": false
+          },
+          "phase1Discrepancy": "MISSING_RECORD",
+          "phase1ContentAction": "CREATE_WHEN_SCHEMA_STATS_PHASES_ARE_READY"
+        },
+        {
+          "canonicalName": "Electrostaff",
+          "weaponGroup": "Advanced Melee Weapon",
+          "source": {
+            "book": "Core Rulebook",
+            "descriptionPage": 121,
+            "statTablePage": 122,
+            "table": "Table 8-3: Melee Weapons",
+            "verifiedBy": [
+              "Core Rulebook_djvu.txt",
+              "Star Wars Saga Edition.pdf visual render"
+            ]
+          },
+          "canonicalPlayerText": "An electrostaff is a double weapon. Each end has an electromagnetic pulse generator; either end can be set to stun its target instead. The staff is made of resilient phrik alloy that gives it DR 20, and this damage reduction applies even against lightsaber attacks. An electrostaff requires two energy cells to operate.",
+          "summary": "Double staff whose ends can deal normal or stun damage; DR 20 applies even against lightsabers; uses two energy cells.",
+          "repo": {
+            "present": true,
+            "id": "weapon-electrostaff",
+            "currentName": "Electrostaff",
+            "phase0NameNormalizationPending": false
+          },
+          "phase1Discrepancy": "DESCRIPTION_INCORRECT",
+          "phase1ContentAction": "UPDATE_CANONICAL_CONTENT"
+        },
+        {
+          "canonicalName": "Force Pike",
+          "weaponGroup": "Advanced Melee Weapon",
+          "source": {
+            "book": "Core Rulebook",
+            "descriptionPage": 121,
+            "statTablePage": 122,
+            "table": "Table 8-3: Melee Weapons",
+            "verifiedBy": [
+              "Core Rulebook_djvu.txt",
+              "Star Wars Saga Edition.pdf visual render"
+            ]
+          },
+          "canonicalPlayerText": "A force pike is a 1-meter pole topped with a power tip. A two-setting power dial lets the user set the weapon to lethal or stun. Although primarily a vibro weapon, the force pike also delivers an electrical shock through its tip, dealing both piercing and energy damage. It requires two energy cells to operate.",
+          "summary": "Piercing/energy polearm with lethal and stun settings; uses two energy cells.",
+          "repo": {
+            "present": false,
+            "id": null,
+            "currentName": null,
+            "phase0NameNormalizationPending": false
+          },
+          "phase1Discrepancy": "MISSING_RECORD",
+          "phase1ContentAction": "CREATE_WHEN_SCHEMA_STATS_PHASES_ARE_READY"
+        },
+        {
+          "canonicalName": "Knife",
+          "weaponGroup": "Simple Weapon",
+          "source": {
+            "book": "Core Rulebook",
+            "descriptionPage": 122,
+            "statTablePage": 123,
+            "table": "Table 8-3: Melee Weapons",
+            "verifiedBy": [
+              "Core Rulebook_djvu.txt",
+              "Star Wars Saga Edition.pdf visual render"
+            ]
+          },
+          "canonicalPlayerText": "While many weapons rely on highly advanced technology, knives still see wide use. A knife is completely silent and serves well in close-combat skirmishes.",
+          "summary": "Silent simple melee blade.",
+          "repo": {
+            "present": false,
+            "id": null,
+            "currentName": null,
+            "phase0NameNormalizationPending": false
+          },
+          "phase1Discrepancy": "MISSING_RECORD",
+          "phase1ContentAction": "CREATE_WHEN_SCHEMA_STATS_PHASES_ARE_READY"
+        },
+        {
+          "canonicalName": "Lightsaber",
+          "weaponGroup": "Lightsaber",
+          "source": {
+            "book": "Core Rulebook",
+            "descriptionPage": 122,
+            "statTablePage": 122,
+            "table": "Table 8-3: Melee Weapons",
+            "verifiedBy": [
+              "Core Rulebook_djvu.txt",
+              "Star Wars Saga Edition.pdf visual render"
+            ]
+          },
+          "canonicalPlayerText": "The lightsaber features a handgrip hilt that projects a blade of pure energy. Its blade is generated by an energy cell and focused through crystals within the hilt. It can cut through most materials, except another lightsaber blade, an energy shield, or a few exotic materials, given enough time. Because only the handgrip has weight, unskilled users have difficulty judging the blade's position. A lightsaber requires a special energy cell costing ten times the price of an ordinary energy cell, but it lasts almost indefinitely.",
+          "summary": "Standard Jedi lightsaber; energy blade can cut most materials given time and uses a long-lasting special energy cell.",
+          "repo": {
+            "present": true,
+            "id": "weapon-lightsaber",
+            "currentName": "Lightsaber",
+            "phase0NameNormalizationPending": false
+          },
+          "phase1Discrepancy": "DESCRIPTION_INCORRECT",
+          "phase1ContentAction": "UPDATE_CANONICAL_CONTENT"
+        },
+        {
+          "canonicalName": "Lightsaber, Double",
+          "weaponGroup": "Lightsaber",
+          "source": {
+            "book": "Core Rulebook",
+            "descriptionPage": 123,
+            "statTablePage": 122,
+            "table": "Table 8-3: Melee Weapons",
+            "verifiedBy": [
+              "Core Rulebook_djvu.txt",
+              "Star Wars Saga Edition.pdf visual render"
+            ]
+          },
+          "canonicalPlayerText": "A double-bladed lightsaber consists of two sabers fused at their hilts. One or both blades can be ignited at once. With both blades ignited, it is a double weapon. You can attack with both ends as a full-round action, but both attack rolls take a -10 penalty; certain feats and talents can reduce these penalties. It requires two special energy cells, each costing ten times an ordinary energy cell and lasting almost indefinitely.",
+          "summary": "Two-ended lightsaber; with both blades active it is a double weapon and needs two special energy cells.",
+          "repo": {
+            "present": true,
+            "id": "weapon-double-bladed-lightsaber",
+            "currentName": "Double-Bladed Lightsaber",
+            "phase0NameNormalizationPending": true
+          },
+          "phase1Discrepancy": "DESCRIPTION_INCORRECT",
+          "phase1ContentAction": "UPDATE_CANONICAL_CONTENT"
+        },
+        {
+          "canonicalName": "Lightsaber, Short",
+          "weaponGroup": "Lightsaber",
+          "source": {
+            "book": "Core Rulebook",
+            "descriptionPage": 123,
+            "statTablePage": 122,
+            "table": "Table 8-3: Melee Weapons",
+            "verifiedBy": [
+              "Core Rulebook_djvu.txt",
+              "Star Wars Saga Edition.pdf visual render"
+            ]
+          },
+          "canonicalPlayerText": "Small Jedi such as Master Yoda favor the short lightsaber, sometimes called a shoto. Jedi skilled at two-weapon fighting often use the shoto as their off-hand weapon. A short lightsaber requires a special energy cell costing ten times the price of an ordinary energy cell, but it lasts almost indefinitely.",
+          "summary": "Small shoto lightsaber commonly used by Small Jedi or as an off-hand weapon.",
+          "repo": {
+            "present": true,
+            "id": "lightsaber-chassis-short",
+            "currentName": "Short Lightsaber",
+            "phase0NameNormalizationPending": true
+          },
+          "phase1Discrepancy": "DESCRIPTION_INCORRECT",
+          "phase1ContentAction": "UPDATE_CANONICAL_CONTENT"
+        },
+        {
+          "canonicalName": "Mace",
+          "weaponGroup": "Simple Weapon",
+          "source": {
+            "book": "Core Rulebook",
+            "descriptionPage": 123,
+            "statTablePage": 123,
+            "table": "Table 8-3: Melee Weapons",
+            "verifiedBy": [
+              "Core Rulebook_djvu.txt",
+              "Star Wars Saga Edition.pdf visual render"
+            ]
+          },
+          "canonicalPlayerText": "The mace is a weapon made of metal, consisting of a heavy ball atop a handle.",
+          "summary": "Basic metal bludgeoning weapon.",
+          "repo": {
+            "present": false,
+            "id": null,
+            "currentName": null,
+            "phase0NameNormalizationPending": false
+          },
+          "phase1Discrepancy": "MISSING_RECORD",
+          "phase1ContentAction": "CREATE_WHEN_SCHEMA_STATS_PHASES_ARE_READY"
+        },
+        {
+          "canonicalName": "Quarterstaff",
+          "weaponGroup": "Simple Weapon",
+          "source": {
+            "book": "Core Rulebook",
+            "descriptionPage": 124,
+            "statTablePage": 123,
+            "table": "Table 8-3: Melee Weapons",
+            "verifiedBy": [
+              "Core Rulebook_djvu.txt",
+              "Star Wars Saga Edition.pdf visual render"
+            ]
+          },
+          "canonicalPlayerText": "A quarterstaff is made of wood, plasteel, or a metal alloy. A user can strike with either end. A quarterstaff is a double weapon. You can attack with both ends as a full-round action, but both attack rolls take a -10 penalty; certain feats and talents can reduce these penalties.",
+          "summary": "Simple double weapon; both ends can be used in a full-round two-weapon attack.",
+          "repo": {
+            "present": false,
+            "id": null,
+            "currentName": null,
+            "phase0NameNormalizationPending": false
+          },
+          "phase1Discrepancy": "MISSING_RECORD",
+          "phase1ContentAction": "CREATE_WHEN_SCHEMA_STATS_PHASES_ARE_READY"
+        },
+        {
+          "canonicalName": "Spear",
+          "weaponGroup": "Simple Weapon",
+          "source": {
+            "book": "Core Rulebook",
+            "descriptionPage": 124,
+            "statTablePage": 123,
+            "table": "Table 8-3: Melee Weapons",
+            "verifiedBy": [
+              "Core Rulebook_djvu.txt",
+              "Star Wars Saga Edition.pdf visual render"
+            ]
+          },
+          "canonicalPlayerText": "A spear is a long pole with a sharp end fashioned from stone or metal. Spears can be used as thrown weapons.",
+          "summary": "Simple piercing polearm that can also be thrown.",
+          "repo": {
+            "present": false,
+            "id": null,
+            "currentName": null,
+            "phase0NameNormalizationPending": false
+          },
+          "phase1Discrepancy": "MISSING_RECORD",
+          "phase1ContentAction": "CREATE_WHEN_SCHEMA_STATS_PHASES_ARE_READY"
+        },
+        {
+          "canonicalName": "Stun Baton",
+          "weaponGroup": "Simple Weapon",
+          "source": {
+            "book": "Core Rulebook",
+            "descriptionPage": 124,
+            "statTablePage": 123,
+            "table": "Table 8-3: Melee Weapons",
+            "verifiedBy": [
+              "Core Rulebook_djvu.txt",
+              "Star Wars Saga Edition.pdf visual render"
+            ]
+          },
+          "canonicalPlayerText": "A stun baton is a short club with a power pack in the handle. It can be activated to produce a stunning charge when it strikes a target, using the normal Stunning rules. A stun baton requires an energy cell to operate.",
+          "summary": "Club that can deliver stun damage; requires an energy cell.",
+          "repo": {
+            "present": true,
+            "id": "weapon-stun-baton",
+            "currentName": "Stun Baton",
+            "phase0NameNormalizationPending": false
+          },
+          "phase1Discrepancy": "DESCRIPTION_INCORRECT",
+          "phase1ContentAction": "UPDATE_CANONICAL_CONTENT"
+        },
+        {
+          "canonicalName": "Vibro-Ax",
+          "weaponGroup": "Advanced Melee Weapon",
+          "source": {
+            "book": "Core Rulebook",
+            "descriptionPage": 124,
+            "statTablePage": 122,
+            "table": "Table 8-3: Melee Weapons",
+            "verifiedBy": [
+              "Core Rulebook_djvu.txt",
+              "Star Wars Saga Edition.pdf visual render"
+            ]
+          },
+          "canonicalPlayerText": "A vibro-ax has an energy cell that causes its blade to vibrate rapidly when activated, giving it much greater cutting power than a standard axe. A vibro-ax requires two energy cells to operate.",
+          "summary": "Heavy vibro axe powered by two energy cells.",
+          "repo": {
+            "present": false,
+            "id": null,
+            "currentName": null,
+            "phase0NameNormalizationPending": false
+          },
+          "phase1Discrepancy": "MISSING_RECORD",
+          "phase1ContentAction": "CREATE_WHEN_SCHEMA_STATS_PHASES_ARE_READY"
+        },
+        {
+          "canonicalName": "Vibrobayonet",
+          "weaponGroup": "Advanced Melee Weapon",
+          "source": {
+            "book": "Core Rulebook",
+            "descriptionPage": 124,
+            "statTablePage": 122,
+            "table": "Table 8-3: Melee Weapons",
+            "verifiedBy": [
+              "Core Rulebook_djvu.txt",
+              "Star Wars Saga Edition.pdf visual render"
+            ]
+          },
+          "canonicalPlayerText": "When mounted on a rifle, a vibrobayonet allows the rifle to be used as a potent melee weapon. Even if you used the rifle for a ranged attack on your last turn, you still threaten squares within your reach and can make attacks of opportunity. It requires two hands when mounted and cannot be used on a rifle with a folded stock. Detached from a rifle it functions as a vibrodagger; mounted it deals more damage because of the added leverage and bulk. It requires an energy cell that is separate from the rifle's power pack.",
+          "summary": "Powered rifle bayonet that preserves melee threat/AoO after ranged fire; detached it functions as a vibrodagger.",
+          "repo": {
+            "present": false,
+            "id": null,
+            "currentName": null,
+            "phase0NameNormalizationPending": false
+          },
+          "phase1Discrepancy": "MISSING_RECORD",
+          "phase1ContentAction": "CREATE_WHEN_SCHEMA_STATS_PHASES_ARE_READY"
+        },
+        {
+          "canonicalName": "Vibroblade",
+          "weaponGroup": "Advanced Melee Weapon",
+          "source": {
+            "book": "Core Rulebook",
+            "descriptionPage": 124,
+            "statTablePage": 122,
+            "table": "Table 8-3: Melee Weapons",
+            "verifiedBy": [
+              "Core Rulebook_djvu.txt",
+              "Star Wars Saga Edition.pdf visual render"
+            ]
+          },
+          "canonicalPlayerText": "The vibroblade is a close-combat weapon favored by soldiers and mercenaries. Vibroblades are illegal in most urban areas. A vibroblade requires an energy cell to operate.",
+          "summary": "Powered vibro sword; usually illegal in urban areas and requires an energy cell.",
+          "repo": {
+            "present": true,
+            "id": "weapon-vibroblade",
+            "currentName": "Vibroblade",
+            "phase0NameNormalizationPending": false
+          },
+          "phase1Discrepancy": "DESCRIPTION_INCORRECT",
+          "phase1ContentAction": "UPDATE_CANONICAL_CONTENT"
+        },
+        {
+          "canonicalName": "Vibrodagger",
+          "weaponGroup": "Advanced Melee Weapon",
+          "source": {
+            "book": "Core Rulebook",
+            "descriptionPage": 124,
+            "statTablePage": 122,
+            "table": "Table 8-3: Melee Weapons",
+            "verifiedBy": [
+              "Core Rulebook_djvu.txt",
+              "Star Wars Saga Edition.pdf visual render"
+            ]
+          },
+          "canonicalPlayerText": "The vibrodagger is the smallest vibro weapon. It is subject to very little regulation because it is viewed as a common tool for crafters and explorers. A vibrodagger requires an energy cell to operate.",
+          "summary": "Small, lightly regulated vibro weapon powered by an energy cell.",
+          "repo": {
+            "present": true,
+            "id": "weapon-vibrodagger",
+            "currentName": "Vibrodagger",
+            "phase0NameNormalizationPending": false
+          },
+          "phase1Discrepancy": "DESCRIPTION_INCORRECT",
+          "phase1ContentAction": "UPDATE_CANONICAL_CONTENT"
+        },
+        {
+          "canonicalName": "Blaster Cannon",
+          "weaponGroup": "Heavy Weapon",
+          "source": {
+            "book": "Core Rulebook",
+            "descriptionPage": 125,
+            "statTablePage": 126,
+            "table": "Table 8-4: Ranged Weapons",
+            "verifiedBy": [
+              "Core Rulebook_djvu.txt",
+              "Star Wars Saga Edition.pdf visual render"
+            ]
+          },
+          "canonicalPlayerText": "A portable shoulder-fired blaster cannon is an area-effect weapon. It deals full damage to the target if the attack hits its Reflex Defense and half damage if it misses; Evasion modifies this as normal. Every creature or object adjacent to the target takes half damage if the attack hits and no damage if it misses. A blaster cannon requires a power pack; after 10 shots the power pack must be replaced.",
+          "summary": "Shoulder-fired area blaster: full/half damage to the target and splash damage to adjacent creatures/objects; 10 shots per power pack.",
+          "repo": {
+            "present": true,
+            "id": "weapon-blaster-cannon",
+            "currentName": "Blaster Cannon",
+            "phase0NameNormalizationPending": false
+          },
+          "phase1Discrepancy": "DESCRIPTION_INCOMPLETE",
+          "phase1ContentAction": "UPDATE_CANONICAL_CONTENT"
+        },
+        {
+          "canonicalName": "Blaster Carbine",
+          "weaponGroup": "Rifle",
+          "source": {
+            "book": "Core Rulebook",
+            "descriptionPage": 125,
+            "statTablePage": 126,
+            "table": "Table 8-4: Ranged Weapons",
+            "verifiedBy": [
+              "Core Rulebook_djvu.txt",
+              "Star Wars Saga Edition.pdf visual render"
+            ]
+          },
+          "canonicalPlayerText": "A blaster carbine has a short barrel and compact two-handed grip. Some models have a retractable stock; a carbine with a retractable stock costs 850 credits instead of 900. Because of its compact design, a blaster carbine can always be used to make an attack of opportunity even if its stock is not folded. It requires a power pack; after 50 shots the power pack must be replaced.",
+          "summary": "Compact rifle that can always make attacks of opportunity; 50 shots per power pack.",
+          "repo": {
+            "present": true,
+            "id": "weapon-blaster-carbine",
+            "currentName": "Blaster Carbine",
+            "phase0NameNormalizationPending": false
+          },
+          "phase1Discrepancy": "DESCRIPTION_INCOMPLETE",
+          "phase1ContentAction": "UPDATE_CANONICAL_CONTENT"
+        },
+        {
+          "canonicalName": "E-Web Repeating Blaster",
+          "weaponGroup": "Heavy Weapon",
+          "source": {
+            "book": "Core Rulebook",
+            "descriptionPage": 125,
+            "statTablePage": 126,
+            "table": "Table 8-4: Ranged Weapons",
+            "verifiedBy": [
+              "Core Rulebook_djvu.txt",
+              "Star Wars Saga Edition.pdf visual render"
+            ]
+          },
+          "canonicalPlayerText": "An E-Web repeating blaster can normally be fired only when mounted on a tripod. When mounted on a tripod, it is treated as one size smaller for purposes of being wielded. It operates only in autofire mode and requires a power generator. It also requires a second crewman to regulate the generator: the crewman must spend a swift action while adjacent to the weapon. If its power was not regulated since the same initiative count in the previous round, attacks with the E-Web take a -2 penalty.",
+          "summary": "Tripod-mounted, autofire-only heavy blaster powered by a generator and normally requiring a second crewman to regulate power.",
+          "repo": {
+            "present": true,
+            "id": "weapon-e-web-repeating-blaster",
+            "currentName": "E-Web Repeating Blaster",
+            "phase0NameNormalizationPending": false
+          },
+          "phase1Discrepancy": "DESCRIPTION_INCOMPLETE",
+          "phase1ContentAction": "UPDATE_CANONICAL_CONTENT"
+        },
+        {
+          "canonicalName": "Heavy Repeating Blaster",
+          "weaponGroup": "Heavy Weapon",
+          "source": {
+            "book": "Core Rulebook",
+            "descriptionPage": 125,
+            "statTablePage": 126,
+            "table": "Table 8-4: Ranged Weapons",
+            "verifiedBy": [
+              "Core Rulebook_djvu.txt",
+              "Star Wars Saga Edition.pdf visual render"
+            ]
+          },
+          "canonicalPlayerText": "A heavy repeating blaster operates only in autofire mode. If used without a tripod or other mount, it cannot be braced before making an autofire attack. It requires a power pack; after 20 shots the pack must be replaced. It can instead be attached to a power generator for longer use.",
+          "summary": "Autofire-only heavy blaster; cannot brace without a mount; 20 shots per pack or generator-powered.",
+          "repo": {
+            "present": true,
+            "id": "weapon-heavy-repeating-blaster",
+            "currentName": "Heavy Repeating Blaster",
+            "phase0NameNormalizationPending": false
+          },
+          "phase1Discrepancy": "DESCRIPTION_INCOMPLETE",
+          "phase1ContentAction": "UPDATE_CANONICAL_CONTENT"
+        },
+        {
+          "canonicalName": "Blaster Pistol",
+          "weaponGroup": "Pistol",
+          "source": {
+            "book": "Core Rulebook",
+            "descriptionPage": 125,
+            "statTablePage": 126,
+            "table": "Table 8-4: Ranged Weapons",
+            "verifiedBy": [
+              "Core Rulebook_djvu.txt",
+              "Star Wars Saga Edition.pdf visual render"
+            ]
+          },
+          "canonicalPlayerText": "A blaster pistol is a common sidearm. It requires a power pack; after 100 shots the power pack must be replaced.",
+          "summary": "Standard blaster sidearm with 100 shots per power pack.",
+          "repo": {
+            "present": true,
+            "id": "weapon-blaster-pistol",
+            "currentName": "Blaster Pistol",
+            "phase0NameNormalizationPending": false
+          },
+          "phase1Discrepancy": "DESCRIPTION_INCOMPLETE",
+          "phase1ContentAction": "UPDATE_CANONICAL_CONTENT"
+        },
+        {
+          "canonicalName": "Blaster Pistol, Heavy",
+          "weaponGroup": "Pistol",
+          "source": {
+            "book": "Core Rulebook",
+            "descriptionPage": 126,
+            "statTablePage": 126,
+            "table": "Table 8-4: Ranged Weapons",
+            "verifiedBy": [
+              "Core Rulebook_djvu.txt",
+              "Star Wars Saga Edition.pdf visual render"
+            ]
+          },
+          "canonicalPlayerText": "A heavy blaster pistol provides rifle-like firepower in a compact sidearm by drawing more heavily on its power pack. It requires a power pack; after 50 shots the power pack must be replaced.",
+          "summary": "High-powered blaster sidearm with 50 shots per power pack.",
+          "repo": {
+            "present": true,
+            "id": "weapon-heavy-blaster-pistol",
+            "currentName": "Heavy Blaster Pistol",
+            "phase0NameNormalizationPending": true
+          },
+          "phase1Discrepancy": "DESCRIPTION_INCOMPLETE",
+          "phase1ContentAction": "UPDATE_CANONICAL_CONTENT"
+        },
+        {
+          "canonicalName": "Blaster Pistol, Hold-Out",
+          "weaponGroup": "Pistol",
+          "source": {
+            "book": "Core Rulebook",
+            "descriptionPage": 126,
+            "statTablePage": 126,
+            "table": "Table 8-4: Ranged Weapons",
+            "verifiedBy": [
+              "Core Rulebook_djvu.txt",
+              "Star Wars Saga Edition.pdf visual render"
+            ]
+          },
+          "canonicalPlayerText": "Because of its compact design, a hold-out blaster pistol grants a +5 equipment bonus on Stealth checks made to conceal the weapon. It requires an energy cell; after 6 shots the energy cell must be replaced.",
+          "summary": "Concealable palm-sized blaster granting +5 equipment bonus to Stealth checks to conceal it; 6 shots per energy cell.",
+          "repo": {
+            "present": true,
+            "id": "weapon-hold-out-blaster-pistol",
+            "currentName": "Hold-Out Blaster Pistol",
+            "phase0NameNormalizationPending": true
+          },
+          "phase1Discrepancy": "DESCRIPTION_INCOMPLETE",
+          "phase1ContentAction": "UPDATE_CANONICAL_CONTENT"
+        },
+        {
+          "canonicalName": "Blaster Pistol, Sporting",
+          "weaponGroup": "Pistol",
+          "source": {
+            "book": "Core Rulebook",
+            "descriptionPage": 126,
+            "statTablePage": 126,
+            "table": "Table 8-4: Ranged Weapons",
+            "verifiedBy": [
+              "Core Rulebook_djvu.txt",
+              "Star Wars Saga Edition.pdf visual render"
+            ]
+          },
+          "canonicalPlayerText": "A sporting blaster pistol is a compact civilian blaster used for small-game hunting or personal defense. It requires an energy cell; after 6 shots the cell must be replaced. It can also be attached to a power pack; after 100 shots the power pack must be replaced.",
+          "summary": "Civilian sporting sidearm using either a 6-shot energy cell or a 100-shot power pack.",
+          "repo": {
+            "present": true,
+            "id": "weapon-sporting-blaster-pistol",
+            "currentName": "Sporting Blaster Pistol",
+            "phase0NameNormalizationPending": true
+          },
+          "phase1Discrepancy": "DESCRIPTION_INCOMPLETE",
+          "phase1ContentAction": "UPDATE_CANONICAL_CONTENT"
+        },
+        {
+          "canonicalName": "Blaster Rifle",
+          "weaponGroup": "Rifle",
+          "source": {
+            "book": "Core Rulebook",
+            "descriptionPage": 126,
+            "statTablePage": 127,
+            "table": "Table 8-4: Ranged Weapons",
+            "verifiedBy": [
+              "Core Rulebook_djvu.txt",
+              "Star Wars Saga Edition.pdf visual render"
+            ]
+          },
+          "canonicalPlayerText": "The basic blaster rifle is standard military issue. Some models have a retractable stock. A blaster rifle without a retractable stock costs 900 credits instead of 1,000 credits. It requires a power pack; after 50 shots the power pack must be replaced.",
+          "summary": "Standard military rifle; 50 shots per power pack and optional retractable-stock configuration.",
+          "repo": {
+            "present": true,
+            "id": "weapon-blaster-rifle",
+            "currentName": "Blaster Rifle",
+            "phase0NameNormalizationPending": false
+          },
+          "phase1Discrepancy": "DESCRIPTION_INCOMPLETE",
+          "phase1ContentAction": "UPDATE_CANONICAL_CONTENT"
+        },
+        {
+          "canonicalName": "Blaster Rifle, Heavy",
+          "weaponGroup": "Rifle",
+          "source": {
+            "book": "Core Rulebook",
+            "descriptionPage": 127,
+            "statTablePage": 127,
+            "table": "Table 8-4: Ranged Weapons",
+            "verifiedBy": [
+              "Core Rulebook_djvu.txt",
+              "Star Wars Saga Edition.pdf visual render"
+            ]
+          },
+          "canonicalPlayerText": "The heavy blaster rifle is a larger, more powerful version of the blaster rifle and is not well suited to close-quarters fighting. It requires a power pack; after 30 shots the power pack must be replaced.",
+          "summary": "Larger high-powered blaster rifle with 30 shots per power pack.",
+          "repo": {
+            "present": true,
+            "id": "weapon-heavy-blaster-rifle",
+            "currentName": "Heavy Blaster Rifle",
+            "phase0NameNormalizationPending": true
+          },
+          "phase1Discrepancy": "DESCRIPTION_INCOMPLETE",
+          "phase1ContentAction": "UPDATE_CANONICAL_CONTENT"
+        },
+        {
+          "canonicalName": "Blaster Rifle, Light Repeating",
+          "weaponGroup": "Rifle",
+          "source": {
+            "book": "Core Rulebook",
+            "descriptionPage": 127,
+            "statTablePage": 127,
+            "table": "Table 8-4: Ranged Weapons",
+            "verifiedBy": [
+              "Core Rulebook_djvu.txt",
+              "Star Wars Saga Edition.pdf visual render"
+            ]
+          },
+          "canonicalPlayerText": "The light repeating blaster is an autofire-only rifle. It requires a power pack; after 30 shots the pack must be replaced. It can also be attached to a power generator for longer use.",
+          "summary": "Autofire-only rifle with 30 shots per pack or generator power.",
+          "repo": {
+            "present": true,
+            "id": "weapon-light-repeating-blaster",
+            "currentName": "Light Repeating Blaster",
+            "phase0NameNormalizationPending": true
+          },
+          "phase1Discrepancy": "DESCRIPTION_INCOMPLETE",
+          "phase1ContentAction": "UPDATE_CANONICAL_CONTENT"
+        },
+        {
+          "canonicalName": "Blaster Rifle, Sporting",
+          "weaponGroup": "Rifle",
+          "source": {
+            "book": "Core Rulebook",
+            "descriptionPage": 127,
+            "statTablePage": 127,
+            "table": "Table 8-4: Ranged Weapons",
+            "verifiedBy": [
+              "Core Rulebook_djvu.txt",
+              "Star Wars Saga Edition.pdf visual render"
+            ]
+          },
+          "canonicalPlayerText": "Sporting blaster rifles are common hunting and recreational weapons. They often have a targeting scope mounted, but the scope is not included in the listed weapon cost. A sporting blaster rifle requires a power pack; after 50 shots the power pack must be replaced.",
+          "summary": "Sporting/hunting rifle; commonly scoped but scope is not included; 50 shots per power pack.",
+          "repo": {
+            "present": true,
+            "id": "weapon-sporting-blaster-rifle",
+            "currentName": "Sporting Blaster Rifle",
+            "phase0NameNormalizationPending": true
+          },
+          "phase1Discrepancy": "DESCRIPTION_INCOMPLETE",
+          "phase1ContentAction": "UPDATE_CANONICAL_CONTENT"
+        },
+        {
+          "canonicalName": "Bow",
+          "weaponGroup": "Simple Weapon",
+          "source": {
+            "book": "Core Rulebook",
+            "descriptionPage": 127,
+            "statTablePage": 127,
+            "table": "Table 8-4: Ranged Weapons",
+            "verifiedBy": [
+              "Core Rulebook_djvu.txt",
+              "Star Wars Saga Edition.pdf visual render"
+            ]
+          },
+          "canonicalPlayerText": "The wielder's Strength modifier applies to damage dealt with a bow. A bow holds one arrow at a time and can be reloaded as a free action. A quiver of 10 arrows costs 20 credits and weighs 0.8 kg.",
+          "summary": "Bow adds Strength to damage, holds one arrow, reloads as a free action, and uses purchasable arrow quivers.",
+          "repo": {
+            "present": true,
+            "id": "weapon-bow",
+            "currentName": "Bow",
+            "phase0NameNormalizationPending": false
+          },
+          "phase1Discrepancy": "DESCRIPTION_INCOMPLETE",
+          "phase1ContentAction": "UPDATE_CANONICAL_CONTENT"
+        },
+        {
+          "canonicalName": "Bowcaster",
+          "weaponGroup": "Exotic Weapon",
+          "source": {
+            "book": "Core Rulebook",
+            "descriptionPage": 127,
+            "statTablePage": 126,
+            "table": "Table 8-4: Ranged Weapons",
+            "verifiedBy": [
+              "Core Rulebook_djvu.txt",
+              "Star Wars Saga Edition.pdf visual render"
+            ]
+          },
+          "canonicalPlayerText": "The Wookiee bowcaster hurls an explosive energy quarrel at high speed. Although it is an exotic weapon, Wookiees are treated as proficient if they have the Weapon Proficiency (rifles) feat. A quiver of 10 quarrels costs 50 credits and weighs 1 kg.",
+          "summary": "Wookiee exotic ranged weapon; Wookiees with rifle proficiency are treated as proficient; uses quarrel quivers.",
+          "repo": {
+            "present": true,
+            "id": "weapon-bowcaster",
+            "currentName": "Bowcaster",
+            "phase0NameNormalizationPending": false
+          },
+          "phase1Discrepancy": "DESCRIPTION_INCORRECT",
+          "phase1ContentAction": "UPDATE_CANONICAL_CONTENT"
+        },
+        {
+          "canonicalName": "Flamethrower",
+          "weaponGroup": "Exotic Weapon",
+          "source": {
+            "book": "Core Rulebook",
+            "descriptionPage": 127,
+            "statTablePage": 126,
+            "table": "Table 8-4: Ranged Weapons",
+            "verifiedBy": [
+              "Core Rulebook_djvu.txt",
+              "Star Wars Saga Edition.pdf visual render"
+            ]
+          },
+          "canonicalPlayerText": "A flamethrower shoots a cone of burning chemicals 6 squares long and 6 squares wide at the terminus. Make one attack roll and compare it to the Reflex Defense of every target in the area; Evasion modifies the area attack as normal. Reloading is a full-round action. The weapon can be used five times before its chemical supply is depleted. Replacement chemical cartridges cost 200 credits and weigh 4 kg each.",
+          "summary": "Six-square cone area weapon; one attack roll vs. all targets, five uses per cartridge, full-round reload.",
+          "repo": {
+            "present": true,
+            "id": "weapon-flamethrower",
+            "currentName": "Flamethrower",
+            "phase0NameNormalizationPending": false
+          },
+          "phase1Discrepancy": "DESCRIPTION_INCORRECT",
+          "phase1ContentAction": "UPDATE_CANONICAL_CONTENT"
+        },
+        {
+          "canonicalName": "Energy Ball",
+          "weaponGroup": "Simple Weapon",
+          "source": {
+            "book": "Core Rulebook",
+            "descriptionPage": 127,
+            "statTablePage": 127,
+            "table": "Table 8-4: Ranged Weapons",
+            "verifiedBy": [
+              "Core Rulebook_djvu.txt",
+              "Star Wars Saga Edition.pdf visual render"
+            ]
+          },
+          "canonicalPlayerText": "Energy balls are the ammunition hurled by Gungan atlatls and cestas. For range, an energy ball thrown by hand is treated as a thrown weapon, hurled by an atlatl as a simple weapon, and hurled by a cesta as an accurate simple weapon.",
+          "summary": "Gungan thrown ammunition whose range category changes when hurled by hand, atlatl, or cesta.",
+          "repo": {
+            "present": true,
+            "id": "weapon-energy-ball",
+            "currentName": "Energy Ball",
+            "phase0NameNormalizationPending": false
+          },
+          "phase1Discrepancy": "DESCRIPTION_INCOMPLETE",
+          "phase1ContentAction": "UPDATE_CANONICAL_CONTENT"
+        },
+        {
+          "canonicalName": "Grenade, Frag",
+          "weaponGroup": "Simple Weapon",
+          "source": {
+            "book": "Core Rulebook",
+            "descriptionPage": 128,
+            "statTablePage": 127,
+            "table": "Table 8-4: Ranged Weapons",
+            "verifiedBy": [
+              "Core Rulebook_djvu.txt",
+              "Star Wars Saga Edition.pdf visual render"
+            ]
+          },
+          "canonicalPlayerText": "A fragmentation grenade explodes on contact after being thrown and affects a 2-square burst radius. Make a single attack roll and compare it with the Reflex Defense of every target in the burst. Targets hit take full damage and targets missed take half damage; Evasion modifies this as normal.",
+          "summary": "Contact-detonated 2-square burst grenade using one area attack roll; full damage on hit, half on miss.",
+          "repo": {
+            "present": true,
+            "id": "weapon-frag-grenade",
+            "currentName": "Frag Grenade",
+            "phase0NameNormalizationPending": true
+          },
+          "phase1Discrepancy": "DESCRIPTION_INCORRECT",
+          "phase1ContentAction": "UPDATE_CANONICAL_CONTENT"
+        },
+        {
+          "canonicalName": "Grenade, Ion",
+          "weaponGroup": "Simple Weapon",
+          "source": {
+            "book": "Core Rulebook",
+            "descriptionPage": 128,
+            "statTablePage": 127,
+            "table": "Table 8-4: Ranged Weapons",
+            "verifiedBy": [
+              "Core Rulebook_djvu.txt",
+              "Star Wars Saga Edition.pdf visual render"
+            ]
+          },
+          "canonicalPlayerText": "An ion grenade explodes on contact and affects a 2-square burst radius. Make one attack roll against the Reflex Defense of every target in the burst. Droids, vehicles, electronic devices, and cybernetically enhanced creatures hit take full ion damage and those missed take half; ion damage can move them down the condition track. Creatures without cybernetics take half ion damage on a hit and none on a miss and suffer no other ill effects. Evasion modifies the area attack as normal.",
+          "summary": "Two-square ion burst especially effective against droids, vehicles, electronics, and cybernetic targets.",
+          "repo": {
+            "present": true,
+            "id": "weapon-ion-grenade",
+            "currentName": "Ion Grenade",
+            "phase0NameNormalizationPending": true
+          },
+          "phase1Discrepancy": "DESCRIPTION_INCOMPLETE",
+          "phase1ContentAction": "UPDATE_CANONICAL_CONTENT"
+        },
+        {
+          "canonicalName": "Grenade, Stun",
+          "weaponGroup": "Simple Weapon",
+          "source": {
+            "book": "Core Rulebook",
+            "descriptionPage": 128,
+            "statTablePage": 127,
+            "table": "Table 8-4: Ranged Weapons",
+            "verifiedBy": [
+              "Core Rulebook_djvu.txt",
+              "Star Wars Saga Edition.pdf visual render"
+            ]
+          },
+          "canonicalPlayerText": "A stun grenade explodes on contact and affects a 2-square burst radius. Make one attack roll against the Reflex Defense of every target in the burst. Targets hit take full stun damage and targets missed take half stun damage; the stun damage can move targets down the condition track. Evasion modifies the area attack as normal. Droids, vehicles, and objects are immune to stun damage.",
+          "summary": "Two-square stun burst; full/half stun damage by area attack, with condition-track effects; droids, vehicles, and objects are immune.",
+          "repo": {
+            "present": true,
+            "id": "weapon-stun-grenade",
+            "currentName": "Stun Grenade",
+            "phase0NameNormalizationPending": true
+          },
+          "phase1Discrepancy": "DESCRIPTION_INCORRECT",
+          "phase1ContentAction": "UPDATE_CANONICAL_CONTENT"
+        },
+        {
+          "canonicalName": "Grenade Launcher",
+          "weaponGroup": "Heavy Weapon",
+          "source": {
+            "book": "Core Rulebook",
+            "descriptionPage": 128,
+            "statTablePage": 126,
+            "table": "Table 8-4: Ranged Weapons",
+            "verifiedBy": [
+              "Core Rulebook_djvu.txt",
+              "Star Wars Saga Edition.pdf visual render"
+            ]
+          },
+          "canonicalPlayerText": "A grenade launcher extends grenade range. Grenades fired by it always explode on impact regardless of timers; the grenade used determines damage, damage type, and burst radius. It cannot fire thermal detonators. It holds four grenades and reloads as a full-round action. It can be mounted on a rifle in 1 minute with a DC 15 Mechanics check or used as a separate weapon.",
+          "summary": "Four-round launcher that fires ordinary grenades on impact; full-round reload and can be rifle-mounted with Mechanics.",
+          "repo": {
+            "present": true,
+            "id": "weapon-grenade-launcher",
+            "currentName": "Grenade Launcher",
+            "phase0NameNormalizationPending": false
+          },
+          "phase1Discrepancy": "DESCRIPTION_INCOMPLETE",
+          "phase1ContentAction": "UPDATE_CANONICAL_CONTENT"
+        },
+        {
+          "canonicalName": "Ion Pistol",
+          "weaponGroup": "Pistol",
+          "source": {
+            "book": "Core Rulebook",
+            "descriptionPage": 128,
+            "statTablePage": 126,
+            "table": "Table 8-4: Ranged Weapons",
+            "verifiedBy": [
+              "Core Rulebook_djvu.txt",
+              "Star Wars Saga Edition.pdf visual render"
+            ]
+          },
+          "canonicalPlayerText": "An ion pistol is effective against droids, vehicles, electronic devices, and cybernetically enhanced creatures. It deals full ion damage to such targets and can move them down the condition track. Creatures without cybernetics take half damage from a successful attack and suffer no other ill effects. It requires a power pack; after 30 shots the pack must be replaced.",
+          "summary": "Ion sidearm dealing full ion effects to electronic/cybernetic targets and half damage to ordinary creatures; 30 shots per pack.",
+          "repo": {
+            "present": true,
+            "id": "weapon-ion-pistol",
+            "currentName": "Ion Pistol",
+            "phase0NameNormalizationPending": false
+          },
+          "phase1Discrepancy": "DESCRIPTION_INCOMPLETE",
+          "phase1ContentAction": "UPDATE_CANONICAL_CONTENT"
+        },
+        {
+          "canonicalName": "Ion Rifle",
+          "weaponGroup": "Rifle",
+          "source": {
+            "book": "Core Rulebook",
+            "descriptionPage": 129,
+            "statTablePage": 127,
+            "table": "Table 8-4: Ranged Weapons",
+            "verifiedBy": [
+              "Core Rulebook_djvu.txt",
+              "Star Wars Saga Edition.pdf visual render"
+            ]
+          },
+          "canonicalPlayerText": "An ion rifle is a larger version of the ion pistol and uses the same ion-damage rules. It requires a power pack; after 20 shots the power pack must be replaced.",
+          "summary": "Larger ion weapon using ion-pistol effects; 20 shots per power pack.",
+          "repo": {
+            "present": true,
+            "id": "weapon-ion-rifle",
+            "currentName": "Ion Rifle",
+            "phase0NameNormalizationPending": false
+          },
+          "phase1Discrepancy": "DESCRIPTION_INCOMPLETE",
+          "phase1ContentAction": "UPDATE_CANONICAL_CONTENT"
+        },
+        {
+          "canonicalName": "Missile Launcher",
+          "weaponGroup": "Heavy Weapon",
+          "source": {
+            "book": "Core Rulebook",
+            "descriptionPage": 129,
+            "statTablePage": 126,
+            "table": "Table 8-4: Ranged Weapons",
+            "verifiedBy": [
+              "Core Rulebook_djvu.txt",
+              "Star Wars Saga Edition.pdf visual render"
+            ]
+          },
+          "canonicalPlayerText": "A missile launcher fires explosive projectiles affecting a 2-square burst radius. Make one attack roll and compare it to the Reflex Defense of every target in the burst; a hit deals full damage and a miss deals half, with Evasion modifying this as normal. The launcher holds four missiles and reloads as a full-round action. Replacement magazines hold four missiles, cost 200 credits, and weigh 5 kg.",
+          "summary": "Four-shot, 2-square-burst launcher using area-attack rules; reloads with four-missile magazines as a full-round action.",
+          "repo": {
+            "present": true,
+            "id": "weapon-missile-launcher",
+            "currentName": "Missile Launcher",
+            "phase0NameNormalizationPending": false
+          },
+          "phase1Discrepancy": "DESCRIPTION_INCOMPLETE",
+          "phase1ContentAction": "UPDATE_CANONICAL_CONTENT"
+        },
+        {
+          "canonicalName": "Net",
+          "weaponGroup": "Simple Weapon",
+          "source": {
+            "book": "Core Rulebook",
+            "descriptionPage": 129,
+            "statTablePage": 127,
+            "table": "Table 8-4: Ranged Weapons",
+            "verifiedBy": [
+              "Core Rulebook_djvu.txt",
+              "Star Wars Saga Edition.pdf visual render"
+            ]
+          },
+          "canonicalPlayerText": "A net lets you initiate a grab or grapple against a character at range. A grabbed or grappled character can escape with a DC 15 Acrobatics check or break out with a DC 20 Strength check. You can use the Pin and Trip feats with a net, but not Crush or Throw.",
+          "summary": "Ranged grab/grapple weapon; target can escape with Acrobatics or Strength, and the wielder can Pin or Trip.",
+          "repo": {
+            "present": true,
+            "id": "weapon-net",
+            "currentName": "Net",
+            "phase0NameNormalizationPending": false
+          },
+          "phase1Discrepancy": "DESCRIPTION_INCOMPLETE",
+          "phase1ContentAction": "UPDATE_CANONICAL_CONTENT"
+        },
+        {
+          "canonicalName": "Sling",
+          "weaponGroup": "Simple Weapon",
+          "source": {
+            "book": "Core Rulebook",
+            "descriptionPage": 129,
+            "statTablePage": 127,
+            "table": "Table 8-4: Ranged Weapons",
+            "verifiedBy": [
+              "Core Rulebook_djvu.txt",
+              "Star Wars Saga Edition.pdf visual render"
+            ]
+          },
+          "canonicalPlayerText": "A sling hurls metal bullets or stones. The wielder's Strength modifier applies to damage dealt with a sling.",
+          "summary": "Primitive ranged weapon that adds Strength to damage.",
+          "repo": {
+            "present": true,
+            "id": "weapon-sling",
+            "currentName": "Sling",
+            "phase0NameNormalizationPending": false
+          },
+          "phase1Discrepancy": "DESCRIPTION_INCOMPLETE",
+          "phase1ContentAction": "UPDATE_CANONICAL_CONTENT"
+        },
+        {
+          "canonicalName": "Slugthrower Pistol",
+          "weaponGroup": "Pistol",
+          "source": {
+            "book": "Core Rulebook",
+            "descriptionPage": 129,
+            "statTablePage": 126,
+            "table": "Table 8-4: Ranged Weapons",
+            "verifiedBy": [
+              "Core Rulebook_djvu.txt",
+              "Star Wars Saga Edition.pdf visual render"
+            ]
+          },
+          "canonicalPlayerText": "A slugthrower pistol fires metal bullets rather than energy bolts. It uses clips instead of power packs; each clip holds 10 slugs, costs 20 credits, and weighs 0.1 kg.",
+          "summary": "Ballistic pistol using 10-round slug clips instead of power packs.",
+          "repo": {
+            "present": true,
+            "id": "weapon-slugthrower-pistol",
+            "currentName": "Slugthrower Pistol",
+            "phase0NameNormalizationPending": false
+          },
+          "phase1Discrepancy": "DESCRIPTION_INCORRECT",
+          "phase1ContentAction": "UPDATE_CANONICAL_CONTENT"
+        },
+        {
+          "canonicalName": "Slugthrower Rifle",
+          "weaponGroup": "Rifle",
+          "source": {
+            "book": "Core Rulebook",
+            "descriptionPage": 129,
+            "statTablePage": 127,
+            "table": "Table 8-4: Ranged Weapons",
+            "verifiedBy": [
+              "Core Rulebook_djvu.txt",
+              "Star Wars Saga Edition.pdf visual render"
+            ]
+          },
+          "canonicalPlayerText": "A slugthrower rifle is the larger cousin of the slugthrower pistol. It uses clips instead of power packs; each clip holds 20 slugs, costs 40 credits, and weighs 0.2 kg.",
+          "summary": "Ballistic rifle using 20-round slug clips instead of power packs.",
+          "repo": {
+            "present": true,
+            "id": "weapon-slugthrower-rifle",
+            "currentName": "Slugthrower Rifle",
+            "phase0NameNormalizationPending": false
+          },
+          "phase1Discrepancy": "DESCRIPTION_INCORRECT",
+          "phase1ContentAction": "UPDATE_CANONICAL_CONTENT"
+        },
+        {
+          "canonicalName": "Thermal Detonator",
+          "weaponGroup": "Simple Weapon",
+          "source": {
+            "book": "Core Rulebook",
+            "descriptionPage": 129,
+            "statTablePage": 127,
+            "table": "Table 8-4: Ranged Weapons",
+            "verifiedBy": [
+              "Core Rulebook_djvu.txt",
+              "Star Wars Saga Edition.pdf visual render"
+            ]
+          },
+          "canonicalPlayerText": "A thermal detonator has a timer adjustable from 1 to 3 rounds. When it detonates, make one area attack roll and compare it to the Reflex Defense of every target in its 4-square burst radius. Targets hit take full damage and targets missed take half damage; Evasion modifies this as normal.",
+          "summary": "Illegal high-power explosive with a 1-3 round timer and 4-square burst using normal area-attack full/half damage rules.",
+          "repo": {
+            "present": true,
+            "id": "weapon-thermal-detonator",
+            "currentName": "Thermal Detonator",
+            "phase0NameNormalizationPending": false
+          },
+          "phase1Discrepancy": "DESCRIPTION_INCORRECT",
+          "phase1ContentAction": "UPDATE_CANONICAL_CONTENT"
+        }
+      ],
+      "repoSnapshotAtCertification": {
+        "repository": "docflowGM/foundryvtt-swse",
+        "branch": "claude/dazzling-meitner-czyh1x",
+        "verifiedHead": "edf8d8e2437a4e7a300487b72e50cd79eafb8708",
+        "pack": "packs/weapons.db"
+      },
+      "foldedBy": {
+        "executionStatus": "AUTHORITY_ONLY",
+        "productionMutations": "none — no weapon records created, no descriptions replaced, no numeric stats changed",
+        "claudeValidation": "48 unique records; every Core-sourced Phase 0-1 canonical weapon covered once; repo.present/id/currentName/phase0NameNormalizationPending agree with Phase 0 disposition and packs/weapons.db; 35 present, 13 absent (ADD); 14 DESCRIPTION_INCORRECT, 21 DESCRIPTION_INCOMPLETE, 13 MISSING_RECORD",
+        "note": "canonicalPlayerText incidentally contains printed numbers (costs, dice, DCs, ranges); numeric stat fields remain uncertified until the stats phase."
+      }
     }
   },
   "pendingPhases": [
-    "1 Provenance and canonical content certification (order: weapons, armor, general equipment families, cybernetics/upgrades/templates, lightsaber components, droid systems)",
+    "1 Provenance and canonical content certification — 1A Core weapons DONE (authority-only); next 1B Clone Wars Campaign Guide weapons, then remaining weapon sources; then armor, general equipment families, cybernetics/upgrades/templates, lightsaber components, droid systems",
     "Gated cleanup tranche (0-3D migrations, 0-3E renames/merge, 0-3F template migration, 0-3G weapons.db stragglers, 0-3H droid migration, weapon/equipment REMOVE dependents)",
     "Vehicle/starship item domain census (separate domain)",
     "2 Descriptions",
