@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { applyCuration, runOverlay, ALLOWED_FIELDS } from '../tools/apply-archetype-phase-12b-semantic-curation.mjs';
+import { applyCuration, normalizeAuthority, runOverlay, ALLOWED_FIELDS } from '../tools/apply-archetype-phase-12b-semantic-curation.mjs';
 import { loadArchetypeAuthorities } from '../tools/lib/archetype-authorities.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
@@ -11,30 +11,46 @@ const J = (p) => JSON.parse(fs.readFileSync(path.join(ROOT, p), 'utf8'));
 const dataset = J('data/archetypes.json');
 const authority = J('data/audits/archetype-phase-12b-semantic-curation.json');
 const { ontologyTags } = loadArchetypeAuthorities(ROOT);
+const normalized = normalizeAuthority(authority);
 const clone = (o) => JSON.parse(JSON.stringify(o));
 
 test('12B overlay --check: cumulative authority applied to the current file is zero diff', () => {
   const r = runOverlay({ check: true });
   assert.equal(r.drift, false);
   assert.deepEqual(r.changedIds, []);
-  assert.equal(r.certified, authority.rolling.certifiedRecordCount);
+  assert.equal(r.certified, authority.certifiedCount);
   assert.equal(r.counts.records, 297);
 });
 
 test('12B authority: every certified record is applied; no unlisted record carries 12B provenance', () => {
-  const listed = new Set(authority.records.map((r) => r.archetypeId));
+  const listed = new Set(normalized.records.map((r) => r.archetypeId));
+  assert.equal(listed.size, authority.certifiedCount);
   for (const r of Object.values(dataset.archetypes)) {
     assert.equal(Boolean(r.metadata.tagProvenance['phase12b.curated.primary']), listed.has(r.id), r.id);
   }
 });
 
-test('12B authority: every supplied tag is in the frozen ontology; allowed fields are exactly the four', () => {
-  assert.deepEqual(authority.executionContract.allowedFields, [...ALLOWED_FIELDS]);
-  assert.equal(authority.executionContract.claudeMayInfer, false);
-  for (const rec of authority.records) {
+test('12B authority: every supplied tag is in the frozen ontology; normalized fields are exactly the four', () => {
+  assert.equal(authority.frozenOntology.tagCount, 190);
+  for (const rec of normalized.records) {
+    assert.deepEqual(Object.keys(rec.replace), [...ALLOWED_FIELDS]);
     const tags = [...rec.replace['metadata.tags.primary'], ...rec.replace['metadata.tags.supporting'], ...rec.replace['metadata.tags.all']];
     for (const t of tags) assert.ok(ontologyTags.has(t), `${rec.archetypeId}: ${t}`);
   }
+});
+
+test('12B provenance: nested owner form maps to the flat dotted keys; owner "authority" string is not stored', () => {
+  const rec = authority.records.find((r) => r.id === 'trianii_ranger');
+  assert.deepEqual(dataset.archetypes.trianii_ranger.metadata.tagProvenance, {
+    'phase12b.curated.primary': rec.tagProvenance.phase12b.curated.primary,
+    'phase12b.curated.supporting': rec.tagProvenance.phase12b.curated.supporting
+  });
+  for (const r of Object.values(dataset.archetypes)) assert.ok(!JSON.stringify(r.metadata.tagProvenance).includes('OWNER_CERTIFIED'));
+});
+
+test('12B execution baseline is recorded as a full commit SHA and the current tranche lists 20 new records', () => {
+  assert.match(authority.currentExecution.requiredBaseline, /^[0-9a-f]{40}$/);
+  assert.equal(authority.currentExecution.newRecordIds.length, 20);
 });
 
 test('12B revision REV-001: scavenger no longer carries resources anywhere', () => {
@@ -49,18 +65,22 @@ test('12B overlay touches only the four semantic fields and fails closed on bad 
   assert.equal(JSON.stringify(next), JSON.stringify(dataset));
 
   const badTag = clone(authority);
-  badTag.records[0].replace['metadata.tags.supporting'].push('not_in_ontology');
+  badTag.records[0].supporting.push('not_in_ontology');
   assert.throws(() => applyCuration(dataset, badTag, ontologyTags), /frozen ontology/);
 
-  const extraField = clone(authority);
-  extraField.records[0].replace['mechanics.skills'] = {};
-  assert.throws(() => applyCuration(dataset, extraField, ontologyTags), /exactly/);
+  const badProvenance = clone(authority);
+  badProvenance.records[0].tagProvenance.phase12b.somethingElse = ['x'];
+  assert.throws(() => applyCuration(dataset, badProvenance, ontologyTags), /tagProvenance shape/);
 
   const unknownId = clone(authority);
-  unknownId.records[0].archetypeId = 'no_such_archetype';
+  unknownId.records[0].id = 'no_such_archetype';
   assert.throws(() => applyCuration(dataset, unknownId, ontologyTags), /does not exist/);
 
-  const infer = clone(authority);
-  infer.executionContract.claudeMayInfer = true;
-  assert.throws(() => applyCuration(dataset, infer, ontologyTags), /claudeMayInfer/);
+  const countMismatch = clone(authority);
+  countMismatch.certifiedCount = 49;
+  assert.throws(() => applyCuration(dataset, countMismatch, ontologyTags), /certifiedCount/);
+
+  const unknownSchema = clone(authority);
+  unknownSchema.schemaVersion = '9.9';
+  assert.throws(() => applyCuration(dataset, unknownSchema, ontologyTags), /unrecognized authority schema/);
 });

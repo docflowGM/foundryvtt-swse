@@ -38,23 +38,64 @@ export const ALLOWED_FIELDS = Object.freeze([
 
 const clone = (o) => JSON.parse(JSON.stringify(o));
 
-/** Pure: apply authority to a parsed dataset. Returns { dataset, changedIds }. Throws on any mismatch. */
-export function applyCuration(dataset, authority, ontologyTags) {
-  if (authority?.executionContract?.claudeMayInfer !== false) throw new Error('authority must declare claudeMayInfer: false');
-  const allowed = authority.executionContract.allowedFields ?? [];
-  if (JSON.stringify(allowed) !== JSON.stringify(ALLOWED_FIELDS)) throw new Error('authority allowedFields differ from the 12B contract');
-  if (!Array.isArray(authority.records) || authority.records.length === 0) throw new Error('authority has no records');
+/**
+ * Normalize an owner authority file to [{ archetypeId, replace }]. Two owner schemas exist:
+ *  - v2: records[].{archetypeId, replace{4 dotted fields}}, with an executionContract.
+ *  - v1.0: records[].{id, primary, supporting, all, tagProvenance:{phase12b:{curated:{...},authority}}}.
+ * For v1.0 the nested provenance is mapped mechanically to the flat dotted-key form already used
+ * in data/archetypes.json ("phase12b.curated.primary": [...]); the informational `authority`
+ * string is not carried into the dataset (owner ruling). Anything unrecognized fails closed.
+ */
+export function normalizeAuthority(authority) {
+  if (!Array.isArray(authority?.records) || authority.records.length === 0) throw new Error('authority has no records');
+  if (authority.schemaVersion === 2) {
+    if (authority.executionContract?.claudeMayInfer !== false) throw new Error('authority must declare claudeMayInfer: false');
+    if (JSON.stringify(authority.executionContract.allowedFields ?? []) !== JSON.stringify(ALLOWED_FIELDS)) {
+      throw new Error('authority allowedFields differ from the 12B contract');
+    }
+    return {
+      certified: authority.rolling?.certifiedRecordCount ?? authority.records.length,
+      records: authority.records.map((r) => ({ archetypeId: r.archetypeId, kind: r.kind, parentId: r.parentId ?? null, replace: r.replace }))
+    };
+  }
+  if (authority.schemaVersion === '1.0' && authority.kind === 'SWSE_ARCHETYPE_PHASE_12B_SEMANTIC_CURATION') {
+    const records = authority.records.map((r) => {
+      const phase = r.tagProvenance?.phase12b;
+      const extra = Object.keys(r.tagProvenance ?? {}).filter((k) => k !== 'phase12b');
+      const phaseExtra = Object.keys(phase ?? {}).filter((k) => k !== 'curated' && k !== 'authority');
+      const curatedKeys = Object.keys(phase?.curated ?? {});
+      if (!phase?.curated || extra.length || phaseExtra.length || curatedKeys.some((k) => k !== 'primary' && k !== 'supporting')) {
+        throw new Error(`authority record "${r.id}": unrecognized tagProvenance shape`);
+      }
+      return {
+        archetypeId: r.id,
+        replace: {
+          'metadata.tags.primary': r.primary,
+          'metadata.tags.supporting': r.supporting,
+          'metadata.tags.all': r.all,
+          'metadata.tagProvenance': Object.fromEntries(curatedKeys.map((k) => [`phase12b.curated.${k}`, phase.curated[k]]))
+        }
+      };
+    });
+    if (authority.certifiedCount !== records.length) throw new Error(`authority certifiedCount ${authority.certifiedCount} != ${records.length} records`);
+    return { certified: authority.certifiedCount, records };
+  }
+  throw new Error('unrecognized authority schema');
+}
 
+/** Pure: apply authority to a parsed dataset. Returns { dataset, changedIds }. Throws on any mismatch. */
+export function applyCuration(dataset, rawAuthority, ontologyTags) {
+  const { records, certified } = normalizeAuthority(rawAuthority);
   const out = clone(dataset);
   const seen = new Set();
   const changedIds = [];
-  for (const rec of authority.records) {
+  for (const rec of records) {
     const id = rec.archetypeId;
     if (seen.has(id)) throw new Error(`duplicate authority record: ${id}`);
     seen.add(id);
     const target = out.archetypes[id];
     if (!target) throw new Error(`authority record "${id}" does not exist in ${DATASET_PATH}`);
-    if (rec.kind !== target.kind || (rec.parentId ?? null) !== (target.parentId ?? null)) {
+    if (rec.kind !== undefined && (rec.kind !== target.kind || (rec.parentId ?? null) !== (target.parentId ?? null))) {
       throw new Error(`authority record "${id}" kind/parentId disagrees with the dataset`);
     }
     const keys = Object.keys(rec.replace ?? {});
@@ -72,7 +113,7 @@ export function applyCuration(dataset, authority, ontologyTags) {
     target.metadata.tagProvenance = clone(r['metadata.tagProvenance']);
     if (JSON.stringify([target.metadata.tags, target.metadata.tagProvenance]) !== before) changedIds.push(id);
   }
-  return { dataset: out, changedIds, certified: seen.size };
+  return { dataset: out, changedIds, certified };
 }
 
 export function runOverlay({ check = false, root = ROOT } = {}) {
