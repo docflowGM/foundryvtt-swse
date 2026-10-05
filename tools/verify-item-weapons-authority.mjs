@@ -1,12 +1,13 @@
 #!/usr/bin/env node
 /**
  * Verifies data/audits/item-canonicalization-rolling-authority.json (Phase 0-1 weapons,
- * Phase 0-2 armor, Phase 0-3A equipment, Phase 0-3B medical, Phase 0-3C explosives, Phase 0-3D cybernetics, Phase 0-3E upgrades, Phase 0-3F gear templates) against the weapons, armor and equipment packs. Read-only. Fails on any drift between the certified authority
+ * Phase 0-2 armor, Phase 0-3A equipment, Phase 0-3B medical, Phase 0-3C explosives, Phase 0-3D cybernetics, Phase 0-3E upgrades, Phase 0-3F gear templates, Phase 0-3G lightsaber components, Phase 0-3H droid systems, Phase 0-3I ammunition boundary, Phase 0 completion manifest) against the weapons, armor and equipment packs. Read-only. Fails on any drift between the certified authority
  * and the pack so that execution phases cannot silently run against a changed repo.
  */
 import fs from 'node:fs';
+import os from 'node:os';
 import path from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const auth = JSON.parse(fs.readFileSync(path.join(ROOT, 'data/audits/item-canonicalization-rolling-authority.json'), 'utf8'));
@@ -271,6 +272,120 @@ if (gt) {
   const gd = count(gt.records, (r) => r.phase0Disposition);
   if (gd.KEEP !== gt.counts.legacyJsonKEEP || gd.EDIT !== gt.counts.legacyJsonEDIT || gd.ADD !== gt.counts.legacyJsonADD || gt.records.length !== gt.counts.canonicalTemplates) fail(`gear template counts ${JSON.stringify(gd)}`);
   if (!errors.length) console.log(`gear template authority OK: ${gt.records.length} canonical (${gd.KEEP} KEEP, ${gd.EDIT} EDIT, ${gd.ADD} ADD pending), ${legacyTotal} legacy JSON records accounted for, ${rtKeys.length} runtime keys in both runtime catalogs`);
+}
+
+// ---- Phase 0-3G lightsaber components (authority-only) ----
+const ls = auth.phases['0-3g-lightsaber-components'];
+if (ls) {
+  const rd = (n) => fs.readFileSync(path.join(ROOT, `packs/${n}.db`), 'utf8').split('\n').filter(Boolean).map((l) => JSON.parse(l));
+  const lsPacks = { 'lightsaber-crystal': rd('lightsaber-crystals'), 'lightsaber-accessory': rd('lightsaber-accessories') };
+  const want = { 'lightsaber-crystal': ls.counts.canonicalCrystals, 'lightsaber-accessory': ls.counts.canonicalAccessories };
+  const lsNames = new Set();
+  for (const [fam, recs] of Object.entries(lsPacks)) {
+    if (recs.length !== want[fam]) fail(`${fam} pack has ${recs.length} records, authority expects ${want[fam]}`);
+    if (new Set(recs.map((r) => r._id)).size !== recs.length || new Set(recs.map((r) => r.name)).size !== recs.length) fail(`${fam} pack has duplicate ids or names`);
+    const byName = new Map(recs.map((r) => [r.name, r._id]));
+    const canon = ls.records.filter((r) => r.family === fam);
+    for (const c of canon) {
+      lsNames.add(`${fam}|${c.canonicalName}`);
+      if (byName.get(c.canonicalName) !== c.repo.id) fail(`${fam} ${c.canonicalName}: pack id "${byName.get(c.canonicalName)}" vs authority repo.id "${c.repo.id}"`);
+    }
+    for (const r of recs) if (!canon.some((c) => c.canonicalName === r.name)) fail(`${fam} pack record "${r.name}" is not a canonical identity`);
+  }
+  if (lsNames.size !== ls.counts.canonicalTotal || ls.records.length !== ls.counts.canonicalTotal) fail(`lightsaber component counts mismatch`);
+  const st = ls.stragglersInWeaponsPack;
+  const upgradesInWeapons = rd('weapons').filter((r) => r.type === 'weaponUpgrade');
+  if (!st.executed) {
+    const listed = new Set(st.records.map((r) => r.id));
+    for (const r of upgradesInWeapons) if (!listed.has(r._id)) fail(`unlisted weaponUpgrade ${r._id} appeared in packs/weapons.db`);
+    for (const id of listed) if (!upgradesInWeapons.some((r) => r._id === id)) fail(`straggler ${id} missing from packs/weapons.db but cleanup not marked executed`);
+  } else if (upgradesInWeapons.length) fail('weapons straggler cleanup marked executed but weaponUpgrade records remain in packs/weapons.db');
+  if (!errors.length) console.log(`lightsaber components authority OK: ${ls.records.length} canonical (${want['lightsaber-crystal']} crystals, ${want['lightsaber-accessory']} accessories) exactly cover their packs; ${upgradesInWeapons.length} flagged stragglers pending cleanup`);
+}
+
+// ---- Phase 0-3H droid systems (authority-only; dedicated droid subsystem, not packs/equipment.db) ----
+const dr = auth.phases['0-3h-droid-systems'];
+if (dr) {
+  const norm = (v) => String(v).toLowerCase().replace(/[^a-z0-9]+/g, '');
+  const ids = new Set();
+  const names = new Set();
+  for (const r of dr.records) {
+    if (ids.has(r.canonicalId) || names.has(r.canonicalName)) fail(`droid duplicate canonical ${r.canonicalId}`);
+    ids.add(r.canonicalId); names.add(r.canonicalName);
+  }
+  const dd = count(dr.records, (r) => r.disposition);
+  for (const k of ['KEEP', 'EDIT', 'ADD']) if ((dd[k] || 0) !== dr.counts[k]) fail(`droid ${k} count ${dd[k]} != ${dr.counts[k]}`);
+  if (dr.records.length !== dr.counts.canonicalIdentities || dr.counts.repoOnlyUnsupportedOrConvenience !== dr.repoOnlyRecords.length) fail('droid counts mismatch');
+  // Load the live registry: droid-part-schema.js uses a Foundry-absolute import, so rewrite it to a file URL in a temp copy.
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'droid-verify-'));
+  try {
+    const systemsUrl = pathToFileURL(path.join(ROOT, 'scripts/data/droid-systems.js')).href;
+    const src = fs.readFileSync(path.join(ROOT, 'scripts/data/droid-part-schema.js'), 'utf8').replace('/systems/foundryvtt-swse/scripts/data/droid-systems.js', systemsUrl);
+    const tmpFile = path.join(tmp, 'droid-part-schema.mjs');
+    fs.writeFileSync(tmpFile, src);
+    const mod = await import(pathToFileURL(tmpFile).href);
+    const systems = (await import(systemsUrl)).DROID_SYSTEMS;
+    const parts = mod.getAllDroidPartDefinitions();
+    const regNames = new Set(parts.map((p) => norm(p.name)));
+    const m = dr.registryMeasurement;
+    if (parts.length !== m.registryParts) fail(`droid registry has ${parts.length} parts, authority measured ${m.registryParts}`);
+    const rawIds = new Set();
+    const walk = (o) => { if (Array.isArray(o)) o.forEach(walk); else if (o && typeof o === 'object') { if (o.id && o.name) rawIds.add(o.id); else Object.values(o).forEach(walk); } };
+    walk(systems);
+    if (rawIds.size !== m.rawSourceIds) fail(`droid-systems.js has ${rawIds.size} raw ids, authority measured ${m.rawSourceIds}`);
+    const overlay = mod.getDroidPartRuleOverlay ? Object.keys(mod.getDroidPartRuleOverlay()) : [];
+    for (const ro of dr.repoOnlyRecords) {
+      if (!rawIds.has(ro.repoId) && !overlay.includes(ro.repoId)) fail(`droid repo-only ${ro.repoId} is in neither droid-systems.js nor the schema overlay`);
+    }
+    const knownDiff = new Set(Object.keys(m.keepButDisplayNameDiffers));
+    for (const r of dr.records) {
+      if (r.disposition === 'KEEP' && !regNames.has(norm(r.canonicalName)) && !knownDiff.has(r.canonicalName)) fail(`droid KEEP ${r.canonicalName} has no registry name match and is not a recorded display-name difference`);
+      if (r.disposition === 'ADD' && regNames.has(norm(r.canonicalName))) fail(`droid ADD ${r.canonicalName} already exists in the registry`);
+    }
+    for (const r of dr.records.filter((x) => x.disposition === 'EDIT')) for (const ref of r.repo.repo) {
+      const id = ref.split(' / ')[0];
+      if (/^[a-z0-9-]+$/.test(id) && !rawIds.has(id) && !parts.some((p) => p.id === id)) fail(`droid EDIT ${r.canonicalName}: ${id} not found in the droid layers`);
+    }
+  } finally { fs.rmSync(tmp, { recursive: true, force: true }); }
+  if (!errors.length) console.log(`droid systems authority OK: ${dr.records.length} canonical (${dd.KEEP} KEEP, ${dd.EDIT} EDIT, ${dd.ADD} ADD pending), ${dr.repoOnlyRecords.length} repo-only flagged, live registry unchanged`);
+}
+
+// ---- Phase 0-3I ammunition / consumables boundary ----
+const am = auth.phases['0-3i-ammunition-consumables-boundary'];
+if (am) {
+  const eqIds = new Set(fs.readFileSync(path.join(ROOT, 'packs/equipment.db'), 'utf8').split('\n').filter(Boolean).map((l) => JSON.parse(l)._id));
+  const owned = new Set((auth.phases['0-3a-general-equipment']?.repoReconciliation || []).filter((r) => r.phase0Disposition === 'KEEP').map((r) => r.id));
+  for (const it of am.canonicalStandaloneSupportItems) {
+    if (!eqIds.has(it.repoId)) fail(`ammo boundary: ${it.repoId} missing from packs/equipment.db`);
+    if (!owned.has(it.repoId)) fail(`ammo boundary: ${it.repoId} is not a 0-3A KEEP record`);
+  }
+  if (am.counts.ADD !== 0 || am.counts.newCanonicalStandaloneIdentities !== 0) fail('ammo boundary must introduce no new identities');
+  if (!errors.length) console.log(`ammunition boundary OK: ${am.canonicalStandaloneSupportItems.length} support items owned by 0-3A, 0 new identities`);
+}
+
+// ---- Phase 0 character-item completion manifest ----
+const pc = auth.phase0Completion;
+if (pc) {
+  const P = auth.phases;
+  const folded = {
+    '0-1': P['0-1-weapons'].canonicalWeapons.length,
+    '0-2': P['0-2-armor'].canonicalArmor.length,
+    '0-3A': P['0-3a-general-equipment'].canonicalRecords.length,
+    '0-3B': P['0-3b-medical-treatment'].records.length,
+    '0-3C': P['0-3c-explosives-demolitions'].records.length,
+    '0-3D': P['0-3d-cybernetics-implants'].records.length,
+    '0-3E': P['0-3e-upgrades-modifications'].records.filter((r) => r.ownership === '0-3E').length,
+    '0-3F': P['0-3f-gear-templates'].records.length,
+    '0-3G': P['0-3g-lightsaber-components'].records.length,
+    '0-3H': P['0-3h-droid-systems'].records.length,
+    '0-3I': P['0-3i-ammunition-consumables-boundary'].counts.newCanonicalStandaloneIdentities
+  };
+  for (const t of pc.tranches) if (folded[t.phase] !== t.canonical) fail(`completion manifest ${t.phase} says ${t.canonical}, folded authority has ${folded[t.phase]}`);
+  if (pc.tranches.length !== Object.keys(folded).length) fail('completion manifest tranche count mismatch');
+  const review = (P['0-2-armor'].repoOnlyArmor || []).filter((r) => r.phase0Disposition === 'REVIEW').map((r) => r.repoName).sort();
+  const listed = [...pc.phase0Closure.unresolvedItems].sort();
+  if (JSON.stringify(review) !== JSON.stringify(listed) || pc.phase0Closure.unresolvedIdentityReviews !== review.length) fail(`completion manifest unresolved reviews ${JSON.stringify(listed)} != armor REVIEW ${JSON.stringify(review)}`);
+  if (!errors.length) console.log(`Phase 0 completion OK: ${pc.tranches.length} tranches reconcile with the folded authorities; ${review.length} open identity reviews (${review.join(', ')})`);
 }
 
 if (errors.length) { console.error(`FAIL (${errors.length})\n- ${errors.join('\n- ')}`); process.exit(1); }

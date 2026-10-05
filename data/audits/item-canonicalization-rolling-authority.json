@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "authorityType": "item-canonicalization-rolling-authority",
-  "status": "ACTIVE — Phase 0 and Phases 0-1, 0-2, 0-3A through 0-3F certified by owner",
+  "status": "PHASE 0 CHARACTER-ITEM CENSUS COMPLETE — identity/presence authority certified for 0-1, 0-2, 0-3A through 0-3I; certified ADD/EDIT/REMOVE actions remain intentionally unexecuted except the armor, equipment and medical identity renames",
   "sourcePolicy": "User-provided SWSE TXT/PDF sourcebooks are the canonical SSOT. Repository compendiums are implementation targets only.",
   "ownerRulings": "docs/audits/item-phase-0-ssot-census.md §7a",
   "architecture": {
@@ -15753,14 +15753,3114 @@
         "legacyJsonQuirk": "data/gear-templates.json uses key \"mandalorian\" in both generalTemplates (Mandalorian, canonical Mandalorian Manufacture) and armorTemplates (Mandalorian Armor, repo-only REMOVE); records must be addressed as container:key.",
         "legacyJsonConsumers": "none (data/gear-templates.json has no code consumer; it is reference data)"
       }
+    },
+    "0-3g-lightsaber-components": {
+      "phase": "0-3G",
+      "status": "CERTIFIED_PHASE_0_3G_IDENTITY_AUTHORITY",
+      "canonicalSourcePolicy": "User-supplied SWSE TXT/PDF sourcebooks are SSOT.",
+      "repoSnapshot": {
+        "repository": "docflowGM/foundryvtt-swse",
+        "head": "0ce0be37794509936050fe851457bad80afbdf57"
+      },
+      "counts": {
+        "canonicalCrystals": 28,
+        "repoCrystals": 28,
+        "canonicalAccessories": 10,
+        "repoAccessories": 10,
+        "canonicalTotal": 38,
+        "repoTotal": 38,
+        "KEEP": 38,
+        "EDIT": 0,
+        "ADD": 0,
+        "REMOVE": 0,
+        "REVIEW": 0
+      },
+      "records": [
+        {
+          "canonicalId": "lightsaber-crystal-ankarres-sapphire",
+          "canonicalName": "Ankarres Sapphire",
+          "family": "lightsaber-crystal",
+          "source": {
+            "book": "Jedi Academy Training Manual",
+            "section": "Lightsaber Crystals / Table 3-3",
+            "txtLines": "4930-~5450"
+          },
+          "repo": {
+            "present": true,
+            "pack": "packs/lightsaber-crystals.db",
+            "id": "lightsaber-crystal-ankarres-sapphire",
+            "name": "Ankarres Sapphire"
+          },
+          "disposition": "KEEP"
+        },
+        {
+          "canonicalId": "lightsaber-crystal-barab-ingot",
+          "canonicalName": "Barab Ingot",
+          "family": "lightsaber-crystal",
+          "source": {
+            "book": "Jedi Academy Training Manual",
+            "section": "Lightsaber Crystals / Table 3-3",
+            "txtLines": "4930-~5450"
+          },
+          "repo": {
+            "present": true,
+            "pack": "packs/lightsaber-crystals.db",
+            "id": "lightsaber-crystal-barab-ingot",
+            "name": "Barab Ingot"
+          },
+          "disposition": "KEEP"
+        },
+        {
+          "canonicalId": "lightsaber-crystal-bondar-crystal",
+          "canonicalName": "Bondar Crystal",
+          "family": "lightsaber-crystal",
+          "source": {
+            "book": "Jedi Academy Training Manual",
+            "section": "Lightsaber Crystals / Table 3-3",
+            "txtLines": "4930-~5450"
+          },
+          "repo": {
+            "present": true,
+            "pack": "packs/lightsaber-crystals.db",
+            "id": "lightsaber-crystal-bondar",
+            "name": "Bondar Crystal",
+            "idNote": "repo id/name added by Claude at integration from the pack; the authority canonicalId is a name slug and differs from the repo _id"
+          },
+          "disposition": "KEEP"
+        },
+        {
+          "canonicalId": "lightsaber-crystal-compressed-crystal",
+          "canonicalName": "Compressed Crystal",
+          "family": "lightsaber-crystal",
+          "source": {
+            "book": "Jedi Academy Training Manual",
+            "section": "Lightsaber Crystals / Table 3-3",
+            "txtLines": "4930-~5450"
+          },
+          "repo": {
+            "present": true,
+            "pack": "packs/lightsaber-crystals.db",
+            "id": "lightsaber-crystal-compressed",
+            "name": "Compressed Crystal",
+            "idNote": "repo id/name added by Claude at integration from the pack; the authority canonicalId is a name slug and differs from the repo _id"
+          },
+          "disposition": "KEEP"
+        },
+        {
+          "canonicalId": "lightsaber-crystal-corusca-gem",
+          "canonicalName": "Corusca Gem",
+          "family": "lightsaber-crystal",
+          "source": {
+            "book": "Jedi Academy Training Manual",
+            "section": "Lightsaber Crystals / Table 3-3",
+            "txtLines": "4930-~5450"
+          },
+          "repo": {
+            "present": true,
+            "pack": "packs/lightsaber-crystals.db",
+            "id": "lightsaber-crystal-corusca-gem",
+            "name": "Corusca Gem"
+          },
+          "disposition": "KEEP"
+        },
+        {
+          "canonicalId": "lightsaber-crystal-dantari-crystal",
+          "canonicalName": "Dantari Crystal",
+          "family": "lightsaber-crystal",
+          "source": {
+            "book": "Jedi Academy Training Manual",
+            "section": "Lightsaber Crystals / Table 3-3",
+            "txtLines": "4930-~5450"
+          },
+          "repo": {
+            "present": true,
+            "pack": "packs/lightsaber-crystals.db",
+            "id": "lightsaber-crystal-dantari",
+            "name": "Dantari Crystal",
+            "idNote": "repo id/name added by Claude at integration from the pack; the authority canonicalId is a name slug and differs from the repo _id"
+          },
+          "disposition": "KEEP"
+        },
+        {
+          "canonicalId": "lightsaber-crystal-dragite-crystal",
+          "canonicalName": "Dragite Crystal",
+          "family": "lightsaber-crystal",
+          "source": {
+            "book": "Jedi Academy Training Manual",
+            "section": "Lightsaber Crystals / Table 3-3",
+            "txtLines": "4930-~5450"
+          },
+          "repo": {
+            "present": true,
+            "pack": "packs/lightsaber-crystals.db",
+            "id": "lightsaber-crystal-dragite",
+            "name": "Dragite Crystal",
+            "idNote": "repo id/name added by Claude at integration from the pack; the authority canonicalId is a name slug and differs from the repo _id"
+          },
+          "disposition": "KEEP"
+        },
+        {
+          "canonicalId": "lightsaber-crystal-durindfire-crystal",
+          "canonicalName": "Durindfire Crystal",
+          "family": "lightsaber-crystal",
+          "source": {
+            "book": "Jedi Academy Training Manual",
+            "section": "Lightsaber Crystals / Table 3-3",
+            "txtLines": "4930-~5450"
+          },
+          "repo": {
+            "present": true,
+            "pack": "packs/lightsaber-crystals.db",
+            "id": "lightsaber-crystal-durindfire",
+            "name": "Durindfire Crystal",
+            "idNote": "repo id/name added by Claude at integration from the pack; the authority canonicalId is a name slug and differs from the repo _id"
+          },
+          "disposition": "KEEP"
+        },
+        {
+          "canonicalId": "lightsaber-crystal-firkraan-crystal",
+          "canonicalName": "Firkraan Crystal",
+          "family": "lightsaber-crystal",
+          "source": {
+            "book": "Jedi Academy Training Manual",
+            "section": "Lightsaber Crystals / Table 3-3",
+            "txtLines": "4930-~5450"
+          },
+          "repo": {
+            "present": true,
+            "pack": "packs/lightsaber-crystals.db",
+            "id": "lightsaber-crystal-firkraan",
+            "name": "Firkraan Crystal",
+            "idNote": "repo id/name added by Claude at integration from the pack; the authority canonicalId is a name slug and differs from the repo _id"
+          },
+          "disposition": "KEEP"
+        },
+        {
+          "canonicalId": "lightsaber-crystal-heart-of-the-guardian",
+          "canonicalName": "Heart of the Guardian",
+          "family": "lightsaber-crystal",
+          "source": {
+            "book": "Jedi Academy Training Manual",
+            "section": "Lightsaber Crystals / Table 3-3",
+            "txtLines": "4930-~5450"
+          },
+          "repo": {
+            "present": true,
+            "pack": "packs/lightsaber-crystals.db",
+            "id": "lightsaber-crystal-heart-of-guardian",
+            "name": "Heart of the Guardian",
+            "idNote": "repo id/name added by Claude at integration from the pack; the authority canonicalId is a name slug and differs from the repo _id"
+          },
+          "disposition": "KEEP"
+        },
+        {
+          "canonicalId": "lightsaber-crystal-hurikane-crystal",
+          "canonicalName": "Hurikane Crystal",
+          "family": "lightsaber-crystal",
+          "source": {
+            "book": "Jedi Academy Training Manual",
+            "section": "Lightsaber Crystals / Table 3-3",
+            "txtLines": "4930-~5450"
+          },
+          "repo": {
+            "present": true,
+            "pack": "packs/lightsaber-crystals.db",
+            "id": "lightsaber-crystal-hurikane",
+            "name": "Hurikane Crystal",
+            "idNote": "repo id/name added by Claude at integration from the pack; the authority canonicalId is a name slug and differs from the repo _id"
+          },
+          "disposition": "KEEP"
+        },
+        {
+          "canonicalId": "lightsaber-crystal-ilum-crystal",
+          "canonicalName": "Ilum Crystal",
+          "family": "lightsaber-crystal",
+          "source": {
+            "book": "Jedi Academy Training Manual",
+            "section": "Lightsaber Crystals / Table 3-3",
+            "txtLines": "4930-~5450"
+          },
+          "repo": {
+            "present": true,
+            "pack": "packs/lightsaber-crystals.db",
+            "id": "lightsaber-crystal-ilum",
+            "name": "Ilum Crystal",
+            "idNote": "repo id/name added by Claude at integration from the pack; the authority canonicalId is a name slug and differs from the repo _id"
+          },
+          "disposition": "KEEP"
+        },
+        {
+          "canonicalId": "lightsaber-crystal-jenraux-crystal",
+          "canonicalName": "Jenraux Crystal",
+          "family": "lightsaber-crystal",
+          "source": {
+            "book": "Jedi Academy Training Manual",
+            "section": "Lightsaber Crystals / Table 3-3",
+            "txtLines": "4930-~5450"
+          },
+          "repo": {
+            "present": true,
+            "pack": "packs/lightsaber-crystals.db",
+            "id": "lightsaber-crystal-jenraux",
+            "name": "Jenraux Crystal",
+            "idNote": "repo id/name added by Claude at integration from the pack; the authority canonicalId is a name slug and differs from the repo _id"
+          },
+          "disposition": "KEEP"
+        },
+        {
+          "canonicalId": "lightsaber-crystal-kaiburr-shard",
+          "canonicalName": "Kaiburr Crystal Shard",
+          "family": "lightsaber-crystal",
+          "source": {
+            "book": "Jedi Academy Training Manual",
+            "section": "Lightsaber Crystals / Table 3-3",
+            "txtLines": "4930-~5450"
+          },
+          "repo": {
+            "present": true,
+            "pack": "packs/lightsaber-crystals.db",
+            "id": "lightsaber-crystal-kaiburr-shard",
+            "name": "Kaiburr Crystal Shard"
+          },
+          "disposition": "KEEP"
+        },
+        {
+          "canonicalId": "lightsaber-crystal-kasha-crystal",
+          "canonicalName": "Kasha Crystal",
+          "family": "lightsaber-crystal",
+          "source": {
+            "book": "Jedi Academy Training Manual",
+            "section": "Lightsaber Crystals / Table 3-3",
+            "txtLines": "4930-~5450"
+          },
+          "repo": {
+            "present": true,
+            "pack": "packs/lightsaber-crystals.db",
+            "id": "lightsaber-crystal-kasha",
+            "name": "Kasha Crystal",
+            "idNote": "repo id/name added by Claude at integration from the pack; the authority canonicalId is a name slug and differs from the repo _id"
+          },
+          "disposition": "KEEP"
+        },
+        {
+          "canonicalId": "lightsaber-crystal-kathracite-crystal",
+          "canonicalName": "Kathracite Crystal",
+          "family": "lightsaber-crystal",
+          "source": {
+            "book": "Jedi Academy Training Manual",
+            "section": "Lightsaber Crystals / Table 3-3",
+            "txtLines": "4930-~5450"
+          },
+          "repo": {
+            "present": true,
+            "pack": "packs/lightsaber-crystals.db",
+            "id": "lightsaber-crystal-kathracite",
+            "name": "Kathracite Crystal",
+            "idNote": "repo id/name added by Claude at integration from the pack; the authority canonicalId is a name slug and differs from the repo _id"
+          },
+          "disposition": "KEEP"
+        },
+        {
+          "canonicalId": "lightsaber-crystal-krayt-dragon-pearl",
+          "canonicalName": "Krayt Dragon Pearl",
+          "family": "lightsaber-crystal",
+          "source": {
+            "book": "Jedi Academy Training Manual",
+            "section": "Lightsaber Crystals / Table 3-3",
+            "txtLines": "4930-~5450"
+          },
+          "repo": {
+            "present": true,
+            "pack": "packs/lightsaber-crystals.db",
+            "id": "lightsaber-crystal-krayt-dragon-pearl",
+            "name": "Krayt Dragon Pearl"
+          },
+          "disposition": "KEEP"
+        },
+        {
+          "canonicalId": "lightsaber-crystal-lambent-crystal",
+          "canonicalName": "Lambent Crystal",
+          "family": "lightsaber-crystal",
+          "source": {
+            "book": "Jedi Academy Training Manual",
+            "section": "Lightsaber Crystals / Table 3-3",
+            "txtLines": "4930-~5450"
+          },
+          "repo": {
+            "present": true,
+            "pack": "packs/lightsaber-crystals.db",
+            "id": "lightsaber-crystal-lambent",
+            "name": "Lambent Crystal",
+            "idNote": "repo id/name added by Claude at integration from the pack; the authority canonicalId is a name slug and differs from the repo _id"
+          },
+          "disposition": "KEEP"
+        },
+        {
+          "canonicalId": "lightsaber-crystal-mantle-of-the-force",
+          "canonicalName": "Mantle of the Force",
+          "family": "lightsaber-crystal",
+          "source": {
+            "book": "Jedi Academy Training Manual",
+            "section": "Lightsaber Crystals / Table 3-3",
+            "txtLines": "4930-~5450"
+          },
+          "repo": {
+            "present": true,
+            "pack": "packs/lightsaber-crystals.db",
+            "id": "lightsaber-crystal-mantle-of-force",
+            "name": "Mantle of the Force",
+            "idNote": "repo id/name added by Claude at integration from the pack; the authority canonicalId is a name slug and differs from the repo _id"
+          },
+          "disposition": "KEEP"
+        },
+        {
+          "canonicalId": "lightsaber-crystal-mephite-crystal",
+          "canonicalName": "Mephite Crystal",
+          "family": "lightsaber-crystal",
+          "source": {
+            "book": "Jedi Academy Training Manual",
+            "section": "Lightsaber Crystals / Table 3-3",
+            "txtLines": "4930-~5450"
+          },
+          "repo": {
+            "present": true,
+            "pack": "packs/lightsaber-crystals.db",
+            "id": "lightsaber-crystal-mephite",
+            "name": "Mephite Crystal",
+            "idNote": "repo id/name added by Claude at integration from the pack; the authority canonicalId is a name slug and differs from the repo _id"
+          },
+          "disposition": "KEEP"
+        },
+        {
+          "canonicalId": "lightsaber-crystal-opila-crystal",
+          "canonicalName": "Opila Crystal",
+          "family": "lightsaber-crystal",
+          "source": {
+            "book": "Jedi Academy Training Manual",
+            "section": "Lightsaber Crystals / Table 3-3",
+            "txtLines": "4930-~5450"
+          },
+          "repo": {
+            "present": true,
+            "pack": "packs/lightsaber-crystals.db",
+            "id": "lightsaber-crystal-opila",
+            "name": "Opila Crystal",
+            "idNote": "repo id/name added by Claude at integration from the pack; the authority canonicalId is a name slug and differs from the repo _id"
+          },
+          "disposition": "KEEP"
+        },
+        {
+          "canonicalId": "lightsaber-crystal-phond-crystal",
+          "canonicalName": "Phond Crystal",
+          "family": "lightsaber-crystal",
+          "source": {
+            "book": "Jedi Academy Training Manual",
+            "section": "Lightsaber Crystals / Table 3-3",
+            "txtLines": "4930-~5450"
+          },
+          "repo": {
+            "present": true,
+            "pack": "packs/lightsaber-crystals.db",
+            "id": "lightsaber-crystal-phond",
+            "name": "Phond Crystal",
+            "idNote": "repo id/name added by Claude at integration from the pack; the authority canonicalId is a name slug and differs from the repo _id"
+          },
+          "disposition": "KEEP"
+        },
+        {
+          "canonicalId": "lightsaber-crystal-pontite-crystal",
+          "canonicalName": "Pontite Crystal",
+          "family": "lightsaber-crystal",
+          "source": {
+            "book": "Jedi Academy Training Manual",
+            "section": "Lightsaber Crystals / Table 3-3",
+            "txtLines": "4930-~5450"
+          },
+          "repo": {
+            "present": true,
+            "pack": "packs/lightsaber-crystals.db",
+            "id": "lightsaber-crystal-pontite",
+            "name": "Pontite Crystal",
+            "idNote": "repo id/name added by Claude at integration from the pack; the authority canonicalId is a name slug and differs from the repo _id"
+          },
+          "disposition": "KEEP"
+        },
+        {
+          "canonicalId": "lightsaber-crystal-rubat-crystal",
+          "canonicalName": "Rubat Crystal",
+          "family": "lightsaber-crystal",
+          "source": {
+            "book": "Jedi Academy Training Manual",
+            "section": "Lightsaber Crystals / Table 3-3",
+            "txtLines": "4930-~5450"
+          },
+          "repo": {
+            "present": true,
+            "pack": "packs/lightsaber-crystals.db",
+            "id": "lightsaber-crystal-rubat",
+            "name": "Rubat Crystal",
+            "idNote": "repo id/name added by Claude at integration from the pack; the authority canonicalId is a name slug and differs from the repo _id"
+          },
+          "disposition": "KEEP"
+        },
+        {
+          "canonicalId": "lightsaber-crystal-sigil-crystal",
+          "canonicalName": "Sigil Crystal",
+          "family": "lightsaber-crystal",
+          "source": {
+            "book": "Jedi Academy Training Manual",
+            "section": "Lightsaber Crystals / Table 3-3",
+            "txtLines": "4930-~5450"
+          },
+          "repo": {
+            "present": true,
+            "pack": "packs/lightsaber-crystals.db",
+            "id": "lightsaber-crystal-sigil",
+            "name": "Sigil Crystal",
+            "idNote": "repo id/name added by Claude at integration from the pack; the authority canonicalId is a name slug and differs from the repo _id"
+          },
+          "disposition": "KEEP"
+        },
+        {
+          "canonicalId": "lightsaber-crystal-solari-crystal",
+          "canonicalName": "Solari Crystal",
+          "family": "lightsaber-crystal",
+          "source": {
+            "book": "Jedi Academy Training Manual",
+            "section": "Lightsaber Crystals / Table 3-3",
+            "txtLines": "4930-~5450"
+          },
+          "repo": {
+            "present": true,
+            "pack": "packs/lightsaber-crystals.db",
+            "id": "lightsaber-crystal-solari",
+            "name": "Solari Crystal",
+            "idNote": "repo id/name added by Claude at integration from the pack; the authority canonicalId is a name slug and differs from the repo _id"
+          },
+          "disposition": "KEEP"
+        },
+        {
+          "canonicalId": "lightsaber-crystal-standard-synthetic-crystal",
+          "canonicalName": "Standard Synthetic Crystal",
+          "family": "lightsaber-crystal",
+          "source": {
+            "book": "Jedi Academy Training Manual",
+            "section": "Lightsaber Crystals / Table 3-3",
+            "txtLines": "4930-~5450"
+          },
+          "repo": {
+            "present": true,
+            "pack": "packs/lightsaber-crystals.db",
+            "id": "lightsaber-crystal-standard-synthetic",
+            "name": "Standard Synthetic Crystal",
+            "idNote": "repo id/name added by Claude at integration from the pack; the authority canonicalId is a name slug and differs from the repo _id"
+          },
+          "disposition": "KEEP"
+        },
+        {
+          "canonicalId": "lightsaber-crystal-unstable-crystal",
+          "canonicalName": "Unstable Crystal",
+          "family": "lightsaber-crystal",
+          "source": {
+            "book": "Jedi Academy Training Manual",
+            "section": "Lightsaber Crystals / Table 3-3",
+            "txtLines": "4930-~5450"
+          },
+          "repo": {
+            "present": true,
+            "pack": "packs/lightsaber-crystals.db",
+            "id": "lightsaber-crystal-unstable",
+            "name": "Unstable Crystal",
+            "idNote": "repo id/name added by Claude at integration from the pack; the authority canonicalId is a name slug and differs from the repo _id"
+          },
+          "disposition": "KEEP"
+        },
+        {
+          "canonicalId": "lightsaber-accessory-beckon-call",
+          "canonicalName": "Beckon Call",
+          "family": "lightsaber-accessory",
+          "source": {
+            "book": "Jedi Academy Training Manual",
+            "section": "Lightsaber Accessories & Modifications",
+            "txtLines": "5475-5595"
+          },
+          "repo": {
+            "present": true,
+            "pack": "packs/lightsaber-accessories.db",
+            "id": "lightsaber-accessory-beckon-call",
+            "name": "Beckon Call"
+          },
+          "disposition": "KEEP"
+        },
+        {
+          "canonicalId": "lightsaber-accessory-blade-lock",
+          "canonicalName": "Blade Lock",
+          "family": "lightsaber-accessory",
+          "source": {
+            "book": "Jedi Academy Training Manual",
+            "section": "Lightsaber Accessories & Modifications",
+            "txtLines": "5475-5595"
+          },
+          "repo": {
+            "present": true,
+            "pack": "packs/lightsaber-accessories.db",
+            "id": "lightsaber-accessory-blade-lock",
+            "name": "Blade Lock"
+          },
+          "disposition": "KEEP"
+        },
+        {
+          "canonicalId": "lightsaber-accessory-concealed-compartment",
+          "canonicalName": "Concealed Compartment",
+          "family": "lightsaber-accessory",
+          "source": {
+            "book": "Jedi Academy Training Manual",
+            "section": "Lightsaber Accessories & Modifications",
+            "txtLines": "5475-5595"
+          },
+          "repo": {
+            "present": true,
+            "pack": "packs/lightsaber-accessories.db",
+            "id": "lightsaber-accessory-concealed-compartment",
+            "name": "Concealed Compartment"
+          },
+          "disposition": "KEEP"
+        },
+        {
+          "canonicalId": "lightsaber-accessory-electrum-detail",
+          "canonicalName": "Electrum Detail",
+          "family": "lightsaber-accessory",
+          "source": {
+            "book": "Jedi Academy Training Manual",
+            "section": "Lightsaber Accessories & Modifications",
+            "txtLines": "5475-5595"
+          },
+          "repo": {
+            "present": true,
+            "pack": "packs/lightsaber-accessories.db",
+            "id": "lightsaber-accessory-electrum-detail",
+            "name": "Electrum Detail"
+          },
+          "disposition": "KEEP"
+        },
+        {
+          "canonicalId": "lightsaber-accessory-fiber-cord",
+          "canonicalName": "Fiber Cord",
+          "family": "lightsaber-accessory",
+          "source": {
+            "book": "Jedi Academy Training Manual",
+            "section": "Lightsaber Accessories & Modifications",
+            "txtLines": "5475-5595"
+          },
+          "repo": {
+            "present": true,
+            "pack": "packs/lightsaber-accessories.db",
+            "id": "lightsaber-accessory-fiber-cord",
+            "name": "Fiber Cord"
+          },
+          "disposition": "KEEP"
+        },
+        {
+          "canonicalId": "lightsaber-accessory-force-activated",
+          "canonicalName": "Force-Activated",
+          "family": "lightsaber-accessory",
+          "source": {
+            "book": "Jedi Academy Training Manual",
+            "section": "Lightsaber Accessories & Modifications",
+            "txtLines": "5475-5595"
+          },
+          "repo": {
+            "present": true,
+            "pack": "packs/lightsaber-accessories.db",
+            "id": "lightsaber-accessory-force-activated",
+            "name": "Force-Activated"
+          },
+          "disposition": "KEEP"
+        },
+        {
+          "canonicalId": "lightsaber-accessory-interlocking-hilt",
+          "canonicalName": "Interlocking Hilt",
+          "family": "lightsaber-accessory",
+          "source": {
+            "book": "Jedi Academy Training Manual",
+            "section": "Lightsaber Accessories & Modifications",
+            "txtLines": "5475-5595"
+          },
+          "repo": {
+            "present": true,
+            "pack": "packs/lightsaber-accessories.db",
+            "id": "lightsaber-accessory-interlocking-hilt",
+            "name": "Interlocking Hilt"
+          },
+          "disposition": "KEEP"
+        },
+        {
+          "canonicalId": "lightsaber-accessory-pressure-grip",
+          "canonicalName": "Pressure Grip",
+          "family": "lightsaber-accessory",
+          "source": {
+            "book": "Jedi Academy Training Manual",
+            "section": "Lightsaber Accessories & Modifications",
+            "txtLines": "5475-5595"
+          },
+          "repo": {
+            "present": true,
+            "pack": "packs/lightsaber-accessories.db",
+            "id": "lightsaber-accessory-pressure-grip",
+            "name": "Pressure Grip"
+          },
+          "disposition": "KEEP"
+        },
+        {
+          "canonicalId": "lightsaber-accessory-trapped-grip",
+          "canonicalName": "Trapped Grip",
+          "family": "lightsaber-accessory",
+          "source": {
+            "book": "Jedi Academy Training Manual",
+            "section": "Lightsaber Accessories & Modifications",
+            "txtLines": "5475-5595"
+          },
+          "repo": {
+            "present": true,
+            "pack": "packs/lightsaber-accessories.db",
+            "id": "lightsaber-accessory-trapped-grip",
+            "name": "Trapped Grip"
+          },
+          "disposition": "KEEP"
+        },
+        {
+          "canonicalId": "lightsaber-accessory-waterproof-casing",
+          "canonicalName": "Waterproof Casing",
+          "family": "lightsaber-accessory",
+          "source": {
+            "book": "Jedi Academy Training Manual",
+            "section": "Lightsaber Accessories & Modifications",
+            "txtLines": "5475-5595"
+          },
+          "repo": {
+            "present": true,
+            "pack": "packs/lightsaber-accessories.db",
+            "id": "lightsaber-accessory-waterproof-casing",
+            "name": "Waterproof Casing"
+          },
+          "disposition": "KEEP"
+        }
+      ],
+      "findings": [
+        "All 28 Jedi Academy lightsaber crystal identities are present exactly once in packs/lightsaber-crystals.db.",
+        "All 10 Jedi Academy lightsaber accessory/modification identities are present exactly once in packs/lightsaber-accessories.db.",
+        "Current pack rows lack source/page provenance; provenance/content/mechanical certification is deferred to later phases.",
+        "These records belong in their dedicated lightsaber packs, not packs/equipment.db."
+      ],
+      "executionPolicy": {
+        "authorityOnly": true,
+        "productionMutationAuthorized": false
+      },
+      "execution": {
+        "status": "AUTHORITY_ONLY",
+        "date": "2026-10-05",
+        "note": "No pack or runtime change. All 38 are KEEP."
+      },
+      "stragglersInWeaponsPack": {
+        "finding": "packs/weapons.db (the weapons aggregate) still holds 4 weaponUpgrade records that are not part of the dedicated lightsaber packs: three share an _id and name with a dedicated-pack record (Blade Lock, Barab Ingot, Ilum Crystal) and one, \"Synthetic Crystal\" (lightsaber-crystal-synthetic), is an alias of the canonical \"Standard Synthetic Crystal\" (lightsaber-crystal-standard-synthetic) under a different _id. They originate from data/lightsaber-items-import.ndjson / data/lightsaber-components.json. The lightsaber construction engine reads only the dedicated packs and weapons-lightsabers, so these are not runtime inputs there. Phase 0-1 excluded upgrades, so no phase has yet claimed them.",
+        "records": [
+          {
+            "id": "lightsaber-accessory-blade-lock",
+            "name": "Blade Lock",
+            "duplicatesDedicatedPackRecord": true,
+            "canonicalIdentity": "Blade Lock"
+          },
+          {
+            "id": "lightsaber-crystal-barab-ingot",
+            "name": "Barab Ingot",
+            "duplicatesDedicatedPackRecord": true,
+            "canonicalIdentity": "Barab Ingot"
+          },
+          {
+            "id": "lightsaber-crystal-ilum",
+            "name": "Ilum Crystal",
+            "duplicatesDedicatedPackRecord": true,
+            "canonicalIdentity": "Ilum Crystal"
+          },
+          {
+            "id": "lightsaber-crystal-synthetic",
+            "name": "Synthetic Crystal",
+            "duplicatesDedicatedPackRecord": false,
+            "canonicalIdentity": "Standard Synthetic Crystal"
+          }
+        ],
+        "status": "FLAGGED_FOR_CLEANUP_TRANCHE",
+        "proposedDisposition": "remove from packs/weapons.db after dependency check (the weapons aggregate should hold only type weapon); canonical identities remain in the dedicated packs",
+        "executed": false,
+        "otherLegacyLayers": [
+          "data/lightsaber-components.json (6 entries)",
+          "data/lightsaber-items-import.ndjson (6 lines)"
+        ]
+      },
+      "idPolicyNote": "Authority canonicalId values are name slugs; use repo.id (the real _id) when addressing records. 22 of 28 crystals differ (e.g. lightsaber-crystal-bondar-crystal vs lightsaber-crystal-bondar)."
+    },
+    "0-3h-droid-systems": {
+      "phase": "0-3H",
+      "status": "CERTIFIED_PHASE_0_3H_IDENTITY_AUTHORITY",
+      "canonicalSourcePolicy": "User-supplied Core Rulebook and Scavenger's Guide to Droids TXT/PDF are SSOT.",
+      "repoSnapshot": {
+        "repository": "docflowGM/foundryvtt-swse",
+        "head": "0ce0be37794509936050fe851457bad80afbdf57",
+        "canonicalDroidRegistry": "scripts/data/droid-part-schema.js",
+        "broadSourceCatalog": "scripts/data/droid-systems.js"
+      },
+      "architectureRuling": "Droid systems remain in the dedicated droid customization subsystem; do not duplicate them into packs/equipment.db merely to satisfy the item census.",
+      "counts": {
+        "canonicalIdentities": 122,
+        "representedCanonicalIdentities": 99,
+        "KEEP": 92,
+        "EDIT": 7,
+        "ADD": 23,
+        "repoOnlyUnsupportedOrConvenience": 5,
+        "REVIEW": 0
+      },
+      "records": [
+        {
+          "canonicalId": "droid-walking",
+          "canonicalName": "Walking",
+          "family": "droid-system",
+          "category": "locomotion",
+          "source": {
+            "book": "Core Rulebook",
+            "section": "Droid Systems / Droid Accessories",
+            "txtRange": "~17780-18570"
+          },
+          "repo": {
+            "present": true,
+            "authority": "scripts/data/droid-part-schema.js"
+          },
+          "disposition": "KEEP",
+          "reason": "Published identity is represented in the live canonical droid subsystem."
+        },
+        {
+          "canonicalId": "droid-wheeled",
+          "canonicalName": "Wheeled",
+          "family": "droid-system",
+          "category": "locomotion",
+          "source": {
+            "book": "Core Rulebook",
+            "section": "Droid Systems / Droid Accessories",
+            "txtRange": "~17780-18570"
+          },
+          "repo": {
+            "present": true,
+            "authority": "scripts/data/droid-part-schema.js"
+          },
+          "disposition": "KEEP",
+          "reason": "Published identity is represented in the live canonical droid subsystem."
+        },
+        {
+          "canonicalId": "droid-tracked",
+          "canonicalName": "Tracked",
+          "family": "droid-system",
+          "category": "locomotion",
+          "source": {
+            "book": "Core Rulebook",
+            "section": "Droid Systems / Droid Accessories",
+            "txtRange": "~17780-18570"
+          },
+          "repo": {
+            "present": true,
+            "authority": "scripts/data/droid-part-schema.js"
+          },
+          "disposition": "KEEP",
+          "reason": "Published identity is represented in the live canonical droid subsystem."
+        },
+        {
+          "canonicalId": "droid-hovering",
+          "canonicalName": "Hovering",
+          "family": "droid-system",
+          "category": "locomotion",
+          "source": {
+            "book": "Core Rulebook",
+            "section": "Droid Systems / Droid Accessories",
+            "txtRange": "~17780-18570"
+          },
+          "repo": {
+            "present": true,
+            "authority": "scripts/data/droid-part-schema.js"
+          },
+          "disposition": "KEEP",
+          "reason": "Published identity is represented in the live canonical droid subsystem."
+        },
+        {
+          "canonicalId": "droid-flying",
+          "canonicalName": "Flying",
+          "family": "droid-system",
+          "category": "locomotion",
+          "source": {
+            "book": "Core Rulebook",
+            "section": "Droid Systems / Droid Accessories",
+            "txtRange": "~17780-18570"
+          },
+          "repo": {
+            "present": true,
+            "authority": "scripts/data/droid-part-schema.js"
+          },
+          "disposition": "KEEP",
+          "reason": "Published identity is represented in the live canonical droid subsystem."
+        },
+        {
+          "canonicalId": "droid-stationary",
+          "canonicalName": "Stationary",
+          "family": "droid-system",
+          "category": "locomotion",
+          "source": {
+            "book": "Core Rulebook",
+            "section": "Droid Systems / Droid Accessories",
+            "txtRange": "~17780-18570"
+          },
+          "repo": {
+            "present": true,
+            "authority": "scripts/data/droid-part-schema.js"
+          },
+          "disposition": "KEEP",
+          "reason": "Published identity is represented in the live canonical droid subsystem."
+        },
+        {
+          "canonicalId": "droid-climbing-claws",
+          "canonicalName": "Climbing Claws",
+          "family": "droid-system",
+          "category": "locomotion",
+          "source": {
+            "book": "Core Rulebook",
+            "section": "Droid Systems / Droid Accessories",
+            "txtRange": "~17780-18570"
+          },
+          "repo": {
+            "present": true,
+            "authority": "scripts/data/droid-part-schema.js"
+          },
+          "disposition": "KEEP",
+          "reason": "Published identity is represented in the live canonical droid subsystem."
+        },
+        {
+          "canonicalId": "droid-extra-legs",
+          "canonicalName": "Extra Legs",
+          "family": "droid-system",
+          "category": "locomotion",
+          "source": {
+            "book": "Core Rulebook",
+            "section": "Droid Systems / Droid Accessories",
+            "txtRange": "~17780-18570"
+          },
+          "repo": {
+            "present": true,
+            "authority": "scripts/data/droid-part-schema.js"
+          },
+          "disposition": "KEEP",
+          "reason": "Published identity is represented in the live canonical droid subsystem."
+        },
+        {
+          "canonicalId": "droid-jump-servos",
+          "canonicalName": "Jump Servos",
+          "family": "droid-system",
+          "category": "locomotion",
+          "source": {
+            "book": "Core Rulebook",
+            "section": "Droid Systems / Droid Accessories",
+            "txtRange": "~17780-18570"
+          },
+          "repo": {
+            "present": true,
+            "authority": "scripts/data/droid-part-schema.js"
+          },
+          "disposition": "KEEP",
+          "reason": "Published identity is represented in the live canonical droid subsystem."
+        },
+        {
+          "canonicalId": "droid-magnetic-feet",
+          "canonicalName": "Magnetic Feet",
+          "family": "droid-system",
+          "category": "locomotion",
+          "source": {
+            "book": "Core Rulebook",
+            "section": "Droid Systems / Droid Accessories",
+            "txtRange": "~17780-18570"
+          },
+          "repo": {
+            "present": true,
+            "authority": "scripts/data/droid-part-schema.js"
+          },
+          "disposition": "KEEP",
+          "reason": "Published identity is represented in the live canonical droid subsystem."
+        },
+        {
+          "canonicalId": "droid-probe",
+          "canonicalName": "Probe",
+          "family": "droid-system",
+          "category": "appendage",
+          "source": {
+            "book": "Core Rulebook",
+            "section": "Droid Systems / Droid Accessories",
+            "txtRange": "~17780-18570"
+          },
+          "repo": {
+            "present": true,
+            "authority": "scripts/data/droid-part-schema.js"
+          },
+          "disposition": "KEEP",
+          "reason": "Published identity is represented in the live canonical droid subsystem."
+        },
+        {
+          "canonicalId": "droid-instrument",
+          "canonicalName": "Instrument",
+          "family": "droid-system",
+          "category": "appendage",
+          "source": {
+            "book": "Core Rulebook",
+            "section": "Droid Systems / Droid Accessories",
+            "txtRange": "~17780-18570"
+          },
+          "repo": {
+            "present": true,
+            "authority": "scripts/data/droid-part-schema.js"
+          },
+          "disposition": "KEEP",
+          "reason": "Published identity is represented in the live canonical droid subsystem."
+        },
+        {
+          "canonicalId": "droid-tool",
+          "canonicalName": "Tool",
+          "family": "droid-system",
+          "category": "appendage",
+          "source": {
+            "book": "Core Rulebook",
+            "section": "Droid Systems / Droid Accessories",
+            "txtRange": "~17780-18570"
+          },
+          "repo": {
+            "present": true,
+            "authority": "scripts/data/droid-part-schema.js"
+          },
+          "disposition": "KEEP",
+          "reason": "Published identity is represented in the live canonical droid subsystem."
+        },
+        {
+          "canonicalId": "droid-claw",
+          "canonicalName": "Claw",
+          "family": "droid-system",
+          "category": "appendage",
+          "source": {
+            "book": "Core Rulebook",
+            "section": "Droid Systems / Droid Accessories",
+            "txtRange": "~17780-18570"
+          },
+          "repo": {
+            "present": true,
+            "authority": "scripts/data/droid-part-schema.js"
+          },
+          "disposition": "KEEP",
+          "reason": "Published identity is represented in the live canonical droid subsystem."
+        },
+        {
+          "canonicalId": "droid-hand",
+          "canonicalName": "Hand",
+          "family": "droid-system",
+          "category": "appendage",
+          "source": {
+            "book": "Core Rulebook",
+            "section": "Droid Systems / Droid Accessories",
+            "txtRange": "~17780-18570"
+          },
+          "repo": {
+            "present": true,
+            "authority": "scripts/data/droid-part-schema.js"
+          },
+          "disposition": "KEEP",
+          "reason": "Published identity is represented in the live canonical droid subsystem."
+        },
+        {
+          "canonicalId": "droid-telescopic-appendage",
+          "canonicalName": "Telescopic Appendage",
+          "family": "droid-system",
+          "category": "appendage",
+          "source": {
+            "book": "Core Rulebook",
+            "section": "Droid Systems / Droid Accessories",
+            "txtRange": "~17780-18570"
+          },
+          "repo": {
+            "present": true,
+            "authority": "scripts/data/droid-part-schema.js"
+          },
+          "disposition": "KEEP",
+          "reason": "Published identity is represented in the live canonical droid subsystem."
+        },
+        {
+          "canonicalId": "droid-stabilized-mount",
+          "canonicalName": "Stabilized Mount",
+          "family": "droid-system",
+          "category": "appendage",
+          "source": {
+            "book": "Core Rulebook",
+            "section": "Droid Systems / Droid Accessories",
+            "txtRange": "~17780-18570"
+          },
+          "repo": {
+            "present": true,
+            "authority": "scripts/data/droid-part-schema.js"
+          },
+          "disposition": "KEEP",
+          "reason": "Published identity is represented in the live canonical droid subsystem."
+        },
+        {
+          "canonicalId": "droid-basic-processor",
+          "canonicalName": "Basic Processor",
+          "family": "droid-system",
+          "category": "processor-control",
+          "source": {
+            "book": "Core Rulebook",
+            "section": "Droid Systems / Droid Accessories",
+            "txtRange": "~17780-18570"
+          },
+          "repo": {
+            "present": true,
+            "authority": "scripts/data/droid-part-schema.js"
+          },
+          "disposition": "KEEP",
+          "reason": "Published identity is represented in the live canonical droid subsystem."
+        },
+        {
+          "canonicalId": "droid-heuristic-processor",
+          "canonicalName": "Heuristic Processor",
+          "family": "droid-system",
+          "category": "processor-control",
+          "source": {
+            "book": "Core Rulebook",
+            "section": "Droid Systems / Droid Accessories",
+            "txtRange": "~17780-18570"
+          },
+          "repo": {
+            "present": true,
+            "authority": "scripts/data/droid-part-schema.js"
+          },
+          "disposition": "KEEP",
+          "reason": "Published identity is represented in the live canonical droid subsystem."
+        },
+        {
+          "canonicalId": "droid-remote-processor",
+          "canonicalName": "Remote Processor",
+          "family": "droid-system",
+          "category": "processor-control",
+          "source": {
+            "book": "Core Rulebook",
+            "section": "Droid Systems / Droid Accessories",
+            "txtRange": "~17780-18570"
+          },
+          "repo": {
+            "present": true,
+            "authority": "scripts/data/droid-part-schema.js",
+            "repo": [
+              "remote / Remote Processor (External)"
+            ],
+            "action": "RENAME_OR_ALIAS_TO_CANONICAL_SOURCE_IDENTITY"
+          },
+          "disposition": "EDIT",
+          "reason": "Published identity is represented, but current repo naming/variant structure does not match the source identity."
+        },
+        {
+          "canonicalId": "droid-remote-receiver",
+          "canonicalName": "Remote Receiver",
+          "family": "droid-system",
+          "category": "processor-control",
+          "source": {
+            "book": "Core Rulebook",
+            "section": "Droid Systems / Droid Accessories",
+            "txtRange": "~17780-18570"
+          },
+          "repo": {
+            "present": true,
+            "authority": "scripts/data/droid-part-schema.js"
+          },
+          "disposition": "KEEP",
+          "reason": "Published identity is represented in the live canonical droid subsystem."
+        },
+        {
+          "canonicalId": "droid-backup-processor",
+          "canonicalName": "Backup Processor",
+          "family": "droid-system",
+          "category": "processor-control",
+          "source": {
+            "book": "Core Rulebook",
+            "section": "Droid Systems / Droid Accessories",
+            "txtRange": "~17780-18570"
+          },
+          "repo": {
+            "present": true,
+            "authority": "scripts/data/droid-part-schema.js"
+          },
+          "disposition": "KEEP",
+          "reason": "Published identity is represented in the live canonical droid subsystem."
+        },
+        {
+          "canonicalId": "droid-synchronized-fire-circuits",
+          "canonicalName": "Synchronized Fire Circuits",
+          "family": "droid-system",
+          "category": "processor-control",
+          "source": {
+            "book": "Core Rulebook",
+            "section": "Droid Systems / Droid Accessories",
+            "txtRange": "~17780-18570"
+          },
+          "repo": {
+            "present": true,
+            "authority": "scripts/data/droid-part-schema.js"
+          },
+          "disposition": "KEEP",
+          "reason": "Published identity is represented in the live canonical droid subsystem."
+        },
+        {
+          "canonicalId": "droid-restraining-bolt",
+          "canonicalName": "Restraining Bolt",
+          "family": "droid-system",
+          "category": "processor-control",
+          "source": {
+            "book": "Core Rulebook",
+            "section": "Droid Systems / Droid Accessories",
+            "txtRange": "~17780-18570"
+          },
+          "repo": {
+            "present": true,
+            "authority": "scripts/data/droid-part-schema.js"
+          },
+          "disposition": "KEEP",
+          "reason": "Published identity is represented in the live canonical droid subsystem."
+        },
+        {
+          "canonicalId": "droid-droid-caller",
+          "canonicalName": "Droid Caller",
+          "family": "droid-system",
+          "category": "processor-control",
+          "source": {
+            "book": "Core Rulebook",
+            "section": "Droid Systems / Droid Accessories",
+            "txtRange": "~17780-18570"
+          },
+          "repo": {
+            "present": true,
+            "authority": "scripts/data/droid-part-schema.js"
+          },
+          "disposition": "KEEP",
+          "reason": "Published identity is represented in the live canonical droid subsystem."
+        },
+        {
+          "canonicalId": "droid-plasteel-shell",
+          "canonicalName": "Plasteel Shell",
+          "family": "droid-system",
+          "category": "armor",
+          "source": {
+            "book": "Core Rulebook",
+            "section": "Droid Systems / Droid Accessories",
+            "txtRange": "~17780-18570"
+          },
+          "repo": {
+            "present": true,
+            "authority": "scripts/data/droid-part-schema.js"
+          },
+          "disposition": "KEEP",
+          "reason": "Published identity is represented in the live canonical droid subsystem."
+        },
+        {
+          "canonicalId": "droid-quadanium-shell",
+          "canonicalName": "Quadanium Shell",
+          "family": "droid-system",
+          "category": "armor",
+          "source": {
+            "book": "Core Rulebook",
+            "section": "Droid Systems / Droid Accessories",
+            "txtRange": "~17780-18570"
+          },
+          "repo": {
+            "present": true,
+            "authority": "scripts/data/droid-part-schema.js"
+          },
+          "disposition": "KEEP",
+          "reason": "Published identity is represented in the live canonical droid subsystem."
+        },
+        {
+          "canonicalId": "droid-durasteel-shell",
+          "canonicalName": "Durasteel Shell",
+          "family": "droid-system",
+          "category": "armor",
+          "source": {
+            "book": "Core Rulebook",
+            "section": "Droid Systems / Droid Accessories",
+            "txtRange": "~17780-18570"
+          },
+          "repo": {
+            "present": true,
+            "authority": "scripts/data/droid-part-schema.js"
+          },
+          "disposition": "KEEP",
+          "reason": "Published identity is represented in the live canonical droid subsystem."
+        },
+        {
+          "canonicalId": "droid-quadanium-plating",
+          "canonicalName": "Quadanium Plating",
+          "family": "droid-system",
+          "category": "armor",
+          "source": {
+            "book": "Core Rulebook",
+            "section": "Droid Systems / Droid Accessories",
+            "txtRange": "~17780-18570"
+          },
+          "repo": {
+            "present": true,
+            "authority": "scripts/data/droid-part-schema.js"
+          },
+          "disposition": "KEEP",
+          "reason": "Published identity is represented in the live canonical droid subsystem."
+        },
+        {
+          "canonicalId": "droid-durasteel-plating",
+          "canonicalName": "Durasteel Plating",
+          "family": "droid-system",
+          "category": "armor",
+          "source": {
+            "book": "Core Rulebook",
+            "section": "Droid Systems / Droid Accessories",
+            "txtRange": "~17780-18570"
+          },
+          "repo": {
+            "present": true,
+            "authority": "scripts/data/droid-part-schema.js"
+          },
+          "disposition": "KEEP",
+          "reason": "Published identity is represented in the live canonical droid subsystem."
+        },
+        {
+          "canonicalId": "droid-quadanium-battle-armor",
+          "canonicalName": "Quadanium Battle Armor",
+          "family": "droid-system",
+          "category": "armor",
+          "source": {
+            "book": "Core Rulebook",
+            "section": "Droid Systems / Droid Accessories",
+            "txtRange": "~17780-18570"
+          },
+          "repo": {
+            "present": true,
+            "authority": "scripts/data/droid-part-schema.js"
+          },
+          "disposition": "KEEP",
+          "reason": "Published identity is represented in the live canonical droid subsystem."
+        },
+        {
+          "canonicalId": "droid-duranium-plating",
+          "canonicalName": "Duranium Plating",
+          "family": "droid-system",
+          "category": "armor",
+          "source": {
+            "book": "Core Rulebook",
+            "section": "Droid Systems / Droid Accessories",
+            "txtRange": "~17780-18570"
+          },
+          "repo": {
+            "present": true,
+            "authority": "scripts/data/droid-part-schema.js"
+          },
+          "disposition": "KEEP",
+          "reason": "Published identity is represented in the live canonical droid subsystem."
+        },
+        {
+          "canonicalId": "droid-durasteel-battle-armor",
+          "canonicalName": "Durasteel Battle Armor",
+          "family": "droid-system",
+          "category": "armor",
+          "source": {
+            "book": "Core Rulebook",
+            "section": "Droid Systems / Droid Accessories",
+            "txtRange": "~17780-18570"
+          },
+          "repo": {
+            "present": true,
+            "authority": "scripts/data/droid-part-schema.js"
+          },
+          "disposition": "KEEP",
+          "reason": "Published identity is represented in the live canonical droid subsystem."
+        },
+        {
+          "canonicalId": "droid-mandalorian-steel-shell",
+          "canonicalName": "Mandalorian Steel Shell",
+          "family": "droid-system",
+          "category": "armor",
+          "source": {
+            "book": "Core Rulebook",
+            "section": "Droid Systems / Droid Accessories",
+            "txtRange": "~17780-18570"
+          },
+          "repo": {
+            "present": true,
+            "authority": "scripts/data/droid-part-schema.js"
+          },
+          "disposition": "KEEP",
+          "reason": "Published identity is represented in the live canonical droid subsystem."
+        },
+        {
+          "canonicalId": "droid-duranium-battle-armor",
+          "canonicalName": "Duranium Battle Armor",
+          "family": "droid-system",
+          "category": "armor",
+          "source": {
+            "book": "Core Rulebook",
+            "section": "Droid Systems / Droid Accessories",
+            "txtRange": "~17780-18570"
+          },
+          "repo": {
+            "present": true,
+            "authority": "scripts/data/droid-part-schema.js"
+          },
+          "disposition": "KEEP",
+          "reason": "Published identity is represented in the live canonical droid subsystem."
+        },
+        {
+          "canonicalId": "droid-neutronium-plating",
+          "canonicalName": "Neutronium Plating",
+          "family": "droid-system",
+          "category": "armor",
+          "source": {
+            "book": "Core Rulebook",
+            "section": "Droid Systems / Droid Accessories",
+            "txtRange": "~17780-18570"
+          },
+          "repo": {
+            "present": true,
+            "authority": "scripts/data/droid-part-schema.js"
+          },
+          "disposition": "KEEP",
+          "reason": "Published identity is represented in the live canonical droid subsystem."
+        },
+        {
+          "canonicalId": "droid-internal-comlink",
+          "canonicalName": "Internal Comlink",
+          "family": "droid-system",
+          "category": "accessory",
+          "source": {
+            "book": "Core Rulebook",
+            "section": "Droid Systems / Droid Accessories",
+            "txtRange": "~17780-18570"
+          },
+          "repo": {
+            "present": true,
+            "authority": "scripts/data/droid-part-schema.js"
+          },
+          "disposition": "KEEP",
+          "reason": "Published identity is represented in the live canonical droid subsystem."
+        },
+        {
+          "canonicalId": "droid-vocabulator",
+          "canonicalName": "Vocabulator",
+          "family": "droid-system",
+          "category": "accessory",
+          "source": {
+            "book": "Core Rulebook",
+            "section": "Droid Systems / Droid Accessories",
+            "txtRange": "~17780-18570"
+          },
+          "repo": {
+            "present": true,
+            "authority": "scripts/data/droid-part-schema.js"
+          },
+          "disposition": "KEEP",
+          "reason": "Published identity is represented in the live canonical droid subsystem."
+        },
+        {
+          "canonicalId": "droid-diagnostics-package",
+          "canonicalName": "Diagnostics Package",
+          "family": "droid-system",
+          "category": "accessory",
+          "source": {
+            "book": "Core Rulebook",
+            "section": "Droid Systems / Droid Accessories",
+            "txtRange": "~17780-18570"
+          },
+          "repo": {
+            "present": false,
+            "authority": "scripts/data/droid-part-schema.js"
+          },
+          "disposition": "ADD",
+          "reason": "Published droid system is absent from the live canonical droid-part registry."
+        },
+        {
+          "canonicalId": "droid-hardened-systems-x2",
+          "canonicalName": "Hardened Systems x2",
+          "family": "droid-system",
+          "category": "accessory",
+          "source": {
+            "book": "Core Rulebook",
+            "section": "Droid Systems / Droid Accessories",
+            "txtRange": "~17780-18570"
+          },
+          "repo": {
+            "present": true,
+            "authority": "scripts/data/droid-part-schema.js"
+          },
+          "disposition": "KEEP",
+          "reason": "Published identity is represented in the live canonical droid subsystem."
+        },
+        {
+          "canonicalId": "droid-hardened-systems-x3",
+          "canonicalName": "Hardened Systems x3",
+          "family": "droid-system",
+          "category": "accessory",
+          "source": {
+            "book": "Core Rulebook",
+            "section": "Droid Systems / Droid Accessories",
+            "txtRange": "~17780-18570"
+          },
+          "repo": {
+            "present": true,
+            "authority": "scripts/data/droid-part-schema.js"
+          },
+          "disposition": "KEEP",
+          "reason": "Published identity is represented in the live canonical droid subsystem."
+        },
+        {
+          "canonicalId": "droid-hardened-systems-x4",
+          "canonicalName": "Hardened Systems x4",
+          "family": "droid-system",
+          "category": "accessory",
+          "source": {
+            "book": "Core Rulebook",
+            "section": "Droid Systems / Droid Accessories",
+            "txtRange": "~17780-18570"
+          },
+          "repo": {
+            "present": true,
+            "authority": "scripts/data/droid-part-schema.js"
+          },
+          "disposition": "KEEP",
+          "reason": "Published identity is represented in the live canonical droid subsystem."
+        },
+        {
+          "canonicalId": "droid-hardened-systems-x5",
+          "canonicalName": "Hardened Systems x5",
+          "family": "droid-system",
+          "category": "accessory",
+          "source": {
+            "book": "Core Rulebook",
+            "section": "Droid Systems / Droid Accessories",
+            "txtRange": "~17780-18570"
+          },
+          "repo": {
+            "present": true,
+            "authority": "scripts/data/droid-part-schema.js"
+          },
+          "disposition": "KEEP",
+          "reason": "Published identity is represented in the live canonical droid subsystem."
+        },
+        {
+          "canonicalId": "droid-internal-storage",
+          "canonicalName": "Internal Storage",
+          "family": "droid-system",
+          "category": "accessory",
+          "source": {
+            "book": "Core Rulebook",
+            "section": "Droid Systems / Droid Accessories",
+            "txtRange": "~17780-18570"
+          },
+          "repo": {
+            "present": false,
+            "authority": "scripts/data/droid-part-schema.js"
+          },
+          "disposition": "ADD",
+          "reason": "Published droid system is absent from the live canonical droid-part registry."
+        },
+        {
+          "canonicalId": "droid-spring-loaded-mechanism",
+          "canonicalName": "Spring-Loaded Mechanism",
+          "family": "droid-system",
+          "category": "accessory",
+          "source": {
+            "book": "Core Rulebook",
+            "section": "Droid Systems / Droid Accessories",
+            "txtRange": "~17780-18570"
+          },
+          "repo": {
+            "present": false,
+            "authority": "scripts/data/droid-part-schema.js"
+          },
+          "disposition": "ADD",
+          "reason": "Published droid system is absent from the live canonical droid-part registry."
+        },
+        {
+          "canonicalId": "droid-locked-access",
+          "canonicalName": "Locked Access",
+          "family": "droid-system",
+          "category": "accessory",
+          "source": {
+            "book": "Core Rulebook",
+            "section": "Droid Systems / Droid Accessories",
+            "txtRange": "~17780-18570"
+          },
+          "repo": {
+            "present": false,
+            "authority": "scripts/data/droid-part-schema.js"
+          },
+          "disposition": "ADD",
+          "reason": "Published droid system is absent from the live canonical droid-part registry."
+        },
+        {
+          "canonicalId": "droid-secondary-battery",
+          "canonicalName": "Secondary Battery",
+          "family": "droid-system",
+          "category": "accessory",
+          "source": {
+            "book": "Core Rulebook",
+            "section": "Droid Systems / Droid Accessories",
+            "txtRange": "~17780-18570"
+          },
+          "repo": {
+            "present": true,
+            "authority": "scripts/data/droid-part-schema.js",
+            "repo": [
+              "battery-backup / Battery Backup System"
+            ],
+            "action": "RENAME_OR_ALIAS_TO_CANONICAL_SOURCE_IDENTITY"
+          },
+          "disposition": "EDIT",
+          "reason": "Published identity is represented, but current repo naming/variant structure does not match the source identity."
+        },
+        {
+          "canonicalId": "droid-self-destruct-system",
+          "canonicalName": "Self-Destruct System",
+          "family": "droid-system",
+          "category": "accessory",
+          "source": {
+            "book": "Core Rulebook",
+            "section": "Droid Systems / Droid Accessories",
+            "txtRange": "~17780-18570"
+          },
+          "repo": {
+            "present": true,
+            "authority": "scripts/data/droid-part-schema.js"
+          },
+          "disposition": "KEEP",
+          "reason": "Published identity is represented in the live canonical droid subsystem."
+        },
+        {
+          "canonicalId": "droid-improved-sensor-package",
+          "canonicalName": "Improved Sensor Package",
+          "family": "droid-system",
+          "category": "sensor-shield-translator",
+          "source": {
+            "book": "Core Rulebook",
+            "section": "Droid Systems / Droid Accessories",
+            "txtRange": "~17780-18570"
+          },
+          "repo": {
+            "present": true,
+            "authority": "scripts/data/droid-part-schema.js"
+          },
+          "disposition": "KEEP",
+          "reason": "Published identity is represented in the live canonical droid subsystem."
+        },
+        {
+          "canonicalId": "droid-darkvision",
+          "canonicalName": "Darkvision",
+          "family": "droid-system",
+          "category": "sensor-shield-translator",
+          "source": {
+            "book": "Core Rulebook",
+            "section": "Droid Systems / Droid Accessories",
+            "txtRange": "~17780-18570"
+          },
+          "repo": {
+            "present": true,
+            "authority": "scripts/data/droid-part-schema.js"
+          },
+          "disposition": "KEEP",
+          "reason": "Published identity is represented in the live canonical droid subsystem."
+        },
+        {
+          "canonicalId": "droid-shield-generator-sr-5",
+          "canonicalName": "Shield Generator, SR 5",
+          "family": "droid-system",
+          "category": "sensor-shield-translator",
+          "source": {
+            "book": "Core Rulebook",
+            "section": "Droid Systems / Droid Accessories",
+            "txtRange": "~17780-18570"
+          },
+          "repo": {
+            "present": true,
+            "authority": "scripts/data/droid-part-schema.js"
+          },
+          "disposition": "KEEP",
+          "reason": "Published identity is represented in the live canonical droid subsystem."
+        },
+        {
+          "canonicalId": "droid-shield-generator-sr-10",
+          "canonicalName": "Shield Generator, SR 10",
+          "family": "droid-system",
+          "category": "sensor-shield-translator",
+          "source": {
+            "book": "Core Rulebook",
+            "section": "Droid Systems / Droid Accessories",
+            "txtRange": "~17780-18570"
+          },
+          "repo": {
+            "present": true,
+            "authority": "scripts/data/droid-part-schema.js"
+          },
+          "disposition": "KEEP",
+          "reason": "Published identity is represented in the live canonical droid subsystem."
+        },
+        {
+          "canonicalId": "droid-shield-generator-sr-15",
+          "canonicalName": "Shield Generator, SR 15",
+          "family": "droid-system",
+          "category": "sensor-shield-translator",
+          "source": {
+            "book": "Core Rulebook",
+            "section": "Droid Systems / Droid Accessories",
+            "txtRange": "~17780-18570"
+          },
+          "repo": {
+            "present": true,
+            "authority": "scripts/data/droid-part-schema.js"
+          },
+          "disposition": "KEEP",
+          "reason": "Published identity is represented in the live canonical droid subsystem."
+        },
+        {
+          "canonicalId": "droid-shield-generator-sr-20",
+          "canonicalName": "Shield Generator, SR 20",
+          "family": "droid-system",
+          "category": "sensor-shield-translator",
+          "source": {
+            "book": "Core Rulebook",
+            "section": "Droid Systems / Droid Accessories",
+            "txtRange": "~17780-18570"
+          },
+          "repo": {
+            "present": true,
+            "authority": "scripts/data/droid-part-schema.js"
+          },
+          "disposition": "KEEP",
+          "reason": "Published identity is represented in the live canonical droid subsystem."
+        },
+        {
+          "canonicalId": "droid-translator-unit",
+          "canonicalName": "Translator Unit",
+          "family": "droid-system",
+          "category": "sensor-shield-translator",
+          "source": {
+            "book": "Core Rulebook",
+            "section": "Droid Systems / Droid Accessories",
+            "txtRange": "~17780-18570"
+          },
+          "repo": {
+            "present": true,
+            "authority": "scripts/data/droid-part-schema.js",
+            "repo": [
+              "basic-translator",
+              "advanced-translator",
+              "universal-translator"
+            ],
+            "action": "MERGE_AS_CANONICAL_IDENTITY_WITH_PRINTED_VARIANTS"
+          },
+          "disposition": "EDIT",
+          "reason": "Published identity is represented, but current repo naming/variant structure does not match the source identity."
+        },
+        {
+          "canonicalId": "droid-burrower-drive",
+          "canonicalName": "Burrower Drive",
+          "family": "droid-system",
+          "category": "locomotion",
+          "source": {
+            "book": "Scavenger's Guide to Droids",
+            "section": "Droid Equipment",
+            "txtRange": "~4570-5965"
+          },
+          "repo": {
+            "present": true,
+            "authority": "scripts/data/droid-part-schema.js"
+          },
+          "disposition": "KEEP",
+          "reason": "Published identity is represented in the live canonical droid subsystem."
+        },
+        {
+          "canonicalId": "droid-gyroscopic-stabilizers",
+          "canonicalName": "Gyroscopic Stabilizers",
+          "family": "droid-system",
+          "category": "locomotion",
+          "source": {
+            "book": "Scavenger's Guide to Droids",
+            "section": "Droid Equipment",
+            "txtRange": "~4570-5965"
+          },
+          "repo": {
+            "present": true,
+            "authority": "scripts/data/droid-part-schema.js"
+          },
+          "disposition": "KEEP",
+          "reason": "Published identity is represented in the live canonical droid subsystem."
+        },
+        {
+          "canonicalId": "droid-underwater-drive",
+          "canonicalName": "Underwater Drive",
+          "family": "droid-system",
+          "category": "locomotion",
+          "source": {
+            "book": "Scavenger's Guide to Droids",
+            "section": "Droid Equipment",
+            "txtRange": "~4570-5965"
+          },
+          "repo": {
+            "present": true,
+            "authority": "scripts/data/droid-part-schema.js"
+          },
+          "disposition": "KEEP",
+          "reason": "Published identity is represented in the live canonical droid subsystem."
+        },
+        {
+          "canonicalId": "droid-magnetic-hands",
+          "canonicalName": "Magnetic Hands",
+          "family": "droid-system",
+          "category": "appendage",
+          "source": {
+            "book": "Scavenger's Guide to Droids",
+            "section": "Droid Equipment",
+            "txtRange": "~4570-5965"
+          },
+          "repo": {
+            "present": true,
+            "authority": "scripts/data/droid-part-schema.js"
+          },
+          "disposition": "KEEP",
+          "reason": "Published identity is represented in the live canonical droid subsystem."
+        },
+        {
+          "canonicalId": "droid-projectile-hand",
+          "canonicalName": "Projectile Hand",
+          "family": "droid-system",
+          "category": "appendage",
+          "source": {
+            "book": "Scavenger's Guide to Droids",
+            "section": "Droid Equipment",
+            "txtRange": "~4570-5965"
+          },
+          "repo": {
+            "present": true,
+            "authority": "scripts/data/droid-part-schema.js",
+            "repo": [
+              "projectile-appendage / Projectile Appendage"
+            ],
+            "action": "RENAME_OR_ALIAS_TO_CANONICAL_SOURCE_IDENTITY"
+          },
+          "disposition": "EDIT",
+          "reason": "Published identity is represented, but current repo naming/variant structure does not match the source identity."
+        },
+        {
+          "canonicalId": "droid-quick-release-coupling",
+          "canonicalName": "Quick-Release Coupling",
+          "family": "droid-system",
+          "category": "appendage",
+          "source": {
+            "book": "Scavenger's Guide to Droids",
+            "section": "Droid Equipment",
+            "txtRange": "~4570-5965"
+          },
+          "repo": {
+            "present": true,
+            "authority": "scripts/data/droid-part-schema.js"
+          },
+          "disposition": "KEEP",
+          "reason": "Published identity is represented in the live canonical droid subsystem."
+        },
+        {
+          "canonicalId": "droid-remote-limb-control",
+          "canonicalName": "Remote Limb Control",
+          "family": "droid-system",
+          "category": "appendage",
+          "source": {
+            "book": "Scavenger's Guide to Droids",
+            "section": "Droid Equipment",
+            "txtRange": "~4570-5965"
+          },
+          "repo": {
+            "present": true,
+            "authority": "scripts/data/droid-part-schema.js"
+          },
+          "disposition": "KEEP",
+          "reason": "Published identity is represented in the live canonical droid subsystem."
+        },
+        {
+          "canonicalId": "droid-rocket-arm",
+          "canonicalName": "Rocket Arm",
+          "family": "droid-system",
+          "category": "appendage",
+          "source": {
+            "book": "Scavenger's Guide to Droids",
+            "section": "Droid Equipment",
+            "txtRange": "~4570-5965"
+          },
+          "repo": {
+            "present": true,
+            "authority": "scripts/data/droid-part-schema.js"
+          },
+          "disposition": "KEEP",
+          "reason": "Published identity is represented in the live canonical droid subsystem."
+        },
+        {
+          "canonicalId": "droid-droid-remote-control",
+          "canonicalName": "Droid Remote Control",
+          "family": "droid-system",
+          "category": "processor",
+          "source": {
+            "book": "Scavenger's Guide to Droids",
+            "section": "Droid Equipment",
+            "txtRange": "~4570-5965"
+          },
+          "repo": {
+            "present": true,
+            "authority": "scripts/data/droid-part-schema.js"
+          },
+          "disposition": "KEEP",
+          "reason": "Published identity is represented in the live canonical droid subsystem."
+        },
+        {
+          "canonicalId": "droid-hidden-core",
+          "canonicalName": "Hidden Core",
+          "family": "droid-system",
+          "category": "processor",
+          "source": {
+            "book": "Scavenger's Guide to Droids",
+            "section": "Droid Equipment",
+            "txtRange": "~4570-5965"
+          },
+          "repo": {
+            "present": true,
+            "authority": "scripts/data/droid-part-schema.js"
+          },
+          "disposition": "KEEP",
+          "reason": "Published identity is represented in the live canonical droid subsystem."
+        },
+        {
+          "canonicalId": "droid-personality-downloader",
+          "canonicalName": "Personality Downloader",
+          "family": "droid-system",
+          "category": "processor",
+          "source": {
+            "book": "Scavenger's Guide to Droids",
+            "section": "Droid Equipment",
+            "txtRange": "~4570-5965"
+          },
+          "repo": {
+            "present": true,
+            "authority": "scripts/data/droid-part-schema.js"
+          },
+          "disposition": "KEEP",
+          "reason": "Published identity is represented in the live canonical droid subsystem."
+        },
+        {
+          "canonicalId": "droid-remote-starship-starter",
+          "canonicalName": "Remote Starship Starter",
+          "family": "droid-system",
+          "category": "processor",
+          "source": {
+            "book": "Scavenger's Guide to Droids",
+            "section": "Droid Equipment",
+            "txtRange": "~4570-5965"
+          },
+          "repo": {
+            "present": true,
+            "authority": "scripts/data/droid-part-schema.js"
+          },
+          "disposition": "KEEP",
+          "reason": "Published identity is represented in the live canonical droid subsystem."
+        },
+        {
+          "canonicalId": "droid-specialized-subprocessor",
+          "canonicalName": "Specialized Subprocessor",
+          "family": "droid-system",
+          "category": "processor",
+          "source": {
+            "book": "Scavenger's Guide to Droids",
+            "section": "Droid Equipment",
+            "txtRange": "~4570-5965"
+          },
+          "repo": {
+            "present": true,
+            "authority": "scripts/data/droid-part-schema.js"
+          },
+          "disposition": "KEEP",
+          "reason": "Published identity is represented in the live canonical droid subsystem."
+        },
+        {
+          "canonicalId": "droid-tactician-battle-computer",
+          "canonicalName": "Tactician Battle Computer",
+          "family": "droid-system",
+          "category": "processor",
+          "source": {
+            "book": "Scavenger's Guide to Droids",
+            "section": "Droid Equipment",
+            "txtRange": "~4570-5965"
+          },
+          "repo": {
+            "present": true,
+            "authority": "scripts/data/droid-part-schema.js"
+          },
+          "disposition": "KEEP",
+          "reason": "Published identity is represented in the live canonical droid subsystem."
+        },
+        {
+          "canonicalId": "droid-crystadurium-plating",
+          "canonicalName": "Crystadurium Plating",
+          "family": "droid-system",
+          "category": "armor",
+          "source": {
+            "book": "Scavenger's Guide to Droids",
+            "section": "Droid Equipment",
+            "txtRange": "~4570-5965"
+          },
+          "repo": {
+            "present": true,
+            "authority": "scripts/data/droid-part-schema.js"
+          },
+          "disposition": "KEEP",
+          "reason": "Published identity is represented in the live canonical droid subsystem."
+        },
+        {
+          "canonicalId": "droid-duravlex-shell",
+          "canonicalName": "Duravlex Shell",
+          "family": "droid-system",
+          "category": "armor",
+          "source": {
+            "book": "Scavenger's Guide to Droids",
+            "section": "Droid Equipment",
+            "txtRange": "~4570-5965"
+          },
+          "repo": {
+            "present": true,
+            "authority": "scripts/data/droid-part-schema.js"
+          },
+          "disposition": "KEEP",
+          "reason": "Published identity is represented in the live canonical droid subsystem."
+        },
+        {
+          "canonicalId": "droid-laminanium-plating",
+          "canonicalName": "Laminanium Plating",
+          "family": "droid-system",
+          "category": "armor",
+          "source": {
+            "book": "Scavenger's Guide to Droids",
+            "section": "Droid Equipment",
+            "txtRange": "~4570-5965"
+          },
+          "repo": {
+            "present": true,
+            "authority": "scripts/data/droid-part-schema.js",
+            "repo": [
+              "laminanium-plating",
+              "laminanium-heavy-plating"
+            ],
+            "action": "MERGE_AS_ONE_CANONICAL_IDENTITY_WITH_LIGHT_HEAVY_TABLE_VARIANTS"
+          },
+          "disposition": "EDIT",
+          "reason": "Published identity is represented, but current repo naming/variant structure does not match the source identity."
+        },
+        {
+          "canonicalId": "droid-communications-countermeasure-system",
+          "canonicalName": "Communications Countermeasure System",
+          "family": "droid-system",
+          "category": "communications",
+          "source": {
+            "book": "Scavenger's Guide to Droids",
+            "section": "Droid Equipment",
+            "txtRange": "~4570-5965"
+          },
+          "repo": {
+            "present": true,
+            "authority": "scripts/data/droid-part-schema.js",
+            "repo": [
+              "communications-countermeasures / Communications Countermeasures"
+            ],
+            "action": "RENAME_OR_ALIAS_TO_CANONICAL_SOURCE_IDENTITY"
+          },
+          "disposition": "EDIT",
+          "reason": "Published identity is represented, but current repo naming/variant structure does not match the source identity."
+        },
+        {
+          "canonicalId": "droid-communications-jammer",
+          "canonicalName": "Communications Jammer",
+          "family": "droid-system",
+          "category": "communications",
+          "source": {
+            "book": "Scavenger's Guide to Droids",
+            "section": "Droid Equipment",
+            "txtRange": "~4570-5965"
+          },
+          "repo": {
+            "present": true,
+            "authority": "scripts/data/droid-part-schema.js"
+          },
+          "disposition": "KEEP",
+          "reason": "Published identity is represented in the live canonical droid subsystem."
+        },
+        {
+          "canonicalId": "droid-remote-receiver-jammer",
+          "canonicalName": "Remote Receiver Jammer",
+          "family": "droid-system",
+          "category": "communications",
+          "source": {
+            "book": "Scavenger's Guide to Droids",
+            "section": "Droid Equipment",
+            "txtRange": "~4570-5965"
+          },
+          "repo": {
+            "present": true,
+            "authority": "scripts/data/droid-part-schema.js"
+          },
+          "disposition": "KEEP",
+          "reason": "Published identity is represented in the live canonical droid subsystem."
+        },
+        {
+          "canonicalId": "droid-remote-receiver-signal-booster",
+          "canonicalName": "Remote Receiver Signal Booster",
+          "family": "droid-system",
+          "category": "communications",
+          "source": {
+            "book": "Scavenger's Guide to Droids",
+            "section": "Droid Equipment",
+            "txtRange": "~4570-5965"
+          },
+          "repo": {
+            "present": true,
+            "authority": "scripts/data/droid-part-schema.js"
+          },
+          "disposition": "KEEP",
+          "reason": "Published identity is represented in the live canonical droid subsystem."
+        },
+        {
+          "canonicalId": "droid-antitheft-comlink-locator",
+          "canonicalName": "Antitheft Comlink Locator",
+          "family": "droid-system",
+          "category": "accessory",
+          "source": {
+            "book": "Scavenger's Guide to Droids",
+            "section": "Droid Equipment",
+            "txtRange": "~4570-5965"
+          },
+          "repo": {
+            "present": false,
+            "authority": "scripts/data/droid-part-schema.js"
+          },
+          "disposition": "ADD",
+          "reason": "Published droid system is absent from the live canonical droid-part registry."
+        },
+        {
+          "canonicalId": "droid-audio-enhancers",
+          "canonicalName": "Audio Enhancers",
+          "family": "droid-system",
+          "category": "accessory",
+          "source": {
+            "book": "Scavenger's Guide to Droids",
+            "section": "Droid Equipment",
+            "txtRange": "~4570-5965"
+          },
+          "repo": {
+            "present": true,
+            "authority": "scripts/data/droid-part-schema.js"
+          },
+          "disposition": "KEEP",
+          "reason": "Published identity is represented in the live canonical droid subsystem."
+        },
+        {
+          "canonicalId": "droid-audio-radial-stunner",
+          "canonicalName": "Audio-Radial Stunner",
+          "family": "droid-system",
+          "category": "accessory",
+          "source": {
+            "book": "Scavenger's Guide to Droids",
+            "section": "Droid Equipment",
+            "txtRange": "~4570-5965"
+          },
+          "repo": {
+            "present": true,
+            "authority": "scripts/data/droid-part-schema.js"
+          },
+          "disposition": "KEEP",
+          "reason": "Published identity is represented in the live canonical droid subsystem."
+        },
+        {
+          "canonicalId": "droid-automap",
+          "canonicalName": "Automap",
+          "family": "droid-system",
+          "category": "accessory",
+          "source": {
+            "book": "Scavenger's Guide to Droids",
+            "section": "Droid Equipment",
+            "txtRange": "~4570-5965"
+          },
+          "repo": {
+            "present": true,
+            "authority": "scripts/data/droid-part-schema.js"
+          },
+          "disposition": "KEEP",
+          "reason": "Published identity is represented in the live canonical droid subsystem."
+        },
+        {
+          "canonicalId": "droid-blaster-recharge-interface",
+          "canonicalName": "Blaster Recharge Interface",
+          "family": "droid-system",
+          "category": "accessory",
+          "source": {
+            "book": "Scavenger's Guide to Droids",
+            "section": "Droid Equipment",
+            "txtRange": "~4570-5965"
+          },
+          "repo": {
+            "present": true,
+            "authority": "scripts/data/droid-part-schema.js"
+          },
+          "disposition": "KEEP",
+          "reason": "Published identity is represented in the live canonical droid subsystem."
+        },
+        {
+          "canonicalId": "droid-collapsible-construction",
+          "canonicalName": "Collapsible Construction",
+          "family": "droid-system",
+          "category": "accessory",
+          "source": {
+            "book": "Scavenger's Guide to Droids",
+            "section": "Droid Equipment",
+            "txtRange": "~4570-5965"
+          },
+          "repo": {
+            "present": false,
+            "authority": "scripts/data/droid-part-schema.js"
+          },
+          "disposition": "ADD",
+          "reason": "Published droid system is absent from the live canonical droid-part registry."
+        },
+        {
+          "canonicalId": "droid-concealed-item",
+          "canonicalName": "Concealed Item",
+          "family": "droid-system",
+          "category": "accessory",
+          "source": {
+            "book": "Scavenger's Guide to Droids",
+            "section": "Droid Equipment",
+            "txtRange": "~4570-5965"
+          },
+          "repo": {
+            "present": true,
+            "authority": "scripts/data/droid-part-schema.js"
+          },
+          "disposition": "KEEP",
+          "reason": "Published identity is represented in the live canonical droid subsystem."
+        },
+        {
+          "canonicalId": "droid-courier-compartments",
+          "canonicalName": "Courier Compartments",
+          "family": "droid-system",
+          "category": "accessory",
+          "source": {
+            "book": "Scavenger's Guide to Droids",
+            "section": "Droid Equipment",
+            "txtRange": "~4570-5965"
+          },
+          "repo": {
+            "present": false,
+            "authority": "scripts/data/droid-part-schema.js"
+          },
+          "disposition": "ADD",
+          "reason": "Published droid system is absent from the live canonical droid-part registry."
+        },
+        {
+          "canonicalId": "droid-credit-reader",
+          "canonicalName": "Credit Reader",
+          "family": "droid-system",
+          "category": "accessory",
+          "source": {
+            "book": "Scavenger's Guide to Droids",
+            "section": "Droid Equipment",
+            "txtRange": "~4570-5965"
+          },
+          "repo": {
+            "present": true,
+            "authority": "scripts/data/droid-part-schema.js"
+          },
+          "disposition": "KEEP",
+          "reason": "Published identity is represented in the live canonical droid subsystem."
+        },
+        {
+          "canonicalId": "droid-droid-oil-bath",
+          "canonicalName": "Droid Oil Bath",
+          "family": "droid-system",
+          "category": "accessory",
+          "source": {
+            "book": "Scavenger's Guide to Droids",
+            "section": "Droid Equipment",
+            "txtRange": "~4570-5965"
+          },
+          "repo": {
+            "present": false,
+            "authority": "scripts/data/droid-part-schema.js"
+          },
+          "disposition": "ADD",
+          "reason": "Published droid system is absent from the live canonical droid-part registry."
+        },
+        {
+          "canonicalId": "droid-earphone-binary-to-basic-translator",
+          "canonicalName": "Earphone Binary-to-Basic Translator",
+          "family": "droid-system",
+          "category": "accessory",
+          "source": {
+            "book": "Scavenger's Guide to Droids",
+            "section": "Droid Equipment",
+            "txtRange": "~4570-5965"
+          },
+          "repo": {
+            "present": false,
+            "authority": "scripts/data/droid-part-schema.js"
+          },
+          "disposition": "ADD",
+          "reason": "Published droid system is absent from the live canonical droid-part registry."
+        },
+        {
+          "canonicalId": "droid-electric-defense-grid",
+          "canonicalName": "Electric Defense Grid",
+          "family": "droid-system",
+          "category": "accessory",
+          "source": {
+            "book": "Scavenger's Guide to Droids",
+            "section": "Droid Equipment",
+            "txtRange": "~4570-5965"
+          },
+          "repo": {
+            "present": true,
+            "authority": "scripts/data/droid-part-schema.js"
+          },
+          "disposition": "KEEP",
+          "reason": "Published identity is represented in the live canonical droid subsystem."
+        },
+        {
+          "canonicalId": "droid-emergency-oxygen-supply",
+          "canonicalName": "Emergency Oxygen Supply",
+          "family": "droid-system",
+          "category": "accessory",
+          "source": {
+            "book": "Scavenger's Guide to Droids",
+            "section": "Droid Equipment",
+            "txtRange": "~4570-5965"
+          },
+          "repo": {
+            "present": false,
+            "authority": "scripts/data/droid-part-schema.js"
+          },
+          "disposition": "ADD",
+          "reason": "Published droid system is absent from the live canonical droid-part registry."
+        },
+        {
+          "canonicalId": "droid-hidden-holster",
+          "canonicalName": "Hidden Holster",
+          "family": "droid-system",
+          "category": "accessory",
+          "source": {
+            "book": "Scavenger's Guide to Droids",
+            "section": "Droid Equipment",
+            "txtRange": "~4570-5965"
+          },
+          "repo": {
+            "present": true,
+            "authority": "scripts/data/droid-part-schema.js"
+          },
+          "disposition": "KEEP",
+          "reason": "Published identity is represented in the live canonical droid subsystem."
+        },
+        {
+          "canonicalId": "droid-high-speed-cutting-torch-and-welder",
+          "canonicalName": "High-Speed Cutting Torch and Welder",
+          "family": "droid-system",
+          "category": "accessory",
+          "source": {
+            "book": "Scavenger's Guide to Droids",
+            "section": "Droid Equipment",
+            "txtRange": "~4570-5965"
+          },
+          "repo": {
+            "present": true,
+            "authority": "scripts/data/droid-part-schema.js"
+          },
+          "disposition": "KEEP",
+          "reason": "Published identity is represented in the live canonical droid subsystem."
+        },
+        {
+          "canonicalId": "droid-holographic-game-system",
+          "canonicalName": "Holographic Game System",
+          "family": "droid-system",
+          "category": "accessory",
+          "source": {
+            "book": "Scavenger's Guide to Droids",
+            "section": "Droid Equipment",
+            "txtRange": "~4570-5965"
+          },
+          "repo": {
+            "present": false,
+            "authority": "scripts/data/droid-part-schema.js"
+          },
+          "disposition": "ADD",
+          "reason": "Published droid system is absent from the live canonical droid-part registry."
+        },
+        {
+          "canonicalId": "droid-holographic-image-disguiser",
+          "canonicalName": "Holographic Image Disguiser",
+          "family": "droid-system",
+          "category": "accessory",
+          "source": {
+            "book": "Scavenger's Guide to Droids",
+            "section": "Droid Equipment",
+            "txtRange": "~4570-5965"
+          },
+          "repo": {
+            "present": true,
+            "authority": "scripts/data/droid-part-schema.js"
+          },
+          "disposition": "KEEP",
+          "reason": "Published identity is represented in the live canonical droid subsystem."
+        },
+        {
+          "canonicalId": "droid-id-dodge",
+          "canonicalName": "ID Dodge",
+          "family": "droid-system",
+          "category": "accessory",
+          "source": {
+            "book": "Scavenger's Guide to Droids",
+            "section": "Droid Equipment",
+            "txtRange": "~4570-5965"
+          },
+          "repo": {
+            "present": true,
+            "authority": "scripts/data/droid-part-schema.js"
+          },
+          "disposition": "KEEP",
+          "reason": "Published identity is represented in the live canonical droid subsystem."
+        },
+        {
+          "canonicalId": "droid-improved-coordination-circuitry",
+          "canonicalName": "Improved Coordination Circuitry",
+          "family": "droid-system",
+          "category": "accessory",
+          "source": {
+            "book": "Scavenger's Guide to Droids",
+            "section": "Droid Equipment",
+            "txtRange": "~4570-5965"
+          },
+          "repo": {
+            "present": true,
+            "authority": "scripts/data/droid-part-schema.js"
+          },
+          "disposition": "KEEP",
+          "reason": "Published identity is represented in the live canonical droid subsystem."
+        },
+        {
+          "canonicalId": "droid-interference-generator",
+          "canonicalName": "Interference Generator",
+          "family": "droid-system",
+          "category": "accessory",
+          "source": {
+            "book": "Scavenger's Guide to Droids",
+            "section": "Droid Equipment",
+            "txtRange": "~4570-5965"
+          },
+          "repo": {
+            "present": false,
+            "authority": "scripts/data/droid-part-schema.js"
+          },
+          "disposition": "ADD",
+          "reason": "Published droid system is absent from the live canonical droid-part registry."
+        },
+        {
+          "canonicalId": "droid-internal-defenses",
+          "canonicalName": "Internal Defenses",
+          "family": "droid-system",
+          "category": "accessory",
+          "source": {
+            "book": "Scavenger's Guide to Droids",
+            "section": "Droid Equipment",
+            "txtRange": "~4570-5965"
+          },
+          "repo": {
+            "present": true,
+            "authority": "scripts/data/droid-part-schema.js"
+          },
+          "disposition": "KEEP",
+          "reason": "Published identity is represented in the live canonical droid subsystem."
+        },
+        {
+          "canonicalId": "droid-internal-grapple-gun",
+          "canonicalName": "Internal Grapple Gun",
+          "family": "droid-system",
+          "category": "accessory",
+          "source": {
+            "book": "Scavenger's Guide to Droids",
+            "section": "Droid Equipment",
+            "txtRange": "~4570-5965"
+          },
+          "repo": {
+            "present": true,
+            "authority": "scripts/data/droid-part-schema.js"
+          },
+          "disposition": "KEEP",
+          "reason": "Published identity is represented in the live canonical droid subsystem."
+        },
+        {
+          "canonicalId": "droid-mesh-tape-dispenser",
+          "canonicalName": "Mesh Tape Dispenser",
+          "family": "droid-system",
+          "category": "accessory",
+          "source": {
+            "book": "Scavenger's Guide to Droids",
+            "section": "Droid Equipment",
+            "txtRange": "~4570-5965"
+          },
+          "repo": {
+            "present": true,
+            "authority": "scripts/data/droid-part-schema.js"
+          },
+          "disposition": "KEEP",
+          "reason": "Published identity is represented in the live canonical droid subsystem."
+        },
+        {
+          "canonicalId": "droid-micro-shield",
+          "canonicalName": "Micro Shield",
+          "family": "droid-system",
+          "category": "accessory",
+          "source": {
+            "book": "Scavenger's Guide to Droids",
+            "section": "Droid Equipment",
+            "txtRange": "~4570-5965"
+          },
+          "repo": {
+            "present": true,
+            "authority": "scripts/data/droid-part-schema.js"
+          },
+          "disposition": "KEEP",
+          "reason": "Published identity is represented in the live canonical droid subsystem."
+        },
+        {
+          "canonicalId": "droid-multifunction-apparatus",
+          "canonicalName": "Multifunction Apparatus",
+          "family": "droid-system",
+          "category": "accessory",
+          "source": {
+            "book": "Scavenger's Guide to Droids",
+            "section": "Droid Equipment",
+            "txtRange": "~4570-5965"
+          },
+          "repo": {
+            "present": true,
+            "authority": "scripts/data/droid-part-schema.js"
+          },
+          "disposition": "KEEP",
+          "reason": "Published identity is represented in the live canonical droid subsystem."
+        },
+        {
+          "canonicalId": "droid-multispectrum-searchlight",
+          "canonicalName": "Multispectrum Searchlight",
+          "family": "droid-system",
+          "category": "accessory",
+          "source": {
+            "book": "Scavenger's Guide to Droids",
+            "section": "Droid Equipment",
+            "txtRange": "~4570-5965"
+          },
+          "repo": {
+            "present": true,
+            "authority": "scripts/data/droid-part-schema.js"
+          },
+          "disposition": "KEEP",
+          "reason": "Published identity is represented in the live canonical droid subsystem."
+        },
+        {
+          "canonicalId": "droid-radiant-heat-element",
+          "canonicalName": "Radiant Heat Element",
+          "family": "droid-system",
+          "category": "accessory",
+          "source": {
+            "book": "Scavenger's Guide to Droids",
+            "section": "Droid Equipment",
+            "txtRange": "~4570-5965"
+          },
+          "repo": {
+            "present": true,
+            "authority": "scripts/data/droid-part-schema.js"
+          },
+          "disposition": "KEEP",
+          "reason": "Published identity is represented in the live canonical droid subsystem."
+        },
+        {
+          "canonicalId": "droid-remote-viewer",
+          "canonicalName": "Remote Viewer",
+          "family": "droid-system",
+          "category": "accessory",
+          "source": {
+            "book": "Scavenger's Guide to Droids",
+            "section": "Droid Equipment",
+            "txtRange": "~4570-5965"
+          },
+          "repo": {
+            "present": false,
+            "authority": "scripts/data/droid-part-schema.js"
+          },
+          "disposition": "ADD",
+          "reason": "Published droid system is absent from the live canonical droid-part registry."
+        },
+        {
+          "canonicalId": "droid-rental-restraining-bolt",
+          "canonicalName": "Rental Restraining Bolt",
+          "family": "droid-system",
+          "category": "accessory",
+          "source": {
+            "book": "Scavenger's Guide to Droids",
+            "section": "Droid Equipment",
+            "txtRange": "~4570-5965"
+          },
+          "repo": {
+            "present": false,
+            "authority": "scripts/data/droid-part-schema.js"
+          },
+          "disposition": "ADD",
+          "reason": "Published droid system is absent from the live canonical droid-part registry."
+        },
+        {
+          "canonicalId": "droid-repulsorcam",
+          "canonicalName": "Repulsorcam",
+          "family": "droid-system",
+          "category": "accessory",
+          "source": {
+            "book": "Scavenger's Guide to Droids",
+            "section": "Droid Equipment",
+            "txtRange": "~4570-5965"
+          },
+          "repo": {
+            "present": false,
+            "authority": "scripts/data/droid-part-schema.js"
+          },
+          "disposition": "ADD",
+          "reason": "Published droid system is absent from the live canonical droid-part registry."
+        },
+        {
+          "canonicalId": "droid-scomp-link",
+          "canonicalName": "Scomp Link",
+          "family": "droid-system",
+          "category": "accessory",
+          "source": {
+            "book": "Scavenger's Guide to Droids",
+            "section": "Droid Equipment",
+            "txtRange": "~4570-5965"
+          },
+          "repo": {
+            "present": true,
+            "authority": "scripts/data/droid-part-schema.js"
+          },
+          "disposition": "KEEP",
+          "reason": "Published identity is represented in the live canonical droid subsystem."
+        },
+        {
+          "canonicalId": "droid-silence-bubble-generator",
+          "canonicalName": "Silence-Bubble Generator",
+          "family": "droid-system",
+          "category": "accessory",
+          "source": {
+            "book": "Scavenger's Guide to Droids",
+            "section": "Droid Equipment",
+            "txtRange": "~4570-5965"
+          },
+          "repo": {
+            "present": false,
+            "authority": "scripts/data/droid-part-schema.js"
+          },
+          "disposition": "ADD",
+          "reason": "Published droid system is absent from the live canonical droid-part registry."
+        },
+        {
+          "canonicalId": "droid-space-beacon-launcher",
+          "canonicalName": "Space-Beacon Launcher",
+          "family": "droid-system",
+          "category": "accessory",
+          "source": {
+            "book": "Scavenger's Guide to Droids",
+            "section": "Droid Equipment",
+            "txtRange": "~4570-5965"
+          },
+          "repo": {
+            "present": false,
+            "authority": "scripts/data/droid-part-schema.js"
+          },
+          "disposition": "ADD",
+          "reason": "Published droid system is absent from the live canonical droid-part registry."
+        },
+        {
+          "canonicalId": "droid-survival-kit",
+          "canonicalName": "Survival Kit",
+          "family": "droid-system",
+          "category": "accessory",
+          "source": {
+            "book": "Scavenger's Guide to Droids",
+            "section": "Droid Equipment",
+            "txtRange": "~4570-5965"
+          },
+          "repo": {
+            "present": true,
+            "authority": "scripts/data/droid-part-schema.js"
+          },
+          "disposition": "KEEP",
+          "reason": "Published identity is represented in the live canonical droid subsystem."
+        },
+        {
+          "canonicalId": "droid-taser",
+          "canonicalName": "Taser",
+          "family": "droid-system",
+          "category": "accessory",
+          "source": {
+            "book": "Scavenger's Guide to Droids",
+            "section": "Droid Equipment",
+            "txtRange": "~4570-5965"
+          },
+          "repo": {
+            "present": true,
+            "authority": "scripts/data/droid-part-schema.js"
+          },
+          "disposition": "KEEP",
+          "reason": "Published identity is represented in the live canonical droid subsystem."
+        },
+        {
+          "canonicalId": "droid-video-screen",
+          "canonicalName": "Video Screen",
+          "family": "droid-system",
+          "category": "accessory",
+          "source": {
+            "book": "Scavenger's Guide to Droids",
+            "section": "Droid Equipment",
+            "txtRange": "~4570-5965"
+          },
+          "repo": {
+            "present": false,
+            "authority": "scripts/data/droid-part-schema.js"
+          },
+          "disposition": "ADD",
+          "reason": "Published droid system is absent from the live canonical droid-part registry."
+        },
+        {
+          "canonicalId": "droid-voice-print-command-lock",
+          "canonicalName": "Voice-Print Command Lock",
+          "family": "droid-system",
+          "category": "accessory",
+          "source": {
+            "book": "Scavenger's Guide to Droids",
+            "section": "Droid Equipment",
+            "txtRange": "~4570-5965"
+          },
+          "repo": {
+            "present": false,
+            "authority": "scripts/data/droid-part-schema.js"
+          },
+          "disposition": "ADD",
+          "reason": "Published droid system is absent from the live canonical droid-part registry."
+        },
+        {
+          "canonicalId": "droid-weapon-detector",
+          "canonicalName": "Weapon Detector",
+          "family": "droid-system",
+          "category": "accessory",
+          "source": {
+            "book": "Scavenger's Guide to Droids",
+            "section": "Droid Equipment",
+            "txtRange": "~4570-5965"
+          },
+          "repo": {
+            "present": true,
+            "authority": "scripts/data/droid-part-schema.js",
+            "repo": [
+              "weapon-detector-package / Weapon-Detector Package"
+            ],
+            "action": "RENAME_OR_ALIAS_TO_CANONICAL_SOURCE_IDENTITY"
+          },
+          "disposition": "EDIT",
+          "reason": "Published identity is represented, but current repo naming/variant structure does not match the source identity."
+        },
+        {
+          "canonicalId": "droid-sensor-booster",
+          "canonicalName": "Sensor Booster",
+          "family": "droid-system",
+          "category": "sensor",
+          "source": {
+            "book": "Scavenger's Guide to Droids",
+            "section": "Droid Equipment",
+            "txtRange": "~4570-5965"
+          },
+          "repo": {
+            "present": true,
+            "authority": "scripts/data/droid-part-schema.js"
+          },
+          "disposition": "KEEP",
+          "reason": "Published identity is represented in the live canonical droid subsystem."
+        },
+        {
+          "canonicalId": "droid-sensor-countermeasure-package",
+          "canonicalName": "Sensor Countermeasure Package",
+          "family": "droid-system",
+          "category": "sensor",
+          "source": {
+            "book": "Scavenger's Guide to Droids",
+            "section": "Droid Equipment",
+            "txtRange": "~4570-5965"
+          },
+          "repo": {
+            "present": true,
+            "authority": "scripts/data/droid-part-schema.js"
+          },
+          "disposition": "KEEP",
+          "reason": "Published identity is represented in the live canonical droid subsystem."
+        },
+        {
+          "canonicalId": "droid-yv-sensor-package",
+          "canonicalName": "YV Sensor Package",
+          "family": "droid-system",
+          "category": "sensor",
+          "source": {
+            "book": "Scavenger's Guide to Droids",
+            "section": "Droid Equipment",
+            "txtRange": "~4570-5965"
+          },
+          "repo": {
+            "present": true,
+            "authority": "scripts/data/droid-part-schema.js"
+          },
+          "disposition": "KEEP",
+          "reason": "Published identity is represented in the live canonical droid subsystem."
+        },
+        {
+          "canonicalId": "droid-shield-expansion-module",
+          "canonicalName": "Shield Expansion Module",
+          "family": "droid-system",
+          "category": "shield",
+          "source": {
+            "book": "Scavenger's Guide to Droids",
+            "section": "Droid Equipment",
+            "txtRange": "~4570-5965"
+          },
+          "repo": {
+            "present": true,
+            "authority": "scripts/data/droid-part-schema.js"
+          },
+          "disposition": "KEEP",
+          "reason": "Published identity is represented in the live canonical droid subsystem."
+        },
+        {
+          "canonicalId": "droid-droid-battle-station",
+          "canonicalName": "Droid Battle Station",
+          "family": "droid-system",
+          "category": "station",
+          "source": {
+            "book": "Scavenger's Guide to Droids",
+            "section": "Droid Equipment",
+            "txtRange": "~4570-5965"
+          },
+          "repo": {
+            "present": false,
+            "authority": "scripts/data/droid-part-schema.js"
+          },
+          "disposition": "ADD",
+          "reason": "Published droid system is absent from the live canonical droid-part registry."
+        },
+        {
+          "canonicalId": "droid-droid-command-station",
+          "canonicalName": "Droid Command Station",
+          "family": "droid-system",
+          "category": "station",
+          "source": {
+            "book": "Scavenger's Guide to Droids",
+            "section": "Droid Equipment",
+            "txtRange": "~4570-5965"
+          },
+          "repo": {
+            "present": false,
+            "authority": "scripts/data/droid-part-schema.js"
+          },
+          "disposition": "ADD",
+          "reason": "Published droid system is absent from the live canonical droid-part registry."
+        },
+        {
+          "canonicalId": "droid-droid-recharge-station",
+          "canonicalName": "Droid Recharge Station",
+          "family": "droid-system",
+          "category": "station",
+          "source": {
+            "book": "Scavenger's Guide to Droids",
+            "section": "Droid Equipment",
+            "txtRange": "~4570-5965"
+          },
+          "repo": {
+            "present": false,
+            "authority": "scripts/data/droid-part-schema.js"
+          },
+          "disposition": "ADD",
+          "reason": "Published droid system is absent from the live canonical droid-part registry."
+        },
+        {
+          "canonicalId": "droid-droid-socket",
+          "canonicalName": "Droid Socket",
+          "family": "droid-system",
+          "category": "station",
+          "source": {
+            "book": "Scavenger's Guide to Droids",
+            "section": "Droid Equipment",
+            "txtRange": "~4570-5965"
+          },
+          "repo": {
+            "present": false,
+            "authority": "scripts/data/droid-part-schema.js"
+          },
+          "disposition": "ADD",
+          "reason": "Published droid system is absent from the live canonical droid-part registry."
+        }
+      ],
+      "repoOnlyRecords": [
+        {
+          "repoId": "military",
+          "name": "Military Processor",
+          "disposition": "REMOVE_OR_DEPRECATE",
+          "reason": "No standalone published droid-system identity by this name was found in the supplied SSOT."
+        },
+        {
+          "repoId": "manipulator-arm",
+          "name": "Manipulator Arm",
+          "disposition": "REMOVE_OR_REMAP",
+          "reason": "Appears descriptively in droid statblocks, but not as a standalone published system. Map to published appendage rules where appropriate."
+        },
+        {
+          "repoId": "repulsor-lift",
+          "name": "Repulsor Lift",
+          "disposition": "REMOVE_OR_REMAP",
+          "reason": "No standalone published droid-system identity by this name was found; use published Hovering locomotion/other explicit systems as appropriate."
+        },
+        {
+          "repoId": "self-repair-kit",
+          "name": "Self-Repair Kit",
+          "disposition": "REMOVE_OR_DEPRECATE",
+          "reason": "No standalone published droid-system identity by this name was found in the supplied SSOT."
+        },
+        {
+          "repoId": "miniaturized-self-destruct-system",
+          "name": "Miniaturized Self-Destruct System",
+          "disposition": "REMOVE_OR_DEPRECATE",
+          "reason": "No standalone published droid-system identity by this name was found in the supplied SSOT."
+        }
+      ],
+      "criticalAdjudications": [
+        {
+          "subject": "Translator Unit",
+          "ruling": "ONE_CANONICAL_IDENTITY_WITH_PRINTED_VARIANTS",
+          "detail": "Current Basic/Advanced/Universal Translator rows are implementation variants; do not treat them as three independently published equipment identities."
+        },
+        {
+          "subject": "Laminanium Plating",
+          "ruling": "ONE_CANONICAL_IDENTITY_WITH_LIGHT_AND_HEAVY_TABLE_VARIANTS",
+          "detail": "Scavenger's Guide gives one Laminanium Plating description with light/heavy table implementations; current light/heavy repo split should be reconciled as variants."
+        },
+        {
+          "subject": "Battery Backup System",
+          "ruling": "MAP_TO_SECONDARY_BATTERY",
+          "detail": "Core explicitly names Secondary Battery and notes redundant/backup battery as alternate terminology."
+        },
+        {
+          "subject": "Projectile Appendage",
+          "ruling": "MAP_TO_PROJECTILE_HAND",
+          "detail": "Scavenger's Guide publishes Projectile Hand."
+        }
+      ],
+      "executionPolicy": {
+        "authorityOnly": true,
+        "productionMutationAuthorized": false,
+        "note": "Fold into rolling authority/verifier first. Registry additions/removals/merges require a dedicated droid migration because live Garage/sheet/runtime depend on canonical ids."
+      },
+      "executorGuardrails": [
+        "Do not create these as ordinary equipment compendium records.",
+        "Do not remove current droid ids until saved actor/world references and aliases are migrated.",
+        "Do not keep repo-only convenience records as canonical merely because runtime currently uses them.",
+        "Do not collapse genuinely distinct printed shield-rating or Hardened Systems variants.",
+        "Do not split Translator Unit or Laminanium Plating into extra canonical identities solely because the repo currently stores variants separately.",
+        "No description/stat/mechanical rewrite is authorized by Phase 0-3H."
+      ],
+      "execution": {
+        "status": "AUTHORITY_ONLY",
+        "date": "2026-10-05",
+        "note": "No registry, runtime, actor-data or pack change. The 23 ADDs, 7 normalizations/merges and 5 repo-only removals/remaps are deferred to a dedicated droid migration that audits saved actor/world ids and runtime aliases."
+      },
+      "registryMeasurement": {
+        "measuredAt": "2026-10-05",
+        "method": "getAllDroidPartDefinitions() from scripts/data/droid-part-schema.js loaded with its Foundry-absolute import rewritten to a file URL; raw ids walked from scripts/data/droid-systems.js",
+        "registryParts": 112,
+        "uniqueRegistryIds": 112,
+        "uniqueRegistryNames": 105,
+        "rawSourceIds": 84,
+        "duplicateDisplayNames": {
+          "stabilizedmount": [
+            "mount",
+            "stabilized-mount"
+          ],
+          "militaryprocessor": [
+            "military",
+            "military-processor"
+          ],
+          "remoteprocessorexternal": [
+            "remote-processor",
+            "remote-processor-external"
+          ],
+          "sr10shieldgenerator": [
+            "sr10-shield-generator",
+            "sr-10-shield-generator"
+          ],
+          "sr15shieldgenerator": [
+            "sr15-shield-generator",
+            "sr-15-shield-generator"
+          ],
+          "sr20shieldgenerator": [
+            "sr20-shield-generator",
+            "sr-20-shield-generator"
+          ],
+          "sr5shieldgenerator": [
+            "sr5-shield-generator",
+            "sr-5-shield-generator"
+          ]
+        },
+        "repoOnlyIdLayers": {
+          "military": "raw id in scripts/data/droid-systems.js (D.processors); the registry id is \"military-processor\"",
+          "manipulator-arm": "raw id in scripts/data/droid-systems.js (D.accessories.miscellaneous)",
+          "repulsor-lift": "raw id in scripts/data/droid-systems.js (D.accessories.miscellaneous)",
+          "self-repair-kit": "raw id in scripts/data/droid-systems.js (D.accessories.miscellaneous)",
+          "miniaturized-self-destruct-system": "overlay entry in scripts/data/droid-part-schema.js RAW_OVERLAY (weaponProfile, miniaturized self-destruct), read by the live self-destruct damage logic in getSelfDestructDamage/getDroidPartRuleOverlay (droid-part-schema.js ~line 703) and mirrored in scripts/domain/droids/droid-part-schema.js IMPORTANT: this is live runtime behavior, not inert data."
+        },
+        "editIdLayers": {
+          "remote": "raw id in droid-systems.js; the registry exposes it as remote-processor and remote-processor-external (two ids, one display name)"
+        },
+        "keepButDisplayNameDiffers": {
+          "Shield Generator, SR 5": [
+            {
+              "id": "sr5-shield-generator",
+              "name": "SR 5 Shield Generator"
+            },
+            {
+              "id": "sr-5-shield-generator",
+              "name": "SR 5 Shield Generator"
+            }
+          ],
+          "Shield Generator, SR 10": [
+            {
+              "id": "sr10-shield-generator",
+              "name": "SR 10 Shield Generator"
+            },
+            {
+              "id": "sr-10-shield-generator",
+              "name": "SR 10 Shield Generator"
+            }
+          ],
+          "Shield Generator, SR 15": [
+            {
+              "id": "sr15-shield-generator",
+              "name": "SR 15 Shield Generator"
+            },
+            {
+              "id": "sr-15-shield-generator",
+              "name": "SR 15 Shield Generator"
+            }
+          ],
+          "Shield Generator, SR 20": [
+            {
+              "id": "sr20-shield-generator",
+              "name": "SR 20 Shield Generator"
+            },
+            {
+              "id": "sr-20-shield-generator",
+              "name": "SR 20 Shield Generator"
+            }
+          ],
+          "High-Speed Cutting Torch and Welder": [
+            {
+              "id": "high-speed-cutting-torch-and-welder",
+              "name": "High-Speed Cutting Torch"
+            }
+          ],
+          "Self-Destruct System": [
+            {
+              "id": "self-destruct-system",
+              "name": "(overlay entry only)",
+              "note": "present in scripts/data/droid-part-schema.js RAW_OVERLAY (weaponProfile) and read by the self-destruct logic, but not in the enumerated getAllDroidPartDefinitions() list nor in droid-systems.js; both self-destruct-system and miniaturized-self-destruct-system are overlay-only, so removing the miniaturized variant would break getSelfDestructDamage(size, {miniaturized:true})"
+            }
+          ]
+        },
+        "note": "The authority marks these KEEP because the published system is represented; the live registry display name differs from the canonical label (e.g. \"SR 10 Shield Generator\" vs \"Shield Generator, SR 10\"). Recorded for Phase 1 / the droid migration; dispositions are unchanged.",
+        "authorityRepoIdNote": "The authority repoOnlyRecords/EDIT references use raw droid-systems.js ids; registry ids can differ (military → military-processor, remote → remote-processor / remote-processor-external)."
+      }
+    },
+    "0-3i-ammunition-consumables-boundary": {
+      "phase": "0-3I",
+      "status": "CERTIFIED_PHASE_0_3I_BOUNDARY_AUTHORITY",
+      "canonicalSourcePolicy": "User-supplied SWSE TXT/PDF sourcebooks are SSOT.",
+      "repoSnapshot": {
+        "repository": "docflowGM/foundryvtt-swse",
+        "head": "0ce0be37794509936050fe851457bad80afbdf57"
+      },
+      "ruling": "No new standalone ammunition compendium is required for the character-item Phase 0 census.",
+      "canonicalStandaloneSupportItems": [
+        {
+          "name": "Energy Cell",
+          "ownerPhase": "0-3A",
+          "repoId": "tool-energy-cell",
+          "status": "ALREADY_CLAIMED_KEEP"
+        },
+        {
+          "name": "Power Pack",
+          "ownerPhase": "0-3A",
+          "repoId": "tool-power-pack",
+          "status": "ALREADY_CLAIMED_KEEP"
+        },
+        {
+          "name": "Power Recharger",
+          "ownerPhase": "0-3A",
+          "repoId": "tool-power-recharger",
+          "status": "ALREADY_CLAIMED_KEEP"
+        }
+      ],
+      "weaponSpecificAmmunitionPolicy": [
+        "Weapon-specific ammunition, magazines, cartridges, rockets, missiles, discs, canisters, and shot capacities remain properties/consumption data of their canonical weapon unless the publication gives a separate general-equipment identity.",
+        "Do not manufacture standalone equipment records solely because a weapon description specifies ammunition cost, clip size, or replacement frequency.",
+        "Phase 4 weapon-stat certification must audit ammunition type, capacity, reload/replacement rule, per-unit cost, and special ammunition interactions."
+      ],
+      "tradeGoodsBoundary": "Core trade goods such as Fuel, 1 liter are not part of the character-equipment compendium census merely because they can be consumed.",
+      "counts": {
+        "newCanonicalStandaloneIdentities": 0,
+        "alreadyOwnedStandaloneSupportItems": 3,
+        "ADD": 0,
+        "REMOVE": 0,
+        "REVIEW": 0
+      },
+      "executionPolicy": {
+        "authorityOnly": true,
+        "productionMutationAuthorized": false
+      },
+      "execution": {
+        "status": "AUTHORITY_ONLY",
+        "date": "2026-10-05",
+        "note": "Boundary ruling only; no records, no mutation."
+      }
     }
   },
   "pendingPhases": [
-    "Lightsaber crystals / accessories / components (batch TBD)",
-    "Droid equipment / modifications (batch TBD)",
-    "Ammunition / consumable weapon supplies (close explicitly)",
-    "Gated cleanup tranche (0-3D migrations, 0-3E renames/merge, 0-3F template migration, REMOVE dependents)",
-    "1 Provenance (pages)",
+    "1 Provenance and canonical content certification (order: weapons, armor, general equipment families, cybernetics/upgrades/templates, lightsaber components, droid systems)",
+    "Gated cleanup tranche (0-3D migrations, 0-3E renames/merge, 0-3F template migration, 0-3G weapons.db stragglers, 0-3H droid migration, weapon/equipment REMOVE dependents)",
+    "Vehicle/starship item domain census (separate domain)",
     "2 Descriptions",
     "3 Schema",
     "4 Stats",
@@ -15768,5 +18868,117 @@
     "6 Legacy tags",
     "7 Semantic tags",
     "8 Migration"
-  ]
+  ],
+  "phase0Completion": {
+    "status": "PHASE_0_CHARACTER_ITEM_CENSUS_COMPLETE",
+    "repoSnapshot": {
+      "repository": "docflowGM/foundryvtt-swse",
+      "head": "0ce0be37794509936050fe851457bad80afbdf57",
+      "pr": 1005
+    },
+    "tranches": [
+      {
+        "phase": "0-1",
+        "name": "Weapons",
+        "canonical": 203,
+        "status": "complete"
+      },
+      {
+        "phase": "0-2",
+        "name": "Armor",
+        "canonical": 67,
+        "status": "complete",
+        "openReview": 3,
+        "note": "Light/Medium/Heavy Pressure Suit remain REVIEW pending supplied Web Enhancements source."
+      },
+      {
+        "phase": "0-3A",
+        "name": "General Equipment",
+        "canonical": 121,
+        "status": "complete"
+      },
+      {
+        "phase": "0-3B",
+        "name": "Medical / Treatment",
+        "canonical": 16,
+        "status": "complete"
+      },
+      {
+        "phase": "0-3C",
+        "name": "Explosives / Demolitions",
+        "canonical": 14,
+        "status": "complete"
+      },
+      {
+        "phase": "0-3D",
+        "name": "Cybernetics / Implants",
+        "canonical": 25,
+        "status": "complete"
+      },
+      {
+        "phase": "0-3E",
+        "name": "Upgrades / Modifications",
+        "canonical": 66,
+        "status": "complete",
+        "note": "66 owned identities; 4 additional published cross-references remain owned by 0-3A."
+      },
+      {
+        "phase": "0-3F",
+        "name": "Gear Templates",
+        "canonical": 27,
+        "status": "complete"
+      },
+      {
+        "phase": "0-3G",
+        "name": "Lightsaber Crystals / Accessories",
+        "canonical": 38,
+        "status": "complete"
+      },
+      {
+        "phase": "0-3H",
+        "name": "Droid Systems",
+        "canonical": 122,
+        "status": "complete"
+      },
+      {
+        "phase": "0-3I",
+        "name": "Ammunition / Consumables Boundary",
+        "canonical": 0,
+        "status": "complete",
+        "note": "3 standalone support items already owned by 0-3A."
+      }
+    ],
+    "phase0Closure": {
+      "characterItemCensusComplete": true,
+      "unresolvedIdentityReviews": 3,
+      "unresolvedItems": [
+        "Light Pressure Suit",
+        "Medium Pressure Suit",
+        "Heavy Pressure Suit"
+      ],
+      "separateFutureDomain": [
+        "vehicle weapons",
+        "starship weapons",
+        "vehicle/starship equipment",
+        "vehicle/starship modifications/templates"
+      ],
+      "notExecutionComplete": true,
+      "meaning": "Phase 0 canonical identity/presence authority is complete for the character item domain; many certified ADD/EDIT/REMOVE actions remain intentionally unexecuted until later content/schema/migration phases."
+    },
+    "nextRecommendedWork": {
+      "phase": "1",
+      "name": "Canonical provenance and descriptions",
+      "order": [
+        "Weapons",
+        "Armor",
+        "General Equipment families",
+        "Cybernetics/Upgrades/Templates",
+        "Lightsaber components",
+        "Droid systems"
+      ],
+      "note": "Certify source/page, full canonical rules text, summary, and repo discrepancy before broad creation of Phase 0 ADD records."
+    },
+    "foldedAt": "2026-10-05",
+    "sourceStatus": "PHASE_0_CHARACTER_ITEM_CENSUS_COMPLETE_PENDING_CLAUDE_FOLD_IN"
+  }
 }

@@ -1,9 +1,9 @@
 # SWSE Item Canonicalization — Rolling Authority
 
-Status: ACTIVE — Phase 0 complete; Phase 0-1 Weapons and Phase 0-2 Armor and Phase 0-3A General Equipment, Phase 0-3B Medical, Phase 0-3C Explosives/Demolitions and Phase 0-3D Cybernetics/Implants Phase 0-3E Upgrades/Modifications and Phase 0-3F Gear Templates certified by owner (armor, equipment and medical renames executed)
+Status: PHASE 0 CHARACTER-ITEM CENSUS COMPLETE — identity/presence authority certified for 0-1, 0-2 and 0-3A through 0-3I (armor, equipment and medical identity renames executed; all other certified ADD/EDIT/REMOVE actions intentionally unexecuted)
 Updated: 2026-10-05
 Machine-readable companion: `data/audits/item-canonicalization-rolling-authority.json`
-Verify against the packs: `node tools/verify-item-weapons-authority.mjs` (weapons, armor, equipment, medical, explosives, cybernetics, upgrades and gear templates)
+Verify against the packs: `node tools/verify-item-weapons-authority.mjs` (weapons, armor, equipment, medical, explosives, cybernetics, upgrades, gear templates, lightsaber components, droid systems, ammunition boundary and the completion manifest)
 
 This is the single cumulative authority for item rehabilitation. Per-book/phase files are temporary evidence and must not become competing authorities. Architecture evidence: `docs/audits/item-phase-0-ssot-census.md` (owner rulings in §7a).
 
@@ -1129,6 +1129,220 @@ These are removals from gear-template authority only, not statements that disrup
 - 27 unique canonical ids (23 + 2 + 2); 30 legacy JSON records = 26 represented + 4 repo-only; every legacy record re-resolved by container:key and name.
 - Runtime: 7 keys match the authority in both `ITEM_TEMPLATE_CATALOG` and `TEMPLATE_CATALOG`; 21 canonical identities absent from runtime.
 
+## Phase 0-3G — Lightsaber components: census and repo reconciliation
+
+Jedi Academy Training Manual lightsaber crystals (Table 3-3) and lightsaber accessories/modifications. These live in dedicated packs (`lightsaber-crystals`, `lightsaber-accessories`), not in `packs/equipment.db`, and must not be duplicated into it. Identity and presence only. **Authority-only: no repo change.**
+
+| Result | Count |
+|---|---:|
+| Canonical crystals / repo crystal records | 28 / 28 |
+| Canonical accessories / repo accessory records | 10 / 10 |
+| KEEP | 38 |
+| EDIT / ADD / REMOVE / REVIEW | 0 / 0 / 0 / 0 |
+
+Current pack rows carry no source or page provenance; that is Phase 1 work, not an identity failure.
+
+| # | Family | Canonical identity | Repo id (real `_id`) | Disposition |
+|---:|---|---|---|---|
+| 1 | crystal | Ankarres Sapphire | `lightsaber-crystal-ankarres-sapphire` | KEEP |
+| 2 | crystal | Barab Ingot | `lightsaber-crystal-barab-ingot` | KEEP |
+| 3 | crystal | Bondar Crystal | `lightsaber-crystal-bondar` | KEEP |
+| 4 | crystal | Compressed Crystal | `lightsaber-crystal-compressed` | KEEP |
+| 5 | crystal | Corusca Gem | `lightsaber-crystal-corusca-gem` | KEEP |
+| 6 | crystal | Dantari Crystal | `lightsaber-crystal-dantari` | KEEP |
+| 7 | crystal | Dragite Crystal | `lightsaber-crystal-dragite` | KEEP |
+| 8 | crystal | Durindfire Crystal | `lightsaber-crystal-durindfire` | KEEP |
+| 9 | crystal | Firkraan Crystal | `lightsaber-crystal-firkraan` | KEEP |
+| 10 | crystal | Heart of the Guardian | `lightsaber-crystal-heart-of-guardian` | KEEP |
+| 11 | crystal | Hurikane Crystal | `lightsaber-crystal-hurikane` | KEEP |
+| 12 | crystal | Ilum Crystal | `lightsaber-crystal-ilum` | KEEP |
+| 13 | crystal | Jenraux Crystal | `lightsaber-crystal-jenraux` | KEEP |
+| 14 | crystal | Kaiburr Crystal Shard | `lightsaber-crystal-kaiburr-shard` | KEEP |
+| 15 | crystal | Kasha Crystal | `lightsaber-crystal-kasha` | KEEP |
+| 16 | crystal | Kathracite Crystal | `lightsaber-crystal-kathracite` | KEEP |
+| 17 | crystal | Krayt Dragon Pearl | `lightsaber-crystal-krayt-dragon-pearl` | KEEP |
+| 18 | crystal | Lambent Crystal | `lightsaber-crystal-lambent` | KEEP |
+| 19 | crystal | Mantle of the Force | `lightsaber-crystal-mantle-of-force` | KEEP |
+| 20 | crystal | Mephite Crystal | `lightsaber-crystal-mephite` | KEEP |
+| 21 | crystal | Opila Crystal | `lightsaber-crystal-opila` | KEEP |
+| 22 | crystal | Phond Crystal | `lightsaber-crystal-phond` | KEEP |
+| 23 | crystal | Pontite Crystal | `lightsaber-crystal-pontite` | KEEP |
+| 24 | crystal | Rubat Crystal | `lightsaber-crystal-rubat` | KEEP |
+| 25 | crystal | Sigil Crystal | `lightsaber-crystal-sigil` | KEEP |
+| 26 | crystal | Solari Crystal | `lightsaber-crystal-solari` | KEEP |
+| 27 | crystal | Standard Synthetic Crystal | `lightsaber-crystal-standard-synthetic` | KEEP |
+| 28 | crystal | Unstable Crystal | `lightsaber-crystal-unstable` | KEEP |
+| 29 | accessory | Beckon Call | `lightsaber-accessory-beckon-call` | KEEP |
+| 30 | accessory | Blade Lock | `lightsaber-accessory-blade-lock` | KEEP |
+| 31 | accessory | Concealed Compartment | `lightsaber-accessory-concealed-compartment` | KEEP |
+| 32 | accessory | Electrum Detail | `lightsaber-accessory-electrum-detail` | KEEP |
+| 33 | accessory | Fiber Cord | `lightsaber-accessory-fiber-cord` | KEEP |
+| 34 | accessory | Force-Activated | `lightsaber-accessory-force-activated` | KEEP |
+| 35 | accessory | Interlocking Hilt | `lightsaber-accessory-interlocking-hilt` | KEEP |
+| 36 | accessory | Pressure Grip | `lightsaber-accessory-pressure-grip` | KEEP |
+| 37 | accessory | Trapped Grip | `lightsaber-accessory-trapped-grip` | KEEP |
+| 38 | accessory | Waterproof Casing | `lightsaber-accessory-waterproof-casing` | KEEP |
+
+**ID note:** Authority canonicalId values are name slugs; use repo.id (the real _id) when addressing records. 22 of 28 crystals differ (e.g. lightsaber-crystal-bondar-crystal vs lightsaber-crystal-bondar).
+
+### Straggler records in `packs/weapons.db` (flagged for the cleanup tranche)
+
+packs/weapons.db (the weapons aggregate) still holds 4 weaponUpgrade records that are not part of the dedicated lightsaber packs: three share an _id and name with a dedicated-pack record (Blade Lock, Barab Ingot, Ilum Crystal) and one, "Synthetic Crystal" (lightsaber-crystal-synthetic), is an alias of the canonical "Standard Synthetic Crystal" (lightsaber-crystal-standard-synthetic) under a different _id. They originate from data/lightsaber-items-import.ndjson / data/lightsaber-components.json. The lightsaber construction engine reads only the dedicated packs and weapons-lightsabers, so these are not runtime inputs there. Phase 0-1 excluded upgrades, so no phase has yet claimed them.
+
+| Repo ID | Name | Duplicates a dedicated-pack record? | Canonical identity |
+|---|---|---|---|
+| `lightsaber-accessory-blade-lock` | Blade Lock | yes (same _id) | Blade Lock |
+| `lightsaber-crystal-barab-ingot` | Barab Ingot | yes (same _id) | Barab Ingot |
+| `lightsaber-crystal-ilum` | Ilum Crystal | yes (same _id) | Ilum Crystal |
+| `lightsaber-crystal-synthetic` | Synthetic Crystal | no — alias, different _id | Standard Synthetic Crystal |
+
+Proposed disposition: remove from packs/weapons.db after dependency check (the weapons aggregate should hold only type weapon); canonical identities remain in the dedicated packs. Not executed.
+
+### QA gate
+
+- 28 crystal + 10 accessory canonical names equal the two dedicated packs exactly (no duplicates, none missing, none extra); verifier fails on any drift or on a new `weaponUpgrade` appearing in `packs/weapons.db`.
+
+## Phase 0-3H — Droid systems: census and repo reconciliation
+
+Droid equipment is a separate installed-system domain. The live definition authority is `scripts/data/droid-part-schema.js` (the canonical droid-part registry), layered over `scripts/data/droid-systems.js` (the broad source catalog). It is consumed by the Garage, the droid systems sheet tab and runtime weapon reconstruction. **Droid systems must not be duplicated into `packs/equipment.db`.** Identity and presence only. **Authority-only: no registry, actor-data or pack change.**
+
+| Result | Count |
+|---|---:|
+| Canonical droid-system identities (Core 55, Scavenger's Guide 67) | 122 |
+| Represented in the live registry | 99 |
+| KEEP | 92 |
+| EDIT (normalize / merge variants) | 7 |
+| ADD (absent from the registry; recorded, not created) | 23 |
+| Repo-only convenience / unsupported entries | 5 |
+| REVIEW | 0 |
+
+### Missing published systems (ADD, not created)
+
+Diagnostics Package, Internal Storage, Spring-Loaded Mechanism, Locked Access, Antitheft Comlink Locator, Collapsible Construction, Courier Compartments, Droid Oil Bath, Earphone Binary-to-Basic Translator, Emergency Oxygen Supply, Holographic Game System, Interference Generator, Remote Viewer, Rental Restraining Bolt, Repulsorcam, Silence-Bubble Generator, Space-Beacon Launcher, Video Screen, Voice-Print Command Lock, Droid Battle Station, Droid Command Station, Droid Recharge Station, Droid Socket.
+
+### Normalizations (EDIT)
+
+| Canonical identity | Current representation | Action |
+|---|---|---|
+| Remote Processor | remote / Remote Processor (External) | RENAME_OR_ALIAS_TO_CANONICAL_SOURCE_IDENTITY |
+| Secondary Battery | battery-backup / Battery Backup System | RENAME_OR_ALIAS_TO_CANONICAL_SOURCE_IDENTITY |
+| Translator Unit | basic-translator; advanced-translator; universal-translator | MERGE_AS_CANONICAL_IDENTITY_WITH_PRINTED_VARIANTS |
+| Projectile Hand | projectile-appendage / Projectile Appendage | RENAME_OR_ALIAS_TO_CANONICAL_SOURCE_IDENTITY |
+| Laminanium Plating | laminanium-plating; laminanium-heavy-plating | MERGE_AS_ONE_CANONICAL_IDENTITY_WITH_LIGHT_HEAVY_TABLE_VARIANTS |
+| Communications Countermeasure System | communications-countermeasures / Communications Countermeasures | RENAME_OR_ALIAS_TO_CANONICAL_SOURCE_IDENTITY |
+| Weapon Detector | weapon-detector-package / Weapon-Detector Package | RENAME_OR_ALIAS_TO_CANONICAL_SOURCE_IDENTITY |
+
+### Repo-only entries (not removed)
+
+| Repo id | Name | Disposition | Layer (measured) |
+|---|---|---|---|
+| `military` | Military Processor | REMOVE_OR_DEPRECATE | raw id in scripts/data/droid-systems.js (D.processors); the registry id is "military-processor" |
+| `manipulator-arm` | Manipulator Arm | REMOVE_OR_REMAP | raw id in scripts/data/droid-systems.js (D.accessories.miscellaneous) |
+| `repulsor-lift` | Repulsor Lift | REMOVE_OR_REMAP | raw id in scripts/data/droid-systems.js (D.accessories.miscellaneous) |
+| `self-repair-kit` | Self-Repair Kit | REMOVE_OR_DEPRECATE | raw id in scripts/data/droid-systems.js (D.accessories.miscellaneous) |
+| `miniaturized-self-destruct-system` | Miniaturized Self-Destruct System | REMOVE_OR_DEPRECATE | overlay entry in scripts/data/droid-part-schema.js RAW_OVERLAY (weaponProfile, miniaturized self-destruct), read by the live self-destruct damage logic in getSelfDestructDamage/getDroidPartRuleOverlay (droid-part-schema.js ~line 703) and mirrored in scripts/domain/droids/droid-part-schema.js IMPORTANT: this is live runtime behavior, not inert data. |
+
+### Adjudications
+
+- **Translator Unit** (ONE_CANONICAL_IDENTITY_WITH_PRINTED_VARIANTS): Current Basic/Advanced/Universal Translator rows are implementation variants; do not treat them as three independently published equipment identities.
+- **Laminanium Plating** (ONE_CANONICAL_IDENTITY_WITH_LIGHT_AND_HEAVY_TABLE_VARIANTS): Scavenger's Guide gives one Laminanium Plating description with light/heavy table implementations; current light/heavy repo split should be reconciled as variants.
+- **Battery Backup System** (MAP_TO_SECONDARY_BATTERY): Core explicitly names Secondary Battery and notes redundant/backup battery as alternate terminology.
+- **Projectile Appendage** (MAP_TO_PROJECTILE_HAND): Scavenger's Guide publishes Projectile Hand.
+
+### Registry measurement (Claude, 2026-10-05)
+
+- `getAllDroidPartDefinitions()` returns 112 parts (112 unique ids, 105 unique display names); `droid-systems.js` holds 84 raw ids. 7 display names are shared by multiple ids (the SR 5/10/15/20 shield generators each exist as `srN-` and `sr-N-` ids, and Remote Processor (External) as `remote-processor` and `remote-processor-external`).
+- The authority repoOnlyRecords/EDIT references use raw droid-systems.js ids; registry ids can differ (military → military-processor, remote → remote-processor / remote-processor-external).
+- The `miniaturized-self-destruct-system` removal candidate is **live behavior**: it is an overlay entry in `droid-part-schema.js` read by the self-destruct damage logic (`miniaturized` option), and `self-destruct-system` is overlay-only too. Do not remove it without migrating that logic.
+- KEEP identities whose live display name differs from the canonical label: Shield Generator, SR 5/10/15/20 (registry: "SR N Shield Generator"), High-Speed Cutting Torch and Welder (registry: "High-Speed Cutting Torch"), and Self-Destruct System (overlay-only). Dispositions unchanged; recorded for Phase 1 and the droid migration.
+
+### Execution guardrails
+
+1. Do not create these as ordinary equipment compendium records.
+2. Do not remove current droid ids until saved actor/world references and aliases are migrated.
+3. Do not keep repo-only convenience records as canonical merely because runtime currently uses them.
+4. Do not collapse genuinely distinct printed shield-rating or Hardened Systems variants.
+5. Do not split Translator Unit or Laminanium Plating into extra canonical identities solely because the repo currently stores variants separately.
+6. No description/stat/mechanical rewrite is authorized by Phase 0-3H.
+
+Droid migration prerequisite: Fold into rolling authority/verifier first. Registry additions/removals/merges require a dedicated droid migration because live Garage/sheet/runtime depend on canonical ids.
+
+## Phase 0-3I — Ammunition and consumables boundary
+
+No new standalone ammunition compendium is required for the character-item Phase 0 census. **Authority-only; no records.**
+
+Already owned by Phase 0-3A (all KEEP): Energy Cell (`tool-energy-cell`), Power Pack (`tool-power-pack`), Power Recharger (`tool-power-recharger`).
+
+- Weapon-specific ammunition, magazines, cartridges, rockets, missiles, discs, canisters, and shot capacities remain properties/consumption data of their canonical weapon unless the publication gives a separate general-equipment identity.
+- Do not manufacture standalone equipment records solely because a weapon description specifies ammunition cost, clip size, or replacement frequency.
+- Phase 4 weapon-stat certification must audit ammunition type, capacity, reload/replacement rule, per-unit cost, and special ammunition interactions.
+- Trade goods: Core trade goods such as Fuel, 1 liter are not part of the character-equipment compendium census merely because they can be consumed.
+
+Phase 4 weapon-stat certification must audit, per weapon: ammunition/power type, shots/capacity, reload or replacement rule, per-unit cost, special-ammunition restrictions, and interactions with power packs, energy cells, launchers and external generators.
+
+## Phase 0 — character-item census completion
+
+**Status: PHASE_0_CHARACTER_ITEM_CENSUS_COMPLETE** (folded 2026-10-05). Phase 0 separates canonical identity truth from production mutation: the census is complete, but Phase 0 canonical identity/presence authority is complete for the character item domain; many certified ADD/EDIT/REMOVE actions remain intentionally unexecuted until later content/schema/migration phases.
+
+| Phase | Domain | Canonical scope | Status |
+|---|---|---:|---|
+| 0-1 | Weapons | 203 | complete |
+| 0-2 | Armor | 67 | complete — Light/Medium/Heavy Pressure Suit remain REVIEW pending supplied Web Enhancements source. |
+| 0-3A | General Equipment | 121 | complete |
+| 0-3B | Medical / Treatment | 16 | complete |
+| 0-3C | Explosives / Demolitions | 14 | complete |
+| 0-3D | Cybernetics / Implants | 25 | complete |
+| 0-3E | Upgrades / Modifications | 66 | complete — 66 owned identities; 4 additional published cross-references remain owned by 0-3A. |
+| 0-3F | Gear Templates | 27 | complete |
+| 0-3G | Lightsaber Crystals / Accessories | 38 | complete |
+| 0-3H | Droid Systems | 122 | complete |
+| 0-3I | Ammunition / Consumables Boundary | 0 | complete — 3 standalone support items already owned by 0-3A. |
+
+### Open identity reviews (the only unresolved Phase 0 identities)
+
+- Light Pressure Suit
+- Medium Pressure Suit
+- Heavy Pressure Suit
+
+Their repo records claim Web Enhancements provenance; the source was not in the supplied SSOT. Keep them untouched until it is supplied.
+
+### Intentionally unexecuted certified actions
+
+- ADD records: weapons (52), general equipment (35), explosives (8), cybernetics (15), upgrades (51), gear templates (1), droid systems (23).
+- Cleanup tranche: the two 0-3D migrations, the 0-3E display-name edits and Helmet Package merge, the 0-3F template migration, the 4 `weaponUpgrade` stragglers in `packs/weapons.db`, the 0-3H droid migration, and all weapon/equipment REMOVE records with their measured dependents.
+- Executed so far (identity renames only): armor 24, general equipment 9, medical 3.
+
+### Separate future domain
+
+- vehicle weapons
+- starship weapons
+- vehicle/starship equipment
+- vehicle/starship modifications/templates
+
+### Recommended next phase
+
+Phase 1 — Canonical provenance and descriptions. Order: Weapons; Armor; General Equipment families; Cybernetics/Upgrades/Templates; Lightsaber components; Droid systems. Certify source/page, full canonical rules text, summary, and repo discrepancy before broad creation of Phase 0 ADD records.
+
+Phase 1 steps per family: (1) exact sourcebook and page; (2) canonical full player-readable rules text; (3) short derived summary; (4) printed prerequisites and restrictions; (5) repo discrepancy classification; (6) only after certification, authorize production creation/update of Phase 0 ADD/EDIT records.
+
 ## Pending phases
 
-Lightsaber crystals / accessories / components (batch TBD) · Droid equipment / modifications (batch TBD) · Ammunition / consumable weapon supplies (close explicitly) · Gated cleanup tranche (0-3D migrations, 0-3E renames/merge, 0-3F template migration, REMOVE dependents) · 1 Provenance (pages) · 2 Descriptions · 3 Schema · 4 Stats · 5 Reconciliation · 6 Legacy tags · 7 Semantic tags · 8 Migration
+- 1 Provenance and canonical content certification (order: weapons, armor, general equipment families, cybernetics/upgrades/templates, lightsaber components, droid systems)
+
+- Gated cleanup tranche (0-3D migrations, 0-3E renames/merge, 0-3F template migration, 0-3G weapons.db stragglers, 0-3H droid migration, weapon/equipment REMOVE dependents)
+
+- Vehicle/starship item domain census (separate domain)
+
+- 2 Descriptions
+
+- 3 Schema
+
+- 4 Stats
+
+- 5 Reconciliation
+
+- 6 Legacy tags
+
+- 7 Semantic tags
+
+- 8 Migration
