@@ -92,3 +92,4 @@
 - Schema v2.5 structural defaults added (`stun.activation`, `wieldingRules`, `triggeredEffects`, etc.); the Lightfoil effective-size / no-two-handed rule is now in `wieldingRules` (operation keys preserved).
 - Schema v2.6 structural defaults added (`criticalEffects`, `technologyClassification`, `deliveryMethod`, standardized `conditionalQualities`).
 - Schema v2.7 structural defaults added (`damageMultiplier: 1`, `conditionalRangeRules: []`, `resourceProfiles: []`).
+- Schema v2.8 (`damage.mode: "fixed"`) added to the contract; this book needed no change.

@@ -28200,10 +28200,10 @@
       ]
     },
     "2-weapons-numeric-stat-schema": {
-      "status": "WEAPON_AUTHORITY_SCHEMA_V2_7_NORMALIZED_THROUGH_SCUM_AND_VILLAINY (2A Core in rolling; 2B KOTOR, 2C Galaxy at War, 2D Force Unleashed, 2E Clone Wars, 2F Jedi Academy, 2G Legacy Era, 2H Unknown Regions, 2I Rebellion Era, 2J Scum and Villainy standalone)",
+      "status": "WEAPON_AUTHORITY_SCHEMA_V2_8_NORMALIZED_THROUGH_GALAXY_OF_INTRIGUE (2A Core in rolling; 2B KOTOR, 2C Galaxy at War, 2D Force Unleashed, 2E Clone Wars, 2F Jedi Academy, 2G Legacy Era, 2H Unknown Regions, 2I Rebellion Era, 2J Scum and Villainy, 2K Galaxy of Intrigue standalone)",
       "family": "weapons",
       "authorityType": "authority-only; no production mutation",
-      "schemaVersion": "weapon-authority-schema-v2.7",
+      "schemaVersion": "weapon-authority-schema-v2.8",
       "goldStandard": true,
       "sourcePolicy": [
         "Supplied published PDF tables, table footnotes, weapon-group rules, and weapon descriptions are final authority for Core weapon mechanics.",
@@ -28230,7 +28230,8 @@
             "modifier",
             "none",
             "special",
-            "varies-by-payload"
+            "varies-by-payload",
+            "fixed"
           ],
           "rule": "Runtime modifiers may add dice, change die size, or add bonuses without rewriting the persisted canonical base profile. Effective damage is never persisted back into baseDamage.",
           "modifierInherited": "modifier = flat bonus to an existing attack (appliesTo); inherited = the profile has no standalone dice and uses the wearer's existing attack (appliesTo/formula \"unarmed\"), e.g. Combat Gloves, Vibroknucklers, Stunning Gauntlet.",
@@ -28656,7 +28657,7 @@
           },
           "resourceConsumption": "attackProfiles[].resourceConsumption is null or {resource, baseUnits, multiplier} plus source-specific extras (stunUnits, autofireUnits, reason)."
         },
-        "version": "weapon-authority-schema-v2.7",
+        "version": "weapon-authority-schema-v2.8",
         "qualityParameters": {
           "rule": "Source-specific parameters of a named quality. Core/KOTOR Inaccurate = cannot attack at Long range (allowedBands pointBlank, short, medium). Galaxy at War Inaccurate = cannot attack at Medium or Long range (allowedBands pointBlank, short). Never flatten one book definition into another; an Inaccurate record must state its allowedBands here.",
           "fields": [
@@ -28915,6 +28916,10 @@
         "resourceProfiles": {
           "field": "canonicalStats.resourceProfiles",
           "rule": "Weapons with multiple independent power/ammunition systems (Energy Lance: two energy cells to operate plus a separate 50-shot power pack for plasma-bolt mode; SG-4: 50-shot power pack plus separately loaded harpoon rounds). Ordinary records keep [] and use canonicalStats.resource (kind \"multiple\" on populated records)."
+        },
+        "fixedDamage": {
+          "field": "canonicalStats.baseDamage and attackProfiles[].damage with mode \"fixed\"",
+          "rule": "A printed flat base damage with no dice (Darter: 1). diceCount 0, dieSize null, flatBonus is the complete published value, formula is display metadata. Never encoded as 1d1 or any invented die expression. Adds no field, so no prior-book backfill."
         }
       },
       "executorGuardrails": [
@@ -28945,7 +28950,7 @@
         {
           "phase": "2A",
           "book": "Core Rulebook",
-          "status": "CERTIFIED_PHASE_2A_CORE_GOLD_STANDARD_NUMERIC_STAT_SCHEMA_AUTHORITY (normalized to schema v2.7)",
+          "status": "CERTIFIED_PHASE_2A_CORE_GOLD_STANDARD_NUMERIC_STAT_SCHEMA_AUTHORITY (normalized to schema v2.8)",
           "counts": {
             "claims": 48,
             "uniqueIdentities": 48,
@@ -42168,7 +42173,8 @@
           "Schema v2.4 (Clone Wars): modifier/inherited damage, proficiencyRules, objectDurability, integratedAccessories, range.hardMaxSquares, resource lifecycle keys, payloadProfiles, conditionalModifiers applied to Core, KOTOR, Galaxy at War and Force Unleashed as structural defaults. Backfilled from existing certified data only: KOTOR Stunning Gauntlet profile damage inherited; Core Electrostaff objectDurability.damageReduction 20; proficiencyRules migrated from operation facts (KOTOR Arg'garok and Massassi Lanvarok, Force Unleashed Ryyk Blade, Core Bowcaster); conditionalModifiers for Galaxy at War ICWS sniper (-2 at unmodified point-blank), Force Unleashed Power Hammer (-2 with Double/Triple Attack, Rapid Strike) and KOTOR Arg'garok (-5 below Strength 15). Original operation keys are preserved. Grenade-payload references for Core Grenade Launcher / Mortar Launcher not made (family not yet certified).",
           "Schema v2.5 (Jedi Academy): wieldingRules, stateMachine, activationRequirements, expanded conditionalModifier targets (attack/damage renamed attackRoll/damageRoll), triggeredEffects + modifierPolicy, stun.activation, constructionRules, configurationStates applied to Core, KOTOR, Galaxy at War, Force Unleashed and Clone Wars as structural defaults. Backfilled from existing certified data only (operation keys preserved): Core Bayonet, KOTOR Lightfoil, Force Unleashed Vibrosword, Clone Wars Garrote wieldingRules; Clone Wars Garrote triggeredEffects (repeat base damage + condition track step); Clone Wars Snap Baton and Czerka Adventurer configurationStates; stun.activation for every stun weapon. Jedi Academy file aliases normalized: attackResolution.mode \"normal\" -> \"standard\", modeProfiles attackProfile -> attackProfileId.",
           "Schema v2.6 (Legacy Era): criticalEffects, standardized conditionalQualities, technologyClassification, deliveryMethod, preparedAttack temporary overrides applied to Core, KOTOR, Galaxy at War, Force Unleashed, Clone Wars and Jedi Academy as structural defaults; existing conditionalQualities converted to {quality,state,when,scope,effect}. Legacy file aliases normalized (see its schemaNormalization); Tehk'la Blade schemaFamily.branch corrected to melee. No source-certified criticalEffects, technology classes or delivery methods existed on prior books to backfill.",
-          "Schema v2.7 (Rebellion Era): attackProfiles[].damageMultiplier (default 1), attackProfiles[].conditionalRangeRules (default []) and canonicalStats.resourceProfiles (default []) applied to Core, KOTOR, Galaxy at War, Force Unleashed, Clone Wars, Jedi Academy, Legacy Era and Unknown Regions as structural defaults. Nothing backfilled: no prior book had a source-certified multiplier, conditional range rule or multiple independent resource system."
+          "Schema v2.7 (Rebellion Era): attackProfiles[].damageMultiplier (default 1), attackProfiles[].conditionalRangeRules (default []) and canonicalStats.resourceProfiles (default []) applied to Core, KOTOR, Galaxy at War, Force Unleashed, Clone Wars, Jedi Academy, Legacy Era and Unknown Regions as structural defaults. Nothing backfilled: no prior book had a source-certified multiplier, conditional range rule or multiple independent resource system.",
+          "Schema v2.8 (Galaxy of Intrigue): damage.mode \"fixed\" (Darter). Adds no field; no prior-book data was changed."
         ]
       },
       "standaloneBookAuthorities": [
@@ -42302,6 +42308,27 @@
           "mirrorProfiles": false,
           "specialRateOfFireAllowed": [],
           "note": "Book-only authority by owner instruction. No schema change (stays v2.7). All nine claims are repo-present."
+        },
+        {
+          "phase": "2K",
+          "book": "Galaxy of Intrigue",
+          "file": "data/audits/item-weapons-phase-2k-galaxy-of-intrigue-standalone-authority.json",
+          "doc": "docs/audits/item-weapons-phase-2k-galaxy-of-intrigue-standalone-authority.md",
+          "status": "GALAXY_OF_INTRIGUE_PHASE_2K_STANDALONE_CERTIFIED",
+          "claims": 4,
+          "repoPresent": 4,
+          "repoMissing": 0,
+          "rollingMergeAuthorized": false,
+          "mirrorProfiles": false,
+          "specialRateOfFireAllowed": [],
+          "note": "Book-only authority by owner instruction. Introduces schema v2.8 (fixed damage). All four claims are repo-present.",
+          "phase1GroupOverrides": {
+            "Xerrol Nightstinger": {
+              "phase1": "Rifle",
+              "phase2": "Exotic Weapon",
+              "reason": "Table 3-1 (Galaxy of Intrigue p.65, visually verified) lists the Xerrol nightstinger under Exotic Weapons; Phase 1 group value was not corrected (owner decision)."
+            }
+          }
         }
       ],
       "pendingSchemaDecision": {
@@ -42312,7 +42339,7 @@
   },
   "pendingPhases": [
     "1 Provenance and canonical content certification — weapons COMPLETE (1A-1L, authority-only); next within Phase 1: armor, general equipment families, cybernetics/upgrades/templates, lightsaber components, droid systems; weapon numeric/stat/schema certification precedes any creation of the 53 missing weapons",
-    "Phase 2 weapons numeric/stat/schema certification — 2A Core DONE (schema v2.1), 2B KOTOR, 2C Galaxy at War, 2D Force Unleashed, 2E Clone Wars, 2F Jedi Academy, 2G Legacy Era, 2H Unknown Regions, 2I Rebellion Era and 2J Scum and Villainy DONE (standalone book authorities, schema v2.7); next books in order: Galaxy of Intrigue (4), Threats of the Galaxy (4); then reconcile all 203 identities; Bowcaster range and BlasTech 500 Riot Gun conflict remain gated",
+    "Phase 2 weapons numeric/stat/schema certification — 2A Core DONE (schema v2.1), 2B KOTOR, 2C Galaxy at War, 2D Force Unleashed, 2E Clone Wars, 2F Jedi Academy, 2G Legacy Era, 2H Unknown Regions, 2I Rebellion Era, 2J Scum and Villainy and 2K Galaxy of Intrigue DONE (standalone book authorities, schema v2.8); next books in order: Threats of the Galaxy (4); then reconcile all 203 identities; Bowcaster range and BlasTech 500 Riot Gun conflict remain gated",
     "Gated cleanup tranche (0-3D migrations, 0-3E renames/merge, 0-3F template migration, 0-3G weapons.db stragglers, 0-3H droid migration, weapon/equipment REMOVE dependents)",
     "Vehicle/starship item domain census (separate domain)",
     "2 Descriptions",

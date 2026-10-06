@@ -1,0 +1,1591 @@
+{
+  "schemaVersion": "2K-galaxy-of-intrigue-standalone-gold-v1",
+  "authorityType": "standalone-book-only",
+  "book": "Galaxy of Intrigue",
+  "phase": "2K",
+  "status": "GALAXY_OF_INTRIGUE_PHASE_2K_STANDALONE_CERTIFIED",
+  "scope": "4 Galaxy of Intrigue character-scale ranged weapon claims only. No rolling authority mutation. No production mutation authorization.",
+  "inherits": [
+    "Core Rulebook Phase 2A gold schema",
+    "KOTOR Phase 2B standalone schema extensions",
+    "Galaxy at War Phase 2C schema extensions",
+    "Force Unleashed Phase 2D schema extensions",
+    "Clone Wars Phase 2E schema extensions",
+    "Jedi Academy Phase 2F schema extensions",
+    "Legacy Era Phase 2G schema v2.6 normalization",
+    "Unknown Regions Phase 2H v2.6 authority",
+    "Rebellion Era Phase 2I schema v2.7 extensions",
+    "Scum and Villainy Phase 2J v2.7 authority"
+  ],
+  "sourcePolicy": {
+    "searchLayer": "Galaxy of Intrigue_djvu.txt",
+    "visualAuthority": "Galaxy of Intrigue.pdf",
+    "repoRole": "comparison-only"
+  },
+  "schemaDelta": {
+    "contractVersion": "weapon-authority-schema-v2.8-fixed-damage",
+    "schemaDecision": "SCHEMA_BUMP_REQUIRED",
+    "principle": "Galaxy of Intrigue introduces a published weapon whose base damage is a fixed numeric value rather than dice, dash, inherited, modifier, or payload-derived damage. Represent that fact directly rather than inventing a die expression.",
+    "requiredEdits": [
+      {
+        "path": "canonicalStats.baseDamage.mode and attackProfiles[].damage.mode",
+        "change": "Add allowed enum value fixed.",
+        "semantics": "When mode=fixed, diceCount=0, dieSize=null, and flatBonus is the complete published fixed weapon-damage value. formula remains a display/compatibility string.",
+        "requiredBy": [
+          "Darter"
+        ],
+        "backwardNormalization": "No new field is added, so earlier book records require no data backfill. Update verifier/schema acceptance to allow fixed while preserving all prior modes unchanged."
+      }
+    ],
+    "sourceQualityRule": "Galaxy of Intrigue footnote 1 is stricter than the usual Core Inaccurate meaning: affected weapons cannot fire at Medium or Long range. Apply this only to Wrist Blaster and Snare Pistol; do not globally redefine Inaccurate.",
+    "existingStructuresExercised": [
+      "attackProfiles[]",
+      "payloadProfiles[]",
+      "triggeredEffects[]",
+      "native stun",
+      "range.allowedBands",
+      "resource economics",
+      "v2.7 damageMultiplier defaults",
+      "v2.7 conditionalRangeRules defaults",
+      "v2.7 resourceProfiles defaults"
+    ],
+    "representationNotes": [
+      "Darter uses mode=fixed with flatBonus=1; do not encode its damage as 1d1 or another invented die expression.",
+      "Darter payload compatibility does not create additional weapon identities.",
+      "Snare Pistol reuses the ranged grab/grapple structures already exercised by Scum and Villainy Snare Rifle, with its own 1d4 native stun and shorter range.",
+      "Xerrol Nightstinger remains an Exotic Weapon with rifle-style range behavior derived from its published sporting-blaster-rifle description."
+    ]
+  },
+  "counts": {
+    "canonicalWeaponClaims": 4,
+    "repoPresent": 4,
+    "repoMissing": 0,
+    "meleeClaims": 0,
+    "rangedClaims": 4,
+    "crossPublishedIdentityClaims": 0,
+    "baseAccurateClaims": 0,
+    "baseInaccurateClaims": 2,
+    "nativeStunClaims": 1,
+    "fixedDamageClaims": 1,
+    "exoticWeaponClaims": 1
+  },
+  "verification": {
+    "rangedTable": "Table 3-1 p.65 visually verified",
+    "descriptionPages": "Weapon descriptions p.64 visually verified",
+    "hardReconciliation": "4 ranged claims = 4 total",
+    "repoReconciliation": "4 present + 0 missing = 4",
+    "visualSpecifics": "Darter damage cell visually verified as fixed 1; Wrist Blaster and Snare Pistol footnote 1 visually verified."
+  },
+  "bookLocalGuardrails": [
+    "Do not update a rolling/master weapon authority from this package.",
+    "Do not mutate production packs, template/schema runtime, actors, feats, talents, or equipment records during certification.",
+    "Do not create any new production weapon records; all four Galaxy of Intrigue weapon claims are repo-present.",
+    "Repo fields are comparison evidence only.",
+    "Bump the authority contract to v2.8 only for the fixed-damage enum extension. Do not add unrelated fields.",
+    "Do not rewrite prior book facts while accepting v2.8; no earlier record needs a new data field.",
+    "Do not convert Darter damage 1 into 1d1, 1d4, or any other dice expression.",
+    "Do not treat Darter as Inaccurate; its Short-range maximum is an explicit weapon rule, not Table 3-1 footnote 1.",
+    "Do not treat Wrist Blaster or Snare Pistol Inaccurate as the global Core meaning. This book explicitly bars both Medium and Long range.",
+    "Do not flatten Snare Pistol 1d4 native stun into normal lethal damage.",
+    "Do not omit Snare Pistol ranged grab/grapple, escape DCs, feat restrictions, or 2-shot cartridge.",
+    "Do not treat Xerrol Nightstinger as a normal rifle for proficiency merely because the prose calls it a sporting blaster rifle; Table 3-1 places it under Exotic Weapons.",
+    "Do not infer Accurate for Xerrol Nightstinger from its sniper role.",
+    "Do not duplicate Surveillance Tagger or Redirection Crystal as weapon identities; both remain separate equipment records."
+  ],
+  "records": [
+    {
+      "canonicalName": "Blaster, Wrist",
+      "publishedName": "Blaster, wrist",
+      "weaponGroup": "Pistol",
+      "source": {
+        "book": "Galaxy of Intrigue",
+        "descriptionPage": 64,
+        "statTablePage": 65,
+        "table": "Table 3-1: Ranged Weapons",
+        "verifiedBy": [
+          "Galaxy of Intrigue_djvu.txt",
+          "Galaxy of Intrigue.pdf visual verification"
+        ]
+      },
+      "schemaFamily": {
+        "branch": "ranged",
+        "subcategory": "pistol",
+        "proficiency": "pistols"
+      },
+      "canonicalStats": {
+        "size": "Tiny",
+        "costCredits": 800,
+        "baseDamage": {
+          "mode": "dice",
+          "diceCount": 3,
+          "dieSize": 4,
+          "flatBonus": 0,
+          "formula": "3d4"
+        },
+        "weightKg": 0.5,
+        "damageType": {
+          "mode": "single",
+          "types": [
+            "energy"
+          ],
+          "qualifiers": []
+        },
+        "availability": {
+          "restriction": "illegal",
+          "rare": false
+        },
+        "rateOfFire": [
+          "S"
+        ],
+        "stun": {
+          "capability": "none",
+          "hasStunSetting": false,
+          "damageMode": "none",
+          "damage": null,
+          "activation": null,
+          "rangeRule": null
+        },
+        "range": {
+          "mode": "ranged",
+          "profileId": "pistols",
+          "bands": {
+            "pointBlank": [
+              0,
+              20
+            ],
+            "short": [
+              21,
+              40
+            ],
+            "medium": [
+              41,
+              60
+            ],
+            "long": [
+              61,
+              80
+            ]
+          },
+          "basePenalties": {
+            "pointBlank": 0,
+            "short": -2,
+            "medium": -5,
+            "long": -10
+          },
+          "allowedBands": [
+            "pointBlank",
+            "short"
+          ],
+          "hardMaxSquares": null,
+          "penaltyApplication": "attack",
+          "qualityEffects": {
+            "pointBlankAllowed": true,
+            "shortPenaltyOverride": null,
+            "mediumAllowed": false,
+            "longAllowed": false
+          },
+          "sourceStatus": "Galaxy of Intrigue footnote 1: cannot fire at Medium or Long range."
+        },
+        "resource": {
+          "kind": "power-cell",
+          "source": "internal wrist-blaster power cell",
+          "capacityShots": 1,
+          "replaceable": null,
+          "reloadAction": null,
+          "consumption": null,
+          "integrated": true,
+          "rechargeable": null,
+          "disposableWhenDepleted": null,
+          "sourceStatus": "Source certifies only one shot of stored energy; replacement/recharge procedure is not stated."
+        },
+        "resourceProfiles": [],
+        "operatingModes": {
+          "default": "normal",
+          "alternates": [],
+          "maxConcurrentAlternates": 1,
+          "autofireOnlyStunException": false
+        },
+        "damageReductionInteraction": {
+          "mode": "normal",
+          "amount": null,
+          "exceptions": []
+        },
+        "attackProfiles": [
+          {
+            "id": "primary",
+            "label": "Primary",
+            "kind": "attack",
+            "schemaFamily": {
+              "branch": "ranged",
+              "subcategory": "pistol",
+              "proficiency": "pistols"
+            },
+            "damage": {
+              "mode": "dice",
+              "diceCount": 3,
+              "dieSize": 4,
+              "flatBonus": 0,
+              "formula": "3d4"
+            },
+            "damageType": {
+              "mode": "single",
+              "types": [
+                "energy"
+              ],
+              "qualifiers": []
+            },
+            "stun": {
+              "capability": "none",
+              "hasStunSetting": false,
+              "damageMode": "none",
+              "damage": null,
+              "activation": null,
+              "rangeRule": null
+            },
+            "rateOfFire": [
+              "S"
+            ],
+            "range": {
+              "mode": "ranged",
+              "profileId": "pistols",
+              "bands": {
+                "pointBlank": [
+                  0,
+                  20
+                ],
+                "short": [
+                  21,
+                  40
+                ],
+                "medium": [
+                  41,
+                  60
+                ],
+                "long": [
+                  61,
+                  80
+                ]
+              },
+              "basePenalties": {
+                "pointBlank": 0,
+                "short": -2,
+                "medium": -5,
+                "long": -10
+              },
+              "allowedBands": [
+                "pointBlank",
+                "short"
+              ],
+              "hardMaxSquares": null,
+              "penaltyApplication": "attack",
+              "qualityEffects": {
+                "pointBlankAllowed": true,
+                "shortPenaltyOverride": null,
+                "mediumAllowed": false,
+                "longAllowed": false
+              },
+              "sourceStatus": "Galaxy of Intrigue footnote 1: cannot fire at Medium or Long range."
+            },
+            "qualities": {
+              "accurate": false,
+              "inaccurate": true,
+              "arc": false,
+              "ignoresDR": false,
+              "areaEffect": false,
+              "autofireOnly": false,
+              "doubleWeapon": false,
+              "thrown": false,
+              "reach": false
+            },
+            "attackResolution": {
+              "mode": "standard",
+              "defense": "reflex",
+              "ignoredDefenseComponents": [],
+              "onMiss": "none"
+            },
+            "area": {
+              "enabled": false,
+              "shape": null,
+              "radiusSquares": null,
+              "lengthSquares": null,
+              "widthAtEndSquares": null,
+              "widthSquares": null,
+              "heightSquares": null,
+              "notes": null
+            },
+            "resourceConsumption": null,
+            "damageComponents": [],
+            "firingConstraints": null,
+            "preparedAttack": null,
+            "conditionalModifiers": [],
+            "activationRequirements": [],
+            "triggeredEffects": [],
+            "criticalEffects": [],
+            "modifierPolicy": null,
+            "notes": [],
+            "damageMultiplier": 1,
+            "conditionalRangeRules": []
+          }
+        ],
+        "modeProfiles": [],
+        "defensiveInteractions": [],
+        "payloadProfiles": [],
+        "objectDurability": null,
+        "integratedAccessories": [],
+        "wieldingRules": [],
+        "stateMachine": null,
+        "configurationStates": [],
+        "constructionRules": null,
+        "triggeredEffects": [],
+        "technologyClassification": {
+          "tags": [],
+          "rules": []
+        },
+        "deliveryMethod": null
+      },
+      "qualities": {
+        "accurate": false,
+        "inaccurate": true,
+        "arc": false,
+        "ignoresDR": false,
+        "areaEffect": false,
+        "autofireOnly": false,
+        "doubleWeapon": false,
+        "thrown": false,
+        "reach": false
+      },
+      "conditionalQualities": [],
+      "conditionalDamageProfiles": [],
+      "proficiencyRules": [],
+      "operation": {
+        "wornAs": "bracelet/jewelry",
+        "sensorDetection": {
+          "check": "Use Computer",
+          "dc": 25,
+          "trigger": "sensor scan for weapons"
+        },
+        "oneShotCapacity": true
+      },
+      "sourceFootnotes": [
+        "Inaccurate weapon: cannot fire at targets at Medium or Long range."
+      ],
+      "repo": {
+        "present": true,
+        "id": "weapon-wrist-blaster",
+        "currentName": "Wrist Blaster",
+        "phase0NameNormalizationPending": true,
+        "currentStats": {
+          "damage": "3d4",
+          "damageType": "energy",
+          "costCredits": 800,
+          "weightKg": 0.5,
+          "traits": [
+            "Illegal"
+          ],
+          "rangeProfile": "pistols"
+        },
+        "phase1ContentStatus": "DESCRIPTION_INCOMPLETE"
+      },
+      "qualityParameters": {
+        "accurate": null,
+        "inaccurate": {
+          "allowedBands": [
+            "pointBlank",
+            "short"
+          ],
+          "note": "Galaxy of Intrigue footnote: cannot fire at Medium or Long range."
+        },
+        "arc": null
+      },
+      "qualityAuthority": {
+        "accurate": "not-established-by-Galaxy-of-Intrigue",
+        "inaccurate": "established-by-Galaxy-of-Intrigue",
+        "arc": "not-established-by-Galaxy-of-Intrigue",
+        "ignoresDR": "not-established-by-Galaxy-of-Intrigue"
+      },
+      "repoComparison": {
+        "status": "MECHANICS_INCOMPLETE",
+        "severity": "material",
+        "current": {
+          "damage": "3d4",
+          "damageType": "energy",
+          "costCredits": 800,
+          "weightKg": 0.5,
+          "traits": [
+            "Illegal"
+          ],
+          "rangeProfile": "pistols"
+        },
+        "phase1ContentStatus": "DESCRIPTION_INCOMPLETE",
+        "findings": [
+          "Printed damage/cost/weight/type/availability and pistol family align with the repo.",
+          "Repo omits the published Inaccurate footnote; Galaxy of Intrigue specifically forbids Medium and Long range.",
+          "Repo legacy range string of 8 squares must not be treated as source authority or a hard maximum.",
+          "Repo does not encode the one-shot power-cell capacity or DC 25 Use Computer sensor-scan detection rule.",
+          "Production name is normalized as Wrist Blaster; preserve Phase 1 identity mapping to published Blaster, wrist."
+        ]
+      },
+      "crossPublishedSources": [],
+      "laterProductionAction": "UPDATE_AFTER_PHASE_2_WEAPON_AUTHORITY_COMPLETE"
+    },
+    {
+      "canonicalName": "Darter",
+      "publishedName": "Darter",
+      "weaponGroup": "Simple Weapon",
+      "source": {
+        "book": "Galaxy of Intrigue",
+        "descriptionPage": 64,
+        "statTablePage": 65,
+        "table": "Table 3-1: Ranged Weapons",
+        "verifiedBy": [
+          "Galaxy of Intrigue_djvu.txt",
+          "Galaxy of Intrigue.pdf visual verification"
+        ]
+      },
+      "schemaFamily": {
+        "branch": "ranged",
+        "subcategory": "simple",
+        "proficiency": "simple"
+      },
+      "canonicalStats": {
+        "size": "Medium",
+        "costCredits": 150,
+        "baseDamage": {
+          "mode": "fixed",
+          "diceCount": 0,
+          "dieSize": null,
+          "flatBonus": 1,
+          "formula": "1"
+        },
+        "weightKg": 3,
+        "damageType": {
+          "mode": "single",
+          "types": [
+            "piercing"
+          ],
+          "qualifiers": []
+        },
+        "availability": {
+          "restriction": "licensed",
+          "rare": false
+        },
+        "rateOfFire": [
+          "S"
+        ],
+        "stun": {
+          "capability": "none",
+          "hasStunSetting": false,
+          "damageMode": "none",
+          "damage": null,
+          "activation": null,
+          "rangeRule": null
+        },
+        "range": {
+          "mode": "ranged",
+          "profileId": "pistols",
+          "bands": {
+            "pointBlank": [
+              0,
+              20
+            ],
+            "short": [
+              21,
+              40
+            ],
+            "medium": [
+              41,
+              60
+            ],
+            "long": [
+              61,
+              80
+            ]
+          },
+          "basePenalties": {
+            "pointBlank": 0,
+            "short": -2,
+            "medium": -5,
+            "long": -10
+          },
+          "allowedBands": [
+            "pointBlank",
+            "short",
+            "medium",
+            "long"
+          ],
+          "hardMaxSquares": 40,
+          "penaltyApplication": "attack",
+          "qualityEffects": {
+            "pointBlankAllowed": true,
+            "shortPenaltyOverride": null,
+            "mediumAllowed": true,
+            "longAllowed": true
+          },
+          "sourceStatus": "Description calls the darter a large pistol and explicitly caps maximum range at the Short range increment (pistol Short ends at 40 squares); the cap is a weapon-specific hard maximum, not the Inaccurate quality."
+        },
+        "resource": {
+          "kind": "compressed-air-dart",
+          "source": "dart launched by compressed-air canister",
+          "capacityShots": null,
+          "replaceable": null,
+          "reloadAction": null,
+          "consumption": null,
+          "integrated": null,
+          "rechargeable": null,
+          "disposableWhenDepleted": null,
+          "sourceStatus": "Book does not publish a magazine/canister shot capacity or replacement action."
+        },
+        "resourceProfiles": [],
+        "operatingModes": {
+          "default": "normal",
+          "alternates": [],
+          "maxConcurrentAlternates": 1,
+          "autofireOnlyStunException": false
+        },
+        "damageReductionInteraction": {
+          "mode": "normal",
+          "amount": null,
+          "exceptions": []
+        },
+        "attackProfiles": [
+          {
+            "id": "primary",
+            "label": "Dart shot",
+            "kind": "attack",
+            "schemaFamily": {
+              "branch": "ranged",
+              "subcategory": "simple",
+              "proficiency": "simple"
+            },
+            "damage": {
+              "mode": "fixed",
+              "diceCount": 0,
+              "dieSize": null,
+              "flatBonus": 1,
+              "formula": "1"
+            },
+            "damageType": {
+              "mode": "single",
+              "types": [
+                "piercing"
+              ],
+              "qualifiers": []
+            },
+            "stun": {
+              "capability": "none",
+              "hasStunSetting": false,
+              "damageMode": "none",
+              "damage": null,
+              "activation": null,
+              "rangeRule": null
+            },
+            "rateOfFire": [
+              "S"
+            ],
+            "range": {
+              "mode": "ranged",
+              "profileId": "pistols",
+              "bands": {
+                "pointBlank": [
+                  0,
+                  20
+                ],
+                "short": [
+                  21,
+                  40
+                ],
+                "medium": [
+                  41,
+                  60
+                ],
+                "long": [
+                  61,
+                  80
+                ]
+              },
+              "basePenalties": {
+                "pointBlank": 0,
+                "short": -2,
+                "medium": -5,
+                "long": -10
+              },
+              "allowedBands": [
+                "pointBlank",
+                "short",
+                "medium",
+                "long"
+              ],
+              "hardMaxSquares": 40,
+              "penaltyApplication": "attack",
+              "qualityEffects": {
+                "pointBlankAllowed": true,
+                "shortPenaltyOverride": null,
+                "mediumAllowed": true,
+                "longAllowed": true
+              },
+              "sourceStatus": "Description calls the darter a large pistol and explicitly caps maximum range at the Short range increment (pistol Short ends at 40 squares); the cap is a weapon-specific hard maximum, not the Inaccurate quality."
+            },
+            "qualities": {
+              "accurate": false,
+              "inaccurate": false,
+              "arc": false,
+              "ignoresDR": false,
+              "areaEffect": false,
+              "autofireOnly": false,
+              "doubleWeapon": false,
+              "thrown": false,
+              "reach": false
+            },
+            "attackResolution": {
+              "mode": "standard",
+              "defense": "reflex",
+              "ignoredDefenseComponents": [],
+              "onMiss": "none"
+            },
+            "area": {
+              "enabled": false,
+              "shape": null,
+              "radiusSquares": null,
+              "lengthSquares": null,
+              "widthAtEndSquares": null,
+              "widthSquares": null,
+              "heightSquares": null,
+              "notes": null
+            },
+            "resourceConsumption": null,
+            "damageComponents": [],
+            "firingConstraints": null,
+            "preparedAttack": null,
+            "conditionalModifiers": [],
+            "activationRequirements": [],
+            "triggeredEffects": [
+              {
+                "id": "poison-delivery",
+                "trigger": "successful-damage-with-poison-carrying-dart",
+                "effect": "deliver-loaded-toxin"
+              }
+            ],
+            "criticalEffects": [],
+            "modifierPolicy": null,
+            "notes": [],
+            "damageMultiplier": 1,
+            "conditionalRangeRules": []
+          }
+        ],
+        "modeProfiles": [],
+        "defensiveInteractions": [],
+        "payloadProfiles": [
+          {
+            "id": "poison-carrying-dart",
+            "label": "Poison-carrying dart",
+            "damage": {
+              "mode": "fixed",
+              "diceCount": 0,
+              "dieSize": null,
+              "flatBonus": 1,
+              "formula": "1"
+            },
+            "damageType": {
+              "mode": "single",
+              "types": [
+                "piercing"
+              ],
+              "qualifiers": []
+            },
+            "specialEffects": [
+              {
+                "effect": "deliver-loaded-toxin",
+                "trigger": "darter successfully deals damage"
+              }
+            ],
+            "notes": [
+              "Poison mechanics come from the loaded toxin; this weapon entry does not redefine the toxin."
+            ],
+            "stun": {
+              "capability": "none",
+              "hasStunSetting": false,
+              "damageMode": "none",
+              "damage": null,
+              "activation": null,
+              "rangeRule": null
+            }
+          }
+        ],
+        "objectDurability": null,
+        "integratedAccessories": [],
+        "wieldingRules": [],
+        "stateMachine": null,
+        "configurationStates": [],
+        "constructionRules": null,
+        "triggeredEffects": [
+          {
+            "id": "poison-delivery",
+            "trigger": "successful-damage-with-poison-carrying-dart",
+            "effect": "deliver-loaded-toxin"
+          }
+        ],
+        "technologyClassification": {
+          "tags": [],
+          "rules": []
+        },
+        "deliveryMethod": null
+      },
+      "qualities": {
+        "accurate": false,
+        "inaccurate": false,
+        "arc": false,
+        "ignoresDR": false,
+        "areaEffect": false,
+        "autofireOnly": false,
+        "doubleWeapon": false,
+        "thrown": false,
+        "reach": false
+      },
+      "conditionalQualities": [],
+      "conditionalDamageProfiles": [],
+      "proficiencyRules": [],
+      "operation": {
+        "maximumRangeIncrement": "short",
+        "poisonDeliveryRequiresDamage": true,
+        "surveillanceTaggerCompatible": true,
+        "surveillanceTaggerCompatibility": {
+          "note": "Darter description explicitly says darts can deliver a surveillance tagger; full tagger mechanics belong to the equipment authority on p.67.",
+          "equipmentAuthorityPage": 67,
+          "duplicateWeaponIdentity": false
+        }
+      },
+      "sourceFootnotes": [],
+      "repo": {
+        "present": true,
+        "id": "weapon-darter",
+        "currentName": "Darter",
+        "phase0NameNormalizationPending": false,
+        "currentStats": {
+          "damage": "1",
+          "damageType": "kinetic",
+          "costCredits": 150,
+          "weightKg": 3,
+          "traits": [
+            "Licensed"
+          ],
+          "rangeProfile": "simple-weapons"
+        },
+        "phase1ContentStatus": "DESCRIPTION_INCOMPLETE"
+      },
+      "qualityParameters": {
+        "accurate": null,
+        "inaccurate": null,
+        "arc": null
+      },
+      "qualityAuthority": {
+        "accurate": "not-established-by-Galaxy-of-Intrigue",
+        "inaccurate": "not-established-by-Galaxy-of-Intrigue",
+        "arc": "not-established-by-Galaxy-of-Intrigue",
+        "ignoresDR": "not-established-by-Galaxy-of-Intrigue"
+      },
+      "repoComparison": {
+        "status": "MECHANICS_INCORRECT",
+        "severity": "material",
+        "current": {
+          "damage": "1",
+          "damageType": "kinetic",
+          "costCredits": 150,
+          "weightKg": 3,
+          "traits": [
+            "Licensed"
+          ],
+          "rangeProfile": "simple-weapons"
+        },
+        "phase1ContentStatus": "DESCRIPTION_INCOMPLETE",
+        "findings": [
+          "Printed cost, fixed base damage 1, weight, and Licensed availability match the repo numerically.",
+          "Repo damage type kinetic is incorrect; Table 3-1 prints Piercing.",
+          "Repo simple-weapons range profile is not source-certified. The source calls the weapon a large pistol and caps it at the Short range increment.",
+          "Repo does not encode poison-on-damage delivery or surveillance-tagger compatibility.",
+          "The published base damage is exactly 1; do not convert it to a die expression such as 1d4 or 1d1."
+        ]
+      },
+      "crossPublishedSources": [],
+      "laterProductionAction": "UPDATE_AFTER_PHASE_2_WEAPON_AUTHORITY_COMPLETE"
+    },
+    {
+      "canonicalName": "Snare Pistol",
+      "publishedName": "Snare pistol",
+      "weaponGroup": "Pistol",
+      "source": {
+        "book": "Galaxy of Intrigue",
+        "descriptionPage": 64,
+        "statTablePage": 65,
+        "table": "Table 3-1: Ranged Weapons",
+        "verifiedBy": [
+          "Galaxy of Intrigue_djvu.txt",
+          "Galaxy of Intrigue.pdf visual verification"
+        ]
+      },
+      "schemaFamily": {
+        "branch": "ranged",
+        "subcategory": "pistol",
+        "proficiency": "pistols"
+      },
+      "canonicalStats": {
+        "size": "Medium",
+        "costCredits": 600,
+        "baseDamage": {
+          "mode": "none",
+          "diceCount": 0,
+          "dieSize": null,
+          "flatBonus": 0,
+          "formula": "-"
+        },
+        "weightKg": 2,
+        "damageType": {
+          "mode": "single",
+          "types": [
+            "bludgeoning"
+          ],
+          "qualifiers": []
+        },
+        "availability": {
+          "restriction": "licensed",
+          "rare": false
+        },
+        "rateOfFire": [
+          "S"
+        ],
+        "stun": {
+          "capability": "native-stun",
+          "hasStunSetting": false,
+          "damageMode": "explicit",
+          "damage": {
+            "mode": "dice",
+            "diceCount": 1,
+            "dieSize": 4,
+            "flatBonus": 0,
+            "formula": "1d4"
+          },
+          "activation": {
+            "timing": "native",
+            "action": null
+          },
+          "rangeRule": {
+            "mode": "same-as-weapon-range",
+            "sourceExceptionToStandardStunSettingSixSquareCap": true
+          }
+        },
+        "range": {
+          "mode": "ranged",
+          "profileId": "pistols",
+          "bands": {
+            "pointBlank": [
+              0,
+              20
+            ],
+            "short": [
+              21,
+              40
+            ],
+            "medium": [
+              41,
+              60
+            ],
+            "long": [
+              61,
+              80
+            ]
+          },
+          "basePenalties": {
+            "pointBlank": 0,
+            "short": -2,
+            "medium": -5,
+            "long": -10
+          },
+          "allowedBands": [
+            "pointBlank",
+            "short"
+          ],
+          "hardMaxSquares": null,
+          "penaltyApplication": "attack",
+          "qualityEffects": {
+            "pointBlankAllowed": true,
+            "shortPenaltyOverride": null,
+            "mediumAllowed": false,
+            "longAllowed": false
+          },
+          "sourceStatus": "Galaxy of Intrigue footnote 1: cannot fire at Medium or Long range; description allows grab/grapple up to Short range."
+        },
+        "resource": {
+          "kind": "ammunition",
+          "source": "specialized snare cartridge",
+          "capacityShots": 2,
+          "replaceable": true,
+          "reloadAction": "replace-cartridge",
+          "consumption": null,
+          "integrated": false,
+          "rechargeable": null,
+          "disposableWhenDepleted": null,
+          "replacementCostCredits": 25,
+          "replacementWeightKg": 1
+        },
+        "resourceProfiles": [],
+        "operatingModes": {
+          "default": "normal",
+          "alternates": [],
+          "maxConcurrentAlternates": 1,
+          "autofireOnlyStunException": false
+        },
+        "damageReductionInteraction": {
+          "mode": "normal",
+          "amount": null,
+          "exceptions": []
+        },
+        "attackProfiles": [
+          {
+            "id": "primary",
+            "label": "Snare shot",
+            "kind": "attack",
+            "schemaFamily": {
+              "branch": "ranged",
+              "subcategory": "pistol",
+              "proficiency": "pistols"
+            },
+            "damage": {
+              "mode": "none",
+              "diceCount": 0,
+              "dieSize": null,
+              "flatBonus": 0,
+              "formula": "-"
+            },
+            "damageType": {
+              "mode": "single",
+              "types": [
+                "bludgeoning"
+              ],
+              "qualifiers": []
+            },
+            "stun": {
+              "capability": "native-stun",
+              "hasStunSetting": false,
+              "damageMode": "explicit",
+              "damage": {
+                "mode": "dice",
+                "diceCount": 1,
+                "dieSize": 4,
+                "flatBonus": 0,
+                "formula": "1d4"
+              },
+              "activation": {
+                "timing": "native",
+                "action": null
+              },
+              "rangeRule": {
+                "mode": "same-as-weapon-range",
+                "sourceExceptionToStandardStunSettingSixSquareCap": true
+              }
+            },
+            "rateOfFire": [
+              "S"
+            ],
+            "range": {
+              "mode": "ranged",
+              "profileId": "pistols",
+              "bands": {
+                "pointBlank": [
+                  0,
+                  20
+                ],
+                "short": [
+                  21,
+                  40
+                ],
+                "medium": [
+                  41,
+                  60
+                ],
+                "long": [
+                  61,
+                  80
+                ]
+              },
+              "basePenalties": {
+                "pointBlank": 0,
+                "short": -2,
+                "medium": -5,
+                "long": -10
+              },
+              "allowedBands": [
+                "pointBlank",
+                "short"
+              ],
+              "hardMaxSquares": null,
+              "penaltyApplication": "attack",
+              "qualityEffects": {
+                "pointBlankAllowed": true,
+                "shortPenaltyOverride": null,
+                "mediumAllowed": false,
+                "longAllowed": false
+              },
+              "sourceStatus": "Galaxy of Intrigue footnote 1: cannot fire at Medium or Long range; description allows grab/grapple up to Short range."
+            },
+            "qualities": {
+              "accurate": false,
+              "inaccurate": true,
+              "arc": false,
+              "ignoresDR": false,
+              "areaEffect": false,
+              "autofireOnly": false,
+              "doubleWeapon": false,
+              "thrown": false,
+              "reach": false
+            },
+            "attackResolution": {
+              "mode": "grab",
+              "defense": "normal-grab-or-grapple-rules",
+              "ignoredDefenseComponents": [],
+              "onMiss": "none"
+            },
+            "area": {
+              "enabled": false,
+              "shape": null,
+              "radiusSquares": null,
+              "lengthSquares": null,
+              "widthAtEndSquares": null,
+              "widthSquares": null,
+              "heightSquares": null,
+              "notes": null
+            },
+            "resourceConsumption": null,
+            "damageComponents": [],
+            "firingConstraints": null,
+            "preparedAttack": null,
+            "conditionalModifiers": [],
+            "activationRequirements": [
+              {
+                "type": "target",
+                "requires": "enemy-at-up-to-short-range"
+              }
+            ],
+            "triggeredEffects": [
+              {
+                "id": "stun-on-successful-grab",
+                "trigger": "successful-ranged-grab-or-grapple",
+                "damage": {
+                  "mode": "dice",
+                  "diceCount": 1,
+                  "dieSize": 4,
+                  "flatBonus": 0,
+                  "formula": "1d4"
+                },
+                "damageMode": "stun",
+                "attackRollRequired": false
+              },
+              {
+                "id": "escape-options",
+                "trigger": "while-snared",
+                "options": [
+                  {
+                    "method": "Acrobatics",
+                    "dc": 15
+                  },
+                  {
+                    "method": "Strength",
+                    "dc": 20
+                  }
+                ],
+                "effect": "snare-escape-options"
+              }
+            ],
+            "criticalEffects": [],
+            "modifierPolicy": null,
+            "notes": [],
+            "damageMultiplier": 1,
+            "conditionalRangeRules": []
+          }
+        ],
+        "modeProfiles": [],
+        "defensiveInteractions": [],
+        "payloadProfiles": [],
+        "objectDurability": null,
+        "integratedAccessories": [],
+        "wieldingRules": [],
+        "stateMachine": null,
+        "configurationStates": [],
+        "constructionRules": null,
+        "triggeredEffects": [
+          {
+            "id": "stun-on-successful-grab",
+            "trigger": "successful-ranged-grab-or-grapple",
+            "damage": {
+              "mode": "dice",
+              "diceCount": 1,
+              "dieSize": 4,
+              "flatBonus": 0,
+              "formula": "1d4"
+            },
+            "damageMode": "stun",
+            "attackRollRequired": false
+          },
+          {
+            "id": "escape-options",
+            "trigger": "while-snared",
+            "options": [
+              {
+                "method": "Acrobatics",
+                "dc": 15
+              },
+              {
+                "method": "Strength",
+                "dc": 20
+              }
+            ],
+            "effect": "snare-escape-options"
+          }
+        ],
+        "technologyClassification": {
+          "tags": [],
+          "rules": []
+        },
+        "deliveryMethod": null
+      },
+      "qualities": {
+        "accurate": false,
+        "inaccurate": true,
+        "arc": false,
+        "ignoresDR": false,
+        "areaEffect": false,
+        "autofireOnly": false,
+        "doubleWeapon": false,
+        "thrown": false,
+        "reach": false
+      },
+      "conditionalQualities": [],
+      "conditionalDamageProfiles": [],
+      "proficiencyRules": [],
+      "operation": {
+        "rangedGrabOrGrapple": true,
+        "maximumGrabRangeIncrement": "short",
+        "escapeAcrobaticsDC": 15,
+        "breakStrengthDC": 20,
+        "allowedFeats": [
+          "Pin",
+          "Trip"
+        ],
+        "disallowedFeats": [
+          "Crush",
+          "Throw",
+          "Bone Crusher"
+        ]
+      },
+      "sourceFootnotes": [
+        "Inaccurate weapon: cannot fire at targets at Medium or Long range."
+      ],
+      "repo": {
+        "present": true,
+        "id": "weapon-snare-pistol",
+        "currentName": "Snare Pistol",
+        "phase0NameNormalizationPending": false,
+        "currentStats": {
+          "damage": "1d4",
+          "damageType": "stun",
+          "costCredits": 600,
+          "weightKg": 2,
+          "traits": [
+            "Licensed"
+          ],
+          "rangeProfile": "pistols"
+        },
+        "phase1ContentStatus": "DESCRIPTION_INCOMPLETE"
+      },
+      "qualityParameters": {
+        "accurate": null,
+        "inaccurate": {
+          "allowedBands": [
+            "pointBlank",
+            "short"
+          ],
+          "note": "Galaxy of Intrigue footnote: cannot fire at Medium or Long range."
+        },
+        "arc": null
+      },
+      "qualityAuthority": {
+        "accurate": "not-established-by-Galaxy-of-Intrigue",
+        "inaccurate": "established-by-Galaxy-of-Intrigue",
+        "arc": "not-established-by-Galaxy-of-Intrigue",
+        "ignoresDR": "not-established-by-Galaxy-of-Intrigue"
+      },
+      "repoComparison": {
+        "status": "MECHANICS_INCORRECT",
+        "severity": "material",
+        "current": {
+          "damage": "1d4",
+          "damageType": "stun",
+          "costCredits": 600,
+          "weightKg": 2,
+          "traits": [
+            "Licensed"
+          ],
+          "rangeProfile": "pistols"
+        },
+        "phase1ContentStatus": "DESCRIPTION_INCOMPLETE",
+        "findings": [
+          "Printed cost/weight/availability and pistol family align with the repo.",
+          "Repo flattens native 1d4 stun into ordinary damage; published normal damage is dash and the table type is Bludgeoning.",
+          "Repo omits the published Inaccurate footnote, which forbids Medium and Long range.",
+          "Repo does not encode ranged grab/grapple resolution, DC 15 Acrobatics / DC 20 Strength escape rules, or Pin/Trip allowed versus Crush/Throw/Bone Crusher prohibited.",
+          "Specialized cartridge capacity is 2 shots; each replacement cartridge costs 25 credits and weighs 1 kg."
+        ]
+      },
+      "crossPublishedSources": [],
+      "laterProductionAction": "UPDATE_AFTER_PHASE_2_WEAPON_AUTHORITY_COMPLETE"
+    },
+    {
+      "canonicalName": "Xerrol Nightstinger",
+      "publishedName": "Xerrol nightstinger",
+      "weaponGroup": "Exotic Weapon",
+      "source": {
+        "book": "Galaxy of Intrigue",
+        "descriptionPage": 64,
+        "statTablePage": 65,
+        "table": "Table 3-1: Ranged Weapons",
+        "verifiedBy": [
+          "Galaxy of Intrigue_djvu.txt",
+          "Galaxy of Intrigue.pdf visual verification"
+        ]
+      },
+      "schemaFamily": {
+        "branch": "ranged",
+        "subcategory": "exotic",
+        "proficiency": "exotic",
+        "exoticWeaponIdentity": "Xerrol Nightstinger"
+      },
+      "canonicalStats": {
+        "size": "Medium",
+        "costCredits": 1500,
+        "baseDamage": {
+          "mode": "dice",
+          "diceCount": 3,
+          "dieSize": 6,
+          "flatBonus": 0,
+          "formula": "3d6"
+        },
+        "weightKg": 4.5,
+        "damageType": {
+          "mode": "single",
+          "types": [
+            "energy"
+          ],
+          "qualifiers": []
+        },
+        "availability": {
+          "restriction": "illegal",
+          "rare": false
+        },
+        "rateOfFire": [
+          "S"
+        ],
+        "stun": {
+          "capability": "none",
+          "hasStunSetting": false,
+          "damageMode": "none",
+          "damage": null,
+          "activation": null,
+          "rangeRule": null
+        },
+        "range": {
+          "mode": "ranged",
+          "profileId": "rifles",
+          "bands": {
+            "pointBlank": [
+              0,
+              30
+            ],
+            "short": [
+              31,
+              60
+            ],
+            "medium": [
+              61,
+              150
+            ],
+            "long": [
+              151,
+              300
+            ]
+          },
+          "basePenalties": {
+            "pointBlank": 0,
+            "short": -2,
+            "medium": -5,
+            "long": -10
+          },
+          "allowedBands": [
+            "pointBlank",
+            "short",
+            "medium",
+            "long"
+          ],
+          "hardMaxSquares": null,
+          "penaltyApplication": "attack",
+          "qualityEffects": {
+            "pointBlankAllowed": true,
+            "shortPenaltyOverride": null,
+            "mediumAllowed": true,
+            "longAllowed": true
+          },
+          "sourceStatus": "Description identifies the weapon as a sporting blaster rifle designed for sniping at long range."
+        },
+        "resource": {
+          "kind": "ammunition",
+          "source": "exotic-gas canister",
+          "capacityShots": 5,
+          "replaceable": true,
+          "reloadAction": "replace-canister",
+          "consumption": null,
+          "integrated": false,
+          "rechargeable": false,
+          "disposableWhenDepleted": null,
+          "replacementCostCredits": 1000,
+          "replacementWeightKg": null
+        },
+        "resourceProfiles": [],
+        "operatingModes": {
+          "default": "normal",
+          "alternates": [],
+          "maxConcurrentAlternates": 1,
+          "autofireOnlyStunException": false
+        },
+        "damageReductionInteraction": {
+          "mode": "normal",
+          "amount": null,
+          "exceptions": []
+        },
+        "attackProfiles": [
+          {
+            "id": "primary",
+            "label": "Invisible blaster shot",
+            "kind": "attack",
+            "schemaFamily": {
+              "branch": "ranged",
+              "subcategory": "exotic",
+              "proficiency": "exotic",
+              "exoticWeaponIdentity": "Xerrol Nightstinger"
+            },
+            "damage": {
+              "mode": "dice",
+              "diceCount": 3,
+              "dieSize": 6,
+              "flatBonus": 0,
+              "formula": "3d6"
+            },
+            "damageType": {
+              "mode": "single",
+              "types": [
+                "energy"
+              ],
+              "qualifiers": []
+            },
+            "stun": {
+              "capability": "none",
+              "hasStunSetting": false,
+              "damageMode": "none",
+              "damage": null,
+              "activation": null,
+              "rangeRule": null
+            },
+            "rateOfFire": [
+              "S"
+            ],
+            "range": {
+              "mode": "ranged",
+              "profileId": "rifles",
+              "bands": {
+                "pointBlank": [
+                  0,
+                  30
+                ],
+                "short": [
+                  31,
+                  60
+                ],
+                "medium": [
+                  61,
+                  150
+                ],
+                "long": [
+                  151,
+                  300
+                ]
+              },
+              "basePenalties": {
+                "pointBlank": 0,
+                "short": -2,
+                "medium": -5,
+                "long": -10
+              },
+              "allowedBands": [
+                "pointBlank",
+                "short",
+                "medium",
+                "long"
+              ],
+              "hardMaxSquares": null,
+              "penaltyApplication": "attack",
+              "qualityEffects": {
+                "pointBlankAllowed": true,
+                "shortPenaltyOverride": null,
+                "mediumAllowed": true,
+                "longAllowed": true
+              },
+              "sourceStatus": "Description identifies the weapon as a sporting blaster rifle designed for sniping at long range."
+            },
+            "qualities": {
+              "accurate": false,
+              "inaccurate": false,
+              "arc": false,
+              "ignoresDR": false,
+              "areaEffect": false,
+              "autofireOnly": false,
+              "doubleWeapon": false,
+              "thrown": false,
+              "reach": false
+            },
+            "attackResolution": {
+              "mode": "standard",
+              "defense": "reflex",
+              "ignoredDefenseComponents": [],
+              "onMiss": "none"
+            },
+            "area": {
+              "enabled": false,
+              "shape": null,
+              "radiusSquares": null,
+              "lengthSquares": null,
+              "widthAtEndSquares": null,
+              "widthSquares": null,
+              "heightSquares": null,
+              "notes": null
+            },
+            "resourceConsumption": null,
+            "damageComponents": [],
+            "firingConstraints": null,
+            "preparedAttack": null,
+            "conditionalModifiers": [],
+            "activationRequirements": [],
+            "triggeredEffects": [
+              {
+                "id": "concealed-shot-origin",
+                "trigger": "weapon-fired",
+                "effect": "shot is invisible to the eye and firing does not reveal shooter position",
+                "attackRollRequired": false
+              }
+            ],
+            "criticalEffects": [],
+            "modifierPolicy": null,
+            "notes": [],
+            "damageMultiplier": 1,
+            "conditionalRangeRules": []
+          }
+        ],
+        "modeProfiles": [],
+        "defensiveInteractions": [],
+        "payloadProfiles": [],
+        "objectDurability": null,
+        "integratedAccessories": [],
+        "wieldingRules": [],
+        "stateMachine": null,
+        "configurationStates": [],
+        "constructionRules": null,
+        "triggeredEffects": [
+          {
+            "id": "concealed-shot-origin",
+            "trigger": "weapon-fired",
+            "effect": "shot is invisible to the eye and firing does not reveal shooter position",
+            "attackRollRequired": false
+          }
+        ],
+        "technologyClassification": {
+          "tags": [],
+          "rules": []
+        },
+        "deliveryMethod": null
+      },
+      "qualities": {
+        "accurate": false,
+        "inaccurate": false,
+        "arc": false,
+        "ignoresDR": false,
+        "areaEffect": false,
+        "autofireOnly": false,
+        "doubleWeapon": false,
+        "thrown": false,
+        "reach": false
+      },
+      "conditionalQualities": [],
+      "conditionalDamageProfiles": [],
+      "proficiencyRules": [],
+      "operation": {
+        "shotVisibility": "invisible-to-eye",
+        "firingDoesNotRevealShooterPosition": true,
+        "redirectionCrystalCompatibility": "Mentioned as a common tactic; redirection crystal remains a separate equipment record on p.67."
+      },
+      "sourceFootnotes": [],
+      "repo": {
+        "present": true,
+        "id": "weapon-xerrol-nightstinger",
+        "currentName": "Xerrol Nightstinger",
+        "phase0NameNormalizationPending": false,
+        "currentStats": {
+          "damage": "3d6",
+          "damageType": "energy",
+          "costCredits": 1500,
+          "weightKg": 4.5,
+          "traits": [
+            "Illegal"
+          ],
+          "rangeProfile": "rifles",
+          "proficiency": "rifles"
+        },
+        "phase1ContentStatus": "DESCRIPTION_INCOMPLETE"
+      },
+      "qualityParameters": {
+        "accurate": null,
+        "inaccurate": null,
+        "arc": null
+      },
+      "qualityAuthority": {
+        "accurate": "not-established-by-Galaxy-of-Intrigue",
+        "inaccurate": "not-established-by-Galaxy-of-Intrigue",
+        "arc": "not-established-by-Galaxy-of-Intrigue",
+        "ignoresDR": "not-established-by-Galaxy-of-Intrigue"
+      },
+      "repoComparison": {
+        "status": "MECHANICS_INCORRECT",
+        "severity": "material",
+        "current": {
+          "damage": "3d6",
+          "damageType": "energy",
+          "costCredits": 1500,
+          "weightKg": 4.5,
+          "traits": [
+            "Illegal"
+          ],
+          "rangeProfile": "rifles",
+          "proficiency": "rifles"
+        },
+        "phase1ContentStatus": "DESCRIPTION_INCOMPLETE",
+        "findings": [
+          "Printed damage/cost/weight/type/availability and rifle-style range behavior align with much of the repo record.",
+          "Table 3-1 places the Xerrol Nightstinger in Exotic Weapons; repo proficiency rifles must not override the published weapon group/proficiency identity.",
+          "Repo does not encode the special 5-shot exotic-gas canister costing 1,000 credits.",
+          "Repo does not encode that the shots are invisible to the eye and firing the weapon does not reveal the sniper position.",
+          "Do not infer Accurate merely because the weapon is intended for sniping; Table 3-1 assigns no Accurate footnote."
+        ]
+      },
+      "crossPublishedSources": [],
+      "laterProductionAction": "UPDATE_AFTER_PHASE_2_WEAPON_AUTHORITY_COMPLETE"
+    }
+  ],
+  "schemaNormalization": {
+    "version": "weapon-authority-schema-v2.8",
+    "change": "Introduces v2.8 (damage.mode \"fixed\"); no prior-book backfill. Structure-only aliases, no published fact changed: pistol range bands corrected to the canonical pistols profile (the package printed medium 41-100 / long 101-200 on 6 range objects; the contract profile is 41-60 / 61-80 and the book prints no pistol-range override); flagged for planner confirmation; Darter: poison payload given a stun object; the surveillance-tagger compatibility entry moved from payloadProfiles[] (damage/effect payloads only) to operation.surveillanceTaggerCompatibility. Additional aliases: Darter Short-range maximum stored as hardMaxSquares 40 (end of the pistol Short increment) with allowedBands derived from qualities (Darter is not Inaccurate); Snare Pistol escape-options triggeredEffect given an effect key. Xerrol Nightstinger weaponGroup \"Exotic Weapon\" differs from the Phase 1 \"Rifle\" and is recorded as a documented group override in the registry (Table 3-1 places it under Exotic Weapons)."
+  }
+}

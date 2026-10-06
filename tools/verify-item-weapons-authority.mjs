@@ -473,6 +473,8 @@ if (s2) {
     if (d.mode === 'dice') {
       if (!Number.isInteger(d.diceCount) || !Number.isInteger(d.dieSize) || !Number.isInteger(d.flatBonus)) fail(`${where} dice damage needs integer diceCount/dieSize/flatBonus`);
       else if (d.formula !== `${d.diceCount}d${d.dieSize}${d.flatBonus ? (d.flatBonus > 0 ? '+' : '') + d.flatBonus : ''}`) fail(`${where} formula ${d.formula} disagrees with structured dice`);
+    } else if (d.mode === 'fixed') {
+      if (d.diceCount !== 0 || d.dieSize !== null || !Number.isInteger(d.flatBonus) || d.flatBonus < 0 || d.formula !== String(d.flatBonus)) fail(`${where} fixed damage needs diceCount 0, dieSize null, integer flatBonus and formula equal to it`);
     } else if (d.mode === 'double') {
       if (d.profiles !== undefined) {
         if (!Array.isArray(d.profiles) || d.profiles.length !== 2) fail(`${where} double damage needs two profiles`);
@@ -525,7 +527,9 @@ if (s2) {
       if (!q1) { fail(`${w} has no Phase 1 record`); continue; }
       const pick = (x) => [x.present, x.id, x.currentName, x.phase0NameNormalizationPending];
       if (!same(pick(r.repo), pick(q1.repo))) fail(`${w} repo mapping differs from Phase 1`);
-      if (r.weaponGroup !== q1.weaponGroup || r.source.descriptionPage !== q1.source.descriptionPage || (r.source.statTablePage ?? null) !== (q1.source.statTablePage ?? null)) fail(`${w} group/pages differ from Phase 1`);
+      const go = opts.groupOverrides?.[n];
+      const groupOk = go ? (go.phase1 === q1.weaponGroup && go.phase2 === r.weaponGroup) : r.weaponGroup === q1.weaponGroup;
+      if (!groupOk || r.source.descriptionPage !== q1.source.descriptionPage || (r.source.statTablePage ?? null) !== (q1.source.statTablePage ?? null)) fail(`${w} group/pages differ from Phase 1`);
       if (r.repo.present) t.present++;
       const s = r.canonicalStats, ql = r.qualities;
       if (!same(Object.keys(ql).sort(), [...QUALS].sort()) || QUALS.some((k) => typeof ql[k] !== 'boolean')) fail(`${w} quality vocabulary incomplete`);
@@ -665,7 +669,7 @@ if (s2) {
     if (t.ign !== 3) fail(`2A expected 3 ignoresDR lightsabers, found ${t.ign}`);
     if (b.records.find((r) => r.canonicalName === 'Bowcaster').canonicalStats.range.mode !== 'unresolved') fail('2A Bowcaster range must remain unresolved');
     if (b.records.length !== 48 || t.present !== 35) fail('2A Core hard checkpoint must be 48 records / 35 present / 13 missing');
-    if (s2.schemaVersion !== 'weapon-authority-schema-v2.7') fail('schemaVersion must be weapon-authority-schema-v2.7');
+    if (s2.schemaVersion !== 'weapon-authority-schema-v2.8') fail('schemaVersion must be weapon-authority-schema-v2.8');
   }
   // Standalone book authorities (not merged into the rolling record unless the owner says so)
   for (const sb of s2.standaloneBookAuthorities || []) {
@@ -675,7 +679,7 @@ if (s2) {
     if (sb.rollingMergeAuthorized !== false) fail(`${sb.phase} standalone book must not be rolling-merged without owner instruction`);
     const p1b = auth.phases['1-weapons-content'].books.find((x) => x.book === sa.book || x.book === sa.book.replace(/^The /, ''));
     const p1 = new Map(p1b.records.map((r) => [r.canonicalName, r]));
-    const t = checkBook(sa, p1, sb.phase, { mirrorProfiles: !!sb.mirrorProfiles });
+    const t = checkBook(sa, p1, sb.phase, { mirrorProfiles: !!sb.mirrorProfiles, groupOverrides: sb.phase1GroupOverrides });
     const c = sa.counts;
     if (sa.records.length !== c.canonicalWeaponClaims || sa.records.length !== sb.claims || t.present !== c.repoPresent || sa.records.length - t.present !== c.repoMissing || t.present !== sb.repoPresent) fail(`${sb.phase} counts mismatch`);
     const tallies = { accurateBaseClaims: t.accurate, inaccurateBaseClaims: t.inaccurate, arcBaseClaims: t.arc, ignoresDRBaseClaims: t.ign, areaEffectClaims: t.area, areaEffectBaseClaims: t.area, baseAccurateClaims: t.accurate, baseInaccurateClaims: t.inaccurate, baseArcClaims: t.arc, biotechClaims: t.biotech, doubleWeaponClaims: t.dbl, autofireOnlyClaims: t.auto };
@@ -694,6 +698,26 @@ if (s2) {
       for (const n of ['DX-2 Disruptor Pistol', 'DXR-6 Disruptor Rifle']) if (f(n).canonicalStats.attackProfiles[0].firingConstraints?.firesOnAlternatingRounds !== true) fail(`2D ${n} fires only on alternating rounds`);
       for (const n of ['Bryar Rifle', 'CR-1 Blast Cannon', 'Flechette Launcher', 'Stokhli Spray Stick']) if (!same(f(n).qualityParameters.inaccurate.allowedBands, ['pointBlank', 'short', 'medium'])) fail(`2D ${n} Inaccurate must exclude Long only (Core/KOTOR definition)`);
       if (!['Guard Shoto', 'Lightsaber Pike'].every((n) => f(n).canonicalStats.defensiveInteractions.length === 1)) fail('2D Guard Shoto / Lightsaber Pike defensiveInteractions');
+    }
+    if (sb.phase === '2K') {
+      const f = (n) => sa.records.find((r) => r.canonicalName === n);
+      const p0 = (n) => f(n).canonicalStats.attackProfiles[0];
+      const same2 = (a, b2) => JSON.stringify(a) === JSON.stringify(b2);
+      if (sa.records.some((r) => r.schemaFamily.branch !== 'ranged') || sa.records.some((r) => !r.repo.present)) fail('2K must be 4 ranged, all repo-present');
+      if (sa.records.some((r) => r.qualities.accurate) || !same2(sa.records.filter((r) => r.qualities.inaccurate).map((r) => r.canonicalName), ['Blaster, Wrist', 'Snare Pistol'])) fail('2K no base Accurate; Inaccurate only Wrist Blaster and Snare Pistol');
+      const fixedAll = sa.records.flatMap((r) => [r.canonicalStats.baseDamage, ...r.canonicalStats.attackProfiles.map((q) => q.damage)].filter((q) => q.mode === 'fixed').map(() => r.canonicalName));
+      if (!fixedAll.length || fixedAll.some((n) => n !== 'Darter') || sa.counts.fixedDamageClaims !== 1) fail('2K only the Darter uses fixed damage');
+      const dt = f('Darter').canonicalStats;
+      if (dt.baseDamage.mode !== 'fixed' || dt.baseDamage.flatBonus !== 1 || dt.baseDamage.formula !== '1' || p0('Darter').damage.flatBonus !== 1 || f('Darter').qualities.inaccurate || dt.damageType.types.join() !== 'piercing' || dt.range.hardMaxSquares !== 40 || f('Darter').operation.maximumRangeIncrement !== 'short' || !p0('Darter').triggeredEffects.some((q) => q.effect === 'deliver-loaded-toxin') || f('Darter').operation.poisonDeliveryRequiresDamage !== true || sa.records.some((r) => r.canonicalName === 'Surveillance Tagger')) fail('2K Darter fixed damage 1, Piercing, not Inaccurate, Short-increment maximum, poison on damage only, no tagger identity');
+      for (const n of ['Blaster, Wrist', 'Snare Pistol']) if (!same2(f(n).canonicalStats.range.allowedBands, ['pointBlank', 'short']) || !same2(f(n).qualityParameters.inaccurate.allowedBands, ['pointBlank', 'short'])) fail(`2K ${n} Inaccurate forbids Medium and Long (book-local rule)`);
+      const wb = f('Blaster, Wrist');
+      if (wb.canonicalStats.resource.capacityShots !== 1 || wb.operation.sensorDetection?.check !== 'Use Computer' || wb.operation.sensorDetection?.dc !== 25 || wb.repo.id !== 'weapon-wrist-blaster') fail('2K Wrist Blaster one shot, DC 25 Use Computer sensor detection, preserved repo id');
+      const sp = f('Snare Pistol');
+      if (sp.canonicalStats.baseDamage.mode !== 'none' || sp.canonicalStats.stun.capability !== 'native-stun' || sp.canonicalStats.stun.damage?.formula !== '1d4' || sp.canonicalStats.damageType.types.join() !== 'bludgeoning' || p0('Snare Pistol').attackResolution.mode !== 'grab' || sp.operation.escapeAcrobaticsDC !== 15 || sp.operation.breakStrengthDC !== 20 || !same2(sp.operation.allowedFeats, ['Pin', 'Trip']) || !same2(sp.operation.disallowedFeats, ['Crush', 'Throw', 'Bone Crusher']) || sp.canonicalStats.resource.capacityShots !== 2 || sp.canonicalStats.resource.replacementCostCredits !== 25 || sp.canonicalStats.resource.replacementWeightKg !== 1) fail('2K Snare Pistol native 1d4 stun, Bludgeoning, grab, DC 15/20 escape, feat restrictions, 2-shot cartridge');
+      const xn = f('Xerrol Nightstinger');
+      if (xn.weaponGroup !== 'Exotic Weapon' || xn.schemaFamily.proficiency !== 'exotic' || xn.canonicalStats.range.profileId !== 'rifles' || xn.qualities.accurate || xn.canonicalStats.resource.capacityShots !== 5 || xn.canonicalStats.resource.replacementCostCredits !== 1000 || xn.operation.firingDoesNotRevealShooterPosition !== true || !p0('Xerrol Nightstinger').triggeredEffects.some((q) => q.id === 'concealed-shot-origin')) fail('2K Xerrol Nightstinger Exotic Weapon with rifle ranges, no Accurate, 5-shot 1,000-credit canister, invisible shots');
+      if (!sb.phase1GroupOverrides?.['Xerrol Nightstinger']) fail('2K Xerrol Nightstinger group override must be recorded in the registry');
+      for (const r of sa.records) for (const rg of [r.canonicalStats.range, ...r.canonicalStats.attackProfiles.map((q) => q.range)]) if (rg.profileId === 'pistols' && !same2(rg.bands.medium, [41, 60])) fail(`2K ${r.canonicalName} pistol bands must be the canonical profile`);
     }
     if (sb.phase === '2J') {
       const f = (n) => sa.records.find((r) => r.canonicalName === n);

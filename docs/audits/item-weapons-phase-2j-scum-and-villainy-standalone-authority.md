@@ -329,3 +329,4 @@ Acceptance checks:
 - No schema change: the book fits `weapon-authority-schema-v2.7`. Aliases normalized to the existing shapes (structure only; see `schemaNormalization` in the JSON and the rolling authority Phase 2 section). Micro Grenade Launcher's payload-dependent -2 dice uses `add-dice` with `dieSize: "same-as-selected-grenade"` (vocabulary tolerance).
 - The verifier enforces the Neural Inhibitor persistent poison cycle, 6-square Pulse Rifle / Deck Sweeper cones, Deck Sweeper priming, Electronet launcher-only 2x2 area with grab and recurring stun, Subrepeating Blaster autofire-only stock rule, Squib Battering Ram two operators and four power packs, Micro Grenade Launcher payload rules, Snare Rifle grab/escape/feat rules, and the Sniper -5 un-Aimed penalty without mandatory accessories.
 - Negative tests run (20 corruptions): all failed the verifier and were restored.
+- Schema v2.8 (`damage.mode: "fixed"`) added to the contract; this book needed no change.

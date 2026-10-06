@@ -439,3 +439,4 @@ Apply these changes to the **authority schema only**, then append the new fields
 - Schema v2.5 structural defaults added; Garrote now has `wieldingRules` (two hands) and a `triggeredEffects` entry for its start-of-turn repeat damage and condition-track step; Snap Baton and Czerka Adventurer have `configurationStates`.
 - Schema v2.6 structural defaults added.
 - Schema v2.7 structural defaults added (`damageMultiplier: 1`, `conditionalRangeRules: []`, `resourceProfiles: []`).
+- Schema v2.8 (`damage.mode: "fixed"`) added to the contract; this book needed no change.

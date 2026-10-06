@@ -484,3 +484,4 @@ Claude may update/append the standalone authority files and schema-verifier/docu
 - Schema v2.5 structural defaults added; conditional-modifier targets renamed to `attackRoll`/`damageRoll`; `stun.activation` backfilled from each record stun capability.
 - Schema v2.6 structural defaults added; no conditional qualities existed to convert.
 - Schema v2.7 structural defaults added (`damageMultiplier: 1`, `conditionalRangeRules: []`, `resourceProfiles: []`).
+- Schema v2.8 (`damage.mode: "fixed"`) added to the contract; this book needed no change.
