@@ -28200,7 +28200,7 @@
       ]
     },
     "2-weapons-numeric-stat-schema": {
-      "status": "WEAPON_AUTHORITY_SCHEMA_V2_7_NORMALIZED_THROUGH_REBELLION_ERA (2A Core in rolling; 2B KOTOR, 2C Galaxy at War, 2D Force Unleashed, 2E Clone Wars, 2F Jedi Academy, 2G Legacy Era, 2H Unknown Regions, 2I Rebellion Era standalone)",
+      "status": "WEAPON_AUTHORITY_SCHEMA_V2_7_NORMALIZED_THROUGH_SCUM_AND_VILLAINY (2A Core in rolling; 2B KOTOR, 2C Galaxy at War, 2D Force Unleashed, 2E Clone Wars, 2F Jedi Academy, 2G Legacy Era, 2H Unknown Regions, 2I Rebellion Era, 2J Scum and Villainy standalone)",
       "family": "weapons",
       "authorityType": "authority-only; no production mutation",
       "schemaVersion": "weapon-authority-schema-v2.7",
@@ -28686,7 +28686,7 @@
         },
         "conditionalDamage": {
           "field": "conditionalDamageProfiles",
-          "rule": "Record-level array; [] unless a certified source rule changes damage by condition (e.g. Scatter Gun by range band, Darkstick held two in one hand). Entries are replacement profiles (default operation \"replace\", requires damage) or adjustments: \"add-dice\" (diceCountDelta, dieSize) and \"area-toggle\" (CR-1 adjacent +1d8, nonadjacent splash).",
+          "rule": "Record-level array; [] unless a certified source rule changes damage by condition (e.g. Scatter Gun by range band, Darkstick held two in one hand). Entries are replacement profiles (default operation \"replace\", requires damage) or adjustments: \"add-dice\" (diceCountDelta, dieSize) and \"area-toggle\" (CR-1 adjacent +1d8, nonadjacent splash). When the dice come from a payload selected at fire time (Micro Grenade Launcher: selected grenade damage -2 dice), add-dice may use diceCountDelta < 0 with dieSize \"same-as-selected-grenade\" (vocabulary tolerance, no version bump).",
           "operations": [
             "replace",
             "add-dice",
@@ -42288,6 +42288,20 @@
           "mirrorProfiles": false,
           "specialRateOfFireAllowed": [],
           "note": "Book-only authority by owner instruction. Introduces schema v2.7. BlasTech 500 Riot Gun stays conflict-gated against Clone Wars; Flechette Launcher is the same identity as Force Unleashed."
+        },
+        {
+          "phase": "2J",
+          "book": "Scum and Villainy",
+          "file": "data/audits/item-weapons-phase-2j-scum-and-villainy-standalone-authority.json",
+          "doc": "docs/audits/item-weapons-phase-2j-scum-and-villainy-standalone-authority.md",
+          "status": "SCUM_AND_VILLAINY_PHASE_2J_STANDALONE_CERTIFIED",
+          "claims": 9,
+          "repoPresent": 9,
+          "repoMissing": 0,
+          "rollingMergeAuthorized": false,
+          "mirrorProfiles": false,
+          "specialRateOfFireAllowed": [],
+          "note": "Book-only authority by owner instruction. No schema change (stays v2.7). All nine claims are repo-present."
         }
       ],
       "pendingSchemaDecision": {
@@ -42298,7 +42312,7 @@
   },
   "pendingPhases": [
     "1 Provenance and canonical content certification — weapons COMPLETE (1A-1L, authority-only); next within Phase 1: armor, general equipment families, cybernetics/upgrades/templates, lightsaber components, droid systems; weapon numeric/stat/schema certification precedes any creation of the 53 missing weapons",
-    "Phase 2 weapons numeric/stat/schema certification — 2A Core DONE (schema v2.1), 2B KOTOR, 2C Galaxy at War, 2D Force Unleashed, 2E Clone Wars, 2F Jedi Academy, 2G Legacy Era, 2H Unknown Regions and 2I Rebellion Era DONE (standalone book authorities, schema v2.7); next books in order: Scum and Villainy (9), Galaxy of Intrigue (4), Threats of the Galaxy (4); then reconcile all 203 identities; Bowcaster range and BlasTech 500 Riot Gun conflict remain gated",
+    "Phase 2 weapons numeric/stat/schema certification — 2A Core DONE (schema v2.1), 2B KOTOR, 2C Galaxy at War, 2D Force Unleashed, 2E Clone Wars, 2F Jedi Academy, 2G Legacy Era, 2H Unknown Regions, 2I Rebellion Era and 2J Scum and Villainy DONE (standalone book authorities, schema v2.7); next books in order: Galaxy of Intrigue (4), Threats of the Galaxy (4); then reconcile all 203 identities; Bowcaster range and BlasTech 500 Riot Gun conflict remain gated",
     "Gated cleanup tranche (0-3D migrations, 0-3E renames/merge, 0-3F template migration, 0-3G weapons.db stragglers, 0-3H droid migration, weapon/equipment REMOVE dependents)",
     "Vehicle/starship item domain census (separate domain)",
     "2 Descriptions",
