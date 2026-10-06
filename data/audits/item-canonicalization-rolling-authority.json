@@ -28200,10 +28200,10 @@
       ]
     },
     "2-weapons-numeric-stat-schema": {
-      "status": "PHASE_2_WEAPONS_NUMERIC_STAT_SCHEMA_IN_PROGRESS (2A Core certified)",
+      "status": "PHASE_2_WEAPONS_NUMERIC_STAT_SCHEMA_IN_PROGRESS (2A Core certified, schema v2.1; 2B KOTOR certified standalone)",
       "family": "weapons",
       "authorityType": "authority-only; no production mutation",
-      "schemaVersion": "2A-core-gold-v2",
+      "schemaVersion": "2A-core-gold-v2.1",
       "goldStandard": true,
       "sourcePolicy": [
         "Supplied published PDF tables, table footnotes, weapon-group rules, and weapon descriptions are final authority for Core weapon mechanics.",
@@ -28226,7 +28226,8 @@
             "modifier",
             "special",
             "ammunition",
-            "none"
+            "none",
+            "alternate-profiles"
           ],
           "rule": "Runtime modifiers may add dice, change die size, or add bonuses without rewriting the persisted canonical base profile. Effective damage is never persisted back into baseDamage."
         },
@@ -28459,9 +28460,10 @@
           "representation": "array of printed settings",
           "values": [
             "S",
-            "A"
+            "A",
+            "Special"
           ],
-          "rule": "Use [S], [A], or [S,A] for ranged weapons. autofireOnly is a separate quality established by source text."
+          "rule": "Use [S], [A], or [S,A] for ranged weapons. autofireOnly is a separate quality established by source text. \"Special\" is used only when the printed table says Special (KOTOR Sonic Disruptor); it requires operation.specialRateOfFire and is never coerced to S or A."
         },
         "resourceAndAmmunition": {
           "rule": "Preserve power source/ammunition kind, capacity, reload action, replacement units, and alternate source. Null capacity means unstated or effectively indefinite, never zero by default."
@@ -28533,7 +28535,12 @@
           ],
           "rule": "These are implementation compatibility surfaces, not independent canonical authorities. Claude should extend verification around them but must not mutate production records during Phase 2 certification."
         },
-        "authorityInvariant": "Published fact -> structured canonical field -> explicit schema mapping -> later production mutation. Repo data never flows backward into canonical authority."
+        "authorityInvariant": "Published fact -> structured canonical field -> explicit schema mapping -> later production mutation. Repo data never flows backward into canonical authority.",
+        "attackProfiles": {
+          "field": "canonicalStats.attackProfiles",
+          "rule": "Every record lists its mechanically distinct attacks. Ordinary weapons have one profile (id \"primary\"); double weapons have \"end1\"/\"end2\" profiles with the same structured damage as baseDamage.profiles; weapons whose source publishes alternate attacks (KOTOR Massassi Lanvarok: \"disc\" and \"melee\") use baseDamage.mode \"alternate-profiles\". Profile shape: id, branch, baseDamage, damageType, range (and wielding where a source requires it). canonicalStats.baseDamage/damageType/range remain the aggregate record and must agree with the profiles.",
+          "guardrail": "Never invent an alternate profile because a weapon could theoretically be used another way; only source-established attacks create profiles."
+        }
       },
       "executorGuardrails": [
         "Fold this revised package as the replacement/gold-standard Phase 2A Core authority. Do not keep the superseded provisional stunDamage schema alongside it as a competing authority.",
@@ -28563,7 +28570,7 @@
         {
           "phase": "2A",
           "book": "Core Rulebook",
-          "status": "CERTIFIED_PHASE_2A_CORE_GOLD_STANDARD_NUMERIC_STAT_SCHEMA_AUTHORITY",
+          "status": "CERTIFIED_PHASE_2A_CORE_GOLD_STANDARD_NUMERIC_STAT_SCHEMA_AUTHORITY (schema 2A-core-gold-v2.1: attackProfiles + Special ROF vocabulary normalized)",
           "counts": {
             "claims": 48,
             "uniqueIdentities": 48,
@@ -28690,7 +28697,36 @@
                   "mode": "normal",
                   "amount": null,
                   "exceptions": []
-                }
+                },
+                "attackProfiles": [
+                  {
+                    "id": "primary",
+                    "branch": "melee",
+                    "baseDamage": {
+                      "mode": "special",
+                      "diceCount": null,
+                      "dieSize": null,
+                      "flatBonus": null,
+                      "formula": "Special"
+                    },
+                    "damageType": {
+                      "mode": "special",
+                      "types": [],
+                      "qualifiers": []
+                    },
+                    "range": {
+                      "mode": "melee",
+                      "profileId": null,
+                      "bands": null,
+                      "basePenalties": null,
+                      "qualityEffects": {
+                        "pointBlankAllowed": null,
+                        "shortPenaltyOverride": null,
+                        "longAllowed": null
+                      }
+                    }
+                  }
+                ]
               },
               "qualities": {
                 "accurate": false,
@@ -28811,7 +28847,38 @@
                   "mode": "normal",
                   "amount": null,
                   "exceptions": []
-                }
+                },
+                "attackProfiles": [
+                  {
+                    "id": "primary",
+                    "branch": "melee",
+                    "baseDamage": {
+                      "mode": "dice",
+                      "diceCount": 2,
+                      "dieSize": 4,
+                      "flatBonus": 0,
+                      "formula": "2d4"
+                    },
+                    "damageType": {
+                      "mode": "single",
+                      "types": [
+                        "bludgeoning"
+                      ],
+                      "qualifiers": []
+                    },
+                    "range": {
+                      "mode": "melee",
+                      "profileId": null,
+                      "bands": null,
+                      "basePenalties": null,
+                      "qualityEffects": {
+                        "pointBlankAllowed": null,
+                        "shortPenaltyOverride": null,
+                        "longAllowed": null
+                      }
+                    }
+                  }
+                ]
               },
               "qualities": {
                 "accurate": false,
@@ -28914,7 +28981,38 @@
                   "mode": "normal",
                   "amount": null,
                   "exceptions": []
-                }
+                },
+                "attackProfiles": [
+                  {
+                    "id": "primary",
+                    "branch": "melee",
+                    "baseDamage": {
+                      "mode": "dice",
+                      "diceCount": 1,
+                      "dieSize": 8,
+                      "flatBonus": 0,
+                      "formula": "1d8"
+                    },
+                    "damageType": {
+                      "mode": "single",
+                      "types": [
+                        "piercing"
+                      ],
+                      "qualifiers": []
+                    },
+                    "range": {
+                      "mode": "melee",
+                      "profileId": null,
+                      "bands": null,
+                      "basePenalties": null,
+                      "qualityEffects": {
+                        "pointBlankAllowed": null,
+                        "shortPenaltyOverride": null,
+                        "longAllowed": null
+                      }
+                    }
+                  }
+                ]
               },
               "qualities": {
                 "accurate": false,
@@ -29022,7 +29120,38 @@
                   "mode": "normal",
                   "amount": null,
                   "exceptions": []
-                }
+                },
+                "attackProfiles": [
+                  {
+                    "id": "primary",
+                    "branch": "melee",
+                    "baseDamage": {
+                      "mode": "dice",
+                      "diceCount": 2,
+                      "dieSize": 4,
+                      "flatBonus": 0,
+                      "formula": "2d4"
+                    },
+                    "damageType": {
+                      "mode": "single",
+                      "types": [
+                        "bludgeoning"
+                      ],
+                      "qualifiers": []
+                    },
+                    "range": {
+                      "mode": "melee",
+                      "profileId": null,
+                      "bands": null,
+                      "basePenalties": null,
+                      "qualityEffects": {
+                        "pointBlankAllowed": null,
+                        "shortPenaltyOverride": null,
+                        "longAllowed": null
+                      }
+                    }
+                  }
+                ]
               },
               "qualities": {
                 "accurate": false,
@@ -29126,7 +29255,38 @@
                   "mode": "normal",
                   "amount": null,
                   "exceptions": []
-                }
+                },
+                "attackProfiles": [
+                  {
+                    "id": "primary",
+                    "branch": "melee",
+                    "baseDamage": {
+                      "mode": "dice",
+                      "diceCount": 1,
+                      "dieSize": 6,
+                      "flatBonus": 0,
+                      "formula": "1d6"
+                    },
+                    "damageType": {
+                      "mode": "single",
+                      "types": [
+                        "bludgeoning"
+                      ],
+                      "qualifiers": []
+                    },
+                    "range": {
+                      "mode": "melee",
+                      "profileId": null,
+                      "bands": null,
+                      "basePenalties": null,
+                      "qualityEffects": {
+                        "pointBlankAllowed": null,
+                        "shortPenaltyOverride": null,
+                        "longAllowed": null
+                      }
+                    }
+                  }
+                ]
               },
               "qualities": {
                 "accurate": false,
@@ -29241,7 +29401,39 @@
                   "mode": "normal",
                   "amount": null,
                   "exceptions": []
-                }
+                },
+                "attackProfiles": [
+                  {
+                    "id": "primary",
+                    "branch": "melee",
+                    "baseDamage": {
+                      "mode": "modifier",
+                      "diceCount": 0,
+                      "dieSize": null,
+                      "flatBonus": 1,
+                      "formula": "+1",
+                      "appliesTo": "successful unarmed attack"
+                    },
+                    "damageType": {
+                      "mode": "single",
+                      "types": [
+                        "bludgeoning"
+                      ],
+                      "qualifiers": []
+                    },
+                    "range": {
+                      "mode": "melee",
+                      "profileId": null,
+                      "bands": null,
+                      "basePenalties": null,
+                      "qualityEffects": {
+                        "pointBlankAllowed": null,
+                        "shortPenaltyOverride": null,
+                        "longAllowed": null
+                      }
+                    }
+                  }
+                ]
               },
               "qualities": {
                 "accurate": false,
@@ -29383,7 +29575,69 @@
                   "mode": "normal",
                   "amount": null,
                   "exceptions": []
-                }
+                },
+                "attackProfiles": [
+                  {
+                    "id": "end1",
+                    "branch": "melee",
+                    "baseDamage": {
+                      "mode": "dice",
+                      "diceCount": 2,
+                      "dieSize": 6,
+                      "flatBonus": 0,
+                      "formula": "2d6"
+                    },
+                    "damageType": {
+                      "mode": "and",
+                      "types": [
+                        "bludgeoning",
+                        "energy"
+                      ],
+                      "qualifiers": []
+                    },
+                    "range": {
+                      "mode": "melee",
+                      "profileId": null,
+                      "bands": null,
+                      "basePenalties": null,
+                      "qualityEffects": {
+                        "pointBlankAllowed": null,
+                        "shortPenaltyOverride": null,
+                        "longAllowed": null
+                      }
+                    }
+                  },
+                  {
+                    "id": "end2",
+                    "branch": "melee",
+                    "baseDamage": {
+                      "mode": "dice",
+                      "diceCount": 2,
+                      "dieSize": 6,
+                      "flatBonus": 0,
+                      "formula": "2d6"
+                    },
+                    "damageType": {
+                      "mode": "and",
+                      "types": [
+                        "bludgeoning",
+                        "energy"
+                      ],
+                      "qualifiers": []
+                    },
+                    "range": {
+                      "mode": "melee",
+                      "profileId": null,
+                      "bands": null,
+                      "basePenalties": null,
+                      "qualityEffects": {
+                        "pointBlankAllowed": null,
+                        "shortPenaltyOverride": null,
+                        "longAllowed": null
+                      }
+                    }
+                  }
+                ]
               },
               "qualities": {
                 "accurate": false,
@@ -29499,7 +29753,39 @@
                   "mode": "normal",
                   "amount": null,
                   "exceptions": []
-                }
+                },
+                "attackProfiles": [
+                  {
+                    "id": "primary",
+                    "branch": "melee",
+                    "baseDamage": {
+                      "mode": "dice",
+                      "diceCount": 2,
+                      "dieSize": 8,
+                      "flatBonus": 0,
+                      "formula": "2d8"
+                    },
+                    "damageType": {
+                      "mode": "and",
+                      "types": [
+                        "piercing",
+                        "energy"
+                      ],
+                      "qualifiers": []
+                    },
+                    "range": {
+                      "mode": "melee",
+                      "profileId": null,
+                      "bands": null,
+                      "basePenalties": null,
+                      "qualityEffects": {
+                        "pointBlankAllowed": null,
+                        "shortPenaltyOverride": null,
+                        "longAllowed": null
+                      }
+                    }
+                  }
+                ]
               },
               "qualities": {
                 "accurate": false,
@@ -29601,7 +29887,39 @@
                   "mode": "normal",
                   "amount": null,
                   "exceptions": []
-                }
+                },
+                "attackProfiles": [
+                  {
+                    "id": "primary",
+                    "branch": "melee",
+                    "baseDamage": {
+                      "mode": "dice",
+                      "diceCount": 1,
+                      "dieSize": 4,
+                      "flatBonus": 0,
+                      "formula": "1d4"
+                    },
+                    "damageType": {
+                      "mode": "or",
+                      "types": [
+                        "slashing",
+                        "piercing"
+                      ],
+                      "qualifiers": []
+                    },
+                    "range": {
+                      "mode": "melee",
+                      "profileId": null,
+                      "bands": null,
+                      "basePenalties": null,
+                      "qualityEffects": {
+                        "pointBlankAllowed": null,
+                        "shortPenaltyOverride": null,
+                        "longAllowed": null
+                      }
+                    }
+                  }
+                ]
               },
               "qualities": {
                 "accurate": false,
@@ -29711,7 +30029,39 @@
                   "exceptions": [
                     "Shield Rating reduces lightsaber damage normally."
                   ]
-                }
+                },
+                "attackProfiles": [
+                  {
+                    "id": "primary",
+                    "branch": "melee",
+                    "baseDamage": {
+                      "mode": "dice",
+                      "diceCount": 2,
+                      "dieSize": 8,
+                      "flatBonus": 0,
+                      "formula": "2d8"
+                    },
+                    "damageType": {
+                      "mode": "and",
+                      "types": [
+                        "energy",
+                        "slashing"
+                      ],
+                      "qualifiers": []
+                    },
+                    "range": {
+                      "mode": "melee",
+                      "profileId": null,
+                      "bands": null,
+                      "basePenalties": null,
+                      "qualityEffects": {
+                        "pointBlankAllowed": null,
+                        "shortPenaltyOverride": null,
+                        "longAllowed": null
+                      }
+                    }
+                  }
+                ]
               },
               "qualities": {
                 "accurate": false,
@@ -29836,7 +30186,69 @@
                   "exceptions": [
                     "Shield Rating reduces lightsaber damage normally."
                   ]
-                }
+                },
+                "attackProfiles": [
+                  {
+                    "id": "end1",
+                    "branch": "melee",
+                    "baseDamage": {
+                      "mode": "dice",
+                      "diceCount": 2,
+                      "dieSize": 8,
+                      "flatBonus": 0,
+                      "formula": "2d8"
+                    },
+                    "damageType": {
+                      "mode": "and",
+                      "types": [
+                        "energy",
+                        "slashing"
+                      ],
+                      "qualifiers": []
+                    },
+                    "range": {
+                      "mode": "melee",
+                      "profileId": null,
+                      "bands": null,
+                      "basePenalties": null,
+                      "qualityEffects": {
+                        "pointBlankAllowed": null,
+                        "shortPenaltyOverride": null,
+                        "longAllowed": null
+                      }
+                    }
+                  },
+                  {
+                    "id": "end2",
+                    "branch": "melee",
+                    "baseDamage": {
+                      "mode": "dice",
+                      "diceCount": 2,
+                      "dieSize": 8,
+                      "flatBonus": 0,
+                      "formula": "2d8"
+                    },
+                    "damageType": {
+                      "mode": "and",
+                      "types": [
+                        "energy",
+                        "slashing"
+                      ],
+                      "qualifiers": []
+                    },
+                    "range": {
+                      "mode": "melee",
+                      "profileId": null,
+                      "bands": null,
+                      "basePenalties": null,
+                      "qualityEffects": {
+                        "pointBlankAllowed": null,
+                        "shortPenaltyOverride": null,
+                        "longAllowed": null
+                      }
+                    }
+                  }
+                ]
               },
               "qualities": {
                 "accurate": false,
@@ -29946,7 +30358,39 @@
                   "exceptions": [
                     "Shield Rating reduces lightsaber damage normally."
                   ]
-                }
+                },
+                "attackProfiles": [
+                  {
+                    "id": "primary",
+                    "branch": "melee",
+                    "baseDamage": {
+                      "mode": "dice",
+                      "diceCount": 2,
+                      "dieSize": 6,
+                      "flatBonus": 0,
+                      "formula": "2d6"
+                    },
+                    "damageType": {
+                      "mode": "and",
+                      "types": [
+                        "energy",
+                        "slashing"
+                      ],
+                      "qualifiers": []
+                    },
+                    "range": {
+                      "mode": "melee",
+                      "profileId": null,
+                      "bands": null,
+                      "basePenalties": null,
+                      "qualityEffects": {
+                        "pointBlankAllowed": null,
+                        "shortPenaltyOverride": null,
+                        "longAllowed": null
+                      }
+                    }
+                  }
+                ]
               },
               "qualities": {
                 "accurate": false,
@@ -30051,7 +30495,38 @@
                   "mode": "normal",
                   "amount": null,
                   "exceptions": []
-                }
+                },
+                "attackProfiles": [
+                  {
+                    "id": "primary",
+                    "branch": "melee",
+                    "baseDamage": {
+                      "mode": "dice",
+                      "diceCount": 1,
+                      "dieSize": 8,
+                      "flatBonus": 0,
+                      "formula": "1d8"
+                    },
+                    "damageType": {
+                      "mode": "single",
+                      "types": [
+                        "bludgeoning"
+                      ],
+                      "qualifiers": []
+                    },
+                    "range": {
+                      "mode": "melee",
+                      "profileId": null,
+                      "bands": null,
+                      "basePenalties": null,
+                      "qualityEffects": {
+                        "pointBlankAllowed": null,
+                        "shortPenaltyOverride": null,
+                        "longAllowed": null
+                      }
+                    }
+                  }
+                ]
               },
               "qualities": {
                 "accurate": false,
@@ -30165,7 +30640,67 @@
                   "mode": "normal",
                   "amount": null,
                   "exceptions": []
-                }
+                },
+                "attackProfiles": [
+                  {
+                    "id": "end1",
+                    "branch": "melee",
+                    "baseDamage": {
+                      "mode": "dice",
+                      "diceCount": 1,
+                      "dieSize": 6,
+                      "flatBonus": 0,
+                      "formula": "1d6"
+                    },
+                    "damageType": {
+                      "mode": "single",
+                      "types": [
+                        "bludgeoning"
+                      ],
+                      "qualifiers": []
+                    },
+                    "range": {
+                      "mode": "melee",
+                      "profileId": null,
+                      "bands": null,
+                      "basePenalties": null,
+                      "qualityEffects": {
+                        "pointBlankAllowed": null,
+                        "shortPenaltyOverride": null,
+                        "longAllowed": null
+                      }
+                    }
+                  },
+                  {
+                    "id": "end2",
+                    "branch": "melee",
+                    "baseDamage": {
+                      "mode": "dice",
+                      "diceCount": 1,
+                      "dieSize": 6,
+                      "flatBonus": 0,
+                      "formula": "1d6"
+                    },
+                    "damageType": {
+                      "mode": "single",
+                      "types": [
+                        "bludgeoning"
+                      ],
+                      "qualifiers": []
+                    },
+                    "range": {
+                      "mode": "melee",
+                      "profileId": null,
+                      "bands": null,
+                      "basePenalties": null,
+                      "qualityEffects": {
+                        "pointBlankAllowed": null,
+                        "shortPenaltyOverride": null,
+                        "longAllowed": null
+                      }
+                    }
+                  }
+                ]
               },
               "qualities": {
                 "accurate": false,
@@ -30266,7 +30801,38 @@
                   "mode": "normal",
                   "amount": null,
                   "exceptions": []
-                }
+                },
+                "attackProfiles": [
+                  {
+                    "id": "primary",
+                    "branch": "melee",
+                    "baseDamage": {
+                      "mode": "dice",
+                      "diceCount": 1,
+                      "dieSize": 8,
+                      "flatBonus": 0,
+                      "formula": "1d8"
+                    },
+                    "damageType": {
+                      "mode": "single",
+                      "types": [
+                        "piercing"
+                      ],
+                      "qualifiers": []
+                    },
+                    "range": {
+                      "mode": "melee",
+                      "profileId": null,
+                      "bands": null,
+                      "basePenalties": null,
+                      "qualityEffects": {
+                        "pointBlankAllowed": null,
+                        "shortPenaltyOverride": null,
+                        "longAllowed": null
+                      }
+                    }
+                  }
+                ]
               },
               "qualities": {
                 "accurate": false,
@@ -30380,7 +30946,38 @@
                   "mode": "normal",
                   "amount": null,
                   "exceptions": []
-                }
+                },
+                "attackProfiles": [
+                  {
+                    "id": "primary",
+                    "branch": "melee",
+                    "baseDamage": {
+                      "mode": "dice",
+                      "diceCount": 1,
+                      "dieSize": 6,
+                      "flatBonus": 0,
+                      "formula": "1d6"
+                    },
+                    "damageType": {
+                      "mode": "single",
+                      "types": [
+                        "bludgeoning"
+                      ],
+                      "qualifiers": []
+                    },
+                    "range": {
+                      "mode": "melee",
+                      "profileId": null,
+                      "bands": null,
+                      "basePenalties": null,
+                      "qualityEffects": {
+                        "pointBlankAllowed": null,
+                        "shortPenaltyOverride": null,
+                        "longAllowed": null
+                      }
+                    }
+                  }
+                ]
               },
               "qualities": {
                 "accurate": false,
@@ -30484,7 +31081,38 @@
                   "mode": "normal",
                   "amount": null,
                   "exceptions": []
-                }
+                },
+                "attackProfiles": [
+                  {
+                    "id": "primary",
+                    "branch": "melee",
+                    "baseDamage": {
+                      "mode": "dice",
+                      "diceCount": 2,
+                      "dieSize": 10,
+                      "flatBonus": 0,
+                      "formula": "2d10"
+                    },
+                    "damageType": {
+                      "mode": "single",
+                      "types": [
+                        "slashing"
+                      ],
+                      "qualifiers": []
+                    },
+                    "range": {
+                      "mode": "melee",
+                      "profileId": null,
+                      "bands": null,
+                      "basePenalties": null,
+                      "qualityEffects": {
+                        "pointBlankAllowed": null,
+                        "shortPenaltyOverride": null,
+                        "longAllowed": null
+                      }
+                    }
+                  }
+                ]
               },
               "qualities": {
                 "accurate": false,
@@ -30588,7 +31216,38 @@
                   "mode": "normal",
                   "amount": null,
                   "exceptions": []
-                }
+                },
+                "attackProfiles": [
+                  {
+                    "id": "primary",
+                    "branch": "melee",
+                    "baseDamage": {
+                      "mode": "dice",
+                      "diceCount": 2,
+                      "dieSize": 6,
+                      "flatBonus": 0,
+                      "formula": "2d6"
+                    },
+                    "damageType": {
+                      "mode": "single",
+                      "types": [
+                        "piercing"
+                      ],
+                      "qualifiers": []
+                    },
+                    "range": {
+                      "mode": "melee",
+                      "profileId": null,
+                      "bands": null,
+                      "basePenalties": null,
+                      "qualityEffects": {
+                        "pointBlankAllowed": null,
+                        "shortPenaltyOverride": null,
+                        "longAllowed": null
+                      }
+                    }
+                  }
+                ]
               },
               "qualities": {
                 "accurate": false,
@@ -30699,7 +31358,39 @@
                   "mode": "normal",
                   "amount": null,
                   "exceptions": []
-                }
+                },
+                "attackProfiles": [
+                  {
+                    "id": "primary",
+                    "branch": "melee",
+                    "baseDamage": {
+                      "mode": "dice",
+                      "diceCount": 2,
+                      "dieSize": 6,
+                      "flatBonus": 0,
+                      "formula": "2d6"
+                    },
+                    "damageType": {
+                      "mode": "or",
+                      "types": [
+                        "slashing",
+                        "piercing"
+                      ],
+                      "qualifiers": []
+                    },
+                    "range": {
+                      "mode": "melee",
+                      "profileId": null,
+                      "bands": null,
+                      "basePenalties": null,
+                      "qualityEffects": {
+                        "pointBlankAllowed": null,
+                        "shortPenaltyOverride": null,
+                        "longAllowed": null
+                      }
+                    }
+                  }
+                ]
               },
               "qualities": {
                 "accurate": false,
@@ -30804,7 +31495,39 @@
                   "mode": "normal",
                   "amount": null,
                   "exceptions": []
-                }
+                },
+                "attackProfiles": [
+                  {
+                    "id": "primary",
+                    "branch": "melee",
+                    "baseDamage": {
+                      "mode": "dice",
+                      "diceCount": 2,
+                      "dieSize": 4,
+                      "flatBonus": 0,
+                      "formula": "2d4"
+                    },
+                    "damageType": {
+                      "mode": "or",
+                      "types": [
+                        "slashing",
+                        "piercing"
+                      ],
+                      "qualifiers": []
+                    },
+                    "range": {
+                      "mode": "melee",
+                      "profileId": null,
+                      "bands": null,
+                      "basePenalties": null,
+                      "qualityEffects": {
+                        "pointBlankAllowed": null,
+                        "shortPenaltyOverride": null,
+                        "longAllowed": null
+                      }
+                    }
+                  }
+                ]
               },
               "qualities": {
                 "accurate": false,
@@ -30934,7 +31657,60 @@
                   "mode": "normal",
                   "amount": null,
                   "exceptions": []
-                }
+                },
+                "attackProfiles": [
+                  {
+                    "id": "primary",
+                    "branch": "ranged",
+                    "baseDamage": {
+                      "mode": "dice",
+                      "diceCount": 3,
+                      "dieSize": 12,
+                      "flatBonus": 0,
+                      "formula": "3d12"
+                    },
+                    "damageType": {
+                      "mode": "single",
+                      "types": [
+                        "energy"
+                      ],
+                      "qualifiers": []
+                    },
+                    "range": {
+                      "mode": "profile",
+                      "profileId": "heavy-weapons",
+                      "bands": {
+                        "pointBlank": [
+                          0,
+                          50
+                        ],
+                        "short": [
+                          51,
+                          100
+                        ],
+                        "medium": [
+                          101,
+                          250
+                        ],
+                        "long": [
+                          251,
+                          500
+                        ]
+                      },
+                      "basePenalties": {
+                        "pointBlank": 0,
+                        "short": -2,
+                        "medium": -5,
+                        "long": -10
+                      },
+                      "qualityEffects": {
+                        "pointBlankAllowed": true,
+                        "shortPenaltyOverride": null,
+                        "longAllowed": true
+                      }
+                    }
+                  }
+                ]
               },
               "qualities": {
                 "accurate": false,
@@ -31078,7 +31854,60 @@
                   "mode": "normal",
                   "amount": null,
                   "exceptions": []
-                }
+                },
+                "attackProfiles": [
+                  {
+                    "id": "primary",
+                    "branch": "ranged",
+                    "baseDamage": {
+                      "mode": "dice",
+                      "diceCount": 3,
+                      "dieSize": 8,
+                      "flatBonus": 0,
+                      "formula": "3d8"
+                    },
+                    "damageType": {
+                      "mode": "single",
+                      "types": [
+                        "energy"
+                      ],
+                      "qualifiers": []
+                    },
+                    "range": {
+                      "mode": "profile",
+                      "profileId": "rifles",
+                      "bands": {
+                        "pointBlank": [
+                          0,
+                          30
+                        ],
+                        "short": [
+                          31,
+                          60
+                        ],
+                        "medium": [
+                          61,
+                          150
+                        ],
+                        "long": [
+                          151,
+                          300
+                        ]
+                      },
+                      "basePenalties": {
+                        "pointBlank": 0,
+                        "short": -2,
+                        "medium": -5,
+                        "long": -10
+                      },
+                      "qualityEffects": {
+                        "pointBlankAllowed": true,
+                        "shortPenaltyOverride": null,
+                        "longAllowed": true
+                      }
+                    }
+                  }
+                ]
               },
               "qualities": {
                 "accurate": false,
@@ -31209,7 +32038,60 @@
                   "mode": "normal",
                   "amount": null,
                   "exceptions": []
-                }
+                },
+                "attackProfiles": [
+                  {
+                    "id": "primary",
+                    "branch": "ranged",
+                    "baseDamage": {
+                      "mode": "dice",
+                      "diceCount": 3,
+                      "dieSize": 12,
+                      "flatBonus": 0,
+                      "formula": "3d12"
+                    },
+                    "damageType": {
+                      "mode": "single",
+                      "types": [
+                        "energy"
+                      ],
+                      "qualifiers": []
+                    },
+                    "range": {
+                      "mode": "profile",
+                      "profileId": "heavy-weapons",
+                      "bands": {
+                        "pointBlank": [
+                          0,
+                          50
+                        ],
+                        "short": [
+                          51,
+                          100
+                        ],
+                        "medium": [
+                          101,
+                          250
+                        ],
+                        "long": [
+                          251,
+                          500
+                        ]
+                      },
+                      "basePenalties": {
+                        "pointBlank": 0,
+                        "short": -2,
+                        "medium": -5,
+                        "long": -10
+                      },
+                      "qualityEffects": {
+                        "pointBlankAllowed": true,
+                        "shortPenaltyOverride": null,
+                        "longAllowed": true
+                      }
+                    }
+                  }
+                ]
               },
               "qualities": {
                 "accurate": false,
@@ -31345,7 +32227,60 @@
                   "mode": "normal",
                   "amount": null,
                   "exceptions": []
-                }
+                },
+                "attackProfiles": [
+                  {
+                    "id": "primary",
+                    "branch": "ranged",
+                    "baseDamage": {
+                      "mode": "dice",
+                      "diceCount": 3,
+                      "dieSize": 10,
+                      "flatBonus": 0,
+                      "formula": "3d10"
+                    },
+                    "damageType": {
+                      "mode": "single",
+                      "types": [
+                        "energy"
+                      ],
+                      "qualifiers": []
+                    },
+                    "range": {
+                      "mode": "profile",
+                      "profileId": "heavy-weapons",
+                      "bands": {
+                        "pointBlank": [
+                          0,
+                          50
+                        ],
+                        "short": [
+                          51,
+                          100
+                        ],
+                        "medium": [
+                          101,
+                          250
+                        ],
+                        "long": [
+                          251,
+                          500
+                        ]
+                      },
+                      "basePenalties": {
+                        "pointBlank": 0,
+                        "short": -2,
+                        "medium": -5,
+                        "long": -10
+                      },
+                      "qualityEffects": {
+                        "pointBlankAllowed": true,
+                        "shortPenaltyOverride": null,
+                        "longAllowed": true
+                      }
+                    }
+                  }
+                ]
               },
               "qualities": {
                 "accurate": false,
@@ -31487,7 +32422,60 @@
                   "mode": "normal",
                   "amount": null,
                   "exceptions": []
-                }
+                },
+                "attackProfiles": [
+                  {
+                    "id": "primary",
+                    "branch": "ranged",
+                    "baseDamage": {
+                      "mode": "dice",
+                      "diceCount": 3,
+                      "dieSize": 6,
+                      "flatBonus": 0,
+                      "formula": "3d6"
+                    },
+                    "damageType": {
+                      "mode": "single",
+                      "types": [
+                        "energy"
+                      ],
+                      "qualifiers": []
+                    },
+                    "range": {
+                      "mode": "profile",
+                      "profileId": "pistols",
+                      "bands": {
+                        "pointBlank": [
+                          0,
+                          20
+                        ],
+                        "short": [
+                          21,
+                          40
+                        ],
+                        "medium": [
+                          41,
+                          60
+                        ],
+                        "long": [
+                          61,
+                          80
+                        ]
+                      },
+                      "basePenalties": {
+                        "pointBlank": 0,
+                        "short": -2,
+                        "medium": -5,
+                        "long": -10
+                      },
+                      "qualityEffects": {
+                        "pointBlankAllowed": true,
+                        "shortPenaltyOverride": null,
+                        "longAllowed": true
+                      }
+                    }
+                  }
+                ]
               },
               "qualities": {
                 "accurate": false,
@@ -31627,7 +32615,60 @@
                   "mode": "normal",
                   "amount": null,
                   "exceptions": []
-                }
+                },
+                "attackProfiles": [
+                  {
+                    "id": "primary",
+                    "branch": "ranged",
+                    "baseDamage": {
+                      "mode": "dice",
+                      "diceCount": 3,
+                      "dieSize": 8,
+                      "flatBonus": 0,
+                      "formula": "3d8"
+                    },
+                    "damageType": {
+                      "mode": "single",
+                      "types": [
+                        "energy"
+                      ],
+                      "qualifiers": []
+                    },
+                    "range": {
+                      "mode": "profile",
+                      "profileId": "pistols",
+                      "bands": {
+                        "pointBlank": [
+                          0,
+                          20
+                        ],
+                        "short": [
+                          21,
+                          40
+                        ],
+                        "medium": [
+                          41,
+                          60
+                        ],
+                        "long": [
+                          61,
+                          80
+                        ]
+                      },
+                      "basePenalties": {
+                        "pointBlank": 0,
+                        "short": -2,
+                        "medium": -5,
+                        "long": -10
+                      },
+                      "qualityEffects": {
+                        "pointBlankAllowed": true,
+                        "shortPenaltyOverride": null,
+                        "longAllowed": true
+                      }
+                    }
+                  }
+                ]
               },
               "qualities": {
                 "accurate": false,
@@ -31755,7 +32796,60 @@
                   "mode": "normal",
                   "amount": null,
                   "exceptions": []
-                }
+                },
+                "attackProfiles": [
+                  {
+                    "id": "primary",
+                    "branch": "ranged",
+                    "baseDamage": {
+                      "mode": "dice",
+                      "diceCount": 3,
+                      "dieSize": 4,
+                      "flatBonus": 0,
+                      "formula": "3d4"
+                    },
+                    "damageType": {
+                      "mode": "single",
+                      "types": [
+                        "energy"
+                      ],
+                      "qualifiers": []
+                    },
+                    "range": {
+                      "mode": "profile",
+                      "profileId": "pistols",
+                      "bands": {
+                        "pointBlank": [
+                          0,
+                          20
+                        ],
+                        "short": [
+                          21,
+                          40
+                        ],
+                        "medium": [
+                          41,
+                          60
+                        ],
+                        "long": [
+                          61,
+                          80
+                        ]
+                      },
+                      "basePenalties": {
+                        "pointBlank": 0,
+                        "short": -2,
+                        "medium": -5,
+                        "long": -10
+                      },
+                      "qualityEffects": {
+                        "pointBlankAllowed": true,
+                        "shortPenaltyOverride": null,
+                        "longAllowed": true
+                      }
+                    }
+                  }
+                ]
               },
               "qualities": {
                 "accurate": false,
@@ -31899,7 +32993,60 @@
                   "mode": "normal",
                   "amount": null,
                   "exceptions": []
-                }
+                },
+                "attackProfiles": [
+                  {
+                    "id": "primary",
+                    "branch": "ranged",
+                    "baseDamage": {
+                      "mode": "dice",
+                      "diceCount": 3,
+                      "dieSize": 4,
+                      "flatBonus": 0,
+                      "formula": "3d4"
+                    },
+                    "damageType": {
+                      "mode": "single",
+                      "types": [
+                        "energy"
+                      ],
+                      "qualifiers": []
+                    },
+                    "range": {
+                      "mode": "profile",
+                      "profileId": "pistols",
+                      "bands": {
+                        "pointBlank": [
+                          0,
+                          20
+                        ],
+                        "short": [
+                          21,
+                          40
+                        ],
+                        "medium": [
+                          41,
+                          60
+                        ],
+                        "long": [
+                          61,
+                          80
+                        ]
+                      },
+                      "basePenalties": {
+                        "pointBlank": 0,
+                        "short": -2,
+                        "medium": -5,
+                        "long": -10
+                      },
+                      "qualityEffects": {
+                        "pointBlankAllowed": true,
+                        "shortPenaltyOverride": null,
+                        "longAllowed": true
+                      }
+                    }
+                  }
+                ]
               },
               "qualities": {
                 "accurate": false,
@@ -32041,7 +33188,60 @@
                   "mode": "normal",
                   "amount": null,
                   "exceptions": []
-                }
+                },
+                "attackProfiles": [
+                  {
+                    "id": "primary",
+                    "branch": "ranged",
+                    "baseDamage": {
+                      "mode": "dice",
+                      "diceCount": 3,
+                      "dieSize": 8,
+                      "flatBonus": 0,
+                      "formula": "3d8"
+                    },
+                    "damageType": {
+                      "mode": "single",
+                      "types": [
+                        "energy"
+                      ],
+                      "qualifiers": []
+                    },
+                    "range": {
+                      "mode": "profile",
+                      "profileId": "rifles",
+                      "bands": {
+                        "pointBlank": [
+                          0,
+                          30
+                        ],
+                        "short": [
+                          31,
+                          60
+                        ],
+                        "medium": [
+                          61,
+                          150
+                        ],
+                        "long": [
+                          151,
+                          300
+                        ]
+                      },
+                      "basePenalties": {
+                        "pointBlank": 0,
+                        "short": -2,
+                        "medium": -5,
+                        "long": -10
+                      },
+                      "qualityEffects": {
+                        "pointBlankAllowed": true,
+                        "shortPenaltyOverride": null,
+                        "longAllowed": true
+                      }
+                    }
+                  }
+                ]
               },
               "qualities": {
                 "accurate": false,
@@ -32186,7 +33386,60 @@
                   "mode": "normal",
                   "amount": null,
                   "exceptions": []
-                }
+                },
+                "attackProfiles": [
+                  {
+                    "id": "primary",
+                    "branch": "ranged",
+                    "baseDamage": {
+                      "mode": "dice",
+                      "diceCount": 3,
+                      "dieSize": 10,
+                      "flatBonus": 0,
+                      "formula": "3d10"
+                    },
+                    "damageType": {
+                      "mode": "single",
+                      "types": [
+                        "energy"
+                      ],
+                      "qualifiers": []
+                    },
+                    "range": {
+                      "mode": "profile",
+                      "profileId": "rifles",
+                      "bands": {
+                        "pointBlank": [
+                          0,
+                          30
+                        ],
+                        "short": [
+                          31,
+                          60
+                        ],
+                        "medium": [
+                          61,
+                          150
+                        ],
+                        "long": [
+                          151,
+                          300
+                        ]
+                      },
+                      "basePenalties": {
+                        "pointBlank": 0,
+                        "short": -2,
+                        "medium": -5,
+                        "long": -10
+                      },
+                      "qualityEffects": {
+                        "pointBlankAllowed": true,
+                        "shortPenaltyOverride": null,
+                        "longAllowed": true
+                      }
+                    }
+                  }
+                ]
               },
               "qualities": {
                 "accurate": false,
@@ -32315,7 +33568,60 @@
                   "mode": "normal",
                   "amount": null,
                   "exceptions": []
-                }
+                },
+                "attackProfiles": [
+                  {
+                    "id": "primary",
+                    "branch": "ranged",
+                    "baseDamage": {
+                      "mode": "dice",
+                      "diceCount": 3,
+                      "dieSize": 8,
+                      "flatBonus": 0,
+                      "formula": "3d8"
+                    },
+                    "damageType": {
+                      "mode": "single",
+                      "types": [
+                        "energy"
+                      ],
+                      "qualifiers": []
+                    },
+                    "range": {
+                      "mode": "profile",
+                      "profileId": "rifles",
+                      "bands": {
+                        "pointBlank": [
+                          0,
+                          30
+                        ],
+                        "short": [
+                          31,
+                          60
+                        ],
+                        "medium": [
+                          61,
+                          150
+                        ],
+                        "long": [
+                          151,
+                          300
+                        ]
+                      },
+                      "basePenalties": {
+                        "pointBlank": 0,
+                        "short": -2,
+                        "medium": -5,
+                        "long": -10
+                      },
+                      "qualityEffects": {
+                        "pointBlankAllowed": true,
+                        "shortPenaltyOverride": null,
+                        "longAllowed": true
+                      }
+                    }
+                  }
+                ]
               },
               "qualities": {
                 "accurate": false,
@@ -32455,7 +33761,60 @@
                   "mode": "normal",
                   "amount": null,
                   "exceptions": []
-                }
+                },
+                "attackProfiles": [
+                  {
+                    "id": "primary",
+                    "branch": "ranged",
+                    "baseDamage": {
+                      "mode": "dice",
+                      "diceCount": 3,
+                      "dieSize": 6,
+                      "flatBonus": 0,
+                      "formula": "3d6"
+                    },
+                    "damageType": {
+                      "mode": "single",
+                      "types": [
+                        "energy"
+                      ],
+                      "qualifiers": []
+                    },
+                    "range": {
+                      "mode": "profile",
+                      "profileId": "rifles",
+                      "bands": {
+                        "pointBlank": [
+                          0,
+                          30
+                        ],
+                        "short": [
+                          31,
+                          60
+                        ],
+                        "medium": [
+                          61,
+                          150
+                        ],
+                        "long": [
+                          151,
+                          300
+                        ]
+                      },
+                      "basePenalties": {
+                        "pointBlank": 0,
+                        "short": -2,
+                        "medium": -5,
+                        "long": -10
+                      },
+                      "qualityEffects": {
+                        "pointBlankAllowed": true,
+                        "shortPenaltyOverride": null,
+                        "longAllowed": true
+                      }
+                    }
+                  }
+                ]
               },
               "qualities": {
                 "accurate": false,
@@ -32588,7 +33947,60 @@
                   "mode": "normal",
                   "amount": null,
                   "exceptions": []
-                }
+                },
+                "attackProfiles": [
+                  {
+                    "id": "primary",
+                    "branch": "ranged",
+                    "baseDamage": {
+                      "mode": "dice",
+                      "diceCount": 1,
+                      "dieSize": 6,
+                      "flatBonus": 0,
+                      "formula": "1d6"
+                    },
+                    "damageType": {
+                      "mode": "single",
+                      "types": [
+                        "piercing"
+                      ],
+                      "qualifiers": []
+                    },
+                    "range": {
+                      "mode": "profile",
+                      "profileId": "simple-weapons",
+                      "bands": {
+                        "pointBlank": [
+                          0,
+                          20
+                        ],
+                        "short": [
+                          21,
+                          40
+                        ],
+                        "medium": [
+                          41,
+                          60
+                        ],
+                        "long": [
+                          61,
+                          80
+                        ]
+                      },
+                      "basePenalties": {
+                        "pointBlank": 0,
+                        "short": -2,
+                        "medium": -5,
+                        "long": -10
+                      },
+                      "qualityEffects": {
+                        "pointBlankAllowed": true,
+                        "shortPenaltyOverride": null,
+                        "longAllowed": true
+                      }
+                    }
+                  }
+                ]
               },
               "qualities": {
                 "accurate": false,
@@ -32703,7 +34115,39 @@
                   "mode": "normal",
                   "amount": null,
                   "exceptions": []
-                }
+                },
+                "attackProfiles": [
+                  {
+                    "id": "primary",
+                    "branch": "ranged",
+                    "baseDamage": {
+                      "mode": "dice",
+                      "diceCount": 3,
+                      "dieSize": 10,
+                      "flatBonus": 0,
+                      "formula": "3d10"
+                    },
+                    "damageType": {
+                      "mode": "and",
+                      "types": [
+                        "energy",
+                        "piercing"
+                      ],
+                      "qualifiers": []
+                    },
+                    "range": {
+                      "mode": "unresolved",
+                      "profileId": null,
+                      "bands": null,
+                      "basePenalties": null,
+                      "qualityEffects": {
+                        "pointBlankAllowed": null,
+                        "shortPenaltyOverride": null,
+                        "longAllowed": null
+                      }
+                    }
+                  }
+                ]
               },
               "qualities": {
                 "accurate": false,
@@ -32818,7 +34262,38 @@
                   "mode": "normal",
                   "amount": null,
                   "exceptions": []
-                }
+                },
+                "attackProfiles": [
+                  {
+                    "id": "primary",
+                    "branch": "ranged",
+                    "baseDamage": {
+                      "mode": "dice",
+                      "diceCount": 3,
+                      "dieSize": 6,
+                      "flatBonus": 0,
+                      "formula": "3d6"
+                    },
+                    "damageType": {
+                      "mode": "single",
+                      "types": [
+                        "fire"
+                      ],
+                      "qualifiers": []
+                    },
+                    "range": {
+                      "mode": "fixed-area",
+                      "profileId": null,
+                      "bands": null,
+                      "basePenalties": null,
+                      "qualityEffects": {
+                        "pointBlankAllowed": null,
+                        "shortPenaltyOverride": null,
+                        "longAllowed": null
+                      }
+                    }
+                  }
+                ]
               },
               "qualities": {
                 "accurate": false,
@@ -32954,7 +34429,61 @@
                   "mode": "normal",
                   "amount": null,
                   "exceptions": []
-                }
+                },
+                "attackProfiles": [
+                  {
+                    "id": "primary",
+                    "branch": "ranged",
+                    "baseDamage": {
+                      "mode": "dice",
+                      "diceCount": 2,
+                      "dieSize": 8,
+                      "flatBonus": 0,
+                      "formula": "2d8"
+                    },
+                    "damageType": {
+                      "mode": "single",
+                      "types": [
+                        "energy"
+                      ],
+                      "qualifiers": []
+                    },
+                    "range": {
+                      "mode": "conditional",
+                      "profileId": null,
+                      "bands": null,
+                      "basePenalties": null,
+                      "variants": [
+                        {
+                          "condition": "thrown by hand",
+                          "profileId": "thrown-weapons",
+                          "accurate": false,
+                          "inaccurate": false,
+                          "arc": false
+                        },
+                        {
+                          "condition": "hurled by atlatl",
+                          "profileId": "simple-weapons",
+                          "accurate": false,
+                          "inaccurate": false,
+                          "arc": false
+                        },
+                        {
+                          "condition": "hurled by cesta",
+                          "profileId": "simple-weapons",
+                          "accurate": true,
+                          "inaccurate": false,
+                          "arc": false
+                        }
+                      ],
+                      "qualityEffects": {
+                        "pointBlankAllowed": null,
+                        "shortPenaltyOverride": null,
+                        "longAllowed": null
+                      }
+                    }
+                  }
+                ]
               },
               "qualities": {
                 "accurate": false,
@@ -33103,7 +34632,60 @@
                   "mode": "normal",
                   "amount": null,
                   "exceptions": []
-                }
+                },
+                "attackProfiles": [
+                  {
+                    "id": "primary",
+                    "branch": "ranged",
+                    "baseDamage": {
+                      "mode": "dice",
+                      "diceCount": 4,
+                      "dieSize": 6,
+                      "flatBonus": 0,
+                      "formula": "4d6"
+                    },
+                    "damageType": {
+                      "mode": "single",
+                      "types": [
+                        "slashing"
+                      ],
+                      "qualifiers": []
+                    },
+                    "range": {
+                      "mode": "profile",
+                      "profileId": "thrown-weapons",
+                      "bands": {
+                        "pointBlank": [
+                          0,
+                          6
+                        ],
+                        "short": [
+                          7,
+                          8
+                        ],
+                        "medium": [
+                          9,
+                          10
+                        ],
+                        "long": [
+                          11,
+                          12
+                        ]
+                      },
+                      "basePenalties": {
+                        "pointBlank": 0,
+                        "short": -2,
+                        "medium": -5,
+                        "long": -10
+                      },
+                      "qualityEffects": {
+                        "pointBlankAllowed": true,
+                        "shortPenaltyOverride": null,
+                        "longAllowed": true
+                      }
+                    }
+                  }
+                ]
               },
               "qualities": {
                 "accurate": false,
@@ -33238,7 +34820,62 @@
                   "mode": "normal",
                   "amount": null,
                   "exceptions": []
-                }
+                },
+                "attackProfiles": [
+                  {
+                    "id": "primary",
+                    "branch": "ranged",
+                    "baseDamage": {
+                      "mode": "dice",
+                      "diceCount": 4,
+                      "dieSize": 6,
+                      "flatBonus": 0,
+                      "formula": "4d6"
+                    },
+                    "damageType": {
+                      "mode": "single",
+                      "types": [
+                        "energy"
+                      ],
+                      "qualifiers": [
+                        "ion"
+                      ]
+                    },
+                    "range": {
+                      "mode": "profile",
+                      "profileId": "thrown-weapons",
+                      "bands": {
+                        "pointBlank": [
+                          0,
+                          6
+                        ],
+                        "short": [
+                          7,
+                          8
+                        ],
+                        "medium": [
+                          9,
+                          10
+                        ],
+                        "long": [
+                          11,
+                          12
+                        ]
+                      },
+                      "basePenalties": {
+                        "pointBlank": 0,
+                        "short": -2,
+                        "medium": -5,
+                        "long": -10
+                      },
+                      "qualityEffects": {
+                        "pointBlankAllowed": true,
+                        "shortPenaltyOverride": null,
+                        "longAllowed": true
+                      }
+                    }
+                  }
+                ]
               },
               "qualities": {
                 "accurate": false,
@@ -33381,7 +35018,60 @@
                   "mode": "normal",
                   "amount": null,
                   "exceptions": []
-                }
+                },
+                "attackProfiles": [
+                  {
+                    "id": "primary",
+                    "branch": "ranged",
+                    "baseDamage": {
+                      "mode": "none",
+                      "diceCount": 0,
+                      "dieSize": null,
+                      "flatBonus": 0,
+                      "formula": null
+                    },
+                    "damageType": {
+                      "mode": "single",
+                      "types": [
+                        "energy"
+                      ],
+                      "qualifiers": []
+                    },
+                    "range": {
+                      "mode": "profile",
+                      "profileId": "thrown-weapons",
+                      "bands": {
+                        "pointBlank": [
+                          0,
+                          6
+                        ],
+                        "short": [
+                          7,
+                          8
+                        ],
+                        "medium": [
+                          9,
+                          10
+                        ],
+                        "long": [
+                          11,
+                          12
+                        ]
+                      },
+                      "basePenalties": {
+                        "pointBlank": 0,
+                        "short": -2,
+                        "medium": -5,
+                        "long": -10
+                      },
+                      "qualityEffects": {
+                        "pointBlankAllowed": true,
+                        "shortPenaltyOverride": null,
+                        "longAllowed": true
+                      }
+                    }
+                  }
+                ]
               },
               "qualities": {
                 "accurate": false,
@@ -33517,7 +35207,58 @@
                   "mode": "normal",
                   "amount": null,
                   "exceptions": []
-                }
+                },
+                "attackProfiles": [
+                  {
+                    "id": "primary",
+                    "branch": "ranged",
+                    "baseDamage": {
+                      "mode": "ammunition",
+                      "diceCount": null,
+                      "dieSize": null,
+                      "flatBonus": null,
+                      "formula": "Special"
+                    },
+                    "damageType": {
+                      "mode": "varies",
+                      "types": [],
+                      "qualifiers": []
+                    },
+                    "range": {
+                      "mode": "profile",
+                      "profileId": "heavy-weapons",
+                      "bands": {
+                        "pointBlank": [
+                          0,
+                          50
+                        ],
+                        "short": [
+                          51,
+                          100
+                        ],
+                        "medium": [
+                          101,
+                          250
+                        ],
+                        "long": [
+                          251,
+                          500
+                        ]
+                      },
+                      "basePenalties": {
+                        "pointBlank": 0,
+                        "short": -2,
+                        "medium": -5,
+                        "long": -10
+                      },
+                      "qualityEffects": {
+                        "pointBlankAllowed": true,
+                        "shortPenaltyOverride": null,
+                        "longAllowed": true
+                      }
+                    }
+                  }
+                ]
               },
               "qualities": {
                 "accurate": false,
@@ -33651,7 +35392,62 @@
                   "mode": "normal",
                   "amount": null,
                   "exceptions": []
-                }
+                },
+                "attackProfiles": [
+                  {
+                    "id": "primary",
+                    "branch": "ranged",
+                    "baseDamage": {
+                      "mode": "dice",
+                      "diceCount": 3,
+                      "dieSize": 6,
+                      "flatBonus": 0,
+                      "formula": "3d6"
+                    },
+                    "damageType": {
+                      "mode": "single",
+                      "types": [
+                        "energy"
+                      ],
+                      "qualifiers": [
+                        "ion"
+                      ]
+                    },
+                    "range": {
+                      "mode": "profile",
+                      "profileId": "pistols",
+                      "bands": {
+                        "pointBlank": [
+                          0,
+                          20
+                        ],
+                        "short": [
+                          21,
+                          40
+                        ],
+                        "medium": [
+                          41,
+                          60
+                        ],
+                        "long": [
+                          61,
+                          80
+                        ]
+                      },
+                      "basePenalties": {
+                        "pointBlank": 0,
+                        "short": -2,
+                        "medium": -5,
+                        "long": -10
+                      },
+                      "qualityEffects": {
+                        "pointBlankAllowed": true,
+                        "shortPenaltyOverride": null,
+                        "longAllowed": true
+                      }
+                    }
+                  }
+                ]
               },
               "qualities": {
                 "accurate": false,
@@ -33783,7 +35579,62 @@
                   "mode": "normal",
                   "amount": null,
                   "exceptions": []
-                }
+                },
+                "attackProfiles": [
+                  {
+                    "id": "primary",
+                    "branch": "ranged",
+                    "baseDamage": {
+                      "mode": "dice",
+                      "diceCount": 3,
+                      "dieSize": 8,
+                      "flatBonus": 0,
+                      "formula": "3d8"
+                    },
+                    "damageType": {
+                      "mode": "single",
+                      "types": [
+                        "energy"
+                      ],
+                      "qualifiers": [
+                        "ion"
+                      ]
+                    },
+                    "range": {
+                      "mode": "profile",
+                      "profileId": "rifles",
+                      "bands": {
+                        "pointBlank": [
+                          0,
+                          30
+                        ],
+                        "short": [
+                          31,
+                          60
+                        ],
+                        "medium": [
+                          61,
+                          150
+                        ],
+                        "long": [
+                          151,
+                          300
+                        ]
+                      },
+                      "basePenalties": {
+                        "pointBlank": 0,
+                        "short": -2,
+                        "medium": -5,
+                        "long": -10
+                      },
+                      "qualityEffects": {
+                        "pointBlankAllowed": true,
+                        "shortPenaltyOverride": null,
+                        "longAllowed": true
+                      }
+                    }
+                  }
+                ]
               },
               "qualities": {
                 "accurate": false,
@@ -33918,7 +35769,60 @@
                   "mode": "normal",
                   "amount": null,
                   "exceptions": []
-                }
+                },
+                "attackProfiles": [
+                  {
+                    "id": "primary",
+                    "branch": "ranged",
+                    "baseDamage": {
+                      "mode": "dice",
+                      "diceCount": 6,
+                      "dieSize": 6,
+                      "flatBonus": 0,
+                      "formula": "6d6"
+                    },
+                    "damageType": {
+                      "mode": "single",
+                      "types": [
+                        "slashing"
+                      ],
+                      "qualifiers": []
+                    },
+                    "range": {
+                      "mode": "profile",
+                      "profileId": "heavy-weapons",
+                      "bands": {
+                        "pointBlank": [
+                          0,
+                          50
+                        ],
+                        "short": [
+                          51,
+                          100
+                        ],
+                        "medium": [
+                          101,
+                          250
+                        ],
+                        "long": [
+                          251,
+                          500
+                        ]
+                      },
+                      "basePenalties": {
+                        "pointBlank": 0,
+                        "short": -2,
+                        "medium": -5,
+                        "long": -10
+                      },
+                      "qualityEffects": {
+                        "pointBlankAllowed": true,
+                        "shortPenaltyOverride": null,
+                        "longAllowed": true
+                      }
+                    }
+                  }
+                ]
               },
               "qualities": {
                 "accurate": false,
@@ -34048,7 +35952,58 @@
                   "mode": "normal",
                   "amount": null,
                   "exceptions": []
-                }
+                },
+                "attackProfiles": [
+                  {
+                    "id": "primary",
+                    "branch": "ranged",
+                    "baseDamage": {
+                      "mode": "none",
+                      "diceCount": 0,
+                      "dieSize": null,
+                      "flatBonus": 0,
+                      "formula": null
+                    },
+                    "damageType": {
+                      "mode": "none",
+                      "types": [],
+                      "qualifiers": []
+                    },
+                    "range": {
+                      "mode": "profile",
+                      "profileId": "simple-weapons",
+                      "bands": {
+                        "pointBlank": [
+                          0,
+                          20
+                        ],
+                        "short": [
+                          21,
+                          40
+                        ],
+                        "medium": [
+                          41,
+                          60
+                        ],
+                        "long": [
+                          61,
+                          80
+                        ]
+                      },
+                      "basePenalties": {
+                        "pointBlank": 0,
+                        "short": -2,
+                        "medium": -5,
+                        "long": -10
+                      },
+                      "qualityEffects": {
+                        "pointBlankAllowed": true,
+                        "shortPenaltyOverride": null,
+                        "longAllowed": true
+                      }
+                    }
+                  }
+                ]
               },
               "qualities": {
                 "accurate": false,
@@ -34181,7 +36136,60 @@
                   "mode": "normal",
                   "amount": null,
                   "exceptions": []
-                }
+                },
+                "attackProfiles": [
+                  {
+                    "id": "primary",
+                    "branch": "ranged",
+                    "baseDamage": {
+                      "mode": "dice",
+                      "diceCount": 1,
+                      "dieSize": 4,
+                      "flatBonus": 0,
+                      "formula": "1d4"
+                    },
+                    "damageType": {
+                      "mode": "single",
+                      "types": [
+                        "bludgeoning"
+                      ],
+                      "qualifiers": []
+                    },
+                    "range": {
+                      "mode": "profile",
+                      "profileId": "simple-weapons",
+                      "bands": {
+                        "pointBlank": [
+                          0,
+                          20
+                        ],
+                        "short": [
+                          21,
+                          40
+                        ],
+                        "medium": [
+                          41,
+                          60
+                        ],
+                        "long": [
+                          61,
+                          80
+                        ]
+                      },
+                      "basePenalties": {
+                        "pointBlank": 0,
+                        "short": -2,
+                        "medium": -5,
+                        "long": -10
+                      },
+                      "qualityEffects": {
+                        "pointBlankAllowed": true,
+                        "shortPenaltyOverride": null,
+                        "longAllowed": true
+                      }
+                    }
+                  }
+                ]
               },
               "qualities": {
                 "accurate": false,
@@ -34316,7 +36324,60 @@
                   "mode": "normal",
                   "amount": null,
                   "exceptions": []
-                }
+                },
+                "attackProfiles": [
+                  {
+                    "id": "primary",
+                    "branch": "ranged",
+                    "baseDamage": {
+                      "mode": "dice",
+                      "diceCount": 2,
+                      "dieSize": 6,
+                      "flatBonus": 0,
+                      "formula": "2d6"
+                    },
+                    "damageType": {
+                      "mode": "single",
+                      "types": [
+                        "piercing"
+                      ],
+                      "qualifiers": []
+                    },
+                    "range": {
+                      "mode": "profile",
+                      "profileId": "pistols",
+                      "bands": {
+                        "pointBlank": [
+                          0,
+                          20
+                        ],
+                        "short": [
+                          21,
+                          40
+                        ],
+                        "medium": [
+                          41,
+                          60
+                        ],
+                        "long": [
+                          61,
+                          80
+                        ]
+                      },
+                      "basePenalties": {
+                        "pointBlank": 0,
+                        "short": -2,
+                        "medium": -5,
+                        "long": -10
+                      },
+                      "qualityEffects": {
+                        "pointBlankAllowed": true,
+                        "shortPenaltyOverride": null,
+                        "longAllowed": true
+                      }
+                    }
+                  }
+                ]
               },
               "qualities": {
                 "accurate": false,
@@ -34452,7 +36513,60 @@
                   "mode": "normal",
                   "amount": null,
                   "exceptions": []
-                }
+                },
+                "attackProfiles": [
+                  {
+                    "id": "primary",
+                    "branch": "ranged",
+                    "baseDamage": {
+                      "mode": "dice",
+                      "diceCount": 2,
+                      "dieSize": 8,
+                      "flatBonus": 0,
+                      "formula": "2d8"
+                    },
+                    "damageType": {
+                      "mode": "single",
+                      "types": [
+                        "piercing"
+                      ],
+                      "qualifiers": []
+                    },
+                    "range": {
+                      "mode": "profile",
+                      "profileId": "rifles",
+                      "bands": {
+                        "pointBlank": [
+                          0,
+                          30
+                        ],
+                        "short": [
+                          31,
+                          60
+                        ],
+                        "medium": [
+                          61,
+                          150
+                        ],
+                        "long": [
+                          151,
+                          300
+                        ]
+                      },
+                      "basePenalties": {
+                        "pointBlank": 0,
+                        "short": -2,
+                        "medium": -5,
+                        "long": -10
+                      },
+                      "qualityEffects": {
+                        "pointBlankAllowed": true,
+                        "shortPenaltyOverride": null,
+                        "longAllowed": true
+                      }
+                    }
+                  }
+                ]
               },
               "qualities": {
                 "accurate": false,
@@ -34578,7 +36692,60 @@
                   "mode": "normal",
                   "amount": null,
                   "exceptions": []
-                }
+                },
+                "attackProfiles": [
+                  {
+                    "id": "primary",
+                    "branch": "ranged",
+                    "baseDamage": {
+                      "mode": "dice",
+                      "diceCount": 8,
+                      "dieSize": 6,
+                      "flatBonus": 0,
+                      "formula": "8d6"
+                    },
+                    "damageType": {
+                      "mode": "single",
+                      "types": [
+                        "energy"
+                      ],
+                      "qualifiers": []
+                    },
+                    "range": {
+                      "mode": "profile",
+                      "profileId": "thrown-weapons",
+                      "bands": {
+                        "pointBlank": [
+                          0,
+                          6
+                        ],
+                        "short": [
+                          7,
+                          8
+                        ],
+                        "medium": [
+                          9,
+                          10
+                        ],
+                        "long": [
+                          11,
+                          12
+                        ]
+                      },
+                      "basePenalties": {
+                        "pointBlank": 0,
+                        "short": -2,
+                        "medium": -5,
+                        "long": -10
+                      },
+                      "qualityEffects": {
+                        "pointBlankAllowed": true,
+                        "shortPenaltyOverride": null,
+                        "longAllowed": true
+                      }
+                    }
+                  }
+                ]
               },
               "qualities": {
                 "accurate": false,
@@ -34624,13 +36791,35 @@
       "foldedBy": {
         "executionStatus": "AUTHORITY_ONLY",
         "productionMutations": "none — no packs, template.json, tags, runtime or sheets changed",
-        "claudeValidation": "48 records, one per Phase 1A Core identity (names, groups, description pages, repo mapping identical to Phase 1A); 35 present / 13 missing; every record carries the full quality vocabulary, structured stun / operatingModes / damageType / availability / range / damageReductionInteraction; ignoresDR agrees with damageReductionInteraction.mode; 3 Core lightsabers ignore DR; Bowcaster range unresolved; spot-checked against reference/sourcebooks/Core Rulebook_djvu.txt (OCR is partial; PDF visual verification is the certifier’s)"
+        "claudeValidation": "48 records, one per Phase 1A Core identity (names, groups, description pages, repo mapping identical to Phase 1A); 35 present / 13 missing; every record carries the full quality vocabulary, structured stun / operatingModes / damageType / availability / range / damageReductionInteraction; ignoresDR agrees with damageReductionInteraction.mode; 3 Core lightsabers ignore DR; Bowcaster range unresolved; spot-checked against reference/sourcebooks/Core Rulebook_djvu.txt (OCR is partial; PDF visual verification is the certifier’s)",
+        "normalizationNotes": [
+          "2A Core schema v2.1 adds canonicalStats.attackProfiles to all 48 records (derived 1:1 from the certified baseDamage/damageType/range; no published fact changed) and the \"Special\" rate-of-fire vocabulary entry.",
+          "The owner addendum also describes reshaping rateOfFire into an object, stun into {available, mode, damage, rangeOverride}, operatingModes into {available, simultaneousAlternateModes}, ammunition into an object and range into min/max bands. The certified standalone KOTOR file (the stated reference) does not use those shapes, so they were NOT applied; awaiting owner direction."
+        ]
+      },
+      "standaloneBookAuthorities": [
+        {
+          "phase": "2B",
+          "book": "Knights of the Old Republic Campaign Guide",
+          "file": "data/audits/item-weapons-phase-2b-kotor-standalone-authority.json",
+          "doc": "docs/audits/item-weapons-phase-2b-kotor-standalone-authority.md",
+          "status": "KOTOR_WEAPONS_33_OF_33_SOURCE_CERTIFIED_BOOK_ONLY",
+          "claims": 33,
+          "repoPresent": 20,
+          "repoMissing": 13,
+          "rollingMergeAuthorized": false,
+          "note": "Book-only authority by owner instruction; verified by the same Phase 2 checks but not merged into this rolling record until the owner says so."
+        }
+      ],
+      "pendingSchemaDecision": {
+        "status": "OPEN",
+        "question": "Addendum reshaping (rateOfFire object, stun.available/mode/rangeOverride, operatingModes.available, ammunition object, range min/max) conflicts with the certified standalone KOTOR 2B file, which keeps the Core v2 shapes plus attackProfiles and a Special ROF value. Owner to choose: keep v2.1 as applied, or reshape Core and KOTOR together to the addendum."
       }
     }
   },
   "pendingPhases": [
     "1 Provenance and canonical content certification — weapons COMPLETE (1A-1L, authority-only); next within Phase 1: armor, general equipment families, cybernetics/upgrades/templates, lightsaber components, droid systems; weapon numeric/stat/schema certification precedes any creation of the 53 missing weapons",
-    "Phase 2 weapons numeric/stat/schema certification — 2A Core DONE (authority-only); next books in order: KOTOR (33), Galaxy at War (21), Force Unleashed (18), Clone Wars (16), Jedi Academy (16), Legacy Era (14), Unknown Regions (14), Rebellion Era (12), Scum and Villainy (9), Galaxy of Intrigue (4), Threats of the Galaxy (4); then reconcile all 203 identities; Bowcaster range and BlasTech 500 Riot Gun conflict remain gated",
+    "Phase 2 weapons numeric/stat/schema certification — 2A Core DONE (schema v2.1), 2B KOTOR DONE (standalone book authority); next books in order: Galaxy at War (21), Force Unleashed (18), Clone Wars (16), Jedi Academy (16), Legacy Era (14), Unknown Regions (14), Rebellion Era (12), Scum and Villainy (9), Galaxy of Intrigue (4), Threats of the Galaxy (4); then reconcile all 203 identities; Bowcaster range and BlasTech 500 Riot Gun conflict remain gated",
     "Gated cleanup tranche (0-3D migrations, 0-3E renames/merge, 0-3F template migration, 0-3G weapons.db stragglers, 0-3H droid migration, weapon/equipment REMOVE dependents)",
     "Vehicle/starship item domain census (separate domain)",
     "2 Descriptions",

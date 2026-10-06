@@ -1684,7 +1684,7 @@ Threats of the Galaxy (1G) weapons (Datadagger p. 13, Light Concussion Missile L
 
 ## Phase 2 — Weapons numeric/stat/schema authority (2A Core)
 
-Status: **CERTIFIED_PHASE_2A_CORE_GOLD_STANDARD_NUMERIC_STAT_SCHEMA_AUTHORITY** (authority-only; no pack, template.json, tag, runtime or sheet change). JSON: `phases["2-weapons-numeric-stat-schema"]` — `schemaContract` (the gold-standard record contract every later book must follow), `books[]` (append later books), `executorGuardrails`, `nextBookOrder`.
+Status: **PHASE_2_WEAPONS_NUMERIC_STAT_SCHEMA_IN_PROGRESS** — 2A Core certified (schema v2.1), 2B KOTOR certified standalone (authority-only; no pack, template.json, tag, runtime or sheet change). JSON: `phases["2-weapons-numeric-stat-schema"]` — `schemaContract` (the gold-standard record contract every later book must follow), `books[]` (append later books), `executorGuardrails`, `nextBookOrder`.
 
 2A certifies 48 Core weapon identities (35 present in `packs/weapons.db`, 13 missing), each matched to its Phase 1A record. Core table rows were checked by the certifier against the rendered PDF for size, cost, damage, printed stun damage, weight, type, availability and rate of fire; this repo has only the partial-OCR TXT, so Claude's checks are structural and spot checks.
 
@@ -1703,6 +1703,13 @@ Status: **CERTIFIED_PHASE_2A_CORE_GOLD_STANDARD_NUMERIC_STAT_SCHEMA_AUTHORITY** 
 - 0 Core weapons are base Accurate, Inaccurate or Arc; Energy Ball is conditionally Accurate when hurled by a cesta; all 3 Core lightsabers ignore DR (Shield Rating still applies).
 - Repo mismatches exposed (examples): Blaster Rifle 3d10 vs Core 3d8; Heavy Blaster Rifle 3d12/1,500 vs 3d10/2,000; Sporting Blaster Pistol 2d6 vs 3d4 (2d4 stun); Flamethrower 2d10/1,500/6 kg vs 3d6/1,000/7 kg; Electrostaff 5,000/6 kg vs 3,000/2 kg; Stun Baton 250/1.5 kg vs 15/0.5 kg. Existing Accurate/Inaccurate/Critical/Armor-Piercing tags are not canonical unless a source proves them.
 - Order of remaining books: KOTOR (33), Galaxy at War (21), Force Unleashed (18), Clone Wars (16), Jedi Academy (16), Legacy Era (14), Unknown Regions (14), Rebellion Era (12), Scum and Villainy (9), Galaxy of Intrigue (4), Threats of the Galaxy (4); then reconcile all 203 identities. The BlasTech 500 Riot Gun conflict stays gated.
+
+### Schema v2.1 (2A-core-gold-v2.1) and standalone book authorities
+
+- **attackProfiles** (`canonicalStats.attackProfiles`): added to all 48 Core records, derived 1:1 from the certified `baseDamage` / `damageType` / `range` (no published fact changed). Ordinary weapons have one profile `primary`; double weapons `end1`/`end2` matching `baseDamage.profiles`; source-published alternate attacks use `baseDamage.mode = "alternate-profiles"`. The verifier requires the profiles to agree with the aggregate fields.
+- **Special rate of fire**: the vocabulary is now `S`, `A`, `Special`. `Special` must be exactly `["Special"]` and requires `operation.specialRateOfFire`; it is never coerced to S/A.
+- **2B KOTOR is a standalone book authority** (owner instruction: book-by-book, not merged into this rolling record): `data/audits/item-weapons-phase-2b-kotor-standalone-authority.json` + `docs/audits/item-weapons-phase-2b-kotor-standalone-authority.md`. 33 records (20 repo-present, 13 missing), checked by the same verifier against the Phase 1J records and the Phase 2 contract. No production mutation, no record creation, no rolling merge.
+- **Open schema decision (owner):** the normalization addendum also describes reshaping `rateOfFire` into an object, `stun` into `{available, mode, damage, rangeOverride}`, `operatingModes` into `{available, simultaneousAlternateModes}`, `ammunition` into an object, and range bands into min/max. The certified standalone KOTOR file does not use those shapes (it keeps the Core v2 shapes plus `attackProfiles` and `Special`), so they were **not** applied and the completion state `CORE_PHASE_2A_GOLD_SCHEMA_NORMALIZED` is **not** claimed. Reshaping Core and KOTOR together to the addendum, or keeping v2.1 as applied, is awaiting owner direction. Also open: only Massassi Lanvarok has attackProfiles in KOTOR; if every record must carry them, KOTOR needs a normalization pass.
 
 ### 2A — Core Rulebook records
 
@@ -1763,7 +1770,7 @@ Full structured records (stun, operating modes, resource, conditional qualities,
 
 - 1 Provenance and canonical content certification — weapons COMPLETE (1A-1L, authority-only); next within Phase 1: armor, general equipment families, cybernetics/upgrades/templates, lightsaber components, droid systems; weapon numeric/stat/schema certification precedes any creation of the 53 missing weapons
 
-- Phase 2 weapons numeric/stat/schema certification — 2A Core DONE (authority-only); next books: KOTOR, Galaxy at War, Force Unleashed, Clone Wars, Jedi Academy, Legacy Era, Unknown Regions, Rebellion Era, Scum and Villainy, Galaxy of Intrigue, Threats of the Galaxy; then reconcile all 203 identities (Bowcaster range and Riot Gun conflict gated)
+- Phase 2 weapons numeric/stat/schema certification — 2A Core DONE (schema v2.1), 2B KOTOR DONE (standalone); next books: Galaxy at War, Force Unleashed, Clone Wars, Jedi Academy, Legacy Era, Unknown Regions, Rebellion Era, Scum and Villainy, Galaxy of Intrigue, Threats of the Galaxy; then reconcile all 203 identities (Bowcaster range and Riot Gun conflict gated)
 
 - Gated cleanup tranche (0-3D migrations, 0-3E renames/merge, 0-3F template migration, 0-3G weapons.db stragglers, 0-3H droid migration, weapon/equipment REMOVE dependents)
 

@@ -459,7 +459,7 @@ if (c1) {
   if (!errors.length) console.log(`Phase 1 weapons content OK: ${c1.books.length} books (${c1.books.map((b) => b.phase).join(',')}), ${tot.claims} claims / ${claimsByName.size} identities (${tot.present} present, ${tot.missing} missing; ${tot.INCORRECT} incorrect, ${tot.INCOMPLETE} incomplete)`);
 }
 
-// ---- Phase 2 weapons numeric/stat/schema authority (2A Core, rolling) ----
+// ---- Phase 2 weapons numeric/stat/schema authority (2A Core in the rolling authority; later books may be standalone) ----
 const s2 = auth.phases['2-weapons-numeric-stat-schema'];
 if (s2) {
   const e0 = errors.length;
@@ -467,8 +467,8 @@ if (s2) {
   const C = s2.schemaContract;
   const STUN_CAP = new Set(C.stun.capabilities), STUN_MODE = new Set(C.stun.damageModes), DMG_MODES = new Set(C.baseDamage.modes);
   const TYPE_MODES = new Set(C.damageType.modes), DR_MODES = new Set(C.damageReductionInteraction.modes), AVAIL = new Set(C.availability.restrictionVocabulary);
-  const P1 = new Map();
-  for (const b of auth.phases['1-weapons-content'].books) for (const r of b.records) if (!P1.has(`${b.phase}:${r.canonicalName}`)) P1.set(`${b.phase}:${r.canonicalName}`, r);
+  const ROF = new Set(C.rateOfFire.values);
+  const same = (a, b) => JSON.stringify(a) === JSON.stringify(b);
   const dice = (d, where) => {
     if (d.mode === 'dice') {
       if (!Number.isInteger(d.diceCount) || !Number.isInteger(d.dieSize) || !Number.isInteger(d.flatBonus)) fail(`${where} dice damage needs integer diceCount/dieSize/flatBonus`);
@@ -478,57 +478,106 @@ if (s2) {
       else { d.profiles.forEach((q, i) => dice(q, `${where}[${i}]`)); if (d.formula !== d.profiles.map((q) => q.formula).join('/')) fail(`${where} double formula mismatch`); }
     } else if (!DMG_MODES.has(d.mode)) fail(`${where} unknown damage mode ${d.mode}`);
   };
-  for (const b of s2.books) {
-    const p1 = new Map(auth.phases['1-weapons-content'].books.find((x) => x.phase === (b.phase === '2A' ? '1A' : null))?.records.map((r) => [r.canonicalName, r]) || []);
+  const rangeCheck = (rg, ql, w) => {
+    if (rg.mode !== 'profile') return;
+    const prof = C.range.canonicalProfiles[rg.profileId];
+    if (!prof || !same(rg.bands, prof)) fail(`${w} range bands differ from the canonical profile ${rg.profileId}`);
+    if (!same(rg.basePenalties, C.range.basePenalties)) fail(`${w} base penalties differ from contract`);
+    const qe = rg.qualityEffects;
+    if (qe.longAllowed !== !ql.inaccurate || qe.pointBlankAllowed !== !ql.arc || (qe.shortPenaltyOverride === 0) !== ql.accurate) fail(`${w} range qualityEffects disagree with qualities`);
+  };
+  /** Checks one weapon book against its Phase 1 records. Returns {present, ign, tallies}. */
+  const checkBook = (b, p1, label, opts = {}) => {
     const seen = new Set();
-    let present = 0, ign = 0;
+    const t = { present: 0, ign: 0, accurate: 0, inaccurate: 0, arc: 0, area: 0, dbl: 0, auto: 0 };
     for (const r of b.records) {
-      const n = r.canonicalName, w = `${b.phase} ${n}`;
+      const n = r.canonicalName, w = `${label} ${n}`;
       if (seen.has(n)) fail(`${w} duplicate`); seen.add(n);
       const q1 = p1.get(n);
       if (!q1) { fail(`${w} has no Phase 1 record`); continue; }
-      if (JSON.stringify(r.repo) !== JSON.stringify(q1.repo)) fail(`${w} repo mapping differs from Phase 1`);
-      if (r.weaponGroup !== q1.weaponGroup || r.source.descriptionPage !== q1.source.descriptionPage) fail(`${w} group/page differs from Phase 1`);
-      if (r.repo.present) present++;
+      const pick = (x) => [x.present, x.id, x.currentName, x.phase0NameNormalizationPending];
+      if (!same(pick(r.repo), pick(q1.repo))) fail(`${w} repo mapping differs from Phase 1`);
+      if (r.weaponGroup !== q1.weaponGroup || r.source.descriptionPage !== q1.source.descriptionPage || (r.source.statTablePage ?? null) !== (q1.source.statTablePage ?? null)) fail(`${w} group/pages differ from Phase 1`);
+      if (r.repo.present) t.present++;
       const s = r.canonicalStats, ql = r.qualities;
-      if (JSON.stringify(Object.keys(ql).sort()) !== JSON.stringify([...QUALS].sort()) || QUALS.some((k) => typeof ql[k] !== 'boolean')) fail(`${w} quality vocabulary incomplete`);
+      if (!same(Object.keys(ql).sort(), [...QUALS].sort()) || QUALS.some((k) => typeof ql[k] !== 'boolean')) fail(`${w} quality vocabulary incomplete`);
       for (const k of ['stun', 'operatingModes', 'damageType', 'availability', 'range', 'damageReductionInteraction', 'baseDamage', 'resource']) if (!s[k]) fail(`${w} missing canonicalStats.${k}`);
       if (!s.stun || !s.baseDamage || !s.damageType || !s.availability || !s.damageReductionInteraction || !s.range || !s.operatingModes) continue;
       dice(s.baseDamage, `${w} baseDamage`);
       if (!STUN_CAP.has(s.stun.capability) || !STUN_MODE.has(s.stun.damageMode) || typeof s.stun.hasStunSetting !== 'boolean') fail(`${w} invalid stun object`);
       if (s.stun.hasStunSetting !== (s.stun.capability === 'setting')) fail(`${w} hasStunSetting disagrees with capability`);
-      if (s.stun.damageMode === 'explicit' && s.stun.damage) dice(s.stun.damage, `${w} stun`);
+      if (s.stun.damageMode === 'explicit' && s.stun.damage && s.stun.damage.mode !== 'modifier') dice(s.stun.damage, `${w} stun`);
       if (!TYPE_MODES.has(s.damageType.mode)) fail(`${w} invalid damageType mode`);
       if ((s.damageType.mode === 'and' || s.damageType.mode === 'or') && s.damageType.types.length < 2) fail(`${w} and/or damage type needs 2+ types`);
       if (!AVAIL.has(s.availability.restriction) || typeof s.availability.rare !== 'boolean') fail(`${w} invalid availability`);
       if (!DR_MODES.has(s.damageReductionInteraction.mode)) fail(`${w} invalid DR mode`);
       if (ql.ignoresDR !== (s.damageReductionInteraction.mode === 'ignore')) fail(`${w} ignoresDR disagrees with damageReductionInteraction.mode`);
-      if (ql.ignoresDR) ign++;
+      if (ql.ignoresDR) t.ign++;
+      for (const [k, key] of [['accurate', 'accurate'], ['inaccurate', 'inaccurate'], ['arc', 'arc'], ['areaEffect', 'area'], ['doubleWeapon', 'dbl'], ['autofireOnly', 'auto']]) if (ql[k]) t[key]++;
       const rof = s.rateOfFire;
-      if (rof !== null && !(Array.isArray(rof) && rof.length && rof.every((x) => x === 'S' || x === 'A'))) fail(`${w} invalid rateOfFire`);
-      if (ql.autofireOnly && JSON.stringify(rof) !== '["A"]') fail(`${w} autofireOnly requires rateOfFire ["A"]`);
-      if (s.range.mode === 'profile') {
-        const prof = C.range.canonicalProfiles[s.range.profileId];
-        if (!prof || JSON.stringify(s.range.bands) !== JSON.stringify(prof)) fail(`${w} range bands differ from the canonical profile ${s.range.profileId}`);
-        if (JSON.stringify(s.range.basePenalties) !== JSON.stringify(C.range.basePenalties)) fail(`${w} base penalties differ from contract`);
-        const qe = s.range.qualityEffects;
-        if (qe.longAllowed !== !ql.inaccurate || qe.pointBlankAllowed !== !ql.arc || (qe.shortPenaltyOverride === 0) !== ql.accurate) fail(`${w} range qualityEffects disagree with qualities`);
-      }
-      if (b.phase === '2A') {
-        if (ql.accurate || ql.inaccurate || ql.arc) fail(`${w} Core must not assert base accurate/inaccurate/arc`);
-        if (s.rateOfFire === null && s.range.mode === 'profile') fail(`${w} ranged profile weapon needs rateOfFire`);
+      if (rof !== null && !(Array.isArray(rof) && rof.length && rof.every((x) => ROF.has(x)))) fail(`${w} invalid rateOfFire`);
+      if (ql.autofireOnly && !same(rof, ['A'])) fail(`${w} autofireOnly requires rateOfFire ["A"]`);
+      if (rof && rof.includes('Special') && (!same(rof, ['Special']) || !r.operation?.specialRateOfFire)) fail(`${w} Special rate of fire must be exactly ["Special"] with operation.specialRateOfFire`);
+      if (r.operation?.specialRateOfFire && !(rof && rof.includes('Special'))) fail(`${w} operation.specialRateOfFire requires rateOfFire ["Special"]`);
+      rangeCheck(s.range, ql, w);
+      // attack profiles: per-attack decomposition that must agree with the aggregate fields.
+      // Required on every record of a book that has adopted schema v2.1 (Core); in a book that predates it (standalone KOTOR 2B)
+      // they are mandatory only where the source publishes alternate attacks, and validated wherever present.
+      const ap = s.attackProfiles;
+      if (!ap) {
+        if (opts.requireAttackProfiles) fail(`${w} missing canonicalStats.attackProfiles`);
+        if (s.baseDamage.mode === 'alternate-profiles') fail(`${w} alternate-profiles damage requires attackProfiles`);
+      } else {
+        if (!Array.isArray(ap) || !ap.length || new Set(ap.map((x) => x.id)).size !== ap.length) fail(`${w} attackProfiles need unique ids`);
+        else {
+          for (const x of ap) {
+            if (!['melee', 'ranged'].includes(x.branch) || !x.baseDamage || !x.damageType || !x.range) fail(`${w} attack profile ${x.id} incomplete`);
+            else { dice(x.baseDamage, `${w} profile ${x.id}`); rangeCheck(x.range, ql, `${w} profile ${x.id}`); }
+          }
+          if (s.baseDamage.mode === 'double') {
+            if (!same(ap.map((x) => x.id), ['end1', 'end2']) || !same(ap.map((x) => x.baseDamage), s.baseDamage.profiles)) fail(`${w} double weapon profiles must be end1/end2 matching baseDamage.profiles`);
+          } else if (s.baseDamage.mode === 'alternate-profiles') {
+            if (ap.length < 2) fail(`${w} alternate-profiles needs 2+ attack profiles`);
+          } else if (ap.length !== 1 || ap[0].id !== 'primary' || !same(ap[0].baseDamage, s.baseDamage) || !same(ap[0].damageType, s.damageType) || !same(ap[0].range, s.range)) fail(`${w} primary attack profile must mirror canonicalStats baseDamage/damageType/range`);
+        }
       }
       const fam = r.schemaFamily;
       if (!fam || !fam.branch || !fam.subcategory || !fam.proficiency) fail(`${w} missing schemaFamily`);
+      if (opts.coreNoBaseRangeQualities && (ql.accurate || ql.inaccurate || ql.arc)) fail(`${w} Core must not assert base accurate/inaccurate/arc`);
     }
-    for (const n of p1.keys()) if (!seen.has(n)) fail(`${b.phase} missing ${n}`);
-    if (b.records.length !== b.counts.claims || present !== b.counts.repoPresent || b.records.length - present !== b.counts.repoMissing) fail(`${b.phase} counts mismatch`);
-    if (b.phase === '2A') {
-      if (ign !== 3) fail(`2A expected 3 ignoresDR lightsabers, found ${ign}`);
-      const bc = b.records.find((r) => r.canonicalName === 'Bowcaster');
-      if (bc.canonicalStats.range.mode !== 'unresolved') fail('2A Bowcaster range must remain unresolved');
-      if (b.records.length !== 48 || present !== 35) fail('2A Core hard checkpoint must be 48 records / 35 present / 13 missing');
-    }
+    for (const n of p1.keys()) if (!seen.has(n)) fail(`${label} missing ${n}`);
+    return t;
+  };
+
+  for (const b of s2.books) {
+    const p1 = new Map(auth.phases['1-weapons-content'].books.find((x) => x.phase === '1A').records.map((r) => [r.canonicalName, r]));
+    const t = checkBook(b, p1, b.phase, { coreNoBaseRangeQualities: true, requireAttackProfiles: true });
+    if (b.records.length !== b.counts.claims || t.present !== b.counts.repoPresent || b.records.length - t.present !== b.counts.repoMissing) fail(`${b.phase} counts mismatch`);
+    if (t.ign !== 3) fail(`2A expected 3 ignoresDR lightsabers, found ${t.ign}`);
+    if (b.records.find((r) => r.canonicalName === 'Bowcaster').canonicalStats.range.mode !== 'unresolved') fail('2A Bowcaster range must remain unresolved');
+    if (b.records.length !== 48 || t.present !== 35) fail('2A Core hard checkpoint must be 48 records / 35 present / 13 missing');
+    if (s2.schemaVersion !== '2A-core-gold-v2.1') fail('2A schemaVersion must be 2A-core-gold-v2.1');
+  }
+  // Standalone book authorities (not merged into the rolling record unless the owner says so)
+  for (const sb of s2.standaloneBookAuthorities || []) {
+    const sa = JSON.parse(fs.readFileSync(path.join(ROOT, sb.file), 'utf8'));
+    if (!fs.existsSync(path.join(ROOT, sb.doc))) fail(`${sb.phase} missing doc ${sb.doc}`);
+    if (sa.scope.rollingAuthorityMutationAuthorized !== false || sa.scope.productionMutationAuthorized !== false || sa.scope.recordCreationAuthorized !== false) fail(`${sb.phase} standalone scope flags must stay false`);
+    const p1b = auth.phases['1-weapons-content'].books.find((x) => x.book === sa.book);
+    const p1 = new Map(p1b.records.map((r) => [r.canonicalName, r]));
+    const t = checkBook(sa, p1, sb.phase);
+    const c = sa.counts;
+    if (sa.records.length !== c.canonicalWeaponClaims || sa.records.length !== sb.claims || t.present !== c.repoPresent || sa.records.length - t.present !== c.repoMissing || t.present !== sb.repoPresent) fail(`${sb.phase} counts mismatch`);
+    const tallies = { accurateBaseClaims: t.accurate, inaccurateBaseClaims: t.inaccurate, arcBaseClaims: t.arc, ignoresDRBaseClaims: t.ign, areaEffectClaims: t.area, doubleWeaponClaims: t.dbl, autofireOnlyClaims: t.auto };
+    for (const [k, v] of Object.entries(tallies)) if (c[k] !== v) fail(`${sb.phase} counts.${k} ${c[k]} != computed ${v}`);
+    const tableSum = sa.verification.sourceTables.reduce((m, x) => m + x.claims, 0);
+    if (tableSum !== sa.records.length) fail(`${sb.phase} source table claims ${tableSum} != records ${sa.records.length}`);
+    // Lightfoil-style DR bypass must come from the lightsaber group only
+    for (const r of sa.records) if (r.qualities.ignoresDR && r.weaponGroup !== 'Lightsaber') fail(`${sb.phase} ${r.canonicalName} ignoresDR outside the Lightsaber group`);
+    for (const r of sa.records) if (r.canonicalStats.rateOfFire?.includes('Special') && r.canonicalName !== 'Sonic Disruptor') fail(`${sb.phase} unexpected Special rate of fire on ${r.canonicalName}`);
+    const mass = sa.records.find((r) => r.canonicalName === 'Massassi Lanvarok');
+    if (mass && !(mass.canonicalStats.attackProfiles.map((x) => x.id).join() === 'disc,melee' && mass.canonicalStats.baseDamage.mode === 'alternate-profiles')) fail(`${sb.phase} Massassi Lanvarok must carry disc and melee profiles`);
+    if (!errors.length) console.log(`Phase 2 standalone ${sb.phase} ${sa.book} OK: ${sa.records.length} records (${t.present} present, ${sa.records.length - t.present} missing)`);
   }
   if (errors.length === e0) console.log(`Phase 2 weapons stat/schema OK: ${s2.books.map((b) => `${b.phase} ${b.book} (${b.records.length})`).join('; ')}`);
 }
