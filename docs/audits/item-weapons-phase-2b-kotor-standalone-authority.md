@@ -91,3 +91,4 @@
 - Schema v2.4 structural defaults added; Stunning Gauntlet profile damage is now `inherited` (wearer’s unarmed attack, converted to stun, +1 stun); Arg’garok and Massassi Lanvarok alternate proficiency migrated into `proficiencyRules`; Arg’garok -5 below Strength 15 added as a `conditionalModifier`. Original `operation` keys preserved.
 - Schema v2.5 structural defaults added (`stun.activation`, `wieldingRules`, `triggeredEffects`, etc.); the Lightfoil effective-size / no-two-handed rule is now in `wieldingRules` (operation keys preserved).
 - Schema v2.6 structural defaults added (`criticalEffects`, `technologyClassification`, `deliveryMethod`, standardized `conditionalQualities`).
+- Schema v2.7 structural defaults added (`damageMultiplier: 1`, `conditionalRangeRules: []`, `resourceProfiles: []`).

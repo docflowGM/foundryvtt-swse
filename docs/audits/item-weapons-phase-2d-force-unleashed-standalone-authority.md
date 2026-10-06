@@ -443,3 +443,4 @@ Apply these changes to the **authority schema only**. Then append the new fields
 - Schema v2.4 structural defaults added; Ryyk Blade Wookiee proficiency migrated into `proficiencyRules`; Power Hammer -2 with Double/Triple Attack and Rapid Strike added as a `conditionalModifier`. Operation keys preserved.
 - Schema v2.5 structural defaults added; Vibrosword two-handed design is in `wieldingRules`; defensiveInteractions entries gained `id`/`effect`. Note: Jedi Academy makes the Guard Shoto / Lightsaber Pike phrik DR protection conditional while this book records it unconditionally (owner to rule).
 - Schema v2.6 structural defaults added.
+- Schema v2.7 structural defaults added (`damageMultiplier: 1`, `conditionalRangeRules: []`, `resourceProfiles: []`).

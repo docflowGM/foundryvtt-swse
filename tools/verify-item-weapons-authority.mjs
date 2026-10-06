@@ -572,6 +572,7 @@ if (s2) {
       }
       if (!Array.isArray(s.configurationStates) || s.configurationStates.some((q) => !q.id || !('attackUsable' in q))) fail(`${w} missing/invalid configurationStates`);
       if (!('constructionRules' in s) || !(s.constructionRules === null || typeof s.constructionRules === 'object')) fail(`${w} missing/invalid constructionRules`);
+      if (!Array.isArray(s.resourceProfiles) || s.resourceProfiles.some((q) => !q.id || !q.kind) || (s.resourceProfiles.length > 0) !== (s.resource.kind === 'multiple')) fail(`${w} resourceProfiles[] must be a list that is non-empty exactly when resource.kind is "multiple"`);
       if (!Array.isArray(s.triggeredEffects) || !same(s.triggeredEffects, (s.attackProfiles || []).flatMap((x) => x.triggeredEffects || []))) fail(`${w} canonicalStats.triggeredEffects must equal the profile-level triggered effects`);
       if (!(s.technologyClassification && Array.isArray(s.technologyClassification.tags) && Array.isArray(s.technologyClassification.rules))) fail(`${w} missing/invalid technologyClassification`);
       if (!('deliveryMethod' in s) || !(s.deliveryMethod === null || (s.deliveryMethod && C.deliveryMethod.fields.every((f2) => f2 in s.deliveryMethod)))) fail(`${w} missing/invalid deliveryMethod`);
@@ -610,6 +611,8 @@ if (s2) {
           if (!STUN_CAP.has(x.stun.capability) || !STUN_MODE.has(x.stun.damageMode)) fail(`${pw} invalid stun`);
           stunAct(x.stun, pw);
           if (!Array.isArray(x.criticalEffects) || x.criticalEffects.some((q) => !C.criticalEffects.fields.every((f2) => f2 in q))) fail(`${pw} invalid criticalEffects`);
+          if (typeof x.damageMultiplier !== 'number' || !(x.damageMultiplier > 0)) fail(`${pw} damageMultiplier missing/invalid`);
+          if (!Array.isArray(x.conditionalRangeRules) || x.conditionalRangeRules.some((q) => !q.when || q.operation !== 'scale-range' || !(q.multiplier > 0) || !q.appliesTo)) fail(`${pw} invalid conditionalRangeRules`);
           if (!Array.isArray(x.activationRequirements) || x.activationRequirements.some((q) => !q.type)) fail(`${pw} invalid activationRequirements`);
           if (!Array.isArray(x.triggeredEffects) || x.triggeredEffects.some((q) => !q.trigger || !(q.effect || q.damage || q.resolution))) fail(`${pw} invalid triggeredEffects`);
           if (x.modifierPolicy !== null && typeof x.modifierPolicy !== 'object') fail(`${pw} invalid modifierPolicy`);
@@ -662,7 +665,7 @@ if (s2) {
     if (t.ign !== 3) fail(`2A expected 3 ignoresDR lightsabers, found ${t.ign}`);
     if (b.records.find((r) => r.canonicalName === 'Bowcaster').canonicalStats.range.mode !== 'unresolved') fail('2A Bowcaster range must remain unresolved');
     if (b.records.length !== 48 || t.present !== 35) fail('2A Core hard checkpoint must be 48 records / 35 present / 13 missing');
-    if (s2.schemaVersion !== 'weapon-authority-schema-v2.6') fail('schemaVersion must be weapon-authority-schema-v2.6');
+    if (s2.schemaVersion !== 'weapon-authority-schema-v2.7') fail('schemaVersion must be weapon-authority-schema-v2.7');
   }
   // Standalone book authorities (not merged into the rolling record unless the owner says so)
   for (const sb of s2.standaloneBookAuthorities || []) {
@@ -691,6 +694,49 @@ if (s2) {
       for (const n of ['DX-2 Disruptor Pistol', 'DXR-6 Disruptor Rifle']) if (f(n).canonicalStats.attackProfiles[0].firingConstraints?.firesOnAlternatingRounds !== true) fail(`2D ${n} fires only on alternating rounds`);
       for (const n of ['Bryar Rifle', 'CR-1 Blast Cannon', 'Flechette Launcher', 'Stokhli Spray Stick']) if (!same(f(n).qualityParameters.inaccurate.allowedBands, ['pointBlank', 'short', 'medium'])) fail(`2D ${n} Inaccurate must exclude Long only (Core/KOTOR definition)`);
       if (!['Guard Shoto', 'Lightsaber Pike'].every((n) => f(n).canonicalStats.defensiveInteractions.length === 1)) fail('2D Guard Shoto / Lightsaber Pike defensiveInteractions');
+    }
+    if (sb.phase === '2I') {
+      const f = (n) => sa.records.find((r) => r.canonicalName === n);
+      const pr = (n, id) => f(n).canonicalStats.attackProfiles.find((q) => q.id === id);
+      const same2 = (a, b2) => JSON.stringify(a) === JSON.stringify(b2);
+      if (sa.records.filter((r) => r.schemaFamily.branch === 'melee').length !== 4 || sa.records.filter((r) => r.schemaFamily.branch === 'ranged').length !== 8) fail('2I must be 4 melee + 8 ranged');
+      if (!same2(sa.records.filter((r) => r.qualities.accurate).map((r) => r.canonicalName), ['Siang Lance']) || !same2(sa.records.filter((r) => r.qualities.inaccurate).map((r) => r.canonicalName), ['Flechette Launcher'])) fail('2I base Accurate (Siang Lance) / Inaccurate (Flechette Launcher) sets');
+      if (sa.records.filter((r) => r.crossPublishedSources?.length).length !== 2 || sa.counts.crossPublishedIdentityClaims !== 2) fail('2I exactly two cross-published identities');
+      const rg = f('BlasTech 500 Riot Gun');
+      if (rg.conflictGate?.status !== 'REVIEW_PRECEDENCE_BEFORE_CONTENT_MUTATION' || !(auth.phases['1-weapons-content'].openContentAdjudications || []).some((q) => q.subject === 'BlasTech 500 Riot Gun') || rg.qualities.inaccurate) fail('2I BlasTech 500 Riot Gun stays conflict-gated and un-Inaccurate in this book');
+      if (rg.canonicalStats.costCredits !== 1200 || rg.canonicalStats.weightKg !== 2.2 || !rg.canonicalStats.modeProfiles.some((m) => m.conditionalModifiers?.some((c) => c.value === -1)) || !rg.canonicalStats.modeProfiles.some((m) => m.conditionalModifiers?.some((c) => c.value === 2 && c.type === 'equipment'))) fail('2I Riot Gun 1200 cr / 2.2 kg, -1 single-shot, +2 equipment autofire');
+      const fl = f('Flechette Launcher');
+      if (!fl.crossPublishedSources.some((c) => /Force Unleashed/.test(c.book) && c.page === 199) || fl.canonicalStats.attackProfiles[0].area.radiusSquares !== 1 || !fl.canonicalStats.attackProfiles[0].firingConstraints?.prohibitsMultiShotAbilities || fl.canonicalStats.resource.capacityShots !== 4) fail('2I Flechette Launcher same identity as Force Unleashed, 1-square splash, 4-shot canister, no multi-shot');
+      for (const n of ['Merr-Sonn PLX-2M Portable Missile Launcher', 'Miniature Proton Torpedo Launcher']) if (f(n).qualities.inaccurate || !f(n).qualities.areaEffect) fail(`2I ${n} is Area Attack and not Inaccurate`);
+      const mp = f('Miniature Proton Torpedo Launcher').canonicalStats;
+      if (mp.baseDamage.formula !== '6d10' || pr('Miniature Proton Torpedo Launcher', 'area').damageMultiplier !== 1 || pr('Miniature Proton Torpedo Launcher', 'single-target').damageMultiplier !== 2 || pr('Miniature Proton Torpedo Launcher', 'single-target').damage.formula !== '6d10' || pr('Miniature Proton Torpedo Launcher', 'area').area.radiusSquares !== 2 || mp.resource.capacityShots !== 4) fail('2I Mini Proton Torpedo: persistent 6d10, single-target profile x2, 2-square area, 4 torpedoes');
+      if (!pr('Miniature Proton Torpedo Launcher', 'single-target').conditionalModifiers.some((m) => m.value === -10)) fail('2I Mini Proton Torpedo single-target -10 against targets smaller than Huge');
+      const px = f('Merr-Sonn PLX-2M Portable Missile Launcher').canonicalStats;
+      if (px.attackProfiles[0].area.radiusSquares !== 3 || px.resource.capacityShots !== 6 || px.modeProfiles.length !== 3 || f('Merr-Sonn PLX-2M Portable Missile Launcher').operation.encumbranceException?.ignoreWeaponWeight !== true) fail('2I PLX-2M 3-square burst, six missiles, three modes, encumbrance exception');
+      const sg = f('SG-4 Blaster Rifle').canonicalStats;
+      const sb2 = sg.attackProfiles.find((q) => q.id === 'blaster'), sh = sg.attackProfiles.find((q) => q.id === 'harpoon');
+      if (sg.attackProfiles.length !== 2 || sg.baseDamage.formula !== '3d8' || sb2.damage.formula !== '3d8' || sh.damage.formula !== '2d6' || sg.stun.damage?.formula !== '2d8' || sg.stun.damageMode !== 'explicit') fail('2I SG-4 keeps separate 3d8 blaster and 2d6 harpoon profiles with explicit 2d8 stun');
+      if (sb2.conditionalRangeRules[0]?.when?.environment !== 'underwater' || sb2.conditionalRangeRules[0]?.multiplier !== 0.5 || sh.conditionalRangeRules[0]?.when?.environment !== 'not-underwater' || sh.conditionalRangeRules[0]?.multiplier !== 0.5) fail('2I SG-4 opposite half-range rules (blaster underwater, harpoon out of water)');
+      if (sg.resourceProfiles.length !== 2 || !same2(sg.resourceProfiles.map((q) => q.usedByAttackProfiles?.[0]), ['blaster', 'harpoon']) || sg.resourceProfiles[0].capacityShots !== 50) fail('2I SG-4 independent power pack and harpoon resource profiles');
+      const el = f('Energy Lance').canonicalStats;
+      if (el.resourceProfiles.length !== 2 || el.resourceProfiles[0].quantityRequired !== 2 || el.resourceProfiles[1].capacityShots !== 50 || el.attackProfiles.length !== 2) fail('2I Energy Lance two energy cells plus separate 50-shot plasma power pack, melee + plasma profiles');
+      if (f('Power Lance').canonicalStats.attackProfiles.length !== 1 || f('Power Lance').canonicalStats.resource.quantityRequired !== 2 || f('Power Lance').canonicalStats.resourceProfiles.length !== 0) fail('2I Power Lance is the lance without a plasma mode, two energy cells');
+      for (const n of ['Energy Lance', 'Power Lance']) if (!f(n).canonicalStats.wieldingRules.some((q) => q.id === 'mounted-medium-one-hand') || !f(n).canonicalStats.wieldingRules.some((q) => q.effect?.attackRollModifier === -1)) fail(`2I ${n} mounted one-hand and -1 unmounted Medium rules`);
+      const ax = f('Axe');
+      if (!ax.qualities.thrown || !ax.canonicalStats.attackProfiles.some((q) => q.id === 'thrown') || ax.canonicalStats.baseDamage.formula !== '1d8') fail('2I Axe 1d8 and throwable');
+      const gd = f('Gaderffii');
+      if (!gd.qualities.doubleWeapon || gd.canonicalStats.attackProfiles.length !== 2 || gd.canonicalStats.modeProfiles[0]?.attackRollModifierEach !== -10 || gd.repo.id !== 'weapon-tusken-gaderffii-stick') fail('2I Gaderffii double weapon, -10 each end full-round, preserved repo id');
+      const sl = f('Siang Lance');
+      if (sl.canonicalStats.resource.capacityShots !== 100 || sl.canonicalStats.range.profileId !== 'rifles' || sl.canonicalStats.stun.damageMode !== 'same-as-base' || sl.canonicalStats.attackProfiles.find((q) => q.id === 'bayonet-aao')?.damage.formula !== 'Core Bayonet') fail('2I Siang Lance 100 shots, rifle range, base-matched stun, bayonet inherits Core Bayonet');
+      const cg = f('Concussion Grenade').canonicalStats.attackProfiles[0];
+      if (cg.damage.formula !== '8d6' || cg.area.radiusSquares !== 2 || cg.attackResolution.onMiss !== 'half-damage' || f('Concussion Grenade').canonicalStats.damageType.types.join() !== 'bludgeoning') fail('2I Concussion Grenade 8d6 bludgeoning 2-square burst, half on miss');
+      const gg = f('Gas Grenade').canonicalStats;
+      if (gg.baseDamage.mode !== 'none' || gg.stun.capability !== 'native-stun' || gg.stun.damage?.formula !== '4d6' || gg.damageType.mode !== 'none' || gg.attackProfiles[0].attackResolution.defense !== 'fortitude' || gg.attackProfiles[0].area.radiusSquares !== 4 || f('Gas Grenade').operation.conditionTrackOnHit !== -2 || f('Gas Grenade').operation.conditionTrackWithEvasion !== -1) fail('2I Gas Grenade no lethal damage, native 4d6 stun, Fortitude 4-square blast, -2 CT (-1 Evasion)');
+      for (const r of sa.records) {
+        if (r.canonicalStats.attackProfiles.some((q) => q.damageMultiplier !== 1 && !(r.canonicalName === 'Miniature Proton Torpedo Launcher' && q.id === 'single-target'))) fail(`2I ${r.canonicalName} unexpected damage multiplier`);
+        if (r.canonicalStats.attackProfiles.some((q) => q.conditionalRangeRules.length) && r.canonicalName !== 'SG-4 Blaster Rifle') fail(`2I ${r.canonicalName} unexpected conditionalRangeRules`);
+        if (r.canonicalStats.resourceProfiles.length && !['Energy Lance', 'SG-4 Blaster Rifle'].includes(r.canonicalName)) fail(`2I ${r.canonicalName} unexpected resourceProfiles`);
+      }
     }
     if (sb.phase === '2H') {
       const f = (n) => sa.records.find((r) => r.canonicalName === n);

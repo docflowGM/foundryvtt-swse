@@ -311,7 +311,9 @@
             "activationRequirements": [],
             "triggeredEffects": [],
             "modifierPolicy": null,
-            "criticalEffects": []
+            "criticalEffects": [],
+            "damageMultiplier": 1,
+            "conditionalRangeRules": []
           },
           {
             "id": "thrown",
@@ -424,7 +426,9 @@
             "activationRequirements": [],
             "triggeredEffects": [],
             "modifierPolicy": null,
-            "criticalEffects": []
+            "criticalEffects": [],
+            "damageMultiplier": 1,
+            "conditionalRangeRules": []
           }
         ],
         "modeProfiles": [],
@@ -441,7 +445,8 @@
           "tags": [],
           "rules": []
         },
-        "deliveryMethod": null
+        "deliveryMethod": null,
+        "resourceProfiles": []
       },
       "qualities": {
         "accurate": false,
@@ -682,7 +687,9 @@
             "activationRequirements": [],
             "triggeredEffects": [],
             "modifierPolicy": null,
-            "criticalEffects": []
+            "criticalEffects": [],
+            "damageMultiplier": 1,
+            "conditionalRangeRules": []
           }
         ],
         "modeProfiles": [],
@@ -699,7 +706,8 @@
           "tags": [],
           "rules": []
         },
-        "deliveryMethod": null
+        "deliveryMethod": null,
+        "resourceProfiles": []
       },
       "qualities": {
         "accurate": false,
@@ -932,7 +940,9 @@
             "activationRequirements": [],
             "triggeredEffects": [],
             "modifierPolicy": null,
-            "criticalEffects": []
+            "criticalEffects": [],
+            "damageMultiplier": 1,
+            "conditionalRangeRules": []
           }
         ],
         "modeProfiles": [],
@@ -949,7 +959,8 @@
           "tags": [],
           "rules": []
         },
-        "deliveryMethod": null
+        "deliveryMethod": null,
+        "resourceProfiles": []
       },
       "qualities": {
         "accurate": false,
@@ -1194,7 +1205,9 @@
             "activationRequirements": [],
             "triggeredEffects": [],
             "modifierPolicy": null,
-            "criticalEffects": []
+            "criticalEffects": [],
+            "damageMultiplier": 1,
+            "conditionalRangeRules": []
           },
           {
             "id": "unarmed-stun",
@@ -1287,7 +1300,9 @@
             "activationRequirements": [],
             "triggeredEffects": [],
             "modifierPolicy": null,
-            "criticalEffects": []
+            "criticalEffects": [],
+            "damageMultiplier": 1,
+            "conditionalRangeRules": []
           }
         ],
         "modeProfiles": [
@@ -1327,7 +1342,8 @@
           "tags": [],
           "rules": []
         },
-        "deliveryMethod": null
+        "deliveryMethod": null,
+        "resourceProfiles": []
       },
       "qualities": {
         "accurate": false,
@@ -1569,7 +1585,9 @@
             "activationRequirements": [],
             "triggeredEffects": [],
             "modifierPolicy": null,
-            "criticalEffects": []
+            "criticalEffects": [],
+            "damageMultiplier": 1,
+            "conditionalRangeRules": []
           }
         ],
         "modeProfiles": [],
@@ -1586,7 +1604,8 @@
           "tags": [],
           "rules": []
         },
-        "deliveryMethod": null
+        "deliveryMethod": null,
+        "resourceProfiles": []
       },
       "qualities": {
         "accurate": false,
@@ -1845,7 +1864,9 @@
             "activationRequirements": [],
             "triggeredEffects": [],
             "modifierPolicy": null,
-            "criticalEffects": []
+            "criticalEffects": [],
+            "damageMultiplier": 1,
+            "conditionalRangeRules": []
           },
           {
             "id": "thrown",
@@ -1970,7 +1991,9 @@
             "activationRequirements": [],
             "triggeredEffects": [],
             "modifierPolicy": null,
-            "criticalEffects": []
+            "criticalEffects": [],
+            "damageMultiplier": 1,
+            "conditionalRangeRules": []
           }
         ],
         "modeProfiles": [
@@ -2002,7 +2025,8 @@
           "tags": [],
           "rules": []
         },
-        "deliveryMethod": null
+        "deliveryMethod": null,
+        "resourceProfiles": []
       },
       "qualities": {
         "accurate": false,
@@ -2227,7 +2251,9 @@
             "activationRequirements": [],
             "triggeredEffects": [],
             "modifierPolicy": null,
-            "criticalEffects": []
+            "criticalEffects": [],
+            "damageMultiplier": 1,
+            "conditionalRangeRules": []
           }
         ],
         "modeProfiles": [],
@@ -2244,7 +2270,8 @@
           "tags": [],
           "rules": []
         },
-        "deliveryMethod": null
+        "deliveryMethod": null,
+        "resourceProfiles": []
       },
       "qualities": {
         "accurate": false,
@@ -2544,7 +2571,9 @@
             "activationRequirements": [],
             "triggeredEffects": [],
             "modifierPolicy": null,
-            "criticalEffects": []
+            "criticalEffects": [],
+            "damageMultiplier": 1,
+            "conditionalRangeRules": []
           },
           {
             "id": "ascension",
@@ -2634,7 +2663,9 @@
             "activationRequirements": [],
             "triggeredEffects": [],
             "modifierPolicy": null,
-            "criticalEffects": []
+            "criticalEffects": [],
+            "damageMultiplier": 1,
+            "conditionalRangeRules": []
           }
         ],
         "modeProfiles": [
@@ -2672,7 +2703,8 @@
           "tags": [],
           "rules": []
         },
-        "deliveryMethod": null
+        "deliveryMethod": null,
+        "resourceProfiles": []
       },
       "qualities": {
         "accurate": false,
@@ -2975,7 +3007,9 @@
             "activationRequirements": [],
             "triggeredEffects": [],
             "modifierPolicy": null,
-            "criticalEffects": []
+            "criticalEffects": [],
+            "damageMultiplier": 1,
+            "conditionalRangeRules": []
           }
         ],
         "modeProfiles": [],
@@ -2992,7 +3026,8 @@
           "tags": [],
           "rules": []
         },
-        "deliveryMethod": null
+        "deliveryMethod": null,
+        "resourceProfiles": []
       },
       "qualities": {
         "accurate": false,
@@ -3299,7 +3334,9 @@
             "activationRequirements": [],
             "triggeredEffects": [],
             "modifierPolicy": null,
-            "criticalEffects": []
+            "criticalEffects": [],
+            "damageMultiplier": 1,
+            "conditionalRangeRules": []
           },
           {
             "id": "medium",
@@ -3424,7 +3461,9 @@
             "activationRequirements": [],
             "triggeredEffects": [],
             "modifierPolicy": null,
-            "criticalEffects": []
+            "criticalEffects": [],
+            "damageMultiplier": 1,
+            "conditionalRangeRules": []
           },
           {
             "id": "high",
@@ -3549,7 +3588,9 @@
             "activationRequirements": [],
             "triggeredEffects": [],
             "modifierPolicy": null,
-            "criticalEffects": []
+            "criticalEffects": [],
+            "damageMultiplier": 1,
+            "conditionalRangeRules": []
           }
         ],
         "modeProfiles": [
@@ -3597,7 +3638,8 @@
           "tags": [],
           "rules": []
         },
-        "deliveryMethod": null
+        "deliveryMethod": null,
+        "resourceProfiles": []
       },
       "qualities": {
         "accurate": false,
@@ -3905,7 +3947,9 @@
             "activationRequirements": [],
             "triggeredEffects": [],
             "modifierPolicy": null,
-            "criticalEffects": []
+            "criticalEffects": [],
+            "damageMultiplier": 1,
+            "conditionalRangeRules": []
           },
           {
             "id": "medium",
@@ -4027,7 +4071,9 @@
             "activationRequirements": [],
             "triggeredEffects": [],
             "modifierPolicy": null,
-            "criticalEffects": []
+            "criticalEffects": [],
+            "damageMultiplier": 1,
+            "conditionalRangeRules": []
           },
           {
             "id": "high",
@@ -4149,7 +4195,9 @@
             "activationRequirements": [],
             "triggeredEffects": [],
             "modifierPolicy": null,
-            "criticalEffects": []
+            "criticalEffects": [],
+            "damageMultiplier": 1,
+            "conditionalRangeRules": []
           },
           {
             "id": "ascension",
@@ -4237,7 +4285,9 @@
             "activationRequirements": [],
             "triggeredEffects": [],
             "modifierPolicy": null,
-            "criticalEffects": []
+            "criticalEffects": [],
+            "damageMultiplier": 1,
+            "conditionalRangeRules": []
           }
         ],
         "modeProfiles": [
@@ -4295,7 +4345,8 @@
           "tags": [],
           "rules": []
         },
-        "deliveryMethod": null
+        "deliveryMethod": null,
+        "resourceProfiles": []
       },
       "qualities": {
         "accurate": false,
@@ -4588,7 +4639,9 @@
             "activationRequirements": [],
             "triggeredEffects": [],
             "modifierPolicy": null,
-            "criticalEffects": []
+            "criticalEffects": [],
+            "damageMultiplier": 1,
+            "conditionalRangeRules": []
           }
         ],
         "modeProfiles": [],
@@ -4605,7 +4658,8 @@
           "tags": [],
           "rules": []
         },
-        "deliveryMethod": null
+        "deliveryMethod": null,
+        "resourceProfiles": []
       },
       "qualities": {
         "accurate": false,
@@ -4886,7 +4940,9 @@
             "activationRequirements": [],
             "triggeredEffects": [],
             "modifierPolicy": null,
-            "criticalEffects": []
+            "criticalEffects": [],
+            "damageMultiplier": 1,
+            "conditionalRangeRules": []
           }
         ],
         "modeProfiles": [],
@@ -4903,7 +4959,8 @@
           "tags": [],
           "rules": []
         },
-        "deliveryMethod": null
+        "deliveryMethod": null,
+        "resourceProfiles": []
       },
       "qualities": {
         "accurate": false,
@@ -5183,7 +5240,9 @@
             "activationRequirements": [],
             "triggeredEffects": [],
             "modifierPolicy": null,
-            "criticalEffects": []
+            "criticalEffects": [],
+            "damageMultiplier": 1,
+            "conditionalRangeRules": []
           }
         ],
         "modeProfiles": [],
@@ -5200,7 +5259,8 @@
           "tags": [],
           "rules": []
         },
-        "deliveryMethod": null
+        "deliveryMethod": null,
+        "resourceProfiles": []
       },
       "qualities": {
         "accurate": false,
@@ -5478,7 +5538,9 @@
             "activationRequirements": [],
             "triggeredEffects": [],
             "modifierPolicy": null,
-            "criticalEffects": []
+            "criticalEffects": [],
+            "damageMultiplier": 1,
+            "conditionalRangeRules": []
           }
         ],
         "modeProfiles": [],
@@ -5495,7 +5557,8 @@
           "tags": [],
           "rules": []
         },
-        "deliveryMethod": null
+        "deliveryMethod": null,
+        "resourceProfiles": []
       },
       "qualities": {
         "accurate": false,
@@ -5806,7 +5869,9 @@
             "activationRequirements": [],
             "triggeredEffects": [],
             "modifierPolicy": null,
-            "criticalEffects": []
+            "criticalEffects": [],
+            "damageMultiplier": 1,
+            "conditionalRangeRules": []
           },
           {
             "id": "sniper",
@@ -5932,7 +5997,9 @@
             "activationRequirements": [],
             "triggeredEffects": [],
             "modifierPolicy": null,
-            "criticalEffects": []
+            "criticalEffects": [],
+            "damageMultiplier": 1,
+            "conditionalRangeRules": []
           },
           {
             "id": "anti-armor",
@@ -6052,7 +6119,9 @@
             "activationRequirements": [],
             "triggeredEffects": [],
             "modifierPolicy": null,
-            "criticalEffects": []
+            "criticalEffects": [],
+            "damageMultiplier": 1,
+            "conditionalRangeRules": []
           }
         ],
         "modeProfiles": [
@@ -6088,7 +6157,8 @@
           "tags": [],
           "rules": []
         },
-        "deliveryMethod": null
+        "deliveryMethod": null,
+        "resourceProfiles": []
       },
       "qualities": {
         "accurate": false,
@@ -6371,7 +6441,9 @@
             "activationRequirements": [],
             "triggeredEffects": [],
             "modifierPolicy": null,
-            "criticalEffects": []
+            "criticalEffects": [],
+            "damageMultiplier": 1,
+            "conditionalRangeRules": []
           }
         ],
         "modeProfiles": [],
@@ -6388,7 +6460,8 @@
           "tags": [],
           "rules": []
         },
-        "deliveryMethod": null
+        "deliveryMethod": null,
+        "resourceProfiles": []
       },
       "qualities": {
         "accurate": false,
@@ -6676,7 +6749,9 @@
             "activationRequirements": [],
             "triggeredEffects": [],
             "modifierPolicy": null,
-            "criticalEffects": []
+            "criticalEffects": [],
+            "damageMultiplier": 1,
+            "conditionalRangeRules": []
           }
         ],
         "modeProfiles": [],
@@ -6693,7 +6768,8 @@
           "tags": [],
           "rules": []
         },
-        "deliveryMethod": null
+        "deliveryMethod": null,
+        "resourceProfiles": []
       },
       "qualities": {
         "accurate": false,
@@ -6977,7 +7053,9 @@
             "activationRequirements": [],
             "triggeredEffects": [],
             "modifierPolicy": null,
-            "criticalEffects": []
+            "criticalEffects": [],
+            "damageMultiplier": 1,
+            "conditionalRangeRules": []
           }
         ],
         "modeProfiles": [],
@@ -6994,7 +7072,8 @@
           "tags": [],
           "rules": []
         },
-        "deliveryMethod": null
+        "deliveryMethod": null,
+        "resourceProfiles": []
       },
       "qualities": {
         "accurate": false,
@@ -7336,7 +7415,9 @@
             "activationRequirements": [],
             "triggeredEffects": [],
             "modifierPolicy": null,
-            "criticalEffects": []
+            "criticalEffects": [],
+            "damageMultiplier": 1,
+            "conditionalRangeRules": []
           }
         ],
         "modeProfiles": [],
@@ -7353,7 +7434,8 @@
           "tags": [],
           "rules": []
         },
-        "deliveryMethod": null
+        "deliveryMethod": null,
+        "resourceProfiles": []
       },
       "qualities": {
         "accurate": false,
@@ -7647,7 +7729,9 @@
             "activationRequirements": [],
             "triggeredEffects": [],
             "modifierPolicy": null,
-            "criticalEffects": []
+            "criticalEffects": [],
+            "damageMultiplier": 1,
+            "conditionalRangeRules": []
           }
         ],
         "modeProfiles": [],
@@ -7664,7 +7748,8 @@
           "tags": [],
           "rules": []
         },
-        "deliveryMethod": null
+        "deliveryMethod": null,
+        "resourceProfiles": []
       },
       "qualities": {
         "accurate": false,
@@ -7726,6 +7811,7 @@
     "v2.3": "weapon-authority-schema-v2.3 structural defaults: range.penaltyApplication (attack for ranged, null otherwise), profile preparedAttack/damageComponents/firingConstraints defaults, canonicalStats.defensiveInteractions []",
     "v2.4": "weapon-authority-schema-v2.4 structural defaults: range.hardMaxSquares, resource lifecycle keys, profile conditionalModifiers, record proficiencyRules, canonicalStats payloadProfiles/objectDurability/integratedAccessories; qualityParameters.inaccurate.allowedBands where only longAllowed was stated.",
     "v2.5": "weapon-authority-schema-v2.5 structural defaults: stun.activation, profile activationRequirements/triggeredEffects/modifierPolicy, canonicalStats wieldingRules/stateMachine/configurationStates/constructionRules/triggeredEffects, conditionalModifiers target vocabulary (attack->attackRoll, damage->damageRoll), defensiveInteractions id/effect.",
-    "v2.6": "weapon-authority-schema-v2.6 structural defaults: profile criticalEffects [], record technologyClassification {tags:[],rules:[]}, deliveryMethod null, conditionalQualities standardized to {quality,state,when,scope,effect}."
+    "v2.6": "weapon-authority-schema-v2.6 structural defaults: profile criticalEffects [], record technologyClassification {tags:[],rules:[]}, deliveryMethod null, conditionalQualities standardized to {quality,state,when,scope,effect}.",
+    "v2.7": "weapon-authority-schema-v2.7 structural defaults: profile damageMultiplier 1, profile conditionalRangeRules [], record resourceProfiles []."
   }
 }
