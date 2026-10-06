@@ -43017,12 +43017,12 @@
       }
     },
     "3-weapons-canonical-authority": {
-      "status": "PHASE_3B_203_IDENTITY_CANONICAL_AUTHORITY_CERTIFIED_AUTHORITY_ONLY",
+      "status": "PHASE_3C_PRODUCTION_DISPOSITION_LEDGER_CERTIFIED_AUTHORITY_ONLY",
       "subphases": {
         "3A": {
           "file": "data/audits/item-weapons-phase-3a-cross-publication-reconciliation.json",
           "doc": "docs/audits/item-weapons-phase-3a-cross-publication-reconciliation.md",
-          "status": "PHASE_3A_RESOLVED_WITH_PHASE_3B_PLANNER_RULINGS",
+          "status": "PHASE_3A_COMPLETE_RESOLVED",
           "identities": 6,
           "resolved": 6,
           "conflictGated": 0,
@@ -43038,8 +43038,14 @@
           "singleClaim": 197,
           "twoClaim": 6
         },
-        "3C": "production disposition ledger (pending)",
-        "3D": "global verification and freeze (pending)"
+        "3C": {
+          "file": "data/audits/item-weapons-phase-3c-production-disposition-ledger.json",
+          "doc": "docs/audits/item-weapons-phase-3c-production-disposition-ledger.md",
+          "builder": "tools/build-item-weapons-phase-3c-production-disposition-ledger.mjs",
+          "status": "WEAPON_PHASE_3C_PRODUCTION_DISPOSITION_LEDGER_CERTIFIED",
+          "productionMutationAuthorized": false
+        },
+        "3D": "global verification and freeze (PENDING; planner certification of 3C first)"
       },
       "productionMutationAuthorized": false,
       "note": "Planner supplies the reconciliation; Claude folds and verifies it against the certified claims. Weapon tag archaeology starts only after 3D.",
@@ -43062,7 +43068,7 @@
   },
   "pendingPhases": [
     "1 Provenance and canonical content certification — weapons COMPLETE (1A-1L, authority-only); next within Phase 1: armor, general equipment families, cybernetics/upgrades/templates, lightsaber components, droid systems; weapon numeric/stat/schema certification precedes any creation of the 53 missing weapons",
-    "Phase 2 weapons numeric/stat/schema certification — 2A Core DONE (schema v2.1), 2B KOTOR, 2C Galaxy at War, 2D Force Unleashed, 2E Clone Wars, 2F Jedi Academy, 2G Legacy Era, 2H Unknown Regions, 2I Rebellion Era, 2J Scum and Villainy and 2K Galaxy of Intrigue and 2L Threats of the Galaxy DONE (standalone book authorities, schema v2.9; all 12 weapon books certified); Phase 3A cross-publication reconciliation and 3B 203-identity canonical build DONE (authority-only); next: 3C production disposition ledger, 3D global verification/freeze; Bowcaster range remains source-unresolved",
+    "Phase 2 weapons numeric/stat/schema certification — 2A Core DONE (schema v2.1), 2B KOTOR, 2C Galaxy at War, 2D Force Unleashed, 2E Clone Wars, 2F Jedi Academy, 2G Legacy Era, 2H Unknown Regions, 2I Rebellion Era, 2J Scum and Villainy and 2K Galaxy of Intrigue and 2L Threats of the Galaxy DONE (standalone book authorities, schema v2.9; all 12 weapon books certified); Phase 3A (resolved), 3B (certified) and 3C production disposition ledger (certified, authority-only, nothing executed) DONE; next: 3D global verification/freeze (after planner certification of 3C); Bowcaster range remains source-unresolved",
     "Gated cleanup tranche (0-3D migrations, 0-3E renames/merge, 0-3F template migration, 0-3G weapons.db stragglers, 0-3H droid migration, weapon/equipment REMOVE dependents)",
     "Vehicle/starship item domain census (separate domain)",
     "2 Descriptions",

@@ -1172,5 +1172,115 @@ if (p3b && typeof p3b === 'object') {
   if (errors.length === e3b) console.log(`Phase 3B canonical authority OK: ${ids.length} identities / ${nClaims} claims (197 single, 6 two-claim), ${ids.filter((i) => i.ambiguities.length).length} identities carry explicit ambiguities, builder byte-stable`);
 }
 
+
+// Phase 3C: production disposition ledger, recomputed independently from Phase 3B, packs/weapons.db and the reference scan
+const p3c = p3 && p3.subphases && p3.subphases['3C'];
+if (p3c && typeof p3c === 'object') {
+  const e3c = errors.length;
+  const same = (x, y) => JSON.stringify(x) === JSON.stringify(y);
+  const sorted = (x) => (Array.isArray(x) ? x.map(sorted) : x && typeof x === 'object' ? Object.fromEntries(Object.keys(x).sort().map((k) => [k, sorted(x[k])])) : x);
+  const sha256 = (x) => crypto.createHash('sha256').update(typeof x === 'string' ? x : JSON.stringify(sorted(x))).digest('hex');
+  const raw = fs.readFileSync(path.join(ROOT, p3c.file), 'utf8');
+  const L = JSON.parse(raw);
+  if (!fs.existsSync(path.join(ROOT, p3c.doc))) fail('3C missing doc');
+  const { buildPhase3C } = await import('./build-item-weapons-phase-3c-production-disposition-ledger.mjs');
+  const c1 = buildPhase3C(), c2 = buildPhase3C();
+  if (c1.json !== c2.json || c1.md !== c2.md) fail('3C builder output is not deterministic');
+  if (raw !== c1.json) fail('3C committed ledger differs from the builder output (stale, hand-edited or an input changed since it was generated)');
+  if (fs.readFileSync(path.join(ROOT, p3c.doc), 'utf8') !== c1.md) fail('3C committed markdown differs from the builder output');
+  if (L.status !== 'WEAPON_PHASE_3C_PRODUCTION_DISPOSITION_LEDGER_CERTIFIED' || L.productionMutationAuthorized !== false || L.authorityOnly !== true) fail('3C status / authority-only flags');
+  // inputs: Phase 3B hash, production baseline
+  const p3bText = fs.readFileSync(path.join(ROOT, 'data/audits/item-weapons-phase-3b-canonical-authority.json'), 'utf8');
+  const P3 = JSON.parse(p3bText);
+  if (L.inputs.phase3b.sha256 !== sha256(p3bText)) fail('3C Phase 3B input hash differs: Phase 3B changed after the ledger was generated');
+  const dbText = fs.readFileSync(path.join(ROOT, 'packs/weapons.db'), 'utf8');
+  if (L.inputs.production['packs/weapons.db'] !== sha256(dbText) || L.inputs.production['template.json'] !== sha256(fs.readFileSync(path.join(ROOT, 'template.json'), 'utf8'))) fail('3C production baseline hash differs: packs/weapons.db or template.json changed after the ledger baseline');
+  const prod = dbText.split('\n').filter((l) => l.trim()).map((l) => JSON.parse(l));
+  const W = prod.filter((r) => r.type === 'weapon'), NW = prod.filter((r) => r.type !== 'weapon'), byId = new Map(W.map((r) => [r._id, r]));
+  if (W.length !== 186 || L.inputs.production.weaponRecords !== 186 || L.inputs.production.nonWeaponRecords !== NW.length) fail('3C production weapon record counts');
+  // identity coverage
+  const ids = P3.identities, led = L.canonical;
+  if (ids.length !== 203 || led.length !== 203 || L.counts.canonicalIdentities !== 203 || L.counts.sourceClaims !== 209) fail(`3C canonical identity counts (${led.length}/${ids.length})`);
+  const keyOf = (x) => x.identityKey;
+  if (!same(led.map(keyOf).slice().sort(), ids.map(keyOf).slice().sort()) || new Set(led.map(keyOf)).size !== 203) fail('3C every Phase 3B identity key must appear exactly once, unchanged');
+  const idByKey = new Map(ids.map((i) => [i.identityKey, i]));
+  // repo mapping / coverage
+  const mapped = ids.filter((i) => i.repo.present).map((i) => i.repo.id);
+  if (new Set(mapped).size !== mapped.length || mapped.length !== 151 || mapped.some((m) => !byId.has(m))) fail('3C mapped repo records must be 151 unique live weapon records');
+  const repoOnlyExpected = W.map((r) => r._id).filter((x) => !mapped.includes(x)).sort();
+  const ro = L.repoOnlyRecords;
+  if (!same(ro.map((r) => r.repoId).slice().sort(), repoOnlyExpected) || new Set(ro.map((r) => r.repoId)).size !== ro.length) fail('3C every live weapon record must be mapped to one canonical identity or appear exactly once in repoOnlyRecords');
+  if (mapped.length + ro.length !== W.length || L.counts.productionWeaponRecordsCovered !== W.length) fail('3C production coverage (mapped + repo-only) must equal the live weapon records');
+  if (!same(L.outOfScopePackRecords.map((r) => r.repoId).sort(), NW.map((r) => r._id).sort())) fail('3C non-weapon pack records must be listed as out of scope');
+  if (L.counts.repoPresent !== 151 || L.counts.repoMissing !== 52) fail('3C repo present/missing counts');
+  // dispositions
+  const PRIM = ['KEEP', 'CREATE', 'RENAME', 'UPDATE', 'MERGE', 'REVIEW_PRECEDENCE'];
+  const roBy = new Map(ro.map((r) => [r.repoId, r]));
+  const create = led.filter((c) => c.primaryDisposition === 'CREATE');
+  if (create.length !== 52 || L.counts.byPrimaryDisposition.CREATE !== 52 || !same(create.map(keyOf).sort(), ids.filter((i) => !i.repo.present).map(keyOf).sort())) fail('3C CREATE must be exactly the 52 repo-missing identities');
+  const unresolved = (i) => (i.crossPublication.conflictHistory || []).some((h) => h.disposition !== 'RESOLVED_LATER_PUBLICATION_PRECEDENCE') || i.ambiguities.some((a) => /^CROSS_PUBLICATION/.test(a.status));
+  const reviewExpected = ids.filter(unresolved).map(keyOf).sort();
+  if (L.counts.byPrimaryDisposition.REVIEW_PRECEDENCE !== 0 || reviewExpected.length !== 0 || led.some((c) => c.primaryDisposition === 'REVIEW_PRECEDENCE')) fail('3C REVIEW_PRECEDENCE must be 0 (no unresolved published contradiction remains)');
+  for (const c of led) {
+    const i = idByKey.get(c.identityKey), w = `3C ${c.canonicalName}`;
+    if (!i) { fail(`${w} identity key ${c.identityKey} does not exist in Phase 3B`); continue; }
+    if (!PRIM.includes(c.primaryDisposition)) fail(`${w} unknown primary disposition`);
+    if (c.productionMutationAuthorized !== false) fail(`${w} must keep productionMutationAuthorized false`);
+    if (c.canonicalName !== i.canonicalName || c.repo.present !== i.repo.present || c.repo.id !== i.repo.id) fail(`${w} differs from Phase 3B`);
+    if (!Array.isArray(c.actions) || !c.actions.length || c.actions.some((a) => !['type', 'canonicalPaths', 'repoPaths', 'reason', 'sourceAuthority', 'representability', 'blocked', 'blockReason'].every((k) => k in a))) fail(`${w} actions must be structured`);
+    const types = c.actions.map((a) => a.type);
+    const repoRec = i.repo.present ? byId.get(i.repo.id) : null;
+    if (!i.repo.present) { if (c.primaryDisposition !== 'CREATE' || !same(types, ['CREATE_RECORD'])) fail(`${w} a repo-missing identity must be CREATE with only CREATE_RECORD`); continue; }
+    if (c.primaryDisposition === 'CREATE') fail(`${w} a repo-present identity cannot be CREATE`);
+    const nameDiffers = repoRec.name !== i.canonicalName;
+    if (nameDiffers !== types.includes('RENAME')) fail(`${w} RENAME action must exist exactly when the production name differs from the canonical name`);
+    const substantive = types.filter((t) => !['RENAME', 'NO_CHANGE', 'REFERENCE_MIGRATION_REQUIRED'].includes(t));
+    if (c.primaryDisposition === 'KEEP' && (substantive.length || nameDiffers || !same(types, ['NO_CHANGE']))) fail(`${w} KEEP cannot carry any required mutation`);
+    if (c.primaryDisposition === 'RENAME' && (substantive.length || !nameDiffers)) fail(`${w} RENAME requires a real name mismatch and no substantive update action`);
+    if (c.primaryDisposition === 'UPDATE' && !substantive.length) fail(`${w} UPDATE needs at least one substantive action`);
+    if (c.primaryDisposition === 'MERGE') {
+      const md = c.mergeDetail; const targets = ro.filter((r) => r.disposition === 'MERGE_INTO_CANONICAL' && r.targetRepoId === i.repo.id).map((r) => r.repoId).sort();
+      if (!md || md.survivorRepoId !== i.repo.id || !md.mergedRepoIds.length || !same([...md.mergedRepoIds].sort(), targets) || md.mergedRepoIds.some((m) => !byId.has(m) || m === i.repo.id) || !md.mergedRepoIds.every((m) => types.includes('MERGE_RECORDS'))) fail(`${w} MERGE must name its survivor and at least one distinct live merged record`);
+    } else if (types.includes('MERGE_RECORDS')) fail(`${w} MERGE_RECORDS only belongs to a MERGE identity`);
+    // recomputed simple field facts must be reflected as actions
+    const cs = i.canonicalStats, sys = repoRec.system;
+    const need = [];
+    if (cs.costCredits !== null && Number(sys.cost) !== cs.costCredits) need.push(['UPDATE_STATS', 'canonicalStats.costCredits']);
+    if (cs.weightKg !== null && Number(sys.weight) !== cs.weightKg) need.push(['UPDATE_STATS', 'canonicalStats.weightKg']);
+    if (['dice', 'fixed', 'double'].includes(cs.baseDamage.mode) && String(sys.damage).replace(/\s/g, '').toLowerCase() !== cs.baseDamage.formula.toLowerCase()) need.push(['UPDATE_DAMAGE', 'canonicalStats.baseDamage']);
+    if (cs.damageType.mode === 'single' && !cs.damageType.qualifiers.length && sys.damageType !== cs.damageType.types[0]) need.push(['UPDATE_DAMAGE_TYPE', 'canonicalStats.damageType']);
+    if (cs.ammo && cs.ammo.mode !== 'multiple' && cs.ammo.capacityShots !== null && sys.ammunition?.max !== cs.ammo.capacityShots) need.push(['UPDATE_AMMO', 'canonicalStats.ammo']);
+    for (const [t, p] of need) if (!c.actions.some((a) => a.type === t && a.canonicalPaths.includes(p))) fail(`${w} missing required ${t} for ${p} (production differs from canonical)`);
+    // source-unresolved fields never filled from the repo
+    if (cs.range.mode === 'unresolved' || (cs.range.mode === 'ranged' && cs.range.profileId === null)) {
+      const bf = c.blockedFields.find((b) => b.canonicalPath === 'canonicalStats.range.profileId');
+      if (!bf || bf.productionValueMayNotBecomeCanonical !== true || bf.status !== 'SOURCE_UNRESOLVED_NO_MUTATION') fail(`${w} source-unresolved range profile must be a blocked field`);
+      if (c.actions.some((a) => a.canonicalPaths.includes('canonicalStats.range.profileId'))) fail(`${w} must not mutate or fill the source-unresolved range profile from production`);
+      if (bf && bf.repoValue !== repoRec.system.rangeProfile) fail(`${w} blocked range field must keep the live production value as evidence only`);
+    }
+    if (i.canonicalStats.ammo?.status === 'not-stated' && c.actions.some((a) => a.type === 'UPDATE_AMMO' && a.canonicalPaths.includes('canonicalStats.ammo') && !a.blocked && a.representability === 'DIFFERS')) fail(`${w} not-stated ammo must not receive a value-setting action`);
+  }
+  if (led.filter((c) => c.primaryDisposition === 'MERGE').length !== ro.filter((r) => r.disposition === 'MERGE_INTO_CANONICAL').map((r) => r.targetRepoId).filter((v, i2, a) => a.indexOf(v) === i2).length) fail('3C MERGE identities must equal the distinct merge survivors');
+  const bd = Object.fromEntries(PRIM.map((p) => [p, led.filter((c) => c.primaryDisposition === p).length]));
+  if (!same(bd, L.counts.byPrimaryDisposition) || Object.values(bd).reduce((a, b) => a + b, 0) !== 203) fail('3C byPrimaryDisposition counts');
+  // reverse ledger
+  const ROD = ['MERGE_INTO_CANONICAL', 'REMOVE_UNSUPPORTED', 'RETAIN_SPECIAL_NONCANONICAL_ROLE', 'REVIEW_MAPPING'];
+  const { scanReferences } = await import('./lib/item-weapons-reference-scan.mjs');
+  const scan = scanReferences(ROOT, W.map((r) => ({ id: r._id, name: r.name })));
+  for (const r of ro) {
+    const w = `3C repo-only ${r.repoId}`;
+    if (!ROD.includes(r.disposition) || r.productionMutationAuthorized !== false) fail(`${w} disposition / mutation flag`);
+    if (r.disposition === 'REMOVE_UNSUPPORTED' && (mapped.includes(r.repoId) || !r.reason)) fail(`${w} REMOVE_UNSUPPORTED cannot target a canonical mapped record and needs a reason`);
+    if (r.disposition === 'MERGE_INTO_CANONICAL') { const t = ids.find((i) => i.canonicalName === r.targetCanonicalIdentity); if (!t || t.repo.id !== r.targetRepoId || r.targetRepoId === r.repoId || !r.reason) fail(`${w} merge target must be a distinct canonical mapped record`); }
+    if (r.disposition === 'RETAIN_SPECIAL_NONCANONICAL_ROLE' && !r.reason) fail(`${w} special retained role needs an explicit reason`);
+    const refs = scan.references.get(r.repoId) || [], total = refs.reduce((m, x) => m + x.count, 0);
+    const want = total ? 'BLOCKED_PENDING_MIGRATION' : 'NO_REFERENCES_FOUND';
+    if (r.dependencyGate.status !== want || r.dependencyGate.referenceTotal !== total || !same(r.dependencyGate.references, refs)) fail(`${w} dependency gate must match the recomputed reference scan (${want}, ${total} references)`);
+    if (r.disposition === 'MERGE_INTO_CANONICAL' && roBy.get(r.repoId) !== r) fail(`${w} duplicated`);
+  }
+  if (L.counts.repoOnlyRecords !== ro.length || L.counts.recordsWithDependencyGates !== ro.filter((r) => r.dependencyGate.status === 'BLOCKED_PENDING_MIGRATION').length) fail('3C repo-only / dependency gate counts');
+  if (errors.length === e3c) console.log(`Phase 3C production disposition ledger OK: ${led.length} identities (${PRIM.map((p) => `${p} ${bd[p]}`).join(', ')}), ${ro.length} repo-only records (${ro.filter((r) => r.disposition === 'MERGE_INTO_CANONICAL').length} merge, ${ro.filter((r) => r.disposition === 'REMOVE_UNSUPPORTED').length} remove), ${L.counts.recordsWithDependencyGates} dependency-gated, ledger byte-stable`);
+}
+
 if (errors.length) { console.error(`FAIL (${errors.length})\n- ${errors.join('\n- ')}`); process.exit(1); }
 console.log(`weapons authority OK: ${p.canonicalWeapons.length} canonical, ${pack.size} repo records, all covered once`);

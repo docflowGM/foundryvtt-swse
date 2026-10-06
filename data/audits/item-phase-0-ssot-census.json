@@ -1778,7 +1778,8 @@
       "scripts/rolls/roll-config.js",
       "scripts/sheets/v2/character-sheet/force-roll-dialog.js",
       "scripts/ui/shell/AlliesSurfaceService.js",
-      "scripts/utils/schema-adapters.js"
+      "scripts/utils/schema-adapters.js",
+      "tools/build-item-weapons-phase-3c-production-disposition-ledger.mjs"
     ]
   },
   "legacyLoader": {
@@ -1875,6 +1876,7 @@
     "tools/audit-nonheroic-lane-b-remainder.mjs",
     "tools/audit-nonheroic-profile-weapon-uuids.mjs",
     "tools/build-item-weapons-phase-3b-canonical-authority.mjs",
+    "tools/build-item-weapons-phase-3c-production-disposition-ledger.mjs",
     "tools/categorize-shields.js",
     "tools/compare-template-equipment.js",
     "tools/fix-armor-data.js",
