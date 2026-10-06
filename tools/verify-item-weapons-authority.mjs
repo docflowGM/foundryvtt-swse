@@ -1352,5 +1352,78 @@ if (p3d && typeof p3d === 'object') {
   if (errors.length === e3d) console.log(`Phase 3D global freeze OK: 209 claims -> 203 identities (197/6), 151/52 repo, CREATE 52/UPDATE 149/MERGE 2, 186 live covered once, 35 cleanup gates, 25 unresolved fields, production unchanged, status ${F.status}`);
 }
 
+// Phase 4A: Simple Weapon semantic tags (rolling planner authority). The planner owns finalTags; this only verifies them.
+const P4A = 'data/audits/item-weapons-phase-4a-simple-semantic-rolling.json';
+if (fs.existsSync(path.join(ROOT, P4A))) {
+  const e4 = errors.length;
+  const same = (x, y) => JSON.stringify(x) === JSON.stringify(y);
+  const S = JSON.parse(fs.readFileSync(path.join(ROOT, P4A), 'utf8'));
+  if (!fs.existsSync(path.join(ROOT, 'docs/audits/item-weapons-phase-4a-simple-semantic-rolling.md'))) fail('4A missing markdown companion');
+  if (S.authorityOnly !== true || S.productionMutationAuthorized !== false || S.implementationContract?.runtimeCodeMutationAuthorized !== false || S.implementationContract?.nextCategoryAuthorized !== false) fail('4A authority-only / mutation flags');
+  // Phase 3D must remain frozen and production unchanged
+  const frz = JSON.parse(fs.readFileSync(path.join(ROOT, 'data/audits/item-weapons-phase-3d-global-freeze.json'), 'utf8'));
+  if (frz.status !== 'WEAPON_PHASE_3D_GLOBAL_AUTHORITY_FROZEN' || auth.phases['3-weapons-canonical-authority'].subphases['3D'].status !== 'WEAPON_PHASE_3D_GLOBAL_AUTHORITY_FROZEN') fail('4A requires Phase 3D to remain frozen');
+  const b3 = JSON.parse(fs.readFileSync(path.join(ROOT, 'data/audits/item-weapons-phase-3b-canonical-authority.json'), 'utf8'));
+  const sh = (t) => crypto.createHash('sha256').update(t).digest('hex');
+  if (sh(fs.readFileSync(path.join(ROOT, 'packs/weapons.db'), 'utf8')) !== b3.productionBaseline['packs/weapons.db'] || sh(fs.readFileSync(path.join(ROOT, 'template.json'), 'utf8')) !== b3.productionBaseline['template.json']) fail('4A production file changed (packs/weapons.db or template.json)');
+  // certified feat/talent-used vocabulary, recomputed from the three authorities
+  const J = (f) => JSON.parse(fs.readFileSync(path.join(ROOT, f), 'utf8'));
+  const used = new Set();
+  for (const a of J('data/audits/feat-tags-pass2-semantic-authority.json').assignments) for (const t of a.finalTags || []) used.add(t);
+  const walk = (o) => { if (Array.isArray(o)) o.forEach(walk); else if (o && typeof o === 'object') for (const [k, v] of Object.entries(o)) { if (k === 'finalTags' && Array.isArray(v)) v.forEach((t) => used.add(t)); else walk(v); } };
+  walk(J('data/audits/talent-phase-12-1-semantic-tag-authority.json').batches);
+  for (const a of J('data/audits/talent-phase-12-final-ontology-adjudication.json').assignments) for (const t of a.finalTags || []) used.add(t);
+  if (used.size !== S.vocabularyPolicy.derivedAllowedTagCount || used.size !== 183) fail(`4A feat/talent-used vocabulary is ${used.size}, expected 183`);
+  const REJECT = ['accuracy', 'area_damage', 'condition_track', 'explosives', 'grenade', 'rifle', 'thrown'];
+  if (!same([...S.vocabularyPolicy.knownRuntimeOrWeaponTagsExplicitlyNotAllowed].sort(), REJECT)) fail('4A rejected runtime-tag list changed');
+  for (const t of REJECT) if (used.has(t)) fail(`4A rejected tag ${t} is now used by certified feats/talents; the vocabulary policy needs planner review`);
+  // Phase 3B Simple Weapon census
+  const simple = b3.identities.filter((i) => i.weaponGroup === 'Simple Weapon').sort((x, y) => (x.canonicalName < y.canonicalName ? -1 : 1));
+  if (simple.length !== 49 || S.categoryCensus.canonicalSimpleWeaponIdentities !== 49) fail(`4A Phase 3B Simple Weapon identities ${simple.length}, expected 49`);
+  const sPresent = simple.filter((i) => i.repo.present).length;
+  if (sPresent !== S.categoryCensus.repoPresent || simple.length - sPresent !== S.categoryCensus.repoMissing) fail('4A Simple Weapon repo present/missing census');
+  const byKey = new Map(simple.map((i) => [i.identityKey, i]));
+  const asg = S.assignments;
+  const seen = new Set();
+  const REQ = asg.length;
+  const tagsUsed = new Set();
+  let tagTotal = 0, present = 0;
+  asg.forEach((a, idx) => {
+    const w = `4A ${a.canonicalName}`;
+    if (seen.has(a.identityKey)) fail(`${w} occurs more than once`); seen.add(a.identityKey);
+    const i = byKey.get(a.identityKey);
+    if (!i) { fail(`${w} (${a.identityKey}) is not a Phase 3B Simple Weapon identity`); return; }
+    if (i.canonicalName !== a.canonicalName) fail(`${w} name differs from Phase 3B (${i.canonicalName})`);
+    if (a.repo.present !== i.repo.present || (a.repo.id || null) !== (i.repo.id || null)) fail(`${w} repo mapping differs from Phase 3B`);
+    if (a.repo.present) present++;
+    if (simple[idx] && simple[idx].identityKey !== a.identityKey) fail(`${w} is out of alphabetical Simple Weapon order`);
+    const c0 = i.sourceClaims[0];
+    if (a.source.book.replace(/^The /, '') !== c0.book.replace(/^The /, '')) fail(`${w} source book differs from Phase 3B`);
+    if (!Array.isArray(a.finalTags) || !a.finalTags.length) fail(`${w} has no finalTags`);
+    if (new Set(a.finalTags).size !== a.finalTags.length) fail(`${w} duplicate tags`);
+    for (const t of a.finalTags) {
+      tagTotal++; tagsUsed.add(t);
+      if (!used.has(t)) fail(`${w} tag ${t} is not used by any certified feat/talent`);
+      if (REJECT.includes(t)) fail(`${w} uses rejected runtime-only tag ${t}`);
+      if (t === 'simple_weapon' || t === 'simple-weapon') fail(`${w} must not carry a Simple Weapon batch tag`);
+      if (!a.rationale || typeof a.rationale[t] !== 'string' || !a.rationale[t].trim()) fail(`${w} tag ${t} has no rationale`);
+    }
+    for (const t of Object.keys(a.rationale || {})) if (!a.finalTags.includes(t)) fail(`${w} rationale for ${t} has no tag`);
+    if (!Array.isArray(a.ontologyGapCandidates)) fail(`${w} ontologyGapCandidates must be an array`);
+  });
+  if (seen.size !== REQ) fail('4A duplicate assignment identity');
+  const rp = S.rollingProgress;
+  if (rp.adjudicatedTotal !== REQ || rp.remaining !== 49 - REQ || rp.adjudicatedThisRound > REQ) fail('4A rolling progress counts');
+  if (rp.nextCanonicalName !== (simple[REQ] ? simple[REQ].canonicalName : null)) fail(`4A next canonical name must be ${simple[REQ]?.canonicalName ?? null}`);
+  if (rp.firstCanonicalName !== simple[0].canonicalName) fail('4A first canonical name');
+  if (rp.round === 1) {
+    if (REQ !== 12 || present !== rp.roundRepoPresent || REQ - present !== rp.roundRepoMissing || rp.roundRepoPresent !== 7 || rp.roundRepoMissing !== 5) fail(`4A Round 1 must be 12 identities, 7 repo-present / 5 repo-missing (got ${REQ}, ${present}/${REQ - present})`);
+    if (tagTotal !== rp.totalFinalTagAssignmentsThisRound || tagsUsed.size !== rp.distinctTagsUsedThisRound || !same([...tagsUsed].sort(), [...rp.tagsUsedThisRound].sort())) fail('4A Round 1 tag counts');
+  }
+  const gaps = asg.reduce((m, a) => m + a.ontologyGapCandidates.length, 0);
+  if (gaps !== rp.ontologyGapCandidatesThisRound) fail('4A ontology gap count');
+  if (errors.length === e4) console.log(`Phase 4A Simple Weapon semantic tags OK: ${REQ}/49 adjudicated (${present} repo-present / ${REQ - present} missing), ${tagTotal} assignments, ${tagsUsed.size} distinct tags from the ${used.size}-tag certified feat/talent vocabulary, next ${rp.nextCanonicalName}`);
+}
+
 if (errors.length) { console.error(`FAIL (${errors.length})\n- ${errors.join('\n- ')}`); process.exit(1); }
 console.log(`weapons authority OK: ${p.canonicalWeapons.length} canonical, ${pack.size} repo records, all covered once`);
