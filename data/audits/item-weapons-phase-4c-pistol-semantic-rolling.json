@@ -1,0 +1,1973 @@
+{
+  "schemaVersion": "weapon-semantic-tags-pistol-rolling-v1",
+  "phase": "4C",
+  "family": "weapons",
+  "categoryBatch": "Pistol",
+  "status": "WEAPON_TAG_PHASE_4C_PISTOL_ROUND_2_PLANNER_ADJUDICATED",
+  "authorityOnly": true,
+  "productionMutationAuthorized": false,
+  "purpose": "Rolling Pistol semantic and recommendation authority. Semantic tags remain restricted to the certified feat/talent-used vocabulary; structural rule selectors and comparative weapon metrics are separate non-tag data.",
+  "baseline": {
+    "repository": "docflowGM/foundryvtt-swse",
+    "phase3DStatus": "WEAPON_PHASE_3D_GLOBAL_AUTHORITY_FROZEN",
+    "pistolComparisonIdentityKey": "weapon-blaster-pistol",
+    "pistolComparisonCanonicalName": "Blaster Pistol"
+  },
+  "vocabularyPolicy": {
+    "semanticRule": "Every value in sharedTags, advantageTags, tradeoffTags, and finalTags must already be used by at least one certified feat or talent. No weapon-only semantic vocabulary is created.",
+    "derivedAllowedTagCount": 183,
+    "ruleSelectorsAreSemanticTags": false,
+    "recommendationProfileValuesAreSemanticTags": false,
+    "rawDamageOrCapacityMayCreateSemanticTags": false,
+    "notes": [
+      "High/low damage and high/low capacity are structured recommendation comparisons, not semantic tags.",
+      "Weapon group/family identifiers are rule selectors, not system.tags.",
+      "Accuracy/Inaccurate remains structured weapon mechanics unless represented by an already-certified semantic concept for a distinct positive mechanic."
+    ]
+  },
+  "selectorPolicy": {
+    "purpose": "Connect weapon identities and families to feat/talent/class applicability without polluting semantic tags.",
+    "required": [
+      "exactIdentity",
+      "weaponGroup",
+      "proficiency"
+    ],
+    "genericPistolAbilityRule": "Generic pistol feats/talents/classes should match weapon-group:pistol or weapon-proficiency:pistols; do not enumerate every generic pistol ability on every pistol.",
+    "explicitLinksRule": "Use explicit ability links only when the weapon source itself names or modifies a particular ability or ability family."
+  },
+  "pistolComparisonPolicy": {
+    "baselineDamage": "3d6",
+    "baselineStunDamage": "2d6",
+    "baselineCapacityShots": 100,
+    "baselineRange": "normal pistol range",
+    "baselineRateOfFire": [
+      "S"
+    ],
+    "baselineConcealmentEquipmentModifier": 0,
+    "variantSelectionRule": "Prefer a specialized pistol only when its comparative strengths align with the character/build and its tradeoffs do not materially conflict with that build."
+  },
+  "categoryCensus": {
+    "canonicalPistolIdentities": 30,
+    "repoPresent": 30,
+    "repoMissing": 0
+  },
+  "rollingProgress": {
+    "round": 2,
+    "adjudicatedThisRound": 10,
+    "adjudicatedTotal": 20,
+    "remaining": 10,
+    "firstCanonicalNameThisRound": "Blaster Pistol, Sporting",
+    "lastCanonicalNameThisRound": "Merr-Sonn Model 434 DeathHammer",
+    "nextCanonicalName": "Needler",
+    "totalFinalTagAssignments": 113,
+    "distinctFinalTagsUsed": 29,
+    "finalTagsUsed": [
+      "action_economy",
+      "anti-force",
+      "battlefield_control",
+      "burst_damage",
+      "concealment",
+      "control",
+      "crafting",
+      "damage_bonus",
+      "damage_reduction",
+      "damage_threshold",
+      "droid",
+      "durability",
+      "exploration",
+      "infiltration",
+      "mechanics",
+      "mobility",
+      "movement",
+      "nonlethal",
+      "offense_ranged",
+      "pistol",
+      "positioning",
+      "precision",
+      "ranged",
+      "setup",
+      "stealth",
+      "stun",
+      "swift_action",
+      "tech",
+      "vehicle"
+    ],
+    "tradeoffTagsUsed": [
+      "action_economy",
+      "concealment",
+      "full_attack",
+      "precision",
+      "stealth",
+      "sustained_damage",
+      "swift_action"
+    ]
+  },
+  "implementationContract": {
+    "semanticAuthority": "planner",
+    "claudeMayChangeFinalTags": false,
+    "claudeMayChangeTradeoffTags": false,
+    "claudeMayChangeRuleSelectors": false,
+    "claudeMayChangeRelativeComparison": false,
+    "claudeMayCreateNewSemanticTags": false,
+    "runtimeCodeMutationAuthorized": false,
+    "productionMutationAuthorized": false,
+    "requiredRepoTargets": [
+      "data/audits/item-weapons-phase-4c-pistol-semantic-rolling.json",
+      "docs/audits/item-weapons-phase-4c-pistol-semantic-rolling.md"
+    ],
+    "productionFilesMustRemainUnchanged": [
+      "packs/weapons.db",
+      "template.json"
+    ]
+  },
+  "assignments": [
+    {
+      "identityKey": "weapon-ascension-gun",
+      "canonicalName": "Ascension Gun",
+      "source": {
+        "book": "Galaxy at War",
+        "descriptionPage": 37,
+        "statTablePage": 41
+      },
+      "canonicalMechanicSummary": "Heavy blaster pistol with a swift-action ascension mode that fires a syntherope grappling dart for vertical ascent or downhill zipline movement; blaster mode uses 50 shots, the weapon carries two syntheropes, and its bulk imposes -5 on Stealth checks made to conceal it.",
+      "sharedTags": [
+        "pistol",
+        "ranged"
+      ],
+      "advantageTags": [
+        "offense_ranged",
+        "stun",
+        "nonlethal",
+        "mobility",
+        "movement",
+        "positioning",
+        "swift_action",
+        "action_economy",
+        "exploration"
+      ],
+      "tradeoffTags": [
+        "stealth",
+        "concealment"
+      ],
+      "finalTags": [
+        "pistol",
+        "ranged",
+        "offense_ranged",
+        "stun",
+        "nonlethal",
+        "mobility",
+        "movement",
+        "positioning",
+        "swift_action",
+        "action_economy",
+        "exploration"
+      ],
+      "rationale": {
+        "pistol": "Canonical Pistol-group weapon.",
+        "ranged": "Both blaster and ascension modes are ranged-use profiles.",
+        "offense_ranged": "Blaster mode functions as a heavy blaster pistol and deals ranged weapon damage.",
+        "stun": "The certified weapon authority includes a stun setting.",
+        "nonlethal": "The stun setting gives the weapon a nonlethal attack mode.",
+        "mobility": "Ascension mode directly transports the wielder vertically or along a zipline.",
+        "movement": "The tether moves the wielder at a published 12 squares per round.",
+        "positioning": "The tether changes vertical and horizontal battlefield position in ways an ordinary pistol cannot.",
+        "swift_action": "Switching between blaster and ascension modes is explicitly a swift action.",
+        "action_economy": "The weapon's combat/utility mode switch consumes a defined combat action.",
+        "exploration": "The grappling tether and zipline provide explicit traversal utility outside ordinary attacks."
+      },
+      "ruleSelectors": {
+        "exactIdentity": "weapon:weapon-ascension-gun",
+        "weaponGroup": "weapon-group:pistol",
+        "proficiency": "weapon-proficiency:pistols",
+        "families": [
+          "weapon-family:blaster-pistol",
+          "weapon-family:heavy-blaster-pistol",
+          "weapon-family:ascension-gun"
+        ],
+        "explicitAbilityLinks": []
+      },
+      "relativeToStandardPistol": {
+        "damage": {
+          "canonical": "3d8",
+          "relation": "HIGHER"
+        },
+        "capacity": {
+          "shots": 50,
+          "status": "ESTABLISHED",
+          "relation": "LOWER"
+        },
+        "stun": {
+          "available": true,
+          "relation": "AVAILABLE"
+        },
+        "range": {
+          "relation": "MIXED",
+          "notes": [
+            "Blaster profile is Inaccurate and cannot attack at long range.",
+            "Ascension mode has a 30-square maximum range."
+          ]
+        },
+        "concealment": {
+          "equipmentModifier": -5,
+          "relation": "WORSE"
+        },
+        "multiAttackCompatibility": {
+          "relation": "NORMAL"
+        },
+        "actionEconomy": {
+          "relation": "MORE_COMPLEX",
+          "notes": [
+            "Mode switching costs a swift action."
+          ]
+        },
+        "recommendationFit": "Strong utility/mobility sidearm for characters who value traversal and positioning and can accept lower ammunition capacity, poor concealability, and no long-range blaster attacks."
+      },
+      "unrepresentedMechanics": [
+        {
+          "mechanic": "50-shot blaster power pack and two-use syntherope supply.",
+          "representationStatus": "STRUCTURED_RECOMMENDATION_DATA",
+          "note": "Capacity and consumable counts are comparison/mechanics data, not semantic tags."
+        },
+        {
+          "mechanic": "-5 Stealth to conceal the weapon.",
+          "representationStatus": "NEGATIVE_TRADEOFF",
+          "note": "Represented directionally through tradeoffTags; exact modifier remains structured data."
+        }
+      ]
+    },
+    {
+      "identityKey": "weapon-black-powder-pistol",
+      "canonicalName": "Black-Powder Pistol",
+      "source": {
+        "book": "The Unknown Regions",
+        "descriptionPage": 37,
+        "statTablePage": 38
+      },
+      "canonicalMechanicSummary": "Primitive one-shot pistol dealing 2d4 piercing damage; Inaccurate, requires a full-round reload after every shot, cannot use feats/talents that allow multiple shots, and provides an explicit Mechanics-based procedure for producing ammunition from foraged materials.",
+      "sharedTags": [
+        "pistol",
+        "ranged"
+      ],
+      "advantageTags": [
+        "offense_ranged",
+        "mechanics",
+        "crafting",
+        "exploration"
+      ],
+      "tradeoffTags": [
+        "action_economy",
+        "full_attack",
+        "sustained_damage"
+      ],
+      "finalTags": [
+        "pistol",
+        "ranged",
+        "offense_ranged",
+        "mechanics",
+        "crafting",
+        "exploration"
+      ],
+      "rationale": {
+        "pistol": "Canonical Pistol-group weapon.",
+        "ranged": "The weapon uses pistol ranges.",
+        "offense_ranged": "Its normal use deals ranged piercing damage.",
+        "mechanics": "The source explicitly uses a Mechanics check to manufacture ammunition from gathered materials.",
+        "crafting": "The weapon publishes a timed ammunition-production procedure with a Mechanics DC and scaling output.",
+        "exploration": "Its defining logistical advantage is the ability to produce ammunition from materials found while away from normal supply."
+      },
+      "ruleSelectors": {
+        "exactIdentity": "weapon:weapon-black-powder-pistol",
+        "weaponGroup": "weapon-group:pistol",
+        "proficiency": "weapon-proficiency:pistols",
+        "families": [
+          "weapon-family:black-powder-pistol",
+          "weapon-family:projectile-pistol"
+        ],
+        "explicitAbilityLinks": [],
+        "abilityRestrictions": [
+          {
+            "selector": "attack-pattern:multiple-shots",
+            "relation": "PROHIBITED",
+            "reason": "The source explicitly prohibits feats or talents that allow multiple shots."
+          }
+        ]
+      },
+      "relativeToStandardPistol": {
+        "damage": {
+          "canonical": "2d4",
+          "relation": "LOWER"
+        },
+        "capacity": {
+          "shots": 1,
+          "status": "ESTABLISHED",
+          "relation": "MUCH_LOWER"
+        },
+        "stun": {
+          "available": false,
+          "relation": "NONE"
+        },
+        "range": {
+          "relation": "WORSE",
+          "notes": [
+            "Inaccurate: cannot attack at long range."
+          ]
+        },
+        "concealment": {
+          "equipmentModifier": 0,
+          "relation": "BASELINE"
+        },
+        "multiAttackCompatibility": {
+          "relation": "PROHIBITED"
+        },
+        "actionEconomy": {
+          "relation": "MUCH_WORSE",
+          "notes": [
+            "Full-round action reload after every shot."
+          ]
+        },
+        "recommendationFit": "Niche expedition/logistics choice for Mechanics-capable characters who may be cut off from normal ammunition supplies; poor combat recommendation for multiattack or sustained-fire builds."
+      },
+      "unrepresentedMechanics": [
+        {
+          "mechanic": "One-shot loaded capacity and full-round reload.",
+          "representationStatus": "STRUCTURED_RECOMMENDATION_DATA",
+          "note": "Exact capacity/reload remain structured data."
+        },
+        {
+          "mechanic": "Inaccurate quality prohibits long-range attacks.",
+          "representationStatus": "STRUCTURED_RECOMMENDATION_DATA",
+          "note": "No new accuracy/inaccurate semantic tag is created."
+        }
+      ]
+    },
+    {
+      "identityKey": "weapon-dh-23-blaster-pistol",
+      "canonicalName": "BlasTech DH-23 Outback Blaster Pistol",
+      "source": {
+        "book": "Clone Wars Campaign Guide",
+        "descriptionPage": 62,
+        "statTablePage": 61
+      },
+      "canonicalMechanicSummary": "Reliable 3d6 blaster pistol with a stun setting and unusually durable construction, giving the weapon object Strength 17 and Break DC 20.",
+      "sharedTags": [
+        "pistol",
+        "ranged"
+      ],
+      "advantageTags": [
+        "offense_ranged",
+        "stun",
+        "nonlethal",
+        "durability"
+      ],
+      "tradeoffTags": [],
+      "finalTags": [
+        "pistol",
+        "ranged",
+        "offense_ranged",
+        "stun",
+        "nonlethal",
+        "durability"
+      ],
+      "rationale": {
+        "pistol": "Canonical Pistol-group weapon.",
+        "ranged": "The weapon attacks at range as a pistol.",
+        "offense_ranged": "It deals direct ranged blaster damage.",
+        "stun": "The table provides a stun setting.",
+        "nonlethal": "The stun setting provides a nonlethal combat option.",
+        "durability": "The source gives the weapon unusually high object Strength and Break DC because of its reinforced construction."
+      },
+      "ruleSelectors": {
+        "exactIdentity": "weapon:weapon-dh-23-blaster-pistol",
+        "weaponGroup": "weapon-group:pistol",
+        "proficiency": "weapon-proficiency:pistols",
+        "families": [
+          "weapon-family:blaster-pistol"
+        ],
+        "explicitAbilityLinks": []
+      },
+      "relativeToStandardPistol": {
+        "damage": {
+          "canonical": "3d6",
+          "relation": "SAME"
+        },
+        "capacity": {
+          "shots": null,
+          "status": "NOT_STATED",
+          "relation": null
+        },
+        "stun": {
+          "available": true,
+          "relation": "AVAILABLE"
+        },
+        "range": {
+          "relation": "WORSE",
+          "notes": [
+            "The source describes sacrificing range to improve reliability; do not invent an unsupported exact range beyond certified structured authority."
+          ]
+        },
+        "concealment": {
+          "equipmentModifier": 0,
+          "relation": "BASELINE"
+        },
+        "multiAttackCompatibility": {
+          "relation": "NORMAL"
+        },
+        "actionEconomy": {
+          "relation": "BASELINE"
+        },
+        "recommendationFit": "Prefer when weapon durability/reliability matters more than maximum range; otherwise its damage profile is baseline-like."
+      },
+      "unrepresentedMechanics": [
+        {
+          "mechanic": "Weapon object Strength 17 and Break DC 20.",
+          "representationStatus": "STRUCTURED_MECHANICS_PLUS_SEMANTIC",
+          "note": "durability captures the recommendation concept; exact values remain structured."
+        }
+      ]
+    },
+    {
+      "identityKey": "weapon-dt-12-heavy-blaster",
+      "canonicalName": "BlasTech DT-12 Heavy Blaster Pistol",
+      "source": {
+        "book": "Clone Wars Campaign Guide",
+        "descriptionPage": 62,
+        "statTablePage": 61
+      },
+      "canonicalMechanicSummary": "Powerful 4d6 heavy blaster pistol with a stun setting and an enlarged grip; it is Inaccurate and cannot attack at long range.",
+      "sharedTags": [
+        "pistol",
+        "ranged"
+      ],
+      "advantageTags": [
+        "offense_ranged",
+        "stun",
+        "nonlethal"
+      ],
+      "tradeoffTags": [],
+      "finalTags": [
+        "pistol",
+        "ranged",
+        "offense_ranged",
+        "stun",
+        "nonlethal"
+      ],
+      "rationale": {
+        "pistol": "Canonical Pistol-group weapon.",
+        "ranged": "The weapon uses pistol ranged attacks.",
+        "offense_ranged": "Its defining role is high-damage ranged offense.",
+        "stun": "The table provides a stun setting.",
+        "nonlethal": "The stun setting gives the weapon a nonlethal option."
+      },
+      "ruleSelectors": {
+        "exactIdentity": "weapon:weapon-dt-12-heavy-blaster",
+        "weaponGroup": "weapon-group:pistol",
+        "proficiency": "weapon-proficiency:pistols",
+        "families": [
+          "weapon-family:blaster-pistol",
+          "weapon-family:heavy-blaster-pistol"
+        ],
+        "explicitAbilityLinks": []
+      },
+      "relativeToStandardPistol": {
+        "damage": {
+          "canonical": "4d6",
+          "relation": "HIGHER"
+        },
+        "capacity": {
+          "shots": null,
+          "status": "NOT_STATED",
+          "relation": null
+        },
+        "stun": {
+          "available": true,
+          "relation": "AVAILABLE"
+        },
+        "range": {
+          "relation": "WORSE",
+          "notes": [
+            "Inaccurate: cannot attack at long range."
+          ]
+        },
+        "concealment": {
+          "equipmentModifier": 0,
+          "relation": "BASELINE"
+        },
+        "multiAttackCompatibility": {
+          "relation": "NORMAL"
+        },
+        "actionEconomy": {
+          "relation": "BASELINE"
+        },
+        "recommendationFit": "High-damage close/medium-range pistol choice when raw sidearm damage matters more than long-range capability."
+      },
+      "unrepresentedMechanics": [
+        {
+          "mechanic": "4d6 base damage is higher than the standard pistol's 3d6.",
+          "representationStatus": "STRUCTURED_RECOMMENDATION_DATA",
+          "note": "Raw damage dice differences are compared structurally, not converted into a damage_bonus semantic tag."
+        },
+        {
+          "mechanic": "Inaccurate quality prohibits long-range attacks.",
+          "representationStatus": "STRUCTURED_RECOMMENDATION_DATA",
+          "note": "No new inaccurate/accuracy semantic tag is created."
+        }
+      ]
+    },
+    {
+      "identityKey": "weapon-blaster-pistol",
+      "canonicalName": "Blaster Pistol",
+      "source": {
+        "book": "Core Rulebook",
+        "descriptionPage": 125,
+        "statTablePage": 126
+      },
+      "canonicalMechanicSummary": "Standard pistol comparison baseline: 3d6 lethal damage, 2d6 stun setting, normal pistol range, single-shot rate of fire, and 100 shots per power pack.",
+      "sharedTags": [
+        "pistol",
+        "ranged"
+      ],
+      "advantageTags": [
+        "offense_ranged",
+        "stun",
+        "nonlethal"
+      ],
+      "tradeoffTags": [],
+      "finalTags": [
+        "pistol",
+        "ranged",
+        "offense_ranged",
+        "stun",
+        "nonlethal"
+      ],
+      "rationale": {
+        "pistol": "Canonical standard Pistol-group sidearm.",
+        "ranged": "Its canonical attack profile is ranged.",
+        "offense_ranged": "Its normal function is direct ranged damage.",
+        "stun": "It has an explicit 2d6 stun setting.",
+        "nonlethal": "Its stun setting provides a nonlethal attack option."
+      },
+      "ruleSelectors": {
+        "exactIdentity": "weapon:weapon-blaster-pistol",
+        "weaponGroup": "weapon-group:pistol",
+        "proficiency": "weapon-proficiency:pistols",
+        "families": [
+          "weapon-family:blaster-pistol",
+          "weapon-family:standard-blaster-pistol"
+        ],
+        "explicitAbilityLinks": []
+      },
+      "relativeToStandardPistol": {
+        "damage": {
+          "canonical": "3d6",
+          "relation": "BASELINE"
+        },
+        "capacity": {
+          "shots": 100,
+          "status": "ESTABLISHED",
+          "relation": "BASELINE"
+        },
+        "stun": {
+          "available": true,
+          "canonical": "2d6",
+          "relation": "BASELINE"
+        },
+        "range": {
+          "relation": "BASELINE"
+        },
+        "concealment": {
+          "equipmentModifier": 0,
+          "relation": "BASELINE"
+        },
+        "multiAttackCompatibility": {
+          "relation": "BASELINE"
+        },
+        "actionEconomy": {
+          "relation": "BASELINE"
+        },
+        "recommendationFit": "Default/fallback pistol when no specialized sidearm offers a build-relevant advantage sufficient to justify its tradeoffs."
+      },
+      "unrepresentedMechanics": []
+    },
+    {
+      "identityKey": "weapon-bluebolt-blaster-pistol",
+      "canonicalName": "Blaster Pistol, Bluebolt",
+      "source": {
+        "book": "Legacy Era Campaign Guide",
+        "descriptionPage": 64,
+        "statTablePage": 64
+      },
+      "canonicalMechanicSummary": "3d8 blaster pistol with a stun setting that reaches 8 squares instead of the usual 6; it uses a 50-shot power pack, each stun attack consumes an additional shot, and the weapon is Inaccurate.",
+      "sharedTags": [
+        "pistol",
+        "ranged"
+      ],
+      "advantageTags": [
+        "offense_ranged",
+        "stun",
+        "nonlethal"
+      ],
+      "tradeoffTags": [],
+      "finalTags": [
+        "pistol",
+        "ranged",
+        "offense_ranged",
+        "stun",
+        "nonlethal"
+      ],
+      "rationale": {
+        "pistol": "Canonical Pistol-group weapon.",
+        "ranged": "The weapon attacks using pistol ranges.",
+        "offense_ranged": "It deals direct ranged blaster damage.",
+        "stun": "Its defining special feature improves the usable range of its stun mode.",
+        "nonlethal": "The weapon retains a nonlethal stun option."
+      },
+      "ruleSelectors": {
+        "exactIdentity": "weapon:weapon-bluebolt-blaster-pistol",
+        "weaponGroup": "weapon-group:pistol",
+        "proficiency": "weapon-proficiency:pistols",
+        "families": [
+          "weapon-family:blaster-pistol",
+          "weapon-family:bluebolt-blaster-pistol"
+        ],
+        "explicitAbilityLinks": []
+      },
+      "relativeToStandardPistol": {
+        "damage": {
+          "canonical": "3d8",
+          "relation": "HIGHER"
+        },
+        "capacity": {
+          "shots": 50,
+          "status": "ESTABLISHED",
+          "relation": "LOWER"
+        },
+        "stun": {
+          "available": true,
+          "relation": "BETTER_RANGE",
+          "notes": [
+            "Stun attacks may reach 8 squares instead of the usual 6.",
+            "Each stun attack consumes one additional shot."
+          ]
+        },
+        "range": {
+          "relation": "WORSE",
+          "notes": [
+            "Inaccurate: cannot attack at long range."
+          ]
+        },
+        "concealment": {
+          "equipmentModifier": 0,
+          "relation": "BASELINE"
+        },
+        "multiAttackCompatibility": {
+          "relation": "NORMAL"
+        },
+        "actionEconomy": {
+          "relation": "BASELINE"
+        },
+        "recommendationFit": "Strong higher-damage/stun specialist when extended stun reach matters, at the cost of lower capacity, increased stun ammunition consumption, and no long-range attacks."
+      },
+      "unrepresentedMechanics": [
+        {
+          "mechanic": "Stun range is 8 squares instead of the usual 6.",
+          "representationStatus": "STRUCTURED_RECOMMENDATION_DATA",
+          "note": "stun captures the semantic role; exact range advantage stays structured."
+        },
+        {
+          "mechanic": "Each stun attack consumes one additional shot.",
+          "representationStatus": "STRUCTURED_RECOMMENDATION_DATA",
+          "note": "Ammo consumption is structured resource data."
+        }
+      ]
+    },
+    {
+      "identityKey": "weapon-heavy-blaster-pistol",
+      "canonicalName": "Blaster Pistol, Heavy",
+      "source": {
+        "book": "Core Rulebook",
+        "descriptionPage": 126,
+        "statTablePage": 126
+      },
+      "canonicalMechanicSummary": "Rifle-like 3d8 firepower in a pistol package with a 2d8 stun setting, paid for by a reduced 50-shot power-pack capacity.",
+      "sharedTags": [
+        "pistol",
+        "ranged"
+      ],
+      "advantageTags": [
+        "offense_ranged",
+        "stun",
+        "nonlethal"
+      ],
+      "tradeoffTags": [],
+      "finalTags": [
+        "pistol",
+        "ranged",
+        "offense_ranged",
+        "stun",
+        "nonlethal"
+      ],
+      "rationale": {
+        "pistol": "Canonical Pistol-group weapon.",
+        "ranged": "Its canonical attack profile is ranged.",
+        "offense_ranged": "Its primary role is higher-damage ranged offense.",
+        "stun": "It has an explicit 2d8 stun setting.",
+        "nonlethal": "The stun setting provides a nonlethal attack option."
+      },
+      "ruleSelectors": {
+        "exactIdentity": "weapon:weapon-heavy-blaster-pistol",
+        "weaponGroup": "weapon-group:pistol",
+        "proficiency": "weapon-proficiency:pistols",
+        "families": [
+          "weapon-family:blaster-pistol",
+          "weapon-family:heavy-blaster-pistol"
+        ],
+        "explicitAbilityLinks": []
+      },
+      "relativeToStandardPistol": {
+        "damage": {
+          "canonical": "3d8",
+          "relation": "HIGHER"
+        },
+        "capacity": {
+          "shots": 50,
+          "status": "ESTABLISHED",
+          "relation": "LOWER"
+        },
+        "stun": {
+          "available": true,
+          "canonical": "2d8",
+          "relation": "HIGHER_DAMAGE"
+        },
+        "range": {
+          "relation": "BASELINE"
+        },
+        "concealment": {
+          "equipmentModifier": 0,
+          "relation": "BASELINE"
+        },
+        "multiAttackCompatibility": {
+          "relation": "NORMAL"
+        },
+        "actionEconomy": {
+          "relation": "BASELINE"
+        },
+        "recommendationFit": "Straightforward damage upgrade over the standard blaster pistol for characters who can accept half the ammunition capacity."
+      },
+      "unrepresentedMechanics": [
+        {
+          "mechanic": "Higher base/stun damage but half the standard pistol's shot capacity.",
+          "representationStatus": "STRUCTURED_RECOMMENDATION_DATA",
+          "note": "Raw dice and capacity deltas remain comparison data rather than semantic tags."
+        }
+      ]
+    },
+    {
+      "identityKey": "weapon-hold-out-blaster-pistol",
+      "canonicalName": "Blaster Pistol, Hold-Out",
+      "source": {
+        "book": "Core Rulebook",
+        "descriptionPage": 126,
+        "statTablePage": 126
+      },
+      "canonicalMechanicSummary": "Palm-sized 3d4 blaster with no stun setting; grants +5 equipment bonus to Stealth checks made to conceal it and holds only 6 shots per energy cell.",
+      "sharedTags": [
+        "pistol",
+        "ranged"
+      ],
+      "advantageTags": [
+        "offense_ranged",
+        "concealment",
+        "stealth"
+      ],
+      "tradeoffTags": [],
+      "finalTags": [
+        "pistol",
+        "ranged",
+        "offense_ranged",
+        "concealment",
+        "stealth"
+      ],
+      "rationale": {
+        "pistol": "Canonical Pistol-group weapon.",
+        "ranged": "It is used for ranged pistol attacks.",
+        "offense_ranged": "It deals direct ranged damage.",
+        "concealment": "Its defining advantage is being easier to hide on the wielder.",
+        "stealth": "It explicitly grants +5 equipment bonus to Stealth checks made to conceal the weapon."
+      },
+      "ruleSelectors": {
+        "exactIdentity": "weapon:weapon-hold-out-blaster-pistol",
+        "weaponGroup": "weapon-group:pistol",
+        "proficiency": "weapon-proficiency:pistols",
+        "families": [
+          "weapon-family:blaster-pistol",
+          "weapon-family:hold-out-blaster-pistol"
+        ],
+        "explicitAbilityLinks": []
+      },
+      "relativeToStandardPistol": {
+        "damage": {
+          "canonical": "3d4",
+          "relation": "LOWER"
+        },
+        "capacity": {
+          "shots": 6,
+          "status": "ESTABLISHED",
+          "relation": "MUCH_LOWER"
+        },
+        "stun": {
+          "available": false,
+          "relation": "NONE"
+        },
+        "range": {
+          "relation": "BASELINE"
+        },
+        "concealment": {
+          "equipmentModifier": 5,
+          "relation": "MUCH_BETTER"
+        },
+        "multiAttackCompatibility": {
+          "relation": "NORMAL"
+        },
+        "actionEconomy": {
+          "relation": "BASELINE"
+        },
+        "recommendationFit": "Concealment/infiltration sidearm for characters who value hidden carry and backup-weapon utility over damage, stun capability, and ammunition endurance."
+      },
+      "unrepresentedMechanics": [
+        {
+          "mechanic": "6-shot energy-cell capacity.",
+          "representationStatus": "STRUCTURED_RECOMMENDATION_DATA",
+          "note": "Capacity is recommendation/mechanics data, not a semantic tag."
+        }
+      ]
+    },
+    {
+      "identityKey": "weapon-sidearm-blaster-pistol",
+      "canonicalName": "Blaster Pistol, Sidearm",
+      "source": {
+        "book": "Galaxy at War",
+        "descriptionPage": 38,
+        "statTablePage": 41
+      },
+      "canonicalMechanicSummary": "3d6 military sidearm with a stun setting and exceptional 250-shot efficiency; using Rapid Shot or a feat with Rapid Shot as a prerequisite forces a swift-action trigger reset before it can fire again.",
+      "sharedTags": [
+        "pistol",
+        "ranged"
+      ],
+      "advantageTags": [
+        "offense_ranged",
+        "stun",
+        "nonlethal"
+      ],
+      "tradeoffTags": [
+        "swift_action",
+        "action_economy"
+      ],
+      "finalTags": [
+        "pistol",
+        "ranged",
+        "offense_ranged",
+        "stun",
+        "nonlethal"
+      ],
+      "rationale": {
+        "pistol": "Canonical Pistol-group weapon.",
+        "ranged": "It uses normal pistol ranged attacks.",
+        "offense_ranged": "Its shots are as powerful as ordinary blaster-pistol attacks.",
+        "stun": "The certified authority provides a stun setting.",
+        "nonlethal": "The stun setting provides a nonlethal option."
+      },
+      "ruleSelectors": {
+        "exactIdentity": "weapon:weapon-sidearm-blaster-pistol",
+        "weaponGroup": "weapon-group:pistol",
+        "proficiency": "weapon-proficiency:pistols",
+        "families": [
+          "weapon-family:blaster-pistol",
+          "weapon-family:sidearm-blaster-pistol"
+        ],
+        "explicitAbilityLinks": [
+          {
+            "abilityType": "feat",
+            "abilityName": "Rapid Shot",
+            "relation": "TRIGGERS_SWIFT_RESET_BEFORE_NEXT_SHOT"
+          }
+        ],
+        "abilityRestrictions": [
+          {
+            "selector": "feat-with-prerequisite:rapid-shot",
+            "relation": "TRIGGERS_SWIFT_RESET_BEFORE_NEXT_SHOT",
+            "reason": "The source explicitly applies the trigger-reset rule to Rapid Shot and feats with Rapid Shot as a prerequisite."
+          }
+        ]
+      },
+      "relativeToStandardPistol": {
+        "damage": {
+          "canonical": "3d6",
+          "relation": "SAME"
+        },
+        "capacity": {
+          "shots": 250,
+          "status": "ESTABLISHED",
+          "relation": "MUCH_HIGHER"
+        },
+        "stun": {
+          "available": true,
+          "relation": "AVAILABLE"
+        },
+        "range": {
+          "relation": "BASELINE"
+        },
+        "concealment": {
+          "equipmentModifier": 0,
+          "relation": "BASELINE"
+        },
+        "multiAttackCompatibility": {
+          "relation": "CONDITIONAL_PENALTY",
+          "notes": [
+            "Rapid Shot and feats requiring Rapid Shot force a swift reset before the next shot."
+          ]
+        },
+        "actionEconomy": {
+          "relation": "WORSE_FOR_RAPID_SHOT_BUILDS"
+        },
+        "recommendationFit": "Excellent endurance/logistics sidearm for prolonged fights and supply-poor missions; de-prioritize for Rapid Shot chains that would repeatedly pay the swift-action reset tax."
+      },
+      "unrepresentedMechanics": [
+        {
+          "mechanic": "250-shot power-pack capacity.",
+          "representationStatus": "STRUCTURED_RECOMMENDATION_DATA",
+          "note": "High capacity is intentionally not a new semantic tag."
+        },
+        {
+          "mechanic": "Rapid Shot-family use requires a swift trigger reset before the next shot.",
+          "representationStatus": "RULE_SELECTOR_INTERACTION",
+          "note": "Represented through tradeoff tags plus explicit rule links; not a positive finalTag."
+        }
+      ]
+    },
+    {
+      "identityKey": "weapon-snap-shot-blaster-pistol",
+      "canonicalName": "Blaster Pistol, Snap Shot",
+      "source": {
+        "book": "Legacy Era Campaign Guide",
+        "descriptionPage": 64,
+        "statTablePage": 64
+      },
+      "canonicalMechanicSummary": "Tiny 3d6 hold-out variant with normal pistol range and +5 concealment bonus, but no stun setting and only one shot per power pack.",
+      "sharedTags": [
+        "pistol",
+        "ranged"
+      ],
+      "advantageTags": [
+        "offense_ranged",
+        "concealment",
+        "stealth"
+      ],
+      "tradeoffTags": [],
+      "finalTags": [
+        "pistol",
+        "ranged",
+        "offense_ranged",
+        "concealment",
+        "stealth"
+      ],
+      "rationale": {
+        "pistol": "Canonical Pistol-group weapon.",
+        "ranged": "It uses normal pistol range rather than the repo's legacy hard-range value.",
+        "offense_ranged": "It deals standard-pistol-level 3d6 ranged damage.",
+        "concealment": "Its source-defined hold-out design grants a concealment advantage.",
+        "stealth": "It grants +5 to Stealth checks made to conceal the weapon."
+      },
+      "ruleSelectors": {
+        "exactIdentity": "weapon:weapon-snap-shot-blaster-pistol",
+        "weaponGroup": "weapon-group:pistol",
+        "proficiency": "weapon-proficiency:pistols",
+        "families": [
+          "weapon-family:blaster-pistol",
+          "weapon-family:hold-out-blaster-pistol",
+          "weapon-family:snap-shot-blaster-pistol"
+        ],
+        "explicitAbilityLinks": []
+      },
+      "relativeToStandardPistol": {
+        "damage": {
+          "canonical": "3d6",
+          "relation": "SAME"
+        },
+        "capacity": {
+          "shots": 1,
+          "status": "ESTABLISHED",
+          "relation": "EXTREMELY_LOWER"
+        },
+        "stun": {
+          "available": false,
+          "relation": "NONE"
+        },
+        "range": {
+          "relation": "BASELINE"
+        },
+        "concealment": {
+          "equipmentModifier": 5,
+          "relation": "MUCH_BETTER"
+        },
+        "multiAttackCompatibility": {
+          "relation": "PRACTICALLY_LIMITED_BY_CAPACITY"
+        },
+        "actionEconomy": {
+          "relation": "WORSE_AFTER_EACH_SHOT",
+          "notes": [
+            "The one-shot power pack must be replaced after firing."
+          ]
+        },
+        "recommendationFit": "Ambush/backup-style concealed sidearm that preserves standard 3d6 damage in a tiny package, but its one-shot capacity makes it a poor primary weapon for sustained combat."
+      },
+      "unrepresentedMechanics": [
+        {
+          "mechanic": "One-shot power pack.",
+          "representationStatus": "STRUCTURED_RECOMMENDATION_DATA",
+          "note": "Extreme low capacity is a recommendation dimension, not a semantic tag."
+        }
+      ]
+    },
+    {
+      "identityKey": "weapon-sporting-blaster-pistol",
+      "canonicalName": "Blaster Pistol, Sporting",
+      "source": {
+        "book": "Core Rulebook",
+        "descriptionPage": 126,
+        "statTablePage": 126
+      },
+      "canonicalMechanicSummary": "Compact civilian 3d4 blaster pistol with a 2d4 stun setting. It can run from a 6-shot energy cell or be attached to a 100-shot power pack.",
+      "sharedTags": [
+        "pistol",
+        "ranged"
+      ],
+      "advantageTags": [
+        "offense_ranged",
+        "stun",
+        "nonlethal"
+      ],
+      "tradeoffTags": [],
+      "finalTags": [
+        "pistol",
+        "ranged",
+        "offense_ranged",
+        "stun",
+        "nonlethal"
+      ],
+      "rationale": {
+        "pistol": "Canonical Pistol-group weapon.",
+        "ranged": "Its canonical attack profile is ranged.",
+        "offense_ranged": "It deals direct ranged blaster damage.",
+        "stun": "It has an explicit 2d4 stun setting.",
+        "nonlethal": "The stun setting provides a nonlethal attack option."
+      },
+      "ruleSelectors": {
+        "exactIdentity": "weapon:weapon-sporting-blaster-pistol",
+        "weaponGroup": "weapon-group:pistol",
+        "proficiency": "weapon-proficiency:pistols",
+        "families": [
+          "weapon-family:blaster-pistol",
+          "weapon-family:sporting-blaster-pistol"
+        ],
+        "explicitAbilityLinks": [
+          {
+            "abilityType": "feat",
+            "abilityName": "Sport Hunter",
+            "relation": "EXPLICIT_WEAPON_BENEFIT",
+            "effect": "Reroll any result of 1 on sporting blaster pistol damage dice until a result other than 1 is obtained."
+          }
+        ]
+      },
+      "relativeToStandardPistol": {
+        "damage": {
+          "canonical": "3d4",
+          "relation": "LOWER"
+        },
+        "capacity": {
+          "shots": [
+            6,
+            100
+          ],
+          "status": "ESTABLISHED_ALTERNATE_POWER_SOURCES",
+          "relation": "CONFIGURABLE",
+          "notes": [
+            "6 shots from an energy cell.",
+            "100 shots when attached to a power pack."
+          ]
+        },
+        "stun": {
+          "available": true,
+          "canonical": "2d4",
+          "relation": "LOWER_DAMAGE"
+        },
+        "range": {
+          "relation": "BASELINE"
+        },
+        "concealment": {
+          "equipmentModifier": 0,
+          "relation": "BASELINE"
+        },
+        "multiAttackCompatibility": {
+          "relation": "NORMAL"
+        },
+        "actionEconomy": {
+          "relation": "BASELINE"
+        },
+        "recommendationFit": "Civilian/sporting sidearm with flexible power supply and an explicit Sport Hunter synergy, but lower lethal and stun damage than the standard Blaster Pistol."
+      },
+      "unrepresentedMechanics": [
+        {
+          "mechanic": "Can use either a 6-shot energy cell or an attached 100-shot power pack.",
+          "representationStatus": "STRUCTURED_RECOMMENDATION_DATA",
+          "note": "Power-source flexibility and shot counts remain structured mechanics rather than semantic tags."
+        }
+      ]
+    },
+    {
+      "identityKey": "weapon-wrist-blaster",
+      "canonicalName": "Blaster, Wrist",
+      "source": {
+        "book": "Galaxy of Intrigue",
+        "descriptionPage": 64,
+        "statTablePage": 65
+      },
+      "canonicalMechanicSummary": "Tiny 3d4 wrist-mounted blaster disguised as jewelry or a bracer. Its integrated cell holds one shot, it cannot attack at Medium or Long range, and weapon-sensor detection requires a DC 25 Use Computer check.",
+      "sharedTags": [
+        "pistol",
+        "ranged"
+      ],
+      "advantageTags": [
+        "offense_ranged",
+        "concealment",
+        "infiltration"
+      ],
+      "tradeoffTags": [
+        "sustained_damage"
+      ],
+      "finalTags": [
+        "pistol",
+        "ranged",
+        "offense_ranged",
+        "concealment",
+        "infiltration"
+      ],
+      "rationale": {
+        "pistol": "Canonical Pistol-group weapon.",
+        "ranged": "It makes ranged attacks using the pistol proficiency family.",
+        "offense_ranged": "It deals direct ranged energy damage.",
+        "concealment": "Its defining function is to hide a weapon inside jewelry or a bracer and mask it from weapon sensors.",
+        "infiltration": "The explicit sensor-masking rule makes it useful for carrying a weapon through security screening."
+      },
+      "ruleSelectors": {
+        "exactIdentity": "weapon:weapon-wrist-blaster",
+        "weaponGroup": "weapon-group:pistol",
+        "proficiency": "weapon-proficiency:pistols",
+        "families": [
+          "weapon-family:blaster-pistol",
+          "weapon-family:wrist-blaster",
+          "weapon-family:concealed-pistol"
+        ],
+        "explicitAbilityLinks": []
+      },
+      "relativeToStandardPistol": {
+        "damage": {
+          "canonical": "3d4",
+          "relation": "LOWER"
+        },
+        "capacity": {
+          "shots": 1,
+          "status": "ESTABLISHED",
+          "relation": "EXTREMELY_LOWER"
+        },
+        "stun": {
+          "available": false,
+          "relation": "NONE"
+        },
+        "range": {
+          "relation": "MUCH_WORSE",
+          "notes": [
+            "Galaxy of Intrigue specifically forbids attacks at Medium and Long range."
+          ]
+        },
+        "concealment": {
+          "relation": "MUCH_BETTER",
+          "notes": [
+            "Weapon-sensor detection requires DC 25 Use Computer."
+          ]
+        },
+        "multiAttackCompatibility": {
+          "relation": "PRACTICALLY_LIMITED_BY_CAPACITY"
+        },
+        "actionEconomy": {
+          "relation": "WORSE_AFTER_FIRST_SHOT"
+        },
+        "recommendationFit": "Security-bypass/infiltration pistol for characters who need a weapon to survive sensor screening; poor primary combat weapon because it is one-shot, low-damage, and short-ranged."
+      },
+      "unrepresentedMechanics": [
+        {
+          "mechanic": "DC 25 Use Computer check is required to detect the weapon with a sensor scan.",
+          "representationStatus": "STRUCTURED_RECOMMENDATION_DATA",
+          "note": "Concealment/infiltration capture the semantic role; the exact detection DC remains structured."
+        },
+        {
+          "mechanic": "One-shot integrated power cell and no Medium/Long attacks.",
+          "representationStatus": "STRUCTURED_RECOMMENDATION_DATA",
+          "note": "Capacity and exact range restrictions are not semantic tags."
+        }
+      ]
+    },
+    {
+      "identityKey": "weapon-bryar-pistol",
+      "canonicalName": "Bryar Pistol",
+      "source": {
+        "book": "Force Unleashed Campaign Guide",
+        "descriptionPage": 98,
+        "statTablePage": 99
+      },
+      "canonicalMechanicSummary": "Accurate 3d4 pistol with a 100-shot rechargeable pack. As a swift action it can be primed; after waiting until the next turn, the next qualifying attack deals +1 weapon die, consumes 5 shots, and cannot be combined with abilities that consume more than one shot.",
+      "sharedTags": [
+        "pistol",
+        "ranged"
+      ],
+      "advantageTags": [
+        "offense_ranged",
+        "precision",
+        "swift_action",
+        "action_economy",
+        "setup",
+        "damage_bonus",
+        "burst_damage"
+      ],
+      "tradeoffTags": [
+        "full_attack"
+      ],
+      "finalTags": [
+        "pistol",
+        "ranged",
+        "offense_ranged",
+        "precision",
+        "swift_action",
+        "action_economy",
+        "setup",
+        "damage_bonus",
+        "burst_damage"
+      ],
+      "rationale": {
+        "pistol": "Canonical Pistol-group weapon.",
+        "ranged": "It makes ranged pistol attacks.",
+        "offense_ranged": "Its normal and primed shots are direct ranged offense.",
+        "precision": "Its Accurate quality removes the normal short-range attack penalty.",
+        "swift_action": "Priming the built-up shot explicitly requires a swift action.",
+        "action_economy": "The charged-shot mode has a defined action and timing commitment.",
+        "setup": "The wielder must prime the weapon and refrain from attacking with it until the next turn before the bonus shot becomes available.",
+        "damage_bonus": "The primed shot explicitly adds +1 weapon die.",
+        "burst_damage": "The weapon concentrates extra output into one prepared shot rather than sustained fire."
+      },
+      "ruleSelectors": {
+        "exactIdentity": "weapon:weapon-bryar-pistol",
+        "weaponGroup": "weapon-group:pistol",
+        "proficiency": "weapon-proficiency:pistols",
+        "families": [
+          "weapon-family:blaster-pistol",
+          "weapon-family:bryar-pistol",
+          "weapon-family:charged-shot-pistol"
+        ],
+        "explicitAbilityLinks": [],
+        "abilityRestrictions": [
+          {
+            "selector": "attack-option:consumes-more-than-one-shot",
+            "relation": "PROHIBITED_WITH_PRIMED_SHOT",
+            "reason": "A primed shot cannot be combined with any ability that consumes more than one shot."
+          }
+        ]
+      },
+      "relativeToStandardPistol": {
+        "damage": {
+          "canonical": "3d4",
+          "relation": "LOWER_BASE_HIGHER_PRIMED",
+          "notes": [
+            "Primed shot deals +1 weapon die."
+          ]
+        },
+        "capacity": {
+          "shots": 100,
+          "status": "ESTABLISHED_RECHARGEABLE",
+          "relation": "SAME"
+        },
+        "stun": {
+          "available": false,
+          "relation": "NONE"
+        },
+        "range": {
+          "relation": "BETTER_AT_SHORT",
+          "notes": [
+            "Accurate quality removes the short-range penalty."
+          ]
+        },
+        "concealment": {
+          "equipmentModifier": 0,
+          "relation": "BASELINE"
+        },
+        "multiAttackCompatibility": {
+          "relation": "NORMAL_UNPRIMED_PROHIBITED_WITH_PRIMED_SHOT"
+        },
+        "actionEconomy": {
+          "relation": "MORE_COMPLEX",
+          "notes": [
+            "Priming costs a swift action and requires delayed setup."
+          ]
+        },
+        "recommendationFit": "Prepared-shot/precision pistol for characters who can spend a swift action and delay their shot to gain a larger single hit; poor fit for builds trying to stack the primed shot with multi-shot options."
+      },
+      "unrepresentedMechanics": [
+        {
+          "mechanic": "Primed shot consumes 5 ammunition and requires no Bryar attack before the start of the next turn.",
+          "representationStatus": "STRUCTURED_RECOMMENDATION_DATA",
+          "note": "Exact ammunition and timing conditions remain structured mechanics."
+        }
+      ]
+    },
+    {
+      "identityKey": "weapon-adjudicator-slugthrower",
+      "canonicalName": "Czerka Adjudicator",
+      "source": {
+        "book": "Clone Wars Campaign Guide",
+        "descriptionPage": 62,
+        "statTablePage": 61
+      },
+      "canonicalMechanicSummary": "Tiny 2d4 slugthrower hold-out pistol intended as a concealable backup weapon. It carries only four shots and requires a full-round action to reload.",
+      "sharedTags": [
+        "pistol",
+        "ranged"
+      ],
+      "advantageTags": [
+        "offense_ranged",
+        "concealment"
+      ],
+      "tradeoffTags": [
+        "action_economy",
+        "sustained_damage"
+      ],
+      "finalTags": [
+        "pistol",
+        "ranged",
+        "offense_ranged",
+        "concealment"
+      ],
+      "rationale": {
+        "pistol": "Canonical Pistol-group weapon.",
+        "ranged": "It fires slugthrower ammunition at range.",
+        "offense_ranged": "Its normal use deals direct ranged piercing damage.",
+        "concealment": "The source explicitly identifies it as a compact hold-out pistol sharing the small size and ease of concealment of hold-out blasters."
+      },
+      "ruleSelectors": {
+        "exactIdentity": "weapon:weapon-adjudicator-slugthrower",
+        "weaponGroup": "weapon-group:pistol",
+        "proficiency": "weapon-proficiency:pistols",
+        "families": [
+          "weapon-family:slugthrower-pistol",
+          "weapon-family:hold-out-pistol",
+          "weapon-family:czerka-adjudicator"
+        ],
+        "explicitAbilityLinks": []
+      },
+      "relativeToStandardPistol": {
+        "damage": {
+          "canonical": "2d4",
+          "relation": "LOWER"
+        },
+        "capacity": {
+          "shots": 4,
+          "status": "ESTABLISHED",
+          "relation": "MUCH_LOWER"
+        },
+        "stun": {
+          "available": false,
+          "relation": "NONE"
+        },
+        "range": {
+          "relation": "BASELINE"
+        },
+        "concealment": {
+          "relation": "BETTER"
+        },
+        "multiAttackCompatibility": {
+          "relation": "NORMAL_BUT_CAPACITY_LIMITED"
+        },
+        "actionEconomy": {
+          "relation": "WORSE",
+          "notes": [
+            "Reload requires a full-round action."
+          ]
+        },
+        "recommendationFit": "Concealable projectile backup sidearm for characters who want a hidden non-blaster option; poor sustained-fire choice because of four-shot capacity and full-round reload."
+      },
+      "unrepresentedMechanics": [
+        {
+          "mechanic": "Four-shot capacity and full-round reload.",
+          "representationStatus": "STRUCTURED_RECOMMENDATION_DATA",
+          "note": "Exact ammunition and reload burden remain structured comparison data."
+        }
+      ]
+    },
+    {
+      "identityKey": "weapon-disruptor-pistol",
+      "canonicalName": "DX-2 Disruptor Pistol",
+      "source": {
+        "book": "Force Unleashed Campaign Guide",
+        "descriptionPage": 99,
+        "statTablePage": 99
+      },
+      "canonicalMechanicSummary": "3d6 disruptor pistol that treats every target's damage threshold as 5 lower and disintegrates creatures or objects it destroys. It fires only once every other round, cannot use multi-shot-consuming abilities, and has a 10-shot rechargeable pack.",
+      "sharedTags": [
+        "pistol",
+        "ranged"
+      ],
+      "advantageTags": [
+        "offense_ranged",
+        "damage_threshold"
+      ],
+      "tradeoffTags": [
+        "full_attack",
+        "sustained_damage"
+      ],
+      "finalTags": [
+        "pistol",
+        "ranged",
+        "offense_ranged",
+        "damage_threshold"
+      ],
+      "rationale": {
+        "pistol": "Canonical Pistol-group weapon.",
+        "ranged": "It makes ranged pistol attacks.",
+        "offense_ranged": "It deals direct ranged disruptor damage.",
+        "damage_threshold": "Every target is explicitly treated as having Damage Threshold 5 lower against this weapon."
+      },
+      "ruleSelectors": {
+        "exactIdentity": "weapon:weapon-disruptor-pistol",
+        "weaponGroup": "weapon-group:pistol",
+        "proficiency": "weapon-proficiency:pistols",
+        "families": [
+          "weapon-family:disruptor",
+          "weapon-family:disruptor-pistol"
+        ],
+        "explicitAbilityLinks": [],
+        "abilityRestrictions": [
+          {
+            "selector": "attack-option:consumes-more-than-one-shot",
+            "relation": "PROHIBITED",
+            "reason": "The weapon cannot be used with feats, talents, or abilities that consume more than one shot in a round."
+          }
+        ]
+      },
+      "relativeToStandardPistol": {
+        "damage": {
+          "canonical": "3d6",
+          "relation": "SAME_BASE_WITH_THRESHOLD_ADVANTAGE"
+        },
+        "capacity": {
+          "shots": 10,
+          "status": "ESTABLISHED_RECHARGEABLE",
+          "relation": "MUCH_LOWER"
+        },
+        "stun": {
+          "available": false,
+          "relation": "NONE"
+        },
+        "range": {
+          "relation": "BASELINE"
+        },
+        "concealment": {
+          "equipmentModifier": 0,
+          "relation": "BASELINE"
+        },
+        "multiAttackCompatibility": {
+          "relation": "PROHIBITED"
+        },
+        "actionEconomy": {
+          "relation": "SEVERELY_RATE_LIMITED",
+          "notes": [
+            "Can fire only once every other round."
+          ]
+        },
+        "recommendationFit": "Damage-threshold specialist for characters who want fewer, more consequential shots; very poor fit for sustained-fire, Rapid Shot, Double Attack, or other multi-shot builds."
+      },
+      "unrepresentedMechanics": [
+        {
+          "mechanic": "Destroyed targets are disintegrated and cease to exist.",
+          "representationStatus": "NO_EXISTING_FEAT_TALENT_TAG",
+          "note": "Preserve as canonical effect text; no semantic tag precisely represents disintegration."
+        },
+        {
+          "mechanic": "May fire only once every other round.",
+          "representationStatus": "STRUCTURED_RECOMMENDATION_DATA",
+          "note": "Rate limitation is represented as a negative sustained-fire comparison rather than a positive semantic tag."
+        }
+      ]
+    },
+    {
+      "identityKey": "weapon-defender-microblaster",
+      "canonicalName": "Gee-Tech 12 Defender Microblaster",
+      "source": {
+        "book": "Clone Wars Campaign Guide",
+        "descriptionPage": 62,
+        "statTablePage": 61
+      },
+      "canonicalMechanicSummary": "Tiny 3d4 microblaster granting +5 on Stealth checks to conceal it. It has only two shots, a hard maximum range of 3 squares, and an integrated nonrechargeable power supply that makes it disposable after depletion.",
+      "sharedTags": [
+        "pistol",
+        "ranged"
+      ],
+      "advantageTags": [
+        "offense_ranged",
+        "concealment",
+        "stealth",
+        "infiltration"
+      ],
+      "tradeoffTags": [
+        "sustained_damage"
+      ],
+      "finalTags": [
+        "pistol",
+        "ranged",
+        "offense_ranged",
+        "concealment",
+        "stealth",
+        "infiltration"
+      ],
+      "rationale": {
+        "pistol": "Canonical Pistol-group weapon.",
+        "ranged": "It makes ranged pistol attacks.",
+        "offense_ranged": "It deals direct ranged blaster damage.",
+        "concealment": "Its extremely small design is explicitly optimized for concealment.",
+        "stealth": "It grants +5 on Stealth checks to conceal the weapon.",
+        "infiltration": "Its explicit concealment bonus makes it useful for entering places where obvious weapons would be discovered."
+      },
+      "ruleSelectors": {
+        "exactIdentity": "weapon:weapon-defender-microblaster",
+        "weaponGroup": "weapon-group:pistol",
+        "proficiency": "weapon-proficiency:pistols",
+        "families": [
+          "weapon-family:blaster-pistol",
+          "weapon-family:hold-out-pistol",
+          "weapon-family:microblaster",
+          "weapon-family:concealed-pistol"
+        ],
+        "explicitAbilityLinks": []
+      },
+      "relativeToStandardPistol": {
+        "damage": {
+          "canonical": "3d4",
+          "relation": "LOWER"
+        },
+        "capacity": {
+          "shots": 2,
+          "status": "ESTABLISHED_INTEGRATED_NONRECHARGEABLE",
+          "relation": "EXTREMELY_LOWER"
+        },
+        "stun": {
+          "available": false,
+          "relation": "NONE"
+        },
+        "range": {
+          "relation": "EXTREMELY_WORSE",
+          "notes": [
+            "Hard maximum range is 3 squares."
+          ]
+        },
+        "concealment": {
+          "equipmentModifier": 5,
+          "relation": "MUCH_BETTER"
+        },
+        "multiAttackCompatibility": {
+          "relation": "PRACTICALLY_LIMITED_BY_CAPACITY"
+        },
+        "actionEconomy": {
+          "relation": "DISPOSABLE_AFTER_DEPLETION"
+        },
+        "recommendationFit": "Extreme concealment/infiltration backup weapon for point-blank emergencies; not a general combat pistol because of two shots, 3-square maximum range, low damage, and disposable power supply."
+      },
+      "unrepresentedMechanics": [
+        {
+          "mechanic": "Integrated power supply cannot be recharged; weapon is disposable after two shots.",
+          "representationStatus": "STRUCTURED_RECOMMENDATION_DATA",
+          "note": "Disposable resource behavior remains structured data."
+        }
+      ]
+    },
+    {
+      "identityKey": "weapon-heavy-slugthrower-pistol",
+      "canonicalName": "Heavy Slugthrower Pistol",
+      "source": {
+        "book": "The Unknown Regions",
+        "descriptionPage": 38,
+        "statTablePage": 38
+      },
+      "canonicalMechanicSummary": "2d8 heavy projectile pistol with an 8-shot clip. Recoil imposes an additional -1 attack penalty whenever Double Attack, Triple Attack, or Rapid Shot is used with it.",
+      "sharedTags": [
+        "pistol",
+        "ranged"
+      ],
+      "advantageTags": [
+        "offense_ranged"
+      ],
+      "tradeoffTags": [
+        "precision",
+        "full_attack",
+        "sustained_damage"
+      ],
+      "finalTags": [
+        "pistol",
+        "ranged",
+        "offense_ranged"
+      ],
+      "rationale": {
+        "pistol": "Canonical Pistol-group weapon.",
+        "ranged": "It attacks at range using pistol proficiency.",
+        "offense_ranged": "It deals direct ranged piercing damage."
+      },
+      "ruleSelectors": {
+        "exactIdentity": "weapon:weapon-heavy-slugthrower-pistol",
+        "weaponGroup": "weapon-group:pistol",
+        "proficiency": "weapon-proficiency:pistols",
+        "families": [
+          "weapon-family:slugthrower-pistol",
+          "weapon-family:heavy-slugthrower-pistol"
+        ],
+        "explicitAbilityLinks": [
+          {
+            "abilityType": "feat",
+            "abilityName": "Double Attack",
+            "relation": "EXTRA_ATTACK_PENALTY",
+            "value": -1
+          },
+          {
+            "abilityType": "feat",
+            "abilityName": "Triple Attack",
+            "relation": "EXTRA_ATTACK_PENALTY",
+            "value": -1
+          },
+          {
+            "abilityType": "feat",
+            "abilityName": "Rapid Shot",
+            "relation": "EXTRA_ATTACK_PENALTY",
+            "value": -1
+          }
+        ]
+      },
+      "relativeToStandardPistol": {
+        "damage": {
+          "canonical": "2d8",
+          "relation": "COMPARABLE_AVERAGE_DIFFERENT_PROFILE"
+        },
+        "capacity": {
+          "shots": 8,
+          "status": "ESTABLISHED",
+          "relation": "MUCH_LOWER"
+        },
+        "stun": {
+          "available": false,
+          "relation": "NONE"
+        },
+        "range": {
+          "relation": "BASELINE"
+        },
+        "concealment": {
+          "equipmentModifier": 0,
+          "relation": "WORSE_BY_SIZE_FLAVOR_ONLY",
+          "notes": [
+            "No special concealment bonus is published."
+          ]
+        },
+        "multiAttackCompatibility": {
+          "relation": "PENALIZED",
+          "notes": [
+            "Double Attack, Triple Attack, and Rapid Shot each incur an additional -1 attack penalty."
+          ]
+        },
+        "actionEconomy": {
+          "relation": "BASELINE"
+        },
+        "recommendationFit": "Projectile sidearm with strong per-shot stopping power, but specifically de-prioritize it for Double Attack, Triple Attack, and Rapid Shot builds because recoil adds another -1 attack penalty."
+      },
+      "unrepresentedMechanics": [
+        {
+          "mechanic": "Source describes a psychological advantage from size and loud report but provides no numerical intimidation rule.",
+          "representationStatus": "NO_EXISTING_MECHANICAL_EFFECT_TO_TAG",
+          "note": "Do not invent an intimidation bonus or tag from descriptive flavor alone."
+        }
+      ]
+    },
+    {
+      "identityKey": "weapon-heavy-sonic-pistol",
+      "canonicalName": "Heavy Sonic Pistol",
+      "source": {
+        "book": "Knights of the Old Republic Campaign Guide",
+        "descriptionPage": 70,
+        "statTablePage": 68
+      },
+      "canonicalMechanicSummary": "2d8 sonic-energy pistol with a 50-shot rechargeable pack. Like other sonic ranged weapons, its attacks cannot be negated by Deflect or talents that have Deflect as a prerequisite.",
+      "sharedTags": [
+        "pistol",
+        "ranged"
+      ],
+      "advantageTags": [
+        "offense_ranged",
+        "anti-force"
+      ],
+      "tradeoffTags": [],
+      "finalTags": [
+        "pistol",
+        "ranged",
+        "offense_ranged",
+        "anti-force"
+      ],
+      "rationale": {
+        "pistol": "Canonical Pistol-group weapon.",
+        "ranged": "It makes ranged pistol attacks.",
+        "offense_ranged": "It deals direct ranged sonic-energy damage.",
+        "anti-force": "Its defining tactical advantage is bypassing Deflect and talents that depend on Deflect, making it specifically useful against lightsaber defense."
+      },
+      "ruleSelectors": {
+        "exactIdentity": "weapon:weapon-heavy-sonic-pistol",
+        "weaponGroup": "weapon-group:pistol",
+        "proficiency": "weapon-proficiency:pistols",
+        "families": [
+          "weapon-family:sonic",
+          "weapon-family:sonic-pistol",
+          "weapon-family:heavy-sonic-pistol"
+        ],
+        "explicitAbilityLinks": [
+          {
+            "abilityType": "talent",
+            "abilityName": "Deflect",
+            "relation": "CANNOT_NEGATE_ATTACK"
+          },
+          {
+            "abilityType": "talent-family",
+            "abilityName": "Talents with Deflect as prerequisite",
+            "relation": "CANNOT_NEGATE_ATTACK"
+          }
+        ]
+      },
+      "relativeToStandardPistol": {
+        "damage": {
+          "canonical": "2d8",
+          "relation": "LOWER_AVERAGE"
+        },
+        "capacity": {
+          "shots": 50,
+          "status": "ESTABLISHED_RECHARGEABLE",
+          "relation": "LOWER"
+        },
+        "stun": {
+          "available": false,
+          "relation": "NONE"
+        },
+        "range": {
+          "relation": "BASELINE"
+        },
+        "concealment": {
+          "equipmentModifier": 0,
+          "relation": "BASELINE"
+        },
+        "multiAttackCompatibility": {
+          "relation": "NORMAL"
+        },
+        "actionEconomy": {
+          "relation": "BASELINE"
+        },
+        "recommendationFit": "Anti-Deflect sidearm for fighting lightsaber users. It sacrifices some average damage, ammunition capacity, and stun flexibility compared with the standard Blaster Pistol in exchange for a defense-bypassing niche."
+      },
+      "unrepresentedMechanics": [
+        {
+          "mechanic": "Sonic damage is energy damage but ranged sonic attacks cannot be deflected with a lightsaber.",
+          "representationStatus": "RULE_SELECTOR_PLUS_SEMANTIC",
+          "note": "anti-force captures the recommendation role; exact Deflect interaction is preserved as a rule selector."
+        }
+      ]
+    },
+    {
+      "identityKey": "weapon-ion-pistol",
+      "canonicalName": "Ion Pistol",
+      "source": {
+        "book": "Core Rulebook",
+        "descriptionPage": 128,
+        "statTablePage": 126
+      },
+      "canonicalMechanicSummary": "3d6 ion sidearm with a 30-shot power pack. It deals full ion effects to droids, vehicles, electronic devices, and cybernetically enhanced creatures and can move applicable targets down the condition track; ordinary creatures take half damage and no other ion effect.",
+      "sharedTags": [
+        "pistol",
+        "ranged"
+      ],
+      "advantageTags": [
+        "offense_ranged",
+        "droid",
+        "vehicle",
+        "tech",
+        "control",
+        "battlefield_control"
+      ],
+      "tradeoffTags": [],
+      "finalTags": [
+        "pistol",
+        "ranged",
+        "offense_ranged",
+        "droid",
+        "vehicle",
+        "tech",
+        "control",
+        "battlefield_control"
+      ],
+      "rationale": {
+        "pistol": "Canonical Pistol-group weapon.",
+        "ranged": "It makes ranged pistol attacks.",
+        "offense_ranged": "It deals ion damage through ranged attacks.",
+        "droid": "Droids are explicit primary targets that take the weapon's full ion effects.",
+        "vehicle": "Vehicles are explicit primary targets that take the weapon's full ion effects.",
+        "tech": "The source explicitly targets electronic devices and cybernetically enhanced creatures as well as droids and vehicles.",
+        "control": "Ion damage can move applicable targets down the condition track rather than functioning as ordinary hit-point damage alone.",
+        "battlefield_control": "The condition-track effect can degrade or disable electronic/cybernetic targets during combat."
+      },
+      "ruleSelectors": {
+        "exactIdentity": "weapon:weapon-ion-pistol",
+        "weaponGroup": "weapon-group:pistol",
+        "proficiency": "weapon-proficiency:pistols",
+        "families": [
+          "weapon-family:ion",
+          "weapon-family:ion-pistol"
+        ],
+        "explicitAbilityLinks": []
+      },
+      "relativeToStandardPistol": {
+        "damage": {
+          "canonical": "3d6 ion",
+          "relation": "TARGET_DEPENDENT",
+          "notes": [
+            "Full ion effect against electronic/cybernetic targets.",
+            "Ordinary noncybernetic creatures take half damage and no other ion effects."
+          ]
+        },
+        "capacity": {
+          "shots": 30,
+          "status": "ESTABLISHED",
+          "relation": "LOWER"
+        },
+        "stun": {
+          "available": false,
+          "relation": "NONE"
+        },
+        "range": {
+          "relation": "BASELINE"
+        },
+        "concealment": {
+          "equipmentModifier": 0,
+          "relation": "BASELINE"
+        },
+        "multiAttackCompatibility": {
+          "relation": "NORMAL"
+        },
+        "actionEconomy": {
+          "relation": "BASELINE"
+        },
+        "recommendationFit": "Dedicated anti-droid/anti-vehicle/electronics sidearm. Strongly recommend when the expected opposition is technological; de-prioritize against ordinary organic targets because they take only half ion damage and no secondary ion effect."
+      },
+      "unrepresentedMechanics": [
+        {
+          "mechanic": "Ion damage has target-specific damage and condition-track rules; no certified `ion` tag exists.",
+          "representationStatus": "STRUCTURED_RECOMMENDATION_DATA",
+          "note": "Use droid/vehicle/tech/control semantics plus the exact ion family selector instead of inventing an ion semantic tag."
+        }
+      ]
+    },
+    {
+      "identityKey": "weapon-model-434-deathhammer",
+      "canonicalName": "Merr-Sonn Model 434 DeathHammer",
+      "source": {
+        "book": "Clone Wars Campaign Guide",
+        "descriptionPage": 63,
+        "statTablePage": 61
+      },
+      "canonicalMechanicSummary": "Rugged 3d8 blaster pistol with a stun setting. Heavy durasteel plating grants the weapon itself a +2 equipment bonus to Damage Reduction.",
+      "sharedTags": [
+        "pistol",
+        "ranged"
+      ],
+      "advantageTags": [
+        "offense_ranged",
+        "stun",
+        "nonlethal",
+        "durability",
+        "damage_reduction"
+      ],
+      "tradeoffTags": [],
+      "finalTags": [
+        "pistol",
+        "ranged",
+        "offense_ranged",
+        "stun",
+        "nonlethal",
+        "durability",
+        "damage_reduction"
+      ],
+      "rationale": {
+        "pistol": "Canonical Pistol-group weapon.",
+        "ranged": "It makes ranged pistol attacks.",
+        "offense_ranged": "It deals direct 3d8 ranged energy damage.",
+        "stun": "The weapon table provides a stun setting.",
+        "nonlethal": "The stun setting provides a nonlethal combat option.",
+        "durability": "The weapon is explicitly reinforced for exceptional sturdiness.",
+        "damage_reduction": "Its durasteel plating grants the weapon itself +2 equipment bonus to Damage Reduction."
+      },
+      "ruleSelectors": {
+        "exactIdentity": "weapon:weapon-model-434-deathhammer",
+        "weaponGroup": "weapon-group:pistol",
+        "proficiency": "weapon-proficiency:pistols",
+        "families": [
+          "weapon-family:blaster-pistol",
+          "weapon-family:heavy-blaster-pistol",
+          "weapon-family:deathhammer"
+        ],
+        "explicitAbilityLinks": []
+      },
+      "relativeToStandardPistol": {
+        "damage": {
+          "canonical": "3d8",
+          "relation": "HIGHER"
+        },
+        "capacity": {
+          "shots": null,
+          "status": "NOT_STATED_BY_SOURCE",
+          "relation": null
+        },
+        "stun": {
+          "available": true,
+          "canonical": "same-as-base",
+          "relation": "HIGHER_DAMAGE"
+        },
+        "range": {
+          "relation": "BASELINE"
+        },
+        "concealment": {
+          "equipmentModifier": 0,
+          "relation": "BASELINE"
+        },
+        "multiAttackCompatibility": {
+          "relation": "NORMAL"
+        },
+        "actionEconomy": {
+          "relation": "BASELINE"
+        },
+        "recommendationFit": "High-damage, rugged general-purpose pistol for characters who want a durable sidearm without giving up stun capability; especially attractive when weapon destruction/disarm-object durability matters."
+      },
+      "unrepresentedMechanics": [
+        {
+          "mechanic": "The +2 DR bonus applies to the weapon object itself, not the wielder.",
+          "representationStatus": "STRUCTURED_MECHANICS_PLUS_SEMANTIC",
+          "note": "durability and damage_reduction capture the concept while the target of the bonus remains explicit in structured data."
+        }
+      ]
+    }
+  ]
+}

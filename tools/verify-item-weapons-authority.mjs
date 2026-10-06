@@ -1556,5 +1556,105 @@ if (fs.existsSync(path.join(ROOT, P4B))) {
   if (errors.length === e4b) console.log(`Phase 4B Lightsaber semantic tags OK: ${REQ}/16 adjudicated, ${tagTotal} assignments, ${tagsUsed.size} distinct tags, ${unrep.length} unrepresented mechanics (plain text, not tags), baseline = Lightsaber, next ${rp.nextCanonicalName}`);
 }
 
+// Phase 4C: Pistol semantic tags + rule selectors + comparison data (rolling planner authority)
+const P4C = 'data/audits/item-weapons-phase-4c-pistol-semantic-rolling.json';
+if (fs.existsSync(path.join(ROOT, P4C))) {
+  const e4c = errors.length;
+  const same = (x, y) => JSON.stringify(x) === JSON.stringify(y);
+  const J = (f) => JSON.parse(fs.readFileSync(path.join(ROOT, f), 'utf8'));
+  const sh = (t) => crypto.createHash('sha256').update(t).digest('hex');
+  const canon = (x) => (Array.isArray(x) ? x.map(canon) : x && typeof x === 'object' ? Object.fromEntries(Object.keys(x).sort().map((k) => [k, canon(x[k])])) : x);
+  const S = J(P4C);
+  if (!fs.existsSync(path.join(ROOT, 'docs/audits/item-weapons-phase-4c-pistol-semantic-rolling.md'))) fail('4C missing markdown companion');
+  const ic = S.implementationContract || {};
+  if (S.authorityOnly !== true || S.productionMutationAuthorized !== false || ic.productionMutationAuthorized !== false || ic.runtimeCodeMutationAuthorized !== false || ic.claudeMayCreateNewSemanticTags !== false || S.vocabularyPolicy?.ruleSelectorsAreSemanticTags !== false || S.vocabularyPolicy?.recommendationProfileValuesAreSemanticTags !== false || S.vocabularyPolicy?.rawDamageOrCapacityMayCreateSemanticTags !== false) fail('4C authority-only / mutation / vocabulary flags');
+  const b3 = J('data/audits/item-weapons-phase-3b-canonical-authority.json');
+  if (J('data/audits/item-weapons-phase-3d-global-freeze.json').status !== 'WEAPON_PHASE_3D_GLOBAL_AUTHORITY_FROZEN') fail('4C requires Phase 3D to remain frozen');
+  if (sh(fs.readFileSync(path.join(ROOT, 'packs/weapons.db'), 'utf8')) !== b3.productionBaseline['packs/weapons.db'] || sh(fs.readFileSync(path.join(ROOT, 'template.json'), 'utf8')) !== b3.productionBaseline['template.json']) fail('4C production file changed (packs/weapons.db or template.json)');
+  const used = new Set();
+  for (const a of J('data/audits/feat-tags-pass2-semantic-authority.json').assignments) for (const t of a.finalTags || []) used.add(t);
+  const walk = (o) => { if (Array.isArray(o)) o.forEach(walk); else if (o && typeof o === 'object') for (const [k, v] of Object.entries(o)) { if (k === 'finalTags' && Array.isArray(v)) v.forEach((t) => used.add(t)); else walk(v); } };
+  walk(J('data/audits/talent-phase-12-1-semantic-tag-authority.json').batches);
+  for (const a of J('data/audits/talent-phase-12-final-ontology-adjudication.json').assignments) for (const t of a.finalTags || []) used.add(t);
+  if (used.size !== 183 || S.vocabularyPolicy.derivedAllowedTagCount !== 183) fail(`4C feat/talent-used vocabulary is ${used.size}, expected 183`);
+  const REJECT = ['accuracy', 'area_damage', 'condition_track', 'explosives', 'grenade', 'rifle', 'thrown'];
+  const SHARED = ['pistol', 'ranged'];
+  const pp = S.pistolComparisonPolicy;
+  if (S.baseline.pistolComparisonIdentityKey !== 'weapon-blaster-pistol' || pp.baselineDamage !== '3d6' || pp.baselineStunDamage !== '2d6' || pp.baselineCapacityShots !== 100 || !same(pp.baselineRateOfFire, ['S'])) fail('4C baseline Blaster Pistol policy changed');
+  const pist = b3.identities.filter((i) => i.weaponGroup === 'Pistol').sort((x, y) => (x.canonicalName < y.canonicalName ? -1 : 1));
+  if (pist.length !== 30 || S.categoryCensus.canonicalPistolIdentities !== 30 || pist.filter((i) => i.repo.present).length !== S.categoryCensus.repoPresent || pist.filter((i) => !i.repo.present).length !== S.categoryCensus.repoMissing) fail('4C Pistol census must match the 30 Phase 3B identities');
+  const lines = (f) => new Set(fs.readFileSync(path.join(ROOT, f), 'utf8').split('\n').filter((l) => l.trim()).map((l) => JSON.parse(l).name));
+  const talentNames = lines('packs/talents.db'), featNames = lines('packs/feats.db');
+  const ENUM = /^[A-Z][A-Z0-9_]*$/;
+  const asg = S.assignments, byKey = new Map(pist.map((i) => [i.identityKey, i])), seen = new Set();
+  const REQ = asg.length; let tagTotal = 0; const tagsUsed = new Set(), tradeUsed = new Set();
+  const bn = (b) => String(b).replace(/^The /, '');
+  asg.forEach((a, idx) => {
+    const w = `4C ${a.canonicalName}`;
+    if (seen.has(a.identityKey)) fail(`${w} occurs more than once`); seen.add(a.identityKey);
+    const i = byKey.get(a.identityKey);
+    if (!i) { fail(`${w} (${a.identityKey}) is not a Phase 3B Pistol identity`); return; }
+    if (i.canonicalName !== a.canonicalName) fail(`${w} name differs from Phase 3B (${i.canonicalName})`);
+    if (pist[idx] && pist[idx].identityKey !== a.identityKey) fail(`${w} is out of alphabetical Pistol order`);
+    const claim = i.sourceClaims.find((c) => bn(c.book) === bn(a.source.book));
+    if (!claim || ![claim.descriptionPage, claim.statTablePage].some((pg) => pg === a.source.descriptionPage || pg === a.source.statTablePage)) fail(`${w} source book/page matches no Phase 3B source claim`);
+    const fields = { sharedTags: a.sharedTags, advantageTags: a.advantageTags, tradeoffTags: a.tradeoffTags, finalTags: a.finalTags };
+    for (const [f, vals] of Object.entries(fields)) {
+      if (!Array.isArray(vals)) { fail(`${w} ${f} must be an array`); continue; }
+      for (const t of vals) { if (!used.has(t)) fail(`${w} ${f} value "${t}" is not used by any certified feat/talent`); if (REJECT.includes(t)) fail(`${w} ${f} uses rejected runtime-only tag ${t}`); }
+    }
+    if (!same(a.sharedTags, SHARED)) fail(`${w} sharedTags must be exactly ${SHARED.join(', ')}`);
+    if (!same(a.finalTags, [...a.sharedTags, ...a.advantageTags])) fail(`${w} finalTags must equal sharedTags plus advantageTags`);
+    for (const t of a.tradeoffTags) { tradeUsed.add(t); if (a.finalTags.includes(t)) fail(`${w} tradeoff tag ${t} was promoted into finalTags`); if (a.advantageTags.includes(t)) fail(`${w} tag ${t} is both advantage and tradeoff`); }
+    if (new Set(a.finalTags).size !== a.finalTags.length) fail(`${w} duplicate finalTags`);
+    for (const t of a.finalTags) { tagTotal++; tagsUsed.add(t); if (typeof a.rationale?.[t] !== 'string' || !a.rationale[t].trim()) fail(`${w} tag ${t} has no rationale`); }
+    for (const t of Object.keys(a.rationale || {})) if (!a.finalTags.includes(t)) fail(`${w} rationale for ${t} has no tag`);
+    const q = a.ruleSelectors;
+    if (!q) fail(`${w} missing ruleSelectors`);
+    else {
+      if (q.exactIdentity !== `weapon:${a.identityKey}`) fail(`${w} exactIdentity must be weapon:${a.identityKey}`);
+      if (q.weaponGroup !== 'weapon-group:pistol' || q.proficiency !== 'weapon-proficiency:pistols') fail(`${w} must retain weapon-group:pistol and weapon-proficiency:pistols`);
+      if (!Array.isArray(q.families) || !q.families.length || q.families.some((f) => !/^weapon-family:[a-z0-9-]+$/.test(f))) fail(`${w} families malformed`);
+      for (const l of q.explicitAbilityLinks || []) {
+        if (!['feat', 'talent', 'talent-family'].includes(l.abilityType) || !ENUM.test(l.relation || '') || !l.abilityName) fail(`${w} ability link shape (${l.abilityName})`);
+        else if (l.abilityType !== 'talent-family' && !(l.abilityType === 'talent' ? talentNames : featNames).has(l.abilityName)) fail(`${w} ${l.abilityType} "${l.abilityName}" does not exist in the production ${l.abilityType} pack`);
+      }
+      for (const r of q.abilityRestrictions || []) if (!r.selector || !ENUM.test(r.relation || '') || !r.reason) fail(`${w} abilityRestriction shape`);
+      const selVals = [q.exactIdentity, q.weaponGroup, q.proficiency, ...q.families, ...(q.abilityRestrictions || []).map((r) => r.selector)];
+      const tagVals = [...a.sharedTags, ...a.advantageTags, ...a.tradeoffTags, ...a.finalTags];
+      if (tagVals.some((t) => selVals.includes(t) || /:/.test(t))) fail(`${w} a rule selector leaked into a semantic tag field`);
+    }
+    const c = a.relativeToStandardPistol, cs = i.canonicalStats;
+    if (!c || !c.damage || !c.capacity || !c.stun || !c.range || !c.concealment || !c.multiAttackCompatibility || !c.actionEconomy || !c.recommendationFit) fail(`${w} relativeToStandardPistol incomplete`);
+    else {
+      if (cs.baseDamage.mode === 'dice' && c.damage.canonical !== cs.baseDamage.formula && !String(c.damage.canonical).startsWith(`${cs.baseDamage.formula} `)) fail(`${w} comparison damage ${c.damage.canonical} != Phase 3B ${cs.baseDamage.formula}`);
+      const am = cs.ammo || {};
+      if (/^ESTABLISHED(_[A-Z_]+)?$/.test(c.capacity.status)) {
+        const sv = c.capacity.shots;
+        if (typeof sv === 'number') { if (am.mode === 'single' && sv !== am.capacityShots) fail(`${w} comparison capacity ${sv} != Phase 3B ${am.capacityShots}`); }
+        else if (Array.isArray(sv) && sv.length && sv.every((n) => typeof n === 'number')) { if (am.mode === 'single' && !sv.includes(am.capacityShots)) fail(`${w} comparison capacities ${sv} do not include Phase 3B ${am.capacityShots}`); }
+        else fail(`${w} established capacity needs a number or list of numbers`);
+      }
+      else if (/^NOT_STATED(_[A-Z_]+)?$/.test(c.capacity.status)) { if (c.capacity.shots !== null || am.status !== 'not-stated') fail(`${w} NOT_STATED capacity must be null and match Phase 3B not-stated ammo`); }
+      else fail(`${w} capacity status`);
+      if (a.identityKey !== 'weapon-blaster-pistol' && c.damage.relation === 'BASELINE') fail(`${w} only the standard Blaster Pistol is BASELINE`);
+    }
+    for (const m of a.unrepresentedMechanics || []) if (!m.mechanic || !ENUM.test(m.representationStatus || '') || !m.note) fail(`${w} unrepresented mechanic shape`);
+  });
+  const base = asg.find((a) => a.identityKey === 'weapon-blaster-pistol');
+  if (!base || base.tradeoffTags.length || base.relativeToStandardPistol.damage.canonical !== '3d6' || base.relativeToStandardPistol.capacity.shots !== 100 || base.relativeToStandardPistol.stun.canonical !== '2d6') fail('4C standard Blaster Pistol must remain the baseline (3d6 / 2d6 stun / 100 shots)');
+  const sid = asg.find((a) => a.identityKey === 'weapon-sidearm-blaster-pistol');
+  if (!sid || !sid.ruleSelectors.explicitAbilityLinks.some((l) => l.abilityName === 'Rapid Shot' && l.relation === 'TRIGGERS_SWIFT_RESET_BEFORE_NEXT_SHOT') || !sid.tradeoffTags.includes('swift_action') || sid.finalTags.includes('swift_action')) fail('4C Sidearm must keep the Rapid Shot reset link as a directional tradeoff, not a positive tag');
+  // progress counters (cumulative) recomputed from the assignments
+  const rp = S.rollingProgress, thisN = rp.adjudicatedThisRound;
+  if (rp.adjudicatedTotal !== REQ || rp.remaining !== 30 - REQ || rp.nextCanonicalName !== (pist[REQ] ? pist[REQ].canonicalName : null) || thisN < 1 || thisN > REQ) fail('4C rolling progress counts / next identity');
+  else if (asg[REQ - thisN].canonicalName !== rp.firstCanonicalNameThisRound || asg[REQ - 1].canonicalName !== rp.lastCanonicalNameThisRound) fail('4C this-round first/last identity');
+  if (rp.totalFinalTagAssignments !== tagTotal || rp.distinctFinalTagsUsed !== tagsUsed.size || !same([...tagsUsed].sort(), [...rp.finalTagsUsed].sort()) || !same([...tradeUsed].sort(), [...rp.tradeoffTagsUsed].sort())) fail('4C rolling progress tag counts');
+  // earlier planner rulings are pinned
+  const pins = [[0, 10, 'b344890cea4cb4d45a3d8c769b33c830660a88aae2ed946c374ba0f4f52b27ac']];
+  for (const [lo, hi, want] of pins) if (REQ >= hi && sh(JSON.stringify(canon(asg.slice(lo, hi)))) !== want) fail(`4C round ${lo / 10 + 1} planner rulings changed after adjudication`);
+  if (errors.length === e4c) console.log(`Phase 4C Pistol semantic tags OK: ${REQ}/30 adjudicated, ${tagTotal} assignments, ${tagsUsed.size} distinct tags, selectors + comparison data cross-checked against Phase 3B, baseline = Blaster Pistol, next ${rp.nextCanonicalName}`);
+}
+
 if (errors.length) { console.error(`FAIL (${errors.length})\n- ${errors.join('\n- ')}`); process.exit(1); }
 console.log(`weapons authority OK: ${p.canonicalWeapons.length} canonical, ${pack.size} repo records, all covered once`);
