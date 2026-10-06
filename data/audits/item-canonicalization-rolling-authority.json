@@ -28200,10 +28200,10 @@
       ]
     },
     "2-weapons-numeric-stat-schema": {
-      "status": "WEAPON_AUTHORITY_SCHEMA_V2_2_NORMALIZED_THROUGH_GALAXY_AT_WAR (2A Core in rolling; 2B KOTOR and 2C Galaxy at War standalone)",
+      "status": "WEAPON_AUTHORITY_SCHEMA_V2_3_NORMALIZED_THROUGH_FORCE_UNLEASHED (2A Core in rolling; 2B KOTOR, 2C Galaxy at War, 2D Force Unleashed standalone)",
       "family": "weapons",
       "authorityType": "authority-only; no production mutation",
-      "schemaVersion": "weapon-authority-schema-v2.2",
+      "schemaVersion": "weapon-authority-schema-v2.3",
       "goldStandard": true,
       "sourcePolicy": [
         "Supplied published PDF tables, table footnotes, weapon-group rules, and weapon descriptions are final authority for Core weapon mechanics.",
@@ -28442,7 +28442,16 @@
             ],
             "rule": "range.allowedBands lists the bands from which an attack may actually be made. It is derived from the printed range profile minus the source-defined consequence of the weapon qualities, and is stored beside (never instead of) the base bands and the quality booleans. qualityEffects.pointBlankAllowed/mediumAllowed/longAllowed must agree with it."
           },
-          "fixedMaximum": "Utility profiles with a printed fixed reach (Ascension mode: maxSquares 30) use mode \"fixed-maximum\" with maxSquares; no bands."
+          "fixedMaximum": "Utility profiles with a printed fixed reach (Ascension mode: maxSquares 30) use mode \"fixed-maximum\" with maxSquares; no bands.",
+          "penaltyApplication": {
+            "vocabulary": [
+              "attack",
+              "damage",
+              "none",
+              "special"
+            ],
+            "rule": "range.penaltyApplication states what the range-band penalty modifies. Ranged ranges default to \"attack\"; melee and unestablished ranges are null. CR-1 Blast Cannon applies penalties to damage rolls (\"damage\")."
+          }
         },
         "damageReductionInteraction": {
           "fields": [
@@ -28572,7 +28581,10 @@
             "attackResolution",
             "area",
             "resourceConsumption",
-            "notes"
+            "notes",
+            "damageComponents",
+            "firingConstraints",
+            "preparedAttack"
           ],
           "kinds": [
             "attack",
@@ -28606,7 +28618,7 @@
             "rule": "enabled=false for non-area profiles. Geometry is only filled from certified source facts."
           }
         },
-        "version": "weapon-authority-schema-v2.2",
+        "version": "weapon-authority-schema-v2.3",
         "qualityParameters": {
           "rule": "Source-specific parameters of a named quality. Core/KOTOR Inaccurate = cannot attack at Long range (allowedBands pointBlank, short, medium). Galaxy at War Inaccurate = cannot attack at Medium or Long range (allowedBands pointBlank, short). Never flatten one book definition into another; an Inaccurate record must state its allowedBands here.",
           "fields": [
@@ -28635,7 +28647,63 @@
         },
         "conditionalDamage": {
           "field": "conditionalDamageProfiles",
-          "rule": "Record-level array; [] unless a certified source rule changes damage by condition (e.g. Scatter Gun by range band, Darkstick held two in one hand)."
+          "rule": "Record-level array; [] unless a certified source rule changes damage by condition (e.g. Scatter Gun by range band, Darkstick held two in one hand). Entries are replacement profiles (default operation \"replace\", requires damage) or adjustments: \"add-dice\" (diceCountDelta, dieSize) and \"area-toggle\" (CR-1 adjacent +1d8, nonadjacent splash).",
+          "operations": [
+            "replace",
+            "add-dice",
+            "area-toggle"
+          ]
+        },
+        "preparedAttack": {
+          "field": "attackProfiles[].preparedAttack",
+          "fields": [
+            "activationAction",
+            "matures",
+            "expires",
+            "consumedBy",
+            "damageDiceDelta",
+            "resourceUnitsOnPreparedAttack",
+            "prohibitsMultiShotAbilities"
+          ],
+          "rule": "null unless a source publishes a primed/prepared attack (Bryar pistol/rifle). Never create prepared states without source authority."
+        },
+        "damageComponents": {
+          "field": "attackProfiles[].damageComponents",
+          "fields": [
+            "id",
+            "damage",
+            "damageType",
+            "resolution"
+          ],
+          "resolutions": [
+            "normal",
+            "stun"
+          ],
+          "rule": "Simultaneous independently rolled components (Neuronic Whip: 2d8 stun plus separate 1d4 slashing). One damage amount with several types stays damageType.mode \"and\" and is never split into components."
+        },
+        "firingConstraints": {
+          "field": "attackProfiles[].firingConstraints",
+          "fields": [
+            "cooldownRounds",
+            "firesOnAlternatingRounds",
+            "maxShotsPerRound",
+            "prohibitsMultiShotAbilities",
+            "reloadRequiredAfterEachShot"
+          ],
+          "rule": "null unless a source constrains firing. Generalizes KOTOR specialRateOfFire; a rateOfFire [\"Special\"] profile must carry firingConstraints and the published Special table value is kept."
+        },
+        "defensiveInteractions": {
+          "field": "canonicalStats.defensiveInteractions",
+          "entryFields": [
+            "type",
+            "condition",
+            "value"
+          ],
+          "rule": "Mechanics of the weapon object as a defender or defensive implement, separate from outgoing damageReductionInteraction (\"lightsaber-does-not-ignore-own-dr\" for Guard Shoto, Lightsaber Pike, Electrostaff, Shockstaff). [] unless source-certified."
+        },
+        "inaccurateByBook": {
+          "Core/KOTOR/Force Unleashed": "cannot attack at Long range",
+          "Galaxy at War": "cannot attack at Medium or Long range"
         }
       },
       "executorGuardrails": [
@@ -28666,7 +28734,7 @@
         {
           "phase": "2A",
           "book": "Core Rulebook",
-          "status": "CERTIFIED_PHASE_2A_CORE_GOLD_STANDARD_NUMERIC_STAT_SCHEMA_AUTHORITY (normalized to schema v2.2)",
+          "status": "CERTIFIED_PHASE_2A_CORE_GOLD_STANDARD_NUMERIC_STAT_SCHEMA_AUTHORITY (normalized to schema v2.3)",
           "counts": {
             "claims": 48,
             "uniqueIdentities": 48,
@@ -28778,7 +28846,8 @@
                     "pointBlankAllowed": null,
                     "shortPenaltyOverride": null,
                     "longAllowed": null
-                  }
+                  },
+                  "penaltyApplication": null
                 },
                 "resource": {
                   "kind": "none",
@@ -28835,7 +28904,8 @@
                         "pointBlankAllowed": null,
                         "shortPenaltyOverride": null,
                         "longAllowed": null
-                      }
+                      },
+                      "penaltyApplication": null
                     },
                     "qualities": {
                       "accurate": false,
@@ -28865,10 +28935,14 @@
                       "notes": null
                     },
                     "resourceConsumption": null,
-                    "notes": []
+                    "notes": [],
+                    "damageComponents": [],
+                    "firingConstraints": null,
+                    "preparedAttack": null
                   }
                 ],
-                "modeProfiles": []
+                "modeProfiles": [],
+                "defensiveInteractions": []
               },
               "qualities": {
                 "accurate": false,
@@ -28980,7 +29054,8 @@
                     "pointBlankAllowed": null,
                     "shortPenaltyOverride": null,
                     "longAllowed": null
-                  }
+                  },
+                  "penaltyApplication": null
                 },
                 "resource": {
                   "kind": "none",
@@ -29039,7 +29114,8 @@
                         "pointBlankAllowed": null,
                         "shortPenaltyOverride": null,
                         "longAllowed": null
-                      }
+                      },
+                      "penaltyApplication": null
                     },
                     "qualities": {
                       "accurate": false,
@@ -29069,10 +29145,14 @@
                       "notes": null
                     },
                     "resourceConsumption": null,
-                    "notes": []
+                    "notes": [],
+                    "damageComponents": [],
+                    "firingConstraints": null,
+                    "preparedAttack": null
                   }
                 ],
-                "modeProfiles": []
+                "modeProfiles": [],
+                "defensiveInteractions": []
               },
               "qualities": {
                 "accurate": false,
@@ -29166,7 +29246,8 @@
                     "pointBlankAllowed": null,
                     "shortPenaltyOverride": null,
                     "longAllowed": null
-                  }
+                  },
+                  "penaltyApplication": null
                 },
                 "resource": {
                   "kind": "none",
@@ -29224,7 +29305,8 @@
                         "pointBlankAllowed": null,
                         "shortPenaltyOverride": null,
                         "longAllowed": null
-                      }
+                      },
+                      "penaltyApplication": null
                     },
                     "qualities": {
                       "accurate": false,
@@ -29254,10 +29336,14 @@
                       "notes": null
                     },
                     "resourceConsumption": null,
-                    "notes": []
+                    "notes": [],
+                    "damageComponents": [],
+                    "firingConstraints": null,
+                    "preparedAttack": null
                   }
                 ],
-                "modeProfiles": []
+                "modeProfiles": [],
+                "defensiveInteractions": []
               },
               "qualities": {
                 "accurate": false,
@@ -29356,7 +29442,8 @@
                     "pointBlankAllowed": null,
                     "shortPenaltyOverride": null,
                     "longAllowed": null
-                  }
+                  },
+                  "penaltyApplication": null
                 },
                 "resource": {
                   "kind": "none",
@@ -29415,7 +29502,8 @@
                         "pointBlankAllowed": null,
                         "shortPenaltyOverride": null,
                         "longAllowed": null
-                      }
+                      },
+                      "penaltyApplication": null
                     },
                     "qualities": {
                       "accurate": false,
@@ -29445,10 +29533,14 @@
                       "notes": null
                     },
                     "resourceConsumption": null,
-                    "notes": []
+                    "notes": [],
+                    "damageComponents": [],
+                    "firingConstraints": null,
+                    "preparedAttack": null
                   }
                 ],
-                "modeProfiles": []
+                "modeProfiles": [],
+                "defensiveInteractions": []
               },
               "qualities": {
                 "accurate": false,
@@ -29543,7 +29635,8 @@
                     "pointBlankAllowed": null,
                     "shortPenaltyOverride": null,
                     "longAllowed": null
-                  }
+                  },
+                  "penaltyApplication": null
                 },
                 "resource": {
                   "kind": "none",
@@ -29601,7 +29694,8 @@
                         "pointBlankAllowed": null,
                         "shortPenaltyOverride": null,
                         "longAllowed": null
-                      }
+                      },
+                      "penaltyApplication": null
                     },
                     "qualities": {
                       "accurate": false,
@@ -29631,10 +29725,14 @@
                       "notes": null
                     },
                     "resourceConsumption": null,
-                    "notes": []
+                    "notes": [],
+                    "damageComponents": [],
+                    "firingConstraints": null,
+                    "preparedAttack": null
                   }
                 ],
-                "modeProfiles": []
+                "modeProfiles": [],
+                "defensiveInteractions": []
               },
               "qualities": {
                 "accurate": false,
@@ -29740,7 +29838,8 @@
                     "pointBlankAllowed": null,
                     "shortPenaltyOverride": null,
                     "longAllowed": null
-                  }
+                  },
+                  "penaltyApplication": null
                 },
                 "resource": {
                   "kind": "none",
@@ -29799,7 +29898,8 @@
                         "pointBlankAllowed": null,
                         "shortPenaltyOverride": null,
                         "longAllowed": null
-                      }
+                      },
+                      "penaltyApplication": null
                     },
                     "qualities": {
                       "accurate": false,
@@ -29829,10 +29929,14 @@
                       "notes": null
                     },
                     "resourceConsumption": null,
-                    "notes": []
+                    "notes": [],
+                    "damageComponents": [],
+                    "firingConstraints": null,
+                    "preparedAttack": null
                   }
                 ],
-                "modeProfiles": []
+                "modeProfiles": [],
+                "defensiveInteractions": []
               },
               "qualities": {
                 "accurate": false,
@@ -29960,7 +30064,8 @@
                     "pointBlankAllowed": null,
                     "shortPenaltyOverride": null,
                     "longAllowed": null
-                  }
+                  },
+                  "penaltyApplication": null
                 },
                 "resource": {
                   "kind": "power",
@@ -30043,7 +30148,8 @@
                         "pointBlankAllowed": null,
                         "shortPenaltyOverride": null,
                         "longAllowed": null
-                      }
+                      },
+                      "penaltyApplication": null
                     },
                     "qualities": {
                       "accurate": false,
@@ -30073,7 +30179,10 @@
                       "notes": null
                     },
                     "resourceConsumption": null,
-                    "notes": []
+                    "notes": [],
+                    "damageComponents": [],
+                    "firingConstraints": null,
+                    "preparedAttack": null
                   },
                   {
                     "id": "end2",
@@ -30135,7 +30244,8 @@
                         "pointBlankAllowed": null,
                         "shortPenaltyOverride": null,
                         "longAllowed": null
-                      }
+                      },
+                      "penaltyApplication": null
                     },
                     "qualities": {
                       "accurate": false,
@@ -30165,10 +30275,21 @@
                       "notes": null
                     },
                     "resourceConsumption": null,
-                    "notes": []
+                    "notes": [],
+                    "damageComponents": [],
+                    "firingConstraints": null,
+                    "preparedAttack": null
                   }
                 ],
-                "modeProfiles": []
+                "modeProfiles": [],
+                "defensiveInteractions": [
+                  {
+                    "type": "lightsaber-does-not-ignore-own-dr",
+                    "condition": null,
+                    "value": true,
+                    "weaponDR": 20
+                  }
+                ]
               },
               "qualities": {
                 "accurate": false,
@@ -30270,7 +30391,8 @@
                     "pointBlankAllowed": null,
                     "shortPenaltyOverride": null,
                     "longAllowed": null
-                  }
+                  },
+                  "penaltyApplication": null
                 },
                 "resource": {
                   "kind": "power",
@@ -30340,7 +30462,8 @@
                         "pointBlankAllowed": null,
                         "shortPenaltyOverride": null,
                         "longAllowed": null
-                      }
+                      },
+                      "penaltyApplication": null
                     },
                     "qualities": {
                       "accurate": false,
@@ -30370,10 +30493,14 @@
                       "notes": null
                     },
                     "resourceConsumption": null,
-                    "notes": []
+                    "notes": [],
+                    "damageComponents": [],
+                    "firingConstraints": null,
+                    "preparedAttack": null
                   }
                 ],
-                "modeProfiles": []
+                "modeProfiles": [],
+                "defensiveInteractions": []
               },
               "qualities": {
                 "accurate": false,
@@ -30466,7 +30593,8 @@
                     "pointBlankAllowed": null,
                     "shortPenaltyOverride": null,
                     "longAllowed": null
-                  }
+                  },
+                  "penaltyApplication": null
                 },
                 "resource": {
                   "kind": "none",
@@ -30525,7 +30653,8 @@
                         "pointBlankAllowed": null,
                         "shortPenaltyOverride": null,
                         "longAllowed": null
-                      }
+                      },
+                      "penaltyApplication": null
                     },
                     "qualities": {
                       "accurate": false,
@@ -30555,10 +30684,14 @@
                       "notes": null
                     },
                     "resourceConsumption": null,
-                    "notes": []
+                    "notes": [],
+                    "damageComponents": [],
+                    "firingConstraints": null,
+                    "preparedAttack": null
                   }
                 ],
-                "modeProfiles": []
+                "modeProfiles": [],
+                "defensiveInteractions": []
               },
               "qualities": {
                 "accurate": false,
@@ -30653,7 +30786,8 @@
                     "pointBlankAllowed": null,
                     "shortPenaltyOverride": null,
                     "longAllowed": null
-                  }
+                  },
+                  "penaltyApplication": null
                 },
                 "resource": {
                   "kind": "power",
@@ -30718,7 +30852,8 @@
                         "pointBlankAllowed": null,
                         "shortPenaltyOverride": null,
                         "longAllowed": null
-                      }
+                      },
+                      "penaltyApplication": null
                     },
                     "qualities": {
                       "accurate": false,
@@ -30748,10 +30883,14 @@
                       "notes": null
                     },
                     "resourceConsumption": null,
-                    "notes": []
+                    "notes": [],
+                    "damageComponents": [],
+                    "firingConstraints": null,
+                    "preparedAttack": null
                   }
                 ],
-                "modeProfiles": []
+                "modeProfiles": [],
+                "defensiveInteractions": []
               },
               "qualities": {
                 "accurate": false,
@@ -30861,7 +31000,8 @@
                     "pointBlankAllowed": null,
                     "shortPenaltyOverride": null,
                     "longAllowed": null
-                  }
+                  },
+                  "penaltyApplication": null
                 },
                 "resource": {
                   "kind": "power",
@@ -30926,7 +31066,8 @@
                         "pointBlankAllowed": null,
                         "shortPenaltyOverride": null,
                         "longAllowed": null
-                      }
+                      },
+                      "penaltyApplication": null
                     },
                     "qualities": {
                       "accurate": false,
@@ -30956,7 +31097,10 @@
                       "notes": null
                     },
                     "resourceConsumption": null,
-                    "notes": []
+                    "notes": [],
+                    "damageComponents": [],
+                    "firingConstraints": null,
+                    "preparedAttack": null
                   },
                   {
                     "id": "end2",
@@ -30999,7 +31143,8 @@
                         "pointBlankAllowed": null,
                         "shortPenaltyOverride": null,
                         "longAllowed": null
-                      }
+                      },
+                      "penaltyApplication": null
                     },
                     "qualities": {
                       "accurate": false,
@@ -31029,10 +31174,14 @@
                       "notes": null
                     },
                     "resourceConsumption": null,
-                    "notes": []
+                    "notes": [],
+                    "damageComponents": [],
+                    "firingConstraints": null,
+                    "preparedAttack": null
                   }
                 ],
-                "modeProfiles": []
+                "modeProfiles": [],
+                "defensiveInteractions": []
               },
               "qualities": {
                 "accurate": false,
@@ -31127,7 +31276,8 @@
                     "pointBlankAllowed": null,
                     "shortPenaltyOverride": null,
                     "longAllowed": null
-                  }
+                  },
+                  "penaltyApplication": null
                 },
                 "resource": {
                   "kind": "power",
@@ -31192,7 +31342,8 @@
                         "pointBlankAllowed": null,
                         "shortPenaltyOverride": null,
                         "longAllowed": null
-                      }
+                      },
+                      "penaltyApplication": null
                     },
                     "qualities": {
                       "accurate": false,
@@ -31222,10 +31373,14 @@
                       "notes": null
                     },
                     "resourceConsumption": null,
-                    "notes": []
+                    "notes": [],
+                    "damageComponents": [],
+                    "firingConstraints": null,
+                    "preparedAttack": null
                   }
                 ],
-                "modeProfiles": []
+                "modeProfiles": [],
+                "defensiveInteractions": []
               },
               "qualities": {
                 "accurate": false,
@@ -31321,7 +31476,8 @@
                     "pointBlankAllowed": null,
                     "shortPenaltyOverride": null,
                     "longAllowed": null
-                  }
+                  },
+                  "penaltyApplication": null
                 },
                 "resource": {
                   "kind": "none",
@@ -31379,7 +31535,8 @@
                         "pointBlankAllowed": null,
                         "shortPenaltyOverride": null,
                         "longAllowed": null
-                      }
+                      },
+                      "penaltyApplication": null
                     },
                     "qualities": {
                       "accurate": false,
@@ -31409,10 +31566,14 @@
                       "notes": null
                     },
                     "resourceConsumption": null,
-                    "notes": []
+                    "notes": [],
+                    "damageComponents": [],
+                    "firingConstraints": null,
+                    "preparedAttack": null
                   }
                 ],
-                "modeProfiles": []
+                "modeProfiles": [],
+                "defensiveInteractions": []
               },
               "qualities": {
                 "accurate": false,
@@ -31517,7 +31678,8 @@
                     "pointBlankAllowed": null,
                     "shortPenaltyOverride": null,
                     "longAllowed": null
-                  }
+                  },
+                  "penaltyApplication": null
                 },
                 "resource": {
                   "kind": "none",
@@ -31575,7 +31737,8 @@
                         "pointBlankAllowed": null,
                         "shortPenaltyOverride": null,
                         "longAllowed": null
-                      }
+                      },
+                      "penaltyApplication": null
                     },
                     "qualities": {
                       "accurate": false,
@@ -31605,7 +31768,10 @@
                       "notes": null
                     },
                     "resourceConsumption": null,
-                    "notes": []
+                    "notes": [],
+                    "damageComponents": [],
+                    "firingConstraints": null,
+                    "preparedAttack": null
                   },
                   {
                     "id": "end2",
@@ -31647,7 +31813,8 @@
                         "pointBlankAllowed": null,
                         "shortPenaltyOverride": null,
                         "longAllowed": null
-                      }
+                      },
+                      "penaltyApplication": null
                     },
                     "qualities": {
                       "accurate": false,
@@ -31677,10 +31844,14 @@
                       "notes": null
                     },
                     "resourceConsumption": null,
-                    "notes": []
+                    "notes": [],
+                    "damageComponents": [],
+                    "firingConstraints": null,
+                    "preparedAttack": null
                   }
                 ],
-                "modeProfiles": []
+                "modeProfiles": [],
+                "defensiveInteractions": []
               },
               "qualities": {
                 "accurate": false,
@@ -31772,7 +31943,8 @@
                     "pointBlankAllowed": null,
                     "shortPenaltyOverride": null,
                     "longAllowed": null
-                  }
+                  },
+                  "penaltyApplication": null
                 },
                 "resource": {
                   "kind": "none",
@@ -31830,7 +32002,8 @@
                         "pointBlankAllowed": null,
                         "shortPenaltyOverride": null,
                         "longAllowed": null
-                      }
+                      },
+                      "penaltyApplication": null
                     },
                     "qualities": {
                       "accurate": false,
@@ -31860,10 +32033,14 @@
                       "notes": null
                     },
                     "resourceConsumption": null,
-                    "notes": []
+                    "notes": [],
+                    "damageComponents": [],
+                    "firingConstraints": null,
+                    "preparedAttack": null
                   }
                 ],
-                "modeProfiles": []
+                "modeProfiles": [],
+                "defensiveInteractions": []
               },
               "qualities": {
                 "accurate": false,
@@ -31963,7 +32140,8 @@
                     "pointBlankAllowed": null,
                     "shortPenaltyOverride": null,
                     "longAllowed": null
-                  }
+                  },
+                  "penaltyApplication": null
                 },
                 "resource": {
                   "kind": "power",
@@ -32032,7 +32210,8 @@
                         "pointBlankAllowed": null,
                         "shortPenaltyOverride": null,
                         "longAllowed": null
-                      }
+                      },
+                      "penaltyApplication": null
                     },
                     "qualities": {
                       "accurate": false,
@@ -32062,10 +32241,14 @@
                       "notes": null
                     },
                     "resourceConsumption": null,
-                    "notes": []
+                    "notes": [],
+                    "damageComponents": [],
+                    "firingConstraints": null,
+                    "preparedAttack": null
                   }
                 ],
-                "modeProfiles": []
+                "modeProfiles": [],
+                "defensiveInteractions": []
               },
               "qualities": {
                 "accurate": false,
@@ -32157,7 +32340,8 @@
                     "pointBlankAllowed": null,
                     "shortPenaltyOverride": null,
                     "longAllowed": null
-                  }
+                  },
+                  "penaltyApplication": null
                 },
                 "resource": {
                   "kind": "power",
@@ -32218,7 +32402,8 @@
                         "pointBlankAllowed": null,
                         "shortPenaltyOverride": null,
                         "longAllowed": null
-                      }
+                      },
+                      "penaltyApplication": null
                     },
                     "qualities": {
                       "accurate": false,
@@ -32248,10 +32433,14 @@
                       "notes": null
                     },
                     "resourceConsumption": null,
-                    "notes": []
+                    "notes": [],
+                    "damageComponents": [],
+                    "firingConstraints": null,
+                    "preparedAttack": null
                   }
                 ],
-                "modeProfiles": []
+                "modeProfiles": [],
+                "defensiveInteractions": []
               },
               "qualities": {
                 "accurate": false,
@@ -32343,7 +32532,8 @@
                     "pointBlankAllowed": null,
                     "shortPenaltyOverride": null,
                     "longAllowed": null
-                  }
+                  },
+                  "penaltyApplication": null
                 },
                 "resource": {
                   "kind": "power",
@@ -32404,7 +32594,8 @@
                         "pointBlankAllowed": null,
                         "shortPenaltyOverride": null,
                         "longAllowed": null
-                      }
+                      },
+                      "penaltyApplication": null
                     },
                     "qualities": {
                       "accurate": false,
@@ -32434,10 +32625,14 @@
                       "notes": null
                     },
                     "resourceConsumption": null,
-                    "notes": []
+                    "notes": [],
+                    "damageComponents": [],
+                    "firingConstraints": null,
+                    "preparedAttack": null
                   }
                 ],
-                "modeProfiles": []
+                "modeProfiles": [],
+                "defensiveInteractions": []
               },
               "qualities": {
                 "accurate": false,
@@ -32536,7 +32731,8 @@
                     "pointBlankAllowed": null,
                     "shortPenaltyOverride": null,
                     "longAllowed": null
-                  }
+                  },
+                  "penaltyApplication": null
                 },
                 "resource": {
                   "kind": "power",
@@ -32598,7 +32794,8 @@
                         "pointBlankAllowed": null,
                         "shortPenaltyOverride": null,
                         "longAllowed": null
-                      }
+                      },
+                      "penaltyApplication": null
                     },
                     "qualities": {
                       "accurate": false,
@@ -32628,10 +32825,14 @@
                       "notes": null
                     },
                     "resourceConsumption": null,
-                    "notes": []
+                    "notes": [],
+                    "damageComponents": [],
+                    "firingConstraints": null,
+                    "preparedAttack": null
                   }
                 ],
-                "modeProfiles": []
+                "modeProfiles": [],
+                "defensiveInteractions": []
               },
               "qualities": {
                 "accurate": false,
@@ -32724,7 +32925,8 @@
                     "pointBlankAllowed": null,
                     "shortPenaltyOverride": null,
                     "longAllowed": null
-                  }
+                  },
+                  "penaltyApplication": null
                 },
                 "resource": {
                   "kind": "power",
@@ -32786,7 +32988,8 @@
                         "pointBlankAllowed": null,
                         "shortPenaltyOverride": null,
                         "longAllowed": null
-                      }
+                      },
+                      "penaltyApplication": null
                     },
                     "qualities": {
                       "accurate": false,
@@ -32816,10 +33019,14 @@
                       "notes": null
                     },
                     "resourceConsumption": null,
-                    "notes": []
+                    "notes": [],
+                    "damageComponents": [],
+                    "firingConstraints": null,
+                    "preparedAttack": null
                   }
                 ],
-                "modeProfiles": []
+                "modeProfiles": [],
+                "defensiveInteractions": []
               },
               "qualities": {
                 "accurate": false,
@@ -32944,7 +33151,8 @@
                     "short",
                     "medium",
                     "long"
-                  ]
+                  ],
+                  "penaltyApplication": "attack"
                 },
                 "resource": {
                   "kind": "ammunition",
@@ -33036,7 +33244,8 @@
                         "short",
                         "medium",
                         "long"
-                      ]
+                      ],
+                      "penaltyApplication": "attack"
                     },
                     "qualities": {
                       "accurate": false,
@@ -33068,10 +33277,14 @@
                       ]
                     },
                     "resourceConsumption": null,
-                    "notes": []
+                    "notes": [],
+                    "damageComponents": [],
+                    "firingConstraints": null,
+                    "preparedAttack": null
                   }
                 ],
-                "modeProfiles": []
+                "modeProfiles": [],
+                "defensiveInteractions": []
               },
               "qualities": {
                 "accurate": false,
@@ -33207,7 +33420,8 @@
                     "short",
                     "medium",
                     "long"
-                  ]
+                  ],
+                  "penaltyApplication": "attack"
                 },
                 "resource": {
                   "kind": "ammunition",
@@ -33313,7 +33527,8 @@
                         "short",
                         "medium",
                         "long"
-                      ]
+                      ],
+                      "penaltyApplication": "attack"
                     },
                     "qualities": {
                       "accurate": false,
@@ -33343,10 +33558,14 @@
                       "notes": null
                     },
                     "resourceConsumption": null,
-                    "notes": []
+                    "notes": [],
+                    "damageComponents": [],
+                    "firingConstraints": null,
+                    "preparedAttack": null
                   }
                 ],
-                "modeProfiles": []
+                "modeProfiles": [],
+                "defensiveInteractions": []
               },
               "qualities": {
                 "accurate": false,
@@ -33473,7 +33692,8 @@
                     "short",
                     "medium",
                     "long"
-                  ]
+                  ],
+                  "penaltyApplication": "attack"
                 },
                 "resource": {
                   "kind": "power",
@@ -33564,7 +33784,8 @@
                         "short",
                         "medium",
                         "long"
-                      ]
+                      ],
+                      "penaltyApplication": "attack"
                     },
                     "qualities": {
                       "accurate": false,
@@ -33594,10 +33815,14 @@
                       "notes": null
                     },
                     "resourceConsumption": null,
-                    "notes": []
+                    "notes": [],
+                    "damageComponents": [],
+                    "firingConstraints": null,
+                    "preparedAttack": null
                   }
                 ],
-                "modeProfiles": []
+                "modeProfiles": [],
+                "defensiveInteractions": []
               },
               "qualities": {
                 "accurate": false,
@@ -33727,7 +33952,8 @@
                     "short",
                     "medium",
                     "long"
-                  ]
+                  ],
+                  "penaltyApplication": "attack"
                 },
                 "resource": {
                   "kind": "ammunition",
@@ -33820,7 +34046,8 @@
                         "short",
                         "medium",
                         "long"
-                      ]
+                      ],
+                      "penaltyApplication": "attack"
                     },
                     "qualities": {
                       "accurate": false,
@@ -33850,10 +34077,14 @@
                       "notes": null
                     },
                     "resourceConsumption": null,
-                    "notes": []
+                    "notes": [],
+                    "damageComponents": [],
+                    "firingConstraints": null,
+                    "preparedAttack": null
                   }
                 ],
-                "modeProfiles": []
+                "modeProfiles": [],
+                "defensiveInteractions": []
               },
               "qualities": {
                 "accurate": false,
@@ -33988,7 +34219,8 @@
                     "short",
                     "medium",
                     "long"
-                  ]
+                  ],
+                  "penaltyApplication": "attack"
                 },
                 "resource": {
                   "kind": "ammunition",
@@ -34092,7 +34324,8 @@
                         "short",
                         "medium",
                         "long"
-                      ]
+                      ],
+                      "penaltyApplication": "attack"
                     },
                     "qualities": {
                       "accurate": false,
@@ -34122,10 +34355,14 @@
                       "notes": null
                     },
                     "resourceConsumption": null,
-                    "notes": []
+                    "notes": [],
+                    "damageComponents": [],
+                    "firingConstraints": null,
+                    "preparedAttack": null
                   }
                 ],
-                "modeProfiles": []
+                "modeProfiles": [],
+                "defensiveInteractions": []
               },
               "qualities": {
                 "accurate": false,
@@ -34258,7 +34495,8 @@
                     "short",
                     "medium",
                     "long"
-                  ]
+                  ],
+                  "penaltyApplication": "attack"
                 },
                 "resource": {
                   "kind": "ammunition",
@@ -34362,7 +34600,8 @@
                         "short",
                         "medium",
                         "long"
-                      ]
+                      ],
+                      "penaltyApplication": "attack"
                     },
                     "qualities": {
                       "accurate": false,
@@ -34392,10 +34631,14 @@
                       "notes": null
                     },
                     "resourceConsumption": null,
-                    "notes": []
+                    "notes": [],
+                    "damageComponents": [],
+                    "firingConstraints": null,
+                    "preparedAttack": null
                   }
                 ],
-                "modeProfiles": []
+                "modeProfiles": [],
+                "defensiveInteractions": []
               },
               "qualities": {
                 "accurate": false,
@@ -34518,7 +34761,8 @@
                     "short",
                     "medium",
                     "long"
-                  ]
+                  ],
+                  "penaltyApplication": "attack"
                 },
                 "resource": {
                   "kind": "ammunition",
@@ -34610,7 +34854,8 @@
                         "short",
                         "medium",
                         "long"
-                      ]
+                      ],
+                      "penaltyApplication": "attack"
                     },
                     "qualities": {
                       "accurate": false,
@@ -34640,10 +34885,14 @@
                       "notes": null
                     },
                     "resourceConsumption": null,
-                    "notes": []
+                    "notes": [],
+                    "damageComponents": [],
+                    "firingConstraints": null,
+                    "preparedAttack": null
                   }
                 ],
-                "modeProfiles": []
+                "modeProfiles": [],
+                "defensiveInteractions": []
               },
               "qualities": {
                 "accurate": false,
@@ -34778,7 +35027,8 @@
                     "short",
                     "medium",
                     "long"
-                  ]
+                  ],
+                  "penaltyApplication": "attack"
                 },
                 "resource": {
                   "kind": "ammunition",
@@ -34884,7 +35134,8 @@
                         "short",
                         "medium",
                         "long"
-                      ]
+                      ],
+                      "penaltyApplication": "attack"
                     },
                     "qualities": {
                       "accurate": false,
@@ -34914,10 +35165,14 @@
                       "notes": null
                     },
                     "resourceConsumption": null,
-                    "notes": []
+                    "notes": [],
+                    "damageComponents": [],
+                    "firingConstraints": null,
+                    "preparedAttack": null
                   }
                 ],
-                "modeProfiles": []
+                "modeProfiles": [],
+                "defensiveInteractions": []
               },
               "qualities": {
                 "accurate": false,
@@ -35051,7 +35306,8 @@
                     "short",
                     "medium",
                     "long"
-                  ]
+                  ],
+                  "penaltyApplication": "attack"
                 },
                 "resource": {
                   "kind": "ammunition",
@@ -35157,7 +35413,8 @@
                         "short",
                         "medium",
                         "long"
-                      ]
+                      ],
+                      "penaltyApplication": "attack"
                     },
                     "qualities": {
                       "accurate": false,
@@ -35187,10 +35444,14 @@
                       "notes": null
                     },
                     "resourceConsumption": null,
-                    "notes": []
+                    "notes": [],
+                    "damageComponents": [],
+                    "firingConstraints": null,
+                    "preparedAttack": null
                   }
                 ],
-                "modeProfiles": []
+                "modeProfiles": [],
+                "defensiveInteractions": []
               },
               "qualities": {
                 "accurate": false,
@@ -35327,7 +35588,8 @@
                     "short",
                     "medium",
                     "long"
-                  ]
+                  ],
+                  "penaltyApplication": "attack"
                 },
                 "resource": {
                   "kind": "ammunition",
@@ -35433,7 +35695,8 @@
                         "short",
                         "medium",
                         "long"
-                      ]
+                      ],
+                      "penaltyApplication": "attack"
                     },
                     "qualities": {
                       "accurate": false,
@@ -35463,10 +35726,14 @@
                       "notes": null
                     },
                     "resourceConsumption": null,
-                    "notes": []
+                    "notes": [],
+                    "damageComponents": [],
+                    "firingConstraints": null,
+                    "preparedAttack": null
                   }
                 ],
-                "modeProfiles": []
+                "modeProfiles": [],
+                "defensiveInteractions": []
               },
               "qualities": {
                 "accurate": false,
@@ -35589,7 +35856,8 @@
                     "short",
                     "medium",
                     "long"
-                  ]
+                  ],
+                  "penaltyApplication": "attack"
                 },
                 "resource": {
                   "kind": "ammunition",
@@ -35682,7 +35950,8 @@
                         "short",
                         "medium",
                         "long"
-                      ]
+                      ],
+                      "penaltyApplication": "attack"
                     },
                     "qualities": {
                       "accurate": false,
@@ -35712,10 +35981,14 @@
                       "notes": null
                     },
                     "resourceConsumption": null,
-                    "notes": []
+                    "notes": [],
+                    "damageComponents": [],
+                    "firingConstraints": null,
+                    "preparedAttack": null
                   }
                 ],
-                "modeProfiles": []
+                "modeProfiles": [],
+                "defensiveInteractions": []
               },
               "qualities": {
                 "accurate": false,
@@ -35848,7 +36121,8 @@
                     "short",
                     "medium",
                     "long"
-                  ]
+                  ],
+                  "penaltyApplication": "attack"
                 },
                 "resource": {
                   "kind": "ammunition",
@@ -35952,7 +36226,8 @@
                         "short",
                         "medium",
                         "long"
-                      ]
+                      ],
+                      "penaltyApplication": "attack"
                     },
                     "qualities": {
                       "accurate": false,
@@ -35982,10 +36257,14 @@
                       "notes": null
                     },
                     "resourceConsumption": null,
-                    "notes": []
+                    "notes": [],
+                    "damageComponents": [],
+                    "firingConstraints": null,
+                    "preparedAttack": null
                   }
                 ],
-                "modeProfiles": []
+                "modeProfiles": [],
+                "defensiveInteractions": []
               },
               "qualities": {
                 "accurate": false,
@@ -36108,7 +36387,8 @@
                     "short",
                     "medium",
                     "long"
-                  ]
+                  ],
+                  "penaltyApplication": "attack"
                 },
                 "resource": {
                   "kind": "ammunition",
@@ -36205,7 +36485,8 @@
                         "short",
                         "medium",
                         "long"
-                      ]
+                      ],
+                      "penaltyApplication": "attack"
                     },
                     "qualities": {
                       "accurate": false,
@@ -36235,10 +36516,14 @@
                       "notes": null
                     },
                     "resourceConsumption": null,
-                    "notes": []
+                    "notes": [],
+                    "damageComponents": [],
+                    "firingConstraints": null,
+                    "preparedAttack": null
                   }
                 ],
-                "modeProfiles": []
+                "modeProfiles": [],
+                "defensiveInteractions": []
               },
               "qualities": {
                 "accurate": false,
@@ -36336,7 +36621,8 @@
                     "pointBlankAllowed": null,
                     "shortPenaltyOverride": null,
                     "longAllowed": null
-                  }
+                  },
+                  "penaltyApplication": null
                 },
                 "resource": {
                   "kind": "ammunition",
@@ -36406,7 +36692,8 @@
                         "pointBlankAllowed": null,
                         "shortPenaltyOverride": null,
                         "longAllowed": null
-                      }
+                      },
+                      "penaltyApplication": null
                     },
                     "qualities": {
                       "accurate": false,
@@ -36436,10 +36723,14 @@
                       "notes": null
                     },
                     "resourceConsumption": null,
-                    "notes": []
+                    "notes": [],
+                    "damageComponents": [],
+                    "firingConstraints": null,
+                    "preparedAttack": null
                   }
                 ],
-                "modeProfiles": []
+                "modeProfiles": [],
+                "defensiveInteractions": []
               },
               "qualities": {
                 "accurate": false,
@@ -36538,7 +36829,8 @@
                     "pointBlankAllowed": null,
                     "shortPenaltyOverride": null,
                     "longAllowed": null
-                  }
+                  },
+                  "penaltyApplication": null
                 },
                 "resource": {
                   "kind": "ammunition",
@@ -36606,7 +36898,8 @@
                         "pointBlankAllowed": null,
                         "shortPenaltyOverride": null,
                         "longAllowed": null
-                      }
+                      },
+                      "penaltyApplication": null
                     },
                     "qualities": {
                       "accurate": false,
@@ -36638,10 +36931,14 @@
                       ]
                     },
                     "resourceConsumption": null,
-                    "notes": []
+                    "notes": [],
+                    "damageComponents": [],
+                    "firingConstraints": null,
+                    "preparedAttack": null
                   }
                 ],
-                "modeProfiles": []
+                "modeProfiles": [],
+                "defensiveInteractions": []
               },
               "qualities": {
                 "accurate": false,
@@ -36766,7 +37063,8 @@
                     "pointBlankAllowed": null,
                     "shortPenaltyOverride": null,
                     "longAllowed": null
-                  }
+                  },
+                  "penaltyApplication": null
                 },
                 "resource": {
                   "kind": "consumable-projectile",
@@ -36851,7 +37149,8 @@
                         "pointBlankAllowed": null,
                         "shortPenaltyOverride": null,
                         "longAllowed": null
-                      }
+                      },
+                      "penaltyApplication": null
                     },
                     "qualities": {
                       "accurate": false,
@@ -36881,10 +37180,14 @@
                       "notes": null
                     },
                     "resourceConsumption": null,
-                    "notes": []
+                    "notes": [],
+                    "damageComponents": [],
+                    "firingConstraints": null,
+                    "preparedAttack": null
                   }
                 ],
-                "modeProfiles": []
+                "modeProfiles": [],
+                "defensiveInteractions": []
               },
               "qualities": {
                 "accurate": false,
@@ -37030,7 +37333,8 @@
                     "short",
                     "medium",
                     "long"
-                  ]
+                  ],
+                  "penaltyApplication": "attack"
                 },
                 "resource": {
                   "kind": "consumable",
@@ -37120,7 +37424,8 @@
                         "short",
                         "medium",
                         "long"
-                      ]
+                      ],
+                      "penaltyApplication": "attack"
                     },
                     "qualities": {
                       "accurate": false,
@@ -37152,10 +37457,14 @@
                       ]
                     },
                     "resourceConsumption": null,
-                    "notes": []
+                    "notes": [],
+                    "damageComponents": [],
+                    "firingConstraints": null,
+                    "preparedAttack": null
                   }
                 ],
-                "modeProfiles": []
+                "modeProfiles": [],
+                "defensiveInteractions": []
               },
               "qualities": {
                 "accurate": false,
@@ -37287,7 +37596,8 @@
                     "short",
                     "medium",
                     "long"
-                  ]
+                  ],
+                  "penaltyApplication": "attack"
                 },
                 "resource": {
                   "kind": "consumable",
@@ -37379,7 +37689,8 @@
                         "short",
                         "medium",
                         "long"
-                      ]
+                      ],
+                      "penaltyApplication": "attack"
                     },
                     "qualities": {
                       "accurate": false,
@@ -37411,10 +37722,14 @@
                       ]
                     },
                     "resourceConsumption": null,
-                    "notes": []
+                    "notes": [],
+                    "damageComponents": [],
+                    "firingConstraints": null,
+                    "preparedAttack": null
                   }
                 ],
-                "modeProfiles": []
+                "modeProfiles": [],
+                "defensiveInteractions": []
               },
               "qualities": {
                 "accurate": false,
@@ -37554,7 +37869,8 @@
                     "short",
                     "medium",
                     "long"
-                  ]
+                  ],
+                  "penaltyApplication": "attack"
                 },
                 "resource": {
                   "kind": "consumable",
@@ -37653,7 +37969,8 @@
                         "short",
                         "medium",
                         "long"
-                      ]
+                      ],
+                      "penaltyApplication": "attack"
                     },
                     "qualities": {
                       "accurate": false,
@@ -37685,10 +38002,14 @@
                       ]
                     },
                     "resourceConsumption": null,
-                    "notes": []
+                    "notes": [],
+                    "damageComponents": [],
+                    "firingConstraints": null,
+                    "preparedAttack": null
                   }
                 ],
-                "modeProfiles": []
+                "modeProfiles": [],
+                "defensiveInteractions": []
               },
               "qualities": {
                 "accurate": false,
@@ -37819,7 +38140,8 @@
                     "short",
                     "medium",
                     "long"
-                  ]
+                  ],
+                  "penaltyApplication": "attack"
                 },
                 "resource": {
                   "kind": "ammunition",
@@ -37911,7 +38233,8 @@
                         "short",
                         "medium",
                         "long"
-                      ]
+                      ],
+                      "penaltyApplication": "attack"
                     },
                     "qualities": {
                       "accurate": false,
@@ -37941,10 +38264,14 @@
                       "notes": null
                     },
                     "resourceConsumption": null,
-                    "notes": []
+                    "notes": [],
+                    "damageComponents": [],
+                    "firingConstraints": null,
+                    "preparedAttack": null
                   }
                 ],
-                "modeProfiles": []
+                "modeProfiles": [],
+                "defensiveInteractions": []
               },
               "qualities": {
                 "accurate": false,
@@ -38073,7 +38400,8 @@
                     "short",
                     "medium",
                     "long"
-                  ]
+                  ],
+                  "penaltyApplication": "attack"
                 },
                 "resource": {
                   "kind": "ammunition",
@@ -38167,7 +38495,8 @@
                         "short",
                         "medium",
                         "long"
-                      ]
+                      ],
+                      "penaltyApplication": "attack"
                     },
                     "qualities": {
                       "accurate": false,
@@ -38197,10 +38526,14 @@
                       "notes": null
                     },
                     "resourceConsumption": null,
-                    "notes": []
+                    "notes": [],
+                    "damageComponents": [],
+                    "firingConstraints": null,
+                    "preparedAttack": null
                   }
                 ],
-                "modeProfiles": []
+                "modeProfiles": [],
+                "defensiveInteractions": []
               },
               "qualities": {
                 "accurate": false,
@@ -38327,7 +38660,8 @@
                     "short",
                     "medium",
                     "long"
-                  ]
+                  ],
+                  "penaltyApplication": "attack"
                 },
                 "resource": {
                   "kind": "ammunition",
@@ -38421,7 +38755,8 @@
                         "short",
                         "medium",
                         "long"
-                      ]
+                      ],
+                      "penaltyApplication": "attack"
                     },
                     "qualities": {
                       "accurate": false,
@@ -38451,10 +38786,14 @@
                       "notes": null
                     },
                     "resourceConsumption": null,
-                    "notes": []
+                    "notes": [],
+                    "damageComponents": [],
+                    "firingConstraints": null,
+                    "preparedAttack": null
                   }
                 ],
-                "modeProfiles": []
+                "modeProfiles": [],
+                "defensiveInteractions": []
               },
               "qualities": {
                 "accurate": false,
@@ -38579,7 +38918,8 @@
                     "short",
                     "medium",
                     "long"
-                  ]
+                  ],
+                  "penaltyApplication": "attack"
                 },
                 "resource": {
                   "kind": "ammunition",
@@ -38676,7 +39016,8 @@
                         "short",
                         "medium",
                         "long"
-                      ]
+                      ],
+                      "penaltyApplication": "attack"
                     },
                     "qualities": {
                       "accurate": false,
@@ -38708,10 +39049,14 @@
                       ]
                     },
                     "resourceConsumption": null,
-                    "notes": []
+                    "notes": [],
+                    "damageComponents": [],
+                    "firingConstraints": null,
+                    "preparedAttack": null
                   }
                 ],
-                "modeProfiles": []
+                "modeProfiles": [],
+                "defensiveInteractions": []
               },
               "qualities": {
                 "accurate": false,
@@ -38839,7 +39184,8 @@
                     "short",
                     "medium",
                     "long"
-                  ]
+                  ],
+                  "penaltyApplication": "attack"
                 },
                 "resource": {
                   "kind": "none",
@@ -38926,7 +39272,8 @@
                         "short",
                         "medium",
                         "long"
-                      ]
+                      ],
+                      "penaltyApplication": "attack"
                     },
                     "qualities": {
                       "accurate": false,
@@ -38956,10 +39303,14 @@
                       "notes": null
                     },
                     "resourceConsumption": null,
-                    "notes": []
+                    "notes": [],
+                    "damageComponents": [],
+                    "firingConstraints": null,
+                    "preparedAttack": null
                   }
                 ],
-                "modeProfiles": []
+                "modeProfiles": [],
+                "defensiveInteractions": []
               },
               "qualities": {
                 "accurate": false,
@@ -39088,7 +39439,8 @@
                     "short",
                     "medium",
                     "long"
-                  ]
+                  ],
+                  "penaltyApplication": "attack"
                 },
                 "resource": {
                   "kind": "ammunition",
@@ -39179,7 +39531,8 @@
                         "short",
                         "medium",
                         "long"
-                      ]
+                      ],
+                      "penaltyApplication": "attack"
                     },
                     "qualities": {
                       "accurate": false,
@@ -39209,10 +39562,14 @@
                       "notes": null
                     },
                     "resourceConsumption": null,
-                    "notes": []
+                    "notes": [],
+                    "damageComponents": [],
+                    "firingConstraints": null,
+                    "preparedAttack": null
                   }
                 ],
-                "modeProfiles": []
+                "modeProfiles": [],
+                "defensiveInteractions": []
               },
               "qualities": {
                 "accurate": false,
@@ -39337,7 +39694,8 @@
                     "short",
                     "medium",
                     "long"
-                  ]
+                  ],
+                  "penaltyApplication": "attack"
                 },
                 "resource": {
                   "kind": "ammunition",
@@ -39434,7 +39792,8 @@
                         "short",
                         "medium",
                         "long"
-                      ]
+                      ],
+                      "penaltyApplication": "attack"
                     },
                     "qualities": {
                       "accurate": false,
@@ -39464,10 +39823,14 @@
                       "notes": null
                     },
                     "resourceConsumption": null,
-                    "notes": []
+                    "notes": [],
+                    "damageComponents": [],
+                    "firingConstraints": null,
+                    "preparedAttack": null
                   }
                 ],
-                "modeProfiles": []
+                "modeProfiles": [],
+                "defensiveInteractions": []
               },
               "qualities": {
                 "accurate": false,
@@ -39591,7 +39954,8 @@
                     "short",
                     "medium",
                     "long"
-                  ]
+                  ],
+                  "penaltyApplication": "attack"
                 },
                 "resource": {
                   "kind": "ammunition",
@@ -39691,7 +40055,8 @@
                         "short",
                         "medium",
                         "long"
-                      ]
+                      ],
+                      "penaltyApplication": "attack"
                     },
                     "qualities": {
                       "accurate": false,
@@ -39721,10 +40086,14 @@
                       "notes": null
                     },
                     "resourceConsumption": null,
-                    "notes": []
+                    "notes": [],
+                    "damageComponents": [],
+                    "firingConstraints": null,
+                    "preparedAttack": null
                   }
                 ],
-                "modeProfiles": []
+                "modeProfiles": [],
+                "defensiveInteractions": []
               },
               "qualities": {
                 "accurate": false,
@@ -39847,7 +40216,8 @@
                     "short",
                     "medium",
                     "long"
-                  ]
+                  ],
+                  "penaltyApplication": "attack"
                 },
                 "resource": {
                   "kind": "consumable",
@@ -39937,7 +40307,8 @@
                         "short",
                         "medium",
                         "long"
-                      ]
+                      ],
+                      "penaltyApplication": "attack"
                     },
                     "qualities": {
                       "accurate": false,
@@ -39969,10 +40340,14 @@
                       ]
                     },
                     "resourceConsumption": null,
-                    "notes": []
+                    "notes": [],
+                    "damageComponents": [],
+                    "firingConstraints": null,
+                    "preparedAttack": null
                   }
                 ],
-                "modeProfiles": []
+                "modeProfiles": [],
+                "defensiveInteractions": []
               },
               "qualities": {
                 "accurate": false,
@@ -40029,7 +40404,8 @@
           "Owner decision: keep v2.1, attackProfiles on KOTOR (done), then schema v2.2 from Galaxy at War (this fold).",
           "Schema v2.2 (weapon-authority-schema-v2.2) applied to Core and KOTOR as structural defaults derived from certified facts: profiles reshaped (damage, label, kind, schemaFamily, stun, rateOfFire, range, qualities, attackResolution, area, resourceConsumption); range.mode \"profile\" renamed \"ranged\"; range.allowedBands + qualityEffects.mediumAllowed; modeProfiles []; resource.consumption null; conditionalDamageProfiles []; qualityParameters (Core/KOTOR Inaccurate preserved as long-only exclusion = allowedBands pointBlank/short/medium; Galaxy at War Inaccurate = pointBlank/short).",
           "Core/KOTOR area-effect profiles: area.enabled true with null geometry and attackResolution.onMiss \"unspecified\" (the certified authority does not capture geometry or the miss rule); non-area profiles onMiss \"none\". Massassi Lanvarok melee profile has all qualities false (Inaccurate applies to the ranged disc).",
-          "Not adopted: the earlier addendum reshaping (rateOfFire object, stun.available/mode/rangeOverride, operatingModes.available, ammunition object, range min/max)."
+          "Not adopted: the earlier addendum reshaping (rateOfFire object, stun.available/mode/rangeOverride, operatingModes.available, ammunition object, range min/max).",
+          "Schema v2.3 (Force Unleashed): range.penaltyApplication, preparedAttack, damageComponents, firingConstraints, defensiveInteractions, add-dice/area-toggle conditional damage applied to Core, KOTOR and Galaxy at War as structural defaults; Sonic Disruptor specialRateOfFire expressed as firingConstraints (Special ROF and operation block preserved); Core Electrostaff and KOTOR Shockstaff lightsaber-vs-object-DR facts backfilled into defensiveInteractions from their existing operation data."
         ]
       },
       "standaloneBookAuthorities": [
@@ -40062,6 +40438,20 @@
           "mirrorProfiles": false,
           "specialRateOfFireAllowed": [],
           "note": "Book-only authority by owner instruction. Introduces schema v2.2."
+        },
+        {
+          "phase": "2D",
+          "book": "Force Unleashed Campaign Guide",
+          "file": "data/audits/item-weapons-phase-2d-force-unleashed-standalone-authority.json",
+          "doc": "docs/audits/item-weapons-phase-2d-force-unleashed-standalone-authority.md",
+          "status": "FORCE_UNLEASHED_PHASE_2D_STANDALONE_CERTIFIED",
+          "claims": 18,
+          "repoPresent": 14,
+          "repoMissing": 4,
+          "rollingMergeAuthorized": false,
+          "mirrorProfiles": false,
+          "specialRateOfFireAllowed": [],
+          "note": "Book-only authority by owner instruction. Introduces schema v2.3."
         }
       ],
       "pendingSchemaDecision": {
@@ -40072,7 +40462,7 @@
   },
   "pendingPhases": [
     "1 Provenance and canonical content certification — weapons COMPLETE (1A-1L, authority-only); next within Phase 1: armor, general equipment families, cybernetics/upgrades/templates, lightsaber components, droid systems; weapon numeric/stat/schema certification precedes any creation of the 53 missing weapons",
-    "Phase 2 weapons numeric/stat/schema certification — 2A Core DONE (schema v2.1), 2B KOTOR and 2C Galaxy at War DONE (standalone book authorities, schema v2.2); next books in order: Force Unleashed (18), Clone Wars (16), Jedi Academy (16), Legacy Era (14), Unknown Regions (14), Rebellion Era (12), Scum and Villainy (9), Galaxy of Intrigue (4), Threats of the Galaxy (4); then reconcile all 203 identities; Bowcaster range and BlasTech 500 Riot Gun conflict remain gated",
+    "Phase 2 weapons numeric/stat/schema certification — 2A Core DONE (schema v2.1), 2B KOTOR, 2C Galaxy at War and 2D Force Unleashed DONE (standalone book authorities, schema v2.3); next books in order: Clone Wars (16), Jedi Academy (16), Legacy Era (14), Unknown Regions (14), Rebellion Era (12), Scum and Villainy (9), Galaxy of Intrigue (4), Threats of the Galaxy (4); then reconcile all 203 identities; Bowcaster range and BlasTech 500 Riot Gun conflict remain gated",
     "Gated cleanup tranche (0-3D migrations, 0-3E renames/merge, 0-3F template migration, 0-3G weapons.db stragglers, 0-3H droid migration, weapon/equipment REMOVE dependents)",
     "Vehicle/starship item domain census (separate domain)",
     "2 Descriptions",

@@ -474,12 +474,15 @@ if (s2) {
       if (!Number.isInteger(d.diceCount) || !Number.isInteger(d.dieSize) || !Number.isInteger(d.flatBonus)) fail(`${where} dice damage needs integer diceCount/dieSize/flatBonus`);
       else if (d.formula !== `${d.diceCount}d${d.dieSize}${d.flatBonus ? (d.flatBonus > 0 ? '+' : '') + d.flatBonus : ''}`) fail(`${where} formula ${d.formula} disagrees with structured dice`);
     } else if (d.mode === 'double') {
-      if (!Array.isArray(d.profiles) || d.profiles.length !== 2) fail(`${where} double damage needs two profiles`);
-      else { d.profiles.forEach((q, i) => dice(q, `${where}[${i}]`)); if (d.formula !== d.profiles.map((q) => q.formula).join('/')) fail(`${where} double formula mismatch`); }
+      if (d.profiles !== undefined) {
+        if (!Array.isArray(d.profiles) || d.profiles.length !== 2) fail(`${where} double damage needs two profiles`);
+        else { d.profiles.forEach((q, i) => dice(q, `${where}[${i}]`)); if (d.formula !== d.profiles.map((q) => q.formula).join('/')) fail(`${where} double formula mismatch`); }
+      } else if (!/^\d+d\d+\/\d+d\d+$/.test(d.formula || '')) fail(`${where} double damage needs profiles or a NdN/NdN formula`);
     } else if (!DMG_MODES.has(d.mode)) fail(`${where} unknown damage mode ${d.mode}`);
   };
   const BANDS = C.range.allowedBands.vocabulary;
   const RANGE_MODES = new Set(C.range.modes);
+  const PEN = new Set(C.range.penaltyApplication.vocabulary);
   /** Expected allowedBands for a qualities/qualityParameters pair (book-specific Inaccurate lives in qualityParameters). */
   const expectedBands = (ql, qp, w) => {
     let b = [...BANDS];
@@ -493,6 +496,9 @@ if (s2) {
   };
   const rangeCheck = (rg, ql, qp, w) => {
     if (!RANGE_MODES.has(rg.mode)) { fail(`${w} unknown range mode ${rg.mode}`); return; }
+    if (!('penaltyApplication' in rg) || !(rg.penaltyApplication === null || PEN.has(rg.penaltyApplication))) fail(`${w} range.penaltyApplication missing/invalid`);
+    else if (rg.mode === 'ranged' && rg.penaltyApplication === null) fail(`${w} ranged range needs penaltyApplication`);
+    else if (rg.mode === 'melee' && rg.penaltyApplication !== null) fail(`${w} melee range penaltyApplication must be null`);
     if (rg.mode === 'fixed-maximum' && !Number.isInteger(rg.maxSquares)) fail(`${w} fixed-maximum range needs maxSquares`);
     if (rg.mode !== 'ranged') return;
     const prof = C.range.canonicalProfiles[rg.profileId];
@@ -530,7 +536,9 @@ if (s2) {
       if (!DR_MODES.has(s.damageReductionInteraction.mode)) fail(`${w} invalid DR mode`);
       if (ql.ignoresDR !== (s.damageReductionInteraction.mode === 'ignore')) fail(`${w} ignoresDR disagrees with damageReductionInteraction.mode`);
       if (ql.ignoresDR) t.ign++;
-      for (const [k, key] of [['accurate', 'accurate'], ['inaccurate', 'inaccurate'], ['arc', 'arc'], ['areaEffect', 'area'], ['doubleWeapon', 'dbl'], ['autofireOnly', 'auto']]) if (ql[k]) t[key]++;
+      for (const [k, key] of [['accurate', 'accurate'], ['inaccurate', 'inaccurate'], ['arc', 'arc'], ['doubleWeapon', 'dbl'], ['autofireOnly', 'auto']]) if (ql[k]) t[key]++;
+      // area tally: the areaEffect quality, or a profile whose geometry is enabled (CR-1 Blast Cannon: conditional splash with areaEffect=false)
+      if (ql.areaEffect || s.attackProfiles?.some((x) => x.area?.enabled)) t.area++;
       const rof = s.rateOfFire;
       if (rof !== null && !(Array.isArray(rof) && rof.length && rof.every((x) => ROF.has(x)))) fail(`${w} invalid rateOfFire`);
       if (ql.autofireOnly && !same(rof, ['A'])) fail(`${w} autofireOnly requires rateOfFire ["A"]`);
@@ -540,6 +548,13 @@ if (s2) {
       if (!qp || !same(Object.keys(qp).sort(), ['accurate', 'arc', 'inaccurate'])) fail(`${w} missing qualityParameters`);
       if (!Array.isArray(r.conditionalDamageProfiles)) fail(`${w} missing conditionalDamageProfiles`);
       if (!Array.isArray(s.modeProfiles)) fail(`${w} missing canonicalStats.modeProfiles`);
+      if (!Array.isArray(s.defensiveInteractions) || s.defensiveInteractions.some((e) => !C.defensiveInteractions.entryFields.every((f) => f in e))) fail(`${w} missing/invalid canonicalStats.defensiveInteractions`);
+      for (const cd of r.conditionalDamageProfiles || []) {
+        const op = cd.operation || 'replace';
+        if (!cd.id || !cd.condition || !C.conditionalDamage.operations.includes(op)) fail(`${w} invalid conditionalDamageProfile ${cd.id}`);
+        else if (op === 'replace') dice(cd.damage, `${w} conditional ${cd.id}`);
+        else if (op === 'add-dice' && !(Number.isInteger(cd.diceCountDelta) && Number.isInteger(cd.dieSize))) fail(`${w} conditional ${cd.id} add-dice needs diceCountDelta/dieSize`);
+      }
       if (!('consumption' in s.resource)) fail(`${w} missing resource.consumption`);
       if (s.baseDamage.mode === 'conditional' && !r.conditionalDamageProfiles?.length) fail(`${w} conditional damage needs conditionalDamageProfiles`);
       rangeCheck(s.range, ql, qp, w);
@@ -564,6 +579,16 @@ if (s2) {
           if (x.resourceConsumption !== null && !x.resourceConsumption?.resource) fail(`${pw} invalid resourceConsumption`);
           if (x.stun.damageMode === 'same-as-active-profile' && !s.modeProfiles.length && ap.length < 2) fail(`${pw} same-as-active-profile needs multiple profiles`);
           rangeCheck(x.range, x.qualities, qp, pw);
+          const pr = x.preparedAttack;
+          if (pr !== null && !C.preparedAttack.fields.every((f) => f in pr)) fail(`${pw} invalid preparedAttack`);
+          if (!Array.isArray(x.damageComponents)) fail(`${pw} damageComponents must be an array`);
+          else for (const dc of x.damageComponents) {
+            if (!C.damageComponents.fields.every((f) => f in dc) || !C.damageComponents.resolutions.includes(dc.resolution)) fail(`${pw} invalid damage component ${dc.id}`);
+            else { dice(dc.damage, `${pw} component ${dc.id}`); if (!TYPE_MODES.has(dc.damageType.mode)) fail(`${pw} component ${dc.id} invalid damageType`); }
+          }
+          const fc = x.firingConstraints;
+          if (fc !== null && (!C.firingConstraints.fields.every((f) => f in fc) || typeof fc.firesOnAlternatingRounds !== 'boolean' || typeof fc.prohibitsMultiShotAbilities !== 'boolean' || typeof fc.reloadRequiredAfterEachShot !== 'boolean')) fail(`${pw} invalid firingConstraints`);
+          if (x.rateOfFire?.includes('Special') && fc === null) fail(`${pw} Special rate of fire requires firingConstraints`);
         }
         const ids = new Set(ap.map((x) => x.id));
         for (const m of s.modeProfiles) {
@@ -594,7 +619,7 @@ if (s2) {
     if (t.ign !== 3) fail(`2A expected 3 ignoresDR lightsabers, found ${t.ign}`);
     if (b.records.find((r) => r.canonicalName === 'Bowcaster').canonicalStats.range.mode !== 'unresolved') fail('2A Bowcaster range must remain unresolved');
     if (b.records.length !== 48 || t.present !== 35) fail('2A Core hard checkpoint must be 48 records / 35 present / 13 missing');
-    if (s2.schemaVersion !== 'weapon-authority-schema-v2.2') fail('schemaVersion must be weapon-authority-schema-v2.2');
+    if (s2.schemaVersion !== 'weapon-authority-schema-v2.3') fail('schemaVersion must be weapon-authority-schema-v2.3');
   }
   // Standalone book authorities (not merged into the rolling record unless the owner says so)
   for (const sb of s2.standaloneBookAuthorities || []) {
@@ -615,6 +640,15 @@ if (s2) {
     for (const r of sa.records) if (r.canonicalStats.rateOfFire?.includes('Special') && !sb.specialRateOfFireAllowed?.includes(r.canonicalName)) fail(`${sb.phase} unexpected Special rate of fire on ${r.canonicalName}`);
     const mass = sa.records.find((r) => r.canonicalName === 'Massassi Lanvarok');
     if (mass && !(mass.canonicalStats.attackProfiles.map((x) => x.id).join() === 'disc,melee' && mass.canonicalStats.baseDamage.mode === 'alternate-profiles')) fail(`${sb.phase} Massassi Lanvarok must carry disc and melee profiles`);
+    if (sb.phase === '2D') {
+      const f = (n) => sa.records.find((r) => r.canonicalName === n);
+      if (f('CR-1 Blast Cannon').canonicalStats.range.penaltyApplication !== 'damage') fail('2D CR-1 Blast Cannon range penalties apply to damage');
+      if (f('Bryar Pistol').canonicalStats.attackProfiles[0].preparedAttack?.damageDiceDelta !== 1 || f('Bryar Rifle').canonicalStats.attackProfiles[0].preparedAttack?.resourceUnitsOnPreparedAttack !== 5) fail('2D Bryar prepared attack missing');
+      if (f('Neuronic Whip').canonicalStats.attackProfiles[0].damageComponents.length !== 2) fail('2D Neuronic Whip needs two independent damage components');
+      for (const n of ['DX-2 Disruptor Pistol', 'DXR-6 Disruptor Rifle']) if (f(n).canonicalStats.attackProfiles[0].firingConstraints?.firesOnAlternatingRounds !== true) fail(`2D ${n} fires only on alternating rounds`);
+      for (const n of ['Bryar Rifle', 'CR-1 Blast Cannon', 'Flechette Launcher', 'Stokhli Spray Stick']) if (!same(f(n).qualityParameters.inaccurate.allowedBands, ['pointBlank', 'short', 'medium'])) fail(`2D ${n} Inaccurate must exclude Long only (Core/KOTOR definition)`);
+      if (!['Guard Shoto', 'Lightsaber Pike'].every((n) => f(n).canonicalStats.defensiveInteractions.length === 1)) fail('2D Guard Shoto / Lightsaber Pike defensiveInteractions');
+    }
     if (sb.phase === '2C') {
       const g = (n) => sa.records.find((r) => r.canonicalName === n);
       for (const n of ['Scatter Gun', 'Ascension Gun', 'Blaster Rifle, Heavy Variable']) if (!same(g(n).qualityParameters.inaccurate.allowedBands, ['pointBlank', 'short'])) fail(`2C ${n} Inaccurate must exclude Medium and Long (book-specific definition)`);
