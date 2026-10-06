@@ -3,7 +3,7 @@
   "phase": "4A",
   "family": "weapons",
   "categoryBatch": "Simple Weapon",
-  "status": "WEAPON_TAG_PHASE_4A_SIMPLE_ROLLING_ROUND_3_PLANNER_ADJUDICATED",
+  "status": "WEAPON_TAG_PHASE_4A_SIMPLE_SEMANTIC_AUTHORITY_CERTIFIED",
   "authorityOnly": true,
   "productionMutationAuthorized": false,
   "purpose": "Rolling planner authority for Simple Weapon semantic tags. Claude implements exact planner rulings; later rounds append additional Simple Weapon identities.",
@@ -84,63 +84,86 @@
     "repoMissing": 21
   },
   "rollingProgress": {
-    "round": 3,
-    "adjudicatedThisRound": 12,
-    "adjudicatedTotal": 36,
-    "remaining": 13,
-    "roundRepoPresent": 6,
-    "roundRepoMissing": 6,
-    "firstCanonicalName": "Grenade, Smoke",
-    "lastCanonicalName": "Short Sword",
-    "nextCanonicalName": "Sith Sword",
-    "totalFinalTagAssignmentsThisRound": 52,
-    "distinctTagsUsedThisRound": 24,
+    "round": 4,
+    "adjudicatedThisRound": 13,
+    "adjudicatedTotal": 49,
+    "remaining": 0,
+    "roundRepoPresent": 8,
+    "roundRepoMissing": 5,
+    "firstCanonicalName": "Sith Sword",
+    "lastCanonicalName": "War Sword",
+    "nextCanonicalName": null,
+    "totalFinalTagAssignmentsThisRound": 71,
+    "distinctTagsUsedThisRound": 36,
     "tagsUsedThisRound": [
-      "acrobatics",
       "action_economy",
-      "battlefield_control",
+      "ally_support",
       "biotech",
+      "block",
       "burst_damage",
-      "concealment",
-      "control",
+      "damage",
       "damage_bonus",
+      "dark_side",
+      "dark_side_score",
+      "deflect",
       "double_weapon",
+      "equipment",
+      "exploration",
+      "force",
+      "force_point_spend",
       "full_attack",
-      "grab",
-      "grapple",
+      "heavy_weapon",
+      "lightsaber",
       "melee",
       "nonlethal",
       "offense_melee",
       "offense_ranged",
+      "positioning",
       "precision",
       "ranged",
-      "restrain",
+      "resource_spend",
       "setup",
       "stun",
+      "support",
+      "survival",
       "swift_action",
-      "trap",
-      "unarmed"
+      "target-designation",
+      "targeting",
+      "teamwork",
+      "unarmed",
+      "vehicle"
     ],
-    "ontologyGapCandidatesThisRound": 1,
-    "totalFinalTagAssignmentsCumulative": 151,
-    "distinctTagsUsedCumulative": 39,
+    "ontologyGapCandidatesThisRound": 3,
+    "totalFinalTagAssignmentsCumulative": 222,
+    "distinctTagsUsedCumulative": 57,
     "tagsUsedCumulative": [
       "acrobatics",
       "action_economy",
+      "ally_support",
       "attack_of_opportunity",
       "battlefield_control",
       "biotech",
+      "block",
       "burst_damage",
       "concealment",
       "control",
+      "damage",
       "damage_bonus",
+      "dark_side",
+      "dark_side_score",
+      "deflect",
       "double_weapon",
       "droid",
       "equipment",
+      "exploration",
+      "force",
+      "force_point_spend",
       "full_attack",
       "grab",
       "grapple",
+      "heavy_weapon",
       "improvised_weapon",
+      "lightsaber",
       "melee",
       "move_action",
       "movement",
@@ -149,15 +172,22 @@
       "offense_ranged",
       "opposed_check",
       "poison",
+      "positioning",
       "precision",
       "ranged",
       "recon",
+      "resource_spend",
       "restrain",
       "setup",
       "stealth",
       "stun",
+      "support",
+      "survival",
       "sustained_damage",
       "swift_action",
+      "target-designation",
+      "targeting",
+      "teamwork",
       "tech",
       "tracking",
       "trap",
@@ -165,7 +195,7 @@
       "unarmed",
       "vehicle"
     ],
-    "ontologyGapCandidatesCumulative": 2
+    "ontologyGapCandidatesCumulative": 5
   },
   "implementationContract": {
     "semanticAuthority": "planner",
@@ -1349,6 +1379,478 @@
         "Do not add dual_wield from descriptive usage alone.",
         "Do not add defense or deflect from flavor text; the published entry grants no standalone numerical or rules benefit for deflecting melee attacks."
       ]
+    },
+    {
+      "identityKey": "weapon-sith-sword",
+      "canonicalName": "Sith Sword",
+      "repo": {
+        "present": true,
+        "id": "weapon-sith-sword"
+      },
+      "source": {
+        "book": "Threats of the Galaxy",
+        "descriptionPage": 159,
+        "statTablePage": null,
+        "phase1": "1G",
+        "phase2": "2L"
+      },
+      "canonicalMechanicSummary": "Alchemical melee blade that resists lightsaber interaction, counts as a lightsaber for specific Jedi defensive talent interactions when wielded proficiently, and can spend a Force Point as a swift action for Dark Side Score bonus damage.",
+      "finalTags": [
+        "melee",
+        "offense_melee",
+        "lightsaber",
+        "block",
+        "deflect",
+        "force",
+        "force_point_spend",
+        "resource_spend",
+        "dark_side",
+        "dark_side_score",
+        "damage_bonus",
+        "swift_action",
+        "action_economy"
+      ],
+      "rationale": {
+        "melee": "The Sith sword has a canonical melee attack profile.",
+        "offense_melee": "Its normal weapon function is dealing melee slashing or piercing damage.",
+        "lightsaber": "A proficient wielder explicitly treats the Sith sword as a lightsaber for specified Jedi talent interactions.",
+        "block": "The proficient-wielder rule explicitly allows the weapon to function as a lightsaber for Block.",
+        "deflect": "The proficient-wielder rule explicitly allows the weapon to function as a lightsaber for Deflect.",
+        "force": "Its empowerment mechanic explicitly spends a Force Point.",
+        "force_point_spend": "Activating the Dark Side empowerment explicitly costs one Force Point.",
+        "resource_spend": "The empowerment consumes a character resource: one Force Point.",
+        "dark_side": "The empowerment is an explicitly Dark Side-associated weapon mechanic.",
+        "dark_side_score": "The damage bonus equals the wielder's Dark Side Score and use increases that score by 1.",
+        "damage_bonus": "The empowerment adds a bonus to the next Sith sword damage roll equal to Dark Side Score.",
+        "swift_action": "Activating the empowerment is explicitly a swift action.",
+        "action_economy": "The empowerment consumes a defined combat action to activate."
+      },
+      "ontologyGapCandidates": [
+        {
+          "concept": "LIGHTSABER_RESISTANCE",
+          "mechanic": "Lightsabers do not ignore the Sith sword's damage reduction.",
+          "reason": "No tag already used by certified feats/talents precisely represents a weapon's resistance to lightsaber DR-bypass interaction. durability and damage_reduction would be materially broader and misleading."
+        }
+      ],
+      "adjudicationNotes": [
+        "Do not add counterattack merely to approximate Redirect Shot compatibility.",
+        "The lightsaber tag is conditional rules classification, not a change to the canonical Simple Weapon group."
+      ]
+    },
+    {
+      "identityKey": "weapon-sling",
+      "canonicalName": "Sling",
+      "repo": {
+        "present": true,
+        "id": "weapon-sling"
+      },
+      "source": {
+        "book": "Core Rulebook",
+        "descriptionPage": 129,
+        "statTablePage": 127,
+        "phase1": "1A",
+        "phase2": "2A"
+      },
+      "canonicalMechanicSummary": "Primitive ranged weapon whose wielder adds Strength modifier to damage.",
+      "finalTags": [
+        "ranged",
+        "offense_ranged",
+        "damage_bonus"
+      ],
+      "rationale": {
+        "ranged": "The sling has a canonical ranged attack profile.",
+        "offense_ranged": "Its primary function is dealing ranged weapon damage.",
+        "damage_bonus": "The wielder's Strength modifier explicitly applies to sling damage."
+      },
+      "ontologyGapCandidates": [],
+      "adjudicationNotes": []
+    },
+    {
+      "identityKey": "weapon-snap-baton",
+      "canonicalName": "Snap Baton",
+      "repo": {
+        "present": true,
+        "id": "weapon-snap-baton"
+      },
+      "source": {
+        "book": "Clone Wars Campaign Guide",
+        "descriptionPage": 59,
+        "statTablePage": 60,
+        "phase1": "1B",
+        "phase2": "2E"
+      },
+      "canonicalMechanicSummary": "Collapsible melee baton with a stun setting; expanding or collapsing the weapon is a swift action.",
+      "finalTags": [
+        "melee",
+        "offense_melee",
+        "stun",
+        "nonlethal",
+        "swift_action",
+        "action_economy"
+      ],
+      "rationale": {
+        "melee": "The snap baton has a canonical melee attack profile.",
+        "offense_melee": "Its primary function is dealing melee weapon damage.",
+        "stun": "The frozen canonical stats include a stun setting.",
+        "nonlethal": "The stun setting provides a nonlethal combat mode.",
+        "swift_action": "Expanding or collapsing the baton is explicitly a swift action.",
+        "action_economy": "Changing the baton's physical state consumes a defined combat action."
+      },
+      "ontologyGapCandidates": [],
+      "adjudicationNotes": [
+        "Optional commercial panic-alarm, glowrod, and sound-dampening variants are not generic semantic tags for the base identity."
+      ]
+    },
+    {
+      "identityKey": "unmapped::Spear",
+      "canonicalName": "Spear",
+      "repo": {
+        "present": false,
+        "id": null
+      },
+      "source": {
+        "book": "Core Rulebook",
+        "descriptionPage": 124,
+        "statTablePage": 123,
+        "phase1": "1A",
+        "phase2": "2A"
+      },
+      "canonicalMechanicSummary": "Simple piercing melee polearm that can also be used as a thrown ranged weapon.",
+      "finalTags": [
+        "melee",
+        "offense_melee",
+        "ranged",
+        "offense_ranged"
+      ],
+      "rationale": {
+        "melee": "The spear has a canonical melee weapon profile.",
+        "offense_melee": "Its normal use deals melee piercing damage.",
+        "ranged": "The published rules explicitly allow a spear to be used as a thrown weapon.",
+        "offense_ranged": "When thrown, the spear deals weapon damage at range."
+      },
+      "ontologyGapCandidates": [],
+      "adjudicationNotes": [
+        "Do not add thrown because it is outside the certified feat/talent-used vocabulary."
+      ]
+    },
+    {
+      "identityKey": "weapon-battering-ram",
+      "canonicalName": "Squib Battering Ram",
+      "repo": {
+        "present": true,
+        "id": "weapon-battering-ram"
+      },
+      "source": {
+        "book": "Scum and Villainy",
+        "descriptionPage": 52,
+        "statTablePage": 51,
+        "phase1": "1H",
+        "phase2": "2J"
+      },
+      "canonicalMechanicSummary": "Two-person powered breaching weapon that deals normal damage to stationary unattended objects but is too unwieldy for living, moving targets.",
+      "finalTags": [
+        "equipment",
+        "teamwork",
+        "damage"
+      ],
+      "rationale": {
+        "equipment": "The battering ram is specialized powered equipment with a distinct operating requirement.",
+        "teamwork": "It explicitly requires two operators with separate stabilize and trigger roles.",
+        "damage": "Its canonical purpose is dealing 5d10 damage to stationary unattended objects."
+      },
+      "ontologyGapCandidates": [
+        {
+          "concept": "BREACHING_OR_OBJECT_ONLY_WEAPON",
+          "mechanic": "It is specifically usable for damaging stationary unattended objects and is too unwieldy against living, moving targets.",
+          "reason": "No tag already used by certified feats/talents cleanly represents a dedicated breaching/object-only weapon role."
+        }
+      ],
+      "adjudicationNotes": [
+        "Do not add ranged/offense_ranged merely because the current canonical schema stores the attack in a ranged branch; the published role is object breaching, not ordinary ranged combat.",
+        "Do not use burst_damage solely because the damage dice are high."
+      ]
+    },
+    {
+      "identityKey": "weapon-stun-baton",
+      "canonicalName": "Stun Baton",
+      "repo": {
+        "present": true,
+        "id": "weapon-stun-baton"
+      },
+      "source": {
+        "book": "Core Rulebook",
+        "descriptionPage": 124,
+        "statTablePage": 123,
+        "phase1": "1A",
+        "phase2": "2A"
+      },
+      "canonicalMechanicSummary": "Melee club that can deliver explicit stun damage and requires an energy cell.",
+      "finalTags": [
+        "melee",
+        "offense_melee",
+        "stun",
+        "nonlethal"
+      ],
+      "rationale": {
+        "melee": "The stun baton has a canonical melee attack profile.",
+        "offense_melee": "Its normal and stun attacks are delivered through melee strikes.",
+        "stun": "It has an explicit stun setting with 2d6 stun damage.",
+        "nonlethal": "The stun setting provides a nonlethal combat mode."
+      },
+      "ontologyGapCandidates": [],
+      "adjudicationNotes": []
+    },
+    {
+      "identityKey": "unmapped::Stunning Gauntlet",
+      "canonicalName": "Stunning Gauntlet",
+      "repo": {
+        "present": false,
+        "id": null
+      },
+      "source": {
+        "book": "Knights of the Old Republic Campaign Guide",
+        "descriptionPage": 202,
+        "statTablePage": 202,
+        "phase1": "1J",
+        "phase2": "2B"
+      },
+      "canonicalMechanicSummary": "Worn gauntlet that converts unarmed melee attacks to stun damage and adds +1 stun damage; cannot be disarmed or dropped.",
+      "finalTags": [
+        "melee",
+        "offense_melee",
+        "unarmed",
+        "stun",
+        "nonlethal",
+        "damage_bonus"
+      ],
+      "rationale": {
+        "melee": "The gauntlet modifies unarmed melee attacks.",
+        "offense_melee": "Its effect directly changes melee attack damage.",
+        "unarmed": "Its rules apply specifically to the wearer's unarmed attacks.",
+        "stun": "It converts those unarmed attacks to stun damage.",
+        "nonlethal": "The converted attacks use the system's nonlethal stun mechanic.",
+        "damage_bonus": "It adds +1 to stun damage on successful unarmed attacks."
+      },
+      "ontologyGapCandidates": [],
+      "adjudicationNotes": [
+        "The cannot-be-disarmed/dropped rule remains structured canonical mechanics.",
+        "Cross-publication identity/stat reconciliation was already resolved in Phase 3B."
+      ]
+    },
+    {
+      "identityKey": "unmapped::Survival Knife",
+      "canonicalName": "Survival Knife",
+      "repo": {
+        "present": false,
+        "id": null
+      },
+      "source": {
+        "book": "Unknown Regions",
+        "descriptionPage": 36,
+        "statTablePage": 37,
+        "phase1": "1L",
+        "phase2": "2H"
+      },
+      "canonicalMechanicSummary": "Melee survival knife with a thrown attack profile, internal storage, and a compass that always identifies north; its thrown use is inaccurate and cannot reach long range.",
+      "finalTags": [
+        "melee",
+        "offense_melee",
+        "ranged",
+        "offense_ranged",
+        "survival",
+        "exploration"
+      ],
+      "rationale": {
+        "melee": "The survival knife has a canonical melee attack profile.",
+        "offense_melee": "Its primary blade use deals melee damage.",
+        "ranged": "It has an explicit thrown ranged attack profile.",
+        "offense_ranged": "Its thrown profile deals weapon damage at range.",
+        "survival": "Its built-in compass and storage are direct wilderness/survival utility.",
+        "exploration": "The compass explicitly guarantees the carrier can determine north, supporting navigation and exploration."
+      },
+      "ontologyGapCandidates": [],
+      "adjudicationNotes": [
+        "Do not invent inaccurate or thrown semantic tags; those are not part of the feat/talent-used vocabulary."
+      ]
+    },
+    {
+      "identityKey": "weapon-targeting-laser",
+      "canonicalName": "Targeting Laser",
+      "repo": {
+        "present": true,
+        "id": "weapon-targeting-laser"
+      },
+      "source": {
+        "book": "Galaxy at War",
+        "descriptionPage": 42,
+        "statTablePage": 41,
+        "phase1": "1D",
+        "phase2": "2C"
+      },
+      "canonicalMechanicSummary": "No-damage ranged designator that must be maintained with repeated attacks; allies gain +2 with missile launchers, grenade launchers, or vehicle weapons against the designated target.",
+      "finalTags": [
+        "ranged",
+        "support",
+        "ally_support",
+        "target-designation",
+        "targeting",
+        "precision",
+        "heavy_weapon",
+        "vehicle",
+        "setup",
+        "teamwork"
+      ],
+      "rationale": {
+        "ranged": "The designation is established through a ranged attack roll.",
+        "support": "The weapon deals no damage and exists to improve allied attacks.",
+        "ally_support": "Its explicit benefit is a +2 attack bonus for allies who know the laser frequency.",
+        "target-designation": "The laser's defining mechanic is painting/designating a specific target for allied fire.",
+        "targeting": "The effect is maintained against a chosen target through repeated attack rolls.",
+        "precision": "The designation attack ignores armor bonuses to Reflex Defense and grants an attack bonus to eligible allied attacks.",
+        "heavy_weapon": "Missile and grenade launchers are explicitly eligible allied weapon types.",
+        "vehicle": "Vehicle weapons are explicitly eligible for the +2 allied attack bonus.",
+        "setup": "The wielder must first establish and then maintain the designation for allies to benefit.",
+        "teamwork": "The mechanic coordinates one character's designation with allied attacks."
+      },
+      "ontologyGapCandidates": [],
+      "adjudicationNotes": [
+        "Do not add offense_ranged because the targeting laser explicitly deals no damage."
+      ]
+    },
+    {
+      "identityKey": "weapon-thermal-detonator",
+      "canonicalName": "Thermal Detonator",
+      "repo": {
+        "present": true,
+        "id": "weapon-thermal-detonator"
+      },
+      "source": {
+        "book": "Core Rulebook",
+        "descriptionPage": 129,
+        "statTablePage": 127,
+        "phase1": "1A",
+        "phase2": "2A"
+      },
+      "canonicalMechanicSummary": "High-powered ranged explosive with an adjustable 1-3 round timer and a 4-square damaging burst.",
+      "finalTags": [
+        "ranged",
+        "offense_ranged",
+        "burst_damage",
+        "setup"
+      ],
+      "rationale": {
+        "ranged": "The thermal detonator resolves as a ranged attack.",
+        "offense_ranged": "Its primary combat role is direct ranged damage.",
+        "burst_damage": "Its 8d6 detonation is a concentrated high-impact damage event, matching the established feat/talent burst-damage concept.",
+        "setup": "Its adjustable 1-3 round timer enables explicit delayed/prepared detonation."
+      },
+      "ontologyGapCandidates": [],
+      "adjudicationNotes": [
+        "Do not add grenade, explosives, area_damage, or thrown because those tags are outside the certified feat/talent-used vocabulary."
+      ]
+    },
+    {
+      "identityKey": "weapon-thud-bug",
+      "canonicalName": "Thud Bug",
+      "repo": {
+        "present": true,
+        "id": "weapon-thud-bug"
+      },
+      "source": {
+        "book": "Legacy Era Campaign Guide",
+        "descriptionPage": 65,
+        "statTablePage": 64,
+        "phase1": "1K",
+        "phase2": "2G"
+      },
+      "canonicalMechanicSummary": "Yuuzhan Vong biotech ranged weapon that can optionally deal stun damage instead of normal damage at point-blank or short range.",
+      "finalTags": [
+        "ranged",
+        "offense_ranged",
+        "stun",
+        "nonlethal",
+        "biotech"
+      ],
+      "rationale": {
+        "ranged": "The thud bug has a canonical ranged attack profile.",
+        "offense_ranged": "Its normal use deals ranged weapon damage.",
+        "stun": "The wielder can explicitly choose stun damage for eligible close-range attacks.",
+        "nonlethal": "The optional stun mode provides a nonlethal attack role.",
+        "biotech": "The thud bug is a Yuuzhan Vong bio-weapon."
+      },
+      "ontologyGapCandidates": [],
+      "adjudicationNotes": [
+        "Do not add thrown because that tag is outside the certified feat/talent-used vocabulary."
+      ]
+    },
+    {
+      "identityKey": "unmapped::Wan-Shen",
+      "canonicalName": "Wan-Shen",
+      "repo": {
+        "present": false,
+        "id": null
+      },
+      "source": {
+        "book": "Jedi Academy Training Manual",
+        "descriptionPage": 54,
+        "statTablePage": 52,
+        "phase1": "1F",
+        "phase2": "2F"
+      },
+      "canonicalMechanicSummary": "Matukai double melee polearm with +1 square reach; both ends can be used under double-weapon full-round rules, and it can be assembled/disassembled as a full-round action.",
+      "finalTags": [
+        "melee",
+        "offense_melee",
+        "double_weapon",
+        "full_attack",
+        "positioning"
+      ],
+      "rationale": {
+        "melee": "Both ends have canonical melee attack profiles.",
+        "offense_melee": "Both ends deal melee weapon damage.",
+        "double_weapon": "The wan-shen is explicitly a double weapon.",
+        "full_attack": "Attacking with both ends uses the normal double-weapon full-round attack procedure.",
+        "positioning": "Its +1 square reach directly changes the spaces the wielder can threaten and attack from."
+      },
+      "ontologyGapCandidates": [
+        {
+          "concept": "EXTENDED_MELEE_REACH",
+          "mechanic": "The weapon explicitly increases reach by 1 square.",
+          "reason": "positioning captures the tactical consequence, but no tag already used by certified feats/talents precisely identifies an intrinsic reach weapon."
+        }
+      ],
+      "adjudicationNotes": [
+        "Do not invent a reach tag.",
+        "The full-round assembly/disassembly action is retained in canonical mechanics; full_attack is justified only by the two-ended attack procedure, not by assembly."
+      ]
+    },
+    {
+      "identityKey": "unmapped::War Sword",
+      "canonicalName": "War Sword",
+      "repo": {
+        "present": false,
+        "id": null
+      },
+      "source": {
+        "book": "Knights of the Old Republic Campaign Guide",
+        "descriptionPage": 66,
+        "statTablePage": 64,
+        "phase1": "1J",
+        "phase2": "2B"
+      },
+      "canonicalMechanicSummary": "Heavy, durable simple longsword with no additional printed combat rule beyond its weapon statistics.",
+      "finalTags": [
+        "melee",
+        "offense_melee"
+      ],
+      "rationale": {
+        "melee": "The war sword has a canonical melee attack profile.",
+        "offense_melee": "Its canonical function is dealing melee weapon damage."
+      },
+      "ontologyGapCandidates": [],
+      "adjudicationNotes": [
+        "Do not add durability solely from descriptive prose stating that the sword is durable; the entry grants no special durability mechanic."
+      ]
     }
   ],
   "rounds": [
@@ -1384,6 +1886,51 @@
       "tagAssignments": 52,
       "ontologyGapCandidates": 1,
       "status": "PLANNER_ADJUDICATED"
+    },
+    {
+      "round": 4,
+      "firstCanonicalName": "Sith Sword",
+      "lastCanonicalName": "War Sword",
+      "assignmentCount": 13,
+      "repoPresent": 8,
+      "repoMissing": 5,
+      "tagAssignments": 71,
+      "ontologyGapCandidates": 3,
+      "status": "PLANNER_ADJUDICATED"
     }
-  ]
+  ],
+  "simpleWeaponPlannerAuthorityComplete": true,
+  "completionSummary": {
+    "canonicalSimpleWeaponIdentities": 49,
+    "adjudicatedIdentities": 49,
+    "repoPresent": 28,
+    "repoMissing": 21,
+    "totalFinalTagAssignments": 222,
+    "distinctTagsUsed": 57,
+    "ontologyGapConcepts": 5,
+    "ontologyGaps": [
+      {
+        "canonicalName": "Fire Blade",
+        "concept": "OBJECT_DR_BYPASS"
+      },
+      {
+        "canonicalName": "Net",
+        "concept": "TRIP_COMPATIBILITY"
+      },
+      {
+        "canonicalName": "Sith Sword",
+        "concept": "LIGHTSABER_RESISTANCE"
+      },
+      {
+        "canonicalName": "Squib Battering Ram",
+        "concept": "BREACHING_OR_OBJECT_ONLY_WEAPON"
+      },
+      {
+        "canonicalName": "Wan-Shen",
+        "concept": "EXTENDED_MELEE_REACH"
+      }
+    ],
+    "vocabularySource": "Exact 183-tag union actually used by certified feat/talent semantic authorities",
+    "productionMutationAuthorized": false
+  }
 }

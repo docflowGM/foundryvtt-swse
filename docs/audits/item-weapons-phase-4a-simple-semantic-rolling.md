@@ -1,10 +1,10 @@
-# Phase 4A — Simple Weapon Semantic Tags — Rolling Planner Authority
+# Phase 4A — Simple Weapon Semantic Tags — Complete Rolling Planner Authority
 
-**Status:** `WEAPON_TAG_PHASE_4A_SIMPLE_ROLLING_ROUND_3_PLANNER_ADJUDICATED`
+**Status:** `WEAPON_TAG_PHASE_4A_SIMPLE_SEMANTIC_AUTHORITY_CERTIFIED`
 
-This is the rolling planner authority for Simple Weapon semantic tags. Each round appends new frozen canonical identities; earlier planner rulings are preserved.
+All 49 frozen canonical Simple Weapon identities are now planner-adjudicated for semantic tags.
 
-Production mutation is **not authorized**. Runtime suggestion code is **not authorized** to change in this phase.
+Production mutation is **not authorized**. Runtime suggestion code is **not authorized** to change in this authority phase.
 
 ## Frozen baseline
 
@@ -18,33 +18,40 @@ Production mutation is **not authorized**. Runtime suggestion code is **not auth
 
 Weapons may use **only tags already used by certified feats and/or certified talents**.
 
-The derived feat/talent-used union contains **183 tags**. No weapon-only or runtime-only vocabulary may be introduced.
+The derived feat/talent-used union contains **183 tags**. No weapon-only or runtime-only vocabulary is allowed.
 
 Explicitly rejected runtime-only examples:
 
 `accuracy`, `area_damage`, `condition_track`, `explosives`, `grenade`, `rifle`, `thrown`
 
-If a weapon concept cannot be represented faithfully with those existing feat/talent tags, it is recorded as an ontology gap.
+Important concepts that cannot be faithfully expressed with existing feat/talent-used tags are recorded as ontology gaps instead of being forced into approximate tags.
 
-## Simple Weapon census
+## Phase 4A completion summary
 
-- Canonical Simple Weapon identities: **49**
+- Canonical Simple Weapon identities: **49 / 49 adjudicated**
 - Repo-present: **28**
 - Repo-missing: **21**
-- Adjudicated through Round 3: **36**
-- Remaining: **13**
-- Cumulative tag assignments: **151**
-- Distinct tags used cumulatively: **39**
-- Cumulative ontology-gap concepts: **2**
-- Next canonical identity: **Sith Sword**
+- Total final tag assignments: **222**
+- Distinct feat/talent-derived tags used: **57**
+- Ontology-gap concepts: **5**
+- Production mutation authorized: **false**
+
+### Ontology gaps
+
+- **Fire Blade** → `OBJECT_DR_BYPASS`
+- **Net** → `TRIP_COMPATIBILITY`
+- **Sith Sword** → `LIGHTSABER_RESISTANCE`
+- **Squib Battering Ram** → `BREACHING_OR_OBJECT_ONLY_WEAPON`
+- **Wan-Shen** → `EXTENDED_MELEE_REACH`
 
 ## Round ledger
 
-- Round 1: Adhesive Grenade → Darter — 12 identities; 7 present / 5 missing; 49 tag assignments; 0 ontology gaps.
-- Round 2: Datadagger → Grenade, Radiation — 12 identities; 7 present / 5 missing; 50 tag assignments; 1 ontology gaps.
-- Round 3: Grenade, Smoke → Short Sword — 12 identities; 6 present / 6 missing; 52 tag assignments; 1 ontology gaps.
+- Round 1: **Adhesive Grenade → Darter** — 12 identities; 7 present / 5 missing; 49 tag assignments; 0 ontology gaps.
+- Round 2: **Datadagger → Grenade, Radiation** — 12 identities; 7 present / 5 missing; 50 tag assignments; 1 ontology gaps.
+- Round 3: **Grenade, Smoke → Short Sword** — 12 identities; 6 present / 6 missing; 52 tag assignments; 1 ontology gaps.
+- Round 4: **Sith Sword → War Sword** — 13 identities; 8 present / 5 missing; 71 tag assignments; 3 ontology gaps.
 
-## Adjudicated identities
+## Complete adjudicated authority
 
 ### 1. Adhesive Grenade
 
@@ -55,7 +62,6 @@ If a weapon concept cannot be represented faithfully with those existing feat/ta
 - **Final tags:** `ranged`, `control`, `battlefield_control`, `grapple`, `restrain`, `opposed_check`
 
 Rationale:
-
 - `ranged` — The weapon resolves its use with the attacker's ranged attack roll.
 - `control` — Its defining effect denies movement rather than dealing normal damage.
 - `battlefield_control` — The adhesive affects every target in the blast radius and can hold multiple creatures in place.
@@ -64,7 +70,6 @@ Rationale:
 - `opposed_check` — The target's grapple check is explicitly opposed by the attacker's ranged attack roll.
 
 Adjudication notes:
-
 - Do not add grenade, thrown, area_damage, or other weapon-runtime-only tags; they are outside the certified feat/talent-used vocabulary.
 
 ### 2. Axe
@@ -76,14 +81,12 @@ Adjudication notes:
 - **Final tags:** `melee`, `offense_melee`, `ranged`, `offense_ranged`
 
 Rationale:
-
 - `melee` — The axe has a canonical melee attack profile.
 - `offense_melee` — Its normal use deals melee weapon damage.
 - `ranged` — The axe has an explicit thrown ranged attack profile.
 - `offense_ranged` — Its thrown profile deals weapon damage at range.
 
 Adjudication notes:
-
 - No thrown tag is permitted because thrown is not in the certified feat/talent-used vocabulary.
 
 ### 3. Bayonet
@@ -95,13 +98,11 @@ Adjudication notes:
 - **Final tags:** `melee`, `offense_melee`, `attack_of_opportunity`
 
 Rationale:
-
 - `melee` — Mounted on a rifle, the bayonet explicitly turns the rifle into a melee weapon; detached, it is treated as a knife.
 - `offense_melee` — Its canonical attack use deals melee weapon damage.
 - `attack_of_opportunity` — The text explicitly states that a mounted bayonet can make attacks of opportunity and preserves threatened squares after a ranged attack.
 
 Adjudication notes:
-
 - Do not add rifle: rifle is not in the certified feat/talent-used vocabulary, and the bayonet remains a Simple Weapon identity.
 
 ### 4. Bow
@@ -113,13 +114,11 @@ Adjudication notes:
 - **Final tags:** `ranged`, `offense_ranged`, `damage_bonus`
 
 Rationale:
-
 - `ranged` — The bow is a ranged weapon.
 - `offense_ranged` — Its normal function is a damaging ranged attack.
 - `damage_bonus` — The wielder's Strength modifier explicitly applies to bow damage.
 
 Adjudication notes:
-
 - Arrow capacity and free-action reload remain structured weapon mechanics rather than semantic tags.
 
 ### 5. Club/Baton
@@ -131,7 +130,6 @@ Adjudication notes:
 - **Final tags:** `melee`, `offense_melee`
 
 Rationale:
-
 - `melee` — The club/baton is used as a melee weapon.
 - `offense_melee` — Its canonical function is to deal melee weapon damage.
 
@@ -144,14 +142,12 @@ Rationale:
 - **Final tags:** `melee`, `offense_melee`, `unarmed`, `damage_bonus`
 
 Rationale:
-
 - `melee` — Combat gloves operate through unarmed melee attacks.
 - `offense_melee` — They directly improve melee attack damage.
 - `unarmed` — Their bonus applies specifically to successful unarmed attacks.
 - `damage_bonus` — They add +1 damage to a successful unarmed attack.
 
 Adjudication notes:
-
 - The cannot-be-disarmed/dropped rule stays in structured canonical mechanics; no existing feat/talent tag needs to duplicate it.
 
 ### 7. Concussion Grenade
@@ -163,13 +159,11 @@ Adjudication notes:
 - **Final tags:** `ranged`, `offense_ranged`, `burst_damage`
 
 Rationale:
-
 - `ranged` — The grenade is resolved as a ranged attack.
 - `offense_ranged` — Its primary role is delivering direct damage at range.
 - `burst_damage` — Its defining combat role is a single high-impact 8d6 damage event, matching the existing feat/talent meaning of burst damage as concentrated spike damage.
 
 Adjudication notes:
-
 - Do not add area_damage, grenade, explosives, or thrown because those tags are not used by certified feats/talents.
 - Area geometry remains structured canonical mechanics and does not need a semantic tag duplicate.
 
@@ -182,7 +176,6 @@ Adjudication notes:
 - **Final tags:** `melee`, `offense_melee`, `stun`, `nonlethal`, `concealment`, `stealth`
 
 Rationale:
-
 - `melee` — The weapon's contact strike is a melee attack.
 - `offense_melee` — It deals melee weapon damage.
 - `stun` — It has an explicit stun setting with its own stun damage.
@@ -199,14 +192,12 @@ Rationale:
 - **Final tags:** `ranged`, `offense_ranged`, `move_action`, `action_economy`
 
 Rationale:
-
 - `ranged` — The crossbow is a ranged weapon.
 - `offense_ranged` — Its primary function is a damaging ranged attack.
 - `move_action` — Reloading the crossbow explicitly requires a move action.
 - `action_economy` — Its reload procedure directly consumes combat action economy.
 
 Adjudication notes:
-
 - The Inaccurate quality remains structured canonical mechanics; do not invent an accuracy/inaccurate semantic tag.
 
 ### 10. Crossbow, Repeating
@@ -218,14 +209,12 @@ Adjudication notes:
 - **Final tags:** `ranged`, `offense_ranged`, `move_action`, `action_economy`
 
 Rationale:
-
 - `ranged` — The repeating crossbow is a ranged weapon.
 - `offense_ranged` — Its primary function is a damaging ranged attack.
 - `move_action` — Replacing its 10-quarrel magazine explicitly requires a move action.
 - `action_economy` — Magazine replacement directly consumes combat action economy.
 
 Adjudication notes:
-
 - Magazine size and ammunition structure remain canonical mechanics rather than semantic tags.
 
 ### 11. CryoBan Grenade
@@ -237,7 +226,6 @@ Adjudication notes:
 - **Final tags:** `ranged`, `offense_ranged`, `control`, `battlefield_control`, `movement`
 
 Rationale:
-
 - `ranged` — The grenade resolves as a ranged attack.
 - `offense_ranged` — It deals direct damage at range.
 - `control` — Beating Fortitude imposes a temporary speed restriction on the target.
@@ -245,7 +233,6 @@ Rationale:
 - `movement` — The published rider directly changes the target's movement speed.
 
 Adjudication notes:
-
 - Do not add grenade, thrown, area_damage, or cold; they are not part of the certified feat/talent-used tag vocabulary.
 
 ### 12. Darter
@@ -257,7 +244,6 @@ Adjudication notes:
 - **Final tags:** `ranged`, `offense_ranged`, `poison`, `recon`, `tracking`
 
 Rationale:
-
 - `ranged` — The darter launches darts as ranged attacks.
 - `offense_ranged` — Its dart attack can deal damage and deliver payload effects at range.
 - `poison` — A poison-carrying dart explicitly delivers its toxin when the attack deals damage.
@@ -265,7 +251,6 @@ Rationale:
 - `tracking` — Surveillance taggers are explicitly supported payloads for following or monitoring a tagged target.
 
 Adjudication notes:
-
 - The source-unresolved dart/ammo capacity remains unresolved and must not be inferred from production.
 
 ### 13. Datadagger
@@ -277,7 +262,6 @@ Adjudication notes:
 - **Final tags:** `melee`, `offense_melee`, `concealment`, `stealth`
 
 Rationale:
-
 - `melee` — The datadagger has a canonical melee attack profile.
 - `offense_melee` — Its weapon profile deals melee piercing damage.
 - `concealment` — Its defining special mechanic makes the weapon unusually easy to conceal and harder to detect by touch.
@@ -292,7 +276,6 @@ Rationale:
 - **Final tags:** `melee`, `offense_melee`
 
 Rationale:
-
 - `melee` — The dire sword is a melee weapon.
 - `offense_melee` — Its canonical function is dealing melee weapon damage.
 
@@ -305,14 +288,12 @@ Rationale:
 - **Final tags:** `melee`, `offense_melee`, `double_weapon`, `full_attack`
 
 Rationale:
-
 - `melee` — Both attack profiles are melee attacks.
 - `offense_melee` — Both ends deal melee weapon damage.
 - `double_weapon` — The weapon explicitly has two usable weapon ends and is governed by double-weapon rules.
 - `full_attack` — Attacking with both ends uses the full-round double-weapon attack procedure.
 
 Adjudication notes:
-
 - Do not add dual_wield solely because the item is double-ended; the existing ontology distinguishes double_weapon from dual_wield.
 
 ### 16. EMP Grenade
@@ -324,7 +305,6 @@ Adjudication notes:
 - **Final tags:** `ranged`, `offense_ranged`, `control`, `battlefield_control`, `droid`, `vehicle`, `tech`
 
 Rationale:
-
 - `ranged` — The EMP grenade resolves as a ranged attack.
 - `offense_ranged` — It deals ion damage through a ranged attack.
 - `control` — Qualifying electronic/cybernetic targets can be moved five steps down the condition track and disabled.
@@ -334,7 +314,6 @@ Rationale:
 - `tech` — The weapon is specifically effective against electronic devices and cybernetic technology.
 
 Adjudication notes:
-
 - No condition_track tag is allowed because that runtime tag has not been used by certified feats/talents; control expresses the effect without creating weapon-only vocabulary.
 
 ### 17. Energy Ball
@@ -346,13 +325,11 @@ Adjudication notes:
 - **Final tags:** `ranged`, `offense_ranged`, `precision`
 
 Rationale:
-
 - `ranged` — Every certified delivery method uses the energy ball as a ranged projectile.
 - `offense_ranged` — Its canonical role is dealing ranged weapon damage.
 - `precision` — When hurled by a cesta it explicitly gains the Accurate quality; certified feat/talent use of precision includes direct attack-accuracy improvements.
 
 Adjudication notes:
-
 - Do not add accuracy or thrown; neither is in the certified feat/talent-used vocabulary.
 
 ### 18. Entrenching Tool
@@ -364,7 +341,6 @@ Adjudication notes:
 - **Final tags:** `melee`, `offense_melee`, `improvised_weapon`, `equipment`
 
 Rationale:
-
 - `melee` — Its certified weapon profile is melee.
 - `offense_melee` — When used as a weapon it deals melee damage.
 - `improvised_weapon` — Its defining combat rule explicitly replaces the normal improvised-weapon attack penalty.
@@ -379,16 +355,13 @@ Rationale:
 - **Final tags:** `melee`, `offense_melee`
 
 Rationale:
-
 - `melee` — The fire blade has a canonical melee attack profile.
 - `offense_melee` — Its primary combat function is dealing melee weapon damage.
 
 Ontology gaps:
-
-- `OBJECT_DR_BYPASS` — Ignores the damage reduction of unattended objects. Reason: No tag already used by certified feats/talents cleanly represents offensive DR penetration against objects. damage_reduction means mitigating incoming damage and must not be repurposed.
+- `OBJECT_DR_BYPASS` — Ignores the damage reduction of unattended objects. **Reason:** No tag already used by certified feats/talents cleanly represents offensive DR penetration against objects. damage_reduction means mitigating incoming damage and must not be repurposed.
 
 Adjudication notes:
-
 - Do not use damage_reduction for DR penetration.
 
 ### 20. Gaderffii
@@ -400,7 +373,6 @@ Adjudication notes:
 - **Final tags:** `melee`, `offense_melee`, `double_weapon`, `full_attack`
 
 Rationale:
-
 - `melee` — Both certified attack profiles are melee attacks.
 - `offense_melee` — Both ends deal melee weapon damage.
 - `double_weapon` — The Gaderffii explicitly functions as a double weapon with two distinct ends.
@@ -415,7 +387,6 @@ Rationale:
 - **Final tags:** `ranged`, `offense_ranged`, `stun`, `nonlethal`, `control`, `battlefield_control`, `concealment`
 
 Rationale:
-
 - `ranged` — The gas grenade resolves as a ranged attack.
 - `offense_ranged` — It delivers an offensive stun-damage effect at range.
 - `stun` — Its certified damage mode is native stun damage.
@@ -425,7 +396,6 @@ Rationale:
 - `concealment` — The gas cloud explicitly provides temporary concealment.
 
 Adjudication notes:
-
 - Do not add condition_track or grenade; neither is in the certified feat/talent-used vocabulary.
 
 ### 22. Grenade, Frag
@@ -437,13 +407,11 @@ Adjudication notes:
 - **Final tags:** `ranged`, `offense_ranged`, `burst_damage`
 
 Rationale:
-
 - `ranged` — The frag grenade resolves as a ranged attack.
 - `offense_ranged` — Its primary role is direct ranged damage.
 - `burst_damage` — It delivers a concentrated single-use spike of damage across its burst, consistent with the existing feat/talent burst-damage concept.
 
 Adjudication notes:
-
 - Area geometry is preserved in canonical mechanics rather than represented by a new weapon-only tag.
 
 ### 23. Grenade, Ion
@@ -455,7 +423,6 @@ Adjudication notes:
 - **Final tags:** `ranged`, `offense_ranged`, `control`, `droid`, `vehicle`, `tech`
 
 Rationale:
-
 - `ranged` — The ion grenade resolves as a ranged attack.
 - `offense_ranged` — It deals ion damage through a ranged attack.
 - `control` — Ion damage is mechanically intended to impair qualifying technological targets rather than merely reduce hit points.
@@ -472,7 +439,6 @@ Rationale:
 - **Final tags:** `ranged`, `offense_ranged`, `sustained_damage`, `treat_injury`
 
 Rationale:
-
 - `ranged` — The radiation grenade resolves as a ranged attack.
 - `offense_ranged` — It deals direct damage through a ranged attack.
 - `sustained_damage` — The attack also exposes targets to Moderate radiation, extending harmful consequences beyond the immediate hit.
@@ -487,14 +453,12 @@ Rationale:
 - **Final tags:** `ranged`, `control`, `battlefield_control`, `concealment`
 
 Rationale:
-
 - `ranged` — The smoke grenade is delivered through a ranged attack.
 - `control` — Its primary function is to alter visibility and movement-space conditions rather than deal damage.
 - `battlefield_control` — It creates a persistent 2-square smoke zone that changes tactical use of the affected area for 10 rounds.
 - `concealment` — The published effect explicitly provides concealment.
 
 Adjudication notes:
-
 - Do not add stealth merely because concealment may enable stealth; the weapon itself does not modify Stealth checks.
 - Do not add grenade, thrown, or area_damage; those are outside the certified feat/talent-used vocabulary.
 
@@ -507,7 +471,6 @@ Adjudication notes:
 - **Final tags:** `ranged`, `offense_ranged`, `stun`, `nonlethal`, `control`, `battlefield_control`
 
 Rationale:
-
 - `ranged` — The stun grenade resolves as a ranged attack.
 - `offense_ranged` — It directly delivers damaging stun effects at range.
 - `stun` — Its certified damage mode is native stun damage.
@@ -516,7 +479,6 @@ Rationale:
 - `battlefield_control` — The burst can impose stun/control effects on multiple targets in an area.
 
 Adjudication notes:
-
 - Do not add droid or vehicle: those targets are immune rather than favored or supported targets.
 - Do not add condition_track because that tag is not used by certified feats/talents.
 
@@ -529,14 +491,12 @@ Adjudication notes:
 - **Final tags:** `melee`, `offense_melee`, `ranged`, `offense_ranged`
 
 Rationale:
-
 - `melee` — The knife's primary certified profile is melee.
 - `offense_melee` — It deals melee slashing or piercing damage.
 - `ranged` — The frozen canonical authority marks the knife as throwable, giving it a ranged attack use.
 - `offense_ranged` — When thrown, the knife deals weapon damage at range.
 
 Adjudication notes:
-
 - Do not add stealth solely from the descriptive statement that a knife is silent; no Stealth modifier or stealth-resolution rule is granted.
 - Do not add thrown because that tag is outside the certified feat/talent-used vocabulary.
 
@@ -549,7 +509,6 @@ Adjudication notes:
 - **Final tags:** `melee`, `offense_melee`
 
 Rationale:
-
 - `melee` — The mace has a canonical melee attack profile.
 - `offense_melee` — Its canonical function is dealing melee weapon damage.
 
@@ -562,12 +521,10 @@ Rationale:
 - **Final tags:** `melee`, `offense_melee`
 
 Rationale:
-
 - `melee` — The generic Mythosaur axe has a canonical melee attack profile.
 - `offense_melee` — Its generic weapon function is dealing melee slashing damage.
 
 Adjudication notes:
-
 - Do not tag the generic identity from Mandalore the Ultimate's named special double-damage powered variant.
 
 ### 30. Net
@@ -579,7 +536,6 @@ Adjudication notes:
 - **Final tags:** `ranged`, `control`, `battlefield_control`, `grab`, `grapple`, `restrain`, `acrobatics`
 
 Rationale:
-
 - `ranged` — The net initiates grab or grapple attempts at range.
 - `control` — Its purpose is to hinder and contain a target rather than deal normal weapon damage.
 - `battlefield_control` — A successful net use restricts enemy freedom of movement and action at range.
@@ -589,11 +545,9 @@ Rationale:
 - `acrobatics` — An affected target can explicitly escape with a DC 15 Acrobatics check.
 
 Ontology gaps:
-
-- `TRIP_COMPATIBILITY` — The wielder may explicitly use the Trip feat with a net. Reason: No tag already used by certified feats/talents represents Trip as a distinct weapon synergy. General control tags do not encode the specific feat interaction.
+- `TRIP_COMPATIBILITY` — The wielder may explicitly use the Trip feat with a net. **Reason:** No tag already used by certified feats/talents represents Trip as a distinct weapon synergy. General control tags do not encode the specific feat interaction.
 
 Adjudication notes:
-
 - Do not invent a trip tag in the weapon authority.
 - Crush and Throw are explicitly disallowed and therefore must not contribute semantic tags.
 
@@ -606,14 +560,12 @@ Adjudication notes:
 - **Final tags:** `melee`, `offense_melee`, `double_weapon`, `full_attack`
 
 Rationale:
-
 - `melee` — Both ends of the quarterstaff are melee attack profiles.
 - `offense_melee` — Both ends deal melee weapon damage.
 - `double_weapon` — The rules explicitly identify the quarterstaff as a double weapon.
 - `full_attack` — Using both ends requires the published full-round attack procedure.
 
 Adjudication notes:
-
 - Do not add dual_wield merely because both ends can be attacked with; double_weapon is the precise existing semantic tag.
 
 ### 32. R-9 Flash Canister
@@ -625,14 +577,12 @@ Adjudication notes:
 - **Final tags:** `ranged`, `control`, `battlefield_control`, `concealment`
 
 Rationale:
-
 - `ranged` — The flash canister is delivered as a ranged attack.
 - `control` — Its effect denies affected creatures normal visual targeting rather than dealing damage.
 - `battlefield_control` — The burst can simultaneously disrupt multiple creatures' ability to see and engage other targets.
 - `concealment` — The published mechanic explicitly grants total concealment against each affected creature.
 
 Adjudication notes:
-
 - No separate blindness/vision-denial tag is needed here because the published mechanic is explicitly expressed through total concealment.
 
 ### 33. Razor Bug
@@ -644,14 +594,12 @@ Adjudication notes:
 - **Final tags:** `ranged`, `offense_ranged`, `precision`, `biotech`
 
 Rationale:
-
 - `ranged` — The razor bug has a canonical ranged attack profile.
 - `offense_ranged` — Its primary role is dealing ranged slashing damage.
 - `precision` — The weapon is explicitly Accurate and takes no short-range attack penalty; certified feat/talent use of precision covers direct attack-accuracy improvements.
 - `biotech` — The frozen canonical authority identifies the razor bug as a Yuuzhan Vong bio-weapon.
 
 Adjudication notes:
-
 - Do not add accuracy or thrown because those tags are outside the certified feat/talent-used vocabulary.
 
 ### 34. Remote Grenade
@@ -663,7 +611,6 @@ Adjudication notes:
 - **Final tags:** `ranged`, `offense_ranged`, `burst_damage`, `setup`, `trap`
 
 Rationale:
-
 - `ranged` — The remote grenade has a canonical ranged attack profile.
 - `offense_ranged` — It delivers direct damage at range.
 - `burst_damage` — Its 4d6 detonation is a concentrated single-event damage effect, consistent with the established burst_damage semantic.
@@ -671,7 +618,6 @@ Rationale:
 - `trap` — Remote placement and later detonation directly support prepared trap-style use.
 
 Adjudication notes:
-
 - Do not add ambush solely because a remotely detonated explosive could be used during an ambush; the published rule directly supports setup/trap behavior, not a specific ambush mechanic.
 
 ### 35. Shockboxing Gloves
@@ -683,7 +629,6 @@ Adjudication notes:
 - **Final tags:** `melee`, `offense_melee`, `unarmed`, `damage_bonus`, `stun`, `nonlethal`, `swift_action`, `action_economy`
 
 Rationale:
-
 - `melee` — Shockboxing gloves operate through unarmed melee attacks.
 - `offense_melee` — They directly improve melee attack damage.
 - `unarmed` — Both lethal and stun profiles apply specifically to the wearer's unarmed attacks.
@@ -694,7 +639,6 @@ Rationale:
 - `action_economy` — The stun-mode switch directly consumes a defined combat action.
 
 Adjudication notes:
-
 - The cannot-be-disarmed/dropped rule remains structured canonical mechanics.
 
 ### 36. Short Sword
@@ -706,24 +650,288 @@ Adjudication notes:
 - **Final tags:** `melee`, `offense_melee`
 
 Rationale:
-
 - `melee` — The short sword has a canonical melee attack profile.
 - `offense_melee` — Its canonical function is dealing melee weapon damage.
 
 Adjudication notes:
-
 - Do not add dual_wield from descriptive usage alone.
 - Do not add defense or deflect from flavor text; the published entry grants no standalone numerical or rules benefit for deflecting melee attacks.
 
-## Claude implementation contract
+### 37. Sith Sword
+
+- Identity: `weapon-sith-sword`
+- Repo: present (`weapon-sith-sword`)
+- Source: Threats of the Galaxy — description p.159
+- Canonical mechanic: Alchemical melee blade that resists lightsaber interaction, counts as a lightsaber for specific Jedi defensive talent interactions when wielded proficiently, and can spend a Force Point as a swift action for Dark Side Score bonus damage.
+- **Final tags:** `melee`, `offense_melee`, `lightsaber`, `block`, `deflect`, `force`, `force_point_spend`, `resource_spend`, `dark_side`, `dark_side_score`, `damage_bonus`, `swift_action`, `action_economy`
+
+Rationale:
+- `melee` — The Sith sword has a canonical melee attack profile.
+- `offense_melee` — Its normal weapon function is dealing melee slashing or piercing damage.
+- `lightsaber` — A proficient wielder explicitly treats the Sith sword as a lightsaber for specified Jedi talent interactions.
+- `block` — The proficient-wielder rule explicitly allows the weapon to function as a lightsaber for Block.
+- `deflect` — The proficient-wielder rule explicitly allows the weapon to function as a lightsaber for Deflect.
+- `force` — Its empowerment mechanic explicitly spends a Force Point.
+- `force_point_spend` — Activating the Dark Side empowerment explicitly costs one Force Point.
+- `resource_spend` — The empowerment consumes a character resource: one Force Point.
+- `dark_side` — The empowerment is an explicitly Dark Side-associated weapon mechanic.
+- `dark_side_score` — The damage bonus equals the wielder's Dark Side Score and use increases that score by 1.
+- `damage_bonus` — The empowerment adds a bonus to the next Sith sword damage roll equal to Dark Side Score.
+- `swift_action` — Activating the empowerment is explicitly a swift action.
+- `action_economy` — The empowerment consumes a defined combat action to activate.
+
+Ontology gaps:
+- `LIGHTSABER_RESISTANCE` — Lightsabers do not ignore the Sith sword's damage reduction. **Reason:** No tag already used by certified feats/talents precisely represents a weapon's resistance to lightsaber DR-bypass interaction. durability and damage_reduction would be materially broader and misleading.
+
+Adjudication notes:
+- Do not add counterattack merely to approximate Redirect Shot compatibility.
+- The lightsaber tag is conditional rules classification, not a change to the canonical Simple Weapon group.
+
+### 38. Sling
+
+- Identity: `weapon-sling`
+- Repo: present (`weapon-sling`)
+- Source: Core Rulebook — description p.129, stat table p.127
+- Canonical mechanic: Primitive ranged weapon whose wielder adds Strength modifier to damage.
+- **Final tags:** `ranged`, `offense_ranged`, `damage_bonus`
+
+Rationale:
+- `ranged` — The sling has a canonical ranged attack profile.
+- `offense_ranged` — Its primary function is dealing ranged weapon damage.
+- `damage_bonus` — The wielder's Strength modifier explicitly applies to sling damage.
+
+### 39. Snap Baton
+
+- Identity: `weapon-snap-baton`
+- Repo: present (`weapon-snap-baton`)
+- Source: Clone Wars Campaign Guide — description p.59, stat table p.60
+- Canonical mechanic: Collapsible melee baton with a stun setting; expanding or collapsing the weapon is a swift action.
+- **Final tags:** `melee`, `offense_melee`, `stun`, `nonlethal`, `swift_action`, `action_economy`
+
+Rationale:
+- `melee` — The snap baton has a canonical melee attack profile.
+- `offense_melee` — Its primary function is dealing melee weapon damage.
+- `stun` — The frozen canonical stats include a stun setting.
+- `nonlethal` — The stun setting provides a nonlethal combat mode.
+- `swift_action` — Expanding or collapsing the baton is explicitly a swift action.
+- `action_economy` — Changing the baton's physical state consumes a defined combat action.
+
+Adjudication notes:
+- Optional commercial panic-alarm, glowrod, and sound-dampening variants are not generic semantic tags for the base identity.
+
+### 40. Spear
+
+- Identity: `unmapped::Spear`
+- Repo: missing
+- Source: Core Rulebook — description p.124, stat table p.123
+- Canonical mechanic: Simple piercing melee polearm that can also be used as a thrown ranged weapon.
+- **Final tags:** `melee`, `offense_melee`, `ranged`, `offense_ranged`
+
+Rationale:
+- `melee` — The spear has a canonical melee weapon profile.
+- `offense_melee` — Its normal use deals melee piercing damage.
+- `ranged` — The published rules explicitly allow a spear to be used as a thrown weapon.
+- `offense_ranged` — When thrown, the spear deals weapon damage at range.
+
+Adjudication notes:
+- Do not add thrown because it is outside the certified feat/talent-used vocabulary.
+
+### 41. Squib Battering Ram
+
+- Identity: `weapon-battering-ram`
+- Repo: present (`weapon-battering-ram`)
+- Source: Scum and Villainy — description p.52, stat table p.51
+- Canonical mechanic: Two-person powered breaching weapon that deals normal damage to stationary unattended objects but is too unwieldy for living, moving targets.
+- **Final tags:** `equipment`, `teamwork`, `damage`
+
+Rationale:
+- `equipment` — The battering ram is specialized powered equipment with a distinct operating requirement.
+- `teamwork` — It explicitly requires two operators with separate stabilize and trigger roles.
+- `damage` — Its canonical purpose is dealing 5d10 damage to stationary unattended objects.
+
+Ontology gaps:
+- `BREACHING_OR_OBJECT_ONLY_WEAPON` — It is specifically usable for damaging stationary unattended objects and is too unwieldy against living, moving targets. **Reason:** No tag already used by certified feats/talents cleanly represents a dedicated breaching/object-only weapon role.
+
+Adjudication notes:
+- Do not add ranged/offense_ranged merely because the current canonical schema stores the attack in a ranged branch; the published role is object breaching, not ordinary ranged combat.
+- Do not use burst_damage solely because the damage dice are high.
+
+### 42. Stun Baton
+
+- Identity: `weapon-stun-baton`
+- Repo: present (`weapon-stun-baton`)
+- Source: Core Rulebook — description p.124, stat table p.123
+- Canonical mechanic: Melee club that can deliver explicit stun damage and requires an energy cell.
+- **Final tags:** `melee`, `offense_melee`, `stun`, `nonlethal`
+
+Rationale:
+- `melee` — The stun baton has a canonical melee attack profile.
+- `offense_melee` — Its normal and stun attacks are delivered through melee strikes.
+- `stun` — It has an explicit stun setting with 2d6 stun damage.
+- `nonlethal` — The stun setting provides a nonlethal combat mode.
+
+### 43. Stunning Gauntlet
+
+- Identity: `unmapped::Stunning Gauntlet`
+- Repo: missing
+- Source: Knights of the Old Republic Campaign Guide — description p.202, stat table p.202
+- Canonical mechanic: Worn gauntlet that converts unarmed melee attacks to stun damage and adds +1 stun damage; cannot be disarmed or dropped.
+- **Final tags:** `melee`, `offense_melee`, `unarmed`, `stun`, `nonlethal`, `damage_bonus`
+
+Rationale:
+- `melee` — The gauntlet modifies unarmed melee attacks.
+- `offense_melee` — Its effect directly changes melee attack damage.
+- `unarmed` — Its rules apply specifically to the wearer's unarmed attacks.
+- `stun` — It converts those unarmed attacks to stun damage.
+- `nonlethal` — The converted attacks use the system's nonlethal stun mechanic.
+- `damage_bonus` — It adds +1 to stun damage on successful unarmed attacks.
+
+Adjudication notes:
+- The cannot-be-disarmed/dropped rule remains structured canonical mechanics.
+- Cross-publication identity/stat reconciliation was already resolved in Phase 3B.
+
+### 44. Survival Knife
+
+- Identity: `unmapped::Survival Knife`
+- Repo: missing
+- Source: Unknown Regions — description p.36, stat table p.37
+- Canonical mechanic: Melee survival knife with a thrown attack profile, internal storage, and a compass that always identifies north; its thrown use is inaccurate and cannot reach long range.
+- **Final tags:** `melee`, `offense_melee`, `ranged`, `offense_ranged`, `survival`, `exploration`
+
+Rationale:
+- `melee` — The survival knife has a canonical melee attack profile.
+- `offense_melee` — Its primary blade use deals melee damage.
+- `ranged` — It has an explicit thrown ranged attack profile.
+- `offense_ranged` — Its thrown profile deals weapon damage at range.
+- `survival` — Its built-in compass and storage are direct wilderness/survival utility.
+- `exploration` — The compass explicitly guarantees the carrier can determine north, supporting navigation and exploration.
+
+Adjudication notes:
+- Do not invent inaccurate or thrown semantic tags; those are not part of the feat/talent-used vocabulary.
+
+### 45. Targeting Laser
+
+- Identity: `weapon-targeting-laser`
+- Repo: present (`weapon-targeting-laser`)
+- Source: Galaxy at War — description p.42, stat table p.41
+- Canonical mechanic: No-damage ranged designator that must be maintained with repeated attacks; allies gain +2 with missile launchers, grenade launchers, or vehicle weapons against the designated target.
+- **Final tags:** `ranged`, `support`, `ally_support`, `target-designation`, `targeting`, `precision`, `heavy_weapon`, `vehicle`, `setup`, `teamwork`
+
+Rationale:
+- `ranged` — The designation is established through a ranged attack roll.
+- `support` — The weapon deals no damage and exists to improve allied attacks.
+- `ally_support` — Its explicit benefit is a +2 attack bonus for allies who know the laser frequency.
+- `target-designation` — The laser's defining mechanic is painting/designating a specific target for allied fire.
+- `targeting` — The effect is maintained against a chosen target through repeated attack rolls.
+- `precision` — The designation attack ignores armor bonuses to Reflex Defense and grants an attack bonus to eligible allied attacks.
+- `heavy_weapon` — Missile and grenade launchers are explicitly eligible allied weapon types.
+- `vehicle` — Vehicle weapons are explicitly eligible for the +2 allied attack bonus.
+- `setup` — The wielder must first establish and then maintain the designation for allies to benefit.
+- `teamwork` — The mechanic coordinates one character's designation with allied attacks.
+
+Adjudication notes:
+- Do not add offense_ranged because the targeting laser explicitly deals no damage.
+
+### 46. Thermal Detonator
+
+- Identity: `weapon-thermal-detonator`
+- Repo: present (`weapon-thermal-detonator`)
+- Source: Core Rulebook — description p.129, stat table p.127
+- Canonical mechanic: High-powered ranged explosive with an adjustable 1-3 round timer and a 4-square damaging burst.
+- **Final tags:** `ranged`, `offense_ranged`, `burst_damage`, `setup`
+
+Rationale:
+- `ranged` — The thermal detonator resolves as a ranged attack.
+- `offense_ranged` — Its primary combat role is direct ranged damage.
+- `burst_damage` — Its 8d6 detonation is a concentrated high-impact damage event, matching the established feat/talent burst-damage concept.
+- `setup` — Its adjustable 1-3 round timer enables explicit delayed/prepared detonation.
+
+Adjudication notes:
+- Do not add grenade, explosives, area_damage, or thrown because those tags are outside the certified feat/talent-used vocabulary.
+
+### 47. Thud Bug
+
+- Identity: `weapon-thud-bug`
+- Repo: present (`weapon-thud-bug`)
+- Source: Legacy Era Campaign Guide — description p.65, stat table p.64
+- Canonical mechanic: Yuuzhan Vong biotech ranged weapon that can optionally deal stun damage instead of normal damage at point-blank or short range.
+- **Final tags:** `ranged`, `offense_ranged`, `stun`, `nonlethal`, `biotech`
+
+Rationale:
+- `ranged` — The thud bug has a canonical ranged attack profile.
+- `offense_ranged` — Its normal use deals ranged weapon damage.
+- `stun` — The wielder can explicitly choose stun damage for eligible close-range attacks.
+- `nonlethal` — The optional stun mode provides a nonlethal attack role.
+- `biotech` — The thud bug is a Yuuzhan Vong bio-weapon.
+
+Adjudication notes:
+- Do not add thrown because that tag is outside the certified feat/talent-used vocabulary.
+
+### 48. Wan-Shen
+
+- Identity: `unmapped::Wan-Shen`
+- Repo: missing
+- Source: Jedi Academy Training Manual — description p.54, stat table p.52
+- Canonical mechanic: Matukai double melee polearm with +1 square reach; both ends can be used under double-weapon full-round rules, and it can be assembled/disassembled as a full-round action.
+- **Final tags:** `melee`, `offense_melee`, `double_weapon`, `full_attack`, `positioning`
+
+Rationale:
+- `melee` — Both ends have canonical melee attack profiles.
+- `offense_melee` — Both ends deal melee weapon damage.
+- `double_weapon` — The wan-shen is explicitly a double weapon.
+- `full_attack` — Attacking with both ends uses the normal double-weapon full-round attack procedure.
+- `positioning` — Its +1 square reach directly changes the spaces the wielder can threaten and attack from.
+
+Ontology gaps:
+- `EXTENDED_MELEE_REACH` — The weapon explicitly increases reach by 1 square. **Reason:** positioning captures the tactical consequence, but no tag already used by certified feats/talents precisely identifies an intrinsic reach weapon.
+
+Adjudication notes:
+- Do not invent a reach tag.
+- The full-round assembly/disassembly action is retained in canonical mechanics; full_attack is justified only by the two-ended attack procedure, not by assembly.
+
+### 49. War Sword
+
+- Identity: `unmapped::War Sword`
+- Repo: missing
+- Source: Knights of the Old Republic Campaign Guide — description p.66, stat table p.64
+- Canonical mechanic: Heavy, durable simple longsword with no additional printed combat rule beyond its weapon statistics.
+- **Final tags:** `melee`, `offense_melee`
+
+Rationale:
+- `melee` — The war sword has a canonical melee attack profile.
+- `offense_melee` — Its canonical function is dealing melee weapon damage.
+
+Adjudication notes:
+- Do not add durability solely from descriptive prose stating that the sword is durable; the entry grants no special durability mechanic.
+
+## Claude implementation / certification contract
 
 Implement/update these repository files:
 
 - `data/audits/item-weapons-phase-4a-simple-semantic-rolling.json`
 - `docs/audits/item-weapons-phase-4a-simple-semantic-rolling.md`
 
-Claude must preserve planner-supplied identity membership, `finalTags`, ontology-gap decisions, and all earlier-round rulings exactly.
+Claude must preserve all 49 planner-supplied identity assignments, `finalTags`, rationale membership, ontology-gap decisions, and prior-round rulings exactly.
 
-The verifier should derive the exact 183-tag allowable vocabulary from the certified feat/talent authority files rather than accepting a hand-maintained weapon vocabulary.
+A deterministic verifier should derive the exact allowed tag set from the certified feat/talent semantic authorities and prove the final Simple Weapon authority rather than trusting hand-maintained counts.
 
-Do not begin Round 4 or Advanced Melee Weapons until planner review.
+At minimum verify:
+
+- frozen Phase 3B contains exactly 49 Simple Weapon identities;
+- all 49 appear exactly once in this authority;
+- no non-Simple identity is present;
+- identity keys and canonical names match Phase 3B exactly;
+- repo-present / missing split is exactly 28 / 21;
+- every final tag is actually used by at least one certified feat or talent;
+- no weapon-only/runtime-only tag is present;
+- every final tag has exactly one rationale and no stray rationale keys exist;
+- all five ontology gaps remain gaps and are not inserted into `finalTags`;
+- Phase 3D remains frozen;
+- `packs/weapons.db` and `template.json` remain unchanged;
+- `productionMutationAuthorized` remains `false`.
+
+Suggested certification status after implementation passes:
+
+`WEAPON_TAG_PHASE_4A_SIMPLE_SEMANTIC_AUTHORITY_CERTIFIED`
+
+Do not begin Advanced Melee Weapons until planner review/certification of Claude's committed Phase 4A implementation.

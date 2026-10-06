@@ -1438,10 +1438,20 @@ if (fs.existsSync(path.join(ROOT, P4A))) {
   if (rounds.length && rounds[0].firstCanonicalName !== simple[0].canonicalName) fail('4A first canonical name');
   // earlier planner rulings are pinned: a later round may not change them
   const canon = (x) => (Array.isArray(x) ? x.map(canon) : x && typeof x === 'object' ? Object.fromEntries(Object.keys(x).sort().map((k) => [k, canon(x[k])])) : x);
-  const pins = [[0, 12, '23e2ffd7c3ffa19f0e44997a125972d2942555193999f4405cb385a8caa4ed1d'], [12, 24, '13a49a0d2a19c94bdaa3768bbb5c55406df8fcc7f26894f73ae09939dbbc8fcf']];
+  const pins = [[0, 12, '23e2ffd7c3ffa19f0e44997a125972d2942555193999f4405cb385a8caa4ed1d'], [12, 24, '13a49a0d2a19c94bdaa3768bbb5c55406df8fcc7f26894f73ae09939dbbc8fcf'], [24, 36, '38977ba85cb2bd96e8e3d8d92f1a3e726fe54db44a60f2e7af2557361c445b3a']];
   for (const [lo, hi, want] of pins) if (asg.length >= hi && sh(JSON.stringify(canon(asg.slice(lo, hi)))) !== want) fail(`4A round ${lo / 12 + 1} planner rulings changed after adjudication`);
   // ontology gaps stay gaps, never tags
   for (const a of asg) for (const g of a.ontologyGapCandidates) if (a.finalTags.some((t) => t.toLowerCase() === String(g.concept).toLowerCase())) fail(`4A ${a.canonicalName} converted ontology gap ${g.concept} into a tag`);
+  if (REQ === 49) {
+    // Simple Weapon category complete: certified status, exact census, recomputed completion summary
+    if (S.status !== 'WEAPON_TAG_PHASE_4A_SIMPLE_SEMANTIC_AUTHORITY_CERTIFIED' || S.simpleWeaponPlannerAuthorityComplete !== true) fail('4A complete authority must carry the certified status');
+    if (!same(simple.map((i) => i.identityKey), asg.map((a) => a.identityKey))) fail('4A all 49 Phase 3B Simple Weapon identities must appear exactly once in order');
+    if (present !== 28 || REQ - present !== 21) fail('4A final repo present/missing must be 28/21');
+    const cs = S.completionSummary, gl = asg.flatMap((a) => a.ontologyGapCandidates.map((g) => ({ canonicalName: a.canonicalName, concept: g.concept })));
+    if (cs.adjudicatedIdentities !== 49 || cs.repoPresent !== 28 || cs.repoMissing !== 21 || cs.totalFinalTagAssignments !== tagTotal || cs.distinctTagsUsed !== tagsUsed.size || cs.ontologyGapConcepts !== gl.length || !same(cs.ontologyGaps, gl)) fail('4A completionSummary does not match the recomputed assignments');
+    if (tagTotal !== 222 || tagsUsed.size !== 57 || !same(gl.map((g) => g.concept), ['OBJECT_DR_BYPASS', 'TRIP_COMPATIBILITY', 'LIGHTSABER_RESISTANCE', 'BREACHING_OR_OBJECT_ONLY_WEAPON', 'EXTENDED_MELEE_REACH'])) fail('4A final totals must be 222 assignments, 57 distinct tags, 5 ontology gaps');
+    if (rp.nextCanonicalName !== null || rp.remaining !== 0) fail('4A complete authority has no next identity');
+  }
   if (errors.length === e4) console.log(`Phase 4A Simple Weapon semantic tags OK: ${REQ}/49 adjudicated in ${rounds.length} round(s) (${present} repo-present / ${REQ - present} missing), ${tagTotal} assignments, ${tagsUsed.size} distinct tags from the ${used.size}-tag certified feat/talent vocabulary, ${cumGaps} ontology gaps, next ${rp.nextCanonicalName}`);
 }
 
