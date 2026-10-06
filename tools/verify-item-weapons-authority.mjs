@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
  * Verifies data/audits/item-canonicalization-rolling-authority.json (Phase 0-1 weapons,
- * Phase 0-2 armor, Phase 0-3A equipment, Phase 0-3B medical, Phase 0-3C explosives, Phase 0-3D cybernetics, Phase 0-3E upgrades, Phase 0-3F gear templates, Phase 0-3G lightsaber components, Phase 0-3H droid systems, Phase 0-3I ammunition boundary, Phase 0 completion manifest, Phase 1 weapons content 1A-1F) against the weapons, armor and equipment packs. Read-only. Fails on any drift between the certified authority
+ * Phase 0-2 armor, Phase 0-3A equipment, Phase 0-3B medical, Phase 0-3C explosives, Phase 0-3D cybernetics, Phase 0-3E upgrades, Phase 0-3F gear templates, Phase 0-3G lightsaber components, Phase 0-3H droid systems, Phase 0-3I ammunition boundary, Phase 0 completion manifest, Phase 1 weapons content 1A-1I) against the weapons, armor and equipment packs. Read-only. Fails on any drift between the certified authority
  * and the pack so that execution phases cannot silently run against a changed repo.
  */
 import fs from 'node:fs';
@@ -388,10 +388,12 @@ if (pc) {
   if (!errors.length) console.log(`Phase 0 completion OK: ${pc.tranches.length} tranches reconcile with the folded authorities; ${review.length} open identity reviews (${review.join(', ')})`);
 }
 
-// ---- Phase 1 weapons content authority (1A-1F, rolling) ----
+// ---- Phase 1 weapons content authority (rolling) ----
 const c1 = auth.phases['1-weapons-content'];
 // Retrosaber (Jedi Academy p. 50) is defined in prose only; the sourcebook prints no stat-table row for it.
 const NO_STAT_TABLE = new Set(['Retrosaber']);
+// Threats of the Galaxy prints these weapons in adversary/feature text, not in a weapons stat table.
+const NO_STAT_TABLE_BOOKS = new Set(['Threats of the Galaxy']);
 if (c1) {
   const byName = new Map(p.canonicalWeapons.map((w) => [w.canonicalName, w]));
   const claimsByName = new Map();
@@ -406,7 +408,7 @@ if (c1) {
       if (!claimsByName.has(r.canonicalName)) claimsByName.set(r.canonicalName, []);
       claimsByName.get(r.canonicalName).push(b.phase);
       disc[r.phase1Discrepancy] = (disc[r.phase1Discrepancy] || 0) + 1;
-      if (r.source.book !== b.book || !r.source.descriptionPage || (!r.source.statTablePage && !NO_STAT_TABLE.has(r.canonicalName))) fail(`${b.phase} ${r.canonicalName} missing provenance`);
+      if (r.source.book !== b.book || !r.source.descriptionPage || (!r.source.statTablePage && !NO_STAT_TABLE.has(r.canonicalName) && !NO_STAT_TABLE_BOOKS.has(b.book))) fail(`${b.phase} ${r.canonicalName} missing provenance`);
       if (!r.canonicalPlayerText?.trim() || !r.summary?.trim() || r.canonicalPlayerText === r.summary) fail(`${b.phase} ${r.canonicalName} text/summary invalid`);
       const absent = w.phase0Disposition === 'ADD';
       if (r.repo.present === absent) fail(`${b.phase} ${r.canonicalName} repo.present disagrees with Phase 0 ${w.phase0Disposition}`);
@@ -438,6 +440,13 @@ if (c1) {
   const dupes = [...claimsByName].filter(([, v]) => v.length > 1).map(([k]) => k).sort();
   const ruled = c1.crossPublishedIdentityRulings.map((r) => r.canonicalIdentity).sort();
   if (JSON.stringify(dupes) !== JSON.stringify(ruled)) fail(`1 cross-published claims ${JSON.stringify(dupes)} != rulings ${JSON.stringify(ruled)}`);
+  for (const r of c1.crossPublishedIdentityRulings) {
+    const w = byName.get(r.canonicalIdentity);
+    if (!w || w.repo.matchedId !== r.repoId) fail(`1 ruling ${r.canonicalIdentity} repoId ${r.repoId} != Phase 0 ${w?.repo.matchedId}`);
+  }
+  const conflicts = c1.crossPublishedIdentityRulings.filter((r) => /CONFLICT/.test(r.ruling)).map((r) => r.canonicalIdentity).sort();
+  const open = (c1.openContentAdjudications || []).map((r) => r.subject).sort();
+  if (JSON.stringify(conflicts) !== JSON.stringify(open)) fail(`1 conflict rulings ${JSON.stringify(conflicts)} != open adjudications ${JSON.stringify(open)}`);
   if (!errors.length) console.log(`Phase 1 weapons content OK: ${c1.books.length} books (${c1.books.map((b) => b.phase).join(',')}), ${tot.claims} claims / ${claimsByName.size} identities (${tot.present} present, ${tot.missing} missing; ${tot.INCORRECT} incorrect, ${tot.INCOMPLETE} incomplete)`);
 }
 

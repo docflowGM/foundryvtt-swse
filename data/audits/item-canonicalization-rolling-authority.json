@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "authorityType": "item-canonicalization-rolling-authority",
-  "status": "PHASE 0 CHARACTER-ITEM CENSUS COMPLETE; PHASE 1 WEAPONS CONTENT CERTIFIED THROUGH 1F (Core, Clone Wars, Force Unleashed, Galaxy at War, Galaxy of Intrigue, Jedi Academy) (authority-only) — certified ADD/EDIT/REMOVE actions remain intentionally unexecuted except the armor, equipment and medical identity renames",
+  "status": "PHASE 0 CHARACTER-ITEM CENSUS COMPLETE; PHASE 1 WEAPONS CONTENT CERTIFIED THROUGH 1I (Core, Clone Wars, Force Unleashed, Galaxy at War, Galaxy of Intrigue, Jedi Academy, Threats of the Galaxy, Scum and Villainy, Rebellion Era) (authority-only) — certified ADD/EDIT/REMOVE actions remain intentionally unexecuted except the armor, equipment and medical identity renames",
   "sourcePolicy": "User-provided SWSE TXT/PDF sourcebooks are the canonical SSOT. Repository compendiums are implementation targets only.",
   "ownerRulings": "docs/audits/item-phase-0-ssot-census.md §7a",
   "architecture": {
@@ -18880,7 +18880,7 @@
       }
     },
     "1-weapons-content": {
-      "status": "ROLLING_PHASE_1_WEAPONS_AUTHORITY_THROUGH_1F",
+      "status": "ROLLING_PHASE_1_WEAPONS_AUTHORITY_THROUGH_1I",
       "canonicalSourcePolicy": "User-supplied SWSE TXT/PDF sourcebooks are SSOT. TXT is the searchable layer; rendered PDF pages are final authority for layout/page ambiguity.",
       "scope": {
         "completedPhases": [
@@ -18889,7 +18889,10 @@
           "1C",
           "1D",
           "1E",
-          "1F"
+          "1F",
+          "1G",
+          "1H",
+          "1I"
         ],
         "booksCompleted": [
           "Core Rulebook",
@@ -18897,7 +18900,10 @@
           "Force Unleashed Campaign Guide",
           "Galaxy at War",
           "Galaxy of Intrigue",
-          "Jedi Academy Training Manual"
+          "Jedi Academy Training Manual",
+          "Threats of the Galaxy",
+          "Scum and Villainy",
+          "Rebellion Era Campaign Guide"
         ],
         "certifiedFields": [
           "source.book",
@@ -18915,13 +18921,13 @@
         ]
       },
       "aggregateCounts": {
-        "sourceBookClaims": 123,
-        "uniqueProductionIdentities": 121,
-        "crossPublishedDuplicateClaims": 2,
-        "repoPresentClaims": 93,
-        "repoMissingClaims": 30,
-        "descriptionIncorrectClaims": 24,
-        "descriptionIncompleteClaims": 69
+        "sourceBookClaims": 148,
+        "uniqueProductionIdentities": 144,
+        "crossPublishedDuplicateClaims": 4,
+        "repoPresentClaims": 114,
+        "repoMissingClaims": 34,
+        "descriptionIncorrectClaims": 26,
+        "descriptionIncompleteClaims": 88
       },
       "books": [
         {
@@ -22058,6 +22064,691 @@
               "phase1ContentAction": "UPDATE_CANONICAL_CONTENT"
             }
           ]
+        },
+        {
+          "phase": "1G",
+          "book": "Threats of the Galaxy",
+          "counts": {
+            "canonicalWeaponClaims": 4,
+            "repoPresent": 3,
+            "repoMissing": 1,
+            "descriptionIncorrect": 1,
+            "descriptionIncomplete": 2,
+            "contentCorrect": 0
+          },
+          "records": [
+            {
+              "canonicalName": "Datadagger",
+              "weaponGroup": "Simple Weapon",
+              "source": {
+                "book": "Threats of the Galaxy",
+                "descriptionPage": 13,
+                "statTablePage": null,
+                "verifiedBy": [
+                  "user-supplied searchable TXT",
+                  "user-supplied PDF visual verification"
+                ]
+              },
+              "canonicalPlayerText": "A datadagger is a decorative code cylinder concealing a needlelike blade. Twisting the hilt extends the blade. Its concealed construction grants a +5 bonus on Stealth checks made to hide the object, and physically touching the wielder does not grant the usual circumstance bonus to notice the hidden weapon.",
+              "summary": "Concealed code-cylinder dagger; +5 to Stealth checks to hide it and unusually difficult to detect by touch.",
+              "repo": {
+                "present": false,
+                "id": null,
+                "currentName": null,
+                "phase0NameNormalizationPending": false
+              },
+              "phase1Discrepancy": "MISSING_RECORD",
+              "phase1ContentAction": "CREATE_WHEN_SCHEMA_STATS_PHASES_ARE_READY",
+              "notes": [],
+              "crossPublishedSources": []
+            },
+            {
+              "canonicalName": "Light Concussion Missile Launcher",
+              "weaponGroup": "Heavy Weapon",
+              "source": {
+                "book": "Threats of the Galaxy",
+                "descriptionPage": 134,
+                "statTablePage": null,
+                "verifiedBy": [
+                  "user-supplied searchable TXT",
+                  "user-supplied PDF visual verification"
+                ]
+              },
+              "canonicalPlayerText": "This antivehicle launcher fires one light concussion missile per attack. Rapid Shot cannot be used with it. Each missile has a 2-square splash radius, and attacks against targets smaller than Huge take a -10 penalty.",
+              "summary": "Single-shot antivehicle launcher with 2-square splash; -10 against targets smaller than Huge and incompatible with Rapid Shot.",
+              "repo": {
+                "present": true,
+                "id": "weapon-light-concussion-missile-launcher",
+                "currentName": "Light Concussion Missile Launcher",
+                "phase0NameNormalizationPending": false
+              },
+              "phase1Discrepancy": "DESCRIPTION_INCOMPLETE",
+              "phase1ContentAction": "UPDATE_CANONICAL_CONTENT",
+              "notes": [],
+              "crossPublishedSources": []
+            },
+            {
+              "canonicalName": "Sonic Stunner",
+              "weaponGroup": "Pistol",
+              "source": {
+                "book": "Threats of the Galaxy",
+                "descriptionPage": 146,
+                "statTablePage": null,
+                "verifiedBy": [
+                  "user-supplied searchable TXT",
+                  "user-supplied PDF visual verification"
+                ]
+              },
+              "canonicalPlayerText": "A sonic stunner deals stun damage by directing high-frequency sonic energy into a living target. Deaf creatures are still affected because the vibrations penetrate the brain. Only the target hears the weapon's sound, so firing it is otherwise silent.",
+              "summary": "Silent-to-bystanders sonic stun pistol that still affects deaf targets.",
+              "repo": {
+                "present": true,
+                "id": "weapon-sonic-stunner",
+                "currentName": "Sonic Stunner",
+                "phase0NameNormalizationPending": false
+              },
+              "phase1Discrepancy": "DESCRIPTION_INCOMPLETE",
+              "phase1ContentAction": "UPDATE_CANONICAL_CONTENT",
+              "notes": [],
+              "crossPublishedSources": []
+            },
+            {
+              "canonicalName": "Sith Sword",
+              "weaponGroup": "Simple Weapon",
+              "source": {
+                "book": "Threats of the Galaxy",
+                "descriptionPage": 159,
+                "statTablePage": null,
+                "verifiedBy": [
+                  "user-supplied searchable TXT",
+                  "user-supplied PDF visual verification"
+                ]
+              },
+              "canonicalPlayerText": "A Sith sword is an alchemically treated archaic blade. Lightsabers do not ignore its damage reduction. A proficient wielder can treat it as a lightsaber for Block, Deflect, Redirect Shot, and talents that use those abilities as prerequisites. As a swift action, a proficient wielder can spend a Force Point to add a damage bonus equal to the wielder's Dark Side Score to the next attack made before the end of the encounter; using this ability also increases the wielder's Dark Side Score by 1.",
+              "summary": "Alchemical blade that resists lightsabers, supports Block/Deflect/Redirect Shot, and can spend a Force Point for Dark Side Score bonus damage.",
+              "repo": {
+                "present": true,
+                "id": "weapon-sith-sword",
+                "currentName": "Sith Sword",
+                "phase0NameNormalizationPending": false
+              },
+              "phase1Discrepancy": "DESCRIPTION_INCORRECT",
+              "phase1ContentAction": "UPDATE_CANONICAL_CONTENT",
+              "notes": [
+                "Current repo prose adds an unsupported 19-20 critical threat range."
+              ],
+              "crossPublishedSources": []
+            }
+          ]
+        },
+        {
+          "phase": "1H",
+          "book": "Scum and Villainy",
+          "counts": {
+            "canonicalWeaponClaims": 9,
+            "repoPresent": 9,
+            "repoMissing": 0,
+            "descriptionIncorrect": 0,
+            "descriptionIncomplete": 9,
+            "contentCorrect": 0
+          },
+          "records": [
+            {
+              "canonicalName": "Subrepeating Blaster",
+              "weaponGroup": "Pistol",
+              "source": {
+                "book": "Scum and Villainy",
+                "descriptionPage": 49,
+                "statTablePage": 51,
+                "verifiedBy": [
+                  "user-supplied searchable TXT",
+                  "user-supplied PDF visual verification"
+                ]
+              },
+              "canonicalPlayerText": "A subrepeating blaster is an autofire-only pistol with a retractable stock. Unless the stock is extended, it cannot be braced before making an autofire attack. It uses a power pack and must have the pack replaced after 50 shots.",
+              "summary": "Autofire-only compact blaster; extend its stock to brace it, with 50 shots per pack.",
+              "repo": {
+                "present": true,
+                "id": "weapon-subrepeating-blaster",
+                "currentName": "Subrepeating Blaster",
+                "phase0NameNormalizationPending": false
+              },
+              "phase1Discrepancy": "DESCRIPTION_INCOMPLETE",
+              "phase1ContentAction": "UPDATE_CANONICAL_CONTENT",
+              "notes": [],
+              "crossPublishedSources": []
+            },
+            {
+              "canonicalName": "Blaster Rifle, Sniper",
+              "weaponGroup": "Rifle",
+              "source": {
+                "book": "Scum and Villainy",
+                "descriptionPage": 50,
+                "statTablePage": 51,
+                "verifiedBy": [
+                  "user-supplied searchable TXT",
+                  "user-supplied PDF visual verification"
+                ]
+              },
+              "canonicalPlayerText": "A sniper blaster rifle is an accurate weapon designed for prepared long-range fire. If the wielder does not aim at the target immediately before attacking, the attack takes a -5 penalty. A bipod and targeting scope are mounted on the rifle and included in its listed cost. The weapon cannot benefit from the rapid recycler upgrade. Its power pack provides 10 shots.",
+              "summary": "Accurate precision rifle with built-in bipod/scope; attacks take -5 unless preceded by Aim, and its pack holds 10 shots.",
+              "repo": {
+                "present": true,
+                "id": "weapon-sniper-blaster-rifle",
+                "currentName": "Sniper Blaster Rifle",
+                "phase0NameNormalizationPending": true
+              },
+              "phase1Discrepancy": "DESCRIPTION_INCOMPLETE",
+              "phase1ContentAction": "UPDATE_CANONICAL_CONTENT",
+              "notes": [],
+              "crossPublishedSources": []
+            },
+            {
+              "canonicalName": "Deck Sweeper",
+              "weaponGroup": "Exotic Weapon",
+              "source": {
+                "book": "Scum and Villainy",
+                "descriptionPage": 50,
+                "statTablePage": 51,
+                "verifiedBy": [
+                  "user-supplied searchable TXT",
+                  "user-supplied PDF visual verification"
+                ]
+              },
+              "canonicalPlayerText": "The Deck Sweeper fires only on the stun setting and attacks a 6-square cone. Make one attack roll and compare it to the Reflex Defense of every target in the area; a hit deals full stun damage and a miss deals half stun damage. The weapon must be primed with a swift action during the same turn before it is fired. Its power pack provides 5 shots.",
+              "summary": "Prime with a swift action, then fire a 6-square stun cone for full/half stun damage; 5 shots per pack.",
+              "repo": {
+                "present": true,
+                "id": "weapon-deck-sweeper",
+                "currentName": "Deck Sweeper",
+                "phase0NameNormalizationPending": false
+              },
+              "phase1Discrepancy": "DESCRIPTION_INCOMPLETE",
+              "phase1ContentAction": "UPDATE_CANONICAL_CONTENT",
+              "notes": [],
+              "crossPublishedSources": []
+            },
+            {
+              "canonicalName": "Electronet",
+              "weaponGroup": "Heavy Weapon (Ammunition)",
+              "source": {
+                "book": "Scum and Villainy",
+                "descriptionPage": 50,
+                "statTablePage": 51,
+                "verifiedBy": [
+                  "user-supplied searchable TXT",
+                  "user-supplied PDF visual verification"
+                ]
+              },
+              "canonicalPlayerText": "An electronet is specialized ammunition fired from a grenade launcher. It targets a 2-by-2-square area; make one attack roll against the Reflex Defense of each target in the area. A hit deals the electronet's stun damage and grabs the target as with a normal net. At the beginning of the attacker's turn, any target still trapped by the electronet takes its listed stun damage again without normal damage modifiers.",
+              "summary": "Grenade-launcher capture net affecting a 2x2 area; hits stun and grab, and trapped targets take repeated stun damage.",
+              "repo": {
+                "present": true,
+                "id": "weapon-electronet",
+                "currentName": "Electronet",
+                "phase0NameNormalizationPending": false
+              },
+              "phase1Discrepancy": "DESCRIPTION_INCOMPLETE",
+              "phase1ContentAction": "UPDATE_CANONICAL_CONTENT",
+              "notes": [],
+              "crossPublishedSources": []
+            },
+            {
+              "canonicalName": "Micro Grenade Launcher",
+              "weaponGroup": "Rifle",
+              "source": {
+                "book": "Scum and Villainy",
+                "descriptionPage": 50,
+                "statTablePage": 51,
+                "verifiedBy": [
+                  "user-supplied searchable TXT",
+                  "user-supplied PDF visual verification"
+                ]
+              },
+              "canonicalPlayerText": "A micro grenade launcher fires miniature grenades and is treated as a rifle. Micro grenades use the normal rules for their grenade type but deal two fewer dice of damage on a successful hit. The launcher holds four micro grenades and requires a full-round action to reload. It can be mounted on a rifle in 1 minute with a DC 15 Mechanics check or used as a separate weapon.",
+              "summary": "Four-shot rifle-class launcher for miniature grenades; normal grenade effects but -2 damage dice, with full-round reload.",
+              "repo": {
+                "present": true,
+                "id": "weapon-micro-grenade-launcher",
+                "currentName": "Micro Grenade Launcher",
+                "phase0NameNormalizationPending": false
+              },
+              "phase1Discrepancy": "DESCRIPTION_INCOMPLETE",
+              "phase1ContentAction": "UPDATE_CANONICAL_CONTENT",
+              "notes": [],
+              "crossPublishedSources": []
+            },
+            {
+              "canonicalName": "Neural Inhibitor",
+              "weaponGroup": "Exotic Weapon",
+              "source": {
+                "book": "Scum and Villainy",
+                "descriptionPage": 50,
+                "statTablePage": 51,
+                "verifiedBy": [
+                  "user-supplied searchable TXT",
+                  "user-supplied PDF visual verification"
+                ]
+              },
+              "canonicalPlayerText": "A neural inhibitor fires a high-velocity dart that injects neurotoxin into a living target. On a hit, the dart makes a 1d20+5 attack against the target's Fortitude Defense. On success the target moves -1 step down the condition track. If that poison attack fails, the next poison attack gains a cumulative +1 bonus until one succeeds. The poison is persistent and attacks again at the beginning of the target's turns until cured with a DC 20 Treat Injury check. If the target falls unconscious, the neurotoxin dissipates.",
+              "summary": "Poison-dart exotic weapon that repeatedly attacks Fortitude and drives the target down the condition track until cured or unconscious.",
+              "repo": {
+                "present": true,
+                "id": "weapon-neural-inhibitor",
+                "currentName": "Neural Inhibitor",
+                "phase0NameNormalizationPending": false
+              },
+              "phase1Discrepancy": "DESCRIPTION_INCOMPLETE",
+              "phase1ContentAction": "UPDATE_CANONICAL_CONTENT",
+              "notes": [],
+              "crossPublishedSources": []
+            },
+            {
+              "canonicalName": "Pulse Rifle",
+              "weaponGroup": "Exotic Weapon",
+              "source": {
+                "book": "Scum and Villainy",
+                "descriptionPage": 50,
+                "statTablePage": 51,
+                "verifiedBy": [
+                  "user-supplied searchable TXT",
+                  "user-supplied PDF visual verification"
+                ]
+              },
+              "canonicalPlayerText": "A pulse rifle fires a 6-square cone as an area attack. Make one attack roll and compare it to the Reflex Defense of every target in the area; a hit deals normal damage and a miss deals half damage. Its power pack provides 5 shots.",
+              "summary": "Five-shot exotic rifle firing a 6-square cone for full damage on a hit and half on a miss.",
+              "repo": {
+                "present": true,
+                "id": "weapon-pulse-rifle",
+                "currentName": "Pulse Rifle",
+                "phase0NameNormalizationPending": false
+              },
+              "phase1Discrepancy": "DESCRIPTION_INCOMPLETE",
+              "phase1ContentAction": "UPDATE_CANONICAL_CONTENT",
+              "notes": [],
+              "crossPublishedSources": []
+            },
+            {
+              "canonicalName": "Snare Rifle",
+              "weaponGroup": "Rifle",
+              "source": {
+                "book": "Scum and Villainy",
+                "descriptionPage": 51,
+                "statTablePage": 51,
+                "verifiedBy": [
+                  "user-supplied searchable TXT",
+                  "user-supplied PDF visual verification"
+                ]
+              },
+              "canonicalPlayerText": "A snare rifle fires weighted cord at targets within short range and can initiate a grab or grapple at range. If the grab succeeds, the target also takes the rifle's listed stun damage. A grabbed or grappled target can escape with a DC 15 Acrobatics check or break free with a DC 20 Strength check. Pin and Trip can be used with the snare rifle, but Crush and Throw cannot. Its cartridge holds 5 shots; replacement cartridges weigh 2 kg and cost 50 credits.",
+              "summary": "Five-shot capture rifle that grabs/grapples at short range, deals stun on a successful snare, and supports Pin/Trip.",
+              "repo": {
+                "present": true,
+                "id": "weapon-snare-rifle",
+                "currentName": "Snare Rifle",
+                "phase0NameNormalizationPending": false
+              },
+              "phase1Discrepancy": "DESCRIPTION_INCOMPLETE",
+              "phase1ContentAction": "UPDATE_CANONICAL_CONTENT",
+              "notes": [],
+              "crossPublishedSources": []
+            },
+            {
+              "canonicalName": "Squib Battering Ram",
+              "weaponGroup": "Simple Weapon",
+              "source": {
+                "book": "Scum and Villainy",
+                "descriptionPage": 52,
+                "statTablePage": 51,
+                "verifiedBy": [
+                  "user-supplied searchable TXT",
+                  "user-supplied PDF visual verification"
+                ]
+              },
+              "canonicalPlayerText": "A Squib battering ram requires two characters to operate: one stabilizes the ram while the other triggers it. It is too unwieldy to use against living, moving targets, but deals its normal damage to stationary unattended objects such as walls or doors. It requires four power packs to operate.",
+              "summary": "Two-person powered breaching ram for stationary unattended objects; uses four power packs.",
+              "repo": {
+                "present": true,
+                "id": "weapon-battering-ram",
+                "currentName": "Battering Ram",
+                "phase0NameNormalizationPending": true
+              },
+              "phase1Discrepancy": "DESCRIPTION_INCOMPLETE",
+              "phase1ContentAction": "UPDATE_CANONICAL_CONTENT",
+              "notes": [],
+              "crossPublishedSources": []
+            }
+          ]
+        },
+        {
+          "phase": "1I",
+          "book": "Rebellion Era Campaign Guide",
+          "counts": {
+            "canonicalWeaponClaims": 12,
+            "repoPresent": 9,
+            "repoMissing": 3,
+            "descriptionIncorrect": 1,
+            "descriptionIncomplete": 8,
+            "contentCorrect": 0
+          },
+          "records": [
+            {
+              "canonicalName": "Axe",
+              "weaponGroup": "Simple Weapon",
+              "source": {
+                "book": "Rebellion Era Campaign Guide",
+                "descriptionPage": 48,
+                "statTablePage": 48,
+                "verifiedBy": [
+                  "user-supplied searchable TXT",
+                  "user-supplied PDF visual verification"
+                ]
+              },
+              "canonicalPlayerText": "A modern axe is an unpowered chopping tool that also serves as a melee weapon. The weapon can be thrown.",
+              "summary": "Simple legal chopping weapon that can also be thrown.",
+              "repo": {
+                "present": false,
+                "id": null,
+                "currentName": null,
+                "phase0NameNormalizationPending": false
+              },
+              "phase1Discrepancy": "MISSING_RECORD",
+              "phase1ContentAction": "CREATE_WHEN_SCHEMA_STATS_PHASES_ARE_READY",
+              "notes": [],
+              "crossPublishedSources": []
+            },
+            {
+              "canonicalName": "Energy Lance",
+              "weaponGroup": "Advanced Melee Weapon",
+              "source": {
+                "book": "Rebellion Era Campaign Guide",
+                "descriptionPage": 48,
+                "statTablePage": 48,
+                "verifiedBy": [
+                  "user-supplied searchable TXT",
+                  "user-supplied PDF visual verification"
+                ]
+              },
+              "canonicalPlayerText": "An energy lance is a force-pike-like mounted weapon incorporating an electromagnetic pulse generator. Although Large, a Medium creature trained in Ride can wield it one-handed while mounted; a Medium creature using it while not mounted takes a -1 attack penalty. The lance can also fire a plasma bolt, functioning as a blaster carbine without a stun setting and using a power pack with the same capacity as a blaster carbine. The lance itself requires two energy cells, and both its melee and ranged attacks work underwater.",
+              "summary": "Mounted energy lance usable one-handed by Ride-trained Medium riders; also fires as a no-stun blaster carbine and works underwater.",
+              "repo": {
+                "present": false,
+                "id": null,
+                "currentName": null,
+                "phase0NameNormalizationPending": false
+              },
+              "phase1Discrepancy": "MISSING_RECORD",
+              "phase1ContentAction": "CREATE_WHEN_SCHEMA_STATS_PHASES_ARE_READY",
+              "notes": [],
+              "crossPublishedSources": []
+            },
+            {
+              "canonicalName": "Power Lance",
+              "weaponGroup": "Advanced Melee Weapon",
+              "source": {
+                "book": "Rebellion Era Campaign Guide",
+                "descriptionPage": 48,
+                "statTablePage": 48,
+                "verifiedBy": [
+                  "user-supplied searchable TXT",
+                  "user-supplied PDF visual verification"
+                ]
+              },
+              "canonicalPlayerText": "A power lance is an energy lance that lacks the plasma-bolt firing capability. It retains the energy lance's mounted-melee design but is cheaper and mass-produced for cavalry and speeder-bike scouts.",
+              "summary": "Cheaper melee-only version of the energy lance, intended for mounted cavalry and speeder-bike scouts.",
+              "repo": {
+                "present": false,
+                "id": null,
+                "currentName": null,
+                "phase0NameNormalizationPending": false
+              },
+              "phase1Discrepancy": "MISSING_RECORD",
+              "phase1ContentAction": "CREATE_WHEN_SCHEMA_STATS_PHASES_ARE_READY",
+              "notes": [],
+              "crossPublishedSources": []
+            },
+            {
+              "canonicalName": "Gaderffii",
+              "weaponGroup": "Simple Weapon",
+              "source": {
+                "book": "Rebellion Era Campaign Guide",
+                "descriptionPage": 48,
+                "statTablePage": 48,
+                "verifiedBy": [
+                  "user-supplied searchable TXT",
+                  "user-supplied PDF visual verification"
+                ]
+              },
+              "canonicalPlayerText": "A gaderffii, or gaffi stick, is a Tusken pole weapon with a blade or spike at one end and a bludgeoning head at the other. It is a double weapon; both ends can be used in a full-round attack, with the normal -10 penalty to each attack before reductions from feats or talents.",
+              "summary": "Tusken double weapon with bludgeoning and cutting ends; both ends can attack in a full-round action.",
+              "repo": {
+                "present": true,
+                "id": "weapon-tusken-gaderffii-stick",
+                "currentName": "Tusken Gaderffii Stick",
+                "phase0NameNormalizationPending": true
+              },
+              "phase1Discrepancy": "DESCRIPTION_INCORRECT",
+              "phase1ContentAction": "UPDATE_CANONICAL_CONTENT",
+              "notes": [
+                "Current repo prose gives mismatched per-end damage values; the published table lists 2d4/2d4."
+              ],
+              "crossPublishedSources": []
+            },
+            {
+              "canonicalName": "Concussion Grenade",
+              "weaponGroup": "Simple Weapon",
+              "source": {
+                "book": "Rebellion Era Campaign Guide",
+                "descriptionPage": 49,
+                "statTablePage": 50,
+                "verifiedBy": [
+                  "user-supplied searchable TXT",
+                  "user-supplied PDF visual verification"
+                ]
+              },
+              "canonicalPlayerText": "A concussion grenade detonates on contact and affects a 2-square burst. Make one area attack roll against the Reflex Defense of every target in the burst; a hit deals full damage and a miss deals half damage. Evasion modifies the result normally.",
+              "summary": "Contact-detonated 2-square burst grenade using standard full/half area-attack rules.",
+              "repo": {
+                "present": true,
+                "id": "weapon-concussion-grenade",
+                "currentName": "Concussion Grenade",
+                "phase0NameNormalizationPending": false
+              },
+              "phase1Discrepancy": "DESCRIPTION_INCOMPLETE",
+              "phase1ContentAction": "UPDATE_CANONICAL_CONTENT",
+              "notes": [],
+              "crossPublishedSources": []
+            },
+            {
+              "canonicalName": "Flechette Launcher",
+              "weaponGroup": "Rifle",
+              "source": {
+                "book": "Rebellion Era Campaign Guide",
+                "descriptionPage": 49,
+                "statTablePage": 50,
+                "verifiedBy": [
+                  "user-supplied searchable TXT",
+                  "user-supplied PDF visual verification"
+                ]
+              },
+              "canonicalPlayerText": "A flechette launcher is a splash weapon with a 1-square splash radius. Because it is single-shot, it cannot be used with Rapid Shot or another feat or talent that expends more than one shot. It uses special four-shot ammunition canisters costing 50 credits.",
+              "summary": "Single-shot 1-square-splash launcher; no Rapid Shot or multi-shot abilities, using four-shot canisters.",
+              "repo": {
+                "present": true,
+                "id": "weapon-flechette-launcher",
+                "currentName": "Flechette Launcher",
+                "phase0NameNormalizationPending": false
+              },
+              "phase1Discrepancy": "DESCRIPTION_INCOMPLETE",
+              "phase1ContentAction": "UPDATE_CANONICAL_CONTENT",
+              "notes": [],
+              "crossPublishedSources": [
+                {
+                  "book": "Force Unleashed Campaign Guide",
+                  "page": 199,
+                  "relationship": "earlier publication; mechanically consistent"
+                }
+              ]
+            },
+            {
+              "canonicalName": "Gas Grenade",
+              "weaponGroup": "Simple Weapon",
+              "source": {
+                "book": "Rebellion Era Campaign Guide",
+                "descriptionPage": 49,
+                "statTablePage": 50,
+                "verifiedBy": [
+                  "user-supplied searchable TXT",
+                  "user-supplied PDF visual verification"
+                ]
+              },
+              "canonicalPlayerText": "A gas grenade detonates on contact and attacks every target in a 4-square blast against Fortitude Defense. A hit moves the target -2 steps on the condition track, or -1 step if the target has Evasion; a miss has no effect. Creatures protected from atmospheric hazards are immune. The gas also provides concealment within the blast area and between creatures inside and outside it until the end of the attacker's next turn.",
+              "summary": "Four-square gas blast attacking Fortitude; moves affected targets down the condition track and creates brief concealment.",
+              "repo": {
+                "present": true,
+                "id": "weapon-gas-grenade",
+                "currentName": "Gas Grenade",
+                "phase0NameNormalizationPending": false
+              },
+              "phase1Discrepancy": "DESCRIPTION_INCOMPLETE",
+              "phase1ContentAction": "UPDATE_CANONICAL_CONTENT",
+              "notes": [],
+              "crossPublishedSources": []
+            },
+            {
+              "canonicalName": "Merr-Sonn PLX-2M Portable Missile Launcher",
+              "weaponGroup": "Heavy Weapon",
+              "source": {
+                "book": "Rebellion Era Campaign Guide",
+                "descriptionPage": 49,
+                "statTablePage": 50,
+                "verifiedBy": [
+                  "user-supplied searchable TXT",
+                  "user-supplied PDF visual verification"
+                ]
+              },
+              "canonicalPlayerText": "The PLX-2M can fire directly or use specialized heat-seeking/gravity-activated targeting modes that penalize the Reflex Defense of the chosen target type. Its missiles detonate in a 3-square burst and use the normal area-attack procedure. The launcher holds six missiles and reloads as a full-round action. A six-missile replacement pack costs 350 credits and weighs 8 kg. A built-in microrepulsorlift means the launcher does not count against encumbrance while carried as the character's active drawn weapon.",
+              "summary": "Six-shot 3-square-burst missile launcher with specialized targeting modes, full-round reload, and a carry-assist microrepulsorlift.",
+              "repo": {
+                "present": true,
+                "id": "weapon-plx-2m-portable-missile-launcher",
+                "currentName": "PLX-2M Portable Missile Launcher",
+                "phase0NameNormalizationPending": true
+              },
+              "phase1Discrepancy": "DESCRIPTION_INCOMPLETE",
+              "phase1ContentAction": "UPDATE_CANONICAL_CONTENT",
+              "notes": [],
+              "crossPublishedSources": []
+            },
+            {
+              "canonicalName": "Miniature Proton Torpedo Launcher",
+              "weaponGroup": "Heavy Weapon",
+              "source": {
+                "book": "Rebellion Era Campaign Guide",
+                "descriptionPage": 49,
+                "statTablePage": 50,
+                "verifiedBy": [
+                  "user-supplied searchable TXT",
+                  "user-supplied PDF visual verification"
+                ]
+              },
+              "canonicalPlayerText": "This four-shot launcher normally makes area attacks in a 2-square blast. After firing, the wielder must spend a standard action to reset the launcher. As a swift action it can be switched to single-target mode; in that mode it no longer makes an area attack, deals 6d10x2 damage, and takes a -10 attack penalty against targets smaller than Huge.",
+              "summary": "Four-shot proton-torpedo launcher; standard reset after each shot and optional focused 6d10x2 mode against large targets.",
+              "repo": {
+                "present": true,
+                "id": "weapon-miniature-proton-torpedo-launcher",
+                "currentName": "Miniature Proton Torpedo Launcher",
+                "phase0NameNormalizationPending": false
+              },
+              "phase1Discrepancy": "DESCRIPTION_INCOMPLETE",
+              "phase1ContentAction": "UPDATE_CANONICAL_CONTENT",
+              "notes": [],
+              "crossPublishedSources": []
+            },
+            {
+              "canonicalName": "BlasTech 500 Riot Gun",
+              "weaponGroup": "Rifle",
+              "source": {
+                "book": "Rebellion Era Campaign Guide",
+                "descriptionPage": 50,
+                "statTablePage": 50,
+                "verifiedBy": [
+                  "user-supplied searchable TXT",
+                  "user-supplied PDF visual verification"
+                ]
+              },
+              "canonicalPlayerText": "The BlasTech 500 riot gun functions much like a blaster carbine but favors autofire. In single-shot mode it imposes a -1 penalty on ranged attack rolls; in autofire mode it grants a +2 equipment bonus on the attack roll. It uses a power pack with 50 shots.",
+              "summary": "Riot carbine favoring autofire: -1 single-shot, +2 equipment bonus to autofire, 50 shots.",
+              "repo": {
+                "present": true,
+                "id": "weapon-espo-500-riot-gun",
+                "currentName": "ESPO 500 Riot Gun",
+                "phase0NameNormalizationPending": true
+              },
+              "phase1Discrepancy": "DESCRIPTION_INCOMPLETE",
+              "phase1ContentAction": "UPDATE_CANONICAL_CONTENT",
+              "notes": [
+                "Cross-source mechanical conflict: Clone Wars p.61 states a -2 penalty in single-shot mode and does not state the Rebellion +2 autofire equipment bonus. Do not choose precedence silently."
+              ],
+              "crossPublishedSources": [
+                {
+                  "book": "Clone Wars Campaign Guide",
+                  "page": 61,
+                  "relationship": "earlier publication with conflicting special rule"
+                }
+              ]
+            },
+            {
+              "canonicalName": "SG-4 Blaster Rifle",
+              "weaponGroup": "Rifle",
+              "source": {
+                "book": "Rebellion Era Campaign Guide",
+                "descriptionPage": 50,
+                "statTablePage": 50,
+                "verifiedBy": [
+                  "user-supplied searchable TXT",
+                  "user-supplied PDF visual verification"
+                ]
+              },
+              "canonicalPlayerText": "The SG-4 is a combination weapon that fires ordinary blaster bolts out of water and miniature harpoons underwater. Using blaster mode underwater or firing a harpoon out of water halves the weapon's range. Blaster mode uses a standard 50-shot power pack; harpoon mode must be reloaded between shots as a swift action.",
+              "summary": "Amphibious combination rifle: blaster above water, harpoon underwater, with halved range when modes are used in the wrong environment.",
+              "repo": {
+                "present": true,
+                "id": "weapon-sg-4-blaster-rifle",
+                "currentName": "SG-4 Blaster Rifle",
+                "phase0NameNormalizationPending": false
+              },
+              "phase1Discrepancy": "DESCRIPTION_INCOMPLETE",
+              "phase1ContentAction": "UPDATE_CANONICAL_CONTENT",
+              "notes": [],
+              "crossPublishedSources": []
+            },
+            {
+              "canonicalName": "Siang Lance",
+              "weaponGroup": "Exotic Weapon",
+              "source": {
+                "book": "Rebellion Era Campaign Guide",
+                "descriptionPage": 50,
+                "statTablePage": 50,
+                "verifiedBy": [
+                  "user-supplied searchable TXT",
+                  "user-supplied PDF visual verification"
+                ]
+              },
+              "canonicalPlayerText": "A siang lance is an ancient sporting blaster rifle with an affixed bayonet, normally wielded one-handed. It can make attacks of opportunity: when an attack of opportunity is triggered, the wielder can choose either a ranged shot with the lance or a melee attack with its bayonet. It uses a power pack with 100 shots.",
+              "summary": "One-handed blaster/bayonet weapon that can make attacks of opportunity with either its ranged shot or bayonet.",
+              "repo": {
+                "present": true,
+                "id": "weapon-siang-lance",
+                "currentName": "Siang Lance",
+                "phase0NameNormalizationPending": false
+              },
+              "phase1Discrepancy": "DESCRIPTION_INCOMPLETE",
+              "phase1ContentAction": "UPDATE_CANONICAL_CONTENT",
+              "notes": [],
+              "crossPublishedSources": []
+            }
+          ]
         }
       ],
       "uniqueIdentityIndex": [
@@ -22348,6 +23039,24 @@
           "repoPresent": false
         },
         {
+          "identityKey": "unmapped::Axe",
+          "canonicalName": "Axe",
+          "alternateCanonicalNames": [],
+          "repoId": null,
+          "sourceClaims": [
+            {
+              "phase": "1I",
+              "book": "Rebellion Era Campaign Guide",
+              "canonicalName": "Axe",
+              "descriptionPage": 48,
+              "statTablePage": 48,
+              "phase1Discrepancy": "MISSING_RECORD"
+            }
+          ],
+          "claimCount": 1,
+          "repoPresent": false
+        },
+        {
           "identityKey": "unmapped::Bayonet",
           "canonicalName": "Bayonet",
           "alternateCanonicalNames": [],
@@ -22431,6 +23140,42 @@
               "canonicalName": "Darkstick",
               "descriptionPage": 36,
               "statTablePage": 36,
+              "phase1Discrepancy": "MISSING_RECORD"
+            }
+          ],
+          "claimCount": 1,
+          "repoPresent": false
+        },
+        {
+          "identityKey": "unmapped::Datadagger",
+          "canonicalName": "Datadagger",
+          "alternateCanonicalNames": [],
+          "repoId": null,
+          "sourceClaims": [
+            {
+              "phase": "1G",
+              "book": "Threats of the Galaxy",
+              "canonicalName": "Datadagger",
+              "descriptionPage": 13,
+              "statTablePage": null,
+              "phase1Discrepancy": "MISSING_RECORD"
+            }
+          ],
+          "claimCount": 1,
+          "repoPresent": false
+        },
+        {
+          "identityKey": "unmapped::Energy Lance",
+          "canonicalName": "Energy Lance",
+          "alternateCanonicalNames": [],
+          "repoId": null,
+          "sourceClaims": [
+            {
+              "phase": "1I",
+              "book": "Rebellion Era Campaign Guide",
+              "canonicalName": "Energy Lance",
+              "descriptionPage": 48,
+              "statTablePage": 48,
               "phase1Discrepancy": "MISSING_RECORD"
             }
           ],
@@ -22593,6 +23338,24 @@
               "canonicalName": "Power Hammer",
               "descriptionPage": 97,
               "statTablePage": 96,
+              "phase1Discrepancy": "MISSING_RECORD"
+            }
+          ],
+          "claimCount": 1,
+          "repoPresent": false
+        },
+        {
+          "identityKey": "unmapped::Power Lance",
+          "canonicalName": "Power Lance",
+          "alternateCanonicalNames": [],
+          "repoId": null,
+          "sourceClaims": [
+            {
+              "phase": "1I",
+              "book": "Rebellion Era Campaign Guide",
+              "canonicalName": "Power Lance",
+              "descriptionPage": 48,
+              "statTablePage": 48,
               "phase1Discrepancy": "MISSING_RECORD"
             }
           ],
@@ -22906,6 +23669,24 @@
           "repoPresent": true
         },
         {
+          "identityKey": "weapon-battering-ram",
+          "canonicalName": "Squib Battering Ram",
+          "alternateCanonicalNames": [],
+          "repoId": "weapon-battering-ram",
+          "sourceClaims": [
+            {
+              "phase": "1H",
+              "book": "Scum and Villainy",
+              "canonicalName": "Squib Battering Ram",
+              "descriptionPage": 52,
+              "statTablePage": 51,
+              "phase1Discrepancy": "DESCRIPTION_INCOMPLETE"
+            }
+          ],
+          "claimCount": 1,
+          "repoPresent": true
+        },
+        {
           "identityKey": "weapon-blaster-cannon",
           "canonicalName": "Blaster Cannon",
           "alternateCanonicalNames": [],
@@ -23050,6 +23831,24 @@
           "repoPresent": true
         },
         {
+          "identityKey": "weapon-concussion-grenade",
+          "canonicalName": "Concussion Grenade",
+          "alternateCanonicalNames": [],
+          "repoId": "weapon-concussion-grenade",
+          "sourceClaims": [
+            {
+              "phase": "1I",
+              "book": "Rebellion Era Campaign Guide",
+              "canonicalName": "Concussion Grenade",
+              "descriptionPage": 49,
+              "statTablePage": 50,
+              "phase1Discrepancy": "DESCRIPTION_INCOMPLETE"
+            }
+          ],
+          "claimCount": 1,
+          "repoPresent": true
+        },
+        {
           "identityKey": "weapon-cr-1-blast-cannon",
           "canonicalName": "CR-1 Blast Cannon",
           "alternateCanonicalNames": [],
@@ -23079,6 +23878,24 @@
               "canonicalName": "Darter",
               "descriptionPage": 64,
               "statTablePage": 65,
+              "phase1Discrepancy": "DESCRIPTION_INCOMPLETE"
+            }
+          ],
+          "claimCount": 1,
+          "repoPresent": true
+        },
+        {
+          "identityKey": "weapon-deck-sweeper",
+          "canonicalName": "Deck Sweeper",
+          "alternateCanonicalNames": [],
+          "repoId": "weapon-deck-sweeper",
+          "sourceClaims": [
+            {
+              "phase": "1H",
+              "book": "Scum and Villainy",
+              "canonicalName": "Deck Sweeper",
+              "descriptionPage": 50,
+              "statTablePage": 51,
               "phase1Discrepancy": "DESCRIPTION_INCOMPLETE"
             }
           ],
@@ -23266,6 +24083,24 @@
           "repoPresent": true
         },
         {
+          "identityKey": "weapon-electronet",
+          "canonicalName": "Electronet",
+          "alternateCanonicalNames": [],
+          "repoId": "weapon-electronet",
+          "sourceClaims": [
+            {
+              "phase": "1H",
+              "book": "Scum and Villainy",
+              "canonicalName": "Electronet",
+              "descriptionPage": 50,
+              "statTablePage": 51,
+              "phase1Discrepancy": "DESCRIPTION_INCOMPLETE"
+            }
+          ],
+          "claimCount": 1,
+          "repoPresent": true
+        },
+        {
           "identityKey": "weapon-electrostaff",
           "canonicalName": "Electrostaff",
           "alternateCanonicalNames": [],
@@ -23332,9 +24167,17 @@
               "descriptionPage": 61,
               "statTablePage": 61,
               "phase1Discrepancy": "DESCRIPTION_INCOMPLETE"
+            },
+            {
+              "phase": "1I",
+              "book": "Rebellion Era Campaign Guide",
+              "canonicalName": "BlasTech 500 Riot Gun",
+              "descriptionPage": 50,
+              "statTablePage": 50,
+              "phase1Discrepancy": "DESCRIPTION_INCOMPLETE"
             }
           ],
-          "claimCount": 1,
+          "claimCount": 2,
           "repoPresent": true
         },
         {
@@ -23422,9 +24265,17 @@
               "descriptionPage": 199,
               "statTablePage": 199,
               "phase1Discrepancy": "DESCRIPTION_INCOMPLETE"
+            },
+            {
+              "phase": "1I",
+              "book": "Rebellion Era Campaign Guide",
+              "canonicalName": "Flechette Launcher",
+              "descriptionPage": 49,
+              "statTablePage": 50,
+              "phase1Discrepancy": "DESCRIPTION_INCOMPLETE"
             }
           ],
-          "claimCount": 1,
+          "claimCount": 2,
           "repoPresent": true
         },
         {
@@ -23440,6 +24291,24 @@
               "descriptionPage": 128,
               "statTablePage": 127,
               "phase1Discrepancy": "DESCRIPTION_INCORRECT"
+            }
+          ],
+          "claimCount": 1,
+          "repoPresent": true
+        },
+        {
+          "identityKey": "weapon-gas-grenade",
+          "canonicalName": "Gas Grenade",
+          "alternateCanonicalNames": [],
+          "repoId": "weapon-gas-grenade",
+          "sourceClaims": [
+            {
+              "phase": "1I",
+              "book": "Rebellion Era Campaign Guide",
+              "canonicalName": "Gas Grenade",
+              "descriptionPage": 49,
+              "statTablePage": 50,
+              "phase1Discrepancy": "DESCRIPTION_INCOMPLETE"
             }
           ],
           "claimCount": 1,
@@ -23644,6 +24513,24 @@
           "repoPresent": true
         },
         {
+          "identityKey": "weapon-light-concussion-missile-launcher",
+          "canonicalName": "Light Concussion Missile Launcher",
+          "alternateCanonicalNames": [],
+          "repoId": "weapon-light-concussion-missile-launcher",
+          "sourceClaims": [
+            {
+              "phase": "1G",
+              "book": "Threats of the Galaxy",
+              "canonicalName": "Light Concussion Missile Launcher",
+              "descriptionPage": 134,
+              "statTablePage": null,
+              "phase1Discrepancy": "DESCRIPTION_INCOMPLETE"
+            }
+          ],
+          "claimCount": 1,
+          "repoPresent": true
+        },
+        {
           "identityKey": "weapon-light-repeating-blaster",
           "canonicalName": "Blaster Rifle, Light Repeating",
           "alternateCanonicalNames": [],
@@ -23674,6 +24561,42 @@
               "descriptionPage": 122,
               "statTablePage": 122,
               "phase1Discrepancy": "DESCRIPTION_INCORRECT"
+            }
+          ],
+          "claimCount": 1,
+          "repoPresent": true
+        },
+        {
+          "identityKey": "weapon-micro-grenade-launcher",
+          "canonicalName": "Micro Grenade Launcher",
+          "alternateCanonicalNames": [],
+          "repoId": "weapon-micro-grenade-launcher",
+          "sourceClaims": [
+            {
+              "phase": "1H",
+              "book": "Scum and Villainy",
+              "canonicalName": "Micro Grenade Launcher",
+              "descriptionPage": 50,
+              "statTablePage": 51,
+              "phase1Discrepancy": "DESCRIPTION_INCOMPLETE"
+            }
+          ],
+          "claimCount": 1,
+          "repoPresent": true
+        },
+        {
+          "identityKey": "weapon-miniature-proton-torpedo-launcher",
+          "canonicalName": "Miniature Proton Torpedo Launcher",
+          "alternateCanonicalNames": [],
+          "repoId": "weapon-miniature-proton-torpedo-launcher",
+          "sourceClaims": [
+            {
+              "phase": "1I",
+              "book": "Rebellion Era Campaign Guide",
+              "canonicalName": "Miniature Proton Torpedo Launcher",
+              "descriptionPage": 49,
+              "statTablePage": 50,
+              "phase1Discrepancy": "DESCRIPTION_INCOMPLETE"
             }
           ],
           "claimCount": 1,
@@ -23745,6 +24668,60 @@
               "canonicalName": "Net",
               "descriptionPage": 129,
               "statTablePage": 127,
+              "phase1Discrepancy": "DESCRIPTION_INCOMPLETE"
+            }
+          ],
+          "claimCount": 1,
+          "repoPresent": true
+        },
+        {
+          "identityKey": "weapon-neural-inhibitor",
+          "canonicalName": "Neural Inhibitor",
+          "alternateCanonicalNames": [],
+          "repoId": "weapon-neural-inhibitor",
+          "sourceClaims": [
+            {
+              "phase": "1H",
+              "book": "Scum and Villainy",
+              "canonicalName": "Neural Inhibitor",
+              "descriptionPage": 50,
+              "statTablePage": 51,
+              "phase1Discrepancy": "DESCRIPTION_INCOMPLETE"
+            }
+          ],
+          "claimCount": 1,
+          "repoPresent": true
+        },
+        {
+          "identityKey": "weapon-plx-2m-portable-missile-launcher",
+          "canonicalName": "Merr-Sonn PLX-2M Portable Missile Launcher",
+          "alternateCanonicalNames": [],
+          "repoId": "weapon-plx-2m-portable-missile-launcher",
+          "sourceClaims": [
+            {
+              "phase": "1I",
+              "book": "Rebellion Era Campaign Guide",
+              "canonicalName": "Merr-Sonn PLX-2M Portable Missile Launcher",
+              "descriptionPage": 49,
+              "statTablePage": 50,
+              "phase1Discrepancy": "DESCRIPTION_INCOMPLETE"
+            }
+          ],
+          "claimCount": 1,
+          "repoPresent": true
+        },
+        {
+          "identityKey": "weapon-pulse-rifle",
+          "canonicalName": "Pulse Rifle",
+          "alternateCanonicalNames": [],
+          "repoId": "weapon-pulse-rifle",
+          "sourceClaims": [
+            {
+              "phase": "1H",
+              "book": "Scum and Villainy",
+              "canonicalName": "Pulse Rifle",
+              "descriptionPage": 50,
+              "statTablePage": 51,
               "phase1Discrepancy": "DESCRIPTION_INCOMPLETE"
             }
           ],
@@ -23842,6 +24819,42 @@
           "repoPresent": true
         },
         {
+          "identityKey": "weapon-sg-4-blaster-rifle",
+          "canonicalName": "SG-4 Blaster Rifle",
+          "alternateCanonicalNames": [],
+          "repoId": "weapon-sg-4-blaster-rifle",
+          "sourceClaims": [
+            {
+              "phase": "1I",
+              "book": "Rebellion Era Campaign Guide",
+              "canonicalName": "SG-4 Blaster Rifle",
+              "descriptionPage": 50,
+              "statTablePage": 50,
+              "phase1Discrepancy": "DESCRIPTION_INCOMPLETE"
+            }
+          ],
+          "claimCount": 1,
+          "repoPresent": true
+        },
+        {
+          "identityKey": "weapon-siang-lance",
+          "canonicalName": "Siang Lance",
+          "alternateCanonicalNames": [],
+          "repoId": "weapon-siang-lance",
+          "sourceClaims": [
+            {
+              "phase": "1I",
+              "book": "Rebellion Era Campaign Guide",
+              "canonicalName": "Siang Lance",
+              "descriptionPage": 50,
+              "statTablePage": 50,
+              "phase1Discrepancy": "DESCRIPTION_INCOMPLETE"
+            }
+          ],
+          "claimCount": 1,
+          "repoPresent": true
+        },
+        {
           "identityKey": "weapon-sidearm-blaster-pistol",
           "canonicalName": "Blaster Pistol, Sidearm",
           "alternateCanonicalNames": [],
@@ -23854,6 +24867,24 @@
               "descriptionPage": 38,
               "statTablePage": 41,
               "phase1Discrepancy": "DESCRIPTION_INCOMPLETE"
+            }
+          ],
+          "claimCount": 1,
+          "repoPresent": true
+        },
+        {
+          "identityKey": "weapon-sith-sword",
+          "canonicalName": "Sith Sword",
+          "alternateCanonicalNames": [],
+          "repoId": "weapon-sith-sword",
+          "sourceClaims": [
+            {
+              "phase": "1G",
+              "book": "Threats of the Galaxy",
+              "canonicalName": "Sith Sword",
+              "descriptionPage": 159,
+              "statTablePage": null,
+              "phase1Discrepancy": "DESCRIPTION_INCORRECT"
             }
           ],
           "claimCount": 1,
@@ -23968,6 +24999,60 @@
           "repoPresent": true
         },
         {
+          "identityKey": "weapon-snare-rifle",
+          "canonicalName": "Snare Rifle",
+          "alternateCanonicalNames": [],
+          "repoId": "weapon-snare-rifle",
+          "sourceClaims": [
+            {
+              "phase": "1H",
+              "book": "Scum and Villainy",
+              "canonicalName": "Snare Rifle",
+              "descriptionPage": 51,
+              "statTablePage": 51,
+              "phase1Discrepancy": "DESCRIPTION_INCOMPLETE"
+            }
+          ],
+          "claimCount": 1,
+          "repoPresent": true
+        },
+        {
+          "identityKey": "weapon-sniper-blaster-rifle",
+          "canonicalName": "Blaster Rifle, Sniper",
+          "alternateCanonicalNames": [],
+          "repoId": "weapon-sniper-blaster-rifle",
+          "sourceClaims": [
+            {
+              "phase": "1H",
+              "book": "Scum and Villainy",
+              "canonicalName": "Blaster Rifle, Sniper",
+              "descriptionPage": 50,
+              "statTablePage": 51,
+              "phase1Discrepancy": "DESCRIPTION_INCOMPLETE"
+            }
+          ],
+          "claimCount": 1,
+          "repoPresent": true
+        },
+        {
+          "identityKey": "weapon-sonic-stunner",
+          "canonicalName": "Sonic Stunner",
+          "alternateCanonicalNames": [],
+          "repoId": "weapon-sonic-stunner",
+          "sourceClaims": [
+            {
+              "phase": "1G",
+              "book": "Threats of the Galaxy",
+              "canonicalName": "Sonic Stunner",
+              "descriptionPage": 146,
+              "statTablePage": null,
+              "phase1Discrepancy": "DESCRIPTION_INCOMPLETE"
+            }
+          ],
+          "claimCount": 1,
+          "repoPresent": true
+        },
+        {
           "identityKey": "weapon-sporting-blaster-pistol",
           "canonicalName": "Blaster Pistol, Sporting",
           "alternateCanonicalNames": [],
@@ -24058,6 +25143,24 @@
           "repoPresent": true
         },
         {
+          "identityKey": "weapon-subrepeating-blaster",
+          "canonicalName": "Subrepeating Blaster",
+          "alternateCanonicalNames": [],
+          "repoId": "weapon-subrepeating-blaster",
+          "sourceClaims": [
+            {
+              "phase": "1H",
+              "book": "Scum and Villainy",
+              "canonicalName": "Subrepeating Blaster",
+              "descriptionPage": 49,
+              "statTablePage": 51,
+              "phase1Discrepancy": "DESCRIPTION_INCOMPLETE"
+            }
+          ],
+          "claimCount": 1,
+          "repoPresent": true
+        },
+        {
           "identityKey": "weapon-tactical-tractor-beam",
           "canonicalName": "Tactical Tractor Beam",
           "alternateCanonicalNames": [],
@@ -24105,6 +25208,24 @@
               "canonicalName": "Thermal Detonator",
               "descriptionPage": 129,
               "statTablePage": 127,
+              "phase1Discrepancy": "DESCRIPTION_INCORRECT"
+            }
+          ],
+          "claimCount": 1,
+          "repoPresent": true
+        },
+        {
+          "identityKey": "weapon-tusken-gaderffii-stick",
+          "canonicalName": "Gaderffii",
+          "alternateCanonicalNames": [],
+          "repoId": "weapon-tusken-gaderffii-stick",
+          "sourceClaims": [
+            {
+              "phase": "1I",
+              "book": "Rebellion Era Campaign Guide",
+              "canonicalName": "Gaderffii",
+              "descriptionPage": 48,
+              "statTablePage": 48,
               "phase1Discrepancy": "DESCRIPTION_INCORRECT"
             }
           ],
@@ -24290,6 +25411,43 @@
             }
           ],
           "ruling": "ONE_PRODUCTION_IDENTITY_MULTIPLE_SOURCE_CLAIMS"
+        },
+        {
+          "canonicalIdentity": "Flechette Launcher",
+          "repoId": "weapon-flechette-launcher",
+          "sources": [
+            {
+              "book": "Force Unleashed Campaign Guide",
+              "phase": "1C",
+              "page": 199
+            },
+            {
+              "book": "Rebellion Era Campaign Guide",
+              "phase": "1I",
+              "page": 49
+            }
+          ],
+          "ruling": "ONE_PRODUCTION_IDENTITY_MULTIPLE_CONSISTENT_SOURCE_CLAIMS"
+        },
+        {
+          "canonicalIdentity": "BlasTech 500 Riot Gun",
+          "repoId": "weapon-espo-500-riot-gun",
+          "sources": [
+            {
+              "book": "Clone Wars Campaign Guide",
+              "phase": "1B",
+              "page": 61,
+              "rule": "-2 attack penalty in single-shot mode"
+            },
+            {
+              "book": "Rebellion Era Campaign Guide",
+              "phase": "1I",
+              "page": 50,
+              "rule": "-1 single-shot penalty and +2 equipment bonus to autofire attacks"
+            }
+          ],
+          "ruling": "ONE_PRODUCTION_IDENTITY_CROSS_SOURCE_MECHANICAL_CONFLICT",
+          "productionAction": "REVIEW_PRECEDENCE_BEFORE_CONTENT_MUTATION"
         }
       ],
       "rollingExecutionGuardrails": [
@@ -24300,20 +25458,18 @@
         "Do not preserve repo mechanics that conflict with source-certified canonicalPlayerText.",
         "Do not convert area-attack mechanics into invented saving throws.",
         "Keep stun and ion mechanics distinct.",
-        "Preserve Phase 0 identity/name-normalization rulings."
+        "Preserve Phase 0 identity/name-normalization rulings.",
+        "Hold BlasTech 500 Riot Gun production content until its cross-source conflict (Clone Wars p. 61 vs Rebellion Era p. 50) is adjudicated."
       ],
       "repoBaselineAtCertification": "edf8d8e2437a4e7a300487b72e50cd79eafb8708",
       "foldedBy": {
         "executionStatus": "AUTHORITY_ONLY",
         "productionMutations": "none — no weapon records created, no descriptions replaced, no numeric stats changed",
-        "claudeValidation": "123 source claims over 121 unique identities (Guard Shoto, Lightsaber Pike cross-published 1C/1F, one production identity each); every claim maps to a Phase 0-1 canonical weapon whose sources include the claiming book; repo.present/id/currentName agree with Phase 0 disposition and packs/weapons.db; 1A records byte-identical to the previously folded Phase 1A authority",
+        "claudeValidation": "148 source claims over 144 unique identities (cross-published: Guard Shoto, Lightsaber Pike, Flechette Launcher, BlasTech 500 Riot Gun); every claim maps to a Phase 0-1 canonical weapon whose sources include the claiming book; repo.present/id/currentName agree with Phase 0 disposition and packs/weapons.db; 1A-1F records byte-identical to the previously folded authority",
         "note": "canonicalPlayerText incidentally contains printed numbers (costs, dice, DCs, ranges); numeric stat fields remain uncertified until the stats phase.",
         "remainingWeaponBooks": [
           "Knights of the Old Republic Campaign Guide",
           "Legacy Era Campaign Guide",
-          "Rebellion Era Campaign Guide",
-          "Scum and Villainy",
-          "Threats of the Galaxy",
           "Unknown Regions"
         ]
       },
@@ -24326,11 +25482,19 @@
         "The 13 missing records are content/provenance certified, but production creation still requires the agreed weapon schema/stat fields to be certified.",
         "Preserve Phase 0 identity decisions; where phase0NameNormalizationPending is true, use the canonical published display name when that rename tranche is authorized.",
         "Do not treat derived summary text as canonical rules text."
+      ],
+      "openContentAdjudications": [
+        {
+          "subject": "BlasTech 500 Riot Gun",
+          "type": "CROSS_SOURCE_MECHANICAL_CONFLICT",
+          "details": "Clone Wars Campaign Guide p.61 and Rebellion Era Campaign Guide p.50 publish different special modifiers for the same weapon identity.",
+          "requiredDecision": "Establish source precedence/errata policy before production description/mechanics are changed."
+        }
       ]
     }
   },
   "pendingPhases": [
-    "1 Provenance and canonical content certification — weapons 1A-1F DONE (authority-only); next weapon books: KOTOR, Legacy, Rebellion, Scum and Villainy, Threats of the Galaxy, Unknown Regions; then armor, general equipment families, cybernetics/upgrades/templates, lightsaber components, droid systems",
+    "1 Provenance and canonical content certification — weapons 1A-1I DONE (authority-only); next weapon books: KOTOR, Legacy Era, Unknown Regions; then armor, general equipment families, cybernetics/upgrades/templates, lightsaber components, droid systems",
     "Gated cleanup tranche (0-3D migrations, 0-3E renames/merge, 0-3F template migration, 0-3G weapons.db stragglers, 0-3H droid migration, weapon/equipment REMOVE dependents)",
     "Vehicle/starship item domain census (separate domain)",
     "2 Descriptions",

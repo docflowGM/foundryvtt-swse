@@ -1333,9 +1333,9 @@ Phase 1 — Canonical provenance and descriptions. Order: Weapons; Armor; Genera
 Phase 1 steps per family: (1) exact sourcebook and page; (2) canonical full player-readable rules text; (3) short derived summary; (4) printed prerequisites and restrictions; (5) repo discrepancy classification; (6) only after certification, authorize production creation/update of Phase 0 ADD/EDIT records.
 
 
-## Phase 1 — Weapons provenance and canonical content (1A–1F)
+## Phase 1 — Weapons provenance and canonical content (1A–1I)
 
-Rolling weapons content authority; later book tranches append here. Status: **ROLLING_PHASE_1_WEAPONS_AUTHORITY_THROUGH_1F** (authority-only; no pack, stat or runtime change). 123 source-book claims map to 121 unique production identities (Guard Shoto and Lightsaber Pike are cross-published Force Unleashed p. 96/199 and Jedi Academy p. 50/53 → one production identity each). 93 claims have a repo record, 30 are missing; 24 descriptions materially incorrect, 69 incomplete. Full text/summaries: JSON `phases["1-weapons-content"].books[].records`; per-identity roll-up: `.uniqueIdentityIndex`.
+Rolling weapons content authority; later book tranches append here. Status: **ROLLING_PHASE_1_WEAPONS_AUTHORITY_THROUGH_1I** (authority-only; no pack, stat or runtime change). 148 source-book claims map to 144 unique production identities. 114 claims have a repo record, 34 are missing; 26 descriptions are materially incorrect, 88 incomplete. Full text/summaries: JSON `phases["1-weapons-content"].books[].records`; per-identity roll-up: `.uniqueIdentityIndex`.
 
 | Phase | Book | Claims | Present | Missing | Incorrect | Incomplete |
 |---|---|--:|--:|--:|--:|--:|
@@ -1345,8 +1345,24 @@ Rolling weapons content authority; later book tranches append here. Status: **RO
 | 1D | Galaxy at War | 21 | 14 | 7 | 1 | 13 |
 | 1E | Galaxy of Intrigue | 4 | 4 | 0 | 0 | 4 |
 | 1F | Jedi Academy Training Manual | 16 | 14 | 2 | 5 | 9 |
+| 1G | Threats of the Galaxy | 4 | 3 | 1 | 1 | 2 |
+| 1H | Scum and Villainy | 9 | 9 | 0 | 0 | 9 |
+| 1I | Rebellion Era Campaign Guide | 12 | 9 | 3 | 1 | 8 |
 
-Remaining weapon books: KOTOR, Legacy, Rebellion, Scum and Villainy, Threats of the Galaxy, Unknown Regions.
+Remaining weapon books: Knights of the Old Republic Campaign Guide (33 claims), Legacy Era Campaign Guide (14), Unknown Regions (14).
+
+### Cross-published identities
+
+| Identity | Repo id | Sources | Ruling |
+|---|---|---|---|
+| Guard Shoto | `lightsaber-chassis-guard-shoto` | Force Unleashed Campaign Guide p. 96; Jedi Academy Training Manual p. 50 | ONE_PRODUCTION_IDENTITY_MULTIPLE_SOURCE_CLAIMS |
+| Lightsaber Pike | `lightsaber-chassis-pike` | Force Unleashed Campaign Guide p. 199; Jedi Academy Training Manual p. 53 | ONE_PRODUCTION_IDENTITY_MULTIPLE_SOURCE_CLAIMS |
+| Flechette Launcher | `weapon-flechette-launcher` | Force Unleashed Campaign Guide p. 199; Rebellion Era Campaign Guide p. 49 | ONE_PRODUCTION_IDENTITY_MULTIPLE_CONSISTENT_SOURCE_CLAIMS |
+| BlasTech 500 Riot Gun | `weapon-espo-500-riot-gun` | Clone Wars Campaign Guide p. 61; Rebellion Era Campaign Guide p. 50 | ONE_PRODUCTION_IDENTITY_CROSS_SOURCE_MECHANICAL_CONFLICT |
+
+### Open cross-source adjudication: BlasTech 500 Riot Gun
+
+One production identity (`weapon-espo-500-riot-gun`), conflicting published mechanics: Clone Wars Campaign Guide p. 61 gives a -2 penalty in single-shot mode; Rebellion Era Campaign Guide p. 50 gives -1 single-shot and a +2 equipment bonus to autofire attacks. Needs an owner source-precedence/errata ruling before any production description or mechanics change; do not pick one silently. (The Flechette Launcher is also cross-published, Force Unleashed p. 199 / Rebellion Era p. 49, with consistent rules.)
 
 ### 1A — Core Rulebook
 
@@ -1510,7 +1526,7 @@ Retrosaber (1F, p. 50) has no stat-table page: the Jedi Academy Training Manual 
 | Guard Shoto | Lightsaber | 50 | 52 | `lightsaber-chassis-guard-shoto` | DESCRIPTION_INCOMPLETE |  |
 | Lightfoil, Archaic | Lightsaber | 50 | 52 | `lightsaber-chassis-archaic-lightfoil` | DESCRIPTION_INCOMPLETE | yes (Archaic Lightfoil) |
 | Lightfoil, Modern | Lightsaber | 50 | 52 | `lightsaber-chassis-modern-lightfoil` | DESCRIPTION_INCORRECT | yes (Modern Lightfoil) |
-| Retrosaber | Lightsaber | 50 | None | `lightsaber-chassis-retrosaber` | DESCRIPTION_INCOMPLETE |  |
+| Retrosaber | Lightsaber | 50 |  | `lightsaber-chassis-retrosaber` | DESCRIPTION_INCOMPLETE |  |
 | Lightsaber, Archaic | Lightsaber | 51 | 52 | `lightsaber-chassis-archaic-lightsaber` | DESCRIPTION_INCOMPLETE | yes (Archaic Lightsaber) |
 | Lightsaber, Dual-Phase | Lightsaber | 51 | 52 | `lightsaber-chassis-dual-phase` | DESCRIPTION_INCOMPLETE | yes (Dual-Phase Lightsaber) |
 | Dueling Lightsaber | Lightsaber | 52 | 52 | `lightsaber-chassis-dueling` | DESCRIPTION_INCOMPLETE |  |
@@ -1524,6 +1540,50 @@ Retrosaber (1F, p. 50) has no stat-table page: the Jedi Academy Training Manual 
 | Discblade | Exotic Weapon | 61 | 61 | `weapon-discblade` | DESCRIPTION_INCORRECT |  |
 | R-9 Flash Canister | Simple Weapon | 61 | 61 | `weapon-flash-canister` | DESCRIPTION_INCORRECT | yes (Flash Canister) |
 
+### 1G — Threats of the Galaxy
+
+| Weapon | Group | Desc p. | Table p. | Repo | Discrepancy | Rename pending |
+|---|---|---|---|---|---|---|
+| Datadagger | Simple Weapon | 13 |  | — | MISSING_RECORD |  |
+| Light Concussion Missile Launcher | Heavy Weapon | 134 |  | `weapon-light-concussion-missile-launcher` | DESCRIPTION_INCOMPLETE |  |
+| Sonic Stunner | Pistol | 146 |  | `weapon-sonic-stunner` | DESCRIPTION_INCOMPLETE |  |
+| Sith Sword | Simple Weapon | 159 |  | `weapon-sith-sword` | DESCRIPTION_INCORRECT |  |
+
+### 1H — Scum and Villainy
+
+| Weapon | Group | Desc p. | Table p. | Repo | Discrepancy | Rename pending |
+|---|---|---|---|---|---|---|
+| Subrepeating Blaster | Pistol | 49 | 51 | `weapon-subrepeating-blaster` | DESCRIPTION_INCOMPLETE |  |
+| Blaster Rifle, Sniper | Rifle | 50 | 51 | `weapon-sniper-blaster-rifle` | DESCRIPTION_INCOMPLETE | yes (Sniper Blaster Rifle) |
+| Deck Sweeper | Exotic Weapon | 50 | 51 | `weapon-deck-sweeper` | DESCRIPTION_INCOMPLETE |  |
+| Electronet | Heavy Weapon (Ammunition) | 50 | 51 | `weapon-electronet` | DESCRIPTION_INCOMPLETE |  |
+| Micro Grenade Launcher | Rifle | 50 | 51 | `weapon-micro-grenade-launcher` | DESCRIPTION_INCOMPLETE |  |
+| Neural Inhibitor | Exotic Weapon | 50 | 51 | `weapon-neural-inhibitor` | DESCRIPTION_INCOMPLETE |  |
+| Pulse Rifle | Exotic Weapon | 50 | 51 | `weapon-pulse-rifle` | DESCRIPTION_INCOMPLETE |  |
+| Snare Rifle | Rifle | 51 | 51 | `weapon-snare-rifle` | DESCRIPTION_INCOMPLETE |  |
+| Squib Battering Ram | Simple Weapon | 52 | 51 | `weapon-battering-ram` | DESCRIPTION_INCOMPLETE | yes (Battering Ram) |
+
+### 1I — Rebellion Era Campaign Guide
+
+| Weapon | Group | Desc p. | Table p. | Repo | Discrepancy | Rename pending |
+|---|---|---|---|---|---|---|
+| Axe | Simple Weapon | 48 | 48 | — | MISSING_RECORD |  |
+| Energy Lance | Advanced Melee Weapon | 48 | 48 | — | MISSING_RECORD |  |
+| Power Lance | Advanced Melee Weapon | 48 | 48 | — | MISSING_RECORD |  |
+| Gaderffii | Simple Weapon | 48 | 48 | `weapon-tusken-gaderffii-stick` | DESCRIPTION_INCORRECT | yes (Tusken Gaderffii Stick) |
+| Concussion Grenade | Simple Weapon | 49 | 50 | `weapon-concussion-grenade` | DESCRIPTION_INCOMPLETE |  |
+| Flechette Launcher | Rifle | 49 | 50 | `weapon-flechette-launcher` | DESCRIPTION_INCOMPLETE |  |
+| Gas Grenade | Simple Weapon | 49 | 50 | `weapon-gas-grenade` | DESCRIPTION_INCOMPLETE |  |
+| Merr-Sonn PLX-2M Portable Missile Launcher | Heavy Weapon | 49 | 50 | `weapon-plx-2m-portable-missile-launcher` | DESCRIPTION_INCOMPLETE | yes (PLX-2M Portable Missile Launcher) |
+| Miniature Proton Torpedo Launcher | Heavy Weapon | 49 | 50 | `weapon-miniature-proton-torpedo-launcher` | DESCRIPTION_INCOMPLETE |  |
+| BlasTech 500 Riot Gun | Rifle | 50 | 50 | `weapon-espo-500-riot-gun` | DESCRIPTION_INCOMPLETE | yes (ESPO 500 Riot Gun) |
+| SG-4 Blaster Rifle | Rifle | 50 | 50 | `weapon-sg-4-blaster-rifle` | DESCRIPTION_INCOMPLETE |  |
+| Siang Lance | Exotic Weapon | 50 | 50 | `weapon-siang-lance` | DESCRIPTION_INCOMPLETE |  |
+
+Retrosaber (1F, p. 50) has no stat-table page: the Jedi Academy Training Manual defines it in prose only (base DC 25, 28 damage, swift-action 2d10 power dial-up), so its stat values need prose-sourced handling in the stats phase.
+
+Threats of the Galaxy (1G) weapons (Datadagger p. 13, Light Concussion Missile Launcher p. 134, Sonic Stunner p. 146, Sith Sword p. 159) have no stat-table page: the book prints them in adversary/feature text, so the stats phase must source their numbers from that prose.
+
 ### Rolling guardrails
 
 - Append later book tranches without deleting earlier certified source claims.
@@ -1534,10 +1594,11 @@ Retrosaber (1F, p. 50) has no stat-table page: the Jedi Academy Training Manual 
 - Do not convert area-attack mechanics into invented saving throws.
 - Keep stun and ion mechanics distinct.
 - Preserve Phase 0 identity/name-normalization rulings.
+- Hold BlasTech 500 Riot Gun production content until its cross-source conflict (Clone Wars p. 61 vs Rebellion Era p. 50) is adjudicated.
 
 ## Pending phases
 
-- 1 Provenance and canonical content certification — weapons 1A-1F DONE (authority-only); next weapon books: KOTOR, Legacy, Rebellion, Scum and Villainy, Threats of the Galaxy, Unknown Regions; then armor, general equipment families, cybernetics/upgrades/templates, lightsaber components, droid systems
+- 1 Provenance and canonical content certification — weapons 1A-1I DONE (authority-only); next weapon books: KOTOR, Legacy Era, Unknown Regions; then armor, general equipment families, cybernetics/upgrades/templates, lightsaber components, droid systems
 
 - Gated cleanup tranche (0-3D migrations, 0-3E renames/merge, 0-3F template migration, 0-3G weapons.db stragglers, 0-3H droid migration, weapon/equipment REMOVE dependents)
 
