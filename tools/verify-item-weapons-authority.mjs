@@ -1343,6 +1343,8 @@ if (p3d && typeof p3d === 'object') {
   if (F.productionMutationAuthorized !== false || F.authorityOnly !== true || F.identityKeysUnchangedThrough3CAndFreeze !== true) fail('3D authority-only / mutation flags');
   const g = F.combatGlovesVisualCheck?.status;
   const wantStatus = g === 'CONFIRMED_WEARER_SIZE' ? 'WEAPON_PHASE_3D_GLOBAL_AUTHORITY_FROZEN' : 'WEAPON_PHASE_3D_VERIFIED_FREEZE_PENDING_COMBAT_GLOVES_VISUAL_CONFIRMATION';
+  if (g === 'CONFIRMED_WEARER_SIZE') { const ev = F.combatGlovesVisualCheck.evidence; if (!ev || ev.source !== 'Core Rulebook' || ev.printedPage !== 123 || ev.section !== 'UNARMED' || !same(ev.rows.map((r) => [r.heading, r.costCredits, r.weightKg]), [['Unarmed, Small character', 150, 0.4], ['Unarmed, Medium character', 250, 0.5]])) fail('3D Combat Gloves confirmation must record the printed p.123 UNARMED wearer-size rows'); }
+  if (F.status === 'WEAPON_PHASE_3D_GLOBAL_AUTHORITY_FROZEN' && g !== 'CONFIRMED_WEARER_SIZE') fail('3D FROZEN is only valid when the Combat Gloves visual check is CONFIRMED_WEARER_SIZE');
   if (F.status !== wantStatus || p3d.status !== wantStatus) fail(`3D freeze status must be ${wantStatus} for the Combat Gloves check state ${g}`);
   if (p3.productionMutationAuthorized !== false || p3d.productionMutationAuthorized !== false) fail('3D rolling authority must keep production mutation unauthorized');
   if (p3.subphases['3B'].status !== 'WEAPON_PHASE_3B_203_IDENTITY_CANONICAL_AUTHORITY_CERTIFIED' || p3.subphases['3C'].status !== 'WEAPON_PHASE_3C_PRODUCTION_DISPOSITION_LEDGER_CERTIFIED' || p3.subphases['3A'].status !== 'PHASE_3A_COMPLETE_RESOLVED') fail('3D rolling authority must carry 3A/3B/3C certified statuses');

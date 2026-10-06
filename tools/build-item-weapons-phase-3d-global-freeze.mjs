@@ -31,17 +31,23 @@ export const PENDING = 'WEAPON_PHASE_3D_VERIFIED_FREEZE_PENDING_COMBAT_GLOVES_VI
 // Planner flag: are the Core Table 8-3 Combat Gloves rows (150 cr / 0.4 kg and 250 cr / 0.5 kg) keyed to Small/Medium
 // WEARER size (current representation) or to WEAPON size headings? Only CONFIRMED_WEARER_SIZE may freeze.
 export const COMBAT_GLOVES_VISUAL_CHECK = {
-  status: 'UNVERIFIED_PRIMARY_SOURCE_PAGE_NOT_AVAILABLE',
+  status: 'CONFIRMED_WEARER_SIZE',
   allowedStatuses: ['CONFIRMED_WEARER_SIZE', 'UNVERIFIED_PRIMARY_SOURCE_PAGE_NOT_AVAILABLE'],
   contradictedBehaviour: 'Stop and back-propagate the smallest correction Phase 2A -> 3B -> 3C (do not freeze).',
   currentRepresentation: 'variantsByWearerSize: Small 150 cr / 0.4 kg, Medium 250 cr / 0.5 kg (sizeRule two_sizes_smaller_than_wearer)',
-  evidenceExamined: [
-    'reference/sourcebooks/Core Rulebook_djvu.txt: Table 8-3 simple-weapons rows "150 +1 - 0.4 kg Bludgeoning -" and "250 +1 - 0.5 kg Bludgeoning -" survive OCR, but the entire name/size label column of the table is missing, so the row headings cannot be read.',
-    'Core description text (p.121): combat gloves "are two sizes smaller than their wearer (for example, a pair of combat gloves designed for a Human are Tiny)".',
-    'No Core Rulebook PDF or page image exists in the repository or the session sandbox; the earlier Phase 1/2A "PDF visual table verification" note was recorded in a prior session and cannot be re-performed here.',
-  ],
-  action: 'Provide Core Rulebook p.123 (Table 8-3, Simple Weapons) as a page image or PDF; if its two glove rows are labelled by wearer size, set status to CONFIRMED_WEARER_SIZE and rebuild; if labelled by weapon size, apply the Phase 2A -> 3B -> 3C correction instead.',
-  shockboxingGloves: 'Not reopened: planner accepted variantsByWearerSize.',
+  evidence: {
+    source: 'Core Rulebook',
+    printedPage: 123,
+    table: 'Table 8-3: Melee Weapons Continued',
+    section: 'UNARMED',
+    rows: [
+      { heading: 'Unarmed, Small character', item: 'Combat gloves', costCredits: 150, damage: '+1', weightKg: 0.4 },
+      { heading: 'Unarmed, Medium character', item: 'Combat gloves', costCredits: 250, damage: '+1', weightKg: 0.5 },
+    ],
+    verification: 'Visual primary-source verification supplied by the planner.',
+    ruling: 'Rows are keyed to character/wearer size, not weapon-size headings; the p.121 Human -> Tiny example is consistent. variantsByWearerSize and sizeRule two_sizes_smaller_than_wearer are correct; no Phase 2A/3B/3C correction is required.',
+  },
+  shockboxingGloves: 'Unchanged: wearer-size interpretation previously confirmed.',
 };
 
 export function buildPhase3D() {
@@ -267,9 +273,11 @@ Traceability: each of the ${counts.sourceClaims} claims is joined Phase 1 text -
 
 Status: **${COMBAT_GLOVES_VISUAL_CHECK.status}**.
 
-${COMBAT_GLOVES_VISUAL_CHECK.evidenceExamined.map((e) => `- ${e}`).join('\n')}
+Evidence: ${COMBAT_GLOVES_VISUAL_CHECK.evidence.source} printed p.${COMBAT_GLOVES_VISUAL_CHECK.evidence.printedPage}, ${COMBAT_GLOVES_VISUAL_CHECK.evidence.table}, section ${COMBAT_GLOVES_VISUAL_CHECK.evidence.section}:
 
-Current representation: ${COMBAT_GLOVES_VISUAL_CHECK.currentRepresentation}. The check is **not contradicted**, but it also cannot be confirmed from the sources available here, so the freeze is not certified until it is. ${COMBAT_GLOVES_VISUAL_CHECK.action} Shockboxing Gloves is not reopened.
+${COMBAT_GLOVES_VISUAL_CHECK.evidence.rows.map((r) => `- ${r.heading}: ${r.item} — ${r.costCredits} cr / ${r.damage} / ${r.weightKg} kg`).join('\n')}
+
+${COMBAT_GLOVES_VISUAL_CHECK.evidence.verification} ${COMBAT_GLOVES_VISUAL_CHECK.evidence.ruling} Current representation: ${COMBAT_GLOVES_VISUAL_CHECK.currentRepresentation}. Shockboxing Gloves: ${COMBAT_GLOVES_VISUAL_CHECK.shockboxingGloves}
 
 ## Cleanup gates (all blocked pending migration, none executed)
 

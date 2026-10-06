@@ -1,6 +1,6 @@
 # Phase 3D — Weapon Canonical Authority: Global Verification and Freeze
 
-Status: **WEAPON_PHASE_3D_VERIFIED_FREEZE_PENDING_COMBAT_GLOVES_VISUAL_CONFIRMATION**. Authority-only. Production mutation is **not** authorized. `packs/weapons.db` and `template.json` are unchanged (SHA-256 `70bd1216ef51…` / `3ba287ec84f8…`).
+Status: **WEAPON_PHASE_3D_GLOBAL_AUTHORITY_FROZEN**. Authority-only. Production mutation is **not** authorized. `packs/weapons.db` and `template.json` are unchanged (SHA-256 `70bd1216ef51…` / `3ba287ec84f8…`).
 
 Built by `tools/build-item-weapons-phase-3d-global-freeze.mjs` (`--check` proves byte-stability). Every figure below is recomputed from the committed Phase 1/2/3A/3B/3C artifacts and the live production pack; the builder throws on drift.
 
@@ -23,13 +23,14 @@ Traceability: each of the 209 claims is joined Phase 1 text -> Phase 2 mechanics
 
 ## Combat Gloves Table 8-3 visual check
 
-Status: **UNVERIFIED_PRIMARY_SOURCE_PAGE_NOT_AVAILABLE**.
+Status: **CONFIRMED_WEARER_SIZE**.
 
-- reference/sourcebooks/Core Rulebook_djvu.txt: Table 8-3 simple-weapons rows "150 +1 - 0.4 kg Bludgeoning -" and "250 +1 - 0.5 kg Bludgeoning -" survive OCR, but the entire name/size label column of the table is missing, so the row headings cannot be read.
-- Core description text (p.121): combat gloves "are two sizes smaller than their wearer (for example, a pair of combat gloves designed for a Human are Tiny)".
-- No Core Rulebook PDF or page image exists in the repository or the session sandbox; the earlier Phase 1/2A "PDF visual table verification" note was recorded in a prior session and cannot be re-performed here.
+Evidence: Core Rulebook printed p.123, Table 8-3: Melee Weapons Continued, section UNARMED:
 
-Current representation: variantsByWearerSize: Small 150 cr / 0.4 kg, Medium 250 cr / 0.5 kg (sizeRule two_sizes_smaller_than_wearer). The check is **not contradicted**, but it also cannot be confirmed from the sources available here, so the freeze is not certified until it is. Provide Core Rulebook p.123 (Table 8-3, Simple Weapons) as a page image or PDF; if its two glove rows are labelled by wearer size, set status to CONFIRMED_WEARER_SIZE and rebuild; if labelled by weapon size, apply the Phase 2A -> 3B -> 3C correction instead. Shockboxing Gloves is not reopened.
+- Unarmed, Small character: Combat gloves — 150 cr / +1 / 0.4 kg
+- Unarmed, Medium character: Combat gloves — 250 cr / +1 / 0.5 kg
+
+Visual primary-source verification supplied by the planner. Rows are keyed to character/wearer size, not weapon-size headings; the p.121 Human -> Tiny example is consistent. variantsByWearerSize and sizeRule two_sizes_smaller_than_wearer are correct; no Phase 2A/3B/3C correction is required. Current representation: variantsByWearerSize: Small 150 cr / 0.4 kg, Medium 250 cr / 0.5 kg (sizeRule two_sizes_smaller_than_wearer). Shockboxing Gloves: Unchanged: wearer-size interpretation previously confirmed.
 
 ## Cleanup gates (all blocked pending migration, none executed)
 
