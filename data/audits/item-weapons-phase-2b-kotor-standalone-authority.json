@@ -159,7 +159,8 @@
           "kind": "power",
           "source": "energy cell",
           "requiredUnits": 1,
-          "capacityShots": null
+          "capacityShots": null,
+          "consumption": null
         },
         "operatingModes": {
           "default": "normal",
@@ -175,8 +176,14 @@
         "attackProfiles": [
           {
             "id": "primary",
-            "branch": "melee",
-            "baseDamage": {
+            "label": "Primary",
+            "kind": "attack",
+            "schemaFamily": {
+              "branch": "melee",
+              "subcategory": "advanced",
+              "proficiency": "advanced-melee"
+            },
+            "damage": {
               "mode": "dice",
               "diceCount": 2,
               "dieSize": 6,
@@ -191,6 +198,14 @@
               ],
               "qualifiers": []
             },
+            "stun": {
+              "capability": "none",
+              "hasStunSetting": false,
+              "damageMode": "none",
+              "damage": null,
+              "rangeRule": null
+            },
+            "rateOfFire": null,
             "range": {
               "mode": "melee",
               "profileId": null,
@@ -201,9 +216,39 @@
                 "shortPenaltyOverride": null,
                 "longAllowed": null
               }
-            }
+            },
+            "qualities": {
+              "accurate": false,
+              "inaccurate": false,
+              "arc": false,
+              "ignoresDR": false,
+              "areaEffect": false,
+              "autofireOnly": false,
+              "doubleWeapon": false,
+              "thrown": false,
+              "reach": false
+            },
+            "attackResolution": {
+              "mode": "standard",
+              "defense": "reflex",
+              "ignoredDefenseComponents": [],
+              "onMiss": "none"
+            },
+            "area": {
+              "enabled": false,
+              "shape": null,
+              "radiusSquares": null,
+              "lengthSquares": null,
+              "widthAtEndSquares": null,
+              "widthSquares": null,
+              "heightSquares": null,
+              "notes": null
+            },
+            "resourceConsumption": null,
+            "notes": []
           }
-        ]
+        ],
+        "modeProfiles": []
       },
       "qualities": {
         "accurate": false,
@@ -243,7 +288,13 @@
           "No production record exists for this canonical identity."
         ]
       },
-      "laterProductionAction": "CREATE_AFTER_PHASE_2_WEAPON_AUTHORITY_COMPLETE"
+      "laterProductionAction": "CREATE_AFTER_PHASE_2_WEAPON_AUTHORITY_COMPLETE",
+      "conditionalDamageProfiles": [],
+      "qualityParameters": {
+        "accurate": null,
+        "inaccurate": null,
+        "arc": null
+      }
     },
     {
       "canonicalName": "Double Vibroblade",
@@ -322,7 +373,8 @@
           "kind": "power",
           "source": "energy cell",
           "requiredUnits": 2,
-          "capacityShots": null
+          "capacityShots": null,
+          "consumption": null
         },
         "operatingModes": {
           "default": "normal",
@@ -338,8 +390,14 @@
         "attackProfiles": [
           {
             "id": "end1",
-            "branch": "melee",
-            "baseDamage": {
+            "label": "End 1",
+            "kind": "attack",
+            "schemaFamily": {
+              "branch": "melee",
+              "subcategory": "advanced",
+              "proficiency": "advanced-melee"
+            },
+            "damage": {
               "mode": "dice",
               "diceCount": 2,
               "dieSize": 6,
@@ -353,6 +411,14 @@
               ],
               "qualifiers": []
             },
+            "stun": {
+              "capability": "none",
+              "hasStunSetting": false,
+              "damageMode": "none",
+              "damage": null,
+              "rangeRule": null
+            },
+            "rateOfFire": null,
             "range": {
               "mode": "melee",
               "profileId": null,
@@ -363,12 +429,47 @@
                 "shortPenaltyOverride": null,
                 "longAllowed": null
               }
-            }
+            },
+            "qualities": {
+              "accurate": false,
+              "inaccurate": false,
+              "arc": false,
+              "ignoresDR": false,
+              "areaEffect": false,
+              "autofireOnly": false,
+              "doubleWeapon": true,
+              "thrown": false,
+              "reach": false
+            },
+            "attackResolution": {
+              "mode": "standard",
+              "defense": "reflex",
+              "ignoredDefenseComponents": [],
+              "onMiss": "none"
+            },
+            "area": {
+              "enabled": false,
+              "shape": null,
+              "radiusSquares": null,
+              "lengthSquares": null,
+              "widthAtEndSquares": null,
+              "widthSquares": null,
+              "heightSquares": null,
+              "notes": null
+            },
+            "resourceConsumption": null,
+            "notes": []
           },
           {
             "id": "end2",
-            "branch": "melee",
-            "baseDamage": {
+            "label": "End 2",
+            "kind": "attack",
+            "schemaFamily": {
+              "branch": "melee",
+              "subcategory": "advanced",
+              "proficiency": "advanced-melee"
+            },
+            "damage": {
               "mode": "dice",
               "diceCount": 2,
               "dieSize": 6,
@@ -382,6 +483,14 @@
               ],
               "qualifiers": []
             },
+            "stun": {
+              "capability": "none",
+              "hasStunSetting": false,
+              "damageMode": "none",
+              "damage": null,
+              "rangeRule": null
+            },
+            "rateOfFire": null,
             "range": {
               "mode": "melee",
               "profileId": null,
@@ -392,9 +501,39 @@
                 "shortPenaltyOverride": null,
                 "longAllowed": null
               }
-            }
+            },
+            "qualities": {
+              "accurate": false,
+              "inaccurate": false,
+              "arc": false,
+              "ignoresDR": false,
+              "areaEffect": false,
+              "autofireOnly": false,
+              "doubleWeapon": true,
+              "thrown": false,
+              "reach": false
+            },
+            "attackResolution": {
+              "mode": "standard",
+              "defense": "reflex",
+              "ignoredDefenseComponents": [],
+              "onMiss": "none"
+            },
+            "area": {
+              "enabled": false,
+              "shape": null,
+              "radiusSquares": null,
+              "lengthSquares": null,
+              "widthAtEndSquares": null,
+              "widthSquares": null,
+              "heightSquares": null,
+              "notes": null
+            },
+            "resourceConsumption": null,
+            "notes": []
           }
-        ]
+        ],
+        "modeProfiles": []
       },
       "qualities": {
         "accurate": false,
@@ -432,7 +571,13 @@
           "No production record exists for this canonical identity."
         ]
       },
-      "laterProductionAction": "CREATE_AFTER_PHASE_2_WEAPON_AUTHORITY_COMPLETE"
+      "laterProductionAction": "CREATE_AFTER_PHASE_2_WEAPON_AUTHORITY_COMPLETE",
+      "conditionalDamageProfiles": [],
+      "qualityParameters": {
+        "accurate": null,
+        "inaccurate": null,
+        "arc": null
+      }
     },
     {
       "canonicalName": "Shockstaff",
@@ -512,7 +657,8 @@
           "kind": "power",
           "source": "energy cell",
           "requiredUnits": 2,
-          "capacityShots": null
+          "capacityShots": null,
+          "consumption": null
         },
         "operatingModes": {
           "default": "normal",
@@ -530,8 +676,14 @@
         "attackProfiles": [
           {
             "id": "end1",
-            "branch": "melee",
-            "baseDamage": {
+            "label": "End 1",
+            "kind": "attack",
+            "schemaFamily": {
+              "branch": "melee",
+              "subcategory": "advanced",
+              "proficiency": "advanced-melee"
+            },
+            "damage": {
               "mode": "dice",
               "diceCount": 2,
               "dieSize": 6,
@@ -546,6 +698,14 @@
               ],
               "qualifiers": []
             },
+            "stun": {
+              "capability": "setting",
+              "hasStunSetting": true,
+              "damageMode": "same-as-base",
+              "damage": null,
+              "rangeRule": null
+            },
+            "rateOfFire": null,
             "range": {
               "mode": "melee",
               "profileId": null,
@@ -556,12 +716,47 @@
                 "shortPenaltyOverride": null,
                 "longAllowed": null
               }
-            }
+            },
+            "qualities": {
+              "accurate": false,
+              "inaccurate": false,
+              "arc": false,
+              "ignoresDR": false,
+              "areaEffect": false,
+              "autofireOnly": false,
+              "doubleWeapon": true,
+              "thrown": false,
+              "reach": false
+            },
+            "attackResolution": {
+              "mode": "standard",
+              "defense": "reflex",
+              "ignoredDefenseComponents": [],
+              "onMiss": "none"
+            },
+            "area": {
+              "enabled": false,
+              "shape": null,
+              "radiusSquares": null,
+              "lengthSquares": null,
+              "widthAtEndSquares": null,
+              "widthSquares": null,
+              "heightSquares": null,
+              "notes": null
+            },
+            "resourceConsumption": null,
+            "notes": []
           },
           {
             "id": "end2",
-            "branch": "melee",
-            "baseDamage": {
+            "label": "End 2",
+            "kind": "attack",
+            "schemaFamily": {
+              "branch": "melee",
+              "subcategory": "advanced",
+              "proficiency": "advanced-melee"
+            },
+            "damage": {
               "mode": "dice",
               "diceCount": 2,
               "dieSize": 6,
@@ -576,6 +771,14 @@
               ],
               "qualifiers": []
             },
+            "stun": {
+              "capability": "setting",
+              "hasStunSetting": true,
+              "damageMode": "same-as-base",
+              "damage": null,
+              "rangeRule": null
+            },
+            "rateOfFire": null,
             "range": {
               "mode": "melee",
               "profileId": null,
@@ -586,9 +789,39 @@
                 "shortPenaltyOverride": null,
                 "longAllowed": null
               }
-            }
+            },
+            "qualities": {
+              "accurate": false,
+              "inaccurate": false,
+              "arc": false,
+              "ignoresDR": false,
+              "areaEffect": false,
+              "autofireOnly": false,
+              "doubleWeapon": true,
+              "thrown": false,
+              "reach": false
+            },
+            "attackResolution": {
+              "mode": "standard",
+              "defense": "reflex",
+              "ignoredDefenseComponents": [],
+              "onMiss": "none"
+            },
+            "area": {
+              "enabled": false,
+              "shape": null,
+              "radiusSquares": null,
+              "lengthSquares": null,
+              "widthAtEndSquares": null,
+              "widthSquares": null,
+              "heightSquares": null,
+              "notes": null
+            },
+            "resourceConsumption": null,
+            "notes": []
           }
-        ]
+        ],
+        "modeProfiles": []
       },
       "qualities": {
         "accurate": false,
@@ -629,7 +862,13 @@
           "No production record exists for this canonical identity."
         ]
       },
-      "laterProductionAction": "CREATE_AFTER_PHASE_2_WEAPON_AUTHORITY_COMPLETE"
+      "laterProductionAction": "CREATE_AFTER_PHASE_2_WEAPON_AUTHORITY_COMPLETE",
+      "conditionalDamageProfiles": [],
+      "qualityParameters": {
+        "accurate": null,
+        "inaccurate": null,
+        "arc": null
+      }
     },
     {
       "canonicalName": "Shyarn",
@@ -694,7 +933,8 @@
           }
         },
         "resource": {
-          "kind": "none"
+          "kind": "none",
+          "consumption": null
         },
         "operatingModes": {
           "default": "normal",
@@ -710,8 +950,15 @@
         "attackProfiles": [
           {
             "id": "primary",
-            "branch": "melee",
-            "baseDamage": {
+            "label": "Primary",
+            "kind": "attack",
+            "schemaFamily": {
+              "branch": "melee",
+              "subcategory": "exotic",
+              "proficiency": "exotic",
+              "exoticWeaponIdentity": "Shyarn"
+            },
+            "damage": {
               "mode": "dice",
               "diceCount": 3,
               "dieSize": 4,
@@ -726,6 +973,14 @@
               ],
               "qualifiers": []
             },
+            "stun": {
+              "capability": "none",
+              "hasStunSetting": false,
+              "damageMode": "none",
+              "damage": null,
+              "rangeRule": null
+            },
+            "rateOfFire": null,
             "range": {
               "mode": "melee",
               "profileId": null,
@@ -736,9 +991,39 @@
                 "shortPenaltyOverride": null,
                 "longAllowed": null
               }
-            }
+            },
+            "qualities": {
+              "accurate": false,
+              "inaccurate": false,
+              "arc": false,
+              "ignoresDR": false,
+              "areaEffect": false,
+              "autofireOnly": false,
+              "doubleWeapon": false,
+              "thrown": false,
+              "reach": false
+            },
+            "attackResolution": {
+              "mode": "standard",
+              "defense": "reflex",
+              "ignoredDefenseComponents": [],
+              "onMiss": "none"
+            },
+            "area": {
+              "enabled": false,
+              "shape": null,
+              "radiusSquares": null,
+              "lengthSquares": null,
+              "widthAtEndSquares": null,
+              "widthSquares": null,
+              "heightSquares": null,
+              "notes": null
+            },
+            "resourceConsumption": null,
+            "notes": []
           }
-        ]
+        ],
+        "modeProfiles": []
       },
       "qualities": {
         "accurate": false,
@@ -778,7 +1063,13 @@
           "No production record exists for this canonical identity."
         ]
       },
-      "laterProductionAction": "CREATE_AFTER_PHASE_2_WEAPON_AUTHORITY_COMPLETE"
+      "laterProductionAction": "CREATE_AFTER_PHASE_2_WEAPON_AUTHORITY_COMPLETE",
+      "conditionalDamageProfiles": [],
+      "qualityParameters": {
+        "accurate": null,
+        "inaccurate": null,
+        "arc": null
+      }
     },
     {
       "canonicalName": "Fira",
@@ -843,7 +1134,8 @@
           }
         },
         "resource": {
-          "kind": "none"
+          "kind": "none",
+          "consumption": null
         },
         "operatingModes": {
           "default": "normal",
@@ -859,8 +1151,15 @@
         "attackProfiles": [
           {
             "id": "primary",
-            "branch": "melee",
-            "baseDamage": {
+            "label": "Primary",
+            "kind": "attack",
+            "schemaFamily": {
+              "branch": "melee",
+              "subcategory": "exotic",
+              "proficiency": "exotic",
+              "exoticWeaponIdentity": "Fira"
+            },
+            "damage": {
               "mode": "dice",
               "diceCount": 1,
               "dieSize": 8,
@@ -875,6 +1174,14 @@
               ],
               "qualifiers": []
             },
+            "stun": {
+              "capability": "none",
+              "hasStunSetting": false,
+              "damageMode": "none",
+              "damage": null,
+              "rangeRule": null
+            },
+            "rateOfFire": null,
             "range": {
               "mode": "melee",
               "profileId": null,
@@ -885,9 +1192,39 @@
                 "shortPenaltyOverride": null,
                 "longAllowed": null
               }
-            }
+            },
+            "qualities": {
+              "accurate": false,
+              "inaccurate": false,
+              "arc": false,
+              "ignoresDR": false,
+              "areaEffect": false,
+              "autofireOnly": false,
+              "doubleWeapon": false,
+              "thrown": false,
+              "reach": false
+            },
+            "attackResolution": {
+              "mode": "standard",
+              "defense": "reflex",
+              "ignoredDefenseComponents": [],
+              "onMiss": "none"
+            },
+            "area": {
+              "enabled": false,
+              "shape": null,
+              "radiusSquares": null,
+              "lengthSquares": null,
+              "widthAtEndSquares": null,
+              "widthSquares": null,
+              "heightSquares": null,
+              "notes": null
+            },
+            "resourceConsumption": null,
+            "notes": []
           }
-        ]
+        ],
+        "modeProfiles": []
       },
       "qualities": {
         "accurate": false,
@@ -931,7 +1268,13 @@
           "No production record exists for this canonical identity."
         ]
       },
-      "laterProductionAction": "CREATE_AFTER_PHASE_2_WEAPON_AUTHORITY_COMPLETE"
+      "laterProductionAction": "CREATE_AFTER_PHASE_2_WEAPON_AUTHORITY_COMPLETE",
+      "conditionalDamageProfiles": [],
+      "qualityParameters": {
+        "accurate": null,
+        "inaccurate": null,
+        "arc": null
+      }
     },
     {
       "canonicalName": "Arggarok",
@@ -995,7 +1338,8 @@
           }
         },
         "resource": {
-          "kind": "none"
+          "kind": "none",
+          "consumption": null
         },
         "operatingModes": {
           "default": "normal",
@@ -1011,8 +1355,15 @@
         "attackProfiles": [
           {
             "id": "primary",
-            "branch": "melee",
-            "baseDamage": {
+            "label": "Primary",
+            "kind": "attack",
+            "schemaFamily": {
+              "branch": "melee",
+              "subcategory": "exotic",
+              "proficiency": "exotic",
+              "exoticWeaponIdentity": "Arg'garok"
+            },
+            "damage": {
               "mode": "dice",
               "diceCount": 2,
               "dieSize": 12,
@@ -1026,6 +1377,14 @@
               ],
               "qualifiers": []
             },
+            "stun": {
+              "capability": "none",
+              "hasStunSetting": false,
+              "damageMode": "none",
+              "damage": null,
+              "rangeRule": null
+            },
+            "rateOfFire": null,
             "range": {
               "mode": "melee",
               "profileId": null,
@@ -1036,9 +1395,39 @@
                 "shortPenaltyOverride": null,
                 "longAllowed": null
               }
-            }
+            },
+            "qualities": {
+              "accurate": false,
+              "inaccurate": false,
+              "arc": false,
+              "ignoresDR": false,
+              "areaEffect": false,
+              "autofireOnly": false,
+              "doubleWeapon": false,
+              "thrown": false,
+              "reach": false
+            },
+            "attackResolution": {
+              "mode": "standard",
+              "defense": "reflex",
+              "ignoredDefenseComponents": [],
+              "onMiss": "none"
+            },
+            "area": {
+              "enabled": false,
+              "shape": null,
+              "radiusSquares": null,
+              "lengthSquares": null,
+              "widthAtEndSquares": null,
+              "widthSquares": null,
+              "heightSquares": null,
+              "notes": null
+            },
+            "resourceConsumption": null,
+            "notes": []
           }
-        ]
+        ],
+        "modeProfiles": []
       },
       "qualities": {
         "accurate": false,
@@ -1086,7 +1475,13 @@
           "No production record exists for this canonical identity."
         ]
       },
-      "laterProductionAction": "CREATE_AFTER_PHASE_2_WEAPON_AUTHORITY_COMPLETE"
+      "laterProductionAction": "CREATE_AFTER_PHASE_2_WEAPON_AUTHORITY_COMPLETE",
+      "conditionalDamageProfiles": [],
+      "qualityParameters": {
+        "accurate": null,
+        "inaccurate": null,
+        "arc": null
+      }
     },
     {
       "canonicalName": "Zhaboka",
@@ -1163,7 +1558,8 @@
           }
         },
         "resource": {
-          "kind": "none"
+          "kind": "none",
+          "consumption": null
         },
         "operatingModes": {
           "default": "normal",
@@ -1179,8 +1575,15 @@
         "attackProfiles": [
           {
             "id": "end1",
-            "branch": "melee",
-            "baseDamage": {
+            "label": "End 1",
+            "kind": "attack",
+            "schemaFamily": {
+              "branch": "melee",
+              "subcategory": "exotic",
+              "proficiency": "exotic",
+              "exoticWeaponIdentity": "Zhaboka"
+            },
+            "damage": {
               "mode": "dice",
               "diceCount": 2,
               "dieSize": 6,
@@ -1194,6 +1597,14 @@
               ],
               "qualifiers": []
             },
+            "stun": {
+              "capability": "none",
+              "hasStunSetting": false,
+              "damageMode": "none",
+              "damage": null,
+              "rangeRule": null
+            },
+            "rateOfFire": null,
             "range": {
               "mode": "melee",
               "profileId": null,
@@ -1204,12 +1615,48 @@
                 "shortPenaltyOverride": null,
                 "longAllowed": null
               }
-            }
+            },
+            "qualities": {
+              "accurate": false,
+              "inaccurate": false,
+              "arc": false,
+              "ignoresDR": false,
+              "areaEffect": false,
+              "autofireOnly": false,
+              "doubleWeapon": true,
+              "thrown": false,
+              "reach": false
+            },
+            "attackResolution": {
+              "mode": "standard",
+              "defense": "reflex",
+              "ignoredDefenseComponents": [],
+              "onMiss": "none"
+            },
+            "area": {
+              "enabled": false,
+              "shape": null,
+              "radiusSquares": null,
+              "lengthSquares": null,
+              "widthAtEndSquares": null,
+              "widthSquares": null,
+              "heightSquares": null,
+              "notes": null
+            },
+            "resourceConsumption": null,
+            "notes": []
           },
           {
             "id": "end2",
-            "branch": "melee",
-            "baseDamage": {
+            "label": "End 2",
+            "kind": "attack",
+            "schemaFamily": {
+              "branch": "melee",
+              "subcategory": "exotic",
+              "proficiency": "exotic",
+              "exoticWeaponIdentity": "Zhaboka"
+            },
+            "damage": {
               "mode": "dice",
               "diceCount": 2,
               "dieSize": 6,
@@ -1223,6 +1670,14 @@
               ],
               "qualifiers": []
             },
+            "stun": {
+              "capability": "none",
+              "hasStunSetting": false,
+              "damageMode": "none",
+              "damage": null,
+              "rangeRule": null
+            },
+            "rateOfFire": null,
             "range": {
               "mode": "melee",
               "profileId": null,
@@ -1233,9 +1688,39 @@
                 "shortPenaltyOverride": null,
                 "longAllowed": null
               }
-            }
+            },
+            "qualities": {
+              "accurate": false,
+              "inaccurate": false,
+              "arc": false,
+              "ignoresDR": false,
+              "areaEffect": false,
+              "autofireOnly": false,
+              "doubleWeapon": true,
+              "thrown": false,
+              "reach": false
+            },
+            "attackResolution": {
+              "mode": "standard",
+              "defense": "reflex",
+              "ignoredDefenseComponents": [],
+              "onMiss": "none"
+            },
+            "area": {
+              "enabled": false,
+              "shape": null,
+              "radiusSquares": null,
+              "lengthSquares": null,
+              "widthAtEndSquares": null,
+              "widthSquares": null,
+              "heightSquares": null,
+              "notes": null
+            },
+            "resourceConsumption": null,
+            "notes": []
           }
-        ]
+        ],
+        "modeProfiles": []
       },
       "qualities": {
         "accurate": false,
@@ -1275,7 +1760,13 @@
           "No production record exists for this canonical identity."
         ]
       },
-      "laterProductionAction": "CREATE_AFTER_PHASE_2_WEAPON_AUTHORITY_COMPLETE"
+      "laterProductionAction": "CREATE_AFTER_PHASE_2_WEAPON_AUTHORITY_COMPLETE",
+      "conditionalDamageProfiles": [],
+      "qualityParameters": {
+        "accurate": null,
+        "inaccurate": null,
+        "arc": null
+      }
     },
     {
       "canonicalName": "Lightfoil",
@@ -1342,7 +1833,8 @@
           "kind": "power",
           "source": "energy cell",
           "requiredUnits": 1,
-          "capacityShots": null
+          "capacityShots": null,
+          "consumption": null
         },
         "operatingModes": {
           "default": "normal",
@@ -1360,8 +1852,14 @@
         "attackProfiles": [
           {
             "id": "primary",
-            "branch": "melee",
-            "baseDamage": {
+            "label": "Primary",
+            "kind": "attack",
+            "schemaFamily": {
+              "branch": "melee",
+              "subcategory": "lightsaber",
+              "proficiency": "lightsabers"
+            },
+            "damage": {
               "mode": "dice",
               "diceCount": 2,
               "dieSize": 8,
@@ -1376,6 +1874,14 @@
               ],
               "qualifiers": []
             },
+            "stun": {
+              "capability": "none",
+              "hasStunSetting": false,
+              "damageMode": "none",
+              "damage": null,
+              "rangeRule": null
+            },
+            "rateOfFire": null,
             "range": {
               "mode": "melee",
               "profileId": null,
@@ -1386,9 +1892,39 @@
                 "shortPenaltyOverride": null,
                 "longAllowed": null
               }
-            }
+            },
+            "qualities": {
+              "accurate": false,
+              "inaccurate": false,
+              "arc": false,
+              "ignoresDR": true,
+              "areaEffect": false,
+              "autofireOnly": false,
+              "doubleWeapon": false,
+              "thrown": false,
+              "reach": false
+            },
+            "attackResolution": {
+              "mode": "standard",
+              "defense": "reflex",
+              "ignoredDefenseComponents": [],
+              "onMiss": "none"
+            },
+            "area": {
+              "enabled": false,
+              "shape": null,
+              "radiusSquares": null,
+              "lengthSquares": null,
+              "widthAtEndSquares": null,
+              "widthSquares": null,
+              "heightSquares": null,
+              "notes": null
+            },
+            "resourceConsumption": null,
+            "notes": []
           }
-        ]
+        ],
+        "modeProfiles": []
       },
       "qualities": {
         "accurate": false,
@@ -1442,7 +1978,13 @@
           "properties include unsupported Finesse/Critical 19-20/Exotic claims"
         ]
       },
-      "laterProductionAction": "UPDATE_FROM_CERTIFIED_AUTHORITY"
+      "laterProductionAction": "UPDATE_FROM_CERTIFIED_AUTHORITY",
+      "conditionalDamageProfiles": [],
+      "qualityParameters": {
+        "accurate": null,
+        "inaccurate": null,
+        "arc": null
+      }
     },
     {
       "canonicalName": "Short Sword",
@@ -1506,7 +2048,8 @@
           }
         },
         "resource": {
-          "kind": "none"
+          "kind": "none",
+          "consumption": null
         },
         "operatingModes": {
           "default": "normal",
@@ -1522,8 +2065,14 @@
         "attackProfiles": [
           {
             "id": "primary",
-            "branch": "melee",
-            "baseDamage": {
+            "label": "Primary",
+            "kind": "attack",
+            "schemaFamily": {
+              "branch": "melee",
+              "subcategory": "simple",
+              "proficiency": "simple"
+            },
+            "damage": {
               "mode": "dice",
               "diceCount": 1,
               "dieSize": 6,
@@ -1538,6 +2087,14 @@
               ],
               "qualifiers": []
             },
+            "stun": {
+              "capability": "none",
+              "hasStunSetting": false,
+              "damageMode": "none",
+              "damage": null,
+              "rangeRule": null
+            },
+            "rateOfFire": null,
             "range": {
               "mode": "melee",
               "profileId": null,
@@ -1548,9 +2105,39 @@
                 "shortPenaltyOverride": null,
                 "longAllowed": null
               }
-            }
+            },
+            "qualities": {
+              "accurate": false,
+              "inaccurate": false,
+              "arc": false,
+              "ignoresDR": false,
+              "areaEffect": false,
+              "autofireOnly": false,
+              "doubleWeapon": false,
+              "thrown": false,
+              "reach": false
+            },
+            "attackResolution": {
+              "mode": "standard",
+              "defense": "reflex",
+              "ignoredDefenseComponents": [],
+              "onMiss": "none"
+            },
+            "area": {
+              "enabled": false,
+              "shape": null,
+              "radiusSquares": null,
+              "lengthSquares": null,
+              "widthAtEndSquares": null,
+              "widthSquares": null,
+              "heightSquares": null,
+              "notes": null
+            },
+            "resourceConsumption": null,
+            "notes": []
           }
-        ]
+        ],
+        "modeProfiles": []
       },
       "qualities": {
         "accurate": false,
@@ -1591,7 +2178,13 @@
           "No production record exists for this canonical identity."
         ]
       },
-      "laterProductionAction": "CREATE_AFTER_PHASE_2_WEAPON_AUTHORITY_COMPLETE"
+      "laterProductionAction": "CREATE_AFTER_PHASE_2_WEAPON_AUTHORITY_COMPLETE",
+      "conditionalDamageProfiles": [],
+      "qualityParameters": {
+        "accurate": null,
+        "inaccurate": null,
+        "arc": null
+      }
     },
     {
       "canonicalName": "War Sword",
@@ -1655,7 +2248,8 @@
           }
         },
         "resource": {
-          "kind": "none"
+          "kind": "none",
+          "consumption": null
         },
         "operatingModes": {
           "default": "normal",
@@ -1671,8 +2265,14 @@
         "attackProfiles": [
           {
             "id": "primary",
-            "branch": "melee",
-            "baseDamage": {
+            "label": "Primary",
+            "kind": "attack",
+            "schemaFamily": {
+              "branch": "melee",
+              "subcategory": "simple",
+              "proficiency": "simple"
+            },
+            "damage": {
               "mode": "dice",
               "diceCount": 1,
               "dieSize": 8,
@@ -1687,6 +2287,14 @@
               ],
               "qualifiers": []
             },
+            "stun": {
+              "capability": "none",
+              "hasStunSetting": false,
+              "damageMode": "none",
+              "damage": null,
+              "rangeRule": null
+            },
+            "rateOfFire": null,
             "range": {
               "mode": "melee",
               "profileId": null,
@@ -1697,9 +2305,39 @@
                 "shortPenaltyOverride": null,
                 "longAllowed": null
               }
-            }
+            },
+            "qualities": {
+              "accurate": false,
+              "inaccurate": false,
+              "arc": false,
+              "ignoresDR": false,
+              "areaEffect": false,
+              "autofireOnly": false,
+              "doubleWeapon": false,
+              "thrown": false,
+              "reach": false
+            },
+            "attackResolution": {
+              "mode": "standard",
+              "defense": "reflex",
+              "ignoredDefenseComponents": [],
+              "onMiss": "none"
+            },
+            "area": {
+              "enabled": false,
+              "shape": null,
+              "radiusSquares": null,
+              "lengthSquares": null,
+              "widthAtEndSquares": null,
+              "widthSquares": null,
+              "heightSquares": null,
+              "notes": null
+            },
+            "resourceConsumption": null,
+            "notes": []
           }
-        ]
+        ],
+        "modeProfiles": []
       },
       "qualities": {
         "accurate": false,
@@ -1737,7 +2375,13 @@
           "No production record exists for this canonical identity."
         ]
       },
-      "laterProductionAction": "CREATE_AFTER_PHASE_2_WEAPON_AUTHORITY_COMPLETE"
+      "laterProductionAction": "CREATE_AFTER_PHASE_2_WEAPON_AUTHORITY_COMPLETE",
+      "conditionalDamageProfiles": [],
+      "qualityParameters": {
+        "accurate": null,
+        "inaccurate": null,
+        "arc": null
+      }
     },
     {
       "canonicalName": "Dire Sword",
@@ -1801,7 +2445,8 @@
           }
         },
         "resource": {
-          "kind": "none"
+          "kind": "none",
+          "consumption": null
         },
         "operatingModes": {
           "default": "normal",
@@ -1817,8 +2462,14 @@
         "attackProfiles": [
           {
             "id": "primary",
-            "branch": "melee",
-            "baseDamage": {
+            "label": "Primary",
+            "kind": "attack",
+            "schemaFamily": {
+              "branch": "melee",
+              "subcategory": "simple",
+              "proficiency": "simple"
+            },
+            "damage": {
               "mode": "dice",
               "diceCount": 1,
               "dieSize": 10,
@@ -1833,6 +2484,14 @@
               ],
               "qualifiers": []
             },
+            "stun": {
+              "capability": "none",
+              "hasStunSetting": false,
+              "damageMode": "none",
+              "damage": null,
+              "rangeRule": null
+            },
+            "rateOfFire": null,
             "range": {
               "mode": "melee",
               "profileId": null,
@@ -1843,9 +2502,39 @@
                 "shortPenaltyOverride": null,
                 "longAllowed": null
               }
-            }
+            },
+            "qualities": {
+              "accurate": false,
+              "inaccurate": false,
+              "arc": false,
+              "ignoresDR": false,
+              "areaEffect": false,
+              "autofireOnly": false,
+              "doubleWeapon": false,
+              "thrown": false,
+              "reach": false
+            },
+            "attackResolution": {
+              "mode": "standard",
+              "defense": "reflex",
+              "ignoredDefenseComponents": [],
+              "onMiss": "none"
+            },
+            "area": {
+              "enabled": false,
+              "shape": null,
+              "radiusSquares": null,
+              "lengthSquares": null,
+              "widthAtEndSquares": null,
+              "widthSquares": null,
+              "heightSquares": null,
+              "notes": null
+            },
+            "resourceConsumption": null,
+            "notes": []
           }
-        ]
+        ],
+        "modeProfiles": []
       },
       "qualities": {
         "accurate": false,
@@ -1883,7 +2572,13 @@
           "No production record exists for this canonical identity."
         ]
       },
-      "laterProductionAction": "CREATE_AFTER_PHASE_2_WEAPON_AUTHORITY_COMPLETE"
+      "laterProductionAction": "CREATE_AFTER_PHASE_2_WEAPON_AUTHORITY_COMPLETE",
+      "conditionalDamageProfiles": [],
+      "qualityParameters": {
+        "accurate": null,
+        "inaccurate": null,
+        "arc": null
+      }
     },
     {
       "canonicalName": "Double-Bladed Sword",
@@ -1960,7 +2655,8 @@
           }
         },
         "resource": {
-          "kind": "none"
+          "kind": "none",
+          "consumption": null
         },
         "operatingModes": {
           "default": "normal",
@@ -1976,8 +2672,14 @@
         "attackProfiles": [
           {
             "id": "end1",
-            "branch": "melee",
-            "baseDamage": {
+            "label": "End 1",
+            "kind": "attack",
+            "schemaFamily": {
+              "branch": "melee",
+              "subcategory": "simple",
+              "proficiency": "simple"
+            },
+            "damage": {
               "mode": "dice",
               "diceCount": 1,
               "dieSize": 6,
@@ -1992,6 +2694,14 @@
               ],
               "qualifiers": []
             },
+            "stun": {
+              "capability": "none",
+              "hasStunSetting": false,
+              "damageMode": "none",
+              "damage": null,
+              "rangeRule": null
+            },
+            "rateOfFire": null,
             "range": {
               "mode": "melee",
               "profileId": null,
@@ -2002,12 +2712,47 @@
                 "shortPenaltyOverride": null,
                 "longAllowed": null
               }
-            }
+            },
+            "qualities": {
+              "accurate": false,
+              "inaccurate": false,
+              "arc": false,
+              "ignoresDR": false,
+              "areaEffect": false,
+              "autofireOnly": false,
+              "doubleWeapon": true,
+              "thrown": false,
+              "reach": false
+            },
+            "attackResolution": {
+              "mode": "standard",
+              "defense": "reflex",
+              "ignoredDefenseComponents": [],
+              "onMiss": "none"
+            },
+            "area": {
+              "enabled": false,
+              "shape": null,
+              "radiusSquares": null,
+              "lengthSquares": null,
+              "widthAtEndSquares": null,
+              "widthSquares": null,
+              "heightSquares": null,
+              "notes": null
+            },
+            "resourceConsumption": null,
+            "notes": []
           },
           {
             "id": "end2",
-            "branch": "melee",
-            "baseDamage": {
+            "label": "End 2",
+            "kind": "attack",
+            "schemaFamily": {
+              "branch": "melee",
+              "subcategory": "simple",
+              "proficiency": "simple"
+            },
+            "damage": {
               "mode": "dice",
               "diceCount": 1,
               "dieSize": 6,
@@ -2022,6 +2767,14 @@
               ],
               "qualifiers": []
             },
+            "stun": {
+              "capability": "none",
+              "hasStunSetting": false,
+              "damageMode": "none",
+              "damage": null,
+              "rangeRule": null
+            },
+            "rateOfFire": null,
             "range": {
               "mode": "melee",
               "profileId": null,
@@ -2032,9 +2785,39 @@
                 "shortPenaltyOverride": null,
                 "longAllowed": null
               }
-            }
+            },
+            "qualities": {
+              "accurate": false,
+              "inaccurate": false,
+              "arc": false,
+              "ignoresDR": false,
+              "areaEffect": false,
+              "autofireOnly": false,
+              "doubleWeapon": true,
+              "thrown": false,
+              "reach": false
+            },
+            "attackResolution": {
+              "mode": "standard",
+              "defense": "reflex",
+              "ignoredDefenseComponents": [],
+              "onMiss": "none"
+            },
+            "area": {
+              "enabled": false,
+              "shape": null,
+              "radiusSquares": null,
+              "lengthSquares": null,
+              "widthAtEndSquares": null,
+              "widthSquares": null,
+              "heightSquares": null,
+              "notes": null
+            },
+            "resourceConsumption": null,
+            "notes": []
           }
-        ]
+        ],
+        "modeProfiles": []
       },
       "qualities": {
         "accurate": false,
@@ -2072,7 +2855,13 @@
           "No production record exists for this canonical identity."
         ]
       },
-      "laterProductionAction": "CREATE_AFTER_PHASE_2_WEAPON_AUTHORITY_COMPLETE"
+      "laterProductionAction": "CREATE_AFTER_PHASE_2_WEAPON_AUTHORITY_COMPLETE",
+      "conditionalDamageProfiles": [],
+      "qualityParameters": {
+        "accurate": null,
+        "inaccurate": null,
+        "arc": null
+      }
     },
     {
       "canonicalName": "Aurial Blaster",
@@ -2129,7 +2918,7 @@
           "rangeRule": null
         },
         "range": {
-          "mode": "profile",
+          "mode": "ranged",
           "profileId": "pistols",
           "bands": {
             "pointBlank": [
@@ -2158,14 +2947,22 @@
           "qualityEffects": {
             "pointBlankAllowed": true,
             "shortPenaltyOverride": null,
-            "longAllowed": true
-          }
+            "longAllowed": true,
+            "mediumAllowed": true
+          },
+          "allowedBands": [
+            "pointBlank",
+            "short",
+            "medium",
+            "long"
+          ]
         },
         "resource": {
           "kind": "ammunition",
           "source": "power pack",
           "capacityShots": 50,
-          "reloadAction": "replace pack"
+          "reloadAction": "replace pack",
+          "consumption": null
         },
         "operatingModes": {
           "default": "single",
@@ -2181,8 +2978,15 @@
         "attackProfiles": [
           {
             "id": "primary",
-            "branch": "ranged",
-            "baseDamage": {
+            "label": "Primary",
+            "kind": "attack",
+            "schemaFamily": {
+              "branch": "ranged",
+              "subcategory": "exotic",
+              "proficiency": "exotic",
+              "exoticWeaponIdentity": "Aurial Blaster"
+            },
+            "damage": {
               "mode": "dice",
               "diceCount": 3,
               "dieSize": 6,
@@ -2198,8 +3002,18 @@
                 "sonic"
               ]
             },
+            "stun": {
+              "capability": "none",
+              "hasStunSetting": false,
+              "damageMode": "none",
+              "damage": null,
+              "rangeRule": null
+            },
+            "rateOfFire": [
+              "S"
+            ],
             "range": {
-              "mode": "profile",
+              "mode": "ranged",
               "profileId": "pistols",
               "bands": {
                 "pointBlank": [
@@ -2228,11 +3042,48 @@
               "qualityEffects": {
                 "pointBlankAllowed": true,
                 "shortPenaltyOverride": null,
-                "longAllowed": true
-              }
-            }
+                "longAllowed": true,
+                "mediumAllowed": true
+              },
+              "allowedBands": [
+                "pointBlank",
+                "short",
+                "medium",
+                "long"
+              ]
+            },
+            "qualities": {
+              "accurate": false,
+              "inaccurate": false,
+              "arc": false,
+              "ignoresDR": false,
+              "areaEffect": false,
+              "autofireOnly": false,
+              "doubleWeapon": false,
+              "thrown": false,
+              "reach": false
+            },
+            "attackResolution": {
+              "mode": "standard",
+              "defense": "reflex",
+              "ignoredDefenseComponents": [],
+              "onMiss": "none"
+            },
+            "area": {
+              "enabled": false,
+              "shape": null,
+              "radiusSquares": null,
+              "lengthSquares": null,
+              "widthAtEndSquares": null,
+              "widthSquares": null,
+              "heightSquares": null,
+              "notes": null
+            },
+            "resourceConsumption": null,
+            "notes": []
           }
-        ]
+        ],
+        "modeProfiles": []
       },
       "qualities": {
         "accurate": false,
@@ -2282,7 +3133,13 @@
           "sonic should be represented as energy with sonic qualifier"
         ]
       },
-      "laterProductionAction": "UPDATE_FROM_CERTIFIED_AUTHORITY"
+      "laterProductionAction": "UPDATE_FROM_CERTIFIED_AUTHORITY",
+      "conditionalDamageProfiles": [],
+      "qualityParameters": {
+        "accurate": null,
+        "inaccurate": null,
+        "arc": null
+      }
     },
     {
       "canonicalName": "Sith Lanvarok",
@@ -2337,7 +3194,7 @@
           "rangeRule": null
         },
         "range": {
-          "mode": "profile",
+          "mode": "ranged",
           "profileId": "pistols",
           "bands": {
             "pointBlank": [
@@ -2366,8 +3223,14 @@
           "qualityEffects": {
             "pointBlankAllowed": true,
             "shortPenaltyOverride": null,
-            "longAllowed": false
-          }
+            "longAllowed": false,
+            "mediumAllowed": true
+          },
+          "allowedBands": [
+            "pointBlank",
+            "short",
+            "medium"
+          ]
         },
         "resource": {
           "kind": "ammunition",
@@ -2375,7 +3238,8 @@
           "capacityShots": 5,
           "reloadAction": "replace discs",
           "replacementCostCredits": 5,
-          "replacementWeightKg": 0.1
+          "replacementWeightKg": 0.1,
+          "consumption": null
         },
         "operatingModes": {
           "default": "single",
@@ -2391,8 +3255,15 @@
         "attackProfiles": [
           {
             "id": "primary",
-            "branch": "ranged",
-            "baseDamage": {
+            "label": "Primary",
+            "kind": "attack",
+            "schemaFamily": {
+              "branch": "ranged",
+              "subcategory": "exotic",
+              "proficiency": "exotic",
+              "exoticWeaponIdentity": "Sith Lanvarok"
+            },
+            "damage": {
               "mode": "dice",
               "diceCount": 3,
               "dieSize": 4,
@@ -2406,8 +3277,18 @@
               ],
               "qualifiers": []
             },
+            "stun": {
+              "capability": "none",
+              "hasStunSetting": false,
+              "damageMode": "none",
+              "damage": null,
+              "rangeRule": null
+            },
+            "rateOfFire": [
+              "S"
+            ],
             "range": {
-              "mode": "profile",
+              "mode": "ranged",
               "profileId": "pistols",
               "bands": {
                 "pointBlank": [
@@ -2436,11 +3317,47 @@
               "qualityEffects": {
                 "pointBlankAllowed": true,
                 "shortPenaltyOverride": null,
-                "longAllowed": false
-              }
-            }
+                "longAllowed": false,
+                "mediumAllowed": true
+              },
+              "allowedBands": [
+                "pointBlank",
+                "short",
+                "medium"
+              ]
+            },
+            "qualities": {
+              "accurate": false,
+              "inaccurate": true,
+              "arc": false,
+              "ignoresDR": false,
+              "areaEffect": false,
+              "autofireOnly": false,
+              "doubleWeapon": false,
+              "thrown": false,
+              "reach": false
+            },
+            "attackResolution": {
+              "mode": "standard",
+              "defense": "reflex",
+              "ignoredDefenseComponents": [],
+              "onMiss": "none"
+            },
+            "area": {
+              "enabled": false,
+              "shape": null,
+              "radiusSquares": null,
+              "lengthSquares": null,
+              "widthAtEndSquares": null,
+              "widthSquares": null,
+              "heightSquares": null,
+              "notes": null
+            },
+            "resourceConsumption": null,
+            "notes": []
           }
-        ]
+        ],
+        "modeProfiles": []
       },
       "qualities": {
         "accurate": false,
@@ -2495,7 +3412,20 @@
           "repo invents Multi-Target/Sith properties not established by this entry"
         ]
       },
-      "laterProductionAction": "UPDATE_FROM_CERTIFIED_AUTHORITY"
+      "laterProductionAction": "UPDATE_FROM_CERTIFIED_AUTHORITY",
+      "conditionalDamageProfiles": [],
+      "qualityParameters": {
+        "accurate": null,
+        "inaccurate": {
+          "allowedBands": [
+            "pointBlank",
+            "short",
+            "medium"
+          ],
+          "note": "Core/KOTOR definition: cannot attack at Long range."
+        },
+        "arc": null
+      }
     },
     {
       "canonicalName": "Massassi Lanvarok",
@@ -2547,7 +3477,7 @@
           "rangeRule": null
         },
         "range": {
-          "mode": "profile",
+          "mode": "ranged",
           "profileId": "thrown-weapons",
           "bands": {
             "pointBlank": [
@@ -2576,8 +3506,14 @@
           "qualityEffects": {
             "pointBlankAllowed": true,
             "shortPenaltyOverride": null,
-            "longAllowed": false
-          }
+            "longAllowed": false,
+            "mediumAllowed": true
+          },
+          "allowedBands": [
+            "pointBlank",
+            "short",
+            "medium"
+          ]
         },
         "resource": {
           "kind": "ammunition",
@@ -2585,7 +3521,8 @@
           "capacityShots": 1,
           "reloadAction": "load one disc",
           "replacementCostCredits": 5,
-          "replacementWeightKg": 0.1
+          "replacementWeightKg": 0.1,
+          "consumption": null
         },
         "operatingModes": {
           "default": "single",
@@ -2601,8 +3538,15 @@
         "attackProfiles": [
           {
             "id": "disc",
-            "branch": "ranged",
-            "baseDamage": {
+            "label": "Disc (ranged)",
+            "kind": "attack",
+            "schemaFamily": {
+              "branch": "ranged",
+              "subcategory": "exotic",
+              "proficiency": "exotic",
+              "exoticWeaponIdentity": "Massassi Lanvarok"
+            },
+            "damage": {
               "mode": "dice",
               "diceCount": 3,
               "dieSize": 4,
@@ -2616,8 +3560,18 @@
               ],
               "qualifiers": []
             },
+            "stun": {
+              "capability": "none",
+              "hasStunSetting": false,
+              "damageMode": "none",
+              "damage": null,
+              "rangeRule": null
+            },
+            "rateOfFire": [
+              "S"
+            ],
             "range": {
-              "mode": "profile",
+              "mode": "ranged",
               "profileId": "thrown-weapons",
               "bands": {
                 "pointBlank": [
@@ -2646,14 +3600,56 @@
               "qualityEffects": {
                 "pointBlankAllowed": true,
                 "shortPenaltyOverride": null,
-                "longAllowed": false
-              }
-            }
+                "longAllowed": false,
+                "mediumAllowed": true
+              },
+              "allowedBands": [
+                "pointBlank",
+                "short",
+                "medium"
+              ]
+            },
+            "qualities": {
+              "accurate": false,
+              "inaccurate": true,
+              "arc": false,
+              "ignoresDR": false,
+              "areaEffect": false,
+              "autofireOnly": false,
+              "doubleWeapon": false,
+              "thrown": false,
+              "reach": false
+            },
+            "attackResolution": {
+              "mode": "standard",
+              "defense": "reflex",
+              "ignoredDefenseComponents": [],
+              "onMiss": "none"
+            },
+            "area": {
+              "enabled": false,
+              "shape": null,
+              "radiusSquares": null,
+              "lengthSquares": null,
+              "widthAtEndSquares": null,
+              "widthSquares": null,
+              "heightSquares": null,
+              "notes": null
+            },
+            "resourceConsumption": null,
+            "notes": []
           },
           {
             "id": "melee",
-            "branch": "melee",
-            "baseDamage": {
+            "label": "Melee",
+            "kind": "attack",
+            "schemaFamily": {
+              "branch": "melee",
+              "subcategory": "exotic",
+              "proficiency": "exotic",
+              "exoticWeaponIdentity": "Massassi Lanvarok"
+            },
+            "damage": {
               "mode": "dice",
               "diceCount": 1,
               "dieSize": 8,
@@ -2667,6 +3663,14 @@
               ],
               "qualifiers": []
             },
+            "stun": {
+              "capability": "none",
+              "hasStunSetting": false,
+              "damageMode": "none",
+              "damage": null,
+              "rangeRule": null
+            },
+            "rateOfFire": null,
             "range": {
               "mode": "melee",
               "profileId": null,
@@ -2678,9 +3682,39 @@
                 "longAllowed": null
               }
             },
+            "qualities": {
+              "accurate": false,
+              "inaccurate": false,
+              "arc": false,
+              "ignoresDR": false,
+              "areaEffect": false,
+              "autofireOnly": false,
+              "doubleWeapon": false,
+              "thrown": false,
+              "reach": false
+            },
+            "attackResolution": {
+              "mode": "standard",
+              "defense": "reflex",
+              "ignoredDefenseComponents": [],
+              "onMiss": "none"
+            },
+            "area": {
+              "enabled": false,
+              "shape": null,
+              "radiusSquares": null,
+              "lengthSquares": null,
+              "widthAtEndSquares": null,
+              "widthSquares": null,
+              "heightSquares": null,
+              "notes": null
+            },
+            "resourceConsumption": null,
+            "notes": [],
             "wielding": "two-handed"
           }
-        ]
+        ],
+        "modeProfiles": []
       },
       "qualities": {
         "accurate": false,
@@ -2731,7 +3765,20 @@
           "one-disc capacity not represented"
         ]
       },
-      "laterProductionAction": "UPDATE_FROM_CERTIFIED_AUTHORITY"
+      "laterProductionAction": "UPDATE_FROM_CERTIFIED_AUTHORITY",
+      "conditionalDamageProfiles": [],
+      "qualityParameters": {
+        "accurate": null,
+        "inaccurate": {
+          "allowedBands": [
+            "pointBlank",
+            "short",
+            "medium"
+          ],
+          "note": "Core/KOTOR definition: cannot attack at Long range."
+        },
+        "arc": null
+      }
     },
     {
       "canonicalName": "Carbonite Rifle",
@@ -2791,7 +3838,7 @@
           "rangeRule": null
         },
         "range": {
-          "mode": "profile",
+          "mode": "ranged",
           "profileId": "heavy-weapons",
           "bands": {
             "pointBlank": [
@@ -2820,8 +3867,15 @@
           "qualityEffects": {
             "pointBlankAllowed": true,
             "shortPenaltyOverride": null,
-            "longAllowed": true
-          }
+            "longAllowed": true,
+            "mediumAllowed": true
+          },
+          "allowedBands": [
+            "pointBlank",
+            "short",
+            "medium",
+            "long"
+          ]
         },
         "resource": {
           "kind": "ammunition",
@@ -2829,7 +3883,8 @@
           "capacityShots": 20,
           "reloadAction": "replace cartridge",
           "replacementCostCredits": 50,
-          "replacementWeightKg": 1
+          "replacementWeightKg": 1,
+          "consumption": null
         },
         "operatingModes": {
           "default": "single",
@@ -2845,8 +3900,14 @@
         "attackProfiles": [
           {
             "id": "primary",
-            "branch": "ranged",
-            "baseDamage": {
+            "label": "Primary",
+            "kind": "attack",
+            "schemaFamily": {
+              "branch": "ranged",
+              "subcategory": "heavy",
+              "proficiency": "heavy-weapons"
+            },
+            "damage": {
               "mode": "none",
               "diceCount": 0,
               "dieSize": null,
@@ -2860,8 +3921,24 @@
               ],
               "qualifiers": []
             },
+            "stun": {
+              "capability": "native-stun",
+              "hasStunSetting": false,
+              "damageMode": "explicit",
+              "damage": {
+                "mode": "dice",
+                "diceCount": 3,
+                "dieSize": 10,
+                "flatBonus": 0,
+                "formula": "3d10"
+              },
+              "rangeRule": null
+            },
+            "rateOfFire": [
+              "S"
+            ],
             "range": {
-              "mode": "profile",
+              "mode": "ranged",
               "profileId": "heavy-weapons",
               "bands": {
                 "pointBlank": [
@@ -2890,11 +3967,48 @@
               "qualityEffects": {
                 "pointBlankAllowed": true,
                 "shortPenaltyOverride": null,
-                "longAllowed": true
-              }
-            }
+                "longAllowed": true,
+                "mediumAllowed": true
+              },
+              "allowedBands": [
+                "pointBlank",
+                "short",
+                "medium",
+                "long"
+              ]
+            },
+            "qualities": {
+              "accurate": false,
+              "inaccurate": false,
+              "arc": false,
+              "ignoresDR": false,
+              "areaEffect": false,
+              "autofireOnly": false,
+              "doubleWeapon": false,
+              "thrown": false,
+              "reach": false
+            },
+            "attackResolution": {
+              "mode": "standard",
+              "defense": "reflex",
+              "ignoredDefenseComponents": [],
+              "onMiss": "none"
+            },
+            "area": {
+              "enabled": false,
+              "shape": null,
+              "radiusSquares": null,
+              "lengthSquares": null,
+              "widthAtEndSquares": null,
+              "widthSquares": null,
+              "heightSquares": null,
+              "notes": null
+            },
+            "resourceConsumption": null,
+            "notes": []
           }
-        ]
+        ],
+        "modeProfiles": []
       },
       "qualities": {
         "accurate": false,
@@ -2939,7 +4053,13 @@
           "special carbonite cartridge/capacity not represented"
         ]
       },
-      "laterProductionAction": "UPDATE_FROM_CERTIFIED_AUTHORITY"
+      "laterProductionAction": "UPDATE_FROM_CERTIFIED_AUTHORITY",
+      "conditionalDamageProfiles": [],
+      "qualityParameters": {
+        "accurate": null,
+        "inaccurate": null,
+        "arc": null
+      }
     },
     {
       "canonicalName": "Needler",
@@ -2993,7 +4113,7 @@
           "rangeRule": null
         },
         "range": {
-          "mode": "profile",
+          "mode": "ranged",
           "profileId": "pistols",
           "bands": {
             "pointBlank": [
@@ -3022,8 +4142,14 @@
           "qualityEffects": {
             "pointBlankAllowed": true,
             "shortPenaltyOverride": null,
-            "longAllowed": false
-          }
+            "longAllowed": false,
+            "mediumAllowed": true
+          },
+          "allowedBands": [
+            "pointBlank",
+            "short",
+            "medium"
+          ]
         },
         "resource": {
           "kind": "ammunition",
@@ -3031,7 +4157,8 @@
           "capacityShots": 10,
           "reloadAction": "replace clip",
           "replacementCostCredits": 20,
-          "replacementWeightKg": 0.1
+          "replacementWeightKg": 0.1,
+          "consumption": null
         },
         "operatingModes": {
           "default": "single",
@@ -3047,8 +4174,14 @@
         "attackProfiles": [
           {
             "id": "primary",
-            "branch": "ranged",
-            "baseDamage": {
+            "label": "Primary",
+            "kind": "attack",
+            "schemaFamily": {
+              "branch": "ranged",
+              "subcategory": "pistol",
+              "proficiency": "pistols"
+            },
+            "damage": {
               "mode": "dice",
               "diceCount": 2,
               "dieSize": 4,
@@ -3062,8 +4195,18 @@
               ],
               "qualifiers": []
             },
+            "stun": {
+              "capability": "none",
+              "hasStunSetting": false,
+              "damageMode": "none",
+              "damage": null,
+              "rangeRule": null
+            },
+            "rateOfFire": [
+              "S"
+            ],
             "range": {
-              "mode": "profile",
+              "mode": "ranged",
               "profileId": "pistols",
               "bands": {
                 "pointBlank": [
@@ -3092,11 +4235,47 @@
               "qualityEffects": {
                 "pointBlankAllowed": true,
                 "shortPenaltyOverride": null,
-                "longAllowed": false
-              }
-            }
+                "longAllowed": false,
+                "mediumAllowed": true
+              },
+              "allowedBands": [
+                "pointBlank",
+                "short",
+                "medium"
+              ]
+            },
+            "qualities": {
+              "accurate": false,
+              "inaccurate": true,
+              "arc": false,
+              "ignoresDR": false,
+              "areaEffect": false,
+              "autofireOnly": false,
+              "doubleWeapon": false,
+              "thrown": false,
+              "reach": false
+            },
+            "attackResolution": {
+              "mode": "standard",
+              "defense": "reflex",
+              "ignoredDefenseComponents": [],
+              "onMiss": "none"
+            },
+            "area": {
+              "enabled": false,
+              "shape": null,
+              "radiusSquares": null,
+              "lengthSquares": null,
+              "widthAtEndSquares": null,
+              "widthSquares": null,
+              "heightSquares": null,
+              "notes": null
+            },
+            "resourceConsumption": null,
+            "notes": []
           }
-        ]
+        ],
+        "modeProfiles": []
       },
       "qualities": {
         "accurate": false,
@@ -3142,7 +4321,20 @@
           "10-shot clip and poison-delivery rule not structured"
         ]
       },
-      "laterProductionAction": "UPDATE_FROM_CERTIFIED_AUTHORITY"
+      "laterProductionAction": "UPDATE_FROM_CERTIFIED_AUTHORITY",
+      "conditionalDamageProfiles": [],
+      "qualityParameters": {
+        "accurate": null,
+        "inaccurate": {
+          "allowedBands": [
+            "pointBlank",
+            "short",
+            "medium"
+          ],
+          "note": "Core/KOTOR definition: cannot attack at Long range."
+        },
+        "arc": null
+      }
     },
     {
       "canonicalName": "Pulse-Wave Pistol",
@@ -3196,7 +4388,7 @@
           "rangeRule": null
         },
         "range": {
-          "mode": "profile",
+          "mode": "ranged",
           "profileId": "pistols",
           "bands": {
             "pointBlank": [
@@ -3225,14 +4417,21 @@
           "qualityEffects": {
             "pointBlankAllowed": true,
             "shortPenaltyOverride": null,
-            "longAllowed": false
-          }
+            "longAllowed": false,
+            "mediumAllowed": true
+          },
+          "allowedBands": [
+            "pointBlank",
+            "short",
+            "medium"
+          ]
         },
         "resource": {
           "kind": "ammunition",
           "source": "power pack",
           "capacityShots": 100,
-          "reloadAction": "replace pack"
+          "reloadAction": "replace pack",
+          "consumption": null
         },
         "operatingModes": {
           "default": "single",
@@ -3248,8 +4447,14 @@
         "attackProfiles": [
           {
             "id": "primary",
-            "branch": "ranged",
-            "baseDamage": {
+            "label": "Primary",
+            "kind": "attack",
+            "schemaFamily": {
+              "branch": "ranged",
+              "subcategory": "pistol",
+              "proficiency": "pistols"
+            },
+            "damage": {
               "mode": "dice",
               "diceCount": 2,
               "dieSize": 6,
@@ -3263,8 +4468,18 @@
               ],
               "qualifiers": []
             },
+            "stun": {
+              "capability": "none",
+              "hasStunSetting": false,
+              "damageMode": "none",
+              "damage": null,
+              "rangeRule": null
+            },
+            "rateOfFire": [
+              "S"
+            ],
             "range": {
-              "mode": "profile",
+              "mode": "ranged",
               "profileId": "pistols",
               "bands": {
                 "pointBlank": [
@@ -3293,11 +4508,47 @@
               "qualityEffects": {
                 "pointBlankAllowed": true,
                 "shortPenaltyOverride": null,
-                "longAllowed": false
-              }
-            }
+                "longAllowed": false,
+                "mediumAllowed": true
+              },
+              "allowedBands": [
+                "pointBlank",
+                "short",
+                "medium"
+              ]
+            },
+            "qualities": {
+              "accurate": false,
+              "inaccurate": true,
+              "arc": false,
+              "ignoresDR": false,
+              "areaEffect": false,
+              "autofireOnly": false,
+              "doubleWeapon": false,
+              "thrown": false,
+              "reach": false
+            },
+            "attackResolution": {
+              "mode": "standard",
+              "defense": "reflex",
+              "ignoredDefenseComponents": [],
+              "onMiss": "none"
+            },
+            "area": {
+              "enabled": false,
+              "shape": null,
+              "radiusSquares": null,
+              "lengthSquares": null,
+              "widthAtEndSquares": null,
+              "widthSquares": null,
+              "heightSquares": null,
+              "notes": null
+            },
+            "resourceConsumption": null,
+            "notes": []
           }
-        ]
+        ],
+        "modeProfiles": []
       },
       "qualities": {
         "accurate": false,
@@ -3343,7 +4594,20 @@
           "100-shot power-pack capacity not represented"
         ]
       },
-      "laterProductionAction": "UPDATE_FROM_CERTIFIED_AUTHORITY"
+      "laterProductionAction": "UPDATE_FROM_CERTIFIED_AUTHORITY",
+      "conditionalDamageProfiles": [],
+      "qualityParameters": {
+        "accurate": null,
+        "inaccurate": {
+          "allowedBands": [
+            "pointBlank",
+            "short",
+            "medium"
+          ],
+          "note": "Core/KOTOR definition: cannot attack at Long range."
+        },
+        "arc": null
+      }
     },
     {
       "canonicalName": "Ripper",
@@ -3397,7 +4661,7 @@
           "rangeRule": null
         },
         "range": {
-          "mode": "profile",
+          "mode": "ranged",
           "profileId": "pistols",
           "bands": {
             "pointBlank": [
@@ -3426,8 +4690,14 @@
           "qualityEffects": {
             "pointBlankAllowed": true,
             "shortPenaltyOverride": null,
-            "longAllowed": false
-          }
+            "longAllowed": false,
+            "mediumAllowed": true
+          },
+          "allowedBands": [
+            "pointBlank",
+            "short",
+            "medium"
+          ]
         },
         "resource": {
           "kind": "ammunition",
@@ -3435,7 +4705,8 @@
           "capacityShots": 10,
           "reloadAction": "replace clip",
           "replacementCostCredits": 20,
-          "replacementWeightKg": 0.1
+          "replacementWeightKg": 0.1,
+          "consumption": null
         },
         "operatingModes": {
           "default": "single",
@@ -3451,8 +4722,14 @@
         "attackProfiles": [
           {
             "id": "primary",
-            "branch": "ranged",
-            "baseDamage": {
+            "label": "Primary",
+            "kind": "attack",
+            "schemaFamily": {
+              "branch": "ranged",
+              "subcategory": "pistol",
+              "proficiency": "pistols"
+            },
+            "damage": {
               "mode": "dice",
               "diceCount": 2,
               "dieSize": 4,
@@ -3466,8 +4743,18 @@
               ],
               "qualifiers": []
             },
+            "stun": {
+              "capability": "none",
+              "hasStunSetting": false,
+              "damageMode": "none",
+              "damage": null,
+              "rangeRule": null
+            },
+            "rateOfFire": [
+              "S"
+            ],
             "range": {
-              "mode": "profile",
+              "mode": "ranged",
               "profileId": "pistols",
               "bands": {
                 "pointBlank": [
@@ -3496,11 +4783,47 @@
               "qualityEffects": {
                 "pointBlankAllowed": true,
                 "shortPenaltyOverride": null,
-                "longAllowed": false
-              }
-            }
+                "longAllowed": false,
+                "mediumAllowed": true
+              },
+              "allowedBands": [
+                "pointBlank",
+                "short",
+                "medium"
+              ]
+            },
+            "qualities": {
+              "accurate": false,
+              "inaccurate": true,
+              "arc": false,
+              "ignoresDR": false,
+              "areaEffect": false,
+              "autofireOnly": false,
+              "doubleWeapon": false,
+              "thrown": false,
+              "reach": false
+            },
+            "attackResolution": {
+              "mode": "standard",
+              "defense": "reflex",
+              "ignoredDefenseComponents": [],
+              "onMiss": "none"
+            },
+            "area": {
+              "enabled": false,
+              "shape": null,
+              "radiusSquares": null,
+              "lengthSquares": null,
+              "widthAtEndSquares": null,
+              "widthSquares": null,
+              "heightSquares": null,
+              "notes": null
+            },
+            "resourceConsumption": null,
+            "notes": []
           }
-        ]
+        ],
+        "modeProfiles": []
       },
       "qualities": {
         "accurate": false,
@@ -3558,7 +4881,20 @@
           "10-shot clip not represented"
         ]
       },
-      "laterProductionAction": "UPDATE_FROM_CERTIFIED_AUTHORITY"
+      "laterProductionAction": "UPDATE_FROM_CERTIFIED_AUTHORITY",
+      "conditionalDamageProfiles": [],
+      "qualityParameters": {
+        "accurate": null,
+        "inaccurate": {
+          "allowedBands": [
+            "pointBlank",
+            "short",
+            "medium"
+          ],
+          "note": "Core/KOTOR definition: cannot attack at Long range."
+        },
+        "arc": null
+      }
     },
     {
       "canonicalName": "Sonic Disruptor",
@@ -3614,7 +4950,7 @@
           "rangeRule": null
         },
         "range": {
-          "mode": "profile",
+          "mode": "ranged",
           "profileId": "pistols",
           "bands": {
             "pointBlank": [
@@ -3643,14 +4979,22 @@
           "qualityEffects": {
             "pointBlankAllowed": true,
             "shortPenaltyOverride": null,
-            "longAllowed": true
-          }
+            "longAllowed": true,
+            "mediumAllowed": true
+          },
+          "allowedBands": [
+            "pointBlank",
+            "short",
+            "medium",
+            "long"
+          ]
         },
         "resource": {
           "kind": "ammunition",
           "source": "power pack",
           "capacityShots": 10,
-          "reloadAction": "recharge pack"
+          "reloadAction": "recharge pack",
+          "consumption": null
         },
         "operatingModes": {
           "default": "single",
@@ -3666,8 +5010,14 @@
         "attackProfiles": [
           {
             "id": "primary",
-            "branch": "ranged",
-            "baseDamage": {
+            "label": "Primary",
+            "kind": "attack",
+            "schemaFamily": {
+              "branch": "ranged",
+              "subcategory": "pistol",
+              "proficiency": "pistols"
+            },
+            "damage": {
               "mode": "dice",
               "diceCount": 2,
               "dieSize": 6,
@@ -3683,8 +5033,18 @@
                 "sonic"
               ]
             },
+            "stun": {
+              "capability": "none",
+              "hasStunSetting": false,
+              "damageMode": "none",
+              "damage": null,
+              "rangeRule": null
+            },
+            "rateOfFire": [
+              "Special"
+            ],
             "range": {
-              "mode": "profile",
+              "mode": "ranged",
               "profileId": "pistols",
               "bands": {
                 "pointBlank": [
@@ -3713,11 +5073,48 @@
               "qualityEffects": {
                 "pointBlankAllowed": true,
                 "shortPenaltyOverride": null,
-                "longAllowed": true
-              }
-            }
+                "longAllowed": true,
+                "mediumAllowed": true
+              },
+              "allowedBands": [
+                "pointBlank",
+                "short",
+                "medium",
+                "long"
+              ]
+            },
+            "qualities": {
+              "accurate": false,
+              "inaccurate": false,
+              "arc": false,
+              "ignoresDR": false,
+              "areaEffect": false,
+              "autofireOnly": false,
+              "doubleWeapon": false,
+              "thrown": false,
+              "reach": false
+            },
+            "attackResolution": {
+              "mode": "standard",
+              "defense": "reflex",
+              "ignoredDefenseComponents": [],
+              "onMiss": "none"
+            },
+            "area": {
+              "enabled": false,
+              "shape": null,
+              "radiusSquares": null,
+              "lengthSquares": null,
+              "widthAtEndSquares": null,
+              "widthSquares": null,
+              "heightSquares": null,
+              "notes": null
+            },
+            "resourceConsumption": null,
+            "notes": []
           }
-        ]
+        ],
+        "modeProfiles": []
       },
       "qualities": {
         "accurate": false,
@@ -3769,7 +5166,13 @@
           "damage-threshold -5, disintegration, multi-shot prohibition, and sonic/Deflect rule not structured"
         ]
       },
-      "laterProductionAction": "UPDATE_FROM_CERTIFIED_AUTHORITY"
+      "laterProductionAction": "UPDATE_FROM_CERTIFIED_AUTHORITY",
+      "conditionalDamageProfiles": [],
+      "qualityParameters": {
+        "accurate": null,
+        "inaccurate": null,
+        "arc": null
+      }
     },
     {
       "canonicalName": "Sonic Pistol",
@@ -3825,7 +5228,7 @@
           "rangeRule": null
         },
         "range": {
-          "mode": "profile",
+          "mode": "ranged",
           "profileId": "pistols",
           "bands": {
             "pointBlank": [
@@ -3854,14 +5257,22 @@
           "qualityEffects": {
             "pointBlankAllowed": true,
             "shortPenaltyOverride": null,
-            "longAllowed": true
-          }
+            "longAllowed": true,
+            "mediumAllowed": true
+          },
+          "allowedBands": [
+            "pointBlank",
+            "short",
+            "medium",
+            "long"
+          ]
         },
         "resource": {
           "kind": "ammunition",
           "source": "power pack",
           "capacityShots": 100,
-          "reloadAction": "recharge pack"
+          "reloadAction": "recharge pack",
+          "consumption": null
         },
         "operatingModes": {
           "default": "single",
@@ -3877,8 +5288,14 @@
         "attackProfiles": [
           {
             "id": "primary",
-            "branch": "ranged",
-            "baseDamage": {
+            "label": "Primary",
+            "kind": "attack",
+            "schemaFamily": {
+              "branch": "ranged",
+              "subcategory": "pistol",
+              "proficiency": "pistols"
+            },
+            "damage": {
               "mode": "dice",
               "diceCount": 2,
               "dieSize": 6,
@@ -3894,8 +5311,18 @@
                 "sonic"
               ]
             },
+            "stun": {
+              "capability": "none",
+              "hasStunSetting": false,
+              "damageMode": "none",
+              "damage": null,
+              "rangeRule": null
+            },
+            "rateOfFire": [
+              "S"
+            ],
             "range": {
-              "mode": "profile",
+              "mode": "ranged",
               "profileId": "pistols",
               "bands": {
                 "pointBlank": [
@@ -3924,11 +5351,48 @@
               "qualityEffects": {
                 "pointBlankAllowed": true,
                 "shortPenaltyOverride": null,
-                "longAllowed": true
-              }
-            }
+                "longAllowed": true,
+                "mediumAllowed": true
+              },
+              "allowedBands": [
+                "pointBlank",
+                "short",
+                "medium",
+                "long"
+              ]
+            },
+            "qualities": {
+              "accurate": false,
+              "inaccurate": false,
+              "arc": false,
+              "ignoresDR": false,
+              "areaEffect": false,
+              "autofireOnly": false,
+              "doubleWeapon": false,
+              "thrown": false,
+              "reach": false
+            },
+            "attackResolution": {
+              "mode": "standard",
+              "defense": "reflex",
+              "ignoredDefenseComponents": [],
+              "onMiss": "none"
+            },
+            "area": {
+              "enabled": false,
+              "shape": null,
+              "radiusSquares": null,
+              "lengthSquares": null,
+              "widthAtEndSquares": null,
+              "widthSquares": null,
+              "heightSquares": null,
+              "notes": null
+            },
+            "resourceConsumption": null,
+            "notes": []
           }
-        ]
+        ],
+        "modeProfiles": []
       },
       "qualities": {
         "accurate": false,
@@ -3975,7 +5439,13 @@
           "sonic/Deflect rule and 100-shot recharge cycle not structured"
         ]
       },
-      "laterProductionAction": "UPDATE_FROM_CERTIFIED_AUTHORITY"
+      "laterProductionAction": "UPDATE_FROM_CERTIFIED_AUTHORITY",
+      "conditionalDamageProfiles": [],
+      "qualityParameters": {
+        "accurate": null,
+        "inaccurate": null,
+        "arc": null
+      }
     },
     {
       "canonicalName": "Heavy Sonic Pistol",
@@ -4031,7 +5501,7 @@
           "rangeRule": null
         },
         "range": {
-          "mode": "profile",
+          "mode": "ranged",
           "profileId": "pistols",
           "bands": {
             "pointBlank": [
@@ -4060,14 +5530,22 @@
           "qualityEffects": {
             "pointBlankAllowed": true,
             "shortPenaltyOverride": null,
-            "longAllowed": true
-          }
+            "longAllowed": true,
+            "mediumAllowed": true
+          },
+          "allowedBands": [
+            "pointBlank",
+            "short",
+            "medium",
+            "long"
+          ]
         },
         "resource": {
           "kind": "ammunition",
           "source": "power pack",
           "capacityShots": 50,
-          "reloadAction": "recharge pack"
+          "reloadAction": "recharge pack",
+          "consumption": null
         },
         "operatingModes": {
           "default": "single",
@@ -4083,8 +5561,14 @@
         "attackProfiles": [
           {
             "id": "primary",
-            "branch": "ranged",
-            "baseDamage": {
+            "label": "Primary",
+            "kind": "attack",
+            "schemaFamily": {
+              "branch": "ranged",
+              "subcategory": "pistol",
+              "proficiency": "pistols"
+            },
+            "damage": {
               "mode": "dice",
               "diceCount": 2,
               "dieSize": 8,
@@ -4100,8 +5584,18 @@
                 "sonic"
               ]
             },
+            "stun": {
+              "capability": "none",
+              "hasStunSetting": false,
+              "damageMode": "none",
+              "damage": null,
+              "rangeRule": null
+            },
+            "rateOfFire": [
+              "S"
+            ],
             "range": {
-              "mode": "profile",
+              "mode": "ranged",
               "profileId": "pistols",
               "bands": {
                 "pointBlank": [
@@ -4130,11 +5624,48 @@
               "qualityEffects": {
                 "pointBlankAllowed": true,
                 "shortPenaltyOverride": null,
-                "longAllowed": true
-              }
-            }
+                "longAllowed": true,
+                "mediumAllowed": true
+              },
+              "allowedBands": [
+                "pointBlank",
+                "short",
+                "medium",
+                "long"
+              ]
+            },
+            "qualities": {
+              "accurate": false,
+              "inaccurate": false,
+              "arc": false,
+              "ignoresDR": false,
+              "areaEffect": false,
+              "autofireOnly": false,
+              "doubleWeapon": false,
+              "thrown": false,
+              "reach": false
+            },
+            "attackResolution": {
+              "mode": "standard",
+              "defense": "reflex",
+              "ignoredDefenseComponents": [],
+              "onMiss": "none"
+            },
+            "area": {
+              "enabled": false,
+              "shape": null,
+              "radiusSquares": null,
+              "lengthSquares": null,
+              "widthAtEndSquares": null,
+              "widthSquares": null,
+              "heightSquares": null,
+              "notes": null
+            },
+            "resourceConsumption": null,
+            "notes": []
           }
-        ]
+        ],
+        "modeProfiles": []
       },
       "qualities": {
         "accurate": false,
@@ -4177,7 +5708,13 @@
           "sonic/Deflect rule and 50-shot recharge cycle not structured"
         ]
       },
-      "laterProductionAction": "UPDATE_FROM_CERTIFIED_AUTHORITY"
+      "laterProductionAction": "UPDATE_FROM_CERTIFIED_AUTHORITY",
+      "conditionalDamageProfiles": [],
+      "qualityParameters": {
+        "accurate": null,
+        "inaccurate": null,
+        "arc": null
+      }
     },
     {
       "canonicalName": "Ion Carbine",
@@ -4234,7 +5771,7 @@
           "rangeRule": null
         },
         "range": {
-          "mode": "profile",
+          "mode": "ranged",
           "profileId": "rifles",
           "bands": {
             "pointBlank": [
@@ -4263,14 +5800,21 @@
           "qualityEffects": {
             "pointBlankAllowed": true,
             "shortPenaltyOverride": null,
-            "longAllowed": false
-          }
+            "longAllowed": false,
+            "mediumAllowed": true
+          },
+          "allowedBands": [
+            "pointBlank",
+            "short",
+            "medium"
+          ]
         },
         "resource": {
           "kind": "ammunition",
           "source": "power pack",
           "capacityShots": 30,
-          "reloadAction": "replace pack"
+          "reloadAction": "replace pack",
+          "consumption": null
         },
         "operatingModes": {
           "default": "single",
@@ -4288,8 +5832,14 @@
         "attackProfiles": [
           {
             "id": "primary",
-            "branch": "ranged",
-            "baseDamage": {
+            "label": "Primary",
+            "kind": "attack",
+            "schemaFamily": {
+              "branch": "ranged",
+              "subcategory": "rifle",
+              "proficiency": "rifles"
+            },
+            "damage": {
               "mode": "dice",
               "diceCount": 3,
               "dieSize": 8,
@@ -4305,8 +5855,19 @@
                 "ion"
               ]
             },
+            "stun": {
+              "capability": "none",
+              "hasStunSetting": false,
+              "damageMode": "none",
+              "damage": null,
+              "rangeRule": null
+            },
+            "rateOfFire": [
+              "S",
+              "A"
+            ],
             "range": {
-              "mode": "profile",
+              "mode": "ranged",
               "profileId": "rifles",
               "bands": {
                 "pointBlank": [
@@ -4335,11 +5896,47 @@
               "qualityEffects": {
                 "pointBlankAllowed": true,
                 "shortPenaltyOverride": null,
-                "longAllowed": false
-              }
-            }
+                "longAllowed": false,
+                "mediumAllowed": true
+              },
+              "allowedBands": [
+                "pointBlank",
+                "short",
+                "medium"
+              ]
+            },
+            "qualities": {
+              "accurate": false,
+              "inaccurate": true,
+              "arc": false,
+              "ignoresDR": false,
+              "areaEffect": false,
+              "autofireOnly": false,
+              "doubleWeapon": false,
+              "thrown": false,
+              "reach": false
+            },
+            "attackResolution": {
+              "mode": "standard",
+              "defense": "reflex",
+              "ignoredDefenseComponents": [],
+              "onMiss": "none"
+            },
+            "area": {
+              "enabled": false,
+              "shape": null,
+              "radiusSquares": null,
+              "lengthSquares": null,
+              "widthAtEndSquares": null,
+              "widthSquares": null,
+              "heightSquares": null,
+              "notes": null
+            },
+            "resourceConsumption": null,
+            "notes": []
           }
-        ]
+        ],
+        "modeProfiles": []
       },
       "qualities": {
         "accurate": false,
@@ -4383,7 +5980,20 @@
           "capacity 30 power-pack shots not represented"
         ]
       },
-      "laterProductionAction": "UPDATE_FROM_CERTIFIED_AUTHORITY"
+      "laterProductionAction": "UPDATE_FROM_CERTIFIED_AUTHORITY",
+      "conditionalDamageProfiles": [],
+      "qualityParameters": {
+        "accurate": null,
+        "inaccurate": {
+          "allowedBands": [
+            "pointBlank",
+            "short",
+            "medium"
+          ],
+          "note": "Core/KOTOR definition: cannot attack at Long range."
+        },
+        "arc": null
+      }
     },
     {
       "canonicalName": "Pulse-Wave Rifle",
@@ -4438,7 +6048,7 @@
           "rangeRule": null
         },
         "range": {
-          "mode": "profile",
+          "mode": "ranged",
           "profileId": "rifles",
           "bands": {
             "pointBlank": [
@@ -4467,14 +6077,21 @@
           "qualityEffects": {
             "pointBlankAllowed": true,
             "shortPenaltyOverride": null,
-            "longAllowed": false
-          }
+            "longAllowed": false,
+            "mediumAllowed": true
+          },
+          "allowedBands": [
+            "pointBlank",
+            "short",
+            "medium"
+          ]
         },
         "resource": {
           "kind": "ammunition",
           "source": "power pack",
           "capacityShots": 50,
-          "reloadAction": "replace pack"
+          "reloadAction": "replace pack",
+          "consumption": null
         },
         "operatingModes": {
           "default": "single",
@@ -4492,8 +6109,14 @@
         "attackProfiles": [
           {
             "id": "primary",
-            "branch": "ranged",
-            "baseDamage": {
+            "label": "Primary",
+            "kind": "attack",
+            "schemaFamily": {
+              "branch": "ranged",
+              "subcategory": "rifle",
+              "proficiency": "rifles"
+            },
+            "damage": {
               "mode": "dice",
               "diceCount": 2,
               "dieSize": 8,
@@ -4507,8 +6130,19 @@
               ],
               "qualifiers": []
             },
+            "stun": {
+              "capability": "none",
+              "hasStunSetting": false,
+              "damageMode": "none",
+              "damage": null,
+              "rangeRule": null
+            },
+            "rateOfFire": [
+              "S",
+              "A"
+            ],
             "range": {
-              "mode": "profile",
+              "mode": "ranged",
               "profileId": "rifles",
               "bands": {
                 "pointBlank": [
@@ -4537,11 +6171,47 @@
               "qualityEffects": {
                 "pointBlankAllowed": true,
                 "shortPenaltyOverride": null,
-                "longAllowed": false
-              }
-            }
+                "longAllowed": false,
+                "mediumAllowed": true
+              },
+              "allowedBands": [
+                "pointBlank",
+                "short",
+                "medium"
+              ]
+            },
+            "qualities": {
+              "accurate": false,
+              "inaccurate": true,
+              "arc": false,
+              "ignoresDR": false,
+              "areaEffect": false,
+              "autofireOnly": false,
+              "doubleWeapon": false,
+              "thrown": false,
+              "reach": false
+            },
+            "attackResolution": {
+              "mode": "standard",
+              "defense": "reflex",
+              "ignoredDefenseComponents": [],
+              "onMiss": "none"
+            },
+            "area": {
+              "enabled": false,
+              "shape": null,
+              "radiusSquares": null,
+              "lengthSquares": null,
+              "widthAtEndSquares": null,
+              "widthSquares": null,
+              "heightSquares": null,
+              "notes": null
+            },
+            "resourceConsumption": null,
+            "notes": []
           }
-        ]
+        ],
+        "modeProfiles": []
       },
       "qualities": {
         "accurate": false,
@@ -4587,7 +6257,20 @@
           "50-shot power-pack capacity not represented"
         ]
       },
-      "laterProductionAction": "UPDATE_FROM_CERTIFIED_AUTHORITY"
+      "laterProductionAction": "UPDATE_FROM_CERTIFIED_AUTHORITY",
+      "conditionalDamageProfiles": [],
+      "qualityParameters": {
+        "accurate": null,
+        "inaccurate": {
+          "allowedBands": [
+            "pointBlank",
+            "short",
+            "medium"
+          ],
+          "note": "Core/KOTOR definition: cannot attack at Long range."
+        },
+        "arc": null
+      }
     },
     {
       "canonicalName": "Sonic Rifle",
@@ -4644,7 +6327,7 @@
           "rangeRule": null
         },
         "range": {
-          "mode": "profile",
+          "mode": "ranged",
           "profileId": "rifles",
           "bands": {
             "pointBlank": [
@@ -4673,14 +6356,22 @@
           "qualityEffects": {
             "pointBlankAllowed": true,
             "shortPenaltyOverride": null,
-            "longAllowed": true
-          }
+            "longAllowed": true,
+            "mediumAllowed": true
+          },
+          "allowedBands": [
+            "pointBlank",
+            "short",
+            "medium",
+            "long"
+          ]
         },
         "resource": {
           "kind": "ammunition",
           "source": "power pack",
           "capacityShots": 50,
-          "reloadAction": "recharge pack"
+          "reloadAction": "recharge pack",
+          "consumption": null
         },
         "operatingModes": {
           "default": "single",
@@ -4698,8 +6389,14 @@
         "attackProfiles": [
           {
             "id": "primary",
-            "branch": "ranged",
-            "baseDamage": {
+            "label": "Primary",
+            "kind": "attack",
+            "schemaFamily": {
+              "branch": "ranged",
+              "subcategory": "rifle",
+              "proficiency": "rifles"
+            },
+            "damage": {
               "mode": "dice",
               "diceCount": 2,
               "dieSize": 8,
@@ -4715,8 +6412,19 @@
                 "sonic"
               ]
             },
+            "stun": {
+              "capability": "none",
+              "hasStunSetting": false,
+              "damageMode": "none",
+              "damage": null,
+              "rangeRule": null
+            },
+            "rateOfFire": [
+              "S",
+              "A"
+            ],
             "range": {
-              "mode": "profile",
+              "mode": "ranged",
               "profileId": "rifles",
               "bands": {
                 "pointBlank": [
@@ -4745,11 +6453,48 @@
               "qualityEffects": {
                 "pointBlankAllowed": true,
                 "shortPenaltyOverride": null,
-                "longAllowed": true
-              }
-            }
+                "longAllowed": true,
+                "mediumAllowed": true
+              },
+              "allowedBands": [
+                "pointBlank",
+                "short",
+                "medium",
+                "long"
+              ]
+            },
+            "qualities": {
+              "accurate": false,
+              "inaccurate": false,
+              "arc": false,
+              "ignoresDR": false,
+              "areaEffect": false,
+              "autofireOnly": false,
+              "doubleWeapon": false,
+              "thrown": false,
+              "reach": false
+            },
+            "attackResolution": {
+              "mode": "standard",
+              "defense": "reflex",
+              "ignoredDefenseComponents": [],
+              "onMiss": "none"
+            },
+            "area": {
+              "enabled": false,
+              "shape": null,
+              "radiusSquares": null,
+              "lengthSquares": null,
+              "widthAtEndSquares": null,
+              "widthSquares": null,
+              "heightSquares": null,
+              "notes": null
+            },
+            "resourceConsumption": null,
+            "notes": []
           }
-        ]
+        ],
+        "modeProfiles": []
       },
       "qualities": {
         "accurate": false,
@@ -4798,7 +6543,13 @@
           "sonic/Deflect rule and 50-shot recharge cycle not structured"
         ]
       },
-      "laterProductionAction": "UPDATE_FROM_CERTIFIED_AUTHORITY"
+      "laterProductionAction": "UPDATE_FROM_CERTIFIED_AUTHORITY",
+      "conditionalDamageProfiles": [],
+      "qualityParameters": {
+        "accurate": null,
+        "inaccurate": null,
+        "arc": null
+      }
     },
     {
       "canonicalName": "Blaster Rifle, Assault",
@@ -4857,7 +6608,7 @@
           }
         },
         "range": {
-          "mode": "profile",
+          "mode": "ranged",
           "profileId": "rifles",
           "bands": {
             "pointBlank": [
@@ -4886,14 +6637,22 @@
           "qualityEffects": {
             "pointBlankAllowed": true,
             "shortPenaltyOverride": 0,
-            "longAllowed": true
-          }
+            "longAllowed": true,
+            "mediumAllowed": true
+          },
+          "allowedBands": [
+            "pointBlank",
+            "short",
+            "medium",
+            "long"
+          ]
         },
         "resource": {
           "kind": "ammunition",
           "source": "power pack",
           "capacityShots": 50,
-          "reloadAction": "replace pack"
+          "reloadAction": "replace pack",
+          "consumption": null
         },
         "operatingModes": {
           "default": "single",
@@ -4912,8 +6671,14 @@
         "attackProfiles": [
           {
             "id": "primary",
-            "branch": "ranged",
-            "baseDamage": {
+            "label": "Primary",
+            "kind": "attack",
+            "schemaFamily": {
+              "branch": "ranged",
+              "subcategory": "rifle",
+              "proficiency": "rifles"
+            },
+            "damage": {
               "mode": "dice",
               "diceCount": 3,
               "dieSize": 8,
@@ -4927,8 +6692,23 @@
               ],
               "qualifiers": []
             },
+            "stun": {
+              "capability": "setting",
+              "hasStunSetting": true,
+              "damageMode": "same-as-base",
+              "damage": null,
+              "rangeRule": {
+                "mode": "max-squares",
+                "maxSquares": 6,
+                "unlessOtherwiseNoted": true
+              }
+            },
+            "rateOfFire": [
+              "S",
+              "A"
+            ],
             "range": {
-              "mode": "profile",
+              "mode": "ranged",
               "profileId": "rifles",
               "bands": {
                 "pointBlank": [
@@ -4957,11 +6737,48 @@
               "qualityEffects": {
                 "pointBlankAllowed": true,
                 "shortPenaltyOverride": 0,
-                "longAllowed": true
-              }
-            }
+                "longAllowed": true,
+                "mediumAllowed": true
+              },
+              "allowedBands": [
+                "pointBlank",
+                "short",
+                "medium",
+                "long"
+              ]
+            },
+            "qualities": {
+              "accurate": true,
+              "inaccurate": false,
+              "arc": false,
+              "ignoresDR": false,
+              "areaEffect": false,
+              "autofireOnly": false,
+              "doubleWeapon": false,
+              "thrown": false,
+              "reach": false
+            },
+            "attackResolution": {
+              "mode": "standard",
+              "defense": "reflex",
+              "ignoredDefenseComponents": [],
+              "onMiss": "none"
+            },
+            "area": {
+              "enabled": false,
+              "shape": null,
+              "radiusSquares": null,
+              "lengthSquares": null,
+              "widthAtEndSquares": null,
+              "widthSquares": null,
+              "heightSquares": null,
+              "notes": null
+            },
+            "resourceConsumption": null,
+            "notes": []
           }
-        ]
+        ],
+        "modeProfiles": []
       },
       "qualities": {
         "accurate": true,
@@ -5003,7 +6820,13 @@
           "missing Stun setting established by YES table entry"
         ]
       },
-      "laterProductionAction": "UPDATE_FROM_CERTIFIED_AUTHORITY"
+      "laterProductionAction": "UPDATE_FROM_CERTIFIED_AUTHORITY",
+      "conditionalDamageProfiles": [],
+      "qualityParameters": {
+        "accurate": null,
+        "inaccurate": null,
+        "arc": null
+      }
     },
     {
       "canonicalName": "Blaster Carbine, Repeating",
@@ -5061,7 +6884,7 @@
           }
         },
         "range": {
-          "mode": "profile",
+          "mode": "ranged",
           "profileId": "rifles",
           "bands": {
             "pointBlank": [
@@ -5090,14 +6913,21 @@
           "qualityEffects": {
             "pointBlankAllowed": true,
             "shortPenaltyOverride": null,
-            "longAllowed": false
-          }
+            "longAllowed": false,
+            "mediumAllowed": true
+          },
+          "allowedBands": [
+            "pointBlank",
+            "short",
+            "medium"
+          ]
         },
         "resource": {
           "kind": "ammunition",
           "source": "power pack",
           "capacityShots": 30,
-          "reloadAction": "replace pack"
+          "reloadAction": "replace pack",
+          "consumption": null
         },
         "operatingModes": {
           "default": "autofire",
@@ -5115,8 +6945,14 @@
         "attackProfiles": [
           {
             "id": "primary",
-            "branch": "ranged",
-            "baseDamage": {
+            "label": "Primary",
+            "kind": "attack",
+            "schemaFamily": {
+              "branch": "ranged",
+              "subcategory": "rifle",
+              "proficiency": "rifles"
+            },
+            "damage": {
               "mode": "dice",
               "diceCount": 3,
               "dieSize": 10,
@@ -5130,8 +6966,22 @@
               ],
               "qualifiers": []
             },
+            "stun": {
+              "capability": "setting",
+              "hasStunSetting": true,
+              "damageMode": "same-as-base",
+              "damage": null,
+              "rangeRule": {
+                "mode": "max-squares",
+                "maxSquares": 6,
+                "unlessOtherwiseNoted": true
+              }
+            },
+            "rateOfFire": [
+              "A"
+            ],
             "range": {
-              "mode": "profile",
+              "mode": "ranged",
               "profileId": "rifles",
               "bands": {
                 "pointBlank": [
@@ -5160,11 +7010,49 @@
               "qualityEffects": {
                 "pointBlankAllowed": true,
                 "shortPenaltyOverride": null,
-                "longAllowed": false
-              }
-            }
+                "longAllowed": false,
+                "mediumAllowed": true
+              },
+              "allowedBands": [
+                "pointBlank",
+                "short",
+                "medium"
+              ]
+            },
+            "qualities": {
+              "accurate": false,
+              "inaccurate": true,
+              "arc": false,
+              "ignoresDR": false,
+              "areaEffect": true,
+              "autofireOnly": true,
+              "doubleWeapon": false,
+              "thrown": false,
+              "reach": false
+            },
+            "attackResolution": {
+              "mode": "standard",
+              "defense": "reflex",
+              "ignoredDefenseComponents": [],
+              "onMiss": "unspecified"
+            },
+            "area": {
+              "enabled": true,
+              "shape": null,
+              "radiusSquares": null,
+              "lengthSquares": null,
+              "widthAtEndSquares": null,
+              "widthSquares": null,
+              "heightSquares": null,
+              "notes": [
+                "Area geometry and miss rule are not captured in the certified Core/KOTOR authority; the printed description governs until a source-backed backfill."
+              ]
+            },
+            "resourceConsumption": null,
+            "notes": []
           }
-        ]
+        ],
+        "modeProfiles": []
       },
       "qualities": {
         "accurate": false,
@@ -5209,7 +7097,20 @@
           "missing Area Attack footnote quality"
         ]
       },
-      "laterProductionAction": "UPDATE_FROM_CERTIFIED_AUTHORITY"
+      "laterProductionAction": "UPDATE_FROM_CERTIFIED_AUTHORITY",
+      "conditionalDamageProfiles": [],
+      "qualityParameters": {
+        "accurate": null,
+        "inaccurate": {
+          "allowedBands": [
+            "pointBlank",
+            "short",
+            "medium"
+          ],
+          "note": "Core/KOTOR definition: cannot attack at Long range."
+        },
+        "arc": null
+      }
     },
     {
       "canonicalName": "Adhesive Grenade",
@@ -5263,7 +7164,7 @@
           "rangeRule": null
         },
         "range": {
-          "mode": "profile",
+          "mode": "ranged",
           "profileId": "thrown-weapons",
           "bands": {
             "pointBlank": [
@@ -5292,14 +7193,22 @@
           "qualityEffects": {
             "pointBlankAllowed": true,
             "shortPenaltyOverride": null,
-            "longAllowed": true
-          }
+            "longAllowed": true,
+            "mediumAllowed": true
+          },
+          "allowedBands": [
+            "pointBlank",
+            "short",
+            "medium",
+            "long"
+          ]
         },
         "resource": {
           "kind": "consumable",
           "source": "adhesive grenade",
           "capacityShots": 1,
-          "consumedOnUse": true
+          "consumedOnUse": true,
+          "consumption": null
         },
         "operatingModes": {
           "default": "single",
@@ -5315,8 +7224,14 @@
         "attackProfiles": [
           {
             "id": "primary",
-            "branch": "ranged",
-            "baseDamage": {
+            "label": "Primary",
+            "kind": "attack",
+            "schemaFamily": {
+              "branch": "ranged",
+              "subcategory": "simple",
+              "proficiency": "simple"
+            },
+            "damage": {
               "mode": "none",
               "diceCount": 0,
               "dieSize": null,
@@ -5330,8 +7245,18 @@
               ],
               "qualifiers": []
             },
+            "stun": {
+              "capability": "none",
+              "hasStunSetting": false,
+              "damageMode": "none",
+              "damage": null,
+              "rangeRule": null
+            },
+            "rateOfFire": [
+              "S"
+            ],
             "range": {
-              "mode": "profile",
+              "mode": "ranged",
               "profileId": "thrown-weapons",
               "bands": {
                 "pointBlank": [
@@ -5360,11 +7285,50 @@
               "qualityEffects": {
                 "pointBlankAllowed": true,
                 "shortPenaltyOverride": null,
-                "longAllowed": true
-              }
-            }
+                "longAllowed": true,
+                "mediumAllowed": true
+              },
+              "allowedBands": [
+                "pointBlank",
+                "short",
+                "medium",
+                "long"
+              ]
+            },
+            "qualities": {
+              "accurate": false,
+              "inaccurate": false,
+              "arc": false,
+              "ignoresDR": false,
+              "areaEffect": true,
+              "autofireOnly": false,
+              "doubleWeapon": false,
+              "thrown": true,
+              "reach": false
+            },
+            "attackResolution": {
+              "mode": "standard",
+              "defense": "reflex",
+              "ignoredDefenseComponents": [],
+              "onMiss": "unspecified"
+            },
+            "area": {
+              "enabled": true,
+              "shape": null,
+              "radiusSquares": null,
+              "lengthSquares": null,
+              "widthAtEndSquares": null,
+              "widthSquares": null,
+              "heightSquares": null,
+              "notes": [
+                "Area geometry and miss rule are not captured in the certified Core/KOTOR authority; the printed description governs until a source-backed backfill."
+              ]
+            },
+            "resourceConsumption": null,
+            "notes": []
           }
-        ]
+        ],
+        "modeProfiles": []
       },
       "qualities": {
         "accurate": false,
@@ -5413,7 +7377,13 @@
           "range profile currently simple-weapons rather than thrown-weapons"
         ]
       },
-      "laterProductionAction": "UPDATE_FROM_CERTIFIED_AUTHORITY"
+      "laterProductionAction": "UPDATE_FROM_CERTIFIED_AUTHORITY",
+      "conditionalDamageProfiles": [],
+      "qualityParameters": {
+        "accurate": null,
+        "inaccurate": null,
+        "arc": null
+      }
     },
     {
       "canonicalName": "CryoBan Grenade",
@@ -5467,7 +7437,7 @@
           "rangeRule": null
         },
         "range": {
-          "mode": "profile",
+          "mode": "ranged",
           "profileId": "thrown-weapons",
           "bands": {
             "pointBlank": [
@@ -5496,14 +7466,22 @@
           "qualityEffects": {
             "pointBlankAllowed": true,
             "shortPenaltyOverride": null,
-            "longAllowed": true
-          }
+            "longAllowed": true,
+            "mediumAllowed": true
+          },
+          "allowedBands": [
+            "pointBlank",
+            "short",
+            "medium",
+            "long"
+          ]
         },
         "resource": {
           "kind": "consumable",
           "source": "CryoBan grenade",
           "capacityShots": 1,
-          "consumedOnUse": true
+          "consumedOnUse": true,
+          "consumption": null
         },
         "operatingModes": {
           "default": "single",
@@ -5519,8 +7497,14 @@
         "attackProfiles": [
           {
             "id": "primary",
-            "branch": "ranged",
-            "baseDamage": {
+            "label": "Primary",
+            "kind": "attack",
+            "schemaFamily": {
+              "branch": "ranged",
+              "subcategory": "simple",
+              "proficiency": "simple"
+            },
+            "damage": {
               "mode": "dice",
               "diceCount": 3,
               "dieSize": 6,
@@ -5534,8 +7518,18 @@
               ],
               "qualifiers": []
             },
+            "stun": {
+              "capability": "none",
+              "hasStunSetting": false,
+              "damageMode": "none",
+              "damage": null,
+              "rangeRule": null
+            },
+            "rateOfFire": [
+              "S"
+            ],
             "range": {
-              "mode": "profile",
+              "mode": "ranged",
               "profileId": "thrown-weapons",
               "bands": {
                 "pointBlank": [
@@ -5564,11 +7558,50 @@
               "qualityEffects": {
                 "pointBlankAllowed": true,
                 "shortPenaltyOverride": null,
-                "longAllowed": true
-              }
-            }
+                "longAllowed": true,
+                "mediumAllowed": true
+              },
+              "allowedBands": [
+                "pointBlank",
+                "short",
+                "medium",
+                "long"
+              ]
+            },
+            "qualities": {
+              "accurate": false,
+              "inaccurate": false,
+              "arc": false,
+              "ignoresDR": false,
+              "areaEffect": true,
+              "autofireOnly": false,
+              "doubleWeapon": false,
+              "thrown": true,
+              "reach": false
+            },
+            "attackResolution": {
+              "mode": "standard",
+              "defense": "reflex",
+              "ignoredDefenseComponents": [],
+              "onMiss": "unspecified"
+            },
+            "area": {
+              "enabled": true,
+              "shape": null,
+              "radiusSquares": null,
+              "lengthSquares": null,
+              "widthAtEndSquares": null,
+              "widthSquares": null,
+              "heightSquares": null,
+              "notes": [
+                "Area geometry and miss rule are not captured in the certified Core/KOTOR authority; the printed description governs until a source-backed backfill."
+              ]
+            },
+            "resourceConsumption": null,
+            "notes": []
           }
-        ]
+        ],
+        "modeProfiles": []
       },
       "qualities": {
         "accurate": false,
@@ -5617,7 +7650,13 @@
           "range profile currently simple-weapons rather than thrown-weapons"
         ]
       },
-      "laterProductionAction": "UPDATE_FROM_CERTIFIED_AUTHORITY"
+      "laterProductionAction": "UPDATE_FROM_CERTIFIED_AUTHORITY",
+      "conditionalDamageProfiles": [],
+      "qualityParameters": {
+        "accurate": null,
+        "inaccurate": null,
+        "arc": null
+      }
     },
     {
       "canonicalName": "Commando Special Rifle",
@@ -5672,7 +7711,7 @@
           "rangeRule": null
         },
         "range": {
-          "mode": "profile",
+          "mode": "ranged",
           "profileId": "rifles",
           "bands": {
             "pointBlank": [
@@ -5701,14 +7740,22 @@
           "qualityEffects": {
             "pointBlankAllowed": true,
             "shortPenaltyOverride": null,
-            "longAllowed": true
-          }
+            "longAllowed": true,
+            "mediumAllowed": true
+          },
+          "allowedBands": [
+            "pointBlank",
+            "short",
+            "medium",
+            "long"
+          ]
         },
         "resource": {
           "kind": "ammunition",
           "source": "power pack",
           "capacityShots": 25,
-          "reloadAction": "replace pack"
+          "reloadAction": "replace pack",
+          "consumption": null
         },
         "operatingModes": {
           "default": "single",
@@ -5726,8 +7773,14 @@
         "attackProfiles": [
           {
             "id": "primary",
-            "branch": "ranged",
-            "baseDamage": {
+            "label": "Primary",
+            "kind": "attack",
+            "schemaFamily": {
+              "branch": "ranged",
+              "subcategory": "rifle",
+              "proficiency": "rifles"
+            },
+            "damage": {
               "mode": "dice",
               "diceCount": 3,
               "dieSize": 10,
@@ -5741,8 +7794,19 @@
               ],
               "qualifiers": []
             },
+            "stun": {
+              "capability": "none",
+              "hasStunSetting": false,
+              "damageMode": "none",
+              "damage": null,
+              "rangeRule": null
+            },
+            "rateOfFire": [
+              "S",
+              "A"
+            ],
             "range": {
-              "mode": "profile",
+              "mode": "ranged",
               "profileId": "rifles",
               "bands": {
                 "pointBlank": [
@@ -5771,11 +7835,48 @@
               "qualityEffects": {
                 "pointBlankAllowed": true,
                 "shortPenaltyOverride": null,
-                "longAllowed": true
-              }
-            }
+                "longAllowed": true,
+                "mediumAllowed": true
+              },
+              "allowedBands": [
+                "pointBlank",
+                "short",
+                "medium",
+                "long"
+              ]
+            },
+            "qualities": {
+              "accurate": false,
+              "inaccurate": false,
+              "arc": false,
+              "ignoresDR": false,
+              "areaEffect": false,
+              "autofireOnly": false,
+              "doubleWeapon": false,
+              "thrown": false,
+              "reach": false
+            },
+            "attackResolution": {
+              "mode": "standard",
+              "defense": "reflex",
+              "ignoredDefenseComponents": [],
+              "onMiss": "none"
+            },
+            "area": {
+              "enabled": false,
+              "shape": null,
+              "radiusSquares": null,
+              "lengthSquares": null,
+              "widthAtEndSquares": null,
+              "widthSquares": null,
+              "heightSquares": null,
+              "notes": null
+            },
+            "resourceConsumption": null,
+            "notes": []
           }
-        ]
+        ],
+        "modeProfiles": []
       },
       "qualities": {
         "accurate": false,
@@ -5815,7 +7916,13 @@
           "25-shot power-pack capacity not represented"
         ]
       },
-      "laterProductionAction": "UPDATE_FROM_CERTIFIED_AUTHORITY"
+      "laterProductionAction": "UPDATE_FROM_CERTIFIED_AUTHORITY",
+      "conditionalDamageProfiles": [],
+      "qualityParameters": {
+        "accurate": null,
+        "inaccurate": null,
+        "arc": null
+      }
     },
     {
       "canonicalName": "Remote Grenade",
@@ -5869,7 +7976,7 @@
           "rangeRule": null
         },
         "range": {
-          "mode": "profile",
+          "mode": "ranged",
           "profileId": "thrown-weapons",
           "bands": {
             "pointBlank": [
@@ -5898,14 +8005,22 @@
           "qualityEffects": {
             "pointBlankAllowed": true,
             "shortPenaltyOverride": null,
-            "longAllowed": true
-          }
+            "longAllowed": true,
+            "mediumAllowed": true
+          },
+          "allowedBands": [
+            "pointBlank",
+            "short",
+            "medium",
+            "long"
+          ]
         },
         "resource": {
           "kind": "consumable",
           "source": "remote grenade",
           "capacityShots": 1,
-          "consumedOnUse": true
+          "consumedOnUse": true,
+          "consumption": null
         },
         "operatingModes": {
           "default": "single",
@@ -5921,8 +8036,14 @@
         "attackProfiles": [
           {
             "id": "primary",
-            "branch": "ranged",
-            "baseDamage": {
+            "label": "Primary",
+            "kind": "attack",
+            "schemaFamily": {
+              "branch": "ranged",
+              "subcategory": "simple",
+              "proficiency": "simple"
+            },
+            "damage": {
               "mode": "dice",
               "diceCount": 4,
               "dieSize": 6,
@@ -5936,8 +8057,18 @@
               ],
               "qualifiers": []
             },
+            "stun": {
+              "capability": "none",
+              "hasStunSetting": false,
+              "damageMode": "none",
+              "damage": null,
+              "rangeRule": null
+            },
+            "rateOfFire": [
+              "S"
+            ],
             "range": {
-              "mode": "profile",
+              "mode": "ranged",
               "profileId": "thrown-weapons",
               "bands": {
                 "pointBlank": [
@@ -5966,11 +8097,50 @@
               "qualityEffects": {
                 "pointBlankAllowed": true,
                 "shortPenaltyOverride": null,
-                "longAllowed": true
-              }
-            }
+                "longAllowed": true,
+                "mediumAllowed": true
+              },
+              "allowedBands": [
+                "pointBlank",
+                "short",
+                "medium",
+                "long"
+              ]
+            },
+            "qualities": {
+              "accurate": false,
+              "inaccurate": false,
+              "arc": false,
+              "ignoresDR": false,
+              "areaEffect": true,
+              "autofireOnly": false,
+              "doubleWeapon": false,
+              "thrown": true,
+              "reach": false
+            },
+            "attackResolution": {
+              "mode": "standard",
+              "defense": "reflex",
+              "ignoredDefenseComponents": [],
+              "onMiss": "unspecified"
+            },
+            "area": {
+              "enabled": true,
+              "shape": null,
+              "radiusSquares": null,
+              "lengthSquares": null,
+              "widthAtEndSquares": null,
+              "widthSquares": null,
+              "heightSquares": null,
+              "notes": [
+                "Area geometry and miss rule are not captured in the certified Core/KOTOR authority; the printed description governs until a source-backed backfill."
+              ]
+            },
+            "resourceConsumption": null,
+            "notes": []
           }
-        ]
+        ],
+        "modeProfiles": []
       },
       "qualities": {
         "accurate": false,
@@ -6015,7 +8185,13 @@
           "range profile currently simple-weapons rather than thrown-weapons"
         ]
       },
-      "laterProductionAction": "UPDATE_FROM_CERTIFIED_AUTHORITY"
+      "laterProductionAction": "UPDATE_FROM_CERTIFIED_AUTHORITY",
+      "conditionalDamageProfiles": [],
+      "qualityParameters": {
+        "accurate": null,
+        "inaccurate": null,
+        "arc": null
+      }
     },
     {
       "canonicalName": "Stunning Gauntlet",
@@ -6088,7 +8264,8 @@
           "kind": "power",
           "source": "embedded energy cell",
           "requiredUnits": 1,
-          "capacityShots": null
+          "capacityShots": null,
+          "consumption": null
         },
         "operatingModes": {
           "default": "normal",
@@ -6117,8 +8294,14 @@
         "attackProfiles": [
           {
             "id": "primary",
-            "branch": "melee",
-            "baseDamage": {
+            "label": "Primary",
+            "kind": "attack",
+            "schemaFamily": {
+              "branch": "melee",
+              "subcategory": "simple",
+              "proficiency": "simple"
+            },
+            "damage": {
               "mode": "none",
               "diceCount": 0,
               "dieSize": null,
@@ -6132,6 +8315,21 @@
               ],
               "qualifiers": []
             },
+            "stun": {
+              "capability": "native-stun",
+              "hasStunSetting": false,
+              "damageMode": "explicit",
+              "damage": {
+                "mode": "modifier",
+                "diceCount": 0,
+                "dieSize": null,
+                "flatBonus": 1,
+                "formula": "+1",
+                "appliesTo": "successful unarmed attack after converting that attack to stun damage"
+              },
+              "rangeRule": null
+            },
+            "rateOfFire": null,
             "range": {
               "mode": "melee",
               "profileId": null,
@@ -6142,9 +8340,39 @@
                 "shortPenaltyOverride": null,
                 "longAllowed": null
               }
-            }
+            },
+            "qualities": {
+              "accurate": false,
+              "inaccurate": false,
+              "arc": false,
+              "ignoresDR": false,
+              "areaEffect": false,
+              "autofireOnly": false,
+              "doubleWeapon": false,
+              "thrown": false,
+              "reach": false
+            },
+            "attackResolution": {
+              "mode": "standard",
+              "defense": "reflex",
+              "ignoredDefenseComponents": [],
+              "onMiss": "none"
+            },
+            "area": {
+              "enabled": false,
+              "shape": null,
+              "radiusSquares": null,
+              "lengthSquares": null,
+              "widthAtEndSquares": null,
+              "widthSquares": null,
+              "heightSquares": null,
+              "notes": null
+            },
+            "resourceConsumption": null,
+            "notes": []
           }
-        ]
+        ],
+        "modeProfiles": []
       },
       "qualities": {
         "accurate": false,
@@ -6194,7 +8422,13 @@
           "No production record exists for this canonical identity."
         ]
       },
-      "laterProductionAction": "CREATE_AFTER_PHASE_2_WEAPON_AUTHORITY_COMPLETE"
+      "laterProductionAction": "CREATE_AFTER_PHASE_2_WEAPON_AUTHORITY_COMPLETE",
+      "conditionalDamageProfiles": [],
+      "qualityParameters": {
+        "accurate": null,
+        "inaccurate": null,
+        "arc": null
+      }
     },
     {
       "canonicalName": "Mythosaur Axe",
@@ -6257,7 +8491,8 @@
           }
         },
         "resource": {
-          "kind": "none"
+          "kind": "none",
+          "consumption": null
         },
         "operatingModes": {
           "default": "normal",
@@ -6273,8 +8508,14 @@
         "attackProfiles": [
           {
             "id": "primary",
-            "branch": "melee",
-            "baseDamage": {
+            "label": "Primary",
+            "kind": "attack",
+            "schemaFamily": {
+              "branch": "melee",
+              "subcategory": "simple",
+              "proficiency": "simple"
+            },
+            "damage": {
               "mode": "dice",
               "diceCount": 1,
               "dieSize": 12,
@@ -6288,6 +8529,14 @@
               ],
               "qualifiers": []
             },
+            "stun": {
+              "capability": "none",
+              "hasStunSetting": false,
+              "damageMode": "none",
+              "damage": null,
+              "rangeRule": null
+            },
+            "rateOfFire": null,
             "range": {
               "mode": "melee",
               "profileId": null,
@@ -6298,9 +8547,39 @@
                 "shortPenaltyOverride": null,
                 "longAllowed": null
               }
-            }
+            },
+            "qualities": {
+              "accurate": false,
+              "inaccurate": false,
+              "arc": false,
+              "ignoresDR": false,
+              "areaEffect": false,
+              "autofireOnly": false,
+              "doubleWeapon": false,
+              "thrown": false,
+              "reach": false
+            },
+            "attackResolution": {
+              "mode": "standard",
+              "defense": "reflex",
+              "ignoredDefenseComponents": [],
+              "onMiss": "none"
+            },
+            "area": {
+              "enabled": false,
+              "shape": null,
+              "radiusSquares": null,
+              "lengthSquares": null,
+              "widthAtEndSquares": null,
+              "widthSquares": null,
+              "heightSquares": null,
+              "notes": null
+            },
+            "resourceConsumption": null,
+            "notes": []
           }
-        ]
+        ],
+        "modeProfiles": []
       },
       "qualities": {
         "accurate": false,
@@ -6346,12 +8625,21 @@
           "No production record exists for this canonical identity."
         ]
       },
-      "laterProductionAction": "CREATE_AFTER_PHASE_2_WEAPON_AUTHORITY_COMPLETE"
+      "laterProductionAction": "CREATE_AFTER_PHASE_2_WEAPON_AUTHORITY_COMPLETE",
+      "conditionalDamageProfiles": [],
+      "qualityParameters": {
+        "accurate": null,
+        "inaccurate": null,
+        "arc": null
+      }
     }
   ],
   "schemaNormalization": {
-    "version": "2A-core-gold-v2.1",
-    "change": "attackProfiles added to every record (derived 1:1 from the certified baseDamage/damageType/range; Massassi Lanvarok keeps its source-published disc/melee profiles). No published fact changed.",
-    "authorizedBy": "owner decision: keep schema v2.1 and add attackProfiles to KOTOR"
+    "version": "weapon-authority-schema-v2.2",
+    "history": [
+      "2A-core-gold-v2.1: attackProfiles added to every record",
+      "weapon-authority-schema-v2.2: profiles reshaped to the v2.2 profile contract (damage, label, kind, schemaFamily, stun, rateOfFire, range.allowedBands, qualities, attackResolution, area, resourceConsumption), range.mode \"profile\" renamed \"ranged\", modeProfiles [], resource.consumption null, conditionalDamageProfiles [], qualityParameters (Inaccurate preserved as long-only exclusion)"
+    ],
+    "note": "Structural normalization only, derived from the certified facts; no published fact changed."
   }
 }

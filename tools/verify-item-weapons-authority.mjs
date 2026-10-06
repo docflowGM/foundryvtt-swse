@@ -478,13 +478,30 @@ if (s2) {
       else { d.profiles.forEach((q, i) => dice(q, `${where}[${i}]`)); if (d.formula !== d.profiles.map((q) => q.formula).join('/')) fail(`${where} double formula mismatch`); }
     } else if (!DMG_MODES.has(d.mode)) fail(`${where} unknown damage mode ${d.mode}`);
   };
-  const rangeCheck = (rg, ql, w) => {
-    if (rg.mode !== 'profile') return;
+  const BANDS = C.range.allowedBands.vocabulary;
+  const RANGE_MODES = new Set(C.range.modes);
+  /** Expected allowedBands for a qualities/qualityParameters pair (book-specific Inaccurate lives in qualityParameters). */
+  const expectedBands = (ql, qp, w) => {
+    let b = [...BANDS];
+    if (ql.inaccurate) {
+      const ab = qp?.inaccurate?.allowedBands;
+      if (!Array.isArray(ab) || !ab.every((x) => BANDS.includes(x))) { fail(`${w} Inaccurate needs qualityParameters.inaccurate.allowedBands`); return b; }
+      b = b.filter((x) => ab.includes(x));
+    }
+    if (ql.arc) b = b.filter((x) => x !== 'pointBlank');
+    return b;
+  };
+  const rangeCheck = (rg, ql, qp, w) => {
+    if (!RANGE_MODES.has(rg.mode)) { fail(`${w} unknown range mode ${rg.mode}`); return; }
+    if (rg.mode === 'fixed-maximum' && !Number.isInteger(rg.maxSquares)) fail(`${w} fixed-maximum range needs maxSquares`);
+    if (rg.mode !== 'ranged') return;
     const prof = C.range.canonicalProfiles[rg.profileId];
     if (!prof || !same(rg.bands, prof)) fail(`${w} range bands differ from the canonical profile ${rg.profileId}`);
     if (!same(rg.basePenalties, C.range.basePenalties)) fail(`${w} base penalties differ from contract`);
+    const want = expectedBands(ql, qp, w);
+    if (!same(rg.allowedBands, want)) fail(`${w} range.allowedBands ${JSON.stringify(rg.allowedBands)} != expected ${JSON.stringify(want)} from qualities/qualityParameters`);
     const qe = rg.qualityEffects;
-    if (qe.longAllowed !== !ql.inaccurate || qe.pointBlankAllowed !== !ql.arc || (qe.shortPenaltyOverride === 0) !== ql.accurate) fail(`${w} range qualityEffects disagree with qualities`);
+    if (qe.pointBlankAllowed !== want.includes('pointBlank') || qe.mediumAllowed !== want.includes('medium') || qe.longAllowed !== want.includes('long') || (qe.shortPenaltyOverride === 0) !== ql.accurate) fail(`${w} range qualityEffects disagree with allowedBands/qualities`);
   };
   /** Checks one weapon book against its Phase 1 records. Returns {present, ign, tallies}. */
   const checkBook = (b, p1, label, opts = {}) => {
@@ -519,26 +536,48 @@ if (s2) {
       if (ql.autofireOnly && !same(rof, ['A'])) fail(`${w} autofireOnly requires rateOfFire ["A"]`);
       if (rof && rof.includes('Special') && (!same(rof, ['Special']) || !r.operation?.specialRateOfFire)) fail(`${w} Special rate of fire must be exactly ["Special"] with operation.specialRateOfFire`);
       if (r.operation?.specialRateOfFire && !(rof && rof.includes('Special'))) fail(`${w} operation.specialRateOfFire requires rateOfFire ["Special"]`);
-      rangeCheck(s.range, ql, w);
-      // attack profiles: per-attack decomposition that must agree with the aggregate fields.
-      // Required on every record of a book that has adopted schema v2.1 (Core); for every standalone book as well (KOTOR 2B was normalized to v2.1 by owner decision).
+      const qp = r.qualityParameters;
+      if (!qp || !same(Object.keys(qp).sort(), ['accurate', 'arc', 'inaccurate'])) fail(`${w} missing qualityParameters`);
+      if (!Array.isArray(r.conditionalDamageProfiles)) fail(`${w} missing conditionalDamageProfiles`);
+      if (!Array.isArray(s.modeProfiles)) fail(`${w} missing canonicalStats.modeProfiles`);
+      if (!('consumption' in s.resource)) fail(`${w} missing resource.consumption`);
+      if (s.baseDamage.mode === 'conditional' && !r.conditionalDamageProfiles?.length) fail(`${w} conditional damage needs conditionalDamageProfiles`);
+      rangeCheck(s.range, ql, qp, w);
+      // attack profiles (schema v2.2): per-attack decomposition
       const ap = s.attackProfiles;
-      if (!ap) {
-        if (opts.requireAttackProfiles) fail(`${w} missing canonicalStats.attackProfiles`);
-        if (s.baseDamage.mode === 'alternate-profiles') fail(`${w} alternate-profiles damage requires attackProfiles`);
-      } else {
-        if (!Array.isArray(ap) || !ap.length || new Set(ap.map((x) => x.id)).size !== ap.length) fail(`${w} attackProfiles need unique ids`);
-        else {
-          for (const x of ap) {
-            if (!['melee', 'ranged'].includes(x.branch) || !x.baseDamage || !x.damageType || !x.range) fail(`${w} attack profile ${x.id} incomplete`);
-            else { dice(x.baseDamage, `${w} profile ${x.id}`); rangeCheck(x.range, ql, `${w} profile ${x.id}`); }
-          }
+      const PKEYS = C.attackProfiles.profileShape, KINDS = new Set(C.attackProfiles.kinds), RES = new Set(C.attackProfiles.attackResolution.modes), MISS = new Set(C.attackProfiles.attackResolution.onMiss);
+      if (!Array.isArray(ap) || !ap.length || new Set(ap.map((x) => x.id)).size !== ap.length) fail(`${w} attackProfiles need unique ids`);
+      else {
+        for (const x of ap) {
+          const pw = `${w} profile ${x.id}`;
+          const miss = PKEYS.filter((k) => !(k in x));
+          if (miss.length) { fail(`${pw} missing ${miss.join(',')}`); continue; }
+          if (!KINDS.has(x.kind)) fail(`${pw} invalid kind ${x.kind}`);
+          if (!x.schemaFamily.branch || !x.schemaFamily.proficiency) fail(`${pw} incomplete schemaFamily`);
+          dice(x.damage, `${pw} damage`);
+          if (!STUN_CAP.has(x.stun.capability) || !STUN_MODE.has(x.stun.damageMode)) fail(`${pw} invalid stun`);
+          if (x.rateOfFire !== null && !(Array.isArray(x.rateOfFire) && x.rateOfFire.every((y) => ROF.has(y)))) fail(`${pw} invalid rateOfFire`);
+          if (!same(Object.keys(x.qualities).sort(), [...QUALS].sort())) fail(`${pw} quality vocabulary incomplete`);
+          if (!RES.has(x.attackResolution.mode) || !MISS.has(x.attackResolution.onMiss) || !Array.isArray(x.attackResolution.ignoredDefenseComponents) || !x.attackResolution.defense) fail(`${pw} invalid attackResolution`);
+          if (typeof x.area.enabled !== 'boolean' || !['shape', 'radiusSquares', 'lengthSquares', 'widthAtEndSquares', 'widthSquares', 'heightSquares', 'notes'].every((k) => k in x.area)) fail(`${pw} invalid area`);
+          else if (!x.area.enabled && ['shape', 'radiusSquares', 'lengthSquares', 'widthAtEndSquares', 'widthSquares', 'heightSquares', 'notes'].some((k) => x.area[k] !== null)) fail(`${pw} area.enabled=false requires null geometry`);
+          if (x.resourceConsumption !== null && !x.resourceConsumption?.resource) fail(`${pw} invalid resourceConsumption`);
+          if (x.stun.damageMode === 'same-as-active-profile' && !s.modeProfiles.length && ap.length < 2) fail(`${pw} same-as-active-profile needs multiple profiles`);
+          rangeCheck(x.range, x.qualities, qp, pw);
+        }
+        const ids = new Set(ap.map((x) => x.id));
+        for (const m of s.modeProfiles) {
+          if (!m.id || !m.label || !('switchAction' in m) || !('attackProfileId' in m)) fail(`${w} modeProfile ${m.id} incomplete`);
+          else if (m.attackProfileId !== null && !ids.has(m.attackProfileId)) fail(`${w} modeProfile ${m.id} links unknown profile ${m.attackProfileId}`);
+        }
+        if (opts.mirrorProfiles) {
           if (s.baseDamage.mode === 'double') {
-            if (!same(ap.map((x) => x.id), ['end1', 'end2']) || !same(ap.map((x) => x.baseDamage), s.baseDamage.profiles)) fail(`${w} double weapon profiles must be end1/end2 matching baseDamage.profiles`);
+            if (!same(ap.map((x) => x.id), ['end1', 'end2']) || !same(ap.map((x) => x.damage), s.baseDamage.profiles)) fail(`${w} double weapon profiles must be end1/end2 matching baseDamage.profiles`);
           } else if (s.baseDamage.mode === 'alternate-profiles') {
             if (ap.length < 2) fail(`${w} alternate-profiles needs 2+ attack profiles`);
-          } else if (ap.length !== 1 || ap[0].id !== 'primary' || !same(ap[0].baseDamage, s.baseDamage) || !same(ap[0].damageType, s.damageType) || !same(ap[0].range, s.range)) fail(`${w} primary attack profile must mirror canonicalStats baseDamage/damageType/range`);
+          } else if (ap.length !== 1 || ap[0].id !== 'primary' || !same(ap[0].damage, s.baseDamage) || !same(ap[0].damageType, s.damageType) || !same(ap[0].range, s.range)) fail(`${w} primary attack profile must mirror canonicalStats baseDamage/damageType/range`);
         }
+        if (s.baseDamage.mode === 'alternate-profiles' && ap.length < 2) fail(`${w} alternate-profiles needs 2+ attack profiles`);
       }
       const fam = r.schemaFamily;
       if (!fam || !fam.branch || !fam.subcategory || !fam.proficiency) fail(`${w} missing schemaFamily`);
@@ -550,32 +589,37 @@ if (s2) {
 
   for (const b of s2.books) {
     const p1 = new Map(auth.phases['1-weapons-content'].books.find((x) => x.phase === '1A').records.map((r) => [r.canonicalName, r]));
-    const t = checkBook(b, p1, b.phase, { coreNoBaseRangeQualities: true, requireAttackProfiles: true });
+    const t = checkBook(b, p1, b.phase, { coreNoBaseRangeQualities: true, mirrorProfiles: true });
     if (b.records.length !== b.counts.claims || t.present !== b.counts.repoPresent || b.records.length - t.present !== b.counts.repoMissing) fail(`${b.phase} counts mismatch`);
     if (t.ign !== 3) fail(`2A expected 3 ignoresDR lightsabers, found ${t.ign}`);
     if (b.records.find((r) => r.canonicalName === 'Bowcaster').canonicalStats.range.mode !== 'unresolved') fail('2A Bowcaster range must remain unresolved');
     if (b.records.length !== 48 || t.present !== 35) fail('2A Core hard checkpoint must be 48 records / 35 present / 13 missing');
-    if (s2.schemaVersion !== '2A-core-gold-v2.1') fail('2A schemaVersion must be 2A-core-gold-v2.1');
+    if (s2.schemaVersion !== 'weapon-authority-schema-v2.2') fail('schemaVersion must be weapon-authority-schema-v2.2');
   }
   // Standalone book authorities (not merged into the rolling record unless the owner says so)
   for (const sb of s2.standaloneBookAuthorities || []) {
     const sa = JSON.parse(fs.readFileSync(path.join(ROOT, sb.file), 'utf8'));
     if (!fs.existsSync(path.join(ROOT, sb.doc))) fail(`${sb.phase} missing doc ${sb.doc}`);
-    if (sa.scope.rollingAuthorityMutationAuthorized !== false || sa.scope.productionMutationAuthorized !== false || sa.scope.recordCreationAuthorized !== false) fail(`${sb.phase} standalone scope flags must stay false`);
+    if (typeof sa.scope === 'object' && (sa.scope.rollingAuthorityMutationAuthorized !== false || sa.scope.productionMutationAuthorized !== false || sa.scope.recordCreationAuthorized !== false)) fail(`${sb.phase} standalone scope flags must stay false`);
+    if (sb.rollingMergeAuthorized !== false) fail(`${sb.phase} standalone book must not be rolling-merged without owner instruction`);
     const p1b = auth.phases['1-weapons-content'].books.find((x) => x.book === sa.book);
     const p1 = new Map(p1b.records.map((r) => [r.canonicalName, r]));
-    const t = checkBook(sa, p1, sb.phase, { requireAttackProfiles: true });
+    const t = checkBook(sa, p1, sb.phase, { mirrorProfiles: !!sb.mirrorProfiles });
     const c = sa.counts;
     if (sa.records.length !== c.canonicalWeaponClaims || sa.records.length !== sb.claims || t.present !== c.repoPresent || sa.records.length - t.present !== c.repoMissing || t.present !== sb.repoPresent) fail(`${sb.phase} counts mismatch`);
     const tallies = { accurateBaseClaims: t.accurate, inaccurateBaseClaims: t.inaccurate, arcBaseClaims: t.arc, ignoresDRBaseClaims: t.ign, areaEffectClaims: t.area, doubleWeaponClaims: t.dbl, autofireOnlyClaims: t.auto };
-    for (const [k, v] of Object.entries(tallies)) if (c[k] !== v) fail(`${sb.phase} counts.${k} ${c[k]} != computed ${v}`);
-    const tableSum = sa.verification.sourceTables.reduce((m, x) => m + x.claims, 0);
-    if (tableSum !== sa.records.length) fail(`${sb.phase} source table claims ${tableSum} != records ${sa.records.length}`);
+    for (const [k, v] of Object.entries(tallies)) if (k in c && c[k] !== v) fail(`${sb.phase} counts.${k} ${c[k]} != computed ${v}`);
+    if (sa.verification.sourceTables) { const tableSum = sa.verification.sourceTables.reduce((m, x) => m + x.claims, 0); if (tableSum !== sa.records.length) fail(`${sb.phase} source table claims ${tableSum} != records ${sa.records.length}`); }
     // Lightfoil-style DR bypass must come from the lightsaber group only
     for (const r of sa.records) if (r.qualities.ignoresDR && r.weaponGroup !== 'Lightsaber') fail(`${sb.phase} ${r.canonicalName} ignoresDR outside the Lightsaber group`);
-    for (const r of sa.records) if (r.canonicalStats.rateOfFire?.includes('Special') && r.canonicalName !== 'Sonic Disruptor') fail(`${sb.phase} unexpected Special rate of fire on ${r.canonicalName}`);
+    for (const r of sa.records) if (r.canonicalStats.rateOfFire?.includes('Special') && !sb.specialRateOfFireAllowed?.includes(r.canonicalName)) fail(`${sb.phase} unexpected Special rate of fire on ${r.canonicalName}`);
     const mass = sa.records.find((r) => r.canonicalName === 'Massassi Lanvarok');
     if (mass && !(mass.canonicalStats.attackProfiles.map((x) => x.id).join() === 'disc,melee' && mass.canonicalStats.baseDamage.mode === 'alternate-profiles')) fail(`${sb.phase} Massassi Lanvarok must carry disc and melee profiles`);
+    if (sb.phase === '2C') {
+      const g = (n) => sa.records.find((r) => r.canonicalName === n);
+      for (const n of ['Scatter Gun', 'Ascension Gun', 'Blaster Rifle, Heavy Variable']) if (!same(g(n).qualityParameters.inaccurate.allowedBands, ['pointBlank', 'short'])) fail(`2C ${n} Inaccurate must exclude Medium and Long (book-specific definition)`);
+      if (g('Interchangeable Weapon System').canonicalStats.attackProfiles.length !== 3 || g('Blaster Rifle, Variable').canonicalStats.modeProfiles.length !== 3) fail('2C IWS / Variable rifle mode structure missing');
+    }
     if (!errors.length) console.log(`Phase 2 standalone ${sb.phase} ${sa.book} OK: ${sa.records.length} records (${t.present} present, ${sa.records.length - t.present} missing)`);
   }
   if (errors.length === e0) console.log(`Phase 2 weapons stat/schema OK: ${s2.books.map((b) => `${b.phase} ${b.book} (${b.records.length})`).join('; ')}`);
