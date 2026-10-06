@@ -985,5 +985,75 @@ if (s2) {
   if (errors.length === e0) console.log(`Phase 2 weapons stat/schema OK: ${s2.books.map((b) => `${b.phase} ${b.book} (${b.records.length})`).join('; ')}`);
 }
 
+
+// Phase 3A: cross-publication reconciliation, recomputed from the certified Phase 1/Phase 2 claims
+const p3 = auth.phases['3-weapons-canonical-authority'];
+if (p3) {
+  const e3 = errors.length;
+  const same = (x, y) => JSON.stringify(x) === JSON.stringify(y);
+  const a3 = p3.subphases['3A'];
+  const rec3 = JSON.parse(fs.readFileSync(path.join(ROOT, a3.file), 'utf8'));
+  if (!fs.existsSync(path.join(ROOT, a3.doc))) fail('3A missing doc');
+  if (p3.productionMutationAuthorized !== false) fail('3A production mutation must stay unauthorized');
+  const claims = new Map();
+  const addClaims = (b, ph) => { for (const r of b.records) { const k = r.canonicalName; if (!claims.has(k)) claims.set(k, []); claims.get(k).push({ ph, r }); } };
+  addClaims(s2.books[0], '2A');
+  for (const sb of s2.standaloneBookAuthorities) addClaims(JSON.parse(fs.readFileSync(path.join(ROOT, sb.file), 'utf8')), sb.phase);
+  const p1all = auth.phases['1-weapons-content'].books.flatMap((b) => b.records.map((r) => r.canonicalName));
+  const dupNames = [...new Set(p1all.filter((n, i) => p1all.indexOf(n) !== i))].sort();
+  if (p1all.length !== 209 || new Set(p1all).size !== 203 || rec3.inputCounts.phase1SourceClaims !== 209 || rec3.inputCounts.phase1UniqueProductionIdentities !== 203 || rec3.inputCounts.crossPublicationDuplicateClaims !== 6 || dupNames.length !== 6) fail('3A input counts must reconcile 209 claims -> 203 identities with exactly six duplicated identities');
+  if (!same(rec3.records.map((q) => q.canonicalIdentity).sort(), dupNames)) fail(`3A identities ${rec3.records.map((q) => q.canonicalIdentity).sort()} must equal the six Phase 1 cross-published identities ${dupNames}`);
+  if (rec3.outputCounts.crossPublishedIdentitiesReviewed !== 6 || rec3.outputCounts.resolvedCompatibleOrAdditive !== rec3.records.filter((q) => !q.conflicts?.length).length || rec3.outputCounts.explicitSourceConflictsCarriedForward !== rec3.records.filter((q) => q.conflicts?.length).length || rec3.outputCounts.explicitSourceConflictsCarriedForward !== 2) fail('3A output counts (4 resolved / 2 conflict-gated)');
+  const dmgStr = (r) => `${r.canonicalStats.damageType.types.map((t) => t[0].toUpperCase() + t.slice(1)).join(r.canonicalStats.damageType.mode === 'and' ? ' AND ' : ' OR ')}`;
+  const field = {
+    weaponGroup: (r) => r.weaponGroup, size: (r) => r.canonicalStats.size, costCredits: (r) => r.canonicalStats.costCredits, baseDamage: (r) => r.canonicalStats.baseDamage.formula, weightKg: (r) => r.canonicalStats.weightKg, damageType: dmgStr,
+    rare: (r) => r.canonicalStats.availability.rare, ignoresDR: (r) => r.qualities.ignoresDR, reach: (r) => r.qualities.reach, inaccurate: (r) => r.qualities.inaccurate, areaEffect: (r) => r.qualities.areaEffect, rateOfFire: (r) => r.canonicalStats.rateOfFire,
+    availability: (r) => r.canonicalStats.availability.restriction,
+  };
+  for (const q of rec3.records) {
+    const n = q.canonicalIdentity, cl = claims.get(n) || [];
+    if (cl.length !== 2) { fail(`3A ${n} needs exactly two certified claims, found ${cl.length}`); continue; }
+    const p1r = auth.phases['1-weapons-content'].books.flatMap((b) => b.records).find((x) => x.canonicalName === n);
+    if ((q.repoId ?? null) !== (p1r.repo.id ?? null)) fail(`3A ${n} repoId ${q.repoId} differs from Phase 1 ${p1r.repo.id}`);
+    for (const src of q.sources) if (!cl.some((c) => c.r.source.book === src.book && c.r.source.descriptionPage === src.page)) fail(`3A ${n} source ${src.book} p.${src.page} is not a certified claim`);
+    if (!same(q.sources.map((x) => `${x.book}|${x.page}`).sort(), cl.map((c) => `${c.r.source.book}|${c.r.source.descriptionPage}`).sort())) fail(`3A ${n} sources must be exactly the two certified claims`);
+    const facts = q.compatibleFacts || q.canonicalMerge || {};
+    const keyMap = { availability: 'availability' };
+    for (const [k, val] of Object.entries(facts)) {
+      const fn = field[k]; if (!fn) continue;
+      for (const c of cl) { const got = fn(c.r); const norm = (x) => (typeof x === 'string' ? x.toLowerCase() : x); if (k === 'baseDamage' && got === '-' && /^none/i.test(String(val))) continue; if (got !== undefined && got !== null && !same(norm(got), norm(val)) && !(k === 'availability' && typeof val === 'string' && val.toLowerCase() === 'rare')) fail(`3A ${n} stated ${k}=${JSON.stringify(val)} but ${c.ph} claim says ${JSON.stringify(got)}`); }
+    }
+    // conflicts: recompute differing fields between the two claims
+    const differ = [];
+    for (const k of ['costCredits', 'weightKg', 'size', 'baseDamage', 'damageType', 'weaponGroup', 'availability', 'inaccurate', 'ignoresDR', 'reach', 'areaEffect', 'rateOfFire']) { const [x, y] = cl.map((c) => field[k](c.r)); if (!same(x, y) && x !== null && y !== null) differ.push(k === 'availability' ? 'availability.restriction' : k === 'inaccurate' ? 'qualities.inaccurate' : k); }
+    const listed = (q.conflicts || []).map((c) => c.field).filter((f2) => f2 !== 'singleShotAttackPenalty').sort();
+    if (!same(listed, differ.sort())) fail(`3A ${n} listed conflicts ${JSON.stringify(listed)} disagree with certified claim differences ${JSON.stringify(differ)}`);
+    for (const c of q.conflicts || []) if (c.disposition !== 'UNRESOLVED_PRECEDENCE') fail(`3A ${n} conflict ${c.field} must stay UNRESOLVED_PRECEDENCE`);
+    if ((q.conflicts?.length || 0) > 0 !== (q.reconciliationStatus === 'SOURCE_CONFLICT_CARRIED_FORWARD')) fail(`3A ${n} reconciliationStatus disagrees with its conflict list`);
+  }
+  const g = (n) => rec3.records.find((q) => q.canonicalIdentity === n);
+  const cw = claims.get('BlasTech 500 Riot Gun').find((c) => c.ph === '2E').r, rb = claims.get('BlasTech 500 Riot Gun').find((c) => c.ph === '2I').r;
+  const ss = (r) => r.canonicalStats.modeProfiles.find((m) => m.id === 'single-shot')?.conditionalModifiers?.[0]?.value;
+  const rg = g('BlasTech 500 Riot Gun');
+  const sp = rg.conflicts.find((c) => c.field === 'singleShotAttackPenalty');
+  if (ss(cw) !== sp?.cloneWars || ss(rb) !== sp?.rebellionEra || cw.canonicalStats.costCredits !== rg.conflicts.find((c) => c.field === 'costCredits').cloneWars || rb.canonicalStats.costCredits !== rg.conflicts.find((c) => c.field === 'costCredits').rebellionEra || cw.canonicalStats.weightKg !== rg.conflicts.find((c) => c.field === 'weightKg').cloneWars || rb.canonicalStats.weightKg !== rg.conflicts.find((c) => c.field === 'weightKg').rebellionEra) fail('3A Riot Gun conflict values must equal the certified Clone Wars / Rebellion Era values');
+  if (rb.canonicalStats.ammo?.capacityShots !== 50 || cw.canonicalStats.ammo?.status !== 'not-stated' || !rb.canonicalStats.modeProfiles.some((m) => m.conditionalModifiers?.some((c) => c.value === 2 && c.type === 'equipment'))) fail('3A Riot Gun Rebellion-only +2 autofire and 50-shot pack');
+  const gs = claims.get('Guard Shoto'); const gc = g('Guard Shoto').conflicts.find((c) => c.field === 'availability.restriction');
+  if (gc.forceUnleashed !== gs.find((c) => c.ph === '2D').r.canonicalStats.availability.restriction || gc.jediAcademy.split(' ')[0] !== gs.find((c) => c.ph === '2F').r.canonicalStats.availability.restriction) fail('3A Guard Shoto availability conflict values');
+  const gt = claims.get('Stunning Gauntlet').find((c) => c.ph === '2B').r;
+  if (!gt.canonicalStats.variantsByWearerSize) fail('3A Stunning Gauntlet KOTOR size variants must remain');
+  if (!claims.get('Long-Handle Lightsaber').some((c) => c.r.canonicalStats.attackProfiles.some((p) => p.id === 'haft-end')) || !claims.get('Lightsaber Pike').some((c) => c.r.canonicalStats.attackProfiles.some((p) => p.id === 'haft-end' && p.damageType.mode === 'unspecified' && !p.qualities.ignoresDR))) fail('3A Long Haft Form haft-end profile (1d6, unspecified type, no DR bypass) must exist in the certified claims');
+  // Claude readback: the phrik DR condition divergence must stay recorded
+  for (const n of ['Guard Shoto', 'Lightsaber Pike']) {
+    const cl = claims.get(n), dr = (r) => r.canonicalStats.defensiveInteractions.filter((x) => /^incoming-lightsaber-does-not-ignore/.test(x.effect)).map((x) => x.condition ?? null);
+    const fu = cl.find((c) => c.ph === '2D').r, ja = cl.find((c) => c.ph === '2F').r;
+    const diverges = dr(fu).includes(null) && dr(ja).some((x) => typeof x === 'string' && /phrik/.test(x)) && !dr(ja).includes(null);
+    const noted = rec3.claudeReadback.findingsForPlanner.some((f2) => f2.identity === n && /phrik/.test(f2.id));
+    if (diverges !== noted) fail(`3A ${n} phrik DR condition divergence must be ${diverges ? 'recorded' : 'absent'} in claudeReadback`);
+  }
+  if (rec3.claudeReadback.planner.ruledResolved !== 4 || rec3.claudeReadback.planner.ruledConflictGated !== 2) fail('3A claudeReadback must record the planner rulings unchanged');
+  if (errors.length === e3) console.log(`Phase 3A cross-publication reconciliation OK: ${rec3.records.length} identities (${rec3.outputCounts.resolvedCompatibleOrAdditive} resolved, ${rec3.outputCounts.explicitSourceConflictsCarriedForward} conflict-gated), ${rec3.claudeReadback.findingsForPlanner.filter((f2) => /phrik/.test(f2.id)).length} phrik findings recorded for the planner`);
+}
+
 if (errors.length) { console.error(`FAIL (${errors.length})\n- ${errors.join('\n- ')}`); process.exit(1); }
 console.log(`weapons authority OK: ${p.canonicalWeapons.length} canonical, ${pack.size} repo records, all covered once`);

@@ -1829,3 +1829,13 @@ Full structured records (stun, operating modes, resource, conditional qualities,
 - 7 Semantic tags
 
 - 8 Migration
+
+
+## Phase 3 — Weapons canonical authority (authority-only)
+
+Status: **PHASE_3A_CROSS_PUBLICATION_RECONCILIATION_DONE_AUTHORITY_ONLY.** Production mutation is not authorized.
+
+- **3A cross-publication reconciliation** (`data/audits/item-weapons-phase-3a-cross-publication-reconciliation.json` + `docs/audits/item-weapons-phase-3a-cross-publication-reconciliation.md`): the six duplicated claim pairs (209 claims -> 203 identities) are reconciled to six identities. Planner rulings are recorded unchanged: **4 resolved** (Lightsaber Pike, Flechette Launcher, Stunning Gauntlet, Long-Handle Lightsaber) and **2 conflict-gated** (Guard Shoto availability: Force Unleashed Illegal vs Jedi Academy common; BlasTech 500 Riot Gun: cost 1000/1200, weight 4.5/2.2, Inaccurate, single-shot -2/-1, plus the Rebellion-only +2 autofire and 50-shot pack).
+- The verifier recomputes every stated fact, source page, repo id and listed conflict from the certified Phase 1/Phase 2 claims, so the reconciliation cannot drift from them.
+- **Open finding for the planner (not adjudicated):** Force Unleashed certifies "incoming lightsaber does not ignore the weapon DR" unconditionally for the Guard Shoto and Lightsaber Pike; Jedi Academy limits it to a phrik-laced handle / phrik-alloy haft. The package treats it as additive (Guard Shoto) or lists no conflict (Pike). Recorded in the file's `claudeReadback.findingsForPlanner`; the verifier requires it to stay recorded.
+- Next: **3B** 203-identity canonical authority build, **3C** production disposition ledger, **3D** global verification and freeze. Weapon tag archaeology starts only after 3D.
