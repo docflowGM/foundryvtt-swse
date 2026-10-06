@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "authorityType": "item-canonicalization-rolling-authority",
-  "status": "PHASE 0 CHARACTER-ITEM CENSUS COMPLETE; PHASE 1 WEAPONS CONTENT CERTIFIED THROUGH 1J (Core, Clone Wars, Force Unleashed, Galaxy at War, Galaxy of Intrigue, Jedi Academy, Threats of the Galaxy, Scum and Villainy, Rebellion Era, KOTOR) (authority-only) — certified ADD/EDIT/REMOVE actions remain intentionally unexecuted except the armor, equipment and medical identity renames",
+  "status": "PHASE 0 CHARACTER-ITEM CENSUS COMPLETE; PHASE 1 WEAPONS CONTENT CERTIFIED THROUGH 1K (Core, Clone Wars, Force Unleashed, Galaxy at War, Galaxy of Intrigue, Jedi Academy, Threats of the Galaxy, Scum and Villainy, Rebellion Era, KOTOR, Legacy Era) (authority-only) — certified ADD/EDIT/REMOVE actions remain intentionally unexecuted except the armor, equipment and medical identity renames",
   "sourcePolicy": "User-provided SWSE TXT/PDF sourcebooks are the canonical SSOT. Repository compendiums are implementation targets only.",
   "ownerRulings": "docs/audits/item-phase-0-ssot-census.md §7a",
   "architecture": {
@@ -18880,7 +18880,7 @@
       }
     },
     "1-weapons-content": {
-      "status": "ROLLING_PHASE_1_WEAPONS_AUTHORITY_THROUGH_1J",
+      "status": "ROLLING_PHASE_1_WEAPONS_AUTHORITY_THROUGH_1K",
       "canonicalSourcePolicy": "User-supplied SWSE TXT/PDF sourcebooks are SSOT. TXT is the searchable layer; rendered PDF pages are final authority for layout/page ambiguity.",
       "scope": {
         "completedPhases": [
@@ -18923,13 +18923,13 @@
         ]
       },
       "aggregateCounts": {
-        "sourceBookClaims": 181,
-        "uniqueProductionIdentities": 176,
-        "crossPublishedDuplicateClaims": 5,
-        "repoPresentClaims": 134,
-        "repoMissingClaims": 47,
+        "sourceBookClaims": 195,
+        "uniqueProductionIdentities": 189,
+        "crossPublishedDuplicateClaims": 6,
+        "repoPresentClaims": 146,
+        "repoMissingClaims": 49,
         "descriptionIncorrectClaims": 34,
-        "descriptionIncompleteClaims": 100
+        "descriptionIncompleteClaims": 112
       },
       "books": [
         {
@@ -23702,6 +23702,427 @@
               "crossPublishedSources": []
             }
           ]
+        },
+        {
+          "phase": "1K",
+          "book": "Legacy Era Campaign Guide",
+          "counts": {
+            "canonicalWeaponClaims": 14,
+            "repoPresent": 12,
+            "repoMissing": 2,
+            "descriptionIncorrect": 0,
+            "descriptionIncomplete": 12,
+            "contentCorrect": 0
+          },
+          "records": [
+            {
+              "canonicalName": "Long-Handle Lightsaber",
+              "weaponGroup": "Lightsaber",
+              "source": {
+                "book": "Legacy Era Campaign Guide",
+                "publishedName": "Long-Handle Lightsaber",
+                "descriptionPage": 62,
+                "statTablePage": 62,
+                "verifiedBy": [
+                  "Legacy Era Campaign Guide_djvu.txt",
+                  "Star Wars Saga Edition - Legacy Era Campaign Guide.pdf visual verification"
+                ]
+              },
+              "tableTraits": [],
+              "canonicalPlayerText": "When wielded two-handed, a long-handle lightsaber can forgo doubling the wielder's Strength bonus to damage and instead increase its base damage to 2d10. It requires an energy cell to operate.",
+              "summary": "Two-handed lightsaber that can trade doubled Strength damage for 2d10 base damage; uses an energy cell.",
+              "repo": {
+                "present": true,
+                "id": "lightsaber-chassis-longhandle",
+                "currentName": "Long-Handle Lightsaber",
+                "phase0NameNormalizationPending": false
+              },
+              "phase1Discrepancy": "DESCRIPTION_INCOMPLETE",
+              "phase1ContentAction": "UPDATE_CANONICAL_CONTENT",
+              "notes": [
+                "Same production identity as the Jedi Academy Training Manual claim; Legacy restates the two-handed 2d10 option without creating a second weapon."
+              ],
+              "crossPublishedSources": [
+                {
+                  "book": "Jedi Academy Training Manual",
+                  "phase": "1F",
+                  "page": 53,
+                  "relationship": "same production identity; mechanically consistent source claim"
+                }
+              ]
+            },
+            {
+              "canonicalName": "Shock Whip",
+              "weaponGroup": "Advanced Melee Weapon",
+              "source": {
+                "book": "Legacy Era Campaign Guide",
+                "publishedName": "Shock Whip",
+                "descriptionPage": 62,
+                "statTablePage": 62,
+                "verifiedBy": [
+                  "Legacy Era Campaign Guide_djvu.txt",
+                  "Star Wars Saga Edition - Legacy Era Campaign Guide.pdf visual verification"
+                ]
+              },
+              "tableTraits": [],
+              "canonicalPlayerText": "A shock whip has reach 2 squares. On a hit, after dealing normal weapon damage, the wielder may make a grab attack as a free action against that target if it is no more than one size category larger. This uses a second attack roll at the wielder's normal attack bonus and does not take the normal -5 grab penalty; if it hits, the target is grabbed. Once per turn as a swift action, the wielder can automatically deal 2d6 energy damage to a target grabbed by the whip without another attack roll. If the wielder has the Trip feat, the whip can knock the target prone instead of making the grab attack. While the whip is grabbing a target, it cannot attack other targets. It requires an energy cell.",
+              "summary": "Reach-2 shock whip that can make a no-penalty free grab after a hit, shock a grabbed target for 2d6 as a swift action, or trip with the Trip feat.",
+              "repo": {
+                "present": false,
+                "id": null,
+                "currentName": null,
+                "phase0NameNormalizationPending": false
+              },
+              "phase1Discrepancy": "MISSING_RECORD",
+              "phase1ContentAction": "CREATE_WHEN_SCHEMA_STATS_PHASES_ARE_READY",
+              "notes": [],
+              "crossPublishedSources": []
+            },
+            {
+              "canonicalName": "Tehkla Blade",
+              "weaponGroup": "Exotic Weapon",
+              "source": {
+                "book": "Legacy Era Campaign Guide",
+                "publishedName": "Tehk'la Blade",
+                "descriptionPage": 62,
+                "statTablePage": 62,
+                "verifiedBy": [
+                  "Legacy Era Campaign Guide_djvu.txt",
+                  "Star Wars Saga Edition - Legacy Era Campaign Guide.pdf visual verification"
+                ]
+              },
+              "tableTraits": [],
+              "canonicalPlayerText": "If an attack roll with a tehk'la blade equals or exceeds both the target's Reflex Defense and Fortitude Defense, the target takes an additional 1d6 points of bleeding damage at the start of its next turn. A tehk'la blade requires an energy cell to operate.",
+              "summary": "Nagai vibroblade that causes 1d6 bleeding damage next turn when the attack also meets the target's Fortitude Defense.",
+              "repo": {
+                "present": false,
+                "id": null,
+                "currentName": null,
+                "phase0NameNormalizationPending": false
+              },
+              "phase1Discrepancy": "MISSING_RECORD",
+              "phase1ContentAction": "CREATE_WHEN_SCHEMA_STATS_PHASES_ARE_READY",
+              "notes": [
+                "Phase 0 identity remains 'Tehkla Blade'; the published display/source spelling is Tehk'la Blade."
+              ],
+              "crossPublishedSources": []
+            },
+            {
+              "canonicalName": "Blaster Carbine, Double-Barreled",
+              "weaponGroup": "Rifle",
+              "source": {
+                "book": "Legacy Era Campaign Guide",
+                "publishedName": "Blaster Carbine, Double-Barreled",
+                "descriptionPage": 63,
+                "statTablePage": 64,
+                "verifiedBy": [
+                  "Legacy Era Campaign Guide_djvu.txt",
+                  "Star Wars Saga Edition - Legacy Era Campaign Guide.pdf visual verification"
+                ]
+              },
+              "tableTraits": [
+                "Inaccurate: cannot attack targets at long range",
+                "Area Attack: double-shot mode targets a 2-square-by-2-square area"
+              ],
+              "canonicalPlayerText": "A double-barreled blaster carbine cannot make autofire attacks. As a swift action it can switch to double-shot mode; in that mode it is an area-effect weapon targeting a 2-square-by-2-square area. A target hit takes full damage (half with Evasion), while a miss deals half damage (none with Evasion). Each double-shot attack consumes 2 shots, and while using double-shot mode the wielder cannot use any feat, talent, or effect that consumes more than one shot in a round, including Double Attack or Rapid Shot. Like other blaster carbines, it can make attacks of opportunity even without a folded stock. It is inaccurate and cannot attack at long range. A power pack provides 50 shots.",
+              "summary": "Inaccurate 50-shot carbine with a swift-action double-shot mode that attacks a 2x2 area, consumes 2 shots, and blocks multi-shot effects.",
+              "repo": {
+                "present": true,
+                "id": "weapon-double-barreled-blaster-carbine",
+                "currentName": "Double-Barreled Blaster Carbine",
+                "phase0NameNormalizationPending": true
+              },
+              "phase1Discrepancy": "DESCRIPTION_INCOMPLETE",
+              "phase1ContentAction": "UPDATE_CANONICAL_CONTENT",
+              "notes": [],
+              "crossPublishedSources": []
+            },
+            {
+              "canonicalName": "Blaster Carbine, Hunting",
+              "weaponGroup": "Rifle",
+              "source": {
+                "book": "Legacy Era Campaign Guide",
+                "publishedName": "Blaster Carbine, Hunting",
+                "descriptionPage": 63,
+                "statTablePage": 64,
+                "verifiedBy": [
+                  "Legacy Era Campaign Guide_djvu.txt",
+                  "Star Wars Saga Edition - Legacy Era Campaign Guide.pdf visual verification"
+                ]
+              },
+              "tableTraits": [
+                "Inaccurate: cannot attack targets at long range"
+              ],
+              "canonicalPlayerText": "A hunting blaster carbine cannot make autofire attacks. On a critical hit, its damage dice change from d8s to d10s. It has a retractable stock and, like other blaster carbines, can make attacks of opportunity even when the stock is not folded. It is inaccurate and cannot attack at long range. A power pack provides 50 shots.",
+              "summary": "Inaccurate 50-shot hunting carbine with no autofire; critical hits upgrade its damage dice from d8s to d10s.",
+              "repo": {
+                "present": true,
+                "id": "weapon-hunting-blaster-carbine",
+                "currentName": "Hunting Blaster Carbine",
+                "phase0NameNormalizationPending": true
+              },
+              "phase1Discrepancy": "DESCRIPTION_INCOMPLETE",
+              "phase1ContentAction": "UPDATE_CANONICAL_CONTENT",
+              "notes": [],
+              "crossPublishedSources": []
+            },
+            {
+              "canonicalName": "Blaster Carbine, Sporting",
+              "weaponGroup": "Rifle",
+              "source": {
+                "book": "Legacy Era Campaign Guide",
+                "publishedName": "Blaster Carbine, Sporting",
+                "descriptionPage": 63,
+                "statTablePage": 64,
+                "verifiedBy": [
+                  "Legacy Era Campaign Guide_djvu.txt",
+                  "Star Wars Saga Edition - Legacy Era Campaign Guide.pdf visual verification"
+                ]
+              },
+              "tableTraits": [
+                "Inaccurate by table; prose removes the inaccurate limitation while wielded in two hands"
+              ],
+              "canonicalPlayerText": "A sporting blaster carbine is normally inaccurate, but it is not treated as an inaccurate weapon when wielded in two hands. Like other blaster carbines, it can make attacks of opportunity even without a folded stock. A power pack provides 100 shots.",
+              "summary": "100-shot sporting carbine that loses its inaccurate limitation when wielded two-handed and can make attacks of opportunity.",
+              "repo": {
+                "present": true,
+                "id": "weapon-sporting-blaster-carbine",
+                "currentName": "Sporting Blaster Carbine",
+                "phase0NameNormalizationPending": true
+              },
+              "phase1Discrepancy": "DESCRIPTION_INCOMPLETE",
+              "phase1ContentAction": "UPDATE_CANONICAL_CONTENT",
+              "notes": [],
+              "crossPublishedSources": []
+            },
+            {
+              "canonicalName": "Blaster Pistol, Bluebolt",
+              "weaponGroup": "Pistol",
+              "source": {
+                "book": "Legacy Era Campaign Guide",
+                "publishedName": "Blaster Pistol, Bluebolt",
+                "descriptionPage": 64,
+                "statTablePage": 64,
+                "verifiedBy": [
+                  "Legacy Era Campaign Guide_djvu.txt",
+                  "Star Wars Saga Edition - Legacy Era Campaign Guide.pdf visual verification"
+                ]
+              },
+              "tableTraits": [
+                "Inaccurate: cannot attack targets at long range"
+              ],
+              "canonicalPlayerText": "A bluebolt blaster pistol can make stun attacks out to 8 squares instead of the usual 6 squares, but each stun attack consumes one additional shot. It is an inaccurate weapon and cannot attack targets at long range. Its power pack provides 50 shots before replacement.",
+              "summary": "Inaccurate 50-shot pistol with an 8-square stun range; stun attacks consume an extra shot.",
+              "repo": {
+                "present": true,
+                "id": "weapon-bluebolt-blaster-pistol",
+                "currentName": "Bluebolt Blaster Pistol",
+                "phase0NameNormalizationPending": true
+              },
+              "phase1Discrepancy": "DESCRIPTION_INCOMPLETE",
+              "phase1ContentAction": "UPDATE_CANONICAL_CONTENT",
+              "notes": [],
+              "crossPublishedSources": []
+            },
+            {
+              "canonicalName": "Blaster Pistol, Snap Shot",
+              "weaponGroup": "Pistol",
+              "source": {
+                "book": "Legacy Era Campaign Guide",
+                "publishedName": "Blaster Pistol, Snap Shot",
+                "descriptionPage": 64,
+                "statTablePage": 64,
+                "verifiedBy": [
+                  "Legacy Era Campaign Guide_djvu.txt",
+                  "Star Wars Saga Edition - Legacy Era Campaign Guide.pdf visual verification"
+                ]
+              },
+              "tableTraits": [],
+              "canonicalPlayerText": "A snap shot blaster pistol carries a single shot in its power pack. Its compact design grants a +5 equipment bonus on Stealth checks made to conceal the weapon. After one shot, the power pack must be replaced.",
+              "summary": "Single-shot concealed pistol granting +5 to Stealth checks to conceal it.",
+              "repo": {
+                "present": true,
+                "id": "weapon-snap-shot-blaster-pistol",
+                "currentName": "Snap-Shot Blaster Pistol",
+                "phase0NameNormalizationPending": true
+              },
+              "phase1Discrepancy": "DESCRIPTION_INCOMPLETE",
+              "phase1ContentAction": "UPDATE_CANONICAL_CONTENT",
+              "notes": [],
+              "crossPublishedSources": []
+            },
+            {
+              "canonicalName": "Blaster Rifle, Heavy Assault",
+              "weaponGroup": "Rifle",
+              "source": {
+                "book": "Legacy Era Campaign Guide",
+                "publishedName": "Blaster Rifle, Heavy Assault",
+                "descriptionPage": 65,
+                "statTablePage": 64,
+                "verifiedBy": [
+                  "Legacy Era Campaign Guide_djvu.txt",
+                  "Star Wars Saga Edition - Legacy Era Campaign Guide.pdf visual verification"
+                ]
+              },
+              "tableTraits": [
+                "Inaccurate: cannot attack targets at long range"
+              ],
+              "canonicalPlayerText": "When a heavy assault blaster rifle scores a critical hit, its damage dice change from d10s to d12s. It is an inaccurate weapon and cannot attack targets at long range. A power pack provides 50 shots.",
+              "summary": "Inaccurate 50-shot heavy assault rifle whose critical hits upgrade its damage dice from d10s to d12s.",
+              "repo": {
+                "present": true,
+                "id": "weapon-heavy-assault-blaster",
+                "currentName": "Heavy Assault Blaster",
+                "phase0NameNormalizationPending": true
+              },
+              "phase1Discrepancy": "DESCRIPTION_INCOMPLETE",
+              "phase1ContentAction": "UPDATE_CANONICAL_CONTENT",
+              "notes": [],
+              "crossPublishedSources": []
+            },
+            {
+              "canonicalName": "Concealed Dart Launcher",
+              "weaponGroup": "Exotic Weapon",
+              "source": {
+                "book": "Legacy Era Campaign Guide",
+                "publishedName": "Concealed Dart Launcher",
+                "descriptionPage": 65,
+                "statTablePage": 64,
+                "verifiedBy": [
+                  "Legacy Era Campaign Guide_djvu.txt",
+                  "Star Wars Saga Edition - Legacy Era Campaign Guide.pdf visual verification"
+                ]
+              },
+              "tableTraits": [],
+              "canonicalPlayerText": "A concealed dart launcher is worn on the wrist and fires darts that can be filled with contact poisons; by default a dart contains a sedative that deals stun damage. Unlike a normal weapon set to stun, it can deal stun damage beyond 6 squares and is treated as a pistol for range. Its compact design grants a +5 equipment bonus on Stealth checks to conceal it. A bundle provides 6 darts before replacement.",
+              "summary": "Wrist dart launcher with poison-capable or sedative darts, pistol ranges, unrestricted stun range, +5 to conceal, and a 6-dart bundle.",
+              "repo": {
+                "present": true,
+                "id": "weapon-concealed-dart-launcher",
+                "currentName": "Concealed Dart Launcher",
+                "phase0NameNormalizationPending": false
+              },
+              "phase1Discrepancy": "DESCRIPTION_INCOMPLETE",
+              "phase1ContentAction": "UPDATE_CANONICAL_CONTENT",
+              "notes": [],
+              "crossPublishedSources": []
+            },
+            {
+              "canonicalName": "Razor Bug",
+              "weaponGroup": "Simple Weapon",
+              "source": {
+                "book": "Legacy Era Campaign Guide",
+                "publishedName": "Razor Bug",
+                "descriptionPage": 65,
+                "statTablePage": 64,
+                "verifiedBy": [
+                  "Legacy Era Campaign Guide_djvu.txt",
+                  "Star Wars Saga Edition - Legacy Era Campaign Guide.pdf visual verification"
+                ]
+              },
+              "tableTraits": [
+                "Accurate: no attack penalty at short range"
+              ],
+              "canonicalPlayerText": "A razor bug is thrown by hand but is treated as a simple weapon, not a thrown weapon, for purposes of determining range. It is an accurate weapon and takes no attack penalty at short range.",
+              "summary": "Accurate Yuuzhan Vong bio-weapon thrown by hand but using simple-weapon ranges rather than thrown-weapon ranges.",
+              "repo": {
+                "present": true,
+                "id": "weapon-razor-bug",
+                "currentName": "Razor Bug",
+                "phase0NameNormalizationPending": false
+              },
+              "phase1Discrepancy": "DESCRIPTION_INCOMPLETE",
+              "phase1ContentAction": "UPDATE_CANONICAL_CONTENT",
+              "notes": [],
+              "crossPublishedSources": []
+            },
+            {
+              "canonicalName": "Thud Bug",
+              "weaponGroup": "Simple Weapon",
+              "source": {
+                "book": "Legacy Era Campaign Guide",
+                "publishedName": "Thud Bug",
+                "descriptionPage": 65,
+                "statTablePage": 64,
+                "verifiedBy": [
+                  "Legacy Era Campaign Guide_djvu.txt",
+                  "Star Wars Saga Edition - Legacy Era Campaign Guide.pdf visual verification"
+                ]
+              },
+              "tableTraits": [],
+              "canonicalPlayerText": "A thud bug is thrown by hand but is treated as a simple weapon, not a thrown weapon, for purposes of determining range. The wielder can choose to deal stun damage instead of normal damage against a target at point-blank or short range.",
+              "summary": "Yuuzhan Vong bio-weapon using simple-weapon ranges; can deal stun instead of normal damage at point-blank or short range.",
+              "repo": {
+                "present": true,
+                "id": "weapon-thud-bug",
+                "currentName": "Thud Bug",
+                "phase0NameNormalizationPending": false
+              },
+              "phase1Discrepancy": "DESCRIPTION_INCOMPLETE",
+              "phase1ContentAction": "UPDATE_CANONICAL_CONTENT",
+              "notes": [],
+              "crossPublishedSources": []
+            },
+            {
+              "canonicalName": "ARC-9965 Blaster Rifle",
+              "weaponGroup": "Rifle",
+              "source": {
+                "book": "Legacy Era Campaign Guide",
+                "publishedName": "ARC-9965 Blaster Rifle",
+                "descriptionPage": 182,
+                "statTablePage": 183,
+                "verifiedBy": [
+                  "Legacy Era Campaign Guide_djvu.txt",
+                  "Star Wars Saga Edition - Legacy Era Campaign Guide.pdf visual verification"
+                ]
+              },
+              "tableTraits": [
+                "Accurate: no attack penalty at short range"
+              ],
+              "canonicalPlayerText": "The ARC-9965 is an accurate weapon and takes no attack penalty at short range. Each autofire attack consumes 10 shots. Its power pack provides 40 shots before replacement, and the rifle has a retractable stock.",
+              "summary": "Accurate Imperial rifle with a retractable stock and 40-shot pack; each autofire attack consumes 10 shots.",
+              "repo": {
+                "present": true,
+                "id": "weapon-arc-9965-blaster",
+                "currentName": "ARC-9965 Blaster",
+                "phase0NameNormalizationPending": true
+              },
+              "phase1Discrepancy": "DESCRIPTION_INCOMPLETE",
+              "phase1ContentAction": "UPDATE_CANONICAL_CONTENT",
+              "notes": [],
+              "crossPublishedSources": []
+            },
+            {
+              "canonicalName": "Heavy Blaster Cannon",
+              "weaponGroup": "Heavy Weapon",
+              "source": {
+                "book": "Legacy Era Campaign Guide",
+                "publishedName": "Heavy Blaster Cannon",
+                "descriptionPage": 182,
+                "statTablePage": 183,
+                "verifiedBy": [
+                  "Legacy Era Campaign Guide_djvu.txt",
+                  "Star Wars Saga Edition - Legacy Era Campaign Guide.pdf visual verification"
+                ]
+              },
+              "tableTraits": [
+                "Area Attack Weapon",
+                "Inaccurate: cannot attack targets at long range"
+              ],
+              "canonicalPlayerText": "A heavy blaster cannon can be braced by spending two swift actions in the same round immediately before making an attack. While braced it is treated as a Large weapon and can be fired by a Medium character; if not braced, it cannot be fired by a Medium or smaller creature. It is an area-effect weapon: the primary target takes full damage on a hit (half with Evasion) or half damage on a miss (none with Evasion); each creature or object adjacent to the target takes half damage if the attack hits (none with Evasion) and no damage if it misses. It is inaccurate and cannot attack at long range. A power pack provides 10 shots.",
+              "summary": "Huge inaccurate area cannon: brace with two swift actions so a Medium user can fire it; hits splash half damage to adjacent targets; 10 shots.",
+              "repo": {
+                "present": true,
+                "id": "weapon-heavy-blaster-cannon",
+                "currentName": "Heavy Blaster Cannon",
+                "phase0NameNormalizationPending": false
+              },
+              "phase1Discrepancy": "DESCRIPTION_INCOMPLETE",
+              "phase1ContentAction": "UPDATE_CANONICAL_CONTENT",
+              "notes": [],
+              "crossPublishedSources": []
+            }
+          ]
         }
       ],
       "uniqueIdentityIndex": [
@@ -23853,7 +24274,7 @@
           "identityKey": "lightsaber-chassis-longhandle",
           "canonicalName": "Long-Handle Lightsaber",
           "repoId": "lightsaber-chassis-longhandle",
-          "claimCount": 1,
+          "claimCount": 2,
           "repoPresent": true,
           "sourceClaims": [
             {
@@ -23862,6 +24283,14 @@
               "canonicalName": "Long-Handle Lightsaber",
               "descriptionPage": 53,
               "statTablePage": 52,
+              "phase1Discrepancy": "DESCRIPTION_INCOMPLETE"
+            },
+            {
+              "phase": "1K",
+              "book": "Legacy Era Campaign Guide",
+              "canonicalName": "Long-Handle Lightsaber",
+              "descriptionPage": 62,
+              "statTablePage": 62,
               "phase1Discrepancy": "DESCRIPTION_INCOMPLETE"
             }
           ]
@@ -24453,6 +24882,23 @@
           ]
         },
         {
+          "identityKey": "unmapped::Shock Whip",
+          "canonicalName": "Shock Whip",
+          "repoId": null,
+          "claimCount": 1,
+          "repoPresent": false,
+          "sourceClaims": [
+            {
+              "phase": "1K",
+              "book": "Legacy Era Campaign Guide",
+              "canonicalName": "Shock Whip",
+              "descriptionPage": 62,
+              "statTablePage": 62,
+              "phase1Discrepancy": "MISSING_RECORD"
+            }
+          ]
+        },
+        {
           "identityKey": "unmapped::Shockboxing Gloves",
           "canonicalName": "Shockboxing Gloves",
           "repoId": null,
@@ -24575,6 +25021,23 @@
               "canonicalName": "Stunning Gauntlet",
               "descriptionPage": 202,
               "statTablePage": 202,
+              "phase1Discrepancy": "MISSING_RECORD"
+            }
+          ]
+        },
+        {
+          "identityKey": "unmapped::Tehkla Blade",
+          "canonicalName": "Tehkla Blade",
+          "repoId": null,
+          "claimCount": 1,
+          "repoPresent": false,
+          "sourceClaims": [
+            {
+              "phase": "1K",
+              "book": "Legacy Era Campaign Guide",
+              "canonicalName": "Tehkla Blade",
+              "descriptionPage": 62,
+              "statTablePage": 62,
               "phase1Discrepancy": "MISSING_RECORD"
             }
           ]
@@ -24784,6 +25247,23 @@
           ]
         },
         {
+          "identityKey": "weapon-arc-9965-blaster",
+          "canonicalName": "ARC-9965 Blaster Rifle",
+          "repoId": "weapon-arc-9965-blaster",
+          "claimCount": 1,
+          "repoPresent": true,
+          "sourceClaims": [
+            {
+              "phase": "1K",
+              "book": "Legacy Era Campaign Guide",
+              "canonicalName": "ARC-9965 Blaster Rifle",
+              "descriptionPage": 182,
+              "statTablePage": 183,
+              "phase1Discrepancy": "DESCRIPTION_INCOMPLETE"
+            }
+          ]
+        },
+        {
           "identityKey": "weapon-ascension-gun",
           "canonicalName": "Ascension Gun",
           "repoId": "weapon-ascension-gun",
@@ -24920,6 +25400,23 @@
           ]
         },
         {
+          "identityKey": "weapon-bluebolt-blaster-pistol",
+          "canonicalName": "Blaster Pistol, Bluebolt",
+          "repoId": "weapon-bluebolt-blaster-pistol",
+          "claimCount": 1,
+          "repoPresent": true,
+          "sourceClaims": [
+            {
+              "phase": "1K",
+              "book": "Legacy Era Campaign Guide",
+              "canonicalName": "Blaster Pistol, Bluebolt",
+              "descriptionPage": 64,
+              "statTablePage": 64,
+              "phase1Discrepancy": "DESCRIPTION_INCOMPLETE"
+            }
+          ]
+        },
+        {
           "identityKey": "weapon-bow",
           "canonicalName": "Bow",
           "repoId": "weapon-bow",
@@ -25017,6 +25514,23 @@
               "canonicalName": "Commando Special Rifle",
               "descriptionPage": 180,
               "statTablePage": 180,
+              "phase1Discrepancy": "DESCRIPTION_INCOMPLETE"
+            }
+          ]
+        },
+        {
+          "identityKey": "weapon-concealed-dart-launcher",
+          "canonicalName": "Concealed Dart Launcher",
+          "repoId": "weapon-concealed-dart-launcher",
+          "claimCount": 1,
+          "repoPresent": true,
+          "sourceClaims": [
+            {
+              "phase": "1K",
+              "book": "Legacy Era Campaign Guide",
+              "canonicalName": "Concealed Dart Launcher",
+              "descriptionPage": 65,
+              "statTablePage": 64,
               "phase1Discrepancy": "DESCRIPTION_INCOMPLETE"
             }
           ]
@@ -25204,6 +25718,23 @@
               "canonicalName": "BlasTech DLT-20A \"Longbarrel\" Blaster Rifle",
               "descriptionPage": 62,
               "statTablePage": 61,
+              "phase1Discrepancy": "DESCRIPTION_INCOMPLETE"
+            }
+          ]
+        },
+        {
+          "identityKey": "weapon-double-barreled-blaster-carbine",
+          "canonicalName": "Blaster Carbine, Double-Barreled",
+          "repoId": "weapon-double-barreled-blaster-carbine",
+          "claimCount": 1,
+          "repoPresent": true,
+          "sourceClaims": [
+            {
+              "phase": "1K",
+              "book": "Legacy Era Campaign Guide",
+              "canonicalName": "Blaster Carbine, Double-Barreled",
+              "descriptionPage": 63,
+              "statTablePage": 64,
               "phase1Discrepancy": "DESCRIPTION_INCOMPLETE"
             }
           ]
@@ -25514,6 +26045,40 @@
           ]
         },
         {
+          "identityKey": "weapon-heavy-assault-blaster",
+          "canonicalName": "Blaster Rifle, Heavy Assault",
+          "repoId": "weapon-heavy-assault-blaster",
+          "claimCount": 1,
+          "repoPresent": true,
+          "sourceClaims": [
+            {
+              "phase": "1K",
+              "book": "Legacy Era Campaign Guide",
+              "canonicalName": "Blaster Rifle, Heavy Assault",
+              "descriptionPage": 65,
+              "statTablePage": 64,
+              "phase1Discrepancy": "DESCRIPTION_INCOMPLETE"
+            }
+          ]
+        },
+        {
+          "identityKey": "weapon-heavy-blaster-cannon",
+          "canonicalName": "Heavy Blaster Cannon",
+          "repoId": "weapon-heavy-blaster-cannon",
+          "claimCount": 1,
+          "repoPresent": true,
+          "sourceClaims": [
+            {
+              "phase": "1K",
+              "book": "Legacy Era Campaign Guide",
+              "canonicalName": "Heavy Blaster Cannon",
+              "descriptionPage": 182,
+              "statTablePage": 183,
+              "phase1Discrepancy": "DESCRIPTION_INCOMPLETE"
+            }
+          ]
+        },
+        {
           "identityKey": "weapon-heavy-blaster-pistol",
           "canonicalName": "Blaster Pistol, Heavy",
           "repoId": "weapon-heavy-blaster-pistol",
@@ -25611,6 +26176,23 @@
               "canonicalName": "Blaster Pistol, Hold-Out",
               "descriptionPage": 126,
               "statTablePage": 126,
+              "phase1Discrepancy": "DESCRIPTION_INCOMPLETE"
+            }
+          ]
+        },
+        {
+          "identityKey": "weapon-hunting-blaster-carbine",
+          "canonicalName": "Blaster Carbine, Hunting",
+          "repoId": "weapon-hunting-blaster-carbine",
+          "claimCount": 1,
+          "repoPresent": true,
+          "sourceClaims": [
+            {
+              "phase": "1K",
+              "book": "Legacy Era Campaign Guide",
+              "canonicalName": "Blaster Carbine, Hunting",
+              "descriptionPage": 63,
+              "statTablePage": 64,
               "phase1Discrepancy": "DESCRIPTION_INCOMPLETE"
             }
           ]
@@ -26041,6 +26623,23 @@
           ]
         },
         {
+          "identityKey": "weapon-razor-bug",
+          "canonicalName": "Razor Bug",
+          "repoId": "weapon-razor-bug",
+          "claimCount": 1,
+          "repoPresent": true,
+          "sourceClaims": [
+            {
+              "phase": "1K",
+              "book": "Legacy Era Campaign Guide",
+              "canonicalName": "Razor Bug",
+              "descriptionPage": 65,
+              "statTablePage": 64,
+              "phase1Discrepancy": "DESCRIPTION_INCOMPLETE"
+            }
+          ]
+        },
+        {
           "identityKey": "weapon-remote-grenade",
           "canonicalName": "Remote Grenade",
           "repoId": "weapon-remote-grenade",
@@ -26313,6 +26912,23 @@
           ]
         },
         {
+          "identityKey": "weapon-snap-shot-blaster-pistol",
+          "canonicalName": "Blaster Pistol, Snap Shot",
+          "repoId": "weapon-snap-shot-blaster-pistol",
+          "claimCount": 1,
+          "repoPresent": true,
+          "sourceClaims": [
+            {
+              "phase": "1K",
+              "book": "Legacy Era Campaign Guide",
+              "canonicalName": "Blaster Pistol, Snap Shot",
+              "descriptionPage": 64,
+              "statTablePage": 64,
+              "phase1Discrepancy": "DESCRIPTION_INCOMPLETE"
+            }
+          ]
+        },
+        {
           "identityKey": "weapon-snare-pistol",
           "canonicalName": "Snare Pistol",
           "repoId": "weapon-snare-pistol",
@@ -26427,6 +27043,23 @@
               "canonicalName": "Sonic Stunner",
               "descriptionPage": 146,
               "statTablePage": null,
+              "phase1Discrepancy": "DESCRIPTION_INCOMPLETE"
+            }
+          ]
+        },
+        {
+          "identityKey": "weapon-sporting-blaster-carbine",
+          "canonicalName": "Blaster Carbine, Sporting",
+          "repoId": "weapon-sporting-blaster-carbine",
+          "claimCount": 1,
+          "repoPresent": true,
+          "sourceClaims": [
+            {
+              "phase": "1K",
+              "book": "Legacy Era Campaign Guide",
+              "canonicalName": "Blaster Carbine, Sporting",
+              "descriptionPage": 63,
+              "statTablePage": 64,
               "phase1Discrepancy": "DESCRIPTION_INCOMPLETE"
             }
           ]
@@ -26581,6 +27214,23 @@
               "descriptionPage": 129,
               "statTablePage": 127,
               "phase1Discrepancy": "DESCRIPTION_INCORRECT"
+            }
+          ]
+        },
+        {
+          "identityKey": "weapon-thud-bug",
+          "canonicalName": "Thud Bug",
+          "repoId": "weapon-thud-bug",
+          "claimCount": 1,
+          "repoPresent": true,
+          "sourceClaims": [
+            {
+              "phase": "1K",
+              "book": "Legacy Era Campaign Guide",
+              "canonicalName": "Thud Bug",
+              "descriptionPage": 65,
+              "statTablePage": 64,
+              "phase1Discrepancy": "DESCRIPTION_INCOMPLETE"
             }
           ]
         },
@@ -26826,6 +27476,23 @@
             }
           ],
           "ruling": "ONE_PRODUCTION_IDENTITY_MULTIPLE_CONSISTENT_SOURCE_CLAIMS"
+        },
+        {
+          "canonicalIdentity": "Long-Handle Lightsaber",
+          "repoId": "lightsaber-chassis-longhandle",
+          "sources": [
+            {
+              "book": "Jedi Academy Training Manual",
+              "phase": "1F",
+              "page": 53
+            },
+            {
+              "book": "Legacy Era Campaign Guide",
+              "phase": "1K",
+              "page": 62
+            }
+          ],
+          "ruling": "ONE_PRODUCTION_IDENTITY_MULTIPLE_SOURCE_CLAIMS"
         }
       ],
       "rollingExecutionGuardrails": [
@@ -26840,14 +27507,13 @@
         "Hold BlasTech 500 Riot Gun production content until its cross-source conflict (Clone Wars p. 61 vs Rebellion Era p. 50) is adjudicated.",
         "1J: use the printed display name Arg’garok (Phase 0 identity key Arggarok preserved) when the missing record is created; do not create a second Stunning Gauntlet; do not create a generic powered Mythosaur Axe from Mandalore the Ultimate’s named variant."
       ],
-      "repoBaselineAtCertification": "edf8d8e2437a4e7a300487b72e50cd79eafb8708",
+      "repoBaselineAtCertification": "2fb98317038e31a94e57c2f633e04ef0ab8acc22",
       "foldedBy": {
         "executionStatus": "AUTHORITY_ONLY",
         "productionMutations": "none — no weapon records created, no descriptions replaced, no numeric stats changed",
-        "claudeValidation": "181 source claims over 176 unique identities (cross-published: Guard Shoto, Lightsaber Pike, Flechette Launcher, BlasTech 500 Riot Gun, Stunning Gauntlet); every claim maps to a Phase 0-1 canonical weapon whose sources include the claiming book; repo.present/id/currentName agree with Phase 0 disposition and packs/weapons.db; 1A-1I records byte-identical to the previously folded authority",
+        "claudeValidation": "195 source claims over 189 unique identities (cross-published: Guard Shoto, Lightsaber Pike, Flechette Launcher, BlasTech 500 Riot Gun, Stunning Gauntlet, Long-Handle Lightsaber); every claim maps to a Phase 0-1 canonical weapon whose sources include the claiming book; repo.present/id/currentName agree with Phase 0 disposition and packs/weapons.db; 1A-1J records preserved unchanged.",
         "note": "canonicalPlayerText incidentally contains printed numbers (costs, dice, DCs, ranges); numeric stat fields remain uncertified until the stats phase.",
         "remainingWeaponBooks": [
-          "Legacy Era Campaign Guide",
           "Unknown Regions"
         ]
       },

@@ -1333,9 +1333,9 @@ Phase 1 — Canonical provenance and descriptions. Order: Weapons; Armor; Genera
 Phase 1 steps per family: (1) exact sourcebook and page; (2) canonical full player-readable rules text; (3) short derived summary; (4) printed prerequisites and restrictions; (5) repo discrepancy classification; (6) only after certification, authorize production creation/update of Phase 0 ADD/EDIT records.
 
 
-## Phase 1 — Weapons provenance and canonical content (1A–1J)
+## Phase 1 — Weapons provenance and canonical content (1A–1K)
 
-Rolling weapons content authority; later book tranches append here. Status: **ROLLING_PHASE_1_WEAPONS_AUTHORITY_THROUGH_1I** (authority-only; no pack, stat or runtime change). 181 source-book claims map to 176 unique production identities. 134 claims have a repo record, 47 are missing; 34 descriptions are materially incorrect, 100 incomplete. Full text/summaries: JSON `phases["1-weapons-content"].books[].records`; per-identity roll-up: `.uniqueIdentityIndex`.
+Rolling weapons content authority; later book tranches append here. Status: **ROLLING_PHASE_1_WEAPONS_AUTHORITY_THROUGH_1K** (authority-only; no pack, stat or runtime change). 195 source-book claims map to 189 unique production identities. 146 claims have a repo record, 49 are missing; 34 descriptions are materially incorrect, 112 incomplete. Full text/summaries: JSON `phases["1-weapons-content"].books[].records`; per-identity roll-up: `.uniqueIdentityIndex`.
 
 | Phase | Book | Claims | Present | Missing | Incorrect | Incomplete |
 |---|---|--:|--:|--:|--:|--:|
@@ -1349,8 +1349,9 @@ Rolling weapons content authority; later book tranches append here. Status: **RO
 | 1H | Scum and Villainy | 9 | 9 | 0 | 0 | 9 |
 | 1I | Rebellion Era Campaign Guide | 12 | 9 | 3 | 1 | 8 |
 | 1J | Knights of the Old Republic Campaign Guide | 33 | 20 | 13 | 8 | 12 |
+| 1K | Legacy Era Campaign Guide | 14 | 12 | 2 | 0 | 12 |
 
-Remaining weapon books: Legacy Era Campaign Guide (14 claims), Unknown Regions (14).
+Remaining weapon books: Unknown Regions (14 claims).
 
 ### Cross-published identities
 
@@ -1361,6 +1362,7 @@ Remaining weapon books: Legacy Era Campaign Guide (14 claims), Unknown Regions (
 | Flechette Launcher | `weapon-flechette-launcher` | Force Unleashed Campaign Guide p. 199; Rebellion Era Campaign Guide p. 49 | ONE_PRODUCTION_IDENTITY_MULTIPLE_CONSISTENT_SOURCE_CLAIMS |
 | BlasTech 500 Riot Gun | `weapon-espo-500-riot-gun` | Clone Wars Campaign Guide p. 61; Rebellion Era Campaign Guide p. 50 | ONE_PRODUCTION_IDENTITY_CROSS_SOURCE_MECHANICAL_CONFLICT |
 | Stunning Gauntlet | `None` | Clone Wars Campaign Guide p. 60; Knights of the Old Republic Campaign Guide p. 202 | ONE_PRODUCTION_IDENTITY_MULTIPLE_CONSISTENT_SOURCE_CLAIMS |
+| Long-Handle Lightsaber | `lightsaber-chassis-longhandle` | Jedi Academy Training Manual p. 53; Legacy Era Campaign Guide p. 62 | ONE_PRODUCTION_IDENTITY_MULTIPLE_SOURCE_CLAIMS |
 
 ### Open cross-source adjudication: BlasTech 500 Riot Gun
 
@@ -1479,6 +1481,27 @@ Certified fields: source book/description page/stat-table page, `canonicalPlayer
 | Mythosaur Axe | Mythosaur Axe | Simple Weapon | 202 | 202 | — | MISSING_RECORD |  |
 
 KOTOR notes: Phase 0 identity `Arggarok` keeps its key; the printed name is Arg’garok and the published spelling is used when the record is created. Stunning Gauntlet (p. 202) is the same identity as Clone Wars p. 60 — one production record. The Mythosaur Axe (p. 202) is the generic weapon; Mandalore the Ultimate’s named powered variant must not become a second generic record.
+
+### 1K — Legacy Era Campaign Guide
+
+| Weapon (Phase 0 identity) | Published name | Group | Desc p. | Table p. | Repo | Discrepancy | Rename pending |
+|---|---|---|---|---|---|---|---|
+| Long-Handle Lightsaber | Long-Handle Lightsaber | Lightsaber | 62 | 62 | `lightsaber-chassis-longhandle` | DESCRIPTION_INCOMPLETE |  |
+| Shock Whip | Shock Whip | Advanced Melee Weapon | 62 | 62 | — | MISSING_RECORD |  |
+| Tehkla Blade | Tehk'la Blade | Exotic Weapon | 62 | 62 | — | MISSING_RECORD |  |
+| Blaster Carbine, Double-Barreled | Blaster Carbine, Double-Barreled | Rifle | 63 | 64 | `weapon-double-barreled-blaster-carbine` | DESCRIPTION_INCOMPLETE | yes (Double-Barreled Blaster Carbine) |
+| Blaster Carbine, Hunting | Blaster Carbine, Hunting | Rifle | 63 | 64 | `weapon-hunting-blaster-carbine` | DESCRIPTION_INCOMPLETE | yes (Hunting Blaster Carbine) |
+| Blaster Carbine, Sporting | Blaster Carbine, Sporting | Rifle | 63 | 64 | `weapon-sporting-blaster-carbine` | DESCRIPTION_INCOMPLETE | yes (Sporting Blaster Carbine) |
+| Blaster Pistol, Bluebolt | Blaster Pistol, Bluebolt | Pistol | 64 | 64 | `weapon-bluebolt-blaster-pistol` | DESCRIPTION_INCOMPLETE | yes (Bluebolt Blaster Pistol) |
+| Blaster Pistol, Snap Shot | Blaster Pistol, Snap Shot | Pistol | 64 | 64 | `weapon-snap-shot-blaster-pistol` | DESCRIPTION_INCOMPLETE | yes (Snap-Shot Blaster Pistol) |
+| Blaster Rifle, Heavy Assault | Blaster Rifle, Heavy Assault | Rifle | 65 | 64 | `weapon-heavy-assault-blaster` | DESCRIPTION_INCOMPLETE | yes (Heavy Assault Blaster) |
+| Concealed Dart Launcher | Concealed Dart Launcher | Exotic Weapon | 65 | 64 | `weapon-concealed-dart-launcher` | DESCRIPTION_INCOMPLETE |  |
+| Razor Bug | Razor Bug | Simple Weapon | 65 | 64 | `weapon-razor-bug` | DESCRIPTION_INCOMPLETE |  |
+| Thud Bug | Thud Bug | Simple Weapon | 65 | 64 | `weapon-thud-bug` | DESCRIPTION_INCOMPLETE |  |
+| ARC-9965 Blaster Rifle | ARC-9965 Blaster Rifle | Rifle | 182 | 183 | `weapon-arc-9965-blaster` | DESCRIPTION_INCOMPLETE | yes (ARC-9965 Blaster) |
+| Heavy Blaster Cannon | Heavy Blaster Cannon | Heavy Weapon | 182 | 183 | `weapon-heavy-blaster-cannon` | DESCRIPTION_INCOMPLETE |  |
+
+Legacy notes: Phase 0 identity `Tehkla Blade` keeps its normalized key, while the published display/source spelling is Tehk'la Blade. Long-Handle Lightsaber is the same production identity already certified from Jedi Academy p. 53; preserve both source claims and do not create a second lightsaber. No weapon records, stats, tags, or runtime mechanics are changed by 1K.
 
 Retrosaber (1F, p. 50) has no stat-table page: the Jedi Academy Training Manual defines it in prose only (base DC 25, 28 damage, swift-action 2d10 power dial-up), so its stat values need prose-sourced handling in the stats phase.
 
@@ -1640,7 +1663,7 @@ Threats of the Galaxy (1G) weapons (Datadagger p. 13, Light Concussion Missile L
 
 ## Pending phases
 
-- 1 Provenance and canonical content certification — weapons 1A-1J DONE (authority-only); next weapon books: Legacy Era, Unknown Regions; then armor, general equipment families, cybernetics/upgrades/templates, lightsaber components, droid systems
+- 1 Provenance and canonical content certification — weapons 1A-1K DONE (authority-only); next weapon book: Unknown Regions; then armor, general equipment families, cybernetics/upgrades/templates, lightsaber components, droid systems
 
 - Gated cleanup tranche (0-3D migrations, 0-3E renames/merge, 0-3F template migration, 0-3G weapons.db stragglers, 0-3H droid migration, weapon/equipment REMOVE dependents)
 
