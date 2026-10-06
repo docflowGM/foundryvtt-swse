@@ -670,7 +670,7 @@ if (s2) {
     if (!fs.existsSync(path.join(ROOT, sb.doc))) fail(`${sb.phase} missing doc ${sb.doc}`);
     if (typeof sa.scope === 'object' && (sa.scope.rollingAuthorityMutationAuthorized !== false || sa.scope.productionMutationAuthorized !== false || sa.scope.recordCreationAuthorized !== false)) fail(`${sb.phase} standalone scope flags must stay false`);
     if (sb.rollingMergeAuthorized !== false) fail(`${sb.phase} standalone book must not be rolling-merged without owner instruction`);
-    const p1b = auth.phases['1-weapons-content'].books.find((x) => x.book === sa.book);
+    const p1b = auth.phases['1-weapons-content'].books.find((x) => x.book === sa.book || x.book === sa.book.replace(/^The /, ''));
     const p1 = new Map(p1b.records.map((r) => [r.canonicalName, r]));
     const t = checkBook(sa, p1, sb.phase, { mirrorProfiles: !!sb.mirrorProfiles });
     const c = sa.counts;
@@ -679,7 +679,7 @@ if (s2) {
     for (const [k, v] of Object.entries(tallies)) if (k in c && c[k] !== v) fail(`${sb.phase} counts.${k} ${c[k]} != computed ${v}`);
     if (sa.verification.sourceTables) { const tableSum = sa.verification.sourceTables.reduce((m, x) => m + x.claims, 0); if (tableSum !== sa.records.length) fail(`${sb.phase} source table claims ${tableSum} != records ${sa.records.length}`); }
     // Lightfoil-style DR bypass must come from the lightsaber group only
-    for (const r of sa.records) if (r.qualities.ignoresDR && r.weaponGroup !== 'Lightsaber') fail(`${sb.phase} ${r.canonicalName} ignoresDR outside the Lightsaber group`);
+    for (const r of sa.records) if (r.qualities.ignoresDR && r.weaponGroup !== 'Lightsaber' && !sb.ignoresDRNonLightsaberAllowed?.includes(r.canonicalName)) fail(`${sb.phase} ${r.canonicalName} ignoresDR outside the Lightsaber group`);
     for (const r of sa.records) if (r.canonicalStats.rateOfFire?.includes('Special') && !sb.specialRateOfFireAllowed?.includes(r.canonicalName)) fail(`${sb.phase} unexpected Special rate of fire on ${r.canonicalName}`);
     const mass = sa.records.find((r) => r.canonicalName === 'Massassi Lanvarok');
     if (mass && !(mass.canonicalStats.attackProfiles.map((x) => x.id).join() === 'disc,melee' && mass.canonicalStats.baseDamage.mode === 'alternate-profiles')) fail(`${sb.phase} Massassi Lanvarok must carry disc and melee profiles`);
@@ -691,6 +691,58 @@ if (s2) {
       for (const n of ['DX-2 Disruptor Pistol', 'DXR-6 Disruptor Rifle']) if (f(n).canonicalStats.attackProfiles[0].firingConstraints?.firesOnAlternatingRounds !== true) fail(`2D ${n} fires only on alternating rounds`);
       for (const n of ['Bryar Rifle', 'CR-1 Blast Cannon', 'Flechette Launcher', 'Stokhli Spray Stick']) if (!same(f(n).qualityParameters.inaccurate.allowedBands, ['pointBlank', 'short', 'medium'])) fail(`2D ${n} Inaccurate must exclude Long only (Core/KOTOR definition)`);
       if (!['Guard Shoto', 'Lightsaber Pike'].every((n) => f(n).canonicalStats.defensiveInteractions.length === 1)) fail('2D Guard Shoto / Lightsaber Pike defensiveInteractions');
+    }
+    if (sb.phase === '2H') {
+      const f = (n) => sa.records.find((r) => r.canonicalName === n);
+      const p0 = (n) => f(n).canonicalStats.attackProfiles[0];
+      const pid = (n, id) => f(n).canonicalStats.attackProfiles.find((q) => q.id === id);
+      const same2 = (a, b2) => JSON.stringify(a) === JSON.stringify(b2);
+      if (sa.records.filter((r) => r.schemaFamily.branch === 'melee').length !== 5 || sa.records.filter((r) => r.schemaFamily.branch === 'ranged').length !== 9) fail('2H must be 5 melee + 9 ranged');
+      if (!same2(sa.records.filter((r) => r.qualities.accurate).map((r) => r.canonicalName).sort(), ['Magna Caster', 'Targeting Blaster Rifle', 'Verpine Shatter Gun'])) fail('2H base Accurate set');
+      if (!same2(sa.records.filter((r) => r.qualities.inaccurate).map((r) => r.canonicalName).sort(), ['Black-Powder Pistol', 'Crossbow', 'Survival Knife'])) fail('2H base Inaccurate set');
+      if (!same2(sa.records.filter((r) => r.canonicalStats.attackProfiles.some((q) => q.id === 'thrown')).map((r) => r.canonicalName).sort(), ['Electropole', 'Survival Knife'])) fail('2H explicitly throwable melee set');
+      if (sa.records.filter((r) => r.canonicalStats.stun.capability === 'native-stun').length !== 1 || sa.counts.nativeStunOnlyClaims !== 1) fail('2H exactly one native-stun-only weapon');
+      for (const n of ['Black-Powder Pistol', 'Crossbow', 'Survival Knife']) if (!same2(f(n).qualityParameters.inaccurate.allowedBands, ['pointBlank', 'short', 'medium'])) fail(`2H ${n} Inaccurate must exclude Long only`);
+      for (const r of sa.records) {
+        if (!r.canonicalStats.technologyClassification || !('deliveryMethod' in r.canonicalStats) || !Array.isArray(r.canonicalStats.wieldingRules) || !Array.isArray(r.canonicalStats.triggeredEffects)) fail(`2H ${r.canonicalName} missing v2.6 record fields`);
+        for (const q of r.canonicalStats.attackProfiles) for (const k of ['criticalEffects', 'activationRequirements', 'triggeredEffects', 'conditionalModifiers']) if (!Array.isArray(q[k])) fail(`2H ${r.canonicalName}/${q.id} missing ${k}[]`);
+        if (r.canonicalStats.range.hardMaxSquares != null && r.canonicalName !== 'Stun Pistol' && r.canonicalStats.stun.rangeRule?.hardMaxSquares == null) fail(`2H ${r.canonicalName} must not turn a legacy repo range string into a hard maximum`);
+      }
+      const bs = f('Blastsword');
+      if (bs.canonicalStats.size !== 'Medium' || !bs.canonicalStats.wieldingRules.some((q) => /Finesse/.test(q.scope || '') && q.effect === 'counts-as-light-weapon') || bs.operation.requiresPowerPack !== true) fail('2H Blastsword stays Medium and counts as light only for Weapon Finesse');
+      const cs = f('Contact Stunner').canonicalStats;
+      if (cs.baseDamage.formula !== '1d4' || cs.stun.damageMode !== 'explicit' || cs.stun.damage?.formula !== '2d8' || f('Contact Stunner').operation.concealmentEquipmentBonus !== 5 || f('Contact Stunner').operation.concealmentSkill !== 'Stealth') fail('2H Contact Stunner 1d4 normal / explicit 2d8 stun and +5 Stealth concealment');
+      const ep = f('Electropole');
+      if (ep.canonicalStats.baseDamage.formula !== '2d8' || !pid('Electropole', 'thrown') || ep.canonicalStats.resource.requiredUnits !== 2 || !ep.proficiencyRules.some((q) => /Gungan/.test(q.condition) && /simple/.test(q.condition)) || ep.repo.id !== 'weapon-gungan-electropole') fail('2H Electropole 2d8, thrown profile, two energy cells, Gungan simple-proficiency substitution, preserved repo id');
+      const sk = f('Survival Knife');
+      if (!sk.qualities.thrown || !sk.qualities.inaccurate || sk.operation.alwaysDetermineNorth !== true || JSON.stringify(sk).match(/storageCapacity|capacity(Items|Kg|Cm)/)) fail('2H Survival Knife thrown+Inaccurate, compass only, no invented storage capacity');
+      const vs = f('Vibro-Saw');
+      if (!vs.qualities.ignoresDR || vs.canonicalStats.damageReductionInteraction.mode !== 'ignore' || vs.canonicalStats.resource.requiredUnits !== 2) fail('2H Vibro-Saw ignores DR and takes two energy cells');
+      const bp = f('Black-Powder Pistol'), bf = p0('Black-Powder Pistol').firingConstraints;
+      if (bp.canonicalStats.resource.capacityShots !== 1 || bp.canonicalStats.resource.reloadAction !== 'full-round' || !bf?.reloadRequiredAfterEachShot || !bf.prohibitsMultiShotAbilities || bf.maxShotsPerRound !== 1 || bp.canonicalStats.resource.purchaseQuantityShots !== 50 || bp.canonicalStats.resource.purchaseCostCredits !== 5) fail('2H Black-Powder Pistol one-shot full-round reload, multi-shot prohibition, 50-shot package');
+      const fg = bp.canonicalStats.constructionRules;
+      if (fg?.searchCheck?.dc !== 20 || fg?.craftCheck?.dc !== 15 || fg?.baseOutputShots !== 5 || fg?.extraOutputPerPointsOverDC !== 5) fail('2H Black-Powder Pistol foraging procedure');
+      for (const n of ['Concussion Rifle', 'Squib Tensor Rifle']) if (p0(n).attackResolution.defense !== 'fortitude') fail(`2H ${n} must target Fortitude Defense`);
+      if (!JSON.stringify(f('Concussion Rifle').canonicalStats.attackProfiles[0].triggeredEffects).match(/prone/i)) fail('2H Concussion Rifle knocks prone on a hit');
+      if (f('Concussion Rifle').canonicalStats.resource.capacityShots !== 25 || f('Concussion Rifle').canonicalStats.range.profileId !== 'rifles') fail('2H Concussion Rifle 25 shots / rifle range');
+      const sq = f('Squib Tensor Rifle');
+      if (sq.canonicalStats.range.profileId !== 'rifles' || sq.canonicalStats.resource.capacityShots !== 15 || !JSON.stringify(sq.canonicalStats.attackProfiles[0].triggeredEffects).match(/condition/i) || !sq.proficiencyRules.some((q) => /Squib/.test(q.condition))) fail('2H Squib Tensor Rifle rifle range, 15 shots, -1 condition track on every hit, Squib rifle proficiency');
+      const cb = f('Crossbow').canonicalStats;
+      if (cb.resource.capacityShots !== 1 || cb.range.profileId !== 'simple-weapons') fail('2H Crossbow one bolt / simple-weapon range');
+      if (!JSON.stringify(p0('Heavy Slugthrower Pistol').conditionalModifiers).match(/Rapid Shot/) || f('Heavy Slugthrower Pistol').canonicalStats.resource.capacityShots !== 8) fail('2H Heavy Slugthrower Pistol extra -1 with multi-shot feats, 8-shot clip');
+      const mc = f('Magna Caster');
+      if (mc.canonicalStats.range.profileId !== 'heavy-weapons' || mc.canonicalStats.resource.capacityShots !== 10 || !JSON.stringify(mc).match(/snip/i)) fail('2H Magna Caster exotic range classification, 10-bolt case, +5 Stealth to snipe');
+      const sp = f('Stun Pistol');
+      if (sp.canonicalStats.baseDamage.mode !== 'none' && sp.canonicalStats.baseDamage.formula) fail('2H Stun Pistol must have no lethal base damage');
+      if (sp.canonicalStats.stun.capability !== 'native-stun' || sp.canonicalStats.stun.damage?.formula !== '3d6' || sp.canonicalStats.range.hardMaxSquares !== 20 || sp.canonicalStats.resource.capacityShots !== 50) fail('2H Stun Pistol native 3d6 stun, 20-square maximum, 50 shots');
+      const tb = f('Targeting Blaster Rifle');
+      const ad = tb.conditionalDamageProfiles.find((q) => q.id === 'aimed-damage-die-upgrade');
+      if (tb.canonicalStats.baseDamage.formula !== '3d6' || tb.canonicalStats.attackProfiles[0].damage.formula !== '3d6' || ad?.fromDieSize !== 6 || ad?.toDieSize !== 8 || ad?.damage?.formula !== '3d8' || ad?.condition?.type !== 'aimed-before-attack') fail('2H Targeting Blaster Rifle base 3d6 with aim d6->d8 for that attack only');
+      if (tb.canonicalStats.resource.capacityShots !== 50 || !JSON.stringify(tb).match(/folding stock/i)) fail('2H Targeting Blaster Rifle 50 shots, explicitly no folding stock');
+      const vp = f('Verpine Shatter Gun');
+      if (vp.canonicalStats.damageType.types.join() !== 'energy' || vp.canonicalStats.range.profileId !== 'pistols' || !vp.proficiencyRules.some((q) => /Verpine/.test(q.condition)) || vp.repo.id !== 'weapon-verpine-shattergun') fail('2H Verpine Shatter Gun Energy type, pistol range, Verpine proficiency, preserved repo id');
+      const vce = JSON.stringify(vp.canonicalStats.attackProfiles[0].criticalEffects);
+      if (!vce.includes('1d10') && !vce.match(/10/) || !vce.match(/after|post/i)) fail('2H Verpine Shatter Gun +1d10 critical added after multiplication');
     }
     if (sb.phase === '2G') {
       const f = (n) => sa.records.find((r) => r.canonicalName === n);
