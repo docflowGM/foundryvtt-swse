@@ -481,3 +481,4 @@ Claude may update/append the standalone authority files and schema-verifier/docu
 - The verifier recomputes `range.allowedBands` / `qualityEffects` from `qualityParameters` and fails if Galaxy at War Inaccurate is read with the Core/KOTOR (long-only) meaning, and checks that every `modeProfiles[].attackProfileId` links to an existing profile.
 - Schema v2.3 structural defaults added to every record (`range.penaltyApplication`, `preparedAttack`, `damageComponents`, `firingConstraints`, `defensiveInteractions`); no published fact changed and Galaxy at War’s Medium+Long Inaccurate definition is untouched.
 - Schema v2.4 structural defaults added; ICWS sniper -2 at unmodified point-blank is now a `conditionalModifier` (operation key preserved). Galaxy at War Inaccurate semantics untouched.
+- Schema v2.5 structural defaults added; conditional-modifier targets renamed to `attackRoll`/`damageRoll`; `stun.activation` backfilled from each record stun capability.

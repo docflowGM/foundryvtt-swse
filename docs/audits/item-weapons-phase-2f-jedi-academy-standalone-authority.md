@@ -1,3 +1,5 @@
+**Repo files:** `data/audits/item-weapons-phase-2f-jedi-academy-standalone-authority.json`, verified by `tools/verify-item-weapons-authority.mjs` against Phase 1F and the schema v2.5 contract.
+
 # Jedi Academy Training Manual Weapons - Phase 2F Standalone Book Authority
 
 **Status:** `JEDI_ACADEMY_PHASE_2F_STANDALONE_CERTIFIED`
@@ -437,3 +439,12 @@ JEDI_ACADEMY_PHASE_2F_STANDALONE_CERTIFIED
 14 repo-present + 2 repo-missing = 16
 0 production mutations authorized
 ```
+
+---
+
+## Repo verification notes (Claude)
+
+- 16 records match the 16 Phase 1F Jedi Academy records one-to-one (names, repo ids/current names, pending-rename flags, description and table pages, Retrosaber with no table page); 14 present, 2 missing.
+- The eight schema edits above are implemented as the repo contract `weapon-authority-schema-v2.5` and applied to Core, KOTOR, Galaxy at War, Force Unleashed and Clone Wars as structural defaults (see the rolling authority Phase 2 section).
+- Aliases normalized in this file (structure only, no published fact changed): `attackResolution.mode "normal"` -> `"standard"`, `modeProfiles[].attackProfile` -> `attackProfileId`, placeholder range strings expanded, `resource.consumption: null` added, and the `rateOfFire` object on Discblade / R-9 Flash Canister converted to the `["S"]` array form.
+- The verifier enforces: Retrosaber cost/size/weight/availability stay null with the forced overcharge -> burnout -> normal state machine and construction DC 25; Lightwhip delayed damage records its excluded modifiers; San-Ni Staff stun is `optional-per-attack` declared at attack time; Wan-Shen disassembles into four components; Great Lightsaber has no wielding prohibition and no unconditional double-weapon quality; Long Haft Form gates the haft-end profile and its damage type stays `unspecified`; Discblade uses thrown-weapon ranges with no innate returning quality; Guard Shoto phrik DR protection stays conditional; cross-publication records are kept.
