@@ -84,5 +84,5 @@
 
 - 33 records match the 33 Phase 1J KOTOR records one-to-one (names, repo ids and current names, pending-rename flags, description and table pages). Counts tally: accurate 1, inaccurate 8, arc 0, ignoresDR 1 (Lightfoil, Lightsaber group), area effect 4, double weapon 4, autofire-only 1; source tables 12 + 17 + 2 + 2 = 33.
 - Phase 1J's Phase 0 identity keys are preserved (`Arggarok` key, printed Arg’garok in `publishedName`; `Sith Lanvarok` / `Massassi Lanvarok`, printed "Lanvarok, Sith/Massassi").
-- Only Massassi Lanvarok carries `attackProfiles` (`disc`, `melee`); other KOTOR records predate schema v2.1 and have none. Sonic Disruptor carries `rateOfFire ["Special"]` with `operation.specialRateOfFire`.
+- All 33 records carry `attackProfiles` (schema v2.1, added by owner decision, derived from the certified damage/type/range); Massassi Lanvarok keeps its source-published `disc`/`melee` profiles. Sonic Disruptor carries `rateOfFire ["Special"]` with `operation.specialRateOfFire`.
 - The 20 present records are all `MATERIAL_MISMATCH` against the repo; the 13 missing are `MISSING_RECORD`. Nothing in packs was changed.

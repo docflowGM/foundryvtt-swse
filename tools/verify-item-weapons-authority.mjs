@@ -521,8 +521,7 @@ if (s2) {
       if (r.operation?.specialRateOfFire && !(rof && rof.includes('Special'))) fail(`${w} operation.specialRateOfFire requires rateOfFire ["Special"]`);
       rangeCheck(s.range, ql, w);
       // attack profiles: per-attack decomposition that must agree with the aggregate fields.
-      // Required on every record of a book that has adopted schema v2.1 (Core); in a book that predates it (standalone KOTOR 2B)
-      // they are mandatory only where the source publishes alternate attacks, and validated wherever present.
+      // Required on every record of a book that has adopted schema v2.1 (Core); for every standalone book as well (KOTOR 2B was normalized to v2.1 by owner decision).
       const ap = s.attackProfiles;
       if (!ap) {
         if (opts.requireAttackProfiles) fail(`${w} missing canonicalStats.attackProfiles`);
@@ -565,7 +564,7 @@ if (s2) {
     if (sa.scope.rollingAuthorityMutationAuthorized !== false || sa.scope.productionMutationAuthorized !== false || sa.scope.recordCreationAuthorized !== false) fail(`${sb.phase} standalone scope flags must stay false`);
     const p1b = auth.phases['1-weapons-content'].books.find((x) => x.book === sa.book);
     const p1 = new Map(p1b.records.map((r) => [r.canonicalName, r]));
-    const t = checkBook(sa, p1, sb.phase);
+    const t = checkBook(sa, p1, sb.phase, { requireAttackProfiles: true });
     const c = sa.counts;
     if (sa.records.length !== c.canonicalWeaponClaims || sa.records.length !== sb.claims || t.present !== c.repoPresent || sa.records.length - t.present !== c.repoMissing || t.present !== sb.repoPresent) fail(`${sb.phase} counts mismatch`);
     const tallies = { accurateBaseClaims: t.accurate, inaccurateBaseClaims: t.inaccurate, arcBaseClaims: t.arc, ignoresDRBaseClaims: t.ign, areaEffectClaims: t.area, doubleWeaponClaims: t.dbl, autofireOnlyClaims: t.auto };

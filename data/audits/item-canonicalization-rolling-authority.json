@@ -36794,7 +36794,7 @@
         "claudeValidation": "48 records, one per Phase 1A Core identity (names, groups, description pages, repo mapping identical to Phase 1A); 35 present / 13 missing; every record carries the full quality vocabulary, structured stun / operatingModes / damageType / availability / range / damageReductionInteraction; ignoresDR agrees with damageReductionInteraction.mode; 3 Core lightsabers ignore DR; Bowcaster range unresolved; spot-checked against reference/sourcebooks/Core Rulebook_djvu.txt (OCR is partial; PDF visual verification is the certifier’s)",
         "normalizationNotes": [
           "2A Core schema v2.1 adds canonicalStats.attackProfiles to all 48 records (derived 1:1 from the certified baseDamage/damageType/range; no published fact changed) and the \"Special\" rate-of-fire vocabulary entry.",
-          "The owner addendum also describes reshaping rateOfFire into an object, stun into {available, mode, damage, rangeOverride}, operatingModes into {available, simultaneousAlternateModes}, ammunition into an object and range into min/max bands. The certified standalone KOTOR file (the stated reference) does not use those shapes, so they were NOT applied; awaiting owner direction."
+          "Owner decision (2026-10): keep v2.1; the wider addendum reshaping (rateOfFire object, stun.available/mode, operatingModes.available, ammunition object, range min/max) is not adopted. attackProfiles was added to KOTOR accordingly."
         ]
       },
       "standaloneBookAuthorities": [
@@ -36808,12 +36808,13 @@
           "repoPresent": 20,
           "repoMissing": 13,
           "rollingMergeAuthorized": false,
-          "note": "Book-only authority by owner instruction; verified by the same Phase 2 checks but not merged into this rolling record until the owner says so."
+          "note": "Book-only authority by owner instruction; verified by the same Phase 2 checks but not merged into this rolling record until the owner says so. attackProfiles present on all 33 records (schema v2.1)."
         }
       ],
       "pendingSchemaDecision": {
-        "status": "OPEN",
-        "question": "Addendum reshaping (rateOfFire object, stun.available/mode/rangeOverride, operatingModes.available, ammunition object, range min/max) conflicts with the certified standalone KOTOR 2B file, which keeps the Core v2 shapes plus attackProfiles and a Special ROF value. Owner to choose: keep v2.1 as applied, or reshape Core and KOTOR together to the addendum."
+        "status": "RESOLVED",
+        "decision": "Keep schema v2.1 as applied; add attackProfiles to every KOTOR record. The addendum reshaping (rateOfFire object, stun.available/mode/rangeOverride, operatingModes.available, ammunition object, range min/max) is not adopted.",
+        "note": "Galaxy at War reportedly adds further extensions (modeProfiles, mode-specific ammunition, same-as-active-profile stun, range.allowedBands, quality parameters, attack resolution, area geometry, conditional damage, utility profiles; source-specific Inaccurate). They are not in the repo until that package is delivered and folded."
       }
     }
   },
