@@ -1333,9 +1333,9 @@ Phase 1 — Canonical provenance and descriptions. Order: Weapons; Armor; Genera
 Phase 1 steps per family: (1) exact sourcebook and page; (2) canonical full player-readable rules text; (3) short derived summary; (4) printed prerequisites and restrictions; (5) repo discrepancy classification; (6) only after certification, authorize production creation/update of Phase 0 ADD/EDIT records.
 
 
-## Phase 1 — Weapons provenance and canonical content (1A–1K)
+## Phase 1 — Weapons provenance and canonical content (1A–1L)
 
-Rolling weapons content authority; later book tranches append here. Status: **ROLLING_PHASE_1_WEAPONS_AUTHORITY_THROUGH_1K** (authority-only; no pack, stat or runtime change). 195 source-book claims map to 189 unique production identities. 146 claims have a repo record, 49 are missing; 34 descriptions are materially incorrect, 112 incomplete. Full text/summaries: JSON `phases["1-weapons-content"].books[].records`; per-identity roll-up: `.uniqueIdentityIndex`.
+Rolling weapons content authority; later book tranches append here. Status: **ROLLING_PHASE_1_WEAPONS_AUTHORITY_THROUGH_1K** (authority-only; no pack, stat or runtime change). 209 source-book claims map to 203 unique production identities (6 cross-published duplicate claims). 156 claims have a repo record, 53 are missing; 35 descriptions are materially incorrect, 121 incomplete. **Status: PHASE_1_WEAPONS_PROVENANCE_CONTENT_COMPLETE** (authority-only). Full text/summaries: JSON `phases["1-weapons-content"].books[].records`; per-identity roll-up: `.uniqueIdentityIndex`.
 
 | Phase | Book | Claims | Present | Missing | Incorrect | Incomplete |
 |---|---|--:|--:|--:|--:|--:|
@@ -1350,6 +1350,7 @@ Rolling weapons content authority; later book tranches append here. Status: **RO
 | 1I | Rebellion Era Campaign Guide | 12 | 9 | 3 | 1 | 8 |
 | 1J | Knights of the Old Republic Campaign Guide | 33 | 20 | 13 | 8 | 12 |
 | 1K | Legacy Era Campaign Guide | 14 | 12 | 2 | 0 | 12 |
+| 1L | Unknown Regions | 14 | 10 | 4 | 1 | 9 |
 
 Remaining weapon books: Unknown Regions (14 claims).
 
@@ -1502,6 +1503,26 @@ KOTOR notes: Phase 0 identity `Arggarok` keeps its key; the printed name is Arg�
 | Heavy Blaster Cannon | Heavy Blaster Cannon | Heavy Weapon | 182 | 183 | `weapon-heavy-blaster-cannon` | DESCRIPTION_INCOMPLETE |  |
 
 Legacy notes: Phase 0 identity `Tehkla Blade` keeps its normalized key, while the published display/source spelling is Tehk'la Blade. Long-Handle Lightsaber is the same production identity already certified from Jedi Academy p. 53; preserve both source claims and do not create a second lightsaber. No weapon records, stats, tags, or runtime mechanics are changed by 1K.
+### 1L — Unknown Regions
+
+| Weapon | Group | Desc p. | Table p. | Repo | Discrepancy | Rename pending |
+|---|---|---|---|---|---|---|
+| Blastsword | Exotic Weapon | 36 | 37 | — | MISSING_RECORD |  |
+| Contact Stunner | Simple Weapon | 36 | 37 | — | MISSING_RECORD |  |
+| Electropole | Advanced Melee Weapon | 36 | 37 | `weapon-gungan-electropole` | DESCRIPTION_INCORRECT | yes (Gungan Electropole) |
+| Survival Knife | Simple Weapon | 36 | 37 | — | MISSING_RECORD |  |
+| Vibro-Saw | Exotic Weapon | 36 | 37 | — | MISSING_RECORD |  |
+| Black-Powder Pistol | Pistol | 37 | 38 | `weapon-black-powder-pistol` | DESCRIPTION_INCOMPLETE |  |
+| Concussion Rifle | Rifle | 37 | 38 | `weapon-concussion-rifle` | DESCRIPTION_INCOMPLETE |  |
+| Crossbow | Simple Weapon | 37 | 38 | `weapon-crossbow` | DESCRIPTION_INCOMPLETE |  |
+| Heavy Slugthrower Pistol | Pistol | 38 | 38 | `weapon-heavy-slugthrower-pistol` | DESCRIPTION_INCOMPLETE |  |
+| Magna Caster | Exotic Weapon | 38 | 38 | `weapon-magna-caster` | DESCRIPTION_INCOMPLETE |  |
+| Squib Tensor Rifle | Exotic Weapon | 39 | 38 | `weapon-squib-tensor-rifle` | DESCRIPTION_INCOMPLETE |  |
+| Stun Pistol | Pistol | 39 | 38 | `weapon-stun-pistol` | DESCRIPTION_INCOMPLETE |  |
+| Targeting Blaster Rifle | Rifle | 39 | 38 | `weapon-targeting-blaster-rifle` | DESCRIPTION_INCOMPLETE |  |
+| Verpine Shatter Gun | Exotic Weapon | 39 | 38 | `weapon-verpine-shattergun` | DESCRIPTION_INCOMPLETE | yes (Verpine Shattergun) |
+
+Unknown Regions notes: Electropole’s current repo description is materially incorrect (adds a two-handed requirement the book does not state). Black-Powder Pistol ammunition-foraging rules, Verpine Shatter Gun critical-hit order of operations (+1d10 after multiplication) and the Survival Knife/Electropole throwable traits are preserved in the canonical text. Blastsword, Contact Stunner, Survival Knife and Vibro-Saw stay uncreated until the schema/stat phase.
 
 Retrosaber (1F, p. 50) has no stat-table page: the Jedi Academy Training Manual defines it in prose only (base DC 25, 28 damage, swift-action 2d10 power dial-up), so its stat values need prose-sourced handling in the stats phase.
 
@@ -1663,7 +1684,7 @@ Threats of the Galaxy (1G) weapons (Datadagger p. 13, Light Concussion Missile L
 
 ## Pending phases
 
-- 1 Provenance and canonical content certification — weapons 1A-1K DONE (authority-only); next weapon book: Unknown Regions; then armor, general equipment families, cybernetics/upgrades/templates, lightsaber components, droid systems
+- 1 Provenance and canonical content certification — weapons COMPLETE (1A-1L, authority-only); next within Phase 1: armor, general equipment families, cybernetics/upgrades/templates, lightsaber components, droid systems; weapon numeric/stat/schema certification precedes any creation of the 53 missing weapons
 
 - Gated cleanup tranche (0-3D migrations, 0-3E renames/merge, 0-3F template migration, 0-3G weapons.db stragglers, 0-3H droid migration, weapon/equipment REMOVE dependents)
 

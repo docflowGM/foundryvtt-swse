@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "authorityType": "item-canonicalization-rolling-authority",
-  "status": "PHASE 0 CHARACTER-ITEM CENSUS COMPLETE; PHASE 1 WEAPONS CONTENT CERTIFIED THROUGH 1K (Core, Clone Wars, Force Unleashed, Galaxy at War, Galaxy of Intrigue, Jedi Academy, Threats of the Galaxy, Scum and Villainy, Rebellion Era, KOTOR, Legacy Era) (authority-only) — certified ADD/EDIT/REMOVE actions remain intentionally unexecuted except the armor, equipment and medical identity renames",
+  "status": "PHASE 0 CHARACTER-ITEM CENSUS COMPLETE; PHASE 1 WEAPONS PROVENANCE/CONTENT COMPLETE (1A-1L, all 12 weapon sourcebooks) (authority-only) — certified ADD/EDIT/REMOVE actions remain intentionally unexecuted except the armor, equipment and medical identity renames",
   "sourcePolicy": "User-provided SWSE TXT/PDF sourcebooks are the canonical SSOT. Repository compendiums are implementation targets only.",
   "ownerRulings": "docs/audits/item-phase-0-ssot-census.md §7a",
   "architecture": {
@@ -18880,7 +18880,7 @@
       }
     },
     "1-weapons-content": {
-      "status": "ROLLING_PHASE_1_WEAPONS_AUTHORITY_THROUGH_1K",
+      "status": "PHASE_1_WEAPONS_PROVENANCE_CONTENT_COMPLETE",
       "canonicalSourcePolicy": "User-supplied SWSE TXT/PDF sourcebooks are SSOT. TXT is the searchable layer; rendered PDF pages are final authority for layout/page ambiguity.",
       "scope": {
         "completedPhases": [
@@ -18893,7 +18893,8 @@
           "1G",
           "1H",
           "1I",
-          "1J"
+          "1J",
+          "1L"
         ],
         "booksCompleted": [
           "Core Rulebook",
@@ -18905,7 +18906,8 @@
           "Threats of the Galaxy",
           "Scum and Villainy",
           "Rebellion Era Campaign Guide",
-          "Knights of the Old Republic Campaign Guide"
+          "Knights of the Old Republic Campaign Guide",
+          "Unknown Regions"
         ],
         "certifiedFields": [
           "source.book",
@@ -18923,13 +18925,13 @@
         ]
       },
       "aggregateCounts": {
-        "sourceBookClaims": 195,
-        "uniqueProductionIdentities": 189,
+        "sourceBookClaims": 209,
+        "uniqueProductionIdentities": 203,
         "crossPublishedDuplicateClaims": 6,
-        "repoPresentClaims": 146,
-        "repoMissingClaims": 49,
-        "descriptionIncorrectClaims": 34,
-        "descriptionIncompleteClaims": 112
+        "repoPresentClaims": 156,
+        "repoMissingClaims": 53,
+        "descriptionIncorrectClaims": 35,
+        "descriptionIncompleteClaims": 121
       },
       "books": [
         {
@@ -24123,6 +24125,415 @@
               "crossPublishedSources": []
             }
           ]
+        },
+        {
+          "phase": "1L",
+          "book": "Unknown Regions",
+          "counts": {
+            "canonicalWeaponClaims": 14,
+            "repoPresent": 10,
+            "repoMissing": 4,
+            "descriptionIncorrect": 1,
+            "descriptionIncomplete": 9,
+            "contentCorrect": 0
+          },
+          "records": [
+            {
+              "canonicalName": "Blastsword",
+              "weaponGroup": "Exotic Weapon",
+              "source": {
+                "book": "Unknown Regions",
+                "publishedName": "Blastsword",
+                "descriptionPage": 36,
+                "statTablePage": 37,
+                "verifiedBy": [
+                  "Unknown Regions_djvu.txt",
+                  "SW_Saga_The_Unknown_Regions.pdf visual verification"
+                ]
+              },
+              "tableTraits": [],
+              "canonicalPlayerText": "A blastsword can be treated as a light weapon for purposes of the Weapon Finesse feat. It requires a power pack to operate.",
+              "summary": "Adumari dueling weapon that qualifies as a light weapon for Weapon Finesse; uses a power pack.",
+              "repo": {
+                "present": false,
+                "id": null,
+                "currentName": null,
+                "phase0NameNormalizationPending": false
+              },
+              "phase1Discrepancy": "MISSING_RECORD",
+              "phase1ContentAction": "CREATE_WHEN_SCHEMA_STATS_PHASES_ARE_READY",
+              "notes": [],
+              "crossPublishedSources": []
+            },
+            {
+              "canonicalName": "Contact Stunner",
+              "weaponGroup": "Simple Weapon",
+              "source": {
+                "book": "Unknown Regions",
+                "publishedName": "Contact Stunner",
+                "descriptionPage": 36,
+                "statTablePage": 37,
+                "verifiedBy": [
+                  "Unknown Regions_djvu.txt",
+                  "SW_Saga_The_Unknown_Regions.pdf visual verification"
+                ]
+              },
+              "tableTraits": [],
+              "canonicalPlayerText": "A contact stunner grants a +5 equipment bonus on Stealth checks made to conceal the weapon. It requires an energy cell to operate.",
+              "summary": "Compact contact weapon granting +5 to Stealth checks to conceal it; uses an energy cell.",
+              "repo": {
+                "present": false,
+                "id": null,
+                "currentName": null,
+                "phase0NameNormalizationPending": false
+              },
+              "phase1Discrepancy": "MISSING_RECORD",
+              "phase1ContentAction": "CREATE_WHEN_SCHEMA_STATS_PHASES_ARE_READY",
+              "notes": [],
+              "crossPublishedSources": []
+            },
+            {
+              "canonicalName": "Electropole",
+              "weaponGroup": "Advanced Melee Weapon",
+              "source": {
+                "book": "Unknown Regions",
+                "publishedName": "Electropole",
+                "descriptionPage": 36,
+                "statTablePage": 37,
+                "verifiedBy": [
+                  "Unknown Regions_djvu.txt",
+                  "SW_Saga_The_Unknown_Regions.pdf visual verification"
+                ]
+              },
+              "tableTraits": [
+                "Can be thrown"
+              ],
+              "canonicalPlayerText": "An electropole can be thrown like a javelin. Gungans with Weapon Proficiency (simple weapons) are considered proficient with the electropole. It requires two energy cells to operate.",
+              "summary": "Throwable electrified pike; Gungans with simple-weapon proficiency are proficient with it; uses two energy cells.",
+              "repo": {
+                "present": true,
+                "id": "weapon-gungan-electropole",
+                "currentName": "Gungan Electropole",
+                "phase0NameNormalizationPending": true
+              },
+              "phase1Discrepancy": "DESCRIPTION_INCORRECT",
+              "phase1ContentAction": "UPDATE_CANONICAL_CONTENT",
+              "notes": [
+                "The current repo description adds a two-handed requirement not present in the published rule; classify as materially incorrect, not merely incomplete."
+              ],
+              "crossPublishedSources": []
+            },
+            {
+              "canonicalName": "Survival Knife",
+              "weaponGroup": "Simple Weapon",
+              "source": {
+                "book": "Unknown Regions",
+                "publishedName": "Survival Knife",
+                "descriptionPage": 36,
+                "statTablePage": 37,
+                "verifiedBy": [
+                  "Unknown Regions_djvu.txt",
+                  "SW_Saga_The_Unknown_Regions.pdf visual verification"
+                ]
+              },
+              "tableTraits": [
+                "Can be thrown",
+                "Inaccurate: cannot attack targets at long range"
+              ],
+              "canonicalPlayerText": "A survival knife has a hollow handle that can store very small items such as compact survival tools. Its built-in digital compass lets a character carrying it always determine which way is north. It can be thrown, but it is an inaccurate weapon and cannot attack targets at long range.",
+              "summary": "Survival knife with tiny internal storage and a compass that always identifies north; throwable but inaccurate.",
+              "repo": {
+                "present": false,
+                "id": null,
+                "currentName": null,
+                "phase0NameNormalizationPending": false
+              },
+              "phase1Discrepancy": "MISSING_RECORD",
+              "phase1ContentAction": "CREATE_WHEN_SCHEMA_STATS_PHASES_ARE_READY",
+              "notes": [],
+              "crossPublishedSources": []
+            },
+            {
+              "canonicalName": "Vibro-Saw",
+              "weaponGroup": "Exotic Weapon",
+              "source": {
+                "book": "Unknown Regions",
+                "publishedName": "Vibro-Saw",
+                "descriptionPage": 36,
+                "statTablePage": 37,
+                "verifiedBy": [
+                  "Unknown Regions_djvu.txt",
+                  "SW_Saga_The_Unknown_Regions.pdf visual verification"
+                ]
+              },
+              "tableTraits": [],
+              "canonicalPlayerText": "A vibro-saw ignores a target's Damage Reduction. It requires two energy cells to operate.",
+              "summary": "Large vibro tool/weapon that ignores Damage Reduction; uses two energy cells.",
+              "repo": {
+                "present": false,
+                "id": null,
+                "currentName": null,
+                "phase0NameNormalizationPending": false
+              },
+              "phase1Discrepancy": "MISSING_RECORD",
+              "phase1ContentAction": "CREATE_WHEN_SCHEMA_STATS_PHASES_ARE_READY",
+              "notes": [],
+              "crossPublishedSources": []
+            },
+            {
+              "canonicalName": "Black-Powder Pistol",
+              "weaponGroup": "Pistol",
+              "source": {
+                "book": "Unknown Regions",
+                "publishedName": "Black-Powder Pistol",
+                "descriptionPage": 37,
+                "statTablePage": 38,
+                "verifiedBy": [
+                  "Unknown Regions_djvu.txt",
+                  "SW_Saga_The_Unknown_Regions.pdf visual verification"
+                ]
+              },
+              "tableTraits": [
+                "Inaccurate: cannot attack targets at long range"
+              ],
+              "canonicalPlayerText": "A black-powder pistol must be reloaded after every shot, and reloading requires a full-round action, preventing the use of feats or talents that allow multiple shots. Ammunition is sold in sets of 50 shots for 5 credits. A character trained in Mechanics can make a DC 20 Perception check to locate suitable materials; after one hour, a DC 15 Mechanics check produces ammunition for 5 shots, plus 5 additional shots for every 5 points by which the check exceeds the DC. The weapon is inaccurate and cannot attack targets at long range.",
+              "summary": "Single-shot inaccurate pistol with a full-round reload; trained characters can forage and manufacture ammunition in the field.",
+              "repo": {
+                "present": true,
+                "id": "weapon-black-powder-pistol",
+                "currentName": "Black-Powder Pistol",
+                "phase0NameNormalizationPending": false
+              },
+              "phase1Discrepancy": "DESCRIPTION_INCOMPLETE",
+              "phase1ContentAction": "UPDATE_CANONICAL_CONTENT",
+              "notes": [],
+              "crossPublishedSources": []
+            },
+            {
+              "canonicalName": "Concussion Rifle",
+              "weaponGroup": "Rifle",
+              "source": {
+                "book": "Unknown Regions",
+                "publishedName": "Concussion Rifle",
+                "descriptionPage": 37,
+                "statTablePage": 38,
+                "verifiedBy": [
+                  "Unknown Regions_djvu.txt",
+                  "SW_Saga_The_Unknown_Regions.pdf visual verification"
+                ]
+              },
+              "tableTraits": [],
+              "canonicalPlayerText": "Attacks with a concussion rifle are made against the target's Fortitude Defense. On a successful attack, the target is knocked prone in addition to taking the weapon's damage. The rifle requires a power pack, which must be replaced after 25 shots.",
+              "summary": "Sonic rifle that attacks Fortitude Defense and knocks a hit target prone; 25-shot power pack.",
+              "repo": {
+                "present": true,
+                "id": "weapon-concussion-rifle",
+                "currentName": "Concussion Rifle",
+                "phase0NameNormalizationPending": false
+              },
+              "phase1Discrepancy": "DESCRIPTION_INCOMPLETE",
+              "phase1ContentAction": "UPDATE_CANONICAL_CONTENT",
+              "notes": [],
+              "crossPublishedSources": []
+            },
+            {
+              "canonicalName": "Crossbow",
+              "weaponGroup": "Simple Weapon",
+              "source": {
+                "book": "Unknown Regions",
+                "publishedName": "Crossbow",
+                "descriptionPage": 37,
+                "statTablePage": 38,
+                "verifiedBy": [
+                  "Unknown Regions_djvu.txt",
+                  "SW_Saga_The_Unknown_Regions.pdf visual verification"
+                ]
+              },
+              "tableTraits": [
+                "Inaccurate: cannot attack targets at long range"
+              ],
+              "canonicalPlayerText": "A crossbow holds one bolt at a time and requires a move action to reload. A case of 10 bolts costs 20 credits and weighs 0.6 kg. The weapon is inaccurate and cannot attack targets at long range.",
+              "summary": "Single-bolt inaccurate crossbow requiring a move action to reload.",
+              "repo": {
+                "present": true,
+                "id": "weapon-crossbow",
+                "currentName": "Crossbow",
+                "phase0NameNormalizationPending": false
+              },
+              "phase1Discrepancy": "DESCRIPTION_INCOMPLETE",
+              "phase1ContentAction": "UPDATE_CANONICAL_CONTENT",
+              "notes": [],
+              "crossPublishedSources": []
+            },
+            {
+              "canonicalName": "Heavy Slugthrower Pistol",
+              "weaponGroup": "Pistol",
+              "source": {
+                "book": "Unknown Regions",
+                "publishedName": "Heavy Slugthrower Pistol",
+                "descriptionPage": 38,
+                "statTablePage": 38,
+                "verifiedBy": [
+                  "Unknown Regions_djvu.txt",
+                  "SW_Saga_The_Unknown_Regions.pdf visual verification"
+                ]
+              },
+              "tableTraits": [],
+              "canonicalPlayerText": "When using Double Attack, Triple Attack, or Rapid Shot with a heavy slugthrower pistol, the wielder takes an additional -1 penalty on the attack rolls. The pistol uses an 8-shot ammunition clip; a replacement clip costs 15 credits and weighs 0.1 kg.",
+              "summary": "Eight-shot heavy slugthrower that imposes an extra -1 attack penalty with Double Attack, Triple Attack, or Rapid Shot.",
+              "repo": {
+                "present": true,
+                "id": "weapon-heavy-slugthrower-pistol",
+                "currentName": "Heavy Slugthrower Pistol",
+                "phase0NameNormalizationPending": false
+              },
+              "phase1Discrepancy": "DESCRIPTION_INCOMPLETE",
+              "phase1ContentAction": "UPDATE_CANONICAL_CONTENT",
+              "notes": [],
+              "crossPublishedSources": []
+            },
+            {
+              "canonicalName": "Magna Caster",
+              "weaponGroup": "Exotic Weapon",
+              "source": {
+                "book": "Unknown Regions",
+                "publishedName": "Magna Caster",
+                "descriptionPage": 38,
+                "statTablePage": 38,
+                "verifiedBy": [
+                  "Unknown Regions_djvu.txt",
+                  "SW_Saga_The_Unknown_Regions.pdf visual verification"
+                ]
+              },
+              "tableTraits": [
+                "Accurate: no attack penalty at short range"
+              ],
+              "canonicalPlayerText": "A magna caster grants a +5 equipment bonus on Stealth checks made to snipe. It uses a case of 10 bolts; a replacement case costs 50 credits and weighs 1 kg. The weapon is accurate and takes no attack penalty at short range.",
+              "summary": "Quiet accurate magnetic launcher granting +5 to Stealth checks to snipe; uses 10-bolt cases.",
+              "repo": {
+                "present": true,
+                "id": "weapon-magna-caster",
+                "currentName": "Magna Caster",
+                "phase0NameNormalizationPending": false
+              },
+              "phase1Discrepancy": "DESCRIPTION_INCOMPLETE",
+              "phase1ContentAction": "UPDATE_CANONICAL_CONTENT",
+              "notes": [],
+              "crossPublishedSources": []
+            },
+            {
+              "canonicalName": "Squib Tensor Rifle",
+              "weaponGroup": "Exotic Weapon",
+              "source": {
+                "book": "Unknown Regions",
+                "publishedName": "Squib Tensor Rifle",
+                "descriptionPage": 39,
+                "statTablePage": 38,
+                "verifiedBy": [
+                  "Unknown Regions_djvu.txt",
+                  "SW_Saga_The_Unknown_Regions.pdf visual verification"
+                ]
+              },
+              "tableTraits": [],
+              "canonicalPlayerText": "Attacks with a Squib tensor rifle are made against the target's Fortitude Defense. On a successful attack, the target moves -1 step on the condition track regardless of the damage roll. Squibs treat the weapon as a rifle rather than an exotic weapon. It is treated as a rifle for determining range and uses a 15-shot power pack.",
+              "summary": "Tractor-beam rifle that attacks Fortitude and moves a hit target -1 condition step regardless of damage; Squibs treat it as a rifle.",
+              "repo": {
+                "present": true,
+                "id": "weapon-squib-tensor-rifle",
+                "currentName": "Squib Tensor Rifle",
+                "phase0NameNormalizationPending": false
+              },
+              "phase1Discrepancy": "DESCRIPTION_INCOMPLETE",
+              "phase1ContentAction": "UPDATE_CANONICAL_CONTENT",
+              "notes": [],
+              "crossPublishedSources": []
+            },
+            {
+              "canonicalName": "Stun Pistol",
+              "weaponGroup": "Pistol",
+              "source": {
+                "book": "Unknown Regions",
+                "publishedName": "Stun Pistol",
+                "descriptionPage": 39,
+                "statTablePage": 38,
+                "verifiedBy": [
+                  "Unknown Regions_djvu.txt",
+                  "SW_Saga_The_Unknown_Regions.pdf visual verification"
+                ]
+              },
+              "tableTraits": [],
+              "canonicalPlayerText": "A stun pistol can attack targets up to 20 squares away instead of the normal 6-square range for stun attacks. It requires a power pack, which must be replaced after 50 shots.",
+              "summary": "Dedicated stun pistol with a 20-square stun range and a 50-shot power pack.",
+              "repo": {
+                "present": true,
+                "id": "weapon-stun-pistol",
+                "currentName": "Stun Pistol",
+                "phase0NameNormalizationPending": false
+              },
+              "phase1Discrepancy": "DESCRIPTION_INCOMPLETE",
+              "phase1ContentAction": "UPDATE_CANONICAL_CONTENT",
+              "notes": [],
+              "crossPublishedSources": []
+            },
+            {
+              "canonicalName": "Targeting Blaster Rifle",
+              "weaponGroup": "Rifle",
+              "source": {
+                "book": "Unknown Regions",
+                "publishedName": "Targeting Blaster Rifle",
+                "descriptionPage": 39,
+                "statTablePage": 38,
+                "verifiedBy": [
+                  "Unknown Regions_djvu.txt",
+                  "SW_Saga_The_Unknown_Regions.pdf visual verification"
+                ]
+              },
+              "tableTraits": [
+                "Accurate: no attack penalty at short range"
+              ],
+              "canonicalPlayerText": "A targeting blaster rifle can be assembled or disassembled as a full-round action. If the wielder aims before making an attack, the weapon's damage dice change from d6s to d8s. It does not have a folding stock and uses a 50-shot power pack. The weapon is accurate and takes no attack penalty at short range.",
+              "summary": "Accurate 50-shot rifle whose damage dice improve from d6s to d8s after aiming; assembles or disassembles as a full-round action.",
+              "repo": {
+                "present": true,
+                "id": "weapon-targeting-blaster-rifle",
+                "currentName": "Targeting Blaster Rifle",
+                "phase0NameNormalizationPending": false
+              },
+              "phase1Discrepancy": "DESCRIPTION_INCOMPLETE",
+              "phase1ContentAction": "UPDATE_CANONICAL_CONTENT",
+              "notes": [],
+              "crossPublishedSources": []
+            },
+            {
+              "canonicalName": "Verpine Shatter Gun",
+              "weaponGroup": "Exotic Weapon",
+              "source": {
+                "book": "Unknown Regions",
+                "publishedName": "Verpine Shatter Gun",
+                "descriptionPage": 39,
+                "statTablePage": 38,
+                "verifiedBy": [
+                  "Unknown Regions_djvu.txt",
+                  "SW_Saga_The_Unknown_Regions.pdf visual verification"
+                ]
+              },
+              "tableTraits": [
+                "Accurate: no attack penalty at short range"
+              ],
+              "canonicalPlayerText": "On a successful critical hit, a Verpine shatter gun deals an additional 1d10 damage after the normal critical-hit multiplication. If the weapon takes any damage, it is disabled until repaired with a Mechanics check. Verpines treat the weapon as a pistol rather than an exotic weapon, and it is treated as a pistol for determining range. It uses a special 50-shot ammunition clip costing 1,000 credits. The weapon is accurate and takes no attack penalty at short range.",
+              "summary": "Accurate fragile Verpine handgun: +1d10 damage after critical multiplication, disabled by any weapon damage, and treated as a pistol by Verpines.",
+              "repo": {
+                "present": true,
+                "id": "weapon-verpine-shattergun",
+                "currentName": "Verpine Shattergun",
+                "phase0NameNormalizationPending": true
+              },
+              "phase1Discrepancy": "DESCRIPTION_INCOMPLETE",
+              "phase1ContentAction": "UPDATE_CANONICAL_CONTENT",
+              "notes": [],
+              "crossPublishedSources": []
+            }
+          ]
         }
       ],
       "uniqueIdentityIndex": [
@@ -24457,6 +24868,24 @@
           ]
         },
         {
+          "identityKey": "unmapped::Blastsword",
+          "canonicalName": "Blastsword",
+          "alternateCanonicalNames": [],
+          "repoId": null,
+          "sourceClaims": [
+            {
+              "phase": "1L",
+              "book": "Unknown Regions",
+              "canonicalName": "Blastsword",
+              "descriptionPage": 36,
+              "statTablePage": 37,
+              "phase1Discrepancy": "MISSING_RECORD"
+            }
+          ],
+          "claimCount": 1,
+          "repoPresent": false
+        },
+        {
           "identityKey": "unmapped::Cesta",
           "canonicalName": "Cesta",
           "repoId": null,
@@ -24506,6 +24935,24 @@
               "phase1Discrepancy": "MISSING_RECORD"
             }
           ]
+        },
+        {
+          "identityKey": "unmapped::Contact Stunner",
+          "canonicalName": "Contact Stunner",
+          "alternateCanonicalNames": [],
+          "repoId": null,
+          "sourceClaims": [
+            {
+              "phase": "1L",
+              "book": "Unknown Regions",
+              "canonicalName": "Contact Stunner",
+              "descriptionPage": 36,
+              "statTablePage": 37,
+              "phase1Discrepancy": "MISSING_RECORD"
+            }
+          ],
+          "claimCount": 1,
+          "repoPresent": false
         },
         {
           "identityKey": "unmapped::Darkstick",
@@ -25026,6 +25473,24 @@
           ]
         },
         {
+          "identityKey": "unmapped::Survival Knife",
+          "canonicalName": "Survival Knife",
+          "alternateCanonicalNames": [],
+          "repoId": null,
+          "sourceClaims": [
+            {
+              "phase": "1L",
+              "book": "Unknown Regions",
+              "canonicalName": "Survival Knife",
+              "descriptionPage": 36,
+              "statTablePage": 37,
+              "phase1Discrepancy": "MISSING_RECORD"
+            }
+          ],
+          "claimCount": 1,
+          "repoPresent": false
+        },
+        {
           "identityKey": "unmapped::Tehkla Blade",
           "canonicalName": "Tehkla Blade",
           "repoId": null,
@@ -25058,6 +25523,24 @@
               "phase1Discrepancy": "MISSING_RECORD"
             }
           ]
+        },
+        {
+          "identityKey": "unmapped::Vibro-Saw",
+          "canonicalName": "Vibro-Saw",
+          "alternateCanonicalNames": [],
+          "repoId": null,
+          "sourceClaims": [
+            {
+              "phase": "1L",
+              "book": "Unknown Regions",
+              "canonicalName": "Vibro-Saw",
+              "descriptionPage": 36,
+              "statTablePage": 37,
+              "phase1Discrepancy": "MISSING_RECORD"
+            }
+          ],
+          "claimCount": 1,
+          "repoPresent": false
         },
         {
           "identityKey": "unmapped::Vibrobayonet",
@@ -25332,6 +25815,24 @@
           ]
         },
         {
+          "identityKey": "weapon-black-powder-pistol",
+          "canonicalName": "Black-Powder Pistol",
+          "alternateCanonicalNames": [],
+          "repoId": "weapon-black-powder-pistol",
+          "sourceClaims": [
+            {
+              "phase": "1L",
+              "book": "Unknown Regions",
+              "canonicalName": "Black-Powder Pistol",
+              "descriptionPage": 37,
+              "statTablePage": 38,
+              "phase1Discrepancy": "DESCRIPTION_INCOMPLETE"
+            }
+          ],
+          "claimCount": 1,
+          "repoPresent": true
+        },
+        {
           "identityKey": "weapon-blaster-cannon",
           "canonicalName": "Blaster Cannon",
           "repoId": "weapon-blaster-cannon",
@@ -25553,6 +26054,24 @@
           ]
         },
         {
+          "identityKey": "weapon-concussion-rifle",
+          "canonicalName": "Concussion Rifle",
+          "alternateCanonicalNames": [],
+          "repoId": "weapon-concussion-rifle",
+          "sourceClaims": [
+            {
+              "phase": "1L",
+              "book": "Unknown Regions",
+              "canonicalName": "Concussion Rifle",
+              "descriptionPage": 37,
+              "statTablePage": 38,
+              "phase1Discrepancy": "DESCRIPTION_INCOMPLETE"
+            }
+          ],
+          "claimCount": 1,
+          "repoPresent": true
+        },
+        {
           "identityKey": "weapon-cr-1-blast-cannon",
           "canonicalName": "CR-1 Blast Cannon",
           "repoId": "weapon-cr-1-blast-cannon",
@@ -25568,6 +26087,24 @@
               "phase1Discrepancy": "DESCRIPTION_INCOMPLETE"
             }
           ]
+        },
+        {
+          "identityKey": "weapon-crossbow",
+          "canonicalName": "Crossbow",
+          "alternateCanonicalNames": [],
+          "repoId": "weapon-crossbow",
+          "sourceClaims": [
+            {
+              "phase": "1L",
+              "book": "Unknown Regions",
+              "canonicalName": "Crossbow",
+              "descriptionPage": 37,
+              "statTablePage": 38,
+              "phase1Discrepancy": "DESCRIPTION_INCOMPLETE"
+            }
+          ],
+          "claimCount": 1,
+          "repoPresent": true
         },
         {
           "identityKey": "weapon-cryoban-grenade",
@@ -26045,6 +26582,24 @@
           ]
         },
         {
+          "identityKey": "weapon-gungan-electropole",
+          "canonicalName": "Electropole",
+          "alternateCanonicalNames": [],
+          "repoId": "weapon-gungan-electropole",
+          "sourceClaims": [
+            {
+              "phase": "1L",
+              "book": "Unknown Regions",
+              "canonicalName": "Electropole",
+              "descriptionPage": 36,
+              "statTablePage": 37,
+              "phase1Discrepancy": "DESCRIPTION_INCORRECT"
+            }
+          ],
+          "claimCount": 1,
+          "repoPresent": true
+        },
+        {
           "identityKey": "weapon-heavy-assault-blaster",
           "canonicalName": "Blaster Rifle, Heavy Assault",
           "repoId": "weapon-heavy-assault-blaster",
@@ -26128,6 +26683,24 @@
               "phase1Discrepancy": "DESCRIPTION_INCOMPLETE"
             }
           ]
+        },
+        {
+          "identityKey": "weapon-heavy-slugthrower-pistol",
+          "canonicalName": "Heavy Slugthrower Pistol",
+          "alternateCanonicalNames": [],
+          "repoId": "weapon-heavy-slugthrower-pistol",
+          "sourceClaims": [
+            {
+              "phase": "1L",
+              "book": "Unknown Regions",
+              "canonicalName": "Heavy Slugthrower Pistol",
+              "descriptionPage": 38,
+              "statTablePage": 38,
+              "phase1Discrepancy": "DESCRIPTION_INCOMPLETE"
+            }
+          ],
+          "claimCount": 1,
+          "repoPresent": true
         },
         {
           "identityKey": "weapon-heavy-sonic-pistol",
@@ -26366,6 +26939,24 @@
               "phase1Discrepancy": "DESCRIPTION_INCORRECT"
             }
           ]
+        },
+        {
+          "identityKey": "weapon-magna-caster",
+          "canonicalName": "Magna Caster",
+          "alternateCanonicalNames": [],
+          "repoId": "weapon-magna-caster",
+          "sourceClaims": [
+            {
+              "phase": "1L",
+              "book": "Unknown Regions",
+              "canonicalName": "Magna Caster",
+              "descriptionPage": 38,
+              "statTablePage": 38,
+              "phase1Discrepancy": "DESCRIPTION_INCOMPLETE"
+            }
+          ],
+          "claimCount": 1,
+          "repoPresent": true
         },
         {
           "identityKey": "weapon-massassi-lanvarok",
@@ -27099,6 +27690,24 @@
           ]
         },
         {
+          "identityKey": "weapon-squib-tensor-rifle",
+          "canonicalName": "Squib Tensor Rifle",
+          "alternateCanonicalNames": [],
+          "repoId": "weapon-squib-tensor-rifle",
+          "sourceClaims": [
+            {
+              "phase": "1L",
+              "book": "Unknown Regions",
+              "canonicalName": "Squib Tensor Rifle",
+              "descriptionPage": 39,
+              "statTablePage": 38,
+              "phase1Discrepancy": "DESCRIPTION_INCOMPLETE"
+            }
+          ],
+          "claimCount": 1,
+          "repoPresent": true
+        },
+        {
           "identityKey": "weapon-stokhli-spray-stick",
           "canonicalName": "Stokhli Spray Stick",
           "repoId": "weapon-stokhli-spray-stick",
@@ -27150,6 +27759,24 @@
           ]
         },
         {
+          "identityKey": "weapon-stun-pistol",
+          "canonicalName": "Stun Pistol",
+          "alternateCanonicalNames": [],
+          "repoId": "weapon-stun-pistol",
+          "sourceClaims": [
+            {
+              "phase": "1L",
+              "book": "Unknown Regions",
+              "canonicalName": "Stun Pistol",
+              "descriptionPage": 39,
+              "statTablePage": 38,
+              "phase1Discrepancy": "DESCRIPTION_INCOMPLETE"
+            }
+          ],
+          "claimCount": 1,
+          "repoPresent": true
+        },
+        {
           "identityKey": "weapon-subrepeating-blaster",
           "canonicalName": "Subrepeating Blaster",
           "repoId": "weapon-subrepeating-blaster",
@@ -27182,6 +27809,24 @@
               "phase1Discrepancy": "DESCRIPTION_INCOMPLETE"
             }
           ]
+        },
+        {
+          "identityKey": "weapon-targeting-blaster-rifle",
+          "canonicalName": "Targeting Blaster Rifle",
+          "alternateCanonicalNames": [],
+          "repoId": "weapon-targeting-blaster-rifle",
+          "sourceClaims": [
+            {
+              "phase": "1L",
+              "book": "Unknown Regions",
+              "canonicalName": "Targeting Blaster Rifle",
+              "descriptionPage": 39,
+              "statTablePage": 38,
+              "phase1Discrepancy": "DESCRIPTION_INCOMPLETE"
+            }
+          ],
+          "claimCount": 1,
+          "repoPresent": true
         },
         {
           "identityKey": "weapon-targeting-laser",
@@ -27267,6 +27912,24 @@
               "phase1Discrepancy": "DESCRIPTION_INCOMPLETE"
             }
           ]
+        },
+        {
+          "identityKey": "weapon-verpine-shattergun",
+          "canonicalName": "Verpine Shatter Gun",
+          "alternateCanonicalNames": [],
+          "repoId": "weapon-verpine-shattergun",
+          "sourceClaims": [
+            {
+              "phase": "1L",
+              "book": "Unknown Regions",
+              "canonicalName": "Verpine Shatter Gun",
+              "descriptionPage": 39,
+              "statTablePage": 38,
+              "phase1Discrepancy": "DESCRIPTION_INCOMPLETE"
+            }
+          ],
+          "claimCount": 1,
+          "repoPresent": true
         },
         {
           "identityKey": "weapon-vibroblade",
@@ -27505,17 +28168,17 @@
         "Keep stun and ion mechanics distinct.",
         "Preserve Phase 0 identity/name-normalization rulings.",
         "Hold BlasTech 500 Riot Gun production content until its cross-source conflict (Clone Wars p. 61 vs Rebellion Era p. 50) is adjudicated.",
-        "1J: use the printed display name Arg’garok (Phase 0 identity key Arggarok preserved) when the missing record is created; do not create a second Stunning Gauntlet; do not create a generic powered Mythosaur Axe from Mandalore the Ultimate’s named variant."
+        "1J: use the printed display name Arg’garok (Phase 0 identity key Arggarok preserved) when the missing record is created; do not create a second Stunning Gauntlet; do not create a generic powered Mythosaur Axe from Mandalore the Ultimate’s named variant.",
+        "1L: Electropole stays mapped to weapon-gungan-electropole (current description adds an unpublished two-handed requirement); Verpine Shatter Gun stays mapped to weapon-verpine-shattergun until the certified rename executes; do not create Blastsword, Contact Stunner, Survival Knife or Vibro-Saw before the schema/stat phase. Phase 1 completion does not authorize resolving the Riot Gun conflict."
       ],
       "repoBaselineAtCertification": "2fb98317038e31a94e57c2f633e04ef0ab8acc22",
       "foldedBy": {
         "executionStatus": "AUTHORITY_ONLY",
         "productionMutations": "none — no weapon records created, no descriptions replaced, no numeric stats changed",
-        "claudeValidation": "195 source claims over 189 unique identities (cross-published: Guard Shoto, Lightsaber Pike, Flechette Launcher, BlasTech 500 Riot Gun, Stunning Gauntlet, Long-Handle Lightsaber); every claim maps to a Phase 0-1 canonical weapon whose sources include the claiming book; repo.present/id/currentName agree with Phase 0 disposition and packs/weapons.db; 1A-1J records preserved unchanged.",
+        "claudeValidation": "209 source claims over 203 unique identities (6 cross-published: Guard Shoto, Lightsaber Pike, Flechette Launcher, BlasTech 500 Riot Gun, Stunning Gauntlet, Long-Handle Lightsaber); 156 present + 53 missing; every claim maps to a Phase 0-1 canonical weapon whose sources include the claiming book; repo.present/id/currentName agree with Phase 0 disposition and packs/weapons.db; 1A-1K records unchanged",
         "note": "canonicalPlayerText incidentally contains printed numbers (costs, dice, DCs, ranges); numeric stat fields remain uncertified until the stats phase.",
-        "remainingWeaponBooks": [
-          "Unknown Regions"
-        ]
+        "remainingWeaponBooks": [],
+        "nextPhase": "Weapon numeric/stat/schema certification across all 203 unique identities; only then create the 53 missing weapons, repair descriptions and execute pending renames."
       },
       "executorGuardrailsPhase1A": [
         "Fold this authority into the rolling item authority before mutating production.",
@@ -27538,7 +28201,7 @@
     }
   },
   "pendingPhases": [
-    "1 Provenance and canonical content certification — weapons 1A-1J DONE (authority-only); next weapon books: Legacy Era, Unknown Regions; then armor, general equipment families, cybernetics/upgrades/templates, lightsaber components, droid systems",
+    "1 Provenance and canonical content certification — weapons COMPLETE (1A-1L, authority-only); next within Phase 1: armor, general equipment families, cybernetics/upgrades/templates, lightsaber components, droid systems; weapon numeric/stat/schema certification precedes any creation of the 53 missing weapons",
     "Gated cleanup tranche (0-3D migrations, 0-3E renames/merge, 0-3F template migration, 0-3G weapons.db stragglers, 0-3H droid migration, weapon/equipment REMOVE dependents)",
     "Vehicle/starship item domain census (separate domain)",
     "2 Descriptions",

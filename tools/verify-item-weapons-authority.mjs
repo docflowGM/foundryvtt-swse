@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
  * Verifies data/audits/item-canonicalization-rolling-authority.json (Phase 0-1 weapons,
- * Phase 0-2 armor, Phase 0-3A equipment, Phase 0-3B medical, Phase 0-3C explosives, Phase 0-3D cybernetics, Phase 0-3E upgrades, Phase 0-3F gear templates, Phase 0-3G lightsaber components, Phase 0-3H droid systems, Phase 0-3I ammunition boundary, Phase 0 completion manifest, Phase 1 weapons content 1A-1I) against the weapons, armor and equipment packs. Read-only. Fails on any drift between the certified authority
+ * Phase 0-2 armor, Phase 0-3A equipment, Phase 0-3B medical, Phase 0-3C explosives, Phase 0-3D cybernetics, Phase 0-3E upgrades, Phase 0-3F gear templates, Phase 0-3G lightsaber components, Phase 0-3H droid systems, Phase 0-3I ammunition boundary, Phase 0 completion manifest, Phase 1 weapons content 1A-1L) against the weapons, armor and equipment packs. Read-only. Fails on any drift between the certified authority
  * and the pack so that execution phases cannot silently run against a changed repo.
  */
 import fs from 'node:fs';
@@ -447,6 +447,15 @@ if (c1) {
   const conflicts = c1.crossPublishedIdentityRulings.filter((r) => /CONFLICT/.test(r.ruling)).map((r) => r.canonicalIdentity).sort();
   const open = (c1.openContentAdjudications || []).map((r) => r.subject).sort();
   if (JSON.stringify(conflicts) !== JSON.stringify(open)) fail(`1 conflict rulings ${JSON.stringify(conflicts)} != open adjudications ${JSON.stringify(open)}`);
+  if (c1.status === 'PHASE_1_WEAPONS_PROVENANCE_CONTENT_COMPLETE') {
+    const fin = { claims: 209, unique: 203, dup: 6, present: 156, missing: 53 };
+    if (tot.claims !== fin.claims || claimsByName.size !== fin.unique || tot.claims - claimsByName.size !== fin.dup || tot.present !== fin.present || tot.missing !== fin.missing
+      || tot.present + tot.missing !== tot.claims) fail(`1 final reconciliation failed ${JSON.stringify(tot)} unique=${claimsByName.size}`);
+    const want = ['BlasTech 500 Riot Gun', 'Flechette Launcher', 'Guard Shoto', 'Lightsaber Pike', 'Long-Handle Lightsaber', 'Stunning Gauntlet'];
+    if (JSON.stringify(dupes) !== JSON.stringify(want)) fail(`1 final duplicate set ${JSON.stringify(dupes)}`);
+    if (c1.books.length !== 12) fail('1 final status requires 12 weapon sourcebooks');
+    if (!(c1.openContentAdjudications || []).some((r) => r.subject === 'BlasTech 500 Riot Gun')) fail('1 Riot Gun adjudication must remain open');
+  }
   if (!errors.length) console.log(`Phase 1 weapons content OK: ${c1.books.length} books (${c1.books.map((b) => b.phase).join(',')}), ${tot.claims} claims / ${claimsByName.size} identities (${tot.present} present, ${tot.missing} missing; ${tot.INCORRECT} incorrect, ${tot.INCOMPLETE} incomplete)`);
 }
 
