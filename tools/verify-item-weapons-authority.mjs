@@ -1412,17 +1412,37 @@ if (fs.existsSync(path.join(ROOT, P4A))) {
     if (!Array.isArray(a.ontologyGapCandidates)) fail(`${w} ontologyGapCandidates must be an array`);
   });
   if (seen.size !== REQ) fail('4A duplicate assignment identity');
-  const rp = S.rollingProgress;
-  if (rp.adjudicatedTotal !== REQ || rp.remaining !== 49 - REQ || rp.adjudicatedThisRound > REQ) fail('4A rolling progress counts');
+  // rounds ledger, recomputed from the assignments
+  const rp = S.rollingProgress, rounds = S.rounds || [];
+  const total = rounds.reduce((m, r) => m + r.assignmentCount, 0);
+  if (total !== REQ || rp.adjudicatedTotal !== REQ || rp.remaining !== 49 - REQ) fail('4A rolling progress counts');
   if (rp.nextCanonicalName !== (simple[REQ] ? simple[REQ].canonicalName : null)) fail(`4A next canonical name must be ${simple[REQ]?.canonicalName ?? null}`);
-  if (rp.firstCanonicalName !== simple[0].canonicalName) fail('4A first canonical name');
-  if (rp.round === 1) {
-    if (REQ !== 12 || present !== rp.roundRepoPresent || REQ - present !== rp.roundRepoMissing || rp.roundRepoPresent !== 7 || rp.roundRepoMissing !== 5) fail(`4A Round 1 must be 12 identities, 7 repo-present / 5 repo-missing (got ${REQ}, ${present}/${REQ - present})`);
-    if (tagTotal !== rp.totalFinalTagAssignmentsThisRound || tagsUsed.size !== rp.distinctTagsUsedThisRound || !same([...tagsUsed].sort(), [...rp.tagsUsedThisRound].sort())) fail('4A Round 1 tag counts');
-  }
-  const gaps = asg.reduce((m, a) => m + a.ontologyGapCandidates.length, 0);
-  if (gaps !== rp.ontologyGapCandidatesThisRound) fail('4A ontology gap count');
-  if (errors.length === e4) console.log(`Phase 4A Simple Weapon semantic tags OK: ${REQ}/49 adjudicated (${present} repo-present / ${REQ - present} missing), ${tagTotal} assignments, ${tagsUsed.size} distinct tags from the ${used.size}-tag certified feat/talent vocabulary, next ${rp.nextCanonicalName}`);
+  let off = 0, cumTags = 0, cumGaps = 0; const cumSet = new Set();
+  rounds.forEach((r, ri) => {
+    const sl = asg.slice(off, off + r.assignmentCount); off += r.assignmentCount;
+    const w = `4A round ${r.round}`;
+    if (r.round !== ri + 1 || !sl.length) { fail(`${w} ledger order`); return; }
+    if (sl[0].canonicalName !== r.firstCanonicalName || sl[sl.length - 1].canonicalName !== r.lastCanonicalName) fail(`${w} first/last identity`);
+    const pr = sl.filter((a) => a.repo.present).length;
+    if (pr !== r.repoPresent || sl.length - pr !== r.repoMissing) fail(`${w} repo present/missing`);
+    const tags = sl.reduce((m, a) => m + a.finalTags.length, 0), gaps = sl.reduce((m, a) => m + a.ontologyGapCandidates.length, 0);
+    if (tags !== r.tagAssignments || gaps !== r.ontologyGapCandidates) fail(`${w} tag/gap counts`);
+    cumTags += tags; cumGaps += gaps; sl.forEach((a) => a.finalTags.forEach((t) => cumSet.add(t)));
+    if (ri === rounds.length - 1) {
+      const rt = new Set(sl.flatMap((a) => a.finalTags));
+      if (rp.round !== r.round || rp.adjudicatedThisRound !== sl.length || rp.firstCanonicalName !== r.firstCanonicalName || rp.lastCanonicalName !== r.lastCanonicalName || rp.roundRepoPresent !== pr || rp.roundRepoMissing !== sl.length - pr || rp.totalFinalTagAssignmentsThisRound !== tags || rp.ontologyGapCandidatesThisRound !== gaps || rp.distinctTagsUsedThisRound !== rt.size || !same([...rt].sort(), [...rp.tagsUsedThisRound].sort())) fail('4A rollingProgress does not match the latest round');
+    }
+  });
+  if (off !== REQ) fail('4A rounds do not cover every assignment');
+  if (rp.totalFinalTagAssignmentsCumulative !== cumTags || rp.distinctTagsUsedCumulative !== cumSet.size || rp.ontologyGapCandidatesCumulative !== cumGaps || !same([...cumSet].sort(), [...rp.tagsUsedCumulative].sort())) fail('4A cumulative tag/gap counts');
+  if (rounds.length && rounds[0].firstCanonicalName !== simple[0].canonicalName) fail('4A first canonical name');
+  // earlier planner rulings are pinned: a later round may not change them
+  const canon = (x) => (Array.isArray(x) ? x.map(canon) : x && typeof x === 'object' ? Object.fromEntries(Object.keys(x).sort().map((k) => [k, canon(x[k])])) : x);
+  const pins = [[0, 12, '23e2ffd7c3ffa19f0e44997a125972d2942555193999f4405cb385a8caa4ed1d'], [12, 24, '13a49a0d2a19c94bdaa3768bbb5c55406df8fcc7f26894f73ae09939dbbc8fcf']];
+  for (const [lo, hi, want] of pins) if (asg.length >= hi && sh(JSON.stringify(canon(asg.slice(lo, hi)))) !== want) fail(`4A round ${lo / 12 + 1} planner rulings changed after adjudication`);
+  // ontology gaps stay gaps, never tags
+  for (const a of asg) for (const g of a.ontologyGapCandidates) if (a.finalTags.some((t) => t.toLowerCase() === String(g.concept).toLowerCase())) fail(`4A ${a.canonicalName} converted ontology gap ${g.concept} into a tag`);
+  if (errors.length === e4) console.log(`Phase 4A Simple Weapon semantic tags OK: ${REQ}/49 adjudicated in ${rounds.length} round(s) (${present} repo-present / ${REQ - present} missing), ${tagTotal} assignments, ${tagsUsed.size} distinct tags from the ${used.size}-tag certified feat/talent vocabulary, ${cumGaps} ontology gaps, next ${rp.nextCanonicalName}`);
 }
 
 if (errors.length) { console.error(`FAIL (${errors.length})\n- ${errors.join('\n- ')}`); process.exit(1); }

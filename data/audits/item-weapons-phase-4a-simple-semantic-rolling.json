@@ -3,7 +3,7 @@
   "phase": "4A",
   "family": "weapons",
   "categoryBatch": "Simple Weapon",
-  "status": "WEAPON_TAG_PHASE_4A_SIMPLE_ROLLING_ROUND_1_PLANNER_ADJUDICATED",
+  "status": "WEAPON_TAG_PHASE_4A_SIMPLE_ROLLING_ROUND_3_PLANNER_ADJUDICATED",
   "authorityOnly": true,
   "productionMutationAuthorized": false,
   "purpose": "Rolling planner authority for Simple Weapon semantic tags. Claude implements exact planner rulings; later rounds append additional Simple Weapon identities.",
@@ -84,26 +84,63 @@
     "repoMissing": 21
   },
   "rollingProgress": {
-    "round": 1,
+    "round": 3,
     "adjudicatedThisRound": 12,
-    "adjudicatedTotal": 12,
-    "remaining": 37,
-    "roundRepoPresent": 7,
-    "roundRepoMissing": 5,
-    "firstCanonicalName": "Adhesive Grenade",
-    "lastCanonicalName": "Darter",
-    "nextCanonicalName": "Datadagger",
-    "totalFinalTagAssignmentsThisRound": 49,
-    "distinctTagsUsedThisRound": 23,
+    "adjudicatedTotal": 36,
+    "remaining": 13,
+    "roundRepoPresent": 6,
+    "roundRepoMissing": 6,
+    "firstCanonicalName": "Grenade, Smoke",
+    "lastCanonicalName": "Short Sword",
+    "nextCanonicalName": "Sith Sword",
+    "totalFinalTagAssignmentsThisRound": 52,
+    "distinctTagsUsedThisRound": 24,
     "tagsUsedThisRound": [
+      "acrobatics",
       "action_economy",
-      "attack_of_opportunity",
       "battlefield_control",
+      "biotech",
       "burst_damage",
       "concealment",
       "control",
       "damage_bonus",
+      "double_weapon",
+      "full_attack",
+      "grab",
       "grapple",
+      "melee",
+      "nonlethal",
+      "offense_melee",
+      "offense_ranged",
+      "precision",
+      "ranged",
+      "restrain",
+      "setup",
+      "stun",
+      "swift_action",
+      "trap",
+      "unarmed"
+    ],
+    "ontologyGapCandidatesThisRound": 1,
+    "totalFinalTagAssignmentsCumulative": 151,
+    "distinctTagsUsedCumulative": 39,
+    "tagsUsedCumulative": [
+      "acrobatics",
+      "action_economy",
+      "attack_of_opportunity",
+      "battlefield_control",
+      "biotech",
+      "burst_damage",
+      "concealment",
+      "control",
+      "damage_bonus",
+      "double_weapon",
+      "droid",
+      "equipment",
+      "full_attack",
+      "grab",
+      "grapple",
+      "improvised_weapon",
       "melee",
       "move_action",
       "movement",
@@ -112,15 +149,23 @@
       "offense_ranged",
       "opposed_check",
       "poison",
+      "precision",
       "ranged",
       "recon",
       "restrain",
+      "setup",
       "stealth",
       "stun",
+      "sustained_damage",
+      "swift_action",
+      "tech",
       "tracking",
-      "unarmed"
+      "trap",
+      "treat_injury",
+      "unarmed",
+      "vehicle"
     ],
-    "ontologyGapCandidatesThisRound": 0
+    "ontologyGapCandidatesCumulative": 2
   },
   "implementationContract": {
     "semanticAuthority": "planner",
@@ -521,6 +566,824 @@
       "adjudicationNotes": [
         "The source-unresolved dart/ammo capacity remains unresolved and must not be inferred from production."
       ]
+    },
+    {
+      "identityKey": "unmapped::Datadagger",
+      "canonicalName": "Datadagger",
+      "repo": {
+        "present": false,
+        "id": null
+      },
+      "source": {
+        "book": "Threats of the Galaxy",
+        "descriptionPage": 13,
+        "statTablePage": null,
+        "phase1": "1G",
+        "phase2": "2L"
+      },
+      "canonicalMechanicSummary": "Concealed code-cylinder dagger; +5 to Stealth checks to hide it and unusually difficult to detect by touch.",
+      "finalTags": [
+        "melee",
+        "offense_melee",
+        "concealment",
+        "stealth"
+      ],
+      "rationale": {
+        "melee": "The datadagger has a canonical melee attack profile.",
+        "offense_melee": "Its weapon profile deals melee piercing damage.",
+        "concealment": "Its defining special mechanic makes the weapon unusually easy to conceal and harder to detect by touch.",
+        "stealth": "It grants a +5 equipment bonus to Stealth checks made to conceal the datadagger."
+      },
+      "ontologyGapCandidates": [],
+      "adjudicationNotes": []
+    },
+    {
+      "identityKey": "unmapped::Dire Sword",
+      "canonicalName": "Dire Sword",
+      "repo": {
+        "present": false,
+        "id": null
+      },
+      "source": {
+        "book": "Knights of the Old Republic Campaign Guide",
+        "descriptionPage": 65,
+        "statTablePage": 64,
+        "phase1": "1J",
+        "phase2": "2B"
+      },
+      "canonicalMechanicSummary": "Large archaic simple sword with no additional special rule.",
+      "finalTags": [
+        "melee",
+        "offense_melee"
+      ],
+      "rationale": {
+        "melee": "The dire sword is a melee weapon.",
+        "offense_melee": "Its canonical function is dealing melee weapon damage."
+      },
+      "ontologyGapCandidates": [],
+      "adjudicationNotes": []
+    },
+    {
+      "identityKey": "unmapped::Double-Bladed Sword",
+      "canonicalName": "Double-Bladed Sword",
+      "repo": {
+        "present": false,
+        "id": null
+      },
+      "source": {
+        "book": "Knights of the Old Republic Campaign Guide",
+        "descriptionPage": 65,
+        "statTablePage": 64,
+        "phase1": "1J",
+        "phase2": "2B"
+      },
+      "canonicalMechanicSummary": "Simple double sword; both ends can attack as part of the full-round double-weapon attack procedure.",
+      "finalTags": [
+        "melee",
+        "offense_melee",
+        "double_weapon",
+        "full_attack"
+      ],
+      "rationale": {
+        "melee": "Both attack profiles are melee attacks.",
+        "offense_melee": "Both ends deal melee weapon damage.",
+        "double_weapon": "The weapon explicitly has two usable weapon ends and is governed by double-weapon rules.",
+        "full_attack": "Attacking with both ends uses the full-round double-weapon attack procedure."
+      },
+      "ontologyGapCandidates": [],
+      "adjudicationNotes": [
+        "Do not add dual_wield solely because the item is double-ended; the existing ontology distinguishes double_weapon from dual_wield."
+      ]
+    },
+    {
+      "identityKey": "weapon-emp-grenade",
+      "canonicalName": "EMP Grenade",
+      "repo": {
+        "present": true,
+        "id": "weapon-emp-grenade"
+      },
+      "source": {
+        "book": "Clone Wars Campaign Guide",
+        "descriptionPage": 62,
+        "statTablePage": 61,
+        "phase1": "1B",
+        "phase2": "2E"
+      },
+      "canonicalMechanicSummary": "Ranged ion burst that can heavily condition and disable droids, vehicles, electronics, and cybernetically enhanced targets.",
+      "finalTags": [
+        "ranged",
+        "offense_ranged",
+        "control",
+        "battlefield_control",
+        "droid",
+        "vehicle",
+        "tech"
+      ],
+      "rationale": {
+        "ranged": "The EMP grenade resolves as a ranged attack.",
+        "offense_ranged": "It deals ion damage through a ranged attack.",
+        "control": "Qualifying electronic/cybernetic targets can be moved five steps down the condition track and disabled.",
+        "battlefield_control": "The effect applies across a burst and can disable multiple qualifying targets in an area.",
+        "droid": "Droids are explicitly among the primary targets that suffer the full ion/disable effect.",
+        "vehicle": "Vehicles are explicitly among the primary targets that suffer the full ion/disable effect.",
+        "tech": "The weapon is specifically effective against electronic devices and cybernetic technology."
+      },
+      "ontologyGapCandidates": [],
+      "adjudicationNotes": [
+        "No condition_track tag is allowed because that runtime tag has not been used by certified feats/talents; control expresses the effect without creating weapon-only vocabulary."
+      ]
+    },
+    {
+      "identityKey": "weapon-energy-ball",
+      "canonicalName": "Energy Ball",
+      "repo": {
+        "present": true,
+        "id": "weapon-energy-ball"
+      },
+      "source": {
+        "book": "Core Rulebook",
+        "descriptionPage": 127,
+        "statTablePage": 127,
+        "phase1": "1A",
+        "phase2": "2A"
+      },
+      "canonicalMechanicSummary": "Gungan ranged projectile whose range mode changes by delivery device; cesta delivery explicitly makes it Accurate.",
+      "finalTags": [
+        "ranged",
+        "offense_ranged",
+        "precision"
+      ],
+      "rationale": {
+        "ranged": "Every certified delivery method uses the energy ball as a ranged projectile.",
+        "offense_ranged": "Its canonical role is dealing ranged weapon damage.",
+        "precision": "When hurled by a cesta it explicitly gains the Accurate quality; certified feat/talent use of precision includes direct attack-accuracy improvements."
+      },
+      "ontologyGapCandidates": [],
+      "adjudicationNotes": [
+        "Do not add accuracy or thrown; neither is in the certified feat/talent-used vocabulary."
+      ]
+    },
+    {
+      "identityKey": "unmapped::Entrenching Tool",
+      "canonicalName": "Entrenching Tool",
+      "repo": {
+        "present": false,
+        "id": null
+      },
+      "source": {
+        "book": "Galaxy at War",
+        "descriptionPage": 36,
+        "statTablePage": 36,
+        "phase1": "1D",
+        "phase2": "2C"
+      },
+      "canonicalMechanicSummary": "Multipurpose field tool usable as an improvised melee weapon at only -2 rather than the normal -5 penalty.",
+      "finalTags": [
+        "melee",
+        "offense_melee",
+        "improvised_weapon",
+        "equipment"
+      ],
+      "rationale": {
+        "melee": "Its certified weapon profile is melee.",
+        "offense_melee": "When used as a weapon it deals melee damage.",
+        "improvised_weapon": "Its defining combat rule explicitly replaces the normal improvised-weapon attack penalty.",
+        "equipment": "It is fundamentally a multipurpose field tool that can also be used as a weapon."
+      },
+      "ontologyGapCandidates": [],
+      "adjudicationNotes": []
+    },
+    {
+      "identityKey": "unmapped::Fire Blade",
+      "canonicalName": "Fire Blade",
+      "repo": {
+        "present": false,
+        "id": null
+      },
+      "source": {
+        "book": "Galaxy at War",
+        "descriptionPage": 40,
+        "statTablePage": 41,
+        "phase1": "1D",
+        "phase2": "2C"
+      },
+      "canonicalMechanicSummary": "Powered melee cutting blade that ignores the damage reduction of unattended objects.",
+      "finalTags": [
+        "melee",
+        "offense_melee"
+      ],
+      "rationale": {
+        "melee": "The fire blade has a canonical melee attack profile.",
+        "offense_melee": "Its primary combat function is dealing melee weapon damage."
+      },
+      "ontologyGapCandidates": [
+        {
+          "concept": "OBJECT_DR_BYPASS",
+          "mechanic": "Ignores the damage reduction of unattended objects.",
+          "reason": "No tag already used by certified feats/talents cleanly represents offensive DR penetration against objects. damage_reduction means mitigating incoming damage and must not be repurposed."
+        }
+      ],
+      "adjudicationNotes": [
+        "Do not use damage_reduction for DR penetration."
+      ]
+    },
+    {
+      "identityKey": "weapon-tusken-gaderffii-stick",
+      "canonicalName": "Gaderffii",
+      "repo": {
+        "present": true,
+        "id": "weapon-tusken-gaderffii-stick"
+      },
+      "source": {
+        "book": "Rebellion Era Campaign Guide",
+        "descriptionPage": 48,
+        "statTablePage": 48,
+        "phase1": "1I",
+        "phase2": "2I"
+      },
+      "canonicalMechanicSummary": "Tusken double melee weapon with distinct cutting and bludgeoning ends; both ends can attack in a full-round action.",
+      "finalTags": [
+        "melee",
+        "offense_melee",
+        "double_weapon",
+        "full_attack"
+      ],
+      "rationale": {
+        "melee": "Both certified attack profiles are melee attacks.",
+        "offense_melee": "Both ends deal melee weapon damage.",
+        "double_weapon": "The Gaderffii explicitly functions as a double weapon with two distinct ends.",
+        "full_attack": "Using both ends is resolved through its full-round double-weapon attack procedure."
+      },
+      "ontologyGapCandidates": [],
+      "adjudicationNotes": []
+    },
+    {
+      "identityKey": "weapon-gas-grenade",
+      "canonicalName": "Gas Grenade",
+      "repo": {
+        "present": true,
+        "id": "weapon-gas-grenade"
+      },
+      "source": {
+        "book": "Rebellion Era Campaign Guide",
+        "descriptionPage": 49,
+        "statTablePage": 50,
+        "phase1": "1I",
+        "phase2": "2I"
+      },
+      "canonicalMechanicSummary": "Ranged gas blast using native stun damage, condition-track penalties, and temporary concealment.",
+      "finalTags": [
+        "ranged",
+        "offense_ranged",
+        "stun",
+        "nonlethal",
+        "control",
+        "battlefield_control",
+        "concealment"
+      ],
+      "rationale": {
+        "ranged": "The gas grenade resolves as a ranged attack.",
+        "offense_ranged": "It delivers an offensive stun-damage effect at range.",
+        "stun": "Its certified damage mode is native stun damage.",
+        "nonlethal": "The stun-damage mode provides a nonlethal combat role.",
+        "control": "A successful effect moves targets down the condition track.",
+        "battlefield_control": "The gas blast affects an area and can hinder multiple targets simultaneously.",
+        "concealment": "The gas cloud explicitly provides temporary concealment."
+      },
+      "ontologyGapCandidates": [],
+      "adjudicationNotes": [
+        "Do not add condition_track or grenade; neither is in the certified feat/talent-used vocabulary."
+      ]
+    },
+    {
+      "identityKey": "weapon-frag-grenade",
+      "canonicalName": "Grenade, Frag",
+      "repo": {
+        "present": true,
+        "id": "weapon-frag-grenade"
+      },
+      "source": {
+        "book": "Core Rulebook",
+        "descriptionPage": 128,
+        "statTablePage": 127,
+        "phase1": "1A",
+        "phase2": "2A"
+      },
+      "canonicalMechanicSummary": "Ranged contact-detonated burst weapon dealing 4d6 damage across its affected area.",
+      "finalTags": [
+        "ranged",
+        "offense_ranged",
+        "burst_damage"
+      ],
+      "rationale": {
+        "ranged": "The frag grenade resolves as a ranged attack.",
+        "offense_ranged": "Its primary role is direct ranged damage.",
+        "burst_damage": "It delivers a concentrated single-use spike of damage across its burst, consistent with the existing feat/talent burst-damage concept."
+      },
+      "ontologyGapCandidates": [],
+      "adjudicationNotes": [
+        "Area geometry is preserved in canonical mechanics rather than represented by a new weapon-only tag."
+      ]
+    },
+    {
+      "identityKey": "weapon-ion-grenade",
+      "canonicalName": "Grenade, Ion",
+      "repo": {
+        "present": true,
+        "id": "weapon-ion-grenade"
+      },
+      "source": {
+        "book": "Core Rulebook",
+        "descriptionPage": 128,
+        "statTablePage": 127,
+        "phase1": "1A",
+        "phase2": "2A"
+      },
+      "canonicalMechanicSummary": "Ranged ion burst especially effective against droids, vehicles, electronics, and cybernetic targets.",
+      "finalTags": [
+        "ranged",
+        "offense_ranged",
+        "control",
+        "droid",
+        "vehicle",
+        "tech"
+      ],
+      "rationale": {
+        "ranged": "The ion grenade resolves as a ranged attack.",
+        "offense_ranged": "It deals ion damage through a ranged attack.",
+        "control": "Ion damage is mechanically intended to impair qualifying technological targets rather than merely reduce hit points.",
+        "droid": "Droids are a primary target class for ion effects.",
+        "vehicle": "Vehicles are a primary target class for ion effects.",
+        "tech": "The ion effect directly targets electronic and cybernetic technology."
+      },
+      "ontologyGapCandidates": [],
+      "adjudicationNotes": []
+    },
+    {
+      "identityKey": "weapon-radiation-grenade",
+      "canonicalName": "Grenade, Radiation",
+      "repo": {
+        "present": true,
+        "id": "weapon-radiation-grenade"
+      },
+      "source": {
+        "book": "Galaxy at War",
+        "descriptionPage": 39,
+        "statTablePage": 41,
+        "phase1": "1D",
+        "phase2": "2C"
+      },
+      "canonicalMechanicSummary": "Ranged burst weapon that deals immediate damage and additionally exposes targets to Moderate radiation for damage and Treat Injury purposes.",
+      "finalTags": [
+        "ranged",
+        "offense_ranged",
+        "sustained_damage",
+        "treat_injury"
+      ],
+      "rationale": {
+        "ranged": "The radiation grenade resolves as a ranged attack.",
+        "offense_ranged": "It deals direct damage through a ranged attack.",
+        "sustained_damage": "The attack also exposes targets to Moderate radiation, extending harmful consequences beyond the immediate hit.",
+        "treat_injury": "The published mechanic explicitly states that the radiation exposure applies for Treat Injury purposes."
+      },
+      "ontologyGapCandidates": [],
+      "adjudicationNotes": []
+    },
+    {
+      "identityKey": "weapon-smoke-grenade",
+      "canonicalName": "Grenade, Smoke",
+      "repo": {
+        "present": true,
+        "id": "weapon-smoke-grenade"
+      },
+      "source": {
+        "book": "Galaxy at War",
+        "descriptionPage": 39,
+        "statTablePage": 41,
+        "phase1": "1D",
+        "phase2": "2C"
+      },
+      "canonicalMechanicSummary": "Ranged smoke weapon that fills a 2-square burst with concealment and a smoke hazard for 10 rounds.",
+      "finalTags": [
+        "ranged",
+        "control",
+        "battlefield_control",
+        "concealment"
+      ],
+      "rationale": {
+        "ranged": "The smoke grenade is delivered through a ranged attack.",
+        "control": "Its primary function is to alter visibility and movement-space conditions rather than deal damage.",
+        "battlefield_control": "It creates a persistent 2-square smoke zone that changes tactical use of the affected area for 10 rounds.",
+        "concealment": "The published effect explicitly provides concealment."
+      },
+      "ontologyGapCandidates": [],
+      "adjudicationNotes": [
+        "Do not add stealth merely because concealment may enable stealth; the weapon itself does not modify Stealth checks.",
+        "Do not add grenade, thrown, or area_damage; those are outside the certified feat/talent-used vocabulary."
+      ]
+    },
+    {
+      "identityKey": "weapon-stun-grenade",
+      "canonicalName": "Grenade, Stun",
+      "repo": {
+        "present": true,
+        "id": "weapon-stun-grenade"
+      },
+      "source": {
+        "book": "Core Rulebook",
+        "descriptionPage": 128,
+        "statTablePage": 127,
+        "phase1": "1A",
+        "phase2": "2A"
+      },
+      "canonicalMechanicSummary": "Ranged 2-square burst dealing native stun damage with condition-track effects; droids, vehicles, and objects are immune.",
+      "finalTags": [
+        "ranged",
+        "offense_ranged",
+        "stun",
+        "nonlethal",
+        "control",
+        "battlefield_control"
+      ],
+      "rationale": {
+        "ranged": "The stun grenade resolves as a ranged attack.",
+        "offense_ranged": "It directly delivers damaging stun effects at range.",
+        "stun": "Its certified damage mode is native stun damage.",
+        "nonlethal": "The weapon's defining damage mode is the system's nonlethal stun mechanic.",
+        "control": "Stun damage can move affected targets down the condition track.",
+        "battlefield_control": "The burst can impose stun/control effects on multiple targets in an area."
+      },
+      "ontologyGapCandidates": [],
+      "adjudicationNotes": [
+        "Do not add droid or vehicle: those targets are immune rather than favored or supported targets.",
+        "Do not add condition_track because that tag is not used by certified feats/talents."
+      ]
+    },
+    {
+      "identityKey": "unmapped::Knife",
+      "canonicalName": "Knife",
+      "repo": {
+        "present": false,
+        "id": null
+      },
+      "source": {
+        "book": "Core Rulebook",
+        "descriptionPage": 122,
+        "statTablePage": 123,
+        "phase1": "1A",
+        "phase2": "2A"
+      },
+      "canonicalMechanicSummary": "Silent simple melee blade with certified thrown capability.",
+      "finalTags": [
+        "melee",
+        "offense_melee",
+        "ranged",
+        "offense_ranged"
+      ],
+      "rationale": {
+        "melee": "The knife's primary certified profile is melee.",
+        "offense_melee": "It deals melee slashing or piercing damage.",
+        "ranged": "The frozen canonical authority marks the knife as throwable, giving it a ranged attack use.",
+        "offense_ranged": "When thrown, the knife deals weapon damage at range."
+      },
+      "ontologyGapCandidates": [],
+      "adjudicationNotes": [
+        "Do not add stealth solely from the descriptive statement that a knife is silent; no Stealth modifier or stealth-resolution rule is granted.",
+        "Do not add thrown because that tag is outside the certified feat/talent-used vocabulary."
+      ]
+    },
+    {
+      "identityKey": "unmapped::Mace",
+      "canonicalName": "Mace",
+      "repo": {
+        "present": false,
+        "id": null
+      },
+      "source": {
+        "book": "Core Rulebook",
+        "descriptionPage": 123,
+        "statTablePage": 123,
+        "phase1": "1A",
+        "phase2": "2A"
+      },
+      "canonicalMechanicSummary": "Basic metal bludgeoning melee weapon.",
+      "finalTags": [
+        "melee",
+        "offense_melee"
+      ],
+      "rationale": {
+        "melee": "The mace has a canonical melee attack profile.",
+        "offense_melee": "Its canonical function is dealing melee weapon damage."
+      },
+      "ontologyGapCandidates": [],
+      "adjudicationNotes": []
+    },
+    {
+      "identityKey": "unmapped::Mythosaur Axe",
+      "canonicalName": "Mythosaur Axe",
+      "repo": {
+        "present": false,
+        "id": null
+      },
+      "source": {
+        "book": "Knights of the Old Republic Campaign Guide",
+        "descriptionPage": 202,
+        "statTablePage": 202,
+        "phase1": "1J",
+        "phase2": "2B"
+      },
+      "canonicalMechanicSummary": "Ceremonial Mythosaur-bone melee axe; Mandalore the Ultimate's special powered version is a named-character variant, not the generic identity.",
+      "finalTags": [
+        "melee",
+        "offense_melee"
+      ],
+      "rationale": {
+        "melee": "The generic Mythosaur axe has a canonical melee attack profile.",
+        "offense_melee": "Its generic weapon function is dealing melee slashing damage."
+      },
+      "ontologyGapCandidates": [],
+      "adjudicationNotes": [
+        "Do not tag the generic identity from Mandalore the Ultimate's named special double-damage powered variant."
+      ]
+    },
+    {
+      "identityKey": "weapon-net",
+      "canonicalName": "Net",
+      "repo": {
+        "present": true,
+        "id": "weapon-net"
+      },
+      "source": {
+        "book": "Core Rulebook",
+        "descriptionPage": 129,
+        "statTablePage": 127,
+        "phase1": "1A",
+        "phase2": "2A"
+      },
+      "canonicalMechanicSummary": "Ranged grab/grapple weapon; targets can escape with Acrobatics or Strength, and the wielder can use Pin or Trip.",
+      "finalTags": [
+        "ranged",
+        "control",
+        "battlefield_control",
+        "grab",
+        "grapple",
+        "restrain",
+        "acrobatics"
+      ],
+      "rationale": {
+        "ranged": "The net initiates grab or grapple attempts at range.",
+        "control": "Its purpose is to hinder and contain a target rather than deal normal weapon damage.",
+        "battlefield_control": "A successful net use restricts enemy freedom of movement and action at range.",
+        "grab": "The text explicitly allows a ranged grab.",
+        "grapple": "The text explicitly allows a ranged grapple.",
+        "restrain": "The net can hold a target and explicitly supports Pin.",
+        "acrobatics": "An affected target can explicitly escape with a DC 15 Acrobatics check."
+      },
+      "ontologyGapCandidates": [
+        {
+          "concept": "TRIP_COMPATIBILITY",
+          "mechanic": "The wielder may explicitly use the Trip feat with a net.",
+          "reason": "No tag already used by certified feats/talents represents Trip as a distinct weapon synergy. General control tags do not encode the specific feat interaction."
+        }
+      ],
+      "adjudicationNotes": [
+        "Do not invent a trip tag in the weapon authority.",
+        "Crush and Throw are explicitly disallowed and therefore must not contribute semantic tags."
+      ]
+    },
+    {
+      "identityKey": "unmapped::Quarterstaff",
+      "canonicalName": "Quarterstaff",
+      "repo": {
+        "present": false,
+        "id": null
+      },
+      "source": {
+        "book": "Core Rulebook",
+        "descriptionPage": 124,
+        "statTablePage": 123,
+        "phase1": "1A",
+        "phase2": "2A"
+      },
+      "canonicalMechanicSummary": "Simple double melee weapon; both ends can be used in a full-round double-weapon attack.",
+      "finalTags": [
+        "melee",
+        "offense_melee",
+        "double_weapon",
+        "full_attack"
+      ],
+      "rationale": {
+        "melee": "Both ends of the quarterstaff are melee attack profiles.",
+        "offense_melee": "Both ends deal melee weapon damage.",
+        "double_weapon": "The rules explicitly identify the quarterstaff as a double weapon.",
+        "full_attack": "Using both ends requires the published full-round attack procedure."
+      },
+      "ontologyGapCandidates": [],
+      "adjudicationNotes": [
+        "Do not add dual_wield merely because both ends can be attacked with; double_weapon is the precise existing semantic tag."
+      ]
+    },
+    {
+      "identityKey": "weapon-flash-canister",
+      "canonicalName": "R-9 Flash Canister",
+      "repo": {
+        "present": true,
+        "id": "weapon-flash-canister"
+      },
+      "source": {
+        "book": "Jedi Academy Training Manual",
+        "descriptionPage": 61,
+        "statTablePage": 61,
+        "phase1": "1F",
+        "phase2": "2F"
+      },
+      "canonicalMechanicSummary": "Ranged 3-square flash burst that deals no damage but gives all other targets total concealment from each affected creature until the next turn.",
+      "finalTags": [
+        "ranged",
+        "control",
+        "battlefield_control",
+        "concealment"
+      ],
+      "rationale": {
+        "ranged": "The flash canister is delivered as a ranged attack.",
+        "control": "Its effect denies affected creatures normal visual targeting rather than dealing damage.",
+        "battlefield_control": "The burst can simultaneously disrupt multiple creatures' ability to see and engage other targets.",
+        "concealment": "The published mechanic explicitly grants total concealment against each affected creature."
+      },
+      "ontologyGapCandidates": [],
+      "adjudicationNotes": [
+        "No separate blindness/vision-denial tag is needed here because the published mechanic is explicitly expressed through total concealment."
+      ]
+    },
+    {
+      "identityKey": "weapon-razor-bug",
+      "canonicalName": "Razor Bug",
+      "repo": {
+        "present": true,
+        "id": "weapon-razor-bug"
+      },
+      "source": {
+        "book": "Legacy Era Campaign Guide",
+        "descriptionPage": 65,
+        "statTablePage": 64,
+        "phase1": "1K",
+        "phase2": "2G"
+      },
+      "canonicalMechanicSummary": "Accurate Yuuzhan Vong biotech ranged weapon using simple-weapon ranges despite being thrown by hand.",
+      "finalTags": [
+        "ranged",
+        "offense_ranged",
+        "precision",
+        "biotech"
+      ],
+      "rationale": {
+        "ranged": "The razor bug has a canonical ranged attack profile.",
+        "offense_ranged": "Its primary role is dealing ranged slashing damage.",
+        "precision": "The weapon is explicitly Accurate and takes no short-range attack penalty; certified feat/talent use of precision covers direct attack-accuracy improvements.",
+        "biotech": "The frozen canonical authority identifies the razor bug as a Yuuzhan Vong bio-weapon."
+      },
+      "ontologyGapCandidates": [],
+      "adjudicationNotes": [
+        "Do not add accuracy or thrown because those tags are outside the certified feat/talent-used vocabulary."
+      ]
+    },
+    {
+      "identityKey": "weapon-remote-grenade",
+      "canonicalName": "Remote Grenade",
+      "repo": {
+        "present": true,
+        "id": "weapon-remote-grenade"
+      },
+      "source": {
+        "book": "Knights of the Old Republic Campaign Guide",
+        "descriptionPage": 180,
+        "statTablePage": 180,
+        "phase1": "1J",
+        "phase2": "2B"
+      },
+      "canonicalMechanicSummary": "Programmable ranged explosive deployed for remote detonation with a dedicated transmitter and a 100-meter safety interlock.",
+      "finalTags": [
+        "ranged",
+        "offense_ranged",
+        "burst_damage",
+        "setup",
+        "trap"
+      ],
+      "rationale": {
+        "ranged": "The remote grenade has a canonical ranged attack profile.",
+        "offense_ranged": "It delivers direct damage at range.",
+        "burst_damage": "Its 4d6 detonation is a concentrated single-event damage effect, consistent with the established burst_damage semantic.",
+        "setup": "Its defining mechanic requires deployment and remote detonation rather than only immediate attack use.",
+        "trap": "Remote placement and later detonation directly support prepared trap-style use."
+      },
+      "ontologyGapCandidates": [],
+      "adjudicationNotes": [
+        "Do not add ambush solely because a remotely detonated explosive could be used during an ambush; the published rule directly supports setup/trap behavior, not a specific ambush mechanic."
+      ]
+    },
+    {
+      "identityKey": "unmapped::Shockboxing Gloves",
+      "canonicalName": "Shockboxing Gloves",
+      "repo": {
+        "present": false,
+        "id": null
+      },
+      "source": {
+        "book": "Galaxy at War",
+        "descriptionPage": 37,
+        "statTablePage": 36,
+        "phase1": "1D",
+        "phase2": "2C"
+      },
+      "canonicalMechanicSummary": "Powered gloves add +1 unarmed damage and can switch the wearer's unarmed attacks to stun damage as a swift action.",
+      "finalTags": [
+        "melee",
+        "offense_melee",
+        "unarmed",
+        "damage_bonus",
+        "stun",
+        "nonlethal",
+        "swift_action",
+        "action_economy"
+      ],
+      "rationale": {
+        "melee": "Shockboxing gloves operate through unarmed melee attacks.",
+        "offense_melee": "They directly improve melee attack damage.",
+        "unarmed": "Both lethal and stun profiles apply specifically to the wearer's unarmed attacks.",
+        "damage_bonus": "They add +1 damage to successful unarmed attacks.",
+        "stun": "They can convert the wearer's unarmed damage to stun damage.",
+        "nonlethal": "The stun setting provides a nonlethal combat mode.",
+        "swift_action": "Switching the gloves to stun is explicitly a swift action.",
+        "action_economy": "The stun-mode switch directly consumes a defined combat action."
+      },
+      "ontologyGapCandidates": [],
+      "adjudicationNotes": [
+        "The cannot-be-disarmed/dropped rule remains structured canonical mechanics."
+      ]
+    },
+    {
+      "identityKey": "unmapped::Short Sword",
+      "canonicalName": "Short Sword",
+      "repo": {
+        "present": false,
+        "id": null
+      },
+      "source": {
+        "book": "Knights of the Old Republic Campaign Guide",
+        "descriptionPage": 65,
+        "statTablePage": 64,
+        "phase1": "1J",
+        "phase2": "2B"
+      },
+      "canonicalMechanicSummary": "Compact simple melee sword commonly used in two-weapon fighting, but with no standalone mechanical two-weapon or defensive bonus.",
+      "finalTags": [
+        "melee",
+        "offense_melee"
+      ],
+      "rationale": {
+        "melee": "The short sword has a canonical melee attack profile.",
+        "offense_melee": "Its canonical function is dealing melee weapon damage."
+      },
+      "ontologyGapCandidates": [],
+      "adjudicationNotes": [
+        "Do not add dual_wield from descriptive usage alone.",
+        "Do not add defense or deflect from flavor text; the published entry grants no standalone numerical or rules benefit for deflecting melee attacks."
+      ]
+    }
+  ],
+  "rounds": [
+    {
+      "round": 1,
+      "firstCanonicalName": "Adhesive Grenade",
+      "lastCanonicalName": "Darter",
+      "assignmentCount": 12,
+      "repoPresent": 7,
+      "repoMissing": 5,
+      "tagAssignments": 49,
+      "ontologyGapCandidates": 0,
+      "status": "PLANNER_ADJUDICATED"
+    },
+    {
+      "round": 2,
+      "firstCanonicalName": "Datadagger",
+      "lastCanonicalName": "Grenade, Radiation",
+      "assignmentCount": 12,
+      "repoPresent": 7,
+      "repoMissing": 5,
+      "tagAssignments": 50,
+      "ontologyGapCandidates": 1,
+      "status": "PLANNER_ADJUDICATED"
+    },
+    {
+      "round": 3,
+      "firstCanonicalName": "Grenade, Smoke",
+      "lastCanonicalName": "Short Sword",
+      "assignmentCount": 12,
+      "repoPresent": 6,
+      "repoMissing": 6,
+      "tagAssignments": 52,
+      "ontologyGapCandidates": 1,
+      "status": "PLANNER_ADJUDICATED"
     }
   ]
 }
