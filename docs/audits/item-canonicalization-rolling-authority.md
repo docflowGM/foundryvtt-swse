@@ -1682,9 +1682,88 @@ Threats of the Galaxy (1G) weapons (Datadagger p. 13, Light Concussion Missile L
 - Preserve Phase 0 identity/name-normalization rulings.
 - Hold BlasTech 500 Riot Gun production content until its cross-source conflict (Clone Wars p. 61 vs Rebellion Era p. 50) is adjudicated.
 
+## Phase 2 — Weapons numeric/stat/schema authority (2A Core)
+
+Status: **CERTIFIED_PHASE_2A_CORE_GOLD_STANDARD_NUMERIC_STAT_SCHEMA_AUTHORITY** (authority-only; no pack, template.json, tag, runtime or sheet change). JSON: `phases["2-weapons-numeric-stat-schema"]` — `schemaContract` (the gold-standard record contract every later book must follow), `books[]` (append later books), `executorGuardrails`, `nextBookOrder`.
+
+2A certifies 48 Core weapon identities (35 present in `packs/weapons.db`, 13 missing), each matched to its Phase 1A record. Core table rows were checked by the certifier against the rendered PDF for size, cost, damage, printed stun damage, weight, type, availability and rate of fire; this repo has only the partial-OCR TXT, so Claude's checks are structural and spot checks.
+
+### Contract highlights
+
+- `baseDamage` is structured (`diceCount`, `dieSize`, `flatBonus`; `formula` is display only). Effective/modified damage is never persisted into it.
+- `stun` is a capability object (`none` / `setting` / `native-stun` / `ammunition-dependent`); printed Core stun values stay `explicit`, never a blanket same-as-base.
+- Nine explicit quality booleans per record: `accurate`, `inaccurate`, `arc`, `ignoresDR`, `areaEffect`, `autofireOnly`, `doubleWeapon`, `thrown`, `reach`. A source-claim `false` means "this book does not establish it", not a universal negative; later books may add or conflict.
+- Range = canonical profile + quality effects (Accurate: short penalty 0; Inaccurate: no Long; Arc: no Point-Blank); `ignoresDR` must equal `damageReductionInteraction.mode === "ignore"`.
+- `rateOfFire` is `["S"]`, `["A"]`, `["S","A"]` or null; availability is restriction + independent Rare; damage-type AND/OR is preserved.
+- Handedness is derived from weapon size vs wielder size; no static `isLight`/`isTwoHanded`.
+
+### Findings carried forward
+
+- Bowcaster range profile is **unresolved**: Core assigns it no Table 8-5 row. Repo implementation does not fill the gap.
+- 0 Core weapons are base Accurate, Inaccurate or Arc; Energy Ball is conditionally Accurate when hurled by a cesta; all 3 Core lightsabers ignore DR (Shield Rating still applies).
+- Repo mismatches exposed (examples): Blaster Rifle 3d10 vs Core 3d8; Heavy Blaster Rifle 3d12/1,500 vs 3d10/2,000; Sporting Blaster Pistol 2d6 vs 3d4 (2d4 stun); Flamethrower 2d10/1,500/6 kg vs 3d6/1,000/7 kg; Electrostaff 5,000/6 kg vs 3,000/2 kg; Stun Baton 250/1.5 kg vs 15/0.5 kg. Existing Accurate/Inaccurate/Critical/Armor-Piercing tags are not canonical unless a source proves them.
+- Order of remaining books: KOTOR (33), Galaxy at War (21), Force Unleashed (18), Clone Wars (16), Jedi Academy (16), Legacy Era (14), Unknown Regions (14), Rebellion Era (12), Scum and Villainy (9), Galaxy of Intrigue (4), Threats of the Galaxy (4); then reconcile all 203 identities. The BlasTech 500 Riot Gun conflict stays gated.
+
+### 2A — Core Rulebook records
+
+| Weapon | Group | Size | Cost | Damage | Stun | kg | Type | ROF | Availability | Range | Qualities |
+|---|---|---|--:|---|---|--:|---|---|---|---|---|
+| Amphistaff | Exotic Weapon | Large | — | Special | — | 2 | special | — | common, Rare | melee | — |
+| Atlatl | Exotic Weapon | Medium | 50 | 2d4 | — | 1.5 | bludgeoning | — | common, Rare | melee | — |
+| Bayonet | Simple Weapon | Medium | 50 | 1d8 | — | 1 | piercing | — | licensed | melee | — |
+| Cesta | Exotic Weapon | Large | 100 | 2d4 | — | 1.8 | bludgeoning | — | common, Rare | melee | reach |
+| Club/Baton | Simple Weapon | Small | 15 | 1d6 | — | 0.5 | bludgeoning | — | common | melee | — |
+| Combat Gloves | Simple Weapon | variable | — | +1 | — | — | bludgeoning | — | common | melee | — |
+| Electrostaff | Advanced Melee Weapon | Large | 3,000 | 2d6/2d6 | 2d6/2d6 | 2 | bludgeoning and energy | — | restricted | melee | doubleWeapon |
+| Force Pike | Advanced Melee Weapon | Medium | 500 | 2d8 | 2d8 | 2 | piercing and energy | — | restricted | melee | — |
+| Knife | Simple Weapon | Tiny | 25 | 1d4 | — | 1 | slashing or piercing | — | common | melee | thrown |
+| Lightsaber | Lightsaber | Medium | 3,000 | 2d8 | — | 1 | energy and slashing | — | common, Rare | melee | ignoresDR, thrown |
+| Lightsaber, Double | Lightsaber | Large | 7,000 | 2d8/2d8 | — | 2 | energy and slashing | — | common, Rare | melee | ignoresDR, doubleWeapon |
+| Lightsaber, Short | Lightsaber | Small | 2,500 | 2d6 | — | 0.5 | energy and slashing | — | common, Rare | melee | ignoresDR, thrown |
+| Mace | Simple Weapon | Medium | 50 | 1d8 | — | 2.5 | bludgeoning | — | common | melee | — |
+| Quarterstaff | Simple Weapon | Large | 65 | 1d6/1d6 | — | 1.8 | bludgeoning | — | common | melee | doubleWeapon |
+| Spear | Simple Weapon | Medium | 60 | 1d8 | — | 1.5 | piercing | — | common | melee | thrown |
+| Stun Baton | Simple Weapon | Small | 15 | 1d6 | 2d6 | 0.5 | bludgeoning | — | common | melee | — |
+| Vibro-Ax | Advanced Melee Weapon | Large | 500 | 2d10 | — | 6 | slashing | — | restricted | melee | — |
+| Vibrobayonet | Advanced Melee Weapon | Medium | 350 | 2d6 | — | 1 | piercing | — | licensed | melee | — |
+| Vibroblade | Advanced Melee Weapon | Small | 250 | 2d6 | — | 1.8 | slashing or piercing | — | licensed | melee | — |
+| Vibrodagger | Advanced Melee Weapon | Tiny | 200 | 2d4 | — | 1 | slashing or piercing | — | common | melee | thrown |
+| Blaster Cannon | Heavy Weapon | Large | 3,000 | 3d12 | — | 18 | energy | S | military | heavy-weapons | areaEffect |
+| Blaster Carbine | Rifle | Medium | 900 | 3d8 | 2d8 | 2.2 | energy | S,A | restricted | rifles | — |
+| E-Web Repeating Blaster | Heavy Weapon | Huge | 8,000 | 3d12 | — | 38 | energy | A | military | heavy-weapons | autofireOnly |
+| Heavy Repeating Blaster | Heavy Weapon | Large | 4,000 | 3d10 | — | 12 | energy | A | military | heavy-weapons | autofireOnly |
+| Blaster Pistol | Pistol | Small | 500 | 3d6 | 2d6 | 1 | energy | S | restricted | pistols | — |
+| Blaster Pistol, Heavy | Pistol | Medium | 750 | 3d8 | 2d8 | 1.3 | energy | S | military | pistols | — |
+| Blaster Pistol, Hold-Out | Pistol | Tiny | 300 | 3d4 | — | 0.5 | energy | S | illegal | pistols | — |
+| Blaster Pistol, Sporting | Pistol | Small | 300 | 3d4 | 2d4 | 1 | energy | S | licensed | pistols | — |
+| Blaster Rifle | Rifle | Medium | 1,000 | 3d8 | 2d8 | 4.5 | energy | S,A | restricted | rifles | — |
+| Blaster Rifle, Heavy | Rifle | Large | 2,000 | 3d10 | 2d10 | 6 | energy | S,A | military | rifles | — |
+| Blaster Rifle, Light Repeating | Rifle | Large | 1,200 | 3d8 | — | 6 | energy | A | military | rifles | autofireOnly |
+| Blaster Rifle, Sporting | Rifle | Medium | 800 | 3d6 | 2d6 | 4 | energy | S | licensed | rifles | — |
+| Bow | Simple Weapon | Medium | 300 | 1d6 | — | 1.4 | piercing | S | common | simple-weapons | — |
+| Bowcaster | Exotic Weapon | Large | 1,500 | 3d10 | — | 8 | energy and piercing | S | licensed, Rare | unresolved | — |
+| Flamethrower | Exotic Weapon | Medium | 1,000 | 3d6 | — | 7 | fire | S | military | fixed-area | areaEffect |
+| Energy Ball | Simple Weapon | Tiny | 20 | 2d8 | — | 0.25 | energy | S | licensed, Rare | conditional | — |
+| Grenade, Frag | Simple Weapon | Tiny | 200 | 4d6 | — | 0.5 | slashing | S | military | thrown-weapons | areaEffect, thrown |
+| Grenade, Ion | Simple Weapon | Tiny | 250 | 4d6 | — | 0.5 | energy | S | restricted | thrown-weapons | areaEffect, thrown |
+| Grenade, Stun | Simple Weapon | Tiny | 250 | None | 4d6 | 0.5 | energy | S | restricted | thrown-weapons | areaEffect, thrown |
+| Grenade Launcher | Heavy Weapon | Medium | 500 | Special | — | 5 | varies | S | military | heavy-weapons | — |
+| Ion Pistol | Pistol | Small | 250 | 3d6 | — | 1 | energy | S | licensed | pistols | — |
+| Ion Rifle | Rifle | Medium | 800 | 3d8 | — | 3.1 | energy | S | restricted | rifles | — |
+| Missile Launcher | Heavy Weapon | Large | 1,500 | 6d6 | — | 10 | slashing | S | military | heavy-weapons | areaEffect |
+| Net | Simple Weapon | Large | 25 | None | — | 4.5 | none | S | common | simple-weapons | — |
+| Sling | Simple Weapon | Small | 35 | 1d4 | — | 0.3 | bludgeoning | S | common | simple-weapons | — |
+| Slugthrower Pistol | Pistol | Small | 250 | 2d6 | — | 1.4 | piercing | S | licensed | pistols | — |
+| Slugthrower Rifle | Rifle | Medium | 300 | 2d8 | — | 4 | piercing | S,A | restricted | rifles | — |
+| Thermal Detonator | Simple Weapon | Tiny | 2,000 | 8d6 | — | 1 | energy | S | illegal | thrown-weapons | areaEffect, thrown |
+
+Full structured records (stun, operating modes, resource, conditional qualities, footnotes, operation rules) are in the JSON.
+
 ## Pending phases
 
 - 1 Provenance and canonical content certification — weapons COMPLETE (1A-1L, authority-only); next within Phase 1: armor, general equipment families, cybernetics/upgrades/templates, lightsaber components, droid systems; weapon numeric/stat/schema certification precedes any creation of the 53 missing weapons
+
+- Phase 2 weapons numeric/stat/schema certification — 2A Core DONE (authority-only); next books: KOTOR, Galaxy at War, Force Unleashed, Clone Wars, Jedi Academy, Legacy Era, Unknown Regions, Rebellion Era, Scum and Villainy, Galaxy of Intrigue, Threats of the Galaxy; then reconcile all 203 identities (Bowcaster range and Riot Gun conflict gated)
 
 - Gated cleanup tranche (0-3D migrations, 0-3E renames/merge, 0-3F template migration, 0-3G weapons.db stragglers, 0-3H droid migration, weapon/equipment REMOVE dependents)
 
