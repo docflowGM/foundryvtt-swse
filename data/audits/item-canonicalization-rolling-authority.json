@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "authorityType": "item-canonicalization-rolling-authority",
-  "status": "PHASE 0 CHARACTER-ITEM CENSUS COMPLETE; PHASE 1 WEAPONS CONTENT CERTIFIED THROUGH 1I (Core, Clone Wars, Force Unleashed, Galaxy at War, Galaxy of Intrigue, Jedi Academy, Threats of the Galaxy, Scum and Villainy, Rebellion Era) (authority-only) — certified ADD/EDIT/REMOVE actions remain intentionally unexecuted except the armor, equipment and medical identity renames",
+  "status": "PHASE 0 CHARACTER-ITEM CENSUS COMPLETE; PHASE 1 WEAPONS CONTENT CERTIFIED THROUGH 1J (Core, Clone Wars, Force Unleashed, Galaxy at War, Galaxy of Intrigue, Jedi Academy, Threats of the Galaxy, Scum and Villainy, Rebellion Era, KOTOR) (authority-only) — certified ADD/EDIT/REMOVE actions remain intentionally unexecuted except the armor, equipment and medical identity renames",
   "sourcePolicy": "User-provided SWSE TXT/PDF sourcebooks are the canonical SSOT. Repository compendiums are implementation targets only.",
   "ownerRulings": "docs/audits/item-phase-0-ssot-census.md §7a",
   "architecture": {
@@ -18880,7 +18880,7 @@
       }
     },
     "1-weapons-content": {
-      "status": "ROLLING_PHASE_1_WEAPONS_AUTHORITY_THROUGH_1I",
+      "status": "ROLLING_PHASE_1_WEAPONS_AUTHORITY_THROUGH_1J",
       "canonicalSourcePolicy": "User-supplied SWSE TXT/PDF sourcebooks are SSOT. TXT is the searchable layer; rendered PDF pages are final authority for layout/page ambiguity.",
       "scope": {
         "completedPhases": [
@@ -18892,7 +18892,8 @@
           "1F",
           "1G",
           "1H",
-          "1I"
+          "1I",
+          "1J"
         ],
         "booksCompleted": [
           "Core Rulebook",
@@ -18903,7 +18904,8 @@
           "Jedi Academy Training Manual",
           "Threats of the Galaxy",
           "Scum and Villainy",
-          "Rebellion Era Campaign Guide"
+          "Rebellion Era Campaign Guide",
+          "Knights of the Old Republic Campaign Guide"
         ],
         "certifiedFields": [
           "source.book",
@@ -18921,13 +18923,13 @@
         ]
       },
       "aggregateCounts": {
-        "sourceBookClaims": 148,
-        "uniqueProductionIdentities": 144,
-        "crossPublishedDuplicateClaims": 4,
-        "repoPresentClaims": 114,
-        "repoMissingClaims": 34,
-        "descriptionIncorrectClaims": 26,
-        "descriptionIncompleteClaims": 88
+        "sourceBookClaims": 181,
+        "uniqueProductionIdentities": 176,
+        "crossPublishedDuplicateClaims": 5,
+        "repoPresentClaims": 134,
+        "repoMissingClaims": 47,
+        "descriptionIncorrectClaims": 34,
+        "descriptionIncompleteClaims": 100
       },
       "books": [
         {
@@ -22749,14 +22751,966 @@
               "crossPublishedSources": []
             }
           ]
+        },
+        {
+          "phase": "1J",
+          "book": "Knights of the Old Republic Campaign Guide",
+          "counts": {
+            "canonicalWeaponClaims": 33,
+            "repoPresent": 20,
+            "repoMissing": 13,
+            "descriptionIncorrect": 8,
+            "descriptionIncomplete": 12,
+            "contentCorrect": 0
+          },
+          "records": [
+            {
+              "canonicalName": "Arggarok",
+              "weaponGroup": "Exotic Weapon",
+              "source": {
+                "book": "Knights of the Old Republic Campaign Guide",
+                "publishedName": "Arg'garok",
+                "descriptionPage": 64,
+                "statTablePage": 64,
+                "verifiedBy": [
+                  "Knights of the Old Republic Campaign Guide_djvu.txt",
+                  "SAGA EDITION - Knights of the Old Republic Campaign Guide.pdf visual verification"
+                ]
+              },
+              "tableTraits": [],
+              "canonicalPlayerText": "A character with Strength lower than 15 takes a -5 penalty on attack rolls made with an Arg'garok. Gamorreans treat the Arg'garok as an advanced melee weapon rather than an exotic weapon.",
+              "summary": "Huge Gamorrean axe; Str 15+ avoids a -5 attack penalty, and Gamorreans treat it as an advanced melee weapon.",
+              "repo": {
+                "present": false,
+                "id": null,
+                "currentName": null,
+                "phase0NameNormalizationPending": false
+              },
+              "phase1Discrepancy": "MISSING_RECORD",
+              "phase1ContentAction": "CREATE_WHEN_SCHEMA_STATS_PHASES_ARE_READY",
+              "notes": [
+                "Phase 0 used the normalized spelling 'Arggarok'. The published display name is Arg'garok; use the published spelling when the missing record is eventually created."
+              ],
+              "crossPublishedSources": []
+            },
+            {
+              "canonicalName": "Dire Sword",
+              "weaponGroup": "Simple Weapon",
+              "source": {
+                "book": "Knights of the Old Republic Campaign Guide",
+                "publishedName": "Dire Sword",
+                "descriptionPage": 65,
+                "statTablePage": 64,
+                "verifiedBy": [
+                  "Knights of the Old Republic Campaign Guide_djvu.txt",
+                  "SAGA EDITION - Knights of the Old Republic Campaign Guide.pdf visual verification"
+                ]
+              },
+              "tableTraits": [],
+              "canonicalPlayerText": "The dire sword is an archaic, unpowered dueling sword: essentially a refined longsword built with modern materials. Its published entry grants no additional special combat rule beyond the weapon-table statistics.",
+              "summary": "Large archaic simple sword with no additional special rule.",
+              "repo": {
+                "present": false,
+                "id": null,
+                "currentName": null,
+                "phase0NameNormalizationPending": false
+              },
+              "phase1Discrepancy": "MISSING_RECORD",
+              "phase1ContentAction": "CREATE_WHEN_SCHEMA_STATS_PHASES_ARE_READY",
+              "notes": [],
+              "crossPublishedSources": []
+            },
+            {
+              "canonicalName": "Dire Vibroblade",
+              "weaponGroup": "Advanced Melee Weapon",
+              "source": {
+                "book": "Knights of the Old Republic Campaign Guide",
+                "publishedName": "Dire Vibroblade",
+                "descriptionPage": 65,
+                "statTablePage": 64,
+                "verifiedBy": [
+                  "Knights of the Old Republic Campaign Guide_djvu.txt",
+                  "SAGA EDITION - Knights of the Old Republic Campaign Guide.pdf visual verification"
+                ]
+              },
+              "tableTraits": [],
+              "canonicalPlayerText": "The dire vibroblade is a larger vibroblade with an extended hilt intended for two-handed use. A Medium wielder can gain double the wielder's Strength bonus to damage when using it two-handed. It requires an energy cell.",
+              "summary": "Large two-handed vibroblade that lets a Medium wielder apply double Strength bonus to damage; uses an energy cell.",
+              "repo": {
+                "present": false,
+                "id": null,
+                "currentName": null,
+                "phase0NameNormalizationPending": false
+              },
+              "phase1Discrepancy": "MISSING_RECORD",
+              "phase1ContentAction": "CREATE_WHEN_SCHEMA_STATS_PHASES_ARE_READY",
+              "notes": [],
+              "crossPublishedSources": []
+            },
+            {
+              "canonicalName": "Double-Bladed Sword",
+              "weaponGroup": "Simple Weapon",
+              "source": {
+                "book": "Knights of the Old Republic Campaign Guide",
+                "publishedName": "Double-Bladed Sword",
+                "descriptionPage": 65,
+                "statTablePage": 64,
+                "verifiedBy": [
+                  "Knights of the Old Republic Campaign Guide_djvu.txt",
+                  "SAGA EDITION - Knights of the Old Republic Campaign Guide.pdf visual verification"
+                ]
+              },
+              "tableTraits": [],
+              "canonicalPlayerText": "A double-bladed sword is a double weapon. A wielder can attack with both ends as a full-round action; both attack rolls take a -10 penalty before reductions from applicable feats or talents.",
+              "summary": "Simple double sword; attack with both ends as a full-round action at the normal double-weapon penalties.",
+              "repo": {
+                "present": false,
+                "id": null,
+                "currentName": null,
+                "phase0NameNormalizationPending": false
+              },
+              "phase1Discrepancy": "MISSING_RECORD",
+              "phase1ContentAction": "CREATE_WHEN_SCHEMA_STATS_PHASES_ARE_READY",
+              "notes": [],
+              "crossPublishedSources": []
+            },
+            {
+              "canonicalName": "Double Vibroblade",
+              "weaponGroup": "Advanced Melee Weapon",
+              "source": {
+                "book": "Knights of the Old Republic Campaign Guide",
+                "publishedName": "Double Vibroblade",
+                "descriptionPage": 65,
+                "statTablePage": 64,
+                "verifiedBy": [
+                  "Knights of the Old Republic Campaign Guide_djvu.txt",
+                  "SAGA EDITION - Knights of the Old Republic Campaign Guide.pdf visual verification"
+                ]
+              },
+              "tableTraits": [],
+              "canonicalPlayerText": "A double vibroblade is a double weapon. A wielder can attack with both ends as a full-round action; both attack rolls take a -10 penalty before reductions from applicable feats or talents. It requires two energy cells.",
+              "summary": "Double vibro weapon using two energy cells and the normal full-round double-weapon attack rules.",
+              "repo": {
+                "present": false,
+                "id": null,
+                "currentName": null,
+                "phase0NameNormalizationPending": false
+              },
+              "phase1Discrepancy": "MISSING_RECORD",
+              "phase1ContentAction": "CREATE_WHEN_SCHEMA_STATS_PHASES_ARE_READY",
+              "notes": [],
+              "crossPublishedSources": []
+            },
+            {
+              "canonicalName": "Fira",
+              "weaponGroup": "Exotic Weapon",
+              "source": {
+                "book": "Knights of the Old Republic Campaign Guide",
+                "publishedName": "Fira",
+                "descriptionPage": 65,
+                "statTablePage": 64,
+                "verifiedBy": [
+                  "Knights of the Old Republic Campaign Guide_djvu.txt",
+                  "SAGA EDITION - Knights of the Old Republic Campaign Guide.pdf visual verification"
+                ]
+              },
+              "tableTraits": [],
+              "canonicalPlayerText": "A fira is forged from a cortosis-bearing alloy and benefits from the Cortosis Weave/Phrik Alloy gear template. If an attack roll with the fira against a living creature equals or exceeds both the target's Reflex Defense and Fortitude Defense, the target takes half the attack's damage again on the following round from the grievous wound.",
+              "summary": "Cortosis Selkath blade that inflicts half its damage again next round when the attack also beats Fortitude Defense.",
+              "repo": {
+                "present": false,
+                "id": null,
+                "currentName": null,
+                "phase0NameNormalizationPending": false
+              },
+              "phase1Discrepancy": "MISSING_RECORD",
+              "phase1ContentAction": "CREATE_WHEN_SCHEMA_STATS_PHASES_ARE_READY",
+              "notes": [],
+              "crossPublishedSources": []
+            },
+            {
+              "canonicalName": "Lightfoil",
+              "weaponGroup": "Lightsaber",
+              "source": {
+                "book": "Knights of the Old Republic Campaign Guide",
+                "publishedName": "Lightfoil",
+                "descriptionPage": 65,
+                "statTablePage": 64,
+                "verifiedBy": [
+                  "Knights of the Old Republic Campaign Guide_djvu.txt",
+                  "SAGA EDITION - Knights of the Old Republic Campaign Guide.pdf visual verification"
+                ]
+              },
+              "tableTraits": [],
+              "canonicalPlayerText": "A lightfoil is delicately balanced. Its wielder may choose to treat it as a Small weapon whenever doing so is beneficial. It cannot be wielded two-handed. It requires an energy cell.",
+              "summary": "One-handed dueling lightsaber that can count as Small when beneficial.",
+              "repo": {
+                "present": true,
+                "id": "weapon-lightfoil",
+                "currentName": "Lightfoil",
+                "phase0NameNormalizationPending": false
+              },
+              "phase1Discrepancy": "DESCRIPTION_INCORRECT",
+              "phase1ContentAction": "UPDATE_CANONICAL_CONTENT",
+              "notes": [
+                "Current repo prose invents Dexterity-for-attack, armor-bypass, blaster-deflection, 19-20 threat-range, and exotic-proficiency rules not stated by this KOTOR weapon entry."
+              ],
+              "crossPublishedSources": []
+            },
+            {
+              "canonicalName": "Shockstaff",
+              "weaponGroup": "Advanced Melee Weapon",
+              "source": {
+                "book": "Knights of the Old Republic Campaign Guide",
+                "publishedName": "Shockstaff",
+                "descriptionPage": 65,
+                "statTablePage": 64,
+                "verifiedBy": [
+                  "Knights of the Old Republic Campaign Guide_djvu.txt",
+                  "SAGA EDITION - Knights of the Old Republic Campaign Guide.pdf visual verification"
+                ]
+              },
+              "tableTraits": [],
+              "canonicalPlayerText": "A shockstaff is laced with phrik alloy, so lightsabers do not ignore its damage reduction. It can deal stun damage equal to its normal damage and can be set to stun as a swift action. It is a double weapon: both ends can be used in a full-round attack with the normal -10 penalties before reductions from feats or talents. It requires two energy cells.",
+              "summary": "Phrik double staff with lethal/stun modes; resists lightsaber DR bypass and uses two energy cells.",
+              "repo": {
+                "present": false,
+                "id": null,
+                "currentName": null,
+                "phase0NameNormalizationPending": false
+              },
+              "phase1Discrepancy": "MISSING_RECORD",
+              "phase1ContentAction": "CREATE_WHEN_SCHEMA_STATS_PHASES_ARE_READY",
+              "notes": [],
+              "crossPublishedSources": []
+            },
+            {
+              "canonicalName": "Short Sword",
+              "weaponGroup": "Simple Weapon",
+              "source": {
+                "book": "Knights of the Old Republic Campaign Guide",
+                "publishedName": "Short Sword",
+                "descriptionPage": 65,
+                "statTablePage": 64,
+                "verifiedBy": [
+                  "Knights of the Old Republic Campaign Guide_djvu.txt",
+                  "SAGA EDITION - Knights of the Old Republic Campaign Guide.pdf visual verification"
+                ]
+              },
+              "tableTraits": [],
+              "canonicalPlayerText": "The short sword is an ancient simple melee weapon commonly used by warriors who fight with two weapons. The published entry describes it as useful for deflecting melee attacks but grants no standalone numerical defense bonus.",
+              "summary": "Compact simple sword commonly used in two-weapon fighting; no additional printed mechanical bonus.",
+              "repo": {
+                "present": false,
+                "id": null,
+                "currentName": null,
+                "phase0NameNormalizationPending": false
+              },
+              "phase1Discrepancy": "MISSING_RECORD",
+              "phase1ContentAction": "CREATE_WHEN_SCHEMA_STATS_PHASES_ARE_READY",
+              "notes": [],
+              "crossPublishedSources": []
+            },
+            {
+              "canonicalName": "Shyarn",
+              "weaponGroup": "Exotic Weapon",
+              "source": {
+                "book": "Knights of the Old Republic Campaign Guide",
+                "publishedName": "Shyarn",
+                "descriptionPage": 65,
+                "statTablePage": 64,
+                "verifiedBy": [
+                  "Knights of the Old Republic Campaign Guide_djvu.txt",
+                  "SAGA EDITION - Knights of the Old Republic Campaign Guide.pdf visual verification"
+                ]
+              },
+              "tableTraits": [],
+              "canonicalPlayerText": "A character wielding a shyarn takes no penalty to attack rolls when using the Rapid Strike feat.",
+              "summary": "Cerean magnetic blade that removes Rapid Strike's attack penalty.",
+              "repo": {
+                "present": false,
+                "id": null,
+                "currentName": null,
+                "phase0NameNormalizationPending": false
+              },
+              "phase1Discrepancy": "MISSING_RECORD",
+              "phase1ContentAction": "CREATE_WHEN_SCHEMA_STATS_PHASES_ARE_READY",
+              "notes": [],
+              "crossPublishedSources": []
+            },
+            {
+              "canonicalName": "War Sword",
+              "weaponGroup": "Simple Weapon",
+              "source": {
+                "book": "Knights of the Old Republic Campaign Guide",
+                "publishedName": "War Sword",
+                "descriptionPage": 66,
+                "statTablePage": 64,
+                "verifiedBy": [
+                  "Knights of the Old Republic Campaign Guide_djvu.txt",
+                  "SAGA EDITION - Knights of the Old Republic Campaign Guide.pdf visual verification"
+                ]
+              },
+              "tableTraits": [],
+              "canonicalPlayerText": "A war sword is a heavy, durable longsword made from high-quality materials. The published weapon entry grants no additional special combat rule beyond the weapon-table statistics.",
+              "summary": "Heavy simple longsword with no additional special rule.",
+              "repo": {
+                "present": false,
+                "id": null,
+                "currentName": null,
+                "phase0NameNormalizationPending": false
+              },
+              "phase1Discrepancy": "MISSING_RECORD",
+              "phase1ContentAction": "CREATE_WHEN_SCHEMA_STATS_PHASES_ARE_READY",
+              "notes": [],
+              "crossPublishedSources": []
+            },
+            {
+              "canonicalName": "Zhaboka",
+              "weaponGroup": "Exotic Weapon",
+              "source": {
+                "book": "Knights of the Old Republic Campaign Guide",
+                "publishedName": "Zhaboka",
+                "descriptionPage": 66,
+                "statTablePage": 64,
+                "verifiedBy": [
+                  "Knights of the Old Republic Campaign Guide_djvu.txt",
+                  "SAGA EDITION - Knights of the Old Republic Campaign Guide.pdf visual verification"
+                ]
+              },
+              "tableTraits": [],
+              "canonicalPlayerText": "A character wielding a zhaboka takes no penalty to attack rolls when using Rapid Strike. A zhaboka is also a double weapon; both ends can be used in a full-round attack with the normal -10 penalties before reductions from feats or talents.",
+              "summary": "Zabrak double pike that removes Rapid Strike's attack penalty.",
+              "repo": {
+                "present": false,
+                "id": null,
+                "currentName": null,
+                "phase0NameNormalizationPending": false
+              },
+              "phase1Discrepancy": "MISSING_RECORD",
+              "phase1ContentAction": "CREATE_WHEN_SCHEMA_STATS_PHASES_ARE_READY",
+              "notes": [],
+              "crossPublishedSources": []
+            },
+            {
+              "canonicalName": "Adhesive Grenade",
+              "weaponGroup": "Simple Weapon",
+              "source": {
+                "book": "Knights of the Old Republic Campaign Guide",
+                "publishedName": "Adhesive Grenade",
+                "descriptionPage": 67,
+                "statTablePage": 68,
+                "verifiedBy": [
+                  "Knights of the Old Republic Campaign Guide_djvu.txt",
+                  "SAGA EDITION - Knights of the Old Republic Campaign Guide.pdf visual verification"
+                ]
+              },
+              "tableTraits": [],
+              "canonicalPlayerText": "Every target in an adhesive grenade's blast radius must make a grapple check against the attacker's ranged attack roll or be unable to move. The adhesive lasts for 3 rounds. Once a character breaks free, that character does not need another grapple check to move through the affected area.",
+              "summary": "Riot-control grenade that can hold targets in place for up to 3 rounds until they win the opposed grapple check.",
+              "repo": {
+                "present": true,
+                "id": "weapon-adhesive-grenade",
+                "currentName": "Adhesive Grenade",
+                "phase0NameNormalizationPending": false
+              },
+              "phase1Discrepancy": "DESCRIPTION_INCOMPLETE",
+              "phase1ContentAction": "UPDATE_CANONICAL_CONTENT",
+              "notes": [],
+              "crossPublishedSources": []
+            },
+            {
+              "canonicalName": "Aurial Blaster",
+              "weaponGroup": "Exotic Weapon",
+              "source": {
+                "book": "Knights of the Old Republic Campaign Guide",
+                "publishedName": "Aurial Blaster",
+                "descriptionPage": 67,
+                "statTablePage": 68,
+                "verifiedBy": [
+                  "Knights of the Old Republic Campaign Guide_djvu.txt",
+                  "SAGA EDITION - Knights of the Old Republic Campaign Guide.pdf visual verification"
+                ]
+              },
+              "tableTraits": [],
+              "canonicalPlayerText": "If an aurial blaster hits and the attack roll also exceeds the target's Fortitude Defense, the target takes a -5 penalty on Perception checks until the end of the attacker's next turn. The weapon uses pistol ranges. A power pack provides 50 shots before replacement.",
+              "summary": "Sonic exotic pistol that can deafen a hit target for -5 Perception; 50 shots per power pack.",
+              "repo": {
+                "present": true,
+                "id": "weapon-aurial-blaster",
+                "currentName": "Aurial Blaster",
+                "phase0NameNormalizationPending": false
+              },
+              "phase1Discrepancy": "DESCRIPTION_INCOMPLETE",
+              "phase1ContentAction": "UPDATE_CANONICAL_CONTENT",
+              "notes": [],
+              "crossPublishedSources": []
+            },
+            {
+              "canonicalName": "Blaster Carbine, Repeating",
+              "weaponGroup": "Rifle",
+              "source": {
+                "book": "Knights of the Old Republic Campaign Guide",
+                "publishedName": "Blaster Carbine, Repeating",
+                "descriptionPage": 67,
+                "statTablePage": 68,
+                "verifiedBy": [
+                  "Knights of the Old Republic Campaign Guide_djvu.txt",
+                  "SAGA EDITION - Knights of the Old Republic Campaign Guide.pdf visual verification"
+                ]
+              },
+              "tableTraits": [
+                "Area attack weapon",
+                "Inaccurate: cannot attack at long range"
+              ],
+              "canonicalPlayerText": "The repeating blaster carbine is an autofire-only, inaccurate area-attack weapon. It cannot attack targets at long range. A power pack provides 30 shots before replacement.",
+              "summary": "Autofire-only repeating carbine; inaccurate at range and limited to 30 shots per pack.",
+              "repo": {
+                "present": true,
+                "id": "weapon-repeating-blaster-carbine",
+                "currentName": "Repeating Blaster Carbine",
+                "phase0NameNormalizationPending": true
+              },
+              "phase1Discrepancy": "DESCRIPTION_INCOMPLETE",
+              "phase1ContentAction": "UPDATE_CANONICAL_CONTENT",
+              "notes": [],
+              "crossPublishedSources": []
+            },
+            {
+              "canonicalName": "Blaster Rifle, Assault",
+              "weaponGroup": "Rifle",
+              "source": {
+                "book": "Knights of the Old Republic Campaign Guide",
+                "publishedName": "Blaster Rifle, Assault",
+                "descriptionPage": 67,
+                "statTablePage": 68,
+                "verifiedBy": [
+                  "Knights of the Old Republic Campaign Guide_djvu.txt",
+                  "SAGA EDITION - Knights of the Old Republic Campaign Guide.pdf visual verification"
+                ]
+              },
+              "tableTraits": [
+                "Accurate: no short-range penalty"
+              ],
+              "canonicalPlayerText": "The assault blaster rifle is an accurate weapon: it takes no penalty when attacking a target at short range. It can fire in single-shot or autofire mode. A power pack provides 50 shots before replacement.",
+              "summary": "Accurate military rifle with single-shot/autofire capability and a 50-shot power pack.",
+              "repo": {
+                "present": true,
+                "id": "weapon-assault-blaster-rifle",
+                "currentName": "Assault Blaster Rifle",
+                "phase0NameNormalizationPending": true
+              },
+              "phase1Discrepancy": "DESCRIPTION_INCOMPLETE",
+              "phase1ContentAction": "UPDATE_CANONICAL_CONTENT",
+              "notes": [],
+              "crossPublishedSources": []
+            },
+            {
+              "canonicalName": "Carbonite Rifle",
+              "weaponGroup": "Heavy Weapon",
+              "source": {
+                "book": "Knights of the Old Republic Campaign Guide",
+                "publishedName": "Carbonite Rifle",
+                "descriptionPage": 69,
+                "statTablePage": 68,
+                "verifiedBy": [
+                  "Knights of the Old Republic Campaign Guide_djvu.txt",
+                  "SAGA EDITION - Knights of the Old Republic Campaign Guide.pdf visual verification"
+                ]
+              },
+              "tableTraits": [],
+              "canonicalPlayerText": "A target moved down the condition track by a carbonite rifle is also immobilized until the end of its next turn. The rifle uses special carbonite cartridges; each cartridge costs 50 credits, weighs 1 kg, and provides 20 shots.",
+              "summary": "Stun rifle that also immobilizes targets it moves down the condition track; 20-shot carbonite cartridges.",
+              "repo": {
+                "present": true,
+                "id": "weapon-carbonite-rifle",
+                "currentName": "Carbonite Rifle",
+                "phase0NameNormalizationPending": false
+              },
+              "phase1Discrepancy": "DESCRIPTION_INCOMPLETE",
+              "phase1ContentAction": "UPDATE_CANONICAL_CONTENT",
+              "notes": [],
+              "crossPublishedSources": []
+            },
+            {
+              "canonicalName": "CryoBan Grenade",
+              "weaponGroup": "Simple Weapon",
+              "source": {
+                "book": "Knights of the Old Republic Campaign Guide",
+                "publishedName": "CryoBan Grenade",
+                "descriptionPage": 69,
+                "statTablePage": 68,
+                "verifiedBy": [
+                  "Knights of the Old Republic Campaign Guide_djvu.txt",
+                  "SAGA EDITION - Knights of the Old Republic Campaign Guide.pdf visual verification"
+                ]
+              },
+              "tableTraits": [],
+              "canonicalPlayerText": "If a CryoBan grenade's attack roll also beats a target's Fortitude Defense, that target's speed is reduced to 2 squares until the end of its next turn.",
+              "summary": "Cryogenic grenade that reduces a target's speed to 2 squares when the attack also beats Fortitude Defense.",
+              "repo": {
+                "present": true,
+                "id": "weapon-cryoban-grenade",
+                "currentName": "CryoBan Grenade",
+                "phase0NameNormalizationPending": false
+              },
+              "phase1Discrepancy": "DESCRIPTION_INCORRECT",
+              "phase1ContentAction": "UPDATE_CANONICAL_CONTENT",
+              "notes": [
+                "Current repo prose invents fixed Reflex/Fortitude save DCs and an immobilized result. The published rule instead compares the grenade attack roll to Fortitude Defense and reduces speed to 2 squares."
+              ],
+              "crossPublishedSources": []
+            },
+            {
+              "canonicalName": "Ion Carbine",
+              "weaponGroup": "Rifle",
+              "source": {
+                "book": "Knights of the Old Republic Campaign Guide",
+                "publishedName": "Ion Carbine",
+                "descriptionPage": 69,
+                "statTablePage": 68,
+                "verifiedBy": [
+                  "Knights of the Old Republic Campaign Guide_djvu.txt",
+                  "SAGA EDITION - Knights of the Old Republic Campaign Guide.pdf visual verification"
+                ]
+              },
+              "tableTraits": [
+                "Inaccurate: cannot attack at long range"
+              ],
+              "canonicalPlayerText": "The ion carbine functions as an ion weapon and can fire in either single-shot or autofire mode. It is inaccurate and cannot attack targets at long range. A power pack provides 30 shots before replacement.",
+              "summary": "Autofire-capable ion carbine; inaccurate at long range and 30 shots per pack.",
+              "repo": {
+                "present": true,
+                "id": "weapon-ion-carbine",
+                "currentName": "Ion Carbine",
+                "phase0NameNormalizationPending": false
+              },
+              "phase1Discrepancy": "DESCRIPTION_INCOMPLETE",
+              "phase1ContentAction": "UPDATE_CANONICAL_CONTENT",
+              "notes": [],
+              "crossPublishedSources": []
+            },
+            {
+              "canonicalName": "Sith Lanvarok",
+              "weaponGroup": "Exotic Weapon",
+              "source": {
+                "book": "Knights of the Old Republic Campaign Guide",
+                "publishedName": "Lanvarok, Sith",
+                "descriptionPage": 69,
+                "statTablePage": 68,
+                "verifiedBy": [
+                  "Knights of the Old Republic Campaign Guide_djvu.txt",
+                  "SAGA EDITION - Knights of the Old Republic Campaign Guide.pdf visual verification"
+                ]
+              },
+              "tableTraits": [
+                "Inaccurate: cannot attack at long range"
+              ],
+              "canonicalPlayerText": "A Sith lanvarok is a wrist-mounted disc launcher that is worn rather than held, leaving the wielder's hands free. It uses pistol ranges and can be fired as a second weapon for two-weapon fighting. It is inaccurate and cannot attack at long range. It holds 5 discs; replacement discs cost 5 credits and weigh 0.1 kg each.",
+              "summary": "Wrist-mounted five-disc launcher that leaves both hands free and can serve as the second weapon in two-weapon fighting.",
+              "repo": {
+                "present": true,
+                "id": "weapon-sith-lanvarok",
+                "currentName": "Sith Lanvarok",
+                "phase0NameNormalizationPending": false
+              },
+              "phase1Discrepancy": "DESCRIPTION_INCORRECT",
+              "phase1ContentAction": "UPDATE_CANONICAL_CONTENT",
+              "notes": [
+                "Current repo prose invents a three-disc cone/spread attack not present in the KOTOR rule."
+              ],
+              "crossPublishedSources": []
+            },
+            {
+              "canonicalName": "Massassi Lanvarok",
+              "weaponGroup": "Exotic Weapon",
+              "source": {
+                "book": "Knights of the Old Republic Campaign Guide",
+                "publishedName": "Lanvarok, Massassi",
+                "descriptionPage": 69,
+                "statTablePage": 68,
+                "verifiedBy": [
+                  "Knights of the Old Republic Campaign Guide_djvu.txt",
+                  "SAGA EDITION - Knights of the Old Republic Campaign Guide.pdf visual verification"
+                ]
+              },
+              "tableTraits": [
+                "Inaccurate: cannot attack at long range"
+              ],
+              "canonicalPlayerText": "A Massassi lanvarok can hurl a disc using thrown-weapon ranges. After the disc is hurled, the lanvarok can be used as a two-handed slashing weapon dealing its listed melee damage. Massassi treat it as an advanced melee weapon instead of an exotic weapon. It is inaccurate for its ranged use and holds one disc at a time; replacement discs cost 5 credits and weigh 0.1 kg each.",
+              "summary": "Polearm that throws one disc, then functions as a two-handed slashing weapon; Massassi treat it as advanced melee.",
+              "repo": {
+                "present": true,
+                "id": "weapon-massassi-lanvarok",
+                "currentName": "Massassi Lanvarok",
+                "phase0NameNormalizationPending": false
+              },
+              "phase1Discrepancy": "DESCRIPTION_INCOMPLETE",
+              "phase1ContentAction": "UPDATE_CANONICAL_CONTENT",
+              "notes": [],
+              "crossPublishedSources": []
+            },
+            {
+              "canonicalName": "Needler",
+              "weaponGroup": "Pistol",
+              "source": {
+                "book": "Knights of the Old Republic Campaign Guide",
+                "publishedName": "Needler",
+                "descriptionPage": 69,
+                "statTablePage": 68,
+                "verifiedBy": [
+                  "Knights of the Old Republic Campaign Guide_djvu.txt",
+                  "SAGA EDITION - Knights of the Old Republic Campaign Guide.pdf visual verification"
+                ]
+              },
+              "tableTraits": [
+                "Inaccurate: cannot attack at long range"
+              ],
+              "canonicalPlayerText": "A needler fires tiny piercing darts. Its ammunition can be laced with a contact poison, delivering that poison when appropriate. The weapon is inaccurate and cannot attack targets at long range. A 10-shot ammunition clip costs 20 credits and weighs 0.1 kg.",
+              "summary": "Ten-shot dart pistol whose ammunition may be poison-laced; inaccurate at long range.",
+              "repo": {
+                "present": true,
+                "id": "weapon-needler",
+                "currentName": "Needler",
+                "phase0NameNormalizationPending": false
+              },
+              "phase1Discrepancy": "DESCRIPTION_INCORRECT",
+              "phase1ContentAction": "UPDATE_CANONICAL_CONTENT",
+              "notes": [
+                "Current repo prose implies the needles are inherently poisoned; the published rule makes poison-lacing optional."
+              ],
+              "crossPublishedSources": []
+            },
+            {
+              "canonicalName": "Pulse-Wave Pistol",
+              "weaponGroup": "Pistol",
+              "source": {
+                "book": "Knights of the Old Republic Campaign Guide",
+                "publishedName": "Pulse-Wave Pistol",
+                "descriptionPage": 69,
+                "statTablePage": 68,
+                "verifiedBy": [
+                  "Knights of the Old Republic Campaign Guide_djvu.txt",
+                  "SAGA EDITION - Knights of the Old Republic Campaign Guide.pdf visual verification"
+                ]
+              },
+              "tableTraits": [
+                "Inaccurate: cannot attack at long range"
+              ],
+              "canonicalPlayerText": "A pulse-wave pistol gains a +4 equipment bonus to damage at point-blank range. It is inaccurate and cannot attack targets at long range. A power pack provides 100 shots before replacement.",
+              "summary": "Primitive energy pistol that gains +4 damage at point-blank range; 100 shots and no long-range attacks.",
+              "repo": {
+                "present": true,
+                "id": "weapon-pulse-wave-pistol",
+                "currentName": "Pulse-Wave Pistol",
+                "phase0NameNormalizationPending": false
+              },
+              "phase1Discrepancy": "DESCRIPTION_INCOMPLETE",
+              "phase1ContentAction": "UPDATE_CANONICAL_CONTENT",
+              "notes": [],
+              "crossPublishedSources": []
+            },
+            {
+              "canonicalName": "Pulse-Wave Rifle",
+              "weaponGroup": "Rifle",
+              "source": {
+                "book": "Knights of the Old Republic Campaign Guide",
+                "publishedName": "Pulse-Wave Rifle",
+                "descriptionPage": 69,
+                "statTablePage": 68,
+                "verifiedBy": [
+                  "Knights of the Old Republic Campaign Guide_djvu.txt",
+                  "SAGA EDITION - Knights of the Old Republic Campaign Guide.pdf visual verification"
+                ]
+              },
+              "tableTraits": [
+                "Inaccurate: cannot attack at long range"
+              ],
+              "canonicalPlayerText": "A pulse-wave rifle gains a +5 equipment bonus to damage at point-blank range. It is inaccurate and cannot attack targets at long range. A power pack provides 50 shots before replacement.",
+              "summary": "Pulse-wave rifle gaining +5 damage at point-blank range; 50 shots and no long-range attacks.",
+              "repo": {
+                "present": true,
+                "id": "weapon-pulse-wave-rifle",
+                "currentName": "Pulse-Wave Rifle",
+                "phase0NameNormalizationPending": false
+              },
+              "phase1Discrepancy": "DESCRIPTION_INCOMPLETE",
+              "phase1ContentAction": "UPDATE_CANONICAL_CONTENT",
+              "notes": [],
+              "crossPublishedSources": []
+            },
+            {
+              "canonicalName": "Ripper",
+              "weaponGroup": "Pistol",
+              "source": {
+                "book": "Knights of the Old Republic Campaign Guide",
+                "publishedName": "Ripper",
+                "descriptionPage": 69,
+                "statTablePage": 68,
+                "verifiedBy": [
+                  "Knights of the Old Republic Campaign Guide_djvu.txt",
+                  "SAGA EDITION - Knights of the Old Republic Campaign Guide.pdf visual verification"
+                ]
+              },
+              "tableTraits": [
+                "Inaccurate: cannot attack at long range"
+              ],
+              "canonicalPlayerText": "A ripper fires physical shrapnel. If its damage exceeds a target's damage threshold and moves that target at least 1 step down the condition track, embedded shrapnel immediately deals an additional 1d4 damage. The weapon is inaccurate and cannot attack at long range. A 10-shot ammunition clip costs 20 credits and weighs 0.1 kg.",
+              "summary": "Shrapnel pistol that deals +1d4 extra damage when it beats damage threshold and moves the target down the condition track.",
+              "repo": {
+                "present": true,
+                "id": "weapon-ripper",
+                "currentName": "Ripper",
+                "phase0NameNormalizationPending": false
+              },
+              "phase1Discrepancy": "DESCRIPTION_INCORRECT",
+              "phase1ContentAction": "UPDATE_CANONICAL_CONTENT",
+              "notes": [
+                "Current repo prose describes the ammunition as razor discs; the published weapon fires irregular shrapnel and has an embedded-shrapnel damage rule."
+              ],
+              "crossPublishedSources": []
+            },
+            {
+              "canonicalName": "Sonic Disruptor",
+              "weaponGroup": "Pistol",
+              "source": {
+                "book": "Knights of the Old Republic Campaign Guide",
+                "publishedName": "Sonic Disruptor",
+                "descriptionPage": 70,
+                "statTablePage": 68,
+                "verifiedBy": [
+                  "Knights of the Old Republic Campaign Guide_djvu.txt",
+                  "SAGA EDITION - Knights of the Old Republic Campaign Guide.pdf visual verification"
+                ]
+              },
+              "tableTraits": [],
+              "canonicalPlayerText": "Sonic disruptor attacks cannot be negated with Deflect or talents that have Deflect as a prerequisite. The weapon treats every target's damage threshold as 5 lower. A creature killed, or an object, vehicle, or droid destroyed, by the weapon is disintegrated. It can fire only once every other round, and it cannot be used with feats, talents, or abilities that consume more than one shot per round. Its power pack must be recharged after 10 shots.",
+              "summary": "Illegal sonic disruptor: -5 effective damage threshold, disintegration on destruction, and only one shot every other round.",
+              "repo": {
+                "present": true,
+                "id": "weapon-sonic-disruptor",
+                "currentName": "Sonic Disruptor",
+                "phase0NameNormalizationPending": false
+              },
+              "phase1Discrepancy": "DESCRIPTION_INCOMPLETE",
+              "phase1ContentAction": "UPDATE_CANONICAL_CONTENT",
+              "notes": [],
+              "crossPublishedSources": []
+            },
+            {
+              "canonicalName": "Sonic Pistol",
+              "weaponGroup": "Pistol",
+              "source": {
+                "book": "Knights of the Old Republic Campaign Guide",
+                "publishedName": "Sonic Pistol",
+                "descriptionPage": 70,
+                "statTablePage": 68,
+                "verifiedBy": [
+                  "Knights of the Old Republic Campaign Guide_djvu.txt",
+                  "SAGA EDITION - Knights of the Old Republic Campaign Guide.pdf visual verification"
+                ]
+              },
+              "tableTraits": [],
+              "canonicalPlayerText": "A sonic pistol deals sonic energy damage. Its ranged attacks cannot be negated with Deflect or talents that have Deflect as a prerequisite. Its power pack must be recharged after 100 shots.",
+              "summary": "One-hundred-shot sonic pistol whose attacks cannot be negated by Deflect.",
+              "repo": {
+                "present": true,
+                "id": "weapon-sonic-pistol",
+                "currentName": "Sonic Pistol",
+                "phase0NameNormalizationPending": false
+              },
+              "phase1Discrepancy": "DESCRIPTION_INCORRECT",
+              "phase1ContentAction": "UPDATE_CANONICAL_CONTENT",
+              "notes": [
+                "Current repo prose incorrectly says sonic damage ignores armor bonuses. The KOTOR rule instead makes ranged sonic attacks nondeflectable by lightsaber Deflect."
+              ],
+              "crossPublishedSources": []
+            },
+            {
+              "canonicalName": "Heavy Sonic Pistol",
+              "weaponGroup": "Pistol",
+              "source": {
+                "book": "Knights of the Old Republic Campaign Guide",
+                "publishedName": "Sonic Pistol, Heavy",
+                "descriptionPage": 70,
+                "statTablePage": 68,
+                "verifiedBy": [
+                  "Knights of the Old Republic Campaign Guide_djvu.txt",
+                  "SAGA EDITION - Knights of the Old Republic Campaign Guide.pdf visual verification"
+                ]
+              },
+              "tableTraits": [],
+              "canonicalPlayerText": "A heavy sonic pistol fires more intensely compressed sonic energy than a standard sonic pistol. Its ranged attacks cannot be negated with Deflect or talents that have Deflect as a prerequisite. Its power pack must be recharged after 50 shots.",
+              "summary": "More powerful 50-shot sonic pistol whose attacks cannot be negated by Deflect.",
+              "repo": {
+                "present": true,
+                "id": "weapon-heavy-sonic-pistol",
+                "currentName": "Heavy Sonic Pistol",
+                "phase0NameNormalizationPending": false
+              },
+              "phase1Discrepancy": "DESCRIPTION_INCOMPLETE",
+              "phase1ContentAction": "UPDATE_CANONICAL_CONTENT",
+              "notes": [],
+              "crossPublishedSources": []
+            },
+            {
+              "canonicalName": "Sonic Rifle",
+              "weaponGroup": "Rifle",
+              "source": {
+                "book": "Knights of the Old Republic Campaign Guide",
+                "publishedName": "Sonic Rifle",
+                "descriptionPage": 70,
+                "statTablePage": 68,
+                "verifiedBy": [
+                  "Knights of the Old Republic Campaign Guide_djvu.txt",
+                  "SAGA EDITION - Knights of the Old Republic Campaign Guide.pdf visual verification"
+                ]
+              },
+              "tableTraits": [],
+              "canonicalPlayerText": "A sonic rifle deals sonic energy damage. Its ranged attacks cannot be negated with Deflect or talents that have Deflect as a prerequisite. Its power pack must be recharged after 50 shots.",
+              "summary": "Fifty-shot sonic rifle whose attacks cannot be negated by Deflect.",
+              "repo": {
+                "present": true,
+                "id": "weapon-sonic-rifle",
+                "currentName": "Sonic Rifle",
+                "phase0NameNormalizationPending": false
+              },
+              "phase1Discrepancy": "DESCRIPTION_INCORRECT",
+              "phase1ContentAction": "UPDATE_CANONICAL_CONTENT",
+              "notes": [
+                "Current repo prose incorrectly says sonic damage ignores armor bonuses. The published rule instead makes ranged sonic attacks nondeflectable by lightsaber Deflect."
+              ],
+              "crossPublishedSources": []
+            },
+            {
+              "canonicalName": "Commando Special Rifle",
+              "weaponGroup": "Rifle",
+              "source": {
+                "book": "Knights of the Old Republic Campaign Guide",
+                "publishedName": "Rifle, Commando Special",
+                "descriptionPage": 180,
+                "statTablePage": 180,
+                "verifiedBy": [
+                  "Knights of the Old Republic Campaign Guide_djvu.txt",
+                  "SAGA EDITION - Knights of the Old Republic Campaign Guide.pdf visual verification"
+                ]
+              },
+              "tableTraits": [],
+              "canonicalPlayerText": "The Commando Special is a sawed-off Republic commando rifle built for portability and stopping power. It can fire in single-shot or autofire mode. Its power pack must be replaced after 25 shots.",
+              "summary": "Compact Republic commando rifle with single/autofire capability and only 25 shots per power pack.",
+              "repo": {
+                "present": true,
+                "id": "weapon-commando-special-rifle",
+                "currentName": "Commando Special Rifle",
+                "phase0NameNormalizationPending": false
+              },
+              "phase1Discrepancy": "DESCRIPTION_INCOMPLETE",
+              "phase1ContentAction": "UPDATE_CANONICAL_CONTENT",
+              "notes": [],
+              "crossPublishedSources": []
+            },
+            {
+              "canonicalName": "Remote Grenade",
+              "weaponGroup": "Simple Weapon",
+              "source": {
+                "book": "Knights of the Old Republic Campaign Guide",
+                "publishedName": "Grenade, Remote",
+                "descriptionPage": 180,
+                "statTablePage": 180,
+                "verifiedBy": [
+                  "Knights of the Old Republic Campaign Guide_djvu.txt",
+                  "SAGA EDITION - Knights of the Old Republic Campaign Guide.pdf visual verification"
+                ]
+              },
+              "tableTraits": [],
+              "canonicalPlayerText": "A remote grenade is programmed for remote detonation using the manufacturer's handheld detonator, which costs 100 credits. Its safety system prevents remote detonation of deployed grenades within 100 meters of the transmitter.",
+              "summary": "Programmable grenade detonated by a dedicated handheld transmitter; safety interlock prevents remote detonation within 100 meters.",
+              "repo": {
+                "present": true,
+                "id": "weapon-remote-grenade",
+                "currentName": "Remote Grenade",
+                "phase0NameNormalizationPending": false
+              },
+              "phase1Discrepancy": "DESCRIPTION_INCORRECT",
+              "phase1ContentAction": "UPDATE_CANONICAL_CONTENT",
+              "notes": [
+                "Current repo prose says the grenade can be detonated by comlink or timer. The published entry specifies a dedicated handheld detonator and a 100-meter safety restriction."
+              ],
+              "crossPublishedSources": []
+            },
+            {
+              "canonicalName": "Stunning Gauntlet",
+              "weaponGroup": "Simple Weapon",
+              "source": {
+                "book": "Knights of the Old Republic Campaign Guide",
+                "publishedName": "Stunning Gauntlet",
+                "descriptionPage": 202,
+                "statTablePage": 202,
+                "verifiedBy": [
+                  "Knights of the Old Republic Campaign Guide_djvu.txt",
+                  "SAGA EDITION - Knights of the Old Republic Campaign Guide.pdf visual verification"
+                ]
+              },
+              "tableTraits": [],
+              "canonicalPlayerText": "A stunning gauntlet changes the wearer's unarmed melee attacks to stun damage and grants a +1 bonus to stun damage on a successful unarmed attack. A stunning gauntlet is two size categories smaller than its wearer. Because it is worn, it cannot be disarmed or dropped.",
+              "summary": "Worn gauntlet converts unarmed attacks to stun damage, adds +1 stun damage, and cannot be disarmed or dropped.",
+              "repo": {
+                "present": false,
+                "id": null,
+                "currentName": null,
+                "phase0NameNormalizationPending": false
+              },
+              "phase1Discrepancy": "MISSING_RECORD",
+              "phase1ContentAction": "CREATE_WHEN_SCHEMA_STATS_PHASES_ARE_READY",
+              "notes": [],
+              "crossPublishedSources": [
+                {
+                  "book": "Clone Wars Campaign Guide",
+                  "phase": "1B",
+                  "page": 60,
+                  "relationship": "same production identity; consistent later publication"
+                }
+              ]
+            },
+            {
+              "canonicalName": "Mythosaur Axe",
+              "weaponGroup": "Simple Weapon",
+              "source": {
+                "book": "Knights of the Old Republic Campaign Guide",
+                "publishedName": "Mythosaur Axe",
+                "descriptionPage": 202,
+                "statTablePage": 202,
+                "verifiedBy": [
+                  "Knights of the Old Republic Campaign Guide_djvu.txt",
+                  "SAGA EDITION - Knights of the Old Republic Campaign Guide.pdf visual verification"
+                ]
+              },
+              "tableTraits": [],
+              "canonicalPlayerText": "The standard Mythosaur axe is a ceremonial simple weapon made from calcified Mythosaur bone. The text also describes Mandalore the Ultimate's special staff-mounted version, which uses modern metals and an energy cell to deal double the standard weapon's damage; that named-character variant is not a second generic equipment identity.",
+              "summary": "Ceremonial Mythosaur-bone axe; Mandalore the Ultimate has a special powered staff-mounted double-damage variant.",
+              "repo": {
+                "present": false,
+                "id": null,
+                "currentName": null,
+                "phase0NameNormalizationPending": false
+              },
+              "phase1Discrepancy": "MISSING_RECORD",
+              "phase1ContentAction": "CREATE_WHEN_SCHEMA_STATS_PHASES_ARE_READY",
+              "notes": [
+                "Do not create a second generic 'powered Mythosaur axe' identity from the named Mandalore the Ultimate variant."
+              ],
+              "crossPublishedSources": []
+            }
+          ]
         }
       ],
       "uniqueIdentityIndex": [
         {
           "identityKey": "lightsaber-chassis-archaic-lightfoil",
           "canonicalName": "Lightfoil, Archaic",
-          "alternateCanonicalNames": [],
           "repoId": "lightsaber-chassis-archaic-lightfoil",
+          "claimCount": 1,
+          "repoPresent": true,
           "sourceClaims": [
             {
               "phase": "1F",
@@ -22766,15 +23720,14 @@
               "statTablePage": 52,
               "phase1Discrepancy": "DESCRIPTION_INCOMPLETE"
             }
-          ],
-          "claimCount": 1,
-          "repoPresent": true
+          ]
         },
         {
           "identityKey": "lightsaber-chassis-archaic-lightsaber",
           "canonicalName": "Lightsaber, Archaic",
-          "alternateCanonicalNames": [],
           "repoId": "lightsaber-chassis-archaic-lightsaber",
+          "claimCount": 1,
+          "repoPresent": true,
           "sourceClaims": [
             {
               "phase": "1F",
@@ -22784,15 +23737,14 @@
               "statTablePage": 52,
               "phase1Discrepancy": "DESCRIPTION_INCOMPLETE"
             }
-          ],
-          "claimCount": 1,
-          "repoPresent": true
+          ]
         },
         {
           "identityKey": "lightsaber-chassis-crossguard",
           "canonicalName": "Crossguard Lightsaber",
-          "alternateCanonicalNames": [],
           "repoId": "lightsaber-chassis-crossguard",
+          "claimCount": 1,
+          "repoPresent": true,
           "sourceClaims": [
             {
               "phase": "1F",
@@ -22802,15 +23754,14 @@
               "statTablePage": 52,
               "phase1Discrepancy": "DESCRIPTION_INCORRECT"
             }
-          ],
-          "claimCount": 1,
-          "repoPresent": true
+          ]
         },
         {
           "identityKey": "lightsaber-chassis-dual-phase",
           "canonicalName": "Lightsaber, Dual-Phase",
-          "alternateCanonicalNames": [],
           "repoId": "lightsaber-chassis-dual-phase",
+          "claimCount": 1,
+          "repoPresent": true,
           "sourceClaims": [
             {
               "phase": "1F",
@@ -22820,15 +23771,14 @@
               "statTablePage": 52,
               "phase1Discrepancy": "DESCRIPTION_INCOMPLETE"
             }
-          ],
-          "claimCount": 1,
-          "repoPresent": true
+          ]
         },
         {
           "identityKey": "lightsaber-chassis-dueling",
           "canonicalName": "Dueling Lightsaber",
-          "alternateCanonicalNames": [],
           "repoId": "lightsaber-chassis-dueling",
+          "claimCount": 1,
+          "repoPresent": true,
           "sourceClaims": [
             {
               "phase": "1F",
@@ -22838,15 +23788,14 @@
               "statTablePage": 52,
               "phase1Discrepancy": "DESCRIPTION_INCOMPLETE"
             }
-          ],
-          "claimCount": 1,
-          "repoPresent": true
+          ]
         },
         {
           "identityKey": "lightsaber-chassis-great",
           "canonicalName": "Lightsaber, Great",
-          "alternateCanonicalNames": [],
           "repoId": "lightsaber-chassis-great",
+          "claimCount": 1,
+          "repoPresent": true,
           "sourceClaims": [
             {
               "phase": "1F",
@@ -22856,15 +23805,14 @@
               "statTablePage": 52,
               "phase1Discrepancy": "DESCRIPTION_INCORRECT"
             }
-          ],
-          "claimCount": 1,
-          "repoPresent": true
+          ]
         },
         {
           "identityKey": "lightsaber-chassis-guard-shoto",
           "canonicalName": "Guard Shoto",
-          "alternateCanonicalNames": [],
           "repoId": "lightsaber-chassis-guard-shoto",
+          "claimCount": 2,
+          "repoPresent": true,
           "sourceClaims": [
             {
               "phase": "1C",
@@ -22882,15 +23830,14 @@
               "statTablePage": 52,
               "phase1Discrepancy": "DESCRIPTION_INCOMPLETE"
             }
-          ],
-          "claimCount": 2,
-          "repoPresent": true
+          ]
         },
         {
           "identityKey": "lightsaber-chassis-lightwhip",
           "canonicalName": "Lightwhip",
-          "alternateCanonicalNames": [],
           "repoId": "lightsaber-chassis-lightwhip",
+          "claimCount": 1,
+          "repoPresent": true,
           "sourceClaims": [
             {
               "phase": "1F",
@@ -22900,15 +23847,14 @@
               "statTablePage": 52,
               "phase1Discrepancy": "DESCRIPTION_INCOMPLETE"
             }
-          ],
-          "claimCount": 1,
-          "repoPresent": true
+          ]
         },
         {
           "identityKey": "lightsaber-chassis-longhandle",
           "canonicalName": "Long-Handle Lightsaber",
-          "alternateCanonicalNames": [],
           "repoId": "lightsaber-chassis-longhandle",
+          "claimCount": 1,
+          "repoPresent": true,
           "sourceClaims": [
             {
               "phase": "1F",
@@ -22918,15 +23864,14 @@
               "statTablePage": 52,
               "phase1Discrepancy": "DESCRIPTION_INCOMPLETE"
             }
-          ],
-          "claimCount": 1,
-          "repoPresent": true
+          ]
         },
         {
           "identityKey": "lightsaber-chassis-modern-lightfoil",
           "canonicalName": "Lightfoil, Modern",
-          "alternateCanonicalNames": [],
           "repoId": "lightsaber-chassis-modern-lightfoil",
+          "claimCount": 1,
+          "repoPresent": true,
           "sourceClaims": [
             {
               "phase": "1F",
@@ -22936,15 +23881,14 @@
               "statTablePage": 52,
               "phase1Discrepancy": "DESCRIPTION_INCORRECT"
             }
-          ],
-          "claimCount": 1,
-          "repoPresent": true
+          ]
         },
         {
           "identityKey": "lightsaber-chassis-pike",
           "canonicalName": "Lightsaber Pike",
-          "alternateCanonicalNames": [],
           "repoId": "lightsaber-chassis-pike",
+          "claimCount": 2,
+          "repoPresent": true,
           "sourceClaims": [
             {
               "phase": "1C",
@@ -22962,15 +23906,14 @@
               "statTablePage": 52,
               "phase1Discrepancy": "DESCRIPTION_INCOMPLETE"
             }
-          ],
-          "claimCount": 2,
-          "repoPresent": true
+          ]
         },
         {
           "identityKey": "lightsaber-chassis-retrosaber",
           "canonicalName": "Retrosaber",
-          "alternateCanonicalNames": [],
           "repoId": "lightsaber-chassis-retrosaber",
+          "claimCount": 1,
+          "repoPresent": true,
           "sourceClaims": [
             {
               "phase": "1F",
@@ -22980,15 +23923,14 @@
               "statTablePage": null,
               "phase1Discrepancy": "DESCRIPTION_INCOMPLETE"
             }
-          ],
-          "claimCount": 1,
-          "repoPresent": true
+          ]
         },
         {
           "identityKey": "lightsaber-chassis-short",
           "canonicalName": "Lightsaber, Short",
-          "alternateCanonicalNames": [],
           "repoId": "lightsaber-chassis-short",
+          "claimCount": 1,
+          "repoPresent": true,
           "sourceClaims": [
             {
               "phase": "1A",
@@ -22998,15 +23940,14 @@
               "statTablePage": 122,
               "phase1Discrepancy": "DESCRIPTION_INCORRECT"
             }
-          ],
-          "claimCount": 1,
-          "repoPresent": true
+          ]
         },
         {
           "identityKey": "unmapped::Amphistaff",
           "canonicalName": "Amphistaff",
-          "alternateCanonicalNames": [],
           "repoId": null,
+          "claimCount": 1,
+          "repoPresent": false,
           "sourceClaims": [
             {
               "phase": "1A",
@@ -23016,15 +23957,31 @@
               "statTablePage": 122,
               "phase1Discrepancy": "MISSING_RECORD"
             }
-          ],
+          ]
+        },
+        {
+          "identityKey": "unmapped::Arggarok",
+          "canonicalName": "Arggarok",
+          "repoId": null,
           "claimCount": 1,
-          "repoPresent": false
+          "repoPresent": false,
+          "sourceClaims": [
+            {
+              "phase": "1J",
+              "book": "Knights of the Old Republic Campaign Guide",
+              "canonicalName": "Arggarok",
+              "descriptionPage": 64,
+              "statTablePage": 64,
+              "phase1Discrepancy": "MISSING_RECORD"
+            }
+          ]
         },
         {
           "identityKey": "unmapped::Atlatl",
           "canonicalName": "Atlatl",
-          "alternateCanonicalNames": [],
           "repoId": null,
+          "claimCount": 1,
+          "repoPresent": false,
           "sourceClaims": [
             {
               "phase": "1A",
@@ -23034,15 +23991,14 @@
               "statTablePage": 122,
               "phase1Discrepancy": "MISSING_RECORD"
             }
-          ],
-          "claimCount": 1,
-          "repoPresent": false
+          ]
         },
         {
           "identityKey": "unmapped::Axe",
           "canonicalName": "Axe",
-          "alternateCanonicalNames": [],
           "repoId": null,
+          "claimCount": 1,
+          "repoPresent": false,
           "sourceClaims": [
             {
               "phase": "1I",
@@ -23052,15 +24008,14 @@
               "statTablePage": 48,
               "phase1Discrepancy": "MISSING_RECORD"
             }
-          ],
-          "claimCount": 1,
-          "repoPresent": false
+          ]
         },
         {
           "identityKey": "unmapped::Bayonet",
           "canonicalName": "Bayonet",
-          "alternateCanonicalNames": [],
           "repoId": null,
+          "claimCount": 1,
+          "repoPresent": false,
           "sourceClaims": [
             {
               "phase": "1A",
@@ -23070,15 +24025,14 @@
               "statTablePage": 123,
               "phase1Discrepancy": "MISSING_RECORD"
             }
-          ],
-          "claimCount": 1,
-          "repoPresent": false
+          ]
         },
         {
           "identityKey": "unmapped::Cesta",
           "canonicalName": "Cesta",
-          "alternateCanonicalNames": [],
           "repoId": null,
+          "claimCount": 1,
+          "repoPresent": false,
           "sourceClaims": [
             {
               "phase": "1A",
@@ -23088,15 +24042,14 @@
               "statTablePage": 122,
               "phase1Discrepancy": "MISSING_RECORD"
             }
-          ],
-          "claimCount": 1,
-          "repoPresent": false
+          ]
         },
         {
           "identityKey": "unmapped::Club/Baton",
           "canonicalName": "Club/Baton",
-          "alternateCanonicalNames": [],
           "repoId": null,
+          "claimCount": 1,
+          "repoPresent": false,
           "sourceClaims": [
             {
               "phase": "1A",
@@ -23106,15 +24059,14 @@
               "statTablePage": 123,
               "phase1Discrepancy": "MISSING_RECORD"
             }
-          ],
-          "claimCount": 1,
-          "repoPresent": false
+          ]
         },
         {
           "identityKey": "unmapped::Combat Gloves",
           "canonicalName": "Combat Gloves",
-          "alternateCanonicalNames": [],
           "repoId": null,
+          "claimCount": 1,
+          "repoPresent": false,
           "sourceClaims": [
             {
               "phase": "1A",
@@ -23124,15 +24076,14 @@
               "statTablePage": 123,
               "phase1Discrepancy": "MISSING_RECORD"
             }
-          ],
-          "claimCount": 1,
-          "repoPresent": false
+          ]
         },
         {
           "identityKey": "unmapped::Darkstick",
           "canonicalName": "Darkstick",
-          "alternateCanonicalNames": [],
           "repoId": null,
+          "claimCount": 1,
+          "repoPresent": false,
           "sourceClaims": [
             {
               "phase": "1D",
@@ -23142,15 +24093,14 @@
               "statTablePage": 36,
               "phase1Discrepancy": "MISSING_RECORD"
             }
-          ],
-          "claimCount": 1,
-          "repoPresent": false
+          ]
         },
         {
           "identityKey": "unmapped::Datadagger",
           "canonicalName": "Datadagger",
-          "alternateCanonicalNames": [],
           "repoId": null,
+          "claimCount": 1,
+          "repoPresent": false,
           "sourceClaims": [
             {
               "phase": "1G",
@@ -23160,15 +24110,82 @@
               "statTablePage": null,
               "phase1Discrepancy": "MISSING_RECORD"
             }
-          ],
+          ]
+        },
+        {
+          "identityKey": "unmapped::Dire Sword",
+          "canonicalName": "Dire Sword",
+          "repoId": null,
           "claimCount": 1,
-          "repoPresent": false
+          "repoPresent": false,
+          "sourceClaims": [
+            {
+              "phase": "1J",
+              "book": "Knights of the Old Republic Campaign Guide",
+              "canonicalName": "Dire Sword",
+              "descriptionPage": 65,
+              "statTablePage": 64,
+              "phase1Discrepancy": "MISSING_RECORD"
+            }
+          ]
+        },
+        {
+          "identityKey": "unmapped::Dire Vibroblade",
+          "canonicalName": "Dire Vibroblade",
+          "repoId": null,
+          "claimCount": 1,
+          "repoPresent": false,
+          "sourceClaims": [
+            {
+              "phase": "1J",
+              "book": "Knights of the Old Republic Campaign Guide",
+              "canonicalName": "Dire Vibroblade",
+              "descriptionPage": 65,
+              "statTablePage": 64,
+              "phase1Discrepancy": "MISSING_RECORD"
+            }
+          ]
+        },
+        {
+          "identityKey": "unmapped::Double Vibroblade",
+          "canonicalName": "Double Vibroblade",
+          "repoId": null,
+          "claimCount": 1,
+          "repoPresent": false,
+          "sourceClaims": [
+            {
+              "phase": "1J",
+              "book": "Knights of the Old Republic Campaign Guide",
+              "canonicalName": "Double Vibroblade",
+              "descriptionPage": 65,
+              "statTablePage": 64,
+              "phase1Discrepancy": "MISSING_RECORD"
+            }
+          ]
+        },
+        {
+          "identityKey": "unmapped::Double-Bladed Sword",
+          "canonicalName": "Double-Bladed Sword",
+          "repoId": null,
+          "claimCount": 1,
+          "repoPresent": false,
+          "sourceClaims": [
+            {
+              "phase": "1J",
+              "book": "Knights of the Old Republic Campaign Guide",
+              "canonicalName": "Double-Bladed Sword",
+              "descriptionPage": 65,
+              "statTablePage": 64,
+              "phase1Discrepancy": "MISSING_RECORD"
+            }
+          ]
         },
         {
           "identityKey": "unmapped::Energy Lance",
           "canonicalName": "Energy Lance",
-          "alternateCanonicalNames": [],
           "repoId": null,
+          "claimCount": 1,
+          "repoPresent": false,
           "sourceClaims": [
             {
               "phase": "1I",
@@ -23178,15 +24195,14 @@
               "statTablePage": 48,
               "phase1Discrepancy": "MISSING_RECORD"
             }
-          ],
-          "claimCount": 1,
-          "repoPresent": false
+          ]
         },
         {
           "identityKey": "unmapped::Entrenching Tool",
           "canonicalName": "Entrenching Tool",
-          "alternateCanonicalNames": [],
           "repoId": null,
+          "claimCount": 1,
+          "repoPresent": false,
           "sourceClaims": [
             {
               "phase": "1D",
@@ -23196,15 +24212,14 @@
               "statTablePage": 36,
               "phase1Discrepancy": "MISSING_RECORD"
             }
-          ],
-          "claimCount": 1,
-          "repoPresent": false
+          ]
         },
         {
           "identityKey": "unmapped::Felucian Skullblade",
           "canonicalName": "Felucian Skullblade",
-          "alternateCanonicalNames": [],
           "repoId": null,
+          "claimCount": 1,
+          "repoPresent": false,
           "sourceClaims": [
             {
               "phase": "1C",
@@ -23214,15 +24229,31 @@
               "statTablePage": 96,
               "phase1Discrepancy": "MISSING_RECORD"
             }
-          ],
+          ]
+        },
+        {
+          "identityKey": "unmapped::Fira",
+          "canonicalName": "Fira",
+          "repoId": null,
           "claimCount": 1,
-          "repoPresent": false
+          "repoPresent": false,
+          "sourceClaims": [
+            {
+              "phase": "1J",
+              "book": "Knights of the Old Republic Campaign Guide",
+              "canonicalName": "Fira",
+              "descriptionPage": 65,
+              "statTablePage": 64,
+              "phase1Discrepancy": "MISSING_RECORD"
+            }
+          ]
         },
         {
           "identityKey": "unmapped::Fire Blade",
           "canonicalName": "Fire Blade",
-          "alternateCanonicalNames": [],
           "repoId": null,
+          "claimCount": 1,
+          "repoPresent": false,
           "sourceClaims": [
             {
               "phase": "1D",
@@ -23232,15 +24263,14 @@
               "statTablePage": 36,
               "phase1Discrepancy": "MISSING_RECORD"
             }
-          ],
-          "claimCount": 1,
-          "repoPresent": false
+          ]
         },
         {
           "identityKey": "unmapped::Force Pike",
           "canonicalName": "Force Pike",
-          "alternateCanonicalNames": [],
           "repoId": null,
+          "claimCount": 1,
+          "repoPresent": false,
           "sourceClaims": [
             {
               "phase": "1A",
@@ -23250,15 +24280,14 @@
               "statTablePage": 122,
               "phase1Discrepancy": "MISSING_RECORD"
             }
-          ],
-          "claimCount": 1,
-          "repoPresent": false
+          ]
         },
         {
           "identityKey": "unmapped::Garrote",
           "canonicalName": "Garrote",
-          "alternateCanonicalNames": [],
           "repoId": null,
+          "claimCount": 1,
+          "repoPresent": false,
           "sourceClaims": [
             {
               "phase": "1B",
@@ -23268,15 +24297,14 @@
               "statTablePage": 60,
               "phase1Discrepancy": "MISSING_RECORD"
             }
-          ],
-          "claimCount": 1,
-          "repoPresent": false
+          ]
         },
         {
           "identityKey": "unmapped::Knife",
           "canonicalName": "Knife",
-          "alternateCanonicalNames": [],
           "repoId": null,
+          "claimCount": 1,
+          "repoPresent": false,
           "sourceClaims": [
             {
               "phase": "1A",
@@ -23286,15 +24314,14 @@
               "statTablePage": 123,
               "phase1Discrepancy": "MISSING_RECORD"
             }
-          ],
-          "claimCount": 1,
-          "repoPresent": false
+          ]
         },
         {
           "identityKey": "unmapped::Mace",
           "canonicalName": "Mace",
-          "alternateCanonicalNames": [],
           "repoId": null,
+          "claimCount": 1,
+          "repoPresent": false,
           "sourceClaims": [
             {
               "phase": "1A",
@@ -23304,15 +24331,31 @@
               "statTablePage": 123,
               "phase1Discrepancy": "MISSING_RECORD"
             }
-          ],
+          ]
+        },
+        {
+          "identityKey": "unmapped::Mythosaur Axe",
+          "canonicalName": "Mythosaur Axe",
+          "repoId": null,
           "claimCount": 1,
-          "repoPresent": false
+          "repoPresent": false,
+          "sourceClaims": [
+            {
+              "phase": "1J",
+              "book": "Knights of the Old Republic Campaign Guide",
+              "canonicalName": "Mythosaur Axe",
+              "descriptionPage": 202,
+              "statTablePage": 202,
+              "phase1Discrepancy": "MISSING_RECORD"
+            }
+          ]
         },
         {
           "identityKey": "unmapped::Neuronic Whip",
           "canonicalName": "Neuronic Whip",
-          "alternateCanonicalNames": [],
           "repoId": null,
+          "claimCount": 1,
+          "repoPresent": false,
           "sourceClaims": [
             {
               "phase": "1C",
@@ -23322,15 +24365,14 @@
               "statTablePage": 199,
               "phase1Discrepancy": "MISSING_RECORD"
             }
-          ],
-          "claimCount": 1,
-          "repoPresent": false
+          ]
         },
         {
           "identityKey": "unmapped::Power Hammer",
           "canonicalName": "Power Hammer",
-          "alternateCanonicalNames": [],
           "repoId": null,
+          "claimCount": 1,
+          "repoPresent": false,
           "sourceClaims": [
             {
               "phase": "1C",
@@ -23340,15 +24382,14 @@
               "statTablePage": 96,
               "phase1Discrepancy": "MISSING_RECORD"
             }
-          ],
-          "claimCount": 1,
-          "repoPresent": false
+          ]
         },
         {
           "identityKey": "unmapped::Power Lance",
           "canonicalName": "Power Lance",
-          "alternateCanonicalNames": [],
           "repoId": null,
+          "claimCount": 1,
+          "repoPresent": false,
           "sourceClaims": [
             {
               "phase": "1I",
@@ -23358,15 +24399,14 @@
               "statTablePage": 48,
               "phase1Discrepancy": "MISSING_RECORD"
             }
-          ],
-          "claimCount": 1,
-          "repoPresent": false
+          ]
         },
         {
           "identityKey": "unmapped::Quarterstaff",
           "canonicalName": "Quarterstaff",
-          "alternateCanonicalNames": [],
           "repoId": null,
+          "claimCount": 1,
+          "repoPresent": false,
           "sourceClaims": [
             {
               "phase": "1A",
@@ -23376,15 +24416,14 @@
               "statTablePage": 123,
               "phase1Discrepancy": "MISSING_RECORD"
             }
-          ],
-          "claimCount": 1,
-          "repoPresent": false
+          ]
         },
         {
           "identityKey": "unmapped::San-Ni Staff",
           "canonicalName": "San-Ni Staff",
-          "alternateCanonicalNames": [],
           "repoId": null,
+          "claimCount": 1,
+          "repoPresent": false,
           "sourceClaims": [
             {
               "phase": "1F",
@@ -23394,15 +24433,14 @@
               "statTablePage": 52,
               "phase1Discrepancy": "MISSING_RECORD"
             }
-          ],
-          "claimCount": 1,
-          "repoPresent": false
+          ]
         },
         {
           "identityKey": "unmapped::Shock Stick",
           "canonicalName": "Shock Stick",
-          "alternateCanonicalNames": [],
           "repoId": null,
+          "claimCount": 1,
+          "repoPresent": false,
           "sourceClaims": [
             {
               "phase": "1D",
@@ -23412,15 +24450,14 @@
               "statTablePage": 36,
               "phase1Discrepancy": "MISSING_RECORD"
             }
-          ],
-          "claimCount": 1,
-          "repoPresent": false
+          ]
         },
         {
           "identityKey": "unmapped::Shockboxing Gloves",
           "canonicalName": "Shockboxing Gloves",
-          "alternateCanonicalNames": [],
           "repoId": null,
+          "claimCount": 1,
+          "repoPresent": false,
           "sourceClaims": [
             {
               "phase": "1D",
@@ -23430,15 +24467,65 @@
               "statTablePage": 36,
               "phase1Discrepancy": "MISSING_RECORD"
             }
-          ],
+          ]
+        },
+        {
+          "identityKey": "unmapped::Shockstaff",
+          "canonicalName": "Shockstaff",
+          "repoId": null,
           "claimCount": 1,
-          "repoPresent": false
+          "repoPresent": false,
+          "sourceClaims": [
+            {
+              "phase": "1J",
+              "book": "Knights of the Old Republic Campaign Guide",
+              "canonicalName": "Shockstaff",
+              "descriptionPage": 65,
+              "statTablePage": 64,
+              "phase1Discrepancy": "MISSING_RECORD"
+            }
+          ]
+        },
+        {
+          "identityKey": "unmapped::Short Sword",
+          "canonicalName": "Short Sword",
+          "repoId": null,
+          "claimCount": 1,
+          "repoPresent": false,
+          "sourceClaims": [
+            {
+              "phase": "1J",
+              "book": "Knights of the Old Republic Campaign Guide",
+              "canonicalName": "Short Sword",
+              "descriptionPage": 65,
+              "statTablePage": 64,
+              "phase1Discrepancy": "MISSING_RECORD"
+            }
+          ]
+        },
+        {
+          "identityKey": "unmapped::Shyarn",
+          "canonicalName": "Shyarn",
+          "repoId": null,
+          "claimCount": 1,
+          "repoPresent": false,
+          "sourceClaims": [
+            {
+              "phase": "1J",
+              "book": "Knights of the Old Republic Campaign Guide",
+              "canonicalName": "Shyarn",
+              "descriptionPage": 65,
+              "statTablePage": 64,
+              "phase1Discrepancy": "MISSING_RECORD"
+            }
+          ]
         },
         {
           "identityKey": "unmapped::Spear",
           "canonicalName": "Spear",
-          "alternateCanonicalNames": [],
           "repoId": null,
+          "claimCount": 1,
+          "repoPresent": false,
           "sourceClaims": [
             {
               "phase": "1A",
@@ -23448,15 +24535,14 @@
               "statTablePage": 123,
               "phase1Discrepancy": "MISSING_RECORD"
             }
-          ],
-          "claimCount": 1,
-          "repoPresent": false
+          ]
         },
         {
           "identityKey": "unmapped::Static Pike",
           "canonicalName": "Static Pike",
-          "alternateCanonicalNames": [],
           "repoId": null,
+          "claimCount": 1,
+          "repoPresent": false,
           "sourceClaims": [
             {
               "phase": "1D",
@@ -23466,15 +24552,14 @@
               "statTablePage": 36,
               "phase1Discrepancy": "MISSING_RECORD"
             }
-          ],
-          "claimCount": 1,
-          "repoPresent": false
+          ]
         },
         {
           "identityKey": "unmapped::Stunning Gauntlet",
           "canonicalName": "Stunning Gauntlet",
-          "alternateCanonicalNames": [],
           "repoId": null,
+          "claimCount": 2,
+          "repoPresent": false,
           "sourceClaims": [
             {
               "phase": "1B",
@@ -23483,16 +24568,23 @@
               "descriptionPage": 60,
               "statTablePage": 60,
               "phase1Discrepancy": "MISSING_RECORD"
+            },
+            {
+              "phase": "1J",
+              "book": "Knights of the Old Republic Campaign Guide",
+              "canonicalName": "Stunning Gauntlet",
+              "descriptionPage": 202,
+              "statTablePage": 202,
+              "phase1Discrepancy": "MISSING_RECORD"
             }
-          ],
-          "claimCount": 1,
-          "repoPresent": false
+          ]
         },
         {
           "identityKey": "unmapped::Vibro-Ax",
           "canonicalName": "Vibro-Ax",
-          "alternateCanonicalNames": [],
           "repoId": null,
+          "claimCount": 1,
+          "repoPresent": false,
           "sourceClaims": [
             {
               "phase": "1A",
@@ -23502,15 +24594,14 @@
               "statTablePage": 122,
               "phase1Discrepancy": "MISSING_RECORD"
             }
-          ],
-          "claimCount": 1,
-          "repoPresent": false
+          ]
         },
         {
           "identityKey": "unmapped::Vibrobayonet",
           "canonicalName": "Vibrobayonet",
-          "alternateCanonicalNames": [],
           "repoId": null,
+          "claimCount": 1,
+          "repoPresent": false,
           "sourceClaims": [
             {
               "phase": "1A",
@@ -23520,15 +24611,14 @@
               "statTablePage": 122,
               "phase1Discrepancy": "MISSING_RECORD"
             }
-          ],
-          "claimCount": 1,
-          "repoPresent": false
+          ]
         },
         {
           "identityKey": "unmapped::Vibroblade, Double",
           "canonicalName": "Vibroblade, Double",
-          "alternateCanonicalNames": [],
           "repoId": null,
+          "claimCount": 1,
+          "repoPresent": false,
           "sourceClaims": [
             {
               "phase": "1C",
@@ -23538,15 +24628,14 @@
               "statTablePage": 96,
               "phase1Discrepancy": "MISSING_RECORD"
             }
-          ],
-          "claimCount": 1,
-          "repoPresent": false
+          ]
         },
         {
           "identityKey": "unmapped::Vibroknucklers",
           "canonicalName": "Vibroknucklers",
-          "alternateCanonicalNames": [],
           "repoId": null,
+          "claimCount": 1,
+          "repoPresent": false,
           "sourceClaims": [
             {
               "phase": "1B",
@@ -23556,15 +24645,14 @@
               "statTablePage": 60,
               "phase1Discrepancy": "MISSING_RECORD"
             }
-          ],
-          "claimCount": 1,
-          "repoPresent": false
+          ]
         },
         {
           "identityKey": "unmapped::Vibrolance",
           "canonicalName": "Vibrolance",
-          "alternateCanonicalNames": [],
           "repoId": null,
+          "claimCount": 1,
+          "repoPresent": false,
           "sourceClaims": [
             {
               "phase": "1D",
@@ -23574,15 +24662,14 @@
               "statTablePage": 36,
               "phase1Discrepancy": "MISSING_RECORD"
             }
-          ],
-          "claimCount": 1,
-          "repoPresent": false
+          ]
         },
         {
           "identityKey": "unmapped::Vibrorapier",
           "canonicalName": "Vibrorapier",
-          "alternateCanonicalNames": [],
           "repoId": null,
+          "claimCount": 1,
+          "repoPresent": false,
           "sourceClaims": [
             {
               "phase": "1B",
@@ -23592,15 +24679,14 @@
               "statTablePage": 60,
               "phase1Discrepancy": "MISSING_RECORD"
             }
-          ],
-          "claimCount": 1,
-          "repoPresent": false
+          ]
         },
         {
           "identityKey": "unmapped::Wan-Shen",
           "canonicalName": "Wan-Shen",
-          "alternateCanonicalNames": [],
           "repoId": null,
+          "claimCount": 1,
+          "repoPresent": false,
           "sourceClaims": [
             {
               "phase": "1F",
@@ -23610,15 +24696,65 @@
               "statTablePage": 52,
               "phase1Discrepancy": "MISSING_RECORD"
             }
-          ],
+          ]
+        },
+        {
+          "identityKey": "unmapped::War Sword",
+          "canonicalName": "War Sword",
+          "repoId": null,
           "claimCount": 1,
-          "repoPresent": false
+          "repoPresent": false,
+          "sourceClaims": [
+            {
+              "phase": "1J",
+              "book": "Knights of the Old Republic Campaign Guide",
+              "canonicalName": "War Sword",
+              "descriptionPage": 66,
+              "statTablePage": 64,
+              "phase1Discrepancy": "MISSING_RECORD"
+            }
+          ]
+        },
+        {
+          "identityKey": "unmapped::Zhaboka",
+          "canonicalName": "Zhaboka",
+          "repoId": null,
+          "claimCount": 1,
+          "repoPresent": false,
+          "sourceClaims": [
+            {
+              "phase": "1J",
+              "book": "Knights of the Old Republic Campaign Guide",
+              "canonicalName": "Zhaboka",
+              "descriptionPage": 66,
+              "statTablePage": 64,
+              "phase1Discrepancy": "MISSING_RECORD"
+            }
+          ]
+        },
+        {
+          "identityKey": "weapon-adhesive-grenade",
+          "canonicalName": "Adhesive Grenade",
+          "repoId": "weapon-adhesive-grenade",
+          "claimCount": 1,
+          "repoPresent": true,
+          "sourceClaims": [
+            {
+              "phase": "1J",
+              "book": "Knights of the Old Republic Campaign Guide",
+              "canonicalName": "Adhesive Grenade",
+              "descriptionPage": 67,
+              "statTablePage": 68,
+              "phase1Discrepancy": "DESCRIPTION_INCOMPLETE"
+            }
+          ]
         },
         {
           "identityKey": "weapon-adjudicator-slugthrower",
           "canonicalName": "Czerka Adjudicator",
-          "alternateCanonicalNames": [],
           "repoId": "weapon-adjudicator-slugthrower",
+          "claimCount": 1,
+          "repoPresent": true,
           "sourceClaims": [
             {
               "phase": "1B",
@@ -23628,15 +24764,14 @@
               "statTablePage": 61,
               "phase1Discrepancy": "DESCRIPTION_INCOMPLETE"
             }
-          ],
-          "claimCount": 1,
-          "repoPresent": true
+          ]
         },
         {
           "identityKey": "weapon-adventurer-slugthrower",
           "canonicalName": "Czerka Adventurer",
-          "alternateCanonicalNames": [],
           "repoId": "weapon-adventurer-slugthrower",
+          "claimCount": 1,
+          "repoPresent": true,
           "sourceClaims": [
             {
               "phase": "1B",
@@ -23646,15 +24781,14 @@
               "statTablePage": 61,
               "phase1Discrepancy": "DESCRIPTION_INCOMPLETE"
             }
-          ],
-          "claimCount": 1,
-          "repoPresent": true
+          ]
         },
         {
           "identityKey": "weapon-ascension-gun",
           "canonicalName": "Ascension Gun",
-          "alternateCanonicalNames": [],
           "repoId": "weapon-ascension-gun",
+          "claimCount": 1,
+          "repoPresent": true,
           "sourceClaims": [
             {
               "phase": "1D",
@@ -23664,15 +24798,48 @@
               "statTablePage": 41,
               "phase1Discrepancy": "DESCRIPTION_INCOMPLETE"
             }
-          ],
+          ]
+        },
+        {
+          "identityKey": "weapon-assault-blaster-rifle",
+          "canonicalName": "Blaster Rifle, Assault",
+          "repoId": "weapon-assault-blaster-rifle",
           "claimCount": 1,
-          "repoPresent": true
+          "repoPresent": true,
+          "sourceClaims": [
+            {
+              "phase": "1J",
+              "book": "Knights of the Old Republic Campaign Guide",
+              "canonicalName": "Blaster Rifle, Assault",
+              "descriptionPage": 67,
+              "statTablePage": 68,
+              "phase1Discrepancy": "DESCRIPTION_INCOMPLETE"
+            }
+          ]
+        },
+        {
+          "identityKey": "weapon-aurial-blaster",
+          "canonicalName": "Aurial Blaster",
+          "repoId": "weapon-aurial-blaster",
+          "claimCount": 1,
+          "repoPresent": true,
+          "sourceClaims": [
+            {
+              "phase": "1J",
+              "book": "Knights of the Old Republic Campaign Guide",
+              "canonicalName": "Aurial Blaster",
+              "descriptionPage": 67,
+              "statTablePage": 68,
+              "phase1Discrepancy": "DESCRIPTION_INCOMPLETE"
+            }
+          ]
         },
         {
           "identityKey": "weapon-battering-ram",
           "canonicalName": "Squib Battering Ram",
-          "alternateCanonicalNames": [],
           "repoId": "weapon-battering-ram",
+          "claimCount": 1,
+          "repoPresent": true,
           "sourceClaims": [
             {
               "phase": "1H",
@@ -23682,15 +24849,14 @@
               "statTablePage": 51,
               "phase1Discrepancy": "DESCRIPTION_INCOMPLETE"
             }
-          ],
-          "claimCount": 1,
-          "repoPresent": true
+          ]
         },
         {
           "identityKey": "weapon-blaster-cannon",
           "canonicalName": "Blaster Cannon",
-          "alternateCanonicalNames": [],
           "repoId": "weapon-blaster-cannon",
+          "claimCount": 1,
+          "repoPresent": true,
           "sourceClaims": [
             {
               "phase": "1A",
@@ -23700,15 +24866,14 @@
               "statTablePage": 126,
               "phase1Discrepancy": "DESCRIPTION_INCOMPLETE"
             }
-          ],
-          "claimCount": 1,
-          "repoPresent": true
+          ]
         },
         {
           "identityKey": "weapon-blaster-carbine",
           "canonicalName": "Blaster Carbine",
-          "alternateCanonicalNames": [],
           "repoId": "weapon-blaster-carbine",
+          "claimCount": 1,
+          "repoPresent": true,
           "sourceClaims": [
             {
               "phase": "1A",
@@ -23718,15 +24883,14 @@
               "statTablePage": 126,
               "phase1Discrepancy": "DESCRIPTION_INCOMPLETE"
             }
-          ],
-          "claimCount": 1,
-          "repoPresent": true
+          ]
         },
         {
           "identityKey": "weapon-blaster-pistol",
           "canonicalName": "Blaster Pistol",
-          "alternateCanonicalNames": [],
           "repoId": "weapon-blaster-pistol",
+          "claimCount": 1,
+          "repoPresent": true,
           "sourceClaims": [
             {
               "phase": "1A",
@@ -23736,15 +24900,14 @@
               "statTablePage": 126,
               "phase1Discrepancy": "DESCRIPTION_INCOMPLETE"
             }
-          ],
-          "claimCount": 1,
-          "repoPresent": true
+          ]
         },
         {
           "identityKey": "weapon-blaster-rifle",
           "canonicalName": "Blaster Rifle",
-          "alternateCanonicalNames": [],
           "repoId": "weapon-blaster-rifle",
+          "claimCount": 1,
+          "repoPresent": true,
           "sourceClaims": [
             {
               "phase": "1A",
@@ -23754,15 +24917,14 @@
               "statTablePage": 127,
               "phase1Discrepancy": "DESCRIPTION_INCOMPLETE"
             }
-          ],
-          "claimCount": 1,
-          "repoPresent": true
+          ]
         },
         {
           "identityKey": "weapon-bow",
           "canonicalName": "Bow",
-          "alternateCanonicalNames": [],
           "repoId": "weapon-bow",
+          "claimCount": 1,
+          "repoPresent": true,
           "sourceClaims": [
             {
               "phase": "1A",
@@ -23772,15 +24934,14 @@
               "statTablePage": 127,
               "phase1Discrepancy": "DESCRIPTION_INCOMPLETE"
             }
-          ],
-          "claimCount": 1,
-          "repoPresent": true
+          ]
         },
         {
           "identityKey": "weapon-bowcaster",
           "canonicalName": "Bowcaster",
-          "alternateCanonicalNames": [],
           "repoId": "weapon-bowcaster",
+          "claimCount": 1,
+          "repoPresent": true,
           "sourceClaims": [
             {
               "phase": "1A",
@@ -23790,15 +24951,14 @@
               "statTablePage": 126,
               "phase1Discrepancy": "DESCRIPTION_INCORRECT"
             }
-          ],
-          "claimCount": 1,
-          "repoPresent": true
+          ]
         },
         {
           "identityKey": "weapon-bryar-pistol",
           "canonicalName": "Bryar Pistol",
-          "alternateCanonicalNames": [],
           "repoId": "weapon-bryar-pistol",
+          "claimCount": 1,
+          "repoPresent": true,
           "sourceClaims": [
             {
               "phase": "1C",
@@ -23808,15 +24968,14 @@
               "statTablePage": 99,
               "phase1Discrepancy": "DESCRIPTION_INCOMPLETE"
             }
-          ],
-          "claimCount": 1,
-          "repoPresent": true
+          ]
         },
         {
           "identityKey": "weapon-bryar-rifle",
           "canonicalName": "Bryar Rifle",
-          "alternateCanonicalNames": [],
           "repoId": "weapon-bryar-rifle",
+          "claimCount": 1,
+          "repoPresent": true,
           "sourceClaims": [
             {
               "phase": "1C",
@@ -23826,15 +24985,48 @@
               "statTablePage": 99,
               "phase1Discrepancy": "DESCRIPTION_INCOMPLETE"
             }
-          ],
+          ]
+        },
+        {
+          "identityKey": "weapon-carbonite-rifle",
+          "canonicalName": "Carbonite Rifle",
+          "repoId": "weapon-carbonite-rifle",
           "claimCount": 1,
-          "repoPresent": true
+          "repoPresent": true,
+          "sourceClaims": [
+            {
+              "phase": "1J",
+              "book": "Knights of the Old Republic Campaign Guide",
+              "canonicalName": "Carbonite Rifle",
+              "descriptionPage": 69,
+              "statTablePage": 68,
+              "phase1Discrepancy": "DESCRIPTION_INCOMPLETE"
+            }
+          ]
+        },
+        {
+          "identityKey": "weapon-commando-special-rifle",
+          "canonicalName": "Commando Special Rifle",
+          "repoId": "weapon-commando-special-rifle",
+          "claimCount": 1,
+          "repoPresent": true,
+          "sourceClaims": [
+            {
+              "phase": "1J",
+              "book": "Knights of the Old Republic Campaign Guide",
+              "canonicalName": "Commando Special Rifle",
+              "descriptionPage": 180,
+              "statTablePage": 180,
+              "phase1Discrepancy": "DESCRIPTION_INCOMPLETE"
+            }
+          ]
         },
         {
           "identityKey": "weapon-concussion-grenade",
           "canonicalName": "Concussion Grenade",
-          "alternateCanonicalNames": [],
           "repoId": "weapon-concussion-grenade",
+          "claimCount": 1,
+          "repoPresent": true,
           "sourceClaims": [
             {
               "phase": "1I",
@@ -23844,15 +25036,14 @@
               "statTablePage": 50,
               "phase1Discrepancy": "DESCRIPTION_INCOMPLETE"
             }
-          ],
-          "claimCount": 1,
-          "repoPresent": true
+          ]
         },
         {
           "identityKey": "weapon-cr-1-blast-cannon",
           "canonicalName": "CR-1 Blast Cannon",
-          "alternateCanonicalNames": [],
           "repoId": "weapon-cr-1-blast-cannon",
+          "claimCount": 1,
+          "repoPresent": true,
           "sourceClaims": [
             {
               "phase": "1C",
@@ -23862,15 +25053,31 @@
               "statTablePage": 199,
               "phase1Discrepancy": "DESCRIPTION_INCOMPLETE"
             }
-          ],
+          ]
+        },
+        {
+          "identityKey": "weapon-cryoban-grenade",
+          "canonicalName": "CryoBan Grenade",
+          "repoId": "weapon-cryoban-grenade",
           "claimCount": 1,
-          "repoPresent": true
+          "repoPresent": true,
+          "sourceClaims": [
+            {
+              "phase": "1J",
+              "book": "Knights of the Old Republic Campaign Guide",
+              "canonicalName": "CryoBan Grenade",
+              "descriptionPage": 69,
+              "statTablePage": 68,
+              "phase1Discrepancy": "DESCRIPTION_INCORRECT"
+            }
+          ]
         },
         {
           "identityKey": "weapon-darter",
           "canonicalName": "Darter",
-          "alternateCanonicalNames": [],
           "repoId": "weapon-darter",
+          "claimCount": 1,
+          "repoPresent": true,
           "sourceClaims": [
             {
               "phase": "1E",
@@ -23880,15 +25087,14 @@
               "statTablePage": 65,
               "phase1Discrepancy": "DESCRIPTION_INCOMPLETE"
             }
-          ],
-          "claimCount": 1,
-          "repoPresent": true
+          ]
         },
         {
           "identityKey": "weapon-deck-sweeper",
           "canonicalName": "Deck Sweeper",
-          "alternateCanonicalNames": [],
           "repoId": "weapon-deck-sweeper",
+          "claimCount": 1,
+          "repoPresent": true,
           "sourceClaims": [
             {
               "phase": "1H",
@@ -23898,15 +25104,14 @@
               "statTablePage": 51,
               "phase1Discrepancy": "DESCRIPTION_INCOMPLETE"
             }
-          ],
-          "claimCount": 1,
-          "repoPresent": true
+          ]
         },
         {
           "identityKey": "weapon-defender-microblaster",
           "canonicalName": "Gee-Tech 12 Defender Microblaster",
-          "alternateCanonicalNames": [],
           "repoId": "weapon-defender-microblaster",
+          "claimCount": 1,
+          "repoPresent": true,
           "sourceClaims": [
             {
               "phase": "1B",
@@ -23916,15 +25121,14 @@
               "statTablePage": 61,
               "phase1Discrepancy": "DESCRIPTION_INCOMPLETE"
             }
-          ],
-          "claimCount": 1,
-          "repoPresent": true
+          ]
         },
         {
           "identityKey": "weapon-dh-23-blaster-pistol",
           "canonicalName": "BlasTech DH-23 Outback Blaster Pistol",
-          "alternateCanonicalNames": [],
           "repoId": "weapon-dh-23-blaster-pistol",
+          "claimCount": 1,
+          "repoPresent": true,
           "sourceClaims": [
             {
               "phase": "1B",
@@ -23934,15 +25138,14 @@
               "statTablePage": 61,
               "phase1Discrepancy": "DESCRIPTION_INCOMPLETE"
             }
-          ],
-          "claimCount": 1,
-          "repoPresent": true
+          ]
         },
         {
           "identityKey": "weapon-discblade",
           "canonicalName": "Discblade",
-          "alternateCanonicalNames": [],
           "repoId": "weapon-discblade",
+          "claimCount": 1,
+          "repoPresent": true,
           "sourceClaims": [
             {
               "phase": "1F",
@@ -23952,15 +25155,14 @@
               "statTablePage": 61,
               "phase1Discrepancy": "DESCRIPTION_INCORRECT"
             }
-          ],
-          "claimCount": 1,
-          "repoPresent": true
+          ]
         },
         {
           "identityKey": "weapon-disruptor-pistol",
           "canonicalName": "DX-2 Disruptor Pistol",
-          "alternateCanonicalNames": [],
           "repoId": "weapon-disruptor-pistol",
+          "claimCount": 1,
+          "repoPresent": true,
           "sourceClaims": [
             {
               "phase": "1C",
@@ -23970,15 +25172,14 @@
               "statTablePage": 99,
               "phase1Discrepancy": "DESCRIPTION_INCORRECT"
             }
-          ],
-          "claimCount": 1,
-          "repoPresent": true
+          ]
         },
         {
           "identityKey": "weapon-disruptor-rifle",
           "canonicalName": "DXR-6 Disruptor Rifle",
-          "alternateCanonicalNames": [],
           "repoId": "weapon-disruptor-rifle",
+          "claimCount": 1,
+          "repoPresent": true,
           "sourceClaims": [
             {
               "phase": "1C",
@@ -23988,15 +25189,14 @@
               "statTablePage": 99,
               "phase1Discrepancy": "DESCRIPTION_INCORRECT"
             }
-          ],
-          "claimCount": 1,
-          "repoPresent": true
+          ]
         },
         {
           "identityKey": "weapon-dlt-20a-longblaster",
           "canonicalName": "BlasTech DLT-20A \"Longbarrel\" Blaster Rifle",
-          "alternateCanonicalNames": [],
           "repoId": "weapon-dlt-20a-longblaster",
+          "claimCount": 1,
+          "repoPresent": true,
           "sourceClaims": [
             {
               "phase": "1B",
@@ -24006,15 +25206,14 @@
               "statTablePage": 61,
               "phase1Discrepancy": "DESCRIPTION_INCOMPLETE"
             }
-          ],
-          "claimCount": 1,
-          "repoPresent": true
+          ]
         },
         {
           "identityKey": "weapon-double-bladed-lightsaber",
           "canonicalName": "Lightsaber, Double",
-          "alternateCanonicalNames": [],
           "repoId": "weapon-double-bladed-lightsaber",
+          "claimCount": 1,
+          "repoPresent": true,
           "sourceClaims": [
             {
               "phase": "1A",
@@ -24024,15 +25223,14 @@
               "statTablePage": 122,
               "phase1Discrepancy": "DESCRIPTION_INCORRECT"
             }
-          ],
-          "claimCount": 1,
-          "repoPresent": true
+          ]
         },
         {
           "identityKey": "weapon-dt-12-heavy-blaster",
           "canonicalName": "BlasTech DT-12 Heavy Blaster Pistol",
-          "alternateCanonicalNames": [],
           "repoId": "weapon-dt-12-heavy-blaster",
+          "claimCount": 1,
+          "repoPresent": true,
           "sourceClaims": [
             {
               "phase": "1B",
@@ -24042,15 +25240,14 @@
               "statTablePage": 61,
               "phase1Discrepancy": "DESCRIPTION_INCOMPLETE"
             }
-          ],
-          "claimCount": 1,
-          "repoPresent": true
+          ]
         },
         {
           "identityKey": "weapon-e-web-missile-launcher",
           "canonicalName": "E-Web Missile Launcher",
-          "alternateCanonicalNames": [],
           "repoId": "weapon-e-web-missile-launcher",
+          "claimCount": 1,
+          "repoPresent": true,
           "sourceClaims": [
             {
               "phase": "1C",
@@ -24060,15 +25257,14 @@
               "statTablePage": 199,
               "phase1Discrepancy": "DESCRIPTION_INCOMPLETE"
             }
-          ],
-          "claimCount": 1,
-          "repoPresent": true
+          ]
         },
         {
           "identityKey": "weapon-e-web-repeating-blaster",
           "canonicalName": "E-Web Repeating Blaster",
-          "alternateCanonicalNames": [],
           "repoId": "weapon-e-web-repeating-blaster",
+          "claimCount": 1,
+          "repoPresent": true,
           "sourceClaims": [
             {
               "phase": "1A",
@@ -24078,15 +25274,14 @@
               "statTablePage": 126,
               "phase1Discrepancy": "DESCRIPTION_INCOMPLETE"
             }
-          ],
-          "claimCount": 1,
-          "repoPresent": true
+          ]
         },
         {
           "identityKey": "weapon-electronet",
           "canonicalName": "Electronet",
-          "alternateCanonicalNames": [],
           "repoId": "weapon-electronet",
+          "claimCount": 1,
+          "repoPresent": true,
           "sourceClaims": [
             {
               "phase": "1H",
@@ -24096,15 +25291,14 @@
               "statTablePage": 51,
               "phase1Discrepancy": "DESCRIPTION_INCOMPLETE"
             }
-          ],
-          "claimCount": 1,
-          "repoPresent": true
+          ]
         },
         {
           "identityKey": "weapon-electrostaff",
           "canonicalName": "Electrostaff",
-          "alternateCanonicalNames": [],
           "repoId": "weapon-electrostaff",
+          "claimCount": 1,
+          "repoPresent": true,
           "sourceClaims": [
             {
               "phase": "1A",
@@ -24114,15 +25308,14 @@
               "statTablePage": 122,
               "phase1Discrepancy": "DESCRIPTION_INCORRECT"
             }
-          ],
-          "claimCount": 1,
-          "repoPresent": true
+          ]
         },
         {
           "identityKey": "weapon-emp-grenade",
           "canonicalName": "EMP Grenade",
-          "alternateCanonicalNames": [],
           "repoId": "weapon-emp-grenade",
+          "claimCount": 1,
+          "repoPresent": true,
           "sourceClaims": [
             {
               "phase": "1B",
@@ -24132,15 +25325,14 @@
               "statTablePage": 61,
               "phase1Discrepancy": "DESCRIPTION_INCOMPLETE"
             }
-          ],
-          "claimCount": 1,
-          "repoPresent": true
+          ]
         },
         {
           "identityKey": "weapon-energy-ball",
           "canonicalName": "Energy Ball",
-          "alternateCanonicalNames": [],
           "repoId": "weapon-energy-ball",
+          "claimCount": 1,
+          "repoPresent": true,
           "sourceClaims": [
             {
               "phase": "1A",
@@ -24150,15 +25342,14 @@
               "statTablePage": 127,
               "phase1Discrepancy": "DESCRIPTION_INCOMPLETE"
             }
-          ],
-          "claimCount": 1,
-          "repoPresent": true
+          ]
         },
         {
           "identityKey": "weapon-espo-500-riot-gun",
           "canonicalName": "BlasTech 500 Riot Gun",
-          "alternateCanonicalNames": [],
           "repoId": "weapon-espo-500-riot-gun",
+          "claimCount": 2,
+          "repoPresent": true,
           "sourceClaims": [
             {
               "phase": "1B",
@@ -24176,15 +25367,14 @@
               "statTablePage": 50,
               "phase1Discrepancy": "DESCRIPTION_INCOMPLETE"
             }
-          ],
-          "claimCount": 2,
-          "repoPresent": true
+          ]
         },
         {
           "identityKey": "weapon-firelance-blaster-rifle",
           "canonicalName": "SoroSuub Firelance Blaster Rifle",
-          "alternateCanonicalNames": [],
           "repoId": "weapon-firelance-blaster-rifle",
+          "claimCount": 1,
+          "repoPresent": true,
           "sourceClaims": [
             {
               "phase": "1B",
@@ -24194,15 +25384,14 @@
               "statTablePage": 61,
               "phase1Discrepancy": "DESCRIPTION_INCOMPLETE"
             }
-          ],
-          "claimCount": 1,
-          "repoPresent": true
+          ]
         },
         {
           "identityKey": "weapon-flame-cannon",
           "canonicalName": "Flame Cannon",
-          "alternateCanonicalNames": [],
           "repoId": "weapon-flame-cannon",
+          "claimCount": 1,
+          "repoPresent": true,
           "sourceClaims": [
             {
               "phase": "1D",
@@ -24212,15 +25401,14 @@
               "statTablePage": 41,
               "phase1Discrepancy": "DESCRIPTION_INCOMPLETE"
             }
-          ],
-          "claimCount": 1,
-          "repoPresent": true
+          ]
         },
         {
           "identityKey": "weapon-flamethrower",
           "canonicalName": "Flamethrower",
-          "alternateCanonicalNames": [],
           "repoId": "weapon-flamethrower",
+          "claimCount": 1,
+          "repoPresent": true,
           "sourceClaims": [
             {
               "phase": "1A",
@@ -24230,15 +25418,14 @@
               "statTablePage": 126,
               "phase1Discrepancy": "DESCRIPTION_INCORRECT"
             }
-          ],
-          "claimCount": 1,
-          "repoPresent": true
+          ]
         },
         {
           "identityKey": "weapon-flash-canister",
           "canonicalName": "R-9 Flash Canister",
-          "alternateCanonicalNames": [],
           "repoId": "weapon-flash-canister",
+          "claimCount": 1,
+          "repoPresent": true,
           "sourceClaims": [
             {
               "phase": "1F",
@@ -24248,15 +25435,14 @@
               "statTablePage": 61,
               "phase1Discrepancy": "DESCRIPTION_INCORRECT"
             }
-          ],
-          "claimCount": 1,
-          "repoPresent": true
+          ]
         },
         {
           "identityKey": "weapon-flechette-launcher",
           "canonicalName": "Flechette Launcher",
-          "alternateCanonicalNames": [],
           "repoId": "weapon-flechette-launcher",
+          "claimCount": 2,
+          "repoPresent": true,
           "sourceClaims": [
             {
               "phase": "1C",
@@ -24274,15 +25460,14 @@
               "statTablePage": 50,
               "phase1Discrepancy": "DESCRIPTION_INCOMPLETE"
             }
-          ],
-          "claimCount": 2,
-          "repoPresent": true
+          ]
         },
         {
           "identityKey": "weapon-frag-grenade",
           "canonicalName": "Grenade, Frag",
-          "alternateCanonicalNames": [],
           "repoId": "weapon-frag-grenade",
+          "claimCount": 1,
+          "repoPresent": true,
           "sourceClaims": [
             {
               "phase": "1A",
@@ -24292,15 +25477,14 @@
               "statTablePage": 127,
               "phase1Discrepancy": "DESCRIPTION_INCORRECT"
             }
-          ],
-          "claimCount": 1,
-          "repoPresent": true
+          ]
         },
         {
           "identityKey": "weapon-gas-grenade",
           "canonicalName": "Gas Grenade",
-          "alternateCanonicalNames": [],
           "repoId": "weapon-gas-grenade",
+          "claimCount": 1,
+          "repoPresent": true,
           "sourceClaims": [
             {
               "phase": "1I",
@@ -24310,15 +25494,14 @@
               "statTablePage": 50,
               "phase1Discrepancy": "DESCRIPTION_INCOMPLETE"
             }
-          ],
-          "claimCount": 1,
-          "repoPresent": true
+          ]
         },
         {
           "identityKey": "weapon-grenade-launcher",
           "canonicalName": "Grenade Launcher",
-          "alternateCanonicalNames": [],
           "repoId": "weapon-grenade-launcher",
+          "claimCount": 1,
+          "repoPresent": true,
           "sourceClaims": [
             {
               "phase": "1A",
@@ -24328,15 +25511,14 @@
               "statTablePage": 126,
               "phase1Discrepancy": "DESCRIPTION_INCOMPLETE"
             }
-          ],
-          "claimCount": 1,
-          "repoPresent": true
+          ]
         },
         {
           "identityKey": "weapon-heavy-blaster-pistol",
           "canonicalName": "Blaster Pistol, Heavy",
-          "alternateCanonicalNames": [],
           "repoId": "weapon-heavy-blaster-pistol",
+          "claimCount": 1,
+          "repoPresent": true,
           "sourceClaims": [
             {
               "phase": "1A",
@@ -24346,15 +25528,14 @@
               "statTablePage": 126,
               "phase1Discrepancy": "DESCRIPTION_INCOMPLETE"
             }
-          ],
-          "claimCount": 1,
-          "repoPresent": true
+          ]
         },
         {
           "identityKey": "weapon-heavy-blaster-rifle",
           "canonicalName": "Blaster Rifle, Heavy",
-          "alternateCanonicalNames": [],
           "repoId": "weapon-heavy-blaster-rifle",
+          "claimCount": 1,
+          "repoPresent": true,
           "sourceClaims": [
             {
               "phase": "1A",
@@ -24364,15 +25545,14 @@
               "statTablePage": 127,
               "phase1Discrepancy": "DESCRIPTION_INCOMPLETE"
             }
-          ],
-          "claimCount": 1,
-          "repoPresent": true
+          ]
         },
         {
           "identityKey": "weapon-heavy-repeating-blaster",
           "canonicalName": "Heavy Repeating Blaster",
-          "alternateCanonicalNames": [],
           "repoId": "weapon-heavy-repeating-blaster",
+          "claimCount": 1,
+          "repoPresent": true,
           "sourceClaims": [
             {
               "phase": "1A",
@@ -24382,15 +25562,31 @@
               "statTablePage": 126,
               "phase1Discrepancy": "DESCRIPTION_INCOMPLETE"
             }
-          ],
+          ]
+        },
+        {
+          "identityKey": "weapon-heavy-sonic-pistol",
+          "canonicalName": "Heavy Sonic Pistol",
+          "repoId": "weapon-heavy-sonic-pistol",
           "claimCount": 1,
-          "repoPresent": true
+          "repoPresent": true,
+          "sourceClaims": [
+            {
+              "phase": "1J",
+              "book": "Knights of the Old Republic Campaign Guide",
+              "canonicalName": "Heavy Sonic Pistol",
+              "descriptionPage": 70,
+              "statTablePage": 68,
+              "phase1Discrepancy": "DESCRIPTION_INCOMPLETE"
+            }
+          ]
         },
         {
           "identityKey": "weapon-heavy-variable-blaster",
           "canonicalName": "Blaster Rifle, Heavy Variable",
-          "alternateCanonicalNames": [],
           "repoId": "weapon-heavy-variable-blaster",
+          "claimCount": 1,
+          "repoPresent": true,
           "sourceClaims": [
             {
               "phase": "1D",
@@ -24400,15 +25596,14 @@
               "statTablePage": 41,
               "phase1Discrepancy": "DESCRIPTION_INCOMPLETE"
             }
-          ],
-          "claimCount": 1,
-          "repoPresent": true
+          ]
         },
         {
           "identityKey": "weapon-hold-out-blaster-pistol",
           "canonicalName": "Blaster Pistol, Hold-Out",
-          "alternateCanonicalNames": [],
           "repoId": "weapon-hold-out-blaster-pistol",
+          "claimCount": 1,
+          "repoPresent": true,
           "sourceClaims": [
             {
               "phase": "1A",
@@ -24418,15 +25613,14 @@
               "statTablePage": 126,
               "phase1Discrepancy": "DESCRIPTION_INCOMPLETE"
             }
-          ],
-          "claimCount": 1,
-          "repoPresent": true
+          ]
         },
         {
           "identityKey": "weapon-incinerator-rifle",
           "canonicalName": "Incinerator Rifle",
-          "alternateCanonicalNames": [],
           "repoId": "weapon-incinerator-rifle",
+          "claimCount": 1,
+          "repoPresent": true,
           "sourceClaims": [
             {
               "phase": "1C",
@@ -24436,15 +25630,14 @@
               "statTablePage": 99,
               "phase1Discrepancy": "DESCRIPTION_INCOMPLETE"
             }
-          ],
-          "claimCount": 1,
-          "repoPresent": true
+          ]
         },
         {
           "identityKey": "weapon-interchangeable-weapon-system",
           "canonicalName": "Interchangeable Weapon System",
-          "alternateCanonicalNames": [],
           "repoId": "weapon-interchangeable-weapon-system",
+          "claimCount": 1,
+          "repoPresent": true,
           "sourceClaims": [
             {
               "phase": "1D",
@@ -24454,15 +25647,31 @@
               "statTablePage": 41,
               "phase1Discrepancy": "DESCRIPTION_INCOMPLETE"
             }
-          ],
+          ]
+        },
+        {
+          "identityKey": "weapon-ion-carbine",
+          "canonicalName": "Ion Carbine",
+          "repoId": "weapon-ion-carbine",
           "claimCount": 1,
-          "repoPresent": true
+          "repoPresent": true,
+          "sourceClaims": [
+            {
+              "phase": "1J",
+              "book": "Knights of the Old Republic Campaign Guide",
+              "canonicalName": "Ion Carbine",
+              "descriptionPage": 69,
+              "statTablePage": 68,
+              "phase1Discrepancy": "DESCRIPTION_INCOMPLETE"
+            }
+          ]
         },
         {
           "identityKey": "weapon-ion-grenade",
           "canonicalName": "Grenade, Ion",
-          "alternateCanonicalNames": [],
           "repoId": "weapon-ion-grenade",
+          "claimCount": 1,
+          "repoPresent": true,
           "sourceClaims": [
             {
               "phase": "1A",
@@ -24472,15 +25681,14 @@
               "statTablePage": 127,
               "phase1Discrepancy": "DESCRIPTION_INCOMPLETE"
             }
-          ],
-          "claimCount": 1,
-          "repoPresent": true
+          ]
         },
         {
           "identityKey": "weapon-ion-pistol",
           "canonicalName": "Ion Pistol",
-          "alternateCanonicalNames": [],
           "repoId": "weapon-ion-pistol",
+          "claimCount": 1,
+          "repoPresent": true,
           "sourceClaims": [
             {
               "phase": "1A",
@@ -24490,15 +25698,14 @@
               "statTablePage": 126,
               "phase1Discrepancy": "DESCRIPTION_INCOMPLETE"
             }
-          ],
-          "claimCount": 1,
-          "repoPresent": true
+          ]
         },
         {
           "identityKey": "weapon-ion-rifle",
           "canonicalName": "Ion Rifle",
-          "alternateCanonicalNames": [],
           "repoId": "weapon-ion-rifle",
+          "claimCount": 1,
+          "repoPresent": true,
           "sourceClaims": [
             {
               "phase": "1A",
@@ -24508,15 +25715,14 @@
               "statTablePage": 127,
               "phase1Discrepancy": "DESCRIPTION_INCOMPLETE"
             }
-          ],
-          "claimCount": 1,
-          "repoPresent": true
+          ]
         },
         {
           "identityKey": "weapon-light-concussion-missile-launcher",
           "canonicalName": "Light Concussion Missile Launcher",
-          "alternateCanonicalNames": [],
           "repoId": "weapon-light-concussion-missile-launcher",
+          "claimCount": 1,
+          "repoPresent": true,
           "sourceClaims": [
             {
               "phase": "1G",
@@ -24526,15 +25732,14 @@
               "statTablePage": null,
               "phase1Discrepancy": "DESCRIPTION_INCOMPLETE"
             }
-          ],
-          "claimCount": 1,
-          "repoPresent": true
+          ]
         },
         {
           "identityKey": "weapon-light-repeating-blaster",
           "canonicalName": "Blaster Rifle, Light Repeating",
-          "alternateCanonicalNames": [],
           "repoId": "weapon-light-repeating-blaster",
+          "claimCount": 1,
+          "repoPresent": true,
           "sourceClaims": [
             {
               "phase": "1A",
@@ -24544,15 +25749,31 @@
               "statTablePage": 127,
               "phase1Discrepancy": "DESCRIPTION_INCOMPLETE"
             }
-          ],
+          ]
+        },
+        {
+          "identityKey": "weapon-lightfoil",
+          "canonicalName": "Lightfoil",
+          "repoId": "weapon-lightfoil",
           "claimCount": 1,
-          "repoPresent": true
+          "repoPresent": true,
+          "sourceClaims": [
+            {
+              "phase": "1J",
+              "book": "Knights of the Old Republic Campaign Guide",
+              "canonicalName": "Lightfoil",
+              "descriptionPage": 65,
+              "statTablePage": 64,
+              "phase1Discrepancy": "DESCRIPTION_INCORRECT"
+            }
+          ]
         },
         {
           "identityKey": "weapon-lightsaber",
           "canonicalName": "Lightsaber",
-          "alternateCanonicalNames": [],
           "repoId": "weapon-lightsaber",
+          "claimCount": 1,
+          "repoPresent": true,
           "sourceClaims": [
             {
               "phase": "1A",
@@ -24562,15 +25783,31 @@
               "statTablePage": 122,
               "phase1Discrepancy": "DESCRIPTION_INCORRECT"
             }
-          ],
+          ]
+        },
+        {
+          "identityKey": "weapon-massassi-lanvarok",
+          "canonicalName": "Massassi Lanvarok",
+          "repoId": "weapon-massassi-lanvarok",
           "claimCount": 1,
-          "repoPresent": true
+          "repoPresent": true,
+          "sourceClaims": [
+            {
+              "phase": "1J",
+              "book": "Knights of the Old Republic Campaign Guide",
+              "canonicalName": "Massassi Lanvarok",
+              "descriptionPage": 69,
+              "statTablePage": 68,
+              "phase1Discrepancy": "DESCRIPTION_INCOMPLETE"
+            }
+          ]
         },
         {
           "identityKey": "weapon-micro-grenade-launcher",
           "canonicalName": "Micro Grenade Launcher",
-          "alternateCanonicalNames": [],
           "repoId": "weapon-micro-grenade-launcher",
+          "claimCount": 1,
+          "repoPresent": true,
           "sourceClaims": [
             {
               "phase": "1H",
@@ -24580,15 +25817,14 @@
               "statTablePage": 51,
               "phase1Discrepancy": "DESCRIPTION_INCOMPLETE"
             }
-          ],
-          "claimCount": 1,
-          "repoPresent": true
+          ]
         },
         {
           "identityKey": "weapon-miniature-proton-torpedo-launcher",
           "canonicalName": "Miniature Proton Torpedo Launcher",
-          "alternateCanonicalNames": [],
           "repoId": "weapon-miniature-proton-torpedo-launcher",
+          "claimCount": 1,
+          "repoPresent": true,
           "sourceClaims": [
             {
               "phase": "1I",
@@ -24598,15 +25834,14 @@
               "statTablePage": 50,
               "phase1Discrepancy": "DESCRIPTION_INCOMPLETE"
             }
-          ],
-          "claimCount": 1,
-          "repoPresent": true
+          ]
         },
         {
           "identityKey": "weapon-missile-launcher",
           "canonicalName": "Missile Launcher",
-          "alternateCanonicalNames": [],
           "repoId": "weapon-missile-launcher",
+          "claimCount": 1,
+          "repoPresent": true,
           "sourceClaims": [
             {
               "phase": "1A",
@@ -24616,15 +25851,14 @@
               "statTablePage": 126,
               "phase1Discrepancy": "DESCRIPTION_INCOMPLETE"
             }
-          ],
-          "claimCount": 1,
-          "repoPresent": true
+          ]
         },
         {
           "identityKey": "weapon-model-434-deathhammer",
           "canonicalName": "Merr-Sonn Model 434 DeathHammer",
-          "alternateCanonicalNames": [],
           "repoId": "weapon-model-434-deathhammer",
+          "claimCount": 1,
+          "repoPresent": true,
           "sourceClaims": [
             {
               "phase": "1B",
@@ -24634,15 +25868,14 @@
               "statTablePage": 61,
               "phase1Discrepancy": "DESCRIPTION_INCOMPLETE"
             }
-          ],
-          "claimCount": 1,
-          "repoPresent": true
+          ]
         },
         {
           "identityKey": "weapon-mortar-launcher",
           "canonicalName": "Mortar Launcher",
-          "alternateCanonicalNames": [],
           "repoId": "weapon-mortar-launcher",
+          "claimCount": 1,
+          "repoPresent": true,
           "sourceClaims": [
             {
               "phase": "1D",
@@ -24652,15 +25885,31 @@
               "statTablePage": 41,
               "phase1Discrepancy": "DESCRIPTION_INCOMPLETE"
             }
-          ],
+          ]
+        },
+        {
+          "identityKey": "weapon-needler",
+          "canonicalName": "Needler",
+          "repoId": "weapon-needler",
           "claimCount": 1,
-          "repoPresent": true
+          "repoPresent": true,
+          "sourceClaims": [
+            {
+              "phase": "1J",
+              "book": "Knights of the Old Republic Campaign Guide",
+              "canonicalName": "Needler",
+              "descriptionPage": 69,
+              "statTablePage": 68,
+              "phase1Discrepancy": "DESCRIPTION_INCORRECT"
+            }
+          ]
         },
         {
           "identityKey": "weapon-net",
           "canonicalName": "Net",
-          "alternateCanonicalNames": [],
           "repoId": "weapon-net",
+          "claimCount": 1,
+          "repoPresent": true,
           "sourceClaims": [
             {
               "phase": "1A",
@@ -24670,15 +25919,14 @@
               "statTablePage": 127,
               "phase1Discrepancy": "DESCRIPTION_INCOMPLETE"
             }
-          ],
-          "claimCount": 1,
-          "repoPresent": true
+          ]
         },
         {
           "identityKey": "weapon-neural-inhibitor",
           "canonicalName": "Neural Inhibitor",
-          "alternateCanonicalNames": [],
           "repoId": "weapon-neural-inhibitor",
+          "claimCount": 1,
+          "repoPresent": true,
           "sourceClaims": [
             {
               "phase": "1H",
@@ -24688,15 +25936,14 @@
               "statTablePage": 51,
               "phase1Discrepancy": "DESCRIPTION_INCOMPLETE"
             }
-          ],
-          "claimCount": 1,
-          "repoPresent": true
+          ]
         },
         {
           "identityKey": "weapon-plx-2m-portable-missile-launcher",
           "canonicalName": "Merr-Sonn PLX-2M Portable Missile Launcher",
-          "alternateCanonicalNames": [],
           "repoId": "weapon-plx-2m-portable-missile-launcher",
+          "claimCount": 1,
+          "repoPresent": true,
           "sourceClaims": [
             {
               "phase": "1I",
@@ -24706,15 +25953,14 @@
               "statTablePage": 50,
               "phase1Discrepancy": "DESCRIPTION_INCOMPLETE"
             }
-          ],
-          "claimCount": 1,
-          "repoPresent": true
+          ]
         },
         {
           "identityKey": "weapon-pulse-rifle",
           "canonicalName": "Pulse Rifle",
-          "alternateCanonicalNames": [],
           "repoId": "weapon-pulse-rifle",
+          "claimCount": 1,
+          "repoPresent": true,
           "sourceClaims": [
             {
               "phase": "1H",
@@ -24724,15 +25970,48 @@
               "statTablePage": 51,
               "phase1Discrepancy": "DESCRIPTION_INCOMPLETE"
             }
-          ],
+          ]
+        },
+        {
+          "identityKey": "weapon-pulse-wave-pistol",
+          "canonicalName": "Pulse-Wave Pistol",
+          "repoId": "weapon-pulse-wave-pistol",
           "claimCount": 1,
-          "repoPresent": true
+          "repoPresent": true,
+          "sourceClaims": [
+            {
+              "phase": "1J",
+              "book": "Knights of the Old Republic Campaign Guide",
+              "canonicalName": "Pulse-Wave Pistol",
+              "descriptionPage": 69,
+              "statTablePage": 68,
+              "phase1Discrepancy": "DESCRIPTION_INCOMPLETE"
+            }
+          ]
+        },
+        {
+          "identityKey": "weapon-pulse-wave-rifle",
+          "canonicalName": "Pulse-Wave Rifle",
+          "repoId": "weapon-pulse-wave-rifle",
+          "claimCount": 1,
+          "repoPresent": true,
+          "sourceClaims": [
+            {
+              "phase": "1J",
+              "book": "Knights of the Old Republic Campaign Guide",
+              "canonicalName": "Pulse-Wave Rifle",
+              "descriptionPage": 69,
+              "statTablePage": 68,
+              "phase1Discrepancy": "DESCRIPTION_INCOMPLETE"
+            }
+          ]
         },
         {
           "identityKey": "weapon-radiation-grenade",
           "canonicalName": "Grenade, Radiation",
-          "alternateCanonicalNames": [],
           "repoId": "weapon-radiation-grenade",
+          "claimCount": 1,
+          "repoPresent": true,
           "sourceClaims": [
             {
               "phase": "1D",
@@ -24742,15 +26021,14 @@
               "statTablePage": 41,
               "phase1Discrepancy": "DESCRIPTION_INCOMPLETE"
             }
-          ],
-          "claimCount": 1,
-          "repoPresent": true
+          ]
         },
         {
           "identityKey": "weapon-rail-detonator-gun",
           "canonicalName": "Rail Detonator Gun",
-          "alternateCanonicalNames": [],
           "repoId": "weapon-rail-detonator-gun",
+          "claimCount": 1,
+          "repoPresent": true,
           "sourceClaims": [
             {
               "phase": "1C",
@@ -24760,15 +26038,48 @@
               "statTablePage": 199,
               "phase1Discrepancy": "DESCRIPTION_INCOMPLETE"
             }
-          ],
+          ]
+        },
+        {
+          "identityKey": "weapon-remote-grenade",
+          "canonicalName": "Remote Grenade",
+          "repoId": "weapon-remote-grenade",
           "claimCount": 1,
-          "repoPresent": true
+          "repoPresent": true,
+          "sourceClaims": [
+            {
+              "phase": "1J",
+              "book": "Knights of the Old Republic Campaign Guide",
+              "canonicalName": "Remote Grenade",
+              "descriptionPage": 180,
+              "statTablePage": 180,
+              "phase1Discrepancy": "DESCRIPTION_INCORRECT"
+            }
+          ]
+        },
+        {
+          "identityKey": "weapon-repeating-blaster-carbine",
+          "canonicalName": "Blaster Carbine, Repeating",
+          "repoId": "weapon-repeating-blaster-carbine",
+          "claimCount": 1,
+          "repoPresent": true,
+          "sourceClaims": [
+            {
+              "phase": "1J",
+              "book": "Knights of the Old Republic Campaign Guide",
+              "canonicalName": "Blaster Carbine, Repeating",
+              "descriptionPage": 67,
+              "statTablePage": 68,
+              "phase1Discrepancy": "DESCRIPTION_INCOMPLETE"
+            }
+          ]
         },
         {
           "identityKey": "weapon-repeating-crossbow",
           "canonicalName": "Crossbow, Repeating",
-          "alternateCanonicalNames": [],
           "repoId": "weapon-repeating-crossbow",
+          "claimCount": 1,
+          "repoPresent": true,
           "sourceClaims": [
             {
               "phase": "1D",
@@ -24778,15 +26089,31 @@
               "statTablePage": 41,
               "phase1Discrepancy": "DESCRIPTION_INCOMPLETE"
             }
-          ],
+          ]
+        },
+        {
+          "identityKey": "weapon-ripper",
+          "canonicalName": "Ripper",
+          "repoId": "weapon-ripper",
           "claimCount": 1,
-          "repoPresent": true
+          "repoPresent": true,
+          "sourceClaims": [
+            {
+              "phase": "1J",
+              "book": "Knights of the Old Republic Campaign Guide",
+              "canonicalName": "Ripper",
+              "descriptionPage": 69,
+              "statTablePage": 68,
+              "phase1Discrepancy": "DESCRIPTION_INCORRECT"
+            }
+          ]
         },
         {
           "identityKey": "weapon-rotary-blaster-cannon",
           "canonicalName": "Rotary Blaster Cannon",
-          "alternateCanonicalNames": [],
           "repoId": "weapon-rotary-blaster-cannon",
+          "claimCount": 1,
+          "repoPresent": true,
           "sourceClaims": [
             {
               "phase": "1D",
@@ -24796,15 +26123,14 @@
               "statTablePage": 41,
               "phase1Discrepancy": "DESCRIPTION_INCOMPLETE"
             }
-          ],
-          "claimCount": 1,
-          "repoPresent": true
+          ]
         },
         {
           "identityKey": "weapon-scattergun",
           "canonicalName": "Scatter Gun",
-          "alternateCanonicalNames": [],
           "repoId": "weapon-scattergun",
+          "claimCount": 1,
+          "repoPresent": true,
           "sourceClaims": [
             {
               "phase": "1D",
@@ -24814,15 +26140,14 @@
               "statTablePage": 41,
               "phase1Discrepancy": "DESCRIPTION_INCOMPLETE"
             }
-          ],
-          "claimCount": 1,
-          "repoPresent": true
+          ]
         },
         {
           "identityKey": "weapon-sg-4-blaster-rifle",
           "canonicalName": "SG-4 Blaster Rifle",
-          "alternateCanonicalNames": [],
           "repoId": "weapon-sg-4-blaster-rifle",
+          "claimCount": 1,
+          "repoPresent": true,
           "sourceClaims": [
             {
               "phase": "1I",
@@ -24832,15 +26157,14 @@
               "statTablePage": 50,
               "phase1Discrepancy": "DESCRIPTION_INCOMPLETE"
             }
-          ],
-          "claimCount": 1,
-          "repoPresent": true
+          ]
         },
         {
           "identityKey": "weapon-siang-lance",
           "canonicalName": "Siang Lance",
-          "alternateCanonicalNames": [],
           "repoId": "weapon-siang-lance",
+          "claimCount": 1,
+          "repoPresent": true,
           "sourceClaims": [
             {
               "phase": "1I",
@@ -24850,15 +26174,14 @@
               "statTablePage": 50,
               "phase1Discrepancy": "DESCRIPTION_INCOMPLETE"
             }
-          ],
-          "claimCount": 1,
-          "repoPresent": true
+          ]
         },
         {
           "identityKey": "weapon-sidearm-blaster-pistol",
           "canonicalName": "Blaster Pistol, Sidearm",
-          "alternateCanonicalNames": [],
           "repoId": "weapon-sidearm-blaster-pistol",
+          "claimCount": 1,
+          "repoPresent": true,
           "sourceClaims": [
             {
               "phase": "1D",
@@ -24868,15 +26191,31 @@
               "statTablePage": 41,
               "phase1Discrepancy": "DESCRIPTION_INCOMPLETE"
             }
-          ],
+          ]
+        },
+        {
+          "identityKey": "weapon-sith-lanvarok",
+          "canonicalName": "Sith Lanvarok",
+          "repoId": "weapon-sith-lanvarok",
           "claimCount": 1,
-          "repoPresent": true
+          "repoPresent": true,
+          "sourceClaims": [
+            {
+              "phase": "1J",
+              "book": "Knights of the Old Republic Campaign Guide",
+              "canonicalName": "Sith Lanvarok",
+              "descriptionPage": 69,
+              "statTablePage": 68,
+              "phase1Discrepancy": "DESCRIPTION_INCORRECT"
+            }
+          ]
         },
         {
           "identityKey": "weapon-sith-sword",
           "canonicalName": "Sith Sword",
-          "alternateCanonicalNames": [],
           "repoId": "weapon-sith-sword",
+          "claimCount": 1,
+          "repoPresent": true,
           "sourceClaims": [
             {
               "phase": "1G",
@@ -24886,15 +26225,14 @@
               "statTablePage": null,
               "phase1Discrepancy": "DESCRIPTION_INCORRECT"
             }
-          ],
-          "claimCount": 1,
-          "repoPresent": true
+          ]
         },
         {
           "identityKey": "weapon-sling",
           "canonicalName": "Sling",
-          "alternateCanonicalNames": [],
           "repoId": "weapon-sling",
+          "claimCount": 1,
+          "repoPresent": true,
           "sourceClaims": [
             {
               "phase": "1A",
@@ -24904,15 +26242,14 @@
               "statTablePage": 127,
               "phase1Discrepancy": "DESCRIPTION_INCOMPLETE"
             }
-          ],
-          "claimCount": 1,
-          "repoPresent": true
+          ]
         },
         {
           "identityKey": "weapon-slugthrower-pistol",
           "canonicalName": "Slugthrower Pistol",
-          "alternateCanonicalNames": [],
           "repoId": "weapon-slugthrower-pistol",
+          "claimCount": 1,
+          "repoPresent": true,
           "sourceClaims": [
             {
               "phase": "1A",
@@ -24922,15 +26259,14 @@
               "statTablePage": 126,
               "phase1Discrepancy": "DESCRIPTION_INCORRECT"
             }
-          ],
-          "claimCount": 1,
-          "repoPresent": true
+          ]
         },
         {
           "identityKey": "weapon-slugthrower-rifle",
           "canonicalName": "Slugthrower Rifle",
-          "alternateCanonicalNames": [],
           "repoId": "weapon-slugthrower-rifle",
+          "claimCount": 1,
+          "repoPresent": true,
           "sourceClaims": [
             {
               "phase": "1A",
@@ -24940,15 +26276,14 @@
               "statTablePage": 127,
               "phase1Discrepancy": "DESCRIPTION_INCORRECT"
             }
-          ],
-          "claimCount": 1,
-          "repoPresent": true
+          ]
         },
         {
           "identityKey": "weapon-smoke-grenade",
           "canonicalName": "Grenade, Smoke",
-          "alternateCanonicalNames": [],
           "repoId": "weapon-smoke-grenade",
+          "claimCount": 1,
+          "repoPresent": true,
           "sourceClaims": [
             {
               "phase": "1D",
@@ -24958,15 +26293,14 @@
               "statTablePage": 41,
               "phase1Discrepancy": "DESCRIPTION_INCOMPLETE"
             }
-          ],
-          "claimCount": 1,
-          "repoPresent": true
+          ]
         },
         {
           "identityKey": "weapon-snap-baton",
           "canonicalName": "Snap Baton",
-          "alternateCanonicalNames": [],
           "repoId": "weapon-snap-baton",
+          "claimCount": 1,
+          "repoPresent": true,
           "sourceClaims": [
             {
               "phase": "1B",
@@ -24976,15 +26310,14 @@
               "statTablePage": 60,
               "phase1Discrepancy": "DESCRIPTION_INCOMPLETE"
             }
-          ],
-          "claimCount": 1,
-          "repoPresent": true
+          ]
         },
         {
           "identityKey": "weapon-snare-pistol",
           "canonicalName": "Snare Pistol",
-          "alternateCanonicalNames": [],
           "repoId": "weapon-snare-pistol",
+          "claimCount": 1,
+          "repoPresent": true,
           "sourceClaims": [
             {
               "phase": "1E",
@@ -24994,15 +26327,14 @@
               "statTablePage": 65,
               "phase1Discrepancy": "DESCRIPTION_INCOMPLETE"
             }
-          ],
-          "claimCount": 1,
-          "repoPresent": true
+          ]
         },
         {
           "identityKey": "weapon-snare-rifle",
           "canonicalName": "Snare Rifle",
-          "alternateCanonicalNames": [],
           "repoId": "weapon-snare-rifle",
+          "claimCount": 1,
+          "repoPresent": true,
           "sourceClaims": [
             {
               "phase": "1H",
@@ -25012,15 +26344,14 @@
               "statTablePage": 51,
               "phase1Discrepancy": "DESCRIPTION_INCOMPLETE"
             }
-          ],
-          "claimCount": 1,
-          "repoPresent": true
+          ]
         },
         {
           "identityKey": "weapon-sniper-blaster-rifle",
           "canonicalName": "Blaster Rifle, Sniper",
-          "alternateCanonicalNames": [],
           "repoId": "weapon-sniper-blaster-rifle",
+          "claimCount": 1,
+          "repoPresent": true,
           "sourceClaims": [
             {
               "phase": "1H",
@@ -25030,15 +26361,65 @@
               "statTablePage": 51,
               "phase1Discrepancy": "DESCRIPTION_INCOMPLETE"
             }
-          ],
+          ]
+        },
+        {
+          "identityKey": "weapon-sonic-disruptor",
+          "canonicalName": "Sonic Disruptor",
+          "repoId": "weapon-sonic-disruptor",
           "claimCount": 1,
-          "repoPresent": true
+          "repoPresent": true,
+          "sourceClaims": [
+            {
+              "phase": "1J",
+              "book": "Knights of the Old Republic Campaign Guide",
+              "canonicalName": "Sonic Disruptor",
+              "descriptionPage": 70,
+              "statTablePage": 68,
+              "phase1Discrepancy": "DESCRIPTION_INCOMPLETE"
+            }
+          ]
+        },
+        {
+          "identityKey": "weapon-sonic-pistol",
+          "canonicalName": "Sonic Pistol",
+          "repoId": "weapon-sonic-pistol",
+          "claimCount": 1,
+          "repoPresent": true,
+          "sourceClaims": [
+            {
+              "phase": "1J",
+              "book": "Knights of the Old Republic Campaign Guide",
+              "canonicalName": "Sonic Pistol",
+              "descriptionPage": 70,
+              "statTablePage": 68,
+              "phase1Discrepancy": "DESCRIPTION_INCORRECT"
+            }
+          ]
+        },
+        {
+          "identityKey": "weapon-sonic-rifle",
+          "canonicalName": "Sonic Rifle",
+          "repoId": "weapon-sonic-rifle",
+          "claimCount": 1,
+          "repoPresent": true,
+          "sourceClaims": [
+            {
+              "phase": "1J",
+              "book": "Knights of the Old Republic Campaign Guide",
+              "canonicalName": "Sonic Rifle",
+              "descriptionPage": 70,
+              "statTablePage": 68,
+              "phase1Discrepancy": "DESCRIPTION_INCORRECT"
+            }
+          ]
         },
         {
           "identityKey": "weapon-sonic-stunner",
           "canonicalName": "Sonic Stunner",
-          "alternateCanonicalNames": [],
           "repoId": "weapon-sonic-stunner",
+          "claimCount": 1,
+          "repoPresent": true,
           "sourceClaims": [
             {
               "phase": "1G",
@@ -25048,15 +26429,14 @@
               "statTablePage": null,
               "phase1Discrepancy": "DESCRIPTION_INCOMPLETE"
             }
-          ],
-          "claimCount": 1,
-          "repoPresent": true
+          ]
         },
         {
           "identityKey": "weapon-sporting-blaster-pistol",
           "canonicalName": "Blaster Pistol, Sporting",
-          "alternateCanonicalNames": [],
           "repoId": "weapon-sporting-blaster-pistol",
+          "claimCount": 1,
+          "repoPresent": true,
           "sourceClaims": [
             {
               "phase": "1A",
@@ -25066,15 +26446,14 @@
               "statTablePage": 126,
               "phase1Discrepancy": "DESCRIPTION_INCOMPLETE"
             }
-          ],
-          "claimCount": 1,
-          "repoPresent": true
+          ]
         },
         {
           "identityKey": "weapon-sporting-blaster-rifle",
           "canonicalName": "Blaster Rifle, Sporting",
-          "alternateCanonicalNames": [],
           "repoId": "weapon-sporting-blaster-rifle",
+          "claimCount": 1,
+          "repoPresent": true,
           "sourceClaims": [
             {
               "phase": "1A",
@@ -25084,15 +26463,14 @@
               "statTablePage": 127,
               "phase1Discrepancy": "DESCRIPTION_INCOMPLETE"
             }
-          ],
-          "claimCount": 1,
-          "repoPresent": true
+          ]
         },
         {
           "identityKey": "weapon-stokhli-spray-stick",
           "canonicalName": "Stokhli Spray Stick",
-          "alternateCanonicalNames": [],
           "repoId": "weapon-stokhli-spray-stick",
+          "claimCount": 1,
+          "repoPresent": true,
           "sourceClaims": [
             {
               "phase": "1C",
@@ -25102,15 +26480,14 @@
               "statTablePage": 99,
               "phase1Discrepancy": "DESCRIPTION_INCOMPLETE"
             }
-          ],
-          "claimCount": 1,
-          "repoPresent": true
+          ]
         },
         {
           "identityKey": "weapon-stun-baton",
           "canonicalName": "Stun Baton",
-          "alternateCanonicalNames": [],
           "repoId": "weapon-stun-baton",
+          "claimCount": 1,
+          "repoPresent": true,
           "sourceClaims": [
             {
               "phase": "1A",
@@ -25120,15 +26497,14 @@
               "statTablePage": 123,
               "phase1Discrepancy": "DESCRIPTION_INCORRECT"
             }
-          ],
-          "claimCount": 1,
-          "repoPresent": true
+          ]
         },
         {
           "identityKey": "weapon-stun-grenade",
           "canonicalName": "Grenade, Stun",
-          "alternateCanonicalNames": [],
           "repoId": "weapon-stun-grenade",
+          "claimCount": 1,
+          "repoPresent": true,
           "sourceClaims": [
             {
               "phase": "1A",
@@ -25138,15 +26514,14 @@
               "statTablePage": 127,
               "phase1Discrepancy": "DESCRIPTION_INCORRECT"
             }
-          ],
-          "claimCount": 1,
-          "repoPresent": true
+          ]
         },
         {
           "identityKey": "weapon-subrepeating-blaster",
           "canonicalName": "Subrepeating Blaster",
-          "alternateCanonicalNames": [],
           "repoId": "weapon-subrepeating-blaster",
+          "claimCount": 1,
+          "repoPresent": true,
           "sourceClaims": [
             {
               "phase": "1H",
@@ -25156,15 +26531,14 @@
               "statTablePage": 51,
               "phase1Discrepancy": "DESCRIPTION_INCOMPLETE"
             }
-          ],
-          "claimCount": 1,
-          "repoPresent": true
+          ]
         },
         {
           "identityKey": "weapon-tactical-tractor-beam",
           "canonicalName": "Tactical Tractor Beam",
-          "alternateCanonicalNames": [],
           "repoId": "weapon-tactical-tractor-beam",
+          "claimCount": 1,
+          "repoPresent": true,
           "sourceClaims": [
             {
               "phase": "1D",
@@ -25174,15 +26548,14 @@
               "statTablePage": 41,
               "phase1Discrepancy": "DESCRIPTION_INCOMPLETE"
             }
-          ],
-          "claimCount": 1,
-          "repoPresent": true
+          ]
         },
         {
           "identityKey": "weapon-targeting-laser",
           "canonicalName": "Targeting Laser",
-          "alternateCanonicalNames": [],
           "repoId": "weapon-targeting-laser",
+          "claimCount": 1,
+          "repoPresent": true,
           "sourceClaims": [
             {
               "phase": "1D",
@@ -25192,15 +26565,14 @@
               "statTablePage": 41,
               "phase1Discrepancy": "DESCRIPTION_INCORRECT"
             }
-          ],
-          "claimCount": 1,
-          "repoPresent": true
+          ]
         },
         {
           "identityKey": "weapon-thermal-detonator",
           "canonicalName": "Thermal Detonator",
-          "alternateCanonicalNames": [],
           "repoId": "weapon-thermal-detonator",
+          "claimCount": 1,
+          "repoPresent": true,
           "sourceClaims": [
             {
               "phase": "1A",
@@ -25210,15 +26582,14 @@
               "statTablePage": 127,
               "phase1Discrepancy": "DESCRIPTION_INCORRECT"
             }
-          ],
-          "claimCount": 1,
-          "repoPresent": true
+          ]
         },
         {
           "identityKey": "weapon-tusken-gaderffii-stick",
           "canonicalName": "Gaderffii",
-          "alternateCanonicalNames": [],
           "repoId": "weapon-tusken-gaderffii-stick",
+          "claimCount": 1,
+          "repoPresent": true,
           "sourceClaims": [
             {
               "phase": "1I",
@@ -25228,15 +26599,14 @@
               "statTablePage": 48,
               "phase1Discrepancy": "DESCRIPTION_INCORRECT"
             }
-          ],
-          "claimCount": 1,
-          "repoPresent": true
+          ]
         },
         {
           "identityKey": "weapon-variable-blaster",
           "canonicalName": "Blaster Rifle, Variable",
-          "alternateCanonicalNames": [],
           "repoId": "weapon-variable-blaster",
+          "claimCount": 1,
+          "repoPresent": true,
           "sourceClaims": [
             {
               "phase": "1D",
@@ -25246,15 +26616,14 @@
               "statTablePage": 41,
               "phase1Discrepancy": "DESCRIPTION_INCOMPLETE"
             }
-          ],
-          "claimCount": 1,
-          "repoPresent": true
+          ]
         },
         {
           "identityKey": "weapon-vibroblade",
           "canonicalName": "Vibroblade",
-          "alternateCanonicalNames": [],
           "repoId": "weapon-vibroblade",
+          "claimCount": 1,
+          "repoPresent": true,
           "sourceClaims": [
             {
               "phase": "1A",
@@ -25264,15 +26633,14 @@
               "statTablePage": 122,
               "phase1Discrepancy": "DESCRIPTION_INCORRECT"
             }
-          ],
-          "claimCount": 1,
-          "repoPresent": true
+          ]
         },
         {
           "identityKey": "weapon-vibrodagger",
           "canonicalName": "Vibrodagger",
-          "alternateCanonicalNames": [],
           "repoId": "weapon-vibrodagger",
+          "claimCount": 1,
+          "repoPresent": true,
           "sourceClaims": [
             {
               "phase": "1A",
@@ -25282,15 +26650,14 @@
               "statTablePage": 122,
               "phase1Discrepancy": "DESCRIPTION_INCORRECT"
             }
-          ],
-          "claimCount": 1,
-          "repoPresent": true
+          ]
         },
         {
           "identityKey": "weapon-vibrosword",
           "canonicalName": "Vibrosword",
-          "alternateCanonicalNames": [],
           "repoId": "weapon-vibrosword",
+          "claimCount": 1,
+          "repoPresent": true,
           "sourceClaims": [
             {
               "phase": "1C",
@@ -25300,15 +26667,14 @@
               "statTablePage": 96,
               "phase1Discrepancy": "DESCRIPTION_INCORRECT"
             }
-          ],
-          "claimCount": 1,
-          "repoPresent": true
+          ]
         },
         {
           "identityKey": "weapon-wookiee-ryyk-blade",
           "canonicalName": "Ryyk Blade",
-          "alternateCanonicalNames": [],
           "repoId": "weapon-wookiee-ryyk-blade",
+          "claimCount": 1,
+          "repoPresent": true,
           "sourceClaims": [
             {
               "phase": "1C",
@@ -25318,15 +26684,14 @@
               "statTablePage": 96,
               "phase1Discrepancy": "DESCRIPTION_INCORRECT"
             }
-          ],
-          "claimCount": 1,
-          "repoPresent": true
+          ]
         },
         {
           "identityKey": "weapon-wrist-blaster",
           "canonicalName": "Blaster, Wrist",
-          "alternateCanonicalNames": [],
           "repoId": "weapon-wrist-blaster",
+          "claimCount": 1,
+          "repoPresent": true,
           "sourceClaims": [
             {
               "phase": "1E",
@@ -25336,15 +26701,14 @@
               "statTablePage": 65,
               "phase1Discrepancy": "DESCRIPTION_INCOMPLETE"
             }
-          ],
-          "claimCount": 1,
-          "repoPresent": true
+          ]
         },
         {
           "identityKey": "weapon-wrist-rocket-launcher",
           "canonicalName": "Wrist Rocket Launcher",
-          "alternateCanonicalNames": [],
           "repoId": "weapon-wrist-rocket-launcher",
+          "claimCount": 1,
+          "repoPresent": true,
           "sourceClaims": [
             {
               "phase": "1B",
@@ -25354,15 +26718,14 @@
               "statTablePage": 61,
               "phase1Discrepancy": "DESCRIPTION_INCOMPLETE"
             }
-          ],
-          "claimCount": 1,
-          "repoPresent": true
+          ]
         },
         {
           "identityKey": "weapon-xerrol-nightstinger",
           "canonicalName": "Xerrol Nightstinger",
-          "alternateCanonicalNames": [],
           "repoId": "weapon-xerrol-nightstinger",
+          "claimCount": 1,
+          "repoPresent": true,
           "sourceClaims": [
             {
               "phase": "1E",
@@ -25372,9 +26735,7 @@
               "statTablePage": 65,
               "phase1Discrepancy": "DESCRIPTION_INCOMPLETE"
             }
-          ],
-          "claimCount": 1,
-          "repoPresent": true
+          ]
         }
       ],
       "crossPublishedIdentityRulings": [
@@ -25448,6 +26809,23 @@
           ],
           "ruling": "ONE_PRODUCTION_IDENTITY_CROSS_SOURCE_MECHANICAL_CONFLICT",
           "productionAction": "REVIEW_PRECEDENCE_BEFORE_CONTENT_MUTATION"
+        },
+        {
+          "canonicalIdentity": "Stunning Gauntlet",
+          "repoId": null,
+          "sources": [
+            {
+              "book": "Clone Wars Campaign Guide",
+              "phase": "1B",
+              "page": 60
+            },
+            {
+              "book": "Knights of the Old Republic Campaign Guide",
+              "phase": "1J",
+              "page": 202
+            }
+          ],
+          "ruling": "ONE_PRODUCTION_IDENTITY_MULTIPLE_CONSISTENT_SOURCE_CLAIMS"
         }
       ],
       "rollingExecutionGuardrails": [
@@ -25459,16 +26837,16 @@
         "Do not convert area-attack mechanics into invented saving throws.",
         "Keep stun and ion mechanics distinct.",
         "Preserve Phase 0 identity/name-normalization rulings.",
-        "Hold BlasTech 500 Riot Gun production content until its cross-source conflict (Clone Wars p. 61 vs Rebellion Era p. 50) is adjudicated."
+        "Hold BlasTech 500 Riot Gun production content until its cross-source conflict (Clone Wars p. 61 vs Rebellion Era p. 50) is adjudicated.",
+        "1J: use the printed display name Arg’garok (Phase 0 identity key Arggarok preserved) when the missing record is created; do not create a second Stunning Gauntlet; do not create a generic powered Mythosaur Axe from Mandalore the Ultimate’s named variant."
       ],
       "repoBaselineAtCertification": "edf8d8e2437a4e7a300487b72e50cd79eafb8708",
       "foldedBy": {
         "executionStatus": "AUTHORITY_ONLY",
         "productionMutations": "none — no weapon records created, no descriptions replaced, no numeric stats changed",
-        "claudeValidation": "148 source claims over 144 unique identities (cross-published: Guard Shoto, Lightsaber Pike, Flechette Launcher, BlasTech 500 Riot Gun); every claim maps to a Phase 0-1 canonical weapon whose sources include the claiming book; repo.present/id/currentName agree with Phase 0 disposition and packs/weapons.db; 1A-1F records byte-identical to the previously folded authority",
+        "claudeValidation": "181 source claims over 176 unique identities (cross-published: Guard Shoto, Lightsaber Pike, Flechette Launcher, BlasTech 500 Riot Gun, Stunning Gauntlet); every claim maps to a Phase 0-1 canonical weapon whose sources include the claiming book; repo.present/id/currentName agree with Phase 0 disposition and packs/weapons.db; 1A-1I records byte-identical to the previously folded authority",
         "note": "canonicalPlayerText incidentally contains printed numbers (costs, dice, DCs, ranges); numeric stat fields remain uncertified until the stats phase.",
         "remainingWeaponBooks": [
-          "Knights of the Old Republic Campaign Guide",
           "Legacy Era Campaign Guide",
           "Unknown Regions"
         ]
@@ -25494,7 +26872,7 @@
     }
   },
   "pendingPhases": [
-    "1 Provenance and canonical content certification — weapons 1A-1I DONE (authority-only); next weapon books: KOTOR, Legacy Era, Unknown Regions; then armor, general equipment families, cybernetics/upgrades/templates, lightsaber components, droid systems",
+    "1 Provenance and canonical content certification — weapons 1A-1J DONE (authority-only); next weapon books: Legacy Era, Unknown Regions; then armor, general equipment families, cybernetics/upgrades/templates, lightsaber components, droid systems",
     "Gated cleanup tranche (0-3D migrations, 0-3E renames/merge, 0-3F template migration, 0-3G weapons.db stragglers, 0-3H droid migration, weapon/equipment REMOVE dependents)",
     "Vehicle/starship item domain census (separate domain)",
     "2 Descriptions",

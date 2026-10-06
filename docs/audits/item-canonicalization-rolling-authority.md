@@ -1333,9 +1333,9 @@ Phase 1 — Canonical provenance and descriptions. Order: Weapons; Armor; Genera
 Phase 1 steps per family: (1) exact sourcebook and page; (2) canonical full player-readable rules text; (3) short derived summary; (4) printed prerequisites and restrictions; (5) repo discrepancy classification; (6) only after certification, authorize production creation/update of Phase 0 ADD/EDIT records.
 
 
-## Phase 1 — Weapons provenance and canonical content (1A–1I)
+## Phase 1 — Weapons provenance and canonical content (1A–1J)
 
-Rolling weapons content authority; later book tranches append here. Status: **ROLLING_PHASE_1_WEAPONS_AUTHORITY_THROUGH_1I** (authority-only; no pack, stat or runtime change). 148 source-book claims map to 144 unique production identities. 114 claims have a repo record, 34 are missing; 26 descriptions are materially incorrect, 88 incomplete. Full text/summaries: JSON `phases["1-weapons-content"].books[].records`; per-identity roll-up: `.uniqueIdentityIndex`.
+Rolling weapons content authority; later book tranches append here. Status: **ROLLING_PHASE_1_WEAPONS_AUTHORITY_THROUGH_1I** (authority-only; no pack, stat or runtime change). 181 source-book claims map to 176 unique production identities. 134 claims have a repo record, 47 are missing; 34 descriptions are materially incorrect, 100 incomplete. Full text/summaries: JSON `phases["1-weapons-content"].books[].records`; per-identity roll-up: `.uniqueIdentityIndex`.
 
 | Phase | Book | Claims | Present | Missing | Incorrect | Incomplete |
 |---|---|--:|--:|--:|--:|--:|
@@ -1348,8 +1348,9 @@ Rolling weapons content authority; later book tranches append here. Status: **RO
 | 1G | Threats of the Galaxy | 4 | 3 | 1 | 1 | 2 |
 | 1H | Scum and Villainy | 9 | 9 | 0 | 0 | 9 |
 | 1I | Rebellion Era Campaign Guide | 12 | 9 | 3 | 1 | 8 |
+| 1J | Knights of the Old Republic Campaign Guide | 33 | 20 | 13 | 8 | 12 |
 
-Remaining weapon books: Knights of the Old Republic Campaign Guide (33 claims), Legacy Era Campaign Guide (14), Unknown Regions (14).
+Remaining weapon books: Legacy Era Campaign Guide (14 claims), Unknown Regions (14).
 
 ### Cross-published identities
 
@@ -1359,6 +1360,7 @@ Remaining weapon books: Knights of the Old Republic Campaign Guide (33 claims), 
 | Lightsaber Pike | `lightsaber-chassis-pike` | Force Unleashed Campaign Guide p. 199; Jedi Academy Training Manual p. 53 | ONE_PRODUCTION_IDENTITY_MULTIPLE_SOURCE_CLAIMS |
 | Flechette Launcher | `weapon-flechette-launcher` | Force Unleashed Campaign Guide p. 199; Rebellion Era Campaign Guide p. 49 | ONE_PRODUCTION_IDENTITY_MULTIPLE_CONSISTENT_SOURCE_CLAIMS |
 | BlasTech 500 Riot Gun | `weapon-espo-500-riot-gun` | Clone Wars Campaign Guide p. 61; Rebellion Era Campaign Guide p. 50 | ONE_PRODUCTION_IDENTITY_CROSS_SOURCE_MECHANICAL_CONFLICT |
+| Stunning Gauntlet | `None` | Clone Wars Campaign Guide p. 60; Knights of the Old Republic Campaign Guide p. 202 | ONE_PRODUCTION_IDENTITY_MULTIPLE_CONSISTENT_SOURCE_CLAIMS |
 
 ### Open cross-source adjudication: BlasTech 500 Riot Gun
 
@@ -1437,6 +1439,46 @@ Certified fields: source book/description page/stat-table page, `canonicalPlayer
 | Slugthrower Pistol | Pistol | 129 | 126 | Table 8-4: Ranged Weapons | `weapon-slugthrower-pistol` | DESCRIPTION_INCORRECT |  |
 | Slugthrower Rifle | Rifle | 129 | 127 | Table 8-4: Ranged Weapons | `weapon-slugthrower-rifle` | DESCRIPTION_INCORRECT |  |
 | Thermal Detonator | Simple Weapon | 129 | 127 | Table 8-4: Ranged Weapons | `weapon-thermal-detonator` | DESCRIPTION_INCORRECT |  |
+
+### 1J — Knights of the Old Republic Campaign Guide
+
+| Weapon (Phase 0 identity) | Published name | Group | Desc p. | Table p. | Repo | Discrepancy | Rename pending |
+|---|---|---|---|---|---|---|---|
+| Arggarok | Arg'garok | Exotic Weapon | 64 | 64 | — | MISSING_RECORD |  |
+| Dire Sword | Dire Sword | Simple Weapon | 65 | 64 | — | MISSING_RECORD |  |
+| Dire Vibroblade | Dire Vibroblade | Advanced Melee Weapon | 65 | 64 | — | MISSING_RECORD |  |
+| Double-Bladed Sword | Double-Bladed Sword | Simple Weapon | 65 | 64 | — | MISSING_RECORD |  |
+| Double Vibroblade | Double Vibroblade | Advanced Melee Weapon | 65 | 64 | — | MISSING_RECORD |  |
+| Fira | Fira | Exotic Weapon | 65 | 64 | — | MISSING_RECORD |  |
+| Lightfoil | Lightfoil | Lightsaber | 65 | 64 | `weapon-lightfoil` | DESCRIPTION_INCORRECT |  |
+| Shockstaff | Shockstaff | Advanced Melee Weapon | 65 | 64 | — | MISSING_RECORD |  |
+| Short Sword | Short Sword | Simple Weapon | 65 | 64 | — | MISSING_RECORD |  |
+| Shyarn | Shyarn | Exotic Weapon | 65 | 64 | — | MISSING_RECORD |  |
+| War Sword | War Sword | Simple Weapon | 66 | 64 | — | MISSING_RECORD |  |
+| Zhaboka | Zhaboka | Exotic Weapon | 66 | 64 | — | MISSING_RECORD |  |
+| Adhesive Grenade | Adhesive Grenade | Simple Weapon | 67 | 68 | `weapon-adhesive-grenade` | DESCRIPTION_INCOMPLETE |  |
+| Aurial Blaster | Aurial Blaster | Exotic Weapon | 67 | 68 | `weapon-aurial-blaster` | DESCRIPTION_INCOMPLETE |  |
+| Blaster Carbine, Repeating | Blaster Carbine, Repeating | Rifle | 67 | 68 | `weapon-repeating-blaster-carbine` | DESCRIPTION_INCOMPLETE | yes (Repeating Blaster Carbine) |
+| Blaster Rifle, Assault | Blaster Rifle, Assault | Rifle | 67 | 68 | `weapon-assault-blaster-rifle` | DESCRIPTION_INCOMPLETE | yes (Assault Blaster Rifle) |
+| Carbonite Rifle | Carbonite Rifle | Heavy Weapon | 69 | 68 | `weapon-carbonite-rifle` | DESCRIPTION_INCOMPLETE |  |
+| CryoBan Grenade | CryoBan Grenade | Simple Weapon | 69 | 68 | `weapon-cryoban-grenade` | DESCRIPTION_INCORRECT |  |
+| Ion Carbine | Ion Carbine | Rifle | 69 | 68 | `weapon-ion-carbine` | DESCRIPTION_INCOMPLETE |  |
+| Sith Lanvarok | Lanvarok, Sith | Exotic Weapon | 69 | 68 | `weapon-sith-lanvarok` | DESCRIPTION_INCORRECT |  |
+| Massassi Lanvarok | Lanvarok, Massassi | Exotic Weapon | 69 | 68 | `weapon-massassi-lanvarok` | DESCRIPTION_INCOMPLETE |  |
+| Needler | Needler | Pistol | 69 | 68 | `weapon-needler` | DESCRIPTION_INCORRECT |  |
+| Pulse-Wave Pistol | Pulse-Wave Pistol | Pistol | 69 | 68 | `weapon-pulse-wave-pistol` | DESCRIPTION_INCOMPLETE |  |
+| Pulse-Wave Rifle | Pulse-Wave Rifle | Rifle | 69 | 68 | `weapon-pulse-wave-rifle` | DESCRIPTION_INCOMPLETE |  |
+| Ripper | Ripper | Pistol | 69 | 68 | `weapon-ripper` | DESCRIPTION_INCORRECT |  |
+| Sonic Disruptor | Sonic Disruptor | Pistol | 70 | 68 | `weapon-sonic-disruptor` | DESCRIPTION_INCOMPLETE |  |
+| Sonic Pistol | Sonic Pistol | Pistol | 70 | 68 | `weapon-sonic-pistol` | DESCRIPTION_INCORRECT |  |
+| Heavy Sonic Pistol | Sonic Pistol, Heavy | Pistol | 70 | 68 | `weapon-heavy-sonic-pistol` | DESCRIPTION_INCOMPLETE |  |
+| Sonic Rifle | Sonic Rifle | Rifle | 70 | 68 | `weapon-sonic-rifle` | DESCRIPTION_INCORRECT |  |
+| Commando Special Rifle | Rifle, Commando Special | Rifle | 180 | 180 | `weapon-commando-special-rifle` | DESCRIPTION_INCOMPLETE |  |
+| Remote Grenade | Grenade, Remote | Simple Weapon | 180 | 180 | `weapon-remote-grenade` | DESCRIPTION_INCORRECT |  |
+| Stunning Gauntlet | Stunning Gauntlet | Simple Weapon | 202 | 202 | — | MISSING_RECORD |  |
+| Mythosaur Axe | Mythosaur Axe | Simple Weapon | 202 | 202 | — | MISSING_RECORD |  |
+
+KOTOR notes: Phase 0 identity `Arggarok` keeps its key; the printed name is Arg’garok and the published spelling is used when the record is created. Stunning Gauntlet (p. 202) is the same identity as Clone Wars p. 60 — one production record. The Mythosaur Axe (p. 202) is the generic weapon; Mandalore the Ultimate’s named powered variant must not become a second generic record.
 
 Retrosaber (1F, p. 50) has no stat-table page: the Jedi Academy Training Manual defines it in prose only (base DC 25, 28 damage, swift-action 2d10 power dial-up), so its stat values need prose-sourced handling in the stats phase.
 
@@ -1598,7 +1640,7 @@ Threats of the Galaxy (1G) weapons (Datadagger p. 13, Light Concussion Missile L
 
 ## Pending phases
 
-- 1 Provenance and canonical content certification — weapons 1A-1I DONE (authority-only); next weapon books: KOTOR, Legacy Era, Unknown Regions; then armor, general equipment families, cybernetics/upgrades/templates, lightsaber components, droid systems
+- 1 Provenance and canonical content certification — weapons 1A-1J DONE (authority-only); next weapon books: Legacy Era, Unknown Regions; then armor, general equipment families, cybernetics/upgrades/templates, lightsaber components, droid systems
 
 - Gated cleanup tranche (0-3D migrations, 0-3E renames/merge, 0-3F template migration, 0-3G weapons.db stragglers, 0-3H droid migration, weapon/equipment REMOVE dependents)
 
