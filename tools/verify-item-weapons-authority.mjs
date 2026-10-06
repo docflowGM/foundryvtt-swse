@@ -517,7 +517,7 @@ if (s2) {
   /** Checks one weapon book against its Phase 1 records. Returns {present, ign, tallies}. */
   const checkBook = (b, p1, label, opts = {}) => {
     const seen = new Set();
-    const t = { present: 0, ign: 0, accurate: 0, inaccurate: 0, arc: 0, area: 0, dbl: 0, auto: 0 };
+    const t = { present: 0, biotech: 0, ign: 0, accurate: 0, inaccurate: 0, arc: 0, area: 0, dbl: 0, auto: 0 };
     for (const r of b.records) {
       const n = r.canonicalName, w = `${label} ${n}`;
       if (seen.has(n)) fail(`${w} duplicate`); seen.add(n);
@@ -549,6 +549,7 @@ if (s2) {
       if (!DR_MODES.has(s.damageReductionInteraction.mode)) fail(`${w} invalid DR mode`);
       if (ql.ignoresDR !== (s.damageReductionInteraction.mode === 'ignore')) fail(`${w} ignoresDR disagrees with damageReductionInteraction.mode`);
       if (ql.ignoresDR) t.ign++;
+      if (s.technologyClassification?.tags?.includes('biotech')) t.biotech++;
       for (const [k, key] of [['accurate', 'accurate'], ['inaccurate', 'inaccurate'], ['arc', 'arc'], ['doubleWeapon', 'dbl'], ['autofireOnly', 'auto']]) if (ql[k]) t[key]++;
       // area tally: the areaEffect quality, or a profile whose geometry is enabled (CR-1 Blast Cannon: conditional splash with areaEffect=false)
       if (ql.areaEffect || s.attackProfiles?.some((x) => x.area?.enabled)) t.area++;
@@ -564,7 +565,7 @@ if (s2) {
       if (!Array.isArray(r.proficiencyRules) || r.proficiencyRules.some((q) => !C.proficiencyRules.fields.every((f) => f in q) || !Array.isArray(q.classifications))) fail(`${w} missing/invalid proficiencyRules`);
       if (s.objectDurability !== null && !(s.objectDurability && C.objectDurability.fields.every((f) => f in s.objectDurability))) fail(`${w} invalid objectDurability`);
       if (!Array.isArray(s.integratedAccessories) || s.integratedAccessories.some((a) => !C.integratedAccessories.fields.every((f) => f in a))) fail(`${w} invalid integratedAccessories`);
-      if (!Array.isArray(s.wieldingRules) || s.wieldingRules.some((q) => !q.id || !(q.effect || q.choice))) fail(`${w} missing/invalid wieldingRules`);
+      if (!Array.isArray(s.wieldingRules) || s.wieldingRules.some((q) => !q.id || !(q.effect || q.choice || q.condition))) fail(`${w} missing/invalid wieldingRules`);
       if (s.stateMachine !== null) {
         const sm = s.stateMachine;
         if (!sm || !Array.isArray(sm.states) || !sm.states.includes(sm.initialState) || !Array.isArray(sm.transitions) || sm.transitions.some((t2) => !sm.states.includes(t2.from) || !sm.states.includes(t2.to))) fail(`${w} invalid stateMachine`);
@@ -572,10 +573,13 @@ if (s2) {
       if (!Array.isArray(s.configurationStates) || s.configurationStates.some((q) => !q.id || !('attackUsable' in q))) fail(`${w} missing/invalid configurationStates`);
       if (!('constructionRules' in s) || !(s.constructionRules === null || typeof s.constructionRules === 'object')) fail(`${w} missing/invalid constructionRules`);
       if (!Array.isArray(s.triggeredEffects) || !same(s.triggeredEffects, (s.attackProfiles || []).flatMap((x) => x.triggeredEffects || []))) fail(`${w} canonicalStats.triggeredEffects must equal the profile-level triggered effects`);
+      if (!(s.technologyClassification && Array.isArray(s.technologyClassification.tags) && Array.isArray(s.technologyClassification.rules))) fail(`${w} missing/invalid technologyClassification`);
+      if (!('deliveryMethod' in s) || !(s.deliveryMethod === null || (s.deliveryMethod && C.deliveryMethod.fields.every((f2) => f2 in s.deliveryMethod)))) fail(`${w} missing/invalid deliveryMethod`);
+      if (!Array.isArray(r.conditionalQualities) || r.conditionalQualities.some((q) => !C.conditionalQualities.shape.every((f2) => f2 in q))) fail(`${w} conditionalQualities must use {quality,state,when,scope,effect}`);
       if (!Array.isArray(s.payloadProfiles)) fail(`${w} missing payloadProfiles`);
       else for (const pl of s.payloadProfiles) {
-        if (!C.payloadProfiles.fields.every((f) => f in pl)) fail(`${w} payload ${pl.id} incomplete`);
-        else { dice(pl.damage, `${w} payload ${pl.id}`); if (!TYPE_MODES.has(pl.damageType.mode) || !STUN_CAP.has(pl.stun.capability)) fail(`${w} payload ${pl.id} invalid damageType/stun`); }
+        if (!C.payloadProfiles.fields.every((f) => f in pl) || !(pl.damage || pl.effect)) fail(`${w} payload ${pl.id} incomplete`);
+        else if (pl.damage) { dice(pl.damage, `${w} payload ${pl.id}`); if (!TYPE_MODES.has(pl.damageType.mode) || !STUN_CAP.has(pl.stun.capability)) fail(`${w} payload ${pl.id} invalid damageType/stun`); }
       }
       if (s.resource.kind !== 'none') {
         for (const k2 of C.resourceLifecycle.fields) if (!(k2 in s.resource) || !(s.resource[k2] === null || typeof s.resource[k2] === 'boolean')) fail(`${w} resource.${k2} must be present as boolean or null`);
@@ -605,8 +609,9 @@ if (s2) {
           if (!TYPE_MODES.has(x.damageType.mode) || (x.damageType.mode === 'unspecified' && x.damageType.types.length)) fail(`${pw} invalid damageType`);
           if (!STUN_CAP.has(x.stun.capability) || !STUN_MODE.has(x.stun.damageMode)) fail(`${pw} invalid stun`);
           stunAct(x.stun, pw);
+          if (!Array.isArray(x.criticalEffects) || x.criticalEffects.some((q) => !C.criticalEffects.fields.every((f2) => f2 in q))) fail(`${pw} invalid criticalEffects`);
           if (!Array.isArray(x.activationRequirements) || x.activationRequirements.some((q) => !q.type)) fail(`${pw} invalid activationRequirements`);
-          if (!Array.isArray(x.triggeredEffects) || x.triggeredEffects.some((q) => !q.trigger || !q.effect)) fail(`${pw} invalid triggeredEffects`);
+          if (!Array.isArray(x.triggeredEffects) || x.triggeredEffects.some((q) => !q.trigger || !(q.effect || q.damage || q.resolution))) fail(`${pw} invalid triggeredEffects`);
           if (x.modifierPolicy !== null && typeof x.modifierPolicy !== 'object') fail(`${pw} invalid modifierPolicy`);
           if (x.rateOfFire !== null && !(Array.isArray(x.rateOfFire) && x.rateOfFire.every((y) => ROF.has(y)))) fail(`${pw} invalid rateOfFire`);
           if (!same(Object.keys(x.qualities).sort(), [...QUALS].sort())) fail(`${pw} quality vocabulary incomplete`);
@@ -618,7 +623,7 @@ if (s2) {
           rangeCheck(x.range, x.qualities, qp, pw);
           if (!Array.isArray(x.conditionalModifiers) || x.conditionalModifiers.some((m) => !C.conditionalModifiers.fields.every((f) => f in m) || !new RegExp(C.conditionalModifiers.targetPattern).test(m.target) || !Number.isInteger(m.value))) fail(`${pw} invalid conditionalModifiers`);
           const pr = x.preparedAttack;
-          if (pr !== null && !C.preparedAttack.fields.every((f) => f in pr)) fail(`${pw} invalid preparedAttack`);
+          if (pr !== null && !(('activationAction' in pr) ? C.preparedAttack.fields.every((f) => f in pr) : (pr.id && Array.isArray(pr.actionCost) && pr.timing))) fail(`${pw} invalid preparedAttack`);
           if (!Array.isArray(x.damageComponents)) fail(`${pw} damageComponents must be an array`);
           else for (const dc of x.damageComponents) {
             if (!C.damageComponents.fields.every((f) => f in dc) || !C.damageComponents.resolutions.includes(dc.resolution)) fail(`${pw} invalid damage component ${dc.id}`);
@@ -657,7 +662,7 @@ if (s2) {
     if (t.ign !== 3) fail(`2A expected 3 ignoresDR lightsabers, found ${t.ign}`);
     if (b.records.find((r) => r.canonicalName === 'Bowcaster').canonicalStats.range.mode !== 'unresolved') fail('2A Bowcaster range must remain unresolved');
     if (b.records.length !== 48 || t.present !== 35) fail('2A Core hard checkpoint must be 48 records / 35 present / 13 missing');
-    if (s2.schemaVersion !== 'weapon-authority-schema-v2.5') fail('schemaVersion must be weapon-authority-schema-v2.5');
+    if (s2.schemaVersion !== 'weapon-authority-schema-v2.6') fail('schemaVersion must be weapon-authority-schema-v2.6');
   }
   // Standalone book authorities (not merged into the rolling record unless the owner says so)
   for (const sb of s2.standaloneBookAuthorities || []) {
@@ -670,7 +675,7 @@ if (s2) {
     const t = checkBook(sa, p1, sb.phase, { mirrorProfiles: !!sb.mirrorProfiles });
     const c = sa.counts;
     if (sa.records.length !== c.canonicalWeaponClaims || sa.records.length !== sb.claims || t.present !== c.repoPresent || sa.records.length - t.present !== c.repoMissing || t.present !== sb.repoPresent) fail(`${sb.phase} counts mismatch`);
-    const tallies = { accurateBaseClaims: t.accurate, inaccurateBaseClaims: t.inaccurate, arcBaseClaims: t.arc, ignoresDRBaseClaims: t.ign, areaEffectClaims: t.area, areaEffectBaseClaims: t.area, doubleWeaponClaims: t.dbl, autofireOnlyClaims: t.auto };
+    const tallies = { accurateBaseClaims: t.accurate, inaccurateBaseClaims: t.inaccurate, arcBaseClaims: t.arc, ignoresDRBaseClaims: t.ign, areaEffectClaims: t.area, areaEffectBaseClaims: t.area, baseAccurateClaims: t.accurate, baseInaccurateClaims: t.inaccurate, baseArcClaims: t.arc, biotechClaims: t.biotech, doubleWeaponClaims: t.dbl, autofireOnlyClaims: t.auto };
     for (const [k, v] of Object.entries(tallies)) if (k in c && c[k] !== v) fail(`${sb.phase} counts.${k} ${c[k]} != computed ${v}`);
     if (sa.verification.sourceTables) { const tableSum = sa.verification.sourceTables.reduce((m, x) => m + x.claims, 0); if (tableSum !== sa.records.length) fail(`${sb.phase} source table claims ${tableSum} != records ${sa.records.length}`); }
     // Lightfoil-style DR bypass must come from the lightsaber group only
@@ -686,6 +691,33 @@ if (s2) {
       for (const n of ['DX-2 Disruptor Pistol', 'DXR-6 Disruptor Rifle']) if (f(n).canonicalStats.attackProfiles[0].firingConstraints?.firesOnAlternatingRounds !== true) fail(`2D ${n} fires only on alternating rounds`);
       for (const n of ['Bryar Rifle', 'CR-1 Blast Cannon', 'Flechette Launcher', 'Stokhli Spray Stick']) if (!same(f(n).qualityParameters.inaccurate.allowedBands, ['pointBlank', 'short', 'medium'])) fail(`2D ${n} Inaccurate must exclude Long only (Core/KOTOR definition)`);
       if (!['Guard Shoto', 'Lightsaber Pike'].every((n) => f(n).canonicalStats.defensiveInteractions.length === 1)) fail('2D Guard Shoto / Lightsaber Pike defensiveInteractions');
+    }
+    if (sb.phase === '2G') {
+      const f = (n) => sa.records.find((r) => r.canonicalName === n);
+      const p0 = (n) => f(n).canonicalStats.attackProfiles[0];
+      const ce = (n) => p0(n).criticalEffects[0];
+      if (ce('Blaster Carbine, Hunting')?.fromDieSize !== 8 || ce('Blaster Carbine, Hunting')?.toDieSize !== 10 || ce('Blaster Rifle, Heavy Assault')?.fromDieSize !== 10 || ce('Blaster Rifle, Heavy Assault')?.toDieSize !== 12) fail('2G critical die-size upgrades (d8->d10 Hunting Carbine, d10->d12 Heavy Assault Rifle)');
+      if (f('Blaster Rifle, Heavy Assault').canonicalStats.baseDamage.dieSize !== 10) fail('2G critical effects must not mutate persistent base damage');
+      const sp = f('Blaster Carbine, Sporting');
+      if (sp.qualities.inaccurate !== true || !sp.conditionalQualities.some((q) => q.quality === 'inaccurate' && q.state === false && q.when?.wieldedHands === 2)) fail('2G Sporting Carbine keeps table Inaccurate with a two-handed conditional override');
+      for (const n of ['Razor Bug', 'Thud Bug']) {
+        const r = f(n);
+        if (!r.canonicalStats.technologyClassification.tags.includes('biotech') || r.canonicalStats.deliveryMethod?.rangeClassification !== 'simple-weapon' || r.canonicalStats.range.profileId !== 'simple-weapons' || r.qualities.thrown) fail(`2G ${n} biotech, thrown by hand but simple-weapon ranges`);
+      }
+      const hb = f('Heavy Blaster Cannon');
+      if (hb.canonicalStats.size !== 'Huge' || hb.canonicalStats.attackProfiles[0].preparedAttack?.temporaryOverrides?.effectiveWeaponSize !== 'Large') fail('2G Heavy Blaster Cannon: canonical Huge with braced effective size Large');
+      const bb = f('Blaster Pistol, Bluebolt').canonicalStats.stun;
+      if (bb.rangeRule?.hardMaxSquares !== 8 || p0('Blaster Pistol, Bluebolt').resourceConsumption.stunUnits !== 2) fail('2G Bluebolt 8-square stun exception and 2-shot stun consumption');
+      if (f('Concealed Dart Launcher').canonicalStats.range.profileId !== 'pistols' || f('Concealed Dart Launcher').canonicalStats.stun.capability !== 'native-stun' || f('Concealed Dart Launcher').canonicalStats.stun.rangeRule?.sourceExceptionToStandardStunSettingSixSquareCap !== true) fail('2G Concealed Dart Launcher pistol ranges and uncapped native stun');
+      if (p0('ARC-9965 Blaster Rifle').resourceConsumption.autofireUnits !== 10) fail('2G ARC-9965 autofire consumes 10 shots');
+      const dbl = f('Blaster Carbine, Double-Barreled');
+      const ds = dbl.canonicalStats.attackProfiles.find((q) => q.id === 'double-shot');
+      if (!ds || ds.resourceConsumption.multiplier !== 2 || !ds.qualities.areaEffect || !ds.firingConstraints.prohibitsMultiShotAbilities || !dbl.canonicalStats.modeProfiles.some((m) => m.attackProfileId === 'double-shot' && m.switchAction === 'swift')) fail('2G Double-Barreled double-shot mode');
+      const sw = f('Shock Whip').canonicalStats.triggeredEffects;
+      if (!sw.some((q) => q.id === 'grabbed-target-shock' && q.attackRollRequired === false && q.damage.formula === '2d6')) fail('2G Shock Whip automatic 2d6 shock');
+      if (f('Tehkla Blade').schemaFamily.branch !== 'melee' || f('Tehkla Blade').publishedName !== "Tehk'la blade") fail("2G Tehkla Blade is a melee weapon with its published spelling");
+      if (!f('Long-Handle Lightsaber').crossPublishedSources?.length || f('Long-Handle Lightsaber').canonicalStats.attackProfiles.length !== 1) fail('2G Long-Handle Lightsaber keeps only its Legacy claim and its cross-publication record');
+      if (f('Long-Handle Lightsaber').canonicalStats.wieldingRules.some((q) => /cannot|only|always/i.test(q.effect || ''))) fail('2G Long-Handle Lightsaber is not permanently two-handed');
     }
     if (sb.phase === '2F') {
       const f = (n) => sa.records.find((r) => r.canonicalName === n);

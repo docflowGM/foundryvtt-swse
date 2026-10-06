@@ -28200,10 +28200,10 @@
       ]
     },
     "2-weapons-numeric-stat-schema": {
-      "status": "WEAPON_AUTHORITY_SCHEMA_V2_5_NORMALIZED_THROUGH_JEDI_ACADEMY (2A Core in rolling; 2B KOTOR, 2C Galaxy at War, 2D Force Unleashed, 2E Clone Wars, 2F Jedi Academy standalone)",
+      "status": "WEAPON_AUTHORITY_SCHEMA_V2_6_NORMALIZED_THROUGH_LEGACY_ERA (2A Core in rolling; 2B KOTOR, 2C Galaxy at War, 2D Force Unleashed, 2E Clone Wars, 2F Jedi Academy, 2G Legacy Era standalone)",
       "family": "weapons",
       "authorityType": "authority-only; no production mutation",
-      "schemaVersion": "weapon-authority-schema-v2.5",
+      "schemaVersion": "weapon-authority-schema-v2.6",
       "goldStandard": true,
       "sourcePolicy": [
         "Supplied published PDF tables, table footnotes, weapon-group rules, and weapon descriptions are final authority for Core weapon mechanics.",
@@ -28613,7 +28613,8 @@
             "conditionalModifiers",
             "activationRequirements",
             "triggeredEffects",
-            "modifierPolicy"
+            "modifierPolicy",
+            "criticalEffects"
           ],
           "kinds": [
             "attack",
@@ -28650,9 +28651,10 @@
               "notes"
             ],
             "rule": "enabled=false for non-area profiles. Geometry is only filled from certified source facts."
-          }
+          },
+          "resourceConsumption": "attackProfiles[].resourceConsumption is null or {resource, baseUnits, multiplier} plus source-specific extras (stunUnits, autofireUnits, reason)."
         },
-        "version": "weapon-authority-schema-v2.5",
+        "version": "weapon-authority-schema-v2.6",
         "qualityParameters": {
           "rule": "Source-specific parameters of a named quality. Core/KOTOR Inaccurate = cannot attack at Long range (allowedBands pointBlank, short, medium). Galaxy at War Inaccurate = cannot attack at Medium or Long range (allowedBands pointBlank, short). Never flatten one book definition into another; an Inaccurate record must state its allowedBands here.",
           "fields": [
@@ -28700,7 +28702,12 @@
             "resourceUnitsOnPreparedAttack",
             "prohibitsMultiShotAbilities"
           ],
-          "rule": "null unless a source publishes a primed/prepared attack (Bryar pistol/rifle). Never create prepared states without source authority."
+          "rule": "null unless a source publishes a primed/prepared attack (Bryar pistol/rifle). Never create prepared states without source authority.",
+          "temporaryOverrides": "Optional preparedAttack.temporaryOverrides (e.g. effectiveWeaponSize) and unpreparedRestriction change effective size or firing eligibility temporarily without mutating canonical size (Heavy Blaster Cannon: Huge, braced as Large by two swift actions).",
+          "shapes": [
+            "delayed: activationAction/matures/expires/consumedBy/damageDiceDelta/resourceUnitsOnPreparedAttack/prohibitsMultiShotAbilities (Bryar)",
+            "immediate: id/actionCost/timing[/temporaryOverrides/unpreparedRestriction] (Heavy Blaster Cannon brace)"
+          ]
         },
         "damageComponents": {
           "field": "attackProfiles[].damageComponents",
@@ -28798,25 +28805,17 @@
           "field": "canonicalStats.payloadProfiles",
           "fields": [
             "id",
-            "label",
-            "costCredits",
-            "weightKg",
-            "availability",
-            "damage",
-            "stun",
-            "damageType",
-            "area",
-            "specialEffects"
+            "label"
           ],
-          "rule": "Launcher ammunition whose selection supplies its own damage/type/cost/effects (Wrist Rocket Launcher: 7 payloads). Payloads are subordinate to the parent weapon identity, never separate weapons. [] by default; Core Grenade Launcher and Galaxy at War Mortar Launcher may later reference a grenade payload family once that family is certified."
+          "rule": "Launcher ammunition whose selection supplies its own damage/type/cost/effects (Wrist Rocket Launcher: 7 payloads). Payloads are subordinate to the parent weapon identity, never separate weapons. [] by default; Core Grenade Launcher and Galaxy at War Mortar Launcher may later reference a grenade payload family once that family is certified. Each payload carries damage (full payload profile) or effect (Concealed Dart Launcher sedative / contact-poison darts)."
         },
         "wieldingRules": {
           "field": "canonicalStats.wieldingRules",
           "fields": [
             "id",
-            "effect|choice"
+            "effect|choice|condition"
           ],
-          "rule": "Source-defined handedness, effective-size choices, ability-bonus substitutions and wielder-size-dependent eligibility. A wielder-size gate on feats/talents (Great Lightsaber) is NOT a prohibition on smaller wielders. [] by default."
+          "rule": "Source-defined handedness, effective-size choices, ability-bonus substitutions and wielder-size-dependent eligibility. A wielder-size gate on feats/talents (Great Lightsaber) is NOT a prohibition on smaller wielders. [] by default. Entries may also be pure condition rules with source-specific keys (Heavy Blaster Cannon: unbraced size restriction, braced effective size)."
         },
         "stateMachine": {
           "field": "canonicalStats.stateMachine",
@@ -28845,7 +28844,7 @@
           "field": "attackProfiles[].triggeredEffects and canonicalStats.triggeredEffects",
           "fields": [
             "trigger",
-            "effect"
+            "effect|damage|resolution"
           ],
           "rule": "Delayed/repeated damage or control effects. canonicalStats.triggeredEffects must equal the profile-level effects in order. modifierPolicy states which modifiers apply to the damage (Lightwhip: base weapon damage only, excluding Strength, half heroic level and all other modifiers). null when not stated."
         },
@@ -28860,6 +28859,42 @@
             "attackUsable"
           ],
           "rule": "Noncombat physical states with transition action and usability (Wan-Shen disassembly, archaic power cord, Snap Baton, Czerka Adventurer). attackUsable null = not stated. [] by default."
+        },
+        "criticalEffects": {
+          "field": "attackProfiles[].criticalEffects",
+          "fields": [
+            "id",
+            "trigger",
+            "operation"
+          ],
+          "rule": "Source-defined critical-hit transformations of base dice (Hunting Blaster Carbine d8 -> d10; Heavy Assault Blaster Rifle d10 -> d12, dice count preserved) without altering persistent base damage. [] by default; never inferred from repo traits."
+        },
+        "conditionalQualities": {
+          "field": "conditionalQualities",
+          "shape": [
+            "quality",
+            "state",
+            "when",
+            "scope",
+            "effect"
+          ],
+          "rule": "A published base quality enabled or disabled under a source condition (Sporting Blaster Carbine: table-Inaccurate, not Inaccurate while wielded two-handed). The base qualities boolean is never erased. Prior entries converted: value -> state, condition -> when.description, scope \"weapon\", effect null."
+        },
+        "technologyClassification": {
+          "field": "canonicalStats.technologyClassification",
+          "fields": [
+            "tags",
+            "rules"
+          ],
+          "rule": "Source-defined technology categories (biotech: Treat Injury instead of Mechanics, Knowledge (life sciences) instead of Knowledge (technology), harder to sense and grasp with the Force, Biotech Specialist instead of Tech Specialist). {tags:[],rules:[]} by default."
+        },
+        "deliveryMethod": {
+          "field": "canonicalStats.deliveryMethod",
+          "fields": [
+            "physicalMethod",
+            "rangeClassification"
+          ],
+          "rule": "Separates physical delivery from the rules range classification (Razor Bug / Thud Bug thrown by hand but use simple-weapon ranges). null by default; qualities.thrown is not set merely because an object is hurled when the source assigns another range classification."
         }
       },
       "executorGuardrails": [
@@ -28890,7 +28925,7 @@
         {
           "phase": "2A",
           "book": "Core Rulebook",
-          "status": "CERTIFIED_PHASE_2A_CORE_GOLD_STANDARD_NUMERIC_STAT_SCHEMA_AUTHORITY (normalized to schema v2.5)",
+          "status": "CERTIFIED_PHASE_2A_CORE_GOLD_STANDARD_NUMERIC_STAT_SCHEMA_AUTHORITY (normalized to schema v2.6)",
           "counts": {
             "claims": 48,
             "uniqueIdentities": 48,
@@ -29102,7 +29137,8 @@
                     "conditionalModifiers": [],
                     "activationRequirements": [],
                     "triggeredEffects": [],
-                    "modifierPolicy": null
+                    "modifierPolicy": null,
+                    "criticalEffects": []
                   }
                 ],
                 "modeProfiles": [],
@@ -29114,7 +29150,12 @@
                 "stateMachine": null,
                 "configurationStates": [],
                 "constructionRules": null,
-                "triggeredEffects": []
+                "triggeredEffects": [],
+                "technologyClassification": {
+                  "tags": [],
+                  "rules": []
+                },
+                "deliveryMethod": null
               },
               "qualities": {
                 "accurate": false,
@@ -29130,18 +29171,30 @@
               "conditionalQualities": [
                 {
                   "quality": "doubleWeapon",
-                  "value": true,
-                  "condition": "quarterstaff form; has all qualities of a quarterstaff"
+                  "state": true,
+                  "when": {
+                    "description": "quarterstaff form; has all qualities of a quarterstaff"
+                  },
+                  "scope": "weapon",
+                  "effect": null
                 },
                 {
                   "quality": "thrown",
-                  "value": true,
-                  "condition": "spear form"
+                  "state": true,
+                  "when": {
+                    "description": "spear form"
+                  },
+                  "scope": "weapon",
+                  "effect": null
                 },
                 {
                   "quality": "reach",
-                  "value": true,
-                  "condition": "whip form; reach 2 squares"
+                  "state": true,
+                  "when": {
+                    "description": "whip form; reach 2 squares"
+                  },
+                  "scope": "weapon",
+                  "effect": null
                 }
               ],
               "operation": null,
@@ -29329,7 +29382,8 @@
                     "conditionalModifiers": [],
                     "activationRequirements": [],
                     "triggeredEffects": [],
-                    "modifierPolicy": null
+                    "modifierPolicy": null,
+                    "criticalEffects": []
                   }
                 ],
                 "modeProfiles": [],
@@ -29341,7 +29395,12 @@
                 "stateMachine": null,
                 "configurationStates": [],
                 "constructionRules": null,
-                "triggeredEffects": []
+                "triggeredEffects": [],
+                "technologyClassification": {
+                  "tags": [],
+                  "rules": []
+                },
+                "deliveryMethod": null
               },
               "qualities": {
                 "accurate": false,
@@ -29537,7 +29596,8 @@
                     "conditionalModifiers": [],
                     "activationRequirements": [],
                     "triggeredEffects": [],
-                    "modifierPolicy": null
+                    "modifierPolicy": null,
+                    "criticalEffects": []
                   }
                 ],
                 "modeProfiles": [],
@@ -29555,7 +29615,12 @@
                 "stateMachine": null,
                 "configurationStates": [],
                 "constructionRules": null,
-                "triggeredEffects": []
+                "triggeredEffects": [],
+                "technologyClassification": {
+                  "tags": [],
+                  "rules": []
+                },
+                "deliveryMethod": null
               },
               "qualities": {
                 "accurate": false,
@@ -29757,7 +29822,8 @@
                     "conditionalModifiers": [],
                     "activationRequirements": [],
                     "triggeredEffects": [],
-                    "modifierPolicy": null
+                    "modifierPolicy": null,
+                    "criticalEffects": []
                   }
                 ],
                 "modeProfiles": [],
@@ -29769,7 +29835,12 @@
                 "stateMachine": null,
                 "configurationStates": [],
                 "constructionRules": null,
-                "triggeredEffects": []
+                "triggeredEffects": [],
+                "technologyClassification": {
+                  "tags": [],
+                  "rules": []
+                },
+                "deliveryMethod": null
               },
               "qualities": {
                 "accurate": false,
@@ -29966,7 +30037,8 @@
                     "conditionalModifiers": [],
                     "activationRequirements": [],
                     "triggeredEffects": [],
-                    "modifierPolicy": null
+                    "modifierPolicy": null,
+                    "criticalEffects": []
                   }
                 ],
                 "modeProfiles": [],
@@ -29978,7 +30050,12 @@
                 "stateMachine": null,
                 "configurationStates": [],
                 "constructionRules": null,
-                "triggeredEffects": []
+                "triggeredEffects": [],
+                "technologyClassification": {
+                  "tags": [],
+                  "rules": []
+                },
+                "deliveryMethod": null
               },
               "qualities": {
                 "accurate": false,
@@ -30187,7 +30264,8 @@
                     "conditionalModifiers": [],
                     "activationRequirements": [],
                     "triggeredEffects": [],
-                    "modifierPolicy": null
+                    "modifierPolicy": null,
+                    "criticalEffects": []
                   }
                 ],
                 "modeProfiles": [],
@@ -30199,7 +30277,12 @@
                 "stateMachine": null,
                 "configurationStates": [],
                 "constructionRules": null,
-                "triggeredEffects": []
+                "triggeredEffects": [],
+                "technologyClassification": {
+                  "tags": [],
+                  "rules": []
+                },
+                "deliveryMethod": null
               },
               "qualities": {
                 "accurate": false,
@@ -30464,7 +30547,8 @@
                     "conditionalModifiers": [],
                     "activationRequirements": [],
                     "triggeredEffects": [],
-                    "modifierPolicy": null
+                    "modifierPolicy": null,
+                    "criticalEffects": []
                   },
                   {
                     "id": "end2",
@@ -30569,7 +30653,8 @@
                     "conditionalModifiers": [],
                     "activationRequirements": [],
                     "triggeredEffects": [],
-                    "modifierPolicy": null
+                    "modifierPolicy": null,
+                    "criticalEffects": []
                   }
                 ],
                 "modeProfiles": [],
@@ -30595,7 +30680,12 @@
                 "stateMachine": null,
                 "configurationStates": [],
                 "constructionRules": null,
-                "triggeredEffects": []
+                "triggeredEffects": [],
+                "technologyClassification": {
+                  "tags": [],
+                  "rules": []
+                },
+                "deliveryMethod": null
               },
               "qualities": {
                 "accurate": false,
@@ -30821,7 +30911,8 @@
                     "conditionalModifiers": [],
                     "activationRequirements": [],
                     "triggeredEffects": [],
-                    "modifierPolicy": null
+                    "modifierPolicy": null,
+                    "criticalEffects": []
                   }
                 ],
                 "modeProfiles": [],
@@ -30833,7 +30924,12 @@
                 "stateMachine": null,
                 "configurationStates": [],
                 "constructionRules": null,
-                "triggeredEffects": []
+                "triggeredEffects": [],
+                "technologyClassification": {
+                  "tags": [],
+                  "rules": []
+                },
+                "deliveryMethod": null
               },
               "qualities": {
                 "accurate": false,
@@ -31029,7 +31125,8 @@
                     "conditionalModifiers": [],
                     "activationRequirements": [],
                     "triggeredEffects": [],
-                    "modifierPolicy": null
+                    "modifierPolicy": null,
+                    "criticalEffects": []
                   }
                 ],
                 "modeProfiles": [],
@@ -31041,7 +31138,12 @@
                 "stateMachine": null,
                 "configurationStates": [],
                 "constructionRules": null,
-                "triggeredEffects": []
+                "triggeredEffects": [],
+                "technologyClassification": {
+                  "tags": [],
+                  "rules": []
+                },
+                "deliveryMethod": null
               },
               "qualities": {
                 "accurate": false,
@@ -31249,7 +31351,8 @@
                     "conditionalModifiers": [],
                     "activationRequirements": [],
                     "triggeredEffects": [],
-                    "modifierPolicy": null
+                    "modifierPolicy": null,
+                    "criticalEffects": []
                   }
                 ],
                 "modeProfiles": [],
@@ -31261,7 +31364,12 @@
                 "stateMachine": null,
                 "configurationStates": [],
                 "constructionRules": null,
-                "triggeredEffects": []
+                "triggeredEffects": [],
+                "technologyClassification": {
+                  "tags": [],
+                  "rules": []
+                },
+                "deliveryMethod": null
               },
               "qualities": {
                 "accurate": false,
@@ -31484,7 +31592,8 @@
                     "conditionalModifiers": [],
                     "activationRequirements": [],
                     "triggeredEffects": [],
-                    "modifierPolicy": null
+                    "modifierPolicy": null,
+                    "criticalEffects": []
                   },
                   {
                     "id": "end2",
@@ -31567,7 +31676,8 @@
                     "conditionalModifiers": [],
                     "activationRequirements": [],
                     "triggeredEffects": [],
-                    "modifierPolicy": null
+                    "modifierPolicy": null,
+                    "criticalEffects": []
                   }
                 ],
                 "modeProfiles": [],
@@ -31579,7 +31689,12 @@
                 "stateMachine": null,
                 "configurationStates": [],
                 "constructionRules": null,
-                "triggeredEffects": []
+                "triggeredEffects": [],
+                "technologyClassification": {
+                  "tags": [],
+                  "rules": []
+                },
+                "deliveryMethod": null
               },
               "qualities": {
                 "accurate": false,
@@ -31787,7 +31902,8 @@
                     "conditionalModifiers": [],
                     "activationRequirements": [],
                     "triggeredEffects": [],
-                    "modifierPolicy": null
+                    "modifierPolicy": null,
+                    "criticalEffects": []
                   }
                 ],
                 "modeProfiles": [],
@@ -31799,7 +31915,12 @@
                 "stateMachine": null,
                 "configurationStates": [],
                 "constructionRules": null,
-                "triggeredEffects": []
+                "triggeredEffects": [],
+                "technologyClassification": {
+                  "tags": [],
+                  "rules": []
+                },
+                "deliveryMethod": null
               },
               "qualities": {
                 "accurate": false,
@@ -31997,7 +32118,8 @@
                     "conditionalModifiers": [],
                     "activationRequirements": [],
                     "triggeredEffects": [],
-                    "modifierPolicy": null
+                    "modifierPolicy": null,
+                    "criticalEffects": []
                   }
                 ],
                 "modeProfiles": [],
@@ -32009,7 +32131,12 @@
                 "stateMachine": null,
                 "configurationStates": [],
                 "constructionRules": null,
-                "triggeredEffects": []
+                "triggeredEffects": [],
+                "technologyClassification": {
+                  "tags": [],
+                  "rules": []
+                },
+                "deliveryMethod": null
               },
               "qualities": {
                 "accurate": false,
@@ -32216,7 +32343,8 @@
                     "conditionalModifiers": [],
                     "activationRequirements": [],
                     "triggeredEffects": [],
-                    "modifierPolicy": null
+                    "modifierPolicy": null,
+                    "criticalEffects": []
                   },
                   {
                     "id": "end2",
@@ -32298,7 +32426,8 @@
                     "conditionalModifiers": [],
                     "activationRequirements": [],
                     "triggeredEffects": [],
-                    "modifierPolicy": null
+                    "modifierPolicy": null,
+                    "criticalEffects": []
                   }
                 ],
                 "modeProfiles": [],
@@ -32310,7 +32439,12 @@
                 "stateMachine": null,
                 "configurationStates": [],
                 "constructionRules": null,
-                "triggeredEffects": []
+                "triggeredEffects": [],
+                "technologyClassification": {
+                  "tags": [],
+                  "rules": []
+                },
+                "deliveryMethod": null
               },
               "qualities": {
                 "accurate": false,
@@ -32504,7 +32638,8 @@
                     "conditionalModifiers": [],
                     "activationRequirements": [],
                     "triggeredEffects": [],
-                    "modifierPolicy": null
+                    "modifierPolicy": null,
+                    "criticalEffects": []
                   }
                 ],
                 "modeProfiles": [],
@@ -32516,7 +32651,12 @@
                 "stateMachine": null,
                 "configurationStates": [],
                 "constructionRules": null,
-                "triggeredEffects": []
+                "triggeredEffects": [],
+                "technologyClassification": {
+                  "tags": [],
+                  "rules": []
+                },
+                "deliveryMethod": null
               },
               "qualities": {
                 "accurate": false,
@@ -32739,7 +32879,8 @@
                     "conditionalModifiers": [],
                     "activationRequirements": [],
                     "triggeredEffects": [],
-                    "modifierPolicy": null
+                    "modifierPolicy": null,
+                    "criticalEffects": []
                   }
                 ],
                 "modeProfiles": [],
@@ -32751,7 +32892,12 @@
                 "stateMachine": null,
                 "configurationStates": [],
                 "constructionRules": null,
-                "triggeredEffects": []
+                "triggeredEffects": [],
+                "technologyClassification": {
+                  "tags": [],
+                  "rules": []
+                },
+                "deliveryMethod": null
               },
               "qualities": {
                 "accurate": false,
@@ -32952,7 +33098,8 @@
                     "conditionalModifiers": [],
                     "activationRequirements": [],
                     "triggeredEffects": [],
-                    "modifierPolicy": null
+                    "modifierPolicy": null,
+                    "criticalEffects": []
                   }
                 ],
                 "modeProfiles": [],
@@ -32964,7 +33111,12 @@
                 "stateMachine": null,
                 "configurationStates": [],
                 "constructionRules": null,
-                "triggeredEffects": []
+                "triggeredEffects": [],
+                "technologyClassification": {
+                  "tags": [],
+                  "rules": []
+                },
+                "deliveryMethod": null
               },
               "qualities": {
                 "accurate": false,
@@ -33165,7 +33317,8 @@
                     "conditionalModifiers": [],
                     "activationRequirements": [],
                     "triggeredEffects": [],
-                    "modifierPolicy": null
+                    "modifierPolicy": null,
+                    "criticalEffects": []
                   }
                 ],
                 "modeProfiles": [],
@@ -33177,7 +33330,12 @@
                 "stateMachine": null,
                 "configurationStates": [],
                 "constructionRules": null,
-                "triggeredEffects": []
+                "triggeredEffects": [],
+                "technologyClassification": {
+                  "tags": [],
+                  "rules": []
+                },
+                "deliveryMethod": null
               },
               "qualities": {
                 "accurate": false,
@@ -33386,7 +33544,8 @@
                     "conditionalModifiers": [],
                     "activationRequirements": [],
                     "triggeredEffects": [],
-                    "modifierPolicy": null
+                    "modifierPolicy": null,
+                    "criticalEffects": []
                   }
                 ],
                 "modeProfiles": [],
@@ -33398,7 +33557,12 @@
                 "stateMachine": null,
                 "configurationStates": [],
                 "constructionRules": null,
-                "triggeredEffects": []
+                "triggeredEffects": [],
+                "technologyClassification": {
+                  "tags": [],
+                  "rules": []
+                },
+                "deliveryMethod": null
               },
               "qualities": {
                 "accurate": false,
@@ -33601,7 +33765,8 @@
                     "conditionalModifiers": [],
                     "activationRequirements": [],
                     "triggeredEffects": [],
-                    "modifierPolicy": null
+                    "modifierPolicy": null,
+                    "criticalEffects": []
                   }
                 ],
                 "modeProfiles": [],
@@ -33613,7 +33778,12 @@
                 "stateMachine": null,
                 "configurationStates": [],
                 "constructionRules": null,
-                "triggeredEffects": []
+                "triggeredEffects": [],
+                "technologyClassification": {
+                  "tags": [],
+                  "rules": []
+                },
+                "deliveryMethod": null
               },
               "qualities": {
                 "accurate": false,
@@ -33880,7 +34050,8 @@
                     "conditionalModifiers": [],
                     "activationRequirements": [],
                     "triggeredEffects": [],
-                    "modifierPolicy": null
+                    "modifierPolicy": null,
+                    "criticalEffects": []
                   }
                 ],
                 "modeProfiles": [],
@@ -33892,7 +34063,12 @@
                 "stateMachine": null,
                 "configurationStates": [],
                 "constructionRules": null,
-                "triggeredEffects": []
+                "triggeredEffects": [],
+                "technologyClassification": {
+                  "tags": [],
+                  "rules": []
+                },
+                "deliveryMethod": null
               },
               "qualities": {
                 "accurate": false,
@@ -34188,7 +34364,8 @@
                     "conditionalModifiers": [],
                     "activationRequirements": [],
                     "triggeredEffects": [],
-                    "modifierPolicy": null
+                    "modifierPolicy": null,
+                    "criticalEffects": []
                   }
                 ],
                 "modeProfiles": [],
@@ -34200,7 +34377,12 @@
                 "stateMachine": null,
                 "configurationStates": [],
                 "constructionRules": null,
-                "triggeredEffects": []
+                "triggeredEffects": [],
+                "technologyClassification": {
+                  "tags": [],
+                  "rules": []
+                },
+                "deliveryMethod": null
               },
               "qualities": {
                 "accurate": false,
@@ -34466,7 +34648,8 @@
                     "conditionalModifiers": [],
                     "activationRequirements": [],
                     "triggeredEffects": [],
-                    "modifierPolicy": null
+                    "modifierPolicy": null,
+                    "criticalEffects": []
                   }
                 ],
                 "modeProfiles": [],
@@ -34478,7 +34661,12 @@
                 "stateMachine": null,
                 "configurationStates": [],
                 "constructionRules": null,
-                "triggeredEffects": []
+                "triggeredEffects": [],
+                "technologyClassification": {
+                  "tags": [],
+                  "rules": []
+                },
+                "deliveryMethod": null
               },
               "qualities": {
                 "accurate": false,
@@ -34749,7 +34937,8 @@
                     "conditionalModifiers": [],
                     "activationRequirements": [],
                     "triggeredEffects": [],
-                    "modifierPolicy": null
+                    "modifierPolicy": null,
+                    "criticalEffects": []
                   }
                 ],
                 "modeProfiles": [],
@@ -34761,7 +34950,12 @@
                 "stateMachine": null,
                 "configurationStates": [],
                 "constructionRules": null,
-                "triggeredEffects": []
+                "triggeredEffects": [],
+                "technologyClassification": {
+                  "tags": [],
+                  "rules": []
+                },
+                "deliveryMethod": null
               },
               "qualities": {
                 "accurate": false,
@@ -35054,7 +35248,8 @@
                     "conditionalModifiers": [],
                     "activationRequirements": [],
                     "triggeredEffects": [],
-                    "modifierPolicy": null
+                    "modifierPolicy": null,
+                    "criticalEffects": []
                   }
                 ],
                 "modeProfiles": [],
@@ -35066,7 +35261,12 @@
                 "stateMachine": null,
                 "configurationStates": [],
                 "constructionRules": null,
-                "triggeredEffects": []
+                "triggeredEffects": [],
+                "technologyClassification": {
+                  "tags": [],
+                  "rules": []
+                },
+                "deliveryMethod": null
               },
               "qualities": {
                 "accurate": false,
@@ -35357,7 +35557,8 @@
                     "conditionalModifiers": [],
                     "activationRequirements": [],
                     "triggeredEffects": [],
-                    "modifierPolicy": null
+                    "modifierPolicy": null,
+                    "criticalEffects": []
                   }
                 ],
                 "modeProfiles": [],
@@ -35369,7 +35570,12 @@
                 "stateMachine": null,
                 "configurationStates": [],
                 "constructionRules": null,
-                "triggeredEffects": []
+                "triggeredEffects": [],
+                "technologyClassification": {
+                  "tags": [],
+                  "rules": []
+                },
+                "deliveryMethod": null
               },
               "qualities": {
                 "accurate": false,
@@ -35632,7 +35838,8 @@
                     "conditionalModifiers": [],
                     "activationRequirements": [],
                     "triggeredEffects": [],
-                    "modifierPolicy": null
+                    "modifierPolicy": null,
+                    "criticalEffects": []
                   }
                 ],
                 "modeProfiles": [],
@@ -35644,7 +35851,12 @@
                 "stateMachine": null,
                 "configurationStates": [],
                 "constructionRules": null,
-                "triggeredEffects": []
+                "triggeredEffects": [],
+                "technologyClassification": {
+                  "tags": [],
+                  "rules": []
+                },
+                "deliveryMethod": null
               },
               "qualities": {
                 "accurate": false,
@@ -35939,7 +36151,8 @@
                     "conditionalModifiers": [],
                     "activationRequirements": [],
                     "triggeredEffects": [],
-                    "modifierPolicy": null
+                    "modifierPolicy": null,
+                    "criticalEffects": []
                   }
                 ],
                 "modeProfiles": [],
@@ -35951,7 +36164,12 @@
                 "stateMachine": null,
                 "configurationStates": [],
                 "constructionRules": null,
-                "triggeredEffects": []
+                "triggeredEffects": [],
+                "technologyClassification": {
+                  "tags": [],
+                  "rules": []
+                },
+                "deliveryMethod": null
               },
               "qualities": {
                 "accurate": false,
@@ -36245,7 +36463,8 @@
                     "conditionalModifiers": [],
                     "activationRequirements": [],
                     "triggeredEffects": [],
-                    "modifierPolicy": null
+                    "modifierPolicy": null,
+                    "criticalEffects": []
                   }
                 ],
                 "modeProfiles": [],
@@ -36257,7 +36476,12 @@
                 "stateMachine": null,
                 "configurationStates": [],
                 "constructionRules": null,
-                "triggeredEffects": []
+                "triggeredEffects": [],
+                "technologyClassification": {
+                  "tags": [],
+                  "rules": []
+                },
+                "deliveryMethod": null
               },
               "qualities": {
                 "accurate": false,
@@ -36554,7 +36778,8 @@
                     "conditionalModifiers": [],
                     "activationRequirements": [],
                     "triggeredEffects": [],
-                    "modifierPolicy": null
+                    "modifierPolicy": null,
+                    "criticalEffects": []
                   }
                 ],
                 "modeProfiles": [],
@@ -36566,7 +36791,12 @@
                 "stateMachine": null,
                 "configurationStates": [],
                 "constructionRules": null,
-                "triggeredEffects": []
+                "triggeredEffects": [],
+                "technologyClassification": {
+                  "tags": [],
+                  "rules": []
+                },
+                "deliveryMethod": null
               },
               "qualities": {
                 "accurate": false,
@@ -36830,7 +37060,8 @@
                     "conditionalModifiers": [],
                     "activationRequirements": [],
                     "triggeredEffects": [],
-                    "modifierPolicy": null
+                    "modifierPolicy": null,
+                    "criticalEffects": []
                   }
                 ],
                 "modeProfiles": [],
@@ -36842,7 +37073,12 @@
                 "stateMachine": null,
                 "configurationStates": [],
                 "constructionRules": null,
-                "triggeredEffects": []
+                "triggeredEffects": [],
+                "technologyClassification": {
+                  "tags": [],
+                  "rules": []
+                },
+                "deliveryMethod": null
               },
               "qualities": {
                 "accurate": false,
@@ -37133,7 +37369,8 @@
                     "conditionalModifiers": [],
                     "activationRequirements": [],
                     "triggeredEffects": [],
-                    "modifierPolicy": null
+                    "modifierPolicy": null,
+                    "criticalEffects": []
                   }
                 ],
                 "modeProfiles": [],
@@ -37145,7 +37382,12 @@
                 "stateMachine": null,
                 "configurationStates": [],
                 "constructionRules": null,
-                "triggeredEffects": []
+                "triggeredEffects": [],
+                "technologyClassification": {
+                  "tags": [],
+                  "rules": []
+                },
+                "deliveryMethod": null
               },
               "qualities": {
                 "accurate": false,
@@ -37413,7 +37655,8 @@
                     "conditionalModifiers": [],
                     "activationRequirements": [],
                     "triggeredEffects": [],
-                    "modifierPolicy": null
+                    "modifierPolicy": null,
+                    "criticalEffects": []
                   }
                 ],
                 "modeProfiles": [],
@@ -37425,7 +37668,12 @@
                 "stateMachine": null,
                 "configurationStates": [],
                 "constructionRules": null,
-                "triggeredEffects": []
+                "triggeredEffects": [],
+                "technologyClassification": {
+                  "tags": [],
+                  "rules": []
+                },
+                "deliveryMethod": null
               },
               "qualities": {
                 "accurate": false,
@@ -37641,7 +37889,8 @@
                     "conditionalModifiers": [],
                     "activationRequirements": [],
                     "triggeredEffects": [],
-                    "modifierPolicy": null
+                    "modifierPolicy": null,
+                    "criticalEffects": []
                   }
                 ],
                 "modeProfiles": [],
@@ -37653,7 +37902,12 @@
                 "stateMachine": null,
                 "configurationStates": [],
                 "constructionRules": null,
-                "triggeredEffects": []
+                "triggeredEffects": [],
+                "technologyClassification": {
+                  "tags": [],
+                  "rules": []
+                },
+                "deliveryMethod": null
               },
               "qualities": {
                 "accurate": false,
@@ -37879,7 +38133,8 @@
                     "conditionalModifiers": [],
                     "activationRequirements": [],
                     "triggeredEffects": [],
-                    "modifierPolicy": null
+                    "modifierPolicy": null,
+                    "criticalEffects": []
                   }
                 ],
                 "modeProfiles": [],
@@ -37891,7 +38146,12 @@
                 "stateMachine": null,
                 "configurationStates": [],
                 "constructionRules": null,
-                "triggeredEffects": []
+                "triggeredEffects": [],
+                "technologyClassification": {
+                  "tags": [],
+                  "rules": []
+                },
+                "deliveryMethod": null
               },
               "qualities": {
                 "accurate": false,
@@ -38149,7 +38409,8 @@
                     "conditionalModifiers": [],
                     "activationRequirements": [],
                     "triggeredEffects": [],
-                    "modifierPolicy": null
+                    "modifierPolicy": null,
+                    "criticalEffects": []
                   }
                 ],
                 "modeProfiles": [],
@@ -38161,7 +38422,12 @@
                 "stateMachine": null,
                 "configurationStates": [],
                 "constructionRules": null,
-                "triggeredEffects": []
+                "triggeredEffects": [],
+                "technologyClassification": {
+                  "tags": [],
+                  "rules": []
+                },
+                "deliveryMethod": null
               },
               "qualities": {
                 "accurate": false,
@@ -38177,23 +38443,39 @@
               "conditionalQualities": [
                 {
                   "quality": "rangeProfile",
-                  "value": "thrown-weapons",
-                  "condition": "thrown by hand"
+                  "state": "thrown-weapons",
+                  "when": {
+                    "description": "thrown by hand"
+                  },
+                  "scope": "weapon",
+                  "effect": null
                 },
                 {
                   "quality": "rangeProfile",
-                  "value": "simple-weapons",
-                  "condition": "hurled by atlatl"
+                  "state": "simple-weapons",
+                  "when": {
+                    "description": "hurled by atlatl"
+                  },
+                  "scope": "weapon",
+                  "effect": null
                 },
                 {
                   "quality": "accurate",
-                  "value": true,
-                  "condition": "hurled by cesta"
+                  "state": true,
+                  "when": {
+                    "description": "hurled by cesta"
+                  },
+                  "scope": "weapon",
+                  "effect": null
                 },
                 {
                   "quality": "rangeProfile",
-                  "value": "simple-weapons",
-                  "condition": "hurled by cesta"
+                  "state": "simple-weapons",
+                  "when": {
+                    "description": "hurled by cesta"
+                  },
+                  "scope": "weapon",
+                  "effect": null
                 }
               ],
               "operation": null,
@@ -38447,7 +38729,8 @@
                     "conditionalModifiers": [],
                     "activationRequirements": [],
                     "triggeredEffects": [],
-                    "modifierPolicy": null
+                    "modifierPolicy": null,
+                    "criticalEffects": []
                   }
                 ],
                 "modeProfiles": [],
@@ -38459,7 +38742,12 @@
                 "stateMachine": null,
                 "configurationStates": [],
                 "constructionRules": null,
-                "triggeredEffects": []
+                "triggeredEffects": [],
+                "technologyClassification": {
+                  "tags": [],
+                  "rules": []
+                },
+                "deliveryMethod": null
               },
               "qualities": {
                 "accurate": false,
@@ -38733,7 +39021,8 @@
                     "conditionalModifiers": [],
                     "activationRequirements": [],
                     "triggeredEffects": [],
-                    "modifierPolicy": null
+                    "modifierPolicy": null,
+                    "criticalEffects": []
                   }
                 ],
                 "modeProfiles": [],
@@ -38745,7 +39034,12 @@
                 "stateMachine": null,
                 "configurationStates": [],
                 "constructionRules": null,
-                "triggeredEffects": []
+                "triggeredEffects": [],
+                "technologyClassification": {
+                  "tags": [],
+                  "rules": []
+                },
+                "deliveryMethod": null
               },
               "qualities": {
                 "accurate": false,
@@ -39040,7 +39334,8 @@
                     "conditionalModifiers": [],
                     "activationRequirements": [],
                     "triggeredEffects": [],
-                    "modifierPolicy": null
+                    "modifierPolicy": null,
+                    "criticalEffects": []
                   }
                 ],
                 "modeProfiles": [],
@@ -39052,7 +39347,12 @@
                 "stateMachine": null,
                 "configurationStates": [],
                 "constructionRules": null,
-                "triggeredEffects": []
+                "triggeredEffects": [],
+                "technologyClassification": {
+                  "tags": [],
+                  "rules": []
+                },
+                "deliveryMethod": null
               },
               "qualities": {
                 "accurate": false,
@@ -39329,7 +39629,8 @@
                     "conditionalModifiers": [],
                     "activationRequirements": [],
                     "triggeredEffects": [],
-                    "modifierPolicy": null
+                    "modifierPolicy": null,
+                    "criticalEffects": []
                   }
                 ],
                 "modeProfiles": [],
@@ -39341,7 +39642,12 @@
                 "stateMachine": null,
                 "configurationStates": [],
                 "constructionRules": null,
-                "triggeredEffects": []
+                "triggeredEffects": [],
+                "technologyClassification": {
+                  "tags": [],
+                  "rules": []
+                },
+                "deliveryMethod": null
               },
               "qualities": {
                 "accurate": false,
@@ -39612,7 +39918,8 @@
                     "conditionalModifiers": [],
                     "activationRequirements": [],
                     "triggeredEffects": [],
-                    "modifierPolicy": null
+                    "modifierPolicy": null,
+                    "criticalEffects": []
                   }
                 ],
                 "modeProfiles": [],
@@ -39624,7 +39931,12 @@
                 "stateMachine": null,
                 "configurationStates": [],
                 "constructionRules": null,
-                "triggeredEffects": []
+                "triggeredEffects": [],
+                "technologyClassification": {
+                  "tags": [],
+                  "rules": []
+                },
+                "deliveryMethod": null
               },
               "qualities": {
                 "accurate": false,
@@ -39893,7 +40205,8 @@
                     "conditionalModifiers": [],
                     "activationRequirements": [],
                     "triggeredEffects": [],
-                    "modifierPolicy": null
+                    "modifierPolicy": null,
+                    "criticalEffects": []
                   }
                 ],
                 "modeProfiles": [],
@@ -39905,7 +40218,12 @@
                 "stateMachine": null,
                 "configurationStates": [],
                 "constructionRules": null,
-                "triggeredEffects": []
+                "triggeredEffects": [],
+                "technologyClassification": {
+                  "tags": [],
+                  "rules": []
+                },
+                "deliveryMethod": null
               },
               "qualities": {
                 "accurate": false,
@@ -40177,7 +40495,8 @@
                     "conditionalModifiers": [],
                     "activationRequirements": [],
                     "triggeredEffects": [],
-                    "modifierPolicy": null
+                    "modifierPolicy": null,
+                    "criticalEffects": []
                   }
                 ],
                 "modeProfiles": [],
@@ -40189,7 +40508,12 @@
                 "stateMachine": null,
                 "configurationStates": [],
                 "constructionRules": null,
-                "triggeredEffects": []
+                "triggeredEffects": [],
+                "technologyClassification": {
+                  "tags": [],
+                  "rules": []
+                },
+                "deliveryMethod": null
               },
               "qualities": {
                 "accurate": false,
@@ -40448,7 +40772,8 @@
                     "conditionalModifiers": [],
                     "activationRequirements": [],
                     "triggeredEffects": [],
-                    "modifierPolicy": null
+                    "modifierPolicy": null,
+                    "criticalEffects": []
                   }
                 ],
                 "modeProfiles": [],
@@ -40460,7 +40785,12 @@
                 "stateMachine": null,
                 "configurationStates": [],
                 "constructionRules": null,
-                "triggeredEffects": []
+                "triggeredEffects": [],
+                "technologyClassification": {
+                  "tags": [],
+                  "rules": []
+                },
+                "deliveryMethod": null
               },
               "qualities": {
                 "accurate": false,
@@ -40728,7 +41058,8 @@
                     "conditionalModifiers": [],
                     "activationRequirements": [],
                     "triggeredEffects": [],
-                    "modifierPolicy": null
+                    "modifierPolicy": null,
+                    "criticalEffects": []
                   }
                 ],
                 "modeProfiles": [],
@@ -40740,7 +41071,12 @@
                 "stateMachine": null,
                 "configurationStates": [],
                 "constructionRules": null,
-                "triggeredEffects": []
+                "triggeredEffects": [],
+                "technologyClassification": {
+                  "tags": [],
+                  "rules": []
+                },
+                "deliveryMethod": null
               },
               "qualities": {
                 "accurate": false,
@@ -41010,7 +41346,8 @@
                     "conditionalModifiers": [],
                     "activationRequirements": [],
                     "triggeredEffects": [],
-                    "modifierPolicy": null
+                    "modifierPolicy": null,
+                    "criticalEffects": []
                   }
                 ],
                 "modeProfiles": [],
@@ -41022,7 +41359,12 @@
                 "stateMachine": null,
                 "configurationStates": [],
                 "constructionRules": null,
-                "triggeredEffects": []
+                "triggeredEffects": [],
+                "technologyClassification": {
+                  "tags": [],
+                  "rules": []
+                },
+                "deliveryMethod": null
               },
               "qualities": {
                 "accurate": false,
@@ -41294,7 +41636,8 @@
                     "conditionalModifiers": [],
                     "activationRequirements": [],
                     "triggeredEffects": [],
-                    "modifierPolicy": null
+                    "modifierPolicy": null,
+                    "criticalEffects": []
                   }
                 ],
                 "modeProfiles": [],
@@ -41306,7 +41649,12 @@
                 "stateMachine": null,
                 "configurationStates": [],
                 "constructionRules": null,
-                "triggeredEffects": []
+                "triggeredEffects": [],
+                "technologyClassification": {
+                  "tags": [],
+                  "rules": []
+                },
+                "deliveryMethod": null
               },
               "qualities": {
                 "accurate": false,
@@ -41569,7 +41917,8 @@
                     "conditionalModifiers": [],
                     "activationRequirements": [],
                     "triggeredEffects": [],
-                    "modifierPolicy": null
+                    "modifierPolicy": null,
+                    "criticalEffects": []
                   }
                 ],
                 "modeProfiles": [],
@@ -41581,7 +41930,12 @@
                 "stateMachine": null,
                 "configurationStates": [],
                 "constructionRules": null,
-                "triggeredEffects": []
+                "triggeredEffects": [],
+                "technologyClassification": {
+                  "tags": [],
+                  "rules": []
+                },
+                "deliveryMethod": null
               },
               "qualities": {
                 "accurate": false,
@@ -41642,7 +41996,8 @@
           "Not adopted: the earlier addendum reshaping (rateOfFire object, stun.available/mode/rangeOverride, operatingModes.available, ammunition object, range min/max).",
           "Schema v2.3 (Force Unleashed): range.penaltyApplication, preparedAttack, damageComponents, firingConstraints, defensiveInteractions, add-dice/area-toggle conditional damage applied to Core, KOTOR and Galaxy at War as structural defaults; Sonic Disruptor specialRateOfFire expressed as firingConstraints (Special ROF and operation block preserved); Core Electrostaff and KOTOR Shockstaff lightsaber-vs-object-DR facts backfilled into defensiveInteractions from their existing operation data.",
           "Schema v2.4 (Clone Wars): modifier/inherited damage, proficiencyRules, objectDurability, integratedAccessories, range.hardMaxSquares, resource lifecycle keys, payloadProfiles, conditionalModifiers applied to Core, KOTOR, Galaxy at War and Force Unleashed as structural defaults. Backfilled from existing certified data only: KOTOR Stunning Gauntlet profile damage inherited; Core Electrostaff objectDurability.damageReduction 20; proficiencyRules migrated from operation facts (KOTOR Arg'garok and Massassi Lanvarok, Force Unleashed Ryyk Blade, Core Bowcaster); conditionalModifiers for Galaxy at War ICWS sniper (-2 at unmodified point-blank), Force Unleashed Power Hammer (-2 with Double/Triple Attack, Rapid Strike) and KOTOR Arg'garok (-5 below Strength 15). Original operation keys are preserved. Grenade-payload references for Core Grenade Launcher / Mortar Launcher not made (family not yet certified).",
-          "Schema v2.5 (Jedi Academy): wieldingRules, stateMachine, activationRequirements, expanded conditionalModifier targets (attack/damage renamed attackRoll/damageRoll), triggeredEffects + modifierPolicy, stun.activation, constructionRules, configurationStates applied to Core, KOTOR, Galaxy at War, Force Unleashed and Clone Wars as structural defaults. Backfilled from existing certified data only (operation keys preserved): Core Bayonet, KOTOR Lightfoil, Force Unleashed Vibrosword, Clone Wars Garrote wieldingRules; Clone Wars Garrote triggeredEffects (repeat base damage + condition track step); Clone Wars Snap Baton and Czerka Adventurer configurationStates; stun.activation for every stun weapon. Jedi Academy file aliases normalized: attackResolution.mode \"normal\" -> \"standard\", modeProfiles attackProfile -> attackProfileId."
+          "Schema v2.5 (Jedi Academy): wieldingRules, stateMachine, activationRequirements, expanded conditionalModifier targets (attack/damage renamed attackRoll/damageRoll), triggeredEffects + modifierPolicy, stun.activation, constructionRules, configurationStates applied to Core, KOTOR, Galaxy at War, Force Unleashed and Clone Wars as structural defaults. Backfilled from existing certified data only (operation keys preserved): Core Bayonet, KOTOR Lightfoil, Force Unleashed Vibrosword, Clone Wars Garrote wieldingRules; Clone Wars Garrote triggeredEffects (repeat base damage + condition track step); Clone Wars Snap Baton and Czerka Adventurer configurationStates; stun.activation for every stun weapon. Jedi Academy file aliases normalized: attackResolution.mode \"normal\" -> \"standard\", modeProfiles attackProfile -> attackProfileId.",
+          "Schema v2.6 (Legacy Era): criticalEffects, standardized conditionalQualities, technologyClassification, deliveryMethod, preparedAttack temporary overrides applied to Core, KOTOR, Galaxy at War, Force Unleashed, Clone Wars and Jedi Academy as structural defaults; existing conditionalQualities converted to {quality,state,when,scope,effect}. Legacy file aliases normalized (see its schemaNormalization); Tehk'la Blade schemaFamily.branch corrected to melee. No source-certified criticalEffects, technology classes or delivery methods existed on prior books to backfill."
         ]
       },
       "standaloneBookAuthorities": [
@@ -41717,6 +42072,20 @@
           "mirrorProfiles": false,
           "specialRateOfFireAllowed": [],
           "note": "Book-only authority by owner instruction. Introduces schema v2.5. Guard Shoto / Lightsaber Pike / Long-Handle Lightsaber are cross-published identities; no precedence chosen."
+        },
+        {
+          "phase": "2G",
+          "book": "Legacy Era Campaign Guide",
+          "file": "data/audits/item-weapons-phase-2g-legacy-era-standalone-authority.json",
+          "doc": "docs/audits/item-weapons-phase-2g-legacy-era-standalone-authority.md",
+          "status": "LEGACY_ERA_PHASE_2G_STANDALONE_CERTIFIED",
+          "claims": 14,
+          "repoPresent": 12,
+          "repoMissing": 2,
+          "rollingMergeAuthorized": false,
+          "mirrorProfiles": false,
+          "specialRateOfFireAllowed": [],
+          "note": "Book-only authority by owner instruction. Introduces schema v2.6. Long-Handle Lightsaber is cross-published with Jedi Academy (same identity; Long Haft Form stays on the Jedi Academy claim)."
         }
       ],
       "pendingSchemaDecision": {
@@ -41727,7 +42096,7 @@
   },
   "pendingPhases": [
     "1 Provenance and canonical content certification — weapons COMPLETE (1A-1L, authority-only); next within Phase 1: armor, general equipment families, cybernetics/upgrades/templates, lightsaber components, droid systems; weapon numeric/stat/schema certification precedes any creation of the 53 missing weapons",
-    "Phase 2 weapons numeric/stat/schema certification — 2A Core DONE (schema v2.1), 2B KOTOR, 2C Galaxy at War, 2D Force Unleashed, 2E Clone Wars and 2F Jedi Academy DONE (standalone book authorities, schema v2.5); next books in order: Legacy Era (14), Unknown Regions (14), Rebellion Era (12), Scum and Villainy (9), Galaxy of Intrigue (4), Threats of the Galaxy (4); then reconcile all 203 identities; Bowcaster range and BlasTech 500 Riot Gun conflict remain gated",
+    "Phase 2 weapons numeric/stat/schema certification — 2A Core DONE (schema v2.1), 2B KOTOR, 2C Galaxy at War, 2D Force Unleashed, 2E Clone Wars, 2F Jedi Academy and 2G Legacy Era DONE (standalone book authorities, schema v2.6); next books in order: Unknown Regions (14), Rebellion Era (12), Scum and Villainy (9), Galaxy of Intrigue (4), Threats of the Galaxy (4); then reconcile all 203 identities; Bowcaster range and BlasTech 500 Riot Gun conflict remain gated",
     "Gated cleanup tranche (0-3D migrations, 0-3E renames/merge, 0-3F template migration, 0-3G weapons.db stragglers, 0-3H droid migration, weapon/equipment REMOVE dependents)",
     "Vehicle/starship item domain census (separate domain)",
     "2 Descriptions",

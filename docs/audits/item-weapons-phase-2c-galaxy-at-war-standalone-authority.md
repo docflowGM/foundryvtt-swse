@@ -482,3 +482,4 @@ Claude may update/append the standalone authority files and schema-verifier/docu
 - Schema v2.3 structural defaults added to every record (`range.penaltyApplication`, `preparedAttack`, `damageComponents`, `firingConstraints`, `defensiveInteractions`); no published fact changed and Galaxy at War’s Medium+Long Inaccurate definition is untouched.
 - Schema v2.4 structural defaults added; ICWS sniper -2 at unmodified point-blank is now a `conditionalModifier` (operation key preserved). Galaxy at War Inaccurate semantics untouched.
 - Schema v2.5 structural defaults added; conditional-modifier targets renamed to `attackRoll`/`damageRoll`; `stun.activation` backfilled from each record stun capability.
+- Schema v2.6 structural defaults added; no conditional qualities existed to convert.

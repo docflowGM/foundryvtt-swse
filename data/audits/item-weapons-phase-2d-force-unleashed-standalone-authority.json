@@ -264,7 +264,8 @@
             "conditionalModifiers": [],
             "activationRequirements": [],
             "triggeredEffects": [],
-            "modifierPolicy": null
+            "modifierPolicy": null,
+            "criticalEffects": []
           }
         ],
         "modeProfiles": [],
@@ -276,7 +277,12 @@
         "stateMachine": null,
         "configurationStates": [],
         "constructionRules": null,
-        "triggeredEffects": []
+        "triggeredEffects": [],
+        "technologyClassification": {
+          "tags": [],
+          "rules": []
+        },
+        "deliveryMethod": null
       },
       "qualities": {
         "accurate": false,
@@ -488,7 +494,8 @@
             "conditionalModifiers": [],
             "activationRequirements": [],
             "triggeredEffects": [],
-            "modifierPolicy": null
+            "modifierPolicy": null,
+            "criticalEffects": []
           }
         ],
         "modeProfiles": [],
@@ -508,7 +515,12 @@
         "stateMachine": null,
         "configurationStates": [],
         "constructionRules": null,
-        "triggeredEffects": []
+        "triggeredEffects": [],
+        "technologyClassification": {
+          "tags": [],
+          "rules": []
+        },
+        "deliveryMethod": null
       },
       "qualities": {
         "accurate": false,
@@ -733,7 +745,8 @@
             ],
             "activationRequirements": [],
             "triggeredEffects": [],
-            "modifierPolicy": null
+            "modifierPolicy": null,
+            "criticalEffects": []
           }
         ],
         "modeProfiles": [],
@@ -745,7 +758,12 @@
         "stateMachine": null,
         "configurationStates": [],
         "constructionRules": null,
-        "triggeredEffects": []
+        "triggeredEffects": [],
+        "technologyClassification": {
+          "tags": [],
+          "rules": []
+        },
+        "deliveryMethod": null
       },
       "qualities": {
         "accurate": false,
@@ -962,7 +980,8 @@
             "conditionalModifiers": [],
             "activationRequirements": [],
             "triggeredEffects": [],
-            "modifierPolicy": null
+            "modifierPolicy": null,
+            "criticalEffects": []
           }
         ],
         "modeProfiles": [],
@@ -974,7 +993,12 @@
         "stateMachine": null,
         "configurationStates": [],
         "constructionRules": null,
-        "triggeredEffects": []
+        "triggeredEffects": [],
+        "technologyClassification": {
+          "tags": [],
+          "rules": []
+        },
+        "deliveryMethod": null
       },
       "qualities": {
         "accurate": false,
@@ -1201,7 +1225,8 @@
             "conditionalModifiers": [],
             "activationRequirements": [],
             "triggeredEffects": [],
-            "modifierPolicy": null
+            "modifierPolicy": null,
+            "criticalEffects": []
           },
           {
             "id": "end2",
@@ -1285,7 +1310,8 @@
             "conditionalModifiers": [],
             "activationRequirements": [],
             "triggeredEffects": [],
-            "modifierPolicy": null
+            "modifierPolicy": null,
+            "criticalEffects": []
           }
         ],
         "modeProfiles": [],
@@ -1297,7 +1323,12 @@
         "stateMachine": null,
         "configurationStates": [],
         "constructionRules": null,
-        "triggeredEffects": []
+        "triggeredEffects": [],
+        "technologyClassification": {
+          "tags": [],
+          "rules": []
+        },
+        "deliveryMethod": null
       },
       "qualities": {
         "accurate": false,
@@ -1515,7 +1546,8 @@
             "conditionalModifiers": [],
             "activationRequirements": [],
             "triggeredEffects": [],
-            "modifierPolicy": null
+            "modifierPolicy": null,
+            "criticalEffects": []
           }
         ],
         "modeProfiles": [],
@@ -1532,7 +1564,12 @@
         "stateMachine": null,
         "configurationStates": [],
         "constructionRules": null,
-        "triggeredEffects": []
+        "triggeredEffects": [],
+        "technologyClassification": {
+          "tags": [],
+          "rules": []
+        },
+        "deliveryMethod": null
       },
       "qualities": {
         "accurate": false,
@@ -1820,7 +1857,8 @@
             "conditionalModifiers": [],
             "activationRequirements": [],
             "triggeredEffects": [],
-            "modifierPolicy": null
+            "modifierPolicy": null,
+            "criticalEffects": []
           }
         ],
         "modeProfiles": [],
@@ -1832,7 +1870,12 @@
         "stateMachine": null,
         "configurationStates": [],
         "constructionRules": null,
-        "triggeredEffects": []
+        "triggeredEffects": [],
+        "technologyClassification": {
+          "tags": [],
+          "rules": []
+        },
+        "deliveryMethod": null
       },
       "qualities": {
         "accurate": true,
@@ -2130,7 +2173,8 @@
             "conditionalModifiers": [],
             "activationRequirements": [],
             "triggeredEffects": [],
-            "modifierPolicy": null
+            "modifierPolicy": null,
+            "criticalEffects": []
           }
         ],
         "modeProfiles": [],
@@ -2142,7 +2186,12 @@
         "stateMachine": null,
         "configurationStates": [],
         "constructionRules": null,
-        "triggeredEffects": []
+        "triggeredEffects": [],
+        "technologyClassification": {
+          "tags": [],
+          "rules": []
+        },
+        "deliveryMethod": null
       },
       "qualities": {
         "accurate": false,
@@ -2444,7 +2493,8 @@
             "conditionalModifiers": [],
             "activationRequirements": [],
             "triggeredEffects": [],
-            "modifierPolicy": null
+            "modifierPolicy": null,
+            "criticalEffects": []
           }
         ],
         "modeProfiles": [],
@@ -2456,7 +2506,12 @@
         "stateMachine": null,
         "configurationStates": [],
         "constructionRules": null,
-        "triggeredEffects": []
+        "triggeredEffects": [],
+        "technologyClassification": {
+          "tags": [],
+          "rules": []
+        },
+        "deliveryMethod": null
       },
       "qualities": {
         "accurate": false,
@@ -2749,7 +2804,8 @@
             "conditionalModifiers": [],
             "activationRequirements": [],
             "triggeredEffects": [],
-            "modifierPolicy": null
+            "modifierPolicy": null,
+            "criticalEffects": []
           }
         ],
         "modeProfiles": [],
@@ -2761,7 +2817,12 @@
         "stateMachine": null,
         "configurationStates": [],
         "constructionRules": null,
-        "triggeredEffects": []
+        "triggeredEffects": [],
+        "technologyClassification": {
+          "tags": [],
+          "rules": []
+        },
+        "deliveryMethod": null
       },
       "qualities": {
         "accurate": false,
@@ -3050,7 +3111,8 @@
             "conditionalModifiers": [],
             "activationRequirements": [],
             "triggeredEffects": [],
-            "modifierPolicy": null
+            "modifierPolicy": null,
+            "criticalEffects": []
           }
         ],
         "modeProfiles": [],
@@ -3062,7 +3124,12 @@
         "stateMachine": null,
         "configurationStates": [],
         "constructionRules": null,
-        "triggeredEffects": []
+        "triggeredEffects": [],
+        "technologyClassification": {
+          "tags": [],
+          "rules": []
+        },
+        "deliveryMethod": null
       },
       "qualities": {
         "accurate": false,
@@ -3364,7 +3431,8 @@
             "conditionalModifiers": [],
             "activationRequirements": [],
             "triggeredEffects": [],
-            "modifierPolicy": null
+            "modifierPolicy": null,
+            "criticalEffects": []
           }
         ],
         "modeProfiles": [],
@@ -3376,7 +3444,12 @@
         "stateMachine": null,
         "configurationStates": [],
         "constructionRules": null,
-        "triggeredEffects": []
+        "triggeredEffects": [],
+        "technologyClassification": {
+          "tags": [],
+          "rules": []
+        },
+        "deliveryMethod": null
       },
       "qualities": {
         "accurate": false,
@@ -3656,7 +3729,8 @@
             "conditionalModifiers": [],
             "activationRequirements": [],
             "triggeredEffects": [],
-            "modifierPolicy": null
+            "modifierPolicy": null,
+            "criticalEffects": []
           }
         ],
         "modeProfiles": [],
@@ -3668,7 +3742,12 @@
         "stateMachine": null,
         "configurationStates": [],
         "constructionRules": null,
-        "triggeredEffects": []
+        "triggeredEffects": [],
+        "technologyClassification": {
+          "tags": [],
+          "rules": []
+        },
+        "deliveryMethod": null
       },
       "qualities": {
         "accurate": false,
@@ -4002,7 +4081,8 @@
             "conditionalModifiers": [],
             "activationRequirements": [],
             "triggeredEffects": [],
-            "modifierPolicy": null
+            "modifierPolicy": null,
+            "criticalEffects": []
           }
         ],
         "modeProfiles": [],
@@ -4014,7 +4094,12 @@
         "stateMachine": null,
         "configurationStates": [],
         "constructionRules": null,
-        "triggeredEffects": []
+        "triggeredEffects": [],
+        "technologyClassification": {
+          "tags": [],
+          "rules": []
+        },
+        "deliveryMethod": null
       },
       "qualities": {
         "accurate": false,
@@ -4312,7 +4397,8 @@
             "conditionalModifiers": [],
             "activationRequirements": [],
             "triggeredEffects": [],
-            "modifierPolicy": null
+            "modifierPolicy": null,
+            "criticalEffects": []
           }
         ],
         "modeProfiles": [],
@@ -4324,7 +4410,12 @@
         "stateMachine": null,
         "configurationStates": [],
         "constructionRules": null,
-        "triggeredEffects": []
+        "triggeredEffects": [],
+        "technologyClassification": {
+          "tags": [],
+          "rules": []
+        },
+        "deliveryMethod": null
       },
       "qualities": {
         "accurate": false,
@@ -4558,7 +4649,8 @@
             "conditionalModifiers": [],
             "activationRequirements": [],
             "triggeredEffects": [],
-            "modifierPolicy": null
+            "modifierPolicy": null,
+            "criticalEffects": []
           }
         ],
         "modeProfiles": [],
@@ -4578,7 +4670,12 @@
         "stateMachine": null,
         "configurationStates": [],
         "constructionRules": null,
-        "triggeredEffects": []
+        "triggeredEffects": [],
+        "technologyClassification": {
+          "tags": [],
+          "rules": []
+        },
+        "deliveryMethod": null
       },
       "qualities": {
         "accurate": false,
@@ -4858,7 +4955,8 @@
             "conditionalModifiers": [],
             "activationRequirements": [],
             "triggeredEffects": [],
-            "modifierPolicy": null
+            "modifierPolicy": null,
+            "criticalEffects": []
           }
         ],
         "modeProfiles": [],
@@ -4870,7 +4968,12 @@
         "stateMachine": null,
         "configurationStates": [],
         "constructionRules": null,
-        "triggeredEffects": []
+        "triggeredEffects": [],
+        "technologyClassification": {
+          "tags": [],
+          "rules": []
+        },
+        "deliveryMethod": null
       },
       "qualities": {
         "accurate": false,
@@ -5150,7 +5253,8 @@
             "conditionalModifiers": [],
             "activationRequirements": [],
             "triggeredEffects": [],
-            "modifierPolicy": null
+            "modifierPolicy": null,
+            "criticalEffects": []
           }
         ],
         "modeProfiles": [],
@@ -5162,7 +5266,12 @@
         "stateMachine": null,
         "configurationStates": [],
         "constructionRules": null,
-        "triggeredEffects": []
+        "triggeredEffects": [],
+        "technologyClassification": {
+          "tags": [],
+          "rules": []
+        },
+        "deliveryMethod": null
       },
       "qualities": {
         "accurate": false,
@@ -5215,6 +5324,7 @@
     "change": "resource.consumption: null added where the book publishes no special consumption rule (structural default; no published fact changed).",
     "recordsDefaulted": 18,
     "v2.4": "weapon-authority-schema-v2.4 structural defaults: range.hardMaxSquares, resource lifecycle keys, profile conditionalModifiers, record proficiencyRules, canonicalStats payloadProfiles/objectDurability/integratedAccessories; qualityParameters.inaccurate.allowedBands where only longAllowed was stated.",
-    "v2.5": "weapon-authority-schema-v2.5 structural defaults: stun.activation, profile activationRequirements/triggeredEffects/modifierPolicy, canonicalStats wieldingRules/stateMachine/configurationStates/constructionRules/triggeredEffects, conditionalModifiers target vocabulary (attack->attackRoll, damage->damageRoll), defensiveInteractions id/effect."
+    "v2.5": "weapon-authority-schema-v2.5 structural defaults: stun.activation, profile activationRequirements/triggeredEffects/modifierPolicy, canonicalStats wieldingRules/stateMachine/configurationStates/constructionRules/triggeredEffects, conditionalModifiers target vocabulary (attack->attackRoll, damage->damageRoll), defensiveInteractions id/effect.",
+    "v2.6": "weapon-authority-schema-v2.6 structural defaults: profile criticalEffects [], record technologyClassification {tags:[],rules:[]}, deliveryMethod null, conditionalQualities standardized to {quality,state,when,scope,effect}."
   }
 }
