@@ -1,0 +1,532 @@
+{
+  "schemaVersion": "weapon-semantic-tags-lightsaber-rolling-v1",
+  "phase": "4B",
+  "family": "weapons",
+  "categoryBatch": "Lightsaber",
+  "status": "WEAPON_TAG_PHASE_4B_LIGHTSABER_ROUND_1_PLANNER_ADJUDICATED",
+  "authorityOnly": true,
+  "productionMutationAuthorized": false,
+  "purpose": "Rolling Lightsaber semantic authority using the standard Lightsaber as the recommendation baseline and preserving explicit variant advantages/tradeoffs.",
+  "baseline": {
+    "repository": "docflowGM/foundryvtt-swse",
+    "branch": "claude/dazzling-meitner-czyh1x",
+    "commit": "8b99a62ff34b7726261866569b9845d9f5dc144f",
+    "phase3DStatus": "WEAPON_PHASE_3D_GLOBAL_AUTHORITY_FROZEN",
+    "phase3B": {
+      "path": "data/audits/item-weapons-phase-3b-canonical-authority.json",
+      "gitBlobSha": "e1f19068526e773a700496976403628c24d34b51"
+    }
+  },
+  "vocabularyPolicy": {
+    "rule": "Every value in any tag-bearing field (finalTags, sharedTags, advantageTags, tradeoffTags, conditionalSynergyTags[].tag) must be an exact tag already used by at least one certified feat or certified talent. No weapon-only tags, aliases, pseudo-tags, ontology labels, or new vocabulary are permitted.",
+    "derivedAllowedTagCount": 183,
+    "noNewWeaponVocabulary": true,
+    "negativeMechanicRule": "A penalty or disadvantage must not be encoded as a positive finalTag. Negative interactions belong in tradeoffTags and relativeToStandard.cons.",
+    "ontologyGapPolicy": "Mechanics that cannot be expressed faithfully with the existing 183 feat/talent-used tags must remain plain-text unrepresentedMechanics entries. They are not tags and must never be copied into system.tags."
+  },
+  "lightsaberComparisonPolicy": {
+    "baselineIdentityKey": "weapon-lightsaber",
+    "baselineCanonicalName": "Lightsaber",
+    "baselineDamage": "2d8",
+    "sharedTags": [
+      "lightsaber",
+      "melee",
+      "offense_melee"
+    ],
+    "systemDesignContext": "Jedi characters start with the standard lightsaber by default in this project.",
+    "variantSelectionRule": "Do not recommend a variant merely because it is a Lightsaber. A variant should outrank the standard baseline only when one or more of its actual advantages align with character/build signals and its tradeoffs do not materially conflict with them.",
+    "sharedMechanicNotUsedAsDifferentiator": [
+      "Lightsaber-group DR bypass/ignoresDR behavior"
+    ]
+  },
+  "categoryCensus": {
+    "canonicalLightsaberIdentities": 16,
+    "repoPresent": 16,
+    "repoMissing": 0
+  },
+  "rollingProgress": {
+    "round": 1,
+    "adjudicatedThisRound": 8,
+    "adjudicatedTotal": 8,
+    "remaining": 8,
+    "firstCanonicalName": "Crossguard Lightsaber",
+    "lastCanonicalName": "Lightsaber Pike",
+    "nextCanonicalName": "Lightsaber, Archaic",
+    "totalFinalTagAssignmentsThisRound": 31,
+    "distinctTagsUsedThisRound": 9,
+    "tagsUsedThisRound": [
+      "attack_of_opportunity",
+      "block",
+      "deflect",
+      "lightsaber",
+      "lightsaber_polearm",
+      "melee",
+      "offense_melee",
+      "positioning",
+      "precision"
+    ],
+    "unrepresentedMechanicInstancesThisRound": 6,
+    "unrepresentedMechanicDescriptionsThisRound": [
+      "Increases reach by 1 square.",
+      "Lightsabers do not ignore the guard shoto's damage reduction.",
+      "May be treated as a Small weapon whenever beneficial.",
+      "The phrik-alloy haft is not subject to lightsaber DR bypass."
+    ]
+  },
+  "implementationContract": {
+    "semanticAuthority": "planner",
+    "claudeMayChangeFinalTags": false,
+    "claudeMayChangeTradeoffTags": false,
+    "claudeMayChangeRelativeComparison": false,
+    "runtimeCodeMutationAuthorized": false,
+    "productionMutationAuthorized": false,
+    "requiredRepoTargets": [
+      "data/audits/item-weapons-phase-4b-lightsaber-semantic-rolling.json",
+      "docs/audits/item-weapons-phase-4b-lightsaber-semantic-rolling.md"
+    ],
+    "claudeMayCreateNewTags": false,
+    "unrepresentedMechanicsAreTags": false
+  },
+  "assignments": [
+    {
+      "identityKey": "lightsaber-chassis-crossguard",
+      "canonicalName": "Crossguard Lightsaber",
+      "repo": {
+        "present": true,
+        "id": "lightsaber-chassis-crossguard"
+      },
+      "source": {
+        "book": "Jedi Academy Training Manual",
+        "descriptionPage": 52,
+        "statTablePage": 52
+      },
+      "canonicalMechanicSummary": "Standard-damage lightsaber that improves successive Block checks in a round from the normal cumulative -5 to cumulative -2, but imposes -2 on Deflect checks.",
+      "sharedTags": [
+        "lightsaber",
+        "melee",
+        "offense_melee"
+      ],
+      "advantageTags": [
+        "block"
+      ],
+      "tradeoffTags": [
+        "deflect"
+      ],
+      "finalTags": [
+        "lightsaber",
+        "melee",
+        "offense_melee",
+        "block"
+      ],
+      "rationale": {
+        "lightsaber": "Canonical Lightsaber-group weapon.",
+        "melee": "Its canonical attack profile is melee.",
+        "offense_melee": "It deals normal lightsaber melee damage.",
+        "block": "Its defining advantage directly improves repeated Block checks."
+      },
+      "relativeToStandard": {
+        "pros": [
+          "Repeated Block checks degrade much more slowly: cumulative -2 instead of cumulative -5."
+        ],
+        "cons": [
+          "Use the Force checks made with Deflect take a -2 penalty."
+        ],
+        "sameAsStandard": [
+          "2d8 base damage."
+        ],
+        "recommendationFit": "Prefer for Block-heavy defensive Jedi; avoid elevating it for Deflect-focused characters."
+      },
+      "conditionalSynergyTags": [],
+      "unrepresentedMechanics": []
+    },
+    {
+      "identityKey": "lightsaber-chassis-dueling",
+      "canonicalName": "Dueling Lightsaber",
+      "repo": {
+        "present": true,
+        "id": "lightsaber-chassis-dueling"
+      },
+      "source": {
+        "book": "Jedi Academy Training Manual",
+        "descriptionPage": 52,
+        "statTablePage": 52
+      },
+      "canonicalMechanicSummary": "Standard-damage curved-hilt lightsaber granting +1 equipment bonus on attacks of opportunity while wielded one-handed.",
+      "sharedTags": [
+        "lightsaber",
+        "melee",
+        "offense_melee"
+      ],
+      "advantageTags": [
+        "attack_of_opportunity",
+        "precision"
+      ],
+      "tradeoffTags": [],
+      "finalTags": [
+        "lightsaber",
+        "melee",
+        "offense_melee",
+        "attack_of_opportunity",
+        "precision"
+      ],
+      "rationale": {
+        "lightsaber": "Canonical Lightsaber-group weapon.",
+        "melee": "Its canonical attack profile is melee.",
+        "offense_melee": "It deals normal lightsaber melee damage.",
+        "attack_of_opportunity": "Its explicit special benefit applies to attacks of opportunity.",
+        "precision": "It grants a direct +1 equipment bonus to the qualifying attack roll."
+      },
+      "relativeToStandard": {
+        "pros": [
+          "+1 equipment bonus on attacks of opportunity while wielded one-handed."
+        ],
+        "cons": [
+          "Its special benefit is inactive when the qualifying one-handed condition is not met."
+        ],
+        "sameAsStandard": [
+          "2d8 base damage."
+        ],
+        "recommendationFit": "Prefer for one-handed Jedi builds that deliberately generate or capitalize on attacks of opportunity."
+      },
+      "conditionalSynergyTags": [],
+      "unrepresentedMechanics": []
+    },
+    {
+      "identityKey": "lightsaber-chassis-guard-shoto",
+      "canonicalName": "Guard Shoto",
+      "repo": {
+        "present": true,
+        "id": "lightsaber-chassis-guard-shoto"
+      },
+      "source": {
+        "book": "Jedi Academy Training Manual",
+        "descriptionPage": 50,
+        "statTablePage": 52
+      },
+      "canonicalMechanicSummary": "Defensive lightsaber tonfa granting +2 equipment bonus on Block and Deflect checks; a phrik-laced handle also resists lightsaber DR bypass, but base damage is only 2d4.",
+      "sharedTags": [
+        "lightsaber",
+        "melee",
+        "offense_melee"
+      ],
+      "advantageTags": [
+        "block",
+        "deflect"
+      ],
+      "tradeoffTags": [],
+      "finalTags": [
+        "lightsaber",
+        "melee",
+        "offense_melee",
+        "block",
+        "deflect"
+      ],
+      "rationale": {
+        "lightsaber": "Canonical Lightsaber-group weapon.",
+        "melee": "Its canonical attack profile is melee.",
+        "offense_melee": "It remains an offensive melee lightsaber despite its defensive specialization.",
+        "block": "A proficient wielder gains +2 equipment bonus on Use the Force checks made with Block.",
+        "deflect": "A proficient wielder gains +2 equipment bonus on Use the Force checks made with Deflect."
+      },
+      "relativeToStandard": {
+        "pros": [
+          "+2 equipment bonus to Block checks.",
+          "+2 equipment bonus to Deflect checks.",
+          "A phrik-laced handle prevents lightsabers from ignoring the weapon's DR."
+        ],
+        "cons": [
+          "2d4 base damage instead of the standard lightsaber's 2d8."
+        ],
+        "sameAsStandard": [],
+        "recommendationFit": "Strong defensive specialization when Block/Deflect reliability matters more than weapon damage."
+      },
+      "conditionalSynergyTags": [],
+      "unrepresentedMechanics": [
+        {
+          "mechanic": "Lightsabers do not ignore the guard shoto's damage reduction.",
+          "representationStatus": "NO_EXISTING_FEAT_TALENT_TAG",
+          "note": "No certified feat/talent-used tag precisely represents resistance to lightsaber DR bypass.",
+          "condition": "handle is phrik-laced"
+        }
+      ]
+    },
+    {
+      "identityKey": "weapon-lightfoil",
+      "canonicalName": "Lightfoil",
+      "repo": {
+        "present": true,
+        "id": "weapon-lightfoil"
+      },
+      "source": {
+        "book": "Knights of the Old Republic Campaign Guide",
+        "descriptionPage": 65,
+        "statTablePage": 64
+      },
+      "canonicalMechanicSummary": "One-handed 2d8 lightfoil that may count as Small whenever beneficial but cannot be wielded two-handed.",
+      "sharedTags": [
+        "lightsaber",
+        "melee",
+        "offense_melee"
+      ],
+      "advantageTags": [],
+      "tradeoffTags": [],
+      "finalTags": [
+        "lightsaber",
+        "melee",
+        "offense_melee"
+      ],
+      "rationale": {
+        "lightsaber": "Canonical Lightsaber-group weapon.",
+        "melee": "Its canonical attack profile is melee.",
+        "offense_melee": "It deals normal 2d8 lightsaber melee damage."
+      },
+      "relativeToStandard": {
+        "pros": [
+          "May be treated as a Small weapon whenever doing so is beneficial while retaining 2d8 base damage."
+        ],
+        "cons": [
+          "Cannot be wielded two-handed."
+        ],
+        "sameAsStandard": [
+          "2d8 base damage."
+        ],
+        "recommendationFit": "Choose when a build gains a concrete benefit from Small-weapon classification and does not need two-handed wielding."
+      },
+      "conditionalSynergyTags": [],
+      "unrepresentedMechanics": [
+        {
+          "mechanic": "May be treated as a Small weapon whenever beneficial.",
+          "representationStatus": "NO_EXISTING_FEAT_TALENT_TAG",
+          "note": "No certified feat/talent-used tag encodes beneficial weapon-size reclassification."
+        }
+      ]
+    },
+    {
+      "identityKey": "lightsaber-chassis-archaic-lightfoil",
+      "canonicalName": "Lightfoil, Archaic",
+      "repo": {
+        "present": true,
+        "id": "lightsaber-chassis-archaic-lightfoil"
+      },
+      "source": {
+        "book": "Jedi Academy Training Manual",
+        "descriptionPage": 50,
+        "statTablePage": 52
+      },
+      "canonicalMechanicSummary": "Archaic one-handed 2d8 lightfoil that may count as Small whenever beneficial but cannot be wielded two-handed.",
+      "sharedTags": [
+        "lightsaber",
+        "melee",
+        "offense_melee"
+      ],
+      "advantageTags": [],
+      "tradeoffTags": [],
+      "finalTags": [
+        "lightsaber",
+        "melee",
+        "offense_melee"
+      ],
+      "rationale": {
+        "lightsaber": "Canonical Lightsaber-group weapon.",
+        "melee": "Its canonical attack profile is melee.",
+        "offense_melee": "It deals 2d8 lightsaber melee damage."
+      },
+      "relativeToStandard": {
+        "pros": [
+          "May be treated as a Small weapon whenever beneficial while retaining 2d8 base damage."
+        ],
+        "cons": [
+          "Cannot be wielded two-handed."
+        ],
+        "sameAsStandard": [
+          "2d8 base damage."
+        ],
+        "recommendationFit": "Same mechanical niche as the KOTOR-era Lightfoil: Small-weapon-classification utility without two-handed use."
+      },
+      "conditionalSynergyTags": [],
+      "unrepresentedMechanics": [
+        {
+          "mechanic": "May be treated as a Small weapon whenever beneficial.",
+          "representationStatus": "NO_EXISTING_FEAT_TALENT_TAG",
+          "note": "No certified feat/talent-used tag encodes beneficial weapon-size reclassification."
+        }
+      ]
+    },
+    {
+      "identityKey": "lightsaber-chassis-modern-lightfoil",
+      "canonicalName": "Lightfoil, Modern",
+      "repo": {
+        "present": true,
+        "id": "lightsaber-chassis-modern-lightfoil"
+      },
+      "source": {
+        "book": "Jedi Academy Training Manual",
+        "descriptionPage": 50,
+        "statTablePage": 52
+      },
+      "canonicalMechanicSummary": "Modern one-handed lightfoil that may count as Small whenever beneficial, cannot be wielded two-handed, and deals 2d6 base damage.",
+      "sharedTags": [
+        "lightsaber",
+        "melee",
+        "offense_melee"
+      ],
+      "advantageTags": [],
+      "tradeoffTags": [],
+      "finalTags": [
+        "lightsaber",
+        "melee",
+        "offense_melee"
+      ],
+      "rationale": {
+        "lightsaber": "Canonical Lightsaber-group weapon.",
+        "melee": "Its canonical attack profile is melee.",
+        "offense_melee": "It deals lightsaber melee damage."
+      },
+      "relativeToStandard": {
+        "pros": [
+          "May be treated as a Small weapon whenever doing so is beneficial."
+        ],
+        "cons": [
+          "2d6 base damage instead of the standard lightsaber's 2d8.",
+          "Cannot be wielded two-handed."
+        ],
+        "sameAsStandard": [],
+        "recommendationFit": "Only prefer when Small-weapon classification materially benefits the build enough to justify lower damage and loss of two-handed use."
+      },
+      "conditionalSynergyTags": [],
+      "unrepresentedMechanics": [
+        {
+          "mechanic": "May be treated as a Small weapon whenever beneficial.",
+          "representationStatus": "NO_EXISTING_FEAT_TALENT_TAG",
+          "note": "No certified feat/talent-used tag encodes beneficial weapon-size reclassification."
+        }
+      ]
+    },
+    {
+      "identityKey": "weapon-lightsaber",
+      "canonicalName": "Lightsaber",
+      "repo": {
+        "present": true,
+        "id": "weapon-lightsaber"
+      },
+      "source": {
+        "book": "Core Rulebook",
+        "descriptionPage": 122,
+        "statTablePage": 122
+      },
+      "canonicalMechanicSummary": "Standard 2d8 Jedi lightsaber and comparison baseline for all Lightsaber-category recommendations.",
+      "sharedTags": [
+        "lightsaber",
+        "melee",
+        "offense_melee"
+      ],
+      "advantageTags": [],
+      "tradeoffTags": [],
+      "finalTags": [
+        "lightsaber",
+        "melee",
+        "offense_melee"
+      ],
+      "rationale": {
+        "lightsaber": "Canonical standard Lightsaber-group weapon.",
+        "melee": "Its canonical attack profile is melee.",
+        "offense_melee": "Its standard role is 2d8 melee offense."
+      },
+      "relativeToStandard": {
+        "pros": [
+          "This is the standard itself: 2d8 damage with no variant-specific penalty or specialization requirement."
+        ],
+        "cons": [
+          "No variant-specific specialization bonus."
+        ],
+        "sameAsStandard": [
+          "Baseline identity."
+        ],
+        "recommendationFit": "Default/fallback choice when no specialized lightsaber variant has a clearly supported advantage for the character."
+      },
+      "systemDesignContext": {
+        "comparisonRole": "DEFAULT_JEDI_BASELINE",
+        "userProjectRule": "Jedi characters start with the standard lightsaber by default when they become a Jedi.",
+        "canonicalSourceClaim": false,
+        "recommendationPolicy": "A variant should displace the standard baseline only when its positive specialization matches the character/build strongly enough to justify its explicit tradeoffs."
+      },
+      "conditionalSynergyTags": [],
+      "unrepresentedMechanics": []
+    },
+    {
+      "identityKey": "lightsaber-chassis-pike",
+      "canonicalName": "Lightsaber Pike",
+      "repo": {
+        "present": true,
+        "id": "lightsaber-chassis-pike"
+      },
+      "source": {
+        "book": "Jedi Academy Training Manual",
+        "descriptionPage": 53,
+        "statTablePage": 52
+      },
+      "canonicalMechanicSummary": "2d8 reach lightsaber pike with phrik-alloy haft; +1 square reach, -2 Block/Deflect, and conditional double-weapon functionality with Long Haft Form.",
+      "sharedTags": [
+        "lightsaber",
+        "melee",
+        "offense_melee"
+      ],
+      "advantageTags": [
+        "lightsaber_polearm",
+        "positioning"
+      ],
+      "tradeoffTags": [
+        "block",
+        "deflect"
+      ],
+      "finalTags": [
+        "lightsaber",
+        "melee",
+        "offense_melee",
+        "lightsaber_polearm",
+        "positioning"
+      ],
+      "rationale": {
+        "lightsaber": "Canonical Lightsaber-group weapon.",
+        "melee": "Its primary attack profile is melee.",
+        "offense_melee": "Its lightsaber end deals standard 2d8 melee damage.",
+        "lightsaber_polearm": "It is explicitly a lightsaber pike/polearm and this tag already exists in certified feat/talent semantics.",
+        "positioning": "Its +1 square reach directly changes attack/threat positioning."
+      },
+      "relativeToStandard": {
+        "pros": [
+          "+1 square reach.",
+          "Phrik-alloy haft resists lightsaber DR bypass.",
+          "With Long Haft Form it can function as a double weapon with a 1d6 haft end."
+        ],
+        "cons": [
+          "-2 on Use the Force checks made with Block.",
+          "-2 on Use the Force checks made with Deflect."
+        ],
+        "sameAsStandard": [
+          "2d8 lightsaber-end base damage."
+        ],
+        "recommendationFit": "Prefer for reach/polearm positioning builds, especially with Long Haft Form; penalize for Block/Deflect-centric defensive Jedi."
+      },
+      "conditionalSynergyTags": [
+        {
+          "tag": "double_weapon",
+          "condition": "wielder has Long Haft Form",
+          "reason": "Double-weapon functionality is conditional rather than intrinsic and therefore is not promoted into unconditional finalTags."
+        }
+      ],
+      "unrepresentedMechanics": [
+        {
+          "mechanic": "Increases reach by 1 square.",
+          "representationStatus": "NO_EXISTING_FEAT_TALENT_TAG",
+          "note": "positioning captures the recommendation consequence, but no certified feat/talent-used tag precisely identifies intrinsic weapon reach."
+        },
+        {
+          "mechanic": "The phrik-alloy haft is not subject to lightsaber DR bypass.",
+          "representationStatus": "NO_EXISTING_FEAT_TALENT_TAG",
+          "note": "No certified feat/talent-used tag precisely represents resistance to lightsaber DR bypass."
+        }
+      ]
+    }
+  ]
+}

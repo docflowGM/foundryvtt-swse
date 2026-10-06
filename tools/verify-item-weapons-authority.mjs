@@ -1455,5 +1455,76 @@ if (fs.existsSync(path.join(ROOT, P4A))) {
   if (errors.length === e4) console.log(`Phase 4A Simple Weapon semantic tags OK: ${REQ}/49 adjudicated in ${rounds.length} round(s) (${present} repo-present / ${REQ - present} missing), ${tagTotal} assignments, ${tagsUsed.size} distinct tags from the ${used.size}-tag certified feat/talent vocabulary, ${cumGaps} ontology gaps, next ${rp.nextCanonicalName}`);
 }
 
+// Phase 4B: Lightsaber semantic tags (rolling planner authority; standard Lightsaber is the comparison baseline)
+const P4B = 'data/audits/item-weapons-phase-4b-lightsaber-semantic-rolling.json';
+if (fs.existsSync(path.join(ROOT, P4B))) {
+  const e4b = errors.length;
+  const same = (x, y) => JSON.stringify(x) === JSON.stringify(y);
+  const J = (f) => JSON.parse(fs.readFileSync(path.join(ROOT, f), 'utf8'));
+  const sh = (t) => crypto.createHash('sha256').update(t).digest('hex');
+  const canon = (x) => (Array.isArray(x) ? x.map(canon) : x && typeof x === 'object' ? Object.fromEntries(Object.keys(x).sort().map((k) => [k, canon(x[k])])) : x);
+  const S = J(P4B);
+  if (!fs.existsSync(path.join(ROOT, 'docs/audits/item-weapons-phase-4b-lightsaber-semantic-rolling.md'))) fail('4B missing markdown companion');
+  const ic = S.implementationContract || {};
+  if (S.authorityOnly !== true || S.productionMutationAuthorized !== false || ic.productionMutationAuthorized !== false || ic.runtimeCodeMutationAuthorized !== false || ic.claudeMayCreateNewTags !== false || ic.unrepresentedMechanicsAreTags !== false) fail('4B authority-only / mutation flags');
+  const b3 = J('data/audits/item-weapons-phase-3b-canonical-authority.json');
+  if (J('data/audits/item-weapons-phase-3d-global-freeze.json').status !== 'WEAPON_PHASE_3D_GLOBAL_AUTHORITY_FROZEN') fail('4B requires Phase 3D to remain frozen');
+  if (sh(fs.readFileSync(path.join(ROOT, 'packs/weapons.db'), 'utf8')) !== b3.productionBaseline['packs/weapons.db'] || sh(fs.readFileSync(path.join(ROOT, 'template.json'), 'utf8')) !== b3.productionBaseline['template.json']) fail('4B production file changed (packs/weapons.db or template.json)');
+  // certified feat/talent-used vocabulary, recomputed
+  const used = new Set();
+  for (const a of J('data/audits/feat-tags-pass2-semantic-authority.json').assignments) for (const t of a.finalTags || []) used.add(t);
+  const walk = (o) => { if (Array.isArray(o)) o.forEach(walk); else if (o && typeof o === 'object') for (const [k, v] of Object.entries(o)) { if (k === 'finalTags' && Array.isArray(v)) v.forEach((t) => used.add(t)); else walk(v); } };
+  walk(J('data/audits/talent-phase-12-1-semantic-tag-authority.json').batches);
+  for (const a of J('data/audits/talent-phase-12-final-ontology-adjudication.json').assignments) for (const t of a.finalTags || []) used.add(t);
+  if (used.size !== 183 || S.vocabularyPolicy.derivedAllowedTagCount !== 183) fail(`4B feat/talent-used vocabulary is ${used.size}, expected 183`);
+  const REJECT = ['accuracy', 'area_damage', 'condition_track', 'explosives', 'grenade', 'rifle', 'thrown'];
+  const SHARED = ['lightsaber', 'melee', 'offense_melee'];
+  if (!same(S.lightsaberComparisonPolicy.sharedTags, SHARED) || S.lightsaberComparisonPolicy.baselineIdentityKey !== 'weapon-lightsaber' || S.lightsaberComparisonPolicy.baselineDamage !== '2d8') fail('4B comparison policy / baseline changed');
+  // Phase 3B lightsaber census
+  const saber = b3.identities.filter((i) => i.weaponGroup === 'Lightsaber').sort((x, y) => (x.canonicalName < y.canonicalName ? -1 : 1));
+  if (saber.length !== 16 || S.categoryCensus.canonicalLightsaberIdentities !== 16 || saber.filter((i) => i.repo.present).length !== S.categoryCensus.repoPresent || S.categoryCensus.repoMissing !== saber.filter((i) => !i.repo.present).length) fail('4B Lightsaber census must match the 16 Phase 3B identities');
+  const asg = S.assignments, byKey = new Map(saber.map((i) => [i.identityKey, i])), seen = new Set();
+  const REQ = asg.length;
+  let tagTotal = 0; const tagsUsed = new Set(); const unrep = [];
+  asg.forEach((a, idx) => {
+    const w = `4B ${a.canonicalName}`;
+    if (seen.has(a.identityKey)) fail(`${w} occurs more than once`); seen.add(a.identityKey);
+    const i = byKey.get(a.identityKey);
+    if (!i) { fail(`${w} (${a.identityKey}) is not a Phase 3B Lightsaber identity`); return; }
+    if (i.canonicalName !== a.canonicalName || a.repo.present !== i.repo.present || (a.repo.id || null) !== (i.repo.id || null)) fail(`${w} identity/name/repo differs from Phase 3B`);
+    if (saber[idx] && saber[idx].identityKey !== a.identityKey) fail(`${w} is out of alphabetical Lightsaber order`);
+    if (!i.sourceClaims.some((c) => c.book.replace(/^The /, '') === a.source.book.replace(/^The /, '') && c.descriptionPage === a.source.descriptionPage)) fail(`${w} source book/page matches no Phase 3B source claim`);
+    // every tag-bearing value must be an exact certified feat/talent-used tag
+    const fields = { sharedTags: a.sharedTags, advantageTags: a.advantageTags, tradeoffTags: a.tradeoffTags, finalTags: a.finalTags, 'conditionalSynergyTags[].tag': (a.conditionalSynergyTags || []).map((c) => c.tag) };
+    for (const [f, vals] of Object.entries(fields)) {
+      if (!Array.isArray(vals)) { fail(`${w} ${f} must be an array`); continue; }
+      for (const t of vals) { if (!used.has(t)) fail(`${w} ${f} value "${t}" is not used by any certified feat/talent`); if (REJECT.includes(t)) fail(`${w} ${f} uses rejected runtime-only tag ${t}`); }
+    }
+    if (!same(a.sharedTags, SHARED)) fail(`${w} sharedTags must be exactly ${SHARED.join(', ')}`);
+    if (!same(a.finalTags, [...a.sharedTags, ...a.advantageTags])) fail(`${w} finalTags must equal sharedTags plus advantageTags (positive specializations only)`);
+    for (const t of a.tradeoffTags) if (a.finalTags.includes(t)) fail(`${w} tradeoff tag ${t} was promoted into finalTags`);
+    for (const t of a.advantageTags) if (a.tradeoffTags.includes(t)) fail(`${w} tag ${t} is both advantage and tradeoff`);
+    if (new Set(a.finalTags).size !== a.finalTags.length) fail(`${w} duplicate finalTags`);
+    for (const t of a.finalTags) { tagTotal++; tagsUsed.add(t); if (typeof a.rationale?.[t] !== 'string' || !a.rationale[t].trim()) fail(`${w} tag ${t} has no rationale`); }
+    for (const t of Object.keys(a.rationale || {})) if (!a.finalTags.includes(t)) fail(`${w} rationale for ${t} has no tag`);
+    for (const c of a.conditionalSynergyTags || []) { if (a.finalTags.includes(c.tag)) fail(`${w} conditional tag ${c.tag} was promoted into finalTags`); if (!c.condition || !c.reason) fail(`${w} conditional tag ${c.tag} needs a condition and reason`); }
+    for (const m of a.unrepresentedMechanics || []) {
+      if (!m.mechanic || m.representationStatus !== 'NO_EXISTING_FEAT_TALENT_TAG' || !m.note) fail(`${w} unrepresented mechanic shape`);
+      const all = [...a.sharedTags, ...a.advantageTags, ...a.tradeoffTags, ...a.finalTags, ...(a.conditionalSynergyTags || []).map((c) => c.tag)];
+      if (all.some((t) => t === m.mechanic || t.toLowerCase() === String(m.mechanic).toLowerCase())) fail(`${w} unrepresented mechanic text was converted into a tag`);
+      unrep.push(m.mechanic);
+    }
+    if (!a.relativeToStandard || !Array.isArray(a.relativeToStandard.pros) || !Array.isArray(a.relativeToStandard.cons) || !a.relativeToStandard.recommendationFit) fail(`${w} relativeToStandard comparison missing`);
+  });
+  const base = asg.find((a) => a.identityKey === 'weapon-lightsaber');
+  if (!base || base.advantageTags.length || base.tradeoffTags.length || !same(base.finalTags, SHARED) || base.systemDesignContext?.comparisonRole !== 'DEFAULT_JEDI_BASELINE') fail('4B standard Lightsaber must remain the undifferentiated default baseline');
+  // progress counters recomputed
+  const rp = S.rollingProgress;
+  if (rp.adjudicatedTotal !== REQ || rp.adjudicatedThisRound !== REQ || rp.remaining !== 16 - REQ || rp.nextCanonicalName !== (saber[REQ] ? saber[REQ].canonicalName : null) || rp.firstCanonicalName !== asg[0].canonicalName || rp.lastCanonicalName !== asg[REQ - 1].canonicalName) fail('4B rolling progress counts / next identity');
+  if (rp.totalFinalTagAssignmentsThisRound !== tagTotal || rp.distinctTagsUsedThisRound !== tagsUsed.size || !same([...tagsUsed].sort(), [...rp.tagsUsedThisRound].sort()) || rp.unrepresentedMechanicInstancesThisRound !== unrep.length || !same([...new Set(unrep)].sort(), [...rp.unrepresentedMechanicDescriptionsThisRound].sort())) fail('4B rolling progress tag / unrepresented-mechanic counts');
+  if (REQ >= 8 && sh(JSON.stringify(canon(asg.slice(0, 8)))) !== '5a7666017416dab6731589bd639af901402222fdf82e9f362c0f1500506d0738') fail('4B round 1 planner rulings changed after adjudication');
+  if (errors.length === e4b) console.log(`Phase 4B Lightsaber semantic tags OK: ${REQ}/16 adjudicated, ${tagTotal} assignments, ${tagsUsed.size} distinct tags, ${unrep.length} unrepresented mechanics (plain text, not tags), baseline = Lightsaber, next ${rp.nextCanonicalName}`);
+}
+
 if (errors.length) { console.error(`FAIL (${errors.length})\n- ${errors.join('\n- ')}`); process.exit(1); }
 console.log(`weapons authority OK: ${p.canonicalWeapons.length} canonical, ${pack.size} repo records, all covered once`);
