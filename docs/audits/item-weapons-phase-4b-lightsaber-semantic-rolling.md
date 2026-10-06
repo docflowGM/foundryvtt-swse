@@ -62,6 +62,16 @@ Variant pros and cons are otherwise preserved as ordinary comparison text.
 - Same/baseline-equivalent: 2d8 base damage.
 - Recommendation fit: Prefer for Block-heavy defensive Jedi; avoid elevating it for Deflect-focused characters.
 
+**Rule selectors** (not semantic tags; never written to `system.tags`)
+
+- Exact: `weapon:lightsaber-chassis-crossguard`
+- Group: `weapon-group:lightsaber`
+- Proficiency: `weapon-proficiency:lightsabers`
+- Families: `weapon-family:crossguard-lightsaber`
+- Explicit ability links:
+  - talent: **Block** — `POSITIVE_WEAPON_MODIFIER`
+  - talent: **Deflect** — `NEGATIVE_WEAPON_MODIFIER`
+
 Tag rationale:
 
 - `lightsaber` — Canonical Lightsaber-group weapon.
@@ -85,6 +95,14 @@ Tag rationale:
 - Cons: Its special benefit is inactive when the qualifying one-handed condition is not met.
 - Same/baseline-equivalent: 2d8 base damage.
 - Recommendation fit: Prefer for one-handed Jedi builds that deliberately generate or capitalize on attacks of opportunity.
+
+**Rule selectors** (not semantic tags; never written to `system.tags`)
+
+- Exact: `weapon:lightsaber-chassis-dueling`
+- Group: `weapon-group:lightsaber`
+- Proficiency: `weapon-proficiency:lightsabers`
+- Families: `weapon-family:dueling-lightsaber`
+- Explicit ability links: none currently source-certified.
 
 Tag rationale:
 
@@ -110,6 +128,18 @@ Tag rationale:
 - Cons: 2d4 base damage instead of the standard lightsaber's 2d8.
 - Same/baseline-equivalent: none
 - Recommendation fit: Strong defensive specialization when Block/Deflect reliability matters more than weapon damage.
+
+**Rule selectors** (not semantic tags; never written to `system.tags`)
+
+- Exact: `weapon:lightsaber-chassis-guard-shoto`
+- Group: `weapon-group:lightsaber`
+- Proficiency: `weapon-proficiency:lightsabers`
+- Families: `weapon-family:shoto`, `weapon-family:guard-shoto`
+- Explicit ability links:
+  - talent: **Shoto Focus** — `EXPLICIT_WEAPON_FAMILY_MATCH`
+  - talent: **Shoto Master** — `EXPLICIT_WEAPON_FAMILY_MATCH`
+  - talent: **Block** — `POSITIVE_WEAPON_MODIFIER`
+  - talent: **Deflect** — `POSITIVE_WEAPON_MODIFIER`
 
 Tag rationale:
 
@@ -140,6 +170,14 @@ Mechanics with no existing feat/talent tag:
 - Same/baseline-equivalent: 2d8 base damage.
 - Recommendation fit: Choose when a build gains a concrete benefit from Small-weapon classification and does not need two-handed wielding.
 
+**Rule selectors** (not semantic tags; never written to `system.tags`)
+
+- Exact: `weapon:weapon-lightfoil`
+- Group: `weapon-group:lightsaber`
+- Proficiency: `weapon-proficiency:lightsabers`
+- Families: `weapon-family:lightfoil`
+- Explicit ability links: none currently source-certified.
+
 Tag rationale:
 
 - `lightsaber` — Canonical Lightsaber-group weapon.
@@ -166,6 +204,14 @@ Mechanics with no existing feat/talent tag:
 - Cons: Cannot be wielded two-handed.
 - Same/baseline-equivalent: 2d8 base damage.
 - Recommendation fit: Same mechanical niche as the KOTOR-era Lightfoil: Small-weapon-classification utility without two-handed use.
+
+**Rule selectors** (not semantic tags; never written to `system.tags`)
+
+- Exact: `weapon:lightsaber-chassis-archaic-lightfoil`
+- Group: `weapon-group:lightsaber`
+- Proficiency: `weapon-proficiency:lightsabers`
+- Families: `weapon-family:lightfoil`, `weapon-family:archaic-lightfoil`
+- Explicit ability links: none currently source-certified.
 
 Tag rationale:
 
@@ -194,6 +240,14 @@ Mechanics with no existing feat/talent tag:
 - Same/baseline-equivalent: none
 - Recommendation fit: Only prefer when Small-weapon classification materially benefits the build enough to justify lower damage and loss of two-handed use.
 
+**Rule selectors** (not semantic tags; never written to `system.tags`)
+
+- Exact: `weapon:lightsaber-chassis-modern-lightfoil`
+- Group: `weapon-group:lightsaber`
+- Proficiency: `weapon-proficiency:lightsabers`
+- Families: `weapon-family:lightfoil`, `weapon-family:modern-lightfoil`
+- Explicit ability links: none currently source-certified.
+
 Tag rationale:
 
 - `lightsaber` — Canonical Lightsaber-group weapon.
@@ -221,6 +275,14 @@ Mechanics with no existing feat/talent tag:
 - Same/baseline-equivalent: Baseline identity.
 - Recommendation fit: Default/fallback choice when no specialized lightsaber variant has a clearly supported advantage for the character.
 
+**Rule selectors** (not semantic tags; never written to `system.tags`)
+
+- Exact: `weapon:weapon-lightsaber`
+- Group: `weapon-group:lightsaber`
+- Proficiency: `weapon-proficiency:lightsabers`
+- Families: `weapon-family:standard-lightsaber`
+- Explicit ability links: none currently source-certified.
+
 Tag rationale:
 
 - `lightsaber` — Canonical standard Lightsaber-group weapon.
@@ -244,6 +306,17 @@ Tag rationale:
 - Same/baseline-equivalent: 2d8 lightsaber-end base damage.
 - Recommendation fit: Prefer for reach/polearm positioning builds, especially with Long Haft Form; penalize for Block/Deflect-centric defensive Jedi.
 
+**Rule selectors** (not semantic tags; never written to `system.tags`)
+
+- Exact: `weapon:lightsaber-chassis-pike`
+- Group: `weapon-group:lightsaber`
+- Proficiency: `weapon-proficiency:lightsabers`
+- Families: `weapon-family:lightsaber-polearm`, `weapon-family:long-haft-compatible`
+- Explicit ability links:
+  - feat: **Long Haft Strike** — `UNLOCKS_DOUBLE_WEAPON_MODE` (equipment cross-reference: Long Haft Form)
+  - talent: **Block** — `NEGATIVE_WEAPON_MODIFIER`
+  - talent: **Deflect** — `NEGATIVE_WEAPON_MODIFIER`
+
 Tag rationale:
 
 - `lightsaber` — Canonical Lightsaber-group weapon.
@@ -260,6 +333,10 @@ Mechanics with no existing feat/talent tag:
 
 - Increases reach by 1 square. positioning captures the recommendation consequence, but no certified feat/talent-used tag precisely identifies intrinsic weapon reach.
 - The phrik-alloy haft is not subject to lightsaber DR bypass. No certified feat/talent-used tag precisely represents resistance to lightsaber DR bypass.
+
+## Rule-selector retrofit
+
+All eight Round 1 records carry a `ruleSelectors` layer (see `data/audits/item-weapons-phase-4b-lightsaber-round1-selector-retrofit.json`) so feats, talents, classes and the suggestion engine can match exact weapons and families. Selectors are not semantic tags and never enter `system.tags`; Round 1 semantic rulings are unchanged. Guard Shoto resolves through `weapon-family:shoto` (Shoto Focus, Shoto Master); Lightsaber Pike links the canonical feat Long Haft Strike (equipment-chapter alias: Long Haft Form). Round 2 will use the same selector architecture.
 
 ## Claude implementation contract
 

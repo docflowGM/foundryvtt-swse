@@ -137,7 +137,27 @@
         "recommendationFit": "Prefer for Block-heavy defensive Jedi; avoid elevating it for Deflect-focused characters."
       },
       "conditionalSynergyTags": [],
-      "unrepresentedMechanics": []
+      "unrepresentedMechanics": [],
+      "ruleSelectors": {
+        "exactIdentity": "weapon:lightsaber-chassis-crossguard",
+        "weaponGroup": "weapon-group:lightsaber",
+        "proficiency": "weapon-proficiency:lightsabers",
+        "families": [
+          "weapon-family:crossguard-lightsaber"
+        ],
+        "explicitAbilityLinks": [
+          {
+            "abilityType": "talent",
+            "abilityName": "Block",
+            "relation": "POSITIVE_WEAPON_MODIFIER"
+          },
+          {
+            "abilityType": "talent",
+            "abilityName": "Deflect",
+            "relation": "NEGATIVE_WEAPON_MODIFIER"
+          }
+        ]
+      }
     },
     {
       "identityKey": "lightsaber-chassis-dueling",
@@ -189,7 +209,16 @@
         "recommendationFit": "Prefer for one-handed Jedi builds that deliberately generate or capitalize on attacks of opportunity."
       },
       "conditionalSynergyTags": [],
-      "unrepresentedMechanics": []
+      "unrepresentedMechanics": [],
+      "ruleSelectors": {
+        "exactIdentity": "weapon:lightsaber-chassis-dueling",
+        "weaponGroup": "weapon-group:lightsaber",
+        "proficiency": "weapon-proficiency:lightsabers",
+        "families": [
+          "weapon-family:dueling-lightsaber"
+        ],
+        "explicitAbilityLinks": []
+      }
     },
     {
       "identityKey": "lightsaber-chassis-guard-shoto",
@@ -248,7 +277,38 @@
           "note": "No certified feat/talent-used tag precisely represents resistance to lightsaber DR bypass.",
           "condition": "handle is phrik-laced"
         }
-      ]
+      ],
+      "ruleSelectors": {
+        "exactIdentity": "weapon:lightsaber-chassis-guard-shoto",
+        "weaponGroup": "weapon-group:lightsaber",
+        "proficiency": "weapon-proficiency:lightsabers",
+        "families": [
+          "weapon-family:shoto",
+          "weapon-family:guard-shoto"
+        ],
+        "explicitAbilityLinks": [
+          {
+            "abilityType": "talent",
+            "abilityName": "Shoto Focus",
+            "relation": "EXPLICIT_WEAPON_FAMILY_MATCH"
+          },
+          {
+            "abilityType": "talent",
+            "abilityName": "Shoto Master",
+            "relation": "EXPLICIT_WEAPON_FAMILY_MATCH"
+          },
+          {
+            "abilityType": "talent",
+            "abilityName": "Block",
+            "relation": "POSITIVE_WEAPON_MODIFIER"
+          },
+          {
+            "abilityType": "talent",
+            "abilityName": "Deflect",
+            "relation": "POSITIVE_WEAPON_MODIFIER"
+          }
+        ]
+      }
     },
     {
       "identityKey": "weapon-lightfoil",
@@ -299,7 +359,16 @@
           "representationStatus": "NO_EXISTING_FEAT_TALENT_TAG",
           "note": "No certified feat/talent-used tag encodes beneficial weapon-size reclassification."
         }
-      ]
+      ],
+      "ruleSelectors": {
+        "exactIdentity": "weapon:weapon-lightfoil",
+        "weaponGroup": "weapon-group:lightsaber",
+        "proficiency": "weapon-proficiency:lightsabers",
+        "families": [
+          "weapon-family:lightfoil"
+        ],
+        "explicitAbilityLinks": []
+      }
     },
     {
       "identityKey": "lightsaber-chassis-archaic-lightfoil",
@@ -350,7 +419,17 @@
           "representationStatus": "NO_EXISTING_FEAT_TALENT_TAG",
           "note": "No certified feat/talent-used tag encodes beneficial weapon-size reclassification."
         }
-      ]
+      ],
+      "ruleSelectors": {
+        "exactIdentity": "weapon:lightsaber-chassis-archaic-lightfoil",
+        "weaponGroup": "weapon-group:lightsaber",
+        "proficiency": "weapon-proficiency:lightsabers",
+        "families": [
+          "weapon-family:lightfoil",
+          "weapon-family:archaic-lightfoil"
+        ],
+        "explicitAbilityLinks": []
+      }
     },
     {
       "identityKey": "lightsaber-chassis-modern-lightfoil",
@@ -400,7 +479,17 @@
           "representationStatus": "NO_EXISTING_FEAT_TALENT_TAG",
           "note": "No certified feat/talent-used tag encodes beneficial weapon-size reclassification."
         }
-      ]
+      ],
+      "ruleSelectors": {
+        "exactIdentity": "weapon:lightsaber-chassis-modern-lightfoil",
+        "weaponGroup": "weapon-group:lightsaber",
+        "proficiency": "weapon-proficiency:lightsabers",
+        "families": [
+          "weapon-family:lightfoil",
+          "weapon-family:modern-lightfoil"
+        ],
+        "explicitAbilityLinks": []
+      }
     },
     {
       "identityKey": "weapon-lightsaber",
@@ -451,7 +540,16 @@
         "recommendationPolicy": "A variant should displace the standard baseline only when its positive specialization matches the character/build strongly enough to justify its explicit tradeoffs."
       },
       "conditionalSynergyTags": [],
-      "unrepresentedMechanics": []
+      "unrepresentedMechanics": [],
+      "ruleSelectors": {
+        "exactIdentity": "weapon:weapon-lightsaber",
+        "weaponGroup": "weapon-group:lightsaber",
+        "proficiency": "weapon-proficiency:lightsabers",
+        "families": [
+          "weapon-family:standard-lightsaber"
+        ],
+        "explicitAbilityLinks": []
+      }
     },
     {
       "identityKey": "lightsaber-chassis-pike",
@@ -526,7 +624,78 @@
           "representationStatus": "NO_EXISTING_FEAT_TALENT_TAG",
           "note": "No certified feat/talent-used tag precisely represents resistance to lightsaber DR bypass."
         }
-      ]
+      ],
+      "ruleSelectors": {
+        "exactIdentity": "weapon:lightsaber-chassis-pike",
+        "weaponGroup": "weapon-group:lightsaber",
+        "proficiency": "weapon-proficiency:lightsabers",
+        "families": [
+          "weapon-family:lightsaber-polearm",
+          "weapon-family:long-haft-compatible"
+        ],
+        "explicitAbilityLinks": [
+          {
+            "abilityType": "feat",
+            "abilityName": "Long Haft Strike",
+            "sourceCrossReferenceAlias": "Long Haft Form",
+            "relation": "UNLOCKS_DOUBLE_WEAPON_MODE"
+          },
+          {
+            "abilityType": "talent",
+            "abilityName": "Block",
+            "relation": "NEGATIVE_WEAPON_MODIFIER"
+          },
+          {
+            "abilityType": "talent",
+            "abilityName": "Deflect",
+            "relation": "NEGATIVE_WEAPON_MODIFIER"
+          }
+        ]
+      }
     }
-  ]
+  ],
+  "ruleSelectorPolicy": {
+    "schemaVersion": "weapon-rule-selectors-v1",
+    "semanticTagInvariant": {
+      "rule": "ruleSelectors are not semantic tags and must never be copied into system.tags.",
+      "semanticFinalTagsRemainRestrictedToCertifiedFeatTalentVocabulary": true,
+      "round1SemanticRulingsChanged": false
+    },
+    "selectorPolicy": {
+      "purpose": "Allow feat, talent, class, and suggestion logic to match exact weapons or canonical weapon families without inventing semantic tags.",
+      "requiredSelectors": [
+        "exactIdentity",
+        "weaponGroup",
+        "proficiency"
+      ],
+      "optionalSelectors": [
+        "families",
+        "explicitAbilityLinks"
+      ],
+      "matchingPriority": [
+        "exactIdentity",
+        "explicitAbilityLinks",
+        "families",
+        "weaponGroup",
+        "proficiency"
+      ]
+    },
+    "verificationContract": [
+      "All 8 Round 1 Lightsaber identities must receive ruleSelectors.",
+      "Every exactIdentity selector must match the frozen canonical identity key exactly.",
+      "Every record must retain weapon-group:lightsaber and weapon-proficiency:lightsabers.",
+      "Guard Shoto must resolve through weapon-family:shoto so Shoto Focus and Shoto Master can match it.",
+      "Lightsaber Pike must link canonical feat Long Haft Strike while retaining Long Haft Form only as the equipment-chapter cross-reference alias.",
+      "No ruleSelector value may be inserted into semantic finalTags or system.tags.",
+      "Existing Round 1 semantic finalTags, tradeoffs, comparisons, and unrepresented mechanics remain unchanged.",
+      "Production mutation remains unauthorized."
+    ]
+  },
+  "selectorRetrofit": {
+    "status": "WEAPON_TAG_PHASE_4B_LIGHTSABER_ROUND_1_SELECTOR_RETROFIT_PLANNER_AUTHORITY",
+    "file": "data/audits/item-weapons-phase-4b-lightsaber-round1-selector-retrofit.json",
+    "doc": "docs/audits/item-weapons-phase-4b-lightsaber-round1-selector-retrofit.md",
+    "assignmentsCovered": 8,
+    "note": "ruleSelectors are not semantic tags and never enter system.tags; Round 1 semantic rulings unchanged."
+  }
 }

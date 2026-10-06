@@ -1,0 +1,201 @@
+{
+  "schemaVersion": "weapon-rule-selectors-v1",
+  "phase": "4B",
+  "scope": "Lightsaber Round 1 selector retrofit",
+  "status": "WEAPON_TAG_PHASE_4B_LIGHTSABER_ROUND_1_SELECTOR_RETROFIT_PLANNER_AUTHORITY",
+  "authorityOnly": true,
+  "productionMutationAuthorized": false,
+  "semanticTagInvariant": {
+    "rule": "ruleSelectors are not semantic tags and must never be copied into system.tags.",
+    "semanticFinalTagsRemainRestrictedToCertifiedFeatTalentVocabulary": true,
+    "round1SemanticRulingsChanged": false
+  },
+  "selectorPolicy": {
+    "purpose": "Allow feat, talent, class, and suggestion logic to match exact weapons or canonical weapon families without inventing semantic tags.",
+    "requiredSelectors": [
+      "exactIdentity",
+      "weaponGroup",
+      "proficiency"
+    ],
+    "optionalSelectors": [
+      "families",
+      "explicitAbilityLinks"
+    ],
+    "matchingPriority": [
+      "exactIdentity",
+      "explicitAbilityLinks",
+      "families",
+      "weaponGroup",
+      "proficiency"
+    ]
+  },
+  "assignments": [
+    {
+      "canonicalName": "Crossguard Lightsaber",
+      "identityKey": "lightsaber-chassis-crossguard",
+      "ruleSelectors": {
+        "exactIdentity": "weapon:lightsaber-chassis-crossguard",
+        "weaponGroup": "weapon-group:lightsaber",
+        "proficiency": "weapon-proficiency:lightsabers",
+        "families": [
+          "weapon-family:crossguard-lightsaber"
+        ],
+        "explicitAbilityLinks": [
+          {
+            "abilityType": "talent",
+            "abilityName": "Block",
+            "relation": "POSITIVE_WEAPON_MODIFIER"
+          },
+          {
+            "abilityType": "talent",
+            "abilityName": "Deflect",
+            "relation": "NEGATIVE_WEAPON_MODIFIER"
+          }
+        ]
+      }
+    },
+    {
+      "canonicalName": "Dueling Lightsaber",
+      "identityKey": "lightsaber-chassis-dueling",
+      "ruleSelectors": {
+        "exactIdentity": "weapon:lightsaber-chassis-dueling",
+        "weaponGroup": "weapon-group:lightsaber",
+        "proficiency": "weapon-proficiency:lightsabers",
+        "families": [
+          "weapon-family:dueling-lightsaber"
+        ],
+        "explicitAbilityLinks": []
+      }
+    },
+    {
+      "canonicalName": "Guard Shoto",
+      "identityKey": "lightsaber-chassis-guard-shoto",
+      "ruleSelectors": {
+        "exactIdentity": "weapon:lightsaber-chassis-guard-shoto",
+        "weaponGroup": "weapon-group:lightsaber",
+        "proficiency": "weapon-proficiency:lightsabers",
+        "families": [
+          "weapon-family:shoto",
+          "weapon-family:guard-shoto"
+        ],
+        "explicitAbilityLinks": [
+          {
+            "abilityType": "talent",
+            "abilityName": "Shoto Focus",
+            "relation": "EXPLICIT_WEAPON_FAMILY_MATCH"
+          },
+          {
+            "abilityType": "talent",
+            "abilityName": "Shoto Master",
+            "relation": "EXPLICIT_WEAPON_FAMILY_MATCH"
+          },
+          {
+            "abilityType": "talent",
+            "abilityName": "Block",
+            "relation": "POSITIVE_WEAPON_MODIFIER"
+          },
+          {
+            "abilityType": "talent",
+            "abilityName": "Deflect",
+            "relation": "POSITIVE_WEAPON_MODIFIER"
+          }
+        ]
+      }
+    },
+    {
+      "canonicalName": "Lightfoil",
+      "identityKey": "weapon-lightfoil",
+      "ruleSelectors": {
+        "exactIdentity": "weapon:weapon-lightfoil",
+        "weaponGroup": "weapon-group:lightsaber",
+        "proficiency": "weapon-proficiency:lightsabers",
+        "families": [
+          "weapon-family:lightfoil"
+        ],
+        "explicitAbilityLinks": []
+      }
+    },
+    {
+      "canonicalName": "Lightfoil, Archaic",
+      "identityKey": "lightsaber-chassis-archaic-lightfoil",
+      "ruleSelectors": {
+        "exactIdentity": "weapon:lightsaber-chassis-archaic-lightfoil",
+        "weaponGroup": "weapon-group:lightsaber",
+        "proficiency": "weapon-proficiency:lightsabers",
+        "families": [
+          "weapon-family:lightfoil",
+          "weapon-family:archaic-lightfoil"
+        ],
+        "explicitAbilityLinks": []
+      }
+    },
+    {
+      "canonicalName": "Lightfoil, Modern",
+      "identityKey": "lightsaber-chassis-modern-lightfoil",
+      "ruleSelectors": {
+        "exactIdentity": "weapon:lightsaber-chassis-modern-lightfoil",
+        "weaponGroup": "weapon-group:lightsaber",
+        "proficiency": "weapon-proficiency:lightsabers",
+        "families": [
+          "weapon-family:lightfoil",
+          "weapon-family:modern-lightfoil"
+        ],
+        "explicitAbilityLinks": []
+      }
+    },
+    {
+      "canonicalName": "Lightsaber",
+      "identityKey": "weapon-lightsaber",
+      "ruleSelectors": {
+        "exactIdentity": "weapon:weapon-lightsaber",
+        "weaponGroup": "weapon-group:lightsaber",
+        "proficiency": "weapon-proficiency:lightsabers",
+        "families": [
+          "weapon-family:standard-lightsaber"
+        ],
+        "explicitAbilityLinks": []
+      }
+    },
+    {
+      "canonicalName": "Lightsaber Pike",
+      "identityKey": "lightsaber-chassis-pike",
+      "ruleSelectors": {
+        "exactIdentity": "weapon:lightsaber-chassis-pike",
+        "weaponGroup": "weapon-group:lightsaber",
+        "proficiency": "weapon-proficiency:lightsabers",
+        "families": [
+          "weapon-family:lightsaber-polearm",
+          "weapon-family:long-haft-compatible"
+        ],
+        "explicitAbilityLinks": [
+          {
+            "abilityType": "feat",
+            "abilityName": "Long Haft Strike",
+            "sourceCrossReferenceAlias": "Long Haft Form",
+            "relation": "UNLOCKS_DOUBLE_WEAPON_MODE"
+          },
+          {
+            "abilityType": "talent",
+            "abilityName": "Block",
+            "relation": "NEGATIVE_WEAPON_MODIFIER"
+          },
+          {
+            "abilityType": "talent",
+            "abilityName": "Deflect",
+            "relation": "NEGATIVE_WEAPON_MODIFIER"
+          }
+        ]
+      }
+    }
+  ],
+  "verificationContract": [
+    "All 8 Round 1 Lightsaber identities must receive ruleSelectors.",
+    "Every exactIdentity selector must match the frozen canonical identity key exactly.",
+    "Every record must retain weapon-group:lightsaber and weapon-proficiency:lightsabers.",
+    "Guard Shoto must resolve through weapon-family:shoto so Shoto Focus and Shoto Master can match it.",
+    "Lightsaber Pike must link canonical feat Long Haft Strike while retaining Long Haft Form only as the equipment-chapter cross-reference alias.",
+    "No ruleSelector value may be inserted into semantic finalTags or system.tags.",
+    "Existing Round 1 semantic finalTags, tradeoffs, comparisons, and unrepresented mechanics remain unchanged.",
+    "Production mutation remains unauthorized."
+  ]
+}

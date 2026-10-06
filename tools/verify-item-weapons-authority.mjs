@@ -1522,7 +1522,37 @@ if (fs.existsSync(path.join(ROOT, P4B))) {
   const rp = S.rollingProgress;
   if (rp.adjudicatedTotal !== REQ || rp.adjudicatedThisRound !== REQ || rp.remaining !== 16 - REQ || rp.nextCanonicalName !== (saber[REQ] ? saber[REQ].canonicalName : null) || rp.firstCanonicalName !== asg[0].canonicalName || rp.lastCanonicalName !== asg[REQ - 1].canonicalName) fail('4B rolling progress counts / next identity');
   if (rp.totalFinalTagAssignmentsThisRound !== tagTotal || rp.distinctTagsUsedThisRound !== tagsUsed.size || !same([...tagsUsed].sort(), [...rp.tagsUsedThisRound].sort()) || rp.unrepresentedMechanicInstancesThisRound !== unrep.length || !same([...new Set(unrep)].sort(), [...rp.unrepresentedMechanicDescriptionsThisRound].sort())) fail('4B rolling progress tag / unrepresented-mechanic counts');
-  if (REQ >= 8 && sh(JSON.stringify(canon(asg.slice(0, 8)))) !== '5a7666017416dab6731589bd639af901402222fdf82e9f362c0f1500506d0738') fail('4B round 1 planner rulings changed after adjudication');
+  if (REQ >= 8 && sh(JSON.stringify(canon(asg.slice(0, 8).map(({ ruleSelectors, ...rest }) => rest)))) !== '5a7666017416dab6731589bd639af901402222fdf82e9f362c0f1500506d0738') fail('4B round 1 planner rulings changed after adjudication');
+  // rule-selector layer (exact weapon / family / ability matching; never semantic tags)
+  const RET = J('data/audits/item-weapons-phase-4b-lightsaber-round1-selector-retrofit.json');
+  const RELATIONS = ['POSITIVE_WEAPON_MODIFIER', 'NEGATIVE_WEAPON_MODIFIER', 'EXPLICIT_WEAPON_FAMILY_MATCH', 'UNLOCKS_DOUBLE_WEAPON_MODE'];
+  const names = (f) => new Set(fs.readFileSync(path.join(ROOT, f), 'utf8').split('\n').filter((l) => l.trim()).map((l) => JSON.parse(l).name));
+  const talentNames = names('packs/talents.db'), featNames = names('packs/feats.db');
+  if (RET.productionMutationAuthorized !== false || RET.authorityOnly !== true || RET.semanticTagInvariant?.round1SemanticRulingsChanged !== false) fail('4B selector retrofit flags');
+  const retBy = new Map(RET.assignments.map((x) => [x.identityKey, x]));
+  asg.forEach((a, idx) => {
+    const w = `4B selectors ${a.canonicalName}`, q = a.ruleSelectors;
+    if (idx < 8 && !q) { fail(`${w} missing ruleSelectors (all Round 1 Lightsabers need them)`); return; }
+    if (!q) return;
+    if (q.exactIdentity !== `weapon:${a.identityKey}`) fail(`${w} exactIdentity must be weapon:${a.identityKey}`);
+    if (q.weaponGroup !== 'weapon-group:lightsaber' || q.proficiency !== 'weapon-proficiency:lightsabers') fail(`${w} must retain weapon-group:lightsaber and weapon-proficiency:lightsabers`);
+    if (!Array.isArray(q.families) || !q.families.length || q.families.some((f) => !/^weapon-family:[a-z0-9-]+$/.test(f))) fail(`${w} families malformed`);
+    for (const l of q.explicitAbilityLinks || []) {
+      if (!['feat', 'talent'].includes(l.abilityType) || !RELATIONS.includes(l.relation)) fail(`${w} ability link shape (${l.abilityName})`);
+      if (!(l.abilityType === 'talent' ? talentNames : featNames).has(l.abilityName)) fail(`${w} ${l.abilityType} "${l.abilityName}" does not exist in the production ${l.abilityType} pack`);
+    }
+    const r = retBy.get(a.identityKey);
+    if (!r || !same(canon(r.ruleSelectors), canon(q))) fail(`${w} differs from the planner selector retrofit`);
+    // selectors are never tags
+    const tagVals = [...a.sharedTags, ...a.advantageTags, ...a.tradeoffTags, ...a.finalTags, ...(a.conditionalSynergyTags || []).map((c) => c.tag)];
+    const selVals = [q.exactIdentity, q.weaponGroup, q.proficiency, ...q.families];
+    if (tagVals.some((t) => selVals.includes(t) || /[:]/.test(t))) fail(`${w} a rule selector leaked into a semantic tag field`);
+  });
+  if (RET.assignments.length !== 8 || !same(RET.assignments.map((x) => x.identityKey), asg.slice(0, 8).map((a) => a.identityKey))) fail('4B selector retrofit must cover exactly the 8 Round 1 identities');
+  const gs = asg.find((a) => a.identityKey === 'lightsaber-chassis-guard-shoto')?.ruleSelectors;
+  if (!gs || !gs.families.includes('weapon-family:shoto') || !['Shoto Focus', 'Shoto Master'].every((n) => gs.explicitAbilityLinks.some((l) => l.abilityName === n && l.relation === 'EXPLICIT_WEAPON_FAMILY_MATCH'))) fail('4B Guard Shoto must resolve through weapon-family:shoto and link Shoto Focus and Shoto Master');
+  const pk = asg.find((a) => a.identityKey === 'lightsaber-chassis-pike')?.ruleSelectors;
+  if (!pk || !pk.explicitAbilityLinks.some((l) => l.abilityType === 'feat' && l.abilityName === 'Long Haft Strike' && l.sourceCrossReferenceAlias === 'Long Haft Form' && l.relation === 'UNLOCKS_DOUBLE_WEAPON_MODE')) fail('4B Lightsaber Pike must link feat Long Haft Strike (alias Long Haft Form)');
   if (errors.length === e4b) console.log(`Phase 4B Lightsaber semantic tags OK: ${REQ}/16 adjudicated, ${tagTotal} assignments, ${tagsUsed.size} distinct tags, ${unrep.length} unrepresented mechanics (plain text, not tags), baseline = Lightsaber, next ${rp.nextCanonicalName}`);
 }
 
