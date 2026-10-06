@@ -1,0 +1,4276 @@
+{
+  "schemaVersion": "weapon-semantic-tags-rifle-rolling-v1",
+  "phase": "4D",
+  "family": "weapons",
+  "categoryBatch": "Rifle",
+  "status": "WEAPON_TAG_PHASE_4D_RIFLE_COMPLETE_PLANNER_AUTHORITY",
+  "authorityOnly": true,
+  "productionMutationAuthorized": false,
+  "purpose": "Rolling Rifle semantic, structural-selector, and recommendation-comparison authority. Rifle role diversity is represented without introducing weapon-only semantic vocabulary.",
+  "baseline": {
+    "repository": "docflowGM/foundryvtt-swse",
+    "phase3DStatus": "WEAPON_PHASE_3D_GLOBAL_AUTHORITY_FROZEN",
+    "comparisonIdentityKey": "weapon-blaster-rifle",
+    "comparisonCanonicalName": "Blaster Rifle",
+    "damage": "3d8",
+    "stunDamage": "2d8",
+    "capacityShots": 50,
+    "rateOfFire": [
+      "S",
+      "A"
+    ],
+    "rangeProfile": {
+      "pointBlank": [
+        0,
+        30
+      ],
+      "short": [
+        31,
+        60
+      ],
+      "medium": [
+        61,
+        150
+      ],
+      "long": [
+        151,
+        300
+      ]
+    }
+  },
+  "vocabularyPolicy": {
+    "semanticRule": "Every semantic tag must already be used by a certified feat or talent in the frozen 183-tag union.",
+    "derivedAllowedTagCount": 183,
+    "forbiddenWeaponSemanticExamples": [
+      "rifle",
+      "accuracy",
+      "area_damage",
+      "autofire",
+      "condition_track",
+      "explosives",
+      "grenade",
+      "thrown"
+    ],
+    "ruleSelectorsAreSemanticTags": false,
+    "recommendationProfileValuesAreSemanticTags": false,
+    "rawDamageCapacityRangeAndROFCreateSemanticTags": false
+  },
+  "selectorPolicy": {
+    "purpose": "Represent exact weapon, weapon-family, group, and proficiency applicability separately from semantic tags.",
+    "required": [
+      "exactIdentity",
+      "weaponGroup",
+      "proficiency"
+    ],
+    "genericRifleAbilityRule": "Generic rifle abilities should match weapon-group:rifle or weapon-proficiency:rifles.",
+    "namedWeaponRule": "Named ability cases such as Riflemaster and Sport Hunter must use exact/family applicability proven by the published ability. Broad family membership must not silently grant an exact named benefit.",
+    "weaponDeclarationPrinciple": "Weapons declare what they are; abilities declare what they apply to."
+  },
+  "comparisonPolicy": {
+    "baseline": "Standard Blaster Rifle",
+    "dimensions": [
+      "damage",
+      "capacity",
+      "stun",
+      "fireModes",
+      "range",
+      "precisionAndAim",
+      "closeQuarters",
+      "multiAttackCompatibility",
+      "actionEconomy",
+      "utility",
+      "recommendationFit"
+    ],
+    "variantSelectionRule": "Prefer a specialized rifle when its range, fire-mode, accuracy/setup, damage, control, or utility profile matches the character's build better than the standard Blaster Rifle and its tradeoffs do not conflict with that build."
+  },
+  "categoryCensus": {
+    "canonicalRifleIdentities": 38,
+    "repoPresent": 38,
+    "repoMissing": 0,
+    "authoritySource": "Phase 3B frozen 203-identity canonical authority",
+    "phase3BBlobSha": "e1f19068526e773a700496976403628c24d34b51"
+  },
+  "rollingProgress": {
+    "round": 4,
+    "adjudicatedThisRound": 8,
+    "adjudicatedTotal": 38,
+    "remaining": 0,
+    "firstCanonicalName": "Scatter Gun",
+    "lastCanonicalName": "Targeting Blaster Rifle",
+    "nextCanonicalName": null,
+    "categoryComplete": true,
+    "totalFinalTagAssignmentsThisRound": 45,
+    "totalFinalTagAssignmentsCumulative": 213,
+    "distinctFinalTagsUsedCumulative": 35,
+    "finalTagsUsedCumulative": [
+      "action_economy",
+      "anti-force",
+      "attack_of_opportunity",
+      "battlefield_control",
+      "burst_damage",
+      "concealment",
+      "control",
+      "critical_hit",
+      "damage_bonus",
+      "damage_threshold",
+      "defense",
+      "droid",
+      "equipment",
+      "exploration",
+      "grab",
+      "grapple",
+      "mechanics",
+      "mobility",
+      "move_action",
+      "movement",
+      "nonlethal",
+      "offense_ranged",
+      "positioning",
+      "precision",
+      "ranged",
+      "restrain",
+      "setup",
+      "sniper",
+      "standard_action",
+      "stun",
+      "sustained_damage",
+      "swift_action",
+      "targeting",
+      "tech",
+      "vehicle"
+    ],
+    "tradeoffTagsUsedCumulative": [
+      "action_economy",
+      "full_attack",
+      "precision",
+      "sustained_damage",
+      "swift_action"
+    ]
+  },
+  "implementationContract": {
+    "semanticAuthority": "planner",
+    "claudeMayChangeFinalTags": false,
+    "claudeMayChangeTradeoffTags": false,
+    "claudeMayChangeRuleSelectors": false,
+    "claudeMayChangeRelativeComparison": false,
+    "claudeMayCreateNewSemanticTags": false,
+    "runtimeCodeMutationAuthorized": false,
+    "productionMutationAuthorized": false,
+    "requiredRepoTargets": [
+      "data/audits/item-weapons-phase-4d-rifle-semantic-rolling.json",
+      "docs/audits/item-weapons-phase-4d-rifle-semantic-rolling.md"
+    ],
+    "productionFilesMustRemainUnchanged": [
+      "packs/weapons.db",
+      "template.json"
+    ]
+  },
+  "assignments": [
+    {
+      "identityKey": "weapon-arc-9965-blaster",
+      "canonicalName": "ARC-9965 Blaster Rifle",
+      "source": {
+        "book": "Legacy Era Campaign Guide",
+        "descriptionPage": 182,
+        "statTablePage": 183
+      },
+      "canonicalMechanicSummary": "Accurate 3d8 S/A blaster rifle with a same-as-base 3d8 stun setting, 40-shot power pack, retractable stock, and 10-shot ammunition consumption for each autofire attack.",
+      "sharedTags": [
+        "ranged"
+      ],
+      "advantageTags": [
+        "offense_ranged",
+        "precision",
+        "stun",
+        "nonlethal",
+        "sustained_damage"
+      ],
+      "tradeoffTags": [],
+      "finalTags": [
+        "ranged",
+        "offense_ranged",
+        "precision",
+        "stun",
+        "nonlethal",
+        "sustained_damage"
+      ],
+      "rationale": {
+        "ranged": "Published Rifle-group ranged weapon.",
+        "offense_ranged": "Deals direct 3d8 ranged energy damage.",
+        "precision": "Accurate explicitly removes the normal attack penalty at Short range.",
+        "stun": "The published weapon has a 3d8 stun setting.",
+        "nonlethal": "Its stun setting provides a nonlethal attack mode.",
+        "sustained_damage": "Supports autofire as well as single-shot fire."
+      },
+      "ruleSelectors": {
+        "exactIdentity": "weapon:weapon-arc-9965-blaster",
+        "weaponGroup": "weapon-group:rifle",
+        "proficiency": "weapon-proficiency:rifles",
+        "families": [
+          "weapon-family:blaster-rifle",
+          "weapon-family:arc-9965-blaster-rifle"
+        ],
+        "explicitAbilityLinks": [],
+        "selectorGuardrails": [
+          "Do not infer the Riflemaster Blaster Rifle benefit from broad blaster-rifle family membership; named Riflemaster cases remain exact."
+        ]
+      },
+      "relativeToStandardRifle": {
+        "damage": {
+          "canonical": "3d8",
+          "relation": "SAME"
+        },
+        "capacity": {
+          "shots": 40,
+          "relation": "LOWER"
+        },
+        "stun": {
+          "available": true,
+          "canonical": "3d8",
+          "relation": "HIGHER_DAMAGE"
+        },
+        "fireModes": {
+          "modes": [
+            "single",
+            "autofire"
+          ],
+          "relation": "SAME"
+        },
+        "range": {
+          "relation": "BETTER_AT_SHORT",
+          "notes": [
+            "Accurate: no Short-range attack penalty."
+          ]
+        },
+        "precisionAndAim": {
+          "relation": "BETTER"
+        },
+        "closeQuarters": {
+          "relation": "CONFIGURABLE_STOCK"
+        },
+        "multiAttackCompatibility": {
+          "relation": "NORMAL"
+        },
+        "actionEconomy": {
+          "relation": "BASELINE"
+        },
+        "utility": {
+          "relation": "ACCURATE_GENERALIST"
+        },
+        "recommendationFit": "Accurate general-purpose rifle with full S/A flexibility and stronger stun damage than the standard rifle, balanced by a smaller pack and expensive autofire bursts."
+      },
+      "unrepresentedMechanics": [
+        {
+          "mechanic": "Each autofire attack consumes 10 shots from the 40-shot power pack.",
+          "representationStatus": "STRUCTURED_RESOURCE_CONSUMPTION",
+          "note": "Ammunition efficiency remains structured recommendation data, not a semantic tag."
+        },
+        {
+          "mechanic": "Retractable stock.",
+          "representationStatus": "STRUCTURED_CONFIGURATION_RULE",
+          "note": "Stock configuration remains rules metadata."
+        }
+      ]
+    },
+    {
+      "identityKey": "weapon-espo-500-riot-gun",
+      "canonicalName": "BlasTech 500 Riot Gun",
+      "source": {
+        "controllingBook": "Rebellion Era Campaign Guide",
+        "descriptionPage": 50,
+        "statTablePage": 50,
+        "crossPublicationConflict": {
+          "earlierBook": "Clone Wars Campaign Guide",
+          "earlierPage": 61,
+          "phase3BResolution": "REBELLION_ERA_CONTROLS_CONFLICT_FIELDS",
+          "preservedEarlierFacts": [
+            "Clone Wars provenance remains attached to the canonical identity.",
+            "Clone Wars printed -2 single-shot penalty and Inaccurate; those conflict fields do not control after Phase 3B reconciliation."
+          ]
+        }
+      },
+      "canonicalMechanicSummary": "3d8 rifle with stun and single/autofire modes. The controlling Rebellion Era publication imposes -1 on single-shot ranged attacks and grants +2 equipment bonus to autofire attacks; a power pack provides 50 shots.",
+      "sharedTags": [
+        "ranged"
+      ],
+      "advantageTags": [
+        "offense_ranged",
+        "stun",
+        "nonlethal",
+        "sustained_damage"
+      ],
+      "tradeoffTags": [
+        "precision"
+      ],
+      "finalTags": [
+        "ranged",
+        "offense_ranged",
+        "stun",
+        "nonlethal",
+        "sustained_damage"
+      ],
+      "rationale": {
+        "ranged": "Published Rifle-group ranged weapon.",
+        "offense_ranged": "Deals direct ranged blaster damage.",
+        "stun": "The controlling Rebellion Era table provides a stun setting.",
+        "nonlethal": "The stun setting supplies a nonlethal attack mode.",
+        "sustained_damage": "The weapon is explicitly optimized for autofire and grants an attack bonus in autofire mode."
+      },
+      "ruleSelectors": {
+        "exactIdentity": "weapon:weapon-espo-500-riot-gun",
+        "weaponGroup": "weapon-group:rifle",
+        "proficiency": "weapon-proficiency:rifles",
+        "families": [
+          "weapon-family:blaster-rifle",
+          "weapon-family:riot-gun",
+          "weapon-family:autofire-rifle"
+        ],
+        "explicitAbilityLinks": [],
+        "selectorGuardrails": [
+          "Do not infer the Riflemaster Blaster Carbine benefit merely because the descriptive text says the riot gun functions in most ways as a blaster carbine."
+        ]
+      },
+      "relativeToStandardRifle": {
+        "damage": {
+          "canonical": "3d8",
+          "relation": "SAME"
+        },
+        "capacity": {
+          "shots": 50,
+          "relation": "SAME"
+        },
+        "stun": {
+          "available": true,
+          "relation": "AVAILABLE"
+        },
+        "fireModes": {
+          "modes": [
+            "single",
+            "autofire"
+          ],
+          "relation": "SAME_MODES_BUT_AUTOFIRE_FAVORED"
+        },
+        "range": {
+          "relation": "BASELINE_BY_CONTROLLING_SOURCE"
+        },
+        "precisionAndAim": {
+          "relation": "MODE_DEPENDENT",
+          "notes": [
+            "Single-shot attacks take -1.",
+            "Autofire attacks gain +2 equipment bonus."
+          ]
+        },
+        "closeQuarters": {
+          "relation": "BASELINE"
+        },
+        "multiAttackCompatibility": {
+          "relation": "NORMAL"
+        },
+        "actionEconomy": {
+          "relation": "BASELINE"
+        },
+        "utility": {
+          "relation": "COMBAT_SPECIALIST"
+        },
+        "recommendationFit": "Autofire-focused rifle. Prefer for characters who routinely use autofire; de-prioritize for single-shot precision builds."
+      },
+      "unrepresentedMechanics": [
+        {
+          "mechanic": "Autofire receives +2 equipment bonus while single-shot attacks take -1.",
+          "representationStatus": "STRUCTURED_MODE_MODIFIERS",
+          "note": "Do not turn `accuracy` or `autofire` into semantic tags."
+        }
+      ]
+    },
+    {
+      "identityKey": "weapon-dlt-20a-longblaster",
+      "canonicalName": "BlasTech DLT-20A \"Longbarrel\" Blaster Rifle",
+      "source": {
+        "book": "Clone Wars Campaign Guide",
+        "descriptionPage": 62,
+        "statTablePage": 61
+      },
+      "canonicalMechanicSummary": "Accurate 3d10 S/A blaster rifle with an integrated standard targeting scope and a magnatomic adhesion grip that grants +1 equipment bonus to Reflex Defense when the wielder is targeted by a disarm attack.",
+      "sharedTags": [
+        "ranged"
+      ],
+      "advantageTags": [
+        "offense_ranged",
+        "precision",
+        "targeting",
+        "defense",
+        "sustained_damage"
+      ],
+      "tradeoffTags": [],
+      "finalTags": [
+        "ranged",
+        "offense_ranged",
+        "precision",
+        "targeting",
+        "defense",
+        "sustained_damage"
+      ],
+      "rationale": {
+        "ranged": "Published Rifle-group ranged weapon.",
+        "offense_ranged": "Deals high 3d10 ranged energy damage.",
+        "precision": "Accurate removes the Short-range attack penalty.",
+        "targeting": "The rifle has an integrated standard targeting scope.",
+        "defense": "Its adhesion grip directly improves Reflex Defense against disarm attempts.",
+        "sustained_damage": "Supports both single-shot and autofire."
+      },
+      "ruleSelectors": {
+        "exactIdentity": "weapon:weapon-dlt-20a-longblaster",
+        "weaponGroup": "weapon-group:rifle",
+        "proficiency": "weapon-proficiency:rifles",
+        "families": [
+          "weapon-family:blaster-rifle",
+          "weapon-family:dlt-20a",
+          "weapon-family:longbarrel-blaster-rifle"
+        ],
+        "explicitAbilityLinks": [],
+        "selectorGuardrails": [
+          "An integrated scope and long-range role do not make this a published sniper-rifle identity.",
+          "Do not infer the Riflemaster Blaster Rifle benefit from broad family membership."
+        ]
+      },
+      "relativeToStandardRifle": {
+        "damage": {
+          "canonical": "3d10",
+          "relation": "HIGHER"
+        },
+        "capacity": {
+          "shots": null,
+          "relation": "SOURCE_UNRESOLVED"
+        },
+        "stun": {
+          "available": false,
+          "relation": "NONE"
+        },
+        "fireModes": {
+          "modes": [
+            "single",
+            "autofire"
+          ],
+          "relation": "SAME"
+        },
+        "range": {
+          "relation": "BETTER_AT_SHORT",
+          "notes": [
+            "Accurate: no Short-range attack penalty."
+          ]
+        },
+        "precisionAndAim": {
+          "relation": "BETTER",
+          "notes": [
+            "Integrated targeting scope."
+          ]
+        },
+        "closeQuarters": {
+          "relation": "LARGE_WEAPON"
+        },
+        "multiAttackCompatibility": {
+          "relation": "NORMAL"
+        },
+        "actionEconomy": {
+          "relation": "BASELINE"
+        },
+        "utility": {
+          "relation": "DISARM_RESISTANCE"
+        },
+        "recommendationFit": "High-damage accurate rifle for precision-capable generalists who still want autofire, with extra protection against disarm attempts."
+      },
+      "unrepresentedMechanics": [
+        {
+          "mechanic": "+1 equipment bonus to Reflex Defense when targeted by a disarm attack.",
+          "representationStatus": "STRUCTURED_CONDITIONAL_DEFENSE",
+          "note": "The exact disarm condition remains structured while `defense` captures the semantic benefit."
+        },
+        {
+          "mechanic": "The source does not establish ammunition source/capacity.",
+          "representationStatus": "SOURCE_UNRESOLVED",
+          "note": "Do not fill this gap from repo assumptions or analogous blaster rifles."
+        }
+      ]
+    },
+    {
+      "identityKey": "weapon-blaster-carbine",
+      "canonicalName": "Blaster Carbine",
+      "source": {
+        "book": "Core Rulebook",
+        "descriptionPage": 125,
+        "statTablePage": 126
+      },
+      "canonicalMechanicSummary": "Compact 3d8/2d8-stun S/A rifle with 50-shot power pack and optional retractable stock. A carbine can make attacks of opportunity even when its stock is not folded.",
+      "sharedTags": [
+        "ranged"
+      ],
+      "advantageTags": [
+        "offense_ranged",
+        "stun",
+        "nonlethal",
+        "sustained_damage",
+        "attack_of_opportunity"
+      ],
+      "tradeoffTags": [],
+      "finalTags": [
+        "ranged",
+        "offense_ranged",
+        "stun",
+        "nonlethal",
+        "sustained_damage",
+        "attack_of_opportunity"
+      ],
+      "rationale": {
+        "ranged": "Published Rifle-group ranged weapon.",
+        "offense_ranged": "Deals direct 3d8 ranged blaster damage.",
+        "stun": "Has an explicit 2d8 stun setting.",
+        "nonlethal": "Stun supplies a nonlethal option.",
+        "sustained_damage": "Supports autofire as well as single-shot fire.",
+        "attack_of_opportunity": "The carbine specifically retains the ability to make attacks of opportunity even when its stock is not folded."
+      },
+      "ruleSelectors": {
+        "exactIdentity": "weapon:weapon-blaster-carbine",
+        "weaponGroup": "weapon-group:rifle",
+        "proficiency": "weapon-proficiency:rifles",
+        "families": [
+          "weapon-family:blaster-rifle",
+          "weapon-family:blaster-carbine"
+        ],
+        "explicitAbilityLinks": [
+          {
+            "abilityType": "feat",
+            "abilityName": "Riflemaster",
+            "relation": "EXPLICIT_WEAPON_BENEFIT",
+            "effect": "A proficient user may brace a Blaster Carbine set to autofire even though it is not an autofire-only weapon."
+          }
+        ]
+      },
+      "relativeToStandardRifle": {
+        "damage": {
+          "canonical": "3d8",
+          "relation": "SAME"
+        },
+        "capacity": {
+          "shots": 50,
+          "relation": "SAME"
+        },
+        "stun": {
+          "available": true,
+          "canonical": "2d8",
+          "relation": "SAME"
+        },
+        "fireModes": {
+          "modes": [
+            "single",
+            "autofire"
+          ],
+          "relation": "SAME"
+        },
+        "range": {
+          "relation": "BASELINE"
+        },
+        "precisionAndAim": {
+          "relation": "BASELINE"
+        },
+        "closeQuarters": {
+          "relation": "BETTER",
+          "notes": [
+            "Explicit carbine attack-of-opportunity rule."
+          ]
+        },
+        "multiAttackCompatibility": {
+          "relation": "NORMAL"
+        },
+        "actionEconomy": {
+          "relation": "CONFIGURATION_DEPENDENT",
+          "notes": [
+            "Retractable stock uses normal stock configuration rules."
+          ]
+        },
+        "utility": {
+          "relation": "COMPACT_GENERALIST"
+        },
+        "recommendationFit": "Close-quarters/generalist rifle with standard damage and autofire plus unusual AoO flexibility; particularly strong with Riflemaster."
+      },
+      "unrepresentedMechanics": [
+        {
+          "mechanic": "Optional retractable stock changes proficiency/range treatment under Core stock rules.",
+          "representationStatus": "STRUCTURED_CONFIGURATION_RULE",
+          "note": "Do not infer unrelated pistol/rifle-family feat applicability from configuration alone."
+        }
+      ]
+    },
+    {
+      "identityKey": "weapon-double-barreled-blaster-carbine",
+      "canonicalName": "Blaster Carbine, Double-Barreled",
+      "source": {
+        "book": "Legacy Era Campaign Guide",
+        "descriptionPage": 63,
+        "statTablePage": 64
+      },
+      "canonicalMechanicSummary": "Inaccurate 3d8 single-shot carbine with 3d8 stun and 50 shots. It cannot autofire, but a swift action enables a two-shot 2x2 area attack. Double-shot consumes 2 shots and cannot combine with effects such as Double Attack or Rapid Shot. It retains the carbine attack-of-opportunity rule.",
+      "sharedTags": [
+        "ranged"
+      ],
+      "advantageTags": [
+        "offense_ranged",
+        "stun",
+        "nonlethal",
+        "attack_of_opportunity",
+        "swift_action",
+        "action_economy",
+        "burst_damage"
+      ],
+      "tradeoffTags": [
+        "precision",
+        "sustained_damage"
+      ],
+      "finalTags": [
+        "ranged",
+        "offense_ranged",
+        "stun",
+        "nonlethal",
+        "attack_of_opportunity",
+        "swift_action",
+        "action_economy",
+        "burst_damage"
+      ],
+      "rationale": {
+        "ranged": "Published Rifle-group ranged weapon.",
+        "offense_ranged": "Deals direct ranged energy damage.",
+        "stun": "Has a same-as-base 3d8 stun setting.",
+        "nonlethal": "The stun setting provides nonlethal capability.",
+        "attack_of_opportunity": "Like other carbines, it can make attacks of opportunity even without a folded stock.",
+        "swift_action": "Double-shot mode is selected as a swift action.",
+        "action_economy": "The weapon has an explicit swift-action combat configuration.",
+        "burst_damage": "Double-shot delivers a concentrated two-shot 2x2 area attack."
+      },
+      "ruleSelectors": {
+        "exactIdentity": "weapon:weapon-double-barreled-blaster-carbine",
+        "weaponGroup": "weapon-group:rifle",
+        "proficiency": "weapon-proficiency:rifles",
+        "families": [
+          "weapon-family:blaster-rifle",
+          "weapon-family:blaster-carbine",
+          "weapon-family:double-barreled-blaster-carbine"
+        ],
+        "explicitAbilityLinks": [],
+        "selectorGuardrails": [
+          "Do not grant the exact Riflemaster Blaster Carbine benefit without explicit named-variant applicability; this variant cannot autofire."
+        ]
+      },
+      "relativeToStandardRifle": {
+        "damage": {
+          "canonical": "3d8",
+          "relation": "SAME_SINGLE_TARGET"
+        },
+        "capacity": {
+          "shots": 50,
+          "relation": "SAME"
+        },
+        "stun": {
+          "available": true,
+          "canonical": "3d8",
+          "relation": "HIGHER_DAMAGE"
+        },
+        "fireModes": {
+          "modes": [
+            "single",
+            "double-shot"
+          ],
+          "relation": "NO_AUTOFIRE_AREA_OPTION"
+        },
+        "range": {
+          "relation": "WORSE",
+          "notes": [
+            "Inaccurate: cannot attack at Long range."
+          ]
+        },
+        "precisionAndAim": {
+          "relation": "WORSE_AT_RANGE"
+        },
+        "closeQuarters": {
+          "relation": "BETTER",
+          "notes": [
+            "Carbine attack-of-opportunity rule and optional area shot."
+          ]
+        },
+        "multiAttackCompatibility": {
+          "relation": "RESTRICTED_IN_DOUBLE_SHOT",
+          "notes": [
+            "Double-shot cannot combine with abilities that consume more than one shot in a round."
+          ]
+        },
+        "actionEconomy": {
+          "relation": "MORE_COMPLEX",
+          "notes": [
+            "Double-shot mode uses a swift action."
+          ]
+        },
+        "utility": {
+          "relation": "AREA_FIRE_WITHOUT_AUTOFIRE"
+        },
+        "recommendationFit": "Close-quarters area-fire carbine for characters who want burst coverage without autofire. De-prioritize for Long-range and multi-shot feat builds."
+      },
+      "unrepresentedMechanics": [
+        {
+          "mechanic": "Double-shot targets a 2x2 area; hit deals full damage and miss deals half, with Evasion modifying those results.",
+          "representationStatus": "STRUCTURED_AREA_ATTACK_PROFILE",
+          "note": "Area geometry and Evasion interaction remain structured; no `area_damage` tag is introduced."
+        },
+        {
+          "mechanic": "Double-shot consumes 2 shots and prohibits multi-shot abilities.",
+          "representationStatus": "STRUCTURED_FIRE_MODE_CONSTRAINT",
+          "note": "Exact restrictions remain mechanics metadata."
+        }
+      ]
+    },
+    {
+      "identityKey": "weapon-hunting-blaster-carbine",
+      "canonicalName": "Blaster Carbine, Hunting",
+      "source": {
+        "book": "Legacy Era Campaign Guide",
+        "descriptionPage": 63,
+        "statTablePage": 64
+      },
+      "canonicalMechanicSummary": "Inaccurate 3d8 single-shot hunting carbine with 3d8 stun, 50-shot power pack, retractable stock, and the normal carbine attack-of-opportunity rule. On a critical hit, its damage dice increase from d8s to d10s.",
+      "sharedTags": [
+        "ranged"
+      ],
+      "advantageTags": [
+        "offense_ranged",
+        "stun",
+        "nonlethal",
+        "attack_of_opportunity",
+        "critical_hit",
+        "burst_damage"
+      ],
+      "tradeoffTags": [
+        "precision",
+        "sustained_damage"
+      ],
+      "finalTags": [
+        "ranged",
+        "offense_ranged",
+        "stun",
+        "nonlethal",
+        "attack_of_opportunity",
+        "critical_hit",
+        "burst_damage"
+      ],
+      "rationale": {
+        "ranged": "Published Rifle-group ranged weapon.",
+        "offense_ranged": "Deals direct ranged blaster damage.",
+        "stun": "Has a same-as-base 3d8 stun setting.",
+        "nonlethal": "The stun setting provides nonlethal capability.",
+        "attack_of_opportunity": "Retains the explicit carbine attack-of-opportunity rule.",
+        "critical_hit": "Its special damage upgrade triggers specifically on a critical hit.",
+        "burst_damage": "Critical hits improve all damage dice from d8 to d10 for a larger damage spike."
+      },
+      "ruleSelectors": {
+        "exactIdentity": "weapon:weapon-hunting-blaster-carbine",
+        "weaponGroup": "weapon-group:rifle",
+        "proficiency": "weapon-proficiency:rifles",
+        "families": [
+          "weapon-family:blaster-rifle",
+          "weapon-family:blaster-carbine",
+          "weapon-family:hunting-blaster-carbine"
+        ],
+        "explicitAbilityLinks": [],
+        "selectorGuardrails": [
+          "Do not attach Sport Hunter; the feat does not list hunting blaster carbines.",
+          "Do not infer the Riflemaster Blaster Carbine benefit without exact applicability."
+        ]
+      },
+      "relativeToStandardRifle": {
+        "damage": {
+          "canonical": "3d8; d10 dice on critical",
+          "relation": "SAME_BASE_BETTER_CRITICAL"
+        },
+        "capacity": {
+          "shots": 50,
+          "relation": "SAME"
+        },
+        "stun": {
+          "available": true,
+          "canonical": "3d8",
+          "relation": "HIGHER_DAMAGE"
+        },
+        "fireModes": {
+          "modes": [
+            "single"
+          ],
+          "relation": "NO_AUTOFIRE"
+        },
+        "range": {
+          "relation": "WORSE",
+          "notes": [
+            "Inaccurate: cannot attack at Long range."
+          ]
+        },
+        "precisionAndAim": {
+          "relation": "WORSE_AT_RANGE"
+        },
+        "closeQuarters": {
+          "relation": "BETTER",
+          "notes": [
+            "Carbine attack-of-opportunity rule."
+          ]
+        },
+        "multiAttackCompatibility": {
+          "relation": "SINGLE_SHOT_ONLY"
+        },
+        "actionEconomy": {
+          "relation": "BASELINE"
+        },
+        "utility": {
+          "relation": "CRITICAL_HIT_SPECIALIST"
+        },
+        "recommendationFit": "Single-shot carbine for critical-hit builds and close-quarters flexibility; poor for Long-range or autofire-oriented characters."
+      },
+      "unrepresentedMechanics": [
+        {
+          "mechanic": "Critical hits replace d8 damage dice with d10s.",
+          "representationStatus": "STRUCTURED_CRITICAL_EFFECT",
+          "note": "`critical_hit` and `burst_damage` capture the build role; exact die replacement remains structured."
+        }
+      ]
+    },
+    {
+      "identityKey": "weapon-repeating-blaster-carbine",
+      "canonicalName": "Blaster Carbine, Repeating",
+      "source": {
+        "book": "Knights of the Old Republic Campaign Guide",
+        "descriptionPage": 67,
+        "statTablePage": 68
+      },
+      "canonicalMechanicSummary": "Large 3d10 repeating carbine with a same-as-base stun setting. It is autofire-only, an area-attack weapon, Inaccurate so it cannot attack at Long range, and holds 30 shots.",
+      "sharedTags": [
+        "ranged"
+      ],
+      "advantageTags": [
+        "offense_ranged",
+        "stun",
+        "nonlethal",
+        "sustained_damage"
+      ],
+      "tradeoffTags": [
+        "precision"
+      ],
+      "finalTags": [
+        "ranged",
+        "offense_ranged",
+        "stun",
+        "nonlethal",
+        "sustained_damage"
+      ],
+      "rationale": {
+        "ranged": "Published Rifle-group ranged weapon.",
+        "offense_ranged": "Deals high direct ranged blaster damage.",
+        "stun": "Published table establishes a stun setting equal to its active base damage.",
+        "nonlethal": "Stun provides a nonlethal attack mode.",
+        "sustained_damage": "Its sole firing mode is autofire, making sustained/area fire the weapon's defining combat behavior."
+      },
+      "ruleSelectors": {
+        "exactIdentity": "weapon:weapon-repeating-blaster-carbine",
+        "weaponGroup": "weapon-group:rifle",
+        "proficiency": "weapon-proficiency:rifles",
+        "families": [
+          "weapon-family:blaster-rifle",
+          "weapon-family:blaster-carbine",
+          "weapon-family:repeating-blaster-carbine",
+          "weapon-family:autofire-rifle"
+        ],
+        "explicitAbilityLinks": [],
+        "selectorGuardrails": [
+          "Do not automatically grant the Riflemaster Blaster Carbine benefit without exact published applicability adjudication; this variant is already autofire-only."
+        ]
+      },
+      "relativeToStandardRifle": {
+        "damage": {
+          "canonical": "3d10",
+          "relation": "HIGHER"
+        },
+        "capacity": {
+          "shots": 30,
+          "relation": "LOWER"
+        },
+        "stun": {
+          "available": true,
+          "canonical": "same-as-base",
+          "relation": "HIGHER_DAMAGE"
+        },
+        "fireModes": {
+          "modes": [
+            "autofire"
+          ],
+          "relation": "AUTOFIRE_ONLY"
+        },
+        "range": {
+          "relation": "WORSE",
+          "notes": [
+            "Inaccurate: cannot attack at Long range."
+          ]
+        },
+        "precisionAndAim": {
+          "relation": "WORSE_AT_RANGE"
+        },
+        "closeQuarters": {
+          "relation": "AUTOFIRE_FOCUSED"
+        },
+        "multiAttackCompatibility": {
+          "relation": "AUTOFIRE_ONLY"
+        },
+        "actionEconomy": {
+          "relation": "BASELINE"
+        },
+        "utility": {
+          "relation": "AREA_FIRE_SPECIALIST"
+        },
+        "recommendationFit": "High-damage autofire specialist. Excellent for characters committed to area/sustained fire; poor for long-range or single-shot builds."
+      },
+      "unrepresentedMechanics": [
+        {
+          "mechanic": "Published area-attack and autofire-only qualities.",
+          "representationStatus": "STRUCTURED_FIRE_MODE",
+          "note": "No certified `autofire` or `area_damage` semantic tag is introduced."
+        }
+      ]
+    },
+    {
+      "identityKey": "weapon-sporting-blaster-carbine",
+      "canonicalName": "Blaster Carbine, Sporting",
+      "source": {
+        "book": "Legacy Era Campaign Guide",
+        "descriptionPage": 63,
+        "statTablePage": 64
+      },
+      "canonicalMechanicSummary": "3d8 single-shot sporting carbine with 3d8 stun, 100-shot power pack, and the carbine attack-of-opportunity rule. It is normally Inaccurate, but when wielded in two hands it is no longer treated as Inaccurate and regains Long-range capability.",
+      "sharedTags": [
+        "ranged"
+      ],
+      "advantageTags": [
+        "offense_ranged",
+        "stun",
+        "nonlethal",
+        "attack_of_opportunity"
+      ],
+      "tradeoffTags": [
+        "precision",
+        "sustained_damage"
+      ],
+      "finalTags": [
+        "ranged",
+        "offense_ranged",
+        "stun",
+        "nonlethal",
+        "attack_of_opportunity"
+      ],
+      "conditionalSynergyTags": [
+        {
+          "tag": "precision",
+          "condition": "wielded in two hands",
+          "reason": "Two-handed use removes the weapon's Inaccurate treatment, restoring Long-range eligibility."
+        }
+      ],
+      "rationale": {
+        "ranged": "Published Rifle-group ranged weapon.",
+        "offense_ranged": "Deals direct ranged blaster damage.",
+        "stun": "Has a same-as-base 3d8 stun setting.",
+        "nonlethal": "The stun setting provides nonlethal capability.",
+        "attack_of_opportunity": "Retains the carbine attack-of-opportunity rule."
+      },
+      "ruleSelectors": {
+        "exactIdentity": "weapon:weapon-sporting-blaster-carbine",
+        "weaponGroup": "weapon-group:rifle",
+        "proficiency": "weapon-proficiency:rifles",
+        "families": [
+          "weapon-family:blaster-rifle",
+          "weapon-family:blaster-carbine",
+          "weapon-family:sporting-blaster-carbine"
+        ],
+        "explicitAbilityLinks": [],
+        "selectorGuardrails": [
+          "Sport Hunter does not list Sporting Blaster Carbine; do not create a Sport Hunter interaction from the word 'sporting'.",
+          "Do not infer the Riflemaster Blaster Carbine benefit without exact applicability."
+        ]
+      },
+      "relativeToStandardRifle": {
+        "damage": {
+          "canonical": "3d8",
+          "relation": "SAME"
+        },
+        "capacity": {
+          "shots": 100,
+          "relation": "HIGHER"
+        },
+        "stun": {
+          "available": true,
+          "canonical": "3d8",
+          "relation": "HIGHER_DAMAGE"
+        },
+        "fireModes": {
+          "modes": [
+            "single"
+          ],
+          "relation": "NO_AUTOFIRE"
+        },
+        "range": {
+          "relation": "CONFIGURATION_DEPENDENT",
+          "notes": [
+            "One-handed: Inaccurate/no Long range.",
+            "Two-handed: not treated as Inaccurate."
+          ]
+        },
+        "precisionAndAim": {
+          "relation": "BETTER_TWO_HANDED"
+        },
+        "closeQuarters": {
+          "relation": "BETTER",
+          "notes": [
+            "Carbine attack-of-opportunity rule."
+          ]
+        },
+        "multiAttackCompatibility": {
+          "relation": "SINGLE_SHOT_ONLY"
+        },
+        "actionEconomy": {
+          "relation": "WIELDING_CONFIGURATION"
+        },
+        "utility": {
+          "relation": "HIGH_CAPACITY_FLEXIBLE_RANGE"
+        },
+        "recommendationFit": "High-capacity single-shot carbine that becomes a capable long-range option when used two-handed while retaining carbine AoO flexibility."
+      },
+      "unrepresentedMechanics": [
+        {
+          "mechanic": "Inaccurate is suppressed only while wielded in two hands.",
+          "representationStatus": "STRUCTURED_CONDITIONAL_QUALITY",
+          "note": "`precision` is conditional rather than an unconditional final tag."
+        }
+      ]
+    },
+    {
+      "identityKey": "weapon-blaster-rifle",
+      "canonicalName": "Blaster Rifle",
+      "source": {
+        "book": "Core Rulebook",
+        "descriptionPage": 126,
+        "statTablePage": 127
+      },
+      "canonicalMechanicSummary": "Standard rifle comparison baseline: 3d8 lethal, 2d8 stun, single/autofire modes, 50-shot power pack, normal rifle range, with optional retractable stock.",
+      "sharedTags": [
+        "ranged"
+      ],
+      "advantageTags": [
+        "offense_ranged",
+        "stun",
+        "nonlethal",
+        "sustained_damage"
+      ],
+      "tradeoffTags": [],
+      "finalTags": [
+        "ranged",
+        "offense_ranged",
+        "stun",
+        "nonlethal",
+        "sustained_damage"
+      ],
+      "rationale": {
+        "ranged": "Canonical standard Rifle-group firearm.",
+        "offense_ranged": "Deals direct 3d8 ranged energy damage.",
+        "stun": "Has an explicit 2d8 stun setting.",
+        "nonlethal": "Stun provides nonlethal capability.",
+        "sustained_damage": "Supports autofire in addition to single-shot attacks."
+      },
+      "ruleSelectors": {
+        "exactIdentity": "weapon:weapon-blaster-rifle",
+        "weaponGroup": "weapon-group:rifle",
+        "proficiency": "weapon-proficiency:rifles",
+        "families": [
+          "weapon-family:blaster-rifle",
+          "weapon-family:standard-blaster-rifle"
+        ],
+        "explicitAbilityLinks": [
+          {
+            "abilityType": "feat",
+            "abilityName": "Riflemaster",
+            "relation": "EXPLICIT_WEAPON_BENEFIT",
+            "effect": "Treat the standard Blaster Rifle as an Accurate weapon."
+          }
+        ]
+      },
+      "relativeToStandardRifle": {
+        "damage": {
+          "canonical": "3d8",
+          "relation": "BASELINE"
+        },
+        "capacity": {
+          "shots": 50,
+          "relation": "BASELINE"
+        },
+        "stun": {
+          "available": true,
+          "canonical": "2d8",
+          "relation": "BASELINE"
+        },
+        "fireModes": {
+          "modes": [
+            "single",
+            "autofire"
+          ],
+          "relation": "BASELINE"
+        },
+        "range": {
+          "relation": "BASELINE"
+        },
+        "precisionAndAim": {
+          "relation": "BASELINE"
+        },
+        "closeQuarters": {
+          "relation": "BASELINE"
+        },
+        "multiAttackCompatibility": {
+          "relation": "BASELINE"
+        },
+        "actionEconomy": {
+          "relation": "BASELINE"
+        },
+        "utility": {
+          "relation": "GENERALIST"
+        },
+        "recommendationFit": "Default rifle when no specialized rifle offers a build-aligned advantage sufficient to justify its tradeoffs."
+      },
+      "unrepresentedMechanics": [
+        {
+          "mechanic": "Optional retractable stock.",
+          "representationStatus": "STRUCTURED_CONFIGURATION_RULE",
+          "note": "Configuration alters proficiency/range treatment as published; it does not create semantic tags."
+        }
+      ]
+    },
+    {
+      "identityKey": "weapon-assault-blaster-rifle",
+      "canonicalName": "Blaster Rifle, Assault",
+      "source": {
+        "book": "Knights of the Old Republic Campaign Guide",
+        "descriptionPage": 67,
+        "statTablePage": 68
+      },
+      "canonicalMechanicSummary": "Accurate 3d8 assault blaster rifle with single/autofire modes, 50-shot power pack, and published stun setting. Accurate removes the normal Short-range attack penalty.",
+      "sharedTags": [
+        "ranged"
+      ],
+      "advantageTags": [
+        "offense_ranged",
+        "stun",
+        "nonlethal",
+        "sustained_damage",
+        "precision"
+      ],
+      "tradeoffTags": [],
+      "finalTags": [
+        "ranged",
+        "offense_ranged",
+        "stun",
+        "nonlethal",
+        "sustained_damage",
+        "precision"
+      ],
+      "rationale": {
+        "ranged": "Published Rifle-group ranged weapon.",
+        "offense_ranged": "Deals direct 3d8 ranged energy damage.",
+        "stun": "Published table establishes a stun setting.",
+        "nonlethal": "Stun provides a nonlethal mode.",
+        "sustained_damage": "Supports autofire as well as single-shot fire.",
+        "precision": "Accurate explicitly eliminates the attack penalty at Short range."
+      },
+      "ruleSelectors": {
+        "exactIdentity": "weapon:weapon-assault-blaster-rifle",
+        "weaponGroup": "weapon-group:rifle",
+        "proficiency": "weapon-proficiency:rifles",
+        "families": [
+          "weapon-family:blaster-rifle",
+          "weapon-family:assault-blaster-rifle"
+        ],
+        "explicitAbilityLinks": [],
+        "selectorGuardrails": [
+          "Do not infer the standard Blaster Rifle Riflemaster effect from the broad blaster-rifle family; Riflemaster's named weapon cases remain exact."
+        ]
+      },
+      "relativeToStandardRifle": {
+        "damage": {
+          "canonical": "3d8",
+          "relation": "SAME"
+        },
+        "capacity": {
+          "shots": 50,
+          "relation": "SAME"
+        },
+        "stun": {
+          "available": true,
+          "canonical": "same-as-base",
+          "relation": "AVAILABLE"
+        },
+        "fireModes": {
+          "modes": [
+            "single",
+            "autofire"
+          ],
+          "relation": "SAME"
+        },
+        "range": {
+          "relation": "BETTER_AT_SHORT",
+          "notes": [
+            "Accurate: no Short-range attack penalty."
+          ]
+        },
+        "precisionAndAim": {
+          "relation": "BETTER"
+        },
+        "closeQuarters": {
+          "relation": "BASELINE"
+        },
+        "multiAttackCompatibility": {
+          "relation": "NORMAL"
+        },
+        "actionEconomy": {
+          "relation": "BASELINE"
+        },
+        "utility": {
+          "relation": "ACCURATE_GENERALIST"
+        },
+        "recommendationFit": "A cleaner general combat rifle than the baseline when Short-range accuracy matters, without sacrificing standard damage, autofire, stun, or capacity."
+      },
+      "unrepresentedMechanics": []
+    },
+    {
+      "identityKey": "weapon-heavy-blaster-rifle",
+      "canonicalName": "Blaster Rifle, Heavy",
+      "source": {
+        "book": "Core Rulebook",
+        "descriptionPage": 127,
+        "statTablePage": 127
+      },
+      "canonicalMechanicSummary": "Large 3d10 heavy blaster rifle with 2d10 stun, single/autofire modes, and a 30-shot power pack. It emphasizes raw rifle firepower over compactness and ammunition endurance.",
+      "sharedTags": [
+        "ranged"
+      ],
+      "advantageTags": [
+        "offense_ranged",
+        "stun",
+        "nonlethal",
+        "sustained_damage"
+      ],
+      "tradeoffTags": [],
+      "finalTags": [
+        "ranged",
+        "offense_ranged",
+        "stun",
+        "nonlethal",
+        "sustained_damage"
+      ],
+      "rationale": {
+        "ranged": "Published Rifle-group ranged weapon.",
+        "offense_ranged": "Deals high 3d10 direct ranged energy damage.",
+        "stun": "Has an explicit 2d10 stun setting.",
+        "nonlethal": "Stun provides a nonlethal option.",
+        "sustained_damage": "Supports autofire as well as single-shot fire."
+      },
+      "ruleSelectors": {
+        "exactIdentity": "weapon:weapon-heavy-blaster-rifle",
+        "weaponGroup": "weapon-group:rifle",
+        "proficiency": "weapon-proficiency:rifles",
+        "families": [
+          "weapon-family:blaster-rifle",
+          "weapon-family:heavy-blaster-rifle"
+        ],
+        "explicitAbilityLinks": [
+          {
+            "abilityType": "feat",
+            "abilityName": "Riflemaster",
+            "relation": "EXPLICIT_WEAPON_BENEFIT",
+            "effect": "When using a Heavy Blaster Rifle, its damage dice increase from d10 to d12."
+          }
+        ]
+      },
+      "relativeToStandardRifle": {
+        "damage": {
+          "canonical": "3d10",
+          "relation": "HIGHER"
+        },
+        "capacity": {
+          "shots": 30,
+          "relation": "LOWER"
+        },
+        "stun": {
+          "available": true,
+          "canonical": "2d10",
+          "relation": "HIGHER_DAMAGE"
+        },
+        "fireModes": {
+          "modes": [
+            "single",
+            "autofire"
+          ],
+          "relation": "SAME"
+        },
+        "range": {
+          "relation": "BASELINE"
+        },
+        "precisionAndAim": {
+          "relation": "BASELINE"
+        },
+        "closeQuarters": {
+          "relation": "BULKIER"
+        },
+        "multiAttackCompatibility": {
+          "relation": "NORMAL"
+        },
+        "actionEconomy": {
+          "relation": "BASELINE"
+        },
+        "utility": {
+          "relation": "DAMAGE_SPECIALIST"
+        },
+        "recommendationFit": "Raw-damage general combat rifle. Prefer when per-shot damage matters more than weight and ammunition endurance; Riflemaster substantially strengthens it."
+      },
+      "unrepresentedMechanics": [
+        {
+          "mechanic": "Higher base/stun dice and lower shot capacity than standard rifle.",
+          "representationStatus": "STRUCTURED_RECOMMENDATION_DATA",
+          "note": "Raw damage dice differences do not become `damage_bonus` semantic tags."
+        }
+      ]
+    },
+    {
+      "identityKey": "weapon-heavy-assault-blaster",
+      "canonicalName": "Blaster Rifle, Heavy Assault",
+      "source": {
+        "book": "Legacy Era Campaign Guide",
+        "descriptionPage": 65,
+        "statTablePage": 64
+      },
+      "canonicalMechanicSummary": "Large 3d10 autofire-only heavy assault rifle with a 50-shot power pack, no stun setting, and Inaccurate range. On a critical hit, its damage dice increase from d10s to d12s.",
+      "sharedTags": [
+        "ranged"
+      ],
+      "advantageTags": [
+        "offense_ranged",
+        "sustained_damage",
+        "critical_hit",
+        "burst_damage"
+      ],
+      "tradeoffTags": [
+        "precision"
+      ],
+      "finalTags": [
+        "ranged",
+        "offense_ranged",
+        "sustained_damage",
+        "critical_hit",
+        "burst_damage"
+      ],
+      "rationale": {
+        "ranged": "Published Rifle-group ranged weapon.",
+        "offense_ranged": "Deals high 3d10 ranged energy damage.",
+        "sustained_damage": "Autofire is its only firing mode.",
+        "critical_hit": "Its special die-size increase is triggered by a critical hit.",
+        "burst_damage": "Critical hits increase all damage dice from d10 to d12."
+      },
+      "ruleSelectors": {
+        "exactIdentity": "weapon:weapon-heavy-assault-blaster",
+        "weaponGroup": "weapon-group:rifle",
+        "proficiency": "weapon-proficiency:rifles",
+        "families": [
+          "weapon-family:blaster-rifle",
+          "weapon-family:heavy-assault-blaster-rifle",
+          "weapon-family:autofire-rifle"
+        ],
+        "explicitAbilityLinks": [],
+        "selectorGuardrails": [
+          "Do not grant Riflemaster's Heavy Blaster Rifle benefit; Heavy Assault Blaster Rifle is a distinct named identity."
+        ]
+      },
+      "relativeToStandardRifle": {
+        "damage": {
+          "canonical": "3d10; d12 dice on critical",
+          "relation": "HIGHER"
+        },
+        "capacity": {
+          "shots": 50,
+          "relation": "SAME"
+        },
+        "stun": {
+          "available": false,
+          "relation": "NONE"
+        },
+        "fireModes": {
+          "modes": [
+            "autofire"
+          ],
+          "relation": "AUTOFIRE_ONLY"
+        },
+        "range": {
+          "relation": "WORSE",
+          "notes": [
+            "Inaccurate: cannot attack at Long range."
+          ]
+        },
+        "precisionAndAim": {
+          "relation": "WORSE_AT_RANGE"
+        },
+        "closeQuarters": {
+          "relation": "AUTOFIRE_FOCUSED"
+        },
+        "multiAttackCompatibility": {
+          "relation": "AUTOFIRE_ONLY"
+        },
+        "actionEconomy": {
+          "relation": "BASELINE"
+        },
+        "utility": {
+          "relation": "HEAVY_AUTOFIRE_DAMAGE"
+        },
+        "recommendationFit": "High-damage autofire rifle with strong critical spikes. Excellent for dedicated autofire/critical builds; poor for stun, single-shot precision, or Long-range roles."
+      },
+      "unrepresentedMechanics": [
+        {
+          "mechanic": "Critical hits replace d10 damage dice with d12s.",
+          "representationStatus": "STRUCTURED_CRITICAL_EFFECT",
+          "note": "Exact die replacement remains structured."
+        }
+      ]
+    },
+    {
+      "identityKey": "weapon-heavy-variable-blaster",
+      "canonicalName": "Blaster Rifle, Heavy Variable",
+      "source": {
+        "book": "Galaxy at War",
+        "descriptionPage": 38,
+        "statTablePage": 41
+      },
+      "canonicalMechanicSummary": "Large variable-power rifle with 500-shot pack, 3d6/3d8/3d10 power profiles consuming 1x/10x/20x ammunition, stun tied to active power, and Inaccurate range. It also has an ascension mode with two syntherope tethers, swift-action mode switching, 12-square-per-round lift/zipline movement, and 30-square ascension range.",
+      "sharedTags": [
+        "ranged"
+      ],
+      "advantageTags": [
+        "offense_ranged",
+        "stun",
+        "nonlethal",
+        "swift_action",
+        "action_economy",
+        "burst_damage",
+        "mobility",
+        "movement",
+        "positioning",
+        "exploration"
+      ],
+      "tradeoffTags": [
+        "precision"
+      ],
+      "finalTags": [
+        "ranged",
+        "offense_ranged",
+        "stun",
+        "nonlethal",
+        "swift_action",
+        "action_economy",
+        "burst_damage",
+        "mobility",
+        "movement",
+        "positioning",
+        "exploration"
+      ],
+      "rationale": {
+        "ranged": "Published Rifle-group ranged weapon.",
+        "offense_ranged": "Multiple power profiles deliver direct ranged blaster damage.",
+        "stun": "Published authority establishes a stun setting tied to the active power profile.",
+        "nonlethal": "Stun provides nonlethal capability.",
+        "swift_action": "Power level and blaster/ascension configuration use swift-action switching.",
+        "action_economy": "Its tactical modes require explicit combat-action investment.",
+        "burst_damage": "The wielder can deliberately trade ammunition efficiency for a much stronger 3d10 shot profile.",
+        "mobility": "Ascension mode directly transports the wielder.",
+        "movement": "The tether moves the wielder 12 squares per round.",
+        "positioning": "The tether enables vertical repositioning and downhill zipline movement.",
+        "exploration": "Integrated grappling/zipline use provides substantial traversal utility."
+      },
+      "ruleSelectors": {
+        "exactIdentity": "weapon:weapon-heavy-variable-blaster",
+        "weaponGroup": "weapon-group:rifle",
+        "proficiency": "weapon-proficiency:rifles",
+        "families": [
+          "weapon-family:blaster-rifle",
+          "weapon-family:heavy-blaster-rifle",
+          "weapon-family:variable-blaster-rifle",
+          "weapon-family:heavy-variable-blaster-rifle",
+          "weapon-family:ascension-system"
+        ],
+        "explicitAbilityLinks": []
+      },
+      "relativeToStandardRifle": {
+        "damage": {
+          "canonical": "3d6 / 3d8 / 3d10",
+          "relation": "CONFIGURABLE"
+        },
+        "capacity": {
+          "shots": 500,
+          "relation": "MUCH_HIGHER_NOMINAL",
+          "notes": [
+            "3d8 mode consumes 10x normal ammunition.",
+            "3d10 mode consumes 20x normal ammunition."
+          ]
+        },
+        "stun": {
+          "available": true,
+          "relation": "CONFIGURATION_DEPENDENT"
+        },
+        "fireModes": {
+          "modes": [
+            "single",
+            "ascension"
+          ],
+          "relation": "NO_AUTOFIRE"
+        },
+        "range": {
+          "relation": "WORSE",
+          "notes": [
+            "Inaccurate: cannot attack at Long range.",
+            "Ascension mode maximum range is 30 squares."
+          ]
+        },
+        "precisionAndAim": {
+          "relation": "WORSE_AT_LONG_RANGE"
+        },
+        "closeQuarters": {
+          "relation": "BASELINE"
+        },
+        "multiAttackCompatibility": {
+          "relation": "NORMAL_BUT_RESOURCE_INTENSIVE_AT_HIGH_POWER"
+        },
+        "actionEconomy": {
+          "relation": "MORE_COMPLEX",
+          "notes": [
+            "Power and ascension configuration use swift actions."
+          ]
+        },
+        "utility": {
+          "relation": "MUCH_BETTER",
+          "notes": [
+            "Integrated grappling/lift/zipline system."
+          ]
+        },
+        "recommendationFit": "Hybrid damage/utility rifle for characters who want selectable output and exceptional traversal. Avoid for autofire builds or characters who need Long-range capability."
+      },
+      "unrepresentedMechanics": [
+        {
+          "mechanic": "500-shot pack with 1x/10x/20x consumption by power mode.",
+          "representationStatus": "STRUCTURED_RESOURCE_PROFILES",
+          "note": "Capacity and consumption multipliers remain structured data."
+        },
+        {
+          "mechanic": "Two syntherope lengths; roughly 720 kg vertical lift; 30-square tether range.",
+          "representationStatus": "STRUCTURED_UTILITY_PROFILE",
+          "note": "Exact limits remain structured mechanics."
+        }
+      ]
+    },
+    {
+      "identityKey": "weapon-light-repeating-blaster",
+      "canonicalName": "Blaster Rifle, Light Repeating",
+      "source": {
+        "book": "Core Rulebook",
+        "descriptionPage": 127,
+        "statTablePage": 127
+      },
+      "canonicalMechanicSummary": "Large 3d8 autofire-only rifle with no stun setting. It uses a 30-shot power pack or can attach to a power generator for extended use.",
+      "sharedTags": [
+        "ranged"
+      ],
+      "advantageTags": [
+        "offense_ranged",
+        "sustained_damage"
+      ],
+      "tradeoffTags": [],
+      "finalTags": [
+        "ranged",
+        "offense_ranged",
+        "sustained_damage"
+      ],
+      "rationale": {
+        "ranged": "Published Rifle-group ranged weapon.",
+        "offense_ranged": "Deals direct ranged energy damage.",
+        "sustained_damage": "It is autofire-only and can use generator power for extended sustained fire."
+      },
+      "ruleSelectors": {
+        "exactIdentity": "weapon:weapon-light-repeating-blaster",
+        "weaponGroup": "weapon-group:rifle",
+        "proficiency": "weapon-proficiency:rifles",
+        "families": [
+          "weapon-family:blaster-rifle",
+          "weapon-family:repeating-blaster-rifle",
+          "weapon-family:light-repeating-blaster",
+          "weapon-family:autofire-rifle"
+        ],
+        "explicitAbilityLinks": [
+          {
+            "abilityType": "feat",
+            "abilityName": "Riflemaster",
+            "relation": "EXPLICIT_WEAPON_BENEFIT",
+            "effect": "Treat the Light Repeating Blaster as Medium instead of Large."
+          }
+        ]
+      },
+      "relativeToStandardRifle": {
+        "damage": {
+          "canonical": "3d8",
+          "relation": "SAME"
+        },
+        "capacity": {
+          "shots": 30,
+          "relation": "LOWER_WITH_GENERATOR_OPTION"
+        },
+        "stun": {
+          "available": false,
+          "relation": "NONE"
+        },
+        "fireModes": {
+          "modes": [
+            "autofire"
+          ],
+          "relation": "AUTOFIRE_ONLY"
+        },
+        "range": {
+          "relation": "BASELINE"
+        },
+        "precisionAndAim": {
+          "relation": "AUTOFIRE_FOCUSED"
+        },
+        "closeQuarters": {
+          "relation": "BULKY"
+        },
+        "multiAttackCompatibility": {
+          "relation": "AUTOFIRE_ONLY"
+        },
+        "actionEconomy": {
+          "relation": "BASELINE"
+        },
+        "utility": {
+          "relation": "SUSTAINED_FIRE_PLATFORM"
+        },
+        "recommendationFit": "Dedicated sustained-fire rifle. Excellent for autofire builds and prolonged positions with generator access; poor for single-shot, stun, or low-profile use."
+      },
+      "unrepresentedMechanics": [
+        {
+          "mechanic": "Can attach to a power generator for longer use.",
+          "representationStatus": "STRUCTURED_RESOURCE_OPTION",
+          "note": "Extended power supply is not a semantic tag."
+        }
+      ]
+    },
+    {
+      "identityKey": "weapon-sniper-blaster-rifle",
+      "canonicalName": "Blaster Rifle, Sniper",
+      "source": {
+        "book": "Scum and Villainy",
+        "descriptionPage": 50,
+        "statTablePage": 51
+      },
+      "canonicalMechanicSummary": "Accurate 3d10 single-shot sniper rifle with built-in bipod and targeting scope, no stun setting, and only 10 shots. If the wielder does not Aim at the target immediately before attacking, the attack takes -5. It cannot benefit from the rapid recycler upgrade.",
+      "sharedTags": [
+        "ranged"
+      ],
+      "advantageTags": [
+        "offense_ranged",
+        "precision",
+        "targeting",
+        "setup"
+      ],
+      "tradeoffTags": [
+        "sustained_damage"
+      ],
+      "finalTags": [
+        "ranged",
+        "offense_ranged",
+        "precision",
+        "targeting",
+        "setup"
+      ],
+      "rationale": {
+        "ranged": "Published Rifle-group ranged weapon.",
+        "offense_ranged": "Deals high 3d10 ranged energy damage.",
+        "precision": "Accurate removes the Short-range penalty and the weapon is expressly built around careful precision fire.",
+        "targeting": "A targeting scope is integrated into the weapon and its core attack rule keys off Aim.",
+        "setup": "The wielder must Aim immediately before the attack or take a -5 penalty."
+      },
+      "ruleSelectors": {
+        "exactIdentity": "weapon:weapon-sniper-blaster-rifle",
+        "weaponGroup": "weapon-group:rifle",
+        "proficiency": "weapon-proficiency:rifles",
+        "families": [
+          "weapon-family:blaster-rifle",
+          "weapon-family:sniper-rifle",
+          "weapon-family:sniper-blaster-rifle"
+        ],
+        "explicitAbilityLinks": [],
+        "abilityRestrictions": [
+          {
+            "selector": "equipment-upgrade:rapid-recycler",
+            "relation": "PROHIBITED",
+            "reason": "The source explicitly states this weapon cannot benefit from the rapid recycler upgrade."
+          }
+        ]
+      },
+      "relativeToStandardRifle": {
+        "damage": {
+          "canonical": "3d10",
+          "relation": "HIGHER"
+        },
+        "capacity": {
+          "shots": 10,
+          "relation": "MUCH_LOWER"
+        },
+        "stun": {
+          "available": false,
+          "relation": "NONE"
+        },
+        "fireModes": {
+          "modes": [
+            "single"
+          ],
+          "relation": "NO_AUTOFIRE"
+        },
+        "range": {
+          "relation": "BETTER_AT_SHORT",
+          "notes": [
+            "Accurate removes Short-range penalty."
+          ]
+        },
+        "precisionAndAim": {
+          "relation": "MUCH_BETTER_WHEN_AIMED",
+          "notes": [
+            "-5 attack if Aim was not used immediately before the attack."
+          ]
+        },
+        "closeQuarters": {
+          "relation": "WORSE"
+        },
+        "multiAttackCompatibility": {
+          "relation": "SINGLE_SHOT_ROLE"
+        },
+        "actionEconomy": {
+          "relation": "AIM_DEPENDENT"
+        },
+        "utility": {
+          "relation": "INTEGRATED_BIPOD_AND_SCOPE"
+        },
+        "recommendationFit": "Dedicated precision/sniper rifle. Strong for Aim-based long-range characters; poor for mobile firing, autofire, stun, or ammunition-intensive combat."
+      },
+      "unrepresentedMechanics": [
+        {
+          "mechanic": "Built-in bipod and targeting scope.",
+          "representationStatus": "STRUCTURED_INTEGRATED_ACCESSORIES",
+          "note": "targeting captures the semantic role; exact accessories remain structured."
+        },
+        {
+          "mechanic": "-5 attack unless Aim immediately precedes the attack.",
+          "representationStatus": "STRUCTURED_ATTACK_REQUIREMENT",
+          "note": "setup and targeting capture the role; exact penalty remains structured."
+        }
+      ]
+    },
+    {
+      "identityKey": "weapon-sporting-blaster-rifle",
+      "canonicalName": "Blaster Rifle, Sporting",
+      "source": {
+        "book": "Core Rulebook",
+        "descriptionPage": 127,
+        "statTablePage": 127
+      },
+      "canonicalMechanicSummary": "Civilian/hunting 3d6 rifle with 2d6 stun, single-shot fire, normal rifle range, and 50-shot power pack. Targeting scopes are common but are not included in the listed weapon cost.",
+      "sharedTags": [
+        "ranged"
+      ],
+      "advantageTags": [
+        "offense_ranged",
+        "stun",
+        "nonlethal"
+      ],
+      "tradeoffTags": [
+        "sustained_damage"
+      ],
+      "finalTags": [
+        "ranged",
+        "offense_ranged",
+        "stun",
+        "nonlethal"
+      ],
+      "rationale": {
+        "ranged": "Published Rifle-group ranged weapon.",
+        "offense_ranged": "Deals direct 3d6 ranged energy damage.",
+        "stun": "Has an explicit 2d6 stun setting.",
+        "nonlethal": "Stun provides a nonlethal option."
+      },
+      "ruleSelectors": {
+        "exactIdentity": "weapon:weapon-sporting-blaster-rifle",
+        "weaponGroup": "weapon-group:rifle",
+        "proficiency": "weapon-proficiency:rifles",
+        "families": [
+          "weapon-family:blaster-rifle",
+          "weapon-family:sporting-rifle",
+          "weapon-family:sporting-blaster-rifle"
+        ],
+        "explicitAbilityLinks": [
+          {
+            "abilityType": "feat",
+            "abilityName": "Sport Hunter",
+            "relation": "EXPLICIT_WEAPON_BENEFIT",
+            "effect": "When using a Sporting Blaster Rifle, gain +1 to the attack roll when aiming before firing."
+          }
+        ],
+        "selectorGuardrails": [
+          "Do not add `precision` to finalTags solely because Sport Hunter can improve this weapon; the benefit belongs to the feat/weapon join, not the unmodified weapon."
+        ]
+      },
+      "relativeToStandardRifle": {
+        "damage": {
+          "canonical": "3d6",
+          "relation": "LOWER"
+        },
+        "capacity": {
+          "shots": 50,
+          "relation": "SAME"
+        },
+        "stun": {
+          "available": true,
+          "canonical": "2d6",
+          "relation": "LOWER_DAMAGE"
+        },
+        "fireModes": {
+          "modes": [
+            "single"
+          ],
+          "relation": "NO_AUTOFIRE"
+        },
+        "range": {
+          "relation": "BASELINE"
+        },
+        "precisionAndAim": {
+          "relation": "BASELINE_UNMODIFIED_WITH_EXPLICIT_SPORT_HUNTER_SYNERGY"
+        },
+        "closeQuarters": {
+          "relation": "BASELINE"
+        },
+        "multiAttackCompatibility": {
+          "relation": "SINGLE_SHOT_ONLY"
+        },
+        "actionEconomy": {
+          "relation": "BASELINE_UNMODIFIED"
+        },
+        "utility": {
+          "relation": "HUNTING_SPORTING"
+        },
+        "recommendationFit": "Lower-power civilian hunting rifle. Normally inferior to a military blaster rifle for raw combat, but materially more attractive to Sport Hunter/Aim-oriented characters."
+      },
+      "unrepresentedMechanics": [
+        {
+          "mechanic": "Targeting scopes are commonly fitted but are not included in the weapon's listed cost.",
+          "representationStatus": "SOURCE_FLAVOR_AND_OPTIONAL_ACCESSORY",
+          "note": "Do not treat the weapon as having an integrated scope."
+        }
+      ]
+    },
+    {
+      "identityKey": "weapon-variable-blaster",
+      "canonicalName": "Blaster Rifle, Variable",
+      "source": {
+        "book": "Galaxy at War",
+        "descriptionPage": 38,
+        "statTablePage": 41
+      },
+      "canonicalMechanicSummary": "Variable-power S/A rifle with 500-shot pack and same-as-active-profile stun. Its swift-action power settings deal 3d4 at 1x consumption, 3d6 at 5x, or 3d8 at 10x.",
+      "sharedTags": [
+        "ranged"
+      ],
+      "advantageTags": [
+        "offense_ranged",
+        "stun",
+        "nonlethal",
+        "sustained_damage",
+        "swift_action",
+        "action_economy",
+        "burst_damage"
+      ],
+      "tradeoffTags": [],
+      "finalTags": [
+        "ranged",
+        "offense_ranged",
+        "stun",
+        "nonlethal",
+        "sustained_damage",
+        "swift_action",
+        "action_economy",
+        "burst_damage"
+      ],
+      "rationale": {
+        "ranged": "Published Rifle-group ranged weapon.",
+        "offense_ranged": "Deals direct ranged blaster damage across three selectable power profiles.",
+        "stun": "The stun setting tracks the currently active damage profile.",
+        "nonlethal": "Stun provides a nonlethal mode.",
+        "sustained_damage": "All power profiles retain autofire capability.",
+        "swift_action": "Changing power level is a swift action.",
+        "action_economy": "Power selection has explicit combat action cost.",
+        "burst_damage": "The weapon can trade ammunition efficiency for a higher-output power setting relative to its low/default mode."
+      },
+      "ruleSelectors": {
+        "exactIdentity": "weapon:weapon-variable-blaster",
+        "weaponGroup": "weapon-group:rifle",
+        "proficiency": "weapon-proficiency:rifles",
+        "families": [
+          "weapon-family:blaster-rifle",
+          "weapon-family:variable-blaster-rifle"
+        ],
+        "explicitAbilityLinks": [],
+        "selectorGuardrails": [
+          "Do not infer Riflemaster's exact Blaster Rifle benefit from family membership."
+        ]
+      },
+      "relativeToStandardRifle": {
+        "damage": {
+          "canonical": "3d4 / 3d6 / 3d8",
+          "relation": "CONFIGURABLE_UP_TO_BASELINE"
+        },
+        "capacity": {
+          "shots": 500,
+          "relation": "MUCH_HIGHER_NOMINAL",
+          "notes": [
+            "3d6 consumes 5x shots.",
+            "3d8 consumes 10x shots."
+          ]
+        },
+        "stun": {
+          "available": true,
+          "relation": "CONFIGURATION_DEPENDENT"
+        },
+        "fireModes": {
+          "modes": [
+            "single",
+            "autofire"
+          ],
+          "relation": "SAME"
+        },
+        "range": {
+          "relation": "BASELINE"
+        },
+        "precisionAndAim": {
+          "relation": "BASELINE"
+        },
+        "closeQuarters": {
+          "relation": "BASELINE"
+        },
+        "multiAttackCompatibility": {
+          "relation": "NORMAL_BUT_RESOURCE_SCALING"
+        },
+        "actionEconomy": {
+          "relation": "MORE_COMPLEX",
+          "notes": [
+            "Power changes use swift actions."
+          ]
+        },
+        "utility": {
+          "relation": "AMMUNITION_EFFICIENCY_CONTROL"
+        },
+        "recommendationFit": "Flexible logistics rifle for characters who want to conserve ammunition against weak targets and dial up to standard-rifle output when needed, while retaining autofire and stun."
+      },
+      "unrepresentedMechanics": [
+        {
+          "mechanic": "500-shot pack with 1x/5x/10x consumption by 3d4/3d6/3d8 mode.",
+          "representationStatus": "STRUCTURED_RESOURCE_PROFILES",
+          "note": "Power and ammunition ratios remain structured data."
+        }
+      ]
+    },
+    {
+      "identityKey": "weapon-bryar-rifle",
+      "canonicalName": "Bryar Rifle",
+      "source": {
+        "book": "Force Unleashed Campaign Guide",
+        "descriptionPage": 98,
+        "statTablePage": 99
+      },
+      "canonicalMechanicSummary": "Inaccurate 3d8 single-shot rifle with a 50-shot rechargeable pack. A swift action can prime it; if the wielder makes no attack before the start of the next turn, the next attack before encounter end gains +1 weapon die, consumes 5 shots, and cannot combine with a multi-shot ability.",
+      "sharedTags": [
+        "ranged"
+      ],
+      "advantageTags": [
+        "offense_ranged",
+        "swift_action",
+        "action_economy",
+        "setup",
+        "damage_bonus",
+        "burst_damage"
+      ],
+      "tradeoffTags": [
+        "precision",
+        "sustained_damage"
+      ],
+      "finalTags": [
+        "ranged",
+        "offense_ranged",
+        "swift_action",
+        "action_economy",
+        "setup",
+        "damage_bonus",
+        "burst_damage"
+      ],
+      "rationale": {
+        "ranged": "Published Rifle-group ranged weapon.",
+        "offense_ranged": "Deals direct 3d8 ranged energy damage.",
+        "swift_action": "Priming the built-up shot is a swift action.",
+        "action_economy": "The charged-shot mechanic requires explicit action investment and delayed firing.",
+        "setup": "The stronger shot must be prepared and preserved through a no-attack interval before it matures.",
+        "damage_bonus": "The prepared attack adds +1 weapon die.",
+        "burst_damage": "The primed shot is a deliberate high-damage spike at increased ammunition cost."
+      },
+      "ruleSelectors": {
+        "exactIdentity": "weapon:weapon-bryar-rifle",
+        "weaponGroup": "weapon-group:rifle",
+        "proficiency": "weapon-proficiency:rifles",
+        "families": [
+          "weapon-family:bryar-rifle",
+          "weapon-family:charged-shot-rifle"
+        ],
+        "explicitAbilityLinks": []
+      },
+      "relativeToStandardRifle": {
+        "damage": {
+          "canonical": "3d8; +1 weapon die when primed",
+          "relation": "SAME_BASE_HIGHER_PREPARED"
+        },
+        "capacity": {
+          "shots": 50,
+          "relation": "SAME",
+          "notes": [
+            "Primed shot consumes 5 shots."
+          ]
+        },
+        "stun": {
+          "available": false,
+          "relation": "NONE"
+        },
+        "fireModes": {
+          "modes": [
+            "single"
+          ],
+          "relation": "NO_AUTOFIRE"
+        },
+        "range": {
+          "relation": "WORSE",
+          "notes": [
+            "Inaccurate: cannot attack at Long range."
+          ]
+        },
+        "precisionAndAim": {
+          "relation": "WORSE_AT_RANGE"
+        },
+        "closeQuarters": {
+          "relation": "SETUP_UNFRIENDLY"
+        },
+        "multiAttackCompatibility": {
+          "relation": "PREPARED_SHOT_PROHIBITS_MULTISHOT"
+        },
+        "actionEconomy": {
+          "relation": "SETUP_HEAVY"
+        },
+        "utility": {
+          "relation": "CHARGED_SHOT"
+        },
+        "recommendationFit": "Prepared-shot rifle for characters who can afford setup turns and want single-hit burst damage. Poor for Long-range, autofire, Rapid Shot, Double Attack, or constant-pressure builds."
+      },
+      "unrepresentedMechanics": [
+        {
+          "mechanic": "Priming matures at the start of the next turn only if no attack was made; it expires at encounter end and is consumed by the next attack.",
+          "representationStatus": "STRUCTURED_PREPARED_ATTACK_STATE",
+          "note": "Exact timing remains structured."
+        }
+      ]
+    },
+    {
+      "identityKey": "weapon-commando-special-rifle",
+      "canonicalName": "Commando Special Rifle",
+      "source": {
+        "book": "Knights of the Old Republic Campaign Guide",
+        "descriptionPage": 180,
+        "statTablePage": 180
+      },
+      "canonicalMechanicSummary": "Compact 3d10 S/A Republic commando rifle with full rifle range, no stun setting, and a 25-shot power pack.",
+      "sharedTags": [
+        "ranged"
+      ],
+      "advantageTags": [
+        "offense_ranged",
+        "sustained_damage"
+      ],
+      "tradeoffTags": [],
+      "finalTags": [
+        "ranged",
+        "offense_ranged",
+        "sustained_damage"
+      ],
+      "rationale": {
+        "ranged": "Published Rifle-group ranged weapon.",
+        "offense_ranged": "Deals high 3d10 ranged energy damage.",
+        "sustained_damage": "Supports autofire as well as single-shot fire."
+      },
+      "ruleSelectors": {
+        "exactIdentity": "weapon:weapon-commando-special-rifle",
+        "weaponGroup": "weapon-group:rifle",
+        "proficiency": "weapon-proficiency:rifles",
+        "families": [
+          "weapon-family:blaster-rifle",
+          "weapon-family:commando-rifle",
+          "weapon-family:commando-special-rifle"
+        ],
+        "explicitAbilityLinks": [],
+        "selectorGuardrails": [
+          "Do not infer Riflemaster's exact Blaster Rifle benefit from broad family membership."
+        ]
+      },
+      "relativeToStandardRifle": {
+        "damage": {
+          "canonical": "3d10",
+          "relation": "HIGHER"
+        },
+        "capacity": {
+          "shots": 25,
+          "relation": "LOWER"
+        },
+        "stun": {
+          "available": false,
+          "relation": "NONE"
+        },
+        "fireModes": {
+          "modes": [
+            "single",
+            "autofire"
+          ],
+          "relation": "SAME"
+        },
+        "range": {
+          "relation": "BASELINE"
+        },
+        "precisionAndAim": {
+          "relation": "BASELINE"
+        },
+        "closeQuarters": {
+          "relation": "MORE_PORTABLE_BY_DESCRIPTION"
+        },
+        "multiAttackCompatibility": {
+          "relation": "NORMAL"
+        },
+        "actionEconomy": {
+          "relation": "BASELINE"
+        },
+        "utility": {
+          "relation": "COMPACT_HIGH_DAMAGE_GENERALIST"
+        },
+        "recommendationFit": "High-damage compact generalist with both single and autofire modes. Strong when stopping power matters more than stun capability or ammunition endurance."
+      },
+      "unrepresentedMechanics": [
+        {
+          "mechanic": "The source describes it as sawed-off and portable but gives no separate numerical concealment or handling bonus.",
+          "representationStatus": "NO_ADDITIONAL_NUMERIC_EFFECT",
+          "note": "Do not invent a concealment or mobility semantic bonus from flavor."
+        }
+      ]
+    },
+    {
+      "identityKey": "weapon-concussion-rifle",
+      "canonicalName": "Concussion Rifle",
+      "source": {
+        "book": "Unknown Regions",
+        "descriptionPage": 37,
+        "statTablePage": 38
+      },
+      "canonicalMechanicSummary": "2d10 sonic-energy single-shot rifle with 25 shots. Its attacks target Fortitude Defense instead of Reflex Defense, and every successful hit knocks the target prone in addition to dealing damage.",
+      "sharedTags": [
+        "ranged"
+      ],
+      "advantageTags": [
+        "offense_ranged",
+        "control",
+        "battlefield_control",
+        "positioning"
+      ],
+      "tradeoffTags": [
+        "sustained_damage"
+      ],
+      "finalTags": [
+        "ranged",
+        "offense_ranged",
+        "control",
+        "battlefield_control",
+        "positioning"
+      ],
+      "rationale": {
+        "ranged": "Published Rifle-group ranged weapon.",
+        "offense_ranged": "Deals direct ranged sonic-energy damage.",
+        "control": "Every successful hit imposes prone in addition to damage.",
+        "battlefield_control": "Reliable ranged knockdown can materially restrict enemy movement and actions.",
+        "positioning": "Knocking targets prone changes their positional/tactical state on the battlefield."
+      },
+      "ruleSelectors": {
+        "exactIdentity": "weapon:weapon-concussion-rifle",
+        "weaponGroup": "weapon-group:rifle",
+        "proficiency": "weapon-proficiency:rifles",
+        "families": [
+          "weapon-family:concussion-rifle",
+          "weapon-family:sonic-rifle"
+        ],
+        "explicitAbilityLinks": []
+      },
+      "relativeToStandardRifle": {
+        "damage": {
+          "canonical": "2d10",
+          "relation": "LOWER_AVERAGE"
+        },
+        "capacity": {
+          "shots": 25,
+          "relation": "LOWER"
+        },
+        "stun": {
+          "available": false,
+          "relation": "NONE"
+        },
+        "fireModes": {
+          "modes": [
+            "single"
+          ],
+          "relation": "NO_AUTOFIRE"
+        },
+        "range": {
+          "relation": "BASELINE"
+        },
+        "precisionAndAim": {
+          "relation": "DIFFERENT_DEFENSE",
+          "notes": [
+            "Attacks Fortitude Defense rather than Reflex Defense."
+          ]
+        },
+        "closeQuarters": {
+          "relation": "CONTROL_ADVANTAGE"
+        },
+        "multiAttackCompatibility": {
+          "relation": "SINGLE_SHOT_ONLY"
+        },
+        "actionEconomy": {
+          "relation": "BASELINE"
+        },
+        "utility": {
+          "relation": "KNOCKDOWN_CONTROL"
+        },
+        "recommendationFit": "Control rifle for builds that value reliable knockdown and alternative-defense targeting over raw damage, autofire, stun, or ammunition endurance."
+      },
+      "unrepresentedMechanics": [
+        {
+          "mechanic": "Attacks target Fortitude Defense rather than Reflex Defense.",
+          "representationStatus": "STRUCTURED_ATTACK_RESOLUTION",
+          "note": "No new defense-target semantic tag is introduced."
+        },
+        {
+          "mechanic": "Sonic is a canonical damage qualifier.",
+          "representationStatus": "STRUCTURED_DAMAGE_TYPE",
+          "note": "Do not invent a `sonic` semantic tag."
+        }
+      ]
+    },
+    {
+      "identityKey": "weapon-adventurer-slugthrower",
+      "canonicalName": "Czerka Adventurer",
+      "source": {
+        "book": "Clone Wars Campaign Guide",
+        "descriptionPage": 62,
+        "statTablePage": 61
+      },
+      "canonicalMechanicSummary": "Accurate 2d10 single-shot slugthrower rifle. It can be broken down for concealment and reassembled; either operation is a move action. The source does not state its slug-ammunition capacity.",
+      "sharedTags": [
+        "ranged"
+      ],
+      "advantageTags": [
+        "offense_ranged",
+        "precision",
+        "concealment",
+        "move_action",
+        "action_economy"
+      ],
+      "tradeoffTags": [
+        "sustained_damage"
+      ],
+      "finalTags": [
+        "ranged",
+        "offense_ranged",
+        "precision",
+        "concealment",
+        "move_action",
+        "action_economy"
+      ],
+      "rationale": {
+        "ranged": "Published Rifle-group ranged weapon.",
+        "offense_ranged": "Deals direct 2d10 piercing damage at rifle range.",
+        "precision": "Accurate explicitly removes the normal Short-range attack penalty.",
+        "concealment": "The source explicitly allows the rifle to be broken down for concealment.",
+        "move_action": "Disassembly and reassembly each require a move action.",
+        "action_economy": "The concealment configuration has a defined move-action cost."
+      },
+      "ruleSelectors": {
+        "exactIdentity": "weapon:weapon-adventurer-slugthrower",
+        "weaponGroup": "weapon-group:rifle",
+        "proficiency": "weapon-proficiency:rifles",
+        "families": [
+          "weapon-family:projectile-rifle",
+          "weapon-family:slugthrower-rifle",
+          "weapon-family:czerka-adventurer"
+        ],
+        "explicitAbilityLinks": [],
+        "selectorGuardrails": [
+          "Sport Hunter's Slugthrower Rifle case is an ability-side family match. Its published transform is specifically d8 -> d12; do not silently rewrite this weapon's 2d10 profile without a rule that supports that transform.",
+          "Do not infer a numerical Stealth bonus merely because the rifle can be broken down for concealment."
+        ]
+      },
+      "relativeToStandardRifle": {
+        "damage": {
+          "canonical": "2d10",
+          "relation": "LOWER_AVERAGE"
+        },
+        "capacity": {
+          "shots": null,
+          "relation": "SOURCE_UNRESOLVED"
+        },
+        "stun": {
+          "available": false,
+          "relation": "NONE"
+        },
+        "fireModes": {
+          "modes": [
+            "single"
+          ],
+          "relation": "NO_AUTOFIRE"
+        },
+        "range": {
+          "relation": "BETTER_AT_SHORT",
+          "notes": [
+            "Accurate: no Short-range attack penalty."
+          ]
+        },
+        "precisionAndAim": {
+          "relation": "BETTER"
+        },
+        "closeQuarters": {
+          "relation": "BASELINE"
+        },
+        "multiAttackCompatibility": {
+          "relation": "SINGLE_SHOT_PROFILE"
+        },
+        "actionEconomy": {
+          "relation": "CONFIGURATION_COST",
+          "notes": [
+            "Disassemble or reassemble as a move action."
+          ]
+        },
+        "utility": {
+          "relation": "CONCEALABLE_BREAKDOWN_RIFLE"
+        },
+        "recommendationFit": "Accurate covert-carry slugthrower for precision characters who value a concealable long arm. Less attractive for autofire or sustained-fire builds."
+      },
+      "unrepresentedMechanics": [
+        {
+          "mechanic": "Slug ammunition capacity is not stated by the source.",
+          "representationStatus": "SOURCE_UNRESOLVED",
+          "note": "Do not infer a magazine size."
+        }
+      ]
+    },
+    {
+      "identityKey": "weapon-disruptor-rifle",
+      "canonicalName": "DXR-6 Disruptor Rifle",
+      "source": {
+        "book": "Force Unleashed Campaign Guide",
+        "descriptionPage": 99,
+        "statTablePage": 99
+      },
+      "canonicalMechanicSummary": "3d8 disruptor rifle that treats every target's Damage Threshold as 5 lower and disintegrates a creature, droid, vehicle, or object it kills or destroys. It can fire only once every other round, cannot use multi-shot-consuming abilities, and has a 10-shot rechargeable pack.",
+      "sharedTags": [
+        "ranged"
+      ],
+      "advantageTags": [
+        "offense_ranged",
+        "damage_threshold"
+      ],
+      "tradeoffTags": [
+        "full_attack",
+        "sustained_damage"
+      ],
+      "finalTags": [
+        "ranged",
+        "offense_ranged",
+        "damage_threshold"
+      ],
+      "rationale": {
+        "ranged": "Published Rifle-group ranged weapon.",
+        "offense_ranged": "Deals direct ranged disruptor damage.",
+        "damage_threshold": "Every target is explicitly treated as having Damage Threshold 5 lower against this weapon."
+      },
+      "ruleSelectors": {
+        "exactIdentity": "weapon:weapon-disruptor-rifle",
+        "weaponGroup": "weapon-group:rifle",
+        "proficiency": "weapon-proficiency:rifles",
+        "families": [
+          "weapon-family:disruptor",
+          "weapon-family:disruptor-rifle"
+        ],
+        "explicitAbilityLinks": [],
+        "abilityRestrictions": [
+          {
+            "selector": "attack-option:consumes-more-than-one-shot",
+            "relation": "PROHIBITED",
+            "reason": "The weapon cannot be used with feats, talents, or abilities that consume more than one shot in a round."
+          }
+        ]
+      },
+      "relativeToStandardRifle": {
+        "damage": {
+          "canonical": "3d8",
+          "relation": "SAME_BASE_WITH_THRESHOLD_ADVANTAGE"
+        },
+        "capacity": {
+          "shots": 10,
+          "relation": "MUCH_LOWER_RECHARGEABLE"
+        },
+        "stun": {
+          "available": false,
+          "relation": "NONE"
+        },
+        "fireModes": {
+          "modes": [
+            "single"
+          ],
+          "relation": "SEVERELY_RATE_LIMITED"
+        },
+        "range": {
+          "relation": "BASELINE"
+        },
+        "precisionAndAim": {
+          "relation": "BASELINE"
+        },
+        "closeQuarters": {
+          "relation": "BASELINE"
+        },
+        "multiAttackCompatibility": {
+          "relation": "PROHIBITED"
+        },
+        "actionEconomy": {
+          "relation": "SEVERELY_RATE_LIMITED",
+          "notes": [
+            "Can fire only once every other round."
+          ]
+        },
+        "utility": {
+          "relation": "DAMAGE_THRESHOLD_SPECIALIST"
+        },
+        "recommendationFit": "Damage-threshold specialist for fewer, more consequential shots. Very poor fit for Rapid Shot, Double Attack, autofire, or other sustained-fire builds."
+      },
+      "unrepresentedMechanics": [
+        {
+          "mechanic": "Targets killed or destroyed by the weapon are disintegrated.",
+          "representationStatus": "NO_EXISTING_FEAT_TALENT_TAG",
+          "note": "Preserve as canonical mechanics; no certified semantic tag precisely represents disintegration."
+        },
+        {
+          "mechanic": "Can fire only once every other round.",
+          "representationStatus": "STRUCTURED_RECOMMENDATION_DATA",
+          "note": "Rate limitation is a negative sustained-fire comparison, not a positive semantic tag."
+        }
+      ]
+    },
+    {
+      "identityKey": "weapon-flechette-launcher",
+      "canonicalName": "Flechette Launcher",
+      "source": {
+        "book": "Rebellion Era Campaign Guide",
+        "descriptionPage": 49,
+        "statTablePage": 50,
+        "crossPublishedSource": {
+          "book": "Force Unleashed Campaign Guide",
+          "descriptionPage": 199,
+          "statTablePage": 199
+        }
+      },
+      "canonicalMechanicSummary": "Inaccurate 3d8 piercing single-shot launcher treated as a Rifle. It is a splash weapon with a 1-square splash radius, uses four-shot flechette canisters, and cannot be used with Rapid Shot or another feat/talent that expends more than one shot.",
+      "sharedTags": [
+        "ranged"
+      ],
+      "advantageTags": [
+        "offense_ranged",
+        "burst_damage"
+      ],
+      "tradeoffTags": [
+        "precision",
+        "full_attack",
+        "sustained_damage"
+      ],
+      "finalTags": [
+        "ranged",
+        "offense_ranged",
+        "burst_damage"
+      ],
+      "rationale": {
+        "ranged": "Published Rifle-group ranged weapon.",
+        "offense_ranged": "Deals direct 3d8 piercing damage through a ranged attack.",
+        "burst_damage": "Its defining offensive advantage is a 1-square splash attack capable of damaging multiple nearby targets."
+      },
+      "ruleSelectors": {
+        "exactIdentity": "weapon:weapon-flechette-launcher",
+        "weaponGroup": "weapon-group:rifle",
+        "proficiency": "weapon-proficiency:rifles",
+        "families": [
+          "weapon-family:flechette",
+          "weapon-family:flechette-launcher",
+          "weapon-family:splash-rifle"
+        ],
+        "explicitAbilityLinks": [
+          {
+            "abilityType": "feat",
+            "abilityName": "Rapid Shot",
+            "relation": "PROHIBITED",
+            "effect": "The weapon's source explicitly prohibits Rapid Shot."
+          }
+        ],
+        "abilityRestrictions": [
+          {
+            "selector": "attack-option:consumes-more-than-one-shot",
+            "relation": "PROHIBITED",
+            "reason": "The source prohibits any feat or talent that expends more than one shot."
+          }
+        ]
+      },
+      "relativeToStandardRifle": {
+        "damage": {
+          "canonical": "3d8 splash",
+          "relation": "SAME_PRIMARY_WITH_SPLASH"
+        },
+        "capacity": {
+          "shots": 4,
+          "relation": "EXTREMELY_LOWER"
+        },
+        "stun": {
+          "available": false,
+          "relation": "NONE"
+        },
+        "fireModes": {
+          "modes": [
+            "single"
+          ],
+          "relation": "NO_AUTOFIRE_SPLASH"
+        },
+        "range": {
+          "relation": "WORSE",
+          "notes": [
+            "Inaccurate: cannot attack at Long range."
+          ]
+        },
+        "precisionAndAim": {
+          "relation": "WORSE_AT_RANGE"
+        },
+        "closeQuarters": {
+          "relation": "SPLASH_CAUTION"
+        },
+        "multiAttackCompatibility": {
+          "relation": "PROHIBITED"
+        },
+        "actionEconomy": {
+          "relation": "BASELINE_FIRE_LOW_CAPACITY"
+        },
+        "utility": {
+          "relation": "ANTI_PERSONNEL_SPLASH"
+        },
+        "recommendationFit": "Anti-personnel splash rifle for characters who want compact area pressure without autofire. Poor fit for Long-range and multi-shot feat chains."
+      },
+      "unrepresentedMechanics": [
+        {
+          "mechanic": "1-square splash geometry and splash-weapon resolution.",
+          "representationStatus": "STRUCTURED_AREA_ATTACK_PROFILE",
+          "note": "Do not introduce `area_damage`; area geometry stays structured."
+        }
+      ]
+    },
+    {
+      "identityKey": "weapon-incinerator-rifle",
+      "canonicalName": "Incinerator Rifle",
+      "source": {
+        "book": "Force Unleashed Campaign Guide",
+        "descriptionPage": 99,
+        "statTablePage": 99
+      },
+      "canonicalMechanicSummary": "3d6 single-shot energy rifle with a 20-shot power pack. Any creature it kills, or droid, object, or vehicle it destroys, is automatically disintegrated and leaves no trace.",
+      "sharedTags": [
+        "ranged"
+      ],
+      "advantageTags": [
+        "offense_ranged"
+      ],
+      "tradeoffTags": [
+        "sustained_damage"
+      ],
+      "finalTags": [
+        "ranged",
+        "offense_ranged"
+      ],
+      "rationale": {
+        "ranged": "Published Rifle-group ranged weapon.",
+        "offense_ranged": "Deals direct ranged energy damage."
+      },
+      "ruleSelectors": {
+        "exactIdentity": "weapon:weapon-incinerator-rifle",
+        "weaponGroup": "weapon-group:rifle",
+        "proficiency": "weapon-proficiency:rifles",
+        "families": [
+          "weapon-family:incinerator-rifle",
+          "weapon-family:disintegration-weapon"
+        ],
+        "explicitAbilityLinks": []
+      },
+      "relativeToStandardRifle": {
+        "damage": {
+          "canonical": "3d6",
+          "relation": "LOWER"
+        },
+        "capacity": {
+          "shots": 20,
+          "relation": "LOWER"
+        },
+        "stun": {
+          "available": false,
+          "relation": "NONE"
+        },
+        "fireModes": {
+          "modes": [
+            "single"
+          ],
+          "relation": "NO_AUTOFIRE"
+        },
+        "range": {
+          "relation": "BASELINE"
+        },
+        "precisionAndAim": {
+          "relation": "BASELINE"
+        },
+        "closeQuarters": {
+          "relation": "BASELINE"
+        },
+        "multiAttackCompatibility": {
+          "relation": "SINGLE_SHOT_PROFILE"
+        },
+        "actionEconomy": {
+          "relation": "BASELINE"
+        },
+        "utility": {
+          "relation": "DISINTEGRATION_ON_KILL"
+        },
+        "recommendationFit": "Niche rifle whose distinctive value is eliminating the remains of targets it kills or destroys. It is otherwise weaker than the standard rifle in damage, capacity, stun, and fire-mode flexibility."
+      },
+      "unrepresentedMechanics": [
+        {
+          "mechanic": "Killed/destroyed targets are disintegrated and leave no trace.",
+          "representationStatus": "NO_EXISTING_FEAT_TALENT_TAG",
+          "note": "Do not force this into stealth, infiltration, or another approximate semantic tag."
+        }
+      ]
+    },
+    {
+      "identityKey": "weapon-interchangeable-weapon-system",
+      "canonicalName": "Interchangeable Weapon System",
+      "source": {
+        "book": "Galaxy at War",
+        "descriptionPage": 39,
+        "statTablePage": 41
+      },
+      "canonicalMechanicSummary": "DC-17m modular weapon that switches as a standard action among a normal 3d8 S/A blaster-rifle mode with stun, an Accurate 3d10 scoped sniper-rifle mode with -2 against unmodified point-blank targets, and a single-shot 4d6 3-square-burst anti-armor grenade-launcher mode using Heavy Weapons proficiency.",
+      "sharedTags": [
+        "ranged"
+      ],
+      "advantageTags": [
+        "offense_ranged",
+        "stun",
+        "nonlethal",
+        "sustained_damage",
+        "sniper",
+        "targeting",
+        "precision",
+        "standard_action",
+        "action_economy",
+        "setup",
+        "burst_damage"
+      ],
+      "tradeoffTags": [],
+      "finalTags": [
+        "ranged",
+        "offense_ranged",
+        "stun",
+        "nonlethal",
+        "sustained_damage",
+        "sniper",
+        "targeting",
+        "precision",
+        "standard_action",
+        "action_economy",
+        "setup",
+        "burst_damage"
+      ],
+      "rationale": {
+        "ranged": "Every configuration is a ranged weapon profile.",
+        "offense_ranged": "All three configurations provide direct ranged offense.",
+        "stun": "Blaster-rifle mode retains a stun setting.",
+        "nonlethal": "Blaster-rifle stun provides a nonlethal option.",
+        "sustained_damage": "Blaster-rifle mode supports autofire.",
+        "sniper": "One configuration is explicitly a sniper-rifle mode.",
+        "targeting": "Sniper mode includes an integrated targeting scope.",
+        "precision": "Sniper mode is Accurate and removes the Short-range penalty.",
+        "standard_action": "Changing configuration requires a standard action.",
+        "action_economy": "Mode switching has a direct combat action cost.",
+        "setup": "The desired combat role must be selected through a configuration change.",
+        "burst_damage": "Anti-armor mode fires a 4d6 3-square-burst projectile."
+      },
+      "ruleSelectors": {
+        "exactIdentity": "weapon:weapon-interchangeable-weapon-system",
+        "weaponGroup": "weapon-group:rifle",
+        "proficiency": "weapon-proficiency:rifles",
+        "families": [
+          "weapon-family:interchangeable-weapon-system",
+          "weapon-family:modular-weapon-system"
+        ],
+        "explicitAbilityLinks": [],
+        "selectorGuardrails": [
+          "Do not apply Rifle-only benefits to the anti-armor configuration merely because the parent item is cataloged under Rifles.",
+          "Resolve ability applicability against the active mode selector."
+        ],
+        "modeSelectors": [
+          {
+            "mode": "blaster-rifle",
+            "weaponGroup": "weapon-group:rifle",
+            "proficiency": "weapon-proficiency:rifles",
+            "families": [
+              "weapon-family:blaster-rifle"
+            ]
+          },
+          {
+            "mode": "sniper",
+            "weaponGroup": "weapon-group:rifle",
+            "proficiency": "weapon-proficiency:rifles",
+            "families": [
+              "weapon-family:sniper-rifle"
+            ]
+          },
+          {
+            "mode": "anti-armor",
+            "weaponGroup": "weapon-group:heavy-weapon",
+            "proficiency": "weapon-proficiency:heavy-weapons",
+            "families": [
+              "weapon-family:grenade-launcher",
+              "weapon-family:anti-armor-launcher"
+            ]
+          }
+        ]
+      },
+      "relativeToStandardRifle": {
+        "damage": {
+          "canonical": "3d8 rifle / 3d10 sniper / 4d6 anti-armor burst",
+          "relation": "MULTI_ROLE"
+        },
+        "capacity": {
+          "shots": null,
+          "relation": "MULTIPLE_RESOURCE_PROFILES"
+        },
+        "stun": {
+          "available": true,
+          "relation": "AVAILABLE_IN_BLASTER_MODE"
+        },
+        "fireModes": {
+          "modes": [
+            "single",
+            "autofire",
+            "sniper-single",
+            "anti-armor-single"
+          ],
+          "relation": "MUCH_MORE_FLEXIBLE"
+        },
+        "range": {
+          "relation": "MODE_DEPENDENT"
+        },
+        "precisionAndAim": {
+          "relation": "MUCH_BETTER_IN_SNIPER_MODE",
+          "notes": [
+            "Accurate; integrated targeting scope.",
+            "-2 against targets at unmodified point-blank range."
+          ]
+        },
+        "closeQuarters": {
+          "relation": "MODE_DEPENDENT"
+        },
+        "multiAttackCompatibility": {
+          "relation": "MODE_DEPENDENT"
+        },
+        "actionEconomy": {
+          "relation": "MODE_SWITCH_COST",
+          "notes": [
+            "Configuration change requires a standard action."
+          ]
+        },
+        "utility": {
+          "relation": "RIFLE_SNIPER_ANTI_ARMOR_MODULARITY"
+        },
+        "recommendationFit": "Premium all-role platform for characters who can afford a standard action to change jobs: general rifle, precision sniper, or heavy-weapon area launcher. Especially valuable to characters proficient in both Rifles and Heavy Weapons."
+      },
+      "unrepresentedMechanics": [
+        {
+          "mechanic": "Anti-armor mode changes proficiency from Rifles to Heavy Weapons.",
+          "representationStatus": "MODE_SPECIFIC_RULE_SELECTOR",
+          "note": "Ability matching must use the active mode, not only the parent item."
+        },
+        {
+          "mechanic": "Sniper mode takes -2 against targets at unmodified point-blank range.",
+          "representationStatus": "STRUCTURED_CONDITIONAL_MODIFIER",
+          "note": "Preserve as a profile-specific drawback."
+        }
+      ]
+    },
+    {
+      "identityKey": "weapon-ion-carbine",
+      "canonicalName": "Ion Carbine",
+      "source": {
+        "book": "Knights of the Old Republic Campaign Guide",
+        "descriptionPage": 69,
+        "statTablePage": 68
+      },
+      "canonicalMechanicSummary": "3d8 ion S/A carbine with a 30-shot power pack. It uses ion-damage rules against droids, vehicles, electronics, and cybernetically enhanced creatures. It is Inaccurate and cannot attack at Long range.",
+      "sharedTags": [
+        "ranged"
+      ],
+      "advantageTags": [
+        "offense_ranged",
+        "droid",
+        "vehicle",
+        "tech",
+        "control",
+        "battlefield_control",
+        "sustained_damage"
+      ],
+      "tradeoffTags": [
+        "precision"
+      ],
+      "finalTags": [
+        "ranged",
+        "offense_ranged",
+        "droid",
+        "vehicle",
+        "tech",
+        "control",
+        "battlefield_control",
+        "sustained_damage"
+      ],
+      "rationale": {
+        "ranged": "Published Rifle-group ranged weapon.",
+        "offense_ranged": "Deals ion damage through ranged attacks.",
+        "droid": "Droids are primary targets for full ion effects.",
+        "vehicle": "Vehicles are primary targets for full ion effects.",
+        "tech": "Ion effects directly target electronic and cybernetic technology.",
+        "control": "Ion damage can impose condition-track effects on qualifying technological targets.",
+        "battlefield_control": "Those ion effects can degrade or disable technological opponents.",
+        "sustained_damage": "The carbine supports autofire as well as single-shot attacks."
+      },
+      "ruleSelectors": {
+        "exactIdentity": "weapon:weapon-ion-carbine",
+        "weaponGroup": "weapon-group:rifle",
+        "proficiency": "weapon-proficiency:rifles",
+        "families": [
+          "weapon-family:ion",
+          "weapon-family:ion-carbine",
+          "weapon-family:blaster-carbine"
+        ],
+        "explicitAbilityLinks": [],
+        "selectorGuardrails": [
+          "No certified `ion` semantic tag exists; ion is structural damage/effect metadata.",
+          "Do not infer Riflemaster's exact Blaster Carbine benefit for this ion variant unless the ability authority explicitly includes it."
+        ]
+      },
+      "relativeToStandardRifle": {
+        "damage": {
+          "canonical": "3d8 ion",
+          "relation": "TARGET_DEPENDENT"
+        },
+        "capacity": {
+          "shots": 30,
+          "relation": "LOWER"
+        },
+        "stun": {
+          "available": false,
+          "relation": "NONE_ION_IS_DISTINCT"
+        },
+        "fireModes": {
+          "modes": [
+            "single",
+            "autofire"
+          ],
+          "relation": "SAME"
+        },
+        "range": {
+          "relation": "WORSE",
+          "notes": [
+            "Inaccurate: cannot attack at Long range."
+          ]
+        },
+        "precisionAndAim": {
+          "relation": "WORSE_AT_RANGE"
+        },
+        "closeQuarters": {
+          "relation": "TECH_TARGET_SPECIALIST"
+        },
+        "multiAttackCompatibility": {
+          "relation": "NORMAL"
+        },
+        "actionEconomy": {
+          "relation": "BASELINE"
+        },
+        "utility": {
+          "relation": "ANTI_DROID_ANTI_VEHICLE_ION"
+        },
+        "recommendationFit": "Autofire-capable anti-technology rifle for droid-, vehicle-, and electronics-heavy encounters. De-prioritize against ordinary organic opposition and Long-range builds."
+      },
+      "unrepresentedMechanics": [
+        {
+          "mechanic": "Ion damage uses target-specific damage and condition-track rules.",
+          "representationStatus": "STRUCTURED_ION_RULES",
+          "note": "Use droid/vehicle/tech/control semantics plus the ion family selector rather than inventing an `ion` tag."
+        }
+      ]
+    },
+    {
+      "identityKey": "weapon-ion-rifle",
+      "canonicalName": "Ion Rifle",
+      "source": {
+        "book": "Core Rulebook",
+        "descriptionPage": 129,
+        "statTablePage": 127
+      },
+      "canonicalMechanicSummary": "3d8 single-shot ion rifle with a 20-shot power pack. It uses the standard ion-damage rules and retains full rifle range.",
+      "sharedTags": [
+        "ranged"
+      ],
+      "advantageTags": [
+        "offense_ranged",
+        "droid",
+        "vehicle",
+        "tech",
+        "control",
+        "battlefield_control"
+      ],
+      "tradeoffTags": [
+        "sustained_damage"
+      ],
+      "finalTags": [
+        "ranged",
+        "offense_ranged",
+        "droid",
+        "vehicle",
+        "tech",
+        "control",
+        "battlefield_control"
+      ],
+      "rationale": {
+        "ranged": "Published Rifle-group ranged weapon.",
+        "offense_ranged": "Deals ion damage through ranged attacks.",
+        "droid": "Droids are primary targets for full ion effects.",
+        "vehicle": "Vehicles are primary targets for full ion effects.",
+        "tech": "Ion effects directly target electronic and cybernetic technology.",
+        "control": "Ion damage can impose condition-track effects on qualifying technological targets.",
+        "battlefield_control": "Ion effects can degrade or disable technological opponents."
+      },
+      "ruleSelectors": {
+        "exactIdentity": "weapon:weapon-ion-rifle",
+        "weaponGroup": "weapon-group:rifle",
+        "proficiency": "weapon-proficiency:rifles",
+        "families": [
+          "weapon-family:ion",
+          "weapon-family:ion-rifle"
+        ],
+        "explicitAbilityLinks": [],
+        "selectorGuardrails": [
+          "No certified `ion` semantic tag exists; ion remains structural rules metadata."
+        ]
+      },
+      "relativeToStandardRifle": {
+        "damage": {
+          "canonical": "3d8 ion",
+          "relation": "TARGET_DEPENDENT"
+        },
+        "capacity": {
+          "shots": 20,
+          "relation": "LOWER"
+        },
+        "stun": {
+          "available": false,
+          "relation": "NONE_ION_IS_DISTINCT"
+        },
+        "fireModes": {
+          "modes": [
+            "single"
+          ],
+          "relation": "NO_AUTOFIRE"
+        },
+        "range": {
+          "relation": "BASELINE"
+        },
+        "precisionAndAim": {
+          "relation": "BASELINE"
+        },
+        "closeQuarters": {
+          "relation": "TECH_TARGET_SPECIALIST"
+        },
+        "multiAttackCompatibility": {
+          "relation": "SINGLE_SHOT_PROFILE"
+        },
+        "actionEconomy": {
+          "relation": "BASELINE"
+        },
+        "utility": {
+          "relation": "ANTI_DROID_ANTI_VEHICLE_ION"
+        },
+        "recommendationFit": "Long-range ion specialist for characters expecting technological opposition. Lower capacity and no autofire make it less attractive as a general-purpose rifle."
+      },
+      "unrepresentedMechanics": [
+        {
+          "mechanic": "Ion damage uses target-specific damage and condition-track rules.",
+          "representationStatus": "STRUCTURED_ION_RULES",
+          "note": "Static semantic tags express target role; exact ion resolution stays canonical mechanics."
+        }
+      ]
+    },
+    {
+      "identityKey": "weapon-micro-grenade-launcher",
+      "canonicalName": "Micro Grenade Launcher",
+      "source": {
+        "book": "Scum and Villainy",
+        "descriptionPage": 50,
+        "statTablePage": 51
+      },
+      "canonicalMechanicSummary": "Inaccurate Rifle-class launcher holding four micro grenades with a full-round reload. It can be used standalone or mounted on a rifle in 1 minute with a DC 15 Mechanics check. Loaded micro grenades inherit their normal grenade rules but deal two fewer damage dice on a successful hit.",
+      "sharedTags": [
+        "ranged"
+      ],
+      "advantageTags": [
+        "mechanics",
+        "equipment",
+        "setup"
+      ],
+      "tradeoffTags": [
+        "precision",
+        "action_economy",
+        "sustained_damage"
+      ],
+      "finalTags": [
+        "ranged",
+        "mechanics",
+        "equipment",
+        "setup"
+      ],
+      "rationale": {
+        "ranged": "The launcher is a Rifle-class ranged delivery system.",
+        "mechanics": "Mounting it on another rifle explicitly requires a DC 15 Mechanics check.",
+        "equipment": "It functions either as a standalone weapon or as mounted equipment on another rifle.",
+        "setup": "Its rifle-mounted configuration requires a one-minute installation procedure."
+      },
+      "ruleSelectors": {
+        "exactIdentity": "weapon:weapon-micro-grenade-launcher",
+        "weaponGroup": "weapon-group:rifle",
+        "proficiency": "weapon-proficiency:rifles",
+        "families": [
+          "weapon-family:grenade-launcher",
+          "weapon-family:micro-grenade-launcher",
+          "weapon-family:payload-launcher"
+        ],
+        "explicitAbilityLinks": [],
+        "selectorGuardrails": [
+          "Do not statically copy every possible grenade semantic tag onto the launcher.",
+          "At recommendation/runtime resolution, inherit payload semantics from the loaded micro-grenade and then apply this launcher's -2 damage-dice transform.",
+          "Do not introduce semantic tags `grenade`, `explosives`, or `area_damage`."
+        ]
+      },
+      "relativeToStandardRifle": {
+        "damage": {
+          "canonical": "loaded grenade damage - 2 dice on successful hit",
+          "relation": "PAYLOAD_DEPENDENT"
+        },
+        "capacity": {
+          "shots": 4,
+          "relation": "EXTREMELY_LOWER"
+        },
+        "stun": {
+          "available": "PAYLOAD_DEPENDENT",
+          "relation": "PAYLOAD_DEPENDENT"
+        },
+        "fireModes": {
+          "modes": [
+            "single"
+          ],
+          "relation": "PAYLOAD_LAUNCHER"
+        },
+        "range": {
+          "relation": "WORSE",
+          "notes": [
+            "Inaccurate: cannot attack at Long range."
+          ]
+        },
+        "precisionAndAim": {
+          "relation": "WORSE_AT_RANGE"
+        },
+        "closeQuarters": {
+          "relation": "PAYLOAD_DEPENDENT"
+        },
+        "multiAttackCompatibility": {
+          "relation": "CAPACITY_AND_RELOAD_LIMITED"
+        },
+        "actionEconomy": {
+          "relation": "WORSE_RELOAD",
+          "notes": [
+            "Full-round action to reload."
+          ]
+        },
+        "utility": {
+          "relation": "MODULAR_GRENADE_PAYLOAD_DELIVERY"
+        },
+        "recommendationFit": "Payload-flexible launcher for characters who value access to multiple grenade effects and can support the mounting/reload burden. Recommendation semantics should come primarily from the loaded micro-grenade."
+      },
+      "unrepresentedMechanics": [
+        {
+          "mechanic": "Loaded grenade supplies damage type, area, stun/ion/control behavior, and other special effects.",
+          "representationStatus": "DYNAMIC_PAYLOAD_SEMANTICS",
+          "note": "The item should inherit semantic relevance from loaded ammunition instead of being overtagged statically."
+        },
+        {
+          "mechanic": "Successful-hit damage is reduced by two dice relative to the selected grenade.",
+          "representationStatus": "STRUCTURED_PAYLOAD_TRANSFORM",
+          "note": "This is not a semantic tag."
+        },
+        {
+          "mechanic": "Full-round reload after four grenades.",
+          "representationStatus": "STRUCTURED_ACTION_ECONOMY_TRADEOFF",
+          "note": "Recorded as a negative recommendation dimension."
+        }
+      ]
+    },
+    {
+      "identityKey": "weapon-pulse-wave-rifle",
+      "canonicalName": "Pulse-Wave Rifle",
+      "source": {
+        "book": "Knights of the Old Republic Campaign Guide",
+        "descriptionPage": 69,
+        "statTablePage": 68
+      },
+      "canonicalMechanicSummary": "Inaccurate 2d8 S/A energy rifle with a 50-shot power pack. It gains a +5 equipment bonus to damage at point-blank range and cannot attack at Long range.",
+      "sharedTags": [
+        "ranged"
+      ],
+      "advantageTags": [
+        "offense_ranged",
+        "damage_bonus",
+        "burst_damage",
+        "sustained_damage"
+      ],
+      "tradeoffTags": [
+        "precision"
+      ],
+      "finalTags": [
+        "ranged",
+        "offense_ranged",
+        "damage_bonus",
+        "burst_damage",
+        "sustained_damage"
+      ],
+      "rationale": {
+        "ranged": "Published Rifle-group ranged weapon.",
+        "offense_ranged": "Deals direct ranged energy damage.",
+        "damage_bonus": "It explicitly gains +5 equipment bonus to damage at point-blank range.",
+        "burst_damage": "Its tactical identity is concentrated extra damage at close range.",
+        "sustained_damage": "Supports autofire as well as single-shot attacks."
+      },
+      "ruleSelectors": {
+        "exactIdentity": "weapon:weapon-pulse-wave-rifle",
+        "weaponGroup": "weapon-group:rifle",
+        "proficiency": "weapon-proficiency:rifles",
+        "families": [
+          "weapon-family:pulse-wave",
+          "weapon-family:pulse-wave-rifle"
+        ],
+        "explicitAbilityLinks": []
+      },
+      "relativeToStandardRifle": {
+        "damage": {
+          "canonical": "2d8 (+5 equipment at point-blank)",
+          "relation": "LOWER_BASE_CLOSE_RANGE_BONUS"
+        },
+        "capacity": {
+          "shots": 50,
+          "relation": "SAME"
+        },
+        "stun": {
+          "available": false,
+          "relation": "NONE"
+        },
+        "fireModes": {
+          "modes": [
+            "single",
+            "autofire"
+          ],
+          "relation": "SAME"
+        },
+        "range": {
+          "relation": "WORSE",
+          "notes": [
+            "Inaccurate: cannot attack at Long range."
+          ]
+        },
+        "precisionAndAim": {
+          "relation": "WORSE_AT_RANGE"
+        },
+        "closeQuarters": {
+          "relation": "BETTER_DAMAGE"
+        },
+        "multiAttackCompatibility": {
+          "relation": "NORMAL"
+        },
+        "actionEconomy": {
+          "relation": "BASELINE"
+        },
+        "utility": {
+          "relation": "POINT_BLANK_DAMAGE_SPECIALIST"
+        },
+        "recommendationFit": "Aggressive close-range rifle for builds that stay inside point-blank range and want both single-shot and autofire. Poor choice for sniper or Long-range play."
+      },
+      "unrepresentedMechanics": []
+    },
+    {
+      "identityKey": "weapon-rail-detonator-gun",
+      "canonicalName": "Rail Detonator Gun",
+      "source": {
+        "book": "Force Unleashed Campaign Guide",
+        "descriptionPage": 200,
+        "statTablePage": 199
+      },
+      "canonicalMechanicSummary": "Large 3d8 piercing single-shot rifle firing special explosive canisters. It is a splash weapon with a 1-square splash radius and uses 10-shot magazines.",
+      "sharedTags": [
+        "ranged"
+      ],
+      "advantageTags": [
+        "offense_ranged",
+        "burst_damage"
+      ],
+      "tradeoffTags": [],
+      "finalTags": [
+        "ranged",
+        "offense_ranged",
+        "burst_damage"
+      ],
+      "rationale": {
+        "ranged": "Published Rifle-group ranged weapon.",
+        "offense_ranged": "Deals direct ranged piercing damage.",
+        "burst_damage": "Its 1-square splash radius provides concentrated multi-target damage."
+      },
+      "ruleSelectors": {
+        "exactIdentity": "weapon:weapon-rail-detonator-gun",
+        "weaponGroup": "weapon-group:rifle",
+        "proficiency": "weapon-proficiency:rifles",
+        "families": [
+          "weapon-family:rail-detonator-gun",
+          "weapon-family:splash-rifle",
+          "weapon-family:explosive-canister-weapon"
+        ],
+        "explicitAbilityLinks": [],
+        "selectorGuardrails": [
+          "Explosive canister ammunition is structured mechanics; do not add forbidden semantic tag `explosives`."
+        ]
+      },
+      "relativeToStandardRifle": {
+        "damage": {
+          "canonical": "3d8 splash",
+          "relation": "SAME_PRIMARY_WITH_SPLASH"
+        },
+        "capacity": {
+          "shots": 10,
+          "relation": "MUCH_LOWER"
+        },
+        "stun": {
+          "available": false,
+          "relation": "NONE"
+        },
+        "fireModes": {
+          "modes": [
+            "single"
+          ],
+          "relation": "NO_AUTOFIRE_SPLASH"
+        },
+        "range": {
+          "relation": "BASELINE"
+        },
+        "precisionAndAim": {
+          "relation": "BASELINE"
+        },
+        "closeQuarters": {
+          "relation": "SPLASH_CAUTION"
+        },
+        "multiAttackCompatibility": {
+          "relation": "SINGLE_SHOT_PROFILE"
+        },
+        "actionEconomy": {
+          "relation": "BASELINE"
+        },
+        "utility": {
+          "relation": "SPLASH_DAMAGE"
+        },
+        "recommendationFit": "Full-range splash rifle for characters who want multi-target pressure without the Inaccurate limitation of the flechette launcher, at the cost of low ammunition capacity and no stun/autofire."
+      },
+      "unrepresentedMechanics": [
+        {
+          "mechanic": "1-square splash geometry.",
+          "representationStatus": "STRUCTURED_AREA_ATTACK_PROFILE",
+          "note": "Area geometry remains structured rather than adding `area_damage`."
+        }
+      ]
+    },
+    {
+      "identityKey": "weapon-scattergun",
+      "canonicalName": "Scatter Gun",
+      "source": {
+        "book": "Galaxy at War",
+        "descriptionPage": 40,
+        "statTablePage": 41
+      },
+      "canonicalMechanicSummary": "Inaccurate single-shot scatter weapon firing individual shells. It deals 3d8 piercing damage at point-blank range, 2d8 at short range, and no damage at medium or long range. It holds 10 shells.",
+      "sharedTags": [
+        "ranged"
+      ],
+      "advantageTags": [
+        "offense_ranged",
+        "positioning"
+      ],
+      "tradeoffTags": [
+        "precision",
+        "sustained_damage"
+      ],
+      "finalTags": [
+        "ranged",
+        "offense_ranged",
+        "positioning"
+      ],
+      "rationale": {
+        "ranged": "Published Rifle-group ranged weapon.",
+        "offense_ranged": "Deals direct ranged piercing damage.",
+        "positioning": "The weapon's effectiveness is explicitly range-position dependent: full damage at point blank, reduced damage at short, and no effect beyond short range."
+      },
+      "ruleSelectors": {
+        "exactIdentity": "weapon:weapon-scattergun",
+        "weaponGroup": "weapon-group:rifle",
+        "proficiency": "weapon-proficiency:rifles",
+        "families": [
+          "weapon-family:projectile-rifle",
+          "weapon-family:scatter-gun",
+          "weapon-family:close-quarters-rifle"
+        ],
+        "explicitAbilityLinks": [],
+        "selectorGuardrails": [
+          "Do not infer area/splash behavior from the shotgun-like fiction; the published weapon is not an area attack.",
+          "Do not introduce a semantic `shotgun` tag unless a future certified feat/talent vocabulary establishes it."
+        ]
+      },
+      "relativeToStandardRifle": {
+        "damage": {
+          "canonical": "3d8 point-blank / 2d8 short / 0 medium-long",
+          "relation": "RANGE_DEPENDENT"
+        },
+        "capacity": {
+          "shots": 10,
+          "relation": "MUCH_LOWER"
+        },
+        "stun": {
+          "available": false,
+          "relation": "NONE"
+        },
+        "fireModes": {
+          "modes": [
+            "single"
+          ],
+          "relation": "NO_AUTOFIRE"
+        },
+        "range": {
+          "relation": "MUCH_WORSE",
+          "notes": [
+            "No damage at Medium or Long range."
+          ]
+        },
+        "precisionAndAim": {
+          "relation": "WORSE_AT_RANGE"
+        },
+        "closeQuarters": {
+          "relation": "SPECIALIST"
+        },
+        "multiAttackCompatibility": {
+          "relation": "SINGLE_SHOT_PROFILE"
+        },
+        "actionEconomy": {
+          "relation": "BASELINE"
+        },
+        "utility": {
+          "relation": "CLOSE_QUARTERS_ROOM_CLEARING_ROLE"
+        },
+        "recommendationFit": "Close-quarters projectile rifle for characters who consistently fight at point-blank or short range. Avoid for general field, sniper, stun, or sustained-fire roles."
+      },
+      "unrepresentedMechanics": [
+        {
+          "mechanic": "Damage changes by range band: 3d8 point blank, 2d8 short, no damage beyond short.",
+          "representationStatus": "STRUCTURED_RANGE_DAMAGE_PROFILE",
+          "note": "Range-dependent damage remains structured mechanics."
+        }
+      ]
+    },
+    {
+      "identityKey": "weapon-sg-4-blaster-rifle",
+      "canonicalName": "SG-4 Blaster Rifle",
+      "source": {
+        "book": "Rebellion Era Campaign Guide",
+        "descriptionPage": 50,
+        "statTablePage": 50
+      },
+      "canonicalMechanicSummary": "Amphibious combination rifle with a normal 3d8 S/A blaster profile, 2d8 stun, and a one-shot 2d6 piercing harpoon profile. Blaster mode uses a 50-shot pack; harpoon mode reloads as a swift action. Using blaster mode underwater or harpoon mode out of water halves range.",
+      "sharedTags": [
+        "ranged"
+      ],
+      "advantageTags": [
+        "offense_ranged",
+        "stun",
+        "nonlethal",
+        "sustained_damage"
+      ],
+      "tradeoffTags": [
+        "swift_action",
+        "action_economy"
+      ],
+      "finalTags": [
+        "ranged",
+        "offense_ranged",
+        "stun",
+        "nonlethal",
+        "sustained_damage"
+      ],
+      "rationale": {
+        "ranged": "Both blaster and harpoon profiles are ranged Rifle attacks.",
+        "offense_ranged": "The weapon provides both energy and piercing ranged offense.",
+        "stun": "Blaster mode has an explicit 2d8 stun setting.",
+        "nonlethal": "The stun setting provides a nonlethal attack option.",
+        "sustained_damage": "Blaster mode supports autofire."
+      },
+      "ruleSelectors": {
+        "exactIdentity": "weapon:weapon-sg-4-blaster-rifle",
+        "weaponGroup": "weapon-group:rifle",
+        "proficiency": "weapon-proficiency:rifles",
+        "families": [
+          "weapon-family:blaster-rifle",
+          "weapon-family:sg-4-blaster-rifle",
+          "weapon-family:amphibious-rifle",
+          "weapon-family:harpoon-rifle"
+        ],
+        "explicitAbilityLinks": [],
+        "selectorGuardrails": [
+          "Aquatic/amphibious role is structural recommendation data; do not invent an `aquatic` semantic tag.",
+          "Do not infer Riflemaster's exact Blaster Rifle benefit merely from broad blaster-rifle family membership."
+        ],
+        "modeSelectors": [
+          {
+            "mode": "blaster",
+            "weaponGroup": "weapon-group:rifle",
+            "proficiency": "weapon-proficiency:rifles",
+            "families": [
+              "weapon-family:blaster-rifle",
+              "weapon-family:sg-4-blaster-rifle"
+            ]
+          },
+          {
+            "mode": "harpoon",
+            "weaponGroup": "weapon-group:rifle",
+            "proficiency": "weapon-proficiency:rifles",
+            "families": [
+              "weapon-family:harpoon-rifle",
+              "weapon-family:sg-4-blaster-rifle"
+            ]
+          }
+        ]
+      },
+      "relativeToStandardRifle": {
+        "damage": {
+          "canonical": "3d8 blaster / 2d6 harpoon",
+          "relation": "MODE_DEPENDENT"
+        },
+        "capacity": {
+          "shots": "50 blaster / 1 harpoon loaded",
+          "relation": "MODE_DEPENDENT"
+        },
+        "stun": {
+          "available": true,
+          "canonical": "2d8 blaster-mode stun",
+          "relation": "SAME"
+        },
+        "fireModes": {
+          "modes": [
+            "single",
+            "autofire",
+            "harpoon-single"
+          ],
+          "relation": "MORE_FLEXIBLE"
+        },
+        "range": {
+          "relation": "ENVIRONMENT_DEPENDENT",
+          "notes": [
+            "Blaster underwater = half range.",
+            "Harpoon out of water = half range."
+          ]
+        },
+        "precisionAndAim": {
+          "relation": "BASELINE"
+        },
+        "closeQuarters": {
+          "relation": "BASELINE"
+        },
+        "multiAttackCompatibility": {
+          "relation": "MODE_DEPENDENT"
+        },
+        "actionEconomy": {
+          "relation": "HARPOON_RELOAD_TAX",
+          "notes": [
+            "Harpoon reload requires a swift action after every shot."
+          ]
+        },
+        "utility": {
+          "relation": "AMPHIBIOUS_COMBAT_SPECIALIST"
+        },
+        "recommendationFit": "Environment-flexible rifle for aquatic/amphibious missions. Above water it remains a standard S/A blaster rifle; underwater the harpoon gives it a dedicated physical-damage option."
+      },
+      "unrepresentedMechanics": [
+        {
+          "mechanic": "Wrong-environment use halves range for the active mode.",
+          "representationStatus": "STRUCTURED_ENVIRONMENT_MODIFIER",
+          "note": "Keep environment handling in mode mechanics."
+        },
+        {
+          "mechanic": "Harpoon mode must be reloaded as a swift action after every shot.",
+          "representationStatus": "STRUCTURED_MODE_ACTION_COST",
+          "note": "Recorded as a tradeoff rather than a positive semantic capability."
+        }
+      ]
+    },
+    {
+      "identityKey": "weapon-slugthrower-rifle",
+      "canonicalName": "Slugthrower Rifle",
+      "source": {
+        "book": "Core Rulebook",
+        "descriptionPage": 129,
+        "statTablePage": 127
+      },
+      "canonicalMechanicSummary": "Standard 2d8 S/A ballistic rifle using 20-round slug clips rather than power packs. It has full rifle range and no stun setting.",
+      "sharedTags": [
+        "ranged"
+      ],
+      "advantageTags": [
+        "offense_ranged",
+        "sustained_damage"
+      ],
+      "tradeoffTags": [],
+      "finalTags": [
+        "ranged",
+        "offense_ranged",
+        "sustained_damage"
+      ],
+      "rationale": {
+        "ranged": "Published Rifle-group ranged weapon.",
+        "offense_ranged": "Deals direct 2d8 piercing damage.",
+        "sustained_damage": "Supports autofire as well as single-shot attacks."
+      },
+      "ruleSelectors": {
+        "exactIdentity": "weapon:weapon-slugthrower-rifle",
+        "weaponGroup": "weapon-group:rifle",
+        "proficiency": "weapon-proficiency:rifles",
+        "families": [
+          "weapon-family:projectile-rifle",
+          "weapon-family:slugthrower-rifle"
+        ],
+        "explicitAbilityLinks": [
+          {
+            "abilityType": "feat",
+            "abilityName": "Sport Hunter",
+            "relation": "EXPLICIT_WEAPON_BENEFIT",
+            "effect": "When using a Slugthrower Rifle, its d8 damage dice increase to d12."
+          }
+        ]
+      },
+      "relativeToStandardRifle": {
+        "damage": {
+          "canonical": "2d8",
+          "relation": "LOWER"
+        },
+        "capacity": {
+          "shots": 20,
+          "relation": "LOWER"
+        },
+        "stun": {
+          "available": false,
+          "relation": "NONE"
+        },
+        "fireModes": {
+          "modes": [
+            "single",
+            "autofire"
+          ],
+          "relation": "SAME"
+        },
+        "range": {
+          "relation": "BASELINE"
+        },
+        "precisionAndAim": {
+          "relation": "BASELINE"
+        },
+        "closeQuarters": {
+          "relation": "BASELINE"
+        },
+        "multiAttackCompatibility": {
+          "relation": "NORMAL"
+        },
+        "actionEconomy": {
+          "relation": "BASELINE"
+        },
+        "utility": {
+          "relation": "PROJECTILE_RIFLE"
+        },
+        "recommendationFit": "Baseline ballistic rifle and a major Sport Hunter target. Without that feat it trades damage, capacity, and stun for physical ammunition; with Sport Hunter its damage profile becomes much more competitive."
+      },
+      "unrepresentedMechanics": [
+        {
+          "mechanic": "Uses physical 20-round slug clips rather than energy power packs.",
+          "representationStatus": "STRUCTURAL_RESOURCE_AND_FAMILY",
+          "note": "Projectile identity stays in weapon-family and ammo metadata."
+        }
+      ]
+    },
+    {
+      "identityKey": "weapon-snare-rifle",
+      "canonicalName": "Snare Rifle",
+      "source": {
+        "book": "Scum and Villainy",
+        "descriptionPage": 51,
+        "statTablePage": 51
+      },
+      "canonicalMechanicSummary": "Five-shot capture rifle that initiates a grab or grapple at range. A successful grab deals 1d6 native stun damage. Snared targets escape with DC 15 Acrobatics or DC 20 Strength. Pin and Trip are supported; Crush and Throw are prohibited.",
+      "sharedTags": [
+        "ranged"
+      ],
+      "advantageTags": [
+        "stun",
+        "nonlethal",
+        "grab",
+        "grapple",
+        "restrain",
+        "control",
+        "battlefield_control"
+      ],
+      "tradeoffTags": [],
+      "finalTags": [
+        "ranged",
+        "stun",
+        "nonlethal",
+        "grab",
+        "grapple",
+        "restrain",
+        "control",
+        "battlefield_control"
+      ],
+      "rationale": {
+        "ranged": "Its capture attack is made at range using Rifle proficiency.",
+        "stun": "Successful snaring deals native 1d6 stun damage.",
+        "nonlethal": "The weapon is built around capture and stun rather than lethal damage.",
+        "grab": "It explicitly initiates a grab at range.",
+        "grapple": "It explicitly initiates a grapple at range.",
+        "restrain": "The target remains bound until it escapes or breaks free.",
+        "control": "The weapon denies freedom of movement/actions rather than focusing on lethal damage.",
+        "battlefield_control": "Ranged restraint and Pin/Trip support materially alter enemy battlefield options."
+      },
+      "ruleSelectors": {
+        "exactIdentity": "weapon:weapon-snare-rifle",
+        "weaponGroup": "weapon-group:rifle",
+        "proficiency": "weapon-proficiency:rifles",
+        "families": [
+          "weapon-family:snare-weapon",
+          "weapon-family:snare-rifle",
+          "weapon-family:capture-weapon"
+        ],
+        "explicitAbilityLinks": [
+          {
+            "abilityType": "feat",
+            "abilityName": "Pin",
+            "relation": "SUPPORTED",
+            "effect": "Pin can be used with the snare rifle."
+          },
+          {
+            "abilityType": "feat",
+            "abilityName": "Trip",
+            "relation": "SUPPORTED",
+            "effect": "Trip can be used with the snare rifle."
+          },
+          {
+            "abilityType": "feat",
+            "abilityName": "Crush",
+            "relation": "PROHIBITED",
+            "effect": "Crush cannot be used with the snare rifle."
+          },
+          {
+            "abilityType": "feat",
+            "abilityName": "Throw",
+            "relation": "PROHIBITED",
+            "effect": "Throw cannot be used with the snare rifle."
+          }
+        ]
+      },
+      "relativeToStandardRifle": {
+        "damage": {
+          "canonical": "no normal damage; 1d6 stun on successful grab",
+          "relation": "CAPTURE_ONLY"
+        },
+        "capacity": {
+          "shots": 5,
+          "relation": "EXTREMELY_LOWER"
+        },
+        "stun": {
+          "available": true,
+          "canonical": "1d6 native stun",
+          "relation": "NATIVE_CAPTURE_PROFILE"
+        },
+        "fireModes": {
+          "modes": [
+            "single"
+          ],
+          "relation": "NO_AUTOFIRE"
+        },
+        "range": {
+          "relation": "CONTROL_EFFECT_SHORT_RANGE",
+          "notes": [
+            "The capture text applies the ranged grab/grapple within short range."
+          ]
+        },
+        "precisionAndAim": {
+          "relation": "BASELINE"
+        },
+        "closeQuarters": {
+          "relation": "CONTROL_SPECIALIST"
+        },
+        "multiAttackCompatibility": {
+          "relation": "CAPACITY_LIMITED"
+        },
+        "actionEconomy": {
+          "relation": "BASELINE"
+        },
+        "utility": {
+          "relation": "CAPTURE_RESTRAINT"
+        },
+        "recommendationFit": "Dedicated nonlethal capture rifle for bounty hunters, law enforcement, grapplers, and control builds. Poor choice when lethal damage, autofire, or ammunition endurance is required."
+      },
+      "unrepresentedMechanics": [
+        {
+          "mechanic": "Escape DC 15 Acrobatics / DC 20 Strength.",
+          "representationStatus": "STRUCTURED_CAPTURE_RULE",
+          "note": "Exact escape mechanics remain structured."
+        }
+      ]
+    },
+    {
+      "identityKey": "weapon-sonic-rifle",
+      "canonicalName": "Sonic Rifle",
+      "source": {
+        "book": "Knights of the Old Republic Campaign Guide",
+        "descriptionPage": 70,
+        "statTablePage": 68
+      },
+      "canonicalMechanicSummary": "2d8 S/A sonic-energy rifle with a 50-shot rechargeable power pack. Its ranged attacks cannot be negated by Deflect or talents that have Deflect as a prerequisite.",
+      "sharedTags": [
+        "ranged"
+      ],
+      "advantageTags": [
+        "offense_ranged",
+        "anti-force",
+        "sustained_damage"
+      ],
+      "tradeoffTags": [],
+      "finalTags": [
+        "ranged",
+        "offense_ranged",
+        "anti-force",
+        "sustained_damage"
+      ],
+      "rationale": {
+        "ranged": "Published Rifle-group ranged weapon.",
+        "offense_ranged": "Deals direct ranged sonic-energy damage.",
+        "anti-force": "Its defining tactical advantage is bypassing Deflect and Deflect-dependent talents.",
+        "sustained_damage": "Supports autofire as well as single-shot attacks."
+      },
+      "ruleSelectors": {
+        "exactIdentity": "weapon:weapon-sonic-rifle",
+        "weaponGroup": "weapon-group:rifle",
+        "proficiency": "weapon-proficiency:rifles",
+        "families": [
+          "weapon-family:sonic",
+          "weapon-family:sonic-rifle"
+        ],
+        "explicitAbilityLinks": [
+          {
+            "abilityType": "talent",
+            "abilityName": "Deflect",
+            "relation": "CANNOT_NEGATE_ATTACK",
+            "effect": "Deflect cannot negate a ranged sonic attack."
+          },
+          {
+            "abilityType": "talent-family",
+            "abilityName": "Talents with Deflect as prerequisite",
+            "relation": "CANNOT_NEGATE_ATTACK",
+            "effect": "Deflect-dependent talents cannot negate the ranged sonic attack."
+          }
+        ],
+        "selectorGuardrails": [
+          "Do not introduce a `sonic` semantic tag; sonic remains damage/selector metadata."
+        ]
+      },
+      "relativeToStandardRifle": {
+        "damage": {
+          "canonical": "2d8 sonic energy",
+          "relation": "LOWER"
+        },
+        "capacity": {
+          "shots": 50,
+          "relation": "SAME"
+        },
+        "stun": {
+          "available": false,
+          "relation": "NONE"
+        },
+        "fireModes": {
+          "modes": [
+            "single",
+            "autofire"
+          ],
+          "relation": "SAME"
+        },
+        "range": {
+          "relation": "BASELINE"
+        },
+        "precisionAndAim": {
+          "relation": "BASELINE"
+        },
+        "closeQuarters": {
+          "relation": "BASELINE"
+        },
+        "multiAttackCompatibility": {
+          "relation": "NORMAL"
+        },
+        "actionEconomy": {
+          "relation": "BASELINE"
+        },
+        "utility": {
+          "relation": "ANTI_DEFLECT"
+        },
+        "recommendationFit": "General anti-Deflect rifle. It gives up damage and stun flexibility relative to the standard Blaster Rifle in exchange for a clean counter to lightsaber Deflect while retaining autofire."
+      },
+      "unrepresentedMechanics": [
+        {
+          "mechanic": "Sonic counts as energy damage while its ranged attacks cannot be negated by Deflect.",
+          "representationStatus": "RULE_SELECTOR_PLUS_SEMANTIC",
+          "note": "`anti-force` captures recommendation meaning; the exact Deflect exception remains explicit."
+        }
+      ]
+    },
+    {
+      "identityKey": "weapon-firelance-blaster-rifle",
+      "canonicalName": "SoroSuub Firelance Blaster Rifle",
+      "source": {
+        "book": "Clone Wars Campaign Guide",
+        "descriptionPage": 63,
+        "statTablePage": 61
+      },
+      "canonicalMechanicSummary": "3d8 S/A light blaster rifle whose defining feature is an unusually strong 4d6 stun setting. The source does not state its ammunition source or capacity.",
+      "sharedTags": [
+        "ranged"
+      ],
+      "advantageTags": [
+        "offense_ranged",
+        "stun",
+        "nonlethal",
+        "sustained_damage"
+      ],
+      "tradeoffTags": [],
+      "finalTags": [
+        "ranged",
+        "offense_ranged",
+        "stun",
+        "nonlethal",
+        "sustained_damage"
+      ],
+      "rationale": {
+        "ranged": "Published Rifle-group ranged weapon.",
+        "offense_ranged": "Deals standard 3d8 ranged energy damage.",
+        "stun": "Has an explicit 4d6 stun profile, stronger than the standard rifle's 2d8 stun setting.",
+        "nonlethal": "Its enhanced stun profile makes nonlethal takedowns a defining role.",
+        "sustained_damage": "Supports autofire as well as single-shot attacks."
+      },
+      "ruleSelectors": {
+        "exactIdentity": "weapon:weapon-firelance-blaster-rifle",
+        "weaponGroup": "weapon-group:rifle",
+        "proficiency": "weapon-proficiency:rifles",
+        "families": [
+          "weapon-family:blaster-rifle",
+          "weapon-family:firelance-blaster-rifle"
+        ],
+        "explicitAbilityLinks": [],
+        "selectorGuardrails": [
+          "Do not infer Riflemaster's exact Blaster Rifle benefit from broad blaster-rifle family membership."
+        ]
+      },
+      "relativeToStandardRifle": {
+        "damage": {
+          "canonical": "3d8",
+          "relation": "SAME"
+        },
+        "capacity": {
+          "shots": null,
+          "relation": "SOURCE_UNRESOLVED"
+        },
+        "stun": {
+          "available": true,
+          "canonical": "4d6",
+          "relation": "MUCH_BETTER_DAMAGE"
+        },
+        "fireModes": {
+          "modes": [
+            "single",
+            "autofire"
+          ],
+          "relation": "SAME"
+        },
+        "range": {
+          "relation": "BASELINE"
+        },
+        "precisionAndAim": {
+          "relation": "BASELINE"
+        },
+        "closeQuarters": {
+          "relation": "BASELINE"
+        },
+        "multiAttackCompatibility": {
+          "relation": "NORMAL"
+        },
+        "actionEconomy": {
+          "relation": "BASELINE"
+        },
+        "utility": {
+          "relation": "HIGH_POWER_STUN"
+        },
+        "recommendationFit": "Nonlethal general-purpose rifle for characters who want standard lethal output and autofire but substantially stronger stun damage than the baseline rifle."
+      },
+      "unrepresentedMechanics": [
+        {
+          "mechanic": "Ammunition source/capacity is not stated in the book.",
+          "representationStatus": "SOURCE_UNRESOLVED",
+          "note": "Do not infer a standard 50-shot pack."
+        }
+      ]
+    },
+    {
+      "identityKey": "weapon-stokhli-spray-stick",
+      "canonicalName": "Stokhli Spray Stick",
+      "source": {
+        "book": "Force Unleashed Campaign Guide",
+        "descriptionPage": 100,
+        "statTablePage": 99
+      },
+      "canonicalMechanicSummary": "Inaccurate long-range capture rifle dealing native 3d8 stun and coating the target in sticky webbing that functions as a net, allowing a ranged grab or grapple. It uses 80-shot spraymist canisters.",
+      "sharedTags": [
+        "ranged"
+      ],
+      "advantageTags": [
+        "stun",
+        "nonlethal",
+        "grab",
+        "grapple",
+        "restrain",
+        "control",
+        "battlefield_control"
+      ],
+      "tradeoffTags": [
+        "precision"
+      ],
+      "finalTags": [
+        "ranged",
+        "stun",
+        "nonlethal",
+        "grab",
+        "grapple",
+        "restrain",
+        "control",
+        "battlefield_control"
+      ],
+      "rationale": {
+        "ranged": "Published Rifle-group ranged weapon.",
+        "stun": "Every successful hit deals native 3d8 stun damage.",
+        "nonlethal": "The weapon is explicitly designed to bring down targets without killing them.",
+        "grab": "Its webbing allows the attacker to initiate a grab at range.",
+        "grapple": "Its webbing allows the attacker to initiate a grapple at range.",
+        "restrain": "Sticky webbing functions as a net and physically binds the target.",
+        "control": "The weapon combines stun with ranged restraint.",
+        "battlefield_control": "Ranged net-style restraint materially limits enemy movement and options."
+      },
+      "ruleSelectors": {
+        "exactIdentity": "weapon:weapon-stokhli-spray-stick",
+        "weaponGroup": "weapon-group:rifle",
+        "proficiency": "weapon-proficiency:rifles",
+        "families": [
+          "weapon-family:stun-rifle",
+          "weapon-family:capture-weapon",
+          "weapon-family:net-weapon",
+          "weapon-family:stokhli-spray-stick"
+        ],
+        "explicitAbilityLinks": [],
+        "selectorGuardrails": [
+          "The source establishes net-like ranged grab/grapple, but Phase 3B does not explicitly name Pin, Trip, Crush, or Throw interactions for the spray stick. Do not copy Snare Rifle feat links onto it without separate authority."
+        ]
+      },
+      "relativeToStandardRifle": {
+        "damage": {
+          "canonical": "native 3d8 stun only",
+          "relation": "NONLETHAL_ONLY"
+        },
+        "capacity": {
+          "shots": 80,
+          "relation": "HIGHER"
+        },
+        "stun": {
+          "available": true,
+          "canonical": "3d8 native stun",
+          "relation": "MUCH_BETTER_RANGE_AND_DAMAGE"
+        },
+        "fireModes": {
+          "modes": [
+            "single"
+          ],
+          "relation": "NO_AUTOFIRE"
+        },
+        "range": {
+          "relation": "WORSE_THAN_FULL_RIFLE",
+          "notes": [
+            "Inaccurate: no Long-range attacks, but far longer reach than ordinary 6-square stun settings."
+          ]
+        },
+        "precisionAndAim": {
+          "relation": "WORSE_AT_RANGE"
+        },
+        "closeQuarters": {
+          "relation": "CAPTURE_SPECIALIST"
+        },
+        "multiAttackCompatibility": {
+          "relation": "SINGLE_SHOT_PROFILE"
+        },
+        "actionEconomy": {
+          "relation": "BASELINE"
+        },
+        "utility": {
+          "relation": "LONG_RANGE_NONLETHAL_CAPTURE"
+        },
+        "recommendationFit": "High-capacity long-range capture weapon for bounty hunters and control builds. It combines strong native stun with net-style grab/grapple at ranges ordinary stun weapons cannot reach."
+      },
+      "unrepresentedMechanics": [
+        {
+          "mechanic": "Webbing functions as a net for ranged grab/grapple.",
+          "representationStatus": "STRUCTURED_NET_CAPTURE_RULE",
+          "note": "Exact net behavior remains structured; semantic tags capture stun/restraint/control."
+        }
+      ]
+    },
+    {
+      "identityKey": "weapon-targeting-blaster-rifle",
+      "canonicalName": "Targeting Blaster Rifle",
+      "source": {
+        "book": "The Unknown Regions",
+        "descriptionPage": 39,
+        "statTablePage": 38
+      },
+      "canonicalMechanicSummary": "Accurate 3d6 single-shot rifle with same-as-base stun and a 50-shot power pack. If the wielder Aims before attacking, its damage dice change from d6s to d8s. It can be assembled or disassembled as a full-round action and has no folding stock.",
+      "sharedTags": [
+        "ranged"
+      ],
+      "advantageTags": [
+        "offense_ranged",
+        "stun",
+        "nonlethal",
+        "precision",
+        "targeting",
+        "setup",
+        "damage_bonus",
+        "burst_damage"
+      ],
+      "tradeoffTags": [
+        "sustained_damage"
+      ],
+      "finalTags": [
+        "ranged",
+        "offense_ranged",
+        "stun",
+        "nonlethal",
+        "precision",
+        "targeting",
+        "setup",
+        "damage_bonus",
+        "burst_damage"
+      ],
+      "rationale": {
+        "ranged": "Published Rifle-group ranged weapon.",
+        "offense_ranged": "Deals direct ranged energy damage.",
+        "stun": "Has a published stun setting tied to its base weapon damage.",
+        "nonlethal": "Stun provides a nonlethal option.",
+        "precision": "Accurate removes the normal Short-range attack penalty.",
+        "targeting": "Its signature damage improvement explicitly requires Aim.",
+        "setup": "The stronger damage profile requires pre-attack aiming.",
+        "damage_bonus": "Aiming changes the weapon's d6 damage dice to d8s for that attack.",
+        "burst_damage": "The aimed attack concentrates a substantial damage increase into a prepared precision shot."
+      },
+      "ruleSelectors": {
+        "exactIdentity": "weapon:weapon-targeting-blaster-rifle",
+        "weaponGroup": "weapon-group:rifle",
+        "proficiency": "weapon-proficiency:rifles",
+        "families": [
+          "weapon-family:blaster-rifle",
+          "weapon-family:targeting-blaster-rifle",
+          "weapon-family:aim-rifle"
+        ],
+        "explicitAbilityLinks": [],
+        "selectorGuardrails": [
+          "The source calls this technically a sporting blaster, but Sport Hunter explicitly lists Sporting Blaster Rifle as its named case. Do not automatically apply Sport Hunter to Targeting Blaster Rifle without separate ability authority.",
+          "Do not infer Riflemaster's exact Blaster Rifle benefit from broad family membership.",
+          "Disassembly is described for storage/ease of transport, not as a numerical concealment bonus."
+        ]
+      },
+      "relativeToStandardRifle": {
+        "damage": {
+          "canonical": "3d6 base / 3d8 after Aim",
+          "relation": "LOWER_BASE_MATCHES_BASELINE_WHEN_AIMED"
+        },
+        "capacity": {
+          "shots": 50,
+          "relation": "SAME"
+        },
+        "stun": {
+          "available": true,
+          "canonical": "same-as-base",
+          "relation": "AVAILABLE"
+        },
+        "fireModes": {
+          "modes": [
+            "single"
+          ],
+          "relation": "NO_AUTOFIRE"
+        },
+        "range": {
+          "relation": "BETTER_AT_SHORT",
+          "notes": [
+            "Accurate: no Short-range attack penalty."
+          ]
+        },
+        "precisionAndAim": {
+          "relation": "MUCH_BETTER_WHEN_AIMED"
+        },
+        "closeQuarters": {
+          "relation": "BASELINE"
+        },
+        "multiAttackCompatibility": {
+          "relation": "SINGLE_SHOT_AIM_ROLE"
+        },
+        "actionEconomy": {
+          "relation": "AIM_DEPENDENT"
+        },
+        "utility": {
+          "relation": "DISASSEMBLABLE_PRECISION_RIFLE"
+        },
+        "recommendationFit": "Aim-focused precision rifle for characters who routinely spend actions to line up shots. It reaches standard Blaster Rifle damage only when aimed, but combines that with Accurate and stun capability."
+      },
+      "unrepresentedMechanics": [
+        {
+          "mechanic": "Assembly or disassembly requires a full-round action.",
+          "representationStatus": "STRUCTURED_CONFIGURATION_ACTION",
+          "note": "Keep the storage/setup procedure in configuration mechanics rather than inventing a concealment benefit."
+        },
+        {
+          "mechanic": "No folding stock.",
+          "representationStatus": "STRUCTURED_CONFIGURATION_LIMIT",
+          "note": "Preserve as equipment configuration data."
+        }
+      ]
+    }
+  ],
+  "censusCorrection": {
+    "status": "CORRECTED_IN_ROUND_2",
+    "priorCount": 30,
+    "correctCount": 38,
+    "reason": "The Round 1 census was derived from an incomplete Phase 1 view. Round 2 re-enumerated the frozen Phase 3B 203-identity canonical authority directly and found 38 Rifle-group identities.",
+    "effect": "Round 1 semantic rulings remain valid. Round 2 backfills the six Rifle identities that alphabetically precede previously adjudicated records and then advances through Concussion Rifle, yielding clean coverage of the first 20 Phase 3B Rifle identities."
+  },
+  "roundLedger": [
+    {
+      "round": 1,
+      "adjudicated": 10,
+      "note": "Initial batch. Semantic rulings remain valid; category census was subsequently corrected from 30 to 38."
+    },
+    {
+      "round": 2,
+      "adjudicated": 10,
+      "firstCanonicalName": "ARC-9965 Blaster Rifle",
+      "lastCanonicalName": "Concussion Rifle",
+      "purpose": "Backfill omitted early Phase 3B Rifle identities and advance to clean first-20 canonical coverage."
+    },
+    {
+      "round": 3,
+      "adjudicated": 10,
+      "firstCanonicalName": "Czerka Adventurer",
+      "lastCanonicalName": "Rail Detonator Gun",
+      "purpose": "Advance canonical Rifle coverage from 20/38 to 30/38 with payload-aware and mode-aware rule-selector architecture."
+    },
+    {
+      "round": 4,
+      "adjudicated": 8,
+      "firstCanonicalName": "Scatter Gun",
+      "lastCanonicalName": "Targeting Blaster Rifle",
+      "purpose": "Close the corrected 38-identity Rifle census and certify complete semantic/selector/recommendation authority."
+    }
+  ],
+  "completionCertification": {
+    "status": "RIFLE_SEMANTIC_SELECTOR_RECOMMENDATION_AUTHORITY_COMPLETE",
+    "canonicalRifleIdentities": 38,
+    "adjudicatedIdentities": 38,
+    "identityReconciliation": "38 = 38",
+    "repoPresent": 38,
+    "repoMissing": 0,
+    "phase3BBlobSha": "e1f19068526e773a700496976403628c24d34b51",
+    "semanticVocabularyInvariantPreserved": true,
+    "ruleSelectorsSeparatedFromSemanticTags": true,
+    "modeAwareSelectorsUsedWhereRequired": true,
+    "payloadAwareSemanticsUsedWhereRequired": true,
+    "productionMutationAuthorized": false
+  }
+}
