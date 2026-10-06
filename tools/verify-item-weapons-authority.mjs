@@ -533,11 +533,19 @@ if (s2) {
       if (!s.stun || !s.baseDamage || !s.damageType || !s.availability || !s.damageReductionInteraction || !s.range || !s.operatingModes) continue;
       dice(s.baseDamage, `${w} baseDamage`);
       if (!STUN_CAP.has(s.stun.capability) || !STUN_MODE.has(s.stun.damageMode) || typeof s.stun.hasStunSetting !== 'boolean') fail(`${w} invalid stun object`);
-      if (s.stun.hasStunSetting !== (s.stun.capability === 'setting')) fail(`${w} hasStunSetting disagrees with capability`);
+      if (s.stun.hasStunSetting !== (s.stun.capability === 'setting' || s.stun.capability === 'optional-per-attack')) fail(`${w} hasStunSetting disagrees with capability`);
+      const stunAct = (st, sw) => {
+        if (!('activation' in st)) fail(`${sw} stun.activation missing`);
+        else if ((st.capability === 'none') !== (st.activation === null)) fail(`${sw} stun.activation must be null exactly when capability is none`);
+        else if (st.activation && !C.stun.activation.shape.timing.includes(st.activation.timing)) fail(`${sw} invalid stun.activation.timing ${st.activation.timing}`);
+        else if (st.capability === 'optional-per-attack' && st.activation?.timing !== 'attack-declaration') fail(`${sw} optional-per-attack stun must be declared at attack time`);
+        else if (st.capability === 'setting' && st.activation?.timing !== 'persistent-setting') fail(`${sw} stun setting must be persistent-setting`);
+      };
+      stunAct(s.stun, w);
       if (s.stun.damageMode === 'explicit' && s.stun.damage && s.stun.damage.mode !== 'modifier') dice(s.stun.damage, `${w} stun`);
       if (!TYPE_MODES.has(s.damageType.mode)) fail(`${w} invalid damageType mode`);
       if ((s.damageType.mode === 'and' || s.damageType.mode === 'or') && s.damageType.types.length < 2) fail(`${w} and/or damage type needs 2+ types`);
-      if (!AVAIL.has(s.availability.restriction) || typeof s.availability.rare !== 'boolean') fail(`${w} invalid availability`);
+      if (!(AVAIL.has(s.availability.restriction) || (s.availability.restriction === null && s.costCredits === null && !q1.source.statTablePage)) || typeof s.availability.rare !== 'boolean') fail(`${w} invalid availability`);
       if (!DR_MODES.has(s.damageReductionInteraction.mode)) fail(`${w} invalid DR mode`);
       if (ql.ignoresDR !== (s.damageReductionInteraction.mode === 'ignore')) fail(`${w} ignoresDR disagrees with damageReductionInteraction.mode`);
       if (ql.ignoresDR) t.ign++;
@@ -556,6 +564,14 @@ if (s2) {
       if (!Array.isArray(r.proficiencyRules) || r.proficiencyRules.some((q) => !C.proficiencyRules.fields.every((f) => f in q) || !Array.isArray(q.classifications))) fail(`${w} missing/invalid proficiencyRules`);
       if (s.objectDurability !== null && !(s.objectDurability && C.objectDurability.fields.every((f) => f in s.objectDurability))) fail(`${w} invalid objectDurability`);
       if (!Array.isArray(s.integratedAccessories) || s.integratedAccessories.some((a) => !C.integratedAccessories.fields.every((f) => f in a))) fail(`${w} invalid integratedAccessories`);
+      if (!Array.isArray(s.wieldingRules) || s.wieldingRules.some((q) => !q.id || !(q.effect || q.choice))) fail(`${w} missing/invalid wieldingRules`);
+      if (s.stateMachine !== null) {
+        const sm = s.stateMachine;
+        if (!sm || !Array.isArray(sm.states) || !sm.states.includes(sm.initialState) || !Array.isArray(sm.transitions) || sm.transitions.some((t2) => !sm.states.includes(t2.from) || !sm.states.includes(t2.to))) fail(`${w} invalid stateMachine`);
+      }
+      if (!Array.isArray(s.configurationStates) || s.configurationStates.some((q) => !q.id || !('attackUsable' in q))) fail(`${w} missing/invalid configurationStates`);
+      if (!('constructionRules' in s) || !(s.constructionRules === null || typeof s.constructionRules === 'object')) fail(`${w} missing/invalid constructionRules`);
+      if (!Array.isArray(s.triggeredEffects) || !same(s.triggeredEffects, (s.attackProfiles || []).flatMap((x) => x.triggeredEffects || []))) fail(`${w} canonicalStats.triggeredEffects must equal the profile-level triggered effects`);
       if (!Array.isArray(s.payloadProfiles)) fail(`${w} missing payloadProfiles`);
       else for (const pl of s.payloadProfiles) {
         if (!C.payloadProfiles.fields.every((f) => f in pl)) fail(`${w} payload ${pl.id} incomplete`);
@@ -586,7 +602,12 @@ if (s2) {
           if (!KINDS.has(x.kind)) fail(`${pw} invalid kind ${x.kind}`);
           if (!x.schemaFamily.branch || !x.schemaFamily.proficiency) fail(`${pw} incomplete schemaFamily`);
           dice(x.damage, `${pw} damage`);
+          if (!TYPE_MODES.has(x.damageType.mode) || (x.damageType.mode === 'unspecified' && x.damageType.types.length)) fail(`${pw} invalid damageType`);
           if (!STUN_CAP.has(x.stun.capability) || !STUN_MODE.has(x.stun.damageMode)) fail(`${pw} invalid stun`);
+          stunAct(x.stun, pw);
+          if (!Array.isArray(x.activationRequirements) || x.activationRequirements.some((q) => !q.type)) fail(`${pw} invalid activationRequirements`);
+          if (!Array.isArray(x.triggeredEffects) || x.triggeredEffects.some((q) => !q.trigger || !q.effect)) fail(`${pw} invalid triggeredEffects`);
+          if (x.modifierPolicy !== null && typeof x.modifierPolicy !== 'object') fail(`${pw} invalid modifierPolicy`);
           if (x.rateOfFire !== null && !(Array.isArray(x.rateOfFire) && x.rateOfFire.every((y) => ROF.has(y)))) fail(`${pw} invalid rateOfFire`);
           if (!same(Object.keys(x.qualities).sort(), [...QUALS].sort())) fail(`${pw} quality vocabulary incomplete`);
           if (!RES.has(x.attackResolution.mode) || !MISS.has(x.attackResolution.onMiss) || !Array.isArray(x.attackResolution.ignoredDefenseComponents) || !x.attackResolution.defense) fail(`${pw} invalid attackResolution`);
@@ -595,7 +616,7 @@ if (s2) {
           if (x.resourceConsumption !== null && !x.resourceConsumption?.resource) fail(`${pw} invalid resourceConsumption`);
           if (x.stun.damageMode === 'same-as-active-profile' && !s.modeProfiles.length && ap.length < 2) fail(`${pw} same-as-active-profile needs multiple profiles`);
           rangeCheck(x.range, x.qualities, qp, pw);
-          if (!Array.isArray(x.conditionalModifiers) || x.conditionalModifiers.some((m) => !C.conditionalModifiers.fields.every((f) => f in m) || !C.conditionalModifiers.targets.includes(m.target) || !Number.isInteger(m.value))) fail(`${pw} invalid conditionalModifiers`);
+          if (!Array.isArray(x.conditionalModifiers) || x.conditionalModifiers.some((m) => !C.conditionalModifiers.fields.every((f) => f in m) || !new RegExp(C.conditionalModifiers.targetPattern).test(m.target) || !Number.isInteger(m.value))) fail(`${pw} invalid conditionalModifiers`);
           const pr = x.preparedAttack;
           if (pr !== null && !C.preparedAttack.fields.every((f) => f in pr)) fail(`${pw} invalid preparedAttack`);
           if (!Array.isArray(x.damageComponents)) fail(`${pw} damageComponents must be an array`);
@@ -636,7 +657,7 @@ if (s2) {
     if (t.ign !== 3) fail(`2A expected 3 ignoresDR lightsabers, found ${t.ign}`);
     if (b.records.find((r) => r.canonicalName === 'Bowcaster').canonicalStats.range.mode !== 'unresolved') fail('2A Bowcaster range must remain unresolved');
     if (b.records.length !== 48 || t.present !== 35) fail('2A Core hard checkpoint must be 48 records / 35 present / 13 missing');
-    if (s2.schemaVersion !== 'weapon-authority-schema-v2.4') fail('schemaVersion must be weapon-authority-schema-v2.4');
+    if (s2.schemaVersion !== 'weapon-authority-schema-v2.5') fail('schemaVersion must be weapon-authority-schema-v2.5');
   }
   // Standalone book authorities (not merged into the rolling record unless the owner says so)
   for (const sb of s2.standaloneBookAuthorities || []) {
@@ -665,6 +686,28 @@ if (s2) {
       for (const n of ['DX-2 Disruptor Pistol', 'DXR-6 Disruptor Rifle']) if (f(n).canonicalStats.attackProfiles[0].firingConstraints?.firesOnAlternatingRounds !== true) fail(`2D ${n} fires only on alternating rounds`);
       for (const n of ['Bryar Rifle', 'CR-1 Blast Cannon', 'Flechette Launcher', 'Stokhli Spray Stick']) if (!same(f(n).qualityParameters.inaccurate.allowedBands, ['pointBlank', 'short', 'medium'])) fail(`2D ${n} Inaccurate must exclude Long only (Core/KOTOR definition)`);
       if (!['Guard Shoto', 'Lightsaber Pike'].every((n) => f(n).canonicalStats.defensiveInteractions.length === 1)) fail('2D Guard Shoto / Lightsaber Pike defensiveInteractions');
+    }
+    if (sb.phase === '2F') {
+      const f = (n) => sa.records.find((r) => r.canonicalName === n);
+      const sm = f('Retrosaber').canonicalStats;
+      if (sm.costCredits !== null || sm.weightKg !== null || sm.size !== null || sm.availability.restriction !== null) fail('2F Retrosaber cost/weight/size/availability must stay unpublished (null)');
+      if (!same(sm.stateMachine.states, ['normal', 'overcharge', 'burnout']) || !sm.stateMachine.transitions.every((t2) => t2.from !== 'burnout' || t2.to === 'normal') || !sm.stateMachine.locks?.some((l) => l.state === 'burnout')) fail('2F Retrosaber forced overcharge -> burnout -> normal state machine with burnout lockout');
+      if (sm.constructionRules?.baseConstructionDC !== 25) fail('2F Retrosaber construction DC 25');
+      const lw = f('Lightwhip').canonicalStats.attackProfiles[0].triggeredEffects.find((q) => q.modifierPolicy);
+      if (!lw || !lw.modifierPolicy.exclude?.length) fail('2F Lightwhip delayed damage must record its excluded modifiers');
+      const sn = f('San-Ni Staff').canonicalStats.stun;
+      if (sn.capability !== 'optional-per-attack' || sn.activation?.timing !== 'attack-declaration') fail('2F San-Ni Staff stun is declared per attack');
+      if (f('Wan-Shen').canonicalStats.configurationStates.find((q) => q.id === 'disassembled')?.components !== 4) fail('2F Wan-Shen disassembles into four components');
+      const gl = f('Lightsaber, Great').canonicalStats.wieldingRules;
+      if (gl.some((q) => /cannot|prohibit|only/i.test(q.effect || ''))) fail('2F Great Lightsaber size gate must not be a wielding prohibition');
+      for (const n of ['Long-Handle Lightsaber', 'Lightsaber Pike']) if (f(n).canonicalStats.attackProfiles.find((q) => q.id === 'haft-end')?.damageType.mode !== 'unspecified') fail(`2F ${n} haft-end damage type must stay unspecified`);
+      const lh = f('Long-Handle Lightsaber').canonicalStats.attackProfiles;
+      if (!lh.find((q) => q.id === 'haft-end')?.activationRequirements.some((q) => q.type === 'feat' && q.id === 'Long Haft Form')) fail('2F Long-Handle haft end requires Long Haft Form');
+      if (f('Lightsaber, Great').qualities.doubleWeapon || f('Long-Handle Lightsaber').qualities.doubleWeapon) fail('2F no unconditional double-weapon quality on Great/Long-Handle');
+      const dsc = f('Discblade');
+      if (dsc.canonicalStats.range.profileId !== 'thrown-weapons' || dsc.qualities.thrown !== true || /return/i.test(JSON.stringify(dsc.qualities))) fail('2F Discblade uses thrown-weapon range and has no innate returning quality');
+      if (f('Guard Shoto').canonicalStats.defensiveInteractions.find((q) => /phrik/.test(q.id))?.condition !== 'handle-is-phrik-laced') fail('2F Guard Shoto phrik DR protection must stay conditional');
+      for (const n of ['Guard Shoto', 'Lightsaber Pike', 'Long-Handle Lightsaber']) if (!f(n).crossPublishedSources?.length) fail(`2F ${n} must keep its cross-publication record`);
     }
     if (sb.phase === '2E') {
       const f = (n) => sa.records.find((r) => r.canonicalName === n);

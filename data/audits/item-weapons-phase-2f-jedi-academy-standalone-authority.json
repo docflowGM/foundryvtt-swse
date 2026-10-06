@@ -1,0 +1,5163 @@
+{
+  "schemaVersion": "2F-jedi-academy-standalone-gold-v1",
+  "authorityType": "standalone-book-only",
+  "book": "Jedi Academy Training Manual",
+  "phase": "2F",
+  "status": "JEDI_ACADEMY_PHASE_2F_STANDALONE_CERTIFIED",
+  "scope": "16 Jedi Academy character-scale weapon claims only. No rolling authority mutation. No production mutation authorization.",
+  "inherits": [
+    "Core Rulebook Phase 2A gold schema",
+    "KOTOR Phase 2B standalone schema extensions",
+    "Galaxy at War Phase 2C schema extensions",
+    "Force Unleashed Phase 2D schema extensions",
+    "Clone Wars Phase 2E schema extensions"
+  ],
+  "sourcePolicy": {
+    "searchLayer": "Jedi Academy Training Manual_djvu.txt",
+    "visualAuthority": "SW Saga - Jedi Academy Training Manual (optimized).pdf",
+    "repoRole": "comparison-only"
+  },
+  "schemaDelta": {
+    "contractVersion": "weapon-authority-schema-v2.5-proposed",
+    "principle": "Jedi Academy extends the normalized authority only where its published weapon mechanics cannot be represented faithfully by the schema through Clone Wars. No production migration is authorized.",
+    "requiredEdits": [
+      {
+        "id": "wielding-rules",
+        "change": "Add canonicalStats.wieldingRules[] for source-defined handedness, effective-size choices, ability-bonus substitutions, and wielder-size-dependent eligibility.",
+        "why": [
+          "Archaic/modern lightfoils may count as Small when beneficial and cannot be wielded two-handed.",
+          "Great lightsaber gates certain feat/talent interactions by wielder size rather than prohibiting smaller wielders outright.",
+          "Long-handle lightsaber offers a two-handed choice between doubled Strength and 2d10 base damage."
+        ],
+        "normalizePriorBooks": "Append wieldingRules:[] by default. Backfill already-certified Core/KOTOR/Force Unleashed handedness or effective-size exceptions without inferring from weapon names or repo tags."
+      },
+      {
+        "id": "state-machine",
+        "change": "Add canonicalStats.stateMachine for forced timed transitions between weapon states, including duration, forced next state, and lockouts.",
+        "why": [
+          "Retrosaber transitions normal -> 2d10 overcharge -> forced 2d4 burnout for one round -> normal, and cannot be dialed up during burnout."
+        ],
+        "normalizePriorBooks": "Append stateMachine:null by default. Existing selectable modes remain modeProfiles unless they have forced temporal transitions."
+      },
+      {
+        "id": "activation-requirements",
+        "change": "Add attackProfiles[].activationRequirements[] and equivalent mode/quality gates for feat, size, wielding, or choice prerequisites.",
+        "why": [
+          "Long Haft Form alone unlocks the extra haft-end/double-weapon profiles on the long-handle lightsaber and lightsaber pike.",
+          "The great lightsaber has wielder-size-gated feat/talent interaction."
+        ],
+        "normalizePriorBooks": "Append [] by default. Backfill already-certified conditional profiles and modes rather than making them always available."
+      },
+      {
+        "id": "conditional-modifier-targets",
+        "change": "Expand conditionalModifiers[].target beyond attack/damage to structured defenses, skill checks, and cumulative check penalties.",
+        "why": [
+          "Crossguard lightsaber changes Block cumulative Use the Force penalties from -5 to -2 and separately imposes -2 on Deflect.",
+          "Dual-phase extended mode imposes -2 Reflex Defense only against adjacent attackers.",
+          "Guard shoto grants +2 equipment to Use the Force checks for Block/Deflect."
+        ],
+        "normalizePriorBooks": "Keep the existing conditionalModifiers[] container but normalize target vocabulary across all prior books. Do not create ad hoc prose-only numeric modifiers."
+      },
+      {
+        "id": "triggered-effects-and-modifier-policy",
+        "change": "Add attackProfiles[].triggeredEffects[] plus modifierPolicy for delayed/repeated damage or control effects and for explicitly included/excluded damage modifiers.",
+        "why": [
+          "Lightwhip can initiate grab/grapple on hit and deals base weapon damage at end of a held target turn while excluding Strength, half heroic level, and all other modifiers."
+        ],
+        "normalizePriorBooks": "Append triggeredEffects:[] by default. Backfill already-certified recurring effects such as Clone Wars Garrote and condition-triggered bonus damage only where the source clearly specifies timing."
+      },
+      {
+        "id": "stun-activation-semantics",
+        "change": "Extend stun authority with activation {timing, action} so a per-attack stun choice is distinct from a persistent alternate setting.",
+        "why": [
+          "San-ni staff lets the wielder designate the energy couplings at the time the attack is made, with no swift-action mode switch."
+        ],
+        "normalizePriorBooks": "Backfill prior stun weapons with source-correct timing: persistent setting, per-attack declaration, native stun-only, or ammunition-dependent. Do not assume every Yes table entry uses the same action economy."
+      },
+      {
+        "id": "construction-rules",
+        "change": "Add canonicalStats.constructionRules for weapon-specific construction DCs, crystal/effect inheritance, and mutually exclusive construction configurations.",
+        "why": [
+          "Retrosaber has base construction DC 25.",
+          "Dual-phase lightsaber can use one crystal across both phases or replace the extended phase with a second crystal whose effect is mutually exclusive with the default crystal."
+        ],
+        "normalizePriorBooks": "Append constructionRules:null by default. Populate only where a weapon source explicitly publishes construction mechanics."
+      },
+      {
+        "id": "physical-configuration-states",
+        "change": "Add canonicalStats.configurationStates[] for noncombat physical states with transition action and usability/storage effects.",
+        "why": [
+          "Wan-shen breaks into four Small objects and requires a full-round action to assemble/disassemble.",
+          "Archaic lightsaber power cord can become disconnected from its external power pack."
+        ],
+        "normalizePriorBooks": "Append configurationStates:[] by default. Backfill source-certified cases such as Clone Wars Snap Baton and Czerka Adventurer where useful."
+      }
+    ],
+    "sourceQualityRule": "Jedi Academy does not introduce a new Accurate/Inaccurate/Arc definition in these 16 claims. Do not import repo traits as source qualities. All lightsaber identities retain the Core lightsaber outgoing DR-bypass rule unless a later explicit exception applies to the attack itself."
+  },
+  "counts": {
+    "canonicalWeaponClaims": 16,
+    "repoPresent": 14,
+    "repoMissing": 2,
+    "lightsaberClaims": 12,
+    "nonLightsaberMeleeClaims": 2,
+    "rangedClaims": 2,
+    "crossPublishedIdentityClaims": 3,
+    "baseAccurateClaims": 0,
+    "baseInaccurateClaims": 0,
+    "baseArcClaims": 0
+  },
+  "verification": {
+    "meleeTable": "Table 3-1 p.52 visually verified",
+    "rangedTable": "Table 3-4 p.61 visually verified",
+    "retrosaberSidebar": "Holocron Lesson p.50 visually verified; Retrosaber is not separately tabled",
+    "hardReconciliation": "14 melee/lightsaber claims + 2 ranged claims = 16",
+    "repoReconciliation": "14 present + 2 missing = 16"
+  },
+  "bookLocalGuardrails": [
+    "Do not update a rolling/master weapon authority from this package.",
+    "Do not mutate production packs, template/schema runtime, actors, feats, or talents during certification.",
+    "Do not create San-Ni Staff or Wan-Shen during this phase.",
+    "Repo fields are comparison evidence only.",
+    "Do not infer Retrosaber cost, weight, size, or availability from the current repo; this source does not separately table them.",
+    "Do not treat generic repo tags such as Throwable, Finesse, Duelist, Large-Only, or TwoHanded as canonical unless the published entry establishes that exact mechanic.",
+    "Guard Shoto, Lightsaber Pike, and Long-Handle Lightsaber are cross-published identities; this book-local package certifies only the Jedi Academy claim.",
+    "Discblade return-to-hand is not a base weapon quality; it depends on trained Zeison Sha Force use."
+  ],
+  "records": [
+    {
+      "canonicalName": "Guard Shoto",
+      "publishedName": "Shoto, guard",
+      "weaponGroup": "Lightsaber",
+      "source": {
+        "book": "Jedi Academy Training Manual",
+        "descriptionPage": 50,
+        "statTablePage": 52,
+        "table": "Table 3-1: Melee Weapons",
+        "verifiedBy": [
+          "Jedi Academy Training Manual_djvu.txt",
+          "SW Saga - Jedi Academy Training Manual (optimized).pdf visual table verification"
+        ]
+      },
+      "schemaFamily": {
+        "branch": "melee",
+        "subcategory": "lightsaber",
+        "proficiency": "lightsabers"
+      },
+      "canonicalStats": {
+        "size": "Small",
+        "costCredits": 7000,
+        "baseDamage": {
+          "mode": "dice",
+          "diceCount": 2,
+          "dieSize": 4,
+          "flatBonus": 0,
+          "formula": "2d4"
+        },
+        "weightKg": 1,
+        "damageType": {
+          "mode": "and",
+          "types": [
+            "energy",
+            "slashing"
+          ],
+          "qualifiers": []
+        },
+        "availability": {
+          "restriction": "common",
+          "rare": true
+        },
+        "rateOfFire": null,
+        "stun": {
+          "capability": "none",
+          "hasStunSetting": false,
+          "damageMode": "none",
+          "damage": null,
+          "activation": null,
+          "rangeRule": null
+        },
+        "range": {
+          "mode": "melee",
+          "profileId": null,
+          "bands": null,
+          "basePenalties": null,
+          "allowedBands": null,
+          "hardMaxSquares": null,
+          "penaltyApplication": null,
+          "qualityEffects": {
+            "pointBlankAllowed": null,
+            "shortPenaltyOverride": null,
+            "mediumAllowed": null,
+            "longAllowed": null
+          }
+        },
+        "resource": {
+          "kind": "energy-cell",
+          "capacity": null,
+          "rechargeable": null,
+          "replaceable": true,
+          "integrated": false,
+          "consumption": null,
+          "disposableWhenDepleted": null
+        },
+        "operatingModes": {
+          "default": "normal",
+          "alternates": [],
+          "maxConcurrentAlternates": 1,
+          "autofireOnlyStunException": false
+        },
+        "damageReductionInteraction": {
+          "mode": "ignore",
+          "amount": null,
+          "exceptions": []
+        },
+        "attackProfiles": [
+          {
+            "id": "blade",
+            "label": "Blade",
+            "kind": "attack",
+            "schemaFamily": {
+              "branch": "melee",
+              "subcategory": "lightsaber",
+              "proficiency": "lightsabers"
+            },
+            "damage": {
+              "mode": "dice",
+              "diceCount": 2,
+              "dieSize": 4,
+              "flatBonus": 0,
+              "formula": "2d4"
+            },
+            "damageType": {
+              "mode": "and",
+              "types": [
+                "energy",
+                "slashing"
+              ],
+              "qualifiers": []
+            },
+            "stun": {
+              "capability": "none",
+              "hasStunSetting": false,
+              "damageMode": "none",
+              "damage": null,
+              "activation": null,
+              "rangeRule": null
+            },
+            "rateOfFire": null,
+            "range": {
+              "mode": "melee",
+              "profileId": null,
+              "bands": null,
+              "basePenalties": null,
+              "allowedBands": null,
+              "hardMaxSquares": null,
+              "penaltyApplication": null,
+              "qualityEffects": {
+                "pointBlankAllowed": null,
+                "shortPenaltyOverride": null,
+                "mediumAllowed": null,
+                "longAllowed": null
+              }
+            },
+            "qualities": {
+              "accurate": false,
+              "inaccurate": false,
+              "arc": false,
+              "ignoresDR": true,
+              "areaEffect": false,
+              "autofireOnly": false,
+              "doubleWeapon": false,
+              "thrown": false,
+              "reach": false
+            },
+            "attackResolution": {
+              "mode": "standard",
+              "defense": "reflex",
+              "ignoredDefenseComponents": [],
+              "onMiss": "none"
+            },
+            "area": {
+              "enabled": false,
+              "shape": null,
+              "radiusSquares": null,
+              "lengthSquares": null,
+              "widthAtEndSquares": null,
+              "widthSquares": null,
+              "heightSquares": null,
+              "notes": null
+            },
+            "resourceConsumption": null,
+            "damageComponents": [],
+            "firingConstraints": null,
+            "preparedAttack": null,
+            "conditionalModifiers": [],
+            "activationRequirements": [],
+            "triggeredEffects": [],
+            "modifierPolicy": null,
+            "notes": []
+          }
+        ],
+        "modeProfiles": [],
+        "defensiveInteractions": [
+          {
+            "id": "block-deflect-bonus",
+            "effect": "equipment-bonus",
+            "target": "use-the-force-check",
+            "value": 2,
+            "appliesWhen": [
+              "Block",
+              "Deflect"
+            ],
+            "requiresProficiency": true
+          },
+          {
+            "id": "phrik-handle-dr-protection",
+            "effect": "incoming-lightsaber-does-not-ignore-weapon-dr",
+            "condition": "handle-is-phrik-laced"
+          }
+        ],
+        "payloadProfiles": [],
+        "objectDurability": null,
+        "integratedAccessories": [],
+        "wieldingRules": [],
+        "stateMachine": null,
+        "configurationStates": [],
+        "constructionRules": null,
+        "triggeredEffects": []
+      },
+      "qualities": {
+        "accurate": false,
+        "inaccurate": false,
+        "arc": false,
+        "ignoresDR": true,
+        "areaEffect": false,
+        "autofireOnly": false,
+        "doubleWeapon": false,
+        "thrown": false,
+        "reach": false
+      },
+      "conditionalQualities": [],
+      "conditionalDamageProfiles": [],
+      "proficiencyRules": [],
+      "operation": {
+        "requiresEnergyCell": true
+      },
+      "sourceFootnotes": [],
+      "repo": {
+        "present": true,
+        "id": "lightsaber-chassis-guard-shoto",
+        "currentName": "Guard Shoto",
+        "phase0NameNormalizationPending": false
+      },
+      "qualityParameters": {
+        "accurate": null,
+        "inaccurate": null,
+        "arc": null
+      },
+      "qualityAuthority": {
+        "accurate": "not-established-by-Jedi-Academy",
+        "inaccurate": "not-established-by-Jedi-Academy",
+        "arc": "not-established-by-Jedi-Academy",
+        "ignoresDR": "established-by-lightsaber-group-rule"
+      },
+      "repoComparison": {
+        "status": "MECHANICS_INCOMPLETE",
+        "severity": "material",
+        "current": {
+          "damage": "2d4",
+          "costCredits": 7000,
+          "weightKg": 1,
+          "traits": [
+            "Lightsaber",
+            "Throwable",
+            "Guard"
+          ],
+          "rangeProfile": "melee"
+        },
+        "phase1ContentStatus": "DESCRIPTION_INCOMPLETE",
+        "findings": [
+          "Table stats match current repo.",
+          "Repo does not structurally represent the +2 Block/Deflect equipment bonus.",
+          "Phrik DR protection is conditional on a phrik-laced handle; do not make it unconditional.",
+          "Repo Throwable trait is not established by this weapon entry."
+        ]
+      },
+      "crossPublishedSources": [
+        {
+          "book": "Force Unleashed Campaign Guide",
+          "page": 96,
+          "relationship": "earlier publication; same production identity"
+        }
+      ],
+      "laterProductionAction": "UPDATE_AFTER_PHASE_2_WEAPON_AUTHORITY_COMPLETE"
+    },
+    {
+      "canonicalName": "Lightfoil, Archaic",
+      "publishedName": "Lightfoil, archaic",
+      "weaponGroup": "Lightsaber",
+      "source": {
+        "book": "Jedi Academy Training Manual",
+        "descriptionPage": 50,
+        "statTablePage": 52,
+        "table": "Table 3-1: Melee Weapons",
+        "verifiedBy": [
+          "Jedi Academy Training Manual_djvu.txt",
+          "SW Saga - Jedi Academy Training Manual (optimized).pdf visual table verification"
+        ]
+      },
+      "schemaFamily": {
+        "branch": "melee",
+        "subcategory": "lightsaber",
+        "proficiency": "lightsabers"
+      },
+      "canonicalStats": {
+        "size": "Medium",
+        "costCredits": 4500,
+        "baseDamage": {
+          "mode": "dice",
+          "diceCount": 2,
+          "dieSize": 8,
+          "flatBonus": 0,
+          "formula": "2d8"
+        },
+        "weightKg": 0.5,
+        "damageType": {
+          "mode": "and",
+          "types": [
+            "energy",
+            "slashing"
+          ],
+          "qualifiers": []
+        },
+        "availability": {
+          "restriction": "common",
+          "rare": true
+        },
+        "rateOfFire": null,
+        "stun": {
+          "capability": "none",
+          "hasStunSetting": false,
+          "damageMode": "none",
+          "damage": null,
+          "activation": null,
+          "rangeRule": null
+        },
+        "range": {
+          "mode": "melee",
+          "profileId": null,
+          "bands": null,
+          "basePenalties": null,
+          "allowedBands": null,
+          "hardMaxSquares": null,
+          "penaltyApplication": null,
+          "qualityEffects": {
+            "pointBlankAllowed": null,
+            "shortPenaltyOverride": null,
+            "mediumAllowed": null,
+            "longAllowed": null
+          }
+        },
+        "resource": {
+          "kind": "energy-cell",
+          "capacity": null,
+          "rechargeable": null,
+          "replaceable": true,
+          "integrated": false,
+          "consumption": null,
+          "disposableWhenDepleted": null
+        },
+        "operatingModes": {
+          "default": "normal",
+          "alternates": [],
+          "maxConcurrentAlternates": 1,
+          "autofireOnlyStunException": false
+        },
+        "damageReductionInteraction": {
+          "mode": "ignore",
+          "amount": null,
+          "exceptions": []
+        },
+        "attackProfiles": [
+          {
+            "id": "blade",
+            "label": "Blade",
+            "kind": "attack",
+            "schemaFamily": {
+              "branch": "melee",
+              "subcategory": "lightsaber",
+              "proficiency": "lightsabers"
+            },
+            "damage": {
+              "mode": "dice",
+              "diceCount": 2,
+              "dieSize": 8,
+              "flatBonus": 0,
+              "formula": "2d8"
+            },
+            "damageType": {
+              "mode": "and",
+              "types": [
+                "energy",
+                "slashing"
+              ],
+              "qualifiers": []
+            },
+            "stun": {
+              "capability": "none",
+              "hasStunSetting": false,
+              "damageMode": "none",
+              "damage": null,
+              "activation": null,
+              "rangeRule": null
+            },
+            "rateOfFire": null,
+            "range": {
+              "mode": "melee",
+              "profileId": null,
+              "bands": null,
+              "basePenalties": null,
+              "allowedBands": null,
+              "hardMaxSquares": null,
+              "penaltyApplication": null,
+              "qualityEffects": {
+                "pointBlankAllowed": null,
+                "shortPenaltyOverride": null,
+                "mediumAllowed": null,
+                "longAllowed": null
+              }
+            },
+            "qualities": {
+              "accurate": false,
+              "inaccurate": false,
+              "arc": false,
+              "ignoresDR": true,
+              "areaEffect": false,
+              "autofireOnly": false,
+              "doubleWeapon": false,
+              "thrown": false,
+              "reach": false
+            },
+            "attackResolution": {
+              "mode": "standard",
+              "defense": "reflex",
+              "ignoredDefenseComponents": [],
+              "onMiss": "none"
+            },
+            "area": {
+              "enabled": false,
+              "shape": null,
+              "radiusSquares": null,
+              "lengthSquares": null,
+              "widthAtEndSquares": null,
+              "widthSquares": null,
+              "heightSquares": null,
+              "notes": null
+            },
+            "resourceConsumption": null,
+            "damageComponents": [],
+            "firingConstraints": null,
+            "preparedAttack": null,
+            "conditionalModifiers": [],
+            "activationRequirements": [],
+            "triggeredEffects": [],
+            "modifierPolicy": null,
+            "notes": []
+          }
+        ],
+        "modeProfiles": [],
+        "defensiveInteractions": [],
+        "payloadProfiles": [],
+        "objectDurability": null,
+        "integratedAccessories": [],
+        "wieldingRules": [
+          {
+            "id": "beneficial-small-size",
+            "effect": "may-count-as-size",
+            "value": "Small",
+            "condition": "whenever-beneficial"
+          },
+          {
+            "id": "no-two-handed",
+            "effect": "cannot-be-wielded-two-handed"
+          }
+        ],
+        "stateMachine": null,
+        "configurationStates": [],
+        "constructionRules": null,
+        "triggeredEffects": []
+      },
+      "qualities": {
+        "accurate": false,
+        "inaccurate": false,
+        "arc": false,
+        "ignoresDR": true,
+        "areaEffect": false,
+        "autofireOnly": false,
+        "doubleWeapon": false,
+        "thrown": false,
+        "reach": false
+      },
+      "conditionalQualities": [],
+      "conditionalDamageProfiles": [],
+      "proficiencyRules": [],
+      "operation": {
+        "requiresEnergyCell": true,
+        "cannotWieldTwoHanded": true,
+        "mayCountAsSmallWhenBeneficial": true
+      },
+      "sourceFootnotes": [],
+      "repo": {
+        "present": true,
+        "id": "lightsaber-chassis-archaic-lightfoil",
+        "currentName": "Archaic Lightfoil",
+        "phase0NameNormalizationPending": true
+      },
+      "qualityParameters": {
+        "accurate": null,
+        "inaccurate": null,
+        "arc": null
+      },
+      "qualityAuthority": {
+        "accurate": "not-established-by-Jedi-Academy",
+        "inaccurate": "not-established-by-Jedi-Academy",
+        "arc": "not-established-by-Jedi-Academy",
+        "ignoresDR": "established-by-lightsaber-group-rule"
+      },
+      "repoComparison": {
+        "status": "MECHANICS_INCOMPLETE",
+        "severity": "material",
+        "current": {
+          "damage": "2d8",
+          "costCredits": 4500,
+          "weightKg": 0.5,
+          "traits": [
+            "Lightsaber",
+            "Throwable",
+            "Finesse"
+          ],
+          "rangeProfile": "melee"
+        },
+        "phase1ContentStatus": "DESCRIPTION_INCOMPLETE",
+        "findings": [
+          "Printed table damage/cost/weight match current repo.",
+          "Repo does not structurally represent the source-defined effective-size choice and two-handed prohibition.",
+          "Repo Finesse/Throwable traits are not themselves printed weapon qualities in this entry."
+        ]
+      },
+      "crossPublishedSources": [],
+      "laterProductionAction": "UPDATE_AFTER_PHASE_2_WEAPON_AUTHORITY_COMPLETE"
+    },
+    {
+      "canonicalName": "Lightfoil, Modern",
+      "publishedName": "Lightfoil, modern",
+      "weaponGroup": "Lightsaber",
+      "source": {
+        "book": "Jedi Academy Training Manual",
+        "descriptionPage": 50,
+        "statTablePage": 52,
+        "table": "Table 3-1: Melee Weapons",
+        "verifiedBy": [
+          "Jedi Academy Training Manual_djvu.txt",
+          "SW Saga - Jedi Academy Training Manual (optimized).pdf visual table verification"
+        ]
+      },
+      "schemaFamily": {
+        "branch": "melee",
+        "subcategory": "lightsaber",
+        "proficiency": "lightsabers"
+      },
+      "canonicalStats": {
+        "size": "Medium",
+        "costCredits": 2500,
+        "baseDamage": {
+          "mode": "dice",
+          "diceCount": 2,
+          "dieSize": 6,
+          "flatBonus": 0,
+          "formula": "2d6"
+        },
+        "weightKg": 0.5,
+        "damageType": {
+          "mode": "and",
+          "types": [
+            "energy",
+            "slashing"
+          ],
+          "qualifiers": []
+        },
+        "availability": {
+          "restriction": "common",
+          "rare": true
+        },
+        "rateOfFire": null,
+        "stun": {
+          "capability": "none",
+          "hasStunSetting": false,
+          "damageMode": "none",
+          "damage": null,
+          "activation": null,
+          "rangeRule": null
+        },
+        "range": {
+          "mode": "melee",
+          "profileId": null,
+          "bands": null,
+          "basePenalties": null,
+          "allowedBands": null,
+          "hardMaxSquares": null,
+          "penaltyApplication": null,
+          "qualityEffects": {
+            "pointBlankAllowed": null,
+            "shortPenaltyOverride": null,
+            "mediumAllowed": null,
+            "longAllowed": null
+          }
+        },
+        "resource": {
+          "kind": "energy-cell",
+          "capacity": null,
+          "rechargeable": null,
+          "replaceable": true,
+          "integrated": false,
+          "consumption": null,
+          "disposableWhenDepleted": null
+        },
+        "operatingModes": {
+          "default": "normal",
+          "alternates": [],
+          "maxConcurrentAlternates": 1,
+          "autofireOnlyStunException": false
+        },
+        "damageReductionInteraction": {
+          "mode": "ignore",
+          "amount": null,
+          "exceptions": []
+        },
+        "attackProfiles": [
+          {
+            "id": "blade",
+            "label": "Blade",
+            "kind": "attack",
+            "schemaFamily": {
+              "branch": "melee",
+              "subcategory": "lightsaber",
+              "proficiency": "lightsabers"
+            },
+            "damage": {
+              "mode": "dice",
+              "diceCount": 2,
+              "dieSize": 6,
+              "flatBonus": 0,
+              "formula": "2d6"
+            },
+            "damageType": {
+              "mode": "and",
+              "types": [
+                "energy",
+                "slashing"
+              ],
+              "qualifiers": []
+            },
+            "stun": {
+              "capability": "none",
+              "hasStunSetting": false,
+              "damageMode": "none",
+              "damage": null,
+              "activation": null,
+              "rangeRule": null
+            },
+            "rateOfFire": null,
+            "range": {
+              "mode": "melee",
+              "profileId": null,
+              "bands": null,
+              "basePenalties": null,
+              "allowedBands": null,
+              "hardMaxSquares": null,
+              "penaltyApplication": null,
+              "qualityEffects": {
+                "pointBlankAllowed": null,
+                "shortPenaltyOverride": null,
+                "mediumAllowed": null,
+                "longAllowed": null
+              }
+            },
+            "qualities": {
+              "accurate": false,
+              "inaccurate": false,
+              "arc": false,
+              "ignoresDR": true,
+              "areaEffect": false,
+              "autofireOnly": false,
+              "doubleWeapon": false,
+              "thrown": false,
+              "reach": false
+            },
+            "attackResolution": {
+              "mode": "standard",
+              "defense": "reflex",
+              "ignoredDefenseComponents": [],
+              "onMiss": "none"
+            },
+            "area": {
+              "enabled": false,
+              "shape": null,
+              "radiusSquares": null,
+              "lengthSquares": null,
+              "widthAtEndSquares": null,
+              "widthSquares": null,
+              "heightSquares": null,
+              "notes": null
+            },
+            "resourceConsumption": null,
+            "damageComponents": [],
+            "firingConstraints": null,
+            "preparedAttack": null,
+            "conditionalModifiers": [],
+            "activationRequirements": [],
+            "triggeredEffects": [],
+            "modifierPolicy": null,
+            "notes": []
+          }
+        ],
+        "modeProfiles": [],
+        "defensiveInteractions": [],
+        "payloadProfiles": [],
+        "objectDurability": null,
+        "integratedAccessories": [],
+        "wieldingRules": [
+          {
+            "id": "beneficial-small-size",
+            "effect": "may-count-as-size",
+            "value": "Small",
+            "condition": "whenever-beneficial"
+          },
+          {
+            "id": "no-two-handed",
+            "effect": "cannot-be-wielded-two-handed"
+          }
+        ],
+        "stateMachine": null,
+        "configurationStates": [],
+        "constructionRules": null,
+        "triggeredEffects": []
+      },
+      "qualities": {
+        "accurate": false,
+        "inaccurate": false,
+        "arc": false,
+        "ignoresDR": true,
+        "areaEffect": false,
+        "autofireOnly": false,
+        "doubleWeapon": false,
+        "thrown": false,
+        "reach": false
+      },
+      "conditionalQualities": [],
+      "conditionalDamageProfiles": [],
+      "proficiencyRules": [],
+      "operation": {
+        "requiresEnergyCell": true,
+        "cannotWieldTwoHanded": true,
+        "mayCountAsSmallWhenBeneficial": true
+      },
+      "sourceFootnotes": [],
+      "repo": {
+        "present": true,
+        "id": "lightsaber-chassis-modern-lightfoil",
+        "currentName": "Modern Lightfoil",
+        "phase0NameNormalizationPending": true
+      },
+      "qualityParameters": {
+        "accurate": null,
+        "inaccurate": null,
+        "arc": null
+      },
+      "qualityAuthority": {
+        "accurate": "not-established-by-Jedi-Academy",
+        "inaccurate": "not-established-by-Jedi-Academy",
+        "arc": "not-established-by-Jedi-Academy",
+        "ignoresDR": "established-by-lightsaber-group-rule"
+      },
+      "repoComparison": {
+        "status": "MECHANICS_INCORRECT",
+        "severity": "material",
+        "current": {
+          "damage": "2d6",
+          "costCredits": 2500,
+          "weightKg": 0.5,
+          "traits": [
+            "Lightsaber",
+            "Throwable",
+            "Finesse"
+          ],
+          "rangeProfile": "melee"
+        },
+        "phase1ContentStatus": "DESCRIPTION_INCORRECT",
+        "findings": [
+          "Printed table damage/cost/weight match current repo.",
+          "Repo does not structurally represent the source-defined effective-size choice and two-handed prohibition.",
+          "Repo Finesse/Throwable traits are not themselves printed weapon qualities in this entry."
+        ]
+      },
+      "crossPublishedSources": [],
+      "laterProductionAction": "UPDATE_AFTER_PHASE_2_WEAPON_AUTHORITY_COMPLETE"
+    },
+    {
+      "canonicalName": "Retrosaber",
+      "publishedName": "Retrosaber",
+      "weaponGroup": "Lightsaber",
+      "source": {
+        "book": "Jedi Academy Training Manual",
+        "descriptionPage": 50,
+        "statTablePage": null,
+        "table": "Holocron Lesson: Archaic Power Packs and Retrosabers",
+        "verifiedBy": [
+          "Jedi Academy Training Manual_djvu.txt",
+          "SW Saga - Jedi Academy Training Manual (optimized).pdf visual table verification"
+        ]
+      },
+      "schemaFamily": {
+        "branch": "melee",
+        "subcategory": "lightsaber",
+        "proficiency": "lightsabers"
+      },
+      "canonicalStats": {
+        "size": null,
+        "costCredits": null,
+        "baseDamage": {
+          "mode": "dice",
+          "diceCount": 2,
+          "dieSize": 8,
+          "flatBonus": 0,
+          "formula": "2d8"
+        },
+        "weightKg": null,
+        "damageType": {
+          "mode": "and",
+          "types": [
+            "energy",
+            "slashing"
+          ],
+          "qualifiers": []
+        },
+        "availability": {
+          "restriction": null,
+          "rare": false
+        },
+        "rateOfFire": null,
+        "stun": {
+          "capability": "none",
+          "hasStunSetting": false,
+          "damageMode": "none",
+          "damage": null,
+          "activation": null,
+          "rangeRule": null
+        },
+        "range": {
+          "mode": "melee",
+          "profileId": null,
+          "bands": null,
+          "basePenalties": null,
+          "allowedBands": null,
+          "hardMaxSquares": null,
+          "penaltyApplication": null,
+          "qualityEffects": {
+            "pointBlankAllowed": null,
+            "shortPenaltyOverride": null,
+            "mediumAllowed": null,
+            "longAllowed": null
+          }
+        },
+        "resource": {
+          "kind": "external-power-pack",
+          "capacity": null,
+          "rechargeable": null,
+          "replaceable": true,
+          "integrated": false,
+          "consumption": null,
+          "disposableWhenDepleted": null
+        },
+        "operatingModes": {
+          "default": "normal",
+          "alternates": [],
+          "maxConcurrentAlternates": 1,
+          "autofireOnlyStunException": false
+        },
+        "damageReductionInteraction": {
+          "mode": "ignore",
+          "amount": null,
+          "exceptions": []
+        },
+        "attackProfiles": [
+          {
+            "id": "normal",
+            "label": "Normal output",
+            "kind": "attack",
+            "schemaFamily": {
+              "branch": "melee",
+              "subcategory": "lightsaber",
+              "proficiency": "lightsabers"
+            },
+            "damage": {
+              "mode": "dice",
+              "diceCount": 2,
+              "dieSize": 8,
+              "flatBonus": 0,
+              "formula": "2d8"
+            },
+            "damageType": {
+              "mode": "and",
+              "types": [
+                "energy",
+                "slashing"
+              ],
+              "qualifiers": []
+            },
+            "stun": {
+              "capability": "none",
+              "hasStunSetting": false,
+              "damageMode": "none",
+              "damage": null,
+              "activation": null,
+              "rangeRule": null
+            },
+            "rateOfFire": null,
+            "range": {
+              "mode": "melee",
+              "profileId": null,
+              "bands": null,
+              "basePenalties": null,
+              "allowedBands": null,
+              "hardMaxSquares": null,
+              "penaltyApplication": null,
+              "qualityEffects": {
+                "pointBlankAllowed": null,
+                "shortPenaltyOverride": null,
+                "mediumAllowed": null,
+                "longAllowed": null
+              }
+            },
+            "qualities": {
+              "accurate": false,
+              "inaccurate": false,
+              "arc": false,
+              "ignoresDR": true,
+              "areaEffect": false,
+              "autofireOnly": false,
+              "doubleWeapon": false,
+              "thrown": false,
+              "reach": false
+            },
+            "attackResolution": {
+              "mode": "standard",
+              "defense": "reflex",
+              "ignoredDefenseComponents": [],
+              "onMiss": "none"
+            },
+            "area": {
+              "enabled": false,
+              "shape": null,
+              "radiusSquares": null,
+              "lengthSquares": null,
+              "widthAtEndSquares": null,
+              "widthSquares": null,
+              "heightSquares": null,
+              "notes": null
+            },
+            "resourceConsumption": null,
+            "damageComponents": [],
+            "firingConstraints": null,
+            "preparedAttack": null,
+            "conditionalModifiers": [],
+            "activationRequirements": [],
+            "triggeredEffects": [],
+            "modifierPolicy": null,
+            "notes": []
+          },
+          {
+            "id": "overcharge",
+            "label": "Dialed-up output",
+            "kind": "attack",
+            "schemaFamily": {
+              "branch": "melee",
+              "subcategory": "lightsaber",
+              "proficiency": "lightsabers"
+            },
+            "damage": {
+              "mode": "dice",
+              "diceCount": 2,
+              "dieSize": 10,
+              "flatBonus": 0,
+              "formula": "2d10"
+            },
+            "damageType": {
+              "mode": "and",
+              "types": [
+                "energy",
+                "slashing"
+              ],
+              "qualifiers": []
+            },
+            "stun": {
+              "capability": "none",
+              "hasStunSetting": false,
+              "damageMode": "none",
+              "damage": null,
+              "activation": null,
+              "rangeRule": null
+            },
+            "rateOfFire": null,
+            "range": {
+              "mode": "melee",
+              "profileId": null,
+              "bands": null,
+              "basePenalties": null,
+              "allowedBands": null,
+              "hardMaxSquares": null,
+              "penaltyApplication": null,
+              "qualityEffects": {
+                "pointBlankAllowed": null,
+                "shortPenaltyOverride": null,
+                "mediumAllowed": null,
+                "longAllowed": null
+              }
+            },
+            "qualities": {
+              "accurate": false,
+              "inaccurate": false,
+              "arc": false,
+              "ignoresDR": true,
+              "areaEffect": false,
+              "autofireOnly": false,
+              "doubleWeapon": false,
+              "thrown": false,
+              "reach": false
+            },
+            "attackResolution": {
+              "mode": "standard",
+              "defense": "reflex",
+              "ignoredDefenseComponents": [],
+              "onMiss": "none"
+            },
+            "area": {
+              "enabled": false,
+              "shape": null,
+              "radiusSquares": null,
+              "lengthSquares": null,
+              "widthAtEndSquares": null,
+              "widthSquares": null,
+              "heightSquares": null,
+              "notes": null
+            },
+            "resourceConsumption": null,
+            "damageComponents": [],
+            "firingConstraints": null,
+            "preparedAttack": null,
+            "conditionalModifiers": [],
+            "activationRequirements": [
+              {
+                "type": "action",
+                "action": "swift"
+              }
+            ],
+            "triggeredEffects": [],
+            "modifierPolicy": null,
+            "notes": []
+          },
+          {
+            "id": "burnout",
+            "label": "Burnout output",
+            "kind": "attack",
+            "schemaFamily": {
+              "branch": "melee",
+              "subcategory": "lightsaber",
+              "proficiency": "lightsabers"
+            },
+            "damage": {
+              "mode": "dice",
+              "diceCount": 2,
+              "dieSize": 4,
+              "flatBonus": 0,
+              "formula": "2d4"
+            },
+            "damageType": {
+              "mode": "and",
+              "types": [
+                "energy",
+                "slashing"
+              ],
+              "qualifiers": []
+            },
+            "stun": {
+              "capability": "none",
+              "hasStunSetting": false,
+              "damageMode": "none",
+              "damage": null,
+              "activation": null,
+              "rangeRule": null
+            },
+            "rateOfFire": null,
+            "range": {
+              "mode": "melee",
+              "profileId": null,
+              "bands": null,
+              "basePenalties": null,
+              "allowedBands": null,
+              "hardMaxSquares": null,
+              "penaltyApplication": null,
+              "qualityEffects": {
+                "pointBlankAllowed": null,
+                "shortPenaltyOverride": null,
+                "mediumAllowed": null,
+                "longAllowed": null
+              }
+            },
+            "qualities": {
+              "accurate": false,
+              "inaccurate": false,
+              "arc": false,
+              "ignoresDR": true,
+              "areaEffect": false,
+              "autofireOnly": false,
+              "doubleWeapon": false,
+              "thrown": false,
+              "reach": false
+            },
+            "attackResolution": {
+              "mode": "standard",
+              "defense": "reflex",
+              "ignoredDefenseComponents": [],
+              "onMiss": "none"
+            },
+            "area": {
+              "enabled": false,
+              "shape": null,
+              "radiusSquares": null,
+              "lengthSquares": null,
+              "widthAtEndSquares": null,
+              "widthSquares": null,
+              "heightSquares": null,
+              "notes": null
+            },
+            "resourceConsumption": null,
+            "damageComponents": [],
+            "firingConstraints": null,
+            "preparedAttack": null,
+            "conditionalModifiers": [],
+            "activationRequirements": [],
+            "triggeredEffects": [],
+            "modifierPolicy": null,
+            "notes": []
+          }
+        ],
+        "modeProfiles": [],
+        "defensiveInteractions": [],
+        "payloadProfiles": [],
+        "objectDurability": null,
+        "integratedAccessories": [],
+        "wieldingRules": [],
+        "stateMachine": {
+          "initialState": "normal",
+          "states": [
+            "normal",
+            "overcharge",
+            "burnout"
+          ],
+          "transitions": [
+            {
+              "from": "normal",
+              "to": "overcharge",
+              "trigger": "swift-action-dial-up",
+              "duration": "until-end-of-wielder-next-turn"
+            },
+            {
+              "from": "overcharge",
+              "to": "burnout",
+              "trigger": "end-of-wielder-next-turn",
+              "forced": true,
+              "duration": "one-round"
+            },
+            {
+              "from": "burnout",
+              "to": "normal",
+              "trigger": "after-one-round",
+              "forced": true
+            }
+          ],
+          "locks": [
+            {
+              "state": "burnout",
+              "prohibits": [
+                "transition-to-overcharge"
+              ]
+            }
+          ]
+        },
+        "configurationStates": [],
+        "constructionRules": {
+          "baseConstructionDC": 25,
+          "constructionBasis": "modern reconstruction of archaic lightsaber",
+          "separateTableEntry": false
+        },
+        "triggeredEffects": []
+      },
+      "qualities": {
+        "accurate": false,
+        "inaccurate": false,
+        "arc": false,
+        "ignoresDR": true,
+        "areaEffect": false,
+        "autofireOnly": false,
+        "doubleWeapon": false,
+        "thrown": false,
+        "reach": false
+      },
+      "conditionalQualities": [],
+      "conditionalDamageProfiles": [],
+      "proficiencyRules": [],
+      "operation": {
+        "constructionDC": 25,
+        "dialUpAction": "swift",
+        "overchargeDamage": "2d10",
+        "burnoutDamage": "2d4"
+      },
+      "sourceFootnotes": [],
+      "repo": {
+        "present": true,
+        "id": "lightsaber-chassis-retrosaber",
+        "currentName": "Retrosaber",
+        "phase0NameNormalizationPending": false
+      },
+      "qualityParameters": {
+        "accurate": null,
+        "inaccurate": null,
+        "arc": null
+      },
+      "qualityAuthority": {
+        "accurate": "not-established-by-Jedi-Academy",
+        "inaccurate": "not-established-by-Jedi-Academy",
+        "arc": "not-established-by-Jedi-Academy",
+        "ignoresDR": "established-by-lightsaber-group-rule"
+      },
+      "repoComparison": {
+        "status": "MECHANICS_INCOMPLETE",
+        "severity": "material",
+        "current": {
+          "damage": "2d8",
+          "costCredits": 4000,
+          "weightKg": 0.8,
+          "traits": [
+            "Lightsaber",
+            "Archaic",
+            "Variable-Damage"
+          ],
+          "rangeProfile": "melee"
+        },
+        "phase1ContentStatus": "DESCRIPTION_INCOMPLETE",
+        "findings": [
+          "Repo base 2d8 damage matches the published retrosaber base damage.",
+          "Retrosaber is not separately tabled; the source does not publish a standalone cost, weight, size, or availability here. Do not adopt repo 4,000-credit/0.8-kg values as source authority.",
+          "Repo Variable-Damage label does not encode the forced 2d10 -> 2d4 -> normal timing sequence."
+        ]
+      },
+      "crossPublishedSources": [],
+      "laterProductionAction": "UPDATE_AFTER_PHASE_2_WEAPON_AUTHORITY_COMPLETE"
+    },
+    {
+      "canonicalName": "Lightsaber, Archaic",
+      "publishedName": "Lightsaber, archaic",
+      "weaponGroup": "Lightsaber",
+      "source": {
+        "book": "Jedi Academy Training Manual",
+        "descriptionPage": 51,
+        "statTablePage": 52,
+        "table": "Table 3-1: Melee Weapons",
+        "verifiedBy": [
+          "Jedi Academy Training Manual_djvu.txt",
+          "SW Saga - Jedi Academy Training Manual (optimized).pdf visual table verification"
+        ]
+      },
+      "schemaFamily": {
+        "branch": "melee",
+        "subcategory": "lightsaber",
+        "proficiency": "lightsabers"
+      },
+      "canonicalStats": {
+        "size": "Medium",
+        "costCredits": 2000,
+        "baseDamage": {
+          "mode": "dice",
+          "diceCount": 2,
+          "dieSize": 6,
+          "flatBonus": 0,
+          "formula": "2d6"
+        },
+        "weightKg": 1.0,
+        "damageType": {
+          "mode": "and",
+          "types": [
+            "energy",
+            "slashing"
+          ],
+          "qualifiers": []
+        },
+        "availability": {
+          "restriction": "common",
+          "rare": true
+        },
+        "rateOfFire": null,
+        "stun": {
+          "capability": "none",
+          "hasStunSetting": false,
+          "damageMode": "none",
+          "damage": null,
+          "activation": null,
+          "rangeRule": null
+        },
+        "range": {
+          "mode": "melee",
+          "profileId": null,
+          "bands": null,
+          "basePenalties": null,
+          "allowedBands": null,
+          "hardMaxSquares": null,
+          "penaltyApplication": null,
+          "qualityEffects": {
+            "pointBlankAllowed": null,
+            "shortPenaltyOverride": null,
+            "mediumAllowed": null,
+            "longAllowed": null
+          }
+        },
+        "resource": {
+          "kind": "special-external-power-pack",
+          "capacity": null,
+          "rechargeable": null,
+          "replaceable": true,
+          "integrated": false,
+          "unitCostCredits": 600,
+          "consumption": null,
+          "disposableWhenDepleted": null
+        },
+        "operatingModes": {
+          "default": "normal",
+          "alternates": [],
+          "maxConcurrentAlternates": 1,
+          "autofireOnlyStunException": false
+        },
+        "damageReductionInteraction": {
+          "mode": "ignore",
+          "amount": null,
+          "exceptions": []
+        },
+        "attackProfiles": [
+          {
+            "id": "blade",
+            "label": "Blade",
+            "kind": "attack",
+            "schemaFamily": {
+              "branch": "melee",
+              "subcategory": "lightsaber",
+              "proficiency": "lightsabers"
+            },
+            "damage": {
+              "mode": "dice",
+              "diceCount": 2,
+              "dieSize": 6,
+              "flatBonus": 0,
+              "formula": "2d6"
+            },
+            "damageType": {
+              "mode": "and",
+              "types": [
+                "energy",
+                "slashing"
+              ],
+              "qualifiers": []
+            },
+            "stun": {
+              "capability": "none",
+              "hasStunSetting": false,
+              "damageMode": "none",
+              "damage": null,
+              "activation": null,
+              "rangeRule": null
+            },
+            "rateOfFire": null,
+            "range": {
+              "mode": "melee",
+              "profileId": null,
+              "bands": null,
+              "basePenalties": null,
+              "allowedBands": null,
+              "hardMaxSquares": null,
+              "penaltyApplication": null,
+              "qualityEffects": {
+                "pointBlankAllowed": null,
+                "shortPenaltyOverride": null,
+                "mediumAllowed": null,
+                "longAllowed": null
+              }
+            },
+            "qualities": {
+              "accurate": false,
+              "inaccurate": false,
+              "arc": false,
+              "ignoresDR": true,
+              "areaEffect": false,
+              "autofireOnly": false,
+              "doubleWeapon": false,
+              "thrown": false,
+              "reach": false
+            },
+            "attackResolution": {
+              "mode": "standard",
+              "defense": "reflex",
+              "ignoredDefenseComponents": [],
+              "onMiss": "none"
+            },
+            "area": {
+              "enabled": false,
+              "shape": null,
+              "radiusSquares": null,
+              "lengthSquares": null,
+              "widthAtEndSquares": null,
+              "widthSquares": null,
+              "heightSquares": null,
+              "notes": null
+            },
+            "resourceConsumption": null,
+            "damageComponents": [],
+            "firingConstraints": null,
+            "preparedAttack": null,
+            "conditionalModifiers": [],
+            "activationRequirements": [],
+            "triggeredEffects": [],
+            "modifierPolicy": null,
+            "notes": []
+          }
+        ],
+        "modeProfiles": [],
+        "defensiveInteractions": [],
+        "payloadProfiles": [],
+        "objectDurability": null,
+        "integratedAccessories": [],
+        "wieldingRules": [],
+        "stateMachine": null,
+        "configurationStates": [
+          {
+            "id": "connected",
+            "label": "Power pack connected",
+            "attackUsable": true
+          },
+          {
+            "id": "disconnected",
+            "label": "Power cord disconnected",
+            "attackUsable": false,
+            "transitionTrigger": "force-applied-to-power-cord-including-disarm-attempt"
+          }
+        ],
+        "constructionRules": null,
+        "triggeredEffects": []
+      },
+      "qualities": {
+        "accurate": false,
+        "inaccurate": false,
+        "arc": false,
+        "ignoresDR": true,
+        "areaEffect": false,
+        "autofireOnly": false,
+        "doubleWeapon": false,
+        "thrown": false,
+        "reach": false
+      },
+      "conditionalQualities": [],
+      "conditionalDamageProfiles": [],
+      "proficiencyRules": [],
+      "operation": {
+        "externalPowerPackCostCredits": 600,
+        "powerCordDisconnectRule": true
+      },
+      "sourceFootnotes": [],
+      "repo": {
+        "present": true,
+        "id": "lightsaber-chassis-archaic-lightsaber",
+        "currentName": "Archaic Lightsaber",
+        "phase0NameNormalizationPending": true
+      },
+      "qualityParameters": {
+        "accurate": null,
+        "inaccurate": null,
+        "arc": null
+      },
+      "qualityAuthority": {
+        "accurate": "not-established-by-Jedi-Academy",
+        "inaccurate": "not-established-by-Jedi-Academy",
+        "arc": "not-established-by-Jedi-Academy",
+        "ignoresDR": "established-by-lightsaber-group-rule"
+      },
+      "repoComparison": {
+        "status": "MECHANICS_INCOMPLETE",
+        "severity": "material",
+        "current": {
+          "damage": "2d6",
+          "costCredits": 2000,
+          "weightKg": 1,
+          "traits": [
+            "Lightsaber",
+            "Throwable",
+            "Archaic"
+          ],
+          "rangeProfile": "melee"
+        },
+        "phase1ContentStatus": "DESCRIPTION_INCOMPLETE",
+        "findings": [
+          "Printed damage/cost/weight match current repo.",
+          "Repo does not represent the required external 600-credit power pack or the cord-disconnection behavior described in the adjacent Holocron lesson.",
+          "Repo Throwable trait is not established by this weapon entry."
+        ]
+      },
+      "crossPublishedSources": [],
+      "laterProductionAction": "UPDATE_AFTER_PHASE_2_WEAPON_AUTHORITY_COMPLETE"
+    },
+    {
+      "canonicalName": "Lightsaber, Dual-Phase",
+      "publishedName": "Lightsaber, dual-phase",
+      "weaponGroup": "Lightsaber",
+      "source": {
+        "book": "Jedi Academy Training Manual",
+        "descriptionPage": 51,
+        "statTablePage": 52,
+        "table": "Table 3-1: Melee Weapons",
+        "verifiedBy": [
+          "Jedi Academy Training Manual_djvu.txt",
+          "SW Saga - Jedi Academy Training Manual (optimized).pdf visual table verification"
+        ]
+      },
+      "schemaFamily": {
+        "branch": "melee",
+        "subcategory": "lightsaber",
+        "proficiency": "lightsabers"
+      },
+      "canonicalStats": {
+        "size": "Medium",
+        "costCredits": 6000,
+        "baseDamage": {
+          "mode": "dice",
+          "diceCount": 2,
+          "dieSize": 8,
+          "flatBonus": 0,
+          "formula": "2d8"
+        },
+        "weightKg": 0.5,
+        "damageType": {
+          "mode": "and",
+          "types": [
+            "energy",
+            "slashing"
+          ],
+          "qualifiers": []
+        },
+        "availability": {
+          "restriction": "common",
+          "rare": true
+        },
+        "rateOfFire": null,
+        "stun": {
+          "capability": "none",
+          "hasStunSetting": false,
+          "damageMode": "none",
+          "damage": null,
+          "activation": null,
+          "rangeRule": null
+        },
+        "range": {
+          "mode": "melee",
+          "profileId": null,
+          "bands": null,
+          "basePenalties": null,
+          "allowedBands": null,
+          "hardMaxSquares": null,
+          "penaltyApplication": null,
+          "qualityEffects": {
+            "pointBlankAllowed": null,
+            "shortPenaltyOverride": null,
+            "mediumAllowed": null,
+            "longAllowed": null
+          }
+        },
+        "resource": {
+          "kind": "energy-cell",
+          "capacity": null,
+          "rechargeable": null,
+          "replaceable": true,
+          "integrated": false,
+          "consumption": null,
+          "disposableWhenDepleted": null
+        },
+        "operatingModes": {
+          "default": "default",
+          "alternates": [
+            "extended"
+          ],
+          "maxConcurrentAlternates": 1,
+          "autofireOnlyStunException": false
+        },
+        "damageReductionInteraction": {
+          "mode": "ignore",
+          "amount": null,
+          "exceptions": []
+        },
+        "attackProfiles": [
+          {
+            "id": "default",
+            "label": "Default blade",
+            "kind": "attack",
+            "schemaFamily": {
+              "branch": "melee",
+              "subcategory": "lightsaber",
+              "proficiency": "lightsabers"
+            },
+            "damage": {
+              "mode": "dice",
+              "diceCount": 2,
+              "dieSize": 8,
+              "flatBonus": 0,
+              "formula": "2d8"
+            },
+            "damageType": {
+              "mode": "and",
+              "types": [
+                "energy",
+                "slashing"
+              ],
+              "qualifiers": []
+            },
+            "stun": {
+              "capability": "none",
+              "hasStunSetting": false,
+              "damageMode": "none",
+              "damage": null,
+              "activation": null,
+              "rangeRule": null
+            },
+            "rateOfFire": null,
+            "range": {
+              "mode": "melee",
+              "profileId": null,
+              "bands": null,
+              "basePenalties": null,
+              "allowedBands": null,
+              "hardMaxSquares": null,
+              "penaltyApplication": null,
+              "qualityEffects": {
+                "pointBlankAllowed": null,
+                "shortPenaltyOverride": null,
+                "mediumAllowed": null,
+                "longAllowed": null
+              }
+            },
+            "qualities": {
+              "accurate": false,
+              "inaccurate": false,
+              "arc": false,
+              "ignoresDR": true,
+              "areaEffect": false,
+              "autofireOnly": false,
+              "doubleWeapon": false,
+              "thrown": false,
+              "reach": false
+            },
+            "attackResolution": {
+              "mode": "standard",
+              "defense": "reflex",
+              "ignoredDefenseComponents": [],
+              "onMiss": "none"
+            },
+            "area": {
+              "enabled": false,
+              "shape": null,
+              "radiusSquares": null,
+              "lengthSquares": null,
+              "widthAtEndSquares": null,
+              "widthSquares": null,
+              "heightSquares": null,
+              "notes": null
+            },
+            "resourceConsumption": null,
+            "damageComponents": [],
+            "firingConstraints": null,
+            "preparedAttack": null,
+            "conditionalModifiers": [],
+            "activationRequirements": [],
+            "triggeredEffects": [],
+            "modifierPolicy": null,
+            "notes": []
+          },
+          {
+            "id": "extended",
+            "label": "Extended blade",
+            "kind": "attack",
+            "schemaFamily": {
+              "branch": "melee",
+              "subcategory": "lightsaber",
+              "proficiency": "lightsabers"
+            },
+            "damage": {
+              "mode": "dice",
+              "diceCount": 2,
+              "dieSize": 8,
+              "flatBonus": 0,
+              "formula": "2d8"
+            },
+            "damageType": {
+              "mode": "and",
+              "types": [
+                "energy",
+                "slashing"
+              ],
+              "qualifiers": []
+            },
+            "stun": {
+              "capability": "none",
+              "hasStunSetting": false,
+              "damageMode": "none",
+              "damage": null,
+              "activation": null,
+              "rangeRule": null
+            },
+            "rateOfFire": null,
+            "range": {
+              "mode": "melee",
+              "profileId": null,
+              "bands": null,
+              "basePenalties": null,
+              "allowedBands": null,
+              "hardMaxSquares": null,
+              "penaltyApplication": null,
+              "qualityEffects": {
+                "pointBlankAllowed": null,
+                "shortPenaltyOverride": null,
+                "mediumAllowed": null,
+                "longAllowed": null
+              }
+            },
+            "qualities": {
+              "accurate": false,
+              "inaccurate": false,
+              "arc": false,
+              "ignoresDR": true,
+              "areaEffect": false,
+              "autofireOnly": false,
+              "doubleWeapon": false,
+              "thrown": false,
+              "reach": true
+            },
+            "attackResolution": {
+              "mode": "standard",
+              "defense": "reflex",
+              "ignoredDefenseComponents": [],
+              "onMiss": "none"
+            },
+            "area": {
+              "enabled": false,
+              "shape": null,
+              "radiusSquares": null,
+              "lengthSquares": null,
+              "widthAtEndSquares": null,
+              "widthSquares": null,
+              "heightSquares": null,
+              "notes": null
+            },
+            "resourceConsumption": null,
+            "damageComponents": [],
+            "firingConstraints": null,
+            "preparedAttack": null,
+            "conditionalModifiers": [
+              {
+                "target": "reflexDefense",
+                "value": -2,
+                "condition": "against-attacks-from-adjacent-targets-while-extended"
+              }
+            ],
+            "activationRequirements": [
+              {
+                "type": "action",
+                "action": "swift"
+              }
+            ],
+            "triggeredEffects": [],
+            "modifierPolicy": null,
+            "notes": []
+          }
+        ],
+        "modeProfiles": [
+          {
+            "id": "default",
+            "switchAction": "swift",
+            "attackProfileId": "default",
+            "label": "Default blade"
+          },
+          {
+            "id": "extended",
+            "switchAction": "swift",
+            "reachBonusSquares": 1,
+            "adjacentReflexPenalty": -2,
+            "attackProfileId": "extended",
+            "label": "Extended blade"
+          }
+        ],
+        "defensiveInteractions": [],
+        "payloadProfiles": [],
+        "objectDurability": null,
+        "integratedAccessories": [],
+        "wieldingRules": [],
+        "stateMachine": null,
+        "configurationStates": [],
+        "constructionRules": {
+          "crystalInheritance": "default crystal applies to both default and extended modes",
+          "alternateVariant": {
+            "allowed": true,
+            "replaceExtendedBladeWithSecondCrystal": true,
+            "effectsMutuallyExclusive": true
+          }
+        },
+        "triggeredEffects": []
+      },
+      "qualities": {
+        "accurate": false,
+        "inaccurate": false,
+        "arc": false,
+        "ignoresDR": true,
+        "areaEffect": false,
+        "autofireOnly": false,
+        "doubleWeapon": false,
+        "thrown": false,
+        "reach": false
+      },
+      "conditionalQualities": [],
+      "conditionalDamageProfiles": [],
+      "proficiencyRules": [],
+      "operation": {
+        "switchAction": "swift",
+        "extendedReachBonusSquares": 1,
+        "adjacentReflexPenalty": -2
+      },
+      "sourceFootnotes": [],
+      "repo": {
+        "present": true,
+        "id": "lightsaber-chassis-dual-phase",
+        "currentName": "Dual-Phase Lightsaber",
+        "phase0NameNormalizationPending": true
+      },
+      "qualityParameters": {
+        "accurate": null,
+        "inaccurate": null,
+        "arc": null
+      },
+      "qualityAuthority": {
+        "accurate": "not-established-by-Jedi-Academy",
+        "inaccurate": "not-established-by-Jedi-Academy",
+        "arc": "not-established-by-Jedi-Academy",
+        "ignoresDR": "established-by-lightsaber-group-rule"
+      },
+      "repoComparison": {
+        "status": "MECHANICS_INCOMPLETE",
+        "severity": "material",
+        "current": {
+          "damage": "2d8",
+          "costCredits": 6000,
+          "weightKg": 0.5,
+          "traits": [
+            "Lightsaber",
+            "Throwable",
+            "Dual-Form"
+          ],
+          "rangeProfile": "melee"
+        },
+        "phase1ContentStatus": "DESCRIPTION_INCOMPLETE",
+        "findings": [
+          "Printed damage/cost/weight match current repo.",
+          "Repo Dual-Form label does not encode the swift mode change, +1-square reach, or adjacent-target Reflex penalty.",
+          "The source also allows an alternate construction using two mutually exclusive crystal effects; this is construction configuration, not a permanent combination of both effects."
+        ]
+      },
+      "crossPublishedSources": [],
+      "laterProductionAction": "UPDATE_AFTER_PHASE_2_WEAPON_AUTHORITY_COMPLETE"
+    },
+    {
+      "canonicalName": "Dueling Lightsaber",
+      "publishedName": "Lightsaber, dueling",
+      "weaponGroup": "Lightsaber",
+      "source": {
+        "book": "Jedi Academy Training Manual",
+        "descriptionPage": 52,
+        "statTablePage": 52,
+        "table": "Table 3-1: Melee Weapons",
+        "verifiedBy": [
+          "Jedi Academy Training Manual_djvu.txt",
+          "SW Saga - Jedi Academy Training Manual (optimized).pdf visual table verification"
+        ]
+      },
+      "schemaFamily": {
+        "branch": "melee",
+        "subcategory": "lightsaber",
+        "proficiency": "lightsabers"
+      },
+      "canonicalStats": {
+        "size": "Medium",
+        "costCredits": 3000,
+        "baseDamage": {
+          "mode": "dice",
+          "diceCount": 2,
+          "dieSize": 8,
+          "flatBonus": 0,
+          "formula": "2d8"
+        },
+        "weightKg": 0.3,
+        "damageType": {
+          "mode": "and",
+          "types": [
+            "energy",
+            "slashing"
+          ],
+          "qualifiers": []
+        },
+        "availability": {
+          "restriction": "common",
+          "rare": true
+        },
+        "rateOfFire": null,
+        "stun": {
+          "capability": "none",
+          "hasStunSetting": false,
+          "damageMode": "none",
+          "damage": null,
+          "activation": null,
+          "rangeRule": null
+        },
+        "range": {
+          "mode": "melee",
+          "profileId": null,
+          "bands": null,
+          "basePenalties": null,
+          "allowedBands": null,
+          "hardMaxSquares": null,
+          "penaltyApplication": null,
+          "qualityEffects": {
+            "pointBlankAllowed": null,
+            "shortPenaltyOverride": null,
+            "mediumAllowed": null,
+            "longAllowed": null
+          }
+        },
+        "resource": {
+          "kind": "energy-cell",
+          "capacity": null,
+          "rechargeable": null,
+          "replaceable": true,
+          "integrated": false,
+          "consumption": null,
+          "disposableWhenDepleted": null
+        },
+        "operatingModes": {
+          "default": "normal",
+          "alternates": [],
+          "maxConcurrentAlternates": 1,
+          "autofireOnlyStunException": false
+        },
+        "damageReductionInteraction": {
+          "mode": "ignore",
+          "amount": null,
+          "exceptions": []
+        },
+        "attackProfiles": [
+          {
+            "id": "blade",
+            "label": "Blade",
+            "kind": "attack",
+            "schemaFamily": {
+              "branch": "melee",
+              "subcategory": "lightsaber",
+              "proficiency": "lightsabers"
+            },
+            "damage": {
+              "mode": "dice",
+              "diceCount": 2,
+              "dieSize": 8,
+              "flatBonus": 0,
+              "formula": "2d8"
+            },
+            "damageType": {
+              "mode": "and",
+              "types": [
+                "energy",
+                "slashing"
+              ],
+              "qualifiers": []
+            },
+            "stun": {
+              "capability": "none",
+              "hasStunSetting": false,
+              "damageMode": "none",
+              "damage": null,
+              "activation": null,
+              "rangeRule": null
+            },
+            "rateOfFire": null,
+            "range": {
+              "mode": "melee",
+              "profileId": null,
+              "bands": null,
+              "basePenalties": null,
+              "allowedBands": null,
+              "hardMaxSquares": null,
+              "penaltyApplication": null,
+              "qualityEffects": {
+                "pointBlankAllowed": null,
+                "shortPenaltyOverride": null,
+                "mediumAllowed": null,
+                "longAllowed": null
+              }
+            },
+            "qualities": {
+              "accurate": false,
+              "inaccurate": false,
+              "arc": false,
+              "ignoresDR": true,
+              "areaEffect": false,
+              "autofireOnly": false,
+              "doubleWeapon": false,
+              "thrown": false,
+              "reach": false
+            },
+            "attackResolution": {
+              "mode": "standard",
+              "defense": "reflex",
+              "ignoredDefenseComponents": [],
+              "onMiss": "none"
+            },
+            "area": {
+              "enabled": false,
+              "shape": null,
+              "radiusSquares": null,
+              "lengthSquares": null,
+              "widthAtEndSquares": null,
+              "widthSquares": null,
+              "heightSquares": null,
+              "notes": null
+            },
+            "resourceConsumption": null,
+            "damageComponents": [],
+            "firingConstraints": null,
+            "preparedAttack": null,
+            "conditionalModifiers": [
+              {
+                "target": "attackRoll",
+                "value": 1,
+                "bonusType": "equipment",
+                "condition": "attack-of-opportunity-and-wielded-one-handed"
+              }
+            ],
+            "activationRequirements": [],
+            "triggeredEffects": [],
+            "modifierPolicy": null,
+            "notes": []
+          }
+        ],
+        "modeProfiles": [],
+        "defensiveInteractions": [],
+        "payloadProfiles": [],
+        "objectDurability": null,
+        "integratedAccessories": [],
+        "wieldingRules": [
+          {
+            "id": "dueling-aao",
+            "condition": "wielded-one-handed",
+            "effect": "AoO attack equipment bonus +1"
+          }
+        ],
+        "stateMachine": null,
+        "configurationStates": [],
+        "constructionRules": null,
+        "triggeredEffects": []
+      },
+      "qualities": {
+        "accurate": false,
+        "inaccurate": false,
+        "arc": false,
+        "ignoresDR": true,
+        "areaEffect": false,
+        "autofireOnly": false,
+        "doubleWeapon": false,
+        "thrown": false,
+        "reach": false
+      },
+      "conditionalQualities": [],
+      "conditionalDamageProfiles": [],
+      "proficiencyRules": [],
+      "operation": {
+        "conditionalAttackBonus": "+1 equipment on attacks of opportunity while one-handed"
+      },
+      "sourceFootnotes": [],
+      "repo": {
+        "present": true,
+        "id": "lightsaber-chassis-dueling",
+        "currentName": "Dueling Lightsaber",
+        "phase0NameNormalizationPending": false
+      },
+      "qualityParameters": {
+        "accurate": null,
+        "inaccurate": null,
+        "arc": null
+      },
+      "qualityAuthority": {
+        "accurate": "not-established-by-Jedi-Academy",
+        "inaccurate": "not-established-by-Jedi-Academy",
+        "arc": "not-established-by-Jedi-Academy",
+        "ignoresDR": "established-by-lightsaber-group-rule"
+      },
+      "repoComparison": {
+        "status": "MECHANICS_INCOMPLETE",
+        "severity": "material",
+        "current": {
+          "damage": "2d8",
+          "costCredits": 3000,
+          "weightKg": 0.3,
+          "traits": [
+            "Lightsaber",
+            "Throwable",
+            "Finesse"
+          ],
+          "rangeProfile": "melee"
+        },
+        "phase1ContentStatus": "DESCRIPTION_INCOMPLETE",
+        "findings": [
+          "Printed damage/cost/weight match current repo.",
+          "Repo does not structurally represent the one-handed attack-of-opportunity bonus.",
+          "Repo Finesse trait is not the published mechanic and must not substitute for the actual rule."
+        ]
+      },
+      "crossPublishedSources": [],
+      "laterProductionAction": "UPDATE_AFTER_PHASE_2_WEAPON_AUTHORITY_COMPLETE"
+    },
+    {
+      "canonicalName": "Crossguard Lightsaber",
+      "publishedName": "Lightsaber, crossguard",
+      "weaponGroup": "Lightsaber",
+      "source": {
+        "book": "Jedi Academy Training Manual",
+        "descriptionPage": 52,
+        "statTablePage": 52,
+        "table": "Table 3-1: Melee Weapons",
+        "verifiedBy": [
+          "Jedi Academy Training Manual_djvu.txt",
+          "SW Saga - Jedi Academy Training Manual (optimized).pdf visual table verification"
+        ]
+      },
+      "schemaFamily": {
+        "branch": "melee",
+        "subcategory": "lightsaber",
+        "proficiency": "lightsabers"
+      },
+      "canonicalStats": {
+        "size": "Medium",
+        "costCredits": 4000,
+        "baseDamage": {
+          "mode": "dice",
+          "diceCount": 2,
+          "dieSize": 8,
+          "flatBonus": 0,
+          "formula": "2d8"
+        },
+        "weightKg": 0.7,
+        "damageType": {
+          "mode": "and",
+          "types": [
+            "energy",
+            "slashing"
+          ],
+          "qualifiers": []
+        },
+        "availability": {
+          "restriction": "common",
+          "rare": true
+        },
+        "rateOfFire": null,
+        "stun": {
+          "capability": "none",
+          "hasStunSetting": false,
+          "damageMode": "none",
+          "damage": null,
+          "activation": null,
+          "rangeRule": null
+        },
+        "range": {
+          "mode": "melee",
+          "profileId": null,
+          "bands": null,
+          "basePenalties": null,
+          "allowedBands": null,
+          "hardMaxSquares": null,
+          "penaltyApplication": null,
+          "qualityEffects": {
+            "pointBlankAllowed": null,
+            "shortPenaltyOverride": null,
+            "mediumAllowed": null,
+            "longAllowed": null
+          }
+        },
+        "resource": {
+          "kind": "energy-cell",
+          "capacity": null,
+          "rechargeable": null,
+          "replaceable": true,
+          "integrated": false,
+          "consumption": null,
+          "disposableWhenDepleted": null
+        },
+        "operatingModes": {
+          "default": "normal",
+          "alternates": [],
+          "maxConcurrentAlternates": 1,
+          "autofireOnlyStunException": false
+        },
+        "damageReductionInteraction": {
+          "mode": "ignore",
+          "amount": null,
+          "exceptions": []
+        },
+        "attackProfiles": [
+          {
+            "id": "blade",
+            "label": "Blade",
+            "kind": "attack",
+            "schemaFamily": {
+              "branch": "melee",
+              "subcategory": "lightsaber",
+              "proficiency": "lightsabers"
+            },
+            "damage": {
+              "mode": "dice",
+              "diceCount": 2,
+              "dieSize": 8,
+              "flatBonus": 0,
+              "formula": "2d8"
+            },
+            "damageType": {
+              "mode": "and",
+              "types": [
+                "energy",
+                "slashing"
+              ],
+              "qualifiers": []
+            },
+            "stun": {
+              "capability": "none",
+              "hasStunSetting": false,
+              "damageMode": "none",
+              "damage": null,
+              "activation": null,
+              "rangeRule": null
+            },
+            "rateOfFire": null,
+            "range": {
+              "mode": "melee",
+              "profileId": null,
+              "bands": null,
+              "basePenalties": null,
+              "allowedBands": null,
+              "hardMaxSquares": null,
+              "penaltyApplication": null,
+              "qualityEffects": {
+                "pointBlankAllowed": null,
+                "shortPenaltyOverride": null,
+                "mediumAllowed": null,
+                "longAllowed": null
+              }
+            },
+            "qualities": {
+              "accurate": false,
+              "inaccurate": false,
+              "arc": false,
+              "ignoresDR": true,
+              "areaEffect": false,
+              "autofireOnly": false,
+              "doubleWeapon": false,
+              "thrown": false,
+              "reach": false
+            },
+            "attackResolution": {
+              "mode": "standard",
+              "defense": "reflex",
+              "ignoredDefenseComponents": [],
+              "onMiss": "none"
+            },
+            "area": {
+              "enabled": false,
+              "shape": null,
+              "radiusSquares": null,
+              "lengthSquares": null,
+              "widthAtEndSquares": null,
+              "widthSquares": null,
+              "heightSquares": null,
+              "notes": null
+            },
+            "resourceConsumption": null,
+            "damageComponents": [],
+            "firingConstraints": null,
+            "preparedAttack": null,
+            "conditionalModifiers": [
+              {
+                "target": "useTheForceCheck.Block.cumulativePenaltyPerAdditionalCheck",
+                "value": -2,
+                "condition": "successive-Block-checks-in-same-round",
+                "replacesDefault": -5
+              },
+              {
+                "target": "useTheForceCheck.Deflect",
+                "value": -2,
+                "condition": "all-Deflect-checks"
+              }
+            ],
+            "activationRequirements": [],
+            "triggeredEffects": [],
+            "modifierPolicy": null,
+            "notes": []
+          }
+        ],
+        "modeProfiles": [],
+        "defensiveInteractions": [
+          {
+            "id": "block-cumulative-penalty",
+            "effect": "replace-cumulative-penalty",
+            "ability": "Block",
+            "from": -5,
+            "to": -2
+          },
+          {
+            "id": "deflect-penalty",
+            "effect": "check-penalty",
+            "ability": "Deflect",
+            "value": -2
+          }
+        ],
+        "payloadProfiles": [],
+        "objectDurability": null,
+        "integratedAccessories": [],
+        "wieldingRules": [],
+        "stateMachine": null,
+        "configurationStates": [],
+        "constructionRules": null,
+        "triggeredEffects": []
+      },
+      "qualities": {
+        "accurate": false,
+        "inaccurate": false,
+        "arc": false,
+        "ignoresDR": true,
+        "areaEffect": false,
+        "autofireOnly": false,
+        "doubleWeapon": false,
+        "thrown": false,
+        "reach": false
+      },
+      "conditionalQualities": [],
+      "conditionalDamageProfiles": [],
+      "proficiencyRules": [],
+      "operation": {
+        "BlockCumulativePenalty": -2,
+        "DeflectPenalty": -2
+      },
+      "sourceFootnotes": [],
+      "repo": {
+        "present": true,
+        "id": "lightsaber-chassis-crossguard",
+        "currentName": "Crossguard Lightsaber",
+        "phase0NameNormalizationPending": false
+      },
+      "qualityParameters": {
+        "accurate": null,
+        "inaccurate": null,
+        "arc": null
+      },
+      "qualityAuthority": {
+        "accurate": "not-established-by-Jedi-Academy",
+        "inaccurate": "not-established-by-Jedi-Academy",
+        "arc": "not-established-by-Jedi-Academy",
+        "ignoresDR": "established-by-lightsaber-group-rule"
+      },
+      "repoComparison": {
+        "status": "MECHANICS_INCORRECT",
+        "severity": "material",
+        "current": {
+          "damage": "2d8",
+          "costCredits": 4000,
+          "weightKg": 0.7,
+          "traits": [
+            "Lightsaber",
+            "Throwable",
+            "Duelist"
+          ],
+          "rangeProfile": "melee"
+        },
+        "phase1ContentStatus": "DESCRIPTION_INCORRECT",
+        "findings": [
+          "Printed table stats match current repo.",
+          "Repo Duelist label does not encode the source rule.",
+          "The exact Block cumulative penalty replacement and Deflect -2 penalty must be represented independently."
+        ]
+      },
+      "crossPublishedSources": [],
+      "laterProductionAction": "UPDATE_AFTER_PHASE_2_WEAPON_AUTHORITY_COMPLETE"
+    },
+    {
+      "canonicalName": "Lightsaber, Great",
+      "publishedName": "Lightsaber, great",
+      "weaponGroup": "Lightsaber",
+      "source": {
+        "book": "Jedi Academy Training Manual",
+        "descriptionPage": 53,
+        "statTablePage": 52,
+        "table": "Table 3-1: Melee Weapons",
+        "verifiedBy": [
+          "Jedi Academy Training Manual_djvu.txt",
+          "SW Saga - Jedi Academy Training Manual (optimized).pdf visual table verification"
+        ]
+      },
+      "schemaFamily": {
+        "branch": "melee",
+        "subcategory": "lightsaber",
+        "proficiency": "lightsabers"
+      },
+      "canonicalStats": {
+        "size": "Large",
+        "costCredits": 5000,
+        "baseDamage": {
+          "mode": "dice",
+          "diceCount": 2,
+          "dieSize": 10,
+          "flatBonus": 0,
+          "formula": "2d10"
+        },
+        "weightKg": 5,
+        "damageType": {
+          "mode": "and",
+          "types": [
+            "energy",
+            "slashing"
+          ],
+          "qualifiers": []
+        },
+        "availability": {
+          "restriction": "common",
+          "rare": true
+        },
+        "rateOfFire": null,
+        "stun": {
+          "capability": "none",
+          "hasStunSetting": false,
+          "damageMode": "none",
+          "damage": null,
+          "activation": null,
+          "rangeRule": null
+        },
+        "range": {
+          "mode": "melee",
+          "profileId": null,
+          "bands": null,
+          "basePenalties": null,
+          "allowedBands": null,
+          "hardMaxSquares": null,
+          "penaltyApplication": null,
+          "qualityEffects": {
+            "pointBlankAllowed": null,
+            "shortPenaltyOverride": null,
+            "mediumAllowed": null,
+            "longAllowed": null
+          }
+        },
+        "resource": {
+          "kind": "energy-cell",
+          "capacity": null,
+          "rechargeable": null,
+          "replaceable": true,
+          "integrated": false,
+          "consumption": null,
+          "disposableWhenDepleted": null
+        },
+        "operatingModes": {
+          "default": "normal",
+          "alternates": [],
+          "maxConcurrentAlternates": 1,
+          "autofireOnlyStunException": false
+        },
+        "damageReductionInteraction": {
+          "mode": "ignore",
+          "amount": null,
+          "exceptions": []
+        },
+        "attackProfiles": [
+          {
+            "id": "blade",
+            "label": "Blade",
+            "kind": "attack",
+            "schemaFamily": {
+              "branch": "melee",
+              "subcategory": "lightsaber",
+              "proficiency": "lightsabers"
+            },
+            "damage": {
+              "mode": "dice",
+              "diceCount": 2,
+              "dieSize": 10,
+              "flatBonus": 0,
+              "formula": "2d10"
+            },
+            "damageType": {
+              "mode": "and",
+              "types": [
+                "energy",
+                "slashing"
+              ],
+              "qualifiers": []
+            },
+            "stun": {
+              "capability": "none",
+              "hasStunSetting": false,
+              "damageMode": "none",
+              "damage": null,
+              "activation": null,
+              "rangeRule": null
+            },
+            "rateOfFire": null,
+            "range": {
+              "mode": "melee",
+              "profileId": null,
+              "bands": null,
+              "basePenalties": null,
+              "allowedBands": null,
+              "hardMaxSquares": null,
+              "penaltyApplication": null,
+              "qualityEffects": {
+                "pointBlankAllowed": null,
+                "shortPenaltyOverride": null,
+                "mediumAllowed": null,
+                "longAllowed": null
+              }
+            },
+            "qualities": {
+              "accurate": false,
+              "inaccurate": false,
+              "arc": false,
+              "ignoresDR": true,
+              "areaEffect": false,
+              "autofireOnly": false,
+              "doubleWeapon": false,
+              "thrown": false,
+              "reach": false
+            },
+            "attackResolution": {
+              "mode": "standard",
+              "defense": "reflex",
+              "ignoredDefenseComponents": [],
+              "onMiss": "none"
+            },
+            "area": {
+              "enabled": false,
+              "shape": null,
+              "radiusSquares": null,
+              "lengthSquares": null,
+              "widthAtEndSquares": null,
+              "widthSquares": null,
+              "heightSquares": null,
+              "notes": null
+            },
+            "resourceConsumption": null,
+            "damageComponents": [],
+            "firingConstraints": null,
+            "preparedAttack": null,
+            "conditionalModifiers": [],
+            "activationRequirements": [],
+            "triggeredEffects": [],
+            "modifierPolicy": null,
+            "notes": []
+          }
+        ],
+        "modeProfiles": [],
+        "defensiveInteractions": [],
+        "payloadProfiles": [],
+        "objectDurability": null,
+        "integratedAccessories": [],
+        "wieldingRules": [
+          {
+            "id": "light-weapon-feat-eligibility",
+            "effect": "feat-or-talent-eligibility",
+            "condition": "wielder-size-Large-or-larger",
+            "scope": "feats/talents that affect light weapons or lightsabers"
+          }
+        ],
+        "stateMachine": null,
+        "configurationStates": [],
+        "constructionRules": null,
+        "triggeredEffects": []
+      },
+      "qualities": {
+        "accurate": false,
+        "inaccurate": false,
+        "arc": false,
+        "ignoresDR": true,
+        "areaEffect": false,
+        "autofireOnly": false,
+        "doubleWeapon": false,
+        "thrown": false,
+        "reach": false
+      },
+      "conditionalQualities": [],
+      "conditionalDamageProfiles": [],
+      "proficiencyRules": [],
+      "operation": {
+        "sizeGate": "Only Large+ can use with feats/talents affecting light weapons or lightsabers"
+      },
+      "sourceFootnotes": [],
+      "repo": {
+        "present": true,
+        "id": "lightsaber-chassis-great",
+        "currentName": "Great Lightsaber",
+        "phase0NameNormalizationPending": true
+      },
+      "qualityParameters": {
+        "accurate": null,
+        "inaccurate": null,
+        "arc": null
+      },
+      "qualityAuthority": {
+        "accurate": "not-established-by-Jedi-Academy",
+        "inaccurate": "not-established-by-Jedi-Academy",
+        "arc": "not-established-by-Jedi-Academy",
+        "ignoresDR": "established-by-lightsaber-group-rule"
+      },
+      "repoComparison": {
+        "status": "MECHANICS_INCORRECT",
+        "severity": "material",
+        "current": {
+          "damage": "2d10",
+          "costCredits": 5000,
+          "weightKg": 5,
+          "traits": [
+            "Lightsaber",
+            "Large-Only"
+          ],
+          "rangeProfile": "melee"
+        },
+        "phase1ContentStatus": "DESCRIPTION_INCORRECT",
+        "findings": [
+          "Printed damage/cost/weight match current repo.",
+          "Repo Large-Only trait overstates the published rule: the source gates use with certain feats/talents, not blanket weapon use."
+        ]
+      },
+      "crossPublishedSources": [],
+      "laterProductionAction": "UPDATE_AFTER_PHASE_2_WEAPON_AUTHORITY_COMPLETE"
+    },
+    {
+      "canonicalName": "Long-Handle Lightsaber",
+      "publishedName": "Lightsaber, long-handle",
+      "weaponGroup": "Lightsaber",
+      "source": {
+        "book": "Jedi Academy Training Manual",
+        "descriptionPage": 53,
+        "statTablePage": 52,
+        "table": "Table 3-1: Melee Weapons",
+        "verifiedBy": [
+          "Jedi Academy Training Manual_djvu.txt",
+          "SW Saga - Jedi Academy Training Manual (optimized).pdf visual table verification"
+        ]
+      },
+      "schemaFamily": {
+        "branch": "melee",
+        "subcategory": "lightsaber",
+        "proficiency": "lightsabers"
+      },
+      "canonicalStats": {
+        "size": "Large",
+        "costCredits": 4500,
+        "baseDamage": {
+          "mode": "dice",
+          "diceCount": 2,
+          "dieSize": 8,
+          "flatBonus": 0,
+          "formula": "2d8"
+        },
+        "weightKg": 2,
+        "damageType": {
+          "mode": "and",
+          "types": [
+            "energy",
+            "slashing"
+          ],
+          "qualifiers": []
+        },
+        "availability": {
+          "restriction": "common",
+          "rare": true
+        },
+        "rateOfFire": null,
+        "stun": {
+          "capability": "none",
+          "hasStunSetting": false,
+          "damageMode": "none",
+          "damage": null,
+          "activation": null,
+          "rangeRule": null
+        },
+        "range": {
+          "mode": "melee",
+          "profileId": null,
+          "bands": null,
+          "basePenalties": null,
+          "allowedBands": null,
+          "hardMaxSquares": null,
+          "penaltyApplication": null,
+          "qualityEffects": {
+            "pointBlankAllowed": null,
+            "shortPenaltyOverride": null,
+            "mediumAllowed": null,
+            "longAllowed": null
+          }
+        },
+        "resource": {
+          "kind": "energy-cell",
+          "capacity": null,
+          "rechargeable": null,
+          "replaceable": true,
+          "integrated": false,
+          "consumption": null,
+          "disposableWhenDepleted": null
+        },
+        "operatingModes": {
+          "default": "normal",
+          "alternates": [],
+          "maxConcurrentAlternates": 1,
+          "autofireOnlyStunException": false
+        },
+        "damageReductionInteraction": {
+          "mode": "ignore",
+          "amount": null,
+          "exceptions": []
+        },
+        "attackProfiles": [
+          {
+            "id": "blade",
+            "label": "Blade",
+            "kind": "attack",
+            "schemaFamily": {
+              "branch": "melee",
+              "subcategory": "lightsaber",
+              "proficiency": "lightsabers"
+            },
+            "damage": {
+              "mode": "dice",
+              "diceCount": 2,
+              "dieSize": 8,
+              "flatBonus": 0,
+              "formula": "2d8"
+            },
+            "damageType": {
+              "mode": "and",
+              "types": [
+                "energy",
+                "slashing"
+              ],
+              "qualifiers": []
+            },
+            "stun": {
+              "capability": "none",
+              "hasStunSetting": false,
+              "damageMode": "none",
+              "damage": null,
+              "activation": null,
+              "rangeRule": null
+            },
+            "rateOfFire": null,
+            "range": {
+              "mode": "melee",
+              "profileId": null,
+              "bands": null,
+              "basePenalties": null,
+              "allowedBands": null,
+              "hardMaxSquares": null,
+              "penaltyApplication": null,
+              "qualityEffects": {
+                "pointBlankAllowed": null,
+                "shortPenaltyOverride": null,
+                "mediumAllowed": null,
+                "longAllowed": null
+              }
+            },
+            "qualities": {
+              "accurate": false,
+              "inaccurate": false,
+              "arc": false,
+              "ignoresDR": true,
+              "areaEffect": false,
+              "autofireOnly": false,
+              "doubleWeapon": false,
+              "thrown": false,
+              "reach": false
+            },
+            "attackResolution": {
+              "mode": "standard",
+              "defense": "reflex",
+              "ignoredDefenseComponents": [],
+              "onMiss": "none"
+            },
+            "area": {
+              "enabled": false,
+              "shape": null,
+              "radiusSquares": null,
+              "lengthSquares": null,
+              "widthAtEndSquares": null,
+              "widthSquares": null,
+              "heightSquares": null,
+              "notes": null
+            },
+            "resourceConsumption": null,
+            "damageComponents": [],
+            "firingConstraints": null,
+            "preparedAttack": null,
+            "conditionalModifiers": [],
+            "activationRequirements": [],
+            "triggeredEffects": [],
+            "modifierPolicy": null,
+            "notes": []
+          },
+          {
+            "id": "two-handed-base-override",
+            "label": "Two-handed base-damage option",
+            "kind": "attack",
+            "schemaFamily": {
+              "branch": "melee",
+              "subcategory": "lightsaber",
+              "proficiency": "lightsabers"
+            },
+            "damage": {
+              "mode": "dice",
+              "diceCount": 2,
+              "dieSize": 10,
+              "flatBonus": 0,
+              "formula": "2d10"
+            },
+            "damageType": {
+              "mode": "and",
+              "types": [
+                "energy",
+                "slashing"
+              ],
+              "qualifiers": []
+            },
+            "stun": {
+              "capability": "none",
+              "hasStunSetting": false,
+              "damageMode": "none",
+              "damage": null,
+              "activation": null,
+              "rangeRule": null
+            },
+            "rateOfFire": null,
+            "range": {
+              "mode": "melee",
+              "profileId": null,
+              "bands": null,
+              "basePenalties": null,
+              "allowedBands": null,
+              "hardMaxSquares": null,
+              "penaltyApplication": null,
+              "qualityEffects": {
+                "pointBlankAllowed": null,
+                "shortPenaltyOverride": null,
+                "mediumAllowed": null,
+                "longAllowed": null
+              }
+            },
+            "qualities": {
+              "accurate": false,
+              "inaccurate": false,
+              "arc": false,
+              "ignoresDR": true,
+              "areaEffect": false,
+              "autofireOnly": false,
+              "doubleWeapon": false,
+              "thrown": false,
+              "reach": false
+            },
+            "attackResolution": {
+              "mode": "standard",
+              "defense": "reflex",
+              "ignoredDefenseComponents": [],
+              "onMiss": "none"
+            },
+            "area": {
+              "enabled": false,
+              "shape": null,
+              "radiusSquares": null,
+              "lengthSquares": null,
+              "widthAtEndSquares": null,
+              "widthSquares": null,
+              "heightSquares": null,
+              "notes": null
+            },
+            "resourceConsumption": null,
+            "damageComponents": [],
+            "firingConstraints": null,
+            "preparedAttack": null,
+            "conditionalModifiers": [],
+            "activationRequirements": [
+              {
+                "type": "wielding",
+                "condition": "two-handed"
+              },
+              {
+                "type": "choice",
+                "condition": "forgo-double-strength-bonus-to-damage"
+              }
+            ],
+            "triggeredEffects": [],
+            "modifierPolicy": null,
+            "notes": []
+          },
+          {
+            "id": "haft-end",
+            "label": "Haft end",
+            "kind": "attack",
+            "schemaFamily": {
+              "branch": "melee",
+              "subcategory": "lightsaber",
+              "proficiency": "lightsabers"
+            },
+            "damage": {
+              "mode": "dice",
+              "diceCount": 1,
+              "dieSize": 6,
+              "flatBonus": 0,
+              "formula": "1d6"
+            },
+            "damageType": {
+              "mode": "unspecified",
+              "types": [],
+              "qualifiers": []
+            },
+            "stun": {
+              "capability": "none",
+              "hasStunSetting": false,
+              "damageMode": "none",
+              "damage": null,
+              "activation": null,
+              "rangeRule": null
+            },
+            "rateOfFire": null,
+            "range": {
+              "mode": "melee",
+              "profileId": null,
+              "bands": null,
+              "basePenalties": null,
+              "allowedBands": null,
+              "hardMaxSquares": null,
+              "penaltyApplication": null,
+              "qualityEffects": {
+                "pointBlankAllowed": null,
+                "shortPenaltyOverride": null,
+                "mediumAllowed": null,
+                "longAllowed": null
+              }
+            },
+            "qualities": {
+              "accurate": false,
+              "inaccurate": false,
+              "arc": false,
+              "ignoresDR": false,
+              "areaEffect": false,
+              "autofireOnly": false,
+              "doubleWeapon": true,
+              "thrown": false,
+              "reach": false
+            },
+            "attackResolution": {
+              "mode": "standard",
+              "defense": "reflex",
+              "ignoredDefenseComponents": [],
+              "onMiss": "none"
+            },
+            "area": {
+              "enabled": false,
+              "shape": null,
+              "radiusSquares": null,
+              "lengthSquares": null,
+              "widthAtEndSquares": null,
+              "widthSquares": null,
+              "heightSquares": null,
+              "notes": null
+            },
+            "resourceConsumption": null,
+            "damageComponents": [],
+            "firingConstraints": null,
+            "preparedAttack": null,
+            "conditionalModifiers": [],
+            "activationRequirements": [
+              {
+                "type": "feat",
+                "id": "Long Haft Form"
+              }
+            ],
+            "triggeredEffects": [],
+            "modifierPolicy": null,
+            "notes": [
+              "Source does not specify the haft-end damage type; do not infer one."
+            ]
+          }
+        ],
+        "modeProfiles": [],
+        "defensiveInteractions": [],
+        "payloadProfiles": [],
+        "objectDurability": null,
+        "integratedAccessories": [],
+        "wieldingRules": [
+          {
+            "id": "two-handed-damage-choice",
+            "condition": "two-handed",
+            "choice": [
+              "normal base damage + doubled Strength bonus",
+              "2d10 base damage + do not double Strength bonus"
+            ]
+          }
+        ],
+        "stateMachine": null,
+        "configurationStates": [],
+        "constructionRules": null,
+        "triggeredEffects": []
+      },
+      "qualities": {
+        "accurate": false,
+        "inaccurate": false,
+        "arc": false,
+        "ignoresDR": true,
+        "areaEffect": false,
+        "autofireOnly": false,
+        "doubleWeapon": false,
+        "thrown": false,
+        "reach": false
+      },
+      "conditionalQualities": [
+        {
+          "quality": "doubleWeapon",
+          "value": true,
+          "condition": "wielder-has-Long-Haft-Form"
+        }
+      ],
+      "conditionalDamageProfiles": [
+        {
+          "id": "two-handed-base-override",
+          "damage": {
+            "mode": "dice",
+            "diceCount": 2,
+            "dieSize": 10,
+            "flatBonus": 0,
+            "formula": "2d10"
+          },
+          "condition": "two-handed-and-forgo-double-strength-bonus"
+        }
+      ],
+      "proficiencyRules": [],
+      "operation": {
+        "twoHandedDamageChoice": true,
+        "longHaftFormDoubleWeapon": true
+      },
+      "sourceFootnotes": [],
+      "repo": {
+        "present": true,
+        "id": "lightsaber-chassis-longhandle",
+        "currentName": "Long-Handle Lightsaber",
+        "phase0NameNormalizationPending": false
+      },
+      "qualityParameters": {
+        "accurate": null,
+        "inaccurate": null,
+        "arc": null
+      },
+      "qualityAuthority": {
+        "accurate": "not-established-by-Jedi-Academy",
+        "inaccurate": "not-established-by-Jedi-Academy",
+        "arc": "not-established-by-Jedi-Academy",
+        "ignoresDR": "established-by-lightsaber-group-rule"
+      },
+      "repoComparison": {
+        "status": "MECHANICS_INCOMPLETE",
+        "severity": "material",
+        "current": {
+          "damage": "2d8",
+          "costCredits": 4500,
+          "weightKg": 2,
+          "traits": [
+            "Lightsaber",
+            "TwoHanded"
+          ],
+          "rangeProfile": "melee"
+        },
+        "phase1ContentStatus": "DESCRIPTION_INCOMPLETE",
+        "findings": [
+          "Printed base stats match current repo.",
+          "Repo TwoHanded trait is too strong: two-handed use enables a special choice but the source does not say the weapon is universally two-handed-only.",
+          "2d10 base-damage option must not stack with doubled Strength bonus.",
+          "Haft-end 1d6 attack exists only with Long Haft Form; its damage type is not specified by this entry."
+        ]
+      },
+      "crossPublishedSources": [
+        {
+          "book": "Legacy Era Campaign Guide",
+          "relationship": "later publication; same production identity"
+        }
+      ],
+      "laterProductionAction": "UPDATE_AFTER_PHASE_2_WEAPON_AUTHORITY_COMPLETE"
+    },
+    {
+      "canonicalName": "Lightsaber Pike",
+      "publishedName": "Lightsaber pike",
+      "weaponGroup": "Lightsaber",
+      "source": {
+        "book": "Jedi Academy Training Manual",
+        "descriptionPage": 53,
+        "statTablePage": 52,
+        "table": "Table 3-1: Melee Weapons",
+        "verifiedBy": [
+          "Jedi Academy Training Manual_djvu.txt",
+          "SW Saga - Jedi Academy Training Manual (optimized).pdf visual table verification"
+        ]
+      },
+      "schemaFamily": {
+        "branch": "melee",
+        "subcategory": "lightsaber",
+        "proficiency": "lightsabers"
+      },
+      "canonicalStats": {
+        "size": "Large",
+        "costCredits": 4000,
+        "baseDamage": {
+          "mode": "dice",
+          "diceCount": 2,
+          "dieSize": 8,
+          "flatBonus": 0,
+          "formula": "2d8"
+        },
+        "weightKg": 2,
+        "damageType": {
+          "mode": "and",
+          "types": [
+            "energy",
+            "slashing"
+          ],
+          "qualifiers": []
+        },
+        "availability": {
+          "restriction": "common",
+          "rare": true
+        },
+        "rateOfFire": null,
+        "stun": {
+          "capability": "none",
+          "hasStunSetting": false,
+          "damageMode": "none",
+          "damage": null,
+          "activation": null,
+          "rangeRule": null
+        },
+        "range": {
+          "mode": "melee",
+          "profileId": null,
+          "bands": null,
+          "basePenalties": null,
+          "allowedBands": null,
+          "hardMaxSquares": null,
+          "penaltyApplication": null,
+          "qualityEffects": {
+            "pointBlankAllowed": null,
+            "shortPenaltyOverride": null,
+            "mediumAllowed": null,
+            "longAllowed": null
+          }
+        },
+        "resource": {
+          "kind": "energy-cell",
+          "capacity": null,
+          "rechargeable": null,
+          "replaceable": true,
+          "integrated": false,
+          "consumption": null,
+          "disposableWhenDepleted": null
+        },
+        "operatingModes": {
+          "default": "normal",
+          "alternates": [],
+          "maxConcurrentAlternates": 1,
+          "autofireOnlyStunException": false
+        },
+        "damageReductionInteraction": {
+          "mode": "ignore",
+          "amount": null,
+          "exceptions": []
+        },
+        "attackProfiles": [
+          {
+            "id": "blade",
+            "label": "Lightsaber end",
+            "kind": "attack",
+            "schemaFamily": {
+              "branch": "melee",
+              "subcategory": "lightsaber",
+              "proficiency": "lightsabers"
+            },
+            "damage": {
+              "mode": "dice",
+              "diceCount": 2,
+              "dieSize": 8,
+              "flatBonus": 0,
+              "formula": "2d8"
+            },
+            "damageType": {
+              "mode": "and",
+              "types": [
+                "energy",
+                "slashing"
+              ],
+              "qualifiers": []
+            },
+            "stun": {
+              "capability": "none",
+              "hasStunSetting": false,
+              "damageMode": "none",
+              "damage": null,
+              "activation": null,
+              "rangeRule": null
+            },
+            "rateOfFire": null,
+            "range": {
+              "mode": "melee",
+              "profileId": null,
+              "bands": null,
+              "basePenalties": null,
+              "allowedBands": null,
+              "hardMaxSquares": null,
+              "penaltyApplication": null,
+              "qualityEffects": {
+                "pointBlankAllowed": null,
+                "shortPenaltyOverride": null,
+                "mediumAllowed": null,
+                "longAllowed": null
+              }
+            },
+            "qualities": {
+              "accurate": false,
+              "inaccurate": false,
+              "arc": false,
+              "ignoresDR": true,
+              "areaEffect": false,
+              "autofireOnly": false,
+              "doubleWeapon": false,
+              "thrown": false,
+              "reach": true
+            },
+            "attackResolution": {
+              "mode": "standard",
+              "defense": "reflex",
+              "ignoredDefenseComponents": [],
+              "onMiss": "none"
+            },
+            "area": {
+              "enabled": false,
+              "shape": null,
+              "radiusSquares": null,
+              "lengthSquares": null,
+              "widthAtEndSquares": null,
+              "widthSquares": null,
+              "heightSquares": null,
+              "notes": null
+            },
+            "resourceConsumption": null,
+            "damageComponents": [],
+            "firingConstraints": null,
+            "preparedAttack": null,
+            "conditionalModifiers": [
+              {
+                "target": "useTheForceCheck.Block",
+                "value": -2,
+                "condition": "all-Block-checks"
+              },
+              {
+                "target": "useTheForceCheck.Deflect",
+                "value": -2,
+                "condition": "all-Deflect-checks"
+              }
+            ],
+            "activationRequirements": [],
+            "triggeredEffects": [],
+            "modifierPolicy": null,
+            "notes": []
+          },
+          {
+            "id": "haft-end",
+            "label": "Non-lightsaber end",
+            "kind": "attack",
+            "schemaFamily": {
+              "branch": "melee",
+              "subcategory": "lightsaber",
+              "proficiency": "lightsabers"
+            },
+            "damage": {
+              "mode": "dice",
+              "diceCount": 1,
+              "dieSize": 6,
+              "flatBonus": 0,
+              "formula": "1d6"
+            },
+            "damageType": {
+              "mode": "unspecified",
+              "types": [],
+              "qualifiers": []
+            },
+            "stun": {
+              "capability": "none",
+              "hasStunSetting": false,
+              "damageMode": "none",
+              "damage": null,
+              "activation": null,
+              "rangeRule": null
+            },
+            "rateOfFire": null,
+            "range": {
+              "mode": "melee",
+              "profileId": null,
+              "bands": null,
+              "basePenalties": null,
+              "allowedBands": null,
+              "hardMaxSquares": null,
+              "penaltyApplication": null,
+              "qualityEffects": {
+                "pointBlankAllowed": null,
+                "shortPenaltyOverride": null,
+                "mediumAllowed": null,
+                "longAllowed": null
+              }
+            },
+            "qualities": {
+              "accurate": false,
+              "inaccurate": false,
+              "arc": false,
+              "ignoresDR": false,
+              "areaEffect": false,
+              "autofireOnly": false,
+              "doubleWeapon": true,
+              "thrown": false,
+              "reach": false
+            },
+            "attackResolution": {
+              "mode": "standard",
+              "defense": "reflex",
+              "ignoredDefenseComponents": [],
+              "onMiss": "none"
+            },
+            "area": {
+              "enabled": false,
+              "shape": null,
+              "radiusSquares": null,
+              "lengthSquares": null,
+              "widthAtEndSquares": null,
+              "widthSquares": null,
+              "heightSquares": null,
+              "notes": null
+            },
+            "resourceConsumption": null,
+            "damageComponents": [],
+            "firingConstraints": null,
+            "preparedAttack": null,
+            "conditionalModifiers": [],
+            "activationRequirements": [
+              {
+                "type": "feat",
+                "id": "Long Haft Form"
+              }
+            ],
+            "triggeredEffects": [],
+            "modifierPolicy": null,
+            "notes": [
+              "Source does not specify the non-lightsaber end damage type; do not infer one."
+            ]
+          }
+        ],
+        "modeProfiles": [],
+        "defensiveInteractions": [
+          {
+            "id": "phrik-haft-dr-protection",
+            "effect": "incoming-lightsaber-does-not-ignore-haft-dr",
+            "condition": "phrik-alloy-haft"
+          }
+        ],
+        "payloadProfiles": [],
+        "objectDurability": null,
+        "integratedAccessories": [],
+        "wieldingRules": [],
+        "stateMachine": null,
+        "configurationStates": [],
+        "constructionRules": null,
+        "triggeredEffects": []
+      },
+      "qualities": {
+        "accurate": false,
+        "inaccurate": false,
+        "arc": false,
+        "ignoresDR": true,
+        "areaEffect": false,
+        "autofireOnly": false,
+        "doubleWeapon": false,
+        "thrown": false,
+        "reach": true
+      },
+      "conditionalQualities": [
+        {
+          "quality": "doubleWeapon",
+          "value": true,
+          "condition": "wielder-has-Long-Haft-Form"
+        }
+      ],
+      "conditionalDamageProfiles": [],
+      "proficiencyRules": [],
+      "operation": {
+        "reachBonusSquares": 1,
+        "BlockPenalty": -2,
+        "DeflectPenalty": -2,
+        "longHaftFormDoubleWeapon": true
+      },
+      "sourceFootnotes": [],
+      "repo": {
+        "present": true,
+        "id": "lightsaber-chassis-pike",
+        "currentName": "Lightsaber Pike",
+        "phase0NameNormalizationPending": false
+      },
+      "qualityParameters": {
+        "accurate": null,
+        "inaccurate": null,
+        "arc": null
+      },
+      "qualityAuthority": {
+        "accurate": "not-established-by-Jedi-Academy",
+        "inaccurate": "not-established-by-Jedi-Academy",
+        "arc": "not-established-by-Jedi-Academy",
+        "ignoresDR": "established-by-lightsaber-group-rule"
+      },
+      "repoComparison": {
+        "status": "MECHANICS_INCOMPLETE",
+        "severity": "material",
+        "current": {
+          "damage": "2d8",
+          "costCredits": 4000,
+          "weightKg": 2,
+          "traits": [
+            "Lightsaber",
+            "Reach"
+          ],
+          "rangeProfile": "melee"
+        },
+        "phase1ContentStatus": "DESCRIPTION_INCOMPLETE",
+        "findings": [
+          "Printed base stats and Reach trait match current repo.",
+          "Repo does not encode the -2 Block/Deflect checks, phrik-haft DR interaction, or Long Haft Form double-weapon option.",
+          "The 1d6 non-lightsaber-end damage type is not specified; do not infer bludgeoning."
+        ]
+      },
+      "crossPublishedSources": [
+        {
+          "book": "Force Unleashed Campaign Guide",
+          "page": 199,
+          "relationship": "earlier publication; same production identity"
+        }
+      ],
+      "laterProductionAction": "UPDATE_AFTER_PHASE_2_WEAPON_AUTHORITY_COMPLETE"
+    },
+    {
+      "canonicalName": "Lightwhip",
+      "publishedName": "Lightwhip",
+      "weaponGroup": "Lightsaber",
+      "source": {
+        "book": "Jedi Academy Training Manual",
+        "descriptionPage": 53,
+        "statTablePage": 52,
+        "table": "Table 3-1: Melee Weapons",
+        "verifiedBy": [
+          "Jedi Academy Training Manual_djvu.txt",
+          "SW Saga - Jedi Academy Training Manual (optimized).pdf visual table verification"
+        ]
+      },
+      "schemaFamily": {
+        "branch": "melee",
+        "subcategory": "lightsaber",
+        "proficiency": "lightsabers"
+      },
+      "canonicalStats": {
+        "size": "Medium",
+        "costCredits": 5000,
+        "baseDamage": {
+          "mode": "dice",
+          "diceCount": 2,
+          "dieSize": 4,
+          "flatBonus": 0,
+          "formula": "2d4"
+        },
+        "weightKg": 1,
+        "damageType": {
+          "mode": "and",
+          "types": [
+            "energy",
+            "slashing"
+          ],
+          "qualifiers": []
+        },
+        "availability": {
+          "restriction": "common",
+          "rare": true
+        },
+        "rateOfFire": null,
+        "stun": {
+          "capability": "none",
+          "hasStunSetting": false,
+          "damageMode": "none",
+          "damage": null,
+          "activation": null,
+          "rangeRule": null
+        },
+        "range": {
+          "mode": "melee",
+          "profileId": null,
+          "bands": null,
+          "basePenalties": null,
+          "allowedBands": null,
+          "hardMaxSquares": null,
+          "penaltyApplication": null,
+          "qualityEffects": {
+            "pointBlankAllowed": null,
+            "shortPenaltyOverride": null,
+            "mediumAllowed": null,
+            "longAllowed": null
+          }
+        },
+        "resource": {
+          "kind": "energy-cell",
+          "capacity": null,
+          "rechargeable": null,
+          "replaceable": true,
+          "integrated": false,
+          "consumption": null,
+          "disposableWhenDepleted": null
+        },
+        "operatingModes": {
+          "default": "normal",
+          "alternates": [],
+          "maxConcurrentAlternates": 1,
+          "autofireOnlyStunException": false
+        },
+        "damageReductionInteraction": {
+          "mode": "ignore",
+          "amount": null,
+          "exceptions": []
+        },
+        "attackProfiles": [
+          {
+            "id": "whip",
+            "label": "Lightwhip",
+            "kind": "attack",
+            "schemaFamily": {
+              "branch": "melee",
+              "subcategory": "lightsaber",
+              "proficiency": "lightsabers"
+            },
+            "damage": {
+              "mode": "dice",
+              "diceCount": 2,
+              "dieSize": 4,
+              "flatBonus": 0,
+              "formula": "2d4"
+            },
+            "damageType": {
+              "mode": "and",
+              "types": [
+                "energy",
+                "slashing"
+              ],
+              "qualifiers": []
+            },
+            "stun": {
+              "capability": "none",
+              "hasStunSetting": false,
+              "damageMode": "none",
+              "damage": null,
+              "activation": null,
+              "rangeRule": null
+            },
+            "rateOfFire": null,
+            "range": {
+              "mode": "melee",
+              "profileId": null,
+              "bands": null,
+              "basePenalties": null,
+              "allowedBands": null,
+              "hardMaxSquares": null,
+              "penaltyApplication": null,
+              "qualityEffects": {
+                "pointBlankAllowed": null,
+                "shortPenaltyOverride": null,
+                "mediumAllowed": null,
+                "longAllowed": null
+              }
+            },
+            "qualities": {
+              "accurate": false,
+              "inaccurate": false,
+              "arc": false,
+              "ignoresDR": true,
+              "areaEffect": false,
+              "autofireOnly": false,
+              "doubleWeapon": false,
+              "thrown": false,
+              "reach": true
+            },
+            "attackResolution": {
+              "mode": "standard",
+              "defense": "reflex",
+              "ignoredDefenseComponents": [],
+              "onMiss": "none"
+            },
+            "area": {
+              "enabled": false,
+              "shape": null,
+              "radiusSquares": null,
+              "lengthSquares": null,
+              "widthAtEndSquares": null,
+              "widthSquares": null,
+              "heightSquares": null,
+              "notes": null
+            },
+            "resourceConsumption": null,
+            "damageComponents": [],
+            "firingConstraints": null,
+            "preparedAttack": null,
+            "conditionalModifiers": [],
+            "activationRequirements": [],
+            "triggeredEffects": [
+              {
+                "trigger": "on-hit",
+                "effect": "may-initiate-grab-or-grapple",
+                "escape": {
+                  "method": "Acrobatics",
+                  "DC": 15
+                }
+              },
+              {
+                "trigger": "target-ends-turn-grabbed-or-grappled-by-lightwhip",
+                "effect": "damage",
+                "damageSource": "weapon-base-damage",
+                "modifierPolicy": {
+                  "includeBaseWeaponDice": true,
+                  "exclude": [
+                    "Strength bonus",
+                    "half heroic level",
+                    "all other modifiers"
+                  ]
+                }
+              }
+            ],
+            "modifierPolicy": null,
+            "notes": []
+          }
+        ],
+        "modeProfiles": [],
+        "defensiveInteractions": [],
+        "payloadProfiles": [],
+        "objectDurability": null,
+        "integratedAccessories": [],
+        "wieldingRules": [],
+        "stateMachine": null,
+        "configurationStates": [],
+        "constructionRules": null,
+        "triggeredEffects": [
+          {
+            "trigger": "on-hit",
+            "effect": "may-initiate-grab-or-grapple",
+            "escape": {
+              "method": "Acrobatics",
+              "DC": 15
+            }
+          },
+          {
+            "trigger": "target-ends-turn-grabbed-or-grappled-by-lightwhip",
+            "effect": "damage",
+            "damageSource": "weapon-base-damage",
+            "modifierPolicy": {
+              "includeBaseWeaponDice": true,
+              "exclude": [
+                "Strength bonus",
+                "half heroic level",
+                "all other modifiers"
+              ]
+            }
+          }
+        ]
+      },
+      "qualities": {
+        "accurate": false,
+        "inaccurate": false,
+        "arc": false,
+        "ignoresDR": true,
+        "areaEffect": false,
+        "autofireOnly": false,
+        "doubleWeapon": false,
+        "thrown": false,
+        "reach": true
+      },
+      "conditionalQualities": [],
+      "conditionalDamageProfiles": [],
+      "proficiencyRules": [],
+      "operation": {
+        "reachSquares": 2,
+        "allowedGrappleFeats": [
+          "Pin",
+          "Trip"
+        ],
+        "prohibitedGrappleFeats": [
+          "Crush",
+          "Throw"
+        ],
+        "escapeAcrobaticsDC": 15
+      },
+      "sourceFootnotes": [],
+      "repo": {
+        "present": true,
+        "id": "lightsaber-chassis-lightwhip",
+        "currentName": "Lightwhip",
+        "phase0NameNormalizationPending": false
+      },
+      "qualityParameters": {
+        "accurate": null,
+        "inaccurate": null,
+        "arc": null
+      },
+      "qualityAuthority": {
+        "accurate": "not-established-by-Jedi-Academy",
+        "inaccurate": "not-established-by-Jedi-Academy",
+        "arc": "not-established-by-Jedi-Academy",
+        "ignoresDR": "established-by-lightsaber-group-rule"
+      },
+      "repoComparison": {
+        "status": "MECHANICS_INCOMPLETE",
+        "severity": "material",
+        "current": {
+          "damage": "2d4",
+          "costCredits": 5000,
+          "weightKg": 1,
+          "traits": [
+            "Lightsaber",
+            "Reach",
+            "Whip"
+          ],
+          "rangeProfile": "melee"
+        },
+        "phase1ContentStatus": "DESCRIPTION_INCOMPLETE",
+        "findings": [
+          "Printed base stats and Reach presentation are compatible with the repo.",
+          "Repo does not encode on-hit grab/grapple, DC 15 Acrobatics escape, Pin/Trip allowance, Crush/Throw prohibition, or end-turn base-damage-only tick."
+        ]
+      },
+      "crossPublishedSources": [],
+      "laterProductionAction": "UPDATE_AFTER_PHASE_2_WEAPON_AUTHORITY_COMPLETE"
+    },
+    {
+      "canonicalName": "San-Ni Staff",
+      "publishedName": "San-ni staff",
+      "weaponGroup": "Advanced Melee Weapon",
+      "source": {
+        "book": "Jedi Academy Training Manual",
+        "descriptionPage": 53,
+        "statTablePage": 52,
+        "table": "Table 3-1: Melee Weapons",
+        "verifiedBy": [
+          "Jedi Academy Training Manual_djvu.txt",
+          "SW Saga - Jedi Academy Training Manual (optimized).pdf visual table verification"
+        ]
+      },
+      "schemaFamily": {
+        "branch": "melee",
+        "subcategory": "advanced",
+        "proficiency": "advanced-melee"
+      },
+      "canonicalStats": {
+        "size": "Large",
+        "costCredits": 4500,
+        "baseDamage": {
+          "mode": "dice",
+          "diceCount": 2,
+          "dieSize": 6,
+          "flatBonus": 0,
+          "formula": "2d6"
+        },
+        "weightKg": 2.2,
+        "damageType": {
+          "mode": "and",
+          "types": [
+            "energy",
+            "bludgeoning"
+          ],
+          "qualifiers": []
+        },
+        "availability": {
+          "restriction": "common",
+          "rare": true
+        },
+        "rateOfFire": null,
+        "stun": {
+          "capability": "optional-per-attack",
+          "hasStunSetting": true,
+          "damageMode": "same-as-base",
+          "damage": null,
+          "activation": {
+            "timing": "attack-declaration",
+            "action": "none"
+          },
+          "rangeRule": null
+        },
+        "range": {
+          "mode": "melee",
+          "profileId": null,
+          "bands": null,
+          "basePenalties": null,
+          "allowedBands": null,
+          "hardMaxSquares": null,
+          "penaltyApplication": null,
+          "qualityEffects": {
+            "pointBlankAllowed": null,
+            "shortPenaltyOverride": null,
+            "mediumAllowed": null,
+            "longAllowed": null
+          }
+        },
+        "resource": {
+          "kind": "energy-cell",
+          "quantityRequired": 2,
+          "capacity": null,
+          "replaceable": true,
+          "integrated": false,
+          "consumption": null,
+          "rechargeable": null,
+          "disposableWhenDepleted": null
+        },
+        "operatingModes": {
+          "default": "normal",
+          "alternates": [],
+          "maxConcurrentAlternates": 1,
+          "autofireOnlyStunException": false
+        },
+        "damageReductionInteraction": {
+          "mode": "normal",
+          "amount": null,
+          "exceptions": []
+        },
+        "attackProfiles": [
+          {
+            "id": "end1",
+            "label": "End 1",
+            "kind": "attack",
+            "schemaFamily": {
+              "branch": "melee",
+              "subcategory": "advanced",
+              "proficiency": "advanced-melee"
+            },
+            "damage": {
+              "mode": "dice",
+              "diceCount": 2,
+              "dieSize": 6,
+              "flatBonus": 0,
+              "formula": "2d6"
+            },
+            "damageType": {
+              "mode": "and",
+              "types": [
+                "energy",
+                "bludgeoning"
+              ],
+              "qualifiers": []
+            },
+            "stun": {
+              "capability": "optional-per-attack",
+              "hasStunSetting": true,
+              "damageMode": "same-as-base",
+              "damage": null,
+              "activation": {
+                "timing": "attack-declaration",
+                "action": "none"
+              },
+              "rangeRule": null
+            },
+            "rateOfFire": null,
+            "range": {
+              "mode": "melee",
+              "profileId": null,
+              "bands": null,
+              "basePenalties": null,
+              "allowedBands": null,
+              "hardMaxSquares": null,
+              "penaltyApplication": null,
+              "qualityEffects": {
+                "pointBlankAllowed": null,
+                "shortPenaltyOverride": null,
+                "mediumAllowed": null,
+                "longAllowed": null
+              }
+            },
+            "qualities": {
+              "accurate": false,
+              "inaccurate": false,
+              "arc": false,
+              "ignoresDR": false,
+              "areaEffect": false,
+              "autofireOnly": false,
+              "doubleWeapon": true,
+              "thrown": false,
+              "reach": false
+            },
+            "attackResolution": {
+              "mode": "standard",
+              "defense": "reflex",
+              "ignoredDefenseComponents": [],
+              "onMiss": "none"
+            },
+            "area": {
+              "enabled": false,
+              "shape": null,
+              "radiusSquares": null,
+              "lengthSquares": null,
+              "widthAtEndSquares": null,
+              "widthSquares": null,
+              "heightSquares": null,
+              "notes": null
+            },
+            "resourceConsumption": null,
+            "damageComponents": [],
+            "firingConstraints": null,
+            "preparedAttack": null,
+            "conditionalModifiers": [],
+            "activationRequirements": [],
+            "triggeredEffects": [],
+            "modifierPolicy": null,
+            "notes": []
+          },
+          {
+            "id": "end2",
+            "label": "End 2",
+            "kind": "attack",
+            "schemaFamily": {
+              "branch": "melee",
+              "subcategory": "advanced",
+              "proficiency": "advanced-melee"
+            },
+            "damage": {
+              "mode": "dice",
+              "diceCount": 2,
+              "dieSize": 6,
+              "flatBonus": 0,
+              "formula": "2d6"
+            },
+            "damageType": {
+              "mode": "and",
+              "types": [
+                "energy",
+                "bludgeoning"
+              ],
+              "qualifiers": []
+            },
+            "stun": {
+              "capability": "optional-per-attack",
+              "hasStunSetting": true,
+              "damageMode": "same-as-base",
+              "damage": null,
+              "activation": {
+                "timing": "attack-declaration",
+                "action": "none"
+              },
+              "rangeRule": null
+            },
+            "rateOfFire": null,
+            "range": {
+              "mode": "melee",
+              "profileId": null,
+              "bands": null,
+              "basePenalties": null,
+              "allowedBands": null,
+              "hardMaxSquares": null,
+              "penaltyApplication": null,
+              "qualityEffects": {
+                "pointBlankAllowed": null,
+                "shortPenaltyOverride": null,
+                "mediumAllowed": null,
+                "longAllowed": null
+              }
+            },
+            "qualities": {
+              "accurate": false,
+              "inaccurate": false,
+              "arc": false,
+              "ignoresDR": false,
+              "areaEffect": false,
+              "autofireOnly": false,
+              "doubleWeapon": true,
+              "thrown": false,
+              "reach": false
+            },
+            "attackResolution": {
+              "mode": "standard",
+              "defense": "reflex",
+              "ignoredDefenseComponents": [],
+              "onMiss": "none"
+            },
+            "area": {
+              "enabled": false,
+              "shape": null,
+              "radiusSquares": null,
+              "lengthSquares": null,
+              "widthAtEndSquares": null,
+              "widthSquares": null,
+              "heightSquares": null,
+              "notes": null
+            },
+            "resourceConsumption": null,
+            "damageComponents": [],
+            "firingConstraints": null,
+            "preparedAttack": null,
+            "conditionalModifiers": [],
+            "activationRequirements": [],
+            "triggeredEffects": [],
+            "modifierPolicy": null,
+            "notes": []
+          }
+        ],
+        "modeProfiles": [],
+        "defensiveInteractions": [
+          {
+            "id": "block-as-lightsaber",
+            "effect": "eligible-for-Block-as-lightsaber"
+          },
+          {
+            "id": "energy-couplings-lightsaber-immunity",
+            "effect": "power-couplings-impervious-to-lightsaber-damage"
+          }
+        ],
+        "payloadProfiles": [],
+        "objectDurability": null,
+        "integratedAccessories": [],
+        "wieldingRules": [],
+        "stateMachine": null,
+        "configurationStates": [],
+        "constructionRules": null,
+        "triggeredEffects": []
+      },
+      "qualities": {
+        "accurate": false,
+        "inaccurate": false,
+        "arc": false,
+        "ignoresDR": false,
+        "areaEffect": false,
+        "autofireOnly": false,
+        "doubleWeapon": true,
+        "thrown": false,
+        "reach": false
+      },
+      "conditionalQualities": [],
+      "conditionalDamageProfiles": [],
+      "proficiencyRules": [],
+      "operation": {
+        "doubleWeapon": true,
+        "mayUseBlockAsLightsaber": true,
+        "stunChoiceTiming": "at-attack",
+        "requiresEnergyCells": 2
+      },
+      "sourceFootnotes": [],
+      "repo": {
+        "present": false,
+        "id": null,
+        "currentName": null,
+        "phase0NameNormalizationPending": false
+      },
+      "qualityParameters": {
+        "accurate": null,
+        "inaccurate": null,
+        "arc": null
+      },
+      "qualityAuthority": {
+        "accurate": "not-established-by-Jedi-Academy",
+        "inaccurate": "not-established-by-Jedi-Academy",
+        "arc": "not-established-by-Jedi-Academy",
+        "ignoresDR": "not-established-by-Jedi-Academy"
+      },
+      "repoComparison": {
+        "status": "MISSING_RECORD",
+        "severity": "material",
+        "current": null,
+        "phase1ContentStatus": "MISSING_RECORD",
+        "findings": [
+          "No production record exists for this canonical identity.",
+          "Stun is chosen at attack time; do not model it as a persistent switched mode requiring a swift action.",
+          "The power couplings are described as impervious to lightsaber damage."
+        ]
+      },
+      "crossPublishedSources": [],
+      "laterProductionAction": "CREATE_AFTER_PHASE_2_WEAPON_AUTHORITY_COMPLETE"
+    },
+    {
+      "canonicalName": "Wan-Shen",
+      "publishedName": "Wan-shen",
+      "weaponGroup": "Simple Weapon",
+      "source": {
+        "book": "Jedi Academy Training Manual",
+        "descriptionPage": 54,
+        "statTablePage": 52,
+        "table": "Table 3-1: Melee Weapons",
+        "verifiedBy": [
+          "Jedi Academy Training Manual_djvu.txt",
+          "SW Saga - Jedi Academy Training Manual (optimized).pdf visual table verification"
+        ]
+      },
+      "schemaFamily": {
+        "branch": "melee",
+        "subcategory": "simple",
+        "proficiency": "simple"
+      },
+      "canonicalStats": {
+        "size": "Large",
+        "costCredits": 1000,
+        "baseDamage": {
+          "mode": "dice",
+          "diceCount": 2,
+          "dieSize": 6,
+          "flatBonus": 0,
+          "formula": "2d6"
+        },
+        "weightKg": 2,
+        "damageType": {
+          "mode": "and",
+          "types": [
+            "slashing",
+            "bludgeoning"
+          ],
+          "qualifiers": []
+        },
+        "availability": {
+          "restriction": "common",
+          "rare": true
+        },
+        "rateOfFire": null,
+        "stun": {
+          "capability": "none",
+          "hasStunSetting": false,
+          "damageMode": "none",
+          "damage": null,
+          "activation": null,
+          "rangeRule": null
+        },
+        "range": {
+          "mode": "melee",
+          "profileId": null,
+          "bands": null,
+          "basePenalties": null,
+          "allowedBands": null,
+          "hardMaxSquares": null,
+          "penaltyApplication": null,
+          "qualityEffects": {
+            "pointBlankAllowed": null,
+            "shortPenaltyOverride": null,
+            "mediumAllowed": null,
+            "longAllowed": null
+          }
+        },
+        "resource": {
+          "kind": "none",
+          "consumption": null
+        },
+        "operatingModes": {
+          "default": "normal",
+          "alternates": [],
+          "maxConcurrentAlternates": 1,
+          "autofireOnlyStunException": false
+        },
+        "damageReductionInteraction": {
+          "mode": "normal",
+          "amount": null,
+          "exceptions": []
+        },
+        "attackProfiles": [
+          {
+            "id": "end1",
+            "label": "End 1",
+            "kind": "attack",
+            "schemaFamily": {
+              "branch": "melee",
+              "subcategory": "simple",
+              "proficiency": "simple"
+            },
+            "damage": {
+              "mode": "dice",
+              "diceCount": 2,
+              "dieSize": 6,
+              "flatBonus": 0,
+              "formula": "2d6"
+            },
+            "damageType": {
+              "mode": "and",
+              "types": [
+                "slashing",
+                "bludgeoning"
+              ],
+              "qualifiers": []
+            },
+            "stun": {
+              "capability": "none",
+              "hasStunSetting": false,
+              "damageMode": "none",
+              "damage": null,
+              "activation": null,
+              "rangeRule": null
+            },
+            "rateOfFire": null,
+            "range": {
+              "mode": "melee",
+              "profileId": null,
+              "bands": null,
+              "basePenalties": null,
+              "allowedBands": null,
+              "hardMaxSquares": null,
+              "penaltyApplication": null,
+              "qualityEffects": {
+                "pointBlankAllowed": null,
+                "shortPenaltyOverride": null,
+                "mediumAllowed": null,
+                "longAllowed": null
+              }
+            },
+            "qualities": {
+              "accurate": false,
+              "inaccurate": false,
+              "arc": false,
+              "ignoresDR": false,
+              "areaEffect": false,
+              "autofireOnly": false,
+              "doubleWeapon": true,
+              "thrown": false,
+              "reach": true
+            },
+            "attackResolution": {
+              "mode": "standard",
+              "defense": "reflex",
+              "ignoredDefenseComponents": [],
+              "onMiss": "none"
+            },
+            "area": {
+              "enabled": false,
+              "shape": null,
+              "radiusSquares": null,
+              "lengthSquares": null,
+              "widthAtEndSquares": null,
+              "widthSquares": null,
+              "heightSquares": null,
+              "notes": null
+            },
+            "resourceConsumption": null,
+            "damageComponents": [],
+            "firingConstraints": null,
+            "preparedAttack": null,
+            "conditionalModifiers": [],
+            "activationRequirements": [],
+            "triggeredEffects": [],
+            "modifierPolicy": null,
+            "notes": []
+          },
+          {
+            "id": "end2",
+            "label": "End 2",
+            "kind": "attack",
+            "schemaFamily": {
+              "branch": "melee",
+              "subcategory": "simple",
+              "proficiency": "simple"
+            },
+            "damage": {
+              "mode": "dice",
+              "diceCount": 2,
+              "dieSize": 6,
+              "flatBonus": 0,
+              "formula": "2d6"
+            },
+            "damageType": {
+              "mode": "and",
+              "types": [
+                "slashing",
+                "bludgeoning"
+              ],
+              "qualifiers": []
+            },
+            "stun": {
+              "capability": "none",
+              "hasStunSetting": false,
+              "damageMode": "none",
+              "damage": null,
+              "activation": null,
+              "rangeRule": null
+            },
+            "rateOfFire": null,
+            "range": {
+              "mode": "melee",
+              "profileId": null,
+              "bands": null,
+              "basePenalties": null,
+              "allowedBands": null,
+              "hardMaxSquares": null,
+              "penaltyApplication": null,
+              "qualityEffects": {
+                "pointBlankAllowed": null,
+                "shortPenaltyOverride": null,
+                "mediumAllowed": null,
+                "longAllowed": null
+              }
+            },
+            "qualities": {
+              "accurate": false,
+              "inaccurate": false,
+              "arc": false,
+              "ignoresDR": false,
+              "areaEffect": false,
+              "autofireOnly": false,
+              "doubleWeapon": true,
+              "thrown": false,
+              "reach": true
+            },
+            "attackResolution": {
+              "mode": "standard",
+              "defense": "reflex",
+              "ignoredDefenseComponents": [],
+              "onMiss": "none"
+            },
+            "area": {
+              "enabled": false,
+              "shape": null,
+              "radiusSquares": null,
+              "lengthSquares": null,
+              "widthAtEndSquares": null,
+              "widthSquares": null,
+              "heightSquares": null,
+              "notes": null
+            },
+            "resourceConsumption": null,
+            "damageComponents": [],
+            "firingConstraints": null,
+            "preparedAttack": null,
+            "conditionalModifiers": [],
+            "activationRequirements": [],
+            "triggeredEffects": [],
+            "modifierPolicy": null,
+            "notes": []
+          }
+        ],
+        "modeProfiles": [],
+        "defensiveInteractions": [],
+        "payloadProfiles": [],
+        "objectDurability": null,
+        "integratedAccessories": [],
+        "wieldingRules": [],
+        "stateMachine": null,
+        "configurationStates": [
+          {
+            "id": "assembled",
+            "label": "Assembled",
+            "attackUsable": true
+          },
+          {
+            "id": "disassembled",
+            "label": "Disassembled",
+            "attackUsable": false,
+            "components": 4,
+            "componentSize": "Small",
+            "transitionAction": "full-round"
+          }
+        ],
+        "constructionRules": null,
+        "triggeredEffects": []
+      },
+      "qualities": {
+        "accurate": false,
+        "inaccurate": false,
+        "arc": false,
+        "ignoresDR": false,
+        "areaEffect": false,
+        "autofireOnly": false,
+        "doubleWeapon": true,
+        "thrown": false,
+        "reach": true
+      },
+      "conditionalQualities": [],
+      "conditionalDamageProfiles": [],
+      "proficiencyRules": [],
+      "operation": {
+        "reachBonusSquares": 1,
+        "doubleWeapon": true,
+        "assemblyAction": "full-round",
+        "disassembledComponents": 4,
+        "disassembledComponentSize": "Small"
+      },
+      "sourceFootnotes": [],
+      "repo": {
+        "present": false,
+        "id": null,
+        "currentName": null,
+        "phase0NameNormalizationPending": false
+      },
+      "qualityParameters": {
+        "accurate": null,
+        "inaccurate": null,
+        "arc": null
+      },
+      "qualityAuthority": {
+        "accurate": "not-established-by-Jedi-Academy",
+        "inaccurate": "not-established-by-Jedi-Academy",
+        "arc": "not-established-by-Jedi-Academy",
+        "ignoresDR": "not-established-by-Jedi-Academy"
+      },
+      "repoComparison": {
+        "status": "MISSING_RECORD",
+        "severity": "material",
+        "current": null,
+        "phase1ContentStatus": "MISSING_RECORD",
+        "findings": [
+          "No production record exists for this canonical identity.",
+          "Source explicitly provides physical disassembly into four Small objects and full-round assembly/disassembly."
+        ]
+      },
+      "crossPublishedSources": [],
+      "laterProductionAction": "CREATE_AFTER_PHASE_2_WEAPON_AUTHORITY_COMPLETE"
+    },
+    {
+      "canonicalName": "Discblade",
+      "publishedName": "Discblade",
+      "weaponGroup": "Exotic Weapon",
+      "source": {
+        "book": "Jedi Academy Training Manual",
+        "descriptionPage": 61,
+        "statTablePage": 61,
+        "table": "Table 3-4: Ranged Weapons",
+        "verifiedBy": [
+          "Jedi Academy Training Manual_djvu.txt",
+          "SW Saga - Jedi Academy Training Manual (optimized).pdf visual table verification"
+        ]
+      },
+      "schemaFamily": {
+        "branch": "ranged",
+        "subcategory": "exotic",
+        "proficiency": "exotic"
+      },
+      "canonicalStats": {
+        "size": "Small",
+        "costCredits": 2000,
+        "baseDamage": {
+          "mode": "dice",
+          "diceCount": 2,
+          "dieSize": 8,
+          "flatBonus": 0,
+          "formula": "2d8"
+        },
+        "weightKg": 1.25,
+        "damageType": {
+          "mode": "single",
+          "types": [
+            "slashing"
+          ],
+          "qualifiers": []
+        },
+        "availability": {
+          "restriction": "common",
+          "rare": true
+        },
+        "rateOfFire": [
+          "S"
+        ],
+        "stun": {
+          "capability": "none",
+          "hasStunSetting": false,
+          "damageMode": "none",
+          "damage": null,
+          "activation": null,
+          "rangeRule": null
+        },
+        "range": {
+          "mode": "ranged",
+          "profileId": "thrown-weapons",
+          "bands": {
+            "pointBlank": [
+              0,
+              6
+            ],
+            "short": [
+              7,
+              8
+            ],
+            "medium": [
+              9,
+              10
+            ],
+            "long": [
+              11,
+              12
+            ]
+          },
+          "basePenalties": {
+            "pointBlank": 0,
+            "short": -2,
+            "medium": -5,
+            "long": -10
+          },
+          "allowedBands": [
+            "pointBlank",
+            "short",
+            "medium",
+            "long"
+          ],
+          "hardMaxSquares": null,
+          "penaltyApplication": "attack",
+          "qualityEffects": {
+            "pointBlankAllowed": true,
+            "shortPenaltyOverride": null,
+            "mediumAllowed": true,
+            "longAllowed": true
+          }
+        },
+        "resource": {
+          "kind": "none",
+          "consumption": null
+        },
+        "operatingModes": {
+          "default": "normal",
+          "alternates": [],
+          "maxConcurrentAlternates": 1,
+          "autofireOnlyStunException": false
+        },
+        "damageReductionInteraction": {
+          "mode": "normal",
+          "amount": null,
+          "exceptions": []
+        },
+        "attackProfiles": [
+          {
+            "id": "thrown",
+            "label": "Thrown discblade",
+            "kind": "attack",
+            "schemaFamily": {
+              "branch": "ranged",
+              "subcategory": "exotic",
+              "proficiency": "exotic"
+            },
+            "damage": {
+              "mode": "dice",
+              "diceCount": 2,
+              "dieSize": 8,
+              "flatBonus": 0,
+              "formula": "2d8"
+            },
+            "damageType": {
+              "mode": "single",
+              "types": [
+                "slashing"
+              ],
+              "qualifiers": []
+            },
+            "stun": {
+              "capability": "none",
+              "hasStunSetting": false,
+              "damageMode": "none",
+              "damage": null,
+              "activation": null,
+              "rangeRule": null
+            },
+            "rateOfFire": [
+              "S"
+            ],
+            "range": {
+              "mode": "ranged",
+              "profileId": "thrown-weapons",
+              "bands": {
+                "pointBlank": [
+                  0,
+                  6
+                ],
+                "short": [
+                  7,
+                  8
+                ],
+                "medium": [
+                  9,
+                  10
+                ],
+                "long": [
+                  11,
+                  12
+                ]
+              },
+              "basePenalties": {
+                "pointBlank": 0,
+                "short": -2,
+                "medium": -5,
+                "long": -10
+              },
+              "allowedBands": [
+                "pointBlank",
+                "short",
+                "medium",
+                "long"
+              ],
+              "hardMaxSquares": null,
+              "penaltyApplication": "attack",
+              "qualityEffects": {
+                "pointBlankAllowed": true,
+                "shortPenaltyOverride": null,
+                "mediumAllowed": true,
+                "longAllowed": true
+              }
+            },
+            "qualities": {
+              "accurate": false,
+              "inaccurate": false,
+              "arc": false,
+              "ignoresDR": false,
+              "areaEffect": false,
+              "autofireOnly": false,
+              "doubleWeapon": false,
+              "thrown": true,
+              "reach": false
+            },
+            "attackResolution": {
+              "mode": "standard",
+              "defense": "reflex",
+              "ignoredDefenseComponents": [],
+              "onMiss": "none"
+            },
+            "area": {
+              "enabled": false,
+              "shape": null,
+              "radiusSquares": null,
+              "lengthSquares": null,
+              "widthAtEndSquares": null,
+              "widthSquares": null,
+              "heightSquares": null,
+              "notes": null
+            },
+            "resourceConsumption": null,
+            "damageComponents": [],
+            "firingConstraints": null,
+            "preparedAttack": null,
+            "conditionalModifiers": [],
+            "activationRequirements": [],
+            "triggeredEffects": [],
+            "modifierPolicy": null,
+            "notes": []
+          }
+        ],
+        "modeProfiles": [],
+        "defensiveInteractions": [],
+        "payloadProfiles": [],
+        "objectDurability": null,
+        "integratedAccessories": [],
+        "wieldingRules": [],
+        "stateMachine": null,
+        "configurationStates": [],
+        "constructionRules": null,
+        "triggeredEffects": []
+      },
+      "qualities": {
+        "accurate": false,
+        "inaccurate": false,
+        "arc": false,
+        "ignoresDR": false,
+        "areaEffect": false,
+        "autofireOnly": false,
+        "doubleWeapon": false,
+        "thrown": true,
+        "reach": false
+      },
+      "conditionalQualities": [],
+      "conditionalDamageProfiles": [],
+      "proficiencyRules": [],
+      "operation": {
+        "returnToHand": "external-Zeison-Sha-Force-technique-not-base-quality"
+      },
+      "sourceFootnotes": [],
+      "repo": {
+        "present": true,
+        "id": "weapon-discblade",
+        "currentName": "Discblade",
+        "phase0NameNormalizationPending": false
+      },
+      "qualityParameters": {
+        "accurate": null,
+        "inaccurate": null,
+        "arc": null
+      },
+      "qualityAuthority": {
+        "accurate": "not-established-by-Jedi-Academy",
+        "inaccurate": "not-established-by-Jedi-Academy",
+        "arc": "not-established-by-Jedi-Academy",
+        "ignoresDR": "not-established-by-Jedi-Academy"
+      },
+      "repoComparison": {
+        "status": "MECHANICS_INCORRECT",
+        "severity": "material",
+        "current": {
+          "damage": "2d8",
+          "costCredits": 2000,
+          "weightKg": 1.25,
+          "traits": [
+            "Rare"
+          ],
+          "rangeProfile": "heavy-weapons"
+        },
+        "phase1ContentStatus": "DESCRIPTION_INCORRECT",
+        "findings": [
+          "Printed damage/cost/weight match current repo.",
+          "Repo heavy-weapons range profile is not source-correct for this thrown weapon. Use the thrown-weapon range profile.",
+          "Return-to-hand behavior is not an automatic property of every throw; the source attributes it to trained Zeison Sha Force use."
+        ]
+      },
+      "crossPublishedSources": [],
+      "laterProductionAction": "UPDATE_AFTER_PHASE_2_WEAPON_AUTHORITY_COMPLETE"
+    },
+    {
+      "canonicalName": "R-9 Flash Canister",
+      "publishedName": "R-9 flash canister",
+      "weaponGroup": "Simple Weapon",
+      "source": {
+        "book": "Jedi Academy Training Manual",
+        "descriptionPage": 61,
+        "statTablePage": 61,
+        "table": "Table 3-4: Ranged Weapons",
+        "verifiedBy": [
+          "Jedi Academy Training Manual_djvu.txt",
+          "SW Saga - Jedi Academy Training Manual (optimized).pdf visual table verification"
+        ]
+      },
+      "schemaFamily": {
+        "branch": "ranged",
+        "subcategory": "simple",
+        "proficiency": "simple"
+      },
+      "canonicalStats": {
+        "size": "Tiny",
+        "costCredits": 100,
+        "baseDamage": {
+          "mode": "special",
+          "diceCount": null,
+          "dieSize": null,
+          "flatBonus": 0,
+          "formula": "Special"
+        },
+        "weightKg": 0.5,
+        "damageType": {
+          "mode": "single",
+          "types": [
+            "energy"
+          ],
+          "qualifiers": []
+        },
+        "availability": {
+          "restriction": "restricted",
+          "rare": false
+        },
+        "rateOfFire": [
+          "S"
+        ],
+        "stun": {
+          "capability": "none",
+          "hasStunSetting": false,
+          "damageMode": "none",
+          "damage": null,
+          "activation": null,
+          "rangeRule": null
+        },
+        "range": {
+          "mode": "ranged",
+          "profileId": "thrown-weapons",
+          "bands": {
+            "pointBlank": [
+              0,
+              6
+            ],
+            "short": [
+              7,
+              8
+            ],
+            "medium": [
+              9,
+              10
+            ],
+            "long": [
+              11,
+              12
+            ]
+          },
+          "basePenalties": {
+            "pointBlank": 0,
+            "short": -2,
+            "medium": -5,
+            "long": -10
+          },
+          "allowedBands": [
+            "pointBlank",
+            "short",
+            "medium",
+            "long"
+          ],
+          "hardMaxSquares": null,
+          "penaltyApplication": "attack",
+          "qualityEffects": {
+            "pointBlankAllowed": true,
+            "shortPenaltyOverride": null,
+            "mediumAllowed": true,
+            "longAllowed": true
+          }
+        },
+        "resource": {
+          "kind": "single-use-weapon",
+          "consumedOnUse": true,
+          "consumption": null,
+          "integrated": null,
+          "rechargeable": null,
+          "replaceable": null,
+          "disposableWhenDepleted": null
+        },
+        "operatingModes": {
+          "default": "normal",
+          "alternates": [],
+          "maxConcurrentAlternates": 1,
+          "autofireOnlyStunException": false
+        },
+        "damageReductionInteraction": {
+          "mode": "normal",
+          "amount": null,
+          "exceptions": []
+        },
+        "attackProfiles": [
+          {
+            "id": "throw",
+            "label": "Thrown flash canister",
+            "kind": "attack",
+            "schemaFamily": {
+              "branch": "ranged",
+              "subcategory": "simple",
+              "proficiency": "simple"
+            },
+            "damage": {
+              "mode": "special",
+              "diceCount": null,
+              "dieSize": null,
+              "flatBonus": 0,
+              "formula": "Special"
+            },
+            "damageType": {
+              "mode": "single",
+              "types": [
+                "energy"
+              ],
+              "qualifiers": []
+            },
+            "stun": {
+              "capability": "none",
+              "hasStunSetting": false,
+              "damageMode": "none",
+              "damage": null,
+              "activation": null,
+              "rangeRule": null
+            },
+            "rateOfFire": [
+              "S"
+            ],
+            "range": {
+              "mode": "ranged",
+              "profileId": "thrown-weapons",
+              "bands": {
+                "pointBlank": [
+                  0,
+                  6
+                ],
+                "short": [
+                  7,
+                  8
+                ],
+                "medium": [
+                  9,
+                  10
+                ],
+                "long": [
+                  11,
+                  12
+                ]
+              },
+              "basePenalties": {
+                "pointBlank": 0,
+                "short": -2,
+                "medium": -5,
+                "long": -10
+              },
+              "allowedBands": [
+                "pointBlank",
+                "short",
+                "medium",
+                "long"
+              ],
+              "hardMaxSquares": null,
+              "penaltyApplication": "attack",
+              "qualityEffects": {
+                "pointBlankAllowed": true,
+                "shortPenaltyOverride": null,
+                "mediumAllowed": true,
+                "longAllowed": true
+              }
+            },
+            "qualities": {
+              "accurate": false,
+              "inaccurate": false,
+              "arc": false,
+              "ignoresDR": false,
+              "areaEffect": true,
+              "autofireOnly": false,
+              "doubleWeapon": false,
+              "thrown": true,
+              "reach": false
+            },
+            "attackResolution": {
+              "mode": "area",
+              "defense": "reflex",
+              "ignoredDefenseComponents": [],
+              "onMiss": "effect-still-applies-to-all-targets"
+            },
+            "area": {
+              "enabled": true,
+              "shape": "burst",
+              "radiusSquares": 3,
+              "lengthSquares": null,
+              "widthAtEndSquares": null,
+              "widthSquares": null,
+              "heightSquares": null,
+              "notes": "contact detonation; one area attack roll against Reflex Defense of every target"
+            },
+            "resourceConsumption": null,
+            "damageComponents": [],
+            "firingConstraints": null,
+            "preparedAttack": null,
+            "conditionalModifiers": [],
+            "activationRequirements": [],
+            "triggeredEffects": [
+              {
+                "trigger": "area-attack-resolution",
+                "effect": "total-concealment-against-affected-creature",
+                "duration": "until-start-of-attacker-next-turn",
+                "onHitDamage": 0,
+                "blindCreaturesImmune": true
+              }
+            ],
+            "modifierPolicy": null,
+            "notes": []
+          }
+        ],
+        "modeProfiles": [],
+        "defensiveInteractions": [],
+        "payloadProfiles": [],
+        "objectDurability": null,
+        "integratedAccessories": [],
+        "wieldingRules": [],
+        "stateMachine": null,
+        "configurationStates": [],
+        "constructionRules": null,
+        "triggeredEffects": [
+          {
+            "trigger": "area-attack-resolution",
+            "effect": "total-concealment-against-affected-creature",
+            "duration": "until-start-of-attacker-next-turn",
+            "onHitDamage": 0,
+            "blindCreaturesImmune": true
+          }
+        ]
+      },
+      "qualities": {
+        "accurate": false,
+        "inaccurate": false,
+        "arc": false,
+        "ignoresDR": false,
+        "areaEffect": true,
+        "autofireOnly": false,
+        "doubleWeapon": false,
+        "thrown": true,
+        "reach": false
+      },
+      "conditionalQualities": [],
+      "conditionalDamageProfiles": [],
+      "proficiencyRules": [],
+      "operation": {
+        "burstRadiusSquares": 3,
+        "contactDetonation": true,
+        "blindCreaturesImmune": true
+      },
+      "sourceFootnotes": [],
+      "repo": {
+        "present": true,
+        "id": "weapon-flash-canister",
+        "currentName": "Flash Canister",
+        "phase0NameNormalizationPending": true
+      },
+      "qualityParameters": {
+        "accurate": null,
+        "inaccurate": null,
+        "arc": null
+      },
+      "qualityAuthority": {
+        "accurate": "not-established-by-Jedi-Academy",
+        "inaccurate": "not-established-by-Jedi-Academy",
+        "arc": "not-established-by-Jedi-Academy",
+        "ignoresDR": "not-established-by-Jedi-Academy"
+      },
+      "repoComparison": {
+        "status": "MECHANICS_INCORRECT",
+        "severity": "material",
+        "current": {
+          "damage": "Special",
+          "costCredits": 100,
+          "weightKg": 0.5,
+          "traits": [
+            "Restricted"
+          ],
+          "rangeProfile": "simple-weapons"
+        },
+        "phase1ContentStatus": "DESCRIPTION_INCORRECT",
+        "findings": [
+          "Printed cost/weight match current repo.",
+          "Repo does not structurally identify the R-9 as an area attack weapon or represent its 3-square burst and concealment effect.",
+          "This weapon deals no hit point damage despite the table Damage entry reading Special."
+        ]
+      },
+      "crossPublishedSources": [],
+      "laterProductionAction": "UPDATE_AFTER_PHASE_2_WEAPON_AUTHORITY_COMPLETE"
+    }
+  ],
+  "schemaNormalization": {
+    "version": "weapon-authority-schema-v2.5",
+    "change": "attackResolution.mode \"normal\" -> \"standard\" (23 total aliases across books), modeProfiles[].attackProfile -> attackProfileId, resource.consumption: null added. No published fact changed. rateOfFire object {modes, special:false, specialRule:null} on Discblade and R-9 Flash Canister converted to the [\"S\"] array form used by every other record (owner decision: v2.x array form; 4 occurrences). Placeholder range strings (\"core-thrown-weapon-bands\", \"core-range-penalties\") expanded to the canonical thrown-weapons bands and base penalties, and modeProfiles labels filled from the linked profile (10 edits)."
+  }
+}

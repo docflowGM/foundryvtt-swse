@@ -166,7 +166,8 @@
           "hasStunSetting": false,
           "damageMode": "none",
           "damage": null,
-          "rangeRule": null
+          "rangeRule": null,
+          "activation": null
         },
         "range": {
           "mode": "melee",
@@ -227,7 +228,8 @@
               "hasStunSetting": false,
               "damageMode": "none",
               "damage": null,
-              "rangeRule": null
+              "rangeRule": null,
+              "activation": null
             },
             "rateOfFire": null,
             "range": {
@@ -279,14 +281,55 @@
             "conditionalModifiers": [],
             "notes": [
               "Attack is treated as a grab attack; garrote-specific feat/talent bonuses apply to the grab."
-            ]
+            ],
+            "activationRequirements": [],
+            "triggeredEffects": [
+              {
+                "trigger": "start-of-grabbed-target-turn-before-actions",
+                "effect": "repeat-weapon-base-damage-and-move-condition-track",
+                "damageSource": "weapon-base-damage",
+                "conditionTrackSteps": -1,
+                "additionalEffects": [
+                  "normal grab effects also apply"
+                ],
+                "modifierPolicy": null,
+                "notes": [
+                  "Modifier inclusion/exclusion for the repeated damage is not stated in the certified Clone Wars entry."
+                ]
+              }
+            ],
+            "modifierPolicy": null
           }
         ],
         "modeProfiles": [],
         "defensiveInteractions": [],
         "payloadProfiles": [],
         "objectDurability": null,
-        "integratedAccessories": []
+        "integratedAccessories": [],
+        "wieldingRules": [
+          {
+            "id": "requires-two-hands",
+            "effect": "requires-two-hands"
+          }
+        ],
+        "stateMachine": null,
+        "configurationStates": [],
+        "constructionRules": null,
+        "triggeredEffects": [
+          {
+            "trigger": "start-of-grabbed-target-turn-before-actions",
+            "effect": "repeat-weapon-base-damage-and-move-condition-track",
+            "damageSource": "weapon-base-damage",
+            "conditionTrackSteps": -1,
+            "additionalEffects": [
+              "normal grab effects also apply"
+            ],
+            "modifierPolicy": null,
+            "notes": [
+              "Modifier inclusion/exclusion for the repeated damage is not stated in the certified Clone Wars entry."
+            ]
+          }
+        ]
       },
       "qualities": {
         "accurate": false,
@@ -391,6 +434,10 @@
           "damage": null,
           "rangeRule": {
             "maxSquares": 6
+          },
+          "activation": {
+            "timing": "persistent-setting",
+            "action": null
           }
         },
         "range": {
@@ -459,6 +506,10 @@
               "damage": null,
               "rangeRule": {
                 "maxSquares": 6
+              },
+              "activation": {
+                "timing": "persistent-setting",
+                "action": null
               }
             },
             "rateOfFire": null,
@@ -509,14 +560,35 @@
             "firingConstraints": null,
             "preparedAttack": null,
             "conditionalModifiers": [],
-            "notes": []
+            "notes": [],
+            "activationRequirements": [],
+            "triggeredEffects": [],
+            "modifierPolicy": null
           }
         ],
         "modeProfiles": [],
         "defensiveInteractions": [],
         "payloadProfiles": [],
         "objectDurability": null,
-        "integratedAccessories": []
+        "integratedAccessories": [],
+        "wieldingRules": [],
+        "stateMachine": null,
+        "configurationStates": [
+          {
+            "id": "expanded",
+            "label": "Expanded",
+            "attackUsable": true,
+            "transitionAction": "swift"
+          },
+          {
+            "id": "collapsed",
+            "label": "Collapsed (small handle)",
+            "attackUsable": null,
+            "transitionAction": "swift"
+          }
+        ],
+        "constructionRules": null,
+        "triggeredEffects": []
       },
       "qualities": {
         "accurate": false,
@@ -624,7 +696,11 @@
             "formula": "+1",
             "appliesTo": "successful unarmed attack after converting that attack to stun damage"
           },
-          "rangeRule": null
+          "rangeRule": null,
+          "activation": {
+            "timing": "native",
+            "action": null
+          }
         },
         "range": {
           "mode": "melee",
@@ -700,7 +776,11 @@
                 "formula": "+1",
                 "appliesTo": "successful unarmed attack after converting that attack to stun damage"
               },
-              "rangeRule": null
+              "rangeRule": null,
+              "activation": {
+                "timing": "native",
+                "action": null
+              }
             },
             "rateOfFire": null,
             "range": {
@@ -752,14 +832,22 @@
             "conditionalModifiers": [],
             "notes": [
               "The gauntlet does not supply standalone lethal damage; it transforms the wearer's unarmed attack to stun damage and adds +1 stun damage."
-            ]
+            ],
+            "activationRequirements": [],
+            "triggeredEffects": [],
+            "modifierPolicy": null
           }
         ],
         "modeProfiles": [],
         "defensiveInteractions": [],
         "payloadProfiles": [],
         "objectDurability": null,
-        "integratedAccessories": []
+        "integratedAccessories": [],
+        "wieldingRules": [],
+        "stateMachine": null,
+        "configurationStates": [],
+        "constructionRules": null,
+        "triggeredEffects": []
       },
       "qualities": {
         "accurate": false,
@@ -872,7 +960,8 @@
           "hasStunSetting": false,
           "damageMode": "none",
           "damage": null,
-          "rangeRule": null
+          "rangeRule": null,
+          "activation": null
         },
         "range": {
           "mode": "melee",
@@ -941,7 +1030,8 @@
               "hasStunSetting": false,
               "damageMode": "none",
               "damage": null,
-              "rangeRule": null
+              "rangeRule": null,
+              "activation": null
             },
             "rateOfFire": null,
             "range": {
@@ -993,14 +1083,22 @@
             "conditionalModifiers": [],
             "notes": [
               "+3 modifies a successful unarmed attack; it is not a standalone 3-point weapon damage formula."
-            ]
+            ],
+            "activationRequirements": [],
+            "triggeredEffects": [],
+            "modifierPolicy": null
           }
         ],
         "modeProfiles": [],
         "defensiveInteractions": [],
         "payloadProfiles": [],
         "objectDurability": null,
-        "integratedAccessories": []
+        "integratedAccessories": [],
+        "wieldingRules": [],
+        "stateMachine": null,
+        "configurationStates": [],
+        "constructionRules": null,
+        "triggeredEffects": []
       },
       "qualities": {
         "accurate": false,
@@ -1104,7 +1202,8 @@
           "hasStunSetting": false,
           "damageMode": "none",
           "damage": null,
-          "rangeRule": null
+          "rangeRule": null,
+          "activation": null
         },
         "range": {
           "mode": "melee",
@@ -1172,7 +1271,8 @@
               "hasStunSetting": false,
               "damageMode": "none",
               "damage": null,
-              "rangeRule": null
+              "rangeRule": null,
+              "activation": null
             },
             "rateOfFire": null,
             "range": {
@@ -1222,14 +1322,22 @@
             "firingConstraints": null,
             "preparedAttack": null,
             "conditionalModifiers": [],
-            "notes": []
+            "notes": [],
+            "activationRequirements": [],
+            "triggeredEffects": [],
+            "modifierPolicy": null
           }
         ],
         "modeProfiles": [],
         "defensiveInteractions": [],
         "payloadProfiles": [],
         "objectDurability": null,
-        "integratedAccessories": []
+        "integratedAccessories": [],
+        "wieldingRules": [],
+        "stateMachine": null,
+        "configurationStates": [],
+        "constructionRules": null,
+        "triggeredEffects": []
       },
       "qualities": {
         "accurate": false,
@@ -1327,6 +1435,10 @@
           "damage": null,
           "rangeRule": {
             "maxSquares": 6
+          },
+          "activation": {
+            "timing": "persistent-setting",
+            "action": null
           }
         },
         "range": {
@@ -1421,6 +1533,10 @@
               "damage": null,
               "rangeRule": {
                 "maxSquares": 6
+              },
+              "activation": {
+                "timing": "persistent-setting",
+                "action": null
               }
             },
             "rateOfFire": [
@@ -1501,12 +1617,15 @@
             "preparedAttack": null,
             "conditionalModifiers": [
               {
-                "target": "attack",
+                "target": "attackRoll",
                 "value": -2,
                 "condition": "single-shot mode"
               }
             ],
-            "notes": []
+            "notes": [],
+            "activationRequirements": [],
+            "triggeredEffects": [],
+            "modifierPolicy": null
           }
         ],
         "modeProfiles": [
@@ -1516,7 +1635,7 @@
             "attackProfileId": "primary",
             "conditionalModifiers": [
               {
-                "target": "attack",
+                "target": "attackRoll",
                 "value": -2,
                 "condition": "when used as a single-shot weapon"
               }
@@ -1531,7 +1650,12 @@
         "defensiveInteractions": [],
         "payloadProfiles": [],
         "objectDurability": null,
-        "integratedAccessories": []
+        "integratedAccessories": [],
+        "wieldingRules": [],
+        "stateMachine": null,
+        "configurationStates": [],
+        "constructionRules": null,
+        "triggeredEffects": []
       },
       "qualities": {
         "accurate": false,
@@ -1646,6 +1770,10 @@
           "damage": null,
           "rangeRule": {
             "maxSquares": 6
+          },
+          "activation": {
+            "timing": "persistent-setting",
+            "action": null
           }
         },
         "range": {
@@ -1741,6 +1869,10 @@
               "damage": null,
               "rangeRule": {
                 "maxSquares": 6
+              },
+              "activation": {
+                "timing": "persistent-setting",
+                "action": null
               }
             },
             "rateOfFire": [
@@ -1820,7 +1952,10 @@
             "firingConstraints": null,
             "preparedAttack": null,
             "conditionalModifiers": [],
-            "notes": []
+            "notes": [],
+            "activationRequirements": [],
+            "triggeredEffects": [],
+            "modifierPolicy": null
           }
         ],
         "modeProfiles": [],
@@ -1832,7 +1967,12 @@
           "damageReduction": null,
           "damageReductionEquipmentBonus": 0
         },
-        "integratedAccessories": []
+        "integratedAccessories": [],
+        "wieldingRules": [],
+        "stateMachine": null,
+        "configurationStates": [],
+        "constructionRules": null,
+        "triggeredEffects": []
       },
       "qualities": {
         "accurate": false,
@@ -1927,7 +2067,8 @@
           "hasStunSetting": false,
           "damageMode": "none",
           "damage": null,
-          "rangeRule": null
+          "rangeRule": null,
+          "activation": null
         },
         "range": {
           "mode": "ranged",
@@ -2020,7 +2161,8 @@
               "hasStunSetting": false,
               "damageMode": "none",
               "damage": null,
-              "rangeRule": null
+              "rangeRule": null,
+              "activation": null
             },
             "rateOfFire": [
               "S",
@@ -2100,7 +2242,10 @@
             "firingConstraints": null,
             "preparedAttack": null,
             "conditionalModifiers": [],
-            "notes": []
+            "notes": [],
+            "activationRequirements": [],
+            "triggeredEffects": [],
+            "modifierPolicy": null
           }
         ],
         "modeProfiles": [],
@@ -2113,7 +2258,12 @@
             "included": true,
             "sourceRule": "top-mounted rangefinder and electronic sight acts as a standard targeting scope"
           }
-        ]
+        ],
+        "wieldingRules": [],
+        "stateMachine": null,
+        "configurationStates": [],
+        "constructionRules": null,
+        "triggeredEffects": []
       },
       "qualities": {
         "accurate": true,
@@ -2216,6 +2366,10 @@
           "damage": null,
           "rangeRule": {
             "maxSquares": 6
+          },
+          "activation": {
+            "timing": "persistent-setting",
+            "action": null
           }
         },
         "range": {
@@ -2310,6 +2464,10 @@
               "damage": null,
               "rangeRule": {
                 "maxSquares": 6
+              },
+              "activation": {
+                "timing": "persistent-setting",
+                "action": null
               }
             },
             "rateOfFire": [
@@ -2388,14 +2546,22 @@
             "firingConstraints": null,
             "preparedAttack": null,
             "conditionalModifiers": [],
-            "notes": []
+            "notes": [],
+            "activationRequirements": [],
+            "triggeredEffects": [],
+            "modifierPolicy": null
           }
         ],
         "modeProfiles": [],
         "defensiveInteractions": [],
         "payloadProfiles": [],
         "objectDurability": null,
-        "integratedAccessories": []
+        "integratedAccessories": [],
+        "wieldingRules": [],
+        "stateMachine": null,
+        "configurationStates": [],
+        "constructionRules": null,
+        "triggeredEffects": []
       },
       "qualities": {
         "accurate": false,
@@ -2499,7 +2665,8 @@
           "hasStunSetting": false,
           "damageMode": "none",
           "damage": null,
-          "rangeRule": null
+          "rangeRule": null,
+          "activation": null
         },
         "range": {
           "mode": "ranged",
@@ -2594,7 +2761,8 @@
               "hasStunSetting": false,
               "damageMode": "none",
               "damage": null,
-              "rangeRule": null
+              "rangeRule": null,
+              "activation": null
             },
             "rateOfFire": [
               "S"
@@ -2673,14 +2841,22 @@
             "firingConstraints": null,
             "preparedAttack": null,
             "conditionalModifiers": [],
-            "notes": []
+            "notes": [],
+            "activationRequirements": [],
+            "triggeredEffects": [],
+            "modifierPolicy": null
           }
         ],
         "modeProfiles": [],
         "defensiveInteractions": [],
         "payloadProfiles": [],
         "objectDurability": null,
-        "integratedAccessories": []
+        "integratedAccessories": [],
+        "wieldingRules": [],
+        "stateMachine": null,
+        "configurationStates": [],
+        "constructionRules": null,
+        "triggeredEffects": []
       },
       "qualities": {
         "accurate": false,
@@ -2776,7 +2952,8 @@
           "hasStunSetting": false,
           "damageMode": "none",
           "damage": null,
-          "rangeRule": null
+          "rangeRule": null,
+          "activation": null
         },
         "range": {
           "mode": "ranged",
@@ -2869,7 +3046,8 @@
               "hasStunSetting": false,
               "damageMode": "none",
               "damage": null,
-              "rangeRule": null
+              "rangeRule": null,
+              "activation": null
             },
             "rateOfFire": [
               "S"
@@ -2948,14 +3126,35 @@
             "firingConstraints": null,
             "preparedAttack": null,
             "conditionalModifiers": [],
-            "notes": []
+            "notes": [],
+            "activationRequirements": [],
+            "triggeredEffects": [],
+            "modifierPolicy": null
           }
         ],
         "modeProfiles": [],
         "defensiveInteractions": [],
         "payloadProfiles": [],
         "objectDurability": null,
-        "integratedAccessories": []
+        "integratedAccessories": [],
+        "wieldingRules": [],
+        "stateMachine": null,
+        "configurationStates": [
+          {
+            "id": "assembled",
+            "label": "Assembled",
+            "attackUsable": true,
+            "transitionAction": "move"
+          },
+          {
+            "id": "disassembled",
+            "label": "Disassembled (concealment)",
+            "attackUsable": null,
+            "transitionAction": "move"
+          }
+        ],
+        "constructionRules": null,
+        "triggeredEffects": []
       },
       "qualities": {
         "accurate": true,
@@ -3058,7 +3257,8 @@
           "hasStunSetting": false,
           "damageMode": "none",
           "damage": null,
-          "rangeRule": null
+          "rangeRule": null,
+          "activation": null
         },
         "range": {
           "mode": "ranged",
@@ -3155,7 +3355,8 @@
               "hasStunSetting": false,
               "damageMode": "none",
               "damage": null,
-              "rangeRule": null
+              "rangeRule": null,
+              "activation": null
             },
             "rateOfFire": [
               "S"
@@ -3236,14 +3437,22 @@
             "firingConstraints": null,
             "preparedAttack": null,
             "conditionalModifiers": [],
-            "notes": []
+            "notes": [],
+            "activationRequirements": [],
+            "triggeredEffects": [],
+            "modifierPolicy": null
           }
         ],
         "modeProfiles": [],
         "defensiveInteractions": [],
         "payloadProfiles": [],
         "objectDurability": null,
-        "integratedAccessories": []
+        "integratedAccessories": [],
+        "wieldingRules": [],
+        "stateMachine": null,
+        "configurationStates": [],
+        "constructionRules": null,
+        "triggeredEffects": []
       },
       "qualities": {
         "accurate": false,
@@ -3354,7 +3563,8 @@
           "hasStunSetting": false,
           "damageMode": "none",
           "damage": null,
-          "rangeRule": null
+          "rangeRule": null,
+          "activation": null
         },
         "range": {
           "mode": "ranged",
@@ -3448,7 +3658,8 @@
               "hasStunSetting": false,
               "damageMode": "none",
               "damage": null,
-              "rangeRule": null
+              "rangeRule": null,
+              "activation": null
             },
             "rateOfFire": [
               "S"
@@ -3526,14 +3737,22 @@
             "firingConstraints": null,
             "preparedAttack": null,
             "conditionalModifiers": [],
-            "notes": []
+            "notes": [],
+            "activationRequirements": [],
+            "triggeredEffects": [],
+            "modifierPolicy": null
           }
         ],
         "modeProfiles": [],
         "defensiveInteractions": [],
         "payloadProfiles": [],
         "objectDurability": null,
-        "integratedAccessories": []
+        "integratedAccessories": [],
+        "wieldingRules": [],
+        "stateMachine": null,
+        "configurationStates": [],
+        "constructionRules": null,
+        "triggeredEffects": []
       },
       "qualities": {
         "accurate": false,
@@ -3643,6 +3862,10 @@
           "damage": null,
           "rangeRule": {
             "maxSquares": 6
+          },
+          "activation": {
+            "timing": "persistent-setting",
+            "action": null
           }
         },
         "range": {
@@ -3738,6 +3961,10 @@
               "damage": null,
               "rangeRule": {
                 "maxSquares": 6
+              },
+              "activation": {
+                "timing": "persistent-setting",
+                "action": null
               }
             },
             "rateOfFire": [
@@ -3817,7 +4044,10 @@
             "firingConstraints": null,
             "preparedAttack": null,
             "conditionalModifiers": [],
-            "notes": []
+            "notes": [],
+            "activationRequirements": [],
+            "triggeredEffects": [],
+            "modifierPolicy": null
           }
         ],
         "modeProfiles": [],
@@ -3829,7 +4059,12 @@
           "damageReduction": null,
           "damageReductionEquipmentBonus": 2
         },
-        "integratedAccessories": []
+        "integratedAccessories": [],
+        "wieldingRules": [],
+        "stateMachine": null,
+        "configurationStates": [],
+        "constructionRules": null,
+        "triggeredEffects": []
       },
       "qualities": {
         "accurate": false,
@@ -3932,6 +4167,10 @@
           },
           "rangeRule": {
             "maxSquares": 6
+          },
+          "activation": {
+            "timing": "persistent-setting",
+            "action": null
           }
         },
         "range": {
@@ -4033,6 +4272,10 @@
               },
               "rangeRule": {
                 "maxSquares": 6
+              },
+              "activation": {
+                "timing": "persistent-setting",
+                "action": null
               }
             },
             "rateOfFire": [
@@ -4113,14 +4356,22 @@
             "firingConstraints": null,
             "preparedAttack": null,
             "conditionalModifiers": [],
-            "notes": []
+            "notes": [],
+            "activationRequirements": [],
+            "triggeredEffects": [],
+            "modifierPolicy": null
           }
         ],
         "modeProfiles": [],
         "defensiveInteractions": [],
         "payloadProfiles": [],
         "objectDurability": null,
-        "integratedAccessories": []
+        "integratedAccessories": [],
+        "wieldingRules": [],
+        "stateMachine": null,
+        "configurationStates": [],
+        "constructionRules": null,
+        "triggeredEffects": []
       },
       "qualities": {
         "accurate": false,
@@ -4212,7 +4463,8 @@
           "hasStunSetting": false,
           "damageMode": "none",
           "damage": null,
-          "rangeRule": null
+          "rangeRule": null,
+          "activation": null
         },
         "range": {
           "mode": "ranged",
@@ -4279,7 +4531,8 @@
               "hasStunSetting": false,
               "damageMode": "none",
               "damage": null,
-              "rangeRule": null
+              "rangeRule": null,
+              "activation": null
             },
             "rateOfFire": [
               "S"
@@ -4340,7 +4593,10 @@
             "conditionalModifiers": [],
             "notes": [
               "Damage, stun, damage type, and special effects are selected from payloadProfiles."
-            ]
+            ],
+            "activationRequirements": [],
+            "triggeredEffects": [],
+            "modifierPolicy": null
           }
         ],
         "modeProfiles": [],
@@ -4659,7 +4915,12 @@
           }
         ],
         "objectDurability": null,
-        "integratedAccessories": []
+        "integratedAccessories": [],
+        "wieldingRules": [],
+        "stateMachine": null,
+        "configurationStates": [],
+        "constructionRules": null,
+        "triggeredEffects": []
       },
       "qualities": {
         "accurate": false,
@@ -4714,6 +4975,7 @@
   ],
   "schemaNormalization": {
     "version": "weapon-authority-schema-v2.4",
-    "change": "resource lifecycle keys (integrated/rechargeable/replaceable/disposableWhenDepleted) defaulted to null where unset; qualityParameters.inaccurate.allowedBands added alongside longAllowed:false (Core/KOTOR/FU/CW long-only definition). No published fact changed. resource.consumption: null defaulted on 16 records."
+    "change": "resource lifecycle keys (integrated/rechargeable/replaceable/disposableWhenDepleted) defaulted to null where unset; qualityParameters.inaccurate.allowedBands added alongside longAllowed:false (Core/KOTOR/FU/CW long-only definition). No published fact changed. resource.consumption: null defaulted on 16 records.",
+    "v2.5": "weapon-authority-schema-v2.5 structural defaults: stun.activation, profile activationRequirements/triggeredEffects/modifierPolicy, canonicalStats wieldingRules/stateMachine/configurationStates/constructionRules/triggeredEffects, conditionalModifiers target vocabulary (attack->attackRoll, damage->damageRoll), defensiveInteractions id/effect."
   }
 }

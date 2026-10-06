@@ -193,7 +193,8 @@
           "hasStunSetting": false,
           "damageMode": "none",
           "damage": null,
-          "rangeRule": null
+          "rangeRule": null,
+          "activation": null
         },
         "range": {
           "mode": "melee",
@@ -255,7 +256,8 @@
               "hasStunSetting": false,
               "damageMode": "none",
               "damage": null,
-              "rangeRule": null
+              "rangeRule": null,
+              "activation": null
             },
             "rateOfFire": null,
             "range": {
@@ -305,7 +307,10 @@
             "damageComponents": [],
             "firingConstraints": null,
             "preparedAttack": null,
-            "conditionalModifiers": []
+            "conditionalModifiers": [],
+            "activationRequirements": [],
+            "triggeredEffects": [],
+            "modifierPolicy": null
           },
           {
             "id": "thrown",
@@ -336,7 +341,8 @@
               "hasStunSetting": false,
               "damageMode": "none",
               "damage": null,
-              "rangeRule": null
+              "rangeRule": null,
+              "activation": null
             },
             "rateOfFire": null,
             "range": {
@@ -413,14 +419,22 @@
             "damageComponents": [],
             "firingConstraints": null,
             "preparedAttack": null,
-            "conditionalModifiers": []
+            "conditionalModifiers": [],
+            "activationRequirements": [],
+            "triggeredEffects": [],
+            "modifierPolicy": null
           }
         ],
         "modeProfiles": [],
         "defensiveInteractions": [],
         "payloadProfiles": [],
         "objectDurability": null,
-        "integratedAccessories": []
+        "integratedAccessories": [],
+        "wieldingRules": [],
+        "stateMachine": null,
+        "configurationStates": [],
+        "constructionRules": null,
+        "triggeredEffects": []
       },
       "qualities": {
         "accurate": false,
@@ -543,7 +557,8 @@
           "hasStunSetting": false,
           "damageMode": "none",
           "damage": null,
-          "rangeRule": null
+          "rangeRule": null,
+          "activation": null
         },
         "range": {
           "mode": "melee",
@@ -605,7 +620,8 @@
               "hasStunSetting": false,
               "damageMode": "none",
               "damage": null,
-              "rangeRule": null
+              "rangeRule": null,
+              "activation": null
             },
             "rateOfFire": null,
             "range": {
@@ -655,14 +671,22 @@
             "damageComponents": [],
             "firingConstraints": null,
             "preparedAttack": null,
-            "conditionalModifiers": []
+            "conditionalModifiers": [],
+            "activationRequirements": [],
+            "triggeredEffects": [],
+            "modifierPolicy": null
           }
         ],
         "modeProfiles": [],
         "defensiveInteractions": [],
         "payloadProfiles": [],
         "objectDurability": null,
-        "integratedAccessories": []
+        "integratedAccessories": [],
+        "wieldingRules": [],
+        "stateMachine": null,
+        "configurationStates": [],
+        "constructionRules": null,
+        "triggeredEffects": []
       },
       "qualities": {
         "accurate": false,
@@ -765,7 +789,8 @@
           "hasStunSetting": false,
           "damageMode": "none",
           "damage": null,
-          "rangeRule": null
+          "rangeRule": null,
+          "activation": null
         },
         "range": {
           "mode": "melee",
@@ -839,7 +864,8 @@
               "hasStunSetting": false,
               "damageMode": "none",
               "damage": null,
-              "rangeRule": null
+              "rangeRule": null,
+              "activation": null
             },
             "rateOfFire": null,
             "range": {
@@ -889,14 +915,22 @@
             "damageComponents": [],
             "firingConstraints": null,
             "preparedAttack": null,
-            "conditionalModifiers": []
+            "conditionalModifiers": [],
+            "activationRequirements": [],
+            "triggeredEffects": [],
+            "modifierPolicy": null
           }
         ],
         "modeProfiles": [],
         "defensiveInteractions": [],
         "payloadProfiles": [],
         "objectDurability": null,
-        "integratedAccessories": []
+        "integratedAccessories": [],
+        "wieldingRules": [],
+        "stateMachine": null,
+        "configurationStates": [],
+        "constructionRules": null,
+        "triggeredEffects": []
       },
       "qualities": {
         "accurate": false,
@@ -998,6 +1032,10 @@
           "rangeRule": {
             "maxSquares": 6,
             "unlessSourceOverrides": true
+          },
+          "activation": {
+            "timing": "persistent-setting",
+            "action": "swift"
           }
         },
         "range": {
@@ -1082,7 +1120,8 @@
               "hasStunSetting": false,
               "damageMode": "none",
               "damage": null,
-              "rangeRule": null
+              "rangeRule": null,
+              "activation": null
             },
             "rateOfFire": null,
             "range": {
@@ -1132,7 +1171,10 @@
             "damageComponents": [],
             "firingConstraints": null,
             "preparedAttack": null,
-            "conditionalModifiers": []
+            "conditionalModifiers": [],
+            "activationRequirements": [],
+            "triggeredEffects": [],
+            "modifierPolicy": null
           },
           {
             "id": "unarmed-stun",
@@ -1167,6 +1209,10 @@
               "rangeRule": {
                 "maxSquares": 6,
                 "unlessSourceOverrides": true
+              },
+              "activation": {
+                "timing": "persistent-setting",
+                "action": "swift"
               }
             },
             "rateOfFire": null,
@@ -1217,7 +1263,10 @@
             "damageComponents": [],
             "firingConstraints": null,
             "preparedAttack": null,
-            "conditionalModifiers": []
+            "conditionalModifiers": [],
+            "activationRequirements": [],
+            "triggeredEffects": [],
+            "modifierPolicy": null
           }
         ],
         "modeProfiles": [
@@ -1247,7 +1296,12 @@
         "defensiveInteractions": [],
         "payloadProfiles": [],
         "objectDurability": null,
-        "integratedAccessories": []
+        "integratedAccessories": [],
+        "wieldingRules": [],
+        "stateMachine": null,
+        "configurationStates": [],
+        "constructionRules": null,
+        "triggeredEffects": []
       },
       "qualities": {
         "accurate": false,
@@ -1351,7 +1405,11 @@
             "flatBonus": 0,
             "formula": "3d6"
           },
-          "rangeRule": null
+          "rangeRule": null,
+          "activation": {
+            "timing": "native",
+            "action": null
+          }
         },
         "range": {
           "mode": "melee",
@@ -1425,7 +1483,11 @@
                 "flatBonus": 0,
                 "formula": "3d6"
               },
-              "rangeRule": null
+              "rangeRule": null,
+              "activation": {
+                "timing": "native",
+                "action": null
+              }
             },
             "rateOfFire": null,
             "range": {
@@ -1477,14 +1539,22 @@
             "damageComponents": [],
             "firingConstraints": null,
             "preparedAttack": null,
-            "conditionalModifiers": []
+            "conditionalModifiers": [],
+            "activationRequirements": [],
+            "triggeredEffects": [],
+            "modifierPolicy": null
           }
         ],
         "modeProfiles": [],
         "defensiveInteractions": [],
         "payloadProfiles": [],
         "objectDurability": null,
-        "integratedAccessories": []
+        "integratedAccessories": [],
+        "wieldingRules": [],
+        "stateMachine": null,
+        "configurationStates": [],
+        "constructionRules": null,
+        "triggeredEffects": []
       },
       "qualities": {
         "accurate": false,
@@ -1601,6 +1671,10 @@
           "rangeRule": {
             "maxSquares": 6,
             "unlessSourceOverrides": true
+          },
+          "activation": {
+            "timing": "persistent-setting",
+            "action": null
           }
         },
         "range": {
@@ -1681,6 +1755,10 @@
               "rangeRule": {
                 "maxSquares": 6,
                 "unlessSourceOverrides": true
+              },
+              "activation": {
+                "timing": "persistent-setting",
+                "action": null
               }
             },
             "rateOfFire": null,
@@ -1731,7 +1809,10 @@
             "damageComponents": [],
             "firingConstraints": null,
             "preparedAttack": null,
-            "conditionalModifiers": []
+            "conditionalModifiers": [],
+            "activationRequirements": [],
+            "triggeredEffects": [],
+            "modifierPolicy": null
           },
           {
             "id": "thrown",
@@ -1771,6 +1852,10 @@
               "rangeRule": {
                 "maxSquares": 6,
                 "unlessSourceOverrides": true
+              },
+              "activation": {
+                "timing": "persistent-setting",
+                "action": null
               }
             },
             "rateOfFire": null,
@@ -1848,7 +1933,10 @@
             "damageComponents": [],
             "firingConstraints": null,
             "preparedAttack": null,
-            "conditionalModifiers": []
+            "conditionalModifiers": [],
+            "activationRequirements": [],
+            "triggeredEffects": [],
+            "modifierPolicy": null
           }
         ],
         "modeProfiles": [
@@ -1870,7 +1958,12 @@
         "defensiveInteractions": [],
         "payloadProfiles": [],
         "objectDurability": null,
-        "integratedAccessories": []
+        "integratedAccessories": [],
+        "wieldingRules": [],
+        "stateMachine": null,
+        "configurationStates": [],
+        "constructionRules": null,
+        "triggeredEffects": []
       },
       "qualities": {
         "accurate": false,
@@ -1969,7 +2062,8 @@
           "hasStunSetting": false,
           "damageMode": "none",
           "damage": null,
-          "rangeRule": null
+          "rangeRule": null,
+          "activation": null
         },
         "range": {
           "mode": "melee",
@@ -2039,7 +2133,8 @@
               "hasStunSetting": false,
               "damageMode": "none",
               "damage": null,
-              "rangeRule": null
+              "rangeRule": null,
+              "activation": null
             },
             "rateOfFire": null,
             "range": {
@@ -2089,14 +2184,22 @@
             "damageComponents": [],
             "firingConstraints": null,
             "preparedAttack": null,
-            "conditionalModifiers": []
+            "conditionalModifiers": [],
+            "activationRequirements": [],
+            "triggeredEffects": [],
+            "modifierPolicy": null
           }
         ],
         "modeProfiles": [],
         "defensiveInteractions": [],
         "payloadProfiles": [],
         "objectDurability": null,
-        "integratedAccessories": []
+        "integratedAccessories": [],
+        "wieldingRules": [],
+        "stateMachine": null,
+        "configurationStates": [],
+        "constructionRules": null,
+        "triggeredEffects": []
       },
       "qualities": {
         "accurate": false,
@@ -2198,6 +2301,10 @@
           "rangeRule": {
             "maxSquares": 6,
             "unlessSourceOverrides": true
+          },
+          "activation": {
+            "timing": "persistent-setting",
+            "action": null
           }
         },
         "range": {
@@ -2303,6 +2410,10 @@
               "rangeRule": {
                 "maxSquares": 6,
                 "unlessSourceOverrides": true
+              },
+              "activation": {
+                "timing": "persistent-setting",
+                "action": null
               }
             },
             "rateOfFire": [
@@ -2384,7 +2495,10 @@
             "damageComponents": [],
             "firingConstraints": null,
             "preparedAttack": null,
-            "conditionalModifiers": []
+            "conditionalModifiers": [],
+            "activationRequirements": [],
+            "triggeredEffects": [],
+            "modifierPolicy": null
           },
           {
             "id": "ascension",
@@ -2412,7 +2526,8 @@
               "hasStunSetting": false,
               "damageMode": "none",
               "damage": null,
-              "rangeRule": null
+              "rangeRule": null,
+              "activation": null
             },
             "rateOfFire": null,
             "range": {
@@ -2469,7 +2584,10 @@
             "damageComponents": [],
             "firingConstraints": null,
             "preparedAttack": null,
-            "conditionalModifiers": []
+            "conditionalModifiers": [],
+            "activationRequirements": [],
+            "triggeredEffects": [],
+            "modifierPolicy": null
           }
         ],
         "modeProfiles": [
@@ -2497,7 +2615,12 @@
         "defensiveInteractions": [],
         "payloadProfiles": [],
         "objectDurability": null,
-        "integratedAccessories": []
+        "integratedAccessories": [],
+        "wieldingRules": [],
+        "stateMachine": null,
+        "configurationStates": [],
+        "constructionRules": null,
+        "triggeredEffects": []
       },
       "qualities": {
         "accurate": false,
@@ -2608,6 +2731,10 @@
           "rangeRule": {
             "maxSquares": 6,
             "unlessSourceOverrides": true
+          },
+          "activation": {
+            "timing": "persistent-setting",
+            "action": null
           }
         },
         "range": {
@@ -2705,6 +2832,10 @@
               "rangeRule": {
                 "maxSquares": 6,
                 "unlessSourceOverrides": true
+              },
+              "activation": {
+                "timing": "persistent-setting",
+                "action": null
               }
             },
             "rateOfFire": [
@@ -2788,14 +2919,22 @@
             "damageComponents": [],
             "firingConstraints": null,
             "preparedAttack": null,
-            "conditionalModifiers": []
+            "conditionalModifiers": [],
+            "activationRequirements": [],
+            "triggeredEffects": [],
+            "modifierPolicy": null
           }
         ],
         "modeProfiles": [],
         "defensiveInteractions": [],
         "payloadProfiles": [],
         "objectDurability": null,
-        "integratedAccessories": []
+        "integratedAccessories": [],
+        "wieldingRules": [],
+        "stateMachine": null,
+        "configurationStates": [],
+        "constructionRules": null,
+        "triggeredEffects": []
       },
       "qualities": {
         "accurate": false,
@@ -2897,6 +3036,10 @@
           "rangeRule": {
             "maxSquares": 6,
             "unlessSourceOverrides": true
+          },
+          "activation": {
+            "timing": "persistent-setting",
+            "action": null
           }
         },
         "range": {
@@ -3006,6 +3149,10 @@
               "rangeRule": {
                 "maxSquares": 6,
                 "unlessSourceOverrides": true
+              },
+              "activation": {
+                "timing": "persistent-setting",
+                "action": null
               }
             },
             "rateOfFire": [
@@ -3090,7 +3237,10 @@
             "damageComponents": [],
             "firingConstraints": null,
             "preparedAttack": null,
-            "conditionalModifiers": []
+            "conditionalModifiers": [],
+            "activationRequirements": [],
+            "triggeredEffects": [],
+            "modifierPolicy": null
           },
           {
             "id": "medium",
@@ -3123,6 +3273,10 @@
               "rangeRule": {
                 "maxSquares": 6,
                 "unlessSourceOverrides": true
+              },
+              "activation": {
+                "timing": "persistent-setting",
+                "action": null
               }
             },
             "rateOfFire": [
@@ -3207,7 +3361,10 @@
             "damageComponents": [],
             "firingConstraints": null,
             "preparedAttack": null,
-            "conditionalModifiers": []
+            "conditionalModifiers": [],
+            "activationRequirements": [],
+            "triggeredEffects": [],
+            "modifierPolicy": null
           },
           {
             "id": "high",
@@ -3240,6 +3397,10 @@
               "rangeRule": {
                 "maxSquares": 6,
                 "unlessSourceOverrides": true
+              },
+              "activation": {
+                "timing": "persistent-setting",
+                "action": null
               }
             },
             "rateOfFire": [
@@ -3324,7 +3485,10 @@
             "damageComponents": [],
             "firingConstraints": null,
             "preparedAttack": null,
-            "conditionalModifiers": []
+            "conditionalModifiers": [],
+            "activationRequirements": [],
+            "triggeredEffects": [],
+            "modifierPolicy": null
           }
         ],
         "modeProfiles": [
@@ -3362,7 +3526,12 @@
         "defensiveInteractions": [],
         "payloadProfiles": [],
         "objectDurability": null,
-        "integratedAccessories": []
+        "integratedAccessories": [],
+        "wieldingRules": [],
+        "stateMachine": null,
+        "configurationStates": [],
+        "constructionRules": null,
+        "triggeredEffects": []
       },
       "qualities": {
         "accurate": false,
@@ -3460,6 +3629,10 @@
           "rangeRule": {
             "maxSquares": 6,
             "unlessSourceOverrides": true
+          },
+          "activation": {
+            "timing": "persistent-setting",
+            "action": null
           }
         },
         "range": {
@@ -3577,6 +3750,10 @@
               "rangeRule": {
                 "maxSquares": 6,
                 "unlessSourceOverrides": true
+              },
+              "activation": {
+                "timing": "persistent-setting",
+                "action": null
               }
             },
             "rateOfFire": [
@@ -3658,7 +3835,10 @@
             "damageComponents": [],
             "firingConstraints": null,
             "preparedAttack": null,
-            "conditionalModifiers": []
+            "conditionalModifiers": [],
+            "activationRequirements": [],
+            "triggeredEffects": [],
+            "modifierPolicy": null
           },
           {
             "id": "medium",
@@ -3691,6 +3871,10 @@
               "rangeRule": {
                 "maxSquares": 6,
                 "unlessSourceOverrides": true
+              },
+              "activation": {
+                "timing": "persistent-setting",
+                "action": null
               }
             },
             "rateOfFire": [
@@ -3772,7 +3956,10 @@
             "damageComponents": [],
             "firingConstraints": null,
             "preparedAttack": null,
-            "conditionalModifiers": []
+            "conditionalModifiers": [],
+            "activationRequirements": [],
+            "triggeredEffects": [],
+            "modifierPolicy": null
           },
           {
             "id": "high",
@@ -3805,6 +3992,10 @@
               "rangeRule": {
                 "maxSquares": 6,
                 "unlessSourceOverrides": true
+              },
+              "activation": {
+                "timing": "persistent-setting",
+                "action": null
               }
             },
             "rateOfFire": [
@@ -3886,7 +4077,10 @@
             "damageComponents": [],
             "firingConstraints": null,
             "preparedAttack": null,
-            "conditionalModifiers": []
+            "conditionalModifiers": [],
+            "activationRequirements": [],
+            "triggeredEffects": [],
+            "modifierPolicy": null
           },
           {
             "id": "ascension",
@@ -3914,7 +4108,8 @@
               "hasStunSetting": false,
               "damageMode": "none",
               "damage": null,
-              "rangeRule": null
+              "rangeRule": null,
+              "activation": null
             },
             "rateOfFire": null,
             "range": {
@@ -3969,7 +4164,10 @@
             "damageComponents": [],
             "firingConstraints": null,
             "preparedAttack": null,
-            "conditionalModifiers": []
+            "conditionalModifiers": [],
+            "activationRequirements": [],
+            "triggeredEffects": [],
+            "modifierPolicy": null
           }
         ],
         "modeProfiles": [
@@ -4017,7 +4215,12 @@
         "defensiveInteractions": [],
         "payloadProfiles": [],
         "objectDurability": null,
-        "integratedAccessories": []
+        "integratedAccessories": [],
+        "wieldingRules": [],
+        "stateMachine": null,
+        "configurationStates": [],
+        "constructionRules": null,
+        "triggeredEffects": []
       },
       "qualities": {
         "accurate": false,
@@ -4124,7 +4327,8 @@
           "hasStunSetting": false,
           "damageMode": "none",
           "damage": null,
-          "rangeRule": null
+          "rangeRule": null,
+          "activation": null
         },
         "range": {
           "mode": "ranged",
@@ -4221,7 +4425,8 @@
               "hasStunSetting": false,
               "damageMode": "none",
               "damage": null,
-              "rangeRule": null
+              "rangeRule": null,
+              "activation": null
             },
             "rateOfFire": [
               "S"
@@ -4304,14 +4509,22 @@
             "damageComponents": [],
             "firingConstraints": null,
             "preparedAttack": null,
-            "conditionalModifiers": []
+            "conditionalModifiers": [],
+            "activationRequirements": [],
+            "triggeredEffects": [],
+            "modifierPolicy": null
           }
         ],
         "modeProfiles": [],
         "defensiveInteractions": [],
         "payloadProfiles": [],
         "objectDurability": null,
-        "integratedAccessories": []
+        "integratedAccessories": [],
+        "wieldingRules": [],
+        "stateMachine": null,
+        "configurationStates": [],
+        "constructionRules": null,
+        "triggeredEffects": []
       },
       "qualities": {
         "accurate": false,
@@ -4404,7 +4617,8 @@
           "hasStunSetting": false,
           "damageMode": "none",
           "damage": null,
-          "rangeRule": null
+          "rangeRule": null,
+          "activation": null
         },
         "range": {
           "mode": "ranged",
@@ -4501,7 +4715,8 @@
               "hasStunSetting": false,
               "damageMode": "none",
               "damage": null,
-              "rangeRule": null
+              "rangeRule": null,
+              "activation": null
             },
             "rateOfFire": [
               "S"
@@ -4586,14 +4801,22 @@
             "damageComponents": [],
             "firingConstraints": null,
             "preparedAttack": null,
-            "conditionalModifiers": []
+            "conditionalModifiers": [],
+            "activationRequirements": [],
+            "triggeredEffects": [],
+            "modifierPolicy": null
           }
         ],
         "modeProfiles": [],
         "defensiveInteractions": [],
         "payloadProfiles": [],
         "objectDurability": null,
-        "integratedAccessories": []
+        "integratedAccessories": [],
+        "wieldingRules": [],
+        "stateMachine": null,
+        "configurationStates": [],
+        "constructionRules": null,
+        "triggeredEffects": []
       },
       "qualities": {
         "accurate": false,
@@ -4690,7 +4913,8 @@
           "hasStunSetting": false,
           "damageMode": "none",
           "damage": null,
-          "rangeRule": null
+          "rangeRule": null,
+          "activation": null
         },
         "range": {
           "mode": "ranged",
@@ -4784,7 +5008,8 @@
               "hasStunSetting": false,
               "damageMode": "none",
               "damage": null,
-              "rangeRule": null
+              "rangeRule": null,
+              "activation": null
             },
             "rateOfFire": [
               "S"
@@ -4867,14 +5092,22 @@
             "damageComponents": [],
             "firingConstraints": null,
             "preparedAttack": null,
-            "conditionalModifiers": []
+            "conditionalModifiers": [],
+            "activationRequirements": [],
+            "triggeredEffects": [],
+            "modifierPolicy": null
           }
         ],
         "modeProfiles": [],
         "defensiveInteractions": [],
         "payloadProfiles": [],
         "objectDurability": null,
-        "integratedAccessories": []
+        "integratedAccessories": [],
+        "wieldingRules": [],
+        "stateMachine": null,
+        "configurationStates": [],
+        "constructionRules": null,
+        "triggeredEffects": []
       },
       "qualities": {
         "accurate": false,
@@ -4969,7 +5202,8 @@
           "hasStunSetting": false,
           "damageMode": "none",
           "damage": null,
-          "rangeRule": null
+          "rangeRule": null,
+          "activation": null
         },
         "range": {
           "mode": "ranged",
@@ -5061,7 +5295,8 @@
               "hasStunSetting": false,
               "damageMode": "none",
               "damage": null,
-              "rangeRule": null
+              "rangeRule": null,
+              "activation": null
             },
             "rateOfFire": [
               "S"
@@ -5146,14 +5381,22 @@
             "damageComponents": [],
             "firingConstraints": null,
             "preparedAttack": null,
-            "conditionalModifiers": []
+            "conditionalModifiers": [],
+            "activationRequirements": [],
+            "triggeredEffects": [],
+            "modifierPolicy": null
           }
         ],
         "modeProfiles": [],
         "defensiveInteractions": [],
         "payloadProfiles": [],
         "objectDurability": null,
-        "integratedAccessories": []
+        "integratedAccessories": [],
+        "wieldingRules": [],
+        "stateMachine": null,
+        "configurationStates": [],
+        "constructionRules": null,
+        "triggeredEffects": []
       },
       "qualities": {
         "accurate": false,
@@ -5256,6 +5499,10 @@
           "rangeRule": {
             "maxSquares": 6,
             "unlessSourceOverrides": true
+          },
+          "activation": {
+            "timing": "persistent-setting",
+            "action": null
           }
         },
         "range": {
@@ -5368,6 +5615,10 @@
               "rangeRule": {
                 "maxSquares": 6,
                 "unlessSourceOverrides": true
+              },
+              "activation": {
+                "timing": "persistent-setting",
+                "action": null
               }
             },
             "rateOfFire": [
@@ -5452,7 +5703,10 @@
             "damageComponents": [],
             "firingConstraints": null,
             "preparedAttack": null,
-            "conditionalModifiers": []
+            "conditionalModifiers": [],
+            "activationRequirements": [],
+            "triggeredEffects": [],
+            "modifierPolicy": null
           },
           {
             "id": "sniper",
@@ -5482,7 +5736,8 @@
               "hasStunSetting": false,
               "damageMode": "none",
               "damage": null,
-              "rangeRule": null
+              "rangeRule": null,
+              "activation": null
             },
             "rateOfFire": [
               "S"
@@ -5569,11 +5824,14 @@
             "preparedAttack": null,
             "conditionalModifiers": [
               {
-                "target": "attack",
+                "target": "attackRoll",
                 "value": -2,
                 "condition": "target at unmodified point-blank range"
               }
-            ]
+            ],
+            "activationRequirements": [],
+            "triggeredEffects": [],
+            "modifierPolicy": null
           },
           {
             "id": "anti-armor",
@@ -5603,7 +5861,8 @@
               "hasStunSetting": false,
               "damageMode": "none",
               "damage": null,
-              "rangeRule": null
+              "rangeRule": null,
+              "activation": null
             },
             "rateOfFire": [
               "S"
@@ -5688,7 +5947,10 @@
             "damageComponents": [],
             "firingConstraints": null,
             "preparedAttack": null,
-            "conditionalModifiers": []
+            "conditionalModifiers": [],
+            "activationRequirements": [],
+            "triggeredEffects": [],
+            "modifierPolicy": null
           }
         ],
         "modeProfiles": [
@@ -5714,7 +5976,12 @@
         "defensiveInteractions": [],
         "payloadProfiles": [],
         "objectDurability": null,
-        "integratedAccessories": []
+        "integratedAccessories": [],
+        "wieldingRules": [],
+        "stateMachine": null,
+        "configurationStates": [],
+        "constructionRules": null,
+        "triggeredEffects": []
       },
       "qualities": {
         "accurate": false,
@@ -5813,7 +6080,8 @@
           "hasStunSetting": false,
           "damageMode": "none",
           "damage": null,
-          "rangeRule": null
+          "rangeRule": null,
+          "activation": null
         },
         "range": {
           "mode": "ranged",
@@ -5907,7 +6175,8 @@
               "hasStunSetting": false,
               "damageMode": "none",
               "damage": null,
-              "rangeRule": null
+              "rangeRule": null,
+              "activation": null
             },
             "rateOfFire": [
               "S"
@@ -5991,14 +6260,22 @@
             "damageComponents": [],
             "firingConstraints": null,
             "preparedAttack": null,
-            "conditionalModifiers": []
+            "conditionalModifiers": [],
+            "activationRequirements": [],
+            "triggeredEffects": [],
+            "modifierPolicy": null
           }
         ],
         "modeProfiles": [],
         "defensiveInteractions": [],
         "payloadProfiles": [],
         "objectDurability": null,
-        "integratedAccessories": []
+        "integratedAccessories": [],
+        "wieldingRules": [],
+        "stateMachine": null,
+        "configurationStates": [],
+        "constructionRules": null,
+        "triggeredEffects": []
       },
       "qualities": {
         "accurate": false,
@@ -6100,7 +6377,8 @@
           "hasStunSetting": false,
           "damageMode": "none",
           "damage": null,
-          "rangeRule": null
+          "rangeRule": null,
+          "activation": null
         },
         "range": {
           "mode": "ranged",
@@ -6195,7 +6473,8 @@
               "hasStunSetting": false,
               "damageMode": "none",
               "damage": null,
-              "rangeRule": null
+              "rangeRule": null,
+              "activation": null
             },
             "rateOfFire": [
               "A"
@@ -6280,14 +6559,22 @@
             "damageComponents": [],
             "firingConstraints": null,
             "preparedAttack": null,
-            "conditionalModifiers": []
+            "conditionalModifiers": [],
+            "activationRequirements": [],
+            "triggeredEffects": [],
+            "modifierPolicy": null
           }
         ],
         "modeProfiles": [],
         "defensiveInteractions": [],
         "payloadProfiles": [],
         "objectDurability": null,
-        "integratedAccessories": []
+        "integratedAccessories": [],
+        "wieldingRules": [],
+        "stateMachine": null,
+        "configurationStates": [],
+        "constructionRules": null,
+        "triggeredEffects": []
       },
       "qualities": {
         "accurate": false,
@@ -6390,7 +6677,8 @@
           "hasStunSetting": false,
           "damageMode": "none",
           "damage": null,
-          "rangeRule": null
+          "rangeRule": null,
+          "activation": null
         },
         "range": {
           "mode": "ranged",
@@ -6484,7 +6772,8 @@
               "hasStunSetting": false,
               "damageMode": "none",
               "damage": null,
-              "rangeRule": null
+              "rangeRule": null,
+              "activation": null
             },
             "rateOfFire": [
               "S"
@@ -6565,14 +6854,22 @@
             "damageComponents": [],
             "firingConstraints": null,
             "preparedAttack": null,
-            "conditionalModifiers": []
+            "conditionalModifiers": [],
+            "activationRequirements": [],
+            "triggeredEffects": [],
+            "modifierPolicy": null
           }
         ],
         "modeProfiles": [],
         "defensiveInteractions": [],
         "payloadProfiles": [],
         "objectDurability": null,
-        "integratedAccessories": []
+        "integratedAccessories": [],
+        "wieldingRules": [],
+        "stateMachine": null,
+        "configurationStates": [],
+        "constructionRules": null,
+        "triggeredEffects": []
       },
       "qualities": {
         "accurate": false,
@@ -6729,7 +7026,8 @@
           "hasStunSetting": false,
           "damageMode": "none",
           "damage": null,
-          "rangeRule": null
+          "rangeRule": null,
+          "activation": null
         },
         "range": {
           "mode": "ranged",
@@ -6823,7 +7121,8 @@
               "hasStunSetting": false,
               "damageMode": "none",
               "damage": null,
-              "rangeRule": null
+              "rangeRule": null,
+              "activation": null
             },
             "rateOfFire": [
               "S"
@@ -6908,14 +7207,22 @@
             "damageComponents": [],
             "firingConstraints": null,
             "preparedAttack": null,
-            "conditionalModifiers": []
+            "conditionalModifiers": [],
+            "activationRequirements": [],
+            "triggeredEffects": [],
+            "modifierPolicy": null
           }
         ],
         "modeProfiles": [],
         "defensiveInteractions": [],
         "payloadProfiles": [],
         "objectDurability": null,
-        "integratedAccessories": []
+        "integratedAccessories": [],
+        "wieldingRules": [],
+        "stateMachine": null,
+        "configurationStates": [],
+        "constructionRules": null,
+        "triggeredEffects": []
       },
       "qualities": {
         "accurate": false,
@@ -7020,7 +7327,8 @@
           "hasStunSetting": false,
           "damageMode": "none",
           "damage": null,
-          "rangeRule": null
+          "rangeRule": null,
+          "activation": null
         },
         "range": {
           "mode": "ranged",
@@ -7116,7 +7424,8 @@
               "hasStunSetting": false,
               "damageMode": "none",
               "damage": null,
-              "rangeRule": null
+              "rangeRule": null,
+              "activation": null
             },
             "rateOfFire": [
               "S"
@@ -7203,14 +7512,22 @@
             "damageComponents": [],
             "firingConstraints": null,
             "preparedAttack": null,
-            "conditionalModifiers": []
+            "conditionalModifiers": [],
+            "activationRequirements": [],
+            "triggeredEffects": [],
+            "modifierPolicy": null
           }
         ],
         "modeProfiles": [],
         "defensiveInteractions": [],
         "payloadProfiles": [],
         "objectDurability": null,
-        "integratedAccessories": []
+        "integratedAccessories": [],
+        "wieldingRules": [],
+        "stateMachine": null,
+        "configurationStates": [],
+        "constructionRules": null,
+        "triggeredEffects": []
       },
       "qualities": {
         "accurate": false,
@@ -7270,6 +7587,7 @@
     "change": "resource.consumption: null added where the book publishes no special consumption rule (structural default; no published fact changed).",
     "recordsDefaulted": 19,
     "v2.3": "weapon-authority-schema-v2.3 structural defaults: range.penaltyApplication (attack for ranged, null otherwise), profile preparedAttack/damageComponents/firingConstraints defaults, canonicalStats.defensiveInteractions []",
-    "v2.4": "weapon-authority-schema-v2.4 structural defaults: range.hardMaxSquares, resource lifecycle keys, profile conditionalModifiers, record proficiencyRules, canonicalStats payloadProfiles/objectDurability/integratedAccessories; qualityParameters.inaccurate.allowedBands where only longAllowed was stated."
+    "v2.4": "weapon-authority-schema-v2.4 structural defaults: range.hardMaxSquares, resource lifecycle keys, profile conditionalModifiers, record proficiencyRules, canonicalStats payloadProfiles/objectDurability/integratedAccessories; qualityParameters.inaccurate.allowedBands where only longAllowed was stated.",
+    "v2.5": "weapon-authority-schema-v2.5 structural defaults: stun.activation, profile activationRequirements/triggeredEffects/modifierPolicy, canonicalStats wieldingRules/stateMachine/configurationStates/constructionRules/triggeredEffects, conditionalModifiers target vocabulary (attack->attackRoll, damage->damageRoll), defensiveInteractions id/effect."
   }
 }
