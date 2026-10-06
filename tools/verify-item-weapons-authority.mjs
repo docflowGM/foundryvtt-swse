@@ -517,6 +517,15 @@ if (s2) {
     if (qe.pointBlankAllowed !== want.includes('pointBlank') || qe.mediumAllowed !== want.includes('medium') || qe.longAllowed !== want.includes('long') || (qe.shortPenaltyOverride === 0) !== ql.accurate) fail(`${w} range qualityEffects disagree with allowedBands/qualities`);
   };
   /** Checks one weapon book against its Phase 1 records. Returns {present, ign, tallies}. */
+  const AMMO_OVERLAY = (() => {
+    const ref = s2.ammoNormalizationOverlay;
+    if (!ref || !fs.existsSync(path.join(ROOT, ref.file))) { fail('v2.9 ammo normalization overlay missing'); return new Map(); }
+    const ov = JSON.parse(fs.readFileSync(path.join(ROOT, ref.file), 'utf8'));
+    if (ov.entries.length !== ref.entries || ov.entries.length !== 209 || new Set(ov.entries.map((e) => e.sourceClaimKey)).size !== 209) fail('v2.9 ammo overlay must have exactly 209 distinct source-claim entries');
+    return new Map(ov.entries.map((e) => [`${e.phase}|${e.canonicalName}`, e]));
+  })();
+  const AMMO_SEEN = new Set();
+  const AC = C.ammo;
   const checkBook = (b, p1, label, opts = {}) => {
     const seen = new Set();
     const t = { present: 0, biotech: 0, ign: 0, accurate: 0, inaccurate: 0, arc: 0, area: 0, dbl: 0, auto: 0 };
@@ -585,6 +594,29 @@ if (s2) {
       else for (const pl of s.payloadProfiles) {
         if (!C.payloadProfiles.fields.every((f) => f in pl) || !(pl.damage || pl.effect)) fail(`${w} payload ${pl.id} incomplete`);
         else if (pl.damage) { dice(pl.damage, `${w} payload ${pl.id}`); if (!TYPE_MODES.has(pl.damageType.mode) || !STUN_CAP.has(pl.stun.capability)) fail(`${w} payload ${pl.id} invalid damageType/stun`); }
+      }
+      {
+        const am = s.ammo, ent = AMMO_OVERLAY.get(`${label}|${n}`);
+        if (!('ammo' in s)) fail(`${w} missing canonicalStats.ammo`);
+        else if (!ent) fail(`${w} has no v2.9 ammo overlay entry`);
+        else {
+          AMMO_SEEN.add(`${label}|${n}`);
+          if (!same(am, ent.ammo)) fail(`${w} canonicalStats.ammo differs from the v2.9 overlay`);
+          const hasRanged = s.attackProfiles.some((x) => x.range.mode !== 'melee');
+          if (ent.hasRangedAttackProfile !== hasRanged) fail(`${w} overlay hasRangedAttackProfile disagrees with the attack profiles`);
+          if ((am === null) === hasRanged) fail(`${w} ammo must be null exactly for pure melee weapons`);
+          if (am) {
+            if (!AC.fields.filter((f2) => f2 !== 'profiles').every((f2) => f2 in am) || !AC.modes.includes(am.mode) || !AC.statuses.includes(am.status) || !AC.damageSourceValues.includes(am.damageSource) || typeof am.payloadDerived !== 'boolean') fail(`${w} ammo object incomplete or outside the contract vocabularies`);
+            if (am.capacityShots !== null && !(Number.isInteger(am.capacityShots) && am.capacityShots > 0)) fail(`${w} ammo.capacityShots must be a positive integer or null`);
+            if (am.status === 'not-stated' && (am.capacityShots !== null || am.type !== null)) fail(`${w} not-stated ammo must not guess a type or capacity`);
+            if (am.payloadDerived !== (am.damageSource === 'loaded-ammo' || am.damageSource === 'loaded-ammo-modified-by-weapon')) fail(`${w} ammo.payloadDerived disagrees with damageSource`);
+            if (am.mode === 'multiple' !== Array.isArray(am.profiles)) fail(`${w} ammo.profiles[] must exist exactly for mode "multiple"`);
+            for (const k2 of AC.runtimeStateNotCanonical) if (k2 in am) fail(`${w} ammo must not carry runtime state ${k2}`);
+            if (am.scopedToAttackProfiles && !am.scopedToAttackProfiles.every((id) => s.attackProfiles.some((x) => x.id === id && x.range.mode !== 'melee'))) fail(`${w} ammo scopedToAttackProfiles must name ranged attack profiles`);
+            if (am.capacityShots !== null && s.resource.capacityShots != null && am.capacityShots !== s.resource.capacityShots) fail(`${w} ammo.capacityShots ${am.capacityShots} disagrees with resource.capacityShots ${s.resource.capacityShots}`);
+          }
+          for (const pl of s.payloadProfiles) if (typeof pl.damageMultiplier !== 'number' || !(pl.damageMultiplier > 0)) fail(`${w} payload ${pl.id} damageMultiplier missing/invalid`);
+        }
       }
       if (s.resource.kind !== 'none') {
         for (const k2 of C.resourceLifecycle.fields) if (!(k2 in s.resource) || !(s.resource[k2] === null || typeof s.resource[k2] === 'boolean')) fail(`${w} resource.${k2} must be present as boolean or null`);
@@ -669,7 +701,7 @@ if (s2) {
     if (t.ign !== 3) fail(`2A expected 3 ignoresDR lightsabers, found ${t.ign}`);
     if (b.records.find((r) => r.canonicalName === 'Bowcaster').canonicalStats.range.mode !== 'unresolved') fail('2A Bowcaster range must remain unresolved');
     if (b.records.length !== 48 || t.present !== 35) fail('2A Core hard checkpoint must be 48 records / 35 present / 13 missing');
-    if (s2.schemaVersion !== 'weapon-authority-schema-v2.8') fail('schemaVersion must be weapon-authority-schema-v2.8');
+    if (s2.schemaVersion !== 'weapon-authority-schema-v2.9') fail('schemaVersion must be weapon-authority-schema-v2.9');
   }
   // Standalone book authorities (not merged into the rolling record unless the owner says so)
   for (const sb of s2.standaloneBookAuthorities || []) {
@@ -698,6 +730,37 @@ if (s2) {
       for (const n of ['DX-2 Disruptor Pistol', 'DXR-6 Disruptor Rifle']) if (f(n).canonicalStats.attackProfiles[0].firingConstraints?.firesOnAlternatingRounds !== true) fail(`2D ${n} fires only on alternating rounds`);
       for (const n of ['Bryar Rifle', 'CR-1 Blast Cannon', 'Flechette Launcher', 'Stokhli Spray Stick']) if (!same(f(n).qualityParameters.inaccurate.allowedBands, ['pointBlank', 'short', 'medium'])) fail(`2D ${n} Inaccurate must exclude Long only (Core/KOTOR definition)`);
       if (!['Guard Shoto', 'Lightsaber Pike'].every((n) => f(n).canonicalStats.defensiveInteractions.length === 1)) fail('2D Guard Shoto / Lightsaber Pike defensiveInteractions');
+    }
+    if (sb.phase === '2L') {
+      const f = (n) => sa.records.find((r) => r.canonicalName === n);
+      const p0 = (n) => f(n).canonicalStats.attackProfiles[0];
+      const same2 = (a, b2) => JSON.stringify(a) === JSON.stringify(b2);
+      if (sa.records.filter((r) => r.schemaFamily.branch === 'melee').length !== 2 || sa.records.filter((r) => r.schemaFamily.branch === 'ranged').length !== 2 || sa.counts.deliverySystemClaims !== 1 || sa.records.filter((r) => r.canonicalStats.stun.capability === 'native-stun').length !== 1) fail('2L 2 melee + 2 ranged, 1 delivery system, 1 native stun');
+      if (sa.records.some((r) => r.canonicalName === 'Lightwhip' || r.canonicalName === 'Saberdart Launcher')) fail('2L must not duplicate Lightwhip or add Saberdart Launcher');
+      const dd = f('Datadagger');
+      if (dd.repo.present || dd.canonicalStats.ammo !== null || dd.canonicalStats.baseDamage.formula !== '1d4' || dd.canonicalStats.damageType.types.join() !== 'piercing' || dd.operation.concealment?.equipmentBonus !== 5 || dd.operation.concealment?.skill !== 'Stealth' || dd.operation.concealment?.touchExaminerCircumstanceBonusDenied !== true || dd.canonicalStats.costCredits !== 500) fail('2L Datadagger missing, 1d4 Piercing, 500 cr, +5 Stealth concealment with no touch-examiner circumstance bonus, ammo null');
+      const lm = f('Light Concussion Missile Launcher'), lcs = lm.canonicalStats;
+      const pl = lcs.payloadProfiles.find((q) => q.id === 'light-concussion-missile');
+      if (lcs.baseDamage.mode !== 'ammunition' || lcs.damageType.mode !== 'varies' || !pl || pl.damage.formula !== '4d10' || pl.damageMultiplier !== 2 || pl.damageType.types.join() !== 'slashing' || pl.area.radiusSquares !== 2 || pl.costCredits !== 800 || pl.weightKg !== 10) fail('2L launcher base damage is payload-derived; the Light Concussion Missile payload owns 4d10 x2 Slashing, 2-square splash, 800 cr, 10 kg');
+      if (lm.qualities.inaccurate || p0('Light Concussion Missile Launcher').damageMultiplier !== 2 || p0('Light Concussion Missile Launcher').damage.formula !== '4d10') fail('2L launcher is not Inaccurate; its resolved missile profile mirrors the payload 4d10 x2');
+      const la = lcs.ammo;
+      if (la.type !== 'light-concussion-missile' || la.capacityShots !== null || la.consumesPerAttack !== 1 || la.damageSource !== 'loaded-ammo' || la.payloadDerived !== true || !same2(la.acceptedAmmoIdentities, ['Light Concussion Missile']) || lcs.resource.capacityShots !== null) fail('2L launcher ammo: missile type, one per attack, NO invented capacity, damage from loaded ammo');
+      if (!p0('Light Concussion Missile Launcher').conditionalModifiers.some((q) => q.value === -10) || lm.operation.rapidShotAllowed !== false || !p0('Light Concussion Missile Launcher').firingConstraints?.prohibitsMultiShotAbilities) fail('2L launcher -10 vs smaller than Huge and Rapid Shot prohibited');
+      const so = f('Sonic Stunner'), sc = so.canonicalStats;
+      if (sc.baseDamage.mode !== 'none' || sc.stun.capability !== 'native-stun' || sc.stun.damage?.formula !== '3d6' || sc.damageType.types.join() !== 'energy' || !sc.damageType.qualifiers.includes('sonic') || sc.ammo.status !== 'not-stated' || sc.ammo.type !== null || sc.ammo.capacityShots !== null || so.operation.targeting?.deafTargetsCanBeHarmed !== true || so.operation.audibility?.onlyTargetHearsAttack !== true) fail('2L Sonic Stunner native 3d6 stun only, Energy (sonic), ammo not stated (no invented type/capacity), audible only to the target, harms deaf targets');
+      const sw = f('Sith Sword'), ws = sw.canonicalStats;
+      if (ws.ammo !== null || ws.baseDamage.formula !== '1d8' || ws.costCredits !== 3000 || ws.damageType.types.join() !== 'slashing,piercing' || ws.damageType.mode !== 'or' || sw.qualities.ignoresDR || JSON.stringify(sw.canonicalStats).includes('19-20') || !ws.defensiveInteractions.some((q) => /does not ignore/.test(q.effect))) fail('2L Sith Sword 1d8 / 3,000 / Slashing OR Piercing, no 19-20 crit, lightsabers do not ignore its DR, ammo null');
+      if (!sw.proficiencyRules.some((q) => q.classificationForRules === 'lightsaber' && q.doesNotChangeBaseWeaponGroup === true) || sw.operation.darkSideEmpowerment?.cost?.ForcePoint !== 1 || sw.operation.darkSideEmpowerment?.activationAction !== 'swift' || sw.operation.darkSideEmpowerment?.darkSideScoreIncrease !== 1 || !p0('Sith Sword').triggeredEffects.some((q) => q.id === 'dark-side-empowerment' && q.sideEffect?.darkSideScoreIncrease === 1) || sw.weaponGroup !== 'Simple Weapon') fail('2L Sith Sword lightsaber classification for talents (group unchanged), 1 Force Point swift dark-side empowerment with +1 Dark Side Score');
+      const mel = ['Datadagger', 'Sith Sword'].every((n) => f(n).canonicalStats.ammo === null);
+      if (!mel) fail('2L pure melee weapons use ammo null');
+    }
+    if (sb.phase === '2I') {
+      const am = (n) => sa.records.find((r) => r.canonicalName === n).canonicalStats.ammo;
+      if (am('Energy Lance').scopedToAttackProfiles?.join() !== 'plasma-bolt' || am('Energy Lance').capacityShots !== 50 || am('SG-4 Blaster Rifle').mode !== 'multiple' || am('SG-4 Blaster Rifle').profiles.length !== 2) fail('2I ammo: Energy Lance scoped to plasma-bolt, SG-4 two ammo profiles');
+    }
+    if (sb.phase === '2J') {
+      const m = sa.records.find((r) => r.canonicalName === 'Micro Grenade Launcher').canonicalStats.ammo;
+      if (m.damageSource !== 'loaded-ammo-modified-by-weapon' || m.payloadDerived !== true || m.capacityShots !== 4) fail('2J Micro Grenade Launcher ammo: payload from loaded grenade, modified by the weapon, 4 grenades');
     }
     if (sb.phase === '2K') {
       const f = (n) => sa.records.find((r) => r.canonicalName === n);
@@ -912,6 +975,12 @@ if (s2) {
       if (g('Interchangeable Weapon System').canonicalStats.attackProfiles.length !== 3 || g('Blaster Rifle, Variable').canonicalStats.modeProfiles.length !== 3) fail('2C IWS / Variable rifle mode structure missing');
     }
     if (!errors.length) console.log(`Phase 2 standalone ${sb.phase} ${sa.book} OK: ${sa.records.length} records (${t.present} present, ${sa.records.length - t.present} missing)`);
+  }
+  if (AMMO_SEEN.size !== 209 || [...AMMO_OVERLAY.keys()].some((k) => !AMMO_SEEN.has(k))) fail(`v2.9 ammo overlay must cover exactly the 209 source claims (covered ${AMMO_SEEN.size})`);
+  else {
+    const ovm = [...AMMO_OVERLAY.values()];
+    const cnt = (fn) => ovm.filter(fn).length;
+    if (cnt((e) => e.ammo === null) !== 76 || cnt((e) => e.ammo?.status === 'established') !== 102 || cnt((e) => e.ammo?.status === 'self-contained') !== 20 || cnt((e) => e.ammo?.status === 'not-stated') !== 10 || cnt((e) => e.ammo?.status === 'partially-established') !== 1 || cnt((e) => e.ammo?.mode === 'multiple') !== 4) fail('v2.9 ammo overlay status totals (76 null / 102 established / 20 self-contained / 10 not-stated / 1 partial / 4 multiple)');
   }
   if (errors.length === e0) console.log(`Phase 2 weapons stat/schema OK: ${s2.books.map((b) => `${b.phase} ${b.book} (${b.records.length})`).join('; ')}`);
 }

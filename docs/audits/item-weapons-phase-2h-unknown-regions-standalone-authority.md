@@ -425,3 +425,4 @@ Claude should run the existing weapon-authority verifier and census check after 
 - Negative tests run (16 corruptions: Blastsword size, Contact Stunner stun, missing Electropole thrown profile, invented Survival Knife storage, Vibro-Saw DR, Concussion Reflex, Squib range, Stun Pistol lethal base / 10-square cap, Targeting 3d8 base, Verpine kinetic / pre-multiplication crit, Black-Powder reload action, Crossbow Accurate / hard max, count mismatch): all failed the verifier and were restored.
 - Schema v2.7 structural defaults added (`damageMultiplier: 1`, `conditionalRangeRules: []`, `resourceProfiles: []`).
 - Schema v2.8 (`damage.mode: "fixed"`) added to the contract; this book needed no change.
+- Schema v2.9: `canonicalStats.ammo` overlay applied from the planner ammo normalization and `payloadProfiles[].damageMultiplier` defaulted to 1; no published fact changed.

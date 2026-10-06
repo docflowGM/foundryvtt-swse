@@ -330,3 +330,4 @@ Acceptance checks:
 - The verifier enforces the Neural Inhibitor persistent poison cycle, 6-square Pulse Rifle / Deck Sweeper cones, Deck Sweeper priming, Electronet launcher-only 2x2 area with grab and recurring stun, Subrepeating Blaster autofire-only stock rule, Squib Battering Ram two operators and four power packs, Micro Grenade Launcher payload rules, Snare Rifle grab/escape/feat rules, and the Sniper -5 un-Aimed penalty without mandatory accessories.
 - Negative tests run (20 corruptions): all failed the verifier and were restored.
 - Schema v2.8 (`damage.mode: "fixed"`) added to the contract; this book needed no change.
+- Schema v2.9: `canonicalStats.ammo` overlay applied from the planner ammo normalization and `payloadProfiles[].damageMultiplier` defaulted to 1; no published fact changed.

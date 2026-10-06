@@ -341,7 +341,25 @@
           "tags": [],
           "rules": []
         },
-        "deliveryMethod": null
+        "deliveryMethod": null,
+        "ammo": {
+          "mode": "single",
+          "status": "established",
+          "required": true,
+          "type": "power-cell",
+          "capacityShots": 1,
+          "capacityUnit": "shots",
+          "consumesPerAttack": 1,
+          "reloadAction": null,
+          "replaceable": null,
+          "integrated": true,
+          "rechargeable": null,
+          "acceptedPayloadFamily": null,
+          "acceptedAmmoIdentities": [],
+          "damageSource": "weapon",
+          "payloadDerived": false,
+          "sourceStatus": "Internal power cell contains enough energy for one shot; replacement/recharge procedure not stated."
+        }
       },
       "qualities": {
         "accurate": false,
@@ -708,7 +726,8 @@
               "damage": null,
               "activation": null,
               "rangeRule": null
-            }
+            },
+            "damageMultiplier": 1
           }
         ],
         "objectDurability": null,
@@ -728,7 +747,29 @@
           "tags": [],
           "rules": []
         },
-        "deliveryMethod": null
+        "deliveryMethod": null,
+        "ammo": {
+          "mode": "single",
+          "status": "partially-established",
+          "required": true,
+          "type": "dart / compressed-air canister",
+          "capacityShots": null,
+          "capacityUnit": "darts",
+          "consumesPerAttack": 1,
+          "reloadAction": null,
+          "replaceable": null,
+          "integrated": null,
+          "rechargeable": null,
+          "acceptedPayloadFamily": "dart",
+          "acceptedAmmoIdentities": [
+            "dart",
+            "poison-carrying dart",
+            "Surveillance Tagger-compatible dart"
+          ],
+          "damageSource": "weapon",
+          "payloadDerived": false,
+          "sourceStatus": "Description establishes dart + compressed-air delivery but does not publish magazine/canister shot capacity."
+        }
       },
       "qualities": {
         "accurate": false,
@@ -1144,7 +1185,25 @@
           "tags": [],
           "rules": []
         },
-        "deliveryMethod": null
+        "deliveryMethod": null,
+        "ammo": {
+          "mode": "single",
+          "status": "established",
+          "required": true,
+          "type": "specialized-snare-cartridge",
+          "capacityShots": 2,
+          "capacityUnit": "shots",
+          "consumesPerAttack": 1,
+          "reloadAction": "replace-cartridge",
+          "replaceable": true,
+          "integrated": false,
+          "rechargeable": false,
+          "acceptedPayloadFamily": "snare-cartridge",
+          "acceptedAmmoIdentities": [],
+          "damageSource": "weapon",
+          "payloadDerived": false,
+          "sourceStatus": "Specialized cartridge holds 2 shots; replacement costs 25 credits and weighs 1 kg."
+        }
       },
       "qualities": {
         "accurate": false,
@@ -1506,7 +1565,25 @@
           "tags": [],
           "rules": []
         },
-        "deliveryMethod": null
+        "deliveryMethod": null,
+        "ammo": {
+          "mode": "single",
+          "status": "established",
+          "required": true,
+          "type": "exotic-gas-canister",
+          "capacityShots": 5,
+          "capacityUnit": "shots",
+          "consumesPerAttack": 1,
+          "reloadAction": "replace-canister",
+          "replaceable": true,
+          "integrated": false,
+          "rechargeable": false,
+          "acceptedPayloadFamily": null,
+          "acceptedAmmoIdentities": [],
+          "damageSource": "weapon",
+          "payloadDerived": false,
+          "sourceStatus": "Each exotic gas canister contains five shots and costs 1,000 credits."
+        }
       },
       "qualities": {
         "accurate": false,
@@ -1586,6 +1663,7 @@
   ],
   "schemaNormalization": {
     "version": "weapon-authority-schema-v2.8",
-    "change": "Introduces v2.8 (damage.mode \"fixed\"); no prior-book backfill. Structure-only aliases, no published fact changed: pistol range bands corrected to the canonical pistols profile (the package printed medium 41-100 / long 101-200 on 6 range objects; the contract profile is 41-60 / 61-80 and the book prints no pistol-range override); flagged for planner confirmation; Darter: poison payload given a stun object; the surveillance-tagger compatibility entry moved from payloadProfiles[] (damage/effect payloads only) to operation.surveillanceTaggerCompatibility. Additional aliases: Darter Short-range maximum stored as hardMaxSquares 40 (end of the pistol Short increment) with allowedBands derived from qualities (Darter is not Inaccurate); Snare Pistol escape-options triggeredEffect given an effect key. Xerrol Nightstinger weaponGroup \"Exotic Weapon\" differs from the Phase 1 \"Rifle\" and is recorded as a documented group override in the registry (Table 3-1 places it under Exotic Weapons)."
+    "change": "Introduces v2.8 (damage.mode \"fixed\"); no prior-book backfill. Structure-only aliases, no published fact changed: pistol range bands corrected to the canonical pistols profile (the package printed medium 41-100 / long 101-200 on 6 range objects; the contract profile is 41-60 / 61-80 and the book prints no pistol-range override); flagged for planner confirmation; Darter: poison payload given a stun object; the surveillance-tagger compatibility entry moved from payloadProfiles[] (damage/effect payloads only) to operation.surveillanceTaggerCompatibility. Additional aliases: Darter Short-range maximum stored as hardMaxSquares 40 (end of the pistol Short increment) with allowedBands derived from qualities (Darter is not Inaccurate); Snare Pistol escape-options triggeredEffect given an effect key. Xerrol Nightstinger weaponGroup \"Exotic Weapon\" differs from the Phase 1 \"Rifle\" and is recorded as a documented group override in the registry (Table 3-1 places it under Exotic Weapons).",
+    "v2.9": "weapon-authority-schema-v2.9: canonicalStats.ammo overlay applied from the planner ammo normalization (item-weapons-schema-v2.9-ammo-normalization.json); payloadProfiles[].damageMultiplier default 1. No published fact changed; resource/resourceProfiles kept."
   }
 }

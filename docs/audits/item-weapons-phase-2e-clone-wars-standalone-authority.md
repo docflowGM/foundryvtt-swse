@@ -440,3 +440,4 @@ Apply these changes to the **authority schema only**, then append the new fields
 - Schema v2.6 structural defaults added.
 - Schema v2.7 structural defaults added (`damageMultiplier: 1`, `conditionalRangeRules: []`, `resourceProfiles: []`).
 - Schema v2.8 (`damage.mode: "fixed"`) added to the contract; this book needed no change.
+- Schema v2.9: `canonicalStats.ammo` overlay applied from the planner ammo normalization and `payloadProfiles[].damageMultiplier` defaulted to 1; no published fact changed.

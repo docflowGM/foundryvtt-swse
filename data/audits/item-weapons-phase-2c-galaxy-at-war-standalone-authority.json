@@ -446,7 +446,25 @@
           "rules": []
         },
         "deliveryMethod": null,
-        "resourceProfiles": []
+        "resourceProfiles": [],
+        "ammo": {
+          "mode": "self-contained",
+          "status": "self-contained",
+          "required": false,
+          "type": null,
+          "capacityShots": null,
+          "capacityUnit": null,
+          "consumesPerAttack": null,
+          "reloadAction": null,
+          "replaceable": null,
+          "integrated": true,
+          "rechargeable": null,
+          "acceptedPayloadFamily": null,
+          "acceptedAmmoIdentities": [],
+          "damageSource": "weapon",
+          "payloadDerived": false,
+          "sourceStatus": "Ranged/thrown weapon does not load a separate ammunition store under this source claim."
+        }
       },
       "qualities": {
         "accurate": false,
@@ -707,7 +725,8 @@
           "rules": []
         },
         "deliveryMethod": null,
-        "resourceProfiles": []
+        "resourceProfiles": [],
+        "ammo": null
       },
       "qualities": {
         "accurate": false,
@@ -960,7 +979,8 @@
           "rules": []
         },
         "deliveryMethod": null,
-        "resourceProfiles": []
+        "resourceProfiles": [],
+        "ammo": null
       },
       "qualities": {
         "accurate": false,
@@ -1343,7 +1363,8 @@
           "rules": []
         },
         "deliveryMethod": null,
-        "resourceProfiles": []
+        "resourceProfiles": [],
+        "ammo": null
       },
       "qualities": {
         "accurate": false,
@@ -1605,7 +1626,8 @@
           "rules": []
         },
         "deliveryMethod": null,
-        "resourceProfiles": []
+        "resourceProfiles": [],
+        "ammo": null
       },
       "qualities": {
         "accurate": false,
@@ -2026,7 +2048,25 @@
           "rules": []
         },
         "deliveryMethod": null,
-        "resourceProfiles": []
+        "resourceProfiles": [],
+        "ammo": {
+          "mode": "single",
+          "status": "established",
+          "required": true,
+          "type": "energy-cell",
+          "capacityShots": null,
+          "capacityUnit": null,
+          "consumesPerAttack": null,
+          "reloadAction": null,
+          "replaceable": null,
+          "integrated": null,
+          "rechargeable": null,
+          "acceptedPayloadFamily": null,
+          "acceptedAmmoIdentities": [],
+          "damageSource": "weapon",
+          "payloadDerived": false,
+          "sourceStatus": "Ammunition/power type is source-certified; loaded shot capacity is not stated by this source claim."
+        }
       },
       "qualities": {
         "accurate": false,
@@ -2271,7 +2311,8 @@
           "rules": []
         },
         "deliveryMethod": null,
-        "resourceProfiles": []
+        "resourceProfiles": [],
+        "ammo": null
       },
       "qualities": {
         "accurate": false,
@@ -2704,7 +2745,55 @@
           "rules": []
         },
         "deliveryMethod": null,
-        "resourceProfiles": []
+        "resourceProfiles": [],
+        "ammo": {
+          "mode": "multiple",
+          "status": "established",
+          "required": true,
+          "type": null,
+          "capacityShots": null,
+          "capacityUnit": null,
+          "consumesPerAttack": null,
+          "reloadAction": null,
+          "replaceable": null,
+          "integrated": null,
+          "rechargeable": null,
+          "profiles": [
+            {
+              "id": "power-pack-shots",
+              "type": "power-pack",
+              "capacityShots": 50,
+              "capacityUnit": "shots",
+              "reloadAction": null,
+              "replaceable": null,
+              "integrated": null,
+              "rechargeable": null,
+              "usedByAttackProfiles": [],
+              "purpose": null,
+              "replacementCostCredits": null,
+              "replacementWeightKg": null
+            },
+            {
+              "id": "syntherope-lengths",
+              "type": "syntherope",
+              "capacityShots": 2,
+              "capacityUnit": "shots",
+              "reloadAction": null,
+              "replaceable": null,
+              "integrated": null,
+              "rechargeable": null,
+              "usedByAttackProfiles": [],
+              "purpose": null,
+              "replacementCostCredits": null,
+              "replacementWeightKg": null
+            }
+          ],
+          "acceptedPayloadFamily": null,
+          "acceptedAmmoIdentities": [],
+          "damageSource": "weapon",
+          "payloadDerived": false,
+          "sourceStatus": "Normalized from certified mixed resource sources."
+        }
       },
       "qualities": {
         "accurate": false,
@@ -3027,7 +3116,25 @@
           "rules": []
         },
         "deliveryMethod": null,
-        "resourceProfiles": []
+        "resourceProfiles": [],
+        "ammo": {
+          "mode": "single",
+          "status": "established",
+          "required": true,
+          "type": "power-pack",
+          "capacityShots": 250,
+          "capacityUnit": "shots",
+          "consumesPerAttack": null,
+          "reloadAction": null,
+          "replaceable": null,
+          "integrated": null,
+          "rechargeable": null,
+          "acceptedPayloadFamily": null,
+          "acceptedAmmoIdentities": [],
+          "damageSource": "weapon",
+          "payloadDerived": false,
+          "sourceStatus": null
+        }
       },
       "qualities": {
         "accurate": false,
@@ -3639,7 +3746,25 @@
           "rules": []
         },
         "deliveryMethod": null,
-        "resourceProfiles": []
+        "resourceProfiles": [],
+        "ammo": {
+          "mode": "single",
+          "status": "established",
+          "required": true,
+          "type": "power-pack",
+          "capacityShots": 500,
+          "capacityUnit": "shots",
+          "consumesPerAttack": null,
+          "reloadAction": null,
+          "replaceable": null,
+          "integrated": null,
+          "rechargeable": null,
+          "acceptedPayloadFamily": null,
+          "acceptedAmmoIdentities": [],
+          "damageSource": "weapon",
+          "payloadDerived": false,
+          "sourceStatus": null
+        }
       },
       "qualities": {
         "accurate": false,
@@ -4346,7 +4471,55 @@
           "rules": []
         },
         "deliveryMethod": null,
-        "resourceProfiles": []
+        "resourceProfiles": [],
+        "ammo": {
+          "mode": "multiple",
+          "status": "established",
+          "required": true,
+          "type": null,
+          "capacityShots": null,
+          "capacityUnit": null,
+          "consumesPerAttack": null,
+          "reloadAction": null,
+          "replaceable": null,
+          "integrated": null,
+          "rechargeable": null,
+          "profiles": [
+            {
+              "id": "power-pack-shots",
+              "type": "power-pack",
+              "capacityShots": 500,
+              "capacityUnit": "shots",
+              "reloadAction": null,
+              "replaceable": null,
+              "integrated": null,
+              "rechargeable": null,
+              "usedByAttackProfiles": [],
+              "purpose": null,
+              "replacementCostCredits": null,
+              "replacementWeightKg": null
+            },
+            {
+              "id": "syntherope-lengths",
+              "type": "syntherope",
+              "capacityShots": 2,
+              "capacityUnit": "shots",
+              "reloadAction": null,
+              "replaceable": null,
+              "integrated": null,
+              "rechargeable": null,
+              "usedByAttackProfiles": [],
+              "purpose": null,
+              "replacementCostCredits": null,
+              "replacementWeightKg": null
+            }
+          ],
+          "acceptedPayloadFamily": null,
+          "acceptedAmmoIdentities": [],
+          "damageSource": "weapon",
+          "payloadDerived": false,
+          "sourceStatus": "Normalized from certified mixed resource sources."
+        }
       },
       "qualities": {
         "accurate": false,
@@ -4659,7 +4832,25 @@
           "rules": []
         },
         "deliveryMethod": null,
-        "resourceProfiles": []
+        "resourceProfiles": [],
+        "ammo": {
+          "mode": "single",
+          "status": "established",
+          "required": true,
+          "type": "quarrel-magazine",
+          "capacityShots": 10,
+          "capacityUnit": "shots",
+          "consumesPerAttack": null,
+          "reloadAction": "move",
+          "replaceable": null,
+          "integrated": null,
+          "rechargeable": null,
+          "acceptedPayloadFamily": null,
+          "acceptedAmmoIdentities": [],
+          "damageSource": "weapon",
+          "payloadDerived": false,
+          "sourceStatus": null
+        }
       },
       "qualities": {
         "accurate": false,
@@ -4960,7 +5151,25 @@
           "rules": []
         },
         "deliveryMethod": null,
-        "resourceProfiles": []
+        "resourceProfiles": [],
+        "ammo": {
+          "mode": "single",
+          "status": "established",
+          "required": true,
+          "type": "flame-cannon-tank",
+          "capacityShots": 20,
+          "capacityUnit": "shots",
+          "consumesPerAttack": null,
+          "reloadAction": "full-round",
+          "replaceable": null,
+          "integrated": null,
+          "rechargeable": null,
+          "acceptedPayloadFamily": null,
+          "acceptedAmmoIdentities": [],
+          "damageSource": "weapon",
+          "payloadDerived": false,
+          "sourceStatus": null
+        }
       },
       "qualities": {
         "accurate": false,
@@ -5260,7 +5469,25 @@
           "rules": []
         },
         "deliveryMethod": null,
-        "resourceProfiles": []
+        "resourceProfiles": [],
+        "ammo": {
+          "mode": "self-contained",
+          "status": "self-contained",
+          "required": false,
+          "type": null,
+          "capacityShots": null,
+          "capacityUnit": null,
+          "consumesPerAttack": null,
+          "reloadAction": null,
+          "replaceable": null,
+          "integrated": true,
+          "rechargeable": null,
+          "acceptedPayloadFamily": null,
+          "acceptedAmmoIdentities": [],
+          "damageSource": "weapon",
+          "payloadDerived": false,
+          "sourceStatus": "Ranged/thrown weapon does not load a separate ammunition store under this source claim."
+        }
       },
       "qualities": {
         "accurate": false,
@@ -5558,7 +5785,25 @@
           "rules": []
         },
         "deliveryMethod": null,
-        "resourceProfiles": []
+        "resourceProfiles": [],
+        "ammo": {
+          "mode": "self-contained",
+          "status": "self-contained",
+          "required": false,
+          "type": null,
+          "capacityShots": null,
+          "capacityUnit": null,
+          "consumesPerAttack": null,
+          "reloadAction": null,
+          "replaceable": null,
+          "integrated": true,
+          "rechargeable": null,
+          "acceptedPayloadFamily": null,
+          "acceptedAmmoIdentities": [],
+          "damageSource": "weapon",
+          "payloadDerived": false,
+          "sourceStatus": "Ranged/thrown weapon does not load a separate ammunition store under this source claim."
+        }
       },
       "qualities": {
         "accurate": false,
@@ -6158,7 +6403,55 @@
           "rules": []
         },
         "deliveryMethod": null,
-        "resourceProfiles": []
+        "resourceProfiles": [],
+        "ammo": {
+          "mode": "multiple",
+          "status": "established",
+          "required": true,
+          "type": null,
+          "capacityShots": null,
+          "capacityUnit": null,
+          "consumesPerAttack": null,
+          "reloadAction": null,
+          "replaceable": null,
+          "integrated": null,
+          "rechargeable": null,
+          "profiles": [
+            {
+              "id": "power-pack-shots",
+              "type": "power-pack",
+              "capacityShots": null,
+              "capacityUnit": null,
+              "reloadAction": null,
+              "replaceable": null,
+              "integrated": null,
+              "rechargeable": null,
+              "usedByAttackProfiles": [],
+              "purpose": null,
+              "replacementCostCredits": null,
+              "replacementWeightKg": null
+            },
+            {
+              "id": "anti-armor-ammunition",
+              "type": "special-ammunition",
+              "capacityShots": null,
+              "capacityUnit": null,
+              "reloadAction": null,
+              "replaceable": null,
+              "integrated": null,
+              "rechargeable": null,
+              "usedByAttackProfiles": [],
+              "purpose": null,
+              "replacementCostCredits": 400,
+              "replacementWeightKg": 1
+            }
+          ],
+          "acceptedPayloadFamily": null,
+          "acceptedAmmoIdentities": [],
+          "damageSource": "weapon",
+          "payloadDerived": false,
+          "sourceStatus": "Normalized from certified mixed resource sources."
+        }
       },
       "qualities": {
         "accurate": false,
@@ -6461,7 +6754,25 @@
           "rules": []
         },
         "deliveryMethod": null,
-        "resourceProfiles": []
+        "resourceProfiles": [],
+        "ammo": {
+          "mode": "single",
+          "status": "established",
+          "required": true,
+          "type": "mortar-shell-magazine",
+          "capacityShots": 5,
+          "capacityUnit": "shots",
+          "consumesPerAttack": null,
+          "reloadAction": null,
+          "replaceable": null,
+          "integrated": null,
+          "rechargeable": null,
+          "acceptedPayloadFamily": null,
+          "acceptedAmmoIdentities": [],
+          "damageSource": "weapon",
+          "payloadDerived": false,
+          "sourceStatus": null
+        }
       },
       "qualities": {
         "accurate": false,
@@ -6769,7 +7080,25 @@
           "rules": []
         },
         "deliveryMethod": null,
-        "resourceProfiles": []
+        "resourceProfiles": [],
+        "ammo": {
+          "mode": "single",
+          "status": "established",
+          "required": true,
+          "type": "power-pack",
+          "capacityShots": 20,
+          "capacityUnit": "shots",
+          "consumesPerAttack": null,
+          "reloadAction": null,
+          "replaceable": null,
+          "integrated": null,
+          "rechargeable": null,
+          "acceptedPayloadFamily": null,
+          "acceptedAmmoIdentities": [],
+          "damageSource": "weapon",
+          "payloadDerived": false,
+          "sourceStatus": null
+        }
       },
       "qualities": {
         "accurate": false,
@@ -7073,7 +7402,25 @@
           "rules": []
         },
         "deliveryMethod": null,
-        "resourceProfiles": []
+        "resourceProfiles": [],
+        "ammo": {
+          "mode": "single",
+          "status": "established",
+          "required": true,
+          "type": "individual-shells",
+          "capacityShots": 10,
+          "capacityUnit": "shots",
+          "consumesPerAttack": null,
+          "reloadAction": null,
+          "replaceable": null,
+          "integrated": null,
+          "rechargeable": null,
+          "acceptedPayloadFamily": null,
+          "acceptedAmmoIdentities": [],
+          "damageSource": "weapon",
+          "payloadDerived": false,
+          "sourceStatus": null
+        }
       },
       "qualities": {
         "accurate": false,
@@ -7435,7 +7782,25 @@
           "rules": []
         },
         "deliveryMethod": null,
-        "resourceProfiles": []
+        "resourceProfiles": [],
+        "ammo": {
+          "mode": "single",
+          "status": "established",
+          "required": true,
+          "type": "power-generator",
+          "capacityShots": null,
+          "capacityUnit": null,
+          "consumesPerAttack": null,
+          "reloadAction": null,
+          "replaceable": null,
+          "integrated": null,
+          "rechargeable": null,
+          "acceptedPayloadFamily": null,
+          "acceptedAmmoIdentities": [],
+          "damageSource": "weapon",
+          "payloadDerived": false,
+          "sourceStatus": "Ammunition/power type is source-certified; loaded shot capacity is not stated by this source claim."
+        }
       },
       "qualities": {
         "accurate": false,
@@ -7749,7 +8114,25 @@
           "rules": []
         },
         "deliveryMethod": null,
-        "resourceProfiles": []
+        "resourceProfiles": [],
+        "ammo": {
+          "mode": "single",
+          "status": "established",
+          "required": true,
+          "type": "energy-cell",
+          "capacityShots": null,
+          "capacityUnit": null,
+          "consumesPerAttack": null,
+          "reloadAction": null,
+          "replaceable": null,
+          "integrated": null,
+          "rechargeable": null,
+          "acceptedPayloadFamily": null,
+          "acceptedAmmoIdentities": [],
+          "damageSource": "weapon",
+          "payloadDerived": false,
+          "sourceStatus": "Ammunition/power type is source-certified; loaded shot capacity is not stated by this source claim."
+        }
       },
       "qualities": {
         "accurate": false,
@@ -7812,6 +8195,7 @@
     "v2.4": "weapon-authority-schema-v2.4 structural defaults: range.hardMaxSquares, resource lifecycle keys, profile conditionalModifiers, record proficiencyRules, canonicalStats payloadProfiles/objectDurability/integratedAccessories; qualityParameters.inaccurate.allowedBands where only longAllowed was stated.",
     "v2.5": "weapon-authority-schema-v2.5 structural defaults: stun.activation, profile activationRequirements/triggeredEffects/modifierPolicy, canonicalStats wieldingRules/stateMachine/configurationStates/constructionRules/triggeredEffects, conditionalModifiers target vocabulary (attack->attackRoll, damage->damageRoll), defensiveInteractions id/effect.",
     "v2.6": "weapon-authority-schema-v2.6 structural defaults: profile criticalEffects [], record technologyClassification {tags:[],rules:[]}, deliveryMethod null, conditionalQualities standardized to {quality,state,when,scope,effect}.",
-    "v2.7": "weapon-authority-schema-v2.7 structural defaults: profile damageMultiplier 1, profile conditionalRangeRules [], record resourceProfiles []."
+    "v2.7": "weapon-authority-schema-v2.7 structural defaults: profile damageMultiplier 1, profile conditionalRangeRules [], record resourceProfiles [].",
+    "v2.9": "weapon-authority-schema-v2.9: canonicalStats.ammo overlay applied from the planner ammo normalization (item-weapons-schema-v2.9-ammo-normalization.json); payloadProfiles[].damageMultiplier default 1. No published fact changed; resource/resourceProfiles kept."
   }
 }

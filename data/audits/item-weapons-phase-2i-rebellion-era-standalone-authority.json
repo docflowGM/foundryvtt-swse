@@ -480,7 +480,28 @@
           "tags": [],
           "rules": []
         },
-        "deliveryMethod": null
+        "deliveryMethod": null,
+        "ammo": {
+          "mode": "single",
+          "status": "established",
+          "required": true,
+          "type": "power-pack",
+          "capacityShots": 50,
+          "capacityUnit": "shots",
+          "consumesPerAttack": 1,
+          "reloadAction": "replace-pack",
+          "replaceable": true,
+          "integrated": false,
+          "rechargeable": null,
+          "acceptedPayloadFamily": null,
+          "acceptedAmmoIdentities": [],
+          "damageSource": "weapon",
+          "payloadDerived": false,
+          "scopedToAttackProfiles": [
+            "plasma-bolt"
+          ],
+          "sourceStatus": "Only the ranged plasma-bolt mode uses a 50-shot power pack. The two energy cells are operating power for the weapon and remain canonicalStats.resource, not ammo."
+        }
       },
       "qualities": {
         "accurate": false,
@@ -762,7 +783,8 @@
           "tags": [],
           "rules": []
         },
-        "deliveryMethod": null
+        "deliveryMethod": null,
+        "ammo": null
       },
       "qualities": {
         "accurate": false,
@@ -1123,6 +1145,24 @@
         "deliveryMethod": {
           "physicalMethod": "thrown-by-hand",
           "rangeClassification": "thrown-weapon"
+        },
+        "ammo": {
+          "mode": "self-contained",
+          "status": "self-contained",
+          "required": false,
+          "type": null,
+          "capacityShots": null,
+          "capacityUnit": null,
+          "consumesPerAttack": null,
+          "reloadAction": null,
+          "replaceable": null,
+          "integrated": true,
+          "rechargeable": null,
+          "acceptedPayloadFamily": null,
+          "acceptedAmmoIdentities": [],
+          "damageSource": "weapon",
+          "payloadDerived": false,
+          "sourceStatus": "Ranged/thrown weapon does not load a separate ammunition store under this source claim."
         }
       },
       "qualities": {
@@ -1467,7 +1507,8 @@
           "tags": [],
           "rules": []
         },
-        "deliveryMethod": null
+        "deliveryMethod": null,
+        "ammo": null
       },
       "qualities": {
         "accurate": false,
@@ -1907,7 +1948,25 @@
           "tags": [],
           "rules": []
         },
-        "deliveryMethod": null
+        "deliveryMethod": null,
+        "ammo": {
+          "mode": "single",
+          "status": "established",
+          "required": true,
+          "type": "power-pack",
+          "capacityShots": 100,
+          "capacityUnit": "shots",
+          "consumesPerAttack": null,
+          "reloadAction": "replace-pack",
+          "replaceable": true,
+          "integrated": null,
+          "rechargeable": null,
+          "acceptedPayloadFamily": null,
+          "acceptedAmmoIdentities": [],
+          "damageSource": "weapon",
+          "payloadDerived": false,
+          "sourceStatus": null
+        }
       },
       "qualities": {
         "accurate": true,
@@ -2297,7 +2356,25 @@
           "tags": [],
           "rules": []
         },
-        "deliveryMethod": null
+        "deliveryMethod": null,
+        "ammo": {
+          "mode": "single",
+          "status": "established",
+          "required": true,
+          "type": "arakyd-3t3-missile",
+          "capacityShots": 6,
+          "capacityUnit": "shots",
+          "consumesPerAttack": null,
+          "reloadAction": "full-round",
+          "replaceable": true,
+          "integrated": null,
+          "rechargeable": null,
+          "acceptedPayloadFamily": "missile",
+          "acceptedAmmoIdentities": [],
+          "damageSource": "loaded-ammo",
+          "payloadDerived": true,
+          "sourceStatus": null
+        }
       },
       "qualities": {
         "accurate": false,
@@ -2789,7 +2866,25 @@
           "tags": [],
           "rules": []
         },
-        "deliveryMethod": null
+        "deliveryMethod": null,
+        "ammo": {
+          "mode": "single",
+          "status": "established",
+          "required": true,
+          "type": "miniature-proton-torpedo",
+          "capacityShots": 4,
+          "capacityUnit": "shots",
+          "consumesPerAttack": null,
+          "reloadAction": null,
+          "replaceable": true,
+          "integrated": null,
+          "rechargeable": null,
+          "acceptedPayloadFamily": "torpedo",
+          "acceptedAmmoIdentities": [],
+          "damageSource": "loaded-ammo",
+          "payloadDerived": true,
+          "sourceStatus": null
+        }
       },
       "qualities": {
         "accurate": false,
@@ -3157,7 +3252,25 @@
           "tags": [],
           "rules": []
         },
-        "deliveryMethod": null
+        "deliveryMethod": null,
+        "ammo": {
+          "mode": "single",
+          "status": "established",
+          "required": true,
+          "type": "power-pack",
+          "capacityShots": 50,
+          "capacityUnit": "shots",
+          "consumesPerAttack": null,
+          "reloadAction": "replace-pack",
+          "replaceable": true,
+          "integrated": null,
+          "rechargeable": null,
+          "acceptedPayloadFamily": null,
+          "acceptedAmmoIdentities": [],
+          "damageSource": "weapon",
+          "payloadDerived": false,
+          "sourceStatus": null
+        }
       },
       "qualities": {
         "accurate": false,
@@ -3697,7 +3810,47 @@
           "tags": [],
           "rules": []
         },
-        "deliveryMethod": null
+        "deliveryMethod": null,
+        "ammo": {
+          "mode": "multiple",
+          "status": "established",
+          "required": true,
+          "type": null,
+          "capacityShots": null,
+          "capacityUnit": null,
+          "consumesPerAttack": null,
+          "reloadAction": null,
+          "replaceable": null,
+          "integrated": null,
+          "rechargeable": null,
+          "profiles": [
+            {
+              "id": "blaster-power-pack",
+              "type": "power-pack",
+              "capacityShots": 50,
+              "capacityUnit": "shots",
+              "reloadAction": "replace-pack",
+              "usedByAttackProfiles": [
+                "blaster"
+              ]
+            },
+            {
+              "id": "harpoon-round",
+              "type": "harpoon-round",
+              "capacityShots": 1,
+              "capacityUnit": "harpoons",
+              "reloadAction": "swift",
+              "usedByAttackProfiles": [
+                "harpoon"
+              ]
+            }
+          ],
+          "acceptedPayloadFamily": null,
+          "acceptedAmmoIdentities": [],
+          "damageSource": "weapon",
+          "payloadDerived": false,
+          "sourceStatus": "Two independent attack ammunition systems: 50-shot blaster power pack and one loaded harpoon round reloaded as a swift action."
+        }
       },
       "qualities": {
         "accurate": false,
@@ -4035,7 +4188,25 @@
           "tags": [],
           "rules": []
         },
-        "deliveryMethod": null
+        "deliveryMethod": null,
+        "ammo": {
+          "mode": "single",
+          "status": "established",
+          "required": true,
+          "type": "flechette-canister",
+          "capacityShots": 4,
+          "capacityUnit": "shots",
+          "consumesPerAttack": null,
+          "reloadAction": "replace-canister",
+          "replaceable": true,
+          "integrated": null,
+          "rechargeable": null,
+          "acceptedPayloadFamily": null,
+          "acceptedAmmoIdentities": [],
+          "damageSource": "weapon",
+          "payloadDerived": false,
+          "sourceStatus": null
+        }
       },
       "qualities": {
         "accurate": false,
@@ -4382,6 +4553,24 @@
         "deliveryMethod": {
           "physicalMethod": "thrown-by-hand",
           "rangeClassification": "thrown-weapon"
+        },
+        "ammo": {
+          "mode": "self-contained",
+          "status": "self-contained",
+          "required": false,
+          "type": null,
+          "capacityShots": null,
+          "capacityUnit": null,
+          "consumesPerAttack": null,
+          "reloadAction": null,
+          "replaceable": null,
+          "integrated": true,
+          "rechargeable": null,
+          "acceptedPayloadFamily": null,
+          "acceptedAmmoIdentities": [],
+          "damageSource": "weapon",
+          "payloadDerived": false,
+          "sourceStatus": "Ranged/thrown weapon does not load a separate ammunition store under this source claim."
         }
       },
       "qualities": {
@@ -4770,6 +4959,24 @@
         "deliveryMethod": {
           "physicalMethod": "thrown-by-hand",
           "rangeClassification": "thrown-weapon"
+        },
+        "ammo": {
+          "mode": "self-contained",
+          "status": "self-contained",
+          "required": false,
+          "type": null,
+          "capacityShots": null,
+          "capacityUnit": null,
+          "consumesPerAttack": null,
+          "reloadAction": null,
+          "replaceable": null,
+          "integrated": true,
+          "rechargeable": null,
+          "acceptedPayloadFamily": null,
+          "acceptedAmmoIdentities": [],
+          "damageSource": "weapon",
+          "payloadDerived": false,
+          "sourceStatus": "Ranged/thrown weapon does not load a separate ammunition store under this source claim."
         }
       },
       "qualities": {
@@ -4848,6 +5055,7 @@
   ],
   "schemaNormalization": {
     "version": "weapon-authority-schema-v2.7",
-    "change": "Introduces v2.7 (damageMultiplier, conditionalRangeRules, resourceProfiles). Structure-only aliases, no published fact changed: Axe/Gaderffii weaponGroup \"Simple Melee Weapon\" -> \"Simple Weapon\" (Phase 1 group vocabulary; branch/subcategory still melee/simple); Concussion Grenade descriptionPage 48 -> 49 to match certified Phase 1L-era record (the package lists 48; flagged for planner confirmation); Gaderffii modeProfile: attackProfileId null (covers both end profiles via attackProfileIds), action -> switchAction; Siang Lance bayonet activationRequirements type \"choice\"."
+    "change": "Introduces v2.7 (damageMultiplier, conditionalRangeRules, resourceProfiles). Structure-only aliases, no published fact changed: Axe/Gaderffii weaponGroup \"Simple Melee Weapon\" -> \"Simple Weapon\" (Phase 1 group vocabulary; branch/subcategory still melee/simple); Concussion Grenade descriptionPage 48 -> 49 to match certified Phase 1L-era record (the package lists 48; flagged for planner confirmation); Gaderffii modeProfile: attackProfileId null (covers both end profiles via attackProfileIds), action -> switchAction; Siang Lance bayonet activationRequirements type \"choice\".",
+    "v2.9": "weapon-authority-schema-v2.9: canonicalStats.ammo overlay applied from the planner ammo normalization (item-weapons-schema-v2.9-ammo-normalization.json); payloadProfiles[].damageMultiplier default 1. No published fact changed; resource/resourceProfiles kept."
   }
 }

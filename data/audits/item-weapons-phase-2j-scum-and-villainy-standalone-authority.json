@@ -372,7 +372,25 @@
           "tags": [],
           "rules": []
         },
-        "deliveryMethod": null
+        "deliveryMethod": null,
+        "ammo": {
+          "mode": "unknown",
+          "status": "not-stated",
+          "required": null,
+          "type": null,
+          "capacityShots": null,
+          "capacityUnit": "shots",
+          "consumesPerAttack": null,
+          "reloadAction": null,
+          "replaceable": null,
+          "integrated": null,
+          "rechargeable": null,
+          "acceptedPayloadFamily": null,
+          "acceptedAmmoIdentities": [],
+          "damageSource": "weapon",
+          "payloadDerived": false,
+          "sourceStatus": "Weapon is described as powered; ammunition/power capacity is not specified by this book."
+        }
       },
       "qualities": {
         "accurate": false,
@@ -658,7 +676,25 @@
           "tags": [],
           "rules": []
         },
-        "deliveryMethod": null
+        "deliveryMethod": null,
+        "ammo": {
+          "mode": "single",
+          "status": "established",
+          "required": true,
+          "type": "power-pack",
+          "capacityShots": 5,
+          "capacityUnit": "shots",
+          "consumesPerAttack": null,
+          "reloadAction": "replace-pack",
+          "replaceable": true,
+          "integrated": false,
+          "rechargeable": null,
+          "acceptedPayloadFamily": null,
+          "acceptedAmmoIdentities": [],
+          "damageSource": "weapon",
+          "payloadDerived": false,
+          "sourceStatus": null
+        }
       },
       "qualities": {
         "accurate": false,
@@ -968,7 +1004,25 @@
           "tags": [],
           "rules": []
         },
-        "deliveryMethod": null
+        "deliveryMethod": null,
+        "ammo": {
+          "mode": "single",
+          "status": "established",
+          "required": true,
+          "type": "power-pack",
+          "capacityShots": 5,
+          "capacityUnit": "shots",
+          "consumesPerAttack": null,
+          "reloadAction": "replace-pack",
+          "replaceable": true,
+          "integrated": false,
+          "rechargeable": null,
+          "acceptedPayloadFamily": null,
+          "acceptedAmmoIdentities": [],
+          "damageSource": "weapon",
+          "payloadDerived": false,
+          "sourceStatus": null
+        }
       },
       "qualities": {
         "accurate": false,
@@ -1323,6 +1377,24 @@
           "physicalMethod": "grenade-launcher-fired-ammunition",
           "requiredLauncher": "grenade-launcher",
           "rangeClassification": "launcher-derived"
+        },
+        "ammo": {
+          "mode": "self-contained-payload",
+          "status": "established",
+          "required": false,
+          "type": "electronet",
+          "capacityShots": 1,
+          "capacityUnit": "electronet",
+          "consumesPerAttack": 1,
+          "reloadAction": "load-into-grenade-launcher",
+          "replaceable": false,
+          "integrated": false,
+          "rechargeable": false,
+          "acceptedPayloadFamily": null,
+          "acceptedAmmoIdentities": [],
+          "damageSource": "weapon",
+          "payloadDerived": false,
+          "sourceStatus": "Electronet is itself Heavy Weapon ammunition and is consumed as the projectile; it is not a launcher with its own ammo store."
         }
       },
       "qualities": {
@@ -1669,7 +1741,25 @@
           "tags": [],
           "rules": []
         },
-        "deliveryMethod": null
+        "deliveryMethod": null,
+        "ammo": {
+          "mode": "single",
+          "status": "established",
+          "required": true,
+          "type": "power-pack",
+          "capacityShots": 50,
+          "capacityUnit": "shots",
+          "consumesPerAttack": null,
+          "reloadAction": "replace-pack",
+          "replaceable": true,
+          "integrated": false,
+          "rechargeable": null,
+          "acceptedPayloadFamily": null,
+          "acceptedAmmoIdentities": [],
+          "damageSource": "weapon",
+          "payloadDerived": false,
+          "sourceStatus": null
+        }
       },
       "qualities": {
         "accurate": false,
@@ -2027,7 +2117,25 @@
           "tags": [],
           "rules": []
         },
-        "deliveryMethod": null
+        "deliveryMethod": null,
+        "ammo": {
+          "mode": "single",
+          "status": "established",
+          "required": true,
+          "type": "power-pack",
+          "capacityShots": null,
+          "capacityUnit": null,
+          "consumesPerAttack": null,
+          "reloadAction": null,
+          "replaceable": true,
+          "integrated": false,
+          "rechargeable": null,
+          "acceptedPayloadFamily": null,
+          "acceptedAmmoIdentities": [],
+          "damageSource": "weapon",
+          "payloadDerived": false,
+          "sourceStatus": "Ammunition/power type is source-certified; loaded shot capacity is not stated by this source claim."
+        }
       },
       "qualities": {
         "accurate": false,
@@ -2388,7 +2496,8 @@
                 "trigger": "successful-hit",
                 "diceCountDelta": -2
               }
-            ]
+            ],
+            "damageMultiplier": 1
           }
         ],
         "objectDurability": null,
@@ -2422,7 +2531,25 @@
           "tags": [],
           "rules": []
         },
-        "deliveryMethod": null
+        "deliveryMethod": null,
+        "ammo": {
+          "mode": "single",
+          "status": "established",
+          "required": true,
+          "type": "micro-grenade",
+          "capacityShots": 4,
+          "capacityUnit": "shots",
+          "consumesPerAttack": null,
+          "reloadAction": "full-round-action",
+          "replaceable": true,
+          "integrated": false,
+          "rechargeable": null,
+          "acceptedPayloadFamily": "micro-grenade",
+          "acceptedAmmoIdentities": [],
+          "damageSource": "loaded-ammo-modified-by-weapon",
+          "payloadDerived": true,
+          "sourceStatus": "Holds four micro grenades; full-round reload. Loaded grenade supplies normal payload rules, with launcher reducing successful-hit damage by 2 dice."
+        }
       },
       "qualities": {
         "accurate": false,
@@ -2864,7 +2991,25 @@
           "tags": [],
           "rules": []
         },
-        "deliveryMethod": null
+        "deliveryMethod": null,
+        "ammo": {
+          "mode": "single",
+          "status": "established",
+          "required": true,
+          "type": "specialized-snare-cartridge",
+          "capacityShots": 5,
+          "capacityUnit": "shots",
+          "consumesPerAttack": null,
+          "reloadAction": "replace-cartridge",
+          "replaceable": true,
+          "integrated": false,
+          "rechargeable": null,
+          "acceptedPayloadFamily": null,
+          "acceptedAmmoIdentities": [],
+          "damageSource": "weapon",
+          "payloadDerived": false,
+          "sourceStatus": null
+        }
       },
       "qualities": {
         "accurate": false,
@@ -3201,7 +3346,25 @@
           "tags": [],
           "rules": []
         },
-        "deliveryMethod": null
+        "deliveryMethod": null,
+        "ammo": {
+          "mode": "single",
+          "status": "established",
+          "required": true,
+          "type": "power-pack",
+          "capacityShots": 10,
+          "capacityUnit": "shots",
+          "consumesPerAttack": null,
+          "reloadAction": "replace-pack",
+          "replaceable": true,
+          "integrated": false,
+          "rechargeable": null,
+          "acceptedPayloadFamily": null,
+          "acceptedAmmoIdentities": [],
+          "damageSource": "weapon",
+          "payloadDerived": false,
+          "sourceStatus": null
+        }
       },
       "qualities": {
         "accurate": true,
@@ -3290,6 +3453,7 @@
   ],
   "schemaNormalization": {
     "version": "weapon-authority-schema-v2.7",
-    "change": "No schema bump. Structure-only aliases to existing v2.7 shapes, no published fact changed: Neural Inhibitor: range.allowedBands null (no printed range profile; the Inaccurate band set stays in qualityParameters), triggeredEffects entry given an effect key; Pulse Rifle / Deck Sweeper: fixed-maximum range maxSquares 6 (hardMaxSquares kept); Deck Sweeper onMiss half-stun-damage -> half-damage with onMissDetail; Electronet weaponGroup case aligned to Phase 1 \"Heavy Weapon (Ammunition)\"; Subrepeating Blaster: retractable-stock sourceRule; firingConstraints completed with the shared fields (autofireOnly/braceRule kept); Sniper Blaster Rifle: bipod/targeting scope are commonly mounted, not source-integrated, so they leave integratedAccessories[] (contract: never add commonly mounted accessories) and stay in operation.commonAccessoriesNotIncludedInListedCost; Squib Battering Ram two-operator wieldingRule given a condition; Snare Rifle escape-options triggeredEffect given an effect key; Micro Grenade Launcher: stun payload-derived -> ammunition-dependent/ammunition; configurationStates attackUsable (standalone true, rifle-mounted null = not stated); conditionalDamageProfile operation add-dice-count -> add-dice (detail kept)."
+    "change": "No schema bump. Structure-only aliases to existing v2.7 shapes, no published fact changed: Neural Inhibitor: range.allowedBands null (no printed range profile; the Inaccurate band set stays in qualityParameters), triggeredEffects entry given an effect key; Pulse Rifle / Deck Sweeper: fixed-maximum range maxSquares 6 (hardMaxSquares kept); Deck Sweeper onMiss half-stun-damage -> half-damage with onMissDetail; Electronet weaponGroup case aligned to Phase 1 \"Heavy Weapon (Ammunition)\"; Subrepeating Blaster: retractable-stock sourceRule; firingConstraints completed with the shared fields (autofireOnly/braceRule kept); Sniper Blaster Rifle: bipod/targeting scope are commonly mounted, not source-integrated, so they leave integratedAccessories[] (contract: never add commonly mounted accessories) and stay in operation.commonAccessoriesNotIncludedInListedCost; Squib Battering Ram two-operator wieldingRule given a condition; Snare Rifle escape-options triggeredEffect given an effect key; Micro Grenade Launcher: stun payload-derived -> ammunition-dependent/ammunition; configurationStates attackUsable (standalone true, rifle-mounted null = not stated); conditionalDamageProfile operation add-dice-count -> add-dice (detail kept).",
+    "v2.9": "weapon-authority-schema-v2.9: canonicalStats.ammo overlay applied from the planner ammo normalization (item-weapons-schema-v2.9-ammo-normalization.json); payloadProfiles[].damageMultiplier default 1. No published fact changed; resource/resourceProfiles kept."
   }
 }
