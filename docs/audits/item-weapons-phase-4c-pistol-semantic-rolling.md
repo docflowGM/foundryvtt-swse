@@ -1,6 +1,6 @@
-# Phase 4C — Pistol Semantic Tags + Rule Selectors — Rolling Planner Authority
+# Phase 4C — Pistol Semantic Tags + Rule Selectors — Complete Planner Authority
 
-**Status:** `WEAPON_TAG_PHASE_4C_PISTOL_ROUND_2_PLANNER_ADJUDICATED`
+**Status:** `WEAPON_TAG_PHASE_4C_PISTOL_COMPLETE_PLANNER_AUTHORITY`
 
 ## Architecture
 
@@ -10,7 +10,7 @@ Pistols use three deliberately separate layers:
 2. **Rule selectors** — exact weapon / family / group / proficiency matching for feats, talents, classes, and suggestion logic.
 3. **Recommendation comparison data** — damage, capacity, stun, range, concealment, multiattack compatibility, and action-economy differences relative to the standard Blaster Pistol.
 
-**High damage, low damage, high capacity, low capacity, and similar comparisons are not semantic tags.**
+**High damage, low damage, high capacity, low capacity, autofire, ion, and similar raw weapon properties do not automatically become semantic tags when the certified vocabulary lacks those tags.**
 
 ## Pistol baseline
 
@@ -22,18 +22,18 @@ Pistols use three deliberately separate layers:
 - Rate of fire: **S**
 - Baseline semantic role: `pistol`, `ranged`, `offense_ranged`, `stun`, `nonlethal`
 
-## Census and progress
+## Completion
 
 - Canonical Pistol identities: **30**
 - Repo-present: **30**
 - Repo-missing: **0**
-- Round 1 adjudicated: **10**
-- Round 2 adjudicated: **10**
-- Total adjudicated: **20 / 30**
-- Remaining: **10**
-- Total final-tag assignments: **113**
-- Distinct final tags used: **29**
-- Next identity: **Needler**
+- Round 1: **10**
+- Round 2: **10**
+- Round 3: **10**
+- **Total adjudicated: 30 / 30**
+- Total final-tag assignments: **164**
+- Distinct final tags used: **34**
+- Production mutation remains **unauthorized**.
 
 ## Rulings
 
@@ -872,13 +872,436 @@ Pistols use three deliberately separate layers:
 
 - `STRUCTURED_MECHANICS_PLUS_SEMANTIC` — The +2 DR bonus applies to the weapon object itself, not the wielder. durability and damage_reduction capture the concept while the target of the bonus remains explicit in structured data.
 
-## Verification / implementation contract
+### 21. Needler
 
+- Identity: `weapon-needler`
+- Source: Knights of the Old Republic Campaign Guide — description p.69, stat table p.68
+- Canonical mechanic: 2d4 piercing dart pistol with a 10-shot clip. It is Inaccurate and cannot attack at Long range. Its ammunition may optionally be laced with contact poison.
+- Shared tags: `pistol`, `ranged`
+- Advantage/mechanic tags: `offense_ranged`, `poison`
+- Tradeoff tags: none
+- **Final tags:** `pistol`, `ranged`, `offense_ranged`, `poison`
+
+**Rule selectors**
+
+- Exact: `weapon:weapon-needler`
+- Group: `weapon-group:pistol`
+- Proficiency: `weapon-proficiency:pistols`
+- Families: `weapon-family:projectile-pistol`, `weapon-family:needler`, `weapon-family:poison-delivery`
+
+**Relative to standard Blaster Pistol**
+
+- Damage: `2d4` — **LOWER**
+- Capacity: `10` / `ESTABLISHED` — **MUCH_LOWER**
+- Stun: **NONE**
+- Range: **WORSE**
+- Concealment: **BASELINE**
+- Multiattack compatibility: **NORMAL**
+- Action economy: **BASELINE**
+- Recommendation fit: Poison-delivery pistol for builds that want contact-toxin synergy; weak as a general-purpose sidearm because of low base damage, 10-shot capacity, and no Long-range attacks.
+
+**Tag rationale**
+
+- `pistol` — Canonical Pistol-group weapon.
+- `ranged` — It makes ranged pistol attacks.
+- `offense_ranged` — It deals direct piercing damage at range.
+- `poison` — Its ammunition can explicitly be laced with contact poison, making the weapon a valid poison-delivery platform.
+
+**Structured / unrepresented mechanics**
+
+- `CONDITIONAL_CAPABILITY` — Poison is optional ammunition treatment, not inherent to every shot. The poison semantic tag means the weapon supports poison delivery; it must not imply the weapon is always poisoned.
+
+### 22. Pulse-Wave Pistol
+
+- Identity: `weapon-pulse-wave-pistol`
+- Source: Knights of the Old Republic Campaign Guide — description p.69, stat table p.68
+- Canonical mechanic: 2d6 energy pistol with a 100-shot power pack. It gains +4 equipment bonus to damage at point-blank range but is Inaccurate and cannot attack at Long range.
+- Shared tags: `pistol`, `ranged`
+- Advantage/mechanic tags: `offense_ranged`, `damage_bonus`, `burst_damage`
+- Tradeoff tags: none
+- **Final tags:** `pistol`, `ranged`, `offense_ranged`, `damage_bonus`, `burst_damage`
+
+**Rule selectors**
+
+- Exact: `weapon:weapon-pulse-wave-pistol`
+- Group: `weapon-group:pistol`
+- Proficiency: `weapon-proficiency:pistols`
+- Families: `weapon-family:pulse-wave`, `weapon-family:pulse-wave-pistol`
+
+**Relative to standard Blaster Pistol**
+
+- Damage: `2d6 (+4 equipment at point-blank)` — **LOWER_BASE_CLOSE_RANGE_BONUS**
+- Capacity: `100` / `ESTABLISHED` — **SAME**
+- Stun: **NONE**
+- Range: **WORSE**
+- Concealment: **BASELINE**
+- Multiattack compatibility: **NORMAL**
+- Action economy: **BASELINE**
+- Recommendation fit: Close-range damage specialist: recommend for point-blank pistol builds that can exploit the +4 damage bonus; de-prioritize for long-range or stun-oriented characters.
+
+**Tag rationale**
+
+- `pistol` — Canonical Pistol-group weapon.
+- `ranged` — It makes ranged pistol attacks.
+- `offense_ranged` — It deals direct ranged energy damage.
+- `damage_bonus` — At point-blank range it explicitly gains +4 equipment bonus to damage.
+- `burst_damage` — Its tactical identity is concentrated extra damage at close range rather than improved long-range performance.
+
+**Structured / unrepresented mechanics**
+
+- `STRUCTURED_CONDITIONAL_MODIFIER` — +4 equipment bonus applies only at point-blank range. Exact bonus type, amount, and range condition remain structured data.
+
+### 23. Ripper
+
+- Identity: `weapon-ripper`
+- Source: Knights of the Old Republic Campaign Guide — description p.69, stat table p.68
+- Canonical mechanic: 2d4 shrapnel pistol with a 10-shot clip. If damage exceeds the target's Damage Threshold and moves it at least 1 step down the condition track, embedded shrapnel immediately deals an additional 1d4 damage. It is Inaccurate and cannot attack at Long range.
+- Shared tags: `pistol`, `ranged`
+- Advantage/mechanic tags: `offense_ranged`, `damage_threshold`, `damage_bonus`, `burst_damage`
+- Tradeoff tags: none
+- **Final tags:** `pistol`, `ranged`, `offense_ranged`, `damage_threshold`, `damage_bonus`, `burst_damage`
+
+**Rule selectors**
+
+- Exact: `weapon:weapon-ripper`
+- Group: `weapon-group:pistol`
+- Proficiency: `weapon-proficiency:pistols`
+- Families: `weapon-family:projectile-pistol`, `weapon-family:shrapnel-pistol`, `weapon-family:ripper`
+
+**Relative to standard Blaster Pistol**
+
+- Damage: `2d4 + conditional 1d4` — **LOWER_BASE_CONDITIONAL_EXTRA**
+- Capacity: `10` / `ESTABLISHED` — **MUCH_LOWER**
+- Stun: **NONE**
+- Range: **WORSE**
+- Concealment: **BASELINE**
+- Multiattack compatibility: **NORMAL**
+- Action economy: **BASELINE**
+- Recommendation fit: Threshold-breaking pistol for builds that already push targets down the condition track; mediocre against high-threshold targets where the bonus 1d4 rarely triggers.
+
+**Tag rationale**
+
+- `pistol` — Canonical Pistol-group weapon.
+- `ranged` — It makes ranged pistol attacks.
+- `offense_ranged` — It deals direct ranged physical damage.
+- `damage_threshold` — Its special effect explicitly keys off exceeding the target's Damage Threshold.
+- `damage_bonus` — Meeting the threshold/condition trigger immediately adds 1d4 damage.
+- `burst_damage` — A successful threshold-breaking hit produces a second immediate damage packet.
+
+**Structured / unrepresented mechanics**
+
+- `STRUCTURED_TRIGGER` — Bonus 1d4 requires both exceeding Damage Threshold and moving the target at least 1 condition-track step. There is no certified condition_track semantic tag; preserve the full trigger structurally.
+
+### 24. Snare Pistol
+
+- Identity: `weapon-snare-pistol`
+- Source: Galaxy of Intrigue — description p.64, stat table p.65
+- Canonical mechanic: Two-shot capture pistol with native 1d4 stun damage. It can initiate a grab or grapple at up to Short range; trapped targets escape with DC 15 Acrobatics or DC 20 Strength. Pin and Trip work with it, while Crush, Throw, and Bone Crusher do not.
+- Shared tags: `pistol`, `ranged`
+- Advantage/mechanic tags: `stun`, `nonlethal`, `grab`, `grapple`, `restrain`, `control`, `battlefield_control`
+- Tradeoff tags: none
+- **Final tags:** `pistol`, `ranged`, `stun`, `nonlethal`, `grab`, `grapple`, `restrain`, `control`, `battlefield_control`
+
+**Rule selectors**
+
+- Exact: `weapon:weapon-snare-pistol`
+- Group: `weapon-group:pistol`
+- Proficiency: `weapon-proficiency:pistols`
+- Families: `weapon-family:snare-weapon`, `weapon-family:snare-pistol`, `weapon-family:capture-weapon`
+- Explicit ability interactions:
+  - feat **Pin** → `SUPPORTED`
+  - feat **Trip** → `SUPPORTED`
+  - feat **Crush** → `PROHIBITED`
+  - feat **Throw** → `PROHIBITED`
+  - feat **Bone Crusher** → `PROHIBITED`
+
+**Relative to standard Blaster Pistol**
+
+- Damage: `native 1d4 stun only` — **MUCH_LOWER_NONLETHAL_ONLY**
+- Capacity: `2` / `ESTABLISHED` — **EXTREMELY_LOWER**
+- Stun: **NATIVE_CAPTURE_PROFILE**
+- Range: **WORSE**
+- Concealment: **BASELINE**
+- Multiattack compatibility: **CAPACITY_LIMITED**
+- Action economy: **BASELINE**
+- Recommendation fit: Dedicated capture/control sidearm. Strong recommendation for bounty hunters, law enforcement, grapplers, or nonlethal builds; poor choice when raw damage or sustained fire is the priority.
+
+**Tag rationale**
+
+- `pistol` — Canonical Pistol-group weapon.
+- `ranged` — It applies its capture mechanics at range.
+- `stun` — The weapon's native damage profile is 1d4 stun.
+- `nonlethal` — Its damage and capture function are explicitly nonlethal-oriented.
+- `grab` — It explicitly initiates a grab at range.
+- `grapple` — It explicitly initiates a grapple at range.
+- `restrain` — Weighted synthcord physically confines the target until escape or break-free succeeds.
+- `control` — Its primary tactical function is denying or limiting enemy freedom rather than dealing lethal damage.
+- `battlefield_control` — Ranged capture changes enemy movement/position options and supports Pin/Trip interactions.
+
+**Structured / unrepresented mechanics**
+
+- `STRUCTURED_CAPTURE_RULE` — Escape DC 15 Acrobatics / break DC 20 Strength. Exact escape mechanics remain structured.
+- `STRUCTURED_RECOMMENDATION_DATA` — Two-shot specialized cartridge. Capacity is not a semantic tag.
+
+### 25. Slugthrower Pistol
+
+- Identity: `weapon-slugthrower-pistol`
+- Source: Core Rulebook — description p.129, stat table p.126
+- Canonical mechanic: Standard ballistic pistol firing metal slugs rather than energy bolts. It uses 10-round ammunition clips instead of power packs.
+- Shared tags: `pistol`, `ranged`
+- Advantage/mechanic tags: `offense_ranged`
+- Tradeoff tags: none
+- **Final tags:** `pistol`, `ranged`, `offense_ranged`
+
+**Rule selectors**
+
+- Exact: `weapon:weapon-slugthrower-pistol`
+- Group: `weapon-group:pistol`
+- Proficiency: `weapon-proficiency:pistols`
+- Families: `weapon-family:projectile-pistol`, `weapon-family:slugthrower-pistol`
+- Explicit ability interactions:
+  - feat **Sport Hunter** → `EXPLICIT_WEAPON_BENEFIT` — At point-blank range, a slugthrower pistol deals +1 die of damage.
+
+**Relative to standard Blaster Pistol**
+
+- Damage: `2d6` — **LOWER**
+- Capacity: `10` / `ESTABLISHED` — **MUCH_LOWER**
+- Stun: **NONE**
+- Range: **BASELINE**
+- Concealment: **BASELINE**
+- Multiattack compatibility: **NORMAL**
+- Action economy: **BASELINE**
+- Recommendation fit: Straightforward projectile pistol with explicit Sport Hunter synergy; especially relevant to characters specialized in slugthrowers or expecting situations where a physical-ammunition sidearm is preferable.
+
+**Tag rationale**
+
+- `pistol` — Canonical Pistol-group weapon.
+- `ranged` — It makes ranged pistol attacks.
+- `offense_ranged` — Its normal role is direct ranged physical damage.
+
+**Structured / unrepresented mechanics**
+
+- `STRUCTURAL_WEAPON_FAMILY_AND_RESOURCE` — Uses physical 10-round slug clips rather than energy power packs. Projectile/slugthrower identity belongs in rule selectors and ammo data, not a new semantic tag.
+
+### 26. Sonic Disruptor
+
+- Identity: `weapon-sonic-disruptor`
+- Source: Knights of the Old Republic Campaign Guide — description p.70, stat table p.68
+- Canonical mechanic: 2d6 sonic disruptor pistol. Its attacks cannot be negated by Deflect or talents requiring Deflect; it treats targets' Damage Threshold as 5 lower, disintegrates targets it destroys, fires only once every other round, forbids multi-shot-consuming abilities, and recharges after 10 shots.
+- Shared tags: `pistol`, `ranged`
+- Advantage/mechanic tags: `offense_ranged`, `anti-force`, `damage_threshold`
+- Tradeoff tags: `full_attack`, `sustained_damage`
+- **Final tags:** `pistol`, `ranged`, `offense_ranged`, `anti-force`, `damage_threshold`
+
+**Rule selectors**
+
+- Exact: `weapon:weapon-sonic-disruptor`
+- Group: `weapon-group:pistol`
+- Proficiency: `weapon-proficiency:pistols`
+- Families: `weapon-family:sonic`, `weapon-family:disruptor`, `weapon-family:sonic-disruptor`
+- Explicit ability interactions:
+  - talent **Deflect** → `CANNOT_NEGATE_ATTACK`
+  - talent-family **Talents with Deflect as prerequisite** → `CANNOT_NEGATE_ATTACK`
+- Ability restrictions:
+  - `attack-option:consumes-more-than-one-shot` → `PROHIBITED` — The weapon cannot use feats, talents, or other abilities that consume more than one shot in a round.
+
+**Relative to standard Blaster Pistol**
+
+- Damage: `2d6` — **LOWER_BASE_WITH_THRESHOLD_ADVANTAGE**
+- Capacity: `10` / `ESTABLISHED_RECHARGEABLE` — **MUCH_LOWER**
+- Stun: **NONE**
+- Range: **BASELINE**
+- Concealment: **BASELINE**
+- Multiattack compatibility: **PROHIBITED**
+- Action economy: **SEVERELY_RATE_LIMITED**
+- Recommendation fit: Specialized anti-Deflect/damage-threshold weapon for decisive single shots. Strong against lightsaber defenses and threshold-based targets; extremely poor for sustained or multi-shot builds.
+
+**Tag rationale**
+
+- `pistol` — Canonical Pistol-group weapon.
+- `ranged` — It makes ranged pistol attacks.
+- `offense_ranged` — It deals direct ranged sonic damage.
+- `anti-force` — Its sonic attacks explicitly cannot be negated by Deflect or talents with Deflect as a prerequisite.
+- `damage_threshold` — It explicitly treats every target's Damage Threshold as 5 lower.
+
+**Structured / unrepresented mechanics**
+
+- `NO_EXISTING_FEAT_TALENT_TAG` — Destroyed targets are disintegrated. Preserve as canonical effect text; do not invent a disintegration tag.
+
+### 27. Sonic Pistol
+
+- Identity: `weapon-sonic-pistol`
+- Source: Knights of the Old Republic Campaign Guide — description p.70, stat table p.68
+- Canonical mechanic: 2d6 sonic-energy pistol with a 100-shot rechargeable pack. Its ranged attacks cannot be negated by Deflect or by talents that have Deflect as a prerequisite.
+- Shared tags: `pistol`, `ranged`
+- Advantage/mechanic tags: `offense_ranged`, `anti-force`
+- Tradeoff tags: none
+- **Final tags:** `pistol`, `ranged`, `offense_ranged`, `anti-force`
+
+**Rule selectors**
+
+- Exact: `weapon:weapon-sonic-pistol`
+- Group: `weapon-group:pistol`
+- Proficiency: `weapon-proficiency:pistols`
+- Families: `weapon-family:sonic`, `weapon-family:sonic-pistol`
+- Explicit ability interactions:
+  - talent **Deflect** → `CANNOT_NEGATE_ATTACK`
+  - talent-family **Talents with Deflect as prerequisite** → `CANNOT_NEGATE_ATTACK`
+
+**Relative to standard Blaster Pistol**
+
+- Damage: `2d6` — **LOWER**
+- Capacity: `100` / `ESTABLISHED_RECHARGEABLE` — **SAME**
+- Stun: **NONE**
+- Range: **BASELINE**
+- Concealment: **BASELINE**
+- Multiattack compatibility: **NORMAL**
+- Action economy: **BASELINE**
+- Recommendation fit: General anti-Deflect sidearm: lower raw damage and no stun setting compared with the standard Blaster Pistol, but a clean counter to lightsaber Deflect.
+
+**Tag rationale**
+
+- `pistol` — Canonical Pistol-group weapon.
+- `ranged` — It makes ranged pistol attacks.
+- `offense_ranged` — It deals direct ranged sonic-energy damage.
+- `anti-force` — Its published tactical distinction is that Deflect and Deflect-dependent talents cannot negate its ranged attacks.
+
+**Structured / unrepresented mechanics**
+
+- `RULE_SELECTOR_PLUS_SEMANTIC` — Sonic damage counts as energy damage while ranged sonic attacks cannot be deflected. anti-force captures recommendation meaning; exact Deflect immunity remains structural.
+
+### 28. Sonic Stunner
+
+- Identity: `weapon-sonic-stunner`
+- Source: Threats of the Galaxy — description p.146, stat table p.146
+- Canonical mechanic: Tiny pistol dealing native 3d6 stun damage through high-frequency sonic energy. Deaf creatures are still affected, and only the target hears the weapon, making its firing otherwise silent.
+- Shared tags: `pistol`, `ranged`
+- Advantage/mechanic tags: `stun`, `nonlethal`, `stealth`, `infiltration`
+- Tradeoff tags: none
+- **Final tags:** `pistol`, `ranged`, `stun`, `nonlethal`, `stealth`, `infiltration`
+
+**Rule selectors**
+
+- Exact: `weapon:weapon-sonic-stunner`
+- Group: `weapon-group:pistol`
+- Proficiency: `weapon-proficiency:pistols`
+- Families: `weapon-family:sonic`, `weapon-family:stun-pistol`, `weapon-family:sonic-stunner`
+
+**Relative to standard Blaster Pistol**
+
+- Damage: `native 3d6 stun only` — **NONLETHAL_ONLY**
+- Capacity: `None` / `NOT_STATED_BY_SOURCE` — **None**
+- Stun: **DEDICATED**
+- Range: **BASELINE**
+- Concealment: **BETTER_COVERT_FIRING**
+- Multiattack compatibility: **NORMAL**
+- Action economy: **BASELINE**
+- Recommendation fit: Covert nonlethal pistol for infiltration, interrogation, abduction, or quiet takedowns. Unlike ordinary sonic weapons, its defining role here is silent stun delivery rather than anti-Deflect offense.
+
+**Tag rationale**
+
+- `pistol` — Canonical Pistol-group weapon.
+- `ranged` — It delivers its stun effect through a ranged pistol attack.
+- `stun` — Its only published damage profile is native 3d6 stun.
+- `nonlethal` — It is a dedicated stunning weapon rather than a lethal sidearm.
+- `stealth` — Only the target hears the attack; firing is otherwise silent.
+- `infiltration` — Silent-to-bystanders operation gives it a clear covert-use niche.
+
+**Structured / unrepresented mechanics**
+
+- `STRUCTURED_TARGETING_EXCEPTION` — Deaf creatures remain affected because the vibrations penetrate the brain. No separate semantic tag is needed for this immunity-bypass detail.
+
+### 29. Stun Pistol
+
+- Identity: `weapon-stun-pistol`
+- Source: The Unknown Regions — description p.39, stat table p.38
+- Canonical mechanic: Dedicated nonlethal pistol with native 3d6 stun damage, 50-shot power pack, and a special 20-square maximum range instead of the usual 6-square limit for stun attacks.
+- Shared tags: `pistol`, `ranged`
+- Advantage/mechanic tags: `stun`, `nonlethal`, `control`
+- Tradeoff tags: none
+- **Final tags:** `pistol`, `ranged`, `stun`, `nonlethal`, `control`
+
+**Rule selectors**
+
+- Exact: `weapon:weapon-stun-pistol`
+- Group: `weapon-group:pistol`
+- Proficiency: `weapon-proficiency:pistols`
+- Families: `weapon-family:stun-pistol`, `weapon-family:nonlethal-pistol`
+
+**Relative to standard Blaster Pistol**
+
+- Damage: `native 3d6 stun only` — **NONLETHAL_ONLY**
+- Capacity: `50` / `ESTABLISHED` — **LOWER**
+- Stun: **MUCH_BETTER_RANGE**
+- Range: **SPECIALIZED**
+- Concealment: **BASELINE**
+- Multiattack compatibility: **NORMAL**
+- Action economy: **BASELINE**
+- Recommendation fit: Dedicated ranged nonlethal sidearm. Strong for bounty hunters, police, and capture builds because it preserves 3d6 stun out to 20 squares; useless when lethal damage is required.
+
+**Tag rationale**
+
+- `pistol` — Canonical Pistol-group weapon.
+- `ranged` — It attacks at range using pistol proficiency.
+- `stun` — Its only published damage profile is native 3d6 stun.
+- `nonlethal` — The weapon is explicitly designed exclusively for nonlethal use.
+- `control` — Its dedicated purpose is crowd control and subduing targets without lethal injury.
+
+**Structured / unrepresented mechanics**
+
+- `STRUCTURED_RANGE_EXCEPTION` — 20-square maximum for native stun attacks. The improved stun range is comparison data, not a new semantic tag.
+
+### 30. Subrepeating Blaster
+
+- Identity: `weapon-subrepeating-blaster`
+- Source: Scum and Villainy — description p.49, stat table p.51
+- Canonical mechanic: 3d6 autofire-only pistol with a retractable stock and 50-shot power pack. It cannot be braced for autofire unless the stock is extended; Core retractable-stock rules then treat it as a rifle for proficiency and range while extended.
+- Shared tags: `pistol`, `ranged`
+- Advantage/mechanic tags: `offense_ranged`, `sustained_damage`
+- Tradeoff tags: none
+- **Final tags:** `pistol`, `ranged`, `offense_ranged`, `sustained_damage`
+
+**Rule selectors**
+
+- Exact: `weapon:weapon-subrepeating-blaster`
+- Group: `weapon-group:pistol`
+- Proficiency: `weapon-proficiency:pistols`
+- Families: `weapon-family:blaster-pistol`, `weapon-family:repeating-blaster`, `weapon-family:subrepeating-blaster`, `weapon-family:autofire-pistol`
+- Conditional structural rules:
+  - `retractable-stock:extended` — Core retractable-stock rule changes proficiency and range treatment only; do not infer that every rifle-specific feat/talent applies.
+  - `retractable-stock:not-extended` — The source explicitly forbids bracing this autofire attack unless the stock is extended.
+
+**Relative to standard Blaster Pistol**
+
+- Damage: `3d6` — **SAME_PER_HIT_PROFILE**
+- Capacity: `50` / `ESTABLISHED` — **LOWER**
+- Stun: **NONE**
+- Range: **CONFIGURATION_DEPENDENT**
+- Concealment: **BASELINE**
+- Multiattack compatibility: **AUTOFIRE_ONLY**
+- Action economy: **CONFIGURATION_DEPENDENT**
+- Recommendation fit: Autofire pistol for characters built around sustained/area fire who want a more compact weapon than a rifle. Poor fit for single-shot, stun, or precision pistol builds.
+
+**Tag rationale**
+
+- `pistol` — Published weapon group is Pistol.
+- `ranged` — It makes ranged attacks.
+- `offense_ranged` — It deals direct ranged blaster damage.
+- `sustained_damage` — Its defining firing mode is autofire-only, favoring repeated area/suppressive fire rather than single-shot precision.
+
+**Structured / unrepresented mechanics**
+
+- `STRUCTURED_FIRE_MODE` — Autofire-only firing mode and brace restriction. No certified `autofire` semantic tag exists; use sustained_damage plus explicit fire-mode rules.
+
+## Completion / implementation contract
+
+- Pistol semantic/selector authority is complete at **30/30**.
 - Preserve all planner semantic rulings exactly.
-- Derive and validate every semantic tag against the existing certified 183-tag feat/talent-used union.
+- Validate every semantic tag against the certified 183-tag feat/talent-used union.
 - Treat `ruleSelectors` as structural rules metadata, never as `system.tags`.
-- Treat raw damage, shot capacity, range limits, reload burden, and legality/cost as structured comparison/mechanics data, not new semantic tags.
-- Generic pistol abilities match through `weapon-group:pistol` / `weapon-proficiency:pistols`; do not hard-code every pistol feat/talent onto every pistol.
-- Preserve explicit positive and negative named-ability interactions directionally. Negative interactions must never be promoted into positive `finalTags`.
-- Keep Phase 3D frozen and production mutation unauthorized.
-- Do not change `packs/weapons.db` or `template.json`.
+- Keep damage dice, shot capacity, reload burden, firing mode, exact range limits, ammo type, and configuration-state rules as structured mechanics/comparison data unless an existing certified semantic tag directly represents the concept.
+- Generic pistol abilities match through `weapon-group:pistol` / `weapon-proficiency:pistols`.
+- Named weapon/family interactions such as **Sport Hunter**, **Deflect**, **Pin/Trip**, and multi-shot prohibitions must remain directional and explicit.
+- Retractable-stock proficiency/range overrides do not automatically promote a pistol into the rifle family for every feat/talent interaction.
+- Phase 3D remains frozen; production mutation is still unauthorized.
+- Do not change `packs/weapons.db` or `template.json` during this certification step.

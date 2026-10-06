@@ -1595,7 +1595,6 @@ if (fs.existsSync(path.join(ROOT, P4C))) {
     const i = byKey.get(a.identityKey);
     if (!i) { fail(`${w} (${a.identityKey}) is not a Phase 3B Pistol identity`); return; }
     if (i.canonicalName !== a.canonicalName) fail(`${w} name differs from Phase 3B (${i.canonicalName})`);
-    if (pist[idx] && pist[idx].identityKey !== a.identityKey) fail(`${w} is out of alphabetical Pistol order`);
     const claim = i.sourceClaims.find((c) => bn(c.book) === bn(a.source.book));
     if (!claim || ![claim.descriptionPage, claim.statTablePage].some((pg) => pg === a.source.descriptionPage || pg === a.source.statTablePage)) fail(`${w} source book/page matches no Phase 3B source claim`);
     const fields = { sharedTags: a.sharedTags, advantageTags: a.advantageTags, tradeoffTags: a.tradeoffTags, finalTags: a.finalTags };
@@ -1628,6 +1627,10 @@ if (fs.existsSync(path.join(ROOT, P4C))) {
     if (!c || !c.damage || !c.capacity || !c.stun || !c.range || !c.concealment || !c.multiAttackCompatibility || !c.actionEconomy || !c.recommendationFit) fail(`${w} relativeToStandardPistol incomplete`);
     else {
       if (cs.baseDamage.mode === 'dice' && c.damage.canonical !== cs.baseDamage.formula && !String(c.damage.canonical).startsWith(`${cs.baseDamage.formula} `)) fail(`${w} comparison damage ${c.damage.canonical} != Phase 3B ${cs.baseDamage.formula}`);
+      if (cs.baseDamage.mode === 'none') {
+        const sf = cs.stun?.damage?.formula;
+        if (!sf || !String(c.damage.canonical).includes(sf)) fail(`${w} stun-only comparison damage "${c.damage.canonical}" must carry the Phase 3B stun formula ${sf}`);
+      }
       const am = cs.ammo || {};
       if (/^ESTABLISHED(_[A-Z_]+)?$/.test(c.capacity.status)) {
         const sv = c.capacity.shots;
@@ -1641,6 +1644,16 @@ if (fs.existsSync(path.join(ROOT, P4C))) {
     }
     for (const m of a.unrepresentedMechanics || []) if (!m.mechanic || !ENUM.test(m.representationStatus || '') || !m.note) fail(`${w} unrepresented mechanic shape`);
   });
+  // adjudicated set must be exactly the first N Phase 3B Pistol identities (within-round listing order is the planner's)
+  if (!same(asg.map((a) => a.identityKey).sort(), pist.slice(0, REQ).map((i) => i.identityKey).sort())) fail('4C adjudicated identities must be exactly the first N alphabetical Phase 3B Pistol identities');
+  if (REQ === 30) {
+    const rpc = S.rollingProgress;
+    if (rpc.categoryComplete !== true || rpc.remaining !== 0 || rpc.nextCanonicalName !== null || asg.filter((a) => byKey.get(a.identityKey)?.repo.present).length !== 30) fail('4C complete authority: categoryComplete, 30/30 repo-present, no next identity');
+    if (tagTotal !== 164 || tagsUsed.size !== 34) fail('4C final totals must be 164 assignments and 34 distinct tags');
+    const sub = asg.find((a) => a.identityKey === 'weapon-subrepeating-blaster');
+    const rr = sub?.ruleSelectors.conditionalRules?.find((r) => r.proficiencyTreatment === 'rifle');
+    if (!sub || !rr || rr.rangeTreatment !== 'rifle' || rr.weaponFamilyPromotion !== false || sub.ruleSelectors.families.some((f) => /rifle/.test(f)) || sub.ruleSelectors.weaponGroup !== 'weapon-group:pistol') fail('4C Subrepeating Blaster: extended stock changes proficiency/range treatment only and must not promote it to the rifle weapon group or family');
+  }
   const base = asg.find((a) => a.identityKey === 'weapon-blaster-pistol');
   if (!base || base.tradeoffTags.length || base.relativeToStandardPistol.damage.canonical !== '3d6' || base.relativeToStandardPistol.capacity.shots !== 100 || base.relativeToStandardPistol.stun.canonical !== '2d6') fail('4C standard Blaster Pistol must remain the baseline (3d6 / 2d6 stun / 100 shots)');
   const sid = asg.find((a) => a.identityKey === 'weapon-sidearm-blaster-pistol');

@@ -3,7 +3,7 @@
   "phase": "4C",
   "family": "weapons",
   "categoryBatch": "Pistol",
-  "status": "WEAPON_TAG_PHASE_4C_PISTOL_ROUND_2_PLANNER_ADJUDICATED",
+  "status": "WEAPON_TAG_PHASE_4C_PISTOL_COMPLETE_PLANNER_AUTHORITY",
   "authorityOnly": true,
   "productionMutationAuthorized": false,
   "purpose": "Rolling Pistol semantic and recommendation authority. Semantic tags remain restricted to the certified feat/talent-used vocabulary; structural rule selectors and comparative weapon metrics are separate non-tag data.",
@@ -52,15 +52,16 @@
     "repoMissing": 0
   },
   "rollingProgress": {
-    "round": 2,
+    "round": 3,
     "adjudicatedThisRound": 10,
-    "adjudicatedTotal": 20,
-    "remaining": 10,
-    "firstCanonicalNameThisRound": "Blaster Pistol, Sporting",
-    "lastCanonicalNameThisRound": "Merr-Sonn Model 434 DeathHammer",
-    "nextCanonicalName": "Needler",
-    "totalFinalTagAssignments": 113,
-    "distinctFinalTagsUsed": 29,
+    "adjudicatedTotal": 30,
+    "remaining": 0,
+    "firstCanonicalNameThisRound": "Needler",
+    "lastCanonicalNameThisRound": "Subrepeating Blaster",
+    "nextCanonicalName": null,
+    "categoryComplete": true,
+    "totalFinalTagAssignments": 164,
+    "distinctFinalTagsUsed": 34,
     "finalTagsUsed": [
       "action_economy",
       "anti-force",
@@ -75,6 +76,8 @@
       "droid",
       "durability",
       "exploration",
+      "grab",
+      "grapple",
       "infiltration",
       "mechanics",
       "mobility",
@@ -82,12 +85,15 @@
       "nonlethal",
       "offense_ranged",
       "pistol",
+      "poison",
       "positioning",
       "precision",
       "ranged",
+      "restrain",
       "setup",
       "stealth",
       "stun",
+      "sustained_damage",
       "swift_action",
       "tech",
       "vehicle"
@@ -1968,6 +1974,939 @@
           "note": "durability and damage_reduction capture the concept while the target of the bonus remains explicit in structured data."
         }
       ]
+    },
+    {
+      "identityKey": "weapon-needler",
+      "canonicalName": "Needler",
+      "source": {
+        "book": "Knights of the Old Republic Campaign Guide",
+        "descriptionPage": 69,
+        "statTablePage": 68
+      },
+      "canonicalMechanicSummary": "2d4 piercing dart pistol with a 10-shot clip. It is Inaccurate and cannot attack at Long range. Its ammunition may optionally be laced with contact poison.",
+      "sharedTags": [
+        "pistol",
+        "ranged"
+      ],
+      "advantageTags": [
+        "offense_ranged",
+        "poison"
+      ],
+      "tradeoffTags": [],
+      "finalTags": [
+        "pistol",
+        "ranged",
+        "offense_ranged",
+        "poison"
+      ],
+      "rationale": {
+        "pistol": "Canonical Pistol-group weapon.",
+        "ranged": "It makes ranged pistol attacks.",
+        "offense_ranged": "It deals direct piercing damage at range.",
+        "poison": "Its ammunition can explicitly be laced with contact poison, making the weapon a valid poison-delivery platform."
+      },
+      "ruleSelectors": {
+        "exactIdentity": "weapon:weapon-needler",
+        "weaponGroup": "weapon-group:pistol",
+        "proficiency": "weapon-proficiency:pistols",
+        "families": [
+          "weapon-family:projectile-pistol",
+          "weapon-family:needler",
+          "weapon-family:poison-delivery"
+        ],
+        "explicitAbilityLinks": []
+      },
+      "relativeToStandardPistol": {
+        "damage": {
+          "canonical": "2d4",
+          "relation": "LOWER"
+        },
+        "capacity": {
+          "shots": 10,
+          "status": "ESTABLISHED",
+          "relation": "MUCH_LOWER"
+        },
+        "stun": {
+          "available": false,
+          "relation": "NONE"
+        },
+        "range": {
+          "relation": "WORSE",
+          "notes": [
+            "Inaccurate: cannot attack at Long range."
+          ]
+        },
+        "concealment": {
+          "equipmentModifier": 0,
+          "relation": "BASELINE"
+        },
+        "multiAttackCompatibility": {
+          "relation": "NORMAL"
+        },
+        "actionEconomy": {
+          "relation": "BASELINE"
+        },
+        "recommendationFit": "Poison-delivery pistol for builds that want contact-toxin synergy; weak as a general-purpose sidearm because of low base damage, 10-shot capacity, and no Long-range attacks."
+      },
+      "unrepresentedMechanics": [
+        {
+          "mechanic": "Poison is optional ammunition treatment, not inherent to every shot.",
+          "representationStatus": "CONDITIONAL_CAPABILITY",
+          "note": "The poison semantic tag means the weapon supports poison delivery; it must not imply the weapon is always poisoned."
+        }
+      ]
+    },
+    {
+      "identityKey": "weapon-pulse-wave-pistol",
+      "canonicalName": "Pulse-Wave Pistol",
+      "source": {
+        "book": "Knights of the Old Republic Campaign Guide",
+        "descriptionPage": 69,
+        "statTablePage": 68
+      },
+      "canonicalMechanicSummary": "2d6 energy pistol with a 100-shot power pack. It gains +4 equipment bonus to damage at point-blank range but is Inaccurate and cannot attack at Long range.",
+      "sharedTags": [
+        "pistol",
+        "ranged"
+      ],
+      "advantageTags": [
+        "offense_ranged",
+        "damage_bonus",
+        "burst_damage"
+      ],
+      "tradeoffTags": [],
+      "finalTags": [
+        "pistol",
+        "ranged",
+        "offense_ranged",
+        "damage_bonus",
+        "burst_damage"
+      ],
+      "rationale": {
+        "pistol": "Canonical Pistol-group weapon.",
+        "ranged": "It makes ranged pistol attacks.",
+        "offense_ranged": "It deals direct ranged energy damage.",
+        "damage_bonus": "At point-blank range it explicitly gains +4 equipment bonus to damage.",
+        "burst_damage": "Its tactical identity is concentrated extra damage at close range rather than improved long-range performance."
+      },
+      "ruleSelectors": {
+        "exactIdentity": "weapon:weapon-pulse-wave-pistol",
+        "weaponGroup": "weapon-group:pistol",
+        "proficiency": "weapon-proficiency:pistols",
+        "families": [
+          "weapon-family:pulse-wave",
+          "weapon-family:pulse-wave-pistol"
+        ],
+        "explicitAbilityLinks": []
+      },
+      "relativeToStandardPistol": {
+        "damage": {
+          "canonical": "2d6 (+4 equipment at point-blank)",
+          "relation": "LOWER_BASE_CLOSE_RANGE_BONUS"
+        },
+        "capacity": {
+          "shots": 100,
+          "status": "ESTABLISHED",
+          "relation": "SAME"
+        },
+        "stun": {
+          "available": false,
+          "relation": "NONE"
+        },
+        "range": {
+          "relation": "WORSE",
+          "notes": [
+            "Inaccurate: cannot attack at Long range."
+          ]
+        },
+        "concealment": {
+          "equipmentModifier": 0,
+          "relation": "BASELINE"
+        },
+        "multiAttackCompatibility": {
+          "relation": "NORMAL"
+        },
+        "actionEconomy": {
+          "relation": "BASELINE"
+        },
+        "recommendationFit": "Close-range damage specialist: recommend for point-blank pistol builds that can exploit the +4 damage bonus; de-prioritize for long-range or stun-oriented characters."
+      },
+      "unrepresentedMechanics": [
+        {
+          "mechanic": "+4 equipment bonus applies only at point-blank range.",
+          "representationStatus": "STRUCTURED_CONDITIONAL_MODIFIER",
+          "note": "Exact bonus type, amount, and range condition remain structured data."
+        }
+      ]
+    },
+    {
+      "identityKey": "weapon-ripper",
+      "canonicalName": "Ripper",
+      "source": {
+        "book": "Knights of the Old Republic Campaign Guide",
+        "descriptionPage": 69,
+        "statTablePage": 68
+      },
+      "canonicalMechanicSummary": "2d4 shrapnel pistol with a 10-shot clip. If damage exceeds the target's Damage Threshold and moves it at least 1 step down the condition track, embedded shrapnel immediately deals an additional 1d4 damage. It is Inaccurate and cannot attack at Long range.",
+      "sharedTags": [
+        "pistol",
+        "ranged"
+      ],
+      "advantageTags": [
+        "offense_ranged",
+        "damage_threshold",
+        "damage_bonus",
+        "burst_damage"
+      ],
+      "tradeoffTags": [],
+      "finalTags": [
+        "pistol",
+        "ranged",
+        "offense_ranged",
+        "damage_threshold",
+        "damage_bonus",
+        "burst_damage"
+      ],
+      "rationale": {
+        "pistol": "Canonical Pistol-group weapon.",
+        "ranged": "It makes ranged pistol attacks.",
+        "offense_ranged": "It deals direct ranged physical damage.",
+        "damage_threshold": "Its special effect explicitly keys off exceeding the target's Damage Threshold.",
+        "damage_bonus": "Meeting the threshold/condition trigger immediately adds 1d4 damage.",
+        "burst_damage": "A successful threshold-breaking hit produces a second immediate damage packet."
+      },
+      "ruleSelectors": {
+        "exactIdentity": "weapon:weapon-ripper",
+        "weaponGroup": "weapon-group:pistol",
+        "proficiency": "weapon-proficiency:pistols",
+        "families": [
+          "weapon-family:projectile-pistol",
+          "weapon-family:shrapnel-pistol",
+          "weapon-family:ripper"
+        ],
+        "explicitAbilityLinks": []
+      },
+      "relativeToStandardPistol": {
+        "damage": {
+          "canonical": "2d4 + conditional 1d4",
+          "relation": "LOWER_BASE_CONDITIONAL_EXTRA"
+        },
+        "capacity": {
+          "shots": 10,
+          "status": "ESTABLISHED",
+          "relation": "MUCH_LOWER"
+        },
+        "stun": {
+          "available": false,
+          "relation": "NONE"
+        },
+        "range": {
+          "relation": "WORSE",
+          "notes": [
+            "Inaccurate: cannot attack at Long range."
+          ]
+        },
+        "concealment": {
+          "equipmentModifier": 0,
+          "relation": "BASELINE"
+        },
+        "multiAttackCompatibility": {
+          "relation": "NORMAL"
+        },
+        "actionEconomy": {
+          "relation": "BASELINE"
+        },
+        "recommendationFit": "Threshold-breaking pistol for builds that already push targets down the condition track; mediocre against high-threshold targets where the bonus 1d4 rarely triggers."
+      },
+      "unrepresentedMechanics": [
+        {
+          "mechanic": "Bonus 1d4 requires both exceeding Damage Threshold and moving the target at least 1 condition-track step.",
+          "representationStatus": "STRUCTURED_TRIGGER",
+          "note": "There is no certified condition_track semantic tag; preserve the full trigger structurally."
+        }
+      ]
+    },
+    {
+      "identityKey": "weapon-snare-pistol",
+      "canonicalName": "Snare Pistol",
+      "source": {
+        "book": "Galaxy of Intrigue",
+        "descriptionPage": 64,
+        "statTablePage": 65
+      },
+      "canonicalMechanicSummary": "Two-shot capture pistol with native 1d4 stun damage. It can initiate a grab or grapple at up to Short range; trapped targets escape with DC 15 Acrobatics or DC 20 Strength. Pin and Trip work with it, while Crush, Throw, and Bone Crusher do not.",
+      "sharedTags": [
+        "pistol",
+        "ranged"
+      ],
+      "advantageTags": [
+        "stun",
+        "nonlethal",
+        "grab",
+        "grapple",
+        "restrain",
+        "control",
+        "battlefield_control"
+      ],
+      "tradeoffTags": [],
+      "finalTags": [
+        "pistol",
+        "ranged",
+        "stun",
+        "nonlethal",
+        "grab",
+        "grapple",
+        "restrain",
+        "control",
+        "battlefield_control"
+      ],
+      "rationale": {
+        "pistol": "Canonical Pistol-group weapon.",
+        "ranged": "It applies its capture mechanics at range.",
+        "stun": "The weapon's native damage profile is 1d4 stun.",
+        "nonlethal": "Its damage and capture function are explicitly nonlethal-oriented.",
+        "grab": "It explicitly initiates a grab at range.",
+        "grapple": "It explicitly initiates a grapple at range.",
+        "restrain": "Weighted synthcord physically confines the target until escape or break-free succeeds.",
+        "control": "Its primary tactical function is denying or limiting enemy freedom rather than dealing lethal damage.",
+        "battlefield_control": "Ranged capture changes enemy movement/position options and supports Pin/Trip interactions."
+      },
+      "ruleSelectors": {
+        "exactIdentity": "weapon:weapon-snare-pistol",
+        "weaponGroup": "weapon-group:pistol",
+        "proficiency": "weapon-proficiency:pistols",
+        "families": [
+          "weapon-family:snare-weapon",
+          "weapon-family:snare-pistol",
+          "weapon-family:capture-weapon"
+        ],
+        "explicitAbilityLinks": [
+          {
+            "abilityType": "feat",
+            "abilityName": "Pin",
+            "relation": "SUPPORTED"
+          },
+          {
+            "abilityType": "feat",
+            "abilityName": "Trip",
+            "relation": "SUPPORTED"
+          },
+          {
+            "abilityType": "feat",
+            "abilityName": "Crush",
+            "relation": "PROHIBITED"
+          },
+          {
+            "abilityType": "feat",
+            "abilityName": "Throw",
+            "relation": "PROHIBITED"
+          },
+          {
+            "abilityType": "feat",
+            "abilityName": "Bone Crusher",
+            "relation": "PROHIBITED"
+          }
+        ]
+      },
+      "relativeToStandardPistol": {
+        "damage": {
+          "canonical": "native 1d4 stun only",
+          "relation": "MUCH_LOWER_NONLETHAL_ONLY"
+        },
+        "capacity": {
+          "shots": 2,
+          "status": "ESTABLISHED",
+          "relation": "EXTREMELY_LOWER"
+        },
+        "stun": {
+          "available": true,
+          "canonical": "1d4 native stun",
+          "relation": "NATIVE_CAPTURE_PROFILE"
+        },
+        "range": {
+          "relation": "WORSE",
+          "notes": [
+            "Cannot attack at Medium or Long range; capture works through Short range."
+          ]
+        },
+        "concealment": {
+          "equipmentModifier": 0,
+          "relation": "BASELINE"
+        },
+        "multiAttackCompatibility": {
+          "relation": "CAPACITY_LIMITED"
+        },
+        "actionEconomy": {
+          "relation": "BASELINE"
+        },
+        "recommendationFit": "Dedicated capture/control sidearm. Strong recommendation for bounty hunters, law enforcement, grapplers, or nonlethal builds; poor choice when raw damage or sustained fire is the priority."
+      },
+      "unrepresentedMechanics": [
+        {
+          "mechanic": "Escape DC 15 Acrobatics / break DC 20 Strength.",
+          "representationStatus": "STRUCTURED_CAPTURE_RULE",
+          "note": "Exact escape mechanics remain structured."
+        },
+        {
+          "mechanic": "Two-shot specialized cartridge.",
+          "representationStatus": "STRUCTURED_RECOMMENDATION_DATA",
+          "note": "Capacity is not a semantic tag."
+        }
+      ]
+    },
+    {
+      "identityKey": "weapon-slugthrower-pistol",
+      "canonicalName": "Slugthrower Pistol",
+      "source": {
+        "book": "Core Rulebook",
+        "descriptionPage": 129,
+        "statTablePage": 126
+      },
+      "canonicalMechanicSummary": "Standard ballistic pistol firing metal slugs rather than energy bolts. It uses 10-round ammunition clips instead of power packs.",
+      "sharedTags": [
+        "pistol",
+        "ranged"
+      ],
+      "advantageTags": [
+        "offense_ranged"
+      ],
+      "tradeoffTags": [],
+      "finalTags": [
+        "pistol",
+        "ranged",
+        "offense_ranged"
+      ],
+      "rationale": {
+        "pistol": "Canonical Pistol-group weapon.",
+        "ranged": "It makes ranged pistol attacks.",
+        "offense_ranged": "Its normal role is direct ranged physical damage."
+      },
+      "ruleSelectors": {
+        "exactIdentity": "weapon:weapon-slugthrower-pistol",
+        "weaponGroup": "weapon-group:pistol",
+        "proficiency": "weapon-proficiency:pistols",
+        "families": [
+          "weapon-family:projectile-pistol",
+          "weapon-family:slugthrower-pistol"
+        ],
+        "explicitAbilityLinks": [
+          {
+            "abilityType": "feat",
+            "abilityName": "Sport Hunter",
+            "relation": "EXPLICIT_WEAPON_BENEFIT",
+            "effect": "At point-blank range, a slugthrower pistol deals +1 die of damage."
+          }
+        ]
+      },
+      "relativeToStandardPistol": {
+        "damage": {
+          "canonical": "2d6",
+          "relation": "LOWER"
+        },
+        "capacity": {
+          "shots": 10,
+          "status": "ESTABLISHED",
+          "relation": "MUCH_LOWER"
+        },
+        "stun": {
+          "available": false,
+          "relation": "NONE"
+        },
+        "range": {
+          "relation": "BASELINE"
+        },
+        "concealment": {
+          "equipmentModifier": 0,
+          "relation": "BASELINE"
+        },
+        "multiAttackCompatibility": {
+          "relation": "NORMAL"
+        },
+        "actionEconomy": {
+          "relation": "BASELINE"
+        },
+        "recommendationFit": "Straightforward projectile pistol with explicit Sport Hunter synergy; especially relevant to characters specialized in slugthrowers or expecting situations where a physical-ammunition sidearm is preferable."
+      },
+      "unrepresentedMechanics": [
+        {
+          "mechanic": "Uses physical 10-round slug clips rather than energy power packs.",
+          "representationStatus": "STRUCTURAL_WEAPON_FAMILY_AND_RESOURCE",
+          "note": "Projectile/slugthrower identity belongs in rule selectors and ammo data, not a new semantic tag."
+        }
+      ]
+    },
+    {
+      "identityKey": "weapon-sonic-disruptor",
+      "canonicalName": "Sonic Disruptor",
+      "source": {
+        "book": "Knights of the Old Republic Campaign Guide",
+        "descriptionPage": 70,
+        "statTablePage": 68
+      },
+      "canonicalMechanicSummary": "2d6 sonic disruptor pistol. Its attacks cannot be negated by Deflect or talents requiring Deflect; it treats targets' Damage Threshold as 5 lower, disintegrates targets it destroys, fires only once every other round, forbids multi-shot-consuming abilities, and recharges after 10 shots.",
+      "sharedTags": [
+        "pistol",
+        "ranged"
+      ],
+      "advantageTags": [
+        "offense_ranged",
+        "anti-force",
+        "damage_threshold"
+      ],
+      "tradeoffTags": [
+        "full_attack",
+        "sustained_damage"
+      ],
+      "finalTags": [
+        "pistol",
+        "ranged",
+        "offense_ranged",
+        "anti-force",
+        "damage_threshold"
+      ],
+      "rationale": {
+        "pistol": "Canonical Pistol-group weapon.",
+        "ranged": "It makes ranged pistol attacks.",
+        "offense_ranged": "It deals direct ranged sonic damage.",
+        "anti-force": "Its sonic attacks explicitly cannot be negated by Deflect or talents with Deflect as a prerequisite.",
+        "damage_threshold": "It explicitly treats every target's Damage Threshold as 5 lower."
+      },
+      "ruleSelectors": {
+        "exactIdentity": "weapon:weapon-sonic-disruptor",
+        "weaponGroup": "weapon-group:pistol",
+        "proficiency": "weapon-proficiency:pistols",
+        "families": [
+          "weapon-family:sonic",
+          "weapon-family:disruptor",
+          "weapon-family:sonic-disruptor"
+        ],
+        "explicitAbilityLinks": [
+          {
+            "abilityType": "talent",
+            "abilityName": "Deflect",
+            "relation": "CANNOT_NEGATE_ATTACK"
+          },
+          {
+            "abilityType": "talent-family",
+            "abilityName": "Talents with Deflect as prerequisite",
+            "relation": "CANNOT_NEGATE_ATTACK"
+          }
+        ],
+        "abilityRestrictions": [
+          {
+            "selector": "attack-option:consumes-more-than-one-shot",
+            "relation": "PROHIBITED",
+            "reason": "The weapon cannot use feats, talents, or other abilities that consume more than one shot in a round."
+          }
+        ]
+      },
+      "relativeToStandardPistol": {
+        "damage": {
+          "canonical": "2d6",
+          "relation": "LOWER_BASE_WITH_THRESHOLD_ADVANTAGE"
+        },
+        "capacity": {
+          "shots": 10,
+          "status": "ESTABLISHED_RECHARGEABLE",
+          "relation": "MUCH_LOWER"
+        },
+        "stun": {
+          "available": false,
+          "relation": "NONE"
+        },
+        "range": {
+          "relation": "BASELINE"
+        },
+        "concealment": {
+          "equipmentModifier": 0,
+          "relation": "BASELINE"
+        },
+        "multiAttackCompatibility": {
+          "relation": "PROHIBITED"
+        },
+        "actionEconomy": {
+          "relation": "SEVERELY_RATE_LIMITED",
+          "notes": [
+            "Can fire only once every other round."
+          ]
+        },
+        "recommendationFit": "Specialized anti-Deflect/damage-threshold weapon for decisive single shots. Strong against lightsaber defenses and threshold-based targets; extremely poor for sustained or multi-shot builds."
+      },
+      "unrepresentedMechanics": [
+        {
+          "mechanic": "Destroyed targets are disintegrated.",
+          "representationStatus": "NO_EXISTING_FEAT_TALENT_TAG",
+          "note": "Preserve as canonical effect text; do not invent a disintegration tag."
+        }
+      ]
+    },
+    {
+      "identityKey": "weapon-sonic-pistol",
+      "canonicalName": "Sonic Pistol",
+      "source": {
+        "book": "Knights of the Old Republic Campaign Guide",
+        "descriptionPage": 70,
+        "statTablePage": 68
+      },
+      "canonicalMechanicSummary": "2d6 sonic-energy pistol with a 100-shot rechargeable pack. Its ranged attacks cannot be negated by Deflect or by talents that have Deflect as a prerequisite.",
+      "sharedTags": [
+        "pistol",
+        "ranged"
+      ],
+      "advantageTags": [
+        "offense_ranged",
+        "anti-force"
+      ],
+      "tradeoffTags": [],
+      "finalTags": [
+        "pistol",
+        "ranged",
+        "offense_ranged",
+        "anti-force"
+      ],
+      "rationale": {
+        "pistol": "Canonical Pistol-group weapon.",
+        "ranged": "It makes ranged pistol attacks.",
+        "offense_ranged": "It deals direct ranged sonic-energy damage.",
+        "anti-force": "Its published tactical distinction is that Deflect and Deflect-dependent talents cannot negate its ranged attacks."
+      },
+      "ruleSelectors": {
+        "exactIdentity": "weapon:weapon-sonic-pistol",
+        "weaponGroup": "weapon-group:pistol",
+        "proficiency": "weapon-proficiency:pistols",
+        "families": [
+          "weapon-family:sonic",
+          "weapon-family:sonic-pistol"
+        ],
+        "explicitAbilityLinks": [
+          {
+            "abilityType": "talent",
+            "abilityName": "Deflect",
+            "relation": "CANNOT_NEGATE_ATTACK"
+          },
+          {
+            "abilityType": "talent-family",
+            "abilityName": "Talents with Deflect as prerequisite",
+            "relation": "CANNOT_NEGATE_ATTACK"
+          }
+        ]
+      },
+      "relativeToStandardPistol": {
+        "damage": {
+          "canonical": "2d6",
+          "relation": "LOWER"
+        },
+        "capacity": {
+          "shots": 100,
+          "status": "ESTABLISHED_RECHARGEABLE",
+          "relation": "SAME"
+        },
+        "stun": {
+          "available": false,
+          "relation": "NONE"
+        },
+        "range": {
+          "relation": "BASELINE"
+        },
+        "concealment": {
+          "equipmentModifier": 0,
+          "relation": "BASELINE"
+        },
+        "multiAttackCompatibility": {
+          "relation": "NORMAL"
+        },
+        "actionEconomy": {
+          "relation": "BASELINE"
+        },
+        "recommendationFit": "General anti-Deflect sidearm: lower raw damage and no stun setting compared with the standard Blaster Pistol, but a clean counter to lightsaber Deflect."
+      },
+      "unrepresentedMechanics": [
+        {
+          "mechanic": "Sonic damage counts as energy damage while ranged sonic attacks cannot be deflected.",
+          "representationStatus": "RULE_SELECTOR_PLUS_SEMANTIC",
+          "note": "anti-force captures recommendation meaning; exact Deflect immunity remains structural."
+        }
+      ]
+    },
+    {
+      "identityKey": "weapon-sonic-stunner",
+      "canonicalName": "Sonic Stunner",
+      "source": {
+        "book": "Threats of the Galaxy",
+        "descriptionPage": 146,
+        "statTablePage": 146
+      },
+      "canonicalMechanicSummary": "Tiny pistol dealing native 3d6 stun damage through high-frequency sonic energy. Deaf creatures are still affected, and only the target hears the weapon, making its firing otherwise silent.",
+      "sharedTags": [
+        "pistol",
+        "ranged"
+      ],
+      "advantageTags": [
+        "stun",
+        "nonlethal",
+        "stealth",
+        "infiltration"
+      ],
+      "tradeoffTags": [],
+      "finalTags": [
+        "pistol",
+        "ranged",
+        "stun",
+        "nonlethal",
+        "stealth",
+        "infiltration"
+      ],
+      "rationale": {
+        "pistol": "Canonical Pistol-group weapon.",
+        "ranged": "It delivers its stun effect through a ranged pistol attack.",
+        "stun": "Its only published damage profile is native 3d6 stun.",
+        "nonlethal": "It is a dedicated stunning weapon rather than a lethal sidearm.",
+        "stealth": "Only the target hears the attack; firing is otherwise silent.",
+        "infiltration": "Silent-to-bystanders operation gives it a clear covert-use niche."
+      },
+      "ruleSelectors": {
+        "exactIdentity": "weapon:weapon-sonic-stunner",
+        "weaponGroup": "weapon-group:pistol",
+        "proficiency": "weapon-proficiency:pistols",
+        "families": [
+          "weapon-family:sonic",
+          "weapon-family:stun-pistol",
+          "weapon-family:sonic-stunner"
+        ],
+        "explicitAbilityLinks": []
+      },
+      "relativeToStandardPistol": {
+        "damage": {
+          "canonical": "native 3d6 stun only",
+          "relation": "NONLETHAL_ONLY"
+        },
+        "capacity": {
+          "shots": null,
+          "status": "NOT_STATED_BY_SOURCE",
+          "relation": null
+        },
+        "stun": {
+          "available": true,
+          "canonical": "3d6 native stun",
+          "relation": "DEDICATED"
+        },
+        "range": {
+          "relation": "BASELINE"
+        },
+        "concealment": {
+          "relation": "BETTER_COVERT_FIRING",
+          "notes": [
+            "Only the target hears the weapon."
+          ]
+        },
+        "multiAttackCompatibility": {
+          "relation": "NORMAL"
+        },
+        "actionEconomy": {
+          "relation": "BASELINE"
+        },
+        "recommendationFit": "Covert nonlethal pistol for infiltration, interrogation, abduction, or quiet takedowns. Unlike ordinary sonic weapons, its defining role here is silent stun delivery rather than anti-Deflect offense."
+      },
+      "unrepresentedMechanics": [
+        {
+          "mechanic": "Deaf creatures remain affected because the vibrations penetrate the brain.",
+          "representationStatus": "STRUCTURED_TARGETING_EXCEPTION",
+          "note": "No separate semantic tag is needed for this immunity-bypass detail."
+        }
+      ]
+    },
+    {
+      "identityKey": "weapon-stun-pistol",
+      "canonicalName": "Stun Pistol",
+      "source": {
+        "book": "The Unknown Regions",
+        "descriptionPage": 39,
+        "statTablePage": 38
+      },
+      "canonicalMechanicSummary": "Dedicated nonlethal pistol with native 3d6 stun damage, 50-shot power pack, and a special 20-square maximum range instead of the usual 6-square limit for stun attacks.",
+      "sharedTags": [
+        "pistol",
+        "ranged"
+      ],
+      "advantageTags": [
+        "stun",
+        "nonlethal",
+        "control"
+      ],
+      "tradeoffTags": [],
+      "finalTags": [
+        "pistol",
+        "ranged",
+        "stun",
+        "nonlethal",
+        "control"
+      ],
+      "rationale": {
+        "pistol": "Canonical Pistol-group weapon.",
+        "ranged": "It attacks at range using pistol proficiency.",
+        "stun": "Its only published damage profile is native 3d6 stun.",
+        "nonlethal": "The weapon is explicitly designed exclusively for nonlethal use.",
+        "control": "Its dedicated purpose is crowd control and subduing targets without lethal injury."
+      },
+      "ruleSelectors": {
+        "exactIdentity": "weapon:weapon-stun-pistol",
+        "weaponGroup": "weapon-group:pistol",
+        "proficiency": "weapon-proficiency:pistols",
+        "families": [
+          "weapon-family:stun-pistol",
+          "weapon-family:nonlethal-pistol"
+        ],
+        "explicitAbilityLinks": []
+      },
+      "relativeToStandardPistol": {
+        "damage": {
+          "canonical": "native 3d6 stun only",
+          "relation": "NONLETHAL_ONLY"
+        },
+        "capacity": {
+          "shots": 50,
+          "status": "ESTABLISHED",
+          "relation": "LOWER"
+        },
+        "stun": {
+          "available": true,
+          "canonical": "3d6 native stun",
+          "relation": "MUCH_BETTER_RANGE"
+        },
+        "range": {
+          "relation": "SPECIALIZED",
+          "notes": [
+            "Stun attacks can reach 20 squares instead of the usual 6-square stun limit."
+          ]
+        },
+        "concealment": {
+          "equipmentModifier": 0,
+          "relation": "BASELINE"
+        },
+        "multiAttackCompatibility": {
+          "relation": "NORMAL"
+        },
+        "actionEconomy": {
+          "relation": "BASELINE"
+        },
+        "recommendationFit": "Dedicated ranged nonlethal sidearm. Strong for bounty hunters, police, and capture builds because it preserves 3d6 stun out to 20 squares; useless when lethal damage is required."
+      },
+      "unrepresentedMechanics": [
+        {
+          "mechanic": "20-square maximum for native stun attacks.",
+          "representationStatus": "STRUCTURED_RANGE_EXCEPTION",
+          "note": "The improved stun range is comparison data, not a new semantic tag."
+        }
+      ]
+    },
+    {
+      "identityKey": "weapon-subrepeating-blaster",
+      "canonicalName": "Subrepeating Blaster",
+      "source": {
+        "book": "Scum and Villainy",
+        "descriptionPage": 49,
+        "statTablePage": 51
+      },
+      "canonicalMechanicSummary": "3d6 autofire-only pistol with a retractable stock and 50-shot power pack. It cannot be braced for autofire unless the stock is extended; Core retractable-stock rules then treat it as a rifle for proficiency and range while extended.",
+      "sharedTags": [
+        "pistol",
+        "ranged"
+      ],
+      "advantageTags": [
+        "offense_ranged",
+        "sustained_damage"
+      ],
+      "tradeoffTags": [],
+      "finalTags": [
+        "pistol",
+        "ranged",
+        "offense_ranged",
+        "sustained_damage"
+      ],
+      "rationale": {
+        "pistol": "Published weapon group is Pistol.",
+        "ranged": "It makes ranged attacks.",
+        "offense_ranged": "It deals direct ranged blaster damage.",
+        "sustained_damage": "Its defining firing mode is autofire-only, favoring repeated area/suppressive fire rather than single-shot precision."
+      },
+      "ruleSelectors": {
+        "exactIdentity": "weapon:weapon-subrepeating-blaster",
+        "weaponGroup": "weapon-group:pistol",
+        "proficiency": "weapon-proficiency:pistols",
+        "families": [
+          "weapon-family:blaster-pistol",
+          "weapon-family:repeating-blaster",
+          "weapon-family:subrepeating-blaster",
+          "weapon-family:autofire-pistol"
+        ],
+        "explicitAbilityLinks": [],
+        "conditionalRules": [
+          {
+            "when": "retractable-stock:extended",
+            "proficiencyTreatment": "rifle",
+            "rangeTreatment": "rifle",
+            "weaponFamilyPromotion": false,
+            "note": "Core retractable-stock rule changes proficiency and range treatment only; do not infer that every rifle-specific feat/talent applies."
+          },
+          {
+            "when": "retractable-stock:not-extended",
+            "braceAutofire": "PROHIBITED",
+            "note": "The source explicitly forbids bracing this autofire attack unless the stock is extended."
+          }
+        ]
+      },
+      "relativeToStandardPistol": {
+        "damage": {
+          "canonical": "3d6",
+          "relation": "SAME_PER_HIT_PROFILE"
+        },
+        "capacity": {
+          "shots": 50,
+          "status": "ESTABLISHED",
+          "relation": "LOWER"
+        },
+        "stun": {
+          "available": false,
+          "relation": "NONE"
+        },
+        "range": {
+          "relation": "CONFIGURATION_DEPENDENT",
+          "notes": [
+            "Pistol treatment by default; rifle proficiency/range treatment with stock extended under Core retractable-stock rules."
+          ]
+        },
+        "concealment": {
+          "equipmentModifier": 0,
+          "relation": "BASELINE"
+        },
+        "multiAttackCompatibility": {
+          "relation": "AUTOFIRE_ONLY"
+        },
+        "actionEconomy": {
+          "relation": "CONFIGURATION_DEPENDENT",
+          "notes": [
+            "Extending/folding a retractable stock uses the Core stock action rule."
+          ]
+        },
+        "recommendationFit": "Autofire pistol for characters built around sustained/area fire who want a more compact weapon than a rifle. Poor fit for single-shot, stun, or precision pistol builds."
+      },
+      "unrepresentedMechanics": [
+        {
+          "mechanic": "Autofire-only firing mode and brace restriction.",
+          "representationStatus": "STRUCTURED_FIRE_MODE",
+          "note": "No certified `autofire` semantic tag exists; use sustained_damage plus explicit fire-mode rules."
+        }
+      ]
     }
-  ]
+  ],
+  "completionCertification": {
+    "status": "PISTOL_SEMANTIC_AND_SELECTOR_AUTHORITY_COMPLETE",
+    "canonicalPistolIdentities": 30,
+    "adjudicatedIdentities": 30,
+    "identityReconciliation": "30 = 30",
+    "productionMutationAuthorized": false,
+    "semanticVocabularyInvariantPreserved": true,
+    "ruleSelectorsSeparatedFromSemanticTags": true,
+    "comparisonBaseline": "weapon-blaster-pistol"
+  }
 }
