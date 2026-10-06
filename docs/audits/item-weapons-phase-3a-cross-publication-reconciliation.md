@@ -242,3 +242,14 @@ Only after Phase 3D should weapon tag archaeology begin.
 - **Findings for the planner (not adjudicated):** the certified claims diverge on the *condition* of the lightsaber-DR resistance. Force Unleashed states it unconditionally for the Guard Shoto and the Lightsaber Pike; Jedi Academy limits it to a phrik-laced handle (Guard Shoto) and a phrik-alloy haft (Pike). The package treats it as additive on the Guard Shoto and lists no conflict on the Pike. This is the same issue as the previously parked "phrik DR" question. The verifier requires both findings to stay recorded.
 - Stunning Gauntlet: KOTOR size/cost/weight are stored as `variantsByWearerSize` in the certified KOTOR claim; the Clone Wars claim carries the Human/Tiny example.
 - No pack, runtime, schema or production record was changed.
+
+---
+
+## Update with the Phase 3B planner rulings (Claude)
+
+The Phase 3B package closed the two conflict gates and the phrik finding. All six cross-published identities are now resolved; the old values stay preserved under `conflictHistory` and in the source claims.
+
+- **Guard Shoto:** availability resolves to Jedi Academy (common, Rare); the lightsaber-DR resistance is conditional on a phrik-laced handle; the +2 Block/Deflect bonus is independent.
+- **Lightsaber Pike:** no conflict; the standard haft is phrik alloy in both publications, so the resistance is intrinsic.
+- **BlasTech 500 Riot Gun:** Rebellion Era controls the contradicting fields (1,200 credits, 2.2 kg, not Inaccurate, -1 single-shot, +2 equipment autofire, 50-shot power pack); Clone Wars values are the superseded claim.
+- Result: 6 resolved identities (4 compatible/additive, 2 by precedence), 0 unresolved cross-publication conflicts. The Bowcaster range stays a source ambiguity, not a cross-publication conflict.

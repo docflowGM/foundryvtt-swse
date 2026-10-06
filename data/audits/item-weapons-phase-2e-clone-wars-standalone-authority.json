@@ -1792,8 +1792,10 @@
       },
       "laterProductionAction": "REVIEW_PRECEDENCE_BEFORE_CONTENT_OR_STAT_MUTATION",
       "conflictGate": {
-        "status": "REVIEW_PRECEDENCE_BEFORE_CONTENT_MUTATION",
-        "reason": "Known cross-publication mechanical conflict with Rebellion Era Campaign Guide; Clone Wars values are certified locally but are not production-precedence authority."
+        "status": "RESOLVED_BY_PLANNER_RULING_PHASE_3B",
+        "historicalStatus": "REVIEW_PRECEDENCE_BEFORE_CONTENT_MUTATION",
+        "historicalReason": "Known cross-publication mechanical conflict with Rebellion Era Campaign Guide; Clone Wars values are certified locally but are not production-precedence authority.",
+        "resolution": "Rebellion Era controls the directly contradicting fields under the field-local later-publication rule; this claim is retained as source provenance (Clone Wars = superseded-conflict, Rebellion Era = controlling)."
       }
     },
     {

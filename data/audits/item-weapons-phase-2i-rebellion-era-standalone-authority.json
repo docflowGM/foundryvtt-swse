@@ -3351,8 +3351,10 @@
       ],
       "laterProductionAction": "REVIEW_PRECEDENCE_BEFORE_CONTENT_OR_STAT_MUTATION",
       "conflictGate": {
-        "status": "REVIEW_PRECEDENCE_BEFORE_CONTENT_MUTATION",
-        "reason": "Known mechanical conflict with Clone Wars Campaign Guide p.61. Rebellion Era values are certified locally but do not resolve production precedence."
+        "status": "RESOLVED_BY_PLANNER_RULING_PHASE_3B",
+        "historicalStatus": "REVIEW_PRECEDENCE_BEFORE_CONTENT_MUTATION",
+        "historicalReason": "Known mechanical conflict with Clone Wars Campaign Guide p.61. Rebellion Era values are certified locally but do not resolve production precedence.",
+        "resolution": "Rebellion Era controls the directly contradicting fields under the field-local later-publication rule; this claim is retained as source provenance (Clone Wars = superseded-conflict, Rebellion Era = controlling)."
       }
     },
     {
@@ -4302,7 +4304,7 @@
       "weaponGroup": "Simple Weapon",
       "source": {
         "book": "Rebellion Era Campaign Guide",
-        "descriptionPage": 49,
+        "descriptionPage": 48,
         "statTablePage": 50,
         "table": "Table 3-2: Ranged Weapons",
         "verifiedBy": [
@@ -4310,6 +4312,10 @@
           "Star Wars Saga Edition - Rebellion Era Campaign Guide.pdf visual table verification"
         ],
         "additionalDescriptionPages": [
+          49
+        ],
+        "descriptionPages": [
+          48,
           49
         ]
       },

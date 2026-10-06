@@ -1874,6 +1874,7 @@
     "tools/audit-damage-profiles.mjs",
     "tools/audit-nonheroic-lane-b-remainder.mjs",
     "tools/audit-nonheroic-profile-weapon-uuids.mjs",
+    "tools/build-item-weapons-phase-3b-canonical-authority.mjs",
     "tools/categorize-shields.js",
     "tools/compare-template-equipment.js",
     "tools/fix-armor-data.js",

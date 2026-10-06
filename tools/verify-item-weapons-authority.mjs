@@ -5,6 +5,7 @@
  * and the pack so that execution phases cannot silently run against a changed repo.
  */
 import fs from 'node:fs';
+import crypto from 'node:crypto';
 import os from 'node:os';
 import path from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
@@ -454,13 +455,14 @@ if (c1) {
     const want = ['BlasTech 500 Riot Gun', 'Flechette Launcher', 'Guard Shoto', 'Lightsaber Pike', 'Long-Handle Lightsaber', 'Stunning Gauntlet'];
     if (JSON.stringify(dupes) !== JSON.stringify(want)) fail(`1 final duplicate set ${JSON.stringify(dupes)}`);
     if (c1.books.length !== 12) fail('1 final status requires 12 weapon sourcebooks');
-    if (!(c1.openContentAdjudications || []).some((r) => r.subject === 'BlasTech 500 Riot Gun')) fail('1 Riot Gun adjudication must remain open');
+    if (!(c1.openContentAdjudications || []).some((r) => r.subject === 'BlasTech 500 Riot Gun' && r.status === 'RESOLVED_BY_PLANNER_RULING_PHASE_3B' && /Rebellion Era/.test(r.resolution))) fail('1 Riot Gun adjudication must be recorded as resolved by the Phase 3B planner ruling');
   }
   if (!errors.length) console.log(`Phase 1 weapons content OK: ${c1.books.length} books (${c1.books.map((b) => b.phase).join(',')}), ${tot.claims} claims / ${claimsByName.size} identities (${tot.present} present, ${tot.missing} missing; ${tot.INCORRECT} incorrect, ${tot.INCOMPLETE} incomplete)`);
 }
 
 // ---- Phase 2 weapons numeric/stat/schema authority (2A Core in the rolling authority; later books may be standalone) ----
 const s2 = auth.phases['2-weapons-numeric-stat-schema'];
+const AMMO_RUNTIME_KEYS = ['currentShots', 'loadedAmmoRef', 'loadedAmmoQuantity', 'chamberedPayloadRef'];
 if (s2) {
   const e0 = errors.length;
   const QUALS = ['accurate', 'inaccurate', 'arc', 'ignoresDR', 'areaEffect', 'autofireOnly', 'doubleWeapon', 'thrown', 'reach'];
@@ -815,7 +817,7 @@ if (s2) {
       if (!same2(sa.records.filter((r) => r.qualities.accurate).map((r) => r.canonicalName), ['Siang Lance']) || !same2(sa.records.filter((r) => r.qualities.inaccurate).map((r) => r.canonicalName), ['Flechette Launcher'])) fail('2I base Accurate (Siang Lance) / Inaccurate (Flechette Launcher) sets');
       if (sa.records.filter((r) => r.crossPublishedSources?.length).length !== 2 || sa.counts.crossPublishedIdentityClaims !== 2) fail('2I exactly two cross-published identities');
       const rg = f('BlasTech 500 Riot Gun');
-      if (rg.conflictGate?.status !== 'REVIEW_PRECEDENCE_BEFORE_CONTENT_MUTATION' || !(auth.phases['1-weapons-content'].openContentAdjudications || []).some((q) => q.subject === 'BlasTech 500 Riot Gun') || rg.qualities.inaccurate) fail('2I BlasTech 500 Riot Gun stays conflict-gated and un-Inaccurate in this book');
+      if (rg.conflictGate?.status !== 'RESOLVED_BY_PLANNER_RULING_PHASE_3B' || !(auth.phases['1-weapons-content'].openContentAdjudications || []).some((q) => q.subject === 'BlasTech 500 Riot Gun') || rg.qualities.inaccurate) fail('2I BlasTech 500 Riot Gun stays conflict-gated and un-Inaccurate in this book');
       if (rg.canonicalStats.costCredits !== 1200 || rg.canonicalStats.weightKg !== 2.2 || !rg.canonicalStats.modeProfiles.some((m) => m.conditionalModifiers?.some((c) => c.value === -1)) || !rg.canonicalStats.modeProfiles.some((m) => m.conditionalModifiers?.some((c) => c.value === 2 && c.type === 'equipment'))) fail('2I Riot Gun 1200 cr / 2.2 kg, -1 single-shot, +2 equipment autofire');
       const fl = f('Flechette Launcher');
       if (!fl.crossPublishedSources.some((c) => /Force Unleashed/.test(c.book) && c.page === 199) || fl.canonicalStats.attackProfiles[0].area.radiusSquares !== 1 || !fl.canonicalStats.attackProfiles[0].firingConstraints?.prohibitsMultiShotAbilities || fl.canonicalStats.resource.capacityShots !== 4) fail('2I Flechette Launcher same identity as Force Unleashed, 1-square splash, 4-shot canister, no multi-shot');
@@ -955,7 +957,7 @@ if (s2) {
       const f = (n) => sa.records.find((r) => r.canonicalName === n);
       const ap0 = (n) => f(n).canonicalStats.attackProfiles[0];
       const rg = f('BlasTech 500 Riot Gun');
-      if (!rg.conflictGate || !(auth.phases['1-weapons-content'].openContentAdjudications || []).some((q) => q.subject === 'BlasTech 500 Riot Gun')) fail('2E BlasTech 500 Riot Gun must stay production-gated with the open adjudication');
+      if (rg.conflictGate?.status !== 'RESOLVED_BY_PLANNER_RULING_PHASE_3B' || !(auth.phases['1-weapons-content'].openContentAdjudications || []).some((q) => q.subject === 'BlasTech 500 Riot Gun')) fail('2E BlasTech 500 Riot Gun claim gate must be recorded as resolved by the planner ruling');
       if (!ap0('BlasTech 500 Riot Gun').conditionalModifiers.some((m) => m.value === -2 && /single-shot/.test(m.condition))) fail('2E Riot Gun single-shot -2 modifier missing');
       const dfn = f('Gee-Tech 12 Defender Microblaster').canonicalStats;
       if (dfn.range.hardMaxSquares !== 3 || dfn.resource.integrated !== true || dfn.resource.rechargeable !== false || dfn.resource.disposableWhenDepleted !== true || dfn.resource.capacityShots !== 2) fail('2E Defender hard max range / integrated disposable power pack');
@@ -1003,7 +1005,7 @@ if (p3) {
   const dupNames = [...new Set(p1all.filter((n, i) => p1all.indexOf(n) !== i))].sort();
   if (p1all.length !== 209 || new Set(p1all).size !== 203 || rec3.inputCounts.phase1SourceClaims !== 209 || rec3.inputCounts.phase1UniqueProductionIdentities !== 203 || rec3.inputCounts.crossPublicationDuplicateClaims !== 6 || dupNames.length !== 6) fail('3A input counts must reconcile 209 claims -> 203 identities with exactly six duplicated identities');
   if (!same(rec3.records.map((q) => q.canonicalIdentity).sort(), dupNames)) fail(`3A identities ${rec3.records.map((q) => q.canonicalIdentity).sort()} must equal the six Phase 1 cross-published identities ${dupNames}`);
-  if (rec3.outputCounts.crossPublishedIdentitiesReviewed !== 6 || rec3.outputCounts.resolvedCompatibleOrAdditive !== rec3.records.filter((q) => !q.conflicts?.length).length || rec3.outputCounts.explicitSourceConflictsCarriedForward !== rec3.records.filter((q) => q.conflicts?.length).length || rec3.outputCounts.explicitSourceConflictsCarriedForward !== 2) fail('3A output counts (4 resolved / 2 conflict-gated)');
+  if (rec3.outputCounts.crossPublishedIdentitiesReviewed !== 6 || rec3.outputCounts.resolvedIdentities !== 6 || rec3.outputCounts.unresolvedCrossPublicationConflicts !== 0 || rec3.outputCounts.explicitSourceConflictsCarriedForward !== 0 || rec3.outputCounts.resolvedCompatibleOrAdditive !== rec3.records.filter((q) => !q.conflictHistory?.length).length || rec3.outputCounts.resolvedByPrecedenceRuling !== rec3.records.filter((q) => q.conflictHistory?.length).length || rec3.outputCounts.resolvedByPrecedenceRuling !== 2 || rec3.records.some((q) => q.conflicts?.length)) fail('3A output counts (6 resolved: 4 compatible/additive + 2 by precedence ruling, 0 unresolved)');
   const dmgStr = (r) => `${r.canonicalStats.damageType.types.map((t) => t[0].toUpperCase() + t.slice(1)).join(r.canonicalStats.damageType.mode === 'and' ? ' AND ' : ' OR ')}`;
   const field = {
     weaponGroup: (r) => r.weaponGroup, size: (r) => r.canonicalStats.size, costCredits: (r) => r.canonicalStats.costCredits, baseDamage: (r) => r.canonicalStats.baseDamage.formula, weightKg: (r) => r.canonicalStats.weightKg, damageType: dmgStr,
@@ -1026,33 +1028,132 @@ if (p3) {
     // conflicts: recompute differing fields between the two claims
     const differ = [];
     for (const k of ['costCredits', 'weightKg', 'size', 'baseDamage', 'damageType', 'weaponGroup', 'availability', 'inaccurate', 'ignoresDR', 'reach', 'areaEffect', 'rateOfFire']) { const [x, y] = cl.map((c) => field[k](c.r)); if (!same(x, y) && x !== null && y !== null) differ.push(k === 'availability' ? 'availability.restriction' : k === 'inaccurate' ? 'qualities.inaccurate' : k); }
-    const listed = (q.conflicts || []).map((c) => c.field).filter((f2) => f2 !== 'singleShotAttackPenalty').sort();
+    const listed = (q.conflictHistory || []).map((c) => c.field).filter((f2) => f2 !== 'singleShotAttackPenalty' && !/^defensiveInteractions\./.test(f2)).sort();
     if (!same(listed, differ.sort())) fail(`3A ${n} listed conflicts ${JSON.stringify(listed)} disagree with certified claim differences ${JSON.stringify(differ)}`);
-    for (const c of q.conflicts || []) if (c.disposition !== 'UNRESOLVED_PRECEDENCE') fail(`3A ${n} conflict ${c.field} must stay UNRESOLVED_PRECEDENCE`);
-    if ((q.conflicts?.length || 0) > 0 !== (q.reconciliationStatus === 'SOURCE_CONFLICT_CARRIED_FORWARD')) fail(`3A ${n} reconciliationStatus disagrees with its conflict list`);
+    for (const c of q.conflictHistory || []) if (c.disposition !== 'RESOLVED_LATER_PUBLICATION_PRECEDENCE' || !c.controllingSource || c.resolvedValue === undefined) fail(`3A ${n} conflict ${c.field} must be resolved with a controlling source and value`);
+    if ((q.conflictHistory?.length || 0) > 0 !== (q.reconciliationStatus === 'RESOLVED_BY_PLANNER_RULING_LATER_PUBLICATION')) fail(`3A ${n} reconciliationStatus disagrees with its conflict history`);
   }
   const g = (n) => rec3.records.find((q) => q.canonicalIdentity === n);
   const cw = claims.get('BlasTech 500 Riot Gun').find((c) => c.ph === '2E').r, rb = claims.get('BlasTech 500 Riot Gun').find((c) => c.ph === '2I').r;
   const ss = (r) => r.canonicalStats.modeProfiles.find((m) => m.id === 'single-shot')?.conditionalModifiers?.[0]?.value;
   const rg = g('BlasTech 500 Riot Gun');
-  const sp = rg.conflicts.find((c) => c.field === 'singleShotAttackPenalty');
-  if (ss(cw) !== sp?.cloneWars || ss(rb) !== sp?.rebellionEra || cw.canonicalStats.costCredits !== rg.conflicts.find((c) => c.field === 'costCredits').cloneWars || rb.canonicalStats.costCredits !== rg.conflicts.find((c) => c.field === 'costCredits').rebellionEra || cw.canonicalStats.weightKg !== rg.conflicts.find((c) => c.field === 'weightKg').cloneWars || rb.canonicalStats.weightKg !== rg.conflicts.find((c) => c.field === 'weightKg').rebellionEra) fail('3A Riot Gun conflict values must equal the certified Clone Wars / Rebellion Era values');
+  const sp = rg.conflictHistory.find((c) => c.field === 'singleShotAttackPenalty');
+  if (ss(cw) !== sp?.cloneWars || ss(rb) !== sp?.rebellionEra || cw.canonicalStats.costCredits !== rg.conflictHistory.find((c) => c.field === 'costCredits').cloneWars || rb.canonicalStats.costCredits !== rg.conflictHistory.find((c) => c.field === 'costCredits').rebellionEra || cw.canonicalStats.weightKg !== rg.conflictHistory.find((c) => c.field === 'weightKg').cloneWars || rb.canonicalStats.weightKg !== rg.conflictHistory.find((c) => c.field === 'weightKg').rebellionEra) fail('3A Riot Gun conflict values must equal the certified Clone Wars / Rebellion Era values');
   if (rb.canonicalStats.ammo?.capacityShots !== 50 || cw.canonicalStats.ammo?.status !== 'not-stated' || !rb.canonicalStats.modeProfiles.some((m) => m.conditionalModifiers?.some((c) => c.value === 2 && c.type === 'equipment'))) fail('3A Riot Gun Rebellion-only +2 autofire and 50-shot pack');
-  const gs = claims.get('Guard Shoto'); const gc = g('Guard Shoto').conflicts.find((c) => c.field === 'availability.restriction');
+  const gs = claims.get('Guard Shoto'); const gc = g('Guard Shoto').conflictHistory.find((c) => c.field === 'availability.restriction');
   if (gc.forceUnleashed !== gs.find((c) => c.ph === '2D').r.canonicalStats.availability.restriction || gc.jediAcademy.split(' ')[0] !== gs.find((c) => c.ph === '2F').r.canonicalStats.availability.restriction) fail('3A Guard Shoto availability conflict values');
   const gt = claims.get('Stunning Gauntlet').find((c) => c.ph === '2B').r;
   if (!gt.canonicalStats.variantsByWearerSize) fail('3A Stunning Gauntlet KOTOR size variants must remain');
   if (!claims.get('Long-Handle Lightsaber').some((c) => c.r.canonicalStats.attackProfiles.some((p) => p.id === 'haft-end')) || !claims.get('Lightsaber Pike').some((c) => c.r.canonicalStats.attackProfiles.some((p) => p.id === 'haft-end' && p.damageType.mode === 'unspecified' && !p.qualities.ignoresDR))) fail('3A Long Haft Form haft-end profile (1d6, unspecified type, no DR bypass) must exist in the certified claims');
-  // Claude readback: the phrik DR condition divergence must stay recorded
-  for (const n of ['Guard Shoto', 'Lightsaber Pike']) {
-    const cl = claims.get(n), dr = (r) => r.canonicalStats.defensiveInteractions.filter((x) => /^incoming-lightsaber-does-not-ignore/.test(x.effect)).map((x) => x.condition ?? null);
-    const fu = cl.find((c) => c.ph === '2D').r, ja = cl.find((c) => c.ph === '2F').r;
-    const diverges = dr(fu).includes(null) && dr(ja).some((x) => typeof x === 'string' && /phrik/.test(x)) && !dr(ja).includes(null);
-    const noted = rec3.claudeReadback.findingsForPlanner.some((f2) => f2.identity === n && /phrik/.test(f2.id));
-    if (diverges !== noted) fail(`3A ${n} phrik DR condition divergence must be ${diverges ? 'recorded' : 'absent'} in claudeReadback`);
+  // Planner rulings (Phase 3B): the phrik divergence stays recorded as resolved
+  for (const n of ['Guard Shoto', 'Lightsaber Pike']) if (!rec3.claudeReadback.findingsResolvedByPlannerRuling.some((f2) => f2.identity === n && /phrik/.test(f2.id) && f2.resolution)) fail(`3A ${n} phrik finding must stay recorded with its planner resolution`);
+  if (!g('Guard Shoto').conflictHistory.some((c) => c.field === 'defensiveInteractions.lightsaberDrCondition' && /phrik-laced/.test(c.resolvedValue)) || !g('Lightsaber Pike').rulingsApplied?.some((q) => q.ruling === 'NO_CONFLICT')) fail('3A phrik rulings (Guard Shoto conditional, Lightsaber Pike intrinsic)');
+  if (rec3.claudeReadback.planner.ruledResolved !== 6 || rec3.claudeReadback.planner.ruledConflictGated !== 0 || rec3.status !== 'PHASE_3A_RESOLVED_WITH_PHASE_3B_PLANNER_RULINGS') fail('3A readback must record 6 resolved / 0 gated planner rulings');
+  if (errors.length === e3) console.log(`Phase 3A cross-publication reconciliation OK: ${rec3.records.length} identities (${rec3.outputCounts.resolvedCompatibleOrAdditive} compatible/additive + ${rec3.outputCounts.resolvedByPrecedenceRuling} by precedence ruling, ${rec3.outputCounts.unresolvedCrossPublicationConflicts} unresolved)`);
+}
+
+
+// Phase 3B: 203-identity canonical authority, recomputed independently and compared with the deterministic builder
+const p3b = p3 && p3.subphases && p3.subphases['3B'];
+if (p3b && typeof p3b === 'object') {
+  const e3b = errors.length;
+  const same = (x, y) => JSON.stringify(x) === JSON.stringify(y);
+  const sorted = (x) => (Array.isArray(x) ? x.map(sorted) : x && typeof x === 'object' ? Object.fromEntries(Object.keys(x).sort().map((k) => [k, sorted(x[k])])) : x);
+  const sha256 = (x) => crypto.createHash('sha256').update(typeof x === 'string' ? x : JSON.stringify(sorted(x))).digest('hex');
+  const raw = fs.readFileSync(path.join(ROOT, p3b.file), 'utf8');
+  const d3b = JSON.parse(raw);
+  if (!fs.existsSync(path.join(ROOT, p3b.doc))) fail('3B missing doc');
+  // determinism / currency: the committed files must equal two independent builder runs
+  const { buildPhase3B } = await import('./build-item-weapons-phase-3b-canonical-authority.mjs');
+  const b1 = buildPhase3B(), b2 = buildPhase3B();
+  if (b1.json !== b2.json || b1.md !== b2.md) fail('3B builder output is not deterministic');
+  if (raw !== b1.json) fail('3B committed authority differs from the builder output (stale or hand-edited)');
+  if (fs.readFileSync(path.join(ROOT, p3b.doc), 'utf8') !== b1.md) fail('3B committed markdown differs from the builder output');
+  if (d3b.status !== 'WEAPON_PHASE_3B_203_IDENTITY_CANONICAL_AUTHORITY_CERTIFIED' || d3b.productionMutationAuthorized !== false || d3b.authorityOnly !== true) fail('3B status / authority-only flags');
+  // production baseline unchanged
+  for (const f of ['packs/weapons.db', 'template.json']) if (d3b.productionBaseline[f] !== sha256(fs.readFileSync(path.join(ROOT, f), 'utf8'))) fail(`3B production file ${f} changed since 3B certification`);
+  // independent recomputation of the join
+  const p1c = auth.phases['1-weapons-content'];
+  const uidx = p1c.uniqueIdentityIndex;
+  const nb = (b) => b.replace(/^The /, '');
+  const p1by = new Map(); for (const b of p1c.books) for (const r of b.records) p1by.set(`${nb(r.source.book)}|${r.canonicalName}`, r);
+  const p2by = new Map();
+  const reg = (b, ph) => { for (const r of b.records) p2by.set(`${nb(r.source.book)}|${r.canonicalName}`, { ph, r }); };
+  reg(s2.books[0], '2A'); for (const sb of s2.standaloneBookAuthorities) reg(JSON.parse(fs.readFileSync(path.join(ROOT, sb.file), 'utf8')), sb.phase);
+  const ovl = JSON.parse(fs.readFileSync(path.join(ROOT, s2.ammoNormalizationOverlay.file), 'utf8'));
+  const ovBy = new Map(ovl.entries.map((e) => [`${e.phase}|${e.canonicalName}`, e]));
+  const ids = d3b.identities;
+  const nClaims = ids.reduce((m, i) => m + i.sourceClaims.length, 0);
+  if (ids.length !== 203 || uidx.length !== 203 || nClaims !== 209 || p1by.size !== 209 || p2by.size !== 209 || ovBy.size !== 209) fail(`3B counts ${ids.length}/${nClaims} (index ${uidx.length}, phase1 ${p1by.size}, phase2 ${p2by.size}, overlay ${ovBy.size})`);
+  if (d3b.counts.uniqueCanonicalIdentities !== 203 || d3b.counts.certifiedSourceClaims !== 209 || d3b.counts.singleClaimIdentities !== 197 || d3b.counts.twoClaimIdentities !== 6 || d3b.counts.sourceBooks !== 12) fail('3B declared counts');
+  if (ids.filter((i) => i.sourceClaims.length === 1).length !== 197 || ids.filter((i) => i.sourceClaims.length === 2).length !== 6) fail('3B must be exactly 197 one-claim and 6 two-claim identities');
+  const six = ['BlasTech 500 Riot Gun', 'Flechette Launcher', 'Guard Shoto', 'Lightsaber Pike', 'Long-Handle Lightsaber', 'Stunning Gauntlet'];
+  if (!same(ids.filter((i) => i.sourceClaims.length === 2).map((i) => i.canonicalName).sort(), six)) fail('3B the six two-claim identities must be exactly the known six');
+  if (new Set(ids.map((i) => i.identityKey)).size !== 203 || new Set(ids.map((i) => i.canonicalName)).size !== 203) fail('3B identity keys / names must be unique');
+  if (!same(ids.map((i) => [i.canonicalName, i.identityKey]), [...ids].map((i) => [i.canonicalName, i.identityKey]).sort((a, b) => (a[0] < b[0] ? -1 : a[0] > b[0] ? 1 : a[1] < b[1] ? -1 : a[1] > b[1] ? 1 : 0)))) fail('3B identities must be sorted by canonicalName then identityKey');
+  const REQ = ['identityKey', 'canonicalName', 'repo', 'sourceClaims', 'firstPublication', 'canonicalPlayerText', 'summary', 'weaponGroup', 'schemaFamily', 'canonicalStats', 'qualities', 'conditionalQualities', 'proficiencyRules', 'operation', 'sourceFootnotes', 'crossPublication', 'repoComparison', 'ambiguities', 'mergeAudit'];
+  const seenClaims = new Set();
+  for (const i of ids) {
+    const w = `3B ${i.canonicalName}`;
+    for (const k of REQ) if (!(k in i)) fail(`${w} missing ${k}`);
+    if (typeof i.canonicalPlayerText !== 'string' || !i.canonicalPlayerText.trim() || typeof i.summary !== 'string' || !i.summary.trim()) fail(`${w} needs canonicalPlayerText and summary`);
+    const u = uidx.find((x) => x.identityKey === i.identityKey);
+    if (!u || u.canonicalName !== i.canonicalName || u.claimCount !== i.sourceClaims.length || (u.repoId ?? null) !== (i.repo.id ?? null) || u.repoPresent !== i.repo.present) fail(`${w} differs from the Phase 1 unique identity index`);
+    for (const c of i.sourceClaims) {
+      const k = `${nb(c.book)}|${c.canonicalName}`;
+      if (seenClaims.has(k)) fail(`${w} duplicate source claim ${k}`); seenClaims.add(k);
+      const a = p1by.get(k), b = p2by.get(k);
+      if (!a || !b) { fail(`${w} claim ${k} lacks a Phase 1 or Phase 2 claim`); continue; }
+      if (c.canonicalPlayerText !== a.canonicalPlayerText || c.summary !== a.summary) fail(`${w} source claim text must equal the certified Phase 1 claim`);
+      if (c.phase2Ref.sha256 !== sha256(b.r) || c.phase2 !== b.ph) fail(`${w} claim ${k} Phase 2 snapshot hash differs from the certified claim`);
+      if (!ovBy.get(`${b.ph}|${b.r.canonicalName}`)) fail(`${w} claim ${k} has no v2.9 ammo overlay entry`);
+      if (!['sole', 'controlling', 'compatible', 'additive', 'superseded-conflict'].includes(c.relationship)) fail(`${w} claim relationship ${c.relationship}`);
+    }
+    if (i.sourceClaims.length === 1) {
+      const a = p1by.get(`${nb(i.sourceClaims[0].book)}|${i.sourceClaims[0].canonicalName}`), b = p2by.get(`${nb(i.sourceClaims[0].book)}|${i.sourceClaims[0].canonicalName}`);
+      if (i.canonicalPlayerText !== a.canonicalPlayerText || i.summary !== a.summary) fail(`${w} one-claim identity must reuse the certified Phase 1 text and summary unchanged`);
+      if (!same(sorted(i.canonicalStats), sorted(b.r.canonicalStats)) || !same(sorted(i.qualities), sorted(b.r.qualities))) fail(`${w} one-claim identity mechanics must equal the certified Phase 2 claim`);
+    }
+    const am = i.canonicalStats.ammo, hasRanged = i.canonicalStats.attackProfiles.some((q) => q.range.mode !== 'melee');
+    if ((am === null) === hasRanged) fail(`${w} ammo must be null exactly for pure melee identities`);
+    if (am && am.capacityShots === 0) fail(`${w} ammo must never carry capacityShots 0`);
+    if (am && am.status === 'not-stated' && (am.type !== null || am.capacityShots !== null)) fail(`${w} not-stated ammo must stay empty (never filled from repo data)`);
+    if (am?.payloadDerived && am.damageSource === 'loaded-ammo' && i.canonicalStats.baseDamage.mode === 'dice' && !i.canonicalStats.payloadProfiles.length && !i.ambiguities.some((a) => a.status === 'DELIVERY_SYSTEM_DAMAGE_OWNERSHIP_UNRESOLVED')) fail(`${w} payload-derived delivery system that still prints launcher base damage must record the ownership ambiguity`);
+    for (const k of AMMO_RUNTIME_KEYS) if (am && k in am) fail(`${w} ammo must not carry runtime state ${k}`);
+    if (i.crossPublication.claimCount !== i.sourceClaims.length || i.mergeAudit.claimCount !== i.sourceClaims.length) fail(`${w} crossPublication/mergeAudit claim counts`);
   }
-  if (rec3.claudeReadback.planner.ruledResolved !== 4 || rec3.claudeReadback.planner.ruledConflictGated !== 2) fail('3A claudeReadback must record the planner rulings unchanged');
-  if (errors.length === e3) console.log(`Phase 3A cross-publication reconciliation OK: ${rec3.records.length} identities (${rec3.outputCounts.resolvedCompatibleOrAdditive} resolved, ${rec3.outputCounts.explicitSourceConflictsCarriedForward} conflict-gated), ${rec3.claudeReadback.findingsForPlanner.filter((f2) => /phrik/.test(f2.id)).length} phrik findings recorded for the planner`);
+  if (seenClaims.size !== 209 || [...p1by.keys()].some((k) => !seenClaims.has(k))) fail('3B all 209 Phase 1 claims must appear exactly once');
+  const g = (n) => ids.find((i) => i.canonicalName === n);
+  // planner rulings
+  const gs = g('Guard Shoto');
+  if (gs.canonicalStats.availability.restriction !== 'common' || gs.canonicalStats.availability.rare !== true) fail('3B Guard Shoto availability must resolve to Jedi Academy (common, Rare)');
+  const gsd = gs.canonicalStats.defensiveInteractions.filter((q) => /^incoming-lightsaber-does-not-ignore/.test(q.effect));
+  if (gsd.length !== 1 || gsd[0].condition !== 'handle-is-phrik-laced' || !gs.canonicalStats.defensiveInteractions.some((q) => q.value === 2 && q.id === 'block-deflect-bonus')) fail('3B Guard Shoto lightsaber-DR resistance must be phrik-handle conditional; +2 Block/Deflect independent');
+  if (!gs.crossPublication.conflictHistory.some((h) => h.field === 'availability.restriction' && h.forceUnleashed === 'illegal') || gs.sourceClaims.find((c) => c.phase2 === '2D').relationship !== 'superseded-conflict') fail('3B Guard Shoto Force Unleashed values must stay preserved as the superseded claim');
+  const pk = g('Lightsaber Pike'); const pkd = pk.canonicalStats.defensiveInteractions;
+  if (pkd.length !== 1 || pkd[0].condition !== null || !/does-not-ignore/.test(pkd[0].effect) || !pk.canonicalStats.attackProfiles.some((q) => q.id === 'haft-end' && q.damageType.mode === 'unspecified' && !q.qualities.ignoresDR)) fail('3B Lightsaber Pike lightsaber-DR resistance must stay active (intrinsic phrik haft) and keep the Long Haft Form haft end');
+  const rg = g('BlasTech 500 Riot Gun'), rgs = rg.canonicalStats, ssv = rgs.modeProfiles.find((m) => m.id === 'single-shot')?.conditionalModifiers?.[0]?.value, afb = rgs.modeProfiles.find((m) => m.id === 'autofire')?.conditionalModifiers?.[0];
+  if (rgs.costCredits !== 1200 || rgs.weightKg !== 2.2 || rg.qualities.inaccurate !== false || ssv !== -1 || afb?.value !== 2 || afb?.type !== 'equipment' || rgs.ammo?.type !== 'power-pack' || rgs.ammo?.capacityShots !== 50 || 'conflictGate' in rg) fail('3B Riot Gun must resolve to the Rebellion Era values (1,200 / 2.2 kg / not Inaccurate / -1 / +2 equipment autofire / 50-shot power pack)');
+  const cwc = rg.sourceClaims.find((c) => c.phase2 === '2E'), cwr = p2by.get('Clone Wars Campaign Guide|BlasTech 500 Riot Gun').r;
+  if (cwc?.relationship !== 'superseded-conflict' || cwr.canonicalStats.costCredits !== 1000 || cwr.canonicalStats.weightKg !== 4.5 || cwr.qualities.inaccurate !== true || !rg.crossPublication.conflictHistory.some((h) => h.field === 'costCredits' && h.cloneWars === 1000)) fail('3B Riot Gun Clone Wars values must stay preserved as the superseded claim');
+  const bc = g('Bowcaster');
+  if (bc.canonicalStats.range.profileId !== null || bc.canonicalStats.range.mode !== 'unresolved' || !bc.ambiguities.some((a) => a.field === 'canonicalStats.range.profileId' && a.blocksProductionRangeMutation === true)) fail('3B Bowcaster range must stay source-unresolved with a recorded ambiguity (never silently rifles)');
+  const cr = g('CR-1 Blast Cannon');
+  if (cr.qualities.areaEffect !== false || !cr.conditionalDamageProfiles.some((q) => q.operation === 'area-toggle' && q.area?.radiusSquares === 1 && q.area?.enabled === true)) fail('3B CR-1 base areaEffect must stay false with a structured nonadjacent 1-square splash');
+  const cg = g('Concussion Grenade');
+  if (cg.sourceClaims[0].descriptionPage !== 48 || !same(cg.sourceClaims[0].descriptionPages, [48, 49])) fail('3B Concussion Grenade description must start on p.48 and continue on p.49');
+  const xn = g('Xerrol Nightstinger');
+  if (xn.weaponGroup !== 'Exotic Weapon' || xn.schemaFamily.proficiency !== 'exotic' || xn.canonicalStats.range.profileId !== 'rifles') fail('3B Xerrol Nightstinger must be Exotic proficiency with rifle range');
+  const sg = g('Stunning Gauntlet');
+  if (!sg.canonicalStats.variantsByWearerSize?.length || sg.canonicalStats.costCredits !== null || sg.canonicalStats.weightKg !== null || sg.canonicalStats.size !== null) fail('3B Stunning Gauntlet must keep its KOTOR size/cost/weight variants, not a single fixed line');
+  if (!sg.ambiguities.some((a) => a.status === 'CROSS_PUBLICATION_VARIANT_DISCREPANCY_FOR_PLANNER')) fail('3B Stunning Gauntlet KOTOR/Clone Wars variant discrepancy must stay recorded for the planner');
+  const lh = g('Long-Handle Lightsaber');
+  if (!lh.canonicalStats.attackProfiles.some((q) => q.id === 'haft-end' && q.damage.formula === '1d6') || !lh.conditionalDamageProfiles.some((q) => q.damage?.formula === '2d10') || lh.canonicalStats.resource.kind !== 'energy-cell') fail('3B Long-Handle Lightsaber two-handed choice, haft end and energy cell');
+  const own = ids.filter((i) => i.ambiguities.some((a) => a.status === 'DELIVERY_SYSTEM_DAMAGE_OWNERSHIP_UNRESOLVED')).map((i) => i.canonicalName).sort();
+  if (!same(own, ['E-Web Missile Launcher', 'Merr-Sonn PLX-2M Portable Missile Launcher', 'Miniature Proton Torpedo Launcher', 'Missile Launcher'].sort())) fail(`3B delivery-system damage-ownership ambiguities must be exactly the four launchers that print launcher damage while the overlay says payload-derived (found ${own})`);
+  const lm = g('Light Concussion Missile Launcher');
+  if (lm.canonicalStats.baseDamage.mode !== 'ammunition' || lm.canonicalStats.payloadProfiles[0]?.damageMultiplier !== 2) fail('3B launcher/payload separation (Light Concussion Missile Launcher) must survive the merge');
+  if (errors.length === e3b) console.log(`Phase 3B canonical authority OK: ${ids.length} identities / ${nClaims} claims (197 single, 6 two-claim), ${ids.filter((i) => i.ambiguities.length).length} identities carry explicit ambiguities, builder byte-stable`);
 }
 
 if (errors.length) { console.error(`FAIL (${errors.length})\n- ${errors.join('\n- ')}`); process.exit(1); }

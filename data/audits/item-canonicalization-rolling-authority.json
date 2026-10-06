@@ -22543,11 +22543,15 @@
               "weaponGroup": "Simple Weapon",
               "source": {
                 "book": "Rebellion Era Campaign Guide",
-                "descriptionPage": 49,
+                "descriptionPage": 48,
                 "statTablePage": 50,
                 "verifiedBy": [
                   "user-supplied searchable TXT",
                   "user-supplied PDF visual verification"
+                ],
+                "descriptionPages": [
+                  48,
+                  49
                 ]
               },
               "canonicalPlayerText": "A concussion grenade detonates on contact and affects a 2-square burst. Make one area attack roll against the Reflex Defense of every target in the burst; a hit deals full damage and a miss deals half damage. Evasion modifies the result normally.",
@@ -26047,9 +26051,13 @@
               "phase": "1I",
               "book": "Rebellion Era Campaign Guide",
               "canonicalName": "Concussion Grenade",
-              "descriptionPage": 49,
+              "descriptionPage": 48,
               "statTablePage": 50,
-              "phase1Discrepancy": "DESCRIPTION_INCOMPLETE"
+              "phase1Discrepancy": "DESCRIPTION_INCOMPLETE",
+              "descriptionPages": [
+                48,
+                49
+              ]
             }
           ]
         },
@@ -28121,7 +28129,8 @@
             }
           ],
           "ruling": "ONE_PRODUCTION_IDENTITY_CROSS_SOURCE_MECHANICAL_CONFLICT",
-          "productionAction": "REVIEW_PRECEDENCE_BEFORE_CONTENT_MUTATION"
+          "historicalProductionAction": "REVIEW_PRECEDENCE_BEFORE_CONTENT_MUTATION",
+          "productionAction": "PRECEDENCE_RESOLVED_BY_PLANNER_RULING_REBELLION_ERA_FIELD_LOCAL"
         },
         {
           "canonicalIdentity": "Stunning Gauntlet",
@@ -28195,7 +28204,9 @@
           "subject": "BlasTech 500 Riot Gun",
           "type": "CROSS_SOURCE_MECHANICAL_CONFLICT",
           "details": "Clone Wars Campaign Guide p.61 and Rebellion Era Campaign Guide p.50 publish different special modifiers for the same weapon identity.",
-          "requiredDecision": "Establish source precedence/errata policy before production description/mechanics are changed."
+          "requiredDecision": "Establish source precedence/errata policy before production description/mechanics are changed.",
+          "status": "RESOLVED_BY_PLANNER_RULING_PHASE_3B",
+          "resolution": "Field-local later-publication precedence: Rebellion Era (Jul 2009) controls the directly contradicting fields over Clone Wars (Jan 2009): 1,200 credits, 2.2 kg, not Inaccurate, -1 single-shot, +2 equipment autofire, 50-shot power pack. The Clone Wars values stay preserved as a superseded claim."
         }
       ]
     },
@@ -42914,7 +42925,7 @@
             "Xerrol Nightstinger": {
               "phase1": "Rifle",
               "phase2": "Exotic Weapon",
-              "reason": "Table 3-1 (Galaxy of Intrigue p.65, visually verified) lists the Xerrol nightstinger under Exotic Weapons; Phase 1 group value was not corrected (owner decision)."
+              "reason": "Planner ruling (Phase 3B): weaponGroup/proficiency Exotic Weapon, range profile rifles. Table 3-1 (Galaxy of Intrigue p.65) lists it under Exotic Weapons; the description calls it a sporting blaster rifle (range only). The certified Phase 1 group value \"Rifle\" is not edited."
             }
           }
         },
@@ -42941,32 +42952,46 @@
         "file": "data/audits/item-weapons-schema-v2.9-ammo-normalization.json",
         "entries": 209,
         "status": "PLANNING_AUTHORITY_FOR_CLAUDE_IMPLEMENTATION",
-        "note": "Planner-supplied deterministic overlay; the companion markdown (ae1770ee) arrived empty (0 bytes), so the JSON contract section is the only schema text."
+        "note": "Planner-supplied deterministic overlay. The first companion markdown arrived empty (0 bytes); the planner regenerated it and it is committed as the doc above.",
+        "doc": "docs/audits/item-weapons-schema-v2.9-ammo-normalization.md"
       }
     },
     "3-weapons-canonical-authority": {
-      "status": "PHASE_3A_CROSS_PUBLICATION_RECONCILIATION_DONE_AUTHORITY_ONLY",
+      "status": "PHASE_3B_203_IDENTITY_CANONICAL_AUTHORITY_CERTIFIED_AUTHORITY_ONLY",
       "subphases": {
         "3A": {
           "file": "data/audits/item-weapons-phase-3a-cross-publication-reconciliation.json",
           "doc": "docs/audits/item-weapons-phase-3a-cross-publication-reconciliation.md",
-          "status": "DRAFT_PHASE_3A_CROSS_PUBLICATION_RECONCILIATION_AUTHORITY",
+          "status": "PHASE_3A_RESOLVED_WITH_PHASE_3B_PLANNER_RULINGS",
           "identities": 6,
-          "resolved": 4,
-          "conflictGated": 2,
-          "claudeFindings": 2
+          "resolved": 6,
+          "conflictGated": 0,
+          "claudeFindings": 0
         },
-        "3B": "203-identity canonical authority build (pending)",
+        "3B": {
+          "file": "data/audits/item-weapons-phase-3b-canonical-authority.json",
+          "doc": "docs/audits/item-weapons-phase-3b-canonical-authority.md",
+          "builder": "tools/build-item-weapons-phase-3b-canonical-authority.mjs",
+          "status": "WEAPON_PHASE_3B_203_IDENTITY_CANONICAL_AUTHORITY_CERTIFIED",
+          "identities": 203,
+          "sourceClaims": 209,
+          "singleClaim": 197,
+          "twoClaim": 6
+        },
         "3C": "production disposition ledger (pending)",
         "3D": "global verification and freeze (pending)"
       },
       "productionMutationAuthorized": false,
-      "note": "Planner supplies the reconciliation; Claude folds and verifies it against the certified claims. Weapon tag archaeology starts only after 3D."
+      "note": "Planner supplies the reconciliation; Claude folds and verifies it against the certified claims. Weapon tag archaeology starts only after 3D.",
+      "openSourceAmbiguities": [
+        "Bowcaster range profile (SOURCE_NOT_EXPLICIT; blocks production range mutation, not Phase 3)",
+        "Stunning Gauntlet KOTOR Medium-wearer variant (300 cr / 0.5 kg) vs Clone Wars Human/Tiny example (200 cr / 0.4 kg): cross-publication variant discrepancy recorded for the planner"
+      ]
     }
   },
   "pendingPhases": [
     "1 Provenance and canonical content certification — weapons COMPLETE (1A-1L, authority-only); next within Phase 1: armor, general equipment families, cybernetics/upgrades/templates, lightsaber components, droid systems; weapon numeric/stat/schema certification precedes any creation of the 53 missing weapons",
-    "Phase 2 weapons numeric/stat/schema certification — 2A Core DONE (schema v2.1), 2B KOTOR, 2C Galaxy at War, 2D Force Unleashed, 2E Clone Wars, 2F Jedi Academy, 2G Legacy Era, 2H Unknown Regions, 2I Rebellion Era, 2J Scum and Villainy and 2K Galaxy of Intrigue and 2L Threats of the Galaxy DONE (standalone book authorities, schema v2.9; all 12 weapon books certified); Phase 3A cross-publication reconciliation DONE (authority-only); next: Phase 3B 203-identity canonical build, 3C dispositions, 3D freeze; Bowcaster range and BlasTech 500 Riot Gun conflict remain gated",
+    "Phase 2 weapons numeric/stat/schema certification — 2A Core DONE (schema v2.1), 2B KOTOR, 2C Galaxy at War, 2D Force Unleashed, 2E Clone Wars, 2F Jedi Academy, 2G Legacy Era, 2H Unknown Regions, 2I Rebellion Era, 2J Scum and Villainy and 2K Galaxy of Intrigue and 2L Threats of the Galaxy DONE (standalone book authorities, schema v2.9; all 12 weapon books certified); Phase 3A cross-publication reconciliation and 3B 203-identity canonical build DONE (authority-only); next: 3C production disposition ledger, 3D global verification/freeze; Bowcaster range and BlasTech 500 Riot Gun conflict remain gated",
     "Gated cleanup tranche (0-3D migrations, 0-3E renames/merge, 0-3F template migration, 0-3G weapons.db stragglers, 0-3H droid migration, weapon/equipment REMOVE dependents)",
     "Vehicle/starship item domain census (separate domain)",
     "2 Descriptions",

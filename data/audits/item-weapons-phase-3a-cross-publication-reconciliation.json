@@ -1,7 +1,7 @@
 {
   "phase": "3A",
   "family": "weapons",
-  "status": "DRAFT_PHASE_3A_CROSS_PUBLICATION_RECONCILIATION_AUTHORITY",
+  "status": "PHASE_3A_RESOLVED_WITH_PHASE_3B_PLANNER_RULINGS",
   "purpose": "Reconcile the six cross-published weapon source-claim pairs into six canonical production identities before the 203-identity Phase 3 canonical weapon authority is built.",
   "inputCounts": {
     "phase1SourceClaims": 209,
@@ -11,8 +11,11 @@
   },
   "outputCounts": {
     "crossPublishedIdentitiesReviewed": 6,
+    "resolvedIdentities": 6,
     "resolvedCompatibleOrAdditive": 4,
-    "explicitSourceConflictsCarriedForward": 2
+    "resolvedByPrecedenceRuling": 2,
+    "explicitSourceConflictsCarriedForward": 0,
+    "unresolvedCrossPublicationConflicts": 0
   },
   "mergePolicy": [
     "Preserve every certified source claim and its provenance even after claims are reconciled to one production identity.",
@@ -38,7 +41,7 @@
           "page": 50
         }
       ],
-      "reconciliationStatus": "SOURCE_CONFLICT_CARRIED_FORWARD",
+      "reconciliationStatus": "RESOLVED_BY_PLANNER_RULING_LATER_PUBLICATION",
       "compatibleFacts": {
         "weaponGroup": "Lightsaber",
         "size": "Small",
@@ -54,15 +57,32 @@
         "Preserve the lightsaber-resistant defensive interaction already certified for the weapon object.",
         "Preserve the Jedi Academy energy-cell operating requirement."
       ],
-      "conflicts": [
+      "conflicts": [],
+      "phase3Rule": "Build one canonical identity now, but leave the restriction field conflict-marked until precedence is explicitly resolved.",
+      "plannerOriginalStatus": "SOURCE_CONFLICT_CARRIED_FORWARD",
+      "conflictHistory": [
         {
           "field": "availability.restriction",
           "forceUnleashed": "illegal",
-          "jediAcademy": "common / no restriction beyond Rare",
-          "disposition": "UNRESOLVED_PRECEDENCE"
+          "jediAcademy": "common",
+          "disposition": "RESOLVED_LATER_PUBLICATION_PRECEDENCE",
+          "controllingSource": "Jedi Academy Training Manual",
+          "resolvedValue": {
+            "restriction": "common",
+            "rare": true
+          },
+          "supersededClaimPreserved": "Force Unleashed Illegal, Rare stays in the source claim"
+        },
+        {
+          "field": "defensiveInteractions.lightsaberDrCondition",
+          "forceUnleashed": "unconditional (condition implicit)",
+          "jediAcademy": "only when the handle is phrik-laced",
+          "disposition": "RESOLVED_LATER_PUBLICATION_PRECEDENCE",
+          "controllingSource": "Jedi Academy Training Manual",
+          "resolvedValue": "conditional on a phrik-laced handle",
+          "note": "The +2 Block/Deflect equipment bonus is independent of this condition."
         }
-      ],
-      "phase3Rule": "Build one canonical identity now, but leave the restriction field conflict-marked until precedence is explicitly resolved."
+      ]
     },
     {
       "canonicalIdentity": "Lightsaber Pike",
@@ -95,7 +115,15 @@
         "Long Haft Form conditionally turns the weapon into a double weapon.",
         "The Long Haft Form haft-end profile deals 1d6 with source-unspecified damage type and does not inherit lightsaber DR bypass."
       ],
-      "conflicts": []
+      "conflicts": [],
+      "plannerOriginalStatus": "RESOLVED_ADDITIVE_MERGE",
+      "rulingsApplied": [
+        {
+          "id": "lightsaber-pike-phrik-dr",
+          "ruling": "NO_CONFLICT",
+          "canonicalRule": "Incoming lightsabers do not ignore the Lightsaber Pike's own DR; the standard haft is phrik alloy in both publications, so the resistance is intrinsic and not an optional gate."
+        }
+      ]
     },
     {
       "canonicalIdentity": "Flechette Launcher",
@@ -132,7 +160,8 @@
         "prohibitsMultiShotAbilities": true
       },
       "conflicts": [],
-      "phase3Rule": "Collapse the two compatible claims to one canonical identity while retaining both provenance sources."
+      "phase3Rule": "Collapse the two compatible claims to one canonical identity while retaining both provenance sources.",
+      "plannerOriginalStatus": "RESOLVED_CONSISTENT_REPRINT"
     },
     {
       "canonicalIdentity": "BlasTech 500 Riot Gun",
@@ -147,7 +176,7 @@
           "page": 50
         }
       ],
-      "reconciliationStatus": "SOURCE_CONFLICT_CARRIED_FORWARD",
+      "reconciliationStatus": "RESOLVED_BY_PLANNER_RULING_LATER_PUBLICATION",
       "compatibleFacts": {
         "weaponGroup": "Rifle",
         "size": "Medium",
@@ -160,37 +189,56 @@
         ],
         "stunSetting": true
       },
-      "conflicts": [
+      "conflicts": [],
+      "rebellionOnlyMechanics": [
+        "+2 equipment bonus to autofire attacks.",
+        "50-shot power pack explicitly certified in the Rebellion Era entry."
+      ],
+      "phase3Rule": "Do not let the current repo values choose the winner. Carry both claim sets until precedence is explicitly adjudicated.",
+      "plannerOriginalStatus": "SOURCE_CONFLICT_CARRIED_FORWARD",
+      "conflictHistory": [
         {
           "field": "costCredits",
           "cloneWars": 1000,
           "rebellionEra": 1200,
-          "disposition": "UNRESOLVED_PRECEDENCE"
+          "disposition": "RESOLVED_LATER_PUBLICATION_PRECEDENCE",
+          "controllingSource": "Rebellion Era Campaign Guide",
+          "resolvedValue": 1200
         },
         {
           "field": "weightKg",
           "cloneWars": 4.5,
           "rebellionEra": 2.2,
-          "disposition": "UNRESOLVED_PRECEDENCE"
+          "disposition": "RESOLVED_LATER_PUBLICATION_PRECEDENCE",
+          "controllingSource": "Rebellion Era Campaign Guide",
+          "resolvedValue": 2.2
         },
         {
           "field": "qualities.inaccurate",
           "cloneWars": true,
           "rebellionEra": false,
-          "disposition": "UNRESOLVED_PRECEDENCE"
+          "disposition": "RESOLVED_LATER_PUBLICATION_PRECEDENCE",
+          "controllingSource": "Rebellion Era Campaign Guide",
+          "resolvedValue": false
         },
         {
           "field": "singleShotAttackPenalty",
           "cloneWars": -2,
           "rebellionEra": -1,
-          "disposition": "UNRESOLVED_PRECEDENCE"
+          "disposition": "RESOLVED_LATER_PUBLICATION_PRECEDENCE",
+          "controllingSource": "Rebellion Era Campaign Guide",
+          "resolvedValue": -1
         }
       ],
-      "rebellionOnlyMechanics": [
-        "+2 equipment bonus to autofire attacks.",
-        "50-shot power pack explicitly certified in the Rebellion Era entry."
-      ],
-      "phase3Rule": "Do not let the current repo values choose the winner. Carry both claim sets until precedence is explicitly adjudicated."
+      "canonicalResolved": {
+        "costCredits": 1200,
+        "weightKg": 2.2,
+        "inaccurate": false,
+        "singleShotAttackPenalty": -1,
+        "autofireEquipmentBonus": 2,
+        "ammoType": "power-pack",
+        "capacityShots": 50
+      }
     },
     {
       "canonicalIdentity": "Stunning Gauntlet",
@@ -220,7 +268,8 @@
         "Preserve KOTOR's certified size/cost/weight variants rather than flattening the identity to one fixed Tiny/200/0.4 line.",
         "Clone Wars confirms the same underlying mechanic and the Human/Tiny example."
       ],
-      "conflicts": []
+      "conflicts": [],
+      "plannerOriginalStatus": "RESOLVED_CONSISTENT_WITH_RICHER_VARIANT_DATA"
     },
     {
       "canonicalIdentity": "Long-Handle Lightsaber",
@@ -252,7 +301,8 @@
         "The Long Haft Form haft end deals 1d6 with source-unspecified damage type and does not inherit lightsaber DR bypass.",
         "Preserve the energy-cell operating requirement."
       ],
-      "conflicts": []
+      "conflicts": [],
+      "plannerOriginalStatus": "RESOLVED_ADDITIVE_MERGE"
     }
   ],
   "phase3Subphases": [
@@ -287,11 +337,11 @@
     "No production mutation occurs during Phase 3 authority construction."
   ],
   "claudeReadback": {
-    "status": "READBACK_AGAINST_CERTIFIED_PHASE_2_CLAIMS",
+    "status": "READBACK_AGAINST_CERTIFIED_PHASE_2_CLAIMS_RULINGS_APPLIED",
     "method": "tools/verify-item-weapons-authority.mjs recomputes every compatible/merged fact and every listed conflict from the certified Phase 1/Phase 2 source claims.",
     "planner": {
-      "ruledResolved": 4,
-      "ruledConflictGated": 2
+      "ruledResolved": 6,
+      "ruledConflictGated": 0
     },
     "confirmed": [
       "All six identities, their repo ids and their (book, page) provenance match the certified claims.",
@@ -299,29 +349,40 @@
       "BlasTech 500 Riot Gun conflicts confirmed: cost 1000/1200, weight 4.5/2.2, Inaccurate true/false, single-shot -2/-1; Rebellion-only +2 autofire equipment bonus and 50-shot power pack (Clone Wars is silent, not contradictory).",
       "Lightsaber Pike, Flechette Launcher, Stunning Gauntlet and Long-Handle Lightsaber core facts agree across their claims; Stunning Gauntlet KOTOR size/cost/weight live in variantsByWearerSize."
     ],
-    "findingsForPlanner": [
+    "conflictGateCounts": {
+      "identityLevel": 0,
+      "withPhrikFindings": 0
+    },
+    "findingsResolvedByPlannerRuling": [
       {
         "id": "guard-shoto-phrik-dr-condition",
         "identity": "Guard Shoto",
         "detail": "Force Unleashed certifies \"incoming lightsaber does not ignore the weapon DR\" unconditionally; Jedi Academy certifies it only when the handle is phrik-laced. The package lists the lightsaber-resistant interaction as additive; the certified claims diverge on its condition.",
-        "suggestedHandling": "Treat as a second conflict object on Guard Shoto, or rule precedence."
+        "suggestedHandling": "Treat as a second conflict object on Guard Shoto, or rule precedence.",
+        "resolvedBy": "planner-ruling",
+        "resolution": "Jedi Academy wording controls: resistance only when the handle is phrik-laced."
       },
       {
         "id": "lightsaber-pike-phrik-dr-condition",
         "identity": "Lightsaber Pike",
         "detail": "Force Unleashed certifies the same DR resistance unconditionally; Jedi Academy certifies it only for a phrik-alloy haft. The package marks the Pike resolved with no conflicts.",
-        "suggestedHandling": "Either rule that Jedi Academy narrows/clarifies the condition (then the Pike stays resolved) or carry a conflict object; Claude did not adjudicate."
+        "suggestedHandling": "Either rule that Jedi Academy narrows/clarifies the condition (then the Pike stays resolved) or carry a conflict object; Claude did not adjudicate.",
+        "resolvedBy": "planner-ruling",
+        "resolution": "No conflict: the standard pike haft is phrik alloy in both publications; resistance is intrinsic."
       },
       {
         "id": "pike-and-long-handle-claim-silence",
         "identity": "Lightsaber Pike / Long-Handle Lightsaber",
         "detail": "Both Jedi Academy claims add Long Haft Form; the Force Unleashed Pike and Legacy Era Long-Handle claims carry no haft-end profile (silence, not contradiction), consistent with the merge policy.",
-        "suggestedHandling": "No action; additive merge stands."
+        "suggestedHandling": "No action; additive merge stands.",
+        "resolvedBy": "planner-ruling",
+        "resolution": "No action; additive merge stands."
       }
     ],
-    "conflictGateCounts": {
-      "identityLevel": 2,
-      "withPhrikFindings": 4
-    }
-  }
+    "openSourceAmbiguities": [
+      "Bowcaster range profile (not a cross-publication conflict; source-unresolved)"
+    ]
+  },
+  "plannerOriginalStatus": "DRAFT_PHASE_3A_CROSS_PUBLICATION_RECONCILIATION_AUTHORITY",
+  "rulingsSource": "data/audits/item-weapons-phase-3b-canonical-authority-build-plan.json plannerRulings + publicationPrecedencePolicy (field-local later-publication precedence; silence never supersedes; earlier-only compatible mechanics survive)"
 }
